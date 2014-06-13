@@ -1,7 +1,4 @@
-For this initial release the openMAXIMS source archive has been split into 3 files:
+openMAXIMS source code project is located in the 'Source Library' folder
 
-openMAXIMS_01_MAY_2014_Source_Archive-1.zip.001
-openMAXIMS_01_MAY_2014_Source_Archive-1.zip.002
-openMAXIMS_01_MAY_2014_Source_Archive-1.zip.003
+The compressed archive (3 files) is also available anybody who wishes to download the source code in a portable format.
 
-This has been necessary to overcome the 100MB file size limit imposed by GitHub
