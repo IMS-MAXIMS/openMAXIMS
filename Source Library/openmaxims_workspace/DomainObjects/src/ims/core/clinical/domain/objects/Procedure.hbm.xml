@@ -1,0 +1,121 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:37 -->
+<hibernate-mapping>
+	<class name="ims.core.clinical.domain.objects.Procedure" table="core_procedure" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: hibernateClassContent -->
+<!-- debug: procedureName -->
+<!-- debug: taxonomyMap -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+ 		<!-- Component Set -->
+ 		<list name="taxonomyMap" table="core_procedure_taxonomyma" lazy="true" >
+ 			<key foreign-key="procedure_taxonomyma_id_fk">
+ 				<column name="id" sql-type="numeric(10,0)" not-null="true" />
+ 			</key>
+ 			<index column='idx'/>
+ 			<!-- Composite -->
+ 			<composite-element class="ims.core.clinical.domain.objects.TaxonomyMap" >
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="taxonomyName" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_taxonomyna" not-null="true" sql-type="numeric(10,0)"  unique="false" unique-key='taxonomy_unq1'  />
+ 				</many-to-one>
+ 				<property name="taxonomyCode" type="string" access="field" update="true">
+ 					<column name="taxonomyco" length="30" not-null="true"  unique="false" unique-key='taxonomy_unq1'   />
+ 				</property>
+ 			</composite-element>
+ 		</list>
+<!-- debug: isActive -->
+<!-- debug: activity -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="activity" class="ims.core.resource.place.domain.objects.Activity" unique="true" foreign-key="procedure_activity_fk" access="field" cascade="save-update">
+			<column name="activity" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: procedureStatus -->
+<!-- debug: keywords -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+ 		<!-- Component Set -->
+ 		<list name="keywords" table="core_procedure_keywords" lazy="true" >
+ 			<key foreign-key="procedure_keywords_id_fk">
+ 				<column name="id" sql-type="numeric(10,0)" not-null="true" />
+ 			</key>
+ 			<index column='idx'/>
+ 			<!-- Composite -->
+ 			<composite-element class="ims.core.generic.domain.objects.Keyword" >
+ 				<property name="keyword" type="string" access="field" update="true">
+ 					<column name="keyword" length="10" not-null="true"  unique="false"  index='keyword_idx1'  />
+ 				</property>
+ 			</composite-element>
+ 		</list>
+<!-- debug: durationInMins -->
+<!-- debug: lOS -->
+<!-- debug: tCILagTime -->
+<!-- debug: surgeonCategory -->
+<!-- debug: anaesthetistCategory -->
+<!-- debug: hospitalCategory -->
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="procedureName" type="string" access="field" update="true" > 
+			<column name="proceduren" length="255"  not-null="true" unique="true"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isActive" type="boolean" access="field" update="true">
+			<column name="isactive"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="procedureStatus" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_procedures" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="durationInMins" type="integer" access="field" update="true">
+			<column name="durationin"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="lOS" type="integer" access="field" update="true">
+			<column name="los"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="tCILagTime" type="integer" access="field" update="true">
+			<column name="tcilagtime"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="surgeonCategory" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_surgeoncat" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="anaesthetistCategory" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_anaestheti" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="hospitalCategory" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_hospitalca" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+	</class>
+</hibernate-mapping>

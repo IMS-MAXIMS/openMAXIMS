@@ -1,0 +1,177 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:37 -->
+<hibernate-mapping>
+	<class name="ims.core.resource.people.domain.objects.MemberOfStaff" table="core_memberofstaff" lazy="true" discriminator-value="null" >
+		<cache usage="nonstrict-read-write" />
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: name -->
+<!-- debug: field.IsAssociation : true -->
+ 		<!-- Component -->
+ 		<component name="name" class="ims.core.generic.domain.objects.PersonName" >
+
+ 			<!-- debug: IsLookup -->
+ 			<many-to-one name="nameType" class="ims.domain.lookups.LookupInstance" access="field">
+ 				<column name="lkp_namenametype" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="surname" type="string" access="field" update="true">
+ 				<column name="namesurname" length="40" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="upperSurname" type="string" access="field" update="true">
+ 				<column name="nameuppersurna" length="40" not-null="false"  unique="false"  index='name_idx' />
+ 			</property>
+
+ 			<property name="forename" type="string" access="field" update="true">
+ 				<column name="nameforename" length="40" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="upperForename" type="string" access="field" update="true">
+ 				<column name="nameupperforen" length="40" not-null="false"  unique="false"  index='name_idx' />
+ 			</property>
+
+ 			<property name="middleName" type="string" access="field" update="true">
+ 				<column name="namemiddlename" length="40" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<!-- debug: IsLookup -->
+ 			<many-to-one name="title" class="ims.domain.lookups.LookupInstance" access="field">
+ 				<column name="lkp_nametitle" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+ 		</component>
+<!-- debug: hcp -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="hcp" class="ims.core.resource.people.domain.objects.Hcp" unique="true" foreign-key="memberofstaff_hcp_fk" access="field" cascade="all">
+			<column name="hcp" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: appUser -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="appUser" class="ims.core.configuration.domain.objects.AppUser" unique="true" foreign-key="memberofstaff_appuser_fk" access="field" cascade="save-update">
+			<column name="appuser" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: staffType -->
+<!-- debug: initials -->
+<!-- debug: isActive -->
+<!-- debug: locations -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="locations" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="memberofstaff_locations_fk">
+				<column name="core_memberofstaff_locations" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.core.resource.domain.objects.HcpLocation" />
+		</set>
+<!-- debug: commChannels -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+ 		<!-- Component Set -->
+ 		<list name="commChannels" table="core_memberofstaff_commchanne" lazy="true" >
+ 			<key foreign-key="memberofstaff_commchanne_id_fk">
+ 				<column name="id" sql-type="numeric(10,0)" not-null="true" />
+ 			</key>
+ 			<index column='idx'/>
+ 			<!-- Composite -->
+ 			<composite-element class="ims.core.generic.domain.objects.CommunicationChannel" >
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="channelType" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_channeltyp" not-null="true" sql-type="numeric(10,0)"  unique="false"   />
+ 				</many-to-one>
+ 				<property name="commValue" type="string" access="field" update="true">
+ 					<column name="commvalue" length="50" not-null="true"  unique="false"    />
+ 				</property>
+ 			</composite-element>
+ 		</list>
+<!-- debug: codeMappings -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+ 		<!-- Component Set -->
+ 		<list name="codeMappings" table="core_memberofstaff_codemappin" lazy="true" >
+ 			<key foreign-key="memberofstaff_codemappin_id_fk">
+ 				<column name="id" sql-type="numeric(10,0)" not-null="true" />
+ 			</key>
+ 			<index column='idx'/>
+ 			<!-- Composite -->
+ 			<composite-element class="ims.core.clinical.domain.objects.TaxonomyMap" >
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="taxonomyName" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_taxonomyna" not-null="true" sql-type="numeric(10,0)"  unique="false" unique-key='taxonomy_unq1'  />
+ 				</many-to-one>
+ 				<property name="taxonomyCode" type="string" access="field" update="true">
+ 					<column name="taxonomyco" length="30" not-null="true"  unique="false" unique-key='taxonomy_unq1'   />
+ 				</property>
+ 			</composite-element>
+ 		</list>
+<!-- debug: sdsRoleId -->
+<!-- debug: signatureBlock -->
+<!-- debug: canReferPatient -->
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="staffType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_stafftype" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="initials" type="string" access="field" update="true" > 
+			<column name="initials" length="5"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isActive" type="boolean" access="field" update="true">
+			<column name="isactive"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="sdsRoleId" type="string" access="field" update="true" > 
+			<column name="sdsroleid" length="50"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="signatureBlock" type="string" access="field" update="true" > 
+			<column name="signatureb" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="canReferPatient" type="boolean" access="field" update="true">
+			<column name="canreferpa"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

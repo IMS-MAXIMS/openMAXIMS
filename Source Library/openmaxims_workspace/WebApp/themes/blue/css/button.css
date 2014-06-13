@@ -1,0 +1,16 @@
+.cn_button{
+	height: 20px;
+
+	/* Filter defined in common style. */
+
+	xl--hover-endcolorstr: #b0bFe7;
+	xl--hover-border-color: #316AC5;
+	
+	font-weight: bold;
+	white-space: normal;
+}
+
+.cn_button span{
+	cursor: default;
+	width: 100%;
+}

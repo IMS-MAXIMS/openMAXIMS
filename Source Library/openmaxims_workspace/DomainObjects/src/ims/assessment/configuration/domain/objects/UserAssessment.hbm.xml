@@ -1,0 +1,219 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:34 -->
+<hibernate-mapping>
+	<class name="ims.assessment.configuration.domain.objects.UserAssessment" table="asse_userassessment" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: name -->
+<!-- debug: description -->
+<!-- debug: questionGroups -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<list name="questionGroups" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="userassessment_questiongr_fk">
+				<column name="asse_userassessment_questiongr" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.assessment.configuration.domain.objects.AssessmentQuestionGroup" />
+		</list>
+<!-- debug: assessmentType -->
+<!-- debug: scoringMethod -->
+<!-- debug: activeStatus -->
+<!-- debug: isFlatView -->
+<!-- debug: category -->
+<!-- debug: isMultipleGroup -->
+<!-- debug: groupQuestionWidth -->
+<!-- debug: isMultiRole -->
+<!-- debug: assessmentRoles -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="assessmentRoles" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="userassessment_assessmen2_fk">
+				<column name="asse_userassessment_assessmen2" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.assessment.configuration.domain.objects.AssessmentRole" />
+		</set>
+<!-- debug: taxonomyMap -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+ 		<!-- Component Set -->
+ 		<list name="taxonomyMap" table="asse_userassessment_taxonomyma" lazy="true" >
+ 			<key foreign-key="userassessment_taxonomyma_i_fk">
+ 				<column name="id" sql-type="numeric(10,0)" not-null="true" />
+ 			</key>
+ 			<index column='idx'/>
+ 			<!-- Composite -->
+ 			<composite-element class="ims.core.clinical.domain.objects.TaxonomyMap" >
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="taxonomyName" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_taxonomyna" not-null="true" sql-type="numeric(10,0)"  unique="false" unique-key='taxonomy_unq1'  />
+ 				</many-to-one>
+ 				<property name="taxonomyCode" type="string" access="field" update="true">
+ 					<column name="taxonomyco" length="30" not-null="true"  unique="false" unique-key='taxonomy_unq1'   />
+ 				</property>
+ 			</composite-element>
+ 		</list>
+<!-- debug: helpURL -->
+<!-- debug: headerText -->
+<!-- debug: footerText -->
+<!-- debug: maxHeaderHeight -->
+<!-- debug: maxFooterHeight -->
+<!-- debug: associatedReport -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="associatedReport" class="ims.core.admin.domain.objects.TemplateBo" unique="true" foreign-key="userassessment_associated_fk" access="field" cascade="save-update">
+			<column name="associated" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: assessmentSpecialties -->
+<!-- debug: IsCollection : true -->
+		<!-- collection of Lookup instances -->
+		<list name="assessmentSpecialties" table="asse_userassessment_assessmen3" lazy="true" access="field">
+			<key foreign-key="userassessment_assessmen3_ofk">
+				<column name="owner" sql-type="numeric(10,0)"/>
+			</key>
+			<index column="idx"/>
+			<composite-element class="ims.domain.lookups.LookupInstanceRef">
+				<many-to-one name="instance" class="ims.domain.lookups.LookupInstance" access="field">
+					<column name="instance_id" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+				</many-to-one>
+			</composite-element>
+		</list>
+<!-- debug: canCopyLast -->
+<!-- debug: copyLastFromContext -->
+<!-- debug: storePrintedAssessment -->
+<!-- debug: services -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<list name="services" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="userassessment_services_fk">
+				<column name="asse_userassessment_services" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.core.clinical.domain.objects.Service" />
+		</list>
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="name" type="string" access="field" update="true" > 
+			<column name="name" length="100"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="description" type="string" access="field" update="true" > 
+			<column name="descriptio" length="500"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="assessmentType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_assessment" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="scoringMethod" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_scoringmet" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="activeStatus" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_activestat" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isFlatView" type="boolean" access="field" update="true">
+			<column name="isflatview"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="category" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_category" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isMultipleGroup" type="boolean" access="field" update="true">
+			<column name="ismultiple"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="groupQuestionWidth" type="integer" access="field" update="true">
+			<column name="groupquest"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isMultiRole" type="boolean" access="field" update="true">
+			<column name="ismultirol"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="helpURL" type="string" access="field" update="true" > 
+			<column name="helpurl" length="150"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="headerText" type="text" access="field" update="true" > 
+			<column name="headertext"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="footerText" type="text" access="field" update="true" > 
+			<column name="footertext"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="maxHeaderHeight" type="integer" access="field" update="true">
+			<column name="maxheaderh"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="maxFooterHeight" type="integer" access="field" update="true">
+			<column name="maxfooterh"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="canCopyLast" type="boolean" access="field" update="true">
+			<column name="cancopylas"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="copyLastFromContext" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_copylastfr" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="storePrintedAssessment" type="boolean" access="field" update="true">
+			<column name="storeprint"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

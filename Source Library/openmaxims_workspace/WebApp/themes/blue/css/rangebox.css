@@ -1,0 +1,15 @@
+.cn_rangebox{
+	height: 18px; 
+	border: 1px solid #9DBBE1; 
+	white-space: nowrap;
+	background: white;
+	overflow: hidden;
+}
+
+.cn_rangebox input{
+	border: 1px solid white;
+	padding: 0px;
+	height: 100%;
+	margin-top: -1px;
+	text-align: center;
+}

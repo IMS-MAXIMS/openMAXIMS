@@ -1,0 +1,37 @@
+.cn_uploadbox{
+	overflow-x: hidden;
+	white-space: nowrap;
+}
+
+.cn_uploadbox input{
+	width: 100%;
+	height: 19px !important;
+	vertical-align: top
+}
+
+.cn_uploadbox input{
+	height: 100%;
+	vertical-align: top;
+	margin-right: 2px;
+}
+
+.cn_uploadbox .cn_button{
+	width: 80px;
+	height: 21px;
+	display: inline;
+}
+
+.cn_uploadbox_hiddenIframe{
+	width: 1px;
+	height: 1px;
+	display: none;
+	top: 0;
+	left: 0;
+	position: absolute;
+}
+
+.cn_uploadbox .progressIMG{
+	position: absolute;
+	left: 0;
+	top: 2px;
+}

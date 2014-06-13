@@ -1,0 +1,217 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:36 -->
+<hibernate-mapping>
+	<class name="ims.clinical.domain.objects.ClinicalCorrespondence" table="shcl_clinicalcorres" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: clinicalContact -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- many to one -->
+		<many-to-one name="clinicalContact" class="ims.core.admin.domain.objects.ClinicalContact" foreign-key="clinicalcorres_clinicalco_fk" access="field" cascade="save-update">
+			<column name="clinicalco" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: careContext -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="careContext" class="ims.core.admin.domain.objects.CareContext" unique="true" foreign-key="clinicalcorres_carecontex_fk" access="field" cascade="save-update">
+			<column name="carecontex" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: episodeOfCare -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="episodeOfCare" class="ims.core.admin.domain.objects.EpisodeOfCare" unique="true" foreign-key="clinicalcorres_episodeofc_fk" access="field" cascade="save-update">
+			<column name="episodeofc" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: type -->
+<!-- debug: recipients -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<list name="recipients" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="clinicalcorres_recipients_fk">
+				<column name="shcl_clinicalcorres_recipients" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.clinical.domain.objects.CorrespondenceRecipients" />
+		</list>
+<!-- debug: primaryRecipient -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="primaryRecipient" class="ims.clinical.domain.objects.CorrespondenceRecipients" unique="true" foreign-key="clinicalcorres_primaryrec_fk" access="field" cascade="save-update">
+			<column name="primaryrec" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: verifyingHCP -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="verifyingHCP" class="ims.core.resource.people.domain.objects.Hcp" unique="true" foreign-key="clinicalcorres_verifyingh_fk" access="field" cascade="save-update">
+			<column name="verifyingh" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: verifyingDateTime -->
+<!-- debug: currentStatus -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="currentStatus" class="ims.clinical.domain.objects.CorrespondenceStatus" unique="true" foreign-key="clinicalcorres_currentsta_fk" access="field" cascade="save-update">
+			<column name="currentsta" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: statusHistory -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="statusHistory" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="clinicalcorres_statushist_fk">
+				<column name="shcl_clinicalcorres_statushist" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.clinical.domain.objects.CorrespondenceStatus" />
+		</set>
+<!-- debug: inpatientDischargeSummary -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="inpatientDischargeSummary" class="ims.clinical.domain.objects.InpatientDischargeNoteFollowup" unique="true" foreign-key="clinicalcorres_inpatientd_fk" access="field" cascade="save-update">
+			<column name="inpatientd" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: oPDNotes -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="oPDNotes" class="ims.clinical.domain.objects.OutpatientNotesOutcome" unique="true" foreign-key="clinicalcorres_opdnotes_fk" access="field" cascade="save-update">
+			<column name="opdnotes" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: hasObjectiveNote -->
+<!-- debug: hasPlanNote -->
+<!-- debug: hasInstructionsNote -->
+<!-- debug: problems -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="problems" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="clinicalcorres_problems_fk">
+				<column name="shcl_clinicalcorres_problems" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.clinical.domain.objects.CorrespondenceProblem" />
+		</set>
+<!-- debug: diagnosesComplications -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="diagnosesComplications" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="clinicalcorres_diagnosesc_fk">
+				<column name="shcl_clinicalcorres_diagnosesc" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.clinical.domain.objects.CorrespondenceDiagnosisComp" />
+		</set>
+<!-- debug: procedures -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="procedures" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="clinicalcorres_procedures_fk">
+				<column name="shcl_clinicalcorres_procedures" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.clinical.domain.objects.CorrespondenceProcedure" />
+		</set>
+<!-- debug: medication -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="medication" class="ims.clinical.domain.objects.MedicationOverview" unique="true" foreign-key="clinicalcorres_medication_fk" access="field" cascade="save-update">
+			<column name="medication" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: authoringInformation -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+ 		<!-- Component -->
+ 		<component name="authoringInformation" class="ims.core.clinical.domain.objects.AuthoringInformation" >
+
+ 			<many-to-one name="authoringHcp" class="ims.core.resource.people.domain.objects.Hcp" foreign-key="clinicalcorres_authoringiau_fk" access="field">
+ 				<column name="authoringiauthoringh" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="authoringDateTime" type="timestamp" access="field" update="true">
+ 				<column name="authoringiauthoringd" not-null="false"  unique="false"   />
+ 			</property>
+ 		</component>
+<!-- debug: rUserVerifyingDateTime -->
+<!-- debug: rUserVerifyingHCP -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="rUserVerifyingHCP" class="ims.core.resource.people.domain.objects.MemberOfStaff" unique="true" foreign-key="clinicalcorres_ruserveri2_fk" access="field" cascade="save-update">
+			<column name="ruserveri2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="type" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_c_ty" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="verifyingDateTime" type="timestamp" access="field" update="true">
+			<column name="verifyingd"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="hasObjectiveNote" type="boolean" access="field" update="true">
+			<column name="hasobjecti"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="hasPlanNote" type="boolean" access="field" update="true">
+			<column name="hasplannot"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="hasInstructionsNote" type="boolean" access="field" update="true">
+			<column name="hasinstruc"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="rUserVerifyingDateTime" type="timestamp" access="field" update="true">
+			<column name="ruserverif"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

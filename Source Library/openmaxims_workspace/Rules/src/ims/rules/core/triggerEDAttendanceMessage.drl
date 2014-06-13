@@ -1,0 +1,26 @@
+package ims.rules.userrules;
+
+import ims.core.admin.domain.objects.EmergencyAttendance;
+import ims.rules.engine.RulesRuntimeEngine;
+import ims.domain.DomainFactory;
+
+global RulesRuntimeEngine engine;
+global DomainFactory factory;
+
+function boolean isConditionMeet5536693712667b757458f90d13d65cb9341(ims.core.admin.domain.objects.EmergencyAttendance entity)
+{
+	if((entity.getId() != null)/*&& entity.isSaveComplete() != null && entity.isSaveComplete()*/)
+		return true;
+	return false;
+}
+
+rule "emergencyFeed"
+no-loop true
+salience 0
+when
+	entity : ims.core.admin.domain.objects.EmergencyAttendance();
+	eval(isConditionMeet5536693712667b757458f90d13d65cb9341(entity));
+then
+	engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Rule 'emergencyFeed' was fired.");
+//	entity.triggerDemographicsMessage(factory, engine);
+end

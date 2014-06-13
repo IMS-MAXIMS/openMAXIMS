@@ -1,0 +1,142 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:36 -->
+<hibernate-mapping>
+	<class name="ims.scheduling.domain.objects.Sch_Booking" table="schl_sch_booking" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: patient -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="patient" class="ims.core.patient.domain.objects.Patient" unique="true" foreign-key="sch_booking_patient_fk" access="field" cascade="save-update">
+			<column name="patient" sql-type="numeric(10,0)" not-null="true" unique="false"  index='pat_idx' />
+		</many-to-one>
+<!-- debug: bookingComments -->
+<!-- debug: bookingSysType -->
+<!-- debug: priorDateOffered -->
+<!-- debug: transportComments -->
+<!-- debug: patientStatus -->
+<!-- debug: appointments -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="appointments" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="sch_booking_appointmen_fk">
+				<column name="schl_sch_booking_appointmen" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.scheduling.domain.objects.Booking_Appointment" />
+		</set>
+<!-- debug: firstAppointment -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="firstAppointment" class="ims.scheduling.domain.objects.Booking_Appointment" unique="true" foreign-key="sch_booking_firstappoi_fk" access="field" cascade="all">
+			<column name="firstappoi" sql-type="numeric(10,0)" not-null="false" unique="false"  index='apptIdx' />
+		</many-to-one>
+<!-- debug: lastAppointment -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="lastAppointment" class="ims.scheduling.domain.objects.Booking_Appointment" unique="true" foreign-key="sch_booking_lastappoin_fk" access="field" cascade="save-update">
+			<column name="lastappoin" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: transportArrangementsReq -->
+<!-- debug: transportReferances -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="transportReferances" class="ims.scheduling.domain.objects.BookingTransportReferances" unique="true" foreign-key="sch_booking_transportr_fk" access="field" cascade="save-update">
+			<column name="transportr" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: specialRequirements -->
+<!-- debug: uBRN -->
+<!-- debug: referrerSdsId -->
+<!-- debug: referrerSdsRoleId -->
+<!-- debug: referrerSdsOrgId -->
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="bookingComments" type="string" access="field" update="true" > 
+			<column name="bookingcom" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="bookingSysType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_bookingsys" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="priorDateOffered" type="date" access="field" update="true">
+			<column name="priordateo"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="transportComments" type="string" access="field" update="true" > 
+			<column name="transportc" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="patientStatus" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_patientsta" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="transportArrangementsReq" type="boolean" access="field" update="true">
+			<column name="transporta"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="specialRequirements" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_specialreq" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="uBRN" type="string" access="field" update="true" > 
+			<column name="ubrn" length="100"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="referrerSdsId" type="string" access="field" update="true" > 
+			<column name="referrersd" length="50"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="referrerSdsRoleId" type="string" access="field" update="true" > 
+			<column name="referrers2" length="50"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="referrerSdsOrgId" type="string" access="field" update="true" > 
+			<column name="referrers3" length="50"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

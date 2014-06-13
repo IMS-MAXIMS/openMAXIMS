@@ -1,0 +1,278 @@
+.cn_grid{ 
+	border: 1px solid #9DBBE1; 
+	overflow: hidden; 
+	background: white;
+}
+
+/*.cn_grid_disabled button{
+	border: 1px solid grey;
+	background: grey;
+	filter: none;
+}*/
+
+.cn_grid .rowDiv{
+	height: 23px;
+	border-bottom-color: #eeeeee;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+/* 1 */
+.cn_grid .hasShadow{
+}
+
+/* 2 */
+.cn_grid .rowDiv .cellSpan{
+	border-left-color: #eeeeee;
+	border-left-width: 1px;
+	border-left-style: solid;
+}
+
+/* 3 */
+.cn_grid *{ 
+	/*font-size: 11px; */
+	/*font-family: tahoma; */
+}
+
+
+.cn_grid table{ table-layout: fixed; }
+
+.cn_grid img, .cn_grid input, .cn_grid button{ vertical-align: top; }
+
+.cn_grid #headerTD{ 
+	color: black; 
+	font-weight: bold; 
+	border-bottom: 1px solid #9DBBE1; 
+	vertical-align: top;
+	height: 24px;
+}
+
+.cn_grid #headerRow{
+	position: relative;
+	background: red;
+	width: 100%;
+	height: 100%;
+	background: #A3C2EA; 
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#A3C2EA, endcolorstr=#FFFFFF);
+}
+
+.cn_grid #headerRow span{
+	overflow: hidden;
+	text-overflow: ellipsis;
+	position: absolute;
+	padding: 1px;
+	vertical-align: middle;
+}
+
+.cn_grid #rowsDiv{
+	width: 100%; 
+	height: 100%; 
+	overflow: auto; 	
+}
+
+.cn_grid .rowDiv{ 
+	xl--hover-background: #EBF0F9; 
+	xl--tooltip-delay: 300;
+	xl--tooltip-position: move;
+	xl--blend-duration: 250;
+	white-space: nowrap;
+	position: relative;
+}
+
+.cn_grid .rowDiv .cellSpan{
+	padding-top: 5px;
+	padding-left: 2px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+
+	height: 100%; 
+	vertical-align: top;
+}
+
+.cn_grid .selectionSpan{ 
+	padding-top: .3em;
+	padding-left: 2px;
+	cursor: hand; 
+	height: 100%;
+}
+
+.cn_grid #leftBorder, .cn_grid #topBorder, .cn_grid #bottomBorder, .cn_grid #rightBorder{
+	position: absolute;
+	visibility: hidden;
+	overflow: hidden;
+}
+.cn_grid #leftBorder{ background: #316AC5; }
+.cn_grid #rightBorder{ background: #B0B1C7; }
+.cn_grid #leftBorder, .cn_grid #rightBorder{ width: 2px; }
+.cn_grid #topBorder, .cn_grid #bottomBorder{ 
+	height: 2px;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr=#316AC5, endColorStr=#B0B1C7, gradientType=1);
+}
+
+.cn_grid button img{ vertical-align: baseline; }
+
+.cellHoverBorderDiv{
+	border: 1px solid #7F9DB9; 
+	overflow: hidden;
+	visibility: hidden;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	height: 1.5em;
+}
+
+.cn_grid .textbox{ 
+	border: 1px solid #7F9DB9; 
+	background: white;
+	position: absolute;
+	height: 1.5em;
+	line-height: 1.2em;
+}
+
+.cn_grid .xllookupbutton{
+	padding: 0px; 
+	margin-top: -1px;
+	margin-left: 3px;
+	margin-right: 2px;	
+	width: 1.4em; /* !! */
+	height: 1.4em; /* !! */
+	z-index: 10;
+	position: relative;
+}
+
+.cn_grid .wrapTextTable{
+	margin: 1px;
+	margin-left: 2px;
+	height: 21px;
+	xl--edit-border-color: #7F9DB9;
+	border: 1px solid white;
+}
+
+.cn_grid .wrapTextTable div{
+	height: 1em;
+	padding: 0px;
+}
+
+.cn_grid .wrapTextTable p{
+	margin: 0px;
+}
+
+.cn_grid .wrapTextTable a{
+	text-decoration: none;
+}
+
+
+.cn_grid .tree_nodeDiv{
+	height: 100%;
+}
+
+.cn_grid .tree_checkBoxSpan{
+	font-family: wingdings;
+	font-size: 17px;
+	height: 1em;
+	overflow: hidden;
+	margin-left: 2px;
+	margin-right: 1px;
+	xl--hover-color: #1148AB;
+	cursor: default;
+	vertical-align: top;
+	margin-top: 2px;
+}
+
+.cn_grid .tree_iconImg{
+	/*vertical-align: middle;*/
+	margin-top: 2px;
+}
+
+.cn_grid .tree_textSpan{
+	cursor: default;
+	position: relative;
+	padding: 2px;
+	padding-left: 4px;
+	padding-top: 4px;
+	display: inline-block;
+	/*vertical-align: baseline;*/
+
+	/* Workaround. */
+	font-size: 8pt;
+}
+
+.cn_grid .tree_nodeDivSelected .tree_textSpan{
+	background: #316AC5;
+	color: white;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#316AC5, endcolorstr=#81A9E2, gradienttype=1);
+}
+
+.cn_grid .tree_nodeDivOver .tree_textSpan{
+	text-decoration: underline;
+}
+
+.cn_grid .xlgridcomboReadOnly .cn_combobox,
+.cn_grid .xlgridcomboReadOnly .xlcomboTD1,
+.cn_grid .xlgridcomboReadOnly .xlcomboinput{
+	border-width: 0px;
+	background: none;
+}
+
+.cn_grid .xlgridcomboReadOnly .xlcomboTD2{
+	visibility: hidden;
+	width: 1px;
+}
+
+.cn_grid .xlgridcomboReadOnly .xlcomboTD15{
+	display: none;
+}
+
+.cn_grid .readOnly{
+	background-color: #F5FAFF;
+}
+
+.cn_grid .readOnly .wrapTextTable{
+	border: 0px;
+}
+
+.commentBoxTextArea{
+	width: 100%;
+	height: 327px;
+}
+
+.commentBoxDiv .commentBoxCaption{ 
+	color: white; 
+	cursor: move; 
+	background: #B1B3C8;
+	font-weight: bold; 
+	font-size: 14px; 
+	padding: 3px; 
+	width: 100%;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#2B5CA5, endcolorstr=#3877D5, gradienttype=0);
+}
+
+.commentBoxDiv .commentOkButton,
+.commentBoxDiv .commentCancelButton{
+	position: absolute;
+	bottom: 2px;
+	width: 80px;
+}
+
+.commentBoxDiv .commentOkButton{
+	right: 84px;
+}
+
+.commentBoxDiv .commentCancelButton{
+	right: 2px;
+}
+
+.cn_grid .gridSortArrow{
+	margin-left: 2px;
+}
+
+.cn_grid .gridfooterDiv{
+	padding: 3px;
+	background: #F5FAFF;
+	border-top: 1px solid #9DBBE1;
+	
+	height: 100%;
+	overflow-y: auto;
+	cursor: default;
+}

@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:36 -->
+<hibernate-mapping>
+	<subclass name="ims.core.resource.place.domain.objects.LocSite" lazy="false" discriminator-value="LOCS" extends="ims.core.resource.place.domain.objects.Location" >
+<!-- debug: hibernateClassContent -->
+<!-- debug: allSecureAccommodation -->
+<!-- debug: parentOrganisation -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- many to one -->
+		<many-to-one name="parentOrganisation" class="ims.core.resource.place.domain.objects.Organisation" foreign-key="locsite_parentorga_fk" access="field" cascade="save-update">
+			<column name="parentorga" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: commChannels -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+ 		<!-- Component Set -->
+ 		<list name="commChannels" table="core_locsite_commchanne" lazy="true" >
+ 			<key foreign-key="locsite_commchanne_id_fk">
+ 				<column name="id" sql-type="numeric(10,0)" not-null="true" />
+ 			</key>
+ 			<index column='idx'/>
+ 			<!-- Composite -->
+ 			<composite-element class="ims.core.generic.domain.objects.CommunicationChannel" >
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="channelType" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_channeltyp" not-null="true" sql-type="numeric(10,0)"  unique="false"   />
+ 				</many-to-one>
+ 				<property name="commValue" type="string" access="field" update="true">
+ 					<column name="commvalue" length="50" not-null="true"  unique="false"    />
+ 				</property>
+ 			</composite-element>
+ 		</list>
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="allSecureAccommodation" type="boolean" access="field" update="true">
+			<column name="allsecurea"  not-null="false" unique="false"  />
+		</property>
+	</subclass>
+</hibernate-mapping>

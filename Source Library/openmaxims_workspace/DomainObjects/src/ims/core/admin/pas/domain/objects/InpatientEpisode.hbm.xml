@@ -1,0 +1,207 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:36 -->
+<hibernate-mapping>
+	<class name="ims.core.admin.pas.domain.objects.InpatientEpisode" table="core_inpat_epis" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: wardStays -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- one to many -->
+		<set name="wardStays" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="inpat_epis_wardstays_fk">
+				<column name="core_inpat_epis_wardstays" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.core.admin.pas.domain.objects.WardStay" />
+		</set>
+<!-- debug: consultantStays -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- one to many -->
+		<set name="consultantStays" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="inpat_epis_consultant_fk">
+				<column name="core_inpat_epis_consultant" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.core.admin.pas.domain.objects.ConsultantStay" />
+		</set>
+<!-- debug: isOnLeave -->
+<!-- debug: pasEvent -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="pasEvent" class="ims.core.admin.pas.domain.objects.PASEvent" unique="true" foreign-key="inpat_epis_pasevent_fk" access="field" cascade="save-update">
+			<column name="pasevent" sql-type="numeric(10,0)" not-null="false" unique="false"  index='InpatPasEventIdx' />
+		</many-to-one>
+<!-- debug: bed -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- Inverse of one-to-one relationship -->
+		<one-to-one name="bed" foreign-key="inpat_epis_bed_fk" class="ims.core.admin.pas.domain.objects.BedSpaceState"
+				property-ref="inpatientEpisode"/>
+<!-- debug: admissionDateTime -->
+<!-- debug: estDischargeDate -->
+<!-- debug: comments -->
+<!-- debug: wardType -->
+<!-- debug: isConfirmedDischarge -->
+<!-- debug: confirmedDischargeDateTime -->
+<!-- debug: bedNo -->
+<!-- debug: admissionType -->
+<!-- debug: isMaternityInpatient -->
+<!-- debug: readmissionType -->
+<!-- debug: dischargeReadyDate -->
+<!-- debug: reasonForAdmission -->
+<!-- debug: isOnHomeLeave -->
+<!-- debug: dateOnHomeLeave -->
+<!-- debug: timeOnHomeLeave -->
+<!-- debug: expectedDateOfReturn -->
+<!-- debug: expectedTimeOfReturn -->
+<!-- debug: homeLeaves -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- one to many -->
+		<list name="homeLeaves" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="inpat_epis_homeleaves_fk">
+				<column name="core_inpat_epis_homeleaves" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.core.admin.pas.domain.objects.HomeLeave" />
+		</list>
+<!-- debug: vacatedBedNumber -->
+<!-- debug: vTEAssessmentStatus -->
+<!-- debug: vTERiskAssessment -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="vTERiskAssessment" class="ims.core.clinical.domain.objects.VTERiskAssessment" unique="true" foreign-key="inpat_epis_vteriskass_fk" access="field" cascade="save-update">
+			<column name="vteriskass" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isOnLeave" type="boolean" access="field" update="true">
+			<column name="isonleave"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="admissionDateTime" type="timestamp" access="field" update="true">
+			<column name="admissiond"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="estDischargeDate" type="date" access="field" update="true">
+			<column name="estdischar"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="comments" type="string" access="field" update="true" > 
+			<column name="comments" length="1500"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="wardType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_wardtype" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isConfirmedDischarge" type="boolean" access="field" update="true">
+			<column name="isconfirme"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="confirmedDischargeDateTime" type="timestamp" access="field" update="true">
+			<column name="confirmedd"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="bedNo" type="string" access="field" update="true" > 
+			<column name="bedno" length="10"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="admissionType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_admissiont" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isMaternityInpatient" type="boolean" access="field" update="true">
+			<column name="ismaternit"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="readmissionType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_readmissio" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dischargeReadyDate" type="date" access="field" update="true">
+			<column name="discharger"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="reasonForAdmission" type="string" access="field" update="true" > 
+			<column name="reasonfora" length="32"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isOnHomeLeave" type="boolean" access="field" update="true">
+			<column name="isonhomele"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dateOnHomeLeave" type="date" access="field" update="true">
+			<column name="dateonhome"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="timeOnHomeLeave" type="string" access="field" update="true">
+			<column name="timeonhome"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="expectedDateOfReturn" type="date" access="field" update="true">
+			<column name="expectedda"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="expectedTimeOfReturn" type="string" access="field" update="true">
+			<column name="expectedti"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="vacatedBedNumber" type="string" access="field" update="true" > 
+			<column name="vacatedbed" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="vTEAssessmentStatus" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_vteassessm" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+	</class>
+</hibernate-mapping>

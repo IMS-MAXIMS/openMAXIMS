@@ -1,0 +1,140 @@
+.popupMenu_container{
+	/* Avoid scrolling. */
+	top: 0px;
+	left: 0px;
+
+	position: absolute;
+	width: 250px;
+	font-family: tahoma; 
+	font-size: 11px; 
+	cursor: default; 
+	padding: 1px; 
+	display: block;
+	visibility: hidden;	
+	overflow: visible;
+		
+	/*filter: blendTrans(duration=.15);*/
+	
+	xl--check-sign: a;
+	xl--shadow-opacity: .20;
+	xl--shadow-pixel-radius: 2;
+
+	background: #F6F6F6; 
+	border: 1px solid #9DBBE1;
+}
+
+.popupMenu_container .leftline{
+	position: absolute; 
+	z-Index: -1;
+	left: 0px; 
+	top: 1px; 
+	width: 24px; 
+	height: expression(parentElement.clientHeight - 2);
+
+	background: #bbbbbb; 
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#CFE5FF, endcolorstr=white, gradienttype=0);
+}
+
+
+.popupMenu_container .item{
+	display: block;
+	padding: 2px; 
+}
+
+.popupMenu_container .item, 
+.popupMenu_container .item_hover{
+	position: relative;
+	display: inline-block;
+	height: 22px;
+}
+
+.popupMenu_container .item_hover{
+	border: 1px solid #9DBBE1; 
+	background: #7A7999; 
+	padding: 1px; 
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#C0D4EC, endcolorstr=white, gradienttype=0);
+}
+
+.popupMenu_container .text{
+	margin-left: 28px;
+	display: inline-block;
+	vertical-align: top;
+	line-height: 16px;
+}
+
+/* Compensate padding/border shift. */
+.popupMenu_container .item_hover .submenuIMG{
+	right: 6px !important;
+	margin-top: -1px;
+}
+
+.popupMenu_container .leftItem,
+.popupMenu_container .leftItemChecked,
+.popupMenu_container .leftItemUnchecked {
+	position: absolute;
+	top: 1px;
+	left: 2px;
+}
+
+.popupMenu_container .leftItem,
+.popupMenu_container .leftItemUnchecked {
+	width: 20px; 
+	height: 18px; 
+	vertical-align: top;
+}
+
+.popupMenu_container .leftItem img{margin-top: 1px; }
+
+.popupMenu_container .leftItem img, 
+.popupMenu_container .leftItemChecked img{ 
+	vertical-align: middle; 
+}
+
+/*
+.popupMenu_container .leftItemChecked {
+	width: 20px; 
+	height: 20px; 
+	overflow: hidden;
+
+	margin-right: 11px;
+	margin-left: -1px; 
+	margin-top: -1px;
+	margin-bottom: -1px;
+
+	background: #dddddd;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#ffffff,endcolorstr=#aaaabb,gradienttype=0);
+
+	border-top: 1px solid #ccccdd;
+	border-left: 1px solid #ccccdd;	
+	border-bottom: 1px solid #eeeeff;
+	border-right: 1px solid #eeeeff;	
+
+	font-family: webdings;
+	font-size: 11px; 
+
+	text-align: center;
+}
+*/
+
+.popupMenu_container .item_hover .leftItemUnchecked, 
+.popupMenu_container .item_hover .leftItem{
+	filter: dropShadow(offX=2,offY=2,color=#A7A7A7);
+	top: -1px; 
+	left: 0px; 
+}
+
+.popupMenu_container .hr{ 
+	display: block;
+	background: #9DBBE1;
+	position: relative;
+	left: 30px;
+	width: expression(parentElement.clientWidth - 30); 
+	height: 1px; 
+	margin-top: 1px;
+	margin-bottom: 1px;
+	text-align: right; 
+	overflow: hidden;
+	font-size: 1px;
+	color: #6E6D8F;
+}
+

@@ -1,0 +1,123 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:37 -->
+<hibernate-mapping>
+	<class name="ims.careuk.domain.objects.PresentationReferralSummary" table="care_presentationre" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: catsReferral -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="catsReferral" class="ims.careuk.domain.objects.CatsReferral" unique="true" foreign-key="presentationre_catsreferr_fk" access="field" cascade="save-update">
+			<column name="catsreferr" sql-type="numeric(10,0)" not-null="true" unique="false"  index='cats_idx' />
+		</many-to-one>
+<!-- debug: authoringUser -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="authoringUser" class="ims.core.resource.people.domain.objects.MemberOfStaff" unique="true" foreign-key="presentationre_authoringu_fk" access="field" cascade="save-update">
+			<column name="authoringu" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: authoringDateTime -->
+<!-- debug: presentingIssues -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="presentingIssues" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="presentationre_presenting_fk">
+				<column name="care_presentationre_presenting" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.clinical.domain.objects.PatientComplaint" />
+		</set>
+<!-- debug: medicationOnReferral -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- one to many -->
+		<set name="medicationOnReferral" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="presentationre_medication_fk">
+				<column name="care_presentationre_medication" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.core.clinical.domain.objects.PatientMedication" />
+		</set>
+<!-- debug: allergies -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- one to many -->
+		<set name="allergies" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="presentationre_allergies_fk">
+				<column name="care_presentationre_allergies" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.core.clinical.domain.objects.PatientAllergy" />
+		</set>
+<!-- debug: comorbidities -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- one to many -->
+		<set name="comorbidities" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="presentationre_comorbidit_fk">
+				<column name="care_presentationre_comorbidit" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.core.clinical.domain.objects.PatientDiagnosis" />
+		</set>
+<!-- debug: presentingIssuesNonIndicated -->
+<!-- debug: medicationNonIndicated -->
+<!-- debug: allergiesIssuesNonIndicated -->
+<!-- debug: comorbiditiesIssuesNonIndicated -->
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="authoringDateTime" type="timestamp" access="field" update="true">
+			<column name="authoringd"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="presentingIssuesNonIndicated" type="boolean" access="field" update="true">
+			<column name="presentin2"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="medicationNonIndicated" type="boolean" access="field" update="true">
+			<column name="medicatio2"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="allergiesIssuesNonIndicated" type="boolean" access="field" update="true">
+			<column name="allergiesi"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="comorbiditiesIssuesNonIndicated" type="boolean" access="field" update="true">
+			<column name="comorbidi2"  not-null="true" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

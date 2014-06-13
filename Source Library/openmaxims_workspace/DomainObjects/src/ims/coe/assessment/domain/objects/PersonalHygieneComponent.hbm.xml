@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:35 -->
+<hibernate-mapping>
+	<subclass name="ims.coe.assessment.domain.objects.PersonalHygieneComponent" lazy="true" discriminator-value="PHYG" extends="ims.nursing.assessment.domain.objects.AssessmentComponent" >
+<!-- debug: hibernateClassContent -->
+<!-- debug: preferredBathingPattern -->
+<!-- debug: assisstanceWithPersonalHygiene -->
+<!-- debug: hygieneActivities -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<list name="hygieneActivities" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="phygcomp_hygieneact_fk">
+				<column name="coe_phygcomp_hygieneact" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.nursing.assessment.domain.objects.PersonalHygieneActivities" />
+		</list>
+<!-- debug: personalHygieneFeet -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="personalHygieneFeet" class="ims.coe.assessment.domain.objects.PersonalHygieneFeet" unique="true" foreign-key="phygcomp_personalhy_fk" access="field" cascade="all">
+			<column name="personalhy" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: conditionOfHair -->
+<!-- debug: evidenceOfHairInfestation -->
+<!-- debug: conditionOfNails -->
+<!-- debug: conditionOfSkin -->
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="preferredBathingPattern" type="string" access="field" update="true">
+			<column name="preferredb"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="assisstanceWithPersonalHygiene" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_assisstanc" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="conditionOfHair" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_conditiono" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="evidenceOfHairInfestation" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_evidenceof" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="conditionOfNails" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_condition2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="conditionOfSkin" type="string" access="field" update="true">
+			<column name="condition3"  not-null="false" unique="false"  />
+		</property>
+	</subclass>
+</hibernate-mapping>

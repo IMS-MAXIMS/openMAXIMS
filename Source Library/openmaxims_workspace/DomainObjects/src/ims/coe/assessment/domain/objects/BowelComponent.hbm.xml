@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:35 -->
+<hibernate-mapping>
+	<subclass name="ims.coe.assessment.domain.objects.BowelComponent" lazy="true" discriminator-value="BOWL" extends="ims.nursing.assessment.domain.objects.AssessmentComponent" >
+<!-- debug: hibernateClassContent -->
+<!-- debug: bowelOstomy -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="bowelOstomy" class="ims.nursing.assessment.domain.objects.BowelOstomy" unique="true" foreign-key="bowelcmp_bowelostom_fk" access="field" cascade="all">
+			<column name="bowelostom" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: diarrhoea -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="diarrhoea" class="ims.coe.assessment.domain.objects.BowelDiarrhoea" unique="true" foreign-key="bowelcmp_diarrhoea_fk" access="field" cascade="all">
+			<column name="diarrhoea" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: bowelsOpen -->
+<!-- debug: constipation -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="constipation" class="ims.coe.assessment.domain.objects.BowelConstipation" unique="true" foreign-key="bowelcmp_constipati_fk" access="field" cascade="all">
+			<column name="constipati" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: bowelMedication -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<list name="bowelMedication" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="bowelcmp_bowelmedic_fk">
+				<column name="coe_bowelcmp_bowelmedic" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.coe.assessment.domain.objects.BowelMedication" />
+		</list>
+<!-- debug: alternativesUsed -->
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="bowelsOpen" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_bowelsopen" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="alternativesUsed" type="string" access="field" update="true">
+			<column name="alternativ"  not-null="false" unique="false"  />
+		</property>
+	</subclass>
+</hibernate-mapping>

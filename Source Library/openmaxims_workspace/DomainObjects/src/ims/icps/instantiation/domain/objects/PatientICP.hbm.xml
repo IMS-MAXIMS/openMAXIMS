@@ -1,0 +1,162 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:35 -->
+<hibernate-mapping>
+	<class name="ims.icps.instantiation.domain.objects.PatientICP" table="icps_patienticp" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: patient -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="patient" class="ims.core.patient.domain.objects.Patient" unique="true" foreign-key="patienticp_patient_fk" access="field" cascade="save-update">
+			<column name="patient" sql-type="numeric(10,0)" not-null="true" unique="false"  index='pat_icp_idx' />
+		</many-to-one>
+<!-- debug: careContext -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="careContext" class="ims.core.admin.domain.objects.CareContext" unique="true" foreign-key="patienticp_carecontex_fk" access="field" cascade="save-update">
+			<column name="carecontex" sql-type="numeric(10,0)" not-null="true" unique="false"  index='ctx_icp_idx' />
+		</many-to-one>
+<!-- debug: iCP -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="iCP" class="ims.icps.configuration.domain.objects.ICP" unique="true" foreign-key="patienticp_icp_fk" access="field" cascade="save-update">
+			<column name="icp" sql-type="numeric(10,0)" not-null="true" unique="false"  index='icp_idx' />
+		</many-to-one>
+<!-- debug: authoringInformation -->
+<!-- debug: field.IsAssociation : true -->
+ 		<!-- Component -->
+ 		<component name="authoringInformation" class="ims.core.clinical.domain.objects.AuthoringInformation" >
+
+ 			<many-to-one name="authoringHcp" class="ims.core.resource.people.domain.objects.Hcp" foreign-key="patienticp_authoringiauthor_fk" access="field">
+ 				<column name="authoringiauthoringh" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="authoringDateTime" type="timestamp" access="field" update="true">
+ 				<column name="authoringiauthoringd" not-null="false"  unique="false"   />
+ 			</property>
+ 		</component>
+<!-- debug: startedDateTime -->
+<!-- debug: hasOutstandingAdminActions -->
+<!-- debug: hasOutstandingNursingActions -->
+<!-- debug: hasOutstandingPhysioActions -->
+<!-- debug: hasOutstandingClinicalActions -->
+<!-- debug: stages -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- inverse side that is one-to-many -->
+		<set name="stages" inverse="true"  access="field" cascade="all-delete-orphan" lazy="true" >
+			<key foreign-key="patienticpstag_icp_fk">
+				<column name="icp" sql-type="numeric(10,0)" unique="false"   />
+			</key>
+			
+			<one-to-many class="ims.icps.instantiation.domain.objects.PatientICPStage"/>
+		</set>
+<!-- debug: clinicalContact -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="clinicalContact" class="ims.core.admin.domain.objects.ClinicalContact" unique="true" foreign-key="patienticp_clinicalco_fk" access="field" cascade="save-update">
+			<column name="clinicalco" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: completedDateTime -->
+<!-- debug: pasEvent -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="pasEvent" class="ims.core.admin.pas.domain.objects.PASEvent" unique="true" foreign-key="patienticp_pasevent_fk" access="field" cascade="save-update">
+			<column name="pasevent" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: appointments -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<set name="appointments" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="patienticp_appointmen_fk">
+				<column name="icps_patienticp_appointmen" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.scheduling.domain.objects.Booking_Appointment" />
+		</set>
+<!-- debug: criticalEvents -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="criticalEvents" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="patienticp_criticalev_fk">
+				<column name="icps_patienticp_criticalev" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.icps.instantiation.domain.objects.PatientCriticalEvents" />
+		</set>
+<!-- debug: evaluationNotes -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<set name="evaluationNotes" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="patienticp_evaluation_fk">
+				<column name="icps_patienticp_evaluation" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.icps.instantiation.domain.objects.PatientICPEvaluationNote" />
+		</set>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="startedDateTime" type="timestamp" access="field" update="true">
+			<column name="starteddat"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="hasOutstandingAdminActions" type="boolean" access="field" update="true">
+			<column name="hasoutstan"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="hasOutstandingNursingActions" type="boolean" access="field" update="true">
+			<column name="hasoutsta2"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="hasOutstandingPhysioActions" type="boolean" access="field" update="true">
+			<column name="hasoutsta3"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="hasOutstandingClinicalActions" type="boolean" access="field" update="true">
+			<column name="hasoutsta4"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="completedDateTime" type="timestamp" access="field" update="true">
+			<column name="completedd"  not-null="false" unique="false"  index='paticp_compldate_idx1'/>
+		</property>
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:36 -->
+<hibernate-mapping>
+	<subclass name="ims.nursing.assessment.domain.objects.NurBowelComponent" lazy="true" discriminator-value="nurb" extends="ims.nursing.assessment.domain.objects.AssessmentComponent" >
+<!-- debug: hibernateClassContent -->
+<!-- debug: usualBowelPattern -->
+<!-- debug: timeOfDay -->
+<!-- debug: bowelRoutinePerformedIn -->
+<!-- debug: bowelRoutinePerformedBy -->
+<!-- debug: bowelsOpenSpontaneously -->
+<!-- debug: notes -->
+<!-- debug: bowelMedication -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="bowelMedication" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="nurbowelcompon_bowelmedic_fk">
+				<column name="ns_nurbowelcompon_bowelmedic" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.core.clinical.domain.objects.PatientMedication" />
+		</set>
+<!-- debug: ostomyDetails -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="ostomyDetails" class="ims.nursing.assessment.domain.objects.BowelOstomy" unique="true" foreign-key="nurbowelcompon_ostomydeta_fk" access="field" cascade="all">
+			<column name="ostomydeta" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: sufferFrom -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="sufferFrom" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="nurbowelcompon_sufferfrom_fk">
+				<column name="ns_nurbowelcompon_sufferfrom" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.nursing.assessment.domain.objects.BowelDiarrhoeaConstipation" />
+		</set>
+<!-- debug: bowelRegime -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="bowelRegime" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="nurbowelcompon_bowelregim_fk">
+				<column name="ns_nurbowelcompon_bowelregim" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.nursing.assessment.domain.objects.BowelRegime" />
+		</set>
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: IsLookup -->
+		<many-to-one name="usualBowelPattern" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_usualbowel" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="timeOfDay" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_timeofday" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="bowelRoutinePerformedIn" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_bowelrouti" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="bowelRoutinePerformedBy" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_bowelrout2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="bowelsOpenSpontaneously" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_bowelsopen" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="notes" type="string" access="field" update="true" > 
+			<column name="notes" length="500"  not-null="false" unique="false"  />
+		</property>
+	</subclass>
+</hibernate-mapping>

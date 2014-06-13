@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:34 -->
+<hibernate-mapping>
+	<subclass name="ims.careuk.domain.objects.PatientDiagnosisApptDetail" lazy="true" discriminator-value="pati" extends="ims.core.clinical.domain.objects.PatientDiagnosis" >
+<!-- debug: hibernateClassContent -->
+<!-- debug: appointment -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="appointment" class="ims.scheduling.domain.objects.Booking_Appointment" unique="true" foreign-key="patientdiagnos_appointmen_fk" access="field" cascade="save-update">
+			<column name="appointmen" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+	</subclass>
+</hibernate-mapping>

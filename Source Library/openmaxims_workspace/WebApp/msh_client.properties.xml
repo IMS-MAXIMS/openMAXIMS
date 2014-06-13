@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Property>
+  <Request>
+    <Log>
+      <!-- "JDK" or "LOG4J" -->
+      <UseLogger>LOG4J</UseLogger>
+      <!-- empty path: user.home -->
+      <LogPath>hermes</LogPath>
+      <LogFile>msh.log</LogFile>
+      <!--
+        0: all
+        1: info, warn, error
+        2: warn, error
+        3: error
+        4: no log
+      -->
+      <LogLevel>0</LogLevel>
+      <!-- For rolling log files, maximum file size per log file,
+           -1: one single big file -->
+      <MaxFileSize>10000</MaxFileSize>
+    </Log>
+    <Config>
+      <!-- The URL of MSH (The URL of MSH to client applications) -->
+      <!-- Keep trailing slash after context path to avoid unexpected problems
+           with some application servers -->
+
+      <URL>http://webapps3/msh/</URL>
+
+      <!-- The time interval in milliseconds after which MSH Stub will check 
+           whether messages arrive in MSH Servlet -->
+      <MonitorInterval>20000</MonitorInterval>
+
+      <!-- the user name and password for sending commands to MSH -->
+      <UserName>SA</UserName>
+      <Password>SA</Password>
+
+      <!-- optional parameter controlling max number of payload
+           and max payload size allowed -->
+      <MaxNumPayload>2</MaxNumPayload>
+      <MaxPayloadSize>5000000</MaxPayloadSize>
+    </Config>
+
+    <!-- Uncomment to use web proxy for outgoing HTTP connections
+    <Proxy>
+      <Host>127.0.0.1</Host>
+      <Port>8282</Port>
+    </Proxy>
+    -->
+
+    <!-- Default message repository for MessageListener used in MSH Stub -->
+    <MessageListener>
+      <MessageRepository>/hermes/ebxmlms/request/messageListener</MessageRepository>
+    </MessageListener>
+
+  </Request>
+</Property>

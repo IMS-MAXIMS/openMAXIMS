@@ -1,0 +1,118 @@
+.cn_popupcalendar{
+	overflow: hidden;
+	margin: 0xp; 
+	width: 340px;
+	height: 261px;
+	background: #ECE9D8;
+}
+
+.cn_popupcalendar input{
+	font-family: tahoma;
+	font-size: 14px;
+}
+
+.cn_popupcalendar td{ font-size: 16px; }
+
+.cn_popupcalendar #topControls{
+	height: 20px;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#517DBF, endcolorstr=#DDECFE);
+}
+
+.cn_popupcalendar #daysTable{
+	width: 100%;
+	border-collapse: collapse;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#DDECFE,endcolorstr=white,gradienttype=0);
+}
+
+.cn_popupcalendar #daysTable #header td{
+	font-size: 14px; 
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#517DBF, endcolorstr=#DDECFE);	
+	border-style: none;
+	border-bottom: 1px solid #7A96DF;
+}
+
+.cn_popupcalendar #daysTable #header span{
+	display: inline-block;
+	filter: dropShadow(color=#444444,offX=1,offY=1);
+}
+
+.cn_popupcalendar #daysTable tr{
+	text-align: center;
+	/*background: white;*/
+	cursor: hand;
+}
+
+.cn_popupcalendar #daysTable td{
+	border-color: #7A96DF;
+	padding-top: 6px;
+	padding-bottom: 6px;
+	width: 14%;
+}
+
+.cn_popupcalendar #daysTable td.hover{
+	background: #4390FF;
+	color: white;
+	text-decoration: underline;
+}
+
+.cn_popupcalendar #daysTable td.pushed{
+	color: white;
+	background: #316AC5;
+	font-weight: bold;
+}
+
+.cn_popupcalendar #daysTable td.empty{
+	cursor: default;
+}
+
+.cn_popupcalendar #daysTable #header{
+	background: #7A96DF;
+	color: white;
+	font-weight: bold;
+	cursor: default;
+}
+
+.cn_popupcalendar #monthSelect{ width: 100px; height: 23px; }
+.cn_popupcalendar #yearSelect{ 
+	width: 44px; font-weight: bold; height: 20px; font-size: 13px;
+	margin-top: 1px;
+	line-height: 18px;
+}
+
+.cn_popupcalendar .arrows7, .cn_popupcalendar .arrows10{ font-family: webdings; }
+.cn_popupcalendar .arrows7{ font-size: 6px; }
+.cn_popupcalendar .arrows10{ font-size: 14px; }
+
+.cn_popupcalendar #nextMonthButton, 
+.cn_popupcalendar #prevMonthButton{ 
+	height: 23px; 
+	line-height: 1em;
+	width: 40px;
+
+	border: 1px outset #81A9E2;
+}
+
+.cn_popupcalendar #yearDownButton, 
+.cn_popupcalendar #yearUpButton{ 
+	height: 11px; width: 23px; 
+}
+
+.cn_popupcalendar #yearUpButton{ margin-top: 1px; }
+
+.cn_popupcalendar #nextMonthButton, 
+.cn_popupcalendar #prevMonthButton, 
+.cn_popupcalendar #yearDownButton, 
+.cn_popupcalendar #yearUpButton{ 
+	font-weight: bold;
+}
+
+.cn_popupcalendar .cn_combobox td{
+	font-size: 13px !important;
+}
+
+.cn_popupcalendar .cn_combobox{
+	font-weight: bold;
+	position: absolute;
+	top: 2px;
+	left: 0px;
+}

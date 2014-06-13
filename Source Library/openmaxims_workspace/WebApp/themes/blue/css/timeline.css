@@ -1,0 +1,87 @@
+.cn_timeline{
+	cursor: default;
+	border: 1px solid #7F9DB9;
+	background: white;
+}
+
+.cn_timeline .timelineLegendDiv{
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width: 140px;
+	font-weight: bold;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#F2F9FF, endcolorstr=white, gradienttype=0);
+	border-right: 1px solid #B3B6CE;
+}
+
+.cn_timeline .timelineCaptionDiv{
+	position: absolute;
+	width: 150px;
+	padding-left: 1px;
+	border-bottom: 1px solid #B3B6CE;
+}
+
+.cn_timeline .timelineTableDiv{
+	overflow: auto;
+	top: 0px;
+	left: 140px;
+	position: absolute;
+	border-right: 1px solid #B3B6CE;
+}
+
+.cn_timeline .timelineTable{
+	border-collapse: collapse;
+}
+
+.cn_timeline .timelineTable td{
+	position: relative;
+	border-bottom: 1px solid #B3B6CE;
+}
+
+.cn_timeline .lowerMonthes1 td{
+	font-size: 1px;
+}
+
+.cn_timeline .lowerMonthesMark{
+	overflow: hidden;
+	width: 2px;
+	background: #8899aa;
+	vertical-align: top;
+	margin-top: -3px;
+}
+
+.cn_timeline .lowerMonthes2 td{
+	font-size: 10px;
+	font-weight: bold;
+}
+
+.cn_timeline .nowMarkDiv{
+	position: absolute;
+	top: 0px;
+	width: 1px;
+	height: 100px;
+	background: red;
+	overflow: hidden;
+}
+
+.cn_timeline .timelineIcon{
+	position: absolute;
+	left: 0px;
+	top: 2px;
+	xl--blend-duration: 200;
+	cursor: hand;
+}
+
+.cn_timeline .cnToolbar{
+	top: 0px;
+	position: absolute;
+	width: 22px;
+	background: #C6C6D9;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#CFE5FF, endcolorstr=white, gradienttype=0);
+}
+
+.cn_timeline .nowLabelDiv{
+	position: absolute;
+	color: red;
+	font-size: 10px;
+}

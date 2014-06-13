@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:35 -->
+<hibernate-mapping>
+	<class name="ims.core.clinical.domain.objects.PatientConcern" table="core_patientconcern" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: assocProblem -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- one to many -->
+		<set name="assocProblem" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="patientconcern_assocprobl_fk">
+				<column name="core_patientconcern_assocprobl" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.core.clinical.domain.objects.PatientProblem" />
+		</set>
+<!-- debug: concernDescription -->
+<!-- debug: dateTimeIdentified -->
+<!-- debug: teamIdentified -->
+<!-- debug: memberIdentified -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="memberIdentified" class="ims.core.resource.people.domain.objects.Hcp" unique="true" foreign-key="patientconcern_memberiden_fk" access="field" cascade="save-update">
+			<column name="memberiden" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: associatedNote -->
+<!-- debug: allocatedToTeam -->
+<!-- debug: allocToTeamMember -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="allocToTeamMember" class="ims.core.resource.people.domain.objects.Hcp" unique="true" foreign-key="patientconcern_alloctotea_fk" access="field" cascade="save-update">
+			<column name="alloctotea" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: dateTimeAllocated -->
+<!-- debug: concernStatus -->
+<!-- debug: recordingHCP -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="recordingHCP" class="ims.core.resource.people.domain.objects.Hcp" unique="true" foreign-key="patientconcern_recordingh_fk" access="field" cascade="save-update">
+			<column name="recordingh" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: updatingHCP -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="updatingHCP" class="ims.core.resource.people.domain.objects.Hcp" unique="true" foreign-key="patientconcern_updatinghc_fk" access="field" cascade="save-update">
+			<column name="updatinghc" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: careContext -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="careContext" class="ims.core.admin.domain.objects.CareContext" unique="true" foreign-key="patientconcern_carecontex_fk" access="field" cascade="save-update">
+			<column name="carecontex" sql-type="numeric(10,0)" not-null="true" unique="false"  index='ctx_idx' />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="concernDescription" type="string" access="field" update="true" > 
+			<column name="concerndes" length="100"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dateTimeIdentified" type="timestamp" access="field" update="true">
+			<column name="datetimeid"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="teamIdentified" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_teamidenti" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="associatedNote" type="string" access="field" update="true" > 
+			<column name="associated" length="1000"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="allocatedToTeam" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_allocatedt" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dateTimeAllocated" type="timestamp" access="field" update="true">
+			<column name="datetimeal"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="concernStatus" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_concernsta" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+	</class>
+</hibernate-mapping>

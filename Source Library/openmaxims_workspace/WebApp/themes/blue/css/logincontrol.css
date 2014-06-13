@@ -1,0 +1,91 @@
+.cn_logincontrol{
+	text-align: center;
+}
+
+.cn_logincontrol .div1{
+	width: 622px; height: 160px; overflow: visible; position: relative;
+}
+
+.cn_logincontrol #bottomLoginBottomDiv2{
+	position: absolute; display: none; top: 152px; left: 95px;
+	width: 430px; height: 90px; 
+	text-align: left;
+} 
+
+.cn_logincontrol .table1{
+	width: 398px; position: relative; top: 20px; left: 22px;
+}
+
+.cn_logincontrol .width100{
+	width: 100px;
+} 
+
+.cn_logincontrol #okChangeButton__{
+	width: 80px; margin-right: 2px;
+}
+
+.cn_logincontrol #cancelChangeButton__{
+	width: 80px;
+}
+
+.cn_logincontrol #topLoginBottomDiv{
+	position: absolute; top: 0px; left: 94px;  
+	width: 439px; height: 90px; text-align: left;
+}
+
+.cn_logincontrol .table2{
+	position: relative; top: 37px; left: 18px;
+	xl--with-location-top: 26px; xl--with-location-left: 10px;
+}
+
+.cn_logincontrol #userTextBox__{
+	font-weight: bold; width: 100px; 
+} 
+
+.cn_logincontrol #passwordTextBox__{
+	width: 100px;
+} 
+
+.cn_logincontrol #loginButton__{
+	width: 80px; margin-left: 4px;
+} 
+
+.cn_logincontrol #locationTR__{
+	display: none;
+} 
+
+.cn_logincontrol .div3{
+	position: absolute; left: 87px; top: 0px; width: 550px; height: 80px; overflow: hidden;
+} 
+
+.cn_logincontrol .div4{
+	position: absolute; top: 0px; left: 0px;
+	width: 446px; height: 80px;
+} 
+
+.cn_logincontrol #lockImg__{
+	position: absolute; top: 16px; left: 65px; width: 24px; height: 32px;
+}
+
+.cn_logincontrol .div5{
+	position: relative; top: 20px;
+	font-family: Tahoma; font-size: 28px; font-weight: bold; 
+}
+
+.cn_logincontrol #loginLogoAnimDiv__{
+	position: absolute; top: 0px; left: 87px; width: 96px; height: 155px;
+	cursor: help; xl--tooltip-position: move; xl--blend-duration: 300; 
+}
+
+.cn_logincontrol .div6{
+	position: absolute; top: 53px; left: -1px; width: 96px; height: 102px; cursor: hand; 
+}
+
+.cn_logincontrol .div7{
+	position: absolute; top: 0px; left: 436px; width: 98px; height: 154px;
+	padding-top: 28px; 
+}
+
+.cn_logincontrol .img1{
+	visibility: hidden;
+}

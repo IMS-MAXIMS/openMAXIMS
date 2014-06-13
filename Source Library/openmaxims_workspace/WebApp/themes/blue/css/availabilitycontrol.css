@@ -1,0 +1,73 @@
+.cn_availabilitycontrol{
+	border: 1px solid #9DBBE1;
+	background: white;
+	
+	xl--grid-color: #777777;
+	overflow: hidden;
+}
+
+.cn_availabilitycontrol table{
+	width: 100%;
+	height: 100%;
+	border-collapse: collapse;
+	position: relative;
+}
+
+.cn_availabilitycontrol td{
+	padding: 0px;
+}
+
+.cn_availabilitycontrol .availbutton{
+	background: none;
+	filter: none;
+	border: 0px;
+	height: 100%;
+	width: 100%;
+}
+
+.cn_availabilitycontrol .firstColumnTD{
+	background: #E7F2FF;
+	color: black;
+	width: 70px;
+	font-weight: bold;
+	text-align: center;
+	border-color: #9EBAE1;
+}
+
+.cn_availabilitycontrol .patternDiv{
+	position: absolute;
+}
+
+.cn_availabilitycontrol td{
+}
+
+.cn_availabilitycontrol .headerTD{
+	background: #2C5FA9;
+	border-color: #4E88DC;
+	border-width: 0px;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#A3C2EA, endcolorstr=#FFFFFF);
+}
+
+.cn_availabilitycontrol .innerGridTD{
+	xl--tooltip-position: move;
+}
+
+.cn_availabilitycontrol .periodDiv_unavail{
+	background: #dddddd;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#aaaaaa, endcolorstr=#dddddd);
+}
+
+.cn_availabilitycontrol .periodDiv_avail{
+	background: white;
+}
+
+.cn_availabilitycontrol .periodDiv_booked{
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#659D4F, endcolorstr=#7DCF6D);
+	background: #7DCF6D;
+}
+
+.cn_availabilitycontrol .periodDiv_pattern{
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#D0B300, endcolorstr=#FEDA00);
+	background: #FEDA00;
+}
+

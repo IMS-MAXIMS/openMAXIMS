@@ -1,0 +1,68 @@
+.cn_combobox{
+	width: 100px;
+	height: 19px;
+	
+	display: inline;
+	background: white;
+	text-align: left;
+	white-space: nowrap;
+
+	cursor: default; 
+	overflow: hidden;
+	
+	border: 1px solid #9DBBE1;
+	xl--disabled-border-color: #dddddd;
+	
+	xl--popup-max-height: 250px;
+	xl--hover-border-color: #316AC5;
+	xl--option-hover-background: #316AC5;
+	xl--option-hover-color: white;
+	xl--option-hover-filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#316AC5, endcolorstr=#c1d9f2, gradienttype=1);
+
+	z-index: 1;
+}
+
+.cn_combobox .xlcomboTD1{
+	padding-left: 2px;
+	padding-right: 1px;
+	vertical-align: center;
+	background-color: white;
+	filter: none;
+}
+
+.cn_combobox .xlcomboTD1 div{ 
+	overflow: hidden; 
+	height: 1.2em; 
+	padding-top: 1px;
+	white-space: nowrap;
+	height: 16px; 
+}
+
+.cn_combobox .xlcomboTD2{
+	border-left: 1px solid #B4CCEB;
+	background: white;
+	width: 11px;
+
+	font-size: 10px;
+	font-weight: normal;
+	font-style: normal;
+	text-align: center;
+	font-family: webdings;
+	color: black;
+
+	xl--hover-filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=white, endcolorstr=#9DBBE1);
+	xl--hover-background-color: #9DBBE1;
+}
+
+.cn_combobox .xlcomboinput{
+	border-width: 0px;
+	width: 100%;
+	height: 100%;
+}
+
+.cn_comboboxPopup{
+	position: absolute; padding: 1px; cursor: default; 
+	border: 1px solid #9DBBE1;
+	display: none; 
+	background: white; 
+}

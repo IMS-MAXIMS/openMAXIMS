@@ -1,0 +1,36 @@
+.cn_answerbox{
+	padding: 1px;
+	cursor: default;
+	display: inline-block;
+		
+	xl--hover-color: #1148AB;
+	xl--disabled-filter: alpha(opacity=40);
+
+	xl--popup-max-height: 250px;
+	xl--hover-border-color: #316AC5;
+	xl--option-hover-background: highlight;
+	xl--option-hover-color: white;
+	xl--option-hover-filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#316AC5, endcolorstr=#c1d9f2, gradienttype=1);
+
+	/*scrollbar-3dlight-color: #517DBF;
+	scrollbar-darkshadow-color: #517DBF;
+	scrollbar-shadow-color: white;
+	scrollbar-highlight-color: white;
+	scrollbar-face-color: #719DdF;
+	scrollbar-arrow-color: white;
+	vertical-align: bottom;*/
+}
+
+.cn_answerbox .checkSpan{
+	padding: 1px; 
+	border: 1px solid #9DBBE1;
+	background: white;
+}
+
+.cn_answerbox .textSpan{
+	margin-left: 4px;
+}
+
+.cn_answerbox img{
+	margin: 1px;
+}

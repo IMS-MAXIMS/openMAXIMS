@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:37 -->
+<hibernate-mapping>
+	<subclass name="ims.careuk.domain.objects.PatientProcedureApptDetail" lazy="true" discriminator-value="ppra" extends="ims.core.clinical.domain.objects.PatientProcedure" >
+<!-- debug: hibernateClassContent -->
+<!-- debug: appointment -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="appointment" class="ims.scheduling.domain.objects.Booking_Appointment" unique="true" foreign-key="patientprocedu_appointmen_fk" access="field" cascade="save-update">
+			<column name="appointmen" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: isPrimaryProcedure -->
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isPrimaryProcedure" type="boolean" access="field" update="true">
+			<column name="isprimaryp"  not-null="false" unique="false"  />
+		</property>
+	</subclass>
+</hibernate-mapping>

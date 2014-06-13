@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:35 -->
+<hibernate-mapping>
+	<subclass name="ims.nursing.assessment.domain.objects.BreathingComponent" lazy="true" discriminator-value="BRTH" extends="ims.nursing.assessment.domain.objects.AssessmentComponent" >
+<!-- debug: hibernateClassContent -->
+<!-- debug: difficultyBreathing -->
+<!-- debug: breathingDyspnoea -->
+<!-- debug: IsCollection : true -->
+		<!-- collection of Lookup instances -->
+		<list name="breathingDyspnoea" table="ns_brthcomp_breathingd" lazy="true" access="field">
+			<key foreign-key="brthcomp_breathingd_ofk">
+				<column name="owner" sql-type="numeric(10,0)"/>
+			</key>
+			<index column="idx"/>
+			<composite-element class="ims.domain.lookups.LookupInstanceRef">
+				<many-to-one name="instance" class="ims.domain.lookups.LookupInstance" access="field">
+					<column name="instance_id" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+				</many-to-one>
+			</composite-element>
+		</list>
+<!-- debug: acuteChronic -->
+<!-- debug: smoking -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="smoking" class="ims.core.clinical.domain.objects.Smoking" unique="true" foreign-key="brthcomp_smoking_fk" access="field" cascade="save-update">
+			<column name="smoking" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: breathingMedication -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="breathingMedication" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="brthcomp_breathingm_fk">
+				<column name="ns_brthcomp_breathingm" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.core.clinical.domain.objects.PatientMedication" />
+		</set>
+<!-- debug: breathingCough -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="breathingCough" class="ims.nursing.assessment.domain.objects.BreathingCough" unique="true" foreign-key="brthcomp_breathingc_fk" access="field" cascade="all">
+			<column name="breathingc" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: breathingTreatment -->
+<!-- debug: IsCollection : true -->
+		<!-- collection of Lookup instances -->
+		<list name="breathingTreatment" table="ns_brthcomp_breathingt" lazy="true" access="field">
+			<key foreign-key="brthcomp_breathingt_ofk">
+				<column name="owner" sql-type="numeric(10,0)"/>
+			</key>
+			<index column="idx"/>
+			<composite-element class="ims.domain.lookups.LookupInstanceRef">
+				<many-to-one name="instance" class="ims.domain.lookups.LookupInstance" access="field">
+					<column name="instance_id" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+				</many-to-one>
+			</composite-element>
+		</list>
+<!-- debug: ventilationTracheostomy -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="ventilationTracheostomy" class="ims.core.vitals.domain.objects.VentilationTracheostomy" unique="true" foreign-key="brthcomp_ventilatio_fk" access="field" cascade="save-update">
+			<column name="ventilatio" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: IsLookup -->
+		<many-to-one name="difficultyBreathing" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_difficulty" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="acuteChronic" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_acutechron" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+	</subclass>
+</hibernate-mapping>

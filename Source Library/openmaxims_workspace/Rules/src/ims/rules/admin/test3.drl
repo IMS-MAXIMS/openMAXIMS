@@ -1,0 +1,74 @@
+package ims.rules.admin;
+
+import ims.core.clinical.domain.objects.PatientAlert;
+import ims.core.patient.domain.objects.Patient;
+import ims.assessment.instantiation.domain.objects.PatientAssessment;
+import ims.assessment.instantiation.domain.objects.PatientAssessmentData;
+
+function boolean isMarius(Patient entity)
+{
+	if (entity.getName().getSurname().equals("marius"))
+		return true;
+		
+	return false;
+}
+
+rule "Patient Assessment Test Rule - Begining"
+	when
+		assessment : PatientAssessment(statusReasonText == null);
+		eval(assessment != null);
+	then
+		System.out.println("Assessment Test Begining");
+		assessment.setStatusReasonText("Drool Test");
+		assessment.setScore(1);
+end
+
+rule "Patient Assessment Test Rule AND"
+	when
+		assessment : PatientAssessment(score == 3, statusReasonText == "Rule OR");
+		eval(assessment != null);
+	then
+		System.out.println("Assessment test AND");
+		assessment.setStatusReasonText("Rule AND");
+		assessment.setScore(2);
+end
+
+#OR is not used like this
+/*
+rule "Patient Assessment Test Rule OR 1"
+	when
+		assessment : PatientAssessment((score == 1) or (statusReasonText == "Rule AND"));
+	then
+		System.out.println("Assessment test OR one");
+		assessment.setStatusReasonText("Rule AND");
+		assessment.setScore(3);
+end
+*/
+
+# This actually creates two rules in the background
+rule "Patient Assessment Test Rule OR 2"
+	when
+		assessment : (PatientAssessment(score == 1) or	PatientAssessment(statusReasonText == "Rule AND") );
+	then
+		System.out.println("Assessment test OR two");
+		assessment.setStatusReasonText("Rule OR");
+		assessment.setScore(3);
+end
+
+/*
+rule "Patient"
+	when
+		entity: Patient();
+		eval(entity.getName().getSurname().equals("Mihalec"));
+	then
+		System.out.println("Entity rule");
+end
+*/
+
+rule "Function Rule"
+	when
+		entity : Patient();
+		eval(isMarius(entity));
+	then
+		System.out.println("Funtion rule");
+end

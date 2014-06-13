@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans>
+<!-- this bean must not be lazily initialized if the exporting is to happen -->
+<bean id="exporter" class="org.springframework.jmx.export.MBeanExporter" lazy-init="false">
+<property name="beans">
+<map>
+<entry key="ims:name=ServicesManager" value-ref="testBean"/>
+</map>
+</property>
+</bean>
+<bean id="testBean" class="ims.domain.servicemanager.ServiceManagerImpl">
+<property name="dynamicMonitoringOn" value="true"/>
+<property name="dynamicLoggingOn" value="true"/>
+</bean>
+</beans>

@@ -1,0 +1,146 @@
+.cn_floorplanner, .cn_bedplanner{
+	border: 1px solid #9DBBE1;
+	overflow: hidden;
+}
+
+.cn_floorplanner .drawingArea, .cn_bedplanner .drawingArea{
+	background: url(../../../g/grid-back-1.gif);
+}
+
+.cn_floorplanner .canvasToolbar, .cn_bedplanner .canvasToolbar{
+	border-left: 1px solid #bbbbcc;
+	border-top: 1px solid #9DBBE1;
+	background: #c1d9f2;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#CFE5FF, endcolorstr=white, gradienttype=0);
+}
+
+
+.cn_floorplanner .button_normal,
+.cn_bedplanner .button_normal{ 
+	margin: 1px; 
+	border: 0px; 
+	background: none; 
+	filter: none;
+}
+
+.cn_floorplanner .button_normalHover,
+.cn_bedplanner .button_normalHover{ 
+	margin: 0px;
+	border: 1px solid #316AC5;
+	background: #eeeeee;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#FEFEFE, endcolorstr=#b0bFe7, gradienttype=0);
+}
+
+.cn_floorplanner .button_normalDown,
+.cn_bedplanner .button_normalDown{ 
+	margin: 0px; 
+	border: 1px solid #316AC5; 
+	background: #eeeeee; 
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#7A92C2, endcolorstr=white, gradienttype=0);
+}
+
+.cn_floorplanner .button_pushed,
+.cn_bedplanner .button_pushed{ 
+	margin: 0px; 
+	border: 1px solid #214Aa5; 
+	background: white;
+}
+
+.cn_floorplanner .button_pushedHover,
+.cn_bedplanner .button_pushedHover{ 
+	margin: 0px;
+	border: 1px solid #214Aa5; 
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#c1d9f2, endcolorstr=white, gradienttype=0); 
+}
+
+.cn_floorplanner .button_pushedDown,
+.cn_bedplanner .button_pushedDown{ 
+	margin: 0px; 
+	border: 1px solid #214Aa5; 
+	background: #ff4444; 
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#7A92C2, endcolorstr=white, gradienttype=0); 
+}
+
+
+.cn_floorplanner .markerButtonHover,
+.cn_bedplanner .markerButtonHover{
+	background: #eeeeee;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#FEFEFE, endcolorstr=#b0bFe7, gradienttype=0);
+}
+
+.cn_floorplanner .markerButtonDown,
+.cn_bedplanner .markerButtonDown{
+	background: white;
+	filter: none;
+}
+
+.cn_floorplanner .toolBarVerticalSeparator,
+.cn_bedplanner .toolBarVerticalSeparator{
+	vertical-align: bottom;
+	width: 2;
+	height: 100%;
+	margin-left: 16;
+	margin-right: 16;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#CFE5FF, endcolorstr=white, gradienttype=1);
+}
+
+
+.cn_bedplanner .toolTip{ 
+	z-index: 1000;
+
+	background: #F0F0F5; 
+	border: 1px solid #6E6D8F;
+	color: black;
+	
+	font-family: tahoma;
+	padding: 2px;
+	font-size: 11px; 
+	position: absolute;
+	visibility: hidden;
+	filter: blendTrans(duration=.2);
+}
+
+
+.cn_list{
+	background: white;
+	width: 100%;
+	height: 100%;
+	border-right: 1px solid #9DBBE1;
+}
+
+.cn_list .contentDiv{
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+}
+
+.cn_list .headerTD{
+	height: 20px;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#A3C2EA, endcolorstr=#FFFFFF);
+	border-bottom: 1px solid #9DBBE1; 
+	font-weight: bold;
+	padding: 3px;
+}
+
+.cn_list .listItemDiv{
+	padding: 2px;
+	width: 100%;
+	cursor: default;
+
+	xl--selected-background: #316AC5; 
+	xl--selected-color: white;
+	xl--selected-filter: filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#316AC5, endcolorstr=#3F89FF, gradienttype=1);
+}
+
+.cn_list .textSpan, .cn_list .textEditSpan{
+	padding: 2px;
+	display: inline-block;
+	white-space: nowrap;
+}
+
+.cn_list .textEditSpan{
+	padding: 1px;
+	border: 1px solid black;
+	background: white;
+	color: black;
+}

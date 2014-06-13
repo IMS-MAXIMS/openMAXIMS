@@ -1,0 +1,85 @@
+.cn_navigation{
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	display: block;
+	position: relative;
+}
+
+.cn_navigation_disabled .contentDiv *{
+	color: #aaaaaa;
+	cursor: no-drop !important;
+}
+
+.cn_navigation .cn_navigation_panel{
+	position: absolute; 
+	width: 100%;
+	xl--top-border-offset: 1px;
+	overflow: hidden;
+}
+
+.cn_navigation .cn_navigation_panel .panelImg{
+	margin-right: 2px;
+}
+
+.cn_navigation .cn_navigation_panel .contentDiv{
+	width: 100%;
+	overflow: auto;
+	background: white;
+	padding-left: 7px;
+}
+
+
+.cn_navigation .cn_navigation_panel .panelButton table{
+	font-weight: bold;
+	color: #5E5E73;
+}
+
+.cn_navigation .cn_navigation_panel .panelButton{
+	cursor: default;
+	color: black;
+	background: white;
+
+	xl--selected-color: black;
+
+	height: 2em;
+	line-height: 1.7em;
+	width: 100%;
+	text-align: left;
+	display: inline-block;
+}
+
+.cn_navigation .cn_navigation_panel .panelButton span{
+	display: inline-block;
+}
+
+
+.cn_navigation .itemDiv{
+	cursor: default;
+	color: black;
+	xl--selected-color: white;
+	xl--selected-filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#316AC5, endcolorstr=#3F89FF, gradienttype=1);
+	xl--hover-color: white;
+	xl--hover-background: #93C6FF;
+	white-space: nowrap;
+}
+
+.cn_navigation .clickable .textSpan{
+	cursor: hand;
+}
+
+.cn_navigation .itemImage{
+	margin-right: 2px;
+	vertical-align: top;
+	margin-top: 0.3em;
+}
+
+.cn_navigation .textSpan{
+	display: inline-block;
+	padding: 2px;
+}
+
+.cn_navigation .clickable {
+	color: #363662;
+}
+

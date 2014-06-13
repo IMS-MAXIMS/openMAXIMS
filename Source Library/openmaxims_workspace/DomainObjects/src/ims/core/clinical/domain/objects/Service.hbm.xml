@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:34 -->
+<hibernate-mapping>
+	<class name="ims.core.clinical.domain.objects.Service" table="core_services" lazy="true" discriminator-value="null" >
+		<cache usage="nonstrict-read-write" />
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: hibernateClassContent -->
+<!-- debug: serviceName -->
+<!-- debug: serviceDescription -->
+<!-- debug: serviceCategory -->
+<!-- debug: specialty -->
+<!-- debug: isActive -->
+<!-- debug: taxonomyMap -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+ 		<!-- Component Set -->
+ 		<list name="taxonomyMap" table="core_services_taxonomyma" lazy="true" >
+ 			<key foreign-key="services_taxonomyma_id_fk">
+ 				<column name="id" sql-type="numeric(10,0)" not-null="true" />
+ 			</key>
+ 			<index column='idx'/>
+ 			<!-- Composite -->
+ 			<composite-element class="ims.core.clinical.domain.objects.TaxonomyMap" >
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="taxonomyName" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_taxonomyna" not-null="true" sql-type="numeric(10,0)"  unique="false" unique-key='taxonomy_unq1'  />
+ 				</many-to-one>
+ 				<property name="taxonomyCode" type="string" access="field" update="true">
+ 					<column name="taxonomyco" length="30" not-null="true"  unique="false" unique-key='taxonomy_unq1'   />
+ 				</property>
+ 			</composite-element>
+ 		</list>
+<!-- debug: upperName -->
+<!-- debug: alternateServiceCode -->
+<!-- debug: canBeScheduled -->
+<!-- debug: turnaroundMeasure -->
+<!-- debug: expectedTurnaround -->
+<!-- debug: maternityIndicator -->
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="serviceName" type="string" access="field" update="true" > 
+			<column name="servicenam" length="100"  not-null="true" unique="false" unique-key='svc_unq_1' />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="serviceDescription" type="string" access="field" update="true" > 
+			<column name="servicedes" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="serviceCategory" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_servicecat" sql-type="numeric(10,0)" not-null="true" unique="false"  index='service_category_idx1' />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="specialty" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_specialty" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isActive" type="boolean" access="field" update="true">
+			<column name="isactive"  not-null="false" unique="false" unique-key='svc_unq_1' />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="upperName" type="string" access="field" update="true" > 
+			<column name="uppername" length="20"  not-null="false" unique="false"  index='svc_upname_idx'/>
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="alternateServiceCode" type="string" access="field" update="true" > 
+			<column name="alternates" length="15"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="canBeScheduled" type="boolean" access="field" update="true">
+			<column name="canbesched"  not-null="false" unique="false"  index='service_scheduled_idx1'/>
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="turnaroundMeasure" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_turnaround" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="expectedTurnaround" type="integer" access="field" update="true">
+			<column name="expectedtu"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="maternityIndicator" type="boolean" access="field" update="true">
+			<column name="maternityi"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

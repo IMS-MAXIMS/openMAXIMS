@@ -1,0 +1,54 @@
+.cn_dynamicgrid{ 
+	border: 1px solid #9DBBE1; 
+	background: white;
+	behavior: url('#default#userData');
+}
+
+.cn_dynamicgrid .contentDiv{
+	width: 100%;
+	overflow: auto;
+}
+
+.cn_dynamicgrid table{
+	table-layout: fixed;
+	border-collapse: collapse;
+	border: 0px;
+}
+
+.cn_dynamicgrid td{
+	padding: 2px;
+}
+
+
+.cn_dynamicgrid .contentTable td{
+	border-bottom: 1px solid #eeeeee;
+}
+
+.cn_dynamicgrid .captionTable{
+	border-bottom: 1px solid #9DBBE1;
+}
+
+.cn_dynamicgrid .captionTable td{
+	font-weight: bold; 
+	background: #D6D7E0; 
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#A3C2EA, endcolorstr=#FFFFFF);
+}
+
+.cn_dynamicgrid .leftBorder, 
+.cn_dynamicgrid .topBorder, 
+.cn_dynamicgrid .bottomBorder, 
+.cn_dynamicgrid .rightBorder{
+	position: absolute;
+	visibility: hidden;
+	overflow: hidden;
+	top: 0px;
+	left: 0px;
+}
+
+.cn_dynamicgrid .leftBorder{ background: #316AC5; }
+.cn_dynamicgrid .rightBorder{ background: #EBF0F9; }
+.cn_dynamicgrid .leftBorder, .cn_dynamicgrid .rightBorder{ width: 2px; }
+.cn_dynamicgrid .topBorder, .cn_dynamicgrid .bottomBorder{ 
+	height: 2px;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr=#316AC5, endColorStr=#B0B1C7, gradientType=1);
+}

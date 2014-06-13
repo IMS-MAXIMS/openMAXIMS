@@ -1,0 +1,583 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:35 -->
+<hibernate-mapping>
+	<class name="ims.careuk.domain.objects.CatsReferral" table="care_catsreferral" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: patient -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="patient" class="ims.core.patient.domain.objects.Patient" unique="true" foreign-key="catsreferral_patient_fk" access="field" cascade="save-update">
+			<column name="patient" sql-type="numeric(10,0)" not-null="true" unique="false"  index='patient_idx' />
+		</many-to-one>
+<!-- debug: iCABReferral -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="iCABReferral" class="ims.core.admin.domain.objects.ICABReferral" unique="true" foreign-key="catsreferral_icabreferr_fk" access="field" cascade="save-update">
+			<column name="icabreferr" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: referralDetails -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="referralDetails" class="ims.core.clinical.domain.objects.ReferralLetterDetails" unique="true" foreign-key="catsreferral_referralde_fk" access="field" cascade="save-update">
+			<column name="referralde" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: dOS -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="dOS" class="ims.scheduling.domain.objects.DirectoryofService" unique="true" foreign-key="catsreferral_dos_fk" access="field" cascade="save-update">
+			<column name="dos" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: investigationOrders -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- one to many -->
+		<set name="investigationOrders" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="catsreferral_investigat_fk">
+				<column name="care_catsreferral_investigat" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.ocrr.orderingresults.domain.objects.OcsOrderSession" />
+		</set>
+<!-- debug: hasInvestigations -->
+<!-- debug: appointments -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- one to many -->
+		<set name="appointments" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="catsreferral_appointmen_fk">
+				<column name="care_catsreferral_appointmen" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.scheduling.domain.objects.Booking_Appointment" />
+		</set>
+<!-- debug: hasAppointments -->
+<!-- debug: referralDocuments -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- one to many -->
+		<set name="referralDocuments" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="catsreferral_referraldo_fk">
+				<column name="care_catsreferral_referraldo" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.core.documents.domain.objects.PatientDocument" />
+		</set>
+<!-- debug: hasDocuments -->
+<!-- debug: hasReferralLetter -->
+<!-- debug: currentStatus -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="currentStatus" class="ims.careuk.domain.objects.CATSReferralStatus" unique="true" foreign-key="catsreferral_currentsta_fk" access="field" cascade="save-update">
+			<column name="currentsta" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: statusHistory -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- one to many -->
+		<set name="statusHistory" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="catsreferral_statushist_fk">
+				<column name="care_catsreferral_statushist" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.careuk.domain.objects.CATSReferralStatus" />
+		</set>
+<!-- debug: orderInvAppts -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- one to many -->
+		<set name="orderInvAppts" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="catsreferral_orderinvap_fk">
+				<column name="care_catsreferral_orderinvap" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.careuk.domain.objects.OrderInvAppt" />
+		</set>
+<!-- debug: callAttempts -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="callAttempts" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="catsreferral_callattemp_fk">
+				<column name="care_catsreferral_callattemp" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.careuk.domain.objects.AppointmentCallAttempts" />
+		</set>
+<!-- debug: careContext -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="careContext" class="ims.core.admin.domain.objects.CareContext" unique="true" foreign-key="catsreferral_carecontex_fk" access="field" cascade="save-update">
+			<column name="carecontex" sql-type="numeric(10,0)" not-null="true" unique="false"  index='ctx_idx' />
+		</many-to-one>
+<!-- debug: isCAB -->
+<!-- debug: consultationAppt -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="consultationAppt" class="ims.scheduling.domain.objects.Booking_Appointment" unique="true" foreign-key="catsreferral_consultati_fk" access="field" cascade="save-update">
+			<column name="consultati" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: additionalInvApptsStatus -->
+<!-- debug: rejectReferralDetail -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="rejectReferralDetail" class="ims.careuk.domain.objects.ReferralReject" unique="true" foreign-key="catsreferral_rejectrefe_fk" access="field" cascade="save-update">
+			<column name="rejectrefe" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: hasRejectedInv -->
+<!-- debug: providerCancellation -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="providerCancellation" class="ims.careuk.domain.objects.ProviderCancellation" unique="true" foreign-key="catsreferral_providerca_fk" access="field" cascade="all">
+			<column name="providerca" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: isFlaggedForReview -->
+<!-- debug: currentReviewDetail -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- one to many -->
+		<set name="currentReviewDetail" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="catsreferral_currentrev_fk">
+				<column name="care_catsreferral_currentrev" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.careuk.domain.objects.ReviewReferralDetail" />
+		</set>
+<!-- debug: reviewHistory -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- one to many -->
+		<set name="reviewHistory" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="catsreferral_reviewhist_fk">
+				<column name="care_catsreferral_reviewhist" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.careuk.domain.objects.ReviewReferralDetail" />
+		</set>
+<!-- debug: onwardReferralStatus -->
+<!-- debug: uniqueLineRefNo -->
+<!-- debug: hasConsultationDetails -->
+<!-- debug: isFinalReportRequired -->
+<!-- debug: dischargeDate -->
+<!-- debug: triageDateTime -->
+<!-- debug: lastApptArrivedDate -->
+<!-- debug: hasTLTStartContact -->
+<!-- debug: isSuitableForSurgery -->
+<!-- debug: isFitForSurgery -->
+<!-- debug: hasTheatreAppt -->
+<!-- debug: isAcceptedOnCAB -->
+<!-- debug: isReferralRejectedOnCAB -->
+<!-- debug: wasPatientRejectionLetterSent -->
+<!-- debug: wasPatientProviderCancellationLetterSent -->
+<!-- debug: requiresDischargeRep -->
+<!-- debug: hasDNAApptsForReview -->
+<!-- debug: hasCancelledApptsForReview -->
+<!-- debug: isSecondaryReportRequired -->
+<!-- debug: wasFurtherManagementDetailsReviewed -->
+<!-- debug: isCurrentlyAllocated -->
+<!-- debug: onwardReferralReason -->
+<!-- debug: wasOutputtedToWeeklyReport -->
+<!-- debug: wasOutputtedToMonthlyReport -->
+<!-- debug: reportsRequired -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="reportsRequired" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="catsreferral_reportsreq_fk">
+				<column name="care_catsreferral_reportsreq" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.careuk.domain.objects.ReportsRequiredForPrinting" />
+		</set>
+<!-- debug: dischargeToGPDetailsReviewStatus -->
+<!-- debug: contract -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="contract" class="ims.core.configuration.domain.objects.ContractConfig" unique="true" foreign-key="catsreferral_c_contra_fk" access="field" cascade="save-update">
+			<column name="c_contra" sql-type="numeric(10,0)" not-null="false" unique="false"  index='cats_ref_contract_idx' />
+		</many-to-one>
+<!-- debug: awaitingClinicalInfo -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="awaitingClinicalInfo" class="ims.careuk.domain.objects.AwaitingClinicalInfo" unique="true" foreign-key="catsreferral_awaitingcl_fk" access="field" cascade="all">
+			<column name="awaitingcl" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: isAwaitingClinicalInfo -->
+<!-- debug: isActiveMonitorApptRequired -->
+<!-- debug: cATSReportSentDate -->
+<!-- debug: suitableForSurgeryDate -->
+<!-- debug: oPDLocation -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="oPDLocation" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="catsreferral_opdlocatio_fk" access="field" cascade="save-update">
+			<column name="opdlocatio" sql-type="numeric(10,0)" not-null="false" unique="false"  index='referral_location_idx' />
+		</many-to-one>
+<!-- debug: endOfCareDate -->
+<!-- debug: procedureForPostOpReview -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="procedureForPostOpReview" class="ims.core.clinical.domain.objects.PatientProcedure" unique="true" foreign-key="catsreferral_proceduref_fk" access="field" cascade="save-update">
+			<column name="proceduref" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: referralCategory -->
+<!-- debug: isOnwardReferralTriage -->
+<!-- debug: nearestTreatmentCentre -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="nearestTreatmentCentre" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="catsreferral_nearesttre_fk" access="field" cascade="save-update">
+			<column name="nearesttre" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: hasOPProcAwaitingAppt -->
+<!-- debug: urgency -->
+<!-- debug: journey -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="journey" class="ims.pathways.domain.objects.PatientPathwayJourney" unique="true" foreign-key="catsreferral_journey_fk" access="field" cascade="save-update">
+			<column name="journey" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: pathwayID -->
+<!-- debug: rTTClockImpact -->
+<!-- debug: electiveEROD -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<list name="electiveEROD" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="catsreferral_electiveer_fk">
+				<column name="care_catsreferral_electiveer" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.careuk.domain.objects.ReferralEROD" />
+		</list>
+<!-- debug: electiveERODHistory -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<list name="electiveERODHistory" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="catsreferral_electivee2_fk">
+				<column name="care_catsreferral_electivee2" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.careuk.domain.objects.ReferralEROD" />
+		</list>
+<!-- debug: outpatientEROD -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<list name="outpatientEROD" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="catsreferral_outpatient_fk">
+				<column name="care_catsreferral_outpatient" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.careuk.domain.objects.ReferralEROD" />
+		</list>
+<!-- debug: currentRTTStatus -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="currentRTTStatus" class="ims.pathways.domain.objects.PathwayRTTStatus" unique="true" foreign-key="catsreferral_currentrtt_fk" access="field" cascade="save-update">
+			<column name="currentrtt" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: adminEvent -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<list name="adminEvent" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="catsreferral_adminevent_fk">
+				<column name="care_catsreferral_adminevent" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.pathways.domain.objects.AdminEvent" />
+		</list>
+<!-- debug: admissions -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<list name="admissions" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="catsreferral_admissions_fk">
+				<column name="care_catsreferral_admissions" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.core.admin.pas.domain.objects.AdmissionDetail" />
+		</list>
+<!-- debug: referralTransfer -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="referralTransfer" class="ims.careuk.domain.objects.ReferralTransfer" unique="true" foreign-key="catsreferral_referraltr_fk" access="field" cascade="save-update">
+			<column name="referraltr" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: consUpgradeDate -->
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="hasInvestigations" type="boolean" access="field" update="true">
+			<column name="hasinvesti"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="hasAppointments" type="boolean" access="field" update="true">
+			<column name="hasappoint"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="hasDocuments" type="boolean" access="field" update="true">
+			<column name="hasdocumen"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="hasReferralLetter" type="boolean" access="field" update="true">
+			<column name="hasreferra"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isCAB" type="boolean" access="field" update="true">
+			<column name="iscab"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="additionalInvApptsStatus" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_additional" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="hasRejectedInv" type="boolean" access="field" update="true">
+			<column name="hasrejecte"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isFlaggedForReview" type="boolean" access="field" update="true">
+			<column name="isflaggedf"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="onwardReferralStatus" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_onwardrefe" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="uniqueLineRefNo" type="string" access="field" update="true" > 
+			<column name="uniqueline" length="8"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="hasConsultationDetails" type="boolean" access="field" update="true">
+			<column name="hasconsult"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="isFinalReportRequired" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_isfinalrep" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dischargeDate" type="date" access="field" update="true">
+			<column name="discharged"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="triageDateTime" type="timestamp" access="field" update="true">
+			<column name="triagedate"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="lastApptArrivedDate" type="date" access="field" update="true">
+			<column name="lastapptar"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="hasTLTStartContact" type="boolean" access="field" update="true">
+			<column name="hastltstar"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isSuitableForSurgery" type="boolean" access="field" update="true">
+			<column name="issuitable"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isFitForSurgery" type="boolean" access="field" update="true">
+			<column name="isfitforsu"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="hasTheatreAppt" type="boolean" access="field" update="true">
+			<column name="hastheatre"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isAcceptedOnCAB" type="boolean" access="field" update="true">
+			<column name="isaccepted"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isReferralRejectedOnCAB" type="boolean" access="field" update="true">
+			<column name="isreferral"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="wasPatientRejectionLetterSent" type="boolean" access="field" update="true">
+			<column name="waspatient"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="wasPatientProviderCancellationLetterSent" type="boolean" access="field" update="true">
+			<column name="waspatien2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="requiresDischargeRep" type="boolean" access="field" update="true">
+			<column name="requiresdi"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="hasDNAApptsForReview" type="boolean" access="field" update="true">
+			<column name="hasdnaappt"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="hasCancelledApptsForReview" type="boolean" access="field" update="true">
+			<column name="hascancell"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="isSecondaryReportRequired" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_issecondar" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="wasFurtherManagementDetailsReviewed" type="boolean" access="field" update="true">
+			<column name="wasfurther"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isCurrentlyAllocated" type="boolean" access="field" update="true">
+			<column name="iscurrentl"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="onwardReferralReason" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_onwardref2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="wasOutputtedToWeeklyReport" type="boolean" access="field" update="true">
+			<column name="wasoutputt"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="wasOutputtedToMonthlyReport" type="boolean" access="field" update="true">
+			<column name="wasoutput2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="dischargeToGPDetailsReviewStatus" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_discharget" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isAwaitingClinicalInfo" type="boolean" access="field" update="true">
+			<column name="isawaiting"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isActiveMonitorApptRequired" type="boolean" access="field" update="true">
+			<column name="isactivemo"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="cATSReportSentDate" type="timestamp" access="field" update="true">
+			<column name="catsreport"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="suitableForSurgeryDate" type="date" access="field" update="true">
+			<column name="suitablefo"  not-null="false" unique="false"  index='sfs_idx'/>
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="endOfCareDate" type="date" access="field" update="true">
+			<column name="endofcared"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="referralCategory" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_referralca" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isOnwardReferralTriage" type="boolean" access="field" update="true">
+			<column name="isonwardre"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="hasOPProcAwaitingAppt" type="boolean" access="field" update="true">
+			<column name="hasopproca"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="urgency" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_urgency" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="pathwayID" type="string" access="field" update="true" > 
+			<column name="pathwayid" length="20"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="rTTClockImpact" type="boolean" access="field" update="true">
+			<column name="rttclockim"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="consUpgradeDate" type="date" access="field" update="true">
+			<column name="consupgrad"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,181 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:36 -->
+<hibernate-mapping>
+	<class name="ims.emergency.domain.objects.Tracking" table="emer_tracking" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: patient -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="patient" class="ims.core.patient.domain.objects.Patient" unique="true" foreign-key="tracking_patient_fk" access="field" cascade="save-update">
+			<column name="patient" sql-type="numeric(10,0)" not-null="true" unique="false"  index='patient_idx' />
+		</many-to-one>
+<!-- debug: attendance -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="attendance" class="ims.core.admin.domain.objects.EmergencyAttendance" unique="true" foreign-key="tracking_attendance_fk" access="field" cascade="save-update">
+			<column name="attendance" sql-type="numeric(10,0)" not-null="true" unique="false"  index='attendance_idx' />
+		</many-to-one>
+<!-- debug: episode -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="episode" class="ims.core.admin.domain.objects.EmergencyEpisode" unique="true" foreign-key="tracking_episode_fk" access="field" cascade="save-update">
+			<column name="episode" sql-type="numeric(10,0)" not-null="true" unique="false"  index='episode_idx' />
+		</many-to-one>
+<!-- debug: currentDNW -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="currentDNW" class="ims.emergency.domain.objects.DNW" unique="true" foreign-key="tracking_currentdnw_fk" access="field" cascade="save-update">
+			<column name="currentdnw" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: currentReferral -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="currentReferral" class="ims.emergency.domain.objects.ReferralToSpecTeam" unique="true" foreign-key="tracking_currentref_fk" access="field" cascade="save-update">
+			<column name="currentref" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: triageDetails -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="triageDetails" class="ims.emergency.domain.objects.Triage" unique="true" foreign-key="tracking_triagedeta_fk" access="field" cascade="save-update">
+			<column name="triagedeta" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: currentArea -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="currentArea" class="ims.emergency.configuration.domain.objects.TrackingArea" unique="true" foreign-key="tracking_currentare_fk" access="field" cascade="save-update">
+			<column name="currentare" sql-type="numeric(10,0)" not-null="false" unique="false"  index='tracking_area_idx' />
+		</many-to-one>
+<!-- debug: eDLocation -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="eDLocation" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="tracking_edlocation_fk" access="field" cascade="save-update">
+			<column name="edlocation" sql-type="numeric(10,0)" not-null="true" unique="false"  index='tracking_loc_idx' />
+		</many-to-one>
+<!-- debug: currentStatus -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="currentStatus" class="ims.emergency.domain.objects.TrackingAttendanceStatus" unique="true" foreign-key="tracking_currentsta_fk" access="field" cascade="save-update">
+			<column name="currentsta" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: isUnknownPatient -->
+<!-- debug: isPrimaryCare -->
+<!-- debug: isDischarged -->
+<!-- debug: seenBy -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="seenBy" class="ims.emergency.domain.objects.SeenByHCP" unique="true" foreign-key="tracking_seenby_fk" access="field" cascade="save-update">
+			<column name="seenby" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: currentCubicle -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="currentCubicle" class="ims.emergency.domain.objects.CubicleAllocation" unique="true" foreign-key="tracking_currentcub_fk" access="field" cascade="save-update">
+			<column name="currentcub" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: lastMovementDateTime -->
+<!-- debug: bedAvailability -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="bedAvailability" class="ims.emergency.domain.objects.BedAvailability" unique="true" foreign-key="tracking_bedavailab_fk" access="field" cascade="save-update">
+			<column name="bedavailab" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: isCurrentlyInXray -->
+<!-- debug: associatedPendingEmergencyAdmission -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="associatedPendingEmergencyAdmission" class="ims.core.admin.pas.domain.objects.PendingEmergencyAdmission" unique="true" foreign-key="tracking_associated_fk" access="field" cascade="save-update">
+			<column name="associated" sql-type="numeric(10,0)" not-null="false" unique="false"  index='PEAIndex' />
+		</many-to-one>
+<!-- debug: dischargeLetterStatus -->
+<!-- debug: reasonForBreach -->
+<!-- debug: currentTransferRecord -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="currentTransferRecord" class="ims.emergency.domain.objects.EDTransfer" unique="true" foreign-key="tracking_currenttra_fk" access="field" cascade="save-update">
+			<column name="currenttra" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: currentPartialAdmission -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="currentPartialAdmission" class="ims.emergency.domain.objects.EDPartialAdmission" unique="true" foreign-key="tracking_currentpar_fk" access="field" cascade="save-update">
+			<column name="currentpar" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isUnknownPatient" type="boolean" access="field" update="true">
+			<column name="isunknownp"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isPrimaryCare" type="boolean" access="field" update="true">
+			<column name="isprimaryc"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isDischarged" type="boolean" access="field" update="true">
+			<column name="isdischarg"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="lastMovementDateTime" type="timestamp" access="field" update="true">
+			<column name="lastmoveme"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isCurrentlyInXray" type="boolean" access="field" update="true">
+			<column name="iscurrentl"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="dischargeLetterStatus" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_dischargel" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="reasonForBreach" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_reasonforb" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+	</class>
+</hibernate-mapping>

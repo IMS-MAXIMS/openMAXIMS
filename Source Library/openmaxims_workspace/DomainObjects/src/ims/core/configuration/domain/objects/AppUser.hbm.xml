@@ -1,0 +1,160 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:35 -->
+<hibernate-mapping>
+	<class name="ims.core.configuration.domain.objects.AppUser" table="core_appuser" lazy="true" discriminator-value="null" >
+		<cache usage="nonstrict-read-write" />
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: username -->
+<!-- debug: password -->
+<!-- debug: encodedPassword -->
+<!-- debug: theme -->
+<!-- debug: pwdExpDate -->
+<!-- debug: effectiveFrom -->
+<!-- debug: effectiveTo -->
+<!-- debug: isActive -->
+<!-- debug: roles -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- many to many -->
+		<set name="roles" table="core_appuser_c_rol" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="appuser_c_rol_fr_fk">
+				<column name="from_side" sql-type="numeric(10,0)" unique="false"   />
+			</key>
+			
+			<many-to-many class="ims.core.configuration.domain.objects.AppRole" foreign-key="appuser_c_rol_to_fk">
+				<column name="to_side" sql-type="numeric(10,0)" unique="false"   />
+			</many-to-many>
+		</set>
+<!-- debug: mos -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="mos" class="ims.core.resource.people.domain.objects.MemberOfStaff" unique="true" foreign-key="appuser_mos_fk" access="field" cascade="save-update">
+			<column name="mos" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: debugMode -->
+<!-- debug: previousPasswords -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<list name="previousPasswords" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="appuser_previouspa_fk">
+				<column name="core_appuser_previouspa" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.core.configuration.domain.objects.AppUserPassword" />
+		</list>
+<!-- debug: emailAccount -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="emailAccount" class="ims.core.admin.domain.objects.UserEmailAccount" unique="true" foreign-key="appuser_emailaccou_fk" access="field" cascade="save-update">
+			<column name="emailaccou" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: useExternalAuthentication -->
+<!-- debug: notificationDetails -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="notificationDetails" class="ims.core.configuration.domain.objects.UserNotificationDetails" unique="true" foreign-key="appuser_notificati_fk" access="field" cascade="save-update">
+			<column name="notificati" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: lDAPUsername -->
+<!-- debug: lDAPPassword -->
+<!-- debug: secretKey -->
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="username" type="string" access="field" update="true" > 
+			<column name="username" length="30"  not-null="true" unique="true"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="password" type="string" access="field" update="true" > 
+			<column name="c_passwo" length="30"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="encodedPassword" type="string" access="field" update="true" > 
+			<column name="encodedpas" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="theme" type="string" access="field" update="true" > 
+			<column name="theme" length="20"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="pwdExpDate" type="timestamp" access="field" update="true">
+			<column name="pwdexpdate"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="effectiveFrom" type="timestamp" access="field" update="true">
+			<column name="effectivef"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="effectiveTo" type="timestamp" access="field" update="true">
+			<column name="effectivet"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isActive" type="boolean" access="field" update="true">
+			<column name="isactive"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="debugMode" type="boolean" access="field" update="true">
+			<column name="debugmode"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="useExternalAuthentication" type="boolean" access="field" update="true">
+			<column name="useexterna"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="lDAPUsername" type="string" access="field" update="true" > 
+			<column name="ldapuserna" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="lDAPPassword" type="string" access="field" update="true" > 
+			<column name="ldappasswo" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="secretKey" type="string" access="field" update="true" > 
+			<column name="secretkey" length="32"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

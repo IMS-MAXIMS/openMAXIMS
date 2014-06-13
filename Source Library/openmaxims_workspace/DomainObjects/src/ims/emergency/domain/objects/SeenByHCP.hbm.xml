@@ -1,0 +1,105 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:36 -->
+<hibernate-mapping>
+	<class name="ims.emergency.domain.objects.SeenByHCP" table="emer_seenbyhcp" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: patient -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="patient" class="ims.core.patient.domain.objects.Patient" unique="true" foreign-key="seenbyhcp_patient_fk" access="field" cascade="save-update">
+			<column name="patient" sql-type="numeric(10,0)" not-null="true" unique="false"  index='patient_idx' />
+		</many-to-one>
+<!-- debug: episode -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="episode" class="ims.core.admin.domain.objects.EpisodeOfCare" unique="true" foreign-key="seenbyhcp_episode_fk" access="field" cascade="save-update">
+			<column name="episode" sql-type="numeric(10,0)" not-null="true" unique="false"  index='episode_idx' />
+		</many-to-one>
+<!-- debug: attendance -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="attendance" class="ims.core.admin.domain.objects.CareContext" unique="true" foreign-key="seenbyhcp_attendance_fk" access="field" cascade="save-update">
+			<column name="attendance" sql-type="numeric(10,0)" not-null="true" unique="false"  index='attendance_idx' />
+		</many-to-one>
+<!-- debug: trackingArea -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="trackingArea" class="ims.emergency.configuration.domain.objects.TrackingArea" unique="true" foreign-key="seenbyhcp_trackingar_fk" access="field" cascade="save-update">
+			<column name="trackingar" sql-type="numeric(10,0)" not-null="false" unique="false"  index='area_idx' />
+		</many-to-one>
+<!-- debug: allocatedDateTime -->
+<!-- debug: allocatedMedic -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="allocatedMedic" class="ims.core.resource.people.domain.objects.Medic" unique="true" foreign-key="seenbyhcp_allocatedm_fk" access="field" cascade="save-update">
+			<column name="allocatedm" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: allocatedNurse -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="allocatedNurse" class="ims.core.resource.people.domain.objects.Nurse" unique="true" foreign-key="seenbyhcp_allocatedn_fk" access="field" cascade="save-update">
+			<column name="allocatedn" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: seenDateTime -->
+<!-- debug: completedDateTime -->
+<!-- debug: seenByHCPNotes -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- one to many -->
+		<list name="seenByHCPNotes" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="seenbyhcp_seenbyhcpn_fk">
+				<column name="emer_seenbyhcp_seenbyhcpn" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.emergency.domain.objects.AttendanceClinicalNotes" />
+		</list>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="allocatedDateTime" type="timestamp" access="field" update="true">
+			<column name="allocatedd"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="seenDateTime" type="timestamp" access="field" update="true">
+			<column name="seendateti"  not-null="true" unique="false"  index='idx_seenDT'/>
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="completedDateTime" type="timestamp" access="field" update="true">
+			<column name="completedd"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

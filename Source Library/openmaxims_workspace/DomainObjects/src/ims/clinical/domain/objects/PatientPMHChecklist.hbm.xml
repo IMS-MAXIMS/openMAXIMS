@@ -1,0 +1,110 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:36 -->
+<hibernate-mapping>
+	<class name="ims.clinical.domain.objects.PatientPMHChecklist" table="shcl_patientpmhchec" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: careContext -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="careContext" class="ims.core.admin.domain.objects.CareContext" unique="true" foreign-key="patientpmhchec_carecontex_fk" access="field" cascade="save-update">
+			<column name="carecontex" sql-type="numeric(10,0)" not-null="true" unique="true"   />
+		</many-to-one>
+<!-- debug: clinicalContact -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="clinicalContact" class="ims.core.admin.domain.objects.ClinicalContact" unique="true" foreign-key="patientpmhchec_clinicalco_fk" access="field" cascade="save-update">
+			<column name="clinicalco" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: pMHInfoText -->
+<!-- debug: presComplaint -->
+<!-- debug: positiveDiagnosis -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- many to many -->
+		<set name="positiveDiagnosis" table="shcl_patientpmhchec_positivedi" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="patientpmhchec_positived_fr_fk">
+				<column name="from_side" sql-type="numeric(10,0)" unique="false"   />
+			</key>
+			
+			<many-to-many class="ims.core.clinical.domain.objects.PatientDiagnosis" foreign-key="patientpmhchec_positived_to_fk">
+				<column name="to_side" sql-type="numeric(10,0)" unique="false"   />
+			</many-to-many>
+		</set>
+<!-- debug: positiveProcedure -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- many to many -->
+		<set name="positiveProcedure" table="shcl_patientpmhchec_positivepr" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="patientpmhchec_positivep_fr_fk">
+				<column name="from_side" sql-type="numeric(10,0)" unique="false"   />
+			</key>
+			
+			<many-to-many class="ims.core.clinical.domain.objects.PatientProcedure" foreign-key="patientpmhchec_positivep_to_fk">
+				<column name="to_side" sql-type="numeric(10,0)" unique="false"   />
+			</many-to-many>
+		</set>
+<!-- debug: otherDiagnosis -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="otherDiagnosis" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="patientpmhchec_otherdiagn_fk">
+				<column name="shcl_patientpmhchec_otherdiagn" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.clinical.domain.objects.PatientPMHChecklistDiagnosis" />
+		</set>
+<!-- debug: otherProcedure -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="otherProcedure" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="patientpmhchec_otherproce_fk">
+				<column name="shcl_patientpmhchec_otherproce" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.clinical.domain.objects.PatientPMHChecklistProcedure" />
+		</set>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="pMHInfoText" type="string" access="field" update="true" > 
+			<column name="pmhinfotex" length="500"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="presComplaint" type="string" access="field" update="true" > 
+			<column name="prescompla" length="500"  not-null="true" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

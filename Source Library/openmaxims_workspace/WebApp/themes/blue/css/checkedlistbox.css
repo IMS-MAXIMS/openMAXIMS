@@ -1,0 +1,58 @@
+.cn_checkedlistbox{
+	border: 1px solid #7F9DB9;
+	overflow: auto;
+	background: white;
+	cursor: default;
+}
+
+.cn_checkedlistbox .checkBoxSpan{
+	font-family: wingdings;
+	font-size: 17px;
+	height: 1em;
+	overflow: hidden;
+	padding-left: 2px;
+	padding-right: 2px;
+	xl--hover-color: #1148AB;
+	vertical-align: top	
+}
+
+.cn_checkedlistbox .iconImg{
+	vertical-align: top;
+}
+
+.cn_checkedlistbox .textSpan{
+	position: relative;
+	margin-left: 2px;
+	padding: 2px;
+}
+
+.cn_checkedlistbox .itemDivSelected .textSpan{
+	background: #316AC5;
+	color: white;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#316AC5, endcolorstr=#3F89FF, gradienttype=1);
+}
+
+
+.cn_checkedlistbox .itemDivOver .textSpan{
+	text-decoration: underline;
+}
+
+
+.cn_grid .cn_checkedlistbox{
+	border: none;
+}
+
+.cn_grid .cn_checkedlistbox img{
+	margin-top: 2px;
+}
+
+.cn_grid .readOnly .cn_checkedlistbox{
+	background: transparent;
+}
+
+.cn_grid .checkedlistbox_table td{
+	padding: 0;
+	margin: 0;
+	width: 100%;
+	height: 100%;
+} 

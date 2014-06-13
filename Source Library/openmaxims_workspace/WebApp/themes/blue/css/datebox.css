@@ -1,0 +1,7 @@
+.cn_datebox{ 
+	xl--disabled-border-color: #dddddd; 
+	xl--disabled-filter: alpha(opacity=80);
+}
+.cn_datebox input{ width: 100%; }
+.cn_datebox button{ margin-left: 2px; width: 21px; height: 21px; }
+.cn_datebox img{ margin-top: 1px; margin-left: 1px; }

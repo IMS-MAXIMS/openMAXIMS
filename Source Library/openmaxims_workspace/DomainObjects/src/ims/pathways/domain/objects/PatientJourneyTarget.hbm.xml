@@ -1,0 +1,149 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:36 -->
+<hibernate-mapping>
+	<class name="ims.pathways.domain.objects.PatientJourneyTarget" table="pthw_patjourntarg" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: pathwayTarget -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="pathwayTarget" class="ims.pathways.configuration.domain.objects.PathwayTarget" unique="true" foreign-key="patjourntarg_pathwaytar_fk" access="field" cascade="save-update">
+			<column name="pathwaytar" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: weekNumber -->
+<!-- debug: targetDate -->
+<!-- debug: currentStatus -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="currentStatus" class="ims.pathways.domain.objects.JourneyTargetStatus" unique="true" foreign-key="patjourntarg_currentsta_fk" access="field" cascade="save-update">
+			<column name="currentsta" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: statusHistory -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- one to many -->
+		<set name="statusHistory" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="patjourntarg_statushist_fk">
+				<column name="pthw_patjourntarg_statushist" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.pathways.domain.objects.JourneyTargetStatus" />
+		</set>
+<!-- debug: journeyClock -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="journeyClock" class="ims.pathways.domain.objects.PathwayClock" unique="true" foreign-key="patjourntarg_journeyclo_fk" access="field" cascade="save-update">
+			<column name="journeyclo" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: achievedDate -->
+<!-- debug: scheduledDate -->
+<!-- debug: cancelledDate -->
+<!-- debug: hasCancelledEvents -->
+<!-- debug: events -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- inverse side that is one-to-many -->
+		<set name="events" inverse="true"  access="field" cascade="save-update" lazy="true" >
+			<key foreign-key="patientevent_patienttar_fk">
+				<column name="patienttar" sql-type="numeric(10,0)" unique="false"   />
+			</key>
+			
+			<one-to-many class="ims.pathways.domain.objects.PatientEvent"/>
+		</set>
+<!-- debug: pathwayJourney -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- many to one -->
+		<many-to-one name="pathwayJourney" class="ims.pathways.domain.objects.PatientPathwayJourney" foreign-key="patjourntarg_pathwayjou_fk" access="field" cascade="save-update">
+			<column name="pathwayjou" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: achievedVariance -->
+<!-- debug: targetCalFromDate -->
+<!-- debug: readjustments -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="readjustments" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="patjourntarg_readjustme_fk">
+				<column name="pthw_patjourntarg_readjustme" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.pathways.domain.objects.TargetReadjustment" />
+		</set>
+<!-- debug: hasReadjustments -->
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="weekNumber" type="integer" access="field" update="true">
+			<column name="weeknumber"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="targetDate" type="date" access="field" update="true">
+			<column name="targetdate"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="achievedDate" type="timestamp" access="field" update="true">
+			<column name="achievedda"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="scheduledDate" type="date" access="field" update="true">
+			<column name="scheduledd"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="cancelledDate" type="date" access="field" update="true">
+			<column name="cancelledd"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="hasCancelledEvents" type="boolean" access="field" update="true">
+			<column name="hascancell"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="achievedVariance" type="integer" access="field" update="true">
+			<column name="achievedva"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="targetCalFromDate" type="date" access="field" update="true">
+			<column name="targetcalf"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="hasReadjustments" type="boolean" access="field" update="true">
+			<column name="hasreadjus"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

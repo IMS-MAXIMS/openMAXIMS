@@ -1,0 +1,5 @@
+.cn_link{ text-decoration: none; cursor: hand; font-weight: bold; white-space: nowrap; }
+.cn_link:hover{ text-decoration: underline; }
+.cn_link img{ margin-right: 4px; border: 0px; }
+.cn_link_disabled{ color: gray; cursor: default; }
+.cn_link_disabled:hover{ text-decoration: none; }

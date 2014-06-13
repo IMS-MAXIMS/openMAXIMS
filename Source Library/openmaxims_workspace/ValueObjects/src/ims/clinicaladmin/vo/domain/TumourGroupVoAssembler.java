@@ -1,0 +1,680 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#############################################################################
+//#EOH
+/*
+ * This code was generated
+ * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
+ * IMS Development Environment (version 1.80 build 5007.25751)
+ * WARNING: DO NOT MODIFY the content of this file
+ * Generated on 16/04/2014, 12:32
+ *
+ */
+package ims.clinicaladmin.vo.domain;
+
+import ims.vo.domain.DomainObjectMap;
+import java.util.HashMap;
+
+import org.hibernate.proxy.HibernateProxy;
+
+/**
+ * @author Catalin Tomozei
+ */
+public class TumourGroupVoAssembler
+{
+  	/**
+	 * Copy one ValueObject to another
+	 * @param valueObjectDest to be updated
+	 * @param valueObjectSrc to copy values from
+	 */
+	 public static ims.clinicaladmin.vo.TumourGroupVo copy(ims.clinicaladmin.vo.TumourGroupVo valueObjectDest, ims.clinicaladmin.vo.TumourGroupVo valueObjectSrc) 
+	 {
+	 	if (null == valueObjectSrc) 
+		{
+			return valueObjectSrc;
+		}
+		valueObjectDest.setID_TumourGroup(valueObjectSrc.getID_TumourGroup());
+	    valueObjectDest.setIsRIE(valueObjectSrc.getIsRIE());
+		// TaxonomyMap
+		valueObjectDest.setTaxonomyMap(valueObjectSrc.getTaxonomyMap());
+		// TNMValues
+		valueObjectDest.setTNMValues(valueObjectSrc.getTNMValues());
+		// SerumMarkers
+		valueObjectDest.setSerumMarkers(valueObjectSrc.getSerumMarkers());
+		// AssociatedSpecialties
+		valueObjectDest.setAssociatedSpecialties(valueObjectSrc.getAssociatedSpecialties());
+		// Histologies
+		valueObjectDest.setHistologies(valueObjectSrc.getHistologies());
+		// TNMVersion
+		valueObjectDest.setTNMVersion(valueObjectSrc.getTNMVersion());
+		// Assessment
+		valueObjectDest.setAssessment(valueObjectSrc.getAssessment());
+		// HistopathologicGrades
+		valueObjectDest.setHistopathologicGrades(valueObjectSrc.getHistopathologicGrades());
+		// PrognosticGroupingConfig
+		valueObjectDest.setPrognosticGroupingConfig(valueObjectSrc.getPrognosticGroupingConfig());
+		// GroupDescription
+		valueObjectDest.setGroupDescription(valueObjectSrc.getGroupDescription());
+		// hasOtherClassifications
+		valueObjectDest.setHasOtherClassifications(valueObjectSrc.getHasOtherClassifications());
+		// OtherClassifications
+		valueObjectDest.setOtherClassifications(valueObjectSrc.getOtherClassifications());
+		// Sites
+		valueObjectDest.setSites(valueObjectSrc.getSites());
+		// TnmRequiresDiff
+		valueObjectDest.setTnmRequiresDiff(valueObjectSrc.getTnmRequiresDiff());
+		// TnmRequiresOver45
+		valueObjectDest.setTnmRequiresOver45(valueObjectSrc.getTnmRequiresOver45());
+		// TnmRequiresHisto
+		valueObjectDest.setTnmRequiresHisto(valueObjectSrc.getTnmRequiresHisto());
+		// TnmRequiresSMarkers
+		valueObjectDest.setTnmRequiresSMarkers(valueObjectSrc.getTnmRequiresSMarkers());
+		// GroupName
+		valueObjectDest.setGroupName(valueObjectSrc.getGroupName());
+		// isActive
+		valueObjectDest.setIsActive(valueObjectSrc.getIsActive());
+		// hasTNM
+		valueObjectDest.setHasTNM(valueObjectSrc.getHasTNM());
+		// isPrognosticGroupingRelevant
+		valueObjectDest.setIsPrognosticGroupingRelevant(valueObjectSrc.getIsPrognosticGroupingRelevant());
+	 	return valueObjectDest;
+	 }
+
+ 
+	/**
+	 * Create the ValueObject collection to hold the set of DomainObjects.
+	 * This is a convenience method only.
+	 * It is intended to be used when one called to an Assembler is made.
+ 	 * If more than one call to an Assembler is made then #createTumourGroupVoCollectionFromTumourGroup(DomainObjectMap, Set) should be used.
+	 * @param domainObjectSet - Set of ims.oncology.configuration.domain.objects.TumourGroup objects.
+	 */
+	public static ims.clinicaladmin.vo.TumourGroupVoCollection createTumourGroupVoCollectionFromTumourGroup(java.util.Set domainObjectSet)	
+	{
+		return createTumourGroupVoCollectionFromTumourGroup(new DomainObjectMap(), domainObjectSet);
+	}
+	
+	/**
+	 * Create the ValueObject collection to hold the set of DomainObjects.
+	 * @param map - maps DomainObjects to created ValueObjects
+	 * @param domainObjectSet - Set of ims.oncology.configuration.domain.objects.TumourGroup objects.
+	 */
+	public static ims.clinicaladmin.vo.TumourGroupVoCollection createTumourGroupVoCollectionFromTumourGroup(DomainObjectMap map, java.util.Set domainObjectSet)	
+	{
+		ims.clinicaladmin.vo.TumourGroupVoCollection voList = new ims.clinicaladmin.vo.TumourGroupVoCollection();
+		if ( null == domainObjectSet ) 
+		{
+			return voList;
+		}
+		int rieCount=0;
+		int activeCount=0;
+		java.util.Iterator iterator = domainObjectSet.iterator();
+		while( iterator.hasNext() ) 
+		{
+			ims.oncology.configuration.domain.objects.TumourGroup domainObject = (ims.oncology.configuration.domain.objects.TumourGroup) iterator.next();
+			ims.clinicaladmin.vo.TumourGroupVo vo = create(map, domainObject);
+			
+			if (vo != null)
+				voList.add(vo);
+				
+			if (domainObject != null)
+			{				
+				if (domainObject.getIsRIE() != null && domainObject.getIsRIE().booleanValue() == true)
+					rieCount++;
+				else
+					activeCount++;
+			}
+		}
+		voList.setRieCount(rieCount);
+		voList.setActiveCount(activeCount);
+		return voList;
+	}
+
+	/**
+	 * Create the ValueObject collection to hold the list of DomainObjects.
+	 * @param domainObjectList - List of ims.oncology.configuration.domain.objects.TumourGroup objects.
+	 */
+	public static ims.clinicaladmin.vo.TumourGroupVoCollection createTumourGroupVoCollectionFromTumourGroup(java.util.List domainObjectList) 
+	{
+		return createTumourGroupVoCollectionFromTumourGroup(new DomainObjectMap(), domainObjectList);
+	}
+	
+	/**
+	 * Create the ValueObject collection to hold the list of DomainObjects.
+	 * @param map - maps DomainObjects to created ValueObjects
+	 * @param domainObjectList - List of ims.oncology.configuration.domain.objects.TumourGroup objects.
+	 */
+	public static ims.clinicaladmin.vo.TumourGroupVoCollection createTumourGroupVoCollectionFromTumourGroup(DomainObjectMap map, java.util.List domainObjectList) 
+	{
+		ims.clinicaladmin.vo.TumourGroupVoCollection voList = new ims.clinicaladmin.vo.TumourGroupVoCollection();
+		if ( null == domainObjectList ) 
+		{
+			return voList;
+		}		
+		int rieCount=0;
+		int activeCount=0;
+		for (int i = 0; i < domainObjectList.size(); i++)
+		{
+			ims.oncology.configuration.domain.objects.TumourGroup domainObject = (ims.oncology.configuration.domain.objects.TumourGroup) domainObjectList.get(i);
+			ims.clinicaladmin.vo.TumourGroupVo vo = create(map, domainObject);
+
+			if (vo != null)
+				voList.add(vo);
+			
+			if (domainObject != null)
+			{
+				if (domainObject.getIsRIE() != null && domainObject.getIsRIE().booleanValue() == true)
+					rieCount++;
+				else
+					activeCount++;
+			}
+		}
+		
+		voList.setRieCount(rieCount);
+		voList.setActiveCount(activeCount);
+		return voList;
+	}
+
+	/**
+	 * Create the ims.oncology.configuration.domain.objects.TumourGroup set from the value object collection.
+	 * @param domainFactory - used to create existing (persistent) domain objects.
+	 * @param voCollection - the collection of value objects	 
+	 */
+	 public static java.util.Set extractTumourGroupSet(ims.domain.ILightweightDomainFactory domainFactory, ims.clinicaladmin.vo.TumourGroupVoCollection voCollection) 
+	 {
+	 	return extractTumourGroupSet(domainFactory, voCollection, null, new HashMap());
+	 }
+	 
+	 public static java.util.Set extractTumourGroupSet(ims.domain.ILightweightDomainFactory domainFactory, ims.clinicaladmin.vo.TumourGroupVoCollection voCollection, java.util.Set domainObjectSet, HashMap domMap) 
+	 {
+	 	int size = (null == voCollection) ? 0 : voCollection.size();
+		if (domainObjectSet == null)
+		{
+			domainObjectSet = new java.util.HashSet();			
+		}
+		java.util.Set newSet = new java.util.HashSet();
+		for(int i=0; i<size; i++) 
+		{
+			ims.clinicaladmin.vo.TumourGroupVo vo = voCollection.get(i);
+			ims.oncology.configuration.domain.objects.TumourGroup domainObject = TumourGroupVoAssembler.extractTumourGroup(domainFactory, vo, domMap);
+
+			//TODO: This can only occur in the situation of a stale object exception. For now leave it to the Interceptor to handle it.
+			if (domainObject == null)
+			{
+				continue;
+			}
+			
+			//Trying to avoid the hibernate collection being marked as dirty via its public interface methods. (like add)
+			if (!domainObjectSet.contains(domainObject)) domainObjectSet.add(domainObject);
+			newSet.add(domainObject);			
+		}
+		java.util.Set removedSet = new java.util.HashSet();
+		java.util.Iterator iter = domainObjectSet.iterator();
+		//Find out which objects need to be removed
+		while (iter.hasNext())
+		{
+			ims.domain.DomainObject o = (ims.domain.DomainObject)iter.next();			
+			if ((o == null || o.getIsRIE() == null || !o.getIsRIE().booleanValue()) && !newSet.contains(o))
+			{
+				removedSet.add(o);
+			}
+		}
+		iter = removedSet.iterator();
+		//Remove the unwanted objects
+		while (iter.hasNext())
+		{
+			domainObjectSet.remove(iter.next());
+		}
+		return domainObjectSet;	 
+	 }
+
+
+	/**
+	 * Create the ims.oncology.configuration.domain.objects.TumourGroup list from the value object collection.
+	 * @param domainFactory - used to create existing (persistent) domain objects.
+	 * @param voCollection - the collection of value objects	 
+	 */
+	 public static java.util.List extractTumourGroupList(ims.domain.ILightweightDomainFactory domainFactory, ims.clinicaladmin.vo.TumourGroupVoCollection voCollection) 
+	 {
+	 	return extractTumourGroupList(domainFactory, voCollection, null, new HashMap());
+	 }
+	 
+	 public static java.util.List extractTumourGroupList(ims.domain.ILightweightDomainFactory domainFactory, ims.clinicaladmin.vo.TumourGroupVoCollection voCollection, java.util.List domainObjectList, HashMap domMap) 
+	 {
+	 	int size = (null == voCollection) ? 0 : voCollection.size();
+		if (domainObjectList == null)
+		{
+			domainObjectList = new java.util.ArrayList();			
+		}
+		for(int i=0; i<size; i++) 
+		{
+			ims.clinicaladmin.vo.TumourGroupVo vo = voCollection.get(i);
+			ims.oncology.configuration.domain.objects.TumourGroup domainObject = TumourGroupVoAssembler.extractTumourGroup(domainFactory, vo, domMap);
+
+			//TODO: This can only occur in the situation of a stale object exception. For now leave it to the Interceptor to handle it.
+			if (domainObject == null)
+			{
+				continue;
+			}
+
+			int domIdx = domainObjectList.indexOf(domainObject);
+			if (domIdx == -1)
+			{
+				domainObjectList.add(i, domainObject);
+			}
+			else if (i != domIdx && i < domainObjectList.size())
+			{
+				Object tmp = domainObjectList.get(i);
+				domainObjectList.set(i, domainObjectList.get(domIdx));
+				domainObjectList.set(domIdx, tmp);
+			}
+		}
+		
+		//Remove all ones in domList where index > voCollection.size() as these should
+		//now represent the ones removed from the VO collection. No longer referenced.
+		int i1=domainObjectList.size();
+		while (i1 > size)
+		{
+			domainObjectList.remove(i1-1);
+			i1=domainObjectList.size();
+		}
+		return domainObjectList;	 
+	 }
+
+ 
+
+	/**
+	 * Create the ValueObject from the ims.oncology.configuration.domain.objects.TumourGroup object.
+	 * @param domainObject ims.oncology.configuration.domain.objects.TumourGroup
+	 */
+	 public static ims.clinicaladmin.vo.TumourGroupVo create(ims.oncology.configuration.domain.objects.TumourGroup domainObject) 
+	 {
+	 	if (null == domainObject) 
+	 	{
+			return null;
+		}
+		DomainObjectMap map = new DomainObjectMap();
+		return create(map, domainObject);
+	 }
+	 
+	 /**
+	  * Create the ValueObject from the ims.oncology.configuration.domain.objects.TumourGroup object.
+	  * @param map DomainObjectMap of DomainObjects to already created ValueObjects.
+	  * @param domainObject
+	  */
+	  public static ims.clinicaladmin.vo.TumourGroupVo create(DomainObjectMap map, ims.oncology.configuration.domain.objects.TumourGroup domainObject) 
+	  {
+	  		if (null == domainObject) 
+	  		{
+				return null;
+			}
+			// check if the domainObject already has a valueObject created for it
+			ims.clinicaladmin.vo.TumourGroupVo valueObject = (ims.clinicaladmin.vo.TumourGroupVo) map.getValueObject(domainObject, ims.clinicaladmin.vo.TumourGroupVo.class);
+			if ( null == valueObject ) 
+			{
+				valueObject = new ims.clinicaladmin.vo.TumourGroupVo(domainObject.getId(), domainObject.getVersion());
+				map.addValueObject(domainObject, valueObject);
+
+				valueObject = insert(map, valueObject, domainObject);
+				
+			}
+	 		return valueObject;
+	  }
+
+	/**
+	 * Update the ValueObject with the Domain Object.
+	 * @param valueObject to be updated
+	 * @param domainObject ims.oncology.configuration.domain.objects.TumourGroup
+	 */
+	 public static ims.clinicaladmin.vo.TumourGroupVo insert(ims.clinicaladmin.vo.TumourGroupVo valueObject, ims.oncology.configuration.domain.objects.TumourGroup domainObject) 
+	 {
+	 	if (null == domainObject) 
+	 	{
+			return valueObject;
+		}
+		DomainObjectMap map = new DomainObjectMap();
+		return insert(map, valueObject, domainObject);
+	 }
+	 
+	/**
+	 * Update the ValueObject with the Domain Object.
+	 * @param map DomainObjectMap of DomainObjects to already created ValueObjects.
+	 * @param valueObject to be updated
+	 * @param domainObject ims.oncology.configuration.domain.objects.TumourGroup
+	 */
+	 public static ims.clinicaladmin.vo.TumourGroupVo insert(DomainObjectMap map, ims.clinicaladmin.vo.TumourGroupVo valueObject, ims.oncology.configuration.domain.objects.TumourGroup domainObject) 
+	 {
+	 	if (null == domainObject) 
+	 	{
+			return valueObject;
+		}
+	 	if (null == map) 
+	 	{
+			map = new DomainObjectMap();
+		}
+
+		valueObject.setID_TumourGroup(domainObject.getId());
+		valueObject.setIsRIE(domainObject.getIsRIE());
+		
+		// If this is a recordedInError record, and the domainObject
+		// value isIncludeRecord has not been set, then we return null and
+		// not the value object
+		if (valueObject.getIsRIE() != null && valueObject.getIsRIE().booleanValue() == true && !domainObject.isIncludeRecord())
+			return null;
+			
+		// If this is not a recordedInError record, and the domainObject
+		// value isIncludeRecord has been set, then we return null and
+		// not the value object
+		if ((valueObject.getIsRIE() == null || valueObject.getIsRIE().booleanValue() == false) && domainObject.isIncludeRecord())
+			return null;
+			
+		// TaxonomyMap
+		valueObject.setTaxonomyMap(ims.core.vo.domain.TaxonomyMapAssembler.createTaxonomyMapCollectionFromTaxonomyMap(map, domainObject.getTaxonomyMap()) );
+		// TNMValues
+		valueObject.setTNMValues(ims.clinicaladmin.vo.domain.TumourGroupSiteTNMValueVoAssembler.createTumourGroupSiteTNMValueVoCollectionFromTumourGroupSiteTNMValue(map, domainObject.getTNMValues()) );
+		// SerumMarkers
+		valueObject.setSerumMarkers(ims.clinicaladmin.vo.domain.TumourSerumMarkersLiteVoAssembler.createTumourSerumMarkersLiteVoCollectionFromTumourSerumMarker(map, domainObject.getSerumMarkers()) );
+		// AssociatedSpecialties
+		valueObject.setAssociatedSpecialties(ims.oncology.vo.domain.TumourGroupSpecialtyVoAssembler.createTumourGroupSpecialtyVoCollectionFromTumourGroupSpecialty(map, domainObject.getAssociatedSpecialties()) );
+		// Histologies
+		valueObject.setHistologies(ims.clinicaladmin.vo.domain.TumourGroupHistologyVoAssembler.createTumourGroupHistologyVoCollectionFromTumourGroupHistology(map, domainObject.getHistologies()) );
+		// TNMVersion
+		if (domainObject.getTNMVersion() != null)
+		{
+			if(domainObject.getTNMVersion() instanceof HibernateProxy) // If the proxy is set, there is no need to lazy load, the proxy knows the id already. 
+			{
+				HibernateProxy p = (HibernateProxy) domainObject.getTNMVersion();
+				int id = Integer.parseInt(p.getHibernateLazyInitializer().getIdentifier().toString());				
+				valueObject.setTNMVersion(new ims.oncology.configuration.vo.TNMStagingClassificationVersionRefVo(id, -1));				
+			}
+			else
+			{
+				valueObject.setTNMVersion(new ims.oncology.configuration.vo.TNMStagingClassificationVersionRefVo(domainObject.getTNMVersion().getId(), domainObject.getTNMVersion().getVersion()));
+			}
+		}
+		// Assessment
+		valueObject.setAssessment(ims.assessment.vo.domain.UserAssessmentLiteVoAssembler.create(map, domainObject.getAssessment()) );
+		// HistopathologicGrades
+		valueObject.setHistopathologicGrades(ims.clinicaladmin.vo.domain.TumourGroupHistopathologyGradeVoAssembler.createTumourGroupHistopathologyGradeVoCollectionFromTumourGroupHistopathologicGrade(map, domainObject.getHistopathologicGrades()) );
+		// PrognosticGroupingConfig
+		valueObject.setPrognosticGroupingConfig(ims.clinicaladmin.vo.domain.PrognosticGroupingCongfigVoAssembler.create(map, domainObject.getPrognosticGroupingConfig()) );
+		// GroupDescription
+		valueObject.setGroupDescription(domainObject.getGroupDescription());
+		// hasOtherClassifications
+		valueObject.setHasOtherClassifications( domainObject.isHasOtherClassifications() );
+		// OtherClassifications
+		valueObject.setOtherClassifications(ims.oncology.vo.domain.TumourGroupClassificationVoAssembler.createTumourGroupClassificationVoCollectionFromTumourGroupClassification(map, domainObject.getOtherClassifications()) );
+		// Sites
+		valueObject.setSites(ims.clinicaladmin.vo.domain.TumourSiteLiteVoAssembler.createTumourSiteLiteVoCollectionFromTumourSite(map, domainObject.getSites()) );
+		// TnmRequiresDiff
+		valueObject.setTnmRequiresDiff( domainObject.isTnmRequiresDiff() );
+		// TnmRequiresOver45
+		valueObject.setTnmRequiresOver45( domainObject.isTnmRequiresOver45() );
+		// TnmRequiresHisto
+		valueObject.setTnmRequiresHisto( domainObject.isTnmRequiresHisto() );
+		// TnmRequiresSMarkers
+		valueObject.setTnmRequiresSMarkers( domainObject.isTnmRequiresSMarkers() );
+		// GroupName
+		valueObject.setGroupName(domainObject.getGroupName());
+		// isActive
+		valueObject.setIsActive( domainObject.isIsActive() );
+		// hasTNM
+		valueObject.setHasTNM( domainObject.isHasTNM() );
+		// isPrognosticGroupingRelevant
+		valueObject.setIsPrognosticGroupingRelevant( domainObject.isIsPrognosticGroupingRelevant() );
+ 		return valueObject;
+	 }
+
+
+	/**
+	 * Create the domain object from the value object.
+	 * @param domainFactory - used to create existing (persistent) domain objects.
+	 * @param valueObject - extract the domain object fields from this.
+	 */
+	public static ims.oncology.configuration.domain.objects.TumourGroup extractTumourGroup(ims.domain.ILightweightDomainFactory domainFactory, ims.clinicaladmin.vo.TumourGroupVo valueObject) 
+	{
+		return 	extractTumourGroup(domainFactory, valueObject, new HashMap());
+	}
+
+	public static ims.oncology.configuration.domain.objects.TumourGroup extractTumourGroup(ims.domain.ILightweightDomainFactory domainFactory, ims.clinicaladmin.vo.TumourGroupVo valueObject, HashMap domMap) 
+	{
+		if (null == valueObject) 
+		{
+			return null;
+		}
+		Integer id = valueObject.getID_TumourGroup();
+		ims.oncology.configuration.domain.objects.TumourGroup domainObject = null;
+		if ( null == id) 
+		{
+			if (domMap.get(valueObject) != null)
+			{
+				return (ims.oncology.configuration.domain.objects.TumourGroup)domMap.get(valueObject);
+			}
+			// ims.clinicaladmin.vo.TumourGroupVo ID_TumourGroup field is unknown
+			domainObject = new ims.oncology.configuration.domain.objects.TumourGroup();
+			domMap.put(valueObject, domainObject);
+		}
+		else 
+		{
+			String key = (valueObject.getClass().getName() + "__" + valueObject.getID_TumourGroup());
+			if (domMap.get(key) != null)
+			{
+				return (ims.oncology.configuration.domain.objects.TumourGroup)domMap.get(key);
+			}
+			domainObject = (ims.oncology.configuration.domain.objects.TumourGroup) domainFactory.getDomainObject(ims.oncology.configuration.domain.objects.TumourGroup.class, id );
+			
+			//TODO: Not sure how this should be handled. Effectively it must be a staleobject exception, but maybe should be handled as that further up.
+			if (domainObject == null) 
+				return null;
+
+			domMap.put(key, domainObject);
+		}
+		domainObject.setVersion(valueObject.getVersion_TumourGroup());
+
+		domainObject.setTaxonomyMap(ims.core.vo.domain.TaxonomyMapAssembler.extractTaxonomyMapList(domainFactory, valueObject.getTaxonomyMap(), domainObject.getTaxonomyMap(), domMap));		
+		domainObject.setTNMValues(ims.clinicaladmin.vo.domain.TumourGroupSiteTNMValueVoAssembler.extractTumourGroupSiteTNMValueList(domainFactory, valueObject.getTNMValues(), domainObject.getTNMValues(), domMap));		
+
+		// SaveAsRefVO treated as RefValueObject
+		ims.oncology.configuration.vo.TumourSerumMarkerRefVoCollection refCollection3 = new ims.oncology.configuration.vo.TumourSerumMarkerRefVoCollection();
+		if (valueObject.getSerumMarkers() != null)
+		{
+			for (int i3=0; i3<valueObject.getSerumMarkers().size(); i3++)
+			{
+				ims.oncology.configuration.vo.TumourSerumMarkerRefVo ref3 = (ims.oncology.configuration.vo.TumourSerumMarkerRefVo)valueObject.getSerumMarkers().get(i3);
+				refCollection3.add(ref3);
+			}
+		}
+		int size3 = (null == refCollection3) ? 0 : refCollection3.size();		
+		java.util.Set domainSerumMarkers3 = domainObject.getSerumMarkers();
+		if (domainSerumMarkers3 == null)
+		{
+			domainSerumMarkers3 = new java.util.HashSet();
+		}
+		java.util.Set newSet3  = new java.util.HashSet();
+		for(int i=0; i<size3; i++) 
+		{
+			ims.oncology.configuration.vo.TumourSerumMarkerRefVo vo = refCollection3.get(i);					
+			ims.oncology.configuration.domain.objects.TumourSerumMarker dom = null;
+			if ( null != vo ) 
+			{
+				if (vo.getBoId() == null)
+				{
+					if (domMap.get(vo) != null)
+					{
+						dom = (ims.oncology.configuration.domain.objects.TumourSerumMarker)domMap.get(vo);
+					}
+				}
+				else
+				{
+					dom = (ims.oncology.configuration.domain.objects.TumourSerumMarker)domainFactory.getDomainObject( ims.oncology.configuration.domain.objects.TumourSerumMarker.class, vo.getBoId());
+				}
+			}
+
+			//Trying to avoid the hibernate collection being marked as dirty via its public interface methods. (like add)
+			if (!domainSerumMarkers3.contains(dom))
+			{
+				domainSerumMarkers3.add(dom);
+			}
+			newSet3.add(dom);			
+		}
+		java.util.Set removedSet3 = new java.util.HashSet();
+		java.util.Iterator iter3 = domainSerumMarkers3.iterator();
+		//Find out which objects need to be removed
+		while (iter3.hasNext())
+		{
+			ims.domain.DomainObject o = (ims.domain.DomainObject)iter3.next();			
+			if ((o == null || o.getIsRIE() == null || !o.getIsRIE().booleanValue()) && !newSet3.contains(o))
+			{
+				removedSet3.add(o);
+			}
+		}
+		iter3 = removedSet3.iterator();
+		//Remove the unwanted objects
+		while (iter3.hasNext())
+		{
+			domainSerumMarkers3.remove(iter3.next());
+		}		
+		
+		domainObject.setSerumMarkers(domainSerumMarkers3);		
+		domainObject.setAssociatedSpecialties(ims.oncology.vo.domain.TumourGroupSpecialtyVoAssembler.extractTumourGroupSpecialtySet(domainFactory, valueObject.getAssociatedSpecialties(), domainObject.getAssociatedSpecialties(), domMap));		
+		domainObject.setHistologies(ims.clinicaladmin.vo.domain.TumourGroupHistologyVoAssembler.extractTumourGroupHistologyList(domainFactory, valueObject.getHistologies(), domainObject.getHistologies(), domMap));		
+		ims.oncology.configuration.domain.objects.TNMStagingClassificationVersion value6 = null;
+		if ( null != valueObject.getTNMVersion() ) 
+		{
+			if (valueObject.getTNMVersion().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getTNMVersion()) != null)
+				{
+					value6 = (ims.oncology.configuration.domain.objects.TNMStagingClassificationVersion)domMap.get(valueObject.getTNMVersion());
+				}
+			}
+			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
+			{
+				value6 = domainObject.getTNMVersion();	
+			}
+			else
+			{
+				value6 = (ims.oncology.configuration.domain.objects.TNMStagingClassificationVersion)domainFactory.getDomainObject(ims.oncology.configuration.domain.objects.TNMStagingClassificationVersion.class, valueObject.getTNMVersion().getBoId());
+			}
+		}
+		domainObject.setTNMVersion(value6);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.assessment.configuration.domain.objects.UserAssessment value7 = null;
+		if ( null != valueObject.getAssessment() ) 
+		{
+			if (valueObject.getAssessment().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getAssessment()) != null)
+				{
+					value7 = (ims.assessment.configuration.domain.objects.UserAssessment)domMap.get(valueObject.getAssessment());
+				}
+			}
+			else
+			{
+				value7 = (ims.assessment.configuration.domain.objects.UserAssessment)domainFactory.getDomainObject(ims.assessment.configuration.domain.objects.UserAssessment.class, valueObject.getAssessment().getBoId());
+			}
+		}
+		domainObject.setAssessment(value7);
+		domainObject.setHistopathologicGrades(ims.clinicaladmin.vo.domain.TumourGroupHistopathologyGradeVoAssembler.extractTumourGroupHistopathologicGradeSet(domainFactory, valueObject.getHistopathologicGrades(), domainObject.getHistopathologicGrades(), domMap));		
+		domainObject.setPrognosticGroupingConfig(ims.clinicaladmin.vo.domain.PrognosticGroupingCongfigVoAssembler.extractPrognosticGroupingConfig(domainFactory, valueObject.getPrognosticGroupingConfig(), domMap));
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getGroupDescription() != null && valueObject.getGroupDescription().equals(""))
+		{
+			valueObject.setGroupDescription(null);
+		}
+		domainObject.setGroupDescription(valueObject.getGroupDescription());
+		domainObject.setHasOtherClassifications(valueObject.getHasOtherClassifications());
+		domainObject.setOtherClassifications(ims.oncology.vo.domain.TumourGroupClassificationVoAssembler.extractTumourGroupClassificationSet(domainFactory, valueObject.getOtherClassifications(), domainObject.getOtherClassifications(), domMap));		
+
+		// SaveAsRefVO treated as RefValueObject
+		ims.oncology.configuration.vo.TumourSiteRefVoCollection refCollection13 = new ims.oncology.configuration.vo.TumourSiteRefVoCollection();
+		if (valueObject.getSites() != null)
+		{
+			for (int i13=0; i13<valueObject.getSites().size(); i13++)
+			{
+				ims.oncology.configuration.vo.TumourSiteRefVo ref13 = (ims.oncology.configuration.vo.TumourSiteRefVo)valueObject.getSites().get(i13);
+				refCollection13.add(ref13);
+			}
+		}
+		int size13 = (null == refCollection13) ? 0 : refCollection13.size();		
+		java.util.List domainSites13 = domainObject.getSites();
+		if (domainSites13 == null)
+		{
+			domainSites13 = new java.util.ArrayList();
+		}
+		for(int i=0; i < size13; i++) 
+		{
+			ims.oncology.configuration.vo.TumourSiteRefVo vo = refCollection13.get(i);			
+			ims.oncology.configuration.domain.objects.TumourSite dom = null;
+			if ( null != vo ) 
+			{
+				if (vo.getBoId() == null)
+				{
+					if (domMap.get(vo) != null)
+					{
+						dom = (ims.oncology.configuration.domain.objects.TumourSite)domMap.get(vo);
+					}
+				}
+				else
+				{
+					dom = (ims.oncology.configuration.domain.objects.TumourSite)domainFactory.getDomainObject( ims.oncology.configuration.domain.objects.TumourSite.class, vo.getBoId());
+				}
+			}
+
+			int domIdx = domainSites13.indexOf(dom);
+			if (domIdx == -1)
+			{
+				domainSites13.add(i, dom);
+			}
+			else if (i != domIdx && i < domainSites13.size())
+			{
+				Object tmp = domainSites13.get(i);
+				domainSites13.set(i, domainSites13.get(domIdx));
+				domainSites13.set(domIdx, tmp);
+			}
+		}
+		
+		//Remove all ones in domList where index > voCollection.size() as these should
+		//now represent the ones removed from the VO collection. No longer referenced.
+		int i13 = domainSites13.size();
+		while (i13 > size13)
+		{
+			domainSites13.remove(i13-1);
+			i13 = domainSites13.size();
+		}
+		
+		domainObject.setSites(domainSites13);		
+		domainObject.setTnmRequiresDiff(valueObject.getTnmRequiresDiff());
+		domainObject.setTnmRequiresOver45(valueObject.getTnmRequiresOver45());
+		domainObject.setTnmRequiresHisto(valueObject.getTnmRequiresHisto());
+		domainObject.setTnmRequiresSMarkers(valueObject.getTnmRequiresSMarkers());
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getGroupName() != null && valueObject.getGroupName().equals(""))
+		{
+			valueObject.setGroupName(null);
+		}
+		domainObject.setGroupName(valueObject.getGroupName());
+		domainObject.setIsActive(valueObject.getIsActive());
+		domainObject.setHasTNM(valueObject.getHasTNM());
+		domainObject.setIsPrognosticGroupingRelevant(valueObject.getIsPrognosticGroupingRelevant());
+
+		return domainObject;
+	}
+
+}

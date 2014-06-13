@@ -1,0 +1,491 @@
+body{
+	behavior: url('#default#userData'); 
+	margin: 0px; 
+
+	background: #4D87DB url(../../../themes/blue/g/body-bg-3.gif) repeat-y;
+
+	scrollbar-3dlight-color: #6AA8EF;
+	scrollbar-darkshadow-color: #6AA8EF;
+	scrollbar-shadow-color: white;
+	scrollbar-highlight-color: white;
+	scrollbar-face-color: #6AA8EF;
+	scrollbar-arrow-color: white;
+
+	xl--tooltip-background: #F0F0F5; 
+	xl--tooltip-border: 1px solid #6E6D8F;
+	xl--tooltip-color: black;
+}
+
+body *{
+	scrollbar-3dlight-color: #B9CDFB;
+	scrollbar-darkshadow-color: #B9CDFB;
+	scrollbar-shadow-color: white;
+	scrollbar-highlight-color: white;
+	scrollbar-face-color: #B9CDFB;
+	scrollbar-arrow-color: white;
+	
+	xl--disabled-background: #F5FAFF;
+}
+
+body, td, input, select, button, textarea{ font-family: tahoma; font-size: 11px; }
+
+@media print{
+	body{
+		background: white;
+		background-image: none;
+	}
+}
+
+v\:*{ behavior: url(#default#vml); }
+
+#cn_globalPlaceholder{ width: 100%; height: 100%; }
+
+form{ margin: 0px; }
+
+a{ color: black; }
+
+input, textarea{ border: 1px solid #7F9DB9; }
+input{ height: 19px; line-height: 15px; }
+
+xl\:combobox{ vertical-align: middle; }
+
+button, .button{
+	background: #4D87DB;
+	border: 1px solid #dddddd;
+
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=white, endcolorstr=#B6D7FF);
+	color: black;
+	
+	xl--hover-endcolorstr: #b0bFe7;
+	xl--hover-border-color: #316AC5;
+	
+	font-weight: bold;
+	height: 20px;
+}
+
+h1, h2, h3{
+	margin: 0px; 
+}
+
+h1{ 
+	font-size: 22px;
+	font-weight: bold;
+}
+
+h2{ font-size: 16px; }
+
+h3{ 
+	font-size: 13px; 
+}
+
+h5{
+	margin: 0px; 
+	font-size: 13px;
+	font-weight: bold;
+	color: #3F3D3D;
+	display: inline-block;
+}
+
+/*.bigMiniWindow, .smallMiniWindow, .smallMiniWindow2{ display: inline; margin-bottom: 12px; vertical-align: top; }*/
+.smallMiniWindow h5, .smallMiniWindow2 h5{ font-size: 11px; }
+
+.smallMiniWindow2 #contentTD{
+	border-left: 1px solid #3571C9;
+	border-bottom: 1px solid #3571C9;
+	border-right: 1px solid #3571C9;	
+}
+
+/*.smallMiniWindow2{ margin-right: 4px; margin-bottom: 0px; }*/
+
+.blue{ color: #3F3D3D; }
+
+.small td{ font-size: 10px; }
+
+.hoverable{ text-decoration: none; color: #d3e3ff; cursor: hand; }
+.hoverable:hover{ text-decoration: underline; color: white; }
+.hoverable img{ margin-right: 4px; }
+
+
+/* Top buttons */
+
+.topRightControls{ 
+	padding-top: 7px; 
+	color: white; 
+	white-space: nowrap; 
+}
+.topRightControls_disabled *{ cursor: no-drop; }
+.topRightControls a{
+	position: relative;
+	margin-left: 8px;
+}
+
+.topButtonsMoreDiv{
+	cursor: default;
+	visibility: hidden;
+	position: absolute; 
+	top: 0px; left: 0px; height: 10px; width: 10px; 
+	overflow: hidden; z-index: 1000; 
+
+	border: 1px solid #9DBBE1; 
+	background: #4D87DB; 
+}
+
+.moreButton, .topButton{
+	font-weight: bold; 	
+	display: inline-block;
+	filter: alpha(opacity=75); 
+	color: white;
+	position: relative;
+	line-height: 25px;
+	height: 25px;
+	vertical-align: middle;
+	text-decoration: none;
+}
+
+.moreButton{ padding-top: 6px; }
+
+.moreButton img, .topButton img{ margin-right: 4px; }
+.topButton img{ display: none; vertical-align: middle; }
+.moreButton img{ border: 0; width: 7px; height: 7px; vertical-align: middle; }
+
+.topButton .imgSpan{
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=false);
+	display: none;
+	width: 24px; height: 24px;
+	vertical-align: middle;
+	margin-right: 4px;
+}
+
+.topButton span{
+	color: white;
+}
+
+.topButtonsMoreDiv .topButton{
+	display: inline-block;
+	margin: 0;
+}
+
+
+.topButtonsMoreDiv .sectionCaptionDiv{
+	display: block;
+	padding: 4px;
+	color: #d3e3ff;
+	position: relative;
+}
+
+.topButtonsMoreDiv .sectionCaptionLine{
+	position: absolute;
+	top: 11px;
+	left: 0px;
+	height: 1px;
+	overflow: hidden;
+	background: #92AED1;
+	z-index: -1;
+}
+
+.topButtonsMoreDiv .sectionCaptionText{
+	z-index: 1;
+	background: #4D87DB;
+	padding-right: 8px;
+}
+
+
+
+.shortPatientInfoTD{ padding-top: 5px; padding-left: 8px; color: white; font-family: verdana; }
+
+.ims_horizontal_line{
+	border-style: none;
+	overflow: hidden;
+	background-color:#AEADC5;
+}
+
+.ims_horizontal_line2{
+	border-style: none;
+	overflow: hidden;
+	filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=1, startcolorstr=#AEADC5, endcolorstr= #FEFEFE);
+}
+
+.dialogCloseButton, #dialogCloseButton{
+	width: 15px; 
+	height: 15px; 
+	overflow: hidden;
+	padding: 1px;
+	color: white; 
+	text-decoration: none; 
+	font-size: 13px; 
+	position: absolute;
+	top: 6px;
+	right: 6px;
+	font-family: webdings; 
+	font-weight: bold; 
+	cursor: default; 
+	display: inline-block;
+}
+
+#dialogCloseButton span, .dialogCloseButton span{
+	position: relative;
+	top: -3px;
+}
+
+#dialogCloseButton.closeButtonHover, .closeButtonHover{
+	border: 1px solid white;
+	padding: 0px;
+}
+
+
+/* Toolbar stuff. */
+
+.cnToolbar .button_normal,
+.cnToolbar .button_normalHover,
+.cnToolbar .button_normalDown,
+.cnToolbar .button_pushed,
+.cnToolbar .button_pushedHover,
+.cnToolbar .button_pushedDown,
+.cnToolbar .button_disabled{
+	cursor: default;
+	height: 22px;
+	width: 22px;
+	overflow: hidden;
+}
+
+.cnToolbar .button_normal{ 
+	border: 0px;
+	background: none; 
+	filter: none;
+	padding: 3px;
+}
+
+.cnToolbar .button_normalHover{ 
+	padding: 2px;
+	border: 1px solid #7F9DB9;
+	background: #eeeeee; 
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#FEFEFE, endcolorstr=#b0bFe7, gradienttype=0);
+}
+
+.cnToolbar .button_normalDown{ 
+	padding: 2px;
+	border: 1px solid #316AC5; 
+	background: #eeeeee; 
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#7A92C2, endcolorstr=white, gradienttype=0);
+}
+
+.cnToolbar .button_pushed{ 
+	padding: 2px;
+	border: 1px solid #214Aa5; 
+	background: white;
+}
+
+.cnToolbar .button_pushedHover{ 
+	padding: 2px;
+	border: 1px solid #214Aa5; 
+	background: #7A92C2;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#c1d9f2, endcolorstr=white, gradienttype=0);
+}
+
+.cnToolbar .button_pushedDown{ 
+	padding: 2px;
+	border: 1px solid #214Aa5; 
+	background: #7A92C2; 
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#7A92C2, endcolorstr=white, gradienttype=0); 
+}
+
+.cnToolbar .button_disabled{ 
+	padding: 3px;
+	border: 0px; 
+	background: none; 
+	filter: alpha(opacity=30);
+}
+	
+.cnToolbar .cnToolbarSeparator{
+	vertical-align: top;
+	overflow: hidden;
+	margin-top: 2px;
+	height: 20px;
+	width: 2px;
+	border-left: 1px solid #B3B6CE;
+	border-right: 1px solid #F4F4F8;
+	margin-left: 2px;
+	margin-right: 2px;
+}								   
+
+.cnPopupDialogDiv{
+	border: 1px solid #787893; 
+	background: white; 
+	position: absolute; 
+	width: 400px;
+	height: 300px;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#F0F1F5,endcolorstr=white,gradienttype=0);
+}
+
+.cnPopupDialogDiv .cnPopupDialogCaption{
+	color: white; 
+	cursor: move; 
+	font-weight: bold; 
+	font-size: 13px; 
+	padding: 2px; 
+	width: 100%;
+	background: #275497;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#275497, endcolorstr=#3169BA, gradienttype=1);
+	border-bottom: 1px solid #787893;
+	position: relative;
+	z-index: 1;
+}
+
+.cnPopupDialogDiv .cnDialogCloseButton{
+	width: 15px; 
+	height: 15px; 
+	overflow: hidden;
+	padding: 1px;
+	color: white; 
+	text-decoration: none; 
+	font-size: 13px; 
+	position: absolute;
+	font-family: webdings; 
+	font-weight: bold; 
+	cursor: default; 
+	top: 2px;
+	right: 2px;
+	z-index: 1;
+}
+
+.cnPopupDialogDiv .cnDialogCloseButton span{
+	position: relative;
+	top: -3px;
+}
+
+.cnPopupDialogDiv .cnDialogButton{
+	position: absolute;
+}
+
+#formCaption1{
+	font-family: verdana;
+	color: white;
+	white-space: nowrap;
+}
+
+.dialogContentTD{
+	background: #E7F2FF;
+}
+
+
+.leftAlertsButton{
+	position: relative; top: 3px; left: -4px; visibility: hidden;
+}
+
+.rightAlertsButton{
+	position: relative; top: 3px; left: -8px; visibility: hidden;
+}
+
+.alertsContainer{
+	width: 124px; overflow: hidden; height: 18px; white-space: nowrap; position: relative; left: -20px; 
+}
+
+.alertsSpan{
+	position: absolute; left: 0px; top: 3px;
+}
+
+.alertsSpan img{
+	cursor: hand;
+	xl--tooltip-position: move;
+	xl--blend-duration: 200;
+} 
+
+.alertsSpan_disabled img{
+	cursor: no-drop;
+}
+
+#xlToolTipFrame{
+	filter: blendTrans(duration = 0.5);
+}
+
+.tabbedContainerTD{
+	border: 1px solid #3571C9;
+}
+
+.cnFormDialogDiv{
+	background: #4D87DB url(../../../themes/blue/g/body-b2-3.gif) repeat-y;
+}
+
+.copyrightDiv{
+	position: absolute; bottom: -5px; left: 0; width: 100%; 
+	font-size: 10px; text-align: center; 
+	font-weight: bold; color: #aaa; z-index: 1; 
+	background: white;
+}
+
+.dialog_about{
+	background: #ECE9D8;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=white, endcolorstr=#E7F2FF);
+}
+
+.cnCollapseButton{
+	overflow: hidden;
+	padding: 1px;
+	z-index: 10;
+	
+	line-height: 12px;
+
+	border: 0px solid #234B85;
+	color: #234B85; 
+	text-decoration: none; 
+	font-size: 12px; 
+	position: absolute;
+
+	font-family: webdings; 
+	font-weight: bold; 
+	cursor: default; 
+	top: 8px;
+	right: 7px;
+}
+
+.cnRequiredIconSpan{
+	position: absolute; color: red; font-size: 16px; line-height: 16px; cursor: default;
+} 
+
+.dialogContOuter{
+	position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+	padding: 20px 2px 2px 2px;
+}
+
+.dialogBottom{
+	position: absolute; width: 100%; left: 0; bottom: 0px; text-align: right; padding: 4px 0 4px 4px;
+}
+
+.dialogIcon{
+	position: absolute; top: 26px; left: 5px;
+}
+
+.aboutDialogSiteLogo1{ position: absolute; top: 32px; left: 12px; }
+.aboutDialogSiteLogo2{ position: absolute; top: 81px; left: 10px; }
+.aboutDialogDiv1{ position: absolute; top: 30px; left: 110px; width: 383px; overflow: auto; height: 160px; } 
+.aboutDialogSeparator{ background: #8E8DaF; position: absolute; top: 193px; left: 5px; width: 488px; overflow: hidden; height: 1px; }
+.aboutDialogDiv2{ position: absolute; top: 197px; left: 5px; width: 488px; overflow: auto; height: 75px; }
+
+.fatalErrorDialogMessageDiv1{ height: 94px; width: 435px; position: relative; padding: 4px; margin: 5px; top: 5px; margin-left: 58px; overflow: auto; }
+.fatalErrorDialogSpan1{ display: none; position: absolute; left: 5px; top: 128px; font-weight: bold; font-size: 10px; }
+.fatalErrorDialogMessageDiv2{ display: none; height: 90px; overflow: auto; border: 1px solid #ddd; background: white; padding: 3px; 
+	position: absolute; width: 490px; left: 4px; top: 142px;
+}
+.fatalErrorDialogSpan2{ display: none; position: absolute; left: 5px; top: 242px; font-weight: bold; font-size: 10px; }
+.fatalErrorDialogMessageDiv3{ display: none; height: 90px; overflow: auto; border: 1px solid #ddd; background: white; padding: 3px; 
+	position: absolute; width: 490px; left: 4px; top: 256px;
+} 
+
+.tooltipPopup{
+	filter: blendTrans(duration = 0.5);
+	border: 1px solid infotext; background: infobackground; 
+	color: infotext; 
+	padding: 2px; font-size: 11px; 
+	position: absolute; top: 0; left: 0; display: none;
+} 
+
+
+.hoverRect{
+	top: 0; 
+	left: 0; 
+	position: absolute; 
+	width: 100px; 
+	height: 21px; 
+	visibility: hidden;
+}
+

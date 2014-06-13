@@ -1,0 +1,128 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:35 -->
+<hibernate-mapping>
+	<class name="ims.core.vitals.domain.objects.VentilationChart" table="core_ventilationch2" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: suction -->
+<!-- debug: physio -->
+<!-- debug: mode -->
+<!-- debug: peakPressure -->
+<!-- debug: pEEPCPAP -->
+<!-- debug: rate -->
+<!-- debug: spontaneousMV -->
+<!-- debug: cuff -->
+<!-- debug: humidifierTemp -->
+<!-- debug: probeChange -->
+<!-- debug: position -->
+<!-- debug: fluidBalance -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- Inverse of one-to-one relationship -->
+		<one-to-one name="fluidBalance" foreign-key="ventilationch2_fluidbalan_fk" class="ims.core.vitals.domain.objects.FluidBalanceInstance"
+				property-ref="ventilationChart"/>
+<!-- debug: painScale -->
+<!-- debug: dailyFluidBalance -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- many to one -->
+		<many-to-one name="dailyFluidBalance" class="ims.core.vitals.domain.objects.DailyFluidBalance" foreign-key="ventilationch2_dailyfluid_fk" access="field" cascade="save-update">
+			<column name="dailyfluid" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: shiftDetails -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="shiftDetails" class="ims.core.vitals.domain.objects.ShiftDetails" unique="true" foreign-key="ventilationch2_shiftdetai_fk" access="field" cascade="save-update">
+			<column name="shiftdetai" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: IsLookup -->
+		<many-to-one name="suction" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_suction" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="physio" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_physio" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="mode" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_c_mo" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="peakPressure" type="integer" access="field" update="true">
+			<column name="peakpressu"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="pEEPCPAP" type="string" access="field" update="true">
+			<column name="peepcpap"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="rate" type="integer" access="field" update="true">
+			<column name="rate"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="spontaneousMV" type="integer" access="field" update="true">
+			<column name="spontaneou"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="cuff" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_cuff" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="humidifierTemp" type="float" access="field" update="true">
+			<column name="humidifier" sql-type="numeric(10,2)"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="probeChange" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_probechang" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="position" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_position" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="painScale" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_painscale" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+	</class>
+</hibernate-mapping>

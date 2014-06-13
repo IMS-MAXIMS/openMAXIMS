@@ -1,0 +1,93 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:36 -->
+<hibernate-mapping>
+	<subclass name="ims.nursing.assessment.domain.objects.NurEatingComponent" lazy="true" discriminator-value="nure" extends="ims.nursing.assessment.domain.objects.AssessmentComponent" >
+<!-- debug: hibernateClassContent -->
+<!-- debug: patientRequireAssistance -->
+<!-- debug: nutritionalMethod -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="nutritionalMethod" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="nureatingcompo_nutritiona_fk">
+				<column name="ns_nureatingcompo_nutritiona" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.nursing.assessment.domain.objects.NutritionalMethod" />
+		</set>
+<!-- debug: oralAssessment -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="oralAssessment" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="nureatingcompo_oralassess_fk">
+				<column name="ns_nureatingcompo_oralassess" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.nursing.assessment.domain.objects.EatingOralAssessment" />
+		</set>
+<!-- debug: difficultiesInSwallowing -->
+<!-- debug: referralSpeechAndLanguageTherapist -->
+<!-- debug: referralDietitian -->
+<!-- debug: specialDiet -->
+<!-- debug: IsCollection : true -->
+		<!-- collection of Lookup instances -->
+		<list name="specialDiet" table="ns_nureatingcompo_specialdie" lazy="true" access="field">
+			<key foreign-key="nureatingcompo_specialdie_ofk">
+				<column name="owner" sql-type="numeric(10,0)"/>
+			</key>
+			<index column="idx"/>
+			<composite-element class="ims.domain.lookups.LookupInstanceRef">
+				<many-to-one name="instance" class="ims.domain.lookups.LookupInstance" access="field">
+					<column name="instance_id" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+				</many-to-one>
+			</composite-element>
+		</list>
+<!-- debug: alcoholUnits -->
+<!-- debug: nutritionalRiskAssessment -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="nutritionalRiskAssessment" class="ims.nursing.assessmenttools.domain.objects.NutritionalRiskAssessment" unique="true" foreign-key="nureatingcompo_nutrition2_fk" access="field" cascade="save-update">
+			<column name="nutrition2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: nutritionalRiskScore -->
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: IsLookup -->
+		<many-to-one name="patientRequireAssistance" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_patientreq" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="difficultiesInSwallowing" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_difficulti" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="referralSpeechAndLanguageTherapist" type="date" access="field" update="true">
+			<column name="referralsp"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="referralDietitian" type="date" access="field" update="true">
+			<column name="referraldi"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="alcoholUnits" type="integer" access="field" update="true">
+			<column name="alcoholuni"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="nutritionalRiskScore" type="integer" access="field" update="true">
+			<column name="nutrition3"  not-null="false" unique="false"  />
+		</property>
+	</subclass>
+</hibernate-mapping>

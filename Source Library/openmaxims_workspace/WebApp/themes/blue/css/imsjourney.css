@@ -1,0 +1,132 @@
+.cn_imsjourney{
+	border: 1px solid #9DBBE1; 
+	position: absolute;
+	overflow: hidden;
+	cursor: default;
+}
+
+.cn_imsjourney .headerDiv{
+	height: 24px;
+	border-bottom: 1px solid #9DBBE1; 
+	background: #A3C2EA; 
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#A3C2EA, endcolorstr=#FFFFFF);
+	white-space: nowrap;
+	width: 100%;
+}
+
+.cn_imsjourney .header1, .cn_imsjourney .header2{ 
+	display: inline;
+	margin-top: 4px;
+	padding-left: 4px;
+	font-weight: bold; 
+	vertical-align: top;
+	width: 50%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.cn_imsjourney .scrollDiv{
+	overflow-y: auto;
+	overflow-x: hidden;
+	width: 100%;
+	background: white url(../../../themes/blue/g/big-down-ar-bg.gif) repeat-y 3px 0px;
+}
+
+.cn_imsjourney .contentTable{
+	width: 100%;
+	table-layout: fixed;
+}
+
+.cn_imsjourney td{
+	padding: 3px;
+	vertical-align: top;
+}
+
+.cn_imsjourney td .img{
+	vertical-align: middle;
+}
+
+.cn_imsjourney .dragDiv{
+	position: absolute;
+	top: 0;
+	overflow: hidden;
+	width: 4px;
+	border-left: 1px solid white;
+	border-right: 1px solid white;
+	border-bottom: 1px solid white;
+	background: #9DBBE1;
+	z-index: 5;
+	height: 100%;
+	cursor: w-resize;
+}
+
+.cn_imsjourney .idSpan{
+	width: 30px;
+	text-align: center;
+	font-weight: bold;
+	display: inline-block;
+	margin-right: 3px;
+}
+
+.cn_imsjourney .imgSpacerSpan{
+	width: 16px;
+}
+
+.cn_imsjourney .separatorTD{
+	border-top: 1px solid #eee;
+	padding: 0;
+}
+
+.cn_imsjourney .separatorDiv{
+	background: url(../../../themes/vista/g/minibox_05.png) repeat-x;
+	padding: 2px;
+	padding-left: 8px;
+	font-weight: bold;
+	margin-left: 20px;
+}
+
+.cn_imsjourney .textSpan{
+	padding: 1px;
+}
+
+.cn_imsjourney .clockLineDiv{
+	background: #FEE4C3;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#FEE4C3, endcolorstr=#D6D0C7, gradienttype=1);
+
+	position: absolute;
+	top: 0;
+	left: 43px;
+	width: 10px;
+}
+
+.cn_imsjourney .clockLineAltDiv{
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#C2DAFE, endcolorstr=#B2B4C5, gradienttype=1);
+}
+
+.cn_imsjourney .clockStopperDiv{
+	background: #E38957;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#E38957, endcolorstr=#B16B44, gradienttype=1);
+
+	overflow: hidden;
+	width: 17px;
+	height: 3px;
+	position: absolute;
+	left: 41px;
+}
+
+.cn_imsjourney .clockStopperAltDiv{
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#688FFF, endcolorstr=#1E1D4F, gradienttype=1);
+}
+
+.cn_imsjourney .clocksWeekSpan{
+	text-align: center;
+	font-weight: bold;
+	margin-left: 3px;
+	width: 32px;
+}
+
+.cn_imsjourney .headerIconIMG{
+	position: absolute;
+	top: 3px;
+	left: 0;
+}

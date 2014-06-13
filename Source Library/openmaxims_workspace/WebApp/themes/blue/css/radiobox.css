@@ -1,0 +1,24 @@
+.cn_radiobox{
+	xl--disabled-color: #999999;
+	white-space: nowrap;
+}
+
+.cn_radiobox .radioItem{
+	cursor: default;
+	display: inline-block;
+		
+	xl--hover-color: #1148AB;
+}
+
+.cn_radiobox .radioItem .checkSpan{
+	font-family: wingdings;
+	font-weight: normal;
+	font-style: normal;
+	font-size: 16px;
+	vertical-align: middle;
+}
+
+.cn_radiobox .radioItem .textSpan{
+	margin-left: 4px;
+	vertical-align: middle;
+}

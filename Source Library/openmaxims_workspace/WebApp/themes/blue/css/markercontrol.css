@@ -1,0 +1,45 @@
+.cn_markercontrol{
+	border: 1px solid #9DBBE1;
+	background: white;
+}
+
+.cn_markercontrol .markerToolbar{
+	border-left: 1px solid #9DBBE1;
+	background: #c1d9f2;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#CFE5FF, endcolorstr=white, gradienttype=0);
+}
+
+.cn_markercontrol .markerButton, 
+.cn_markercontrol .markerButtonHover, 
+.cn_markercontrol .markerButtonDown{
+	margin: 2px;
+}
+
+.cn_markercontrol .markerButtonHover{
+	margin: 1px;
+	border: 1px solid #316AC5;
+	background: #eeeeee;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#FEFEFE, endcolorstr=#b0bFe7, gradienttype=0);
+}
+
+.cn_markercontrol .markerButtonDown{
+	margin: 1px;
+	background: white;
+	border: 1px solid red;
+	filter: none;
+}
+
+.cn_markercontrol .toolTip{ 
+	z-index: 1000;
+
+	background: #F0F0F5; 
+	border: 1px solid #6E6D8F;
+	color: black;
+	
+	font-family: tahoma;
+	padding: 2px;
+	font-size: 11px; 
+	position: absolute;
+	visibility: hidden;
+	filter: blendTrans(duration=.2);
+}

@@ -1,0 +1,49 @@
+.cn_tabnavigation{
+	top: 3px; left: 3px; position: relative; 
+}
+
+.topTab, .topTabSelected{
+	display: inline; 
+	margin-right: 1px;
+}
+
+.topTab{
+	cursor: hand;
+}
+
+#navigationPlaceholder2 .topTab, #navigationPlaceholder2 .topTabSelected{
+	vertical-align: top;
+}
+
+#navigationPlaceholder2 .topTab{
+	position: relative;
+	top: -1px;
+}
+
+.topTabSelected{
+	cursor: default;
+	position: relative;
+	top: 2px;
+}
+
+.topTab .topTabTextTD, .topTabSelected .topTabTextTD{
+	padding-left: 1px; padding-right: 1px; 
+	font-size: 12px;
+	font-weight: bold;
+	color: #3F3D3D;
+}
+
+.topTab .topTabTextTD{
+	padding-top: 9px; 
+}
+
+.topTabSelected .topTabTextTD{
+	padding-top: 8px; 
+}
+
+.subTabsDiv{
+	position: absolute;
+	top: 0px; 
+	left: -1px;
+	visibility: hidden;
+}

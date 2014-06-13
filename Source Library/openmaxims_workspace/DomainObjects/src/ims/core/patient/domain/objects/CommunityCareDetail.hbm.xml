@@ -1,0 +1,196 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:36 -->
+<hibernate-mapping>
+	<class name="ims.core.patient.domain.objects.CommunityCareDetail" table="core_commcaredet" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: lho -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="lho" class="ims.core.resource.place.domain.objects.Organisation" unique="true" foreign-key="commcaredet_lho_fk" access="field" cascade="save-update">
+			<column name="lho" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: cca -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="cca" class="ims.core.resource.place.domain.objects.LocSite" unique="true" foreign-key="commcaredet_cca_fk" access="field" cascade="save-update">
+			<column name="cca" sql-type="numeric(10,0)" not-null="false" unique="false"  index='cca_idx' />
+		</many-to-one>
+<!-- debug: sector -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="sector" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="commcaredet_sector_fk" access="field" cascade="save-update">
+			<column name="sector" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: phnDistrict -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="phnDistrict" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="commcaredet_phndistric_fk" access="field" cascade="save-update">
+			<column name="phndistric" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: dED -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="dED" class="ims.core.resource.place.domain.objects.DED" unique="true" foreign-key="commcaredet_ded_fk" access="field" cascade="save-update">
+			<column name="ded" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: registeredGp -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="registeredGp" class="ims.core.resource.people.domain.objects.Gp" unique="true" foreign-key="commcaredet_registered_fk" access="field" cascade="save-update">
+			<column name="registered" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: registeredGpSurgery -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="registeredGpSurgery" class="ims.core.resource.place.domain.objects.LocSite" unique="true" foreign-key="commcaredet_registere2_fk" access="field" cascade="save-update">
+			<column name="registere2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: gPRegistrationDate -->
+<!-- debug: userDefinedField1 -->
+<!-- debug: userDefinedField2 -->
+<!-- debug: userDefinedField3 -->
+<!-- debug: userDefinedField4 -->
+<!-- debug: userDefinedField5 -->
+<!-- debug: addressHistory -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+ 		<!-- Component Set -->
+ 		<list name="addressHistory" table="core_commcaredet_addresshis" lazy="true" >
+ 			<key foreign-key="commcaredet_addresshis_id_fk">
+ 				<column name="id" sql-type="numeric(10,0)" not-null="true" />
+ 			</key>
+ 			<index column='idx'/>
+ 			<!-- Composite -->
+ 			<composite-element class="ims.core.resource.place.domain.objects.PciAddressHistory" >
+ 				<property name="line1" type="string" access="field" update="true">
+ 					<column name="line1" length="40" not-null="false"  unique="false"    />
+ 				</property>
+ 				<property name="line2" type="string" access="field" update="true">
+ 					<column name="line2" length="40" not-null="false"  unique="false"    />
+ 				</property>
+ 				<property name="line3" type="string" access="field" update="true">
+ 					<column name="line3" length="40" not-null="false"  unique="false"    />
+ 				</property>
+ 				<property name="line4" type="string" access="field" update="true">
+ 					<column name="line4" length="40" not-null="false"  unique="false"    />
+ 				</property>
+ 				<property name="line5" type="string" access="field" update="true">
+ 					<column name="line5" length="40" not-null="false"  unique="false"    />
+ 				</property>
+ 				<property name="postCode" type="string" access="field" update="true">
+ 					<column name="postcode" length="10" not-null="false"  unique="false"    />
+ 				</property>
+ 				<property name="phone" type="string" access="field" update="true">
+ 					<column name="phone" length="30" not-null="false"  unique="false"    />
+ 				</property>
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="county" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_county" not-null="false" sql-type="numeric(10,0)"  unique="false"   />
+ 				</many-to-one>
+ 				<property name="fax" type="string" access="field" update="true">
+ 					<column name="fax" length="30" not-null="false"  unique="false"    />
+ 				</property>
+ 				<property name="updateDate" type="timestamp" access="field" update="true">
+ 					<column name="updatedate" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="notificationDate" type="date" access="field" update="true">
+ 					<column name="notificati" not-null="false"  unique="false"   />
+ 				</property>
+ 				<many-to-one name="lho" class="ims.core.resource.place.domain.objects.Organisation" foreign-key="commcaredet_lho_fk" access="field">
+ 					<column name="lho" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 				</many-to-one>
+ 				<many-to-one name="cca" class="ims.core.resource.place.domain.objects.LocSite" foreign-key="commcaredet_cca_fk" access="field">
+ 					<column name="cca" sql-type="numeric(10,0)" not-null="false" unique="false"  index='cca_idx' />
+ 				</many-to-one>
+ 				<many-to-one name="sector" class="ims.core.resource.place.domain.objects.Location" foreign-key="commcaredet_sector_fk" access="field">
+ 					<column name="sector" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 				</many-to-one>
+ 				<many-to-one name="phnDistrict" class="ims.core.resource.place.domain.objects.Location" foreign-key="commcaredet_phndistric_fk" access="field">
+ 					<column name="phndistric" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 				</many-to-one>
+ 				<many-to-one name="dED" class="ims.core.resource.place.domain.objects.DED" foreign-key="commcaredet_ded_fk" access="field">
+ 					<column name="ded" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 				</many-to-one>
+ 			</composite-element>
+ 		</list>
+<!-- debug: isExtracted -->
+<!-- debug: currentSchool -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="currentSchool" class="ims.core.resource.place.domain.objects.School" unique="true" foreign-key="commcaredet_currentsch_fk" access="field" cascade="save-update">
+			<column name="currentsch" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="gPRegistrationDate" type="date" access="field" update="true">
+			<column name="gpregistra"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="userDefinedField1" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_userdefine" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="userDefinedField2" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_userdefin2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="userDefinedField3" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_userdefin3" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="userDefinedField4" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_userdefin4" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="userDefinedField5" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_userdefin5" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isExtracted" type="boolean" access="field" update="true">
+			<column name="isextracte"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

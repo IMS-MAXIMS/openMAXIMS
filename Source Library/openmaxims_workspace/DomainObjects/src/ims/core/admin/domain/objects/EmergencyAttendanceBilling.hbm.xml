@@ -1,0 +1,110 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:35 -->
+<hibernate-mapping>
+	<class name="ims.core.admin.domain.objects.EmergencyAttendanceBilling" table="core_emergencyatte2" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: emergencyAttendence -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="emergencyAttendence" class="ims.core.admin.domain.objects.EmergencyAttendance" unique="true" foreign-key="emergencyatte2_emergencya_fk" access="field" cascade="save-update">
+			<column name="emergencya" sql-type="numeric(10,0)" not-null="true" unique="false"  index='ea_index' />
+		</many-to-one>
+<!-- debug: patient -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="patient" class="ims.core.patient.domain.objects.Patient" unique="true" foreign-key="emergencyatte2_patient_fk" access="field" cascade="save-update">
+			<column name="patient" sql-type="numeric(10,0)" not-null="true" unique="false"  index='pat_bill_idx' />
+		</many-to-one>
+<!-- debug: episode -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="episode" class="ims.core.admin.domain.objects.EpisodeOfCare" unique="true" foreign-key="emergencyatte2_episode_fk" access="field" cascade="save-update">
+			<column name="episode" sql-type="numeric(10,0)" not-null="true" unique="false"  index='epi_bill_idx' />
+		</many-to-one>
+<!-- debug: attendance -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="attendance" class="ims.core.admin.domain.objects.CareContext" unique="true" foreign-key="emergencyatte2_attendance_fk" access="field" cascade="save-update">
+			<column name="attendance" sql-type="numeric(10,0)" not-null="true" unique="false"  index='attendance_idx' />
+		</many-to-one>
+<!-- debug: isPatientExempt -->
+<!-- debug: exemptionReason -->
+<!-- debug: exemptionReasonOther -->
+<!-- debug: paymentMade -->
+<!-- debug: paymentType -->
+<!-- debug: invoiceAmount -->
+<!-- debug: reasonForNonPayment -->
+<!-- debug: paymentRefunded -->
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="isPatientExempt" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_ispatiente" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="exemptionReason" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_exemptionr" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="exemptionReasonOther" type="string" access="field" update="true" > 
+			<column name="exemption2" length="500"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="paymentMade" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_paymentmad" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="paymentType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_paymenttyp" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="invoiceAmount" type="integer" access="field" update="true">
+			<column name="invoiceamo"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="reasonForNonPayment" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_reasonforn" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="paymentRefunded" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_paymentref" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+	</class>
+</hibernate-mapping>

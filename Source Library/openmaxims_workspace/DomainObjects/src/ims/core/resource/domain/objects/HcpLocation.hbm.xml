@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:36 -->
+<hibernate-mapping>
+	<class name="ims.core.resource.domain.objects.HcpLocation" table="core_hcplocation" lazy="true" discriminator-value="null" >
+		<cache usage="nonstrict-read-write" />
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: hibernateClassContent -->
+<!-- debug: location -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="location" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="hcplocation_location_fk" access="field" cascade="save-update">
+			<column name="location" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: services -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="services" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="hcplocation_services_fk">
+				<column name="core_hcplocation_services" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.core.resource.domain.objects.HcpLocationService" />
+		</set>
+<!-- debug: isPrimary -->
+<!-- debug: accreditationStatus -->
+<!-- debug: startDate -->
+<!-- debug: endDate -->
+<!-- debug: accreditationHistory -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<list name="accreditationHistory" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="hcplocation_accredita2_fk">
+				<column name="core_hcplocation_accredita2" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.core.resource.domain.objects.HcpLocationAccredHis" />
+		</list>
+<!-- debug: caseTypes -->
+<!-- debug: IsCollection : true -->
+		<!-- collection of Lookup instances -->
+		<list name="caseTypes" table="core_hcplocation_casetypes" lazy="true" access="field">
+			<key foreign-key="hcplocation_casetypes_ofk">
+				<column name="owner" sql-type="numeric(10,0)"/>
+			</key>
+			<index column="idx"/>
+			<composite-element class="ims.domain.lookups.LookupInstanceRef">
+				<many-to-one name="instance" class="ims.domain.lookups.LookupInstance" access="field">
+					<column name="instance_id" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+				</many-to-one>
+			</composite-element>
+		</list>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isPrimary" type="boolean" access="field" update="true">
+			<column name="isprimary"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="accreditationStatus" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_accreditat" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="startDate" type="date" access="field" update="true">
+			<column name="startdate"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="endDate" type="date" access="field" update="true">
+			<column name="enddate"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

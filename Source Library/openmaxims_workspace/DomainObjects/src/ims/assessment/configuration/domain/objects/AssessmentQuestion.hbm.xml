@@ -1,0 +1,115 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:35 -->
+<hibernate-mapping>
+	<class name="ims.assessment.configuration.domain.objects.AssessmentQuestion" table="asse_userassessmen2" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: question -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="question" class="ims.core.clinical.domain.objects.QuestionInformation" unique="true" foreign-key="userassessmen2_question_fk" access="field" cascade="save-update">
+			<column name="question" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: isMandatory -->
+<!-- debug: scoringAnswerType -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="scoringAnswerType" class="ims.core.clinical.domain.objects.QuestionAnswerType" unique="true" foreign-key="userassessmen2_scoringans_fk" access="field" cascade="save-update">
+			<column name="scoringans" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: activeStatus -->
+<!-- debug: sequence -->
+<!-- debug: allowsMultipleAnswers -->
+<!-- debug: assessmentAnswerRole -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="assessmentAnswerRole" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="userassessmen2_assessment_fk">
+				<column name="asse_userassessmen2_assessment" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.assessment.configuration.domain.objects.AssessmentQuestionRole" />
+		</set>
+<!-- debug: uRL -->
+<!-- debug: protocol -->
+<!-- debug: isNonStandard -->
+<!-- debug: triagePriority -->
+<!-- debug: legendText -->
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isMandatory" type="boolean" access="field" update="true">
+			<column name="ismandator"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="activeStatus" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_activestat" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="sequence" type="integer" access="field" update="true">
+			<column name="c_sequen"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="allowsMultipleAnswers" type="boolean" access="field" update="true">
+			<column name="allowsmult"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="uRL" type="string" access="field" update="true" > 
+			<column name="url" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="protocol" type="string" access="field" update="true" > 
+			<column name="protocol" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isNonStandard" type="boolean" access="field" update="true">
+			<column name="isnonstand"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="triagePriority" type="integer" access="field" update="true">
+			<column name="triageprio"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="legendText" type="text" access="field" update="true" > 
+			<column name="legendtext"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

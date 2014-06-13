@@ -1,0 +1,15 @@
+.cn_partialdatebox{
+	height: 18px; 
+	border: 1px solid #9DBBE1; 
+	white-space: nowrap;
+	background: white;
+	overflow: hidden;
+}
+
+.cn_partialdatebox input{
+	border: 0px;
+	padding: 0px;
+	height: 16px;
+	margin-top: -1px;
+	text-align: center;
+}

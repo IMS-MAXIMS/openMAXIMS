@@ -1,0 +1,71 @@
+.cn_recordnavigator{
+	table-layout: fixed;
+}
+
+.cn_recordnavigator button{
+	width: 19px;
+	height: 100%;
+	font-family: webdings;
+	font-weight: normal;
+	font-size: 14px;
+	line-height: 12px;
+}
+
+.cn_recordnavigator div{
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.cn_recordnavigator .centerTD{
+	text-align: center;
+	background: #E7F2FF;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#FFFFFF, endcolorstr=#E7F2FF);
+	cursor: default;
+	xl--hover-filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=white, endcolorstr=#B6D7FF);
+}
+
+.cn_recordnavigator div{
+	padding-left: 2px;
+	padding-right: 2px;
+}
+
+/*.cn_recordnavigator .div1{
+	border-top: 1px solid #DDDDDD;
+	font-weight: bold;
+}*/
+
+
+.cn_recordnavigator .div2{
+	height: 100%;
+	padding-top: 2px;
+	border-top: 1px solid #DDDDDD;
+	border-bottom: 1px solid #DDDDDD;
+}
+
+
+.cn_recordnavigator_popup{
+	position: absolute;
+	visibility: hidden;
+	background: white; padding: 1px; cursor: default; border: 1px solid black;
+	
+	overflow-y: visible;
+	overflow-x: auto;
+}
+
+.cn_recordnavigator_popup .optionDiv{
+	padding: 1px; 
+	display: inline-block; 
+	white-space: nowrap;
+
+	xl--option-hover-background: #316AC5;
+	xl--option-hover-color: white;
+	xl--option-hover-filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#316AC5, endcolorstr=#c1d9f2, gradienttype=1);
+}
+
+.cn_recordnavigator .arrowDiv{
+	font-family: webdings;
+	position: absolute;
+	top: 0px;
+	right: 38px;
+	visibility: hidden;
+}

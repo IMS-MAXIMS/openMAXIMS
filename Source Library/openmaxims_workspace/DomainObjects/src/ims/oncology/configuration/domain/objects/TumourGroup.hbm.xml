@@ -1,0 +1,222 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:37 -->
+<hibernate-mapping>
+	<class name="ims.oncology.configuration.domain.objects.TumourGroup" table="onco_tumourgroup" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: groupName -->
+<!-- debug: groupDescription -->
+<!-- debug: sites -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<list name="sites" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="tumourgroup_sites_fk">
+				<column name="onco_tumourgroup_sites" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.oncology.configuration.domain.objects.TumourSite" />
+		</list>
+<!-- debug: tNMValues -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<list name="tNMValues" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="tumourgroup_tnmvalues_fk">
+				<column name="onco_tumourgroup_tnmvalues" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.oncology.configuration.domain.objects.TumourGroupSiteTNMValue" />
+		</list>
+<!-- debug: histologies -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- many to many -->
+		<list name="histologies" table="onco_tumourgroup_histologie" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="tumourgroup_histologie_fr_fk">
+				<column name="from_side" sql-type="numeric(10,0)" unique="false"   />
+			</key>
+			<index column='idx'/>
+			<many-to-many class="ims.oncology.configuration.domain.objects.TumourGroupHistology" foreign-key="tumourgroup_histologie_to_fk">
+				<column name="to_side" sql-type="numeric(10,0)" unique="false"   />
+			</many-to-many>
+		</list>
+<!-- debug: hasTNM -->
+<!-- debug: tnmRequiresDiff -->
+<!-- debug: tnmRequiresOver45 -->
+<!-- debug: tnmRequiresHisto -->
+<!-- debug: tnmRequiresSMarkers -->
+<!-- debug: hasOtherClassifications -->
+<!-- debug: otherClassifications -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="otherClassifications" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="tumourgroup_otherclass_fk">
+				<column name="onco_tumourgroup_otherclass" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.oncology.configuration.domain.objects.TumourGroupClassification" />
+		</set>
+<!-- debug: taxonomyMap -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+ 		<!-- Component Set -->
+ 		<list name="taxonomyMap" table="onco_tumourgroup_taxonomyma" lazy="true" >
+ 			<key foreign-key="tumourgroup_taxonomyma_id_fk">
+ 				<column name="id" sql-type="numeric(10,0)" not-null="true" />
+ 			</key>
+ 			<index column='idx'/>
+ 			<!-- Composite -->
+ 			<composite-element class="ims.core.clinical.domain.objects.TaxonomyMap" >
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="taxonomyName" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_taxonomyna" not-null="true" sql-type="numeric(10,0)"  unique="false" unique-key='taxonomy_unq1'  />
+ 				</many-to-one>
+ 				<property name="taxonomyCode" type="string" access="field" update="true">
+ 					<column name="taxonomyco" length="30" not-null="true"  unique="false" unique-key='taxonomy_unq1'   />
+ 				</property>
+ 			</composite-element>
+ 		</list>
+<!-- debug: isActive -->
+<!-- debug: histopathologicGrades -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="histopathologicGrades" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="tumourgroup_histopatho_fk">
+				<column name="onco_tumourgroup_histopatho" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.oncology.configuration.domain.objects.TumourGroupHistopathologicGrade" />
+		</set>
+<!-- debug: associatedSpecialties -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="associatedSpecialties" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="tumourgroup_associated_fk">
+				<column name="onco_tumourgroup_associated" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.oncology.configuration.domain.objects.TumourGroupSpecialty" />
+		</set>
+<!-- debug: serumMarkers -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- many to many -->
+		<set name="serumMarkers" table="onco_tumourgroup_serummarke" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="tumourgroup_serummarke_fr_fk">
+				<column name="from_side" sql-type="numeric(10,0)" unique="false"   />
+			</key>
+			
+			<many-to-many class="ims.oncology.configuration.domain.objects.TumourSerumMarker" foreign-key="tumourgroup_serummarke_to_fk">
+				<column name="to_side" sql-type="numeric(10,0)" unique="false"   />
+			</many-to-many>
+		</set>
+<!-- debug: tNMVersion -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="tNMVersion" class="ims.oncology.configuration.domain.objects.TNMStagingClassificationVersion" unique="true" foreign-key="tumourgroup_tnmversion_fk" access="field" cascade="save-update">
+			<column name="tnmversion" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: assessment -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- many to one -->
+		<many-to-one name="assessment" class="ims.assessment.configuration.domain.objects.UserAssessment" foreign-key="tumourgroup_assessment_fk" access="field" cascade="save-update">
+			<column name="assessment" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: isPrognosticGroupingRelevant -->
+<!-- debug: prognosticGroupingConfig -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="prognosticGroupingConfig" class="ims.oncology.configuration.domain.objects.PrognosticGroupingConfig" unique="true" foreign-key="tumourgroup_prognostic_fk" access="field" cascade="all">
+			<column name="prognostic" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="groupName" type="string" access="field" update="true" > 
+			<column name="groupname" length="255"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="groupDescription" type="string" access="field" update="true" > 
+			<column name="groupdescr" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="hasTNM" type="boolean" access="field" update="true">
+			<column name="hastnm"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="tnmRequiresDiff" type="boolean" access="field" update="true">
+			<column name="tnmrequire"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="tnmRequiresOver45" type="boolean" access="field" update="true">
+			<column name="tnmrequir2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="tnmRequiresHisto" type="boolean" access="field" update="true">
+			<column name="tnmrequir3"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="tnmRequiresSMarkers" type="boolean" access="field" update="true">
+			<column name="tnmrequir4"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="hasOtherClassifications" type="boolean" access="field" update="true">
+			<column name="hasothercl"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isActive" type="boolean" access="field" update="true">
+			<column name="isactive"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isPrognosticGroupingRelevant" type="boolean" access="field" update="true">
+			<column name="isprognost"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

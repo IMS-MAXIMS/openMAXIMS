@@ -1,0 +1,77 @@
+.cn_tree{
+	cursor: default;
+	white-space: nowrap;
+
+	border: 1px solid #7F9DB9;
+	overflow: hidden;
+	background: white;
+	xl--drag-over-background: #CFE5FF;
+}
+
+.cn_tree .checkBoxSpan{
+	font-family: wingdings;
+	font-size: 17px;
+	height: 1em;
+	overflow: hidden;
+	margin-left: 2px;
+	margin-right: 1px;
+	xl--hover-color: #1148AB;
+	vertical-align: bottom;	
+}
+
+.cn_tree .iconImg{
+	vertical-align: bottom;
+}
+
+.cn_tree .textSpan{
+	position: relative;
+	margin-left: 2px;
+	padding: 2px;
+	display: inline-block;
+	vertical-align: bottom;
+
+	/* Workaround. */
+	font-family: tahoma;
+	font-size: 8pt;
+}
+
+.cn_tree .textEditSpan{
+	white-space: nowrap;
+	padding: 1px;
+	border: 1px solid black;
+	background: white !important;
+	color: black !important;
+	filter: none !important;
+}
+
+.cn_tree .nodeDivSelected .textSpan, 
+.cn_tree .draggedNode{
+	background: #316AC5;
+	color: white;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#316AC5, endcolorstr=#3F89FF, gradienttype=1);
+}
+
+.cn_tree .draggedNode{
+	padding: 2px;
+	filter: alpha(opacity=50);
+}
+
+.cn_tree .insertCursor{
+	overflow: hidden;
+	height: 2px;
+	width: 2px;
+	background: #316AC5;
+}
+
+.cn_tree .nodeDivOver .textSpan{
+	text-decoration: underline;
+}
+
+.cn_tree .inplaceEditBox{
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	margin-top: 0px;
+	padding-top: 0px;
+}

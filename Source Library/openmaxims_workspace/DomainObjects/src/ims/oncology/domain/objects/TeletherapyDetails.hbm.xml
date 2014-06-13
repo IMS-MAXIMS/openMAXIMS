@@ -1,0 +1,178 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:36 -->
+<hibernate-mapping>
+	<class name="ims.oncology.domain.objects.TeletherapyDetails" table="onco_teletherapydet" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: phaseDetails -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<list name="phaseDetails" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="teletherapydet_phasedetai_fk">
+				<column name="onco_teletherapydet_phasedetai" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.oncology.domain.objects.TeletherapyPhase" />
+		</list>
+<!-- debug: perscriptionPoint -->
+<!-- debug: actualDose -->
+<!-- debug: actualFractions -->
+<!-- debug: actualPhases -->
+<!-- debug: actualDuration -->
+<!-- debug: anterior -->
+<!-- debug: anteriorDose -->
+<!-- debug: anteriorFractions -->
+<!-- debug: hasAdjacentFields -->
+<!-- debug: adjacentFieldDetails -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<list name="adjacentFieldDetails" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="teletherapydet_adjacentfi_fk">
+				<column name="onco_teletherapydet_adjacentfi" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.oncology.domain.objects.AdjacentFieldPhase" />
+		</list>
+<!-- debug: retreatment -->
+<!-- debug: hyperfractionation -->
+<!-- debug: specialTechnique -->
+<!-- debug: preoperative -->
+<!-- debug: generalAnaesthetic -->
+<!-- debug: beamType -->
+<!-- debug: beamEnergy -->
+<!-- debug: noOfFields -->
+<!-- debug: complexityGroup -->
+<!-- debug: multiplePlanning -->
+<!-- debug: anaestheticReq -->
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="perscriptionPoint" type="integer" access="field" update="true">
+			<column name="perscripti"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="actualDose" type="float" access="field" update="true">
+			<column name="actualdose" sql-type="numeric(10,2)"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="actualFractions" type="integer" access="field" update="true">
+			<column name="actualfrac"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="actualPhases" type="integer" access="field" update="true">
+			<column name="actualphas"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="actualDuration" type="integer" access="field" update="true">
+			<column name="actualdura"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="anterior" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_anterior" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="anteriorDose" type="float" access="field" update="true">
+			<column name="anteriordo" sql-type="numeric(10,2)"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="anteriorFractions" type="integer" access="field" update="true">
+			<column name="anteriorfr"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="hasAdjacentFields" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_hasadjacen" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="retreatment" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_retreatmen" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="hyperfractionation" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_hyperfract" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="specialTechnique" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_specialtec" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="preoperative" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_preoperati" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="generalAnaesthetic" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_generalana" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="beamType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_beamtype" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="beamEnergy" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_beamenergy" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="noOfFields" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_nooffields" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="complexityGroup" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_complexity" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="multiplePlanning" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_multiplepl" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="anaestheticReq" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_anaestheti" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+	</class>
+</hibernate-mapping>

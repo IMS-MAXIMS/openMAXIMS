@@ -1,0 +1,23 @@
+.cn_timebox{ 
+	border: 1px solid #9DBBE1; 
+	background: white;
+	width: 3.3em;
+	height: 1.5em;
+	padding: 0px;
+	padding-left: 1px;
+	overflow: hidden;
+	white-space: nowrap;
+	
+	xl--disabled-border-color: #dddddd;
+}
+
+.cn_timebox input{
+	overflow: hidden;
+	border: 0px;
+	width: 1.3em;
+	font-size: 1em;
+	height: 1.3em;
+	padding: 0px;
+	vertical-align: top;
+	margin-top: -1px;
+}

@@ -1,0 +1,138 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:37 -->
+<hibernate-mapping>
+	<class name="ims.careuk.domain.objects.CATSReferralStatus" table="care_catsreferralst" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: referralStatus -->
+<!-- debug: authoringUser -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="authoringUser" class="ims.core.resource.people.domain.objects.MemberOfStaff" unique="true" foreign-key="catsreferralst_authoringu_fk" access="field" cascade="save-update">
+			<column name="authoringu" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: statusDateTime -->
+<!-- debug: comment -->
+<!-- debug: uniqueLineRefNo -->
+<!-- debug: uniqueLineRefNoRejected -->
+<!-- debug: uniqueLineRefNoDI -->
+<!-- debug: uniqueLineRefNoL1 -->
+<!-- debug: wasOutputtedToWeeklyReport -->
+<!-- debug: wasOutputtedToMonthlyReport -->
+<!-- debug: wasOutputtedToWeeklyReportRej -->
+<!-- debug: wasOutputtedToMonthlyReportRej -->
+<!-- debug: wasOutputtedToWeeklyReportDI -->
+<!-- debug: wasOutputtedToMonthlyReportDI -->
+<!-- debug: wasOutputtedToWeeklyReportI1 -->
+<!-- debug: wasOutputtedToMonthlyReportI1 -->
+<!-- debug: secondOpinionCategory -->
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: IsLookup -->
+		<many-to-one name="referralStatus" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_referralst" sql-type="numeric(10,0)" not-null="true" unique="false"  index='referral_status_idx1' />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="statusDateTime" type="timestamp" access="field" update="true">
+			<column name="statusdate"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="comment" type="string" access="field" update="true" > 
+			<column name="c_comme" length="1500"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="uniqueLineRefNo" type="string" access="field" update="true" > 
+			<column name="uniqueline" length="8"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="uniqueLineRefNoRejected" type="string" access="field" update="true" > 
+			<column name="uniquelin2" length="8"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="uniqueLineRefNoDI" type="string" access="field" update="true" > 
+			<column name="uniquelin3" length="8"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="uniqueLineRefNoL1" type="string" access="field" update="true" > 
+			<column name="uniquelin4" length="8"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="wasOutputtedToWeeklyReport" type="boolean" access="field" update="true">
+			<column name="wasoutputt"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="wasOutputtedToMonthlyReport" type="boolean" access="field" update="true">
+			<column name="wasoutput2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="wasOutputtedToWeeklyReportRej" type="boolean" access="field" update="true">
+			<column name="wasoutput3"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="wasOutputtedToMonthlyReportRej" type="boolean" access="field" update="true">
+			<column name="wasoutput4"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="wasOutputtedToWeeklyReportDI" type="boolean" access="field" update="true">
+			<column name="wasoutput5"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="wasOutputtedToMonthlyReportDI" type="boolean" access="field" update="true">
+			<column name="wasoutput6"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="wasOutputtedToWeeklyReportI1" type="boolean" access="field" update="true">
+			<column name="wasoutput7"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="wasOutputtedToMonthlyReportI1" type="boolean" access="field" update="true">
+			<column name="wasoutput8"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="secondOpinionCategory" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_secondopin" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+	</class>
+</hibernate-mapping>

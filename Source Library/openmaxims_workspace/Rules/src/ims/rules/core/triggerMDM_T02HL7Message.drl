@@ -1,0 +1,73 @@
+package ims.rules.userrules;
+
+import ims.core.documents.domain.objects.PatientDocument;
+import ims.rules.engine.RulesRuntimeEngine;
+import ims.domain.DomainFactory;
+
+global RulesRuntimeEngine engine;
+global DomainFactory factory;
+
+function boolean isNotNull5e3194a2131527fbf05f3be68f1b5ab0dd5(ims.core.documents.domain.objects.PatientDocument entity)
+{
+	if(entity == null)
+		return false;
+	if(entity.getCurrentDocumentStatus() == null)
+		return false;
+	if(entity.getCurrentDocumentStatus().getCorrespondenceStatus() == null)
+		return false;
+	return true;
+}
+
+function boolean alreadyTriggered(ims.core.documents.domain.objects.PatientDocument entity)
+{
+	if(entity == null)
+		return false;
+	if(entity.isWasTriggered() == null)
+		return false;
+	if(Boolean.TRUE.equals(entity.isWasTriggered()))
+		return true;
+	return false;
+}
+
+
+
+function boolean isReadyToSendInHistory(ims.core.documents.domain.objects.PatientDocument entity)
+{
+	if(entity == null)
+		return false;
+	if(entity.getDocumentStatusHistory() == null)
+		return false;
+	for (int x=0; x < entity.getDocumentStatusHistory().size();x++)
+	{
+		ims.core.documents.domain.objects.DocumentStatus item = (ims.core.documents.domain.objects.DocumentStatus)entity.getDocumentStatusHistory().get(x);
+		if(item.getId()!=null && item.getCorrespondenceStatus().getId()==-2082) //ReadyToSend
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+function boolean isConditionMeet17e88303131527fbf05daef0392688efa1c(RulesRuntimeEngine engine, ims.core.documents.domain.objects.PatientDocument entity)
+{
+	if(isNotNull5e3194a2131527fbf05f3be68f1b5ab0dd5(entity) && (!alreadyTriggered(entity))&&
+		(entity.getCurrentDocumentStatus().getCorrespondenceStatus().getId() == -2082 ||//READY to SEND
+		entity.getCurrentDocumentStatus().getCorrespondenceStatus().getId() == -2083 
+	))
+	{
+		return true;
+	}
+	return false;
+}
+
+rule "mdm"
+no-loop true
+salience 0
+when
+	entity : ims.core.documents.domain.objects.PatientDocument();
+	eval(isConditionMeet17e88303131527fbf05daef0392688efa1c(engine, entity));
+then
+	engine.println("Rule 'mdm' was fired.");
+	engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Rule 'mdm' was fired.");
+	entity.triggerMDM_T02HL7Message(factory, engine);
+end

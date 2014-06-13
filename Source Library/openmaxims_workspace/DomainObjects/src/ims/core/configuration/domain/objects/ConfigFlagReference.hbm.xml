@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:36 -->
+<hibernate-mapping>
+	<class name="ims.core.configuration.domain.objects.ConfigFlagReference" table="core_configflagref" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: hibernateClassContent -->
+<!-- debug: flagGroupName -->
+<!-- debug: flagName -->
+<!-- debug: module -->
+<!-- debug: forms -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- many to many -->
+		<set name="forms" table="core_configflagref_forms" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="configflagref_forms_fr_fk">
+				<column name="from_side" sql-type="numeric(10,0)" unique="false"   />
+			</key>
+			
+			<many-to-many class="ims.core.configuration.domain.objects.AppForm" foreign-key="configflagref_forms_to_fk">
+				<column name="to_side" sql-type="numeric(10,0)" unique="false"   />
+			</many-to-many>
+		</set>
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="flagGroupName" type="string" access="field" update="true" > 
+			<column name="flaggroupn" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="flagName" type="string" access="field" update="true" > 
+			<column name="flagname" length="255"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="module" type="string" access="field" update="true" > 
+			<column name="c_modu" length="50"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

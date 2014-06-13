@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:36 -->
+<hibernate-mapping>
+	<subclass name="ims.nursing.assessment.domain.objects.SafeEnvironmentComponent" lazy="true" discriminator-value="safe" extends="ims.nursing.assessment.domain.objects.AssessmentComponent" >
+<!-- debug: hibernateClassContent -->
+<!-- debug: maintainOwnSafety -->
+<!-- debug: haveAHeadInjury -->
+<!-- debug: riskOfAutonomicDysreflexia -->
+<!-- debug: notes -->
+<!-- debug: safetyLevel -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="safetyLevel" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="safeenvironmen_safetyleve_fk">
+				<column name="ns_safeenvironmen_safetyleve" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.nursing.assessment.domain.objects.SafetyLevel" />
+		</set>
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: IsLookup -->
+		<many-to-one name="maintainOwnSafety" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_maintainow" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="haveAHeadInjury" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_haveaheadi" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="riskOfAutonomicDysreflexia" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_riskofauto" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="notes" type="string" access="field" update="true" > 
+			<column name="notes" length="500"  not-null="false" unique="false"  />
+		</property>
+	</subclass>
+</hibernate-mapping>

@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:36 -->
+<hibernate-mapping>
+	<subclass name="ims.nursing.assessmenttools.domain.objects.MRSAAssessment" lazy="true" discriminator-value="mrsa" extends="ims.core.clinical.domain.objects.AssessmentTool" >
+<!-- debug: hibernateClassContent -->
+<!-- debug: dateScreening -->
+<!-- debug: sitesAndResults -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="sitesAndResults" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="mrsaassessment_sitesandre_fk">
+				<column name="ns_mrsaassessment_sitesandre" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.nursing.assessmenttools.domain.objects.MRSASitesResults" />
+		</set>
+<!-- debug: treatment -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="treatment" class="ims.nursing.assessmenttools.domain.objects.MRSATreatment" unique="true" foreign-key="mrsaassessment_treatment_fk" access="field" cascade="all">
+			<column name="treatment" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="dateScreening" type="date" access="field" update="true">
+			<column name="datescreen"  not-null="false" unique="false"  />
+		</property>
+	</subclass>
+</hibernate-mapping>

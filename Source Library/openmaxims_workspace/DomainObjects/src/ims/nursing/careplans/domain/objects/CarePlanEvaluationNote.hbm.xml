@@ -1,0 +1,85 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:34 -->
+<hibernate-mapping>
+	<class name="ims.nursing.careplans.domain.objects.CarePlanEvaluationNote" table="ns_careplanevnt" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: hibernateClassContent -->
+<!-- debug: recordedDateTime -->
+<!-- debug: recordedBy -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="recordedBy" class="ims.core.resource.people.domain.objects.Hcp" unique="true" foreign-key="careplanevnt_recordedby_fk" access="field" cascade="save-update">
+			<column name="recordedby" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: note -->
+<!-- debug: correctedBy -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="correctedBy" class="ims.core.resource.people.domain.objects.Hcp" unique="true" foreign-key="careplanevnt_correctedb_fk" access="field" cascade="save-update">
+			<column name="correctedb" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: correctionDateTime -->
+<!-- debug: correctionReason -->
+<!-- debug: active -->
+<!-- debug: confirmedBy -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="confirmedBy" class="ims.core.resource.people.domain.objects.Hcp" unique="true" foreign-key="careplanevnt_confirmedb_fk" access="field" cascade="save-update">
+			<column name="confirmedb" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: confirmedDateTime -->
+<!-- debug: carePlan -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="carePlan" class="ims.nursing.careplans.domain.objects.CarePlan" unique="true" foreign-key="careplanevnt_careplan_fk" access="field" cascade="save-update">
+			<column name="careplan" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="recordedDateTime" type="timestamp" access="field" update="true">
+			<column name="recordedda"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="note" type="string" access="field" update="true" > 
+			<column name="c_no" length="1000"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="correctionDateTime" type="timestamp" access="field" update="true">
+			<column name="correction"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="correctionReason" type="string" access="field" update="true" > 
+			<column name="correctio2" length="500"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="active" type="boolean" access="field" update="true">
+			<column name="active"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="confirmedDateTime" type="timestamp" access="field" update="true">
+			<column name="confirmedd"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

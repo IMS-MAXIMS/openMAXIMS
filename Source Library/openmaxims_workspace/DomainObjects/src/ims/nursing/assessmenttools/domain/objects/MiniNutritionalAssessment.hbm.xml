@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:37 -->
+<hibernate-mapping>
+	<subclass name="ims.nursing.assessmenttools.domain.objects.MiniNutritionalAssessment" lazy="true" discriminator-value="MNAS" extends="ims.core.clinical.domain.objects.AssessmentTool" >
+<!-- debug: hibernateClassContent -->
+<!-- debug: assessmentDetails -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="assessmentDetails" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="mnassess_assessment_fk">
+				<column name="ns_mnassess_assessment" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.nursing.assessmenttools.domain.objects.MiniNutritionalAssessmentDetails" />
+		</set>
+<!-- debug: metrics -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="metrics" class="ims.core.vitals.domain.objects.Metrics" unique="true" foreign-key="mnassess_metrics_fk" access="field" cascade="save-update">
+			<column name="metrics" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+	</subclass>
+</hibernate-mapping>

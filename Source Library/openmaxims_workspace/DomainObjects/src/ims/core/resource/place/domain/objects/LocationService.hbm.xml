@@ -1,0 +1,123 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:36 -->
+<hibernate-mapping>
+	<class name="ims.core.resource.place.domain.objects.LocationService" table="core_locationservic" lazy="true" discriminator-value="null" >
+		<cache usage="nonstrict-read-write" />
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: hibernateClassContent -->
+<!-- debug: contact -->
+<!-- debug: field.IsAssociation : true -->
+ 		<!-- Component -->
+ 		<component name="contact" class="ims.core.resource.people.domain.objects.ServiceContact" >
+
+  			<!-- Component -->
+  			<component name="name" class="ims.core.generic.domain.objects.PersonName" >
+
+  				<!-- debug: IsLookup -->
+  				<many-to-one name="nameType" class="ims.domain.lookups.LookupInstance" access="field">
+  					<column name="lkp_namenametype" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+  				</many-to-one>
+
+  				<property name="surname" type="string" access="field" update="true">
+  					<column name="namesurname" length="40" not-null="false"  unique="false"   />
+  				</property>
+
+  				<property name="upperSurname" type="string" access="field" update="true">
+  					<column name="nameuppersurna" length="40" not-null="false"  unique="false"  index='name_idx' />
+  				</property>
+
+  				<property name="forename" type="string" access="field" update="true">
+  					<column name="nameforename" length="40" not-null="false"  unique="false"   />
+  				</property>
+
+  				<property name="upperForename" type="string" access="field" update="true">
+  					<column name="nameupperforen" length="40" not-null="false"  unique="false"  index='name_idx' />
+  				</property>
+
+  				<property name="middleName" type="string" access="field" update="true">
+  					<column name="namemiddlename" length="40" not-null="false"  unique="false"   />
+  				</property>
+
+  				<!-- debug: IsLookup -->
+  				<many-to-one name="title" class="ims.domain.lookups.LookupInstance" access="field">
+  					<column name="lkp_nametitle" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+  				</many-to-one>
+  			</component>
+
+ 			<property name="contactNumber" type="string" access="field" update="true">
+ 				<column name="c_contacontactnum" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="isActive" type="boolean" access="field" update="true">
+ 				<column name="c_contaisactive" not-null="false"  unique="false"   />
+ 			</property>
+ 		</component>
+<!-- debug: service -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="service" class="ims.core.clinical.domain.objects.Service" unique="true" foreign-key="locationservic_service_fk" access="field" cascade="save-update">
+			<column name="service" sql-type="numeric(10,0)" not-null="true" unique="false" unique-key='locsvc_unq1' index='service_idx' />
+		</many-to-one>
+<!-- debug: location -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- many to one -->
+		<many-to-one name="location" class="ims.core.resource.place.domain.objects.Location" foreign-key="locationservic_location_fk" access="field" cascade="save-update">
+			<column name="location" sql-type="numeric(10,0)" not-null="true" unique="false" unique-key='locsvc_unq1'  />
+		</many-to-one>
+<!-- debug: isActive -->
+<!-- debug: functions -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="functions" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="locationservic_functions_fk">
+				<column name="core_locationservic_functions" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.core.resource.place.domain.objects.LocationServiceFunction" />
+		</set>
+<!-- debug: effectiveTo -->
+<!-- debug: activities -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- inverse side that is one-to-many -->
+		<set name="activities" inverse="true"  access="field" cascade="all-delete-orphan" lazy="true" >
+			<key foreign-key="locationservi2_locationse_fk">
+				<column name="locationse" sql-type="numeric(10,0)" unique="false"   />
+			</key>
+			
+			<one-to-many class="ims.core.resource.place.domain.objects.LocationServiceActivity"/>
+		</set>
+<!-- debug: defaultPrinter -->
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isActive" type="boolean" access="field" update="true">
+			<column name="isactive"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="effectiveTo" type="date" access="field" update="true">
+			<column name="effectivet"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="defaultPrinter" type="string" access="field" update="true" > 
+			<column name="defaultpri" length="200"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

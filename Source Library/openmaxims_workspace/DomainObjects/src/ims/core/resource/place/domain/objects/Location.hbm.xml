@@ -1,0 +1,258 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:36 -->
+<hibernate-mapping>
+	<class name="ims.core.resource.place.domain.objects.Location" table="core_location" lazy="false" discriminator-value="null" >
+		<cache usage="nonstrict-read-write" />
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: name -->
+<!-- debug: address -->
+<!-- debug: field.IsAssociation : true -->
+ 		<!-- Component -->
+ 		<component name="address" class="ims.core.generic.domain.objects.Address" >
+
+ 			<property name="line1" type="string" access="field" update="true">
+ 				<column name="addressline1" length="40" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="line2" type="string" access="field" update="true">
+ 				<column name="addressline2" length="40" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="line3" type="string" access="field" update="true">
+ 				<column name="addressline3" length="40" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="line4" type="string" access="field" update="true">
+ 				<column name="addressline4" length="40" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="line5" type="string" access="field" update="true">
+ 				<column name="addressline5" length="40" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="postCode" type="string" access="field" update="true">
+ 				<column name="addresspostcode" length="10" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="phone" type="string" access="field" update="true">
+ 				<column name="addressphone" length="30" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<!-- debug: IsLookup -->
+ 			<many-to-one name="county" class="ims.domain.lookups.LookupInstance" access="field">
+ 				<column name="lkp_addresscounty" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="fax" type="string" access="field" update="true">
+ 				<column name="addressfax" length="30" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="updateDate" type="timestamp" access="field" update="true">
+ 				<column name="addressupdatedate" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="notificationDate" type="date" access="field" update="true">
+ 				<column name="addressnotificati" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<!-- debug: IsLookup -->
+ 			<many-to-one name="addressType" class="ims.domain.lookups.LookupInstance" access="field">
+ 				<column name="lkp_addressaddresstyp" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="pCT" type="string" access="field" update="true">
+ 				<column name="addresspct" length="15" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="otherphone" type="string" access="field" update="true">
+ 				<column name="addressotherphone" length="30" not-null="false"  unique="false"   />
+ 			</property>
+ 		</component>
+<!-- debug: type -->
+<!-- debug: isActive -->
+<!-- debug: secureAccommodation -->
+<!-- debug: locations -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- inverse side that is one-to-many -->
+		<set name="locations" inverse="true"  access="field" cascade="save-update" lazy="true" >
+			<key foreign-key="location_parentloca_fk">
+				<column name="parentloca" sql-type="numeric(10,0)" unique="false"   />
+			</key>
+			
+			<one-to-many class="ims.core.resource.place.domain.objects.Location"/>
+		</set>
+<!-- debug: parentLocation -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- many to one -->
+		<many-to-one name="parentLocation" class="ims.core.resource.place.domain.objects.Location" foreign-key="location_parentloca_fk" access="field" cascade="save-update">
+			<column name="parentloca" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: services -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- inverse side that is one-to-many -->
+		<set name="services" inverse="true"  access="field" cascade="save-update" lazy="true" >
+			<key foreign-key="locationservic_location_fk">
+				<column name="location" sql-type="numeric(10,0)" unique="false"   />
+			</key>
+			
+			<one-to-many class="ims.core.resource.place.domain.objects.LocationService"/>
+		</set>
+<!-- debug: treatingHosp -->
+<!-- debug: referringHospital -->
+<!-- debug: activityLimitGroup -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="activityLimitGroup" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="location_activityli_fk">
+				<column name="core_location_activityli" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.core.clinical.domain.objects.ActivityLimitGroup" />
+		</set>
+<!-- debug: codeMappings -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+ 		<!-- Component Set -->
+ 		<list name="codeMappings" table="core_location_codemappin" lazy="true" >
+ 			<key foreign-key="location_codemappin_id_fk">
+ 				<column name="id" sql-type="numeric(10,0)" not-null="true" />
+ 			</key>
+ 			<index column='idx'/>
+ 			<!-- Composite -->
+ 			<composite-element class="ims.core.clinical.domain.objects.TaxonomyMap" >
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="taxonomyName" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_taxonomyna" not-null="true" sql-type="numeric(10,0)"  unique="false" unique-key='taxonomy_unq1'  />
+ 				</many-to-one>
+ 				<property name="taxonomyCode" type="string" access="field" update="true">
+ 					<column name="taxonomyco" length="30" not-null="true"  unique="false" unique-key='taxonomy_unq1'   />
+ 				</property>
+ 			</composite-element>
+ 		</list>
+<!-- debug: printers -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- many to many -->
+		<list name="printers" table="core_location_printers" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="location_printers_fr_fk">
+				<column name="from_side" sql-type="numeric(10,0)" unique="false"   />
+			</key>
+			<index column='idx'/>
+			<many-to-many class="ims.core.configuration.domain.objects.Printer" foreign-key="location_printers_to_fk">
+				<column name="to_side" sql-type="numeric(10,0)" unique="false"   />
+			</many-to-many>
+		</list>
+<!-- debug: upperName -->
+<!-- debug: isVirtual -->
+<!-- debug: defaultPrinter -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="defaultPrinter" class="ims.core.configuration.domain.objects.Printer" unique="true" foreign-key="location_defaultpri_fk" access="field" cascade="all">
+			<column name="defaultpri" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: designatedPrinterForNewResults -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="designatedPrinterForNewResults" class="ims.core.configuration.domain.objects.Printer" unique="true" foreign-key="location_designated_fk" access="field" cascade="all">
+			<column name="designated" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: designatedPrinterForOCSOrder -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="designatedPrinterForOCSOrder" class="ims.core.configuration.domain.objects.Printer" unique="true" foreign-key="location_designate2_fk" access="field" cascade="all">
+			<column name="designate2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: vTEAsessmentNotRequired -->
+<!-- debug: displayInEDTracking -->
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="name" type="string" access="field" update="true" > 
+			<column name="name" length="120"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="type" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_c_ty" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isActive" type="boolean" access="field" update="true">
+			<column name="isactive"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="secureAccommodation" type="boolean" access="field" update="true">
+			<column name="secureacco"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="treatingHosp" type="boolean" access="field" update="true">
+			<column name="treatingho"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="referringHospital" type="boolean" access="field" update="true">
+			<column name="referringh"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="upperName" type="string" access="field" update="true" > 
+			<column name="uppername" length="30"  not-null="true" unique="false"  index='core_loc_name_idx'/>
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isVirtual" type="boolean" access="field" update="true">
+			<column name="isvirtual"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="vTEAsessmentNotRequired" type="boolean" access="field" update="true">
+			<column name="vteasessme"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="displayInEDTracking" type="boolean" access="field" update="true">
+			<column name="displayine"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

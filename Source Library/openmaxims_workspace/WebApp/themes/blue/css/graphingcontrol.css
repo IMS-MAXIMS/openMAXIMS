@@ -1,0 +1,128 @@
+.cn_graphingcontrol{
+	border: 1px solid #9DBBE1;
+	background: white;
+	overflow: hidden;
+}
+
+@media print{
+	.cn_graphingcontrol_printDiv{
+		display: inline-block;
+		filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+		page-break-after: always;
+	}
+}
+
+.cn_graphingcontrol .headerTD{
+}
+
+.cn_graphingcontrol .leftAxisLabelTD,
+.cn_graphingcontrol .rightAxisLabelTD{
+	background: #E7F2FF;
+}
+
+.cn_graphingcontrol .topDiv{
+	display: inline-block;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=white, endcolorstr=#E7F2FF, gradienttype=0);
+	border-bottom: 1px solid #D8E2ED;
+}
+
+@media print{
+	.cn_graphingcontrol .topDiv{
+		display: none;
+	}
+}
+
+.cn_graphingcontrol .headerDiv1{
+	font-size: 18px;
+	font-weight: bold;
+	padding: 3px; 
+}
+
+.cn_graphingcontrol .headerDiv2{
+	font-size: 14px;
+	font-weight: bold;
+	padding: 3px; 
+}
+
+.cn_graphingcontrol .legendItem{
+	padding: 4px;
+	text-align: center;
+	width: 55px;
+}
+
+.cn_graphingcontrol .leftAxisDiv{
+	filter: flipV flipH;
+	white-space: nowrap;
+}
+
+.cn_graphingcontrol .leftAxisDiv, 
+.cn_graphingcontrol .rightAxisDiv{
+	font-weight: bold;
+	display: inline-block; 
+	writing-mode: tb-rl; 
+}
+
+.cn_graphingcontrol .leftHeaderTD,
+.cn_graphingcontrol .rightHeaderTD{
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=white, endcolorstr=#E7F2FF, gradienttype=0);
+}
+
+.cn_graphingcontrol .xLabelsTable td{
+	text-align: right;
+	border-bottom: 1px solid #DFE5EC;
+	padding-right: 2px;
+}
+
+.cn_graphingcontrol .xAxisTable{
+	border-collapse: collapse;
+	table-layout: fixed;
+}
+
+.cn_graphingcontrol .xAxisTable td{
+	border-bottom: 1px solid #DFE5EC;
+	font-size: 10px;
+}
+
+.cn_graphingcontrol .xAxisFirstTR td{
+	/*font-weight: bold;*/
+}
+
+.cn_graphingcontrol .bottomAxisTD{
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#E7F2FF, endcolorstr=white, gradienttype=0);
+	border-left: 1px solid #D8E2ED;
+	border-right: 1px solid #D8E2ED;
+}
+
+.cn_graphingcontrol .leftBottomLabelsTD{
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#E7F2FF, endcolorstr=white, gradienttype=1);
+}
+
+.cn_graphingcontrol .rightBottomTD{
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=white, endcolorstr=#E7F2FF, gradienttype=1);
+}
+
+.cn_graphingcontrol_printInfoTable{
+	background: white;
+	margin-bottom: 4px;
+}
+
+.cn_graphingcontrol_printInfoTable td{
+	padding: 3px;
+}
+
+.cn_graphingcontrol_printInfoTable .headerTD{
+	background: #ddd;
+	font-weight: bold;
+}
+
+@media print{
+	.cn_graphingcontrol .labelDiv{
+		font-size: 15px;
+	}
+}
+
+@media print{
+	.cn_graphingcontrol .leftAxisDiv{
+		font-size: 15px;
+	}
+}

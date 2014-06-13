@@ -1,0 +1,47 @@
+.cn_barcontrol{
+	border: 1px solid #7F9DB9;
+	padding: 0px;
+	overflow-x: scroll;
+	overflow-y: hidden;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=white, endcolorstr=#F4F4F8, gradienttype=0);
+	cursor: default;
+}
+
+.cn_barcontrol .resourceTable{
+	height: 100%;
+	table-layout: fixed;
+}
+
+.cn_barcontrol .resourceBarTD{
+	height: 100%;
+	width: 32px;
+	position: relative;
+}
+
+.cn_barcontrol .resourceBarDiv{
+	width: 100%;
+	border: 1px solid #66667E;
+	position: absolute;
+	background: white;
+	overflow: hidden;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=white, endcolorstr=#eeeeee);	
+}
+
+.cn_barcontrol .resourceNumberTD{
+	border: 1px solid #666692;
+	text-align: center;
+	font-weight: bold;
+	background: #29599E;
+	color: white;
+	xl--tooltip-delay: 0;
+	xl--tooltip-position: move;
+	xl--blend-duration: 250;
+}
+
+.cn_barcontrol .resourceGaugeDiv{
+	width: 100%;
+	position: absolute;
+	overflow: hidden;
+	background: gray;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#EAEBF1, endcolorstr=#29599E, gradienttype=1);	
+}

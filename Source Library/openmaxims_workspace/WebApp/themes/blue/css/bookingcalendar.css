@@ -1,0 +1,206 @@
+.cn_bookingcalendar{
+	border: 1px solid gray;
+	overflow: hidden;
+	xl-width: 400px;
+	xl-height: 400px;
+}
+
+.cn_bookingcalendar, 
+.cn_bookingcalendar select, 
+.cn_bookingcalendar input, 
+.cn_bookingcalendar td, 
+.cn_bookingcalendar button{
+	font-size: 12px;
+}
+
+.cn_bookingcalendar td{ position: relative; }
+
+.cn_bookingcalendar select{ width: 80px; font-weight: bold; }
+
+.cn_bookingcalendar #topControls td{
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#9DBBE1, endcolorstr=white);
+}
+
+.cn_bookingcalendar #topControls .cn_combobox td{
+	filter: none;
+}
+
+.cn_bookingcalendar #daysTable{
+	width: 100%;
+}
+
+.cn_bookingcalendar #daysTable #header{
+	height: 24px;
+	color: white;
+	font-weight: bold;
+	cursor: default;
+}
+
+.cn_bookingcalendar #daysTable #header td{
+	text-align: center;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#9DBBE1, endcolorstr=white);
+	border-style: none;
+	border-bottom: 1px solid #555555;
+	font-size: 110%;
+}
+
+.cn_bookingcalendar #daysTable td{
+	width: 14%;
+	border: none;
+	border-left: 1px solid #555555;
+	border-bottom: 1px solid #555555;
+}
+
+.cn_bookingcalendar #daysTable #header span{
+	height: 1px;
+	padding: 1px;
+	padding-right: 2px;
+	color: black;
+}
+
+.cn_bookingcalendar #monthSelect{ width: 100px; margin-top: 2px; }
+.cn_bookingcalendar #yearSelect{ width: 44px; font-weight: bold; margin-top: 1px; }
+
+.cn_bookingcalendar #nextMonthButton, 
+.cn_bookingcalendar #prevMonthButton{ 
+	height: 22px; 
+	line-height: 1em;
+	width: 40px;
+}
+
+.cn_bookingcalendar #yearDownButton, 
+.cn_bookingcalendar #yearUpButton{ 
+	height: 10px; width: 22px; 
+}
+
+.cn_bookingcalendar #yearUpButton{ margin-top: 2px; height: 9px; }
+
+.cn_bookingcalendar .arrows7, .cn_bookingcalendar .arrows10{ font-family: webdings; }
+.cn_bookingcalendar .arrows7{ font-size: 6px; }
+.cn_bookingcalendar .arrows10{ font-size: 14px; }
+
+.cn_bookingcalendar .dayButton, 
+.cn_bookingcalendar .dayDisabled, 
+.cn_bookingcalendar .conflictDay, 
+.cn_bookingcalendar .noSlotsDay{ 
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	
+	width: 70%;
+	height: 50%;
+	line-height: 1em;	
+		
+	background: none; 
+}
+
+.cn_bookingcalendar .dayButton{
+/*	border: 1px solid #AEADC5;
+	background: white;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#FEFEFE, endcolorstr=#B6D7FF, gradienttype=1);*/
+	border: 1px outset #eee;
+	background: #ACD7FF;
+	filter: none;
+}
+
+.cn_bookingcalendar .dayDisabled{
+	text-align: center;
+	padding: 2px;
+}
+
+.cn_bookingcalendar .reboockedCheckbox, 
+.cn_bookingcalendar .boockedCheckbox{
+	position: absolute;
+	font-family: wingdings;
+	font-size: 14px;
+	font-weight: normal;
+	line-height: 0.75em;
+	cursor: default;
+	xl--hover-color: #1148AB;
+}
+
+.cn_bookingcalendar .boockedCheckbox{
+	top: 64%;
+	left: 15%;
+	color: black;
+}
+
+.cn_bookingcalendar .reboockedCheckbox{
+	top: 64%;
+	left: 42%;
+	color: gray;
+}
+
+.cn_bookingcalendar .gauge{
+	position: absolute;
+	top: 1px;
+	right: 1px;	 
+	
+	height: 90%;
+	width: 20%;
+	overflow: hidden;
+	
+	border: 1px solid black;
+	background: white;
+}
+
+.cn_bookingcalendar .gaugeBar{
+	position: absolute;
+	bottom: -1px;
+	left: 0px;
+	width: 100%;
+	overflow: hidden;
+	background: #5090ff;
+}
+
+.cn_bookingcalendar .empty{
+	background: white;
+	filter: none !important;
+}
+
+.cn_bookingcalendar td.beforeTodayDay{
+	background: #ddd;
+}
+
+.cn_bookingcalendar td.beforeTodayDay button{
+	filter: none; 
+/*	background: #ddd;*/
+	background: #E1DBDF;	
+	border: 1px outset #eee;
+}
+
+
+.cn_bookingcalendar td.todayDay,
+.cn_bookingcalendar .normalDay{
+	background: #ACD7FF;
+/*	background: white;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#FEFEFE, endcolorstr=#ADD7FF);*/
+}
+
+.cn_bookingcalendar .conflictDay{
+	background: red;
+	filter: none;
+	color: yellow;
+	border-width: 1px;
+	border-color: #FFC0CB;
+}
+
+.cn_bookingcalendar .noSlotsDay{
+	background: #F5DEB3;
+	border-width: 1px;
+	border-color: #000000;
+	color: black !important;
+}
+
+.cn_bookingcalendar .selectedDay{
+	background: #6090FF;
+}
+.cn_bookingcalendar .selectedDay button{
+	color: black;
+	font-weight: bold;
+}
+
+.cn_bookingcalendar .cn_combobox{
+	width: 100px;
+	font-weight: bold;
+}

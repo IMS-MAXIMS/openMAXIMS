@@ -1,0 +1,222 @@
+.cn_drawingcontrol{
+	border: 1px solid #9DBBE1;
+	background: white;
+}
+
+.cn_drawingcontrol .canvasToolbar{
+	border-left: 1px solid #9DBBE1;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#CFE5FF, endcolorstr=white, gradienttype=0);
+}
+
+
+.cn_drawingcontrol .button_normal{ 
+	margin: 0px;
+	padding: 3px; 
+	border: 0px; 
+	background: none; 
+	filter: none;
+}
+
+.cn_drawingcontrol .button_disabled{ 
+	margin: 0px;
+	padding: 3px; 
+	border: 0px; 
+	filter: alpha(opacity=30);
+}
+
+.cn_drawingcontrol .button_normalHover{ 
+	margin: 0px;
+	padding: 2px; 
+	border: 1px solid #316AC5;
+	background: #eeeeee; 
+	display: inline-block;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#FEFEFE, endcolorstr=#b0bFe7, gradienttype=0);
+}
+
+.cn_drawingcontrol .button_normalDown{ 
+	margin: 0px;
+	padding: 2px; 
+	display: inline-block;
+	border: 1px solid #316AC5; 
+	background: #eeeeee;  
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#7A92C2, endcolorstr=white, gradienttype=0);
+}
+
+.cn_drawingcontrol .button_pushed{ 
+	margin: 0px;
+	padding: 2px; 
+	border: 1px solid #214Aa5; 
+	background: white;
+	display: inline-block;
+}
+
+.cn_drawingcontrol .button_pushedHover{ 
+	margin: 0px;
+	padding: 2px; 
+	border: 1px solid #214Aa5; 
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#c1d9f2, endcolorstr=white, gradienttype=0); 
+	display: inline-block;
+}
+
+.cn_drawingcontrol .button_pushedDown{ 
+	margin: 0px;
+	padding: 2px; 
+	border: 1px solid #214Aa5; 
+	background: #214Aa5;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#c1d9f2, endcolorstr=white, gradienttype=0); 
+	display: inline-block;
+}
+
+
+.cn_drawingcontrol .spanButton_normal, 
+.cn_drawingcontrol .spanButton_disabled,
+.cn_drawingcontrol .spanButton_normalHover,
+.cn_drawingcontrol .spanButton_normalDown,
+.cn_drawingcontrol .spanButton_pushed,
+.cn_drawingcontrol .spanButton_pushedHover,
+.cn_drawingcontrol .spanButton_pushedDown{
+	width: 16px;
+	height: 16px;
+	background: none; 
+	padding: 1px; 
+	border: 0px; 
+	filter: none;
+	margin: 0px;
+}
+
+.cn_drawingcontrol .spanButton_normal{ 
+}
+
+.cn_drawingcontrol .spanButton_disabled *{ 
+	filter: alpha(opacity=30);
+}
+
+.cn_drawingcontrol .spanButton_normalHover{ 
+	padding: 0px; 
+	border: 1px solid #316AC5;
+	background: #eeeeee; 
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#FEFEFE, endcolorstr=#b0bFe7, gradienttype=0);
+}
+
+.cn_drawingcontrol .spanButton_normalDown{ 
+	padding: 0px; 
+	border: 1px solid #316AC5; 
+	background: #eeeeee; 
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#7A92C2, endcolorstr=white, gradienttype=0);
+}
+
+.cn_drawingcontrol .spanButton_pushed{ 
+	padding: 0px; 
+	border: 1px solid #214Aa5; 
+	background: white;
+}
+
+.cn_drawingcontrol .spanButton_pushedHover{ 
+	padding: 0px;
+	border: 1px solid #214Aa5; 
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#c1d9f2, endcolorstr=white, gradienttype=0); 
+}
+
+.cn_drawingcontrol .spanButton_pushedDown{ 
+	padding: 0px; 
+	border: 1px solid #214Aa5; 
+	background: #ff4444; 
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#7A92C2, endcolorstr=white, gradienttype=0); 
+}
+
+.cn_drawingcontrol .contextButtonsDiv{
+	position: absolute;
+	visibility: hidden;
+	bottom: 18px;
+	right: 125px;
+	height: 20px;
+	filter: 
+		filter: blendTrans(duration=.2)
+		progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#F4F4F8, endcolorstr=white, gradienttype=0);	
+}
+
+.cn_drawingcontrol button{
+	background: #F4F4F8;
+}
+
+.cn_drawingcontrol .contextButtonsDiv button{
+	height: 20px;
+	width: 75px;
+	fontSize: 10px;
+	border-color: white;
+}
+
+.cn_drawingcontrol .contextButtonsDiv button img{
+	margin-right: 3px;
+}
+
+.cn_drawingcontrol .statusBar{
+	background: #CFE5FF;
+	filter: 
+		filter: blendTrans(duration=.2)
+		progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#CFE5FF, endcolorstr=white, gradienttype=0);
+	position: absolute;
+	padding: 2px;
+	padding-left: 4px;
+	cursor: default;
+	left: 0px;
+	width: 100%;
+	border-top: 1px solid #9DBBE1;
+}
+
+
+.cn_drawingconfigcontrol{
+	border: 1px solid #9DBBE1;
+	background: white;
+}
+
+.cn_drawingconfigcontrol .content{
+	width: 100%;
+	height: 100%;
+	position: relative;
+	overflow: auto;
+}
+
+.cn_drawingconfigcontrol .cn_tree{
+	width: 200px;
+	height: 100%;
+	border-top: 0px;
+	border-left: 0px;
+	border-bottom: 0px;
+}
+
+
+.cn_drawingcontrol_printPageDiv{
+	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3); 
+	border: 1px solid #ddd; 
+	width: 912px; 
+	height: 672px;
+	overflow: hidden;
+	font-family: arial;
+}
+
+.cn_drawingcontrol_printPageDiv v\:shape.markerArea{
+	display: none;
+}
+
+.cn_drawingcontrol_titleDiv, .cn_drawingcontrol_subTitleDiv{
+	width: 710px;
+	background: #eee;
+	position: absolute;
+	text-align: center;
+}
+
+.cn_drawingcontrol_titleDiv{
+	font-size: 14px;
+	top: -8px;
+	left: -8px; // ?
+	padding-top: 2px;
+	padding-bottom: 8px;
+}
+
+.cn_drawingcontrol_subTitleDiv{
+	top: 24px;
+	left: 0px;
+	font-size: 14px;
+	text-align: center;
+}

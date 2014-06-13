@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:36 -->
+<hibernate-mapping>
+	<subclass name="ims.nursing.assessment.domain.objects.AdmissionAssessment" lazy="true" discriminator-value="AAMT" extends="ims.core.clinical.domain.objects.Assessment" >
+<!-- debug: hibernateClassContent -->
+<!-- debug: components -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- inverse side that is one-to-many -->
+		<set name="components" inverse="true"  access="field" cascade="all-delete-orphan" lazy="true" >
+			<key foreign-key="assessmentcomp_assessmen2_fk">
+				<column name="assessmen2" sql-type="numeric(10,0)" unique="false"   />
+			</key>
+			
+			<one-to-many class="ims.nursing.assessment.domain.objects.AssessmentComponent"/>
+		</set>
+<!-- debug: assessmentType -->
+<!-- debug: assessmentStatus -->
+<!-- debug: hCPComplete -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="hCPComplete" class="ims.core.resource.people.domain.objects.Hcp" unique="true" foreign-key="admitassess_hcpcomplet_fk" access="field" cascade="save-update">
+			<column name="hcpcomplet" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: dateTimeComplete -->
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="assessmentType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_assessment" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="assessmentStatus" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_assessmen2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dateTimeComplete" type="timestamp" access="field" update="true">
+			<column name="datetimeco"  not-null="false" unique="false"  />
+		</property>
+	</subclass>
+</hibernate-mapping>

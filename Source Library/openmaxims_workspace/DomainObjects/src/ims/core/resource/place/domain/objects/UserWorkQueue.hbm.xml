@@ -1,0 +1,151 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:37 -->
+<hibernate-mapping>
+	<class name="ims.core.resource.place.domain.objects.UserWorkQueue" table="core_userworkqueue" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: requestType -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="requestType" class="ims.core.resource.place.domain.objects.Activity" unique="true" foreign-key="userworkqueue_requesttyp_fk" access="field" cascade="save-update">
+			<column name="requesttyp" sql-type="numeric(10,0)" not-null="false" unique="false"  index='core_userworkqueue_idx' />
+		</many-to-one>
+<!-- debug: requestedBy -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="requestedBy" class="ims.core.resource.people.domain.objects.MemberOfStaff" unique="true" foreign-key="userworkqueue_requestedb_fk" access="field" cascade="save-update">
+			<column name="requestedb" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: requestDateTime -->
+<!-- debug: targetUser -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="targetUser" class="ims.core.resource.people.domain.objects.MemberOfStaff" unique="true" foreign-key="userworkqueue_targetuser_fk" access="field" cascade="save-update">
+			<column name="targetuser" sql-type="numeric(10,0)" not-null="false" unique="false"  index='core_userworkqueue_idx' />
+		</many-to-one>
+<!-- debug: description -->
+<!-- debug: requiredOnDate -->
+<!-- debug: requestingObjectID -->
+<!-- debug: requestingForm -->
+<!-- debug: targetObjectID -->
+<!-- debug: targetForm -->
+<!-- debug: currentStatus -->
+<!-- debug: statusHistory -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="statusHistory" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="userworkqueue_statushist_fk">
+				<column name="core_userworkqueue_statushist" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.core.resource.place.domain.objects.WorkQueueStatus" />
+		</set>
+<!-- debug: origNoteType -->
+<!-- debug: comments -->
+<!-- debug: procedureLocationService -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="procedureLocationService" class="ims.core.resource.place.domain.objects.LocationService" unique="true" foreign-key="userworkqueue_procedurel_fk" access="field" cascade="save-update">
+			<column name="procedurel" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: procedureActivity -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="procedureActivity" class="ims.core.resource.place.domain.objects.Activity" unique="true" foreign-key="userworkqueue_procedurea_fk" access="field" cascade="save-update">
+			<column name="procedurea" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: procedureContext -->
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="requestDateTime" type="timestamp" access="field" update="true">
+			<column name="requestdat"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="description" type="string" access="field" update="true" > 
+			<column name="descriptio" length="1500"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="requiredOnDate" type="date" access="field" update="true">
+			<column name="requiredon"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="requestingObjectID" type="integer" access="field" update="true">
+			<column name="requesting"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<component name="requestingForm" class="ims.domain.FormName" >
+			<property name="id" type="int" access="field" update="true">
+				<column name="requestin2"  not-null="false" unique="false"     />
+			</property>
+		</component>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="targetObjectID" type="integer" access="field" update="true">
+			<column name="targetobje"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<component name="targetForm" class="ims.domain.FormName" >
+			<property name="id" type="int" access="field" update="true">
+				<column name="targetform"  not-null="false" unique="false"     />
+			</property>
+		</component>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="currentStatus" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_currentsta" sql-type="numeric(10,0)" not-null="false" unique="false"  index='core_userworkqueue_idx' />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="origNoteType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_orignotety" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="comments" type="string" access="field" update="true" > 
+			<column name="comments" length="1500"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="procedureContext" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_procedurec" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+	</class>
+</hibernate-mapping>

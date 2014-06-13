@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:36 -->
+<hibernate-mapping>
+	<subclass name="ims.nursing.assessmenttools.domain.objects.PainAssessment" lazy="true" discriminator-value="PAIN" extends="ims.core.clinical.domain.objects.Assessment" >
+<!-- debug: hibernateClassContent -->
+<!-- debug: siteDetails -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<list name="siteDetails" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="painassessment_sitedetail_fk">
+				<column name="ns_painassessment_sitedetail" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.nursing.assessmenttools.domain.objects.PainAssessmentFindings" />
+		</list>
+<!-- debug: assessmentDateTime -->
+<!-- debug: imageVersion -->
+<!-- debug: field.IsAssociation : true -->
+ 		<!-- Component -->
+ 		<component name="imageVersion" class="ims.core.configuration.domain.objects.DrawingImageVersion" >
+
+ 			<property name="imageName" type="string" access="field" update="true">
+ 				<column name="imageversiimagename" length="255" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="versionNumber" type="integer" access="field" update="true">
+ 				<column name="imageversiversionnum" not-null="false"  unique="false"   />
+ 			</property>
+ 		</component>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="assessmentDateTime" type="timestamp" access="field" update="true">
+			<column name="assessment"  not-null="false" unique="false"  />
+		</property>
+	</subclass>
+</hibernate-mapping>

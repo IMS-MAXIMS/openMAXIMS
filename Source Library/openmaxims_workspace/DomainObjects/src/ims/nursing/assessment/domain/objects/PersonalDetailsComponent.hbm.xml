@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:36 -->
+<hibernate-mapping>
+	<subclass name="ims.nursing.assessment.domain.objects.PersonalDetailsComponent" lazy="true" discriminator-value="pers" extends="ims.nursing.assessment.domain.objects.AssessmentComponent" >
+<!-- debug: hibernateClassContent -->
+<!-- debug: sportsInterestsHobbies -->
+<!-- debug: occupation -->
+<!-- debug: occupationOther -->
+<!-- debug: usualSleepPattern -->
+<!-- debug: takesNightSedation -->
+<!-- debug: notes -->
+<!-- debug: sexuality -->
+<!-- debug: notAppropriateToAsk -->
+<!-- debug: anxietyDying -->
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="sportsInterestsHobbies" type="string" access="field" update="true">
+			<column name="sportsinte"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="occupation" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_occupation" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="occupationOther" type="string" access="field" update="true" > 
+			<column name="occupatio2" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="usualSleepPattern" type="integer" access="field" update="true">
+			<column name="usualsleep"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="takesNightSedation" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_takesnight" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="notes" type="string" access="field" update="true" > 
+			<column name="notes" length="500"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="sexuality" type="string" access="field" update="true" > 
+			<column name="sexuality" length="450"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="notAppropriateToAsk" type="boolean" access="field" update="true">
+			<column name="notappropr"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="anxietyDying" type="string" access="field" update="true" > 
+			<column name="anxietydyi" length="450"  not-null="false" unique="false"  />
+		</property>
+	</subclass>
+</hibernate-mapping>

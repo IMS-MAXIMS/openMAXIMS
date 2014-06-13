@@ -1,0 +1,161 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:37 -->
+<hibernate-mapping>
+	<class name="ims.careuk.domain.objects.TCIForPatientElectiveList" table="care_tciforpatiente" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: tCIDate -->
+<!-- debug: tCITime -->
+<!-- debug: tCIOfferMethod -->
+<!-- debug: dateTCIOffered -->
+<!-- debug: dateTCIAccepted -->
+<!-- debug: appointment -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="appointment" class="ims.scheduling.domain.objects.Booking_Appointment" unique="true" foreign-key="tciforpatiente_appointmen_fk" access="field" cascade="save-update">
+			<column name="appointmen" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: session -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="session" class="ims.scheduling.domain.objects.Sch_Session" unique="true" foreign-key="tciforpatiente_c_sessi_fk" access="field" cascade="save-update">
+			<column name="c_sessi" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: comments -->
+<!-- debug: kPIExceededReason -->
+<!-- debug: planningElective -->
+<!-- debug: tCIHospital -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="tCIHospital" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="tciforpatiente_tcihospita_fk" access="field" cascade="save-update">
+			<column name="tcihospita" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: tCIWard -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="tCIWard" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="tciforpatiente_tciward_fk" access="field" cascade="save-update">
+			<column name="tciward" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: tCIBed -->
+<!-- debug: tCIConsultant -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="tCIConsultant" class="ims.core.resource.people.domain.objects.Hcp" unique="true" foreign-key="tciforpatiente_tciconsult_fk" access="field" cascade="save-update">
+			<column name="tciconsult" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: currentOutcome -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="currentOutcome" class="ims.careuk.domain.objects.TCIOutcomeForPatientElectiveList" unique="true" foreign-key="tciforpatiente_currentout_fk" access="field" cascade="save-update">
+			<column name="currentout" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: outcomeHistory -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- one to many -->
+		<list name="outcomeHistory" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="tciforpatiente_outcomehis_fk">
+				<column name="care_tciforpatiente_outcomehis" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.careuk.domain.objects.TCIOutcomeForPatientElectiveList" />
+		</list>
+<!-- debug: isActive -->
+<!-- debug: admissionDetail -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="admissionDetail" class="ims.core.admin.pas.domain.objects.AdmissionDetail" unique="true" foreign-key="tciforpatiente_admissiond_fk" access="field" cascade="save-update">
+			<column name="admissiond" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: bedManagerComment -->
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="tCIDate" type="date" access="field" update="true">
+			<column name="tcidate"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="tCITime" type="string" access="field" update="true">
+			<column name="tcitime"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="tCIOfferMethod" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_tciofferme" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dateTCIOffered" type="date" access="field" update="true">
+			<column name="datetcioff"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dateTCIAccepted" type="date" access="field" update="true">
+			<column name="datetciacc"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="comments" type="string" access="field" update="true" > 
+			<column name="comments" length="1000"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="kPIExceededReason" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_kpiexceede" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="planningElective" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_planningel" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="tCIBed" type="string" access="field" update="true" > 
+			<column name="tcibed" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isActive" type="boolean" access="field" update="true">
+			<column name="isactive"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="bedManagerComment" type="string" access="field" update="true" > 
+			<column name="bedmanager" length="1000"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

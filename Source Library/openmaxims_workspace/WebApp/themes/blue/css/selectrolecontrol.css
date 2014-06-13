@@ -1,0 +1,54 @@
+.cn_selectrolecontrol{
+	width: 100%; height: 100%; padding: 4px;
+}
+
+.cn_selectrolecontrol .td1{
+	padding-left: 10px;
+}
+
+.cn_selectrolecontrol .span1{
+	visibility: visible; display: inline-block; margin-top: 10px; margin-left: 20px; 
+}
+
+.cn_selectrolecontrol .span2{
+	position: relative; width: 200px; height: 30px; margin-left: 20px; 
+}
+
+.cn_selectrolecontrol .span3{
+	position: absolute; top: -40px; left: 0px; white-space: nowrap; visibility: visible; 
+}
+
+.cn_selectrolecontrol #selectScreenTitle_{
+	display: inline;
+}
+
+.cn_selectrolecontrol .img1{
+	position: relative; top: -45px; left: 125px;
+} 
+
+.cn_selectrolecontrol #rolesDiv{
+	width: 260px; height: 100%; overflow-x: visible; overflow-y: auto;
+	text-align: center;
+}
+
+.cn_selectrolecontrol .table1{
+	display: none; position: relative; cursor: hand; margin-bottom: 4px; 
+	width: 100%; height: 37px;
+}				 
+
+.cn_selectrolecontrol .td2{
+	font-size: 14px;  
+}
+
+.cn_selectrolecontrol .img2{
+	position: absolute; top: 7px; right: 5px;
+} 
+
+.cn_selectrolecontrol .img3{
+	width: 100%; height: 38px;
+} 
+
+.cn_selectrolecontrol .div1{
+	position: absolute; white-space: nowrap; top: 0px; left: 0px; overflow: hidden; width: 100%;
+	padding-top: 10px; padding-left: 16px; padding-right: 16px;
+} 

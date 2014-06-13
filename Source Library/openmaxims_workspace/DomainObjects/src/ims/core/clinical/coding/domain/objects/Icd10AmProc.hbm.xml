@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:35 -->
+<hibernate-mapping>
+	<class name="ims.core.clinical.coding.domain.objects.Icd10AmProc" table="core_icd10amproc" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: hibernateClassContent -->
+<!-- debug: code_id -->
+<!-- debug: block -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="block" class="ims.core.clinical.coding.domain.objects.Icd10AmBlock" unique="true" foreign-key="icd10amproc_c_blo_fk" access="field" cascade="save-update">
+			<column name="c_blo" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: ascii_desc -->
+<!-- debug: ascii_short_desc -->
+<!-- debug: effective_from -->
+<!-- debug: inactive -->
+<!-- debug: sex -->
+<!-- debug: stype -->
+<!-- debug: ageL -->
+<!-- debug: agelH -->
+<!-- debug: atype -->
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="code_id" type="string" access="field" update="true" > 
+			<column name="code_id" length="10"  not-null="false" unique="false" unique-key='ProcCodeUnqIdx' />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="ascii_desc" type="string" access="field" update="true" > 
+			<column name="ascii_desc" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="ascii_short_desc" type="string" access="field" update="true" > 
+			<column name="ascii_shor" length="60"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="effective_from" type="date" access="field" update="true">
+			<column name="effective_"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="inactive" type="date" access="field" update="true">
+			<column name="inactive"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="sex" type="integer" access="field" update="true">
+			<column name="sex"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="stype" type="integer" access="field" update="true">
+			<column name="stype"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="ageL" type="integer" access="field" update="true">
+			<column name="agel"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="agelH" type="integer" access="field" update="true">
+			<column name="agelh"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="atype" type="integer" access="field" update="true">
+			<column name="atype"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

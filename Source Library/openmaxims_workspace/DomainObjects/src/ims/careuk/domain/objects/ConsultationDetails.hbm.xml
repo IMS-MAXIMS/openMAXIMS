@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:37 -->
+<hibernate-mapping>
+	<class name="ims.careuk.domain.objects.ConsultationDetails" table="care_consultationde" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: cATSReferral -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="cATSReferral" class="ims.careuk.domain.objects.CatsReferral" unique="true" foreign-key="consultationde_catsreferr_fk" access="field" cascade="save-update">
+			<column name="catsreferr" sql-type="numeric(10,0)" not-null="true" unique="false"  index='cats_idx' />
+		</many-to-one>
+<!-- debug: authoringInformation -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+ 		<!-- Component -->
+ 		<component name="authoringInformation" class="ims.core.clinical.domain.objects.AuthoringInformation" >
+
+ 			<many-to-one name="authoringHcp" class="ims.core.resource.people.domain.objects.Hcp" foreign-key="consultationde_authoringiau_fk" access="field">
+ 				<column name="authoringiauthoringh" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="authoringDateTime" type="timestamp" access="field" update="true">
+ 				<column name="authoringiauthoringd" not-null="false"  unique="false"   />
+ 			</property>
+ 		</component>
+<!-- debug: consultationTimes -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="consultationTimes" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="consultationde_consultati_fk">
+				<column name="care_consultationde_consultati" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.careuk.domain.objects.ConsultationTime" />
+		</set>
+<!-- debug: clinicalContactTime -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- one to many -->
+		<set name="clinicalContactTime" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="consultationde_clinicalco_fk">
+				<column name="care_consultationde_clinicalco" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.careuk.domain.objects.ClinicalContactTime" />
+		</set>
+<!-- debug: tltTimes -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="tltTimes" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="consultationde_tlttimes_fk">
+				<column name="care_consultationde_tlttimes" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.careuk.domain.objects.TltContactTime" />
+		</set>
+<!-- debug: referralSummary -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="referralSummary" class="ims.careuk.domain.objects.PresentationReferralSummary" unique="true" foreign-key="consultationde_referralsu_fk" access="field" cascade="save-update">
+			<column name="referralsu" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: baselineObs -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="baselineObs" class="ims.careuk.domain.objects.NursingNotes" unique="true" foreign-key="consultationde_baselineob_fk" access="field" cascade="all">
+			<column name="baselineob" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: onExam -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="onExam" class="ims.careuk.domain.objects.OnExamination" unique="true" foreign-key="consultationde_onexam_fk" access="field" cascade="all">
+			<column name="onexam" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: atConsultation -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="atConsultation" class="ims.careuk.domain.objects.AtConsultation" unique="true" foreign-key="consultationde_atconsulta_fk" access="field" cascade="all">
+			<column name="atconsulta" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: outcome -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="outcome" class="ims.careuk.domain.objects.ReferralOutcome" unique="true" foreign-key="consultationde_outcome_fk" access="field" cascade="all">
+			<column name="outcome" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+	</class>
+</hibernate-mapping>

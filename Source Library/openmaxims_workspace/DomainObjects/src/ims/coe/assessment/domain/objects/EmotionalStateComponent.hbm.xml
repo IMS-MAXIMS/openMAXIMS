@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:37 -->
+<hibernate-mapping>
+	<subclass name="ims.coe.assessment.domain.objects.EmotionalStateComponent" lazy="true" discriminator-value="EMOT" extends="ims.nursing.assessment.domain.objects.AssessmentComponent" >
+<!-- debug: hibernateClassContent -->
+<!-- debug: stateAssessment -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="stateAssessment" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="emotcomp_stateasses_fk">
+				<column name="coe_emotcomp_stateasses" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.coe.assessment.domain.objects.EmotionalStateAssessment" />
+		</set>
+<!-- debug: sexuality -->
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="sexuality" type="string" access="field" update="true" > 
+			<column name="sexuality" length="500"  not-null="false" unique="false"  />
+		</property>
+	</subclass>
+</hibernate-mapping>

@@ -1,0 +1,183 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:36 -->
+<hibernate-mapping>
+	<class name="ims.nursing.assessmenttools.domain.objects.SkinAssessmentFindings" table="ns_skinassfind" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: hibernateClassContent -->
+<!-- debug: woundType -->
+<!-- debug: siteName -->
+<!-- debug: siteImage -->
+<!-- debug: siteDetails -->
+<!-- debug: howLongIsItPresent -->
+<!-- debug: pressureSoreGrade -->
+<!-- debug: length -->
+<!-- debug: width -->
+<!-- debug: depth -->
+<!-- debug: woundBed -->
+<!-- debug: surroundingSkin -->
+<!-- debug: exudateAmount -->
+<!-- debug: exudateType -->
+<!-- debug: odour -->
+<!-- debug: pain -->
+<!-- debug: infectionSuspected -->
+<!-- debug: swabTaken -->
+<!-- debug: woundTraced -->
+<!-- debug: cleansedWith -->
+<!-- debug: primaryDressing -->
+<!-- debug: secondaryDressing -->
+<!-- debug: frequencyOfChange -->
+<!-- debug: comment -->
+<!-- debug: isDiscontinuedAssess -->
+<!-- debug: isContinuedAssessment -->
+<!-- debug: skinAssessmentReview -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="skinAssessmentReview" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="skinassfind_skinassess_fk">
+				<column name="ns_skinassfind_skinassess" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.nursing.assessmenttools.domain.objects.SkinAssessmentReview" />
+		</set>
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: IsLookup -->
+		<many-to-one name="woundType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_woundtype" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="siteName" type="string" access="field" update="true" > 
+			<column name="sitename" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="siteImage" type="text" access="field" update="true" > 
+			<column name="siteimage"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="siteDetails" type="string" access="field" update="true" > 
+			<column name="sitedetail" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="howLongIsItPresent" type="string" access="field" update="true" > 
+			<column name="howlongisi" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="pressureSoreGrade" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_pressureso" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="length" type="float" access="field" update="true">
+			<column name="length" sql-type="numeric(10,2)"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="width" type="float" access="field" update="true">
+			<column name="width" sql-type="numeric(10,2)"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="depth" type="float" access="field" update="true">
+			<column name="depth" sql-type="numeric(10,2)"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="woundBed" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_woundbed" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="surroundingSkin" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_surroundin" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="exudateAmount" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_exudateamo" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="exudateType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_exudatetyp" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="odour" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_odour" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="pain" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_pain" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="infectionSuspected" type="boolean" access="field" update="true">
+			<column name="infections"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="swabTaken" type="boolean" access="field" update="true">
+			<column name="swabtaken"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="woundTraced" type="boolean" access="field" update="true">
+			<column name="woundtrace"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="cleansedWith" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_cleansedwi" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="primaryDressing" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_primarydre" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="secondaryDressing" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_secondaryd" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="frequencyOfChange" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_frequencyo" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="comment" type="string" access="field" update="true" > 
+			<column name="c_comme" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isDiscontinuedAssess" type="boolean" access="field" update="true">
+			<column name="isdisconti"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isContinuedAssessment" type="boolean" access="field" update="true">
+			<column name="iscontinue"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>
