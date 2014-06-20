@@ -4956,7 +4956,7 @@ public class GenForm extends FormBridge
 		{
 			Core = new CoreForms();
 			Clinical = new ClinicalForms();
-			CAREUK = new CAREUKForms();
+			RefMan = new RefManForms();
 		}
 		public final class CoreForms implements java.io.Serializable
 		{
@@ -4978,10 +4978,10 @@ public class GenForm extends FormBridge
 			}
 			public final FormName VTERiskAssessmentDialog;
 		}
-		public final class CAREUKForms implements java.io.Serializable
+		public final class RefManForms implements java.io.Serializable
 		{
 			private static final long serialVersionUID = 1L;
-			private CAREUKForms()
+			private RefManForms()
 			{
 				PatientElectiveListAndTCIForCancellationDialog = new LocalFormName(134235);
 			}
@@ -4990,7 +4990,7 @@ public class GenForm extends FormBridge
 
 		public CoreForms Core;
 		public ClinicalForms Clinical;
-		public CAREUKForms CAREUK;
+		public RefManForms RefMan;
 	}
 
 
@@ -5365,11 +5365,11 @@ public class GenForm extends FormBridge
 		{
 			return !cxl_PatientElectiveListDischarge.getValueIsNull(context);
 		}
-		public ims.careuk.vo.PatientElectiveListBedAdmissionVo getPatientElectiveListDischarge()
+		public ims.RefMan.vo.PatientElectiveListBedAdmissionVo getPatientElectiveListDischarge()
 		{
-			return (ims.careuk.vo.PatientElectiveListBedAdmissionVo)cxl_PatientElectiveListDischarge.getValue(context);
+			return (ims.RefMan.vo.PatientElectiveListBedAdmissionVo)cxl_PatientElectiveListDischarge.getValue(context);
 		}
-		public void setPatientElectiveListDischarge(ims.careuk.vo.PatientElectiveListBedAdmissionVo value)
+		public void setPatientElectiveListDischarge(ims.RefMan.vo.PatientElectiveListBedAdmissionVo value)
 		{
 			cxl_PatientElectiveListDischarge.setValue(context, value);
 		}
@@ -5491,7 +5491,7 @@ public class GenForm extends FormBridge
 			fields[67] = new ims.framework.ReportField(this.context, "_cvp_Clinical.ExtendedClinicalNotesListFilter", "BO-1011100000-CARECONTEXT", "CareContext");
 			fields[68] = new ims.framework.ReportField(this.context, "_cvp_Core.PasEvent", "BO-1014100003-ID", "ID_PASEvent");
 			fields[69] = new ims.framework.ReportField(this.context, "_cvp_Correspondence.CorrespondenceDetails", "BO-1052100001-ID", "ID_CorrespondenceDetails");
-			fields[70] = new ims.framework.ReportField(this.context, "_cvp_CareUk.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
+			fields[70] = new ims.framework.ReportField(this.context, "_cvp_RefMan.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
 			fields[71] = new ims.framework.ReportField(this.context, "_cv_Core.ADTWard", "BO-1007100007-ID", "ID_Location");
 			fields[72] = new ims.framework.ReportField(this.context, "_cv_Core.ADTWard", "BO-1007100007-NAME", "Name");
 			fields[73] = new ims.framework.ReportField(this.context, "_cv_Core.ADTWard", "BO-1007100007-ISACTIVE", "IsActive");

@@ -48,13 +48,13 @@ public interface PatientTheatreAppointmentManagement extends ims.domain.DomainIn
 	/**
 	* getCatsReferralForAppointment
 	*/
-	public ims.careuk.vo.CatsReferralListVo getCatsReferralForAppointment(ims.scheduling.vo.Booking_AppointmentRefVo appt);
+	public ims.RefMan.vo.CatsReferralListVo getCatsReferralForAppointment(ims.scheduling.vo.Booking_AppointmentRefVo appt);
 
 	// Generated from form domain interface definition
 	/**
 	* updateCatsReferralAdditionalInvStatus
 	*/
-	public void updateCatsReferralAdditionalInvStatus(ims.careuk.vo.CatsReferralRefVo catsReferral) throws ims.domain.exceptions.StaleObjectException;
+	public void updateCatsReferralAdditionalInvStatus(ims.RefMan.vo.CatsReferralRefVo catsReferral) throws ims.domain.exceptions.StaleObjectException;
 
 	// Generated from form domain interface definition
 	/**
@@ -84,5 +84,5 @@ public interface PatientTheatreAppointmentManagement extends ims.domain.DomainIn
 	public ims.scheduling.vo.SessionParentChildSlotVo getSessionParentChildSlotByAppt(ims.scheduling.vo.Booking_AppointmentRefVo appt);
 
 	// Generated from form domain interface definition
-	public void cancelTCIAndReferralEROD(ims.careuk.vo.CatsReferralRefVo catsReferral, ims.scheduling.vo.Booking_AppointmentRefVo apptRef, Boolean isProviderCancellation, Boolean isPatientCancellation) throws ims.domain.exceptions.StaleObjectException;
+	public void cancelTCIAndReferralEROD(ims.RefMan.vo.CatsReferralRefVo catsReferral, ims.scheduling.vo.Booking_AppointmentRefVo apptRef, Boolean isProviderCancellation, Boolean isPatientCancellation) throws ims.domain.exceptions.StaleObjectException;
 }

@@ -60,7 +60,7 @@ public interface BedInfoDialog extends ims.domain.DomainInterface
 	/**
 	* saveDischarge
 	*/
-	public ims.core.vo.DischargedEpisodeADTVo saveDischargeElectiveList(ims.core.vo.DischargedEpisodeADTVo dischargedEpisode, ims.core.vo.BedSpaceStateLiteVo voBedSpacState, ims.careuk.vo.PatientElectiveListBedAdmissionVo electiveList, ims.careuk.vo.PatientElectiveListBedAdmissionVoCollection cancelledElectiveListToBeRemoved) throws ims.domain.exceptions.DomainInterfaceException, ims.domain.exceptions.StaleObjectException, ims.domain.exceptions.ForeignKeyViolationException;
+	public ims.core.vo.DischargedEpisodeADTVo saveDischargeElectiveList(ims.core.vo.DischargedEpisodeADTVo dischargedEpisode, ims.core.vo.BedSpaceStateLiteVo voBedSpacState, ims.RefMan.vo.PatientElectiveListBedAdmissionVo electiveList, ims.RefMan.vo.PatientElectiveListBedAdmissionVoCollection cancelledElectiveListToBeRemoved) throws ims.domain.exceptions.DomainInterfaceException, ims.domain.exceptions.StaleObjectException, ims.domain.exceptions.ForeignKeyViolationException;
 
 	// Generated from form domain interface definition
 	/**
@@ -225,17 +225,17 @@ public interface BedInfoDialog extends ims.domain.DomainInterface
 	public ims.core.vo.LocationLiteVo getCurrentHospital(ims.framework.interfaces.ILocation currentLocation);
 
 	// Generated from form domain interface definition
-	public ims.careuk.vo.PatientElectiveListBedAdmissionVo getPatientElectiveListForDischarge(ims.core.admin.pas.vo.PASEventRefVo pasEvent);
+	public ims.RefMan.vo.PatientElectiveListBedAdmissionVo getPatientElectiveListForDischarge(ims.core.admin.pas.vo.PASEventRefVo pasEvent);
 
 	// Generated from form domain interface definition
-	public Boolean hasCancelledElectiveListsToRemove(ims.core.patient.vo.PatientRefVo patient, ims.careuk.vo.PatientElectiveListRefVo electiveList, ims.core.clinical.vo.ServiceRefVo service);
+	public Boolean hasCancelledElectiveListsToRemove(ims.core.patient.vo.PatientRefVo patient, ims.RefMan.vo.PatientElectiveListRefVo electiveList, ims.core.clinical.vo.ServiceRefVo service);
 
 	// Generated from form domain interface definition
-	public ims.careuk.vo.PatientElectiveListBedAdmissionVoCollection getCancelledElectiveListsToRemove(ims.core.patient.vo.PatientRefVo patient, ims.careuk.vo.PatientElectiveListRefVo electiveList, ims.core.clinical.vo.ServiceRefVo service);
+	public ims.RefMan.vo.PatientElectiveListBedAdmissionVoCollection getCancelledElectiveListsToRemove(ims.core.patient.vo.PatientRefVo patient, ims.RefMan.vo.PatientElectiveListRefVo electiveList, ims.core.clinical.vo.ServiceRefVo service);
 
 	// Generated from form domain interface definition
-	public Boolean hasElectiveListsToRemove(ims.core.patient.vo.PatientRefVo patientRef, ims.careuk.vo.PatientElectiveListRefVo electiveListRef, ims.core.vo.lookups.Specialty specialty);
+	public Boolean hasElectiveListsToRemove(ims.core.patient.vo.PatientRefVo patientRef, ims.RefMan.vo.PatientElectiveListRefVo electiveListRef, ims.core.vo.lookups.Specialty specialty);
 
 	// Generated from form domain interface definition
-	public ims.careuk.vo.PatientElectiveListBedAdmissionVoCollection getElectiveListsToRemove(ims.core.patient.vo.PatientRefVo patientRef, ims.careuk.vo.PatientElectiveListRefVo electiveListRef, ims.core.vo.lookups.Specialty specialty);
+	public ims.RefMan.vo.PatientElectiveListBedAdmissionVoCollection getElectiveListsToRemove(ims.core.patient.vo.PatientRefVo patientRef, ims.RefMan.vo.PatientElectiveListRefVo electiveListRef, ims.core.vo.lookups.Specialty specialty);
 }

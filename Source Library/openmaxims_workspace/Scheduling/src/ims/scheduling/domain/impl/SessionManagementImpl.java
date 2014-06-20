@@ -28,11 +28,11 @@ import ims.admin.domain.OrganisationAndLocation;
 import ims.admin.domain.impl.HcpAdminImpl;
 import ims.admin.domain.impl.LocationServiceImpl;
 import ims.admin.domain.impl.OrganisationAndLocationImpl;
-import ims.careuk.domain.objects.CatsReferral;
-import ims.careuk.domain.objects.OrderInvAppt;
-import ims.careuk.vo.CatsReferralForSessionManagementVo;
-import ims.careuk.vo.CatsReferralRefVo;
-import ims.careuk.vo.domain.CatsReferralForSessionManagementVoAssembler;
+import ims.RefMan.domain.objects.CatsReferral;
+import ims.RefMan.domain.objects.OrderInvAppt;
+import ims.RefMan.vo.CatsReferralForSessionManagementVo;
+import ims.RefMan.vo.CatsReferralRefVo;
+import ims.RefMan.vo.domain.CatsReferralForSessionManagementVoAssembler;
 import ims.chooseandbook.vo.lookups.ActionRequestType;
 import ims.configuration.gen.ConfigFlag;
 import ims.core.patient.domain.objects.Patient;
@@ -429,7 +429,7 @@ public class SessionManagementImpl extends BaseSessionManagementImpl
 
 	public SessionServiceAndSlotActivityVo getServiceAndActivityByAppt(Booking_AppointmentRefVo appt, Boolean isFlexible)
 	{
-		PatientAppointmentManagement impl = (PatientAppointmentManagement) getDomainImpl(PatientAppointmentMangementCareUKImpl.class);
+		PatientAppointmentManagement impl = (PatientAppointmentManagement) getDomainImpl(PatientAppointmentMangementRefManImpl.class);
 		return impl.getServiceAndActivityByAppt(appt, isFlexible);
 	}
 

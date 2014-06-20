@@ -34,7 +34,7 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 		super(context);
 
 		Core = new CoreContext(context);
-		CareUk = new CareUkContext(context);
+		RefMan = new RefManContext(context);
 	}
 	public final class CoreContext implements Serializable
 	{
@@ -133,11 +133,11 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 
 		private ims.framework.Context context;
 	}
-	public final class CareUkContext implements Serializable
+	public final class RefManContext implements Serializable
 	{
 		private static final long serialVersionUID = 1L;
 
-		private CareUkContext(ims.framework.Context context)
+		private RefManContext(ims.framework.Context context)
 		{
 			this.context = context;
 
@@ -145,64 +145,64 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 
 		public boolean getUploadDocumentsDialogDocumentTypeIsNotNull()
 		{
-			return !cx_CareUkUploadDocumentsDialogDocumentType.getValueIsNull(context);
+			return !cx_RefManUploadDocumentsDialogDocumentType.getValueIsNull(context);
 		}
 		public ims.core.vo.lookups.DocumentCategory getUploadDocumentsDialogDocumentType()
 		{
-			return (ims.core.vo.lookups.DocumentCategory)cx_CareUkUploadDocumentsDialogDocumentType.getValue(context);
+			return (ims.core.vo.lookups.DocumentCategory)cx_RefManUploadDocumentsDialogDocumentType.getValue(context);
 		}
 		public void setUploadDocumentsDialogDocumentType(ims.core.vo.lookups.DocumentCategory value)
 		{
-			cx_CareUkUploadDocumentsDialogDocumentType.setValue(context, value);
+			cx_RefManUploadDocumentsDialogDocumentType.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkUploadDocumentsDialogDocumentType = new ims.framework.ContextVariable("CareUk.UploadDocumentsDialogDocumentType", "_cv_CareUk.UploadDocumentsDialogDocumentType");
+		private ims.framework.ContextVariable cx_RefManUploadDocumentsDialogDocumentType = new ims.framework.ContextVariable("RefMan.UploadDocumentsDialogDocumentType", "_cv_RefMan.UploadDocumentsDialogDocumentType");
 		public boolean getCatsReferralIsNotNull()
 		{
-			return !cx_CareUkCatsReferral.getValueIsNull(context);
+			return !cx_RefManCatsReferral.getValueIsNull(context);
 		}
-		public ims.careuk.vo.CatsReferralRefVo getCatsReferral()
+		public ims.RefMan.vo.CatsReferralRefVo getCatsReferral()
 		{
-			return (ims.careuk.vo.CatsReferralRefVo)cx_CareUkCatsReferral.getValue(context);
+			return (ims.RefMan.vo.CatsReferralRefVo)cx_RefManCatsReferral.getValue(context);
 		}
-		public void setCatsReferral(ims.careuk.vo.CatsReferralRefVo value)
+		public void setCatsReferral(ims.RefMan.vo.CatsReferralRefVo value)
 		{
-			cx_CareUkCatsReferral.setValue(context, value);
+			cx_RefManCatsReferral.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkCatsReferral = new ims.framework.ContextVariable("CareUk.CatsReferral", "_cvp_CareUk.CatsReferral");
+		private ims.framework.ContextVariable cx_RefManCatsReferral = new ims.framework.ContextVariable("RefMan.CatsReferral", "_cvp_RefMan.CatsReferral");
 		public boolean getCatsReferralWizardIsNotNull()
 		{
-			return !cx_CareUkCatsReferralWizard.getValueIsNull(context);
+			return !cx_RefManCatsReferralWizard.getValueIsNull(context);
 		}
-		public ims.careuk.vo.CatsReferralWizardVo getCatsReferralWizard()
+		public ims.RefMan.vo.CatsReferralWizardVo getCatsReferralWizard()
 		{
-			return (ims.careuk.vo.CatsReferralWizardVo)cx_CareUkCatsReferralWizard.getValue(context);
+			return (ims.RefMan.vo.CatsReferralWizardVo)cx_RefManCatsReferralWizard.getValue(context);
 		}
-		public void setCatsReferralWizard(ims.careuk.vo.CatsReferralWizardVo value)
+		public void setCatsReferralWizard(ims.RefMan.vo.CatsReferralWizardVo value)
 		{
-			cx_CareUkCatsReferralWizard.setValue(context, value);
+			cx_RefManCatsReferralWizard.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkCatsReferralWizard = new ims.framework.ContextVariable("CareUk.CatsReferralWizard", "_cv_CareUk.CatsReferralWizard");
+		private ims.framework.ContextVariable cx_RefManCatsReferralWizard = new ims.framework.ContextVariable("RefMan.CatsReferralWizard", "_cv_RefMan.CatsReferralWizard");
 		public boolean getCatsReferralHasGpLetterIsNotNull()
 		{
-			return !cx_CareUkCatsReferralHasGpLetter.getValueIsNull(context);
+			return !cx_RefManCatsReferralHasGpLetter.getValueIsNull(context);
 		}
 		public Boolean getCatsReferralHasGpLetter()
 		{
-			return (Boolean)cx_CareUkCatsReferralHasGpLetter.getValue(context);
+			return (Boolean)cx_RefManCatsReferralHasGpLetter.getValue(context);
 		}
 		public void setCatsReferralHasGpLetter(Boolean value)
 		{
-			cx_CareUkCatsReferralHasGpLetter.setValue(context, value);
+			cx_RefManCatsReferralHasGpLetter.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkCatsReferralHasGpLetter = new ims.framework.ContextVariable("CareUk.CatsReferralHasGpLetter", "_cv_CareUk.CatsReferralHasGpLetter");
+		private ims.framework.ContextVariable cx_RefManCatsReferralHasGpLetter = new ims.framework.ContextVariable("RefMan.CatsReferralHasGpLetter", "_cv_RefMan.CatsReferralHasGpLetter");
 
 		private ims.framework.Context context;
 	}
 
 	public CoreContext Core;
-	public CareUkContext CareUk;
+	public RefManContext RefMan;
 }

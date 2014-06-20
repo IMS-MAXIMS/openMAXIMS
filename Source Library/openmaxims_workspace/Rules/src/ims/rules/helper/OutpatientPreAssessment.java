@@ -39,7 +39,7 @@ public final class OutpatientPreAssessment extends ims.rules.types.RulesEngineEn
 		super.isPublic = true;
 		super.supportsNotifications = false;
 		super.description = "Outpatient PreAssessment";
-		super.businessObjectName = "ims.careuk.domain.objects.OutpatientPreAssessment";
+		super.businessObjectName = "ims.RefMan.domain.objects.OutpatientPreAssessment";
 		super.fields = new ArrayList<ims.rules.types.RulesEngineField>();
 		fieldEntityIndex = entities.indexOf(new ims.rules.helper.ConsultantOutpatientAppointmentOutcome(entities));
 		super.fields.add(new ims.rules.types.RulesEngineField("38833872009721632243519490121", "Suitable For Surgery Assessment", "Suitable For Surgery Assessment", false, ims.rules.types.RulesEngineFieldType.ENTITY, (fieldEntityIndex >= 0 ? entities.get(fieldEntityIndex) : new ims.rules.helper.ConsultantOutpatientAppointmentOutcome(entities)), 0, "SuitableForSurgeryAssessment", this));

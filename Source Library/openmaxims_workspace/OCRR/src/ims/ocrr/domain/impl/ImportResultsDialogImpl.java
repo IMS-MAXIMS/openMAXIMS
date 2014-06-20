@@ -22,8 +22,8 @@
 
 package ims.ocrr.domain.impl;
 
-import ims.careuk.domain.objects.CatsReferral;
-import ims.careuk.vo.CatsReferralRefVo;
+import ims.RefMan.domain.objects.CatsReferral;
+import ims.RefMan.vo.CatsReferralRefVo;
 import ims.core.clinical.domain.objects.PatientNotification;
 import ims.core.clinical.domain.objects.PatientOCSNewResults;
 import ims.core.clinical.domain.objects.PatientOCSSeenResults;

@@ -22,12 +22,12 @@
 
 package ims.scheduling.domain.impl;
 
-import ims.careuk.domain.objects.CatsReferral;
-import ims.careuk.domain.objects.OrderInvAppt;
-import ims.careuk.vo.CatsReferralRefVo;
-import ims.careuk.vo.CatsReferralVo;
-import ims.careuk.vo.domain.CatsReferralVoAssembler;
-import ims.careuk.vo.lookups.AdditionalInvestigationAppointmentsStatus;
+import ims.RefMan.domain.objects.CatsReferral;
+import ims.RefMan.domain.objects.OrderInvAppt;
+import ims.RefMan.vo.CatsReferralRefVo;
+import ims.RefMan.vo.CatsReferralVo;
+import ims.RefMan.vo.domain.CatsReferralVoAssembler;
+import ims.RefMan.vo.lookups.AdditionalInvestigationAppointmentsStatus;
 import ims.chooseandbook.vo.lookups.ActionRequestType;
 import ims.configuration.gen.ConfigFlag;
 import ims.core.documents.domain.objects.PatientDocument;
@@ -324,7 +324,7 @@ public class DnaBatchUpdateImpl extends BaseDnaBatchUpdateImpl implements Job
 
 			if(CatsReferralId != null)
 			{
-				ims.careuk.vo.CatsReferralRefVo catsReferralRefVo = new CatsReferralRefVo();
+				ims.RefMan.vo.CatsReferralRefVo catsReferralRefVo = new CatsReferralRefVo();
 				catsReferralRefVo.setID_CatsReferral((Integer)CatsReferralId);
 				
 				CatsReferralVo catsReferral = getCatsReferral(catsReferralRefVo);
@@ -370,7 +370,7 @@ public class DnaBatchUpdateImpl extends BaseDnaBatchUpdateImpl implements Job
 			return; 
 		} 	
 
-		ims.careuk.vo.CatsReferralRefVo catsReferralRefVo = new CatsReferralRefVo();
+		ims.RefMan.vo.CatsReferralRefVo catsReferralRefVo = new CatsReferralRefVo();
 		catsReferralRefVo.setID_CatsReferral((Integer)lastCatsReferralId);
 		
 		CatsReferralVo catsReferral = getCatsReferral(catsReferralRefVo);
@@ -422,7 +422,7 @@ public class DnaBatchUpdateImpl extends BaseDnaBatchUpdateImpl implements Job
 	public void save2(Booking_AppointmentShortVoCollection dnaAppointments, DomainFactory factory)
 	{	
 		//TODO call impl
-		//PatientAppointmentManagement  impl = (PatientAppointmentManagement) getDomainImpl(PatientAppointmentMangementCareUKImpl.class);
+		//PatientAppointmentManagement  impl = (PatientAppointmentManagement) getDomainImpl(PatientAppointmentMangementRefManImpl.class);
 		for (Booking_AppointmentShortVo booking: dnaAppointments)
 		{
 			try
@@ -770,13 +770,13 @@ public class DnaBatchUpdateImpl extends BaseDnaBatchUpdateImpl implements Job
 		return (xml.split("\""))[1];	
 	}
 	
-	public ims.careuk.vo.CatsReferralVo getCatsReferral(ims.careuk.vo.CatsReferralRefVo voCatsRef)
+	public ims.RefMan.vo.CatsReferralVo getCatsReferral(ims.RefMan.vo.CatsReferralRefVo voCatsRef)
 	{
 		return CatsReferralVoAssembler.create((CatsReferral)getDomainFactory().getDomainObject(CatsReferral.class, voCatsRef.getID_CatsReferral()));
 	}	
 	
 	@SuppressWarnings("unchecked")
-	public void savePatientDocument(ims.core.vo.PatientDocumentVo document, ims.careuk.vo.CatsReferralVo catReferral) throws ims.domain.exceptions.StaleObjectException
+	public void savePatientDocument(ims.core.vo.PatientDocumentVo document, ims.RefMan.vo.CatsReferralVo catReferral) throws ims.domain.exceptions.StaleObjectException
 	{
 		if (document != null)
 		{

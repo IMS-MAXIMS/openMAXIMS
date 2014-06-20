@@ -22,7 +22,7 @@
 
 package ims.core.forms.uploaddocument;
 
-import ims.careuk.vo.CatsReferralRefVo;
+import ims.RefMan.vo.CatsReferralRefVo;
 import ims.configuration.gen.ConfigFlag;
 import ims.core.vo.MemberOfStaffLiteVo;
 import ims.core.vo.PatientDocumentVo;
@@ -96,7 +96,7 @@ public class Logic extends BaseLogic
 			return true;
 		if (form.getLocalContext().getUploadDocumentStoreLevel().equals(UploadDocumentStoreLevel.PATIENT) && form.getGlobalContext().Core.getPatientShortIsNotNull())
 			return true;
-		if (form.getLocalContext().getUploadDocumentStoreLevel().equals(UploadDocumentStoreLevel.REFERRAL) && form.getGlobalContext().CareUk.getCatsReferralIsNotNull())
+		if (form.getLocalContext().getUploadDocumentStoreLevel().equals(UploadDocumentStoreLevel.REFERRAL) && form.getGlobalContext().RefMan.getCatsReferralIsNotNull())
 			return true;
 		return false;
 	}
@@ -114,7 +114,7 @@ public class Logic extends BaseLogic
 		}
 		else if (form.getLocalContext().getDocumentViewLevel().equals(DocumentViewLevel.REFERRAL)) 
 		{	
-			if (form.getGlobalContext().CareUk.getCatsReferral() == null) {
+			if (form.getGlobalContext().RefMan.getCatsReferral() == null) {
 				throw new DomainRuntimeException("CatsReferral is mandatory!");
 			}
 			listDocumentsAtReferralLevel(form.getLocalContext().getDocumentCategory(), form.getLocalContext().getDocumentViewLevel());	
@@ -148,7 +148,7 @@ public class Logic extends BaseLogic
 	{
 		if (form.getGlobalContext().Core.getPatientShortIsNotNull()) 
 		{
-			CatsReferralRefVo 	referral 			= form.getGlobalContext().CareUk.getCatsReferral();			
+			CatsReferralRefVo 	referral 			= form.getGlobalContext().RefMan.getCatsReferral();			
 								isGPLetterSelected 	= false;
 								isGPLetterCategory 	= false;							
 			
@@ -362,8 +362,8 @@ public class Logic extends BaseLogic
 			form.getLocalContext().setSelectedRecord(null);//WDEV-13695
 			
 			//wdev-12880
-			if(form.getGlobalContext().CareUk.getCatsReferral() != null)
-				form.getGlobalContext().CareUk.setCatsReferral(domain.getCatsReferral(form.getGlobalContext().CareUk.getCatsReferral()));
+			if(form.getGlobalContext().RefMan.getCatsReferral() != null)
+				form.getGlobalContext().RefMan.setCatsReferral(domain.getCatsReferral(form.getGlobalContext().RefMan.getCatsReferral()));
 			//------------
 			form.fireCustomControlValueChanged();
 		}	

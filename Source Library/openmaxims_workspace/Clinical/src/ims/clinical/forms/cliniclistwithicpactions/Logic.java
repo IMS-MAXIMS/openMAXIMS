@@ -23,13 +23,13 @@
 package ims.clinical.forms.cliniclistwithicpactions;
 
 import ims.admin.vo.AppointmentTrackingstatusColourConfigVo;
-import ims.careuk.vo.CatsReferralListVo;
-import ims.careuk.vo.ElectiveListStatusVo;
-import ims.careuk.vo.PatientElectiveListForDNAAppointmentsVo;
-import ims.careuk.vo.TCIForPatientElectiveListAppointmentDNAVo;
-import ims.careuk.vo.TCIOutcomeForAppointmentDNAVo;
-import ims.careuk.vo.lookups.AdmissionOfferOutcome;
-import ims.careuk.vo.lookups.ReferralApptStatus;
+import ims.RefMan.vo.CatsReferralListVo;
+import ims.RefMan.vo.ElectiveListStatusVo;
+import ims.RefMan.vo.PatientElectiveListForDNAAppointmentsVo;
+import ims.RefMan.vo.TCIForPatientElectiveListAppointmentDNAVo;
+import ims.RefMan.vo.TCIOutcomeForAppointmentDNAVo;
+import ims.RefMan.vo.lookups.AdmissionOfferOutcome;
+import ims.RefMan.vo.lookups.ReferralApptStatus;
 import ims.clinical.forms.cliniclistwithicpactions.GenForm.grdResultsRow;
 import ims.configuration.gen.ConfigFlag;
 import ims.core.resource.people.vo.HcpRefVo;
@@ -598,7 +598,7 @@ public class Logic extends BaseLogic
 
 		// Added as requested by JNS - WDEV-15944
 		form.getGlobalContext().ICP.setPatientICPRecord(form.grdResults().getSelectedRow().getValue().getICPInfo());
-		form.getGlobalContext().CareUk.setCatsReferral(form.grdResults().getSelectedRow().getValue().getReferral());
+		form.getGlobalContext().RefMan.setCatsReferral(form.grdResults().getSelectedRow().getValue().getReferral());
 
 				
 		//WDEV-11665
@@ -932,10 +932,10 @@ public class Logic extends BaseLogic
 			if (form.getLocalContext().getbLessThenTodaysDateIsNotNull()
 				&& form.getLocalContext().getbLessThenTodaysDate())
 			{
-				form.getGlobalContext().CareUk.setChosenTime(null);
+				form.getGlobalContext().RefMan.setChosenTime(null);
 				form.getLocalContext().setbArrivalChosen(false);
 				form.getLocalContext().setAllowEditICP(allowEditICP);
-				engine.open(form.getForms().CAREUK.ArrivalSeenTimeDialog, new Object[]{"Seen Time"} );
+				engine.open(form.getForms().RefMan.ArrivalSeenTimeDialog, new Object[]{"Seen Time"} );
 			}
 			else
 				markasSeen(allowEditICP);
@@ -952,13 +952,13 @@ public class Logic extends BaseLogic
 		Booking_AppointmentVo voBook = domain.getBookingAppt(form.grdResults().getValue());
 		if (voBook.getApptStatusIsNotNull() && voBook.getApptStatus().equals(Status_Reason.BOOKED))
 		{
-			form.getGlobalContext().CareUk.setChosenTime(null); //WDEV-18188
+			form.getGlobalContext().RefMan.setChosenTime(null); //WDEV-18188
 			
 			if (form.getLocalContext().getbLessThenTodaysDate()
 				&& form.getLocalContext().getbLessThenTodaysDate())
 			{
 				form.getLocalContext().setbArrivalChosen(true);
-				engine.open(form.getForms().CAREUK.ArrivalSeenTimeDialog, new Object[]{"Arrival Time"} );
+				engine.open(form.getForms().RefMan.ArrivalSeenTimeDialog, new Object[]{"Arrival Time"} );
 			}
 			else
 				arriveBooking();
@@ -982,15 +982,15 @@ public class Logic extends BaseLogic
 		OutpatientEpisodeWithICPInfoVo appointment = form.grdResults().getSelectedRow().getValue();
 		if (appointment.getICPInfoIsNotNull())
 		form.getGlobalContext().Core.setCurrentCareContext(domain.getCareContext(appointment.getICPInfo().getCareContext()));
-		form.getGlobalContext().CareUk.setCatsReferral(domain.getCatsReferralRef(appointment.getID_Booking_Appointment()));
-		engine.open(form.getForms().CAREUK.DischargeSummaryWardPacuDialogAlias);
+		form.getGlobalContext().RefMan.setCatsReferral(domain.getCatsReferralRef(appointment.getID_Booking_Appointment()));
+		engine.open(form.getForms().RefMan.DischargeSummaryWardPacuDialogAlias);
 	}
 
 	private void admitPatient() 
 	{
-		form.getGlobalContext().CareUk.setDayCaseAdmApptTime(form.grdResults().getSelectedRow().getcolApptTime());
-		form.getGlobalContext().CareUk.setDayCaseAdmApptDate(form.grdResults().getSelectedRow().getValue().getAppointmentDate());
-		form.getGlobalContext().CareUk.setDayCaseAdmClinicName(form.grdResults().getSelectedRow().getValue().getSession().getName());
+		form.getGlobalContext().RefMan.setDayCaseAdmApptTime(form.grdResults().getSelectedRow().getcolApptTime());
+		form.getGlobalContext().RefMan.setDayCaseAdmApptDate(form.grdResults().getSelectedRow().getValue().getAppointmentDate());
+		form.getGlobalContext().RefMan.setDayCaseAdmClinicName(form.grdResults().getSelectedRow().getValue().getSession().getName());
 
 		form.getGlobalContext().Scheduling.setBookingAppointmentRef(form.grdResults().getSelectedRow().getValue());
 		
@@ -1000,7 +1000,7 @@ public class Logic extends BaseLogic
 		else 
 			form.getGlobalContext().Core.setHospitalLoc(new LocMostVo(form.cmbHospital().getValue().getID_Location(), 0));
 
-		engine.open(form.getForms().CAREUK.DayCaseAdmissionDialog);
+		engine.open(form.getForms().RefMan.DayCaseAdmissionDialog);
 	}
 
 	private void markasSeen(boolean allowEditICP) 
@@ -1154,19 +1154,19 @@ public class Logic extends BaseLogic
 
 		if (stat.equals(Status_Reason.ARRIVAL))
 		{
-			if (form.getGlobalContext().CareUk.getChosenTime() == null)
+			if (form.getGlobalContext().RefMan.getChosenTime() == null)
 				voBooking.setArrivalTime(new Time());
 			else
-				voBooking.setArrivalTime(form.getGlobalContext().CareUk.getChosenTime());
+				voBooking.setArrivalTime(form.getGlobalContext().RefMan.getChosenTime());
 		}
 		else if (stat.equals(Status_Reason.SEEN))
 		{
 			//WDEV-18480
 			voBooking.setSeenBy((HcpRefVo) domain.getHcpLiteUser());
-			if (form.getGlobalContext().CareUk.getChosenTime() == null)
+			if (form.getGlobalContext().RefMan.getChosenTime() == null)
 				voBooking.setSeenTime(new Time());
 			else
-				voBooking.setSeenTime(form.getGlobalContext().CareUk.getChosenTime());
+				voBooking.setSeenTime(form.getGlobalContext().RefMan.getChosenTime());
 		}
 		else if (stat.equals(Status_Reason.BOOKED))
 		{
@@ -1284,7 +1284,7 @@ public class Logic extends BaseLogic
 	protected void onFormDialogClosed(FormName formName, DialogResult result) throws PresentationLogicException 
 	{
 		if (result.equals(DialogResult.OK) 
-			&& formName.equals(form.getForms().CAREUK.ArrivalSeenTimeDialog))
+			&& formName.equals(form.getForms().RefMan.ArrivalSeenTimeDialog))
 		{
 			if(form.getLocalContext().getbArrivalChosenIsNotNull())
 			{
@@ -1301,7 +1301,7 @@ public class Logic extends BaseLogic
 			search();
 //			toggleTimer(false);
 		}
-		else if (form.getForms().CAREUK.DischargeSummaryWardPacuDialogAlias.equals(formName))
+		else if (form.getForms().RefMan.DischargeSummaryWardPacuDialogAlias.equals(formName))
 		{
 			//WDEV-13354
 			search();

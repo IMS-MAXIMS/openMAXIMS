@@ -33,13 +33,13 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 	{
 		super(context);
 
-		CareUk = new CareUkContext(context);
+		RefMan = new RefManContext(context);
 	}
-	public final class CareUkContext implements Serializable
+	public final class RefManContext implements Serializable
 	{
 		private static final long serialVersionUID = 1L;
 
-		private CareUkContext(ims.framework.Context context)
+		private RefManContext(ims.framework.Context context)
 		{
 			this.context = context;
 
@@ -47,35 +47,35 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 
 		public boolean getContractServiceLocationsConfigIsNotNull()
 		{
-			return !cx_CareUkContractServiceLocationsConfig.getValueIsNull(context);
+			return !cx_RefManContractServiceLocationsConfig.getValueIsNull(context);
 		}
-		public ims.careuk.vo.ContractServiceLocationsConfigVoCollection getContractServiceLocationsConfig()
+		public ims.RefMan.vo.ContractServiceLocationsConfigVoCollection getContractServiceLocationsConfig()
 		{
-			return (ims.careuk.vo.ContractServiceLocationsConfigVoCollection)cx_CareUkContractServiceLocationsConfig.getValue(context);
+			return (ims.RefMan.vo.ContractServiceLocationsConfigVoCollection)cx_RefManContractServiceLocationsConfig.getValue(context);
 		}
-		public void setContractServiceLocationsConfig(ims.careuk.vo.ContractServiceLocationsConfigVoCollection value)
+		public void setContractServiceLocationsConfig(ims.RefMan.vo.ContractServiceLocationsConfigVoCollection value)
 		{
-			cx_CareUkContractServiceLocationsConfig.setValue(context, value);
+			cx_RefManContractServiceLocationsConfig.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkContractServiceLocationsConfig = new ims.framework.ContextVariable("CareUk.ContractServiceLocationsConfig", "_cv_CareUk.ContractServiceLocationsConfig");
+		private ims.framework.ContextVariable cx_RefManContractServiceLocationsConfig = new ims.framework.ContextVariable("RefMan.ContractServiceLocationsConfig", "_cv_RefMan.ContractServiceLocationsConfig");
 		public boolean getLocationContractIsNotNull()
 		{
-			return !cx_CareUkLocationContract.getValueIsNull(context);
+			return !cx_RefManLocationContract.getValueIsNull(context);
 		}
 		public ims.admin.vo.ConfigLocationLiteVoCollection getLocationContract()
 		{
-			return (ims.admin.vo.ConfigLocationLiteVoCollection)cx_CareUkLocationContract.getValue(context);
+			return (ims.admin.vo.ConfigLocationLiteVoCollection)cx_RefManLocationContract.getValue(context);
 		}
 		public void setLocationContract(ims.admin.vo.ConfigLocationLiteVoCollection value)
 		{
-			cx_CareUkLocationContract.setValue(context, value);
+			cx_RefManLocationContract.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkLocationContract = new ims.framework.ContextVariable("CareUk.LocationContract", "_cv_CareUk.LocationContract");
+		private ims.framework.ContextVariable cx_RefManLocationContract = new ims.framework.ContextVariable("RefMan.LocationContract", "_cv_RefMan.LocationContract");
 
 		private ims.framework.Context context;
 	}
 
-	public CareUkContext CareUk;
+	public RefManContext RefMan;
 }

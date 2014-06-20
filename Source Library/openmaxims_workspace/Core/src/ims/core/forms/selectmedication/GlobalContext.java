@@ -34,7 +34,7 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 		super(context);
 
 		Core = new CoreContext(context);
-		CareUk = new CareUkContext(context);
+		RefMan = new RefManContext(context);
 	}
 	public final class CoreContext implements Serializable
 	{
@@ -85,11 +85,11 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 		public SelectMedicationContext SelectMedication;
 		private ims.framework.Context context;
 	}
-	public final class CareUkContext implements Serializable
+	public final class RefManContext implements Serializable
 	{
 		private static final long serialVersionUID = 1L;
 
-		private CareUkContext(ims.framework.Context context)
+		private RefManContext(ims.framework.Context context)
 		{
 			this.context = context;
 
@@ -97,22 +97,22 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 
 		public boolean getSelectedSpecialtyIsNotNull()
 		{
-			return !cx_CareUkSelectedSpecialty.getValueIsNull(context);
+			return !cx_RefManSelectedSpecialty.getValueIsNull(context);
 		}
 		public ims.core.vo.lookups.Specialty getSelectedSpecialty()
 		{
-			return (ims.core.vo.lookups.Specialty)cx_CareUkSelectedSpecialty.getValue(context);
+			return (ims.core.vo.lookups.Specialty)cx_RefManSelectedSpecialty.getValue(context);
 		}
 		public void setSelectedSpecialty(ims.core.vo.lookups.Specialty value)
 		{
-			cx_CareUkSelectedSpecialty.setValue(context, value);
+			cx_RefManSelectedSpecialty.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkSelectedSpecialty = new ims.framework.ContextVariable("CareUk.SelectedSpecialty", "_cv_CareUk.SelectedSpecialty");
+		private ims.framework.ContextVariable cx_RefManSelectedSpecialty = new ims.framework.ContextVariable("RefMan.SelectedSpecialty", "_cv_RefMan.SelectedSpecialty");
 
 		private ims.framework.Context context;
 	}
 
 	public CoreContext Core;
-	public CareUkContext CareUk;
+	public RefManContext RefMan;
 }

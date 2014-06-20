@@ -102,15 +102,15 @@ public class BaseAccessLogic extends FormAccessLogic implements Serializable
 
 		private CurrentForms()
 		{
-			CAREUK = new CAREUKForms();
+			RefMan = new RefManForms();
 			Clinical = new ClinicalForms();
 			Core = new CoreForms();
 		}
-		public final class CAREUKForms implements Serializable
+		public final class RefManForms implements Serializable
 		{
 			private static final long serialVersionUID = 1L;
 
-			private CAREUKForms()
+			private RefManForms()
 			{
 				TheatreList = new LocalFormName(134154);
 			}
@@ -139,7 +139,7 @@ public class BaseAccessLogic extends FormAccessLogic implements Serializable
 			public final FormName RieConfirmationDialog;
 		}
 
-		public CAREUKForms CAREUK;
+		public RefManForms RefMan;
 		public ClinicalForms Clinical;
 		public CoreForms Core;
 	}

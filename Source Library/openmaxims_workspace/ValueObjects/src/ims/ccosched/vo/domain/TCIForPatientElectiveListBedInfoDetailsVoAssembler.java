@@ -81,7 +81,7 @@ public class TCIForPatientElectiveListBedInfoDetailsVoAssembler
 	 * This is a convenience method only.
 	 * It is intended to be used when one called to an Assembler is made.
  	 * If more than one call to an Assembler is made then #createTCIForPatientElectiveListBedInfoDetailsVoCollectionFromTCIForPatientElectiveList(DomainObjectMap, Set) should be used.
-	 * @param domainObjectSet - Set of ims.careuk.domain.objects.TCIForPatientElectiveList objects.
+	 * @param domainObjectSet - Set of ims.RefMan.domain.objects.TCIForPatientElectiveList objects.
 	 */
 	public static ims.ccosched.vo.TCIForPatientElectiveListBedInfoDetailsVoCollection createTCIForPatientElectiveListBedInfoDetailsVoCollectionFromTCIForPatientElectiveList(java.util.Set domainObjectSet)	
 	{
@@ -91,7 +91,7 @@ public class TCIForPatientElectiveListBedInfoDetailsVoAssembler
 	/**
 	 * Create the ValueObject collection to hold the set of DomainObjects.
 	 * @param map - maps DomainObjects to created ValueObjects
-	 * @param domainObjectSet - Set of ims.careuk.domain.objects.TCIForPatientElectiveList objects.
+	 * @param domainObjectSet - Set of ims.RefMan.domain.objects.TCIForPatientElectiveList objects.
 	 */
 	public static ims.ccosched.vo.TCIForPatientElectiveListBedInfoDetailsVoCollection createTCIForPatientElectiveListBedInfoDetailsVoCollectionFromTCIForPatientElectiveList(DomainObjectMap map, java.util.Set domainObjectSet)	
 	{
@@ -105,7 +105,7 @@ public class TCIForPatientElectiveListBedInfoDetailsVoAssembler
 		java.util.Iterator iterator = domainObjectSet.iterator();
 		while( iterator.hasNext() ) 
 		{
-			ims.careuk.domain.objects.TCIForPatientElectiveList domainObject = (ims.careuk.domain.objects.TCIForPatientElectiveList) iterator.next();
+			ims.RefMan.domain.objects.TCIForPatientElectiveList domainObject = (ims.RefMan.domain.objects.TCIForPatientElectiveList) iterator.next();
 			ims.ccosched.vo.TCIForPatientElectiveListBedInfoDetailsVo vo = create(map, domainObject);
 			
 			if (vo != null)
@@ -126,7 +126,7 @@ public class TCIForPatientElectiveListBedInfoDetailsVoAssembler
 
 	/**
 	 * Create the ValueObject collection to hold the list of DomainObjects.
-	 * @param domainObjectList - List of ims.careuk.domain.objects.TCIForPatientElectiveList objects.
+	 * @param domainObjectList - List of ims.RefMan.domain.objects.TCIForPatientElectiveList objects.
 	 */
 	public static ims.ccosched.vo.TCIForPatientElectiveListBedInfoDetailsVoCollection createTCIForPatientElectiveListBedInfoDetailsVoCollectionFromTCIForPatientElectiveList(java.util.List domainObjectList) 
 	{
@@ -136,7 +136,7 @@ public class TCIForPatientElectiveListBedInfoDetailsVoAssembler
 	/**
 	 * Create the ValueObject collection to hold the list of DomainObjects.
 	 * @param map - maps DomainObjects to created ValueObjects
-	 * @param domainObjectList - List of ims.careuk.domain.objects.TCIForPatientElectiveList objects.
+	 * @param domainObjectList - List of ims.RefMan.domain.objects.TCIForPatientElectiveList objects.
 	 */
 	public static ims.ccosched.vo.TCIForPatientElectiveListBedInfoDetailsVoCollection createTCIForPatientElectiveListBedInfoDetailsVoCollectionFromTCIForPatientElectiveList(DomainObjectMap map, java.util.List domainObjectList) 
 	{
@@ -149,7 +149,7 @@ public class TCIForPatientElectiveListBedInfoDetailsVoAssembler
 		int activeCount=0;
 		for (int i = 0; i < domainObjectList.size(); i++)
 		{
-			ims.careuk.domain.objects.TCIForPatientElectiveList domainObject = (ims.careuk.domain.objects.TCIForPatientElectiveList) domainObjectList.get(i);
+			ims.RefMan.domain.objects.TCIForPatientElectiveList domainObject = (ims.RefMan.domain.objects.TCIForPatientElectiveList) domainObjectList.get(i);
 			ims.ccosched.vo.TCIForPatientElectiveListBedInfoDetailsVo vo = create(map, domainObject);
 
 			if (vo != null)
@@ -170,7 +170,7 @@ public class TCIForPatientElectiveListBedInfoDetailsVoAssembler
 	}
 
 	/**
-	 * Create the ims.careuk.domain.objects.TCIForPatientElectiveList set from the value object collection.
+	 * Create the ims.RefMan.domain.objects.TCIForPatientElectiveList set from the value object collection.
 	 * @param domainFactory - used to create existing (persistent) domain objects.
 	 * @param voCollection - the collection of value objects	 
 	 */
@@ -190,7 +190,7 @@ public class TCIForPatientElectiveListBedInfoDetailsVoAssembler
 		for(int i=0; i<size; i++) 
 		{
 			ims.ccosched.vo.TCIForPatientElectiveListBedInfoDetailsVo vo = voCollection.get(i);
-			ims.careuk.domain.objects.TCIForPatientElectiveList domainObject = TCIForPatientElectiveListBedInfoDetailsVoAssembler.extractTCIForPatientElectiveList(domainFactory, vo, domMap);
+			ims.RefMan.domain.objects.TCIForPatientElectiveList domainObject = TCIForPatientElectiveListBedInfoDetailsVoAssembler.extractTCIForPatientElectiveList(domainFactory, vo, domMap);
 
 			//TODO: This can only occur in the situation of a stale object exception. For now leave it to the Interceptor to handle it.
 			if (domainObject == null)
@@ -224,7 +224,7 @@ public class TCIForPatientElectiveListBedInfoDetailsVoAssembler
 
 
 	/**
-	 * Create the ims.careuk.domain.objects.TCIForPatientElectiveList list from the value object collection.
+	 * Create the ims.RefMan.domain.objects.TCIForPatientElectiveList list from the value object collection.
 	 * @param domainFactory - used to create existing (persistent) domain objects.
 	 * @param voCollection - the collection of value objects	 
 	 */
@@ -243,7 +243,7 @@ public class TCIForPatientElectiveListBedInfoDetailsVoAssembler
 		for(int i=0; i<size; i++) 
 		{
 			ims.ccosched.vo.TCIForPatientElectiveListBedInfoDetailsVo vo = voCollection.get(i);
-			ims.careuk.domain.objects.TCIForPatientElectiveList domainObject = TCIForPatientElectiveListBedInfoDetailsVoAssembler.extractTCIForPatientElectiveList(domainFactory, vo, domMap);
+			ims.RefMan.domain.objects.TCIForPatientElectiveList domainObject = TCIForPatientElectiveListBedInfoDetailsVoAssembler.extractTCIForPatientElectiveList(domainFactory, vo, domMap);
 
 			//TODO: This can only occur in the situation of a stale object exception. For now leave it to the Interceptor to handle it.
 			if (domainObject == null)
@@ -278,10 +278,10 @@ public class TCIForPatientElectiveListBedInfoDetailsVoAssembler
  
 
 	/**
-	 * Create the ValueObject from the ims.careuk.domain.objects.TCIForPatientElectiveList object.
-	 * @param domainObject ims.careuk.domain.objects.TCIForPatientElectiveList
+	 * Create the ValueObject from the ims.RefMan.domain.objects.TCIForPatientElectiveList object.
+	 * @param domainObject ims.RefMan.domain.objects.TCIForPatientElectiveList
 	 */
-	 public static ims.ccosched.vo.TCIForPatientElectiveListBedInfoDetailsVo create(ims.careuk.domain.objects.TCIForPatientElectiveList domainObject) 
+	 public static ims.ccosched.vo.TCIForPatientElectiveListBedInfoDetailsVo create(ims.RefMan.domain.objects.TCIForPatientElectiveList domainObject) 
 	 {
 	 	if (null == domainObject) 
 	 	{
@@ -292,11 +292,11 @@ public class TCIForPatientElectiveListBedInfoDetailsVoAssembler
 	 }
 	 
 	 /**
-	  * Create the ValueObject from the ims.careuk.domain.objects.TCIForPatientElectiveList object.
+	  * Create the ValueObject from the ims.RefMan.domain.objects.TCIForPatientElectiveList object.
 	  * @param map DomainObjectMap of DomainObjects to already created ValueObjects.
 	  * @param domainObject
 	  */
-	  public static ims.ccosched.vo.TCIForPatientElectiveListBedInfoDetailsVo create(DomainObjectMap map, ims.careuk.domain.objects.TCIForPatientElectiveList domainObject) 
+	  public static ims.ccosched.vo.TCIForPatientElectiveListBedInfoDetailsVo create(DomainObjectMap map, ims.RefMan.domain.objects.TCIForPatientElectiveList domainObject) 
 	  {
 	  		if (null == domainObject) 
 	  		{
@@ -318,9 +318,9 @@ public class TCIForPatientElectiveListBedInfoDetailsVoAssembler
 	/**
 	 * Update the ValueObject with the Domain Object.
 	 * @param valueObject to be updated
-	 * @param domainObject ims.careuk.domain.objects.TCIForPatientElectiveList
+	 * @param domainObject ims.RefMan.domain.objects.TCIForPatientElectiveList
 	 */
-	 public static ims.ccosched.vo.TCIForPatientElectiveListBedInfoDetailsVo insert(ims.ccosched.vo.TCIForPatientElectiveListBedInfoDetailsVo valueObject, ims.careuk.domain.objects.TCIForPatientElectiveList domainObject) 
+	 public static ims.ccosched.vo.TCIForPatientElectiveListBedInfoDetailsVo insert(ims.ccosched.vo.TCIForPatientElectiveListBedInfoDetailsVo valueObject, ims.RefMan.domain.objects.TCIForPatientElectiveList domainObject) 
 	 {
 	 	if (null == domainObject) 
 	 	{
@@ -334,9 +334,9 @@ public class TCIForPatientElectiveListBedInfoDetailsVoAssembler
 	 * Update the ValueObject with the Domain Object.
 	 * @param map DomainObjectMap of DomainObjects to already created ValueObjects.
 	 * @param valueObject to be updated
-	 * @param domainObject ims.careuk.domain.objects.TCIForPatientElectiveList
+	 * @param domainObject ims.RefMan.domain.objects.TCIForPatientElectiveList
 	 */
-	 public static ims.ccosched.vo.TCIForPatientElectiveListBedInfoDetailsVo insert(DomainObjectMap map, ims.ccosched.vo.TCIForPatientElectiveListBedInfoDetailsVo valueObject, ims.careuk.domain.objects.TCIForPatientElectiveList domainObject) 
+	 public static ims.ccosched.vo.TCIForPatientElectiveListBedInfoDetailsVo insert(DomainObjectMap map, ims.ccosched.vo.TCIForPatientElectiveListBedInfoDetailsVo valueObject, ims.RefMan.domain.objects.TCIForPatientElectiveList domainObject) 
 	 {
 	 	if (null == domainObject) 
 	 	{
@@ -385,14 +385,14 @@ public class TCIForPatientElectiveListBedInfoDetailsVoAssembler
 		// AdmissionDetail
 		valueObject.setAdmissionDetail(ims.core.vo.domain.AdmissionDetailVoAssembler.create(map, domainObject.getAdmissionDetail()) );
 		// CurrentOutcome
-		valueObject.setCurrentOutcome(ims.careuk.vo.domain.TCIOutcomeForPatientElectiveListVoAssembler.create(map, domainObject.getCurrentOutcome()) );
+		valueObject.setCurrentOutcome(ims.RefMan.vo.domain.TCIOutcomeForPatientElectiveListVoAssembler.create(map, domainObject.getCurrentOutcome()) );
 		// OutcomeHistory
-		ims.careuk.vo.TCIOutcomeForPatientElectiveListRefVoCollection OutcomeHistory = new ims.careuk.vo.TCIOutcomeForPatientElectiveListRefVoCollection();
+		ims.RefMan.vo.TCIOutcomeForPatientElectiveListRefVoCollection OutcomeHistory = new ims.RefMan.vo.TCIOutcomeForPatientElectiveListRefVoCollection();
 		for(java.util.Iterator iterator = domainObject.getOutcomeHistory().iterator(); iterator.hasNext(); ) 
 		{
-			ims.careuk.domain.objects.TCIOutcomeForPatientElectiveList tmp = (ims.careuk.domain.objects.TCIOutcomeForPatientElectiveList)iterator.next();
+			ims.RefMan.domain.objects.TCIOutcomeForPatientElectiveList tmp = (ims.RefMan.domain.objects.TCIOutcomeForPatientElectiveList)iterator.next();
 			if (tmp != null)
-				OutcomeHistory.add(new ims.careuk.vo.TCIOutcomeForPatientElectiveListRefVo(tmp.getId(),tmp.getVersion()));
+				OutcomeHistory.add(new ims.RefMan.vo.TCIOutcomeForPatientElectiveListRefVo(tmp.getId(),tmp.getVersion()));
 		}
 		valueObject.setOutcomeHistory(OutcomeHistory);
 		// IsActive
@@ -408,27 +408,27 @@ public class TCIForPatientElectiveListBedInfoDetailsVoAssembler
 	 * @param domainFactory - used to create existing (persistent) domain objects.
 	 * @param valueObject - extract the domain object fields from this.
 	 */
-	public static ims.careuk.domain.objects.TCIForPatientElectiveList extractTCIForPatientElectiveList(ims.domain.ILightweightDomainFactory domainFactory, ims.ccosched.vo.TCIForPatientElectiveListBedInfoDetailsVo valueObject) 
+	public static ims.RefMan.domain.objects.TCIForPatientElectiveList extractTCIForPatientElectiveList(ims.domain.ILightweightDomainFactory domainFactory, ims.ccosched.vo.TCIForPatientElectiveListBedInfoDetailsVo valueObject) 
 	{
 		return 	extractTCIForPatientElectiveList(domainFactory, valueObject, new HashMap());
 	}
 
-	public static ims.careuk.domain.objects.TCIForPatientElectiveList extractTCIForPatientElectiveList(ims.domain.ILightweightDomainFactory domainFactory, ims.ccosched.vo.TCIForPatientElectiveListBedInfoDetailsVo valueObject, HashMap domMap) 
+	public static ims.RefMan.domain.objects.TCIForPatientElectiveList extractTCIForPatientElectiveList(ims.domain.ILightweightDomainFactory domainFactory, ims.ccosched.vo.TCIForPatientElectiveListBedInfoDetailsVo valueObject, HashMap domMap) 
 	{
 		if (null == valueObject) 
 		{
 			return null;
 		}
 		Integer id = valueObject.getID_TCIForPatientElectiveList();
-		ims.careuk.domain.objects.TCIForPatientElectiveList domainObject = null;
+		ims.RefMan.domain.objects.TCIForPatientElectiveList domainObject = null;
 		if ( null == id) 
 		{
 			if (domMap.get(valueObject) != null)
 			{
-				return (ims.careuk.domain.objects.TCIForPatientElectiveList)domMap.get(valueObject);
+				return (ims.RefMan.domain.objects.TCIForPatientElectiveList)domMap.get(valueObject);
 			}
 			// ims.ccosched.vo.TCIForPatientElectiveListBedInfoDetailsVo ID_TCIForPatientElectiveList field is unknown
-			domainObject = new ims.careuk.domain.objects.TCIForPatientElectiveList();
+			domainObject = new ims.RefMan.domain.objects.TCIForPatientElectiveList();
 			domMap.put(valueObject, domainObject);
 		}
 		else 
@@ -436,9 +436,9 @@ public class TCIForPatientElectiveListBedInfoDetailsVoAssembler
 			String key = (valueObject.getClass().getName() + "__" + valueObject.getID_TCIForPatientElectiveList());
 			if (domMap.get(key) != null)
 			{
-				return (ims.careuk.domain.objects.TCIForPatientElectiveList)domMap.get(key);
+				return (ims.RefMan.domain.objects.TCIForPatientElectiveList)domMap.get(key);
 			}
-			domainObject = (ims.careuk.domain.objects.TCIForPatientElectiveList) domainFactory.getDomainObject(ims.careuk.domain.objects.TCIForPatientElectiveList.class, id );
+			domainObject = (ims.RefMan.domain.objects.TCIForPatientElectiveList) domainFactory.getDomainObject(ims.RefMan.domain.objects.TCIForPatientElectiveList.class, id );
 			
 			//TODO: Not sure how this should be handled. Effectively it must be a staleobject exception, but maybe should be handled as that further up.
 			if (domainObject == null) 
@@ -511,9 +511,9 @@ public class TCIForPatientElectiveListBedInfoDetailsVoAssembler
 		}
 		domainObject.setTCIConsultant(value6);
 		domainObject.setAdmissionDetail(ims.core.vo.domain.AdmissionDetailVoAssembler.extractAdmissionDetail(domainFactory, valueObject.getAdmissionDetail(), domMap));
-		domainObject.setCurrentOutcome(ims.careuk.vo.domain.TCIOutcomeForPatientElectiveListVoAssembler.extractTCIOutcomeForPatientElectiveList(domainFactory, valueObject.getCurrentOutcome(), domMap));
+		domainObject.setCurrentOutcome(ims.RefMan.vo.domain.TCIOutcomeForPatientElectiveListVoAssembler.extractTCIOutcomeForPatientElectiveList(domainFactory, valueObject.getCurrentOutcome(), domMap));
 
-		ims.careuk.vo.TCIOutcomeForPatientElectiveListRefVoCollection refCollection9 = valueObject.getOutcomeHistory();
+		ims.RefMan.vo.TCIOutcomeForPatientElectiveListRefVoCollection refCollection9 = valueObject.getOutcomeHistory();
 		int size9 = (null == refCollection9) ? 0 : refCollection9.size();		
 		java.util.List domainOutcomeHistory9 = domainObject.getOutcomeHistory();
 		if (domainOutcomeHistory9 == null)
@@ -522,20 +522,20 @@ public class TCIForPatientElectiveListBedInfoDetailsVoAssembler
 		}
 		for(int i=0; i < size9; i++) 
 		{
-			ims.careuk.vo.TCIOutcomeForPatientElectiveListRefVo vo = refCollection9.get(i);			
-			ims.careuk.domain.objects.TCIOutcomeForPatientElectiveList dom = null;
+			ims.RefMan.vo.TCIOutcomeForPatientElectiveListRefVo vo = refCollection9.get(i);			
+			ims.RefMan.domain.objects.TCIOutcomeForPatientElectiveList dom = null;
 			if ( null != vo ) 
 			{
 				if (vo.getBoId() == null)
 				{
 					if (domMap.get(vo) != null)
 					{
-						dom = (ims.careuk.domain.objects.TCIOutcomeForPatientElectiveList)domMap.get(vo);
+						dom = (ims.RefMan.domain.objects.TCIOutcomeForPatientElectiveList)domMap.get(vo);
 					}
 				}
 				else
 				{
-					dom = (ims.careuk.domain.objects.TCIOutcomeForPatientElectiveList)domainFactory.getDomainObject( ims.careuk.domain.objects.TCIOutcomeForPatientElectiveList.class, vo.getBoId());
+					dom = (ims.RefMan.domain.objects.TCIOutcomeForPatientElectiveList)domainFactory.getDomainObject( ims.RefMan.domain.objects.TCIOutcomeForPatientElectiveList.class, vo.getBoId());
 				}
 			}
 

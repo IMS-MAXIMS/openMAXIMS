@@ -30,7 +30,7 @@ public abstract class BaseAppointmentOutcomeDialogImpl extends DomainImpl implem
 	private static final long serialVersionUID = 1L;
 
 	@SuppressWarnings("unused")
-	public void validatesaveBookingAppointment(ims.scheduling.vo.BookingAppointmentOutcomeVo appt, ims.careuk.vo.PatientElectiveListDetailsToSaveVo patientElectiveListToSave, ims.pathways.vo.EventLiteVo firstDefinitiveTreatmentEvent)
+	public void validatesaveBookingAppointment(ims.scheduling.vo.BookingAppointmentOutcomeVo appt, ims.RefMan.vo.PatientElectiveListDetailsToSaveVo patientElectiveListToSave, ims.pathways.vo.EventLiteVo firstDefinitiveTreatmentEvent)
 	{
 		if(appt == null)
 			throw new ims.domain.exceptions.DomainRuntimeException("The parameter 'appt' of type 'ims.scheduling.vo.BookingAppointmentOutcomeVo' cannot be null.");
@@ -44,7 +44,7 @@ public abstract class BaseAppointmentOutcomeDialogImpl extends DomainImpl implem
 	}
 
 	@SuppressWarnings("unused")
-	public void validatethereAreActivePatientElectiveListsForCurrentCatsReferral(ims.careuk.vo.CatsReferralRefVo catsRef)
+	public void validatethereAreActivePatientElectiveListsForCurrentCatsReferral(ims.RefMan.vo.CatsReferralRefVo catsRef)
 	{
 	}
 

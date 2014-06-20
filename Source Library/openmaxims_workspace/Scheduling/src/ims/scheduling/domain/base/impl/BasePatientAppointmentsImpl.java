@@ -50,10 +50,10 @@ public abstract class BasePatientAppointmentsImpl extends DomainImpl implements 
 	}
 
 	@SuppressWarnings("unused")
-	public void validateupdateCatsReferralForCancelledAppt(ims.careuk.vo.CatsReferralRefVo catsRef)
+	public void validateupdateCatsReferralForCancelledAppt(ims.RefMan.vo.CatsReferralRefVo catsRef)
 	{
 		if(catsRef == null)
-			throw new ims.domain.exceptions.DomainRuntimeException("The parameter 'catsRef' of type 'ims.careuk.vo.CatsReferralRefVo' cannot be null.");
+			throw new ims.domain.exceptions.DomainRuntimeException("The parameter 'catsRef' of type 'ims.RefMan.vo.CatsReferralRefVo' cannot be null.");
 	}
 
 	@SuppressWarnings("unused")
@@ -77,7 +77,7 @@ public abstract class BasePatientAppointmentsImpl extends DomainImpl implements 
 	}
 
 	@SuppressWarnings("unused")
-	public void validateisReferralICPCompleted(ims.careuk.vo.CatsReferralRefVo catsReferral)
+	public void validateisReferralICPCompleted(ims.RefMan.vo.CatsReferralRefVo catsReferral)
 	{
 	}
 
@@ -87,7 +87,7 @@ public abstract class BasePatientAppointmentsImpl extends DomainImpl implements 
 	}
 
 	@SuppressWarnings("unused")
-	public void validatecancelTCIAndReferralEROD(ims.careuk.vo.CatsReferralRefVo catsReferral, ims.scheduling.vo.Booking_AppointmentRefVo apptRef, Boolean isProviderCancellation, Boolean isPatientCancellation)
+	public void validatecancelTCIAndReferralEROD(ims.RefMan.vo.CatsReferralRefVo catsReferral, ims.scheduling.vo.Booking_AppointmentRefVo apptRef, Boolean isProviderCancellation, Boolean isPatientCancellation)
 	{
 	}
 }

@@ -3,18 +3,18 @@
 	<transport_type>http</transport_type>
 	<from_msh_url>http://webapps3/msh/</from_msh_url>
 	<to_msh_url>http://192.168.100.9:8080/msh/</to_msh_url>
-	<cpa_id>S2004608A2033881</cpa_id>
-	<conv_id>DD9DAF16-1DD1-11B2-8126-F50454FE6FFC</conv_id>
+	<cpa_id>xxxxx</cpa_id>
+	<conv_id>xxxxx</conv_id>
 	<cab_service>urn:nhs:names:services:ebs</cab_service>
-	<cab_action>PRSC_IN040000UK08</cab_action> <!-- Was Book -->
-	<cid_extension>@sandpit-r2.ims.thirdparty.nhs.uk</cid_extension>
+	<cab_action>xxxxx</cab_action> <!-- Was Book -->
+	<cid_extension>@sandpit-r2.xxxxx.thirdparty.nhs.uk</cid_extension>
 	<app_processor>urn:nhs:names:services:ebs</app_processor>  <!-- Was Scheduler -->
 	<response_queue_sleep>1000</response_queue_sleep>
 	<request_queue_sleep>60</request_queue_sleep>
 	<web_service_url>http://localhost:8080/MAXIMS/services/WebService</web_service_url>
 	<pds_url>https://xxxx"</pds_url>
 	<sds_output_file>sdsCfg.xml</sds_output_file>
-	<webservice_user>****</webservice_user>
+	<webservice_user>*****</webservice_user>
 	<ignore_sequence_exceptions>true</ignore_sequence_exceptions>
 	<webservice_pwd>*****</webservice_pwd>
 	<webservice_encrypt>false</webservice_encrypt>

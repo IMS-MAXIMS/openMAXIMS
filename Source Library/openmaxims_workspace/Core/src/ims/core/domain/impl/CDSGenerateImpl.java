@@ -22,13 +22,13 @@
 
 package ims.core.domain.impl;
 
-import ims.careuk.domain.objects.CATSReferralStatus;
-import ims.careuk.domain.objects.CatsReferral;
-import ims.careuk.domain.objects.DischargeSummaryPacuAndWard;
-import ims.careuk.domain.objects.ReferralCoding;
-import ims.careuk.domain.objects.ReferralCodingItem;
-import ims.careuk.domain.objects.SuitableForSurgeryAssessment;
-import ims.careuk.vo.lookups.ReferralApptStatus;
+import ims.RefMan.domain.objects.CATSReferralStatus;
+import ims.RefMan.domain.objects.CatsReferral;
+import ims.RefMan.domain.objects.DischargeSummaryPacuAndWard;
+import ims.RefMan.domain.objects.ReferralCoding;
+import ims.RefMan.domain.objects.ReferralCodingItem;
+import ims.RefMan.domain.objects.SuitableForSurgeryAssessment;
+import ims.RefMan.vo.lookups.ReferralApptStatus;
 import ims.configuration.EnvironmentConfig;
 import ims.configuration.gen.ConfigFlag;
 import ims.core.admin.domain.objects.CareContext;

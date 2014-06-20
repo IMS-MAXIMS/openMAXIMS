@@ -45,7 +45,7 @@ public interface ClinicListWithICPActions extends ims.domain.DomainInterface
 	public ims.core.vo.LocMostVo getLocation(ims.core.resource.place.vo.LocationRefVo voLocRef);
 
 	// Generated from form domain interface definition
-	public ims.scheduling.vo.Booking_AppointmentVo saveOPEpisode(ims.scheduling.vo.Booking_AppointmentVo voOP, ims.careuk.vo.CatsReferralListVo voCatsReferral, ims.scheduling.vo.SessionSlotVo dnaSessionSlot, ims.careuk.vo.PatientElectiveListForDNAAppointmentsVo electiveList, Boolean isFirstAppointmentActivity) throws ims.domain.exceptions.DomainInterfaceException, ims.domain.exceptions.StaleObjectException;
+	public ims.scheduling.vo.Booking_AppointmentVo saveOPEpisode(ims.scheduling.vo.Booking_AppointmentVo voOP, ims.RefMan.vo.CatsReferralListVo voCatsReferral, ims.scheduling.vo.SessionSlotVo dnaSessionSlot, ims.RefMan.vo.PatientElectiveListForDNAAppointmentsVo electiveList, Boolean isFirstAppointmentActivity) throws ims.domain.exceptions.DomainInterfaceException, ims.domain.exceptions.StaleObjectException;
 
 	// Generated from form domain interface definition
 	public ims.scheduling.vo.Booking_AppointmentVo getOpEpisode(ims.scheduling.vo.Booking_AppointmentRefVo voBookingRef);
@@ -54,10 +54,10 @@ public interface ClinicListWithICPActions extends ims.domain.DomainInterface
 	public Boolean isNotACurrentInpatient(ims.core.patient.vo.PatientRefVo voPatRef);
 
 	// Generated from form domain interface definition
-	public ims.careuk.vo.CatsReferralRefVo getCatsReferralRef(Integer bookApptID);
+	public ims.RefMan.vo.CatsReferralRefVo getCatsReferralRef(Integer bookApptID);
 
 	// Generated from form domain interface definition
-	public ims.careuk.vo.CatsReferralListVo getCatsReferral(ims.scheduling.vo.Booking_AppointmentRefVo voBookRefVo);
+	public ims.RefMan.vo.CatsReferralListVo getCatsReferral(ims.scheduling.vo.Booking_AppointmentRefVo voBookRefVo);
 
 	// Generated from form domain interface definition
 	public ims.core.vo.CareContextShortVo getCareContext(ims.core.admin.vo.CareContextRefVo careContextRef);
@@ -75,7 +75,7 @@ public interface ClinicListWithICPActions extends ims.domain.DomainInterface
 	public ims.admin.vo.AppointmentTrackingstatusColourConfigVo getTrackingColorConfig(ims.vo.LookupInstVo trackingStatus);
 
 	// Generated from form domain interface definition
-	public ims.careuk.vo.PatientElectiveListForDNAAppointmentsVo getPatientElectiveList(ims.scheduling.vo.Booking_AppointmentRefVo appointment);
+	public ims.RefMan.vo.PatientElectiveListForDNAAppointmentsVo getPatientElectiveList(ims.scheduling.vo.Booking_AppointmentRefVo appointment);
 
 	// Generated from form domain interface definition
 	public Boolean hasTCI(ims.scheduling.vo.Booking_AppointmentRefVo appointment);

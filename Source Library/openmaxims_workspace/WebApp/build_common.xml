@@ -77,7 +77,6 @@
 		<equals arg1="${dbtype}" arg2="MSQ05" casesensitive="false" trim="true" />
 	</condition>
 
-	
 	<!-- HSQLDB JDBC Settings -->	
 	<condition property="sqlterminator" value=";" >
 		<equals arg1="${dbtype}" arg2="HSQ" casesensitive="false" trim="true" />
@@ -147,7 +146,8 @@
 		<tstamp>
 			<format property="timestamp" pattern="yyyyMMdd HH:mm:ss" />
 		</tstamp>
-		<buildnumber file="\\webapps\BuildNumbers\DevBuildNumber" />
+		<!-- POINT AT AN EMPTY FILE FOR YOUR FIRST BUILD, ANT WILL TRACK YOUR BUILD NUMBER -->
+		<buildnumber file="${workspace}DevBuildNumber" />
 		<mkdir dir="${workspace}Admin/src" />
 		<mkdir dir="${workspace}Admin/bin" />
 		<mkdir dir="${workspace}Alerts/src" />
@@ -165,36 +165,66 @@
 		<mkdir dir="${workspace}ValueObjects/src" />
 		<mkdir dir="${workspace}ValueObjects/bin" />
 		<mkdir dir="${workspace}WebApp/WEB-INF/classes" />
-		<!--
-		<cvs dest="${libdir}" command="update"/>
-		<cvs dest="${workspace}DomainObjects" command="update"/>
-		-->
 	</target>
 
 	<!-- Compile DomainObjects -->
 	<target name="DomainObjects" depends="init" >
+		<delete includeEmptyDirs="true" quiet="true">
+			<fileset dir="${workspace}DomainObjects/bin">
+				<patternset>
+					<include name="**/*.class"/>
+				</patternset>
+			</fileset>
+		</delete>		
 		<javac debug="on" classpath="${ant_classpath}" destdir="${workspace}DomainObjects/bin/" srcdir="${workspace}DomainObjects/src/" includes="**/*.java" />
 	</target>
 
 	<!-- Compile ValueObjects -->
 		<target name="ValueObjects" depends="DomainObjects" >
-		    <!-- <javac debug="on" fork="true" classpath="${ant_classpath};${libdir}hibernate3.jar;${workspace}DomainObjects/bin/" destdir="${workspace}ValueObjects/bin/" srcdir="${workspace}ValueObjects/src/" includes="**/*.java"  memoryInitialSize="512m" memoryMaximumSize="2048m" /> -->
+		<delete includeEmptyDirs="true" quiet="true">
+			<fileset dir="${workspace}ValueObjects/bin">
+				<patternset>
+					<include name="**/*.class"/>
+				</patternset>
+			</fileset>
+		</delete>		
 			<javac debug="on" classpath="${ant_classpath};${libdir}hibernate3.jar;${workspace}DomainObjects/bin/" destdir="${workspace}ValueObjects/bin/" srcdir="${workspace}ValueObjects/src/" includes="**/*.java"/>			
 		</target>
 
 	<!-- Compile Alerts -->
 	<target name="Alerts" depends="init" >
+		<delete includeEmptyDirs="true" quiet="true">
+			<fileset dir="${workspace}Alerts/bin">
+				<patternset>
+					<include name="**/*.class"/>
+				</patternset>
+			</fileset>
+		</delete>		
 		<javac debug="on" classpath="${ant_classpath}" destdir="${workspace}Alerts/bin/" srcdir="${workspace}Alerts/src/" includes="**/*.java" />
 	</target>
 
 	<!-- Compile DTOClients -->
 	<target name="DTOClients" depends="init" >
+		<delete includeEmptyDirs="true" quiet="true">
+			<fileset dir="${workspace}DTOClients/bin">
+				<patternset>
+					<include name="**/*.class"/>
+				</patternset>
+			</fileset>
+		</delete>		
 		<javac debug="on" classpath="${ant_classpath}" destdir="${workspace}DTOClients/bin/" srcdir="${workspace}DTOClients/src/" includes="**/*.java" />
 	</target>
 
 	<!-- Compile Admin -->
 	<target name="Admin" depends="ValueObjects, DTOClients" >
-		<javac debug="on" classpath="${ant_classpath};${tomcatdir}tomcat-dbcp.jar;${tomcatdir}naming-factory-dbcp.jar;${newtomcatdir}tomcat-dbcp.jar;${newtomcatdir}naming-factory-dbcp.jar;${libdir}jaxrpc.jar;${libdir}hapi.jar;${libdir}hl7utils.jar;${libdir}jamon-2.2.jar;${libdir}/xstream-1.2.2.jar;${libdir}/quartz.jar;${libdir}/c3p0.jar;${libdir}/quartz-modified.jar;${libdir}commons-io-1.3.1.jar;${libdir}commons-httpclient-3.0.jar;${libdir}commons-dbcp.jar;${libdir}xercesImpl.jar;${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;${workspace}DTOClients/bin/;" destdir="${workspace}Admin/bin/" srcdir="${workspace}Admin/src/" includes="**/*.java" />
+		<delete includeEmptyDirs="true" quiet="true">
+			<fileset dir="${workspace}Admin/bin">
+				<patternset>
+					<include name="**/*.class"/>
+				</patternset>
+			</fileset>
+		</delete>		
+	<javac debug="on" classpath="${soap_classpath};${ant_classpath};${tomcatdir}tomcat-dbcp.jar;${tomcatdir}naming-factory-dbcp.jar;${newtomcatdir}tomcat-dbcp.jar;${newtomcatdir}naming-factory-dbcp.jar;${libdir}jaxrpc.jar;${libdir}hapi.jar;${libdir}hl7utils.jar;${libdir}jamon-2.2.jar;${libdir}/xstream-1.2.2.jar;${libdir}quartz.jar;${libdir}c3p0.jar;${libdir}quartz-modified.jar;${libdir}commons-io-1.3.1.jar;${libdir}commons-httpclient-3.0.jar;${libdir}commons-dbcp.jar;${libdir}axis.jar;${libdir}spectrum.jar;${libdir}xercesImpl.jar;${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;${workspace}DTOClients/bin/;" destdir="${workspace}Admin/bin/" srcdir="${workspace}Admin/src/" includes="**/*.java" />
 	</target>
 
 	<!-- JavaDoc Admin -->
@@ -204,11 +234,25 @@
 
 	<!-- Compile ClinicalAdmin-->
 	<target name="ClinicalAdmin" depends="Admin" >
+		<delete includeEmptyDirs="true" quiet="true">
+			<fileset dir="${workspace}ClinicalAdmin/bin">
+				<patternset>
+					<include name="**/*.class"/>
+				</patternset>
+			</fileset>
+		</delete>		
 		<javac debug="on" classpath="${ant_classpath};${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;${workspace}Admin/bin/;" destdir="${workspace}ClinicalAdmin/bin/" srcdir="${workspace}ClinicalAdmin/src/"  includes="**/*.java" />
 	</target>
 
 	<!-- Compile Core -->
 	<target name="Core" depends="Alerts, ClinicalAdmin" >
+		<delete includeEmptyDirs="true" quiet="true">
+			<fileset dir="${workspace}Core/bin">
+				<patternset>
+					<include name="**/*.class"/>
+				</patternset>
+			</fileset>
+		</delete>		
 		<javac debug="on" classpath="${ant_classpath};${libdir}joda-time-1.6.jar;${libdir}jaxrpc.jar;${libdir}saaj.jar;${libdir}wsdl4j.jar;${libdir}axis.jar;${libdir}jdom.jar;${libdir}mime-util-2.1.2.jar;${libdir}/quartz.jar;${libdir}jodconverter-core-3.0-beta-3.jar;${libdir}ImsServer.jar;${libdir}log4j.jar;${libdir}itext.jar;${libdir}plugin.jar;${libdir}capscan.jar;${libdir}j-interopdeps.jar;${libdir}jcifs-1.2.19.jar;${libdir}j-interop.jar;${libdir}Esendex.jar;${workspace}ClinicalAdmin/bin/;${workspace}Admin/bin/;${workspace}Alerts/bin/;${workspace}DomainObjects/bin/;${workspace}DTOClients/bin/;${workspace}ValueObjects/bin/;" destdir="${workspace}Core/bin/" srcdir="${workspace}Core/src/" includes="**/*.java" />
 	</target>
 	
@@ -235,7 +279,7 @@
 
 	<!-- Compile WebAppSource -->
 	<target name="WebAppSource" depends="init" >
-		<javac debug="on" classpath="${ant_classpath};${soap_classpath};${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;${workspace}Core/bin;${workspace}Clinical/bin;${workspace}Scheduling/bin;${workspace}Admin/bin;${workspace}CAREUK/bin" destdir="${workspace}WebApp/WEB-INF/classes" srcdir="${workspace}WebApp/src/" includes="**/*.java" />
+		<javac debug="on" classpath="${ant_classpath};${soap_classpath};${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;${workspace}Core/bin;${workspace}Clinical/bin;${workspace}Scheduling/bin;${workspace}Admin/bin;${workspace}RefMan/bin" destdir="${workspace}WebApp/WEB-INF/classes" srcdir="${workspace}WebApp/src/" includes="**/*.java" />
 	</target>
 
 	<target name="GenerateDropScript" depends="init" >
@@ -326,8 +370,7 @@
 		<replace file="${workspace}DomainObjects/restore_data.sql" token="1 rows affected" />
 	</target>
 
-
-		<target name="SchemaRefreshAllNoBackup" depends="GenerateMinRestoreScript, SchemaExport" >
+	<target name="SchemaRefreshAllNoBackup" depends="GenerateMinRestoreScript, SchemaExport" >
 	  <copy file="${workspace}WebApp/${project.name}_RefData.sql" 
 		tofile="${workspace}WebApp/${project.name}_RefDataMSQ.sql" 
 		overwrite="true" />
@@ -397,8 +440,6 @@
 		overwrite="true" />
 	</target>
 	
-	
-
 	<target name="SchemaRefreshNoBackup" depends="GenerateMinRestoreScript, SchemaExport" >
 	  <copy file="${workspace}WebApp/${project.name}_RefData.sql" 
 		tofile="${workspace}WebApp/${project.name}_RefDataMSQ.sql" 
@@ -647,21 +688,4 @@
 		<include name="joda-time-1.6.jar"/>
 	</fileset>
 	
-	<target name="EmailResultSuccess">
-	<mail mailhost="mailstore.ie.imsgrp.net" mailport="25" user="devenv@imsmaxims.com" password="devenv10" subject="${ant.project.name}  Dev Build Succeeded">
-		<from address="devenv@imsmaxims.com"/>
-		<replyto address="devenv@imsmaxims.com"/>
-	<to address="maxims_dev@imsmaxims.com"/>
-	<message>The ${ant.project.name} development build has completed successfully - http://${env.HOSTNAME}/${ant.project.name}_DEV </message>
-	</mail>
-	</target>
-
-	<target name="EmailResultFail"  >
-	<mail mailhost="mailstore.ie.imsgrp.net" mailport="25" user="devenv@imsmaxims.com" password="devenv10" subject="${ant.project.name} Dev Build Failed" messagefile="c:/jinstall/utils/devbuild_${ant.project.name}.log">
-		<from address="devenv@imsmaxims.com"/>
-		<replyto address="devenv@imsmaxims.com"/>
-	<to address="maxims_dev@imsmaxims.com"/>
-  </mail>
-	</target>
-
 </project>

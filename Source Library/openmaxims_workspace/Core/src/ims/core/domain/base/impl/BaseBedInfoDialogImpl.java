@@ -55,7 +55,7 @@ public abstract class BaseBedInfoDialogImpl extends DomainImpl implements ims.co
 	}
 
 	@SuppressWarnings("unused")
-	public void validatesaveDischargeElectiveList(ims.core.vo.DischargedEpisodeADTVo dischargedEpisode, ims.core.vo.BedSpaceStateLiteVo voBedSpacState, ims.careuk.vo.PatientElectiveListBedAdmissionVo electiveList, ims.careuk.vo.PatientElectiveListBedAdmissionVoCollection cancelledElectiveListToBeRemoved)
+	public void validatesaveDischargeElectiveList(ims.core.vo.DischargedEpisodeADTVo dischargedEpisode, ims.core.vo.BedSpaceStateLiteVo voBedSpacState, ims.RefMan.vo.PatientElectiveListBedAdmissionVo electiveList, ims.RefMan.vo.PatientElectiveListBedAdmissionVoCollection cancelledElectiveListToBeRemoved)
 	{
 	}
 
@@ -249,22 +249,22 @@ public abstract class BaseBedInfoDialogImpl extends DomainImpl implements ims.co
 	}
 
 	@SuppressWarnings("unused")
-	public void validatehasCancelledElectiveListsToRemove(ims.core.patient.vo.PatientRefVo patient, ims.careuk.vo.PatientElectiveListRefVo electiveList, ims.core.clinical.vo.ServiceRefVo service)
+	public void validatehasCancelledElectiveListsToRemove(ims.core.patient.vo.PatientRefVo patient, ims.RefMan.vo.PatientElectiveListRefVo electiveList, ims.core.clinical.vo.ServiceRefVo service)
 	{
 	}
 
 	@SuppressWarnings("unused")
-	public void validategetCancelledElectiveListsToRemove(ims.core.patient.vo.PatientRefVo patient, ims.careuk.vo.PatientElectiveListRefVo electiveList, ims.core.clinical.vo.ServiceRefVo service)
+	public void validategetCancelledElectiveListsToRemove(ims.core.patient.vo.PatientRefVo patient, ims.RefMan.vo.PatientElectiveListRefVo electiveList, ims.core.clinical.vo.ServiceRefVo service)
 	{
 	}
 
 	@SuppressWarnings("unused")
-	public void validatehasElectiveListsToRemove(ims.core.patient.vo.PatientRefVo patientRef, ims.careuk.vo.PatientElectiveListRefVo electiveListRef, ims.core.vo.lookups.Specialty specialty)
+	public void validatehasElectiveListsToRemove(ims.core.patient.vo.PatientRefVo patientRef, ims.RefMan.vo.PatientElectiveListRefVo electiveListRef, ims.core.vo.lookups.Specialty specialty)
 	{
 	}
 
 	@SuppressWarnings("unused")
-	public void validategetElectiveListsToRemove(ims.core.patient.vo.PatientRefVo patientRef, ims.careuk.vo.PatientElectiveListRefVo electiveListRef, ims.core.vo.lookups.Specialty specialty)
+	public void validategetElectiveListsToRemove(ims.core.patient.vo.PatientRefVo patientRef, ims.RefMan.vo.PatientElectiveListRefVo electiveListRef, ims.core.vo.lookups.Specialty specialty)
 	{
 	}
 }

@@ -97,12 +97,12 @@ abstract public class Handlers implements ims.framework.UILogic, IFormUILogicCod
 				onGrdSearchResultsSelectionCleared();
 			}
 		});
-		this.form.getContextMenus().CAREUK.getTansportEditItem().setClickEvent(new ims.framework.delegates.MenuItemClick()
+		this.form.getContextMenus().RefMan.getTansportEditItem().setClickEvent(new ims.framework.delegates.MenuItemClick()
 		{
 			private static final long serialVersionUID = 1L;
 			public void handle(ims.framework.Control sender) throws ims.framework.exceptions.PresentationLogicException
 			{
-				onContextMenuItemClick(GenForm.ContextMenus.CAREUKNamespace.Tansport.Edit, sender);
+				onContextMenuItemClick(GenForm.ContextMenus.RefManNamespace.Tansport.Edit, sender);
 			}
 		});
 	}

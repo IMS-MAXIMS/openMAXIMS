@@ -22,8 +22,8 @@
 
 package ims.clinical.domain.impl;
 
-import ims.careuk.domain.objects.CatsReferral;
-import ims.careuk.vo.domain.CatsReferralBreachDatesVoAssembler;
+import ims.RefMan.domain.objects.CatsReferral;
+import ims.RefMan.vo.domain.CatsReferralBreachDatesVoAssembler;
 import ims.clinical.domain.ClinicListWithICPActions;
 import ims.clinical.domain.base.impl.BaseClinicListNotesPullingImpl;
 import ims.clinical.vo.ClinicalNotesPullingSearchCriteriaVo;

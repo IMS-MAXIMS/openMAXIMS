@@ -54,7 +54,7 @@ public interface InpatientListwithICPActions extends ims.domain.DomainInterface
 	public ims.core.vo.LocMostVo getLocation(ims.core.resource.place.vo.LocationRefVo voLocRef);
 
 	// Generated from form domain interface definition
-	public ims.careuk.vo.CatsReferralRefVo getCatsReferralRef(ims.icp.vo.InpatientEpisodeWithICPInfoVo inpatientEpisode);
+	public ims.RefMan.vo.CatsReferralRefVo getCatsReferralRef(ims.icp.vo.InpatientEpisodeWithICPInfoVo inpatientEpisode);
 
 	// Generated from form domain interface definition
 	public ims.core.vo.CareContextShortVo getCareContext(ims.core.admin.vo.CareContextRefVo careContextRef);

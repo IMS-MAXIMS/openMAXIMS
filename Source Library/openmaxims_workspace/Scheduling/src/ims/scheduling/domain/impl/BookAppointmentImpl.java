@@ -24,10 +24,10 @@ package ims.scheduling.domain.impl;
 
 import ims.admin.domain.OrganisationAndLocation;
 import ims.admin.domain.impl.OrganisationAndLocationImpl;
-import ims.careuk.domain.objects.CATSReferralStatus;
-import ims.careuk.domain.objects.CatsReferral;
-import ims.careuk.vo.lookups.ICABReferralStatus;
-import ims.careuk.vo.lookups.ReferralApptStatus;
+import ims.RefMan.domain.objects.CATSReferralStatus;
+import ims.RefMan.domain.objects.CatsReferral;
+import ims.RefMan.vo.lookups.ICABReferralStatus;
+import ims.RefMan.vo.lookups.ReferralApptStatus;
 import ims.chooseandbook.vo.lookups.ActionRequestType;
 import ims.configuration.gen.ConfigFlag;
 import ims.core.admin.domain.objects.ICABReferral;

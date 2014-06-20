@@ -208,11 +208,11 @@ public class GenForm extends FormBridge
 		{
 			return !cxl_referralStatusColl.getValueIsNull(context);
 		}
-		public ims.careuk.vo.ReferralStatusConfigVoCollection getreferralStatusColl()
+		public ims.RefMan.vo.ReferralStatusConfigVoCollection getreferralStatusColl()
 		{
-			return (ims.careuk.vo.ReferralStatusConfigVoCollection)cxl_referralStatusColl.getValue(context);
+			return (ims.RefMan.vo.ReferralStatusConfigVoCollection)cxl_referralStatusColl.getValue(context);
 		}
-		public void setreferralStatusColl(ims.careuk.vo.ReferralStatusConfigVoCollection value)
+		public void setreferralStatusColl(ims.RefMan.vo.ReferralStatusConfigVoCollection value)
 		{
 			cxl_referralStatusColl.setValue(context, value);
 		}
@@ -221,11 +221,11 @@ public class GenForm extends FormBridge
 		{
 			return !cxl_usedParents.getValueIsNull(context);
 		}
-		public ims.careuk.vo.lookups.ReferralApptStatusCollection getusedParents()
+		public ims.RefMan.vo.lookups.ReferralApptStatusCollection getusedParents()
 		{
-			return (ims.careuk.vo.lookups.ReferralApptStatusCollection)cxl_usedParents.getValue(context);
+			return (ims.RefMan.vo.lookups.ReferralApptStatusCollection)cxl_usedParents.getValue(context);
 		}
-		public void setusedParents(ims.careuk.vo.lookups.ReferralApptStatusCollection value)
+		public void setusedParents(ims.RefMan.vo.lookups.ReferralApptStatusCollection value)
 		{
 			cxl_usedParents.setValue(context, value);
 		}
@@ -381,7 +381,7 @@ public class GenForm extends FormBridge
 			fields[67] = new ims.framework.ReportField(this.context, "_cvp_Clinical.ExtendedClinicalNotesListFilter", "BO-1011100000-CARECONTEXT", "CareContext");
 			fields[68] = new ims.framework.ReportField(this.context, "_cvp_Core.PasEvent", "BO-1014100003-ID", "ID_PASEvent");
 			fields[69] = new ims.framework.ReportField(this.context, "_cvp_Correspondence.CorrespondenceDetails", "BO-1052100001-ID", "ID_CorrespondenceDetails");
-			fields[70] = new ims.framework.ReportField(this.context, "_cvp_CareUk.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
+			fields[70] = new ims.framework.ReportField(this.context, "_cvp_RefMan.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
 			return fields;
 		}
 		protected Context context = null;

@@ -35,7 +35,7 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 
 		Core = new CoreContext(context);
 		ICP = new ICPContext(context);
-		CareUk = new CareUkContext(context);
+		RefMan = new RefManContext(context);
 		Scheduling = new SchedulingContext(context);
 		Clinical = new ClinicalContext(context);
 	}
@@ -93,11 +93,11 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 
 		private ims.framework.Context context;
 	}
-	public final class CareUkContext implements Serializable
+	public final class RefManContext implements Serializable
 	{
 		private static final long serialVersionUID = 1L;
 
-		private CareUkContext(ims.framework.Context context)
+		private RefManContext(ims.framework.Context context)
 		{
 			this.context = context;
 
@@ -105,32 +105,32 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 
 		public boolean getPatientElectiveListRefIsNotNull()
 		{
-			return !cx_CareUkPatientElectiveListRef.getValueIsNull(context);
+			return !cx_RefManPatientElectiveListRef.getValueIsNull(context);
 		}
-		public ims.careuk.vo.PatientElectiveListRefVo getPatientElectiveListRef()
+		public ims.RefMan.vo.PatientElectiveListRefVo getPatientElectiveListRef()
 		{
-			return (ims.careuk.vo.PatientElectiveListRefVo)cx_CareUkPatientElectiveListRef.getValue(context);
+			return (ims.RefMan.vo.PatientElectiveListRefVo)cx_RefManPatientElectiveListRef.getValue(context);
 		}
-		public void setPatientElectiveListRef(ims.careuk.vo.PatientElectiveListRefVo value)
+		public void setPatientElectiveListRef(ims.RefMan.vo.PatientElectiveListRefVo value)
 		{
-			cx_CareUkPatientElectiveListRef.setValue(context, value);
+			cx_RefManPatientElectiveListRef.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkPatientElectiveListRef = new ims.framework.ContextVariable("CareUk.PatientElectiveListRef", "_cv_CareUk.PatientElectiveListRef");
+		private ims.framework.ContextVariable cx_RefManPatientElectiveListRef = new ims.framework.ContextVariable("RefMan.PatientElectiveListRef", "_cv_RefMan.PatientElectiveListRef");
 		public boolean getCatsReferralIsNotNull()
 		{
-			return !cx_CareUkCatsReferral.getValueIsNull(context);
+			return !cx_RefManCatsReferral.getValueIsNull(context);
 		}
-		public ims.careuk.vo.CatsReferralRefVo getCatsReferral()
+		public ims.RefMan.vo.CatsReferralRefVo getCatsReferral()
 		{
-			return (ims.careuk.vo.CatsReferralRefVo)cx_CareUkCatsReferral.getValue(context);
+			return (ims.RefMan.vo.CatsReferralRefVo)cx_RefManCatsReferral.getValue(context);
 		}
-		public void setCatsReferral(ims.careuk.vo.CatsReferralRefVo value)
+		public void setCatsReferral(ims.RefMan.vo.CatsReferralRefVo value)
 		{
-			cx_CareUkCatsReferral.setValue(context, value);
+			cx_RefManCatsReferral.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkCatsReferral = new ims.framework.ContextVariable("CareUk.CatsReferral", "_cvp_CareUk.CatsReferral");
+		private ims.framework.ContextVariable cx_RefManCatsReferral = new ims.framework.ContextVariable("RefMan.CatsReferral", "_cvp_RefMan.CatsReferral");
 
 		private ims.framework.Context context;
 	}
@@ -205,7 +205,7 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 
 	public CoreContext Core;
 	public ICPContext ICP;
-	public CareUkContext CareUk;
+	public RefManContext RefMan;
 	public SchedulingContext Scheduling;
 	public ClinicalContext Clinical;
 }

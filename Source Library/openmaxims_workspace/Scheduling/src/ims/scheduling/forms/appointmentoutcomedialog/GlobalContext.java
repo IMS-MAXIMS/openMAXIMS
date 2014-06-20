@@ -34,7 +34,7 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 		super(context);
 
 		Scheduling = new SchedulingContext(context);
-		CareUk = new CareUkContext(context);
+		RefMan = new RefManContext(context);
 		Core = new CoreContext(context);
 		Clinical = new ClinicalContext(context);
 	}
@@ -107,11 +107,11 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 
 		private ims.framework.Context context;
 	}
-	public final class CareUkContext implements Serializable
+	public final class RefManContext implements Serializable
 	{
 		private static final long serialVersionUID = 1L;
 
-		private CareUkContext(ims.framework.Context context)
+		private RefManContext(ims.framework.Context context)
 		{
 			this.context = context;
 
@@ -119,74 +119,74 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 
 		public boolean getPatientElectiveListIsNotNull()
 		{
-			return !cx_CareUkPatientElectiveList.getValueIsNull(context);
+			return !cx_RefManPatientElectiveList.getValueIsNull(context);
 		}
-		public ims.careuk.vo.PatientElectiveListDetailsToSaveVo getPatientElectiveList()
+		public ims.RefMan.vo.PatientElectiveListDetailsToSaveVo getPatientElectiveList()
 		{
-			return (ims.careuk.vo.PatientElectiveListDetailsToSaveVo)cx_CareUkPatientElectiveList.getValue(context);
+			return (ims.RefMan.vo.PatientElectiveListDetailsToSaveVo)cx_RefManPatientElectiveList.getValue(context);
 		}
-		public void setPatientElectiveList(ims.careuk.vo.PatientElectiveListDetailsToSaveVo value)
+		public void setPatientElectiveList(ims.RefMan.vo.PatientElectiveListDetailsToSaveVo value)
 		{
-			cx_CareUkPatientElectiveList.setValue(context, value);
+			cx_RefManPatientElectiveList.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkPatientElectiveList = new ims.framework.ContextVariable("CareUk.PatientElectiveList", "_cv_CareUk.PatientElectiveList");
+		private ims.framework.ContextVariable cx_RefManPatientElectiveList = new ims.framework.ContextVariable("RefMan.PatientElectiveList", "_cv_RefMan.PatientElectiveList");
 		public boolean getPatientProcedureForAppointmentOutcomeIsNotNull()
 		{
-			return !cx_CareUkPatientProcedureForAppointmentOutcome.getValueIsNull(context);
+			return !cx_RefManPatientProcedureForAppointmentOutcome.getValueIsNull(context);
 		}
-		public ims.careuk.vo.PatientProcedureForAppointmentOutcomeVo getPatientProcedureForAppointmentOutcome()
+		public ims.RefMan.vo.PatientProcedureForAppointmentOutcomeVo getPatientProcedureForAppointmentOutcome()
 		{
-			return (ims.careuk.vo.PatientProcedureForAppointmentOutcomeVo)cx_CareUkPatientProcedureForAppointmentOutcome.getValue(context);
+			return (ims.RefMan.vo.PatientProcedureForAppointmentOutcomeVo)cx_RefManPatientProcedureForAppointmentOutcome.getValue(context);
 		}
-		public void setPatientProcedureForAppointmentOutcome(ims.careuk.vo.PatientProcedureForAppointmentOutcomeVo value)
+		public void setPatientProcedureForAppointmentOutcome(ims.RefMan.vo.PatientProcedureForAppointmentOutcomeVo value)
 		{
-			cx_CareUkPatientProcedureForAppointmentOutcome.setValue(context, value);
+			cx_RefManPatientProcedureForAppointmentOutcome.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkPatientProcedureForAppointmentOutcome = new ims.framework.ContextVariable("CareUk.PatientProcedureForAppointmentOutcome", "_cv_CareUk.PatientProcedureForAppointmentOutcome");
+		private ims.framework.ContextVariable cx_RefManPatientProcedureForAppointmentOutcome = new ims.framework.ContextVariable("RefMan.PatientProcedureForAppointmentOutcome", "_cv_RefMan.PatientProcedureForAppointmentOutcome");
 		public boolean getCatsReferralIsNotNull()
 		{
-			return !cx_CareUkCatsReferral.getValueIsNull(context);
+			return !cx_RefManCatsReferral.getValueIsNull(context);
 		}
-		public ims.careuk.vo.CatsReferralRefVo getCatsReferral()
+		public ims.RefMan.vo.CatsReferralRefVo getCatsReferral()
 		{
-			return (ims.careuk.vo.CatsReferralRefVo)cx_CareUkCatsReferral.getValue(context);
+			return (ims.RefMan.vo.CatsReferralRefVo)cx_RefManCatsReferral.getValue(context);
 		}
-		public void setCatsReferral(ims.careuk.vo.CatsReferralRefVo value)
+		public void setCatsReferral(ims.RefMan.vo.CatsReferralRefVo value)
 		{
-			cx_CareUkCatsReferral.setValue(context, value);
+			cx_RefManCatsReferral.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkCatsReferral = new ims.framework.ContextVariable("CareUk.CatsReferral", "_cvp_CareUk.CatsReferral");
+		private ims.framework.ContextVariable cx_RefManCatsReferral = new ims.framework.ContextVariable("RefMan.CatsReferral", "_cvp_RefMan.CatsReferral");
 		public boolean getAppointmentSavedIsNotNull()
 		{
-			return !cx_CareUkAppointmentSaved.getValueIsNull(context);
+			return !cx_RefManAppointmentSaved.getValueIsNull(context);
 		}
 		public Boolean getAppointmentSaved()
 		{
-			return (Boolean)cx_CareUkAppointmentSaved.getValue(context);
+			return (Boolean)cx_RefManAppointmentSaved.getValue(context);
 		}
 		public void setAppointmentSaved(Boolean value)
 		{
-			cx_CareUkAppointmentSaved.setValue(context, value);
+			cx_RefManAppointmentSaved.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkAppointmentSaved = new ims.framework.ContextVariable("CareUk.AppointmentSaved", "_cv_CareUk.AppointmentSaved");
+		private ims.framework.ContextVariable cx_RefManAppointmentSaved = new ims.framework.ContextVariable("RefMan.AppointmentSaved", "_cv_RefMan.AppointmentSaved");
 		public boolean getSelectedDiagnosisApptOutcomeListIsNotNull()
 		{
-			return !cx_CareUkSelectedDiagnosisApptOutcomeList.getValueIsNull(context);
+			return !cx_RefManSelectedDiagnosisApptOutcomeList.getValueIsNull(context);
 		}
 		public ims.clinical.vo.PatientDiagnosisOpNotesVoCollection getSelectedDiagnosisApptOutcomeList()
 		{
-			return (ims.clinical.vo.PatientDiagnosisOpNotesVoCollection)cx_CareUkSelectedDiagnosisApptOutcomeList.getValue(context);
+			return (ims.clinical.vo.PatientDiagnosisOpNotesVoCollection)cx_RefManSelectedDiagnosisApptOutcomeList.getValue(context);
 		}
 		public void setSelectedDiagnosisApptOutcomeList(ims.clinical.vo.PatientDiagnosisOpNotesVoCollection value)
 		{
-			cx_CareUkSelectedDiagnosisApptOutcomeList.setValue(context, value);
+			cx_RefManSelectedDiagnosisApptOutcomeList.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkSelectedDiagnosisApptOutcomeList = new ims.framework.ContextVariable("CareUk.SelectedDiagnosisApptOutcomeList", "_cv_CareUk.SelectedDiagnosisApptOutcomeList");
+		private ims.framework.ContextVariable cx_RefManSelectedDiagnosisApptOutcomeList = new ims.framework.ContextVariable("RefMan.SelectedDiagnosisApptOutcomeList", "_cv_RefMan.SelectedDiagnosisApptOutcomeList");
 
 		private ims.framework.Context context;
 	}
@@ -288,7 +288,7 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 	}
 
 	public SchedulingContext Scheduling;
-	public CareUkContext CareUk;
+	public RefManContext RefMan;
 	public CoreContext Core;
 	public ClinicalContext Clinical;
 }

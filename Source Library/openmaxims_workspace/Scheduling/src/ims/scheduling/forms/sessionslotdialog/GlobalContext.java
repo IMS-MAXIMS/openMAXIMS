@@ -33,14 +33,14 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 	{
 		super(context);
 
-		CareUk = new CareUkContext(context);
+		RefMan = new RefManContext(context);
 		Scheduling = new SchedulingContext(context);
 	}
-	public final class CareUkContext implements Serializable
+	public final class RefManContext implements Serializable
 	{
 		private static final long serialVersionUID = 1L;
 
-		private CareUkContext(ims.framework.Context context)
+		private RefManContext(ims.framework.Context context)
 		{
 			this.context = context;
 
@@ -48,32 +48,32 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 
 		public boolean getSelectedSessionsIsNotNull()
 		{
-			return !cx_CareUkSelectedSessions.getValueIsNull(context);
+			return !cx_RefManSelectedSessions.getValueIsNull(context);
 		}
 		public ims.scheduling.vo.SessionShortVoCollection getSelectedSessions()
 		{
-			return (ims.scheduling.vo.SessionShortVoCollection)cx_CareUkSelectedSessions.getValue(context);
+			return (ims.scheduling.vo.SessionShortVoCollection)cx_RefManSelectedSessions.getValue(context);
 		}
 		public void setSelectedSessions(ims.scheduling.vo.SessionShortVoCollection value)
 		{
-			cx_CareUkSelectedSessions.setValue(context, value);
+			cx_RefManSelectedSessions.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkSelectedSessions = new ims.framework.ContextVariable("CareUk.SelectedSessions", "_cv_CareUk.SelectedSessions");
+		private ims.framework.ContextVariable cx_RefManSelectedSessions = new ims.framework.ContextVariable("RefMan.SelectedSessions", "_cv_RefMan.SelectedSessions");
 		public boolean getSelectedSessionIsNotNull()
 		{
-			return !cx_CareUkSelectedSession.getValueIsNull(context);
+			return !cx_RefManSelectedSession.getValueIsNull(context);
 		}
 		public ims.scheduling.vo.SessionShortVo getSelectedSession()
 		{
-			return (ims.scheduling.vo.SessionShortVo)cx_CareUkSelectedSession.getValue(context);
+			return (ims.scheduling.vo.SessionShortVo)cx_RefManSelectedSession.getValue(context);
 		}
 		public void setSelectedSession(ims.scheduling.vo.SessionShortVo value)
 		{
-			cx_CareUkSelectedSession.setValue(context, value);
+			cx_RefManSelectedSession.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkSelectedSession = new ims.framework.ContextVariable("CareUk.SelectedSession", "_cv_CareUk.SelectedSession");
+		private ims.framework.ContextVariable cx_RefManSelectedSession = new ims.framework.ContextVariable("RefMan.SelectedSession", "_cv_RefMan.SelectedSession");
 
 		private ims.framework.Context context;
 	}
@@ -133,6 +133,6 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 		private ims.framework.Context context;
 	}
 
-	public CareUkContext CareUk;
+	public RefManContext RefMan;
 	public SchedulingContext Scheduling;
 }

@@ -54,7 +54,7 @@ public interface ClinicList extends ims.domain.DomainInterface
 	public ims.scheduling.vo.ProfileShortVoCollection listProfiles(ims.core.vo.ServiceShortVo service, ims.scheduling.vo.DirectoryOfServiceVo directoryOfService, Boolean activeOnly);
 
 	// Generated from form domain interface definition
-	public void dnaAppt(ims.scheduling.vo.Booking_AppointmentVo appt, ims.careuk.vo.CatsReferralForClinicListVo catsReferral, ims.chooseandbook.vo.lookups.ActionRequestType requestType, ims.careuk.vo.PatientElectiveListForDNAAppointmentsVo electiveList, Boolean isFirstAppointmentActivity) throws ims.domain.exceptions.DomainInterfaceException, ims.domain.exceptions.StaleObjectException;
+	public void dnaAppt(ims.scheduling.vo.Booking_AppointmentVo appt, ims.RefMan.vo.CatsReferralForClinicListVo catsReferral, ims.chooseandbook.vo.lookups.ActionRequestType requestType, ims.RefMan.vo.PatientElectiveListForDNAAppointmentsVo electiveList, Boolean isFirstAppointmentActivity) throws ims.domain.exceptions.DomainInterfaceException, ims.domain.exceptions.StaleObjectException;
 
 	// Generated from form domain interface definition
 	public void cancelSlot(ims.scheduling.vo.SessionSlotVo sessionSlot, ims.chooseandbook.vo.lookups.ActionRequestType requestType, String requestSource) throws ims.domain.exceptions.StaleObjectException;
@@ -114,11 +114,11 @@ public interface ClinicList extends ims.domain.DomainInterface
 	public ims.scheduling.vo.Booking_AppointmentVo getAppointment(ims.scheduling.vo.Session_SlotRefVo sessionSlot);
 
 	// Generated from form domain interface definition
-	public ims.careuk.vo.CatsReferralForClinicListVo getCatsReferral(ims.scheduling.vo.Booking_AppointmentRefVo appt);
+	public ims.RefMan.vo.CatsReferralForClinicListVo getCatsReferral(ims.scheduling.vo.Booking_AppointmentRefVo appt);
 
 	// Generated from form domain interface definition
 	public Boolean hasTCI(ims.scheduling.vo.Booking_AppointmentRefVo appointment);
 
 	// Generated from form domain interface definition
-	public ims.careuk.vo.PatientElectiveListForDNAAppointmentsVo getPatientElectiveList(ims.scheduling.vo.Booking_AppointmentRefVo appointment);
+	public ims.RefMan.vo.PatientElectiveListForDNAAppointmentsVo getPatientElectiveList(ims.scheduling.vo.Booking_AppointmentRefVo appointment);
 }

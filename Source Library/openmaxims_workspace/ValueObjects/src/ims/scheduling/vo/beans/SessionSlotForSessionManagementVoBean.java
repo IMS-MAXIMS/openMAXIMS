@@ -41,7 +41,7 @@ public class SessionSlotForSessionManagementVoBean extends ims.vo.ValueObjectBea
 		this.slotresp = vo.getSlotResp() == null ? null : (ims.scheduling.vo.beans.SessionListOwnerLiteVoBean)vo.getSlotResp().getBean();
 		this.directoryofservices = vo.getDirectoryOfServices() == null ? null : vo.getDirectoryOfServices().getBeanCollection();
 		this.priority = vo.getPriority() == null ? null : (ims.vo.LookupInstanceBean)vo.getPriority().getBean();
-		this.catsreferral = vo.getCatsReferral() == null ? null : (ims.careuk.vo.beans.CatsReferralForSessionManagementVoBean)vo.getCatsReferral().getBean();
+		this.catsreferral = vo.getCatsReferral() == null ? null : (ims.RefMan.vo.beans.CatsReferralForSessionManagementVoBean)vo.getCatsReferral().getBean();
 	}
 
 	public void populate(ims.vo.ValueObjectBeanMap map, ims.scheduling.vo.SessionSlotForSessionManagementVo vo)
@@ -57,7 +57,7 @@ public class SessionSlotForSessionManagementVoBean extends ims.vo.ValueObjectBea
 		this.slotresp = vo.getSlotResp() == null ? null : (ims.scheduling.vo.beans.SessionListOwnerLiteVoBean)vo.getSlotResp().getBean(map);
 		this.directoryofservices = vo.getDirectoryOfServices() == null ? null : vo.getDirectoryOfServices().getBeanCollection();
 		this.priority = vo.getPriority() == null ? null : (ims.vo.LookupInstanceBean)vo.getPriority().getBean();
-		this.catsreferral = vo.getCatsReferral() == null ? null : (ims.careuk.vo.beans.CatsReferralForSessionManagementVoBean)vo.getCatsReferral().getBean(map);
+		this.catsreferral = vo.getCatsReferral() == null ? null : (ims.RefMan.vo.beans.CatsReferralForSessionManagementVoBean)vo.getCatsReferral().getBean(map);
 	}
 
 	public ims.scheduling.vo.SessionSlotForSessionManagementVo buildVo()
@@ -167,11 +167,11 @@ public class SessionSlotForSessionManagementVoBean extends ims.vo.ValueObjectBea
 	{
 		this.priority = value;
 	}
-	public ims.careuk.vo.beans.CatsReferralForSessionManagementVoBean getCatsReferral()
+	public ims.RefMan.vo.beans.CatsReferralForSessionManagementVoBean getCatsReferral()
 	{
 		return this.catsreferral;
 	}
-	public void setCatsReferral(ims.careuk.vo.beans.CatsReferralForSessionManagementVoBean value)
+	public void setCatsReferral(ims.RefMan.vo.beans.CatsReferralForSessionManagementVoBean value)
 	{
 		this.catsreferral = value;
 	}
@@ -187,5 +187,5 @@ public class SessionSlotForSessionManagementVoBean extends ims.vo.ValueObjectBea
 	private ims.scheduling.vo.beans.SessionListOwnerLiteVoBean slotresp;
 	private ims.scheduling.vo.beans.DirectoryOfServiceSessionSlotVoBean[] directoryofservices;
 	private ims.vo.LookupInstanceBean priority;
-	private ims.careuk.vo.beans.CatsReferralForSessionManagementVoBean catsreferral;
+	private ims.RefMan.vo.beans.CatsReferralForSessionManagementVoBean catsreferral;
 }

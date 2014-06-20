@@ -622,10 +622,10 @@ public class GenForm extends FormBridge
 			return;
 		if(!context.isValidContextType(ims.core.vo.PatientShort.class))
 			throw new ims.framework.exceptions.CodingRuntimeException("The type 'ims.core.vo.PatientShort' of the global context variable 'Core.PatientShort' is not supported.");
-		if(!context.isValidContextType(ims.careuk.vo.CatsReferralRefVo.class))
-			throw new ims.framework.exceptions.CodingRuntimeException("The type 'ims.careuk.vo.CatsReferralRefVo' of the global context variable 'CareUk.CatsReferral' is not supported.");
+		if(!context.isValidContextType(ims.RefMan.vo.CatsReferralRefVo.class))
+			throw new ims.framework.exceptions.CodingRuntimeException("The type 'ims.RefMan.vo.CatsReferralRefVo' of the global context variable 'RefMan.CatsReferral' is not supported.");
 		if(!context.isValidContextType(ims.core.vo.lookups.ReferralManagementContractType.class))
-			throw new ims.framework.exceptions.CodingRuntimeException("The type 'ims.core.vo.lookups.ReferralManagementContractType' of the global context variable 'CareUk.ReferralContractTypeForPatient' is not supported.");
+			throw new ims.framework.exceptions.CodingRuntimeException("The type 'ims.core.vo.lookups.ReferralManagementContractType' of the global context variable 'RefMan.ReferralContractTypeForPatient' is not supported.");
 		if(!context.isValidContextType(ims.ocrr.vo.RoleDisciplineSecurityLevelLiteGCVo.class))
 			throw new ims.framework.exceptions.CodingRuntimeException("The type 'ims.ocrr.vo.RoleDisciplineSecurityLevelLiteGCVo' of the global context variable 'OCRR.RoleDisciplineSecurityLevels' is not supported.");
 	}
@@ -1017,7 +1017,7 @@ public class GenForm extends FormBridge
 			fields[67] = new ims.framework.ReportField(this.context, "_cvp_Clinical.ExtendedClinicalNotesListFilter", "BO-1011100000-CARECONTEXT", "CareContext");
 			fields[68] = new ims.framework.ReportField(this.context, "_cvp_Core.PasEvent", "BO-1014100003-ID", "ID_PASEvent");
 			fields[69] = new ims.framework.ReportField(this.context, "_cvp_Correspondence.CorrespondenceDetails", "BO-1052100001-ID", "ID_CorrespondenceDetails");
-			fields[70] = new ims.framework.ReportField(this.context, "_cvp_CareUk.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
+			fields[70] = new ims.framework.ReportField(this.context, "_cvp_RefMan.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
 			fields[71] = new ims.framework.ReportField(this.context, "_cv_OCRR.PathologyResults.Order", "BO-1070100000-ID", "ID_OcsOrderSession");
 			fields[72] = new ims.framework.ReportField(this.context, prefix + "_lv_OCRR.PathologyOrders.__internal_x_context__PrintingContext_" + componentIdentifier, "BO-1070100010-ID", "ID_OrderSpecimen");
 			return fields;

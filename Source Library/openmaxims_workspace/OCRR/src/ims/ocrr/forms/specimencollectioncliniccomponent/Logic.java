@@ -812,7 +812,7 @@ public class Logic extends BaseLogic
 					SpecimenWorkListItemVo specimenWorkListItemVo = new SpecimenWorkListItemVo();
 					specimenWorkListItemVo.setID_SpecimenWorkListItem(new Integer(-1));
 					form.getLocalContext().setContextDummyForReports(specimenWorkListItemVo);
-					form.getGlobalContext().CareUk.setSpecimenWorkListItemForReports(specimenWorkListItemVo);
+					form.getGlobalContext().RefMan.setSpecimenWorkListItemForReports(specimenWorkListItemVo);
 				}
 			}
 		}

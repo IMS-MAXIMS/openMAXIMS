@@ -81,7 +81,7 @@ public abstract class BaseSessionAdminImpl extends DomainImpl implements ims.sch
 	}
 
 	@SuppressWarnings("unused")
-	public void validateupdateCatsReferralAdditionalInvStatus(ims.careuk.vo.CatsReferralRefVo catsReferral)
+	public void validateupdateCatsReferralAdditionalInvStatus(ims.RefMan.vo.CatsReferralRefVo catsReferral)
 	{
 	}
 

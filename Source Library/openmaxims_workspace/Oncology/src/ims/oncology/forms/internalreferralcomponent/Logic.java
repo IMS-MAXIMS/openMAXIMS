@@ -153,7 +153,7 @@ public class Logic extends BaseLogic
 			clearInstanceControls();
 			form.setMode(FormMode.VIEW);
 			form.chkRemove().setEnabled(Boolean.FALSE);
-			form.getGlobalContext().CareUk.setIsComponentInEditMode(FormMode.VIEW);
+			form.getGlobalContext().RefMan.setIsComponentInEditMode(FormMode.VIEW);
 			form.fireCustomControlValueChanged();
 			populateInstanceControls(form.getLocalContext().getSelectedRecord());
 		}
@@ -168,7 +168,7 @@ public class Logic extends BaseLogic
 		if(voInternalReferral!=null && voInternalReferral.getID_InternalReferralIsNotNull())
 			form.getLocalContext().setSelectedRecord(domain.getInternalReferral(voInternalReferral));
 		populateInstanceControls(form.getLocalContext().getSelectedRecord());
-		form.getGlobalContext().CareUk.setIsComponentInEditMode(FormMode.VIEW);
+		form.getGlobalContext().RefMan.setIsComponentInEditMode(FormMode.VIEW);
 		form.fireCustomControlValueChanged();
 	
 	}
@@ -408,7 +408,7 @@ public class Logic extends BaseLogic
 		initialise();
 		clearInstanceControls();
 		form.setMode(FormMode.VIEW);
-		form.getGlobalContext().CareUk.setIsComponentInEditMode(null);
+		form.getGlobalContext().RefMan.setIsComponentInEditMode(null);
 		
 		if (form.getLocalContext().getSelectedRecord() == null && bEditMode)
 			newInstance();
@@ -586,7 +586,7 @@ public class Logic extends BaseLogic
 	@Override
 	protected void onDyngrdReasonsRowSelectionChanged(DynamicGridRow row) throws PresentationLogicException 
 	{
-		form.getGlobalContext().CareUk.setIsComponentInEditMode(null);
+		form.getGlobalContext().RefMan.setIsComponentInEditMode(null);
 		if (form.getMode().equals(FormMode.EDIT))
 		{
 	//		loadReasonCombo(form.dyngrdReasons().getSelectedRow(), (InternalReferralTypeAndReason)form.dyngrdReasons().getSelectedRow().getColReason().getValue());

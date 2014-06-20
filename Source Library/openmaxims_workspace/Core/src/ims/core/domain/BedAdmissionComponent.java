@@ -133,13 +133,13 @@ public interface BedAdmissionComponent extends ims.domain.DomainInterface
 	public ims.core.vo.BedSpaceStateLiteVo getBedSpaceState(ims.core.admin.pas.vo.BedSpaceStateRefVo bedRef);
 
 	// Generated from form domain interface definition
-	public ims.careuk.vo.PatientElectiveListBedInfoVoCollection listPatientElective(ims.core.resource.place.vo.LocationRefVo ward, ims.framework.utils.Date fromDate, ims.framework.utils.Date toDate);
+	public ims.RefMan.vo.PatientElectiveListBedInfoVoCollection listPatientElective(ims.core.resource.place.vo.LocationRefVo ward, ims.framework.utils.Date fromDate, ims.framework.utils.Date toDate);
 
 	// Generated from form domain interface definition
-	public ims.careuk.vo.PatientElectiveListBedAdmissionVo getPatientElectiveAdmission(ims.careuk.vo.PatientElectiveListRefVo patientElectiveLlist);
+	public ims.RefMan.vo.PatientElectiveListBedAdmissionVo getPatientElectiveAdmission(ims.RefMan.vo.PatientElectiveListRefVo patientElectiveLlist);
 
 	// Generated from form domain interface definition
-	public ims.careuk.vo.PatientElectiveListBedAdmissionVo saveTCIAdmissionAndUpdateList(ims.careuk.vo.PatientElectiveListBedAdmissionVo electiveAdmission, ims.core.vo.BedSpaceStateLiteVo bedSpaceState, ims.core.vo.WardStayVo wardStay, ims.core.vo.ConsultantStayVo consultant, ims.careuk.vo.PatientElectiveListBedAdmissionVoCollection patientElectiveListsToCancel) throws ims.domain.exceptions.DomainInterfaceException, ims.domain.exceptions.StaleObjectException;
+	public ims.RefMan.vo.PatientElectiveListBedAdmissionVo saveTCIAdmissionAndUpdateList(ims.RefMan.vo.PatientElectiveListBedAdmissionVo electiveAdmission, ims.core.vo.BedSpaceStateLiteVo bedSpaceState, ims.core.vo.WardStayVo wardStay, ims.core.vo.ConsultantStayVo consultant, ims.RefMan.vo.PatientElectiveListBedAdmissionVoCollection patientElectiveListsToCancel) throws ims.domain.exceptions.DomainInterfaceException, ims.domain.exceptions.StaleObjectException;
 
 	// Generated from form domain interface definition
 	public ims.core.vo.PatientShort getPatientShort(ims.core.patient.vo.PatientRefVo patient);
@@ -148,10 +148,10 @@ public interface BedAdmissionComponent extends ims.domain.DomainInterface
 	public ims.core.vo.MedicVo getMedic(ims.core.resource.people.vo.HcpRefVo hcp);
 
 	// Generated from form domain interface definition
-	public Boolean hasPatientElectiveListToCancel(ims.core.patient.vo.PatientRefVo patient, ims.careuk.vo.PatientElectiveListRefVo electiveElist, ims.core.clinical.vo.ServiceRefVo service);
+	public Boolean hasPatientElectiveListToCancel(ims.core.patient.vo.PatientRefVo patient, ims.RefMan.vo.PatientElectiveListRefVo electiveElist, ims.core.clinical.vo.ServiceRefVo service);
 
 	// Generated from form domain interface definition
-	public ims.careuk.vo.PatientElectiveListBedAdmissionVoCollection getPatientElectiveListToCancel(ims.core.patient.vo.PatientRefVo patient, ims.careuk.vo.PatientElectiveListRefVo electiveElist, ims.core.clinical.vo.ServiceRefVo service);
+	public ims.RefMan.vo.PatientElectiveListBedAdmissionVoCollection getPatientElectiveListToCancel(ims.core.patient.vo.PatientRefVo patient, ims.RefMan.vo.PatientElectiveListRefVo electiveElist, ims.core.clinical.vo.ServiceRefVo service);
 
 	// Generated from form domain interface definition
 	public Boolean isPatientAnInpatient(ims.core.patient.vo.PatientRefVo patient);
@@ -166,7 +166,7 @@ public interface BedAdmissionComponent extends ims.domain.DomainInterface
 	public String getCodeCCGFromPostalCode(String postCode);
 
 	// Generated from form domain interface definition
-	public ims.careuk.vo.ContractConfigShortVo getContractByCCG(String codeCCG);
+	public ims.RefMan.vo.ContractConfigShortVo getContractByCCG(String codeCCG);
 
 	// Generated from form domain interface definition
 	public ims.core.vo.ServiceLiteVoCollection getServicesBySpecialty(ims.core.vo.lookups.Specialty specialty);

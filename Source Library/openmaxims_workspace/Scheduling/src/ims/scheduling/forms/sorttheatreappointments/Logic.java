@@ -59,7 +59,7 @@ public class Logic extends BaseLogic
 		open();
 		
 		if(engine.getParentDialogFormName() != null
-			&& engine.getParentDialogFormName().equals(form.getForms().CAREUK.BookTheatreDialog) 
+			&& engine.getParentDialogFormName().equals(form.getForms().RefMan.BookTheatreDialog) 
 			&& form.getGlobalContext().Scheduling.getAppointmentIdsIsNotNull())
 			engine.open(form.getForms().Scheduling.PrintAppointment);
 	}

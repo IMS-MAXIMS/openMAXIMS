@@ -22,7 +22,7 @@
 
 package ims.clinical.forms.fitforsurgerycomment;
 
-import ims.careuk.vo.FitForSurgeryCommentVo;
+import ims.RefMan.vo.FitForSurgeryCommentVo;
 import ims.framework.enumerations.DialogResult;
 import ims.framework.enumerations.FormMode;
 

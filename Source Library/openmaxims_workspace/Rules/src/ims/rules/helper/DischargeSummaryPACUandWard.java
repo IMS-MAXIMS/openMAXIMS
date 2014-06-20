@@ -39,7 +39,7 @@ public final class DischargeSummaryPACUandWard extends ims.rules.types.RulesEngi
 		super.isPublic = true;
 		super.supportsNotifications = false;
 		super.description = "Discharge Summary PACU and Ward";
-		super.businessObjectName = "ims.careuk.domain.objects.DischargeSummaryPacuAndWard";
+		super.businessObjectName = "ims.RefMan.domain.objects.DischargeSummaryPacuAndWard";
 		super.fields = new ArrayList<ims.rules.types.RulesEngineField>();
 		fieldEntityIndex = entities.indexOf(new ims.rules.helper.PatientReferral(entities));
 		super.fields.add(new ims.rules.types.RulesEngineField("37598732009831124639944663960", "Patient Referral", "Patient Referral", false, ims.rules.types.RulesEngineFieldType.ENTITY, (fieldEntityIndex >= 0 ? entities.get(fieldEntityIndex) : new ims.rules.helper.PatientReferral(entities)), 0, "CatsReferral", this));

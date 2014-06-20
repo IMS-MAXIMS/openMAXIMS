@@ -38,7 +38,7 @@ public final class ReferralCurrentStatus extends ims.rules.types.RulesEngineEnti
 		super.isPublic = true;
 		super.supportsNotifications = false;
 		super.description = "Referral Current Status";
-		super.businessObjectName = "ims.careuk.domain.objects.CATSReferralStatus";
+		super.businessObjectName = "ims.RefMan.domain.objects.CATSReferralStatus";
 		super.fields = new ArrayList<ims.rules.types.RulesEngineField>();
 		super.fields.add(new ims.rules.types.RulesEngineField("73724392008822104485073661995", "Referral Status", "Referral Status", false, ims.rules.types.RulesEngineFieldType.LOOKUP, null, 1341000, "ReferralStatus", this));
 		super.actions = new ArrayList<ims.rules.types.RulesEngineEntityMethod>();

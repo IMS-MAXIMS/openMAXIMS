@@ -59,13 +59,13 @@ public class GenForm extends FormBridge
 		if(!context.isValidContextType(ims.core.vo.CareContextShortVo.class))
 			throw new ims.framework.exceptions.CodingRuntimeException("The type 'ims.core.vo.CareContextShortVo' of the global context variable 'Core.CurrentCareContext' is not supported.");
 		if(!context.isValidContextType(Boolean.class))
-			throw new ims.framework.exceptions.CodingRuntimeException("The type 'Boolean' of the global context variable 'CareUk.IsProviderCancellation' is not supported.");
+			throw new ims.framework.exceptions.CodingRuntimeException("The type 'Boolean' of the global context variable 'RefMan.IsProviderCancellation' is not supported.");
 		if(!context.isValidContextType(ims.core.vo.EpisodeofCareShortVo.class))
 			throw new ims.framework.exceptions.CodingRuntimeException("The type 'ims.core.vo.EpisodeofCareShortVo' of the global context variable 'Core.EpisodeofCareShort' is not supported.");
 		if(!context.isValidContextType(ims.core.vo.PatientShort.class))
 			throw new ims.framework.exceptions.CodingRuntimeException("The type 'ims.core.vo.PatientShort' of the global context variable 'Core.PatientShort' is not supported.");
-		if(!context.isValidContextType(ims.careuk.vo.CatsReferralRefVo.class))
-			throw new ims.framework.exceptions.CodingRuntimeException("The type 'ims.careuk.vo.CatsReferralRefVo' of the global context variable 'CareUk.CatsReferral' is not supported.");
+		if(!context.isValidContextType(ims.RefMan.vo.CatsReferralRefVo.class))
+			throw new ims.framework.exceptions.CodingRuntimeException("The type 'ims.RefMan.vo.CatsReferralRefVo' of the global context variable 'RefMan.CatsReferral' is not supported.");
 	}
 	public boolean supportsRecordedInError()
 	{
@@ -271,18 +271,18 @@ public class GenForm extends FormBridge
 		{
 			return !cxl_CatsReferralRef.getValueIsNull(context);
 		}
-		public ims.careuk.vo.CatsReferralRefVo getCatsReferralRef()
+		public ims.RefMan.vo.CatsReferralRefVo getCatsReferralRef()
 		{
-			return (ims.careuk.vo.CatsReferralRefVo)cxl_CatsReferralRef.getValue(context);
+			return (ims.RefMan.vo.CatsReferralRefVo)cxl_CatsReferralRef.getValue(context);
 		}
-		public void setCatsReferralRef(ims.careuk.vo.CatsReferralRefVo value)
+		public void setCatsReferralRef(ims.RefMan.vo.CatsReferralRefVo value)
 		{
 			if(value != null && (value.getBoId() == null || value.getBoId().intValue() < 1))
 				throw new ims.framework.exceptions.CodingRuntimeException("Invalid domain object id for 'CatsReferralRef' RefVo context variable.");
 			if(value == null)
 				cxl_CatsReferralRef.setValue(context, null);
 			else
-				cxl_CatsReferralRef.setValue(context, new ims.careuk.vo.CatsReferralRefVo(value.getBoId(), value.getBoVersion()));
+				cxl_CatsReferralRef.setValue(context, new ims.RefMan.vo.CatsReferralRefVo(value.getBoId(), value.getBoVersion()));
 		}
 		private ims.framework.ContextVariable cxl_CatsReferralRef = null;
 		public boolean getIsGPLetterSelectedIsNotNull()
@@ -441,7 +441,7 @@ public class GenForm extends FormBridge
 			fields[67] = new ims.framework.ReportField(this.context, "_cvp_Clinical.ExtendedClinicalNotesListFilter", "BO-1011100000-CARECONTEXT", "CareContext");
 			fields[68] = new ims.framework.ReportField(this.context, "_cvp_Core.PasEvent", "BO-1014100003-ID", "ID_PASEvent");
 			fields[69] = new ims.framework.ReportField(this.context, "_cvp_Correspondence.CorrespondenceDetails", "BO-1052100001-ID", "ID_CorrespondenceDetails");
-			fields[70] = new ims.framework.ReportField(this.context, "_cvp_CareUk.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
+			fields[70] = new ims.framework.ReportField(this.context, "_cvp_RefMan.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
 			fields[71] = new ims.framework.ReportField(this.context, "_cv_Core.PatientDocument", "BO-1068100001-ID", "ID_PatientDocument");
 			fields[72] = new ims.framework.ReportField(this.context, "_cv_Core.PatientDocument", "BO-1068100001-PATIENT", "Patient");
 			fields[73] = new ims.framework.ReportField(this.context, "_cv_Core.PatientDocument", "BO-1068100001-EPISODEOFCARE", "EpisodeofCare");

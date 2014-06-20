@@ -328,31 +328,31 @@ public class GenForm extends FormBridge
 		{
 			private static final long serialVersionUID = 1L;
 			
-			public void newRow(ims.careuk.vo.lookups.ReasonNotSuitableForSurgery value, String text)
+			public void newRow(ims.RefMan.vo.lookups.ReasonNotSuitableForSurgery value, String text)
 			{
 				super.control.newRow(value, text);
 			}
-			public void newRow(ims.careuk.vo.lookups.ReasonNotSuitableForSurgery value, String text, ims.framework.utils.Image image)
+			public void newRow(ims.RefMan.vo.lookups.ReasonNotSuitableForSurgery value, String text, ims.framework.utils.Image image)
 			{
 				super.control.newRow(value, text, image);
 			}
-			public void newRow(ims.careuk.vo.lookups.ReasonNotSuitableForSurgery value, String text, ims.framework.utils.Color textColor)
+			public void newRow(ims.RefMan.vo.lookups.ReasonNotSuitableForSurgery value, String text, ims.framework.utils.Color textColor)
 			{
 				super.control.newRow(value, text, textColor);
 			}
-			public void newRow(ims.careuk.vo.lookups.ReasonNotSuitableForSurgery value, String text, ims.framework.utils.Image image, ims.framework.utils.Color textColor)
+			public void newRow(ims.RefMan.vo.lookups.ReasonNotSuitableForSurgery value, String text, ims.framework.utils.Image image, ims.framework.utils.Color textColor)
 			{
 				super.control.newRow(value, text, image, textColor);
 			}
-			public boolean removeRow(ims.careuk.vo.lookups.ReasonNotSuitableForSurgery value)
+			public boolean removeRow(ims.RefMan.vo.lookups.ReasonNotSuitableForSurgery value)
 			{
 				return super.control.removeRow(value);
 			}
-			public ims.careuk.vo.lookups.ReasonNotSuitableForSurgery getValue()
+			public ims.RefMan.vo.lookups.ReasonNotSuitableForSurgery getValue()
 			{
-				return (ims.careuk.vo.lookups.ReasonNotSuitableForSurgery)super.control.getValue();
+				return (ims.RefMan.vo.lookups.ReasonNotSuitableForSurgery)super.control.getValue();
 			}
-			public void setValue(ims.careuk.vo.lookups.ReasonNotSuitableForSurgery value)
+			public void setValue(ims.RefMan.vo.lookups.ReasonNotSuitableForSurgery value)
 			{
 				super.control.setValue(value);
 			}
@@ -573,43 +573,43 @@ public class GenForm extends FormBridge
 	{
 		private static final long serialVersionUID = 1L;
 		
-		public void newRow(ims.careuk.vo.SuitableForSurgeryAssessmentLiteVo value, String text)
+		public void newRow(ims.RefMan.vo.SuitableForSurgeryAssessmentLiteVo value, String text)
 		{
 			super.control.newRow(value, text);
 		}
-		public void newRow(ims.careuk.vo.SuitableForSurgeryAssessmentLiteVo value, String text, ims.framework.utils.Image image)
+		public void newRow(ims.RefMan.vo.SuitableForSurgeryAssessmentLiteVo value, String text, ims.framework.utils.Image image)
 		{
 			super.control.newRow(value, text, image);
 		}
-		public void newRow(ims.careuk.vo.SuitableForSurgeryAssessmentLiteVo value, String text, ims.framework.utils.Color textColor)
+		public void newRow(ims.RefMan.vo.SuitableForSurgeryAssessmentLiteVo value, String text, ims.framework.utils.Color textColor)
 		{
 			super.control.newRow(value, text, textColor);
 		}
-		public void newRow(ims.careuk.vo.SuitableForSurgeryAssessmentLiteVo value, String text, ims.framework.utils.Image image, ims.framework.utils.Color textColor)
+		public void newRow(ims.RefMan.vo.SuitableForSurgeryAssessmentLiteVo value, String text, ims.framework.utils.Image image, ims.framework.utils.Color textColor)
 		{
 			super.control.newRow(value, text, image, textColor);
 		}
-		public void newRow(int index, ims.careuk.vo.SuitableForSurgeryAssessmentLiteVo value, String text)
+		public void newRow(int index, ims.RefMan.vo.SuitableForSurgeryAssessmentLiteVo value, String text)
 		{
 			super.control.newRow(index, value, text);
 		}
-		public void newRow(int index, ims.careuk.vo.SuitableForSurgeryAssessmentLiteVo value, String text, ims.framework.utils.Image image)
+		public void newRow(int index, ims.RefMan.vo.SuitableForSurgeryAssessmentLiteVo value, String text, ims.framework.utils.Image image)
 		{
 			super.control.newRow(index, value, text, image);
 		}
-		public void newRow(int index, ims.careuk.vo.SuitableForSurgeryAssessmentLiteVo value, String text, ims.framework.utils.Color textColor)
+		public void newRow(int index, ims.RefMan.vo.SuitableForSurgeryAssessmentLiteVo value, String text, ims.framework.utils.Color textColor)
 		{
 			super.control.newRow(index, value, text, textColor);
 		}
-		public void newRow(int index, ims.careuk.vo.SuitableForSurgeryAssessmentLiteVo value, String text, ims.framework.utils.Image image, ims.framework.utils.Color textColor)
+		public void newRow(int index, ims.RefMan.vo.SuitableForSurgeryAssessmentLiteVo value, String text, ims.framework.utils.Image image, ims.framework.utils.Color textColor)
 		{
 			super.control.newRow(index, value, text, image, textColor);
 		}
-		public ims.careuk.vo.SuitableForSurgeryAssessmentLiteVo getValue()
+		public ims.RefMan.vo.SuitableForSurgeryAssessmentLiteVo getValue()
 		{
-			return (ims.careuk.vo.SuitableForSurgeryAssessmentLiteVo)super.control.getValue();
+			return (ims.RefMan.vo.SuitableForSurgeryAssessmentLiteVo)super.control.getValue();
 		}
-		public void setValue(ims.careuk.vo.SuitableForSurgeryAssessmentLiteVo value)
+		public void setValue(ims.RefMan.vo.SuitableForSurgeryAssessmentLiteVo value)
 		{
 			super.control.setValue(value);
 		}
@@ -982,11 +982,11 @@ public class GenForm extends FormBridge
 		{
 			return !cxl_Assessment.getValueIsNull(context);
 		}
-		public ims.careuk.vo.SuitableForSurgeryAssessmentLiteVo getAssessment()
+		public ims.RefMan.vo.SuitableForSurgeryAssessmentLiteVo getAssessment()
 		{
-			return (ims.careuk.vo.SuitableForSurgeryAssessmentLiteVo)cxl_Assessment.getValue(context);
+			return (ims.RefMan.vo.SuitableForSurgeryAssessmentLiteVo)cxl_Assessment.getValue(context);
 		}
-		public void setAssessment(ims.careuk.vo.SuitableForSurgeryAssessmentLiteVo value)
+		public void setAssessment(ims.RefMan.vo.SuitableForSurgeryAssessmentLiteVo value)
 		{
 			cxl_Assessment.setValue(context, value);
 		}
@@ -1144,7 +1144,7 @@ public class GenForm extends FormBridge
 			fields[67] = new ims.framework.ReportField(this.context, "_cvp_Clinical.ExtendedClinicalNotesListFilter", "BO-1011100000-CARECONTEXT", "CareContext");
 			fields[68] = new ims.framework.ReportField(this.context, "_cvp_Core.PasEvent", "BO-1014100003-ID", "ID_PASEvent");
 			fields[69] = new ims.framework.ReportField(this.context, "_cvp_Correspondence.CorrespondenceDetails", "BO-1052100001-ID", "ID_CorrespondenceDetails");
-			fields[70] = new ims.framework.ReportField(this.context, "_cvp_CareUk.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
+			fields[70] = new ims.framework.ReportField(this.context, "_cvp_RefMan.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
 			fields[71] = new ims.framework.ReportField(this.context, "_cv_Clinical.SelectedSuitableforSurgeryComment", "BO-1096100041-ID", "ID_SuitableForSurgeryComment");
 			fields[72] = new ims.framework.ReportField(this.context, "_cv_Clinical.SelectedSuitableforSurgeryComment", "BO-1096100041-COMMENT", "Comment");
 			fields[73] = new ims.framework.ReportField(this.context, prefix + "_lv_Clinical.SuitableforSurgeryAssessment.__internal_x_context__Assessment_" + componentIdentifier, "BO-1096100015-ID", "ID_SuitableForSurgeryAssessment");

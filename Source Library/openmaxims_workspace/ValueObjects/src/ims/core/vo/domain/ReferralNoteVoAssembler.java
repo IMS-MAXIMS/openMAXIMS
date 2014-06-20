@@ -388,8 +388,8 @@ public class ReferralNoteVoAssembler
 			if (color != null) 
 				color.getValue();
 
-			ims.careuk.vo.lookups.ReferralNoteType voLookup5 = new ims.careuk.vo.lookups.ReferralNoteType(instance5.getId(),instance5.getText(), instance5.isActive(), null, img, color);
-			ims.careuk.vo.lookups.ReferralNoteType parentVoLookup5 = voLookup5;
+			ims.RefMan.vo.lookups.ReferralNoteType voLookup5 = new ims.RefMan.vo.lookups.ReferralNoteType(instance5.getId(),instance5.getText(), instance5.isActive(), null, img, color);
+			ims.RefMan.vo.lookups.ReferralNoteType parentVoLookup5 = voLookup5;
 			ims.domain.lookups.LookupInstance parent5 = instance5.getParent();
 			while (parent5 != null)
 			{
@@ -404,7 +404,7 @@ public class ReferralNoteVoAssembler
 				color = parent5.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup5.setParent(new ims.careuk.vo.lookups.ReferralNoteType(parent5.getId(),parent5.getText(), parent5.isActive(), null, img, color));
+								parentVoLookup5.setParent(new ims.RefMan.vo.lookups.ReferralNoteType(parent5.getId(),parent5.getText(), parent5.isActive(), null, img, color));
 				parentVoLookup5 = parentVoLookup5.getParent();
 								parent5 = parent5.getParent();
 			}			

@@ -211,9 +211,9 @@ public class Logic extends BaseLogic
 	private void populateGrid() {
 		form.grdInvestigations().getRows().clear();
 		
-		if(form.getGlobalContext().CareUk.getCatsReferralIsNotNull())
+		if(form.getGlobalContext().RefMan.getCatsReferralIsNotNull())
 		{
-			ReferralAppointmentInvestigationsVo voReferralAppointmentInvestigations = domain.listInvestigations(form.getGlobalContext().CareUk.getCatsReferral());
+			ReferralAppointmentInvestigationsVo voReferralAppointmentInvestigations = domain.listInvestigations(form.getGlobalContext().RefMan.getCatsReferral());
 			ReferralAppointmentDetailsOcsOrderVoCollection order = voReferralAppointmentInvestigations.getInvestigationOrders();
 			for(ReferralAppointmentDetailsOcsOrderVo voOrder : order)
 			{
@@ -346,7 +346,7 @@ public class Logic extends BaseLogic
 		}
 		
 		form.getGlobalContext().Core.setUploadDocumentAction(UploadDocumentAction.IMPORT);
-		form.getGlobalContext().CareUk.setUploadDocumentsDialogDocumentType(DocumentCategory.RESULTREPORT);
+		form.getGlobalContext().RefMan.setUploadDocumentsDialogDocumentType(DocumentCategory.RESULTREPORT);
 		openDialog();
 	}
 	

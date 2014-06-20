@@ -24,9 +24,9 @@
 package ims.core.vo;
 
 /**
- * Linked to CAREUK.WorkAllocation business object (ID: 1096100033).
+ * Linked to RefMan.WorkAllocation business object (ID: 1096100033).
  */
-public class WorkAllocationListVo extends ims.careuk.vo.WorkAllocationRefVo implements ims.vo.ImsCloneable, Comparable
+public class WorkAllocationListVo extends ims.RefMan.vo.WorkAllocationRefVo implements ims.vo.ImsCloneable, Comparable
 {
 	private static final long serialVersionUID = 1L;
 
@@ -41,13 +41,13 @@ public class WorkAllocationListVo extends ims.careuk.vo.WorkAllocationRefVo impl
 	{
 		this.id = bean.getId();
 		this.version = bean.getVersion();
-		this.catsreferral = bean.getCatsReferral() == null ? null : new ims.careuk.vo.CatsReferralRefVo(new Integer(bean.getCatsReferral().getId()), bean.getCatsReferral().getVersion());
+		this.catsreferral = bean.getCatsReferral() == null ? null : new ims.RefMan.vo.CatsReferralRefVo(new Integer(bean.getCatsReferral().getId()), bean.getCatsReferral().getVersion());
 	}
 	public void populate(ims.vo.ValueObjectBeanMap map, ims.core.vo.beans.WorkAllocationListVoBean bean)
 	{
 		this.id = bean.getId();
 		this.version = bean.getVersion();
-		this.catsreferral = bean.getCatsReferral() == null ? null : new ims.careuk.vo.CatsReferralRefVo(new Integer(bean.getCatsReferral().getId()), bean.getCatsReferral().getVersion());
+		this.catsreferral = bean.getCatsReferral() == null ? null : new ims.RefMan.vo.CatsReferralRefVo(new Integer(bean.getCatsReferral().getId()), bean.getCatsReferral().getVersion());
 	}
 	public ims.vo.ValueObjectBean getBean()
 	{
@@ -79,11 +79,11 @@ public class WorkAllocationListVo extends ims.careuk.vo.WorkAllocationRefVo impl
 	{
 		return this.catsreferral != null;
 	}
-	public ims.careuk.vo.CatsReferralRefVo getCatsReferral()
+	public ims.RefMan.vo.CatsReferralRefVo getCatsReferral()
 	{
 		return this.catsreferral;
 	}
-	public void setCatsReferral(ims.careuk.vo.CatsReferralRefVo value)
+	public void setCatsReferral(ims.RefMan.vo.CatsReferralRefVo value)
 	{
 		this.isValidated = false;
 		this.catsreferral = value;
@@ -191,7 +191,7 @@ public class WorkAllocationListVo extends ims.careuk.vo.WorkAllocationRefVo impl
 	{
 		return 1;
 	}
-	protected ims.careuk.vo.CatsReferralRefVo catsreferral;
+	protected ims.RefMan.vo.CatsReferralRefVo catsreferral;
 	private boolean isValidated = false;
 	private boolean isBusy = false;
 }

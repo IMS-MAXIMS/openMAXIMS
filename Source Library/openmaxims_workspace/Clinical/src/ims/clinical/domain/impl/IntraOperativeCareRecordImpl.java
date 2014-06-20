@@ -22,12 +22,12 @@
 
 package ims.clinical.domain.impl;
 
-import ims.careuk.domain.objects.SuitableForSurgeryAssessment;
-import ims.careuk.vo.CatsReferralVo;
-import ims.careuk.vo.CatsReferralVoCollection;
-import ims.careuk.vo.SuitableForSurgeryAssessmentLiteVo;
-import ims.careuk.vo.domain.CatsReferralVoAssembler;
-import ims.careuk.vo.domain.SuitableForSurgeryAssessmentLiteVoAssembler;
+import ims.RefMan.domain.objects.SuitableForSurgeryAssessment;
+import ims.RefMan.vo.CatsReferralVo;
+import ims.RefMan.vo.CatsReferralVoCollection;
+import ims.RefMan.vo.SuitableForSurgeryAssessmentLiteVo;
+import ims.RefMan.vo.domain.CatsReferralVoAssembler;
+import ims.RefMan.vo.domain.SuitableForSurgeryAssessmentLiteVoAssembler;
 import ims.clinical.domain.Procedures;
 import ims.clinical.domain.base.impl.BaseIntraOperativeCareRecordImpl;
 import ims.clinical.vo.IntraOperativeCareRecordVo;

@@ -30,8 +30,8 @@ public interface ReferralServices extends ims.domain.DomainInterface
 	public ims.core.vo.ServiceLiteVoCollection getServices();
 
 	// Generated from form domain interface definition
-	public ims.careuk.vo.ReferralServiceVo getReferralService();
+	public ims.RefMan.vo.ReferralServiceVo getReferralService();
 
 	// Generated from form domain interface definition
-	public ims.careuk.vo.ReferralServiceVo save(ims.careuk.vo.ReferralServiceVo value) throws ims.domain.exceptions.DomainInterfaceException, ims.domain.exceptions.StaleObjectException, ims.domain.exceptions.ForeignKeyViolationException;
+	public ims.RefMan.vo.ReferralServiceVo save(ims.RefMan.vo.ReferralServiceVo value) throws ims.domain.exceptions.DomainInterfaceException, ims.domain.exceptions.StaleObjectException, ims.domain.exceptions.ForeignKeyViolationException;
 }

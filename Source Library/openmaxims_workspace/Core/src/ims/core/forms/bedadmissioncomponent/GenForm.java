@@ -2360,11 +2360,11 @@ public class GenForm extends FormBridge
 				{
 					super.row.setTooltip(5, value);
 				}
-				public ims.careuk.vo.PatientElectiveListBedInfoVo getValue()
+				public ims.RefMan.vo.PatientElectiveListBedInfoVo getValue()
 				{
-					return (ims.careuk.vo.PatientElectiveListBedInfoVo)super.row.getValue();
+					return (ims.RefMan.vo.PatientElectiveListBedInfoVo)super.row.getValue();
 				}
-				public void setValue(ims.careuk.vo.PatientElectiveListBedInfoVo value)
+				public void setValue(ims.RefMan.vo.PatientElectiveListBedInfoVo value)
 				{
 					super.row.setValue(value);
 				}
@@ -2414,20 +2414,20 @@ public class GenForm extends FormBridge
 				{
 					super.grid.addPartialDateColumn(caption, captionAlignment, alignment, width, readOnly, canBeEmpty, validationString, bold, sortOrder, canGrow);
 				}
-				public ims.careuk.vo.PatientElectiveListBedInfoVoCollection getValues()
+				public ims.RefMan.vo.PatientElectiveListBedInfoVoCollection getValues()
 				{
-					ims.careuk.vo.PatientElectiveListBedInfoVoCollection listOfValues = new ims.careuk.vo.PatientElectiveListBedInfoVoCollection();
+					ims.RefMan.vo.PatientElectiveListBedInfoVoCollection listOfValues = new ims.RefMan.vo.PatientElectiveListBedInfoVoCollection();
 					for(int x = 0; x < this.getRows().size(); x++)
 					{
 						listOfValues.add(this.getRows().get(x).getValue());
 					}
 					return listOfValues;
 				}
-				public ims.careuk.vo.PatientElectiveListBedInfoVo getValue()
+				public ims.RefMan.vo.PatientElectiveListBedInfoVo getValue()
 				{
-					return (ims.careuk.vo.PatientElectiveListBedInfoVo)super.grid.getValue();
+					return (ims.RefMan.vo.PatientElectiveListBedInfoVo)super.grid.getValue();
 				}
-				public void setValue(ims.careuk.vo.PatientElectiveListBedInfoVo value)
+				public void setValue(ims.RefMan.vo.PatientElectiveListBedInfoVo value)
 				{
 					super.grid.setValue(value);
 				}
@@ -2443,7 +2443,7 @@ public class GenForm extends FormBridge
 				{
 					return new grdTCI_ElectiveRowCollection(super.grid.getRows());
 				}
-				public grdTCI_ElectiveRow getRowByValue(ims.careuk.vo.PatientElectiveListBedInfoVo value)
+				public grdTCI_ElectiveRow getRowByValue(ims.RefMan.vo.PatientElectiveListBedInfoVo value)
 				{
 					GridRow row = super.grid.getRowByValue(value);
 					return row == null?null:new grdTCI_ElectiveRow(row);
@@ -3821,11 +3821,11 @@ public class GenForm extends FormBridge
 		{
 			return !cxl_TCIElectiveAdmission.getValueIsNull(context);
 		}
-		public ims.careuk.vo.PatientElectiveListBedAdmissionVo getTCIElectiveAdmission()
+		public ims.RefMan.vo.PatientElectiveListBedAdmissionVo getTCIElectiveAdmission()
 		{
-			return (ims.careuk.vo.PatientElectiveListBedAdmissionVo)cxl_TCIElectiveAdmission.getValue(context);
+			return (ims.RefMan.vo.PatientElectiveListBedAdmissionVo)cxl_TCIElectiveAdmission.getValue(context);
 		}
-		public void setTCIElectiveAdmission(ims.careuk.vo.PatientElectiveListBedAdmissionVo value)
+		public void setTCIElectiveAdmission(ims.RefMan.vo.PatientElectiveListBedAdmissionVo value)
 		{
 			cxl_TCIElectiveAdmission.setValue(context, value);
 		}
@@ -3934,7 +3934,7 @@ public class GenForm extends FormBridge
 			fields[67] = new ims.framework.ReportField(this.context, "_cvp_Clinical.ExtendedClinicalNotesListFilter", "BO-1011100000-CARECONTEXT", "CareContext");
 			fields[68] = new ims.framework.ReportField(this.context, "_cvp_Core.PasEvent", "BO-1014100003-ID", "ID_PASEvent");
 			fields[69] = new ims.framework.ReportField(this.context, "_cvp_Correspondence.CorrespondenceDetails", "BO-1052100001-ID", "ID_CorrespondenceDetails");
-			fields[70] = new ims.framework.ReportField(this.context, "_cvp_CareUk.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
+			fields[70] = new ims.framework.ReportField(this.context, "_cvp_RefMan.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
 			fields[71] = new ims.framework.ReportField(this.context, "_cv_Core.SelectedBedSpaceState", "BO-1014100009-ID", "ID_BedSpaceState");
 			fields[72] = new ims.framework.ReportField(this.context, "_cv_Core.SelectedBedSpaceState", "BO-1014100009-ISMATERNITY", "IsMaternity");
 			fields[73] = new ims.framework.ReportField(this.context, "_cv_Core.SelectedBedSpaceState", "BO-1014100009-NOOFINFANTS", "NoOfInfants");

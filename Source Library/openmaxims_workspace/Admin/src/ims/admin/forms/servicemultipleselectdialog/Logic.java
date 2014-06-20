@@ -27,8 +27,8 @@ import ims.admin.forms.servicemultipleselectdialog.GenForm.grdSearchServiceRow;
 import ims.admin.forms.servicemultipleselectdialog.GenForm.grdSelectedServicesRow;
 import ims.admin.vo.ServiceVoLiteVo;
 import ims.admin.vo.ServiceVoLiteVoCollection;
-import ims.careuk.vo.ContractConfigShortVo;
-import ims.careuk.vo.ContractServiceLocationsConfigVoCollection;
+import ims.RefMan.vo.ContractConfigShortVo;
+import ims.RefMan.vo.ContractServiceLocationsConfigVoCollection;
 import ims.core.vo.QuestionInformationShortVoCollection;
 import ims.core.vo.lookups.ReferralManagementContractType;
 import ims.framework.enumerations.DialogResult;
@@ -63,7 +63,7 @@ public class Logic extends BaseLogic
 			return;
 		}
 		
-		form.getGlobalContext().CareUk.setServiceContrat(tempColl);
+		form.getGlobalContext().RefMan.setServiceContrat(tempColl);
 		engine.close(DialogResult.OK);
 		
 		

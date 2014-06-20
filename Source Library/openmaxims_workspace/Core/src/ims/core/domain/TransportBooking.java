@@ -33,19 +33,19 @@ public interface TransportBooking extends ims.domain.DomainInterface
 	/**
 	* List all the transport booking for the appointment
 	*/
-	public ims.careuk.vo.TransportBookingShortVoCollection listTransportBooking(ims.core.admin.vo.CareContextRefVo careContext);
+	public ims.RefMan.vo.TransportBookingShortVoCollection listTransportBooking(ims.core.admin.vo.CareContextRefVo careContext);
 
 	// Generated from form domain interface definition
 	/**
 	* Retrieves from data base a TransportBookingVo based on the id provided.
 	*/
-	public ims.careuk.vo.TransportBookingDisplayVo getTransportBooking(ims.core.vo.TransportBookingRefVo transportBookingRef);
+	public ims.RefMan.vo.TransportBookingDisplayVo getTransportBooking(ims.core.vo.TransportBookingRefVo transportBookingRef);
 
 	// Generated from form domain interface definition
 	/**
 	* Save the provided Vo to data base.
 	*/
-	public ims.careuk.vo.TransportBookingShortVo saveTransportBooking(ims.careuk.vo.TransportBookingShortVo transportBookingVo, ims.scheduling.vo.Booking_AppointmentTransportVoCollection appointments) throws ims.domain.exceptions.StaleObjectException;
+	public ims.RefMan.vo.TransportBookingShortVo saveTransportBooking(ims.RefMan.vo.TransportBookingShortVo transportBookingVo, ims.scheduling.vo.Booking_AppointmentTransportVoCollection appointments) throws ims.domain.exceptions.StaleObjectException;
 
 	// Generated from form domain interface definition
 	/**

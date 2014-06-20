@@ -1021,8 +1021,8 @@ public class Logic extends BaseLogic
 			if(voCollOrderInv.size() > 0)
 			{
 				domain.cancelOrderInvestigations(form.getGlobalContext().Core.getPatientShort(), voCollOrderInv, form.getGlobalContext().OCRR.getInvestigationStatusChangeReason(), form.getGlobalContext().OCRR.getInvestigationCancelComment());
-				if(form.getGlobalContext().CareUk.getCatsReferral() != null)
-					domain.updateCatsReferralAdditionalInvStatus(form.getGlobalContext().CareUk.getCatsReferral());
+				if(form.getGlobalContext().RefMan.getCatsReferral() != null)
+					domain.updateCatsReferralAdditionalInvStatus(form.getGlobalContext().RefMan.getCatsReferral());
 			}
 			else
 				return false;

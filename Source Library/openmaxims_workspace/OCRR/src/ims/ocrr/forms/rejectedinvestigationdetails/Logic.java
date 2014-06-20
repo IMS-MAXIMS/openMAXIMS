@@ -39,7 +39,7 @@ public class Logic extends BaseLogic
 	
 	private void open() 
 	{
-		OrderInvestigationLiteVoCollection voColl = domain.listRejectedInvestigations(form.getGlobalContext().CareUk.getCatsReferral());
+		OrderInvestigationLiteVoCollection voColl = domain.listRejectedInvestigations(form.getGlobalContext().RefMan.getCatsReferral());
 		for(int i = 0 ; voColl != null && i < voColl.size() ; i++)
 			addInvestigationRow(voColl.get(i));
 	}

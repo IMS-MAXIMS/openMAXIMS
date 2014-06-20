@@ -30,5 +30,5 @@ public interface LocationMultipleSelectDialog extends ims.domain.DomainInterface
 	public ims.core.vo.OrganisationLiteVoCollection listActiveOrganisations(String name);
 
 	// Generated from form domain interface definition
-	public ims.careuk.vo.OrganisationConfigVo getOrganisation(ims.core.resource.place.vo.OrganisationRefVo organisationRef);
+	public ims.RefMan.vo.OrganisationConfigVo getOrganisation(ims.core.resource.place.vo.OrganisationRefVo organisationRef);
 }

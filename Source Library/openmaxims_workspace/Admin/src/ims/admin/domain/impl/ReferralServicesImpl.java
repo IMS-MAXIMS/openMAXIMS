@@ -23,9 +23,9 @@
 package ims.admin.domain.impl;
 
 import ims.admin.domain.base.impl.BaseReferralServicesImpl;
-import ims.careuk.domain.objects.ReferralService;
-import ims.careuk.vo.ReferralServiceVo;
-import ims.careuk.vo.domain.ReferralServiceVoAssembler;
+import ims.RefMan.domain.objects.ReferralService;
+import ims.RefMan.vo.ReferralServiceVo;
+import ims.RefMan.vo.domain.ReferralServiceVoAssembler;
 import ims.core.vo.ServiceLiteVoCollection;
 import ims.core.vo.domain.ServiceLiteVoAssembler;
 import ims.domain.DomainFactory;

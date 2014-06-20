@@ -24,18 +24,18 @@ package ims.clinical.domain.impl;
 
 import ims.admin.vo.AppointmentTrackingstatusColourConfigVo;
 import ims.admin.vo.domain.AppointmentTrackingstatusColourConfigVoAssembler;
-import ims.careuk.domain.objects.CatsReferral;
-import ims.careuk.domain.objects.PatientElectiveList;
-import ims.careuk.domain.objects.TCIForPatientElectiveList;
-import ims.careuk.vo.CatsReferralListVo;
-import ims.careuk.vo.CatsReferralRefVo;
-import ims.careuk.vo.PatientElectiveListForDNAAppointmentsVo;
-import ims.careuk.vo.TCIForPatientElectiveListAppointmentDNAVo;
-import ims.careuk.vo.domain.CatsReferralBreachDatesVoAssembler;
-import ims.careuk.vo.domain.CatsReferralListVoAssembler;
-import ims.careuk.vo.domain.CatsReferralVoAssembler;
-import ims.careuk.vo.domain.PatientElectiveListForDNAAppointmentsVoAssembler;
-import ims.careuk.vo.domain.TCIForPatientElectiveListAppointmentDNAVoAssembler;
+import ims.RefMan.domain.objects.CatsReferral;
+import ims.RefMan.domain.objects.PatientElectiveList;
+import ims.RefMan.domain.objects.TCIForPatientElectiveList;
+import ims.RefMan.vo.CatsReferralListVo;
+import ims.RefMan.vo.CatsReferralRefVo;
+import ims.RefMan.vo.PatientElectiveListForDNAAppointmentsVo;
+import ims.RefMan.vo.TCIForPatientElectiveListAppointmentDNAVo;
+import ims.RefMan.vo.domain.CatsReferralBreachDatesVoAssembler;
+import ims.RefMan.vo.domain.CatsReferralListVoAssembler;
+import ims.RefMan.vo.domain.CatsReferralVoAssembler;
+import ims.RefMan.vo.domain.PatientElectiveListForDNAAppointmentsVoAssembler;
+import ims.RefMan.vo.domain.TCIForPatientElectiveListAppointmentDNAVoAssembler;
 import ims.chooseandbook.vo.lookups.ActionRequestType;
 import ims.clinical.domain.base.impl.BaseClinicListWithICPActionsImpl;
 import ims.configuration.gen.ConfigFlag;
@@ -464,7 +464,7 @@ public class ClinicListwithICPActionsImpl extends BaseClinicListWithICPActionsIm
 		//CatsReferralListVoAssembler.extractCatsReferral(factory, voCatsReferral);
 		doCats.setHasDNAApptsForReview(voCatsReferral.getHasDNAApptsForReview());
 		
-		//WDEV-17987 added the code below so the form will do the same thing on "Arrived" and "Undo Arrival" as CareUK.ClinicList
+		//WDEV-17987 added the code below so the form will do the same thing on "Arrived" and "Undo Arrival" as RefMan.ClinicList
 		if(doAppt.getApptStatus().equals(getDomLookup(Status_Reason.ARRIVAL)))
 		{
 			if(doAppt.getSession() != null &&  doAppt.getSession().getService() != null &&  doAppt.getSession().getService().getServiceCategory() != null)

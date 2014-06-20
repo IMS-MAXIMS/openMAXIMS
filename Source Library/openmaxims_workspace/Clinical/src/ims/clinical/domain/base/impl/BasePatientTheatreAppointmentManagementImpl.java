@@ -50,7 +50,7 @@ public abstract class BasePatientTheatreAppointmentManagementImpl extends Domain
 	}
 
 	@SuppressWarnings("unused")
-	public void validateupdateCatsReferralAdditionalInvStatus(ims.careuk.vo.CatsReferralRefVo catsReferral)
+	public void validateupdateCatsReferralAdditionalInvStatus(ims.RefMan.vo.CatsReferralRefVo catsReferral)
 	{
 	}
 
@@ -92,7 +92,7 @@ public abstract class BasePatientTheatreAppointmentManagementImpl extends Domain
 	}
 
 	@SuppressWarnings("unused")
-	public void validatecancelTCIAndReferralEROD(ims.careuk.vo.CatsReferralRefVo catsReferral, ims.scheduling.vo.Booking_AppointmentRefVo apptRef, Boolean isProviderCancellation, Boolean isPatientCancellation)
+	public void validatecancelTCIAndReferralEROD(ims.RefMan.vo.CatsReferralRefVo catsReferral, ims.scheduling.vo.Booking_AppointmentRefVo apptRef, Boolean isProviderCancellation, Boolean isPatientCancellation)
 	{
 	}
 }

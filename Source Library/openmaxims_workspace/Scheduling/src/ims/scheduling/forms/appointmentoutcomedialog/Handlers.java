@@ -230,44 +230,44 @@ abstract public class Handlers implements ims.framework.UILogic, IFormUILogicCod
 				onGrdProceduresSelectionChanged();
 			}
 		});
-		this.form.getContextMenus().CAREUK.getAppointmentOutcomeDiagnosisMenuSELECTItem().setClickEvent(new ims.framework.delegates.MenuItemClick()
+		this.form.getContextMenus().RefMan.getAppointmentOutcomeDiagnosisMenuSELECTItem().setClickEvent(new ims.framework.delegates.MenuItemClick()
 		{
 			private static final long serialVersionUID = 1L;
 			public void handle(ims.framework.Control sender) throws ims.framework.exceptions.PresentationLogicException
 			{
-				onContextMenuItemClick(GenForm.ContextMenus.CAREUKNamespace.AppointmentOutcomeDiagnosisMenu.SELECT, sender);
+				onContextMenuItemClick(GenForm.ContextMenus.RefManNamespace.AppointmentOutcomeDiagnosisMenu.SELECT, sender);
 			}
 		});
-		this.form.getContextMenus().CAREUK.getAppointmentOutcomeDiagnosisMenuADDItem().setClickEvent(new ims.framework.delegates.MenuItemClick()
+		this.form.getContextMenus().RefMan.getAppointmentOutcomeDiagnosisMenuADDItem().setClickEvent(new ims.framework.delegates.MenuItemClick()
 		{
 			private static final long serialVersionUID = 1L;
 			public void handle(ims.framework.Control sender) throws ims.framework.exceptions.PresentationLogicException
 			{
-				onContextMenuItemClick(GenForm.ContextMenus.CAREUKNamespace.AppointmentOutcomeDiagnosisMenu.ADD, sender);
+				onContextMenuItemClick(GenForm.ContextMenus.RefManNamespace.AppointmentOutcomeDiagnosisMenu.ADD, sender);
 			}
 		});
-		this.form.getContextMenus().CAREUK.getAppointmentOutcomeDiagnosisMenuEDITItem().setClickEvent(new ims.framework.delegates.MenuItemClick()
+		this.form.getContextMenus().RefMan.getAppointmentOutcomeDiagnosisMenuEDITItem().setClickEvent(new ims.framework.delegates.MenuItemClick()
 		{
 			private static final long serialVersionUID = 1L;
 			public void handle(ims.framework.Control sender) throws ims.framework.exceptions.PresentationLogicException
 			{
-				onContextMenuItemClick(GenForm.ContextMenus.CAREUKNamespace.AppointmentOutcomeDiagnosisMenu.EDIT, sender);
+				onContextMenuItemClick(GenForm.ContextMenus.RefManNamespace.AppointmentOutcomeDiagnosisMenu.EDIT, sender);
 			}
 		});
-		this.form.getContextMenus().CAREUK.getAppointmentOutcomeProcedureMenuADDItem().setClickEvent(new ims.framework.delegates.MenuItemClick()
+		this.form.getContextMenus().RefMan.getAppointmentOutcomeProcedureMenuADDItem().setClickEvent(new ims.framework.delegates.MenuItemClick()
 		{
 			private static final long serialVersionUID = 1L;
 			public void handle(ims.framework.Control sender) throws ims.framework.exceptions.PresentationLogicException
 			{
-				onContextMenuItemClick(GenForm.ContextMenus.CAREUKNamespace.AppointmentOutcomeProcedureMenu.ADD, sender);
+				onContextMenuItemClick(GenForm.ContextMenus.RefManNamespace.AppointmentOutcomeProcedureMenu.ADD, sender);
 			}
 		});
-		this.form.getContextMenus().CAREUK.getAppointmentOutcomeProcedureMenuEDITItem().setClickEvent(new ims.framework.delegates.MenuItemClick()
+		this.form.getContextMenus().RefMan.getAppointmentOutcomeProcedureMenuEDITItem().setClickEvent(new ims.framework.delegates.MenuItemClick()
 		{
 			private static final long serialVersionUID = 1L;
 			public void handle(ims.framework.Control sender) throws ims.framework.exceptions.PresentationLogicException
 			{
-				onContextMenuItemClick(GenForm.ContextMenus.CAREUKNamespace.AppointmentOutcomeProcedureMenu.EDIT, sender);
+				onContextMenuItemClick(GenForm.ContextMenus.RefManNamespace.AppointmentOutcomeProcedureMenu.EDIT, sender);
 			}
 		});
 	}

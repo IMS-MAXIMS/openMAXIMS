@@ -670,8 +670,8 @@ public class Logic extends BaseLogic
 		
 		if(!ConfigFlag.UI.DISABLE_MULTI_SITE_CATS_FUNCTIONALITY.getValue())
 		{
-			if(form.getGlobalContext().CareUk.getCatsReferral()!=null){
-				LocationLiteVoCollection voCollLocation =  domain.listLocationLiteForReferralContract(form.getGlobalContext().CareUk.getCatsReferral(),true);
+			if(form.getGlobalContext().RefMan.getCatsReferral()!=null){
+				LocationLiteVoCollection voCollLocation =  domain.listLocationLiteForReferralContract(form.getGlobalContext().RefMan.getCatsReferral(),true);
 				if(voCollLocation != null)
 					form.getLocalContext().setContractLocations(voCollLocation.toRefVoCollection());
 			}

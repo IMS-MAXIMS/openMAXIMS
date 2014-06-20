@@ -48,14 +48,14 @@ public interface PendingElectiveAdmissionsListELComponent extends ims.domain.Dom
 	public ims.core.vo.LocMostVo getLocation(ims.core.resource.place.vo.LocationRefVo voLocRef);
 
 	// Generated from form domain interface definition
-	public ims.careuk.vo.PatientElectiveListForPendingAdmissionVoCollection getElectiveLists(ims.core.vo.PendingElectiveAdmissionListFilterVo searchFilter);
+	public ims.RefMan.vo.PatientElectiveListForPendingAdmissionVoCollection getElectiveLists(ims.core.vo.PendingElectiveAdmissionListFilterVo searchFilter);
 
 	// Generated from form domain interface definition
 	public ims.core.vo.PatientShort getPatientShort(ims.core.patient.vo.PatientRefVo patientRef);
 
 	// Generated from form domain interface definition
-	public ims.careuk.vo.PatientElectiveListForPendingAdmissionVo getCurrentPendingRecord(ims.careuk.vo.PatientElectiveListRefVo patientElectiveListRef);
+	public ims.RefMan.vo.PatientElectiveListForPendingAdmissionVo getCurrentPendingRecord(ims.RefMan.vo.PatientElectiveListRefVo patientElectiveListRef);
 
 	// Generated from form domain interface definition
-	public void saveTCIDetails(ims.careuk.vo.PatientElectiveTCIBedManagerCommentVo tciDetails) throws ims.domain.exceptions.StaleObjectException;
+	public void saveTCIDetails(ims.RefMan.vo.PatientElectiveTCIBedManagerCommentVo tciDetails) throws ims.domain.exceptions.StaleObjectException;
 }

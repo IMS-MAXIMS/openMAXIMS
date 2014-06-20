@@ -129,7 +129,7 @@ public interface SelectandOrder extends ims.domain.DomainInterface
 	/**
 	* listLocationLiteForReferralContract
 	*/
-	public ims.core.vo.LocationLiteVoCollection listLocationLiteForReferralContract(ims.careuk.vo.CatsReferralRefVo referral, Boolean includePathandRad);
+	public ims.core.vo.LocationLiteVoCollection listLocationLiteForReferralContract(ims.RefMan.vo.CatsReferralRefVo referral, Boolean includePathandRad);
 
 	// Generated from form domain interface definition
 	/**

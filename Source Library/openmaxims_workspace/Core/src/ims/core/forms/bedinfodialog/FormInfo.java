@@ -48,7 +48,7 @@ public final class FormInfo extends ims.framework.FormInfo
 	}
 	public String[] getContextVariables()
 	{
-		return new String[] { "_cv_Core.BedInfoAction", "_cv_Core.Items", "_cv_Core.ADTWard", "_cv_Core.HasWaitingArea", "_cv_Core.SelectedWaitingAreaPatient", "_cv_Core.CreateVTERiskAssessmentOnDischarge", "_cv_Core.InpatientEpisodeForVTERiskAssessmentWorklistVo", "_cv_Core.VTERiskAssessmentShortVo", "_cv_Core.DischargeEpisodeBedInfo", "_cv_Core.SelectedBedSpaceState", "_cv_Core.EditVTERiskAssessmentFromInpatientEpisode", "_cv_Core.ADTTransfersOut", "_cv_Core.BedInfoDialog", "_cv_Core.ADTTransfersIn", "_cv_CareUk.PatientElectiveListsForCancellationDialog" };
+		return new String[] { "_cv_Core.BedInfoAction", "_cv_Core.Items", "_cv_Core.ADTWard", "_cv_Core.HasWaitingArea", "_cv_Core.SelectedWaitingAreaPatient", "_cv_Core.CreateVTERiskAssessmentOnDischarge", "_cv_Core.InpatientEpisodeForVTERiskAssessmentWorklistVo", "_cv_Core.VTERiskAssessmentShortVo", "_cv_Core.DischargeEpisodeBedInfo", "_cv_Core.SelectedBedSpaceState", "_cv_Core.EditVTERiskAssessmentFromInpatientEpisode", "_cv_Core.ADTTransfersOut", "_cv_Core.BedInfoDialog", "_cv_Core.ADTTransfersIn", "_cv_RefMan.PatientElectiveListsForCancellationDialog" };
 	}
 	public String getLocalVariablesPrefix()
 	{

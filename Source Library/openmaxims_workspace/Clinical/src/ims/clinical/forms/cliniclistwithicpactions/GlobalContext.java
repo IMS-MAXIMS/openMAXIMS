@@ -34,7 +34,7 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 		super(context);
 
 		Scheduling = new SchedulingContext(context);
-		CareUk = new CareUkContext(context);
+		RefMan = new RefManContext(context);
 		Core = new CoreContext(context);
 		ICP = new ICPContext(context);
 	}
@@ -65,11 +65,11 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 
 		private ims.framework.Context context;
 	}
-	public final class CareUkContext implements Serializable
+	public final class RefManContext implements Serializable
 	{
 		private static final long serialVersionUID = 1L;
 
-		private CareUkContext(ims.framework.Context context)
+		private RefManContext(ims.framework.Context context)
 		{
 			this.context = context;
 
@@ -77,74 +77,74 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 
 		public boolean getDayCaseAdmApptDateIsNotNull()
 		{
-			return !cx_CareUkDayCaseAdmApptDate.getValueIsNull(context);
+			return !cx_RefManDayCaseAdmApptDate.getValueIsNull(context);
 		}
 		public ims.framework.utils.Date getDayCaseAdmApptDate()
 		{
-			return (ims.framework.utils.Date)cx_CareUkDayCaseAdmApptDate.getValue(context);
+			return (ims.framework.utils.Date)cx_RefManDayCaseAdmApptDate.getValue(context);
 		}
 		public void setDayCaseAdmApptDate(ims.framework.utils.Date value)
 		{
-			cx_CareUkDayCaseAdmApptDate.setValue(context, value);
+			cx_RefManDayCaseAdmApptDate.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkDayCaseAdmApptDate = new ims.framework.ContextVariable("CareUk.DayCaseAdmApptDate", "_cv_CareUk.DayCaseAdmApptDate");
+		private ims.framework.ContextVariable cx_RefManDayCaseAdmApptDate = new ims.framework.ContextVariable("RefMan.DayCaseAdmApptDate", "_cv_RefMan.DayCaseAdmApptDate");
 		public boolean getDayCaseAdmApptTimeIsNotNull()
 		{
-			return !cx_CareUkDayCaseAdmApptTime.getValueIsNull(context);
+			return !cx_RefManDayCaseAdmApptTime.getValueIsNull(context);
 		}
 		public String getDayCaseAdmApptTime()
 		{
-			return (String)cx_CareUkDayCaseAdmApptTime.getValue(context);
+			return (String)cx_RefManDayCaseAdmApptTime.getValue(context);
 		}
 		public void setDayCaseAdmApptTime(String value)
 		{
-			cx_CareUkDayCaseAdmApptTime.setValue(context, value);
+			cx_RefManDayCaseAdmApptTime.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkDayCaseAdmApptTime = new ims.framework.ContextVariable("CareUk.DayCaseAdmApptTime", "_cv_CareUk.DayCaseAdmApptTime");
+		private ims.framework.ContextVariable cx_RefManDayCaseAdmApptTime = new ims.framework.ContextVariable("RefMan.DayCaseAdmApptTime", "_cv_RefMan.DayCaseAdmApptTime");
 		public boolean getDayCaseAdmClinicNameIsNotNull()
 		{
-			return !cx_CareUkDayCaseAdmClinicName.getValueIsNull(context);
+			return !cx_RefManDayCaseAdmClinicName.getValueIsNull(context);
 		}
 		public String getDayCaseAdmClinicName()
 		{
-			return (String)cx_CareUkDayCaseAdmClinicName.getValue(context);
+			return (String)cx_RefManDayCaseAdmClinicName.getValue(context);
 		}
 		public void setDayCaseAdmClinicName(String value)
 		{
-			cx_CareUkDayCaseAdmClinicName.setValue(context, value);
+			cx_RefManDayCaseAdmClinicName.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkDayCaseAdmClinicName = new ims.framework.ContextVariable("CareUk.DayCaseAdmClinicName", "_cv_CareUk.DayCaseAdmClinicName");
+		private ims.framework.ContextVariable cx_RefManDayCaseAdmClinicName = new ims.framework.ContextVariable("RefMan.DayCaseAdmClinicName", "_cv_RefMan.DayCaseAdmClinicName");
 		public boolean getCatsReferralIsNotNull()
 		{
-			return !cx_CareUkCatsReferral.getValueIsNull(context);
+			return !cx_RefManCatsReferral.getValueIsNull(context);
 		}
-		public ims.careuk.vo.CatsReferralRefVo getCatsReferral()
+		public ims.RefMan.vo.CatsReferralRefVo getCatsReferral()
 		{
-			return (ims.careuk.vo.CatsReferralRefVo)cx_CareUkCatsReferral.getValue(context);
+			return (ims.RefMan.vo.CatsReferralRefVo)cx_RefManCatsReferral.getValue(context);
 		}
-		public void setCatsReferral(ims.careuk.vo.CatsReferralRefVo value)
+		public void setCatsReferral(ims.RefMan.vo.CatsReferralRefVo value)
 		{
-			cx_CareUkCatsReferral.setValue(context, value);
+			cx_RefManCatsReferral.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkCatsReferral = new ims.framework.ContextVariable("CareUk.CatsReferral", "_cvp_CareUk.CatsReferral");
+		private ims.framework.ContextVariable cx_RefManCatsReferral = new ims.framework.ContextVariable("RefMan.CatsReferral", "_cvp_RefMan.CatsReferral");
 		public boolean getChosenTimeIsNotNull()
 		{
-			return !cx_CareUkChosenTime.getValueIsNull(context);
+			return !cx_RefManChosenTime.getValueIsNull(context);
 		}
 		public ims.framework.utils.Time getChosenTime()
 		{
-			return (ims.framework.utils.Time)cx_CareUkChosenTime.getValue(context);
+			return (ims.framework.utils.Time)cx_RefManChosenTime.getValue(context);
 		}
 		public void setChosenTime(ims.framework.utils.Time value)
 		{
-			cx_CareUkChosenTime.setValue(context, value);
+			cx_RefManChosenTime.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkChosenTime = new ims.framework.ContextVariable("CareUk.ChosenTime", "_cv_CareUk.ChosenTime");
+		private ims.framework.ContextVariable cx_RefManChosenTime = new ims.framework.ContextVariable("RefMan.ChosenTime", "_cv_RefMan.ChosenTime");
 
 		private ims.framework.Context context;
 	}
@@ -274,7 +274,7 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 	private ims.framework.ContextVariable cx_UKSHOutPatientWardViewSearchCriteria = new ims.framework.ContextVariable("UKSHOutPatientWardViewSearchCriteria", "_cvp_UKSHOutPatientWardViewSearchCriteria");
 
 	public SchedulingContext Scheduling;
-	public CareUkContext CareUk;
+	public RefManContext RefMan;
 	public CoreContext Core;
 	public ICPContext ICP;
 }

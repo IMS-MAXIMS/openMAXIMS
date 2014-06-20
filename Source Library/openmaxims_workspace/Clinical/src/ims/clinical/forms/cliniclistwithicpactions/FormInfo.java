@@ -48,7 +48,7 @@ public final class FormInfo extends ims.framework.FormInfo
 	}
 	public String[] getContextVariables()
 	{
-		return new String[] { "_cv_Scheduling.BookingAppointmentRef", "_cv_CareUk.DayCaseAdmApptDate", "_cv_CareUk.DayCaseAdmApptTime", "_cv_CareUk.DayCaseAdmClinicName", "_cv_Core.HospitalLoc", "_cv_Core.SelectedLocationForOrdering", "_cv_ICP.PatientICPRecord", "_cv_CareUk.ChosenTime" };
+		return new String[] { "_cv_Scheduling.BookingAppointmentRef", "_cv_RefMan.DayCaseAdmApptDate", "_cv_RefMan.DayCaseAdmApptTime", "_cv_RefMan.DayCaseAdmClinicName", "_cv_Core.HospitalLoc", "_cv_Core.SelectedLocationForOrdering", "_cv_ICP.PatientICPRecord", "_cv_RefMan.ChosenTime" };
 	}
 	public String getLocalVariablesPrefix()
 	{

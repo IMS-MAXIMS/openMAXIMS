@@ -30,12 +30,12 @@ public abstract class BaseAdminEventImpl extends DomainImpl implements ims.pathw
 	private static final long serialVersionUID = 1L;
 
 	@SuppressWarnings("unused")
-	public void validategetAdminEvents(ims.careuk.vo.CatsReferralRefVo referralRef)
+	public void validategetAdminEvents(ims.RefMan.vo.CatsReferralRefVo referralRef)
 	{
 	}
 
 	@SuppressWarnings("unused")
-	public void validatesaveAdminEvent(ims.pathways.vo.AdminEventVo adminEventToSave, ims.careuk.vo.CatsReferralRefVo referralRef)
+	public void validatesaveAdminEvent(ims.pathways.vo.AdminEventVo adminEventToSave, ims.RefMan.vo.CatsReferralRefVo referralRef)
 	{
 	}
 }

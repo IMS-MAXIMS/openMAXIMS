@@ -22,10 +22,10 @@
 
 package ims.core.forms.uploaddocumentdialog;
 
-import ims.careuk.vo.CatsReferralStatusVo;
-import ims.careuk.vo.CatsReferralStatusVoCollection;
-import ims.careuk.vo.CatsReferralWizardVo;
-import ims.careuk.vo.lookups.ReferralApptStatus;
+import ims.RefMan.vo.CatsReferralStatusVo;
+import ims.RefMan.vo.CatsReferralStatusVoCollection;
+import ims.RefMan.vo.CatsReferralWizardVo;
+import ims.RefMan.vo.lookups.ReferralApptStatus;
 import ims.configuration.gen.ConfigFlag;
 import ims.configuration.EnvironmentConfig;
 import ims.core.helper.ConversionHelper;
@@ -157,8 +157,8 @@ public class Logic extends BaseLogic
 			if (form.getLocalContext().getUploadDocumentStoreLevelIsNotNull() &&
 					form.getLocalContext().getUploadDocumentStoreLevel().equals(UploadDocumentStoreLevel.REFERRAL))
 			{
-				if (form.getGlobalContext().CareUk.getUploadDocumentsDialogDocumentTypeIsNotNull()) {
-					form.cmbSource().setValue(form.getGlobalContext().CareUk.getUploadDocumentsDialogDocumentType());
+				if (form.getGlobalContext().RefMan.getUploadDocumentsDialogDocumentTypeIsNotNull()) {
+					form.cmbSource().setValue(form.getGlobalContext().RefMan.getUploadDocumentsDialogDocumentType());
 				}
 				else {
 					form.cmbSource().setValue(DocumentCategory.GPLETTER);
@@ -602,9 +602,9 @@ public class Logic extends BaseLogic
 	{
 		hasGPLetter = false;
 		CatsReferralWizardVo catReferral = null;
-		if (form.getGlobalContext().CareUk.getCatsReferralIsNotNull())
+		if (form.getGlobalContext().RefMan.getCatsReferralIsNotNull())
 		{
-			catReferral = domain.getCatsReferral(form.getGlobalContext().CareUk.getCatsReferral());
+			catReferral = domain.getCatsReferral(form.getGlobalContext().RefMan.getCatsReferral());
 		}
 
 		if (catReferral == null)
@@ -656,16 +656,16 @@ public class Logic extends BaseLogic
 
 		try 
 		{					
-			PatientDocumentSaveVo voSave = domain.savePatientDocument(vo, catReferral, form.getGlobalContext().CareUk.getCatsReferralIsNotNull() ? form.getGlobalContext().CareUk.getCatsReferral() : null  );
+			PatientDocumentSaveVo voSave = domain.savePatientDocument(vo, catReferral, form.getGlobalContext().RefMan.getCatsReferralIsNotNull() ? form.getGlobalContext().RefMan.getCatsReferral() : null  );
 			form.getGlobalContext().Core.setPatientDocument(voSave.getPatientDocumentVo());
-			form.getGlobalContext().CareUk.setCatsReferralWizard(voSave.getCatsReferralWizardVo());
+			form.getGlobalContext().RefMan.setCatsReferralWizard(voSave.getCatsReferralWizardVo());
 		
 			if (!hasGPLetter)
 			{
-				form.getGlobalContext().CareUk.setCatsReferralHasGpLetter(Boolean.FALSE);
+				form.getGlobalContext().RefMan.setCatsReferralHasGpLetter(Boolean.FALSE);
 			}
 			else
-				form.getGlobalContext().CareUk.setCatsReferralHasGpLetter(Boolean.TRUE);
+				form.getGlobalContext().RefMan.setCatsReferralHasGpLetter(Boolean.TRUE);
 		
 		} 
 		catch (StaleObjectException e) 

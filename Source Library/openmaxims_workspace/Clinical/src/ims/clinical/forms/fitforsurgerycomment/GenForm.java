@@ -196,11 +196,11 @@ public class GenForm extends FormBridge
 		{
 			return !cxl_Comment.getValueIsNull(context);
 		}
-		public ims.careuk.vo.FitForSurgeryCommentVo getComment()
+		public ims.RefMan.vo.FitForSurgeryCommentVo getComment()
 		{
-			return (ims.careuk.vo.FitForSurgeryCommentVo)cxl_Comment.getValue(context);
+			return (ims.RefMan.vo.FitForSurgeryCommentVo)cxl_Comment.getValue(context);
 		}
-		public void setComment(ims.careuk.vo.FitForSurgeryCommentVo value)
+		public void setComment(ims.RefMan.vo.FitForSurgeryCommentVo value)
 		{
 			cxl_Comment.setValue(context, value);
 		}
@@ -296,7 +296,7 @@ public class GenForm extends FormBridge
 			fields[67] = new ims.framework.ReportField(this.context, "_cvp_Clinical.ExtendedClinicalNotesListFilter", "BO-1011100000-CARECONTEXT", "CareContext");
 			fields[68] = new ims.framework.ReportField(this.context, "_cvp_Core.PasEvent", "BO-1014100003-ID", "ID_PASEvent");
 			fields[69] = new ims.framework.ReportField(this.context, "_cvp_Correspondence.CorrespondenceDetails", "BO-1052100001-ID", "ID_CorrespondenceDetails");
-			fields[70] = new ims.framework.ReportField(this.context, "_cvp_CareUk.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
+			fields[70] = new ims.framework.ReportField(this.context, "_cvp_RefMan.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
 			fields[71] = new ims.framework.ReportField(this.context, "_cv_Clinical.SelectedFitForSurgeryComment", "BO-1096100042-ID", "ID_FitForSurgeryComment");
 			fields[72] = new ims.framework.ReportField(this.context, "_cv_Clinical.SelectedFitForSurgeryComment", "BO-1096100042-COMMENT", "Comment");
 			fields[73] = new ims.framework.ReportField(this.context, prefix + "_lv_Clinical.FitForSurgeryComment.__internal_x_context__Comment_" + componentIdentifier, "BO-1096100042-ID", "ID_FitForSurgeryComment");

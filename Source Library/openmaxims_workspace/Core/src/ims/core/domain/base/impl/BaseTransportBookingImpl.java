@@ -45,7 +45,7 @@ public abstract class BaseTransportBookingImpl extends DomainImpl implements ims
 	}
 
 	@SuppressWarnings("unused")
-	public void validatesaveTransportBooking(ims.careuk.vo.TransportBookingShortVo transportBookingVo, ims.scheduling.vo.Booking_AppointmentTransportVoCollection appointments)
+	public void validatesaveTransportBooking(ims.RefMan.vo.TransportBookingShortVo transportBookingVo, ims.scheduling.vo.Booking_AppointmentTransportVoCollection appointments)
 	{
 	}
 

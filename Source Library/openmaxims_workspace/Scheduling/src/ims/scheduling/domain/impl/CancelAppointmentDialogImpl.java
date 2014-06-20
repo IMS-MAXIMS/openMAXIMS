@@ -22,13 +22,13 @@
 
 package ims.scheduling.domain.impl;
 
-import ims.careuk.domain.objects.CatsReferral;
-import ims.careuk.domain.objects.PatientElectiveList;
-import ims.careuk.vo.CatsReferralRefVo;
-import ims.careuk.vo.CatsReferralforElectiveListDetailsVo;
-import ims.careuk.vo.PatientElectiveListForCancelAppointmentVo;
-import ims.careuk.vo.domain.CatsReferralforElectiveListDetailsVoAssembler;
-import ims.careuk.vo.domain.PatientElectiveListForCancelAppointmentVoAssembler;
+import ims.RefMan.domain.objects.CatsReferral;
+import ims.RefMan.domain.objects.PatientElectiveList;
+import ims.RefMan.vo.CatsReferralRefVo;
+import ims.RefMan.vo.CatsReferralforElectiveListDetailsVo;
+import ims.RefMan.vo.PatientElectiveListForCancelAppointmentVo;
+import ims.RefMan.vo.domain.CatsReferralforElectiveListDetailsVoAssembler;
+import ims.RefMan.vo.domain.PatientElectiveListForCancelAppointmentVoAssembler;
 import ims.domain.DomainFactory;
 import ims.domain.lookups.LookupInstance;
 import ims.framework.exceptions.CodingRuntimeException;

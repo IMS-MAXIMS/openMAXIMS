@@ -25,10 +25,10 @@ package ims.admin.domain.impl;
 import java.util.List;
 
 import ims.admin.domain.base.impl.BaseReferralStatusAdminImpl;
-import ims.careuk.vo.ReferralStatusConfigVo;
-import ims.careuk.vo.ReferralStatusConfigVoCollection;
-import ims.careuk.vo.domain.ReferralStatusConfigVoAssembler;
-import ims.careuk.vo.lookups.ReferralApptStatus;
+import ims.RefMan.vo.ReferralStatusConfigVo;
+import ims.RefMan.vo.ReferralStatusConfigVoCollection;
+import ims.RefMan.vo.domain.ReferralStatusConfigVoAssembler;
+import ims.RefMan.vo.lookups.ReferralApptStatus;
 import ims.core.admin.domain.objects.ReferralStatusConfig;
 import ims.domain.exceptions.DomainRuntimeException;
 import ims.domain.exceptions.ForeignKeyViolationException;
@@ -40,7 +40,7 @@ public class ReferralStatusAdminImpl extends BaseReferralStatusAdminImpl
 
 	private static final long	serialVersionUID	= 1L;
 
-	public ims.careuk.vo.ReferralStatusConfigVoCollection getReferralStatus()
+	public ims.RefMan.vo.ReferralStatusConfigVoCollection getReferralStatus()
 	{
 
 		ims.domain.DomainFactory factory = getDomainFactory();
@@ -53,7 +53,7 @@ public class ReferralStatusAdminImpl extends BaseReferralStatusAdminImpl
 
 	}
 
-	public void saveReferralStatusConfig(ims.careuk.vo.ReferralStatusConfigVoCollection referralStatusConfigVoColl) throws StaleObjectException, ForeignKeyViolationException
+	public void saveReferralStatusConfig(ims.RefMan.vo.ReferralStatusConfigVoCollection referralStatusConfigVoColl) throws StaleObjectException, ForeignKeyViolationException
 	{
 
 		if (!referralStatusConfigVoColl.isValidated())

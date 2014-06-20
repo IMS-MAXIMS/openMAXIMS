@@ -48,7 +48,7 @@ public final class FormInfo extends ims.framework.FormInfo
 	}
 	public String[] getContextVariables()
 	{
-		return new String[] { "_cv_Core.DeathDetails", "_cv_Core.GPDetails", "_cv_Core.GPSurgery", "_cv_Core.NOKDetails", "_cv_Core.OtherAddresses", "_cv_Core.OtherNames", "_cv_Core.ParentFormMode", "_cv_Core.AddressSearchText", "_cv_Core.AddressSearchType", "_cv_Core.HideCancelButton", "_cv_Core.PatientToBeDisplayed", "_cv_Core.PersonAddress", "_cv_Core.YesNoDialogMessage", "_cv_CareUk.PatientsGP", "_cv_Core.CommChannels", "_cv_Core.NOKPersonAddress" };
+		return new String[] { "_cv_Core.DeathDetails", "_cv_Core.GPDetails", "_cv_Core.GPSurgery", "_cv_Core.NOKDetails", "_cv_Core.OtherAddresses", "_cv_Core.OtherNames", "_cv_Core.ParentFormMode", "_cv_Core.AddressSearchText", "_cv_Core.AddressSearchType", "_cv_Core.HideCancelButton", "_cv_Core.PatientToBeDisplayed", "_cv_Core.PersonAddress", "_cv_Core.YesNoDialogMessage", "_cv_RefMan.PatientsGP", "_cv_Core.CommChannels", "_cv_Core.NOKPersonAddress" };
 	}
 	public String getLocalVariablesPrefix()
 	{

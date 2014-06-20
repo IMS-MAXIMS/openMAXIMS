@@ -22,10 +22,10 @@
 
 package ims.core.domain.impl;
 
-import ims.careuk.domain.objects.CatsReferral;
-import ims.careuk.vo.CatsReferralListVo;
-import ims.careuk.vo.CatsReferralRefVo;
-import ims.careuk.vo.domain.CatsReferralListVoAssembler;
+import ims.RefMan.domain.objects.CatsReferral;
+import ims.RefMan.vo.CatsReferralListVo;
+import ims.RefMan.vo.CatsReferralRefVo;
+import ims.RefMan.vo.domain.CatsReferralListVoAssembler;
 import ims.core.admin.vo.CareContextRefVo;
 import ims.core.domain.base.impl.BaseUploadDocumentImpl;
 import ims.core.patient.vo.PatientRefVo;

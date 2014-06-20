@@ -212,7 +212,7 @@ public class Logic extends BaseLogic
 		// wdev-8663
 		try
 		{
-			form.getGlobalContext().CareUk.setCatsReferral(domain.getCatsReferralRefVoForCareContext(form.getGlobalContext().Core.getCurrentCareContext()));
+			form.getGlobalContext().RefMan.setCatsReferral(domain.getCatsReferralRefVoForCareContext(form.getGlobalContext().Core.getCurrentCareContext()));
 		}
 		catch (DomainInterfaceException e)
 		{

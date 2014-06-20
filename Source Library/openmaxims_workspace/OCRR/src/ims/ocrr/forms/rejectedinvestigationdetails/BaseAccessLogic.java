@@ -39,7 +39,7 @@ public class BaseAccessLogic extends FormAccessLogic implements Serializable
 	}
 	public boolean isAccessible()
 	{
-		if(!form.getGlobalContext().CareUk.getCatsReferralIsNotNull())
+		if(!form.getGlobalContext().RefMan.getCatsReferralIsNotNull())
 			return false;
 
 		return true;

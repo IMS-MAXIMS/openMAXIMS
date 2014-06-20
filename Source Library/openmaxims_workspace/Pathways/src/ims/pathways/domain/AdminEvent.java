@@ -27,8 +27,8 @@ package ims.pathways.domain;
 public interface AdminEvent extends ims.domain.DomainInterface
 {
 	// Generated from form domain interface definition
-	public ims.pathways.vo.AdminEventVoCollection getAdminEvents(ims.careuk.vo.CatsReferralRefVo referralRef);
+	public ims.pathways.vo.AdminEventVoCollection getAdminEvents(ims.RefMan.vo.CatsReferralRefVo referralRef);
 
 	// Generated from form domain interface definition
-	public ims.pathways.vo.AdminEventVo saveAdminEvent(ims.pathways.vo.AdminEventVo adminEventToSave, ims.careuk.vo.CatsReferralRefVo referralRef) throws ims.domain.exceptions.DomainInterfaceException, ims.domain.exceptions.StaleObjectException;
+	public ims.pathways.vo.AdminEventVo saveAdminEvent(ims.pathways.vo.AdminEventVo adminEventToSave, ims.RefMan.vo.CatsReferralRefVo referralRef) throws ims.domain.exceptions.DomainInterfaceException, ims.domain.exceptions.StaleObjectException;
 }

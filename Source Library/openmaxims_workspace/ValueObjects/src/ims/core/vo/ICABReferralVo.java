@@ -50,7 +50,7 @@ public class ICABReferralVo extends ims.core.admin.vo.ICABReferralRefVo implemen
 		this.extreferralkey = bean.getExtReferralKey();
 		this.patient = bean.getPatient() == null ? null : new ims.core.patient.vo.PatientRefVo(new Integer(bean.getPatient().getId()), bean.getPatient().getVersion());
 		this.ubrn = bean.getUBRN();
-		this.status = bean.getStatus() == null ? null : ims.careuk.vo.lookups.ICABReferralStatus.buildLookup(bean.getStatus());
+		this.status = bean.getStatus() == null ? null : ims.RefMan.vo.lookups.ICABReferralStatus.buildLookup(bean.getStatus());
 	}
 	public void populate(ims.vo.ValueObjectBeanMap map, ims.core.vo.beans.ICABReferralVoBean bean)
 	{
@@ -65,7 +65,7 @@ public class ICABReferralVo extends ims.core.admin.vo.ICABReferralRefVo implemen
 		this.extreferralkey = bean.getExtReferralKey();
 		this.patient = bean.getPatient() == null ? null : new ims.core.patient.vo.PatientRefVo(new Integer(bean.getPatient().getId()), bean.getPatient().getVersion());
 		this.ubrn = bean.getUBRN();
-		this.status = bean.getStatus() == null ? null : ims.careuk.vo.lookups.ICABReferralStatus.buildLookup(bean.getStatus());
+		this.status = bean.getStatus() == null ? null : ims.RefMan.vo.lookups.ICABReferralStatus.buildLookup(bean.getStatus());
 	}
 	public ims.vo.ValueObjectBean getBean()
 	{
@@ -244,11 +244,11 @@ public class ICABReferralVo extends ims.core.admin.vo.ICABReferralRefVo implemen
 	{
 		return this.status != null;
 	}
-	public ims.careuk.vo.lookups.ICABReferralStatus getStatus()
+	public ims.RefMan.vo.lookups.ICABReferralStatus getStatus()
 	{
 		return this.status;
 	}
-	public void setStatus(ims.careuk.vo.lookups.ICABReferralStatus value)
+	public void setStatus(ims.RefMan.vo.lookups.ICABReferralStatus value)
 	{
 		this.isValidated = false;
 		this.status = value;
@@ -341,7 +341,7 @@ public class ICABReferralVo extends ims.core.admin.vo.ICABReferralRefVo implemen
 		if(this.status == null)
 			clone.status = null;
 		else
-			clone.status = (ims.careuk.vo.lookups.ICABReferralStatus)this.status.clone();
+			clone.status = (ims.RefMan.vo.lookups.ICABReferralStatus)this.status.clone();
 		clone.isValidated = this.isValidated;
 		
 		this.isBusy = false;
@@ -410,7 +410,7 @@ public class ICABReferralVo extends ims.core.admin.vo.ICABReferralRefVo implemen
 	protected String extreferralkey;
 	protected ims.core.patient.vo.PatientRefVo patient;
 	protected String ubrn;
-	protected ims.careuk.vo.lookups.ICABReferralStatus status;
+	protected ims.RefMan.vo.lookups.ICABReferralStatus status;
 	private boolean isValidated = false;
 	private boolean isBusy = false;
 }

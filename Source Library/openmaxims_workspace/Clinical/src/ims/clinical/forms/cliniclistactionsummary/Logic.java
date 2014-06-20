@@ -210,11 +210,11 @@ public class Logic extends BaseLogic
 	@Override
 	protected void onFormDialogClosed(ims.framework.FormName formName, ims.framework.enumerations.DialogResult result) throws ims.framework.exceptions.PresentationLogicException
 	{
-		if (formName.equals(form.getForms().CAREUK.NewElectiveListTCIErodDialog) && DialogResult.ABORT.equals(result)) //abord is actually Close button
+		if (formName.equals(form.getForms().RefMan.NewElectiveListTCIErodDialog) && DialogResult.ABORT.equals(result)) //abord is actually Close button
 		{
 			markElectiveListAsComplete();
 		}
-		else if (formName.equals(form.getForms().CAREUK.BookAppointmentDialog))
+		else if (formName.equals(form.getForms().RefMan.BookAppointmentDialog))
 		{
 			markAppointmentsAsComplete();
 		}
@@ -504,7 +504,7 @@ public class Logic extends BaseLogic
 		form.getGlobalContext().Scheduling.setBookingAppointmentRef(form.grdResults().getSelectedRow().getValue());
 		form.getGlobalContext().Core.setPatientShort(domain.getPatientShort(form.grdResults().getSelectedRow().getValue().getPatient()));
 		form.getGlobalContext().ICP.setPatientICPRecord(form.grdResults().getSelectedRow().getValue().getICPInfo());
-		form.getGlobalContext().CareUk.setCatsReferral(form.grdResults().getSelectedRow().getValue().getReferral());
+		form.getGlobalContext().RefMan.setCatsReferral(form.grdResults().getSelectedRow().getValue().getReferral());
 
 		updateControlsState();
 	}
@@ -643,12 +643,12 @@ public class Logic extends BaseLogic
 				{
 					if (OutcomeAction.DONE_NOW.equals(outcomeAction.getOutcomeOfAction()))
 					{
-						row.setcolW(form.getImages().CAREUK.AddNow16);
+						row.setcolW(form.getImages().RefMan.AddNow16);
 						row.setTooltipForcolW("Task Complete");
 					}
 					else if (OutcomeAction.DO_LATER.equals(outcomeAction.getOutcomeOfAction()))
 					{
-						row.setcolW(form.getImages().CAREUK.AddLater16);
+						row.setcolW(form.getImages().RefMan.AddLater16);
 						row.setTooltipForcolW("Outstanding Task");
 					}
 				}
@@ -656,12 +656,12 @@ public class Logic extends BaseLogic
 				{
 					if (OutcomeAction.DONE_NOW.equals(outcomeAction.getOutcomeOfAction()))
 					{
-						row.setcolB(form.getImages().CAREUK.AddNow16);
+						row.setcolB(form.getImages().RefMan.AddNow16);
 						row.setTooltipForcolB("Task Complete");
 					}
 					else if (OutcomeAction.DO_LATER.equals(outcomeAction.getOutcomeOfAction()))
 					{
-						row.setcolB(form.getImages().CAREUK.AddLater16);
+						row.setcolB(form.getImages().RefMan.AddLater16);
 						row.setTooltipForcolB("Outstanding Task");
 					}
 				}
@@ -669,12 +669,12 @@ public class Logic extends BaseLogic
 				{
 					if (OutcomeAction.DONE_NOW.equals(outcomeAction.getOutcomeOfAction()))
 					{
-						row.setcolP(form.getImages().CAREUK.AddNow16);
+						row.setcolP(form.getImages().RefMan.AddNow16);
 						row.setTooltipForcolP("Task Complete");
 					}
 					else if (OutcomeAction.DO_LATER.equals(outcomeAction.getOutcomeOfAction()))
 					{
-						row.setcolP(form.getImages().CAREUK.AddLater16);
+						row.setcolP(form.getImages().RefMan.AddLater16);
 						row.setTooltipForcolP("Outstanding Task");
 					}
 				}
@@ -682,12 +682,12 @@ public class Logic extends BaseLogic
 				{
 					if (OutcomeAction.DONE_NOW.equals(outcomeAction.getOutcomeOfAction()))
 					{
-						row.setcolF(form.getImages().CAREUK.AddNow16);
+						row.setcolF(form.getImages().RefMan.AddNow16);
 						row.setTooltipForcolF("Task Complete");
 					}
 					else if (OutcomeAction.DO_LATER.equals(outcomeAction.getOutcomeOfAction()))
 					{
-						row.setcolF(form.getImages().CAREUK.AddLater16);
+						row.setcolF(form.getImages().RefMan.AddLater16);
 						row.setTooltipForcolF("Outstanding Task");
 					}
 				}
@@ -695,12 +695,12 @@ public class Logic extends BaseLogic
 				{
 					if (OutcomeAction.DONE_NOW.equals(outcomeAction.getOutcomeOfAction()))
 					{
-						row.setcolO(form.getImages().CAREUK.AddNow16);
+						row.setcolO(form.getImages().RefMan.AddNow16);
 						row.setTooltipForcolO("Task Complete");
 					}
 					else if (OutcomeAction.DO_LATER.equals(outcomeAction.getOutcomeOfAction()))
 					{
-						row.setcolO(form.getImages().CAREUK.AddLater16);
+						row.setcolO(form.getImages().RefMan.AddLater16);
 						row.setTooltipForcolO("Outstanding Task");
 					}
 				}
@@ -708,12 +708,12 @@ public class Logic extends BaseLogic
 				{
 					if (OutcomeAction.DONE_NOW.equals(outcomeAction.getOutcomeOfAction()))
 					{
-						row.setcolT(form.getImages().CAREUK.AddNow16);
+						row.setcolT(form.getImages().RefMan.AddNow16);
 						row.setTooltipForcolT("Task Complete");
 					}
 					else if (OutcomeAction.DO_LATER.equals(outcomeAction.getOutcomeOfAction()))
 					{
-						row.setcolT(form.getImages().CAREUK.AddLater16);
+						row.setcolT(form.getImages().RefMan.AddLater16);
 						row.setTooltipForcolT("Outstanding Task");
 					}
 				}
@@ -779,22 +779,22 @@ public class Logic extends BaseLogic
 		switch (menuItemID)
 		{
 			case GenForm.ContextMenus.ClinicalNamespace.ClinicListActionSummaryMenu.ADD_TO_WAITING_LIST:
-				form.getGlobalContext().CareUk.setPatientElectiveListRef(null);
-				engine.open(form.getForms().CAREUK.NewElectiveListTCIErodDialog, new Object[] { ElectiveListDetails.ADDTOWAITINGLIST });
+				form.getGlobalContext().RefMan.setPatientElectiveListRef(null);
+				engine.open(form.getForms().RefMan.NewElectiveListTCIErodDialog, new Object[] { ElectiveListDetails.ADDTOWAITINGLIST });
 				break;
 
 			case GenForm.ContextMenus.ClinicalNamespace.ClinicListActionSummaryMenu.ADD_TO_BOOKED_LIST:
-				form.getGlobalContext().CareUk.setPatientElectiveListRef(null);
-				engine.open(form.getForms().CAREUK.NewElectiveListTCIErodDialog, new Object[] { ElectiveListDetails.ADDTOBOOKEDLIST });
+				form.getGlobalContext().RefMan.setPatientElectiveListRef(null);
+				engine.open(form.getForms().RefMan.NewElectiveListTCIErodDialog, new Object[] { ElectiveListDetails.ADDTOBOOKEDLIST });
 				break;
 
 			case GenForm.ContextMenus.ClinicalNamespace.ClinicListActionSummaryMenu.ADD_TO_PLANNED_LIST:
-				form.getGlobalContext().CareUk.setPatientElectiveListRef(null);
-				engine.open(form.getForms().CAREUK.NewElectiveListTCIErodDialog, new Object[] { ElectiveListDetails.ADDTOPLANNEDLIST });
+				form.getGlobalContext().RefMan.setPatientElectiveListRef(null);
+				engine.open(form.getForms().RefMan.NewElectiveListTCIErodDialog, new Object[] { ElectiveListDetails.ADDTOPLANNEDLIST });
 				break;
 
 			case GenForm.ContextMenus.ClinicalNamespace.ClinicListActionSummaryMenu.BOOK_APPOINTMENT:
-				engine.open(form.getForms().CAREUK.BookAppointmentDialog);
+				engine.open(form.getForms().RefMan.BookAppointmentDialog);
 				break;
 		}
 	}

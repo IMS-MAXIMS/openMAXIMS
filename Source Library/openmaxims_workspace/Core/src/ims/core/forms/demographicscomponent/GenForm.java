@@ -1591,7 +1591,7 @@ public class GenForm extends FormBridge
 			fields[67] = new ims.framework.ReportField(this.context, "_cvp_Clinical.ExtendedClinicalNotesListFilter", "BO-1011100000-CARECONTEXT", "CareContext");
 			fields[68] = new ims.framework.ReportField(this.context, "_cvp_Core.PasEvent", "BO-1014100003-ID", "ID_PASEvent");
 			fields[69] = new ims.framework.ReportField(this.context, "_cvp_Correspondence.CorrespondenceDetails", "BO-1052100001-ID", "ID_CorrespondenceDetails");
-			fields[70] = new ims.framework.ReportField(this.context, "_cvp_CareUk.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
+			fields[70] = new ims.framework.ReportField(this.context, "_cvp_RefMan.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
 			fields[71] = new ims.framework.ReportField(this.context, "_cv_Core.DeathDetails", "BO-1003100060-ID", "ID_DeathDetails");
 			fields[72] = new ims.framework.ReportField(this.context, "_cv_Core.DeathDetails", "BO-1003100060-DEATHPLACEOFDEATH", "DeathPlaceofDeath");
 			fields[73] = new ims.framework.ReportField(this.context, "_cv_Core.DeathDetails", "BO-1003100060-DEATHCAUSEESTABLISHED", "DeathCauseEstablished");
@@ -1642,8 +1642,8 @@ public class GenForm extends FormBridge
 			fields[118] = new ims.framework.ReportField(this.context, "_cv_Core.PersonAddress", "BO-1002100000-ADDRESSTYPE", "AddressType");
 			fields[119] = new ims.framework.ReportField(this.context, "_cv_Core.PersonAddress", "BO-1002100000-PCT", "PCT");
 			fields[120] = new ims.framework.ReportField(this.context, "_cv_Core.PersonAddress", "BO-1002100000-OTHERPHONE", "Otherphone");
-			fields[121] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientsGP", "BO-1006100001-ID", "ID_Gp");
-			fields[122] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientsGP", "BO-1006100001-STATUS", "Status");
+			fields[121] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientsGP", "BO-1006100001-ID", "ID_Gp");
+			fields[122] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientsGP", "BO-1006100001-STATUS", "Status");
 			fields[123] = new ims.framework.ReportField(this.context, "_cv_Core.NOKPersonAddress", "BO-1002100000-ID", "ID_Address");
 			fields[124] = new ims.framework.ReportField(this.context, "_cv_Core.NOKPersonAddress", "BO-1002100000-LINE1", "Line1");
 			fields[125] = new ims.framework.ReportField(this.context, "_cv_Core.NOKPersonAddress", "BO-1002100000-LINE2", "Line2");

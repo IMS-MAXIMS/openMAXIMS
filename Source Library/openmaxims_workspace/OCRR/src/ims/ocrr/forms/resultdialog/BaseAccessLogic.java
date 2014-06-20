@@ -115,7 +115,7 @@ public class BaseAccessLogic extends FormAccessLogic implements Serializable
 				OrderInvStatusHistory = new LocalFormName(116143);
 				CentricityWebPACSViewer = new LocalFormName(116156);
 				NewResults = new LocalFormName(116127);
-				CAREUKNewResults = new LocalFormName(116147);
+				RefManNewResults = new LocalFormName(116147);
 				PathologyOrders = new LocalFormName(116139);
 				RadiologyOrders = new LocalFormName(116138);
 				ResultCommentsDialog = new LocalFormName(116162);
@@ -127,7 +127,7 @@ public class BaseAccessLogic extends FormAccessLogic implements Serializable
 			public final FormName OrderInvStatusHistory;
 			public final FormName CentricityWebPACSViewer;
 			public final FormName NewResults;
-			public final FormName CAREUKNewResults;
+			public final FormName RefManNewResults;
 			public final FormName PathologyOrders;
 			public final FormName RadiologyOrders;
 			public final FormName ResultCommentsDialog;

@@ -22,7 +22,7 @@
 
 package ims.core.domain.impl;
 
-import ims.careuk.vo.lookups.ReferralApptStatus;
+import ims.RefMan.vo.lookups.ReferralApptStatus;
 import ims.clinical.vo.lookups.DischargeLetterStatus;
 import ims.clinical.vo.lookups.EDischargeSummarySection;
 import ims.clinical.vo.lookups.EDischargeSummarySectionStatus;

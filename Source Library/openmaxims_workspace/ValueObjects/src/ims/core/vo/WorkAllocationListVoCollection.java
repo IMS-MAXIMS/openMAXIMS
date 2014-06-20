@@ -30,7 +30,7 @@ import java.util.Iterator;
 import ims.framework.enumerations.SortOrder;
 
 /**
- * Linked to CAREUK.WorkAllocation business object (ID: 1096100033).
+ * Linked to RefMan.WorkAllocation business object (ID: 1096100033).
  */
 public class WorkAllocationListVoCollection extends ims.vo.ValueObjectCollection implements ims.vo.ImsCloneable, Iterable<WorkAllocationListVo>
 {
@@ -39,7 +39,7 @@ public class WorkAllocationListVoCollection extends ims.vo.ValueObjectCollection
 	private ArrayList<WorkAllocationListVo> col = new ArrayList<WorkAllocationListVo>();
 	public String getBoClassName()
 	{
-		return "ims.careuk.domain.objects.WorkAllocation";
+		return "ims.RefMan.domain.objects.WorkAllocation";
 	}
 	public boolean add(WorkAllocationListVo value)
 	{
@@ -181,9 +181,9 @@ public class WorkAllocationListVoCollection extends ims.vo.ValueObjectCollection
 		Collections.sort(col, comparator);
 		return this;
 	}
-	public ims.careuk.vo.WorkAllocationRefVoCollection toRefVoCollection()
+	public ims.RefMan.vo.WorkAllocationRefVoCollection toRefVoCollection()
 	{
-		ims.careuk.vo.WorkAllocationRefVoCollection result = new ims.careuk.vo.WorkAllocationRefVoCollection();
+		ims.RefMan.vo.WorkAllocationRefVoCollection result = new ims.RefMan.vo.WorkAllocationRefVoCollection();
 		for(int x = 0; x < this.col.size(); x++)
 		{
 			result.add(this.col.get(x));

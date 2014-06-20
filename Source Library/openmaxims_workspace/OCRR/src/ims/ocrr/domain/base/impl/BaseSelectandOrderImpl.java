@@ -119,7 +119,7 @@ public abstract class BaseSelectandOrderImpl extends DomainImpl implements ims.o
 	}
 
 	@SuppressWarnings("unused")
-	public void validatelistLocationLiteForReferralContract(ims.careuk.vo.CatsReferralRefVo referral, Boolean includePathandRad)
+	public void validatelistLocationLiteForReferralContract(ims.RefMan.vo.CatsReferralRefVo referral, Boolean includePathandRad)
 	{
 		if(includePathandRad == null)
 			throw new ims.domain.exceptions.DomainRuntimeException("The parameter 'includePathandRad' of type 'Boolean' cannot be null.");

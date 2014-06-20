@@ -34,7 +34,7 @@ public class CatsReferralEmergencyAdmissionVoBean extends ims.vo.ValueObjectBean
 		this.version = vo.getBoVersion();
 		this.patient = vo.getPatient() == null ? null : (ims.core.vo.beans.PatientShortBean)vo.getPatient().getBean();
 		this.carecontext = vo.getCareContext() == null ? null : new ims.vo.RefVoBean(vo.getCareContext().getBoId(), vo.getCareContext().getBoVersion());
-		this.currentstatus = vo.getCurrentStatus() == null ? null : (ims.careuk.vo.beans.CatsReferralStatusVoBean)vo.getCurrentStatus().getBean();
+		this.currentstatus = vo.getCurrentStatus() == null ? null : (ims.RefMan.vo.beans.CatsReferralStatusVoBean)vo.getCurrentStatus().getBean();
 		if(vo.getStatusHistory() != null)
 		{
 			this.statushistory = new ims.vo.RefVoBean[vo.getStatusHistory().size()];
@@ -56,7 +56,7 @@ public class CatsReferralEmergencyAdmissionVoBean extends ims.vo.ValueObjectBean
 		this.version = vo.getBoVersion();
 		this.patient = vo.getPatient() == null ? null : (ims.core.vo.beans.PatientShortBean)vo.getPatient().getBean(map);
 		this.carecontext = vo.getCareContext() == null ? null : new ims.vo.RefVoBean(vo.getCareContext().getBoId(), vo.getCareContext().getBoVersion());
-		this.currentstatus = vo.getCurrentStatus() == null ? null : (ims.careuk.vo.beans.CatsReferralStatusVoBean)vo.getCurrentStatus().getBean(map);
+		this.currentstatus = vo.getCurrentStatus() == null ? null : (ims.RefMan.vo.beans.CatsReferralStatusVoBean)vo.getCurrentStatus().getBean(map);
 		if(vo.getStatusHistory() != null)
 		{
 			this.statushistory = new ims.vo.RefVoBean[vo.getStatusHistory().size()];
@@ -123,11 +123,11 @@ public class CatsReferralEmergencyAdmissionVoBean extends ims.vo.ValueObjectBean
 	{
 		this.carecontext = value;
 	}
-	public ims.careuk.vo.beans.CatsReferralStatusVoBean getCurrentStatus()
+	public ims.RefMan.vo.beans.CatsReferralStatusVoBean getCurrentStatus()
 	{
 		return this.currentstatus;
 	}
-	public void setCurrentStatus(ims.careuk.vo.beans.CatsReferralStatusVoBean value)
+	public void setCurrentStatus(ims.RefMan.vo.beans.CatsReferralStatusVoBean value)
 	{
 		this.currentstatus = value;
 	}
@@ -184,7 +184,7 @@ public class CatsReferralEmergencyAdmissionVoBean extends ims.vo.ValueObjectBean
 	private int version;
 	private ims.core.vo.beans.PatientShortBean patient;
 	private ims.vo.RefVoBean carecontext;
-	private ims.careuk.vo.beans.CatsReferralStatusVoBean currentstatus;
+	private ims.RefMan.vo.beans.CatsReferralStatusVoBean currentstatus;
 	private ims.vo.RefVoBean[] statushistory;
 	private ims.vo.RefVoBean journey;
 	private ims.core.vo.beans.AdmissionDetailVoBean[] admissions;

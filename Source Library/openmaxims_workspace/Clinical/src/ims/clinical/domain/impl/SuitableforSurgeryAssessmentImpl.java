@@ -22,22 +22,22 @@
 
 package ims.clinical.domain.impl;
 
-import ims.careuk.domain.objects.CatsReferral;
-import ims.careuk.domain.objects.FitForSurgeryAssesment;
-import ims.careuk.domain.objects.OutpatientPreAssessment;
-import ims.careuk.domain.objects.SuitableForSurgeryAssessment;
-import ims.careuk.vo.CatsReferralListVo;
-import ims.careuk.vo.FitForSurgeryAssesmentVo;
-import ims.careuk.vo.OutpatientPreAssessmentVo;
-import ims.careuk.vo.SuitableForSurgeryAssessmentLiteVo;
-import ims.careuk.vo.SuitableForSurgeryAssessmentLiteVoCollection;
-import ims.careuk.vo.SuitableForSurgeryAssessmentRefVo;
-import ims.careuk.vo.domain.CatsReferralListVoAssembler;
-import ims.careuk.vo.domain.CatsReferralWizardVoAssembler;
-import ims.careuk.vo.domain.ContractConfigForReferralDetailsComponentVoAssembler;
-import ims.careuk.vo.domain.FitForSurgeryAssesmentVoAssembler;
-import ims.careuk.vo.domain.OutpatientPreAssessmentVoAssembler;
-import ims.careuk.vo.domain.SuitableForSurgeryAssessmentLiteVoAssembler;
+import ims.RefMan.domain.objects.CatsReferral;
+import ims.RefMan.domain.objects.FitForSurgeryAssesment;
+import ims.RefMan.domain.objects.OutpatientPreAssessment;
+import ims.RefMan.domain.objects.SuitableForSurgeryAssessment;
+import ims.RefMan.vo.CatsReferralListVo;
+import ims.RefMan.vo.FitForSurgeryAssesmentVo;
+import ims.RefMan.vo.OutpatientPreAssessmentVo;
+import ims.RefMan.vo.SuitableForSurgeryAssessmentLiteVo;
+import ims.RefMan.vo.SuitableForSurgeryAssessmentLiteVoCollection;
+import ims.RefMan.vo.SuitableForSurgeryAssessmentRefVo;
+import ims.RefMan.vo.domain.CatsReferralListVoAssembler;
+import ims.RefMan.vo.domain.CatsReferralWizardVoAssembler;
+import ims.RefMan.vo.domain.ContractConfigForReferralDetailsComponentVoAssembler;
+import ims.RefMan.vo.domain.FitForSurgeryAssesmentVoAssembler;
+import ims.RefMan.vo.domain.OutpatientPreAssessmentVoAssembler;
+import ims.RefMan.vo.domain.SuitableForSurgeryAssessmentLiteVoAssembler;
 import ims.clinical.domain.ClinicalDiAssociations;
 import ims.clinical.domain.FitForSurgeryAssessment;
 import ims.clinical.domain.base.impl.BaseSuitableforSurgeryAssessmentImpl;
@@ -69,7 +69,7 @@ public class SuitableforSurgeryAssessmentImpl extends BaseSuitableforSurgeryAsse
 
 
 	//wdev-13765 (added parameter catsReferralLiteVo referralRecord to saveAssessment method)
-	public ims.careuk.vo.SuitableForSurgeryAssessmentLiteVo saveAssessment(ims.careuk.vo.SuitableForSurgeryAssessmentLiteVo assessment,catsReferralLiteVo referralRecord) throws ims.domain.exceptions.DomainInterfaceException, ims.domain.exceptions.StaleObjectException, ims.domain.exceptions.ForeignKeyViolationException, ims.domain.exceptions.UniqueKeyViolationException
+	public ims.RefMan.vo.SuitableForSurgeryAssessmentLiteVo saveAssessment(ims.RefMan.vo.SuitableForSurgeryAssessmentLiteVo assessment,catsReferralLiteVo referralRecord) throws ims.domain.exceptions.DomainInterfaceException, ims.domain.exceptions.StaleObjectException, ims.domain.exceptions.ForeignKeyViolationException, ims.domain.exceptions.UniqueKeyViolationException
 	{
 		// Check for a provided VO
 		if (assessment == null)

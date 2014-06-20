@@ -24,9 +24,9 @@ package ims.clinical.domain.impl;
 
 import ims.admin.domain.OrganisationAndLocation;
 import ims.admin.domain.impl.OrganisationAndLocationImpl;
-import ims.careuk.domain.objects.CatsReferral;
-import ims.careuk.vo.CatsReferralRefVo;
-import ims.careuk.vo.domain.CatsReferralVoAssembler;
+import ims.RefMan.domain.objects.CatsReferral;
+import ims.RefMan.vo.CatsReferralRefVo;
+import ims.RefMan.vo.domain.CatsReferralVoAssembler;
 import ims.clinical.domain.base.impl.BaseInpatientListwithICPActionsImpl;
 import ims.core.admin.domain.objects.CareContext;
 import ims.core.admin.pas.domain.objects.InpatientEpisode;

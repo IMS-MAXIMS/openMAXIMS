@@ -57,7 +57,7 @@ public interface OrderSummaryDialog extends ims.domain.DomainInterface
 	/**
 	* updateCatsReferralAdditionalInvStatus
 	*/
-	public void updateCatsReferralAdditionalInvStatus(ims.careuk.vo.CatsReferralRefVo catsReferral) throws ims.domain.exceptions.StaleObjectException;
+	public void updateCatsReferralAdditionalInvStatus(ims.RefMan.vo.CatsReferralRefVo catsReferral) throws ims.domain.exceptions.StaleObjectException;
 
 	// Generated from form domain interface definition
 	/**

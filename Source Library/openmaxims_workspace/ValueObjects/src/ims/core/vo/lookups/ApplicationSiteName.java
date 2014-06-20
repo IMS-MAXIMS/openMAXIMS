@@ -117,7 +117,7 @@ public class ApplicationSiteName extends ims.vo.LookupInstVo implements TreeNode
 		ApplicationSiteNameCollection result = new ApplicationSiteNameCollection();
 		result.add(BHRT);
 		result.add(BLACKPOOL);
-		result.add(CAREUK);
+		result.add(RefMan);
 		result.add(CCO);
 		result.add(CMHT);
 		result.add(COE);
@@ -148,7 +148,7 @@ public class ApplicationSiteName extends ims.vo.LookupInstVo implements TreeNode
 		ApplicationSiteName[] instances = new ApplicationSiteName[26];
 		instances[0] = BHRT;
 		instances[1] = BLACKPOOL;
-		instances[2] = CAREUK;
+		instances[2] = RefMan;
 		instances[3] = CCO;
 		instances[4] = CMHT;
 		instances[5] = COE;
@@ -179,7 +179,7 @@ public class ApplicationSiteName extends ims.vo.LookupInstVo implements TreeNode
 		String[] negativeInstances = new String[26];
 		negativeInstances[0] = "BHRT";
 		negativeInstances[1] = "BLACKPOOL";
-		negativeInstances[2] = "CAREUK";
+		negativeInstances[2] = "RefMan";
 		negativeInstances[3] = "CCO";
 		negativeInstances[4] = "CMHT";
 		negativeInstances[5] = "COE";
@@ -236,7 +236,7 @@ public class ApplicationSiteName extends ims.vo.LookupInstVo implements TreeNode
 	public static final int TYPE_ID = 1021238;
 	public static final ApplicationSiteName BHRT = new ApplicationSiteName(-1680, "BHRT", true, null, null, Color.Default);
 	public static final ApplicationSiteName BLACKPOOL = new ApplicationSiteName(-1681, "Blackpool", true, null, null, Color.Default);
-	public static final ApplicationSiteName CAREUK = new ApplicationSiteName(-1682, "CAREUK", true, null, null, Color.Default);
+	public static final ApplicationSiteName RefMan = new ApplicationSiteName(-1682, "RefMan", true, null, null, Color.Default);
 	public static final ApplicationSiteName CCO = new ApplicationSiteName(-1683, "CCO", true, null, null, Color.Default);
 	public static final ApplicationSiteName CMHT = new ApplicationSiteName(-1684, "CMHT", true, null, null, Color.Default);
 	public static final ApplicationSiteName COE = new ApplicationSiteName(-1685, "COE", true, null, null, Color.Default);

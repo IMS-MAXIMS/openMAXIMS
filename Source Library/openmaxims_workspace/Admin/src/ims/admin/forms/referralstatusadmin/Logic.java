@@ -25,11 +25,11 @@ package ims.admin.forms.referralstatusadmin;
 import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
 
 import ims.admin.forms.activity.GenForm.ContextMenus;
-import ims.careuk.vo.ReferralStatusConfigVo;
-import ims.careuk.vo.ReferralStatusConfigVoCollection;
-import ims.careuk.vo.lookups.LookupHelper;
-import ims.careuk.vo.lookups.ReferralApptStatus;
-import ims.careuk.vo.lookups.ReferralApptStatusCollection;
+import ims.RefMan.vo.ReferralStatusConfigVo;
+import ims.RefMan.vo.ReferralStatusConfigVoCollection;
+import ims.RefMan.vo.lookups.LookupHelper;
+import ims.RefMan.vo.lookups.ReferralApptStatus;
+import ims.RefMan.vo.lookups.ReferralApptStatusCollection;
 import ims.configuration.gen.ConfigFlag;
 import ims.core.resource.people.vo.GpRefVo;
 import ims.core.resource.people.vo.MemberOfStaffRefVo;

@@ -40,7 +40,7 @@ public class BookingAppointmentOutcomeVoBean extends ims.vo.ValueObjectBean
 		this.seenby = vo.getSeenBy() == null ? null : (ims.core.vo.beans.HcpLiteVoBean)vo.getSeenBy().getBean();
 		this.outpatientprocedures = vo.getOutpatientProcedures() == null ? null : vo.getOutpatientProcedures().getBeanCollection();
 		this.outpatientdiagnoses = vo.getOutpatientDiagnoses() == null ? null : vo.getOutpatientDiagnoses().getBeanCollection();
-		this.session = vo.getSession() == null ? null : (ims.careuk.vo.beans.SessionForAppointmentOutcomeVoBean)vo.getSession().getBean();
+		this.session = vo.getSession() == null ? null : (ims.RefMan.vo.beans.SessionForAppointmentOutcomeVoBean)vo.getSession().getBean();
 		this.outcomereason = vo.getOutcomeReason() == null ? null : (ims.vo.LookupInstanceBean)vo.getOutcomeReason().getBean();
 		this.wasfirstdefinitivetreatment = vo.getWasFirstDefinitiveTreatment();
 		this.outcomeactions = vo.getOutcomeActions() == null ? null : vo.getOutcomeActions().getBeanCollection();
@@ -58,7 +58,7 @@ public class BookingAppointmentOutcomeVoBean extends ims.vo.ValueObjectBean
 		this.seenby = vo.getSeenBy() == null ? null : (ims.core.vo.beans.HcpLiteVoBean)vo.getSeenBy().getBean(map);
 		this.outpatientprocedures = vo.getOutpatientProcedures() == null ? null : vo.getOutpatientProcedures().getBeanCollection();
 		this.outpatientdiagnoses = vo.getOutpatientDiagnoses() == null ? null : vo.getOutpatientDiagnoses().getBeanCollection();
-		this.session = vo.getSession() == null ? null : (ims.careuk.vo.beans.SessionForAppointmentOutcomeVoBean)vo.getSession().getBean(map);
+		this.session = vo.getSession() == null ? null : (ims.RefMan.vo.beans.SessionForAppointmentOutcomeVoBean)vo.getSession().getBean(map);
 		this.outcomereason = vo.getOutcomeReason() == null ? null : (ims.vo.LookupInstanceBean)vo.getOutcomeReason().getBean();
 		this.wasfirstdefinitivetreatment = vo.getWasFirstDefinitiveTreatment();
 		this.outcomeactions = vo.getOutcomeActions() == null ? null : vo.getOutcomeActions().getBeanCollection();
@@ -147,11 +147,11 @@ public class BookingAppointmentOutcomeVoBean extends ims.vo.ValueObjectBean
 	{
 		this.seenby = value;
 	}
-	public ims.careuk.vo.beans.PatientProcedureForAppointmentOutcomeVoBean[] getOutpatientProcedures()
+	public ims.RefMan.vo.beans.PatientProcedureForAppointmentOutcomeVoBean[] getOutpatientProcedures()
 	{
 		return this.outpatientprocedures;
 	}
-	public void setOutpatientProcedures(ims.careuk.vo.beans.PatientProcedureForAppointmentOutcomeVoBean[] value)
+	public void setOutpatientProcedures(ims.RefMan.vo.beans.PatientProcedureForAppointmentOutcomeVoBean[] value)
 	{
 		this.outpatientprocedures = value;
 	}
@@ -163,11 +163,11 @@ public class BookingAppointmentOutcomeVoBean extends ims.vo.ValueObjectBean
 	{
 		this.outpatientdiagnoses = value;
 	}
-	public ims.careuk.vo.beans.SessionForAppointmentOutcomeVoBean getSession()
+	public ims.RefMan.vo.beans.SessionForAppointmentOutcomeVoBean getSession()
 	{
 		return this.session;
 	}
-	public void setSession(ims.careuk.vo.beans.SessionForAppointmentOutcomeVoBean value)
+	public void setSession(ims.RefMan.vo.beans.SessionForAppointmentOutcomeVoBean value)
 	{
 		this.session = value;
 	}
@@ -204,9 +204,9 @@ public class BookingAppointmentOutcomeVoBean extends ims.vo.ValueObjectBean
 	private Boolean haselectivelist;
 	private ims.framework.utils.beans.DateBean appointmentdate;
 	private ims.core.vo.beans.HcpLiteVoBean seenby;
-	private ims.careuk.vo.beans.PatientProcedureForAppointmentOutcomeVoBean[] outpatientprocedures;
+	private ims.RefMan.vo.beans.PatientProcedureForAppointmentOutcomeVoBean[] outpatientprocedures;
 	private ims.clinical.vo.beans.PatientDiagnosisOpNotesVoBean[] outpatientdiagnoses;
-	private ims.careuk.vo.beans.SessionForAppointmentOutcomeVoBean session;
+	private ims.RefMan.vo.beans.SessionForAppointmentOutcomeVoBean session;
 	private ims.vo.LookupInstanceBean outcomereason;
 	private Boolean wasfirstdefinitivetreatment;
 	private ims.scheduling.vo.beans.AppointmentOutcomeActionVoBean[] outcomeactions;

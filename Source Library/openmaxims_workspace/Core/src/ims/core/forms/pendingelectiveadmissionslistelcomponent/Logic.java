@@ -22,9 +22,9 @@
 
 package ims.core.forms.pendingelectiveadmissionslistelcomponent;
 
-import ims.careuk.vo.PatientElectiveListForPendingAdmissionVo;
-import ims.careuk.vo.PatientElectiveListForPendingAdmissionVoCollection;
-import ims.careuk.vo.PatientElectiveTCIBedManagerCommentVo;
+import ims.RefMan.vo.PatientElectiveListForPendingAdmissionVo;
+import ims.RefMan.vo.PatientElectiveListForPendingAdmissionVoCollection;
+import ims.RefMan.vo.PatientElectiveTCIBedManagerCommentVo;
 import ims.configuration.gen.ConfigFlag;
 import ims.core.resource.place.vo.LocationRefVo;
 import ims.core.vo.HcpFilter;

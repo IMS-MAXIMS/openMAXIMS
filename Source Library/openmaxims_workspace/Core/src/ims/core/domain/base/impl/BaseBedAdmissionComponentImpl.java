@@ -158,12 +158,12 @@ public abstract class BaseBedAdmissionComponentImpl extends DomainImpl implement
 	}
 
 	@SuppressWarnings("unused")
-	public void validategetPatientElectiveAdmission(ims.careuk.vo.PatientElectiveListRefVo patientElectiveLlist)
+	public void validategetPatientElectiveAdmission(ims.RefMan.vo.PatientElectiveListRefVo patientElectiveLlist)
 	{
 	}
 
 	@SuppressWarnings("unused")
-	public void validatesaveTCIAdmissionAndUpdateList(ims.careuk.vo.PatientElectiveListBedAdmissionVo electiveAdmission, ims.core.vo.BedSpaceStateLiteVo bedSpaceState, ims.core.vo.WardStayVo wardStay, ims.core.vo.ConsultantStayVo consultant, ims.careuk.vo.PatientElectiveListBedAdmissionVoCollection patientElectiveListsToCancel)
+	public void validatesaveTCIAdmissionAndUpdateList(ims.RefMan.vo.PatientElectiveListBedAdmissionVo electiveAdmission, ims.core.vo.BedSpaceStateLiteVo bedSpaceState, ims.core.vo.WardStayVo wardStay, ims.core.vo.ConsultantStayVo consultant, ims.RefMan.vo.PatientElectiveListBedAdmissionVoCollection patientElectiveListsToCancel)
 	{
 	}
 
@@ -178,12 +178,12 @@ public abstract class BaseBedAdmissionComponentImpl extends DomainImpl implement
 	}
 
 	@SuppressWarnings("unused")
-	public void validatehasPatientElectiveListToCancel(ims.core.patient.vo.PatientRefVo patient, ims.careuk.vo.PatientElectiveListRefVo electiveElist, ims.core.clinical.vo.ServiceRefVo service)
+	public void validatehasPatientElectiveListToCancel(ims.core.patient.vo.PatientRefVo patient, ims.RefMan.vo.PatientElectiveListRefVo electiveElist, ims.core.clinical.vo.ServiceRefVo service)
 	{
 	}
 
 	@SuppressWarnings("unused")
-	public void validategetPatientElectiveListToCancel(ims.core.patient.vo.PatientRefVo patient, ims.careuk.vo.PatientElectiveListRefVo electiveElist, ims.core.clinical.vo.ServiceRefVo service)
+	public void validategetPatientElectiveListToCancel(ims.core.patient.vo.PatientRefVo patient, ims.RefMan.vo.PatientElectiveListRefVo electiveElist, ims.core.clinical.vo.ServiceRefVo service)
 	{
 	}
 

@@ -75,11 +75,11 @@ public class PatientDocumentSaveVo extends ims.vo.ValueObject implements ims.vo.
 	{
 		return this.catsreferralwizardvo != null;
 	}
-	public ims.careuk.vo.CatsReferralWizardVo getCatsReferralWizardVo()
+	public ims.RefMan.vo.CatsReferralWizardVo getCatsReferralWizardVo()
 	{
 		return this.catsreferralwizardvo;
 	}
-	public void setCatsReferralWizardVo(ims.careuk.vo.CatsReferralWizardVo value)
+	public void setCatsReferralWizardVo(ims.RefMan.vo.CatsReferralWizardVo value)
 	{
 		this.isValidated = false;
 		this.catsreferralwizardvo = value;
@@ -217,7 +217,7 @@ public class PatientDocumentSaveVo extends ims.vo.ValueObject implements ims.vo.
 		if(this.catsreferralwizardvo == null)
 			clone.catsreferralwizardvo = null;
 		else
-			clone.catsreferralwizardvo = (ims.careuk.vo.CatsReferralWizardVo)this.catsreferralwizardvo.clone();
+			clone.catsreferralwizardvo = (ims.RefMan.vo.CatsReferralWizardVo)this.catsreferralwizardvo.clone();
 		clone.isValidated = this.isValidated;
 		
 		this.isBusy = false;
@@ -278,7 +278,7 @@ public class PatientDocumentSaveVo extends ims.vo.ValueObject implements ims.vo.
 		return 2;
 	}
 	protected ims.core.vo.PatientDocumentVo patientdocumentvo;
-	protected ims.careuk.vo.CatsReferralWizardVo catsreferralwizardvo;
+	protected ims.RefMan.vo.CatsReferralWizardVo catsreferralwizardvo;
 	private boolean isValidated = false;
 	private boolean isBusy = false;
 }

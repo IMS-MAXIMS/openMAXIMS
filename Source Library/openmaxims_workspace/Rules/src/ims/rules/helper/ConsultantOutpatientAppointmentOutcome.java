@@ -39,7 +39,7 @@ public final class ConsultantOutpatientAppointmentOutcome extends ims.rules.type
 		super.isPublic = true;
 		super.supportsNotifications = false;
 		super.description = "Consultant Outpatient Appointment Outcome";
-		super.businessObjectName = "ims.careuk.domain.objects.SuitableForSurgeryAssessment";
+		super.businessObjectName = "ims.RefMan.domain.objects.SuitableForSurgeryAssessment";
 		super.fields = new ArrayList<ims.rules.types.RulesEngineField>();
 		super.fields.add(new ims.rules.types.RulesEngineField("id", "Code", "Code", false, ims.rules.types.RulesEngineFieldType.ENTITY_CODE, null, 0, "Id", this));
 		fieldEntityIndex = entities.indexOf(new ims.rules.helper.PatientCareContext(entities));

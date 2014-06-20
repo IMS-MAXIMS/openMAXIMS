@@ -39,7 +39,7 @@ public final class PatientReferral extends ims.rules.types.RulesEngineEntity
 		super.isPublic = true;
 		super.supportsNotifications = false;
 		super.description = "Patient Referral";
-		super.businessObjectName = "ims.careuk.domain.objects.CatsReferral";
+		super.businessObjectName = "ims.RefMan.domain.objects.CatsReferral";
 		super.fields = new ArrayList<ims.rules.types.RulesEngineField>();
 		fieldEntityIndex = entities.indexOf(new ims.rules.helper.Patient(entities));
 		super.fields.add(new ims.rules.types.RulesEngineField("38366782008821181706481400932", "Patient", "Patient", false, ims.rules.types.RulesEngineFieldType.ENTITY, (fieldEntityIndex >= 0 ? entities.get(fieldEntityIndex) : new ims.rules.helper.Patient(entities)), 0, "Patient", this));

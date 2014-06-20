@@ -22,11 +22,11 @@
 
 package ims.clinical.forms.suitableforsurgeryassessment;
 
-import ims.careuk.vo.SuitableForSurgeryAssessmentLiteVo;
-import ims.careuk.vo.SuitableForSurgeryAssessmentLiteVoCollection;
-import ims.careuk.vo.SuitableForSurgeryAssessmentRefVo;
-import ims.careuk.vo.SuitableForSurgeryCommentVo;
-import ims.careuk.vo.SuitableForSurgeryCommentVoCollection;
+import ims.RefMan.vo.SuitableForSurgeryAssessmentLiteVo;
+import ims.RefMan.vo.SuitableForSurgeryAssessmentLiteVoCollection;
+import ims.RefMan.vo.SuitableForSurgeryAssessmentRefVo;
+import ims.RefMan.vo.SuitableForSurgeryCommentVo;
+import ims.RefMan.vo.SuitableForSurgeryCommentVoCollection;
 import ims.clinical.vo.catsReferralLiteVo;
 import ims.clinical.vo.lookups.AnaestheticType;
 import ims.clinical.vo.lookups.CodingItemType;

@@ -30,7 +30,7 @@ public interface ProceduresDialog extends ims.domain.DomainInterface
 	/**
 	* getCatsReferral
 	*/
-	public ims.careuk.vo.CatsReferralWizardVo getCatsReferral(ims.careuk.vo.CatsReferralRefVo voCatsRef);
+	public ims.RefMan.vo.CatsReferralWizardVo getCatsReferral(ims.RefMan.vo.CatsReferralRefVo voCatsRef);
 
 	// Generated from form domain interface definition
 	public ims.core.vo.ServiceShortVo getService(ims.core.clinical.vo.ServiceRefVo voServiceRef);

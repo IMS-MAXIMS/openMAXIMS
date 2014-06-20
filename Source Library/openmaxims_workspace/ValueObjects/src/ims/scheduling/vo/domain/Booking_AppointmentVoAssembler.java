@@ -740,8 +740,8 @@ public class Booking_AppointmentVoAssembler
 			if (color != null) 
 				color.getValue();
 
-			ims.careuk.vo.lookups.CatsReferralCategory voLookup31 = new ims.careuk.vo.lookups.CatsReferralCategory(instance31.getId(),instance31.getText(), instance31.isActive(), null, img, color);
-			ims.careuk.vo.lookups.CatsReferralCategory parentVoLookup31 = voLookup31;
+			ims.RefMan.vo.lookups.CatsReferralCategory voLookup31 = new ims.RefMan.vo.lookups.CatsReferralCategory(instance31.getId(),instance31.getText(), instance31.isActive(), null, img, color);
+			ims.RefMan.vo.lookups.CatsReferralCategory parentVoLookup31 = voLookup31;
 			ims.domain.lookups.LookupInstance parent31 = instance31.getParent();
 			while (parent31 != null)
 			{
@@ -756,7 +756,7 @@ public class Booking_AppointmentVoAssembler
 				color = parent31.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup31.setParent(new ims.careuk.vo.lookups.CatsReferralCategory(parent31.getId(),parent31.getText(), parent31.isActive(), null, img, color));
+								parentVoLookup31.setParent(new ims.RefMan.vo.lookups.CatsReferralCategory(parent31.getId(),parent31.getText(), parent31.isActive(), null, img, color));
 				parentVoLookup31 = parentVoLookup31.getParent();
 								parent31 = parent31.getParent();
 			}			

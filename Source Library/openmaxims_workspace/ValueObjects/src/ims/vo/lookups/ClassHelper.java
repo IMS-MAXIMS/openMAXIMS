@@ -39,97 +39,97 @@ public class ClassHelper
 			case 1351004:
 				return ims.naes.vo.lookups.NAESReferredBy.class;
 			case 1341048:
-				return ims.careuk.vo.lookups.ElectiveListReviewType.class;
+				return ims.RefMan.vo.lookups.ElectiveListReviewType.class;
 			case 1341047:
-				return ims.careuk.vo.lookups.KPIExceededReason.class;
+				return ims.RefMan.vo.lookups.KPIExceededReason.class;
 			case 1341046:
-				return ims.careuk.vo.lookups.RemovalOtherReason.class;
+				return ims.RefMan.vo.lookups.RemovalOtherReason.class;
 			case 1341045:
-				return ims.careuk.vo.lookups.AdmissionOfferOutcome.class;
+				return ims.RefMan.vo.lookups.AdmissionOfferOutcome.class;
 			case 1341044:
-				return ims.careuk.vo.lookups.SuspensionReason.class;
+				return ims.RefMan.vo.lookups.SuspensionReason.class;
 			case 1341043:
-				return ims.careuk.vo.lookups.ElectiveListStatusReason.class;
+				return ims.RefMan.vo.lookups.ElectiveListStatusReason.class;
 			case 1341042:
-				return ims.careuk.vo.lookups.ERODStatus.class;
+				return ims.RefMan.vo.lookups.ERODStatus.class;
 			case 1341041:
-				return ims.careuk.vo.lookups.TCIStatusChangeReason.class;
+				return ims.RefMan.vo.lookups.TCIStatusChangeReason.class;
 			case 1341039:
-				return ims.careuk.vo.lookups.ElectiveAdmissionType.class;
+				return ims.RefMan.vo.lookups.ElectiveAdmissionType.class;
 			case 1341038:
-				return ims.careuk.vo.lookups.PlanningElective.class;
+				return ims.RefMan.vo.lookups.PlanningElective.class;
 			case 1341037:
-				return ims.careuk.vo.lookups.ERODType.class;
+				return ims.RefMan.vo.lookups.ERODType.class;
 			case 1341036:
-				return ims.careuk.vo.lookups.ReferralUrgency.class;
+				return ims.RefMan.vo.lookups.ReferralUrgency.class;
 			case 1341035:
-				return ims.careuk.vo.lookups.ClinicalNoteTypeForAnAppointment.class;
+				return ims.RefMan.vo.lookups.ClinicalNoteTypeForAnAppointment.class;
 			case 1341034:
-				return ims.careuk.vo.lookups.ServiceReferredInto.class;
+				return ims.RefMan.vo.lookups.ServiceReferredInto.class;
 			case 1341033:
-				return ims.careuk.vo.lookups.CatsReferralCategory.class;
+				return ims.RefMan.vo.lookups.CatsReferralCategory.class;
 			case 1341032:
-				return ims.careuk.vo.lookups.SurgicalOpFollowUpIn.class;
+				return ims.RefMan.vo.lookups.SurgicalOpFollowUpIn.class;
 			case 1341031:
-				return ims.careuk.vo.lookups.SurgicalOpFollowUpType.class;
+				return ims.RefMan.vo.lookups.SurgicalOpFollowUpType.class;
 			case 1341030:
-				return ims.careuk.vo.lookups.ClinicalOutcomeContext.class;
+				return ims.RefMan.vo.lookups.ClinicalOutcomeContext.class;
 			case 1341029:
-				return ims.careuk.vo.lookups.ActiveMonitoringReason.class;
+				return ims.RefMan.vo.lookups.ActiveMonitoringReason.class;
 			case 1341028:
-				return ims.careuk.vo.lookups.AwaitingClinicalInformationType.class;
+				return ims.RefMan.vo.lookups.AwaitingClinicalInformationType.class;
 			case 1341027:
-				return ims.careuk.vo.lookups.SecondOpinionCategory.class;
+				return ims.RefMan.vo.lookups.SecondOpinionCategory.class;
 			case 1341026:
-				return ims.careuk.vo.lookups.DischargeToGPDetailsReviewStatus.class;
+				return ims.RefMan.vo.lookups.DischargeToGPDetailsReviewStatus.class;
 			case 1341024:
-				return ims.careuk.vo.lookups.ReportNoteStatus.class;
+				return ims.RefMan.vo.lookups.ReportNoteStatus.class;
 			case 1341023:
-				return ims.careuk.vo.lookups.ReportNoteType.class;
+				return ims.RefMan.vo.lookups.ReportNoteType.class;
 			case 1341022:
-				return ims.careuk.vo.lookups.TLTType.class;
+				return ims.RefMan.vo.lookups.TLTType.class;
 			case 1341021:
-				return ims.careuk.vo.lookups.ReportsRequiredSubCategory.class;
+				return ims.RefMan.vo.lookups.ReportsRequiredSubCategory.class;
 			case 1341020:
-				return ims.careuk.vo.lookups.ReasonNotSuitableForSurgery.class;
+				return ims.RefMan.vo.lookups.ReasonNotSuitableForSurgery.class;
 			case 1341019:
-				return ims.careuk.vo.lookups.ConsultationOutcomeType.class;
+				return ims.RefMan.vo.lookups.ConsultationOutcomeType.class;
 			case 1341018:
-				return ims.careuk.vo.lookups.ReferralNoteType.class;
+				return ims.RefMan.vo.lookups.ReferralNoteType.class;
 			case 1341017:
-				return ims.careuk.vo.lookups.ReportStatus.class;
+				return ims.RefMan.vo.lookups.ReportStatus.class;
 			case 1341016:
-				return ims.careuk.vo.lookups.OnwardReferralReason.class;
+				return ims.RefMan.vo.lookups.OnwardReferralReason.class;
 			case 1341015:
-				return ims.careuk.vo.lookups.OnwardReferralStatus.class;
+				return ims.RefMan.vo.lookups.OnwardReferralStatus.class;
 			case 1341014:
-				return ims.careuk.vo.lookups.ReviewType.class;
+				return ims.RefMan.vo.lookups.ReviewType.class;
 			case 1341013:
-				return ims.careuk.vo.lookups.FollowupManagementType.class;
+				return ims.RefMan.vo.lookups.FollowupManagementType.class;
 			case 1341012:
-				return ims.careuk.vo.lookups.OnwardReferralRejectedBy.class;
+				return ims.RefMan.vo.lookups.OnwardReferralRejectedBy.class;
 			case 1341011:
-				return ims.careuk.vo.lookups.ProviderCancellationReason.class;
+				return ims.RefMan.vo.lookups.ProviderCancellationReason.class;
 			case 1341009:
-				return ims.careuk.vo.lookups.DischargeOtherType.class;
+				return ims.RefMan.vo.lookups.DischargeOtherType.class;
 			case 1341008:
-				return ims.careuk.vo.lookups.ReferralWorklistStatus.class;
+				return ims.RefMan.vo.lookups.ReferralWorklistStatus.class;
 			case 1341007:
-				return ims.careuk.vo.lookups.AdditionalInvestigationAppointmentsStatus.class;
+				return ims.RefMan.vo.lookups.AdditionalInvestigationAppointmentsStatus.class;
 			case 1341006:
-				return ims.careuk.vo.lookups.CallPurpose.class;
+				return ims.RefMan.vo.lookups.CallPurpose.class;
 			case 1341005:
-				return ims.careuk.vo.lookups.AnotherConsultationAppt.class;
+				return ims.RefMan.vo.lookups.AnotherConsultationAppt.class;
 			case 1341003:
-				return ims.careuk.vo.lookups.DischargeType.class;
+				return ims.RefMan.vo.lookups.DischargeType.class;
 			case 1341002:
-				return ims.careuk.vo.lookups.ICABReferralStatus.class;
+				return ims.RefMan.vo.lookups.ICABReferralStatus.class;
 			case 1341001:
-				return ims.careuk.vo.lookups.RejectionReason.class;
+				return ims.RefMan.vo.lookups.RejectionReason.class;
 			case 1341000:
-				return ims.careuk.vo.lookups.ReferralApptStatus.class;
+				return ims.RefMan.vo.lookups.ReferralApptStatus.class;
 			case 1341010:
-				return ims.careuk.vo.lookups.MedicallyIncomplete.class;
+				return ims.RefMan.vo.lookups.MedicallyIncomplete.class;
 			case 1331003:
 				return ims.pci.vo.lookups.BreastFeedingStatus.class;
 			case 1331010:
@@ -2082,97 +2082,97 @@ public class ClassHelper
 			case 1351004:
 				return ims.naes.vo.lookups.NAESReferredByCollection.class;
 			case 1341048:
-				return ims.careuk.vo.lookups.ElectiveListReviewTypeCollection.class;
+				return ims.RefMan.vo.lookups.ElectiveListReviewTypeCollection.class;
 			case 1341047:
-				return ims.careuk.vo.lookups.KPIExceededReasonCollection.class;
+				return ims.RefMan.vo.lookups.KPIExceededReasonCollection.class;
 			case 1341046:
-				return ims.careuk.vo.lookups.RemovalOtherReasonCollection.class;
+				return ims.RefMan.vo.lookups.RemovalOtherReasonCollection.class;
 			case 1341045:
-				return ims.careuk.vo.lookups.AdmissionOfferOutcomeCollection.class;
+				return ims.RefMan.vo.lookups.AdmissionOfferOutcomeCollection.class;
 			case 1341044:
-				return ims.careuk.vo.lookups.SuspensionReasonCollection.class;
+				return ims.RefMan.vo.lookups.SuspensionReasonCollection.class;
 			case 1341043:
-				return ims.careuk.vo.lookups.ElectiveListStatusReasonCollection.class;
+				return ims.RefMan.vo.lookups.ElectiveListStatusReasonCollection.class;
 			case 1341042:
-				return ims.careuk.vo.lookups.ERODStatusCollection.class;
+				return ims.RefMan.vo.lookups.ERODStatusCollection.class;
 			case 1341041:
-				return ims.careuk.vo.lookups.TCIStatusChangeReasonCollection.class;
+				return ims.RefMan.vo.lookups.TCIStatusChangeReasonCollection.class;
 			case 1341039:
-				return ims.careuk.vo.lookups.ElectiveAdmissionTypeCollection.class;
+				return ims.RefMan.vo.lookups.ElectiveAdmissionTypeCollection.class;
 			case 1341038:
-				return ims.careuk.vo.lookups.PlanningElectiveCollection.class;
+				return ims.RefMan.vo.lookups.PlanningElectiveCollection.class;
 			case 1341037:
-				return ims.careuk.vo.lookups.ERODTypeCollection.class;
+				return ims.RefMan.vo.lookups.ERODTypeCollection.class;
 			case 1341036:
-				return ims.careuk.vo.lookups.ReferralUrgencyCollection.class;
+				return ims.RefMan.vo.lookups.ReferralUrgencyCollection.class;
 			case 1341035:
-				return ims.careuk.vo.lookups.ClinicalNoteTypeForAnAppointmentCollection.class;
+				return ims.RefMan.vo.lookups.ClinicalNoteTypeForAnAppointmentCollection.class;
 			case 1341034:
-				return ims.careuk.vo.lookups.ServiceReferredIntoCollection.class;
+				return ims.RefMan.vo.lookups.ServiceReferredIntoCollection.class;
 			case 1341033:
-				return ims.careuk.vo.lookups.CatsReferralCategoryCollection.class;
+				return ims.RefMan.vo.lookups.CatsReferralCategoryCollection.class;
 			case 1341032:
-				return ims.careuk.vo.lookups.SurgicalOpFollowUpInCollection.class;
+				return ims.RefMan.vo.lookups.SurgicalOpFollowUpInCollection.class;
 			case 1341031:
-				return ims.careuk.vo.lookups.SurgicalOpFollowUpTypeCollection.class;
+				return ims.RefMan.vo.lookups.SurgicalOpFollowUpTypeCollection.class;
 			case 1341030:
-				return ims.careuk.vo.lookups.ClinicalOutcomeContextCollection.class;
+				return ims.RefMan.vo.lookups.ClinicalOutcomeContextCollection.class;
 			case 1341029:
-				return ims.careuk.vo.lookups.ActiveMonitoringReasonCollection.class;
+				return ims.RefMan.vo.lookups.ActiveMonitoringReasonCollection.class;
 			case 1341028:
-				return ims.careuk.vo.lookups.AwaitingClinicalInformationTypeCollection.class;
+				return ims.RefMan.vo.lookups.AwaitingClinicalInformationTypeCollection.class;
 			case 1341027:
-				return ims.careuk.vo.lookups.SecondOpinionCategoryCollection.class;
+				return ims.RefMan.vo.lookups.SecondOpinionCategoryCollection.class;
 			case 1341026:
-				return ims.careuk.vo.lookups.DischargeToGPDetailsReviewStatusCollection.class;
+				return ims.RefMan.vo.lookups.DischargeToGPDetailsReviewStatusCollection.class;
 			case 1341024:
-				return ims.careuk.vo.lookups.ReportNoteStatusCollection.class;
+				return ims.RefMan.vo.lookups.ReportNoteStatusCollection.class;
 			case 1341023:
-				return ims.careuk.vo.lookups.ReportNoteTypeCollection.class;
+				return ims.RefMan.vo.lookups.ReportNoteTypeCollection.class;
 			case 1341022:
-				return ims.careuk.vo.lookups.TLTTypeCollection.class;
+				return ims.RefMan.vo.lookups.TLTTypeCollection.class;
 			case 1341021:
-				return ims.careuk.vo.lookups.ReportsRequiredSubCategoryCollection.class;
+				return ims.RefMan.vo.lookups.ReportsRequiredSubCategoryCollection.class;
 			case 1341020:
-				return ims.careuk.vo.lookups.ReasonNotSuitableForSurgeryCollection.class;
+				return ims.RefMan.vo.lookups.ReasonNotSuitableForSurgeryCollection.class;
 			case 1341019:
-				return ims.careuk.vo.lookups.ConsultationOutcomeTypeCollection.class;
+				return ims.RefMan.vo.lookups.ConsultationOutcomeTypeCollection.class;
 			case 1341018:
-				return ims.careuk.vo.lookups.ReferralNoteTypeCollection.class;
+				return ims.RefMan.vo.lookups.ReferralNoteTypeCollection.class;
 			case 1341017:
-				return ims.careuk.vo.lookups.ReportStatusCollection.class;
+				return ims.RefMan.vo.lookups.ReportStatusCollection.class;
 			case 1341016:
-				return ims.careuk.vo.lookups.OnwardReferralReasonCollection.class;
+				return ims.RefMan.vo.lookups.OnwardReferralReasonCollection.class;
 			case 1341015:
-				return ims.careuk.vo.lookups.OnwardReferralStatusCollection.class;
+				return ims.RefMan.vo.lookups.OnwardReferralStatusCollection.class;
 			case 1341014:
-				return ims.careuk.vo.lookups.ReviewTypeCollection.class;
+				return ims.RefMan.vo.lookups.ReviewTypeCollection.class;
 			case 1341013:
-				return ims.careuk.vo.lookups.FollowupManagementTypeCollection.class;
+				return ims.RefMan.vo.lookups.FollowupManagementTypeCollection.class;
 			case 1341012:
-				return ims.careuk.vo.lookups.OnwardReferralRejectedByCollection.class;
+				return ims.RefMan.vo.lookups.OnwardReferralRejectedByCollection.class;
 			case 1341011:
-				return ims.careuk.vo.lookups.ProviderCancellationReasonCollection.class;
+				return ims.RefMan.vo.lookups.ProviderCancellationReasonCollection.class;
 			case 1341009:
-				return ims.careuk.vo.lookups.DischargeOtherTypeCollection.class;
+				return ims.RefMan.vo.lookups.DischargeOtherTypeCollection.class;
 			case 1341008:
-				return ims.careuk.vo.lookups.ReferralWorklistStatusCollection.class;
+				return ims.RefMan.vo.lookups.ReferralWorklistStatusCollection.class;
 			case 1341007:
-				return ims.careuk.vo.lookups.AdditionalInvestigationAppointmentsStatusCollection.class;
+				return ims.RefMan.vo.lookups.AdditionalInvestigationAppointmentsStatusCollection.class;
 			case 1341006:
-				return ims.careuk.vo.lookups.CallPurposeCollection.class;
+				return ims.RefMan.vo.lookups.CallPurposeCollection.class;
 			case 1341005:
-				return ims.careuk.vo.lookups.AnotherConsultationApptCollection.class;
+				return ims.RefMan.vo.lookups.AnotherConsultationApptCollection.class;
 			case 1341003:
-				return ims.careuk.vo.lookups.DischargeTypeCollection.class;
+				return ims.RefMan.vo.lookups.DischargeTypeCollection.class;
 			case 1341002:
-				return ims.careuk.vo.lookups.ICABReferralStatusCollection.class;
+				return ims.RefMan.vo.lookups.ICABReferralStatusCollection.class;
 			case 1341001:
-				return ims.careuk.vo.lookups.RejectionReasonCollection.class;
+				return ims.RefMan.vo.lookups.RejectionReasonCollection.class;
 			case 1341000:
-				return ims.careuk.vo.lookups.ReferralApptStatusCollection.class;
+				return ims.RefMan.vo.lookups.ReferralApptStatusCollection.class;
 			case 1341010:
-				return ims.careuk.vo.lookups.MedicallyIncompleteCollection.class;
+				return ims.RefMan.vo.lookups.MedicallyIncompleteCollection.class;
 			case 1331003:
 				return ims.pci.vo.lookups.BreastFeedingStatusCollection.class;
 			case 1331010:

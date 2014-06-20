@@ -26,9 +26,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import ims.careuk.domain.objects.SuitableForSurgeryAssessment;
-import ims.careuk.vo.SuitableForSurgeryAssessmentLiteVo;
-import ims.careuk.vo.domain.SuitableForSurgeryAssessmentLiteVoAssembler;
+import ims.RefMan.domain.objects.SuitableForSurgeryAssessment;
+import ims.RefMan.vo.SuitableForSurgeryAssessmentLiteVo;
+import ims.RefMan.vo.domain.SuitableForSurgeryAssessmentLiteVoAssembler;
 import ims.clinical.domain.Procedures;
 import ims.clinical.domain.base.impl.BaseCataractIntraOperativeCareRecordImpl;
 import ims.clinical.vo.IntraOperativeCareRecordVo;

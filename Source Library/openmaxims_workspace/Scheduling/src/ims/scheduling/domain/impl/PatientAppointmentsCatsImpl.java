@@ -22,19 +22,19 @@
 
 package ims.scheduling.domain.impl;
 
-import ims.careuk.domain.objects.CatsReferral;
-import ims.careuk.domain.objects.ElectiveListStatus;
-import ims.careuk.domain.objects.PatientElectiveList;
-import ims.careuk.domain.objects.ReferralEROD;
-import ims.careuk.domain.objects.TCIForPatientElectiveList;
-import ims.careuk.domain.objects.TCIOutcomeForPatientElectiveList;
-import ims.careuk.vo.CatsReferralForTheatreListVo;
-import ims.careuk.vo.CatsReferralListVo;
-import ims.careuk.vo.CatsReferralRefVo;
-import ims.careuk.vo.domain.CatsReferralForTheatreListVoAssembler;
-import ims.careuk.vo.lookups.AdmissionOfferOutcome;
-import ims.careuk.vo.lookups.ERODStatus;
-import ims.careuk.vo.lookups.TCIStatusChangeReason;
+import ims.RefMan.domain.objects.CatsReferral;
+import ims.RefMan.domain.objects.ElectiveListStatus;
+import ims.RefMan.domain.objects.PatientElectiveList;
+import ims.RefMan.domain.objects.ReferralEROD;
+import ims.RefMan.domain.objects.TCIForPatientElectiveList;
+import ims.RefMan.domain.objects.TCIOutcomeForPatientElectiveList;
+import ims.RefMan.vo.CatsReferralForTheatreListVo;
+import ims.RefMan.vo.CatsReferralListVo;
+import ims.RefMan.vo.CatsReferralRefVo;
+import ims.RefMan.vo.domain.CatsReferralForTheatreListVoAssembler;
+import ims.RefMan.vo.lookups.AdmissionOfferOutcome;
+import ims.RefMan.vo.lookups.ERODStatus;
+import ims.RefMan.vo.lookups.TCIStatusChangeReason;
 import ims.configuration.gen.ConfigFlag;
 import ims.core.resource.people.domain.objects.MemberOfStaff;
 import ims.core.vo.HcpLiteVo;
@@ -100,28 +100,28 @@ public class PatientAppointmentsCatsImpl extends BasePatientAppointmentsImpl
 	//Implemented for WDEV-12783
 	public SessionServiceAndSlotActivityVo getServiceAndActivityByAppt(Booking_AppointmentRefVo appt, Boolean isFlexible)
 	{
-		PatientAppointmentManagement pamImpl = (PatientAppointmentManagement) getDomainImpl(PatientAppointmentMangementCareUKImpl.class);
+		PatientAppointmentManagement pamImpl = (PatientAppointmentManagement) getDomainImpl(PatientAppointmentMangementRefManImpl.class);
 		return pamImpl.getServiceAndActivityByAppt(appt, isFlexible);
 	}
 
 	//Implemented for WDEV-12783
 	public Booking_AppointmentVo saveBookingAppt(Booking_AppointmentShortVo appt) throws StaleObjectException
 	{
-		PatientAppointmentManagement pamImpl = (PatientAppointmentManagement) getDomainImpl(PatientAppointmentMangementCareUKImpl.class);
+		PatientAppointmentManagement pamImpl = (PatientAppointmentManagement) getDomainImpl(PatientAppointmentMangementRefManImpl.class);
 		return pamImpl.saveBookingAppt(appt, false, false);
 	}
 	
 	//Added for WDEV-12783
 	public CatsReferralListVo getCatsReferralForAppointment(Booking_AppointmentRefVo appt)
 	{
-		PatientAppointmentManagement pamImpl = (PatientAppointmentManagement) getDomainImpl(PatientAppointmentMangementCareUKImpl.class);
+		PatientAppointmentManagement pamImpl = (PatientAppointmentManagement) getDomainImpl(PatientAppointmentMangementRefManImpl.class);
 		return pamImpl.getCatsReferralForAppointment(appt);
 	}
 
 	//Added for WDEV-12783
 	public void updateCatsReferralForCancelledAppt(CatsReferralRefVo catsRef) throws StaleObjectException
 	{
-		PatientAppointmentManagement pamImpl = (PatientAppointmentManagement) getDomainImpl(PatientAppointmentMangementCareUKImpl.class);
+		PatientAppointmentManagement pamImpl = (PatientAppointmentManagement) getDomainImpl(PatientAppointmentMangementRefManImpl.class);
 		pamImpl.updateCatsReferralAdditionalInvStatus(catsRef);
 		pamImpl.updateCatsReferralCancelStatus(catsRef);
 		

@@ -60,7 +60,7 @@ public abstract class BaseClinicListImpl extends DomainImpl implements ims.sched
 	}
 
 	@SuppressWarnings("unused")
-	public void validatednaAppt(ims.scheduling.vo.Booking_AppointmentVo appt, ims.careuk.vo.CatsReferralForClinicListVo catsReferral, ims.chooseandbook.vo.lookups.ActionRequestType requestType, ims.careuk.vo.PatientElectiveListForDNAAppointmentsVo electiveList, Boolean isFirstAppointmentActivity)
+	public void validatednaAppt(ims.scheduling.vo.Booking_AppointmentVo appt, ims.RefMan.vo.CatsReferralForClinicListVo catsReferral, ims.chooseandbook.vo.lookups.ActionRequestType requestType, ims.RefMan.vo.PatientElectiveListForDNAAppointmentsVo electiveList, Boolean isFirstAppointmentActivity)
 	{
 	}
 

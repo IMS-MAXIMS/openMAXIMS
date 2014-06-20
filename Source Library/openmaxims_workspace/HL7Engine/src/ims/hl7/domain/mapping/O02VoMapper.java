@@ -171,8 +171,8 @@ public class O02VoMapper extends VoMapper
 
 		if (service.getCanBeScheduled()) 
 		{
-			IHL7Helper careukHelper=(IHL7Helper)getDomainImpl("ims.careuk.helper.CareUkHL7Helper");
-			order = careukHelper.PopulateOrderMessage(order,orderInv,orderVo,careUKdomain);
+			IHL7Helper RefManHelper=(IHL7Helper)getDomainImpl("ims.RefMan.helper.RefManHL7Helper");
+			order = RefManHelper.PopulateOrderMessage(order,orderInv,orderVo,RefMandomain);
 		}
 		
 		LOG.debug("O02VoMapper populateOrderResponseMessage: exit");
@@ -187,8 +187,8 @@ public class O02VoMapper extends VoMapper
 	{
 		LOG.debug("O02VoMapper populateOrderResponseMessage: entry");
 		
-		PatientRefVo patient= careUKdomain.getPatientFromAppointment(event.getAppointment());
-		OcsOrderSessionRefVo orderRef=careUKdomain.getOrderFromInvestigation(event.getInvestigation());
+		PatientRefVo patient= RefMandomain.getPatientFromAppointment(event.getAppointment());
+		OcsOrderSessionRefVo orderRef=RefMandomain.getOrderFromInvestigation(event.getInvestigation());
 		IfOutOcsOrderVo orderVo= ocsIf.getOrder(orderRef);
 		
 		ORR_O02   order = new ORR_O02();
@@ -293,8 +293,8 @@ public class O02VoMapper extends VoMapper
 
 		if (service.getCanBeScheduled()) 
 		{
-			IHL7Helper careukHelper=(IHL7Helper)getDomainImpl("ims.careuk.helper.CareUkHL7Helper");
-		order = careukHelper.PopulateOrderMessage(order,orderInv,orderVo,careUKdomain);
+			IHL7Helper RefManHelper=(IHL7Helper)getDomainImpl("ims.RefMan.helper.RefManHL7Helper");
+		order = RefManHelper.PopulateOrderMessage(order,orderInv,orderVo,RefMandomain);
 		}
 		
 		LOG.debug("O02VoMapper populateOrderResponseMessage: exit");

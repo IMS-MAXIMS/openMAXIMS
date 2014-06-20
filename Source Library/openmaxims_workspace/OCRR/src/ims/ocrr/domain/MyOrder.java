@@ -45,7 +45,7 @@ public interface MyOrder extends ims.domain.DomainInterface
 	/**
 	* saveOcsOrder
 	*/
-	public ims.ocrr.vo.OcsOrderVo saveOcsOrder(ims.ocrr.vo.OcsOrderVo ocsOrder, ims.ocrr.vo.SpecimenWorkListItemVoCollection workListItems, ims.ocrr.vo.enums.ORDERSTATE orderState, ims.careuk.vo.CatsReferralRefVo catsReferral, ims.scheduling.vo.Booking_AppointmentRefVo appt) throws ims.domain.exceptions.StaleObjectException;
+	public ims.ocrr.vo.OcsOrderVo saveOcsOrder(ims.ocrr.vo.OcsOrderVo ocsOrder, ims.ocrr.vo.SpecimenWorkListItemVoCollection workListItems, ims.ocrr.vo.enums.ORDERSTATE orderState, ims.RefMan.vo.CatsReferralRefVo catsReferral, ims.scheduling.vo.Booking_AppointmentRefVo appt) throws ims.domain.exceptions.StaleObjectException;
 
 	// Generated from form domain interface definition
 	/**
@@ -189,19 +189,19 @@ public interface MyOrder extends ims.domain.DomainInterface
 	/**
 	* updateCatsReferralAdditionalInvStatus
 	*/
-	public void updateCatsReferralAdditionalInvStatus(ims.careuk.vo.CatsReferralRefVo catsReferral) throws ims.domain.exceptions.StaleObjectException;
+	public void updateCatsReferralAdditionalInvStatus(ims.RefMan.vo.CatsReferralRefVo catsReferral) throws ims.domain.exceptions.StaleObjectException;
 
 	// Generated from form domain interface definition
 	/**
 	* getReferrerGP
 	*/
-	public ims.core.vo.GpLiteVo getReferrerGP(ims.careuk.vo.CatsReferralRefVo catsRef);
+	public ims.core.vo.GpLiteVo getReferrerGP(ims.RefMan.vo.CatsReferralRefVo catsRef);
 
 	// Generated from form domain interface definition
 	/**
 	* getInitiallySeenByHcpFromConsultationClinicalNotesByReferral
 	*/
-	public ims.core.vo.HcpLiteVo getInitiallySeenByHcpFromConsultationClinicalNotesByReferral(ims.careuk.vo.CatsReferralRefVo referral);
+	public ims.core.vo.HcpLiteVo getInitiallySeenByHcpFromConsultationClinicalNotesByReferral(ims.RefMan.vo.CatsReferralRefVo referral);
 
 	// Generated from form domain interface definition
 	public ims.core.vo.LocationLiteVoCollection listActiveOutpatientDepartment(ims.core.resource.place.vo.LocationRefVo hospital);
@@ -216,7 +216,7 @@ public interface MyOrder extends ims.domain.DomainInterface
 	public ims.core.vo.HcpLiteVoCollection listResponsibleMedicsByName(String hcpName);
 
 	// Generated from form domain interface definition
-	public ims.careuk.vo.CatsReferralListVo getCatsReferralListVo(ims.careuk.vo.CatsReferralRefVo catsRefVo);
+	public ims.RefMan.vo.CatsReferralListVo getCatsReferralListVo(ims.RefMan.vo.CatsReferralRefVo catsRefVo);
 
 	// Generated from form domain interface definition
 	public ims.ocrr.vo.MyOrderInpatEpisVo getInpatientEpisodeForPatient(ims.core.patient.vo.PatientRefVo patient);
@@ -225,10 +225,10 @@ public interface MyOrder extends ims.domain.DomainInterface
 	public ims.core.vo.LocationLiteVoCollection getDefaultEmergencyDepartment(ims.core.resource.place.vo.LocationRefVo hospital);
 
 	// Generated from form domain interface definition
-	public Boolean hasArrived(ims.careuk.vo.CatsReferralRefVo referral);
+	public Boolean hasArrived(ims.RefMan.vo.CatsReferralRefVo referral);
 
 	// Generated from form domain interface definition
-	public ims.core.vo.HcpLiteVo getLeadConsultantForReferral(ims.careuk.vo.CatsReferralRefVo referral);
+	public ims.core.vo.HcpLiteVo getLeadConsultantForReferral(ims.RefMan.vo.CatsReferralRefVo referral);
 
 	// Generated from form domain interface definition
 	public ims.core.vo.HcpLiteVo getHCPbyMoS(ims.core.resource.people.vo.MemberOfStaffRefVo memberOfStaff);
@@ -243,19 +243,19 @@ public interface MyOrder extends ims.domain.DomainInterface
 	public ims.core.vo.GeneralQuestionAnswerVoCollection getCategoryQuestionsAnswers(ims.ocrr.orderingresults.vo.OcsOrderSessionRefVo orderDetails, ims.ocrr.vo.lookups.Category category);
 
 	// Generated from form domain interface definition
-	public ims.careuk.vo.OrderInvWithStatusApptVo getOrderInvestigationAppointment(ims.ocrr.orderingresults.vo.OrderInvestigationRefVo investigation);
+	public ims.RefMan.vo.OrderInvWithStatusApptVo getOrderInvestigationAppointment(ims.ocrr.orderingresults.vo.OrderInvestigationRefVo investigation);
 
 	// Generated from form domain interface definition
 	public ims.ocrr.vo.OrderInvestigationBookingWithStatusVo getOrderInvestigationBooking(ims.ocrr.orderingresults.vo.OrderInvestigationRefVo investigation);
 
 	// Generated from form domain interface definition
-	public void updateOrderInvestigationAppointment(ims.careuk.vo.OrderInvWithStatusApptVo orderInvestigationAppointment, ims.ocrr.vo.OrderInvestigationLiteVo investigationToAmend) throws ims.domain.exceptions.StaleObjectException;
+	public void updateOrderInvestigationAppointment(ims.RefMan.vo.OrderInvWithStatusApptVo orderInvestigationAppointment, ims.ocrr.vo.OrderInvestigationLiteVo investigationToAmend) throws ims.domain.exceptions.StaleObjectException;
 
 	// Generated from form domain interface definition
 	public ims.scheduling.vo.Booking_AppointmentVo cancelAppointment(ims.scheduling.vo.Booking_AppointmentVo appointment, ims.chooseandbook.vo.lookups.ActionRequestType requestType, String requestSource) throws ims.domain.exceptions.StaleObjectException;
 
 	// Generated from form domain interface definition
-	public void updateCatsReferralCancelStatus(ims.careuk.vo.CatsReferralRefVo referral) throws ims.domain.exceptions.StaleObjectException;
+	public void updateCatsReferralCancelStatus(ims.RefMan.vo.CatsReferralRefVo referral) throws ims.domain.exceptions.StaleObjectException;
 
 	// Generated from form domain interface definition
 	public ims.ocrr.vo.OrderInvestigationForStatusChangeVo getOrderInvestigation(ims.ocrr.orderingresults.vo.OrderInvestigationRefVo investigation);

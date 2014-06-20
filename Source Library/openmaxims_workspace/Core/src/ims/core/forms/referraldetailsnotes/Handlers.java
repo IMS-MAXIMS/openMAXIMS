@@ -61,20 +61,20 @@ abstract public class Handlers implements ims.framework.UILogic, IFormUILogicCod
 				onGrdNotesSelectionChanged();
 			}
 		});
-		this.form.getContextMenus().CAREUK.getNotesMenuNewNoteItem().setClickEvent(new ims.framework.delegates.MenuItemClick()
+		this.form.getContextMenus().RefMan.getNotesMenuNewNoteItem().setClickEvent(new ims.framework.delegates.MenuItemClick()
 		{
 			private static final long serialVersionUID = 1L;
 			public void handle(ims.framework.Control sender) throws ims.framework.exceptions.PresentationLogicException
 			{
-				onContextMenuItemClick(GenForm.ContextMenus.CAREUKNamespace.NotesMenu.NewNote, sender);
+				onContextMenuItemClick(GenForm.ContextMenus.RefManNamespace.NotesMenu.NewNote, sender);
 			}
 		});
-		this.form.getContextMenus().CAREUK.getNotesMenuEditNoteItem().setClickEvent(new ims.framework.delegates.MenuItemClick()
+		this.form.getContextMenus().RefMan.getNotesMenuEditNoteItem().setClickEvent(new ims.framework.delegates.MenuItemClick()
 		{
 			private static final long serialVersionUID = 1L;
 			public void handle(ims.framework.Control sender) throws ims.framework.exceptions.PresentationLogicException
 			{
-				onContextMenuItemClick(GenForm.ContextMenus.CAREUKNamespace.NotesMenu.EditNote, sender);
+				onContextMenuItemClick(GenForm.ContextMenus.RefManNamespace.NotesMenu.EditNote, sender);
 			}
 		});
 	}

@@ -54,13 +54,13 @@ public class Logic extends BaseLogic
 	{
 		clearScreen();
 		
-		if(form.getGlobalContext().CareUk.getPrescriptionMedication() == null)
+		if(form.getGlobalContext().RefMan.getPrescriptionMedication() == null)
 			return;
 		
-		form.qmbMedication().newRow(form.getGlobalContext().CareUk.getPrescriptionMedication().getMedication(),form.getGlobalContext().CareUk.getPrescriptionMedication().getMedication().getMedicationName());
-		form.qmbMedication().setValue(form.getGlobalContext().CareUk.getPrescriptionMedication().getMedication());
-		form.cmbFrequency().setValue(form.getGlobalContext().CareUk.getPrescriptionMedication().getFrequency());
-		form.intNoOfDaysSupply().setValue(form.getGlobalContext().CareUk.getPrescriptionMedication().getNoDaysSupply());
+		form.qmbMedication().newRow(form.getGlobalContext().RefMan.getPrescriptionMedication().getMedication(),form.getGlobalContext().RefMan.getPrescriptionMedication().getMedication().getMedicationName());
+		form.qmbMedication().setValue(form.getGlobalContext().RefMan.getPrescriptionMedication().getMedication());
+		form.cmbFrequency().setValue(form.getGlobalContext().RefMan.getPrescriptionMedication().getFrequency());
+		form.intNoOfDaysSupply().setValue(form.getGlobalContext().RefMan.getPrescriptionMedication().getNoDaysSupply());
 	}
 
 	//	WDEV-14054
@@ -97,7 +97,7 @@ public class Logic extends BaseLogic
 			return false;
 		}
 		
-		form.getGlobalContext().CareUk.setPrescriptionMedication(medicationData);
+		form.getGlobalContext().RefMan.setPrescriptionMedication(medicationData);
 		return true;
 	}
 		
@@ -112,9 +112,9 @@ public class Logic extends BaseLogic
 	{
 		PatientMedicationLiteVo voPatientMedicationLite = null;
 		
-		if(form.getGlobalContext().CareUk.getPrescriptionMedication() != null)
+		if(form.getGlobalContext().RefMan.getPrescriptionMedication() != null)
 		{
-			voPatientMedicationLite = (PatientMedicationLiteVo) form.getGlobalContext().CareUk.getPrescriptionMedication().clone();
+			voPatientMedicationLite = (PatientMedicationLiteVo) form.getGlobalContext().RefMan.getPrescriptionMedication().clone();
 		}
 		
 		if(voPatientMedicationLite == null)
@@ -155,7 +155,7 @@ public class Logic extends BaseLogic
 	//	WDEV-14054
 	private void updateControlsState()
 	{
-		form.qmbMedication().setEnabled(form.getGlobalContext().CareUk.getPrescriptionMedication() == null);
+		form.qmbMedication().setEnabled(form.getGlobalContext().RefMan.getPrescriptionMedication() == null);
 		form.cmbFrequency().setEnabled(form.qmbMedication().getValue() != null);
 		form.intNoOfDaysSupply().setEnabled(form.qmbMedication().getValue() != null);
 	}
@@ -174,7 +174,7 @@ public class Logic extends BaseLogic
 	{
 		form.qmbMedication().clear();
 		
-		MedicationLiteVoCollection listMedications = domain.listMedications(value, form.getGlobalContext().CareUk.getDrugsAlreadyAddedToPrescription(), getSpecialty());
+		MedicationLiteVoCollection listMedications = domain.listMedications(value, form.getGlobalContext().RefMan.getDrugsAlreadyAddedToPrescription(), getSpecialty());
 		if (listMedications == null || listMedications.size() == 0)
 		{
 			form.qmbMedication().showOpened();

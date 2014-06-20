@@ -39,7 +39,7 @@ public class BaseAccessLogic extends FormAccessLogic implements Serializable
 	}
 	public boolean isAccessible()
 	{
-		if(!form.getGlobalContext().CareUk.getCatsReferralIsNotNull())
+		if(!form.getGlobalContext().RefMan.getCatsReferralIsNotNull())
 			return false;
 
 		return true;
@@ -102,19 +102,19 @@ public class BaseAccessLogic extends FormAccessLogic implements Serializable
 
 		private CurrentForms()
 		{
-			CAREUK = new CAREUKForms();
+			RefMan = new RefManForms();
 		}
-		public final class CAREUKForms implements Serializable
+		public final class RefManForms implements Serializable
 		{
 			private static final long serialVersionUID = 1L;
 
-			private CAREUKForms()
+			private RefManForms()
 			{
 				PatientReferralStatusList = new LocalFormName(134126);
 			}
 			public final FormName PatientReferralStatusList;
 		}
 
-		public CAREUKForms CAREUK;
+		public RefManForms RefMan;
 	}
 }

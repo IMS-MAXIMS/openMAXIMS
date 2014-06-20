@@ -71,7 +71,7 @@ public class Logic extends BaseLogic
 		if (FormMode.EDIT.equals(formMode))
 			initialise();
 		//WDEV-18487		
-		if (FormMode.VIEW.equals(formMode) && form.getForms().CAREUK.PatientReferralStatusList.equals(engine.getPreviosFormName()))
+		if (FormMode.VIEW.equals(formMode) && form.getForms().RefMan.PatientReferralStatusList.equals(engine.getPreviosFormName()))
 		{
 			form.getLocalContext().setCanAddEvent(Boolean.FALSE);
 		}
@@ -84,7 +84,7 @@ public class Logic extends BaseLogic
 	{
 		form.grdAdminEvents().getRows().clear();
 
-		AdminEventVoCollection adminEvents = domain.getAdminEvents(form.getGlobalContext().CareUk.getCatsReferral());
+		AdminEventVoCollection adminEvents = domain.getAdminEvents(form.getGlobalContext().RefMan.getCatsReferral());
 
 		if (adminEvents == null)
 			return;
@@ -146,7 +146,7 @@ public class Logic extends BaseLogic
 
 		try
 		{
-			form.getLocalContext().setAdminEvent(domain.saveAdminEvent(adminEvent, form.getGlobalContext().CareUk.getCatsReferral()));
+			form.getLocalContext().setAdminEvent(domain.saveAdminEvent(adminEvent, form.getGlobalContext().RefMan.getCatsReferral()));
 
 			if (form.getLocalContext().getAdminEvent() == null)
 			{

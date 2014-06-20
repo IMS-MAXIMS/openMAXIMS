@@ -60,7 +60,7 @@ import ims.framework.exceptions.CodingRuntimeException;
 import ims.framework.interfaces.IAppRole;
 import ims.framework.interfaces.ILocation;
 import ims.framework.utils.Date;
-import ims.ocrr.domain.CAREUKNewResults;
+import ims.ocrr.domain.RefManNewResults;
 import ims.ocrr.domain.ClinicalImagingResults;
 import ims.ocrr.domain.MyOrder;
 import ims.ocrr.domain.SelectandOrder;
@@ -82,7 +82,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class NewResultsImpl extends DomainImpl implements ims.ocrr.domain.NewResults, CAREUKNewResults, ims.domain.impl.Transactional
+public class NewResultsImpl extends DomainImpl implements ims.ocrr.domain.NewResults, RefManNewResults, ims.domain.impl.Transactional
 {
 	private static final long serialVersionUID = 1L;
 

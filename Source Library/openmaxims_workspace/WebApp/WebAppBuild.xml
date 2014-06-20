@@ -2,25 +2,33 @@
 <project basedir="." name="openMAXIMS" default="openMAXIMSwarfile" >
 
 	<!-- Properties set by DevEnv before writing script to file -->
-	<property name="workspace" value="C:/jinstall/Builds/maxims_br_workspace/" />
+	<!-- POINT THE WORKSPACE TO YOUR SOURCE DIRECTORY -->
+	<property name="workspace" value="C:/openmaxims_workspace/" />
 	<property name="project.name" value="openMAXIMS" />
 	<property name="dbtype" value="MSQ05" />
 	<property name="hib.version" value="3" />
 
 	<!-- ***************************************** -->
 	<!-- Only these 5 properties need to be changed -->
-
-	<property name="dbHost" value="dub-mssql1" />
-	<property name="dbPort" value="1433" />
-	<property name="dbName" value="openmaxims_dev" />
-	<property name="userid" value="xxxx"  />
-	<property name="password" value="xxxx" />
+	<!-- POINT TO YOUR SQL DB and ADMIN ACCOUNT -->
+	<property name="dbHost" value="xxxxx" />
+	<property name="dbPort" value="xxxxx" />
+	<property name="dbName" value="xxxxx" />
+	<property name="userid" value="xxxxx"  />
+	<property name="password" value="xxxxx" />
 	<!-- ***************************************** -->
 
 	<import file="build_common.xml"/>
 
 	<!-- Compile Rules -->
 	<target name="Rules" depends="Admin" >
+		<delete includeEmptyDirs="true" quiet="true">
+			<fileset dir="${workspace}Rules/bin">
+				<patternset>
+					<include name="**/*.class"/>
+				</patternset>
+			</fileset>
+		</delete>		
 		<mkdir dir="${workspace}Rules/bin" />
 		<copy todir="${workspace}Rules/bin">
 			<fileset dir="${workspace}Rules/src">
@@ -162,31 +170,18 @@
 		</delete>																			
 		<javac debug="on" classpath="${ant_classpath};${workspace}Admin/bin/;${workspace}Core/bin/;${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;" destdir="${workspace}Pathways/bin/" srcdir="${workspace}Pathways/src/"  includes="**/*.java" />
 	</target>
-
-	<!-- Compile ClinicalAdmin-->
-	<target name="ClinicalAdmin" depends="Admin" >
-	<mkdir dir="${workspace}ClinicalAdmin/bin" />
+	
+	<!-- Compile RefMan-->
+	<target name="RefMan" depends="Admin, Core, Scheduling,OCS_IF, OCRR, ClinicalAdmin, Assessment, Pathways" >
+		<mkdir dir="${workspace}RefMan/bin" />
 		<delete includeEmptyDirs="true" quiet="true">
-			<fileset dir="${workspace}Pathways/bin">
-				<patternset>
-					<include name="**/*.class"/>
-				</patternset>
-			</fileset>
-		</delete>																				
-		<javac debug="on" classpath="${ant_classpath};${workspace}Admin/bin/;${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;" destdir="${workspace}ClinicalAdmin/bin/" srcdir="${workspace}ClinicalAdmin/src/"  includes="**/*.java" />
-	</target>
-
-	<!-- Compile CAREUK-->
-	<target name="CAREUK" depends="Admin, Core, Scheduling,OCS_IF,OCRR,ClinicalAdmin,Assessment,Pathways" >
-		<mkdir dir="${workspace}CAREUK/bin" />
-		<delete includeEmptyDirs="true" quiet="true">
-			<fileset dir="${workspace}CAREUK/bin">
+			<fileset dir="${workspace}RefMan/bin">
 				<patternset>
 					<include name="**/*.class"/>
 				</patternset>
 			</fileset>
 		</delete>																						
-		<javac debug="on" classpath="${ant_classpath};${libdir}QueryBuilder3.jar;${libdir}commons-io-1.4.jar;${libdir}commons-httpclient-3.0.jar;${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;${workspace}ClinicalAdmin/bin/;${workspace}Admin/bin/;${workspace}Core/bin/;${workspace}Clinical/bin/;${workspace}Scheduling/bin/;${workspace}Pathways/bin/;${workspace}OCS_IF/bin/;${workspace}OCRR/bin/;${workspace}Assessment/bin/;" destdir="${workspace}CAREUK/bin/" srcdir="${workspace}CAREUK/src/"  includes="**/*.java" />
+		<javac debug="on" classpath="${ant_classpath};${libdir}QueryBuilder3.jar;${libdir}commons-io-1.4.jar;${libdir}commons-httpclient-3.0.jar;${libdir}quartz.jar;${libdir}quartz-modified.jar;${libdir}xstream-1.2.2.jar;${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;${workspace}ClinicalAdmin/bin/;${workspace}Admin/bin/;${workspace}Core/bin/;${workspace}Clinical/bin/;${workspace}Scheduling/bin/;${workspace}Pathways/bin/;${workspace}OCS_IF/bin/;${workspace}OCRR/bin/;${workspace}Assessment/bin/;" destdir="${workspace}RefMan/bin/" srcdir="${workspace}RefMan/src/"  includes="**/*.java" />
 	</target>
 
       <!-- Compile Scheduling-->
@@ -282,8 +277,8 @@
 
 
 	<!-- Gather all War File dependencies -->
-	<target name="WarDependencies" depends="Core,ICP,Assessment,CAREUK,Nursing,COE,OCRR,OCS_IF,Therapies,Racpc,SpinalInjuries,Oncology,HL7Engine,Clinical,ClinicalAdmin,Correspondence,Pathways,Scheduling,Emergency,Billing,MappingFiles,WebAppFiles,WebAppSource" >
-		<echo>All War File Dependencies have now be executed</echo>
+	<target name="WarDependencies" depends="Core,ICP,Assessment,RefMan,Nursing,COE,OCRR,OCS_IF,Therapies,Racpc,SpinalInjuries,Oncology,HL7Engine,Clinical,ClinicalAdmin,Correspondence,Pathways,Scheduling,Emergency,Billing,MappingFiles,WebAppFiles,WebAppSource" >
+		<echo>All War File Dependencies have now been executed</echo>
 	</target>
 
 	<target name="openMAXIMSwarfile" depends="WarDependencies">
@@ -335,7 +330,7 @@ ims.warfile.timestamp=${timestamp}
 			<classes dir="${workspace}OCRR/bin" />
 			<classes dir="${workspace}OCS_IF/bin" />
 			<classes dir="${workspace}Assessment/bin" />
-			<classes dir="${workspace}CAREUK/bin" />
+			<classes dir="${workspace}RefMan/bin" />
 			<classes dir="${workspace}Oncology/bin" />
      			<classes dir="${workspace}Clinical/bin" />
 			<classes dir="${workspace}ClinicalAdmin/bin" />
@@ -352,104 +347,6 @@ ims.warfile.timestamp=${timestamp}
 			<classes dir="${workspace}HL7Engine/bin" />
 			<classes dir="${workspace}Rules/bin" />
 		</war>
-	</target>	
-	
-	<target name="openMAXIMS_Escrow" >
-		  <property name="output_dir" value="\\PROJECT\openMAXIMS\openmaxims_workspace" />
-		  <delete dir="${output_dir}" />
-  		  <mkdir dir="${output_dir}" />
-		  <copy todir="${output_dir}\Admin\src">
-		    <fileset dir="${workspace}/Admin/src"/>
-		  </copy>
-		  <copy todir="${output_dir}\Alerts\src">
-		    <fileset dir="${workspace}/Alerts/src"/>
-		  </copy>
-		  <copy todir="${output_dir}\Assessment\src">
-		    <fileset dir="${workspace}/Assessment/src"/>
-		  </copy>
-		  <copy todir="${output_dir}\Billing\src">
-		    <fileset dir="${workspace}/Billing/src"/>
-		  </copy>
-		  <copy todir="${output_dir}\CAREUK\src">
-		    <fileset dir="${workspace}/CAREUK/src"/>
-		  </copy>
-		  <copy todir="${output_dir}\Clinical\src">
-		    <fileset dir="${workspace}/Clinical/src"/>
-		  </copy>
-		  <copy todir="${output_dir}\ClinicalAdmin\src">
-		    <fileset dir="${workspace}/ClinicalAdmin/src"/>
-		  </copy>
-		  <copy todir="${output_dir}\COE\src">
-		    <fileset dir="${workspace}/COE/src"/>
-		  </copy>
-		  <copy todir="${output_dir}\Core\src">
-		    <fileset dir="${workspace}/Core/src"/>
-		  </copy>
-		  <copy todir="${output_dir}\Correspondence\src">
-		    <fileset dir="${workspace}/Correspondence/src"/>
-		  </copy>
-		 <copy todir="${output_dir}\DomainObjects\src">
-		    <fileset dir="${workspace}/DomainObjects/src"/>
-		  </copy>
-		 <copy todir="${output_dir}\DTOClients\src">
-		    <fileset dir="${workspace}/DTOClients/src"/>
-		  </copy>
-		 <copy todir="${output_dir}\DTOScripts\src">
-		    <fileset dir="${workspace}/DTOScripts/src"/>
-		  </copy>
-		 <copy todir="${output_dir}\Emergency\src">
-		    <fileset dir="${workspace}/Emergency/src"/>
-		  </copy>
-		 <copy todir="${output_dir}\HL7Engine\src">
-		    <fileset dir="${workspace}/HL7Engine/src"/>
-		  </copy>
-		 <copy todir="${output_dir}\HL7Nas\src">
-		    <fileset dir="${workspace}/HL7Nas/src"/>
-	  	</copy>
-		 <copy todir="${output_dir}\ICP\src">
-		    <fileset dir="${workspace}/ICP/src"/>
-	  	</copy>
-		 <copy todir="${output_dir}\Nursing\src">
-		    <fileset dir="${workspace}/Nursing/src"/>
-	  	</copy>
-		 <copy todir="${output_dir}\OCRR\src">
-		    <fileset dir="${workspace}/OCRR/src"/>
-		  </copy>
-		 <copy todir="${output_dir}\OCS_IF\src">
-		    <fileset dir="${workspace}/OCS_IF/src"/>
-		  </copy>
-		 <copy todir="${output_dir}\Oncology\src">
-		    <fileset dir="${workspace}/Oncology/src"/>
-		  </copy>
-		 <copy todir="${output_dir}\Pathways\src">
-		    <fileset dir="${workspace}/Pathways/src"/>
-		  </copy>
-		 <copy todir="${output_dir}\RACPC\src">
-		    <fileset dir="${workspace}/RACPC/src"/>
-		  </copy>
-		 <copy todir="${output_dir}\Rules\src">
-		    <fileset dir="${workspace}/Rules/src"/>
-		  </copy>
-		 <copy todir="${output_dir}\Scheduling\src">
-		    <fileset dir="${workspace}/Scheduling/src"/>
-		  </copy>
-		 <copy todir="${output_dir}\SpinalInjuries\src">
-		    <fileset dir="${workspace}/SpinalInjuries/src"/>
-		  </copy>
-		 <copy todir="${output_dir}\Therapies\src">
-		    <fileset dir="${workspace}/Therapies/src"/>
-		  </copy>
-		 <copy todir="${output_dir}\ValueObjects\src">
-		    <fileset dir="${workspace}/ValueObjects/src"/>
-		  </copy>
-		 <copy todir="${output_dir}\WebApp">
-			<fileset dir="${workspace}/WebApp" includes="src/**, applet/**, flash/**, g/**, Images/**, jsCN/**, packed/**, reports/**, themes/**, WEB-INF/web.xml,WEB-INF/server-config.wsdd, *.sql,build_common.xml,*.html,*.dic,*.xml" />
-		 </copy>
-		 <copy file="${workspace}/WebApp/WebAppBuild.xml" tofile="${output_dir}\WebApp\build_pms.xml" />
-		 <copy todir="${output_dir}\WebApp\WEB-INF\lib">
-			<fileset dir="${workspace}/WebApp/WEB-INF/lib" includes="*" />
-		 </copy>
-
 	</target>	
 	
 </project>

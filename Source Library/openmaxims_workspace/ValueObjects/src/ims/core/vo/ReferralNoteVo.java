@@ -45,7 +45,7 @@ public class ReferralNoteVo extends ims.core.vo.CorrespondenceNoteRefVo implemen
 		this.recordinguser = bean.getRecordingUser() == null ? null : bean.getRecordingUser().buildVo();
 		this.recordingdatetime = bean.getRecordingDateTime() == null ? null : bean.getRecordingDateTime().buildDateTime();
 		this.note = bean.getNote();
-		this.notetype = bean.getNoteType() == null ? null : ims.careuk.vo.lookups.ReferralNoteType.buildLookup(bean.getNoteType());
+		this.notetype = bean.getNoteType() == null ? null : ims.RefMan.vo.lookups.ReferralNoteType.buildLookup(bean.getNoteType());
 	}
 	public void populate(ims.vo.ValueObjectBeanMap map, ims.core.vo.beans.ReferralNoteVoBean bean)
 	{
@@ -55,7 +55,7 @@ public class ReferralNoteVo extends ims.core.vo.CorrespondenceNoteRefVo implemen
 		this.recordinguser = bean.getRecordingUser() == null ? null : bean.getRecordingUser().buildVo(map);
 		this.recordingdatetime = bean.getRecordingDateTime() == null ? null : bean.getRecordingDateTime().buildDateTime();
 		this.note = bean.getNote();
-		this.notetype = bean.getNoteType() == null ? null : ims.careuk.vo.lookups.ReferralNoteType.buildLookup(bean.getNoteType());
+		this.notetype = bean.getNoteType() == null ? null : ims.RefMan.vo.lookups.ReferralNoteType.buildLookup(bean.getNoteType());
 	}
 	public ims.vo.ValueObjectBean getBean()
 	{
@@ -151,11 +151,11 @@ public class ReferralNoteVo extends ims.core.vo.CorrespondenceNoteRefVo implemen
 	{
 		return this.notetype != null;
 	}
-	public ims.careuk.vo.lookups.ReferralNoteType getNoteType()
+	public ims.RefMan.vo.lookups.ReferralNoteType getNoteType()
 	{
 		return this.notetype;
 	}
-	public void setNoteType(ims.careuk.vo.lookups.ReferralNoteType value)
+	public void setNoteType(ims.RefMan.vo.lookups.ReferralNoteType value)
 	{
 		this.isValidated = false;
 		this.notetype = value;
@@ -261,7 +261,7 @@ public class ReferralNoteVo extends ims.core.vo.CorrespondenceNoteRefVo implemen
 		if(this.notetype == null)
 			clone.notetype = null;
 		else
-			clone.notetype = (ims.careuk.vo.lookups.ReferralNoteType)this.notetype.clone();
+			clone.notetype = (ims.RefMan.vo.lookups.ReferralNoteType)this.notetype.clone();
 		clone.isValidated = this.isValidated;
 		
 		this.isBusy = false;
@@ -315,7 +315,7 @@ public class ReferralNoteVo extends ims.core.vo.CorrespondenceNoteRefVo implemen
 	protected ims.core.vo.MemberOfStaffLiteVo recordinguser;
 	protected ims.framework.utils.DateTime recordingdatetime;
 	protected String note;
-	protected ims.careuk.vo.lookups.ReferralNoteType notetype;
+	protected ims.RefMan.vo.lookups.ReferralNoteType notetype;
 	private boolean isValidated = false;
 	private boolean isBusy = false;
 }

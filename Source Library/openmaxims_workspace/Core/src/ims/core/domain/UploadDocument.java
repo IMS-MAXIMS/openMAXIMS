@@ -30,7 +30,7 @@ public interface UploadDocument extends ims.domain.DomainInterface
 	/**
 	* listPatientDocuments
 	*/
-	public ims.core.vo.PatientDocumentVoCollection listPatientDocuments(ims.core.patient.vo.PatientRefVo patient, ims.core.admin.vo.CareContextRefVo careContext, ims.core.vo.lookups.DocumentCategory documentCategory, ims.careuk.vo.CatsReferralRefVo refVo, ims.core.vo.enums.DocumentViewLevel level);
+	public ims.core.vo.PatientDocumentVoCollection listPatientDocuments(ims.core.patient.vo.PatientRefVo patient, ims.core.admin.vo.CareContextRefVo careContext, ims.core.vo.lookups.DocumentCategory documentCategory, ims.RefMan.vo.CatsReferralRefVo refVo, ims.core.vo.enums.DocumentViewLevel level);
 
 	// Generated from form domain interface definition
 	/**
@@ -39,5 +39,5 @@ public interface UploadDocument extends ims.domain.DomainInterface
 	public ims.core.vo.MemberOfStaffLiteVo getMoS(ims.core.resource.people.vo.MemberOfStaffRefVo refVo);
 
 	// Generated from form domain interface definition
-	public ims.careuk.vo.CatsReferralListVo getCatsReferral(ims.careuk.vo.CatsReferralRefVo catsRefVo);
+	public ims.RefMan.vo.CatsReferralListVo getCatsReferral(ims.RefMan.vo.CatsReferralRefVo catsRefVo);
 }

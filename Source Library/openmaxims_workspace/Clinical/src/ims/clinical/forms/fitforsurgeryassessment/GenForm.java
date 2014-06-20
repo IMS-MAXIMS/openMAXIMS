@@ -118,43 +118,43 @@ public class GenForm extends FormBridge
 	{
 		private static final long serialVersionUID = 1L;
 		
-		public void newRow(ims.careuk.vo.FitForSurgeryAssessmentLiteVo value, String text)
+		public void newRow(ims.RefMan.vo.FitForSurgeryAssessmentLiteVo value, String text)
 		{
 			super.control.newRow(value, text);
 		}
-		public void newRow(ims.careuk.vo.FitForSurgeryAssessmentLiteVo value, String text, ims.framework.utils.Image image)
+		public void newRow(ims.RefMan.vo.FitForSurgeryAssessmentLiteVo value, String text, ims.framework.utils.Image image)
 		{
 			super.control.newRow(value, text, image);
 		}
-		public void newRow(ims.careuk.vo.FitForSurgeryAssessmentLiteVo value, String text, ims.framework.utils.Color textColor)
+		public void newRow(ims.RefMan.vo.FitForSurgeryAssessmentLiteVo value, String text, ims.framework.utils.Color textColor)
 		{
 			super.control.newRow(value, text, textColor);
 		}
-		public void newRow(ims.careuk.vo.FitForSurgeryAssessmentLiteVo value, String text, ims.framework.utils.Image image, ims.framework.utils.Color textColor)
+		public void newRow(ims.RefMan.vo.FitForSurgeryAssessmentLiteVo value, String text, ims.framework.utils.Image image, ims.framework.utils.Color textColor)
 		{
 			super.control.newRow(value, text, image, textColor);
 		}
-		public void newRow(int index, ims.careuk.vo.FitForSurgeryAssessmentLiteVo value, String text)
+		public void newRow(int index, ims.RefMan.vo.FitForSurgeryAssessmentLiteVo value, String text)
 		{
 			super.control.newRow(index, value, text);
 		}
-		public void newRow(int index, ims.careuk.vo.FitForSurgeryAssessmentLiteVo value, String text, ims.framework.utils.Image image)
+		public void newRow(int index, ims.RefMan.vo.FitForSurgeryAssessmentLiteVo value, String text, ims.framework.utils.Image image)
 		{
 			super.control.newRow(index, value, text, image);
 		}
-		public void newRow(int index, ims.careuk.vo.FitForSurgeryAssessmentLiteVo value, String text, ims.framework.utils.Color textColor)
+		public void newRow(int index, ims.RefMan.vo.FitForSurgeryAssessmentLiteVo value, String text, ims.framework.utils.Color textColor)
 		{
 			super.control.newRow(index, value, text, textColor);
 		}
-		public void newRow(int index, ims.careuk.vo.FitForSurgeryAssessmentLiteVo value, String text, ims.framework.utils.Image image, ims.framework.utils.Color textColor)
+		public void newRow(int index, ims.RefMan.vo.FitForSurgeryAssessmentLiteVo value, String text, ims.framework.utils.Image image, ims.framework.utils.Color textColor)
 		{
 			super.control.newRow(index, value, text, image, textColor);
 		}
-		public ims.careuk.vo.FitForSurgeryAssessmentLiteVo getValue()
+		public ims.RefMan.vo.FitForSurgeryAssessmentLiteVo getValue()
 		{
-			return (ims.careuk.vo.FitForSurgeryAssessmentLiteVo)super.control.getValue();
+			return (ims.RefMan.vo.FitForSurgeryAssessmentLiteVo)super.control.getValue();
 		}
-		public void setValue(ims.careuk.vo.FitForSurgeryAssessmentLiteVo value)
+		public void setValue(ims.RefMan.vo.FitForSurgeryAssessmentLiteVo value)
 		{
 			super.control.setValue(value);
 		}
@@ -462,11 +462,11 @@ public class GenForm extends FormBridge
 		{
 			return !cxl_CurrentRecord.getValueIsNull(context);
 		}
-		public ims.careuk.vo.FitForSurgeryAssesmentVo getCurrentRecord()
+		public ims.RefMan.vo.FitForSurgeryAssesmentVo getCurrentRecord()
 		{
-			return (ims.careuk.vo.FitForSurgeryAssesmentVo)cxl_CurrentRecord.getValue(context);
+			return (ims.RefMan.vo.FitForSurgeryAssesmentVo)cxl_CurrentRecord.getValue(context);
 		}
-		public void setCurrentRecord(ims.careuk.vo.FitForSurgeryAssesmentVo value)
+		public void setCurrentRecord(ims.RefMan.vo.FitForSurgeryAssesmentVo value)
 		{
 			cxl_CurrentRecord.setValue(context, value);
 		}
@@ -637,7 +637,7 @@ public class GenForm extends FormBridge
 			fields[67] = new ims.framework.ReportField(this.context, "_cvp_Clinical.ExtendedClinicalNotesListFilter", "BO-1011100000-CARECONTEXT", "CareContext");
 			fields[68] = new ims.framework.ReportField(this.context, "_cvp_Core.PasEvent", "BO-1014100003-ID", "ID_PASEvent");
 			fields[69] = new ims.framework.ReportField(this.context, "_cvp_Correspondence.CorrespondenceDetails", "BO-1052100001-ID", "ID_CorrespondenceDetails");
-			fields[70] = new ims.framework.ReportField(this.context, "_cvp_CareUk.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
+			fields[70] = new ims.framework.ReportField(this.context, "_cvp_RefMan.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
 			fields[71] = new ims.framework.ReportField(this.context, "_cv_Clinical.SelectedFitForSurgeryComment", "BO-1096100042-ID", "ID_FitForSurgeryComment");
 			fields[72] = new ims.framework.ReportField(this.context, "_cv_Clinical.SelectedFitForSurgeryComment", "BO-1096100042-COMMENT", "Comment");
 			fields[73] = new ims.framework.ReportField(this.context, "_cv_Clinical.AppointmentForFitForSurgery", "BO-1055100007-ID", "ID_Booking_Appointment");

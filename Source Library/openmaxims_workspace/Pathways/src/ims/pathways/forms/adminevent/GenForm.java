@@ -395,13 +395,13 @@ public class GenForm extends FormBridge
 	{
 		if(context == null)
 			return;
-		if(!context.isValidContextType(ims.careuk.vo.CatsReferralRefVo.class))
-			throw new ims.framework.exceptions.CodingRuntimeException("The type 'ims.careuk.vo.CatsReferralRefVo' of the global context variable 'CareUk.CatsReferral' is not supported.");
+		if(!context.isValidContextType(ims.RefMan.vo.CatsReferralRefVo.class))
+			throw new ims.framework.exceptions.CodingRuntimeException("The type 'ims.RefMan.vo.CatsReferralRefVo' of the global context variable 'RefMan.CatsReferral' is not supported.");
 	}
 	private void validateMandatoryContext(Context context)
 	{
-		if(new ims.framework.ContextVariable("CareUk.CatsReferral", "_cvp_CareUk.CatsReferral").getValueIsNull(context))
-			throw new ims.framework.exceptions.FormMandatoryContextMissingException("The required context data 'CareUk.CatsReferral' is not available.");
+		if(new ims.framework.ContextVariable("RefMan.CatsReferral", "_cvp_RefMan.CatsReferral").getValueIsNull(context))
+			throw new ims.framework.exceptions.FormMandatoryContextMissingException("The required context data 'RefMan.CatsReferral' is not available.");
 	}
 	public boolean supportsRecordedInError()
 	{
@@ -608,19 +608,19 @@ public class GenForm extends FormBridge
 
 		private Forms()
 		{
-			CAREUK = new CAREUKForms();
+			RefMan = new RefManForms();
 		}
-		public final class CAREUKForms implements java.io.Serializable
+		public final class RefManForms implements java.io.Serializable
 		{
 			private static final long serialVersionUID = 1L;
-			private CAREUKForms()
+			private RefManForms()
 			{
 				PatientReferralStatusList = new LocalFormName(134126);
 			}
 			public final FormName PatientReferralStatusList;
 		}
 
-		public CAREUKForms CAREUK;
+		public RefManForms RefMan;
 	}
 
 	public GlobalContext getGlobalContext()
@@ -764,7 +764,7 @@ public class GenForm extends FormBridge
 			fields[67] = new ims.framework.ReportField(this.context, "_cvp_Clinical.ExtendedClinicalNotesListFilter", "BO-1011100000-CARECONTEXT", "CareContext");
 			fields[68] = new ims.framework.ReportField(this.context, "_cvp_Core.PasEvent", "BO-1014100003-ID", "ID_PASEvent");
 			fields[69] = new ims.framework.ReportField(this.context, "_cvp_Correspondence.CorrespondenceDetails", "BO-1052100001-ID", "ID_CorrespondenceDetails");
-			fields[70] = new ims.framework.ReportField(this.context, "_cvp_CareUk.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
+			fields[70] = new ims.framework.ReportField(this.context, "_cvp_RefMan.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
 			fields[71] = new ims.framework.ReportField(this.context, prefix + "_lv_Pathways.AdminEvent.__internal_x_context__AdminEvent_" + componentIdentifier, "BO-1088100011-ID", "ID_AdminEvent");
 			fields[72] = new ims.framework.ReportField(this.context, prefix + "_lv_Pathways.AdminEvent.__internal_x_context__AdminEvent_" + componentIdentifier, "BO-1088100011-EVENTDETAILS", "EventDetails");
 			fields[73] = new ims.framework.ReportField(this.context, prefix + "_lv_Pathways.AdminEvent.__internal_x_context__AdminEvent_" + componentIdentifier, "BO-1088100011-OUTCOME", "Outcome");

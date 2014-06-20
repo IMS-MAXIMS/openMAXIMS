@@ -501,11 +501,11 @@ public class GenForm extends FormBridge
 		{
 			super.row.setTooltip(2, value);
 		}
-		public ims.careuk.vo.TransportBookingShortVo getValue()
+		public ims.RefMan.vo.TransportBookingShortVo getValue()
 		{
-			return (ims.careuk.vo.TransportBookingShortVo)super.row.getValue();
+			return (ims.RefMan.vo.TransportBookingShortVo)super.row.getValue();
 		}
-		public void setValue(ims.careuk.vo.TransportBookingShortVo value)
+		public void setValue(ims.RefMan.vo.TransportBookingShortVo value)
 		{
 			super.row.setValue(value);
 		}
@@ -551,20 +551,20 @@ public class GenForm extends FormBridge
 		{
 			super.grid.addDateColumn(caption, captionAlignment, alignment, width, readOnly, canBeEmpty, validationString, bold, sortOrder, canGrow);
 		}
-		public ims.careuk.vo.TransportBookingShortVoCollection getValues()
+		public ims.RefMan.vo.TransportBookingShortVoCollection getValues()
 		{
-			ims.careuk.vo.TransportBookingShortVoCollection listOfValues = new ims.careuk.vo.TransportBookingShortVoCollection();
+			ims.RefMan.vo.TransportBookingShortVoCollection listOfValues = new ims.RefMan.vo.TransportBookingShortVoCollection();
 			for(int x = 0; x < this.getRows().size(); x++)
 			{
 				listOfValues.add(this.getRows().get(x).getValue());
 			}
 			return listOfValues;
 		}
-		public ims.careuk.vo.TransportBookingShortVo getValue()
+		public ims.RefMan.vo.TransportBookingShortVo getValue()
 		{
-			return (ims.careuk.vo.TransportBookingShortVo)super.grid.getValue();
+			return (ims.RefMan.vo.TransportBookingShortVo)super.grid.getValue();
 		}
-		public void setValue(ims.careuk.vo.TransportBookingShortVo value)
+		public void setValue(ims.RefMan.vo.TransportBookingShortVo value)
 		{
 			super.grid.setValue(value);
 		}
@@ -580,7 +580,7 @@ public class GenForm extends FormBridge
 		{
 			return new grdTransportRowCollection(super.grid.getRows());
 		}
-		public grdTransportRow getRowByValue(ims.careuk.vo.TransportBookingShortVo value)
+		public grdTransportRow getRowByValue(ims.RefMan.vo.TransportBookingShortVo value)
 		{
 			GridRow row = super.grid.getRowByValue(value);
 			return row == null?null:new grdTransportRow(row);
@@ -669,12 +669,12 @@ public class GenForm extends FormBridge
 
 		// Context Menus
 		contextMenus = new ContextMenus();
-		contextMenus.CAREUK.contextMenuTransportBooking = factory.createMenu(startControlID.intValue() + 1);
-		contextMenus.CAREUK.contextMenuTransportBookingNewItem = factory.createMenuItem(startControlID.intValue() + 1, "New Booking", true, false, new Integer(102179), true, false);
-		contextMenus.CAREUK.contextMenuTransportBooking.add(contextMenus.CAREUK.contextMenuTransportBookingNewItem);
-		contextMenus.CAREUK.contextMenuTransportBookingEditItem = factory.createMenuItem(startControlID.intValue() + 2, "Edit Booking", true, false, new Integer(103102), true, false);
-		contextMenus.CAREUK.contextMenuTransportBooking.add(contextMenus.CAREUK.contextMenuTransportBookingEditItem);
-		form.registerMenu(contextMenus.CAREUK.contextMenuTransportBooking);
+		contextMenus.RefMan.contextMenuTransportBooking = factory.createMenu(startControlID.intValue() + 1);
+		contextMenus.RefMan.contextMenuTransportBookingNewItem = factory.createMenuItem(startControlID.intValue() + 1, "New Booking", true, false, new Integer(102179), true, false);
+		contextMenus.RefMan.contextMenuTransportBooking.add(contextMenus.RefMan.contextMenuTransportBookingNewItem);
+		contextMenus.RefMan.contextMenuTransportBookingEditItem = factory.createMenuItem(startControlID.intValue() + 2, "Edit Booking", true, false, new Integer(103102), true, false);
+		contextMenus.RefMan.contextMenuTransportBooking.add(contextMenus.RefMan.contextMenuTransportBookingEditItem);
+		form.registerMenu(contextMenus.RefMan.contextMenuTransportBooking);
 
 
 		// Container Clasess
@@ -718,7 +718,7 @@ public class GenForm extends FormBridge
 
 		// Grid Controls
 		RuntimeAnchoring anchoringHelper16 = new RuntimeAnchoring(designSize, runtimeSize, 16, 48, 736, 272, ims.framework.enumerations.ControlAnchoring.ALL);
-		Grid m_grdTransportTemp = (Grid)factory.getControl(Grid.class, new Object[] { control, new Integer(startControlID.intValue() + 1015), new Integer(anchoringHelper16.getX()), new Integer(anchoringHelper16.getY()), new Integer(anchoringHelper16.getWidth()), new Integer(anchoringHelper16.getHeight()), new Integer(startTabIndex.intValue() + 3), ControlState.READONLY, ControlState.DISABLED, ims.framework.enumerations.ControlAnchoring.ALL,Boolean.TRUE, Boolean.TRUE, new Integer(24), Boolean.TRUE, contextMenus.CAREUK.contextMenuTransportBooking, Boolean.FALSE, Boolean.FALSE, new Integer(0), null, Boolean.FALSE, Boolean.TRUE});
+		Grid m_grdTransportTemp = (Grid)factory.getControl(Grid.class, new Object[] { control, new Integer(startControlID.intValue() + 1015), new Integer(anchoringHelper16.getX()), new Integer(anchoringHelper16.getY()), new Integer(anchoringHelper16.getWidth()), new Integer(anchoringHelper16.getHeight()), new Integer(startTabIndex.intValue() + 3), ControlState.READONLY, ControlState.DISABLED, ims.framework.enumerations.ControlAnchoring.ALL,Boolean.TRUE, Boolean.TRUE, new Integer(24), Boolean.TRUE, contextMenus.RefMan.contextMenuTransportBooking, Boolean.FALSE, Boolean.FALSE, new Integer(0), null, Boolean.FALSE, Boolean.TRUE});
 		addControl(m_grdTransportTemp);
 		grdTransportGrid grdTransport = (grdTransportGrid)GridFlyweightFactory.getInstance().createGridBridge(grdTransportGrid.class, m_grdTransportTemp);
 		grdTransport.addStringColumn("Booking Ref No", 0, 0, 200, true, false, 0, 0, true, ims.framework.enumerations.CharacterCasing.NORMAL);
@@ -792,11 +792,11 @@ public class GenForm extends FormBridge
 		{
 			return !cxl_selectedTransport.getValueIsNull(context);
 		}
-		public ims.careuk.vo.TransportBookingShortVo getselectedTransport()
+		public ims.RefMan.vo.TransportBookingShortVo getselectedTransport()
 		{
-			return (ims.careuk.vo.TransportBookingShortVo)cxl_selectedTransport.getValue(context);
+			return (ims.RefMan.vo.TransportBookingShortVo)cxl_selectedTransport.getValue(context);
 		}
-		public void setselectedTransport(ims.careuk.vo.TransportBookingShortVo value)
+		public void setselectedTransport(ims.RefMan.vo.TransportBookingShortVo value)
 		{
 			cxl_selectedTransport.setValue(context, value);
 		}
@@ -824,8 +824,8 @@ public class GenForm extends FormBridge
 	public final class ContextMenus implements java.io.Serializable
 	{
 		private static final long serialVersionUID = 1L;
-		public CAREUKNamespace CAREUK = new CAREUKNamespace();
-		public final class CAREUKNamespace implements java.io.Serializable
+		public RefManNamespace RefMan = new RefManNamespace();
+		public final class RefManNamespace implements java.io.Serializable
 		{
 			private static final long serialVersionUID = 1L;
 			public final class TransportBooking implements java.io.Serializable
@@ -954,7 +954,7 @@ public class GenForm extends FormBridge
 			fields[67] = new ims.framework.ReportField(this.context, "_cvp_Clinical.ExtendedClinicalNotesListFilter", "BO-1011100000-CARECONTEXT", "CareContext");
 			fields[68] = new ims.framework.ReportField(this.context, "_cvp_Core.PasEvent", "BO-1014100003-ID", "ID_PASEvent");
 			fields[69] = new ims.framework.ReportField(this.context, "_cvp_Correspondence.CorrespondenceDetails", "BO-1052100001-ID", "ID_CorrespondenceDetails");
-			fields[70] = new ims.framework.ReportField(this.context, "_cvp_CareUk.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
+			fields[70] = new ims.framework.ReportField(this.context, "_cvp_RefMan.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
 			fields[71] = new ims.framework.ReportField(this.context, prefix + "_lv_Core.TransportBooking.__internal_x_context__selectedTransport_" + componentIdentifier, "BO-1090100004-ID", "ID_TransportBooking");
 			fields[72] = new ims.framework.ReportField(this.context, prefix + "_lv_Core.TransportBooking.__internal_x_context__selectedTransport_" + componentIdentifier, "BO-1090100004-DATEBOOKED", "DateBooked");
 			fields[73] = new ims.framework.ReportField(this.context, prefix + "_lv_Core.TransportBooking.__internal_x_context__selectedTransport_" + componentIdentifier, "BO-1090100004-BOOKINGREFERENCE", "BookingReference");

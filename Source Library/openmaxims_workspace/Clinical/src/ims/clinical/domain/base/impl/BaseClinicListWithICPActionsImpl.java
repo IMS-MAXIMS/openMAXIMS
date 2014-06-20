@@ -55,7 +55,7 @@ public abstract class BaseClinicListWithICPActionsImpl extends DomainImpl implem
 	}
 
 	@SuppressWarnings("unused")
-	public void validatesaveOPEpisode(ims.scheduling.vo.Booking_AppointmentVo voOP, ims.careuk.vo.CatsReferralListVo voCatsReferral, ims.scheduling.vo.SessionSlotVo dnaSessionSlot, ims.careuk.vo.PatientElectiveListForDNAAppointmentsVo electiveList, Boolean isFirstAppointmentActivity)
+	public void validatesaveOPEpisode(ims.scheduling.vo.Booking_AppointmentVo voOP, ims.RefMan.vo.CatsReferralListVo voCatsReferral, ims.scheduling.vo.SessionSlotVo dnaSessionSlot, ims.RefMan.vo.PatientElectiveListForDNAAppointmentsVo electiveList, Boolean isFirstAppointmentActivity)
 	{
 	}
 

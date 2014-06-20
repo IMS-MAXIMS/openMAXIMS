@@ -48,7 +48,7 @@ public final class FormInfo extends ims.framework.FormInfo
 	}
 	public String[] getContextVariables()
 	{
-		return new String[] { "_cv_Scheduling.BookingService", "_cv_Scheduling.BookingSession", "_cv_Scheduling.TheatreConsultant", "_cv_Scheduling.TheatreProcedure", "_cv_Scheduling.TheatreService", "_cv_Scheduling.TheatreType", "_cv_Scheduling.TheatreAppointment", "_cv_ChooseAndBook.isCABAppt", "_cv_Scheduling.ApptCancelStatus", "_cv_Scheduling.BookingActivity", "_cv_Scheduling.BookingAppointment", "_cv_Scheduling.BookingAppointmentRef", "_cv_Core.HospitalLoc", "_cv_CareUk.CatsReferralStatus", "_cv_CareUk.TheatreAdmitDetails", "_cv_CareUk.TheatreBookingAppointment", "_cv_Scheduling.MoveAppointmentDialogData" };
+		return new String[] { "_cv_Scheduling.BookingService", "_cv_Scheduling.BookingSession", "_cv_Scheduling.TheatreConsultant", "_cv_Scheduling.TheatreProcedure", "_cv_Scheduling.TheatreService", "_cv_Scheduling.TheatreType", "_cv_Scheduling.TheatreAppointment", "_cv_ChooseAndBook.isCABAppt", "_cv_Scheduling.ApptCancelStatus", "_cv_Scheduling.BookingActivity", "_cv_Scheduling.BookingAppointment", "_cv_Scheduling.BookingAppointmentRef", "_cv_Core.HospitalLoc", "_cv_RefMan.CatsReferralStatus", "_cv_RefMan.TheatreAdmitDetails", "_cv_RefMan.TheatreBookingAppointment", "_cv_Scheduling.MoveAppointmentDialogData" };
 	}
 	public String getLocalVariablesPrefix()
 	{

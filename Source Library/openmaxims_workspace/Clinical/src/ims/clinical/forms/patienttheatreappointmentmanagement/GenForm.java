@@ -550,8 +550,8 @@ public class GenForm extends FormBridge
 	{
 		if(context == null)
 			return;
-		if(!context.isValidContextType(ims.careuk.vo.CatsReferralRefVo.class))
-			throw new ims.framework.exceptions.CodingRuntimeException("The type 'ims.careuk.vo.CatsReferralRefVo' of the global context variable 'CareUk.CatsReferral' is not supported.");
+		if(!context.isValidContextType(ims.RefMan.vo.CatsReferralRefVo.class))
+			throw new ims.framework.exceptions.CodingRuntimeException("The type 'ims.RefMan.vo.CatsReferralRefVo' of the global context variable 'RefMan.CatsReferral' is not supported.");
 		if(!context.isValidContextType(ims.core.vo.PatientShort.class))
 			throw new ims.framework.exceptions.CodingRuntimeException("The type 'ims.core.vo.PatientShort' of the global context variable 'Core.PatientShort' is not supported.");
 	}
@@ -796,7 +796,7 @@ public class GenForm extends FormBridge
 		{
 			CcoSched = new CcoSchedForms();
 			Scheduling = new SchedulingForms();
-			CAREUK = new CAREUKForms();
+			RefMan = new RefManForms();
 		}
 		public final class CcoSchedForms implements java.io.Serializable
 		{
@@ -822,10 +822,10 @@ public class GenForm extends FormBridge
 			public final FormName AppointmentOutcomeDialog;
 			public final FormName MoveAppointmentDialog;
 		}
-		public final class CAREUKForms implements java.io.Serializable
+		public final class RefManForms implements java.io.Serializable
 		{
 			private static final long serialVersionUID = 1L;
-			private CAREUKForms()
+			private RefManForms()
 			{
 				BookAppointment = new LocalFormName(134123);
 				TheatreAdmissionDialog = new LocalFormName(134156);
@@ -842,7 +842,7 @@ public class GenForm extends FormBridge
 
 		public CcoSchedForms CcoSched;
 		public SchedulingForms Scheduling;
-		public CAREUKForms CAREUK;
+		public RefManForms RefMan;
 	}
 
 
@@ -1129,7 +1129,7 @@ public class GenForm extends FormBridge
 			fields[67] = new ims.framework.ReportField(this.context, "_cvp_Clinical.ExtendedClinicalNotesListFilter", "BO-1011100000-CARECONTEXT", "CareContext");
 			fields[68] = new ims.framework.ReportField(this.context, "_cvp_Core.PasEvent", "BO-1014100003-ID", "ID_PASEvent");
 			fields[69] = new ims.framework.ReportField(this.context, "_cvp_Correspondence.CorrespondenceDetails", "BO-1052100001-ID", "ID_CorrespondenceDetails");
-			fields[70] = new ims.framework.ReportField(this.context, "_cvp_CareUk.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
+			fields[70] = new ims.framework.ReportField(this.context, "_cvp_RefMan.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
 			fields[71] = new ims.framework.ReportField(this.context, "_cv_Scheduling.TheatreProcedure", "BO-1003100019-ID", "ID_Procedure");
 			fields[72] = new ims.framework.ReportField(this.context, "_cv_Scheduling.TheatreProcedure", "BO-1003100019-PROCEDURENAME", "ProcedureName");
 			fields[73] = new ims.framework.ReportField(this.context, "_cv_Scheduling.TheatreProcedure", "BO-1003100019-ISACTIVE", "IsActive");
@@ -1203,17 +1203,17 @@ public class GenForm extends FormBridge
 			fields[141] = new ims.framework.ReportField(this.context, "_cv_Core.HospitalLoc", "BO-1007100007-SECUREACCOMMODATION", "SecureAccommodation");
 			fields[142] = new ims.framework.ReportField(this.context, "_cv_Core.HospitalLoc", "BO-1007100007-TREATINGHOSP", "TreatingHosp");
 			fields[143] = new ims.framework.ReportField(this.context, "_cv_Core.HospitalLoc", "BO-1007100007-REFERRINGHOSPITAL", "ReferringHospital");
-			fields[144] = new ims.framework.ReportField(this.context, "_cv_CareUk.CatsReferralStatus", "BO-1096100007-ID", "ID_CATSReferralStatus");
-			fields[145] = new ims.framework.ReportField(this.context, "_cv_CareUk.CatsReferralStatus", "BO-1096100007-REFERRALSTATUS", "ReferralStatus");
-			fields[146] = new ims.framework.ReportField(this.context, "_cv_CareUk.CatsReferralStatus", "BO-1096100007-AUTHORINGUSER", "AuthoringUser");
-			fields[147] = new ims.framework.ReportField(this.context, "_cv_CareUk.CatsReferralStatus", "BO-1096100007-STATUSDATETIME", "StatusDateTime");
-			fields[148] = new ims.framework.ReportField(this.context, "_cv_CareUk.CatsReferralStatus", "BO-1096100007-COMMENT", "Comment");
-			fields[149] = new ims.framework.ReportField(this.context, "_cv_CareUk.CatsReferralStatus", "BO-1096100007-SECONDOPINIONCATEGORY", "SecondOpinionCategory");
+			fields[144] = new ims.framework.ReportField(this.context, "_cv_RefMan.CatsReferralStatus", "BO-1096100007-ID", "ID_CATSReferralStatus");
+			fields[145] = new ims.framework.ReportField(this.context, "_cv_RefMan.CatsReferralStatus", "BO-1096100007-REFERRALSTATUS", "ReferralStatus");
+			fields[146] = new ims.framework.ReportField(this.context, "_cv_RefMan.CatsReferralStatus", "BO-1096100007-AUTHORINGUSER", "AuthoringUser");
+			fields[147] = new ims.framework.ReportField(this.context, "_cv_RefMan.CatsReferralStatus", "BO-1096100007-STATUSDATETIME", "StatusDateTime");
+			fields[148] = new ims.framework.ReportField(this.context, "_cv_RefMan.CatsReferralStatus", "BO-1096100007-COMMENT", "Comment");
+			fields[149] = new ims.framework.ReportField(this.context, "_cv_RefMan.CatsReferralStatus", "BO-1096100007-SECONDOPINIONCATEGORY", "SecondOpinionCategory");
 			fields[150] = new ims.framework.ReportField(this.context, "_cv_Scheduling.BookingService", "BO-1003100032-ID", "ID_Service");
 			fields[151] = new ims.framework.ReportField(this.context, "_cv_Scheduling.BookingSession", "BO-1055100010-ID", "ID_Sch_Session");
 			fields[152] = new ims.framework.ReportField(this.context, "_cv_Scheduling.BookingActivity", "BO-1007100005-ID", "ID_Activity");
 			fields[153] = new ims.framework.ReportField(this.context, "_cv_Scheduling.BookingAppointmentRef", "BO-1055100007-ID", "ID_Booking_Appointment");
-			fields[154] = new ims.framework.ReportField(this.context, "_cv_CareUk.TheatreBookingAppointment", "BO-1055100007-ID", "ID_Booking_Appointment");
+			fields[154] = new ims.framework.ReportField(this.context, "_cv_RefMan.TheatreBookingAppointment", "BO-1055100007-ID", "ID_Booking_Appointment");
 			fields[155] = new ims.framework.ReportField(this.context, prefix + "_lv_Clinical.PatientTheatreAppointmentManagement.__internal_x_context__selectedPatient_" + componentIdentifier, "BO-1001100000-ID", "ID_Patient");
 			fields[156] = new ims.framework.ReportField(this.context, prefix + "_lv_Clinical.PatientTheatreAppointmentManagement.__internal_x_context__selectedPatient_" + componentIdentifier, "BO-1001100000-SEX", "Sex");
 			fields[157] = new ims.framework.ReportField(this.context, prefix + "_lv_Clinical.PatientTheatreAppointmentManagement.__internal_x_context__selectedPatient_" + componentIdentifier, "BO-1001100000-DOB", "Dob");

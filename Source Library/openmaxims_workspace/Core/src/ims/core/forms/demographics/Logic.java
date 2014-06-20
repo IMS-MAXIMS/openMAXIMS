@@ -2196,7 +2196,7 @@ public class Logic extends BaseLogic
 		if (newPatient)
 		{
 			engine.clearPatientContextInformation();
-			form.getGlobalContext().CareUk.clearCatsReferral();
+			form.getGlobalContext().RefMan.clearCatsReferral();
 		}
 
 		form.getLocalContext().setPatient(patient);

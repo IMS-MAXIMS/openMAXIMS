@@ -34,7 +34,7 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 		super(context);
 
 		Core = new CoreContext(context);
-		CareUk = new CareUkContext(context);
+		RefMan = new RefManContext(context);
 	}
 	public final class CoreContext implements Serializable
 	{
@@ -105,11 +105,11 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 
 		private ims.framework.Context context;
 	}
-	public final class CareUkContext implements Serializable
+	public final class RefManContext implements Serializable
 	{
 		private static final long serialVersionUID = 1L;
 
-		private CareUkContext(ims.framework.Context context)
+		private RefManContext(ims.framework.Context context)
 		{
 			this.context = context;
 
@@ -117,36 +117,36 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 
 		public boolean getPrescriptionMedicationIsNotNull()
 		{
-			return !cx_CareUkPrescriptionMedication.getValueIsNull(context);
+			return !cx_RefManPrescriptionMedication.getValueIsNull(context);
 		}
 		public ims.core.vo.PatientMedicationLiteVo getPrescriptionMedication()
 		{
-			return (ims.core.vo.PatientMedicationLiteVo)cx_CareUkPrescriptionMedication.getValue(context);
+			return (ims.core.vo.PatientMedicationLiteVo)cx_RefManPrescriptionMedication.getValue(context);
 		}
 		public void setPrescriptionMedication(ims.core.vo.PatientMedicationLiteVo value)
 		{
-			cx_CareUkPrescriptionMedication.setValue(context, value);
+			cx_RefManPrescriptionMedication.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkPrescriptionMedication = new ims.framework.ContextVariable("CareUk.PrescriptionMedication", "_cv_CareUk.PrescriptionMedication");
+		private ims.framework.ContextVariable cx_RefManPrescriptionMedication = new ims.framework.ContextVariable("RefMan.PrescriptionMedication", "_cv_RefMan.PrescriptionMedication");
 		public boolean getDrugsAlreadyAddedToPrescriptionIsNotNull()
 		{
-			return !cx_CareUkDrugsAlreadyAddedToPrescription.getValueIsNull(context);
+			return !cx_RefManDrugsAlreadyAddedToPrescription.getValueIsNull(context);
 		}
 		public String getDrugsAlreadyAddedToPrescription()
 		{
-			return (String)cx_CareUkDrugsAlreadyAddedToPrescription.getValue(context);
+			return (String)cx_RefManDrugsAlreadyAddedToPrescription.getValue(context);
 		}
 		public void setDrugsAlreadyAddedToPrescription(String value)
 		{
-			cx_CareUkDrugsAlreadyAddedToPrescription.setValue(context, value);
+			cx_RefManDrugsAlreadyAddedToPrescription.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkDrugsAlreadyAddedToPrescription = new ims.framework.ContextVariable("CareUk.DrugsAlreadyAddedToPrescription", "_cv_CareUk.DrugsAlreadyAddedToPrescription");
+		private ims.framework.ContextVariable cx_RefManDrugsAlreadyAddedToPrescription = new ims.framework.ContextVariable("RefMan.DrugsAlreadyAddedToPrescription", "_cv_RefMan.DrugsAlreadyAddedToPrescription");
 
 		private ims.framework.Context context;
 	}
 
 	public CoreContext Core;
-	public CareUkContext CareUk;
+	public RefManContext RefMan;
 }

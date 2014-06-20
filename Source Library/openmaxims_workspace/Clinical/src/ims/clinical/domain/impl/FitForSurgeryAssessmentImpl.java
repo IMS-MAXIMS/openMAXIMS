@@ -22,18 +22,18 @@
 
 package ims.clinical.domain.impl;
 
-import ims.careuk.domain.objects.CatsReferral;
-import ims.careuk.domain.objects.FitForSurgeryAssesment;
-import ims.careuk.domain.objects.OutpatientPreAssessment;
-import ims.careuk.vo.CatsReferralListVo;
-import ims.careuk.vo.FitForSurgeryAssesmentRefVo;
-import ims.careuk.vo.FitForSurgeryAssesmentVo;
-import ims.careuk.vo.FitForSurgeryAssessmentLiteVoCollection;
-import ims.careuk.vo.OutpatientPreAssessmentVo;
-import ims.careuk.vo.domain.CatsReferralListVoAssembler;
-import ims.careuk.vo.domain.FitForSurgeryAssesmentVoAssembler;
-import ims.careuk.vo.domain.FitForSurgeryAssessmentLiteVoAssembler;
-import ims.careuk.vo.domain.OutpatientPreAssessmentVoAssembler;
+import ims.RefMan.domain.objects.CatsReferral;
+import ims.RefMan.domain.objects.FitForSurgeryAssesment;
+import ims.RefMan.domain.objects.OutpatientPreAssessment;
+import ims.RefMan.vo.CatsReferralListVo;
+import ims.RefMan.vo.FitForSurgeryAssesmentRefVo;
+import ims.RefMan.vo.FitForSurgeryAssesmentVo;
+import ims.RefMan.vo.FitForSurgeryAssessmentLiteVoCollection;
+import ims.RefMan.vo.OutpatientPreAssessmentVo;
+import ims.RefMan.vo.domain.CatsReferralListVoAssembler;
+import ims.RefMan.vo.domain.FitForSurgeryAssesmentVoAssembler;
+import ims.RefMan.vo.domain.FitForSurgeryAssessmentLiteVoAssembler;
+import ims.RefMan.vo.domain.OutpatientPreAssessmentVoAssembler;
 import ims.clinical.domain.base.impl.BaseFitForSurgeryAssessmentImpl;
 import ims.core.admin.vo.CareContextRefVo;
 import ims.core.patient.vo.PatientRefVo;
@@ -157,7 +157,7 @@ public class FitForSurgeryAssessmentImpl extends BaseFitForSurgeryAssessmentImpl
 		return outpatient.size() > 0 ? OutpatientPreAssessmentVoAssembler.create((OutpatientPreAssessment)outpatient.get(0)) : null;
 	}
 
-	public ims.careuk.vo.FitForSurgeryAssesmentVo getFitForSurgery(ims.core.vo.CareContextShortVo careContext)
+	public ims.RefMan.vo.FitForSurgeryAssesmentVo getFitForSurgery(ims.core.vo.CareContextShortVo careContext)
 	{
 		if(careContext == null || !careContext.getID_CareContextIsNotNull())
 			throw new CodingRuntimeException("Cannot get FitForSurgeryAssesmentVo for null CareContext.");
@@ -171,7 +171,7 @@ public class FitForSurgeryAssessmentImpl extends BaseFitForSurgeryAssessmentImpl
 		if(listFitFortSurgery == null || listFitFortSurgery.size() == 0)
 			return null;
 		
-		ims.careuk.vo.FitForSurgeryAssesmentVoCollection fitForSurgeryColl = FitForSurgeryAssesmentVoAssembler.createFitForSurgeryAssesmentVoCollectionFromFitForSurgeryAssesment(listFitFortSurgery);
+		ims.RefMan.vo.FitForSurgeryAssesmentVoCollection fitForSurgeryColl = FitForSurgeryAssesmentVoAssembler.createFitForSurgeryAssesmentVoCollectionFromFitForSurgeryAssesment(listFitFortSurgery);
 		
 		if(fitForSurgeryColl == null || fitForSurgeryColl.size() == 0)
 			return null;

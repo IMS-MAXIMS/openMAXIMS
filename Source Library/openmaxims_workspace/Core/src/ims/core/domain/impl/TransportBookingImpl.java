@@ -22,11 +22,11 @@
 
 package ims.core.domain.impl;
 
-import ims.careuk.vo.TransportBookingDisplayVo;
-import ims.careuk.vo.TransportBookingShortVo;
-import ims.careuk.vo.TransportBookingShortVoCollection;
-import ims.careuk.vo.domain.TransportBookingDisplayVoAssembler;
-import ims.careuk.vo.domain.TransportBookingShortVoAssembler;
+import ims.RefMan.vo.TransportBookingDisplayVo;
+import ims.RefMan.vo.TransportBookingShortVo;
+import ims.RefMan.vo.TransportBookingShortVoCollection;
+import ims.RefMan.vo.domain.TransportBookingDisplayVoAssembler;
+import ims.RefMan.vo.domain.TransportBookingShortVoAssembler;
 import ims.core.admin.vo.CareContextRefVo;
 import ims.core.domain.base.impl.BaseTransportBookingImpl;
 import ims.core.domain.objects.PatientTransportRequirements;

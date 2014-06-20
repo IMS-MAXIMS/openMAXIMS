@@ -23,7 +23,7 @@
 package ims.admin.forms.referralservices;
 
 import ims.admin.forms.referralservices.GenForm.grdReferralServiceRow;
-import ims.careuk.vo.ReferralServiceVo;
+import ims.RefMan.vo.ReferralServiceVo;
 import ims.core.clinical.vo.ServiceRefVoCollection;
 import ims.core.vo.ServiceLiteVo;
 import ims.core.vo.ServiceLiteVoCollection;

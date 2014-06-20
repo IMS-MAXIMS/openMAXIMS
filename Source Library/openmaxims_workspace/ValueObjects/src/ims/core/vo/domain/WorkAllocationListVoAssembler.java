@@ -61,7 +61,7 @@ public class WorkAllocationListVoAssembler
 	 * This is a convenience method only.
 	 * It is intended to be used when one called to an Assembler is made.
  	 * If more than one call to an Assembler is made then #createWorkAllocationListVoCollectionFromWorkAllocation(DomainObjectMap, Set) should be used.
-	 * @param domainObjectSet - Set of ims.careuk.domain.objects.WorkAllocation objects.
+	 * @param domainObjectSet - Set of ims.RefMan.domain.objects.WorkAllocation objects.
 	 */
 	public static ims.core.vo.WorkAllocationListVoCollection createWorkAllocationListVoCollectionFromWorkAllocation(java.util.Set domainObjectSet)	
 	{
@@ -71,7 +71,7 @@ public class WorkAllocationListVoAssembler
 	/**
 	 * Create the ValueObject collection to hold the set of DomainObjects.
 	 * @param map - maps DomainObjects to created ValueObjects
-	 * @param domainObjectSet - Set of ims.careuk.domain.objects.WorkAllocation objects.
+	 * @param domainObjectSet - Set of ims.RefMan.domain.objects.WorkAllocation objects.
 	 */
 	public static ims.core.vo.WorkAllocationListVoCollection createWorkAllocationListVoCollectionFromWorkAllocation(DomainObjectMap map, java.util.Set domainObjectSet)	
 	{
@@ -85,7 +85,7 @@ public class WorkAllocationListVoAssembler
 		java.util.Iterator iterator = domainObjectSet.iterator();
 		while( iterator.hasNext() ) 
 		{
-			ims.careuk.domain.objects.WorkAllocation domainObject = (ims.careuk.domain.objects.WorkAllocation) iterator.next();
+			ims.RefMan.domain.objects.WorkAllocation domainObject = (ims.RefMan.domain.objects.WorkAllocation) iterator.next();
 			ims.core.vo.WorkAllocationListVo vo = create(map, domainObject);
 			
 			if (vo != null)
@@ -106,7 +106,7 @@ public class WorkAllocationListVoAssembler
 
 	/**
 	 * Create the ValueObject collection to hold the list of DomainObjects.
-	 * @param domainObjectList - List of ims.careuk.domain.objects.WorkAllocation objects.
+	 * @param domainObjectList - List of ims.RefMan.domain.objects.WorkAllocation objects.
 	 */
 	public static ims.core.vo.WorkAllocationListVoCollection createWorkAllocationListVoCollectionFromWorkAllocation(java.util.List domainObjectList) 
 	{
@@ -116,7 +116,7 @@ public class WorkAllocationListVoAssembler
 	/**
 	 * Create the ValueObject collection to hold the list of DomainObjects.
 	 * @param map - maps DomainObjects to created ValueObjects
-	 * @param domainObjectList - List of ims.careuk.domain.objects.WorkAllocation objects.
+	 * @param domainObjectList - List of ims.RefMan.domain.objects.WorkAllocation objects.
 	 */
 	public static ims.core.vo.WorkAllocationListVoCollection createWorkAllocationListVoCollectionFromWorkAllocation(DomainObjectMap map, java.util.List domainObjectList) 
 	{
@@ -129,7 +129,7 @@ public class WorkAllocationListVoAssembler
 		int activeCount=0;
 		for (int i = 0; i < domainObjectList.size(); i++)
 		{
-			ims.careuk.domain.objects.WorkAllocation domainObject = (ims.careuk.domain.objects.WorkAllocation) domainObjectList.get(i);
+			ims.RefMan.domain.objects.WorkAllocation domainObject = (ims.RefMan.domain.objects.WorkAllocation) domainObjectList.get(i);
 			ims.core.vo.WorkAllocationListVo vo = create(map, domainObject);
 
 			if (vo != null)
@@ -150,7 +150,7 @@ public class WorkAllocationListVoAssembler
 	}
 
 	/**
-	 * Create the ims.careuk.domain.objects.WorkAllocation set from the value object collection.
+	 * Create the ims.RefMan.domain.objects.WorkAllocation set from the value object collection.
 	 * @param domainFactory - used to create existing (persistent) domain objects.
 	 * @param voCollection - the collection of value objects	 
 	 */
@@ -170,7 +170,7 @@ public class WorkAllocationListVoAssembler
 		for(int i=0; i<size; i++) 
 		{
 			ims.core.vo.WorkAllocationListVo vo = voCollection.get(i);
-			ims.careuk.domain.objects.WorkAllocation domainObject = WorkAllocationListVoAssembler.extractWorkAllocation(domainFactory, vo, domMap);
+			ims.RefMan.domain.objects.WorkAllocation domainObject = WorkAllocationListVoAssembler.extractWorkAllocation(domainFactory, vo, domMap);
 
 			//TODO: This can only occur in the situation of a stale object exception. For now leave it to the Interceptor to handle it.
 			if (domainObject == null)
@@ -204,7 +204,7 @@ public class WorkAllocationListVoAssembler
 
 
 	/**
-	 * Create the ims.careuk.domain.objects.WorkAllocation list from the value object collection.
+	 * Create the ims.RefMan.domain.objects.WorkAllocation list from the value object collection.
 	 * @param domainFactory - used to create existing (persistent) domain objects.
 	 * @param voCollection - the collection of value objects	 
 	 */
@@ -223,7 +223,7 @@ public class WorkAllocationListVoAssembler
 		for(int i=0; i<size; i++) 
 		{
 			ims.core.vo.WorkAllocationListVo vo = voCollection.get(i);
-			ims.careuk.domain.objects.WorkAllocation domainObject = WorkAllocationListVoAssembler.extractWorkAllocation(domainFactory, vo, domMap);
+			ims.RefMan.domain.objects.WorkAllocation domainObject = WorkAllocationListVoAssembler.extractWorkAllocation(domainFactory, vo, domMap);
 
 			//TODO: This can only occur in the situation of a stale object exception. For now leave it to the Interceptor to handle it.
 			if (domainObject == null)
@@ -258,10 +258,10 @@ public class WorkAllocationListVoAssembler
  
 
 	/**
-	 * Create the ValueObject from the ims.careuk.domain.objects.WorkAllocation object.
-	 * @param domainObject ims.careuk.domain.objects.WorkAllocation
+	 * Create the ValueObject from the ims.RefMan.domain.objects.WorkAllocation object.
+	 * @param domainObject ims.RefMan.domain.objects.WorkAllocation
 	 */
-	 public static ims.core.vo.WorkAllocationListVo create(ims.careuk.domain.objects.WorkAllocation domainObject) 
+	 public static ims.core.vo.WorkAllocationListVo create(ims.RefMan.domain.objects.WorkAllocation domainObject) 
 	 {
 	 	if (null == domainObject) 
 	 	{
@@ -272,11 +272,11 @@ public class WorkAllocationListVoAssembler
 	 }
 	 
 	 /**
-	  * Create the ValueObject from the ims.careuk.domain.objects.WorkAllocation object.
+	  * Create the ValueObject from the ims.RefMan.domain.objects.WorkAllocation object.
 	  * @param map DomainObjectMap of DomainObjects to already created ValueObjects.
 	  * @param domainObject
 	  */
-	  public static ims.core.vo.WorkAllocationListVo create(DomainObjectMap map, ims.careuk.domain.objects.WorkAllocation domainObject) 
+	  public static ims.core.vo.WorkAllocationListVo create(DomainObjectMap map, ims.RefMan.domain.objects.WorkAllocation domainObject) 
 	  {
 	  		if (null == domainObject) 
 	  		{
@@ -298,9 +298,9 @@ public class WorkAllocationListVoAssembler
 	/**
 	 * Update the ValueObject with the Domain Object.
 	 * @param valueObject to be updated
-	 * @param domainObject ims.careuk.domain.objects.WorkAllocation
+	 * @param domainObject ims.RefMan.domain.objects.WorkAllocation
 	 */
-	 public static ims.core.vo.WorkAllocationListVo insert(ims.core.vo.WorkAllocationListVo valueObject, ims.careuk.domain.objects.WorkAllocation domainObject) 
+	 public static ims.core.vo.WorkAllocationListVo insert(ims.core.vo.WorkAllocationListVo valueObject, ims.RefMan.domain.objects.WorkAllocation domainObject) 
 	 {
 	 	if (null == domainObject) 
 	 	{
@@ -314,9 +314,9 @@ public class WorkAllocationListVoAssembler
 	 * Update the ValueObject with the Domain Object.
 	 * @param map DomainObjectMap of DomainObjects to already created ValueObjects.
 	 * @param valueObject to be updated
-	 * @param domainObject ims.careuk.domain.objects.WorkAllocation
+	 * @param domainObject ims.RefMan.domain.objects.WorkAllocation
 	 */
-	 public static ims.core.vo.WorkAllocationListVo insert(DomainObjectMap map, ims.core.vo.WorkAllocationListVo valueObject, ims.careuk.domain.objects.WorkAllocation domainObject) 
+	 public static ims.core.vo.WorkAllocationListVo insert(DomainObjectMap map, ims.core.vo.WorkAllocationListVo valueObject, ims.RefMan.domain.objects.WorkAllocation domainObject) 
 	 {
 	 	if (null == domainObject) 
 	 	{
@@ -349,11 +349,11 @@ public class WorkAllocationListVoAssembler
 			{
 				HibernateProxy p = (HibernateProxy) domainObject.getCatsReferral();
 				int id = Integer.parseInt(p.getHibernateLazyInitializer().getIdentifier().toString());				
-				valueObject.setCatsReferral(new ims.careuk.vo.CatsReferralRefVo(id, -1));				
+				valueObject.setCatsReferral(new ims.RefMan.vo.CatsReferralRefVo(id, -1));				
 			}
 			else
 			{
-				valueObject.setCatsReferral(new ims.careuk.vo.CatsReferralRefVo(domainObject.getCatsReferral().getId(), domainObject.getCatsReferral().getVersion()));
+				valueObject.setCatsReferral(new ims.RefMan.vo.CatsReferralRefVo(domainObject.getCatsReferral().getId(), domainObject.getCatsReferral().getVersion()));
 			}
 		}
  		return valueObject;
@@ -365,27 +365,27 @@ public class WorkAllocationListVoAssembler
 	 * @param domainFactory - used to create existing (persistent) domain objects.
 	 * @param valueObject - extract the domain object fields from this.
 	 */
-	public static ims.careuk.domain.objects.WorkAllocation extractWorkAllocation(ims.domain.ILightweightDomainFactory domainFactory, ims.core.vo.WorkAllocationListVo valueObject) 
+	public static ims.RefMan.domain.objects.WorkAllocation extractWorkAllocation(ims.domain.ILightweightDomainFactory domainFactory, ims.core.vo.WorkAllocationListVo valueObject) 
 	{
 		return 	extractWorkAllocation(domainFactory, valueObject, new HashMap());
 	}
 
-	public static ims.careuk.domain.objects.WorkAllocation extractWorkAllocation(ims.domain.ILightweightDomainFactory domainFactory, ims.core.vo.WorkAllocationListVo valueObject, HashMap domMap) 
+	public static ims.RefMan.domain.objects.WorkAllocation extractWorkAllocation(ims.domain.ILightweightDomainFactory domainFactory, ims.core.vo.WorkAllocationListVo valueObject, HashMap domMap) 
 	{
 		if (null == valueObject) 
 		{
 			return null;
 		}
 		Integer id = valueObject.getID_WorkAllocation();
-		ims.careuk.domain.objects.WorkAllocation domainObject = null;
+		ims.RefMan.domain.objects.WorkAllocation domainObject = null;
 		if ( null == id) 
 		{
 			if (domMap.get(valueObject) != null)
 			{
-				return (ims.careuk.domain.objects.WorkAllocation)domMap.get(valueObject);
+				return (ims.RefMan.domain.objects.WorkAllocation)domMap.get(valueObject);
 			}
 			// ims.core.vo.WorkAllocationListVo ID_WorkAllocation field is unknown
-			domainObject = new ims.careuk.domain.objects.WorkAllocation();
+			domainObject = new ims.RefMan.domain.objects.WorkAllocation();
 			domMap.put(valueObject, domainObject);
 		}
 		else 
@@ -393,9 +393,9 @@ public class WorkAllocationListVoAssembler
 			String key = (valueObject.getClass().getName() + "__" + valueObject.getID_WorkAllocation());
 			if (domMap.get(key) != null)
 			{
-				return (ims.careuk.domain.objects.WorkAllocation)domMap.get(key);
+				return (ims.RefMan.domain.objects.WorkAllocation)domMap.get(key);
 			}
-			domainObject = (ims.careuk.domain.objects.WorkAllocation) domainFactory.getDomainObject(ims.careuk.domain.objects.WorkAllocation.class, id );
+			domainObject = (ims.RefMan.domain.objects.WorkAllocation) domainFactory.getDomainObject(ims.RefMan.domain.objects.WorkAllocation.class, id );
 			
 			//TODO: Not sure how this should be handled. Effectively it must be a staleobject exception, but maybe should be handled as that further up.
 			if (domainObject == null) 
@@ -405,14 +405,14 @@ public class WorkAllocationListVoAssembler
 		}
 		domainObject.setVersion(valueObject.getVersion_WorkAllocation());
 
-		ims.careuk.domain.objects.CatsReferral value1 = null;
+		ims.RefMan.domain.objects.CatsReferral value1 = null;
 		if ( null != valueObject.getCatsReferral() ) 
 		{
 			if (valueObject.getCatsReferral().getBoId() == null)
 			{
 				if (domMap.get(valueObject.getCatsReferral()) != null)
 				{
-					value1 = (ims.careuk.domain.objects.CatsReferral)domMap.get(valueObject.getCatsReferral());
+					value1 = (ims.RefMan.domain.objects.CatsReferral)domMap.get(valueObject.getCatsReferral());
 				}
 			}
 			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
@@ -421,7 +421,7 @@ public class WorkAllocationListVoAssembler
 			}
 			else
 			{
-				value1 = (ims.careuk.domain.objects.CatsReferral)domainFactory.getDomainObject(ims.careuk.domain.objects.CatsReferral.class, valueObject.getCatsReferral().getBoId());
+				value1 = (ims.RefMan.domain.objects.CatsReferral)domainFactory.getDomainObject(ims.RefMan.domain.objects.CatsReferral.class, valueObject.getCatsReferral().getBoId());
 			}
 		}
 		domainObject.setCatsReferral(value1);

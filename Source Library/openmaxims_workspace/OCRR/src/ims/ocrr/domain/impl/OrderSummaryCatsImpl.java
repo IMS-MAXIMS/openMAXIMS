@@ -22,7 +22,7 @@
 
 package ims.ocrr.domain.impl;
 
-import ims.careuk.domain.objects.OrderInvAppt;
+import ims.RefMan.domain.objects.OrderInvAppt;
 import ims.core.vo.PatientShort;
 import ims.domain.exceptions.ForeignKeyViolationException;
 import ims.domain.exceptions.StaleObjectException;

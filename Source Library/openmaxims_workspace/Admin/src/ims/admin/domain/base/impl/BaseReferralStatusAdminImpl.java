@@ -30,7 +30,7 @@ public abstract class BaseReferralStatusAdminImpl extends DomainImpl implements 
 	private static final long serialVersionUID = 1L;
 
 	@SuppressWarnings("unused")
-	public void validatesaveReferralStatusConfig(ims.careuk.vo.ReferralStatusConfigVoCollection referralStatusConfigVoColl)
+	public void validatesaveReferralStatusConfig(ims.RefMan.vo.ReferralStatusConfigVoCollection referralStatusConfigVoColl)
 	{
 	}
 }

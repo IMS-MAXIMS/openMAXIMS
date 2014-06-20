@@ -39,7 +39,7 @@ public class TCIForPatientElectiveListBedInfoDetailsVoBean extends ims.vo.ValueO
 		this.bedmanagercomment = vo.getBedManagerComment();
 		this.tciconsultant = vo.getTCIConsultant() == null ? null : (ims.core.vo.beans.HcpLiteVoBean)vo.getTCIConsultant().getBean();
 		this.admissiondetail = vo.getAdmissionDetail() == null ? null : (ims.core.vo.beans.AdmissionDetailVoBean)vo.getAdmissionDetail().getBean();
-		this.currentoutcome = vo.getCurrentOutcome() == null ? null : (ims.careuk.vo.beans.TCIOutcomeForPatientElectiveListVoBean)vo.getCurrentOutcome().getBean();
+		this.currentoutcome = vo.getCurrentOutcome() == null ? null : (ims.RefMan.vo.beans.TCIOutcomeForPatientElectiveListVoBean)vo.getCurrentOutcome().getBean();
 		if(vo.getOutcomeHistory() != null)
 		{
 			this.outcomehistory = new ims.vo.RefVoBean[vo.getOutcomeHistory().size()];
@@ -63,7 +63,7 @@ public class TCIForPatientElectiveListBedInfoDetailsVoBean extends ims.vo.ValueO
 		this.bedmanagercomment = vo.getBedManagerComment();
 		this.tciconsultant = vo.getTCIConsultant() == null ? null : (ims.core.vo.beans.HcpLiteVoBean)vo.getTCIConsultant().getBean(map);
 		this.admissiondetail = vo.getAdmissionDetail() == null ? null : (ims.core.vo.beans.AdmissionDetailVoBean)vo.getAdmissionDetail().getBean(map);
-		this.currentoutcome = vo.getCurrentOutcome() == null ? null : (ims.careuk.vo.beans.TCIOutcomeForPatientElectiveListVoBean)vo.getCurrentOutcome().getBean(map);
+		this.currentoutcome = vo.getCurrentOutcome() == null ? null : (ims.RefMan.vo.beans.TCIOutcomeForPatientElectiveListVoBean)vo.getCurrentOutcome().getBean(map);
 		if(vo.getOutcomeHistory() != null)
 		{
 			this.outcomehistory = new ims.vo.RefVoBean[vo.getOutcomeHistory().size()];
@@ -167,11 +167,11 @@ public class TCIForPatientElectiveListBedInfoDetailsVoBean extends ims.vo.ValueO
 	{
 		this.admissiondetail = value;
 	}
-	public ims.careuk.vo.beans.TCIOutcomeForPatientElectiveListVoBean getCurrentOutcome()
+	public ims.RefMan.vo.beans.TCIOutcomeForPatientElectiveListVoBean getCurrentOutcome()
 	{
 		return this.currentoutcome;
 	}
-	public void setCurrentOutcome(ims.careuk.vo.beans.TCIOutcomeForPatientElectiveListVoBean value)
+	public void setCurrentOutcome(ims.RefMan.vo.beans.TCIOutcomeForPatientElectiveListVoBean value)
 	{
 		this.currentoutcome = value;
 	}
@@ -209,7 +209,7 @@ public class TCIForPatientElectiveListBedInfoDetailsVoBean extends ims.vo.ValueO
 	private String bedmanagercomment;
 	private ims.core.vo.beans.HcpLiteVoBean tciconsultant;
 	private ims.core.vo.beans.AdmissionDetailVoBean admissiondetail;
-	private ims.careuk.vo.beans.TCIOutcomeForPatientElectiveListVoBean currentoutcome;
+	private ims.RefMan.vo.beans.TCIOutcomeForPatientElectiveListVoBean currentoutcome;
 	private ims.vo.RefVoBean[] outcomehistory;
 	private Boolean isactive;
 	private ims.scheduling.vo.beans.BookingAppointmentTheatreVoBean appointment;

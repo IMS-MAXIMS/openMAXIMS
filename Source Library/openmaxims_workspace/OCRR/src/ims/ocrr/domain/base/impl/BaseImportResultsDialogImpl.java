@@ -35,7 +35,7 @@ public abstract class BaseImportResultsDialogImpl extends DomainImpl implements 
 	}
 
 	@SuppressWarnings("unused")
-	public void validatelistInvestigations(ims.careuk.vo.CatsReferralRefVo refCatsReferralRefVo)
+	public void validatelistInvestigations(ims.RefMan.vo.CatsReferralRefVo refCatsReferralRefVo)
 	{
 	}
 }

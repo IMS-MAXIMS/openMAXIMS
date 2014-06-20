@@ -22,7 +22,7 @@
 
 package ims.ocrr.domain.impl;
 
-import ims.careuk.vo.CatsReferralRefVo;
+import ims.RefMan.vo.CatsReferralRefVo;
 import ims.configuration.gen.ConfigFlag;
 import ims.core.vo.HcpLiteVo;
 import ims.core.vo.PatientShort;

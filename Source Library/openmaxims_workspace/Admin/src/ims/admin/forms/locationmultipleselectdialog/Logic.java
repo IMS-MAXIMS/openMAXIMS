@@ -30,10 +30,10 @@ import ims.admin.vo.ConfigLocationLiteVo;
 import ims.admin.vo.ConfigLocationLiteVoCollection;
 import ims.admin.vo.ServiceVoLiteVo;
 import ims.admin.vo.ServiceVoLiteVoCollection;
-import ims.careuk.vo.ContractServiceLocationsConfigVoCollection;
-import ims.careuk.vo.LocationConfigVo;
-import ims.careuk.vo.LocationConfigVoCollection;
-import ims.careuk.vo.OrganisationConfigVo;
+import ims.RefMan.vo.ContractServiceLocationsConfigVoCollection;
+import ims.RefMan.vo.LocationConfigVo;
+import ims.RefMan.vo.LocationConfigVoCollection;
+import ims.RefMan.vo.OrganisationConfigVo;
 import ims.core.vo.OrganisationLiteVo;
 import ims.core.vo.OrganisationLiteVoCollection;
 import ims.framework.enumerations.DialogResult;
@@ -78,7 +78,7 @@ public class Logic extends BaseLogic
 			return;
 		}
 		
-		form.getGlobalContext().CareUk.setLocationContract(tempColl);
+		form.getGlobalContext().RefMan.setLocationContract(tempColl);
 		engine.close(DialogResult.OK);	}
 	
 	protected void onBtnAddToListClick() throws ims.framework.exceptions.PresentationLogicException

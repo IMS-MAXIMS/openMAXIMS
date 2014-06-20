@@ -24,9 +24,9 @@ package ims.scheduling.forms.appointmentoutcomedialog;
 
 import ims.admin.vo.AppointmentOutcomeReasonVo;
 import ims.admin.vo.AppointmentOutcomeReasonVoCollection;
-import ims.careuk.vo.PatientProcedureForAppointmentOutcomeVo;
-import ims.careuk.vo.PatientProcedureForAppointmentOutcomeVoCollection;
-import ims.careuk.vo.lookups.ElectiveAdmissionType;
+import ims.RefMan.vo.PatientProcedureForAppointmentOutcomeVo;
+import ims.RefMan.vo.PatientProcedureForAppointmentOutcomeVoCollection;
+import ims.RefMan.vo.lookups.ElectiveAdmissionType;
 import ims.clinical.vo.PatientDiagnosisOpNotesVo;
 import ims.clinical.vo.PatientDiagnosisOpNotesVoCollection;
 import ims.configuration.gen.ConfigFlag;
@@ -66,9 +66,9 @@ public class Logic extends BaseLogic
 			form.getLocalContext().setFormMode((FormMode) args[0]);
 		}
 		
-		if(form.getGlobalContext().CareUk.getCatsReferral() == null)
+		if(form.getGlobalContext().RefMan.getCatsReferral() == null)
 		{
-			form.getGlobalContext().CareUk.setCatsReferral(domain.getCatsReferral(form.getGlobalContext().Scheduling.getBookingAppointmentRef()));
+			form.getGlobalContext().RefMan.setCatsReferral(domain.getCatsReferral(form.getGlobalContext().Scheduling.getBookingAppointmentRef()));
 		}
 		
 		if(form.getGlobalContext().Core.getCurrentCareContext() == null)
@@ -86,32 +86,32 @@ public class Logic extends BaseLogic
 		}
 		
 		//WDEV-18083
-		form.getGlobalContext().CareUk.setPatientElectiveList(null);
+		form.getGlobalContext().RefMan.setPatientElectiveList(null);
 		
-		form.btnWaitingListAdd().setImage(form.getImages().CAREUK.AddNow);
+		form.btnWaitingListAdd().setImage(form.getImages().RefMan.AddNow);
 		form.btnWaitingListAdd().setText("Add Now");		
-		form.btnWaitingListAddLater().setImage(form.getImages().CAREUK.AddLater);
+		form.btnWaitingListAddLater().setImage(form.getImages().RefMan.AddLater);
 		form.btnWaitingListAddLater().setText("Add Later");
 		
-		form.btnBookedListAddNow().setImage(form.getImages().CAREUK.AddNow);
+		form.btnBookedListAddNow().setImage(form.getImages().RefMan.AddNow);
 		form.btnBookedListAddNow().setText("Add Now");
-		form.btnBookedListAddLater().setImage(form.getImages().CAREUK.AddLater);
+		form.btnBookedListAddLater().setImage(form.getImages().RefMan.AddLater);
 		form.btnBookedListAddLater().setText("Add Later");
 		
-		form.btnPlannedListAddNow().setImage(form.getImages().CAREUK.AddNow);
+		form.btnPlannedListAddNow().setImage(form.getImages().RefMan.AddNow);
 		form.btnPlannedListAddNow().setText("Add Now");
-		form.btnPlannedListAddLater().setImage(form.getImages().CAREUK.AddLater);
+		form.btnPlannedListAddLater().setImage(form.getImages().RefMan.AddLater);
 		form.btnPlannedListAddLater().setText("Add Later");
 		
-		form.btnFutureApptAddNow().setImage(form.getImages().CAREUK.AddNow);
+		form.btnFutureApptAddNow().setImage(form.getImages().RefMan.AddNow);
 		form.btnFutureApptAddNow().setText("Add Now");
-		form.btnFutureApptAddLater().setImage(form.getImages().CAREUK.AddLater);
+		form.btnFutureApptAddLater().setImage(form.getImages().RefMan.AddLater);
 		form.btnFutureApptAddLater().setText("Add Later");
 		
-		form.btnOnwardReferral().setImage(form.getImages().CAREUK.AddNow);
+		form.btnOnwardReferral().setImage(form.getImages().RefMan.AddNow);
 		form.btnOnwardReferral().setText("Add Now");
 		
-		form.btnTransferToProvider().setImage(form.getImages().CAREUK.AddNow);
+		form.btnTransferToProvider().setImage(form.getImages().RefMan.AddNow);
 		form.btnTransferToProvider().setText("Add Now");
 	}
 	
@@ -127,7 +127,7 @@ public class Logic extends BaseLogic
 		BookingAppointmentOutcomeVo voOutcome = populateDataFromScreen(form.getLocalContext().getAppointment());
 		
 		//WDEV-18083
-		if (form.getGlobalContext().CareUk.getPatientElectiveList()!=null)
+		if (form.getGlobalContext().RefMan.getPatientElectiveList()!=null)
 		{
 			voOutcome.setHasElectiveList(true);
 		}
@@ -142,7 +142,7 @@ public class Logic extends BaseLogic
 		try
 		{	
 			//WDEV-18553 - previous form parameter removed from domain interface method
-			domain.saveBookingAppointment(voOutcome,form.getGlobalContext().CareUk.getPatientElectiveList(), ((form.chkFirstDifinitiveTreatment().getValue() && form.getLocalContext().getAppointmentOutcomeConfig() != null) ? form.getLocalContext().getAppointmentOutcomeConfig().getFirstDefinitiveTreatmentEvent() : null));//WDEV-18083
+			domain.saveBookingAppointment(voOutcome,form.getGlobalContext().RefMan.getPatientElectiveList(), ((form.chkFirstDifinitiveTreatment().getValue() && form.getLocalContext().getAppointmentOutcomeConfig() != null) ? form.getLocalContext().getAppointmentOutcomeConfig().getFirstDefinitiveTreatmentEvent() : null));//WDEV-18083
 		}
 		catch (StaleObjectException e)
 		{
@@ -334,48 +334,48 @@ public class Logic extends BaseLogic
 	protected void onFormDialogClosed(FormName formName, DialogResult result) throws PresentationLogicException
 	{
 		//WDEV-18223
-		if (ConfigFlag.GEN.USE_ELECTIVE_LIST_FUNCTIONALITY.getValue() && form.getForms().CAREUK.NewElectiveListTCIErodDialog.equals(formName))//WDEV-18345
+		if (ConfigFlag.GEN.USE_ELECTIVE_LIST_FUNCTIONALITY.getValue() && form.getForms().RefMan.NewElectiveListTCIErodDialog.equals(formName))//WDEV-18345
 		{
 			if (result.equals(DialogResult.OK) )
 			{
-				if(form.getGlobalContext().CareUk.getPatientElectiveList() == null)
+				if(form.getGlobalContext().RefMan.getPatientElectiveList() == null)
 					return;
 				
-				if(ElectiveAdmissionType.ELECTIVE_TYPE11.equals(form.getGlobalContext().CareUk.getPatientElectiveList().getElectiveAdmissionType()))
+				if(ElectiveAdmissionType.ELECTIVE_TYPE11.equals(form.getGlobalContext().RefMan.getPatientElectiveList().getElectiveAdmissionType()))
 				{
 					addAction(AppointmentAction.WAITING_LIST_ACTION, OutcomeAction.DONE_NOW, null);
 				}
-				else if(ElectiveAdmissionType.PLANNED_TYPE13.equals(form.getGlobalContext().CareUk.getPatientElectiveList().getElectiveAdmissionType()))
+				else if(ElectiveAdmissionType.PLANNED_TYPE13.equals(form.getGlobalContext().RefMan.getPatientElectiveList().getElectiveAdmissionType()))
 				{
 					addAction(AppointmentAction.PLANNED_LIST_ACTION, OutcomeAction.DONE_NOW, null);
 				}
-				else if(ElectiveAdmissionType.BOOKED_TYPE12.equals(form.getGlobalContext().CareUk.getPatientElectiveList().getElectiveAdmissionType()))
+				else if(ElectiveAdmissionType.BOOKED_TYPE12.equals(form.getGlobalContext().RefMan.getPatientElectiveList().getElectiveAdmissionType()))
 				{
 					addAction(AppointmentAction.BOOKED_LIST_ACTION, OutcomeAction.DONE_NOW, null);
 				}
 			}
 			else if (result.equals(DialogResult.CANCEL) && form.getLocalContext().getAppointment()==null)
 			{
-				form.getGlobalContext().CareUk.setPatientElectiveList(null);
+				form.getGlobalContext().RefMan.setPatientElectiveList(null);
 			}
 			
 		}
-		else if(form.getForms().CAREUK.AppointmentOutcomeProcedureDialog.equals(formName))
+		else if(form.getForms().RefMan.AppointmentOutcomeProcedureDialog.equals(formName))
 		{
 			if(DialogResult.OK.equals(result))
 			{
-				if(form.getGlobalContext().CareUk.getPatientProcedureForAppointmentOutcome() != null && Boolean.TRUE.equals(form.getGlobalContext().CareUk.getPatientProcedureForAppointmentOutcome().getIsPrimary()))
+				if(form.getGlobalContext().RefMan.getPatientProcedureForAppointmentOutcome() != null && Boolean.TRUE.equals(form.getGlobalContext().RefMan.getPatientProcedureForAppointmentOutcome().getIsPrimary()))
 				{
 					uncheckPreviousPrimary();
 				}
 				
 				if(Boolean.TRUE.equals(form.getLocalContext().getEditProcedure()))
 				{
-					addPatientProcedureRow(form.getGlobalContext().CareUk.getPatientProcedureForAppointmentOutcome(), form.grdProcedures().getSelectedRow());
+					addPatientProcedureRow(form.getGlobalContext().RefMan.getPatientProcedureForAppointmentOutcome(), form.grdProcedures().getSelectedRow());
 				}
 				else
 				{
-					addPatientProcedureRow(form.getGlobalContext().CareUk.getPatientProcedureForAppointmentOutcome(), null);
+					addPatientProcedureRow(form.getGlobalContext().RefMan.getPatientProcedureForAppointmentOutcome(), null);
 				}
 			}
 		}
@@ -393,7 +393,7 @@ public class Logic extends BaseLogic
 				}
 			}
 		}
-		else if(form.getForms().CAREUK.AppointmentOutcomeDiagnosisSelectionDialog.equals(formName))
+		else if(form.getForms().RefMan.AppointmentOutcomeDiagnosisSelectionDialog.equals(formName))
 		{
 			if(DialogResult.OK.equals(result))
 			{
@@ -401,7 +401,7 @@ public class Logic extends BaseLogic
 			}
 		}
 		//WDEV-18517
-		else if(form.getForms().CAREUK.BookAppointmentDialog.equals(formName) && Boolean.TRUE.equals(form.getGlobalContext().CareUk.getAppointmentSaved()))
+		else if(form.getForms().RefMan.BookAppointmentDialog.equals(formName) && Boolean.TRUE.equals(form.getGlobalContext().RefMan.getAppointmentSaved()))
 		{
 			addAction(AppointmentAction.BOOK_APPT_ACTION, OutcomeAction.DONE_NOW, null);
 		}
@@ -420,10 +420,10 @@ public class Logic extends BaseLogic
 	
 	private void addSelectedPatientDiagnosis()
 	{
-		if(form.getGlobalContext().CareUk.getSelectedDiagnosisApptOutcomeList() == null)
+		if(form.getGlobalContext().RefMan.getSelectedDiagnosisApptOutcomeList() == null)
 			return;
 		
-		for(PatientDiagnosisOpNotesVo diagnosis : form.getGlobalContext().CareUk.getSelectedDiagnosisApptOutcomeList())
+		for(PatientDiagnosisOpNotesVo diagnosis : form.getGlobalContext().RefMan.getSelectedDiagnosisApptOutcomeList())
 		{
 			if(form.grdDiagnosis().getRowByValue(diagnosis) ==  null)
 				addPatientDiagnosisRow(diagnosis, null);
@@ -436,7 +436,7 @@ public class Logic extends BaseLogic
     			if(form.grdDiagnosis().getRows().get(i).getValue() == null || form.grdDiagnosis().getRows().get(i).getValue().getID_PatientDiagnosis() == null)
     				continue;
     			
-    			if(!form.getGlobalContext().CareUk.getSelectedDiagnosisApptOutcomeList().contains(form.grdDiagnosis().getRows().get(i).getValue()))
+    			if(!form.getGlobalContext().RefMan.getSelectedDiagnosisApptOutcomeList().contains(form.grdDiagnosis().getRows().get(i).getValue()))
     				form.grdDiagnosis().getRows().remove(i);
     		}
 		}
@@ -456,23 +456,23 @@ public class Logic extends BaseLogic
 	{
 		switch(menuItemID)
 		{
-			case GenForm.ContextMenus.CAREUKNamespace.AppointmentOutcomeProcedureMenu.ADD:
+			case GenForm.ContextMenus.RefManNamespace.AppointmentOutcomeProcedureMenu.ADD:
 				addProcedure();
 			break;
 			
-			case GenForm.ContextMenus.CAREUKNamespace.AppointmentOutcomeProcedureMenu.EDIT:
+			case GenForm.ContextMenus.RefManNamespace.AppointmentOutcomeProcedureMenu.EDIT:
 				editProcedure();
 			break;
 			
-			case GenForm.ContextMenus.CAREUKNamespace.AppointmentOutcomeDiagnosisMenu.SELECT:
+			case GenForm.ContextMenus.RefManNamespace.AppointmentOutcomeDiagnosisMenu.SELECT:
 				selectDiagnosis();
 			break;
 			
-			case GenForm.ContextMenus.CAREUKNamespace.AppointmentOutcomeDiagnosisMenu.ADD:
+			case GenForm.ContextMenus.RefManNamespace.AppointmentOutcomeDiagnosisMenu.ADD:
 				addDiagnosis();
 			break;
 			
-			case GenForm.ContextMenus.CAREUKNamespace.AppointmentOutcomeDiagnosisMenu.EDIT:
+			case GenForm.ContextMenus.RefManNamespace.AppointmentOutcomeDiagnosisMenu.EDIT:
 				editDiagnosis();
 			break;
 		}
@@ -496,8 +496,8 @@ public class Logic extends BaseLogic
 
 	private void selectDiagnosis()
 	{
-		form.getGlobalContext().CareUk.setSelectedDiagnosisApptOutcomeList(getPatientDiagnosisWithIds());
-		engine.open(form.getForms().CAREUK.AppointmentOutcomeDiagnosisSelectionDialog);
+		form.getGlobalContext().RefMan.setSelectedDiagnosisApptOutcomeList(getPatientDiagnosisWithIds());
+		engine.open(form.getForms().RefMan.AppointmentOutcomeDiagnosisSelectionDialog);
 	}
 
 	private PatientDiagnosisOpNotesVoCollection getPatientDiagnosisWithIds()
@@ -522,7 +522,7 @@ public class Logic extends BaseLogic
 	{
 		form.getLocalContext().setEditProcedure(true);
 		
-		form.getGlobalContext().CareUk.setPatientProcedureForAppointmentOutcome(form.grdProcedures().getValue());
+		form.getGlobalContext().RefMan.setPatientProcedureForAppointmentOutcome(form.grdProcedures().getValue());
 		
 		Specialty specialty = null;
 		
@@ -531,14 +531,14 @@ public class Logic extends BaseLogic
 			specialty = form.getLocalContext().getAppointment().getSession().getService().getSpecialty();
 		}
 		
-		engine.open(form.getForms().CAREUK.AppointmentOutcomeProcedureDialog, new Object[] {specialty, form.getLocalContext().getAppointment().getSeenBy(), form.getLocalContext().getAppointment().getAppointmentDate()});
+		engine.open(form.getForms().RefMan.AppointmentOutcomeProcedureDialog, new Object[] {specialty, form.getLocalContext().getAppointment().getSeenBy(), form.getLocalContext().getAppointment().getAppointmentDate()});
 	}
 	
 	private void addProcedure()
 	{
 		form.getLocalContext().setEditProcedure(false);
 		
-		form.getGlobalContext().CareUk.setPatientProcedureForAppointmentOutcome(null);
+		form.getGlobalContext().RefMan.setPatientProcedureForAppointmentOutcome(null);
 		
 		Specialty specialty = null;
 		
@@ -547,17 +547,17 @@ public class Logic extends BaseLogic
 			specialty = form.getLocalContext().getAppointment().getSession().getService().getSpecialty();
 		}
 		
-		engine.open(form.getForms().CAREUK.AppointmentOutcomeProcedureDialog, new Object[] {specialty, form.getLocalContext().getAppointment().getSeenBy(), form.getLocalContext().getAppointment().getAppointmentDate()});
+		engine.open(form.getForms().RefMan.AppointmentOutcomeProcedureDialog, new Object[] {specialty, form.getLocalContext().getAppointment().getSeenBy(), form.getLocalContext().getAppointment().getAppointmentDate()});
 	}
 	
 	private void updateControlsState()
 	{
-		form.getContextMenus().CAREUK.getAppointmentOutcomeProcedureMenuADDItem().setVisible(FormMode.EDIT.equals(form.getMode()));
-		form.getContextMenus().CAREUK.getAppointmentOutcomeProcedureMenuEDITItem().setVisible(FormMode.EDIT.equals(form.getMode()) && form.grdProcedures().getValue() != null);
+		form.getContextMenus().RefMan.getAppointmentOutcomeProcedureMenuADDItem().setVisible(FormMode.EDIT.equals(form.getMode()));
+		form.getContextMenus().RefMan.getAppointmentOutcomeProcedureMenuEDITItem().setVisible(FormMode.EDIT.equals(form.getMode()) && form.grdProcedures().getValue() != null);
 		
-		form.getContextMenus().CAREUK.getAppointmentOutcomeDiagnosisMenuSELECTItem().setVisible(FormMode.EDIT.equals(form.getMode()));
-		form.getContextMenus().CAREUK.getAppointmentOutcomeDiagnosisMenuADDItem().setVisible(FormMode.EDIT.equals(form.getMode()));
-		form.getContextMenus().CAREUK.getAppointmentOutcomeDiagnosisMenuEDITItem().setVisible(FormMode.EDIT.equals(form.getMode()) && form.grdDiagnosis().getValue() != null);
+		form.getContextMenus().RefMan.getAppointmentOutcomeDiagnosisMenuSELECTItem().setVisible(FormMode.EDIT.equals(form.getMode()));
+		form.getContextMenus().RefMan.getAppointmentOutcomeDiagnosisMenuADDItem().setVisible(FormMode.EDIT.equals(form.getMode()));
+		form.getContextMenus().RefMan.getAppointmentOutcomeDiagnosisMenuEDITItem().setVisible(FormMode.EDIT.equals(form.getMode()) && form.grdDiagnosis().getValue() != null);
 		
 		form.lblOutcomeReason().setVisible(form.getLocalContext().getAppointmentOutcomeConfig() != null);
 		form.cmbOutcomeReason().setVisible(form.getLocalContext().getAppointmentOutcomeConfig() != null);
@@ -577,7 +577,7 @@ public class Logic extends BaseLogic
 		form.btnPlannedListAddNow().setEnabled(enabledPlannedList);
 		form.btnPlannedListAddLater().setEnabled(enabledPlannedList);
 		
-		boolean enabledFutureAppointment = !Boolean.TRUE.equals(form.getLocalContext().getWasFutureAppointmentsButtonsPressed()) && !Boolean.TRUE.equals(form.getGlobalContext().CareUk.getAppointmentSaved()) && FormMode.EDIT.equals(form.getMode()) && form.getLocalContext().getAppointmentOutcomeConfig() != null && Boolean.TRUE.equals(form.getLocalContext().getAppointmentOutcomeConfig().getCanMakeAppointment());
+		boolean enabledFutureAppointment = !Boolean.TRUE.equals(form.getLocalContext().getWasFutureAppointmentsButtonsPressed()) && !Boolean.TRUE.equals(form.getGlobalContext().RefMan.getAppointmentSaved()) && FormMode.EDIT.equals(form.getMode()) && form.getLocalContext().getAppointmentOutcomeConfig() != null && Boolean.TRUE.equals(form.getLocalContext().getAppointmentOutcomeConfig().getCanMakeAppointment());
 		form.btnFutureApptAddNow().setEnabled(enabledFutureAppointment);
 		form.btnFutureApptAddLater().setEnabled(enabledFutureAppointment);
 		
@@ -678,8 +678,8 @@ public class Logic extends BaseLogic
 	@Override
 	protected void onBtnFutureApptAddNowClick() throws PresentationLogicException
 	{
-		form.getGlobalContext().CareUk.setAppointmentSaved(Boolean.FALSE);
-		engine.open(form.getForms().CAREUK.BookAppointmentDialog);
+		form.getGlobalContext().RefMan.setAppointmentSaved(Boolean.FALSE);
+		engine.open(form.getForms().RefMan.BookAppointmentDialog);
 	}
 
 	@Override
@@ -692,7 +692,7 @@ public class Logic extends BaseLogic
 	@Override
 	protected void onBtnPlannedListAddNowClick() throws PresentationLogicException
 	{
-		engine.open(form.getForms().CAREUK.NewElectiveListTCIErodDialog, new Object[] {ims.admin.vo.enums.ElectiveListDetails.ADDTOPLANNEDLIST});
+		engine.open(form.getForms().RefMan.NewElectiveListTCIErodDialog, new Object[] {ims.admin.vo.enums.ElectiveListDetails.ADDTOPLANNEDLIST});
 	}
 
 	@Override
@@ -776,7 +776,7 @@ public class Logic extends BaseLogic
 	@Override
 	protected void onBtnBookedListAddNowClick() throws PresentationLogicException
 	{
-		engine.open(form.getForms().CAREUK.NewElectiveListTCIErodDialog, new Object[] {ims.admin.vo.enums.ElectiveListDetails.ADDTOBOOKEDLIST});
+		engine.open(form.getForms().RefMan.NewElectiveListTCIErodDialog, new Object[] {ims.admin.vo.enums.ElectiveListDetails.ADDTOBOOKEDLIST});
 	}
 
 	@Override
@@ -789,7 +789,7 @@ public class Logic extends BaseLogic
 	@Override
 	protected void onBtnWaitingListAddClick() throws PresentationLogicException
 	{
-		engine.open(form.getForms().CAREUK.NewElectiveListTCIErodDialog, new Object[] {ims.admin.vo.enums.ElectiveListDetails.ADDTOWAITINGLIST});
+		engine.open(form.getForms().RefMan.NewElectiveListTCIErodDialog, new Object[] {ims.admin.vo.enums.ElectiveListDetails.ADDTOWAITINGLIST});
 	}
 
 	@Override

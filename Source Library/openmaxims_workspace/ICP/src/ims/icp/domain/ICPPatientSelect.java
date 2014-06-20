@@ -36,7 +36,7 @@ public interface ICPPatientSelect extends ims.domain.DomainInterface
 	/**
 	* Function used to create a PatientICP from a CATSReferralRef and an ICPConfiguration.
 	*/
-	public void createPatientICP(ims.core.admin.vo.CareContextRefVo careContext, ims.core.patient.vo.PatientRefVo patient, ims.careuk.vo.CatsReferralRefVo catsReferral, ims.icps.configuration.vo.ICPRefVo icpConfiguration, ims.core.vo.HcpLiteVo voHCP) throws ims.domain.exceptions.DomainInterfaceException, ims.domain.exceptions.StaleObjectException, ims.domain.exceptions.ForeignKeyViolationException, ims.domain.exceptions.UniqueKeyViolationException;
+	public void createPatientICP(ims.core.admin.vo.CareContextRefVo careContext, ims.core.patient.vo.PatientRefVo patient, ims.RefMan.vo.CatsReferralRefVo catsReferral, ims.icps.configuration.vo.ICPRefVo icpConfiguration, ims.core.vo.HcpLiteVo voHCP) throws ims.domain.exceptions.DomainInterfaceException, ims.domain.exceptions.StaleObjectException, ims.domain.exceptions.ForeignKeyViolationException, ims.domain.exceptions.UniqueKeyViolationException;
 
 	// Generated from form domain interface definition
 	public ims.icp.vo.ICPVo getICP(ims.icps.configuration.vo.ICPRefVo icpRefVo);

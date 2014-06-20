@@ -510,7 +510,7 @@ public class GenForm extends FormBridge
 			fields[67] = new ims.framework.ReportField(this.context, "_cvp_Clinical.ExtendedClinicalNotesListFilter", "BO-1011100000-CARECONTEXT", "CareContext");
 			fields[68] = new ims.framework.ReportField(this.context, "_cvp_Core.PasEvent", "BO-1014100003-ID", "ID_PASEvent");
 			fields[69] = new ims.framework.ReportField(this.context, "_cvp_Correspondence.CorrespondenceDetails", "BO-1052100001-ID", "ID_CorrespondenceDetails");
-			fields[70] = new ims.framework.ReportField(this.context, "_cvp_CareUk.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
+			fields[70] = new ims.framework.ReportField(this.context, "_cvp_RefMan.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
 			fields[71] = new ims.framework.ReportField(this.context, prefix + "_lv_Emergency.AdviceLeafletsConfig.__internal_x_context__currentAdviceLeaflet_" + componentIdentifier, "BO-1087100013-ID", "ID_AdviceLeafletsConfig");
 			fields[72] = new ims.framework.ReportField(this.context, prefix + "_lv_Emergency.AdviceLeafletsConfig.__internal_x_context__currentAdviceLeaflet_" + componentIdentifier, "BO-1087100013-ISGENERICADVICELEAFLET", "IsGenericAdviceLeaflet");
 			fields[73] = new ims.framework.ReportField(this.context, prefix + "_lv_Emergency.AdviceLeafletsConfig.__internal_x_context__selectedTemplate_" + componentIdentifier, "BO-1004100008-ID", "ID_TemplateBo");

@@ -806,7 +806,7 @@ public class GenForm extends FormBridge
 			fields[67] = new ims.framework.ReportField(this.context, "_cvp_Clinical.ExtendedClinicalNotesListFilter", "BO-1011100000-CARECONTEXT", "CareContext");
 			fields[68] = new ims.framework.ReportField(this.context, "_cvp_Core.PasEvent", "BO-1014100003-ID", "ID_PASEvent");
 			fields[69] = new ims.framework.ReportField(this.context, "_cvp_Correspondence.CorrespondenceDetails", "BO-1052100001-ID", "ID_CorrespondenceDetails");
-			fields[70] = new ims.framework.ReportField(this.context, "_cvp_CareUk.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
+			fields[70] = new ims.framework.ReportField(this.context, "_cvp_RefMan.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
 			fields[71] = new ims.framework.ReportField(this.context, prefix + "_lv_Correspondence.PatientDocuments.__internal_x_context__docVo_" + componentIdentifier, "BO-1001100009-ID", "ID_Document");
 			fields[72] = new ims.framework.ReportField(this.context, prefix + "_lv_Correspondence.PatientDocuments.__internal_x_context__docVo_" + componentIdentifier, "BO-1001100009-CONTENT", "Content");
 			fields[73] = new ims.framework.ReportField(this.context, prefix + "_lv_Correspondence.PatientDocuments.__internal_x_context__docVo_" + componentIdentifier, "BO-1001100009-STATUS", "Status");

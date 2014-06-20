@@ -886,7 +886,7 @@ public class GenForm extends FormBridge
 		private Forms()
 		{
 			Scheduling = new SchedulingForms();
-			CAREUK = new CAREUKForms();
+			RefMan = new RefManForms();
 		}
 		public final class SchedulingForms implements java.io.Serializable
 		{
@@ -897,10 +897,10 @@ public class GenForm extends FormBridge
 			}
 			public final FormName PrintAppointment;
 		}
-		public final class CAREUKForms implements java.io.Serializable
+		public final class RefManForms implements java.io.Serializable
 		{
 			private static final long serialVersionUID = 1L;
-			private CAREUKForms()
+			private RefManForms()
 			{
 				BookTheatreSlot = new LocalFormName(134208);
 			}
@@ -908,7 +908,7 @@ public class GenForm extends FormBridge
 		}
 
 		public SchedulingForms Scheduling;
-		public CAREUKForms CAREUK;
+		public RefManForms RefMan;
 	}
 
 
@@ -1174,7 +1174,7 @@ public class GenForm extends FormBridge
 			fields[67] = new ims.framework.ReportField(this.context, "_cvp_Clinical.ExtendedClinicalNotesListFilter", "BO-1011100000-CARECONTEXT", "CareContext");
 			fields[68] = new ims.framework.ReportField(this.context, "_cvp_Core.PasEvent", "BO-1014100003-ID", "ID_PASEvent");
 			fields[69] = new ims.framework.ReportField(this.context, "_cvp_Correspondence.CorrespondenceDetails", "BO-1052100001-ID", "ID_CorrespondenceDetails");
-			fields[70] = new ims.framework.ReportField(this.context, "_cvp_CareUk.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
+			fields[70] = new ims.framework.ReportField(this.context, "_cvp_RefMan.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
 			fields[71] = new ims.framework.ReportField(this.context, "_cv_Scheduling.TheatreSession", "BO-1055100010-ID", "ID_Sch_Session");
 			fields[72] = new ims.framework.ReportField(this.context, prefix + "_lv_Scheduling.SortFixedTheatreAppointments.__internal_x_context__SessApptOrder_" + componentIdentifier, "BO-1090100012-ID", "ID_Sch_Session_Appointment_Order");
 			fields[73] = new ims.framework.ReportField(this.context, prefix + "_lv_Scheduling.SortFixedTheatreAppointments.__internal_x_context__SessApptOrder_" + componentIdentifier, "BO-1090100012-ISFINALISED", "IsFinalised");

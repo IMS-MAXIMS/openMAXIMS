@@ -64,7 +64,7 @@ public abstract class BaseOrderSummaryDialogImpl extends DomainImpl implements i
 	}
 
 	@SuppressWarnings("unused")
-	public void validateupdateCatsReferralAdditionalInvStatus(ims.careuk.vo.CatsReferralRefVo catsReferral)
+	public void validateupdateCatsReferralAdditionalInvStatus(ims.RefMan.vo.CatsReferralRefVo catsReferral)
 	{
 	}
 

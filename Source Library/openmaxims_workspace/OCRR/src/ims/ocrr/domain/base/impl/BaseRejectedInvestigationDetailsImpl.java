@@ -30,7 +30,7 @@ public abstract class BaseRejectedInvestigationDetailsImpl extends DomainImpl im
 	private static final long serialVersionUID = 1L;
 
 	@SuppressWarnings("unused")
-	public void validatelistRejectedInvestigations(ims.careuk.vo.CatsReferralRefVo catsRefVo)
+	public void validatelistRejectedInvestigations(ims.RefMan.vo.CatsReferralRefVo catsRefVo)
 	{
 	}
 }

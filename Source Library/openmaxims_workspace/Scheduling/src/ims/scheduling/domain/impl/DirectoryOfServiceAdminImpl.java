@@ -24,8 +24,8 @@ package ims.scheduling.domain.impl;
 
 import ims.admin.domain.OrganisationAndLocation;
 import ims.admin.domain.impl.OrganisationAndLocationImpl;
-import ims.careuk.vo.ContractConfigShortVoCollection;
-import ims.careuk.vo.domain.ContractConfigShortVoAssembler;
+import ims.RefMan.vo.ContractConfigShortVoCollection;
+import ims.RefMan.vo.domain.ContractConfigShortVoAssembler;
 import ims.core.clinical.domain.objects.Service;
 import ims.core.resource.place.vo.OrganisationRefVo;
 import ims.core.vo.LocationLiteVoCollection;

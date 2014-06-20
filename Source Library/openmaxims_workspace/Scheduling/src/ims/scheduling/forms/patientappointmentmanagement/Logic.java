@@ -22,7 +22,7 @@
 
 package ims.scheduling.forms.patientappointmentmanagement;
 
-import ims.careuk.vo.CatsReferralListVo;
+import ims.RefMan.vo.CatsReferralListVo;
 import ims.configuration.gen.ConfigFlag;
 import ims.core.resource.people.vo.MemberOfStaffRefVo;
 import ims.core.vo.HcpLiteVo;
@@ -418,7 +418,7 @@ public class Logic extends BaseLogic
 						flexible = true;
 					//wdev-11902
 					CatsReferralListVo voReferral = domain.getCatsReferralForAppointment(form.grdAppts().getValue());
-					form.getGlobalContext().CareUk.setCatsReferralStatus(voReferral != null ? voReferral.getCurrentStatus() : null);	//wdev-12335
+					form.getGlobalContext().RefMan.setCatsReferralStatus(voReferral != null ? voReferral.getCurrentStatus() : null);	//wdev-12335
 					form.getGlobalContext().Scheduling.setBookingAppointmentRef(voAppt);
 					voServiceAndActivity = domain.getServiceAndActivityByAppt(voAppt, flexible);
 					//WDEV-12284 start
@@ -618,10 +618,10 @@ public class Logic extends BaseLogic
 					
 					if(ConfigFlag.UI.BOOKAPPT_UI_TYPE.getValue().equals("CARE_UK"))
 					{
-						form.getGlobalContext().CareUk.setCatsReferral(voReferral);
-						form.getGlobalContext().CareUk.setReferralContractTypeForPatient(voReferral.getContractIsNotNull() ? voReferral.getContract().getContractType() : null );//wdev-12682
+						form.getGlobalContext().RefMan.setCatsReferral(voReferral);
+						form.getGlobalContext().RefMan.setReferralContractTypeForPatient(voReferral.getContractIsNotNull() ? voReferral.getContract().getContractType() : null );//wdev-12682
 
-						engine.open(form.getForms().CAREUK.BookAppointment);
+						engine.open(form.getForms().RefMan.BookAppointment);
 					}
 					else
 						engine.open(form.getForms().Scheduling.BookAppointment);

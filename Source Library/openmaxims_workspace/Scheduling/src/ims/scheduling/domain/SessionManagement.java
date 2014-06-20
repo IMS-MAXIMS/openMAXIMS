@@ -51,7 +51,7 @@ public interface SessionManagement extends ims.domain.DomainInterface
 	public ims.scheduling.vo.SessionSlotForSessionManagementVoCollection getSlotsForSession(ims.scheduling.vo.Sch_SessionRefVo sessionRef);
 
 	// Generated from form domain interface definition
-	public ims.careuk.vo.CatsReferralForSessionManagementVo getCatsReferralForAppointment(ims.scheduling.vo.Booking_AppointmentRefVo appointmentRef);
+	public ims.RefMan.vo.CatsReferralForSessionManagementVo getCatsReferralForAppointment(ims.scheduling.vo.Booking_AppointmentRefVo appointmentRef);
 
 	// Generated from form domain interface definition
 	public ims.scheduling.vo.SessionShortVo getSessionShortVo(ims.scheduling.vo.Sch_SessionRefVo sessionRef);
@@ -75,7 +75,7 @@ public interface SessionManagement extends ims.domain.DomainInterface
 	public ims.scheduling.vo.SessionParentChildSlotVoCollection getTheatreSlots(ims.scheduling.vo.Sch_SessionRefVo sessionRef);
 
 	// Generated from form domain interface definition
-	public Boolean isReferralICPCompleted(ims.careuk.vo.CatsReferralRefVo catsReferral);
+	public Boolean isReferralICPCompleted(ims.RefMan.vo.CatsReferralRefVo catsReferral);
 
 	// Generated from form domain interface definition
 	public ims.scheduling.vo.Booking_AppointmentVo getBookingAppointment(ims.scheduling.vo.Booking_AppointmentRefVo appt);
@@ -87,10 +87,10 @@ public interface SessionManagement extends ims.domain.DomainInterface
 	public ims.scheduling.vo.Booking_AppointmentVo cancelAppt(ims.scheduling.vo.Booking_AppointmentVo appt, ims.chooseandbook.vo.lookups.ActionRequestType requestType, String requestSource) throws ims.domain.exceptions.StaleObjectException;
 
 	// Generated from form domain interface definition
-	public void updateCatsReferralAdditionalInvStatus(ims.careuk.vo.CatsReferralRefVo catsReferral) throws ims.domain.exceptions.StaleObjectException;
+	public void updateCatsReferralAdditionalInvStatus(ims.RefMan.vo.CatsReferralRefVo catsReferral) throws ims.domain.exceptions.StaleObjectException;
 
 	// Generated from form domain interface definition
-	public void updateCatsReferralCancelStatus(ims.careuk.vo.CatsReferralRefVo catsReferral) throws ims.domain.exceptions.StaleObjectException;
+	public void updateCatsReferralCancelStatus(ims.RefMan.vo.CatsReferralRefVo catsReferral) throws ims.domain.exceptions.StaleObjectException;
 
 	// Generated from form domain interface definition
 	public ims.core.vo.PatientShort getPatientShort(ims.core.patient.vo.PatientRefVo patientRef);

@@ -27,7 +27,7 @@ import java.util.List;
 
 import ims.admin.domain.base.impl.BaseServiceMultipleSelectDialogImpl;
 import ims.admin.vo.domain.ServiceVoLiteVoAssembler;
-import ims.careuk.vo.domain.ContractConfigShortVoAssembler;
+import ims.RefMan.vo.domain.ContractConfigShortVoAssembler;
 import ims.core.vo.lookups.ReferralManagementContractType;
 import ims.domain.exceptions.DomainRuntimeException;
 

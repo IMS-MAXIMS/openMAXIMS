@@ -268,15 +268,15 @@ public class Logic extends BaseLogic
 			break;
 			
 			case GenForm.ContextMenus.ClinicalNamespace.IpWardListMenu.EditBedNumber:
-				form.getGlobalContext().CareUk.setBedNumber(form.grdInpatientsWithICPS().getValue().getBedNumber());
+				form.getGlobalContext().RefMan.setBedNumber(form.grdInpatientsWithICPS().getValue().getBedNumber());
 				engine.open(form.getForms().Clinical.InpatientBedNumberDialog);
 			break;
 			
 			case GenForm.ContextMenus.ClinicalNamespace.IpWardListMenu.DISCHARGE:
 				if (form.grdInpatientsWithICPS().getValue().getICPInfoIsNotNull())
 					form.getGlobalContext().Core.setCurrentCareContext(domain.getCareContext(form.grdInpatientsWithICPS().getValue().getICPInfo().getCareContext()));
-				form.getGlobalContext().CareUk.setCatsReferral(domain.getCatsReferralRef(form.grdInpatientsWithICPS().getValue()));
-				engine.open(form.getForms().CAREUK.DischargeSummaryWardPacuDialogAlias);
+				form.getGlobalContext().RefMan.setCatsReferral(domain.getCatsReferralRef(form.grdInpatientsWithICPS().getValue()));
+				engine.open(form.getForms().RefMan.DischargeSummaryWardPacuDialogAlias);
 			break;
 				
 			case GenForm.ContextMenus.ClinicalNamespace.IpWardListMenu.TRANSFER:
@@ -327,7 +327,7 @@ public class Logic extends BaseLogic
 	@Override
 	protected void onGrdIPGridButtonClicked(int column, grdInpatientsWithICPSRow row) throws PresentationLogicException 
 	{
-		//engine.open(form.getForms().CAREUK.ICPActions);
+		//engine.open(form.getForms().RefMan.ICPActions);
 	}
 
 	@Override
@@ -375,14 +375,14 @@ public class Logic extends BaseLogic
 	{
 		if(formName.equals(form.getForms().Clinical.InpatientBedNumberDialog) && result.equals(DialogResult.OK))
 		{
-			saveNewBedNumber(form.getGlobalContext().CareUk.getBedNumber());
+			saveNewBedNumber(form.getGlobalContext().RefMan.getBedNumber());
 		}
 		// WDEV-11648
 		else if(formName.equals(form.getForms().Clinical.InpatientBedNumberDialog) && result.equals(DialogResult.CANCEL))
 		{
 			open();
 		}
-		else if (formName.equals(form.getForms().CAREUK.DischargeSummaryWardPacuDialogAlias))
+		else if (formName.equals(form.getForms().RefMan.DischargeSummaryWardPacuDialogAlias))
 		{
 			open();
 		}

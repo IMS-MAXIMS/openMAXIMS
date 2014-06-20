@@ -33,14 +33,14 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 	{
 		super(context);
 
-		CareUk = new CareUkContext(context);
+		RefMan = new RefManContext(context);
 		Core = new CoreContext(context);
 	}
-	public final class CareUkContext implements Serializable
+	public final class RefManContext implements Serializable
 	{
 		private static final long serialVersionUID = 1L;
 
-		private CareUkContext(ims.framework.Context context)
+		private RefManContext(ims.framework.Context context)
 		{
 			this.context = context;
 
@@ -48,32 +48,32 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 
 		public boolean getReferralNoteIsNotNull()
 		{
-			return !cx_CareUkReferralNote.getValueIsNull(context);
+			return !cx_RefManReferralNote.getValueIsNull(context);
 		}
 		public ims.core.vo.ReferralNoteVo getReferralNote()
 		{
-			return (ims.core.vo.ReferralNoteVo)cx_CareUkReferralNote.getValue(context);
+			return (ims.core.vo.ReferralNoteVo)cx_RefManReferralNote.getValue(context);
 		}
 		public void setReferralNote(ims.core.vo.ReferralNoteVo value)
 		{
-			cx_CareUkReferralNote.setValue(context, value);
+			cx_RefManReferralNote.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkReferralNote = new ims.framework.ContextVariable("CareUk.ReferralNote", "_cv_CareUk.ReferralNote");
+		private ims.framework.ContextVariable cx_RefManReferralNote = new ims.framework.ContextVariable("RefMan.ReferralNote", "_cv_RefMan.ReferralNote");
 		public boolean getIsProviderCancellationIsNotNull()
 		{
-			return !cx_CareUkIsProviderCancellation.getValueIsNull(context);
+			return !cx_RefManIsProviderCancellation.getValueIsNull(context);
 		}
 		public Boolean getIsProviderCancellation()
 		{
-			return (Boolean)cx_CareUkIsProviderCancellation.getValue(context);
+			return (Boolean)cx_RefManIsProviderCancellation.getValue(context);
 		}
 		public void setIsProviderCancellation(Boolean value)
 		{
-			cx_CareUkIsProviderCancellation.setValue(context, value);
+			cx_RefManIsProviderCancellation.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkIsProviderCancellation = new ims.framework.ContextVariable("CareUk.IsProviderCancellation", "_cvp_CareUk.IsProviderCancellation");
+		private ims.framework.ContextVariable cx_RefManIsProviderCancellation = new ims.framework.ContextVariable("RefMan.IsProviderCancellation", "_cvp_RefMan.IsProviderCancellation");
 
 		private ims.framework.Context context;
 	}
@@ -105,6 +105,6 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 		private ims.framework.Context context;
 	}
 
-	public CareUkContext CareUk;
+	public RefManContext RefMan;
 	public CoreContext Core;
 }

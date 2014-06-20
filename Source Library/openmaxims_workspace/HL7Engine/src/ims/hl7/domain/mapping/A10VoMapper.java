@@ -59,10 +59,10 @@ public class A10VoMapper extends VoMapper {
 	public Message populateMessage(ExternalEventVo newEvent) throws Exception
 	{
 		
-		newEvent=careUKdomain.updateEventVoWithInvestigation(newEvent);
+		newEvent=RefMandomain.updateEventVoWithInvestigation(newEvent);
 		if(null==newEvent)
 			return null;
-		IfPatientLocationVo patLoc =careUKdomain.getPatientLocFromAppointment(newEvent.getAppointment());
+		IfPatientLocationVo patLoc =RefMandomain.getPatientLocFromAppointment(newEvent.getAppointment());
 		Patient fullPatient = demog.getPatient(patLoc.getPatient());
 		
 		//LocShortMappingsVo location =  orgLoc.getLocation(patLoc.getID_Location());
@@ -138,7 +138,7 @@ public class A10VoMapper extends VoMapper {
 			//http://jira/browse/WDEV-12682
 			if("CARE_UK".equals(ConfigFlag.HL7.EXTENDED_HL7_PROCESSING.getValue()))
 			{
-				careUKdomain.setAppointmentArrivedForUBRN(patVo2, UBRN, maximsApptId,arrivalDT);
+				RefMandomain.setAppointmentArrivedForUBRN(patVo2, UBRN, maximsApptId,arrivalDT);
 			}
 
 		} catch (StaleObjectException soe)

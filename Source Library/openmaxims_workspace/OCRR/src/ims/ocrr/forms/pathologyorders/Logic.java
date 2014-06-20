@@ -25,7 +25,7 @@ package ims.ocrr.forms.pathologyorders;
 import ims.admin.vo.ReportTemplateVo;
 import ims.admin.vo.ReportVo;
 import ims.admin.vo.ReportVoCollection;
-import ims.careuk.vo.CatsReferralListVo;
+import ims.RefMan.vo.CatsReferralListVo;
 import ims.configuration.gen.ConfigFlag;
 import ims.core.clinical.vo.ServiceRefVo;
 import ims.core.resource.place.vo.LocationRefVo;
@@ -179,8 +179,8 @@ public class Logic extends BaseLogic
 		{
 			form.getGlobalContext().Core.setPatientShort(voPathologyOrder.getOrderDetails().getPatient());
 			CatsReferralListVo voCats = domain.getCatsReferralByOrder(voPathologyOrder.getOrderDetails());
-			form.getGlobalContext().CareUk.setCatsReferral(voCats);
-			form.getGlobalContext().CareUk.setReferralContractTypeForPatient(voCats != null && voCats.getContractIsNotNull() ? voCats.getContract().getContractType() : null);//wdev-12682
+			form.getGlobalContext().RefMan.setCatsReferral(voCats);
+			form.getGlobalContext().RefMan.setReferralContractTypeForPatient(voCats != null && voCats.getContractIsNotNull() ? voCats.getContract().getContractType() : null);//wdev-12682
 
 			engine.open(form.getForms().OCRR.OrderSummaryDialog);
 		}
@@ -240,8 +240,8 @@ public class Logic extends BaseLogic
 	private void initialize()
 	{
 		form.getGlobalContext().Core.setPatientShort(null);
-		form.getGlobalContext().CareUk.setCatsReferral(null);
-		form.getGlobalContext().CareUk.setReferralContractTypeForPatient(null);//wdev-12682
+		form.getGlobalContext().RefMan.setCatsReferral(null);
+		form.getGlobalContext().RefMan.setReferralContractTypeForPatient(null);//wdev-12682
 
 		loadLocation();
 		displayGridFooter();

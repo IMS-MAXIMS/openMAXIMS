@@ -249,12 +249,12 @@ public class GenForm extends FormBridge
 			fields[67] = new ims.framework.ReportField(this.context, "_cvp_Clinical.ExtendedClinicalNotesListFilter", "BO-1011100000-CARECONTEXT", "CareContext");
 			fields[68] = new ims.framework.ReportField(this.context, "_cvp_Core.PasEvent", "BO-1014100003-ID", "ID_PASEvent");
 			fields[69] = new ims.framework.ReportField(this.context, "_cvp_Correspondence.CorrespondenceDetails", "BO-1052100001-ID", "ID_CorrespondenceDetails");
-			fields[70] = new ims.framework.ReportField(this.context, "_cvp_CareUk.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
-			fields[71] = new ims.framework.ReportField(this.context, "_cv_CareUk.ReferralNote", "BO-1096100013-ID", "ID_CorrespondenceNote");
-			fields[72] = new ims.framework.ReportField(this.context, "_cv_CareUk.ReferralNote", "BO-1096100013-CARECONTEXT", "CareContext");
-			fields[73] = new ims.framework.ReportField(this.context, "_cv_CareUk.ReferralNote", "BO-1096100013-RECORDINGDATETIME", "RecordingDateTime");
-			fields[74] = new ims.framework.ReportField(this.context, "_cv_CareUk.ReferralNote", "BO-1096100013-NOTE", "Note");
-			fields[75] = new ims.framework.ReportField(this.context, "_cv_CareUk.ReferralNote", "BO-1096100013-NOTETYPE", "NoteType");
+			fields[70] = new ims.framework.ReportField(this.context, "_cvp_RefMan.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
+			fields[71] = new ims.framework.ReportField(this.context, "_cv_RefMan.ReferralNote", "BO-1096100013-ID", "ID_CorrespondenceNote");
+			fields[72] = new ims.framework.ReportField(this.context, "_cv_RefMan.ReferralNote", "BO-1096100013-CARECONTEXT", "CareContext");
+			fields[73] = new ims.framework.ReportField(this.context, "_cv_RefMan.ReferralNote", "BO-1096100013-RECORDINGDATETIME", "RecordingDateTime");
+			fields[74] = new ims.framework.ReportField(this.context, "_cv_RefMan.ReferralNote", "BO-1096100013-NOTE", "Note");
+			fields[75] = new ims.framework.ReportField(this.context, "_cv_RefMan.ReferralNote", "BO-1096100013-NOTETYPE", "NoteType");
 			return fields;
 		}
 		protected Context context = null;

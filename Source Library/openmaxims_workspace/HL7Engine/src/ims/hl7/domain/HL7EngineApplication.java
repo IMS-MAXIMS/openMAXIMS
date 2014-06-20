@@ -61,7 +61,7 @@ import ims.hl7.vo.lookups.MessageType;
 import ims.ocrr.vo.ProviderSystemVo;
 import ims.ocs_if.domain.OcsIf;
 import ims.ocs_if.domain.OcsIfInbound;
-import ims.ocs_if.helper.ICareUKDomainHelper;
+import ims.ocs_if.helper.IRefManDomainHelper;
 
 import org.apache.log4j.Logger;
 import com.jamonapi.proxy.MonProxyFactory;
@@ -97,7 +97,7 @@ public class HL7EngineApplication implements Application
 	private Allergies				allergy;
 	private ClinicalCoding			allergen;
 //	private ExternalEvents          externalEvents;	
-	private ICareUKDomainHelper	   careUKDomain;
+	private IRefManDomainHelper	   RefManDomain;
 	private HL7TTOIF			hl7tto;
 	private CareContextSelectDialog careContextSelectDialog;
 	private HL7Query				hl7query;
@@ -192,7 +192,7 @@ public class HL7EngineApplication implements Application
 		mapper.setLookupTree(lookupTree);
 		mapper.setCareSpellDialog(careSpellDialog);
 		mapper.setDischargeInpatient(dischargeInpatient);
-		mapper.setCareUKDomain(careUKDomain);
+		mapper.setRefManDomain(RefManDomain);
 		mapper.setHL7TTO(hl7tto);
 		mapper.setCareContextSelectDialog(careContextSelectDialog);
 		mapper.setAllergy(allergy);
@@ -535,8 +535,8 @@ public class HL7EngineApplication implements Application
 			if (dischargeInpatient == null)
 				dischargeInpatient = (DischargeInpatient)getDomainImpl("ims.clinical.domain.impl.DischargeInpatientImpl");
 			
-			if ((careUKDomain == null)&&("CARE_UK".equals(ConfigFlag.HL7.EXTENDED_HL7_PROCESSING.getValue())))
-				careUKDomain = (ICareUKDomainHelper)getDomainImpl("ims.careuk.domain.impl.ExternalEventsImpl");
+			if ((RefManDomain == null)&&("CARE_UK".equals(ConfigFlag.HL7.EXTENDED_HL7_PROCESSING.getValue())))
+				RefManDomain = (IRefManDomainHelper)getDomainImpl("ims.RefMan.domain.impl.ExternalEventsImpl");
 			
 			if(hl7tto == null)
 				hl7tto=(HL7TTOIF)getDomainImpl("ims.clinical.domain.impl.HL7TTOIFImpl");

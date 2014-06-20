@@ -22,15 +22,15 @@
 
 package ims.scheduling.domain.impl;
 
-import ims.careuk.domain.objects.CatsReferral;
-import ims.careuk.domain.objects.PatientElectiveList;
-import ims.careuk.domain.objects.TCIForPatientElectiveList;
-import ims.careuk.vo.CatsReferralForClinicListVo;
-import ims.careuk.vo.PatientElectiveListForDNAAppointmentsVo;
-import ims.careuk.vo.TCIForPatientElectiveListAppointmentDNAVo;
-import ims.careuk.vo.domain.CatsReferralForClinicListVoAssembler;
-import ims.careuk.vo.domain.PatientElectiveListForDNAAppointmentsVoAssembler;
-import ims.careuk.vo.domain.TCIForPatientElectiveListAppointmentDNAVoAssembler;
+import ims.RefMan.domain.objects.CatsReferral;
+import ims.RefMan.domain.objects.PatientElectiveList;
+import ims.RefMan.domain.objects.TCIForPatientElectiveList;
+import ims.RefMan.vo.CatsReferralForClinicListVo;
+import ims.RefMan.vo.PatientElectiveListForDNAAppointmentsVo;
+import ims.RefMan.vo.TCIForPatientElectiveListAppointmentDNAVo;
+import ims.RefMan.vo.domain.CatsReferralForClinicListVoAssembler;
+import ims.RefMan.vo.domain.PatientElectiveListForDNAAppointmentsVoAssembler;
+import ims.RefMan.vo.domain.TCIForPatientElectiveListAppointmentDNAVoAssembler;
 import ims.chooseandbook.vo.lookups.ActionRequestType;
 import ims.configuration.gen.ConfigFlag;
 import ims.core.admin.domain.objects.CareSpell;

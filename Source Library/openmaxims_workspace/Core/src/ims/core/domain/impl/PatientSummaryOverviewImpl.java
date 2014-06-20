@@ -22,11 +22,11 @@
 
 package ims.core.domain.impl;
 
-import ims.careuk.domain.objects.CATSReferralStatus;
-import ims.careuk.domain.objects.CatsReferral;
-import ims.careuk.domain.objects.DischargeSummaryPacuAndWard;
-import ims.careuk.domain.objects.SuitableForSurgeryAssessment;
-import ims.careuk.vo.lookups.ReferralApptStatus;
+import ims.RefMan.domain.objects.CATSReferralStatus;
+import ims.RefMan.domain.objects.CatsReferral;
+import ims.RefMan.domain.objects.DischargeSummaryPacuAndWard;
+import ims.RefMan.domain.objects.SuitableForSurgeryAssessment;
+import ims.RefMan.vo.lookups.ReferralApptStatus;
 import ims.clinical.domain.objects.PatientInvasiveDevice;
 import ims.clinical.domain.objects.VIPScore;
 import ims.coe.vo.RiskAssessmentCollection;

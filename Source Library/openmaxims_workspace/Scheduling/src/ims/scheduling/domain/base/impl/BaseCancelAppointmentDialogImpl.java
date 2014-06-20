@@ -42,12 +42,12 @@ public abstract class BaseCancelAppointmentDialogImpl extends DomainImpl impleme
 	}
 
 	@SuppressWarnings("unused")
-	public void validategetCatsReferral(ims.careuk.vo.CatsReferralRefVo catsRef)
+	public void validategetCatsReferral(ims.RefMan.vo.CatsReferralRefVo catsRef)
 	{
 	}
 
 	@SuppressWarnings("unused")
-	public void validategetPatientElectiveList(ims.careuk.vo.CatsReferralforElectiveListDetailsVo catsReferral)
+	public void validategetPatientElectiveList(ims.RefMan.vo.CatsReferralforElectiveListDetailsVo catsReferral)
 	{
 	}
 }

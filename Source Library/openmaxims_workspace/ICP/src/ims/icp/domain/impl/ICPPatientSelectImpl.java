@@ -22,8 +22,8 @@
 
 package ims.icp.domain.impl;
 
-import ims.careuk.domain.objects.CatsReferral;
-import ims.careuk.vo.CatsReferralRefVo;
+import ims.RefMan.domain.objects.CatsReferral;
+import ims.RefMan.vo.CatsReferralRefVo;
 import ims.core.admin.pas.domain.objects.PASEvent;
 import ims.core.admin.pas.vo.PASEventRefVo;
 import ims.core.admin.vo.CareContextRefVo;

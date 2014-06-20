@@ -30,7 +30,7 @@ public abstract class BaseUploadDocumentImpl extends DomainImpl implements ims.c
 	private static final long serialVersionUID = 1L;
 
 	@SuppressWarnings("unused")
-	public void validatelistPatientDocuments(ims.core.patient.vo.PatientRefVo patient, ims.core.admin.vo.CareContextRefVo careContext, ims.core.vo.lookups.DocumentCategory documentCategory, ims.careuk.vo.CatsReferralRefVo refVo, ims.core.vo.enums.DocumentViewLevel level)
+	public void validatelistPatientDocuments(ims.core.patient.vo.PatientRefVo patient, ims.core.admin.vo.CareContextRefVo careContext, ims.core.vo.lookups.DocumentCategory documentCategory, ims.RefMan.vo.CatsReferralRefVo refVo, ims.core.vo.enums.DocumentViewLevel level)
 	{
 	}
 
@@ -42,7 +42,7 @@ public abstract class BaseUploadDocumentImpl extends DomainImpl implements ims.c
 	}
 
 	@SuppressWarnings("unused")
-	public void validategetCatsReferral(ims.careuk.vo.CatsReferralRefVo catsRefVo)
+	public void validategetCatsReferral(ims.RefMan.vo.CatsReferralRefVo catsRefVo)
 	{
 	}
 }

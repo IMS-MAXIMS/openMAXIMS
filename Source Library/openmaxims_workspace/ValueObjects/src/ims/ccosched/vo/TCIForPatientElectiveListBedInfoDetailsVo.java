@@ -24,9 +24,9 @@
 package ims.ccosched.vo;
 
 /**
- * Linked to CAREUK.TCIForPatientElectiveList business object (ID: 1096100064).
+ * Linked to RefMan.TCIForPatientElectiveList business object (ID: 1096100064).
  */
-public class TCIForPatientElectiveListBedInfoDetailsVo extends ims.careuk.vo.TCIForPatientElectiveListRefVo implements ims.vo.ImsCloneable, Comparable
+public class TCIForPatientElectiveListBedInfoDetailsVo extends ims.RefMan.vo.TCIForPatientElectiveListRefVo implements ims.vo.ImsCloneable, Comparable
 {
 	private static final long serialVersionUID = 1L;
 
@@ -51,10 +51,10 @@ public class TCIForPatientElectiveListBedInfoDetailsVo extends ims.careuk.vo.TCI
 		this.currentoutcome = bean.getCurrentOutcome() == null ? null : bean.getCurrentOutcome().buildVo();
 		if(bean.getOutcomeHistory() != null)
 		{
-			this.outcomehistory = new ims.careuk.vo.TCIOutcomeForPatientElectiveListRefVoCollection();
+			this.outcomehistory = new ims.RefMan.vo.TCIOutcomeForPatientElectiveListRefVoCollection();
 			for(int outcomehistory_i = 0; outcomehistory_i < bean.getOutcomeHistory().length; outcomehistory_i++)
 			{
-				this.outcomehistory.add(new ims.careuk.vo.TCIOutcomeForPatientElectiveListRefVo(new Integer(bean.getOutcomeHistory()[outcomehistory_i].getId()), bean.getOutcomeHistory()[outcomehistory_i].getVersion()));
+				this.outcomehistory.add(new ims.RefMan.vo.TCIOutcomeForPatientElectiveListRefVo(new Integer(bean.getOutcomeHistory()[outcomehistory_i].getId()), bean.getOutcomeHistory()[outcomehistory_i].getVersion()));
 			}
 		}
 		this.isactive = bean.getIsActive();
@@ -74,10 +74,10 @@ public class TCIForPatientElectiveListBedInfoDetailsVo extends ims.careuk.vo.TCI
 		this.currentoutcome = bean.getCurrentOutcome() == null ? null : bean.getCurrentOutcome().buildVo(map);
 		if(bean.getOutcomeHistory() != null)
 		{
-			this.outcomehistory = new ims.careuk.vo.TCIOutcomeForPatientElectiveListRefVoCollection();
+			this.outcomehistory = new ims.RefMan.vo.TCIOutcomeForPatientElectiveListRefVoCollection();
 			for(int outcomehistory_i = 0; outcomehistory_i < bean.getOutcomeHistory().length; outcomehistory_i++)
 			{
-				this.outcomehistory.add(new ims.careuk.vo.TCIOutcomeForPatientElectiveListRefVo(new Integer(bean.getOutcomeHistory()[outcomehistory_i].getId()), bean.getOutcomeHistory()[outcomehistory_i].getVersion()));
+				this.outcomehistory.add(new ims.RefMan.vo.TCIOutcomeForPatientElectiveListRefVo(new Integer(bean.getOutcomeHistory()[outcomehistory_i].getId()), bean.getOutcomeHistory()[outcomehistory_i].getVersion()));
 			}
 		}
 		this.isactive = bean.getIsActive();
@@ -232,11 +232,11 @@ public class TCIForPatientElectiveListBedInfoDetailsVo extends ims.careuk.vo.TCI
 	{
 		return this.currentoutcome != null;
 	}
-	public ims.careuk.vo.TCIOutcomeForPatientElectiveListVo getCurrentOutcome()
+	public ims.RefMan.vo.TCIOutcomeForPatientElectiveListVo getCurrentOutcome()
 	{
 		return this.currentoutcome;
 	}
-	public void setCurrentOutcome(ims.careuk.vo.TCIOutcomeForPatientElectiveListVo value)
+	public void setCurrentOutcome(ims.RefMan.vo.TCIOutcomeForPatientElectiveListVo value)
 	{
 		this.isValidated = false;
 		this.currentoutcome = value;
@@ -245,11 +245,11 @@ public class TCIForPatientElectiveListBedInfoDetailsVo extends ims.careuk.vo.TCI
 	{
 		return this.outcomehistory != null;
 	}
-	public ims.careuk.vo.TCIOutcomeForPatientElectiveListRefVoCollection getOutcomeHistory()
+	public ims.RefMan.vo.TCIOutcomeForPatientElectiveListRefVoCollection getOutcomeHistory()
 	{
 		return this.outcomehistory;
 	}
-	public void setOutcomeHistory(ims.careuk.vo.TCIOutcomeForPatientElectiveListRefVoCollection value)
+	public void setOutcomeHistory(ims.RefMan.vo.TCIOutcomeForPatientElectiveListRefVoCollection value)
 	{
 		this.isValidated = false;
 		this.outcomehistory = value;
@@ -431,7 +431,7 @@ public class TCIForPatientElectiveListBedInfoDetailsVo extends ims.careuk.vo.TCI
 		if(this.currentoutcome == null)
 			clone.currentoutcome = null;
 		else
-			clone.currentoutcome = (ims.careuk.vo.TCIOutcomeForPatientElectiveListVo)this.currentoutcome.clone();
+			clone.currentoutcome = (ims.RefMan.vo.TCIOutcomeForPatientElectiveListVo)this.currentoutcome.clone();
 		clone.outcomehistory = this.outcomehistory;
 		clone.isactive = this.isactive;
 		if(this.appointment == null)
@@ -506,8 +506,8 @@ public class TCIForPatientElectiveListBedInfoDetailsVo extends ims.careuk.vo.TCI
 	protected String bedmanagercomment;
 	protected ims.core.vo.HcpLiteVo tciconsultant;
 	protected ims.core.vo.AdmissionDetailVo admissiondetail;
-	protected ims.careuk.vo.TCIOutcomeForPatientElectiveListVo currentoutcome;
-	protected ims.careuk.vo.TCIOutcomeForPatientElectiveListRefVoCollection outcomehistory;
+	protected ims.RefMan.vo.TCIOutcomeForPatientElectiveListVo currentoutcome;
+	protected ims.RefMan.vo.TCIOutcomeForPatientElectiveListRefVoCollection outcomehistory;
 	protected Boolean isactive;
 	protected ims.scheduling.vo.BookingAppointmentTheatreVo appointment;
 	private boolean isValidated = false;

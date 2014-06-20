@@ -38,7 +38,7 @@ public class DirectoryOfServiceVoBean extends ims.vo.ValueObjectBean
 		this.service = vo.getService() == null ? null : (ims.core.vo.beans.ServiceShortVoBean)vo.getService().getBean();
 		this.functions = vo.getFunctions() == null ? null : vo.getFunctions().getBeanCollection();
 		this.location = vo.getLocation() == null ? null : (ims.core.vo.beans.LocationLiteVoBean)vo.getLocation().getBean();
-		this.contract = vo.getContract() == null ? null : (ims.careuk.vo.beans.ContractConfigShortVoBean)vo.getContract().getBean();
+		this.contract = vo.getContract() == null ? null : (ims.RefMan.vo.beans.ContractConfigShortVoBean)vo.getContract().getBean();
 	}
 
 	public void populate(ims.vo.ValueObjectBeanMap map, ims.scheduling.vo.DirectoryOfServiceVo vo)
@@ -51,7 +51,7 @@ public class DirectoryOfServiceVoBean extends ims.vo.ValueObjectBean
 		this.service = vo.getService() == null ? null : (ims.core.vo.beans.ServiceShortVoBean)vo.getService().getBean(map);
 		this.functions = vo.getFunctions() == null ? null : vo.getFunctions().getBeanCollection();
 		this.location = vo.getLocation() == null ? null : (ims.core.vo.beans.LocationLiteVoBean)vo.getLocation().getBean(map);
-		this.contract = vo.getContract() == null ? null : (ims.careuk.vo.beans.ContractConfigShortVoBean)vo.getContract().getBean(map);
+		this.contract = vo.getContract() == null ? null : (ims.RefMan.vo.beans.ContractConfigShortVoBean)vo.getContract().getBean(map);
 	}
 
 	public ims.scheduling.vo.DirectoryOfServiceVo buildVo()
@@ -137,11 +137,11 @@ public class DirectoryOfServiceVoBean extends ims.vo.ValueObjectBean
 	{
 		this.location = value;
 	}
-	public ims.careuk.vo.beans.ContractConfigShortVoBean getContract()
+	public ims.RefMan.vo.beans.ContractConfigShortVoBean getContract()
 	{
 		return this.contract;
 	}
-	public void setContract(ims.careuk.vo.beans.ContractConfigShortVoBean value)
+	public void setContract(ims.RefMan.vo.beans.ContractConfigShortVoBean value)
 	{
 		this.contract = value;
 	}
@@ -154,5 +154,5 @@ public class DirectoryOfServiceVoBean extends ims.vo.ValueObjectBean
 	private ims.core.vo.beans.ServiceShortVoBean service;
 	private ims.core.vo.beans.ServiceFunctionVoBean[] functions;
 	private ims.core.vo.beans.LocationLiteVoBean location;
-	private ims.careuk.vo.beans.ContractConfigShortVoBean contract;
+	private ims.RefMan.vo.beans.ContractConfigShortVoBean contract;
 }

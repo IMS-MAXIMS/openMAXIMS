@@ -81,15 +81,15 @@ public class Logic extends BaseLogic
 
 	private void initialise()
 	{
-		if(form.getGlobalContext().CareUk.getSelectedSessionsIsNotNull())
+		if(form.getGlobalContext().RefMan.getSelectedSessionsIsNotNull())
 		{
-			for(SessionShortVo voSession : form.getGlobalContext().CareUk.getSelectedSessions())
+			for(SessionShortVo voSession : form.getGlobalContext().RefMan.getSelectedSessions())
 			{
 				form.cmbSession().newRow(voSession, voSession.getName());
 			}
 			
 			if(form.cmbSession().getValues().size() == 1)
-				form.cmbSession().setValue(form.getGlobalContext().CareUk.getSelectedSessions().get(0));
+				form.cmbSession().setValue(form.getGlobalContext().RefMan.getSelectedSessions().get(0));
 			
 			form.lblSlotType().setVisible(false);
 			form.cmbSlotType().setVisible(false);
@@ -145,7 +145,7 @@ public class Logic extends BaseLogic
 		if(form.cmbSession().getValue() != null)
 		{
 			voSlot.setSession(form.cmbSession().getValue());
-			form.getGlobalContext().CareUk.setSelectedSession(form.cmbSession().getValue());
+			form.getGlobalContext().RefMan.setSelectedSession(form.cmbSession().getValue());
 		}
 		
 		if(ConfigFlag.DOM.SCHEDULING_SLOTS_CREATION.getValue().equals("Choose and Book"))
@@ -202,7 +202,7 @@ public class Logic extends BaseLogic
 			}
 		}
 		
-		if(form.getGlobalContext().CareUk.getSelectedSessionsIsNotNull())
+		if(form.getGlobalContext().RefMan.getSelectedSessionsIsNotNull())
 			form.cmbSlotType().setValue(SchedCABSlotType.LOCAL);
 	}
 
@@ -212,7 +212,7 @@ public class Logic extends BaseLogic
 				
 		//called from book appointment to add slot on the fly
 		
-		if(form.getGlobalContext().CareUk.getSelectedSessionsIsNotNull())
+		if(form.getGlobalContext().RefMan.getSelectedSessionsIsNotNull())
 		{
 			if(form.cmbSession().getValue() == null)
 				errors.add("Session is mandatory");
@@ -234,7 +234,7 @@ public class Logic extends BaseLogic
 		
 		//wdev-12073, 	WDEV-11638
 		SessionShortVo tempvo = null;
-		if(form.getGlobalContext().CareUk.getSelectedSessionsIsNotNull())
+		if(form.getGlobalContext().RefMan.getSelectedSessionsIsNotNull())
 		{
 			tempvo = form.cmbSession().getValue();
 		}

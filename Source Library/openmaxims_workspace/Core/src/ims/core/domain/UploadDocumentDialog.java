@@ -30,11 +30,11 @@ public interface UploadDocumentDialog extends ims.domain.DomainInterface
 	/**
 	* savePatientDocument
 	*/
-	public ims.core.vo.PatientDocumentSaveVo savePatientDocument(ims.core.vo.PatientDocumentVo document, ims.careuk.vo.CatsReferralWizardVo catReferral, ims.careuk.vo.CatsReferralRefVo voRef) throws ims.domain.exceptions.StaleObjectException;
+	public ims.core.vo.PatientDocumentSaveVo savePatientDocument(ims.core.vo.PatientDocumentVo document, ims.RefMan.vo.CatsReferralWizardVo catReferral, ims.RefMan.vo.CatsReferralRefVo voRef) throws ims.domain.exceptions.StaleObjectException;
 
 	// Generated from form domain interface definition
 	/**
 	* getCatsReferral
 	*/
-	public ims.careuk.vo.CatsReferralWizardVo getCatsReferral(ims.careuk.vo.CatsReferralRefVo voCatsRef);
+	public ims.RefMan.vo.CatsReferralWizardVo getCatsReferral(ims.RefMan.vo.CatsReferralRefVo voCatsRef);
 }

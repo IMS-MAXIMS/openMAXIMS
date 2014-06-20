@@ -27,8 +27,8 @@ package ims.admin.domain;
 public interface ReferralStatusAdmin extends ims.domain.DomainInterface
 {
 	// Generated from form domain interface definition
-	public ims.careuk.vo.ReferralStatusConfigVoCollection getReferralStatus();
+	public ims.RefMan.vo.ReferralStatusConfigVoCollection getReferralStatus();
 
 	// Generated from form domain interface definition
-	public void saveReferralStatusConfig(ims.careuk.vo.ReferralStatusConfigVoCollection referralStatusConfigVoColl) throws ims.domain.exceptions.DomainInterfaceException, ims.domain.exceptions.StaleObjectException, ims.domain.exceptions.ForeignKeyViolationException;
+	public void saveReferralStatusConfig(ims.RefMan.vo.ReferralStatusConfigVoCollection referralStatusConfigVoColl) throws ims.domain.exceptions.DomainInterfaceException, ims.domain.exceptions.StaleObjectException, ims.domain.exceptions.ForeignKeyViolationException;
 }

@@ -22,11 +22,11 @@
 
 package ims.scheduling.domain.impl;
 
-import ims.careuk.domain.objects.CatsReferral;
-import ims.careuk.domain.objects.OrderInvAppt;
-import ims.careuk.vo.CatsReferralListVo;
-import ims.careuk.vo.CatsReferralRefVo;
-import ims.careuk.vo.lookups.AdditionalInvestigationAppointmentsStatus;
+import ims.RefMan.domain.objects.CatsReferral;
+import ims.RefMan.domain.objects.OrderInvAppt;
+import ims.RefMan.vo.CatsReferralListVo;
+import ims.RefMan.vo.CatsReferralRefVo;
+import ims.RefMan.vo.lookups.AdditionalInvestigationAppointmentsStatus;
 import ims.chooseandbook.vo.lookups.ActionRequestType;
 import ims.configuration.gen.ConfigFlag;
 import ims.core.clinical.domain.objects.Procedure;
@@ -180,19 +180,19 @@ public class PatientAppointmentManagementImpl extends BasePatientAppointmentMana
 		return voServiceAndSlot;
 	}
 
-	//stub for method that is only implemented in CAREUK
+	//stub for method that is only implemented in RefMan
 	public CatsReferralListVo getCatsReferralForAppointment(Booking_AppointmentRefVo appt)//WDEV-11902
 	{
 		return null;
 	}
 
-	//stub for method that is only implemented in CAREUK
+	//stub for method that is only implemented in RefMan
 	public void updateCatsReferralAdditionalInvStatus(CatsReferralRefVo catsReferral) throws StaleObjectException
 	{
 		return;
 	}
 	
-	//stub for method that is only implemented in CAREUK
+	//stub for method that is only implemented in RefMan
 	public void updateCatsReferralCancelStatus(CatsReferralRefVo catsReferral) throws StaleObjectException
 	{
 		return;

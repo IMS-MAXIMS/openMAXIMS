@@ -47,7 +47,7 @@ public final class AccessLogic extends BaseAccessLogic implements Serializable
 		}
 		else if (documentViewLevel.equals(DocumentViewLevel.REFERRAL.getText()))
 		{
-			if (form.getGlobalContext().CareUk.getCatsReferral()== null)
+			if (form.getGlobalContext().RefMan.getCatsReferral()== null)
 				return false;
 		}
 		else if (documentViewLevel.equals(DocumentViewLevel.PATIENT.getText()))

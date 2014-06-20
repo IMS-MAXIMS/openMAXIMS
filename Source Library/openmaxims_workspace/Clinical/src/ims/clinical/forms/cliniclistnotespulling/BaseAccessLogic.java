@@ -100,14 +100,14 @@ public class BaseAccessLogic extends FormAccessLogic implements Serializable
 
 		private CurrentForms()
 		{
-			CAREUK = new CAREUKForms();
+			RefMan = new RefManForms();
 			Scheduling = new SchedulingForms();
 		}
-		public final class CAREUKForms implements Serializable
+		public final class RefManForms implements Serializable
 		{
 			private static final long serialVersionUID = 1L;
 
-			private CAREUKForms()
+			private RefManForms()
 			{
 				NewElectiveListTCIErodDialog = new LocalFormName(134224);
 				BookAppointmentDialog = new LocalFormName(134134);
@@ -126,7 +126,7 @@ public class BaseAccessLogic extends FormAccessLogic implements Serializable
 			public final FormName AppointmentOutcomeDialog;
 		}
 
-		public CAREUKForms CAREUK;
+		public RefManForms RefMan;
 		public SchedulingForms Scheduling;
 	}
 }

@@ -22,7 +22,7 @@
 
 package ims.core.forms.referraldetailsnotes;
 
-import ims.careuk.vo.lookups.ReferralNoteType;
+import ims.RefMan.vo.lookups.ReferralNoteType;
 import ims.core.forms.referraldetailsnotes.GenForm.grdNotesRow;
 import ims.core.vo.MemberOfStaffLiteVo;
 import ims.core.vo.ReferralNoteVo;
@@ -41,12 +41,12 @@ public class Logic extends BaseLogic
 	@Override
 	protected void onContextMenuItemClick(int menuItemID, ims.framework.Control sender) throws ims.framework.exceptions.PresentationLogicException
 	{
-		form.getGlobalContext().CareUk.setReferralNote(form.grdNotes().getValue());
+		form.getGlobalContext().RefMan.setReferralNote(form.grdNotes().getValue());
 
 		switch (menuItemID)
 		{
-			case GenForm.ContextMenus.CAREUKNamespace.NotesMenu.NewNote :
-				form.getGlobalContext().CareUk.setReferralNote(null);
+			case GenForm.ContextMenus.RefManNamespace.NotesMenu.NewNote :
+				form.getGlobalContext().RefMan.setReferralNote(null);
 			break;
 			default :
 		}
@@ -60,18 +60,18 @@ public class Logic extends BaseLogic
 	}
 	private void manageNotesMenu() 
 	{
-		form.getContextMenus().CAREUK.disableAllNotesMenuMenuItems();
-		form.getContextMenus().CAREUK.getNotesMenuNewNoteItem().setEnabled(domain.getMosUser() != null);
-		form.getContextMenus().CAREUK.getNotesMenuNewNoteItem().setVisible(domain.getMosUser() != null);
+		form.getContextMenus().RefMan.disableAllNotesMenuMenuItems();
+		form.getContextMenus().RefMan.getNotesMenuNewNoteItem().setEnabled(domain.getMosUser() != null);
+		form.getContextMenus().RefMan.getNotesMenuNewNoteItem().setVisible(domain.getMosUser() != null);
 		
-		form.getContextMenus().CAREUK.getNotesMenuEditNoteItem().setEnabled(form.grdNotes().getSelectedRow() != null && domain.getMosUser() != null ? Boolean.TRUE : Boolean.FALSE);
-		form.getContextMenus().CAREUK.getNotesMenuEditNoteItem().setVisible(form.grdNotes().getSelectedRow() != null && domain.getMosUser() != null ? Boolean.TRUE : Boolean.FALSE);
+		form.getContextMenus().RefMan.getNotesMenuEditNoteItem().setEnabled(form.grdNotes().getSelectedRow() != null && domain.getMosUser() != null ? Boolean.TRUE : Boolean.FALSE);
+		form.getContextMenus().RefMan.getNotesMenuEditNoteItem().setVisible(form.grdNotes().getSelectedRow() != null && domain.getMosUser() != null ? Boolean.TRUE : Boolean.FALSE);
 		
 		if (form.grdNotes().getSelectedRow() != null
 			&& form.grdNotes().getSelectedRow().getValue() !=null
 			&& form.grdNotes().getSelectedRow().getValue().getNoteTypeIsNotNull()
 			&& form.grdNotes().getSelectedRow().getValue().getNoteType().equals(ReferralNoteType.CLINICAL))
-			form.getContextMenus().CAREUK.getNotesMenuEditNoteItem().setVisible(Boolean.FALSE);
+			form.getContextMenus().RefMan.getNotesMenuEditNoteItem().setVisible(Boolean.FALSE);
 	
 	}
 	
@@ -131,7 +131,7 @@ public class Logic extends BaseLogic
 			
 		}
 		
-		form.getGlobalContext().CareUk.setReferralNote(null);		
+		form.getGlobalContext().RefMan.setReferralNote(null);		
 		listReferralNotes();
 	}
 
@@ -147,7 +147,7 @@ public class Logic extends BaseLogic
 		if(formName.equals(form.getForms().Core.ReferralDetailsNoteDialog)
 				&& result.equals(DialogResult.OK))
 		{
-				saveReferralNote(form.getGlobalContext().CareUk.getReferralNote());
+				saveReferralNote(form.getGlobalContext().RefMan.getReferralNote());
 		}		
 	}
 

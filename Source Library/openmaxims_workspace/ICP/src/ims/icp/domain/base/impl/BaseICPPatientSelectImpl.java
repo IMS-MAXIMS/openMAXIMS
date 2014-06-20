@@ -35,7 +35,7 @@ public abstract class BaseICPPatientSelectImpl extends DomainImpl implements ims
 	}
 
 	@SuppressWarnings("unused")
-	public void validatecreatePatientICP(ims.core.admin.vo.CareContextRefVo careContext, ims.core.patient.vo.PatientRefVo patient, ims.careuk.vo.CatsReferralRefVo catsReferral, ims.icps.configuration.vo.ICPRefVo icpConfiguration, ims.core.vo.HcpLiteVo voHCP)
+	public void validatecreatePatientICP(ims.core.admin.vo.CareContextRefVo careContext, ims.core.patient.vo.PatientRefVo patient, ims.RefMan.vo.CatsReferralRefVo catsReferral, ims.icps.configuration.vo.ICPRefVo icpConfiguration, ims.core.vo.HcpLiteVo voHCP)
 	{
 	}
 

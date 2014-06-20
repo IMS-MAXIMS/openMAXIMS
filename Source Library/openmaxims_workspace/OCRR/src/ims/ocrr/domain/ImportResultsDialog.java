@@ -30,7 +30,7 @@ public interface ImportResultsDialog extends ims.domain.DomainInterface
 	public ims.ocrr.vo.ReferralAppointmentDetailsOrderInvestigationVo saveReferralAppointmentDetailsOrderInvestigationVo(ims.ocrr.vo.ReferralAppointmentDetailsOrderInvestigationVo referralAppointmentDetailsOrderInvestigationVo) throws ims.domain.exceptions.StaleObjectException;
 
 	// Generated from form domain interface definition
-	public ims.ocrr.vo.ReferralAppointmentInvestigationsVo listInvestigations(ims.careuk.vo.CatsReferralRefVo refCatsReferralRefVo);
+	public ims.ocrr.vo.ReferralAppointmentInvestigationsVo listInvestigations(ims.RefMan.vo.CatsReferralRefVo refCatsReferralRefVo);
 
 	// Generated from form domain interface definition
 	public ims.ocrr.vo.ImportResultsConfigVo getImportResultsConfig();

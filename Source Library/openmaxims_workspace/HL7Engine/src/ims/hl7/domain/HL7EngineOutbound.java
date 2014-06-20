@@ -94,7 +94,7 @@ import ims.ocrr.vo.lookups.OrderInvStatus;
 import ims.ocrr.vo.lookups.OrderMessageStatus;
 import ims.ocs_if.domain.OcsIf;
 import ims.ocs_if.domain.OcsIfInbound;
-import ims.ocs_if.helper.ICareUKDomainHelper;
+import ims.ocs_if.helper.IRefManDomainHelper;
 import ims.ocs_if.helper.IQueueHandler;
 import ims.ocs_if.vo.Hl7OutboundRegVo;
 import ims.ocs_if.vo.IfOcsOrderShortVo;
@@ -174,7 +174,7 @@ public class HL7EngineOutbound extends Thread implements IHL7InterfaceComponent
 	private GPAdmin gpAdmin;
 	private LookupTree lookupTree;
 	private IQueueHandler externalEvents;
-	private ICareUKDomainHelper careUKDomain;
+	private IRefManDomainHelper RefManDomain;
 	private Map<String, SocketPackage> providerSystemSocks = new HashMap<String, SocketPackage>();
 	private HL7Query hl7query;
 
@@ -331,7 +331,7 @@ public class HL7EngineOutbound extends Thread implements IHL7InterfaceComponent
 		mapper.setOcsIf(ocsIf);
 		mapper.setGpAdmin(gpAdmin);
 		mapper.setLookupTree(lookupTree);
-		mapper.setCareUKDomain(careUKDomain);
+		mapper.setRefManDomain(RefManDomain);
 
 	}
 
@@ -1997,12 +1997,12 @@ public class HL7EngineOutbound extends Thread implements IHL7InterfaceComponent
 				ocsIf = (OcsIf) getDomainImpl("ims.ocs_if.domain.impl.OcsIfImpl");
 			
 			if ((externalEvents == null) && ("CARE_UK".equals(ConfigFlag.HL7.EXTENDED_HL7_PROCESSING.getValue())))
-				externalEvents = (IQueueHandler) getDomainImpl("ims.careuk.domain.impl.ExternalEventsImpl");
+				externalEvents = (IQueueHandler) getDomainImpl("ims.RefMan.domain.impl.ExternalEventsImpl");
 			if ("Configured".equals(ConfigFlag.HL7.EXTENDED_HL7_PROCESSING.getValue()))
 				externalEvents = (IQueueHandler) getDomainImpl("ims.ocs_if.domain.impl.OcsIfImpl");
 			
-			if ((careUKDomain == null) && ("CARE_UK".equals(ConfigFlag.HL7.EXTENDED_HL7_PROCESSING.getValue())))
-				careUKDomain = (ICareUKDomainHelper) getDomainImpl("ims.careuk.domain.impl.ExternalEventsImpl");
+			if ((RefManDomain == null) && ("CARE_UK".equals(ConfigFlag.HL7.EXTENDED_HL7_PROCESSING.getValue())))
+				RefManDomain = (IRefManDomainHelper) getDomainImpl("ims.RefMan.domain.impl.ExternalEventsImpl");
 			
 			if(hl7query == null)
 				hl7query = (HL7Query) getDomainImpl("ims.core.domain.impl.HL7QueryImpl");

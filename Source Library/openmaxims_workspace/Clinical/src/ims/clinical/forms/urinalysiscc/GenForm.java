@@ -1560,7 +1560,7 @@ public class GenForm extends FormBridge
 			fields[67] = new ims.framework.ReportField(this.context, "_cvp_Clinical.ExtendedClinicalNotesListFilter", "BO-1011100000-CARECONTEXT", "CareContext");
 			fields[68] = new ims.framework.ReportField(this.context, "_cvp_Core.PasEvent", "BO-1014100003-ID", "ID_PASEvent");
 			fields[69] = new ims.framework.ReportField(this.context, "_cvp_Correspondence.CorrespondenceDetails", "BO-1052100001-ID", "ID_CorrespondenceDetails");
-			fields[70] = new ims.framework.ReportField(this.context, "_cvp_CareUk.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
+			fields[70] = new ims.framework.ReportField(this.context, "_cvp_RefMan.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
 			fields[71] = new ims.framework.ReportField(this.context, prefix + "_lv_Clinical.UrinalysisCc.__internal_x_context__SelectedUrinalysis_" + componentIdentifier, "BO-1022100012-ID", "ID_Urinalysis");
 			fields[72] = new ims.framework.ReportField(this.context, prefix + "_lv_Clinical.UrinalysisCc.__internal_x_context__SelectedUrinalysis_" + componentIdentifier, "BO-1022100012-NOABNORMALITYDETECTED", "NoAbnormalityDetected");
 			fields[73] = new ims.framework.ReportField(this.context, prefix + "_lv_Clinical.UrinalysisCc.__internal_x_context__SelectedUrinalysis_" + componentIdentifier, "BO-1022100012-LEUCOCYTES", "Leucocytes");

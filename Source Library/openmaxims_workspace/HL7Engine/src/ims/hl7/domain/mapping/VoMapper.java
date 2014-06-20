@@ -155,7 +155,7 @@ import ims.ocrr.vo.lookups.Category;
 import ims.ocrr.vo.lookups.OrderCategory;
 import ims.ocs_if.domain.OcsIf;
 import ims.ocs_if.domain.OcsIfInbound;
-import ims.ocs_if.helper.ICareUKDomainHelper;
+import ims.ocs_if.helper.IRefManDomainHelper;
 import ims.ocs_if.vo.IfOcsOrderVo;
 import ims.ocs_if.vo.IfOrderInvestigationVo;
 import ims.ocs_if.vo.IfOrderInvestigationVoCollection;
@@ -228,7 +228,7 @@ public abstract class VoMapper  implements IMessageHandler
 	protected LookupTree				lookupTree;
 	protected CareSpellDialog			careSpellDialog;
 	protected DischargeInpatient		dischargeInpatient;
-	protected ICareUKDomainHelper       careUKdomain;
+	protected IRefManDomainHelper       RefMandomain;
 	protected HL7TTOIF					hl7tto;
 	protected CareContextSelectDialog	careContextSelectDialog;
 	protected Allergies					allergy;
@@ -3511,13 +3511,13 @@ public abstract class VoMapper  implements IMessageHandler
 	}
 
 
-	public ICareUKDomainHelper getCareUKDomain() {
-		return careUKdomain;
+	public IRefManDomainHelper getRefManDomain() {
+		return RefMandomain;
 	}
 
 
-	public void setCareUKDomain(ICareUKDomainHelper careUKdomain) {
-		this.careUKdomain = careUKdomain;
+	public void setRefManDomain(IRefManDomainHelper RefMandomain) {
+		this.RefMandomain = RefMandomain;
 	}
 
 	public void setHL7TTO(HL7TTOIF hl7tto) {

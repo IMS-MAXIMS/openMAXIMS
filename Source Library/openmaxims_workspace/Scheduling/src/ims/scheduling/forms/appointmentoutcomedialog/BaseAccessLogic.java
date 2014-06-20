@@ -101,7 +101,7 @@ public class BaseAccessLogic extends FormAccessLogic implements Serializable
 		private CurrentForms()
 		{
 			Clinical = new ClinicalForms();
-			CAREUK = new CAREUKForms();
+			RefMan = new RefManForms();
 			Scheduling = new SchedulingForms();
 		}
 		public final class ClinicalForms implements Serializable
@@ -116,11 +116,11 @@ public class BaseAccessLogic extends FormAccessLogic implements Serializable
 			public final FormName ClinicListWithICPActions;
 			public final FormName PatientDiagnosisDialog;
 		}
-		public final class CAREUKForms implements Serializable
+		public final class RefManForms implements Serializable
 		{
 			private static final long serialVersionUID = 1L;
 
-			private CAREUKForms()
+			private RefManForms()
 			{
 				NewElectiveListTCIErodDialog = new LocalFormName(134224);
 				AppointmentOutcomeDiagnosisSelectionDialog = new LocalFormName(134233);
@@ -144,7 +144,7 @@ public class BaseAccessLogic extends FormAccessLogic implements Serializable
 		}
 
 		public ClinicalForms Clinical;
-		public CAREUKForms CAREUK;
+		public RefManForms RefMan;
 		public SchedulingForms Scheduling;
 	}
 }

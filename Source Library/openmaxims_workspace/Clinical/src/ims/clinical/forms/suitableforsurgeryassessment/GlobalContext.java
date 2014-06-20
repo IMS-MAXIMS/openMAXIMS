@@ -83,11 +83,11 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 		{
 			return !cx_ClinicalSelectedSuitableforSurgeryComment.getValueIsNull(context);
 		}
-		public ims.careuk.vo.SuitableForSurgeryCommentVo getSelectedSuitableforSurgeryComment()
+		public ims.RefMan.vo.SuitableForSurgeryCommentVo getSelectedSuitableforSurgeryComment()
 		{
-			return (ims.careuk.vo.SuitableForSurgeryCommentVo)cx_ClinicalSelectedSuitableforSurgeryComment.getValue(context);
+			return (ims.RefMan.vo.SuitableForSurgeryCommentVo)cx_ClinicalSelectedSuitableforSurgeryComment.getValue(context);
 		}
-		public void setSelectedSuitableforSurgeryComment(ims.careuk.vo.SuitableForSurgeryCommentVo value)
+		public void setSelectedSuitableforSurgeryComment(ims.RefMan.vo.SuitableForSurgeryCommentVo value)
 		{
 			cx_ClinicalSelectedSuitableforSurgeryComment.setValue(context, value);
 		}

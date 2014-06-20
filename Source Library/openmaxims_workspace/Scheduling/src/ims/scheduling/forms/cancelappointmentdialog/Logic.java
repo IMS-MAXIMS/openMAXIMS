@@ -32,10 +32,10 @@ import ims.framework.exceptions.PresentationLogicException;
 import ims.scheduling.vo.Appointment_StatusVo;
 import ims.scheduling.vo.lookups.CancelAppointmentReasonCollection;
 import ims.scheduling.vo.lookups.Status_Reason;
-import ims.careuk.vo.CatsReferralforElectiveListDetailsVo;
-import ims.careuk.vo.PatientElectiveListForCancelAppointmentVo;
-import ims.careuk.vo.domain.PatientElectiveListForCancelAppointmentVoAssembler;
-import ims.careuk.vo.lookups.ReferralApptStatus;
+import ims.RefMan.vo.CatsReferralforElectiveListDetailsVo;
+import ims.RefMan.vo.PatientElectiveListForCancelAppointmentVo;
+import ims.RefMan.vo.domain.PatientElectiveListForCancelAppointmentVoAssembler;
+import ims.RefMan.vo.lookups.ReferralApptStatus;
 
 public class Logic extends BaseLogic
 {
@@ -79,10 +79,10 @@ public class Logic extends BaseLogic
 			if(form.getGlobalContext().ChooseAndBook.getisCABAppt())
 				form.ansRebook().setEnabled(false);
 		}
-		if(form.getGlobalContext().CareUk.getCatsReferralStatusIsNotNull())
-			if(form.getGlobalContext().CareUk.getCatsReferralStatus().getReferralStatusIsNotNull()
-					&& (form.getGlobalContext().CareUk.getCatsReferralStatus().getReferralStatus().equals(ReferralApptStatus.REFERRAL_CANCELLED_BY_PROVIDER)
-						|| form.getGlobalContext().CareUk.getCatsReferralStatus().getReferralStatus().equals(ReferralApptStatus.END_OF_CARE)) )
+		if(form.getGlobalContext().RefMan.getCatsReferralStatusIsNotNull())
+			if(form.getGlobalContext().RefMan.getCatsReferralStatus().getReferralStatusIsNotNull()
+					&& (form.getGlobalContext().RefMan.getCatsReferralStatus().getReferralStatus().equals(ReferralApptStatus.REFERRAL_CANCELLED_BY_PROVIDER)
+						|| form.getGlobalContext().RefMan.getCatsReferralStatus().getReferralStatus().equals(ReferralApptStatus.END_OF_CARE)) )
 				form.ansRebook().setEnabled(false);
 		
 		if (ConfigFlag.GEN.CREATE_ICP_ON_ACCEPTANCE_OF_REFERRAL.getValue() && isReferralICPCompleted())
@@ -98,9 +98,9 @@ public class Logic extends BaseLogic
 		form.lblNonMedicalReason().setVisible(false);
 
 		//wdev-18419
-		if( form.getGlobalContext().CareUk.getCatsReferralIsNotNull() )
+		if( form.getGlobalContext().RefMan.getCatsReferralIsNotNull() )
 		{
-			CatsReferralforElectiveListDetailsVo tempVo = domain.getCatsReferral(form.getGlobalContext().CareUk.getCatsReferral());
+			CatsReferralforElectiveListDetailsVo tempVo = domain.getCatsReferral(form.getGlobalContext().RefMan.getCatsReferral());
 			if( tempVo != null && tempVo.getJourneyIsNotNull() && tempVo.getJourney().getCurrentClockIsNotNull() )
 			{
 				PatientElectiveListForCancelAppointmentVo pateleVo = domain.getPatientElectiveList(tempVo);

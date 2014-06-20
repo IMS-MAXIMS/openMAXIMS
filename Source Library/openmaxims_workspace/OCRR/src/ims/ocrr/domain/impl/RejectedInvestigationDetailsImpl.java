@@ -34,7 +34,7 @@ public class RejectedInvestigationDetailsImpl extends BaseRejectedInvestigationD
 
 	private static final long serialVersionUID = 1L;
 
-	public ims.ocrr.vo.OrderInvestigationLiteVoCollection listRejectedInvestigations(ims.careuk.vo.CatsReferralRefVo catsRefVo)
+	public ims.ocrr.vo.OrderInvestigationLiteVoCollection listRejectedInvestigations(ims.RefMan.vo.CatsReferralRefVo catsRefVo)
 	{
 		ArrayList markers = new ArrayList();
 		ArrayList values = new ArrayList();

@@ -179,7 +179,7 @@ public class Logic extends BaseLogic
 			if (hcpLiteVo != null && hcpLiteVo.getHcpTypeIsNotNull())
 			{
 				domain.createPatientICP(form.getGlobalContext().Core.getCurrentCareContext(), form.getGlobalContext().Core.getPatientShort(),
-						form.getGlobalContext().CareUk.getCatsReferral(), domain.getICP(form.grdICPList().getValue()), hcpLiteVo);
+						form.getGlobalContext().RefMan.getCatsReferral(), domain.getICP(form.grdICPList().getValue()), hcpLiteVo);
 			}
 			else
 			{

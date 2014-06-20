@@ -35,7 +35,7 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 
 		OCRR = new OCRRContext(context);
 		Core = new CoreContext(context);
-		CareUk = new CareUkContext(context);
+		RefMan = new RefManContext(context);
 		Rotherham = new RotherhamContext(context);
 	}
 	public final class OCRRContext implements Serializable
@@ -460,11 +460,11 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 		public CareContextSelectDialogContext CareContextSelectDialog;
 		private ims.framework.Context context;
 	}
-	public final class CareUkContext implements Serializable
+	public final class RefManContext implements Serializable
 	{
 		private static final long serialVersionUID = 1L;
 
-		private CareUkContext(ims.framework.Context context)
+		private RefManContext(ims.framework.Context context)
 		{
 			this.context = context;
 
@@ -472,32 +472,32 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 
 		public boolean getCatsReferralIsNotNull()
 		{
-			return !cx_CareUkCatsReferral.getValueIsNull(context);
+			return !cx_RefManCatsReferral.getValueIsNull(context);
 		}
-		public ims.careuk.vo.CatsReferralRefVo getCatsReferral()
+		public ims.RefMan.vo.CatsReferralRefVo getCatsReferral()
 		{
-			return (ims.careuk.vo.CatsReferralRefVo)cx_CareUkCatsReferral.getValue(context);
+			return (ims.RefMan.vo.CatsReferralRefVo)cx_RefManCatsReferral.getValue(context);
 		}
-		public void setCatsReferral(ims.careuk.vo.CatsReferralRefVo value)
+		public void setCatsReferral(ims.RefMan.vo.CatsReferralRefVo value)
 		{
-			cx_CareUkCatsReferral.setValue(context, value);
+			cx_RefManCatsReferral.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkCatsReferral = new ims.framework.ContextVariable("CareUk.CatsReferral", "_cvp_CareUk.CatsReferral");
+		private ims.framework.ContextVariable cx_RefManCatsReferral = new ims.framework.ContextVariable("RefMan.CatsReferral", "_cvp_RefMan.CatsReferral");
 		public boolean getOrderingHCPIsNotNull()
 		{
-			return !cx_CareUkOrderingHCP.getValueIsNull(context);
+			return !cx_RefManOrderingHCP.getValueIsNull(context);
 		}
 		public ims.core.vo.MemberOfStaffLiteVo getOrderingHCP()
 		{
-			return (ims.core.vo.MemberOfStaffLiteVo)cx_CareUkOrderingHCP.getValue(context);
+			return (ims.core.vo.MemberOfStaffLiteVo)cx_RefManOrderingHCP.getValue(context);
 		}
 		public void setOrderingHCP(ims.core.vo.MemberOfStaffLiteVo value)
 		{
-			cx_CareUkOrderingHCP.setValue(context, value);
+			cx_RefManOrderingHCP.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkOrderingHCP = new ims.framework.ContextVariable("CareUk.OrderingHCP", "_cv_CareUk.OrderingHCP");
+		private ims.framework.ContextVariable cx_RefManOrderingHCP = new ims.framework.ContextVariable("RefMan.OrderingHCP", "_cv_RefMan.OrderingHCP");
 
 		private ims.framework.Context context;
 	}
@@ -531,6 +531,6 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 
 	public OCRRContext OCRR;
 	public CoreContext Core;
-	public CareUkContext CareUk;
+	public RefManContext RefMan;
 	public RotherhamContext Rotherham;
 }

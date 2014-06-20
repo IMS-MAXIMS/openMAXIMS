@@ -30,10 +30,10 @@ public abstract class BaseProceduresDialogImpl extends DomainImpl implements ims
 	private static final long serialVersionUID = 1L;
 
 	@SuppressWarnings("unused")
-	public void validategetCatsReferral(ims.careuk.vo.CatsReferralRefVo voCatsRef)
+	public void validategetCatsReferral(ims.RefMan.vo.CatsReferralRefVo voCatsRef)
 	{
 		if(voCatsRef == null)
-			throw new ims.domain.exceptions.DomainRuntimeException("The parameter 'voCatsRef' of type 'ims.careuk.vo.CatsReferralRefVo' cannot be null.");
+			throw new ims.domain.exceptions.DomainRuntimeException("The parameter 'voCatsRef' of type 'ims.RefMan.vo.CatsReferralRefVo' cannot be null.");
 	}
 
 	@SuppressWarnings("unused")

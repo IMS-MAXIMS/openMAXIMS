@@ -831,8 +831,8 @@ public class GenForm extends FormBridge
 			return;
 		if(!context.isValidContextType(ims.core.vo.PatientShort.class))
 			throw new ims.framework.exceptions.CodingRuntimeException("The type 'ims.core.vo.PatientShort' of the global context variable 'Core.PatientShort' is not supported.");
-		if(!context.isValidContextType(ims.careuk.vo.CatsReferralRefVo.class))
-			throw new ims.framework.exceptions.CodingRuntimeException("The type 'ims.careuk.vo.CatsReferralRefVo' of the global context variable 'CareUk.CatsReferral' is not supported.");
+		if(!context.isValidContextType(ims.RefMan.vo.CatsReferralRefVo.class))
+			throw new ims.framework.exceptions.CodingRuntimeException("The type 'ims.RefMan.vo.CatsReferralRefVo' of the global context variable 'RefMan.CatsReferral' is not supported.");
 		if(!context.isValidContextType(ims.core.vo.IPandOPSearchCriteriaVo.class))
 			throw new ims.framework.exceptions.CodingRuntimeException("The type 'ims.core.vo.IPandOPSearchCriteriaVo' of the global context variable 'UKSHOutPatientWardViewSearchCriteria' is not supported.");
 		if(!context.isValidContextType(ims.core.vo.IPandOPSearchCriteriaVo.class))
@@ -1095,13 +1095,13 @@ public class GenForm extends FormBridge
 
 		private Forms()
 		{
-			CAREUK = new CAREUKForms();
+			RefMan = new RefManForms();
 			Scheduling = new SchedulingForms();
 		}
-		public final class CAREUKForms implements java.io.Serializable
+		public final class RefManForms implements java.io.Serializable
 		{
 			private static final long serialVersionUID = 1L;
-			private CAREUKForms()
+			private RefManForms()
 			{
 				NewElectiveListTCIErodDialog = new LocalFormName(134224);
 				BookAppointmentDialog = new LocalFormName(134134);
@@ -1119,7 +1119,7 @@ public class GenForm extends FormBridge
 			public final FormName AppointmentOutcomeDialog;
 		}
 
-		public CAREUKForms CAREUK;
+		public RefManForms RefMan;
 		public SchedulingForms Scheduling;
 	}
 
@@ -1140,7 +1140,7 @@ public class GenForm extends FormBridge
 		{
 			Core = new CoreImages();
 			ICP = new ICPImages();
-			CAREUK = new CAREUKImages();
+			RefMan = new RefManImages();
 		}
 		public final class CoreImages implements java.io.Serializable
 		{
@@ -1166,20 +1166,20 @@ public class GenForm extends FormBridge
 			}
 			public final ims.framework.utils.Image ICP;
 		}
-		public final class CAREUKImages implements java.io.Serializable
+		public final class RefManImages implements java.io.Serializable
 		{
 			private static final long serialVersionUID = 1L;
-			private CAREUKImages()
+			private RefManImages()
 			{
-				AddLater16 = new ImageHelper(134138, "Images/CAREUK/AddLater16.png", new Integer(16), new Integer(16));
-				AddNow16 = new ImageHelper(134139, "Images/CAREUK/AddNow16.png", new Integer(16), new Integer(16));
+				AddLater16 = new ImageHelper(134138, "Images/RefMan/AddLater16.png", new Integer(16), new Integer(16));
+				AddNow16 = new ImageHelper(134139, "Images/RefMan/AddNow16.png", new Integer(16), new Integer(16));
 			}
 			public final ims.framework.utils.Image AddLater16;
 			public final ims.framework.utils.Image AddNow16;
 		}
 		public final CoreImages Core;
 		public final ICPImages ICP;
-		public final CAREUKImages CAREUK;
+		public final RefManImages RefMan;
 	}
 	public GlobalContext getGlobalContext()
 	{
@@ -1396,10 +1396,10 @@ public class GenForm extends FormBridge
 			fields[67] = new ims.framework.ReportField(this.context, "_cvp_Clinical.ExtendedClinicalNotesListFilter", "BO-1011100000-CARECONTEXT", "CareContext");
 			fields[68] = new ims.framework.ReportField(this.context, "_cvp_Core.PasEvent", "BO-1014100003-ID", "ID_PASEvent");
 			fields[69] = new ims.framework.ReportField(this.context, "_cvp_Correspondence.CorrespondenceDetails", "BO-1052100001-ID", "ID_CorrespondenceDetails");
-			fields[70] = new ims.framework.ReportField(this.context, "_cvp_CareUk.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
+			fields[70] = new ims.framework.ReportField(this.context, "_cvp_RefMan.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
 			fields[71] = new ims.framework.ReportField(this.context, "_cv_Scheduling.BookingAppointmentRef", "BO-1055100007-ID", "ID_Booking_Appointment");
 			fields[72] = new ims.framework.ReportField(this.context, "_cv_ICP.PatientICPRecord", "BO-1100100000-ID", "ID_PatientICP");
-			fields[73] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientElectiveListRef", "BO-1014100020-ID", "ID_PatientElectiveList");
+			fields[73] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientElectiveListRef", "BO-1014100020-ID", "ID_PatientElectiveList");
 			return fields;
 		}
 		protected Context context = null;

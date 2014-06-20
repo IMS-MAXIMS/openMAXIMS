@@ -102,7 +102,7 @@ public class BaseAccessLogic extends FormAccessLogic implements Serializable
 		{
 			Core = new CoreForms();
 			Clinical = new ClinicalForms();
-			CAREUK = new CAREUKForms();
+			RefMan = new RefManForms();
 		}
 		public final class CoreForms implements Serializable
 		{
@@ -126,11 +126,11 @@ public class BaseAccessLogic extends FormAccessLogic implements Serializable
 			}
 			public final FormName VTERiskAssessmentDialog;
 		}
-		public final class CAREUKForms implements Serializable
+		public final class RefManForms implements Serializable
 		{
 			private static final long serialVersionUID = 1L;
 
-			private CAREUKForms()
+			private RefManForms()
 			{
 				PatientElectiveListAndTCIForCancellationDialog = new LocalFormName(134235);
 			}
@@ -139,6 +139,6 @@ public class BaseAccessLogic extends FormAccessLogic implements Serializable
 
 		public CoreForms Core;
 		public ClinicalForms Clinical;
-		public CAREUKForms CAREUK;
+		public RefManForms RefMan;
 	}
 }

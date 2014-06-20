@@ -69,7 +69,7 @@ public class PatientElectiveListForWardViewVoAssembler
 	 * This is a convenience method only.
 	 * It is intended to be used when one called to an Assembler is made.
  	 * If more than one call to an Assembler is made then #createPatientElectiveListForWardViewVoCollectionFromPatientElectiveList(DomainObjectMap, Set) should be used.
-	 * @param domainObjectSet - Set of ims.careuk.domain.objects.PatientElectiveList objects.
+	 * @param domainObjectSet - Set of ims.RefMan.domain.objects.PatientElectiveList objects.
 	 */
 	public static ims.core.vo.PatientElectiveListForWardViewVoCollection createPatientElectiveListForWardViewVoCollectionFromPatientElectiveList(java.util.Set domainObjectSet)	
 	{
@@ -79,7 +79,7 @@ public class PatientElectiveListForWardViewVoAssembler
 	/**
 	 * Create the ValueObject collection to hold the set of DomainObjects.
 	 * @param map - maps DomainObjects to created ValueObjects
-	 * @param domainObjectSet - Set of ims.careuk.domain.objects.PatientElectiveList objects.
+	 * @param domainObjectSet - Set of ims.RefMan.domain.objects.PatientElectiveList objects.
 	 */
 	public static ims.core.vo.PatientElectiveListForWardViewVoCollection createPatientElectiveListForWardViewVoCollectionFromPatientElectiveList(DomainObjectMap map, java.util.Set domainObjectSet)	
 	{
@@ -93,7 +93,7 @@ public class PatientElectiveListForWardViewVoAssembler
 		java.util.Iterator iterator = domainObjectSet.iterator();
 		while( iterator.hasNext() ) 
 		{
-			ims.careuk.domain.objects.PatientElectiveList domainObject = (ims.careuk.domain.objects.PatientElectiveList) iterator.next();
+			ims.RefMan.domain.objects.PatientElectiveList domainObject = (ims.RefMan.domain.objects.PatientElectiveList) iterator.next();
 			ims.core.vo.PatientElectiveListForWardViewVo vo = create(map, domainObject);
 			
 			if (vo != null)
@@ -114,7 +114,7 @@ public class PatientElectiveListForWardViewVoAssembler
 
 	/**
 	 * Create the ValueObject collection to hold the list of DomainObjects.
-	 * @param domainObjectList - List of ims.careuk.domain.objects.PatientElectiveList objects.
+	 * @param domainObjectList - List of ims.RefMan.domain.objects.PatientElectiveList objects.
 	 */
 	public static ims.core.vo.PatientElectiveListForWardViewVoCollection createPatientElectiveListForWardViewVoCollectionFromPatientElectiveList(java.util.List domainObjectList) 
 	{
@@ -124,7 +124,7 @@ public class PatientElectiveListForWardViewVoAssembler
 	/**
 	 * Create the ValueObject collection to hold the list of DomainObjects.
 	 * @param map - maps DomainObjects to created ValueObjects
-	 * @param domainObjectList - List of ims.careuk.domain.objects.PatientElectiveList objects.
+	 * @param domainObjectList - List of ims.RefMan.domain.objects.PatientElectiveList objects.
 	 */
 	public static ims.core.vo.PatientElectiveListForWardViewVoCollection createPatientElectiveListForWardViewVoCollectionFromPatientElectiveList(DomainObjectMap map, java.util.List domainObjectList) 
 	{
@@ -137,7 +137,7 @@ public class PatientElectiveListForWardViewVoAssembler
 		int activeCount=0;
 		for (int i = 0; i < domainObjectList.size(); i++)
 		{
-			ims.careuk.domain.objects.PatientElectiveList domainObject = (ims.careuk.domain.objects.PatientElectiveList) domainObjectList.get(i);
+			ims.RefMan.domain.objects.PatientElectiveList domainObject = (ims.RefMan.domain.objects.PatientElectiveList) domainObjectList.get(i);
 			ims.core.vo.PatientElectiveListForWardViewVo vo = create(map, domainObject);
 
 			if (vo != null)
@@ -158,7 +158,7 @@ public class PatientElectiveListForWardViewVoAssembler
 	}
 
 	/**
-	 * Create the ims.careuk.domain.objects.PatientElectiveList set from the value object collection.
+	 * Create the ims.RefMan.domain.objects.PatientElectiveList set from the value object collection.
 	 * @param domainFactory - used to create existing (persistent) domain objects.
 	 * @param voCollection - the collection of value objects	 
 	 */
@@ -178,7 +178,7 @@ public class PatientElectiveListForWardViewVoAssembler
 		for(int i=0; i<size; i++) 
 		{
 			ims.core.vo.PatientElectiveListForWardViewVo vo = voCollection.get(i);
-			ims.careuk.domain.objects.PatientElectiveList domainObject = PatientElectiveListForWardViewVoAssembler.extractPatientElectiveList(domainFactory, vo, domMap);
+			ims.RefMan.domain.objects.PatientElectiveList domainObject = PatientElectiveListForWardViewVoAssembler.extractPatientElectiveList(domainFactory, vo, domMap);
 
 			//TODO: This can only occur in the situation of a stale object exception. For now leave it to the Interceptor to handle it.
 			if (domainObject == null)
@@ -212,7 +212,7 @@ public class PatientElectiveListForWardViewVoAssembler
 
 
 	/**
-	 * Create the ims.careuk.domain.objects.PatientElectiveList list from the value object collection.
+	 * Create the ims.RefMan.domain.objects.PatientElectiveList list from the value object collection.
 	 * @param domainFactory - used to create existing (persistent) domain objects.
 	 * @param voCollection - the collection of value objects	 
 	 */
@@ -231,7 +231,7 @@ public class PatientElectiveListForWardViewVoAssembler
 		for(int i=0; i<size; i++) 
 		{
 			ims.core.vo.PatientElectiveListForWardViewVo vo = voCollection.get(i);
-			ims.careuk.domain.objects.PatientElectiveList domainObject = PatientElectiveListForWardViewVoAssembler.extractPatientElectiveList(domainFactory, vo, domMap);
+			ims.RefMan.domain.objects.PatientElectiveList domainObject = PatientElectiveListForWardViewVoAssembler.extractPatientElectiveList(domainFactory, vo, domMap);
 
 			//TODO: This can only occur in the situation of a stale object exception. For now leave it to the Interceptor to handle it.
 			if (domainObject == null)
@@ -266,10 +266,10 @@ public class PatientElectiveListForWardViewVoAssembler
  
 
 	/**
-	 * Create the ValueObject from the ims.careuk.domain.objects.PatientElectiveList object.
-	 * @param domainObject ims.careuk.domain.objects.PatientElectiveList
+	 * Create the ValueObject from the ims.RefMan.domain.objects.PatientElectiveList object.
+	 * @param domainObject ims.RefMan.domain.objects.PatientElectiveList
 	 */
-	 public static ims.core.vo.PatientElectiveListForWardViewVo create(ims.careuk.domain.objects.PatientElectiveList domainObject) 
+	 public static ims.core.vo.PatientElectiveListForWardViewVo create(ims.RefMan.domain.objects.PatientElectiveList domainObject) 
 	 {
 	 	if (null == domainObject) 
 	 	{
@@ -280,11 +280,11 @@ public class PatientElectiveListForWardViewVoAssembler
 	 }
 	 
 	 /**
-	  * Create the ValueObject from the ims.careuk.domain.objects.PatientElectiveList object.
+	  * Create the ValueObject from the ims.RefMan.domain.objects.PatientElectiveList object.
 	  * @param map DomainObjectMap of DomainObjects to already created ValueObjects.
 	  * @param domainObject
 	  */
-	  public static ims.core.vo.PatientElectiveListForWardViewVo create(DomainObjectMap map, ims.careuk.domain.objects.PatientElectiveList domainObject) 
+	  public static ims.core.vo.PatientElectiveListForWardViewVo create(DomainObjectMap map, ims.RefMan.domain.objects.PatientElectiveList domainObject) 
 	  {
 	  		if (null == domainObject) 
 	  		{
@@ -306,9 +306,9 @@ public class PatientElectiveListForWardViewVoAssembler
 	/**
 	 * Update the ValueObject with the Domain Object.
 	 * @param valueObject to be updated
-	 * @param domainObject ims.careuk.domain.objects.PatientElectiveList
+	 * @param domainObject ims.RefMan.domain.objects.PatientElectiveList
 	 */
-	 public static ims.core.vo.PatientElectiveListForWardViewVo insert(ims.core.vo.PatientElectiveListForWardViewVo valueObject, ims.careuk.domain.objects.PatientElectiveList domainObject) 
+	 public static ims.core.vo.PatientElectiveListForWardViewVo insert(ims.core.vo.PatientElectiveListForWardViewVo valueObject, ims.RefMan.domain.objects.PatientElectiveList domainObject) 
 	 {
 	 	if (null == domainObject) 
 	 	{
@@ -322,9 +322,9 @@ public class PatientElectiveListForWardViewVoAssembler
 	 * Update the ValueObject with the Domain Object.
 	 * @param map DomainObjectMap of DomainObjects to already created ValueObjects.
 	 * @param valueObject to be updated
-	 * @param domainObject ims.careuk.domain.objects.PatientElectiveList
+	 * @param domainObject ims.RefMan.domain.objects.PatientElectiveList
 	 */
-	 public static ims.core.vo.PatientElectiveListForWardViewVo insert(DomainObjectMap map, ims.core.vo.PatientElectiveListForWardViewVo valueObject, ims.careuk.domain.objects.PatientElectiveList domainObject) 
+	 public static ims.core.vo.PatientElectiveListForWardViewVo insert(DomainObjectMap map, ims.core.vo.PatientElectiveListForWardViewVo valueObject, ims.RefMan.domain.objects.PatientElectiveList domainObject) 
 	 {
 	 	if (null == domainObject) 
 	 	{
@@ -369,27 +369,27 @@ public class PatientElectiveListForWardViewVoAssembler
 	 * @param domainFactory - used to create existing (persistent) domain objects.
 	 * @param valueObject - extract the domain object fields from this.
 	 */
-	public static ims.careuk.domain.objects.PatientElectiveList extractPatientElectiveList(ims.domain.ILightweightDomainFactory domainFactory, ims.core.vo.PatientElectiveListForWardViewVo valueObject) 
+	public static ims.RefMan.domain.objects.PatientElectiveList extractPatientElectiveList(ims.domain.ILightweightDomainFactory domainFactory, ims.core.vo.PatientElectiveListForWardViewVo valueObject) 
 	{
 		return 	extractPatientElectiveList(domainFactory, valueObject, new HashMap());
 	}
 
-	public static ims.careuk.domain.objects.PatientElectiveList extractPatientElectiveList(ims.domain.ILightweightDomainFactory domainFactory, ims.core.vo.PatientElectiveListForWardViewVo valueObject, HashMap domMap) 
+	public static ims.RefMan.domain.objects.PatientElectiveList extractPatientElectiveList(ims.domain.ILightweightDomainFactory domainFactory, ims.core.vo.PatientElectiveListForWardViewVo valueObject, HashMap domMap) 
 	{
 		if (null == valueObject) 
 		{
 			return null;
 		}
 		Integer id = valueObject.getID_PatientElectiveList();
-		ims.careuk.domain.objects.PatientElectiveList domainObject = null;
+		ims.RefMan.domain.objects.PatientElectiveList domainObject = null;
 		if ( null == id) 
 		{
 			if (domMap.get(valueObject) != null)
 			{
-				return (ims.careuk.domain.objects.PatientElectiveList)domMap.get(valueObject);
+				return (ims.RefMan.domain.objects.PatientElectiveList)domMap.get(valueObject);
 			}
 			// ims.core.vo.PatientElectiveListForWardViewVo ID_PatientElectiveList field is unknown
-			domainObject = new ims.careuk.domain.objects.PatientElectiveList();
+			domainObject = new ims.RefMan.domain.objects.PatientElectiveList();
 			domMap.put(valueObject, domainObject);
 		}
 		else 
@@ -397,9 +397,9 @@ public class PatientElectiveListForWardViewVoAssembler
 			String key = (valueObject.getClass().getName() + "__" + valueObject.getID_PatientElectiveList());
 			if (domMap.get(key) != null)
 			{
-				return (ims.careuk.domain.objects.PatientElectiveList)domMap.get(key);
+				return (ims.RefMan.domain.objects.PatientElectiveList)domMap.get(key);
 			}
-			domainObject = (ims.careuk.domain.objects.PatientElectiveList) domainFactory.getDomainObject(ims.careuk.domain.objects.PatientElectiveList.class, id );
+			domainObject = (ims.RefMan.domain.objects.PatientElectiveList) domainFactory.getDomainObject(ims.RefMan.domain.objects.PatientElectiveList.class, id );
 			
 			//TODO: Not sure how this should be handled. Effectively it must be a staleobject exception, but maybe should be handled as that further up.
 			if (domainObject == null) 
@@ -434,19 +434,19 @@ public class PatientElectiveListForWardViewVoAssembler
 		}
 		domainObject.setBed(valueObject.getBed());
 	// SaveAsRefVO - treated as a refVo in extract methods
-	ims.careuk.domain.objects.CatsReferral value3 = null;
+	ims.RefMan.domain.objects.CatsReferral value3 = null;
 		if ( null != valueObject.getReferral() ) 
 		{
 			if (valueObject.getReferral().getBoId() == null)
 			{
 				if (domMap.get(valueObject.getReferral()) != null)
 				{
-					value3 = (ims.careuk.domain.objects.CatsReferral)domMap.get(valueObject.getReferral());
+					value3 = (ims.RefMan.domain.objects.CatsReferral)domMap.get(valueObject.getReferral());
 				}
 			}
 			else
 			{
-				value3 = (ims.careuk.domain.objects.CatsReferral)domainFactory.getDomainObject(ims.careuk.domain.objects.CatsReferral.class, valueObject.getReferral().getBoId());
+				value3 = (ims.RefMan.domain.objects.CatsReferral)domainFactory.getDomainObject(ims.RefMan.domain.objects.CatsReferral.class, valueObject.getReferral().getBoId());
 			}
 		}
 		domainObject.setReferral(value3);

@@ -22,16 +22,16 @@
 
 package ims.core.domain.impl;
 
-import ims.careuk.domain.objects.CatsReferral;
-import ims.careuk.domain.objects.PatientElectiveList;
-import ims.careuk.vo.ContractConfigShortVo;
-import ims.careuk.vo.PatientElectiveListBedAdmissionVo;
-import ims.careuk.vo.PatientElectiveListBedAdmissionVoCollection;
-import ims.careuk.vo.PatientElectiveListBedInfoVoCollection;
-import ims.careuk.vo.PatientElectiveListRefVo;
-import ims.careuk.vo.domain.ContractConfigShortVoAssembler;
-import ims.careuk.vo.domain.PatientElectiveListBedAdmissionVoAssembler;
-import ims.careuk.vo.domain.PatientElectiveListBedInfoVoAssembler;
+import ims.RefMan.domain.objects.CatsReferral;
+import ims.RefMan.domain.objects.PatientElectiveList;
+import ims.RefMan.vo.ContractConfigShortVo;
+import ims.RefMan.vo.PatientElectiveListBedAdmissionVo;
+import ims.RefMan.vo.PatientElectiveListBedAdmissionVoCollection;
+import ims.RefMan.vo.PatientElectiveListBedInfoVoCollection;
+import ims.RefMan.vo.PatientElectiveListRefVo;
+import ims.RefMan.vo.domain.ContractConfigShortVoAssembler;
+import ims.RefMan.vo.domain.PatientElectiveListBedAdmissionVoAssembler;
+import ims.RefMan.vo.domain.PatientElectiveListBedInfoVoAssembler;
 import ims.clinical.vo.lookups.VTEAsessmentStatus;
 import ims.configuration.InitConfig;
 import ims.configuration.gen.ConfigFlag;

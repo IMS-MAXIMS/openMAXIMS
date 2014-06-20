@@ -163,7 +163,7 @@ public class Logic extends BaseLogic
 	{
 		switch (menuItemID)
 		{
-			case GenForm.ContextMenus.CAREUKNamespace.Tansport.Edit:
+			case GenForm.ContextMenus.RefManNamespace.Tansport.Edit:
 				editTransportDetails(form.grdSearchResults().getValue());
 				break;
 		}
@@ -191,8 +191,8 @@ public class Logic extends BaseLogic
 		form.getGlobalContext().Core.setCurrentCareContext(null);
 		
 		// Initialize the context menu
-		form.getContextMenus().CAREUK.getTansportEditItem().setEnabled(true);
-		form.getContextMenus().CAREUK.getTansportEditItem().setVisible(false);
+		form.getContextMenus().RefMan.getTansportEditItem().setEnabled(true);
+		form.getContextMenus().RefMan.getTansportEditItem().setVisible(false);
 	}
 	
 	/**
@@ -231,7 +231,7 @@ public class Logic extends BaseLogic
 	public void updateControlsState()
 	{
 		// Context menu state update - if need be, extract a local function
-		form.getContextMenus().CAREUK.getTansportEditItem().setVisible(form.grdSearchResults().getValue() != null);
+		form.getContextMenus().RefMan.getTansportEditItem().setVisible(form.grdSearchResults().getValue() != null);
 	}
 
 	

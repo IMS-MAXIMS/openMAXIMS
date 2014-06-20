@@ -24,12 +24,12 @@ package ims.core.forms.bedinfodialog;
 
 import ims.admin.vo.SelectItemVo;
 import ims.admin.vo.SelectItemVoCollection;
-import ims.careuk.vo.ElectiveListStatusVo;
-import ims.careuk.vo.PatientElectiveListBedAdmissionVo;
-import ims.careuk.vo.PatientElectiveListBedAdmissionVoCollection;
-import ims.careuk.vo.TCIOutcomeForPatientElectiveListVo;
-import ims.careuk.vo.lookups.AdmissionOfferOutcome;
-import ims.careuk.vo.lookups.ElectiveListStatusReason;
+import ims.RefMan.vo.ElectiveListStatusVo;
+import ims.RefMan.vo.PatientElectiveListBedAdmissionVo;
+import ims.RefMan.vo.PatientElectiveListBedAdmissionVoCollection;
+import ims.RefMan.vo.TCIOutcomeForPatientElectiveListVo;
+import ims.RefMan.vo.lookups.AdmissionOfferOutcome;
+import ims.RefMan.vo.lookups.ElectiveListStatusReason;
 import ims.clinical.vo.InpatientEpisodeForVTERiskAsessmentVo;
 import ims.clinical.vo.VTERiskAssessmentShortVo;
 import ims.clinical.vo.VTERiskAssessmentShortVoCollection;
@@ -3672,13 +3672,13 @@ public class Logic extends BaseLogic
 			}
 		}
 		//WDEV-18454
-		else if (formName.equals(form.getForms().CAREUK.PatientElectiveListAndTCIForCancellationDialog))
+		else if (formName.equals(form.getForms().RefMan.PatientElectiveListAndTCIForCancellationDialog))
 		{
 			PatientElectiveListBedAdmissionVo patientElectiveList = form.getLocalContext().getPatientElectiveListDischarge();
 			
 			if (DialogResult.OK.equals(result))
 			{
-				PatientElectiveListBedAdmissionVoCollection patienElectiveListToRemove = form.getGlobalContext().CareUk.getPatientElectiveListsForCancellationDialog();
+				PatientElectiveListBedAdmissionVoCollection patienElectiveListToRemove = form.getGlobalContext().RefMan.getPatientElectiveListsForCancellationDialog();
 
 				for (PatientElectiveListBedAdmissionVo electiveList : patienElectiveListToRemove)
 				{
@@ -4225,8 +4225,8 @@ public class Logic extends BaseLogic
 			
 			if (DialogResult.YES.equals(result))
 			{
-				form.getGlobalContext().CareUk.setPatientElectiveListsForCancellationDialog(domain.getElectiveListsToRemove(form.getGlobalContext().Core.getPatientShort(), patientElectiveList, form.getLocalContext().getInpatientEpisodeSpecialty()));
-				engine.open(form.getForms().CAREUK.PatientElectiveListAndTCIForCancellationDialog);
+				form.getGlobalContext().RefMan.setPatientElectiveListsForCancellationDialog(domain.getElectiveListsToRemove(form.getGlobalContext().Core.getPatientShort(), patientElectiveList, form.getLocalContext().getInpatientEpisodeSpecialty()));
+				engine.open(form.getForms().RefMan.PatientElectiveListAndTCIForCancellationDialog);
 				return;
 			}
 			else if (DialogResult.NO.equals(result))

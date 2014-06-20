@@ -22,7 +22,7 @@
 
 package ims.core.forms.referraldetailsnotedialog;
 
-import ims.careuk.vo.lookups.ReferralNoteType;
+import ims.RefMan.vo.lookups.ReferralNoteType;
 import ims.core.vo.MemberOfStaffLiteVo;
 import ims.core.vo.ReferralNoteVo;
 import ims.framework.MessageButtons;
@@ -37,11 +37,11 @@ public class Logic extends BaseLogic
 	@Override
 	protected void onFormOpen(Object[] args) throws ims.framework.exceptions.PresentationLogicException
 	{
-		if (form.getGlobalContext().CareUk.getReferralNoteIsNotNull())
+		if (form.getGlobalContext().RefMan.getReferralNoteIsNotNull())
 		{
-			form.txtUser().setValue(form.getGlobalContext().CareUk.getReferralNote().getRecordingUserIsNotNull() && form.getGlobalContext().CareUk.getReferralNote().getRecordingUser().getNameIsNotNull() ? form.getGlobalContext().CareUk.getReferralNote().getRecordingUser().getName().toString() : null);
-			form.dtimDateTime().setValue(form.getGlobalContext().CareUk.getReferralNote().getRecordingDateTimeIsNotNull() ? form.getGlobalContext().CareUk.getReferralNote().getRecordingDateTime() : null);
-			form.txtNotes().setValue(form.getGlobalContext().CareUk.getReferralNote().getNote());
+			form.txtUser().setValue(form.getGlobalContext().RefMan.getReferralNote().getRecordingUserIsNotNull() && form.getGlobalContext().RefMan.getReferralNote().getRecordingUser().getNameIsNotNull() ? form.getGlobalContext().RefMan.getReferralNote().getRecordingUser().getName().toString() : null);
+			form.dtimDateTime().setValue(form.getGlobalContext().RefMan.getReferralNote().getRecordingDateTimeIsNotNull() ? form.getGlobalContext().RefMan.getReferralNote().getRecordingDateTime() : null);
+			form.txtNotes().setValue(form.getGlobalContext().RefMan.getReferralNote().getNote());
 		}
 		else
 		{
@@ -63,9 +63,9 @@ public class Logic extends BaseLogic
 		}
 		
 		ReferralNoteVo voNote = new ReferralNoteVo();
-		if (form.getGlobalContext().CareUk.getReferralNoteIsNotNull())
+		if (form.getGlobalContext().RefMan.getReferralNoteIsNotNull())
 		{
-			voNote = form.getGlobalContext().CareUk.getReferralNote();
+			voNote = form.getGlobalContext().RefMan.getReferralNote();
 			voNote.setNote(form.txtNotes().getValue());
 		}
 		else
@@ -78,7 +78,7 @@ public class Logic extends BaseLogic
 			voNote.setNote(form.txtNotes().getValue());
 			voNote.setNoteType(ReferralNoteType.NON_CLINICAL);
 		}
-		form.getGlobalContext().CareUk.setReferralNote(voNote);
+		form.getGlobalContext().RefMan.setReferralNote(voNote);
 		
 		engine.close(DialogResult.OK);
 	}

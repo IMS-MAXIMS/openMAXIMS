@@ -1183,13 +1183,13 @@ public class GenForm extends FormBridge
 
 		private Forms()
 		{
-			CAREUK = new CAREUKForms();
+			RefMan = new RefManForms();
 			Clinical = new ClinicalForms();
 		}
-		public final class CAREUKForms implements java.io.Serializable
+		public final class RefManForms implements java.io.Serializable
 		{
 			private static final long serialVersionUID = 1L;
-			private CAREUKForms()
+			private RefManForms()
 			{
 				TheatreList = new LocalFormName(134154);
 			}
@@ -1205,7 +1205,7 @@ public class GenForm extends FormBridge
 			public final FormName CataractIntraOperativeCareRecordDialog;
 		}
 
-		public CAREUKForms CAREUK;
+		public RefManForms RefMan;
 		public ClinicalForms Clinical;
 	}
 
@@ -1532,7 +1532,7 @@ public class GenForm extends FormBridge
 			fields[67] = new ims.framework.ReportField(this.context, "_cvp_Clinical.ExtendedClinicalNotesListFilter", "BO-1011100000-CARECONTEXT", "CareContext");
 			fields[68] = new ims.framework.ReportField(this.context, "_cvp_Core.PasEvent", "BO-1014100003-ID", "ID_PASEvent");
 			fields[69] = new ims.framework.ReportField(this.context, "_cvp_Correspondence.CorrespondenceDetails", "BO-1052100001-ID", "ID_CorrespondenceDetails");
-			fields[70] = new ims.framework.ReportField(this.context, "_cvp_CareUk.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
+			fields[70] = new ims.framework.ReportField(this.context, "_cvp_RefMan.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
 			fields[71] = new ims.framework.ReportField(this.context, "_cv_Clinical.PatientProcedureForIntraOperativeDialog", "BO-1003100017-ID", "ID_PatientProcedure");
 			fields[72] = new ims.framework.ReportField(this.context, "_cv_Clinical.PatientProcedureForIntraOperativeDialog", "BO-1003100017-PROCEDUREDESCRIPTION", "ProcedureDescription");
 			fields[73] = new ims.framework.ReportField(this.context, "_cv_Clinical.PatientProcedureForIntraOperativeDialog", "BO-1003100017-INFOSOURCE", "InfoSource");

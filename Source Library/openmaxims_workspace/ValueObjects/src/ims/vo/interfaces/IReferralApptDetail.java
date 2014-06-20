@@ -47,7 +47,7 @@ public interface IReferralApptDetail extends Comparable
 	/*
 	 * getIReferralApptDetailStatusHistory
 	 */
-	 ims.careuk.vo.CatsReferralStatusVoCollection getIReferralApptDetailStatusHistory();
+	 ims.RefMan.vo.CatsReferralStatusVoCollection getIReferralApptDetailStatusHistory();
 	/*
 	 * getIReferralApptDetailAppointments
 	 */
@@ -63,15 +63,15 @@ public interface IReferralApptDetail extends Comparable
 	/*
 	 * getIReferralApptDetailOrdInvAppts
 	 */
-	 ims.careuk.vo.OrderInvApptListVoCollection getIReferralApptDetailOrdInvAppts();
+	 ims.RefMan.vo.OrderInvApptListVoCollection getIReferralApptDetailOrdInvAppts();
 	/*
 	 * getIReferralOutpatientEROD
 	 */
-	 ims.careuk.vo.ReferralERODVoCollection getIReferralOutpatientEROD();
+	 ims.RefMan.vo.ReferralERODVoCollection getIReferralOutpatientEROD();
 	/*
 	 * getIReferralTheatreEROD
 	 */
-	 ims.careuk.vo.ReferralERODVoCollection getIReferralTheatreEROD();
+	 ims.RefMan.vo.ReferralERODVoCollection getIReferralTheatreEROD();
 	/*
 	 * getIReferralApptDetailCurrentRTTStatus
 	 */

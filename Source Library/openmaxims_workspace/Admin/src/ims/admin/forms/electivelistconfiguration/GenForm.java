@@ -1279,7 +1279,7 @@ public class GenForm extends FormBridge
 		private Images()
 		{
 			Core = new CoreImages();
-			CAREUK = new CAREUKImages();
+			RefMan = new RefManImages();
 			Clinical = new ClinicalImages();
 		}
 		public final class CoreImages implements java.io.Serializable
@@ -1297,12 +1297,12 @@ public class GenForm extends FormBridge
 			public final ims.framework.utils.Image ClearDisabled24;
 			public final ims.framework.utils.Image ClearEnabled24;
 		}
-		public final class CAREUKImages implements java.io.Serializable
+		public final class RefManImages implements java.io.Serializable
 		{
 			private static final long serialVersionUID = 1L;
-			private CAREUKImages()
+			private RefManImages()
 			{
-				Diagnosis16 = new ImageHelper(134124, "Images/CAREUK/diagnosis_16.png", new Integer(16), new Integer(16));
+				Diagnosis16 = new ImageHelper(134124, "Images/RefMan/diagnosis_16.png", new Integer(16), new Integer(16));
 			}
 			public final ims.framework.utils.Image Diagnosis16;
 		}
@@ -1318,7 +1318,7 @@ public class GenForm extends FormBridge
 			public final ims.framework.utils.Image PatientWithDiagnosticServices16;
 		}
 		public final CoreImages Core;
-		public final CAREUKImages CAREUK;
+		public final RefManImages RefMan;
 		public final ClinicalImages Clinical;
 	}
 	public GlobalContext getGlobalContext()
@@ -1560,7 +1560,7 @@ public class GenForm extends FormBridge
 			fields[67] = new ims.framework.ReportField(this.context, "_cvp_Clinical.ExtendedClinicalNotesListFilter", "BO-1011100000-CARECONTEXT", "CareContext");
 			fields[68] = new ims.framework.ReportField(this.context, "_cvp_Core.PasEvent", "BO-1014100003-ID", "ID_PASEvent");
 			fields[69] = new ims.framework.ReportField(this.context, "_cvp_Correspondence.CorrespondenceDetails", "BO-1052100001-ID", "ID_CorrespondenceDetails");
-			fields[70] = new ims.framework.ReportField(this.context, "_cvp_CareUk.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
+			fields[70] = new ims.framework.ReportField(this.context, "_cvp_RefMan.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
 			fields[71] = new ims.framework.ReportField(this.context, prefix + "_lv_Admin.ElectiveListConfiguration.__internal_x_context__SelectedRecord_" + componentIdentifier, "BO-1028100072-ID", "ID_ElectiveListConfiguration");
 			fields[72] = new ims.framework.ReportField(this.context, prefix + "_lv_Admin.ElectiveListConfiguration.__internal_x_context__SelectedRecord_" + componentIdentifier, "BO-1028100072-WAITINGLISTNAME", "WaitingListName");
 			fields[73] = new ims.framework.ReportField(this.context, prefix + "_lv_Admin.ElectiveListConfiguration.__internal_x_context__SelectedRecord_" + componentIdentifier, "BO-1028100072-STARTDATE", "StartDate");

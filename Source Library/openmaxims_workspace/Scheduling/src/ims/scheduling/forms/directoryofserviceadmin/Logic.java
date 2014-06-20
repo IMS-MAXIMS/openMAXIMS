@@ -22,8 +22,8 @@
 
 package ims.scheduling.forms.directoryofserviceadmin;
 
-import ims.careuk.vo.ContractConfigShortVo;
-import ims.careuk.vo.ContractConfigShortVoCollection;
+import ims.RefMan.vo.ContractConfigShortVo;
+import ims.RefMan.vo.ContractConfigShortVoCollection;
 import ims.configuration.gen.ConfigFlag;
 import ims.core.vo.LocationLiteVoCollection;
 import ims.core.vo.ServiceFunctionVo;

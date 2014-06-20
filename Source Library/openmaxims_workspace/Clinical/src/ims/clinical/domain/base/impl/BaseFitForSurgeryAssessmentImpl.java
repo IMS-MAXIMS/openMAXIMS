@@ -35,12 +35,12 @@ public abstract class BaseFitForSurgeryAssessmentImpl extends DomainImpl impleme
 	}
 
 	@SuppressWarnings("unused")
-	public void validategetAssessment(ims.careuk.vo.FitForSurgeryAssesmentRefVo assessRefVo)
+	public void validategetAssessment(ims.RefMan.vo.FitForSurgeryAssesmentRefVo assessRefVo)
 	{
 	}
 
 	@SuppressWarnings("unused")
-	public void validatesave(ims.careuk.vo.FitForSurgeryAssesmentVo record)
+	public void validatesave(ims.RefMan.vo.FitForSurgeryAssesmentVo record)
 	{
 	}
 

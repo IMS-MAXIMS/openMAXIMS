@@ -22,7 +22,7 @@
 
 package ims.ocrr.domain.impl;
 
-import ims.careuk.vo.CatsReferralListVo;
+import ims.RefMan.vo.CatsReferralListVo;
 import ims.core.clinical.vo.ServiceRefVo;
 import ims.core.domain.Reports;
 import ims.core.domain.impl.ReportsImpl;

@@ -30,12 +30,12 @@ public abstract class BaseSuitableforSurgeryAssessmentImpl extends DomainImpl im
 	private static final long serialVersionUID = 1L;
 
 	@SuppressWarnings("unused")
-	public void validategetAssessment(ims.careuk.vo.SuitableForSurgeryAssessmentRefVo assessRefVo)
+	public void validategetAssessment(ims.RefMan.vo.SuitableForSurgeryAssessmentRefVo assessRefVo)
 	{
 	}
 
 	@SuppressWarnings("unused")
-	public void validatesaveAssessment(ims.careuk.vo.SuitableForSurgeryAssessmentLiteVo assessment, ims.clinical.vo.catsReferralLiteVo referralRecord)
+	public void validatesaveAssessment(ims.RefMan.vo.SuitableForSurgeryAssessmentLiteVo assessment, ims.clinical.vo.catsReferralLiteVo referralRecord)
 	{
 	}
 

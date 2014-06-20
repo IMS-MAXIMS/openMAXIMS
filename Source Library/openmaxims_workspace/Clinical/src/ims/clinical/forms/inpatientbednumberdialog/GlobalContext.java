@@ -33,13 +33,13 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 	{
 		super(context);
 
-		CareUk = new CareUkContext(context);
+		RefMan = new RefManContext(context);
 	}
-	public final class CareUkContext implements Serializable
+	public final class RefManContext implements Serializable
 	{
 		private static final long serialVersionUID = 1L;
 
-		private CareUkContext(ims.framework.Context context)
+		private RefManContext(ims.framework.Context context)
 		{
 			this.context = context;
 
@@ -47,21 +47,21 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 
 		public boolean getBedNumberIsNotNull()
 		{
-			return !cx_CareUkBedNumber.getValueIsNull(context);
+			return !cx_RefManBedNumber.getValueIsNull(context);
 		}
 		public String getBedNumber()
 		{
-			return (String)cx_CareUkBedNumber.getValue(context);
+			return (String)cx_RefManBedNumber.getValue(context);
 		}
 		public void setBedNumber(String value)
 		{
-			cx_CareUkBedNumber.setValue(context, value);
+			cx_RefManBedNumber.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkBedNumber = new ims.framework.ContextVariable("CareUk.BedNumber", "_cv_CareUk.BedNumber");
+		private ims.framework.ContextVariable cx_RefManBedNumber = new ims.framework.ContextVariable("RefMan.BedNumber", "_cv_RefMan.BedNumber");
 
 		private ims.framework.Context context;
 	}
 
-	public CareUkContext CareUk;
+	public RefManContext RefMan;
 }

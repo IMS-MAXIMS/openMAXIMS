@@ -34,7 +34,7 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 		super(context);
 
 		Core = new CoreContext(context);
-		CareUk = new CareUkContext(context);
+		RefMan = new RefManContext(context);
 	}
 	public final class CoreContext implements Serializable
 	{
@@ -129,11 +129,11 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 
 		private ims.framework.Context context;
 	}
-	public final class CareUkContext implements Serializable
+	public final class RefManContext implements Serializable
 	{
 		private static final long serialVersionUID = 1L;
 
-		private CareUkContext(ims.framework.Context context)
+		private RefManContext(ims.framework.Context context)
 		{
 			this.context = context;
 
@@ -141,50 +141,50 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 
 		public boolean getIsProviderCancellationIsNotNull()
 		{
-			return !cx_CareUkIsProviderCancellation.getValueIsNull(context);
+			return !cx_RefManIsProviderCancellation.getValueIsNull(context);
 		}
 		public Boolean getIsProviderCancellation()
 		{
-			return (Boolean)cx_CareUkIsProviderCancellation.getValue(context);
+			return (Boolean)cx_RefManIsProviderCancellation.getValue(context);
 		}
 		public void setIsProviderCancellation(Boolean value)
 		{
-			cx_CareUkIsProviderCancellation.setValue(context, value);
+			cx_RefManIsProviderCancellation.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkIsProviderCancellation = new ims.framework.ContextVariable("CareUk.IsProviderCancellation", "_cvp_CareUk.IsProviderCancellation");
+		private ims.framework.ContextVariable cx_RefManIsProviderCancellation = new ims.framework.ContextVariable("RefMan.IsProviderCancellation", "_cvp_RefMan.IsProviderCancellation");
 		public boolean getCatsReferralIsNotNull()
 		{
-			return !cx_CareUkCatsReferral.getValueIsNull(context);
+			return !cx_RefManCatsReferral.getValueIsNull(context);
 		}
-		public ims.careuk.vo.CatsReferralRefVo getCatsReferral()
+		public ims.RefMan.vo.CatsReferralRefVo getCatsReferral()
 		{
-			return (ims.careuk.vo.CatsReferralRefVo)cx_CareUkCatsReferral.getValue(context);
+			return (ims.RefMan.vo.CatsReferralRefVo)cx_RefManCatsReferral.getValue(context);
 		}
-		public void setCatsReferral(ims.careuk.vo.CatsReferralRefVo value)
+		public void setCatsReferral(ims.RefMan.vo.CatsReferralRefVo value)
 		{
-			cx_CareUkCatsReferral.setValue(context, value);
+			cx_RefManCatsReferral.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkCatsReferral = new ims.framework.ContextVariable("CareUk.CatsReferral", "_cvp_CareUk.CatsReferral");
+		private ims.framework.ContextVariable cx_RefManCatsReferral = new ims.framework.ContextVariable("RefMan.CatsReferral", "_cvp_RefMan.CatsReferral");
 		public boolean getCatsReferralHasGpLetterIsNotNull()
 		{
-			return !cx_CareUkCatsReferralHasGpLetter.getValueIsNull(context);
+			return !cx_RefManCatsReferralHasGpLetter.getValueIsNull(context);
 		}
 		public Boolean getCatsReferralHasGpLetter()
 		{
-			return (Boolean)cx_CareUkCatsReferralHasGpLetter.getValue(context);
+			return (Boolean)cx_RefManCatsReferralHasGpLetter.getValue(context);
 		}
 		public void setCatsReferralHasGpLetter(Boolean value)
 		{
-			cx_CareUkCatsReferralHasGpLetter.setValue(context, value);
+			cx_RefManCatsReferralHasGpLetter.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkCatsReferralHasGpLetter = new ims.framework.ContextVariable("CareUk.CatsReferralHasGpLetter", "_cv_CareUk.CatsReferralHasGpLetter");
+		private ims.framework.ContextVariable cx_RefManCatsReferralHasGpLetter = new ims.framework.ContextVariable("RefMan.CatsReferralHasGpLetter", "_cv_RefMan.CatsReferralHasGpLetter");
 
 		private ims.framework.Context context;
 	}
 
 	public CoreContext Core;
-	public CareUkContext CareUk;
+	public RefManContext RefMan;
 }

@@ -25,7 +25,7 @@ package ims.ocrr.domain.impl;
 import ims.admin.domain.OrganisationAndLocation;
 import ims.admin.domain.impl.OrganisationAndLocationImpl;
 import ims.admin.vo.lookups.GenderSpecific;
-import ims.careuk.vo.CatsReferralRefVo;
+import ims.RefMan.vo.CatsReferralRefVo;
 import ims.core.clinical.domain.objects.Service;
 import ims.core.clinical.vo.ServiceRefVo;
 import ims.core.configuration.domain.objects.ContractConfig;

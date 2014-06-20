@@ -199,7 +199,7 @@ public class Logic extends BaseLogic
 			refreshGpDetails(form.getGlobalContext().Core.getGPDetails(), form.getGlobalContext().Core.getGPSurgery());
 
 			patient.setGp(form.getGlobalContext().Core.getGPDetails());
-			form.getGlobalContext().CareUk.setPatientsGP(form.getGlobalContext().Core.getGPDetails());
+			form.getGlobalContext().RefMan.setPatientsGP(form.getGlobalContext().Core.getGPDetails());
 			patient.setGpSurgery(form.getGlobalContext().Core.getGPSurgery());
 
 			form.getLocalContext().setPatient(patient);
@@ -1567,7 +1567,7 @@ public class Logic extends BaseLogic
 		form.getGlobalContext().Core.setPatientShort(patient);
 		if (patient!=null)
 			if (patient.getGpIsNotNull())	
-				form.getGlobalContext().CareUk.setPatientsGP(patient.getGp());
+				form.getGlobalContext().RefMan.setPatientsGP(patient.getGp());
 		populateScreenFromData(patient);
 		if (bFromDialogClosed)
 		{

@@ -47,7 +47,7 @@ public class BookingAppointmentOutcomeVo extends ims.scheduling.vo.Booking_Appoi
 		this.haselectivelist = bean.getHasElectiveList();
 		this.appointmentdate = bean.getAppointmentDate() == null ? null : bean.getAppointmentDate().buildDate();
 		this.seenby = bean.getSeenBy() == null ? null : bean.getSeenBy().buildVo();
-		this.outpatientprocedures = ims.careuk.vo.PatientProcedureForAppointmentOutcomeVoCollection.buildFromBeanCollection(bean.getOutpatientProcedures());
+		this.outpatientprocedures = ims.RefMan.vo.PatientProcedureForAppointmentOutcomeVoCollection.buildFromBeanCollection(bean.getOutpatientProcedures());
 		this.outpatientdiagnoses = ims.clinical.vo.PatientDiagnosisOpNotesVoCollection.buildFromBeanCollection(bean.getOutpatientDiagnoses());
 		this.session = bean.getSession() == null ? null : bean.getSession().buildVo();
 		this.outcomereason = bean.getOutcomeReason() == null ? null : ims.admin.vo.lookups.AppointmentOutcomeReason.buildLookup(bean.getOutcomeReason());
@@ -64,7 +64,7 @@ public class BookingAppointmentOutcomeVo extends ims.scheduling.vo.Booking_Appoi
 		this.haselectivelist = bean.getHasElectiveList();
 		this.appointmentdate = bean.getAppointmentDate() == null ? null : bean.getAppointmentDate().buildDate();
 		this.seenby = bean.getSeenBy() == null ? null : bean.getSeenBy().buildVo(map);
-		this.outpatientprocedures = ims.careuk.vo.PatientProcedureForAppointmentOutcomeVoCollection.buildFromBeanCollection(bean.getOutpatientProcedures());
+		this.outpatientprocedures = ims.RefMan.vo.PatientProcedureForAppointmentOutcomeVoCollection.buildFromBeanCollection(bean.getOutpatientProcedures());
 		this.outpatientdiagnoses = ims.clinical.vo.PatientDiagnosisOpNotesVoCollection.buildFromBeanCollection(bean.getOutpatientDiagnoses());
 		this.session = bean.getSession() == null ? null : bean.getSession().buildVo(map);
 		this.outcomereason = bean.getOutcomeReason() == null ? null : ims.admin.vo.lookups.AppointmentOutcomeReason.buildLookup(bean.getOutcomeReason());
@@ -205,11 +205,11 @@ public class BookingAppointmentOutcomeVo extends ims.scheduling.vo.Booking_Appoi
 	{
 		return this.outpatientprocedures != null;
 	}
-	public ims.careuk.vo.PatientProcedureForAppointmentOutcomeVoCollection getOutpatientProcedures()
+	public ims.RefMan.vo.PatientProcedureForAppointmentOutcomeVoCollection getOutpatientProcedures()
 	{
 		return this.outpatientprocedures;
 	}
-	public void setOutpatientProcedures(ims.careuk.vo.PatientProcedureForAppointmentOutcomeVoCollection value)
+	public void setOutpatientProcedures(ims.RefMan.vo.PatientProcedureForAppointmentOutcomeVoCollection value)
 	{
 		this.isValidated = false;
 		this.outpatientprocedures = value;
@@ -231,11 +231,11 @@ public class BookingAppointmentOutcomeVo extends ims.scheduling.vo.Booking_Appoi
 	{
 		return this.session != null;
 	}
-	public ims.careuk.vo.SessionForAppointmentOutcomeVo getSession()
+	public ims.RefMan.vo.SessionForAppointmentOutcomeVo getSession()
 	{
 		return this.session;
 	}
-	public void setSession(ims.careuk.vo.SessionForAppointmentOutcomeVo value)
+	public void setSession(ims.RefMan.vo.SessionForAppointmentOutcomeVo value)
 	{
 		this.isValidated = false;
 		this.session = value;
@@ -423,7 +423,7 @@ public class BookingAppointmentOutcomeVo extends ims.scheduling.vo.Booking_Appoi
 		if(this.outpatientprocedures == null)
 			clone.outpatientprocedures = null;
 		else
-			clone.outpatientprocedures = (ims.careuk.vo.PatientProcedureForAppointmentOutcomeVoCollection)this.outpatientprocedures.clone();
+			clone.outpatientprocedures = (ims.RefMan.vo.PatientProcedureForAppointmentOutcomeVoCollection)this.outpatientprocedures.clone();
 		if(this.outpatientdiagnoses == null)
 			clone.outpatientdiagnoses = null;
 		else
@@ -431,7 +431,7 @@ public class BookingAppointmentOutcomeVo extends ims.scheduling.vo.Booking_Appoi
 		if(this.session == null)
 			clone.session = null;
 		else
-			clone.session = (ims.careuk.vo.SessionForAppointmentOutcomeVo)this.session.clone();
+			clone.session = (ims.RefMan.vo.SessionForAppointmentOutcomeVo)this.session.clone();
 		if(this.outcomereason == null)
 			clone.outcomereason = null;
 		else
@@ -510,9 +510,9 @@ public class BookingAppointmentOutcomeVo extends ims.scheduling.vo.Booking_Appoi
 	protected Boolean haselectivelist;
 	protected ims.framework.utils.Date appointmentdate;
 	protected ims.core.vo.HcpLiteVo seenby;
-	protected ims.careuk.vo.PatientProcedureForAppointmentOutcomeVoCollection outpatientprocedures;
+	protected ims.RefMan.vo.PatientProcedureForAppointmentOutcomeVoCollection outpatientprocedures;
 	protected ims.clinical.vo.PatientDiagnosisOpNotesVoCollection outpatientdiagnoses;
-	protected ims.careuk.vo.SessionForAppointmentOutcomeVo session;
+	protected ims.RefMan.vo.SessionForAppointmentOutcomeVo session;
 	protected ims.admin.vo.lookups.AppointmentOutcomeReason outcomereason;
 	protected Boolean wasfirstdefinitivetreatment;
 	protected ims.scheduling.vo.AppointmentOutcomeActionVoCollection outcomeactions;

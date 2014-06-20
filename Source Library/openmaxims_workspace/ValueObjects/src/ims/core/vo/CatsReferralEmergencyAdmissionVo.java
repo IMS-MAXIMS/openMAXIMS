@@ -24,9 +24,9 @@
 package ims.core.vo;
 
 /**
- * Linked to CAREUK.CatsReferral business object (ID: 1004100035).
+ * Linked to RefMan.CatsReferral business object (ID: 1004100035).
  */
-public class CatsReferralEmergencyAdmissionVo extends ims.careuk.vo.CatsReferralRefVo implements ims.vo.ImsCloneable, Comparable
+public class CatsReferralEmergencyAdmissionVo extends ims.RefMan.vo.CatsReferralRefVo implements ims.vo.ImsCloneable, Comparable
 {
 	private static final long serialVersionUID = 1L;
 
@@ -46,10 +46,10 @@ public class CatsReferralEmergencyAdmissionVo extends ims.careuk.vo.CatsReferral
 		this.currentstatus = bean.getCurrentStatus() == null ? null : bean.getCurrentStatus().buildVo();
 		if(bean.getStatusHistory() != null)
 		{
-			this.statushistory = new ims.careuk.vo.CATSReferralStatusRefVoCollection();
+			this.statushistory = new ims.RefMan.vo.CATSReferralStatusRefVoCollection();
 			for(int statushistory_i = 0; statushistory_i < bean.getStatusHistory().length; statushistory_i++)
 			{
-				this.statushistory.add(new ims.careuk.vo.CATSReferralStatusRefVo(new Integer(bean.getStatusHistory()[statushistory_i].getId()), bean.getStatusHistory()[statushistory_i].getVersion()));
+				this.statushistory.add(new ims.RefMan.vo.CATSReferralStatusRefVo(new Integer(bean.getStatusHistory()[statushistory_i].getId()), bean.getStatusHistory()[statushistory_i].getVersion()));
 			}
 		}
 		this.journey = bean.getJourney() == null ? null : new ims.pathways.vo.PatientPathwayJourneyRefVo(new Integer(bean.getJourney().getId()), bean.getJourney().getVersion());
@@ -67,10 +67,10 @@ public class CatsReferralEmergencyAdmissionVo extends ims.careuk.vo.CatsReferral
 		this.currentstatus = bean.getCurrentStatus() == null ? null : bean.getCurrentStatus().buildVo(map);
 		if(bean.getStatusHistory() != null)
 		{
-			this.statushistory = new ims.careuk.vo.CATSReferralStatusRefVoCollection();
+			this.statushistory = new ims.RefMan.vo.CATSReferralStatusRefVoCollection();
 			for(int statushistory_i = 0; statushistory_i < bean.getStatusHistory().length; statushistory_i++)
 			{
-				this.statushistory.add(new ims.careuk.vo.CATSReferralStatusRefVo(new Integer(bean.getStatusHistory()[statushistory_i].getId()), bean.getStatusHistory()[statushistory_i].getVersion()));
+				this.statushistory.add(new ims.RefMan.vo.CATSReferralStatusRefVo(new Integer(bean.getStatusHistory()[statushistory_i].getId()), bean.getStatusHistory()[statushistory_i].getVersion()));
 			}
 		}
 		this.journey = bean.getJourney() == null ? null : new ims.pathways.vo.PatientPathwayJourneyRefVo(new Integer(bean.getJourney().getId()), bean.getJourney().getVersion());
@@ -151,11 +151,11 @@ public class CatsReferralEmergencyAdmissionVo extends ims.careuk.vo.CatsReferral
 	{
 		return this.currentstatus != null;
 	}
-	public ims.careuk.vo.CatsReferralStatusVo getCurrentStatus()
+	public ims.RefMan.vo.CatsReferralStatusVo getCurrentStatus()
 	{
 		return this.currentstatus;
 	}
-	public void setCurrentStatus(ims.careuk.vo.CatsReferralStatusVo value)
+	public void setCurrentStatus(ims.RefMan.vo.CatsReferralStatusVo value)
 	{
 		this.isValidated = false;
 		this.currentstatus = value;
@@ -164,11 +164,11 @@ public class CatsReferralEmergencyAdmissionVo extends ims.careuk.vo.CatsReferral
 	{
 		return this.statushistory != null;
 	}
-	public ims.careuk.vo.CATSReferralStatusRefVoCollection getStatusHistory()
+	public ims.RefMan.vo.CATSReferralStatusRefVoCollection getStatusHistory()
 	{
 		return this.statushistory;
 	}
-	public void setStatusHistory(ims.careuk.vo.CATSReferralStatusRefVoCollection value)
+	public void setStatusHistory(ims.RefMan.vo.CATSReferralStatusRefVoCollection value)
 	{
 		this.isValidated = false;
 		this.statushistory = value;
@@ -385,7 +385,7 @@ public class CatsReferralEmergencyAdmissionVo extends ims.careuk.vo.CatsReferral
 		if(this.currentstatus == null)
 			clone.currentstatus = null;
 		else
-			clone.currentstatus = (ims.careuk.vo.CatsReferralStatusVo)this.currentstatus.clone();
+			clone.currentstatus = (ims.RefMan.vo.CatsReferralStatusVo)this.currentstatus.clone();
 		clone.statushistory = this.statushistory;
 		clone.journey = this.journey;
 		if(this.admissions == null)
@@ -457,8 +457,8 @@ public class CatsReferralEmergencyAdmissionVo extends ims.careuk.vo.CatsReferral
 	}
 	protected ims.core.vo.PatientShort patient;
 	protected ims.core.admin.vo.CareContextRefVo carecontext;
-	protected ims.careuk.vo.CatsReferralStatusVo currentstatus;
-	protected ims.careuk.vo.CATSReferralStatusRefVoCollection statushistory;
+	protected ims.RefMan.vo.CatsReferralStatusVo currentstatus;
+	protected ims.RefMan.vo.CATSReferralStatusRefVoCollection statushistory;
 	protected ims.pathways.vo.PatientPathwayJourneyRefVo journey;
 	protected ims.core.vo.AdmissionDetailVoCollection admissions;
 	protected ims.core.vo.ReferralDetailsEmergencyAdmissionVo referraldetails;

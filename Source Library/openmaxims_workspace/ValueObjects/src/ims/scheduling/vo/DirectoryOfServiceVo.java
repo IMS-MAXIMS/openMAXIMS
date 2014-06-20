@@ -136,11 +136,11 @@ public class DirectoryOfServiceVo extends ims.scheduling.vo.DirectoryOfServiceLi
 	{
 		return this.contract != null;
 	}
-	public ims.careuk.vo.ContractConfigShortVo getContract()
+	public ims.RefMan.vo.ContractConfigShortVo getContract()
 	{
 		return this.contract;
 	}
-	public void setContract(ims.careuk.vo.ContractConfigShortVo value)
+	public void setContract(ims.RefMan.vo.ContractConfigShortVo value)
 	{
 		this.isValidated = false;
 		this.contract = value;
@@ -300,7 +300,7 @@ public class DirectoryOfServiceVo extends ims.scheduling.vo.DirectoryOfServiceLi
 		if(this.contract == null)
 			clone.contract = null;
 		else
-			clone.contract = (ims.careuk.vo.ContractConfigShortVo)this.contract.clone();
+			clone.contract = (ims.RefMan.vo.ContractConfigShortVo)this.contract.clone();
 		clone.isValidated = this.isValidated;
 		
 		this.isBusy = false;
@@ -358,7 +358,7 @@ public class DirectoryOfServiceVo extends ims.scheduling.vo.DirectoryOfServiceLi
 	protected ims.core.vo.ServiceShortVo service;
 	protected ims.core.vo.ServiceFunctionVoCollection functions;
 	protected ims.core.vo.LocationLiteVo location;
-	protected ims.careuk.vo.ContractConfigShortVo contract;
+	protected ims.RefMan.vo.ContractConfigShortVo contract;
 	private boolean isValidated = false;
 	private boolean isBusy = false;
 }

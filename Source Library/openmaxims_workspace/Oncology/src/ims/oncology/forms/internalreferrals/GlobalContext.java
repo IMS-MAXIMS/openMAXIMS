@@ -34,7 +34,7 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 		super(context);
 
 		Core = new CoreContext(context);
-		CareUk = new CareUkContext(context);
+		RefMan = new RefManContext(context);
 		Oncology = new OncologyContext(context);
 	}
 	public final class CoreContext implements Serializable
@@ -78,11 +78,11 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 
 		private ims.framework.Context context;
 	}
-	public final class CareUkContext implements Serializable
+	public final class RefManContext implements Serializable
 	{
 		private static final long serialVersionUID = 1L;
 
-		private CareUkContext(ims.framework.Context context)
+		private RefManContext(ims.framework.Context context)
 		{
 			this.context = context;
 
@@ -90,18 +90,18 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 
 		public boolean getIsComponentInEditModeIsNotNull()
 		{
-			return !cx_CareUkIsComponentInEditMode.getValueIsNull(context);
+			return !cx_RefManIsComponentInEditMode.getValueIsNull(context);
 		}
 		public ims.framework.enumerations.FormMode getIsComponentInEditMode()
 		{
-			return (ims.framework.enumerations.FormMode)cx_CareUkIsComponentInEditMode.getValue(context);
+			return (ims.framework.enumerations.FormMode)cx_RefManIsComponentInEditMode.getValue(context);
 		}
 		public void setIsComponentInEditMode(ims.framework.enumerations.FormMode value)
 		{
-			cx_CareUkIsComponentInEditMode.setValue(context, value);
+			cx_RefManIsComponentInEditMode.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkIsComponentInEditMode = new ims.framework.ContextVariable("CareUk.IsComponentInEditMode", "_cv_CareUk.IsComponentInEditMode");
+		private ims.framework.ContextVariable cx_RefManIsComponentInEditMode = new ims.framework.ContextVariable("RefMan.IsComponentInEditMode", "_cv_RefMan.IsComponentInEditMode");
 
 		private ims.framework.Context context;
 	}
@@ -134,6 +134,6 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 	}
 
 	public CoreContext Core;
-	public CareUkContext CareUk;
+	public RefManContext RefMan;
 	public OncologyContext Oncology;
 }

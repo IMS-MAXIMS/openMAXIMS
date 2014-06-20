@@ -126,7 +126,7 @@ public interface PatientICP extends ims.domain.DomainInterface
 	public ims.icp.vo.ICPLiteVo getICPInfo(ims.icps.instantiation.vo.PatientICPRefVo patientICPRef) throws ims.domain.exceptions.DomainInterfaceException;
 
 	// Generated from form domain interface definition
-	public ims.careuk.vo.CatsReferralVo getCatsReferralRefVoForCareContext(ims.core.admin.vo.CareContextRefVo voCarecontext) throws ims.domain.exceptions.DomainInterfaceException;
+	public ims.RefMan.vo.CatsReferralVo getCatsReferralRefVoForCareContext(ims.core.admin.vo.CareContextRefVo voCarecontext) throws ims.domain.exceptions.DomainInterfaceException;
 
 	// Generated from form domain interface definition
 	public ims.icp.vo.PatientICPActionFullVo getPatientICPActionFull(ims.icps.instantiation.vo.PatientICPActionRefVo patientICPActionRef);

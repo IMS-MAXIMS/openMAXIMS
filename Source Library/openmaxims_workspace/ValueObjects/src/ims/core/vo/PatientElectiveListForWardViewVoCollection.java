@@ -30,7 +30,7 @@ import java.util.Iterator;
 import ims.framework.enumerations.SortOrder;
 
 /**
- * Linked to CAREUK.PatientElectiveList business object (ID: 1014100020).
+ * Linked to RefMan.PatientElectiveList business object (ID: 1014100020).
  */
 public class PatientElectiveListForWardViewVoCollection extends ims.vo.ValueObjectCollection implements ims.vo.ImsCloneable, Iterable<PatientElectiveListForWardViewVo>
 {
@@ -39,7 +39,7 @@ public class PatientElectiveListForWardViewVoCollection extends ims.vo.ValueObje
 	private ArrayList<PatientElectiveListForWardViewVo> col = new ArrayList<PatientElectiveListForWardViewVo>();
 	public String getBoClassName()
 	{
-		return "ims.careuk.domain.objects.PatientElectiveList";
+		return "ims.RefMan.domain.objects.PatientElectiveList";
 	}
 	public boolean add(PatientElectiveListForWardViewVo value)
 	{
@@ -181,9 +181,9 @@ public class PatientElectiveListForWardViewVoCollection extends ims.vo.ValueObje
 		Collections.sort(col, comparator);
 		return this;
 	}
-	public ims.careuk.vo.PatientElectiveListRefVoCollection toRefVoCollection()
+	public ims.RefMan.vo.PatientElectiveListRefVoCollection toRefVoCollection()
 	{
-		ims.careuk.vo.PatientElectiveListRefVoCollection result = new ims.careuk.vo.PatientElectiveListRefVoCollection();
+		ims.RefMan.vo.PatientElectiveListRefVoCollection result = new ims.RefMan.vo.PatientElectiveListRefVoCollection();
 		for(int x = 0; x < this.col.size(); x++)
 		{
 			result.add(this.col.get(x));

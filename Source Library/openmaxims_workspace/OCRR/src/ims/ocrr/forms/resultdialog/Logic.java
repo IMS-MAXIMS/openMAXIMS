@@ -520,7 +520,7 @@ public class Logic extends BaseLogic
 		OcsPathRadResultVo currRep = form.getGlobalContext().OCRR.getCurrentPathRadResult();
 		if(currRep.getCategoryIsNotNull())
 		{
-			if (engine.getPreviousNonDialogFormName().equals(form.getForms().OCRR.CAREUKNewResults)//wdev-10391
+			if (engine.getPreviousNonDialogFormName().equals(form.getForms().OCRR.RefManNewResults)//wdev-10391
 				|| engine.getPreviousNonDialogFormName().equals(form.getForms().OCRR.NewResults)//wdev-10391
 				|| engine.getPreviousNonDialogFormName().equals(form.getForms().OCRR.NewResultsSearch)//WDEV-16715
 				|| engine.getPreviousNonDialogFormName().equals(form.getForms().OCRR.PathologyOrders)//wdev-10391

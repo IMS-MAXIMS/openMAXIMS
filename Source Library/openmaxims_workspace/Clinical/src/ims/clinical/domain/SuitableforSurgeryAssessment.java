@@ -27,13 +27,13 @@ package ims.clinical.domain;
 public interface SuitableforSurgeryAssessment extends ims.domain.DomainInterface
 {
 	// Generated from form domain interface definition
-	public ims.careuk.vo.SuitableForSurgeryAssessmentLiteVo getAssessment(ims.careuk.vo.SuitableForSurgeryAssessmentRefVo assessRefVo) throws ims.domain.exceptions.DomainInterfaceException;
+	public ims.RefMan.vo.SuitableForSurgeryAssessmentLiteVo getAssessment(ims.RefMan.vo.SuitableForSurgeryAssessmentRefVo assessRefVo) throws ims.domain.exceptions.DomainInterfaceException;
 
 	// Generated from form domain interface definition
-	public ims.careuk.vo.SuitableForSurgeryAssessmentLiteVo saveAssessment(ims.careuk.vo.SuitableForSurgeryAssessmentLiteVo assessment, ims.clinical.vo.catsReferralLiteVo referralRecord) throws ims.domain.exceptions.DomainInterfaceException, ims.domain.exceptions.StaleObjectException, ims.domain.exceptions.ForeignKeyViolationException, ims.domain.exceptions.UniqueKeyViolationException;
+	public ims.RefMan.vo.SuitableForSurgeryAssessmentLiteVo saveAssessment(ims.RefMan.vo.SuitableForSurgeryAssessmentLiteVo assessment, ims.clinical.vo.catsReferralLiteVo referralRecord) throws ims.domain.exceptions.DomainInterfaceException, ims.domain.exceptions.StaleObjectException, ims.domain.exceptions.ForeignKeyViolationException, ims.domain.exceptions.UniqueKeyViolationException;
 
 	// Generated from form domain interface definition
-	public ims.careuk.vo.SuitableForSurgeryAssessmentLiteVoCollection listAssessments(ims.core.admin.vo.CareContextRefVo careContextRefVo) throws ims.domain.exceptions.DomainInterfaceException;
+	public ims.RefMan.vo.SuitableForSurgeryAssessmentLiteVoCollection listAssessments(ims.core.admin.vo.CareContextRefVo careContextRefVo) throws ims.domain.exceptions.DomainInterfaceException;
 
 	// Generated from form domain interface definition
 	public ims.clinical.vo.catsReferralLiteVo getCatsReferral(ims.core.admin.vo.CareContextRefVo careContextRef);

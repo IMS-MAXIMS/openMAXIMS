@@ -274,8 +274,8 @@ public class GenForm extends FormBridge
 			throw new ims.framework.exceptions.CodingRuntimeException("The type 'ims.core.vo.PatientShort' of the global context variable 'Core.PatientShort' is not supported.");
 		if(!context.isValidContextType(ims.ocrr.vo.RoleDisciplineSecurityLevelLiteGCVo.class))
 			throw new ims.framework.exceptions.CodingRuntimeException("The type 'ims.ocrr.vo.RoleDisciplineSecurityLevelLiteGCVo' of the global context variable 'OCRR.RoleDisciplineSecurityLevels' is not supported.");
-		if(!context.isValidContextType(ims.careuk.vo.CatsReferralRefVo.class))
-			throw new ims.framework.exceptions.CodingRuntimeException("The type 'ims.careuk.vo.CatsReferralRefVo' of the global context variable 'CareUk.CatsReferral' is not supported.");
+		if(!context.isValidContextType(ims.RefMan.vo.CatsReferralRefVo.class))
+			throw new ims.framework.exceptions.CodingRuntimeException("The type 'ims.RefMan.vo.CatsReferralRefVo' of the global context variable 'RefMan.CatsReferral' is not supported.");
 	}
 	private void validateMandatoryContext(Context context)
 	{
@@ -788,7 +788,7 @@ public class GenForm extends FormBridge
 			fields[67] = new ims.framework.ReportField(this.context, "_cvp_Clinical.ExtendedClinicalNotesListFilter", "BO-1011100000-CARECONTEXT", "CareContext");
 			fields[68] = new ims.framework.ReportField(this.context, "_cvp_Core.PasEvent", "BO-1014100003-ID", "ID_PASEvent");
 			fields[69] = new ims.framework.ReportField(this.context, "_cvp_Correspondence.CorrespondenceDetails", "BO-1052100001-ID", "ID_CorrespondenceDetails");
-			fields[70] = new ims.framework.ReportField(this.context, "_cvp_CareUk.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
+			fields[70] = new ims.framework.ReportField(this.context, "_cvp_RefMan.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
 			fields[71] = new ims.framework.ReportField(this.context, "_cv_OCRR.OrderInvestigationToAmend", "BO-1070100002-ID", "ID_OrderInvestigation");
 			fields[72] = new ims.framework.ReportField(this.context, "_cv_OCRR.OrderInvestigationToAmend", "BO-1070100002-REPDATETIME", "RepDateTime");
 			fields[73] = new ims.framework.ReportField(this.context, "_cv_OCRR.OrderInvestigationToAmend", "BO-1070100002-DISPLAYDATETIME", "DisplayDateTime");

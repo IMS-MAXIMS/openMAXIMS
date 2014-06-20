@@ -232,11 +232,11 @@ public class SessionSlotForSessionManagementVo extends ims.scheduling.vo.Session
 	{
 		return this.catsreferral != null;
 	}
-	public ims.careuk.vo.CatsReferralForSessionManagementVo getCatsReferral()
+	public ims.RefMan.vo.CatsReferralForSessionManagementVo getCatsReferral()
 	{
 		return this.catsreferral;
 	}
-	public void setCatsReferral(ims.careuk.vo.CatsReferralForSessionManagementVo value)
+	public void setCatsReferral(ims.RefMan.vo.CatsReferralForSessionManagementVo value)
 	{
 		this.isValidated = false;
 		this.catsreferral = value;
@@ -335,7 +335,7 @@ public class SessionSlotForSessionManagementVo extends ims.scheduling.vo.Session
 		if(this.catsreferral == null)
 			clone.catsreferral = null;
 		else
-			clone.catsreferral = (ims.careuk.vo.CatsReferralForSessionManagementVo)this.catsreferral.clone();
+			clone.catsreferral = (ims.RefMan.vo.CatsReferralForSessionManagementVo)this.catsreferral.clone();
 		clone.isValidated = this.isValidated;
 		
 		this.isBusy = false;
@@ -404,7 +404,7 @@ public class SessionSlotForSessionManagementVo extends ims.scheduling.vo.Session
 	protected ims.scheduling.vo.SessionListOwnerLiteVo slotresp;
 	protected ims.scheduling.vo.DirectoryOfServiceSessionSlotVoCollection directoryofservices;
 	protected ims.scheduling.vo.lookups.SchedulingPriority priority;
-	protected ims.careuk.vo.CatsReferralForSessionManagementVo catsreferral;
+	protected ims.RefMan.vo.CatsReferralForSessionManagementVo catsreferral;
 	private boolean isValidated = false;
 	private boolean isBusy = false;
 }

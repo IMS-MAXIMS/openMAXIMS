@@ -612,7 +612,7 @@ public class R01VoMapper extends VoMapper
 			// update the acceptReferralFromInvestigation method to check the contract type 
 			if ("CARE_UK".equals(ConfigFlag.HL7.EXTENDED_HL7_PROCESSING.getValue()))
 			{
-				careUKdomain.acceptReferralFromInvestigation(invVo);
+				RefMandomain.acceptReferralFromInvestigation(invVo);
 				
 			}
 		}
@@ -661,8 +661,8 @@ public class R01VoMapper extends VoMapper
 				}
 
 				
-				IHL7Helper careukHelper=(IHL7Helper)getDomainImpl("ims.careuk.helper.CareUkHL7Helper");
-				careukHelper.ProcessOrderMessage( orc, invVo,orderInvfromMsg,careUKdomain,apptStartTime,apptEndTime,seenBy);
+				IHL7Helper RefManHelper=(IHL7Helper)getDomainImpl("ims.RefMan.helper.RefManHL7Helper");
+				RefManHelper.ProcessOrderMessage( orc, invVo,orderInvfromMsg,RefMandomain,apptStartTime,apptEndTime,seenBy);
 			}
 
 		}	
@@ -682,7 +682,7 @@ public class R01VoMapper extends VoMapper
 			if((msg instanceof ORU_R01)&&("CARE_UK".equals(ConfigFlag.HL7.EXTENDED_HL7_PROCESSING.getValue())))
 			{
 				
-				IHL7Helper careukHelper= (IHL7Helper)getDomainImpl("ims.careuk.helper.CareUkHL7Helper");
+				IHL7Helper RefManHelper= (IHL7Helper)getDomainImpl("ims.RefMan.helper.RefManHL7Helper");
 				String fileTypeStr=obr.getPlacerSupplementalServiceInformation(0).getNameOfCodingSystem().getValue();
 				if(null!=fileTypeStr)
 				{
@@ -701,7 +701,7 @@ public class R01VoMapper extends VoMapper
 						LOG.error("Document category (PlacerSupplementalServiceInformation^Identifier)must be the Result Report mapping for the DocumentCategory Lookup.");
 					}
 				}
-				careukHelper.PocessResultMessage((ORU_R01)msg, invVo,orderInvfromMsg,careUKdomain);
+				RefManHelper.PocessResultMessage((ORU_R01)msg, invVo,orderInvfromMsg,RefMandomain);
 			}
 			
 			

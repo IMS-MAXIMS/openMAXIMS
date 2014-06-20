@@ -145,11 +145,11 @@ public class Logic extends BaseLogic
 	@Override
 	protected void onCcReferralValueChanged() throws PresentationLogicException
 	{
-		if (form.getGlobalContext().CareUk.getIsComponentInEditModeIsNotNull()
-			&& form.getGlobalContext().CareUk.getIsComponentInEditMode().equals(FormMode.VIEW))
+		if (form.getGlobalContext().RefMan.getIsComponentInEditModeIsNotNull()
+			&& form.getGlobalContext().RefMan.getIsComponentInEditMode().equals(FormMode.VIEW))
 		{
 			open(false);
-			form.getGlobalContext().CareUk.setIsComponentInEditMode(null);
+			form.getGlobalContext().RefMan.setIsComponentInEditMode(null);
 		}
 	}
 

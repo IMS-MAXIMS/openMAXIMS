@@ -19,7 +19,7 @@
 //#EOH
 package ims.ocrr.helper;
 
-import ims.careuk.vo.CatsReferralRefVo;
+import ims.RefMan.vo.CatsReferralRefVo;
 import ims.domain.exceptions.StaleObjectException;
 import ims.domain.impl.DomainImpl;
 import ims.scheduling.domain.SessionAdmin;

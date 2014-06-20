@@ -60,10 +60,10 @@ public interface IntraOperativeCareRecord extends ims.domain.DomainInterface
 	/**
 	* getCatsReferral
 	*/
-	public ims.careuk.vo.CatsReferralVo getCatsReferral(ims.core.admin.vo.CareContextRefVo careContextRef);
+	public ims.RefMan.vo.CatsReferralVo getCatsReferral(ims.core.admin.vo.CareContextRefVo careContextRef);
 
 	// Generated from form domain interface definition
-	public ims.scheduling.vo.Booking_AppointmentShortVoCollection getBookingAppt(ims.careuk.vo.CatsReferralVo catsReferralvo);
+	public ims.scheduling.vo.Booking_AppointmentShortVoCollection getBookingAppt(ims.RefMan.vo.CatsReferralVo catsReferralvo);
 
 	// Generated from form domain interface definition
 	/**

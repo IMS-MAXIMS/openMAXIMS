@@ -208,7 +208,7 @@ public class Logic extends BaseLogic
 		
 		String authoringError = form.ccAuthoring().getErrors();
 		
-		if (authoringError != null && !authoringError.isEmpty())
+		if (authoringError != null && !("".equals(authoringError)))
 			errors.add(authoringError);
 		
 		return errors.toArray(new String[errors.size()]);

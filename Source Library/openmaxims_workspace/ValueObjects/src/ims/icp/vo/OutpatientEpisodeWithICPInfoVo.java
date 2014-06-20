@@ -252,11 +252,11 @@ public class OutpatientEpisodeWithICPInfoVo extends ims.scheduling.vo.Booking_Ap
 	{
 		return this.referral != null;
 	}
-	public ims.careuk.vo.CatsReferralBreachDatesVo getReferral()
+	public ims.RefMan.vo.CatsReferralBreachDatesVo getReferral()
 	{
 		return this.referral;
 	}
-	public void setReferral(ims.careuk.vo.CatsReferralBreachDatesVo value)
+	public void setReferral(ims.RefMan.vo.CatsReferralBreachDatesVo value)
 	{
 		this.isValidated = false;
 		this.referral = value;
@@ -803,7 +803,7 @@ public class OutpatientEpisodeWithICPInfoVo extends ims.scheduling.vo.Booking_Ap
 		if(this.referral == null)
 			clone.referral = null;
 		else
-			clone.referral = (ims.careuk.vo.CatsReferralBreachDatesVo)this.referral.clone();
+			clone.referral = (ims.RefMan.vo.CatsReferralBreachDatesVo)this.referral.clone();
 		clone.haselectivelist = this.haselectivelist;
 		if(this.outcome == null)
 			clone.outcome = null;
@@ -893,7 +893,7 @@ public class OutpatientEpisodeWithICPInfoVo extends ims.scheduling.vo.Booking_Ap
 	protected ims.scheduling.vo.Appt_Tracking_Status_HistoryVo currentappttrakingstatus;
 	protected ims.core.vo.ActivityLiteVo activity;
 	protected ims.admin.vo.AppointmentTrackingstatusColourConfigVo appointmenttrackingstatus;
-	protected ims.careuk.vo.CatsReferralBreachDatesVo referral;
+	protected ims.RefMan.vo.CatsReferralBreachDatesVo referral;
 	protected Boolean haselectivelist;
 	protected ims.scheduling.vo.lookups.ApptOutcome outcome;
 	protected ims.scheduling.vo.AppointmentOutcomeActionVoCollection outcomeactions;

@@ -361,7 +361,7 @@ public class DirectoryOfServiceVoAssembler
 		// Location
 		valueObject.setLocation(ims.core.vo.domain.LocationLiteVoAssembler.create(map, domainObject.getLocation()) );
 		// Contract
-		valueObject.setContract(ims.careuk.vo.domain.ContractConfigShortVoAssembler.create(map, domainObject.getContract()) );
+		valueObject.setContract(ims.RefMan.vo.domain.ContractConfigShortVoAssembler.create(map, domainObject.getContract()) );
 		// DoSName
 		valueObject.setDoSName(domainObject.getDoSName());
 		// DoSId

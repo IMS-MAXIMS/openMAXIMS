@@ -144,8 +144,8 @@ public class GenForm extends FormBridge
 	{
 		if(context == null)
 			return;
-		if(!context.isValidContextType(ims.careuk.vo.CatsReferralRefVo.class))
-			throw new ims.framework.exceptions.CodingRuntimeException("The type 'ims.careuk.vo.CatsReferralRefVo' of the global context variable 'CareUk.CatsReferral' is not supported.");
+		if(!context.isValidContextType(ims.RefMan.vo.CatsReferralRefVo.class))
+			throw new ims.framework.exceptions.CodingRuntimeException("The type 'ims.RefMan.vo.CatsReferralRefVo' of the global context variable 'RefMan.CatsReferral' is not supported.");
 	}
 	public boolean supportsRecordedInError()
 	{
@@ -438,7 +438,7 @@ public class GenForm extends FormBridge
 			fields[67] = new ims.framework.ReportField(this.context, "_cvp_Clinical.ExtendedClinicalNotesListFilter", "BO-1011100000-CARECONTEXT", "CareContext");
 			fields[68] = new ims.framework.ReportField(this.context, "_cvp_Core.PasEvent", "BO-1014100003-ID", "ID_PASEvent");
 			fields[69] = new ims.framework.ReportField(this.context, "_cvp_Correspondence.CorrespondenceDetails", "BO-1052100001-ID", "ID_CorrespondenceDetails");
-			fields[70] = new ims.framework.ReportField(this.context, "_cvp_CareUk.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
+			fields[70] = new ims.framework.ReportField(this.context, "_cvp_RefMan.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
 			fields[71] = new ims.framework.ReportField(this.context, "_cv_Scheduling.BookingAppointment", "BO-1055100007-ID", "ID_Booking_Appointment");
 			fields[72] = new ims.framework.ReportField(this.context, "_cv_Scheduling.BookingAppointment", "BO-1055100007-APPOINTMENTDATE", "AppointmentDate");
 			fields[73] = new ims.framework.ReportField(this.context, "_cv_Scheduling.BookingAppointment", "BO-1055100007-APPTSTARTTIME", "ApptStartTime");
@@ -476,12 +476,12 @@ public class GenForm extends FormBridge
 			fields[105] = new ims.framework.ReportField(this.context, "_cv_Scheduling.ApptCancelStatus", "BO-1055100008-REBOOKSELECTED", "RebookSelected");
 			fields[106] = new ims.framework.ReportField(this.context, "_cv_Scheduling.ApptCancelStatus", "BO-1055100008-EARLIESTOFFEREDDATE", "EarliestOfferedDate");
 			fields[107] = new ims.framework.ReportField(this.context, "_cv_Scheduling.ApptCancelStatus", "BO-1055100008-STATUSCHANGEDATETIME", "StatusChangeDateTime");
-			fields[108] = new ims.framework.ReportField(this.context, "_cv_CareUk.CatsReferralStatus", "BO-1096100007-ID", "ID_CATSReferralStatus");
-			fields[109] = new ims.framework.ReportField(this.context, "_cv_CareUk.CatsReferralStatus", "BO-1096100007-REFERRALSTATUS", "ReferralStatus");
-			fields[110] = new ims.framework.ReportField(this.context, "_cv_CareUk.CatsReferralStatus", "BO-1096100007-AUTHORINGUSER", "AuthoringUser");
-			fields[111] = new ims.framework.ReportField(this.context, "_cv_CareUk.CatsReferralStatus", "BO-1096100007-STATUSDATETIME", "StatusDateTime");
-			fields[112] = new ims.framework.ReportField(this.context, "_cv_CareUk.CatsReferralStatus", "BO-1096100007-COMMENT", "Comment");
-			fields[113] = new ims.framework.ReportField(this.context, "_cv_CareUk.CatsReferralStatus", "BO-1096100007-SECONDOPINIONCATEGORY", "SecondOpinionCategory");
+			fields[108] = new ims.framework.ReportField(this.context, "_cv_RefMan.CatsReferralStatus", "BO-1096100007-ID", "ID_CATSReferralStatus");
+			fields[109] = new ims.framework.ReportField(this.context, "_cv_RefMan.CatsReferralStatus", "BO-1096100007-REFERRALSTATUS", "ReferralStatus");
+			fields[110] = new ims.framework.ReportField(this.context, "_cv_RefMan.CatsReferralStatus", "BO-1096100007-AUTHORINGUSER", "AuthoringUser");
+			fields[111] = new ims.framework.ReportField(this.context, "_cv_RefMan.CatsReferralStatus", "BO-1096100007-STATUSDATETIME", "StatusDateTime");
+			fields[112] = new ims.framework.ReportField(this.context, "_cv_RefMan.CatsReferralStatus", "BO-1096100007-COMMENT", "Comment");
+			fields[113] = new ims.framework.ReportField(this.context, "_cv_RefMan.CatsReferralStatus", "BO-1096100007-SECONDOPINIONCATEGORY", "SecondOpinionCategory");
 			fields[114] = new ims.framework.ReportField(this.context, "_cv_Scheduling.BookingActivity", "BO-1007100005-ID", "ID_Activity");
 			fields[115] = new ims.framework.ReportField(this.context, "_cv_Scheduling.BookingService", "BO-1003100032-ID", "ID_Service");
 			fields[116] = new ims.framework.ReportField(this.context, "_cv_Scheduling.BookingSession", "BO-1055100010-ID", "ID_Sch_Session");

@@ -145,20 +145,20 @@ abstract public class Handlers implements ims.framework.UILogic, IFormUILogicCod
 				onBtnCancelClick();
 			}
 		});
-		this.form.getContextMenus().CAREUK.getTransportBookingNewItem().setClickEvent(new ims.framework.delegates.MenuItemClick()
+		this.form.getContextMenus().RefMan.getTransportBookingNewItem().setClickEvent(new ims.framework.delegates.MenuItemClick()
 		{
 			private static final long serialVersionUID = 1L;
 			public void handle(ims.framework.Control sender) throws ims.framework.exceptions.PresentationLogicException
 			{
-				onContextMenuItemClick(GenForm.ContextMenus.CAREUKNamespace.TransportBooking.New, sender);
+				onContextMenuItemClick(GenForm.ContextMenus.RefManNamespace.TransportBooking.New, sender);
 			}
 		});
-		this.form.getContextMenus().CAREUK.getTransportBookingEditItem().setClickEvent(new ims.framework.delegates.MenuItemClick()
+		this.form.getContextMenus().RefMan.getTransportBookingEditItem().setClickEvent(new ims.framework.delegates.MenuItemClick()
 		{
 			private static final long serialVersionUID = 1L;
 			public void handle(ims.framework.Control sender) throws ims.framework.exceptions.PresentationLogicException
 			{
-				onContextMenuItemClick(GenForm.ContextMenus.CAREUKNamespace.TransportBooking.Edit, sender);
+				onContextMenuItemClick(GenForm.ContextMenus.RefManNamespace.TransportBooking.Edit, sender);
 			}
 		});
 	}

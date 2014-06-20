@@ -48,7 +48,7 @@ public final class FormInfo extends ims.framework.FormInfo
 	}
 	public String[] getContextVariables()
 	{
-		return new String[] { "_cv_CareUk.IsComponentInEditMode", "_cv_Oncology.InternalReferralRef" };
+		return new String[] { "_cv_RefMan.IsComponentInEditMode", "_cv_Oncology.InternalReferralRef" };
 	}
 	public String getLocalVariablesPrefix()
 	{

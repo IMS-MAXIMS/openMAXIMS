@@ -30,7 +30,7 @@ import java.util.Iterator;
 import ims.framework.enumerations.SortOrder;
 
 /**
- * Linked to CAREUK.CatsReferral business object (ID: 1004100035).
+ * Linked to RefMan.CatsReferral business object (ID: 1004100035).
  */
 public class CatsReferralEmergencyAdmissionVoCollection extends ims.vo.ValueObjectCollection implements ims.vo.ImsCloneable, Iterable<CatsReferralEmergencyAdmissionVo>
 {
@@ -39,7 +39,7 @@ public class CatsReferralEmergencyAdmissionVoCollection extends ims.vo.ValueObje
 	private ArrayList<CatsReferralEmergencyAdmissionVo> col = new ArrayList<CatsReferralEmergencyAdmissionVo>();
 	public String getBoClassName()
 	{
-		return "ims.careuk.domain.objects.CatsReferral";
+		return "ims.RefMan.domain.objects.CatsReferral";
 	}
 	public boolean add(CatsReferralEmergencyAdmissionVo value)
 	{
@@ -181,9 +181,9 @@ public class CatsReferralEmergencyAdmissionVoCollection extends ims.vo.ValueObje
 		Collections.sort(col, comparator);
 		return this;
 	}
-	public ims.careuk.vo.CatsReferralRefVoCollection toRefVoCollection()
+	public ims.RefMan.vo.CatsReferralRefVoCollection toRefVoCollection()
 	{
-		ims.careuk.vo.CatsReferralRefVoCollection result = new ims.careuk.vo.CatsReferralRefVoCollection();
+		ims.RefMan.vo.CatsReferralRefVoCollection result = new ims.RefMan.vo.CatsReferralRefVoCollection();
 		for(int x = 0; x < this.col.size(); x++)
 		{
 			result.add(this.col.get(x));

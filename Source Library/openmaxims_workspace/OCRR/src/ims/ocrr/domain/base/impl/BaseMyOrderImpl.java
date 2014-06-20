@@ -45,10 +45,10 @@ public abstract class BaseMyOrderImpl extends DomainImpl implements ims.ocrr.dom
 	}
 
 	@SuppressWarnings("unused")
-	public void validatesaveOcsOrder(ims.ocrr.vo.OcsOrderVo ocsOrder, ims.ocrr.vo.SpecimenWorkListItemVoCollection workListItems, ims.ocrr.vo.enums.ORDERSTATE orderState, ims.careuk.vo.CatsReferralRefVo catsReferral, ims.scheduling.vo.Booking_AppointmentRefVo appt)
+	public void validatesaveOcsOrder(ims.ocrr.vo.OcsOrderVo ocsOrder, ims.ocrr.vo.SpecimenWorkListItemVoCollection workListItems, ims.ocrr.vo.enums.ORDERSTATE orderState, ims.RefMan.vo.CatsReferralRefVo catsReferral, ims.scheduling.vo.Booking_AppointmentRefVo appt)
 	{
 		if(catsReferral == null)
-			throw new ims.domain.exceptions.DomainRuntimeException("The parameter 'catsReferral' of type 'ims.careuk.vo.CatsReferralRefVo' cannot be null.");
+			throw new ims.domain.exceptions.DomainRuntimeException("The parameter 'catsReferral' of type 'ims.RefMan.vo.CatsReferralRefVo' cannot be null.");
 	}
 
 	@SuppressWarnings("unused")
@@ -177,22 +177,22 @@ public abstract class BaseMyOrderImpl extends DomainImpl implements ims.ocrr.dom
 	}
 
 	@SuppressWarnings("unused")
-	public void validateupdateCatsReferralAdditionalInvStatus(ims.careuk.vo.CatsReferralRefVo catsReferral)
+	public void validateupdateCatsReferralAdditionalInvStatus(ims.RefMan.vo.CatsReferralRefVo catsReferral)
 	{
 	}
 
 	@SuppressWarnings("unused")
-	public void validategetReferrerGP(ims.careuk.vo.CatsReferralRefVo catsRef)
+	public void validategetReferrerGP(ims.RefMan.vo.CatsReferralRefVo catsRef)
 	{
 		if(catsRef == null)
-			throw new ims.domain.exceptions.DomainRuntimeException("The parameter 'catsRef' of type 'ims.careuk.vo.CatsReferralRefVo' cannot be null.");
+			throw new ims.domain.exceptions.DomainRuntimeException("The parameter 'catsRef' of type 'ims.RefMan.vo.CatsReferralRefVo' cannot be null.");
 	}
 
 	@SuppressWarnings("unused")
-	public void validategetInitiallySeenByHcpFromConsultationClinicalNotesByReferral(ims.careuk.vo.CatsReferralRefVo referral)
+	public void validategetInitiallySeenByHcpFromConsultationClinicalNotesByReferral(ims.RefMan.vo.CatsReferralRefVo referral)
 	{
 		if(referral == null)
-			throw new ims.domain.exceptions.DomainRuntimeException("The parameter 'referral' of type 'ims.careuk.vo.CatsReferralRefVo' cannot be null.");
+			throw new ims.domain.exceptions.DomainRuntimeException("The parameter 'referral' of type 'ims.RefMan.vo.CatsReferralRefVo' cannot be null.");
 	}
 
 	@SuppressWarnings("unused")
@@ -216,7 +216,7 @@ public abstract class BaseMyOrderImpl extends DomainImpl implements ims.ocrr.dom
 	}
 
 	@SuppressWarnings("unused")
-	public void validategetCatsReferralListVo(ims.careuk.vo.CatsReferralRefVo catsRefVo)
+	public void validategetCatsReferralListVo(ims.RefMan.vo.CatsReferralRefVo catsRefVo)
 	{
 	}
 
@@ -231,12 +231,12 @@ public abstract class BaseMyOrderImpl extends DomainImpl implements ims.ocrr.dom
 	}
 
 	@SuppressWarnings("unused")
-	public void validatehasArrived(ims.careuk.vo.CatsReferralRefVo referral)
+	public void validatehasArrived(ims.RefMan.vo.CatsReferralRefVo referral)
 	{
 	}
 
 	@SuppressWarnings("unused")
-	public void validategetLeadConsultantForReferral(ims.careuk.vo.CatsReferralRefVo referral)
+	public void validategetLeadConsultantForReferral(ims.RefMan.vo.CatsReferralRefVo referral)
 	{
 	}
 
@@ -271,7 +271,7 @@ public abstract class BaseMyOrderImpl extends DomainImpl implements ims.ocrr.dom
 	}
 
 	@SuppressWarnings("unused")
-	public void validateupdateOrderInvestigationAppointment(ims.careuk.vo.OrderInvWithStatusApptVo orderInvestigationAppointment, ims.ocrr.vo.OrderInvestigationLiteVo investigationToAmend)
+	public void validateupdateOrderInvestigationAppointment(ims.RefMan.vo.OrderInvWithStatusApptVo orderInvestigationAppointment, ims.ocrr.vo.OrderInvestigationLiteVo investigationToAmend)
 	{
 	}
 
@@ -281,7 +281,7 @@ public abstract class BaseMyOrderImpl extends DomainImpl implements ims.ocrr.dom
 	}
 
 	@SuppressWarnings("unused")
-	public void validateupdateCatsReferralCancelStatus(ims.careuk.vo.CatsReferralRefVo referral)
+	public void validateupdateCatsReferralCancelStatus(ims.RefMan.vo.CatsReferralRefVo referral)
 	{
 	}
 

@@ -651,32 +651,32 @@ public class GenForm extends FormBridge
 		contextMenus.contextMenuGenericGridEDIT_VIEW_ICP_ACTIONSItem = factory.createMenuItem(startControlID.intValue() + 9, "Edit/View ICP action(s)", true, false, new Integer(118107), true, false);
 		contextMenus.contextMenuGenericGrid.add(contextMenus.contextMenuGenericGridEDIT_VIEW_ICP_ACTIONSItem);
 		form.registerMenu(contextMenus.contextMenuGenericGrid);
-		contextMenus.CAREUK.contextMenuReferralAppointmentDetailsComponent = factory.createMenu(startControlID.intValue() + 2);
-		contextMenus.CAREUK.contextMenuReferralAppointmentDetailsComponentBOOK_APPTItem = factory.createMenuItem(startControlID.intValue() + 10, "Book New Appointment", true, false, new Integer(102179), true, false);
+		contextMenus.RefMan.contextMenuReferralAppointmentDetailsComponent = factory.createMenu(startControlID.intValue() + 2);
+		contextMenus.RefMan.contextMenuReferralAppointmentDetailsComponentBOOK_APPTItem = factory.createMenuItem(startControlID.intValue() + 10, "Book New Appointment", true, false, new Integer(102179), true, false);
 		if(factory.getUIEngine().getLoggedInRole().hasMenuActionRight(appForm, new ims.framework.MenuAction(2550001)))
-			contextMenus.CAREUK.contextMenuReferralAppointmentDetailsComponent.add(contextMenus.CAREUK.contextMenuReferralAppointmentDetailsComponentBOOK_APPTItem);
-		contextMenus.CAREUK.contextMenuReferralAppointmentDetailsComponentCANCEL_APPTItem = factory.createMenuItem(startControlID.intValue() + 11, "Cancel Appointment", true, false, new Integer(102148), true, false);
+			contextMenus.RefMan.contextMenuReferralAppointmentDetailsComponent.add(contextMenus.RefMan.contextMenuReferralAppointmentDetailsComponentBOOK_APPTItem);
+		contextMenus.RefMan.contextMenuReferralAppointmentDetailsComponentCANCEL_APPTItem = factory.createMenuItem(startControlID.intValue() + 11, "Cancel Appointment", true, false, new Integer(102148), true, false);
 		if(factory.getUIEngine().getLoggedInRole().hasMenuActionRight(appForm, new ims.framework.MenuAction(2550002)))
-			contextMenus.CAREUK.contextMenuReferralAppointmentDetailsComponent.add(contextMenus.CAREUK.contextMenuReferralAppointmentDetailsComponentCANCEL_APPTItem);
-		contextMenus.CAREUK.contextMenuReferralAppointmentDetailsComponentREBOOK_APPTItem = factory.createMenuItem(startControlID.intValue() + 12, "Rebook Appointment", true, false, new Integer(102186), true, false);
+			contextMenus.RefMan.contextMenuReferralAppointmentDetailsComponent.add(contextMenus.RefMan.contextMenuReferralAppointmentDetailsComponentCANCEL_APPTItem);
+		contextMenus.RefMan.contextMenuReferralAppointmentDetailsComponentREBOOK_APPTItem = factory.createMenuItem(startControlID.intValue() + 12, "Rebook Appointment", true, false, new Integer(102186), true, false);
 		if(factory.getUIEngine().getLoggedInRole().hasMenuActionRight(appForm, new ims.framework.MenuAction(2550003)))
-			contextMenus.CAREUK.contextMenuReferralAppointmentDetailsComponent.add(contextMenus.CAREUK.contextMenuReferralAppointmentDetailsComponentREBOOK_APPTItem);
-		contextMenus.CAREUK.contextMenuReferralAppointmentDetailsComponentORDER_INVESTIGATIONItem = factory.createMenuItem(startControlID.intValue() + 13, "Order Investigation", true, false, new Integer(116112), true, false);
+			contextMenus.RefMan.contextMenuReferralAppointmentDetailsComponent.add(contextMenus.RefMan.contextMenuReferralAppointmentDetailsComponentREBOOK_APPTItem);
+		contextMenus.RefMan.contextMenuReferralAppointmentDetailsComponentORDER_INVESTIGATIONItem = factory.createMenuItem(startControlID.intValue() + 13, "Order Investigation", true, false, new Integer(116112), true, false);
 		if(factory.getUIEngine().getLoggedInRole().hasMenuActionRight(appForm, new ims.framework.MenuAction(2550008)))
-			contextMenus.CAREUK.contextMenuReferralAppointmentDetailsComponent.add(contextMenus.CAREUK.contextMenuReferralAppointmentDetailsComponentORDER_INVESTIGATIONItem);
-		contextMenus.CAREUK.contextMenuReferralAppointmentDetailsComponentBOOK_THEATRE_APPTItem = factory.createMenuItem(startControlID.intValue() + 14, "Book Theatre Appointment", true, false, new Integer(102179), true, true);
+			contextMenus.RefMan.contextMenuReferralAppointmentDetailsComponent.add(contextMenus.RefMan.contextMenuReferralAppointmentDetailsComponentORDER_INVESTIGATIONItem);
+		contextMenus.RefMan.contextMenuReferralAppointmentDetailsComponentBOOK_THEATRE_APPTItem = factory.createMenuItem(startControlID.intValue() + 14, "Book Theatre Appointment", true, false, new Integer(102179), true, true);
 		if(factory.getUIEngine().getLoggedInRole().hasMenuActionRight(appForm, new ims.framework.MenuAction(2550004)))
-			contextMenus.CAREUK.contextMenuReferralAppointmentDetailsComponent.add(contextMenus.CAREUK.contextMenuReferralAppointmentDetailsComponentBOOK_THEATRE_APPTItem);
-		contextMenus.CAREUK.contextMenuReferralAppointmentDetailsComponentCANCEL_THEATRE_APPTItem = factory.createMenuItem(startControlID.intValue() + 15, "Cancel Theatre Appointment", true, false, new Integer(102148), true, false);
+			contextMenus.RefMan.contextMenuReferralAppointmentDetailsComponent.add(contextMenus.RefMan.contextMenuReferralAppointmentDetailsComponentBOOK_THEATRE_APPTItem);
+		contextMenus.RefMan.contextMenuReferralAppointmentDetailsComponentCANCEL_THEATRE_APPTItem = factory.createMenuItem(startControlID.intValue() + 15, "Cancel Theatre Appointment", true, false, new Integer(102148), true, false);
 		if(factory.getUIEngine().getLoggedInRole().hasMenuActionRight(appForm, new ims.framework.MenuAction(2550005)))
-			contextMenus.CAREUK.contextMenuReferralAppointmentDetailsComponent.add(contextMenus.CAREUK.contextMenuReferralAppointmentDetailsComponentCANCEL_THEATRE_APPTItem);
-		contextMenus.CAREUK.contextMenuReferralAppointmentDetailsComponentREBOOK_THEATRE_APPTItem = factory.createMenuItem(startControlID.intValue() + 16, "Rebook Theatre Appointment", true, false, new Integer(102186), true, false);
+			contextMenus.RefMan.contextMenuReferralAppointmentDetailsComponent.add(contextMenus.RefMan.contextMenuReferralAppointmentDetailsComponentCANCEL_THEATRE_APPTItem);
+		contextMenus.RefMan.contextMenuReferralAppointmentDetailsComponentREBOOK_THEATRE_APPTItem = factory.createMenuItem(startControlID.intValue() + 16, "Rebook Theatre Appointment", true, false, new Integer(102186), true, false);
 		if(factory.getUIEngine().getLoggedInRole().hasMenuActionRight(appForm, new ims.framework.MenuAction(2550006)))
-			contextMenus.CAREUK.contextMenuReferralAppointmentDetailsComponent.add(contextMenus.CAREUK.contextMenuReferralAppointmentDetailsComponentREBOOK_THEATRE_APPTItem);
-		contextMenus.CAREUK.contextMenuReferralAppointmentDetailsComponentVIEW_APPT_HISTORYItem = factory.createMenuItem(startControlID.intValue() + 17, "View Appointment History", true, false, new Integer(102555), true, false);
+			contextMenus.RefMan.contextMenuReferralAppointmentDetailsComponent.add(contextMenus.RefMan.contextMenuReferralAppointmentDetailsComponentREBOOK_THEATRE_APPTItem);
+		contextMenus.RefMan.contextMenuReferralAppointmentDetailsComponentVIEW_APPT_HISTORYItem = factory.createMenuItem(startControlID.intValue() + 17, "View Appointment History", true, false, new Integer(102555), true, false);
 		if(factory.getUIEngine().getLoggedInRole().hasMenuActionRight(appForm, new ims.framework.MenuAction(2550007)))
-			contextMenus.CAREUK.contextMenuReferralAppointmentDetailsComponent.add(contextMenus.CAREUK.contextMenuReferralAppointmentDetailsComponentVIEW_APPT_HISTORYItem);
-		form.registerMenu(contextMenus.CAREUK.contextMenuReferralAppointmentDetailsComponent);
+			contextMenus.RefMan.contextMenuReferralAppointmentDetailsComponent.add(contextMenus.RefMan.contextMenuReferralAppointmentDetailsComponentVIEW_APPT_HISTORYItem);
+		form.registerMenu(contextMenus.RefMan.contextMenuReferralAppointmentDetailsComponent);
 
 
 		// Panel Controls
@@ -722,7 +722,7 @@ public class GenForm extends FormBridge
 
 		// TextBox Controls
 		RuntimeAnchoring anchoringHelper23 = new RuntimeAnchoring(designSize, runtimeSize, 80, 40, 272, 48, ims.framework.enumerations.ControlAnchoring.TOPLEFTRIGHT);
-		super.addControl(factory.getControl(TextBox.class, new Object[] { control, new Integer(startControlID.intValue() + 1023), new Integer(anchoringHelper23.getX()), new Integer(anchoringHelper23.getY()), new Integer(anchoringHelper23.getWidth()), new Integer(anchoringHelper23.getHeight()), new Integer(startTabIndex.intValue() + 3), ControlState.DISABLED, ControlState.ENABLED, ims.framework.enumerations.ControlAnchoring.TOPLEFTRIGHT,Boolean.TRUE, new Integer(255), Boolean.TRUE, Boolean.FALSE, contextMenus.CAREUK.contextMenuReferralAppointmentDetailsComponent, null, Boolean.FALSE, ims.framework.enumerations.CharacterCasing.NORMAL, ims.framework.enumerations.TextTrimming.NONE, "", ""}));
+		super.addControl(factory.getControl(TextBox.class, new Object[] { control, new Integer(startControlID.intValue() + 1023), new Integer(anchoringHelper23.getX()), new Integer(anchoringHelper23.getY()), new Integer(anchoringHelper23.getWidth()), new Integer(anchoringHelper23.getHeight()), new Integer(startTabIndex.intValue() + 3), ControlState.DISABLED, ControlState.ENABLED, ims.framework.enumerations.ControlAnchoring.TOPLEFTRIGHT,Boolean.TRUE, new Integer(255), Boolean.TRUE, Boolean.FALSE, contextMenus.RefMan.contextMenuReferralAppointmentDetailsComponent, null, Boolean.FALSE, ims.framework.enumerations.CharacterCasing.NORMAL, ims.framework.enumerations.TextTrimming.NONE, "", ""}));
 
 		// Grid Controls
 		RuntimeAnchoring anchoringHelper24 = new RuntimeAnchoring(designSize, runtimeSize, 16, 104, 816, 328, ims.framework.enumerations.ControlAnchoring.ALL);
@@ -846,7 +846,7 @@ public class GenForm extends FormBridge
 	public final class ContextMenus implements java.io.Serializable
 	{
 		private static final long serialVersionUID = 1L;
-		public CAREUKNamespace CAREUK = new CAREUKNamespace();
+		public RefManNamespace RefMan = new RefManNamespace();
 		public final class GenericGrid implements java.io.Serializable
 		{
 			private static final long serialVersionUID = 1L;
@@ -930,7 +930,7 @@ public class GenForm extends FormBridge
 			return this.contextMenuGenericGridEDIT_VIEW_ICP_ACTIONSItem;
 		}
 		private MenuItem contextMenuGenericGridEDIT_VIEW_ICP_ACTIONSItem;
-		public final class CAREUKNamespace implements java.io.Serializable
+		public final class RefManNamespace implements java.io.Serializable
 		{
 			private static final long serialVersionUID = 1L;
 			public final class ReferralAppointmentDetailsComponent implements java.io.Serializable
@@ -1107,7 +1107,7 @@ public class GenForm extends FormBridge
 			fields[67] = new ims.framework.ReportField(this.context, "_cvp_Clinical.ExtendedClinicalNotesListFilter", "BO-1011100000-CARECONTEXT", "CareContext");
 			fields[68] = new ims.framework.ReportField(this.context, "_cvp_Core.PasEvent", "BO-1014100003-ID", "ID_PASEvent");
 			fields[69] = new ims.framework.ReportField(this.context, "_cvp_Correspondence.CorrespondenceDetails", "BO-1052100001-ID", "ID_CorrespondenceDetails");
-			fields[70] = new ims.framework.ReportField(this.context, "_cvp_CareUk.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
+			fields[70] = new ims.framework.ReportField(this.context, "_cvp_RefMan.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
 			fields[71] = new ims.framework.ReportField(this.context, "_cv_Therapies.HomeVisit", "BO-1019100088-ID", "ID_HomeVisit");
 			fields[72] = new ims.framework.ReportField(this.context, prefix + "_lv_Therapies.HomeVisitRooms.__internal_x_context__HomeVisitVo_" + componentIdentifier, "BO-1019100088-ID", "ID_HomeVisit");
 			fields[73] = new ims.framework.ReportField(this.context, prefix + "_lv_Therapies.HomeVisitRooms.__internal_x_context__HomeVisitVo_" + componentIdentifier, "BO-1019100088-CARECONTEXT", "CareContext");

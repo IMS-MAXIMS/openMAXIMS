@@ -39,7 +39,7 @@ public final class NursingandAnaesthetistOutcome extends ims.rules.types.RulesEn
 		super.isPublic = true;
 		super.supportsNotifications = false;
 		super.description = "Nursing and Anaesthetist Outcome";
-		super.businessObjectName = "ims.careuk.domain.objects.FitForSurgeryAssesment";
+		super.businessObjectName = "ims.RefMan.domain.objects.FitForSurgeryAssesment";
 		super.fields = new ArrayList<ims.rules.types.RulesEngineField>();
 		super.fields.add(new ims.rules.types.RulesEngineField("id", "Code", "Code", false, ims.rules.types.RulesEngineFieldType.ENTITY_CODE, null, 0, "Id", this));
 		fieldEntityIndex = entities.indexOf(new ims.rules.helper.PatientCareContext(entities));

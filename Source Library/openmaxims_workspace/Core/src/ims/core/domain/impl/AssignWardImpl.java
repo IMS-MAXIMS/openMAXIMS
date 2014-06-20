@@ -22,7 +22,7 @@
 
 package ims.core.domain.impl;
 
-import ims.careuk.domain.objects.PatientElectiveList;
+import ims.RefMan.domain.objects.PatientElectiveList;
 import ims.core.admin.pas.domain.objects.PendingElectiveAdmission;
 import ims.core.domain.AssignWard;
 import ims.core.domain.BedInfoDialog;

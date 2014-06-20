@@ -22,8 +22,8 @@
 
 package ims.clinical.forms.patientappointmentsdialog;
 
-import ims.careuk.vo.OrderInvApptListVo;
-import ims.careuk.vo.ReferralForFitForSurgeryVo;
+import ims.RefMan.vo.OrderInvApptListVo;
+import ims.RefMan.vo.ReferralForFitForSurgeryVo;
 import ims.clinical.forms.patientappointmentsdialog.GenForm.grdApptsRow;
 import ims.framework.enumerations.DialogResult;
 import ims.framework.enumerations.SortOrder;

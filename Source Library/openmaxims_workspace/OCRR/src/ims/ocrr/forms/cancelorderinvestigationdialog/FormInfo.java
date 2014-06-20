@@ -61,6 +61,6 @@ public final class FormInfo extends ims.framework.FormInfo
 	}
 	public String getImagePath()
 	{
-		return "Images/CAREUK/cancellation_48.png";
+		return "Images/RefMan/cancellation_48.png";
 	}
 }

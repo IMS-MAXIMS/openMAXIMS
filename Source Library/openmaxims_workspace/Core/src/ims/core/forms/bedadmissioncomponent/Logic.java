@@ -22,18 +22,18 @@
 
 package ims.core.forms.bedadmissioncomponent;
 
-import ims.careuk.vo.CATSReferralStatusRefVoCollection;
-import ims.careuk.vo.CatsReferralStatusVo;
-import ims.careuk.vo.ContractConfigShortVo;
-import ims.careuk.vo.ElectiveListStatusVo;
-import ims.careuk.vo.PatientElectiveListBedAdmissionVo;
-import ims.careuk.vo.PatientElectiveListBedAdmissionVoCollection;
-import ims.careuk.vo.PatientElectiveListBedInfoVo;
-import ims.careuk.vo.PatientElectiveListBedInfoVoCollection;
-import ims.careuk.vo.TCIOutcomeForPatientElectiveListVo;
-import ims.careuk.vo.lookups.AdmissionOfferOutcome;
-import ims.careuk.vo.lookups.ReferralApptStatus;
-import ims.careuk.vo.lookups.TCIStatusChangeReason;
+import ims.RefMan.vo.CATSReferralStatusRefVoCollection;
+import ims.RefMan.vo.CatsReferralStatusVo;
+import ims.RefMan.vo.ContractConfigShortVo;
+import ims.RefMan.vo.ElectiveListStatusVo;
+import ims.RefMan.vo.PatientElectiveListBedAdmissionVo;
+import ims.RefMan.vo.PatientElectiveListBedAdmissionVoCollection;
+import ims.RefMan.vo.PatientElectiveListBedInfoVo;
+import ims.RefMan.vo.PatientElectiveListBedInfoVoCollection;
+import ims.RefMan.vo.TCIOutcomeForPatientElectiveListVo;
+import ims.RefMan.vo.lookups.AdmissionOfferOutcome;
+import ims.RefMan.vo.lookups.ReferralApptStatus;
+import ims.RefMan.vo.lookups.TCIStatusChangeReason;
 import ims.ccosched.vo.TCIForPatientElectiveListBedInfoDetailsVo;
 import ims.configuration.gen.ConfigFlag;
 import ims.core.admin.pas.vo.AdmissionDetailRefVoCollection;

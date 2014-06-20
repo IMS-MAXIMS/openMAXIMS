@@ -125,9 +125,9 @@ public class O01VoMapper extends VoMapper
 				&&  ocsIf.getService(msgVo.getInvestigations()
 						.get(0).getInvestigation()).getCanBeScheduled().booleanValue() )
 		{
-			//ims.careuk.helper.IHL7Helper careukHelper= new ims.careuk.helper.CareUkHL7Helper();
-			IHL7Helper careukHelper=(IHL7Helper)getDomainImpl("ims.careuk.helper.CareUkHL7Helper");
-			order = careukHelper.PopulateOrderMessage(order,msgVo,msgVo.getInvestigations().get(0),careUKdomain);
+			//ims.RefMan.helper.IHL7Helper RefManHelper= new ims.RefMan.helper.RefManHL7Helper();
+			IHL7Helper RefManHelper=(IHL7Helper)getDomainImpl("ims.RefMan.helper.RefManHL7Helper");
+			order = RefManHelper.PopulateOrderMessage(order,msgVo,msgVo.getInvestigations().get(0),RefMandomain);
 		}
 		LOG.debug("O01VoMapper populateMessage: exit");		
 		
@@ -935,10 +935,10 @@ public class O01VoMapper extends VoMapper
 		LOG.debug("O01VoMapper populateStatusChangeRadiologyMessage: entry");
 		ORM_O01 order = new ORM_O01();
 		
-		PatientRefVo patient= careUKdomain.getPatientFromAppointment(event.getAppointment());
+		PatientRefVo patient= RefMandomain.getPatientFromAppointment(event.getAppointment());
 		if(null==event.getInvestigation())
 			return null;
-		OcsOrderSessionRefVo orderRef=careUKdomain.getOrderFromInvestigation(event.getInvestigation());
+		OcsOrderSessionRefVo orderRef=RefMandomain.getOrderFromInvestigation(event.getInvestigation());
 		IfOutOcsOrderVo orderVo= ocsIf.getOrder(orderRef);
 		
 		DecimalFormat myFormatter = new DecimalFormat("000000000");  // Required for placer order number
@@ -1086,8 +1086,8 @@ public class O01VoMapper extends VoMapper
 		// Only do this for XOs that are .....
 		// contract is non-diagnostic and provider system has RebookApptWithCancelandFullXO set
 		
-		IHL7Helper careuk=(IHL7Helper)getDomainImpl("ims.careuk.helper.CareUkHL7Helper");
-		Boolean nonDiagnostic = !careuk.isReferralDiagnostic(event.getAppointment().getBoId()) ;
+		IHL7Helper RefMan=(IHL7Helper)getDomainImpl("ims.RefMan.helper.RefManHL7Helper");
+		Boolean nonDiagnostic = !RefMan.isReferralDiagnostic(event.getAppointment().getBoId()) ;
 		
 		String rebookApptWithCancelandFullXO = HL7Utils.getConfigItem(toConfigItemArray(event.getProviderSystem().getConfigItems()), ConfigItems.RebookApptWithCancelandFullXO);
 		boolean rebookWithFullXO=false;
@@ -1188,8 +1188,8 @@ public class O01VoMapper extends VoMapper
 		
 		if (service.getCanBeScheduled()) 
 		{
-		IHL7Helper careukHelper=(IHL7Helper)getDomainImpl("ims.careuk.helper.CareUkHL7Helper");
-		order = careukHelper.PopulateOrderMessage(order,null,orderInv,careUKdomain);
+		IHL7Helper RefManHelper=(IHL7Helper)getDomainImpl("ims.RefMan.helper.RefManHL7Helper");
+		order = RefManHelper.PopulateOrderMessage(order,null,orderInv,RefMandomain);
 		}
 		LOG.debug("O01VoMapper populateStatusChangeRadiologyMessage: exit");
 		return order;

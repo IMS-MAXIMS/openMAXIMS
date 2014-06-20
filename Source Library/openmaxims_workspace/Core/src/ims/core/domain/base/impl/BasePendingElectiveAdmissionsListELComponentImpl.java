@@ -70,12 +70,12 @@ public abstract class BasePendingElectiveAdmissionsListELComponentImpl extends D
 	}
 
 	@SuppressWarnings("unused")
-	public void validategetCurrentPendingRecord(ims.careuk.vo.PatientElectiveListRefVo patientElectiveListRef)
+	public void validategetCurrentPendingRecord(ims.RefMan.vo.PatientElectiveListRefVo patientElectiveListRef)
 	{
 	}
 
 	@SuppressWarnings("unused")
-	public void validatesaveTCIDetails(ims.careuk.vo.PatientElectiveTCIBedManagerCommentVo tciDetails)
+	public void validatesaveTCIDetails(ims.RefMan.vo.PatientElectiveTCIBedManagerCommentVo tciDetails)
 	{
 	}
 }

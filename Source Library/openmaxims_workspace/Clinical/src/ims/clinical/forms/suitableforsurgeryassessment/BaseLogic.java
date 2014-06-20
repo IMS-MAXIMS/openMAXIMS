@@ -218,7 +218,7 @@ public abstract class BaseLogic extends Handlers
 			{
 				for(int x = 0; x < listOfValues.size(); x++)
 				{
-					ims.careuk.vo.lookups.ReasonNotSuitableForSurgery existingInstance = (ims.careuk.vo.lookups.ReasonNotSuitableForSurgery)listOfValues.get(x);
+					ims.RefMan.vo.lookups.ReasonNotSuitableForSurgery existingInstance = (ims.RefMan.vo.lookups.ReasonNotSuitableForSurgery)listOfValues.get(x);
 					if(!existingInstance.isActive())
 					{
 						bindcmbReasonNotSuitableLookup();
@@ -227,9 +227,9 @@ public abstract class BaseLogic extends Handlers
 				}
 			}
 		}
-		else if(value instanceof ims.careuk.vo.lookups.ReasonNotSuitableForSurgery)
+		else if(value instanceof ims.RefMan.vo.lookups.ReasonNotSuitableForSurgery)
 		{
-			ims.careuk.vo.lookups.ReasonNotSuitableForSurgery instance = (ims.careuk.vo.lookups.ReasonNotSuitableForSurgery)value;
+			ims.RefMan.vo.lookups.ReasonNotSuitableForSurgery instance = (ims.RefMan.vo.lookups.ReasonNotSuitableForSurgery)value;
 
 			if(listOfValues != null)
 			{
@@ -238,7 +238,7 @@ public abstract class BaseLogic extends Handlers
 
 				for(int x = 0; x < listOfValues.size(); x++)
 				{
-					ims.careuk.vo.lookups.ReasonNotSuitableForSurgery existingInstance = (ims.careuk.vo.lookups.ReasonNotSuitableForSurgery)listOfValues.get(x);
+					ims.RefMan.vo.lookups.ReasonNotSuitableForSurgery existingInstance = (ims.RefMan.vo.lookups.ReasonNotSuitableForSurgery)listOfValues.get(x);
 					if(existingInstance.equals(instance))
 						return;
 				}
@@ -250,7 +250,7 @@ public abstract class BaseLogic extends Handlers
 	protected final void bindcmbReasonNotSuitableLookup()
 	{
 		this.form.ctnConclusions().cmbReasonNotSuitable().clear();
-		ims.careuk.vo.lookups.ReasonNotSuitableForSurgeryCollection lookupCollection = ims.careuk.vo.lookups.LookupHelper.getReasonNotSuitableForSurgery(this.domain.getLookupService());
+		ims.RefMan.vo.lookups.ReasonNotSuitableForSurgeryCollection lookupCollection = ims.RefMan.vo.lookups.LookupHelper.getReasonNotSuitableForSurgery(this.domain.getLookupService());
 		for(int x = 0; x < lookupCollection.size(); x++)
 		{
 			this.form.ctnConclusions().cmbReasonNotSuitable().newRow(lookupCollection.get(x), lookupCollection.get(x).getText(), lookupCollection.get(x).getImage(), lookupCollection.get(x).getTextColor());
@@ -258,13 +258,13 @@ public abstract class BaseLogic extends Handlers
 	}
 	protected final void setcmbReasonNotSuitableLookupValue(int id)
 	{
-		ims.careuk.vo.lookups.ReasonNotSuitableForSurgery instance = ims.careuk.vo.lookups.LookupHelper.getReasonNotSuitableForSurgeryInstance(this.domain.getLookupService(), id);
+		ims.RefMan.vo.lookups.ReasonNotSuitableForSurgery instance = ims.RefMan.vo.lookups.LookupHelper.getReasonNotSuitableForSurgeryInstance(this.domain.getLookupService(), id);
 		if(instance != null)
 			this.form.ctnConclusions().cmbReasonNotSuitable().setValue(instance);
 	}
 	protected final void defaultcmbReasonNotSuitableLookupValue()
 	{
-		this.form.ctnConclusions().cmbReasonNotSuitable().setValue((ims.careuk.vo.lookups.ReasonNotSuitableForSurgery)domain.getLookupService().getDefaultInstance(ims.careuk.vo.lookups.ReasonNotSuitableForSurgery.class, engine.getFormName().getID(), ims.careuk.vo.lookups.ReasonNotSuitableForSurgery.TYPE_ID));
+		this.form.ctnConclusions().cmbReasonNotSuitable().setValue((ims.RefMan.vo.lookups.ReasonNotSuitableForSurgery)domain.getLookupService().getDefaultInstance(ims.RefMan.vo.lookups.ReasonNotSuitableForSurgery.class, engine.getFormName().getID(), ims.RefMan.vo.lookups.ReasonNotSuitableForSurgery.TYPE_ID));
 	}
 	public void initialize() throws ims.framework.exceptions.FormOpenException
 	{

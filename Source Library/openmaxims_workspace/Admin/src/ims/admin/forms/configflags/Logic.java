@@ -429,6 +429,15 @@ public class Logic extends BaseLogic
 		if (formName.equals(form.getForms().Core.YesNoDialog) && (result.equals(DialogResult.OK) ||result.equals(DialogResult.YES) ))
 		{
 			String password = form.getGlobalContext().getPasswordEntered();
+			//********************************************************************
+			//	IMPORTANT - YOU NEED TO ENTER A SECURE LOCAL PASSWORD BELOW
+			//
+			//	Replace the "xxxx" with a password that the system administrators
+			//	will remember. The password is hard coded and so must be entered
+			//	before the code is built. The password will give access to low-level
+			//	system configuration parameters and incorrectly setting these
+			//	could cause unexpected results or damage your data.
+			//********************************************************************
 			if (password == null || !password.equals("xxxx"))
 			{
 				engine.showMessage("Incorrect password entered");

@@ -545,7 +545,7 @@ public class GenForm extends FormBridge
 				OrderInvStatusHistory = new LocalFormName(116143);
 				CentricityWebPACSViewer = new LocalFormName(116156);
 				NewResults = new LocalFormName(116127);
-				CAREUKNewResults = new LocalFormName(116147);
+				RefManNewResults = new LocalFormName(116147);
 				PathologyOrders = new LocalFormName(116139);
 				RadiologyOrders = new LocalFormName(116138);
 				ResultCommentsDialog = new LocalFormName(116162);
@@ -557,7 +557,7 @@ public class GenForm extends FormBridge
 			public final FormName OrderInvStatusHistory;
 			public final FormName CentricityWebPACSViewer;
 			public final FormName NewResults;
-			public final FormName CAREUKNewResults;
+			public final FormName RefManNewResults;
 			public final FormName PathologyOrders;
 			public final FormName RadiologyOrders;
 			public final FormName ResultCommentsDialog;
@@ -852,7 +852,7 @@ public class GenForm extends FormBridge
 			fields[67] = new ims.framework.ReportField(this.context, "_cvp_Clinical.ExtendedClinicalNotesListFilter", "BO-1011100000-CARECONTEXT", "CareContext");
 			fields[68] = new ims.framework.ReportField(this.context, "_cvp_Core.PasEvent", "BO-1014100003-ID", "ID_PASEvent");
 			fields[69] = new ims.framework.ReportField(this.context, "_cvp_Correspondence.CorrespondenceDetails", "BO-1052100001-ID", "ID_CorrespondenceDetails");
-			fields[70] = new ims.framework.ReportField(this.context, "_cvp_CareUk.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
+			fields[70] = new ims.framework.ReportField(this.context, "_cvp_RefMan.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
 			fields[71] = new ims.framework.ReportField(this.context, "_cv_Core.SecondPatientShort", "BO-1001100000-ID", "ID_Patient");
 			fields[72] = new ims.framework.ReportField(this.context, "_cv_Core.SecondPatientShort", "BO-1001100000-SEX", "Sex");
 			fields[73] = new ims.framework.ReportField(this.context, "_cv_Core.SecondPatientShort", "BO-1001100000-DOB", "Dob");

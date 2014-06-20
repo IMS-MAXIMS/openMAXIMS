@@ -85,31 +85,31 @@ public class GenForm extends FormBridge
 	{
 		private static final long serialVersionUID = 1L;
 		
-		public void newRow(ims.careuk.vo.ContractConfigShortVo value, String text)
+		public void newRow(ims.RefMan.vo.ContractConfigShortVo value, String text)
 		{
 			super.control.newRow(value, text);
 		}
-		public void newRow(ims.careuk.vo.ContractConfigShortVo value, String text, ims.framework.utils.Image image)
+		public void newRow(ims.RefMan.vo.ContractConfigShortVo value, String text, ims.framework.utils.Image image)
 		{
 			super.control.newRow(value, text, image);
 		}
-		public void newRow(ims.careuk.vo.ContractConfigShortVo value, String text, ims.framework.utils.Color textColor)
+		public void newRow(ims.RefMan.vo.ContractConfigShortVo value, String text, ims.framework.utils.Color textColor)
 		{
 			super.control.newRow(value, text, textColor);
 		}
-		public void newRow(ims.careuk.vo.ContractConfigShortVo value, String text, ims.framework.utils.Image image, ims.framework.utils.Color textColor)
+		public void newRow(ims.RefMan.vo.ContractConfigShortVo value, String text, ims.framework.utils.Image image, ims.framework.utils.Color textColor)
 		{
 			super.control.newRow(value, text, image, textColor);
 		}
-		public boolean removeRow(ims.careuk.vo.ContractConfigShortVo value)
+		public boolean removeRow(ims.RefMan.vo.ContractConfigShortVo value)
 		{
 			return super.control.removeRow(value);
 		}
-		public ims.careuk.vo.ContractConfigShortVo getValue()
+		public ims.RefMan.vo.ContractConfigShortVo getValue()
 		{
-			return (ims.careuk.vo.ContractConfigShortVo)super.control.getValue();
+			return (ims.RefMan.vo.ContractConfigShortVo)super.control.getValue();
 		}
-		public void setValue(ims.careuk.vo.ContractConfigShortVo value)
+		public void setValue(ims.RefMan.vo.ContractConfigShortVo value)
 		{
 			super.control.setValue(value);
 		}
@@ -1100,7 +1100,7 @@ public class GenForm extends FormBridge
 			fields[67] = new ims.framework.ReportField(this.context, "_cvp_Clinical.ExtendedClinicalNotesListFilter", "BO-1011100000-CARECONTEXT", "CareContext");
 			fields[68] = new ims.framework.ReportField(this.context, "_cvp_Core.PasEvent", "BO-1014100003-ID", "ID_PASEvent");
 			fields[69] = new ims.framework.ReportField(this.context, "_cvp_Correspondence.CorrespondenceDetails", "BO-1052100001-ID", "ID_CorrespondenceDetails");
-			fields[70] = new ims.framework.ReportField(this.context, "_cvp_CareUk.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
+			fields[70] = new ims.framework.ReportField(this.context, "_cvp_RefMan.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
 			fields[71] = new ims.framework.ReportField(this.context, prefix + "_lv_Scheduling.DirectoryOfServiceAdmin.__internal_x_context__DirectoryOfService_" + componentIdentifier, "BO-1055100011-ID", "ID_DirectoryofService");
 			fields[72] = new ims.framework.ReportField(this.context, prefix + "_lv_Scheduling.DirectoryOfServiceAdmin.__internal_x_context__DirectoryOfService_" + componentIdentifier, "BO-1055100011-DOSNAME", "DoSName");
 			fields[73] = new ims.framework.ReportField(this.context, prefix + "_lv_Scheduling.DirectoryOfServiceAdmin.__internal_x_context__DirectoryOfService_" + componentIdentifier, "BO-1055100011-DOSID", "DoSId");

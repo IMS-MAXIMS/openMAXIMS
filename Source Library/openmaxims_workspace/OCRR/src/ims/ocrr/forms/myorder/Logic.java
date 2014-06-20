@@ -26,7 +26,7 @@ import ims.admin.vo.SelectItemVo;
 import ims.admin.vo.SelectItemVoCollection;
 import ims.assessment.vo.PatientAssessmentAnswerVo;
 import ims.assessment.vo.PatientAssessmentAnswerVoCollection;
-import ims.careuk.vo.OrderInvWithStatusApptVo;
+import ims.RefMan.vo.OrderInvWithStatusApptVo;
 import ims.chooseandbook.vo.lookups.ActionRequestType;
 import ims.clinical.vo.SummaryClinicalInformationVo;
 import ims.configuration.AppRight;
@@ -1941,7 +1941,7 @@ public class Logic extends BaseLogic
 		// WDEV-13999 - CARE UK project only functionality
 		if (ConfigFlag.UI.ORDER_ENTRY_UI_TYPE.getValue().equals(CARE_UK_UI_ORDER)) // - CARE UK project only functionality -
 		{
-			setCareUkClinicalDetails();
+			setRefManClinicalDetails();
 		}
 
 		// WDEV-5344
@@ -2174,7 +2174,7 @@ public class Logic extends BaseLogic
 	/**
 	 * WDEV-13999 Function used to default in the Care UK clinical details
 	 */
-	private void setCareUkClinicalDetails()
+	private void setRefManClinicalDetails()
 	{
 		// Get logged in user HCP (if any)
 		HcpLiteVo userHCP = (HcpLiteVo) domain.getHcpLiteUser();
@@ -2189,9 +2189,9 @@ public class Logic extends BaseLogic
 		}
 		// Default in the Lead Consultant for speciality from Service associated to the referral
 		// if the patient has not arrived yet (for this referral)
-		else if (form.getGlobalContext().CareUk.getCatsReferralIsNotNull() && Boolean.FALSE.equals(domain.hasArrived(form.getGlobalContext().CareUk.getCatsReferral())))
+		else if (form.getGlobalContext().RefMan.getCatsReferralIsNotNull() && Boolean.FALSE.equals(domain.hasArrived(form.getGlobalContext().RefMan.getCatsReferral())))
 		{
-			HcpLiteVo leadConsultant = domain.getLeadConsultantForReferral(form.getGlobalContext().CareUk.getCatsReferral());
+			HcpLiteVo leadConsultant = domain.getLeadConsultantForReferral(form.getGlobalContext().RefMan.getCatsReferral());
 
 			if (leadConsultant != null)
 			{
@@ -2783,7 +2783,7 @@ public class Logic extends BaseLogic
 			// WDEV-13999
 			if (ConfigFlag.UI.ORDER_ENTRY_UI_TYPE.getValue().equals(CARE_UK_UI_ORDER)) // - CARE UK project only functionality -
 			{
-				fillInCareUkClinicalDetails(order);
+				fillInRefManClinicalDetails(order);
 			}
 
 
@@ -2899,7 +2899,7 @@ public class Logic extends BaseLogic
 	/**
 	 * WDEV-13999
 	 */
-	private void fillInCareUkClinicalDetails(OcsOrderVo order)
+	private void fillInRefManClinicalDetails(OcsOrderVo order)
 	{
 		if (order == null)
 			return;
@@ -3970,7 +3970,7 @@ public class Logic extends BaseLogic
 		
 		try
 		{
-			voOcsOrder = domain.saveOcsOrder(voOcsOrder, workListItems, state, form.getGlobalContext().CareUk.getCatsReferral(), form.getGlobalContext().Rotherham.getAppointmentToLink());
+			voOcsOrder = domain.saveOcsOrder(voOcsOrder, workListItems, state, form.getGlobalContext().RefMan.getCatsReferral(), form.getGlobalContext().Rotherham.getAppointmentToLink());
 
 			// WDEV-13999
 			// CARE UK project functionality ONLY
@@ -4006,15 +4006,15 @@ public class Logic extends BaseLogic
 				domain.updateInvestigationStatus(investigationToAmendStatus);
 			}
 
-			if ((ConfigFlag.UI.ORDER_ENTRY_UI_TYPE.getValue().equals("CARE_UK") || ConfigFlag.UI.ORDER_ENTRY_UI_TYPE.getValue().equals("UKSH")) && form.getGlobalContext().CareUk.getCatsReferralIsNotNull()) // WDEV-11881
+			if ((ConfigFlag.UI.ORDER_ENTRY_UI_TYPE.getValue().equals("CARE_UK") || ConfigFlag.UI.ORDER_ENTRY_UI_TYPE.getValue().equals("UKSH")) && form.getGlobalContext().RefMan.getCatsReferralIsNotNull()) // WDEV-11881
 			{
-				domain.updateCatsReferralAdditionalInvStatus(form.getGlobalContext().CareUk.getCatsReferral());
+				domain.updateCatsReferralAdditionalInvStatus(form.getGlobalContext().RefMan.getCatsReferral());
 			}
 		}
 		catch (StaleObjectException e)
 		{
-			if (form.getGlobalContext().CareUk.getCatsReferral() != null)
-				form.getGlobalContext().CareUk.setCatsReferral(domain.getCatsReferralListVo(form.getGlobalContext().CareUk.getCatsReferral()));// wdev-12864
+			if (form.getGlobalContext().RefMan.getCatsReferral() != null)
+				form.getGlobalContext().RefMan.setCatsReferral(domain.getCatsReferralListVo(form.getGlobalContext().RefMan.getCatsReferral()));// wdev-12864
 
 			engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
 			engine.close(DialogResult.CANCEL);
@@ -4022,8 +4022,8 @@ public class Logic extends BaseLogic
 		}
 
 		processOrder(state, engine.hasRight(AppRight.CAN_AUTHORIZE_CLINICAL_IMAGING_ORDERS), engine.hasRight(AppRight.CAN_AUTHORIZE_PATHOLOGY_ORDERS), voOcsOrder);
-		if (form.getGlobalContext().CareUk.getCatsReferral() != null)
-			form.getGlobalContext().CareUk.setCatsReferral(domain.getCatsReferralListVo(form.getGlobalContext().CareUk.getCatsReferral()));// wdev-12864
+		if (form.getGlobalContext().RefMan.getCatsReferral() != null)
+			form.getGlobalContext().RefMan.setCatsReferral(domain.getCatsReferralListVo(form.getGlobalContext().RefMan.getCatsReferral()));// wdev-12864
 	}
 
 
@@ -4056,7 +4056,7 @@ public class Logic extends BaseLogic
 				cancelAppointment(appointment);
 
 				// OK to do this as this function should only be called in CARE UK project
-				domain.updateCatsReferralCancelStatus(form.getGlobalContext().CareUk.getCatsReferral());
+				domain.updateCatsReferralCancelStatus(form.getGlobalContext().RefMan.getCatsReferral());
 			}
 		}
 		else
@@ -4546,8 +4546,8 @@ public class Logic extends BaseLogic
 		}
 
 		// WDEV-6786
-		if (form.getGlobalContext().CareUk.getCatsReferralIsNotNull())
-			voOcsOrder.setResponsibleGp(domain.getReferrerGP(form.getGlobalContext().CareUk.getCatsReferral()));
+		if (form.getGlobalContext().RefMan.getCatsReferralIsNotNull())
+			voOcsOrder.setResponsibleGp(domain.getReferrerGP(form.getGlobalContext().RefMan.getCatsReferral()));
 
 		voOcsOrder.setOrderCategory(form.lyrDetails().tabGenDetails().cmbOrderCategory().getValue());
 
@@ -6628,7 +6628,7 @@ public class Logic extends BaseLogic
 	}
 
 	/**
-	 * for CAREUK
+	 * for RefMan
 	 */
 	private void displayRadOrPathTab()
 	{
@@ -6879,9 +6879,9 @@ public class Logic extends BaseLogic
 		boolean loggedInEmergencyDepartment = currentLocation != null && currentLocation instanceof LocationLiteVo && LocationType.ANE.equals(((LocationLiteVo)currentLocation).getType());
 		
 		// WDEV-9913 - if the cats referral is not null retrieve the initially seen by HCP for the ConsultationClinicalNotes record
-		if (form.getGlobalContext().CareUk.getCatsReferralIsNotNull())
+		if (form.getGlobalContext().RefMan.getCatsReferralIsNotNull())
 		{
-			HcpLiteVo voHcp = domain.getInitiallySeenByHcpFromConsultationClinicalNotesByReferral(form.getGlobalContext().CareUk.getCatsReferral());
+			HcpLiteVo voHcp = domain.getInitiallySeenByHcpFromConsultationClinicalNotesByReferral(form.getGlobalContext().RefMan.getCatsReferral());
 			if (voHcp != null)
 			{
 				form.lyrDetails().tabGenDetails().qmbClinician().newRow(voHcp, voHcp.toString());

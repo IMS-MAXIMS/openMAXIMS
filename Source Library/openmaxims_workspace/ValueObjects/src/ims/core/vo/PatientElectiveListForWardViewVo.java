@@ -24,9 +24,9 @@
 package ims.core.vo;
 
 /**
- * Linked to CAREUK.PatientElectiveList business object (ID: 1014100020).
+ * Linked to RefMan.PatientElectiveList business object (ID: 1014100020).
  */
-public class PatientElectiveListForWardViewVo extends ims.careuk.vo.PatientElectiveListRefVo implements ims.vo.ImsCloneable, Comparable
+public class PatientElectiveListForWardViewVo extends ims.RefMan.vo.PatientElectiveListRefVo implements ims.vo.ImsCloneable, Comparable
 {
 	private static final long serialVersionUID = 1L;
 

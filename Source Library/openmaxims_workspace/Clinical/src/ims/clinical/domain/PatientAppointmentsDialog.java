@@ -27,5 +27,5 @@ package ims.clinical.domain;
 public interface PatientAppointmentsDialog extends ims.domain.DomainInterface
 {
 	// Generated from form domain interface definition
-	public ims.careuk.vo.ReferralForFitForSurgeryVo getReferralByCareContext(ims.core.admin.vo.CareContextRefVo careContext);
+	public ims.RefMan.vo.ReferralForFitForSurgeryVo getReferralByCareContext(ims.core.admin.vo.CareContextRefVo careContext);
 }

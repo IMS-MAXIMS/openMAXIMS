@@ -27,5 +27,5 @@ package ims.ocrr.domain;
 public interface RejectedInvestigationDetails extends ims.domain.DomainInterface
 {
 	// Generated from form domain interface definition
-	public ims.ocrr.vo.OrderInvestigationLiteVoCollection listRejectedInvestigations(ims.careuk.vo.CatsReferralRefVo catsRefVo);
+	public ims.ocrr.vo.OrderInvestigationLiteVoCollection listRejectedInvestigations(ims.RefMan.vo.CatsReferralRefVo catsRefVo);
 }

@@ -41,7 +41,7 @@ public class OutpatientEpisodeWithICPInfoVoBean extends ims.vo.ValueObjectBean
 		this.currentappttrakingstatus = vo.getCurrentApptTrakingStatus() == null ? null : (ims.scheduling.vo.beans.Appt_Tracking_Status_HistoryVoBean)vo.getCurrentApptTrakingStatus().getBean();
 		this.activity = vo.getActivity() == null ? null : (ims.core.vo.beans.ActivityLiteVoBean)vo.getActivity().getBean();
 		this.appointmenttrackingstatus = vo.getAppointmentTrackingStatus() == null ? null : (ims.admin.vo.beans.AppointmentTrackingstatusColourConfigVoBean)vo.getAppointmentTrackingStatus().getBean();
-		this.referral = vo.getReferral() == null ? null : (ims.careuk.vo.beans.CatsReferralBreachDatesVoBean)vo.getReferral().getBean();
+		this.referral = vo.getReferral() == null ? null : (ims.RefMan.vo.beans.CatsReferralBreachDatesVoBean)vo.getReferral().getBean();
 		this.haselectivelist = vo.getHasElectiveList();
 		this.outcome = vo.getOutcome() == null ? null : (ims.vo.LookupInstanceBean)vo.getOutcome().getBean();
 		this.outcomeactions = vo.getOutcomeActions() == null ? null : vo.getOutcomeActions().getBeanCollection();
@@ -62,7 +62,7 @@ public class OutpatientEpisodeWithICPInfoVoBean extends ims.vo.ValueObjectBean
 		this.currentappttrakingstatus = vo.getCurrentApptTrakingStatus() == null ? null : (ims.scheduling.vo.beans.Appt_Tracking_Status_HistoryVoBean)vo.getCurrentApptTrakingStatus().getBean(map);
 		this.activity = vo.getActivity() == null ? null : (ims.core.vo.beans.ActivityLiteVoBean)vo.getActivity().getBean(map);
 		this.appointmenttrackingstatus = vo.getAppointmentTrackingStatus() == null ? null : (ims.admin.vo.beans.AppointmentTrackingstatusColourConfigVoBean)vo.getAppointmentTrackingStatus().getBean(map);
-		this.referral = vo.getReferral() == null ? null : (ims.careuk.vo.beans.CatsReferralBreachDatesVoBean)vo.getReferral().getBean(map);
+		this.referral = vo.getReferral() == null ? null : (ims.RefMan.vo.beans.CatsReferralBreachDatesVoBean)vo.getReferral().getBean(map);
 		this.haselectivelist = vo.getHasElectiveList();
 		this.outcome = vo.getOutcome() == null ? null : (ims.vo.LookupInstanceBean)vo.getOutcome().getBean();
 		this.outcomeactions = vo.getOutcomeActions() == null ? null : vo.getOutcomeActions().getBeanCollection();
@@ -177,11 +177,11 @@ public class OutpatientEpisodeWithICPInfoVoBean extends ims.vo.ValueObjectBean
 	{
 		this.appointmenttrackingstatus = value;
 	}
-	public ims.careuk.vo.beans.CatsReferralBreachDatesVoBean getReferral()
+	public ims.RefMan.vo.beans.CatsReferralBreachDatesVoBean getReferral()
 	{
 		return this.referral;
 	}
-	public void setReferral(ims.careuk.vo.beans.CatsReferralBreachDatesVoBean value)
+	public void setReferral(ims.RefMan.vo.beans.CatsReferralBreachDatesVoBean value)
 	{
 		this.referral = value;
 	}
@@ -237,7 +237,7 @@ public class OutpatientEpisodeWithICPInfoVoBean extends ims.vo.ValueObjectBean
 	private ims.scheduling.vo.beans.Appt_Tracking_Status_HistoryVoBean currentappttrakingstatus;
 	private ims.core.vo.beans.ActivityLiteVoBean activity;
 	private ims.admin.vo.beans.AppointmentTrackingstatusColourConfigVoBean appointmenttrackingstatus;
-	private ims.careuk.vo.beans.CatsReferralBreachDatesVoBean referral;
+	private ims.RefMan.vo.beans.CatsReferralBreachDatesVoBean referral;
 	private Boolean haselectivelist;
 	private ims.vo.LookupInstanceBean outcome;
 	private ims.scheduling.vo.beans.AppointmentOutcomeActionVoBean[] outcomeactions;

@@ -31,7 +31,7 @@ public class Logic extends BaseLogic
 	@Override
 	protected void onFormOpen(Object[] args) throws ims.framework.exceptions.PresentationLogicException
 	{
-		form.lblCurrentBedNumber().setValue(form.getGlobalContext().CareUk.getBedNumberIsNotNull() ? form.getGlobalContext().CareUk.getBedNumber().toString() : "");
+		form.lblCurrentBedNumber().setValue(form.getGlobalContext().RefMan.getBedNumberIsNotNull() ? form.getGlobalContext().RefMan.getBedNumber().toString() : "");
 		
 	}
 	@Override
@@ -42,7 +42,7 @@ public class Logic extends BaseLogic
 			engine.showMessage("No Bed Number provided.");
 			return;
 		}
-		form.getGlobalContext().CareUk.setBedNumber(form.txtNewBed().getValue());
+		form.getGlobalContext().RefMan.setBedNumber(form.txtNewBed().getValue());
 		engine.close(DialogResult.OK);
 		
 	}

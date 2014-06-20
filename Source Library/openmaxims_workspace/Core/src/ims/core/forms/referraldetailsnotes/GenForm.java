@@ -250,7 +250,7 @@ public class GenForm extends FormBridge
 		if(context == null)
 			return;
 		if(!context.isValidContextType(Boolean.class))
-			throw new ims.framework.exceptions.CodingRuntimeException("The type 'Boolean' of the global context variable 'CareUk.IsProviderCancellation' is not supported.");
+			throw new ims.framework.exceptions.CodingRuntimeException("The type 'Boolean' of the global context variable 'RefMan.IsProviderCancellation' is not supported.");
 		if(!context.isValidContextType(ims.core.vo.CareContextShortVo.class))
 			throw new ims.framework.exceptions.CodingRuntimeException("The type 'ims.core.vo.CareContextShortVo' of the global context variable 'Core.CurrentCareContext' is not supported.");
 	}
@@ -305,17 +305,17 @@ public class GenForm extends FormBridge
 
 		// Context Menus
 		contextMenus = new ContextMenus();
-		contextMenus.CAREUK.contextMenuNotesMenu = factory.createMenu(startControlID.intValue() + 1);
-		contextMenus.CAREUK.contextMenuNotesMenuNewNoteItem = factory.createMenuItem(startControlID.intValue() + 1, "New Note", true, false, new Integer(102149), true, false);
-		contextMenus.CAREUK.contextMenuNotesMenu.add(contextMenus.CAREUK.contextMenuNotesMenuNewNoteItem);
-		contextMenus.CAREUK.contextMenuNotesMenuEditNoteItem = factory.createMenuItem(startControlID.intValue() + 2, "Edit Note", true, false, new Integer(102150), true, false);
-		contextMenus.CAREUK.contextMenuNotesMenu.add(contextMenus.CAREUK.contextMenuNotesMenuEditNoteItem);
-		form.registerMenu(contextMenus.CAREUK.contextMenuNotesMenu);
+		contextMenus.RefMan.contextMenuNotesMenu = factory.createMenu(startControlID.intValue() + 1);
+		contextMenus.RefMan.contextMenuNotesMenuNewNoteItem = factory.createMenuItem(startControlID.intValue() + 1, "New Note", true, false, new Integer(102149), true, false);
+		contextMenus.RefMan.contextMenuNotesMenu.add(contextMenus.RefMan.contextMenuNotesMenuNewNoteItem);
+		contextMenus.RefMan.contextMenuNotesMenuEditNoteItem = factory.createMenuItem(startControlID.intValue() + 2, "Edit Note", true, false, new Integer(102150), true, false);
+		contextMenus.RefMan.contextMenuNotesMenu.add(contextMenus.RefMan.contextMenuNotesMenuEditNoteItem);
+		form.registerMenu(contextMenus.RefMan.contextMenuNotesMenu);
 
 
 		// Grid Controls
 		RuntimeAnchoring anchoringHelper1 = new RuntimeAnchoring(designSize, runtimeSize, 0, 0, 848, 632, ims.framework.enumerations.ControlAnchoring.ALL);
-		Grid m_grdNotesTemp = (Grid)factory.getControl(Grid.class, new Object[] { control, new Integer(startControlID.intValue() + 1000), new Integer(anchoringHelper1.getX()), new Integer(anchoringHelper1.getY()), new Integer(anchoringHelper1.getWidth()), new Integer(anchoringHelper1.getHeight()), new Integer(startTabIndex.intValue() + 1), ControlState.UNKNOWN, ControlState.UNKNOWN, ims.framework.enumerations.ControlAnchoring.ALL,Boolean.TRUE, Boolean.FALSE, new Integer(24), Boolean.TRUE, contextMenus.CAREUK.contextMenuNotesMenu, Boolean.FALSE, Boolean.FALSE, new Integer(0), null, Boolean.FALSE, Boolean.TRUE});
+		Grid m_grdNotesTemp = (Grid)factory.getControl(Grid.class, new Object[] { control, new Integer(startControlID.intValue() + 1000), new Integer(anchoringHelper1.getX()), new Integer(anchoringHelper1.getY()), new Integer(anchoringHelper1.getWidth()), new Integer(anchoringHelper1.getHeight()), new Integer(startTabIndex.intValue() + 1), ControlState.UNKNOWN, ControlState.UNKNOWN, ims.framework.enumerations.ControlAnchoring.ALL,Boolean.TRUE, Boolean.FALSE, new Integer(24), Boolean.TRUE, contextMenus.RefMan.contextMenuNotesMenu, Boolean.FALSE, Boolean.FALSE, new Integer(0), null, Boolean.FALSE, Boolean.TRUE});
 		addControl(m_grdNotesTemp);
 		grdNotesGrid grdNotes = (grdNotesGrid)GridFlyweightFactory.getInstance().createGridBridge(grdNotesGrid.class, m_grdNotesTemp);
 		grdNotes.addStringColumn("Date / Time", 0, 0, 100, true, false, 0, 0, true, ims.framework.enumerations.CharacterCasing.NORMAL);
@@ -392,18 +392,18 @@ public class GenForm extends FormBridge
 		{
 			return !cxl_CatsReferral.getValueIsNull(context);
 		}
-		public ims.careuk.vo.CatsReferralRefVo getCatsReferral()
+		public ims.RefMan.vo.CatsReferralRefVo getCatsReferral()
 		{
-			return (ims.careuk.vo.CatsReferralRefVo)cxl_CatsReferral.getValue(context);
+			return (ims.RefMan.vo.CatsReferralRefVo)cxl_CatsReferral.getValue(context);
 		}
-		public void setCatsReferral(ims.careuk.vo.CatsReferralRefVo value)
+		public void setCatsReferral(ims.RefMan.vo.CatsReferralRefVo value)
 		{
 			if(value != null && (value.getBoId() == null || value.getBoId().intValue() < 1))
 				throw new ims.framework.exceptions.CodingRuntimeException("Invalid domain object id for 'CatsReferral' RefVo context variable.");
 			if(value == null)
 				cxl_CatsReferral.setValue(context, null);
 			else
-				cxl_CatsReferral.setValue(context, new ims.careuk.vo.CatsReferralRefVo(value.getBoId(), value.getBoVersion()));
+				cxl_CatsReferral.setValue(context, new ims.RefMan.vo.CatsReferralRefVo(value.getBoId(), value.getBoVersion()));
 		}
 		private ims.framework.ContextVariable cxl_CatsReferral = null;
 	}
@@ -411,8 +411,8 @@ public class GenForm extends FormBridge
 	public final class ContextMenus implements java.io.Serializable
 	{
 		private static final long serialVersionUID = 1L;
-		public CAREUKNamespace CAREUK = new CAREUKNamespace();
-		public final class CAREUKNamespace implements java.io.Serializable
+		public RefManNamespace RefMan = new RefManNamespace();
+		public final class RefManNamespace implements java.io.Serializable
 		{
 			private static final long serialVersionUID = 1L;
 			public final class NotesMenu implements java.io.Serializable
@@ -541,12 +541,12 @@ public class GenForm extends FormBridge
 			fields[67] = new ims.framework.ReportField(this.context, "_cvp_Clinical.ExtendedClinicalNotesListFilter", "BO-1011100000-CARECONTEXT", "CareContext");
 			fields[68] = new ims.framework.ReportField(this.context, "_cvp_Core.PasEvent", "BO-1014100003-ID", "ID_PASEvent");
 			fields[69] = new ims.framework.ReportField(this.context, "_cvp_Correspondence.CorrespondenceDetails", "BO-1052100001-ID", "ID_CorrespondenceDetails");
-			fields[70] = new ims.framework.ReportField(this.context, "_cvp_CareUk.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
-			fields[71] = new ims.framework.ReportField(this.context, "_cv_CareUk.ReferralNote", "BO-1096100013-ID", "ID_CorrespondenceNote");
-			fields[72] = new ims.framework.ReportField(this.context, "_cv_CareUk.ReferralNote", "BO-1096100013-CARECONTEXT", "CareContext");
-			fields[73] = new ims.framework.ReportField(this.context, "_cv_CareUk.ReferralNote", "BO-1096100013-RECORDINGDATETIME", "RecordingDateTime");
-			fields[74] = new ims.framework.ReportField(this.context, "_cv_CareUk.ReferralNote", "BO-1096100013-NOTE", "Note");
-			fields[75] = new ims.framework.ReportField(this.context, "_cv_CareUk.ReferralNote", "BO-1096100013-NOTETYPE", "NoteType");
+			fields[70] = new ims.framework.ReportField(this.context, "_cvp_RefMan.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
+			fields[71] = new ims.framework.ReportField(this.context, "_cv_RefMan.ReferralNote", "BO-1096100013-ID", "ID_CorrespondenceNote");
+			fields[72] = new ims.framework.ReportField(this.context, "_cv_RefMan.ReferralNote", "BO-1096100013-CARECONTEXT", "CareContext");
+			fields[73] = new ims.framework.ReportField(this.context, "_cv_RefMan.ReferralNote", "BO-1096100013-RECORDINGDATETIME", "RecordingDateTime");
+			fields[74] = new ims.framework.ReportField(this.context, "_cv_RefMan.ReferralNote", "BO-1096100013-NOTE", "Note");
+			fields[75] = new ims.framework.ReportField(this.context, "_cv_RefMan.ReferralNote", "BO-1096100013-NOTETYPE", "NoteType");
 			fields[76] = new ims.framework.ReportField(this.context, prefix + "_lv_Core.ReferralDetailsNotes.__internal_x_context__CatsReferral_" + componentIdentifier, "BO-1004100035-ID", "ID_CatsReferral");
 			return fields;
 		}

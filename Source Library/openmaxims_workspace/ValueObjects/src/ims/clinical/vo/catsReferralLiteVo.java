@@ -24,9 +24,9 @@
 package ims.clinical.vo;
 
 /**
- * Linked to CAREUK.CatsReferral business object (ID: 1004100035).
+ * Linked to RefMan.CatsReferral business object (ID: 1004100035).
  */
-public class catsReferralLiteVo extends ims.careuk.vo.CatsReferralRefVo implements ims.vo.ImsCloneable, Comparable
+public class catsReferralLiteVo extends ims.RefMan.vo.CatsReferralRefVo implements ims.vo.ImsCloneable, Comparable
 {
 	private static final long serialVersionUID = 1L;
 

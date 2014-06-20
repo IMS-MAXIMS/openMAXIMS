@@ -395,11 +395,11 @@ public class GenForm extends FormBridge
 		{
 			super.row.setTooltip(5, value);
 		}
-		public ims.careuk.vo.PatientProcedureForAppointmentOutcomeVo getValue()
+		public ims.RefMan.vo.PatientProcedureForAppointmentOutcomeVo getValue()
 		{
-			return (ims.careuk.vo.PatientProcedureForAppointmentOutcomeVo)super.row.getValue();
+			return (ims.RefMan.vo.PatientProcedureForAppointmentOutcomeVo)super.row.getValue();
 		}
-		public void setValue(ims.careuk.vo.PatientProcedureForAppointmentOutcomeVo value)
+		public void setValue(ims.RefMan.vo.PatientProcedureForAppointmentOutcomeVo value)
 		{
 			super.row.setValue(value);
 		}
@@ -449,20 +449,20 @@ public class GenForm extends FormBridge
 		{
 			super.grid.addBoolColumn(caption, captionAlignment, alignment, width, readOnly, autoPostBack, sortOrder, canGrow);
 		}
-		public ims.careuk.vo.PatientProcedureForAppointmentOutcomeVoCollection getValues()
+		public ims.RefMan.vo.PatientProcedureForAppointmentOutcomeVoCollection getValues()
 		{
-			ims.careuk.vo.PatientProcedureForAppointmentOutcomeVoCollection listOfValues = new ims.careuk.vo.PatientProcedureForAppointmentOutcomeVoCollection();
+			ims.RefMan.vo.PatientProcedureForAppointmentOutcomeVoCollection listOfValues = new ims.RefMan.vo.PatientProcedureForAppointmentOutcomeVoCollection();
 			for(int x = 0; x < this.getRows().size(); x++)
 			{
 				listOfValues.add(this.getRows().get(x).getValue());
 			}
 			return listOfValues;
 		}
-		public ims.careuk.vo.PatientProcedureForAppointmentOutcomeVo getValue()
+		public ims.RefMan.vo.PatientProcedureForAppointmentOutcomeVo getValue()
 		{
-			return (ims.careuk.vo.PatientProcedureForAppointmentOutcomeVo)super.grid.getValue();
+			return (ims.RefMan.vo.PatientProcedureForAppointmentOutcomeVo)super.grid.getValue();
 		}
-		public void setValue(ims.careuk.vo.PatientProcedureForAppointmentOutcomeVo value)
+		public void setValue(ims.RefMan.vo.PatientProcedureForAppointmentOutcomeVo value)
 		{
 			super.grid.setValue(value);
 		}
@@ -478,7 +478,7 @@ public class GenForm extends FormBridge
 		{
 			return new grdProceduresRowCollection(super.grid.getRows());
 		}
-		public grdProceduresRow getRowByValue(ims.careuk.vo.PatientProcedureForAppointmentOutcomeVo value)
+		public grdProceduresRow getRowByValue(ims.RefMan.vo.PatientProcedureForAppointmentOutcomeVo value)
 		{
 			GridRow row = super.grid.getRowByValue(value);
 			return row == null?null:new grdProceduresRow(row);
@@ -538,8 +538,8 @@ public class GenForm extends FormBridge
 			return;
 		if(!context.isValidContextType(ims.core.vo.PatientShort.class))
 			throw new ims.framework.exceptions.CodingRuntimeException("The type 'ims.core.vo.PatientShort' of the global context variable 'Core.PatientShort' is not supported.");
-		if(!context.isValidContextType(ims.careuk.vo.CatsReferralRefVo.class))
-			throw new ims.framework.exceptions.CodingRuntimeException("The type 'ims.careuk.vo.CatsReferralRefVo' of the global context variable 'CareUk.CatsReferral' is not supported.");
+		if(!context.isValidContextType(ims.RefMan.vo.CatsReferralRefVo.class))
+			throw new ims.framework.exceptions.CodingRuntimeException("The type 'ims.RefMan.vo.CatsReferralRefVo' of the global context variable 'RefMan.CatsReferral' is not supported.");
 		if(!context.isValidContextType(ims.core.vo.EpisodeofCareShortVo.class))
 			throw new ims.framework.exceptions.CodingRuntimeException("The type 'ims.core.vo.EpisodeofCareShortVo' of the global context variable 'Core.EpisodeofCareShort' is not supported.");
 		if(!context.isValidContextType(ims.core.vo.CareContextShortVo.class))
@@ -599,25 +599,25 @@ public class GenForm extends FormBridge
 
 		// Context Menus
 		contextMenus = new ContextMenus();
-		contextMenus.CAREUK.contextMenuAppointmentOutcomeDiagnosisMenu = factory.createMenu(startControlID.intValue() + 1);
-		contextMenus.CAREUK.contextMenuAppointmentOutcomeDiagnosisMenuSELECTItem = factory.createMenuItem(startControlID.intValue() + 1, "Select", true, false, new Integer(102232), true, false);
+		contextMenus.RefMan.contextMenuAppointmentOutcomeDiagnosisMenu = factory.createMenu(startControlID.intValue() + 1);
+		contextMenus.RefMan.contextMenuAppointmentOutcomeDiagnosisMenuSELECTItem = factory.createMenuItem(startControlID.intValue() + 1, "Select", true, false, new Integer(102232), true, false);
 		if(factory.getUIEngine().getLoggedInRole().hasMenuActionRight(appForm, new ims.framework.MenuAction(5470001)))
-			contextMenus.CAREUK.contextMenuAppointmentOutcomeDiagnosisMenu.add(contextMenus.CAREUK.contextMenuAppointmentOutcomeDiagnosisMenuSELECTItem);
-		contextMenus.CAREUK.contextMenuAppointmentOutcomeDiagnosisMenuADDItem = factory.createMenuItem(startControlID.intValue() + 2, "Add", true, false, new Integer(102179), true, false);
+			contextMenus.RefMan.contextMenuAppointmentOutcomeDiagnosisMenu.add(contextMenus.RefMan.contextMenuAppointmentOutcomeDiagnosisMenuSELECTItem);
+		contextMenus.RefMan.contextMenuAppointmentOutcomeDiagnosisMenuADDItem = factory.createMenuItem(startControlID.intValue() + 2, "Add", true, false, new Integer(102179), true, false);
 		if(factory.getUIEngine().getLoggedInRole().hasMenuActionRight(appForm, new ims.framework.MenuAction(5470002)))
-			contextMenus.CAREUK.contextMenuAppointmentOutcomeDiagnosisMenu.add(contextMenus.CAREUK.contextMenuAppointmentOutcomeDiagnosisMenuADDItem);
-		contextMenus.CAREUK.contextMenuAppointmentOutcomeDiagnosisMenuEDITItem = factory.createMenuItem(startControlID.intValue() + 3, "Edit", true, false, new Integer(102150), true, false);
+			contextMenus.RefMan.contextMenuAppointmentOutcomeDiagnosisMenu.add(contextMenus.RefMan.contextMenuAppointmentOutcomeDiagnosisMenuADDItem);
+		contextMenus.RefMan.contextMenuAppointmentOutcomeDiagnosisMenuEDITItem = factory.createMenuItem(startControlID.intValue() + 3, "Edit", true, false, new Integer(102150), true, false);
 		if(factory.getUIEngine().getLoggedInRole().hasMenuActionRight(appForm, new ims.framework.MenuAction(5470003)))
-			contextMenus.CAREUK.contextMenuAppointmentOutcomeDiagnosisMenu.add(contextMenus.CAREUK.contextMenuAppointmentOutcomeDiagnosisMenuEDITItem);
-		form.registerMenu(contextMenus.CAREUK.contextMenuAppointmentOutcomeDiagnosisMenu);
-		contextMenus.CAREUK.contextMenuAppointmentOutcomeProcedureMenu = factory.createMenu(startControlID.intValue() + 2);
-		contextMenus.CAREUK.contextMenuAppointmentOutcomeProcedureMenuADDItem = factory.createMenuItem(startControlID.intValue() + 4, "Add", true, false, new Integer(102179), true, false);
+			contextMenus.RefMan.contextMenuAppointmentOutcomeDiagnosisMenu.add(contextMenus.RefMan.contextMenuAppointmentOutcomeDiagnosisMenuEDITItem);
+		form.registerMenu(contextMenus.RefMan.contextMenuAppointmentOutcomeDiagnosisMenu);
+		contextMenus.RefMan.contextMenuAppointmentOutcomeProcedureMenu = factory.createMenu(startControlID.intValue() + 2);
+		contextMenus.RefMan.contextMenuAppointmentOutcomeProcedureMenuADDItem = factory.createMenuItem(startControlID.intValue() + 4, "Add", true, false, new Integer(102179), true, false);
 		if(factory.getUIEngine().getLoggedInRole().hasMenuActionRight(appForm, new ims.framework.MenuAction(5460001)))
-			contextMenus.CAREUK.contextMenuAppointmentOutcomeProcedureMenu.add(contextMenus.CAREUK.contextMenuAppointmentOutcomeProcedureMenuADDItem);
-		contextMenus.CAREUK.contextMenuAppointmentOutcomeProcedureMenuEDITItem = factory.createMenuItem(startControlID.intValue() + 5, "Edit", true, false, new Integer(102150), true, false);
+			contextMenus.RefMan.contextMenuAppointmentOutcomeProcedureMenu.add(contextMenus.RefMan.contextMenuAppointmentOutcomeProcedureMenuADDItem);
+		contextMenus.RefMan.contextMenuAppointmentOutcomeProcedureMenuEDITItem = factory.createMenuItem(startControlID.intValue() + 5, "Edit", true, false, new Integer(102150), true, false);
 		if(factory.getUIEngine().getLoggedInRole().hasMenuActionRight(appForm, new ims.framework.MenuAction(5460002)))
-			contextMenus.CAREUK.contextMenuAppointmentOutcomeProcedureMenu.add(contextMenus.CAREUK.contextMenuAppointmentOutcomeProcedureMenuEDITItem);
-		form.registerMenu(contextMenus.CAREUK.contextMenuAppointmentOutcomeProcedureMenu);
+			contextMenus.RefMan.contextMenuAppointmentOutcomeProcedureMenu.add(contextMenus.RefMan.contextMenuAppointmentOutcomeProcedureMenuEDITItem);
+		form.registerMenu(contextMenus.RefMan.contextMenuAppointmentOutcomeProcedureMenu);
 
 
 		// Panel Controls
@@ -708,13 +708,13 @@ public class GenForm extends FormBridge
 
 		// Grid Controls
 		RuntimeAnchoring anchoringHelper35 = new RuntimeAnchoring(designSize, runtimeSize, 488, 240, 352, 176, ims.framework.enumerations.ControlAnchoring.ALL);
-		Grid m_grdDiagnosisTemp = (Grid)factory.getControl(Grid.class, new Object[] { control, new Integer(startControlID.intValue() + 1034), new Integer(anchoringHelper35.getX()), new Integer(anchoringHelper35.getY()), new Integer(anchoringHelper35.getWidth()), new Integer(anchoringHelper35.getHeight()), new Integer(startTabIndex.intValue() + 19), ControlState.READONLY, ControlState.READONLY, ims.framework.enumerations.ControlAnchoring.ALL,Boolean.TRUE, Boolean.FALSE, new Integer(24), Boolean.TRUE, contextMenus.CAREUK.contextMenuAppointmentOutcomeDiagnosisMenu, Boolean.FALSE, Boolean.FALSE, new Integer(0), null, Boolean.FALSE, Boolean.TRUE});
+		Grid m_grdDiagnosisTemp = (Grid)factory.getControl(Grid.class, new Object[] { control, new Integer(startControlID.intValue() + 1034), new Integer(anchoringHelper35.getX()), new Integer(anchoringHelper35.getY()), new Integer(anchoringHelper35.getWidth()), new Integer(anchoringHelper35.getHeight()), new Integer(startTabIndex.intValue() + 19), ControlState.READONLY, ControlState.READONLY, ims.framework.enumerations.ControlAnchoring.ALL,Boolean.TRUE, Boolean.FALSE, new Integer(24), Boolean.TRUE, contextMenus.RefMan.contextMenuAppointmentOutcomeDiagnosisMenu, Boolean.FALSE, Boolean.FALSE, new Integer(0), null, Boolean.FALSE, Boolean.TRUE});
 		addControl(m_grdDiagnosisTemp);
 		grdDiagnosisGrid grdDiagnosis = (grdDiagnosisGrid)GridFlyweightFactory.getInstance().createGridBridge(grdDiagnosisGrid.class, m_grdDiagnosisTemp);
 		grdDiagnosis.addStringColumn("Diagnosis", 0, 0, -1, true, false, 0, 0, true, ims.framework.enumerations.CharacterCasing.NORMAL);
 		super.addGrid(grdDiagnosis);
 		RuntimeAnchoring anchoringHelper36 = new RuntimeAnchoring(designSize, runtimeSize, 24, 104, 800, 96, ims.framework.enumerations.ControlAnchoring.TOPLEFTRIGHT);
-		Grid m_grdProceduresTemp = (Grid)factory.getControl(Grid.class, new Object[] { control, new Integer(startControlID.intValue() + 1035), new Integer(anchoringHelper36.getX()), new Integer(anchoringHelper36.getY()), new Integer(anchoringHelper36.getWidth()), new Integer(anchoringHelper36.getHeight()), new Integer(startTabIndex.intValue() + 6), ControlState.READONLY, ControlState.READONLY, ims.framework.enumerations.ControlAnchoring.TOPLEFTRIGHT,Boolean.TRUE, Boolean.FALSE, new Integer(24), Boolean.TRUE, contextMenus.CAREUK.contextMenuAppointmentOutcomeProcedureMenu, Boolean.FALSE, Boolean.FALSE, new Integer(0), null, Boolean.FALSE, Boolean.TRUE});
+		Grid m_grdProceduresTemp = (Grid)factory.getControl(Grid.class, new Object[] { control, new Integer(startControlID.intValue() + 1035), new Integer(anchoringHelper36.getX()), new Integer(anchoringHelper36.getY()), new Integer(anchoringHelper36.getWidth()), new Integer(anchoringHelper36.getHeight()), new Integer(startTabIndex.intValue() + 6), ControlState.READONLY, ControlState.READONLY, ims.framework.enumerations.ControlAnchoring.TOPLEFTRIGHT,Boolean.TRUE, Boolean.FALSE, new Integer(24), Boolean.TRUE, contextMenus.RefMan.contextMenuAppointmentOutcomeProcedureMenu, Boolean.FALSE, Boolean.FALSE, new Integer(0), null, Boolean.FALSE, Boolean.TRUE});
 		addControl(m_grdProceduresTemp);
 		grdProceduresGrid grdProcedures = (grdProceduresGrid)GridFlyweightFactory.getInstance().createGridBridge(grdProceduresGrid.class, m_grdProceduresTemp);
 		grdProcedures.addDateColumn("Date", 0, 0, 70, true, true, null, false, 0, true);
@@ -858,7 +858,7 @@ public class GenForm extends FormBridge
 		private Forms()
 		{
 			Clinical = new ClinicalForms();
-			CAREUK = new CAREUKForms();
+			RefMan = new RefManForms();
 			Scheduling = new SchedulingForms();
 		}
 		public final class ClinicalForms implements java.io.Serializable
@@ -872,10 +872,10 @@ public class GenForm extends FormBridge
 			public final FormName ClinicListWithICPActions;
 			public final FormName PatientDiagnosisDialog;
 		}
-		public final class CAREUKForms implements java.io.Serializable
+		public final class RefManForms implements java.io.Serializable
 		{
 			private static final long serialVersionUID = 1L;
-			private CAREUKForms()
+			private RefManForms()
 			{
 				NewElectiveListTCIErodDialog = new LocalFormName(134224);
 				AppointmentOutcomeDiagnosisSelectionDialog = new LocalFormName(134233);
@@ -898,7 +898,7 @@ public class GenForm extends FormBridge
 		}
 
 		public ClinicalForms Clinical;
-		public CAREUKForms CAREUK;
+		public RefManForms RefMan;
 		public SchedulingForms Scheduling;
 	}
 
@@ -917,20 +917,20 @@ public class GenForm extends FormBridge
 		}
 		private Images()
 		{
-			CAREUK = new CAREUKImages();
+			RefMan = new RefManImages();
 		}
-		public final class CAREUKImages implements java.io.Serializable
+		public final class RefManImages implements java.io.Serializable
 		{
 			private static final long serialVersionUID = 1L;
-			private CAREUKImages()
+			private RefManImages()
 			{
-				AddLater = new ImageHelper(134136, "Images/CAREUK/AddLater.png", new Integer(50), new Integer(50));
-				AddNow = new ImageHelper(134135, "Images/CAREUK/AddNow.png", new Integer(50), new Integer(50));
+				AddLater = new ImageHelper(134136, "Images/RefMan/AddLater.png", new Integer(50), new Integer(50));
+				AddNow = new ImageHelper(134135, "Images/RefMan/AddNow.png", new Integer(50), new Integer(50));
 			}
 			public final ims.framework.utils.Image AddLater;
 			public final ims.framework.utils.Image AddNow;
 		}
-		public final CAREUKImages CAREUK;
+		public final RefManImages RefMan;
 	}
 	public GlobalContext getGlobalContext()
 	{
@@ -1043,8 +1043,8 @@ public class GenForm extends FormBridge
 	public final class ContextMenus implements java.io.Serializable
 	{
 		private static final long serialVersionUID = 1L;
-		public CAREUKNamespace CAREUK = new CAREUKNamespace();
-		public final class CAREUKNamespace implements java.io.Serializable
+		public RefManNamespace RefMan = new RefManNamespace();
+		public final class RefManNamespace implements java.io.Serializable
 		{
 			private static final long serialVersionUID = 1L;
 			public final class AppointmentOutcomeDiagnosisMenu implements java.io.Serializable
@@ -1208,7 +1208,7 @@ public class GenForm extends FormBridge
 			fields[67] = new ims.framework.ReportField(this.context, "_cvp_Clinical.ExtendedClinicalNotesListFilter", "BO-1011100000-CARECONTEXT", "CareContext");
 			fields[68] = new ims.framework.ReportField(this.context, "_cvp_Core.PasEvent", "BO-1014100003-ID", "ID_PASEvent");
 			fields[69] = new ims.framework.ReportField(this.context, "_cvp_Correspondence.CorrespondenceDetails", "BO-1052100001-ID", "ID_CorrespondenceDetails");
-			fields[70] = new ims.framework.ReportField(this.context, "_cvp_CareUk.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
+			fields[70] = new ims.framework.ReportField(this.context, "_cvp_RefMan.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
 			fields[71] = new ims.framework.ReportField(this.context, "_cv_Scheduling.BookingAppointment", "BO-1055100007-ID", "ID_Booking_Appointment");
 			fields[72] = new ims.framework.ReportField(this.context, "_cv_Scheduling.BookingAppointment", "BO-1055100007-APPOINTMENTDATE", "AppointmentDate");
 			fields[73] = new ims.framework.ReportField(this.context, "_cv_Scheduling.BookingAppointment", "BO-1055100007-APPTSTARTTIME", "ApptStartTime");
@@ -1239,44 +1239,44 @@ public class GenForm extends FormBridge
 			fields[98] = new ims.framework.ReportField(this.context, "_cv_Clinical.SelectedPatientDiagnosisOPNotes", "BO-1003100016-SOURCEOFINFORMATION", "SourceofInformation");
 			fields[99] = new ims.framework.ReportField(this.context, "_cv_Clinical.SelectedPatientDiagnosisOPNotes", "BO-1003100016-ISCOMORBIDITY", "IsComorbidity");
 			fields[100] = new ims.framework.ReportField(this.context, "_cv_Clinical.SelectedPatientDiagnosisOPNotes", "BO-1003100016-EPISODEOFCARE", "EpisodeOfCare");
-			fields[101] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientElectiveList", "BO-1014100020-ID", "ID_PatientElectiveList");
-			fields[102] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientElectiveList", "BO-1014100020-PATIENT", "Patient");
-			fields[103] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientElectiveList", "BO-1014100020-REFERRAL", "Referral");
-			fields[104] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientElectiveList", "BO-1014100020-EPISODEOFCARE", "EpisodeOfCare");
-			fields[105] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientElectiveList", "BO-1014100020-BED", "Bed");
-			fields[106] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientElectiveList", "BO-1014100020-DATEONLIST", "DateOnList");
-			fields[107] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientElectiveList", "BO-1014100020-ORIGINALDECISIONDATE", "OriginalDecisionDate");
-			fields[108] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientElectiveList", "BO-1014100020-ELECTIVELISTREASON", "ElectiveListReason");
-			fields[109] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientElectiveList", "BO-1014100020-ELECTIVEADMISSIONTYPE", "ElectiveAdmissionType");
-			fields[110] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientElectiveList", "BO-1014100020-INTENDEDMANAGEMENT", "IntendedManagement");
-			fields[111] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientElectiveList", "BO-1014100020-ANTICIPATEDSTAY", "AnticipatedStay");
-			fields[112] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientElectiveList", "BO-1014100020-AVAILABLEATSHORTNOTICE", "AvailableAtShortNotice");
-			fields[113] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientElectiveList", "BO-1014100020-AVAILABLEATSHORTNOTICEPERIOD", "AvailableAtShortNoticePeriod");
-			fields[114] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientElectiveList", "BO-1014100020-PRIORITY", "Priority");
-			fields[115] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientElectiveList", "BO-1014100020-OPERATIVEPROCEDURESTATUS", "OperativeProcedureStatus");
-			fields[116] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientElectiveList", "BO-1014100020-PROCEDUREDESCRIPTION", "ProcedureDescription");
-			fields[117] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientElectiveList", "BO-1014100020-INTERPRETATORREQUIRED", "InterpretatorRequired");
-			fields[118] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientElectiveList", "BO-1014100020-LANGUAGE", "Language");
-			fields[119] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientElectiveList", "BO-1014100020-TRANSPORTREQUIRED", "TransportRequired");
-			fields[120] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientElectiveList", "BO-1014100020-TRANSPORT", "Transport");
-			fields[121] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientElectiveList", "BO-1014100020-SPECIALREQUIREMENTS", "SpecialRequirements");
-			fields[122] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientElectiveList", "BO-1014100020-SPECIALREQUIREMENTSDETAILS", "SpecialRequirementsDetails");
-			fields[123] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientElectiveList", "BO-1014100020-PATHWAYCLOCK", "PathwayClock");
-			fields[124] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientElectiveList", "BO-1014100020-TCICANCELLEDBYPROVIDER", "TCICancelledByProvider");
-			fields[125] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientElectiveList", "BO-1014100020-PREADMISSIONREQUIRED", "PreAdmissionRequired");
-			fields[126] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientElectiveList", "BO-1014100020-CURRENTSUSPENSIONENDDATE", "CurrentSuspensionEndDate");
-			fields[127] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientElectiveList", "BO-1014100020-PATIENTSTATUS", "PatientStatus");
-			fields[128] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientElectiveList", "BO-1014100020-REQUIRESTCIBY", "RequiresTCIBy");
-			fields[129] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientProcedureForAppointmentOutcome", "BO-1003100017-ID", "ID_PatientProcedure");
-			fields[130] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientProcedureForAppointmentOutcome", "BO-1003100017-PROCEDUREDESCRIPTION", "ProcedureDescription");
-			fields[131] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientProcedureForAppointmentOutcome", "BO-1003100017-SITETEXT", "SiteText");
-			fields[132] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientProcedureForAppointmentOutcome", "BO-1003100017-PROCLATERALITY", "ProcLaterality");
-			fields[133] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientProcedureForAppointmentOutcome", "BO-1003100017-PROCDATE", "ProcDate");
-			fields[134] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientProcedureForAppointmentOutcome", "BO-1003100017-INFOSOURCE", "InfoSource");
-			fields[135] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientProcedureForAppointmentOutcome", "BO-1003100017-EPISODEOFCARE", "EpisodeOfCare");
-			fields[136] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientProcedureForAppointmentOutcome", "BO-1003100017-ISPRIMARY", "IsPrimary");
-			fields[137] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientProcedureForAppointmentOutcome", "BO-1003100017-PROCEDURESTATUS", "ProcedureStatus");
-			fields[138] = new ims.framework.ReportField(this.context, "_cv_CareUk.PatientProcedureForAppointmentOutcome", "BO-1003100017-CARECONTEXT", "CareContext");
+			fields[101] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientElectiveList", "BO-1014100020-ID", "ID_PatientElectiveList");
+			fields[102] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientElectiveList", "BO-1014100020-PATIENT", "Patient");
+			fields[103] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientElectiveList", "BO-1014100020-REFERRAL", "Referral");
+			fields[104] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientElectiveList", "BO-1014100020-EPISODEOFCARE", "EpisodeOfCare");
+			fields[105] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientElectiveList", "BO-1014100020-BED", "Bed");
+			fields[106] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientElectiveList", "BO-1014100020-DATEONLIST", "DateOnList");
+			fields[107] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientElectiveList", "BO-1014100020-ORIGINALDECISIONDATE", "OriginalDecisionDate");
+			fields[108] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientElectiveList", "BO-1014100020-ELECTIVELISTREASON", "ElectiveListReason");
+			fields[109] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientElectiveList", "BO-1014100020-ELECTIVEADMISSIONTYPE", "ElectiveAdmissionType");
+			fields[110] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientElectiveList", "BO-1014100020-INTENDEDMANAGEMENT", "IntendedManagement");
+			fields[111] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientElectiveList", "BO-1014100020-ANTICIPATEDSTAY", "AnticipatedStay");
+			fields[112] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientElectiveList", "BO-1014100020-AVAILABLEATSHORTNOTICE", "AvailableAtShortNotice");
+			fields[113] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientElectiveList", "BO-1014100020-AVAILABLEATSHORTNOTICEPERIOD", "AvailableAtShortNoticePeriod");
+			fields[114] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientElectiveList", "BO-1014100020-PRIORITY", "Priority");
+			fields[115] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientElectiveList", "BO-1014100020-OPERATIVEPROCEDURESTATUS", "OperativeProcedureStatus");
+			fields[116] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientElectiveList", "BO-1014100020-PROCEDUREDESCRIPTION", "ProcedureDescription");
+			fields[117] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientElectiveList", "BO-1014100020-INTERPRETATORREQUIRED", "InterpretatorRequired");
+			fields[118] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientElectiveList", "BO-1014100020-LANGUAGE", "Language");
+			fields[119] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientElectiveList", "BO-1014100020-TRANSPORTREQUIRED", "TransportRequired");
+			fields[120] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientElectiveList", "BO-1014100020-TRANSPORT", "Transport");
+			fields[121] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientElectiveList", "BO-1014100020-SPECIALREQUIREMENTS", "SpecialRequirements");
+			fields[122] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientElectiveList", "BO-1014100020-SPECIALREQUIREMENTSDETAILS", "SpecialRequirementsDetails");
+			fields[123] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientElectiveList", "BO-1014100020-PATHWAYCLOCK", "PathwayClock");
+			fields[124] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientElectiveList", "BO-1014100020-TCICANCELLEDBYPROVIDER", "TCICancelledByProvider");
+			fields[125] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientElectiveList", "BO-1014100020-PREADMISSIONREQUIRED", "PreAdmissionRequired");
+			fields[126] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientElectiveList", "BO-1014100020-CURRENTSUSPENSIONENDDATE", "CurrentSuspensionEndDate");
+			fields[127] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientElectiveList", "BO-1014100020-PATIENTSTATUS", "PatientStatus");
+			fields[128] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientElectiveList", "BO-1014100020-REQUIRESTCIBY", "RequiresTCIBy");
+			fields[129] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientProcedureForAppointmentOutcome", "BO-1003100017-ID", "ID_PatientProcedure");
+			fields[130] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientProcedureForAppointmentOutcome", "BO-1003100017-PROCEDUREDESCRIPTION", "ProcedureDescription");
+			fields[131] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientProcedureForAppointmentOutcome", "BO-1003100017-SITETEXT", "SiteText");
+			fields[132] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientProcedureForAppointmentOutcome", "BO-1003100017-PROCLATERALITY", "ProcLaterality");
+			fields[133] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientProcedureForAppointmentOutcome", "BO-1003100017-PROCDATE", "ProcDate");
+			fields[134] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientProcedureForAppointmentOutcome", "BO-1003100017-INFOSOURCE", "InfoSource");
+			fields[135] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientProcedureForAppointmentOutcome", "BO-1003100017-EPISODEOFCARE", "EpisodeOfCare");
+			fields[136] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientProcedureForAppointmentOutcome", "BO-1003100017-ISPRIMARY", "IsPrimary");
+			fields[137] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientProcedureForAppointmentOutcome", "BO-1003100017-PROCEDURESTATUS", "ProcedureStatus");
+			fields[138] = new ims.framework.ReportField(this.context, "_cv_RefMan.PatientProcedureForAppointmentOutcome", "BO-1003100017-CARECONTEXT", "CareContext");
 			fields[139] = new ims.framework.ReportField(this.context, "_cv_Scheduling.FutureAppointmentDetails", "BO-1090100021-ID", "ID_FutureAppointmentDetails");
 			fields[140] = new ims.framework.ReportField(this.context, "_cv_Scheduling.FutureAppointmentDetails", "BO-1090100021-PERIODVALUE", "PeriodValue");
 			fields[141] = new ims.framework.ReportField(this.context, "_cv_Scheduling.FutureAppointmentDetails", "BO-1090100021-PERIODTYPE", "PeriodType");

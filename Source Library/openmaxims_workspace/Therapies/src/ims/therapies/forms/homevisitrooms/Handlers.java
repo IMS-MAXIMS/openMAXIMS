@@ -149,68 +149,68 @@ abstract public class Handlers implements ims.framework.UILogic, IFormUILogicCod
 				onGridRoomsSelectionChanged();
 			}
 		});
-		this.form.getContextMenus().CAREUK.getReferralAppointmentDetailsComponentBOOK_APPTItem().setClickEvent(new ims.framework.delegates.MenuItemClick()
+		this.form.getContextMenus().RefMan.getReferralAppointmentDetailsComponentBOOK_APPTItem().setClickEvent(new ims.framework.delegates.MenuItemClick()
 		{
 			private static final long serialVersionUID = 1L;
 			public void handle(ims.framework.Control sender) throws ims.framework.exceptions.PresentationLogicException
 			{
-				onContextMenuItemClick(GenForm.ContextMenus.CAREUKNamespace.ReferralAppointmentDetailsComponent.BOOK_APPT, sender);
+				onContextMenuItemClick(GenForm.ContextMenus.RefManNamespace.ReferralAppointmentDetailsComponent.BOOK_APPT, sender);
 			}
 		});
-		this.form.getContextMenus().CAREUK.getReferralAppointmentDetailsComponentCANCEL_APPTItem().setClickEvent(new ims.framework.delegates.MenuItemClick()
+		this.form.getContextMenus().RefMan.getReferralAppointmentDetailsComponentCANCEL_APPTItem().setClickEvent(new ims.framework.delegates.MenuItemClick()
 		{
 			private static final long serialVersionUID = 1L;
 			public void handle(ims.framework.Control sender) throws ims.framework.exceptions.PresentationLogicException
 			{
-				onContextMenuItemClick(GenForm.ContextMenus.CAREUKNamespace.ReferralAppointmentDetailsComponent.CANCEL_APPT, sender);
+				onContextMenuItemClick(GenForm.ContextMenus.RefManNamespace.ReferralAppointmentDetailsComponent.CANCEL_APPT, sender);
 			}
 		});
-		this.form.getContextMenus().CAREUK.getReferralAppointmentDetailsComponentREBOOK_APPTItem().setClickEvent(new ims.framework.delegates.MenuItemClick()
+		this.form.getContextMenus().RefMan.getReferralAppointmentDetailsComponentREBOOK_APPTItem().setClickEvent(new ims.framework.delegates.MenuItemClick()
 		{
 			private static final long serialVersionUID = 1L;
 			public void handle(ims.framework.Control sender) throws ims.framework.exceptions.PresentationLogicException
 			{
-				onContextMenuItemClick(GenForm.ContextMenus.CAREUKNamespace.ReferralAppointmentDetailsComponent.REBOOK_APPT, sender);
+				onContextMenuItemClick(GenForm.ContextMenus.RefManNamespace.ReferralAppointmentDetailsComponent.REBOOK_APPT, sender);
 			}
 		});
-		this.form.getContextMenus().CAREUK.getReferralAppointmentDetailsComponentORDER_INVESTIGATIONItem().setClickEvent(new ims.framework.delegates.MenuItemClick()
+		this.form.getContextMenus().RefMan.getReferralAppointmentDetailsComponentORDER_INVESTIGATIONItem().setClickEvent(new ims.framework.delegates.MenuItemClick()
 		{
 			private static final long serialVersionUID = 1L;
 			public void handle(ims.framework.Control sender) throws ims.framework.exceptions.PresentationLogicException
 			{
-				onContextMenuItemClick(GenForm.ContextMenus.CAREUKNamespace.ReferralAppointmentDetailsComponent.ORDER_INVESTIGATION, sender);
+				onContextMenuItemClick(GenForm.ContextMenus.RefManNamespace.ReferralAppointmentDetailsComponent.ORDER_INVESTIGATION, sender);
 			}
 		});
-		this.form.getContextMenus().CAREUK.getReferralAppointmentDetailsComponentBOOK_THEATRE_APPTItem().setClickEvent(new ims.framework.delegates.MenuItemClick()
+		this.form.getContextMenus().RefMan.getReferralAppointmentDetailsComponentBOOK_THEATRE_APPTItem().setClickEvent(new ims.framework.delegates.MenuItemClick()
 		{
 			private static final long serialVersionUID = 1L;
 			public void handle(ims.framework.Control sender) throws ims.framework.exceptions.PresentationLogicException
 			{
-				onContextMenuItemClick(GenForm.ContextMenus.CAREUKNamespace.ReferralAppointmentDetailsComponent.BOOK_THEATRE_APPT, sender);
+				onContextMenuItemClick(GenForm.ContextMenus.RefManNamespace.ReferralAppointmentDetailsComponent.BOOK_THEATRE_APPT, sender);
 			}
 		});
-		this.form.getContextMenus().CAREUK.getReferralAppointmentDetailsComponentCANCEL_THEATRE_APPTItem().setClickEvent(new ims.framework.delegates.MenuItemClick()
+		this.form.getContextMenus().RefMan.getReferralAppointmentDetailsComponentCANCEL_THEATRE_APPTItem().setClickEvent(new ims.framework.delegates.MenuItemClick()
 		{
 			private static final long serialVersionUID = 1L;
 			public void handle(ims.framework.Control sender) throws ims.framework.exceptions.PresentationLogicException
 			{
-				onContextMenuItemClick(GenForm.ContextMenus.CAREUKNamespace.ReferralAppointmentDetailsComponent.CANCEL_THEATRE_APPT, sender);
+				onContextMenuItemClick(GenForm.ContextMenus.RefManNamespace.ReferralAppointmentDetailsComponent.CANCEL_THEATRE_APPT, sender);
 			}
 		});
-		this.form.getContextMenus().CAREUK.getReferralAppointmentDetailsComponentREBOOK_THEATRE_APPTItem().setClickEvent(new ims.framework.delegates.MenuItemClick()
+		this.form.getContextMenus().RefMan.getReferralAppointmentDetailsComponentREBOOK_THEATRE_APPTItem().setClickEvent(new ims.framework.delegates.MenuItemClick()
 		{
 			private static final long serialVersionUID = 1L;
 			public void handle(ims.framework.Control sender) throws ims.framework.exceptions.PresentationLogicException
 			{
-				onContextMenuItemClick(GenForm.ContextMenus.CAREUKNamespace.ReferralAppointmentDetailsComponent.REBOOK_THEATRE_APPT, sender);
+				onContextMenuItemClick(GenForm.ContextMenus.RefManNamespace.ReferralAppointmentDetailsComponent.REBOOK_THEATRE_APPT, sender);
 			}
 		});
-		this.form.getContextMenus().CAREUK.getReferralAppointmentDetailsComponentVIEW_APPT_HISTORYItem().setClickEvent(new ims.framework.delegates.MenuItemClick()
+		this.form.getContextMenus().RefMan.getReferralAppointmentDetailsComponentVIEW_APPT_HISTORYItem().setClickEvent(new ims.framework.delegates.MenuItemClick()
 		{
 			private static final long serialVersionUID = 1L;
 			public void handle(ims.framework.Control sender) throws ims.framework.exceptions.PresentationLogicException
 			{
-				onContextMenuItemClick(GenForm.ContextMenus.CAREUKNamespace.ReferralAppointmentDetailsComponent.VIEW_APPT_HISTORY, sender);
+				onContextMenuItemClick(GenForm.ContextMenus.RefManNamespace.ReferralAppointmentDetailsComponent.VIEW_APPT_HISTORY, sender);
 			}
 		});
 		this.form.getContextMenus().getGenericGridAddItem().setClickEvent(new ims.framework.delegates.MenuItemClick()

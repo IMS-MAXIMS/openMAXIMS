@@ -31,13 +31,13 @@ public class PatientDocumentSaveVoBean extends ims.vo.ValueObjectBean
 	public PatientDocumentSaveVoBean(ims.core.vo.PatientDocumentSaveVo vo)
 	{
 		this.patientdocumentvo = vo.getPatientDocumentVo() == null ? null : (ims.core.vo.beans.PatientDocumentVoBean)vo.getPatientDocumentVo().getBean();
-		this.catsreferralwizardvo = vo.getCatsReferralWizardVo() == null ? null : (ims.careuk.vo.beans.CatsReferralWizardVoBean)vo.getCatsReferralWizardVo().getBean();
+		this.catsreferralwizardvo = vo.getCatsReferralWizardVo() == null ? null : (ims.RefMan.vo.beans.CatsReferralWizardVoBean)vo.getCatsReferralWizardVo().getBean();
 	}
 
 	public void populate(ims.vo.ValueObjectBeanMap map, ims.core.vo.PatientDocumentSaveVo vo)
 	{
 		this.patientdocumentvo = vo.getPatientDocumentVo() == null ? null : (ims.core.vo.beans.PatientDocumentVoBean)vo.getPatientDocumentVo().getBean(map);
-		this.catsreferralwizardvo = vo.getCatsReferralWizardVo() == null ? null : (ims.careuk.vo.beans.CatsReferralWizardVoBean)vo.getCatsReferralWizardVo().getBean(map);
+		this.catsreferralwizardvo = vo.getCatsReferralWizardVo() == null ? null : (ims.RefMan.vo.beans.CatsReferralWizardVoBean)vo.getCatsReferralWizardVo().getBean(map);
 	}
 
 	public ims.core.vo.PatientDocumentSaveVo buildVo()
@@ -67,15 +67,15 @@ public class PatientDocumentSaveVoBean extends ims.vo.ValueObjectBean
 	{
 		this.patientdocumentvo = value;
 	}
-	public ims.careuk.vo.beans.CatsReferralWizardVoBean getCatsReferralWizardVo()
+	public ims.RefMan.vo.beans.CatsReferralWizardVoBean getCatsReferralWizardVo()
 	{
 		return this.catsreferralwizardvo;
 	}
-	public void setCatsReferralWizardVo(ims.careuk.vo.beans.CatsReferralWizardVoBean value)
+	public void setCatsReferralWizardVo(ims.RefMan.vo.beans.CatsReferralWizardVoBean value)
 	{
 		this.catsreferralwizardvo = value;
 	}
 
 	private ims.core.vo.beans.PatientDocumentVoBean patientdocumentvo;
-	private ims.careuk.vo.beans.CatsReferralWizardVoBean catsreferralwizardvo;
+	private ims.RefMan.vo.beans.CatsReferralWizardVoBean catsreferralwizardvo;
 }

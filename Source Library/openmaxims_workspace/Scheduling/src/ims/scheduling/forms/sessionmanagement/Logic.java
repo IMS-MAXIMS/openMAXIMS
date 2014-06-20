@@ -22,8 +22,8 @@
 
 package ims.scheduling.forms.sessionmanagement;
 
-import ims.careuk.vo.CatsReferralForSessionManagementVo;
-import ims.careuk.vo.lookups.ReferralApptStatus;
+import ims.RefMan.vo.CatsReferralForSessionManagementVo;
+import ims.RefMan.vo.lookups.ReferralApptStatus;
 import ims.chooseandbook.vo.lookups.ActionRequestType;
 import ims.configuration.gen.ConfigFlag;
 import ims.core.vo.HcpLiteVo;
@@ -331,7 +331,7 @@ public class Logic extends BaseLogic
 		{
 			updateSessionStatus(form.getLocalContext().getSelectedSession(), Session_Status_and_Reason.BLOCKED);
 		}
-		else if(formName.equals(form.getForms().CAREUK.BookAppointmentDialog))
+		else if(formName.equals(form.getForms().RefMan.BookAppointmentDialog))
 		{
 			form.getGlobalContext().Core.setPatientShort(null);
 			updateScreenForRecord(null);
@@ -395,7 +395,7 @@ public class Logic extends BaseLogic
 			/*
 			if(ConfigFlag.GEN.USE_ELECTIVE_LIST_FUNCTIONALITY.getValue() && voApptFull.getTheatreBooking() != null && form.getGlobalContext().Scheduling.getApptCancelStatusIsNotNull() && Boolean.TRUE.equals(form.getGlobalContext().Scheduling.getApptCancelStatus().getCancelTCI())) //WDEV-18249
 			{
-				domain.cancelTCIAndReferralEROD(form.getGlobalContext().CareUk.getCatsReferral(), voApptFull, Status_Reason.HOSPITALCANCELLED.equals(voApptFull.getApptStatusReas()), Status_Reason.PATIENTCANCELLED.equals(voApptFull.getApptStatusReas()), form.getGlobalContext().Scheduling.getApptCancelStatus().getCancelledForNonMedicalReason());//WDEV-18249,wdev-18419
+				domain.cancelTCIAndReferralEROD(form.getGlobalContext().RefMan.getCatsReferral(), voApptFull, Status_Reason.HOSPITALCANCELLED.equals(voApptFull.getApptStatusReas()), Status_Reason.PATIENTCANCELLED.equals(voApptFull.getApptStatusReas()), form.getGlobalContext().Scheduling.getApptCancelStatus().getCancelledForNonMedicalReason());//WDEV-18249,wdev-18419
 			}
 			*/
 		} 
@@ -426,7 +426,7 @@ public class Logic extends BaseLogic
 			form.getGlobalContext().Scheduling.setBookingActivity(voAppt.getActivityIsNotNull() ? voAppt.getActivity() : null);
 			
 			form.getGlobalContext().Core.setPatientShort(domain.getPatientShort(form.lyrTabs().tabExtendedView().grdSlots().getSelectedRow().getValue().getAppointment().getPatient()));
-			form.getGlobalContext().CareUk.setCatsReferral(form.lyrTabs().tabExtendedView().grdSlots().getSelectedRow().getValue().getCatsReferral());
+			form.getGlobalContext().RefMan.setCatsReferral(form.lyrTabs().tabExtendedView().grdSlots().getSelectedRow().getValue().getCatsReferral());
 			bookAppt();
 		}
 	}
@@ -437,7 +437,7 @@ public class Logic extends BaseLogic
 		if (isReferralEndOfCare())
 			return;
 
-		engine.open(form.getForms().CAREUK.BookAppointmentDialog);
+		engine.open(form.getForms().RefMan.BookAppointmentDialog);
 		
 	}
 
@@ -864,7 +864,7 @@ public class Logic extends BaseLogic
 		form.getGlobalContext().Scheduling.setBookingAppointment(null);
 		form.getGlobalContext().Scheduling.setBookingService(null);
 		form.getGlobalContext().Scheduling.setBookingActivity(null);
-		form.getGlobalContext().CareUk.setCatsReferral(null);
+		form.getGlobalContext().RefMan.setCatsReferral(null);
 		form.getGlobalContext().Core.setPatientShort(null);
 	}
 

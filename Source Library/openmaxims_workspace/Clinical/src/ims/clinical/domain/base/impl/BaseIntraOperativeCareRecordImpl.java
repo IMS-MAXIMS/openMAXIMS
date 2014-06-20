@@ -77,7 +77,7 @@ public abstract class BaseIntraOperativeCareRecordImpl extends DomainImpl implem
 	}
 
 	@SuppressWarnings("unused")
-	public void validategetBookingAppt(ims.careuk.vo.CatsReferralVo catsReferralvo)
+	public void validategetBookingAppt(ims.RefMan.vo.CatsReferralVo catsReferralvo)
 	{
 	}
 

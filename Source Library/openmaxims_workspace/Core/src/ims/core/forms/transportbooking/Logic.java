@@ -22,9 +22,9 @@
 
 package ims.core.forms.transportbooking;
 
-import ims.careuk.vo.TransportBookingDisplayVo;
-import ims.careuk.vo.TransportBookingShortVo;
-import ims.careuk.vo.TransportBookingShortVoCollection;
+import ims.RefMan.vo.TransportBookingDisplayVo;
+import ims.RefMan.vo.TransportBookingShortVo;
+import ims.RefMan.vo.TransportBookingShortVoCollection;
 import ims.core.admin.vo.CareContextRefVo;
 import ims.core.forms.transportbooking.GenForm.ctnDetailsContainer.grdAppointmentsGridGrid;
 import ims.core.forms.transportbooking.GenForm.ctnDetailsContainer.grdAppointmentsGridRow;
@@ -196,12 +196,12 @@ public class Logic extends BaseLogic
 		switch (menuItemID)
 		{
 			// New booking
-			case GenForm.ContextMenus.CAREUKNamespace.TransportBooking.New:
+			case GenForm.ContextMenus.RefManNamespace.TransportBooking.New:
 				newInstance();
 				break;
 				
 			// Edit a booking
-			case GenForm.ContextMenus.CAREUKNamespace.TransportBooking.Edit:
+			case GenForm.ContextMenus.RefManNamespace.TransportBooking.Edit:
 				updateInstance();
 				break;
 		}
@@ -225,11 +225,11 @@ public class Logic extends BaseLogic
 		
 		// Initialize context menus (No need for a function, this code is used only in this function)
 		// Transports grid context menu
-		form.getContextMenus().CAREUK.getTransportBookingNewItem().setEnabled(true);
-		form.getContextMenus().CAREUK.getTransportBookingNewItem().setVisible(true);
+		form.getContextMenus().RefMan.getTransportBookingNewItem().setEnabled(true);
+		form.getContextMenus().RefMan.getTransportBookingNewItem().setVisible(true);
 		
-		form.getContextMenus().CAREUK.getTransportBookingEditItem().setEnabled(true);
-		form.getContextMenus().CAREUK.getTransportBookingEditItem().setVisible(true);
+		form.getContextMenus().RefMan.getTransportBookingEditItem().setEnabled(true);
+		form.getContextMenus().RefMan.getTransportBookingEditItem().setVisible(true);
 	}
 	
 	/**
@@ -307,8 +307,8 @@ public class Logic extends BaseLogic
 	private void updateContextMenuState()
 	{
 		// Update context menu - Transport Booking
-		form.getContextMenus().CAREUK.getTransportBookingNewItem().setVisible(FormMode.VIEW.equals(form.getMode()));
-		form.getContextMenus().CAREUK.getTransportBookingEditItem().setVisible(form.grdTransport().getValue() != null && FormMode.VIEW.equals(form.getMode()));
+		form.getContextMenus().RefMan.getTransportBookingNewItem().setVisible(FormMode.VIEW.equals(form.getMode()));
+		form.getContextMenus().RefMan.getTransportBookingEditItem().setVisible(form.grdTransport().getValue() != null && FormMode.VIEW.equals(form.getMode()));
 	}
 
 	

@@ -48,7 +48,7 @@ public final class FormInfo extends ims.framework.FormInfo
 	}
 	public String[] getContextVariables()
 	{
-		return new String[] { "_cv_Core.UploadDocumentAction", "_cv_Core.PatientDocument", "_cv_Core.UploadDocumentAbsolutePath", "_cv_OCRR.ReferralAppointmentDetailsOcsOrderVoCollection", "_cv_CareUk.UploadDocumentsDialogDocumentType" };
+		return new String[] { "_cv_Core.UploadDocumentAction", "_cv_Core.PatientDocument", "_cv_Core.UploadDocumentAbsolutePath", "_cv_OCRR.ReferralAppointmentDetailsOcsOrderVoCollection", "_cv_RefMan.UploadDocumentsDialogDocumentType" };
 	}
 	public String getLocalVariablesPrefix()
 	{

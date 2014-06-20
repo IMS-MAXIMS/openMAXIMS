@@ -478,8 +478,8 @@ public class ICABReferralVoAssembler
 			if (color != null) 
 				color.getValue();
 
-			ims.careuk.vo.lookups.ICABReferralStatus voLookup10 = new ims.careuk.vo.lookups.ICABReferralStatus(instance10.getId(),instance10.getText(), instance10.isActive(), null, img, color);
-			ims.careuk.vo.lookups.ICABReferralStatus parentVoLookup10 = voLookup10;
+			ims.RefMan.vo.lookups.ICABReferralStatus voLookup10 = new ims.RefMan.vo.lookups.ICABReferralStatus(instance10.getId(),instance10.getText(), instance10.isActive(), null, img, color);
+			ims.RefMan.vo.lookups.ICABReferralStatus parentVoLookup10 = voLookup10;
 			ims.domain.lookups.LookupInstance parent10 = instance10.getParent();
 			while (parent10 != null)
 			{
@@ -494,7 +494,7 @@ public class ICABReferralVoAssembler
 				color = parent10.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup10.setParent(new ims.careuk.vo.lookups.ICABReferralStatus(parent10.getId(),parent10.getText(), parent10.isActive(), null, img, color));
+								parentVoLookup10.setParent(new ims.RefMan.vo.lookups.ICABReferralStatus(parent10.getId(),parent10.getText(), parent10.isActive(), null, img, color));
 				parentVoLookup10 = parentVoLookup10.getParent();
 								parent10 = parent10.getParent();
 			}			

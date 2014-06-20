@@ -91,11 +91,11 @@
 		<servlet-class>ims.hl7.domain.HL7EngineServlet</servlet-class>
 			<init-param>
 				<param-name>user</param-name>
-				<param-value>xxxx</param-value>
+				<param-value>xxxxx</param-value>
 			</init-param>
 			<init-param>
 				<param-name>pwd</param-name>
-				<param-value>xxxx</param-value>
+				<param-value>xxxxx</param-value>
 			</init-param>
 		<load-on-startup>5</load-on-startup>
 	</servlet>

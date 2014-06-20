@@ -313,7 +313,7 @@ public class PatientKioskOperationsImpl extends BasePatientKioskOperationsImpl
 					newBooking.setApptStatus(Status_Reason.ARRIVAL);
 					newBooking.setArrivalTime(new Time());
 					
-					PatientAppointmentManagement impl = (PatientAppointmentManagement) getDomainImpl(PatientAppointmentMangementCareUKImpl.class);
+					PatientAppointmentManagement impl = (PatientAppointmentManagement) getDomainImpl(PatientAppointmentMangementRefManImpl.class);
 					
 					if (!newBooking.isValidated())
 					{

@@ -100,7 +100,7 @@ public abstract class BaseSessionManagementImpl extends DomainImpl implements im
 	}
 
 	@SuppressWarnings("unused")
-	public void validateisReferralICPCompleted(ims.careuk.vo.CatsReferralRefVo catsReferral)
+	public void validateisReferralICPCompleted(ims.RefMan.vo.CatsReferralRefVo catsReferral)
 	{
 	}
 
@@ -120,12 +120,12 @@ public abstract class BaseSessionManagementImpl extends DomainImpl implements im
 	}
 
 	@SuppressWarnings("unused")
-	public void validateupdateCatsReferralAdditionalInvStatus(ims.careuk.vo.CatsReferralRefVo catsReferral)
+	public void validateupdateCatsReferralAdditionalInvStatus(ims.RefMan.vo.CatsReferralRefVo catsReferral)
 	{
 	}
 
 	@SuppressWarnings("unused")
-	public void validateupdateCatsReferralCancelStatus(ims.careuk.vo.CatsReferralRefVo catsReferral)
+	public void validateupdateCatsReferralCancelStatus(ims.RefMan.vo.CatsReferralRefVo catsReferral)
 	{
 	}
 

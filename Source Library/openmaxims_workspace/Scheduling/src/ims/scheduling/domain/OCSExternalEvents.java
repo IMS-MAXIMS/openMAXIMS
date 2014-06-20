@@ -52,7 +52,7 @@ public interface OCSExternalEvents extends ims.domain.DomainInterface
 
 	// Generated from form domain interface definition
 	/**
-	* Should be called in CAREUK when a patient NDAs 
+	* Should be called in RefMan when a patient NDAs 
 	*/
 	public void generateOrderPatientDNAEvent(ims.scheduling.vo.Booking_AppointmentRefVo appointment, ims.ocrr.orderingresults.vo.OrderInvestigationRefVo investigation) throws ims.domain.exceptions.StaleObjectException;
 

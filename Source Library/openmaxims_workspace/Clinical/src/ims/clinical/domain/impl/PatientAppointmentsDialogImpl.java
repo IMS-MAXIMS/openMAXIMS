@@ -22,8 +22,8 @@
 
 package ims.clinical.domain.impl;
 
-import ims.careuk.domain.objects.CatsReferral;
-import ims.careuk.vo.domain.ReferralForFitForSurgeryVoAssembler;
+import ims.RefMan.domain.objects.CatsReferral;
+import ims.RefMan.vo.domain.ReferralForFitForSurgeryVoAssembler;
 import ims.clinical.domain.base.impl.BasePatientAppointmentsDialogImpl;
 import ims.domain.DomainFactory;
 import ims.framework.exceptions.CodingRuntimeException;
@@ -33,7 +33,7 @@ public class PatientAppointmentsDialogImpl extends BasePatientAppointmentsDialog
 
 	private static final long serialVersionUID = 1L;
 
-	public ims.careuk.vo.ReferralForFitForSurgeryVo getReferralByCareContext(ims.core.admin.vo.CareContextRefVo careContext)
+	public ims.RefMan.vo.ReferralForFitForSurgeryVo getReferralByCareContext(ims.core.admin.vo.CareContextRefVo careContext)
 	{
 		if(careContext == null || !careContext.getID_CareContextIsNotNull())
 			throw new CodingRuntimeException("Can not get Cats Referral for a null Care Context.");

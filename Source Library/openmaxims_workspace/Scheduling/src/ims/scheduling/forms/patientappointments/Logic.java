@@ -22,9 +22,9 @@
 
 package ims.scheduling.forms.patientappointments;
 
-import ims.careuk.vo.CatsReferralForTheatreListVo;
-import ims.careuk.vo.CatsReferralListVo;
-import ims.careuk.vo.lookups.ReferralApptStatus;
+import ims.RefMan.vo.CatsReferralForTheatreListVo;
+import ims.RefMan.vo.CatsReferralListVo;
+import ims.RefMan.vo.lookups.ReferralApptStatus;
 import ims.configuration.gen.ConfigFlag;
 import ims.core.patient.vo.PatientRefVo;
 import ims.domain.exceptions.StaleObjectException;
@@ -214,14 +214,14 @@ public class Logic extends BaseLogic
 			form.getLocalContext().setAppointmentId(form.grdAppointments().getSelectedRow().getValue());
 			form.getGlobalContext().Scheduling.setBookingAppointment(null);//wdev-15207
 			form.getGlobalContext().Scheduling.setBookingAppointmentRef(null);//wdev-15207
-			form.getGlobalContext().CareUk.setCatsReferral(domain.getCatsReferralForAppointment(form.grdAppointments().getValue()));
+			form.getGlobalContext().RefMan.setCatsReferral(domain.getCatsReferralForAppointment(form.grdAppointments().getValue()));
 		}
 		else
 		{
 			form.getLocalContext().setAppointmentId(null);
 			form.getGlobalContext().Scheduling.setBookingAppointment(null);//wdev-15207
 			form.getGlobalContext().Scheduling.setBookingAppointmentRef(null);//wdev-15207
-			form.getGlobalContext().CareUk.setCatsReferral(null);
+			form.getGlobalContext().RefMan.setCatsReferral(null);
 		}
 		
 		updateControlsState();
@@ -232,7 +232,7 @@ public class Logic extends BaseLogic
 		Boolean rowSelected = form.grdAppointments().getValue() != null;
 		
 		Boolean isTheatreAppt = rowSelected && form.grdAppointments().getValue().getTheatreBooking() != null;
-		Boolean icpCompleted = domain.isReferralICPCompleted(form.getGlobalContext().CareUk.getCatsReferral());
+		Boolean icpCompleted = domain.isReferralICPCompleted(form.getGlobalContext().RefMan.getCatsReferral());
 
 		CatsReferralForTheatreListVo referralStatus = domain.getCatsReferralStatus(form.grdAppointments().getValue());
 		Boolean isReferralEOC = referralStatus != null && referralStatus.getCurrentStatus() != null && ReferralApptStatus.END_OF_CARE.equals(referralStatus.getCurrentStatus().getReferralStatus());
@@ -271,7 +271,7 @@ public class Logic extends BaseLogic
 					{
 						//WDEV-12783 - Start
 						CatsReferralListVo voReferral = domain.getCatsReferralForAppointment(voAppt);
-						form.getGlobalContext().CareUk.setCatsReferralStatus(voReferral != null ? voReferral.getCurrentStatus() : null);
+						form.getGlobalContext().RefMan.setCatsReferralStatus(voReferral != null ? voReferral.getCurrentStatus() : null);
 						//WDEV-12783 - End
 						form.getGlobalContext().Scheduling.setBookingAppointmentRef(voAppt);
 						form.getGlobalContext().Scheduling.setBookingActivity(voServiceAndActivity.getSlotActivity());
@@ -288,7 +288,7 @@ public class Logic extends BaseLogic
 							{
 								//wdev-11902
 								CatsReferralListVo voReferral = domain.getCatsReferralForAppointment(form.grdAppointments().getValue());
-								form.getGlobalContext().CareUk.setCatsReferralStatus(voReferral.getCurrentStatus());
+								form.getGlobalContext().RefMan.setCatsReferralStatus(voReferral.getCurrentStatus());
 		
 								form.getGlobalContext().Scheduling.setTheatreConsultant(voServiceProcedureConsultant.getConsultant());
 								form.getGlobalContext().Scheduling.setTheatreService(voServiceProcedureConsultant.getService());
@@ -420,8 +420,8 @@ public class Logic extends BaseLogic
 					//WDEV-12783 -Start
 					if(form.grdAppointments().getValue().getTheatreBookingIsNotNull())  //wdev-12783
 					{				
-						if (form.getGlobalContext().CareUk.getCatsReferral() == null)//WDEV-15294
-							form.getGlobalContext().CareUk.setCatsReferral(voReferral); 
+						if (form.getGlobalContext().RefMan.getCatsReferral() == null)//WDEV-15294
+							form.getGlobalContext().RefMan.setCatsReferral(voReferral); 
 						
 						rebookTheatreAppt(domain.getTheatreAppointment(form.grdAppointments().getValue()),form.grdAppointments().getValue());
 						return;
@@ -431,10 +431,10 @@ public class Logic extends BaseLogic
 												
 						if(ConfigFlag.UI.BOOKAPPT_UI_TYPE.getValue().equals("CARE_UK"))
 						{
-							form.getGlobalContext().CareUk.setCatsReferral(voReferral);
-							form.getGlobalContext().CareUk.setReferralContractTypeForPatient(voReferral.getContractIsNotNull() ? voReferral.getContract().getContractType() : null );//wdev-12682
+							form.getGlobalContext().RefMan.setCatsReferral(voReferral);
+							form.getGlobalContext().RefMan.setReferralContractTypeForPatient(voReferral.getContractIsNotNull() ? voReferral.getContract().getContractType() : null );//wdev-12682
 	
-							engine.open(form.getForms().CAREUK.BookAppointment);
+							engine.open(form.getForms().RefMan.BookAppointment);
 						}
 						else
 							engine.open(form.getForms().Scheduling.BookAppointmentDialog); // wdev-17851
@@ -483,9 +483,9 @@ public class Logic extends BaseLogic
 				
 				//WDEV-12918
 				if(ConfigFlag.DOM.THEATRE_SESSION_TYPE.getValue().equals("TCI"))
-					engine.open(form.getForms().CAREUK.BookTheatreDialog);
+					engine.open(form.getForms().RefMan.BookTheatreDialog);
 				else
-					engine.open(form.getForms().CAREUK.BookTheatreSlot);
+					engine.open(form.getForms().RefMan.BookTheatreSlot);
 			}
 		}
 	}

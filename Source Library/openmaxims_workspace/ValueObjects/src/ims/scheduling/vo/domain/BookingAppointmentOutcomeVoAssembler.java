@@ -449,11 +449,11 @@ public class BookingAppointmentOutcomeVoAssembler
 		// SeenBy
 		valueObject.setSeenBy(ims.core.vo.domain.HcpLiteVoAssembler.create(map, domainObject.getSeenBy()) );
 		// OutpatientProcedures
-		valueObject.setOutpatientProcedures(ims.careuk.vo.domain.PatientProcedureForAppointmentOutcomeVoAssembler.createPatientProcedureForAppointmentOutcomeVoCollectionFromPatientProcedure(map, domainObject.getOutpatientProcedures()) );
+		valueObject.setOutpatientProcedures(ims.RefMan.vo.domain.PatientProcedureForAppointmentOutcomeVoAssembler.createPatientProcedureForAppointmentOutcomeVoCollectionFromPatientProcedure(map, domainObject.getOutpatientProcedures()) );
 		// OutpatientDiagnoses
 		valueObject.setOutpatientDiagnoses(ims.clinical.vo.domain.PatientDiagnosisOpNotesVoAssembler.createPatientDiagnosisOpNotesVoCollectionFromPatientDiagnosis(map, domainObject.getOutpatientDiagnoses()) );
 		// Session
-		valueObject.setSession(ims.careuk.vo.domain.SessionForAppointmentOutcomeVoAssembler.create(map, domainObject.getSession()) );
+		valueObject.setSession(ims.RefMan.vo.domain.SessionForAppointmentOutcomeVoAssembler.create(map, domainObject.getSession()) );
 		// OutcomeReason
 		ims.domain.lookups.LookupInstance instance10 = domainObject.getOutcomeReason();
 		if ( null != instance10 ) {
@@ -591,7 +591,7 @@ public class BookingAppointmentOutcomeVoAssembler
 			}
 		}
 		domainObject.setSeenBy(value6);
-		domainObject.setOutpatientProcedures(ims.careuk.vo.domain.PatientProcedureForAppointmentOutcomeVoAssembler.extractPatientProcedureSet(domainFactory, valueObject.getOutpatientProcedures(), domainObject.getOutpatientProcedures(), domMap));		
+		domainObject.setOutpatientProcedures(ims.RefMan.vo.domain.PatientProcedureForAppointmentOutcomeVoAssembler.extractPatientProcedureSet(domainFactory, valueObject.getOutpatientProcedures(), domainObject.getOutpatientProcedures(), domMap));		
 		domainObject.setOutpatientDiagnoses(ims.clinical.vo.domain.PatientDiagnosisOpNotesVoAssembler.extractPatientDiagnosisSet(domainFactory, valueObject.getOutpatientDiagnoses(), domainObject.getOutpatientDiagnoses(), domMap));		
 	// SaveAsRefVO - treated as a refVo in extract methods
 	ims.scheduling.domain.objects.Sch_Session value9 = null;

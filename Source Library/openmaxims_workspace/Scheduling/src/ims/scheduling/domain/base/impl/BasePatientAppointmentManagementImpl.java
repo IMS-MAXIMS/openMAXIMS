@@ -63,7 +63,7 @@ public abstract class BasePatientAppointmentManagementImpl extends DomainImpl im
 	}
 
 	@SuppressWarnings("unused")
-	public void validateupdateCatsReferralAdditionalInvStatus(ims.careuk.vo.CatsReferralRefVo catsReferral)
+	public void validateupdateCatsReferralAdditionalInvStatus(ims.RefMan.vo.CatsReferralRefVo catsReferral)
 	{
 	}
 
@@ -75,7 +75,7 @@ public abstract class BasePatientAppointmentManagementImpl extends DomainImpl im
 	}
 
 	@SuppressWarnings("unused")
-	public void validateupdateCatsReferralCancelStatus(ims.careuk.vo.CatsReferralRefVo catsReferral)
+	public void validateupdateCatsReferralCancelStatus(ims.RefMan.vo.CatsReferralRefVo catsReferral)
 	{
 	}
 

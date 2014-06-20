@@ -22,12 +22,12 @@
 
 package ims.scheduling.forms.cliniclist;
 
-import ims.careuk.vo.CatsReferralForClinicListVo;
-import ims.careuk.vo.ElectiveListStatusVo;
-import ims.careuk.vo.PatientElectiveListForDNAAppointmentsVo;
-import ims.careuk.vo.TCIForPatientElectiveListAppointmentDNAVo;
-import ims.careuk.vo.TCIOutcomeForAppointmentDNAVo;
-import ims.careuk.vo.lookups.AdmissionOfferOutcome;
+import ims.RefMan.vo.CatsReferralForClinicListVo;
+import ims.RefMan.vo.ElectiveListStatusVo;
+import ims.RefMan.vo.PatientElectiveListForDNAAppointmentsVo;
+import ims.RefMan.vo.TCIForPatientElectiveListAppointmentDNAVo;
+import ims.RefMan.vo.TCIOutcomeForAppointmentDNAVo;
+import ims.RefMan.vo.lookups.AdmissionOfferOutcome;
 import ims.chooseandbook.vo.lookups.ActionRequestType;
 import ims.configuration.gen.ConfigFlag;
 import ims.core.resource.people.vo.MemberOfStaffRefVo;

@@ -35,7 +35,7 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 
 		Core = new CoreContext(context);
 		OCRR = new OCRRContext(context);
-		CareUk = new CareUkContext(context);
+		RefMan = new RefManContext(context);
 	}
 	public final class CoreContext implements Serializable
 	{
@@ -117,11 +117,11 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 		public PathologyResultsContext PathologyResults;
 		private ims.framework.Context context;
 	}
-	public final class CareUkContext implements Serializable
+	public final class RefManContext implements Serializable
 	{
 		private static final long serialVersionUID = 1L;
 
-		private CareUkContext(ims.framework.Context context)
+		private RefManContext(ims.framework.Context context)
 		{
 			this.context = context;
 
@@ -129,37 +129,37 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 
 		public boolean getCatsReferralIsNotNull()
 		{
-			return !cx_CareUkCatsReferral.getValueIsNull(context);
+			return !cx_RefManCatsReferral.getValueIsNull(context);
 		}
-		public ims.careuk.vo.CatsReferralRefVo getCatsReferral()
+		public ims.RefMan.vo.CatsReferralRefVo getCatsReferral()
 		{
-			return (ims.careuk.vo.CatsReferralRefVo)cx_CareUkCatsReferral.getValue(context);
+			return (ims.RefMan.vo.CatsReferralRefVo)cx_RefManCatsReferral.getValue(context);
 		}
-		public void setCatsReferral(ims.careuk.vo.CatsReferralRefVo value)
+		public void setCatsReferral(ims.RefMan.vo.CatsReferralRefVo value)
 		{
-			cx_CareUkCatsReferral.setValue(context, value);
+			cx_RefManCatsReferral.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkCatsReferral = new ims.framework.ContextVariable("CareUk.CatsReferral", "_cvp_CareUk.CatsReferral");
+		private ims.framework.ContextVariable cx_RefManCatsReferral = new ims.framework.ContextVariable("RefMan.CatsReferral", "_cvp_RefMan.CatsReferral");
 		public boolean getReferralContractTypeForPatientIsNotNull()
 		{
-			return !cx_CareUkReferralContractTypeForPatient.getValueIsNull(context);
+			return !cx_RefManReferralContractTypeForPatient.getValueIsNull(context);
 		}
 		public ims.core.vo.lookups.ReferralManagementContractType getReferralContractTypeForPatient()
 		{
-			return (ims.core.vo.lookups.ReferralManagementContractType)cx_CareUkReferralContractTypeForPatient.getValue(context);
+			return (ims.core.vo.lookups.ReferralManagementContractType)cx_RefManReferralContractTypeForPatient.getValue(context);
 		}
 		public void setReferralContractTypeForPatient(ims.core.vo.lookups.ReferralManagementContractType value)
 		{
-			cx_CareUkReferralContractTypeForPatient.setValue(context, value);
+			cx_RefManReferralContractTypeForPatient.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkReferralContractTypeForPatient = new ims.framework.ContextVariable("CareUk.ReferralContractTypeForPatient", "_cvp_CareUk.ReferralContractTypeForPatient");
+		private ims.framework.ContextVariable cx_RefManReferralContractTypeForPatient = new ims.framework.ContextVariable("RefMan.ReferralContractTypeForPatient", "_cvp_RefMan.ReferralContractTypeForPatient");
 
 		private ims.framework.Context context;
 	}
 
 	public CoreContext Core;
 	public OCRRContext OCRR;
-	public CareUkContext CareUk;
+	public RefManContext RefMan;
 }

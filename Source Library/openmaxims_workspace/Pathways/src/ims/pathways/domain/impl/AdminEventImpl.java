@@ -22,16 +22,16 @@
 
 package ims.pathways.domain.impl;
 
-import ims.careuk.domain.objects.CATSReferralStatus;
-import ims.careuk.domain.objects.CatsReferral;
-import ims.careuk.domain.objects.ElectiveListStatus;
-import ims.careuk.domain.objects.PatientElectiveList;
-import ims.careuk.domain.objects.TCIForPatientElectiveList;
-import ims.careuk.domain.objects.TCIOutcomeForPatientElectiveList;
-import ims.careuk.vo.CatsReferralRefVo;
-import ims.careuk.vo.lookups.AdmissionOfferOutcome;
-import ims.careuk.vo.lookups.ReferralApptStatus;
-import ims.careuk.vo.lookups.TCIStatusChangeReason;
+import ims.RefMan.domain.objects.CATSReferralStatus;
+import ims.RefMan.domain.objects.CatsReferral;
+import ims.RefMan.domain.objects.ElectiveListStatus;
+import ims.RefMan.domain.objects.PatientElectiveList;
+import ims.RefMan.domain.objects.TCIForPatientElectiveList;
+import ims.RefMan.domain.objects.TCIOutcomeForPatientElectiveList;
+import ims.RefMan.vo.CatsReferralRefVo;
+import ims.RefMan.vo.lookups.AdmissionOfferOutcome;
+import ims.RefMan.vo.lookups.ReferralApptStatus;
+import ims.RefMan.vo.lookups.TCIStatusChangeReason;
 import ims.chooseandbook.vo.lookups.ActionRequestType;
 import ims.configuration.gen.ConfigFlag;
 import ims.core.resource.people.domain.objects.MemberOfStaff;
@@ -83,7 +83,7 @@ public class AdminEventImpl extends BaseAdminEventImpl
 
 	private static final long serialVersionUID = 1L;
 
-	public ims.pathways.vo.AdminEventVoCollection getAdminEvents(ims.careuk.vo.CatsReferralRefVo referralRef)
+	public ims.pathways.vo.AdminEventVoCollection getAdminEvents(ims.RefMan.vo.CatsReferralRefVo referralRef)
 	{
 		if (referralRef == null)
 			throw new CodingRuntimeException("Cannot get AdminEvents on null referralRef");

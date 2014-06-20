@@ -30,7 +30,7 @@ public abstract class BaseReferralServicesImpl extends DomainImpl implements ims
 	private static final long serialVersionUID = 1L;
 
 	@SuppressWarnings("unused")
-	public void validatesave(ims.careuk.vo.ReferralServiceVo value)
+	public void validatesave(ims.RefMan.vo.ReferralServiceVo value)
 	{
 	}
 }

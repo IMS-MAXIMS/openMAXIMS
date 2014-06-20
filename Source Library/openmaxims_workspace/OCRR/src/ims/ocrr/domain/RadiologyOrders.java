@@ -72,5 +72,5 @@ public interface RadiologyOrders extends ims.domain.DomainInterface
 	/**
 	* getCatsReferralByOrder
 	*/
-	public ims.careuk.vo.CatsReferralListVo getCatsReferralByOrder(ims.ocrr.orderingresults.vo.OcsOrderSessionRefVo voOcsOrder);
+	public ims.RefMan.vo.CatsReferralListVo getCatsReferralByOrder(ims.ocrr.orderingresults.vo.OcsOrderSessionRefVo voOcsOrder);
 }

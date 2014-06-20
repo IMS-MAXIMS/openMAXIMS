@@ -66,7 +66,7 @@ public interface PathologyOrders extends ims.domain.DomainInterface
 	/**
 	* getCatsReferralByOrder
 	*/
-	public ims.careuk.vo.CatsReferralListVo getCatsReferralByOrder(ims.ocrr.orderingresults.vo.OcsOrderSessionRefVo voOcsOrder);
+	public ims.RefMan.vo.CatsReferralListVo getCatsReferralByOrder(ims.ocrr.orderingresults.vo.OcsOrderSessionRefVo voOcsOrder);
 
 	// Generated from form domain interface definition
 	public ims.ocrr.vo.PathologyOrderVoCollection listPathologyOrderInvestigation(ims.core.clinical.vo.ServiceRefVo serviceRefVo, ims.core.resource.place.vo.LocationRefVo locationRefVo, ims.ocrr.vo.lookups.Category category, ims.framework.utils.Date fromDate, ims.framework.utils.Date toDate);

@@ -22,7 +22,7 @@
 
 package ims.clinical.forms.intraoperativecarerecord;
 
-import ims.careuk.vo.CatsReferralVo;
+import ims.RefMan.vo.CatsReferralVo;
 import ims.clinical.forms.intraoperativecarerecord.GenForm.lyr1Layer.tabCareRecordContainer.PlannedUnplannedEnumeration;
 import ims.clinical.forms.intraoperativecarerecord.GenForm.lyr1Layer.tabDetailsContainer.ctn1Container.CorrectEnumeration;
 import ims.clinical.forms.intraoperativecarerecord.GenForm.lyr1Layer.tabDetailsContainer.ctn1Container.DrainsEnumeration;

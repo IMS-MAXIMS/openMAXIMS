@@ -22,11 +22,11 @@
 
 package ims.clinical.forms.fitforsurgeryassessment;
 
-import ims.careuk.vo.FitForSurgeryAssesmentVo;
-import ims.careuk.vo.FitForSurgeryAssessmentLiteVo;
-import ims.careuk.vo.FitForSurgeryAssessmentLiteVoCollection;
-import ims.careuk.vo.FitForSurgeryCommentVo;
-import ims.careuk.vo.FitForSurgeryCommentVoCollection;
+import ims.RefMan.vo.FitForSurgeryAssesmentVo;
+import ims.RefMan.vo.FitForSurgeryAssessmentLiteVo;
+import ims.RefMan.vo.FitForSurgeryAssessmentLiteVoCollection;
+import ims.RefMan.vo.FitForSurgeryCommentVo;
+import ims.RefMan.vo.FitForSurgeryCommentVoCollection;
 import ims.configuration.gen.ConfigFlag;
 import ims.core.resource.people.vo.HcpRefVo;
 import ims.core.vo.MedicVo;

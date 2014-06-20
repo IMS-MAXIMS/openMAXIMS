@@ -38,14 +38,14 @@ public class Logic extends BaseLogic
 	{
 		updateControlsState();
 		
-//		boolean allowVTMSelection = engine.getParentDialogFormName().equals(form.getForms().CAREUK.Presentation);		
+//		boolean allowVTMSelection = engine.getParentDialogFormName().equals(form.getForms().RefMan.Presentation);		
 		
 		boolean hotlistSearchOnly = false;
 		if(form.getGlobalContext().Core.SelectMedication.getHotlistSearchOnlyIsNotNull())
 		{
 			hotlistSearchOnly = form.getGlobalContext().Core.SelectMedication.getHotlistSearchOnly();
 		}
-		form.ccDMDSearch().initialize(form.getGlobalContext().CareUk.getSelectedSpecialty(), true, hotlistSearchOnly);
+		form.ccDMDSearch().initialize(form.getGlobalContext().RefMan.getSelectedSpecialty(), true, hotlistSearchOnly);
 	}
 	@Override
 	protected void onBtnSelectClick() throws ims.framework.exceptions.PresentationLogicException

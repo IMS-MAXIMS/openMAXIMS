@@ -34,7 +34,7 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 		super(context);
 
 		Scheduling = new SchedulingContext(context);
-		CareUk = new CareUkContext(context);
+		RefMan = new RefManContext(context);
 		ChooseAndBook = new ChooseAndBookContext(context);
 		Core = new CoreContext(context);
 	}
@@ -219,11 +219,11 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 
 		private ims.framework.Context context;
 	}
-	public final class CareUkContext implements Serializable
+	public final class RefManContext implements Serializable
 	{
 		private static final long serialVersionUID = 1L;
 
-		private CareUkContext(ims.framework.Context context)
+		private RefManContext(ims.framework.Context context)
 		{
 			this.context = context;
 
@@ -231,60 +231,60 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 
 		public boolean getCatsReferralIsNotNull()
 		{
-			return !cx_CareUkCatsReferral.getValueIsNull(context);
+			return !cx_RefManCatsReferral.getValueIsNull(context);
 		}
-		public ims.careuk.vo.CatsReferralRefVo getCatsReferral()
+		public ims.RefMan.vo.CatsReferralRefVo getCatsReferral()
 		{
-			return (ims.careuk.vo.CatsReferralRefVo)cx_CareUkCatsReferral.getValue(context);
+			return (ims.RefMan.vo.CatsReferralRefVo)cx_RefManCatsReferral.getValue(context);
 		}
-		public void setCatsReferral(ims.careuk.vo.CatsReferralRefVo value)
+		public void setCatsReferral(ims.RefMan.vo.CatsReferralRefVo value)
 		{
-			cx_CareUkCatsReferral.setValue(context, value);
+			cx_RefManCatsReferral.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkCatsReferral = new ims.framework.ContextVariable("CareUk.CatsReferral", "_cvp_CareUk.CatsReferral");
+		private ims.framework.ContextVariable cx_RefManCatsReferral = new ims.framework.ContextVariable("RefMan.CatsReferral", "_cvp_RefMan.CatsReferral");
 		public boolean getCatsReferralStatusIsNotNull()
 		{
-			return !cx_CareUkCatsReferralStatus.getValueIsNull(context);
+			return !cx_RefManCatsReferralStatus.getValueIsNull(context);
 		}
-		public ims.careuk.vo.CatsReferralStatusVo getCatsReferralStatus()
+		public ims.RefMan.vo.CatsReferralStatusVo getCatsReferralStatus()
 		{
-			return (ims.careuk.vo.CatsReferralStatusVo)cx_CareUkCatsReferralStatus.getValue(context);
+			return (ims.RefMan.vo.CatsReferralStatusVo)cx_RefManCatsReferralStatus.getValue(context);
 		}
-		public void setCatsReferralStatus(ims.careuk.vo.CatsReferralStatusVo value)
+		public void setCatsReferralStatus(ims.RefMan.vo.CatsReferralStatusVo value)
 		{
-			cx_CareUkCatsReferralStatus.setValue(context, value);
+			cx_RefManCatsReferralStatus.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkCatsReferralStatus = new ims.framework.ContextVariable("CareUk.CatsReferralStatus", "_cv_CareUk.CatsReferralStatus");
+		private ims.framework.ContextVariable cx_RefManCatsReferralStatus = new ims.framework.ContextVariable("RefMan.CatsReferralStatus", "_cv_RefMan.CatsReferralStatus");
 		public boolean getTheatreAdmitDetailsIsNotNull()
 		{
-			return !cx_CareUkTheatreAdmitDetails.getValueIsNull(context);
+			return !cx_RefManTheatreAdmitDetails.getValueIsNull(context);
 		}
-		public ims.careuk.vo.TheatreListBookingDetailVo getTheatreAdmitDetails()
+		public ims.RefMan.vo.TheatreListBookingDetailVo getTheatreAdmitDetails()
 		{
-			return (ims.careuk.vo.TheatreListBookingDetailVo)cx_CareUkTheatreAdmitDetails.getValue(context);
+			return (ims.RefMan.vo.TheatreListBookingDetailVo)cx_RefManTheatreAdmitDetails.getValue(context);
 		}
-		public void setTheatreAdmitDetails(ims.careuk.vo.TheatreListBookingDetailVo value)
+		public void setTheatreAdmitDetails(ims.RefMan.vo.TheatreListBookingDetailVo value)
 		{
-			cx_CareUkTheatreAdmitDetails.setValue(context, value);
+			cx_RefManTheatreAdmitDetails.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkTheatreAdmitDetails = new ims.framework.ContextVariable("CareUk.TheatreAdmitDetails", "_cv_CareUk.TheatreAdmitDetails");
+		private ims.framework.ContextVariable cx_RefManTheatreAdmitDetails = new ims.framework.ContextVariable("RefMan.TheatreAdmitDetails", "_cv_RefMan.TheatreAdmitDetails");
 		public boolean getTheatreBookingAppointmentIsNotNull()
 		{
-			return !cx_CareUkTheatreBookingAppointment.getValueIsNull(context);
+			return !cx_RefManTheatreBookingAppointment.getValueIsNull(context);
 		}
 		public ims.scheduling.vo.Booking_AppointmentRefVo getTheatreBookingAppointment()
 		{
-			return (ims.scheduling.vo.Booking_AppointmentRefVo)cx_CareUkTheatreBookingAppointment.getValue(context);
+			return (ims.scheduling.vo.Booking_AppointmentRefVo)cx_RefManTheatreBookingAppointment.getValue(context);
 		}
 		public void setTheatreBookingAppointment(ims.scheduling.vo.Booking_AppointmentRefVo value)
 		{
-			cx_CareUkTheatreBookingAppointment.setValue(context, value);
+			cx_RefManTheatreBookingAppointment.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkTheatreBookingAppointment = new ims.framework.ContextVariable("CareUk.TheatreBookingAppointment", "_cv_CareUk.TheatreBookingAppointment");
+		private ims.framework.ContextVariable cx_RefManTheatreBookingAppointment = new ims.framework.ContextVariable("RefMan.TheatreBookingAppointment", "_cv_RefMan.TheatreBookingAppointment");
 
 		private ims.framework.Context context;
 	}
@@ -358,7 +358,7 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 	}
 
 	public SchedulingContext Scheduling;
-	public CareUkContext CareUk;
+	public RefManContext RefMan;
 	public ChooseAndBookContext ChooseAndBook;
 	public CoreContext Core;
 }

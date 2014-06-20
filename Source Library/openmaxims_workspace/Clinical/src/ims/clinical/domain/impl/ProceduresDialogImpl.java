@@ -22,8 +22,8 @@
 
 package ims.clinical.domain.impl;
 
-import ims.careuk.domain.objects.CatsReferral;
-import ims.careuk.vo.domain.CatsReferralWizardVoAssembler;
+import ims.RefMan.domain.objects.CatsReferral;
+import ims.RefMan.vo.domain.CatsReferralWizardVoAssembler;
 import ims.clinical.domain.base.impl.BaseProceduresDialogImpl;
 import ims.core.clinical.vo.ServiceRefVo;
 import ims.core.vo.ServiceShortVo;
@@ -37,7 +37,7 @@ public class ProceduresDialogImpl extends BaseProceduresDialogImpl
 	/**
 	* getCatsReferral
 	*/
-	public ims.careuk.vo.CatsReferralWizardVo getCatsReferral(ims.careuk.vo.CatsReferralRefVo voCatsRef)
+	public ims.RefMan.vo.CatsReferralWizardVo getCatsReferral(ims.RefMan.vo.CatsReferralRefVo voCatsRef)
 	{
 		return CatsReferralWizardVoAssembler.create((CatsReferral)getDomainFactory().getDomainObject(CatsReferral.class, voCatsRef.getID_CatsReferral()));
 	}

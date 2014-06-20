@@ -27,16 +27,16 @@ package ims.clinical.domain;
 public interface FitForSurgeryAssessment extends ims.domain.DomainInterface
 {
 	// Generated from form domain interface definition
-	public ims.careuk.vo.FitForSurgeryAssessmentLiteVoCollection listAssessments(ims.core.admin.vo.CareContextRefVo careContextRefVo);
+	public ims.RefMan.vo.FitForSurgeryAssessmentLiteVoCollection listAssessments(ims.core.admin.vo.CareContextRefVo careContextRefVo);
 
 	// Generated from form domain interface definition
-	public ims.careuk.vo.FitForSurgeryAssesmentVo getAssessment(ims.careuk.vo.FitForSurgeryAssesmentRefVo assessRefVo);
+	public ims.RefMan.vo.FitForSurgeryAssesmentVo getAssessment(ims.RefMan.vo.FitForSurgeryAssesmentRefVo assessRefVo);
 
 	// Generated from form domain interface definition
-	public ims.careuk.vo.FitForSurgeryAssesmentVo save(ims.careuk.vo.FitForSurgeryAssesmentVo record) throws ims.domain.exceptions.DomainInterfaceException, ims.domain.exceptions.StaleObjectException, ims.domain.exceptions.UniqueKeyViolationException;
+	public ims.RefMan.vo.FitForSurgeryAssesmentVo save(ims.RefMan.vo.FitForSurgeryAssesmentVo record) throws ims.domain.exceptions.DomainInterfaceException, ims.domain.exceptions.StaleObjectException, ims.domain.exceptions.UniqueKeyViolationException;
 
 	// Generated from form domain interface definition
-	public ims.careuk.vo.FitForSurgeryAssesmentVo getFitForSurgery(ims.core.vo.CareContextShortVo careContext);
+	public ims.RefMan.vo.FitForSurgeryAssesmentVo getFitForSurgery(ims.core.vo.CareContextShortVo careContext);
 
 	// Generated from form domain interface definition
 	public ims.scheduling.vo.BookingAppointmentForFitForSurgeryAssessmentVo getLatestAppointment(ims.core.patient.vo.PatientRefVo patient);

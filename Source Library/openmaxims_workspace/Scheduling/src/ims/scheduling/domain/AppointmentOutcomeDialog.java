@@ -30,7 +30,7 @@ public interface AppointmentOutcomeDialog extends ims.domain.DomainInterface
 	/**
 	* saveBookingAppointment
 	*/
-	public void saveBookingAppointment(ims.scheduling.vo.BookingAppointmentOutcomeVo appt, ims.careuk.vo.PatientElectiveListDetailsToSaveVo patientElectiveListToSave, ims.pathways.vo.EventLiteVo firstDefinitiveTreatmentEvent) throws ims.domain.exceptions.DomainInterfaceException, ims.domain.exceptions.StaleObjectException;
+	public void saveBookingAppointment(ims.scheduling.vo.BookingAppointmentOutcomeVo appt, ims.RefMan.vo.PatientElectiveListDetailsToSaveVo patientElectiveListToSave, ims.pathways.vo.EventLiteVo firstDefinitiveTreatmentEvent) throws ims.domain.exceptions.DomainInterfaceException, ims.domain.exceptions.StaleObjectException;
 
 	// Generated from form domain interface definition
 	/**
@@ -39,13 +39,13 @@ public interface AppointmentOutcomeDialog extends ims.domain.DomainInterface
 	public ims.scheduling.vo.BookingAppointmentOutcomeVo getBookingAppointment(ims.scheduling.vo.Booking_AppointmentRefVo appt);
 
 	// Generated from form domain interface definition
-	public Boolean thereAreActivePatientElectiveListsForCurrentCatsReferral(ims.careuk.vo.CatsReferralRefVo catsRef);
+	public Boolean thereAreActivePatientElectiveListsForCurrentCatsReferral(ims.RefMan.vo.CatsReferralRefVo catsRef);
 
 	// Generated from form domain interface definition
 	public Boolean isCurrentPathwayClockActive(ims.scheduling.vo.Booking_AppointmentRefVo bookAppointment);
 
 	// Generated from form domain interface definition
-	public ims.careuk.vo.PatientProcedureForAppointmentOutcomeVo getPatientProcedure(ims.core.clinical.vo.PatientProcedureRefVo patientProcedureRef);
+	public ims.RefMan.vo.PatientProcedureForAppointmentOutcomeVo getPatientProcedure(ims.core.clinical.vo.PatientProcedureRefVo patientProcedureRef);
 
 	// Generated from form domain interface definition
 	public ims.core.vo.CareContextShortVo getCareContext(ims.scheduling.vo.Booking_AppointmentRefVo bookApptId);
@@ -60,5 +60,5 @@ public interface AppointmentOutcomeDialog extends ims.domain.DomainInterface
 	public ims.clinical.vo.PatientDiagnosisOpNotesVo getPatientDiagnosis(ims.core.clinical.vo.PatientDiagnosisRefVo patientDiagnosisRef);
 
 	// Generated from form domain interface definition
-	public ims.careuk.vo.CatsReferralRefVo getCatsReferral(ims.scheduling.vo.Booking_AppointmentRefVo bookApptRef);
+	public ims.RefMan.vo.CatsReferralRefVo getCatsReferral(ims.scheduling.vo.Booking_AppointmentRefVo bookApptRef);
 }

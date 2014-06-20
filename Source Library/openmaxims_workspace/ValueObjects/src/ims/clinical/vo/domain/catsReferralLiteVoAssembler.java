@@ -63,7 +63,7 @@ public class catsReferralLiteVoAssembler
 	 * This is a convenience method only.
 	 * It is intended to be used when one called to an Assembler is made.
  	 * If more than one call to an Assembler is made then #createcatsReferralLiteVoCollectionFromCatsReferral(DomainObjectMap, Set) should be used.
-	 * @param domainObjectSet - Set of ims.careuk.domain.objects.CatsReferral objects.
+	 * @param domainObjectSet - Set of ims.RefMan.domain.objects.CatsReferral objects.
 	 */
 	public static ims.clinical.vo.catsReferralLiteVoCollection createcatsReferralLiteVoCollectionFromCatsReferral(java.util.Set domainObjectSet)	
 	{
@@ -73,7 +73,7 @@ public class catsReferralLiteVoAssembler
 	/**
 	 * Create the ValueObject collection to hold the set of DomainObjects.
 	 * @param map - maps DomainObjects to created ValueObjects
-	 * @param domainObjectSet - Set of ims.careuk.domain.objects.CatsReferral objects.
+	 * @param domainObjectSet - Set of ims.RefMan.domain.objects.CatsReferral objects.
 	 */
 	public static ims.clinical.vo.catsReferralLiteVoCollection createcatsReferralLiteVoCollectionFromCatsReferral(DomainObjectMap map, java.util.Set domainObjectSet)	
 	{
@@ -87,7 +87,7 @@ public class catsReferralLiteVoAssembler
 		java.util.Iterator iterator = domainObjectSet.iterator();
 		while( iterator.hasNext() ) 
 		{
-			ims.careuk.domain.objects.CatsReferral domainObject = (ims.careuk.domain.objects.CatsReferral) iterator.next();
+			ims.RefMan.domain.objects.CatsReferral domainObject = (ims.RefMan.domain.objects.CatsReferral) iterator.next();
 			ims.clinical.vo.catsReferralLiteVo vo = create(map, domainObject);
 			
 			if (vo != null)
@@ -108,7 +108,7 @@ public class catsReferralLiteVoAssembler
 
 	/**
 	 * Create the ValueObject collection to hold the list of DomainObjects.
-	 * @param domainObjectList - List of ims.careuk.domain.objects.CatsReferral objects.
+	 * @param domainObjectList - List of ims.RefMan.domain.objects.CatsReferral objects.
 	 */
 	public static ims.clinical.vo.catsReferralLiteVoCollection createcatsReferralLiteVoCollectionFromCatsReferral(java.util.List domainObjectList) 
 	{
@@ -118,7 +118,7 @@ public class catsReferralLiteVoAssembler
 	/**
 	 * Create the ValueObject collection to hold the list of DomainObjects.
 	 * @param map - maps DomainObjects to created ValueObjects
-	 * @param domainObjectList - List of ims.careuk.domain.objects.CatsReferral objects.
+	 * @param domainObjectList - List of ims.RefMan.domain.objects.CatsReferral objects.
 	 */
 	public static ims.clinical.vo.catsReferralLiteVoCollection createcatsReferralLiteVoCollectionFromCatsReferral(DomainObjectMap map, java.util.List domainObjectList) 
 	{
@@ -131,7 +131,7 @@ public class catsReferralLiteVoAssembler
 		int activeCount=0;
 		for (int i = 0; i < domainObjectList.size(); i++)
 		{
-			ims.careuk.domain.objects.CatsReferral domainObject = (ims.careuk.domain.objects.CatsReferral) domainObjectList.get(i);
+			ims.RefMan.domain.objects.CatsReferral domainObject = (ims.RefMan.domain.objects.CatsReferral) domainObjectList.get(i);
 			ims.clinical.vo.catsReferralLiteVo vo = create(map, domainObject);
 
 			if (vo != null)
@@ -152,7 +152,7 @@ public class catsReferralLiteVoAssembler
 	}
 
 	/**
-	 * Create the ims.careuk.domain.objects.CatsReferral set from the value object collection.
+	 * Create the ims.RefMan.domain.objects.CatsReferral set from the value object collection.
 	 * @param domainFactory - used to create existing (persistent) domain objects.
 	 * @param voCollection - the collection of value objects	 
 	 */
@@ -172,7 +172,7 @@ public class catsReferralLiteVoAssembler
 		for(int i=0; i<size; i++) 
 		{
 			ims.clinical.vo.catsReferralLiteVo vo = voCollection.get(i);
-			ims.careuk.domain.objects.CatsReferral domainObject = catsReferralLiteVoAssembler.extractCatsReferral(domainFactory, vo, domMap);
+			ims.RefMan.domain.objects.CatsReferral domainObject = catsReferralLiteVoAssembler.extractCatsReferral(domainFactory, vo, domMap);
 
 			//TODO: This can only occur in the situation of a stale object exception. For now leave it to the Interceptor to handle it.
 			if (domainObject == null)
@@ -206,7 +206,7 @@ public class catsReferralLiteVoAssembler
 
 
 	/**
-	 * Create the ims.careuk.domain.objects.CatsReferral list from the value object collection.
+	 * Create the ims.RefMan.domain.objects.CatsReferral list from the value object collection.
 	 * @param domainFactory - used to create existing (persistent) domain objects.
 	 * @param voCollection - the collection of value objects	 
 	 */
@@ -225,7 +225,7 @@ public class catsReferralLiteVoAssembler
 		for(int i=0; i<size; i++) 
 		{
 			ims.clinical.vo.catsReferralLiteVo vo = voCollection.get(i);
-			ims.careuk.domain.objects.CatsReferral domainObject = catsReferralLiteVoAssembler.extractCatsReferral(domainFactory, vo, domMap);
+			ims.RefMan.domain.objects.CatsReferral domainObject = catsReferralLiteVoAssembler.extractCatsReferral(domainFactory, vo, domMap);
 
 			//TODO: This can only occur in the situation of a stale object exception. For now leave it to the Interceptor to handle it.
 			if (domainObject == null)
@@ -260,10 +260,10 @@ public class catsReferralLiteVoAssembler
  
 
 	/**
-	 * Create the ValueObject from the ims.careuk.domain.objects.CatsReferral object.
-	 * @param domainObject ims.careuk.domain.objects.CatsReferral
+	 * Create the ValueObject from the ims.RefMan.domain.objects.CatsReferral object.
+	 * @param domainObject ims.RefMan.domain.objects.CatsReferral
 	 */
-	 public static ims.clinical.vo.catsReferralLiteVo create(ims.careuk.domain.objects.CatsReferral domainObject) 
+	 public static ims.clinical.vo.catsReferralLiteVo create(ims.RefMan.domain.objects.CatsReferral domainObject) 
 	 {
 	 	if (null == domainObject) 
 	 	{
@@ -274,11 +274,11 @@ public class catsReferralLiteVoAssembler
 	 }
 	 
 	 /**
-	  * Create the ValueObject from the ims.careuk.domain.objects.CatsReferral object.
+	  * Create the ValueObject from the ims.RefMan.domain.objects.CatsReferral object.
 	  * @param map DomainObjectMap of DomainObjects to already created ValueObjects.
 	  * @param domainObject
 	  */
-	  public static ims.clinical.vo.catsReferralLiteVo create(DomainObjectMap map, ims.careuk.domain.objects.CatsReferral domainObject) 
+	  public static ims.clinical.vo.catsReferralLiteVo create(DomainObjectMap map, ims.RefMan.domain.objects.CatsReferral domainObject) 
 	  {
 	  		if (null == domainObject) 
 	  		{
@@ -300,9 +300,9 @@ public class catsReferralLiteVoAssembler
 	/**
 	 * Update the ValueObject with the Domain Object.
 	 * @param valueObject to be updated
-	 * @param domainObject ims.careuk.domain.objects.CatsReferral
+	 * @param domainObject ims.RefMan.domain.objects.CatsReferral
 	 */
-	 public static ims.clinical.vo.catsReferralLiteVo insert(ims.clinical.vo.catsReferralLiteVo valueObject, ims.careuk.domain.objects.CatsReferral domainObject) 
+	 public static ims.clinical.vo.catsReferralLiteVo insert(ims.clinical.vo.catsReferralLiteVo valueObject, ims.RefMan.domain.objects.CatsReferral domainObject) 
 	 {
 	 	if (null == domainObject) 
 	 	{
@@ -316,9 +316,9 @@ public class catsReferralLiteVoAssembler
 	 * Update the ValueObject with the Domain Object.
 	 * @param map DomainObjectMap of DomainObjects to already created ValueObjects.
 	 * @param valueObject to be updated
-	 * @param domainObject ims.careuk.domain.objects.CatsReferral
+	 * @param domainObject ims.RefMan.domain.objects.CatsReferral
 	 */
-	 public static ims.clinical.vo.catsReferralLiteVo insert(DomainObjectMap map, ims.clinical.vo.catsReferralLiteVo valueObject, ims.careuk.domain.objects.CatsReferral domainObject) 
+	 public static ims.clinical.vo.catsReferralLiteVo insert(DomainObjectMap map, ims.clinical.vo.catsReferralLiteVo valueObject, ims.RefMan.domain.objects.CatsReferral domainObject) 
 	 {
 	 	if (null == domainObject) 
 	 	{
@@ -361,27 +361,27 @@ public class catsReferralLiteVoAssembler
 	 * @param domainFactory - used to create existing (persistent) domain objects.
 	 * @param valueObject - extract the domain object fields from this.
 	 */
-	public static ims.careuk.domain.objects.CatsReferral extractCatsReferral(ims.domain.ILightweightDomainFactory domainFactory, ims.clinical.vo.catsReferralLiteVo valueObject) 
+	public static ims.RefMan.domain.objects.CatsReferral extractCatsReferral(ims.domain.ILightweightDomainFactory domainFactory, ims.clinical.vo.catsReferralLiteVo valueObject) 
 	{
 		return 	extractCatsReferral(domainFactory, valueObject, new HashMap());
 	}
 
-	public static ims.careuk.domain.objects.CatsReferral extractCatsReferral(ims.domain.ILightweightDomainFactory domainFactory, ims.clinical.vo.catsReferralLiteVo valueObject, HashMap domMap) 
+	public static ims.RefMan.domain.objects.CatsReferral extractCatsReferral(ims.domain.ILightweightDomainFactory domainFactory, ims.clinical.vo.catsReferralLiteVo valueObject, HashMap domMap) 
 	{
 		if (null == valueObject) 
 		{
 			return null;
 		}
 		Integer id = valueObject.getID_CatsReferral();
-		ims.careuk.domain.objects.CatsReferral domainObject = null;
+		ims.RefMan.domain.objects.CatsReferral domainObject = null;
 		if ( null == id) 
 		{
 			if (domMap.get(valueObject) != null)
 			{
-				return (ims.careuk.domain.objects.CatsReferral)domMap.get(valueObject);
+				return (ims.RefMan.domain.objects.CatsReferral)domMap.get(valueObject);
 			}
 			// ims.clinical.vo.catsReferralLiteVo ID_CatsReferral field is unknown
-			domainObject = new ims.careuk.domain.objects.CatsReferral();
+			domainObject = new ims.RefMan.domain.objects.CatsReferral();
 			domMap.put(valueObject, domainObject);
 		}
 		else 
@@ -389,9 +389,9 @@ public class catsReferralLiteVoAssembler
 			String key = (valueObject.getClass().getName() + "__" + valueObject.getID_CatsReferral());
 			if (domMap.get(key) != null)
 			{
-				return (ims.careuk.domain.objects.CatsReferral)domMap.get(key);
+				return (ims.RefMan.domain.objects.CatsReferral)domMap.get(key);
 			}
-			domainObject = (ims.careuk.domain.objects.CatsReferral) domainFactory.getDomainObject(ims.careuk.domain.objects.CatsReferral.class, id );
+			domainObject = (ims.RefMan.domain.objects.CatsReferral) domainFactory.getDomainObject(ims.RefMan.domain.objects.CatsReferral.class, id );
 			
 			//TODO: Not sure how this should be handled. Effectively it must be a staleobject exception, but maybe should be handled as that further up.
 			if (domainObject == null) 

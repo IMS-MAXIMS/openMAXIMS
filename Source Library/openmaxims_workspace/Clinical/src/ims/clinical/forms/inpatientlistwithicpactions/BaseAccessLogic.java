@@ -100,16 +100,16 @@ public class BaseAccessLogic extends FormAccessLogic implements Serializable
 
 		private CurrentForms()
 		{
-			CAREUK = new CAREUKForms();
+			RefMan = new RefManForms();
 			ICP = new ICPForms();
 			Clinical = new ClinicalForms();
 			Core = new CoreForms();
 		}
-		public final class CAREUKForms implements Serializable
+		public final class RefManForms implements Serializable
 		{
 			private static final long serialVersionUID = 1L;
 
-			private CAREUKForms()
+			private RefManForms()
 			{
 				ICPActions = new LocalFormName(123153);
 				DischargeSummaryWardPacuDialogAlias = new LocalFormName(134170);
@@ -148,7 +148,7 @@ public class BaseAccessLogic extends FormAccessLogic implements Serializable
 			public final FormName InpatientTransferDialog;
 		}
 
-		public CAREUKForms CAREUK;
+		public RefManForms RefMan;
 		public ICPForms ICP;
 		public ClinicalForms Clinical;
 		public CoreForms Core;

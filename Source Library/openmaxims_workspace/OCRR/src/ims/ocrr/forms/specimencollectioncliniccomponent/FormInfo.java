@@ -48,7 +48,7 @@ public final class FormInfo extends ims.framework.FormInfo
 	}
 	public String[] getContextVariables()
 	{
-		return new String[] { "_cv_Core.PrinterSelect", "_cv_Core.PrepareForPrinting", "_cv_Core.Report", "_cv_Core.Template", "_cv_Core.ClinicalContact", "_cv_CareUk.SpecimenWorkListItemForReports" };
+		return new String[] { "_cv_Core.PrinterSelect", "_cv_Core.PrepareForPrinting", "_cv_Core.Report", "_cv_Core.Template", "_cv_Core.ClinicalContact", "_cv_RefMan.SpecimenWorkListItemForReports" };
 	}
 	public String getLocalVariablesPrefix()
 	{

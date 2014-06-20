@@ -30,7 +30,7 @@ import java.util.Iterator;
 import ims.framework.enumerations.SortOrder;
 
 /**
- * Linked to CAREUK.TCIForPatientElectiveList business object (ID: 1096100064).
+ * Linked to RefMan.TCIForPatientElectiveList business object (ID: 1096100064).
  */
 public class TCIForPatElectListForWardLiteVoCollection extends ims.vo.ValueObjectCollection implements ims.vo.ImsCloneable, Iterable<TCIForPatElectListForWardLiteVo>
 {
@@ -39,7 +39,7 @@ public class TCIForPatElectListForWardLiteVoCollection extends ims.vo.ValueObjec
 	private ArrayList<TCIForPatElectListForWardLiteVo> col = new ArrayList<TCIForPatElectListForWardLiteVo>();
 	public String getBoClassName()
 	{
-		return "ims.careuk.domain.objects.TCIForPatientElectiveList";
+		return "ims.RefMan.domain.objects.TCIForPatientElectiveList";
 	}
 	public boolean add(TCIForPatElectListForWardLiteVo value)
 	{
@@ -181,9 +181,9 @@ public class TCIForPatElectListForWardLiteVoCollection extends ims.vo.ValueObjec
 		Collections.sort(col, comparator);
 		return this;
 	}
-	public ims.careuk.vo.TCIForPatientElectiveListRefVoCollection toRefVoCollection()
+	public ims.RefMan.vo.TCIForPatientElectiveListRefVoCollection toRefVoCollection()
 	{
-		ims.careuk.vo.TCIForPatientElectiveListRefVoCollection result = new ims.careuk.vo.TCIForPatientElectiveListRefVoCollection();
+		ims.RefMan.vo.TCIForPatientElectiveListRefVoCollection result = new ims.RefMan.vo.TCIForPatientElectiveListRefVoCollection();
 		for(int x = 0; x < this.col.size(); x++)
 		{
 			result.add(this.col.get(x));

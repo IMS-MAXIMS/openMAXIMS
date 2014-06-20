@@ -371,10 +371,10 @@ public class GenForm extends FormBridge
 
 		// Context Menus
 		contextMenus = new ContextMenus();
-		contextMenus.CAREUK.contextMenuTansport = factory.createMenu(startControlID.intValue() + 1);
-		contextMenus.CAREUK.contextMenuTansportEditItem = factory.createMenuItem(startControlID.intValue() + 1, "Edit Transport Booking Details", true, false, new Integer(103102), true, false);
-		contextMenus.CAREUK.contextMenuTansport.add(contextMenus.CAREUK.contextMenuTansportEditItem);
-		form.registerMenu(contextMenus.CAREUK.contextMenuTansport);
+		contextMenus.RefMan.contextMenuTansport = factory.createMenu(startControlID.intValue() + 1);
+		contextMenus.RefMan.contextMenuTansportEditItem = factory.createMenuItem(startControlID.intValue() + 1, "Edit Transport Booking Details", true, false, new Integer(103102), true, false);
+		contextMenus.RefMan.contextMenuTansport.add(contextMenus.RefMan.contextMenuTansportEditItem);
+		form.registerMenu(contextMenus.RefMan.contextMenuTansport);
 
 
 		// Label Controls
@@ -395,7 +395,7 @@ public class GenForm extends FormBridge
 
 		// Grid Controls
 		RuntimeAnchoring anchoringHelper6 = new RuntimeAnchoring(designSize, runtimeSize, 16, 72, 816, 544, ims.framework.enumerations.ControlAnchoring.ALL);
-		Grid m_grdSearchResultsTemp = (Grid)factory.getControl(Grid.class, new Object[] { control, new Integer(startControlID.intValue() + 1005), new Integer(anchoringHelper6.getX()), new Integer(anchoringHelper6.getY()), new Integer(anchoringHelper6.getWidth()), new Integer(anchoringHelper6.getHeight()), new Integer(startTabIndex.intValue() + 7), ControlState.READONLY, ControlState.READONLY, ims.framework.enumerations.ControlAnchoring.ALL,Boolean.TRUE, Boolean.TRUE, new Integer(24), Boolean.TRUE, contextMenus.CAREUK.contextMenuTansport, Boolean.FALSE, Boolean.FALSE, new Integer(0), null, Boolean.FALSE, Boolean.TRUE});
+		Grid m_grdSearchResultsTemp = (Grid)factory.getControl(Grid.class, new Object[] { control, new Integer(startControlID.intValue() + 1005), new Integer(anchoringHelper6.getX()), new Integer(anchoringHelper6.getY()), new Integer(anchoringHelper6.getWidth()), new Integer(anchoringHelper6.getHeight()), new Integer(startTabIndex.intValue() + 7), ControlState.READONLY, ControlState.READONLY, ims.framework.enumerations.ControlAnchoring.ALL,Boolean.TRUE, Boolean.TRUE, new Integer(24), Boolean.TRUE, contextMenus.RefMan.contextMenuTansport, Boolean.FALSE, Boolean.FALSE, new Integer(0), null, Boolean.FALSE, Boolean.TRUE});
 		addControl(m_grdSearchResultsTemp);
 		grdSearchResultsGrid grdSearchResults = (grdSearchResultsGrid)GridFlyweightFactory.getInstance().createGridBridge(grdSearchResultsGrid.class, m_grdSearchResultsTemp);
 		grdSearchResults.addDateColumn("Date", 0, 0, 100, true, true, null, false, 0, false);
@@ -561,8 +561,8 @@ public class GenForm extends FormBridge
 	public final class ContextMenus implements java.io.Serializable
 	{
 		private static final long serialVersionUID = 1L;
-		public CAREUKNamespace CAREUK = new CAREUKNamespace();
-		public final class CAREUKNamespace implements java.io.Serializable
+		public RefManNamespace RefMan = new RefManNamespace();
+		public final class RefManNamespace implements java.io.Serializable
 		{
 			private static final long serialVersionUID = 1L;
 			public final class Tansport implements java.io.Serializable
@@ -683,7 +683,7 @@ public class GenForm extends FormBridge
 			fields[67] = new ims.framework.ReportField(this.context, "_cvp_Clinical.ExtendedClinicalNotesListFilter", "BO-1011100000-CARECONTEXT", "CareContext");
 			fields[68] = new ims.framework.ReportField(this.context, "_cvp_Core.PasEvent", "BO-1014100003-ID", "ID_PASEvent");
 			fields[69] = new ims.framework.ReportField(this.context, "_cvp_Correspondence.CorrespondenceDetails", "BO-1052100001-ID", "ID_CorrespondenceDetails");
-			fields[70] = new ims.framework.ReportField(this.context, "_cvp_CareUk.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
+			fields[70] = new ims.framework.ReportField(this.context, "_cvp_RefMan.CatsReferral", "BO-1004100035-ID", "ID_CatsReferral");
 			fields[71] = new ims.framework.ReportField(this.context, prefix + "_lv_Core.Transport.__internal_x_context__ReportContext_" + componentIdentifier, "BO-1055100007-ID", "ID_Booking_Appointment");
 			fields[72] = new ims.framework.ReportField(this.context, prefix + "_lv_Core.Transport.__internal_x_context__ReportContext_" + componentIdentifier, "BO-1055100007-APPOINTMENTDATE", "AppointmentDate");
 			fields[73] = new ims.framework.ReportField(this.context, prefix + "_lv_Core.Transport.__internal_x_context__ReportContext_" + componentIdentifier, "BO-1055100007-APPTSTARTTIME", "ApptStartTime");

@@ -36,8 +36,8 @@ public interface CancelAppointmentDialog extends ims.domain.DomainInterface
 	public Boolean isReferralICPCompleted(ims.scheduling.vo.Booking_AppointmentRefVo bookingAppt);
 
 	// Generated from form domain interface definition
-	public ims.careuk.vo.CatsReferralforElectiveListDetailsVo getCatsReferral(ims.careuk.vo.CatsReferralRefVo catsRef);
+	public ims.RefMan.vo.CatsReferralforElectiveListDetailsVo getCatsReferral(ims.RefMan.vo.CatsReferralRefVo catsRef);
 
 	// Generated from form domain interface definition
-	public ims.careuk.vo.PatientElectiveListForCancelAppointmentVo getPatientElectiveList(ims.careuk.vo.CatsReferralforElectiveListDetailsVo catsReferral);
+	public ims.RefMan.vo.PatientElectiveListForCancelAppointmentVo getPatientElectiveList(ims.RefMan.vo.CatsReferralforElectiveListDetailsVo catsReferral);
 }

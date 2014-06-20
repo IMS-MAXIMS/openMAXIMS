@@ -75,7 +75,7 @@ public class Booking_AppointmentVo extends ims.scheduling.vo.Booking_Appointment
 		this.outcomecomments = bean.getOutcomeComments();
 		this.pathwayclock = bean.getPathwayClock() == null ? null : new ims.pathways.vo.PathwayClockRefVo(new Integer(bean.getPathwayClock().getId()), bean.getPathwayClock().getVersion());
 		this.consmediatype = bean.getConsMediaType() == null ? null : ims.scheduling.vo.lookups.ConsultationMediaType.buildLookup(bean.getConsMediaType());
-		this.category = bean.getCategory() == null ? null : ims.careuk.vo.lookups.CatsReferralCategory.buildLookup(bean.getCategory());
+		this.category = bean.getCategory() == null ? null : ims.RefMan.vo.lookups.CatsReferralCategory.buildLookup(bean.getCategory());
 	}
 	public void populate(ims.vo.ValueObjectBeanMap map, ims.scheduling.vo.beans.Booking_AppointmentVoBean bean)
 	{
@@ -115,7 +115,7 @@ public class Booking_AppointmentVo extends ims.scheduling.vo.Booking_Appointment
 		this.outcomecomments = bean.getOutcomeComments();
 		this.pathwayclock = bean.getPathwayClock() == null ? null : new ims.pathways.vo.PathwayClockRefVo(new Integer(bean.getPathwayClock().getId()), bean.getPathwayClock().getVersion());
 		this.consmediatype = bean.getConsMediaType() == null ? null : ims.scheduling.vo.lookups.ConsultationMediaType.buildLookup(bean.getConsMediaType());
-		this.category = bean.getCategory() == null ? null : ims.careuk.vo.lookups.CatsReferralCategory.buildLookup(bean.getCategory());
+		this.category = bean.getCategory() == null ? null : ims.RefMan.vo.lookups.CatsReferralCategory.buildLookup(bean.getCategory());
 	}
 	public ims.vo.ValueObjectBean getBean()
 	{
@@ -665,11 +665,11 @@ public class Booking_AppointmentVo extends ims.scheduling.vo.Booking_Appointment
 	{
 		return this.category != null;
 	}
-	public ims.careuk.vo.lookups.CatsReferralCategory getCategory()
+	public ims.RefMan.vo.lookups.CatsReferralCategory getCategory()
 	{
 		return this.category;
 	}
-	public void setCategory(ims.careuk.vo.lookups.CatsReferralCategory value)
+	public void setCategory(ims.RefMan.vo.lookups.CatsReferralCategory value)
 	{
 		this.isValidated = false;
 		this.category = value;
@@ -1044,7 +1044,7 @@ public class Booking_AppointmentVo extends ims.scheduling.vo.Booking_Appointment
 		if(this.category == null)
 			clone.category = null;
 		else
-			clone.category = (ims.careuk.vo.lookups.CatsReferralCategory)this.category.clone();
+			clone.category = (ims.RefMan.vo.lookups.CatsReferralCategory)this.category.clone();
 		clone.isValidated = this.isValidated;
 		
 		this.isBusy = false;
@@ -1213,7 +1213,7 @@ public class Booking_AppointmentVo extends ims.scheduling.vo.Booking_Appointment
 	protected String outcomecomments;
 	protected ims.pathways.vo.PathwayClockRefVo pathwayclock;
 	protected ims.scheduling.vo.lookups.ConsultationMediaType consmediatype;
-	protected ims.careuk.vo.lookups.CatsReferralCategory category;
+	protected ims.RefMan.vo.lookups.CatsReferralCategory category;
 	private boolean isValidated = false;
 	private boolean isBusy = false;
 }

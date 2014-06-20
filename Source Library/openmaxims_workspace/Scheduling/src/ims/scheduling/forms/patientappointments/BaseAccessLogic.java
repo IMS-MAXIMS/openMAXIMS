@@ -103,7 +103,7 @@ public class BaseAccessLogic extends FormAccessLogic implements Serializable
 		private CurrentForms()
 		{
 			Scheduling = new SchedulingForms();
-			CAREUK = new CAREUKForms();
+			RefMan = new RefManForms();
 		}
 		public final class SchedulingForms implements Serializable
 		{
@@ -121,11 +121,11 @@ public class BaseAccessLogic extends FormAccessLogic implements Serializable
 			public final FormName BookAppointmentDialog;
 			public final FormName AppointmentHistoryDialog;
 		}
-		public final class CAREUKForms implements Serializable
+		public final class RefManForms implements Serializable
 		{
 			private static final long serialVersionUID = 1L;
 
-			private CAREUKForms()
+			private RefManForms()
 			{
 				BookAppointment = new LocalFormName(134123);
 				BookTheatreDialog = new LocalFormName(134159);
@@ -137,6 +137,6 @@ public class BaseAccessLogic extends FormAccessLogic implements Serializable
 		}
 
 		public SchedulingForms Scheduling;
-		public CAREUKForms CAREUK;
+		public RefManForms RefMan;
 	}
 }

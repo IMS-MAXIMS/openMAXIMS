@@ -235,9 +235,9 @@ public class Logic extends BaseLogic
 				cmbReferralValueChanged();
 			}
 			
-			if (Boolean.TRUE.equals(searchAfterCatsReferral) && referrals.size() > 1 && form.getGlobalContext().CareUk.getCatsReferralIsNotNull() )
+			if (Boolean.TRUE.equals(searchAfterCatsReferral) && referrals.size() > 1 && form.getGlobalContext().RefMan.getCatsReferralIsNotNull() )
 			{
-				form.cmbReferrals().setValue(domain.getReferralFromSelectedCatsReferral(form.getGlobalContext().CareUk.getCatsReferral().getID_CatsReferral()));
+				form.cmbReferrals().setValue(domain.getReferralFromSelectedCatsReferral(form.getGlobalContext().RefMan.getCatsReferral().getID_CatsReferral()));
 				cmbReferralValueChanged();
 			}
 		}

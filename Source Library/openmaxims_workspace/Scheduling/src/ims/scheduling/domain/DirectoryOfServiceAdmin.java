@@ -60,5 +60,5 @@ public interface DirectoryOfServiceAdmin extends ims.domain.DomainInterface
 	public ims.core.vo.LocationLiteVoCollection listLocationLiteByName(String name);
 
 	// Generated from form domain interface definition
-	public ims.careuk.vo.ContractConfigShortVoCollection listActiveContracts();
+	public ims.RefMan.vo.ContractConfigShortVoCollection listActiveContracts();
 }

@@ -35,7 +35,7 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 
 		Scheduling = new SchedulingContext(context);
 		ChooseAndBook = new ChooseAndBookContext(context);
-		CareUk = new CareUkContext(context);
+		RefMan = new RefManContext(context);
 	}
 	public final class SchedulingContext implements Serializable
 	{
@@ -161,11 +161,11 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 
 		private ims.framework.Context context;
 	}
-	public final class CareUkContext implements Serializable
+	public final class RefManContext implements Serializable
 	{
 		private static final long serialVersionUID = 1L;
 
-		private CareUkContext(ims.framework.Context context)
+		private RefManContext(ims.framework.Context context)
 		{
 			this.context = context;
 
@@ -173,51 +173,51 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 
 		public boolean getCatsReferralStatusIsNotNull()
 		{
-			return !cx_CareUkCatsReferralStatus.getValueIsNull(context);
+			return !cx_RefManCatsReferralStatus.getValueIsNull(context);
 		}
-		public ims.careuk.vo.CatsReferralStatusVo getCatsReferralStatus()
+		public ims.RefMan.vo.CatsReferralStatusVo getCatsReferralStatus()
 		{
-			return (ims.careuk.vo.CatsReferralStatusVo)cx_CareUkCatsReferralStatus.getValue(context);
+			return (ims.RefMan.vo.CatsReferralStatusVo)cx_RefManCatsReferralStatus.getValue(context);
 		}
-		public void setCatsReferralStatus(ims.careuk.vo.CatsReferralStatusVo value)
+		public void setCatsReferralStatus(ims.RefMan.vo.CatsReferralStatusVo value)
 		{
-			cx_CareUkCatsReferralStatus.setValue(context, value);
+			cx_RefManCatsReferralStatus.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkCatsReferralStatus = new ims.framework.ContextVariable("CareUk.CatsReferralStatus", "_cv_CareUk.CatsReferralStatus");
+		private ims.framework.ContextVariable cx_RefManCatsReferralStatus = new ims.framework.ContextVariable("RefMan.CatsReferralStatus", "_cv_RefMan.CatsReferralStatus");
 		public boolean getCatsReferralStatusHistoryIsNotNull()
 		{
-			return !cx_CareUkCatsReferralStatusHistory.getValueIsNull(context);
+			return !cx_RefManCatsReferralStatusHistory.getValueIsNull(context);
 		}
-		public ims.careuk.vo.CatsReferralStatusVoCollection getCatsReferralStatusHistory()
+		public ims.RefMan.vo.CatsReferralStatusVoCollection getCatsReferralStatusHistory()
 		{
-			return (ims.careuk.vo.CatsReferralStatusVoCollection)cx_CareUkCatsReferralStatusHistory.getValue(context);
+			return (ims.RefMan.vo.CatsReferralStatusVoCollection)cx_RefManCatsReferralStatusHistory.getValue(context);
 		}
-		public void setCatsReferralStatusHistory(ims.careuk.vo.CatsReferralStatusVoCollection value)
+		public void setCatsReferralStatusHistory(ims.RefMan.vo.CatsReferralStatusVoCollection value)
 		{
-			cx_CareUkCatsReferralStatusHistory.setValue(context, value);
+			cx_RefManCatsReferralStatusHistory.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkCatsReferralStatusHistory = new ims.framework.ContextVariable("CareUk.CatsReferralStatusHistory", "_cv_CareUk.CatsReferralStatusHistory");
+		private ims.framework.ContextVariable cx_RefManCatsReferralStatusHistory = new ims.framework.ContextVariable("RefMan.CatsReferralStatusHistory", "_cv_RefMan.CatsReferralStatusHistory");
 		public boolean getCatsReferralIsNotNull()
 		{
-			return !cx_CareUkCatsReferral.getValueIsNull(context);
+			return !cx_RefManCatsReferral.getValueIsNull(context);
 		}
-		public ims.careuk.vo.CatsReferralRefVo getCatsReferral()
+		public ims.RefMan.vo.CatsReferralRefVo getCatsReferral()
 		{
-			return (ims.careuk.vo.CatsReferralRefVo)cx_CareUkCatsReferral.getValue(context);
+			return (ims.RefMan.vo.CatsReferralRefVo)cx_RefManCatsReferral.getValue(context);
 		}
-		public void setCatsReferral(ims.careuk.vo.CatsReferralRefVo value)
+		public void setCatsReferral(ims.RefMan.vo.CatsReferralRefVo value)
 		{
-			cx_CareUkCatsReferral.setValue(context, value);
+			cx_RefManCatsReferral.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkCatsReferral = new ims.framework.ContextVariable("CareUk.CatsReferral", "_cvp_CareUk.CatsReferral");
+		private ims.framework.ContextVariable cx_RefManCatsReferral = new ims.framework.ContextVariable("RefMan.CatsReferral", "_cvp_RefMan.CatsReferral");
 
 		private ims.framework.Context context;
 	}
 
 	public SchedulingContext Scheduling;
 	public ChooseAndBookContext ChooseAndBook;
-	public CareUkContext CareUk;
+	public RefManContext RefMan;
 }

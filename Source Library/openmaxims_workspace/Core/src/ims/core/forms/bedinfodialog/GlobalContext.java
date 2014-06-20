@@ -34,7 +34,7 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 		super(context);
 
 		Core = new CoreContext(context);
-		CareUk = new CareUkContext(context);
+		RefMan = new RefManContext(context);
 	}
 	public final class CoreContext implements Serializable
 	{
@@ -273,11 +273,11 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 
 		private ims.framework.Context context;
 	}
-	public final class CareUkContext implements Serializable
+	public final class RefManContext implements Serializable
 	{
 		private static final long serialVersionUID = 1L;
 
-		private CareUkContext(ims.framework.Context context)
+		private RefManContext(ims.framework.Context context)
 		{
 			this.context = context;
 
@@ -285,22 +285,22 @@ public final class GlobalContext extends ims.framework.FormContext implements Se
 
 		public boolean getPatientElectiveListsForCancellationDialogIsNotNull()
 		{
-			return !cx_CareUkPatientElectiveListsForCancellationDialog.getValueIsNull(context);
+			return !cx_RefManPatientElectiveListsForCancellationDialog.getValueIsNull(context);
 		}
-		public ims.careuk.vo.PatientElectiveListBedAdmissionVoCollection getPatientElectiveListsForCancellationDialog()
+		public ims.RefMan.vo.PatientElectiveListBedAdmissionVoCollection getPatientElectiveListsForCancellationDialog()
 		{
-			return (ims.careuk.vo.PatientElectiveListBedAdmissionVoCollection)cx_CareUkPatientElectiveListsForCancellationDialog.getValue(context);
+			return (ims.RefMan.vo.PatientElectiveListBedAdmissionVoCollection)cx_RefManPatientElectiveListsForCancellationDialog.getValue(context);
 		}
-		public void setPatientElectiveListsForCancellationDialog(ims.careuk.vo.PatientElectiveListBedAdmissionVoCollection value)
+		public void setPatientElectiveListsForCancellationDialog(ims.RefMan.vo.PatientElectiveListBedAdmissionVoCollection value)
 		{
-			cx_CareUkPatientElectiveListsForCancellationDialog.setValue(context, value);
+			cx_RefManPatientElectiveListsForCancellationDialog.setValue(context, value);
 		}
 
-		private ims.framework.ContextVariable cx_CareUkPatientElectiveListsForCancellationDialog = new ims.framework.ContextVariable("CareUk.PatientElectiveListsForCancellationDialog", "_cv_CareUk.PatientElectiveListsForCancellationDialog");
+		private ims.framework.ContextVariable cx_RefManPatientElectiveListsForCancellationDialog = new ims.framework.ContextVariable("RefMan.PatientElectiveListsForCancellationDialog", "_cv_RefMan.PatientElectiveListsForCancellationDialog");
 
 		private ims.framework.Context context;
 	}
 
 	public CoreContext Core;
-	public CareUkContext CareUk;
+	public RefManContext RefMan;
 }

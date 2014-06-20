@@ -7,9 +7,9 @@ This version of openMAXIMS is intended for use with Microsoft SQL Server 2008 R2
 
 Some 3rd party tools are provided in the 'apps' folder for your convenience.
 
-to build the openMAXIMS project:
+to build the openMAXIMS project for Windows:
 
-1. Install JDK 1.5 (jdk-1_5_0_05-windows-i586-p.exe) 
+1. Install JDK 1.5 (jdk-1_5_0_22-windows-i586-p.exe) - (note: this is the latest/final version of jdk 1.5)
 2. Ensure the <jdk_install_home>\bin directory is in the PATH.
 3. Install Tomcat (jakarta-tomcat-5.5.9.exe)
 4. Create a system wide environment variable called TOMCAT_HOME set to <tomcat_install_dir>
