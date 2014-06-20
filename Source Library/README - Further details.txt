@@ -7,7 +7,12 @@ openmaxims_workspace\WebApp\WebAppBuild.xml
 Line 6: set path to your local source code directory
 lines 14 through 18: the actual location and parameters for database can be set
 -----------------------------------------------------------------------------------------------------------
-IMPORTANT - The following 2 java source files employ hard coded passwords that are compiled into the final build, by default these are set to "xxxx" in this code. These paswords control access to some of the lower level configuration settings that should not be changed (except by a very confident system administrator or developer) once the system has been initially configured and had data loaded - else data corruption and other nasty things could occur. For a simple test deployment these passwords are not important, but for any real-world use they should be set to a locally agreed but secure string.
+IMPORTANT - The following 2 java source files employ hard coded passwords that are compiled into the final
+build, by default these are set to "xxxx" in this code. These paswords control access to some of the lower level
+configuration settings that should not be changed (except by a very confident system administrator or developer)
+once the system has been initially configured and had data loaded - else data corruption and other nasty things
+could occur. For a simple test deployment these passwords are not important, but for any real-world use they
+should be set to a locally agreed but secure string.
 
 openmaxims_workspace\Admin\src\ims\admin\forms\configflags\Logic.java
 line 432: set system password details - gives access to change configflags on built system
