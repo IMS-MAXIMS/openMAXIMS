@@ -1,0 +1,13 @@
+<iClearInfo>
+	<context name="Core.PatientShort" key="_cvp_Core.PatientShort" />
+	<context name="Core.CurrentClinicalContact" key="_cvp_Core.CurrentClinicalContact" />
+	<context name="Core.CurrentCareContext" key="_cvp_Core.CurrentCareContext" />
+	<context name="Core.EpisodeofCareShort" key="_cvp_Core.EpisodeofCareShort" />
+	<context name="Core.CurrentCareContext.ContextType" key="_cvp_Core.CurrentCareContext.ContextType" />
+	<context name="CareUk.CatsReferral" key="_cvp_CareUk.CatsReferral" />
+	<context name="ICP.PatientICPRecord" key="_cv_ICP.PatientICPRecord" />
+	<context name="Oncology.CancerContactSearchCriteriaVo" key="_cvp_Oncology.CancerContactSearchCriteriaVo" />
+	<context name="CareUk.ReferralContractTypeForPatient" key="_cvp_CareUk.ReferralContractTypeForPatient" />
+	<context name="CancerCare.ClientReferral" key="_cv_CancerCare.ClientReferral" />
+	<context name="Core.SelectingPatientForm" key="_cvp_Core.SelectingPatientForm" />
+</iClearInfo>
