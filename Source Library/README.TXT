@@ -5,7 +5,21 @@ We also make use of some 3rd party software components within openMAXIMS which a
 This version of openMAXIMS is intended for use with Microsoft SQL Server 2008 R2 or 2012 (JDBC v3)
 (other database systems such as Oracle and MySQL are also supported but will require you to make some configuration code changes)
 
-Some 3rd party tools are provided in the 'apps' folder for your convenience.
+----------------------------------------------------------------------------------------
+Some 3rd party tools are provided in the 'apps' folder for your convenience, or else can be found here:
+
+For JDK 1.5.0_22:
+
+http://www.oracle.com/technetwork/java/javasebusiness/downloads/java-archive-downloads-javase5-419410.html#jdk-1.5.0_22-oth-JPR
+
+For Apache Ant 1.6.5:
+
+http://archive.apache.org/dist/ant/binaries/
+
+For Apache Jakarta Tomcat 5.5.9:
+
+http://archive.apache.org/dist/jakarta/tomcat-5/v5.5.9/bin/
+---------------------------------------------------------------------------------------
 
 to build the openMAXIMS project for Windows:
 
