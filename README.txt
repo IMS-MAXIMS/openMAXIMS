@@ -1,6 +1,13 @@
 openMAXIMS source code project is located in the 'Source Library' folder
 
 -----------------------------------------------------------------------------------------------------------------------------------
+1st August 2014 - Updated Release
+
+The openMAXIMS database creation scripts have been uploaded, together with scripts for the creation of the initial reference data.
+
+Instructions have been included.
+
+-----------------------------------------------------------------------------------------------------------------------------------
 20th June 2014 - Updated Release
 
 The compressed (zip) version has been removed as GitHub provides for a 'zipped' download
