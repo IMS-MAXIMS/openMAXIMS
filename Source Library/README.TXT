@@ -34,7 +34,44 @@ to build the openMAXIMS project for Windows:
 9. Modify the property workspace on line 4 of openmaxims_workspace\WebApp\WebAppBuild.xml to point to the openmaxims_workspace
 10. Modify the setenv.bat file to match your environment (change disk and paths)
 11. From a DOS window, go to the directory containing this file, run the 'setenv.bat' batch file followed by the 'build_openMAXIMS.bat' batch file
+11a. Or go to the \openmaxims_workspace folder and run ant from a command prompt.
 12. Once the build is successful, there is a newly created file called openMAXIMS.war located in .\openmaxims_workspace\WebApp folder
 
 openMAXIMS.war consitutes the entire openMAXIMS application, containing all run-time dependencies. 
 This can be deployed as a web application in Apache Tomcat in the standard manner.
+
+
+
+
+=========================================================================================================
+cp -Rf ./Admin/bin/* /home/sumeetc/whome/Downloads/apache-tomcat-6.0.36/apache-tomcat-6.0.36/webapps/openMAXIMS/WEB-INF/classes/
+cp -Rf ./Alerts/bin/* /home/sumeetc/whome/Downloads/apache-tomcat-6.0.36/apache-tomcat-6.0.36/webapps/openMAXIMS/WEB-INF/classes/
+cp -Rf ./Assessment/bin/* /home/sumeetc/whome/Downloads/apache-tomcat-6.0.36/apache-tomcat-6.0.36/webapps/openMAXIMS/WEB-INF/classes/
+cp -Rf ./Billing/bin/* /home/sumeetc/whome/Downloads/apache-tomcat-6.0.36/apache-tomcat-6.0.36/webapps/openMAXIMS/WEB-INF/classes/
+cp -Rf ./bin/bin/* /home/sumeetc/whome/Downloads/apache-tomcat-6.0.36/apache-tomcat-6.0.36/webapps/openMAXIMS/WEB-INF/classes/
+cp -Rf ./Clinical/bin/* /home/sumeetc/whome/Downloads/apache-tomcat-6.0.36/apache-tomcat-6.0.36/webapps/openMAXIMS/WEB-INF/classes/
+cp -Rf ./ClinicalAdmin/bin/* /home/sumeetc/whome/Downloads/apache-tomcat-6.0.36/apache-tomcat-6.0.36/webapps/openMAXIMS/WEB-INF/classes/
+cp -Rf ./COE/bin/* /home/sumeetc/whome/Downloads/apache-tomcat-6.0.36/apache-tomcat-6.0.36/webapps/openMAXIMS/WEB-INF/classes/
+cp -Rf ./Core/bin/* /home/sumeetc/whome/Downloads/apache-tomcat-6.0.36/apache-tomcat-6.0.36/webapps/openMAXIMS/WEB-INF/classes/
+cp -Rf ./Correspondence/bin/* /home/sumeetc/whome/Downloads/apache-tomcat-6.0.36/apache-tomcat-6.0.36/webapps/openMAXIMS/WEB-INF/classes/
+cp -Rf ./DomainObjects/bin/* /home/sumeetc/whome/Downloads/apache-tomcat-6.0.36/apache-tomcat-6.0.36/webapps/openMAXIMS/WEB-INF/classes/
+cp -Rf ./DTOClients/bin/* /home/sumeetc/whome/Downloads/apache-tomcat-6.0.36/apache-tomcat-6.0.36/webapps/openMAXIMS/WEB-INF/classes/
+cp -Rf ./DTOScripts/bin/* /home/sumeetc/whome/Downloads/apache-tomcat-6.0.36/apache-tomcat-6.0.36/webapps/openMAXIMS/WEB-INF/classes/
+cp -Rf ./Emergency/bin/* /home/sumeetc/whome/Downloads/apache-tomcat-6.0.36/apache-tomcat-6.0.36/webapps/openMAXIMS/WEB-INF/classes/
+cp -Rf ./HL7Engine/bin/* /home/sumeetc/whome/Downloads/apache-tomcat-6.0.36/apache-tomcat-6.0.36/webapps/openMAXIMS/WEB-INF/classes/
+cp -Rf ./HL7Nas/bin/* /home/sumeetc/whome/Downloads/apache-tomcat-6.0.36/apache-tomcat-6.0.36/webapps/openMAXIMS/WEB-INF/classes/
+cp -Rf ./ICP/bin/* /home/sumeetc/whome/Downloads/apache-tomcat-6.0.36/apache-tomcat-6.0.36/webapps/openMAXIMS/WEB-INF/classes/
+cp -Rf ./Nursing/bin/* /home/sumeetc/whome/Downloads/apache-tomcat-6.0.36/apache-tomcat-6.0.36/webapps/openMAXIMS/WEB-INF/classes/
+cp -Rf ./OCRR/bin/* /home/sumeetc/whome/Downloads/apache-tomcat-6.0.36/apache-tomcat-6.0.36/webapps/openMAXIMS/WEB-INF/classes/
+cp -Rf ./OCS_IF/bin/* /home/sumeetc/whome/Downloads/apache-tomcat-6.0.36/apache-tomcat-6.0.36/webapps/openMAXIMS/WEB-INF/classes/
+cp -Rf ./Oncology/bin/* /home/sumeetc/whome/Downloads/apache-tomcat-6.0.36/apache-tomcat-6.0.36/webapps/openMAXIMS/WEB-INF/classes/
+cp -Rf ./Pathways/bin/* /home/sumeetc/whome/Downloads/apache-tomcat-6.0.36/apache-tomcat-6.0.36/webapps/openMAXIMS/WEB-INF/classes/
+cp -Rf ./RACPC/bin/* /home/sumeetc/whome/Downloads/apache-tomcat-6.0.36/apache-tomcat-6.0.36/webapps/openMAXIMS/WEB-INF/classes/
+cp -Rf ./RefMan/bin/* /home/sumeetc/whome/Downloads/apache-tomcat-6.0.36/apache-tomcat-6.0.36/webapps/openMAXIMS/WEB-INF/classes/
+cp -Rf ./Rules/bin/* /home/sumeetc/whome/Downloads/apache-tomcat-6.0.36/apache-tomcat-6.0.36/webapps/openMAXIMS/WEB-INF/classes/
+cp -Rf ./Scheduling/bin/* /home/sumeetc/whome/Downloads/apache-tomcat-6.0.36/apache-tomcat-6.0.36/webapps/openMAXIMS/WEB-INF/classes/
+cp -Rf ./SpinalInjuries/bin/* /home/sumeetc/whome/Downloads/apache-tomcat-6.0.36/apache-tomcat-6.0.36/webapps/openMAXIMS/WEB-INF/classes/
+cp -Rf ./src/bin/* /home/sumeetc/whome/Downloads/apache-tomcat-6.0.36/apache-tomcat-6.0.36/webapps/openMAXIMS/WEB-INF/classes/
+cp -Rf ./Therapies/bin/* /home/sumeetc/whome/Downloads/apache-tomcat-6.0.36/apache-tomcat-6.0.36/webapps/openMAXIMS/WEB-INF/classes/
+cp -Rf ./ValueObjects/bin/* /home/sumeetc/whome/Downloads/apache-tomcat-6.0.36/apache-tomcat-6.0.36/webapps/openMAXIMS/WEB-INF/classes/
+cp -Rf ./WebApp/bin/* /home/sumeetc/whome/Downloads/apache-tomcat-6.0.36/apache-tomcat-6.0.36/webapps/openMAXIMS/WEB-INF/classes/

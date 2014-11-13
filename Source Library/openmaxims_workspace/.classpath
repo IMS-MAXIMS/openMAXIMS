@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/activation.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/antlr-runtime-3.1.1.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/antlr.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/apns-0.1.5.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/asm.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/aspectjrt.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/axis-ant.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/axis-schema.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/axis.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/base_src.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/base.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/bsh-2.0b2.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/c3p0.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/cactus.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/capscan.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/cglib.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/commons-beanutils-bean-collections.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/commons-beanutils-core.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/commons-beanutils.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/commons-betwixt-0.6.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/commons-cli-1.1.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/commons-codec-1.3.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/commons-collections.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/commons-dbcp.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/commons-digester.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/commons-discovery.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/commons-httpclient-3.0.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/commons-io-1.4.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/commons-lang.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/commons-logging.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/commons-pool.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/concurrent.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/configflag_src.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/configflag.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/cos.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/crimson.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/dom4j.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/domain_src.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/domain.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/drools-compiler-5.5.0.Final.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/drools-core-5.5.0.Final.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/ehcache.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/Esendex.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/flatpack-3.1.1.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/framework_src.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/framework.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/hapi_src.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/hapi.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/hibernate3_src.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/hibernate3.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/hl7utils.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/hsqldb.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/HttpReportClient_src.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/HttpReportClient.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/imsjiraant.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/ImsQuartzScheduler_src.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/ImsQuartzScheduler.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/ImsQueryBuilderClient_src.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/ImsQueryBuilderClient.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/ImsServer.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/itext.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/itextRTF.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/j-interop.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/j-interopdeps.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/jackson-all-1.6.1.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/jamon-2.2.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/JavaPrintServer.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/javassist.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/jaxen-full.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/jaxen.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/jaxm-api.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/jaxm-runtime.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/jaxrpc.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/jazzy-core.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/jboss-aop.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/jboss-cache.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/jboss-common.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/jboss-j2ee.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/jboss-jmx.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/jboss-minimal.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/jboss-serialization.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/jboss-system.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/jcifs-1.2.19.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/jdom.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/jgroups.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/jms.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/joda-time_src.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/joda-time-1.6.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/joda-time.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/jodconverter-core-3.0-beta-3.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/jpedal_lgpl.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/json-20080701.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/jsoup-1.5.2.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/jsse.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/juh-3.1.0.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/junit.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/jurt-3.1.0.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/knowledge-api-5.5.0.Final.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/knowledge-internal-api-5.5.0.Final.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/log4j.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/mail.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/MaximsICAB.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/mime-util-2.1.2.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/mm.mysql-2.0.14-bin.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/msh.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/mvel2-2.1.3.Final.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/nas.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/nearcode.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/odmg.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/OracleJdbc.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/org.eclipse.jdt.core_3.4.4.v_894_R34x.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/plugin.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/pool.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/postgresql.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/proxool.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/qdox.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/quartz-modified.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/quartz.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/QueryBuilder3_src.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/QueryBuilder3.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/ReportDataSource.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/ridl-3.1.0.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/saaj-api.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/saaj-ri.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/saaj.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/slf4j-api-1.5.8-sources.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/slf4j-api-1.5.8.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/slf4j-jcl-1.5.8-sources.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/slf4j-jcl-1.5.8.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/spring.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/sqljdbc4.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/trove.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/unoil-3.1.0.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/velocity-1.4.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/WebJContextor.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/wsdl4j.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/xalan.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/xercesImpl.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/xmldg.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/xmlParserAPIs.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/xmlsec.jar"/>
+	<classpathentry kind="lib" path="WebApp/WEB-INF/lib/xstream-1.2.2.jar"/>
+	<classpathentry kind="src" path="Clinical/src" output="Clinical/bin"/>
+	<classpathentry kind="src" path="Rules/src" output="Rules/bin"/>
+	<classpathentry kind="src" path="Therapies/src" output="Therapies/bin"/>
+	<classpathentry kind="src" path="RACPC/src" output="RACPC/bin"/>
+	<classpathentry kind="src" path="RefMan/src" output="RefMan/bin"/>
+	<classpathentry kind="src" path="SpinalInjuries/src" output="SpinalInjuries/bin"/>
+	<classpathentry kind="src" path="Scheduling/src" output="Scheduling/bin"/>
+	<classpathentry kind="src" path="WebApp/src" output="WebApp/WEB-INF/classes"/>
+	<classpathentry kind="src" path="OCRR/src" output="OCRR/bin"/>
+	<classpathentry kind="src" path="OCS_IF/src" output="OCS_IF/bin"/>
+	<classpathentry kind="src" path="ICP/src" output="ICP/bin"/>
+	<classpathentry kind="src" path="Pathways/src" output="Pathways/bin"/>
+	<classpathentry kind="src" path="Oncology/src" output="Oncology/bin"/>
+	<classpathentry kind="src" path="HL7Nas/src" output="HL7Nas/bin"/>
+	<classpathentry kind="src" path="Emergency/src" output="Emergency/bin"/>
+	<classpathentry kind="src" path="Nursing/src" output="Nursing/bin"/>
+	<classpathentry kind="src" path="HL7Engine/src" output="HL7Engine/bin"/>
+	<classpathentry kind="src" path="ValueObjects/src" output="ValueObjects/bin"/>
+	<classpathentry kind="src" path="DTOClients/src" output="DTOClients/bin"/>
+	<classpathentry kind="src" path="DTOScripts/src" output="DTOScripts/bin"/>
+	<classpathentry kind="src" path="DomainObjects/src" output="DomainObjects/bin"/>
+	<classpathentry kind="src" path="Core/src" output="Core/bin"/>
+	<classpathentry kind="src" path="Correspondence/src" output="Correspondence/bin"/>
+	<classpathentry kind="src" path="ClinicalAdmin/src" output="ClinicalAdmin/bin"/>
+	<classpathentry kind="src" path="COE/src" output="COE/bin"/>
+	<classpathentry kind="src" path="Assessment/src" output="Assessment/bin"/>
+	<classpathentry kind="src" path="Alerts/src" output="Alerts/bin"/>
+	<classpathentry kind="src" path="Admin/src" output="Admin/bin"/>
+	<classpathentry kind="src" path="Billing/src" output="Billing/bin"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

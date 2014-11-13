@@ -78,9 +78,9 @@
  <beanMapping languageSpecificType="java:ims.core.vo.beans.PatientProcedureProcsComponentVoBean" qname="ns18:Core.PatientProcedureProcsComponentVoBean" xmlns:ns18="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.EpisodeOfCareCoMorbidityVoBean" qname="ns19:Core.EpisodeOfCareCoMorbidityVoBean" xmlns:ns19="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.IncludeDiagnosisInDischargeReportVoBean" qname="ns20:Core.IncludeDiagnosisInDischargeReportVoBean" xmlns:ns20="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ElectiveListStatusVoBean" qname="ns21:CAREUK.ElectiveListStatusVoBean" xmlns:ns21="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ElectiveListStatusVoBean" qname="ns21:REFMAN.ElectiveListStatusVoBean" xmlns:ns21="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.PatientDiagnosisEDischargeVoBean" qname="ns22:Core.PatientDiagnosisEDischargeVoBean" xmlns:ns22="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ReferralLetterDetailsForNewPatientElectiveListVoBean" qname="ns23:CAREUK.ReferralLetterDetailsForNewPatientElectiveListVoBean" xmlns:ns23="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ReferralLetterDetailsForNewPatientElectiveListVoBean" qname="ns23:REFMAN.ReferralLetterDetailsForNewPatientElectiveListVoBean" xmlns:ns23="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.AssessmentQuestionShortVoBean" qname="ns24:Core.AssessmentQuestionShortVoBean" xmlns:ns24="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.ChartValueGroupVoBean" qname="ns25:Core.ChartValueGroupVoBean" xmlns:ns25="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.ChartValueSetVoBean" qname="ns26:Core.ChartValueSetVoBean" xmlns:ns26="http://www.imsmaxims.com/VO"/>
@@ -101,16 +101,16 @@
  <beanMapping languageSpecificType="java:ims.oncology.vo.beans.PatTreatmentPlanRadiotherapyDialogVoBean" qname="ns41:Oncology.PatTreatmentPlanRadiotherapyDialogVoBean" xmlns:ns41="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.oncology.vo.beans.PatTreatPlanActionChemotherapyDialogVoBean" qname="ns42:Oncology.PatTreatPlanActionChemotherapyDialogVoBean" xmlns:ns42="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.oncology.vo.beans.RadiotherapyDetailsLiteDialogVoBean" qname="ns43:Oncology.RadiotherapyDetailsLiteDialogVoBean" xmlns:ns43="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.OrganisationConfigVoBean" qname="ns44:CAREUK.OrganisationConfigVoBean" xmlns:ns44="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ClinicalOutcomeVoBean" qname="ns45:CAREUK.ClinicalOutcomeVoBean" xmlns:ns45="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ClinicalOutcomeDisplayVoBean" qname="ns46:CAREUK.ClinicalOutcomeDisplayVoBean" xmlns:ns46="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ClinicalOutcomeLiteVoBean" qname="ns47:CAREUK.ClinicalOutcomeLiteVoBean" xmlns:ns47="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ClinicalOutcomeProcedureVoBean" qname="ns48:CAREUK.ClinicalOutcomeProcedureVoBean" xmlns:ns48="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.OrganisationConfigVoBean" qname="ns44:REFMAN.OrganisationConfigVoBean" xmlns:ns44="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ClinicalOutcomeVoBean" qname="ns45:REFMAN.ClinicalOutcomeVoBean" xmlns:ns45="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ClinicalOutcomeDisplayVoBean" qname="ns46:REFMAN.ClinicalOutcomeDisplayVoBean" xmlns:ns46="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ClinicalOutcomeLiteVoBean" qname="ns47:REFMAN.ClinicalOutcomeLiteVoBean" xmlns:ns47="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ClinicalOutcomeProcedureVoBean" qname="ns48:REFMAN.ClinicalOutcomeProcedureVoBean" xmlns:ns48="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.DataSetTypeVoBean" qname="ns49:Core.DataSetTypeVoBean" xmlns:ns49="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.SpecimenNameVoBean" qname="ns50:OCRR.SpecimenNameVoBean" xmlns:ns50="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.ConfigFlagGroupVoBean" qname="ns51:Core.ConfigFlagGroupVoBean" xmlns:ns51="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.TCIForPatientElectiveListAppointmentDNAVoBean" qname="ns52:CAREUK.TCIForPatientElectiveListAppointmentDNAVoBean" xmlns:ns52="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ReferralLetterDetailsForElectiveListDetailsVoBean" qname="ns53:CAREUK.ReferralLetterDetailsForElectiveListDetailsVoBean" xmlns:ns53="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.TCIForPatientElectiveListAppointmentDNAVoBean" qname="ns52:REFMAN.TCIForPatientElectiveListAppointmentDNAVoBean" xmlns:ns52="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ReferralLetterDetailsForElectiveListDetailsVoBean" qname="ns53:REFMAN.ReferralLetterDetailsForElectiveListDetailsVoBean" xmlns:ns53="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.MDTPatientCustomListVoBean" qname="ns54:Core.MDTPatientCustomListVoBean" xmlns:ns54="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.CareContextForEdischargeVoBean" qname="ns55:Core.CareContextForEdischargeVoBean" xmlns:ns55="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.EpisodeOfCareForEDischargeVoBean" qname="ns56:Core.EpisodeOfCareForEDischargeVoBean" xmlns:ns56="http://www.imsmaxims.com/VO"/>
@@ -133,8 +133,8 @@
  <beanMapping languageSpecificType="java:ims.pathways.vo.beans.PatientJourneyClockInterfaceVoBean" qname="ns73:Pathways.PatientJourneyClockInterfaceVoBean" xmlns:ns73="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.oncology.vo.beans.PatientDiagnosisForPrimaryTumourVoBean" qname="ns74:Oncology.PatientDiagnosisForPrimaryTumourVoBean" xmlns:ns74="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.oncology.vo.beans.PrimaryTumourDetailsLiteVoBean" qname="ns75:Oncology.PrimaryTumourDetailsLiteVoBean" xmlns:ns75="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.PatientDiagnosisApptDetailVoBean" qname="ns76:CAREUK.PatientDiagnosisApptDetailVoBean" xmlns:ns76="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.PatientProcedureApptDetailVoBean" qname="ns77:CAREUK.PatientProcedureApptDetailVoBean" xmlns:ns77="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.PatientDiagnosisApptDetailVoBean" qname="ns76:REFMAN.PatientDiagnosisApptDetailVoBean" xmlns:ns76="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.PatientProcedureApptDetailVoBean" qname="ns77:REFMAN.PatientProcedureApptDetailVoBean" xmlns:ns77="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.pathways.vo.beans.EventRTTEventVoBean" qname="ns78:Pathways.EventRTTEventVoBean" xmlns:ns78="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.pathways.vo.beans.PathwayTargetExternalEventMappingVoBean" qname="ns79:Pathways.PathwayTargetExternalEventMappingVoBean" xmlns:ns79="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.pathways.vo.beans.PathwayTargetRTTEventVoBean" qname="ns80:Pathways.PathwayTargetRTTEventVoBean" xmlns:ns80="http://www.imsmaxims.com/VO"/>
@@ -145,7 +145,7 @@
  <beanMapping languageSpecificType="java:ims.pathways.vo.beans.TargetLiteVoBean" qname="ns85:Pathways.TargetLiteVoBean" xmlns:ns85="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.oncology.vo.beans.PrimaryTumourDetailsShortVoBean" qname="ns86:Oncology.PrimaryTumourDetailsShortVoBean" xmlns:ns86="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.oncology.vo.beans.PatientTumourClassificationVoBean" qname="ns87:Oncology.PatientTumourClassificationVoBean" xmlns:ns87="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.AppointmentClinicalNotesVoBean" qname="ns88:CAREUK.AppointmentClinicalNotesVoBean" xmlns:ns88="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.AppointmentClinicalNotesVoBean" qname="ns88:REFMAN.AppointmentClinicalNotesVoBean" xmlns:ns88="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.oncology.vo.beans.ChemoDosageDetailsVoBean" qname="ns89:Oncology.ChemoDosageDetailsVoBean" xmlns:ns89="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.oncology.vo.beans.ChemoTherapyDayDetailsVoBean" qname="ns90:Oncology.ChemoTherapyDayDetailsVoBean" xmlns:ns90="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.oncology.vo.beans.ChemotherapyCycleDetailsVoBean" qname="ns91:Oncology.ChemotherapyCycleDetailsVoBean" xmlns:ns91="http://www.imsmaxims.com/VO"/>
@@ -154,8 +154,8 @@
  <beanMapping languageSpecificType="java:ims.oncology.vo.beans.RadiotherapyDetailsShortVoBean" qname="ns94:Oncology.RadiotherapyDetailsShortVoBean" xmlns:ns94="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.oncology.vo.beans.TeletherapyDetailsVoBean" qname="ns95:Oncology.TeletherapyDetailsVoBean" xmlns:ns95="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.oncology.vo.beans.BrachytherapyDetailsVoBean" qname="ns96:Oncology.BrachytherapyDetailsVoBean" xmlns:ns96="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.OnwardReferralFromTriageVoBean" qname="ns97:CAREUK.OnwardReferralFromTriageVoBean" xmlns:ns97="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ClinicalOutcomeCategoryProcedureRequiredConfigVoBean" qname="ns98:CAREUK.ClinicalOutcomeCategoryProcedureRequiredConfigVoBean" xmlns:ns98="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.OnwardReferralFromTriageVoBean" qname="ns97:REFMAN.OnwardReferralFromTriageVoBean" xmlns:ns97="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ClinicalOutcomeCategoryProcedureRequiredConfigVoBean" qname="ns98:REFMAN.ClinicalOutcomeCategoryProcedureRequiredConfigVoBean" xmlns:ns98="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.pathways.vo.beans.PatientJourneyVoBean" qname="ns99:Pathways.PatientJourneyVoBean" xmlns:ns99="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.pathways.vo.beans.EventVoBean" qname="ns100:Pathways.EventVoBean" xmlns:ns100="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.pathways.vo.beans.ExternalEventMappingVoBean" qname="ns101:Pathways.ExternalEventMappingVoBean" xmlns:ns101="http://www.imsmaxims.com/VO"/>
@@ -185,12 +185,12 @@
  <beanMapping languageSpecificType="java:ims.oncology.vo.beans.InternalReferralListFilterVoBean" qname="ns125:Oncology.InternalReferralListFilterVoBean" xmlns:ns125="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ntpf.vo.beans.ExchequerMappingVoBean" qname="ns126:NTPF.ExchequerMappingVoBean" xmlns:ns126="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ntpf.vo.beans.ServiceActivityExportVoBean" qname="ns127:NTPF.ServiceActivityExportVoBean" xmlns:ns127="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.CatsReferralRttDateForTheatreListVoBean" qname="ns128:CAREUK.CatsReferralRttDateForTheatreListVoBean" xmlns:ns128="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.CatsReferralRttDateForTheatreListVoBean" qname="ns128:REFMAN.CatsReferralRttDateForTheatreListVoBean" xmlns:ns128="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.oncology.vo.beans.ContactTypesByDisciplineVoBean" qname="ns129:Oncology.ContactTypesByDisciplineVoBean" xmlns:ns129="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.PendingElectiveAdmissionListFilterVoBean" qname="ns130:Core.PendingElectiveAdmissionListFilterVoBean" xmlns:ns130="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ConsultationAssessmentsLiteVoBean" qname="ns131:CAREUK.ConsultationAssessmentsLiteVoBean" xmlns:ns131="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ConsultationAssessmentsLiteVoBean" qname="ns131:REFMAN.ConsultationAssessmentsLiteVoBean" xmlns:ns131="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.PendingEmergencyAdmissionAdmitVoBean" qname="ns132:Core.PendingEmergencyAdmissionAdmitVoBean" xmlns:ns132="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ServiceForClinicaNotesVoBean" qname="ns133:CAREUK.ServiceForClinicaNotesVoBean" xmlns:ns133="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ServiceForClinicaNotesVoBean" qname="ns133:REFMAN.ServiceForClinicaNotesVoBean" xmlns:ns133="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.admin.vo.beans.SystemJobVoBean" qname="ns134:Admin.SystemJobVoBean" xmlns:ns134="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.admin.vo.beans.LoggedInUserInfoWebServiceVoBean" qname="ns135:Admin.LoggedInUserInfoWebServiceVoBean" xmlns:ns135="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.UserWorkQueueVoBean" qname="ns136:Core.UserWorkQueueVoBean" xmlns:ns136="http://www.imsmaxims.com/VO"/>
@@ -265,7 +265,7 @@
  <beanMapping languageSpecificType="java:ims.icp.vo.beans.PatientICPPhase_DisplayVoBean" qname="ns205:ICP.PatientICPPhase_DisplayVoBean" xmlns:ns205="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.icp.vo.beans.PatientICP_DisplayVoBean" qname="ns206:ICP.PatientICP_DisplayVoBean" xmlns:ns206="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.MedicationFormLiteVoBean" qname="ns207:Core.MedicationFormLiteVoBean" xmlns:ns207="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.TltSummaryNoteVoBean" qname="ns208:CAREUK.TltSummaryNoteVoBean" xmlns:ns208="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.TltSummaryNoteVoBean" qname="ns208:REFMAN.TltSummaryNoteVoBean" xmlns:ns208="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ntpf.vo.beans.LoCallWaitingListDetailsMediumVoBean" qname="ns209:NTPF.LoCallWaitingListDetailsMediumVoBean" xmlns:ns209="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.admin.vo.beans.AppointmentOutcomeReasonVoBean" qname="ns210:Admin.AppointmentOutcomeReasonVoBean" xmlns:ns210="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.nursing.vo.beans.CarePlanOverviewBean" qname="ns211:Nursing.CarePlanOverviewBean" xmlns:ns211="http://www.imsmaxims.com/VO"/>
@@ -322,18 +322,18 @@
  <beanMapping languageSpecificType="java:ims.coe.vo.beans.ManualDexterityBean" qname="ns262:COE.ManualDexterityBean" xmlns:ns262="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ccosched.vo.beans.TCIForPatientElectiveListBedInfoDetailsVoBean" qname="ns263:CcoSched.TCIForPatientElectiveListBedInfoDetailsVoBean" xmlns:ns263="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.coe.vo.beans.BladderSkillsBean" qname="ns264:COE.BladderSkillsBean" xmlns:ns264="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.PatientElectiveTCIBedManagerCommentVoBean" qname="ns265:CAREUK.PatientElectiveTCIBedManagerCommentVoBean" xmlns:ns265="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.PatientElectiveListBedAdmissionVoBean" qname="ns266:CAREUK.PatientElectiveListBedAdmissionVoBean" xmlns:ns266="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.TCIOutcomeForAppointmentDNAVoBean" qname="ns267:CAREUK.TCIOutcomeForAppointmentDNAVoBean" xmlns:ns267="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ElectiveListConfigurationLiteVoBean" qname="ns268:CAREUK.ElectiveListConfigurationLiteVoBean" xmlns:ns268="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.PatientElectiveTCIBedManagerCommentVoBean" qname="ns265:REFMAN.PatientElectiveTCIBedManagerCommentVoBean" xmlns:ns265="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.PatientElectiveListBedAdmissionVoBean" qname="ns266:REFMAN.PatientElectiveListBedAdmissionVoBean" xmlns:ns266="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.TCIOutcomeForAppointmentDNAVoBean" qname="ns267:REFMAN.TCIOutcomeForAppointmentDNAVoBean" xmlns:ns267="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ElectiveListConfigurationLiteVoBean" qname="ns268:REFMAN.ElectiveListConfigurationLiteVoBean" xmlns:ns268="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.InpatientEpisodeVoBean" qname="ns269:Core.InpatientEpisodeVoBean" xmlns:ns269="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.PatientElectiveListDetailsToSaveVoBean" qname="ns270:CAREUK.PatientElectiveListDetailsToSaveVoBean" xmlns:ns270="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.PatientElectiveListDetailsToSaveVoBean" qname="ns270:REFMAN.PatientElectiveListDetailsToSaveVoBean" xmlns:ns270="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.MedicVoBean" qname="ns271:Core.MedicVoBean" xmlns:ns271="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.LocShortVoBean" qname="ns272:Core.LocShortVoBean" xmlns:ns272="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.GPBean" qname="ns273:Core.GPBean" xmlns:ns273="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.SmokingDetailsBean" qname="ns274:Core.SmokingDetailsBean" xmlns:ns274="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.CatsReferralRTTStatusVoBean" qname="ns275:CAREUK.CatsReferralRTTStatusVoBean" xmlns:ns275="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.PathwayClockRTTStatusVoBean" qname="ns276:CAREUK.PathwayClockRTTStatusVoBean" xmlns:ns276="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.CatsReferralRTTStatusVoBean" qname="ns275:REFMAN.CatsReferralRTTStatusVoBean" xmlns:ns275="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.PathwayClockRTTStatusVoBean" qname="ns276:REFMAN.PathwayClockRTTStatusVoBean" xmlns:ns276="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.admin.vo.beans.ElectiveListConfigLiteVoBean" qname="ns277:Admin.ElectiveListConfigLiteVoBean" xmlns:ns277="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.HcpLocationsServicesVoBean" qname="ns278:Core.HcpLocationsServicesVoBean" xmlns:ns278="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.assessment.vo.beans.ImageFindingQuestionVoBean" qname="ns279:Assessment.ImageFindingQuestionVoBean" xmlns:ns279="http://www.imsmaxims.com/VO"/>
@@ -386,19 +386,19 @@
  <beanMapping languageSpecificType="java:ims.coe.vo.beans.DischargeFunctionalBean" qname="ns326:COE.DischargeFunctionalBean" xmlns:ns326="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.ClinicalNotesVoBean" qname="ns327:Core.ClinicalNotesVoBean" xmlns:ns327="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.coe.vo.beans.AssessmentBreathingCoughVoBean" qname="ns328:COE.AssessmentBreathingCoughVoBean" xmlns:ns328="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.PatientProcedureForAppointmentOutcomeVoBean" qname="ns329:CAREUK.PatientProcedureForAppointmentOutcomeVoBean" xmlns:ns329="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ServiceForAppointmentOutcomeVoBean" qname="ns330:CAREUK.ServiceForAppointmentOutcomeVoBean" xmlns:ns330="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.SessionForAppointmentOutcomeVoBean" qname="ns331:CAREUK.SessionForAppointmentOutcomeVoBean" xmlns:ns331="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.PatientProcedureForAppointmentOutcomeVoBean" qname="ns329:REFMAN.PatientProcedureForAppointmentOutcomeVoBean" xmlns:ns329="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ServiceForAppointmentOutcomeVoBean" qname="ns330:REFMAN.ServiceForAppointmentOutcomeVoBean" xmlns:ns330="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.SessionForAppointmentOutcomeVoBean" qname="ns331:REFMAN.SessionForAppointmentOutcomeVoBean" xmlns:ns331="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.MskGroupVoBean" qname="ns332:Core.MskGroupVoBean" xmlns:ns332="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ReviewPatientElectiveListVoBean" qname="ns333:CAREUK.ReviewPatientElectiveListVoBean" xmlns:ns333="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ReviewPatientElectiveListVoBean" qname="ns333:REFMAN.ReviewPatientElectiveListVoBean" xmlns:ns333="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.VSVentilationChartRecordsVoBean" qname="ns334:Core.VSVentilationChartRecordsVoBean" xmlns:ns334="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.VSVentilationChartVoBean" qname="ns335:Core.VSVentilationChartVoBean" xmlns:ns335="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.SpecialtyListVoBean" qname="ns336:Core.SpecialtyListVoBean" xmlns:ns336="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.EquipmentVoBean" qname="ns337:Core.EquipmentVoBean" xmlns:ns337="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.InvestigationsVoBean" qname="ns338:Core.InvestigationsVoBean" xmlns:ns338="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.DischargedEpisodeVoBean" qname="ns339:Core.DischargedEpisodeVoBean" xmlns:ns339="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ReferralTransferVoBean" qname="ns340:CAREUK.ReferralTransferVoBean" xmlns:ns340="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.CareContextForAppointmentOutcomeVoBean" qname="ns341:CAREUK.CareContextForAppointmentOutcomeVoBean" xmlns:ns341="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ReferralTransferVoBean" qname="ns340:REFMAN.ReferralTransferVoBean" xmlns:ns340="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.CareContextForAppointmentOutcomeVoBean" qname="ns341:REFMAN.CareContextForAppointmentOutcomeVoBean" xmlns:ns341="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.MedicationDoseBean" qname="ns342:Core.MedicationDoseBean" xmlns:ns342="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.coe.vo.beans.PatientMovementHeaderBean" qname="ns343:COE.PatientMovementHeaderBean" xmlns:ns343="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.coe.vo.beans.PatientHandlingHeaderBean" qname="ns344:COE.PatientHandlingHeaderBean" xmlns:ns344="http://www.imsmaxims.com/VO"/>
@@ -413,13 +413,13 @@
  <beanMapping languageSpecificType="java:ims.core.vo.beans.VSArterialBloodGasBean" qname="ns353:Core.VSArterialBloodGasBean" xmlns:ns353="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.ClinicalContactVoBean" qname="ns354:Core.ClinicalContactVoBean" xmlns:ns354="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.FluidBalanceDetailsVoBean" qname="ns355:Core.FluidBalanceDetailsVoBean" xmlns:ns355="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.Booking_AppointmentERODVoBean" qname="ns356:CAREUK.Booking_AppointmentERODVoBean" xmlns:ns356="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.Booking_AppointmentERODVoBean" qname="ns356:REFMAN.Booking_AppointmentERODVoBean" xmlns:ns356="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.GpShortVoBean" qname="ns357:Core.GpShortVoBean" xmlns:ns357="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.GraphicAreaVoBean" qname="ns358:Core.GraphicAreaVoBean" xmlns:ns358="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.PatientElectiveListConfigForReferralDetailsVoBean" qname="ns359:CAREUK.PatientElectiveListConfigForReferralDetailsVoBean" xmlns:ns359="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.PatientElectiveListConfigForReferralDetailsVoBean" qname="ns359:REFMAN.PatientElectiveListConfigForReferralDetailsVoBean" xmlns:ns359="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.generalmedical.vo.beans.NeuroSensationExaminationVoBean" qname="ns360:GeneralMedical.NeuroSensationExaminationVoBean" xmlns:ns360="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.generalmedical.vo.beans.NeuroMotorFindingsVoBean" qname="ns361:GeneralMedical.NeuroMotorFindingsVoBean" xmlns:ns361="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ReferralERODForBookAppointmentVoBean" qname="ns362:CAREUK.ReferralERODForBookAppointmentVoBean" xmlns:ns362="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ReferralERODForBookAppointmentVoBean" qname="ns362:REFMAN.ReferralERODForBookAppointmentVoBean" xmlns:ns362="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.BedSpaceLiteVoBean" qname="ns363:Core.BedSpaceLiteVoBean" xmlns:ns363="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.PasEventForSTHKListVoBean" qname="ns364:Core.PasEventForSTHKListVoBean" xmlns:ns364="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.STHKCurrentInpatientListVoBean" qname="ns365:Core.STHKCurrentInpatientListVoBean" xmlns:ns365="http://www.imsmaxims.com/VO"/>
@@ -452,13 +452,13 @@
  <beanMapping languageSpecificType="java:ims.core.vo.beans.ActivityVoBean" qname="ns392:Core.ActivityVoBean" xmlns:ns392="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.LocationServiceActivityVoBean" qname="ns393:Core.LocationServiceActivityVoBean" xmlns:ns393="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.ActivityContextPricingDetailsVoBean" qname="ns394:Core.ActivityContextPricingDetailsVoBean" xmlns:ns394="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.PatientElectiveListTCIVoBean" qname="ns395:CAREUK.PatientElectiveListTCIVoBean" xmlns:ns395="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.PatientPathwayJourneyForERODVoBean" qname="ns396:CAREUK.PatientPathwayJourneyForERODVoBean" xmlns:ns396="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.PatientElectiveListTCIVoBean" qname="ns395:REFMAN.PatientElectiveListTCIVoBean" xmlns:ns395="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.PatientPathwayJourneyForERODVoBean" qname="ns396:REFMAN.PatientPathwayJourneyForERODVoBean" xmlns:ns396="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.generalmedical.vo.beans.MskExamJointBonesDetailVoBean" qname="ns397:GeneralMedical.MskExamJointBonesDetailVoBean" xmlns:ns397="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.PatientProcedureVoBean" qname="ns398:Core.PatientProcedureVoBean" xmlns:ns398="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.PatientSurgicalOperationVoBean" qname="ns399:Core.PatientSurgicalOperationVoBean" xmlns:ns399="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.Booking_AppointmentElectiveListVoBean" qname="ns400:CAREUK.Booking_AppointmentElectiveListVoBean" xmlns:ns400="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.PatientElectiveListForTCIDetailsDialogVoBean" qname="ns401:CAREUK.PatientElectiveListForTCIDetailsDialogVoBean" xmlns:ns401="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.Booking_AppointmentElectiveListVoBean" qname="ns400:REFMAN.Booking_AppointmentElectiveListVoBean" xmlns:ns400="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.PatientElectiveListForTCIDetailsDialogVoBean" qname="ns401:REFMAN.PatientElectiveListForTCIDetailsDialogVoBean" xmlns:ns401="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.generalmedical.vo.beans.NeuroMotorAreaFindingVoBean" qname="ns402:GeneralMedical.NeuroMotorAreaFindingVoBean" xmlns:ns402="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.generalmedical.vo.beans.OPDGenNotesShortVoBean" qname="ns403:GeneralMedical.OPDGenNotesShortVoBean" xmlns:ns403="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.PathologyResultListShortVoBean" qname="ns404:OCRR.PathologyResultListShortVoBean" xmlns:ns404="http://www.imsmaxims.com/VO"/>
@@ -471,23 +471,23 @@
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.PathologyOrderVoBean" qname="ns411:OCRR.PathologyOrderVoBean" xmlns:ns411="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.OrderSpecimenPathologyVoBean" qname="ns412:OCRR.OrderSpecimenPathologyVoBean" xmlns:ns412="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.OrderResultHistoryVoBean" qname="ns413:OCRR.OrderResultHistoryVoBean" xmlns:ns413="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.PatientElectiveListNotesVoBean" qname="ns414:CAREUK.PatientElectiveListNotesVoBean" xmlns:ns414="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.SuspensionDetailsForPatientElectiveListVoBean" qname="ns415:CAREUK.SuspensionDetailsForPatientElectiveListVoBean" xmlns:ns415="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.PatientElectiveListElectiveTCIVoBean" qname="ns416:CAREUK.PatientElectiveListElectiveTCIVoBean" xmlns:ns416="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.CareContextForNewElectiveListEntryVoBean" qname="ns417:CAREUK.CareContextForNewElectiveListEntryVoBean" xmlns:ns417="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.CatsReferralForNewElectivListEntryVoBean" qname="ns418:CAREUK.CatsReferralForNewElectivListEntryVoBean" xmlns:ns418="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.PatientElectiveListNotesVoBean" qname="ns414:REFMAN.PatientElectiveListNotesVoBean" xmlns:ns414="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.SuspensionDetailsForPatientElectiveListVoBean" qname="ns415:REFMAN.SuspensionDetailsForPatientElectiveListVoBean" xmlns:ns415="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.PatientElectiveListElectiveTCIVoBean" qname="ns416:REFMAN.PatientElectiveListElectiveTCIVoBean" xmlns:ns416="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.CareContextForNewElectiveListEntryVoBean" qname="ns417:REFMAN.CareContextForNewElectiveListEntryVoBean" xmlns:ns417="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.CatsReferralForNewElectivListEntryVoBean" qname="ns418:REFMAN.CatsReferralForNewElectivListEntryVoBean" xmlns:ns418="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.dtomove.vo.beans.ActivityGroupVoBean" qname="ns419:DtoMove.ActivityGroupVoBean" xmlns:ns419="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.generalmedical.vo.beans.OPDFertClinicVoBean" qname="ns420:GeneralMedical.OPDFertClinicVoBean" xmlns:ns420="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ContractServiceLocationsConfigVoBean" qname="ns421:CAREUK.ContractServiceLocationsConfigVoBean" xmlns:ns421="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ContractServiceLocationsConfigVoBean" qname="ns421:REFMAN.ContractServiceLocationsConfigVoBean" xmlns:ns421="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.spinalinjuries.vo.beans.SocialStatusVoBean" qname="ns422:SpinalInjuries.SocialStatusVoBean" xmlns:ns422="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.generalmedical.vo.beans.OPDVisitRelPresVoBean" qname="ns423:GeneralMedical.OPDVisitRelPresVoBean" xmlns:ns423="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.generalmedical.vo.beans.OPDVisitDetailsVoBean" qname="ns424:GeneralMedical.OPDVisitDetailsVoBean" xmlns:ns424="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.generalmedical.vo.beans.AdmisNeuroInterpretVoBean" qname="ns425:GeneralMedical.AdmisNeuroInterpretVoBean" xmlns:ns425="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.generalmedical.vo.beans.NeuroInterpretVoBean" qname="ns426:GeneralMedical.NeuroInterpretVoBean" xmlns:ns426="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.CatsReferralListManualAssemblyVoBean" qname="ns427:CAREUK.CatsReferralListManualAssemblyVoBean" xmlns:ns427="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.NursingNotesVoBean" qname="ns428:CAREUK.NursingNotesVoBean" xmlns:ns428="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.TrackingStatusConfigVoBean" qname="ns429:CAREUK.TrackingStatusConfigVoBean" xmlns:ns429="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.SurgicalOpNotesVoBean" qname="ns430:CAREUK.SurgicalOpNotesVoBean" xmlns:ns430="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.CatsReferralListManualAssemblyVoBean" qname="ns427:REFMAN.CatsReferralListManualAssemblyVoBean" xmlns:ns427="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.NursingNotesVoBean" qname="ns428:REFMAN.NursingNotesVoBean" xmlns:ns428="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.TrackingStatusConfigVoBean" qname="ns429:REFMAN.TrackingStatusConfigVoBean" xmlns:ns429="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.SurgicalOpNotesVoBean" qname="ns430:REFMAN.SurgicalOpNotesVoBean" xmlns:ns430="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.generalmedical.vo.beans.OPDSpasAssLimbsVoBean" qname="ns431:GeneralMedical.OPDSpasAssLimbsVoBean" xmlns:ns431="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.generalmedical.vo.beans.MskSpineExamFindingVoBean" qname="ns432:GeneralMedical.MskSpineExamFindingVoBean" xmlns:ns432="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.generalmedical.vo.beans.MskSpineExaminationVoBean" qname="ns433:GeneralMedical.MskSpineExaminationVoBean" xmlns:ns433="http://www.imsmaxims.com/VO"/>
@@ -502,14 +502,14 @@
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.OrderEntryTemplateLiteVoBean" qname="ns442:OCRR.OrderEntryTemplateLiteVoBean" xmlns:ns442="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.SecurityLevelConfigVoBean" qname="ns443:OCRR.SecurityLevelConfigVoBean" xmlns:ns443="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.SecurityLevelLiteVoBean" qname="ns444:OCRR.SecurityLevelLiteVoBean" xmlns:ns444="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ReferralERODHistoryVoBean" qname="ns445:CAREUK.ReferralERODHistoryVoBean" xmlns:ns445="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.PatientElectiveListTCIForCancelationVoBean" qname="ns446:CAREUK.PatientElectiveListTCIForCancelationVoBean" xmlns:ns446="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ReferralErodForCancellationVoBean" qname="ns447:CAREUK.ReferralErodForCancellationVoBean" xmlns:ns447="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.PatientElectiveListForCancellationVoBean" qname="ns448:CAREUK.PatientElectiveListForCancellationVoBean" xmlns:ns448="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.CatsReferralforElectiveListDetailsVoBean" qname="ns449:CAREUK.CatsReferralforElectiveListDetailsVoBean" xmlns:ns449="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.PatientElectiveListForDNAAppointmentsVoBean" qname="ns450:CAREUK.PatientElectiveListForDNAAppointmentsVoBean" xmlns:ns450="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.PatientElectiveListForSuspensionDetailsVoBean" qname="ns451:CAREUK.PatientElectiveListForSuspensionDetailsVoBean" xmlns:ns451="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.TCIOutcomeForPatientElectiveListVoBean" qname="ns452:CAREUK.TCIOutcomeForPatientElectiveListVoBean" xmlns:ns452="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ReferralERODHistoryVoBean" qname="ns445:REFMAN.ReferralERODHistoryVoBean" xmlns:ns445="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.PatientElectiveListTCIForCancelationVoBean" qname="ns446:REFMAN.PatientElectiveListTCIForCancelationVoBean" xmlns:ns446="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ReferralErodForCancellationVoBean" qname="ns447:REFMAN.ReferralErodForCancellationVoBean" xmlns:ns447="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.PatientElectiveListForCancellationVoBean" qname="ns448:REFMAN.PatientElectiveListForCancellationVoBean" xmlns:ns448="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.CatsReferralforElectiveListDetailsVoBean" qname="ns449:REFMAN.CatsReferralforElectiveListDetailsVoBean" xmlns:ns449="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.PatientElectiveListForDNAAppointmentsVoBean" qname="ns450:REFMAN.PatientElectiveListForDNAAppointmentsVoBean" xmlns:ns450="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.PatientElectiveListForSuspensionDetailsVoBean" qname="ns451:REFMAN.PatientElectiveListForSuspensionDetailsVoBean" xmlns:ns451="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.TCIOutcomeForPatientElectiveListVoBean" qname="ns452:REFMAN.TCIOutcomeForPatientElectiveListVoBean" xmlns:ns452="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.ReferralAppointmentInvestigationsVoBean" qname="ns453:OCRR.ReferralAppointmentInvestigationsVoBean" xmlns:ns453="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.NewResultSpecDocVoBean" qname="ns454:OCRR.NewResultSpecDocVoBean" xmlns:ns454="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.ReferralAppointmentDetailsOrderInvestigationVoBean" qname="ns455:OCRR.ReferralAppointmentDetailsOrderInvestigationVoBean" xmlns:ns455="http://www.imsmaxims.com/VO"/>
@@ -520,13 +520,13 @@
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.OrderInvestigationLiteVoBean" qname="ns460:OCRR.OrderInvestigationLiteVoBean" xmlns:ns460="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.SpecimenWorkListItemLiteVoBean" qname="ns461:OCRR.SpecimenWorkListItemLiteVoBean" xmlns:ns461="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.OrderInvestigationBookingVoBean" qname="ns462:OCRR.OrderInvestigationBookingVoBean" xmlns:ns462="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.CareContextForClinicalNotesVoBean" qname="ns463:CAREUK.CareContextForClinicalNotesVoBean" xmlns:ns463="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ReferralLetterDetailsForClinicalNotesVoBean" qname="ns464:CAREUK.ReferralLetterDetailsForClinicalNotesVoBean" xmlns:ns464="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.SessionForClinicalNotesVoBean" qname="ns465:CAREUK.SessionForClinicalNotesVoBean" xmlns:ns465="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.CatsReferralForClinicalNotesVoBean" qname="ns466:CAREUK.CatsReferralForClinicalNotesVoBean" xmlns:ns466="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.PatientProcedureForClinicalNotesVoBean" qname="ns467:CAREUK.PatientProcedureForClinicalNotesVoBean" xmlns:ns467="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.BookingAppointmentForClinicalNotesVoBean" qname="ns468:CAREUK.BookingAppointmentForClinicalNotesVoBean" xmlns:ns468="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ReferralClinicalNotesVoBean" qname="ns469:CAREUK.ReferralClinicalNotesVoBean" xmlns:ns469="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.CareContextForClinicalNotesVoBean" qname="ns463:REFMAN.CareContextForClinicalNotesVoBean" xmlns:ns463="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ReferralLetterDetailsForClinicalNotesVoBean" qname="ns464:REFMAN.ReferralLetterDetailsForClinicalNotesVoBean" xmlns:ns464="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.SessionForClinicalNotesVoBean" qname="ns465:REFMAN.SessionForClinicalNotesVoBean" xmlns:ns465="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.CatsReferralForClinicalNotesVoBean" qname="ns466:REFMAN.CatsReferralForClinicalNotesVoBean" xmlns:ns466="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.PatientProcedureForClinicalNotesVoBean" qname="ns467:REFMAN.PatientProcedureForClinicalNotesVoBean" xmlns:ns467="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.BookingAppointmentForClinicalNotesVoBean" qname="ns468:REFMAN.BookingAppointmentForClinicalNotesVoBean" xmlns:ns468="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ReferralClinicalNotesVoBean" qname="ns469:REFMAN.ReferralClinicalNotesVoBean" xmlns:ns469="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.generalmedical.vo.beans.NeuroSenastionFindingsVoBean" qname="ns470:GeneralMedical.NeuroSenastionFindingsVoBean" xmlns:ns470="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.generalmedical.vo.beans.NeuroSensationRootValueVoBean" qname="ns471:GeneralMedical.NeuroSensationRootValueVoBean" xmlns:ns471="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.generalmedical.vo.beans.OPDErectDysfxnVoBean" qname="ns472:GeneralMedical.OPDErectDysfxnVoBean" xmlns:ns472="http://www.imsmaxims.com/VO"/>
@@ -543,7 +543,7 @@
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.NewResultsListProviderServiceVoBean" qname="ns483:OCRR.NewResultsListProviderServiceVoBean" xmlns:ns483="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.NewResultsListInvestigationIndexVoBean" qname="ns484:OCRR.NewResultsListInvestigationIndexVoBean" xmlns:ns484="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.LocSvcProviderSysLiteVoBean" qname="ns485:OCRR.LocSvcProviderSysLiteVoBean" xmlns:ns485="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ContractConfigurationVoBean" qname="ns486:CAREUK.ContractConfigurationVoBean" xmlns:ns486="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ContractConfigurationVoBean" qname="ns486:REFMAN.ContractConfigurationVoBean" xmlns:ns486="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.LocationServiceMidVoBean" qname="ns487:Core.LocationServiceMidVoBean" xmlns:ns487="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.CareContextHistoryVoBean" qname="ns488:Core.CareContextHistoryVoBean" xmlns:ns488="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.PatientEWSVoBean" qname="ns489:Core.PatientEWSVoBean" xmlns:ns489="http://www.imsmaxims.com/VO"/>
@@ -587,13 +587,13 @@
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.OrderSpecimenLiteVoBean" qname="ns527:OCRR.OrderSpecimenLiteVoBean" xmlns:ns527="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.OcsPathRadResultVoBean" qname="ns528:OCRR.OcsPathRadResultVoBean" xmlns:ns528="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.therapies.vo.beans.GaitTreatmentVoBean" qname="ns529:Therapies.GaitTreatmentVoBean" xmlns:ns529="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ReferralERODVoBean" qname="ns530:CAREUK.ReferralERODVoBean" xmlns:ns530="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ReferralLetterDetailsForCallAttemptsVoBean" qname="ns531:CAREUK.ReferralLetterDetailsForCallAttemptsVoBean" xmlns:ns531="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ReferralERODVoBean" qname="ns530:REFMAN.ReferralERODVoBean" xmlns:ns530="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ReferralLetterDetailsForCallAttemptsVoBean" qname="ns531:REFMAN.ReferralLetterDetailsForCallAttemptsVoBean" xmlns:ns531="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.DeathConditionsVoBean" qname="ns532:Core.DeathConditionsVoBean" xmlns:ns532="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.CatsReferralForTheatreListVoBean" qname="ns533:CAREUK.CatsReferralForTheatreListVoBean" xmlns:ns533="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.CatsReferralBreachDatesVoBean" qname="ns534:CAREUK.CatsReferralBreachDatesVoBean" xmlns:ns534="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.CatsReferralForTheatreListVoBean" qname="ns533:REFMAN.CatsReferralForTheatreListVoBean" xmlns:ns533="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.CatsReferralBreachDatesVoBean" qname="ns534:REFMAN.CatsReferralBreachDatesVoBean" xmlns:ns534="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.LocationServiceLocationVoBean" qname="ns535:Core.LocationServiceLocationVoBean" xmlns:ns535="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.OrderInvWithStatusApptVoBean" qname="ns536:CAREUK.OrderInvWithStatusApptVoBean" xmlns:ns536="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.OrderInvWithStatusApptVoBean" qname="ns536:REFMAN.OrderInvWithStatusApptVoBean" xmlns:ns536="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.admin.vo.beans.MenuActionVoBean" qname="ns537:Admin.MenuActionVoBean" xmlns:ns537="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.admin.vo.beans.FormMenuActionsDeniedVoBean" qname="ns538:Admin.FormMenuActionsDeniedVoBean" xmlns:ns538="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.DeathDetailsVoBean" qname="ns539:Core.DeathDetailsVoBean" xmlns:ns539="http://www.imsmaxims.com/VO"/>
@@ -755,12 +755,12 @@
  <beanMapping languageSpecificType="java:ims.therapies.vo.beans.WorkOnAdmissionVoBean" qname="ns695:Therapies.WorkOnAdmissionVoBean" xmlns:ns695="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.scheduling.vo.beans.BookingAppointmentOutcomeActionsToSaveVoBean" qname="ns696:Scheduling.BookingAppointmentOutcomeActionsToSaveVoBean" xmlns:ns696="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.therapies.vo.beans.ElectrotherapyPneumaticVoBean" qname="ns697:Therapies.ElectrotherapyPneumaticVoBean" xmlns:ns697="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.InpatientClinicalCodingWorklistSearchCriteriaVoBean" qname="ns698:CAREUK.InpatientClinicalCodingWorklistSearchCriteriaVoBean" xmlns:ns698="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.DischargedEpisodeForClinicalCodingWorklistVoBean" qname="ns699:CAREUK.DischargedEpisodeForClinicalCodingWorklistVoBean" xmlns:ns699="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.PatientForClinicalCodingWorklistVoBean" qname="ns700:CAREUK.PatientForClinicalCodingWorklistVoBean" xmlns:ns700="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.PasEventForClinicalCodingWorklistVoBean" qname="ns701:CAREUK.PasEventForClinicalCodingWorklistVoBean" xmlns:ns701="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.CatsReferralCurrentStatusVoBean" qname="ns702:CAREUK.CatsReferralCurrentStatusVoBean" xmlns:ns702="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.PatientElectiveListForCancelAppointmentVoBean" qname="ns703:CAREUK.PatientElectiveListForCancelAppointmentVoBean" xmlns:ns703="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.InpatientClinicalCodingWorklistSearchCriteriaVoBean" qname="ns698:REFMAN.InpatientClinicalCodingWorklistSearchCriteriaVoBean" xmlns:ns698="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.DischargedEpisodeForClinicalCodingWorklistVoBean" qname="ns699:REFMAN.DischargedEpisodeForClinicalCodingWorklistVoBean" xmlns:ns699="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.PatientForClinicalCodingWorklistVoBean" qname="ns700:REFMAN.PatientForClinicalCodingWorklistVoBean" xmlns:ns700="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.PasEventForClinicalCodingWorklistVoBean" qname="ns701:REFMAN.PasEventForClinicalCodingWorklistVoBean" xmlns:ns701="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.CatsReferralCurrentStatusVoBean" qname="ns702:REFMAN.CatsReferralCurrentStatusVoBean" xmlns:ns702="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.PatientElectiveListForCancelAppointmentVoBean" qname="ns703:REFMAN.PatientElectiveListForCancelAppointmentVoBean" xmlns:ns703="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.therapies.vo.beans.SplintsWearRegimeVoBean" qname="ns704:Therapies.SplintsWearRegimeVoBean" xmlns:ns704="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.therapies.vo.beans.SplintsInstructionDetailsVoBean" qname="ns705:Therapies.SplintsInstructionDetailsVoBean" xmlns:ns705="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinical.vo.beans.CorrespondenceProcedureVoBean" qname="ns706:Clinical.CorrespondenceProcedureVoBean" xmlns:ns706="http://www.imsmaxims.com/VO"/>
@@ -778,8 +778,8 @@
  <beanMapping languageSpecificType="java:ims.therapies.vo.beans.ElectrotherapyPneumaticTreatmentVoBean" qname="ns718:Therapies.ElectrotherapyPneumaticTreatmentVoBean" xmlns:ns718="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.ClinicalResultVoBean" qname="ns719:OCRR.ClinicalResultVoBean" xmlns:ns719="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.ResultDetailsForClinicalResultListVoBean" qname="ns720:OCRR.ResultDetailsForClinicalResultListVoBean" xmlns:ns720="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ReferralLetterForSessionManagementVoBean" qname="ns721:CAREUK.ReferralLetterForSessionManagementVoBean" xmlns:ns721="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.CatsReferralForSessionManagementVoBean" qname="ns722:CAREUK.CatsReferralForSessionManagementVoBean" xmlns:ns722="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ReferralLetterForSessionManagementVoBean" qname="ns721:REFMAN.ReferralLetterForSessionManagementVoBean" xmlns:ns721="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.CatsReferralForSessionManagementVoBean" qname="ns722:REFMAN.CatsReferralForSessionManagementVoBean" xmlns:ns722="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinical.vo.beans.SurgicalAuditOperationDetailStatusVoBean" qname="ns723:Clinical.SurgicalAuditOperationDetailStatusVoBean" xmlns:ns723="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.therapies.vo.beans.BobathVoBean" qname="ns724:Therapies.BobathVoBean" xmlns:ns724="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.therapies.vo.beans.ComplementaryTherapyTreatmentVoBean" qname="ns725:Therapies.ComplementaryTherapyTreatmentVoBean" xmlns:ns725="http://www.imsmaxims.com/VO"/>
@@ -1022,7 +1022,7 @@
  <beanMapping languageSpecificType="java:ims.admin.vo.beans.ReportTemplateLiteVoBean" qname="ns962:Admin.ReportTemplateLiteVoBean" xmlns:ns962="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.PatientElectiveListForWardViewVoBean" qname="ns963:Core.PatientElectiveListForWardViewVoBean" xmlns:ns963="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.NewResultInvestigationVoBean" qname="ns964:OCRR.NewResultInvestigationVoBean" xmlns:ns964="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ReferralForFitForSurgeryVoBean" qname="ns965:CAREUK.ReferralForFitForSurgeryVoBean" xmlns:ns965="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ReferralForFitForSurgeryVoBean" qname="ns965:REFMAN.ReferralForFitForSurgeryVoBean" xmlns:ns965="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.TemplateRoleShortVoBean" qname="ns966:OCRR.TemplateRoleShortVoBean" xmlns:ns966="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.LocSvcProviderSysVoBean" qname="ns967:OCRR.LocSvcProviderSysVoBean" xmlns:ns967="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.NewResultVoBean" qname="ns968:OCRR.NewResultVoBean" xmlns:ns968="http://www.imsmaxims.com/VO"/>
@@ -1328,7 +1328,7 @@
  <beanMapping languageSpecificType="java:ims.core.vo.beans.EpisodeOfCareListVoBean" qname="ns1268:Core.EpisodeOfCareListVoBean" xmlns:ns1268="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.dtomove.vo.beans.ActionHRGVoBean" qname="ns1269:DtoMove.ActionHRGVoBean" xmlns:ns1269="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.dtomove.vo.beans.ActivityActionVoBean" qname="ns1270:DtoMove.ActivityActionVoBean" xmlns:ns1270="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.SuitableForSurgeryCommentVoBean" qname="ns1271:CAREUK.SuitableForSurgeryCommentVoBean" xmlns:ns1271="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.SuitableForSurgeryCommentVoBean" qname="ns1271:REFMAN.SuitableForSurgeryCommentVoBean" xmlns:ns1271="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.PatientListsFilterVoBean" qname="ns1272:Core.PatientListsFilterVoBean" xmlns:ns1272="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.emergency.vo.beans.TrackingForReferalToSpecialtyVoBean" qname="ns1273:Emergency.TrackingForReferalToSpecialtyVoBean" xmlns:ns1273="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.AdmissionDetailLiteWithInpatientEpisodeVoBean" qname="ns1274:Core.AdmissionDetailLiteWithInpatientEpisodeVoBean" xmlns:ns1274="http://www.imsmaxims.com/VO"/>
@@ -1652,11 +1652,11 @@
  <beanMapping languageSpecificType="java:ims.scheduling.vo.beans.SessionSlotVoBean" qname="ns1592:Scheduling.SessionSlotVoBean" xmlns:ns1592="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.emergency.vo.beans.EmergencyEpisodeForQuickRegistrationVoBean" qname="ns1593:Emergency.EmergencyEpisodeForQuickRegistrationVoBean" xmlns:ns1593="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.emergency.vo.beans.EmergencyAttendanceForQuickRegistrationVoBean" qname="ns1594:Emergency.EmergencyAttendanceForQuickRegistrationVoBean" xmlns:ns1594="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.AwaitingClinicalInfoVoBean" qname="ns1595:CAREUK.AwaitingClinicalInfoVoBean" xmlns:ns1595="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ConsultationAssessmentsVoBean" qname="ns1596:CAREUK.ConsultationAssessmentsVoBean" xmlns:ns1596="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.AwaitingClinicalInfoVoBean" qname="ns1595:REFMAN.AwaitingClinicalInfoVoBean" xmlns:ns1595="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ConsultationAssessmentsVoBean" qname="ns1596:REFMAN.ConsultationAssessmentsVoBean" xmlns:ns1596="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.PatientProcedureShortWithCareIntraOperativeVoBean" qname="ns1597:Core.PatientProcedureShortWithCareIntraOperativeVoBean" xmlns:ns1597="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.emergency.vo.beans.AdviceLeafletConfigDisplayVoBean" qname="ns1598:Emergency.AdviceLeafletConfigDisplayVoBean" xmlns:ns1598="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.FitForSurgeryCommentVoBean" qname="ns1599:CAREUK.FitForSurgeryCommentVoBean" xmlns:ns1599="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.FitForSurgeryCommentVoBean" qname="ns1599:REFMAN.FitForSurgeryCommentVoBean" xmlns:ns1599="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.IfPatientDocumentVoBean" qname="ns1600:Core.IfPatientDocumentVoBean" xmlns:ns1600="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.BedSpaceStateBayOnlyVoBean" qname="ns1601:Core.BedSpaceStateBayOnlyVoBean" xmlns:ns1601="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.PatientDocumentMessageQueueVoBean" qname="ns1602:Core.PatientDocumentMessageQueueVoBean" xmlns:ns1602="http://www.imsmaxims.com/VO"/>
@@ -1665,19 +1665,19 @@
  <beanMapping languageSpecificType="java:ims.core.vo.beans.RecordingUserInformationVoBean" qname="ns1605:Core.RecordingUserInformationVoBean" xmlns:ns1605="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.CaseNoteFolderVoBean" qname="ns1606:Core.CaseNoteFolderVoBean" xmlns:ns1606="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.emergency.vo.beans.DrugToxicologyVoBean" qname="ns1607:Emergency.DrugToxicologyVoBean" xmlns:ns1607="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ContractConfigKPIHistoryVoBean" qname="ns1608:CAREUK.ContractConfigKPIHistoryVoBean" xmlns:ns1608="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ContractConfigLiteVoBean" qname="ns1609:CAREUK.ContractConfigLiteVoBean" xmlns:ns1609="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ContractConfigKPIHistoryVoBean" qname="ns1608:REFMAN.ContractConfigKPIHistoryVoBean" xmlns:ns1608="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ContractConfigLiteVoBean" qname="ns1609:REFMAN.ContractConfigLiteVoBean" xmlns:ns1609="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.TemplateForPatientDocumentVoBean" qname="ns1610:Core.TemplateForPatientDocumentVoBean" xmlns:ns1610="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.ScreenHintVoBean" qname="ns1611:Core.ScreenHintVoBean" xmlns:ns1611="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.emergency.vo.beans.HCGTestsVoBean" qname="ns1612:Emergency.HCGTestsVoBean" xmlns:ns1612="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.emergency.vo.beans.HCGTestItemVoBean" qname="ns1613:Emergency.HCGTestItemVoBean" xmlns:ns1613="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ContractConfigShortVoBean" qname="ns1614:CAREUK.ContractConfigShortVoBean" xmlns:ns1614="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ContractConfigVoBean" qname="ns1615:CAREUK.ContractConfigVoBean" xmlns:ns1615="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ContractConfigShortVoBean" qname="ns1614:REFMAN.ContractConfigShortVoBean" xmlns:ns1614="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ContractConfigVoBean" qname="ns1615:REFMAN.ContractConfigVoBean" xmlns:ns1615="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.DischargeClinicalInformationSTHKVoBean" qname="ns1616:Core.DischargeClinicalInformationSTHKVoBean" xmlns:ns1616="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.CareContextForPatientDocumentVoBean" qname="ns1617:Core.CareContextForPatientDocumentVoBean" xmlns:ns1617="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.LocSiteUpprNameVoBean" qname="ns1618:Core.LocSiteUpprNameVoBean" xmlns:ns1618="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.AddressVoBean" qname="ns1619:Core.AddressVoBean" xmlns:ns1619="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ReferralOverviewAndKpisVoBean" qname="ns1620:CAREUK.ReferralOverviewAndKpisVoBean" xmlns:ns1620="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ReferralOverviewAndKpisVoBean" qname="ns1620:REFMAN.ReferralOverviewAndKpisVoBean" xmlns:ns1620="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.ConfigFlagListVoBean" qname="ns1621:Core.ConfigFlagListVoBean" xmlns:ns1621="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.PatientMedicationLiteVoBean" qname="ns1622:Core.PatientMedicationLiteVoBean" xmlns:ns1622="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.ReadAuditFilterVoBean" qname="ns1623:Core.ReadAuditFilterVoBean" xmlns:ns1623="http://www.imsmaxims.com/VO"/>
@@ -1708,24 +1708,24 @@
  <beanMapping languageSpecificType="java:ims.core.vo.beans.PatientForDocumentWorklistVoBean" qname="ns1648:Core.PatientForDocumentWorklistVoBean" xmlns:ns1648="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.emergency.vo.beans.TrackingAreaCubiclesVoBean" qname="ns1649:Emergency.TrackingAreaCubiclesVoBean" xmlns:ns1649="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.emergency.vo.beans.EmergencyAttendanceForObsPatientAssessmentVoBean" qname="ns1650:Emergency.EmergencyAttendanceForObsPatientAssessmentVoBean" xmlns:ns1650="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ClinicListFilterVoBean" qname="ns1651:CAREUK.ClinicListFilterVoBean" xmlns:ns1651="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ClinicListFilterVoBean" qname="ns1651:REFMAN.ClinicListFilterVoBean" xmlns:ns1651="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.PatientAllergyForSummaryOverviewVoBean" qname="ns1652:Core.PatientAllergyForSummaryOverviewVoBean" xmlns:ns1652="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.RiskAssessmentForSummaryOverviewVoBean" qname="ns1653:Core.RiskAssessmentForSummaryOverviewVoBean" xmlns:ns1653="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.ProcedureForSummaryOverviewVoBean" qname="ns1654:Core.ProcedureForSummaryOverviewVoBean" xmlns:ns1654="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.GpToPracticesForSummaryOverviewVoBean" qname="ns1655:Core.GpToPracticesForSummaryOverviewVoBean" xmlns:ns1655="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.IntraOperativeCRforSummaryOverviewVoBean" qname="ns1656:Core.IntraOperativeCRforSummaryOverviewVoBean" xmlns:ns1656="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ActivityUniqueLineRefVoBean" qname="ns1657:CAREUK.ActivityUniqueLineRefVoBean" xmlns:ns1657="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ActivityUniqueLineRefVoBean" qname="ns1657:REFMAN.ActivityUniqueLineRefVoBean" xmlns:ns1657="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.PatientDocumentForICPReportsVoBean" qname="ns1658:Core.PatientDocumentForICPReportsVoBean" xmlns:ns1658="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.TransportBookingDisplayVoBean" qname="ns1659:CAREUK.TransportBookingDisplayVoBean" xmlns:ns1659="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.TransportBookingShortVoBean" qname="ns1660:CAREUK.TransportBookingShortVoBean" xmlns:ns1660="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.CATSReferralTransportBookingVoBean" qname="ns1661:CAREUK.CATSReferralTransportBookingVoBean" xmlns:ns1661="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.TransportBookingDisplayVoBean" qname="ns1659:REFMAN.TransportBookingDisplayVoBean" xmlns:ns1659="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.TransportBookingShortVoBean" qname="ns1660:REFMAN.TransportBookingShortVoBean" xmlns:ns1660="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.CATSReferralTransportBookingVoBean" qname="ns1661:REFMAN.CATSReferralTransportBookingVoBean" xmlns:ns1661="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.BedSpaceStateLiteVoBean" qname="ns1662:Core.BedSpaceStateLiteVoBean" xmlns:ns1662="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.LeadConsultantForSpecialtyConfigVoBean" qname="ns1663:OCRR.LeadConsultantForSpecialtyConfigVoBean" xmlns:ns1663="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.coe.vo.beans.AssessmentSpiritualityBean" qname="ns1664:COE.AssessmentSpiritualityBean" xmlns:ns1664="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.ResultCommentsVoBean" qname="ns1665:OCRR.ResultCommentsVoBean" xmlns:ns1665="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.emergency.vo.beans.CareContextForEDDischargeVoBean" qname="ns1666:Emergency.CareContextForEDDischargeVoBean" xmlns:ns1666="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.TheatreListFilterVoBean" qname="ns1667:CAREUK.TheatreListFilterVoBean" xmlns:ns1667="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.FitForSurgeryAssesmentVoBean" qname="ns1668:CAREUK.FitForSurgeryAssesmentVoBean" xmlns:ns1668="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.TheatreListFilterVoBean" qname="ns1667:REFMAN.TheatreListFilterVoBean" xmlns:ns1667="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.FitForSurgeryAssesmentVoBean" qname="ns1668:REFMAN.FitForSurgeryAssesmentVoBean" xmlns:ns1668="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.spinalinjuries.vo.beans.RespExamLungFBean" qname="ns1669:SpinalInjuries.RespExamLungFBean" xmlns:ns1669="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.spinalinjuries.vo.beans.RespExamObsBean" qname="ns1670:SpinalInjuries.RespExamObsBean" xmlns:ns1670="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.spinalinjuries.vo.beans.RespExamAuscBean" qname="ns1671:SpinalInjuries.RespExamAuscBean" xmlns:ns1671="http://www.imsmaxims.com/VO"/>
@@ -1736,18 +1736,18 @@
  <beanMapping languageSpecificType="java:ims.emergency.vo.beans.DNWForOutcomeVoBean" qname="ns1676:Emergency.DNWForOutcomeVoBean" xmlns:ns1676="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.emergency.vo.beans.PatientDiagnosisForTrackingVoBean" qname="ns1677:Emergency.PatientDiagnosisForTrackingVoBean" xmlns:ns1677="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.emergency.vo.beans.InterventionsTreatmentsForAttendenceVoBean" qname="ns1678:Emergency.InterventionsTreatmentsForAttendenceVoBean" xmlns:ns1678="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ConsultationClinicalNotesLiteVoBean" qname="ns1679:CAREUK.ConsultationClinicalNotesLiteVoBean" xmlns:ns1679="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ConsultationClinicalNotesLiteVoBean" qname="ns1679:REFMAN.ConsultationClinicalNotesLiteVoBean" xmlns:ns1679="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.emergency.vo.beans.InvestigationForAttendenceNotesCcVoBean" qname="ns1680:Emergency.InvestigationForAttendenceNotesCcVoBean" xmlns:ns1680="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.emergency.vo.beans.InvestigationAttendenceDetailVoBean" qname="ns1681:Emergency.InvestigationAttendenceDetailVoBean" xmlns:ns1681="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.nursing.vo.beans.HygieneActivitiesBean" qname="ns1682:Nursing.HygieneActivitiesBean" xmlns:ns1682="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.coe.vo.beans.DressingAndGroomingPreferencesBean" qname="ns1683:COE.DressingAndGroomingPreferencesBean" xmlns:ns1683="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.coe.vo.beans.FeetFindingsBean" qname="ns1684:COE.FeetFindingsBean" xmlns:ns1684="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.CatsReferralERODVoBean" qname="ns1685:CAREUK.CatsReferralERODVoBean" xmlns:ns1685="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.PatientElectiveListForReferralDetailsVoBean" qname="ns1686:CAREUK.PatientElectiveListForReferralDetailsVoBean" xmlns:ns1686="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.CatsReferralERODVoBean" qname="ns1685:REFMAN.CatsReferralERODVoBean" xmlns:ns1685="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.PatientElectiveListForReferralDetailsVoBean" qname="ns1686:REFMAN.PatientElectiveListForReferralDetailsVoBean" xmlns:ns1686="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.emergency.vo.beans.EmergencyAttendanceContractAllocVoBean" qname="ns1687:Emergency.EmergencyAttendanceContractAllocVoBean" xmlns:ns1687="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.emergency.vo.beans.AppFormForTrackingVoBean" qname="ns1688:Emergency.AppFormForTrackingVoBean" xmlns:ns1688="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.emergency.vo.beans.EDPartialAdmissionVoBean" qname="ns1689:Emergency.EDPartialAdmissionVoBean" xmlns:ns1689="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.DiagnosisManagementLiteVoBean" qname="ns1690:CAREUK.DiagnosisManagementLiteVoBean" xmlns:ns1690="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.DiagnosisManagementLiteVoBean" qname="ns1690:REFMAN.DiagnosisManagementLiteVoBean" xmlns:ns1690="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.ResultCommentsLiteVoBean" qname="ns1691:OCRR.ResultCommentsLiteVoBean" xmlns:ns1691="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.nursing.vo.beans.OralAssessmentBean" qname="ns1692:Nursing.OralAssessmentBean" xmlns:ns1692="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.coe.vo.beans.SwallowingAssessmentBean" qname="ns1693:COE.SwallowingAssessmentBean" xmlns:ns1693="http://www.imsmaxims.com/VO"/>
@@ -1773,7 +1773,7 @@
  <beanMapping languageSpecificType="java:ims.assessment.vo.beans.UserDefinedObjectListVoBean" qname="ns1713:Assessment.UserDefinedObjectListVoBean" xmlns:ns1713="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.RespiratoryTreatmentDetailVoBean" qname="ns1714:Core.RespiratoryTreatmentDetailVoBean" xmlns:ns1714="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.coe.vo.beans.MnaEnhancedVoBean" qname="ns1715:COE.MnaEnhancedVoBean" xmlns:ns1715="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.CatsReferralERODWithElectiveOnlyVoBean" qname="ns1716:CAREUK.CatsReferralERODWithElectiveOnlyVoBean" xmlns:ns1716="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.CatsReferralERODWithElectiveOnlyVoBean" qname="ns1716:REFMAN.CatsReferralERODWithElectiveOnlyVoBean" xmlns:ns1716="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinical.vo.beans.ReferralsRecordingListVoBean" qname="ns1717:Clinical.ReferralsRecordingListVoBean" xmlns:ns1717="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinical.vo.beans.EMISProblemsVoBean" qname="ns1718:Clinical.EMISProblemsVoBean" xmlns:ns1718="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.assessment.vo.beans.UserDefinedObjectComponentListVoBean" qname="ns1719:Assessment.UserDefinedObjectComponentListVoBean" xmlns:ns1719="http://www.imsmaxims.com/VO"/>
@@ -1787,7 +1787,7 @@
  <beanMapping languageSpecificType="java:ims.coe.vo.beans.AssessmentMobilityBean" qname="ns1727:COE.AssessmentMobilityBean" xmlns:ns1727="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.coe.vo.beans.AssessmentCommunicationBean" qname="ns1728:COE.AssessmentCommunicationBean" xmlns:ns1728="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinicaladmin.vo.beans.InvasiveDeviceConfigShortVoBean" qname="ns1729:ClinicalAdmin.InvasiveDeviceConfigShortVoBean" xmlns:ns1729="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ReferralServiceVoBean" qname="ns1730:CAREUK.ReferralServiceVoBean" xmlns:ns1730="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ReferralServiceVoBean" qname="ns1730:REFMAN.ReferralServiceVoBean" xmlns:ns1730="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.nursing.vo.beans.CarePlanTitleBean" qname="ns1731:Nursing.CarePlanTitleBean" xmlns:ns1731="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinical.vo.beans.PatientAbsentDiagnosisVoBean" qname="ns1732:Clinical.PatientAbsentDiagnosisVoBean" xmlns:ns1732="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinical.vo.beans.PatientAbsentProcedureVoBean" qname="ns1733:Clinical.PatientAbsentProcedureVoBean" xmlns:ns1733="http://www.imsmaxims.com/VO"/>
@@ -1799,16 +1799,16 @@
  <beanMapping languageSpecificType="java:ims.clinicaladmin.vo.beans.OtherClassificationValueVoBean" qname="ns1739:ClinicalAdmin.OtherClassificationValueVoBean" xmlns:ns1739="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinicaladmin.vo.beans.DailyPatternShortConfigVoBean" qname="ns1740:ClinicalAdmin.DailyPatternShortConfigVoBean" xmlns:ns1740="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinicaladmin.vo.beans.TumourGroupVoBean" qname="ns1741:ClinicalAdmin.TumourGroupVoBean" xmlns:ns1741="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.PatientDiagnosisForClinicalNotesVoBean" qname="ns1742:CAREUK.PatientDiagnosisForClinicalNotesVoBean" xmlns:ns1742="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.PatientDiagnosisForClinicalNotesVoBean" qname="ns1742:REFMAN.PatientDiagnosisForClinicalNotesVoBean" xmlns:ns1742="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.OcsOrderWebServiceListVoBean" qname="ns1743:OCRR.OcsOrderWebServiceListVoBean" xmlns:ns1743="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.hl7.vo.beans.HL7OutboundSaveVoBean" qname="ns1744:HL7.HL7OutboundSaveVoBean" xmlns:ns1744="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.hl7.vo.beans.HL7OutboundVoBean" qname="ns1745:HL7.HL7OutboundVoBean" xmlns:ns1745="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.hl7.vo.beans.HL7InboundVoBean" qname="ns1746:HL7.HL7InboundVoBean" xmlns:ns1746="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ClinicalOutcomeContextProcedureRequiredConfigVoBean" qname="ns1747:CAREUK.ClinicalOutcomeContextProcedureRequiredConfigVoBean" xmlns:ns1747="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.TheatreTrackingIdleConfigVoBean" qname="ns1748:CAREUK.TheatreTrackingIdleConfigVoBean" xmlns:ns1748="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.LocationConfigVoBean" qname="ns1749:CAREUK.LocationConfigVoBean" xmlns:ns1749="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.LocationSiteConfigVoBean" qname="ns1750:CAREUK.LocationSiteConfigVoBean" xmlns:ns1750="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.CatsReferralForClinicListVoBean" qname="ns1751:CAREUK.CatsReferralForClinicListVoBean" xmlns:ns1751="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ClinicalOutcomeContextProcedureRequiredConfigVoBean" qname="ns1747:REFMAN.ClinicalOutcomeContextProcedureRequiredConfigVoBean" xmlns:ns1747="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.TheatreTrackingIdleConfigVoBean" qname="ns1748:REFMAN.TheatreTrackingIdleConfigVoBean" xmlns:ns1748="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.LocationConfigVoBean" qname="ns1749:REFMAN.LocationConfigVoBean" xmlns:ns1749="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.LocationSiteConfigVoBean" qname="ns1750:REFMAN.LocationSiteConfigVoBean" xmlns:ns1750="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.CatsReferralForClinicListVoBean" qname="ns1751:REFMAN.CatsReferralForClinicListVoBean" xmlns:ns1751="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.emergency.vo.beans.HistoryOfPatientMedsVoBean" qname="ns1752:Emergency.HistoryOfPatientMedsVoBean" xmlns:ns1752="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinicaladmin.vo.beans.ProcedureHotlistItemVoBean" qname="ns1753:ClinicalAdmin.ProcedureHotlistItemVoBean" xmlns:ns1753="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinical.vo.beans.CaseConfMOSStatusVoBean" qname="ns1754:Clinical.CaseConfMOSStatusVoBean" xmlns:ns1754="http://www.imsmaxims.com/VO"/>
@@ -1825,7 +1825,7 @@
  <beanMapping languageSpecificType="java:ims.core.vo.beans.SocialHistoryVoBean" qname="ns1765:Core.SocialHistoryVoBean" xmlns:ns1765="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.IllicitDrugsDetailsVoBean" qname="ns1766:Core.IllicitDrugsDetailsVoBean" xmlns:ns1766="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.IllicitDrugsVoBean" qname="ns1767:Core.IllicitDrugsVoBean" xmlns:ns1767="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.CSPrimaryDiagnosisForClinicalNotesVoBean" qname="ns1768:CAREUK.CSPrimaryDiagnosisForClinicalNotesVoBean" xmlns:ns1768="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.CSPrimaryDiagnosisForClinicalNotesVoBean" qname="ns1768:REFMAN.CSPrimaryDiagnosisForClinicalNotesVoBean" xmlns:ns1768="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.ActivityGroupLimitsVoBean" qname="ns1769:Core.ActivityGroupLimitsVoBean" xmlns:ns1769="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.emergency.vo.beans.InterventionTreatmentDetailLiteVoBean" qname="ns1770:Emergency.InterventionTreatmentDetailLiteVoBean" xmlns:ns1770="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.emergency.vo.beans.AdmissionDetailForEventHistoryVoBean" qname="ns1771:Emergency.AdmissionDetailForEventHistoryVoBean" xmlns:ns1771="http://www.imsmaxims.com/VO"/>
@@ -1853,31 +1853,31 @@
  <beanMapping languageSpecificType="java:ims.clinical.vo.beans.ReferralsRecordingShortVoBean" qname="ns1793:Clinical.ReferralsRecordingShortVoBean" xmlns:ns1793="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.QuestionAnswerTypeVoBean" qname="ns1794:Core.QuestionAnswerTypeVoBean" xmlns:ns1794="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinical.vo.beans.CSPrimaryDiagnosisAndPoceduresVoBean" qname="ns1795:Clinical.CSPrimaryDiagnosisAndPoceduresVoBean" xmlns:ns1795="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.CatsReferralClinicListListVoBean" qname="ns1796:CAREUK.CatsReferralClinicListListVoBean" xmlns:ns1796="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.FitForSurgeryAssessmentLiteVoBean" qname="ns1797:CAREUK.FitForSurgeryAssessmentLiteVoBean" xmlns:ns1797="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.CorrespondenceNoteLiteVoBean" qname="ns1798:CAREUK.CorrespondenceNoteLiteVoBean" xmlns:ns1798="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.CorrespondenceNoteVoBean" qname="ns1799:CAREUK.CorrespondenceNoteVoBean" xmlns:ns1799="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.CatsReferralClinicListListVoBean" qname="ns1796:REFMAN.CatsReferralClinicListListVoBean" xmlns:ns1796="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.FitForSurgeryAssessmentLiteVoBean" qname="ns1797:REFMAN.FitForSurgeryAssessmentLiteVoBean" xmlns:ns1797="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.CorrespondenceNoteLiteVoBean" qname="ns1798:REFMAN.CorrespondenceNoteLiteVoBean" xmlns:ns1798="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.CorrespondenceNoteVoBean" qname="ns1799:REFMAN.CorrespondenceNoteVoBean" xmlns:ns1799="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.QuestionInformationShortVoBean" qname="ns1800:Core.QuestionInformationShortVoBean" xmlns:ns1800="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.ClinicalContactShortVoBean" qname="ns1801:Core.ClinicalContactShortVoBean" xmlns:ns1801="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.ActivitySchedVoBean" qname="ns1802:Core.ActivitySchedVoBean" xmlns:ns1802="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.ClinicListVoBean" qname="ns1803:Core.ClinicListVoBean" xmlns:ns1803="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.SessionSlotCatsReferralClinicListWrapperVoBean" qname="ns1804:CAREUK.SessionSlotCatsReferralClinicListWrapperVoBean" xmlns:ns1804="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ReportsRequiredForPrintingVoBean" qname="ns1805:CAREUK.ReportsRequiredForPrintingVoBean" xmlns:ns1805="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.SessionSlotCatsReferralClinicListWrapperVoBean" qname="ns1804:REFMAN.SessionSlotCatsReferralClinicListWrapperVoBean" xmlns:ns1804="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ReportsRequiredForPrintingVoBean" qname="ns1805:REFMAN.ReportsRequiredForPrintingVoBean" xmlns:ns1805="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinical.vo.beans.POACCheckListVoBean" qname="ns1806:Clinical.POACCheckListVoBean" xmlns:ns1806="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinical.vo.beans.CheckListItemsVoBean" qname="ns1807:Clinical.CheckListItemsVoBean" xmlns:ns1807="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinical.vo.beans.SystemReviewVoBean" qname="ns1808:Clinical.SystemReviewVoBean" xmlns:ns1808="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.ConsentGivenVoBean" qname="ns1809:Core.ConsentGivenVoBean" xmlns:ns1809="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.AnswerOptionVoBean" qname="ns1810:Core.AnswerOptionVoBean" xmlns:ns1810="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ContractConfigForReferralDetailsComponentVoBean" qname="ns1811:CAREUK.ContractConfigForReferralDetailsComponentVoBean" xmlns:ns1811="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ReferralLetterDetailsClinicListListVoBean" qname="ns1812:CAREUK.ReferralLetterDetailsClinicListListVoBean" xmlns:ns1812="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ActiveMonitoringVoBean" qname="ns1813:CAREUK.ActiveMonitoringVoBean" xmlns:ns1813="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ContractConfigForReferralDetailsComponentVoBean" qname="ns1811:REFMAN.ContractConfigForReferralDetailsComponentVoBean" xmlns:ns1811="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ReferralLetterDetailsClinicListListVoBean" qname="ns1812:REFMAN.ReferralLetterDetailsClinicListListVoBean" xmlns:ns1812="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ActiveMonitoringVoBean" qname="ns1813:REFMAN.ActiveMonitoringVoBean" xmlns:ns1813="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.FluidBalanceInstanceVoBean" qname="ns1814:Core.FluidBalanceInstanceVoBean" xmlns:ns1814="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.DrawingGraphicFindingQuestionVoBean" qname="ns1815:Core.DrawingGraphicFindingQuestionVoBean" xmlns:ns1815="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.CommChannelVoBean" qname="ns1816:Core.CommChannelVoBean" xmlns:ns1816="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.ClinicalNotesFilterVoBean" qname="ns1817:Core.ClinicalNotesFilterVoBean" xmlns:ns1817="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.ClinicalNotesAdditionalVoBean" qname="ns1818:Core.ClinicalNotesAdditionalVoBean" xmlns:ns1818="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.ClinicalNotesShortVoBean" qname="ns1819:Core.ClinicalNotesShortVoBean" xmlns:ns1819="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.TheatreTrackingStatusColourConfigVoBean" qname="ns1820:CAREUK.TheatreTrackingStatusColourConfigVoBean" xmlns:ns1820="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.TheatreTrackingStatusColourConfigVoBean" qname="ns1820:REFMAN.TheatreTrackingStatusColourConfigVoBean" xmlns:ns1820="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinical.vo.beans.HospitalAtNightPatientDetailListVoBean" qname="ns1821:Clinical.HospitalAtNightPatientDetailListVoBean" xmlns:ns1821="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.emergency.vo.beans.WoundImagesVoBean" qname="ns1822:Emergency.WoundImagesVoBean" xmlns:ns1822="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.emergency.vo.beans.EDAssessmentWoundImagesVoBean" qname="ns1823:Emergency.EDAssessmentWoundImagesVoBean" xmlns:ns1823="http://www.imsmaxims.com/VO"/>
@@ -1926,7 +1926,7 @@
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.ResultComponentCommentsVoBean" qname="ns1866:OCRR.ResultComponentCommentsVoBean" xmlns:ns1866="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.CareSpellVoBean" qname="ns1867:Core.CareSpellVoBean" xmlns:ns1867="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.EpisodeofCareVoBean" qname="ns1868:Core.EpisodeofCareVoBean" xmlns:ns1868="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ProcedureActivityMappingVoBean" qname="ns1869:CAREUK.ProcedureActivityMappingVoBean" xmlns:ns1869="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ProcedureActivityMappingVoBean" qname="ns1869:REFMAN.ProcedureActivityMappingVoBean" xmlns:ns1869="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.NewResultsListInvestigationVoBean" qname="ns1870:OCRR.NewResultsListInvestigationVoBean" xmlns:ns1870="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.NewResultsListOrderInvestigationStatusVoBean" qname="ns1871:OCRR.NewResultsListOrderInvestigationStatusVoBean" xmlns:ns1871="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.ServiceActivityVoBean" qname="ns1872:Core.ServiceActivityVoBean" xmlns:ns1872="http://www.imsmaxims.com/VO"/>
@@ -1935,13 +1935,13 @@
  <beanMapping languageSpecificType="java:ims.core.vo.beans.ShiftDetailsVoBean" qname="ns1875:Core.ShiftDetailsVoBean" xmlns:ns1875="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.InsertedDevicesVoBean" qname="ns1876:Core.InsertedDevicesVoBean" xmlns:ns1876="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.RemovedDevicesVoBean" qname="ns1877:Core.RemovedDevicesVoBean" xmlns:ns1877="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.CatsReferralCallAttemptsVoBean" qname="ns1878:CAREUK.CatsReferralCallAttemptsVoBean" xmlns:ns1878="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.CatsReferralCallAttemptsVoBean" qname="ns1878:REFMAN.CatsReferralCallAttemptsVoBean" xmlns:ns1878="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.assessment.vo.beans.UserDefinedObjectShortVoBean" qname="ns1879:Assessment.UserDefinedObjectShortVoBean" xmlns:ns1879="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.assessment.vo.beans.UserDefinedObjectFilterVoBean" qname="ns1880:Assessment.UserDefinedObjectFilterVoBean" xmlns:ns1880="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.assessment.vo.beans.GraphicAssessmentFilterVoBean" qname="ns1881:Assessment.GraphicAssessmentFilterVoBean" xmlns:ns1881="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.InterpreterDetailsVoBean" qname="ns1882:CAREUK.InterpreterDetailsVoBean" xmlns:ns1882="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.CatsReferralFlaggedForReviewVoBean" qname="ns1883:CAREUK.CatsReferralFlaggedForReviewVoBean" xmlns:ns1883="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.CatsReferralReportsVoBean" qname="ns1884:CAREUK.CatsReferralReportsVoBean" xmlns:ns1884="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.InterpreterDetailsVoBean" qname="ns1882:REFMAN.InterpreterDetailsVoBean" xmlns:ns1882="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.CatsReferralFlaggedForReviewVoBean" qname="ns1883:REFMAN.CatsReferralFlaggedForReviewVoBean" xmlns:ns1883="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.CatsReferralReportsVoBean" qname="ns1884:REFMAN.CatsReferralReportsVoBean" xmlns:ns1884="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinical.vo.beans.PIDBarOncologyManualVoBean" qname="ns1885:Clinical.PIDBarOncologyManualVoBean" xmlns:ns1885="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinical.vo.beans.VTERiskAssessmentVoBean" qname="ns1886:Clinical.VTERiskAssessmentVoBean" xmlns:ns1886="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinical.vo.beans.SurgicalAuditProcedureDetailsVoBean" qname="ns1887:Clinical.SurgicalAuditProcedureDetailsVoBean" xmlns:ns1887="http://www.imsmaxims.com/VO"/>
@@ -1953,19 +1953,19 @@
  <beanMapping languageSpecificType="java:ims.clinical.vo.beans.PasEventForHospitalAtNightVoBean" qname="ns1893:Clinical.PasEventForHospitalAtNightVoBean" xmlns:ns1893="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinical.vo.beans.InpatientEpisodeForHospitalAtNightVoBean" qname="ns1894:Clinical.InpatientEpisodeForHospitalAtNightVoBean" xmlns:ns1894="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinical.vo.beans.InpatientEpisodeWithCareContextVoBean" qname="ns1895:Clinical.InpatientEpisodeWithCareContextVoBean" xmlns:ns1895="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ConsultationOutcomeVoBean" qname="ns1896:CAREUK.ConsultationOutcomeVoBean" xmlns:ns1896="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.TheatreProcedureServiceAndConsultantLiteVoBean" qname="ns1897:CAREUK.TheatreProcedureServiceAndConsultantLiteVoBean" xmlns:ns1897="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ConsultationOutcomeVoBean" qname="ns1896:REFMAN.ConsultationOutcomeVoBean" xmlns:ns1896="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.TheatreProcedureServiceAndConsultantLiteVoBean" qname="ns1897:REFMAN.TheatreProcedureServiceAndConsultantLiteVoBean" xmlns:ns1897="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinical.vo.beans.OnAdmissionSummaryVoBean" qname="ns1898:Clinical.OnAdmissionSummaryVoBean" xmlns:ns1898="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinical.vo.beans.SoapNoteShortVoBean" qname="ns1899:Clinical.SoapNoteShortVoBean" xmlns:ns1899="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinical.vo.beans.AreaOfNeedsNotingDetailVoBean" qname="ns1900:Clinical.AreaOfNeedsNotingDetailVoBean" xmlns:ns1900="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinical.vo.beans.AreaOfNeedsNotingVoBean" qname="ns1901:Clinical.AreaOfNeedsNotingVoBean" xmlns:ns1901="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinical.vo.beans.SoapNoteVoBean" qname="ns1902:Clinical.SoapNoteVoBean" xmlns:ns1902="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.TheatreListBookingAppointmentVoBean" qname="ns1903:CAREUK.TheatreListBookingAppointmentVoBean" xmlns:ns1903="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.TheatreListBookingDetailVoBean" qname="ns1904:CAREUK.TheatreListBookingDetailVoBean" xmlns:ns1904="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.TheatreListBookingAppointmentVoBean" qname="ns1903:REFMAN.TheatreListBookingAppointmentVoBean" xmlns:ns1903="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.TheatreListBookingDetailVoBean" qname="ns1904:REFMAN.TheatreListBookingDetailVoBean" xmlns:ns1904="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinical.vo.beans.SystemReviewSymptomVoBean" qname="ns1905:Clinical.SystemReviewSymptomVoBean" xmlns:ns1905="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinical.vo.beans.FamilyHistoryVoBean" qname="ns1906:Clinical.FamilyHistoryVoBean" xmlns:ns1906="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.SuitableForSurgeryAssessmentLiteVoBean" qname="ns1907:CAREUK.SuitableForSurgeryAssessmentLiteVoBean" xmlns:ns1907="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.OutpatientPreAssessmentVoBean" qname="ns1908:CAREUK.OutpatientPreAssessmentVoBean" xmlns:ns1908="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.SuitableForSurgeryAssessmentLiteVoBean" qname="ns1907:REFMAN.SuitableForSurgeryAssessmentLiteVoBean" xmlns:ns1907="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.OutpatientPreAssessmentVoBean" qname="ns1908:REFMAN.OutpatientPreAssessmentVoBean" xmlns:ns1908="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinical.vo.beans.HospitalAtNightListandDatesVoBean" qname="ns1909:Clinical.HospitalAtNightListandDatesVoBean" xmlns:ns1909="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.assessment.vo.beans.Patient_GraphicalAssessmentStageVoBean" qname="ns1910:Assessment.Patient_GraphicalAssessmentStageVoBean" xmlns:ns1910="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.assessment.vo.beans.Finding_StageQuestionsVoBean" qname="ns1911:Assessment.Finding_StageQuestionsVoBean" xmlns:ns1911="http://www.imsmaxims.com/VO"/>
@@ -1978,15 +1978,15 @@
  <beanMapping languageSpecificType="java:ims.assessment.vo.beans.Answer_DetailsVoBean" qname="ns1918:Assessment.Answer_DetailsVoBean" xmlns:ns1918="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.assessment.vo.beans.Answer_OptionVoBean" qname="ns1919:Assessment.Answer_OptionVoBean" xmlns:ns1919="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.assessment.vo.beans.UserAssessmentWithServiceCollVoBean" qname="ns1920:Assessment.UserAssessmentWithServiceCollVoBean" xmlns:ns1920="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.PrescriptionsVoBean" qname="ns1921:CAREUK.PrescriptionsVoBean" xmlns:ns1921="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.DischargeSummaryPacuAndWardLiteVoBean" qname="ns1922:CAREUK.DischargeSummaryPacuAndWardLiteVoBean" xmlns:ns1922="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ConsultationClinicalNotesVoBean" qname="ns1923:CAREUK.ConsultationClinicalNotesVoBean" xmlns:ns1923="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.SuitableForSurgeryAssessmentMinVoBean" qname="ns1924:CAREUK.SuitableForSurgeryAssessmentMinVoBean" xmlns:ns1924="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.DischargeSummaryPacuAndWardVoBean" qname="ns1925:CAREUK.DischargeSummaryPacuAndWardVoBean" xmlns:ns1925="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.WorkAllocationVoBean" qname="ns1926:CAREUK.WorkAllocationVoBean" xmlns:ns1926="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.DiagnosisManagementVoBean" qname="ns1927:CAREUK.DiagnosisManagementVoBean" xmlns:ns1927="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.FollowUpNoteVoBean" qname="ns1928:CAREUK.FollowUpNoteVoBean" xmlns:ns1928="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ReportNotePrintTemplateVoBean" qname="ns1929:CAREUK.ReportNotePrintTemplateVoBean" xmlns:ns1929="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.PrescriptionsVoBean" qname="ns1921:REFMAN.PrescriptionsVoBean" xmlns:ns1921="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.DischargeSummaryPacuAndWardLiteVoBean" qname="ns1922:REFMAN.DischargeSummaryPacuAndWardLiteVoBean" xmlns:ns1922="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ConsultationClinicalNotesVoBean" qname="ns1923:REFMAN.ConsultationClinicalNotesVoBean" xmlns:ns1923="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.SuitableForSurgeryAssessmentMinVoBean" qname="ns1924:REFMAN.SuitableForSurgeryAssessmentMinVoBean" xmlns:ns1924="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.DischargeSummaryPacuAndWardVoBean" qname="ns1925:REFMAN.DischargeSummaryPacuAndWardVoBean" xmlns:ns1925="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.WorkAllocationVoBean" qname="ns1926:REFMAN.WorkAllocationVoBean" xmlns:ns1926="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.DiagnosisManagementVoBean" qname="ns1927:REFMAN.DiagnosisManagementVoBean" xmlns:ns1927="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.FollowUpNoteVoBean" qname="ns1928:REFMAN.FollowUpNoteVoBean" xmlns:ns1928="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ReportNotePrintTemplateVoBean" qname="ns1929:REFMAN.ReportNotePrintTemplateVoBean" xmlns:ns1929="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinical.vo.beans.SurgicalAuditRecoveryVoBean" qname="ns1930:Clinical.SurgicalAuditRecoveryVoBean" xmlns:ns1930="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.OrderHCPAlertVoBean" qname="ns1931:OCRR.OrderHCPAlertVoBean" xmlns:ns1931="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.OrderInvestigationVoBean" qname="ns1932:OCRR.OrderInvestigationVoBean" xmlns:ns1932="http://www.imsmaxims.com/VO"/>
@@ -1997,17 +1997,17 @@
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.QuestionTooltipVoBean" qname="ns1937:OCRR.QuestionTooltipVoBean" xmlns:ns1937="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.MyOrderComponentQuestionsVoBean" qname="ns1938:OCRR.MyOrderComponentQuestionsVoBean" xmlns:ns1938="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.CategoryQuestionVoBean" qname="ns1939:OCRR.CategoryQuestionVoBean" xmlns:ns1939="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.CatsReportNoteVoBean" qname="ns1940:CAREUK.CatsReportNoteVoBean" xmlns:ns1940="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.CatsReportNoteVoBean" qname="ns1940:REFMAN.CatsReportNoteVoBean" xmlns:ns1940="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.assessment.vo.beans.Graphic_AssessmentQuestionVoBean" qname="ns1941:Assessment.Graphic_AssessmentQuestionVoBean" xmlns:ns1941="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.CategoryQuestionShortVoBean" qname="ns1942:OCRR.CategoryQuestionShortVoBean" xmlns:ns1942="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ReferralOutcomeLiteVoBean" qname="ns1943:CAREUK.ReferralOutcomeLiteVoBean" xmlns:ns1943="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.FollowUpNoteLiteVoBean" qname="ns1944:CAREUK.FollowUpNoteLiteVoBean" xmlns:ns1944="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ReferralOutcomeLiteVoBean" qname="ns1943:REFMAN.ReferralOutcomeLiteVoBean" xmlns:ns1943="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.FollowUpNoteLiteVoBean" qname="ns1944:REFMAN.FollowUpNoteLiteVoBean" xmlns:ns1944="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.SocialHistoryLiteVoBean" qname="ns1945:Core.SocialHistoryLiteVoBean" xmlns:ns1945="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.PrescriptionsLiteVoBean" qname="ns1946:CAREUK.PrescriptionsLiteVoBean" xmlns:ns1946="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ReferralCodingVoBean" qname="ns1947:CAREUK.ReferralCodingVoBean" xmlns:ns1947="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ReferralCodingItemVoBean" qname="ns1948:CAREUK.ReferralCodingItemVoBean" xmlns:ns1948="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.DischargeAndPASEventForReferralCodingVoBean" qname="ns1949:CAREUK.DischargeAndPASEventForReferralCodingVoBean" xmlns:ns1949="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.TltSummaryNoteLiteVoBean" qname="ns1950:CAREUK.TltSummaryNoteLiteVoBean" xmlns:ns1950="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.PrescriptionsLiteVoBean" qname="ns1946:REFMAN.PrescriptionsLiteVoBean" xmlns:ns1946="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ReferralCodingVoBean" qname="ns1947:REFMAN.ReferralCodingVoBean" xmlns:ns1947="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ReferralCodingItemVoBean" qname="ns1948:REFMAN.ReferralCodingItemVoBean" xmlns:ns1948="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.DischargeAndPASEventForReferralCodingVoBean" qname="ns1949:REFMAN.DischargeAndPASEventForReferralCodingVoBean" xmlns:ns1949="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.TltSummaryNoteLiteVoBean" qname="ns1950:REFMAN.TltSummaryNoteLiteVoBean" xmlns:ns1950="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinical.vo.beans.PatientAssessmentListAndSearchCriteriaVoBean" qname="ns1951:Clinical.PatientAssessmentListAndSearchCriteriaVoBean" xmlns:ns1951="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinical.vo.beans.catsReferralLiteVoBean" qname="ns1952:Clinical.catsReferralLiteVoBean" xmlns:ns1952="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.oncology.vo.beans.PrognosticLocationConfigVoBean" qname="ns1953:Oncology.PrognosticLocationConfigVoBean" xmlns:ns1953="http://www.imsmaxims.com/VO"/>
@@ -2024,17 +2024,17 @@
  <beanMapping languageSpecificType="java:ims.assessment.vo.beans.ScreeningProfileVoBean" qname="ns1964:Assessment.ScreeningProfileVoBean" xmlns:ns1964="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.OcsOrderShortVoBean" qname="ns1965:OCRR.OcsOrderShortVoBean" xmlns:ns1965="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.assessment.vo.beans.UserPatientAssessmentFavouritesVoBean" qname="ns1966:Assessment.UserPatientAssessmentFavouritesVoBean" xmlns:ns1966="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ReferralLetterDetailsBookingVoBean" qname="ns1967:CAREUK.ReferralLetterDetailsBookingVoBean" xmlns:ns1967="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.CatsReferralStatusVoBean" qname="ns1968:CAREUK.CatsReferralStatusVoBean" xmlns:ns1968="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ReferralLetterDetailsBookingVoBean" qname="ns1967:REFMAN.ReferralLetterDetailsBookingVoBean" xmlns:ns1967="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.CatsReferralStatusVoBean" qname="ns1968:REFMAN.CatsReferralStatusVoBean" xmlns:ns1968="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinical.vo.beans.SurgicalAuditActualProcedureVoBean" qname="ns1969:Clinical.SurgicalAuditActualProcedureVoBean" xmlns:ns1969="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.CatsReferralVoBean" qname="ns1970:CAREUK.CatsReferralVoBean" xmlns:ns1970="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.AtConsultationVoBean" qname="ns1971:CAREUK.AtConsultationVoBean" xmlns:ns1971="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ReferralLetterDetailsLiteVoBean" qname="ns1972:CAREUK.ReferralLetterDetailsLiteVoBean" xmlns:ns1972="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ReferralAppointmentDetailsVoBean" qname="ns1973:CAREUK.ReferralAppointmentDetailsVoBean" xmlns:ns1973="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.onExaminationVoBean" qname="ns1974:CAREUK.onExaminationVoBean" xmlns:ns1974="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ReferralStatusConfigVoBean" qname="ns1975:CAREUK.ReferralStatusConfigVoBean" xmlns:ns1975="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.PresentationReferralSummaryVoBean" qname="ns1976:CAREUK.PresentationReferralSummaryVoBean" xmlns:ns1976="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.BaselineObservationsVoBean" qname="ns1977:CAREUK.BaselineObservationsVoBean" xmlns:ns1977="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.CatsReferralVoBean" qname="ns1970:REFMAN.CatsReferralVoBean" xmlns:ns1970="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.AtConsultationVoBean" qname="ns1971:REFMAN.AtConsultationVoBean" xmlns:ns1971="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ReferralLetterDetailsLiteVoBean" qname="ns1972:REFMAN.ReferralLetterDetailsLiteVoBean" xmlns:ns1972="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ReferralAppointmentDetailsVoBean" qname="ns1973:REFMAN.ReferralAppointmentDetailsVoBean" xmlns:ns1973="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.onExaminationVoBean" qname="ns1974:REFMAN.onExaminationVoBean" xmlns:ns1974="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ReferralStatusConfigVoBean" qname="ns1975:REFMAN.ReferralStatusConfigVoBean" xmlns:ns1975="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.PresentationReferralSummaryVoBean" qname="ns1976:REFMAN.PresentationReferralSummaryVoBean" xmlns:ns1976="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.BaselineObservationsVoBean" qname="ns1977:REFMAN.BaselineObservationsVoBean" xmlns:ns1977="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinical.vo.beans.AdmissionDetailForDementiaWorklistVoBean" qname="ns1978:Clinical.AdmissionDetailForDementiaWorklistVoBean" xmlns:ns1978="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinical.vo.beans.DementiaEDischargeCheckVoBean" qname="ns1979:Clinical.DementiaEDischargeCheckVoBean" xmlns:ns1979="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.InvestigationUnderSpecimenVoBean" qname="ns1980:OCRR.InvestigationUnderSpecimenVoBean" xmlns:ns1980="http://www.imsmaxims.com/VO"/>
@@ -2050,16 +2050,16 @@
  <beanMapping languageSpecificType="java:ims.assessment.vo.beans.Patient_AssessmentVoBean" qname="ns1990:Assessment.Patient_AssessmentVoBean" xmlns:ns1990="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.assessment.vo.beans.Assessment_QuestionGroupVoBean" qname="ns1991:Assessment.Assessment_QuestionGroupVoBean" xmlns:ns1991="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.assessment.vo.beans.User_AssessmentVoBean" qname="ns1992:Assessment.User_AssessmentVoBean" xmlns:ns1992="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ClinicalContactTimeVoBean" qname="ns1993:CAREUK.ClinicalContactTimeVoBean" xmlns:ns1993="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.AppointmentCallAttemptsVoBean" qname="ns1994:CAREUK.AppointmentCallAttemptsVoBean" xmlns:ns1994="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.CatsReferralDetailsVoBean" qname="ns1995:CAREUK.CatsReferralDetailsVoBean" xmlns:ns1995="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.CatsReferralListVoBean" qname="ns1996:CAREUK.CatsReferralListVoBean" xmlns:ns1996="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.CATSReferralFilterVoBean" qname="ns1997:CAREUK.CATSReferralFilterVoBean" xmlns:ns1997="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ReferralBookingVoBean" qname="ns1998:CAREUK.ReferralBookingVoBean" xmlns:ns1998="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.CatsReferralWizardVoBean" qname="ns1999:CAREUK.CatsReferralWizardVoBean" xmlns:ns1999="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ReferralOutcomeVoBean" qname="ns2000:CAREUK.ReferralOutcomeVoBean" xmlns:ns2000="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ConsultationDetailsVoBean" qname="ns2001:CAREUK.ConsultationDetailsVoBean" xmlns:ns2001="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ConsultationTimeVoBean" qname="ns2002:CAREUK.ConsultationTimeVoBean" xmlns:ns2002="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ClinicalContactTimeVoBean" qname="ns1993:REFMAN.ClinicalContactTimeVoBean" xmlns:ns1993="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.AppointmentCallAttemptsVoBean" qname="ns1994:REFMAN.AppointmentCallAttemptsVoBean" xmlns:ns1994="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.CatsReferralDetailsVoBean" qname="ns1995:REFMAN.CatsReferralDetailsVoBean" xmlns:ns1995="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.CatsReferralListVoBean" qname="ns1996:REFMAN.CatsReferralListVoBean" xmlns:ns1996="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.CATSReferralFilterVoBean" qname="ns1997:REFMAN.CATSReferralFilterVoBean" xmlns:ns1997="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ReferralBookingVoBean" qname="ns1998:REFMAN.ReferralBookingVoBean" xmlns:ns1998="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.CatsReferralWizardVoBean" qname="ns1999:REFMAN.CatsReferralWizardVoBean" xmlns:ns1999="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ReferralOutcomeVoBean" qname="ns2000:REFMAN.ReferralOutcomeVoBean" xmlns:ns2000="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ConsultationDetailsVoBean" qname="ns2001:REFMAN.ConsultationDetailsVoBean" xmlns:ns2001="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ConsultationTimeVoBean" qname="ns2002:REFMAN.ConsultationTimeVoBean" xmlns:ns2002="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinical.vo.beans.VitalSignsForSurgicalAuditPreOpChecksVoBean" qname="ns2003:Clinical.VitalSignsForSurgicalAuditPreOpChecksVoBean" xmlns:ns2003="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.rules.vo.beans.BusinessRulesSearchVoBean" qname="ns2004:Rules.BusinessRulesSearchVoBean" xmlns:ns2004="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.PathologySpecimenVoBean" qname="ns2005:OCRR.PathologySpecimenVoBean" xmlns:ns2005="http://www.imsmaxims.com/VO"/>
@@ -2075,15 +2075,15 @@
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.PathResultDetailsShortVoBean" qname="ns2015:OCRR.PathResultDetailsShortVoBean" xmlns:ns2015="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.OrderSpecimenContainerVoBean" qname="ns2016:OCRR.OrderSpecimenContainerVoBean" xmlns:ns2016="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.PathologyResultShortVoBean" qname="ns2017:OCRR.PathologyResultShortVoBean" xmlns:ns2017="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ReferralLetterDetailsLiteWithGPVoBean" qname="ns2018:CAREUK.ReferralLetterDetailsLiteWithGPVoBean" xmlns:ns2018="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.CatsReferralStatusLiteVoBean" qname="ns2019:CAREUK.CatsReferralStatusLiteVoBean" xmlns:ns2019="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.RejectReferralVoBean" qname="ns2020:CAREUK.RejectReferralVoBean" xmlns:ns2020="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ReferralLetterDetailsLiteWithGPVoBean" qname="ns2018:REFMAN.ReferralLetterDetailsLiteWithGPVoBean" xmlns:ns2018="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.CatsReferralStatusLiteVoBean" qname="ns2019:REFMAN.CatsReferralStatusLiteVoBean" xmlns:ns2019="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.RejectReferralVoBean" qname="ns2020:REFMAN.RejectReferralVoBean" xmlns:ns2020="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.ReferralNoteVoBean" qname="ns2021:Core.ReferralNoteVoBean" xmlns:ns2021="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.OrderInvApptListVoBean" qname="ns2022:CAREUK.OrderInvApptListVoBean" xmlns:ns2022="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ReferralServiceFullVoBean" qname="ns2023:CAREUK.ReferralServiceFullVoBean" xmlns:ns2023="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.WaitingListConfigVoBean" qname="ns2024:CAREUK.WaitingListConfigVoBean" xmlns:ns2024="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.IFCATSExternalEventVoBean" qname="ns2025:CAREUK.IFCATSExternalEventVoBean" xmlns:ns2025="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.OrderInvApptVoBean" qname="ns2026:CAREUK.OrderInvApptVoBean" xmlns:ns2026="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.OrderInvApptListVoBean" qname="ns2022:REFMAN.OrderInvApptListVoBean" xmlns:ns2022="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ReferralServiceFullVoBean" qname="ns2023:REFMAN.ReferralServiceFullVoBean" xmlns:ns2023="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.WaitingListConfigVoBean" qname="ns2024:REFMAN.WaitingListConfigVoBean" xmlns:ns2024="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.IFCATSExternalEventVoBean" qname="ns2025:REFMAN.IFCATSExternalEventVoBean" xmlns:ns2025="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.OrderInvApptVoBean" qname="ns2026:REFMAN.OrderInvApptVoBean" xmlns:ns2026="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.NewResultsSearchListVoBean" qname="ns2027:OCRR.NewResultsSearchListVoBean" xmlns:ns2027="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.oncology.vo.beans.InternalReferralListVoBean" qname="ns2028:Oncology.InternalReferralListVoBean" xmlns:ns2028="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.oncology.vo.beans.InternalReferralOutcomeVoBean" qname="ns2029:Oncology.InternalReferralOutcomeVoBean" xmlns:ns2029="http://www.imsmaxims.com/VO"/>
@@ -2100,16 +2100,16 @@
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.ClinImagInvDetailsVoBean" qname="ns2040:OCRR.ClinImagInvDetailsVoBean" xmlns:ns2040="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.InvestigationIndexVoBean" qname="ns2041:OCRR.InvestigationIndexVoBean" xmlns:ns2041="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.InvestigationVoBean" qname="ns2042:OCRR.InvestigationVoBean" xmlns:ns2042="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ChangeOfServiceVoBean" qname="ns2043:CAREUK.ChangeOfServiceVoBean" xmlns:ns2043="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.TLTContactTimeVoBean" qname="ns2044:CAREUK.TLTContactTimeVoBean" xmlns:ns2044="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.CatsReferralReviewDetailVoBean" qname="ns2045:CAREUK.CatsReferralReviewDetailVoBean" xmlns:ns2045="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.CatsReferralProviderCancellationVoBean" qname="ns2046:CAREUK.CatsReferralProviderCancellationVoBean" xmlns:ns2046="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.OnwardReferralVoBean" qname="ns2047:CAREUK.OnwardReferralVoBean" xmlns:ns2047="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.TransportBookingLiteVoBean" qname="ns2048:CAREUK.TransportBookingLiteVoBean" xmlns:ns2048="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ReferralDischargeVoBean" qname="ns2049:CAREUK.ReferralDischargeVoBean" xmlns:ns2049="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.FurtherManagementDetailsVoBean" qname="ns2050:CAREUK.FurtherManagementDetailsVoBean" xmlns:ns2050="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ProviderCancellationVoBean" qname="ns2051:CAREUK.ProviderCancellationVoBean" xmlns:ns2051="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ReviewReferralDetailVoBean" qname="ns2052:CAREUK.ReviewReferralDetailVoBean" xmlns:ns2052="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ChangeOfServiceVoBean" qname="ns2043:REFMAN.ChangeOfServiceVoBean" xmlns:ns2043="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.TLTContactTimeVoBean" qname="ns2044:REFMAN.TLTContactTimeVoBean" xmlns:ns2044="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.CatsReferralReviewDetailVoBean" qname="ns2045:REFMAN.CatsReferralReviewDetailVoBean" xmlns:ns2045="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.CatsReferralProviderCancellationVoBean" qname="ns2046:REFMAN.CatsReferralProviderCancellationVoBean" xmlns:ns2046="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.OnwardReferralVoBean" qname="ns2047:REFMAN.OnwardReferralVoBean" xmlns:ns2047="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.TransportBookingLiteVoBean" qname="ns2048:REFMAN.TransportBookingLiteVoBean" xmlns:ns2048="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ReferralDischargeVoBean" qname="ns2049:REFMAN.ReferralDischargeVoBean" xmlns:ns2049="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.FurtherManagementDetailsVoBean" qname="ns2050:REFMAN.FurtherManagementDetailsVoBean" xmlns:ns2050="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ProviderCancellationVoBean" qname="ns2051:REFMAN.ProviderCancellationVoBean" xmlns:ns2051="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ReviewReferralDetailVoBean" qname="ns2052:REFMAN.ReviewReferralDetailVoBean" xmlns:ns2052="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.oncology.vo.beans.ActualPlanDetailsVoBean" qname="ns2053:Oncology.ActualPlanDetailsVoBean" xmlns:ns2053="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinical.vo.beans.WasVTERiskAssessmentStatusChangedVoBean" qname="ns2054:Clinical.WasVTERiskAssessmentStatusChangedVoBean" xmlns:ns2054="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinical.vo.beans.SurgicalOperationSummaryVoBean" qname="ns2055:Clinical.SurgicalOperationSummaryVoBean" xmlns:ns2055="http://www.imsmaxims.com/VO"/>
@@ -2125,11 +2125,11 @@
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.OrderEntryTemplateVoBean" qname="ns2065:OCRR.OrderEntryTemplateVoBean" xmlns:ns2065="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.OrderEntryTemplateColumnVoBean" qname="ns2066:OCRR.OrderEntryTemplateColumnVoBean" xmlns:ns2066="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.ProviderSystemVoBean" qname="ns2067:OCRR.ProviderSystemVoBean" xmlns:ns2067="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.SearchCriteriaForElectiveListManagementVoBean" qname="ns2068:CAREUK.SearchCriteriaForElectiveListManagementVoBean" xmlns:ns2068="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.PathwayClockForReferralERODVoBean" qname="ns2069:CAREUK.PathwayClockForReferralERODVoBean" xmlns:ns2069="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.SearchCriteriaForElectiveListManagementVoBean" qname="ns2068:REFMAN.SearchCriteriaForElectiveListManagementVoBean" xmlns:ns2068="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.PathwayClockForReferralERODVoBean" qname="ns2069:REFMAN.PathwayClockForReferralERODVoBean" xmlns:ns2069="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.InvestigationForNewResultsOcsOrderVoBean" qname="ns2070:OCRR.InvestigationForNewResultsOcsOrderVoBean" xmlns:ns2070="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.OrderInvestigationForNewResultOcsOrderVoBean" qname="ns2071:OCRR.OrderInvestigationForNewResultOcsOrderVoBean" xmlns:ns2071="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.PatientElevectiveListManagementVoBean" qname="ns2072:CAREUK.PatientElevectiveListManagementVoBean" xmlns:ns2072="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.PatientElevectiveListManagementVoBean" qname="ns2072:REFMAN.PatientElevectiveListManagementVoBean" xmlns:ns2072="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.SpecimenContainerDetailsForDftVoBean" qname="ns2073:OCRR.SpecimenContainerDetailsForDftVoBean" xmlns:ns2073="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.ResultDetailsForClinicalResultVoBean" qname="ns2074:OCRR.ResultDetailsForClinicalResultVoBean" xmlns:ns2074="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.ocrr.vo.beans.SpecimenTypeVoBean" qname="ns2075:OCRR.SpecimenTypeVoBean" xmlns:ns2075="http://www.imsmaxims.com/VO"/>
@@ -2398,11 +2398,11 @@
  <beanMapping languageSpecificType="java:ims.oncology.vo.beans.ChemotherapyDetailsLiteDialogVoBean" qname="ns2338:Oncology.ChemotherapyDetailsLiteDialogVoBean" xmlns:ns2338="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.emergency.vo.beans.OrderInvestigationForAttendenceNotesCcVoBean" qname="ns2339:Emergency.OrderInvestigationForAttendenceNotesCcVoBean" xmlns:ns2339="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.assessment.vo.beans.UserDefinedObjectComponentLiteVoBean" qname="ns2340:Assessment.UserDefinedObjectComponentLiteVoBean" xmlns:ns2340="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.PatientElectiveListBedInfoVoBean" qname="ns2341:CAREUK.PatientElectiveListBedInfoVoBean" xmlns:ns2341="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.PatientElectiveListForPendingAdmissionVoBean" qname="ns2342:CAREUK.PatientElectiveListForPendingAdmissionVoBean" xmlns:ns2342="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.PatientElectiveListBedInfoVoBean" qname="ns2341:REFMAN.PatientElectiveListBedInfoVoBean" xmlns:ns2341="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.PatientElectiveListForPendingAdmissionVoBean" qname="ns2342:REFMAN.PatientElectiveListForPendingAdmissionVoBean" xmlns:ns2342="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.RCHTInpatientDischargeVoBean" qname="ns2343:Core.RCHTInpatientDischargeVoBean" xmlns:ns2343="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.emergency.vo.beans.TrackingAreaForWhiteBoardConfigVoBean" qname="ns2344:Emergency.TrackingAreaForWhiteBoardConfigVoBean" xmlns:ns2344="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.PatientElectiveListLiteVoBean" qname="ns2345:CAREUK.PatientElectiveListLiteVoBean" xmlns:ns2345="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.PatientElectiveListLiteVoBean" qname="ns2345:REFMAN.PatientElectiveListLiteVoBean" xmlns:ns2345="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.ConfigFlagVoBean" qname="ns2346:Core.ConfigFlagVoBean" xmlns:ns2346="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.WardDataViewVoBean" qname="ns2347:Core.WardDataViewVoBean" xmlns:ns2347="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.AdmissionDetailLiteVoBean" qname="ns2348:Core.AdmissionDetailLiteVoBean" xmlns:ns2348="http://www.imsmaxims.com/VO"/>
@@ -2438,9 +2438,9 @@
  <beanMapping languageSpecificType="java:ims.core.vo.beans.MemberOfStaffMappingsLiteVoBean" qname="ns2378:Core.MemberOfStaffMappingsLiteVoBean" xmlns:ns2378="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.PatientProcedureSurgicalOpVoBean" qname="ns2379:Core.PatientProcedureSurgicalOpVoBean" xmlns:ns2379="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.MergedTablesVoBean" qname="ns2380:Core.MergedTablesVoBean" xmlns:ns2380="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ElectiveListStatusForBookTheatreVoBean" qname="ns2381:CAREUK.ElectiveListStatusForBookTheatreVoBean" xmlns:ns2381="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.CCGToContractConfigVoBean" qname="ns2382:CAREUK.CCGToContractConfigVoBean" xmlns:ns2382="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.CATSReferralWithContextPasVoBean" qname="ns2383:CAREUK.CATSReferralWithContextPasVoBean" xmlns:ns2383="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ElectiveListStatusForBookTheatreVoBean" qname="ns2381:REFMAN.ElectiveListStatusForBookTheatreVoBean" xmlns:ns2381="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.CCGToContractConfigVoBean" qname="ns2382:REFMAN.CCGToContractConfigVoBean" xmlns:ns2382="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.CATSReferralWithContextPasVoBean" qname="ns2383:REFMAN.CATSReferralWithContextPasVoBean" xmlns:ns2383="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.CDSOutpatientVoBean" qname="ns2384:Core.CDSOutpatientVoBean" xmlns:ns2384="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.PatientDocumentLiteVoBean" qname="ns2385:Core.PatientDocumentLiteVoBean" xmlns:ns2385="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.CDSDiagnosisDetailsVoBean" qname="ns2386:Core.CDSDiagnosisDetailsVoBean" xmlns:ns2386="http://www.imsmaxims.com/VO"/>
@@ -2453,15 +2453,15 @@
  <beanMapping languageSpecificType="java:ims.core.vo.beans.ChartTypeDatasetVoBean" qname="ns2393:Core.ChartTypeDatasetVoBean" xmlns:ns2393="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.VitalSignMonitoringVoBean" qname="ns2394:Core.VitalSignMonitoringVoBean" xmlns:ns2394="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.clinical.vo.beans.SECSConfigurationVoBean" qname="ns2395:Clinical.SECSConfigurationVoBean" xmlns:ns2395="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ReferralERODForBookTheatreVoBean" qname="ns2396:CAREUK.ReferralERODForBookTheatreVoBean" xmlns:ns2396="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.PatientElectiveListVoBean" qname="ns2397:CAREUK.PatientElectiveListVoBean" xmlns:ns2397="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ReferralERODForBookTheatreVoBean" qname="ns2396:REFMAN.ReferralERODForBookTheatreVoBean" xmlns:ns2396="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.PatientElectiveListVoBean" qname="ns2397:REFMAN.PatientElectiveListVoBean" xmlns:ns2397="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.AppSiteVoBean" qname="ns2398:Core.AppSiteVoBean" xmlns:ns2398="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.RecentDischargesFilterVoBean" qname="ns2399:Core.RecentDischargesFilterVoBean" xmlns:ns2399="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.PatientAlertLiteVoBean" qname="ns2400:Core.PatientAlertLiteVoBean" xmlns:ns2400="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.WardStayVoBean" qname="ns2401:Core.WardStayVoBean" xmlns:ns2401="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.PendingDischargesVoBean" qname="ns2402:Core.PendingDischargesVoBean" xmlns:ns2402="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.PendingElectiveAdmissionHl7VoBean" qname="ns2403:Core.PendingElectiveAdmissionHl7VoBean" xmlns:ns2403="http://www.imsmaxims.com/VO"/>
- <beanMapping languageSpecificType="java:ims.careuk.vo.beans.ElectiveTCIForReferralDetailsVoBean" qname="ns2404:CAREUK.ElectiveTCIForReferralDetailsVoBean" xmlns:ns2404="http://www.imsmaxims.com/VO"/>
+ <beanMapping languageSpecificType="java:ims.RefMan.vo.beans.ElectiveTCIForReferralDetailsVoBean" qname="ns2404:REFMAN.ElectiveTCIForReferralDetailsVoBean" xmlns:ns2404="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.InpatientEpisodeLiteVoBean" qname="ns2405:Core.InpatientEpisodeLiteVoBean" xmlns:ns2405="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.PasEventADTVoBean" qname="ns2406:Core.PasEventADTVoBean" xmlns:ns2406="http://www.imsmaxims.com/VO"/>
  <beanMapping languageSpecificType="java:ims.core.vo.beans.PendingTransfersLiteVoBean" qname="ns2407:Core.PendingTransfersLiteVoBean" xmlns:ns2407="http://www.imsmaxims.com/VO"/>

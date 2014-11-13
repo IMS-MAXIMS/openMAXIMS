@@ -625,10 +625,10 @@ public class MAXIMSWebService extends ims.domain.impl.DomainWebService
 			//	throw new Exception("Errors found during value object (booking) validation - " + errors0);
 	
 	}
-	ims.careuk.vo.CatsReferralRefVo v_catsReferral=null;
+	ims.RefMan.vo.CatsReferralRefVo v_catsReferral=null;
 	    if (catsReferral != null)
 		{
-			v_catsReferral = catsReferral == null ? null : new ims.careuk.vo.CatsReferralRefVo(catsReferral.getId(), catsReferral.getVersion());
+			v_catsReferral = catsReferral == null ? null : new ims.RefMan.vo.CatsReferralRefVo(catsReferral.getId(), catsReferral.getVersion());
 	}
 	Boolean v_isRebook=null;
 	    if (isRebook != null)
@@ -636,7 +636,7 @@ public class MAXIMSWebService extends ims.domain.impl.DomainWebService
 			v_isRebook = isRebook;
 	}
 		
-		ims.careuk.domain.BookAppointment intf = (ims.careuk.domain.BookAppointment)super.getDomainImpl("ims.careuk.domain.impl.BookAppointmentImpl");		
+		ims.RefMan.domain.BookAppointment intf = (ims.RefMan.domain.BookAppointment)super.getDomainImpl("ims.RefMan.domain.impl.BookAppointmentImpl");		
 
 	   ims.scheduling.vo.Sch_BookingVo ret = intf.saveBooking(
 												  v_booking 
@@ -658,10 +658,10 @@ public class MAXIMSWebService extends ims.domain.impl.DomainWebService
 	{
 		if (!loggedIn()) throw new Exception("Not logged in!!");
 			
-	ims.careuk.vo.CatsReferralRefVo v_catsReferral=null;
+	ims.RefMan.vo.CatsReferralRefVo v_catsReferral=null;
 	    if (catsReferral != null)
 		{
-			v_catsReferral = catsReferral == null ? null : new ims.careuk.vo.CatsReferralRefVo(catsReferral.getId(), catsReferral.getVersion());
+			v_catsReferral = catsReferral == null ? null : new ims.RefMan.vo.CatsReferralRefVo(catsReferral.getId(), catsReferral.getVersion());
 	}
 	ims.scheduling.vo.Booking_AppointmentRefVo v_appt=null;
 	    if (appt != null)
@@ -669,7 +669,7 @@ public class MAXIMSWebService extends ims.domain.impl.DomainWebService
 			v_appt = appt == null ? null : new ims.scheduling.vo.Booking_AppointmentRefVo(appt.getId(), appt.getVersion());
 	}
 		
-		ims.careuk.domain.BookAppointment intf = (ims.careuk.domain.BookAppointment)super.getDomainImpl("ims.careuk.domain.impl.BookAppointmentImpl");		
+		ims.RefMan.domain.BookAppointment intf = (ims.RefMan.domain.BookAppointment)super.getDomainImpl("ims.RefMan.domain.impl.BookAppointmentImpl");		
 
 	    intf.processAppointmentForPukkaJ(
 												  v_catsReferral 
@@ -688,10 +688,10 @@ public class MAXIMSWebService extends ims.domain.impl.DomainWebService
 	{
 		if (!loggedIn()) throw new Exception("Not logged in!!");
 			
-	ims.careuk.vo.CatsReferralRefVo v_catsReferral=null;
+	ims.RefMan.vo.CatsReferralRefVo v_catsReferral=null;
 	    if (catsReferral != null)
 		{
-			v_catsReferral = catsReferral == null ? null : new ims.careuk.vo.CatsReferralRefVo(catsReferral.getId(), catsReferral.getVersion());
+			v_catsReferral = catsReferral == null ? null : new ims.RefMan.vo.CatsReferralRefVo(catsReferral.getId(), catsReferral.getVersion());
 	}
 	ims.scheduling.vo.Booking_AppointmentRefVo v_appt=null;
 	    if (appt != null)
@@ -699,7 +699,7 @@ public class MAXIMSWebService extends ims.domain.impl.DomainWebService
 			v_appt = appt == null ? null : new ims.scheduling.vo.Booking_AppointmentRefVo(appt.getId(), appt.getVersion());
 	}
 		
-		ims.careuk.domain.BookAppointment intf = (ims.careuk.domain.BookAppointment)super.getDomainImpl("ims.careuk.domain.impl.BookAppointmentImpl");		
+		ims.RefMan.domain.BookAppointment intf = (ims.RefMan.domain.BookAppointment)super.getDomainImpl("ims.RefMan.domain.impl.BookAppointmentImpl");		
 
 	    intf.cancelAppointmentForPukkaJ(
 												  v_catsReferral 
@@ -858,10 +858,10 @@ public class MAXIMSWebService extends ims.domain.impl.DomainWebService
 	{
 		if (!loggedIn()) throw new Exception("Not logged in!!");
 			
-	ims.careuk.vo.CatsReferralRefVo v_catsReferral=null;
+	ims.RefMan.vo.CatsReferralRefVo v_catsReferral=null;
 	    if (catsReferral != null)
 		{
-			v_catsReferral = catsReferral == null ? null : new ims.careuk.vo.CatsReferralRefVo(catsReferral.getId(), catsReferral.getVersion());
+			v_catsReferral = catsReferral == null ? null : new ims.RefMan.vo.CatsReferralRefVo(catsReferral.getId(), catsReferral.getVersion());
 	}
 		
 		ims.scheduling.domain.SessionAdmin intf = (ims.scheduling.domain.SessionAdmin)super.getDomainImpl("ims.scheduling.domain.impl.SessionAdminImpl");		

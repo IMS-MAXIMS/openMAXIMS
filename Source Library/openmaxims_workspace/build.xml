@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+
+<project name="openMAXIMS" default="openMAXIMS">
+	<property name="workspace" value="${basedir}/" />
+	
+	<target name="openMAXIMS">
+		<ant antfile="WebApp/WebAppBuild.xml" target="openMAXIMSwarfile" inheritAll="true" />
+	</target>
+
+	<target name="clean">
+		<delete includeEmptyDirs="true" quiet="true"><fileset dir="${workspace}Clinical/bin"/></delete>
+		<delete includeEmptyDirs="true" quiet="true"><fileset dir="${workspace}Rules/bin"/></delete>
+		<delete includeEmptyDirs="true" quiet="true"><fileset dir="${workspace}Therapies/bin"/></delete>
+		<delete includeEmptyDirs="true" quiet="true"><fileset dir="${workspace}RACPC/bin"/></delete>
+		<delete includeEmptyDirs="true" quiet="true"><fileset dir="${workspace}RefMan/bin"/></delete>
+		<delete includeEmptyDirs="true" quiet="true"><fileset dir="${workspace}SpinalInjuries/bin"/></delete>
+		<delete includeEmptyDirs="true" quiet="true"><fileset dir="${workspace}Scheduling/bin"/></delete>
+		<delete includeEmptyDirs="true" quiet="true">
+			<fileset dir="${workspace}WebApp/WEB-INF/classes">
+				<patternset>
+					<include name="**/*.class"/>
+				</patternset>
+			</fileset>
+		</delete>
+		<delete includeEmptyDirs="true" quiet="true"><fileset dir="${workspace}OCRR/bin"/></delete>
+		<delete includeEmptyDirs="true" quiet="true"><fileset dir="${workspace}OCS_IF/bin"/></delete>
+		<delete includeEmptyDirs="true" quiet="true"><fileset dir="${workspace}ICP/bin"/></delete>
+		<delete includeEmptyDirs="true" quiet="true"><fileset dir="${workspace}Pathways/bin"/></delete>
+		<delete includeEmptyDirs="true" quiet="true"><fileset dir="${workspace}Oncology/bin"/></delete>
+		<delete includeEmptyDirs="true" quiet="true"><fileset dir="${workspace}HL7Nas/bin"/></delete>
+		<delete includeEmptyDirs="true" quiet="true"><fileset dir="${workspace}Emergency/bin"/></delete>
+		<delete includeEmptyDirs="true" quiet="true"><fileset dir="${workspace}Nursing/bin"/></delete>
+		<delete includeEmptyDirs="true" quiet="true"><fileset dir="${workspace}HL7Engine/bin"/></delete>
+		<delete includeEmptyDirs="true" quiet="true"><fileset dir="${workspace}ValueObjects/bin"/></delete>
+		<delete includeEmptyDirs="true" quiet="true"><fileset dir="${workspace}DTOClients/bin"/></delete>
+		<delete includeEmptyDirs="true" quiet="true"><fileset dir="${workspace}DTOScripts/bin"/></delete>
+		<delete includeEmptyDirs="true" quiet="true"><fileset dir="${workspace}DomainObjects/bin"/></delete>
+		<delete includeEmptyDirs="true" quiet="true"><fileset dir="${workspace}Core/bin"/></delete>
+		<delete includeEmptyDirs="true" quiet="true"><fileset dir="${workspace}Correspondence/bin"/></delete>
+		<delete includeEmptyDirs="true" quiet="true"><fileset dir="${workspace}ClinicalAdmin/bin"/></delete>
+		<delete includeEmptyDirs="true" quiet="true"><fileset dir="${workspace}COE/bin"/></delete>
+		<delete includeEmptyDirs="true" quiet="true"><fileset dir="${workspace}Assessment/bin"/></delete>
+		<delete includeEmptyDirs="true" quiet="true"><fileset dir="${workspace}Alerts/bin"/></delete>
+		<delete includeEmptyDirs="true" quiet="true"><fileset dir="${workspace}Admin/bin"/></delete>
+		<delete includeEmptyDirs="true" quiet="true"><fileset dir="${workspace}Billing/bin"/></delete>
+	</target>
+</project>
