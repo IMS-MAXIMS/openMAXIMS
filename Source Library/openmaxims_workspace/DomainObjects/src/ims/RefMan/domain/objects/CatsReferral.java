@@ -9,7 +9,7 @@
 package ims.RefMan.domain.objects;
 
 /**
- * 
+ *
  * @author Neil McAnaspie
  * Generated.
  */
@@ -84,7 +84,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 	private ims.RefMan.domain.objects.ProviderCancellation providerCancellation;
 	/** Is the Referral Flagged For Review */
 	private Boolean isFlaggedForReview;
-	/** Current Review Detail 
+	/** Current Review Detail
 	  * Collection of ims.RefMan.domain.objects.ReviewReferralDetail.
 	  */
 	private java.util.Set currentReviewDetail;
@@ -170,7 +170,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 	private Boolean isOnwardReferralTriage;
 	/** Nearest Treatment Centre Location */
 	private ims.core.resource.place.domain.objects.Location nearestTreatmentCentre;
-	/** Is there an OP Procedure awaiting appointment’ */
+	/** Is there an OP Procedure awaiting appointment */
 	private Boolean hasOPProcAwaitingAppt;
 	/** Urgency */
 	private ims.domain.lookups.LookupInstance urgency;
@@ -231,8 +231,8 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 	}
 	public static java.util.List listCatsReferralByPatient(ims.domain.ILightweightDomainFactory factory, ims.core.patient.domain.objects.Patient val)
 	{
-		String hql = "from CatsReferral c where c.patient = :patient";		
-		return factory.find(hql, new String[]{"patient"}, new Object[]{val});		
+		String hql = "from CatsReferral c where c.patient = :patient";
+		return factory.find(hql, new String[]{"patient"}, new Object[]{val});
 	}
 	public void setPatient(ims.core.patient.domain.objects.Patient patient) {
 		this.patient = patient;
@@ -849,12 +849,12 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 	public String toAuditString()
 	{
 		StringBuffer auditStr = new StringBuffer();
-		
+
 		auditStr.append("\r\n*patient* :");
 		if (patient != null)
 		{
 			auditStr.append(toShortClassName(patient));
-				
+
 		    auditStr.append(patient.getId());
 		}
 	    auditStr.append("; ");
@@ -862,7 +862,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 		if (iCABReferral != null)
 		{
 			auditStr.append(toShortClassName(iCABReferral));
-				
+
 		    auditStr.append(iCABReferral.getId());
 		}
 	    auditStr.append("; ");
@@ -870,7 +870,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 		if (referralDetails != null)
 		{
 			auditStr.append(toShortClassName(referralDetails));
-				
+
 		    auditStr.append(referralDetails.getId());
 		}
 	    auditStr.append("; ");
@@ -878,7 +878,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 		if (dOS != null)
 		{
 			auditStr.append(toShortClassName(dOS));
-				
+
 		    auditStr.append(dOS.getId());
 		}
 	    auditStr.append("; ");
@@ -899,7 +899,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 			auditStr.append(toShortClassName(obj));
 			auditStr.append("[");
 		   }
-		
+
 		   auditStr.append(obj.getId());
 		}
 			i5++;
@@ -928,7 +928,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 			auditStr.append(toShortClassName(obj));
 			auditStr.append("[");
 		   }
-		
+
 		   auditStr.append(obj.getId());
 		}
 			i7++;
@@ -957,7 +957,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 			auditStr.append(toShortClassName(obj));
 			auditStr.append("[");
 		   }
-		
+
 		   auditStr.append(obj.getId());
 		}
 			i9++;
@@ -976,7 +976,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 		if (currentStatus != null)
 		{
 			auditStr.append(toShortClassName(currentStatus));
-				
+
 		    auditStr.append(currentStatus.getId());
 		}
 	    auditStr.append("; ");
@@ -997,7 +997,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 			auditStr.append(toShortClassName(obj));
 			auditStr.append("[");
 		   }
-		
+
 		   auditStr.append(obj.getId());
 		}
 			i13++;
@@ -1023,7 +1023,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 			auditStr.append(toShortClassName(obj));
 			auditStr.append("[");
 		   }
-		
+
 		   auditStr.append(obj.getId());
 		}
 			i14++;
@@ -1049,7 +1049,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 			auditStr.append(toShortClassName(obj));
 			auditStr.append("[");
 		   }
-		
+
 		   auditStr.append(obj.getId());
 		}
 			i15++;
@@ -1062,7 +1062,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 		if (careContext != null)
 		{
 			auditStr.append(toShortClassName(careContext));
-				
+
 		    auditStr.append(careContext.getId());
 		}
 	    auditStr.append("; ");
@@ -1073,7 +1073,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 		if (consultationAppt != null)
 		{
 			auditStr.append(toShortClassName(consultationAppt));
-				
+
 		    auditStr.append(consultationAppt.getId());
 		}
 	    auditStr.append("; ");
@@ -1085,7 +1085,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 		if (rejectReferralDetail != null)
 		{
 			auditStr.append(toShortClassName(rejectReferralDetail));
-				
+
 		    auditStr.append(rejectReferralDetail.getId());
 		}
 	    auditStr.append("; ");
@@ -1096,7 +1096,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 		if (providerCancellation != null)
 		{
 			auditStr.append(toShortClassName(providerCancellation));
-				
+
 		    auditStr.append(providerCancellation.getId());
 		}
 	    auditStr.append("; ");
@@ -1120,7 +1120,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 			auditStr.append(toShortClassName(obj));
 			auditStr.append("[");
 		   }
-		
+
 		   auditStr.append(obj.getId());
 		}
 			i24++;
@@ -1146,7 +1146,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 			auditStr.append(toShortClassName(obj));
 			auditStr.append("[");
 		   }
-		
+
 		   auditStr.append(obj.getId());
 		}
 			i25++;
@@ -1248,7 +1248,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 			auditStr.append(toShortClassName(obj));
 			auditStr.append("[");
 		   }
-		
+
 		   auditStr.append(obj.getId());
 		}
 			i50++;
@@ -1265,7 +1265,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 		if (contract != null)
 		{
 			auditStr.append(toShortClassName(contract));
-				
+
 		    auditStr.append(contract.getId());
 		}
 	    auditStr.append("; ");
@@ -1273,7 +1273,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 		if (awaitingClinicalInfo != null)
 		{
 			auditStr.append(toShortClassName(awaitingClinicalInfo));
-				
+
 		    auditStr.append(awaitingClinicalInfo.getId());
 		}
 	    auditStr.append("; ");
@@ -1293,7 +1293,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 		if (oPDLocation != null)
 		{
 			auditStr.append(toShortClassName(oPDLocation));
-				
+
 		    auditStr.append(oPDLocation.getId());
 		}
 	    auditStr.append("; ");
@@ -1304,7 +1304,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 		if (procedureForPostOpReview != null)
 		{
 			auditStr.append(toShortClassName(procedureForPostOpReview));
-				
+
 		    auditStr.append(procedureForPostOpReview.getId());
 		}
 	    auditStr.append("; ");
@@ -1319,7 +1319,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 		if (nearestTreatmentCentre != null)
 		{
 			auditStr.append(toShortClassName(nearestTreatmentCentre));
-				
+
 		    auditStr.append(nearestTreatmentCentre.getId());
 		}
 	    auditStr.append("; ");
@@ -1334,7 +1334,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 		if (journey != null)
 		{
 			auditStr.append(toShortClassName(journey));
-				
+
 		    auditStr.append(journey.getId());
 		}
 	    auditStr.append("; ");
@@ -1417,7 +1417,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 		if (currentRTTStatus != null)
 		{
 			auditStr.append(toShortClassName(currentRTTStatus));
-				
+
 		    auditStr.append(currentRTTStatus.getId());
 		}
 	    auditStr.append("; ");
@@ -1471,7 +1471,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 		if (referralTransfer != null)
 		{
 			auditStr.append(toShortClassName(referralTransfer));
-				
+
 		    auditStr.append(referralTransfer.getId());
 		}
 	    auditStr.append("; ");
@@ -1480,28 +1480,28 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
-	
+
 	public String toXMLString()
 	{
 		return toXMLString(new java.util.HashMap());
 	}
-	
+
 	public String toXMLString(java.util.HashMap domMap)
 	{
 		StringBuffer sb = new StringBuffer();
-		sb.append("<class type=\"" + this.getClass().getName() + "\" ");		
-		sb.append(" id=\"" + this.getId() + "\""); 
+		sb.append("<class type=\"" + this.getClass().getName() + "\" ");
+		sb.append(" id=\"" + this.getId() + "\"");
 		sb.append(" source=\"" + ims.configuration.EnvironmentConfig.getImportExportSourceName() + "\" ");
 		sb.append(" classVersion=\"" + this.getClassVersion() + "\" ");
 		sb.append(" component=\"" + this.getIsComponentClass() + "\" >");
-		
+
 		if (domMap.get(this) == null)
 		{
 			domMap.put(this, this);
 			sb.append(this.fieldsToXMLString(domMap));
 		}
 		sb.append("</class>");
-		
+
 		String keyClassName = "CatsReferral";
 		String externalSource = ims.configuration.EnvironmentConfig.getImportExportSourceName();
 		ims.configuration.ImportedObject impObj = (ims.configuration.ImportedObject)domMap.get(keyClassName + "_" + externalSource + "_" + this.getId());
@@ -1511,11 +1511,11 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
     		impObj.setExternalId(this.getId());
     		impObj.setExternalSource(externalSource);
     		impObj.setDomainObject(this);
-			impObj.setLocalId(this.getId()); 
-    		impObj.setClassName(keyClassName); 
+			impObj.setLocalId(this.getId());
+    		impObj.setClassName(keyClassName);
 			domMap.put(keyClassName + "_" + externalSource + "_" + this.getId(), impObj);
 		}
-		
+
 		return sb.toString();
 	}
 
@@ -1525,26 +1525,26 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 		if (this.getPatient() != null)
 		{
 			sb.append("<patient>");
-			sb.append(this.getPatient().toXMLString(domMap)); 	
-			sb.append("</patient>");		
+			sb.append(this.getPatient().toXMLString(domMap));
+			sb.append("</patient>");
 		}
 		if (this.getICABReferral() != null)
 		{
 			sb.append("<iCABReferral>");
-			sb.append(this.getICABReferral().toXMLString(domMap)); 	
-			sb.append("</iCABReferral>");		
+			sb.append(this.getICABReferral().toXMLString(domMap));
+			sb.append("</iCABReferral>");
 		}
 		if (this.getReferralDetails() != null)
 		{
 			sb.append("<referralDetails>");
-			sb.append(this.getReferralDetails().toXMLString(domMap)); 	
-			sb.append("</referralDetails>");		
+			sb.append(this.getReferralDetails().toXMLString(domMap));
+			sb.append("</referralDetails>");
 		}
 		if (this.getDOS() != null)
 		{
 			sb.append("<dOS>");
-			sb.append(this.getDOS().toXMLString(domMap)); 	
-			sb.append("</dOS>");		
+			sb.append(this.getDOS().toXMLString(domMap));
+			sb.append("</dOS>");
 		}
 		if (this.getInvestigationOrders() != null)
 		{
@@ -1552,14 +1552,14 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 			{
 			sb.append("<investigationOrders>");
 			sb.append(ims.domain.DomainObject.toXMLString(this.getInvestigationOrders(), domMap));
-			sb.append("</investigationOrders>");		
+			sb.append("</investigationOrders>");
 			}
 		}
 		if (this.isHasInvestigations() != null)
 		{
 			sb.append("<hasInvestigations>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isHasInvestigations().toString()));
-			sb.append("</hasInvestigations>");		
+			sb.append("</hasInvestigations>");
 		}
 		if (this.getAppointments() != null)
 		{
@@ -1567,14 +1567,14 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 			{
 			sb.append("<appointments>");
 			sb.append(ims.domain.DomainObject.toXMLString(this.getAppointments(), domMap));
-			sb.append("</appointments>");		
+			sb.append("</appointments>");
 			}
 		}
 		if (this.isHasAppointments() != null)
 		{
 			sb.append("<hasAppointments>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isHasAppointments().toString()));
-			sb.append("</hasAppointments>");		
+			sb.append("</hasAppointments>");
 		}
 		if (this.getReferralDocuments() != null)
 		{
@@ -1582,26 +1582,26 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 			{
 			sb.append("<referralDocuments>");
 			sb.append(ims.domain.DomainObject.toXMLString(this.getReferralDocuments(), domMap));
-			sb.append("</referralDocuments>");		
+			sb.append("</referralDocuments>");
 			}
 		}
 		if (this.isHasDocuments() != null)
 		{
 			sb.append("<hasDocuments>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isHasDocuments().toString()));
-			sb.append("</hasDocuments>");		
+			sb.append("</hasDocuments>");
 		}
 		if (this.isHasReferralLetter() != null)
 		{
 			sb.append("<hasReferralLetter>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isHasReferralLetter().toString()));
-			sb.append("</hasReferralLetter>");		
+			sb.append("</hasReferralLetter>");
 		}
 		if (this.getCurrentStatus() != null)
 		{
 			sb.append("<currentStatus>");
-			sb.append(this.getCurrentStatus().toXMLString(domMap)); 	
-			sb.append("</currentStatus>");		
+			sb.append(this.getCurrentStatus().toXMLString(domMap));
+			sb.append("</currentStatus>");
 		}
 		if (this.getStatusHistory() != null)
 		{
@@ -1609,7 +1609,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 			{
 			sb.append("<statusHistory>");
 			sb.append(ims.domain.DomainObject.toXMLString(this.getStatusHistory(), domMap));
-			sb.append("</statusHistory>");		
+			sb.append("</statusHistory>");
 			}
 		}
 		if (this.getOrderInvAppts() != null)
@@ -1618,7 +1618,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 			{
 			sb.append("<orderInvAppts>");
 			sb.append(ims.domain.DomainObject.toXMLString(this.getOrderInvAppts(), domMap));
-			sb.append("</orderInvAppts>");		
+			sb.append("</orderInvAppts>");
 			}
 		}
 		if (this.getCallAttempts() != null)
@@ -1627,56 +1627,56 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 			{
 			sb.append("<callAttempts>");
 			sb.append(ims.domain.DomainObject.toXMLString(this.getCallAttempts(), domMap));
-			sb.append("</callAttempts>");		
+			sb.append("</callAttempts>");
 			}
 		}
 		if (this.getCareContext() != null)
 		{
 			sb.append("<careContext>");
-			sb.append(this.getCareContext().toXMLString(domMap)); 	
-			sb.append("</careContext>");		
+			sb.append(this.getCareContext().toXMLString(domMap));
+			sb.append("</careContext>");
 		}
 		if (this.isIsCAB() != null)
 		{
 			sb.append("<isCAB>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsCAB().toString()));
-			sb.append("</isCAB>");		
+			sb.append("</isCAB>");
 		}
 		if (this.getConsultationAppt() != null)
 		{
 			sb.append("<consultationAppt>");
-			sb.append(this.getConsultationAppt().toXMLString(domMap)); 	
-			sb.append("</consultationAppt>");		
+			sb.append(this.getConsultationAppt().toXMLString(domMap));
+			sb.append("</consultationAppt>");
 		}
 		if (this.getAdditionalInvApptsStatus() != null)
 		{
 			sb.append("<additionalInvApptsStatus>");
-			sb.append(this.getAdditionalInvApptsStatus().toXMLString()); 
-			sb.append("</additionalInvApptsStatus>");		
+			sb.append(this.getAdditionalInvApptsStatus().toXMLString());
+			sb.append("</additionalInvApptsStatus>");
 		}
 		if (this.getRejectReferralDetail() != null)
 		{
 			sb.append("<rejectReferralDetail>");
-			sb.append(this.getRejectReferralDetail().toXMLString(domMap)); 	
-			sb.append("</rejectReferralDetail>");		
+			sb.append(this.getRejectReferralDetail().toXMLString(domMap));
+			sb.append("</rejectReferralDetail>");
 		}
 		if (this.isHasRejectedInv() != null)
 		{
 			sb.append("<hasRejectedInv>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isHasRejectedInv().toString()));
-			sb.append("</hasRejectedInv>");		
+			sb.append("</hasRejectedInv>");
 		}
 		if (this.getProviderCancellation() != null)
 		{
 			sb.append("<providerCancellation>");
-			sb.append(this.getProviderCancellation().toXMLString(domMap)); 	
-			sb.append("</providerCancellation>");		
+			sb.append(this.getProviderCancellation().toXMLString(domMap));
+			sb.append("</providerCancellation>");
 		}
 		if (this.isIsFlaggedForReview() != null)
 		{
 			sb.append("<isFlaggedForReview>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsFlaggedForReview().toString()));
-			sb.append("</isFlaggedForReview>");		
+			sb.append("</isFlaggedForReview>");
 		}
 		if (this.getCurrentReviewDetail() != null)
 		{
@@ -1684,7 +1684,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 			{
 			sb.append("<currentReviewDetail>");
 			sb.append(ims.domain.DomainObject.toXMLString(this.getCurrentReviewDetail(), domMap));
-			sb.append("</currentReviewDetail>");		
+			sb.append("</currentReviewDetail>");
 			}
 		}
 		if (this.getReviewHistory() != null)
@@ -1693,152 +1693,152 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 			{
 			sb.append("<reviewHistory>");
 			sb.append(ims.domain.DomainObject.toXMLString(this.getReviewHistory(), domMap));
-			sb.append("</reviewHistory>");		
+			sb.append("</reviewHistory>");
 			}
 		}
 		if (this.getOnwardReferralStatus() != null)
 		{
 			sb.append("<onwardReferralStatus>");
-			sb.append(this.getOnwardReferralStatus().toXMLString()); 
-			sb.append("</onwardReferralStatus>");		
+			sb.append(this.getOnwardReferralStatus().toXMLString());
+			sb.append("</onwardReferralStatus>");
 		}
 		if (this.getUniqueLineRefNo() != null)
 		{
 			sb.append("<uniqueLineRefNo>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getUniqueLineRefNo().toString()));
-			sb.append("</uniqueLineRefNo>");		
+			sb.append("</uniqueLineRefNo>");
 		}
 		if (this.isHasConsultationDetails() != null)
 		{
 			sb.append("<hasConsultationDetails>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isHasConsultationDetails().toString()));
-			sb.append("</hasConsultationDetails>");		
+			sb.append("</hasConsultationDetails>");
 		}
 		if (this.getIsFinalReportRequired() != null)
 		{
 			sb.append("<isFinalReportRequired>");
-			sb.append(this.getIsFinalReportRequired().toXMLString()); 
-			sb.append("</isFinalReportRequired>");		
+			sb.append(this.getIsFinalReportRequired().toXMLString());
+			sb.append("</isFinalReportRequired>");
 		}
 		if (this.getDischargeDate() != null)
 		{
 			sb.append("<dischargeDate>");
 			sb.append(new ims.framework.utils.DateTime(this.getDischargeDate()).toString(ims.framework.utils.DateTimeFormat.MILLI));
-			sb.append("</dischargeDate>");		
+			sb.append("</dischargeDate>");
 		}
 		if (this.getTriageDateTime() != null)
 		{
 			sb.append("<triageDateTime>");
 			sb.append(new ims.framework.utils.DateTime(this.getTriageDateTime()).toString(ims.framework.utils.DateTimeFormat.MILLI));
-			sb.append("</triageDateTime>");		
+			sb.append("</triageDateTime>");
 		}
 		if (this.getLastApptArrivedDate() != null)
 		{
 			sb.append("<lastApptArrivedDate>");
 			sb.append(new ims.framework.utils.DateTime(this.getLastApptArrivedDate()).toString(ims.framework.utils.DateTimeFormat.MILLI));
-			sb.append("</lastApptArrivedDate>");		
+			sb.append("</lastApptArrivedDate>");
 		}
 		if (this.isHasTLTStartContact() != null)
 		{
 			sb.append("<hasTLTStartContact>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isHasTLTStartContact().toString()));
-			sb.append("</hasTLTStartContact>");		
+			sb.append("</hasTLTStartContact>");
 		}
 		if (this.isIsSuitableForSurgery() != null)
 		{
 			sb.append("<isSuitableForSurgery>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsSuitableForSurgery().toString()));
-			sb.append("</isSuitableForSurgery>");		
+			sb.append("</isSuitableForSurgery>");
 		}
 		if (this.isIsFitForSurgery() != null)
 		{
 			sb.append("<isFitForSurgery>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsFitForSurgery().toString()));
-			sb.append("</isFitForSurgery>");		
+			sb.append("</isFitForSurgery>");
 		}
 		if (this.isHasTheatreAppt() != null)
 		{
 			sb.append("<hasTheatreAppt>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isHasTheatreAppt().toString()));
-			sb.append("</hasTheatreAppt>");		
+			sb.append("</hasTheatreAppt>");
 		}
 		if (this.isIsAcceptedOnCAB() != null)
 		{
 			sb.append("<isAcceptedOnCAB>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsAcceptedOnCAB().toString()));
-			sb.append("</isAcceptedOnCAB>");		
+			sb.append("</isAcceptedOnCAB>");
 		}
 		if (this.isIsReferralRejectedOnCAB() != null)
 		{
 			sb.append("<isReferralRejectedOnCAB>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsReferralRejectedOnCAB().toString()));
-			sb.append("</isReferralRejectedOnCAB>");		
+			sb.append("</isReferralRejectedOnCAB>");
 		}
 		if (this.isWasPatientRejectionLetterSent() != null)
 		{
 			sb.append("<wasPatientRejectionLetterSent>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isWasPatientRejectionLetterSent().toString()));
-			sb.append("</wasPatientRejectionLetterSent>");		
+			sb.append("</wasPatientRejectionLetterSent>");
 		}
 		if (this.isWasPatientProviderCancellationLetterSent() != null)
 		{
 			sb.append("<wasPatientProviderCancellationLetterSent>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isWasPatientProviderCancellationLetterSent().toString()));
-			sb.append("</wasPatientProviderCancellationLetterSent>");		
+			sb.append("</wasPatientProviderCancellationLetterSent>");
 		}
 		if (this.isRequiresDischargeRep() != null)
 		{
 			sb.append("<requiresDischargeRep>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isRequiresDischargeRep().toString()));
-			sb.append("</requiresDischargeRep>");		
+			sb.append("</requiresDischargeRep>");
 		}
 		if (this.isHasDNAApptsForReview() != null)
 		{
 			sb.append("<hasDNAApptsForReview>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isHasDNAApptsForReview().toString()));
-			sb.append("</hasDNAApptsForReview>");		
+			sb.append("</hasDNAApptsForReview>");
 		}
 		if (this.isHasCancelledApptsForReview() != null)
 		{
 			sb.append("<hasCancelledApptsForReview>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isHasCancelledApptsForReview().toString()));
-			sb.append("</hasCancelledApptsForReview>");		
+			sb.append("</hasCancelledApptsForReview>");
 		}
 		if (this.getIsSecondaryReportRequired() != null)
 		{
 			sb.append("<isSecondaryReportRequired>");
-			sb.append(this.getIsSecondaryReportRequired().toXMLString()); 
-			sb.append("</isSecondaryReportRequired>");		
+			sb.append(this.getIsSecondaryReportRequired().toXMLString());
+			sb.append("</isSecondaryReportRequired>");
 		}
 		if (this.isWasFurtherManagementDetailsReviewed() != null)
 		{
 			sb.append("<wasFurtherManagementDetailsReviewed>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isWasFurtherManagementDetailsReviewed().toString()));
-			sb.append("</wasFurtherManagementDetailsReviewed>");		
+			sb.append("</wasFurtherManagementDetailsReviewed>");
 		}
 		if (this.isIsCurrentlyAllocated() != null)
 		{
 			sb.append("<isCurrentlyAllocated>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsCurrentlyAllocated().toString()));
-			sb.append("</isCurrentlyAllocated>");		
+			sb.append("</isCurrentlyAllocated>");
 		}
 		if (this.getOnwardReferralReason() != null)
 		{
 			sb.append("<onwardReferralReason>");
-			sb.append(this.getOnwardReferralReason().toXMLString()); 
-			sb.append("</onwardReferralReason>");		
+			sb.append(this.getOnwardReferralReason().toXMLString());
+			sb.append("</onwardReferralReason>");
 		}
 		if (this.isWasOutputtedToWeeklyReport() != null)
 		{
 			sb.append("<wasOutputtedToWeeklyReport>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isWasOutputtedToWeeklyReport().toString()));
-			sb.append("</wasOutputtedToWeeklyReport>");		
+			sb.append("</wasOutputtedToWeeklyReport>");
 		}
 		if (this.isWasOutputtedToMonthlyReport() != null)
 		{
 			sb.append("<wasOutputtedToMonthlyReport>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isWasOutputtedToMonthlyReport().toString()));
-			sb.append("</wasOutputtedToMonthlyReport>");		
+			sb.append("</wasOutputtedToMonthlyReport>");
 		}
 		if (this.getReportsRequired() != null)
 		{
@@ -1846,116 +1846,116 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 			{
 			sb.append("<reportsRequired>");
 			sb.append(ims.domain.DomainObject.toXMLString(this.getReportsRequired(), domMap));
-			sb.append("</reportsRequired>");		
+			sb.append("</reportsRequired>");
 			}
 		}
 		if (this.getDischargeToGPDetailsReviewStatus() != null)
 		{
 			sb.append("<dischargeToGPDetailsReviewStatus>");
-			sb.append(this.getDischargeToGPDetailsReviewStatus().toXMLString()); 
-			sb.append("</dischargeToGPDetailsReviewStatus>");		
+			sb.append(this.getDischargeToGPDetailsReviewStatus().toXMLString());
+			sb.append("</dischargeToGPDetailsReviewStatus>");
 		}
 		if (this.getContract() != null)
 		{
 			sb.append("<contract>");
-			sb.append(this.getContract().toXMLString(domMap)); 	
-			sb.append("</contract>");		
+			sb.append(this.getContract().toXMLString(domMap));
+			sb.append("</contract>");
 		}
 		if (this.getAwaitingClinicalInfo() != null)
 		{
 			sb.append("<awaitingClinicalInfo>");
-			sb.append(this.getAwaitingClinicalInfo().toXMLString(domMap)); 	
-			sb.append("</awaitingClinicalInfo>");		
+			sb.append(this.getAwaitingClinicalInfo().toXMLString(domMap));
+			sb.append("</awaitingClinicalInfo>");
 		}
 		if (this.isIsAwaitingClinicalInfo() != null)
 		{
 			sb.append("<isAwaitingClinicalInfo>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsAwaitingClinicalInfo().toString()));
-			sb.append("</isAwaitingClinicalInfo>");		
+			sb.append("</isAwaitingClinicalInfo>");
 		}
 		if (this.isIsActiveMonitorApptRequired() != null)
 		{
 			sb.append("<isActiveMonitorApptRequired>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsActiveMonitorApptRequired().toString()));
-			sb.append("</isActiveMonitorApptRequired>");		
+			sb.append("</isActiveMonitorApptRequired>");
 		}
 		if (this.getCATSReportSentDate() != null)
 		{
 			sb.append("<cATSReportSentDate>");
 			sb.append(new ims.framework.utils.DateTime(this.getCATSReportSentDate()).toString(ims.framework.utils.DateTimeFormat.MILLI));
-			sb.append("</cATSReportSentDate>");		
+			sb.append("</cATSReportSentDate>");
 		}
 		if (this.getSuitableForSurgeryDate() != null)
 		{
 			sb.append("<suitableForSurgeryDate>");
 			sb.append(new ims.framework.utils.DateTime(this.getSuitableForSurgeryDate()).toString(ims.framework.utils.DateTimeFormat.MILLI));
-			sb.append("</suitableForSurgeryDate>");		
+			sb.append("</suitableForSurgeryDate>");
 		}
 		if (this.getOPDLocation() != null)
 		{
 			sb.append("<oPDLocation>");
-			sb.append(this.getOPDLocation().toXMLString(domMap)); 	
-			sb.append("</oPDLocation>");		
+			sb.append(this.getOPDLocation().toXMLString(domMap));
+			sb.append("</oPDLocation>");
 		}
 		if (this.getEndOfCareDate() != null)
 		{
 			sb.append("<endOfCareDate>");
 			sb.append(new ims.framework.utils.DateTime(this.getEndOfCareDate()).toString(ims.framework.utils.DateTimeFormat.MILLI));
-			sb.append("</endOfCareDate>");		
+			sb.append("</endOfCareDate>");
 		}
 		if (this.getProcedureForPostOpReview() != null)
 		{
 			sb.append("<procedureForPostOpReview>");
-			sb.append(this.getProcedureForPostOpReview().toXMLString(domMap)); 	
-			sb.append("</procedureForPostOpReview>");		
+			sb.append(this.getProcedureForPostOpReview().toXMLString(domMap));
+			sb.append("</procedureForPostOpReview>");
 		}
 		if (this.getReferralCategory() != null)
 		{
 			sb.append("<referralCategory>");
-			sb.append(this.getReferralCategory().toXMLString()); 
-			sb.append("</referralCategory>");		
+			sb.append(this.getReferralCategory().toXMLString());
+			sb.append("</referralCategory>");
 		}
 		if (this.isIsOnwardReferralTriage() != null)
 		{
 			sb.append("<isOnwardReferralTriage>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsOnwardReferralTriage().toString()));
-			sb.append("</isOnwardReferralTriage>");		
+			sb.append("</isOnwardReferralTriage>");
 		}
 		if (this.getNearestTreatmentCentre() != null)
 		{
 			sb.append("<nearestTreatmentCentre>");
-			sb.append(this.getNearestTreatmentCentre().toXMLString(domMap)); 	
-			sb.append("</nearestTreatmentCentre>");		
+			sb.append(this.getNearestTreatmentCentre().toXMLString(domMap));
+			sb.append("</nearestTreatmentCentre>");
 		}
 		if (this.isHasOPProcAwaitingAppt() != null)
 		{
 			sb.append("<hasOPProcAwaitingAppt>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isHasOPProcAwaitingAppt().toString()));
-			sb.append("</hasOPProcAwaitingAppt>");		
+			sb.append("</hasOPProcAwaitingAppt>");
 		}
 		if (this.getUrgency() != null)
 		{
 			sb.append("<urgency>");
-			sb.append(this.getUrgency().toXMLString()); 
-			sb.append("</urgency>");		
+			sb.append(this.getUrgency().toXMLString());
+			sb.append("</urgency>");
 		}
 		if (this.getJourney() != null)
 		{
 			sb.append("<journey>");
-			sb.append(this.getJourney().toXMLString(domMap)); 	
-			sb.append("</journey>");		
+			sb.append(this.getJourney().toXMLString(domMap));
+			sb.append("</journey>");
 		}
 		if (this.getPathwayID() != null)
 		{
 			sb.append("<pathwayID>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getPathwayID().toString()));
-			sb.append("</pathwayID>");		
+			sb.append("</pathwayID>");
 		}
 		if (this.isRTTClockImpact() != null)
 		{
 			sb.append("<rTTClockImpact>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isRTTClockImpact().toString()));
-			sb.append("</rTTClockImpact>");		
+			sb.append("</rTTClockImpact>");
 		}
 		if (this.getElectiveEROD() != null)
 		{
@@ -1963,7 +1963,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 			{
 			sb.append("<electiveEROD>");
 			sb.append(ims.domain.DomainObject.toXMLString(this.getElectiveEROD(), domMap));
-			sb.append("</electiveEROD>");		
+			sb.append("</electiveEROD>");
 			}
 		}
 		if (this.getElectiveERODHistory() != null)
@@ -1972,7 +1972,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 			{
 			sb.append("<electiveERODHistory>");
 			sb.append(ims.domain.DomainObject.toXMLString(this.getElectiveERODHistory(), domMap));
-			sb.append("</electiveERODHistory>");		
+			sb.append("</electiveERODHistory>");
 			}
 		}
 		if (this.getOutpatientEROD() != null)
@@ -1981,14 +1981,14 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 			{
 			sb.append("<outpatientEROD>");
 			sb.append(ims.domain.DomainObject.toXMLString(this.getOutpatientEROD(), domMap));
-			sb.append("</outpatientEROD>");		
+			sb.append("</outpatientEROD>");
 			}
 		}
 		if (this.getCurrentRTTStatus() != null)
 		{
 			sb.append("<currentRTTStatus>");
-			sb.append(this.getCurrentRTTStatus().toXMLString(domMap)); 	
-			sb.append("</currentRTTStatus>");		
+			sb.append(this.getCurrentRTTStatus().toXMLString(domMap));
+			sb.append("</currentRTTStatus>");
 		}
 		if (this.getAdminEvent() != null)
 		{
@@ -1996,7 +1996,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 			{
 			sb.append("<adminEvent>");
 			sb.append(ims.domain.DomainObject.toXMLString(this.getAdminEvent(), domMap));
-			sb.append("</adminEvent>");		
+			sb.append("</adminEvent>");
 			}
 		}
 		if (this.getAdmissions() != null)
@@ -2005,24 +2005,24 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 			{
 			sb.append("<admissions>");
 			sb.append(ims.domain.DomainObject.toXMLString(this.getAdmissions(), domMap));
-			sb.append("</admissions>");		
+			sb.append("</admissions>");
 			}
 		}
 		if (this.getReferralTransfer() != null)
 		{
 			sb.append("<referralTransfer>");
-			sb.append(this.getReferralTransfer().toXMLString(domMap)); 	
-			sb.append("</referralTransfer>");		
+			sb.append(this.getReferralTransfer().toXMLString(domMap));
+			sb.append("</referralTransfer>");
 		}
 		if (this.getConsUpgradeDate() != null)
 		{
 			sb.append("<consUpgradeDate>");
 			sb.append(new ims.framework.utils.DateTime(this.getConsUpgradeDate()).toString(ims.framework.utils.DateTimeFormat.MILLI));
-			sb.append("</consUpgradeDate>");		
+			sb.append("</consUpgradeDate>");
 		}
 		return sb.toString();
 	}
-		
+
 	public static java.util.List fromListXMLString(org.dom4j.Element el, ims.domain.DomainFactory factory, java.util.List list, java.util.HashMap domMap) throws Exception
 	{
 		if (list == null)
@@ -2030,7 +2030,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 		fillListFromXMLString(list, el, factory, domMap);
 		return list;
 	}
-	
+
 	public static java.util.Set fromSetXMLString(org.dom4j.Element el, ims.domain.DomainFactory factory, java.util.Set set, java.util.HashMap domMap) throws Exception
 	{
 		if (set == null)
@@ -2038,17 +2038,17 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 		fillSetFromXMLString(set, el, factory, domMap);
 		return set;
 	}
-	
+
 	private static void fillSetFromXMLString(java.util.Set set, org.dom4j.Element el, ims.domain.DomainFactory factory, java.util.HashMap domMap) throws Exception
 	{
 		if (el == null)
 			return;
-		
+
 		java.util.List cl = el.elements("class");
 		int size = cl.size();
-		
+
 		java.util.Set newSet = new java.util.HashSet();
-		for(int i=0; i<size; i++) 
+		for(int i=0; i<size; i++)
 		{
 			org.dom4j.Element itemEl = (org.dom4j.Element)cl.get(i);
 			CatsReferral domainObject = getCatsReferralfromXML(itemEl, factory, domMap);
@@ -2057,19 +2057,19 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 			{
 				continue;
 			}
-			
+
 			//Trying to avoid the hibernate collection being marked as dirty via its public interface methods. (like add)
-			if (!set.contains(domainObject)) 
+			if (!set.contains(domainObject))
 				set.add(domainObject);
-			newSet.add(domainObject);			
+			newSet.add(domainObject);
 		}
-		
+
 		java.util.Set removedSet = new java.util.HashSet();
 		java.util.Iterator iter = set.iterator();
 		//Find out which objects need to be removed
 		while (iter.hasNext())
 		{
-			ims.domain.DomainObject o = (ims.domain.DomainObject)iter.next();			
+			ims.domain.DomainObject o = (ims.domain.DomainObject)iter.next();
 			if ((o == null || o.getIsRIE() == null || !o.getIsRIE().booleanValue()) && !newSet.contains(o))
 			{
 				removedSet.add(o);
@@ -2080,18 +2080,18 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 		while (iter.hasNext())
 		{
 			set.remove(iter.next());
-		}		
+		}
 	}
-	
+
 	private static void fillListFromXMLString(java.util.List list, org.dom4j.Element el, ims.domain.DomainFactory factory, java.util.HashMap domMap) throws Exception
 	{
 		if (el == null)
 			return;
-		
+
 		java.util.List cl = el.elements("class");
 		int size = cl.size();
-		
-		for(int i=0; i<size; i++) 
+
+		for(int i=0; i<size; i++)
 		{
 			org.dom4j.Element itemEl = (org.dom4j.Element)cl.get(i);
 			CatsReferral domainObject = getCatsReferralfromXML(itemEl, factory, domMap);
@@ -2112,8 +2112,8 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 				list.set(i, list.get(domIdx));
 				list.set(domIdx, tmp);
 			}
-		}		
-		
+		}
+
 		//Remove all ones in domList where index > voCollection.size() as these should
 		//now represent the ones removed from the VO collection. No longer referenced.
 		int i1=list.size();
@@ -2123,18 +2123,18 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 			i1=list.size();
 		}
 	}
-		
+
 	public static CatsReferral getCatsReferralfromXML(String xml, ims.domain.DomainFactory factory, java.util.HashMap domMap) throws Exception
 	{
 		org.dom4j.Document doc = new org.dom4j.io.SAXReader().read(new org.xml.sax.InputSource(xml));
 		return getCatsReferralfromXML(doc.getRootElement(), factory, domMap);
 	}
-	
+
 	public static CatsReferral getCatsReferralfromXML(org.dom4j.Element el, ims.domain.DomainFactory factory, java.util.HashMap domMap) throws Exception
 	{
 		if (el == null)
 			return null;
-		
+
 		String className = el.attributeValue("type");
 		if (!CatsReferral.class.getName().equals(className))
 		{
@@ -2151,12 +2151,12 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 		if(!impVersion.equals(CatsReferral.CLASSVERSION))
 		{
 			throw new Exception("Incompatible class structure found. Cannot import instance.");
-		}		
-		
+		}
+
 		CatsReferral ret = null;
 		int extId = Integer.parseInt(el.attributeValue("id"));
 		String externalSource = el.attributeValue("source");
-		ret = (CatsReferral)factory.getImportedDomainObject(CatsReferral.class, externalSource, extId);	
+		ret = (CatsReferral)factory.getImportedDomainObject(CatsReferral.class, externalSource, extId);
 		if (ret == null)
 		{
 			ret = new CatsReferral();
@@ -2186,420 +2186,420 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 		fldEl = el.element("patient");
 		if(fldEl != null)
 		{
-			fldEl = fldEl.element("class");		
-			obj.setPatient(ims.core.patient.domain.objects.Patient.getPatientfromXML(fldEl, factory, domMap)); 
+			fldEl = fldEl.element("class");
+			obj.setPatient(ims.core.patient.domain.objects.Patient.getPatientfromXML(fldEl, factory, domMap));
 		}
 		fldEl = el.element("iCABReferral");
 		if(fldEl != null)
 		{
-			fldEl = fldEl.element("class");		
-			obj.setICABReferral(ims.core.admin.domain.objects.ICABReferral.getICABReferralfromXML(fldEl, factory, domMap)); 
+			fldEl = fldEl.element("class");
+			obj.setICABReferral(ims.core.admin.domain.objects.ICABReferral.getICABReferralfromXML(fldEl, factory, domMap));
 		}
 		fldEl = el.element("referralDetails");
 		if(fldEl != null)
 		{
-			fldEl = fldEl.element("class");		
-			obj.setReferralDetails(ims.core.clinical.domain.objects.ReferralLetterDetails.getReferralLetterDetailsfromXML(fldEl, factory, domMap)); 
+			fldEl = fldEl.element("class");
+			obj.setReferralDetails(ims.core.clinical.domain.objects.ReferralLetterDetails.getReferralLetterDetailsfromXML(fldEl, factory, domMap));
 		}
 		fldEl = el.element("dOS");
 		if(fldEl != null)
 		{
-			fldEl = fldEl.element("class");		
-			obj.setDOS(ims.scheduling.domain.objects.DirectoryofService.getDirectoryofServicefromXML(fldEl, factory, domMap)); 
+			fldEl = fldEl.element("class");
+			obj.setDOS(ims.scheduling.domain.objects.DirectoryofService.getDirectoryofServicefromXML(fldEl, factory, domMap));
 		}
 		fldEl = el.element("investigationOrders");
 		if(fldEl != null)
 		{
-			fldEl = fldEl.element("set");	
+			fldEl = fldEl.element("set");
 			obj.setInvestigationOrders(ims.ocrr.orderingresults.domain.objects.OcsOrderSession.fromSetXMLString(fldEl, factory, obj.getInvestigationOrders(), domMap));
 		}
 		fldEl = el.element("hasInvestigations");
 		if(fldEl != null)
-		{	
-    		obj.setHasInvestigations(new Boolean(fldEl.getTextTrim()));	
+		{
+    		obj.setHasInvestigations(new Boolean(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("appointments");
 		if(fldEl != null)
 		{
-			fldEl = fldEl.element("set");	
+			fldEl = fldEl.element("set");
 			obj.setAppointments(ims.scheduling.domain.objects.Booking_Appointment.fromSetXMLString(fldEl, factory, obj.getAppointments(), domMap));
 		}
 		fldEl = el.element("hasAppointments");
 		if(fldEl != null)
-		{	
-    		obj.setHasAppointments(new Boolean(fldEl.getTextTrim()));	
+		{
+    		obj.setHasAppointments(new Boolean(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("referralDocuments");
 		if(fldEl != null)
 		{
-			fldEl = fldEl.element("set");	
+			fldEl = fldEl.element("set");
 			obj.setReferralDocuments(ims.core.documents.domain.objects.PatientDocument.fromSetXMLString(fldEl, factory, obj.getReferralDocuments(), domMap));
 		}
 		fldEl = el.element("hasDocuments");
 		if(fldEl != null)
-		{	
-    		obj.setHasDocuments(new Boolean(fldEl.getTextTrim()));	
+		{
+    		obj.setHasDocuments(new Boolean(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("hasReferralLetter");
 		if(fldEl != null)
-		{	
-    		obj.setHasReferralLetter(new Boolean(fldEl.getTextTrim()));	
+		{
+    		obj.setHasReferralLetter(new Boolean(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("currentStatus");
 		if(fldEl != null)
 		{
-			fldEl = fldEl.element("class");		
-			obj.setCurrentStatus(ims.RefMan.domain.objects.CATSReferralStatus.getCATSReferralStatusfromXML(fldEl, factory, domMap)); 
+			fldEl = fldEl.element("class");
+			obj.setCurrentStatus(ims.RefMan.domain.objects.CATSReferralStatus.getCATSReferralStatusfromXML(fldEl, factory, domMap));
 		}
 		fldEl = el.element("statusHistory");
 		if(fldEl != null)
 		{
-			fldEl = fldEl.element("set");	
+			fldEl = fldEl.element("set");
 			obj.setStatusHistory(ims.RefMan.domain.objects.CATSReferralStatus.fromSetXMLString(fldEl, factory, obj.getStatusHistory(), domMap));
 		}
 		fldEl = el.element("orderInvAppts");
 		if(fldEl != null)
 		{
-			fldEl = fldEl.element("set");	
+			fldEl = fldEl.element("set");
 			obj.setOrderInvAppts(ims.RefMan.domain.objects.OrderInvAppt.fromSetXMLString(fldEl, factory, obj.getOrderInvAppts(), domMap));
 		}
 		fldEl = el.element("callAttempts");
 		if(fldEl != null)
 		{
-			fldEl = fldEl.element("set");	
+			fldEl = fldEl.element("set");
 			obj.setCallAttempts(ims.RefMan.domain.objects.AppointmentCallAttempts.fromSetXMLString(fldEl, factory, obj.getCallAttempts(), domMap));
 		}
 		fldEl = el.element("careContext");
 		if(fldEl != null)
 		{
-			fldEl = fldEl.element("class");		
-			obj.setCareContext(ims.core.admin.domain.objects.CareContext.getCareContextfromXML(fldEl, factory, domMap)); 
+			fldEl = fldEl.element("class");
+			obj.setCareContext(ims.core.admin.domain.objects.CareContext.getCareContextfromXML(fldEl, factory, domMap));
 		}
 		fldEl = el.element("isCAB");
 		if(fldEl != null)
-		{	
-    		obj.setIsCAB(new Boolean(fldEl.getTextTrim()));	
+		{
+    		obj.setIsCAB(new Boolean(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("consultationAppt");
 		if(fldEl != null)
 		{
-			fldEl = fldEl.element("class");		
-			obj.setConsultationAppt(ims.scheduling.domain.objects.Booking_Appointment.getBooking_AppointmentfromXML(fldEl, factory, domMap)); 
+			fldEl = fldEl.element("class");
+			obj.setConsultationAppt(ims.scheduling.domain.objects.Booking_Appointment.getBooking_AppointmentfromXML(fldEl, factory, domMap));
 		}
 		fldEl = el.element("additionalInvApptsStatus");
 		if(fldEl != null)
 		{
 			fldEl = fldEl.element("lki");
-			obj.setAdditionalInvApptsStatus(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+			obj.setAdditionalInvApptsStatus(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory));
 		}
 		fldEl = el.element("rejectReferralDetail");
 		if(fldEl != null)
 		{
-			fldEl = fldEl.element("class");		
-			obj.setRejectReferralDetail(ims.RefMan.domain.objects.ReferralReject.getReferralRejectfromXML(fldEl, factory, domMap)); 
+			fldEl = fldEl.element("class");
+			obj.setRejectReferralDetail(ims.RefMan.domain.objects.ReferralReject.getReferralRejectfromXML(fldEl, factory, domMap));
 		}
 		fldEl = el.element("hasRejectedInv");
 		if(fldEl != null)
-		{	
-    		obj.setHasRejectedInv(new Boolean(fldEl.getTextTrim()));	
+		{
+    		obj.setHasRejectedInv(new Boolean(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("providerCancellation");
 		if(fldEl != null)
 		{
-			fldEl = fldEl.element("class");		
-			obj.setProviderCancellation(ims.RefMan.domain.objects.ProviderCancellation.getProviderCancellationfromXML(fldEl, factory, domMap)); 
+			fldEl = fldEl.element("class");
+			obj.setProviderCancellation(ims.RefMan.domain.objects.ProviderCancellation.getProviderCancellationfromXML(fldEl, factory, domMap));
 		}
 		fldEl = el.element("isFlaggedForReview");
 		if(fldEl != null)
-		{	
-    		obj.setIsFlaggedForReview(new Boolean(fldEl.getTextTrim()));	
+		{
+    		obj.setIsFlaggedForReview(new Boolean(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("currentReviewDetail");
 		if(fldEl != null)
 		{
-			fldEl = fldEl.element("set");	
+			fldEl = fldEl.element("set");
 			obj.setCurrentReviewDetail(ims.RefMan.domain.objects.ReviewReferralDetail.fromSetXMLString(fldEl, factory, obj.getCurrentReviewDetail(), domMap));
 		}
 		fldEl = el.element("reviewHistory");
 		if(fldEl != null)
 		{
-			fldEl = fldEl.element("set");	
+			fldEl = fldEl.element("set");
 			obj.setReviewHistory(ims.RefMan.domain.objects.ReviewReferralDetail.fromSetXMLString(fldEl, factory, obj.getReviewHistory(), domMap));
 		}
 		fldEl = el.element("onwardReferralStatus");
 		if(fldEl != null)
 		{
 			fldEl = fldEl.element("lki");
-			obj.setOnwardReferralStatus(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+			obj.setOnwardReferralStatus(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory));
 		}
 		fldEl = el.element("uniqueLineRefNo");
 		if(fldEl != null)
-		{	
-    		obj.setUniqueLineRefNo(new String(fldEl.getTextTrim()));	
+		{
+    		obj.setUniqueLineRefNo(new String(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("hasConsultationDetails");
 		if(fldEl != null)
-		{	
-    		obj.setHasConsultationDetails(new Boolean(fldEl.getTextTrim()));	
+		{
+    		obj.setHasConsultationDetails(new Boolean(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("isFinalReportRequired");
 		if(fldEl != null)
 		{
 			fldEl = fldEl.element("lki");
-			obj.setIsFinalReportRequired(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+			obj.setIsFinalReportRequired(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory));
 		}
 		fldEl = el.element("dischargeDate");
 		if(fldEl != null)
-		{	
+		{
     		obj.setDischargeDate(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("triageDateTime");
 		if(fldEl != null)
-		{	
+		{
     		obj.setTriageDateTime(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("lastApptArrivedDate");
 		if(fldEl != null)
-		{	
+		{
     		obj.setLastApptArrivedDate(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("hasTLTStartContact");
 		if(fldEl != null)
-		{	
-    		obj.setHasTLTStartContact(new Boolean(fldEl.getTextTrim()));	
+		{
+    		obj.setHasTLTStartContact(new Boolean(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("isSuitableForSurgery");
 		if(fldEl != null)
-		{	
-    		obj.setIsSuitableForSurgery(new Boolean(fldEl.getTextTrim()));	
+		{
+    		obj.setIsSuitableForSurgery(new Boolean(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("isFitForSurgery");
 		if(fldEl != null)
-		{	
-    		obj.setIsFitForSurgery(new Boolean(fldEl.getTextTrim()));	
+		{
+    		obj.setIsFitForSurgery(new Boolean(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("hasTheatreAppt");
 		if(fldEl != null)
-		{	
-    		obj.setHasTheatreAppt(new Boolean(fldEl.getTextTrim()));	
+		{
+    		obj.setHasTheatreAppt(new Boolean(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("isAcceptedOnCAB");
 		if(fldEl != null)
-		{	
-    		obj.setIsAcceptedOnCAB(new Boolean(fldEl.getTextTrim()));	
+		{
+    		obj.setIsAcceptedOnCAB(new Boolean(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("isReferralRejectedOnCAB");
 		if(fldEl != null)
-		{	
-    		obj.setIsReferralRejectedOnCAB(new Boolean(fldEl.getTextTrim()));	
+		{
+    		obj.setIsReferralRejectedOnCAB(new Boolean(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("wasPatientRejectionLetterSent");
 		if(fldEl != null)
-		{	
-    		obj.setWasPatientRejectionLetterSent(new Boolean(fldEl.getTextTrim()));	
+		{
+    		obj.setWasPatientRejectionLetterSent(new Boolean(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("wasPatientProviderCancellationLetterSent");
 		if(fldEl != null)
-		{	
-    		obj.setWasPatientProviderCancellationLetterSent(new Boolean(fldEl.getTextTrim()));	
+		{
+    		obj.setWasPatientProviderCancellationLetterSent(new Boolean(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("requiresDischargeRep");
 		if(fldEl != null)
-		{	
-    		obj.setRequiresDischargeRep(new Boolean(fldEl.getTextTrim()));	
+		{
+    		obj.setRequiresDischargeRep(new Boolean(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("hasDNAApptsForReview");
 		if(fldEl != null)
-		{	
-    		obj.setHasDNAApptsForReview(new Boolean(fldEl.getTextTrim()));	
+		{
+    		obj.setHasDNAApptsForReview(new Boolean(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("hasCancelledApptsForReview");
 		if(fldEl != null)
-		{	
-    		obj.setHasCancelledApptsForReview(new Boolean(fldEl.getTextTrim()));	
+		{
+    		obj.setHasCancelledApptsForReview(new Boolean(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("isSecondaryReportRequired");
 		if(fldEl != null)
 		{
 			fldEl = fldEl.element("lki");
-			obj.setIsSecondaryReportRequired(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+			obj.setIsSecondaryReportRequired(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory));
 		}
 		fldEl = el.element("wasFurtherManagementDetailsReviewed");
 		if(fldEl != null)
-		{	
-    		obj.setWasFurtherManagementDetailsReviewed(new Boolean(fldEl.getTextTrim()));	
+		{
+    		obj.setWasFurtherManagementDetailsReviewed(new Boolean(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("isCurrentlyAllocated");
 		if(fldEl != null)
-		{	
-    		obj.setIsCurrentlyAllocated(new Boolean(fldEl.getTextTrim()));	
+		{
+    		obj.setIsCurrentlyAllocated(new Boolean(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("onwardReferralReason");
 		if(fldEl != null)
 		{
 			fldEl = fldEl.element("lki");
-			obj.setOnwardReferralReason(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+			obj.setOnwardReferralReason(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory));
 		}
 		fldEl = el.element("wasOutputtedToWeeklyReport");
 		if(fldEl != null)
-		{	
-    		obj.setWasOutputtedToWeeklyReport(new Boolean(fldEl.getTextTrim()));	
+		{
+    		obj.setWasOutputtedToWeeklyReport(new Boolean(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("wasOutputtedToMonthlyReport");
 		if(fldEl != null)
-		{	
-    		obj.setWasOutputtedToMonthlyReport(new Boolean(fldEl.getTextTrim()));	
+		{
+    		obj.setWasOutputtedToMonthlyReport(new Boolean(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("reportsRequired");
 		if(fldEl != null)
 		{
-			fldEl = fldEl.element("set");	
+			fldEl = fldEl.element("set");
 			obj.setReportsRequired(ims.RefMan.domain.objects.ReportsRequiredForPrinting.fromSetXMLString(fldEl, factory, obj.getReportsRequired(), domMap));
 		}
 		fldEl = el.element("dischargeToGPDetailsReviewStatus");
 		if(fldEl != null)
 		{
 			fldEl = fldEl.element("lki");
-			obj.setDischargeToGPDetailsReviewStatus(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+			obj.setDischargeToGPDetailsReviewStatus(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory));
 		}
 		fldEl = el.element("contract");
 		if(fldEl != null)
 		{
-			fldEl = fldEl.element("class");		
-			obj.setContract(ims.core.configuration.domain.objects.ContractConfig.getContractConfigfromXML(fldEl, factory, domMap)); 
+			fldEl = fldEl.element("class");
+			obj.setContract(ims.core.configuration.domain.objects.ContractConfig.getContractConfigfromXML(fldEl, factory, domMap));
 		}
 		fldEl = el.element("awaitingClinicalInfo");
 		if(fldEl != null)
 		{
-			fldEl = fldEl.element("class");		
-			obj.setAwaitingClinicalInfo(ims.RefMan.domain.objects.AwaitingClinicalInfo.getAwaitingClinicalInfofromXML(fldEl, factory, domMap)); 
+			fldEl = fldEl.element("class");
+			obj.setAwaitingClinicalInfo(ims.RefMan.domain.objects.AwaitingClinicalInfo.getAwaitingClinicalInfofromXML(fldEl, factory, domMap));
 		}
 		fldEl = el.element("isAwaitingClinicalInfo");
 		if(fldEl != null)
-		{	
-    		obj.setIsAwaitingClinicalInfo(new Boolean(fldEl.getTextTrim()));	
+		{
+    		obj.setIsAwaitingClinicalInfo(new Boolean(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("isActiveMonitorApptRequired");
 		if(fldEl != null)
-		{	
-    		obj.setIsActiveMonitorApptRequired(new Boolean(fldEl.getTextTrim()));	
+		{
+    		obj.setIsActiveMonitorApptRequired(new Boolean(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("cATSReportSentDate");
 		if(fldEl != null)
-		{	
+		{
     		obj.setCATSReportSentDate(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("suitableForSurgeryDate");
 		if(fldEl != null)
-		{	
+		{
     		obj.setSuitableForSurgeryDate(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("oPDLocation");
 		if(fldEl != null)
 		{
-			fldEl = fldEl.element("class");		
-			obj.setOPDLocation(ims.core.resource.place.domain.objects.Location.getLocationfromXML(fldEl, factory, domMap)); 
+			fldEl = fldEl.element("class");
+			obj.setOPDLocation(ims.core.resource.place.domain.objects.Location.getLocationfromXML(fldEl, factory, domMap));
 		}
 		fldEl = el.element("endOfCareDate");
 		if(fldEl != null)
-		{	
+		{
     		obj.setEndOfCareDate(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("procedureForPostOpReview");
 		if(fldEl != null)
 		{
-			fldEl = fldEl.element("class");		
-			obj.setProcedureForPostOpReview(ims.core.clinical.domain.objects.PatientProcedure.getPatientProcedurefromXML(fldEl, factory, domMap)); 
+			fldEl = fldEl.element("class");
+			obj.setProcedureForPostOpReview(ims.core.clinical.domain.objects.PatientProcedure.getPatientProcedurefromXML(fldEl, factory, domMap));
 		}
 		fldEl = el.element("referralCategory");
 		if(fldEl != null)
 		{
 			fldEl = fldEl.element("lki");
-			obj.setReferralCategory(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+			obj.setReferralCategory(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory));
 		}
 		fldEl = el.element("isOnwardReferralTriage");
 		if(fldEl != null)
-		{	
-    		obj.setIsOnwardReferralTriage(new Boolean(fldEl.getTextTrim()));	
+		{
+    		obj.setIsOnwardReferralTriage(new Boolean(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("nearestTreatmentCentre");
 		if(fldEl != null)
 		{
-			fldEl = fldEl.element("class");		
-			obj.setNearestTreatmentCentre(ims.core.resource.place.domain.objects.Location.getLocationfromXML(fldEl, factory, domMap)); 
+			fldEl = fldEl.element("class");
+			obj.setNearestTreatmentCentre(ims.core.resource.place.domain.objects.Location.getLocationfromXML(fldEl, factory, domMap));
 		}
 		fldEl = el.element("hasOPProcAwaitingAppt");
 		if(fldEl != null)
-		{	
-    		obj.setHasOPProcAwaitingAppt(new Boolean(fldEl.getTextTrim()));	
+		{
+    		obj.setHasOPProcAwaitingAppt(new Boolean(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("urgency");
 		if(fldEl != null)
 		{
 			fldEl = fldEl.element("lki");
-			obj.setUrgency(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+			obj.setUrgency(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory));
 		}
 		fldEl = el.element("journey");
 		if(fldEl != null)
 		{
-			fldEl = fldEl.element("class");		
-			obj.setJourney(ims.pathways.domain.objects.PatientPathwayJourney.getPatientPathwayJourneyfromXML(fldEl, factory, domMap)); 
+			fldEl = fldEl.element("class");
+			obj.setJourney(ims.pathways.domain.objects.PatientPathwayJourney.getPatientPathwayJourneyfromXML(fldEl, factory, domMap));
 		}
 		fldEl = el.element("pathwayID");
 		if(fldEl != null)
-		{	
-    		obj.setPathwayID(new String(fldEl.getTextTrim()));	
+		{
+    		obj.setPathwayID(new String(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("rTTClockImpact");
 		if(fldEl != null)
-		{	
-    		obj.setRTTClockImpact(new Boolean(fldEl.getTextTrim()));	
+		{
+    		obj.setRTTClockImpact(new Boolean(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("electiveEROD");
 		if(fldEl != null)
 		{
-			fldEl = fldEl.element("list");	
+			fldEl = fldEl.element("list");
 			obj.setElectiveEROD(ims.RefMan.domain.objects.ReferralEROD.fromListXMLString(fldEl, factory, obj.getElectiveEROD(), domMap));
 		}
 		fldEl = el.element("electiveERODHistory");
 		if(fldEl != null)
 		{
-			fldEl = fldEl.element("list");	
+			fldEl = fldEl.element("list");
 			obj.setElectiveERODHistory(ims.RefMan.domain.objects.ReferralEROD.fromListXMLString(fldEl, factory, obj.getElectiveERODHistory(), domMap));
 		}
 		fldEl = el.element("outpatientEROD");
 		if(fldEl != null)
 		{
-			fldEl = fldEl.element("list");	
+			fldEl = fldEl.element("list");
 			obj.setOutpatientEROD(ims.RefMan.domain.objects.ReferralEROD.fromListXMLString(fldEl, factory, obj.getOutpatientEROD(), domMap));
 		}
 		fldEl = el.element("currentRTTStatus");
 		if(fldEl != null)
 		{
-			fldEl = fldEl.element("class");		
-			obj.setCurrentRTTStatus(ims.pathways.domain.objects.PathwayRTTStatus.getPathwayRTTStatusfromXML(fldEl, factory, domMap)); 
+			fldEl = fldEl.element("class");
+			obj.setCurrentRTTStatus(ims.pathways.domain.objects.PathwayRTTStatus.getPathwayRTTStatusfromXML(fldEl, factory, domMap));
 		}
 		fldEl = el.element("adminEvent");
 		if(fldEl != null)
 		{
-			fldEl = fldEl.element("list");	
+			fldEl = fldEl.element("list");
 			obj.setAdminEvent(ims.pathways.domain.objects.AdminEvent.fromListXMLString(fldEl, factory, obj.getAdminEvent(), domMap));
 		}
 		fldEl = el.element("admissions");
 		if(fldEl != null)
 		{
-			fldEl = fldEl.element("list");	
+			fldEl = fldEl.element("list");
 			obj.setAdmissions(ims.core.admin.pas.domain.objects.AdmissionDetail.fromListXMLString(fldEl, factory, obj.getAdmissions(), domMap));
 		}
 		fldEl = el.element("referralTransfer");
 		if(fldEl != null)
 		{
-			fldEl = fldEl.element("class");		
-			obj.setReferralTransfer(ims.RefMan.domain.objects.ReferralTransfer.getReferralTransferfromXML(fldEl, factory, domMap)); 
+			fldEl = fldEl.element("class");
+			obj.setReferralTransfer(ims.RefMan.domain.objects.ReferralTransfer.getReferralTransferfromXML(fldEl, factory, domMap));
 		}
 		fldEl = el.element("consUpgradeDate");
 		if(fldEl != null)
-		{	
+		{
     		obj.setConsUpgradeDate(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
 		}
 	}
@@ -2625,7 +2625,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 	}
 
 
-	public static class FieldNames	
+	public static class FieldNames
 	{
 	public static final String ID = "id";
 		public static final String Patient = "patient";

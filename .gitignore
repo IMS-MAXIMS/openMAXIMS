@@ -1,5 +1,12 @@
 *.class
 
+# Ignore vagrant artifacts
+.vagrant
+Vagrantfile
+
+# Ignore build number
+"Source Library/openmaxims_workspace/DevBuildNumber"
+
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
