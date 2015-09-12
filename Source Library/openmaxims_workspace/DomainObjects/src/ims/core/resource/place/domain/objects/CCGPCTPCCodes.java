@@ -5,7 +5,7 @@
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
 //#  published by the Free Software Foundation, either version 3 of the       #
-//#  License, or (at your option) any later version.                          # 
+//#  License, or (at your option) any later version.                          #
 //#                                                                           #
 //#  This program is distributed in the hope that it will be useful,          #
 //#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
@@ -28,7 +28,7 @@
 package ims.core.resource.place.domain.objects;
 
 /**
- * 
+ *
  * @author Sean Nesbitt
  * Generated.
  */
@@ -51,7 +51,7 @@ public class CCGPCTPCCodes extends ims.domain.DomainObject implements ims.domain
 	private String cCGDescription;
 	/** The associated DHA code for the Postcode */
 	private String dHACode;
-	/** Unit postcode – 8 character version */
+	/** Unit postcode - 8 character version */
 	private String postcode;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
@@ -111,7 +111,7 @@ public class CCGPCTPCCodes extends ims.domain.DomainObject implements ims.domain
 	}
 	public static CCGPCTPCCodes getCCGPCTPCCodesFromPostcode(ims.domain.ILightweightDomainFactory factory, String val)
 	{
-		String hql = "from CCGPCTPCCodes c where c.postcode = :postcode";		
+		String hql = "from CCGPCTPCCodes c where c.postcode = :postcode";
 		java.util.List l = factory.find(hql, new String[]{"postcode"}, new Object[]{val});
 		if (l == null || l.size() == 0) return null;
 		if (l.size() > 1) throw new ims.domain.exceptions.DomainRuntimeException("Non-unique get call. CCGPCTPCCodes.postcode = " + val + " returned " + l.size() + " records. " );
@@ -161,7 +161,7 @@ public class CCGPCTPCCodes extends ims.domain.DomainObject implements ims.domain
 	public String toAuditString()
 	{
 		StringBuffer auditStr = new StringBuffer();
-		
+
 		auditStr.append("\r\n*cCGCode* :");
 		auditStr.append(cCGCode);
 	    auditStr.append("; ");
@@ -176,28 +176,28 @@ public class CCGPCTPCCodes extends ims.domain.DomainObject implements ims.domain
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
-	
+
 	public String toXMLString()
 	{
 		return toXMLString(new java.util.HashMap());
 	}
-	
+
 	public String toXMLString(java.util.HashMap domMap)
 	{
 		StringBuffer sb = new StringBuffer();
-		sb.append("<class type=\"" + this.getClass().getName() + "\" ");		
-		sb.append(" id=\"" + this.getId() + "\""); 
+		sb.append("<class type=\"" + this.getClass().getName() + "\" ");
+		sb.append(" id=\"" + this.getId() + "\"");
 		sb.append(" source=\"" + ims.configuration.EnvironmentConfig.getImportExportSourceName() + "\" ");
 		sb.append(" classVersion=\"" + this.getClassVersion() + "\" ");
 		sb.append(" component=\"" + this.getIsComponentClass() + "\" >");
-		
+
 		if (domMap.get(this) == null)
 		{
 			domMap.put(this, this);
 			sb.append(this.fieldsToXMLString(domMap));
 		}
 		sb.append("</class>");
-		
+
 		String keyClassName = "CCGPCTPCCodes";
 		String externalSource = ims.configuration.EnvironmentConfig.getImportExportSourceName();
 		ims.configuration.ImportedObject impObj = (ims.configuration.ImportedObject)domMap.get(keyClassName + "_" + externalSource + "_" + this.getId());
@@ -207,11 +207,11 @@ public class CCGPCTPCCodes extends ims.domain.DomainObject implements ims.domain
     		impObj.setExternalId(this.getId());
     		impObj.setExternalSource(externalSource);
     		impObj.setDomainObject(this);
-			impObj.setLocalId(this.getId()); 
-    		impObj.setClassName(keyClassName); 
+			impObj.setLocalId(this.getId());
+    		impObj.setClassName(keyClassName);
 			domMap.put(keyClassName + "_" + externalSource + "_" + this.getId(), impObj);
 		}
-		
+
 		return sb.toString();
 	}
 
@@ -222,29 +222,29 @@ public class CCGPCTPCCodes extends ims.domain.DomainObject implements ims.domain
 		{
 			sb.append("<cCGCode>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getCCGCode().toString()));
-			sb.append("</cCGCode>");		
+			sb.append("</cCGCode>");
 		}
 		if (this.getCCGDescription() != null)
 		{
 			sb.append("<cCGDescription>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getCCGDescription().toString()));
-			sb.append("</cCGDescription>");		
+			sb.append("</cCGDescription>");
 		}
 		if (this.getDHACode() != null)
 		{
 			sb.append("<dHACode>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getDHACode().toString()));
-			sb.append("</dHACode>");		
+			sb.append("</dHACode>");
 		}
 		if (this.getPostcode() != null)
 		{
 			sb.append("<postcode>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getPostcode().toString()));
-			sb.append("</postcode>");		
+			sb.append("</postcode>");
 		}
 		return sb.toString();
 	}
-		
+
 	public static java.util.List fromListXMLString(org.dom4j.Element el, ims.domain.DomainFactory factory, java.util.List list, java.util.HashMap domMap) throws Exception
 	{
 		if (list == null)
@@ -252,7 +252,7 @@ public class CCGPCTPCCodes extends ims.domain.DomainObject implements ims.domain
 		fillListFromXMLString(list, el, factory, domMap);
 		return list;
 	}
-	
+
 	public static java.util.Set fromSetXMLString(org.dom4j.Element el, ims.domain.DomainFactory factory, java.util.Set set, java.util.HashMap domMap) throws Exception
 	{
 		if (set == null)
@@ -260,17 +260,17 @@ public class CCGPCTPCCodes extends ims.domain.DomainObject implements ims.domain
 		fillSetFromXMLString(set, el, factory, domMap);
 		return set;
 	}
-	
+
 	private static void fillSetFromXMLString(java.util.Set set, org.dom4j.Element el, ims.domain.DomainFactory factory, java.util.HashMap domMap) throws Exception
 	{
 		if (el == null)
 			return;
-		
+
 		java.util.List cl = el.elements("class");
 		int size = cl.size();
-		
+
 		java.util.Set newSet = new java.util.HashSet();
-		for(int i=0; i<size; i++) 
+		for(int i=0; i<size; i++)
 		{
 			org.dom4j.Element itemEl = (org.dom4j.Element)cl.get(i);
 			CCGPCTPCCodes domainObject = getCCGPCTPCCodesfromXML(itemEl, factory, domMap);
@@ -279,19 +279,19 @@ public class CCGPCTPCCodes extends ims.domain.DomainObject implements ims.domain
 			{
 				continue;
 			}
-			
+
 			//Trying to avoid the hibernate collection being marked as dirty via its public interface methods. (like add)
-			if (!set.contains(domainObject)) 
+			if (!set.contains(domainObject))
 				set.add(domainObject);
-			newSet.add(domainObject);			
+			newSet.add(domainObject);
 		}
-		
+
 		java.util.Set removedSet = new java.util.HashSet();
 		java.util.Iterator iter = set.iterator();
 		//Find out which objects need to be removed
 		while (iter.hasNext())
 		{
-			ims.domain.DomainObject o = (ims.domain.DomainObject)iter.next();			
+			ims.domain.DomainObject o = (ims.domain.DomainObject)iter.next();
 			if ((o == null || o.getIsRIE() == null || !o.getIsRIE().booleanValue()) && !newSet.contains(o))
 			{
 				removedSet.add(o);
@@ -302,18 +302,18 @@ public class CCGPCTPCCodes extends ims.domain.DomainObject implements ims.domain
 		while (iter.hasNext())
 		{
 			set.remove(iter.next());
-		}		
+		}
 	}
-	
+
 	private static void fillListFromXMLString(java.util.List list, org.dom4j.Element el, ims.domain.DomainFactory factory, java.util.HashMap domMap) throws Exception
 	{
 		if (el == null)
 			return;
-		
+
 		java.util.List cl = el.elements("class");
 		int size = cl.size();
-		
-		for(int i=0; i<size; i++) 
+
+		for(int i=0; i<size; i++)
 		{
 			org.dom4j.Element itemEl = (org.dom4j.Element)cl.get(i);
 			CCGPCTPCCodes domainObject = getCCGPCTPCCodesfromXML(itemEl, factory, domMap);
@@ -334,8 +334,8 @@ public class CCGPCTPCCodes extends ims.domain.DomainObject implements ims.domain
 				list.set(i, list.get(domIdx));
 				list.set(domIdx, tmp);
 			}
-		}		
-		
+		}
+
 		//Remove all ones in domList where index > voCollection.size() as these should
 		//now represent the ones removed from the VO collection. No longer referenced.
 		int i1=list.size();
@@ -345,18 +345,18 @@ public class CCGPCTPCCodes extends ims.domain.DomainObject implements ims.domain
 			i1=list.size();
 		}
 	}
-		
+
 	public static CCGPCTPCCodes getCCGPCTPCCodesfromXML(String xml, ims.domain.DomainFactory factory, java.util.HashMap domMap) throws Exception
 	{
 		org.dom4j.Document doc = new org.dom4j.io.SAXReader().read(new org.xml.sax.InputSource(xml));
 		return getCCGPCTPCCodesfromXML(doc.getRootElement(), factory, domMap);
 	}
-	
+
 	public static CCGPCTPCCodes getCCGPCTPCCodesfromXML(org.dom4j.Element el, ims.domain.DomainFactory factory, java.util.HashMap domMap) throws Exception
 	{
 		if (el == null)
 			return null;
-		
+
 		String className = el.attributeValue("type");
 		if (!CCGPCTPCCodes.class.getName().equals(className))
 		{
@@ -373,12 +373,12 @@ public class CCGPCTPCCodes extends ims.domain.DomainObject implements ims.domain
 		if(!impVersion.equals(CCGPCTPCCodes.CLASSVERSION))
 		{
 			throw new Exception("Incompatible class structure found. Cannot import instance.");
-		}		
-		
+		}
+
 		CCGPCTPCCodes ret = null;
 		int extId = Integer.parseInt(el.attributeValue("id"));
 		String externalSource = el.attributeValue("source");
-		ret = (CCGPCTPCCodes)factory.getImportedDomainObject(CCGPCTPCCodes.class, externalSource, extId);	
+		ret = (CCGPCTPCCodes)factory.getImportedDomainObject(CCGPCTPCCodes.class, externalSource, extId);
 		if (ret == null)
 		{
 			ret = new CCGPCTPCCodes();
@@ -407,23 +407,23 @@ public class CCGPCTPCCodes extends ims.domain.DomainObject implements ims.domain
 		org.dom4j.Element fldEl;
 		fldEl = el.element("cCGCode");
 		if(fldEl != null)
-		{	
-    		obj.setCCGCode(new String(fldEl.getTextTrim()));	
+		{
+    		obj.setCCGCode(new String(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("cCGDescription");
 		if(fldEl != null)
-		{	
-    		obj.setCCGDescription(new String(fldEl.getTextTrim()));	
+		{
+    		obj.setCCGDescription(new String(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("dHACode");
 		if(fldEl != null)
-		{	
-    		obj.setDHACode(new String(fldEl.getTextTrim()));	
+		{
+    		obj.setDHACode(new String(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("postcode");
 		if(fldEl != null)
-		{	
-    		obj.setPostcode(new String(fldEl.getTextTrim()));	
+		{
+    		obj.setPostcode(new String(fldEl.getTextTrim()));
 		}
 	}
 
@@ -434,7 +434,7 @@ public class CCGPCTPCCodes extends ims.domain.DomainObject implements ims.domain
 	}
 
 
-	public static class FieldNames	
+	public static class FieldNames
 	{
 	public static final String ID = "id";
 		public static final String CCGCode = "cCGCode";

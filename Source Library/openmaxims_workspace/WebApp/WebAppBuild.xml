@@ -3,7 +3,7 @@
 
 	<!-- Properties set by DevEnv before writing script to file -->
 	<!-- POINT THE WORKSPACE TO YOUR SOURCE DIRECTORY -->
-	<property name="workspace" value="C:/openmaxims_workspace/" />
+	<property name="workspace" value="/vagrant/Source Library/openmaxims_workspace/" />
 	<property name="project.name" value="openMAXIMS" />
 	<property name="dbtype" value="MSQ05" />
 	<property name="hib.version" value="3" />
@@ -28,7 +28,7 @@
 					<include name="**/*.class"/>
 				</patternset>
 			</fileset>
-		</delete>		
+		</delete>
 		<mkdir dir="${workspace}Rules/bin" />
 		<copy todir="${workspace}Rules/bin">
 			<fileset dir="${workspace}Rules/src">
@@ -47,9 +47,9 @@
 					<include name="**/*.class"/>
 				</patternset>
 			</fileset>
-		</delete>		
+		</delete>
 		<javac debug="on" classpath="${ant_classpath};${libdir}jodconverter-core-3.0-beta-3.jar;${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;${workspace}Admin/bin/;${workspace}Clinical/bin/;${workspace}Alerts/bin/;${workspace}Core/bin/;${workspace}DTOClients/bin/;" destdir="${workspace}Correspondence/bin/" srcdir="${workspace}Correspondence/src/"  includes="**/*.java" />
-      </target>	
+      </target>
 
 	<!-- Compile Assessment -->
 	<target name="Assessment" depends="Admin, Core" >
@@ -60,7 +60,7 @@
 					<include name="**/*.class"/>
 				</patternset>
 			</fileset>
-		</delete>				
+		</delete>
 		<javac debug="on" classpath="${ant_classpath};${workspace}Admin/bin/;${workspace}Core/bin/;${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;" destdir="${workspace}Assessment/bin/" srcdir="${workspace}Assessment/src/"  includes="**/*.java" />
 	</target>
 
@@ -73,7 +73,7 @@
 					<include name="**/*.class"/>
 				</patternset>
 			</fileset>
-		</delete>					
+		</delete>
 		<javac debug="on" classpath="${ant_classpath};${libdir}velocity-1.4.jar;${libdir}commons-httpclient-3.0.jar;${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;${workspace}Admin/bin/;${workspace}Alerts/bin/;${workspace}Core/bin/;${workspace}Assessment/bin/;${workspace}ClinicalAdmin/bin/;${workspace}Scheduling/bin/;${workspace}Pathways/bin/;" destdir="${workspace}Clinical/bin/" srcdir="${workspace}Clinical/src/"  includes="**/*.java" />
 	</target>
 
@@ -86,7 +86,7 @@
 					<include name="**/*.class"/>
 				</patternset>
 			</fileset>
-		</delete>							
+		</delete>
 		<javac debug="on" classpath="${ant_classpath};${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;${workspace}Admin/bin/;${workspace}ClinicalAdmin/bin/;${workspace}Alerts/bin/;${workspace}Core/bin/;${workspace}Assessment/bin/" destdir="${workspace}Nursing/bin/" srcdir="${workspace}Nursing/src/"  includes="**/*.java" />
 		<copy  todir="${workspace}Nursing/bin" >
 		    <fileset dir="${workspace}Nursing/src" includes="**/*.xml"/>
@@ -102,7 +102,7 @@
 					<include name="**/*.class"/>
 				</patternset>
 			</fileset>
-		</delete>									
+		</delete>
 		<javac debug="on" classpath="${ant_classpath};${workspace}Admin/bin/;${workspace}Core/bin/;${workspace}Clinical/bin/;${workspace}ClinicalAdmin/bin/;${workspace}Nursing/bin/;${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;" destdir="${workspace}COE/bin/" srcdir="${workspace}COE/src/"  includes="**/*.java" />
 	</target>
 
@@ -115,7 +115,7 @@
 					<include name="**/*.class"/>
 				</patternset>
 			</fileset>
-		</delete>											
+		</delete>
 		<javac debug="on" classpath="${ant_classpath};${workspace}Admin/bin/;${workspace}Core/bin/;${workspace}Clinical/bin/;${workspace}ClinicalAdmin/bin/;${workspace}Assessment/bin/;${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;" destdir="${workspace}Oncology/bin/" srcdir="${workspace}Oncology/src/"  includes="**/*.java" />
 	</target>
 
@@ -128,7 +128,7 @@
 					<include name="**/*.class"/>
 				</patternset>
 			</fileset>
-		</delete>													
+		</delete>
 		<javac debug="on" classpath="${ant_classpath};${workspace}Admin/bin/;${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;" destdir="${workspace}OCS_IF/bin/" srcdir="${workspace}OCS_IF/src/"  includes="**/*.java" />
 	</target>
 
@@ -141,7 +141,7 @@
 					<include name="**/*.class"/>
 				</patternset>
 			</fileset>
-		</delete>															
+		</delete>
 		<javac debug="on" classpath="${ant_classpath};${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;${workspace}Admin/bin/;${workspace}Core/bin/;${workspace}Clinical/bin/;${workspace}ClinicalAdmin/bin/;" destdir="${workspace}Therapies/bin/" srcdir="${workspace}Therapies/src/"  includes="**/*.java" />
 	</target>
 
@@ -154,7 +154,7 @@
 					<include name="**/*.class"/>
 				</patternset>
 			</fileset>
-		</delete>																	
+		</delete>
 		<javac debug="on" classpath="${ant_classpath};${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;${workspace}Admin/bin/;${workspace}Nursing/bin/;${workspace}Core/bin/;${workspace}Assessment/bin/;${workspace}Clinical/bin/;${workspace}ClinicalAdmin/bin/;" destdir="${workspace}SpinalInjuries/bin/" srcdir="${workspace}SpinalInjuries/src/" includes="**/*.java" />
 	</target>
 
@@ -167,10 +167,10 @@
 					<include name="**/*.class"/>
 				</patternset>
 			</fileset>
-		</delete>																			
+		</delete>
 		<javac debug="on" classpath="${ant_classpath};${workspace}Admin/bin/;${workspace}Core/bin/;${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;" destdir="${workspace}Pathways/bin/" srcdir="${workspace}Pathways/src/"  includes="**/*.java" />
 	</target>
-	
+
 	<!-- Compile RefMan-->
 	<target name="RefMan" depends="Admin, Core, Scheduling,OCS_IF, OCRR, ClinicalAdmin, Assessment, Pathways" >
 		<mkdir dir="${workspace}RefMan/bin" />
@@ -180,7 +180,7 @@
 					<include name="**/*.class"/>
 				</patternset>
 			</fileset>
-		</delete>																						
+		</delete>
 		<javac debug="on" classpath="${ant_classpath};${libdir}QueryBuilder3.jar;${libdir}commons-io-1.4.jar;${libdir}commons-httpclient-3.0.jar;${libdir}quartz.jar;${libdir}quartz-modified.jar;${libdir}xstream-1.2.2.jar;${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;${workspace}ClinicalAdmin/bin/;${workspace}Admin/bin/;${workspace}Core/bin/;${workspace}Clinical/bin/;${workspace}Scheduling/bin/;${workspace}Pathways/bin/;${workspace}OCS_IF/bin/;${workspace}OCRR/bin/;${workspace}Assessment/bin/;" destdir="${workspace}RefMan/bin/" srcdir="${workspace}RefMan/src/"  includes="**/*.java" />
 	</target>
 
@@ -193,7 +193,7 @@
 					<include name="**/*.class"/>
 				</patternset>
 			</fileset>
-		</delete>																								
+		</delete>
 		<javac debug="on" classpath="${ant_classpath};${libdir}/commons-io-1.3.1.jar;${libdir}/xstream-1.2.2.jar;${libdir}/ImsServer.jar;${libdir}/quartz.jar;${libdir}/quartz-modified.jar;${libdir}/commons-httpclient-3.0.jar;${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;${workspace}Admin/bin/;${workspace}Pathways/bin/;${workspace}Alerts/bin/;${workspace}Core/bin/;" destdir="${workspace}Scheduling/bin/" srcdir="${workspace}Scheduling/src/"  includes="**/*.java" />
 	</target>
 
@@ -206,7 +206,7 @@
 					<include name="**/*.class"/>
 				</patternset>
 			</fileset>
-		</delete>																										
+		</delete>
 		<javac debug="on" classpath="${ant_classpath};${libdir}itext.jar;${workspace}Core/bin/;${workspace}Rules/bin/;${workspace}Assessment/bin/;${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;" destdir="${workspace}ICP/bin/" srcdir="${workspace}ICP/src/"  includes="**/*.java" />
 	</target>
 
@@ -219,7 +219,7 @@
 					<include name="**/*.class"/>
 				</patternset>
 			</fileset>
-		</delete>																												
+		</delete>
 		<javac debug="on" classpath="${ant_classpath};${workspace}Admin/bin/;${workspace}Assessment/bin/;${workspace}Core/bin/;${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;${workspace}Clinical/bin/;${workspace}Scheduling/bin/;${workspace}OCS_IF/bin;" destdir="${workspace}OCRR/bin/" srcdir="${workspace}OCRR/src/"  includes="**/*.java" />
 	</target>
 
@@ -232,7 +232,7 @@
 					<include name="**/*.class"/>
 				</patternset>
 			</fileset>
-		</delete>																														
+		</delete>
 		<javac debug="on" classpath="${ant_classpath};${workspace}Admin/bin/;${workspace}ICP/bin/;${workspace}Clinical/bin/;${workspace}Core/bin/;${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;" destdir="${workspace}Emergency/bin/" srcdir="${workspace}Emergency/src/"  includes="**/*.java" />
 	</target>
 
@@ -245,7 +245,7 @@
 					<include name="**/*.class"/>
 				</patternset>
 			</fileset>
-		</delete>																																
+		</delete>
 		<javac debug="on" classpath="${ant_classpath};${libdir}hapi.jar;${libdir}hl7utils.jar;${libdir}ImsServer.jar;${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;${workspace}Admin/bin/;${workspace}Assessment/bin/;${workspace}Pathways/bin/;${workspace}Core/bin/;${workspace}OCS_IF/bin/;${workspace}Assessment/bin/;${workspace}Clinical/bin/;" destdir="${workspace}HL7Engine/bin/" srcdir="${workspace}HL7Engine/src/" includes="**/*.java" />
 	</target>
 
@@ -258,7 +258,7 @@
 					<include name="**/*.class"/>
 				</patternset>
 			</fileset>
-		</delete>																																		
+		</delete>
 		<javac debug="on" classpath="${ant_classpath};${workspace}Core/bin/;${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;" destdir="${workspace}Billing/bin/" srcdir="${workspace}Billing/src/"  includes="**/*.java" />
 	</target>
 
@@ -271,7 +271,7 @@
 					<include name="**/*.class"/>
 				</patternset>
 			</fileset>
-		</delete>		
+		</delete>
 		<javac debug="on" classpath="${ant_classpath};${workspace}Admin/bin/;${workspace}Alerts/bin/;${workspace}Core/bin/;${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;${workspace}Clinical/bin/;" destdir="${workspace}Racpc/bin/" srcdir="${workspace}Racpc/src/"  includes="**/*.java" />
 	</target>
 
@@ -347,6 +347,6 @@ ims.warfile.timestamp=${timestamp}
 			<classes dir="${workspace}HL7Engine/bin" />
 			<classes dir="${workspace}Rules/bin" />
 		</war>
-	</target>	
-	
+	</target>
+
 </project>
