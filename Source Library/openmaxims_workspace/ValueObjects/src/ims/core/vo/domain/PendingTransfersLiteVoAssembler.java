@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.core.vo.domain;
@@ -66,6 +71,16 @@ public class PendingTransfersLiteVoAssembler
 		valueObjectDest.setSpecialty(valueObjectSrc.getSpecialty());
 		// PASSpecialty
 		valueObjectDest.setPASSpecialty(valueObjectSrc.getPASSpecialty());
+		// TransferReason
+		valueObjectDest.setTransferReason(valueObjectSrc.getTransferReason());
+		// TransferComment
+		valueObjectDest.setTransferComment(valueObjectSrc.getTransferComment());
+		// PatientStatus
+		valueObjectDest.setPatientStatus(valueObjectSrc.getPatientStatus());
+		// BedAvailableDateTime
+		valueObjectDest.setBedAvailableDateTime(valueObjectSrc.getBedAvailableDateTime());
+		// Service
+		valueObjectDest.setService(valueObjectSrc.getService());
 	 	return valueObjectDest;
 	 }
 
@@ -512,7 +527,89 @@ public class PendingTransfersLiteVoAssembler
 			}			
 			valueObject.setPASSpecialty(voLookup8);
 		}
-		 		return valueObject;
+				// TransferReason
+		ims.domain.lookups.LookupInstance instance9 = domainObject.getTransferReason();
+		if ( null != instance9 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance9.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance9.getImage().getImageId(), instance9.getImage().getImagePath());
+			}
+			color = instance9.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.TransferReason voLookup9 = new ims.core.vo.lookups.TransferReason(instance9.getId(),instance9.getText(), instance9.isActive(), null, img, color);
+			ims.core.vo.lookups.TransferReason parentVoLookup9 = voLookup9;
+			ims.domain.lookups.LookupInstance parent9 = instance9.getParent();
+			while (parent9 != null)
+			{
+				if (parent9.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent9.getImage().getImageId(), parent9.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent9.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup9.setParent(new ims.core.vo.lookups.TransferReason(parent9.getId(),parent9.getText(), parent9.isActive(), null, img, color));
+				parentVoLookup9 = parentVoLookup9.getParent();
+								parent9 = parent9.getParent();
+			}			
+			valueObject.setTransferReason(voLookup9);
+		}
+				// TransferComment
+		valueObject.setTransferComment(domainObject.getTransferComment());
+		// PatientStatus
+		ims.domain.lookups.LookupInstance instance11 = domainObject.getPatientStatus();
+		if ( null != instance11 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance11.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance11.getImage().getImageId(), instance11.getImage().getImagePath());
+			}
+			color = instance11.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.PatientStatus voLookup11 = new ims.core.vo.lookups.PatientStatus(instance11.getId(),instance11.getText(), instance11.isActive(), null, img, color);
+			ims.core.vo.lookups.PatientStatus parentVoLookup11 = voLookup11;
+			ims.domain.lookups.LookupInstance parent11 = instance11.getParent();
+			while (parent11 != null)
+			{
+				if (parent11.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent11.getImage().getImageId(), parent11.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent11.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup11.setParent(new ims.core.vo.lookups.PatientStatus(parent11.getId(),parent11.getText(), parent11.isActive(), null, img, color));
+				parentVoLookup11 = parentVoLookup11.getParent();
+								parent11 = parent11.getParent();
+			}			
+			valueObject.setPatientStatus(voLookup11);
+		}
+				// BedAvailableDateTime
+		java.util.Date BedAvailableDateTime = domainObject.getBedAvailableDateTime();
+		if ( null != BedAvailableDateTime ) 
+		{
+			valueObject.setBedAvailableDateTime(new ims.framework.utils.DateTime(BedAvailableDateTime) );
+		}
+		// Service
+		valueObject.setService(ims.core.vo.domain.ServiceLiteVoAssembler.create(map, domainObject.getService()) );
+ 		return valueObject;
 	 }
 
 
@@ -603,6 +700,53 @@ public class PendingTransfersLiteVoAssembler
 				domainFactory.getLookupInstance(valueObject.getPASSpecialty().getID());
 		}
 		domainObject.setPASSpecialty(value8);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value9 = null;
+		if ( null != valueObject.getTransferReason() ) 
+		{
+			value9 =
+				domainFactory.getLookupInstance(valueObject.getTransferReason().getID());
+		}
+		domainObject.setTransferReason(value9);
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getTransferComment() != null && valueObject.getTransferComment().equals(""))
+		{
+			valueObject.setTransferComment(null);
+		}
+		domainObject.setTransferComment(valueObject.getTransferComment());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value11 = null;
+		if ( null != valueObject.getPatientStatus() ) 
+		{
+			value11 =
+				domainFactory.getLookupInstance(valueObject.getPatientStatus().getID());
+		}
+		domainObject.setPatientStatus(value11);
+		ims.framework.utils.DateTime dateTime12 = valueObject.getBedAvailableDateTime();
+		java.util.Date value12 = null;
+		if ( dateTime12 != null ) 
+		{
+			value12 = dateTime12.getJavaDate();
+		}
+		domainObject.setBedAvailableDateTime(value12);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.clinical.domain.objects.Service value13 = null;
+		if ( null != valueObject.getService() ) 
+		{
+			if (valueObject.getService().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getService()) != null)
+				{
+					value13 = (ims.core.clinical.domain.objects.Service)domMap.get(valueObject.getService());
+				}
+			}
+			else
+			{
+				value13 = (ims.core.clinical.domain.objects.Service)domainFactory.getDomainObject(ims.core.clinical.domain.objects.Service.class, valueObject.getService().getBoId());
+			}
+		}
+		domainObject.setService(value13);
 
 		return domainObject;
 	}

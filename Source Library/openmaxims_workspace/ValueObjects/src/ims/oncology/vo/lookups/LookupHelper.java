@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,15 +15,20 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 
 /*
  * This code was generated.
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:38
+ * Generated: 13/10/2015, 13:23
  */
 package ims.oncology.vo.lookups;
 
@@ -35,6 +40,136 @@ import ims.domain.lookups.LookupService;
  * 
  */
 public final class LookupHelper {
+	public static RegimenAcronymCollection getRegimenAcronym(LookupService lookupService) {
+		RegimenAcronymCollection collection =
+			(RegimenAcronymCollection) lookupService.getLookupCollection(RegimenAcronym.TYPE_ID, 
+				RegimenAcronymCollection.class, RegimenAcronym.class);
+		return collection;
+	}
+
+	public static RegimenAcronym getRegimenAcronymInstance(LookupService lookupService, int id) 
+	{
+		return (RegimenAcronym)lookupService.getLookupInstance(RegimenAcronym.class, RegimenAcronym.TYPE_ID, id);
+	}
+	
+
+	public static FUMorbidityCombinationCollection getFUMorbidityCombination(LookupService lookupService) {
+		FUMorbidityCombinationCollection collection =
+			(FUMorbidityCombinationCollection) lookupService.getLookupCollection(FUMorbidityCombination.TYPE_ID, 
+				FUMorbidityCombinationCollection.class, FUMorbidityCombination.class);
+		return collection;
+	}
+
+	public static FUMorbidityCombination getFUMorbidityCombinationInstance(LookupService lookupService, int id) 
+	{
+		return (FUMorbidityCombination)lookupService.getLookupInstance(FUMorbidityCombination.class, FUMorbidityCombination.TYPE_ID, id);
+	}
+	
+
+	public static FUMorbidityRadiotxCollection getFUMorbidityRadiotx(LookupService lookupService) {
+		FUMorbidityRadiotxCollection collection =
+			(FUMorbidityRadiotxCollection) lookupService.getLookupCollection(FUMorbidityRadiotx.TYPE_ID, 
+				FUMorbidityRadiotxCollection.class, FUMorbidityRadiotx.class);
+		return collection;
+	}
+
+	public static FUMorbidityRadiotx getFUMorbidityRadiotxInstance(LookupService lookupService, int id) 
+	{
+		return (FUMorbidityRadiotx)lookupService.getLookupInstance(FUMorbidityRadiotx.class, FUMorbidityRadiotx.TYPE_ID, id);
+	}
+	
+
+	public static FUTreatmentTypeCollection getFUTreatmentType(LookupService lookupService) {
+		FUTreatmentTypeCollection collection =
+			(FUTreatmentTypeCollection) lookupService.getLookupCollection(FUTreatmentType.TYPE_ID, 
+				FUTreatmentTypeCollection.class, FUTreatmentType.class);
+		return collection;
+	}
+
+	public static FUTreatmentType getFUTreatmentTypeInstance(LookupService lookupService, int id) 
+	{
+		return (FUTreatmentType)lookupService.getLookupInstance(FUTreatmentType.class, FUTreatmentType.TYPE_ID, id);
+	}
+	
+
+	public static FUPatientFollowUpStatusCollection getFUPatientFollowUpStatus(LookupService lookupService) {
+		FUPatientFollowUpStatusCollection collection =
+			(FUPatientFollowUpStatusCollection) lookupService.getLookupCollection(FUPatientFollowUpStatus.TYPE_ID, 
+				FUPatientFollowUpStatusCollection.class, FUPatientFollowUpStatus.class);
+		return collection;
+	}
+
+	public static FUPatientFollowUpStatus getFUPatientFollowUpStatusInstance(LookupService lookupService, int id) 
+	{
+		return (FUPatientFollowUpStatus)lookupService.getLookupInstance(FUPatientFollowUpStatus.class, FUPatientFollowUpStatus.TYPE_ID, id);
+	}
+	
+
+	public static WHOPerformanceStatusCollection getWHOPerformanceStatus(LookupService lookupService) {
+		WHOPerformanceStatusCollection collection =
+			(WHOPerformanceStatusCollection) lookupService.getLookupCollection(WHOPerformanceStatus.TYPE_ID, 
+				WHOPerformanceStatusCollection.class, WHOPerformanceStatus.class);
+		return collection;
+	}
+
+	public static WHOPerformanceStatus getWHOPerformanceStatusInstance(LookupService lookupService, int id) 
+	{
+		return (WHOPerformanceStatus)lookupService.getLookupInstance(WHOPerformanceStatus.class, WHOPerformanceStatus.TYPE_ID, id);
+	}
+	
+
+	public static FUMarkerResponseStatusCollection getFUMarkerResponseStatus(LookupService lookupService) {
+		FUMarkerResponseStatusCollection collection =
+			(FUMarkerResponseStatusCollection) lookupService.getLookupCollection(FUMarkerResponseStatus.TYPE_ID, 
+				FUMarkerResponseStatusCollection.class, FUMarkerResponseStatus.class);
+		return collection;
+	}
+
+	public static FUMarkerResponseStatus getFUMarkerResponseStatusInstance(LookupService lookupService, int id) 
+	{
+		return (FUMarkerResponseStatus)lookupService.getLookupInstance(FUMarkerResponseStatus.class, FUMarkerResponseStatus.TYPE_ID, id);
+	}
+	
+
+	public static FUNodalStatusCollection getFUNodalStatus(LookupService lookupService) {
+		FUNodalStatusCollection collection =
+			(FUNodalStatusCollection) lookupService.getLookupCollection(FUNodalStatus.TYPE_ID, 
+				FUNodalStatusCollection.class, FUNodalStatus.class);
+		return collection;
+	}
+
+	public static FUNodalStatus getFUNodalStatusInstance(LookupService lookupService, int id) 
+	{
+		return (FUNodalStatus)lookupService.getLookupInstance(FUNodalStatus.class, FUNodalStatus.TYPE_ID, id);
+	}
+	
+
+	public static FUMetastaticStatusCollection getFUMetastaticStatus(LookupService lookupService) {
+		FUMetastaticStatusCollection collection =
+			(FUMetastaticStatusCollection) lookupService.getLookupCollection(FUMetastaticStatus.TYPE_ID, 
+				FUMetastaticStatusCollection.class, FUMetastaticStatus.class);
+		return collection;
+	}
+
+	public static FUMetastaticStatus getFUMetastaticStatusInstance(LookupService lookupService, int id) 
+	{
+		return (FUMetastaticStatus)lookupService.getLookupInstance(FUMetastaticStatus.class, FUMetastaticStatus.TYPE_ID, id);
+	}
+	
+
+	public static FUDyspneaScoreCollection getFUDyspneaScore(LookupService lookupService) {
+		FUDyspneaScoreCollection collection =
+			(FUDyspneaScoreCollection) lookupService.getLookupCollection(FUDyspneaScore.TYPE_ID, 
+				FUDyspneaScoreCollection.class, FUDyspneaScore.class);
+		return collection;
+	}
+
+	public static FUDyspneaScore getFUDyspneaScoreInstance(LookupService lookupService, int id) 
+	{
+		return (FUDyspneaScore)lookupService.getLookupInstance(FUDyspneaScore.class, FUDyspneaScore.TYPE_ID, id);
+	}
+	
+
 	public static TreatmentGroupSiteCollection getTreatmentGroupSite(LookupService lookupService) {
 		TreatmentGroupSiteCollection collection =
 			(TreatmentGroupSiteCollection) lookupService.getLookupCollection(TreatmentGroupSite.TYPE_ID, 
@@ -45,6 +180,19 @@ public final class LookupHelper {
 	public static TreatmentGroupSite getTreatmentGroupSiteInstance(LookupService lookupService, int id) 
 	{
 		return (TreatmentGroupSite)lookupService.getLookupInstance(TreatmentGroupSite.class, TreatmentGroupSite.TYPE_ID, id);
+	}
+	
+
+	public static ClinicalTrialNameCollection getClinicalTrialName(LookupService lookupService) {
+		ClinicalTrialNameCollection collection =
+			(ClinicalTrialNameCollection) lookupService.getLookupCollection(ClinicalTrialName.TYPE_ID, 
+				ClinicalTrialNameCollection.class, ClinicalTrialName.class);
+		return collection;
+	}
+
+	public static ClinicalTrialName getClinicalTrialNameInstance(LookupService lookupService, int id) 
+	{
+		return (ClinicalTrialName)lookupService.getLookupInstance(ClinicalTrialName.class, ClinicalTrialName.TYPE_ID, id);
 	}
 	
 
@@ -191,6 +339,19 @@ public final class LookupHelper {
 	}
 	
 
+	public static SurgeryRequiredCollection getSurgeryRequired(LookupService lookupService) {
+		SurgeryRequiredCollection collection =
+			(SurgeryRequiredCollection) lookupService.getLookupCollection(SurgeryRequired.TYPE_ID, 
+				SurgeryRequiredCollection.class, SurgeryRequired.class);
+		return collection;
+	}
+
+	public static SurgeryRequired getSurgeryRequiredInstance(LookupService lookupService, int id) 
+	{
+		return (SurgeryRequired)lookupService.getLookupInstance(SurgeryRequired.class, SurgeryRequired.TYPE_ID, id);
+	}
+	
+
 	public static InternalReferralSourceCollection getInternalReferralSource(LookupService lookupService) {
 		InternalReferralSourceCollection collection =
 			(InternalReferralSourceCollection) lookupService.getLookupCollection(InternalReferralSource.TYPE_ID, 
@@ -240,6 +401,19 @@ public final class LookupHelper {
 	public static ReferralOutcome getReferralOutcomeInstance(LookupService lookupService, int id) 
 	{
 		return (ReferralOutcome)lookupService.getLookupInstance(ReferralOutcome.class, ReferralOutcome.TYPE_ID, id);
+	}
+	
+
+	public static EASImageTypeCollection getEASImageType(LookupService lookupService) {
+		EASImageTypeCollection collection =
+			(EASImageTypeCollection) lookupService.getLookupCollection(EASImageType.TYPE_ID, 
+				EASImageTypeCollection.class, EASImageType.class);
+		return collection;
+	}
+
+	public static EASImageType getEASImageTypeInstance(LookupService lookupService, int id) 
+	{
+		return (EASImageType)lookupService.getLookupInstance(EASImageType.class, EASImageType.TYPE_ID, id);
 	}
 	
 
@@ -516,6 +690,19 @@ public final class LookupHelper {
 	}
 	
 
+	public static OncBeamEnergyCollection getOncBeamEnergy(LookupService lookupService) {
+		OncBeamEnergyCollection collection =
+			(OncBeamEnergyCollection) lookupService.getLookupCollection(OncBeamEnergy.TYPE_ID, 
+				OncBeamEnergyCollection.class, OncBeamEnergy.class);
+		return collection;
+	}
+
+	public static OncBeamEnergy getOncBeamEnergyInstance(LookupService lookupService, int id) 
+	{
+		return (OncBeamEnergy)lookupService.getLookupInstance(OncBeamEnergy.class, OncBeamEnergy.TYPE_ID, id);
+	}
+	
+
 	public static OncCarePlanStatusCollection getOncCarePlanStatus(LookupService lookupService) {
 		OncCarePlanStatusCollection collection =
 			(OncCarePlanStatusCollection) lookupService.getLookupCollection(OncCarePlanStatus.TYPE_ID, 
@@ -737,6 +924,19 @@ public final class LookupHelper {
 	}
 	
 
+	public static LateralityOncologySpecificCollection getLateralityOncologySpecific(LookupService lookupService) {
+		LateralityOncologySpecificCollection collection =
+			(LateralityOncologySpecificCollection) lookupService.getLookupCollection(LateralityOncologySpecific.TYPE_ID, 
+				LateralityOncologySpecificCollection.class, LateralityOncologySpecific.class);
+		return collection;
+	}
+
+	public static LateralityOncologySpecific getLateralityOncologySpecificInstance(LookupService lookupService, int id) 
+	{
+		return (LateralityOncologySpecific)lookupService.getLookupInstance(LateralityOncologySpecific.class, LateralityOncologySpecific.TYPE_ID, id);
+	}
+	
+
 	public static InvestigationTypeCollection getInvestigationType(LookupService lookupService) {
 		InvestigationTypeCollection collection =
 			(InvestigationTypeCollection) lookupService.getLookupCollection(InvestigationType.TYPE_ID, 
@@ -789,6 +989,19 @@ public final class LookupHelper {
 	}
 	
 
+	public static BasicOfDiagnosisCollection getBasicOfDiagnosis(LookupService lookupService) {
+		BasicOfDiagnosisCollection collection =
+			(BasicOfDiagnosisCollection) lookupService.getLookupCollection(BasicOfDiagnosis.TYPE_ID, 
+				BasicOfDiagnosisCollection.class, BasicOfDiagnosis.class);
+		return collection;
+	}
+
+	public static BasicOfDiagnosis getBasicOfDiagnosisInstance(LookupService lookupService, int id) 
+	{
+		return (BasicOfDiagnosis)lookupService.getLookupInstance(BasicOfDiagnosis.class, BasicOfDiagnosis.TYPE_ID, id);
+	}
+	
+
 	public static ChemoTherapyHRGCollection getChemoTherapyHRG(LookupService lookupService) {
 		ChemoTherapyHRGCollection collection =
 			(ChemoTherapyHRGCollection) lookupService.getLookupCollection(ChemoTherapyHRG.TYPE_ID, 
@@ -825,19 +1038,6 @@ public final class LookupHelper {
 	public static DrugProgramResponse getDrugProgramResponseInstance(LookupService lookupService, int id) 
 	{
 		return (DrugProgramResponse)lookupService.getLookupInstance(DrugProgramResponse.class, DrugProgramResponse.TYPE_ID, id);
-	}
-	
-
-	public static RegimenAcronymCollection getRegimenAcronym(LookupService lookupService) {
-		RegimenAcronymCollection collection =
-			(RegimenAcronymCollection) lookupService.getLookupCollection(RegimenAcronym.TYPE_ID, 
-				RegimenAcronymCollection.class, RegimenAcronym.class);
-		return collection;
-	}
-
-	public static RegimenAcronym getRegimenAcronymInstance(LookupService lookupService, int id) 
-	{
-		return (RegimenAcronym)lookupService.getLookupInstance(RegimenAcronym.class, RegimenAcronym.TYPE_ID, id);
 	}
 	
 
@@ -1033,6 +1233,84 @@ public final class LookupHelper {
 	public static ImagingModality getImagingModalityInstance(LookupService lookupService, int id) 
 	{
 		return (ImagingModality)lookupService.getLookupInstance(ImagingModality.class, ImagingModality.TYPE_ID, id);
+	}
+	
+
+	public static FUMorbidityChemoTxCollection getFUMorbidityChemoTx(LookupService lookupService) {
+		FUMorbidityChemoTxCollection collection =
+			(FUMorbidityChemoTxCollection) lookupService.getLookupCollection(FUMorbidityChemoTx.TYPE_ID, 
+				FUMorbidityChemoTxCollection.class, FUMorbidityChemoTx.class);
+		return collection;
+	}
+
+	public static FUMorbidityChemoTx getFUMorbidityChemoTxInstance(LookupService lookupService, int id) 
+	{
+		return (FUMorbidityChemoTx)lookupService.getLookupInstance(FUMorbidityChemoTx.class, FUMorbidityChemoTx.TYPE_ID, id);
+	}
+	
+
+	public static FUMorbiditySurgeryCollection getFUMorbiditySurgery(LookupService lookupService) {
+		FUMorbiditySurgeryCollection collection =
+			(FUMorbiditySurgeryCollection) lookupService.getLookupCollection(FUMorbiditySurgery.TYPE_ID, 
+				FUMorbiditySurgeryCollection.class, FUMorbiditySurgery.class);
+		return collection;
+	}
+
+	public static FUMorbiditySurgery getFUMorbiditySurgeryInstance(LookupService lookupService, int id) 
+	{
+		return (FUMorbiditySurgery)lookupService.getLookupInstance(FUMorbiditySurgery.class, FUMorbiditySurgery.TYPE_ID, id);
+	}
+	
+
+	public static FUPrimaryTumourStatusCollection getFUPrimaryTumourStatus(LookupService lookupService) {
+		FUPrimaryTumourStatusCollection collection =
+			(FUPrimaryTumourStatusCollection) lookupService.getLookupCollection(FUPrimaryTumourStatus.TYPE_ID, 
+				FUPrimaryTumourStatusCollection.class, FUPrimaryTumourStatus.class);
+		return collection;
+	}
+
+	public static FUPrimaryTumourStatus getFUPrimaryTumourStatusInstance(LookupService lookupService, int id) 
+	{
+		return (FUPrimaryTumourStatus)lookupService.getLookupInstance(FUPrimaryTumourStatus.class, FUPrimaryTumourStatus.TYPE_ID, id);
+	}
+	
+
+	public static ChemoTherapyToxicityTypeCollection getChemoTherapyToxicityType(LookupService lookupService) {
+		ChemoTherapyToxicityTypeCollection collection =
+			(ChemoTherapyToxicityTypeCollection) lookupService.getLookupCollection(ChemoTherapyToxicityType.TYPE_ID, 
+				ChemoTherapyToxicityTypeCollection.class, ChemoTherapyToxicityType.class);
+		return collection;
+	}
+
+	public static ChemoTherapyToxicityType getChemoTherapyToxicityTypeInstance(LookupService lookupService, int id) 
+	{
+		return (ChemoTherapyToxicityType)lookupService.getLookupInstance(ChemoTherapyToxicityType.class, ChemoTherapyToxicityType.TYPE_ID, id);
+	}
+	
+
+	public static RadioTherapyToxicityTypeCollection getRadioTherapyToxicityType(LookupService lookupService) {
+		RadioTherapyToxicityTypeCollection collection =
+			(RadioTherapyToxicityTypeCollection) lookupService.getLookupCollection(RadioTherapyToxicityType.TYPE_ID, 
+				RadioTherapyToxicityTypeCollection.class, RadioTherapyToxicityType.class);
+		return collection;
+	}
+
+	public static RadioTherapyToxicityType getRadioTherapyToxicityTypeInstance(LookupService lookupService, int id) 
+	{
+		return (RadioTherapyToxicityType)lookupService.getLookupInstance(RadioTherapyToxicityType.class, RadioTherapyToxicityType.TYPE_ID, id);
+	}
+	
+
+	public static SymptomTypeCollection getSymptomType(LookupService lookupService) {
+		SymptomTypeCollection collection =
+			(SymptomTypeCollection) lookupService.getLookupCollection(SymptomType.TYPE_ID, 
+				SymptomTypeCollection.class, SymptomType.class);
+		return collection;
+	}
+
+	public static SymptomType getSymptomTypeInstance(LookupService lookupService, int id) 
+	{
+		return (SymptomType)lookupService.getLookupInstance(SymptomType.class, SymptomType.TYPE_ID, id);
 	}
 	
 }

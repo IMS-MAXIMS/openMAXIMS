@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -49,7 +54,6 @@ public class ReportsToModalityConfigFormImpl extends BaseReportsToModalityConfig
 	private static final long serialVersionUID = 1L;
 
 	@SuppressWarnings("rawtypes")
-//	@Override
 	public ServiceLiteVoCollection listModality()
 	{
 		String hql = "from Service as s1_1 order by s1_1.serviceName asc";
@@ -61,7 +65,6 @@ public class ReportsToModalityConfigFormImpl extends BaseReportsToModalityConfig
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-//	@Override
 	public ModalityReportsVoCollection listModalityReports(TemplateBoRefVo template, ServiceRefVo modality, Boolean dft) throws DomainInterfaceException
 	{
 		StringBuffer hql = new StringBuffer();
@@ -102,15 +105,14 @@ public class ReportsToModalityConfigFormImpl extends BaseReportsToModalityConfig
 		}
 		
 		hql.append(cond.toString());
-		hql.append(" order by UPPER(s.serviceName)");
+		hql.append(" order by s.upperName"); //WDEV-20219 UPPER(s.serviceName)
 		
 		List list = factory.find(hql.toString(), markers, values);
 
 		return ModalityReportsVoAssembler.createModalityReportsVoCollectionFromModalityReports(list);
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-//	@Override
+	@SuppressWarnings({ "rawtypes", "unchecked" })	
 	public ReportTemplateLiteVoCollection listTemplates(String name, Boolean isDft)
 	{
 		DomainFactory factory = getDomainFactory();
@@ -174,8 +176,7 @@ public class ReportsToModalityConfigFormImpl extends BaseReportsToModalityConfig
 		
 		return sb.toString();
 	}
-
-//	@Override
+	
 	public void deleteRecord(ModalityReportsRefVo recordId) throws DomainInterfaceException, StaleObjectException, ForeignKeyViolationException
 	{
 		if(recordId == null || recordId.getID_ModalityReports() == null)

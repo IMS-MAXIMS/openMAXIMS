@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:35 -->
+<hibernate-mapping>
+	<class name="ims.core.admin.domain.objects.SystemLog" table="core_systemlog" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: hibernateClassContent -->
+<!-- debug: eventDateTime -->
+<!-- debug: eventType -->
+<!-- debug: eventLevel -->
+<!-- debug: user -->
+<!-- debug: source -->
+<!-- debug: computer -->
+<!-- debug: userAgent -->
+<!-- debug: sessionId -->
+<!-- debug: message -->
+<!-- debug: appServer -->
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="eventDateTime" type="timestamp" access="field" update="true">
+			<column name="eventdatet"  not-null="true" unique="false"  index='event_idx'/>
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="eventType" type="integer" access="field" update="true">
+			<column name="eventtype"  not-null="true" unique="false"  index='event_idx'/>
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="eventLevel" type="integer" access="field" update="true">
+			<column name="eventlevel"  not-null="true" unique="false"  index='event_idx'/>
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="user" type="string" access="field" update="true" > 
+			<column name="c_us" length="100"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="source" type="string" access="field" update="true" > 
+			<column name="source" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="computer" type="string" access="field" update="true" > 
+			<column name="computer" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="userAgent" type="string" access="field" update="true" > 
+			<column name="useragent" length="1000"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="sessionId" type="string" access="field" update="true" > 
+			<column name="sessionid" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="message" type="text" access="field" update="true" > 
+			<column name="message"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="appServer" type="string" access="field" update="true" > 
+			<column name="appserver" length="255"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -52,7 +57,7 @@ public class Logic extends BaseLogic
 		populateSelectedHCPsGrid(form.getGlobalContext().Scheduling.getSelectedHCPs());
 		//WDEV-19368
 		if (form.getGlobalContext().Scheduling.getSelectedHCPs() != null)
-			form.getLocalContext().setSelectedHCPs(form.getGlobalContext().Scheduling.getSelectedHCPs());
+			form.getLocalContext().setSelectedHCPs((HcpLiteVoCollection) form.getGlobalContext().Scheduling.getSelectedHCPs().clone()); //WDEV-20050 
 		updateControlsState();
 
 	}
@@ -177,7 +182,7 @@ public class Logic extends BaseLogic
 	@Override
 	protected void onImbSearchClick() throws ims.framework.exceptions.PresentationLogicException
 	{
-		form.getLocalContext().setSelectedHCPs(form.getGlobalContext().Scheduling.getSelectedHCPs() != null ? form.getGlobalContext().Scheduling.getSelectedHCPs() : null);
+		form.getLocalContext().setSelectedHCPs(form.grdSelectedHcps().getValues()); //WDEV-20050
 
 		if (form.txtName().getValue() == null || form.txtName().getValue().trim().equals(""))
 		{
@@ -244,9 +249,8 @@ public class Logic extends BaseLogic
 		if (!isChecked)
 		{
 			form.grdSelectedHcps().setValue(row.getValue());
-			if (form.getLocalContext().getSelectedHCPs() == null)
-				form.getLocalContext().setSelectedHCPs(new HcpLiteVoCollection());
-			form.getLocalContext().getSelectedHCPs().add(row.getValue());	
+			if (form.getLocalContext().getSelectedHCPs() != null && form.getLocalContext().getSelectedHCPs().indexOf(row.getValue()) != -1) //WDEV-20050
+				form.getLocalContext().getSelectedHCPs().remove(row.getValue());	
 			form.grdSelectedHcps().removeSelectedRow();
 			reinstateRow(row);
 		}		

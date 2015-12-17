@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -128,6 +133,11 @@ public class Logic extends BaseLogic
 	{
 		// Initialize custom components
 		form.lyrMain().tabICP().ccICP().initialize();
+		
+		// Set the visibility of the link back to list
+		form.lnkReturn().setVisible(form.getForms().RefMan.TheatreList.equals(engine.getPreviousNonDialogFormName())
+									|| form.getForms().Clinical.ClinicListWithICPActions.equals(engine.getPreviousNonDialogFormName())
+									|| form.getForms().Clinical.PatientICPList.equals(engine.getPreviousNonDialogFormName()));
 		
 		// Set ICP Component to not open Action Details in dialog, but to send an event
 		form.lyrMain().tabICP().ccICP().setActionDetailsHandlingMode(PresentationActionDetails.TRIGGER_EVENT);

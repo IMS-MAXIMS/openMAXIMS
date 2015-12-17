@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.emergency.vo.domain;
@@ -52,6 +57,8 @@ public class EmergencyAttendanceForEDDischargeVoAssembler
 	    valueObjectDest.setIsRIE(valueObjectSrc.getIsRIE());
 		// CareContext
 		valueObjectDest.setCareContext(valueObjectSrc.getCareContext());
+		// DischargeLetterStatus
+		valueObjectDest.setDischargeLetterStatus(valueObjectSrc.getDischargeLetterStatus());
 	 	return valueObjectDest;
 	 }
 
@@ -344,7 +351,43 @@ public class EmergencyAttendanceForEDDischargeVoAssembler
 			
 		// CareContext
 		valueObject.setCareContext(ims.emergency.vo.domain.CareContextForEDDischargeVoAssembler.create(map, domainObject.getCareContext()) );
- 		return valueObject;
+		// DischargeLetterStatus
+		ims.domain.lookups.LookupInstance instance2 = domainObject.getDischargeLetterStatus();
+		if ( null != instance2 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance2.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance2.getImage().getImageId(), instance2.getImage().getImagePath());
+			}
+			color = instance2.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.clinical.vo.lookups.DischargeLetterStatus voLookup2 = new ims.clinical.vo.lookups.DischargeLetterStatus(instance2.getId(),instance2.getText(), instance2.isActive(), null, img, color);
+			ims.clinical.vo.lookups.DischargeLetterStatus parentVoLookup2 = voLookup2;
+			ims.domain.lookups.LookupInstance parent2 = instance2.getParent();
+			while (parent2 != null)
+			{
+				if (parent2.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent2.getImage().getImageId(), parent2.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent2.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup2.setParent(new ims.clinical.vo.lookups.DischargeLetterStatus(parent2.getId(),parent2.getText(), parent2.isActive(), null, img, color));
+				parentVoLookup2 = parentVoLookup2.getParent();
+								parent2 = parent2.getParent();
+			}			
+			valueObject.setDischargeLetterStatus(voLookup2);
+		}
+		 		return valueObject;
 	 }
 
 
@@ -410,6 +453,14 @@ public class EmergencyAttendanceForEDDischargeVoAssembler
 			}
 		}
 		domainObject.setCareContext(value1);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value2 = null;
+		if ( null != valueObject.getDischargeLetterStatus() ) 
+		{
+			value2 =
+				domainFactory.getLookupInstance(valueObject.getDischargeLetterStatus().getID());
+		}
+		domainObject.setDischargeLetterStatus(value2);
 
 		return domainObject;
 	}

@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:35 -->
+<hibernate-mapping>
+	<class name="ims.oncology.domain.objects.ChemoCycleDetailsCCO" table="onco_chemocycledeta" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: treatmentType -->
+<!-- debug: cycleStartDate -->
+<!-- debug: cycleNumber -->
+<!-- debug: dayNumber -->
+<!-- debug: cycleDuration -->
+<!-- debug: weight -->
+<!-- debug: performanceStatus -->
+<!-- debug: isActive -->
+<!-- debug: regimen -->
+<!-- debug: procurementCode -->
+<!-- debug: dayOneDeliveryCode -->
+<!-- debug: deliveryCodeAllOtherDays -->
+<!-- debug: diaryEntry -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="diaryEntry" class="ims.core.scheduler.domain.objects.PatientApptDiary" unique="true" foreign-key="chemocycledeta_diaryentry_fk" access="field" cascade="save-update">
+			<column name="diaryentry" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: IsLookup -->
+		<many-to-one name="treatmentType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_treatmentt" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="cycleStartDate" type="date" access="field" update="true">
+			<column name="cyclestart"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="cycleNumber" type="integer" access="field" update="true">
+			<column name="cyclenumbe"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dayNumber" type="integer" access="field" update="true">
+			<column name="daynumber"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="cycleDuration" type="integer" access="field" update="true">
+			<column name="cycledurat"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="weight" type="integer" access="field" update="true">
+			<column name="weight"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="performanceStatus" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_performanc" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isActive" type="boolean" access="field" update="true">
+			<column name="isactive"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="regimen" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_regimen" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="procurementCode" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_procuremen" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="dayOneDeliveryCode" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_dayonedeli" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="deliveryCodeAllOtherDays" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_deliveryco" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+	</class>
+</hibernate-mapping>

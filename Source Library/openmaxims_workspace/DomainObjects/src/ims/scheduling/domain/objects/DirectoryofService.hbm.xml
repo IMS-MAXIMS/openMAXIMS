@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:36 -->
+<!-- Generated: 12/10/2015, 13:31 -->
 <hibernate-mapping>
 	<class name="ims.scheduling.domain.objects.DirectoryofService" table="schl_directoryofser" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -41,13 +41,15 @@
 		</many-to-one>
 <!-- debug: functions -->
 <!-- debug: field.IsAssociation : true -->
-		<!-- one to many -->
-		<set name="functions" lazy="true" access="field" cascade="save-update">
-			<key foreign-key="directoryofser_functions_fk">
-				<column name="schl_directoryofser_functions" sql-type="numeric(10,0)" />
+		<!-- many to many -->
+		<set name="functions" table="schl_directoryofser_functions" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="directoryofser_functions_fr_fk">
+				<column name="from_side" sql-type="numeric(10,0)" unique="false"   />
 			</key>
 			
-			<one-to-many class="ims.core.clinical.domain.objects.ServiceFunction" />
+			<many-to-many class="ims.core.clinical.domain.objects.ServiceFunction" foreign-key="directoryofser_functions_to_fk">
+				<column name="to_side" sql-type="numeric(10,0)" unique="false"   />
+			</many-to-many>
 		</set>
 <!-- debug: isActive -->
 <!-- debug: location -->
@@ -64,6 +66,7 @@
 		<many-to-one name="contract" class="ims.core.configuration.domain.objects.ContractConfig" unique="true" foreign-key="directoryofser_c_contra_fk" access="field" cascade="save-update">
 			<column name="c_contra" sql-type="numeric(10,0)" not-null="true" unique="false"   />
 		</many-to-one>
+<!-- debug: rTTClockImpact -->
 <!-- debug: !IsAssociation && !IsCollection -->
 
 <!-- debug: !IsLookup -->
@@ -79,6 +82,11 @@
 <!-- debug: !IsLookup -->
 		<property name="isActive" type="boolean" access="field" update="true">
 			<column name="isactive"  not-null="true" unique="false" unique-key='dos_unq1' />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="rTTClockImpact" type="boolean" access="field" update="true">
+			<column name="rttclockim"  not-null="false" unique="false"  />
 		</property>
 	</class>
 </hibernate-mapping>

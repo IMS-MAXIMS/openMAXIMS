@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.nursing.careplans.domain.objects;
@@ -61,9 +66,10 @@ public class CarePlanIntervention extends ims.domain.DomainObject implements jav
 	/** Frequency */
 	private ims.domain.lookups.LookupInstance frequency;
 	private Boolean isRemoved;
-	private java.util.Date removedDate;
 	/** RecordingInformation */
 	private ims.core.clinical.domain.objects.RecordingUserInformation recordingInformation;
+	private ims.core.clinical.domain.objects.AuthoringInformation removalAuthoringInformation;
+	private ims.core.clinical.domain.objects.AuthoringInformation reinstatingAuthoringInformation;
     public CarePlanIntervention (Integer id, int ver)
     {
     	super(id, ver);
@@ -174,18 +180,25 @@ public class CarePlanIntervention extends ims.domain.DomainObject implements jav
 		this.isRemoved = isRemoved;
 	}
 
-	public java.util.Date getRemovedDate() {
-		return removedDate;
-	}
-	public void setRemovedDate(java.util.Date removedDate) {
-		this.removedDate = removedDate;
-	}
-
 	public ims.core.clinical.domain.objects.RecordingUserInformation getRecordingInformation() {
 		return recordingInformation;
 	}
 	public void setRecordingInformation(ims.core.clinical.domain.objects.RecordingUserInformation recordingInformation) {
 		this.recordingInformation = recordingInformation;
+	}
+
+	public ims.core.clinical.domain.objects.AuthoringInformation getRemovalAuthoringInformation() {
+		return removalAuthoringInformation;
+	}
+	public void setRemovalAuthoringInformation(ims.core.clinical.domain.objects.AuthoringInformation removalAuthoringInformation) {
+		this.removalAuthoringInformation = removalAuthoringInformation;
+	}
+
+	public ims.core.clinical.domain.objects.AuthoringInformation getReinstatingAuthoringInformation() {
+		return reinstatingAuthoringInformation;
+	}
+	public void setReinstatingAuthoringInformation(ims.core.clinical.domain.objects.AuthoringInformation reinstatingAuthoringInformation) {
+		this.reinstatingAuthoringInformation = reinstatingAuthoringInformation;
 	}
 
 	/**
@@ -267,15 +280,28 @@ public class CarePlanIntervention extends ims.domain.DomainObject implements jav
 		auditStr.append("\r\n*isRemoved* :");
 		auditStr.append(isRemoved);
 	    auditStr.append("; ");
-		auditStr.append("\r\n*removedDate* :");
-		auditStr.append(removedDate);
-	    auditStr.append("; ");
 		auditStr.append("\r\n*recordingInformation* :");
 		if (recordingInformation != null)
 		{
 			auditStr.append(toShortClassName(recordingInformation));
 				
 		    auditStr.append(recordingInformation.toString());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*removalAuthoringInformation* :");
+		if (removalAuthoringInformation != null)
+		{
+			auditStr.append(toShortClassName(removalAuthoringInformation));
+				
+		    auditStr.append(removalAuthoringInformation.toString());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*reinstatingAuthoringInformation* :");
+		if (reinstatingAuthoringInformation != null)
+		{
+			auditStr.append(toShortClassName(reinstatingAuthoringInformation));
+				
+		    auditStr.append(reinstatingAuthoringInformation.toString());
 		}
 	    auditStr.append("; ");
 		return auditStr.toString();
@@ -394,17 +420,23 @@ public class CarePlanIntervention extends ims.domain.DomainObject implements jav
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsRemoved().toString()));
 			sb.append("</isRemoved>");		
 		}
-		if (this.getRemovedDate() != null)
-		{
-			sb.append("<removedDate>");
-			sb.append(new ims.framework.utils.DateTime(this.getRemovedDate()).toString(ims.framework.utils.DateTimeFormat.MILLI));
-			sb.append("</removedDate>");		
-		}
 		if (this.getRecordingInformation() != null)
 		{
 			sb.append("<recordingInformation>");
 			sb.append(this.getRecordingInformation().toXMLString(domMap)); 	
 			sb.append("</recordingInformation>");		
+		}
+		if (this.getRemovalAuthoringInformation() != null)
+		{
+			sb.append("<removalAuthoringInformation>");
+			sb.append(this.getRemovalAuthoringInformation().toXMLString(domMap)); 	
+			sb.append("</removalAuthoringInformation>");		
+		}
+		if (this.getReinstatingAuthoringInformation() != null)
+		{
+			sb.append("<reinstatingAuthoringInformation>");
+			sb.append(this.getReinstatingAuthoringInformation().toXMLString(domMap)); 	
+			sb.append("</reinstatingAuthoringInformation>");		
 		}
 		return sb.toString();
 	}
@@ -633,16 +665,23 @@ public class CarePlanIntervention extends ims.domain.DomainObject implements jav
 		{	
     		obj.setIsRemoved(new Boolean(fldEl.getTextTrim()));	
 		}
-		fldEl = el.element("removedDate");
-		if(fldEl != null)
-		{	
-    		obj.setRemovedDate(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
-		}
 		fldEl = el.element("recordingInformation");
 		if(fldEl != null)
 		{
 			fldEl = fldEl.element("class");		
 			obj.setRecordingInformation(ims.core.clinical.domain.objects.RecordingUserInformation.getRecordingUserInformationfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("removalAuthoringInformation");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setRemovalAuthoringInformation(ims.core.clinical.domain.objects.AuthoringInformation.getAuthoringInformationfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("reinstatingAuthoringInformation");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setReinstatingAuthoringInformation(ims.core.clinical.domain.objects.AuthoringInformation.getAuthoringInformationfromXML(fldEl, factory, domMap)); 
 		}
 	}
 
@@ -668,8 +707,9 @@ public class CarePlanIntervention extends ims.domain.DomainObject implements jav
 		public static final String AdditionalInfo = "additionalInfo";
 		public static final String Frequency = "frequency";
 		public static final String IsRemoved = "isRemoved";
-		public static final String RemovedDate = "removedDate";
 		public static final String RecordingInformation = "recordingInformation";
+		public static final String RemovalAuthoringInformation = "removalAuthoringInformation";
+		public static final String ReinstatingAuthoringInformation = "reinstatingAuthoringInformation";
 	}
 }
 

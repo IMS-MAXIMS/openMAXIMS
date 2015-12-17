@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -39,6 +44,8 @@ import ims.core.vo.MemberOfStaffShortVo;
 import ims.core.vo.OrgShortVo;
 import ims.core.vo.PersonName;
 import ims.core.vo.lookups.HcpDisType;
+import ims.core.vo.lookups.Sex;
+import ims.domain.exceptions.DomainInterfaceException;
 import ims.framework.IReportField;
 import ims.framework.controls.DynamicGridCell;
 import ims.framework.controls.DynamicGridColumn;
@@ -50,11 +57,14 @@ import ims.framework.utils.Color;
 import ims.framework.utils.DateTime;
 import ims.framework.utils.DateTimeFormat;
 import ims.framework.utils.PartialDate;
+import ims.naes.vo.lookups.NAESReferredBy;
+import ims.scheduling.vo.lookups.ApptOutcome;
 import ims.vo.LookupInstVo;
 import ims.vo.LookupInstanceCollection;
 import ims.vo.ValueObjectCollection;
 import ims.vo.lookups.ClassHelper;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -70,13 +80,14 @@ import com.ims.query.builder.client.exceptions.QueryBuilderClientException;
 
 public class Logic extends BaseLogic
 {
+	@SuppressWarnings("unused")
 	private static final long	serialVersionUID	= 1L;
 	private static final String	NAME_COLUMN			= "0";
 	private static final String	VALUE_COLUMN		= "1";
 	private static final String	MANDATORY_COLUMN	= "2";
 
 	private static final String	INTEGER				= "java.lang.Integer";
-	private static final String	BIG_INTEGER			= "java.math.BigInteger";
+/*	private static final String	BIG_INTEGER			= "java.math.BigInteger";
 	private static final String	SHORT				= "java.lang.Short";
 	private static final String	LONG				= "java.lang.Long";
 	private static final String	BOOOLEAN			= "java.lang.Boolean";
@@ -87,10 +98,38 @@ public class Logic extends BaseLogic
 	private static final String	UTIL_DATE			= "java.util.Date";
 	private static final String	SQL_DATE			= "java.sql.Date";
 	private static final String	SQL_TIME			= "java.sql.Time";
-	
+*/	
+	/**
+	 *	Class used in populating dynamic grid cell items with
+	 *	seeds that use custom search
+	 */
+	private class CustomSearchSeed
+	{
+		private Object value;
+		private String displayText;
+		
+		public CustomSearchSeed(Object value, String text)
+		{
+			this.value = value;
+			this.displayText = text;
+		}
+
+		public Object getValue()
+		{
+			return this.value;
+		}
+
+		@Override
+		public String toString()
+		{
+			return displayText;
+		}
+	}
 	@Override
 	protected void onBtnPDFClick() throws ims.framework.exceptions.PresentationLogicException
 	{
+		form.htmReport().setHTML("");
+		
 		//check mandatory seeds
 		for (int i = 0; i < form.ctnParams().dyngrdParams().getRows().size(); i++)
 		{
@@ -100,7 +139,7 @@ public class Logic extends BaseLogic
 			
 			if(seed.getCanBeNull().booleanValue() == false && row.getCells().get(getColumn(VALUE_COLUMN)).getValue() == null)
 			{
-				engine.showMessage("The seed '" + seed.getName() + "' is mandatory !");
+				engine.showMessage("The seed '" + seed.getName() + "' is mandatory.");
 				return;
 			}
 		}
@@ -179,7 +218,7 @@ public class Logic extends BaseLogic
 	protected void onFormOpen(Object[] args) throws PresentationLogicException
 	{
 		if(args == null || args.length == 0)
-			throw new PresentationLogicException("No template was assigned to this form !");
+			throw new PresentationLogicException("This form should not be added to navigation as a standalone form. The report that needs to be displayed should be added to navigation.");
 		
 		TemplateBoRefVo templateRef = (TemplateBoRefVo) args[0];
 		
@@ -189,7 +228,7 @@ public class Logic extends BaseLogic
 		form.getLocalContext().setTemplateRef(templateRef);			//wdev-16393
 		if(report == null)
 		{
-			form.htmReport().setHTML("<br><br><br><br><center><b>I could not get report for template id = " + templateRef.getID_TemplateBo() + "</b></center>");
+			form.htmReport().setHTML("<br><br><br><br><center><b>I couldn't get report for template with id " + templateRef.getID_TemplateBo() + "</b></center>");
 			return;
 		}
 		
@@ -366,7 +405,8 @@ public class Logic extends BaseLogic
 			return;
 
 		DynamicGridRow row = form.ctnParams().dyngrdParams().getRows().newRow();
-
+		row.setSelectable(false);
+		
 		DynamicGridCell nameCell = row.getCells().newCell(getColumn(NAME_COLUMN), DynamicCellType.WRAPTEXT);
 		nameCell.setValue(voSeed.getName());
 		nameCell.setReadOnly(true);
@@ -555,6 +595,12 @@ public class Logic extends BaseLogic
 	{
 		if (cell == null)
 			return;
+		
+		if (isCustomSearchSeedCell(cell))
+		{
+			listCustomSearchSeed(cell);
+			return;
+		}
 
 		if (cell.getType().equals(DynamicCellType.QUERYCOMBOBOX))
 		{
@@ -598,7 +644,19 @@ public class Logic extends BaseLogic
 			}
 		}
 	}
-
+	
+	private boolean isCustomSearchSeedCell(DynamicGridCell cell)
+	{
+		if (cell == null || cell.getRow() == null || !(cell.getRow().getValue() instanceof ReportSeedParsedVo))
+			return false;
+		
+		ReportSeedParsedVo seed = (ReportSeedParsedVo) cell.getRow().getValue();
+		
+		if (seed.getSearchTypeIsNotNull() && seed.getSearchType().equalsIgnoreCase("S"))
+			return true;
+		
+		return false;
+	}
 	private void listGps(DynamicGridCell cell)
 	{
 		if (cell == null)
@@ -654,14 +712,69 @@ public class Logic extends BaseLogic
 
 		populateCellItems(cell, domain.listLocationByName(cell.getTypedText()));
 	}
+	/**
+	 * 
+	 * Function used to list seeds marked as having custom search by string
+	 */
+	private void listCustomSearchSeed(DynamicGridCell cell)
+	{
+		try
+		{
+			if (cell == null || cell.getRow() == null || !(cell.getRow().getValue() instanceof ReportSeedParsedVo) || cell.getTypedText() == null || cell.getTypedText().trim().length() < 1)
+			{				
+				return;
+			}	
 
+			ReportSeedParsedVo seed = (ReportSeedParsedVo) cell.getRow().getValue();
+
+			ArrayList<Object[]> listCustomSearchSeed = domain.listCustomSearchSeed(seed.getShortBOName(), seed.getBOField(), seed.getDisplayFields(), seed.getSearchBy(), cell.getTypedText());
+			
+			populateCellItems(cell, listCustomSearchSeed);
+		}
+		catch (DomainInterfaceException e)
+		{
+			engine.showMessage(e.getMessage());
+			e.printStackTrace();
+			return;
+		}
+	}
+	private void populateCellItems(DynamicGridCell cell, ArrayList<Object[]> listCustomSearchSeed)
+	{
+		cell.getItems().clear();
+		
+		if (listCustomSearchSeed == null || listCustomSearchSeed.size() == 0)
+		{
+			cell.showOpened();
+			return;
+		}
+		
+		for (int i = 0; i < listCustomSearchSeed.size(); i++)
+		{
+			Object[] elements = listCustomSearchSeed.get(i);
+			
+			if (elements == null || elements.length != 2)
+				continue;
+			
+			CustomSearchSeed seed = new CustomSearchSeed(elements[0], (String) elements[1]);
+			
+			cell.getItems().newItem(seed, seed.toString());
+			
+			if (listCustomSearchSeed.size() == 1)
+				cell.setValue(seed);
+		}
+		
+		if (listCustomSearchSeed.size() != 1)
+			cell.showOpened();
+	}
 	private void populateCellItems(DynamicGridCell cell, ValueObjectCollection voColl)
 	{
 		cell.getItems().clear();
 
 		for (int i = 0; voColl != null && i < voColl.getItems().length; i++)
 		{
-			cell.getItems().newItem(voColl.getItems()[i]);
+			//WDEV-23374
+			cell.getItems().newItem(voColl.getItems()[i], (voColl.getItems()[i]).toString());
+			//WDEV-23374 - ends here
 		}
 
 		if (voColl != null && voColl.getItems() != null)
@@ -687,60 +800,93 @@ public class Logic extends BaseLogic
 		
 		// WDEV-16393
 		// If the cell value is null then clear the seed value
+		// WDEV-12801
+		// If the cell value is null then clear the seed value
+		//WDEV-23374
 		if (value == null)
 		{
 			seed.setValue(null);
 			return seed;
 		}
-		
-		if (value instanceof GpShortVo)
+		else if (value instanceof CustomSearchSeed)
+		{
+			seed.setValue(((CustomSearchSeed) value).getValue().toString());
+			seed.setDisplayText(((CustomSearchSeed) value).toString());
+		}
+		else if (value instanceof GpShortVo)
 		{
 			seed.setValue(((GpShortVo) value).getID_Gp().toString());
+			seed.setDisplayText(((GpShortVo) value).toString());
 			seed.setGP(((GpShortVo) value));
 		}
 		else if (value instanceof HcpLiteVo)
 		{
 			seed.setValue(((HcpLiteVo) value).getID_Hcp().toString());
+			seed.setDisplayText(((HcpLiteVo) value).toString());
 			seed.setHCP((HcpLiteVo) value);
 		}
 		else if (value instanceof MemberOfStaffShortVo)
 		{
 			seed.setValue(((MemberOfStaffShortVo) value).getID_MemberOfStaff().toString());
+			seed.setDisplayText(((MemberOfStaffShortVo) value).toString());
 			seed.setMOS((MemberOfStaffShortVo) value);
 		}
 		else if (value instanceof OrgShortVo)
 		{
 			seed.setValue(((OrgShortVo) value).getID_Organisation().toString());
+			seed.setDisplayText(((OrgShortVo) value).toString());
 			seed.setOrganisation(((OrgShortVo) value));
 		}
 		else if (value instanceof LocSiteLiteVo)
 		{
 			seed.setValue(((LocSiteLiteVo) value).getID_Location().toString());
+			seed.setDisplayText(((LocSiteLiteVo) value).toString());
 			seed.setLocSite((LocSiteLiteVo) value);
 		}
 		else if (value instanceof LocationLiteVo)
 		{
 			seed.setValue(((LocationLiteVo) value).getID_Location().toString());
+			seed.setDisplayText(((LocationLiteVo) value).toString());
 			seed.setLocation((LocationLiteVo) value);
+		}
+		else if (value instanceof Sex)
+		{
+			seed.setValue(String.valueOf(((Sex)value).getId()));
+			seed.setDisplayText(((Sex)value).getText());
+			seed.setSex((Sex)value);
+		}
+		else if (value instanceof ApptOutcome)
+		{
+			seed.setValue(String.valueOf(((ApptOutcome)value).getId()));
+			seed.setDisplayText(((ApptOutcome)value).getText());
+			seed.setOutcome((ApptOutcome)value);
+		}
+		else if (value instanceof NAESReferredBy)
+		{
+			seed.setValue(String.valueOf(((NAESReferredBy)value).getId()));
+			seed.setDisplayText(((NAESReferredBy)value).getText());
+			seed.setReferralBy((NAESReferredBy)value);
 		}
 		else if (value instanceof DateTime)
 		{
 			seed.setValue(((DateTime)value).toString(DateTimeFormat.ISO_SECS));
+			seed.setDisplayText(((DateTime)value).toString(DateTimeFormat.ISO_SECS));
 		}
 		else if (value instanceof PartialDate && seed.getType().equalsIgnoreCase(INTEGER))
 		{
 			seed.setValue(((PartialDate)value).toInteger().toString());
+			seed.setDisplayText(((PartialDate)value).toInteger().toString());
 		}
 		else if (value instanceof LookupInstVo)
 		{
 			seed.setValue(String.valueOf(((LookupInstVo)value).getId()));
 			seed.setDisplayText(((LookupInstVo)value).getText());
 		}
-
 		else
 		{
-			seed.setValue(value.toString());	
+			seed.setValue(value.toString());
 		}
+		//WDEV-23374 - ends here
 
 		return seed;
 	}

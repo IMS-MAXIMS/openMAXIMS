@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -31,6 +36,7 @@ import ims.core.vo.TaxonomyMap;
 import ims.domain.exceptions.DomainInterfaceException;
 import ims.domain.exceptions.StaleObjectException;
 import ims.framework.utils.DateTime;
+import ims.hl7.domain.EventResponse;
 import ims.hl7.utils.HL7Utils;
 import ims.ocrr.vo.ProviderSystemVo;
 import ims.scheduling.vo.ExternalEventVo;
@@ -55,10 +61,8 @@ public class A10VoMapper extends VoMapper {
 		return null;
 	}
 
-	//public Message populateMessage(PatientRefVo patient,LocationRefVo patLoc,ProviderSystemVo provider)throws Exception
 	public Message populateMessage(ExternalEventVo newEvent) throws Exception
-	{
-		
+	{		
 		newEvent=RefMandomain.updateEventVoWithInvestigation(newEvent);
 		if(null==newEvent)
 			return null;
@@ -99,14 +103,15 @@ public class A10VoMapper extends VoMapper {
 		pv.getPreadmitNumber().getID().setValue(apptId);
 		populateMSH(a10Msg, newEvent.getProviderSystem());
 		populateEVN(a10Msg);
+
 		return a10Msg;
-
-
 	}
 	
 	@Override
-	public Message processEvent(Message msg, ProviderSystemVo providerSystem)
-			throws HL7Exception {
+	//WDEV-20112
+//	public Message processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception
+	public EventResponse processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception //WDEV-20112
+	{
 		PID pid= null;
 		PV1 pv1 = null;
 		MSH msh = null;
@@ -116,6 +121,9 @@ public class A10VoMapper extends VoMapper {
 		DateTime arrivalDT=null;
 		String UBRN = pv1.getPreadmitNumber().getCheckDigit().getValue();
 		String maximsApptId = pv1.getPreadmitNumber().getID().getValue();
+		
+		//WDEV-20112
+		EventResponse response = new EventResponse(); //WDEV-20112
 		
 		//TODO check this is the correct field
 		String arrivalTime = msh.getDateTimeOfMessage().getTimeOfAnEvent().getValue();
@@ -133,8 +141,13 @@ public class A10VoMapper extends VoMapper {
 		
 		
 		Patient patVo = getPrimaryIdFromPid(pid, providerSystem);
+		
 		try {
 			Patient patVo2 = getDemog().getPatient(patVo);
+
+			//WDEV-20112
+			response.setPatient(patVo2); //WDEV-20112
+
 			//http://jira/browse/WDEV-12682
 			if("CARE_UK".equals(ConfigFlag.HL7.EXTENDED_HL7_PROCESSING.getValue()))
 			{
@@ -152,8 +165,11 @@ public class A10VoMapper extends VoMapper {
 				throw new HL7Exception(die.getMessage());
 			}
 		
-		Message ack = HL7Utils.buildPosAck(msg.get("MSH"), toConfigItemArray(providerSystem.getConfigItems()));;
-		return ack;
+		//WDEV-20112
+//		Message ack = HL7Utils.buildPosAck(msg.get("MSH"), toConfigItemArray(providerSystem.getConfigItems()));;
+//		return ack;
+		response.setMessage(HL7Utils.buildPosAck( msg.get("MSH"), toConfigItemArray(providerSystem.getConfigItems())));
+		return response; //WDEV-20112
 	}
 
 	private void populateMSH(ADT_A09 msg, ProviderSystemVo providerSystem) throws DataTypeException, Exception
@@ -201,8 +217,4 @@ public class A10VoMapper extends VoMapper {
 		renderDateTimeVoToTS(new DateTime(), evn.getRecordedDateTime());
 	}
 
-
-	
-	
-	
 }

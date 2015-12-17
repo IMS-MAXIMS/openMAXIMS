@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -31,6 +36,8 @@ import ims.core.vo.PatientAlertLiteVo;
 import ims.core.vo.PatientAlertLiteVoCollection;
 import ims.core.vo.PatientNoAlertInfoForTriageVo;
 import ims.core.vo.RecordingUserInformationForTriageVo;
+import ims.core.vo.lookups.AlertAccessRights;
+import ims.core.vo.lookups.AlertType;
 import ims.core.vo.lookups.PatientAlertStatus;
 import ims.domain.exceptions.StaleObjectException;
 import ims.domain.exceptions.UniqueKeyViolationException;
@@ -38,6 +45,8 @@ import ims.emergency.vo.enums.EdAssessment_CustomControlsEvents;
 import ims.framework.Control;
 import ims.framework.enumerations.FormMode;
 import ims.framework.exceptions.PresentationLogicException;
+import ims.framework.interfaces.IAlertsAccess;
+import ims.framework.interfaces.IAppRole;
 import ims.framework.utils.DateTime;
 
 public class Logic extends BaseLogic
@@ -146,17 +155,23 @@ public class Logic extends BaseLogic
 	
 	private void updateControlsState() 
 	{
-		form.imbNew().setEnabled(Boolean.TRUE.equals(form.getLocalContext().getIsEnabled()));
-		form.imbEdit().setEnabled(Boolean.TRUE.equals(form.getLocalContext().getIsEnabled()) && form.grdAlerts().getValue() != null);
+		boolean rightToEdit = form.grdAlerts().getValue() != null && hasTheUserRightToEditAlert(form.grdAlerts().getValue().getAlertType());
+		boolean rightToNew = hasTheUserRightToCreateAlert();
+		
+		form.imbNew().setEnabled(Boolean.TRUE.equals(form.getLocalContext().getIsEnabled()) && rightToNew);
+		form.imbEdit().setEnabled(Boolean.TRUE.equals(form.getLocalContext().getIsEnabled()) && rightToEdit);
+		form.imbView().setEnabled(Boolean.TRUE.equals(form.getLocalContext().getIsEnabled()) && rightToEdit); //WDEV-22359
 		//WDEV-17686
 		form.chkNoAlerts().setEnabled((Boolean.TRUE.equals(form.getLocalContext().getIsEnabled()) || (!Boolean.TRUE.equals(form.getLocalContext().getIsHidden()) && FormMode.VIEW.equals(form.getMode()))) && form.grdAlerts().getRows().size() == 0 && !form.chkNoAlerts().getValue());//WDEV-17605
 		
-		form.getContextMenus().Core.getAlertsCcMenuADDItem().setVisible(Boolean.TRUE.equals(form.getLocalContext().getIsEnabled()) || (!Boolean.TRUE.equals(form.getLocalContext().getIsHidden()) && FormMode.VIEW.equals(form.getMode())));//WDEV-17605
-		form.getContextMenus().Core.getAlertsCcMenuEDITItem().setVisible((Boolean.TRUE.equals(form.getLocalContext().getIsEnabled()) || (!Boolean.TRUE.equals(form.getLocalContext().getIsHidden()) && FormMode.VIEW.equals(form.getMode()))) && form.grdAlerts().getValue() != null);//WDEV-17605
+		form.getContextMenus().Core.getAlertsCcMenuADDItem().setVisible((Boolean.TRUE.equals(form.getLocalContext().getIsEnabled()) || (!Boolean.TRUE.equals(form.getLocalContext().getIsHidden()) && FormMode.VIEW.equals(form.getMode()))) && rightToNew);//WDEV-17605
+		form.getContextMenus().Core.getAlertsCcMenuEDITItem().setVisible((Boolean.TRUE.equals(form.getLocalContext().getIsEnabled()) || (!Boolean.TRUE.equals(form.getLocalContext().getIsHidden()) && FormMode.VIEW.equals(form.getMode()))) && rightToEdit);//WDEV-17605
+		form.getContextMenus().Core.getAlertsCcMenuVIEWItem().setVisible((Boolean.TRUE.equals(form.getLocalContext().getIsEnabled()) || (!Boolean.TRUE.equals(form.getLocalContext().getIsHidden()) && FormMode.VIEW.equals(form.getMode()))) && rightToEdit);//WDEV-22359
 		
 		//WDEV-17605
 		form.imbNew().setVisible(!Boolean.TRUE.equals(form.getLocalContext().getIsHidden()));
 		form.imbEdit().setVisible(!Boolean.TRUE.equals(form.getLocalContext().getIsHidden()));
+		form.imbView().setVisible(!Boolean.TRUE.equals(form.getLocalContext().getIsHidden())); //WDEV-22359
 	}
 
 	public void refresh()
@@ -167,7 +182,7 @@ public class Logic extends BaseLogic
 		form.getLocalContext().setNoAlert(domain.getPatientNoAlertInfo(form.getGlobalContext().Core.getPatientShort()));
 		form.chkNoAlerts().setValue(form.getLocalContext().getNoAlertIsNotNull() && PatientAlertStatus.NOKNOWNALERTS.equals((form.getLocalContext().getNoAlert().getAlertStatus())));
 		
-		populateAlertsGrid(domain.listAlerts(form.getGlobalContext().Core.getPatientShort()));
+		populateAlertsGrid(domain.listAlerts(form.getGlobalContext().Core.getPatientShort(), engine.getLoggedInRole()));
 		
 		updateControlsState();
 	}
@@ -211,7 +226,7 @@ public class Logic extends BaseLogic
 		if(form.grdAlerts().getValue() == null)
 			return;
 		
-		engine.open(form.getForms().Core.AlertsForTriage, new Object[] {form.grdAlerts().getValue()});
+		engine.open(form.getForms().Core.AlertsForTriage, new Object[] {form.grdAlerts().getValue(), Boolean.TRUE}); //WDEV-22359
 	}
 
 	@Override
@@ -220,6 +235,17 @@ public class Logic extends BaseLogic
 		form.getLocalContext().setselectedAlert(null);//WDEV-16176
 		engine.open(form.getForms().Core.AlertsForTriage);
 	}
+	
+	//WDEV-22359
+	@Override
+	protected void onImbViewClick() throws PresentationLogicException 
+	{
+		if(form.grdAlerts().getValue() == null)
+			return;
+		
+		engine.open(form.getForms().Core.AlertsForTriage, new Object[] {form.grdAlerts().getValue(), Boolean.FALSE});
+	}
+	//WDEV-22359 ends here
 
 	public void clear() 
 	{
@@ -246,7 +272,16 @@ public class Logic extends BaseLogic
 				if(form.grdAlerts().getValue() == null)
 					return;
 				
-				engine.open(form.getForms().Core.AlertsForTriage, new Object[] {form.grdAlerts().getValue()});
+				engine.open(form.getForms().Core.AlertsForTriage, new Object[] {form.grdAlerts().getValue(), Boolean.TRUE}); //WDEV-22359
+			}
+			break;
+			
+			case GenForm.ContextMenus.CoreNamespace.AlertsCcMenu.VIEW:
+			{
+				if(form.grdAlerts().getValue() == null)
+					return;
+				
+				engine.open(form.getForms().Core.AlertsForTriage, new Object[] {form.grdAlerts().getValue(), Boolean.FALSE}); //WDEV-22359
 			}
 			break;
 		}
@@ -272,5 +307,61 @@ public class Logic extends BaseLogic
 		form.getLocalContext().setIsHidden(value);
 		
 		updateControlsState();
+	}
+	
+	private boolean hasTheUserRightToEditAlert(AlertType alertType)
+	{
+		if(alertType == null)
+			return false;
+		
+		IAppRole role = engine.getLoggedInRole();
+		IAlertsAccess[] alertsAccessList = role.getAlertsAccessList();
+		
+		for(int i=0; i<alertsAccessList.length; i++)
+		{
+			IAlertsAccess alertAccess = alertsAccessList[i];
+			
+			if(alertAccess == null)
+				continue;
+			
+			if(!(alertAccess.getIAlertType() instanceof AlertType) || !(alertAccess.getIAccess() instanceof AlertAccessRights))
+				continue;
+			
+			AlertType alertCat = (AlertType) alertAccess.getIAlertType();
+			AlertAccessRights access = (AlertAccessRights) alertAccess.getIAccess();
+			
+			if(AlertAccessRights.READ_WRITE.equals(access) && alertCat.equals(alertType.getParent()))
+			{
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	private boolean hasTheUserRightToCreateAlert()
+	{
+		IAppRole role = engine.getLoggedInRole();
+		IAlertsAccess[] alertsAccessList = role.getAlertsAccessList();
+		
+		for(int i=0; i<alertsAccessList.length; i++)
+		{
+			IAlertsAccess alertAccess = alertsAccessList[i];
+			
+			if(alertAccess == null)
+				continue;
+			
+			if(!(alertAccess.getIAlertType() instanceof AlertType) || !(alertAccess.getIAccess() instanceof AlertAccessRights))
+				continue;
+			
+			AlertAccessRights access = (AlertAccessRights) alertAccess.getIAccess();
+			
+			if(AlertAccessRights.READ_WRITE.equals(access))
+			{
+				return true;
+			}
+		}
+		
+		return false;
 	}
 }

@@ -1,0 +1,12 @@
+package ims.rules.admin;
+
+import ims.core.patient.domain.objects.Patient;
+
+rule "A stand alone rule"	
+	when
+		p : Patient();
+		eval(p != null)
+	then 
+		System.out.println("A patient is about to be saved...");		
+end
+

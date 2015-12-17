@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,6 +15,11 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 package ims.hl7.domain.mapping;
@@ -26,13 +31,17 @@ import ims.configuration.gen.ConfigFlag;
 import ims.core.admin.pas.vo.PASEventRefVo;
 import ims.core.vo.CareContextInterfaceVo;
 import ims.core.vo.DischargedEpisodeVo;
+import ims.core.vo.PatRelative;
 import ims.core.vo.Patient;
+import ims.core.vo.ifInpatientEpisodeVo;
 import ims.emergency.vo.ifEDAttendanceVo;
+import ims.hl7.domain.EventResponse;
 import ims.hl7.domain.HL7EngineApplication;
 import ims.hl7.utils.EvnCodes;
 import ims.hl7.utils.HL7Errors;
 import ims.hl7.utils.HL7Utils;
 import ims.ocrr.vo.ProviderSystemVo;
+import ims.ocs_if.vo.InpatientEpisodeQueueVo;
 import ims.vo.interfaces.IHL7OutboundMessageHandler;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
@@ -44,11 +53,20 @@ import ca.uhn.hl7v2.model.v24.segment.PV2;
 
 public class A13VoMapper extends VoMapper
 {
+	// The A13 event is sent when an A03 (discharge/end visit) event is cancelled
+	
 	private static final Logger			LOG		= Logger.getLogger(A13VoMapper.class);
+	private A01VoMapper a01Vomapper; //WDEV-19481
 
-	public Message processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception
+	//WDEV-20112
+//	public Message processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception
+	public EventResponse processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception //WDEV-20112
 	{
-		return(processCancelDischarge(msg, providerSystem));
+		//WDEV-20112
+//		return(processCancelDischarge(msg, providerSystem));
+		EventResponse response = new EventResponse();
+		response = processCancelDischarge(msg, providerSystem, response);
+		return response; //WDEV-20112
 	}
 
 	public Message populateMessage()
@@ -61,14 +79,12 @@ public class A13VoMapper extends VoMapper
 	{
 		LOG.debug("A13VoMapper populateMessage: entry");
 		ADT_A01 message = new ADT_A01();
-		EDAttendanceFeedVo edAttendance = null;
-		Patient patient=null;
+		Patient patient = null;
 		PV1 pv = message.getPV1();
 
 		if(event instanceof EDAttendanceFeedVo)
 		{
-			edAttendance = (EDAttendanceFeedVo)event;
-			ifEDAttendanceVo attendenceDetails= adt.getEDAttendanceDetails(edAttendance.getAttendance());
+			ifEDAttendanceVo attendenceDetails= adt.getEDAttendanceDetails(event);
 			patient=attendenceDetails.getPatient();
 			//PV1-3
 			renderPatientLocationToPV1(attendenceDetails.getRegistrationLocation(), null, null, pv, event.getProviderSystem());
@@ -80,11 +96,15 @@ public class A13VoMapper extends VoMapper
 			pv.getHospitalService().setValue("E");
 			
 			//PV1-19
-			if(attendenceDetails.getBoId()!=null)
+			if(ConfigFlag.GEN.ED_USE_CUSTOM_ATTENDANCE_ID.getValue()
+					&&attendenceDetails.getCustomIDIsNotNull())
+			{
+				pv.getVisitNumber().getID().setValue(attendenceDetails.getCustomID());
+			}
+			else if(attendenceDetails.getBoId()!=null)
 			{
 				pv.getVisitNumber().getID().setValue(attendenceDetails.getBoId().toString());
-			}
-			//PV1-13
+			}			//PV1-13
 			if(attendenceDetails.getAttendanceTypeIsNotNull())
 			{
 				pv.getReAdmissionIndicator().setValue(svc.getRemoteLookup(attendenceDetails.getAttendanceType().getID(), event.getProviderSystem().getCodeSystem().getText()));
@@ -109,23 +129,118 @@ public class A13VoMapper extends VoMapper
 						attendenceDetails.getEmergencyEpisode().getPresentingComplaint().getID(),event.getProviderSystem().getCodeSystem().getText()));
 			}
 		}
-		else //Other event types
+
+		//WDEV-19481
+		else if(event instanceof InpatientEpisodeQueueVo)
 		{
+			a01Vomapper = (A01VoMapper)HL7EngineApplication.getVoMapper(EvnCodes.A01);
+			if(a01Vomapper==null)
+			{
+				throw new HL7Exception("A13 mapper requires A01 mapper. A01 mapper not found in list of registered mappers.");			
+			}
+
+			PV1 pv1 = message.getPV1();
+			PV2 pv2 = message.getPV2();
 			
+			InpatientEpisodeQueueVo feedVo = (InpatientEpisodeQueueVo)event;
+			ifInpatientEpisodeVo inpatientEpisode = adt.getInpatientEpisodeDetails(feedVo);
+			patient = inpatientEpisode.getPatient();
+
+			a01Vomapper.populateBasicEpisodeData(event, inpatientEpisode, pv1, pv2);
+			
+			// PV1-36 Discharge disposition (IS)
+			if(inpatientEpisode != null
+					&& inpatientEpisode.getDischargeDisposition() != null)
+			{
+				pv1.getDischargeDisposition().setValue(svc.getRemoteLookup(inpatientEpisode.getDischargeDestination().getID(), event.getProviderSystem().getCodeSystem().getText()));
+			}
+	
+			// PV1-37 Discharged to location (CM)
+			if(inpatientEpisode != null
+					&& inpatientEpisode.getDischargeDestination() !=null 
+					&& inpatientEpisode.getDischargeDestination().getText().length() > 0)
+			{
+				pv1.getDischargedToLocation().getDischargeLocation().setValue(inpatientEpisode.getDischargeDestination().toString());
+			}
+
+			// PV1-45 Discharge date/time
+			if(inpatientEpisode != null
+					&& inpatientEpisode.getDischargeDateTime() != null)
+			{
+				renderDateTimeVoToTS(inpatientEpisode.getDischargeDateTime(), pv1.getDischargeDateTime(0));
+			}
+			
+			//WDEV-22918
+			// EVN-2 Recorded Date/Time (TS)
+			// Discharge has been cancelled, thus new admission object created?
+			if (inpatientEpisode.getAdmissionEventDateTime() != null)
+			{
+				renderDateTimeVoToTS(inpatientEpisode.getAdmissionEventDateTime(), message.getEVN().getRecordedDateTime());
+			} //WDEV-22918
+				
 		}
+	
 		
 		populateMSH( event.getProviderSystem(),  message.getMSH(),Long.toString( new java.util.Date().getTime()),"ADT","A13");
+
+		message.getEVN().getEventTypeCode().setValue("A13");
+		
 		renderPatientVoToPID(patient,message.getPID(),event.getProviderSystem());
-		NK1 nk1 = message.getNK1();
-		renderNextOfKinVoToNK1(patient.getNok(), nk1,event.getProviderSystem());
+
 		PD1 pd1=message.getPD1();
-		renderGPDetailsToPD1(patient,pd1);
-		populateEVN(message.getEVN(),"A13");
+		//WDEV-20993
+//		renderGPDetailsToPD1(patient,pd1);
+		renderGPDetailsToPD1(patient, pd1, event.getProviderSystem());
+		renderPatientDetailsToPD1(patient, pd1, event.getProviderSystem()); //WDEV-22624
+
+		//WDEV-22006 Comment out following code and replace by calling a single method
+//		NK1 nk1 = message.getNK1();
+//		//WDEV-20335
+//		Boolean isConfidential = patient.getIsConfidential();
+//		
+//		//WDEV-20336 Populate NK1 from PDSRelative object first. If object is Null then use Next of Kin VO
+//		int NK1Iteration = 0;
+//		
+//		if(patient.getPDSrelativesIsNotNull()
+//				&& patient.getPDSrelatives().size() > 0)
+//		{
+//			for (int i=0; i < patient.getPDSrelatives().size(); i++)
+//			{
+//				PatRelative patRelative = patient.getPDSrelatives().get(i);
+//				renderPatRelativeVoToNK1(patRelative, nk1, event.getProviderSystem(), isConfidential);
+//				NK1Iteration ++;
+//			}
+//		} 
+//		else
+//		{
+//			renderNextOfKinVoToNK1(patient.getNok(), nk1, event.getProviderSystem(), isConfidential);
+//			NK1Iteration ++;
+//		}
+//		
+//		if(patient.getSupportNetworkFamilyIsNotNull() && ConfigFlag.HL7.HL7_INCLUDE_FAMILY_SUPPORT.getValue())
+//		{
+//			for (int i=0; i < patient.getSupportNetworkFamily().size(); i++)
+//			{
+//				NK1 sfn = message.getNK1(NK1Iteration);
+//				if(patient.getSupportNetworkFamily().get(i).getInactivatingDateTime() == null)
+//				{
+//					renderSupportNetworkFamilyVoToNK1(patient.getSupportNetworkFamily().get(i), sfn, event.getProviderSystem(), isConfidential);
+//					NK1Iteration++;
+//				}
+//			}
+//		} //WDEV-20336
+
+		renderPatientVoToNK1(patient, message, event.getProviderSystem());
+		//WDEV-22006
+
 		return message;
 	}
 
-	private Message processCancelDischarge(Message msg, ProviderSystemVo providerSystem) throws HL7Exception
+	//WDEV-20112
+//	private Message processCancelDischarge(Message msg, ProviderSystemVo providerSystem) throws HL7Exception
+	private EventResponse processCancelDischarge(Message msg, ProviderSystemVo providerSystem, EventResponse response) throws HL7Exception //WDEV-20112
 	{
+		
 		PV1 pv1 = (PV1) msg.get("PV1");
 		String patClass = pv1.getPatientClass().getValue();
 		
@@ -137,8 +252,11 @@ public class A13VoMapper extends VoMapper
 				throw new HL7Exception("A13 mapper requires A05 mapper. A05 mapper not found in list of registerd mappers.");			
 			}
 			
-			Message ack = a05mapper.processEvent(msg, providerSystem);
-			return ack;
+			//WDEV-20112
+//			Message ack = a05mapper.processEvent(msg, providerSystem);
+//			return ack;
+			response.setMessage((Message) a05mapper.processEvent(msg, providerSystem));
+			return response; //WDEV-20112
 
 		}
 
@@ -146,10 +264,15 @@ public class A13VoMapper extends VoMapper
 		try
 		{
 			patVo = savePatient(msg, providerSystem, false);
+			//WDEV-20112
+			response.setPatient(patVo); //WDEV-20112
 		}
 		catch (Exception ex)
 		{
-			return HL7Utils.buildRejAck( msg.get("MSH"), "Exception: " + ex.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems()));
+			//WDEV-20112
+//			return HL7Utils.buildRejAck( msg.get("MSH"), "Exception: " + ex.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems()));
+			response.setMessage(HL7Utils.buildRejAck(msg.get("MSH"), "Exception: " + ex.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems())));
+			return response; //WDEV-20112
 		}
 		try
 		{
@@ -196,10 +319,17 @@ public class A13VoMapper extends VoMapper
 		}
 		catch (Exception ex)
 		{
-			return HL7Utils.buildRejAck( msg.get("MSH"), "Exception: " + ex.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems()));
+			//WDEV-20112
+//			return HL7Utils.buildRejAck( msg.get("MSH"), "Exception: " + ex.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems()));
+			response.setMessage(HL7Utils.buildRejAck(msg.get("MSH"), "Exception: " + ex.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems())));
+			return response; //WDEV-20112
 		}
-		Message ack = HL7Utils.buildPosAck( msg.get("MSH"), toConfigItemArray(providerSystem.getConfigItems()));
-		return ack;
+		//WDEV-20112
+//		Message ack = HL7Utils.buildPosAck( msg.get("MSH"), toConfigItemArray(providerSystem.getConfigItems()));
+//		return ack;
+		response.setPatient(patVo);
+		response.setMessage(HL7Utils.buildPosAck( msg.get("MSH"), toConfigItemArray(providerSystem.getConfigItems())));
+		return response; //WDEV-20112
 	}
 	
 }

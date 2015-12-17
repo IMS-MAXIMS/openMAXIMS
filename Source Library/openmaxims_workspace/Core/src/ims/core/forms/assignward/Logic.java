@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -31,6 +36,8 @@ import ims.domain.exceptions.DomainInterfaceException;
 import ims.domain.exceptions.StaleObjectException;
 import ims.framework.enumerations.DialogResult;
 import ims.framework.exceptions.CodingRuntimeException;
+
+import java.util.ArrayList;
 
 public class Logic extends BaseLogic
 {
@@ -103,7 +110,7 @@ public class Logic extends BaseLogic
 			{
 				
 				voPatElectList.getTCIDetails().setTCIWard(form.cmbward().getValue());
-				String[] arrErrors = voPatElectList.validate();
+				String[] arrErrors = voPatElectList.validate(validateUiRules());
 	    		if(arrErrors != null)
 	    		{
 	    			engine.showErrors(arrErrors);
@@ -157,6 +164,24 @@ public class Logic extends BaseLogic
 		
 		engine.close(DialogResult.OK);
 	}
+	
+	//WDEV-19095
+	private String[] validateUiRules()
+	{
+
+		ArrayList<String> listOfErrors = new ArrayList<String>();
+
+		if (form.cmbward().getValue() == null)
+		{
+			listOfErrors.add("Destination Ward is mandatory.");
+		}
+		
+		String[] result = new String[listOfErrors.size()];
+		listOfErrors.toArray(result);
+		
+		return result;
+	}
+	
 	@Override
 	protected void onBtnCancelClick() throws ims.framework.exceptions.PresentationLogicException
 	{

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -29,6 +34,7 @@ import ims.admin.vo.DementiaConfigurationVo;
 import ims.core.vo.lookups.LookupHelper;
 import ims.core.vo.lookups.MethodOfAdmissionCollection;
 import ims.domain.exceptions.StaleObjectException;
+import ims.domain.exceptions.UniqueKeyViolationException;
 import ims.framework.controls.DynamicGridCell;
 import ims.framework.controls.DynamicGridColumn;
 import ims.framework.controls.DynamicGridRow;
@@ -58,6 +64,11 @@ public class Logic extends BaseLogic
 
 	private void updateControlsState()
 	{
+		//WDEV-18743
+		form.btnNew().setVisible(FormMode.VIEW.equals(form.getMode()));
+		form.btnNew().setEnabled(form.btnNew().isVisible() && form.getLocalContext().getcurrentDementiaConfig() == null);
+		form.btnEdit().setVisible(FormMode.VIEW.equals(form.getMode()) && form.getLocalContext().getcurrentDementiaConfigIsNotNull());
+		
 		form.getContextMenus().Admin.getDementiaColourConfigGridMenuADDItem().setVisible(FormMode.EDIT.equals(form.getMode()));
 		form.getContextMenus().Admin.getDementiaColourConfigGridMenuEDITItem().setVisible(FormMode.EDIT.equals(form.getMode()) && form.dyngrdColourConfig().getValue() != null);
 		form.getContextMenus().Admin.getDementiaColourConfigGridMenuREMOVEItem().setVisible(FormMode.EDIT.equals(form.getMode()) && form.dyngrdColourConfig().getValue() != null);
@@ -76,11 +87,22 @@ public class Logic extends BaseLogic
 		
 		initializeColourConfigDynamicGrid();
 		populateAdmissionTypeGrid();
+		populateRecentlyAssessedColourCombo();//WDEV-18700
 		populateScreenFromData(form.getLocalContext().getcurrentDementiaConfig());
 
 		form.setMode(FormMode.VIEW);
 	}
 
+	//WDEV-18700
+	private void populateRecentlyAssessedColourCombo()
+	{
+		Color[] ca = Color.getAllColors();
+		for (int i = 0; i < ca.length; i++)
+		{
+			form.cmbRecentlyAssessedColour().newRow(ca[i], ca[i].getName(), ca[i].getImage());
+		}
+	}
+	
 	private void populateScreenFromData(DementiaConfigurationVo dementiaConfigurationVo)
 	{
 		clearScreen();
@@ -98,6 +120,7 @@ public class Logic extends BaseLogic
 		DementiaColourConfigVoCollection collColourConfigVo = dementiaConfigurationVo.getColourConfig();
 		collColourConfigVo.sort(SortOrder.ASCENDING);
 
+		form.cmbRecentlyAssessedColour().setValue(dementiaConfigurationVo.getRecentlyAssessed());//WDEV-18700
 		populateColourConfigDynamicGrid(collColourConfigVo.sort(SortOrder.ASCENDING));
 
 	}
@@ -171,6 +194,7 @@ public class Logic extends BaseLogic
 			form.grdAdmissionType().getRows().get(i).setcolSelected(false);
 		}
 		form.dyngrdColourConfig().getRows().clear();
+		form.cmbRecentlyAssessedColour().setValue(null);//WDEV-18700
 	}
 
 	@Override
@@ -278,13 +302,6 @@ public class Logic extends BaseLogic
 	private boolean save()
 	{
 		DementiaConfigurationVo dementiaConfigToSave = populateDataFromScreen(form.getLocalContext().getcurrentDementiaConfig());
-
-		if (dementiaConfigToSave==null)
-		{
-			engine.showMessage("Please use the script to introduce the record in DB!");
-			open();
-			return false;
-		}
 		
 		String[] errors = dementiaConfigToSave.validate(validateColourConfigHours(dementiaConfigToSave.getColourConfig()));
 		
@@ -301,6 +318,12 @@ public class Logic extends BaseLogic
 		catch (StaleObjectException e)
 		{
 			engine.showMessage(ims.configuration.gen.ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
+			open();
+			return false;
+		}
+		catch (UniqueKeyViolationException ex)//WDEV-18743
+		{
+			engine.showMessage(ex.getMessage());
 			open();
 			return false;
 		}
@@ -340,10 +363,10 @@ public class Logic extends BaseLogic
 	
 	private DementiaConfigurationVo populateDataFromScreen(DementiaConfigurationVo dementiaConfigToSave)
 	{
-		if (dementiaConfigToSave!=null)
-			dementiaConfigToSave=(DementiaConfigurationVo) dementiaConfigToSave.clone();
+		if (dementiaConfigToSave != null)
+			dementiaConfigToSave =(DementiaConfigurationVo) dementiaConfigToSave.clone();
 		else
-			return null;
+			dementiaConfigToSave = new DementiaConfigurationVo(); //WDEV-18743
 		
 		dementiaConfigToSave.setAge(form.intAge().getValue());
 		dementiaConfigToSave.setExcludeFAIRPeriod(form.intExcludeFAIRPeriod().getValue());
@@ -360,7 +383,7 @@ public class Logic extends BaseLogic
 		}
 
 		dementiaConfigToSave.setColourConfig(collColourConfig);
-
+		dementiaConfigToSave.setRecentlyAssessed(form.cmbRecentlyAssessedColour().getValue());//WDEV-18700
 		return dementiaConfigToSave;
 	}
 
@@ -411,5 +434,19 @@ public class Logic extends BaseLogic
 	{
 		form.getGlobalContext().Admin.setSelectedDementiaColourConfig((DementiaColourConfigVo) form.dyngrdColourConfig().getValue());
 		updateControlsState();
+	}
+	//WDEV-18743
+	@Override
+	protected void onBtnNewClick() throws PresentationLogicException
+	{
+		newInstance();
+		
+	}
+
+	private void newInstance() 
+	{
+	  clearScreen();
+	  form.cmbRecentlyAssessedColour().setValue(Color.LightSalmon);//WDEV-18700
+	  form.setMode(FormMode.EDIT);
 	}
 }

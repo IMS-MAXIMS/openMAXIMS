@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.scheduling.vo.domain;
@@ -86,6 +91,16 @@ public class BookingAppointmentTheatreVoAssembler
 		valueObjectDest.setPathwayClock(valueObjectSrc.getPathwayClock());
 		// PASEvent
 		valueObjectDest.setPASEvent(valueObjectSrc.getPASEvent());
+		// CareContext
+		valueObjectDest.setCareContext(valueObjectSrc.getCareContext());
+		// Date28DayRuleBreach
+		valueObjectDest.setDate28DayRuleBreach(valueObjectSrc.getDate28DayRuleBreach());
+		// Day28BreachReason
+		valueObjectDest.setDay28BreachReason(valueObjectSrc.getDay28BreachReason());
+		// Day28BreachComment
+		valueObjectDest.setDay28BreachComment(valueObjectSrc.getDay28BreachComment());
+		// ProcedureDetails
+		valueObjectDest.setProcedureDetails(valueObjectSrc.getProcedureDetails());
 	 	return valueObjectDest;
 	 }
 
@@ -490,6 +505,54 @@ public class BookingAppointmentTheatreVoAssembler
 				valueObject.setPASEvent(new ims.core.admin.pas.vo.PASEventRefVo(domainObject.getPASEvent().getId(), domainObject.getPASEvent().getVersion()));
 			}
 		}
+		// CareContext
+		valueObject.setCareContext(ims.core.vo.domain.CareContextShortVoAssembler.create(map, domainObject.getCareContext()) );
+		// Date28DayRuleBreach
+		java.util.Date Date28DayRuleBreach = domainObject.getDate28DayRuleBreach();
+		if ( null != Date28DayRuleBreach ) 
+		{
+			valueObject.setDate28DayRuleBreach(new ims.framework.utils.Date(Date28DayRuleBreach) );
+		}
+		// Day28BreachReason
+		ims.domain.lookups.LookupInstance instance21 = domainObject.getDay28BreachReason();
+		if ( null != instance21 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance21.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance21.getImage().getImageId(), instance21.getImage().getImagePath());
+			}
+			color = instance21.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.scheduling.vo.lookups.RTTWeekWaitOr28DayRuleBreachReason voLookup21 = new ims.scheduling.vo.lookups.RTTWeekWaitOr28DayRuleBreachReason(instance21.getId(),instance21.getText(), instance21.isActive(), null, img, color);
+			ims.scheduling.vo.lookups.RTTWeekWaitOr28DayRuleBreachReason parentVoLookup21 = voLookup21;
+			ims.domain.lookups.LookupInstance parent21 = instance21.getParent();
+			while (parent21 != null)
+			{
+				if (parent21.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent21.getImage().getImageId(), parent21.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent21.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup21.setParent(new ims.scheduling.vo.lookups.RTTWeekWaitOr28DayRuleBreachReason(parent21.getId(),parent21.getText(), parent21.isActive(), null, img, color));
+				parentVoLookup21 = parentVoLookup21.getParent();
+								parent21 = parent21.getParent();
+			}			
+			valueObject.setDay28BreachReason(voLookup21);
+		}
+				// Day28BreachComment
+		valueObject.setDay28BreachComment(domainObject.getDay28BreachComment());
+		// ProcedureDetails
+		valueObject.setProcedureDetails(domainObject.getProcedureDetails());
  		return valueObject;
 	 }
 
@@ -670,6 +733,52 @@ public class BookingAppointmentTheatreVoAssembler
 			}
 		}
 		domainObject.setPASEvent(value18);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.admin.domain.objects.CareContext value19 = null;
+		if ( null != valueObject.getCareContext() ) 
+		{
+			if (valueObject.getCareContext().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getCareContext()) != null)
+				{
+					value19 = (ims.core.admin.domain.objects.CareContext)domMap.get(valueObject.getCareContext());
+				}
+			}
+			else
+			{
+				value19 = (ims.core.admin.domain.objects.CareContext)domainFactory.getDomainObject(ims.core.admin.domain.objects.CareContext.class, valueObject.getCareContext().getBoId());
+			}
+		}
+		domainObject.setCareContext(value19);
+		java.util.Date value20 = null;
+		ims.framework.utils.Date date20 = valueObject.getDate28DayRuleBreach();		
+		if ( date20 != null ) 
+		{
+			value20 = date20.getDate();
+		}
+		domainObject.setDate28DayRuleBreach(value20);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value21 = null;
+		if ( null != valueObject.getDay28BreachReason() ) 
+		{
+			value21 =
+				domainFactory.getLookupInstance(valueObject.getDay28BreachReason().getID());
+		}
+		domainObject.setDay28BreachReason(value21);
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getDay28BreachComment() != null && valueObject.getDay28BreachComment().equals(""))
+		{
+			valueObject.setDay28BreachComment(null);
+		}
+		domainObject.setDay28BreachComment(valueObject.getDay28BreachComment());
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getProcedureDetails() != null && valueObject.getProcedureDetails().equals(""))
+		{
+			valueObject.setProcedureDetails(null);
+		}
+		domainObject.setProcedureDetails(valueObject.getProcedureDetails());
 
 		return domainObject;
 	}

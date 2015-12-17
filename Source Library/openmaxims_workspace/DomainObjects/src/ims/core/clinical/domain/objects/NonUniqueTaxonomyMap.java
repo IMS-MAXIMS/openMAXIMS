@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.clinical.domain.objects;
@@ -47,6 +52,8 @@ public class NonUniqueTaxonomyMap extends ims.domain.DomainObject implements ims
 
 	private ims.domain.lookups.LookupInstance taxonomyName;
 	private String taxonomyCode;
+	private java.util.Date effectiveFrom;
+	private java.util.Date effectiveTo;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public NonUniqueTaxonomyMap (Integer id, int ver)
@@ -86,6 +93,20 @@ public class NonUniqueTaxonomyMap extends ims.domain.DomainObject implements ims
 				taxonomyCode);
 		}
 		this.taxonomyCode = taxonomyCode;
+	}
+
+	public java.util.Date getEffectiveFrom() {
+		return effectiveFrom;
+	}
+	public void setEffectiveFrom(java.util.Date effectiveFrom) {
+		this.effectiveFrom = effectiveFrom;
+	}
+
+	public java.util.Date getEffectiveTo() {
+		return effectiveTo;
+	}
+	public void setEffectiveTo(java.util.Date effectiveTo) {
+		this.effectiveTo = effectiveTo;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -132,6 +153,12 @@ public class NonUniqueTaxonomyMap extends ims.domain.DomainObject implements ims
 		auditStr.append("\r\n*taxonomyCode* :");
 		auditStr.append(taxonomyCode);
 	    auditStr.append("; ");
+		auditStr.append("\r\n*effectiveFrom* :");
+		auditStr.append(effectiveFrom);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*effectiveTo* :");
+		auditStr.append(effectiveTo);
+	    auditStr.append("; ");
 		return auditStr.toString();
 	}
 	
@@ -173,6 +200,18 @@ public class NonUniqueTaxonomyMap extends ims.domain.DomainObject implements ims
 			sb.append("<taxonomyCode>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getTaxonomyCode().toString()));
 			sb.append("</taxonomyCode>");		
+		}
+		if (this.getEffectiveFrom() != null)
+		{
+			sb.append("<effectiveFrom>");
+			sb.append(new ims.framework.utils.DateTime(this.getEffectiveFrom()).toString(ims.framework.utils.DateTimeFormat.MILLI));
+			sb.append("</effectiveFrom>");		
+		}
+		if (this.getEffectiveTo() != null)
+		{
+			sb.append("<effectiveTo>");
+			sb.append(new ims.framework.utils.DateTime(this.getEffectiveTo()).toString(ims.framework.utils.DateTimeFormat.MILLI));
+			sb.append("</effectiveTo>");		
 		}
 		return sb.toString();
 	}
@@ -330,6 +369,16 @@ public class NonUniqueTaxonomyMap extends ims.domain.DomainObject implements ims
 		{	
     		obj.setTaxonomyCode(new String(fldEl.getTextTrim()));	
 		}
+		fldEl = el.element("effectiveFrom");
+		if(fldEl != null)
+		{	
+    		obj.setEffectiveFrom(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
+		}
+		fldEl = el.element("effectiveTo");
+		if(fldEl != null)
+		{	
+    		obj.setEffectiveTo(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -341,17 +390,25 @@ public class NonUniqueTaxonomyMap extends ims.domain.DomainObject implements ims
 	/**
 	equals
 	*/
-	public boolean equals(Object obj)
+public boolean equals(Object obj)
+{
+	if (null == obj)
 	{
-		if (null == obj)
-		{
-			return false;
-		}
-
-		if (taxonomyCode.equals(((NonUniqueTaxonomyMap) obj).getTaxonomyCode()) && taxonomyName.getId() == ((NonUniqueTaxonomyMap) obj).getTaxonomyName().getId())
-			return true;
 		return false;
 	}
+	if(!(obj instanceof NonUniqueTaxonomyMap))
+	{
+           return false;
+	}
+	NonUniqueTaxonomyMap compareObj=(NonUniqueTaxonomyMap)obj;
+	if((taxonomyCode==null ? compareObj.taxonomyCode == null : taxonomyCode.equals(compareObj.taxonomyCode))&&
+		(taxonomyName==null ? compareObj.taxonomyName==null : taxonomyName.equals(compareObj.taxonomyName))&&
+		(effectiveFrom==null? compareObj.effectiveFrom==null : effectiveFrom.equals(compareObj.effectiveFrom))&&
+		(effectiveTo==null? compareObj.effectiveTo==null : effectiveTo.equals(compareObj.effectiveTo)))
+		return true;
+	return super.equals(obj);
+}
+
 
 	/**
 	toString
@@ -371,7 +428,12 @@ public String toString()
 	*/
 public int hashCode()
 {
-return (this.getTaxonomyName().hashCode() * 10011) + this.getTaxonomyCode().hashCode(); 
+	int hash = 0;
+	if (taxonomyName!= null) hash += taxonomyName.hashCode()* 10011;
+	if (taxonomyCode!= null) hash += taxonomyCode.hashCode();
+	if (effectiveFrom!= null) hash += effectiveFrom.hashCode();
+	if (effectiveTo!= null) hash += effectiveTo.hashCode();
+	return hash;
 }
 
 
@@ -381,6 +443,8 @@ return (this.getTaxonomyName().hashCode() * 10011) + this.getTaxonomyCode().hash
 	public static final String ID = "id";
 		public static final String TaxonomyName = "taxonomyName";
 		public static final String TaxonomyCode = "taxonomyCode";
+		public static final String EffectiveFrom = "effectiveFrom";
+		public static final String EffectiveTo = "effectiveTo";
 	}
 }
 

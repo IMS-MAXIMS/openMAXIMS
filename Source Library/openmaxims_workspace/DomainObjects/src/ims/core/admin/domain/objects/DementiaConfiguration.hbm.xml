@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:35 -->
+<!-- Generated: 12/10/2015, 13:32 -->
 <hibernate-mapping>
 	<class name="ims.core.admin.domain.objects.DementiaConfiguration" table="core_dementiaconfig" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -61,6 +61,7 @@
 			<index column='idx'/>
 			<one-to-many class="ims.core.admin.domain.objects.DementiaColourConfig" />
 		</list>
+<!-- debug: recentlyAssessed -->
 <!-- debug: !IsAssociation && !IsCollection -->
 
 <!-- debug: !IsLookup -->
@@ -87,5 +88,12 @@
 		<property name="aMTSThresholdScore" type="integer" access="field" update="true">
 			<column name="amtsthresh"  not-null="true" unique="false"  />
 		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<component name="recentlyAssessed" class="ims.framework.utils.Color" >
+			<property name="name" type="string" access="field" update="true">
+				<column name="recentlyas"  not-null="true" unique="false"     />
+			</property>
+		</component>
 	</class>
 </hibernate-mapping>

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.scheduling.vo.domain;
@@ -52,8 +57,6 @@ public class Sch_ProfileVoAssembler
 	    valueObjectDest.setIsRIE(valueObjectSrc.getIsRIE());
 		// SchLocation
 		valueObjectDest.setSchLocation(valueObjectSrc.getSchLocation());
-		// isFixed
-		valueObjectDest.setIsFixed(valueObjectSrc.getIsFixed());
 		// isUnderContract
 		valueObjectDest.setIsUnderContract(valueObjectSrc.getIsUnderContract());
 		// IntervalType
@@ -108,6 +111,12 @@ public class Sch_ProfileVoAssembler
 		valueObjectDest.setExclusionTimes(valueObjectSrc.getExclusionTimes());
 		// ConsMediaType
 		valueObjectDest.setConsMediaType(valueObjectSrc.getConsMediaType());
+		// CaseNoteFolderLocation
+		valueObjectDest.setCaseNoteFolderLocation(valueObjectSrc.getCaseNoteFolderLocation());
+		// caseNoteFolderNotRequired
+		valueObjectDest.setCaseNoteFolderNotRequired(valueObjectSrc.getCaseNoteFolderNotRequired());
+		// Hospital
+		valueObjectDest.setHospital(valueObjectSrc.getHospital());
 		// Description
 		valueObjectDest.setDescription(valueObjectSrc.getDescription());
 		// PrfCategory
@@ -126,6 +135,12 @@ public class Sch_ProfileVoAssembler
 		valueObjectDest.setLastActualGenDate(valueObjectSrc.getLastActualGenDate());
 		// LastGenDate
 		valueObjectDest.setLastGenDate(valueObjectSrc.getLastGenDate());
+		// AutoGeneratePeriod
+		valueObjectDest.setAutoGeneratePeriod(valueObjectSrc.getAutoGeneratePeriod());
+		// ReadyToGenerate
+		valueObjectDest.setReadyToGenerate(valueObjectSrc.getReadyToGenerate());
+		// isFixed
+		valueObjectDest.setIsFixed(valueObjectSrc.getIsFixed());
 		// Name
 		valueObjectDest.setName(valueObjectSrc.getName());
 	 	return valueObjectDest;
@@ -420,45 +435,43 @@ public class Sch_ProfileVoAssembler
 			
 		// SchLocation
 		valueObject.setSchLocation(ims.core.vo.domain.LocShortVoAssembler.create(map, domainObject.getSchLocation()) );
-		// isFixed
-		valueObject.setIsFixed( domainObject.isIsFixed() );
 		// isUnderContract
 		valueObject.setIsUnderContract( domainObject.isIsUnderContract() );
 		// IntervalType
-		ims.domain.lookups.LookupInstance instance4 = domainObject.getIntervalType();
-		if ( null != instance4 ) {
+		ims.domain.lookups.LookupInstance instance3 = domainObject.getIntervalType();
+		if ( null != instance3 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
 			img = null;
-			if (instance4.getImage() != null) 
+			if (instance3.getImage() != null) 
 			{
-				img = new ims.framework.utils.ImagePath(instance4.getImage().getImageId(), instance4.getImage().getImagePath());
+				img = new ims.framework.utils.ImagePath(instance3.getImage().getImageId(), instance3.getImage().getImagePath());
 			}
-			color = instance4.getColor();
+			color = instance3.getColor();
 			if (color != null) 
 				color.getValue();
 
-			ims.scheduling.vo.lookups.Profile_Interval_Type voLookup4 = new ims.scheduling.vo.lookups.Profile_Interval_Type(instance4.getId(),instance4.getText(), instance4.isActive(), null, img, color);
-			ims.scheduling.vo.lookups.Profile_Interval_Type parentVoLookup4 = voLookup4;
-			ims.domain.lookups.LookupInstance parent4 = instance4.getParent();
-			while (parent4 != null)
+			ims.scheduling.vo.lookups.Profile_Interval_Type voLookup3 = new ims.scheduling.vo.lookups.Profile_Interval_Type(instance3.getId(),instance3.getText(), instance3.isActive(), null, img, color);
+			ims.scheduling.vo.lookups.Profile_Interval_Type parentVoLookup3 = voLookup3;
+			ims.domain.lookups.LookupInstance parent3 = instance3.getParent();
+			while (parent3 != null)
 			{
-				if (parent4.getImage() != null) 
+				if (parent3.getImage() != null) 
 				{
-					img = new ims.framework.utils.ImagePath(parent4.getImage().getImageId(), parent4.getImage().getImagePath() );
+					img = new ims.framework.utils.ImagePath(parent3.getImage().getImageId(), parent3.getImage().getImagePath() );
 				}
 				else 
 				{
 					img = null;
 				}
-				color = parent4.getColor();
+				color = parent3.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup4.setParent(new ims.scheduling.vo.lookups.Profile_Interval_Type(parent4.getId(),parent4.getText(), parent4.isActive(), null, img, color));
-				parentVoLookup4 = parentVoLookup4.getParent();
-								parent4 = parent4.getParent();
+								parentVoLookup3.setParent(new ims.scheduling.vo.lookups.Profile_Interval_Type(parent3.getId(),parent3.getText(), parent3.isActive(), null, img, color));
+				parentVoLookup3 = parentVoLookup3.getParent();
+								parent3 = parent3.getParent();
 			}			
-			valueObject.setIntervalType(voLookup4);
+			valueObject.setIntervalType(voLookup3);
 		}
 				// IntervalSize
 		valueObject.setIntervalSize(domainObject.getIntervalSize());
@@ -505,40 +518,40 @@ public class Sch_ProfileVoAssembler
 			valueObject.setEndTm(new ims.framework.utils.Time(EndTm) );
 		}
 		// PASClinic
-		ims.domain.lookups.LookupInstance instance23 = domainObject.getPASClinic();
-		if ( null != instance23 ) {
+		ims.domain.lookups.LookupInstance instance22 = domainObject.getPASClinic();
+		if ( null != instance22 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
 			img = null;
-			if (instance23.getImage() != null) 
+			if (instance22.getImage() != null) 
 			{
-				img = new ims.framework.utils.ImagePath(instance23.getImage().getImageId(), instance23.getImage().getImagePath());
+				img = new ims.framework.utils.ImagePath(instance22.getImage().getImageId(), instance22.getImage().getImagePath());
 			}
-			color = instance23.getColor();
+			color = instance22.getColor();
 			if (color != null) 
 				color.getValue();
 
-			ims.scheduling.vo.lookups.SchedPASClinic voLookup23 = new ims.scheduling.vo.lookups.SchedPASClinic(instance23.getId(),instance23.getText(), instance23.isActive(), null, img, color);
-			ims.scheduling.vo.lookups.SchedPASClinic parentVoLookup23 = voLookup23;
-			ims.domain.lookups.LookupInstance parent23 = instance23.getParent();
-			while (parent23 != null)
+			ims.scheduling.vo.lookups.SchedPASClinic voLookup22 = new ims.scheduling.vo.lookups.SchedPASClinic(instance22.getId(),instance22.getText(), instance22.isActive(), null, img, color);
+			ims.scheduling.vo.lookups.SchedPASClinic parentVoLookup22 = voLookup22;
+			ims.domain.lookups.LookupInstance parent22 = instance22.getParent();
+			while (parent22 != null)
 			{
-				if (parent23.getImage() != null) 
+				if (parent22.getImage() != null) 
 				{
-					img = new ims.framework.utils.ImagePath(parent23.getImage().getImageId(), parent23.getImage().getImagePath() );
+					img = new ims.framework.utils.ImagePath(parent22.getImage().getImageId(), parent22.getImage().getImagePath() );
 				}
 				else 
 				{
 					img = null;
 				}
-				color = parent23.getColor();
+				color = parent22.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup23.setParent(new ims.scheduling.vo.lookups.SchedPASClinic(parent23.getId(),parent23.getText(), parent23.isActive(), null, img, color));
-				parentVoLookup23 = parentVoLookup23.getParent();
-								parent23 = parent23.getParent();
+								parentVoLookup22.setParent(new ims.scheduling.vo.lookups.SchedPASClinic(parent22.getId(),parent22.getText(), parent22.isActive(), null, img, color));
+				parentVoLookup22 = parentVoLookup22.getParent();
+								parent22 = parent22.getParent();
 			}			
-			valueObject.setPASClinic(voLookup23);
+			valueObject.setPASClinic(voLookup22);
 		}
 				// MaxNoAppts
 		valueObject.setMaxNoAppts(domainObject.getMaxNoAppts());
@@ -551,114 +564,120 @@ public class Sch_ProfileVoAssembler
 		// ExclusionTimes
 		valueObject.setExclusionTimes(ims.scheduling.vo.domain.Profile_Exc_TimeVoAssembler.createProfile_Exc_TimeVoCollectionFromProfile_Exc_Time(map, domainObject.getExclusionTimes()) );
 		// ConsMediaType
-		ims.domain.lookups.LookupInstance instance29 = domainObject.getConsMediaType();
-		if ( null != instance29 ) {
+		ims.domain.lookups.LookupInstance instance28 = domainObject.getConsMediaType();
+		if ( null != instance28 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
 			img = null;
-			if (instance29.getImage() != null) 
+			if (instance28.getImage() != null) 
 			{
-				img = new ims.framework.utils.ImagePath(instance29.getImage().getImageId(), instance29.getImage().getImagePath());
+				img = new ims.framework.utils.ImagePath(instance28.getImage().getImageId(), instance28.getImage().getImagePath());
 			}
-			color = instance29.getColor();
+			color = instance28.getColor();
 			if (color != null) 
 				color.getValue();
 
-			ims.scheduling.vo.lookups.ConsultationMediaType voLookup29 = new ims.scheduling.vo.lookups.ConsultationMediaType(instance29.getId(),instance29.getText(), instance29.isActive(), null, img, color);
-			ims.scheduling.vo.lookups.ConsultationMediaType parentVoLookup29 = voLookup29;
-			ims.domain.lookups.LookupInstance parent29 = instance29.getParent();
-			while (parent29 != null)
+			ims.scheduling.vo.lookups.ConsultationMediaType voLookup28 = new ims.scheduling.vo.lookups.ConsultationMediaType(instance28.getId(),instance28.getText(), instance28.isActive(), null, img, color);
+			ims.scheduling.vo.lookups.ConsultationMediaType parentVoLookup28 = voLookup28;
+			ims.domain.lookups.LookupInstance parent28 = instance28.getParent();
+			while (parent28 != null)
 			{
-				if (parent29.getImage() != null) 
+				if (parent28.getImage() != null) 
 				{
-					img = new ims.framework.utils.ImagePath(parent29.getImage().getImageId(), parent29.getImage().getImagePath() );
+					img = new ims.framework.utils.ImagePath(parent28.getImage().getImageId(), parent28.getImage().getImagePath() );
 				}
 				else 
 				{
 					img = null;
 				}
-				color = parent29.getColor();
+				color = parent28.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup29.setParent(new ims.scheduling.vo.lookups.ConsultationMediaType(parent29.getId(),parent29.getText(), parent29.isActive(), null, img, color));
-				parentVoLookup29 = parentVoLookup29.getParent();
-								parent29 = parent29.getParent();
+								parentVoLookup28.setParent(new ims.scheduling.vo.lookups.ConsultationMediaType(parent28.getId(),parent28.getText(), parent28.isActive(), null, img, color));
+				parentVoLookup28 = parentVoLookup28.getParent();
+								parent28 = parent28.getParent();
 			}			
-			valueObject.setConsMediaType(voLookup29);
+			valueObject.setConsMediaType(voLookup28);
 		}
-				// Description
+				// CaseNoteFolderLocation
+		valueObject.setCaseNoteFolderLocation(ims.core.vo.domain.LocShortVoAssembler.create(map, domainObject.getCaseNoteFolderLocation()) );
+		// caseNoteFolderNotRequired
+		valueObject.setCaseNoteFolderNotRequired( domainObject.isCaseNoteFolderNotRequired() );
+		// Hospital
+		valueObject.setHospital(ims.core.vo.domain.LocationLiteVoAssembler.create(map, domainObject.getHospital()) );
+		// Description
 		valueObject.setDescription(domainObject.getDescription());
 		// PrfCategory
-		ims.domain.lookups.LookupInstance instance31 = domainObject.getPrfCategory();
-		if ( null != instance31 ) {
+		ims.domain.lookups.LookupInstance instance33 = domainObject.getPrfCategory();
+		if ( null != instance33 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
 			img = null;
-			if (instance31.getImage() != null) 
+			if (instance33.getImage() != null) 
 			{
-				img = new ims.framework.utils.ImagePath(instance31.getImage().getImageId(), instance31.getImage().getImagePath());
+				img = new ims.framework.utils.ImagePath(instance33.getImage().getImageId(), instance33.getImage().getImagePath());
 			}
-			color = instance31.getColor();
+			color = instance33.getColor();
 			if (color != null) 
 				color.getValue();
 
-			ims.scheduling.vo.lookups.Sched_Prfile_Cat voLookup31 = new ims.scheduling.vo.lookups.Sched_Prfile_Cat(instance31.getId(),instance31.getText(), instance31.isActive(), null, img, color);
-			ims.scheduling.vo.lookups.Sched_Prfile_Cat parentVoLookup31 = voLookup31;
-			ims.domain.lookups.LookupInstance parent31 = instance31.getParent();
-			while (parent31 != null)
+			ims.scheduling.vo.lookups.Sched_Prfile_Cat voLookup33 = new ims.scheduling.vo.lookups.Sched_Prfile_Cat(instance33.getId(),instance33.getText(), instance33.isActive(), null, img, color);
+			ims.scheduling.vo.lookups.Sched_Prfile_Cat parentVoLookup33 = voLookup33;
+			ims.domain.lookups.LookupInstance parent33 = instance33.getParent();
+			while (parent33 != null)
 			{
-				if (parent31.getImage() != null) 
+				if (parent33.getImage() != null) 
 				{
-					img = new ims.framework.utils.ImagePath(parent31.getImage().getImageId(), parent31.getImage().getImagePath() );
+					img = new ims.framework.utils.ImagePath(parent33.getImage().getImageId(), parent33.getImage().getImagePath() );
 				}
 				else 
 				{
 					img = null;
 				}
-				color = parent31.getColor();
+				color = parent33.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup31.setParent(new ims.scheduling.vo.lookups.Sched_Prfile_Cat(parent31.getId(),parent31.getText(), parent31.isActive(), null, img, color));
-				parentVoLookup31 = parentVoLookup31.getParent();
-								parent31 = parent31.getParent();
+								parentVoLookup33.setParent(new ims.scheduling.vo.lookups.Sched_Prfile_Cat(parent33.getId(),parent33.getText(), parent33.isActive(), null, img, color));
+				parentVoLookup33 = parentVoLookup33.getParent();
+								parent33 = parent33.getParent();
 			}			
-			valueObject.setPrfCategory(voLookup31);
+			valueObject.setPrfCategory(voLookup33);
 		}
 				// Prftype
-		ims.domain.lookups.LookupInstance instance32 = domainObject.getPrftype();
-		if ( null != instance32 ) {
+		ims.domain.lookups.LookupInstance instance34 = domainObject.getPrftype();
+		if ( null != instance34 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
 			img = null;
-			if (instance32.getImage() != null) 
+			if (instance34.getImage() != null) 
 			{
-				img = new ims.framework.utils.ImagePath(instance32.getImage().getImageId(), instance32.getImage().getImagePath());
+				img = new ims.framework.utils.ImagePath(instance34.getImage().getImageId(), instance34.getImage().getImagePath());
 			}
-			color = instance32.getColor();
+			color = instance34.getColor();
 			if (color != null) 
 				color.getValue();
 
-			ims.scheduling.vo.lookups.Sched_Profile_Type voLookup32 = new ims.scheduling.vo.lookups.Sched_Profile_Type(instance32.getId(),instance32.getText(), instance32.isActive(), null, img, color);
-			ims.scheduling.vo.lookups.Sched_Profile_Type parentVoLookup32 = voLookup32;
-			ims.domain.lookups.LookupInstance parent32 = instance32.getParent();
-			while (parent32 != null)
+			ims.scheduling.vo.lookups.Sched_Profile_Type voLookup34 = new ims.scheduling.vo.lookups.Sched_Profile_Type(instance34.getId(),instance34.getText(), instance34.isActive(), null, img, color);
+			ims.scheduling.vo.lookups.Sched_Profile_Type parentVoLookup34 = voLookup34;
+			ims.domain.lookups.LookupInstance parent34 = instance34.getParent();
+			while (parent34 != null)
 			{
-				if (parent32.getImage() != null) 
+				if (parent34.getImage() != null) 
 				{
-					img = new ims.framework.utils.ImagePath(parent32.getImage().getImageId(), parent32.getImage().getImagePath() );
+					img = new ims.framework.utils.ImagePath(parent34.getImage().getImageId(), parent34.getImage().getImagePath() );
 				}
 				else 
 				{
 					img = null;
 				}
-				color = parent32.getColor();
+				color = parent34.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup32.setParent(new ims.scheduling.vo.lookups.Sched_Profile_Type(parent32.getId(),parent32.getText(), parent32.isActive(), null, img, color));
-				parentVoLookup32 = parentVoLookup32.getParent();
-								parent32 = parent32.getParent();
+								parentVoLookup34.setParent(new ims.scheduling.vo.lookups.Sched_Profile_Type(parent34.getId(),parent34.getText(), parent34.isActive(), null, img, color));
+				parentVoLookup34 = parentVoLookup34.getParent();
+								parent34 = parent34.getParent();
 			}			
-			valueObject.setPrftype(voLookup32);
+			valueObject.setPrftype(voLookup34);
 		}
 				// EffFrm
 		java.util.Date EffFrm = domainObject.getEffFrm();
@@ -688,6 +707,12 @@ public class Sch_ProfileVoAssembler
 		{
 			valueObject.setLastGenDate(new ims.framework.utils.Date(LastGenDate) );
 		}
+		// AutoGeneratePeriod
+		valueObject.setAutoGeneratePeriod(domainObject.getAutoGeneratePeriod());
+		// ReadyToGenerate
+		valueObject.setReadyToGenerate( domainObject.isReadyToGenerate() );
+		// isFixed
+		valueObject.setIsFixed( domainObject.isIsFixed() );
 		// Name
 		valueObject.setName(domainObject.getName());
  		return valueObject;
@@ -740,16 +765,15 @@ public class Sch_ProfileVoAssembler
 		domainObject.setVersion(valueObject.getVersion_Sch_Profile());
 
 		domainObject.setSchLocation(ims.core.vo.domain.LocShortVoAssembler.extractLocation(domainFactory, valueObject.getSchLocation(), domMap));
-		domainObject.setIsFixed(valueObject.getIsFixed());
 		domainObject.setIsUnderContract(valueObject.getIsUnderContract());
 		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value4 = null;
+		ims.domain.lookups.LookupInstance value3 = null;
 		if ( null != valueObject.getIntervalType() ) 
 		{
-			value4 =
+			value3 =
 				domainFactory.getLookupInstance(valueObject.getIntervalType().getID());
 		}
-		domainObject.setIntervalType(value4);
+		domainObject.setIntervalType(value3);
 		domainObject.setIntervalSize(valueObject.getIntervalSize());
 		domainObject.setIsSchMon(valueObject.getIsSchMon());
 		domainObject.setIsSchTue(valueObject.getIsSchTue());
@@ -766,41 +790,76 @@ public class Sch_ProfileVoAssembler
 		domainObject.setMinInt(valueObject.getMinInt());
 		domainObject.setRoundAttTime(valueObject.getRoundAttTime());
 		domainObject.setLastAppInterval(valueObject.getLastAppInterval());
-		ims.framework.utils.Time time21 = valueObject.getStartTm();
+		ims.framework.utils.Time time20 = valueObject.getStartTm();
+		String value20 = null;
+		if ( time20 != null ) 
+		{
+			value20 = time20.toString();
+		}
+		domainObject.setStartTm(value20);
+		ims.framework.utils.Time time21 = valueObject.getEndTm();
 		String value21 = null;
 		if ( time21 != null ) 
 		{
 			value21 = time21.toString();
 		}
-		domainObject.setStartTm(value21);
-		ims.framework.utils.Time time22 = valueObject.getEndTm();
-		String value22 = null;
-		if ( time22 != null ) 
-		{
-			value22 = time22.toString();
-		}
-		domainObject.setEndTm(value22);
+		domainObject.setEndTm(value21);
 		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value23 = null;
+		ims.domain.lookups.LookupInstance value22 = null;
 		if ( null != valueObject.getPASClinic() ) 
 		{
-			value23 =
+			value22 =
 				domainFactory.getLookupInstance(valueObject.getPASClinic().getID());
 		}
-		domainObject.setPASClinic(value23);
+		domainObject.setPASClinic(value22);
 		domainObject.setMaxNoAppts(valueObject.getMaxNoAppts());
 		domainObject.setBookingRights(ims.scheduling.vo.domain.Profile_BookRightsVoAssembler.extractProfile_BookingRightSet(domainFactory, valueObject.getBookingRights(), domainObject.getBookingRights(), domMap));		
 		domainObject.setListOwners(ims.scheduling.vo.domain.Profile_ListOwnerVoAssembler.extractProfile_ListOwnerSet(domainFactory, valueObject.getListOwners(), domainObject.getListOwners(), domMap));		
 		domainObject.setExclusionDates(ims.scheduling.vo.domain.Profile_Exc_DateVoAssembler.extractProfile_Exc_DateSet(domainFactory, valueObject.getExclusionDates(), domainObject.getExclusionDates(), domMap));		
 		domainObject.setExclusionTimes(ims.scheduling.vo.domain.Profile_Exc_TimeVoAssembler.extractProfile_Exc_TimeSet(domainFactory, valueObject.getExclusionTimes(), domainObject.getExclusionTimes(), domMap));		
 		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value29 = null;
+		ims.domain.lookups.LookupInstance value28 = null;
 		if ( null != valueObject.getConsMediaType() ) 
 		{
-			value29 =
+			value28 =
 				domainFactory.getLookupInstance(valueObject.getConsMediaType().getID());
 		}
-		domainObject.setConsMediaType(value29);
+		domainObject.setConsMediaType(value28);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.resource.place.domain.objects.Location value29 = null;
+		if ( null != valueObject.getCaseNoteFolderLocation() ) 
+		{
+			if (valueObject.getCaseNoteFolderLocation().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getCaseNoteFolderLocation()) != null)
+				{
+					value29 = (ims.core.resource.place.domain.objects.Location)domMap.get(valueObject.getCaseNoteFolderLocation());
+				}
+			}
+			else
+			{
+				value29 = (ims.core.resource.place.domain.objects.Location)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.Location.class, valueObject.getCaseNoteFolderLocation().getBoId());
+			}
+		}
+		domainObject.setCaseNoteFolderLocation(value29);
+		domainObject.setCaseNoteFolderNotRequired(valueObject.getCaseNoteFolderNotRequired());
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.resource.place.domain.objects.Location value31 = null;
+		if ( null != valueObject.getHospital() ) 
+		{
+			if (valueObject.getHospital().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getHospital()) != null)
+				{
+					value31 = (ims.core.resource.place.domain.objects.Location)domMap.get(valueObject.getHospital());
+				}
+			}
+			else
+			{
+				value31 = (ims.core.resource.place.domain.objects.Location)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.Location.class, valueObject.getHospital().getBoId());
+			}
+		}
+		domainObject.setHospital(value31);
 		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
 		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
 		if (valueObject.getDescription() != null && valueObject.getDescription().equals(""))
@@ -809,51 +868,54 @@ public class Sch_ProfileVoAssembler
 		}
 		domainObject.setDescription(valueObject.getDescription());
 		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value31 = null;
+		ims.domain.lookups.LookupInstance value33 = null;
 		if ( null != valueObject.getPrfCategory() ) 
 		{
-			value31 =
+			value33 =
 				domainFactory.getLookupInstance(valueObject.getPrfCategory().getID());
 		}
-		domainObject.setPrfCategory(value31);
+		domainObject.setPrfCategory(value33);
 		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value32 = null;
+		ims.domain.lookups.LookupInstance value34 = null;
 		if ( null != valueObject.getPrftype() ) 
 		{
-			value32 =
+			value34 =
 				domainFactory.getLookupInstance(valueObject.getPrftype().getID());
 		}
-		domainObject.setPrftype(value32);
-		java.util.Date value33 = null;
-		ims.framework.utils.Date date33 = valueObject.getEffFrm();		
-		if ( date33 != null ) 
+		domainObject.setPrftype(value34);
+		java.util.Date value35 = null;
+		ims.framework.utils.Date date35 = valueObject.getEffFrm();		
+		if ( date35 != null ) 
 		{
-			value33 = date33.getDate();
+			value35 = date35.getDate();
 		}
-		domainObject.setEffFrm(value33);
-		java.util.Date value34 = null;
-		ims.framework.utils.Date date34 = valueObject.getEffTo();		
-		if ( date34 != null ) 
+		domainObject.setEffFrm(value35);
+		java.util.Date value36 = null;
+		ims.framework.utils.Date date36 = valueObject.getEffTo();		
+		if ( date36 != null ) 
 		{
-			value34 = date34.getDate();
+			value36 = date36.getDate();
 		}
-		domainObject.setEffTo(value34);
+		domainObject.setEffTo(value36);
 		domainObject.setIsActive(valueObject.getIsActive());
 		domainObject.setService(ims.core.vo.domain.ServiceShortVoAssembler.extractService(domainFactory, valueObject.getService(), domMap));
-		java.util.Date value37 = null;
-		ims.framework.utils.Date date37 = valueObject.getLastActualGenDate();		
-		if ( date37 != null ) 
+		java.util.Date value39 = null;
+		ims.framework.utils.Date date39 = valueObject.getLastActualGenDate();		
+		if ( date39 != null ) 
 		{
-			value37 = date37.getDate();
+			value39 = date39.getDate();
 		}
-		domainObject.setLastActualGenDate(value37);
-		java.util.Date value38 = null;
-		ims.framework.utils.Date date38 = valueObject.getLastGenDate();		
-		if ( date38 != null ) 
+		domainObject.setLastActualGenDate(value39);
+		java.util.Date value40 = null;
+		ims.framework.utils.Date date40 = valueObject.getLastGenDate();		
+		if ( date40 != null ) 
 		{
-			value38 = date38.getDate();
+			value40 = date40.getDate();
 		}
-		domainObject.setLastGenDate(value38);
+		domainObject.setLastGenDate(value40);
+		domainObject.setAutoGeneratePeriod(valueObject.getAutoGeneratePeriod());
+		domainObject.setReadyToGenerate(valueObject.getReadyToGenerate());
+		domainObject.setIsFixed(valueObject.getIsFixed());
 		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
 		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
 		if (valueObject.getName() != null && valueObject.getName().equals(""))

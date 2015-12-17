@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -47,7 +52,7 @@ public class EDDepartmentTypeConfigImpl extends BaseEDDepartmentTypeConfigImpl
 		DomainFactory factory = getDomainFactory();
 		StringBuffer hql = new StringBuffer();
 
-		hql.append(" select l1_1 from Location as l1_1 left join l1_1.type as l2_1 where (l2_1.id = :idloctype and l1_1.isActive = 1) order by upper(l1_1.name) asc ");
+		hql.append(" select l1_1 from Location as l1_1 left join l1_1.type as l2_1 where l2_1.id = :idloctype and l1_1.isActive = 1 and l1_1.isVirtual = 0 order by l1_1.upperName asc "); //WDEV-19532  WDEV-20219
 
 		List<?> list = factory.find(hql.toString(), new String[] { "idloctype" }, new Object[] { LocationType.ANE.getID() });
 
@@ -89,11 +94,21 @@ public class EDDepartmentTypeConfigImpl extends BaseEDDepartmentTypeConfigImpl
 		DomainFactory factory = getDomainFactory();
 		for( DefaultEDLocationDeptTypeVo record: records)
 		{
+			//wdev-19431
+			if( record != null && !record.getID_DefaultEDLocationDeptTypeIsNotNull() && record.getLocationIsNotNull())
+			{
+				StringBuffer hql = new StringBuffer();
+				hql.append("select d1_1	from DefaultEDLocationDeptType as d1_1 left join d1_1.location as l1_1 where (l1_1.id = :loc and (d1_1.isRIE = null or d1_1.isRIE = 0))");
+				java.util.List list = getDomainFactory().find(hql.toString(), "loc",record.getLocation().getID_Location());
+				if (list != null && list.size() > 0)
+					throw new StaleObjectException(null);
+			}
+			//-----------
 			DefaultEDLocationDeptType doDefaultEDLocationDeptType = DefaultEDLocationDeptTypeVoAssembler.extractDefaultEDLocationDeptType(factory, record);
 			factory.save(doDefaultEDLocationDeptType);
 		}
 				
 	}
-
+	
 
 }

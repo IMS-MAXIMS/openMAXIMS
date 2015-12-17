@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.core.vo.domain;
@@ -52,6 +57,8 @@ public class GpPracticeLiteVoAssembler
 	    valueObjectDest.setIsRIE(valueObjectSrc.getIsRIE());
 		// surgeries
 		valueObjectDest.setSurgeries(valueObjectSrc.getSurgeries());
+		// CodeMappings
+		valueObjectDest.setCodeMappings(valueObjectSrc.getCodeMappings());
 		// Name
 		valueObjectDest.setName(valueObjectSrc.getName());
 		// Address
@@ -352,45 +359,47 @@ public class GpPracticeLiteVoAssembler
 			
 		// surgeries
 		valueObject.setSurgeries(ims.core.vo.domain.LocSiteShortVoAssembler.createLocSiteShortVoCollectionFromLocSite(map, domainObject.getLocationSites()) );
+		// CodeMappings
+		valueObject.setCodeMappings(ims.core.vo.domain.TaxonomyMapAssembler.createTaxonomyMapCollectionFromTaxonomyMap(map, domainObject.getCodeMappings()) );
 		// Name
 		valueObject.setName(domainObject.getName());
 		// Address
 		valueObject.setAddress(ims.core.vo.domain.PersonAddressAssembler.create(map, domainObject.getAddress()) );
 		// Type
-		ims.domain.lookups.LookupInstance instance4 = domainObject.getType();
-		if ( null != instance4 ) {
+		ims.domain.lookups.LookupInstance instance5 = domainObject.getType();
+		if ( null != instance5 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
 			img = null;
-			if (instance4.getImage() != null) 
+			if (instance5.getImage() != null) 
 			{
-				img = new ims.framework.utils.ImagePath(instance4.getImage().getImageId(), instance4.getImage().getImagePath());
+				img = new ims.framework.utils.ImagePath(instance5.getImage().getImageId(), instance5.getImage().getImagePath());
 			}
-			color = instance4.getColor();
+			color = instance5.getColor();
 			if (color != null) 
 				color.getValue();
 
-			ims.core.vo.lookups.OrganisationType voLookup4 = new ims.core.vo.lookups.OrganisationType(instance4.getId(),instance4.getText(), instance4.isActive(), null, img, color);
-			ims.core.vo.lookups.OrganisationType parentVoLookup4 = voLookup4;
-			ims.domain.lookups.LookupInstance parent4 = instance4.getParent();
-			while (parent4 != null)
+			ims.core.vo.lookups.OrganisationType voLookup5 = new ims.core.vo.lookups.OrganisationType(instance5.getId(),instance5.getText(), instance5.isActive(), null, img, color);
+			ims.core.vo.lookups.OrganisationType parentVoLookup5 = voLookup5;
+			ims.domain.lookups.LookupInstance parent5 = instance5.getParent();
+			while (parent5 != null)
 			{
-				if (parent4.getImage() != null) 
+				if (parent5.getImage() != null) 
 				{
-					img = new ims.framework.utils.ImagePath(parent4.getImage().getImageId(), parent4.getImage().getImagePath() );
+					img = new ims.framework.utils.ImagePath(parent5.getImage().getImageId(), parent5.getImage().getImagePath() );
 				}
 				else 
 				{
 					img = null;
 				}
-				color = parent4.getColor();
+				color = parent5.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup4.setParent(new ims.core.vo.lookups.OrganisationType(parent4.getId(),parent4.getText(), parent4.isActive(), null, img, color));
-				parentVoLookup4 = parentVoLookup4.getParent();
-								parent4 = parent4.getParent();
+								parentVoLookup5.setParent(new ims.core.vo.lookups.OrganisationType(parent5.getId(),parent5.getText(), parent5.isActive(), null, img, color));
+				parentVoLookup5 = parentVoLookup5.getParent();
+								parent5 = parent5.getParent();
 			}			
-			valueObject.setType(voLookup4);
+			valueObject.setType(voLookup5);
 		}
 				// isActive
 		valueObject.setIsActive( domainObject.isIsActive() );
@@ -444,6 +453,65 @@ public class GpPracticeLiteVoAssembler
 		domainObject.setVersion(valueObject.getVersion_Organisation());
 
 		domainObject.setLocationSites(ims.core.vo.domain.LocSiteShortVoAssembler.extractLocSiteSet(domainFactory, valueObject.getSurgeries(), domainObject.getLocationSites(), domMap));		
+
+		// SaveAsRefVO treated as RefValueObject
+		ims.core.clinical.vo.TaxonomyMapRefVoCollection refCollection2 = new ims.core.clinical.vo.TaxonomyMapRefVoCollection();
+		if (valueObject.getCodeMappings() != null)
+		{
+			for (int i2=0; i2<valueObject.getCodeMappings().size(); i2++)
+			{
+				ims.core.clinical.vo.TaxonomyMapRefVo ref2 = (ims.core.clinical.vo.TaxonomyMapRefVo)valueObject.getCodeMappings().get(i2);
+				refCollection2.add(ref2);
+			}
+		}
+		int size2 = (null == refCollection2) ? 0 : refCollection2.size();		
+		java.util.List domainCodeMappings2 = domainObject.getCodeMappings();
+		if (domainCodeMappings2 == null)
+		{
+			domainCodeMappings2 = new java.util.ArrayList();
+		}
+		for(int i=0; i < size2; i++) 
+		{
+			ims.core.clinical.vo.TaxonomyMapRefVo vo = refCollection2.get(i);			
+			ims.core.clinical.domain.objects.TaxonomyMap dom = null;
+			if ( null != vo ) 
+			{
+				if (vo.getBoId() == null)
+				{
+					if (domMap.get(vo) != null)
+					{
+						dom = (ims.core.clinical.domain.objects.TaxonomyMap)domMap.get(vo);
+					}
+				}
+				else
+				{
+					dom = (ims.core.clinical.domain.objects.TaxonomyMap)domainFactory.getDomainObject( ims.core.clinical.domain.objects.TaxonomyMap.class, vo.getBoId());
+				}
+			}
+
+			int domIdx = domainCodeMappings2.indexOf(dom);
+			if (domIdx == -1)
+			{
+				domainCodeMappings2.add(i, dom);
+			}
+			else if (i != domIdx && i < domainCodeMappings2.size())
+			{
+				Object tmp = domainCodeMappings2.get(i);
+				domainCodeMappings2.set(i, domainCodeMappings2.get(domIdx));
+				domainCodeMappings2.set(domIdx, tmp);
+			}
+		}
+		
+		//Remove all ones in domList where index > voCollection.size() as these should
+		//now represent the ones removed from the VO collection. No longer referenced.
+		int i2 = domainCodeMappings2.size();
+		while (i2 > size2)
+		{
+			domainCodeMappings2.remove(i2-1);
+			i2 = domainCodeMappings2.size();
+		}
+		
+		domainObject.setCodeMappings(domainCodeMappings2);		
 		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
 		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
 		if (valueObject.getName() != null && valueObject.getName().equals(""))
@@ -453,13 +521,13 @@ public class GpPracticeLiteVoAssembler
 		domainObject.setName(valueObject.getName());
 		domainObject.setAddress(ims.core.vo.domain.PersonAddressAssembler.extractAddress(domainFactory, valueObject.getAddress(), domMap));
 		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value4 = null;
+		ims.domain.lookups.LookupInstance value5 = null;
 		if ( null != valueObject.getType() ) 
 		{
-			value4 =
+			value5 =
 				domainFactory.getLookupInstance(valueObject.getType().getID());
 		}
-		domainObject.setType(value4);
+		domainObject.setType(value5);
 		domainObject.setIsActive(valueObject.getIsActive());
 
 		return domainObject;

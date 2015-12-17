@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.scheduling.vo.domain;
@@ -60,6 +65,12 @@ public class ProfileParentChildSlotVoAssembler
 		valueObjectDest.setDuration(valueObjectSrc.getDuration());
 		// EndTm
 		valueObjectDest.setEndTm(valueObjectSrc.getEndTm());
+		// Priority
+		valueObjectDest.setPriority(valueObjectSrc.getPriority());
+		// SlotResp
+		valueObjectDest.setSlotResp(valueObjectSrc.getSlotResp());
+		// NumberSlotsReq
+		valueObjectDest.setNumberSlotsReq(valueObjectSrc.getNumberSlotsReq());
 	 	return valueObjectDest;
 	 }
 
@@ -368,6 +379,46 @@ public class ProfileParentChildSlotVoAssembler
 		{
 			valueObject.setEndTm(new ims.framework.utils.Time(EndTm) );
 		}
+		// Priority
+		ims.domain.lookups.LookupInstance instance6 = domainObject.getPriority();
+		if ( null != instance6 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance6.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance6.getImage().getImageId(), instance6.getImage().getImagePath());
+			}
+			color = instance6.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.scheduling.vo.lookups.SchedulingPriority voLookup6 = new ims.scheduling.vo.lookups.SchedulingPriority(instance6.getId(),instance6.getText(), instance6.isActive(), null, img, color);
+			ims.scheduling.vo.lookups.SchedulingPriority parentVoLookup6 = voLookup6;
+			ims.domain.lookups.LookupInstance parent6 = instance6.getParent();
+			while (parent6 != null)
+			{
+				if (parent6.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent6.getImage().getImageId(), parent6.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent6.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup6.setParent(new ims.scheduling.vo.lookups.SchedulingPriority(parent6.getId(),parent6.getText(), parent6.isActive(), null, img, color));
+				parentVoLookup6 = parentVoLookup6.getParent();
+								parent6 = parent6.getParent();
+			}			
+			valueObject.setPriority(voLookup6);
+		}
+				// SlotResp
+		valueObject.setSlotResp(ims.scheduling.vo.domain.Profile_ListOwnerVoAssembler.create(map, domainObject.getSlotResp()) );
+		// NumberSlotsReq
+		valueObject.setNumberSlotsReq(domainObject.getNumberSlotsReq());
  		return valueObject;
 	 }
 
@@ -434,6 +485,16 @@ public class ProfileParentChildSlotVoAssembler
 			value5 = time5.toString();
 		}
 		domainObject.setEndTm(value5);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value6 = null;
+		if ( null != valueObject.getPriority() ) 
+		{
+			value6 =
+				domainFactory.getLookupInstance(valueObject.getPriority().getID());
+		}
+		domainObject.setPriority(value6);
+		domainObject.setSlotResp(ims.scheduling.vo.domain.Profile_ListOwnerVoAssembler.extractProfile_ListOwner(domainFactory, valueObject.getSlotResp(), domMap));
+		domainObject.setNumberSlotsReq(valueObject.getNumberSlotsReq());
 
 		return domainObject;
 	}

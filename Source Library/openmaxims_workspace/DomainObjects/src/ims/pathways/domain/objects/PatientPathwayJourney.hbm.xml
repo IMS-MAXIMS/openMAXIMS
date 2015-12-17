@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:36 -->
+<!-- Generated: 12/10/2015, 13:31 -->
 <hibernate-mapping>
 	<class name="ims.pathways.domain.objects.PatientPathwayJourney" table="pthw_patientjourney" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -82,7 +82,6 @@
 			
 			<one-to-many class="ims.pathways.domain.objects.PatientJourneyStatus" />
 		</set>
-<!-- debug: targetEndDate -->
 <!-- debug: endedOnDate -->
 <!-- debug: currentClock -->
 <!-- debug: field.IsAssociation : true -->
@@ -123,18 +122,44 @@
 		<many-to-one name="responsibleConsultant" class="ims.core.resource.people.domain.objects.Hcp" unique="true" foreign-key="patientjourney_responsibl_fk" access="field" cascade="save-update">
 			<column name="responsibl" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
-<!-- debug: comments -->
 <!-- debug: isCancerPathway -->
 <!-- debug: cancerPathwayDate -->
+<!-- debug: linkedComments -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- one to many -->
+		<list name="linkedComments" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="patientjourney_linkedcomm_fk">
+				<column name="pthw_patientjourney_linkedcomm" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.pathways.domain.objects.PatientJourneyComment" />
+		</list>
+<!-- debug: lastValidationDate -->
+<!-- debug: nextValidationDate -->
+<!-- debug: patientJourneyBreachReason -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- one to many -->
+		<list name="patientJourneyBreachReason" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="patientjourney_patientjou_fk">
+				<column name="pthw_patientjourney_patientjou" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.pathways.domain.objects.PatientJourneyBreach" />
+		</list>
+<!-- debug: validationCompletedDT -->
+<!-- debug: validationCompletedBy -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="validationCompletedBy" class="ims.core.resource.people.domain.objects.MemberOfStaff" unique="true" foreign-key="patientjourney_validatio2_fk" access="field" cascade="save-update">
+			<column name="validatio2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="startDate" type="date" access="field" update="true">
 			<column name="startdate"  not-null="true" unique="false"  />
-		</property>
-<!-- debug: !IsAssociation && !IsCollection -->
-<!-- debug: !IsLookup -->
-		<property name="targetEndDate" type="date" access="field" update="true">
-			<column name="targetendd"  not-null="true" unique="false"  />
 		</property>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
@@ -148,11 +173,6 @@
 		</property>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
-		<property name="comments" type="text" access="field" update="true" > 
-			<column name="comments"  not-null="false" unique="false"  />
-		</property>
-<!-- debug: !IsAssociation && !IsCollection -->
-<!-- debug: !IsLookup -->
 		<property name="isCancerPathway" type="boolean" access="field" update="true">
 			<column name="iscancerpa"  not-null="false" unique="false"  />
 		</property>
@@ -160,6 +180,21 @@
 <!-- debug: !IsLookup -->
 		<property name="cancerPathwayDate" type="date" access="field" update="true">
 			<column name="cancerpath"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="lastValidationDate" type="date" access="field" update="true">
+			<column name="lastvalida"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="nextValidationDate" type="date" access="field" update="true">
+			<column name="nextvalida"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="validationCompletedDT" type="timestamp" access="field" update="true">
+			<column name="c_validati"  not-null="false" unique="false"  />
 		</property>
 	</class>
 </hibernate-mapping>

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -51,7 +56,7 @@ public class CarePlanWorklistImpl extends BaseCarePlanWorklistImpl
 	
 	public LocationLiteVoCollection getWards() 
 	{
-		String hql = "from Location loc where loc.type = " + LocationType.WARD.getId() + " and loc.isActive = 1 order by UPPER(loc.name) asc";		
+		String hql = "from Location loc where loc.type = " + LocationType.WARD.getId() + " and loc.isActive = 1 and loc.isVirtual = 0 order by loc.upperName asc"; //WDEV-19532		WDEV-20219
 		return LocationLiteVoAssembler.createLocationLiteVoCollectionFromLocation(getDomainFactory().find(hql));
 	}
 

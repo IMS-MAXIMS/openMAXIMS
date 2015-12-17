@@ -1,0 +1,47 @@
+package ims.rules.userrules;
+
+import ims.careuk.domain.objects.ReferralEROD;
+import ims.careuk.vo.lookups.ERODType;
+import ims.rules.engine.RulesRuntimeEngine;
+import ims.domain.DomainFactory;
+import java.util.HashMap;
+
+global RulesRuntimeEngine engine;
+global DomainFactory factory;
+global HashMap prevState;
+
+
+
+				 
+function boolean newPauseEventCheck(ims.rules.engine.RulesRuntimeEngine engine, ims.domain.DomainFactory factory, java.util.HashMap prevState, ims.careuk.domain.objects.ReferralEROD entity)
+{
+	  
+		// Don't continue if this is not the pathwayEntity rule we are looking for
+		if (engine.getPathwayEntitySpecificRuleName() == null || !engine.getPathwayEntitySpecificRuleName().equals("newPauseEventCheck.drl"))
+		{
+			return false;
+		}
+		
+		// Set this as the rule that is executed for checking within the interceptor
+		engine.setLastRuleName("newPauseEventCheck.drl");
+  
+		// If this is a new ReferralEROD of type Elective, we want to create the event
+	    if ((entity.getId() == null || prevState == null) && entity.getERODType() != null && entity.getERODType().getId() == ims.careuk.vo.lookups.ERODType.ELECTIVE.getId())
+	    {
+   		    engine.setLastRuleResult(ims.careuk.vo.lookups.ERODType.ELECTIVE.getId());
+   		    return true;
+	    }
+
+   	    engine.setLastRuleResult(0);
+	   return false; 
+}
+
+rule "newPauseEventCheck"
+no-loop true
+salience 0
+when
+	entity : ims.careuk.domain.objects.ReferralEROD();
+	eval(newPauseEventCheck(engine, factory, prevState, entity));
+then
+	engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Rule 'newPauseEventCheck' new Elective type created.");
+end

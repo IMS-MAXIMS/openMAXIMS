@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.clinical.configuration.domain.objects;
@@ -55,6 +60,9 @@ public class SECSConfiguration extends ims.domain.DomainObject implements ims.do
 	private ims.clinical.configuration.domain.objects.SECSOxygenSats oxygenSatsConfig;
 	/** isActive Flag */
 	private Boolean isActive;
+	private java.util.Date effectiveFrom;
+	private java.util.Date effectiveTo;
+	private Boolean isRequiredForScore;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public SECSConfiguration (Integer id, int ver)
@@ -108,6 +116,27 @@ public class SECSConfiguration extends ims.domain.DomainObject implements ims.do
 	}
 	public void setIsActive(Boolean isActive) {
 		this.isActive = isActive;
+	}
+
+	public java.util.Date getEffectiveFrom() {
+		return effectiveFrom;
+	}
+	public void setEffectiveFrom(java.util.Date effectiveFrom) {
+		this.effectiveFrom = effectiveFrom;
+	}
+
+	public java.util.Date getEffectiveTo() {
+		return effectiveTo;
+	}
+	public void setEffectiveTo(java.util.Date effectiveTo) {
+		this.effectiveTo = effectiveTo;
+	}
+
+	public Boolean isIsRequiredForScore() {
+		return isRequiredForScore;
+	}
+	public void setIsRequiredForScore(Boolean isRequiredForScore) {
+		this.isRequiredForScore = isRequiredForScore;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -177,6 +206,15 @@ public class SECSConfiguration extends ims.domain.DomainObject implements ims.do
 	    auditStr.append("; ");
 		auditStr.append("\r\n*isActive* :");
 		auditStr.append(isActive);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*effectiveFrom* :");
+		auditStr.append(effectiveFrom);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*effectiveTo* :");
+		auditStr.append(effectiveTo);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*isRequiredForScore* :");
+		auditStr.append(isRequiredForScore);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -251,6 +289,24 @@ public class SECSConfiguration extends ims.domain.DomainObject implements ims.do
 			sb.append("<isActive>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsActive().toString()));
 			sb.append("</isActive>");		
+		}
+		if (this.getEffectiveFrom() != null)
+		{
+			sb.append("<effectiveFrom>");
+			sb.append(new ims.framework.utils.DateTime(this.getEffectiveFrom()).toString(ims.framework.utils.DateTimeFormat.MILLI));
+			sb.append("</effectiveFrom>");		
+		}
+		if (this.getEffectiveTo() != null)
+		{
+			sb.append("<effectiveTo>");
+			sb.append(new ims.framework.utils.DateTime(this.getEffectiveTo()).toString(ims.framework.utils.DateTimeFormat.MILLI));
+			sb.append("</effectiveTo>");		
+		}
+		if (this.isIsRequiredForScore() != null)
+		{
+			sb.append("<isRequiredForScore>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsRequiredForScore().toString()));
+			sb.append("</isRequiredForScore>");		
 		}
 		return sb.toString();
 	}
@@ -444,6 +500,21 @@ public class SECSConfiguration extends ims.domain.DomainObject implements ims.do
 		{	
     		obj.setIsActive(new Boolean(fldEl.getTextTrim()));	
 		}
+		fldEl = el.element("effectiveFrom");
+		if(fldEl != null)
+		{	
+    		obj.setEffectiveFrom(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
+		}
+		fldEl = el.element("effectiveTo");
+		if(fldEl != null)
+		{	
+    		obj.setEffectiveTo(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
+		}
+		fldEl = el.element("isRequiredForScore");
+		if(fldEl != null)
+		{	
+    		obj.setIsRequiredForScore(new Boolean(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -461,6 +532,9 @@ public class SECSConfiguration extends ims.domain.DomainObject implements ims.do
 		public static final String LookupConfig = "lookupConfig";
 		public static final String OxygenSatsConfig = "oxygenSatsConfig";
 		public static final String IsActive = "isActive";
+		public static final String EffectiveFrom = "effectiveFrom";
+		public static final String EffectiveTo = "effectiveTo";
+		public static final String IsRequiredForScore = "isRequiredForScore";
 	}
 }
 

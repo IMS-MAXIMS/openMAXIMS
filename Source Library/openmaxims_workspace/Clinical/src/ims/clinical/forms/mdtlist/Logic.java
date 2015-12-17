@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -37,7 +42,19 @@ public class Logic extends BaseLogic
 	protected void onFormOpen() throws ims.framework.exceptions.PresentationLogicException
 	{
 		initialize();
+		if (form.getGlobalContext().Core.getCurrentMDTListShownIsNotNull()) //WDEV-19389 
+		{
+			setSearchCriteria(form.getGlobalContext().Core.getCurrentMDTListShown());
+			search();
+		}
 	}
+
+
+	private void setSearchCriteria(MDTListAorB currentMDTListShown)
+	{
+		form.cmbMDTList().setValue(currentMDTListShown);		
+	}
+
 
 	private void initialize()
 	{
@@ -56,6 +73,7 @@ public class Logic extends BaseLogic
 	protected void onImbClearClick() throws ims.framework.exceptions.PresentationLogicException
 	{
 		clear();
+		form.getGlobalContext().Core.setCurrentMDTListShown(null);//WDEV-19389 
 	}
 
 	private void clear()

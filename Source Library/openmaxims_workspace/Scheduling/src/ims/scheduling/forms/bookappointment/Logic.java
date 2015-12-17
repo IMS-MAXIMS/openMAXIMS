@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -35,6 +40,8 @@ import ims.core.vo.enums.MosType;
 import ims.core.vo.lookups.ActivityType;
 import ims.domain.exceptions.DomainInterfaceException;
 import ims.domain.exceptions.StaleObjectException;
+import ims.emergency.vo.EmergencyAttendanceOutcomeVo;
+import ims.framework.MessageButtons;
 import ims.framework.enumerations.DialogResult;
 import ims.framework.enumerations.FormMode;
 import ims.framework.enumerations.SortOrder;
@@ -83,6 +90,12 @@ public class Logic extends BaseLogic
 		if (args != null && args.length > 0 && args[0] instanceof Boolean)
 		{
 			form.getLocalContext().setTransportRequired((Boolean) args[0]);
+		}
+		
+		//WDEV-19060
+		if (args != null && args.length > 0 && args[0] instanceof EmergencyAttendanceOutcomeVo)
+		{
+			form.getLocalContext().setCurrentEmergencyAttendance((EmergencyAttendanceOutcomeVo) args[0]);
 		}
 		
 		form.btnClose().setVisible(false);
@@ -176,9 +189,6 @@ public class Logic extends BaseLogic
 			bookingCalendar1DateSelected(new Date());
 			form.btnCancel().setEnabled(true);
 
-			form.cmbSpecialty().setEnabled(false);
-			form.cmbActivity().setEnabled(false);
-			form.cmbClinic().setEnabled(false);
 			form.imbClear().setEnabled(false);
 		}
 	}
@@ -423,7 +433,9 @@ public class Logic extends BaseLogic
 							Time endTime = (Time)voCollSessionShort.get(i).getEndTm().clone();
 							
 							totalTime += endTime.getTotalMinutes() - startTime.getTotalMinutes();
-							remainingTime += voCollSessionShort.get(i).getRemainingTime();
+							
+							if (voCollSessionShort.get(i).getRemainingTime() != null)
+								remainingTime += voCollSessionShort.get(i).getRemainingTime();
 						}
 					}
 				}
@@ -631,7 +643,12 @@ public class Logic extends BaseLogic
 								sRow.setColLocation(voCollSlots.get(i).getSession().getSchLocation().getName());
 								sRow.setTooltipForColLocation(voCollSlots.get(i).getSession().getSchLocation().getName());
 							}
-						
+							//WDEV-19739
+							if ((voCollSlots.get(i).getSessionIsNotNull() && voCollSlots.get(i).getSession().getSessionComment() != null)  || voCollSlots.get(i).getComment() != null)
+							{
+								sRow.setColSlotComment(" * ");
+								sRow.setTooltipForColSlotComment((voCollSlots.get(i).getSession() != null && voCollSlots.get(i).getSession().getSessionComment() != null ? "Clinic Comment: <b>" + voCollSlots.get(i).getSession().getSessionComment() + "</b>"  : "") + (voCollSlots.get(i).getSession() != null && voCollSlots.get(i).getSession().getSessionComment() != null && voCollSlots.get(i).getSession().getSessionComment().length() > 0 ? "<br/>" : "") + (voCollSlots.get(i).getComment() != null ? "Slot Comment: <b>" + voCollSlots.get(i).getComment() + "</b>" : ""));
+							}
 							
 							sRow.setValue(voCollSlots.get(i));
 							sRow.setColSelectReadOnly(!hasBookingRights);
@@ -669,6 +686,11 @@ public class Logic extends BaseLogic
 						sRow.setTooltipForColActivity(form.cmbActivity().getValue().getName());
 					
 					sRow.setColAppointmentTime("Flexi");
+					if (voSession.getSessionComment() != null)
+					{
+						sRow.setColSlotComment("*");
+						sRow.setTooltipForColSlotComment("Session Comment: <b>" + voSession.getSessionComment() + "</b>");
+					}
 					voBookAppt.setActivity(form.cmbActivity().getValue());
 					voBookAppt.setSession(voSession);
 					sRow.setValue(voBookAppt);
@@ -959,11 +981,49 @@ public class Logic extends BaseLogic
 		//this method was moved in impl
 		//reduceRemainingSlotsOrTimes(voBooking);	//	WDEV-10598
 
+		form.getLocalContext().setSch_Booking(voBooking);
+		if(ConfigFlag.UI.DISPLAY_WARNING_MESSAGE_IF_BOOKING_IN_PAST.getValue())
+		{
+			if(isApptInthePast(voBooking))
+			{
+				form.getLocalContext().setApptInThePastMessageid(engine.showMessage("The selected date of the appointment is in the past. Do you wish to continue to book the appointment", "Booking Historical Appointment?", MessageButtons.YESNO));
+				return;
+			}
+		}
+	
+		saveBooking(voBooking);
+	}
+	
+	private boolean isApptInthePast(Sch_BookingVo voBooking)
+	{
+		if (voBooking == null)
+			throw new CodingRuntimeException("voBooking cannot be null in method isApptInthePast");
+		
+		if(voBooking.getAppointmentsIsNotNull())
+		{
+			for(Booking_AppointmentVo voAppt : voBooking.getAppointments())
+			{
+				if(voAppt.getID_Booking_Appointment() == null || voAppt.getRequiresRebookIsNotNull())
+				{
+					if(voAppt.getAppointmentDateIsNotNull() && voAppt.getAppointmentDate().isLessThan(new Date()))
+						return true;
+					else if(voAppt.getAppointmentDateIsNotNull() && voAppt.getAppointmentDate().equals(new Date()) && voAppt.getApptStartTimeIsNotNull() && voAppt.getApptStartTime().isLessThan(new Time()))
+						return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+		
+	private void saveBooking(Sch_BookingVo voBooking)
+	{
 		try
 		{
-			voBooking = domain.saveBooking(voBooking, null, form.getLocalContext().getSelectedSessions().get(form.getLocalContext().getSelectedSessionIndex()));
+			voBooking = domain.saveBooking(voBooking, null, form.getLocalContext().getSelectedSessions().get(form.getLocalContext().getSelectedSessionIndex()), form.getLocalContext().getCurrentEmergencyAttendance()); //WDEV-19060
 			form.getGlobalContext().Scheduling.setBookingAppointment(null);
 			form.getLocalContext().setIsRebookApptSelected(null);
+			form.getLocalContext().setCurrentEmergencyAttendance(null);//WDEV-19060
 		}
 		catch (StaleObjectException e)
 		{
@@ -1457,18 +1517,19 @@ public class Logic extends BaseLogic
 		if(FormMode.EDIT.equals(form.getMode()))
 		{
 			form.txtBookingComments().setEnabled(form.grdAppts().getRows().size() > 0);
+			form.chkOverBook().setEnabled(false); //WDEV-19738
 			if(	Boolean.TRUE.equals(form.getLocalContext().getEnableFirstAvailableApp()))	//wdev-14867
 				form.chkFirst().setEnabled(true);
 			else
 				form.chkFirst().setEnabled(false);
 		}
 		else
-			{
+		{
 			form.chkFirst().setEnabled(true);		//wdev-14867
 			//WDEV-15833
 			form.txtBookingComments().setEnabled(false);
-			}
-			
+			form.chkOverBook().setEnabled(true); //WDEV-19738
+		}			
 	}
 
 	private void displayExistingFixedAppts(SessionSlotVo voSlot, boolean isChecked)
@@ -1638,6 +1699,7 @@ public class Logic extends BaseLogic
 
 		if(voBookAppt.getApptStatusHistoryIsNotNull())
 			clearUnsavedItemsInHistory(voBookAppt.getApptStatusHistory());
+		
 		// WDEV-6049
 		Appointment_StatusVo voStatus = new Appointment_StatusVo();
 		voStatus.setApptDate(voBookAppt.getAppointmentDate());
@@ -1646,6 +1708,8 @@ public class Logic extends BaseLogic
 		voStatus.setStatusChangeDateTime(new DateTime());
 		//-------
 		voStatus.setStatus(voBookAppt.getApptStatus());
+		voStatus.setSession(voBookAppt.getSessionIsNotNull() ? voBookAppt.getSession() : null); //WDEV-23185
+		
 		voBookAppt.setCurrentStatusRecord(voStatus);
 		if (voBookAppt.getApptStatusHistory() == null)
 			voBookAppt.setApptStatusHistory(new Appointment_StatusVoCollection());
@@ -1723,7 +1787,10 @@ public class Logic extends BaseLogic
 		Appointment_StatusVo voStatus = new Appointment_StatusVo();
 		voStatus.setApptDate(voBookAppt.getAppointmentDate());
 		voStatus.setApptTime(voBookAppt.getApptStartTime());
+		voStatus.setStatusChangeDateTime(new DateTime());
 		voStatus.setStatus(voBookAppt.getApptStatus());
+		voStatus.setSession(voBookAppt.getSessionIsNotNull() ? voBookAppt.getSession() : null); //WDEV-23185
+		
 		voBookAppt.setCurrentStatusRecord(voStatus);
 		if (voBookAppt.getApptStatusHistory() == null)
 			voBookAppt.setApptStatusHistory(new Appointment_StatusVoCollection());
@@ -2139,5 +2206,15 @@ public class Logic extends BaseLogic
 			return form.grdSessionSlots().getRowByValue((SessionSlotVo)rowVal);
 		
 		return null;
+	}
+
+	@Override
+	protected void onMessageBoxClosed(int messageBoxId, DialogResult result) throws PresentationLogicException 
+	{
+		if(form.getLocalContext().getApptInThePastMessageidIsNotNull() && form.getLocalContext().getApptInThePastMessageid().equals(messageBoxId))
+		{
+			if(result.equals(DialogResult.YES))
+				saveBooking(form.getLocalContext().getSch_Booking());
+		}
 	}
 }

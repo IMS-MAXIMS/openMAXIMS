@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.admin.vo.domain;
@@ -62,10 +67,22 @@ public class AppRoleVoAssembler
 		valueObjectDest.setFormMenuActionsDenied(valueObjectSrc.getFormMenuActionsDenied());
 		// CodeMappings
 		valueObjectDest.setCodeMappings(valueObjectSrc.getCodeMappings());
+		// SessionTimeout
+		valueObjectDest.setSessionTimeout(valueObjectSrc.getSessionTimeout());
+		// AutolockTimer
+		valueObjectDest.setAutolockTimer(valueObjectSrc.getAutolockTimer());
+		// AlertsAccess
+		valueObjectDest.setAlertsAccess(valueObjectSrc.getAlertsAccess());
+		// SpineRbac
+		valueObjectDest.setSpineRbac(valueObjectSrc.getSpineRbac());
+		// PdsRights
+		valueObjectDest.setPdsRights(valueObjectSrc.getPdsRights());
 		// Name
 		valueObjectDest.setName(valueObjectSrc.getName());
 		// IsActive
 		valueObjectDest.setIsActive(valueObjectSrc.getIsActive());
+		// RequiresPDS
+		valueObjectDest.setRequiresPDS(valueObjectSrc.getRequiresPDS());
 	 	return valueObjectDest;
 	 }
 
@@ -368,10 +385,22 @@ public class AppRoleVoAssembler
 		valueObject.setFormMenuActionsDenied(ims.admin.vo.domain.FormMenuActionsDeniedVoAssembler.createFormMenuActionsDeniedVoCollectionFromRoleMenuActionsDenied(map, domainObject.getFormMenuActionsDenied()) );
 		// CodeMappings
 		valueObject.setCodeMappings(ims.core.vo.domain.TaxonomyMapAssembler.createTaxonomyMapCollectionFromTaxonomyMap(map, domainObject.getCodeMappings()) );
+		// SessionTimeout
+		valueObject.setSessionTimeout(domainObject.getSessionTimeout());
+		// AutolockTimer
+		valueObject.setAutolockTimer(domainObject.getAutolockTimer());
+		// AlertsAccess
+		valueObject.setAlertsAccess(ims.core.vo.domain.AlertAccessRightVoAssembler.createAlertAccessRightVoCollectionFromAlertAccessRight(map, domainObject.getAlertsAccess()) );
+		// SpineRbac
+		valueObject.setSpineRbac(ims.admin.vo.domain.RBACBaselineJobRoleLiteVoAssembler.create(map, domainObject.getSpineRbac()) );
+		// PdsRights
+		valueObject.setPdsRights(ims.admin.vo.domain.AppRightVoAssembler.createAppRightVoCollectionFromAppRight(map, domainObject.getPdsRights()) );
 		// Name
 		valueObject.setName(domainObject.getName());
 		// IsActive
 		valueObject.setIsActive( domainObject.isIsActive() );
+		// RequiresPDS
+		valueObject.setRequiresPDS( domainObject.isRequiresPDS() );
  		return valueObject;
 	 }
 
@@ -433,6 +462,11 @@ public class AppRoleVoAssembler
 		domainObject.setTopButtonConfig(ims.admin.vo.domain.AppTopButtonConfigVoAssembler.extractAppTopButtonConfig(domainFactory, valueObject.getTopButtonConfig(), domMap));
 		domainObject.setFormMenuActionsDenied(ims.admin.vo.domain.FormMenuActionsDeniedVoAssembler.extractRoleMenuActionsDeniedSet(domainFactory, valueObject.getFormMenuActionsDenied(), domainObject.getFormMenuActionsDenied(), domMap));		
 		domainObject.setCodeMappings(ims.core.vo.domain.TaxonomyMapAssembler.extractTaxonomyMapList(domainFactory, valueObject.getCodeMappings(), domainObject.getCodeMappings(), domMap));		
+		domainObject.setSessionTimeout(valueObject.getSessionTimeout());
+		domainObject.setAutolockTimer(valueObject.getAutolockTimer());
+		domainObject.setAlertsAccess(ims.core.vo.domain.AlertAccessRightVoAssembler.extractAlertAccessRightList(domainFactory, valueObject.getAlertsAccess(), domainObject.getAlertsAccess(), domMap));		
+		domainObject.setSpineRbac(ims.admin.vo.domain.RBACBaselineJobRoleLiteVoAssembler.extractRBACBaselineJobRole(domainFactory, valueObject.getSpineRbac(), domMap));
+		domainObject.setPdsRights(ims.admin.vo.domain.AppRightVoAssembler.extractAppRightList(domainFactory, valueObject.getPdsRights(), domainObject.getPdsRights(), domMap));		
 		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
 		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
 		if (valueObject.getName() != null && valueObject.getName().equals(""))
@@ -441,6 +475,7 @@ public class AppRoleVoAssembler
 		}
 		domainObject.setName(valueObject.getName());
 		domainObject.setIsActive(valueObject.getIsActive());
+		domainObject.setRequiresPDS(valueObject.getRequiresPDS());
 
 		return domainObject;
 	}

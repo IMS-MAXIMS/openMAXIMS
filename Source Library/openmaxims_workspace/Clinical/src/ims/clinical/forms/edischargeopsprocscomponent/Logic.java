@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -77,6 +82,7 @@ public class Logic extends BaseLogic
 	{
 		form.getLocalContext().setbInitialised(null);
 		form.getLocalContext().setisReadonly(false);
+		form.ctnDetails().ccPerformedBy().isRequired(form.getForms().Clinical.EDischarge.equals(engine.getFormName())); //WDEV-18625
 	}
 
 	// We initialize the Clinical Coding custom control and Authoring Info.
@@ -217,13 +223,13 @@ public class Logic extends BaseLogic
 		}
 		else
 		{
+			form.chkComplete().setVisible(false); // WDEV-20190
 			//WDEV-12923 - starts here
 			form.ctnDetails().grpProcedureType().setEnabled(form.getLocalContext().getIsIncludedChanged() == null);
 			form.ctnDetails().cmbLaterality().setEnabled(form.getLocalContext().getIsIncludedChanged() == null);
 			form.ctnDetails().pdtPerformed().setEnabled(form.getLocalContext().getIsIncludedChanged() == null);
 			form.ctnDetails().txtSite().setEnabled(form.getLocalContext().getIsIncludedChanged() == null);
 			form.ctnDetails().timProc().setEnabled(form.getLocalContext().getIsIncludedChanged() == null);
-			
 			//WDEV-12923 -  ends here
 			
 			/*WDEV-12923if (form.getLocalContext().getHcpIsNotNull())
@@ -690,7 +696,7 @@ public class Logic extends BaseLogic
 
 			if (datePerf.isGreaterThan(new Date()))
 			{
-				errors.add("Date Performed cannot be in the Future!!!");
+				errors.add("Date Performed cannot be in the Future");
 			}
 			if (form.getGlobalContext().Core.getPatientShortIsNotNull() && form.getGlobalContext().Core.getPatientShort().getDobIsNotNull() && datePerf.isLessThan(form.getGlobalContext().Core.getPatientShort().getDob()))
 			{
@@ -700,6 +706,11 @@ public class Logic extends BaseLogic
 			}
 		}
 		// -----------------------------
+		
+		//WDEV-18625
+		if (form.ctnDetails().ccPerformedBy().getError("Performed By") != null)
+			errors.add(form.ctnDetails().ccPerformedBy().getError("Performed By"));
+		
 		if (errors.size() > 0)
 		{
 			engine.showErrors(errors.toArray(new String[0]));
@@ -798,8 +809,9 @@ public class Logic extends BaseLogic
 			form.ctnDetails().ccAuthor().setValue(author);
 		}
 		
-		// Initialise performed by
-		form.ctnDetails().ccPerformedBy().setValue(domain.getHcpLiteUser() != null? domain.getHcp((IMos) domain.getHcpLiteUser()) : null);
+		// Initialise performed by 
+		if (!form.getForms().Clinical.EDischarge.equals(engine.getFormName())) //WDEV-18625
+			form.ctnDetails().ccPerformedBy().setValue(domain.getHcpLiteUser() != null? domain.getHcp((IMos) domain.getHcpLiteUser()) : null);
 
 		updateContextMenu();
 		form.getGlobalContext().Clinical.seteDischargeDisableTabs(true);

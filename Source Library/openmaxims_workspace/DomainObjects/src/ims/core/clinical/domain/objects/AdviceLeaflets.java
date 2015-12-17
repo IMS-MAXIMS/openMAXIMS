@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.clinical.domain.objects;
@@ -63,6 +68,7 @@ public class AdviceLeaflets extends ims.domain.DomainObject implements ims.domai
 	private ims.core.resource.people.domain.objects.Hcp authoringHCP;
 	/** Authoring DateTime */
 	private java.util.Date authoringDateTime;
+	private String adviceLeafletName;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public AdviceLeaflets (Integer id, int ver)
@@ -154,6 +160,17 @@ public class AdviceLeaflets extends ims.domain.DomainObject implements ims.domai
 		this.authoringDateTime = authoringDateTime;
 	}
 
+	public String getAdviceLeafletName() {
+		return adviceLeafletName;
+	}
+	public void setAdviceLeafletName(String adviceLeafletName) {
+		if ( null != adviceLeafletName && adviceLeafletName.length() > 100 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for adviceLeafletName. Tried to set value: "+
+				adviceLeafletName);
+		}
+		this.adviceLeafletName = adviceLeafletName;
+	}
+
 	public ims.domain.SystemInformation getSystemInformation() {
 		if (systemInformation == null) systemInformation = new ims.domain.SystemInformation();
 		return systemInformation;
@@ -234,6 +251,9 @@ public class AdviceLeaflets extends ims.domain.DomainObject implements ims.domai
 	    auditStr.append("; ");
 		auditStr.append("\r\n*authoringDateTime* :");
 		auditStr.append(authoringDateTime);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*adviceLeafletName* :");
+		auditStr.append(adviceLeafletName);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -332,6 +352,12 @@ public class AdviceLeaflets extends ims.domain.DomainObject implements ims.domai
 			sb.append("<authoringDateTime>");
 			sb.append(new ims.framework.utils.DateTime(this.getAuthoringDateTime()).toString(ims.framework.utils.DateTimeFormat.MILLI));
 			sb.append("</authoringDateTime>");		
+		}
+		if (this.getAdviceLeafletName() != null)
+		{
+			sb.append("<adviceLeafletName>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getAdviceLeafletName().toString()));
+			sb.append("</adviceLeafletName>");		
 		}
 		return sb.toString();
 	}
@@ -546,6 +572,11 @@ public class AdviceLeaflets extends ims.domain.DomainObject implements ims.domai
 		{	
     		obj.setAuthoringDateTime(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
 		}
+		fldEl = el.element("adviceLeafletName");
+		if(fldEl != null)
+		{	
+    		obj.setAdviceLeafletName(new String(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -567,6 +598,7 @@ public class AdviceLeaflets extends ims.domain.DomainObject implements ims.domai
 		public static final String CareContext = "careContext";
 		public static final String AuthoringHCP = "authoringHCP";
 		public static final String AuthoringDateTime = "authoringDateTime";
+		public static final String AdviceLeafletName = "adviceLeafletName";
 	}
 }
 

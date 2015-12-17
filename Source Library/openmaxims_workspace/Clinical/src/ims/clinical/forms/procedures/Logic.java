@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -867,12 +872,12 @@ public class Logic extends BaseLogic
 			
 			if (getDateFromPartialDate(pdtPerformed).isGreaterThan(new ims.framework.utils.Date()))
 			{
-				listOfErrors.add("Date Performed can not be in the future");
+				listOfErrors.add("Date Performed cannot be set to a date in the future"); //WDEV-18762
 			}
 		}
 		//WDEV-13303 
 		else if(form.ctnDetails().GroupStatus().getValue().equals(GroupStatusEnumeration.rdoPerformed) && pdtPerformed == null)
-			listOfErrors.add("Date Performed is mandatory for Performed procedures.");
+			listOfErrors.add("Date Performed is mandatory for performed procedures."); //WDEV-18762
 				
 		if (listOfErrors.size() == 0 )
 			return null;
@@ -949,7 +954,7 @@ public class Logic extends BaseLogic
 					{
 						if(dateperformed.isGreaterOrEqualThan(datenow.getDate()))
 						{
-							engine.showErrors(new String[]{"Time Performed cannot be in the future."});
+							engine.showErrors(new String[]{"Date Performed cannot be set to a date in the future."}); //WDEV-18762
 							return false;
 						}
 					}
@@ -970,17 +975,17 @@ public class Logic extends BaseLogic
 						}
 						if(voPatProc.getProcDate().getYear() > datenow.getDate().getYear())
 						{
-							engine.showErrors(new String[]{"Time Performed cannot be in the future."});
+							engine.showErrors(new String[]{"Date Performed cannot be set to a date in the future."}); //WDEV-18762
 							return false;
 						}
 						if((month > datenow.getDate().getMonth()) && (voPatProc.getProcDate().getYear() == datenow.getDate().getYear()) )
 						{
-							engine.showErrors(new String[]{"Time Performed cannot be in the future."});
+							engine.showErrors(new String[]{"Date Performed cannot be set to a date in the future."}); //WDEV-18762
 							return false;
 						}
 						if((day >= datenow.getDate().getDay())&&(month == datenow.getDate().getMonth()) && (voPatProc.getProcDate().getYear() == datenow.getDate().getYear()) )
 						{
-							engine.showErrors(new String[]{"Time Performed cannot be in the future."});
+							engine.showErrors(new String[]{"Date Performed cannot be set to a date in the future."}); //WDEV-18762
 							return false;
 							
 						}

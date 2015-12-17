@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:36 -->
+<hibernate-mapping>
+	<class name="ims.coe.assessment.domain.objects.CommunicationSpeechAndLanguage" table="coe_commsplg" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: hibernateClassContent -->
+<!-- debug: speechLanguageDifficulty -->
+<!-- debug: spokenLanguage -->
+<!-- debug: communicates -->
+<!-- debug: IsCollection : true -->
+		<!-- collection of Lookup instances -->
+		<list name="communicates" table="coe_commsplg_communicat" lazy="true" access="field">
+			<key foreign-key="commsplg_communicat_ofk">
+				<column name="owner" sql-type="numeric(10,0)"/>
+			</key>
+			<index column="idx"/>
+			<composite-element class="ims.domain.lookups.LookupInstanceRef">
+				<many-to-one name="instance" class="ims.domain.lookups.LookupInstance" access="field">
+					<column name="instance_id" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+				</many-to-one>
+			</composite-element>
+		</list>
+<!-- debug: verbally -->
+<!-- debug: IsCollection : true -->
+		<!-- collection of Lookup instances -->
+		<list name="verbally" table="coe_commsplg_verbally" lazy="true" access="field">
+			<key foreign-key="commsplg_verbally_ofk">
+				<column name="owner" sql-type="numeric(10,0)"/>
+			</key>
+			<index column="idx"/>
+			<composite-element class="ims.domain.lookups.LookupInstanceRef">
+				<many-to-one name="instance" class="ims.domain.lookups.LookupInstance" access="field">
+					<column name="instance_id" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+				</many-to-one>
+			</composite-element>
+		</list>
+<!-- debug: speechAndLanguageUnderstanding -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="speechAndLanguageUnderstanding" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="commsplg_speechandl_fk">
+				<column name="coe_commsplg_speechandl" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.coe.assessment.domain.objects.CommunicationSpeechAndLanguageUnderstanding" />
+		</set>
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: IsLookup -->
+		<many-to-one name="speechLanguageDifficulty" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_speechlang" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="spokenLanguage" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_spokenlang" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+	</class>
+</hibernate-mapping>

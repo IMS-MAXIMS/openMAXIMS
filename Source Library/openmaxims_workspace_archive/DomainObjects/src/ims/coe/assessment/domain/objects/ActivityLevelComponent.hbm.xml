@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:35 -->
+<hibernate-mapping>
+	<subclass name="ims.coe.assessment.domain.objects.ActivityLevelComponent" lazy="true" discriminator-value="ACTC" extends="ims.nursing.assessment.domain.objects.AssessmentComponent" >
+<!-- debug: hibernateClassContent -->
+<!-- debug: activityLevel -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<list name="activityLevel" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="actvcomp_activityle_fk">
+				<column name="coe_actvcomp_activityle" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.coe.assessment.domain.objects.ActivityLevel" />
+		</list>
+	</subclass>
+</hibernate-mapping>

@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:37 -->
+<!-- Generated: 12/10/2015, 13:28 -->
 <hibernate-mapping>
 	<class name="ims.RefMan.domain.objects.TCIForPatientElectiveList" table="care_tciforpatiente" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -50,7 +50,7 @@
 			<column name="c_sessi" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
 <!-- debug: comments -->
-<!-- debug: kPIExceededReason -->
+<!-- debug: rTTBreachReason -->
 <!-- debug: planningElective -->
 <!-- debug: tCIHospital -->
 <!-- debug: field.IsAssociation : true -->
@@ -101,11 +101,23 @@
 			<column name="admissiond" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
 <!-- debug: bedManagerComment -->
+<!-- debug: day28BreachReason -->
+<!-- debug: day28BreachComment -->
+<!-- debug: rTTBreachComment -->
+<!-- debug: plannedTCIDate -->
+<!-- debug: cancelMsgProcessed -->
+<!-- debug: wasReasonable28dayOfferMade -->
+<!-- debug: _28DayTCIDateOffered -->
+<!-- debug: _28DateOfOffer -->
+<!-- debug: _28ReasonDeclined -->
+<!-- debug: subjectTo28DayRule -->
+<!-- debug: rule28DayStatus -->
+<!-- debug: rule28DayPeriodStart -->
 <!-- debug: !IsAssociation && !IsCollection -->
 
 <!-- debug: !IsLookup -->
 		<property name="tCIDate" type="date" access="field" update="true">
-			<column name="tcidate"  not-null="true" unique="false"  />
+			<column name="tcidate"  not-null="false" unique="false"  />
 		</property>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
@@ -120,7 +132,7 @@
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="dateTCIOffered" type="date" access="field" update="true">
-			<column name="datetcioff"  not-null="true" unique="false"  />
+			<column name="datetcioff"  not-null="false" unique="false"  />
 		</property>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
@@ -134,8 +146,8 @@
 		</property>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: IsLookup -->
-		<many-to-one name="kPIExceededReason" class="ims.domain.lookups.LookupInstance" access="field">
-			<column name="lkp_kpiexceede" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		<many-to-one name="rTTBreachReason" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_rttbreachr" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: IsLookup -->
@@ -156,6 +168,66 @@
 <!-- debug: !IsLookup -->
 		<property name="bedManagerComment" type="string" access="field" update="true" > 
 			<column name="bedmanager" length="1000"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="day28BreachReason" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_day28breac" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="day28BreachComment" type="string" access="field" update="true" > 
+			<column name="day28brea2" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="rTTBreachComment" type="string" access="field" update="true" > 
+			<column name="rttbreachc" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="plannedTCIDate" type="date" access="field" update="true">
+			<column name="plannedtci"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="cancelMsgProcessed" type="boolean" access="field" update="true">
+			<column name="cancelmsgp"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="wasReasonable28dayOfferMade" type="boolean" access="field" update="true">
+			<column name="wasreasona"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="_28DayTCIDateOffered" type="date" access="field" update="true">
+			<column name="_28daytcid"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="_28DateOfOffer" type="date" access="field" update="true">
+			<column name="_28dateofo"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="_28ReasonDeclined" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp__28reasond" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="subjectTo28DayRule" type="boolean" access="field" update="true">
+			<column name="subjectto2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="rule28DayStatus" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_rule28days" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="rule28DayPeriodStart" type="date" access="field" update="true">
+			<column name="rule28dayp"  not-null="false" unique="false"  />
 		</property>
 	</class>
 </hibernate-mapping>

@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:36 -->
+<!-- Generated: 12/10/2015, 13:31 -->
 <hibernate-mapping>
 	<class name="ims.core.resource.domain.objects.ExternalResource" table="core_externalresour" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -93,6 +93,57 @@
 
  			<property name="otherphone" type="string" access="field" update="true">
  				<column name="resourceadotherphone" length="30" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<!-- debug: IsLookup -->
+ 			<many-to-one name="areaOfResidence" class="ims.domain.lookups.LookupInstance" access="field">
+ 				<column name="lkp_resourceadareaofresi" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="pafkey" type="string" access="field" update="true">
+ 				<column name="resourceadpafkey" length="8" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="description" type="string" access="field" update="true">
+ 				<column name="resourceaddescriptio" length="100" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="objectidentifier" type="string" access="field" update="true">
+ 				<column name="resourceadobjectiden" length="14" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="beffdate" type="date" access="field" update="true">
+ 				<column name="resourceadbeffdate" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="beffdatecnf" type="boolean" access="field" update="true">
+ 				<column name="resourceadbeffdatecn" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="betdate" type="date" access="field" update="true">
+ 				<column name="resourceadbetdate" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="betdatecnf" type="boolean" access="field" update="true">
+ 				<column name="resourceadbetdatecnf" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<!-- debug: IsLookup -->
+ 			<many-to-one name="pdsUpdateMode" class="ims.domain.lookups.LookupInstance" access="field">
+ 				<column name="lkp_resourceadpdsupdatem" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<!-- debug: IsLookup -->
+ 			<many-to-one name="country" class="ims.domain.lookups.LookupInstance" access="field">
+ 				<column name="lkp_resourceadcountry" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="noFixedAbode" type="boolean" access="field" update="true">
+ 				<column name="resourceadnofixedabo" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="careHome" type="boolean" access="field" update="true">
+ 				<column name="resourceadcarehome" not-null="false"  unique="false"   />
  			</property>
  		</component>
 <!-- debug: resourceStatus -->

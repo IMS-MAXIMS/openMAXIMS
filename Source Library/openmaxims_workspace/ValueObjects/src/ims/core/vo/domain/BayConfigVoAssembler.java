@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.core.vo.domain;
@@ -50,12 +55,36 @@ public class BayConfigVoAssembler
 		}
 		valueObjectDest.setID_BayConfig(valueObjectSrc.getID_BayConfig());
 	    valueObjectDest.setIsRIE(valueObjectSrc.getIsRIE());
-		// Bay
-		valueObjectDest.setBay(valueObjectSrc.getBay());
 		// FloorBedSpaceLayout
 		valueObjectDest.setFloorBedSpaceLayout(valueObjectSrc.getFloorBedSpaceLayout());
+		// Dependency
+		valueObjectDest.setDependency(valueObjectSrc.getDependency());
+		// Bay
+		valueObjectDest.setBay(valueObjectSrc.getBay());
 		// isActive
 		valueObjectDest.setIsActive(valueObjectSrc.getIsActive());
+		// Male
+		valueObjectDest.setMale(valueObjectSrc.getMale());
+		// Female
+		valueObjectDest.setFemale(valueObjectSrc.getFemale());
+		// Paediatric
+		valueObjectDest.setPaediatric(valueObjectSrc.getPaediatric());
+		// numOfBeds
+		valueObjectDest.setNumOfBeds(valueObjectSrc.getNumOfBeds());
+		// numOfOccupiedBeds
+		valueObjectDest.setNumOfOccupiedBeds(valueObjectSrc.getNumOfOccupiedBeds());
+		// OpeningTime
+		valueObjectDest.setOpeningTime(valueObjectSrc.getOpeningTime());
+		// ClosingTime
+		valueObjectDest.setClosingTime(valueObjectSrc.getClosingTime());
+		// WeekdaysOnly
+		valueObjectDest.setWeekdaysOnly(valueObjectSrc.getWeekdaysOnly());
+		// BayAvailabilityStatus
+		valueObjectDest.setBayAvailabilityStatus(valueObjectSrc.getBayAvailabilityStatus());
+		// ReOpenOutOfHours
+		valueObjectDest.setReOpenOutOfHours(valueObjectSrc.getReOpenOutOfHours());
+		// TemporaryBayGender
+		valueObjectDest.setTemporaryBayGender(valueObjectSrc.getTemporaryBayGender());
 	 	return valueObjectDest;
 	 }
 
@@ -346,13 +375,147 @@ public class BayConfigVoAssembler
 		if ((valueObject.getIsRIE() == null || valueObject.getIsRIE().booleanValue() == false) && domainObject.isIncludeRecord())
 			return null;
 			
-		// Bay
-		valueObject.setBay(ims.core.vo.domain.LocationLiteVoAssembler.create(map, domainObject.getBay()) );
 		// FloorBedSpaceLayout
 		valueObject.setFloorBedSpaceLayout(ims.core.vo.domain.FloorBedSpaceLayoutLiteVoAssembler.create(map, domainObject.getFloorBedSpaceLayout()) );
+		// Dependency
+		ims.domain.lookups.LookupInstance instance2 = domainObject.getDependency();
+		if ( null != instance2 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance2.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance2.getImage().getImageId(), instance2.getImage().getImagePath());
+			}
+			color = instance2.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.BayDependencyLevel voLookup2 = new ims.core.vo.lookups.BayDependencyLevel(instance2.getId(),instance2.getText(), instance2.isActive(), null, img, color);
+			ims.core.vo.lookups.BayDependencyLevel parentVoLookup2 = voLookup2;
+			ims.domain.lookups.LookupInstance parent2 = instance2.getParent();
+			while (parent2 != null)
+			{
+				if (parent2.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent2.getImage().getImageId(), parent2.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent2.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup2.setParent(new ims.core.vo.lookups.BayDependencyLevel(parent2.getId(),parent2.getText(), parent2.isActive(), null, img, color));
+				parentVoLookup2 = parentVoLookup2.getParent();
+								parent2 = parent2.getParent();
+			}			
+			valueObject.setDependency(voLookup2);
+		}
+				// Bay
+		valueObject.setBay(ims.core.vo.domain.LocationLiteVoAssembler.create(map, domainObject.getBay()) );
 		// isActive
 		valueObject.setIsActive( domainObject.isIsActive() );
- 		return valueObject;
+		// Male
+		valueObject.setMale( domainObject.isMale() );
+		// Female
+		valueObject.setFemale( domainObject.isFemale() );
+		// Paediatric
+		valueObject.setPaediatric( domainObject.isPediatric() );
+		// numOfBeds
+		valueObject.setNumOfBeds(domainObject.getNumOfBeds());
+		// numOfOccupiedBeds
+		valueObject.setNumOfOccupiedBeds(domainObject.getNumOfOccupiedBeds());
+		// OpeningTime
+		String OpeningTime = domainObject.getOpeningTime();
+		if ( null != OpeningTime ) 
+		{
+			valueObject.setOpeningTime(new ims.framework.utils.Time(OpeningTime) );
+		}
+		// ClosingTime
+		String ClosingTime = domainObject.getClosingTime();
+		if ( null != ClosingTime ) 
+		{
+			valueObject.setClosingTime(new ims.framework.utils.Time(ClosingTime) );
+		}
+		// WeekdaysOnly
+		valueObject.setWeekdaysOnly( domainObject.isWeekdaysOnly() );
+		// BayAvailabilityStatus
+		ims.domain.lookups.LookupInstance instance13 = domainObject.getBayStatus();
+		if ( null != instance13 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance13.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance13.getImage().getImageId(), instance13.getImage().getImagePath());
+			}
+			color = instance13.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.WardBayStatus voLookup13 = new ims.core.vo.lookups.WardBayStatus(instance13.getId(),instance13.getText(), instance13.isActive(), null, img, color);
+			ims.core.vo.lookups.WardBayStatus parentVoLookup13 = voLookup13;
+			ims.domain.lookups.LookupInstance parent13 = instance13.getParent();
+			while (parent13 != null)
+			{
+				if (parent13.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent13.getImage().getImageId(), parent13.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent13.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup13.setParent(new ims.core.vo.lookups.WardBayStatus(parent13.getId(),parent13.getText(), parent13.isActive(), null, img, color));
+				parentVoLookup13 = parentVoLookup13.getParent();
+								parent13 = parent13.getParent();
+			}			
+			valueObject.setBayAvailabilityStatus(voLookup13);
+		}
+				// ReOpenOutOfHours
+		valueObject.setReOpenOutOfHours(ims.core.vo.domain.ReopenBayOutOfHoursVoAssembler.createReopenBayOutOfHoursVoCollectionFromReopenOutOfHours(map, domainObject.getReOpenOutOfHours()) );
+		// TemporaryBayGender
+		ims.domain.lookups.LookupInstance instance15 = domainObject.getTemporaryBayGender();
+		if ( null != instance15 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance15.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance15.getImage().getImageId(), instance15.getImage().getImagePath());
+			}
+			color = instance15.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.Sex voLookup15 = new ims.core.vo.lookups.Sex(instance15.getId(),instance15.getText(), instance15.isActive(), null, img, color);
+			ims.core.vo.lookups.Sex parentVoLookup15 = voLookup15;
+			ims.domain.lookups.LookupInstance parent15 = instance15.getParent();
+			while (parent15 != null)
+			{
+				if (parent15.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent15.getImage().getImageId(), parent15.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent15.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup15.setParent(new ims.core.vo.lookups.Sex(parent15.getId(),parent15.getText(), parent15.isActive(), null, img, color));
+				parentVoLookup15 = parentVoLookup15.getParent();
+								parent15 = parent15.getParent();
+			}			
+			valueObject.setTemporaryBayGender(voLookup15);
+		}
+		 		return valueObject;
 	 }
 
 
@@ -401,25 +564,70 @@ public class BayConfigVoAssembler
 		}
 		domainObject.setVersion(valueObject.getVersion_BayConfig());
 
-		domainObject.setBay(ims.core.vo.domain.LocationLiteVoAssembler.extractLocation(domainFactory, valueObject.getBay(), domMap));
 	// SaveAsRefVO - treated as a refVo in extract methods
-	ims.core.layout.domain.objects.FloorBedSpaceLayout value2 = null;
+	ims.core.layout.domain.objects.FloorBedSpaceLayout value1 = null;
 		if ( null != valueObject.getFloorBedSpaceLayout() ) 
 		{
 			if (valueObject.getFloorBedSpaceLayout().getBoId() == null)
 			{
 				if (domMap.get(valueObject.getFloorBedSpaceLayout()) != null)
 				{
-					value2 = (ims.core.layout.domain.objects.FloorBedSpaceLayout)domMap.get(valueObject.getFloorBedSpaceLayout());
+					value1 = (ims.core.layout.domain.objects.FloorBedSpaceLayout)domMap.get(valueObject.getFloorBedSpaceLayout());
 				}
 			}
 			else
 			{
-				value2 = (ims.core.layout.domain.objects.FloorBedSpaceLayout)domainFactory.getDomainObject(ims.core.layout.domain.objects.FloorBedSpaceLayout.class, valueObject.getFloorBedSpaceLayout().getBoId());
+				value1 = (ims.core.layout.domain.objects.FloorBedSpaceLayout)domainFactory.getDomainObject(ims.core.layout.domain.objects.FloorBedSpaceLayout.class, valueObject.getFloorBedSpaceLayout().getBoId());
 			}
 		}
-		domainObject.setFloorBedSpaceLayout(value2);
+		domainObject.setFloorBedSpaceLayout(value1);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value2 = null;
+		if ( null != valueObject.getDependency() ) 
+		{
+			value2 =
+				domainFactory.getLookupInstance(valueObject.getDependency().getID());
+		}
+		domainObject.setDependency(value2);
+		domainObject.setBay(ims.core.vo.domain.LocationLiteVoAssembler.extractLocation(domainFactory, valueObject.getBay(), domMap));
 		domainObject.setIsActive(valueObject.getIsActive());
+		domainObject.setMale(valueObject.getMale());
+		domainObject.setFemale(valueObject.getFemale());
+		domainObject.setPediatric(valueObject.getPaediatric());
+		domainObject.setNumOfBeds(valueObject.getNumOfBeds());
+		domainObject.setNumOfOccupiedBeds(valueObject.getNumOfOccupiedBeds());
+		ims.framework.utils.Time time10 = valueObject.getOpeningTime();
+		String value10 = null;
+		if ( time10 != null ) 
+		{
+			value10 = time10.toString();
+		}
+		domainObject.setOpeningTime(value10);
+		ims.framework.utils.Time time11 = valueObject.getClosingTime();
+		String value11 = null;
+		if ( time11 != null ) 
+		{
+			value11 = time11.toString();
+		}
+		domainObject.setClosingTime(value11);
+		domainObject.setWeekdaysOnly(valueObject.getWeekdaysOnly());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value13 = null;
+		if ( null != valueObject.getBayAvailabilityStatus() ) 
+		{
+			value13 =
+				domainFactory.getLookupInstance(valueObject.getBayAvailabilityStatus().getID());
+		}
+		domainObject.setBayStatus(value13);
+		domainObject.setReOpenOutOfHours(ims.core.vo.domain.ReopenBayOutOfHoursVoAssembler.extractReopenOutOfHoursList(domainFactory, valueObject.getReOpenOutOfHours(), domainObject.getReOpenOutOfHours(), domMap));		
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value15 = null;
+		if ( null != valueObject.getTemporaryBayGender() ) 
+		{
+			value15 =
+				domainFactory.getLookupInstance(valueObject.getTemporaryBayGender().getID());
+		}
+		domainObject.setTemporaryBayGender(value15);
 
 		return domainObject;
 	}

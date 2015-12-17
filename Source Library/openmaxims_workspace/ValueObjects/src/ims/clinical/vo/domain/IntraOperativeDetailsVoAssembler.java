@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.clinical.vo.domain;
@@ -104,6 +109,34 @@ public class IntraOperativeDetailsVoAssembler
 		valueObjectDest.setCountComments(valueObjectSrc.getCountComments());
 		// TableDevices
 		valueObjectDest.setTableDevices(valueObjectSrc.getTableDevices());
+		// PatientPreparation
+		valueObjectDest.setPatientPreparation(valueObjectSrc.getPatientPreparation());
+		// DiathermyDeviceSerialNumber
+		valueObjectDest.setDiathermyDeviceSerialNumber(valueObjectSrc.getDiathermyDeviceSerialNumber());
+		// DiathermyPadSite
+		valueObjectDest.setDiathermyPadSite(valueObjectSrc.getDiathermyPadSite());
+		// LaserDeviceName
+		valueObjectDest.setLaserDeviceName(valueObjectSrc.getLaserDeviceName());
+		// LaserDeviceSerialNumber
+		valueObjectDest.setLaserDeviceSerialNumber(valueObjectSrc.getLaserDeviceSerialNumber());
+		// LaserMode
+		valueObjectDest.setLaserMode(valueObjectSrc.getLaserMode());
+		// LaserPatientSafetyMeasures
+		valueObjectDest.setLaserPatientSafetyMeasures(valueObjectSrc.getLaserPatientSafetyMeasures());
+		// IrrigantSolution
+		valueObjectDest.setIrrigantSolution(valueObjectSrc.getIrrigantSolution());
+		// SpecimenDestination
+		valueObjectDest.setSpecimenDestination(valueObjectSrc.getSpecimenDestination());
+		// WoundPackingType
+		valueObjectDest.setWoundPackingType(valueObjectSrc.getWoundPackingType());
+		// ProcedureWoundClass
+		valueObjectDest.setProcedureWoundClass(valueObjectSrc.getProcedureWoundClass());
+		// MissingItems
+		valueObjectDest.setMissingItems(valueObjectSrc.getMissingItems());
+		// ActionsTaken
+		valueObjectDest.setActionsTaken(valueObjectSrc.getActionsTaken());
+		// ChartableOccurrenceType
+		valueObjectDest.setChartableOccurrenceType(valueObjectSrc.getChartableOccurrenceType());
 	 	return valueObjectDest;
 	 }
 
@@ -744,7 +777,511 @@ public class IntraOperativeDetailsVoAssembler
 		valueObject.setCountComments(domainObject.getCountComments());
 		// TableDevices
 		valueObject.setTableDevices(ims.clinical.vo.domain.TableDeviceVoAssembler.createTableDeviceVoCollectionFromTableDevice(map, domainObject.getTableDevices()) );
- 		return valueObject;
+		// PatientPreparation
+		ims.domain.lookups.LookupInstance instance28 = domainObject.getPatientPreparation();
+		if ( null != instance28 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance28.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance28.getImage().getImageId(), instance28.getImage().getImagePath());
+			}
+			color = instance28.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.PatientPreparation voLookup28 = new ims.core.vo.lookups.PatientPreparation(instance28.getId(),instance28.getText(), instance28.isActive(), null, img, color);
+			ims.core.vo.lookups.PatientPreparation parentVoLookup28 = voLookup28;
+			ims.domain.lookups.LookupInstance parent28 = instance28.getParent();
+			while (parent28 != null)
+			{
+				if (parent28.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent28.getImage().getImageId(), parent28.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent28.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup28.setParent(new ims.core.vo.lookups.PatientPreparation(parent28.getId(),parent28.getText(), parent28.isActive(), null, img, color));
+				parentVoLookup28 = parentVoLookup28.getParent();
+								parent28 = parent28.getParent();
+			}			
+			valueObject.setPatientPreparation(voLookup28);
+		}
+				// DiathermyDeviceSerialNumber
+		ims.domain.lookups.LookupInstance instance29 = domainObject.getDiathermyDeviceSerialNumber();
+		if ( null != instance29 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance29.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance29.getImage().getImageId(), instance29.getImage().getImagePath());
+			}
+			color = instance29.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.DiathermyDeviceSerialNumber voLookup29 = new ims.core.vo.lookups.DiathermyDeviceSerialNumber(instance29.getId(),instance29.getText(), instance29.isActive(), null, img, color);
+			ims.core.vo.lookups.DiathermyDeviceSerialNumber parentVoLookup29 = voLookup29;
+			ims.domain.lookups.LookupInstance parent29 = instance29.getParent();
+			while (parent29 != null)
+			{
+				if (parent29.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent29.getImage().getImageId(), parent29.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent29.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup29.setParent(new ims.core.vo.lookups.DiathermyDeviceSerialNumber(parent29.getId(),parent29.getText(), parent29.isActive(), null, img, color));
+				parentVoLookup29 = parentVoLookup29.getParent();
+								parent29 = parent29.getParent();
+			}			
+			valueObject.setDiathermyDeviceSerialNumber(voLookup29);
+		}
+				// DiathermyPadSite
+		ims.domain.lookups.LookupInstance instance30 = domainObject.getDiathermyPadSite();
+		if ( null != instance30 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance30.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance30.getImage().getImageId(), instance30.getImage().getImagePath());
+			}
+			color = instance30.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.DiathermyPadSite voLookup30 = new ims.core.vo.lookups.DiathermyPadSite(instance30.getId(),instance30.getText(), instance30.isActive(), null, img, color);
+			ims.core.vo.lookups.DiathermyPadSite parentVoLookup30 = voLookup30;
+			ims.domain.lookups.LookupInstance parent30 = instance30.getParent();
+			while (parent30 != null)
+			{
+				if (parent30.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent30.getImage().getImageId(), parent30.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent30.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup30.setParent(new ims.core.vo.lookups.DiathermyPadSite(parent30.getId(),parent30.getText(), parent30.isActive(), null, img, color));
+				parentVoLookup30 = parentVoLookup30.getParent();
+								parent30 = parent30.getParent();
+			}			
+			valueObject.setDiathermyPadSite(voLookup30);
+		}
+				// LaserDeviceName
+		ims.domain.lookups.LookupInstance instance31 = domainObject.getLaserDeviceName();
+		if ( null != instance31 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance31.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance31.getImage().getImageId(), instance31.getImage().getImagePath());
+			}
+			color = instance31.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.LaserDeviceName voLookup31 = new ims.core.vo.lookups.LaserDeviceName(instance31.getId(),instance31.getText(), instance31.isActive(), null, img, color);
+			ims.core.vo.lookups.LaserDeviceName parentVoLookup31 = voLookup31;
+			ims.domain.lookups.LookupInstance parent31 = instance31.getParent();
+			while (parent31 != null)
+			{
+				if (parent31.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent31.getImage().getImageId(), parent31.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent31.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup31.setParent(new ims.core.vo.lookups.LaserDeviceName(parent31.getId(),parent31.getText(), parent31.isActive(), null, img, color));
+				parentVoLookup31 = parentVoLookup31.getParent();
+								parent31 = parent31.getParent();
+			}			
+			valueObject.setLaserDeviceName(voLookup31);
+		}
+				// LaserDeviceSerialNumber
+		ims.domain.lookups.LookupInstance instance32 = domainObject.getLaserDeviceSerialNumber();
+		if ( null != instance32 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance32.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance32.getImage().getImageId(), instance32.getImage().getImagePath());
+			}
+			color = instance32.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.LaserDeviceSerialNumber voLookup32 = new ims.core.vo.lookups.LaserDeviceSerialNumber(instance32.getId(),instance32.getText(), instance32.isActive(), null, img, color);
+			ims.core.vo.lookups.LaserDeviceSerialNumber parentVoLookup32 = voLookup32;
+			ims.domain.lookups.LookupInstance parent32 = instance32.getParent();
+			while (parent32 != null)
+			{
+				if (parent32.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent32.getImage().getImageId(), parent32.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent32.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup32.setParent(new ims.core.vo.lookups.LaserDeviceSerialNumber(parent32.getId(),parent32.getText(), parent32.isActive(), null, img, color));
+				parentVoLookup32 = parentVoLookup32.getParent();
+								parent32 = parent32.getParent();
+			}			
+			valueObject.setLaserDeviceSerialNumber(voLookup32);
+		}
+				// LaserMode
+		ims.domain.lookups.LookupInstance instance33 = domainObject.getLaserMode();
+		if ( null != instance33 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance33.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance33.getImage().getImageId(), instance33.getImage().getImagePath());
+			}
+			color = instance33.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.LaserMode voLookup33 = new ims.core.vo.lookups.LaserMode(instance33.getId(),instance33.getText(), instance33.isActive(), null, img, color);
+			ims.core.vo.lookups.LaserMode parentVoLookup33 = voLookup33;
+			ims.domain.lookups.LookupInstance parent33 = instance33.getParent();
+			while (parent33 != null)
+			{
+				if (parent33.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent33.getImage().getImageId(), parent33.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent33.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup33.setParent(new ims.core.vo.lookups.LaserMode(parent33.getId(),parent33.getText(), parent33.isActive(), null, img, color));
+				parentVoLookup33 = parentVoLookup33.getParent();
+								parent33 = parent33.getParent();
+			}			
+			valueObject.setLaserMode(voLookup33);
+		}
+				// LaserPatientSafetyMeasures
+		ims.domain.lookups.LookupInstance instance34 = domainObject.getLaserPatientSafetyMeasures();
+		if ( null != instance34 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance34.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance34.getImage().getImageId(), instance34.getImage().getImagePath());
+			}
+			color = instance34.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.LaserPatientSafetyMeasures voLookup34 = new ims.core.vo.lookups.LaserPatientSafetyMeasures(instance34.getId(),instance34.getText(), instance34.isActive(), null, img, color);
+			ims.core.vo.lookups.LaserPatientSafetyMeasures parentVoLookup34 = voLookup34;
+			ims.domain.lookups.LookupInstance parent34 = instance34.getParent();
+			while (parent34 != null)
+			{
+				if (parent34.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent34.getImage().getImageId(), parent34.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent34.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup34.setParent(new ims.core.vo.lookups.LaserPatientSafetyMeasures(parent34.getId(),parent34.getText(), parent34.isActive(), null, img, color));
+				parentVoLookup34 = parentVoLookup34.getParent();
+								parent34 = parent34.getParent();
+			}			
+			valueObject.setLaserPatientSafetyMeasures(voLookup34);
+		}
+				// IrrigantSolution
+		ims.domain.lookups.LookupInstance instance35 = domainObject.getIrrigantSolution();
+		if ( null != instance35 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance35.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance35.getImage().getImageId(), instance35.getImage().getImagePath());
+			}
+			color = instance35.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.IrrigantSolution voLookup35 = new ims.core.vo.lookups.IrrigantSolution(instance35.getId(),instance35.getText(), instance35.isActive(), null, img, color);
+			ims.core.vo.lookups.IrrigantSolution parentVoLookup35 = voLookup35;
+			ims.domain.lookups.LookupInstance parent35 = instance35.getParent();
+			while (parent35 != null)
+			{
+				if (parent35.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent35.getImage().getImageId(), parent35.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent35.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup35.setParent(new ims.core.vo.lookups.IrrigantSolution(parent35.getId(),parent35.getText(), parent35.isActive(), null, img, color));
+				parentVoLookup35 = parentVoLookup35.getParent();
+								parent35 = parent35.getParent();
+			}			
+			valueObject.setIrrigantSolution(voLookup35);
+		}
+				// SpecimenDestination
+		ims.domain.lookups.LookupInstance instance36 = domainObject.getSpecimenDestination();
+		if ( null != instance36 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance36.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance36.getImage().getImageId(), instance36.getImage().getImagePath());
+			}
+			color = instance36.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.SpecimenDestination voLookup36 = new ims.core.vo.lookups.SpecimenDestination(instance36.getId(),instance36.getText(), instance36.isActive(), null, img, color);
+			ims.core.vo.lookups.SpecimenDestination parentVoLookup36 = voLookup36;
+			ims.domain.lookups.LookupInstance parent36 = instance36.getParent();
+			while (parent36 != null)
+			{
+				if (parent36.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent36.getImage().getImageId(), parent36.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent36.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup36.setParent(new ims.core.vo.lookups.SpecimenDestination(parent36.getId(),parent36.getText(), parent36.isActive(), null, img, color));
+				parentVoLookup36 = parentVoLookup36.getParent();
+								parent36 = parent36.getParent();
+			}			
+			valueObject.setSpecimenDestination(voLookup36);
+		}
+				// WoundPackingType
+		ims.domain.lookups.LookupInstance instance37 = domainObject.getWoundPackingType();
+		if ( null != instance37 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance37.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance37.getImage().getImageId(), instance37.getImage().getImagePath());
+			}
+			color = instance37.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.WoundPackingType voLookup37 = new ims.core.vo.lookups.WoundPackingType(instance37.getId(),instance37.getText(), instance37.isActive(), null, img, color);
+			ims.core.vo.lookups.WoundPackingType parentVoLookup37 = voLookup37;
+			ims.domain.lookups.LookupInstance parent37 = instance37.getParent();
+			while (parent37 != null)
+			{
+				if (parent37.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent37.getImage().getImageId(), parent37.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent37.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup37.setParent(new ims.core.vo.lookups.WoundPackingType(parent37.getId(),parent37.getText(), parent37.isActive(), null, img, color));
+				parentVoLookup37 = parentVoLookup37.getParent();
+								parent37 = parent37.getParent();
+			}			
+			valueObject.setWoundPackingType(voLookup37);
+		}
+				// ProcedureWoundClass
+		ims.domain.lookups.LookupInstance instance38 = domainObject.getProcedureWoundClass();
+		if ( null != instance38 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance38.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance38.getImage().getImageId(), instance38.getImage().getImagePath());
+			}
+			color = instance38.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.ProcedureWoundClass voLookup38 = new ims.core.vo.lookups.ProcedureWoundClass(instance38.getId(),instance38.getText(), instance38.isActive(), null, img, color);
+			ims.core.vo.lookups.ProcedureWoundClass parentVoLookup38 = voLookup38;
+			ims.domain.lookups.LookupInstance parent38 = instance38.getParent();
+			while (parent38 != null)
+			{
+				if (parent38.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent38.getImage().getImageId(), parent38.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent38.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup38.setParent(new ims.core.vo.lookups.ProcedureWoundClass(parent38.getId(),parent38.getText(), parent38.isActive(), null, img, color));
+				parentVoLookup38 = parentVoLookup38.getParent();
+								parent38 = parent38.getParent();
+			}			
+			valueObject.setProcedureWoundClass(voLookup38);
+		}
+				// MissingItems
+		ims.domain.lookups.LookupInstance instance39 = domainObject.getMissingItems();
+		if ( null != instance39 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance39.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance39.getImage().getImageId(), instance39.getImage().getImagePath());
+			}
+			color = instance39.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.MissingItems voLookup39 = new ims.core.vo.lookups.MissingItems(instance39.getId(),instance39.getText(), instance39.isActive(), null, img, color);
+			ims.core.vo.lookups.MissingItems parentVoLookup39 = voLookup39;
+			ims.domain.lookups.LookupInstance parent39 = instance39.getParent();
+			while (parent39 != null)
+			{
+				if (parent39.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent39.getImage().getImageId(), parent39.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent39.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup39.setParent(new ims.core.vo.lookups.MissingItems(parent39.getId(),parent39.getText(), parent39.isActive(), null, img, color));
+				parentVoLookup39 = parentVoLookup39.getParent();
+								parent39 = parent39.getParent();
+			}			
+			valueObject.setMissingItems(voLookup39);
+		}
+				// ActionsTaken
+		ims.domain.lookups.LookupInstance instance40 = domainObject.getActionsTaken();
+		if ( null != instance40 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance40.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance40.getImage().getImageId(), instance40.getImage().getImagePath());
+			}
+			color = instance40.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.ActionsTaken voLookup40 = new ims.core.vo.lookups.ActionsTaken(instance40.getId(),instance40.getText(), instance40.isActive(), null, img, color);
+			ims.core.vo.lookups.ActionsTaken parentVoLookup40 = voLookup40;
+			ims.domain.lookups.LookupInstance parent40 = instance40.getParent();
+			while (parent40 != null)
+			{
+				if (parent40.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent40.getImage().getImageId(), parent40.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent40.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup40.setParent(new ims.core.vo.lookups.ActionsTaken(parent40.getId(),parent40.getText(), parent40.isActive(), null, img, color));
+				parentVoLookup40 = parentVoLookup40.getParent();
+								parent40 = parent40.getParent();
+			}			
+			valueObject.setActionsTaken(voLookup40);
+		}
+				// ChartableOccurrenceType
+		ims.domain.lookups.LookupInstance instance41 = domainObject.getChartableOccurrenceType();
+		if ( null != instance41 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance41.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance41.getImage().getImageId(), instance41.getImage().getImagePath());
+			}
+			color = instance41.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.ChartableOccurrenceType voLookup41 = new ims.core.vo.lookups.ChartableOccurrenceType(instance41.getId(),instance41.getText(), instance41.isActive(), null, img, color);
+			ims.core.vo.lookups.ChartableOccurrenceType parentVoLookup41 = voLookup41;
+			ims.domain.lookups.LookupInstance parent41 = instance41.getParent();
+			while (parent41 != null)
+			{
+				if (parent41.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent41.getImage().getImageId(), parent41.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent41.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup41.setParent(new ims.core.vo.lookups.ChartableOccurrenceType(parent41.getId(),parent41.getText(), parent41.isActive(), null, img, color));
+				parentVoLookup41 = parentVoLookup41.getParent();
+								parent41 = parent41.getParent();
+			}			
+			valueObject.setChartableOccurrenceType(voLookup41);
+		}
+		 		return valueObject;
 	 }
 
 
@@ -1025,6 +1562,118 @@ public class IntraOperativeDetailsVoAssembler
 		}
 		domainObject.setCountComments(valueObject.getCountComments());
 		domainObject.setTableDevices(ims.clinical.vo.domain.TableDeviceVoAssembler.extractTableDeviceList(domainFactory, valueObject.getTableDevices(), domainObject.getTableDevices(), domMap));		
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value28 = null;
+		if ( null != valueObject.getPatientPreparation() ) 
+		{
+			value28 =
+				domainFactory.getLookupInstance(valueObject.getPatientPreparation().getID());
+		}
+		domainObject.setPatientPreparation(value28);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value29 = null;
+		if ( null != valueObject.getDiathermyDeviceSerialNumber() ) 
+		{
+			value29 =
+				domainFactory.getLookupInstance(valueObject.getDiathermyDeviceSerialNumber().getID());
+		}
+		domainObject.setDiathermyDeviceSerialNumber(value29);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value30 = null;
+		if ( null != valueObject.getDiathermyPadSite() ) 
+		{
+			value30 =
+				domainFactory.getLookupInstance(valueObject.getDiathermyPadSite().getID());
+		}
+		domainObject.setDiathermyPadSite(value30);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value31 = null;
+		if ( null != valueObject.getLaserDeviceName() ) 
+		{
+			value31 =
+				domainFactory.getLookupInstance(valueObject.getLaserDeviceName().getID());
+		}
+		domainObject.setLaserDeviceName(value31);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value32 = null;
+		if ( null != valueObject.getLaserDeviceSerialNumber() ) 
+		{
+			value32 =
+				domainFactory.getLookupInstance(valueObject.getLaserDeviceSerialNumber().getID());
+		}
+		domainObject.setLaserDeviceSerialNumber(value32);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value33 = null;
+		if ( null != valueObject.getLaserMode() ) 
+		{
+			value33 =
+				domainFactory.getLookupInstance(valueObject.getLaserMode().getID());
+		}
+		domainObject.setLaserMode(value33);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value34 = null;
+		if ( null != valueObject.getLaserPatientSafetyMeasures() ) 
+		{
+			value34 =
+				domainFactory.getLookupInstance(valueObject.getLaserPatientSafetyMeasures().getID());
+		}
+		domainObject.setLaserPatientSafetyMeasures(value34);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value35 = null;
+		if ( null != valueObject.getIrrigantSolution() ) 
+		{
+			value35 =
+				domainFactory.getLookupInstance(valueObject.getIrrigantSolution().getID());
+		}
+		domainObject.setIrrigantSolution(value35);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value36 = null;
+		if ( null != valueObject.getSpecimenDestination() ) 
+		{
+			value36 =
+				domainFactory.getLookupInstance(valueObject.getSpecimenDestination().getID());
+		}
+		domainObject.setSpecimenDestination(value36);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value37 = null;
+		if ( null != valueObject.getWoundPackingType() ) 
+		{
+			value37 =
+				domainFactory.getLookupInstance(valueObject.getWoundPackingType().getID());
+		}
+		domainObject.setWoundPackingType(value37);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value38 = null;
+		if ( null != valueObject.getProcedureWoundClass() ) 
+		{
+			value38 =
+				domainFactory.getLookupInstance(valueObject.getProcedureWoundClass().getID());
+		}
+		domainObject.setProcedureWoundClass(value38);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value39 = null;
+		if ( null != valueObject.getMissingItems() ) 
+		{
+			value39 =
+				domainFactory.getLookupInstance(valueObject.getMissingItems().getID());
+		}
+		domainObject.setMissingItems(value39);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value40 = null;
+		if ( null != valueObject.getActionsTaken() ) 
+		{
+			value40 =
+				domainFactory.getLookupInstance(valueObject.getActionsTaken().getID());
+		}
+		domainObject.setActionsTaken(value40);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value41 = null;
+		if ( null != valueObject.getChartableOccurrenceType() ) 
+		{
+			value41 =
+				domainFactory.getLookupInstance(valueObject.getChartableOccurrenceType().getID());
+		}
+		domainObject.setChartableOccurrenceType(value41);
 
 		return domainObject;
 	}

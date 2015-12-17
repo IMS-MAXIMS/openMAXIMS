@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -40,35 +45,66 @@ import ims.admin.vo.FormMenuActionsDeniedVo;
 import ims.admin.vo.FormMenuActionsDeniedVoCollection;
 import ims.admin.vo.MenuActionVo;
 import ims.admin.vo.MenuActionVoCollection;
+import ims.admin.vo.RBACBaselineJobRoleLiteVo;
+import ims.admin.vo.RBACBaselineJobRoleLiteVoCollection;
 import ims.configuration.AppRight;
+import ims.configuration.gen.ConfigFlag;
 import ims.core.configuration.vo.AppFormRefVo;
+import ims.core.vo.AlertAccessRightVo;
+import ims.core.vo.AlertAccessRightVoCollection;
+import ims.core.vo.lookups.AlertAccessRights;
+import ims.core.vo.lookups.AlertAccessRightsCollection;
+import ims.core.vo.lookups.AlertType;
+import ims.core.vo.lookups.LookupHelper;
 import ims.domain.exceptions.StaleObjectException;
 import ims.domain.exceptions.UniqueKeyViolationException;
 import ims.framework.Control;
 import ims.framework.FormName;
+import ims.framework.controls.DynamicGridCell;
+import ims.framework.controls.DynamicGridColumn;
+import ims.framework.controls.DynamicGridRow;
 import ims.framework.controls.TreeNode;
 import ims.framework.enumerations.DialogResult;
+import ims.framework.enumerations.DynamicCellType;
 import ims.framework.enumerations.FormMode;
 import ims.framework.exceptions.PresentationLogicException;
+import ims.framework.utils.Color;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 public class Logic extends BaseLogic
 {
+	private static final int COL_ALERT = 1;
+	private static final int COL_ACCESS = 2;
+	
 	@Override
 	protected void onFormOpen() throws PresentationLogicException 
 	{
-		populateAppRightsCombo(false);
+		initialiseAlertRightGrid();
 		populateNavCombo();
 		populateTopButtonsCombo();
+		populateSpineRBACCombo(); //WDEV-20420
 		form.ccTaxonomyMappings().initialize();
 		
 		open();
 		
 		form.getContextMenus().getGenericGridRemoveItem().setVisible(false);
 	}
+	
+	private void initialiseAlertRightGrid()
+	{
+		form.lyrRights().tabAlerts().dyngrdAlerts().clear();
+		
+		DynamicGridColumn colAlert = form.lyrRights().tabAlerts().dyngrdAlerts().getColumns().newColumn("Alert Category", COL_ALERT);
+		colAlert.setWidth(270);
+		colAlert.setCanGrow(true);
+		
+		DynamicGridColumn colAcess = form.lyrRights().tabAlerts().dyngrdAlerts().getColumns().newColumn("Alert Access Right", COL_ACCESS);
+		colAcess.setWidth(-1);
+	}
+	
 	@Override
 	protected void onFormModeChanged() 
 	{
@@ -80,8 +116,23 @@ public class Logic extends BaseLogic
 		form.btnUpdate().setEnabled(false);
 		
 	}
+	
 	private void updateComponentState() 
 	{	
+		//WDEV-20420
+		form.cmbSpineRBAC().setVisible(Boolean.TRUE.equals(form.chkRequiresPDS().getValue())); 
+		form.cmbSpineRBAC().setEnabled(FormMode.EDIT.equals(form.getMode()));
+		form.cmbSpineRBAC().setRequired(Boolean.TRUE.equals(form.chkRequiresPDS().getValue()) && FormMode.EDIT.equals(form.getMode())); 
+		form.lblSpineRBAC().setVisible(Boolean.TRUE.equals(form.chkRequiresPDS().getValue())); 
+		//WDEV-20420 ends here
+		
+		//WDEV-20617
+		form.grdPdsRights().setVisible(Boolean.TRUE.equals(form.chkRequiresPDS().getValue())); 
+		//form.grdPdsRights().setEnabled(FormMode.EDIT.equals(form.getMode()));
+		form.btnAddPds().setVisible(Boolean.TRUE.equals(form.chkRequiresPDS().getValue()));
+		form.btnAddPds().setEnabled(FormMode.EDIT.equals(form.getMode()));
+		//WDEV-20617 ends here
+		
 		form.ccTaxonomyMappings().setMode(form.getMode());
 		form.ccTaxonomyMappings().setComponentMode(form.getMode());
 	}
@@ -97,7 +148,19 @@ public class Logic extends BaseLogic
 		{
 			processMenuActionsSelection();
 		}
+		
+		//WDEV-19693 
+		if(formName.equals(form.getForms().Admin.AssignRightsDialog) && result.equals(DialogResult.OK))
+		{
+			 //WDEV-20617
+			if (form.getLocalContext().getIsPdsRight())
+				populateAppPdsRights(form.getGlobalContext().Admin.getSelectedPdsRoleRights());
+			else	
+				populateAppRights(form.getGlobalContext().Admin.getSelectedRoleRigths());
+			 //WDEV-20617 ends here
+		}
 	}
+	
 	private void updateContextMenuState()
 	{
 		if(form.getMode() == FormMode.VIEW)
@@ -105,6 +168,8 @@ public class Logic extends BaseLogic
 			form.getContextMenus().Admin.getRoleMenuActionAddItem().setVisible(false);
 			form.getContextMenus().Admin.getRoleMenuActionRemoveItem().setVisible(false);
 			form.getContextMenus().Admin.getRoleMenuActionRemoveAllItem().setVisible(false);
+			
+			form.getContextMenus().Admin.getPdsRightsMenuActionsRemoveItem().setVisible(false);
 		}
 		else if(form.getMode() == FormMode.EDIT)
 		{
@@ -113,8 +178,13 @@ public class Logic extends BaseLogic
 			form.getContextMenus().Admin.getRoleMenuActionRemoveItem().setVisible(form.lyrRights().tabActionsDenied().treActions().getValue() != null);
 			form.getContextMenus().Admin.getRoleMenuActionRemoveAllItem().setVisible(true);
 			form.getContextMenus().Admin.getRoleMenuActionRemoveAllItem().setEnabled(true);
+			form.getContextMenus().Admin.getPdsRightsMenuActionsRemoveItem().setVisible(form.grdPdsRights().getValue() != null); //WDEV-20617
 		}
+		
+		form.getContextMenus().Admin.getAlertsRightMenuADDItem().setVisible(FormMode.EDIT.equals(form.getMode()));
+		form.getContextMenus().Admin.getAlertsRightMenuREMOVEItem().setVisible(FormMode.EDIT.equals(form.getMode()) && form.lyrRights().tabAlerts().dyngrdAlerts().getValue() != null);
 	}
+	
 	private void populateNavCombo()
 	{
 		form.cmbNavs().clear();
@@ -137,6 +207,23 @@ public class Logic extends BaseLogic
 			}
 		}
 	}
+	
+	//WDEV-20420
+	private void populateSpineRBACCombo()
+	{
+		form.cmbSpineRBAC().clear();
+		RBACBaselineJobRoleLiteVoCollection coll = domain.listSpineRBAC();
+		
+		if(coll != null)
+		{
+			for (RBACBaselineJobRoleLiteVo spine : coll)
+			{
+				form.cmbSpineRBAC().newRow(spine, spine.getRoleCode());
+			}
+		}
+	}
+	//WDEV-20420 ends here
+	
 	class AppRightComparator implements Comparator<AppRightVo>
 	{
 
@@ -153,48 +240,24 @@ public class Logic extends BaseLogic
 		}
 		
 	}
-	
-	private void populateAppRightsCombo(boolean bOnUpdate)
-	{
-		form.lyrRights().tabRightsGranted().cmbRights().clear();
-		AppRight[] rights = AppRight.getAllRights();
-		AppRightVo[] voRights = AppRightVo.domArrayToVo(rights);
-		
-		Arrays.sort(voRights, new  AppRightComparator());
-				
-		for (int i = 0; i < voRights.length; i++)
-		{
-			AppRightVo voRight = voRights[i];	
-			if(bOnUpdate && isAlreadySelected(voRight))
-				continue;
-			form.lyrRights().tabRightsGranted().cmbRights().newRow(voRight, voRight.getName());
-		}		
-	}
-	private boolean isAlreadySelected(AppRightVo voRight) {
-		AppRoleVo voRole = form.getLocalContext().getRoleSelected();
-		
-		AppRightVoCollection collSelectedRights = voRole.getAppRights();		
-		for (int i = 0; i < collSelectedRights.size(); i++)
-		{
-			AppRightVo voSelectedRight = collSelectedRights.get(i);
-			if(voSelectedRight.getName().equals(voRight.getName()))
-				return true;
-		}
-		
-		return false;
-	}
+
 	private void clearAllFields() 
 	{
 		form.chkIsActive().setValue(true);
+		form.chkRequiresPDS().setValue(false); //WDEV-20420
+		form.cmbSpineRBAC().setValue(null); // WDEV-20420
+		form.grdPdsRights().getRows().clear(); //WDEV-20617
 		form.txtRoleName().setValue(null);
 		form.txtRoleDesc().setValue(null);
 		form.cmbNavs().setValue(null);
 		form.cmbTopButtons().setValue(null);
 		form.ccTaxonomyMappings().clear();
 		form.lyrRights().tabRightsGranted().grdRights().getRows().clear();
-		form.lyrRights().tabRightsGranted().cmbRights().setValue(null);
+		form.lyrRights().tabAlerts().dyngrdAlerts().getRows().clear();
 		form.treNavView().clear();
 		form.lyrRights().tabActionsDenied().treActions().clear();
+		form.intSessionTimeout().setValue(0);
+		form.intAutolock().setValue(0);
 	}
 
 	private void listRoles() 
@@ -234,11 +297,13 @@ public class Logic extends BaseLogic
 		listRoles();		
 		form.grdRoles().setEnabled(true);
 		form.getContextMenus().getGenericGridRemoveItem().setVisible(false);
+		form.getContextMenus().Admin.getPdsRightsMenuActionsRemoveItem().setVisible(false); //WDEV-20617
 		
 		if (form.getLocalContext().getRoleSelectedIsNotNull())
 		{
 			refreshSelectedRole();
 		}
+		updateComponentState(); //WDEV-20420
 	}
 
 	protected void onBtnSaveClick() throws PresentationLogicException 
@@ -247,13 +312,21 @@ public class Logic extends BaseLogic
 			return;
 		
 		AppRoleVo voRole = form.getLocalContext().getRoleSelected();
+		
+		AppNavigationVo navigation = domain.getNavigation(form.cmbNavs().getValue()); //WDEV-22749
 
 		voRole.setIsActive(new Boolean(form.chkIsActive().getValue()));
+		voRole.setRequiresPDS(form.chkRequiresPDS().getValue()); //WDEV-20420
+		voRole.setSpineRbac(form.cmbSpineRBAC().getValue());//WDEV-20420
 		voRole.setName(form.txtRoleName().getValue());
 		voRole.setDescription(form.txtRoleDesc().getValue());
 		voRole.setCodeMappings(form.ccTaxonomyMappings().getValue());
-		voRole.setNavigation(domain.getNavigation(form.cmbNavs().getValue()));
+		voRole.setNavigation(navigation); //WDEV-22749
 		voRole.setFormMenuActionsDenied(getActionsDenied());
+		voRole.setSessionTimeout(form.intSessionTimeout().getValue());
+		voRole.setAutolockTimer(form.intAutolock().getValue());
+
+
 		
 		if(form.cmbTopButtons().getValue() != null)
 			voRole.setTopButtonConfig(domain.getTopButtonConfiguration(form.cmbTopButtons().getValue()));
@@ -261,15 +334,18 @@ public class Logic extends BaseLogic
 			voRole.setTopButtonConfig(null);
 		
 		voRole.setAppRights(buildAppRightList());
-				
-		String[] errMess = voRole.validate(); 
+		voRole.setPdsRights(buildAppPdsRightList()); //WDEV-20617
+		voRole.setAlertsAccess(populateAlertAccessRightsFromScreen());
+		
+		String[] errMess = voRole.validate(validateUIRules(navigation,voRole)); 
 		if (errMess != null)
 		{
 			engine.showErrors(errMess);
 			return;
 		}
+		
 		try
-		{
+		{	
 			AppRoleVo newRole = domain.saveRole(voRole);
 			form.getLocalContext().setRoleSelected(newRole);
 		}
@@ -284,7 +360,71 @@ public class Logic extends BaseLogic
 			open();
 			return;
 		}
+		
 		open();
+	}
+
+	private String[] validateUIRules(AppNavigationVo navigation, AppRoleVo role)
+	{
+		List<String> uiErrors = new ArrayList<String>();
+		
+		for(int i=0; i<form.lyrRights().tabAlerts().dyngrdAlerts().getRows().size(); i++)
+		{
+			DynamicGridRow row = form.lyrRights().tabAlerts().dyngrdAlerts().getRows().get(i);
+			
+			if(row.getCells().get(getColumn(COL_ALERT)).getValue() != null && row.getCells().get(getColumn(COL_ACCESS)).getValue() == null)
+			{
+				uiErrors.add("Alert Access Right is mandatory.");
+			}
+			
+			if(row.getCells().get(getColumn(COL_ALERT)).getValue() == null && row.getCells().get(getColumn(COL_ACCESS)).getValue() != null)
+			{
+				uiErrors.add("Alert Category is mandatory.");
+			}
+		}
+		
+		//WDEV-22749
+		if (navigation != null && Boolean.FALSE.equals(navigation.getIsActive()) && Boolean.TRUE.equals(role.getIsActive()))
+		{
+			uiErrors.add("Selected navigation must be active.");
+		}
+		//WDEV-22749 ends here
+		
+		String[] uiResults = new String[uiErrors.size()];
+		uiErrors.toArray(uiResults);
+		
+		return uiResults;
+	}
+
+	private AlertAccessRightVoCollection populateAlertAccessRightsFromScreen()
+	{
+		AlertAccessRightVoCollection coll = new AlertAccessRightVoCollection();
+		
+		for(int i=0; i<form.lyrRights().tabAlerts().dyngrdAlerts().getRows().size(); i++)
+		{
+			DynamicGridRow row = form.lyrRights().tabAlerts().dyngrdAlerts().getRows().get(i);
+			
+			AlertAccessRightVo alertAccess = null;
+			
+			if(row.getValue() instanceof AlertAccessRightVo)
+			{
+				alertAccess = (AlertAccessRightVo) row.getValue();
+			}
+			else
+			{
+				alertAccess = new AlertAccessRightVo();
+			}
+			
+			alertAccess.setAlertType((AlertType) row.getCells().get(getColumn(COL_ALERT)).getValue());
+			alertAccess.setAccess((AlertAccessRights) row.getCells().get(getColumn(COL_ACCESS)).getValue());
+			
+			if(alertAccess.getID_AlertAccessRight() == null && alertAccess.getAlertType() == null && alertAccess.getAccess() == null)
+				continue;
+			
+			coll.add(alertAccess);
+		}
+		
+		return coll;
 	}
 
 	private AppRightVoCollection buildAppRightList()
@@ -297,7 +437,19 @@ public class Logic extends BaseLogic
 		}
 		return ret;		
 	}
-
+	
+	//WDEV-20617
+	private AppRightVoCollection buildAppPdsRightList()
+	{
+		AppRightVoCollection ret = new AppRightVoCollection();
+		int size = form.grdPdsRights().getRows().size();
+		for (int i = 0; i < size; i++)
+		{
+			ret.add(form.grdPdsRights().getRows().get(i).getValue());
+		}
+		return ret;		
+	}
+	//WDEV-20617 ends here
 
 	/**
 	 * @return
@@ -309,15 +461,52 @@ public class Logic extends BaseLogic
 			engine.showMessage("Please enter a Role Name.");
 			return false;
 		}
+		
+		if (form.intSessionTimeout().getValue() == null ||
+				form.intSessionTimeout().getValue() < 0)
+		{
+			form.intSessionTimeout().setValue(0);
+		}
+		
+		//WDEV-20420
+		if (Boolean.TRUE.equals(form.chkRequiresPDS().getValue()) && form.cmbSpineRBAC().getValue() == null)
+		{
+			engine.showMessage("Please select a Job Role for SPINE-RBAC mapping.");
+			return false;
+		}
+		//WDEV-20420 ends here
+		
+		if (form.intSessionTimeout().getValue() != null &&
+				form.intSessionTimeout().getValue() > 0 &&
+					ConfigFlag.GEN.SESSION_TIMEOUT.getValue() < form.intSessionTimeout().getValue())
+		{
+			engine.showMessage("'Session Timeout' value can't be greater than 'SESSION_TIMEOUT' ConfigFlag value (current value '" + ConfigFlag.GEN.SESSION_TIMEOUT.getValue() + "' minute(s) )");
+			return false;
+		}
+		
+		if (form.intAutolock().getValue() == null ||
+				form.intAutolock().getValue() < 0)
+		{
+			form.intAutolock().setValue(0);
+		}
+		
+		if (form.intAutolock().getValue() != null &&
+				form.intAutolock().getValue() > 0 &&
+					ConfigFlag.UI.AUTO_LOCK_TIMER.getValue() < form.intAutolock().getValue())
+		{
+			engine.showMessage("'Autolock Screen' value can't be greater than 'AUTO_LOCK_TIMER' ConfigFlag value (current value '" + ConfigFlag.UI.AUTO_LOCK_TIMER.getValue() + "' minute(s) )");
+			return false;
+		}
+		
 		return true;
 	}
 
 	protected void onBtnUpdateClick() throws PresentationLogicException 
 	{
-		form.setMode(FormMode.EDIT);	
+		form.setMode(FormMode.EDIT);
 		form.grdRoles().setEnabled(false);
-		form.getContextMenus().getGenericGridRemoveItem().setVisible(false);
-		populateAppRightsCombo(true);
+		form.getContextMenus().getGenericGridRemoveItem().setVisible(false);	
+	//	populateAppRightsCombo(true);
 	}
 
 	
@@ -329,7 +518,8 @@ public class Logic extends BaseLogic
 		listRoles();
 		form.grdRoles().setEnabled(false);
 		form.getContextMenus().getGenericGridRemoveItem().setVisible(false);
-		populateAppRightsCombo(false);
+		updateComponentState(); //WDEV-20420
+	//	populateAppRightsCombo(false);
 	}
 
 	protected void onGrdRolesSelectionChanged() throws PresentationLogicException 
@@ -344,17 +534,68 @@ public class Logic extends BaseLogic
 		AppRoleVo voRole = domain.getRole(form.grdRoles().getValue());
 		form.getLocalContext().setRoleSelected(voRole);
 		
+		form.chkRequiresPDS().setValue(Boolean.TRUE.equals(voRole.getRequiresPDS())); //WDEV-20420
+		form.cmbSpineRBAC().setValue(voRole.getSpineRbac()); //WDEV-20420
+		updateComponentState(); //WDEV-20420
+		
 		form.txtRoleName().setValue(voRole.getName());
 		form.txtRoleDesc().setValue(voRole.getDescription());
 		form.chkIsActive().setValue(voRole.getIsActive().booleanValue());
 		form.ccTaxonomyMappings().setValue(voRole.getCodeMappings());
 		form.cmbNavs().setValue(voRole.getNavigation());
 		form.cmbTopButtons().setValue(voRole.getTopButtonConfig());		
+		form.intSessionTimeout().setValue(voRole.getSessionTimeoutIsNotNull() ? voRole.getSessionTimeout(): 0);
+		form.intAutolock().setValue(voRole.getAutolockTimerIsNotNull() ?  voRole.getAutolockTimer() : 0);
+		
 		populateNavigation(voRole.getNavigation());
 		form.btnUpdate().setEnabled(true);
 		populateAppRights(voRole.getAppRights());
+		populateAppPdsRights(voRole.getPdsRights()); //WDEV-20617
 		populateMenuActions(voRole.getFormMenuActionsDenied());
+		populateAlertsRightFromData(voRole.getAlertsAccess());
 	}
+	
+	private void populateAlertsRightFromData(AlertAccessRightVoCollection alertsAccess)
+	{
+		form.lyrRights().tabAlerts().dyngrdAlerts().getRows().clear();
+		
+		if(alertsAccess == null)
+			return;
+		
+		for(AlertAccessRightVo item : alertsAccess)
+		{
+			if(item == null)
+				continue;
+			
+			DynamicGridRow row = form.lyrRights().tabAlerts().dyngrdAlerts().getRows().newRow();
+			
+			DynamicGridCell cell = row.getCells().newCell(getColumn(COL_ALERT), DynamicCellType.ENUMERATION);
+			bindAlertTypeCell(cell);
+			
+			cell.setValue(item.getAlertType());
+			deleteThisAlertFromAllAlertsItems(item.getAlertType(), cell);
+			
+			//WDEV-21078
+			if (!Boolean.TRUE.equals(item.getAlertType().isActive()))
+			{
+				cell.getItems().newItem(item.getAlertType(), item.getAlertType().getText(), null , Color.Red);
+				cell.setValue(item.getAlertType());
+			}
+			
+			cell.setAutoPostBack(true);
+			cell = row.getCells().newCell(getColumn(COL_ACCESS), DynamicCellType.ENUMERATION);
+			bindAlertAccessRightCell(cell);
+			cell.setValue(item.getAccess());
+		
+			row.setValue(item);
+		}
+	}
+	
+	private DynamicGridColumn getColumn(int colIden)
+	{
+		return form.lyrRights().tabAlerts().dyngrdAlerts().getColumns().getByIdentifier(colIden);
+	}
+
 	@SuppressWarnings("unchecked")
 	private void populateNavigation(AppNavigationVo nav)
 	{
@@ -470,17 +711,45 @@ public class Logic extends BaseLogic
 			row = form.lyrRights().tabRightsGranted().grdRights().getRows().newRow();
 			row.setAppRight(rights.get(i).getName());
 			row.setValue(rights.get(i));
-			row.setTooltip(rights.get(i).getComment());
-			removeItemFromRightsCombo(rights.get(i));
+			
+			//WDEV-20577
+//			row.setTooltip(rights.get(i).getComment());
+			AppRight right = AppRight.getRight(rights.get(i).getName());
+			if (right != null)
+				row.setTooltip(right.getComment()); //WDEV-20577
+		
 		}	
 	}
+	
+	//WDEV-20617
+	private void populateAppPdsRights(AppRightVoCollection rights)
+	{
+		form.grdPdsRights().getRows().clear();
+		if (rights == null)
+			return;
+		rights.sort(new AppRightComparator());
+		GenForm.grdPdsRightsRow row;
+		for (int i = 0; i < rights.size(); i++)
+		{
+			row = form.grdPdsRights().getRows().newRow();
+			row.setPDSRights(rights.get(i).getName());
+			row.setValue(rights.get(i));
+			row.setTooltip(rights.get(i).getComment());
+		}	
+	}
+	//WDEV-20617 ends here
 
 	protected void onContextMenuItemClick(int menuItemID, Control sender) throws PresentationLogicException 
 	{		
 		switch(menuItemID)
 		{
+			//WDEV-20617
+			case GenForm.ContextMenus.AdminNamespace.PdsRightsMenuActions.Remove:
+				form.grdPdsRights().removeSelectedRow();
+				updateContextMenuState();
+				break;
+			//WDEV-20617 ends here
 			case GenForm.ContextMenus.GenericGrid.Remove:
-				addItemToRightsCombo(form.lyrRights().tabRightsGranted().grdRights().getSelectedRow().getValue());
 				form.lyrRights().tabRightsGranted().grdRights().removeSelectedRow();
 				form.getContextMenus().getGenericGridRemoveItem().setVisible(false);
 				break;
@@ -493,14 +762,116 @@ public class Logic extends BaseLogic
 			case GenForm.ContextMenus.AdminNamespace.RoleMenuAction.RemoveAll:
 				removeAllMenuActionsDenied();
 				break;
+				
+			case GenForm.ContextMenus.AdminNamespace.AlertsRightMenu.ADD:
+				addAlertRight();
+			break;
+			
+			case GenForm.ContextMenus.AdminNamespace.AlertsRightMenu.REMOVE:
+				removeAlertRight();
+			break;
+			
 			default:
 				break;
 		}
 	}
 
-	private void addItemToRightsCombo(AppRightVo value)
+	private void removeAlertRight()
 	{
-		form.lyrRights().tabRightsGranted().cmbRights().newRow(value, value.getName());
+		if(form.lyrRights().tabAlerts().dyngrdAlerts().getSelectedRow() == null)
+			return;
+		
+		form.lyrRights().tabAlerts().dyngrdAlerts().getRows().remove(form.lyrRights().tabAlerts().dyngrdAlerts().getSelectedRow());
+	}
+	
+	private void addAlertRight()
+	{
+		DynamicGridRow row = form.lyrRights().tabAlerts().dyngrdAlerts().getRows().newRow();
+		
+		DynamicGridCell cell = row.getCells().newCell(getColumn(COL_ALERT), DynamicCellType.ENUMERATION);
+		bindAlertTypeCell(cell);
+		cell.setAutoPostBack(true);
+	
+		cell = row.getCells().newCell(getColumn(COL_ACCESS), DynamicCellType.ENUMERATION);
+		bindAlertAccessRightCell(cell);
+	}
+
+	private void bindAlertAccessRightCell(DynamicGridCell cell)
+	{
+		AlertAccessRightsCollection accessRightColl = LookupHelper.getAlertAccessRights(domain.getLookupService());
+		
+		if(accessRightColl == null)
+			return;
+		
+		for(int i=0; i<accessRightColl.size(); i++)
+		{
+			if(accessRightColl.get(i) == null)
+				continue;
+			
+			cell.getItems().newItem(accessRightColl.get(i), accessRightColl.get(i).getText());
+		}
+	}
+
+	private void bindAlertTypeCell(DynamicGridCell cell)
+	{
+		ims.framework.cn.data.TreeNode[] alertsTypeColl = LookupHelper.getAlertType(domain.getLookupService()).getRootNodes();
+		
+		if(alertsTypeColl == null)
+			return;
+		
+		cell.getItems().clear();
+		
+		for(int i=0; i<alertsTypeColl.length; i++)
+		{
+			if(!(alertsTypeColl[i] instanceof AlertType))
+				continue;
+			
+			AlertType item = (AlertType)alertsTypeColl[i];
+			
+			if(item.isActive() && isNotAlreadyAdded(item))
+			{
+				cell.getItems().newItem(item, item.getText());
+			}
+		}
+	}
+	
+	private void deleteThisAlertFromAllAlertsItems(AlertType alert, DynamicGridCell cellFromEvent)
+	{
+		for(int i=0; i<form.lyrRights().tabAlerts().dyngrdAlerts().getRows().size(); i++)
+		{
+			DynamicGridRow row = form.lyrRights().tabAlerts().dyngrdAlerts().getRows().get(i);
+			DynamicGridCell cell = row.getCells().get(getColumn(COL_ALERT));
+					
+			Object value = cell.getValue();
+			bindAlertTypeCell(cell);
+			
+			//WDEV-21078
+			if (value!=null && value instanceof AlertType && !Boolean.TRUE.equals(((AlertType)value).isActive()))
+			{
+				AlertType item = (AlertType)value;
+				cell.getItems().newItem(item, item.getText(), null, Color.Red);
+			}
+			
+			cell.setValue(value);
+		}
+	}
+
+	private boolean isNotAlreadyAdded(AlertType item)
+	{
+		if(item == null)
+			return false;
+		
+		for(int i=0; i<form.lyrRights().tabAlerts().dyngrdAlerts().getRows().size(); i++)
+		{
+			DynamicGridRow row = form.lyrRights().tabAlerts().dyngrdAlerts().getRows().get(i);
+			
+			AlertType alert = (AlertType) row.getCells().get(getColumn(COL_ALERT)).getValue();
+			
+			if(item.equals(alert))
+				return false;
+		}
+		
+		return true;
 	}
 	
 	protected void onGrdRightsSelectionChanged() throws PresentationLogicException
@@ -508,44 +879,30 @@ public class Logic extends BaseLogic
 		if (form.getMode().equals(FormMode.EDIT))			
 			form.getContextMenus().getGenericGridRemoveItem().setVisible(true);
 	}
-
-	protected void onCmbRightsValueChanged() throws PresentationLogicException
+	
+	//WDEV-20617
+	protected void onGrdPdsRightsSelectionChanged() throws PresentationLogicException 
 	{
-		if (form.lyrRights().tabRightsGranted().cmbRights().getValue() != null)
-		{
-			form.lyrRights().tabRightsGranted().cmbRights().setTooltip(form.lyrRights().tabRightsGranted().cmbRights().getValue().getComment());
-		}
-		else
-		{
-			form.lyrRights().tabRightsGranted().cmbRights().setTooltip(null);			
-		}
+		updateContextMenuState();
 	}
-
+	//WDEV-20617 ends here
+	
 	protected void onBtnAddClick() throws PresentationLogicException
-	{
-		AppRightVo val = form.lyrRights().tabRightsGranted().cmbRights().getValue();
-		if (val == null)
-			return;
-		if (form.lyrRights().tabRightsGranted().grdRights().getRowByValue(val) != null)
-			return;
-		
-		GenForm.lyrRightsLayer.tabRightsGrantedContainer.grdRightsRow row =  form.lyrRights().tabRightsGranted().grdRights().getRows().newRow();
-		row.setValue(val);
-		row.setAppRight(val.getName());
-		row.setTooltip(val.getComment());		
-		
-		removeItemFromRightsCombo(val);
-		form.lyrRights().tabRightsGranted().grdRights().getValues().sort(new AppRightComparator());
+	{	
+		form.getLocalContext().setIsPdsRight(false);
+		form.getGlobalContext().Admin.setSelectedRoleRigths(form.lyrRights().tabRightsGranted().grdRights().getValues());
+		engine.open(form.getForms().Admin.AssignRightsDialog, new Object[] {form.getLocalContext().getIsPdsRight()}); //WDEV-20617
 	}
-
-	private void removeItemFromRightsCombo(AppRightVo val)
+	
+	//WDEV-20617
+	protected void onBtnAddPdsClick() throws PresentationLogicException 
 	{
-		for(int i=0;i<form.lyrRights().tabRightsGranted().cmbRights().getValues().size();i++)
-		{
-			if(((AppRightVo)form.lyrRights().tabRightsGranted().cmbRights().getValues().get(i)).getName().equals(val.getName()))
-				form.lyrRights().tabRightsGranted().cmbRights().removeRow(((AppRightVo)form.lyrRights().tabRightsGranted().cmbRights().getValues().get(i)));
-		}
+		form.getLocalContext().setIsPdsRight(true);
+		form.getGlobalContext().Admin.setSelectedPdsRoleRights(form.grdPdsRights().getValues());
+		engine.open(form.getForms().Admin.AssignRightsDialog, new Object[] {form.getLocalContext().getIsPdsRight()});//WDEV-20617
 	}
+	//WDEV-20617 ends here
+	
 	protected void onCmbNavsValueChanged() throws PresentationLogicException
 	{
 		populateNavigation(domain.getNavigation(form.cmbNavs().getValue()));
@@ -729,5 +1086,33 @@ public class Logic extends BaseLogic
 		{
 			addMenuAction(getAppForm(item.getForm().getID_AppForm()), item.getMenuActions().get(x));
 		}
-	}	
+	}
+
+	@Override
+	protected void onDyngrdAlertsRowSelectionChanged(DynamicGridRow row) throws PresentationLogicException
+	{
+		updateContextMenuState();
+	}
+
+	@Override
+	protected void onDyngrdAlertsCellValueChanged(DynamicGridCell cell)
+	{
+		if(getColumn(COL_ALERT).equals(cell.getColumn()))
+		{
+			deleteThisAlertFromAllAlertsItems((AlertType) cell.getValue(), cell);
+		}
+	}
+
+	//WDEV-20420
+	@Override
+	protected void onChkRequiresPDSValueChanged() throws PresentationLogicException 
+	{
+		if (Boolean.FALSE.equals(form.chkRequiresPDS().getValue()))
+		{
+			form.cmbSpineRBAC().setValue(null);
+			form.grdPdsRights().getRows().clear(); //WDEV-20617
+		}
+		updateComponentState();
+	}
+	//WDEV-20420 ends here
 }

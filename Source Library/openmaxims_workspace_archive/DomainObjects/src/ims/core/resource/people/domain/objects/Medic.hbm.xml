@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:37 -->
+<hibernate-mapping>
+	<subclass name="ims.core.resource.people.domain.objects.Medic" lazy="false" discriminator-value="MEDI" extends="ims.core.resource.people.domain.objects.Hcp" >
+<!-- debug: hibernateClassContent -->
+<!-- debug: medicType -->
+<!-- debug: grade -->
+<!-- debug: specialty -->
+<!-- debug: secondSpecialty -->
+<!-- debug: thirdSpecialty -->
+<!-- debug: inpatientHandling -->
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: IsLookup -->
+		<many-to-one name="medicType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_medictype" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="grade" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_grade" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="specialty" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_specialty" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="secondSpecialty" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_secondspec" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="thirdSpecialty" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_thirdspeci" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="inpatientHandling" type="boolean" access="field" update="true">
+			<column name="inpatienth"  not-null="false" unique="false"  />
+		</property>
+	</subclass>
+</hibernate-mapping>

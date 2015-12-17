@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.core.vo.domain;
@@ -56,6 +61,20 @@ public class CommChannelVoAssembler
 		valueObjectDest.setCommValue(valueObjectSrc.getCommValue());
 		// SystemInformation
 		valueObjectDest.setSystemInformation(valueObjectSrc.getSystemInformation());
+		// objectidentifier
+		valueObjectDest.setObjectidentifier(valueObjectSrc.getObjectidentifier());
+		// beffdate
+		valueObjectDest.setBeffdate(valueObjectSrc.getBeffdate());
+		// beffdatecnf
+		valueObjectDest.setBeffdatecnf(valueObjectSrc.getBeffdatecnf());
+		// betdate
+		valueObjectDest.setBetdate(valueObjectSrc.getBetdate());
+		// betdatecnf
+		valueObjectDest.setBetdatecnf(valueObjectSrc.getBetdatecnf());
+		// pdsUpdateMode
+		valueObjectDest.setPdsUpdateMode(valueObjectSrc.getPdsUpdateMode());
+		// ChannelUsage
+		valueObjectDest.setChannelUsage(valueObjectSrc.getChannelUsage());
 	 	return valueObjectDest;
 	 }
 
@@ -387,7 +406,97 @@ public class CommChannelVoAssembler
 		// SystemInformation
 		// set system information
 		valueObject.setSystemInformation(ims.vo.domain.SystemInformationAssembler.create(domainObject.getSystemInformation()));
- 		return valueObject;
+		// objectidentifier
+		valueObject.setObjectidentifier(domainObject.getObjectidentifier());
+		// beffdate
+		java.util.Date beffdate = domainObject.getBeffdate();
+		if ( null != beffdate ) 
+		{
+			valueObject.setBeffdate(new ims.framework.utils.Date(beffdate) );
+		}
+		// beffdatecnf
+		valueObject.setBeffdatecnf( domainObject.isBeffdatecnf() );
+		// betdate
+		java.util.Date betdate = domainObject.getBetdate();
+		if ( null != betdate ) 
+		{
+			valueObject.setBetdate(new ims.framework.utils.Date(betdate) );
+		}
+		// betdatecnf
+		valueObject.setBetdatecnf( domainObject.isBetdatecnf() );
+		// pdsUpdateMode
+		ims.domain.lookups.LookupInstance instance9 = domainObject.getPdsUpdateMode();
+		if ( null != instance9 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance9.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance9.getImage().getImageId(), instance9.getImage().getImagePath());
+			}
+			color = instance9.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.PDSUpdateMode voLookup9 = new ims.core.vo.lookups.PDSUpdateMode(instance9.getId(),instance9.getText(), instance9.isActive(), null, img, color);
+			ims.core.vo.lookups.PDSUpdateMode parentVoLookup9 = voLookup9;
+			ims.domain.lookups.LookupInstance parent9 = instance9.getParent();
+			while (parent9 != null)
+			{
+				if (parent9.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent9.getImage().getImageId(), parent9.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent9.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup9.setParent(new ims.core.vo.lookups.PDSUpdateMode(parent9.getId(),parent9.getText(), parent9.isActive(), null, img, color));
+				parentVoLookup9 = parentVoLookup9.getParent();
+								parent9 = parent9.getParent();
+			}			
+			valueObject.setPdsUpdateMode(voLookup9);
+		}
+				// ChannelUsage
+		ims.domain.lookups.LookupInstance instance10 = domainObject.getChannelUsage();
+		if ( null != instance10 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance10.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance10.getImage().getImageId(), instance10.getImage().getImagePath());
+			}
+			color = instance10.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.PDSChannelUsage voLookup10 = new ims.core.vo.lookups.PDSChannelUsage(instance10.getId(),instance10.getText(), instance10.isActive(), null, img, color);
+			ims.core.vo.lookups.PDSChannelUsage parentVoLookup10 = voLookup10;
+			ims.domain.lookups.LookupInstance parent10 = instance10.getParent();
+			while (parent10 != null)
+			{
+				if (parent10.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent10.getImage().getImageId(), parent10.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent10.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup10.setParent(new ims.core.vo.lookups.PDSChannelUsage(parent10.getId(),parent10.getText(), parent10.isActive(), null, img, color));
+				parentVoLookup10 = parentVoLookup10.getParent();
+								parent10 = parent10.getParent();
+			}			
+			valueObject.setChannelUsage(voLookup10);
+		}
+		 		return valueObject;
 	 }
 
 
@@ -451,6 +560,45 @@ public class CommChannelVoAssembler
 			valueObject.setCommValue(null);
 		}
 		domainObject.setCommValue(valueObject.getCommValue());
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getObjectidentifier() != null && valueObject.getObjectidentifier().equals(""))
+		{
+			valueObject.setObjectidentifier(null);
+		}
+		domainObject.setObjectidentifier(valueObject.getObjectidentifier());
+		java.util.Date value5 = null;
+		ims.framework.utils.Date date5 = valueObject.getBeffdate();		
+		if ( date5 != null ) 
+		{
+			value5 = date5.getDate();
+		}
+		domainObject.setBeffdate(value5);
+		domainObject.setBeffdatecnf(valueObject.getBeffdatecnf());
+		java.util.Date value7 = null;
+		ims.framework.utils.Date date7 = valueObject.getBetdate();		
+		if ( date7 != null ) 
+		{
+			value7 = date7.getDate();
+		}
+		domainObject.setBetdate(value7);
+		domainObject.setBetdatecnf(valueObject.getBetdatecnf());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value9 = null;
+		if ( null != valueObject.getPdsUpdateMode() ) 
+		{
+			value9 =
+				domainFactory.getLookupInstance(valueObject.getPdsUpdateMode().getID());
+		}
+		domainObject.setPdsUpdateMode(value9);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value10 = null;
+		if ( null != valueObject.getChannelUsage() ) 
+		{
+			value10 =
+				domainFactory.getLookupInstance(valueObject.getChannelUsage().getID());
+		}
+		domainObject.setChannelUsage(value10);
 
 		return domainObject;
 	}

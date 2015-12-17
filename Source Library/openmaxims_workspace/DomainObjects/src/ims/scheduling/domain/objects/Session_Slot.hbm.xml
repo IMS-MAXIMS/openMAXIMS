@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:36 -->
+<!-- Generated: 12/10/2015, 13:31 -->
 <hibernate-mapping>
 	<class name="ims.scheduling.domain.objects.Session_Slot" table="schl_sess_slot" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -109,6 +109,10 @@
 				<column name="to_side" sql-type="numeric(10,0)" unique="false"   />
 			</many-to-many>
 		</set>
+<!-- debug: cancelBlockReason -->
+<!-- debug: cancelBlockComment -->
+<!-- debug: comment -->
+<!-- debug: wasBlockedCABSlot -->
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="startTm" type="string" access="field" update="true">
@@ -164,5 +168,25 @@
 		<many-to-one name="statusReason" class="ims.domain.lookups.LookupInstance" access="field">
 			<column name="lkp_statusreas" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="cancelBlockReason" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_cancelbloc" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="cancelBlockComment" type="string" access="field" update="true" > 
+			<column name="cancelblo2" length="250"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="comment" type="string" access="field" update="true" > 
+			<column name="c_comme" length="500"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="wasBlockedCABSlot" type="boolean" access="field" update="true">
+			<column name="wasblocked"  not-null="false" unique="false"  />
+		</property>
 	</class>
 </hibernate-mapping>

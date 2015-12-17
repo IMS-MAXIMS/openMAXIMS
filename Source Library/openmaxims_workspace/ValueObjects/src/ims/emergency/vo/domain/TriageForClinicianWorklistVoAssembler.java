@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.emergency.vo.domain;
@@ -64,6 +69,12 @@ public class TriageForClinicianWorklistVoAssembler
 		valueObjectDest.setCurrentTriageAssessment(valueObjectSrc.getCurrentTriageAssessment());
 		// CurrentTriagePathway
 		valueObjectDest.setCurrentTriagePathway(valueObjectSrc.getCurrentTriagePathway());
+		// TriagePriorityChange
+		valueObjectDest.setTriagePriorityChange(valueObjectSrc.getTriagePriorityChange());
+		// OBSScore
+		valueObjectDest.setOBSScore(valueObjectSrc.getOBSScore());
+		// VitalsTakenDateTime
+		valueObjectDest.setVitalsTakenDateTime(valueObjectSrc.getVitalsTakenDateTime());
 		// CurrentTriagePriority
 		valueObjectDest.setCurrentTriagePriority(valueObjectSrc.getCurrentTriagePriority());
 		// MainPresentingProblem
@@ -440,8 +451,8 @@ public class TriageForClinicianWorklistVoAssembler
 				valueObject.setCurrentTriagePathway(new ims.icps.instantiation.vo.PatientICPRefVo(domainObject.getCurrentTriagePathway().getId(), domainObject.getCurrentTriagePathway().getVersion()));
 			}
 		}
-		// CurrentTriagePriority
-		ims.domain.lookups.LookupInstance instance8 = domainObject.getCurrentTriagePriority();
+		// TriagePriorityChange
+		ims.domain.lookups.LookupInstance instance8 = domainObject.getTriagePriorityChange();
 		if ( null != instance8 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
@@ -454,8 +465,8 @@ public class TriageForClinicianWorklistVoAssembler
 			if (color != null) 
 				color.getValue();
 
-			ims.emergency.vo.lookups.TriagePriority voLookup8 = new ims.emergency.vo.lookups.TriagePriority(instance8.getId(),instance8.getText(), instance8.isActive(), null, img, color);
-			ims.emergency.vo.lookups.TriagePriority parentVoLookup8 = voLookup8;
+			ims.emergency.vo.lookups.TriagePriorityChange voLookup8 = new ims.emergency.vo.lookups.TriagePriorityChange(instance8.getId(),instance8.getText(), instance8.isActive(), null, img, color);
+			ims.emergency.vo.lookups.TriagePriorityChange parentVoLookup8 = voLookup8;
 			ims.domain.lookups.LookupInstance parent8 = instance8.getParent();
 			while (parent8 != null)
 			{
@@ -470,11 +481,55 @@ public class TriageForClinicianWorklistVoAssembler
 				color = parent8.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup8.setParent(new ims.emergency.vo.lookups.TriagePriority(parent8.getId(),parent8.getText(), parent8.isActive(), null, img, color));
+								parentVoLookup8.setParent(new ims.emergency.vo.lookups.TriagePriorityChange(parent8.getId(),parent8.getText(), parent8.isActive(), null, img, color));
 				parentVoLookup8 = parentVoLookup8.getParent();
 								parent8 = parent8.getParent();
 			}			
-			valueObject.setCurrentTriagePriority(voLookup8);
+			valueObject.setTriagePriorityChange(voLookup8);
+		}
+				// OBSScore
+		valueObject.setOBSScore(domainObject.getOBSScore());
+		// VitalsTakenDateTime
+		java.util.Date VitalsTakenDateTime = domainObject.getVitalsTakenDateTime();
+		if ( null != VitalsTakenDateTime ) 
+		{
+			valueObject.setVitalsTakenDateTime(new ims.framework.utils.DateTime(VitalsTakenDateTime) );
+		}
+		// CurrentTriagePriority
+		ims.domain.lookups.LookupInstance instance11 = domainObject.getCurrentTriagePriority();
+		if ( null != instance11 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance11.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance11.getImage().getImageId(), instance11.getImage().getImagePath());
+			}
+			color = instance11.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.emergency.vo.lookups.TriagePriority voLookup11 = new ims.emergency.vo.lookups.TriagePriority(instance11.getId(),instance11.getText(), instance11.isActive(), null, img, color);
+			ims.emergency.vo.lookups.TriagePriority parentVoLookup11 = voLookup11;
+			ims.domain.lookups.LookupInstance parent11 = instance11.getParent();
+			while (parent11 != null)
+			{
+				if (parent11.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent11.getImage().getImageId(), parent11.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent11.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup11.setParent(new ims.emergency.vo.lookups.TriagePriority(parent11.getId(),parent11.getText(), parent11.isActive(), null, img, color));
+				parentVoLookup11 = parentVoLookup11.getParent();
+								parent11 = parent11.getParent();
+			}			
+			valueObject.setCurrentTriagePriority(voLookup11);
 		}
 				// MainPresentingProblem
 		valueObject.setMainPresentingProblem(ims.emergency.vo.domain.PatientProblemForClinicianWorklistVoAssembler.create(map, domainObject.getMainPresentingProblem()) );
@@ -665,43 +720,59 @@ public class TriageForClinicianWorklistVoAssembler
 		domainObject.setCurrentTriagePathway(value7);
 		// create LookupInstance from vo LookupType
 		ims.domain.lookups.LookupInstance value8 = null;
-		if ( null != valueObject.getCurrentTriagePriority() ) 
+		if ( null != valueObject.getTriagePriorityChange() ) 
 		{
 			value8 =
+				domainFactory.getLookupInstance(valueObject.getTriagePriorityChange().getID());
+		}
+		domainObject.setTriagePriorityChange(value8);
+		domainObject.setOBSScore(valueObject.getOBSScore());
+		ims.framework.utils.DateTime dateTime10 = valueObject.getVitalsTakenDateTime();
+		java.util.Date value10 = null;
+		if ( dateTime10 != null ) 
+		{
+			value10 = dateTime10.getJavaDate();
+		}
+		domainObject.setVitalsTakenDateTime(value10);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value11 = null;
+		if ( null != valueObject.getCurrentTriagePriority() ) 
+		{
+			value11 =
 				domainFactory.getLookupInstance(valueObject.getCurrentTriagePriority().getID());
 		}
-		domainObject.setCurrentTriagePriority(value8);
+		domainObject.setCurrentTriagePriority(value11);
 	// SaveAsRefVO - treated as a refVo in extract methods
-	ims.core.clinical.domain.objects.PatientProblem value9 = null;
+	ims.core.clinical.domain.objects.PatientProblem value12 = null;
 		if ( null != valueObject.getMainPresentingProblem() ) 
 		{
 			if (valueObject.getMainPresentingProblem().getBoId() == null)
 			{
 				if (domMap.get(valueObject.getMainPresentingProblem()) != null)
 				{
-					value9 = (ims.core.clinical.domain.objects.PatientProblem)domMap.get(valueObject.getMainPresentingProblem());
+					value12 = (ims.core.clinical.domain.objects.PatientProblem)domMap.get(valueObject.getMainPresentingProblem());
 				}
 			}
 			else
 			{
-				value9 = (ims.core.clinical.domain.objects.PatientProblem)domainFactory.getDomainObject(ims.core.clinical.domain.objects.PatientProblem.class, valueObject.getMainPresentingProblem().getBoId());
+				value12 = (ims.core.clinical.domain.objects.PatientProblem)domainFactory.getDomainObject(ims.core.clinical.domain.objects.PatientProblem.class, valueObject.getMainPresentingProblem().getBoId());
 			}
 		}
-		domainObject.setMainPresentingProblem(value9);
-		ims.framework.utils.DateTime dateTime10 = valueObject.getTriageStartDateTime();
-		java.util.Date value10 = null;
-		if ( dateTime10 != null ) 
+		domainObject.setMainPresentingProblem(value12);
+		ims.framework.utils.DateTime dateTime13 = valueObject.getTriageStartDateTime();
+		java.util.Date value13 = null;
+		if ( dateTime13 != null ) 
 		{
-			value10 = dateTime10.getJavaDate();
+			value13 = dateTime13.getJavaDate();
 		}
-		domainObject.setTriageStartDateTime(value10);
-		ims.framework.utils.DateTime dateTime11 = valueObject.getMedicInterventionStartDateTime();
-		java.util.Date value11 = null;
-		if ( dateTime11 != null ) 
+		domainObject.setTriageStartDateTime(value13);
+		ims.framework.utils.DateTime dateTime14 = valueObject.getMedicInterventionStartDateTime();
+		java.util.Date value14 = null;
+		if ( dateTime14 != null ) 
 		{
-			value11 = dateTime11.getJavaDate();
+			value14 = dateTime14.getJavaDate();
 		}
-		domainObject.setMedicInterventionStartDateTime(value11);
+		domainObject.setMedicInterventionStartDateTime(value14);
 
 		return domainObject;
 	}

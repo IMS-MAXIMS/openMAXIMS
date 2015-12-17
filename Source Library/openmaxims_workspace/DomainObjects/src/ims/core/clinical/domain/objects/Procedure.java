@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.clinical.domain.objects;
@@ -47,7 +52,7 @@ public class Procedure extends ims.domain.DomainObject implements java.io.Serial
 
 	private String procedureName;
 	/** 
-	  * Collection of ims.core.clinical.domain.objects.TaxonomyMap.
+	  * Collection of ims.core.clinical.domain.objects.NonUniqueTaxonomyMap.
 	  */
 	private java.util.List taxonomyMap;
 	private Boolean isActive;
@@ -71,6 +76,16 @@ public class Procedure extends ims.domain.DomainObject implements java.io.Serial
 	private ims.domain.lookups.LookupInstance anaesthetistCategory;
 	/** Hospital Category */
 	private ims.domain.lookups.LookupInstance hospitalCategory;
+	/** This procedure will only take place in an outpatient setting. */
+	private Boolean outpatientOnlyProcedure;
+	/** Indicates that a Procedure is an Endoscopy Procedure */
+	private Boolean isEndoscopy;
+	private Boolean isLateralityApplicable;
+	private Boolean isBilateralListingApplicable;
+	private ims.domain.lookups.LookupInstance defaultAnaestheticType;
+	private ims.domain.lookups.LookupInstance genderSpecific;
+	private ims.domain.lookups.LookupInstance endoscopyType;
+	private Boolean medicalWL;
     public Procedure (Integer id, int ver)
     {
     	super(id, ver);
@@ -191,6 +206,62 @@ public class Procedure extends ims.domain.DomainObject implements java.io.Serial
 		this.hospitalCategory = hospitalCategory;
 	}
 
+	public Boolean isOutpatientOnlyProcedure() {
+		return outpatientOnlyProcedure;
+	}
+	public void setOutpatientOnlyProcedure(Boolean outpatientOnlyProcedure) {
+		this.outpatientOnlyProcedure = outpatientOnlyProcedure;
+	}
+
+	public Boolean isIsEndoscopy() {
+		return isEndoscopy;
+	}
+	public void setIsEndoscopy(Boolean isEndoscopy) {
+		this.isEndoscopy = isEndoscopy;
+	}
+
+	public Boolean isIsLateralityApplicable() {
+		return isLateralityApplicable;
+	}
+	public void setIsLateralityApplicable(Boolean isLateralityApplicable) {
+		this.isLateralityApplicable = isLateralityApplicable;
+	}
+
+	public Boolean isIsBilateralListingApplicable() {
+		return isBilateralListingApplicable;
+	}
+	public void setIsBilateralListingApplicable(Boolean isBilateralListingApplicable) {
+		this.isBilateralListingApplicable = isBilateralListingApplicable;
+	}
+
+	public ims.domain.lookups.LookupInstance getDefaultAnaestheticType() {
+		return defaultAnaestheticType;
+	}
+	public void setDefaultAnaestheticType(ims.domain.lookups.LookupInstance defaultAnaestheticType) {
+		this.defaultAnaestheticType = defaultAnaestheticType;
+	}
+
+	public ims.domain.lookups.LookupInstance getGenderSpecific() {
+		return genderSpecific;
+	}
+	public void setGenderSpecific(ims.domain.lookups.LookupInstance genderSpecific) {
+		this.genderSpecific = genderSpecific;
+	}
+
+	public ims.domain.lookups.LookupInstance getEndoscopyType() {
+		return endoscopyType;
+	}
+	public void setEndoscopyType(ims.domain.lookups.LookupInstance endoscopyType) {
+		this.endoscopyType = endoscopyType;
+	}
+
+	public Boolean isMedicalWL() {
+		return medicalWL;
+	}
+	public void setMedicalWL(Boolean medicalWL) {
+		this.medicalWL = medicalWL;
+	}
+
 	/**
 	 * isConfigurationObject
 	 * Taken from the Usage property of the business object, this method will return
@@ -233,7 +304,7 @@ public class Procedure extends ims.domain.DomainObject implements java.io.Serial
 		{
 			if (i2 > 0)
 				auditStr.append(",");
-			ims.core.clinical.domain.objects.TaxonomyMap obj = (ims.core.clinical.domain.objects.TaxonomyMap)taxonomyMap.get(i2);
+			ims.core.clinical.domain.objects.NonUniqueTaxonomyMap obj = (ims.core.clinical.domain.objects.NonUniqueTaxonomyMap)taxonomyMap.get(i2);
 		    if (obj != null)
 			{
 				if (i2 == 0)
@@ -306,6 +377,33 @@ public class Procedure extends ims.domain.DomainObject implements java.io.Serial
 		auditStr.append("\r\n*hospitalCategory* :");
 		if (hospitalCategory != null)
 			auditStr.append(hospitalCategory.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*outpatientOnlyProcedure* :");
+		auditStr.append(outpatientOnlyProcedure);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*isEndoscopy* :");
+		auditStr.append(isEndoscopy);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*isLateralityApplicable* :");
+		auditStr.append(isLateralityApplicable);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*isBilateralListingApplicable* :");
+		auditStr.append(isBilateralListingApplicable);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*defaultAnaestheticType* :");
+		if (defaultAnaestheticType != null)
+			auditStr.append(defaultAnaestheticType.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*genderSpecific* :");
+		if (genderSpecific != null)
+			auditStr.append(genderSpecific.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*endoscopyType* :");
+		if (endoscopyType != null)
+			auditStr.append(endoscopyType.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*medicalWL* :");
+		auditStr.append(medicalWL);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -428,6 +526,54 @@ public class Procedure extends ims.domain.DomainObject implements java.io.Serial
 			sb.append("<hospitalCategory>");
 			sb.append(this.getHospitalCategory().toXMLString()); 
 			sb.append("</hospitalCategory>");		
+		}
+		if (this.isOutpatientOnlyProcedure() != null)
+		{
+			sb.append("<outpatientOnlyProcedure>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isOutpatientOnlyProcedure().toString()));
+			sb.append("</outpatientOnlyProcedure>");		
+		}
+		if (this.isIsEndoscopy() != null)
+		{
+			sb.append("<isEndoscopy>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsEndoscopy().toString()));
+			sb.append("</isEndoscopy>");		
+		}
+		if (this.isIsLateralityApplicable() != null)
+		{
+			sb.append("<isLateralityApplicable>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsLateralityApplicable().toString()));
+			sb.append("</isLateralityApplicable>");		
+		}
+		if (this.isIsBilateralListingApplicable() != null)
+		{
+			sb.append("<isBilateralListingApplicable>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsBilateralListingApplicable().toString()));
+			sb.append("</isBilateralListingApplicable>");		
+		}
+		if (this.getDefaultAnaestheticType() != null)
+		{
+			sb.append("<defaultAnaestheticType>");
+			sb.append(this.getDefaultAnaestheticType().toXMLString()); 
+			sb.append("</defaultAnaestheticType>");		
+		}
+		if (this.getGenderSpecific() != null)
+		{
+			sb.append("<genderSpecific>");
+			sb.append(this.getGenderSpecific().toXMLString()); 
+			sb.append("</genderSpecific>");		
+		}
+		if (this.getEndoscopyType() != null)
+		{
+			sb.append("<endoscopyType>");
+			sb.append(this.getEndoscopyType().toXMLString()); 
+			sb.append("</endoscopyType>");		
+		}
+		if (this.isMedicalWL() != null)
+		{
+			sb.append("<medicalWL>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isMedicalWL().toString()));
+			sb.append("</medicalWL>");		
 		}
 		return sb.toString();
 	}
@@ -601,7 +747,7 @@ public class Procedure extends ims.domain.DomainObject implements java.io.Serial
 		if(fldEl != null)
 		{
 			fldEl = fldEl.element("list");	
-			obj.setTaxonomyMap(ims.core.clinical.domain.objects.TaxonomyMap.fromListXMLString(fldEl, factory, obj.getTaxonomyMap(), domMap));
+			obj.setTaxonomyMap(ims.core.clinical.domain.objects.NonUniqueTaxonomyMap.fromListXMLString(fldEl, factory, obj.getTaxonomyMap(), domMap));
 		}
 		fldEl = el.element("isActive");
 		if(fldEl != null)
@@ -659,6 +805,49 @@ public class Procedure extends ims.domain.DomainObject implements java.io.Serial
 			fldEl = fldEl.element("lki");
 			obj.setHospitalCategory(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
 		}
+		fldEl = el.element("outpatientOnlyProcedure");
+		if(fldEl != null)
+		{	
+    		obj.setOutpatientOnlyProcedure(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("isEndoscopy");
+		if(fldEl != null)
+		{	
+    		obj.setIsEndoscopy(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("isLateralityApplicable");
+		if(fldEl != null)
+		{	
+    		obj.setIsLateralityApplicable(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("isBilateralListingApplicable");
+		if(fldEl != null)
+		{	
+    		obj.setIsBilateralListingApplicable(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("defaultAnaestheticType");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setDefaultAnaestheticType(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("genderSpecific");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setGenderSpecific(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("endoscopyType");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setEndoscopyType(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("medicalWL");
+		if(fldEl != null)
+		{	
+    		obj.setMedicalWL(new Boolean(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -685,6 +874,14 @@ public class Procedure extends ims.domain.DomainObject implements java.io.Serial
 		public static final String SurgeonCategory = "surgeonCategory";
 		public static final String AnaesthetistCategory = "anaesthetistCategory";
 		public static final String HospitalCategory = "hospitalCategory";
+		public static final String OutpatientOnlyProcedure = "outpatientOnlyProcedure";
+		public static final String IsEndoscopy = "isEndoscopy";
+		public static final String IsLateralityApplicable = "isLateralityApplicable";
+		public static final String IsBilateralListingApplicable = "isBilateralListingApplicable";
+		public static final String DefaultAnaestheticType = "defaultAnaestheticType";
+		public static final String GenderSpecific = "genderSpecific";
+		public static final String EndoscopyType = "endoscopyType";
+		public static final String MedicalWL = "medicalWL";
 	}
 }
 

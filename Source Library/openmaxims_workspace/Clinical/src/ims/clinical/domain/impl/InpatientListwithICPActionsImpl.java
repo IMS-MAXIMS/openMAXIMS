@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -250,13 +255,23 @@ public class InpatientListwithICPActionsImpl extends BaseInpatientListwithICPAct
 		if (inpatientEpisode.getCareContextIsNotNull())
 		{
 			paramValues.add(inpatientEpisode.getCareContext().getID_CareContext());
+			
 		}
 		else	// Keep this for backward compatibility
 		{
 			paramValues.add(inpatientEpisode.getICPInfo().getCareContext().getID_CareContext());
 		}
 
-		return CatsReferralVoAssembler.create((CatsReferral) getDomainFactory().find(hql, paramNames, paramValues).get(0));
+		//WDEV-20995
+		List <?> list = getDomainFactory().find(hql, paramNames, paramValues);
+		
+		
+		if (list == null || list.size() == 0)
+		{
+			return null;
+		}
+		
+		return CatsReferralVoAssembler.create((CatsReferral) list.get(0));
 	}
 
 	public CareContextShortVo getCareContext(CareContextRefVo careContextRef) 

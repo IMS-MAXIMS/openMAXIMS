@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -36,6 +41,7 @@ import ims.core.vo.domain.ChartResultVoAssembler;
 import ims.core.vo.domain.ChartTypeShortVoAssembler;
 import ims.core.vo.domain.ChartTypeVoAssembler;
 import ims.core.vo.domain.ServiceLiteVoAssembler;
+import ims.core.vo.lookups.LocationType;
 import ims.core.vo.lookups.PreActiveActiveInactiveStatus;
 import ims.core.vo.lookups.ServiceCategory;
 import ims.core.vo.lookups.TaxonomyType;
@@ -69,6 +75,7 @@ import ims.ocrr.vo.domain.PathologyResultListShortVoAssembler;
 import ims.ocrr.vo.domain.SpecimenWorkListItemDateToCollectVoAssembler;
 import ims.ocrr.vo.lookups.Category;
 import ims.ocrr.vo.lookups.InvEventType;
+import ims.ocrr.vo.lookups.OrderInvStatus;
 import ims.ocrr.vo.lookups.ResultStatus;
 import ims.ocrr.vo.lookups.ResultValueType;
 
@@ -79,6 +86,12 @@ public class PathologyResultsImpl extends BasePathologyResultsImpl
 {
 	private static final long serialVersionUID = 1L;
 
+	private static final int IPOP_ALL			= 1;
+	private static final int IPOP_INPATIENT		= 2;
+	private static final int IPOP_OUTPATIENT	= 3;
+
+	
+	
 	public ims.core.vo.HcpLiteVoCollection listClinicians(String name)
 	{
 		ClinicalImagingResults impl = (ClinicalImagingResults)getDomainImpl(ClinicalImagingResultsImpl.class);
@@ -93,16 +106,20 @@ public class PathologyResultsImpl extends BasePathologyResultsImpl
 				getDomainFactory().find("from InvestigationIndex as i1_1 where (i1_1.category = :category and i1_1.upperName like :name and i1_1.activeStatus = :status and i1_1.isProfile = :isProfile) order by i1_1.upperName", 
 						new String[] {"category", "name", "status", "isProfile"}, new Object[] {getDomLookup(Category.PATHOLOGY), name, getDomLookup(PreActiveActiveInactiveStatus.ACTIVE), Boolean.FALSE}));
 	}
-	@SuppressWarnings({"rawtypes", "unchecked"})
-	public PathologyResultListShortVoCollection listResults(PatientRefVo patient, Date fromDate, Date toDate, InvestigationIndexRefVo investigationType, ServiceLiteVo discipline, HcpRefVo clinician, Boolean resultsOnly) throws DomainInterfaceException 
+
+	
+	
+	@SuppressWarnings({"rawtypes"})
+	public PathologyResultListShortVoCollection listResults(PatientRefVo patient, Date fromDate, Date toDate, InvestigationIndexRefVo investigationType,
+																ServiceLiteVo discipline, HcpRefVo clinician, Integer inpatientOutpatientOption, 
+																Boolean resultsOnly, Boolean checked, Boolean unchecked) throws DomainInterfaceException
 	{
-		ArrayList markers = new ArrayList();
-		ArrayList values = new ArrayList();
+		ArrayList<String> markers = new ArrayList<String>();
+		ArrayList<Object> values = new ArrayList<Object>();
 		
 		if(patient == null || patient.getID_Patient() == null)
 			throw new CodingRuntimeException("Invalid patient");
-//		if(fromDate == null && toDate == null)
-//			throw new DomainInterfaceException("Invalid date range");
+
 
 		StringBuffer sb = new StringBuffer("from OrderInvestigation as o1_1 ");
 		
@@ -158,15 +175,6 @@ public class PathologyResultsImpl extends BasePathologyResultsImpl
 			markers.add("discipline");
 			values.add(discipline.getID_Service());
 		}
-//		if(orderingLocation != null && orderingLocation.getID_LocationIsNotNull())
-//		{
-//			sb.append(whereAdded ? " and" : " where");
-//			whereAdded = true;
-//			
-//			sb.append(" o1_1.orderDetails.patientLocation.id = :orderingloc");
-//			markers.add("orderingloc");
-//			values.add(orderingLocation.getID_Location());
-//		}
 		if(clinician != null && clinician.getID_HcpIsNotNull())
 		{
 			sb.append(" and");
@@ -174,11 +182,50 @@ public class PathologyResultsImpl extends BasePathologyResultsImpl
 			markers.add("clinician");
 			values.add(clinician.getID_Hcp());
 		}
+		
+		
+		switch (inpatientOutpatientOption)
+		{
+			case IPOP_ALL:
+				break;
+				
+			case IPOP_INPATIENT:
+				sb.append(" AND o1_1.patientLocation is not null AND o1_1.patientLocation.type = :WARD_TYPE ");
+				markers.add("WARD_TYPE");
+				values.add(getDomLookup(LocationType.WARD));
+				break;
+				
+			case IPOP_OUTPATIENT:
+				sb.append(" AND (o1_1.patientClinic is not null OR o1_1.orderDetails.outpatientDept is not null) " );
+				break;
+		}
+
+		
 		if (resultsOnly != null && resultsOnly.booleanValue())
 		{
 			sb.append(" and");
 			sb.append(" (o1_1.resultDetails is not null ) ");//WDEV-10227
 		}
+		
+
+		if ((checked != null && unchecked != null) /* LOGICAL XOR */
+				&& ((checked && !unchecked) || (!checked && unchecked)))
+		{
+			if (checked)
+			{
+				sb.append(" AND o1_1.ordInvCurrentStatus.ordInvStatus = :CHECKED_STAT ");
+				markers.add("CHECKED_STAT");
+				values.add(getDomLookup(OrderInvStatus.CHECKED));
+			}
+			
+			if (unchecked)
+			{
+				sb.append(" AND o1_1.ordInvCurrentStatus.ordInvStatus <> :CHECKED_STAT ");
+				markers.add("CHECKED_STAT");
+				values.add(getDomLookup(OrderInvStatus.CHECKED));
+			}
+		}
+		
 		
 		sb.append(" order by o1_1.displayDateTime desc, o1_1.ordInvSeq asc, o1_1.systemInformation.creationDateTime, o1_1.systemInformation.creationUser");
 

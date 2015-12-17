@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.core.vo.domain;
@@ -60,6 +65,12 @@ public class PatientLiteVoAssembler
 		valueObjectDest.setIsActive(valueObjectSrc.getIsActive());
 		// IsQuickRegistrationPatient
 		valueObjectDest.setIsQuickRegistrationPatient(valueObjectSrc.getIsQuickRegistrationPatient());
+		// primaryIdValueUsed
+		valueObjectDest.setPrimaryIdValueUsed(valueObjectSrc.getPrimaryIdValueUsed());
+		// identifiers
+		valueObjectDest.setIdentifiers(valueObjectSrc.getIdentifiers());
+		// dod
+		valueObjectDest.setDod(valueObjectSrc.getDod());
 	 	return valueObjectDest;
 	 }
 
@@ -398,6 +409,16 @@ public class PatientLiteVoAssembler
 		valueObject.setIsActive( domainObject.isIsActive() );
 		// IsQuickRegistrationPatient
 		valueObject.setIsQuickRegistrationPatient( domainObject.isIsQuickRegistrationPatient() );
+		// primaryIdValueUsed
+		valueObject.setPrimaryIdValueUsed(domainObject.getPrimaryIdValueUsed());
+		// identifiers
+		valueObject.setIdentifiers(ims.core.vo.domain.PatientIdAssembler.createPatientIdCollectionFromPatientId(map, domainObject.getIdentifiers()) );
+		// dod
+		java.util.Date dod = domainObject.getDod();
+		if ( null != dod ) 
+		{
+			valueObject.setDod(new ims.framework.utils.Date(dod) );
+		}
  		return valueObject;
 	 }
 
@@ -465,6 +486,21 @@ public class PatientLiteVoAssembler
 		domainObject.setDob(value3);
 		domainObject.setIsActive(valueObject.getIsActive());
 		domainObject.setIsQuickRegistrationPatient(valueObject.getIsQuickRegistrationPatient());
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getPrimaryIdValueUsed() != null && valueObject.getPrimaryIdValueUsed().equals(""))
+		{
+			valueObject.setPrimaryIdValueUsed(null);
+		}
+		domainObject.setPrimaryIdValueUsed(valueObject.getPrimaryIdValueUsed());
+		domainObject.setIdentifiers(ims.core.vo.domain.PatientIdAssembler.extractPatientIdList(domainFactory, valueObject.getIdentifiers(), domainObject.getIdentifiers(), domMap));		
+		java.util.Date value8 = null;
+		ims.framework.utils.Date date8 = valueObject.getDod();		
+		if ( date8 != null ) 
+		{
+			value8 = date8.getDate();
+		}
+		domainObject.setDod(value8);
 
 		return domainObject;
 	}

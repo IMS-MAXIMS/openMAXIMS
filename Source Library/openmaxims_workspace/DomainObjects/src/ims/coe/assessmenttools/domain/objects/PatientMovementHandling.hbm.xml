@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:37 -->
+<!-- Generated: 12/10/2015, 13:32 -->
 <hibernate-mapping>
 	<subclass name="ims.coe.assessmenttools.domain.objects.PatientMovementHandling" lazy="true" discriminator-value="PTMV" extends="ims.core.clinical.domain.objects.Assessment" >
 <!-- debug: hibernateClassContent -->

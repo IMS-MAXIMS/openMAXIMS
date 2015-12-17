@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.scheduling.domain.objects;
@@ -47,10 +52,6 @@ public class SessionTheatreProceduresRemanining extends ims.domain.DomainObject 
 
 	/** Remaining Time In Mins */
 	private Integer remainingTimeInMins;
-	/** Procedure Details
-	  * Collection of ims.scheduling.domain.objects.TheatreProcedure.
-	  */
-	private java.util.Set procedureDetails;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public SessionTheatreProceduresRemanining (Integer id, int ver)
@@ -76,16 +77,6 @@ public class SessionTheatreProceduresRemanining extends ims.domain.DomainObject 
 	}
 	public void setRemainingTimeInMins(Integer remainingTimeInMins) {
 		this.remainingTimeInMins = remainingTimeInMins;
-	}
-
-	public java.util.Set getProcedureDetails() {
-		if ( null == procedureDetails ) {
-			procedureDetails = new java.util.HashSet();
-		}
-		return procedureDetails;
-	}
-	public void setProcedureDetails(java.util.Set paramValue) {
-		this.procedureDetails = paramValue;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -127,32 +118,6 @@ public class SessionTheatreProceduresRemanining extends ims.domain.DomainObject 
 		
 		auditStr.append("\r\n*remainingTimeInMins* :");
 		auditStr.append(remainingTimeInMins);
-	    auditStr.append("; ");
-		auditStr.append("\r\n*procedureDetails* :");
-		if (procedureDetails != null)
-		{
-			java.util.Iterator it2 = procedureDetails.iterator();
-			int i2=0;
-			while (it2.hasNext())
-			{
-				if (i2 > 0)
-					auditStr.append(",");
-				ims.scheduling.domain.objects.TheatreProcedure obj = (ims.scheduling.domain.objects.TheatreProcedure)it2.next();
-		if (obj != null)
-		{
-		   if (i2 == 0)
-		   {
-			auditStr.append(toShortClassName(obj));
-			auditStr.append("[");
-		   }
-		
-		   auditStr.append(obj.getId());
-		}
-			i2++;
-		}
-		if (i2 > 0)
-			auditStr.append("] " + i2);
-		}
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -203,15 +168,6 @@ public class SessionTheatreProceduresRemanining extends ims.domain.DomainObject 
 			sb.append("<remainingTimeInMins>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getRemainingTimeInMins().toString()));
 			sb.append("</remainingTimeInMins>");		
-		}
-		if (this.getProcedureDetails() != null)
-		{
-			if (this.getProcedureDetails().size() > 0 )
-			{
-			sb.append("<procedureDetails>");
-			sb.append(ims.domain.DomainObject.toXMLString(this.getProcedureDetails(), domMap));
-			sb.append("</procedureDetails>");		
-			}
 		}
 		return sb.toString();
 	}
@@ -381,18 +337,11 @@ public class SessionTheatreProceduresRemanining extends ims.domain.DomainObject 
 		{	
     		obj.setRemainingTimeInMins(new Integer(fldEl.getTextTrim()));	
 		}
-		fldEl = el.element("procedureDetails");
-		if(fldEl != null)
-		{
-			fldEl = fldEl.element("set");	
-			obj.setProcedureDetails(ims.scheduling.domain.objects.TheatreProcedure.fromSetXMLString(fldEl, factory, obj.getProcedureDetails(), domMap));
-		}
 	}
 
 	public static String[] getCollectionFields()
 	{
 		return new String[]{
-		 "procedureDetails"
 		};
 	}
 
@@ -401,7 +350,6 @@ public class SessionTheatreProceduresRemanining extends ims.domain.DomainObject 
 	{
 	public static final String ID = "id";
 		public static final String RemainingTimeInMins = "remainingTimeInMins";
-		public static final String ProcedureDetails = "procedureDetails";
 	}
 }
 

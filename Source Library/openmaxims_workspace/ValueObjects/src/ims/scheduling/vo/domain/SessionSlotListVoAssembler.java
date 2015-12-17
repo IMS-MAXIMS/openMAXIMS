@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.scheduling.vo.domain;
@@ -56,6 +61,16 @@ public class SessionSlotListVoAssembler
 		valueObjectDest.setSession(valueObjectSrc.getSession());
 		// Priority
 		valueObjectDest.setPriority(valueObjectSrc.getPriority());
+		// Comment
+		valueObjectDest.setComment(valueObjectSrc.getComment());
+		// Activity
+		valueObjectDest.setActivity(valueObjectSrc.getActivity());
+		// Functions
+		valueObjectDest.setFunctions(valueObjectSrc.getFunctions());
+		// DirectAccessSlot
+		valueObjectDest.setDirectAccessSlot(valueObjectSrc.getDirectAccessSlot());
+		// Duration
+		valueObjectDest.setDuration(valueObjectSrc.getDuration());
 	 	return valueObjectDest;
 	 }
 
@@ -390,7 +405,51 @@ public class SessionSlotListVoAssembler
 			}			
 			valueObject.setPriority(voLookup3);
 		}
-		 		return valueObject;
+				// Comment
+		valueObject.setComment(domainObject.getComment());
+		// Activity
+		valueObject.setActivity(ims.core.vo.domain.ActivityForSessionManagementVoAssembler.create(map, domainObject.getActivity()) );
+		// Functions
+		valueObject.setFunctions(ims.core.vo.domain.ServiceFunctionLiteVoAssembler.createServiceFunctionLiteVoCollectionFromServiceFunction(map, domainObject.getFunctions()) );
+		// DirectAccessSlot
+		ims.domain.lookups.LookupInstance instance7 = domainObject.getDirectAccessSlot();
+		if ( null != instance7 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance7.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance7.getImage().getImageId(), instance7.getImage().getImagePath());
+			}
+			color = instance7.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.scheduling.vo.lookups.SchedCABSlotType voLookup7 = new ims.scheduling.vo.lookups.SchedCABSlotType(instance7.getId(),instance7.getText(), instance7.isActive(), null, img, color);
+			ims.scheduling.vo.lookups.SchedCABSlotType parentVoLookup7 = voLookup7;
+			ims.domain.lookups.LookupInstance parent7 = instance7.getParent();
+			while (parent7 != null)
+			{
+				if (parent7.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent7.getImage().getImageId(), parent7.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent7.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup7.setParent(new ims.scheduling.vo.lookups.SchedCABSlotType(parent7.getId(),parent7.getText(), parent7.isActive(), null, img, color));
+				parentVoLookup7 = parentVoLookup7.getParent();
+								parent7 = parent7.getParent();
+			}			
+			valueObject.setDirectAccessSlot(voLookup7);
+		}
+				// Duration
+		valueObject.setDuration(domainObject.getDuration());
+ 		return valueObject;
 	 }
 
 
@@ -471,6 +530,102 @@ public class SessionSlotListVoAssembler
 				domainFactory.getLookupInstance(valueObject.getPriority().getID());
 		}
 		domainObject.setPriority(value3);
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getComment() != null && valueObject.getComment().equals(""))
+		{
+			valueObject.setComment(null);
+		}
+		domainObject.setComment(valueObject.getComment());
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.resource.place.domain.objects.Activity value5 = null;
+		if ( null != valueObject.getActivity() ) 
+		{
+			if (valueObject.getActivity().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getActivity()) != null)
+				{
+					value5 = (ims.core.resource.place.domain.objects.Activity)domMap.get(valueObject.getActivity());
+				}
+			}
+			else
+			{
+				value5 = (ims.core.resource.place.domain.objects.Activity)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.Activity.class, valueObject.getActivity().getBoId());
+			}
+		}
+		domainObject.setActivity(value5);
+
+		// SaveAsRefVO treated as RefValueObject
+		ims.core.clinical.vo.ServiceFunctionRefVoCollection refCollection6 = new ims.core.clinical.vo.ServiceFunctionRefVoCollection();
+		if (valueObject.getFunctions() != null)
+		{
+			for (int i6=0; i6<valueObject.getFunctions().size(); i6++)
+			{
+				ims.core.clinical.vo.ServiceFunctionRefVo ref6 = (ims.core.clinical.vo.ServiceFunctionRefVo)valueObject.getFunctions().get(i6);
+				refCollection6.add(ref6);
+			}
+		}
+		int size6 = (null == refCollection6) ? 0 : refCollection6.size();		
+		java.util.Set domainFunctions6 = domainObject.getFunctions();
+		if (domainFunctions6 == null)
+		{
+			domainFunctions6 = new java.util.HashSet();
+		}
+		java.util.Set newSet6  = new java.util.HashSet();
+		for(int i=0; i<size6; i++) 
+		{
+			ims.core.clinical.vo.ServiceFunctionRefVo vo = refCollection6.get(i);					
+			ims.core.clinical.domain.objects.ServiceFunction dom = null;
+			if ( null != vo ) 
+			{
+				if (vo.getBoId() == null)
+				{
+					if (domMap.get(vo) != null)
+					{
+						dom = (ims.core.clinical.domain.objects.ServiceFunction)domMap.get(vo);
+					}
+				}
+				else
+				{
+					dom = (ims.core.clinical.domain.objects.ServiceFunction)domainFactory.getDomainObject( ims.core.clinical.domain.objects.ServiceFunction.class, vo.getBoId());
+				}
+			}
+
+			//Trying to avoid the hibernate collection being marked as dirty via its public interface methods. (like add)
+			if (!domainFunctions6.contains(dom))
+			{
+				domainFunctions6.add(dom);
+			}
+			newSet6.add(dom);			
+		}
+		java.util.Set removedSet6 = new java.util.HashSet();
+		java.util.Iterator iter6 = domainFunctions6.iterator();
+		//Find out which objects need to be removed
+		while (iter6.hasNext())
+		{
+			ims.domain.DomainObject o = (ims.domain.DomainObject)iter6.next();			
+			if ((o == null || o.getIsRIE() == null || !o.getIsRIE().booleanValue()) && !newSet6.contains(o))
+			{
+				removedSet6.add(o);
+			}
+		}
+		iter6 = removedSet6.iterator();
+		//Remove the unwanted objects
+		while (iter6.hasNext())
+		{
+			domainFunctions6.remove(iter6.next());
+		}		
+		
+		domainObject.setFunctions(domainFunctions6);		
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value7 = null;
+		if ( null != valueObject.getDirectAccessSlot() ) 
+		{
+			value7 =
+				domainFactory.getLookupInstance(valueObject.getDirectAccessSlot().getID());
+		}
+		domainObject.setDirectAccessSlot(value7);
+		domainObject.setDuration(valueObject.getDuration());
 
 		return domainObject;
 	}

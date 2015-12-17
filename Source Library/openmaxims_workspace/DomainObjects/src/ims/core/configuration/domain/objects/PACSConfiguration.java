@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.configuration.domain.objects;
@@ -61,6 +66,20 @@ public class PACSConfiguration extends ims.domain.DomainObject implements ims.do
 	private String accessionTestValue;
 	/** PACS client type */
 	private ims.domain.lookups.LookupInstance pACSClientType;
+	/** When True used the username of the logged in user */
+	private Boolean useLoggedUserName;
+	/** When a patient  */
+	private ims.domain.lookups.LookupInstance primaryIdentifier;
+	private ims.domain.lookups.LookupInstance secondaryIdentifier;
+	private String patientIdentifierParam;
+	private String issuerOfIdentifierParam;
+	private String sessionTimeParam;
+	private String primaryIdentifierCode;
+	private String secondaryIdentifierCode;
+	private String aESKey;
+	private Boolean useEncryptedToken;
+	/** URL parameter for encrypted token */
+	private String encryptedTokenParam;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public PACSConfiguration (Integer id, int ver)
@@ -165,6 +184,111 @@ public class PACSConfiguration extends ims.domain.DomainObject implements ims.do
 		this.pACSClientType = pACSClientType;
 	}
 
+	public Boolean isUseLoggedUserName() {
+		return useLoggedUserName;
+	}
+	public void setUseLoggedUserName(Boolean useLoggedUserName) {
+		this.useLoggedUserName = useLoggedUserName;
+	}
+
+	public ims.domain.lookups.LookupInstance getPrimaryIdentifier() {
+		return primaryIdentifier;
+	}
+	public void setPrimaryIdentifier(ims.domain.lookups.LookupInstance primaryIdentifier) {
+		this.primaryIdentifier = primaryIdentifier;
+	}
+
+	public ims.domain.lookups.LookupInstance getSecondaryIdentifier() {
+		return secondaryIdentifier;
+	}
+	public void setSecondaryIdentifier(ims.domain.lookups.LookupInstance secondaryIdentifier) {
+		this.secondaryIdentifier = secondaryIdentifier;
+	}
+
+	public String getPatientIdentifierParam() {
+		return patientIdentifierParam;
+	}
+	public void setPatientIdentifierParam(String patientIdentifierParam) {
+		if ( null != patientIdentifierParam && patientIdentifierParam.length() > 50 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for patientIdentifierParam. Tried to set value: "+
+				patientIdentifierParam);
+		}
+		this.patientIdentifierParam = patientIdentifierParam;
+	}
+
+	public String getIssuerOfIdentifierParam() {
+		return issuerOfIdentifierParam;
+	}
+	public void setIssuerOfIdentifierParam(String issuerOfIdentifierParam) {
+		if ( null != issuerOfIdentifierParam && issuerOfIdentifierParam.length() > 50 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for issuerOfIdentifierParam. Tried to set value: "+
+				issuerOfIdentifierParam);
+		}
+		this.issuerOfIdentifierParam = issuerOfIdentifierParam;
+	}
+
+	public String getSessionTimeParam() {
+		return sessionTimeParam;
+	}
+	public void setSessionTimeParam(String sessionTimeParam) {
+		if ( null != sessionTimeParam && sessionTimeParam.length() > 50 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for sessionTimeParam. Tried to set value: "+
+				sessionTimeParam);
+		}
+		this.sessionTimeParam = sessionTimeParam;
+	}
+
+	public String getPrimaryIdentifierCode() {
+		return primaryIdentifierCode;
+	}
+	public void setPrimaryIdentifierCode(String primaryIdentifierCode) {
+		if ( null != primaryIdentifierCode && primaryIdentifierCode.length() > 50 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for primaryIdentifierCode. Tried to set value: "+
+				primaryIdentifierCode);
+		}
+		this.primaryIdentifierCode = primaryIdentifierCode;
+	}
+
+	public String getSecondaryIdentifierCode() {
+		return secondaryIdentifierCode;
+	}
+	public void setSecondaryIdentifierCode(String secondaryIdentifierCode) {
+		if ( null != secondaryIdentifierCode && secondaryIdentifierCode.length() > 50 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for secondaryIdentifierCode. Tried to set value: "+
+				secondaryIdentifierCode);
+		}
+		this.secondaryIdentifierCode = secondaryIdentifierCode;
+	}
+
+	public String getAESKey() {
+		return aESKey;
+	}
+	public void setAESKey(String aESKey) {
+		if ( null != aESKey && aESKey.length() > 1024 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for aESKey. Tried to set value: "+
+				aESKey);
+		}
+		this.aESKey = aESKey;
+	}
+
+	public Boolean isUseEncryptedToken() {
+		return useEncryptedToken;
+	}
+	public void setUseEncryptedToken(Boolean useEncryptedToken) {
+		this.useEncryptedToken = useEncryptedToken;
+	}
+
+	public String getEncryptedTokenParam() {
+		return encryptedTokenParam;
+	}
+	public void setEncryptedTokenParam(String encryptedTokenParam) {
+		if ( null != encryptedTokenParam && encryptedTokenParam.length() > 50 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for encryptedTokenParam. Tried to set value: "+
+				encryptedTokenParam);
+		}
+		this.encryptedTokenParam = encryptedTokenParam;
+	}
+
 	public ims.domain.SystemInformation getSystemInformation() {
 		if (systemInformation == null) systemInformation = new ims.domain.SystemInformation();
 		return systemInformation;
@@ -226,6 +350,41 @@ public class PACSConfiguration extends ims.domain.DomainObject implements ims.do
 		auditStr.append("\r\n*pACSClientType* :");
 		if (pACSClientType != null)
 			auditStr.append(pACSClientType.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*useLoggedUserName* :");
+		auditStr.append(useLoggedUserName);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*primaryIdentifier* :");
+		if (primaryIdentifier != null)
+			auditStr.append(primaryIdentifier.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*secondaryIdentifier* :");
+		if (secondaryIdentifier != null)
+			auditStr.append(secondaryIdentifier.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*patientIdentifierParam* :");
+		auditStr.append(patientIdentifierParam);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*issuerOfIdentifierParam* :");
+		auditStr.append(issuerOfIdentifierParam);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*sessionTimeParam* :");
+		auditStr.append(sessionTimeParam);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*primaryIdentifierCode* :");
+		auditStr.append(primaryIdentifierCode);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*secondaryIdentifierCode* :");
+		auditStr.append(secondaryIdentifierCode);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*aESKey* :");
+		auditStr.append(aESKey);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*useEncryptedToken* :");
+		auditStr.append(useEncryptedToken);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*encryptedTokenParam* :");
+		auditStr.append(encryptedTokenParam);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -318,6 +477,72 @@ public class PACSConfiguration extends ims.domain.DomainObject implements ims.do
 			sb.append("<pACSClientType>");
 			sb.append(this.getPACSClientType().toXMLString()); 
 			sb.append("</pACSClientType>");		
+		}
+		if (this.isUseLoggedUserName() != null)
+		{
+			sb.append("<useLoggedUserName>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isUseLoggedUserName().toString()));
+			sb.append("</useLoggedUserName>");		
+		}
+		if (this.getPrimaryIdentifier() != null)
+		{
+			sb.append("<primaryIdentifier>");
+			sb.append(this.getPrimaryIdentifier().toXMLString()); 
+			sb.append("</primaryIdentifier>");		
+		}
+		if (this.getSecondaryIdentifier() != null)
+		{
+			sb.append("<secondaryIdentifier>");
+			sb.append(this.getSecondaryIdentifier().toXMLString()); 
+			sb.append("</secondaryIdentifier>");		
+		}
+		if (this.getPatientIdentifierParam() != null)
+		{
+			sb.append("<patientIdentifierParam>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getPatientIdentifierParam().toString()));
+			sb.append("</patientIdentifierParam>");		
+		}
+		if (this.getIssuerOfIdentifierParam() != null)
+		{
+			sb.append("<issuerOfIdentifierParam>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getIssuerOfIdentifierParam().toString()));
+			sb.append("</issuerOfIdentifierParam>");		
+		}
+		if (this.getSessionTimeParam() != null)
+		{
+			sb.append("<sessionTimeParam>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getSessionTimeParam().toString()));
+			sb.append("</sessionTimeParam>");		
+		}
+		if (this.getPrimaryIdentifierCode() != null)
+		{
+			sb.append("<primaryIdentifierCode>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getPrimaryIdentifierCode().toString()));
+			sb.append("</primaryIdentifierCode>");		
+		}
+		if (this.getSecondaryIdentifierCode() != null)
+		{
+			sb.append("<secondaryIdentifierCode>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getSecondaryIdentifierCode().toString()));
+			sb.append("</secondaryIdentifierCode>");		
+		}
+		if (this.getAESKey() != null)
+		{
+			sb.append("<aESKey>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getAESKey().toString()));
+			sb.append("</aESKey>");		
+		}
+		if (this.isUseEncryptedToken() != null)
+		{
+			sb.append("<useEncryptedToken>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isUseEncryptedToken().toString()));
+			sb.append("</useEncryptedToken>");		
+		}
+		if (this.getEncryptedTokenParam() != null)
+		{
+			sb.append("<encryptedTokenParam>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getEncryptedTokenParam().toString()));
+			sb.append("</encryptedTokenParam>");		
 		}
 		return sb.toString();
 	}
@@ -523,6 +748,63 @@ public class PACSConfiguration extends ims.domain.DomainObject implements ims.do
 			fldEl = fldEl.element("lki");
 			obj.setPACSClientType(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
 		}
+		fldEl = el.element("useLoggedUserName");
+		if(fldEl != null)
+		{	
+    		obj.setUseLoggedUserName(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("primaryIdentifier");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setPrimaryIdentifier(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("secondaryIdentifier");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setSecondaryIdentifier(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("patientIdentifierParam");
+		if(fldEl != null)
+		{	
+    		obj.setPatientIdentifierParam(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("issuerOfIdentifierParam");
+		if(fldEl != null)
+		{	
+    		obj.setIssuerOfIdentifierParam(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("sessionTimeParam");
+		if(fldEl != null)
+		{	
+    		obj.setSessionTimeParam(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("primaryIdentifierCode");
+		if(fldEl != null)
+		{	
+    		obj.setPrimaryIdentifierCode(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("secondaryIdentifierCode");
+		if(fldEl != null)
+		{	
+    		obj.setSecondaryIdentifierCode(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("aESKey");
+		if(fldEl != null)
+		{	
+    		obj.setAESKey(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("useEncryptedToken");
+		if(fldEl != null)
+		{	
+    		obj.setUseEncryptedToken(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("encryptedTokenParam");
+		if(fldEl != null)
+		{	
+    		obj.setEncryptedTokenParam(new String(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -543,6 +825,17 @@ public class PACSConfiguration extends ims.domain.DomainObject implements ims.do
 		public static final String AccessionParam = "accessionParam";
 		public static final String AccessionTestValue = "accessionTestValue";
 		public static final String PACSClientType = "pACSClientType";
+		public static final String UseLoggedUserName = "useLoggedUserName";
+		public static final String PrimaryIdentifier = "primaryIdentifier";
+		public static final String SecondaryIdentifier = "secondaryIdentifier";
+		public static final String PatientIdentifierParam = "patientIdentifierParam";
+		public static final String IssuerOfIdentifierParam = "issuerOfIdentifierParam";
+		public static final String SessionTimeParam = "sessionTimeParam";
+		public static final String PrimaryIdentifierCode = "primaryIdentifierCode";
+		public static final String SecondaryIdentifierCode = "secondaryIdentifierCode";
+		public static final String AESKey = "aESKey";
+		public static final String UseEncryptedToken = "useEncryptedToken";
+		public static final String EncryptedTokenParam = "encryptedTokenParam";
 	}
 }
 

@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:37 -->
+<!-- Generated: 12/10/2015, 13:32 -->
 <hibernate-mapping>
 	<class name="ims.edischarge.domain.objects.TTANote" table="edis_ttanotes" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -31,11 +31,23 @@
 		</component>
 <!-- debug: hibernateClassContent -->
 <!-- debug: tTAComment -->
+<!-- debug: sourceOfInformation -->
+<!-- debug: noteDate -->
 <!-- debug: !IsAssociation && !IsCollection -->
 
 <!-- debug: !IsLookup -->
 		<property name="tTAComment" type="string" access="field" update="true" > 
 			<column name="ttacomment" length="1000"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="sourceOfInformation" type="string" access="field" update="true" > 
+			<column name="sourceofin" length="100"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="noteDate" type="string" access="field" update="true" > 
+			<column name="notedate" length="50"  not-null="false" unique="false"  />
 		</property>
 	</class>
 </hibernate-mapping>

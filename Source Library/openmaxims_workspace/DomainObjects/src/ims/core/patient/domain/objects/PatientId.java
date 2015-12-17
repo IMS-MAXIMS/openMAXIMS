@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.patient.domain.objects;
@@ -51,6 +56,18 @@ public class PatientId extends ims.domain.DomainObject implements java.io.Serial
 	private Boolean verified;
 	/** Flag to indicate whether this id is from a Merged Patient */
 	private Boolean merged;
+	/** Default 0 */
+	private Integer duplicateNHSNum;
+	/** The date from which the alternative identifier has been indicated to be effective. */
+	private java.util.Date beffdate;
+	/** Beffdate confirmed */
+	private Boolean beffdatecnf;
+	/** The date until which the alternative identifier has been indicated to be effective. */
+	private java.util.Date betdate;
+	/** Betdate confirmed */
+	private Boolean betdatecnf;
+	/** The NHS Number Status indicator of the Patient (e.g. 01-Number Present and Verified)  */
+	private ims.domain.lookups.LookupInstance nhsNumberStatus;
     public PatientId (Integer id, int ver)
     {
     	super(id, ver);
@@ -104,6 +121,48 @@ public class PatientId extends ims.domain.DomainObject implements java.io.Serial
 		this.merged = merged;
 	}
 
+	public Integer getDuplicateNHSNum() {
+		return duplicateNHSNum;
+	}
+	public void setDuplicateNHSNum(Integer duplicateNHSNum) {
+		this.duplicateNHSNum = duplicateNHSNum;
+	}
+
+	public java.util.Date getBeffdate() {
+		return beffdate;
+	}
+	public void setBeffdate(java.util.Date beffdate) {
+		this.beffdate = beffdate;
+	}
+
+	public Boolean isBeffdatecnf() {
+		return beffdatecnf;
+	}
+	public void setBeffdatecnf(Boolean beffdatecnf) {
+		this.beffdatecnf = beffdatecnf;
+	}
+
+	public java.util.Date getBetdate() {
+		return betdate;
+	}
+	public void setBetdate(java.util.Date betdate) {
+		this.betdate = betdate;
+	}
+
+	public Boolean isBetdatecnf() {
+		return betdatecnf;
+	}
+	public void setBetdatecnf(Boolean betdatecnf) {
+		this.betdatecnf = betdatecnf;
+	}
+
+	public ims.domain.lookups.LookupInstance getNhsNumberStatus() {
+		return nhsNumberStatus;
+	}
+	public void setNhsNumberStatus(ims.domain.lookups.LookupInstance nhsNumberStatus) {
+		this.nhsNumberStatus = nhsNumberStatus;
+	}
+
 	/**
 	 * isConfigurationObject
 	 * Taken from the Usage property of the business object, this method will return
@@ -118,28 +177,32 @@ public class PatientId extends ims.domain.DomainObject implements java.io.Serial
 			return false;
 	}
 	// method generated based on 'type_val_idx' unique index.
-	public static boolean recordExistForTypeAndValueAndVerified(ims.domain.ILightweightDomainFactory factory,
+	public static boolean recordExistForTypeAndValueAndVerifiedAndDuplicateNHSNum(ims.domain.ILightweightDomainFactory factory,
 		 ims.domain.lookups.LookupInstance type
 	,
 	 String value
 	,
 	 Boolean verified
+	,
+	 Integer duplicateNHSNum
 	)	
 	{
-		return recordExistForTypeAndValueAndVerified(factory, type, value, verified, null);
+		return recordExistForTypeAndValueAndVerifiedAndDuplicateNHSNum(factory, type, value, verified, duplicateNHSNum, null);
 	}	
 
 	// method generated based on 'type_val_idx' unique index.
-	public static boolean recordExistForTypeAndValueAndVerified(ims.domain.ILightweightDomainFactory factory,
+	public static boolean recordExistForTypeAndValueAndVerifiedAndDuplicateNHSNum(ims.domain.ILightweightDomainFactory factory,
 		 ims.domain.lookups.LookupInstance type
 	,
 	 String value
 	,
 	 Boolean verified
+	,
+	 Integer duplicateNHSNum
 	, Integer recordId)	
 	{
-		String[] names = new String[3];
-		Object[] values = new Object[3];
+		String[] names = new String[4];
+		Object[] values = new Object[4];
 		StringBuffer hql = new StringBuffer();
 		
 		hql.append("from PatientId c where ");
@@ -154,6 +217,10 @@ public class PatientId extends ims.domain.DomainObject implements java.io.Serial
 		hql.append(" c.verified = :verified ");
 		names[2] = "verified";
 		values[2] = verified;		
+		hql.append(" and "); 
+		hql.append(" c.duplicateNHSNum = :duplicateNHSNum ");
+		names[3] = "duplicateNHSNum";
+		values[3] = duplicateNHSNum;		
 		if(recordId != null)
 		{
 			hql.append(" and c.id <> " + recordId);
@@ -163,16 +230,18 @@ public class PatientId extends ims.domain.DomainObject implements java.io.Serial
 	}	
 
 	// method generated based on 'type_val_idx' unique index.
-	public static PatientId getRecordByTypeAndValueAndVerified(ims.domain.ILightweightDomainFactory factory,
+	public static PatientId getRecordByTypeAndValueAndVerifiedAndDuplicateNHSNum(ims.domain.ILightweightDomainFactory factory,
 	 ims.domain.lookups.LookupInstance type
 	,
 	 String value
 	,
 	 Boolean verified
+	,
+	 Integer duplicateNHSNum
 	)
 	{
-		String[] names = new String[3];
-		Object[] values = new Object[3];
+		String[] names = new String[4];
+		Object[] values = new Object[4];
 		StringBuffer hql = new StringBuffer();
 		hql.append("from PatientId c where ");
 		hql.append(" c.type = :type ");
@@ -186,6 +255,10 @@ public class PatientId extends ims.domain.DomainObject implements java.io.Serial
 		hql.append(" c.verified = :verified ");
 		names[2] = "verified";
 		values[2] = verified;		
+		hql.append(" and "); 
+		hql.append(" c.duplicateNHSNum = :duplicateNHSNum ");
+		names[3] = "duplicateNHSNum";
+		values[3] = duplicateNHSNum;		
 		java.util.List l = factory.find(hql.toString(), names, values);
 		if (l == null || l.size() == 0) return null;
 		if (l.size() > 1) throw new ims.domain.exceptions.DomainRuntimeException("Non-unique get call. " + hql + " returned " + l.size() + " records. " );
@@ -198,10 +271,12 @@ public class PatientId extends ims.domain.DomainObject implements java.io.Serial
 	 String value
 	,
 	 Boolean verified
+	,
+	 Integer duplicateNHSNum
 	)
 	{
-		String[] names = new String[3];
-		Object[] values = new Object[3];
+		String[] names = new String[4];
+		Object[] values = new Object[4];
 		StringBuffer hql = new StringBuffer();
 		hql.append("from PatientId c where ");
 		hql.append(" c.type = :type ");
@@ -215,6 +290,10 @@ public class PatientId extends ims.domain.DomainObject implements java.io.Serial
 		hql.append(" c.verified = :verified ");
 		names[2] = "verified";
 		values[2] = verified;		
+		hql.append(" and "); 
+		hql.append(" c.duplicateNHSNum = :duplicateNHSNum ");
+		names[3] = "duplicateNHSNum";
+		values[3] = duplicateNHSNum;		
 		java.util.List l = factory.find(hql.toString(), names, values);
 		if (l == null || l.size() == 0) return null;
 		if (l.size() > 1) throw new ims.domain.exceptions.DomainRuntimeException("Non-unique get call. " + hql + " returned " + l.size() + " records. " );
@@ -247,6 +326,25 @@ public class PatientId extends ims.domain.DomainObject implements java.io.Serial
 	    auditStr.append("; ");
 		auditStr.append("\r\n*merged* :");
 		auditStr.append(merged);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*duplicateNHSNum* :");
+		auditStr.append(duplicateNHSNum);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*beffdate* :");
+		auditStr.append(beffdate);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*beffdatecnf* :");
+		auditStr.append(beffdatecnf);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*betdate* :");
+		auditStr.append(betdate);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*betdatecnf* :");
+		auditStr.append(betdatecnf);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*nhsNumberStatus* :");
+		if (nhsNumberStatus != null)
+			auditStr.append(nhsNumberStatus.getText());
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -301,6 +399,42 @@ public class PatientId extends ims.domain.DomainObject implements java.io.Serial
 			sb.append("<merged>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isMerged().toString()));
 			sb.append("</merged>");		
+		}
+		if (this.getDuplicateNHSNum() != null)
+		{
+			sb.append("<duplicateNHSNum>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getDuplicateNHSNum().toString()));
+			sb.append("</duplicateNHSNum>");		
+		}
+		if (this.getBeffdate() != null)
+		{
+			sb.append("<beffdate>");
+			sb.append(new ims.framework.utils.DateTime(this.getBeffdate()).toString(ims.framework.utils.DateTimeFormat.MILLI));
+			sb.append("</beffdate>");		
+		}
+		if (this.isBeffdatecnf() != null)
+		{
+			sb.append("<beffdatecnf>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isBeffdatecnf().toString()));
+			sb.append("</beffdatecnf>");		
+		}
+		if (this.getBetdate() != null)
+		{
+			sb.append("<betdate>");
+			sb.append(new ims.framework.utils.DateTime(this.getBetdate()).toString(ims.framework.utils.DateTimeFormat.MILLI));
+			sb.append("</betdate>");		
+		}
+		if (this.isBetdatecnf() != null)
+		{
+			sb.append("<betdatecnf>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isBetdatecnf().toString()));
+			sb.append("</betdatecnf>");		
+		}
+		if (this.getNhsNumberStatus() != null)
+		{
+			sb.append("<nhsNumberStatus>");
+			sb.append(this.getNhsNumberStatus().toXMLString()); 
+			sb.append("</nhsNumberStatus>");		
 		}
 		return sb.toString();
 	}
@@ -468,6 +602,37 @@ public class PatientId extends ims.domain.DomainObject implements java.io.Serial
 		{	
     		obj.setMerged(new Boolean(fldEl.getTextTrim()));	
 		}
+		fldEl = el.element("duplicateNHSNum");
+		if(fldEl != null)
+		{	
+    		obj.setDuplicateNHSNum(new Integer(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("beffdate");
+		if(fldEl != null)
+		{	
+    		obj.setBeffdate(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
+		}
+		fldEl = el.element("beffdatecnf");
+		if(fldEl != null)
+		{	
+    		obj.setBeffdatecnf(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("betdate");
+		if(fldEl != null)
+		{	
+    		obj.setBetdate(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
+		}
+		fldEl = el.element("betdatecnf");
+		if(fldEl != null)
+		{	
+    		obj.setBetdatecnf(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("nhsNumberStatus");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setNhsNumberStatus(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -480,37 +645,106 @@ public class PatientId extends ims.domain.DomainObject implements java.io.Serial
 	equals:
 	*/
 public boolean equals(Object obj)
+{
+	if (this == obj)
+		return true;
+	if (!super.equals(obj))
+		return false;
+	if (getClass() != obj.getClass())
+		return false;
+	PatientId other = (PatientId) obj;
+	if (beffdate == null)
 	{
-		if (null == obj) {
+		if (other.beffdate != null)
 			return false;
-		}
-		if (!(obj instanceof ims.core.patient.domain.objects.PatientId)) 
-		{
-			return false;
-		}
-		ims.core.patient.domain.objects.PatientId tmp = (ims.core.patient.domain.objects.PatientId)obj;
-		return (tmp.getType().equals(this.getType()) && tmp.getValue().equals(this.getValue()) &&
-		((tmp.isVerified() == null && this.isVerified() == null) || (tmp.isVerified() != null && tmp.isVerified().equals(this.isVerified()))));		
 	}
+	else if (!beffdate.equals(other.beffdate))
+		return false;
+	if (beffdatecnf == null)
+	{
+		if (other.beffdatecnf != null)
+			return false;
+	}
+	else if (!beffdatecnf.equals(other.beffdatecnf))
+		return false;
+	if (betdate == null)
+	{
+		if (other.betdate != null)
+			return false;
+	}
+	else if (!betdate.equals(other.betdate))
+		return false;
+	if (betdatecnf == null)
+	{
+		if (other.betdatecnf != null)
+			return false;
+	}
+	else if (!betdatecnf.equals(other.betdatecnf))
+		return false;
+	if (duplicateNHSNum == null)
+	{
+		if (other.duplicateNHSNum != null)
+			return false;
+	}
+	if (nhsNumberStatus == null)
+	{
+		if (other.nhsNumberStatus != null)
+			return false;
+	}
+	else if (!nhsNumberStatus.equals(other.nhsNumberStatus))
+		return false;
+	else if (!duplicateNHSNum.equals(other.duplicateNHSNum))
+		return false;
+	if (merged == null)
+	{
+		if (other.merged != null)
+			return false;
+	}
+	else if (!merged.equals(other.merged))
+		return false;
+	if (type == null)
+	{
+		if (other.type != null)
+			return false;
+	}
+	else if (!type.equals(other.type))
+		return false;
+	if (value == null)
+	{
+		if (other.value != null)
+			return false;
+	}
+	else if (!value.equals(other.value))
+		return false;
+	if (verified == null)
+	{
+		if (other.verified != null)
+			return false;
+	}
+	else if (!verified.equals(other.verified))
+		return false;
+	return true;
+}
 
 	/**
 	hashcode:
 	*/
-	public int hashCode()
-	{
-		int result = 0;
-		if(this.getType() != null)
-		{
-			result += this.getType().hashCode();
-		}
-		if(this.getValue() != null)
-		{
-			result += this.getValue().hashCode();
-		}
-
-		return result;
-	}
-
+public int hashCode()
+{
+	final int prime = 31;
+	int result = super.hashCode();
+	result = prime * result + ((beffdate == null) ? 0 : beffdate.hashCode());
+	result = prime * result + ((beffdatecnf == null) ? 0 : beffdatecnf.hashCode());
+	result = prime * result + ((betdate == null) ? 0 : betdate.hashCode());
+	result = prime * result + ((betdatecnf == null) ? 0 : betdatecnf.hashCode());
+	result = prime * result + ((nhsNumberStatus== null) ? 0 : nhsNumberStatus.hashCode());
+	result = prime * result + ((duplicateNHSNum == null) ? 0 : duplicateNHSNum.hashCode());
+	result = prime * result + ((merged == null) ? 0 : merged.hashCode());
+	result = prime * result + ((type == null) ? 0 : type.hashCode());
+	result = prime * result + ((value == null) ? 0 : value.hashCode());
+	result = prime * result + ((verified == null) ? 0 : verified.hashCode());
+	return result;
+}
 
 	/**
 	toString
@@ -535,6 +769,12 @@ public String toString()
 		public static final String Value = "value";
 		public static final String Verified = "verified";
 		public static final String Merged = "merged";
+		public static final String DuplicateNHSNum = "duplicateNHSNum";
+		public static final String Beffdate = "beffdate";
+		public static final String Beffdatecnf = "beffdatecnf";
+		public static final String Betdate = "betdate";
+		public static final String Betdatecnf = "betdatecnf";
+		public static final String NhsNumberStatus = "nhsNumberStatus";
 	}
 }
 

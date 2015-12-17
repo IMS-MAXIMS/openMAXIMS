@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.core.vo.domain;
@@ -52,14 +57,26 @@ public class PendingTransfersVoAssembler
 	    valueObjectDest.setIsRIE(valueObjectSrc.getIsRIE());
 		// InpatientEpisode
 		valueObjectDest.setInpatientEpisode(valueObjectSrc.getInpatientEpisode());
-		// DestinationWard
-		valueObjectDest.setDestinationWard(valueObjectSrc.getDestinationWard());
 		// WardType
 		valueObjectDest.setWardType(valueObjectSrc.getWardType());
-		// TransferRequestDateTime
-		valueObjectDest.setTransferRequestDateTime(valueObjectSrc.getTransferRequestDateTime());
 		// CurrentStatus
 		valueObjectDest.setCurrentStatus(valueObjectSrc.getCurrentStatus());
+		// TransferRequestDateTime
+		valueObjectDest.setTransferRequestDateTime(valueObjectSrc.getTransferRequestDateTime());
+		// BedAvailableDateTime
+		valueObjectDest.setBedAvailableDateTime(valueObjectSrc.getBedAvailableDateTime());
+		// DestinationWard
+		valueObjectDest.setDestinationWard(valueObjectSrc.getDestinationWard());
+		// Consultant
+		valueObjectDest.setConsultant(valueObjectSrc.getConsultant());
+		// Specialty
+		valueObjectDest.setSpecialty(valueObjectSrc.getSpecialty());
+		// TransferReason
+		valueObjectDest.setTransferReason(valueObjectSrc.getTransferReason());
+		// TransferComment
+		valueObjectDest.setTransferComment(valueObjectSrc.getTransferComment());
+		// Service
+		valueObjectDest.setService(valueObjectSrc.getService());
 	 	return valueObjectDest;
 	 }
 
@@ -352,10 +369,44 @@ public class PendingTransfersVoAssembler
 			
 		// InpatientEpisode
 		valueObject.setInpatientEpisode(ims.core.vo.domain.InpatientEpisodeForTransfersVoAssembler.create(map, domainObject.getInpatientEpisode()) );
-		// DestinationWard
-		valueObject.setDestinationWard(ims.core.vo.domain.LocationLiteVoAssembler.create(map, domainObject.getDestinationWard()) );
 		// WardType
-		ims.domain.lookups.LookupInstance instance3 = domainObject.getWardType();
+		ims.domain.lookups.LookupInstance instance2 = domainObject.getWardType();
+		if ( null != instance2 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance2.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance2.getImage().getImageId(), instance2.getImage().getImagePath());
+			}
+			color = instance2.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.WardType voLookup2 = new ims.core.vo.lookups.WardType(instance2.getId(),instance2.getText(), instance2.isActive(), null, img, color);
+			ims.core.vo.lookups.WardType parentVoLookup2 = voLookup2;
+			ims.domain.lookups.LookupInstance parent2 = instance2.getParent();
+			while (parent2 != null)
+			{
+				if (parent2.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent2.getImage().getImageId(), parent2.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent2.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup2.setParent(new ims.core.vo.lookups.WardType(parent2.getId(),parent2.getText(), parent2.isActive(), null, img, color));
+				parentVoLookup2 = parentVoLookup2.getParent();
+								parent2 = parent2.getParent();
+			}			
+			valueObject.setWardType(voLookup2);
+		}
+				// CurrentStatus
+		ims.domain.lookups.LookupInstance instance3 = domainObject.getCurrentStatus();
 		if ( null != instance3 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
@@ -368,8 +419,8 @@ public class PendingTransfersVoAssembler
 			if (color != null) 
 				color.getValue();
 
-			ims.core.vo.lookups.WardType voLookup3 = new ims.core.vo.lookups.WardType(instance3.getId(),instance3.getText(), instance3.isActive(), null, img, color);
-			ims.core.vo.lookups.WardType parentVoLookup3 = voLookup3;
+			ims.core.vo.lookups.TransferStatus voLookup3 = new ims.core.vo.lookups.TransferStatus(instance3.getId(),instance3.getText(), instance3.isActive(), null, img, color);
+			ims.core.vo.lookups.TransferStatus parentVoLookup3 = voLookup3;
 			ims.domain.lookups.LookupInstance parent3 = instance3.getParent();
 			while (parent3 != null)
 			{
@@ -384,11 +435,11 @@ public class PendingTransfersVoAssembler
 				color = parent3.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup3.setParent(new ims.core.vo.lookups.WardType(parent3.getId(),parent3.getText(), parent3.isActive(), null, img, color));
+								parentVoLookup3.setParent(new ims.core.vo.lookups.TransferStatus(parent3.getId(),parent3.getText(), parent3.isActive(), null, img, color));
 				parentVoLookup3 = parentVoLookup3.getParent();
 								parent3 = parent3.getParent();
 			}			
-			valueObject.setWardType(voLookup3);
+			valueObject.setCurrentStatus(voLookup3);
 		}
 				// TransferRequestDateTime
 		java.util.Date TransferRequestDateTime = domainObject.getTransferRequestDateTime();
@@ -396,43 +447,93 @@ public class PendingTransfersVoAssembler
 		{
 			valueObject.setTransferRequestDateTime(new ims.framework.utils.DateTime(TransferRequestDateTime) );
 		}
-		// CurrentStatus
-		ims.domain.lookups.LookupInstance instance5 = domainObject.getCurrentStatus();
-		if ( null != instance5 ) {
+		// BedAvailableDateTime
+		java.util.Date BedAvailableDateTime = domainObject.getBedAvailableDateTime();
+		if ( null != BedAvailableDateTime ) 
+		{
+			valueObject.setBedAvailableDateTime(new ims.framework.utils.DateTime(BedAvailableDateTime) );
+		}
+		// DestinationWard
+		valueObject.setDestinationWard(ims.core.vo.domain.LocationMinVoAssembler.create(map, domainObject.getDestinationWard()) );
+		// Consultant
+		valueObject.setConsultant(ims.core.vo.domain.MedicLiteVoAssembler.create(map, domainObject.getConsultant()) );
+		// Specialty
+		ims.domain.lookups.LookupInstance instance8 = domainObject.getSpecialty();
+		if ( null != instance8 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
 			img = null;
-			if (instance5.getImage() != null) 
+			if (instance8.getImage() != null) 
 			{
-				img = new ims.framework.utils.ImagePath(instance5.getImage().getImageId(), instance5.getImage().getImagePath());
+				img = new ims.framework.utils.ImagePath(instance8.getImage().getImageId(), instance8.getImage().getImagePath());
 			}
-			color = instance5.getColor();
+			color = instance8.getColor();
 			if (color != null) 
 				color.getValue();
 
-			ims.core.vo.lookups.TransferStatus voLookup5 = new ims.core.vo.lookups.TransferStatus(instance5.getId(),instance5.getText(), instance5.isActive(), null, img, color);
-			ims.core.vo.lookups.TransferStatus parentVoLookup5 = voLookup5;
-			ims.domain.lookups.LookupInstance parent5 = instance5.getParent();
-			while (parent5 != null)
+			ims.core.vo.lookups.Specialty voLookup8 = new ims.core.vo.lookups.Specialty(instance8.getId(),instance8.getText(), instance8.isActive(), null, img, color);
+			ims.core.vo.lookups.Specialty parentVoLookup8 = voLookup8;
+			ims.domain.lookups.LookupInstance parent8 = instance8.getParent();
+			while (parent8 != null)
 			{
-				if (parent5.getImage() != null) 
+				if (parent8.getImage() != null) 
 				{
-					img = new ims.framework.utils.ImagePath(parent5.getImage().getImageId(), parent5.getImage().getImagePath() );
+					img = new ims.framework.utils.ImagePath(parent8.getImage().getImageId(), parent8.getImage().getImagePath() );
 				}
 				else 
 				{
 					img = null;
 				}
-				color = parent5.getColor();
+				color = parent8.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup5.setParent(new ims.core.vo.lookups.TransferStatus(parent5.getId(),parent5.getText(), parent5.isActive(), null, img, color));
-				parentVoLookup5 = parentVoLookup5.getParent();
-								parent5 = parent5.getParent();
+								parentVoLookup8.setParent(new ims.core.vo.lookups.Specialty(parent8.getId(),parent8.getText(), parent8.isActive(), null, img, color));
+				parentVoLookup8 = parentVoLookup8.getParent();
+								parent8 = parent8.getParent();
 			}			
-			valueObject.setCurrentStatus(voLookup5);
+			valueObject.setSpecialty(voLookup8);
 		}
-		 		return valueObject;
+				// TransferReason
+		ims.domain.lookups.LookupInstance instance9 = domainObject.getTransferReason();
+		if ( null != instance9 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance9.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance9.getImage().getImageId(), instance9.getImage().getImagePath());
+			}
+			color = instance9.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.TransferReason voLookup9 = new ims.core.vo.lookups.TransferReason(instance9.getId(),instance9.getText(), instance9.isActive(), null, img, color);
+			ims.core.vo.lookups.TransferReason parentVoLookup9 = voLookup9;
+			ims.domain.lookups.LookupInstance parent9 = instance9.getParent();
+			while (parent9 != null)
+			{
+				if (parent9.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent9.getImage().getImageId(), parent9.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent9.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup9.setParent(new ims.core.vo.lookups.TransferReason(parent9.getId(),parent9.getText(), parent9.isActive(), null, img, color));
+				parentVoLookup9 = parentVoLookup9.getParent();
+								parent9 = parent9.getParent();
+			}			
+			valueObject.setTransferReason(voLookup9);
+		}
+				// TransferComment
+		valueObject.setTransferComment(domainObject.getTransferComment());
+		// Service
+		valueObject.setService(ims.admin.vo.domain.ServiceVoLiteVoAssembler.create(map, domainObject.getService()) );
+ 		return valueObject;
 	 }
 
 
@@ -482,15 +583,22 @@ public class PendingTransfersVoAssembler
 		domainObject.setVersion(valueObject.getVersion_PendingTransfers());
 
 		domainObject.setInpatientEpisode(ims.core.vo.domain.InpatientEpisodeForTransfersVoAssembler.extractInpatientEpisode(domainFactory, valueObject.getInpatientEpisode(), domMap));
-		domainObject.setDestinationWard(ims.core.vo.domain.LocationLiteVoAssembler.extractLocation(domainFactory, valueObject.getDestinationWard(), domMap));
 		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value3 = null;
+		ims.domain.lookups.LookupInstance value2 = null;
 		if ( null != valueObject.getWardType() ) 
 		{
-			value3 =
+			value2 =
 				domainFactory.getLookupInstance(valueObject.getWardType().getID());
 		}
-		domainObject.setWardType(value3);
+		domainObject.setWardType(value2);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value3 = null;
+		if ( null != valueObject.getCurrentStatus() ) 
+		{
+			value3 =
+				domainFactory.getLookupInstance(valueObject.getCurrentStatus().getID());
+		}
+		domainObject.setCurrentStatus(value3);
 		ims.framework.utils.DateTime dateTime4 = valueObject.getTransferRequestDateTime();
 		java.util.Date value4 = null;
 		if ( dateTime4 != null ) 
@@ -498,14 +606,87 @@ public class PendingTransfersVoAssembler
 			value4 = dateTime4.getJavaDate();
 		}
 		domainObject.setTransferRequestDateTime(value4);
-		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value5 = null;
-		if ( null != valueObject.getCurrentStatus() ) 
+		ims.framework.utils.DateTime dateTime5 = valueObject.getBedAvailableDateTime();
+		java.util.Date value5 = null;
+		if ( dateTime5 != null ) 
 		{
-			value5 =
-				domainFactory.getLookupInstance(valueObject.getCurrentStatus().getID());
+			value5 = dateTime5.getJavaDate();
 		}
-		domainObject.setCurrentStatus(value5);
+		domainObject.setBedAvailableDateTime(value5);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.resource.place.domain.objects.Location value6 = null;
+		if ( null != valueObject.getDestinationWard() ) 
+		{
+			if (valueObject.getDestinationWard().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getDestinationWard()) != null)
+				{
+					value6 = (ims.core.resource.place.domain.objects.Location)domMap.get(valueObject.getDestinationWard());
+				}
+			}
+			else
+			{
+				value6 = (ims.core.resource.place.domain.objects.Location)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.Location.class, valueObject.getDestinationWard().getBoId());
+			}
+		}
+		domainObject.setDestinationWard(value6);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.resource.people.domain.objects.Medic value7 = null;
+		if ( null != valueObject.getConsultant() ) 
+		{
+			if (valueObject.getConsultant().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getConsultant()) != null)
+				{
+					value7 = (ims.core.resource.people.domain.objects.Medic)domMap.get(valueObject.getConsultant());
+				}
+			}
+			else
+			{
+				value7 = (ims.core.resource.people.domain.objects.Medic)domainFactory.getDomainObject(ims.core.resource.people.domain.objects.Medic.class, valueObject.getConsultant().getBoId());
+			}
+		}
+		domainObject.setConsultant(value7);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value8 = null;
+		if ( null != valueObject.getSpecialty() ) 
+		{
+			value8 =
+				domainFactory.getLookupInstance(valueObject.getSpecialty().getID());
+		}
+		domainObject.setSpecialty(value8);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value9 = null;
+		if ( null != valueObject.getTransferReason() ) 
+		{
+			value9 =
+				domainFactory.getLookupInstance(valueObject.getTransferReason().getID());
+		}
+		domainObject.setTransferReason(value9);
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getTransferComment() != null && valueObject.getTransferComment().equals(""))
+		{
+			valueObject.setTransferComment(null);
+		}
+		domainObject.setTransferComment(valueObject.getTransferComment());
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.clinical.domain.objects.Service value11 = null;
+		if ( null != valueObject.getService() ) 
+		{
+			if (valueObject.getService().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getService()) != null)
+				{
+					value11 = (ims.core.clinical.domain.objects.Service)domMap.get(valueObject.getService());
+				}
+			}
+			else
+			{
+				value11 = (ims.core.clinical.domain.objects.Service)domainFactory.getDomainObject(ims.core.clinical.domain.objects.Service.class, valueObject.getService().getBoId());
+			}
+		}
+		domainObject.setService(value11);
 
 		return domainObject;
 	}

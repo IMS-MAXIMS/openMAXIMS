@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:37 -->
+<!-- Generated: 12/10/2015, 13:32 -->
 <hibernate-mapping>
 	<class name="ims.emergency.configuration.domain.objects.TrackingArea" table="emer_trackingarea" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -69,6 +69,14 @@
 			</many-to-many>
 		</list>
 <!-- debug: areaType -->
+<!-- debug: workflowConfig -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="workflowConfig" class="ims.emergency.configuration.domain.objects.TrackingWorkflowConfig" unique="true" foreign-key="trackingarea_workflowco_fk" access="field" cascade="save-update">
+			<column name="workflowco" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: associatedWorkflowMandatory -->
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="areaNameDescription" type="string" access="field" update="true" > 
@@ -109,5 +117,10 @@
 		<many-to-one name="areaType" class="ims.domain.lookups.LookupInstance" access="field">
 			<column name="lkp_areatype" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="associatedWorkflowMandatory" type="boolean" access="field" update="true">
+			<column name="associated"  not-null="false" unique="false"  />
+		</property>
 	</class>
 </hibernate-mapping>

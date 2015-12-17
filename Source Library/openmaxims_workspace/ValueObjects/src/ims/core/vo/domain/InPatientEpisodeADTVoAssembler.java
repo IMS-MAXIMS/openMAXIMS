@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:23
  *
  */
 package ims.core.vo.domain;
@@ -80,6 +85,10 @@ public class InPatientEpisodeADTVoAssembler
 		valueObjectDest.setExpectedTimeOfReturn(valueObjectSrc.getExpectedTimeOfReturn());
 		// HomeLeaves
 		valueObjectDest.setHomeLeaves(valueObjectSrc.getHomeLeaves());
+		// BedNo
+		valueObjectDest.setBedNo(valueObjectSrc.getBedNo());
+		// VacatedBedNumber
+		valueObjectDest.setVacatedBedNumber(valueObjectSrc.getVacatedBedNumber());
 	 	return valueObjectDest;
 	 }
 
@@ -397,7 +406,7 @@ public class InPatientEpisodeADTVoAssembler
 		java.util.Date EstDischargeDate = domainObject.getEstDischargeDate();
 		if ( null != EstDischargeDate ) 
 		{
-			valueObject.setEstDischargeDate(new ims.framework.utils.Date(EstDischargeDate) );
+			valueObject.setEstDischargeDate(new ims.framework.utils.DateTime(EstDischargeDate) );
 		}
 		// Comments
 		valueObject.setComments(domainObject.getComments());
@@ -465,6 +474,10 @@ public class InPatientEpisodeADTVoAssembler
 		}
 		// HomeLeaves
 		valueObject.setHomeLeaves(ims.core.vo.domain.HomeLeaveVoAssembler.createHomeLeaveVoCollectionFromHomeLeave(map, domainObject.getHomeLeaves()) );
+		// BedNo
+		valueObject.setBedNo(domainObject.getBedNo());
+		// VacatedBedNumber
+		valueObject.setVacatedBedNumber(domainObject.getVacatedBedNumber());
  		return valueObject;
 	 }
 
@@ -579,11 +592,11 @@ public class InPatientEpisodeADTVoAssembler
 			value6 = dateTime6.getJavaDate();
 		}
 		domainObject.setAdmissionDateTime(value6);
+		ims.framework.utils.DateTime dateTime7 = valueObject.getEstDischargeDate();
 		java.util.Date value7 = null;
-		ims.framework.utils.Date date7 = valueObject.getEstDischargeDate();		
-		if ( date7 != null ) 
+		if ( dateTime7 != null ) 
 		{
-			value7 = date7.getDate();
+			value7 = dateTime7.getJavaDate();
 		}
 		domainObject.setEstDischargeDate(value7);
 		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
@@ -689,6 +702,20 @@ public class InPatientEpisodeADTVoAssembler
 		}
 		
 		domainObject.setHomeLeaves(domainHomeLeaves15);		
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getBedNo() != null && valueObject.getBedNo().equals(""))
+		{
+			valueObject.setBedNo(null);
+		}
+		domainObject.setBedNo(valueObject.getBedNo());
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getVacatedBedNumber() != null && valueObject.getVacatedBedNumber().equals(""))
+		{
+			valueObject.setVacatedBedNumber(null);
+		}
+		domainObject.setVacatedBedNumber(valueObject.getVacatedBedNumber());
 
 		return domainObject;
 	}

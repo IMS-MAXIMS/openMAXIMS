@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:35 -->
+<hibernate-mapping>
+	<subclass name="ims.coe.assessment.domain.objects.InfectionControlComponent" lazy="true" discriminator-value="infe" extends="ims.nursing.assessment.domain.objects.AssessmentComponent" >
+<!-- debug: hibernateClassContent -->
+<!-- debug: mRSA -->
+<!-- debug: mRSAComment -->
+<!-- debug: clostridium -->
+<!-- debug: clostridiumComment -->
+<!-- debug: vRE -->
+<!-- debug: vREComment -->
+<!-- debug: eSBC -->
+<!-- debug: eSBCComment -->
+<!-- debug: tB -->
+<!-- debug: tBComment -->
+<!-- debug: norovirus -->
+<!-- debug: norovirusComment -->
+<!-- debug: controlRequirement -->
+<!-- debug: notes -->
+<!-- debug: infectionControlAssessment -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="infectionControlAssessment" class="ims.coe.assessmenttools.domain.objects.InfectionControlRepeatableAssessment" unique="true" foreign-key="infectioncontr_infectionc_fk" access="field" cascade="save-update">
+			<column name="infectionc" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: IsLookup -->
+		<many-to-one name="mRSA" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_mrsa" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="mRSAComment" type="string" access="field" update="true" > 
+			<column name="mrsacommen" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="clostridium" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_clostridiu" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="clostridiumComment" type="string" access="field" update="true" > 
+			<column name="clostridi2" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="vRE" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_vre" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="vREComment" type="string" access="field" update="true" > 
+			<column name="vrecomment" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="eSBC" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_esbc" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="eSBCComment" type="string" access="field" update="true" > 
+			<column name="esbccommen" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="tB" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_tb" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="tBComment" type="string" access="field" update="true" > 
+			<column name="tbcomment" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="norovirus" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_norovirus" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="norovirusComment" type="string" access="field" update="true" > 
+			<column name="norovirusc" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="controlRequirement" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_controlreq" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="notes" type="string" access="field" update="true" > 
+			<column name="notes" length="500"  not-null="false" unique="false"  />
+		</property>
+	</subclass>
+</hibernate-mapping>

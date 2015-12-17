@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+     
+   <!-- sleep interval is in seconds -->
+   <parameter name="sleep_interval" value="100" />
+   <parameter name="continous_loop" value="TRUE" />
+   
+   <parameter name="patient_table" value="core_patient" />
+   <parameter name="merge_patient_ids" value="yes" />
+   <parameter name="process_ocs_counts" value="yes" />
+   
+   <excludeEntities>
+   	 <entity name="PersonName" />
+   	 <entity name="Address" />
+	 <entity name="PatientId" />
+	 <entity name="CommunicationChannel" />
+	 <entity name="PatientOCSSeenResults" />
+	 <entity name="PatientOCSNewResults" />`
+	 <entity name="PatientNoAllergyInfo" />
+	 <entity name="PatientNoAlertInfo" />
+</excludeEntities>   
+</configuration>

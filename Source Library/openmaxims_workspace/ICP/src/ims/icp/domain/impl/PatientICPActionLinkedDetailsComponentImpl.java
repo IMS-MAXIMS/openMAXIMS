@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -36,6 +41,7 @@ import ims.assessment.vo.domain.GraphicAssessmentVoAssembler;
 import ims.assessment.vo.domain.PatientAssessmentLiteVoAssembler;
 import ims.assessment.vo.domain.PatientAssessmentVoAssembler;
 import ims.assessment.vo.domain.UserAssessmentVoAssembler;
+import ims.configuration.gen.ConfigFlag;
 import ims.core.admin.domain.objects.CareContext;
 import ims.core.admin.domain.objects.ClinicalContact;
 import ims.core.admin.domain.objects.EpisodeOfCare;
@@ -112,9 +118,18 @@ public class PatientICPActionLinkedDetailsComponentImpl extends BasePatientICPAc
 		if (careContext == null)
 			return null;
 				
-		String query = " from PatientAssessment as pa where pa.assessmentData.userAssessment.id = :ASS_ID and ((pa.careContext.id = :CC_ID and pa.careContext.context.id != :CC_TYPE)" +
-				" or (pa.careContext.episodeOfCare.id = :EP_ID and pa.careContext.context.id = :CC_TYPE)) order by pa.authoringInformation.authoringDateTime desc";
-		
+		String query = null;
+		if(ConfigFlag.FW.USE_REFERRAL_CARECONTEXT.getValue()) //http://jira/browse/WDEV-20263
+		{
+			query = " from PatientAssessment as pa where pa.assessmentData.userAssessment.id = :ASS_ID and ((pa.careContext.id = :CC_ID )" +
+					" or (pa.careContext.episodeOfCare.id = :EP_ID )) order by pa.authoringInformation.authoringDateTime desc";
+		}
+			
+		else
+		{
+			query = " from PatientAssessment as pa where pa.assessmentData.userAssessment.id = :ASS_ID and ((pa.careContext.id = :CC_ID and pa.careContext.context.id != :CC_TYPE)" +
+					" or (pa.careContext.episodeOfCare.id = :EP_ID and pa.careContext.context.id = :CC_TYPE)) order by pa.authoringInformation.authoringDateTime desc";
+		}
 		ArrayList<String> paramNames = new ArrayList<String>();
 		ArrayList<Object> paramValues = new ArrayList<Object>();
 		
@@ -123,10 +138,11 @@ public class PatientICPActionLinkedDetailsComponentImpl extends BasePatientICPAc
 		
 		paramNames.add("CC_ID");
 		paramValues.add(careContextRef.getID_CareContext());
-		
-		paramNames.add("CC_TYPE");
-		paramValues.add(ContextType.INPATIENT.getID());
-		
+		if(!ConfigFlag.FW.USE_REFERRAL_CARECONTEXT.getValue()) //http://jira/browse/WDEV-20263
+		{
+			paramNames.add("CC_TYPE");
+			paramValues.add(ContextType.INPATIENT.getID());
+		}
 		paramNames.add("EP_ID");
 		paramValues.add(careContext.getEpisodeOfCare().getID_EpisodeOfCare());
 

@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:37 -->
+<!-- Generated: 12/10/2015, 13:32 -->
 <hibernate-mapping>
 	<class name="ims.RefMan.domain.objects.ReferralCodingItem" table="care_referralcodite" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -44,9 +44,26 @@
 		<many-to-one name="patientDiagnosis" class="ims.core.clinical.domain.objects.PatientDiagnosis" unique="true" foreign-key="referralcodite_patientdia_fk" access="field" cascade="save-update">
 			<column name="patientdia" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
+<!-- debug: investigation -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="investigation" class="ims.ocrr.orderingresults.domain.objects.OrderInvestigation" unique="true" foreign-key="referralcodite_investigat_fk" access="field" cascade="save-update">
+			<column name="investigat" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
 <!-- debug: oPCS4 -->
 <!-- debug: iCD10 -->
 <!-- debug: procLaterality -->
+<!-- debug: hRG -->
+<!-- debug: daggerAsterisk -->
+<!-- debug: codingTypeIndicator -->
+<!-- debug: firstInSet -->
+<!-- debug: primarySecondaryInd -->
+<!-- debug: procConsandTheatreCode -->
+<!-- debug: procedureDateTime -->
+<!-- debug: hRGType -->
+<!-- debug: itemShortDescription -->
+<!-- debug: itemDescription -->
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="oPCS4" type="string" access="field" update="true" > 
@@ -62,5 +79,55 @@
 		<many-to-one name="procLaterality" class="ims.domain.lookups.LookupInstance" access="field">
 			<column name="lkp_proclatera" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="hRG" type="string" access="field" update="true" > 
+			<column name="hrg" length="5"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="daggerAsterisk" type="string" access="field" update="true" > 
+			<column name="daggeraste" length="1"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="codingTypeIndicator" type="string" access="field" update="true" > 
+			<column name="codingtype" length="3"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="firstInSet" type="string" access="field" update="true" > 
+			<column name="firstinset" length="1"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="primarySecondaryInd" type="string" access="field" update="true" > 
+			<column name="primarysec" length="1"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="procConsandTheatreCode" type="string" access="field" update="true" > 
+			<column name="procconsan" length="16"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="procedureDateTime" type="string" access="field" update="true" > 
+			<column name="procedured" length="14"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="hRGType" type="string" access="field" update="true" > 
+			<column name="hrgtype" length="3"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="itemShortDescription" type="string" access="field" update="true" > 
+			<column name="itemshortd" length="60"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="itemDescription" type="string" access="field" update="true" > 
+			<column name="itemdescri" length="255"  not-null="false" unique="false"  />
+		</property>
 	</class>
 </hibernate-mapping>

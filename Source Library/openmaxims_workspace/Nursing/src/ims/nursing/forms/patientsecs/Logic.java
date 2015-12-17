@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -31,6 +36,7 @@ import ims.framework.utils.Date;
 import ims.framework.utils.DateTime;
 import ims.framework.utils.Time;
 import ims.nursing.forms.patientsecs.GenForm.grdSECSRow;
+import ims.nursing.vo.PatientSECSSearchCriteriaVo;
 
 public class Logic extends BaseLogic
 {
@@ -39,12 +45,40 @@ public class Logic extends BaseLogic
 	protected void onFormOpen(Object[] args) throws ims.framework.exceptions.PresentationLogicException
 	{
 		initialize();
-		doSearch(true);
+		//WDEV-19389 - start
+		if (!(form.getGlobalContext().Core.getPatientShortIsNotNull() && form.getGlobalContext().Nursing.getPatientSECSSearchCriteriaIsNotNull() && form.getGlobalContext().Core.getPatientShort().equals(form.getGlobalContext().Nursing.getPatientSECSSearchCriteria().getPatient())))
+			form.getGlobalContext().Nursing.setPatientSECSSearchCriteria(null);
+		
+		if(form.getGlobalContext().Nursing.getPatientSECSSearchCriteriaIsNotNull())
+		{
+			setSearchCriteria(form.getGlobalContext().Nursing.getPatientSECSSearchCriteria());
+			doSearch(false);
+		}
+		else
+			doSearch(true);
+		//WDEV-19389 - end
 	}
 
 	protected void onImbSearchClick() throws ims.framework.exceptions.PresentationLogicException
 	{
 		doSearch(false);
+	}
+	
+	private PatientSECSSearchCriteriaVo getSearchCriteria()
+	{
+		PatientSECSSearchCriteriaVo searchCriteria = new PatientSECSSearchCriteriaVo();
+		
+		searchCriteria.setFromDate(form.dteStart().getValue());
+		searchCriteria.setToDate(form.dteEnd().getValue());
+		searchCriteria.setPatient(form.getGlobalContext().Core.getPatientShort());
+		
+		return searchCriteria;
+	}
+	
+	private void setSearchCriteria(PatientSECSSearchCriteriaVo patientSECSSearchCriteriaVo) 
+	{
+		form.dteStart().setValue(patientSECSSearchCriteriaVo.getFromDate());
+		form.dteEnd().setValue(patientSECSSearchCriteriaVo.getToDate());
 	}
 
 	private void initialize()
@@ -92,6 +126,9 @@ public class Logic extends BaseLogic
 			}
 
 			populateGridControl(voColl);
+			
+			if (isCalledFromFormOpen == false)
+				form.getGlobalContext().Nursing.setPatientSECSSearchCriteria(getSearchCriteria());//WDEV-19389 
 		}
 	}
 

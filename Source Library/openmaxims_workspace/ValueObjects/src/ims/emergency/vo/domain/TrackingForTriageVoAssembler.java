@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.emergency.vo.domain;
@@ -62,6 +67,8 @@ public class TrackingForTriageVoAssembler
 		valueObjectDest.setCurrentStatus(valueObjectSrc.getCurrentStatus());
 		// SeenBy
 		valueObjectDest.setSeenBy(valueObjectSrc.getSeenBy());
+		// SeenByNurse
+		valueObjectDest.setSeenByNurse(valueObjectSrc.getSeenByNurse());
 		// Patient
 		valueObjectDest.setPatient(valueObjectSrc.getPatient());
 		// Attendance
@@ -380,6 +387,8 @@ public class TrackingForTriageVoAssembler
 		valueObject.setCurrentStatus(ims.emergency.vo.domain.TrackingAttendanceStatusVoAssembler.create(map, domainObject.getCurrentStatus()) );
 		// SeenBy
 		valueObject.setSeenBy(ims.emergency.vo.domain.SeenByHCPVoAssembler.create(map, domainObject.getSeenBy()) );
+		// SeenByNurse
+		valueObject.setSeenByNurse(ims.emergency.vo.domain.SeenByHCPVoAssembler.create(map, domainObject.getSeenByNurse()) );
 		// Patient
 		valueObject.setPatient(ims.emergency.vo.domain.PatientForTriageVoAssembler.create(map, domainObject.getPatient()) );
 		// Attendance
@@ -491,39 +500,56 @@ public class TrackingForTriageVoAssembler
 		}
 		domainObject.setSeenBy(value6);
 	// SaveAsRefVO - treated as a refVo in extract methods
-	ims.core.patient.domain.objects.Patient value7 = null;
+	ims.emergency.domain.objects.SeenByHCP value7 = null;
+		if ( null != valueObject.getSeenByNurse() ) 
+		{
+			if (valueObject.getSeenByNurse().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getSeenByNurse()) != null)
+				{
+					value7 = (ims.emergency.domain.objects.SeenByHCP)domMap.get(valueObject.getSeenByNurse());
+				}
+			}
+			else
+			{
+				value7 = (ims.emergency.domain.objects.SeenByHCP)domainFactory.getDomainObject(ims.emergency.domain.objects.SeenByHCP.class, valueObject.getSeenByNurse().getBoId());
+			}
+		}
+		domainObject.setSeenByNurse(value7);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.patient.domain.objects.Patient value8 = null;
 		if ( null != valueObject.getPatient() ) 
 		{
 			if (valueObject.getPatient().getBoId() == null)
 			{
 				if (domMap.get(valueObject.getPatient()) != null)
 				{
-					value7 = (ims.core.patient.domain.objects.Patient)domMap.get(valueObject.getPatient());
+					value8 = (ims.core.patient.domain.objects.Patient)domMap.get(valueObject.getPatient());
 				}
 			}
 			else
 			{
-				value7 = (ims.core.patient.domain.objects.Patient)domainFactory.getDomainObject(ims.core.patient.domain.objects.Patient.class, valueObject.getPatient().getBoId());
+				value8 = (ims.core.patient.domain.objects.Patient)domainFactory.getDomainObject(ims.core.patient.domain.objects.Patient.class, valueObject.getPatient().getBoId());
 			}
 		}
-		domainObject.setPatient(value7);
+		domainObject.setPatient(value8);
 	// SaveAsRefVO - treated as a refVo in extract methods
-	ims.core.admin.domain.objects.EmergencyAttendance value8 = null;
+	ims.core.admin.domain.objects.EmergencyAttendance value9 = null;
 		if ( null != valueObject.getAttendance() ) 
 		{
 			if (valueObject.getAttendance().getBoId() == null)
 			{
 				if (domMap.get(valueObject.getAttendance()) != null)
 				{
-					value8 = (ims.core.admin.domain.objects.EmergencyAttendance)domMap.get(valueObject.getAttendance());
+					value9 = (ims.core.admin.domain.objects.EmergencyAttendance)domMap.get(valueObject.getAttendance());
 				}
 			}
 			else
 			{
-				value8 = (ims.core.admin.domain.objects.EmergencyAttendance)domainFactory.getDomainObject(ims.core.admin.domain.objects.EmergencyAttendance.class, valueObject.getAttendance().getBoId());
+				value9 = (ims.core.admin.domain.objects.EmergencyAttendance)domainFactory.getDomainObject(ims.core.admin.domain.objects.EmergencyAttendance.class, valueObject.getAttendance().getBoId());
 			}
 		}
-		domainObject.setAttendance(value8);
+		domainObject.setAttendance(value9);
 
 		return domainObject;
 	}

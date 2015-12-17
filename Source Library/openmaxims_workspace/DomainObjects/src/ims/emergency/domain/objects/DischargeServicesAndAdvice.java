@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.emergency.domain.objects;
@@ -83,6 +88,10 @@ public class DischargeServicesAndAdvice extends ims.domain.DomainObject implemen
 	  * Collection of ims.core.clinical.domain.objects.AdviceLeaflets.
 	  */
 	private java.util.List adviceLeafletsPrinted;
+	/** 
+	  * Collection of ims.core.clinical.domain.objects.AdviceLeaflets.
+	  */
+	private java.util.List prePrintedAdviceLeafletsGiven;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public DischargeServicesAndAdvice (Integer id, int ver)
@@ -218,6 +227,16 @@ public class DischargeServicesAndAdvice extends ims.domain.DomainObject implemen
 	}
 	public void setAdviceLeafletsPrinted(java.util.List paramValue) {
 		this.adviceLeafletsPrinted = paramValue;
+	}
+
+	public java.util.List getPrePrintedAdviceLeafletsGiven() {
+		if ( null == prePrintedAdviceLeafletsGiven ) {
+			prePrintedAdviceLeafletsGiven = new java.util.ArrayList();
+		}
+		return prePrintedAdviceLeafletsGiven;
+	}
+	public void setPrePrintedAdviceLeafletsGiven(java.util.List paramValue) {
+		this.prePrintedAdviceLeafletsGiven = paramValue;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -418,6 +437,29 @@ public class DischargeServicesAndAdvice extends ims.domain.DomainObject implemen
 			auditStr.append("] " + i13);
 		}
 	    auditStr.append("; ");
+		auditStr.append("\r\n*prePrintedAdviceLeafletsGiven* :");
+		if (prePrintedAdviceLeafletsGiven != null)
+		{
+		int i14=0;
+		for (i14=0; i14<prePrintedAdviceLeafletsGiven.size(); i14++)
+		{
+			if (i14 > 0)
+				auditStr.append(",");
+			ims.core.clinical.domain.objects.AdviceLeaflets obj = (ims.core.clinical.domain.objects.AdviceLeaflets)prePrintedAdviceLeafletsGiven.get(i14);
+		    if (obj != null)
+			{
+				if (i14 == 0)
+				{
+				auditStr.append(toShortClassName(obj));
+				auditStr.append("[");
+				}
+		        auditStr.append(obj.getId());
+			}
+		}
+		if (i14 > 0)
+			auditStr.append("] " + i14);
+		}
+	    auditStr.append("; ");
 		return auditStr.toString();
 	}
 	
@@ -556,6 +598,15 @@ public class DischargeServicesAndAdvice extends ims.domain.DomainObject implemen
 			sb.append("<adviceLeafletsPrinted>");
 			sb.append(ims.domain.DomainObject.toXMLString(this.getAdviceLeafletsPrinted(), domMap));
 			sb.append("</adviceLeafletsPrinted>");		
+			}
+		}
+		if (this.getPrePrintedAdviceLeafletsGiven() != null)
+		{
+			if (this.getPrePrintedAdviceLeafletsGiven().size() > 0 )
+			{
+			sb.append("<prePrintedAdviceLeafletsGiven>");
+			sb.append(ims.domain.DomainObject.toXMLString(this.getPrePrintedAdviceLeafletsGiven(), domMap));
+			sb.append("</prePrintedAdviceLeafletsGiven>");		
 			}
 		}
 		return sb.toString();
@@ -796,6 +847,12 @@ public class DischargeServicesAndAdvice extends ims.domain.DomainObject implemen
 			fldEl = fldEl.element("list");	
 			obj.setAdviceLeafletsPrinted(ims.core.clinical.domain.objects.AdviceLeaflets.fromListXMLString(fldEl, factory, obj.getAdviceLeafletsPrinted(), domMap));
 		}
+		fldEl = el.element("prePrintedAdviceLeafletsGiven");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("list");	
+			obj.setPrePrintedAdviceLeafletsGiven(ims.core.clinical.domain.objects.AdviceLeaflets.fromListXMLString(fldEl, factory, obj.getPrePrintedAdviceLeafletsGiven(), domMap));
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -807,6 +864,7 @@ public class DischargeServicesAndAdvice extends ims.domain.DomainObject implemen
 		, "patientMobility"
 		, "equipment"
 		, "adviceLeafletsPrinted"
+		, "prePrintedAdviceLeafletsGiven"
 		};
 	}
 
@@ -827,6 +885,7 @@ public class DischargeServicesAndAdvice extends ims.domain.DomainObject implemen
 		public static final String Equipment = "equipment";
 		public static final String BookingNo = "bookingNo";
 		public static final String AdviceLeafletsPrinted = "adviceLeafletsPrinted";
+		public static final String PrePrintedAdviceLeafletsGiven = "prePrintedAdviceLeafletsGiven";
 	}
 }
 

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -37,15 +42,18 @@ import ims.clinical.domain.PastMedicalHistory;
 import ims.clinical.domain.PatientSummary;
 import ims.clinical.domain.base.impl.BaseDiagnosisComplicationsImpl;
 import ims.clinical.vo.ClinicalDIAssociationVoCollection;
+import ims.clinical.vo.lookups.DischargeLetterStatus;
 import ims.configuration.gen.ConfigFlag;
 import ims.core.admin.vo.CareContextRefVo;
 import ims.core.admin.vo.CareSpellRefVo;
 import ims.core.admin.vo.ClinicalContactRefVo;
 import ims.core.admin.vo.EpisodeOfCareRefVo;
 import ims.core.clinical.domain.objects.PatientDiagnosis;
+import ims.core.clinical.domain.objects.PatientNoDiagInfoForCC;
 import ims.core.clinical.vo.PatientDiagnosisRefVo;
 import ims.core.configuration.domain.objects.AppUser;
 import ims.core.patient.vo.PatientRefVo;
+import ims.core.vo.CareContextLiteVo;
 import ims.core.vo.DiagLiteVoCollection;
 import ims.core.vo.HcpCollection;
 import ims.core.vo.HcpFilter;
@@ -56,12 +64,14 @@ import ims.core.vo.PatientDiagnosisShortVo;
 import ims.core.vo.PatientDiagnosisShortVoCollection;
 import ims.core.vo.PatientDiagnosisVo;
 import ims.core.vo.PatientDiagnosisVoCollection;
+import ims.core.vo.PatientNoDiagInfoForCCVo;
 import ims.core.vo.PatientPastMedicalHistoryVo;
 import ims.core.vo.PatientShort;
 import ims.core.vo.domain.DiagLiteVoAssembler;
 import ims.core.vo.domain.PatientDiagnosisListVoAssembler;
 import ims.core.vo.domain.PatientDiagnosisShortVoAssembler;
 import ims.core.vo.domain.PatientDiagnosisVoAssembler;
+import ims.core.vo.domain.PatientNoDiagInfoForCCVoAssembler;
 import ims.core.vo.lookups.Specialty;
 import ims.domain.DomainFactory;
 import ims.domain.exceptions.DomainInterfaceException;
@@ -69,6 +79,9 @@ import ims.domain.exceptions.DomainRuntimeException;
 import ims.domain.exceptions.StaleObjectException;
 import ims.domain.exceptions.UniqueKeyViolationException;
 import ims.domain.exceptions.UnqViolationUncheckedException;
+import ims.edischarge.domain.objects.DischargeDetails;
+import ims.edischarge.domain.objects.RTLSummary;
+import ims.framework.exceptions.CodingRuntimeException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,7 +90,7 @@ public class DiagnosisComplicationsImpl extends BaseDiagnosisComplicationsImpl
 {
 	private static final long serialVersionUID = 1L;
 
-	public PatientDiagnosisVo saveDiagnosisVo(PatientDiagnosisVo voDiagnosis, PatientShort patientShortVo, Boolean savePMH) throws StaleObjectException, UnqViolationUncheckedException, DomainInterfaceException, UniqueKeyViolationException
+	public PatientDiagnosisVo saveDiagnosisVo(PatientDiagnosisVo voDiagnosis, PatientShort patientShortVo, Boolean savePMH, PatientNoDiagInfoForCCVo patientNoDiagInfo) throws StaleObjectException, UnqViolationUncheckedException, DomainInterfaceException, UniqueKeyViolationException
 	{
 		if (patientShortVo == null)
 			throw new  DomainRuntimeException("Patient not provided.");
@@ -91,6 +104,43 @@ public class DiagnosisComplicationsImpl extends BaseDiagnosisComplicationsImpl
 		
 		factory.save(doPatDiag);
 		
+		//WDEV-18627
+		if (patientNoDiagInfo != null)
+		{
+			PatientNoDiagInfoForCC patientNoDiagInfoDo = PatientNoDiagInfoForCCVoAssembler.extractPatientNoDiagInfoForCC(factory, patientNoDiagInfo);
+			factory.save(patientNoDiagInfoDo);
+		}
+
+		//WDEV-19847
+		if (voDiagnosis != null)
+		{
+			DischargeDetails ddDO = getDischargeDetails(voDiagnosis);
+		
+			RTLSummary rtlSummary = getRTLSummaryToUpdate(voDiagnosis.getCareContext());
+					
+			if (ddDO != null)
+			{
+				if (Boolean.TRUE.equals(voDiagnosis.getIsComplication()))
+				{
+					if (rtlSummary != null)
+						rtlSummary.setWereComplicationsEntered(Boolean.TRUE);
+					ddDO.setHasNoComplications(Boolean.FALSE);
+				}	
+				if (!Boolean.TRUE.equals(voDiagnosis.getIsComplication()) && !Boolean.TRUE.equals(voDiagnosis.getIsComorbidity()))
+				{
+					if (rtlSummary != null)
+						rtlSummary.setWereDiagnosisDetailsEntered(Boolean.TRUE);
+					ddDO.setHasNoDiagnosis(Boolean.FALSE);
+				}
+					
+				factory.save(ddDO);
+				
+				if (rtlSummary != null)
+				{
+					factory.save(rtlSummary);
+				}
+			}			
+		}
 		voDiagnosis = PatientDiagnosisVoAssembler.create(doPatDiag);//Create here to avoid possible StaleObj in PMH save
 		
 		if(savePMH != null && savePMH.booleanValue())	
@@ -122,7 +172,46 @@ public class DiagnosisComplicationsImpl extends BaseDiagnosisComplicationsImpl
 		
 		return voDiagnosis;
 	}
-
+	//WDEV-19847
+	private RTLSummary getRTLSummaryToUpdate(CareContextLiteVo careContext)
+	{
+		if (careContext == null || careContext.getID_CareContext() == null)
+			return null;
+		List<?> results  = getDomainFactory().find("select rtl from RTLSummary as rtl where rtl.careContext.id = :CC_ID", new String[]{"CC_ID"}, new Object[]{careContext.getID_CareContext()});
+		
+		if (results == null || results.isEmpty())
+			return null;
+		
+		return (RTLSummary) results.get(0);
+				
+	}
+	//WDEV-19847
+	private DischargeDetails getDischargeDetails(PatientDiagnosisVo voDiagnosis)
+	{
+		if (voDiagnosis == null || voDiagnosis.getCareContext() == null || voDiagnosis.getCareContext().getEpisodeOfCare() == null)
+			return null;
+		
+		StringBuilder hql = new StringBuilder();
+		ArrayList<String> marques  = new ArrayList<String>();
+		ArrayList<Object> values = new ArrayList<Object>();
+		
+		DomainFactory domainFactory = getDomainFactory();
+		
+ 		hql.append("select dd from DischargeDetails as dd left join dd.careContext as ccontext left join ccontext.episodeOfCare as epis where dd.dischargeLetterStatus.id = :LETTER_STATUS and epis.id = :EPISODE_ID");
+		
+ 		marques.add("LETTER_STATUS");
+ 		marques.add("EPISODE_ID");
+ 		 		
+ 		values.add(DischargeLetterStatus.IN_PROGRESS.getID());
+ 		values.add(voDiagnosis.getCareContext().getEpisodeOfCare().getID_EpisodeOfCare());
+ 		
+ 		List<?> ddList = domainFactory.find(hql.toString(),marques,values);
+ 		
+ 		if (ddList == null || ddList.isEmpty())
+ 			return null;
+				
+		return (DischargeDetails) ddList.get(0);
+	}
 	public PatientDiagnosisVo getDiagnosisVo(PatientDiagnosisRefVo patdiagrefVo)
 	{
 		if(patdiagrefVo == null)
@@ -621,7 +710,7 @@ public class DiagnosisComplicationsImpl extends BaseDiagnosisComplicationsImpl
 			andStr = " and ";
 		}
 				
-		clause.append(andStr).append(" u.username != 'imsadmin'");  
+		clause.append(andStr).append(" u.username != 'xxxxx'");  
 		andStr=" and ";
 
 		if (andStr.equals(" and "))
@@ -650,5 +739,30 @@ public class DiagnosisComplicationsImpl extends BaseDiagnosisComplicationsImpl
 	{
 		PatientSummary ps = (PatientSummary) getDomainImpl(PatientSummaryImpl.class);
 		return ps.getPIDDiagnosisInfo(careContextRefVo, episodeRefVo, null);
+	}
+
+	public PatientNoDiagInfoForCCVo getPatientNoDiagInfoForCareContext(CareContextRefVo careContextRef)
+	{
+		if(careContextRef == null)
+			   throw new CodingRuntimeException("Cannot get PatientNoDiagInfo on null careContext ");
+		
+		List<?> list = getDomainFactory().find("select patNoDiag from PatientNoDiagInfoForCC as patNoDiag left join patNoDiag.careContext as cc where cc.id = :careContextId)", 
+				new String[] {"careContextId"}, new Object[] {careContextRef.getID_CareContext()});
+		
+		if (list == null || list.size() == 0)
+			return null;
+		
+		return PatientNoDiagInfoForCCVoAssembler.createPatientNoDiagInfoForCCVoCollectionFromPatientNoDiagInfoForCC(list).get(0);
+	}
+
+	public void savePatientNoDiagInfo(PatientNoDiagInfoForCCVo patientNoDiagInfoToSave) throws StaleObjectException
+	{
+		if (patientNoDiagInfoToSave == null)
+			throw new CodingRuntimeException("Cannot save null patientNoDiagInfo");
+		
+		DomainFactory factory = getDomainFactory();
+		
+		PatientNoDiagInfoForCC patientNoDiagInfoDo = PatientNoDiagInfoForCCVoAssembler.extractPatientNoDiagInfoForCC(factory, patientNoDiagInfoToSave);
+		factory.save(patientNoDiagInfoDo);
 	}
 }

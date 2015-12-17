@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -50,12 +55,14 @@ public class AdtTransferDialogImpl extends BaseAdtTransferDialogImpl
 	public LocationLiteVo getParentHospital(ims.core.resource.place.vo.LocationRefVo ward)
 	{
 		DomainFactory factory = getDomainFactory();
-		Location doLocation = (Location) factory.getDomainObject(ward);
+		Location doLocation =  ward != null ? (Location) factory.getDomainObject(ward) : null; //WDEV-20173
 		return getHospital(doLocation);	
 	}
 	
 	private LocationLiteVo getHospital(Location doLocation)
 	{
+		if (doLocation ==null)
+			return null; //WDEV-20173		
 		if(doLocation instanceof LocSite && doLocation.getType().equals(getDomLookup(LocationType.HOSP)))
 			return LocationLiteVoAssembler.create(doLocation);
 	
@@ -77,8 +84,8 @@ public class AdtTransferDialogImpl extends BaseAdtTransferDialogImpl
 	public LocationLiteVoCollection listHospitals()
 	{
 		DomainFactory factory = getDomainFactory();
-		String hql = " from Location loc where loc.type = :locType and loc.isActive = :isActive";
-		List l = factory.find(hql, new String[]{"locType","isActive"}, new Object[]{getDomLookup(LocationType.HOSP), Boolean.TRUE});
+		String hql = " from Location loc where loc.type = :locType and loc.isActive = :isActive and loc.isVirtual = :isVirtual";	//WDEV-19532
+		List l = factory.find(hql, new String[]{"locType","isActive","isVirtual"}, new Object[]{getDomLookup(LocationType.HOSP), Boolean.TRUE,Boolean.FALSE});	//WDEV-19532
 		return LocationLiteVoAssembler.createLocationLiteVoCollectionFromLocation(l);
 	}
 

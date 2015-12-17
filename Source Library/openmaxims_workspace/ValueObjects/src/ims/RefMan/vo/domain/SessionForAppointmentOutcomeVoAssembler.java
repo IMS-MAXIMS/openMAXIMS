@@ -1,9 +1,33 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.RefMan.vo.domain;
@@ -33,6 +57,8 @@ public class SessionForAppointmentOutcomeVoAssembler
 	    valueObjectDest.setIsRIE(valueObjectSrc.getIsRIE());
 		// Service
 		valueObjectDest.setService(valueObjectSrc.getService());
+		// ListOwners
+		valueObjectDest.setListOwners(valueObjectSrc.getListOwners());
 	 	return valueObjectDest;
 	 }
 
@@ -325,6 +351,8 @@ public class SessionForAppointmentOutcomeVoAssembler
 			
 		// Service
 		valueObject.setService(ims.RefMan.vo.domain.ServiceForAppointmentOutcomeVoAssembler.create(map, domainObject.getService()) );
+		// ListOwners
+		valueObject.setListOwners(ims.scheduling.vo.domain.Session_ListOwnerVoAssembler.createSession_ListOwnerVoCollectionFromSession_ListOwner(map, domainObject.getListOwners()) );
  		return valueObject;
 	 }
 
@@ -391,6 +419,69 @@ public class SessionForAppointmentOutcomeVoAssembler
 			}
 		}
 		domainObject.setService(value1);
+
+		// SaveAsRefVO treated as RefValueObject
+		ims.scheduling.vo.Session_ListOwnerRefVoCollection refCollection2 = new ims.scheduling.vo.Session_ListOwnerRefVoCollection();
+		if (valueObject.getListOwners() != null)
+		{
+			for (int i2=0; i2<valueObject.getListOwners().size(); i2++)
+			{
+				ims.scheduling.vo.Session_ListOwnerRefVo ref2 = (ims.scheduling.vo.Session_ListOwnerRefVo)valueObject.getListOwners().get(i2);
+				refCollection2.add(ref2);
+			}
+		}
+		int size2 = (null == refCollection2) ? 0 : refCollection2.size();		
+		java.util.Set domainListOwners2 = domainObject.getListOwners();
+		if (domainListOwners2 == null)
+		{
+			domainListOwners2 = new java.util.HashSet();
+		}
+		java.util.Set newSet2  = new java.util.HashSet();
+		for(int i=0; i<size2; i++) 
+		{
+			ims.scheduling.vo.Session_ListOwnerRefVo vo = refCollection2.get(i);					
+			ims.scheduling.domain.objects.Session_ListOwner dom = null;
+			if ( null != vo ) 
+			{
+				if (vo.getBoId() == null)
+				{
+					if (domMap.get(vo) != null)
+					{
+						dom = (ims.scheduling.domain.objects.Session_ListOwner)domMap.get(vo);
+					}
+				}
+				else
+				{
+					dom = (ims.scheduling.domain.objects.Session_ListOwner)domainFactory.getDomainObject( ims.scheduling.domain.objects.Session_ListOwner.class, vo.getBoId());
+				}
+			}
+
+			//Trying to avoid the hibernate collection being marked as dirty via its public interface methods. (like add)
+			if (!domainListOwners2.contains(dom))
+			{
+				domainListOwners2.add(dom);
+			}
+			newSet2.add(dom);			
+		}
+		java.util.Set removedSet2 = new java.util.HashSet();
+		java.util.Iterator iter2 = domainListOwners2.iterator();
+		//Find out which objects need to be removed
+		while (iter2.hasNext())
+		{
+			ims.domain.DomainObject o = (ims.domain.DomainObject)iter2.next();			
+			if ((o == null || o.getIsRIE() == null || !o.getIsRIE().booleanValue()) && !newSet2.contains(o))
+			{
+				removedSet2.add(o);
+			}
+		}
+		iter2 = removedSet2.iterator();
+		//Remove the unwanted objects
+		while (iter2.hasNext())
+		{
+			domainListOwners2.remove(iter2.next());
+		}		
+		
+		domainObject.setListOwners(domainListOwners2);		
 
 		return domainObject;
 	}

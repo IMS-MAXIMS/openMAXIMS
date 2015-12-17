@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -31,6 +36,7 @@ import ims.core.vo.lookups.TaxonomyType;
 import ims.domain.exceptions.DomainInterfaceException;
 import ims.domain.exceptions.StaleObjectException;
 import ims.framework.utils.DateTime;
+import ims.hl7.domain.EventResponse;
 import ims.hl7.utils.HL7Errors;
 import ims.hl7.utils.HL7Utils;
 import ims.ocrr.vo.ProviderSystemVo;
@@ -67,25 +73,46 @@ public class PCGVoMapper extends VoMapper {
 	protected HL7PathwayIf	hL7PathwayIf=null;
 	private static final String AMEND_CLOCK_START="AS";
 
-	public Message processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception 
+	//WDEV-20112
+//	public Message processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception 
+	public EventResponse processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception  //WDEV-20112
 	{
+		//WDEV-20112
+		EventResponse response = new EventResponse(); //WDEV-20112
+		
 		try
 		{
 			if (hL7PathwayIf == null)
+			{
 				hL7PathwayIf = (HL7PathwayIf) getDomainImpl("ims.pathways.domain.impl.HL7PathwayIfImpl");
-			processMessage(msg, providerSystem);
+			}
+
+			//WDEV-20112
+//			processMessage(msg, providerSystem);
+			response = processMessage(msg, providerSystem, response); //WDEV-20112
 		}
 		catch (Exception ex)
 		{
-			return HL7Utils.buildRejAck(msg.get("MSH"), ex.getClass().getName() + " occurred. " + ex.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems()));
+			//WDEV-20112
+//			return HL7Utils.buildRejAck(msg.get("MSH"), ex.getClass().getName() + " occurred. " + ex.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems()));
+			response.setMessage(HL7Utils.buildRejAck(msg.get("MSH"), ex.getClass().getName() + " occurred. " + ex.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems())));
+			return response; //WDEV-20112
 		}
 
-		Message ack = HL7Utils.buildPosAck(msg.get("MSH"), toConfigItemArray(providerSystem.getConfigItems()));
-		return ack;	
+		//WDEV-20112
+//		Message ack = HL7Utils.buildPosAck(msg.get("MSH"), toConfigItemArray(providerSystem.getConfigItems()));
+//		return ack;	
+		response.setMessage(HL7Utils.buildPosAck(msg.get("MSH"), toConfigItemArray(providerSystem.getConfigItems())));
+		return response; //WDEV-20112
 	}
 
-	private void processMessage(Message msg, ProviderSystemVo providerSystem) throws Exception 
+	
+	
+	//WDEV-20112
+//	private void processMessage(Message msg, ProviderSystemVo providerSystem) throws Exception
+	private EventResponse processMessage(Message msg, ProviderSystemVo providerSystem, EventResponse response) throws Exception //WDEV-20112 
 	{
+		
 		PPG_PCG_PTHNTEVARROLVARGOLNTEVARROLVAROBXNTEPRBNTEVARROLVAROBXNTEORCOBRRXONTEVAROBXNTEVAR ppg = (PPG_PCG_PTHNTEVARROLVARGOLNTEVARROLVAROBXNTEPRBNTEVARROLVAROBXNTEORCOBRRXONTEVAROBXNTEVAR) msg.get("PPG_PCG_PTHNTEVARROLVARGOLNTEVARROLVAROBXNTEPRBNTEVARROLVAROBXNTEORCOBRRXONTEVAROBXNTEVAR");
 		MessageEvent messageEvent = new MessageEvent();
 
@@ -107,13 +134,19 @@ public class PCGVoMapper extends VoMapper {
 			PatientJourneyVo journey = hL7PathwayIf.getPatientJourney(referral);
 			if (journey != null)
 				hL7PathwayIf.endPatientJourney(journey);
-			return;
+			//WDEV-20112
+//			return;
+			response.setMessage(msg);
+			return response; //WDEV-20112
 		}
 		
 		// Identify the Patient, Register if required
 		Patient patient = savePatient(msg, providerSystem);
 		messageEvent.patient = patient;
 		
+		//WDEV-20112
+		response.setPatient(patient); //WDEV-20112
+
 		Boolean unlink=false;  // wdev-7351 needed if updating a previous patient event
 		
 		EventVo event=null;
@@ -221,13 +254,18 @@ public class PCGVoMapper extends VoMapper {
 					journey = new PatientJourneyVo();
 					journey.setPatient(patient);
 					journey.setStartDate(populateDateVoFromTS(pth.getPathwayEstablishedDateTime()));
-					journey.setTargetEndDate(populateDateVoFromTS(gol.getExpectedGoalAchieveDateTime())); // GOl-8
+					
+					//journey.setTargetEndDate(populateDateVoFromTS(gol.getExpectedGoalAchieveDateTime())); // GOl-8
 					journey.setExtReferralKey(messageEvent.referralKey);
 					journey.setResponsibleConsultant(messageEvent.pathwayConsultant);  // wdev-4508
 					PathwayClockVo clock = new PathwayClockVo();
 					clock.setExtClockId(messageEvent.extClockId);
 					clock.setExtClockName(messageEvent.extClockName);
 					clock.setStartDate(journey.getStartDate());
+					
+					//WDEV-20014
+					clock.setTargetClockEnd(populateDateVoFromTS(gol.getExpectedGoalAchieveDateTime())); // GOl-8
+					
 					journey.setCurrentClock(clock);
 					if (!journey.getClockHistoryIsNotNull())
 						journey.setClockHistory(new PathwayClockVoCollection());
@@ -289,10 +327,13 @@ public class PCGVoMapper extends VoMapper {
 						newClock.setExtClockId(messageEvent.extClockId);
 						newClock.setExtClockName(messageEvent.extClockName);
 						newClock.setStartDate(messageEvent.eventDateTime.getDate());
+						
+						//WDEV-20014
+						newClock.setTargetClockEnd(populateDateVoFromTS(gol.getExpectedGoalAchieveDateTime())); // GOL-8 may be a new TargetEndDate
 							
 						journey.setCurrentClock(newClock);
 						journey.getClockHistory().add(newClock);
-						journey.setTargetEndDate(populateDateVoFromTS(gol.getExpectedGoalAchieveDateTime())); // GOL-8 may be a new TargetEndDate
+						//journey.setTargetEndDate(populateDateVoFromTS(gol.getExpectedGoalAchieveDateTime())); // GOL-8 may be a new TargetEndDate
 							
 					}
 				}
@@ -335,7 +376,10 @@ public class PCGVoMapper extends VoMapper {
 		}
 
 		// Message Processed
-		return;
+		//WDEV-20112
+//		return;
+		response.setMessage((Message) messageEvent);
+		return response; //WDEV-20112
 	}
 
 	private RTTEventVo buildRttEvent(MessageEvent messageEvent, ProviderSystemVo providerSystem, GOL gol, PV1 pv1) throws HL7Exception, DomainInterfaceException
@@ -363,7 +407,9 @@ public class PCGVoMapper extends VoMapper {
 			if (medLite == null)
 			{
 				// 	Check to see if the pas code has been specified in second repetition of consulting doctor, try this if found
-				medLite = hcpAdmin.getMedicLiteByExternalCode(TaxonomyType.PAS, pathwayConsultant);
+				//WDEV-20278
+//				medLite = hcpAdmin.getMedicLiteByExternalCode(TaxonomyType.PAS, pathwayConsultant);
+				medLite = hcpAdmin.getMedicLiteByExternalCode(providerSystem.getCodeSystem(), pathwayConsultant); //WDEV-20278
 				if (medLite == null)
 				{
 					// Try the second repetition for national consultant code
@@ -386,7 +432,9 @@ public class PCGVoMapper extends VoMapper {
 			if (medLite == null)
 			{
 				// 	Check to see if the pas code has been specified in second repetition of consulting doctor, try this if found
-				medLite = hcpAdmin.getMedicLiteByExternalCode(TaxonomyType.PAS, rttEventConsultant);
+				//WDEV-20278
+//				medLite = hcpAdmin.getMedicLiteByExternalCode(TaxonomyType.PAS, rttEventConsultant);
+				medLite = hcpAdmin.getMedicLiteByExternalCode(providerSystem.getCodeSystem(), rttEventConsultant); //WDEV-20278
 				if (medLite == null)
 				{
 					// Try the second repetition for national consultant code
@@ -460,7 +508,9 @@ public class PCGVoMapper extends VoMapper {
 			if (medLite == null)
 			{
 				// 	Check to see if the pas code has been specified in second repetition of consulting doctor, try this if found
-				medLite = hcpAdmin.getMedicLiteByExternalCode(TaxonomyType.PAS, pathwayConsultant);
+				//WDEV-20278
+//				medLite = hcpAdmin.getMedicLiteByExternalCode(TaxonomyType.PAS, pathwayConsultant);
+				medLite = hcpAdmin.getMedicLiteByExternalCode(providerSystem.getCodeSystem(), pathwayConsultant); //WDEV-20278
 				if (medLite == null)
 				{
 					// Try the second repetition for national consultant code
@@ -484,7 +534,9 @@ public class PCGVoMapper extends VoMapper {
 			if (medLite == null)
 			{
 				// 	Check to see if the pas code has been specified in second repetition of consulting doctor, try this if found
-				medLite = hcpAdmin.getMedicLiteByExternalCode(TaxonomyType.PAS, eventConsultant);
+				//WDEV-20278
+//				medLite = hcpAdmin.getMedicLiteByExternalCode(TaxonomyType.PAS, eventConsultant);
+				medLite = hcpAdmin.getMedicLiteByExternalCode(providerSystem.getCodeSystem(), eventConsultant); //WDEV-20278
 				if (medLite == null)
 				{
 					// Try the second repetition for national consultant code

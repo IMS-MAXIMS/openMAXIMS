@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.emergency.vo.domain;
@@ -70,6 +75,20 @@ public class EmergencyAttendanceOutcomeVoAssembler
 		valueObjectDest.setRegistrationDateTime(valueObjectSrc.getRegistrationDateTime());
 		// DischargingHCP
 		valueObjectDest.setDischargingHCP(valueObjectSrc.getDischargingHCP());
+		// AttendanceType
+		valueObjectDest.setAttendanceType(valueObjectSrc.getAttendanceType());
+		// AttendanceOutcomeComment
+		valueObjectDest.setAttendanceOutcomeComment(valueObjectSrc.getAttendanceOutcomeComment());
+		// AttendanceDischargeComment
+		valueObjectDest.setAttendanceDischargeComment(valueObjectSrc.getAttendanceDischargeComment());
+		// GPLetterStatus
+		valueObjectDest.setGPLetterStatus(valueObjectSrc.getGPLetterStatus());
+		// ArrivalDateTime
+		valueObjectDest.setArrivalDateTime(valueObjectSrc.getArrivalDateTime());
+		// EDClinicDetails
+		valueObjectDest.setEDClinicDetails(valueObjectSrc.getEDClinicDetails());
+		// RequiresSignOff
+		valueObjectDest.setRequiresSignOff(valueObjectSrc.getRequiresSignOff());
 	 	return valueObjectDest;
 	 }
 
@@ -460,7 +479,127 @@ public class EmergencyAttendanceOutcomeVoAssembler
 		}
 		// DischargingHCP
 		valueObject.setDischargingHCP(ims.core.vo.domain.AuthoringInformationVoAssembler.create(map, domainObject.getDischargingHCP()) );
- 		return valueObject;
+		// AttendanceType
+		ims.domain.lookups.LookupInstance instance11 = domainObject.getAttendanceType();
+		if ( null != instance11 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance11.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance11.getImage().getImageId(), instance11.getImage().getImagePath());
+			}
+			color = instance11.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.emergency.vo.lookups.AttendanceType voLookup11 = new ims.emergency.vo.lookups.AttendanceType(instance11.getId(),instance11.getText(), instance11.isActive(), null, img, color);
+			ims.emergency.vo.lookups.AttendanceType parentVoLookup11 = voLookup11;
+			ims.domain.lookups.LookupInstance parent11 = instance11.getParent();
+			while (parent11 != null)
+			{
+				if (parent11.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent11.getImage().getImageId(), parent11.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent11.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup11.setParent(new ims.emergency.vo.lookups.AttendanceType(parent11.getId(),parent11.getText(), parent11.isActive(), null, img, color));
+				parentVoLookup11 = parentVoLookup11.getParent();
+								parent11 = parent11.getParent();
+			}			
+			valueObject.setAttendanceType(voLookup11);
+		}
+				// AttendanceOutcomeComment
+		valueObject.setAttendanceOutcomeComment(domainObject.getAttendanceOutcomeComment());
+		// AttendanceDischargeComment
+		valueObject.setAttendanceDischargeComment(domainObject.getAttendanceDischargeComment());
+		// GPLetterStatus
+		ims.domain.lookups.LookupInstance instance14 = domainObject.getGPLetterStatus();
+		if ( null != instance14 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance14.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance14.getImage().getImageId(), instance14.getImage().getImagePath());
+			}
+			color = instance14.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.emergency.vo.lookups.GPLetterStatus voLookup14 = new ims.emergency.vo.lookups.GPLetterStatus(instance14.getId(),instance14.getText(), instance14.isActive(), null, img, color);
+			ims.emergency.vo.lookups.GPLetterStatus parentVoLookup14 = voLookup14;
+			ims.domain.lookups.LookupInstance parent14 = instance14.getParent();
+			while (parent14 != null)
+			{
+				if (parent14.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent14.getImage().getImageId(), parent14.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent14.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup14.setParent(new ims.emergency.vo.lookups.GPLetterStatus(parent14.getId(),parent14.getText(), parent14.isActive(), null, img, color));
+				parentVoLookup14 = parentVoLookup14.getParent();
+								parent14 = parent14.getParent();
+			}			
+			valueObject.setGPLetterStatus(voLookup14);
+		}
+				// ArrivalDateTime
+		java.util.Date ArrivalDateTime = domainObject.getArrivalDateTime();
+		if ( null != ArrivalDateTime ) 
+		{
+			valueObject.setArrivalDateTime(new ims.framework.utils.DateTime(ArrivalDateTime) );
+		}
+		// EDClinicDetails
+		valueObject.setEDClinicDetails(ims.emergency.vo.domain.EDClinicDetailsVoAssembler.create(map, domainObject.getEDClinicDetails()) );
+		// RequiresSignOff
+		ims.domain.lookups.LookupInstance instance17 = domainObject.getRequiresSignOff();
+		if ( null != instance17 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance17.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance17.getImage().getImageId(), instance17.getImage().getImagePath());
+			}
+			color = instance17.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.emergency.vo.lookups.RequiresSignOff voLookup17 = new ims.emergency.vo.lookups.RequiresSignOff(instance17.getId(),instance17.getText(), instance17.isActive(), null, img, color);
+			ims.emergency.vo.lookups.RequiresSignOff parentVoLookup17 = voLookup17;
+			ims.domain.lookups.LookupInstance parent17 = instance17.getParent();
+			while (parent17 != null)
+			{
+				if (parent17.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent17.getImage().getImageId(), parent17.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent17.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup17.setParent(new ims.emergency.vo.lookups.RequiresSignOff(parent17.getId(),parent17.getText(), parent17.isActive(), null, img, color));
+				parentVoLookup17 = parentVoLookup17.getParent();
+								parent17 = parent17.getParent();
+			}			
+			valueObject.setRequiresSignOff(voLookup17);
+		}
+		 		return valueObject;
 	 }
 
 
@@ -573,6 +712,52 @@ public class EmergencyAttendanceOutcomeVoAssembler
 		}
 		domainObject.setRegistrationDateTime(value9);
 		domainObject.setDischargingHCP(ims.core.vo.domain.AuthoringInformationVoAssembler.extractAuthoringInformation(domainFactory, valueObject.getDischargingHCP(), domMap));
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value11 = null;
+		if ( null != valueObject.getAttendanceType() ) 
+		{
+			value11 =
+				domainFactory.getLookupInstance(valueObject.getAttendanceType().getID());
+		}
+		domainObject.setAttendanceType(value11);
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getAttendanceOutcomeComment() != null && valueObject.getAttendanceOutcomeComment().equals(""))
+		{
+			valueObject.setAttendanceOutcomeComment(null);
+		}
+		domainObject.setAttendanceOutcomeComment(valueObject.getAttendanceOutcomeComment());
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getAttendanceDischargeComment() != null && valueObject.getAttendanceDischargeComment().equals(""))
+		{
+			valueObject.setAttendanceDischargeComment(null);
+		}
+		domainObject.setAttendanceDischargeComment(valueObject.getAttendanceDischargeComment());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value14 = null;
+		if ( null != valueObject.getGPLetterStatus() ) 
+		{
+			value14 =
+				domainFactory.getLookupInstance(valueObject.getGPLetterStatus().getID());
+		}
+		domainObject.setGPLetterStatus(value14);
+		ims.framework.utils.DateTime dateTime15 = valueObject.getArrivalDateTime();
+		java.util.Date value15 = null;
+		if ( dateTime15 != null ) 
+		{
+			value15 = dateTime15.getJavaDate();
+		}
+		domainObject.setArrivalDateTime(value15);
+		domainObject.setEDClinicDetails(ims.emergency.vo.domain.EDClinicDetailsVoAssembler.extractEDClinicDetails(domainFactory, valueObject.getEDClinicDetails(), domMap));
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value17 = null;
+		if ( null != valueObject.getRequiresSignOff() ) 
+		{
+			value17 =
+				domainFactory.getLookupInstance(valueObject.getRequiresSignOff().getID());
+		}
+		domainObject.setRequiresSignOff(value17);
 
 		return domainObject;
 	}

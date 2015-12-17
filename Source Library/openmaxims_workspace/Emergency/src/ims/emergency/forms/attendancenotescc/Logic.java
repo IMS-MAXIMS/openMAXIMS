@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -29,14 +34,14 @@ import ims.core.admin.vo.CareContextRefVo;
 import ims.core.admin.vo.EpisodeOfCareRefVo;
 import ims.core.patient.vo.PatientRefVo;
 import ims.core.resource.people.vo.HcpRefVo;
-import ims.core.vo.CareContextShortVo;
-import ims.core.vo.CareContextShortVoCollection;
 import ims.core.vo.HcpLiteVo;
 import ims.domain.exceptions.StaleObjectException;
 import ims.emergency.forms.attendancenotescc.GenForm.GroupRadioFilterEnumeration;
 import ims.emergency.vo.AttendanceClinicalNotesVo;
 import ims.emergency.vo.AttendanceClinicalNotesVoCollection;
 import ims.emergency.vo.AttendanceNotesSearchCriteriaVo;
+import ims.emergency.vo.CareContextForAttendanceNotesVo;
+import ims.emergency.vo.CareContextForAttendanceNotesVoCollection;
 import ims.emergency.vo.enums.EdAssessment_CustomControlsEvents;
 import ims.emergency.vo.lookups.AttendanceClinicalNoteType;
 import ims.framework.FormName;
@@ -256,20 +261,20 @@ public class Logic extends BaseLogic
 		form.cmbSpecialty().setValue(attendanceNotesSearchCriteria.getSpecialty());
 		form.GroupRadioFilter().setValue(Boolean.TRUE.equals(attendanceNotesSearchCriteria.getLatestFirst()) ? GroupRadioFilterEnumeration.rdoLatestFirst  :GroupRadioFilterEnumeration.rdoOldestFirst);
 	}
-	private void populateAttendanceCombo(CareContextShortVoCollection collCareContext)
+	private void populateAttendanceCombo(CareContextForAttendanceNotesVoCollection careContextForAttendanceNotesVoCollection)
 	{
 		form.cmbAttendance().clear();
-		if (collCareContext==null || collCareContext.size()==0)
+		if (careContextForAttendanceNotesVoCollection==null || careContextForAttendanceNotesVoCollection.size()==0)
 			return;
 		
-		for (int i=0;i<collCareContext.size();i++)
+		for (int i=0;i<careContextForAttendanceNotesVoCollection.size();i++)
 		{
-			CareContextShortVo careContex = collCareContext.get(i);
+			CareContextForAttendanceNotesVo careContex = careContextForAttendanceNotesVoCollection.get(i);
 			form.cmbAttendance().newRow(careContex, getTextToDisplayInAttendanceCombo(careContex));
 		}
 	}
 	
-	private String getTextToDisplayInAttendanceCombo(CareContextShortVo careContex)
+	private String getTextToDisplayInAttendanceCombo(CareContextForAttendanceNotesVo careContex)
 	{
 		if (careContex==null)
 			return null;
@@ -318,11 +323,19 @@ public class Logic extends BaseLogic
 			
 			sb.append("</b>");
 		}
-		
-		sb.append("<br><br>");
-		sb.append(note.getClinicalNote());
-		
-		row.setColNote(Boolean.TRUE.equals(note.getIsCorrected()) ? "<s>" + sb.toString() + "</s>" : sb.toString());//WDEV-17234
+		//----------------- wdev-19068
+		row.setColAuthoring(Boolean.TRUE.equals(note.getIsCorrected()) ? "<s>" + sb.toString() + "</s>" : sb.toString());
+		//------------------------------
+				
+		if( note.getNoteTypeIsNotNull())	//wdev-19068
+			row.setColNoteType(Boolean.TRUE.equals(note.getIsCorrected()) ? "<s>" + note.getNoteType().getIItemText() + "</s>" : note.getNoteType().getIItemText());
+			
+		if( note.getClinicalNoteIsNotNull() )	//wdev-19068
+		{
+			row.setColNote(Boolean.TRUE.equals(note.getIsCorrected()) ? "<s>" + note.getClinicalNote() + "</s>" : note.getClinicalNote());//WDEV-17234
+			row.setCellColNoteTooltip(note.getClinicalNote());
+		}
+		//row.setColNote(Boolean.TRUE.equals(note.getIsCorrected()) ? "<s>" + sb.toString() + "</s>" : sb.toString());//WDEV-17234
 		//wdev-17113
 		if( Boolean.TRUE.equals(note.getIsCorrected()) )
 		{
@@ -352,12 +365,15 @@ public class Logic extends BaseLogic
 		boolean noteWasCreatedByCurrentUser = form.grdNotes().getValue()!=null && form.grdNotes().getValue().getAuthoringInformation()!=null && form.grdNotes().getValue().getAuthoringInformation().getAuthoringHcp()!=null && form.grdNotes().getValue().getAuthoringInformation().getAuthoringHcp().equals(form.getLocalContext().getLoggedHCP()); //WDEV-17260
 		form.btnNote().setVisible(true);
 		form.btnNote().setEnabled(form.getLocalContext().getCareContextIsNotNull() && Boolean.TRUE.equals(form.getLocalContext().getIsEnabled()));
+		form.btnNewHPCNote().setEnabled(form.getLocalContext().getCareContextIsNotNull() && Boolean.TRUE.equals(form.getLocalContext().getIsEnabled())); //WDEV-20424
 		form.btnEdit().setEnabled(form.getLocalContext().getCareContextIsNotNull() && Boolean.TRUE.equals(form.getLocalContext().getIsEnabled()) && form.grdNotes().getValue() != null && !Boolean.TRUE.equals(form.grdNotes().getValue().getIsCorrected()) && (noteWasCreatedByCurrentUser || userHasRightToCorrect(form.grdNotes().getValue()))); //wdev-17113 //WDEV-17260 //WDEV-17304
 		form.btnRIE().setEnabled(form.getLocalContext().getCareContextIsNotNull() && Boolean.TRUE.equals(form.getLocalContext().getIsEnabled()) && form.grdNotes().getValue() != null);
 		
 		form.ccInterventionDiagnosisInvestigations().setEnabled(form.getLocalContext().getCareContextIsNotNull() && Boolean.TRUE.equals(form.getLocalContext().getIsEnabled()));
 		
 		form.getContextMenus().Emergency.getAttendanceClinicalNoteMenuNEWItem().setVisible(form.getLocalContext().getCareContextIsNotNull() && Boolean.TRUE.equals(form.getLocalContext().getIsEnabled()));
+		form.getContextMenus().Emergency.getAttendanceClinicalNoteMenuNEW_HPC_NOTEItem().setVisible(form.getLocalContext().getCareContextIsNotNull() && Boolean.TRUE.equals(form.getLocalContext().getIsEnabled())); //WDEV-20424
+		
 		form.getContextMenus().Emergency.getAttendanceClinicalNoteMenuEDITItem().setVisible(form.getLocalContext().getCareContextIsNotNull() && Boolean.TRUE.equals(form.getLocalContext().getIsEnabled()) && form.grdNotes().getValue() != null && !Boolean.TRUE.equals(form.grdNotes().getValue().getIsCorrected()) && (noteWasCreatedByCurrentUser || (userHasRightToCorrect(form.grdNotes().getValue()))));  //wdev-17113 //WDEV-17260 //WDEV-17304
 		form.getContextMenus().Emergency.getAttendanceClinicalNoteMenuRIEItem().setVisible(form.getLocalContext().getCareContextIsNotNull() && Boolean.TRUE.equals(form.getLocalContext().getIsEnabled()) && form.grdNotes().getValue() != null);
 		
@@ -393,6 +409,10 @@ public class Logic extends BaseLogic
 		{
 			case GenForm.ContextMenus.EmergencyNamespace.AttendanceClinicalNoteMenu.NEW:
 				newAttendanceClinicalNote();
+			break;
+			
+			case GenForm.ContextMenus.EmergencyNamespace.AttendanceClinicalNoteMenu.NEW_HPC_NOTE://WDEV-20424
+				newHPCNote();
 			break;
 			
 			case GenForm.ContextMenus.EmergencyNamespace.AttendanceClinicalNoteMenu.EDIT:
@@ -492,12 +512,33 @@ public class Logic extends BaseLogic
 			
 			form.ccInterventionDiagnosisInvestigations().resetSelectedEvent();
 		}
-		
+		else if (EdAssessment_CustomControlsEvents.REFRESH.equals(form.ccInterventionDiagnosisInvestigations().getSelectedEvent())) //WDEV-19058
+		{
+			form.getLocalContext().setSelectedEvent(EdAssessment_CustomControlsEvents.SAVE);
+			form.fireCustomControlValueChanged();
+			refresh();
+			form.ccInterventionDiagnosisInvestigations().resetSelectedEvent();
+		}
 	}
 	
 	//WDEV-17337
 	public void refreshMainPresentingProblem(ClinicalProblemRefVo clinicalProblemRef)
 	{
 		form.getLocalContext().setPresentingProblem(clinicalProblemRef);
+	}
+	
+	//WDEV-20424
+	@Override
+	protected void onBtnNewHPCNoteClick() throws PresentationLogicException
+	{
+		newHPCNote();	
+	}
+	
+	//WDEV-20424
+	private void newHPCNote()
+	{
+		form.getGlobalContext().Emergency.setAttendanceClinicalNotes(null);
+		
+		engine.open(form.getForms().Emergency.AttendanceClinicalNoteDialog, new Object[] {AttendanceClinicalNoteType.HPC});
 	}
 }

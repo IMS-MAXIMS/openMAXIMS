@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -35,6 +40,7 @@ import ims.framework.utils.Date;
 import ims.ocrr.forms.phlebotomyworklist.GenForm.grdWorkListRow;
 import ims.ocrr.helper.PhlebotomyHelper;
 import ims.ocrr.vo.MoveToWardDetailsVo;
+import ims.ocrr.vo.PhlebotomyWorklistSearchCriteriaVo;
 import ims.ocrr.vo.SpecimenCollectionListConfigDetailsVoCollection;
 import ims.ocrr.vo.SpecimenWorkListitemCustomVo;
 import ims.ocrr.vo.SpecimenWorkListitemCustomVoCollection;
@@ -122,6 +128,14 @@ public class Logic extends BaseLogic
 		populateHospitals();
 		form.dteRequired().setValue(new Date());
 		refreshRounds();
+		
+		//WDEV-19389 
+		if (form.getGlobalContext().OCRR.getPhlebotomyWorklistSearchCriteriaIsNotNull())
+		{
+			setSearchCriteria(form.getGlobalContext().OCRR.getPhlebotomyWorklistSearchCriteria());
+			if (search())
+				form.getGlobalContext().OCRR.setPhlebotomyWorklistSearchCriteria(getSearchCriteria());
+		}	
 	}
 
 	private void populateHospitals()
@@ -177,6 +191,7 @@ public class Logic extends BaseLogic
 
 	private void roundClosed()
 	{
+		form.getGlobalContext().OCRR.setPhlebotomyWorklistSearchCriteria(null);//WDEV-19389 
 		form.txtWard().setValue(null);
 		form.getGlobalContext().Core.setItems(null);
 		form.grdWorkList().getRows().clear();
@@ -294,6 +309,7 @@ public class Logic extends BaseLogic
 	protected void onImbClearClick() throws ims.framework.exceptions.PresentationLogicException
 	{
 		clearScreen();
+		form.getGlobalContext().OCRR.setPhlebotomyWorklistSearchCriteria(null);
 		updateControlsState();
 	}
 
@@ -310,8 +326,61 @@ public class Logic extends BaseLogic
 
 	protected void onImbSearchClick() throws ims.framework.exceptions.PresentationLogicException
 	{
+		//WDEV-19389 
+		if (search())
+			form.getGlobalContext().OCRR.setPhlebotomyWorklistSearchCriteria(getSearchCriteria());
+		
+	}
+
+	private PhlebotomyWorklistSearchCriteriaVo getSearchCriteria() 
+	{
+		PhlebotomyWorklistSearchCriteriaVo searchCriteria = new PhlebotomyWorklistSearchCriteriaVo();
+		
+		searchCriteria.setLocation(form.cmbHospital().getValue());
+		searchCriteria.setFromDate(form.dteRequired().getValue());
+		searchCriteria.setRound(form.cmbRound().getValue());
+		searchCriteria.setWardText(form.txtWard().getValue());
+		searchCriteria.setWardList(form.getGlobalContext().Core.getItems());
+
+		return searchCriteria;
+	}
+
+	private void setSearchCriteria(PhlebotomyWorklistSearchCriteriaVo phlebotomyWorklistSearchCriteriaVo) 
+	{
+		if (phlebotomyWorklistSearchCriteriaVo.getLocationIsNotNull())
+		{
+			form.cmbHospital().setValue(phlebotomyWorklistSearchCriteriaVo.getLocation());
+		}
+		
+		form.dteRequired().setValue(phlebotomyWorklistSearchCriteriaVo.getFromDate());	
+		try
+		{
+			onDteRequiredValueChanged();
+		}
+		catch (PresentationLogicException e)
+		{e.printStackTrace();}
+		
+		if (phlebotomyWorklistSearchCriteriaVo.getRoundIsNotNull())
+		{
+			form.cmbRound().setValue(phlebotomyWorklistSearchCriteriaVo.getRound());
+			try
+			{
+				onCmbRoundValueChanged();
+			}
+			catch (PresentationLogicException e)
+			{e.printStackTrace();}
+		}
+		
+		form.getGlobalContext().Core.setItems(phlebotomyWorklistSearchCriteriaVo.getWardList());
+		form.txtWard().setValue(phlebotomyWorklistSearchCriteriaVo.getWardText());
+		
+		
+	}
+
+	private boolean search()
+	{
 		if (checkSearchCriteria() == false)
-			return;
+			return false;
 
 		SelectItemVoCollection voCollSelectedWards = form.getGlobalContext().Core.getItems();
 		Integer[] wards = null;
@@ -350,6 +419,7 @@ public class Logic extends BaseLogic
 		form.btnPrintClose().setEnabled(true);
 		
 		updateControlsState();
+		return true;
 	}
 
 	private boolean checkSearchCriteria()

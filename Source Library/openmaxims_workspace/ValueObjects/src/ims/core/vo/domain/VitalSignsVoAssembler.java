@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.core.vo.domain;
@@ -88,6 +93,8 @@ public class VitalSignsVoAssembler
 		valueObjectDest.setPatientCausingConcern(valueObjectSrc.getPatientCausingConcern());
 		// RecordingInformation
 		valueObjectDest.setRecordingInformation(valueObjectSrc.getRecordingInformation());
+		// UnrecordedObservationsReason
+		valueObjectDest.setUnrecordedObservationsReason(valueObjectSrc.getUnrecordedObservationsReason());
 		// IsVentilationChartRecord
 		valueObjectDest.setIsVentilationChartRecord(valueObjectSrc.getIsVentilationChartRecord());
 		// ClinicalContact
@@ -570,7 +577,43 @@ public class VitalSignsVoAssembler
 		}
 				// RecordingInformation
 		valueObject.setRecordingInformation(ims.core.vo.domain.RecordingUserInformationVoAssembler.create(map, domainObject.getRecordingInformation()) );
-		// IsVentilationChartRecord
+		// UnrecordedObservationsReason
+		ims.domain.lookups.LookupInstance instance20 = domainObject.getUnrecordedObservationsReason();
+		if ( null != instance20 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance20.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance20.getImage().getImageId(), instance20.getImage().getImagePath());
+			}
+			color = instance20.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.UnrecordedObservationsReason voLookup20 = new ims.core.vo.lookups.UnrecordedObservationsReason(instance20.getId(),instance20.getText(), instance20.isActive(), null, img, color);
+			ims.core.vo.lookups.UnrecordedObservationsReason parentVoLookup20 = voLookup20;
+			ims.domain.lookups.LookupInstance parent20 = instance20.getParent();
+			while (parent20 != null)
+			{
+				if (parent20.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent20.getImage().getImageId(), parent20.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent20.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup20.setParent(new ims.core.vo.lookups.UnrecordedObservationsReason(parent20.getId(),parent20.getText(), parent20.isActive(), null, img, color));
+				parentVoLookup20 = parentVoLookup20.getParent();
+								parent20 = parent20.getParent();
+			}			
+			valueObject.setUnrecordedObservationsReason(voLookup20);
+		}
+				// IsVentilationChartRecord
 		valueObject.setIsVentilationChartRecord( domainObject.isIsVentilationChartRecord() );
 		// ClinicalContact
 		valueObject.setClinicalContact(ims.core.vo.domain.ClinicalContactShortVoAssembler.create(map, domainObject.getClinicalContact()) );
@@ -725,51 +768,59 @@ public class VitalSignsVoAssembler
 		}
 		domainObject.setPatientCausingConcern(value18);
 		domainObject.setRecordingInformation(ims.core.vo.domain.RecordingUserInformationVoAssembler.extractRecordingUserInformation(domainFactory, valueObject.getRecordingInformation(), domMap));
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value20 = null;
+		if ( null != valueObject.getUnrecordedObservationsReason() ) 
+		{
+			value20 =
+				domainFactory.getLookupInstance(valueObject.getUnrecordedObservationsReason().getID());
+		}
+		domainObject.setUnrecordedObservationsReason(value20);
 		domainObject.setIsVentilationChartRecord(valueObject.getIsVentilationChartRecord());
 	// SaveAsRefVO - treated as a refVo in extract methods
-	ims.core.admin.domain.objects.ClinicalContact value21 = null;
+	ims.core.admin.domain.objects.ClinicalContact value22 = null;
 		if ( null != valueObject.getClinicalContact() ) 
 		{
 			if (valueObject.getClinicalContact().getBoId() == null)
 			{
 				if (domMap.get(valueObject.getClinicalContact()) != null)
 				{
-					value21 = (ims.core.admin.domain.objects.ClinicalContact)domMap.get(valueObject.getClinicalContact());
+					value22 = (ims.core.admin.domain.objects.ClinicalContact)domMap.get(valueObject.getClinicalContact());
 				}
 			}
 			else
 			{
-				value21 = (ims.core.admin.domain.objects.ClinicalContact)domainFactory.getDomainObject(ims.core.admin.domain.objects.ClinicalContact.class, valueObject.getClinicalContact().getBoId());
+				value22 = (ims.core.admin.domain.objects.ClinicalContact)domainFactory.getDomainObject(ims.core.admin.domain.objects.ClinicalContact.class, valueObject.getClinicalContact().getBoId());
 			}
 		}
-		domainObject.setClinicalContact(value21);
-		ims.framework.utils.DateTime dateTime22 = valueObject.getVitalsTakenDateTime();
-		java.util.Date value22 = null;
-		if ( dateTime22 != null ) 
+		domainObject.setClinicalContact(value22);
+		ims.framework.utils.DateTime dateTime23 = valueObject.getVitalsTakenDateTime();
+		java.util.Date value23 = null;
+		if ( dateTime23 != null ) 
 		{
-			value22 = dateTime22.getJavaDate();
+			value23 = dateTime23.getJavaDate();
 		}
-		domainObject.setVitalsTakenDateTime(value22);
-		ims.core.admin.domain.objects.CareContext value23 = null;
+		domainObject.setVitalsTakenDateTime(value23);
+		ims.core.admin.domain.objects.CareContext value24 = null;
 		if ( null != valueObject.getCareContext() ) 
 		{
 			if (valueObject.getCareContext().getBoId() == null)
 			{
 				if (domMap.get(valueObject.getCareContext()) != null)
 				{
-					value23 = (ims.core.admin.domain.objects.CareContext)domMap.get(valueObject.getCareContext());
+					value24 = (ims.core.admin.domain.objects.CareContext)domMap.get(valueObject.getCareContext());
 				}
 			}
 			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
 			{
-				value23 = domainObject.getCareContext();	
+				value24 = domainObject.getCareContext();	
 			}
 			else
 			{
-				value23 = (ims.core.admin.domain.objects.CareContext)domainFactory.getDomainObject(ims.core.admin.domain.objects.CareContext.class, valueObject.getCareContext().getBoId());
+				value24 = (ims.core.admin.domain.objects.CareContext)domainFactory.getDomainObject(ims.core.admin.domain.objects.CareContext.class, valueObject.getCareContext().getBoId());
 			}
 		}
-		domainObject.setCareContext(value23);
+		domainObject.setCareContext(value24);
 		domainObject.setAuthoringInformation(ims.core.vo.domain.AuthoringInformationVoAssembler.extractAuthoringInformation(domainFactory, valueObject.getAuthoringInformation(), domMap));
 
 		return domainObject;

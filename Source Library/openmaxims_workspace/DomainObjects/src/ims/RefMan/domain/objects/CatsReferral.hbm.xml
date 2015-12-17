@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:35 -->
+<!-- Generated: 12/10/2015, 13:29 -->
 <hibernate-mapping>
 	<class name="ims.RefMan.domain.objects.CatsReferral" table="care_catsreferral" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -139,6 +139,13 @@
 			
 			<one-to-many class="ims.RefMan.domain.objects.AppointmentCallAttempts" />
 		</set>
+<!-- debug: episodeOfCare -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="episodeOfCare" class="ims.core.admin.domain.objects.EpisodeOfCare" unique="true" foreign-key="catsreferral_episodeofc_fk" access="field" cascade="save-update">
+			<column name="episodeofc" sql-type="numeric(10,0)" not-null="false" unique="false"  index='eoc_ref_idx' />
+		</many-to-one>
 <!-- debug: careContext -->
 <!-- debug: field.IsAssociation : true -->
 		<!-- A one-to-one relationship using a foreign-key is mapping as a
@@ -212,8 +219,6 @@
 <!-- debug: wasPatientRejectionLetterSent -->
 <!-- debug: wasPatientProviderCancellationLetterSent -->
 <!-- debug: requiresDischargeRep -->
-<!-- debug: hasDNAApptsForReview -->
-<!-- debug: hasCancelledApptsForReview -->
 <!-- debug: isSecondaryReportRequired -->
 <!-- debug: wasFurtherManagementDetailsReviewed -->
 <!-- debug: isCurrentlyAllocated -->
@@ -354,6 +359,72 @@
 			<column name="referraltr" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
 <!-- debug: consUpgradeDate -->
+<!-- debug: numProviderCancelledAppts -->
+<!-- debug: numPatientCancelledAppts -->
+<!-- debug: cancerType -->
+<!-- debug: rTTClockImpacts -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<list name="rTTClockImpacts" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="catsreferral_rttclocki2_fk">
+				<column name="care_catsreferral_rttclocki2" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.pathways.domain.objects.PathwaysRTTClockImpact" />
+		</list>
+<!-- debug: linkedReferrals -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<list name="linkedReferrals" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="catsreferral_linkedrefe_fk">
+				<column name="care_catsreferral_linkedrefe" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.RefMan.domain.objects.LinkedCatsReferral" />
+		</list>
+<!-- debug: creatingAppointment -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="creatingAppointment" class="ims.scheduling.domain.objects.Booking_Appointment" unique="true" foreign-key="catsreferral_creatingap_fk" access="field" cascade="save-update">
+			<column name="creatingap" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: triageOutcome -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="triageOutcome" class="ims.RefMan.domain.objects.TriageOutcome" unique="true" foreign-key="catsreferral_triageoutc_fk" access="field" cascade="save-update">
+			<column name="triageoutc" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: current31TargetDate -->
+<!-- debug: current62TargetDate -->
+<!-- debug: repatriationRequest -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="repatriationRequest" class="ims.core.admin.pas.domain.objects.PendingNoEDEmergencyAdmit" unique="true" foreign-key="catsreferral_repatriati_fk" access="field" cascade="save-update">
+			<column name="repatriati" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: consultationActivityRequired -->
+<!-- debug: patientCategory -->
+<!-- debug: urgencyUpdateHistory -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<list name="urgencyUpdateHistory" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="catsreferral_urgencyupd_fk">
+				<column name="care_catsreferral_urgencyupd" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.RefMan.domain.objects.ReferralUrgencyUpdates" />
+		</list>
+<!-- debug: isEmergencyReferral -->
+<!-- debug: manuallyMarkedAsNotRTTImpact -->
+<!-- debug: hasDNAorNotSeenActivity -->
+<!-- debug: hasRebookingSubsequentActivity -->
+<!-- debug: changeCBAppointment -->
+<!-- debug: redirectCAB -->
+<!-- debug: changeCABOPAandDirectToList -->
+<!-- debug: cABOPAandDirectToList -->
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="hasInvestigations" type="boolean" access="field" update="true">
@@ -475,16 +546,6 @@
 			<column name="requiresdi"  not-null="false" unique="false"  />
 		</property>
 <!-- debug: !IsAssociation && !IsCollection -->
-<!-- debug: !IsLookup -->
-		<property name="hasDNAApptsForReview" type="boolean" access="field" update="true">
-			<column name="hasdnaappt"  not-null="false" unique="false"  />
-		</property>
-<!-- debug: !IsAssociation && !IsCollection -->
-<!-- debug: !IsLookup -->
-		<property name="hasCancelledApptsForReview" type="boolean" access="field" update="true">
-			<column name="hascancell"  not-null="false" unique="false"  />
-		</property>
-<!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: IsLookup -->
 		<many-to-one name="isSecondaryReportRequired" class="ims.domain.lookups.LookupInstance" access="field">
 			<column name="lkp_issecondar" sql-type="numeric(10,0)" not-null="false" unique="false"   />
@@ -578,6 +639,81 @@
 <!-- debug: !IsLookup -->
 		<property name="consUpgradeDate" type="date" access="field" update="true">
 			<column name="consupgrad"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="numProviderCancelledAppts" type="integer" access="field" update="true">
+			<column name="numprovide"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="numPatientCancelledAppts" type="integer" access="field" update="true">
+			<column name="numpatient"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="cancerType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_cancertype" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="current31TargetDate" type="date" access="field" update="true">
+			<column name="current31t"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="current62TargetDate" type="date" access="field" update="true">
+			<column name="current62t"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="consultationActivityRequired" type="boolean" access="field" update="true">
+			<column name="consultat2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="patientCategory" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_patientcat" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isEmergencyReferral" type="boolean" access="field" update="true">
+			<column name="isemergenc"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="manuallyMarkedAsNotRTTImpact" type="boolean" access="field" update="true">
+			<column name="manuallyma"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="hasDNAorNotSeenActivity" type="boolean" access="field" update="true">
+			<column name="hasdnaorno"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="hasRebookingSubsequentActivity" type="boolean" access="field" update="true">
+			<column name="hasrebooki"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="changeCBAppointment" type="boolean" access="field" update="true">
+			<column name="changecbap"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="redirectCAB" type="boolean" access="field" update="true">
+			<column name="redirectca"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="changeCABOPAandDirectToList" type="boolean" access="field" update="true">
+			<column name="changecabo"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="cABOPAandDirectToList" type="boolean" access="field" update="true">
+			<column name="cabopaandd"  not-null="false" unique="false"  />
 		</property>
 	</class>
 </hibernate-mapping>

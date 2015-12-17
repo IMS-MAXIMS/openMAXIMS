@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.emergency.vo.domain;
@@ -50,20 +55,22 @@ public class TrackingAreaForTrackingVoAssembler
 		}
 		valueObjectDest.setID_TrackingArea(valueObjectSrc.getID_TrackingArea());
 	    valueObjectDest.setIsRIE(valueObjectSrc.getIsRIE());
+		// Columns
+		valueObjectDest.setColumns(valueObjectSrc.getColumns());
+		// PatientRefreshRate
+		valueObjectDest.setPatientRefreshRate(valueObjectSrc.getPatientRefreshRate());
 		// EDLocation
 		valueObjectDest.setEDLocation(valueObjectSrc.getEDLocation());
 		// AreaNameDescription
 		valueObjectDest.setAreaNameDescription(valueObjectSrc.getAreaNameDescription());
 		// AreaDisplayName
 		valueObjectDest.setAreaDisplayName(valueObjectSrc.getAreaDisplayName());
+		// Status
+		valueObjectDest.setStatus(valueObjectSrc.getStatus());
 		// isOverallView
 		valueObjectDest.setIsOverallView(valueObjectSrc.getIsOverallView());
 		// isRegistrationArea
 		valueObjectDest.setIsRegistrationArea(valueObjectSrc.getIsRegistrationArea());
-		// Columns
-		valueObjectDest.setColumns(valueObjectSrc.getColumns());
-		// PatientRefreshRate
-		valueObjectDest.setPatientRefreshRate(valueObjectSrc.getPatientRefreshRate());
 	 	return valueObjectDest;
 	 }
 
@@ -354,6 +361,10 @@ public class TrackingAreaForTrackingVoAssembler
 		if ((valueObject.getIsRIE() == null || valueObject.getIsRIE().booleanValue() == false) && domainObject.isIncludeRecord())
 			return null;
 			
+		// Columns
+		valueObject.setColumns(ims.emergency.vo.domain.ColumnDetailVoAssembler.createColumnDetailVoCollectionFromColumnDetail(map, domainObject.getColumns()) );
+		// PatientRefreshRate
+		valueObject.setPatientRefreshRate(domainObject.getPatientRefreshRate());
 		// EDLocation
 		if (domainObject.getEDLocation() != null)
 		{
@@ -372,14 +383,46 @@ public class TrackingAreaForTrackingVoAssembler
 		valueObject.setAreaNameDescription(domainObject.getAreaNameDescription());
 		// AreaDisplayName
 		valueObject.setAreaDisplayName(domainObject.getAreaDisplayName());
-		// isOverallView
+		// Status
+		ims.domain.lookups.LookupInstance instance6 = domainObject.getStatus();
+		if ( null != instance6 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance6.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance6.getImage().getImageId(), instance6.getImage().getImagePath());
+			}
+			color = instance6.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.PreActiveActiveInactiveStatus voLookup6 = new ims.core.vo.lookups.PreActiveActiveInactiveStatus(instance6.getId(),instance6.getText(), instance6.isActive(), null, img, color);
+			ims.core.vo.lookups.PreActiveActiveInactiveStatus parentVoLookup6 = voLookup6;
+			ims.domain.lookups.LookupInstance parent6 = instance6.getParent();
+			while (parent6 != null)
+			{
+				if (parent6.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent6.getImage().getImageId(), parent6.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent6.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup6.setParent(new ims.core.vo.lookups.PreActiveActiveInactiveStatus(parent6.getId(),parent6.getText(), parent6.isActive(), null, img, color));
+				parentVoLookup6 = parentVoLookup6.getParent();
+								parent6 = parent6.getParent();
+			}			
+			valueObject.setStatus(voLookup6);
+		}
+				// isOverallView
 		valueObject.setIsOverallView( domainObject.isIsOverallView() );
 		// isRegistrationArea
 		valueObject.setIsRegistrationArea( domainObject.isIsRegistrationArea() );
-		// Columns
-		valueObject.setColumns(ims.emergency.vo.domain.ColumnDetailVoAssembler.createColumnDetailVoCollectionFromColumnDetail(map, domainObject.getColumns()) );
-		// PatientRefreshRate
-		valueObject.setPatientRefreshRate(domainObject.getPatientRefreshRate());
  		return valueObject;
 	 }
 
@@ -429,62 +472,26 @@ public class TrackingAreaForTrackingVoAssembler
 		}
 		domainObject.setVersion(valueObject.getVersion_TrackingArea());
 
-		ims.core.resource.place.domain.objects.Location value1 = null;
-		if ( null != valueObject.getEDLocation() ) 
-		{
-			if (valueObject.getEDLocation().getBoId() == null)
-			{
-				if (domMap.get(valueObject.getEDLocation()) != null)
-				{
-					value1 = (ims.core.resource.place.domain.objects.Location)domMap.get(valueObject.getEDLocation());
-				}
-			}
-			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
-			{
-				value1 = domainObject.getEDLocation();	
-			}
-			else
-			{
-				value1 = (ims.core.resource.place.domain.objects.Location)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.Location.class, valueObject.getEDLocation().getBoId());
-			}
-		}
-		domainObject.setEDLocation(value1);
-		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
-		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
-		if (valueObject.getAreaNameDescription() != null && valueObject.getAreaNameDescription().equals(""))
-		{
-			valueObject.setAreaNameDescription(null);
-		}
-		domainObject.setAreaNameDescription(valueObject.getAreaNameDescription());
-		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
-		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
-		if (valueObject.getAreaDisplayName() != null && valueObject.getAreaDisplayName().equals(""))
-		{
-			valueObject.setAreaDisplayName(null);
-		}
-		domainObject.setAreaDisplayName(valueObject.getAreaDisplayName());
-		domainObject.setIsOverallView(valueObject.getIsOverallView());
-		domainObject.setIsRegistrationArea(valueObject.getIsRegistrationArea());
 
 		// SaveAsRefVO treated as RefValueObject
-		ims.emergency.configuration.vo.ColumnDetailRefVoCollection refCollection6 = new ims.emergency.configuration.vo.ColumnDetailRefVoCollection();
+		ims.emergency.configuration.vo.ColumnDetailRefVoCollection refCollection1 = new ims.emergency.configuration.vo.ColumnDetailRefVoCollection();
 		if (valueObject.getColumns() != null)
 		{
-			for (int i6=0; i6<valueObject.getColumns().size(); i6++)
+			for (int i1=0; i1<valueObject.getColumns().size(); i1++)
 			{
-				ims.emergency.configuration.vo.ColumnDetailRefVo ref6 = (ims.emergency.configuration.vo.ColumnDetailRefVo)valueObject.getColumns().get(i6);
-				refCollection6.add(ref6);
+				ims.emergency.configuration.vo.ColumnDetailRefVo ref1 = (ims.emergency.configuration.vo.ColumnDetailRefVo)valueObject.getColumns().get(i1);
+				refCollection1.add(ref1);
 			}
 		}
-		int size6 = (null == refCollection6) ? 0 : refCollection6.size();		
-		java.util.List domainColumns6 = domainObject.getColumns();
-		if (domainColumns6 == null)
+		int size1 = (null == refCollection1) ? 0 : refCollection1.size();		
+		java.util.List domainColumns1 = domainObject.getColumns();
+		if (domainColumns1 == null)
 		{
-			domainColumns6 = new java.util.ArrayList();
+			domainColumns1 = new java.util.ArrayList();
 		}
-		for(int i=0; i < size6; i++) 
+		for(int i=0; i < size1; i++) 
 		{
-			ims.emergency.configuration.vo.ColumnDetailRefVo vo = refCollection6.get(i);			
+			ims.emergency.configuration.vo.ColumnDetailRefVo vo = refCollection1.get(i);			
 			ims.emergency.configuration.domain.objects.ColumnDetail dom = null;
 			if ( null != vo ) 
 			{
@@ -501,30 +508,74 @@ public class TrackingAreaForTrackingVoAssembler
 				}
 			}
 
-			int domIdx = domainColumns6.indexOf(dom);
+			int domIdx = domainColumns1.indexOf(dom);
 			if (domIdx == -1)
 			{
-				domainColumns6.add(i, dom);
+				domainColumns1.add(i, dom);
 			}
-			else if (i != domIdx && i < domainColumns6.size())
+			else if (i != domIdx && i < domainColumns1.size())
 			{
-				Object tmp = domainColumns6.get(i);
-				domainColumns6.set(i, domainColumns6.get(domIdx));
-				domainColumns6.set(domIdx, tmp);
+				Object tmp = domainColumns1.get(i);
+				domainColumns1.set(i, domainColumns1.get(domIdx));
+				domainColumns1.set(domIdx, tmp);
 			}
 		}
 		
 		//Remove all ones in domList where index > voCollection.size() as these should
 		//now represent the ones removed from the VO collection. No longer referenced.
-		int i6 = domainColumns6.size();
-		while (i6 > size6)
+		int i1 = domainColumns1.size();
+		while (i1 > size1)
 		{
-			domainColumns6.remove(i6-1);
-			i6 = domainColumns6.size();
+			domainColumns1.remove(i1-1);
+			i1 = domainColumns1.size();
 		}
 		
-		domainObject.setColumns(domainColumns6);		
+		domainObject.setColumns(domainColumns1);		
 		domainObject.setPatientRefreshRate(valueObject.getPatientRefreshRate());
+		ims.core.resource.place.domain.objects.Location value3 = null;
+		if ( null != valueObject.getEDLocation() ) 
+		{
+			if (valueObject.getEDLocation().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getEDLocation()) != null)
+				{
+					value3 = (ims.core.resource.place.domain.objects.Location)domMap.get(valueObject.getEDLocation());
+				}
+			}
+			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
+			{
+				value3 = domainObject.getEDLocation();	
+			}
+			else
+			{
+				value3 = (ims.core.resource.place.domain.objects.Location)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.Location.class, valueObject.getEDLocation().getBoId());
+			}
+		}
+		domainObject.setEDLocation(value3);
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getAreaNameDescription() != null && valueObject.getAreaNameDescription().equals(""))
+		{
+			valueObject.setAreaNameDescription(null);
+		}
+		domainObject.setAreaNameDescription(valueObject.getAreaNameDescription());
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getAreaDisplayName() != null && valueObject.getAreaDisplayName().equals(""))
+		{
+			valueObject.setAreaDisplayName(null);
+		}
+		domainObject.setAreaDisplayName(valueObject.getAreaDisplayName());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value6 = null;
+		if ( null != valueObject.getStatus() ) 
+		{
+			value6 =
+				domainFactory.getLookupInstance(valueObject.getStatus().getID());
+		}
+		domainObject.setStatus(value6);
+		domainObject.setIsOverallView(valueObject.getIsOverallView());
+		domainObject.setIsRegistrationArea(valueObject.getIsRegistrationArea());
 
 		return domainObject;
 	}

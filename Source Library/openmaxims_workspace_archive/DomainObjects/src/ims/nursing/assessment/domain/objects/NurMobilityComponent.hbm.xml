@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:36 -->
+<hibernate-mapping>
+	<subclass name="ims.nursing.assessment.domain.objects.NurMobilityComponent" lazy="true" discriminator-value="mobi" extends="ims.nursing.assessment.domain.objects.AssessmentComponent" >
+<!-- debug: hibernateClassContent -->
+<!-- debug: mobilityStatus -->
+<!-- debug: IsCollection : true -->
+		<!-- collection of Lookup instances -->
+		<list name="mobilityStatus" table="ns_mobilitycompon_mobilityst" lazy="true" access="field">
+			<key foreign-key="mobilitycompon_mobilityst_ofk">
+				<column name="owner" sql-type="numeric(10,0)"/>
+			</key>
+			<index column="idx"/>
+			<composite-element class="ims.domain.lookups.LookupInstanceRef">
+				<many-to-one name="instance" class="ims.domain.lookups.LookupInstance" access="field">
+					<column name="instance_id" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+				</many-to-one>
+			</composite-element>
+		</list>
+<!-- debug: orthosesUsed -->
+<!-- debug: IsCollection : true -->
+		<!-- collection of Lookup instances -->
+		<list name="orthosesUsed" table="ns_mobilitycompon_orthosesus" lazy="true" access="field">
+			<key foreign-key="mobilitycompon_orthosesus_ofk">
+				<column name="owner" sql-type="numeric(10,0)"/>
+			</key>
+			<index column="idx"/>
+			<composite-element class="ims.domain.lookups.LookupInstanceRef">
+				<many-to-one name="instance" class="ims.domain.lookups.LookupInstance" access="field">
+					<column name="instance_id" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+				</many-to-one>
+			</composite-element>
+		</list>
+<!-- debug: mobilityAids -->
+<!-- debug: transfers -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="transfers" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="mobilitycompon_transfers_fk">
+				<column name="ns_mobilitycompon_transfers" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.nursing.assessment.domain.objects.Transfers" />
+		</set>
+<!-- debug: notes -->
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="mobilityAids" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_mobilityai" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="notes" type="string" access="field" update="true" > 
+			<column name="notes" length="500"  not-null="false" unique="false"  />
+		</property>
+	</subclass>
+</hibernate-mapping>

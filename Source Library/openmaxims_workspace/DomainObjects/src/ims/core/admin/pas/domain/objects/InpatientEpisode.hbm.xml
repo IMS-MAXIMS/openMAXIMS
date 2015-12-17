@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:36 -->
+<!-- Generated: 12/10/2015, 13:31 -->
 <hibernate-mapping>
 	<class name="ims.core.admin.pas.domain.objects.InpatientEpisode" table="core_inpat_epis" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -103,6 +103,33 @@
 		<many-to-one name="vTERiskAssessment" class="ims.core.clinical.domain.objects.VTERiskAssessment" unique="true" foreign-key="inpat_epis_vteriskass_fk" access="field" cascade="save-update">
 			<column name="vteriskass" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
+<!-- debug: vTEAssessmentStatusReason -->
+<!-- debug: latestSECSScore -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="latestSECSScore" class="ims.clinical.domain.objects.PatientSECS" unique="true" foreign-key="inpat_epis_latestsecs_fk" access="field" cascade="save-update">
+			<column name="latestsecs" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: currentTrackingMovement -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="currentTrackingMovement" class="ims.core.admin.pas.domain.objects.TrackingMovement" unique="true" foreign-key="inpat_epis_currenttra_fk" access="field" cascade="save-update">
+			<column name="currenttra" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: trackingMovementHistory -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<list name="trackingMovementHistory" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="inpat_epis_trackingmo_fk">
+				<column name="core_inpat_epis_trackingmo" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.core.admin.pas.domain.objects.TrackingMovement" />
+		</list>
+<!-- debug: isReadyToLeave -->
+<!-- debug: readyToLeaveDecisionDateTime -->
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="isOnLeave" type="boolean" access="field" update="true">
@@ -115,7 +142,7 @@
 		</property>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
-		<property name="estDischargeDate" type="date" access="field" update="true">
+		<property name="estDischargeDate" type="timestamp" access="field" update="true">
 			<column name="estdischar"  not-null="false" unique="false"  />
 		</property>
 <!-- debug: !IsAssociation && !IsCollection -->
@@ -166,7 +193,7 @@
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="reasonForAdmission" type="string" access="field" update="true" > 
-			<column name="reasonfora" length="32"  not-null="false" unique="false"  />
+			<column name="reasonfora" length="255"  not-null="false" unique="false"  />
 		</property>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
@@ -203,5 +230,20 @@
 		<many-to-one name="vTEAssessmentStatus" class="ims.domain.lookups.LookupInstance" access="field">
 			<column name="lkp_vteassessm" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="vTEAssessmentStatusReason" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_vteassess2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isReadyToLeave" type="boolean" access="field" update="true">
+			<column name="isreadytol"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="readyToLeaveDecisionDateTime" type="timestamp" access="field" update="true">
+			<column name="readytolea"  not-null="false" unique="false"  />
+		</property>
 	</class>
 </hibernate-mapping>

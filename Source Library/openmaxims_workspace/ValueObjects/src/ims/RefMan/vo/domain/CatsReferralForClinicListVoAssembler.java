@@ -1,9 +1,33 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.RefMan.vo.domain;
@@ -31,8 +55,10 @@ public class CatsReferralForClinicListVoAssembler
 		}
 		valueObjectDest.setID_CatsReferral(valueObjectSrc.getID_CatsReferral());
 	    valueObjectDest.setIsRIE(valueObjectSrc.getIsRIE());
-		// hasDNAApptsForReview
-		valueObjectDest.setHasDNAApptsForReview(valueObjectSrc.getHasDNAApptsForReview());
+		// ConsultationActivityRequired
+		valueObjectDest.setConsultationActivityRequired(valueObjectSrc.getConsultationActivityRequired());
+		// PatientCategory
+		valueObjectDest.setPatientCategory(valueObjectSrc.getPatientCategory());
 	 	return valueObjectDest;
 	 }
 
@@ -323,9 +349,45 @@ public class CatsReferralForClinicListVoAssembler
 		if ((valueObject.getIsRIE() == null || valueObject.getIsRIE().booleanValue() == false) && domainObject.isIncludeRecord())
 			return null;
 			
-		// hasDNAApptsForReview
-		valueObject.setHasDNAApptsForReview( domainObject.isHasDNAApptsForReview() );
- 		return valueObject;
+		// ConsultationActivityRequired
+		valueObject.setConsultationActivityRequired( domainObject.isConsultationActivityRequired() );
+		// PatientCategory
+		ims.domain.lookups.LookupInstance instance2 = domainObject.getPatientCategory();
+		if ( null != instance2 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance2.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance2.getImage().getImageId(), instance2.getImage().getImagePath());
+			}
+			color = instance2.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.PatientStatus voLookup2 = new ims.core.vo.lookups.PatientStatus(instance2.getId(),instance2.getText(), instance2.isActive(), null, img, color);
+			ims.core.vo.lookups.PatientStatus parentVoLookup2 = voLookup2;
+			ims.domain.lookups.LookupInstance parent2 = instance2.getParent();
+			while (parent2 != null)
+			{
+				if (parent2.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent2.getImage().getImageId(), parent2.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent2.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup2.setParent(new ims.core.vo.lookups.PatientStatus(parent2.getId(),parent2.getText(), parent2.isActive(), null, img, color));
+				parentVoLookup2 = parentVoLookup2.getParent();
+								parent2 = parent2.getParent();
+			}			
+			valueObject.setPatientCategory(voLookup2);
+		}
+		 		return valueObject;
 	 }
 
 
@@ -374,7 +436,15 @@ public class CatsReferralForClinicListVoAssembler
 		}
 		domainObject.setVersion(valueObject.getVersion_CatsReferral());
 
-		domainObject.setHasDNAApptsForReview(valueObject.getHasDNAApptsForReview());
+		domainObject.setConsultationActivityRequired(valueObject.getConsultationActivityRequired());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value2 = null;
+		if ( null != valueObject.getPatientCategory() ) 
+		{
+			value2 =
+				domainFactory.getLookupInstance(valueObject.getPatientCategory().getID());
+		}
+		domainObject.setPatientCategory(value2);
 
 		return domainObject;
 	}

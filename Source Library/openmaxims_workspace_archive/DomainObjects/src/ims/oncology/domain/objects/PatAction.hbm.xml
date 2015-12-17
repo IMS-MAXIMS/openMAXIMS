@@ -1,0 +1,329 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:34 -->
+<hibernate-mapping>
+	<class name="ims.oncology.domain.objects.PatAction" table="onco_pataction" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: bookedDate -->
+<!-- debug: bookedTime -->
+<!-- debug: action -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- many to one -->
+		<many-to-one name="action" class="ims.dto_move.domain.objects.ActivityAction" foreign-key="pataction_action_fk" access="field" cascade="save-update">
+			<column name="action" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: apptHeadId -->
+<!-- debug: dose -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<list name="dose" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="pataction_dose_fk">
+				<column name="onco_pataction_dose" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.oncology.domain.objects.PatTreatmentPlanDose" />
+		</list>
+<!-- debug: apptId -->
+<!-- debug: pretreatmentPlan -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="pretreatmentPlan" class="ims.oncology.domain.objects.PreTreatmentPlan" unique="true" foreign-key="pataction_pretreatme_fk" access="field" cascade="save-update">
+			<column name="pretreatme" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: status -->
+<!-- debug: activityGroup -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="activityGroup" class="ims.dto_move.domain.objects.ActivityGroup" unique="true" foreign-key="pataction_activitygr_fk" access="field" cascade="save-update">
+			<column name="activitygr" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: activity -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="activity" class="ims.dto_move.domain.objects.SchedActivity" unique="true" foreign-key="pataction_activity_fk" access="field" cascade="save-update">
+			<column name="activity" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: priority -->
+<!-- debug: groupSiteTech -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<list name="groupSiteTech" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="pataction_groupsitet_fk">
+				<column name="onco_pataction_groupsitet" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.oncology.domain.objects.PatTreatmentPlanGroupSiteTech" />
+		</list>
+<!-- debug: patientStatus -->
+<!-- debug: attendingAs -->
+<!-- debug: transport -->
+<!-- debug: reason -->
+<!-- debug: category -->
+<!-- debug: unit -->
+<!-- debug: modality -->
+<!-- debug: aneasthetic -->
+<!-- debug: plannedRegime -->
+<!-- debug: treatingConsultant -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="treatingConsultant" class="ims.core.resource.people.domain.objects.Hcp" unique="true" foreign-key="pataction_treatingco_fk" access="field" cascade="save-update">
+			<column name="treatingco" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: active -->
+<!-- debug: estartDate -->
+<!-- debug: eendDate -->
+<!-- debug: actionStatusDate -->
+<!-- debug: waitingList -->
+<!-- debug: modalEnergy -->
+<!-- debug: imagingDate -->
+<!-- debug: startDateRegime -->
+<!-- debug: action_OrderNumber -->
+<!-- debug: treatmenAction -->
+<!-- debug: lastAppointmentDate -->
+<!-- debug: appDate -->
+<!-- debug: chemPlanStartDate -->
+<!-- debug: oPAClinic -->
+<!-- debug: oPADate -->
+<!-- debug: oPATime -->
+<!-- debug: wLId -->
+<!-- debug: schedAppDate -->
+<!-- debug: schedAppTIme -->
+<!-- debug: treatmentaction -->
+<!-- debug: actionStatusPoint -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<list name="actionStatusPoint" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="pataction_actionsta2_fk">
+				<column name="onco_pataction_actionsta2" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.oncology.domain.objects.PatActionStatusPoint" />
+		</list>
+<!-- debug: tl_dose -->
+<!-- debug: tl_fractions -->
+<!-- debug: tl_duration -->
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="bookedDate" type="date" access="field" update="true">
+			<column name="bookeddate"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="bookedTime" type="string" access="field" update="true">
+			<column name="bookedtime"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="apptHeadId" type="integer" access="field" update="true">
+			<column name="apptheadid"  not-null="false" unique="false"  index='appt_idx '/>
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="apptId" type="integer" access="field" update="true">
+			<column name="apptid"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="status" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_status" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="priority" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_priority" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="patientStatus" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_patientsta" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="attendingAs" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_attendinga" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="transport" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_transport" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="reason" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_reason" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="category" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_category" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="unit" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_unit" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="modality" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_modality" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="aneasthetic" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_aneastheti" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="plannedRegime" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_plannedreg" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="active" type="boolean" access="field" update="true">
+			<column name="active"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="estartDate" type="date" access="field" update="true">
+			<column name="estartdate"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="eendDate" type="date" access="field" update="true">
+			<column name="eenddate"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="actionStatusDate" type="date" access="field" update="true">
+			<column name="actionstat"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="waitingList" type="string" access="field" update="true" > 
+			<column name="waitinglis" length="1"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="modalEnergy" type="string" access="field" update="true" > 
+			<column name="modalenerg" length="10"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="imagingDate" type="date" access="field" update="true">
+			<column name="imagingdat"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="startDateRegime" type="date" access="field" update="true">
+			<column name="startdater"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="action_OrderNumber" type="integer" access="field" update="true">
+			<column name="action_ord"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="treatmenAction" type="string" access="field" update="true" > 
+			<column name="treatmenac" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="lastAppointmentDate" type="date" access="field" update="true">
+			<column name="lastappoin"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="appDate" type="date" access="field" update="true">
+			<column name="appdate"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="chemPlanStartDate" type="date" access="field" update="true">
+			<column name="chemplanst"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="oPAClinic" type="integer" access="field" update="true">
+			<column name="opaclinic"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="oPADate" type="date" access="field" update="true">
+			<column name="opadate"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="oPATime" type="string" access="field" update="true">
+			<column name="opatime"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="wLId" type="integer" access="field" update="true">
+			<column name="wlid"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="schedAppDate" type="date" access="field" update="true">
+			<column name="schedappda"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="schedAppTIme" type="string" access="field" update="true">
+			<column name="schedappti"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="treatmentaction" type="integer" access="field" update="true">
+			<column name="treatmenta"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="tl_dose" type="integer" access="field" update="true">
+			<column name="tl_dose"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="tl_fractions" type="integer" access="field" update="true">
+			<column name="tl_fractio"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="tl_duration" type="integer" access="field" update="true">
+			<column name="tl_duratio"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

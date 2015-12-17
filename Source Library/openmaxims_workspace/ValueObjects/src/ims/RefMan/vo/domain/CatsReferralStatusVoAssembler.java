@@ -1,9 +1,33 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.RefMan.vo.domain;
@@ -33,14 +57,14 @@ public class CatsReferralStatusVoAssembler
 	    valueObjectDest.setIsRIE(valueObjectSrc.getIsRIE());
 		// AuthoringUser
 		valueObjectDest.setAuthoringUser(valueObjectSrc.getAuthoringUser());
-		// StatusDateTime
-		valueObjectDest.setStatusDateTime(valueObjectSrc.getStatusDateTime());
 		// Comment
 		valueObjectDest.setComment(valueObjectSrc.getComment());
 		// SecondOpinionCategory
 		valueObjectDest.setSecondOpinionCategory(valueObjectSrc.getSecondOpinionCategory());
 		// ReferralStatus
 		valueObjectDest.setReferralStatus(valueObjectSrc.getReferralStatus());
+		// StatusDateTime
+		valueObjectDest.setStatusDateTime(valueObjectSrc.getStatusDateTime());
 	 	return valueObjectDest;
 	 }
 
@@ -345,16 +369,46 @@ public class CatsReferralStatusVoAssembler
 				valueObject.setAuthoringUser(new ims.core.resource.people.vo.MemberOfStaffRefVo(domainObject.getAuthoringUser().getId(), domainObject.getAuthoringUser().getVersion()));
 			}
 		}
-		// StatusDateTime
-		java.util.Date StatusDateTime = domainObject.getStatusDateTime();
-		if ( null != StatusDateTime ) 
-		{
-			valueObject.setStatusDateTime(new ims.framework.utils.DateTime(StatusDateTime) );
-		}
 		// Comment
 		valueObject.setComment(domainObject.getComment());
 		// SecondOpinionCategory
-		ims.domain.lookups.LookupInstance instance4 = domainObject.getSecondOpinionCategory();
+		ims.domain.lookups.LookupInstance instance3 = domainObject.getSecondOpinionCategory();
+		if ( null != instance3 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance3.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance3.getImage().getImageId(), instance3.getImage().getImagePath());
+			}
+			color = instance3.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.RefMan.vo.lookups.SecondOpinionCategory voLookup3 = new ims.RefMan.vo.lookups.SecondOpinionCategory(instance3.getId(),instance3.getText(), instance3.isActive(), null, img, color);
+			ims.RefMan.vo.lookups.SecondOpinionCategory parentVoLookup3 = voLookup3;
+			ims.domain.lookups.LookupInstance parent3 = instance3.getParent();
+			while (parent3 != null)
+			{
+				if (parent3.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent3.getImage().getImageId(), parent3.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent3.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup3.setParent(new ims.RefMan.vo.lookups.SecondOpinionCategory(parent3.getId(),parent3.getText(), parent3.isActive(), null, img, color));
+				parentVoLookup3 = parentVoLookup3.getParent();
+								parent3 = parent3.getParent();
+			}			
+			valueObject.setSecondOpinionCategory(voLookup3);
+		}
+				// ReferralStatus
+		ims.domain.lookups.LookupInstance instance4 = domainObject.getReferralStatus();
 		if ( null != instance4 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
@@ -367,8 +421,8 @@ public class CatsReferralStatusVoAssembler
 			if (color != null) 
 				color.getValue();
 
-			ims.RefMan.vo.lookups.SecondOpinionCategory voLookup4 = new ims.RefMan.vo.lookups.SecondOpinionCategory(instance4.getId(),instance4.getText(), instance4.isActive(), null, img, color);
-			ims.RefMan.vo.lookups.SecondOpinionCategory parentVoLookup4 = voLookup4;
+			ims.RefMan.vo.lookups.ReferralApptStatus voLookup4 = new ims.RefMan.vo.lookups.ReferralApptStatus(instance4.getId(),instance4.getText(), instance4.isActive(), null, img, color);
+			ims.RefMan.vo.lookups.ReferralApptStatus parentVoLookup4 = voLookup4;
 			ims.domain.lookups.LookupInstance parent4 = instance4.getParent();
 			while (parent4 != null)
 			{
@@ -383,49 +437,19 @@ public class CatsReferralStatusVoAssembler
 				color = parent4.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup4.setParent(new ims.RefMan.vo.lookups.SecondOpinionCategory(parent4.getId(),parent4.getText(), parent4.isActive(), null, img, color));
+								parentVoLookup4.setParent(new ims.RefMan.vo.lookups.ReferralApptStatus(parent4.getId(),parent4.getText(), parent4.isActive(), null, img, color));
 				parentVoLookup4 = parentVoLookup4.getParent();
 								parent4 = parent4.getParent();
 			}			
-			valueObject.setSecondOpinionCategory(voLookup4);
+			valueObject.setReferralStatus(voLookup4);
 		}
-				// ReferralStatus
-		ims.domain.lookups.LookupInstance instance5 = domainObject.getReferralStatus();
-		if ( null != instance5 ) {
-			ims.framework.utils.ImagePath img = null;
-			ims.framework.utils.Color color = null;		
-			img = null;
-			if (instance5.getImage() != null) 
-			{
-				img = new ims.framework.utils.ImagePath(instance5.getImage().getImageId(), instance5.getImage().getImagePath());
-			}
-			color = instance5.getColor();
-			if (color != null) 
-				color.getValue();
-
-			ims.RefMan.vo.lookups.ReferralApptStatus voLookup5 = new ims.RefMan.vo.lookups.ReferralApptStatus(instance5.getId(),instance5.getText(), instance5.isActive(), null, img, color);
-			ims.RefMan.vo.lookups.ReferralApptStatus parentVoLookup5 = voLookup5;
-			ims.domain.lookups.LookupInstance parent5 = instance5.getParent();
-			while (parent5 != null)
-			{
-				if (parent5.getImage() != null) 
-				{
-					img = new ims.framework.utils.ImagePath(parent5.getImage().getImageId(), parent5.getImage().getImagePath() );
-				}
-				else 
-				{
-					img = null;
-				}
-				color = parent5.getColor();
-    			if (color != null) 
-    				color.getValue();
-								parentVoLookup5.setParent(new ims.RefMan.vo.lookups.ReferralApptStatus(parent5.getId(),parent5.getText(), parent5.isActive(), null, img, color));
-				parentVoLookup5 = parentVoLookup5.getParent();
-								parent5 = parent5.getParent();
-			}			
-			valueObject.setReferralStatus(voLookup5);
+				// StatusDateTime
+		java.util.Date StatusDateTime = domainObject.getStatusDateTime();
+		if ( null != StatusDateTime ) 
+		{
+			valueObject.setStatusDateTime(new ims.framework.utils.DateTime(StatusDateTime) );
 		}
-		 		return valueObject;
+ 		return valueObject;
 	 }
 
 
@@ -494,13 +518,6 @@ public class CatsReferralStatusVoAssembler
 			}
 		}
 		domainObject.setAuthoringUser(value1);
-		ims.framework.utils.DateTime dateTime2 = valueObject.getStatusDateTime();
-		java.util.Date value2 = null;
-		if ( dateTime2 != null ) 
-		{
-			value2 = dateTime2.getJavaDate();
-		}
-		domainObject.setStatusDateTime(value2);
 		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
 		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
 		if (valueObject.getComment() != null && valueObject.getComment().equals(""))
@@ -509,21 +526,28 @@ public class CatsReferralStatusVoAssembler
 		}
 		domainObject.setComment(valueObject.getComment());
 		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value4 = null;
+		ims.domain.lookups.LookupInstance value3 = null;
 		if ( null != valueObject.getSecondOpinionCategory() ) 
 		{
-			value4 =
+			value3 =
 				domainFactory.getLookupInstance(valueObject.getSecondOpinionCategory().getID());
 		}
-		domainObject.setSecondOpinionCategory(value4);
+		domainObject.setSecondOpinionCategory(value3);
 		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value5 = null;
+		ims.domain.lookups.LookupInstance value4 = null;
 		if ( null != valueObject.getReferralStatus() ) 
 		{
-			value5 =
+			value4 =
 				domainFactory.getLookupInstance(valueObject.getReferralStatus().getID());
 		}
-		domainObject.setReferralStatus(value5);
+		domainObject.setReferralStatus(value4);
+		ims.framework.utils.DateTime dateTime5 = valueObject.getStatusDateTime();
+		java.util.Date value5 = null;
+		if ( dateTime5 != null ) 
+		{
+			value5 = dateTime5.getJavaDate();
+		}
+		domainObject.setStatusDateTime(value5);
 
 		return domainObject;
 	}

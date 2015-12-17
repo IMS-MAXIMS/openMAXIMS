@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.scheduling.domain.objects;
@@ -49,6 +54,8 @@ public class Session_ListOwner extends ims.domain.DomainObject implements java.i
 	private String endTime;
 	private Integer maxNoAppts;
 	private ims.core.resource.people.domain.objects.Hcp hcp;
+	private Boolean listOwner;
+	private Boolean attendingClinician;
     public Session_ListOwner (Integer id, int ver)
     {
     	super(id, ver);
@@ -93,6 +100,20 @@ public class Session_ListOwner extends ims.domain.DomainObject implements java.i
 	}
 	public void setHcp(ims.core.resource.people.domain.objects.Hcp hcp) {
 		this.hcp = hcp;
+	}
+
+	public Boolean isListOwner() {
+		return listOwner;
+	}
+	public void setListOwner(Boolean listOwner) {
+		this.listOwner = listOwner;
+	}
+
+	public Boolean isAttendingClinician() {
+		return attendingClinician;
+	}
+	public void setAttendingClinician(Boolean attendingClinician) {
+		this.attendingClinician = attendingClinician;
 	}
 
 	/**
@@ -142,6 +163,12 @@ public class Session_ListOwner extends ims.domain.DomainObject implements java.i
 				
 		    auditStr.append(hcp.getId());
 		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*listOwner* :");
+		auditStr.append(listOwner);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*attendingClinician* :");
+		auditStr.append(attendingClinician);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -210,6 +237,18 @@ public class Session_ListOwner extends ims.domain.DomainObject implements java.i
 			sb.append("<hcp>");
 			sb.append(this.getHcp().toXMLString(domMap)); 	
 			sb.append("</hcp>");		
+		}
+		if (this.isListOwner() != null)
+		{
+			sb.append("<listOwner>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isListOwner().toString()));
+			sb.append("</listOwner>");		
+		}
+		if (this.isAttendingClinician() != null)
+		{
+			sb.append("<attendingClinician>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isAttendingClinician().toString()));
+			sb.append("</attendingClinician>");		
 		}
 		return sb.toString();
 	}
@@ -395,6 +434,16 @@ public class Session_ListOwner extends ims.domain.DomainObject implements java.i
 			fldEl = fldEl.element("class");		
 			obj.setHcp(ims.core.resource.people.domain.objects.Hcp.getHcpfromXML(fldEl, factory, domMap)); 
 		}
+		fldEl = el.element("listOwner");
+		if(fldEl != null)
+		{	
+    		obj.setListOwner(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("attendingClinician");
+		if(fldEl != null)
+		{	
+    		obj.setAttendingClinician(new Boolean(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -411,6 +460,8 @@ public class Session_ListOwner extends ims.domain.DomainObject implements java.i
 		public static final String EndTime = "endTime";
 		public static final String MaxNoAppts = "maxNoAppts";
 		public static final String Hcp = "hcp";
+		public static final String ListOwner = "listOwner";
+		public static final String AttendingClinician = "attendingClinician";
 	}
 }
 

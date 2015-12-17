@@ -1,0 +1,49 @@
+package ims.rules.userrules;
+
+import ims.scheduling.domain.objects.Booking_Appointment;
+import ims.scheduling.vo.lookups.Status_Reason;
+import ims.rules.engine.RulesRuntimeEngine;
+import ims.domain.DomainFactory;
+import java.util.HashMap;
+
+global RulesRuntimeEngine engine;
+global DomainFactory factory;
+global HashMap prevState;
+
+		 
+function boolean appointmentUndoDNAEventCheck(ims.rules.engine.RulesRuntimeEngine engine, ims.domain.DomainFactory factory, java.util.HashMap prevState, ims.scheduling.domain.objects.Booking_Appointment entity)
+{
+		
+        // Don't continue if this is not the pathwayEntity rule we are looking for
+	    if (engine.getPathwayEntitySpecificRuleName() == null || !engine.getPathwayEntitySpecificRuleName().equals("appointmentUndoDNAEventCheck.drl"))
+		{
+			return false;
+		}
+		// Set this as the rule that is executed for checking within the interceptor
+		engine.setLastRuleName("appointmentUndoDNAEventCheck.drl");
+		
+        if (entity.getApptStatus() != null && entity.getApptStatus().getId() == ims.scheduling.vo.lookups.Status_Reason.BOOKED.getId())
+	    {
+	        if (prevState != null && prevState.get("apptStatus") != null)
+	        {
+	        	if (((ims.domain.lookups.LookupInstance)prevState.get("apptStatus")).getId() == ims.scheduling.vo.lookups.Status_Reason.DNA.getId())
+				{
+					    engine.setLastRuleResult(ims.scheduling.vo.lookups.Status_Reason.DNA.getId());
+    				    return true;
+	    		}
+	    	}
+	    }
+
+   	    engine.setLastRuleResult(0);
+	   return false; 
+}
+
+rule "appointmentUndoDNAEventCheck"
+no-loop true
+salience 0
+when
+	entity : ims.scheduling.domain.objects.Booking_Appointment();
+	eval(appointmentUndoDNAEventCheck(engine, factory, prevState, entity));
+then
+	engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Rule 'appointmentUndoDNAEventCheck' status was changed from DNA to Booked.");
+end

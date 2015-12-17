@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -48,6 +53,7 @@ import ims.framework.utils.Time;
 import ims.scheduling.vo.Appointment_StatusVo;
 import ims.scheduling.vo.Appointment_StatusVoCollection;
 import ims.scheduling.vo.Booking_AppointmentVo;
+import ims.scheduling.vo.ClinicListsSearchCriteriaVo;
 import ims.scheduling.vo.ProfileShortVo;
 import ims.scheduling.vo.ProfileShortVoCollection;
 import ims.scheduling.vo.Sch_BookingVo;
@@ -77,6 +83,42 @@ public class Logic extends BaseLogic
 			form.grdSlots().setColUBRNCaption("");
 		
 		loadProfiles();
+		
+		//WDEV-19389 
+		if (form.getGlobalContext().Scheduling.getClinicListsSearchCriteriaIsNotNull())
+		{
+			setSearchCriteria(form.getGlobalContext().Scheduling.getClinicListsSearchCriteria());
+			if(form.cmbSessions().getValue() != null)
+				loadSlots();
+		}
+		
+		form.getGlobalContext().RefMan.setLinkedAppointmentsCollection(null);//WDEV-19543
+	}
+	
+	private ClinicListsSearchCriteriaVo getSearchCriteria()
+	{
+		ClinicListsSearchCriteriaVo searchCriteria = new ClinicListsSearchCriteriaVo();
+		
+		searchCriteria.setProfile(form.cmbProfile().getValue());
+		searchCriteria.setClinic(form.cmbSessions().getValue());
+		searchCriteria.setDate(form.dteSessionDate().getValue());
+		searchCriteria.setActivity(form.cmbStatus().getValue());
+		searchCriteria.setListType(form.cmbListType().getValue());	//wdev-19419
+		
+		return searchCriteria;
+	}
+	
+	private void setSearchCriteria(ClinicListsSearchCriteriaVo clinicListsSearchCriteriaVo) 
+	{
+		form.cmbProfile().setValue(clinicListsSearchCriteriaVo.getProfile());
+		form.dteSessionDate().setValue(clinicListsSearchCriteriaVo.getDate());
+		
+		if (form.cmbProfile().getValue() != null && form.dteSessionDate().getValue() != null)
+				search();
+		
+		form.cmbSessions().setValue(clinicListsSearchCriteriaVo.getClinic());
+		form.cmbStatus().setValue(clinicListsSearchCriteriaVo.getActivity());
+		form.cmbListType().setValue(clinicListsSearchCriteriaVo.getListType());		//wdev-19419
 	}
 	
 	private void loadProfiles() 
@@ -111,7 +153,7 @@ public class Logic extends BaseLogic
 			{
 				if(voSessionSlot.getAppointmentIsNotNull())
 				{
-					Boolean showOutcome = voSessionSlot.getAppointment().getApptStatusIsNotNull() 
+					Boolean showOutcome = voSessionSlot.getAppointment().getAppointmentDate() != null && voSessionSlot.getAppointment().getAppointmentDate().isLessOrEqualThan(new Date()) && voSessionSlot.getAppointment().getApptStatusIsNotNull()  //WDEV-21616
 					&& ((voSessionSlot.getAppointment().getApptStatus().equals(Status_Reason.SEEN) 
 							|| voSessionSlot.getAppointment().getApptStatus().equals(Status_Reason.ARRIVAL)) 
 							|| ( voSessionSlot.getAppointment().getApptStatusHistoryIsNotNull()
@@ -130,7 +172,7 @@ public class Logic extends BaseLogic
 								&& voSessionSlot.getAppointment().getApptStartTime().isLessThan(new Time())));
 					//WDEV-12568 - ends here
 							
-					form.getContextMenus().Scheduling.getClinicListATTENDEDItem().setVisible(form.getMode().equals(FormMode.VIEW) && voSessionSlot.getAppointment().getApptStatusIsNotNull() && voSessionSlot.getAppointment().getApptStatus().equals(Status_Reason.BOOKED));
+					form.getContextMenus().Scheduling.getClinicListATTENDEDItem().setVisible(voSessionSlot.getAppointment().getAppointmentDate() != null && voSessionSlot.getAppointment().getAppointmentDate().isLessOrEqualThan(new Date()) && form.getMode().equals(FormMode.VIEW) && voSessionSlot.getAppointment().getApptStatusIsNotNull() && voSessionSlot.getAppointment().getApptStatus().equals(Status_Reason.BOOKED)); //WDEV-21616
 					form.getContextMenus().Scheduling.getClinicListSEENItem().setVisible(form.getMode().equals(FormMode.VIEW) && voSessionSlot.getAppointment().getApptStatusIsNotNull() && voSessionSlot.getAppointment().getApptStatus().equals(Status_Reason.ARRIVAL));
 
 					form.getContextMenus().Scheduling.getClinicListCANCELItem().setVisible(showCancel);
@@ -164,6 +206,8 @@ public class Logic extends BaseLogic
 			search();
 			if(form.cmbSessions().getValue() != null)
 				loadSlots();
+			
+			form.getGlobalContext().Scheduling.setClinicListsSearchCriteria(getSearchCriteria()); //WDEV-19389 
 		}
 	}
 	
@@ -173,7 +217,7 @@ public class Logic extends BaseLogic
 		if(form.cmbProfile().getValue() == null || form.dteSessionDate().getValue() == null)
 			return;
 		
-		SessionShortVoCollection voCollSessionShort = domain.listSession(null, null, form.cmbProfile().getValue(), form.dteSessionDate().getValue());
+		SessionShortVoCollection voCollSessionShort = domain.listSession(null, null, form.cmbProfile().getValue(), form.dteSessionDate().getValue(),form.cmbListType().getValue());	//wdev-19419
 		loadSessions(voCollSessionShort);	
 	}
 	private boolean validateSearch()
@@ -223,7 +267,9 @@ public class Logic extends BaseLogic
 		form.cmbProfile().setValue(null);
 		form.cmbSessions().clear();
 		form.cmbStatus().setValue(null);
+		form.cmbListType().setValue(null);		//wdev-19419
 		form.getContextMenus().Scheduling.hideAllClinicListMenuItems();
+		form.getGlobalContext().Scheduling.setClinicListsSearchCriteria(null);//WDEV-19389 
 	}
 
 	protected void onCmbSessionsValueChanged() throws PresentationLogicException 
@@ -356,7 +402,12 @@ public class Logic extends BaseLogic
 				
 				if(!ConfigFlag.DOM.SCHEDULING_SLOTS_CREATION.getValue().equals("Local Only"))
 					row.setColUBRN(voSessionSlot.getUBRN());
-				
+				//WDEV-19331
+				if (Boolean.TRUE.equals(voSessionSlot.getAppointment().getIsCABBooking()))
+				{	
+					row.setColIsCAB(form.getImages().OCRR.LetterC);
+					strTooltip.insert(0,"'Choose and Book' Appointment <br/>" );
+				}
 				if(voSessionSlot.getAppointment().getOutcomeIsNotNull())
 					strTooltip.append("<br><b>Appointment Outcome :</b> " + voSessionSlot.getAppointment().getOutcome().getText());
 				
@@ -385,7 +436,8 @@ public class Logic extends BaseLogic
 			case GenForm.ContextMenus.SchedulingNamespace.ClinicList.DNA:
 				//dna();
 				//loadSlots();
-				dnaPatientMenuItem();
+//				dnaPatientMenuItem();
+				appointmentOutcome();
 			break;
 			
 			case GenForm.ContextMenus.SchedulingNamespace.ClinicList.OUTCOME:
@@ -550,7 +602,13 @@ public class Logic extends BaseLogic
 				engine.showMessage("No CATS Referral Found.");
 				return;
 			}
-			voCats.setHasDNAApptsForReview(true);
+			
+			//WDEV-20643
+	    	if (Boolean.TRUE.equals(voBooking.getFirstConsultationActivity()))
+			{
+				voCats.setConsultationActivityRequired(true);
+			}
+	    	
 			voCats.validate();
 			
 			if(voBooking.getIsCABBooking() == null || Boolean.FALSE.equals(voBooking.getIsCABBooking()))
@@ -664,7 +722,7 @@ public class Logic extends BaseLogic
 				if(!cancelAppt())
 					return;
 				
-				//open book appointment (CARE_UK or BLACKPOOL)
+				//open book appointment 
 				if(form.getGlobalContext().Scheduling.getApptCancelStatusIsNotNull() && form.getGlobalContext().Scheduling.getApptCancelStatus().getRebookSelectedIsNotNull() && form.getGlobalContext().Scheduling.getApptCancelStatus().getRebookSelected())
 				{
 					form.getGlobalContext().Core.setPatientShort(domain.getBookingPatient(((SessionSlotVo) form.grdSlots().getValue()).getAppointment()));
@@ -708,46 +766,64 @@ public class Logic extends BaseLogic
 	
 	private boolean cancelAppt() 
 	{
-		SessionSlotVo voSessionSlot = form.getLocalContext().getSessionSlot();
-		if(voSessionSlot == null)
-			return false;
-		
-		if(form.getGlobalContext().Scheduling.getApptCancelStatusIsNotNull())
+		int repeats = 0;
+
+		do
 		{
-			//appt status and status history
-			// wdev-6034
-			Appointment_StatusVo voApptStatus = new Appointment_StatusVo();
-			voSessionSlot.getAppointment().setCurrentStatusRecord(voApptStatus);  
-			
-			voSessionSlot.getAppointment().setApptStatus(Status_Reason.CANCELLED);
-			voSessionSlot.getAppointment().setApptStatusHistory(getApptStatusHistory(voSessionSlot,Status_Reason.CANCELLED, voApptStatus));
-			if(form.getGlobalContext().Scheduling.getApptCancelStatusIsNotNull())
+			try
 			{
-				voSessionSlot.getAppointment().setApptStatusReas(form.getGlobalContext().Scheduling.getApptCancelStatus().getStatusReason());
-				if(form.getGlobalContext().Scheduling.getApptCancelStatus().getRebookSelectedIsNotNull())
-					voSessionSlot.getAppointment().setRequiresRebook(form.getGlobalContext().Scheduling.getApptCancelStatus().getRebookSelected());
+				SessionSlotVo voSessionSlot = form.getLocalContext().getSessionSlot();
+				if(voSessionSlot == null)
+					return false;
+
+				if(form.getGlobalContext().Scheduling.getApptCancelStatusIsNotNull())
+				{
+					//appt status and status history
+					// wdev-6034
+					Appointment_StatusVo voApptStatus = new Appointment_StatusVo();
+					voSessionSlot.getAppointment().setCurrentStatusRecord(voApptStatus);  
+
+					voSessionSlot.getAppointment().setApptStatus(Status_Reason.CANCELLED);
+					voSessionSlot.getAppointment().setApptStatusHistory(getApptStatusHistory(voSessionSlot,Status_Reason.CANCELLED, voApptStatus));
+					if(form.getGlobalContext().Scheduling.getApptCancelStatusIsNotNull())
+					{
+						voSessionSlot.getAppointment().setApptStatusReas(form.getGlobalContext().Scheduling.getApptCancelStatus().getStatusReason());
+						if(form.getGlobalContext().Scheduling.getApptCancelStatus().getRebookSelectedIsNotNull())
+							voSessionSlot.getAppointment().setRequiresRebook(form.getGlobalContext().Scheduling.getApptCancelStatus().getRebookSelected());
+					}
+				}
+				voSessionSlot.setStatus(voSessionSlot.getAppointment().getSession().getAppropiateSessionSlotStatus()); //WDEV-18940
+
+				voSessionSlot.getAppointment().setLinkedApptsToBeCancelled(form.getGlobalContext().RefMan.getLinkedAppointmentsCollection());//WDEV-19543
+
+				String[] arrErrors = voSessionSlot.validate();
+				if(arrErrors != null)
+				{
+					engine.showErrors(arrErrors);
+					return false;
+				}
+
+				form.getGlobalContext().Scheduling.setBookingAppointment(domain.cancelAppt(voSessionSlot.getAppointment(), ActionRequestType.NOTIFY_APPT_CANCEL, "Cancel Appt requested from Clinic List"));
+				return true;
+			}
+			catch (StaleObjectException e) {
+				engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
+				search();
+				if(form.cmbSessions().getValue() != null)
+					loadSlots();
+				return false;
+			}
+			catch (DomainInterfaceException e)
+			{
+				repeats++;
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
-		voSessionSlot.setStatus(Status_Reason.SLOTOPENED);
-		
-		String[] arrErrors = voSessionSlot.validate();
-		if(arrErrors != null)
-		{
-			engine.showErrors(arrErrors);
-			return false;
-		}
+		while (repeats < 3);
 
-		try {
-			form.getGlobalContext().Scheduling.setBookingAppointment(domain.cancelAppt(voSessionSlot.getAppointment(), ActionRequestType.NOTIFY_APPT_CANCEL, "Cancel Appt requested from Clinic List"));
-		} catch (StaleObjectException e) {
-			engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
-			search();
-			if(form.cmbSessions().getValue() != null)
-				loadSlots();
-			return false;
-		}
-		
-		return true;
+		engine.showMessage("An Error occured during the process. Please try again or start the process again.");
+		return false;
 	}
 
 	/**
@@ -759,6 +835,7 @@ public class Logic extends BaseLogic
 	{
 		voApptStatus.setApptDate(voSessionSlot.getAppointment().getAppointmentDate());
 		voApptStatus.setApptTime(voSessionSlot.getStartTm());
+		voApptStatus.setStatusChangeDateTime(new DateTime());
 		
 		//if reason is cancelled retrieve values set in cancel dialog
 		if(status.equals(Status_Reason.CANCELLED))
@@ -848,5 +925,13 @@ public class Logic extends BaseLogic
 		search();
 		if(form.cmbSessions().getValue() != null)
 			loadSlots();
+	}
+
+	//wdev-19419
+	protected void onCmbListTypeValueChanged() throws PresentationLogicException
+	{
+		if( form.cmbProfile().getValue() != null && form.dteSessionDate().getValue() != null)
+			search();
+		
 	}
 }

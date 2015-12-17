@@ -1,0 +1,139 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 12/10/2015, 13:30 -->
+<hibernate-mapping>
+	<class name="ims.core.clinical.domain.objects.PatientCaseNoteRequest" table="core_patientcasereq" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: patient -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="patient" class="ims.core.patient.domain.objects.Patient" unique="true" foreign-key="patientcasereq_patient_fk" access="field" cascade="save-update">
+			<column name="patient" sql-type="numeric(10,0)" not-null="true" unique="false"  index='request_idx' />
+		</many-to-one>
+<!-- debug: caseNote -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="caseNote" class="ims.core.clinical.domain.objects.PatientCaseNote" unique="true" foreign-key="patientcasereq_casenote_fk" access="field" cascade="save-update">
+			<column name="casenote" sql-type="numeric(10,0)" not-null="true" unique="false"  index='request_idx' />
+		</many-to-one>
+<!-- debug: requestStatus -->
+<!-- debug: requestedForLocation -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="requestedForLocation" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="patientcasereq_requestedf_fk" access="field" cascade="save-update">
+			<column name="requestedf" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: requestedBy -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="requestedBy" class="ims.core.resource.people.domain.objects.MemberOfStaff" unique="true" foreign-key="patientcasereq_requestedb_fk" access="field" cascade="save-update">
+			<column name="requestedb" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: requiredByDate -->
+<!-- debug: reasonForRequest -->
+<!-- debug: requestComment -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="requestComment" class="ims.core.clinical.domain.objects.PatientCaseNoteComment" unique="true" foreign-key="patientcasereq_requestcom_fk" access="field" cascade="save-update">
+			<column name="requestcom" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: cancelledBy -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="cancelledBy" class="ims.core.resource.people.domain.objects.MemberOfStaff" unique="true" foreign-key="patientcasereq_cancelledb_fk" access="field" cascade="save-update">
+			<column name="cancelledb" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: cancelledDate -->
+<!-- debug: cancellationReason -->
+<!-- debug: creationDate -->
+<!-- debug: transferThatCompletedRequest -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- many to one -->
+		<many-to-one name="transferThatCompletedRequest" class="ims.core.clinical.domain.objects.PatientCaseNoteTransfer" foreign-key="patientcasereq_transferth_fk" access="field" cascade="save-update">
+			<column name="transferth" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: appointment -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- many to one -->
+		<many-to-one name="appointment" class="ims.scheduling.domain.objects.Booking_Appointment" foreign-key="patientcasereq_appointmen_fk" access="field" cascade="save-update">
+			<column name="appointmen" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: tCIDetail -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- many to one -->
+		<many-to-one name="tCIDetail" class="ims.RefMan.domain.objects.TCIForPatientElectiveList" foreign-key="patientcasereq_tcidetail_fk" access="field" cascade="save-update">
+			<column name="tcidetail" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: printedPullListDate -->
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="requestStatus" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_requeststa" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="requiredByDate" type="timestamp" access="field" update="true">
+			<column name="requiredby"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="reasonForRequest" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_reasonforr" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="cancelledDate" type="timestamp" access="field" update="true">
+			<column name="cancelledd"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="cancellationReason" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_cancellati" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="creationDate" type="timestamp" access="field" update="true">
+			<column name="creationda"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="printedPullListDate" type="timestamp" access="field" update="true">
+			<column name="printedpul"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

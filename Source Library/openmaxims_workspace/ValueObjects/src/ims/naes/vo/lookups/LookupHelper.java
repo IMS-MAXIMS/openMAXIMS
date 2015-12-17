@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,15 +15,20 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 
 /*
  * This code was generated.
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:38
+ * Generated: 13/10/2015, 13:23
  */
 package ims.naes.vo.lookups;
 
@@ -35,6 +40,19 @@ import ims.domain.lookups.LookupService;
  * 
  */
 public final class LookupHelper {
+	public static NaesActionStatusCollection getNaesActionStatus(LookupService lookupService) {
+		NaesActionStatusCollection collection =
+			(NaesActionStatusCollection) lookupService.getLookupCollection(NaesActionStatus.TYPE_ID, 
+				NaesActionStatusCollection.class, NaesActionStatus.class);
+		return collection;
+	}
+
+	public static NaesActionStatus getNaesActionStatusInstance(LookupService lookupService, int id) 
+	{
+		return (NaesActionStatus)lookupService.getLookupInstance(NaesActionStatus.class, NaesActionStatus.TYPE_ID, id);
+	}
+	
+
 	public static NAESReferredByCollection getNAESReferredBy(LookupService lookupService) {
 		NAESReferredByCollection collection =
 			(NAESReferredByCollection) lookupService.getLookupCollection(NAESReferredBy.TYPE_ID, 
@@ -45,6 +63,45 @@ public final class LookupHelper {
 	public static NAESReferredBy getNAESReferredByInstance(LookupService lookupService, int id) 
 	{
 		return (NAESReferredBy)lookupService.getLookupInstance(NAESReferredBy.class, NAESReferredBy.TYPE_ID, id);
+	}
+	
+
+	public static ImplantTypeCollection getImplantType(LookupService lookupService) {
+		ImplantTypeCollection collection =
+			(ImplantTypeCollection) lookupService.getLookupCollection(ImplantType.TYPE_ID, 
+				ImplantTypeCollection.class, ImplantType.class);
+		return collection;
+	}
+
+	public static ImplantType getImplantTypeInstance(LookupService lookupService, int id) 
+	{
+		return (ImplantType)lookupService.getLookupInstance(ImplantType.class, ImplantType.TYPE_ID, id);
+	}
+	
+
+	public static UnderlyingReasonCollection getUnderlyingReason(LookupService lookupService) {
+		UnderlyingReasonCollection collection =
+			(UnderlyingReasonCollection) lookupService.getLookupCollection(UnderlyingReason.TYPE_ID, 
+				UnderlyingReasonCollection.class, UnderlyingReason.class);
+		return collection;
+	}
+
+	public static UnderlyingReason getUnderlyingReasonInstance(LookupService lookupService, int id) 
+	{
+		return (UnderlyingReason)lookupService.getLookupInstance(UnderlyingReason.class, UnderlyingReason.TYPE_ID, id);
+	}
+	
+
+	public static ActionCollection getAction(LookupService lookupService) {
+		ActionCollection collection =
+			(ActionCollection) lookupService.getLookupCollection(Action.TYPE_ID, 
+				ActionCollection.class, Action.class);
+		return collection;
+	}
+
+	public static Action getActionInstance(LookupService lookupService, int id) 
+	{
+		return (Action)lookupService.getLookupInstance(Action.class, Action.TYPE_ID, id);
 	}
 	
 }

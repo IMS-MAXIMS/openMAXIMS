@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:37 -->
+<!-- Generated: 12/10/2015, 13:32 -->
 <hibernate-mapping>
 	<class name="ims.core.resource.people.domain.objects.Hcp" table="core_hcp" lazy="false" discriminator-value="null" >
 		<cache usage="nonstrict-read-write" />
@@ -27,6 +27,17 @@
 <!-- debug: isHCPaResponsibleHCP -->
 <!-- debug: isALocalConsultant -->
 <!-- debug: isAResponsibleEDClinician -->
+<!-- debug: serviceFunction -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<list name="serviceFunction" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="hcp_servicefun_fk">
+				<column name="core_hcp_servicefun" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.core.resource.domain.objects.HCPServiceFunction" />
+		</list>
+<!-- debug: isHCPaEndoscopist -->
 <!-- debug: !IsAssociation && !IsCollection -->
 
 <!-- debug: IsLookup -->
@@ -52,6 +63,11 @@
 <!-- debug: !IsLookup -->
 		<property name="isAResponsibleEDClinician" type="boolean" access="field" update="true">
 			<column name="isarespons"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isHCPaEndoscopist" type="boolean" access="field" update="true">
+			<column name="ishcpaendo"  not-null="false" unique="false"  />
 		</property>
 	</class>
 </hibernate-mapping>

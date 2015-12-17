@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -44,6 +49,7 @@ public class DementialManualClass
 	private Date breachDateTime;
 	private Boolean deliriumConfirmed;
 	private Boolean dementiaConfirmed;
+	private Integer AMTSScore;//WDEV-21318
 
 	public DementialManualClass(Integer DementiaId,
 								String patient_title,
@@ -62,7 +68,8 @@ public class DementialManualClass
 								Date dischargeDateTime,
 								Date breachDateTime,
 								Boolean deliriumConfirmed,
-								Boolean dementiaConfirmed)
+								Boolean dementiaConfirmed,
+								Integer AMTSScore)//WDEV-21318
 	{
 		this.DementiaId = DementiaId;
 		this.patient_title = patient_title;
@@ -82,6 +89,13 @@ public class DementialManualClass
 		this.breachDateTime = breachDateTime;
 		this.deliriumConfirmed = deliriumConfirmed;
 		this.dementiaConfirmed = dementiaConfirmed;
+		this.AMTSScore = AMTSScore;//WDEV-21318
+	}
+	
+	//WDEV-21318
+	public Integer getAMTSScore()
+	{
+		return this.AMTSScore;
 	}
 
 	public Integer getDementiaId()

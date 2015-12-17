@@ -1,0 +1,332 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 12/10/2015, 13:29 -->
+<hibernate-mapping>
+	<class name="ims.core.admin.domain.objects.PDSConfiguration" table="core_pdsconfigurati" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: dOB_DATE_RANGE -->
+<!-- debug: dOD_DATE_RANGE -->
+<!-- debug: tRACE_ADVANCED_IGNORE_HISTORY -->
+<!-- debug: tRACE_HISTORY_DATA_INDICATOR -->
+<!-- debug: uSE_LPI_CROSSCHECK -->
+<!-- debug: dECOUPLE_ON_DECEASE -->
+<!-- debug: nOTIFY_ON_DECEASE -->
+<!-- debug: nO_FIXED_ABODE_POSTCODE -->
+<!-- debug: dECOUPLE_ON_SYNC_REQUIRED -->
+<!-- debug: aDVANCED_SEARCH_TIMER_INTERVAL -->
+<!-- debug: pDS_BACKOFFICE_NOTIFICATI -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="pDS_BACKOFFICE_NOTIFICATI" class="ims.core.configuration.domain.objects.AppUser" unique="true" foreign-key="pdsconfigurati_pds_backof_fk" access="field" cascade="save-update">
+			<column name="pds_backof" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: numOfDaysAppointBatchTrace -->
+<!-- debug: numOfDaysTCIBatchTrace -->
+<!-- debug: numOfDaysForNextPDSCheck -->
+<!-- debug: sYNCHRONISE_WITH_BACKOFFICE -->
+<!-- debug: fromPDSAccreditedSystemId -->
+<!-- debug: toPDSAccreditedSystemId -->
+<!-- debug: pDS_CONFIG_FILE -->
+<!-- debug: pDS_STORE_MESSAGE_LOC -->
+<!-- debug: pDS_STORE_MESSAGE -->
+<!-- debug: sTART_PDS_GATEWAY -->
+<!-- debug: pDS_MSH_REPOSITORY -->
+<!-- debug: pDS_MSH_URL -->
+<!-- debug: cREATE_BO_NOTIFICATIONS -->
+<!-- debug: sDSHost -->
+<!-- debug: sDSPort -->
+<!-- debug: pDS_URL -->
+<!-- debug: pDS_HOST -->
+<!-- debug: pDS_STORE_SYNC_MESSAGE -->
+<!-- debug: pDS_STORE_SYNC_MESSAGE_LOC -->
+<!-- debug: consentChangeMessage -->
+<!-- debug: inactivePatientRecordBgColour -->
+<!-- debug: pDS_AUTHENTICATION -->
+<!-- debug: rBAC_PdsSearchForPatient -->
+<!-- debug: rBAC_PdsSearchPatientAdvanced -->
+<!-- debug: rBAC_PdsRetrieval -->
+<!-- debug: rBAC_AccessSensitiveData -->
+<!-- debug: rBAC_AmendPatient -->
+<!-- debug: rBAC_ControlConsent -->
+<!-- debug: rBAC_AmendPatientDecease -->
+<!-- debug: rBAC_PostcodeSearch -->
+<!-- debug: pDS_DISPLAY_CONSENT -->
+<!-- debug: dOB_DATE_RANGE_TYPE -->
+<!-- debug: dOD_DATE_RANGE_TYPE -->
+<!-- debug: tP_BookOutpatientAppt -->
+<!-- debug: tP_BookWardAttenderAppt -->
+<!-- debug: tP_CreateTCIAndTheatreBooking -->
+<!-- debug: tP_AnyAdmission -->
+<!-- debug: tP_AnyApptArrival -->
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="dOB_DATE_RANGE" type="integer" access="field" update="true">
+			<column name="dob_date_r"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dOD_DATE_RANGE" type="integer" access="field" update="true">
+			<column name="dod_date_r"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="tRACE_ADVANCED_IGNORE_HISTORY" type="boolean" access="field" update="true">
+			<column name="trace_adva"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="tRACE_HISTORY_DATA_INDICATOR" type="boolean" access="field" update="true">
+			<column name="trace_hist"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="uSE_LPI_CROSSCHECK" type="boolean" access="field" update="true">
+			<column name="use_lpi_cr"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dECOUPLE_ON_DECEASE" type="boolean" access="field" update="true">
+			<column name="decouple_o"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="nOTIFY_ON_DECEASE" type="boolean" access="field" update="true">
+			<column name="notify_on_"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="nO_FIXED_ABODE_POSTCODE" type="string" access="field" update="true" > 
+			<column name="no_fixed_a" length="10"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dECOUPLE_ON_SYNC_REQUIRED" type="boolean" access="field" update="true">
+			<column name="decouple_2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="aDVANCED_SEARCH_TIMER_INTERVAL" type="integer" access="field" update="true">
+			<column name="advanced_s"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="numOfDaysAppointBatchTrace" type="integer" access="field" update="true">
+			<column name="numofdaysa"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="numOfDaysTCIBatchTrace" type="integer" access="field" update="true">
+			<column name="numofdayst"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="numOfDaysForNextPDSCheck" type="integer" access="field" update="true">
+			<column name="numofdaysf"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="sYNCHRONISE_WITH_BACKOFFICE" type="boolean" access="field" update="true">
+			<column name="synchronis"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="fromPDSAccreditedSystemId" type="string" access="field" update="true" > 
+			<column name="frompdsacc" length="20"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="toPDSAccreditedSystemId" type="string" access="field" update="true" > 
+			<column name="topdsaccre" length="20"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="pDS_CONFIG_FILE" type="string" access="field" update="true" > 
+			<column name="pds_config" length="200"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="pDS_STORE_MESSAGE_LOC" type="string" access="field" update="true" > 
+			<column name="pds_store_" length="250"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="pDS_STORE_MESSAGE" type="boolean" access="field" update="true">
+			<column name="pds_store2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="sTART_PDS_GATEWAY" type="boolean" access="field" update="true">
+			<column name="start_pds_"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="pDS_MSH_REPOSITORY" type="string" access="field" update="true" > 
+			<column name="pds_msh_re" length="250"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="pDS_MSH_URL" type="string" access="field" update="true" > 
+			<column name="pds_msh_ur" length="250"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="cREATE_BO_NOTIFICATIONS" type="boolean" access="field" update="true">
+			<column name="create_bo_"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="sDSHost" type="string" access="field" update="true" > 
+			<column name="sdshost" length="100"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="sDSPort" type="string" access="field" update="true" > 
+			<column name="sdsport" length="20"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="pDS_URL" type="string" access="field" update="true" > 
+			<column name="pds_url" length="200"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="pDS_HOST" type="string" access="field" update="true" > 
+			<column name="pds_host" length="100"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="pDS_STORE_SYNC_MESSAGE" type="boolean" access="field" update="true">
+			<column name="pds_store3"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="pDS_STORE_SYNC_MESSAGE_LOC" type="string" access="field" update="true" > 
+			<column name="pds_store4" length="250"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="consentChangeMessage" type="string" access="field" update="true" > 
+			<column name="consentcha" length="400"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<component name="inactivePatientRecordBgColour" class="ims.framework.utils.Color" >
+			<property name="name" type="string" access="field" update="true">
+				<column name="inactivepa"  not-null="false" unique="false"     />
+			</property>
+		</component>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="pDS_AUTHENTICATION" type="boolean" access="field" update="true">
+			<column name="pds_authen"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="rBAC_PdsSearchForPatient" type="string" access="field" update="true" > 
+			<column name="rbac_pdsse" length="10"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="rBAC_PdsSearchPatientAdvanced" type="string" access="field" update="true" > 
+			<column name="rbac_pdss2" length="10"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="rBAC_PdsRetrieval" type="string" access="field" update="true" > 
+			<column name="rbac_pdsre" length="10"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="rBAC_AccessSensitiveData" type="string" access="field" update="true" > 
+			<column name="rbac_acces" length="10"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="rBAC_AmendPatient" type="string" access="field" update="true" > 
+			<column name="rbac_amend" length="10"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="rBAC_ControlConsent" type="string" access="field" update="true" > 
+			<column name="rbac_contr" length="10"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="rBAC_AmendPatientDecease" type="string" access="field" update="true" > 
+			<column name="rbac_amen2" length="10"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="rBAC_PostcodeSearch" type="string" access="field" update="true" > 
+			<column name="rbac_postc" length="10"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="pDS_DISPLAY_CONSENT" type="boolean" access="field" update="true">
+			<column name="pds_displa"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="dOB_DATE_RANGE_TYPE" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_dob_date_2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="dOD_DATE_RANGE_TYPE" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_dod_date_2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="tP_BookOutpatientAppt" type="boolean" access="field" update="true">
+			<column name="tp_bookout"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="tP_BookWardAttenderAppt" type="boolean" access="field" update="true">
+			<column name="tp_bookwar"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="tP_CreateTCIAndTheatreBooking" type="boolean" access="field" update="true">
+			<column name="tp_createt"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="tP_AnyAdmission" type="boolean" access="field" update="true">
+			<column name="tp_anyadmi"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="tP_AnyApptArrival" type="boolean" access="field" update="true">
+			<column name="tp_anyappt"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

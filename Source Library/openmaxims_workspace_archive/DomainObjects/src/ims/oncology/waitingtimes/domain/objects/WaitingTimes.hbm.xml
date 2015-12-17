@@ -1,0 +1,297 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:35 -->
+<hibernate-mapping>
+	<class name="ims.oncology.waitingtimes.domain.objects.WaitingTimes" table="onco_waitingtimes" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: hibernateClassContent -->
+<!-- debug: nHSNumber -->
+<!-- debug: referralSource -->
+<!-- debug: refDecisionDate -->
+<!-- debug: refReceivedDate -->
+<!-- debug: priorityCode -->
+<!-- debug: referralType -->
+<!-- debug: firstSeenDate -->
+<!-- debug: firstSeenOrgaCode -->
+<!-- debug: wTAdjustmentFS -->
+<!-- debug: wTAdjustmentReasonFS -->
+<!-- debug: breachReason -->
+<!-- debug: delayReasonRefFirstSeen -->
+<!-- debug: specReferralDate -->
+<!-- debug: referredBy -->
+<!-- debug: specDateFirstSeen -->
+<!-- debug: specOrgCode -->
+<!-- debug: clinlInterventionDate -->
+<!-- debug: clinInterventionOrgCode -->
+<!-- debug: mDTDiscussInd -->
+<!-- debug: mDTDiscussDate -->
+<!-- debug: cancerStatus -->
+<!-- debug: primaryDiagnosis -->
+<!-- debug: tumourLaterality -->
+<!-- debug: dDTDateSurgery -->
+<!-- debug: dDTDateChemo -->
+<!-- debug: dDTDateTele -->
+<!-- debug: dDTDateBrachy -->
+<!-- debug: dDTDatePalliative -->
+<!-- debug: dDTDateActiveMon -->
+<!-- debug: dDTOrgCode -->
+<!-- debug: wTAdjustmentTreat -->
+<!-- debug: wTAdjustmentReasonTreat -->
+<!-- debug: planCancerTreatType -->
+<!-- debug: firstTreatmentDateSurg -->
+<!-- debug: firstTreatmentDateChemo -->
+<!-- debug: firstTreatmentDateTele -->
+<!-- debug: firstTreatmentDateBrachy -->
+<!-- debug: firstTreatmentDateSPCare -->
+<!-- debug: firstTreatmentDateActiveMon -->
+<!-- debug: firstTreatmentOrgCode -->
+<!-- debug: wTAdjustFirstTreat -->
+<!-- debug: wTAdjustmentReasonFT -->
+<!-- debug: delayReasonDTT -->
+<!-- debug: delayReasonRTT -->
+<!-- debug: delayCodeDTT -->
+<!-- debug: delayCodeRTT -->
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="nHSNumber" type="string" access="field" update="true" > 
+			<column name="nhsnumber" length="10"  not-null="false" unique="false"  index='mainIdx'/>
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="referralSource" type="string" access="field" update="true" > 
+			<column name="referralso" length="15"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="refDecisionDate" type="date" access="field" update="true">
+			<column name="refdecisio"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="refReceivedDate" type="date" access="field" update="true">
+			<column name="refreceive"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="priorityCode" type="string" access="field" update="true" > 
+			<column name="priorityco" length="15"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="referralType" type="string" access="field" update="true" > 
+			<column name="referralty" length="15"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="firstSeenDate" type="date" access="field" update="true">
+			<column name="firstseend"  not-null="false" unique="false"  index='mainIdx'/>
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="firstSeenOrgaCode" type="string" access="field" update="true" > 
+			<column name="firstseeno" length="15"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="wTAdjustmentFS" type="integer" access="field" update="true">
+			<column name="wtadjustme"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="wTAdjustmentReasonFS" type="string" access="field" update="true" > 
+			<column name="wtadjustm2" length="1"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="breachReason" type="string" access="field" update="true" > 
+			<column name="breachreas" length="1000"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="delayReasonRefFirstSeen" type="string" access="field" update="true" > 
+			<column name="delayreaso" length="2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="specReferralDate" type="date" access="field" update="true">
+			<column name="specreferr"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="referredBy" type="string" access="field" update="true" > 
+			<column name="referredby" length="5"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="specDateFirstSeen" type="date" access="field" update="true">
+			<column name="specdatefi"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="specOrgCode" type="string" access="field" update="true" > 
+			<column name="specorgcod" length="5"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="clinlInterventionDate" type="date" access="field" update="true">
+			<column name="clinlinter"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="clinInterventionOrgCode" type="string" access="field" update="true" > 
+			<column name="clininterv" length="5"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="mDTDiscussInd" type="string" access="field" update="true" > 
+			<column name="mdtdiscuss" length="1"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="mDTDiscussDate" type="date" access="field" update="true">
+			<column name="mdtdiscus2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="cancerStatus" type="string" access="field" update="true" > 
+			<column name="cancerstat" length="1"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="primaryDiagnosis" type="string" access="field" update="true" > 
+			<column name="primarydia" length="5"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="tumourLaterality" type="string" access="field" update="true" > 
+			<column name="tumourlate" length="1"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dDTDateSurgery" type="date" access="field" update="true">
+			<column name="ddtdatesur"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dDTDateChemo" type="date" access="field" update="true">
+			<column name="ddtdateche"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dDTDateTele" type="date" access="field" update="true">
+			<column name="ddtdatetel"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dDTDateBrachy" type="date" access="field" update="true">
+			<column name="ddtdatebra"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dDTDatePalliative" type="date" access="field" update="true">
+			<column name="ddtdatepal"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dDTDateActiveMon" type="date" access="field" update="true">
+			<column name="ddtdateact"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dDTOrgCode" type="string" access="field" update="true" > 
+			<column name="ddtorgcode" length="5"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="wTAdjustmentTreat" type="integer" access="field" update="true">
+			<column name="wtadjustm3"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="wTAdjustmentReasonTreat" type="string" access="field" update="true" > 
+			<column name="wtadjustm4" length="1"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="planCancerTreatType" type="string" access="field" update="true" > 
+			<column name="plancancer" length="2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="firstTreatmentDateSurg" type="date" access="field" update="true">
+			<column name="firsttreat"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="firstTreatmentDateChemo" type="date" access="field" update="true">
+			<column name="firsttrea2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="firstTreatmentDateTele" type="date" access="field" update="true">
+			<column name="firsttrea3"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="firstTreatmentDateBrachy" type="date" access="field" update="true">
+			<column name="firsttrea4"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="firstTreatmentDateSPCare" type="date" access="field" update="true">
+			<column name="firsttrea5"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="firstTreatmentDateActiveMon" type="date" access="field" update="true">
+			<column name="firsttrea6"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="firstTreatmentOrgCode" type="string" access="field" update="true" > 
+			<column name="firsttrea7" length="5"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="wTAdjustFirstTreat" type="integer" access="field" update="true">
+			<column name="wtadjustfi"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="wTAdjustmentReasonFT" type="string" access="field" update="true" > 
+			<column name="wtadjustm5" length="1"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="delayReasonDTT" type="string" access="field" update="true" > 
+			<column name="delayreas2" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="delayReasonRTT" type="string" access="field" update="true" > 
+			<column name="delayreas3" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="delayCodeDTT" type="string" access="field" update="true" > 
+			<column name="delaycoded" length="1"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="delayCodeRTT" type="string" access="field" update="true" > 
+			<column name="delaycoder" length="1"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

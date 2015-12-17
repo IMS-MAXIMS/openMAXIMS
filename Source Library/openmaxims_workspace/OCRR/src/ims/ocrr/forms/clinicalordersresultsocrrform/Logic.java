@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -39,6 +44,7 @@ import ims.framework.utils.Time;
 import ims.ocrr.forms.clinicalordersresultsocrrform.GenForm.Group1Enumeration;
 import ims.ocrr.forms.clinicalordersresultsocrrform.GenForm.GrpCriteriaEnumeration;
 import ims.ocrr.forms.clinicalordersresultsocrrform.GenForm.grdClinicalResultsRow;
+import ims.ocrr.vo.ClinicalOrdersResultsSearchCriteriaVo;
 import ims.ocrr.vo.ClinicalResultListVo;
 import ims.ocrr.vo.ClinicalResultListVoCollection;
 import ims.ocrr.vo.InvestigationIndexLiteVoCollection;
@@ -59,6 +65,9 @@ public class Logic extends BaseLogic
 {
 	private static final long serialVersionUID = 1L;
 
+	private static final int LIST_ALL				= 1;
+	private static final int LIST_RESULTS_ONLY		= 2;
+	
 	@Override
 	protected void onFormOpen(Object[] args) throws ims.framework.exceptions.PresentationLogicException
 	{
@@ -72,7 +81,87 @@ public class Logic extends BaseLogic
 		if (voRoleDisciplineSecurityLevels == null || (voRoleDisciplineSecurityLevels != null && voRoleDisciplineSecurityLevels.getIsConfigLoadedIsNotNull() && !voRoleDisciplineSecurityLevels.getIsConfigLoaded().equals(false)))
 			form.getGlobalContext().OCRR.setRoleDisciplineSecurityLevels(domain.getRoleDisciplineSecurityLevels(engine.getLoggedInRole()));
 		
-		doSearch();
+		//WDEV-19389 - start
+		if (!(form.getGlobalContext().Core.getPatientShortIsNotNull() && form.getGlobalContext().OCRR.getClinicalOrdersResultsSearchCriteriaIsNotNull() && form.getGlobalContext().OCRR.getClinicalOrdersResultsSearchCriteria().getPatientIsNotNull() && form.getGlobalContext().Core.getPatientShort().equals(form.getGlobalContext().OCRR.getClinicalOrdersResultsSearchCriteria().getPatient())))
+			form.getGlobalContext().OCRR.setClinicalOrdersResultsSearchCriteria(null);
+		
+		if(form.getGlobalContext().OCRR.getClinicalOrdersResultsSearchCriteriaIsNotNull())
+		{
+			setSearchCriteria(form.getGlobalContext().OCRR.getClinicalOrdersResultsSearchCriteria());
+			if(doSearch())
+			{
+				form.getGlobalContext().OCRR.setClinicalOrdersResultsSearchCriteria(getSearchCriteria());
+			}
+		}
+		else
+			doSearch();		
+		//WDEV-19389 - end
+	}
+	
+	private ClinicalOrdersResultsSearchCriteriaVo getSearchCriteria()
+	{
+		ClinicalOrdersResultsSearchCriteriaVo searchCriteria = new ClinicalOrdersResultsSearchCriteriaVo();
+		
+		searchCriteria.setRespClinician(form.qmbClinician().getValue());
+		searchCriteria.setService(form.cmbDepartment().getValue());
+		searchCriteria.setFromDate(form.dteFrom().getValue());
+		searchCriteria.setToDate(form.dteTo().getValue());
+		searchCriteria.setSearchType(getSearchType());
+		searchCriteria.setInvestigation(form.qmbInvestigation().getValue());
+		searchCriteria.setPatient(form.getGlobalContext().Core.getPatientShort());
+		
+		return searchCriteria;
+	}
+
+	private void setSearchCriteria(ClinicalOrdersResultsSearchCriteriaVo clinicalOrdersResultsSearchCriteriaVo) 
+	{
+		if (clinicalOrdersResultsSearchCriteriaVo.getRespClinicianIsNotNull())
+		{
+			form.qmbClinician().newRow(clinicalOrdersResultsSearchCriteriaVo.getRespClinician(), clinicalOrdersResultsSearchCriteriaVo.getRespClinician().getName().toString());
+			form.qmbClinician().setValue(clinicalOrdersResultsSearchCriteriaVo.getRespClinician());
+		}
+		if (clinicalOrdersResultsSearchCriteriaVo.getInvestigationIsNotNull())
+		{
+			form.qmbInvestigation().newRow(clinicalOrdersResultsSearchCriteriaVo.getInvestigation(), clinicalOrdersResultsSearchCriteriaVo.getInvestigation().getName());
+			form.qmbInvestigation().setValue(clinicalOrdersResultsSearchCriteriaVo.getInvestigation());
+		}
+		
+		form.dteFrom().setValue(clinicalOrdersResultsSearchCriteriaVo.getFromDate());
+		form.dteTo().setValue(clinicalOrdersResultsSearchCriteriaVo.getToDate());
+		form.cmbDepartment().setValue(clinicalOrdersResultsSearchCriteriaVo.getService());
+		setSearchType(clinicalOrdersResultsSearchCriteriaVo.getSearchType());		
+	}
+	
+	
+	private void setSearchType(Integer searchType)
+	{
+		if (searchType == null)
+			return;
+		
+		switch (searchType)
+		{
+		case LIST_ALL:
+			form.Group1().setValue(Group1Enumeration.rdoAll);
+			break;
+		case LIST_RESULTS_ONLY:
+			form.Group1().setValue(Group1Enumeration.rdoResults);
+			break;
+		}			
+	}
+
+	private Integer getSearchType()
+	{
+		Group1Enumeration searchType = form.Group1().getValue();
+		if (Group1Enumeration.rdoAll.equals(searchType))
+		{
+			return LIST_ALL;
+		}
+		if (Group1Enumeration.rdoResults.equals(searchType))
+		{
+			return LIST_RESULTS_ONLY;
+		}
+		
+		return null;
 	}
 
 	protected void loadCmbDepartment()
@@ -167,7 +256,7 @@ public class Logic extends BaseLogic
 		doSearch();
 	}
 
-	private void doSearch()
+	private boolean doSearch()
 	{
 		form.getGlobalContext().OCRR.setLastUpdatedPathRadResult(null);
 		form.grdClinicalResults().getRows().clear();
@@ -186,8 +275,15 @@ public class Logic extends BaseLogic
 			Date dateUnseen = new Date().addDay(-1 * nNewResUnseenDays.intValue());
 
 			populateResultsGrid(voCollResults, dateUnseen);
+			form.getGlobalContext().OCRR.setClinicalOrdersResultsSearchCriteria(getSearchCriteria());//WDEV-19389 
+			updateControlsState();
+			return true;
 		}
-		updateControlsState();
+		else
+		{
+			updateControlsState();
+			return false;
+		}
 
 	}
 
@@ -312,7 +408,7 @@ public class Logic extends BaseLogic
 			comments.sort(SortOrder.DESCENDING);
 			ResultCommentsLiteVo lastComment = comments.get(0);
 
-			szTooltip += "<br><b>" + lastComment.getAuthoringInformation().getAuthoringDateTime().toString() + " ";
+			szTooltip += "<br><b>Last Annotation Comment: " + lastComment.getAuthoringInformation().getAuthoringDateTime().toString() + " "; //WDEV-18405
 			szTooltip += lastComment.getAuthoringInformation().getAuthoringHcp().getName().toString() + ":</b> " + lastComment.getComment();
 			
 			//Append correction
@@ -421,6 +517,7 @@ public class Logic extends BaseLogic
 	{
 		clearScreen();
 		updateControlsState();
+		form.getGlobalContext().OCRR.setClinicalOrdersResultsSearchCriteria(null);//WDEV-19389 
 	}
 
 	private void clearScreen()

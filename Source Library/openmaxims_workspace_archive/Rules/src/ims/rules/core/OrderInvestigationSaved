@@ -1,0 +1,27 @@
+package ims.rules.userrules;
+
+import ims.ocrr.orderingresults.domain.objects.OrderSpecimen;
+import ims.rules.engine.RulesRuntimeEngine;
+import ims.domain.DomainFactory;
+
+global RulesRuntimeEngine engine;
+global DomainFactory factory;
+
+function boolean isOrderInvestigationSaved(ims.ocrr.orderingresults.domain.objects.OrderInvestigation entity)
+{
+	if((entity.getOrderDetails() != null))
+		return true;
+	return false;
+}
+
+rule "OrderInvestigationSaved"
+no-loop true
+salience 0
+when
+	entity : ims.ocrr.orderingresults.domain.objects.OrderInvestigation();
+	eval(isOrderInvestigationSaved(entity));
+then	
+	engine.println("Rule 'OrderInvestigationSaved' was fired.");
+	engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Rule 'OrderInvestigationSaved' was fired.");
+	engine.fireAllRules(entity.getOrderDetails());
+end

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -39,6 +44,7 @@ import ims.nursing.forms.metric.GenForm.GroupHEnumeration;
 import ims.nursing.forms.metric.GenForm.GroupWEnumeration;
 import ims.nursing.forms.metric.GenForm.grdMetricsRow;
 import ims.nursing.vo.LastHeightMetricRecordVo;
+import ims.nursing.vo.MetricSearchCriteriaVo;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -51,6 +57,17 @@ public class Logic extends BaseLogic
 	protected void onFormOpen(Object[] args) throws ims.framework.exceptions.PresentationLogicException
 	{
 		initialize();
+		
+		//WDEV-19389 
+		if (!(form.getGlobalContext().Core.getPatientShortIsNotNull() && form.getGlobalContext().Nursing.getMetricSearchCriteriaIsNotNull() && form.getGlobalContext().Nursing.getMetricSearchCriteria().getPatientIsNotNull() && form.getGlobalContext().Core.getPatientShort().equals(form.getGlobalContext().Nursing.getMetricSearchCriteria().getPatient())))
+			form.getGlobalContext().Nursing.setMetricSearchCriteria(null);
+		
+		if(form.getGlobalContext().Nursing.getMetricSearchCriteriaIsNotNull())
+		{
+			setSearchCriteria(form.getGlobalContext().Nursing.getMetricSearchCriteria());
+		}
+		//WDEV-19389 - end
+		
 		open();
 	}
 
@@ -66,7 +83,7 @@ public class Logic extends BaseLogic
 		clear();
 		clearSearch();
 		updateControlsState();
-
+		form.getGlobalContext().Nursing.setMetricSearchCriteria(null);
 	}
 
 	@Override
@@ -166,7 +183,7 @@ public class Logic extends BaseLogic
 	{
 		form.getLocalContext().setSelectedInstance(null);
 		clearInstanceControls();
-		form.ccRecording().initializeComponent(true);
+		form.ccRecording().initializeComponent(true, null); //WDEV-18846
 		LastHeightMetricRecordVo lastHeight = domain.getLastRecordedHeight(form.getGlobalContext().Core.getPatientShort());
 		if (lastHeight != null)
 		{
@@ -322,7 +339,26 @@ public class Logic extends BaseLogic
 		if (showErrors && (metrics == null || metrics.size() == 0))
 			engine.showMessage("No records found to match your criteria", "No records", MessageButtons.OK, MessageIcon.INFORMATION);
 		form.grdMetrics().setValue(form.getLocalContext().getSelectedInstance());
+		
+		form.getGlobalContext().Nursing.setMetricSearchCriteria(getSearchCriteria()); //WDEV-19389 
 		selectInstance();
+	}
+	
+	private MetricSearchCriteriaVo getSearchCriteria()
+	{
+		MetricSearchCriteriaVo searchCriteria = new MetricSearchCriteriaVo();
+		
+		searchCriteria.setFromDateTime(form.dtimFrom().getValue());
+		searchCriteria.setToDateTime(form.dtimTo().getValue());
+		searchCriteria.setPatient(form.getGlobalContext().Core.getPatientShort());
+		
+		return searchCriteria;
+	}
+		
+	private void setSearchCriteria(MetricSearchCriteriaVo metricSearchCriteriaVo)
+	{
+		form.dtimFrom().setValue(metricSearchCriteriaVo.getFromDateTime());
+		form.dtimTo().setValue(metricSearchCriteriaVo.getToDateTime());
 	}
 	
 	private void selectInstance()

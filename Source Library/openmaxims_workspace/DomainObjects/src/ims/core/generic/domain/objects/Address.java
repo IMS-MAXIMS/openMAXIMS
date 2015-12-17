@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.generic.domain.objects;
@@ -73,6 +78,28 @@ public class Address extends ims.domain.DomainObject implements java.io.Serializ
 	private String pCT;
 	/** Other Phone Number */
 	private String otherphone;
+	/** AreaOfResidence */
+	private ims.domain.lookups.LookupInstance areaOfResidence;
+	/** PAF key */
+	private String pafkey;
+	/** Address Description - Textual description of the usage of a temporary address. For temporary address only (i.e. where the address type='TMP'). */
+	private String description;
+	/** Object identifier - UID */
+	private String objectidentifier;
+	/** The date from which the alternative identifier has been indicated to be effective. */
+	private java.util.Date beffdate;
+	/** Beffdate confirmed */
+	private Boolean beffdatecnf;
+	/** The date until which the alternative identifier has been indicated to be effective. */
+	private java.util.Date betdate;
+	/** Betdate confirmed */
+	private Boolean betdatecnf;
+	/** PDS Update Mode */
+	private ims.domain.lookups.LookupInstance pdsUpdateMode;
+	/** Country */
+	private ims.domain.lookups.LookupInstance country;
+	private Boolean noFixedAbode;
+	private Boolean careHome;
     public Address (Integer id, int ver)
     {
     	super(id, ver);
@@ -232,6 +259,102 @@ public class Address extends ims.domain.DomainObject implements java.io.Serializ
 		this.otherphone = otherphone;
 	}
 
+	public ims.domain.lookups.LookupInstance getAreaOfResidence() {
+		return areaOfResidence;
+	}
+	public void setAreaOfResidence(ims.domain.lookups.LookupInstance areaOfResidence) {
+		this.areaOfResidence = areaOfResidence;
+	}
+
+	public String getPafkey() {
+		return pafkey;
+	}
+	public void setPafkey(String pafkey) {
+		if ( null != pafkey && pafkey.length() > 8 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for pafkey. Tried to set value: "+
+				pafkey);
+		}
+		this.pafkey = pafkey;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		if ( null != description && description.length() > 100 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for description. Tried to set value: "+
+				description);
+		}
+		this.description = description;
+	}
+
+	public String getObjectidentifier() {
+		return objectidentifier;
+	}
+	public void setObjectidentifier(String objectidentifier) {
+		if ( null != objectidentifier && objectidentifier.length() > 14 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for objectidentifier. Tried to set value: "+
+				objectidentifier);
+		}
+		this.objectidentifier = objectidentifier;
+	}
+
+	public java.util.Date getBeffdate() {
+		return beffdate;
+	}
+	public void setBeffdate(java.util.Date beffdate) {
+		this.beffdate = beffdate;
+	}
+
+	public Boolean isBeffdatecnf() {
+		return beffdatecnf;
+	}
+	public void setBeffdatecnf(Boolean beffdatecnf) {
+		this.beffdatecnf = beffdatecnf;
+	}
+
+	public java.util.Date getBetdate() {
+		return betdate;
+	}
+	public void setBetdate(java.util.Date betdate) {
+		this.betdate = betdate;
+	}
+
+	public Boolean isBetdatecnf() {
+		return betdatecnf;
+	}
+	public void setBetdatecnf(Boolean betdatecnf) {
+		this.betdatecnf = betdatecnf;
+	}
+
+	public ims.domain.lookups.LookupInstance getPdsUpdateMode() {
+		return pdsUpdateMode;
+	}
+	public void setPdsUpdateMode(ims.domain.lookups.LookupInstance pdsUpdateMode) {
+		this.pdsUpdateMode = pdsUpdateMode;
+	}
+
+	public ims.domain.lookups.LookupInstance getCountry() {
+		return country;
+	}
+	public void setCountry(ims.domain.lookups.LookupInstance country) {
+		this.country = country;
+	}
+
+	public Boolean isNoFixedAbode() {
+		return noFixedAbode;
+	}
+	public void setNoFixedAbode(Boolean noFixedAbode) {
+		this.noFixedAbode = noFixedAbode;
+	}
+
+	public Boolean isCareHome() {
+		return careHome;
+	}
+	public void setCareHome(Boolean careHome) {
+		this.careHome = careHome;
+	}
+
 	/**
 	 * isConfigurationObject
 	 * Taken from the Usage property of the business object, this method will return
@@ -306,6 +429,45 @@ public class Address extends ims.domain.DomainObject implements java.io.Serializ
 	    auditStr.append("; ");
 		auditStr.append("\r\n*otherphone* :");
 		auditStr.append(otherphone);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*areaOfResidence* :");
+		if (areaOfResidence != null)
+			auditStr.append(areaOfResidence.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*pafkey* :");
+		auditStr.append(pafkey);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*description* :");
+		auditStr.append(description);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*objectidentifier* :");
+		auditStr.append(objectidentifier);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*beffdate* :");
+		auditStr.append(beffdate);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*beffdatecnf* :");
+		auditStr.append(beffdatecnf);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*betdate* :");
+		auditStr.append(betdate);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*betdatecnf* :");
+		auditStr.append(betdatecnf);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*pdsUpdateMode* :");
+		if (pdsUpdateMode != null)
+			auditStr.append(pdsUpdateMode.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*country* :");
+		if (country != null)
+			auditStr.append(country.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*noFixedAbode* :");
+		auditStr.append(noFixedAbode);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*careHome* :");
+		auditStr.append(careHome);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -420,6 +582,78 @@ public class Address extends ims.domain.DomainObject implements java.io.Serializ
 			sb.append("<otherphone>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getOtherphone().toString()));
 			sb.append("</otherphone>");		
+		}
+		if (this.getAreaOfResidence() != null)
+		{
+			sb.append("<areaOfResidence>");
+			sb.append(this.getAreaOfResidence().toXMLString()); 
+			sb.append("</areaOfResidence>");		
+		}
+		if (this.getPafkey() != null)
+		{
+			sb.append("<pafkey>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getPafkey().toString()));
+			sb.append("</pafkey>");		
+		}
+		if (this.getDescription() != null)
+		{
+			sb.append("<description>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getDescription().toString()));
+			sb.append("</description>");		
+		}
+		if (this.getObjectidentifier() != null)
+		{
+			sb.append("<objectidentifier>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getObjectidentifier().toString()));
+			sb.append("</objectidentifier>");		
+		}
+		if (this.getBeffdate() != null)
+		{
+			sb.append("<beffdate>");
+			sb.append(new ims.framework.utils.DateTime(this.getBeffdate()).toString(ims.framework.utils.DateTimeFormat.MILLI));
+			sb.append("</beffdate>");		
+		}
+		if (this.isBeffdatecnf() != null)
+		{
+			sb.append("<beffdatecnf>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isBeffdatecnf().toString()));
+			sb.append("</beffdatecnf>");		
+		}
+		if (this.getBetdate() != null)
+		{
+			sb.append("<betdate>");
+			sb.append(new ims.framework.utils.DateTime(this.getBetdate()).toString(ims.framework.utils.DateTimeFormat.MILLI));
+			sb.append("</betdate>");		
+		}
+		if (this.isBetdatecnf() != null)
+		{
+			sb.append("<betdatecnf>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isBetdatecnf().toString()));
+			sb.append("</betdatecnf>");		
+		}
+		if (this.getPdsUpdateMode() != null)
+		{
+			sb.append("<pdsUpdateMode>");
+			sb.append(this.getPdsUpdateMode().toXMLString()); 
+			sb.append("</pdsUpdateMode>");		
+		}
+		if (this.getCountry() != null)
+		{
+			sb.append("<country>");
+			sb.append(this.getCountry().toXMLString()); 
+			sb.append("</country>");		
+		}
+		if (this.isNoFixedAbode() != null)
+		{
+			sb.append("<noFixedAbode>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isNoFixedAbode().toString()));
+			sb.append("</noFixedAbode>");		
+		}
+		if (this.isCareHome() != null)
+		{
+			sb.append("<careHome>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isCareHome().toString()));
+			sb.append("</careHome>");		
 		}
 		return sb.toString();
 	}
@@ -638,6 +872,69 @@ public class Address extends ims.domain.DomainObject implements java.io.Serializ
 		{	
     		obj.setOtherphone(new String(fldEl.getTextTrim()));	
 		}
+		fldEl = el.element("areaOfResidence");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setAreaOfResidence(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("pafkey");
+		if(fldEl != null)
+		{	
+    		obj.setPafkey(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("description");
+		if(fldEl != null)
+		{	
+    		obj.setDescription(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("objectidentifier");
+		if(fldEl != null)
+		{	
+    		obj.setObjectidentifier(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("beffdate");
+		if(fldEl != null)
+		{	
+    		obj.setBeffdate(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
+		}
+		fldEl = el.element("beffdatecnf");
+		if(fldEl != null)
+		{	
+    		obj.setBeffdatecnf(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("betdate");
+		if(fldEl != null)
+		{	
+    		obj.setBetdate(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
+		}
+		fldEl = el.element("betdatecnf");
+		if(fldEl != null)
+		{	
+    		obj.setBetdatecnf(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("pdsUpdateMode");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setPdsUpdateMode(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("country");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setCountry(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("noFixedAbode");
+		if(fldEl != null)
+		{	
+    		obj.setNoFixedAbode(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("careHome");
+		if(fldEl != null)
+		{	
+    		obj.setCareHome(new Boolean(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -649,114 +946,249 @@ public class Address extends ims.domain.DomainObject implements java.io.Serializ
 	/**
 	equals:
 	*/
-	public boolean equals(Object obj)
-	{
-		if (null == obj) {
-			return false;
-		}
-		if (!(obj instanceof ims.core.generic.domain.objects.Address)) 
-		{
-			return false;
-		}
-		ims.core.generic.domain.objects.Address tmp = (ims.core.generic.domain.objects.Address)obj;
-		
-		if ((line1!= null && tmp.getLine1() != null) && !line1.equals(tmp.getLine1())) return false;
-		if ((line1!= null && tmp.getLine1() == null) || (line1== null && tmp.getLine1() != null)) return false;
-
-		if ((line2!= null && tmp.getLine2() != null) && !line2.equals(tmp.getLine2())) return false;
-		if ((line2!= null && tmp.getLine2() == null) || (line2== null && tmp.getLine2() != null)) return false;
-
-		if ((line3!= null && tmp.getLine3() != null) && !line3.equals(tmp.getLine3())) return false;
-		if ((line3!= null && tmp.getLine3() == null) || (line3== null && tmp.getLine3() != null)) return false;
-
-		if ((line4!= null && tmp.getLine4() != null) && !line4.equals(tmp.getLine4())) return false;
-		if ((line4!= null && tmp.getLine4() == null) || (line4== null && tmp.getLine4() != null)) return false;
-
-		if ((line5!= null && tmp.getLine5() != null) && !line5.equals(tmp.getLine5())) return false;
-		if ((line5!= null && tmp.getLine5() == null) || (line5== null && tmp.getLine5() != null)) return false;
-
-		if ((postCode!= null && tmp.getPostCode() != null) && !postCode.equals(tmp.getPostCode())) return false;
-		if ((postCode!= null && tmp.getPostCode() == null) || (postCode== null && tmp.getPostCode() != null)) return false;
-
-		if ((phone!= null && tmp.getPhone() != null) && !phone.equals(tmp.getPhone())) return false;
-		if ((phone!= null && tmp.getPhone() == null) || (phone== null && tmp.getPhone() != null)) return false;
-
-		if ((county!= null && tmp.getCounty() != null) && !county.equals(tmp.getCounty())) return false;
-		if ((county!= null && tmp.getCounty() == null) || (county== null && tmp.getCounty() != null)) return false;
-
-		if ((fax!= null && tmp.getFax() != null) && !fax.equals(tmp.getFax())) return false;
-		if ((fax!= null && tmp.getFax() == null) || (fax== null && tmp.getFax() != null)) return false;
-		
-		if ((updateDate!= null && tmp.getUpdateDate() != null) && !updateDate.equals(tmp.getUpdateDate())) return false;
-		if ((updateDate!= null && tmp.getUpdateDate() == null) || (updateDate== null && tmp.getUpdateDate() != null)) return false;
-		
-		if ((notificationDate!= null && tmp.getNotificationDate() != null) && !notificationDate.equals(tmp.getNotificationDate())) return false;
-		if ((notificationDate!= null && tmp.getNotificationDate() == null) || (notificationDate== null && tmp.getNotificationDate() != null)) return false;
-
-		if ((addressType!= null && tmp.getAddressType() != null) && !addressType.equals(tmp.getAddressType())) return false;
-		if ((addressType!= null && tmp.getAddressType() == null) || (addressType== null && tmp.getAddressType() != null)) return false;
-
+public boolean equals(Object obj)
+{
+	if (this == obj)
 		return true;
+	if (!super.equals(obj))
+		return false;
+	if (getClass() != obj.getClass())
+		return false;
+	Address other = (Address) obj;
+	if (addressType == null)
+	{
+		if (other.addressType != null)
+			return false;
 	}
-
-
+	else if (!addressType.equals(other.addressType))
+		return false;
+	if (areaOfResidence == null)
+	{
+		if (other.areaOfResidence != null)
+			return false;
+	}
+	else if (!areaOfResidence.equals(other.areaOfResidence))
+		return false;
+	if (beffdate == null)
+	{
+		if (other.beffdate != null)
+			return false;
+	}
+	else if (!beffdate.equals(other.beffdate))
+		return false;
+	if (beffdatecnf == null)
+	{
+		if (other.beffdatecnf != null)
+			return false;
+	}
+	else if (!beffdatecnf.equals(other.beffdatecnf))
+		return false;
+	if (betdate == null)
+	{
+		if (other.betdate != null)
+			return false;
+	}
+	else if (!betdate.equals(other.betdate))
+		return false;
+	if (betdatecnf == null)
+	{
+		if (other.betdatecnf != null)
+			return false;
+	}
+	else if (!betdatecnf.equals(other.betdatecnf))
+		return false;
+      if (country == null)
+  	{
+  		if (other.country != null)
+  			return false;
+  	}
+  	else if (!country.equals(other.country))
+  		return false;
+	if (country== null)
+	{
+		if (other.county != null)
+			return false;
+	}
+	else if (!county.equals(other.county))
+		return false;
+	if (description == null)
+	{
+		if (other.description != null)
+			return false;
+	}
+	if (pdsUpdateMode == null)
+	{
+		if (other.pdsUpdateMode != null)
+			return false;
+	}
+	else if (!pdsUpdateMode.equals(other.pdsUpdateMode))
+		return false;
+	else if (!description.equals(other.description))
+		return false;
+	if (fax == null)
+	{
+		if (other.fax != null)
+			return false;
+	}
+	else if (!fax.equals(other.fax))
+		return false;
+	if (line1 == null)
+	{
+		if (other.line1 != null)
+			return false;
+	}
+	else if (!line1.equals(other.line1))
+		return false;
+	if (line2 == null)
+	{
+		if (other.line2 != null)
+			return false;
+	}
+	else if (!line2.equals(other.line2))
+		return false;
+	if (line3 == null)
+	{
+		if (other.line3 != null)
+			return false;
+	}
+	else if (!line3.equals(other.line3))
+		return false;
+	if (line4 == null)
+	{
+		if (other.line4 != null)
+			return false;
+	}
+	else if (!line4.equals(other.line4))
+		return false;
+	if (line5 == null)
+	{
+		if (other.line5 != null)
+			return false;
+	}
+	else if (!line5.equals(other.line5))
+		return false;
+	if (notificationDate == null)
+	{
+		if (other.notificationDate != null)
+			return false;
+	}
+	else if (!notificationDate.equals(other.notificationDate))
+		return false;
+	if (objectidentifier == null)
+	{
+		if (other.objectidentifier != null)
+			return false;
+	}
+	else if (!objectidentifier.equals(other.objectidentifier))
+		return false;
+	if (otherphone == null)
+	{
+		if (other.otherphone != null)
+			return false;
+	}
+	else if (!otherphone.equals(other.otherphone))
+		return false;
+	if (pCT == null)
+	{
+		if (other.pCT != null)
+			return false;
+	}
+	else if (!pCT.equals(other.pCT))
+		return false;
+	if (pafkey == null)
+	{
+		if (other.pafkey != null)
+			return false;
+	}
+	else if (!pafkey.equals(other.pafkey))
+		return false;
+	if (phone == null)
+	{
+		if (other.phone != null)
+			return false;
+	}
+	else if (!phone.equals(other.phone))
+		return false;
+	if (postCode == null)
+	{
+		if (other.postCode != null)
+			return false;
+	}
+	else if (!postCode.equals(other.postCode))
+		return false;
+	if (updateDate == null)
+	{
+		if (other.updateDate != null)
+			return false;
+	}
+	else if (!updateDate.equals(other.updateDate))
+		return false;
+	return true;
+}
 
 	/**
 	hashCode:
 	*/
-	public int hashCode()
-	{
-		int hash = 0;
-
-		if (line1!= null) hash += line1.hashCode();
-		if (line2!= null) hash += line2.hashCode();
-		if (line3!= null) hash += line3.hashCode();
-		if (line4!= null) hash += line4.hashCode();
-		if (line5!= null) hash += line5.hashCode();
-		if (postCode!= null) hash += postCode.hashCode();
-		if (phone!= null) hash += phone.hashCode();
-		if (county!= null) hash += county.hashCode();
-		if (addressType!= null) hash += addressType.hashCode();
-		if (fax!= null) hash += fax.hashCode();
-		if (updateDate!= null) hash += updateDate.hashCode();
-		if (notificationDate!= null) hash += notificationDate.hashCode();
-		if (notificationDate!= null) hash += notificationDate.hashCode();
-
-
-		return hash;
-	}
-
-
-
+public int hashCode()
+{
+	final int prime = 31;
+	int result = super.hashCode();
+	result = prime * result + ((addressType == null) ? 0 : addressType.hashCode());
+	result = prime * result + ((areaOfResidence == null) ? 0 : areaOfResidence.hashCode());
+	result = prime * result + ((beffdate == null) ? 0 : beffdate.hashCode());
+	result = prime * result + ((beffdatecnf == null) ? 0 : beffdatecnf.hashCode());
+	result = prime * result + ((betdate == null) ? 0 : betdate.hashCode());
+	result = prime * result + ((betdatecnf == null) ? 0 : betdatecnf.hashCode());
+	result = prime * result + ((county == null) ? 0 : county.hashCode());
+	result = prime * result + ((country== null) ? 0 : country.hashCode());
+	result = prime * result + ((pdsUpdateMode== null) ? 0 : pdsUpdateMode.hashCode());
+	result = prime * result + ((description == null) ? 0 : description.hashCode());
+	result = prime * result + ((fax == null) ? 0 : fax.hashCode());
+	result = prime * result + ((line1 == null) ? 0 : line1.hashCode());
+	result = prime * result + ((line2 == null) ? 0 : line2.hashCode());
+	result = prime * result + ((line3 == null) ? 0 : line3.hashCode());
+	result = prime * result + ((line4 == null) ? 0 : line4.hashCode());
+	result = prime * result + ((line5 == null) ? 0 : line5.hashCode());
+	result = prime * result + ((notificationDate == null) ? 0 : notificationDate.hashCode());
+	result = prime * result + ((objectidentifier == null) ? 0 : objectidentifier.hashCode());
+	result = prime * result + ((otherphone == null) ? 0 : otherphone.hashCode());
+	result = prime * result + ((pCT == null) ? 0 : pCT.hashCode());
+	result = prime * result + ((pafkey == null) ? 0 : pafkey.hashCode());
+	result = prime * result + ((phone == null) ? 0 : phone.hashCode());
+	result = prime * result + ((postCode == null) ? 0 : postCode.hashCode());
+	result = prime * result + ((updateDate == null) ? 0 : updateDate.hashCode());
+	return result;
+}
 
 	/**
 	toString
 	*/
 public String toString()
-	{	
-		StringBuffer objStr = new StringBuffer();
-	
-		if (line1 != null)
-			objStr.append(line1 + "-");
-	      if (line2 != null)
-			objStr.append(line2 + "-");
-            if (line3 != null)
-			objStr.append(line3 + "-");
- 		if (line4 != null)
-			objStr.append(line4 + "-");
- 		if (line5 != null)
-			objStr.append(line5 + "-");
-            if (postCode != null)
-			objStr.append(postCode + "-");
-    		if (phone != null)
-			objStr.append(phone + "-");
-		if (county != null)
-			objStr.append(county.getText() + "-");
-		if (fax != null)
-			objStr.append(fax);
-		return objStr.toString();
-		
-	}
+{	
+	StringBuffer objStr = new StringBuffer();
+
+	if (line1 != null)
+		objStr.append(line1 + "-");
+	if (line2 != null)
+		objStr.append(line2 + "-");
+	if (line3 != null)
+		objStr.append(line3 + "-");
+	if (line4 != null)
+		objStr.append(line4 + "-");
+	if (line5 != null)
+		objStr.append(line5 + "-");
+	if (areaOfResidence != null)
+		objStr.append(areaOfResidence.getText() + "-");
+	if (postCode != null)
+		objStr.append(postCode + "-");
+	if (phone != null)
+		objStr.append(phone + "-");
+	if (county != null)
+		objStr.append(county.getText() + "-");
+	if (fax != null)
+		objStr.append(fax);
+	return objStr.toString();
+}
 
 
 	public static class FieldNames	
@@ -776,6 +1208,18 @@ public String toString()
 		public static final String AddressType = "addressType";
 		public static final String PCT = "pCT";
 		public static final String Otherphone = "otherphone";
+		public static final String AreaOfResidence = "areaOfResidence";
+		public static final String Pafkey = "pafkey";
+		public static final String Description = "description";
+		public static final String Objectidentifier = "objectidentifier";
+		public static final String Beffdate = "beffdate";
+		public static final String Beffdatecnf = "beffdatecnf";
+		public static final String Betdate = "betdate";
+		public static final String Betdatecnf = "betdatecnf";
+		public static final String PdsUpdateMode = "pdsUpdateMode";
+		public static final String Country = "country";
+		public static final String NoFixedAbode = "noFixedAbode";
+		public static final String CareHome = "careHome";
 	}
 }
 

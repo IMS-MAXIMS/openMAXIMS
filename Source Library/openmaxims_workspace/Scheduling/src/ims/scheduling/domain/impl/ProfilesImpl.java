@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -36,36 +41,48 @@ import ims.admin.vo.AppRoleShortVo;
 import ims.admin.vo.AppRoleShortVoCollection;
 import ims.admin.vo.AppUserShortVoCollection;
 import ims.admin.vo.AppUserVo;
-import ims.core.clinical.domain.objects.ProceduresPerformedByHCP;
+import ims.core.clinical.domain.objects.ServiceFunction;
+import ims.core.clinical.vo.ServiceFunctionRefVo;
 import ims.core.clinical.vo.ServiceRefVo;
 import ims.core.resource.people.vo.HcpRefVo;
 import ims.core.resource.people.vo.HcpRefVoCollection;
+import ims.core.resource.place.domain.objects.Location;
 import ims.core.resource.place.vo.LocationRefVo;
 import ims.core.vo.ActivityLiteVoCollection;
 import ims.core.vo.HcpFilter;
 import ims.core.vo.HcpLiteVoCollection;
 import ims.core.vo.LocShortVo;
+import ims.core.vo.LocShortVoCollection;
+import ims.core.vo.LocationLiteVo;
 import ims.core.vo.LocationLiteVoCollection;
 import ims.core.vo.LocationServiceVo;
 import ims.core.vo.LocationServiceVoCollection;
-import ims.core.vo.ProcedureLiteVo;
 import ims.core.vo.ProcedureLiteVoCollection;
+import ims.core.vo.ProcedureNameVoCollection;
+import ims.core.vo.ServiceFunctionLiteVo;
+import ims.core.vo.ServiceFunctionLiteVoCollection;
 import ims.core.vo.ServiceShortVo;
 import ims.core.vo.ServiceVoCollection;
 import ims.core.vo.domain.ActivityLiteVoAssembler;
+import ims.core.vo.domain.HcpLiteVoAssembler;
 import ims.core.vo.domain.LocationServiceVoAssembler;
 import ims.core.vo.domain.ProcedureLiteVoAssembler;
+import ims.core.vo.domain.ProcedureNameVoAssembler;
+import ims.core.vo.domain.ServiceFunctionLiteVoAssembler;
+import ims.core.vo.domain.ServiceVoAssembler;
 import ims.core.vo.lookups.ActivityType;
+import ims.core.vo.lookups.HcpDisType;
+import ims.core.vo.lookups.LocationType;
+import ims.core.vo.lookups.ServiceFunctionCollection;
 import ims.domain.DomainFactory;
+import ims.domain.DomainObject;
 import ims.domain.exceptions.DomainRuntimeException;
 import ims.domain.exceptions.ForeignKeyViolationException;
 import ims.domain.exceptions.StaleObjectException;
 import ims.domain.exceptions.UniqueKeyViolationException;
-import ims.domain.hibernate3.IMSCriteria;
 import ims.domain.impl.DomainImpl;
-import ims.framework.enumerations.SortOrder;
 import ims.framework.exceptions.CodingRuntimeException;
-import ims.scheduling.domain.DirectoryOfServiceAdmin;
+import ims.scheduling.domain.objects.DirectoryofService;
 import ims.scheduling.domain.objects.ProfileTemplate;
 import ims.scheduling.domain.objects.Profile_Slot;
 import ims.scheduling.domain.objects.Sch_Profile;
@@ -74,16 +91,19 @@ import ims.scheduling.domain.objects.Session_Slot;
 import ims.scheduling.helper.SlotGenerationUtils;
 import ims.scheduling.vo.DirectoryOfServiceVo;
 import ims.scheduling.vo.DirectoryOfServiceVoCollection;
+import ims.scheduling.vo.ProfileParentChildSlotRefVo;
 import ims.scheduling.vo.ProfileShortVo;
 import ims.scheduling.vo.ProfileShortVoCollection;
 import ims.scheduling.vo.ProfileTemplateVoCollection;
 import ims.scheduling.vo.Sch_ProfileGenericVo;
 import ims.scheduling.vo.Sch_ProfileRefVo;
 import ims.scheduling.vo.Sch_ProfileVo;
+import ims.scheduling.vo.domain.DirectoryOfServiceVoAssembler;
 import ims.scheduling.vo.domain.ProfileShortVoAssembler;
 import ims.scheduling.vo.domain.ProfileTemplateVoAssembler;
 import ims.scheduling.vo.domain.Sch_ProfileGenericVoAssembler;
 import ims.scheduling.vo.domain.Sch_ProfileVoAssembler;
+import ims.scheduling.vo.lookups.SchProfileType;
 import ims.scheduling.vo.lookups.Sched_Profile_Type;
 import ims.vo.interfaces.IMos;
 
@@ -181,7 +201,7 @@ public class ProfilesImpl extends DomainImpl implements ims.scheduling.domain.Pr
 	 * </p>
 	 * @throws StaleObjectException
 	 */
-	private void rippleOutToSessions(DomainFactory factory, Sch_Profile domProfile) throws StaleObjectException
+	private void rippleOutToSessions(DomainFactory factory, Sch_Profile domProfile) throws StaleObjectException //WDEV-21137
 	{
 		// List all sessions with a session date greater than today for the profile
 		List sessList = factory.find(" from Sch_Session s where s.sessionDate > :sessDate and s.sch_Profile.id = :profile", new String[]{"sessDate", "profile"}, new Object[]{new java.util.Date(), domProfile.getId()});
@@ -206,7 +226,6 @@ public class ProfilesImpl extends DomainImpl implements ims.scheduling.domain.Pr
 			session.setMaxNoAppts(domProfile.getMaxNoAppts());
 			session.setDirectoryofServices(SlotGenerationUtils.copyDirectoryOfServices(domProfile.getDirectoryOfServices()));
 			session.setSessionSlots(updateSlots(factory, session, domProfile.getProfileSlots()));
-			session.setBookingRights(SlotGenerationUtils.copyBookingRights(domProfile.getBookingRights()));
 			session.setListOwners(SlotGenerationUtils.copyListOwners(domProfile.getListOwners()));
 			session.setExclusionTimes(SlotGenerationUtils.copyExclusionTimes(domProfile.getExclusionTimes()));
 		}
@@ -354,10 +373,102 @@ public class ProfilesImpl extends DomainImpl implements ims.scheduling.domain.Pr
 		return impl.listLocationService(locShort);
 	}
 
-	public DirectoryOfServiceVoCollection listDOS(DirectoryOfServiceVo directoryOfService) 
+	public DirectoryOfServiceVoCollection listDOS(DirectoryOfServiceVo directoryOfService,ServiceFunctionCollection serviceFuntions) 	//wdev-20262
 	{
-		DirectoryOfServiceAdmin impl = (DirectoryOfServiceAdmin) getDomainImpl(DirectoryOfServiceAdminImpl.class);
-		return impl.listDirectoryOfService(directoryOfService);
+		//DirectoryOfServiceAdmin impl = (DirectoryOfServiceAdmin) getDomainImpl(DirectoryOfServiceAdminImpl.class);
+		//return impl.listDirectoryOfService(directoryOfService);
+		
+		//wdev-20262
+		DomainFactory factory = getDomainFactory();
+
+		if(directoryOfService == null) //no filter return all
+			return DirectoryOfServiceVoAssembler.createDirectoryOfServiceVoCollectionFromDirectoryofService(factory.listDomainObjects(DirectoryofService.class));
+
+		ArrayList<String> markers = new ArrayList<String>();
+		ArrayList<Object> values = new ArrayList<Object>();
+		StringBuffer condStr = new StringBuffer();
+		//String hql = " from DirectoryofService dos "; 
+		
+		String hql = " select dos from DirectoryofService as dos left join dos.functions as s1_1 left join s1_1.function as l1_1 ";
+		
+		String andStr = " ";
+		
+	
+		if (directoryOfService.getDoSName() != null)
+		{
+			condStr.append(andStr + " upper(dos.doSName) like :dosName" );
+			markers.add("dosName");
+			//WDEV-20489
+//			values.add("%" + directoryOfService.getDoSName().toUpperCase() + "%");
+			if (directoryOfService.getDoSName().toUpperCase().length() > 300)
+			{
+				values.add(directoryOfService.getDoSName().toUpperCase().substring(0, 300));
+			}
+			else
+			{
+				values.add("%" + directoryOfService.getDoSName().toUpperCase() + "%");
+			} //WDEV-20489
+			andStr = " and ";
+		}
+		if (directoryOfService.getService() != null)
+		{
+			condStr.append(andStr + " dos.service.id = :serviceId");
+			markers.add("serviceId");
+			values.add( directoryOfService.getService().getID_Service());		
+			andStr = " and ";
+		}
+		if (directoryOfService.getLocation() != null)
+		{
+			//http://jira/browse/WDEV-21222 
+			OrganisationAndLocation impl = (OrganisationAndLocation)getDomainImpl(OrganisationAndLocationImpl.class);
+			String locationsIds=impl.getChildLocationsIdsForLocation(directoryOfService.getLocation().getBoId(), null, Boolean.TRUE, null, null, Boolean.TRUE);
+			condStr.append(andStr + " dos.location.id IN (");
+			condStr.append(locationsIds);
+			condStr.append(") ");
+			
+			
+			
+			//condStr.append(andStr + " dos.location.id = :locId");
+			//markers.add("locId");
+			//values.add( directoryOfService.getLocation().getID_Location());		
+			andStr = " and ";
+		}
+		if (directoryOfService.getIsActiveIsNotNull())
+		{
+			condStr.append(andStr + " dos.isActive = :isActive" );
+			markers.add("isActive");
+			values.add(directoryOfService.getIsActive());		
+			andStr = " and ";
+		}
+		if( serviceFuntions != null && serviceFuntions.size() > 0)	//wdev-20262
+		{
+			String funcIds = new String();
+			for(int g = 0;g < serviceFuntions.size();g++)
+			{
+				if( g > 0)
+					funcIds += ",";
+					
+				funcIds += serviceFuntions.get(g).getId();
+			}
+			
+			condStr.append(andStr + " l1_1.id IN (");
+			
+			condStr.append(funcIds);
+			
+			condStr.append(") ");
+		}
+		
+		if(andStr.equals(" and "))
+			hql += " where ";
+		
+		hql += condStr.toString();
+		
+		hql += " order by upper(dos.doSName) asc ";
+
+		List<?> dosList = factory.find(hql,markers,values, 500);
+		
+		return DirectoryOfServiceVoAssembler.createDirectoryOfServiceVoCollectionFromDirectoryofService(dosList);
+		//----------
 	}
 
 	public HcpLiteVoCollection listHcpLite(HcpFilter filter) 
@@ -368,8 +479,14 @@ public class ProfilesImpl extends DomainImpl implements ims.scheduling.domain.Pr
 
 	public ServiceVoCollection listServices() 
 	{
-		LocationService impl = (LocationService) getDomainImpl(LocationServiceImpl.class);
-		return impl.listService(Boolean.TRUE);
+		/*LocationService impl = (LocationService) getDomainImpl(LocationServiceImpl.class);
+		return impl.listService(Boolean.TRUE);*/
+		
+		DomainFactory factory = getDomainFactory();
+		
+		return ServiceVoAssembler.createServiceVoCollectionFromService(factory.find("from Service service where service.isActive = 1 and service.canBeScheduled = 1"));	//wdev-20074
+
+		
 	}
 	
 	public Sch_ProfileVo getProfileDetails(ProfileShortVo profile)
@@ -384,6 +501,9 @@ public class ProfilesImpl extends DomainImpl implements ims.scheduling.domain.Pr
 	
 	public Sch_ProfileGenericVo getGenericProfileDetails(ProfileShortVo profile)
 	{
+		if (profile == null || profile.getID_Sch_Profile() == null)
+			return null;
+		
 		DomainFactory factory = getDomainFactory();
 		
 		Sch_Profile domProfile = (Sch_Profile)factory.getDomainObject(Sch_Profile.class, profile.getID_Sch_Profile());
@@ -417,49 +537,64 @@ public class ProfilesImpl extends DomainImpl implements ims.scheduling.domain.Pr
 	}
 
 	//list all procedures performed by Hcp list provided 
-	public ProcedureLiteVoCollection listProcedureByHcpAndName(HcpRefVoCollection collHcp, String name) 
+	public ProcedureNameVoCollection listProcedureByHcpAndNameLite(HcpRefVoCollection collHcp, String name) 
 	{
-		DomainFactory factory=getDomainFactory();
-		IMSCriteria imsc=new IMSCriteria(ProceduresPerformedByHCP.class,factory);
-		ProcedureLiteVo aux=new ProcedureLiteVo();
-		if (collHcp!=null)
-			imsc.in("performingHCP.id", getIdArray(collHcp));
+		//WDEV-19993
+		DomainFactory factory = getDomainFactory();
+		ArrayList markers = new ArrayList();
+		ArrayList values = new ArrayList();
 		
-		if(name != null)
-		{
-			imsc.join("this.procedures", "proc");
-			imsc.like("proc.procedureName", name + "%");			
-		}
-	
-		List proceduresPerformedByHCP = imsc.find();
-		ProcedureLiteVoCollection voCollProcedureLite =new ProcedureLiteVoCollection();
-		Iterator it = proceduresPerformedByHCP.iterator();
-		while(it.hasNext())
-		{
-			ProceduresPerformedByHCP doProcHcp = (ProceduresPerformedByHCP) it.next();
-			
-			ProcedureLiteVoCollection voCollProc = ProcedureLiteVoAssembler.createProcedureLiteVoCollectionFromProcedure(doProcHcp.getProcedures());
-			for(ProcedureLiteVo voProc : voCollProc)
-				voCollProcedureLite.add(voProc);
-		}
-
-		return voCollProcedureLite;
+		String hql = "select distinct procedure from ProceduresPerformedByHCP as hcpProcedures left join hcpProcedures.performingHCP as perfHCP left join hcpProcedures.procedures as procedure " +
+				" where perfHCP.id in ( " + getHcpIds(collHcp) + " ) and upper(procedure.procedureName) like :procName and procedure.isActive = :procedureActive order by procedure.procedureName asc";
+		
+		markers.add("procName");
+		values.add("%" + name.toUpperCase() + "%");
+		
+		markers.add("procedureActive");
+		values.add(Boolean.TRUE);
+		
+		ProcedureNameVoCollection procedures = ProcedureNameVoAssembler.createProcedureNameVoCollectionFromProcedure(factory.find(hql, markers, values));
+		return procedures;
 	}
+	
+	@Override
+	public ProcedureLiteVoCollection listProcedureByHcpAndName(HcpRefVoCollection hcp, String name) 
+	{
+		DomainFactory factory = getDomainFactory();
+		ArrayList markers = new ArrayList();
+		ArrayList values = new ArrayList();
+		
+		String hql = "select distinct procedure from ProceduresPerformedByHCP as hcpProcedures left join hcpProcedures.performingHCP as perfHCP left join hcpProcedures.procedures as procedure " +
+				" where perfHCP.id in ( " + getHcpIds(hcp) + " ) and upper(procedure.procedureName) like :procName and procedure.isActive = :procedureActive order by procedure.procedureName asc";
+		
+		markers.add("procName");
+		values.add("%" + name.toUpperCase() + "%");
+		
+		markers.add("procedureActive");
+		values.add(Boolean.TRUE);
+		
+		ProcedureLiteVoCollection procedures = ProcedureLiteVoAssembler.createProcedureLiteVoCollectionFromProcedure(factory.find(hql, markers, values));
+		return procedures;
+	}
+	
 
-	private Object[] getIdArray(HcpRefVoCollection collHcp)
+	private String getHcpIds(HcpRefVoCollection collHcp)
 	{
 		if (collHcp == null)
-			throw new CodingRuntimeException("collHcp is null or id not provided in method getIdArray");
+			return "";
 		
-		Object[] ids = new Object[collHcp.size()];
-		int i=0;
+		ArrayList<Integer> ids = new  ArrayList<Integer>();
+		
 		for(HcpRefVo hcp : collHcp)
 		{
-			ids[i] = hcp.getID_Hcp();
-			i++;
+			ids.add(hcp.getID_Hcp());
 		}
-			
-		return ids;
+		
+		String idsString = ids.toString();
+		
+		idsString = idsString.substring(1, idsString.length() - 1);
+		
+		return idsString;
 	}
 
 	public LocationLiteVoCollection listActiveHospitalsLite()
@@ -496,14 +631,14 @@ public class ProfilesImpl extends DomainImpl implements ims.scheduling.domain.Pr
 		return ActivityLiteVoAssembler.createActivityLiteVoCollectionFromActivity(activities);
 	}
 
-	public ProfileShortVoCollection listProfiles(ServiceShortVo service, DirectoryOfServiceVo directoryOfService, LocationRefVo hosp, Boolean activeOnly, Boolean isOutpatient, Boolean isTheatre, String name, IMos listOwner)
+	public ProfileShortVoCollection listProfiles(ServiceShortVo service, DirectoryOfServiceVo directoryOfService, LocationRefVo hosp, Boolean activeOnly, Boolean isOutpatient, Boolean isTheatre, String name, IMos listOwner,  Boolean isWardAttendance)	//wdev-20074
 	{
 		DomainFactory factory = getDomainFactory();
 		
 		String hql = " Select profile from Sch_Profile profile ";
 		
-		ArrayList markers = new ArrayList();
-		ArrayList values = new ArrayList();
+		ArrayList<String> markers = new ArrayList<String>();
+		ArrayList<Object> values = new ArrayList<Object>();
 		String andStr = " where ";
 		StringBuffer condStr = new StringBuffer();
 		
@@ -536,9 +671,9 @@ public class ProfilesImpl extends DomainImpl implements ims.scheduling.domain.Pr
 		}
 		if(hosp != null)
 		{
-			condStr.append(andStr + "( profile.schLocation.id = :idHosp or profile.schLocation.parentLocation.id = :idHosp ) ");
-			markers.add("idHosp");
-			values.add(hosp.getID_Location());	
+			String ids = getLocationsIdsForHospital(hosp);
+
+			condStr.append(andStr + " profile.schLocation.id in ( " + ids + " ) ");
 			andStr = " and ";
 		}
 		
@@ -553,24 +688,69 @@ public class ProfilesImpl extends DomainImpl implements ims.scheduling.domain.Pr
 		{
 			condStr.append(andStr + " profile.name like :name ");
 			markers.add("name");
-			values.add("%" + name + "%");	
+			//WDEV-20489
+//			values.add("%" + name + "%");
+			if (name.length() > 255)
+			{
+				values.add(name.substring(0, 255));
+			}
+			else
+			{
+				values.add("%" + name + "%");
+			} //WDEV-20489
 			andStr = " and ";
 		}
 		
 		//WDEV-13362 values can be null when called from other forms (eg. SessionAdmin)
-		if(isOutpatient != null && isTheatre != null)
+		if(isOutpatient != null && isTheatre != null &&  isWardAttendance != null)	//wdev-20074
 		{
-			if(!isOutpatient || !isTheatre)
+			if(!isOutpatient || !isTheatre || !isWardAttendance)
 			{
+				
 				if(isOutpatient)
 				{
-					condStr.append(andStr + " (profile.isTheatreProfile is null or profile.isTheatreProfile = 0) ");
-					andStr = " and ";
+					condStr.append(andStr + " ( profile.profileType.id = :OUTPATIENT_PROFILE ");
+					markers.add("OUTPATIENT_PROFILE");
+					values.add(SchProfileType.OUTPATIENT.getID());
+					if( isTheatre == false && isWardAttendance == false)
+						condStr.append(" )");
+					
+					if( isTheatre || isWardAttendance)		//wdev-20074
+						andStr = " or ";
+					else
+						andStr = " and ";
 				}
-				else if(isTheatre)
+				if(isTheatre)
 				{
-					condStr.append(andStr + " profile.isTheatreProfile = 1 ");
+					if( isOutpatient)
+						condStr.append(andStr + " profile.profileType.id = :THEATRE_PROFILE ");
+					else
+						condStr.append(andStr + " ( profile.profileType.id = :THEATRE_PROFILE ");
+					
+					markers.add("THEATRE_PROFILE");
+					values.add(SchProfileType.THEATRE.getID());
+					
+					if( isWardAttendance == false)
+						condStr.append(" )");
+					
+					if( isWardAttendance)		//wdev-20074
+						andStr = " or ";
+					else
+						andStr = " and ";
+					
+					
+				}
+				if(isWardAttendance)
+				{
+					condStr.append(andStr + " profile.profileType.id = :WARDATTENDANCE_PROFILE ");
+					markers.add("WARDATTENDANCE_PROFILE");
+					values.add(SchProfileType.WARD_ATTENDANCE.getID());
+					if( isTheatre || isOutpatient )
+						condStr.append(" )");
+					
+					
 					andStr = " and ";
+					
 				}
 			}
 		}
@@ -578,8 +758,270 @@ public class ProfilesImpl extends DomainImpl implements ims.scheduling.domain.Pr
 		hql += joinDos + joinListOwner + condStr.toString();	
 		hql += " order by upper(profile.name) asc ";
 
-		List profiles =  factory.find(hql, markers, values, 2000);
-		return ProfileShortVoAssembler.createProfileShortVoCollectionFromSch_Profile(profiles);
+		return ProfileShortVoAssembler.createProfileShortVoCollectionFromSch_Profile(factory.find(hql, markers, values, 2000));
+	}
+
+	private String getLocationsIdsForHospital(LocationRefVo hospital)
+	{
+		//http://jira/browse/WDEV-21222 
+		OrganisationAndLocation impl =(OrganisationAndLocation)getDomainImpl(OrganisationAndLocationImpl.class);
+		return impl.getChildLocationsIdsForLocation(hospital.getBoId(), null, Boolean.TRUE,Boolean.FALSE);
+	}
+		
+	//WDEV-19953
+	public Boolean isParentChildSlotUsed(ProfileParentChildSlotRefVo parentChildSlotRef)
+	{
+		if (parentChildSlotRef == null || parentChildSlotRef.getID_ProfileParentChildSlot() == null)
+		{
+			throw new CodingRuntimeException("Cannot get ProfileParentChildSlotRefVo on null Id for parentChildSlotRef ");
+		}
+
+		DomainFactory factory = getDomainFactory();
+
+		StringBuffer hql = new StringBuffer();
+		hql.append("select count(spcs.id) from SessionParentChildSlot as spcs left join spcs.profileSlot as ps where ps.id = :ParentChildSlotID ");
+
+		Long  count = factory.countWithHQL(hql.toString(), new String[] { "ParentChildSlotID" }, new Object[] { parentChildSlotRef.getID_ProfileParentChildSlot()});
+
+		if (count>0)
+			return true;
+		
+		return false;
+	}
+	
+
+	//wdev-20074
+	public ServiceFunctionLiteVoCollection listServiceFunctionByService(ServiceRefVo service)
+	{
+		if(service == null || service.getID_Service() == null)
+			throw new CodingRuntimeException("service parameter is null or id not provided in method listServiceFunctionByService");
+		
+		DomainFactory factory = getDomainFactory();
+		List servFuncs = factory.find("from ServiceFunction as servFunc where servFunc.service.id = :idService and servFunc.isActive = 1",new String[]{"idService"}, new Object[]{service.getID_Service()});
+		return ServiceFunctionLiteVoAssembler.createServiceFunctionLiteVoCollectionFromServiceFunction(servFuncs);
+	}
+
+	//wdev-20074
+	public ActivityLiteVoCollection listActivityByService(ServiceRefVo serviceRef, Boolean isFlexible)
+	{
+		
+		if( serviceRef == null )
+			return null;
+		
+		DomainFactory factory = getDomainFactory();
+		String hql = null;
+		if( Boolean.TRUE.equals(isFlexible))
+		{
+			hql = "select s1_1.activity from ServiceActivity as s1_1 left join s1_1.service as s2_1 left join s1_1.activity as a1_1 where (s1_1.isActive = 1 and s2_1.id = :serviceId  and s1_1.isFlexible = 1 and a1_1.isActive = 1)";   //wdev-20262
+		}
+		else
+		{
+			hql = "select s1_1.activity from ServiceActivity as s1_1 left join s1_1.service as s2_1 left join s1_1.activity as a1_1 where (s1_1.isActive = 1 and s2_1.id = :serviceId  and s1_1.isFlexible = 0 and a1_1.isActive = 1)";		//wdev-20262
+		}
+		List lst = factory.find(hql, new String[]{"serviceId"}, new Object[]{new Integer(serviceRef.getID_Service())});
+		
+		return (ActivityLiteVoAssembler.createActivityLiteVoCollectionFromActivity(lst));
+	}
+
+	//wdev-20233
+	public LocShortVoCollection getLocationByParent(LocationRefVo locRef, String value, LocationType type1)
+	{
+		//http://jira/browse/WDEV-21222
+		OrganisationAndLocation impl = (OrganisationAndLocation)getDomainImpl(OrganisationAndLocationImpl.class);
+		return impl.getLocationByParent(locRef,value,type1);
+	}
+
+	//wdve-20074
+	public LocShortVoCollection getCaseNoteFolderLocationByParent(LocationRefVo locRef, String value, LocationType type)
+	{
+		OrganisationAndLocation impl = (OrganisationAndLocation) getDomainImpl(OrganisationAndLocationImpl.class);
+		return impl.getCaseNoteFolderLocationByParent(locRef, value, type).sort(true);
+//		List locations = listLocationsByParentLocation(type,locRef,Boolean.TRUE,null,null,value,true);
+//		return LocShortVoAssembler.createLocShortVoCollectionFromLocation(locations);
+	}
+
+	//wdev-20074
+	public HcpLiteVoCollection listHcpLiteBySerbiceFunction(HcpFilter filter, ServiceRefVo service, ServiceFunctionCollection functions)
+	{
+		
+		List l = this.listHCPList(filter, null,service,functions, -1); //WDEV-11656
+		
+		HcpLiteVoCollection result = HcpLiteVoAssembler.createHcpLiteVoCollectionFromHcp(l);
+		
+		return result;
+	}
+	private List listHCPList(HcpFilter filter, String subClass, ServiceRefVo service, ServiceFunctionCollection functions,  int max) //WDEV-11656
+	{
+		DomainFactory factory = getDomainFactory();
+		String hql;
+		ArrayList markers = new ArrayList();
+		ArrayList values = new ArrayList();
+
+		if (filter == null) filter = new HcpFilter();
+		
+		
+		
+		//hql = " from Hcp h ";
+		hql = " select h from Hcp as h left join h.serviceFunction as h2_1 left join h2_1.service as s1_1 left join h2_1.function as l1_1 "; 
+		StringBuffer condStr = new StringBuffer();
+		String andStr = " ";
+		if (filter.getQueryName() != null)
+		{
+			if (filter.getQueryName().getSurname() != null && filter.getQueryName().getSurname().length() > 0)
+			{
+				condStr.append(" h.mos.name.upperSurname like :hcpSname");
+				markers.add("hcpSname");
+				values.add(filter.getQueryName().getSurname().toUpperCase().replace("_", "") + "%");
+				andStr = " and ";
+			}
+			if (filter.getQueryName().getForename() != null && filter.getQueryName().getForename().length() > 0)
+			{
+				condStr.append(andStr + " h.mos.name.upperForename like :hcpFname");
+				markers.add("hcpFname");
+				values.add(filter.getQueryName().getForename().toUpperCase().replace("_", "") + "%");
+				andStr = " and ";
+			}
+		}
+		
+		if (subClass != null)
+		{
+			condStr.append(andStr + " h.class = " + subClass);
+			andStr = " and ";																	
+			
+		}
+		else 
+		{
+			if (filter.getHcpType() != null)
+			{
+				//If the hcpType = HcpDisType.OTHER we must allow for that field being null or it's parent == OTHER
+				if (filter.getHcpType().equals(HcpDisType.OTHER))
+				{
+					condStr.append(andStr + " ( h.hcpType is null or h.hcpType.parent =  :hcpType) ");														
+				}
+				else
+				{
+					condStr.append(andStr + " h.hcpType = :hcpType");									
+				}
+				markers.add("hcpType");
+				values.add(getDomLookup(filter.getHcpType()));
+				andStr = " and ";		
+			}
+		}
+		
+		
+
+		if( service != null )
+		{
+			condStr.append(andStr + " s1_1.id =:service");
+			markers.add("service");
+			values.add(service.getID_Service());
+			andStr = " and ";
+		}
+		
+		if( functions != null && functions.size() > 0)
+		{
+			String funcIds = new String();
+			for(int g = 0;g < functions.size();g++)
+			{
+				if( g > 0)
+					funcIds += ",";
+					
+				funcIds += functions.get(g).getId();
+			}
+			
+			condStr.append(andStr + " l1_1.id IN (");
+			
+			condStr.append(funcIds);
+			
+			condStr.append(") ");
+			
+						
+			
+		}
+		condStr.append(andStr + " h.isActive =:active");
+		markers.add("active");
+		values.add(Boolean.TRUE);
+		andStr = " and ";
+		
+		condStr.append(andStr + " h2_1.isActive =:serviceactive");
+		markers.add("serviceactive");
+		values.add(Boolean.TRUE);
+		
+		
+		hql += " where ";
+		
+		
+		hql += condStr.toString();
+		//-----------------------wdev-8356
+		hql += " order by h.mos.name.upperSurname,h.mos.name.upperForename";
+		//-----------------------
+		
+		//WDEV-11656
+		if(max != -1)
+			return factory.find(hql, markers, values, max);		
+		else
+			return factory.find(hql, markers, values);
+	}
+
+	//wdev-20074
+	public ServiceFunctionLiteVo getServiceFunction(ServiceFunctionRefVo serviceFunctionRef)
+	{
+		DomainFactory factory = getDomainFactory();
+		
+		ServiceFunction domServiceFunction = (ServiceFunction)factory.getDomainObject(ServiceFunction.class, serviceFunctionRef.getID_ServiceFunction());
+		ServiceFunctionLiteVo voServiceFunct = ServiceFunctionLiteVoAssembler.create(domServiceFunction);
+		
+		return voServiceFunct;
+	}
+
+	@Override
+	public Integer countSessionsForProfile(Sch_ProfileRefVo profile) 
+	{
+		if (profile == null)
+			throw new CodingRuntimeException("profile cannot be null in method countSessionsForProfile");
+		
+		String hql = "select count (sess.id) from Sch_Session as sess left join sess.sch_Profile as prof where prof.id = " +  profile.getID_Sch_Profile();
+		List ret = getDomainFactory().find(hql);
+		
+		if (ret != null && ret.get(0) != null)
+		{
+			if (ret.get(0) instanceof Integer)
+			{
+				Integer iCount = (Integer) ret.get(0);
+				return iCount;
+			}
+			else if (ret.get(0) instanceof Long)
+			{
+				Long lCount = (Long) ret.get(0);
+				return lCount.intValue();
+			}
+		}
+		return 0;
+	}
+	//--------------
+
+	//WDEV-21898
+	public Boolean onTheSameHospital(LocationRefVo profileHospital, LocationRefVo dosLocation)
+	{
+		if (profileHospital == null || dosLocation == null)
+			return false;
+		
+		if (profileHospital.getID_Location().equals(dosLocation.getID_Location()))
+			return true;
+		
+		Location domDOSLocation = (Location) getDomainFactory().getDomainObject(Location.class, dosLocation.getID_Location());
+		
+		Location parentLoc = domDOSLocation.getParentLocation();
+		
+		while (parentLoc != null)
+		{
+			if (parentLoc.getId().equals(profileHospital.getID_Location()))
+				return true;
+			
+			parentLoc = parentLoc.getParentLocation();
+		}
+		
+		return false;
 	}
 }
 

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -111,7 +116,7 @@ public class WebServicesIntegrationImpl extends BaseWebServicesIntegrationImpl
 			params.add(securityTokenParamVo);
 		}  
 						
-		securityTokenVo.setParams(params);				
+		securityTokenVo.setParams(params);		
 		
 		DomainFactory factory = getDomainFactory();
 		SecurityToken securityTokenDom = SecurityTokenVoAssembler.extractSecurityToken(factory, securityTokenVo);		
@@ -261,7 +266,7 @@ public class WebServicesIntegrationImpl extends BaseWebServicesIntegrationImpl
 		
 		SessionData sessData = getSessionData();
 		HashMap<String, String> parameters = new HashMap<String, String>();
-		String securityToken = null;
+		String securityToken = null;		
 		if (sessData.securityTokenParameters.get() != null && sessData.securityTokenParameters.get().size() > 0)
 		{
 			sessData.securityTokenPatientIdentifierType.set(null);
@@ -299,6 +304,30 @@ public class WebServicesIntegrationImpl extends BaseWebServicesIntegrationImpl
 		if (sessData.openForm.get() != null)
 		{
 			parameters.put("startupFormId", Integer.valueOf(sessData.openForm.get()).toString());
+		}
+		
+		//Set Appointment Consultant Code
+		if (sessData.appointmentConsultantCode.get() != null)
+		{
+			parameters.put("appointmentConsultantCode", sessData.appointmentConsultantCode.get());
+		}
+		
+		//Set Appointment Location Code
+		if (sessData.appointmentLocationCode.get() != null)
+		{
+			parameters.put("appointmentLocationCode", sessData.appointmentLocationCode.get());
+		}
+		
+		//Set Appointment Start Date
+		if (sessData.appointmentStartDateTime.get() != null)
+		{
+			parameters.put("appointmentStartDateTime", sessData.appointmentStartDateTime.get());
+		}
+
+		//Set Appointment End Date
+		if (sessData.appointmentEndDateTime.get() != null)
+		{
+			parameters.put("appointmentEndDateTime", sessData.appointmentEndDateTime.get());
 		}
 		
 		sessData.securityTokenParameters.set(parameters);		
@@ -384,27 +413,30 @@ public class WebServicesIntegrationImpl extends BaseWebServicesIntegrationImpl
 		return securityToken;
 	}
 	
+	//wdev-17883 - FWUI - 1818
 	private Patient getPatient(PatientShort patientShort) throws Exception 
-	{						
-		DomainSession domainSession = DomainSession.getSession();		
-		DomainImplFlyweightFactory factory = DomainImplFlyweightFactory.getInstance();
+	{		
 		
-		Object instance = factory.create(Class.forName("ims.core.domain.impl.DemographicsImpl"), domainSession);		
-		Class<?> demographicsImpl = instance.getClass();
-		
-		final Method getPatientMethod = demographicsImpl.getDeclaredMethod("getPatient", PatientShort.class);	
-		AccessController.doPrivileged(new PrivilegedAction<Object>() 
-		{
-			public Object run() 
-			{
-				getPatientMethod.setAccessible(true);
-		        return null;
-		    }
-		});
+        DomainSession domainSession = DomainSession.getSession();                               
+        DomainImplFlyweightFactory factory = DomainImplFlyweightFactory.getInstance();
+                        
+        Object instance = factory.create(Class.forName("ims.core.domain.impl.DemographicsImpl"), domainSession);                                
+        Class<?> demographicsImpl = instance.getClass();
+                        
+        final Method getPatientMethod = demographicsImpl.getDeclaredMethod("getPatient", PatientShort.class, Boolean.class); 
+        AccessController.doPrivileged(new PrivilegedAction<Object>() 
+        {
+            public Object run() 
+            {
+                            getPatientMethod.setAccessible(true);
+                   return null;
+            }
+        });
 
-		Object patient = getPatientMethod.invoke( instance, new Object[] { patientShort } );	  
-		
-		return (Patient) patient;
+        Object patient = getPatientMethod.invoke( instance, new Object[] { patientShort , Boolean.valueOf(false)} );                  
+                        
+        return (Patient) patient;
+
      }
 
 	public byte[] buildReport(String templateId, String imsId,
@@ -784,5 +816,99 @@ public class WebServicesIntegrationImpl extends BaseWebServicesIntegrationImpl
 		DomainFactory factory = getDomainFactory();
 		List list = factory.find(hql.toString(), markers, values);
 		return ReportListVoAssembler.createReportListVoCollectionFromReportBo(list).sort();
+	}
+
+	public void setAppointmentConsultantCode(String sessionToken, String code)
+	{
+		SessionData sessData = getSessionData();
+		if(sessData == null) {
+			createSOAPFault(SystemLogLevel.ERROR, "setAppointmentConsultantCode(): 'sessData' can't be null");
+		}
+		
+		if (ConfigFlag.FW.DEBUG_WEB_SERVICES.getValue()) {
+			String message = "Call setAppointmentConsultantCode() with parameters: ConsultantCode: " +  code;
+			createSystemLogEntry(SystemLogType.WEB_SERVICE, SystemLogLevel.INFORMATION, sessData.securityTokenLaunchUsername.get(), "", message);
+		}
+		
+		if (code == null || 
+				code.trim().length() == 0) {		
+					createSOAPFault(SystemLogLevel.ERROR, 
+							"setAppointmentConsultantCode(): 'ConsultantCode' can't be null");
+		}
+		
+		sessData.appointmentConsultantCode.set(code);		
+	}
+
+	public void setAppointmentLocationCode(String sessionToken, String code)
+	{
+		SessionData sessData = getSessionData();
+		if(sessData == null) {
+			createSOAPFault(SystemLogLevel.ERROR, "setAppointmentStartDateTime(): 'sessData' can't be null");
+		}
+		
+		if (ConfigFlag.FW.DEBUG_WEB_SERVICES.getValue()) {
+			String message = "Call setAppointmentLocationCode() with parameters: LocationCode: " +  code;
+			createSystemLogEntry(SystemLogType.WEB_SERVICE, SystemLogLevel.INFORMATION, sessData.securityTokenLaunchUsername.get(), "", message);
+		}
+		
+		if (code == null || 
+				code.trim().length() == 0) {		
+					createSOAPFault(SystemLogLevel.ERROR, 
+							"setAppointmentLocationCode(): 'LocationCode' can't be null");
+		}
+			
+		sessData.appointmentLocationCode.set(code);
+	}
+	
+	public void setAppointmentStartDateTime(String sessionToken, String startDate)
+	{
+		SessionData sessData = getSessionData();
+		if(sessData == null) {
+			createSOAPFault(SystemLogLevel.ERROR, "setAppointmentStartDateTime(): 'sessData' can't be null");
+		}
+		
+		if (ConfigFlag.FW.DEBUG_WEB_SERVICES.getValue()) {
+			String message = "Call setAppointmentStartDateTime() with parameters: endDatte: " +  startDate;
+			createSystemLogEntry(SystemLogType.WEB_SERVICE, SystemLogLevel.INFORMATION, sessData.securityTokenLaunchUsername.get(), "", message);
+		}
+
+		if (startDate == null || 
+				startDate.trim().length() == 0) {		
+					createSOAPFault(SystemLogLevel.ERROR, 
+							"setAppointmentStartDateTime(): 'AppointmentStartDateTime' can't be null");
+		}
+		
+		sessData.appointmentStartDateTime.set(startDate);
+	}
+
+	public void setAppointmentEndDateTime(String sessionToken, String endDate)
+	{	
+		SessionData sessData = getSessionData();
+		if(sessData == null) {
+			createSOAPFault(SystemLogLevel.ERROR, "setAppointmentEndDateTime(): 'sessData' can't be null");
+		}
+		
+		if (ConfigFlag.FW.DEBUG_WEB_SERVICES.getValue()) {
+			String message = "Call setAppointmentEndDateTime() with parameters: endDatte: " +  endDate;
+			createSystemLogEntry(SystemLogType.WEB_SERVICE, SystemLogLevel.INFORMATION, sessData.securityTokenLaunchUsername.get(), "", message);
+		}
+		
+		if (endDate == null || 
+				endDate.trim().length() == 0) {		
+					createSOAPFault(SystemLogLevel.ERROR, 
+							"setAppointmentEndDateTime(): 'AppointmentEndDateTime' can't be null");
+		}				
+		
+		sessData.appointmentEndDateTime.set(endDate);		
+	}
+	
+	public String convertOfficeDocument(String patientDocumentID, String format) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String deleteTempFile(String url) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.core.vo.domain;
@@ -74,14 +79,14 @@ public class ActivitySchedVoAssembler
 		valueObjectDest.setStatus(valueObjectSrc.getStatus());
 		// CodeMappings
 		valueObjectDest.setCodeMappings(valueObjectSrc.getCodeMappings());
-		// FirstAppointment
-		valueObjectDest.setFirstAppointment(valueObjectSrc.getFirstAppointment());
-		// Diagnostic
-		valueObjectDest.setDiagnostic(valueObjectSrc.getDiagnostic());
 		// Name
 		valueObjectDest.setName(valueObjectSrc.getName());
 		// TmReq
 		valueObjectDest.setTmReq(valueObjectSrc.getTmReq());
+		// FirstAppointment
+		valueObjectDest.setFirstAppointment(valueObjectSrc.getFirstAppointment());
+		// Diagnostic
+		valueObjectDest.setDiagnostic(valueObjectSrc.getDiagnostic());
 	 	return valueObjectDest;
 	 }
 
@@ -540,14 +545,14 @@ public class ActivitySchedVoAssembler
 		}
 				// CodeMappings
 		valueObject.setCodeMappings(ims.core.vo.domain.TaxonomyMapAssembler.createTaxonomyMapCollectionFromTaxonomyMap(map, domainObject.getCodeMappings()) );
-		// FirstAppointment
-		valueObject.setFirstAppointment( domainObject.isFirstAppointment() );
-		// Diagnostic
-		valueObject.setDiagnostic( domainObject.isDiagnostic() );
 		// Name
 		valueObject.setName(domainObject.getName());
 		// TmReq
 		valueObject.setTmReq(domainObject.getTmReq());
+		// FirstAppointment
+		valueObject.setFirstAppointment( domainObject.isFirstAppointment() );
+		// Diagnostic
+		valueObject.setDiagnostic( domainObject.isDiagnostic() );
  		return valueObject;
 	 }
 
@@ -676,8 +681,6 @@ public class ActivitySchedVoAssembler
 		}
 		domainObject.setStatus(value11);
 		domainObject.setCodeMappings(ims.core.vo.domain.TaxonomyMapAssembler.extractTaxonomyMapList(domainFactory, valueObject.getCodeMappings(), domainObject.getCodeMappings(), domMap));		
-		domainObject.setFirstAppointment(valueObject.getFirstAppointment());
-		domainObject.setDiagnostic(valueObject.getDiagnostic());
 		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
 		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
 		if (valueObject.getName() != null && valueObject.getName().equals(""))
@@ -686,6 +689,8 @@ public class ActivitySchedVoAssembler
 		}
 		domainObject.setName(valueObject.getName());
 		domainObject.setTmReq(valueObject.getTmReq());
+		domainObject.setFirstAppointment(valueObject.getFirstAppointment());
+		domainObject.setDiagnostic(valueObject.getDiagnostic());
 
 		return domainObject;
 	}

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.core.vo.domain;
@@ -571,7 +576,7 @@ public class PendingElectiveAdmissionAdmitVoAssembler
 			valueObject.setAdmissionMethod(voLookup12);
 		}
 				// ReferringConsultant
-		valueObject.setReferringConsultant((ims.core.vo.MedicVo)ims.core.vo.domain.MedicVoAssembler.create(map, domainObject.getReferringConsultant()) );
+		valueObject.setReferringConsultant(ims.core.vo.domain.MedicVoAssembler.create(map, domainObject.getReferringConsultant()) );
 		// PatientStatus
 		ims.domain.lookups.LookupInstance instance14 = domainObject.getPatientStatus();
 		if ( null != instance14 ) {
@@ -738,7 +743,23 @@ public class PendingElectiveAdmissionAdmitVoAssembler
 				domainFactory.getLookupInstance(valueObject.getAdmissionMethod().getID());
 		}
 		domainObject.setAdmissionMethod(value12);
-		domainObject.setReferringConsultant(ims.core.vo.domain.MedicVoAssembler.extractMedic(domainFactory, (ims.core.vo.MedicVo)valueObject.getReferringConsultant(), domMap));
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.resource.people.domain.objects.Medic value13 = null;
+		if ( null != valueObject.getReferringConsultant() ) 
+		{
+			if (valueObject.getReferringConsultant().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getReferringConsultant()) != null)
+				{
+					value13 = (ims.core.resource.people.domain.objects.Medic)domMap.get(valueObject.getReferringConsultant());
+				}
+			}
+			else
+			{
+				value13 = (ims.core.resource.people.domain.objects.Medic)domainFactory.getDomainObject(ims.core.resource.people.domain.objects.Medic.class, valueObject.getReferringConsultant().getBoId());
+			}
+		}
+		domainObject.setReferringConsultant(value13);
 		// create LookupInstance from vo LookupType
 		ims.domain.lookups.LookupInstance value14 = null;
 		if ( null != valueObject.getPatientStatus() ) 

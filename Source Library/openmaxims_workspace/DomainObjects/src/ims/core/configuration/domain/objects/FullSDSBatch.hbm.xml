@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 12/10/2015, 13:31 -->
+<hibernate-mapping>
+	<class name="ims.core.configuration.domain.objects.FullSDSBatch" table="core_fullsdsbatch" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: configuredJobDetails -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="configuredJobDetails" class="ims.core.configuration.domain.objects.ConfiguredJob" unique="true" foreign-key="fullsdsbatch_configured_fk" access="field" cascade="save-update">
+			<column name="configured" sql-type="numeric(10,0)" not-null="true" unique="true"   />
+		</many-to-one>
+<!-- debug: processedGPRequestsNo -->
+<!-- debug: successfulGPRequestsUpdatedNo -->
+<!-- debug: processedPracticeRequestsNo -->
+<!-- debug: successfulPracticeRequestsUpdatedNo -->
+<!-- debug: lastSuccessfulRunDate -->
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="processedGPRequestsNo" type="integer" access="field" update="true">
+			<column name="processedg"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="successfulGPRequestsUpdatedNo" type="integer" access="field" update="true">
+			<column name="c_successf"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="processedPracticeRequestsNo" type="integer" access="field" update="true">
+			<column name="processedp"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="successfulPracticeRequestsUpdatedNo" type="integer" access="field" update="true">
+			<column name="successfu2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="lastSuccessfulRunDate" type="timestamp" access="field" update="true">
+			<column name="lastsucces"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

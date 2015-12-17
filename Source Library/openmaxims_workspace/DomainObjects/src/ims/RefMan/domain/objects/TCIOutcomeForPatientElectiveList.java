@@ -1,9 +1,33 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.RefMan.domain.objects;
@@ -36,6 +60,9 @@ public class TCIOutcomeForPatientElectiveList extends ims.domain.DomainObject im
 	private ims.domain.lookups.LookupInstance outcomeReason;
 	/** Was TCI Cancelled for non-medical reason */
 	private Boolean cancelledForNonMedicalReason;
+	/** Cancellation Reason */
+	private ims.domain.lookups.LookupInstance cancellationReason;
+	private String reasonComments;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public TCIOutcomeForPatientElectiveList (Integer id, int ver)
@@ -89,6 +116,24 @@ public class TCIOutcomeForPatientElectiveList extends ims.domain.DomainObject im
 	}
 	public void setCancelledForNonMedicalReason(Boolean cancelledForNonMedicalReason) {
 		this.cancelledForNonMedicalReason = cancelledForNonMedicalReason;
+	}
+
+	public ims.domain.lookups.LookupInstance getCancellationReason() {
+		return cancellationReason;
+	}
+	public void setCancellationReason(ims.domain.lookups.LookupInstance cancellationReason) {
+		this.cancellationReason = cancellationReason;
+	}
+
+	public String getReasonComments() {
+		return reasonComments;
+	}
+	public void setReasonComments(String reasonComments) {
+		if ( null != reasonComments && reasonComments.length() > 255 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for reasonComments. Tried to set value: "+
+				reasonComments);
+		}
+		this.reasonComments = reasonComments;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -149,6 +194,13 @@ public class TCIOutcomeForPatientElectiveList extends ims.domain.DomainObject im
 	    auditStr.append("; ");
 		auditStr.append("\r\n*cancelledForNonMedicalReason* :");
 		auditStr.append(cancelledForNonMedicalReason);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*cancellationReason* :");
+		if (cancellationReason != null)
+			auditStr.append(cancellationReason.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*reasonComments* :");
+		auditStr.append(reasonComments);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -223,6 +275,18 @@ public class TCIOutcomeForPatientElectiveList extends ims.domain.DomainObject im
 			sb.append("<cancelledForNonMedicalReason>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isCancelledForNonMedicalReason().toString()));
 			sb.append("</cancelledForNonMedicalReason>");		
+		}
+		if (this.getCancellationReason() != null)
+		{
+			sb.append("<cancellationReason>");
+			sb.append(this.getCancellationReason().toXMLString()); 
+			sb.append("</cancellationReason>");		
+		}
+		if (this.getReasonComments() != null)
+		{
+			sb.append("<reasonComments>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getReasonComments().toString()));
+			sb.append("</reasonComments>");		
 		}
 		return sb.toString();
 	}
@@ -415,6 +479,17 @@ public class TCIOutcomeForPatientElectiveList extends ims.domain.DomainObject im
 		{	
     		obj.setCancelledForNonMedicalReason(new Boolean(fldEl.getTextTrim()));	
 		}
+		fldEl = el.element("cancellationReason");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setCancellationReason(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("reasonComments");
+		if(fldEl != null)
+		{	
+    		obj.setReasonComments(new String(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -432,6 +507,8 @@ public class TCIOutcomeForPatientElectiveList extends ims.domain.DomainObject im
 		public static final String StatusDateTime = "statusDateTime";
 		public static final String OutcomeReason = "outcomeReason";
 		public static final String CancelledForNonMedicalReason = "cancelledForNonMedicalReason";
+		public static final String CancellationReason = "cancellationReason";
+		public static final String ReasonComments = "reasonComments";
 	}
 }
 

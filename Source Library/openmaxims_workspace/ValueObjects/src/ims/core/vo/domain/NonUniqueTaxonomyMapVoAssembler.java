@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.core.vo.domain;
@@ -54,6 +59,10 @@ public class NonUniqueTaxonomyMapVoAssembler
 		valueObjectDest.setTaxonomyName(valueObjectSrc.getTaxonomyName());
 		// TaxonomyCode
 		valueObjectDest.setTaxonomyCode(valueObjectSrc.getTaxonomyCode());
+		// EffectiveFrom
+		valueObjectDest.setEffectiveFrom(valueObjectSrc.getEffectiveFrom());
+		// EffectiveTo
+		valueObjectDest.setEffectiveTo(valueObjectSrc.getEffectiveTo());
 	 	return valueObjectDest;
 	 }
 
@@ -382,6 +391,18 @@ public class NonUniqueTaxonomyMapVoAssembler
 		}
 				// TaxonomyCode
 		valueObject.setTaxonomyCode(domainObject.getTaxonomyCode());
+		// EffectiveFrom
+		java.util.Date EffectiveFrom = domainObject.getEffectiveFrom();
+		if ( null != EffectiveFrom ) 
+		{
+			valueObject.setEffectiveFrom(new ims.framework.utils.Date(EffectiveFrom) );
+		}
+		// EffectiveTo
+		java.util.Date EffectiveTo = domainObject.getEffectiveTo();
+		if ( null != EffectiveTo ) 
+		{
+			valueObject.setEffectiveTo(new ims.framework.utils.Date(EffectiveTo) );
+		}
  		return valueObject;
 	 }
 
@@ -446,6 +467,20 @@ public class NonUniqueTaxonomyMapVoAssembler
 			valueObject.setTaxonomyCode(null);
 		}
 		domainObject.setTaxonomyCode(valueObject.getTaxonomyCode());
+		java.util.Date value3 = null;
+		ims.framework.utils.Date date3 = valueObject.getEffectiveFrom();		
+		if ( date3 != null ) 
+		{
+			value3 = date3.getDate();
+		}
+		domainObject.setEffectiveFrom(value3);
+		java.util.Date value4 = null;
+		ims.framework.utils.Date date4 = valueObject.getEffectiveTo();		
+		if ( date4 != null ) 
+		{
+			value4 = date4.getDate();
+		}
+		domainObject.setEffectiveTo(value4);
 
 		return domainObject;
 	}

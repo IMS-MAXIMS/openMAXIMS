@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:35 -->
+<!-- Generated: 12/10/2015, 13:29 -->
 <hibernate-mapping>
 	<class name="ims.core.clinical.domain.objects.AdviceLeaflets" table="core_adviceleaflets" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -56,6 +56,7 @@
 			<column name="authoringh" sql-type="numeric(10,0)" not-null="true" unique="false"   />
 		</many-to-one>
 <!-- debug: authoringDateTime -->
+<!-- debug: adviceLeafletName -->
 <!-- debug: !IsAssociation && !IsCollection -->
 
 <!-- debug: IsLookup -->
@@ -86,6 +87,11 @@
 <!-- debug: !IsLookup -->
 		<property name="authoringDateTime" type="timestamp" access="field" update="true">
 			<column name="authoringd"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="adviceLeafletName" type="string" access="field" update="true" > 
+			<column name="advicelea2" length="100"  not-null="false" unique="false"  />
 		</property>
 	</class>
 </hibernate-mapping>

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.core.vo.domain;
@@ -72,6 +77,8 @@ public class MedicVoAssembler
 		valueObjectDest.setIsALocalConsultant(valueObjectSrc.getIsALocalConsultant());
 		// isAResponsibleEDClinician
 		valueObjectDest.setIsAResponsibleEDClinician(valueObjectSrc.getIsAResponsibleEDClinician());
+		// isHCPaEndoscopist
+		valueObjectDest.setIsHCPaEndoscopist(valueObjectSrc.getIsHCPaEndoscopist());
 		// hcpType
 		valueObjectDest.setHcpType(valueObjectSrc.getHcpType());
 	 	return valueObjectDest;
@@ -556,41 +563,43 @@ public class MedicVoAssembler
 		valueObject.setIsALocalConsultant( domainObject.isIsALocalConsultant() );
 		// isAResponsibleEDClinician
 		valueObject.setIsAResponsibleEDClinician( domainObject.isIsAResponsibleEDClinician() );
+		// isHCPaEndoscopist
+		valueObject.setIsHCPaEndoscopist( domainObject.isIsHCPaEndoscopist() );
 		// hcpType
-		ims.domain.lookups.LookupInstance instance12 = domainObject.getHcpType();
-		if ( null != instance12 ) {
+		ims.domain.lookups.LookupInstance instance13 = domainObject.getHcpType();
+		if ( null != instance13 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
 			img = null;
-			if (instance12.getImage() != null) 
+			if (instance13.getImage() != null) 
 			{
-				img = new ims.framework.utils.ImagePath(instance12.getImage().getImageId(), instance12.getImage().getImagePath());
+				img = new ims.framework.utils.ImagePath(instance13.getImage().getImageId(), instance13.getImage().getImagePath());
 			}
-			color = instance12.getColor();
+			color = instance13.getColor();
 			if (color != null) 
 				color.getValue();
 
-			ims.core.vo.lookups.HcpDisType voLookup12 = new ims.core.vo.lookups.HcpDisType(instance12.getId(),instance12.getText(), instance12.isActive(), null, img, color);
-			ims.core.vo.lookups.HcpDisType parentVoLookup12 = voLookup12;
-			ims.domain.lookups.LookupInstance parent12 = instance12.getParent();
-			while (parent12 != null)
+			ims.core.vo.lookups.HcpDisType voLookup13 = new ims.core.vo.lookups.HcpDisType(instance13.getId(),instance13.getText(), instance13.isActive(), null, img, color);
+			ims.core.vo.lookups.HcpDisType parentVoLookup13 = voLookup13;
+			ims.domain.lookups.LookupInstance parent13 = instance13.getParent();
+			while (parent13 != null)
 			{
-				if (parent12.getImage() != null) 
+				if (parent13.getImage() != null) 
 				{
-					img = new ims.framework.utils.ImagePath(parent12.getImage().getImageId(), parent12.getImage().getImagePath() );
+					img = new ims.framework.utils.ImagePath(parent13.getImage().getImageId(), parent13.getImage().getImagePath() );
 				}
 				else 
 				{
 					img = null;
 				}
-				color = parent12.getColor();
+				color = parent13.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup12.setParent(new ims.core.vo.lookups.HcpDisType(parent12.getId(),parent12.getText(), parent12.isActive(), null, img, color));
-				parentVoLookup12 = parentVoLookup12.getParent();
-								parent12 = parent12.getParent();
+								parentVoLookup13.setParent(new ims.core.vo.lookups.HcpDisType(parent13.getId(),parent13.getText(), parent13.isActive(), null, img, color));
+				parentVoLookup13 = parentVoLookup13.getParent();
+								parent13 = parent13.getParent();
 			}			
-			valueObject.setHcpType(voLookup12);
+			valueObject.setHcpType(voLookup13);
 		}
 		 		return valueObject;
 	 }
@@ -687,14 +696,15 @@ public class MedicVoAssembler
 		domainObject.setIsHCPaResponsibleHCP(valueObject.getIsHCPaResponsibleHCP());
 		domainObject.setIsALocalConsultant(valueObject.getIsALocalConsultant());
 		domainObject.setIsAResponsibleEDClinician(valueObject.getIsAResponsibleEDClinician());
+		domainObject.setIsHCPaEndoscopist(valueObject.getIsHCPaEndoscopist());
 		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value12 = null;
+		ims.domain.lookups.LookupInstance value13 = null;
 		if ( null != valueObject.getHcpType() ) 
 		{
-			value12 =
+			value13 =
 				domainFactory.getLookupInstance(valueObject.getHcpType().getID());
 		}
-		domainObject.setHcpType(value12);
+		domainObject.setHcpType(value13);
 
 		return domainObject;
 	}

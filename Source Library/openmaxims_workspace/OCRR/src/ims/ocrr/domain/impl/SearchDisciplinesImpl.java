@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -39,7 +44,7 @@ public class SearchDisciplinesImpl extends BaseSearchDisciplinesImpl
 		ArrayList<Object> paramValues = new ArrayList<Object>();
 		
 		query.append("select srv from Service as srv left join srv.serviceCategory as srvCat where srv.isActive = 1 and srv.serviceCategory.id in ( " + getIdStringForPathRad() + " ) ");
-		query.append(" order by UPPER(srvCat.text) asc, UPPER(srv.serviceName) asc");
+		query.append(" order by UPPER(srvCat.text) asc, srv.upperName asc"); //WDEV-20219 UPPER(srv.serviceName)
 		
 		return ServiceLiteVoAssembler.createServiceLiteVoCollectionFromService(getDomainFactory().find(query.toString(), paramNames, paramValues)); 
 	}

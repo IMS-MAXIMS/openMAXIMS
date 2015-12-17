@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -29,6 +34,7 @@ import ims.core.vo.HcpLiteVoCollection;
 import ims.core.vo.ServiceLiteVoCollection;
 import ims.core.vo.domain.HcpLiteVoAssembler;
 import ims.core.vo.domain.ServiceLiteVoAssembler;
+import ims.core.vo.lookups.LocationType;
 import ims.core.vo.lookups.PreActiveActiveInactiveStatus;
 import ims.core.vo.lookups.ServiceCategory;
 import ims.core.vo.lookups.TaxonomyType;
@@ -61,6 +67,11 @@ import java.util.List;
 
 public class ClinicalImagingResultsImpl extends BaseClinicalImagingResultsImpl
 {
+	private static final int IPOP_ALL = 1;
+	private static final int IPOP_INPATIENT = 2;
+	private static final int IPOP_OUTPATIENT = 3;
+
+	
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -86,7 +97,8 @@ public class ClinicalImagingResultsImpl extends BaseClinicalImagingResultsImpl
 		return HcpLiteVoAssembler.createHcpLiteVoCollectionFromHcp(getDomainFactory().find(query, "HCP_NAME", name.toUpperCase() + "%", 400));
 	}
 
-	public RadiologyResultListVoCollection listResults(DateTime dateFrom, DateTime dateTo, ServiceRefVo department, InvestigationIndexRefVo exam, HcpRefVo clinician, Boolean resultsOnly, PatientRefVo patientId, Boolean bCompleted)
+	public RadiologyResultListVoCollection listResults(DateTime dateFrom, DateTime dateTo, ServiceRefVo department, InvestigationIndexRefVo exam, HcpRefVo clinician,
+																	Integer optionIpOp, Boolean resultsOnly, PatientRefVo patientId, Boolean bCompleted, Boolean checked, Boolean unchecked)
 	{
 		/*
 		if(dateFrom == null || dateTo == null)
@@ -134,6 +146,24 @@ public class ClinicalImagingResultsImpl extends BaseClinicalImagingResultsImpl
 			markers.add("CLINICIAN");
 			values.add(clinician.getID_Hcp());
 		}
+		
+		switch (optionIpOp)
+		{
+			case IPOP_ALL:
+				break;
+				
+			case IPOP_INPATIENT:
+				sb.append(" AND o1_1.patientLocation is not null AND o1_1.patientLocation.type = :WARD_TYPE ");
+				markers.add("WARD_TYPE");
+				values.add(getDomLookup(LocationType.WARD));
+				break;
+				
+			case IPOP_OUTPATIENT:
+				sb.append(" AND (o1_1.patientClinic is not null OR o1_1.orderDetails.outpatientDept is not null) " );
+				break;
+		}
+		
+		
 		if (bCompleted != null
 			&& bCompleted)
 		{
@@ -145,6 +175,26 @@ public class ClinicalImagingResultsImpl extends BaseClinicalImagingResultsImpl
 		{
 			sb.append(" and o1_1.resultDetails is not null");//WDEV-10227
 		}
+		
+		if ((checked != null && unchecked != null) /* LOGICAL XOR */
+				&& ((checked && !unchecked) || (!checked && unchecked)))
+		{
+			if (checked)
+			{
+				sb.append(" AND o1_1.ordInvCurrentStatus.ordInvStatus = :CHECKED_STAT ");
+				markers.add("CHECKED_STAT");
+				values.add(getDomLookup(OrderInvStatus.CHECKED));
+			}
+			
+			if (unchecked)
+			{
+				sb.append(" AND o1_1.ordInvCurrentStatus.ordInvStatus <> :CHECKED_STAT ");
+				markers.add("CHECKED_STAT");
+				values.add(getDomLookup(OrderInvStatus.CHECKED));
+			}
+		}
+		
+		
 		if (patientId != null)
 		{
 			sb.append(" and o1_1.orderDetails.patient.id  = :PID");
@@ -154,7 +204,7 @@ public class ClinicalImagingResultsImpl extends BaseClinicalImagingResultsImpl
 		sb.append(" order by o1_1.displayDateTime desc, o1_1.ordInvSeq asc, o1_1.systemInformation.creationDateTime, o1_1.systemInformation.creationUser");
 		
 		//WDEV-12054
-		List results = getDomainFactory().find(sb.toString(), markers, values);
+		List<?> results = getDomainFactory().find(sb.toString(), markers, values);
 		HashMap map = new HashMap();
 		map = getListXoHistory(map, results);
 		

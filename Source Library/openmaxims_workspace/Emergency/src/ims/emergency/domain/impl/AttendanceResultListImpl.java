@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -80,23 +85,23 @@ public class AttendanceResultListImpl extends BaseAttendanceResultListImpl
 		
 		if (fromDate != null && dateTo != null)
 		{
-			queryNonDFT.append(" AND orderInv.displayDateTime BETWEEN :FROM_DATE AND :END_DATE ");
-			queryDFT.append(" AND orderInv.displayDateTime BETWEEN :FROM_DATE AND :END_DATE ");
+			queryNonDFT.append(" AND orderInv.systemInformation.creationDateTime BETWEEN :FROM_DATE AND :END_DATE ");
+			queryDFT.append(" AND orderInv.systemInformation.creationDateTime BETWEEN :FROM_DATE AND :END_DATE ");
 			
 			paramNames.add("FROM_DATE");	paramValues.add(new DateTime(fromDate, new Time(0, 0, 0)).getJavaDate());
 			paramNames.add("END_DATE");		paramValues.add(new DateTime(dateTo, new Time(23, 59, 59)).getJavaDate());
 		}
 		else if (fromDate == null && dateTo != null)
 		{
-			queryNonDFT.append(" AND orderInv.displayDateTime <= :END_DATE ");
-			queryDFT.append(" AND orderInv.displayDateTime <= :END_DATE ");
+			queryNonDFT.append(" AND orderInv.systemInformation.creationDateTime <= :END_DATE ");
+			queryDFT.append(" AND orderInv.systemInformation.creationDateTime <= :END_DATE ");
 			
 			paramNames.add("END_DATE");		paramValues.add(new DateTime(dateTo, new Time(23, 59, 59)).getJavaDate());
 		}
 		else if (fromDate != null && dateTo == null)
 		{
-			queryNonDFT.append(" AND orderInv.dislayDateTime >= :FROM_DATE ");
-			queryDFT.append(" AND orderInv.displayDateTime >= :FROM_DATE ");
+			queryNonDFT.append(" AND orderInv.systemInformation.creationDateTime >= :FROM_DATE ");
+			queryDFT.append(" AND orderInv.systemInformation.creationDateTime >= :FROM_DATE ");
 			
 			paramNames.add("FROM_DATE");	paramValues.add(new DateTime(fromDate, new Time(23,59, 59)).getJavaDate());
 		}
@@ -190,20 +195,20 @@ public class AttendanceResultListImpl extends BaseAttendanceResultListImpl
 	
 		if (fromDate != null && toDate != null)
 		{
-			query.append(" AND orderInv.displayDateTime BETWEEN :FROM_DATE AND :END_DATE ");
+			query.append(" AND orderInv.systemInformation.creationDateTime BETWEEN :FROM_DATE AND :END_DATE ");
 			
 			paramNames.add("FROM_DATE");	paramValues.add(new DateTime(fromDate, new Time(0, 0, 0)).getJavaDate());
 			paramNames.add("END_DATE");		paramValues.add(new DateTime(toDate, new Time(23, 59, 59)).getJavaDate());
 		}
 		else if (fromDate == null && toDate != null)
 		{
-			query.append(" AND orderInv.displayDateTime <= :END_DATE ");
+			query.append(" AND orderInv.systemInformation.creationDateTime <= :END_DATE ");
 			
 			paramNames.add("END_DATE");		paramValues.add(new DateTime(toDate, new Time(23, 59, 59)).getJavaDate());
 		}
 		else if (fromDate != null && toDate == null)
 		{
-			query.append(" AND orderInv.dislayDateTime >= :FROM_DATE ");
+			query.append(" AND orderInv.systemInformation.creationDateTime >= :FROM_DATE ");
 			
 			paramNames.add("FROM_DATE");	paramValues.add(new DateTime(fromDate, new Time(23,59, 59)).getJavaDate());
 		}

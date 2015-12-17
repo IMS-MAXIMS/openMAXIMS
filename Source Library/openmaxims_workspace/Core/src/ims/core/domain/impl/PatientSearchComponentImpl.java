@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -105,27 +110,38 @@ public class PatientSearchComponentImpl extends DTODomainImplementation implemen
 			patients.Filter.Remote = "N";			
 		}
 
-		if (filter.getPersId() != null)
+		if (filter.getPersId() != null || filter.getNHSNumber() != null)
 		{
-			if (filter.getPersId().getType().equals(PatIdType.HOSPNUM))
+			if (filter.getPersId() != null && filter.getPersId().getType().equals(PatIdType.HOSPNUM))
 			{
 				patients.Filter.Hospnum = filter.getPersId().getValue();
 			}
-			else if (filter.getPersId().getType().equals(PatIdType.PKEY))
+			else if (filter.getPersId() != null && filter.getPersId().getType().equals(PatIdType.PKEY))
 			{
 				patients.Filter.Pkey = filter.getPersId().getValue();
 			}
-			else if (filter.getPersId().getType().equals(PatIdType.NHSN))
+			else if ((filter.getPersId() != null && filter.getPersId().getType().equals(PatIdType.NHSN)) || filter.getNHSNumber() != null)
 			{
-				patients.Filter.Nhsn = filter.getPersId().getValue();
-				if (filter.getPersId().getType().equals(PatIdType.NHSN))
-					patients.Filter.Nhsn = filter.getPersId().getValue().replace(" ", "");//wdev-7305
+				String NHSValue = filter.getNHSNumber();
+				
+				if(NHSValue != null)
+					NHSValue = NHSValue.replace(" ", "");
+				
+				if(NHSValue == null)
+				{
+					NHSValue = filter.getPersId().getValue();
+				
+					if(NHSValue != null)
+						NHSValue = NHSValue.replace(" ", "");
+				}
+				
+				patients.Filter.Nhsn = NHSValue;
 			}
-			else if (filter.getPersId().getType().equals(PatIdType.CHARTNUM))
+			else if (filter.getPersId() != null && filter.getPersId().getType().equals(PatIdType.CHARTNUM))
 			{
 				patients.Filter.Chartnum = filter.getPersId().getValue().toUpperCase();
 			}
-			else if (filter.getPersId().getType().equals(PatIdType.PPSN))
+			else if (filter.getPersId() != null && filter.getPersId().getType().equals(PatIdType.PPSN))
 			{
 				patients.Filter.Ppsn = filter.getPersId().getValue();
 			}
@@ -271,7 +287,8 @@ public class PatientSearchComponentImpl extends DTODomainImplementation implemen
 		ArrayList markerValues = new ArrayList();
 		String andStr="";
 		java.util.List patients = null;
-		if (filter.getPersId() != null && filter.getPersId().getValue() != null)
+		boolean isCaseSensitivePatIdSearch = ConfigFlag.DOM.CASE_SENSITIVE_PATID.getValue(); //WDEV-18817
+		if ((filter.getPersId() != null && filter.getPersId().getValue() != null) || filter.getNHSNumber() != null)
 		{
 			//TODO dlaffan - when NTPF.Demographics is merged to Core.Demographics we 
 			//can call the getPatient and add the result to the collection and return it 
@@ -282,22 +299,30 @@ public class PatientSearchComponentImpl extends DTODomainImplementation implemen
 					" where ids.type = :idType ");// +
 					//" and p.isActive = true ");
 			
-			String idVal = filter.getPersId().getValue().trim();			
-			if (filter.getPersId().getType().equals(PatIdType.NHSN))
-				idVal = filter.getPersId().getValue().replace(" ", "");//wdev-7305
-
-			if(!ConfigFlag.DOM.CASE_SENSITIVE_PATID.getValue())
+			String idVal = null;
+			
+			if(filter.getNHSNumber() != null)
 			{
+				idVal = filter.getNHSNumber().trim();
+			}
+			else
+			{
+				idVal = filter.getPersId().getValue().trim();	
+			}
+			
+			if ((filter.getPersId() != null && filter.getPersId().getType().equals(PatIdType.NHSN)) || filter.getNHSNumber() != null)
+				idVal = idVal.replace(" ", "");//wdev-7305
+			if (!isCaseSensitivePatIdSearch) //WDEV-18817
+			{	
 				idVal = idVal.toUpperCase();
 			}
-
-			if (filter.getPersId().getType().equals(PatIdType.NHSN))
+			if ((filter.getPersId() != null && filter.getPersId().getType().equals(PatIdType.NHSN)) || filter.getNHSNumber() != null)
 			{
-				hql.append(" and ids.value like :idValue ");
+				hql.append(" and " + (!isCaseSensitivePatIdSearch ? " UPPER(ids.value)" : " ids.value") + " like :idValue"); //WDEV-18817
 				idVal += "%";
 			}
 			else
-				hql.append(" and ids.value = :idValue");
+				hql.append(" and " + (!isCaseSensitivePatIdSearch ? " UPPER(ids.value)" : " ids.value") + " = :idValue"); //WDEV-18817
 
 			if(bReturnMergedPatients == true)
 				hql.append(andStr + " and (p.isActive = :isActive or p.associatedPatient is not null)");
@@ -310,19 +335,21 @@ public class PatientSearchComponentImpl extends DTODomainImplementation implemen
 				hql.append(" and p.dod is null");
 			}
 			
-			patients = factory.find(hql.toString(), new String[]{"idValue", "idType", "isActive"}, new Object[]{idVal, getDomLookup(filter.getPersId().getType()),Boolean.TRUE});
+			patients = factory.find(hql.toString(), new String[]{"idValue", "idType", "isActive"}, new Object[]{idVal, (filter.getNHSNumber() != null ? getDomLookup(PatIdType.NHSN) : getDomLookup(filter.getPersId().getType())), Boolean.TRUE});
 		}
 		else
 		{
 			String strSearchSurname = "";
 			String strSearchForename = "";
+			//WDEV-18642
+			String nonReplacedCharsForSearchRegExp = ConfigFlag.GEN.PATIENT_SEARCH_ALLOW_NUMERIC_CHARS.getValue() ? "[^a-zA-Z0-9]" :"[^a-zA-Z]";
 			if (filter.getSurname() != null)
 			{
 				filterString.append(andStr + " p.name.upperSurname like :surname");
 				markerNames.add("surname");
 					
+				filter.setSurname(filter.getSurname().replaceAll(nonReplacedCharsForSearchRegExp, "")); //WDEV-18642
 				strSearchSurname = filter.getSurname().toUpperCase().trim();
-				strSearchSurname = strSearchSurname.replaceAll("[^a-zA-Z]", "");
 					
 				if(strSearchSurname.length() >= 40)
 				{
@@ -353,7 +380,8 @@ public class PatientSearchComponentImpl extends DTODomainImplementation implemen
 				filterString.append(andStr + " p.name.upperForename like :forename");
 				markerNames.add("forename");
 
-				filter.setForename(filter.getForename().replaceAll("[^a-zA-Z]", ""));
+				//WDEV-18642
+				filter.setForename(filter.getForename().replaceAll(nonReplacedCharsForSearchRegExp, ""));
 				strSearchForename = filter.getForename().toUpperCase().trim();
 				
 				if(strSearchForename.length() >= 9)

@@ -1,0 +1,87 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 12/10/2015, 13:30 -->
+<hibernate-mapping>
+	<class name="ims.core.resource.place.domain.objects.Townland" table="core_townland" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: name -->
+<!-- debug: isActive -->
+<!-- debug: codeMappings -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+ 		<!-- Component Set -->
+ 		<list name="codeMappings" table="core_townland_codemappin" lazy="true" >
+ 			<key foreign-key="townland_codemappin_id_fk">
+ 				<column name="id" sql-type="numeric(10,0)" not-null="true" />
+ 			</key>
+ 			<index column='idx'/>
+ 			<!-- Composite -->
+ 			<composite-element class="ims.core.clinical.domain.objects.TaxonomyMap" >
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="taxonomyName" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_taxonomyna" not-null="true" sql-type="numeric(10,0)"  unique="false" unique-key='taxonomy_unq1'  />
+ 				</many-to-one>
+ 				<property name="taxonomyCode" type="string" access="field" update="true">
+ 					<column name="taxonomyco" length="30" not-null="true"  unique="false" unique-key='taxonomy_unq1'   />
+ 				</property>
+ 			</composite-element>
+ 		</list>
+<!-- debug: upperName -->
+<!-- debug: dED -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="dED" class="ims.core.resource.place.domain.objects.DED" unique="true" foreign-key="townland_ded_fk" access="field" cascade="save-update">
+			<column name="ded" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: county -->
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="name" type="string" access="field" update="true" > 
+			<column name="name" length="120"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isActive" type="boolean" access="field" update="true">
+			<column name="isactive"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="upperName" type="string" access="field" update="true" > 
+			<column name="uppername" length="120"  not-null="true" unique="false"  index='pci_ded_name_idx'/>
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="county" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_county" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+	</class>
+</hibernate-mapping>

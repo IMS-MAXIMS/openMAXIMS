@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 12/10/2015, 13:29 -->
+<hibernate-mapping>
+	<class name="ims.clinical.domain.objects.ApplicableIntraOperative" table="shcl_applicableintr" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: theatreAppointment -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="theatreAppointment" class="ims.scheduling.domain.objects.Booking_Appointment" unique="true" foreign-key="applicableintr_theatreapp_fk" access="field" cascade="save-update">
+			<column name="theatreapp" sql-type="numeric(10,0)" not-null="true" unique="true"   />
+		</many-to-one>
+<!-- debug: displayPlannedProcedures -->
+<!-- debug: displayAnaestheticDetails -->
+<!-- debug: displayPrepAndPositioning -->
+<!-- debug: displayDiathermyAndLaser -->
+<!-- debug: displayIrrigantCatheters -->
+<!-- debug: displaySpecimenWounds -->
+<!-- debug: displayImplantsArterial -->
+<!-- debug: displayTourniquet -->
+<!-- debug: displayCountsOccurances -->
+<!-- debug: displayPerformedProcedures -->
+<!-- debug: displayPACU -->
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="displayPlannedProcedures" type="boolean" access="field" update="true">
+			<column name="displaypla"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="displayAnaestheticDetails" type="boolean" access="field" update="true">
+			<column name="displayana"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="displayPrepAndPositioning" type="boolean" access="field" update="true">
+			<column name="displaypre"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="displayDiathermyAndLaser" type="boolean" access="field" update="true">
+			<column name="displaydia"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="displayIrrigantCatheters" type="boolean" access="field" update="true">
+			<column name="displayirr"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="displaySpecimenWounds" type="boolean" access="field" update="true">
+			<column name="displayspe"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="displayImplantsArterial" type="boolean" access="field" update="true">
+			<column name="displayimp"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="displayTourniquet" type="boolean" access="field" update="true">
+			<column name="displaytou"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="displayCountsOccurances" type="boolean" access="field" update="true">
+			<column name="displaycou"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="displayPerformedProcedures" type="boolean" access="field" update="true">
+			<column name="displayper"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="displayPACU" type="boolean" access="field" update="true">
+			<column name="displaypac"  not-null="true" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

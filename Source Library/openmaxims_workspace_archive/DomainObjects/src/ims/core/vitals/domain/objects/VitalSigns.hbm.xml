@@ -1,0 +1,403 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:35 -->
+<hibernate-mapping>
+	<class name="ims.core.vitals.domain.objects.VitalSigns" table="core_vitalsigns" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: vitalsTakenDateTime -->
+<!-- debug: bloodPressure -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="bloodPressure" class="ims.core.vitals.domain.objects.Bloodpressure" unique="true" foreign-key="vitalsigns_bloodpress_fk" access="field" cascade="all">
+			<column name="bloodpress" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: pulse -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="pulse" class="ims.core.vitals.domain.objects.Pulse" unique="true" foreign-key="vitalsigns_pulse_fk" access="field" cascade="all">
+			<column name="pulse" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: respiratory -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="respiratory" class="ims.core.vitals.domain.objects.Respiratory" unique="true" foreign-key="vitalsigns_respirator_fk" access="field" cascade="all">
+			<column name="respirator" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: temperature -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="temperature" class="ims.core.vitals.domain.objects.Temperature" unique="true" foreign-key="vitalsigns_temperatur_fk" access="field" cascade="all">
+			<column name="temperatur" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: glasgowComaScale -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="glasgowComaScale" class="ims.core.vitals.domain.objects.GCS" unique="true" foreign-key="vitalsigns_glasgowcom_fk" access="field" cascade="all">
+			<column name="glasgowcom" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: oxygenSaturation -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="oxygenSaturation" class="ims.core.vitals.domain.objects.OxygenSaturation" unique="true" foreign-key="vitalsigns_oxygensatu_fk" access="field" cascade="all">
+			<column name="oxygensatu" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: bloodSugar -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="bloodSugar" class="ims.core.vitals.domain.objects.BloodSugar" unique="true" foreign-key="vitalsigns_bloodsugar_fk" access="field" cascade="all">
+			<column name="bloodsugar" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: lungFunctionTest -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="lungFunctionTest" class="ims.core.vitals.domain.objects.LungFunctionTests" unique="true" foreign-key="vitalsigns_lungfuncti_fk" access="field" cascade="all">
+			<column name="lungfuncti" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: pupils -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="pupils" class="ims.core.vitals.domain.objects.Pupils" unique="true" foreign-key="vitalsigns_pupils_fk" access="field" cascade="all">
+			<column name="pupils" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: visualAcuity -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="visualAcuity" class="ims.core.vitals.domain.objects.VisualAcuity" unique="true" foreign-key="vitalsigns_visualacui_fk" access="field" cascade="all">
+			<column name="visualacui" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: metrics -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="metrics" class="ims.core.vitals.domain.objects.Metrics" unique="true" foreign-key="vitalsigns_metrics_fk" access="field" cascade="all">
+			<column name="metrics" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: arterialBloodGas -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="arterialBloodGas" class="ims.core.vitals.domain.objects.ArterialBloodGas" unique="true" foreign-key="vitalsigns_arterialbl_fk" access="field" cascade="all">
+			<column name="arterialbl" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: ventilationChart -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="ventilationChart" class="ims.core.vitals.domain.objects.VentilationChart" unique="true" foreign-key="vitalsigns_ventilatio_fk" access="field" cascade="all">
+			<column name="ventilatio" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: pain -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="pain" class="ims.core.vitals.domain.objects.Pain" unique="true" foreign-key="vitalsigns_pain_fk" access="field" cascade="all">
+			<column name="pain" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: isVentilationChartRecord -->
+<!-- debug: recordedSigns -->
+<!-- debug: IsCollection : true -->
+		<!-- collection of Lookup instances -->
+		<list name="recordedSigns" table="core_vitalsigns_recordedsi" lazy="true" access="field">
+			<key foreign-key="vitalsigns_recordedsi_ofk">
+				<column name="owner" sql-type="numeric(10,0)"/>
+			</key>
+			<index column="idx"/>
+			<composite-element class="ims.domain.lookups.LookupInstanceRef">
+				<many-to-one name="instance" class="ims.domain.lookups.LookupInstance" access="field">
+					<column name="instance_id" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+				</many-to-one>
+			</composite-element>
+		</list>
+<!-- debug: inactiveBloodPressure -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="inactiveBloodPressure" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="vitalsigns_inactivebl_fk">
+				<column name="core_vitalsigns_inactivebl" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.core.vitals.domain.objects.Bloodpressure" />
+		</set>
+<!-- debug: inactivePulse -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="inactivePulse" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="vitalsigns_inactivepu_fk">
+				<column name="core_vitalsigns_inactivepu" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.core.vitals.domain.objects.Pulse" />
+		</set>
+<!-- debug: inactiveRespiratory -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="inactiveRespiratory" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="vitalsigns_inactivere_fk">
+				<column name="core_vitalsigns_inactivere" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.core.vitals.domain.objects.Respiratory" />
+		</set>
+<!-- debug: inactiveTemperature -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="inactiveTemperature" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="vitalsigns_inactivete_fk">
+				<column name="core_vitalsigns_inactivete" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.core.vitals.domain.objects.Temperature" />
+		</set>
+<!-- debug: inactiveGlasgowComaScale -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="inactiveGlasgowComaScale" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="vitalsigns_inactivegl_fk">
+				<column name="core_vitalsigns_inactivegl" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.core.vitals.domain.objects.GCS" />
+		</set>
+<!-- debug: inactiveOxygenSaturation -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="inactiveOxygenSaturation" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="vitalsigns_inactiveox_fk">
+				<column name="core_vitalsigns_inactiveox" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.core.vitals.domain.objects.OxygenSaturation" />
+		</set>
+<!-- debug: inactiveBloodSugar -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="inactiveBloodSugar" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="vitalsigns_inactiveb2_fk">
+				<column name="core_vitalsigns_inactiveb2" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.core.vitals.domain.objects.BloodSugar" />
+		</set>
+<!-- debug: inactiveLungFunctionTest -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="inactiveLungFunctionTest" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="vitalsigns_inactivelu_fk">
+				<column name="core_vitalsigns_inactivelu" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.core.vitals.domain.objects.LungFunctionTests" />
+		</set>
+<!-- debug: inactivePupils -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="inactivePupils" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="vitalsigns_inactivep2_fk">
+				<column name="core_vitalsigns_inactivep2" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.core.vitals.domain.objects.Pupils" />
+		</set>
+<!-- debug: inactiveVisualAcuity -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="inactiveVisualAcuity" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="vitalsigns_inactivevi_fk">
+				<column name="core_vitalsigns_inactivevi" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.core.vitals.domain.objects.VisualAcuity" />
+		</set>
+<!-- debug: inactiveMetrics -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="inactiveMetrics" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="vitalsigns_inactiveme_fk">
+				<column name="core_vitalsigns_inactiveme" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.core.vitals.domain.objects.Metrics" />
+		</set>
+<!-- debug: inactiveVentilationChart -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="inactiveVentilationChart" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="vitalsigns_inactiveve_fk">
+				<column name="core_vitalsigns_inactiveve" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.core.vitals.domain.objects.VentilationChart" />
+		</set>
+<!-- debug: inactivePain -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="inactivePain" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="vitalsigns_inactivepa_fk">
+				<column name="core_vitalsigns_inactivepa" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.core.vitals.domain.objects.Pain" />
+		</set>
+<!-- debug: clinicalContact -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="clinicalContact" class="ims.core.admin.domain.objects.ClinicalContact" unique="true" foreign-key="vitalsigns_clinicalco_fk" access="field" cascade="save-update">
+			<column name="clinicalco" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: careContext -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="careContext" class="ims.core.admin.domain.objects.CareContext" unique="true" foreign-key="vitalsigns_carecontex_fk" access="field" cascade="save-update">
+			<column name="carecontex" sql-type="numeric(10,0)" not-null="true" unique="false"  index='ctx_idx' />
+		</many-to-one>
+<!-- debug: patientConscious -->
+<!-- debug: urine2mlkgkhr -->
+<!-- debug: authoringInformation -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+ 		<!-- Component -->
+ 		<component name="authoringInformation" class="ims.core.clinical.domain.objects.AuthoringInformation" >
+
+ 			<many-to-one name="authoringHcp" class="ims.core.resource.people.domain.objects.Hcp" foreign-key="vitalsigns_authoringiauthor_fk" access="field">
+ 				<column name="authoringiauthoringh" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="authoringDateTime" type="timestamp" access="field" update="true">
+ 				<column name="authoringiauthoringd" not-null="false"  unique="false"   />
+ 			</property>
+ 		</component>
+<!-- debug: patientCausingConcern -->
+<!-- debug: recordingInformation -->
+<!-- debug: field.IsAssociation : true -->
+ 		<!-- Component -->
+ 		<component name="recordingInformation" class="ims.core.clinical.domain.objects.RecordingUserInformation" >
+
+ 			<many-to-one name="recordingUser" class="ims.core.resource.people.domain.objects.MemberOfStaff" foreign-key="vitalsigns_recordingirecord_fk" access="field">
+ 				<column name="recordingirecordingu" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="recordingDateTime" type="timestamp" access="field" update="true">
+ 				<column name="recordingirecordingd" not-null="false"  unique="false"   />
+ 			</property>
+ 		</component>
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="vitalsTakenDateTime" type="timestamp" access="field" update="true">
+			<column name="vitalstake"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isVentilationChartRecord" type="boolean" access="field" update="true">
+			<column name="isventilat"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="patientConscious" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_patientcon" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="urine2mlkgkhr" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_urine2mlkg" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="patientCausingConcern" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_patientcau" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+	</class>
+</hibernate-mapping>

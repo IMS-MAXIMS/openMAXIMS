@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:36 -->
+<!-- Generated: 12/10/2015, 13:30 -->
 <hibernate-mapping>
 	<class name="ims.core.clinical.domain.objects.IntraOperativeDetails" table="core_intraoperativd" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -184,6 +184,20 @@
 			<index column='idx'/>
 			<one-to-many class="ims.core.clinical.domain.objects.TableDevice" />
 		</list>
+<!-- debug: patientPreparation -->
+<!-- debug: diathermyDeviceSerialNumber -->
+<!-- debug: diathermyPadSite -->
+<!-- debug: laserDeviceName -->
+<!-- debug: laserDeviceSerialNumber -->
+<!-- debug: laserMode -->
+<!-- debug: laserPatientSafetyMeasures -->
+<!-- debug: irrigantSolution -->
+<!-- debug: specimenDestination -->
+<!-- debug: woundPackingType -->
+<!-- debug: procedureWoundClass -->
+<!-- debug: missingItems -->
+<!-- debug: actionsTaken -->
+<!-- debug: chartableOccurrenceType -->
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="otherSkinPreparationUsed" type="string" access="field" update="true" > 
@@ -249,5 +263,75 @@
 		<property name="countComments" type="string" access="field" update="true" > 
 			<column name="countcomme" length="255"  not-null="false" unique="false"  />
 		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="patientPreparation" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_patientpre" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="diathermyDeviceSerialNumber" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_diathermyd" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="diathermyPadSite" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_diathermy3" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="laserDeviceName" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_laserdevic" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="laserDeviceSerialNumber" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_laserdevi2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="laserMode" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_lasermode" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="laserPatientSafetyMeasures" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_laserpatie" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="irrigantSolution" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_irrigantso" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="specimenDestination" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_specimende" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="woundPackingType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_woundpacki" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="procedureWoundClass" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_procedurew" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="missingItems" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_missingite" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="actionsTaken" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_actionstak" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="chartableOccurrenceType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_chartableo" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
 	</class>
 </hibernate-mapping>

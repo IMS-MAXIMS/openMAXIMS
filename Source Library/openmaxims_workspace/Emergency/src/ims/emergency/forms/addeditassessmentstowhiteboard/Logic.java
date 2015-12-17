@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -67,11 +72,10 @@ public class Logic extends BaseLogic
 		else
 			whiteBoardAssessmentConfig=(WhiteBoardAssessmentConfigVo) whiteBoardAssessmentConfig.clone();
 		
-		whiteBoardAssessmentConfig.setName(form.qmbAssessment().getValue()!=null ? form.qmbAssessment().getEditedText() : null);
-		
+		whiteBoardAssessmentConfig.setName(form.txtName().getValue());
+		whiteBoardAssessmentConfig.setAssociatedAssessment(form.qmbAssessment().getValue());
 		whiteBoardAssessmentConfig.setIcon((AppImageRefVo) form.qmbIcon().getValue());
 		
-		whiteBoardAssessmentConfig.setMAXIMSMappingValue(form.txtTaxonomy().getValue());
 		
 		return whiteBoardAssessmentConfig;
 	}
@@ -83,13 +87,12 @@ public class Logic extends BaseLogic
 		if (form.qmbAssessment().getValue()==null)
 			errors.add("Assessment is mandatory!");
 		
+		if (form.txtName().getValue()==null)
+			errors.add("Name is mandatory!");
+		
 		if (form.qmbIcon().getValue()==null)
 			errors.add("Icon is mandatory!");
-		
-		if (form.txtTaxonomy().getValue()==null)
-			errors.add("Taxonomy is mandatory!");
-		
-		
+	
 		if (errors.size() > 0)
 		{
 			String[] UIErrors = new String[errors.size()];
@@ -142,12 +145,15 @@ public class Logic extends BaseLogic
 		{
 			form.qmbIcon().showOpened();
 		}
+		
+		updateControlState();
 	}
 	
 	@Override
 	protected void onQmbAssessmentTextSubmited(String value) throws ims.framework.exceptions.PresentationLogicException
 	{
 		populateAssessmentQueryCombo(value);
+		updateControlState();
 	}
 	
 	private void populateAssessmentQueryCombo(String value)
@@ -170,15 +176,14 @@ public class Logic extends BaseLogic
 			form.qmbAssessment().showOpened();
 		}
 		
+		form.txtName().setValue(form.qmbAssessment().getValue()!=null ? form.qmbAssessment().getValue().getName() : null);
 	}
 	@Override
 	protected void onFormOpen(Object[] args) throws PresentationLogicException
 	{
-		form.qmbAssessment().setEnabled(form.getGlobalContext().Emergency.getWhiteBoardAssessmentConfig()==null);
-		form.txtTaxonomy().setEnabled(form.getGlobalContext().Emergency.getWhiteBoardAssessmentConfig()==null);
 		open();
 	}
-	
+
 	private void open()
 	{	
 		populateScreenFromData(form.getGlobalContext().Emergency.getWhiteBoardAssessmentConfig());
@@ -188,6 +193,8 @@ public class Logic extends BaseLogic
 	private void updateControlState()
 	{
 		form.imgAssessment().setVisible(form.qmbIcon().getValue()!=null);
+		form.qmbAssessment().setEnabled(form.getGlobalContext().Emergency.getWhiteBoardAssessmentConfig()==null);
+		form.txtName().setEnabled(form.qmbAssessment().getValue()!=null);
 	}
 	private void populateScreenFromData(WhiteBoardAssessmentConfigVo whiteBoardAssessmentConfig)
 	{
@@ -195,12 +202,14 @@ public class Logic extends BaseLogic
 		if (whiteBoardAssessmentConfig==null)
 			return;
 		
-		if (whiteBoardAssessmentConfig.getName() != null)
+		if (whiteBoardAssessmentConfig.getAssociatedAssessment() != null)
 		{
-			UserAssessmentForWhiteboardConfigVo tempUA = new UserAssessmentForWhiteboardConfigVo();
-			form.qmbAssessment().newRow(tempUA, whiteBoardAssessmentConfig.getName());
-			form.qmbAssessment().setValue(tempUA);
+			
+			form.qmbAssessment().newRow(whiteBoardAssessmentConfig.getAssociatedAssessment(), whiteBoardAssessmentConfig.getAssociatedAssessment().getName().toString());
+			form.qmbAssessment().setValue(whiteBoardAssessmentConfig.getAssociatedAssessment());
 		}
+		
+		form.txtName().setValue(whiteBoardAssessmentConfig.getName());
 		
 		if (whiteBoardAssessmentConfig.getIcon() != null)
 		{
@@ -209,8 +218,6 @@ public class Logic extends BaseLogic
 			form.qmbIcon().setValue(img);
 			form.imgAssessment().setValue(img);
 		}
-		
-		form.txtTaxonomy().setValue(whiteBoardAssessmentConfig.getMAXIMSMappingValue());
 	
 	}
 	private void clearScreen()
@@ -218,7 +225,13 @@ public class Logic extends BaseLogic
 		form.qmbAssessment().setValue(null);
 		form.qmbIcon().setValue(null);
 		form.imgAssessment().setValue(null);
-		form.txtTaxonomy().setValue(null);
+		form.txtName().setValue(null);
+	}
+	@Override
+	protected void onQmbAssessmentValueChanged() throws PresentationLogicException
+	{
+		form.txtName().setValue(form.qmbAssessment().getValue()!=null ? form.qmbAssessment().getValue().getName() : null);
+		updateControlState();
 	}
 	
 }

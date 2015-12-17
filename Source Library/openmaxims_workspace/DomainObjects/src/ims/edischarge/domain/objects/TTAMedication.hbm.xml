@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:35 -->
+<!-- Generated: 12/10/2015, 13:30 -->
 <hibernate-mapping>
 	<class name="ims.edischarge.domain.objects.TTAMedication" table="edis_ttamedication" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -38,13 +38,19 @@
 <!-- debug: frequency -->
 <!-- debug: gpToContinue -->
 <!-- debug: route -->
-<!-- debug: tTAComment -->
+<!-- debug: medComments -->
 <!-- debug: field.IsAssociation : true -->
-		<!-- A one-to-one relationship using a foreign-key is mapping as a
-			many-to-one with a uniqueness contraint -->
-		<many-to-one name="tTAComment" class="ims.edischarge.domain.objects.TTANote" unique="true" foreign-key="ttamedication_ttacomment_fk" access="field" cascade="save-update">
-			<column name="ttacomment" sql-type="numeric(10,0)" not-null="false" unique="false"   />
-		</many-to-one>
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<list name="medComments" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="ttamedication_medcomment_fk">
+				<column name="edis_ttamedication_medcomment" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.edischarge.domain.objects.TTANote" />
+		</list>
+<!-- debug: sortOrder -->
 <!-- debug: !IsAssociation && !IsCollection -->
 
 <!-- debug: !IsLookup -->
@@ -86,5 +92,10 @@
 		<many-to-one name="route" class="ims.domain.lookups.LookupInstance" access="field">
 			<column name="lkp_route" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="sortOrder" type="integer" access="field" update="true">
+			<column name="sortorder"  not-null="false" unique="false"  />
+		</property>
 	</class>
 </hibernate-mapping>

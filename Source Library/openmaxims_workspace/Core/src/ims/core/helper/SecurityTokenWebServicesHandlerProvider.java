@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -61,6 +66,12 @@ public class SecurityTokenWebServicesHandlerProvider extends DomainImpl implemen
 		boolean				 roleSet	      = false;
 		boolean				 startupFormSet	  = false;
 		boolean 			 restrictPatient  = true;
+		boolean 			 appointmentConsultantCodeSet  = false;
+		boolean 			 appointmentLocationCodeSet  = false;
+		boolean 			 appointmentStartDateTimeSet  = false;
+		boolean 			 appointmentEndDateTimeSet  = false;
+		
+		SessionData sessData = (SessionData)this.getDomainFactory().getDomainSession().getAttribute(SessionConstants.SESSION_DATA);
 		
 		for (int i = 0; i < parameters.length; i++) 
 		{	      		    
@@ -70,7 +81,6 @@ public class SecurityTokenWebServicesHandlerProvider extends DomainImpl implemen
 			if (key.equals("locationId") && Boolean.FALSE.equals(locationSet))
 			{
 				ILocation loc = getLocation(Integer.valueOf(parameters[i].getValue()));
-				SessionData sessData = (SessionData)this.getDomainFactory().getDomainSession().getAttribute(SessionConstants.SESSION_DATA);
 				sessData.selectedLocation.set(loc);
 				locationSet = true;
 			}
@@ -78,7 +88,6 @@ public class SecurityTokenWebServicesHandlerProvider extends DomainImpl implemen
 			else if (key.equals("roleId") && Boolean.FALSE.equals(roleSet))
 			{
 				IAppRole role = getRole(Integer.valueOf(parameters[i].getValue()));
-				SessionData sessData = (SessionData)this.getDomainFactory().getDomainSession().getAttribute(SessionConstants.SESSION_DATA);
 				sessData.role.set(role);
 				roleSet = true;
 			}
@@ -86,7 +95,6 @@ public class SecurityTokenWebServicesHandlerProvider extends DomainImpl implemen
 			else if (key.equals("startupFormId") && Boolean.FALSE.equals(startupFormSet))
 			{
 				IAppForm startupForm = getForm(Integer.valueOf(parameters[i].getValue()));
-				SessionData sessData = (SessionData)this.getDomainFactory().getDomainSession().getAttribute(SessionConstants.SESSION_DATA);
 				sessData.openForm.set(startupForm.getFormId());
 				sessData.defaultStartupForm.set(startupForm.getFormId());				
 				startupFormSet = true;
@@ -96,6 +104,30 @@ public class SecurityTokenWebServicesHandlerProvider extends DomainImpl implemen
 			{				
 				restrictPatient =  false;
 			}
+			//Set Appointment Consultant Code
+			else if (key.equals("appointmentConsultantCode") && Boolean.FALSE.equals(appointmentConsultantCodeSet))
+			{
+				sessData.appointmentConsultantCode.set(parameters[i].getValue());
+				appointmentConsultantCodeSet = true;
+			}
+			//Set Appointment Location Code
+			else if (key.equals("appointmentLocationCode") && Boolean.FALSE.equals(appointmentLocationCodeSet))
+			{
+				sessData.appointmentLocationCode.set(parameters[i].getValue());
+				appointmentLocationCodeSet = true;
+			}
+			//Set Appointment Start Date
+			else if (key.equals("appointmentStartDateTime") && Boolean.FALSE.equals(appointmentStartDateTimeSet))
+			{
+				sessData.appointmentStartDateTime.set(parameters[i].getValue());
+				appointmentStartDateTimeSet = true;
+			}
+			//Set Appointment End Date
+			else if (key.equals("appointmentEndDateTime") && Boolean.FALSE.equals(appointmentEndDateTimeSet))
+			{
+				sessData.appointmentEndDateTime.set(parameters[i].getValue());
+				appointmentEndDateTimeSet = true;
+			}			
 			//Set Patient identifiers
 			else
 			{
@@ -118,7 +150,10 @@ public class SecurityTokenWebServicesHandlerProvider extends DomainImpl implemen
 		Patient pat = null;
 		try 
 		{
+			
 			pat = getPatient(patient);
+			sessData.appointmentConsultantCode.get();
+			int h = 0;
 		}
 		catch (StaleObjectException e) 
 		{
@@ -131,7 +166,7 @@ public class SecurityTokenWebServicesHandlerProvider extends DomainImpl implemen
 			
 			if (restrictPatient)
 			{
-				SessionData sessData = (SessionData)this.getDomainFactory().getDomainSession().getAttribute(SessionConstants.SESSION_DATA);
+				sessData = (SessionData)this.getDomainFactory().getDomainSession().getAttribute(SessionConstants.SESSION_DATA);
 				sessData.restrictPatientAccess.set("True");
 				sessData.restrictPatientId.set(pat.getID_Patient());				
 			}
@@ -179,7 +214,7 @@ public class SecurityTokenWebServicesHandlerProvider extends DomainImpl implemen
 	private Patient getPatient(PatientShort patient) throws StaleObjectException 
 	{		
 		Demographics demographicsImpl = (Demographics)getDomainImpl(DemographicsImpl.class);
-		return demographicsImpl.getPatient(patient);		
+		return demographicsImpl.getPatient(patient, false);         //wdev-17883 - FWUI -1818		
 	}
 	
 	public String setSTParameters(String serviceName, ValueObject vo) {

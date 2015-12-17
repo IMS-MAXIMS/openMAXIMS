@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.pathways.vo.domain;
@@ -50,14 +55,16 @@ public class RTTStatusPointVoAssembler
 		}
 		valueObjectDest.setID_RTTStatusPoint(valueObjectSrc.getID_RTTStatusPoint());
 	    valueObjectDest.setIsRIE(valueObjectSrc.getIsRIE());
+		// Children
+		valueObjectDest.setChildren(valueObjectSrc.getChildren());
+		// AppointmentOutcomes
+		valueObjectDest.setAppointmentOutcomes(valueObjectSrc.getAppointmentOutcomes());
 		// NationalCode
 		valueObjectDest.setNationalCode(valueObjectSrc.getNationalCode());
 		// Description
 		valueObjectDest.setDescription(valueObjectSrc.getDescription());
 		// LocalCode
 		valueObjectDest.setLocalCode(valueObjectSrc.getLocalCode());
-		// Children
-		valueObjectDest.setChildren(valueObjectSrc.getChildren());
 	 	return valueObjectDest;
 	 }
 
@@ -348,14 +355,58 @@ public class RTTStatusPointVoAssembler
 		if ((valueObject.getIsRIE() == null || valueObject.getIsRIE().booleanValue() == false) && domainObject.isIncludeRecord())
 			return null;
 			
+		// Children
+		valueObject.setChildren(ims.pathways.vo.domain.RTTStatusPointVoAssembler.createRTTStatusPointVoCollectionFromRTTStatusPoint(map, domainObject.getChildren()) );
+		// AppointmentOutcomes
+		java.util.List listAppointmentOutcomes = domainObject.getAppointmentOutcomes();
+		ims.scheduling.vo.lookups.ApptOutcomeCollection AppointmentOutcomes = new ims.scheduling.vo.lookups.ApptOutcomeCollection();
+		for(java.util.Iterator iterator = listAppointmentOutcomes.iterator(); iterator.hasNext(); ) 
+		{
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;
+		
+			ims.domain.lookups.LookupInstance instance = 
+				(ims.domain.lookups.LookupInstance) iterator.next();
+			if (instance.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance.getImage().getImageId(), instance.getImage().getImagePath());
+			}
+			else 
+			{
+				img = null;
+			}
+			color = instance.getColor();
+			if (color != null) 
+				color.getValue();
+			ims.scheduling.vo.lookups.ApptOutcome voInstance = new ims.scheduling.vo.lookups.ApptOutcome(instance.getId(),instance.getText(), instance.isActive(), null, img, color);
+			ims.scheduling.vo.lookups.ApptOutcome parentVoInstance = voInstance;
+			ims.domain.lookups.LookupInstance parent = instance.getParent();
+			while (parent != null)
+			{
+				if (parent.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent.getImage().getImageId(), parent.getImage().getImagePath());
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent.getColor();
+				if (color != null) 
+					color.getValue();
+								parentVoInstance.setParent(new ims.scheduling.vo.lookups.ApptOutcome(parent.getId(),parent.getText(), parent.isActive(), null, img, color));
+				parentVoInstance = parentVoInstance.getParent();
+								parent = parent.getParent();
+			}			
+			AppointmentOutcomes.add(voInstance);
+		}
+		valueObject.setAppointmentOutcomes( AppointmentOutcomes );
 		// NationalCode
 		valueObject.setNationalCode(domainObject.getNationalCode());
 		// Description
 		valueObject.setDescription(domainObject.getDescription());
 		// LocalCode
 		valueObject.setLocalCode(domainObject.getLocalCode());
-		// Children
-		valueObject.setChildren(ims.pathways.vo.domain.RTTStatusPointVoAssembler.createRTTStatusPointVoCollectionFromRTTStatusPoint(map, domainObject.getChildren()) );
  		return valueObject;
 	 }
 
@@ -405,41 +456,26 @@ public class RTTStatusPointVoAssembler
 		}
 		domainObject.setVersion(valueObject.getVersion_RTTStatusPoint());
 
-		domainObject.setNationalCode(valueObject.getNationalCode());
-		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
-		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
-		if (valueObject.getDescription() != null && valueObject.getDescription().equals(""))
-		{
-			valueObject.setDescription(null);
-		}
-		domainObject.setDescription(valueObject.getDescription());
-		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
-		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
-		if (valueObject.getLocalCode() != null && valueObject.getLocalCode().equals(""))
-		{
-			valueObject.setLocalCode(null);
-		}
-		domainObject.setLocalCode(valueObject.getLocalCode());
 
 		// SaveAsRefVO treated as RefValueObject
-		ims.pathways.configuration.vo.RTTStatusPointRefVoCollection refCollection4 = new ims.pathways.configuration.vo.RTTStatusPointRefVoCollection();
+		ims.pathways.configuration.vo.RTTStatusPointRefVoCollection refCollection1 = new ims.pathways.configuration.vo.RTTStatusPointRefVoCollection();
 		if (valueObject.getChildren() != null)
 		{
-			for (int i4=0; i4<valueObject.getChildren().size(); i4++)
+			for (int i1=0; i1<valueObject.getChildren().size(); i1++)
 			{
-				ims.pathways.configuration.vo.RTTStatusPointRefVo ref4 = (ims.pathways.configuration.vo.RTTStatusPointRefVo)valueObject.getChildren().get(i4);
-				refCollection4.add(ref4);
+				ims.pathways.configuration.vo.RTTStatusPointRefVo ref1 = (ims.pathways.configuration.vo.RTTStatusPointRefVo)valueObject.getChildren().get(i1);
+				refCollection1.add(ref1);
 			}
 		}
-		int size4 = (null == refCollection4) ? 0 : refCollection4.size();		
-		java.util.List domainChildren4 = domainObject.getChildren();
-		if (domainChildren4 == null)
+		int size1 = (null == refCollection1) ? 0 : refCollection1.size();		
+		java.util.List domainChildren1 = domainObject.getChildren();
+		if (domainChildren1 == null)
 		{
-			domainChildren4 = new java.util.ArrayList();
+			domainChildren1 = new java.util.ArrayList();
 		}
-		for(int i=0; i < size4; i++) 
+		for(int i=0; i < size1; i++) 
 		{
-			ims.pathways.configuration.vo.RTTStatusPointRefVo vo = refCollection4.get(i);			
+			ims.pathways.configuration.vo.RTTStatusPointRefVo vo = refCollection1.get(i);			
 			ims.pathways.configuration.domain.objects.RTTStatusPoint dom = null;
 			if ( null != vo ) 
 			{
@@ -456,29 +492,85 @@ public class RTTStatusPointVoAssembler
 				}
 			}
 
-			int domIdx = domainChildren4.indexOf(dom);
+			int domIdx = domainChildren1.indexOf(dom);
 			if (domIdx == -1)
 			{
-				domainChildren4.add(i, dom);
+				domainChildren1.add(i, dom);
 			}
-			else if (i != domIdx && i < domainChildren4.size())
+			else if (i != domIdx && i < domainChildren1.size())
 			{
-				Object tmp = domainChildren4.get(i);
-				domainChildren4.set(i, domainChildren4.get(domIdx));
-				domainChildren4.set(domIdx, tmp);
+				Object tmp = domainChildren1.get(i);
+				domainChildren1.set(i, domainChildren1.get(domIdx));
+				domainChildren1.set(domIdx, tmp);
 			}
 		}
 		
 		//Remove all ones in domList where index > voCollection.size() as these should
 		//now represent the ones removed from the VO collection. No longer referenced.
-		int i4 = domainChildren4.size();
-		while (i4 > size4)
+		int i1 = domainChildren1.size();
+		while (i1 > size1)
 		{
-			domainChildren4.remove(i4-1);
-			i4 = domainChildren4.size();
+			domainChildren1.remove(i1-1);
+			i1 = domainChildren1.size();
 		}
 		
-		domainObject.setChildren(domainChildren4);		
+		domainObject.setChildren(domainChildren1);		
+		ims.scheduling.vo.lookups.ApptOutcomeCollection collection2 =
+	valueObject.getAppointmentOutcomes();
+	    java.util.List domainAppointmentOutcomes = domainObject.getAppointmentOutcomes();;			
+	    int collection2Size=0;
+		if (collection2 == null)
+		{
+			domainAppointmentOutcomes = new java.util.ArrayList(0);
+		}
+		else
+		{
+			collection2Size = collection2.size();
+		}
+		
+		for(int i=0; i<collection2Size; i++) 
+		{
+			int instanceId = collection2.get(i).getID();
+			ims.domain.lookups.LookupInstanceRef dom =new ims.domain.lookups.LookupInstanceRef(domainFactory.getLookupInstance(instanceId));
+			
+			int domIdx = domainAppointmentOutcomes.indexOf(dom);
+			if (domIdx == -1)
+			{
+				domainAppointmentOutcomes.add(i, dom);
+			}
+			else if (i != domIdx && i < domainAppointmentOutcomes.size())
+			{
+				Object tmp = domainAppointmentOutcomes.get(i);
+				domainAppointmentOutcomes.set(i, domainAppointmentOutcomes.get(domIdx));
+				domainAppointmentOutcomes.set(domIdx, tmp);
+			}
+		}
+		
+		//Remove all ones in domList where index > voCollection.size() as these should
+		//now represent the ones removed from the VO collection. No longer referenced.
+		int j2 = domainAppointmentOutcomes.size();
+		while (j2 > collection2Size)
+		{
+			domainAppointmentOutcomes.remove(j2-1);
+			j2 = domainAppointmentOutcomes.size();
+		}
+
+		domainObject.setAppointmentOutcomes(domainAppointmentOutcomes);		
+		domainObject.setNationalCode(valueObject.getNationalCode());
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getDescription() != null && valueObject.getDescription().equals(""))
+		{
+			valueObject.setDescription(null);
+		}
+		domainObject.setDescription(valueObject.getDescription());
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getLocalCode() != null && valueObject.getLocalCode().equals(""))
+		{
+			valueObject.setLocalCode(null);
+		}
+		domainObject.setLocalCode(valueObject.getLocalCode());
 
 		return domainObject;
 	}

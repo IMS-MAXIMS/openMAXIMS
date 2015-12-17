@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.core.vo.domain;
@@ -70,6 +75,14 @@ public class ReferralDetailsEmergencyAdmissionVoAssembler
 		valueObjectDest.setPractice(valueObjectSrc.getPractice());
 		// DateReferralReceived
 		valueObjectDest.setDateReferralReceived(valueObjectSrc.getDateReferralReceived());
+		// EndDateKPI
+		valueObjectDest.setEndDateKPI(valueObjectSrc.getEndDateKPI());
+		// EndDateEmailKPI
+		valueObjectDest.setEndDateEmailKPI(valueObjectSrc.getEndDateEmailKPI());
+		// EndDatePaperKPI
+		valueObjectDest.setEndDatePaperKPI(valueObjectSrc.getEndDatePaperKPI());
+		// ReferrerType
+		valueObjectDest.setReferrerType(valueObjectSrc.getReferrerType());
 	 	return valueObjectDest;
 	 }
 
@@ -456,7 +469,61 @@ public class ReferralDetailsEmergencyAdmissionVoAssembler
 		{
 			valueObject.setDateReferralReceived(new ims.framework.utils.Date(DateReferralReceived) );
 		}
- 		return valueObject;
+		// EndDateKPI
+		java.util.Date EndDateKPI = domainObject.getEndDateKPI();
+		if ( null != EndDateKPI ) 
+		{
+			valueObject.setEndDateKPI(new ims.framework.utils.Date(EndDateKPI) );
+		}
+		// EndDateEmailKPI
+		java.util.Date EndDateEmailKPI = domainObject.getEndDateEmailKPI();
+		if ( null != EndDateEmailKPI ) 
+		{
+			valueObject.setEndDateEmailKPI(new ims.framework.utils.Date(EndDateEmailKPI) );
+		}
+		// EndDatePaperKPI
+		java.util.Date EndDatePaperKPI = domainObject.getEndDatePaperKPI();
+		if ( null != EndDatePaperKPI ) 
+		{
+			valueObject.setEndDatePaperKPI(new ims.framework.utils.Date(EndDatePaperKPI) );
+		}
+		// ReferrerType
+		ims.domain.lookups.LookupInstance instance14 = domainObject.getReferrerType();
+		if ( null != instance14 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance14.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance14.getImage().getImageId(), instance14.getImage().getImagePath());
+			}
+			color = instance14.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.SourceOfReferral voLookup14 = new ims.core.vo.lookups.SourceOfReferral(instance14.getId(),instance14.getText(), instance14.isActive(), null, img, color);
+			ims.core.vo.lookups.SourceOfReferral parentVoLookup14 = voLookup14;
+			ims.domain.lookups.LookupInstance parent14 = instance14.getParent();
+			while (parent14 != null)
+			{
+				if (parent14.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent14.getImage().getImageId(), parent14.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent14.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup14.setParent(new ims.core.vo.lookups.SourceOfReferral(parent14.getId(),parent14.getText(), parent14.isActive(), null, img, color));
+				parentVoLookup14 = parentVoLookup14.getParent();
+								parent14 = parent14.getParent();
+			}			
+			valueObject.setReferrerType(voLookup14);
+		}
+		 		return valueObject;
 	 }
 
 
@@ -640,6 +707,35 @@ public class ReferralDetailsEmergencyAdmissionVoAssembler
 			value10 = date10.getDate();
 		}
 		domainObject.setDateReferralReceived(value10);
+		java.util.Date value11 = null;
+		ims.framework.utils.Date date11 = valueObject.getEndDateKPI();		
+		if ( date11 != null ) 
+		{
+			value11 = date11.getDate();
+		}
+		domainObject.setEndDateKPI(value11);
+		java.util.Date value12 = null;
+		ims.framework.utils.Date date12 = valueObject.getEndDateEmailKPI();		
+		if ( date12 != null ) 
+		{
+			value12 = date12.getDate();
+		}
+		domainObject.setEndDateEmailKPI(value12);
+		java.util.Date value13 = null;
+		ims.framework.utils.Date date13 = valueObject.getEndDatePaperKPI();		
+		if ( date13 != null ) 
+		{
+			value13 = date13.getDate();
+		}
+		domainObject.setEndDatePaperKPI(value13);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value14 = null;
+		if ( null != valueObject.getReferrerType() ) 
+		{
+			value14 =
+				domainFactory.getLookupInstance(valueObject.getReferrerType().getID());
+		}
+		domainObject.setReferrerType(value14);
 
 		return domainObject;
 	}

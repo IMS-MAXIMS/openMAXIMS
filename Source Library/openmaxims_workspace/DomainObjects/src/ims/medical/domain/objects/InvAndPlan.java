@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.medical.domain.objects;
@@ -52,6 +57,8 @@ public class InvAndPlan extends ims.domain.DomainObject implements ims.domain.Sy
 	private String medicalPlan;
 	/** ClinicalContact */
 	private ims.core.admin.domain.objects.ClinicalContact clinicalContact;
+	/** AuthoringInfo */
+	private ims.core.clinical.domain.objects.AuthoringInformation authoringInfo;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public InvAndPlan (Integer id, int ver)
@@ -98,6 +105,13 @@ public class InvAndPlan extends ims.domain.DomainObject implements ims.domain.Sy
 	}
 	public void setClinicalContact(ims.core.admin.domain.objects.ClinicalContact clinicalContact) {
 		this.clinicalContact = clinicalContact;
+	}
+
+	public ims.core.clinical.domain.objects.AuthoringInformation getAuthoringInfo() {
+		return authoringInfo;
+	}
+	public void setAuthoringInfo(ims.core.clinical.domain.objects.AuthoringInformation authoringInfo) {
+		this.authoringInfo = authoringInfo;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -165,6 +179,14 @@ public class InvAndPlan extends ims.domain.DomainObject implements ims.domain.Sy
 		    auditStr.append(clinicalContact.getId());
 		}
 	    auditStr.append("; ");
+		auditStr.append("\r\n*authoringInfo* :");
+		if (authoringInfo != null)
+		{
+			auditStr.append(toShortClassName(authoringInfo));
+				
+		    auditStr.append(authoringInfo.toString());
+		}
+	    auditStr.append("; ");
 		return auditStr.toString();
 	}
 	
@@ -229,6 +251,12 @@ public class InvAndPlan extends ims.domain.DomainObject implements ims.domain.Sy
 			sb.append("<clinicalContact>");
 			sb.append(this.getClinicalContact().toXMLString(domMap)); 	
 			sb.append("</clinicalContact>");		
+		}
+		if (this.getAuthoringInfo() != null)
+		{
+			sb.append("<authoringInfo>");
+			sb.append(this.getAuthoringInfo().toXMLString(domMap)); 	
+			sb.append("</authoringInfo>");		
 		}
 		return sb.toString();
 	}
@@ -410,6 +438,12 @@ public class InvAndPlan extends ims.domain.DomainObject implements ims.domain.Sy
 			fldEl = fldEl.element("class");		
 			obj.setClinicalContact(ims.core.admin.domain.objects.ClinicalContact.getClinicalContactfromXML(fldEl, factory, domMap)); 
 		}
+		fldEl = el.element("authoringInfo");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setAuthoringInfo(ims.core.clinical.domain.objects.AuthoringInformation.getAuthoringInformationfromXML(fldEl, factory, domMap)); 
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -426,6 +460,7 @@ public class InvAndPlan extends ims.domain.DomainObject implements ims.domain.Sy
 		public static final String InvestigationOrdered = "investigationOrdered";
 		public static final String MedicalPlan = "medicalPlan";
 		public static final String ClinicalContact = "clinicalContact";
+		public static final String AuthoringInfo = "authoringInfo";
 	}
 }
 

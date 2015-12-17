@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." name="JIRA" default="JIRA" >	
+	<!-- property name="jira.issues" value="WDEV-4153 wdev-4146,wdev-4129;wdev-4157;wdev-4178;wdev-4199;wdev-4196;wdev-4197;wdev-4154;wdev-4182;wdev-4151;wdev-4212;wdev-4155;wdev-4201;wdev-4156;wdev-4216;wdev-4195;wdev-4194;wdev-4134;wdev-4225;wdev-4251;wdev-4238;wdev-4221;wdev-3999;wdev-4281;wdev-4297;wdev-4242;wdev-4321;wdev-4322;wdev-4323;wdev-4303;wdev-4307"/ -->
+	<property name="jira.issues" value="WDEV-8664;WDEV-8759;WDEV-8528;WDEV-7715;WDEV-8191;WDEV-8690;WDEV-8207;WDEV-8483;WDEV-8700;WDEV-8203;WDEV-8608;WDEV-8579;WDEV-8609;WDEV-8356;WDEV-8614;WDEV-8607;WDEV-8613;WDEV-8556;WDEV-8606;WDEV-8615;WDEV-8612;WDEV-8683;WDEV-8544;WDEV-8665;WDEV-8467;WDEV-8679;WDEV-8678;WDEV-8549;WDEV-8495;WDEV-8460;WDEV-8497;WDEV-8204;WDEV-8555;WDEV-8584;WDEV-8494;WDEV-8452;WDEV-8498;WDEV-8496;"/>
+	
+	<taskdef name="jirareport" classname="ims.ant.jira.JiraReportTask"/>	
+	<target name="JIRA">
+		<jirareport></jirareport>
+	</target>
+</project>

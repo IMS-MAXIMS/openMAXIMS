@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -178,7 +183,7 @@ public class Logic extends BaseLogic
 		row = form.lyr1().tabBilling().grd2().getRows().newRow();
 		row.setColDate("10/12/2010");
 		row.setColQuantity("1");
-		row.setColDescription("Oral Analgesia – co-codamol, paracetamol");
+		row.setColDescription("Oral Analgesia â€“ co-codamol, paracetamol");
 		row.setColUnitPrice("0.45");
 		row.setColSubTotal("0");
 		row.setColPST(new Float(0));
@@ -218,7 +223,7 @@ public class Logic extends BaseLogic
 		row = form.lyr1().tabBilling().grd2().getRows().newRow();
 		row.setColDate("12/12/2010");
 		row.setColQuantity("2");
-		row.setColDescription("Dressing pack – Small, Large");
+		row.setColDescription("Dressing pack â€“ Small, Large");
 		row.setColUnitPrice("21");
 		row.setColSubTotal("0");
 		row.setColPST(new Float(0));
@@ -288,7 +293,7 @@ public class Logic extends BaseLogic
 		row = form.lyr1().tabBilling().grd2().getRows().newRow();
 		row.setColDate("16/12/2010");
 		row.setColQuantity("3");
-		row.setColDescription("X-Ray – 1 joint, 3 views");
+		row.setColDescription("X-Ray â€“ 1 joint, 3 views");
 		row.setColUnitPrice("20");
 		row.setColSubTotal("0");
 		row.setColPST(new Float(0));

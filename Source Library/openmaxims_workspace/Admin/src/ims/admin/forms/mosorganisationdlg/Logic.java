@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -482,91 +487,89 @@ public class Logic extends BaseLogic
 
 	private void setHcpLocations(HcpLocationVoCollection voCollHcpLocations, DynamicGridRow rowParent)
 	{
-		for (int i = 0; i < voCollHcpLocations.size(); i++)
-		{
-			HcpLocationVo hcpLocVo = voCollHcpLocations.get(i);
-			
-			LocShortVo locVo = hcpLocVo.getLocation();
-			
 			for (int j = 0; j < rowParent.getRows().size() ; j++)
 			{
 				DynamicGridRow row = rowParent.getRows().get(j);
 				
-				if (row.getValue().equals(locVo))
+				for (int i = 0; i < voCollHcpLocations.size(); i++) //WDEV-20716 moved inside the loop for performance 
 				{
-					row.setValue(hcpLocVo);
-					
-					row.setChecked(true);
-							
-					String strTooltip = createAccreditationHistoryTooltip(hcpLocVo.getAccreditationHistory(), hcpLocVo.getCaseTypes());
-					
-					DynamicGridCell cellOrgLoc = row.getCells().get(form.dyngrdOrganisationLocation().getColumns().getByIdentifier(COL_ORGANISATION_LOCATION));
-					cellOrgLoc.setTooltip(strTooltip);
-
-					if (hcpLocVo.getIsPrimary() != null && hcpLocVo.getIsPrimary().booleanValue())
+					HcpLocationVo hcpLocVo = voCollHcpLocations.get(i);
+					LocShortVo locVo = hcpLocVo.getLocation();
+					if (row.getValue().equals(locVo))
 					{
-						row.setTextColor(Color.Red);
-					}
-
-					if (getColByIdentifier(COL_ACCREDITATION) != null)
-					{
-						DynamicGridCell cell = row.getCells().get(form.dyngrdOrganisationLocation().getColumns().getByIdentifier(COL_ACCREDITATION));
-						if (cell != null && cell.getType().equals(DynamicCellType.ENUMERATION))
-	 					{
-							cell.setValue(hcpLocVo.getAccreditationStatusIsNotNull() ? hcpLocVo.getAccreditationStatus() : null);
-							cell.setIdentifier(hcpLocVo.getAccreditationStatus());
-							cell.setWidth(200);
-							cell.setTooltip(strTooltip);
-	 					}
+						row.setValue(hcpLocVo);
 						
-						//WDEV-15073
-						if (ConfigFlag.UI.MANDATORY_MOS_ACCREDITATION_STATUS.getValue() && cell != null && cell.getValue() != null &&( ((AccreditationLocationStatus)cell.getValue()).equals(AccreditationLocationStatus.RESTICT_ACCRED) 
-								|| ((AccreditationLocationStatus)cell.getValue()).equals(AccreditationLocationStatus.RESTRICT_ACCRED_REFERRING)) )
+						row.setChecked(true);
+								
+						String strTooltip = createAccreditationHistoryTooltip(hcpLocVo.getAccreditationHistory(), hcpLocVo.getCaseTypes());
+						
+						DynamicGridCell cellOrgLoc = row.getCells().get(form.dyngrdOrganisationLocation().getColumns().getByIdentifier(COL_ORGANISATION_LOCATION));
+						cellOrgLoc.setTooltip(strTooltip);
+	
+						if (hcpLocVo.getIsPrimary() != null && hcpLocVo.getIsPrimary().booleanValue())
 						{
-							row.getCells().newCell(getColByIdentifier(COL_ACCREDITATION_CASETYPES), DynamicCellType.BUTTON);
+							row.setTextColor(Color.Red);
+						}
+	
+						if (getColByIdentifier(COL_ACCREDITATION) != null)
+						{
+							DynamicGridCell cell = row.getCells().get(form.dyngrdOrganisationLocation().getColumns().getByIdentifier(COL_ACCREDITATION));
+							if (cell != null && cell.getType().equals(DynamicCellType.ENUMERATION))
+		 					{
+								cell.setValue(hcpLocVo.getAccreditationStatusIsNotNull() ? hcpLocVo.getAccreditationStatus() : null);
+								cell.setIdentifier(hcpLocVo.getAccreditationStatus());
+								cell.setWidth(200);
+								cell.setTooltip(strTooltip);
+		 					}
+							
+							//WDEV-15073
+							if (ConfigFlag.UI.MANDATORY_MOS_ACCREDITATION_STATUS.getValue() && cell != null && cell.getValue() != null &&( ((AccreditationLocationStatus)cell.getValue()).equals(AccreditationLocationStatus.RESTICT_ACCRED) 
+									|| ((AccreditationLocationStatus)cell.getValue()).equals(AccreditationLocationStatus.RESTRICT_ACCRED_REFERRING)) )
+							{
+								row.getCells().newCell(getColByIdentifier(COL_ACCREDITATION_CASETYPES), DynamicCellType.BUTTON);
+							}
+							
 						}
 						
-					}
-					
-					if (getColByIdentifier(COL_ACCREDITATION_CASETYPES) != null)
-					{
-						DynamicGridCell cell = row.getCells().get(form.dyngrdOrganisationLocation().getColumns().getByIdentifier(COL_ACCREDITATION_CASETYPES));
-						if (cell != null && cell.getType().equals(DynamicCellType.BUTTON))
-	 					{
-							cell.setIdentifier(hcpLocVo.getCaseTypes());
-							cell.setWidth(100);
-							cell.setTooltip(strTooltip);
-	 					}
-					}
-
-					if (getColByIdentifier(COL_ACCREDITATION_ST_DATE) != null)
-					{
-						DynamicGridCell cell = row.getCells().get(form.dyngrdOrganisationLocation().getColumns().getByIdentifier(COL_ACCREDITATION_ST_DATE));
-						if (cell != null && cell.getType().equals(DynamicCellType.DATE))
-	 					{
-							cell.setValue(hcpLocVo.getStartDateIsNotNull() ? hcpLocVo.getStartDate(): null);
-							cell.setIdentifier(hcpLocVo.getStartDate());
-							cell.setWidth(120);
-							cell.setTooltip(strTooltip);
-	 					}
-					}
-					if (getColByIdentifier(COL_ACCREDITATION_END_DATE) != null)
-					{
-						DynamicGridCell cell = row.getCells().get(form.dyngrdOrganisationLocation().getColumns().getByIdentifier(COL_ACCREDITATION_END_DATE));
-						if (cell != null && cell.getType().equals(DynamicCellType.DATE))
-	 					{
-							cell.setValue(hcpLocVo.getEndDateIsNotNull() ? hcpLocVo.getEndDate() : null);
-							cell.setIdentifier(hcpLocVo.getEndDate());
-							cell.setWidth(-1);
-							cell.setTooltip(strTooltip);
-	 					}
+						if (getColByIdentifier(COL_ACCREDITATION_CASETYPES) != null)
+						{
+							DynamicGridCell cell = row.getCells().get(form.dyngrdOrganisationLocation().getColumns().getByIdentifier(COL_ACCREDITATION_CASETYPES));
+							if (cell != null && cell.getType().equals(DynamicCellType.BUTTON))
+		 					{
+								cell.setIdentifier(hcpLocVo.getCaseTypes());
+								cell.setWidth(100);
+								cell.setTooltip(strTooltip);
+		 					}
+						}
+	
+						if (getColByIdentifier(COL_ACCREDITATION_ST_DATE) != null)
+						{
+							DynamicGridCell cell = row.getCells().get(form.dyngrdOrganisationLocation().getColumns().getByIdentifier(COL_ACCREDITATION_ST_DATE));
+							if (cell != null && cell.getType().equals(DynamicCellType.DATE))
+		 					{
+								cell.setValue(hcpLocVo.getStartDateIsNotNull() ? hcpLocVo.getStartDate(): null);
+								cell.setIdentifier(hcpLocVo.getStartDate());
+								cell.setWidth(120);
+								cell.setTooltip(strTooltip);
+		 					}
+						}
+						if (getColByIdentifier(COL_ACCREDITATION_END_DATE) != null)
+						{
+							DynamicGridCell cell = row.getCells().get(form.dyngrdOrganisationLocation().getColumns().getByIdentifier(COL_ACCREDITATION_END_DATE));
+							if (cell != null && cell.getType().equals(DynamicCellType.DATE))
+		 					{
+								cell.setValue(hcpLocVo.getEndDateIsNotNull() ? hcpLocVo.getEndDate() : null);
+								cell.setIdentifier(hcpLocVo.getEndDate());
+								cell.setWidth(-1);
+								cell.setTooltip(strTooltip);
+		 					}
+						}
 					}
 				}
-				
 				if (row.getRows().size() > 0)
 					setHcpLocations(voCollHcpLocations, row);
 			}
-		}		
+//		}		
 	}
 
 	private String createAccreditationHistoryTooltip(HcpLocationAccreditationHistoryVoCollection accreditationHistory, CaseTypeCollection collCaseTypes)
@@ -815,9 +818,24 @@ public class Logic extends BaseLogic
 
 			}
 		}
+		//WDEV-20218
+		checkedOrUncheckChildRow(row.getRows(), row.isChecked());
 
 	}
 
+	//WDEV-20218
+	protected void checkedOrUncheckChildRow(DynamicGridRowCollection row, Boolean checkboxStatus)
+	{
+		if(row!= null)
+		{
+			for(int i = 0; i < row.size();i++)
+			{	
+				row.get(i).setChecked(Boolean.TRUE.equals(checkboxStatus));
+				checkedOrUncheckChildRow(row.get(i).getRows(),checkboxStatus);
+			}
+		}
+	}
+	
 	protected void onDyngrdOrganisationLocationRowSelectionChanged(DynamicGridRow row) 
 	{
 		form.getContextMenus().getMosLocationSetPrimaryLocationItem().setVisible(form.dyngrdOrganisationLocation().getSelectedRow().getValue() != null && ! (form.dyngrdOrganisationLocation().getSelectedRow().getValue() instanceof OrganisationVo) && ! form.dyngrdOrganisationLocation().getSelectedRow().getTextColor().equals(Color.Red)); //WDEV-15405  //WDEV-15404

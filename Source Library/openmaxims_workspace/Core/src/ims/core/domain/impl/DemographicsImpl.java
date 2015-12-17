@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -33,16 +38,24 @@ import ims.RefMan.domain.objects.TCIForPatientElectiveList;
 import ims.RefMan.domain.objects.TCIOutcomeForPatientElectiveList;
 import ims.RefMan.vo.lookups.AdmissionOfferOutcome;
 import ims.RefMan.vo.lookups.ElectiveListStatusReason;
+import ims.RefMan.vo.lookups.ReferralApptStatus;
 import ims.RefMan.vo.lookups.TCIStatusChangeReason;
 import ims.chooseandbook.vo.lookups.ActionRequestType;
 import ims.configuration.InitConfig;
 import ims.configuration.gen.ConfigFlag;
+import ims.core.admin.domain.objects.EmergencyAttendance;
 import ims.core.clinical.domain.objects.DeathDetails;
+import ims.core.clinical.domain.objects.PatientAlertCategories;
+import ims.core.clinical.domain.objects.PatientMedicalInsurance;
 import ims.core.clinical.domain.objects.PatientNoAlertInfo;
 import ims.core.domain.Alerts;
+import ims.core.domain.PatientCaseNotes;
 import ims.core.helper.DTOHelper;
+import ims.core.helper.IEndOfCareCatsReferralHelper;
 import ims.core.patient.vo.PatientRefVo;
 import ims.core.resource.people.domain.objects.MemberOfStaff;
+import ims.core.resource.people.vo.MemberOfStaffRefVo;
+import ims.core.resource.place.domain.objects.LocSite;
 import ims.core.resource.place.domain.objects.Organisation;
 import ims.core.resource.place.vo.LocationRefVo;
 import ims.core.resource.place.vo.OrganisationRefVo;
@@ -50,23 +63,26 @@ import ims.core.vo.CaseNoteFolderVo;
 import ims.core.vo.CommChannelVoCollection;
 import ims.core.vo.DeathDetailsVo;
 import ims.core.vo.DeathDetailsVoCollection;
+import ims.core.vo.DemographicControlsConfigVoCollection;
 import ims.core.vo.GP;
 import ims.core.vo.GpLiteToPracticeLiteVo;
 import ims.core.vo.GpPracticeLiteVo;
 import ims.core.vo.GpShortVo;
 import ims.core.vo.GpToPracticesVo;
 import ims.core.vo.GpToPracticesVoCollection;
-import ims.core.vo.InsuranceVo;
 import ims.core.vo.LocSiteShortVo;
 import ims.core.vo.LocSiteShortVoCollection;
 import ims.core.vo.LocSiteVo;
 import ims.core.vo.LocSiteVoCollection;
 import ims.core.vo.MemberOfStaffLiteVo;
 import ims.core.vo.MemberOfStaffShortVo;
+import ims.core.vo.NationalHealthCoverVo;
 import ims.core.vo.NextOfKin;
 import ims.core.vo.OrganisationVo;
 import ims.core.vo.OrganisationWithSitesVo;
 import ims.core.vo.Patient;
+import ims.core.vo.PatientAlertCategoriesVo;
+import ims.core.vo.PatientCaseNoteRequestLiteVoCollection;
 import ims.core.vo.PatientId;
 import ims.core.vo.PatientIdCollection;
 import ims.core.vo.PatientLiteVo;
@@ -77,17 +93,24 @@ import ims.core.vo.PersonName;
 import ims.core.vo.TaxonomyMap;
 import ims.core.vo.TaxonomyMapCollection;
 import ims.core.vo.domain.DeathDetailsVoAssembler;
+import ims.core.vo.domain.DemographicControlsConfigVoAssembler;
 import ims.core.vo.domain.GPAssembler;
 import ims.core.vo.domain.LocSiteVoAssembler;
 import ims.core.vo.domain.MemberOfStaffLiteVoAssembler;
 import ims.core.vo.domain.MemberOfStaffShortVoAssembler;
 import ims.core.vo.domain.OrganisationWithSitesVoAssembler;
+import ims.core.vo.domain.PatientAlertCategoriesVoAssembler;
 import ims.core.vo.domain.PatientAssembler;
+import ims.core.vo.domain.PatientCaseNoteRequestLiteVoAssembler;
 import ims.core.vo.domain.PatientIdAssembler;
 import ims.core.vo.domain.PatientListVoAssembler;
 import ims.core.vo.domain.PatientLiteVoAssembler;
 import ims.core.vo.domain.PatientShortAssembler;
 import ims.core.vo.lookups.AddressType;
+import ims.core.vo.lookups.AlertType;
+import ims.core.vo.lookups.AlertTypeCollection;
+import ims.core.vo.lookups.CaseNoteRequestCancellationReason;
+import ims.core.vo.lookups.CaseNoteRequestStatus;
 import ims.core.vo.lookups.ChannelType;
 import ims.core.vo.lookups.EthnicOrigin;
 import ims.core.vo.lookups.LocationType;
@@ -106,11 +129,15 @@ import ims.core.vo.lookups.Sex;
 import ims.core.vo.lookups.TaxonomyType;
 import ims.core.vo.lookups.WaitingListStatus;
 import ims.domain.DomainFactory;
+import ims.domain.DomainObject;
+import ims.domain.DomainSession;
+import ims.domain.SessionData;
 import ims.domain.exceptions.DomainInterfaceException;
 import ims.domain.exceptions.DomainRuntimeException;
 import ims.domain.exceptions.StaleObjectException;
 import ims.domain.exceptions.UniqueKeyViolationException;
 import ims.domain.exceptions.UnqViolationUncheckedException;
+import ims.domain.lookups.LookupInstance;
 import ims.dto.DTODomainImplementation;
 import ims.dto.Result;
 import ims.dto.ResultException;
@@ -125,6 +152,8 @@ import ims.dto.client.Hadd.HaddRecord;
 import ims.dto.client.Sd_appt;
 import ims.dto.client.Sd_appt.Sd_apptAppt_idRecord;
 import ims.dto.client.Sd_appt.Sd_apptRecord;
+import ims.emergency.domain.objects.AttendanceRequiringContracting;
+import ims.framework.SessionConstants;
 import ims.framework.enumerations.SystemLogLevel;
 import ims.framework.enumerations.SystemLogType;
 import ims.framework.exceptions.CodingRuntimeException;
@@ -145,18 +174,23 @@ import ims.pathways.vo.domain.PatientJourneyVoAssembler;
 import ims.pathways.vo.domain.RTTStatusEventMapVoAssembler;
 import ims.pathways.vo.lookups.EventStatus;
 import ims.pathways.vo.lookups.JourneyStatus;
-import ims.scheduling.domain.objects.Appointment_Status;
 import ims.scheduling.domain.objects.Booking_Appointment;
+import ims.scheduling.domain.objects.PendingEmergencyTheatre;
 import ims.scheduling.vo.Appointment_StatusVo;
 import ims.scheduling.vo.Appointment_StatusVoCollection;
 import ims.scheduling.vo.BookingAppointmentLiteVo;
 import ims.scheduling.vo.BookingAppointmentLiteVoCollection;
 import ims.scheduling.vo.Booking_AppointmentVo;
-import ims.scheduling.vo.Booking_AppointmentVoCollection;
+import ims.scheduling.vo.PendingEmergencyTheatreVo;
+import ims.scheduling.vo.PendingEmergencyTheatreVoCollection;
 import ims.scheduling.vo.domain.BookingAppointmentLiteVoAssembler;
 import ims.scheduling.vo.domain.Booking_AppointmentVoAssembler;
+import ims.scheduling.vo.domain.PendingEmergencyTheatreVoAssembler;
+import ims.scheduling.vo.lookups.PendingEmergencyTheatreRemovalReason;
+import ims.scheduling.vo.lookups.PendingEmergencyTheatreStatus;
 import ims.scheduling.vo.lookups.Status_Reason;
 
+import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -204,6 +238,9 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 
 	private Patient getDTOPatient(PatientShort patient) throws StaleObjectException, UniqueKeyViolationException
 	{
+		if (Boolean.TRUE.equals(ConfigFlag.GEN.USE_ELECTIVE_LIST_FUNCTIONALITY.getValue()))
+			return null;
+
 		String extSystem = ConfigFlag.DOM.DEMOGRAPHICS_EXT_SYSTEM.getValue();
 		
 		Demographics patRec = (Demographics) getDTOInstance(Demographics.class);
@@ -416,18 +453,18 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 		else
 			voPatient.setNok(null);
 
-		InsuranceVo insurance;
-		if ((insurance = voPatient.getInsurance()) == null)
+		NationalHealthCoverVo insurance;
+		if ((insurance = voPatient.getNationalHealthCover()) == null)
 		{
-			insurance = new InsuranceVo();
-			voPatient.setInsurance(insurance);
+			insurance = new NationalHealthCoverVo();
+			voPatient.setNationalHealthCover(insurance);
 		}
 		insurance.setHealthActCategory((PersonHealthActCategory) getLookupService().getLocalLookup(PersonHealthActCategory.class, PersonHealthActCategory.TYPE_ID, extSystem, dtop.Healthcat));
 		insurance.setMedicalCardNo(dtop.Medcardno);
 		// wdev-7328 - null values in insurance are causing unnecessary patient updates
 		// check value now, and if not set, clear the insurance for the patient
 		if (insurance.getHealthActCategory() == null && (insurance.getMedicalCardNo() == null || insurance.getMedicalCardNo().equals("")))
-			voPatient.setInsurance(null);
+			voPatient.setNationalHealthCover(null);
 
 		if ((dtop.Gpcd!= null) && (dtop.Gpcd.length() > 0 &&  !dtop.Gpcd.equals("0")))
 		{
@@ -476,6 +513,15 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 		
 		// Set Allergies & Allerts
 		voPatient.setHasAlerts(hasAlerts(voPatient.getID_Patient()));
+		
+		//Set PatientAlertsCategory
+		PatientAlertCategoriesVo alertCategories = hasAlertsCategories(voPatient);		
+		voPatient.setHasAlertCategory1(alertCategories.getHasAlertCategory1() != null ? alertCategories.getHasAlertCategory1() : false);
+		voPatient.setHasAlertCategory2(alertCategories.getHasAlertCategory2() != null ? alertCategories.getHasAlertCategory2() : false);
+		voPatient.setHasAlertCategory3(alertCategories.getHasAlertCategory3() != null ? alertCategories.getHasAlertCategory3() : false);
+		voPatient.setHasAlertCategory4(alertCategories.getHasAlertCategory4() != null ? alertCategories.getHasAlertCategory4() : false);
+		voPatient.setHasAlertCategoryOther(alertCategories.getHasAlertCategoryOther() != null ? alertCategories.getHasAlertCategoryOther() : false);
+		
 		voPatient.setHasAllergies(hasAllergy(voPatient.getID_Patient()));
 
 		if (voPatient.getIdentifiers() != null)
@@ -516,6 +562,11 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 			if (intfId.getIdValue() != null)
 			{
 				String idVal = intfId.getIdValue().trim();
+				Integer nhsDup = intfId.getDuplicateNHSNum();
+				
+				if(nhsDup == null)
+					nhsDup = 0;
+				
 				//wdev-9584 add verified as a field to check 
 				//http://jira/browse/WDEV-12850
 				String hql = "";
@@ -525,16 +576,16 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 					Boolean isVerified = intfId.getVerified()==null?Boolean.valueOf(false):intfId.getVerified();
 					//if isVerified value being supplied to query is false - return false and null records
 					if(!isVerified)
-						hql = " from Patient p join p.identifiers as ids where ids.type = :idType and ids.value = :idValue and ( ids.verified = False or ids.verified is null) ";		
+						hql = " from Patient p join p.identifiers as ids where ids.type = :idType and ids.value = :idValue and ( ids.verified = False or ids.verified is null) and (ids.duplicateNHSNum is null or ids.duplicateNHSNum = :dupNHS) ";		
 					else
 						//return only records with true
-						hql = " from Patient p join p.identifiers as ids where ids.type = :idType and ids.value = :idValue and ids.verified = True ";
+						hql = " from Patient p join p.identifiers as ids where ids.type = :idType and ids.value = :idValue and ids.verified = True and (ids.duplicateNHSNum is null or ids.duplicateNHSNum = :dupNHS) ";
 				}
 				else
 				{
-					hql = " from Patient p join p.identifiers as ids where ids.type = :idType and ids.value = :idValue ";
+					hql = " from Patient p join p.identifiers as ids where ids.type = :idType and ids.value = :idValue and (ids.duplicateNHSNum is null or ids.duplicateNHSNum = :dupNHS) ";
 				}
-				java.util.List patientList = factory.find(hql, new String[]{"idValue", "idType"}, new Object[]{idVal, getDomLookup(intfId.getType())});
+				java.util.List patientList = factory.find(hql, new String[]{"idValue", "idType", "dupNHS"}, new Object[]{idVal, getDomLookup(intfId.getType()), nhsDup});
 				if (patientList != null && !patientList.isEmpty())
 				{
 					// 	Patient Should be unique per id value and type
@@ -543,6 +594,10 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 						throw new DomainRuntimeException("More than one patient found with identifier type = " + intfId.getType() + " and value = " + idVal);
 					}
 					domPatient = (ims.core.patient.domain.objects.Patient) patientList.get(0);
+					if(domPatient!=null)//http://jira/browse/WDEV-18798
+					{
+						domPatient.setPrimaryIdValueUsed(idVal);
+					}
 				}
 			}
 			i++;
@@ -586,9 +641,12 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 			domPatient = domPatient.getAssociatedPatient();
 			isMergedPatient = true;
 		}
-			
-		if(isMergedPatient)
-			raiseAlert(domPatient.getMergedMessage(foundPatient));
+		//WDEV-22567 
+		if (isMergedPatient)
+		{	
+			triggerMergeAlertMessage(domPatient, foundPatient);
+		}
+		//WDEV-22567
 		
 		Patient voPatient = PatientAssembler.create(domPatient);
 		if (voPatient != null && voPatient.getAge() == null)   //wdev-14325
@@ -601,11 +659,38 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 		if(voPatient != null) //wdev-14325
 		{
 			voPatient.setHasAlerts(hasAlerts(domPatient.getId()));
+			
+			PatientAlertCategoriesVo alertCategories = hasAlertsCategories(voPatient);
+			voPatient.setHasAlertCategory1(alertCategories.getHasAlertCategory1() != null ? alertCategories.getHasAlertCategory1() : false);
+			voPatient.setHasAlertCategory2(alertCategories.getHasAlertCategory2() != null ? alertCategories.getHasAlertCategory2() : false);
+			voPatient.setHasAlertCategory3(alertCategories.getHasAlertCategory3() != null ? alertCategories.getHasAlertCategory3() : false);
+			voPatient.setHasAlertCategory4(alertCategories.getHasAlertCategory4() != null ? alertCategories.getHasAlertCategory4() : false);
+			voPatient.setHasAlertCategoryOther(alertCategories.getHasAlertCategoryOther() != null ? alertCategories.getHasAlertCategoryOther() : voPatient.getHasAlerts());
+			
 			voPatient.setHasAllergies(hasAllergy(domPatient.getId()));
 		}
 
 		
 		return voPatient;
+	}
+	
+	//WDEV-22567
+	private void triggerMergeAlertMessage(ims.core.patient.domain.objects.Patient domPatient,ims.core.patient.domain.objects.Patient foundPatient)
+	{
+		DomainSession session = getSession();
+		boolean bShowDomainMessage = true;
+		SessionData sessData = (SessionData)session.getAttribute(SessionConstants.SESSION_DATA);
+		String mergedDomainMessage = domPatient.getMergedMessage(foundPatient);
+		if (sessData != null)
+		{	
+			ArrayList<String> messages = sessData.domainMessageBox.get();
+			if (messages != null && messages.contains(mergedDomainMessage))
+				bShowDomainMessage = false;			
+		}
+		if (bShowDomainMessage)
+		{			
+			raiseAlert(mergedDomainMessage);
+		}
 	}
 
 	private ims.core.vo.Patient replicatePatient(ims.core.vo.Patient voPatient) throws StaleObjectException, UniqueKeyViolationException, DomainInterfaceException
@@ -665,6 +750,29 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 		return Boolean.valueOf(count > 0);
 	}
 
+	public PatientAlertCategoriesVo hasAlertsCategories(Patient patient)
+	{
+		if(patient == null)
+			throw new CodingRuntimeException("Can not get PatientAlertCategories on null Patient.");
+		
+		DomainFactory factory = getDomainFactory();
+		List<?> alertCategories = factory.find("from PatientAlertCategories as alert where alert.patient.id = :idPatient", new String[] {"idPatient"}, new Object[] {patient.getID_Patient()});
+		
+		if(alertCategories == null || alertCategories.size() == 0)
+		{
+			PatientAlertCategoriesVo result = new PatientAlertCategoriesVo();
+			result.setPatient(patient);
+			result.setHasAlertCategory1(false);
+			result.setHasAlertCategory2(false);
+			result.setHasAlertCategory3(false);
+			result.setHasAlertCategory4(false);
+			result.setHasAlertCategoryOther(patient.getHasAlerts() != null ? patient.getHasAlerts() : false);
+			return result;
+		}
+		
+		return PatientAlertCategoriesVoAssembler.create((PatientAlertCategories) alertCategories.get(0));
+	}
+	
 	public Boolean hasAllergy(Integer patientID)
 	{
 		if (patientID == null)
@@ -693,8 +801,10 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 		return GPAssembler.create(doGp);
 	}
 
-	private static final String createPatientNumber(int patNum)
+	public String createPatientNumber(Integer patNum) //WDEV-20260
 	{
+		if(patNum==null)
+			return null;
 		if (!ConfigFlag.DOM.USE_PATIENT_NUMBER.getValue())
 		{
 			return null;
@@ -703,9 +813,17 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 		{
 			try
 			{
-				String patNumPrefix=ConfigFlag.DOM.PATIENT_NUMBER_PREFIX.getValue().trim().substring(0,2);
-				DecimalFormat numFormatter = new DecimalFormat("00000000");
-				return patNumPrefix+numFormatter.format(patNum);
+				String preFixFlagValue = ConfigFlag.DOM.PATIENT_NUMBER_PREFIX.getValue().trim();
+				if("NONE".equalsIgnoreCase(preFixFlagValue)) //http://jira/browse/WDEV-21512
+				{
+					return patNum.toString();
+				}
+				else
+				{
+					String patNumPrefix=preFixFlagValue.substring(0,2);
+					DecimalFormat numFormatter = new DecimalFormat("00000000");
+					return patNumPrefix+numFormatter.format(patNum);
+				}
 
 			} catch (IndexOutOfBoundsException ioobe)
 			{
@@ -715,7 +833,13 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 		
 	}
 
+	//WDEV-19715 - overide savePatient() if no death details entered pass null and do not update RTT
 	public Patient savePatient(Patient patient, Boolean fromInterface) throws UniqueKeyViolationException, StaleObjectException, DomainInterfaceException, IndexOutOfBoundsException
+	{
+		return savePatient(patient, fromInterface, null);
+	}
+	
+	private Patient savePatient(Patient patient, Boolean fromInterface, Boolean patientDodSaved) throws UniqueKeyViolationException, StaleObjectException, DomainInterfaceException, IndexOutOfBoundsException
 	{
 		DomainFactory factory = getDomainFactory();
 		factory.setDirtyCheck(true);
@@ -731,16 +855,36 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 				patient.getOtherNames().get(i).setUppers();
 			}
 		}
-		return this.savePatientRecord(factory, patient, 1, fromInterface);
-	}
+		return this.savePatientRecord(factory, patient, 1, fromInterface, patientDodSaved);
+	}	
+	//WDEV-19715 --- end
 	
 	// wdev-7328 - default is not from dtoCall
-	private Patient savePatientRecord(DomainFactory factory, Patient patient, int duplicateCount, boolean fromInterface) throws StaleObjectException, UniqueKeyViolationException, DomainInterfaceException
+	private Patient savePatientRecord(DomainFactory factory, Patient patient, int duplicateCount, boolean fromInterface, Boolean patientDodSaved) throws StaleObjectException, UniqueKeyViolationException, DomainInterfaceException
 	{
-		return savePatientRecord(factory, patient, duplicateCount, fromInterface, false);
+		return savePatientRecord(factory, patient, duplicateCount, fromInterface, false,  patientDodSaved);
 	}
-	private Patient savePatientRecord(DomainFactory factory, Patient patient, int duplicateCount, boolean fromInterface, boolean fromDtoReplicate) throws StaleObjectException, UniqueKeyViolationException, DomainInterfaceException
+	private Patient savePatientRecord(DomainFactory factory, Patient patient, int duplicateCount, boolean fromInterface, boolean fromDtoReplicate, Boolean patientDodSaved) throws StaleObjectException, UniqueKeyViolationException, DomainInterfaceException
 	{
+		//WDEV-18245		
+		ims.core.patient.domain.objects.Patient preSavedPatient = null;
+		String savedPatientPostcode = "";
+		LocSite savedSurgery = null;
+			
+		if (ConfigFlag.UI.USE_HEARTS_CONTRACTING.getValue())
+		{			 
+			if (patient.getID_PatientIsNotNull())
+			{
+				preSavedPatient = getDomPatient(patient);
+				if (preSavedPatient != null)
+				{
+					savedPatientPostcode = preSavedPatient.getAddress()!=null?preSavedPatient.getAddress().getPostCode():"";
+					savedSurgery = preSavedPatient.getGpSurgery();
+				}
+			}
+		}
+		
+		//WDEV-18245
 		if (patient.getIdentifiers() != null && !ConfigFlag.DOM.CASE_SENSITIVE_PATID.getValue())
 		{
 			for (int i = 0; i < patient.getIdentifiers().size(); i++)
@@ -782,18 +926,23 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 			}
 		}
 
-		ims.core.patient.domain.objects.Patient domPatient = PatientAssembler.extractPatient(factory, patient);			
-
+		ims.core.patient.domain.objects.Patient domPatient = PatientAssembler.extractPatient(factory, patient);	
+		
 		try
 		{
+			boolean newPatient = false;
 			// wdev-9585
 			// set the newPatient flag to true if the id is null
 			if (domPatient.getId() == null)
 			{
 				domPatient.setIsNewPatient(true);
+				newPatient = true;
 			}
 			else
+			{
 				domPatient.setIsNewPatient(false);
+				newPatient = false;
+			}
 
 			
 			// wdev-2034 To force a deletion of re-insertion of identifiers
@@ -817,10 +966,44 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 				domPatient.setIdentifiers(lst);
 			}
 
-			savePatientToDto(factory, domPatient, patient, fromInterface, fromDtoReplicate, bBlankTempAddress);
+
+			// Keep medical insurance for a new patient as this is a two step save process
+			// but these saves must be performed after the patient was saved to DTO (HEARTS, etc.)
+			PatientMedicalInsurance doPatientMedicalInsurance = null;
+			if (newPatient)
+			{
+				doPatientMedicalInsurance = domPatient.getCurrentMedicalInsurance();
+				domPatient.setCurrentMedicalInsurance(null);	//wdev-19528
+			}
+
+			// Replicate patient into DTO (HEARTS)
+			// This will save the patient to database
+			domPatient = savePatientToDto(factory, domPatient, patient, fromInterface, fromDtoReplicate, bBlankTempAddress);
+			//WDEV-19571
+			if (patient != null)
+			{
+				boolean cancleAppts = patient.getCancelSD_APPTSIsNotNull()?patient.getCancelSD_APPTS():false;
+				String  alias = patient.getSaveAlias() != null ? patient.getSaveAlias() : ""; //WDEV-20259
+				
+				patient = PatientAssembler.create(domPatient);
+				
+				patient.setCancelSD_APPTS(cancleAppts);
+				patient.setSaveAlias(alias.length() > 0 ? alias : null);
+			}
+			
+			// If Patient Medical Insurance was retain, then this is a new patient and needs to have
+			// the PatientMedicalInsurance added back to the domain object 
+			if( doPatientMedicalInsurance != null)
+			{
+				domPatient.setCurrentMedicalInsurance(null);
+				doPatientMedicalInsurance.setPatient(domPatient);
+				domPatient.setCurrentMedicalInsurance(doPatientMedicalInsurance);
+			}
+
 			if (ConfigFlag.DOM.USE_PATIENT_NUMBER.getValue())
 			{
-				if ( domPatient.isIsNewPatient()!=null &&  domPatient.isIsNewPatient().booleanValue()==true && !PatIdType.NHSN.equals(PatIdType.getNegativeInstance(ConfigFlag.GEN.GENERATE_PATID_TYPE.getValue())) )   //wdev-15754
+				if ( domPatient.isIsNewPatient()!=null &&  domPatient.isIsNewPatient().booleanValue()==true &&
+						domPatient.getId()!=null && !PatIdType.NHSN.equals(PatIdType.getNegativeInstance(ConfigFlag.GEN.GENERATE_PATID_TYPE.getValue())))   //wdev-15754 WDEV-19224, wdev-18684
 				{	
 					String patNum=createPatientNumber(domPatient.getId());
 					ims.core.patient.domain.objects.PatientId patNumberId= new ims.core.patient.domain.objects.PatientId();
@@ -828,32 +1011,22 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 					//patNumberId.setType(getDomLookup ( PatIdType.PATNUM));
 					patNumberId.setType(getDomLookup ( PatIdType.getNegativeInstance(ConfigFlag.GEN.GENERATE_PATID_TYPE.getValue()))); //wdev-15754
 					domPatient.getIdentifiers().add(patNumberId);
-					domPatient.setMRNStatus(getDomLookup(MRNStatus.WAITING));
+
+					//wdev-19170
+					if( ConfigFlag.GEN.MRN_PROVIDED_BY_EXTERNAL_PAS.getValue() == true )
+					{
+						domPatient.setMRNStatus(getDomLookup(MRNStatus.WAITING));
+					}
+					//-------------
 				}
 			}
-			if (ConfigFlag.GEN.CANCEL_APPOINTMENTS_WHEN_DOD_ENTERED.getValue()
-				&& patient.getCancelSD_APPTSIsNotNull()
-				&& patient.getCancelSD_APPTS().booleanValue() )
-			{
-				if (Boolean.TRUE.equals(ConfigFlag.DOM.HEARTS_REPLICATE_PATIENTS.getValue())) 
-					cancelSD_APPTS(patient);
-				else
-					cancelFutureAppointments(patient);
-			}
+			//19682
+			boolean cancelFutureAppts = ConfigFlag.GEN.CANCEL_APPOINTMENTS_WHEN_DOD_ENTERED.getValue()
+					&& Boolean.TRUE.equals(patient.getCancelSD_APPTS());
 			
-			//WDEV-18326
-			if (ConfigFlag.DOM.RTT_STATUS_POINT_FUNCTIONALITY.getValue() && patient.getID_PatientIsNotNull())
-			{
-				if (patient.getDod() != null)
-					saveRTTStatusForPatientRIP(patient);
-				else 
-					revertRTTStatus(patient);
-			}
-			
-			//WDEV-18259
-			if (patient.getID_Patient() != null && patient.getDod() != null)
-				updatePatientElectiveListsForDOD(patient);
-			
+			if (patientDodSaved != null)
+			updatePatientDeceasedData(patient, null, cancelFutureAppts , patientDodSaved);
+						
 			domPatient.setSaveComplete(true); // wdev-9585  at last save now
 
 			if (ConfigFlag.DOM.USE_ALIAS_SURNAME_FUNCTIONALITY.getValue()
@@ -886,6 +1059,11 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 			
 			factory.save(domPatient);
 			
+			//Alert Categories		
+			PatientAlertCategoriesVo alertCategories = hasAlertsCategories(patient);
+			PatientAlertCategories alertCategoriesDomainObject = PatientAlertCategoriesVoAssembler.extractPatientAlertCategories(factory, alertCategories);
+			factory.save(alertCategoriesDomainObject);
+			
 
 			if (ConfigFlag.DOM.USE_ALIAS_SURNAME_FUNCTIONALITY.getValue()
 				&& ConfigFlag.DOM.HEARTS_REPLICATE_PATIENTS.getValue()
@@ -900,6 +1078,49 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 				else
 					saveAlias(patient);
 			}
+
+			//WDEV-18245
+			if (ConfigFlag.UI.USE_HEARTS_CONTRACTING.getValue() && !fromInterface)
+			{
+				//check if there is a closed emergency attendance record
+				//check postcode of address
+				boolean attendenceRecode = false;
+				if (preSavedPatient != null)
+				{
+					//compare postcodes WDEV-19684 WDEV-22871
+					attendenceRecode = (savedPatientPostcode != null && patient.getAddress() != null) ? !savedPatientPostcode.equals(patient.getAddress().getPostCode()):(patient.getAddressIsNotNull() ? patient.getAddress().getPostCodeIsNotNull() : false);					
+					
+					if (!attendenceRecode)
+						//compare gp surgery selection
+						attendenceRecode = savedSurgery!=null?!savedSurgery.equals(patient.getGpSurgery()):(savedSurgery==null?patient.getGpSurgeryIsNotNull():false);
+				}
+				
+				if (attendenceRecode)
+				{
+					// get closed emergency attendance with a date between now and RECODE_ATTENDANCE_UPON_GP_OR_ADDRESS_CHANGE days previous
+					String hsql = "select ea from EmergencyAttendance as ea " +
+							"where (ea.id not in (select arc.attendance.id  from AttendanceRequiringContracting as arc where arc.status is null)) " +
+							"and ea.patient.id = :patientId " +
+							"and  ea.dischargeDateTime is not null " +
+							"and  ea.dischargeDateTime >= :fromDate";
+					DateTime toDate = new DateTime();
+					DateTime fromDate = new DateTime();
+					
+					int minusDAys = ConfigFlag.DOM.RECODE_ATTENDANCE_UPON_GP_OR_ADDRESS_CHANGE.getValue()>0?ConfigFlag.DOM.RECODE_ATTENDANCE_UPON_GP_OR_ADDRESS_CHANGE.getValue()*-1:ConfigFlag.DOM.RECODE_ATTENDANCE_UPON_GP_OR_ADDRESS_CHANGE.getValue();
+					fromDate.addDays(minusDAys);
+					List emergencyAttendance=factory.find(hsql, new String[] {"patientId","fromDate"}, new Object[] {patient.getID_Patient(),fromDate.getJavaDate(),toDate.getJavaDate()});
+					if (emergencyAttendance!=null && emergencyAttendance.size()>0)
+					{
+						for (int i=0;i<emergencyAttendance.size();i++)
+						{
+							createAttendanceRequiringCodingRecord((EmergencyAttendance)emergencyAttendance.get(i),factory);
+						}
+					}
+					
+				}					
+			}		
+			//WDEV-18245			
+			
 		}
 		catch (UnqViolationUncheckedException e)
 		{
@@ -938,14 +1159,19 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 								 */
 								//if (newPatientClinical)
 								//	patient.setID_Patient(null);//WDEV-1015
-								String nhsValue = voPatId.getIdValue().trim();
+								/*String nhsValue = voPatId.getIdValue().trim();
 
 								int pos = nhsValue.indexOf(" (DUP");
 								if (pos > 0)
 									nhsValue = nhsValue.substring(0, pos);
-								voPatId.setValue(nhsValue + " (DUP" + duplicateCount + ")");
+								voPatId.setValue(nhsValue + " (DUP" + duplicateCount + ")");*/
+								
+								Boolean isTheSameNHS = Boolean.FALSE;
+								Integer dup = getDuplicateNumber(factory, voPatId, patient.getID_Patient(), isTheSameNHS);
+								voPatId.setDuplicateNHSNum(++ dup);
+								
 								// Try the save again
-								return (savePatientRecord(factory, patient, ++duplicateCount, fromInterface));
+								return (savePatientRecord(factory, patient, ++duplicateCount, fromInterface, patientDodSaved));
 							}
 
 
@@ -967,11 +1193,166 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 		{
 			updatePatientNoAlertInfo(patient);
 		}
-	
-		Patient voPatient = PatientAssembler.create(domPatient);		
+
+		Patient voPatient = PatientAssembler.create(domPatient);
+
+		//WDEV-23085
+		if (voPatient.getID_PatientIsNotNull())
+		{
+			boolean isCurrentlyInED = isCurrentlyInED(voPatient);
+			if (isCurrentlyInED)
+			{	
+				EmergencyAttendance currentEDAttendance = updateCurrentEDAttendance(voPatient);
+				factory.save(currentEDAttendance);
+			}
+		}
+
 		return voPatient;
 	}
+	////WDEV-23085
+	private boolean isCurrentlyInED(Patient patientVo)
+	{
+		if (patientVo == null || patientVo.getID_Patient() == null)
+			return false;
+		
+		Object ob  = getCurrentAttendance(patientVo, true);
+		if (ob != null && ob instanceof Boolean)
+			return ((Boolean) ob).booleanValue();
+		return false;
+	}
 
+	private EmergencyAttendance updateCurrentEDAttendance(Patient voPatient)
+	{		
+		if (voPatient == null || voPatient.getID_Patient() == null)
+			return null;
+		
+		Object ob  = getCurrentAttendance(voPatient, false);
+		EmergencyAttendance domAttendance = null;
+		if (ob != null && ob instanceof EmergencyAttendance)
+		{
+			domAttendance = (EmergencyAttendance) ob;
+			domAttendance.setAgeAtAttendance(voPatient.getDobIsNotNull() ? calculateAgeAtAttendance(voPatient, domAttendance.getArrivalDateTime()) : null);			
+		}
+		return domAttendance;		
+	}
+	private Integer calculateAgeAtAttendance(Patient voPatient, java.util.Date arrivalDate)
+	{
+		PartialDate dob = voPatient.getDob();
+		Date dod = voPatient.getDod();
+		int patAge = 0;
+		
+		if (dob != null)
+		{
+			if (dod != null)
+			{
+				patAge = dod.yearDiff(dob);
+			}
+			else
+			{
+				patAge = arrivalDate != null ?  new ims.framework.utils.Age(dob, new Date(arrivalDate)).getYears() :  new ims.framework.utils.Age(dob, new Date()).getYears();
+			}
+			return new Integer(patAge);
+		}			
+		return null;	
+	}
+
+	private Object getCurrentAttendance(Patient voPatient, boolean returnAsCount)
+	{
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append(returnAsCount ? "select count(ed.id)" : "select ed" );
+		sb.append(" from EmergencyAttendance as ed left join ed.patient as pat where (ed.isRIE is null or ed.isRIE = false) and ed.dischargeDateTime is null and pat.id = :ID"); 
+		sb.append(returnAsCount ?  "" :	" order by ed.registrationDateTime desc");
+		
+		DomainFactory domainFactory = getDomainFactory();
+		String finalQuery = sb.toString();
+		String[] paramNames = new String[]{"ID"};
+		Object[] paramValues = new Object[] {voPatient.getID_Patient()};
+		if (returnAsCount)
+		{			
+			long count = domainFactory.countWithHQL(finalQuery, paramNames, paramValues);
+			return new Boolean(count > 0);			
+		}		
+			
+		EmergencyAttendance domAttendance = (EmergencyAttendance) domainFactory.findFirst(finalQuery, paramNames, paramValues);
+		return domAttendance;
+	}
+	////WDEV-23085 --end
+	private Integer getDuplicateNumber(DomainFactory factory, PatientId voPatId, Integer patientId, Boolean isTheSameNHS)
+	{
+		ArrayList<String> paramNames = new ArrayList<String>();
+		ArrayList<Object> paramValues = new ArrayList<Object>();
+		
+		if(patientId != null)
+		{
+			String query = "select iden.value, iden.duplicateNHSNum from Patient as pat left join pat.identifiers as iden left join iden.type as idenType where iden.value = :NHSNumber and idenType.id = -9 and pat.id = :PatientId";
+			paramNames.add("NHSNumber");
+			paramValues.add(voPatId.getIdValue().trim());
+			
+			paramNames.add("PatientId");
+			paramValues.add(patientId);
+			
+			List<?> listDupNHSNumber = factory.find(query, paramNames, paramValues);
+			
+			if(listDupNHSNumber != null && listDupNHSNumber.size() > 0)
+			{
+				Object[] items = (Object[]) listDupNHSNumber.get(0);
+				
+				if(items[1] instanceof Integer)
+				{
+					isTheSameNHS = Boolean.TRUE;
+					return ((Integer) items[1]) - 1;
+				}
+			}
+		}
+		
+		String query = "select iden.value, iden.duplicateNHSNum from Patient as pat left join pat.identifiers as iden left join iden.type as idenType where iden.value = :NHSNumber and idenType.id = -9 ";
+		paramNames.add("NHSNumber");
+		paramValues.add(voPatId.getIdValue().trim());
+		
+		if(patientId != null)
+		{
+			query += " and pat.id = :PatientId";
+			paramNames.add("PatientId");
+			paramValues.add(patientId);
+		}
+		
+		List<?> listDupNHSNumber = factory.find(query, paramNames, paramValues);
+		
+		Integer dup = 0;
+		
+		if(listDupNHSNumber != null)
+		{
+			for(int x=0; x<listDupNHSNumber.size(); x++)
+			{
+				Object[] items = (Object[]) listDupNHSNumber.get(x);
+				if(items[1] instanceof Integer && ((Integer) items[1]) >= dup)
+				{
+					dup = (Integer) items[1];
+				}
+			}
+		}
+		
+		return dup;
+	}
+	
+	//WDEV-18245
+	private void createAttendanceRequiringCodingRecord(EmergencyAttendance emergencyAttendance,DomainFactory domainfactory) throws StaleObjectException
+	{	
+		if (emergencyAttendance == null )
+		{
+			return;
+		}
+		
+		AttendanceRequiringContracting doAttendanceRequiringContracting=new AttendanceRequiringContracting();
+		doAttendanceRequiringContracting.setPatient(emergencyAttendance.getPatient());
+		doAttendanceRequiringContracting.setAttendance(emergencyAttendance);
+		
+		domainfactory.save(doAttendanceRequiringContracting);			
+		
+	}
+	//WDEV-18245
+	
 	//WDEV-18413
 	private void revertRTTStatus(Patient patient) throws StaleObjectException
 	{
@@ -1042,70 +1423,140 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 		}
 	}
 
-	private void saveRTTStatusForPatientRIP(Patient patient) throws StaleObjectException, DomainInterfaceException  //WDEV-18326
+	// WDEV-23646 - Ensure the correct event Date Time is used when creating a new RTT Status
+	private void saveRTTStatusForPatientRIP(Patient patient, java.util.Date eventDateTime) throws StaleObjectException, DomainInterfaceException  //WDEV-18326
 	{
+		if (!ConfigFlag.DOM.RTT_STATUS_POINT_FUNCTIONALITY.getValue())
+			return;
+		
 		List <?> listofReferralsDO = getCatsReferralsforPatient(patient);
 
 		if (listofReferralsDO == null || listofReferralsDO.size() == 0)
 		{
 			return;
 		}
+		DomainFactory factory = getDomainFactory();
+		Object mosUser = getMosUser();
 		for (int i=0; i<listofReferralsDO.size();i++)
 		{
 			if (listofReferralsDO.get(i) instanceof CatsReferral)
 			{
-				updateRTTforCatsRef((CatsReferral) listofReferralsDO.get(i));
+				CatsReferral catsRefDO = (CatsReferral) listofReferralsDO.get(i); 
+				updateRTTStatusAndJourney(catsRefDO, eventDateTime); //WDEV-20060
+				catsRefDO = endOfCareReferral(factory, catsRefDO, mosUser);
+				
+				factory.save(catsRefDO);	
 			}	
 		}
 	}
 
-	private void updateRTTforCatsRef(CatsReferral catsRefDO) throws StaleObjectException, DomainInterfaceException //WDEV-18326 
+	private CatsReferral endOfCareReferral(DomainFactory factory, CatsReferral catsRefDO, Object mosUser)
+	{
+		if (catsRefDO == null)
+			return null;
+					
+		MemberOfStaff domainMOS = null;
+		
+		if (mosUser instanceof MemberOfStaffShortVo)
+		{
+			domainMOS = MemberOfStaffShortVoAssembler.extractMemberOfStaff(factory, ((MemberOfStaffShortVo) getMosUser()));
+		}
+		
+		try
+		{
+			Class<?> implClass = Class.forName("ims.pathways.domain.impl.AdminEventImpl");
+			IEndOfCareCatsReferralHelper adminEventImpl = (IEndOfCareCatsReferralHelper) getDomainImpl(implClass);
+			catsRefDO = adminEventImpl.endOfCareReferralAndUpdateConsultationAppointment(factory, catsRefDO, catsRefDO.getPatient().getDod(), domainMOS);
+		}
+		catch (ClassNotFoundException e)
+		{
+			//Log the exception in system, should be fine
+			createSystemLogEntry(SystemLogType.APPLICATION, SystemLogLevel.ERROR, "Class Cast exception has occured.Please check log file for: " + new DateTime().toString(DateTimeFormat.STANDARD, true) + " timestamp.");
+		}
+		catch (StaleObjectException ex)
+		{
+			
+		}
+		catch (DomainInterfaceException e)
+		{
+			
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return catsRefDO;
+	}
+
+	//WDEV-20060
+	// WDEV-23646 - Ensure the correct event Date Time is used when creating a new RTT Status
+	private void updateRTTStatusAndJourney(CatsReferral catsRefDO, java.util.Date eventDateTime) throws StaleObjectException, DomainInterfaceException //WDEV-18326 
 	{
 		int nationalCode = RTT_PATIENT_DIED_BEFORE_TREATMENT_NAT_CODE;
 
-		if (!ConfigFlag.DOM.RTT_STATUS_POINT_FUNCTIONALITY.getValue() || Boolean.FALSE.equals(catsRefDO.isRTTClockImpact()))
-			return;	
-
-		if (catsRefDO == null || (catsRefDO != null && catsRefDO.getCurrentRTTStatus() != null && catsRefDO.getCurrentRTTStatus().getRTTStatus() != null && nationalCode == catsRefDO.getCurrentRTTStatus().getRTTStatus().getNationalCode()))
+		if (catsRefDO == null ||  !Boolean.TRUE.equals(catsRefDO.isRTTClockImpact()) || (catsRefDO.getCurrentRTTStatus() != null && catsRefDO.getCurrentRTTStatus().getRTTStatus() != null && nationalCode == catsRefDO.getCurrentRTTStatus().getRTTStatus().getNationalCode()))
 			return;
 
-		DomainFactory factory = getDomainFactory();
-
 		PatientPathwayJourney journeyDO = catsRefDO.getJourney();
+		PathwayRTTStatus rttSTatusDO = createPathwRTTStatus(nationalCode,isInpatient(catsRefDO.getPatient()), eventDateTime);//WDEV-23292
+				
+		if (journeyDO != null)
+		{			
+			journeyDO = updateJourneyStatus(journeyDO, catsRefDO.getPatient().getDod());
 
-		PathwayRTTStatus rttSTatusDO = createPathwRTTStatus(nationalCode);
-		
-		if (journeyDO != null && journeyDO.getCurrentClock() != null)
-		{
+			if (journeyDO.getCurrentClock() != null)
+			{				
+				//WDEV-18446
+				journeyDO.getCurrentClock().setStopDate(catsRefDO.getPatient().getDod());
 
-			PathwayClock ptwClockDO = journeyDO.getCurrentClock();
+				journeyDO.getCurrentClock().setCurrentRTTStatus(rttSTatusDO);
 
-			ptwClockDO.setCurrentRTTStatus(rttSTatusDO);
+				List<PathwayRTTStatus> ptwClockHistory = journeyDO.getCurrentClock().getRTTStatusHistory();
 
-			List<PathwayRTTStatus> ptwClockHistory = ptwClockDO.getRTTStatusHistory();
+				if (ptwClockHistory == null)
+				{
+					ptwClockHistory = new java.util.ArrayList();
+				}
+				ptwClockHistory.add(rttSTatusDO);
 
-			if (ptwClockHistory == null)
-			{
-				ptwClockHistory = new java.util.ArrayList();
-			}
-			ptwClockHistory.add(rttSTatusDO);
-
-			instantiatePatientEvent(catsRefDO, rttSTatusDO);
+				instantiatePatientEvent(catsRefDO, rttSTatusDO);	
+			}	
 		}
-		
 		catsRefDO.setCurrentRTTStatus(rttSTatusDO);
-		
-		factory.save(catsRefDO);
-
 	}
-
-	private PathwayRTTStatus createPathwRTTStatus(int nationalCode) throws StaleObjectException //WDEV-18326
+	
+	private PatientPathwayJourney updateJourneyStatus(PatientPathwayJourney journeyDO, java.util.Date dateOfDeath)
+	{
+		if (journeyDO == null)
+			return null;
+		
+		PatientJourneyStatus journeyStatus = new PatientJourneyStatus();
+		journeyStatus.setDateTime(dateOfDeath);
+		journeyStatus.setStatus(getDomLookup(JourneyStatus.ENDPATHWAYJOURNEY));
+		
+		if (journeyDO.getStatusHistory() == null)
+		{
+			journeyDO.setStatusHistory(new HashSet());
+		}		
+	
+		journeyDO.setEndedOnDate(dateOfDeath);
+		journeyDO.setCurrentStatus(journeyStatus);
+		journeyDO.getStatusHistory().add(journeyStatus);
+		
+		return journeyDO;
+	}
+	
+	
+	//WDEV-20060 --- ends here
+	// WDEV-23646 - Ensure the correct event Date Time is used when creating a new RTT Status
+	private PathwayRTTStatus createPathwRTTStatus(int nationalCode,boolean isInpatient, java.util.Date eventDateTime) ///WDEV-23292 throws StaleObjectException //WDEV-18326
 	{
 		PathwayRTTStatus rttSTatusDO = new PathwayRTTStatus();
 
 		RTTStatusPoint rttStatusPoint = getRTTStatusPointFromConfig(nationalCode);
 
 		rttSTatusDO.setRTTStatus(rttStatusPoint);
+		if(isInpatient)						//WDEV-23292
+			rttSTatusDO.setSetting("I");	//WDEV-23292
+
 
 		Object mos = getMosUser();
 		MemberOfStaff doMos = null;
@@ -1116,18 +1567,26 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 		}
 
 		rttSTatusDO.setStatusBy(doMos);
-		rttSTatusDO.setStatusDateTime(new java.util.Date());
+		rttSTatusDO.setStatusDateTime(eventDateTime);
 
 		return rttSTatusDO;
 	}
-
-	private  List<?> getCatsReferralsforPatient(Patient patient)
+	
+	private boolean isInpatient(ims.core.patient.domain.objects.Patient patient) ///WDEV-23292
 	{
-		String hql = "select ref from CatsReferral as ref left join ref.patient as pat left join ref.journey as journ left join journ.currentClock as cclock where journ.endedOnDate is null and cclock is not null and cclock.stopDate is null and pat.id = :patientID";
+		if(patient!=null&& patient.getWard()!=null)
+			return true;
+		return false;
+	}
+
+	private  List<?> getCatsReferralsforPatient(Patient patient) //now get all referrals not EOC  -WDEV-20060
+	{
+		//WDEV-18497 removed from query "and cclock.stopDate is null"
+		String hql = "select ref from CatsReferral as ref left join ref.currentStatus as cstatus left join ref.patient as pat where (ref.isRIE is null or ref.isRIE = 0) AND pat.id = :patientID AND cstatus.referralStatus.id <> :EOC";
 
 		DomainFactory factory = getDomainFactory();
 
-		List<?> results = factory.find(hql, new String[]{"patientID"}, new Object[] {patient.getID_Patient()});
+		List<?> results = factory.find(hql, new String[]{"patientID", "EOC"}, new Object[] {patient.getID_Patient(), ReferralApptStatus.END_OF_CARE.getID()});
 
 		if (results != null && results.size() > 0)
 		{
@@ -1191,7 +1650,7 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 		if (rttStatusPoint == null || rttStatusPoint.getId() == null)	
 			return null;
 
-		String hql = "select event from RTTStatusEventMap as event left join event.currentRTTStatus as rttstat where event.active = 1 and rttstat.nationalCode = :natCode";
+		String hql = "select event from RTTStatusEventMap as event left join event.currentRTTStatus as rttstat where event.active = 1 and rttstat.nationalCode = :natCode and event.encounterType is null ";
 
 		DomainFactory factory = getDomainFactory();
 
@@ -1239,6 +1698,8 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 					appointmentStatus.setStatus(Status_Reason.CANCELLED);
 					appointmentStatus.setStatusReason(Status_Reason.SLOTOPENED);
 					appointmentStatus.setStatusChangeDateTime(new DateTime());
+					appointmentStatus.setSession(appointment.getSessionIsNotNull() ? appointment.getSession() : null); //WDEV-23185
+					
 					appointment.setCurrentStatusRecord(appointmentStatus);
 
 					if (appointment.getApptStatusHistory() == null)
@@ -1246,7 +1707,7 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 					appointment.getApptStatusHistory().add(appointmentStatus);
 
 					if (appointment.getSessionSlot() != null)
-						appointment.getSessionSlot().setStatus(Status_Reason.SLOTOPENED);
+						appointment.getSessionSlot().setStatus(appointment.getSession().getAppropiateSessionSlotStatus()); //WDEV-18940
 
 					sessionAdminImp.cancelAppt(appointment, ActionRequestType.NOTIFY_APPT_CANCEL, "Cancel Appt requested when Patient was marked as DOD.");
 				}
@@ -1256,12 +1717,20 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 				// log the exception in system log - but it should be fine
 				createSystemLogEntry(SystemLogType.APPLICATION, SystemLogLevel.ERROR, "Class Not Found exception has occured.Please check log file for: " + new DateTime().toString(DateTimeFormat.STANDARD, true) + " timestamp.");
 			}
+			catch (DomainInterfaceException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
 	
 	private void cancelSD_APPTS(Patient patient) throws DomainInterfaceException
 	{
+		if (Boolean.TRUE.equals(ConfigFlag.GEN.USE_ELECTIVE_LIST_FUNCTIONALITY.getValue()))
+			return;
+
 		Sd_appt apptRec = (Sd_appt)getDTOInstance(Sd_appt.class);
 		apptRec.DataCollection.add();
 		Sd_apptRecord rec = apptRec.DataCollection.get(0);
@@ -1322,35 +1791,53 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 		}
 	}
 
-	private Patient savePatientToDto(DomainFactory factory, ims.core.patient.domain.objects.Patient domPatient, Patient voPatient, Boolean fromInterface, boolean fromDtoReplicate, boolean bBlankTempAddress) throws DomainInterfaceException, StaleObjectException
+	private ims.core.patient.domain.objects.Patient savePatientToDto(DomainFactory factory, ims.core.patient.domain.objects.Patient domPatient, Patient voPatient, Boolean fromInterface, boolean fromDtoReplicate, boolean bBlankTempAddress) throws DomainInterfaceException, StaleObjectException
 	{
 		factory.save(domPatient);
-		if(factory.isDirty(domPatient) || voPatient.getID_Patient() == null)
+		
+		if (factory.isDirty(domPatient) || voPatient.getID_Patient() == null)
 		{
 			//WDEV- 6964 - update the pas and if new use the pasa generated hospnum for the local patient
 			if(ConfigFlag.DOM.HEARTS_REPLICATE_PATIENTS.getValue() == true && !fromInterface)
 			{
 				String[] newIds = updateOrInsertDTOPatient(voPatient, fromDtoReplicate, bBlankTempAddress);	
+
+
 				if(newIds != null)
 				{	
+					ArrayList<String> paramNames = new ArrayList<String>();
+					ArrayList<Object> paramValues = new ArrayList<Object>();
+
+					// Perform a get on the patient by HOSPNUM to see if there was a save already
+					String query = "SELECT pat FROM Patient AS pat LEFT JOIN pat.identifiers AS iden LEFT JOIN iden.type AS type WHERE iden.value = :ID_VAL AND type.id = :HOSP_TYPE";
+
+					paramNames.add("ID_VAL");		paramValues.add(newIds[0]);
+					paramNames.add("HOSP_TYPE");	paramValues.add(PatIdType.HOSPNUM.getId());
+
+					DomainObject patientFromDTO = factory.findFirst(query, paramNames, paramValues);
+
+					if (patientFromDTO instanceof ims.core.patient.domain.objects.Patient)
+					{
+						domPatient = (ims.core.patient.domain.objects.Patient) patientFromDTO;
+					}
+
 					ims.core.patient.domain.objects.PatientId patHospnumId = new ims.core.patient.domain.objects.PatientId();
 					patHospnumId.setType(getDomLookup(PatIdType.HOSPNUM));
 					patHospnumId.setValue(newIds[0]);
 					domPatient.getIdentifiers().add(patHospnumId);
-					
+
 					ims.core.patient.domain.objects.PatientId patPkeyId = new ims.core.patient.domain.objects.PatientId();
 					patPkeyId.setType(getDomLookup(PatIdType.PKEY));
 					patPkeyId.setValue(newIds[1]);
 					domPatient.getIdentifiers().add(patPkeyId);
-					
-					factory.save(domPatient);
-					voPatient = PatientAssembler.create(domPatient);
 				}
 			}
 		}
-	
+
+		factory.save(domPatient);
 		factory.setDirtyCheck(false);
-		return voPatient;
+
+		return domPatient;
 	}
 
 	/**
@@ -1634,7 +2121,10 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 		if(voPatient.getGpIsNotNull())
 		{
 			dtoPatient.Gmcnum = voPatient.getGp().getNationalCode();
-			dtoPatient.Gpcd = getMappingForGp(voPatient.getGp());
+			String gpCode=getGpMappingFromSurgery(voPatient.getGpSurgery()); //http://jira/browse/WDEV-18787
+			if (gpCode==null||gpCode.equals(""))
+				gpCode=getMappingForGp(voPatient.getGp());
+			dtoPatient.Gpcd = gpCode;
 			dtoPatient.Prcd = getMappingForGpSurgery(voPatient.getGpSurgery());
 		}
 		else
@@ -1670,7 +2160,23 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 		
 		return null;
 	}
-
+	
+	//http://jira/browse/WDEV-18787
+	private String getGpMappingFromSurgery(LocSiteShortVo locSiteShortVo)
+	{
+		String gpCode="";
+		if(locSiteShortVo != null && locSiteShortVo.getCodeMappingsIsNotNull())
+		{
+			String surgeryCode=locSiteShortVo.getCodeMappings().getMappingValue(TaxonomyType.PAS);
+			if(surgeryCode!=null)
+			{
+				int idx=surgeryCode.lastIndexOf('_');
+				gpCode=surgeryCode.substring(idx+1);
+			}
+		}
+		return gpCode;
+	}
+	
 	private String getMappingForGpSurgery(LocSiteShortVo locSiteShortVo)
 	{
 		if(locSiteShortVo != null && locSiteShortVo.getCodeMappingsIsNotNull())
@@ -1719,6 +2225,9 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 	
 	public GpLiteToPracticeLiteVo synchronizeGPPracticeDetails(String strGPCode)  throws StaleObjectException, UniqueKeyViolationException
 	{
+		if (Boolean.TRUE.equals(ConfigFlag.GEN.USE_ELECTIVE_LIST_FUNCTIONALITY.getValue()))
+			return null;
+	
 		Gp_practice gpPracticeRecord = (Gp_practice) getDTOInstance(Gp_practice.class);
 		gpPracticeRecord.Filter.Gp_code = strGPCode;
 		GP voGP = null;
@@ -2081,8 +2590,13 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 				// update the future TCIs
 				TCIForPatientElectiveList doTCIDetails = doPatientElectiveList.getTCIDetails();
 
+				//WDEV-19489 Cancel the Open Case Note Requests for the TCI
+				if (doTCIDetails != null)
+					cancelCaseNoteRequests(doTCIDetails.getId());
+				
 				if (doTCIDetails != null && doTCIDetails.isIsActive() && doTCIDetails.getTCIDate() != null && currentDate.getDate().compareTo(doTCIDetails.getTCIDate()) <= 0)
 				{
+					
 					// create a new Outcome
 					TCIOutcomeForPatientElectiveList newOutcome = new TCIOutcomeForPatientElectiveList();
 
@@ -2128,7 +2642,7 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 						doJourney.setStatusHistory(new HashSet());
 					}
 
-					if (doJourney.getCurrentClock() != null)
+					if (doJourney.getCurrentClock() != null && doJourney.getCurrentClock().getStopDate() == null)
 					{
 						doJourney.getCurrentClock().setStopDate(patientShort.getDod().getDate());
 					}
@@ -2142,6 +2656,34 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 
 			factory.save(doPatientElectiveList);
 		}
+	}
+
+	private void cancelCaseNoteRequests(Integer tciId) throws StaleObjectException
+	{
+		PatientCaseNoteRequestLiteVoCollection requestsForCancellation = getLinkedCaseNoteOpenRequests(tciId);
+		
+		if (requestsForCancellation == null || requestsForCancellation.size() == 0)
+			return;
+		
+		Object mos = getMosUser();
+		
+		PatientCaseNotes impl = (PatientCaseNotes) getDomainImpl(PatientCaseNotesImpl.class);
+		
+		for (int i = 0; i < requestsForCancellation.size(); i++)
+		{
+			impl.cancelRequest(requestsForCancellation.get(i), (MemberOfStaffRefVo) mos, CaseNoteRequestCancellationReason.TCI_CANCELLED); //WDEV-20989
+		}
+	}
+
+	private PatientCaseNoteRequestLiteVoCollection getLinkedCaseNoteOpenRequests(Integer tciId)
+	{
+		if(tciId == null)
+			   return null;
+		
+		List<?> list = getDomainFactory().find("select req from PatientCaseNoteRequest as req left join req.tCIDetail as tci left join req.requestStatus as status " +
+				"where (tci.id = :tciID and status.id = :requestStatusID)", new String[] {"tciID", "requestStatusID"}, new Object[] {tciId, CaseNoteRequestStatus.OPEN.getID()});
+		
+		return PatientCaseNoteRequestLiteVoAssembler.createPatientCaseNoteRequestLiteVoCollectionFromPatientCaseNoteRequest(list);
 	}
 
 	public ims.core.vo.Patient getMergedPatient(PatientShort patient) 
@@ -2161,11 +2703,19 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 
 	public Patient saveDemographics(Patient patient, DeathDetailsVo deathDetails) throws StaleObjectException, UniqueKeyViolationException, DomainInterfaceException, IndexOutOfBoundsException
 	{
+		//WDEV-19715 start
+		ims.core.patient.domain.objects.Patient domPatient = getDomPatient(patient);
+		Boolean wasPatientDodSavedPreviously = domPatient != null && domPatient.getDod() != null;
+		Boolean wasPatientDodSavedNow = false;
+		
 		saveDeathDetails(deathDetails);
+				
+		wasPatientDodSavedNow =  (deathDetails == null || (wasPatientDodSavedPreviously && patient.getDod() != null)) ? null :  domPatient != null && patient.getDod() != null && domPatient.getDod() == null;
 		
 		if(patient != null)
-		return savePatient(patient,false);
+			return savePatient(patient, false, wasPatientDodSavedNow);
 		
+		//WDEV-19715 --- ends here
 		return null;
 	
 	}
@@ -2201,18 +2751,18 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 	 * http://jira/browse/WDEV-11792
 	 * @see ims.core.domain.Demographics#validatePatient(ims.core.vo.Patient, ims.core.patient.vo.PatientRefVo)
 	 */
-	public Boolean validatePatient(Patient patientVOFromMsg, PatientRefVo patientRefFromOrder)
+	public String validatePatient(Patient patientVOFromMsg, PatientRefVo patientRefFromOrder) //http://jira/browse/WDEV-18798
 	{
 		
 		if (!ConfigFlag.HL7.VALIDATE_MSG_PATIENT_WITH_ORDER_PATIENT.getValue())
 		{
 			// If the flag is not set always true i.e. the patient is always valid
-			return true;
+			return "";
 		}
 		// Get the patient from the message
 		ims.core.patient.domain.objects.Patient domPatientFromMsg = getDomPatient(patientVOFromMsg,false);
 		if (domPatientFromMsg == null) 
-			return false;
+			return null;
 
 		//recurse to get master patient if this patient was merged
 		while(domPatientFromMsg.getAssociatedPatient() != null)
@@ -2233,17 +2783,20 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 				domPatientFromOrder.getId()!=null&&
 				domPatientFromOrder.getId().equals(domPatientFromMsg.getId()))
 		{
-			return true;
+			return domPatientFromMsg.getPrimaryIdValueUsed();
 		}
 		else 
 		{
-			return false;
+			return null;
 		}
 
 	}
 
 	public CaseNoteFolderVo getCaseNoteFolderLocation(String strHospNum) 
 	{
+		if (Boolean.TRUE.equals(ConfigFlag.GEN.USE_ELECTIVE_LIST_FUNCTIONALITY.getValue()))
+			return null;
+
 		ims.dto.client.Patient patRec = (ims.dto.client.Patient) getDTOInstance(ims.dto.client.Patient.class);
 
 		patRec.Filter.clear();
@@ -2342,7 +2895,7 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 		
 		//wdev-15845
 		if( result != null && result.getId() == -7 )
-			throw new DomainInterfaceException("Demographics details cannot be edited –- Please contact the system administrator with the details for this patient");
+			throw new DomainInterfaceException("Demographics details cannot be edited ï¿½- Please contact the system administrator with the details for this patient");
 		//-------------
 		
 		if(result != null 
@@ -2494,4 +3047,264 @@ public class DemographicsImpl extends DTODomainImplementation implements ims.cor
 			}
 		}	
 	}
+
+	//wdev-17883 - FWUI-1818
+	public Patient getPatient(PatientShort patient, Boolean verify) throws StaleObjectException
+	{
+		if (ConfigFlag.DOM.PATIENT_SEARCH_TYPE.getValue().equals("LOCAL"))
+            return getLocalPatient(patient, verify.booleanValue());
+        else if (ConfigFlag.DOM.PATIENT_SEARCH_TYPE.getValue().equals("DTO"))
+        {
+            try
+            {
+                 return getDTOPatient(patient);
+            }
+            catch (UniqueKeyViolationException e)
+            {
+                 throw new DomainRuntimeException(e);
+            }
+        }
+
+		return null;
+
+	}
+
+	//wdev-17883- FWUI-1818
+	public Patient getLocalPatient(PatientShort patient, Boolean includeVerifiedInSearch)
+	{
+        ims.core.patient.domain.objects.Patient domPatient = getDomPatient(patient,includeVerifiedInSearch);;
+        return getLocalPatient(domPatient);
+
+	}
+
+	//wdev-19528
+	public DemographicControlsConfigVoCollection getDemographicControlsConfig()
+	{
+		DomainFactory factory = getDomainFactory();
+		StringBuffer hql = new StringBuffer("from DemographicControlsConfig");
+		List<?> list = factory.find(hql.toString());
+		if( list != null && list.size() > 0 )
+			return DemographicControlsConfigVoAssembler.createDemographicControlsConfigVoCollectionFromDemographicControlsConfig(list);
+				
+		return null;
+	}
+	//WDEV-19682 //WDEV-19715
+	public void updatePatientDeceasedData(Patient patient, DeathDetailsVo deathDetails, Boolean cancelFutureAppointments, Boolean wasPatientAlreadySavedAsDeceased) throws DomainInterfaceException, StaleObjectException
+	{		
+		if (deathDetails != null && !Boolean.TRUE.equals(wasPatientAlreadySavedAsDeceased))
+		{	
+			saveDeathDetails(deathDetails);			
+		}		
+		
+		ims.core.patient.domain.objects.Patient patientDO = (ims.core.patient.domain.objects.Patient) getDomainFactory().getDomainObject(ims.core.patient.domain.objects.Patient.class, patient.getID_Patient());
+		
+		if (patientDO != null && !Boolean.TRUE.equals(patientDO.isIsNewPatient()))
+		{
+			if ((Boolean.TRUE.equals(patient.getCancelSD_APPTS()) || Boolean.TRUE.equals(cancelFutureAppointments)) && (!wasPatientAlreadySavedAsDeceased || (wasPatientAlreadySavedAsDeceased && patient.getVersion_Patient() == patientDO.getVersion())))
+			{
+				if (Boolean.TRUE.equals(ConfigFlag.DOM.HEARTS_REPLICATE_PATIENTS.getValue()) && ConfigFlag.UI.BED_INFO_UI_TYPE.equals("CCO")) 
+					cancelSD_APPTS(patient);
+				else
+					cancelFutureAppointments(patient);
+			}		
+			//WDEV-18326
+			if (ConfigFlag.DOM.RTT_STATUS_POINT_FUNCTIONALITY.getValue())
+			{
+				if (patient.getDod() != null && (!wasPatientAlreadySavedAsDeceased || (wasPatientAlreadySavedAsDeceased && patient.getVersion_Patient() == patientDO.getVersion())))
+				{
+					// WDEV-23646 - Ensure the correct event Date Time is used when creating a new RTT Status
+					// When a Patient is marked as deceased, referrals that do get terminated by this operation must have the RTT Status set Date of Death
+					java.util.Date eventDeathDetails = new DateTime(patient.getDod()).getJavaDate();
+					saveRTTStatusForPatientRIP(patient, eventDeathDetails);
+				}
+				else  if (!wasPatientAlreadySavedAsDeceased && patient.getDod() == null)
+					revertRTTStatus(patient);
+			}			
+			//WDEV-18259
+			if (patient.getDod() != null && (!wasPatientAlreadySavedAsDeceased || (wasPatientAlreadySavedAsDeceased && patient.getVersion_Patient() == patientDO.getVersion())))
+				updatePatientElectiveListsForDOD(patient);
+			
+			//WDEV-20371
+			cancelPendingEmergencyTheatreRecords(patient);
+			
+		}	
+	}
+
+	private void cancelPendingEmergencyTheatreRecords(Patient patient) throws StaleObjectException
+	{
+		if (patient == null)
+			return;
+		
+		DomainFactory factory = getDomainFactory();
+
+		String hql = " select PET from PendingEmergencyTheatre as PET left join PET.patient as pat left join PET.catsReferral as referral left join PET.currentStatus as status " +
+				     "where pat.id = :patID and status.id <> :removedStatusID and status.id <> :admittedStatusID";
+
+		ArrayList<String> markers = new ArrayList<String>();
+		ArrayList<Serializable> values = new ArrayList<Serializable>();
+		
+		markers.add("patID");
+		values.add(patient.getID_Patient());
+		
+		markers.add("removedStatusID");
+		values.add(PendingEmergencyTheatreStatus.REMOVED.getID());
+				
+		markers.add("admittedStatusID");
+		values.add(PendingEmergencyTheatreStatus.ADMITTED.getID());
+		
+		PendingEmergencyTheatreVoCollection pendingEmergencyTheatreRecords = PendingEmergencyTheatreVoAssembler.createPendingEmergencyTheatreVoCollectionFromPendingEmergencyTheatre(factory.find(hql, markers, values));
+		
+		if (pendingEmergencyTheatreRecords == null || pendingEmergencyTheatreRecords.size() == 0)
+			return;
+		
+		for (int i = 0; i < pendingEmergencyTheatreRecords.size(); i++)
+		{
+			PendingEmergencyTheatreVo pendingEmergencyTheatre = pendingEmergencyTheatreRecords.get(i);
+
+			pendingEmergencyTheatre.setCurrentStatus(PendingEmergencyTheatreStatus.REMOVED);
+			pendingEmergencyTheatre.setRemovalDateTime(new DateTime());
+			pendingEmergencyTheatre.setRemovalReason(PendingEmergencyTheatreRemovalReason.PATIENT_DIED);
+			
+			Object mosUser = getMosUser();
+			
+			if (mosUser instanceof MemberOfStaffShortVo)
+			{
+				pendingEmergencyTheatre.setRemovedBy((MemberOfStaffShortVo) mosUser);
+			}
+
+			PendingEmergencyTheatre domainPendingEmergencyTheatre = PendingEmergencyTheatreVoAssembler.extractPendingEmergencyTheatre(factory, pendingEmergencyTheatre);
+
+			factory.save(domainPendingEmergencyTheatre);
+
+		}
+		
+	}
+
+	public Boolean hasAlertsForViewOrEdit(PatientRefVo patient, AlertTypeCollection alertsType)
+	{
+		if (patient == null || alertsType == null || alertsType.size() == 0)
+			return false;
+
+		DomainFactory factory = getDomainFactory(); 
+		String alertCategoryIds = getAlertCategoryIds(alertsType);
+		
+		String filter = "select count (alert.id) from PatientAlert as alert left join alert.alertType as alertType where (alert.isRIE = false or alert.isRIE is null) and alert.isCurrentlyActiveAlert = true and alert.patient.id = :idPatient";
+		
+		if(alertCategoryIds != null)
+		{
+			filter += " and alertType.parent is not null and alertType.parent.id in (" + alertCategoryIds + ")";
+		}
+		
+		List alerts = factory.find(filter, new String[]{"idPatient"}, new Object[]{patient.getID_Patient()});
+		
+		int count = 0;
+		if(alerts.size() > 0)
+		{
+			if(alerts.get(0) instanceof Integer)
+				count = ((Integer)alerts.get(0)).intValue();
+			else
+				count = ((Long)alerts.get(0)).intValue();
+		}
+		
+		return Boolean.valueOf(count > 0);
+	}
+
+	private String getAlertCategoryIds(AlertTypeCollection alertsType)
+	{
+		if(alertsType == null)
+			return null;
+		
+		String ids = "";
+		for(int i=0; i<alertsType.size(); i++)
+		{
+			AlertType alertCat = alertsType.get(i);
+			
+			if(alertCat == null)
+				continue;
+			
+			ids += (ids.length() > 0 ? "," : "") + alertCat.getID();
+		}
+		
+		return ids.length() > 0 ? ids : null;
+	}
+
+	@Override
+	//http://jira/browse/WDEV-22545
+	public PatientIdCollection getPatientIdentifiers(PatientRefVo patient)
+	{
+		if(patient!=null)
+		{
+			String hql ="select ids.type,ids.value,ids.verified from Patient as pat left join pat.identifiers as ids  where (pat.id = :PATID) ";
+			List<?> list  = getDomainFactory().find(hql, new String[]{"PATID"},new Object[] {patient.getID_Patient()});
+			
+			if(list!=null && list.size()>0)
+			{
+				PatientIdCollection patientIdCollection = new PatientIdCollection();
+				for (Object object : list)
+				{
+					Object[] values = (Object[])object;
+					PatientId patientId = new PatientId();
+					
+					LookupInstance  instance = (LookupInstance)values[0];
+					if ( null != instance )
+					{
+						ims.framework.utils.ImagePath img = null;
+						ims.framework.utils.Color color = null;		
+						img = null;
+						if (instance.getImage() != null) 
+						{
+							img = new ims.framework.utils.ImagePath(instance.getImage().getImageId(), instance.getImage().getImagePath());
+						}
+						color = instance.getColor();
+						if (color != null) 
+							color.getValue();
+					
+						ims.core.vo.lookups.PatIdType voLookup1 = new ims.core.vo.lookups.PatIdType(instance.getId(),instance.getText(), instance.isActive(), null, img, color);
+					
+						patientId.setType(voLookup1);
+						patientId.setValue((String)values[1]);
+						patientId.setVerified((Boolean)values[2]);
+						patientIdCollection.add(patientId);
+					}
+				}
+				return patientIdCollection;
+			}
+		}
+		return null;
+	}
+	
+	
+	//WDEV-20593 - Delete patient record 
+//	public void triggerDeletePatientEvent(ims.core.patient.domain.objects.Patient patient) throws StaleObjectException
+//	{
+//		triggerDemographicEvent(patient, MsgEventType.A29);	
+//	}
+//
+//	
+//	//WDEV-20593 - Added method for future functionality that might need to write different message event types to demographics queue
+//	public void triggerDemographicEvent(ims.core.patient.domain.objects.Patient patient, LookupInstVo messageEventType) throws StaleObjectException
+//	{
+//		DomainFactory factory = getDomainFactory();
+//		String hql = "select ot.providerSystem from OutboundTriggers as ot left join ot.queueType as qt left join qt.instance as i"
+//				+ " where(i.id = "+QueueType.DEMOGRAPHICFEED.getId()+")";
+//
+//		java.util.List<ProviderSystem> list = factory.find(hql);
+//
+//		for (int i=0; i<list.size(); i++)
+//		{
+//		
+//			ProviderSystem provider = (ProviderSystem) list.get(i);
+//
+//			DemographicsMessageQueue queue = new DemographicsMessageQueue();
+//			
+//			queue.setMessageStatus(getDomLookup(OrderMessageStatus.CREATED));
+//			queue.setMsgType(getDomLookup(messageEventType));
+//			queue.setQueueType(getDomLookup(QueueType.DEMOGRAPHICFEED));
+//			queue.setPatient(patient);
+//			queue.setProviderSystem(provider);
+//
+//			factory.save(queue);
+//		}
+//	}
+
 }	

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.pathways.vo.domain;
@@ -58,6 +63,10 @@ public class PathwayRTTStatusVoAssembler
 		valueObjectDest.setStatusDateTime(valueObjectSrc.getStatusDateTime());
 		// Setting
 		valueObjectDest.setSetting(valueObjectSrc.getSetting());
+		// RTTStatusUpdateReason
+		valueObjectDest.setRTTStatusUpdateReason(valueObjectSrc.getRTTStatusUpdateReason());
+		// RTTStatusUpdateComment
+		valueObjectDest.setRTTStatusUpdateComment(valueObjectSrc.getRTTStatusUpdateComment());
 	 	return valueObjectDest;
 	 }
 
@@ -349,19 +358,7 @@ public class PathwayRTTStatusVoAssembler
 			return null;
 			
 		// RTTStatus
-		if (domainObject.getRTTStatus() != null)
-		{
-			if(domainObject.getRTTStatus() instanceof HibernateProxy) // If the proxy is set, there is no need to lazy load, the proxy knows the id already. 
-			{
-				HibernateProxy p = (HibernateProxy) domainObject.getRTTStatus();
-				int id = Integer.parseInt(p.getHibernateLazyInitializer().getIdentifier().toString());				
-				valueObject.setRTTStatus(new ims.pathways.configuration.vo.RTTStatusPointRefVo(id, -1));				
-			}
-			else
-			{
-				valueObject.setRTTStatus(new ims.pathways.configuration.vo.RTTStatusPointRefVo(domainObject.getRTTStatus().getId(), domainObject.getRTTStatus().getVersion()));
-			}
-		}
+		valueObject.setRTTStatus(ims.pathways.vo.domain.RTTStatusPointLiteVoAssembler.create(map, domainObject.getRTTStatus()) );
 		// StatusBy
 		if (domainObject.getStatusBy() != null)
 		{
@@ -384,6 +381,44 @@ public class PathwayRTTStatusVoAssembler
 		}
 		// Setting
 		valueObject.setSetting(domainObject.getSetting());
+		// RTTStatusUpdateReason
+		ims.domain.lookups.LookupInstance instance5 = domainObject.getRTTStatusUpdateReason();
+		if ( null != instance5 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance5.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance5.getImage().getImageId(), instance5.getImage().getImagePath());
+			}
+			color = instance5.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.pathways.vo.lookups.RTTStatusUpdateReason voLookup5 = new ims.pathways.vo.lookups.RTTStatusUpdateReason(instance5.getId(),instance5.getText(), instance5.isActive(), null, img, color);
+			ims.pathways.vo.lookups.RTTStatusUpdateReason parentVoLookup5 = voLookup5;
+			ims.domain.lookups.LookupInstance parent5 = instance5.getParent();
+			while (parent5 != null)
+			{
+				if (parent5.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent5.getImage().getImageId(), parent5.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent5.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup5.setParent(new ims.pathways.vo.lookups.RTTStatusUpdateReason(parent5.getId(),parent5.getText(), parent5.isActive(), null, img, color));
+				parentVoLookup5 = parentVoLookup5.getParent();
+								parent5 = parent5.getParent();
+			}			
+			valueObject.setRTTStatusUpdateReason(voLookup5);
+		}
+				// RTTStatusUpdateComment
+		valueObject.setRTTStatusUpdateComment(domainObject.getRTTStatusUpdateComment());
  		return valueObject;
 	 }
 
@@ -433,26 +468,7 @@ public class PathwayRTTStatusVoAssembler
 		}
 		domainObject.setVersion(valueObject.getVersion_PathwayRTTStatus());
 
-		ims.pathways.configuration.domain.objects.RTTStatusPoint value1 = null;
-		if ( null != valueObject.getRTTStatus() ) 
-		{
-			if (valueObject.getRTTStatus().getBoId() == null)
-			{
-				if (domMap.get(valueObject.getRTTStatus()) != null)
-				{
-					value1 = (ims.pathways.configuration.domain.objects.RTTStatusPoint)domMap.get(valueObject.getRTTStatus());
-				}
-			}
-			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
-			{
-				value1 = domainObject.getRTTStatus();	
-			}
-			else
-			{
-				value1 = (ims.pathways.configuration.domain.objects.RTTStatusPoint)domainFactory.getDomainObject(ims.pathways.configuration.domain.objects.RTTStatusPoint.class, valueObject.getRTTStatus().getBoId());
-			}
-		}
-		domainObject.setRTTStatus(value1);
+		domainObject.setRTTStatus(ims.pathways.vo.domain.RTTStatusPointLiteVoAssembler.extractRTTStatusPoint(domainFactory, valueObject.getRTTStatus(), domMap));
 		ims.core.resource.people.domain.objects.MemberOfStaff value2 = null;
 		if ( null != valueObject.getStatusBy() ) 
 		{
@@ -487,6 +503,21 @@ public class PathwayRTTStatusVoAssembler
 			valueObject.setSetting(null);
 		}
 		domainObject.setSetting(valueObject.getSetting());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value5 = null;
+		if ( null != valueObject.getRTTStatusUpdateReason() ) 
+		{
+			value5 =
+				domainFactory.getLookupInstance(valueObject.getRTTStatusUpdateReason().getID());
+		}
+		domainObject.setRTTStatusUpdateReason(value5);
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getRTTStatusUpdateComment() != null && valueObject.getRTTStatusUpdateComment().equals(""))
+		{
+			valueObject.setRTTStatusUpdateComment(null);
+		}
+		domainObject.setRTTStatusUpdateComment(valueObject.getRTTStatusUpdateComment());
 
 		return domainObject;
 	}

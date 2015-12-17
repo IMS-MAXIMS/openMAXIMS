@@ -25,7 +25,7 @@ function boolean appointmentBookedEventCheck(ims.rules.engine.RulesRuntimeEngine
 		engine.setLastRuleName("appointmentBookedEventCheck.drl");
 		
        
-        if (entity.getApptStatus() != null && entity.getApptStatus().getId() == ims.scheduling.vo.lookups.Status_Reason.BOOKED.getId())
+        if (entity.getApptStatus() != null && entity.getApptStatus().getId() == ims.scheduling.vo.lookups.Status_Reason.BOOKED.getId() && entity.getTheatreBooking() == null)
 	    {
 	        if (prevState != null && prevState.get("apptStatus") != null)
 	        {

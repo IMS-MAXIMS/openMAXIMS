@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -31,13 +36,14 @@ import ims.admin.vo.AppointmentOutcomeReasonVo;
 import ims.admin.vo.AppointmentOutcomeReasonVoCollection;
 import ims.admin.vo.lookups.AppointmentOutcomeReason;
 import ims.admin.vo.lookups.AppointmentOutcomeReasonCollection;
+import ims.admin.vo.lookups.HardCodedEvents;
 import ims.domain.exceptions.StaleObjectException;
 import ims.framework.enumerations.FormMode;
 import ims.framework.exceptions.PresentationLogicException;
 import ims.framework.utils.Color;
-import ims.pathways.vo.EventLiteVoCollection;
 import ims.scheduling.vo.lookups.ApptOutcome;
 import ims.scheduling.vo.lookups.ApptOutcomeCollection;
+
 
 public class Logic extends BaseLogic
 {
@@ -57,7 +63,7 @@ public class Logic extends BaseLogic
 			form.getLocalContext().setSelectedRecord(null);
 			form.getLocalContext().setSelectedLookup((ApptOutcome) form.grdAppOutcomeConfig().getValue());
 			clearInstanceControls();
-			form.ctnDetails().htmAppointmentOutcomeValue().setHTML(form.getLocalContext().getSelectedLookup()!=null ? "<b>" + form.getLocalContext().getSelectedLookup().getText() + "</b>": null);	
+			form.ctnDetails().setCaption(form.getLocalContext().getSelectedLookup()!=null ? "Appointment Outcome: " + form.getLocalContext().getSelectedLookup().getText(): null);
 		}
 		
 		updateControlsState();
@@ -70,19 +76,22 @@ public class Logic extends BaseLogic
 		if (apptOutome==null)
 			return;
 		
-		form.ctnDetails().htmAppointmentOutcomeValue().setHTML("<b>" + apptOutome.getAppointmentOutcome().getText() + "</b>");
+		form.ctnDetails().setCaption(form.getLocalContext().getSelectedLookup()!=null ? "Appointment Outcome: " + form.getLocalContext().getSelectedLookup().getText(): null); //WDEV-19635 
 		populateGridAppOutcomeReason(apptOutome.getAppointmentOutcomeReasons());
-		form.ctnDetails().qmbFirstDefinitiveTreatment().newRow(apptOutome.getFirstDefinitiveTreatmentEvent(),apptOutome.getFirstDefinitiveTreatmentEvent()!=null ?  apptOutome.getFirstDefinitiveTreatmentEvent().getName(): null);
-		form.ctnDetails().qmbFirstDefinitiveTreatment().setValue(apptOutome.getFirstDefinitiveTreatmentEvent());
 		form.ctnDetails().chkFirst().setValue(apptOutome.getShowFirstDefinitiveTreatment());
 		form.ctnDetails().chkWaiting().setValue(apptOutome.getCanAddtoWaitingList());
-		form.ctnDetails().chkBooked().setValue(apptOutome.getCanAddtoBookedList());
 		form.ctnDetails().chkPlanned().setValue(apptOutome.getCanAddtoPlannedList());
 		form.ctnDetails().chkAppointment().setValue(apptOutome.getCanMakeAppointment());
-		form.ctnDetails().chkOnward().setValue(apptOutome.getCanMakeOnwardReferral());
 		form.ctnDetails().chkTransfer().setValue(apptOutome.getCanTransfer());
 		
+		//WDEV-20319
+		form.ctnDetails().chkAddRequestForService().setValue(apptOutome.getCanAddRequestForService());
+		form.ctnDetails().chkTransferOfCare().setValue(apptOutome.getCanTransferOfCare());
 		
+		//WDEV-19635 
+		form.ctnDetails().chkSeen().setValue(apptOutome.getUsedForSeen());
+		form.ctnDetails().chkNotSeen().setValue(apptOutome.getUsedForNotSeen());
+		form.ctnDetails().chkDNA().setValue(apptOutome.getUsedForDNA());	
 	}
 
 	private void populateGridAppOutcomeReason(AppointmentOutcomeReasonVoCollection collAppointmentOutcomeReasons)
@@ -114,16 +123,22 @@ public class Logic extends BaseLogic
 
 	private void clearInstanceControls()
 	{
-		form.ctnDetails().htmAppointmentOutcomeValue().setHTML("");
 		clearAppointmentOutcomeReasonSelection();
-		form.ctnDetails().qmbFirstDefinitiveTreatment().clear();
 		form.ctnDetails().chkFirst().setValue(null);
 		form.ctnDetails().chkWaiting().setValue(null);
-		form.ctnDetails().chkBooked().setValue(null);
 		form.ctnDetails().chkPlanned().setValue(null);
 		form.ctnDetails().chkAppointment().setValue(null);
-		form.ctnDetails().chkOnward().setValue(null);
 		form.ctnDetails().chkTransfer().setValue(null);
+		
+		//WDEV-20319
+		form.ctnDetails().chkAddRequestForService().setValue(null);
+		form.ctnDetails().chkTransferOfCare().setValue(null);
+		
+		//WDEV-19635 
+		form.ctnDetails().chkSeen().setValue(null);
+		form.ctnDetails().chkNotSeen().setValue(null);
+		form.ctnDetails().chkDNA().setValue(null);
+		form.ctnDetails().setCaption("Details");
 	}
 
 	private void clearAppointmentOutcomeReasonSelection()
@@ -157,16 +172,20 @@ public class Logic extends BaseLogic
 	}
 
 	private void open()
-	{
+	{		
 		populateGridAppointmentOutcomeConfig(GroupFilterEnumeration.rdoActive.equals(form.GroupFilter().getValue())); 
+		filterAppointmentOutcomeGridRecords(form.chkSeenSearch().getValue(), form.chkNotSeenSearch().getValue(), form.chkDNASearch().getValue());
+		
+		if (form.grdAppOutcomeConfig().getValue() == null)
+			clearInstanceControls();
+		
 		form.setMode(FormMode.VIEW);
 	}
 
 	private void initialize()
-	{
-		
+	{	
 		initializeGridAppointmentOutcomeConfigWithLookups(GroupFilterEnumeration.rdoActive.equals(form.GroupFilter().getValue()));
-		initializeGridAppointmentOutcomeReasonWithLookups();
+		initializeGridAppointmentOutcomeReasonWithLookups();		
 	}
 
 	private void initializeGridAppointmentOutcomeReasonWithLookups()
@@ -181,14 +200,13 @@ public class Logic extends BaseLogic
 		}
 	}
 
-	private void addLookupRowToAppOutcomeReasonGrid(AppointmentOutcomeReason appointmentOutcomeReason)
+	private void addLookupRowToAppOutcomeReasonGrid(AppointmentOutcomeReason appointmentOutcomeReason) //WDEV-20319
 	{
 	    grdAppointmentOutcomeReasonsRow row = form.ctnDetails().grdAppointmentOutcomeReasons().getRows().newRow();
 		
 		row.setValue(appointmentOutcomeReason);
 		row.setColAppointmentOutcomeReason(appointmentOutcomeReason.getText());
 		row.setTooltipForColAppointmentOutcomeReason(appointmentOutcomeReason.getText());
-		row.setColActive(appointmentOutcomeReason.isActive());
 	}
 
 	private void populateGridAppointmentOutcomeConfig(boolean active)
@@ -223,17 +241,50 @@ public class Logic extends BaseLogic
 		if (apptOutcomeConfig==null)
 			return;
 		
+		//WDEV-19635 
+		row.setColAppointmentOutcome("<b>" + row.getColAppointmentOutcome() + "</b>");
+		row.setCellColAppointmentOutcomeTooltip(row.getColAppointmentOutcome());
+		
 		row.setColAppointmentOutcomeReason(getAppOutcomeReasons(apptOutcomeConfig.getAppointmentOutcomeReasons()));
 		row.setTooltipForColAppointmentOutcomeReason(getAppOutcomeReasons(apptOutcomeConfig.getAppointmentOutcomeReasons()));
 		row.setColFirst(apptOutcomeConfig.getShowFirstDefinitiveTreatment());
 		row.setColWaiting(apptOutcomeConfig.getCanAddtoWaitingList());
-		row.setColBooked(apptOutcomeConfig.getCanAddtoBookedList());
 		row.setColPlanned(apptOutcomeConfig.getCanAddtoPlannedList());
 		row.setColAppointment(apptOutcomeConfig.getCanMakeAppointment());
-		row.setColOnward(apptOutcomeConfig.getCanMakeOnwardReferral());
 		row.setColTransfer(apptOutcomeConfig.getCanTransfer());
-		row.setValue(apptOutcomeConfig);
+		row.setColStatus(getApptStatuses(apptOutcomeConfig));
+		row.setCellColStatusTooltip(row.getColStatus());
 		
+		//WDEV-20319
+		row.setColRequest(apptOutcomeConfig.getCanAddRequestForService());
+		row.setColTransferCare(apptOutcomeConfig.getCanTransferOfCare());
+		
+		row.setValue(apptOutcomeConfig);
+	}
+
+	private String getApptStatuses(AppointmentOutcomeConfigVo apptOutcomeConfig)
+	{
+		if (apptOutcomeConfig == null)
+			return null;
+		
+		String apptStatus = "";
+		String comma = "";
+		if (Boolean.TRUE.equals(apptOutcomeConfig.getUsedForSeen()))
+		{
+			apptStatus = apptStatus + "Seen" + comma;
+			comma = ", ";
+		}
+		if (Boolean.TRUE.equals(apptOutcomeConfig.getUsedForNotSeen()))
+		{
+			apptStatus =apptStatus + comma + "Not Seen" ;
+			comma = ", ";
+		}
+		if (Boolean.TRUE.equals(apptOutcomeConfig.getUsedForDNA()))
+		{
+			apptStatus =apptStatus + comma + "DNA";
+		}
+		
+		return apptStatus;
 	}
 
 	private String getAppOutcomeReasons(AppointmentOutcomeReasonVoCollection collAppointmentOutcomeReasons)
@@ -286,7 +337,7 @@ public class Logic extends BaseLogic
 		
 		row.setValue(apptOutcome);
 		row.setColAppointmentOutcome(apptOutcome.getText());
-		row.setTooltipForColAppointmentOutcome(apptOutcome.getText());
+		row.setTooltipForColAppointmentOutcome("<b> Not Configured: </b>" + apptOutcome.getText()); //WDEV-19635 
 		if (!apptOutcome.isActive())
 		{
 			row.setBackColor(Color.Cyan);
@@ -296,11 +347,7 @@ public class Logic extends BaseLogic
 	@Override
 	protected void onRadioButtonGroupFilterValueChanged() throws PresentationLogicException
 	{
-		initialize();
-		form.getLocalContext().setSelectedLookup(null);
-		form.getLocalContext().setSelectedRecord(null);
-		populateGridAppointmentOutcomeConfig(GroupFilterEnumeration.rdoActive.equals(form.GroupFilter().getValue()));
-		updateControlsState();
+		refresh();
 	}
 
 	@Override
@@ -359,14 +406,27 @@ public class Logic extends BaseLogic
 		selectedRecord.setAppointmentOutcome(form.getLocalContext().getSelectedLookup());
 		selectedRecord.setAppointmentOutcomeReasons(populateOutcomeReasonsDataFromScreen(selectedRecord.getAppointmentOutcomeReasons()));
 		
-		selectedRecord.setFirstDefinitiveTreatmentEvent(form.ctnDetails().qmbFirstDefinitiveTreatment().getValue());
 		selectedRecord.setShowFirstDefinitiveTreatment(form.ctnDetails().chkFirst().getValue());
 		selectedRecord.setCanAddtoWaitingList(form.ctnDetails().chkWaiting().getValue());
-		selectedRecord.setCanAddtoBookedList(form.ctnDetails().chkBooked().getValue());
 		selectedRecord.setCanAddtoPlannedList(form.ctnDetails().chkPlanned().getValue());
 		selectedRecord.setCanMakeAppointment(form.ctnDetails().chkAppointment().getValue());
-		selectedRecord.setCanMakeOnwardReferral(form.ctnDetails().chkOnward().getValue());
 		selectedRecord.setCanTransfer(form.ctnDetails().chkTransfer().getValue());
+
+		//WDEV-20319
+		selectedRecord.setCanAddRequestForService(form.ctnDetails().chkAddRequestForService().getValue());
+		selectedRecord.setCanTransferOfCare(form.ctnDetails().chkTransferOfCare().getValue());
+		
+		//WDEV-19536  - start
+		if (Boolean.TRUE.equals(form.ctnDetails().chkFirst().getValue()))
+			selectedRecord.setFirstDefinitiveTreatmentEvent(domain.getFirstDefinitiveTreatmentEvent(HardCodedEvents.FIRSTDEFINITIVETREATMENTEVENT.getId()));
+		else 
+			selectedRecord.setFirstDefinitiveTreatmentEvent(null);
+		//WDEV-19536 - end
+		
+		//WDEV-19635 
+		selectedRecord.setUsedForSeen(Boolean.TRUE.equals(form.ctnDetails().chkSeen().getValue()) ? true : false);
+		selectedRecord.setUsedForNotSeen(Boolean.TRUE.equals(form.ctnDetails().chkNotSeen().getValue()) ? true : false);
+		selectedRecord.setUsedForDNA(Boolean.TRUE.equals(form.ctnDetails().chkDNA().getValue()) ? true : false);
 		
 		return selectedRecord;
 	}
@@ -420,26 +480,48 @@ public class Logic extends BaseLogic
 	}
 
 	@Override
-	protected void onQmbFirstDefinitiveTreatmentTextSubmited(String value) throws PresentationLogicException
-	{
-		form.ctnDetails().qmbFirstDefinitiveTreatment().clear();
-		
-		EventLiteVoCollection voCollEvent = domain.listEvents(value);
-		if (voCollEvent==null || voCollEvent.size() == 0)
-		{
-			return;
-		}
-
-		for (int i = 0; i < voCollEvent.size(); i++)
-		{
-			form.ctnDetails().qmbFirstDefinitiveTreatment().newRow(voCollEvent.get(i), voCollEvent.get(i).getName().toString());
-		}
-
-		if (voCollEvent.size() == 1)
-			form.ctnDetails().qmbFirstDefinitiveTreatment().setValue(voCollEvent.get(0));
-		else
-			form.ctnDetails().qmbFirstDefinitiveTreatment().showOpened();
+	protected void onChkDNASearchValueChanged() throws PresentationLogicException
+	{	
+		refresh();
 	}
-	
+
+	private void filterAppointmentOutcomeGridRecords(boolean seen, boolean notSeen, boolean dna)
+	{
+		for (int i = 0; i< form.grdAppOutcomeConfig().getRows().size(); i++)
+		{
+			if (form.grdAppOutcomeConfig().getRows().get(i).getValue() instanceof AppointmentOutcomeConfigVo)
+			{	
+				AppointmentOutcomeConfigVo item = (AppointmentOutcomeConfigVo) form.grdAppOutcomeConfig().getRows().get(i).getValue();
+				if ((Boolean.TRUE.equals(seen) && !Boolean.TRUE.equals(item.getUsedForSeen())) ||
+					(Boolean.TRUE.equals(notSeen) && !Boolean.TRUE.equals(item.getUsedForNotSeen())	||
+					(Boolean.TRUE.equals(dna) && !Boolean.TRUE.equals(item.getUsedForDNA()))))
+				{
+					form.grdAppOutcomeConfig().getRows().remove(i);
+					i--;
+				}
+			}
+		}
+	}
+
+	@Override
+	protected void onChkNotSeenSearchValueChanged() throws PresentationLogicException
+	{
+		refresh();
+	}
+
+	@Override
+	protected void onChkSeenSearchValueChanged() throws PresentationLogicException
+	{
+		refresh();
+	}
+
+	private void refresh()
+	{
+		initialize();
+		form.getLocalContext().setSelectedLookup(null);
+		form.getLocalContext().setSelectedRecord(null);
+		open();
+	}
+
 	
 }

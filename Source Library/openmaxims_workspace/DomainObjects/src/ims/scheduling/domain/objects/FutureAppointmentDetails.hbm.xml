@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:36 -->
+<!-- Generated: 12/10/2015, 13:31 -->
 <hibernate-mapping>
 	<class name="ims.scheduling.domain.objects.FutureAppointmentDetails" table="schl_futureappointm" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -30,24 +30,286 @@
 			</property>
 		</component>
 <!-- debug: hibernateClassContent -->
-<!-- debug: periodValue -->
-<!-- debug: periodType -->
-<!-- debug: futureApptByDate -->
-<!-- debug: !IsAssociation && !IsCollection -->
-
-<!-- debug: !IsLookup -->
-		<property name="periodValue" type="integer" access="field" update="true">
-			<column name="periodvalu"  not-null="true" unique="false"  />
-		</property>
+<!-- debug: referral -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="referral" class="ims.RefMan.domain.objects.CatsReferral" unique="true" foreign-key="futureappointm_referral_fk" access="field" cascade="save-update">
+			<column name="referral" sql-type="numeric(10,0)" not-null="true" unique="false"  index='future_appt_idx1' />
+		</many-to-one>
+<!-- debug: source -->
+<!-- debug: requestToSchedule -->
+<!-- debug: currentStatus -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="currentStatus" class="ims.scheduling.domain.objects.FutureAppointmentStatus" unique="true" foreign-key="futureappointm_currentsta_fk" access="field" cascade="save-update">
+			<column name="currentsta" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: statusHistory -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<list name="statusHistory" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="futureappointm_statushist_fk">
+				<column name="schl_futureappointm_statushist" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.scheduling.domain.objects.FutureAppointmentStatus" />
+		</list>
+<!-- debug: sameDay -->
+<!-- debug: sameService -->
+<!-- debug: numberOfLinkedRecurringApptsToBook -->
+<!-- debug: _1stApptService -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="_1stApptService" class="ims.core.clinical.domain.objects.Service" unique="true" foreign-key="futureappointm__1stapptse_fk" access="field" cascade="save-update">
+			<column name="_1stapptse" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: _1stApptFunction -->
+<!-- debug: _1stApptPeriodValue -->
+<!-- debug: _1stApptPeriodType -->
+<!-- debug: _1stApptFutureApptByDate -->
+<!-- debug: _1stApptToSee -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="_1stApptToSee" class="ims.RefMan.domain.objects.OPA" unique="true" foreign-key="futureappointm__1stapptto_fk" access="field" cascade="save-update">
+			<column name="_1stapptto" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: appointments -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="appointments" class="ims.scheduling.domain.objects.Booking_Appointment" unique="true" foreign-key="futureappointm_appointmen_fk" access="field" cascade="save-update">
+			<column name="appointmen" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: linkedDiagnostics -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<list name="linkedDiagnostics" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="futureappointm_linkeddiag_fk">
+				<column name="schl_futureappointm_linkeddiag" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.RefMan.domain.objects.LinkedDiagnostic" />
+		</list>
+<!-- debug: startingWeek -->
+<!-- debug: mon -->
+<!-- debug: tues -->
+<!-- debug: wed -->
+<!-- debug: thurs -->
+<!-- debug: fri -->
+<!-- debug: sat -->
+<!-- debug: sun -->
+<!-- debug: comments -->
+<!-- debug: _2ndApptService -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="_2ndApptService" class="ims.core.clinical.domain.objects.Service" unique="true" foreign-key="futureappointm__2ndapptse_fk" access="field" cascade="save-update">
+			<column name="_2ndapptse" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: _2ndApptFunction -->
+<!-- debug: _2ndApptPeriodValue -->
+<!-- debug: _2ndApptPeriodType -->
+<!-- debug: _2ndApptFutureApptByDate -->
+<!-- debug: _2ndApptToSee -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="_2ndApptToSee" class="ims.RefMan.domain.objects.OPA" unique="true" foreign-key="futureappointm__2ndapptto_fk" access="field" cascade="save-update">
+			<column name="_2ndapptto" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: _3rdApptService -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="_3rdApptService" class="ims.core.clinical.domain.objects.Service" unique="true" foreign-key="futureappointm__3rdapptse_fk" access="field" cascade="save-update">
+			<column name="_3rdapptse" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: _3rdApptFunction -->
+<!-- debug: _3rdApptPeriodValue -->
+<!-- debug: _3rdApptPeriodType -->
+<!-- debug: _3rdApptFutureApptByDate -->
+<!-- debug: _3rdAppToSee -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="_3rdAppToSee" class="ims.RefMan.domain.objects.OPA" unique="true" foreign-key="futureappointm__3rdapptos_fk" access="field" cascade="save-update">
+			<column name="_3rdapptos" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: recurring -->
+<!-- debug: endAfterNOccurrences -->
+<!-- debug: noOfTimesPerWeek -->
+<!-- debug: everyNMonths -->
+<!-- debug: weekInTheMonth -->
+<!-- debug: futureAppointmentComments -->
+<!-- debug: doNotMoveDate -->
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: IsLookup -->
-		<many-to-one name="periodType" class="ims.domain.lookups.LookupInstance" access="field">
-			<column name="lkp_periodtype" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		<many-to-one name="source" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_source" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="requestToSchedule" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_requesttos" sql-type="numeric(10,0)" not-null="true" unique="false"   />
 		</many-to-one>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
-		<property name="futureApptByDate" type="date" access="field" update="true">
-			<column name="futureappt"  not-null="true" unique="false"  />
+		<property name="sameDay" type="boolean" access="field" update="true">
+			<column name="sameday"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="sameService" type="boolean" access="field" update="true">
+			<column name="sameservic"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="numberOfLinkedRecurringApptsToBook" type="integer" access="field" update="true">
+			<column name="numberofli"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="_1stApptFunction" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp__1stapptfu" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="_1stApptPeriodValue" type="integer" access="field" update="true">
+			<column name="_1stapptpe"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="_1stApptPeriodType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp__1stapptp2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="_1stApptFutureApptByDate" type="date" access="field" update="true">
+			<column name="_1stapptf2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="startingWeek" type="date" access="field" update="true">
+			<column name="startingwe"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="mon" type="boolean" access="field" update="true">
+			<column name="mon"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="tues" type="boolean" access="field" update="true">
+			<column name="tues"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="wed" type="boolean" access="field" update="true">
+			<column name="wed"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="thurs" type="boolean" access="field" update="true">
+			<column name="thurs"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="fri" type="boolean" access="field" update="true">
+			<column name="fri"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="sat" type="boolean" access="field" update="true">
+			<column name="sat"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="sun" type="boolean" access="field" update="true">
+			<column name="sun"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="comments" type="text" access="field" update="true" > 
+			<column name="comments"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="_2ndApptFunction" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp__2ndapptfu" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="_2ndApptPeriodValue" type="integer" access="field" update="true">
+			<column name="_2ndapptpe"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="_2ndApptPeriodType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp__2ndapptp2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="_2ndApptFutureApptByDate" type="date" access="field" update="true">
+			<column name="_2ndapptf2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="_3rdApptFunction" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp__3rdapptfu" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="_3rdApptPeriodValue" type="integer" access="field" update="true">
+			<column name="_3rdapptpe"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="_3rdApptPeriodType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp__3rdapptp2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="_3rdApptFutureApptByDate" type="date" access="field" update="true">
+			<column name="_3rdapptf2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="recurring" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_recurring" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="endAfterNOccurrences" type="integer" access="field" update="true">
+			<column name="endafterno"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="noOfTimesPerWeek" type="integer" access="field" update="true">
+			<column name="nooftimesp"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="everyNMonths" type="integer" access="field" update="true">
+			<column name="everynmont"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="weekInTheMonth" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_weekinthem" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="futureAppointmentComments" type="string" access="field" update="true" > 
+			<column name="futureappo" length="750"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="doNotMoveDate" type="boolean" access="field" update="true">
+			<column name="donotmoved"  not-null="false" unique="false"  />
 		</property>
 	</class>
 </hibernate-mapping>

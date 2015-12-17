@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.scheduling.vo.domain;
@@ -78,6 +83,16 @@ public class BookingAppointmentForSessionManagementVoAssembler
 		valueObjectDest.setRequiresRebook(valueObjectSrc.getRequiresRebook());
 		// TheatreBooking
 		valueObjectDest.setTheatreBooking(valueObjectSrc.getTheatreBooking());
+		// FirstApptKPIDate
+		valueObjectDest.setFirstApptKPIDate(valueObjectSrc.getFirstApptKPIDate());
+		// DoNotMove
+		valueObjectDest.setDoNotMove(valueObjectSrc.getDoNotMove());
+		// numProviderCancellations
+		valueObjectDest.setNumProviderCancellations(valueObjectSrc.getNumProviderCancellations());
+		// numPatientCancellations
+		valueObjectDest.setNumPatientCancellations(valueObjectSrc.getNumPatientCancellations());
+		// LinkedAppointments
+		valueObjectDest.setLinkedAppointments(valueObjectSrc.getLinkedAppointments());
 	 	return valueObjectDest;
 	 }
 
@@ -499,19 +514,28 @@ public class BookingAppointmentForSessionManagementVoAssembler
 		// RequiresRebook
 		valueObject.setRequiresRebook( domainObject.isRequiresRebook() );
 		// TheatreBooking
-		if (domainObject.getTheatreBooking() != null)
+		valueObject.setTheatreBooking(ims.scheduling.vo.domain.TheatreBookingProcedureNameVoAssembler.create(map, domainObject.getTheatreBooking()) );
+		// FirstApptKPIDate
+		java.util.Date FirstApptKPIDate = domainObject.getFirstApptKPIDate();
+		if ( null != FirstApptKPIDate ) 
 		{
-			if(domainObject.getTheatreBooking() instanceof HibernateProxy) // If the proxy is set, there is no need to lazy load, the proxy knows the id already. 
-			{
-				HibernateProxy p = (HibernateProxy) domainObject.getTheatreBooking();
-				int id = Integer.parseInt(p.getHibernateLazyInitializer().getIdentifier().toString());				
-				valueObject.setTheatreBooking(new ims.scheduling.vo.TheatreBookingRefVo(id, -1));				
-			}
-			else
-			{
-				valueObject.setTheatreBooking(new ims.scheduling.vo.TheatreBookingRefVo(domainObject.getTheatreBooking().getId(), domainObject.getTheatreBooking().getVersion()));
-			}
+			valueObject.setFirstApptKPIDate(new ims.framework.utils.Date(FirstApptKPIDate) );
 		}
+		// DoNotMove
+		valueObject.setDoNotMove( domainObject.isDoNotMove() );
+		// numProviderCancellations
+		valueObject.setNumProviderCancellations(domainObject.getNumProviderCancellations());
+		// numPatientCancellations
+		valueObject.setNumPatientCancellations(domainObject.getNumPatientCancellations());
+		// LinkedAppointments
+		ims.scheduling.vo.Booking_AppointmentRefVoCollection LinkedAppointments = new ims.scheduling.vo.Booking_AppointmentRefVoCollection();
+		for(java.util.Iterator iterator = domainObject.getLinkedAppointments().iterator(); iterator.hasNext(); ) 
+		{
+			ims.scheduling.domain.objects.Booking_Appointment tmp = (ims.scheduling.domain.objects.Booking_Appointment)iterator.next();
+			if (tmp != null)
+				LinkedAppointments.add(new ims.scheduling.vo.Booking_AppointmentRefVo(tmp.getId(),tmp.getVersion()));
+		}
+		valueObject.setLinkedAppointments(LinkedAppointments);
  		return valueObject;
 	 }
 
@@ -665,7 +689,8 @@ public class BookingAppointmentForSessionManagementVoAssembler
 		}
 		domainObject.setCareContext(value12);
 		domainObject.setRequiresRebook(valueObject.getRequiresRebook());
-		ims.scheduling.domain.objects.TheatreBooking value14 = null;
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.scheduling.domain.objects.TheatreBooking value14 = null;
 		if ( null != valueObject.getTheatreBooking() ) 
 		{
 			if (valueObject.getTheatreBooking().getBoId() == null)
@@ -675,16 +700,76 @@ public class BookingAppointmentForSessionManagementVoAssembler
 					value14 = (ims.scheduling.domain.objects.TheatreBooking)domMap.get(valueObject.getTheatreBooking());
 				}
 			}
-			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
-			{
-				value14 = domainObject.getTheatreBooking();	
-			}
 			else
 			{
 				value14 = (ims.scheduling.domain.objects.TheatreBooking)domainFactory.getDomainObject(ims.scheduling.domain.objects.TheatreBooking.class, valueObject.getTheatreBooking().getBoId());
 			}
 		}
 		domainObject.setTheatreBooking(value14);
+		java.util.Date value15 = null;
+		ims.framework.utils.Date date15 = valueObject.getFirstApptKPIDate();		
+		if ( date15 != null ) 
+		{
+			value15 = date15.getDate();
+		}
+		domainObject.setFirstApptKPIDate(value15);
+		domainObject.setDoNotMove(valueObject.getDoNotMove());
+		domainObject.setNumProviderCancellations(valueObject.getNumProviderCancellations());
+		domainObject.setNumPatientCancellations(valueObject.getNumPatientCancellations());
+
+		ims.scheduling.vo.Booking_AppointmentRefVoCollection refCollection19 = valueObject.getLinkedAppointments();
+		int size19 = (null == refCollection19) ? 0 : refCollection19.size();		
+		java.util.Set domainLinkedAppointments19 = domainObject.getLinkedAppointments();
+		if (domainLinkedAppointments19 == null)
+		{
+			domainLinkedAppointments19 = new java.util.HashSet();
+		}
+		java.util.Set newSet19  = new java.util.HashSet();
+		for(int i=0; i<size19; i++) 
+		{
+			ims.scheduling.vo.Booking_AppointmentRefVo vo = refCollection19.get(i);					
+			ims.scheduling.domain.objects.Booking_Appointment dom = null;
+			if ( null != vo ) 
+			{
+				if (vo.getBoId() == null)
+				{
+					if (domMap.get(vo) != null)
+					{
+						dom = (ims.scheduling.domain.objects.Booking_Appointment)domMap.get(vo);
+					}
+				}
+				else
+				{
+					dom = (ims.scheduling.domain.objects.Booking_Appointment)domainFactory.getDomainObject( ims.scheduling.domain.objects.Booking_Appointment.class, vo.getBoId());
+				}
+			}
+
+			//Trying to avoid the hibernate collection being marked as dirty via its public interface methods. (like add)
+			if (!domainLinkedAppointments19.contains(dom))
+			{
+				domainLinkedAppointments19.add(dom);
+			}
+			newSet19.add(dom);			
+		}
+		java.util.Set removedSet19 = new java.util.HashSet();
+		java.util.Iterator iter19 = domainLinkedAppointments19.iterator();
+		//Find out which objects need to be removed
+		while (iter19.hasNext())
+		{
+			ims.domain.DomainObject o = (ims.domain.DomainObject)iter19.next();			
+			if ((o == null || o.getIsRIE() == null || !o.getIsRIE().booleanValue()) && !newSet19.contains(o))
+			{
+				removedSet19.add(o);
+			}
+		}
+		iter19 = removedSet19.iterator();
+		//Remove the unwanted objects
+		while (iter19.hasNext())
+		{
+			domainLinkedAppointments19.remove(iter19.next());
+		}		
+		
+		domainObject.setLinkedAppointments(domainLinkedAppointments19);		
 
 		return domainObject;
 	}

@@ -1,9 +1,33 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.RefMan.vo.domain;
@@ -35,6 +59,14 @@ public class PatientElectiveTCIBedManagerCommentVoAssembler
 		valueObjectDest.setBedManagerComment(valueObjectSrc.getBedManagerComment());
 		// TCIDate
 		valueObjectDest.setTCIDate(valueObjectSrc.getTCIDate());
+		// TCIWard
+		valueObjectDest.setTCIWard(valueObjectSrc.getTCIWard());
+		// Comments
+		valueObjectDest.setComments(valueObjectSrc.getComments());
+		// TCITime
+		valueObjectDest.setTCITime(valueObjectSrc.getTCITime());
+		// TCIHospital
+		valueObjectDest.setTCIHospital(valueObjectSrc.getTCIHospital());
 	 	return valueObjectDest;
 	 }
 
@@ -333,6 +365,18 @@ public class PatientElectiveTCIBedManagerCommentVoAssembler
 		{
 			valueObject.setTCIDate(new ims.framework.utils.Date(TCIDate) );
 		}
+		// TCIWard
+		valueObject.setTCIWard(ims.core.vo.domain.LocationLiteVoAssembler.create(map, domainObject.getTCIWard()) );
+		// Comments
+		valueObject.setComments(domainObject.getComments());
+		// TCITime
+		String TCITime = domainObject.getTCITime();
+		if ( null != TCITime ) 
+		{
+			valueObject.setTCITime(new ims.framework.utils.Time(TCITime) );
+		}
+		// TCIHospital
+		valueObject.setTCIHospital(ims.core.vo.domain.LocationLiteVoAssembler.create(map, domainObject.getTCIHospital()) );
  		return valueObject;
 	 }
 
@@ -396,6 +440,54 @@ public class PatientElectiveTCIBedManagerCommentVoAssembler
 			value2 = date2.getDate();
 		}
 		domainObject.setTCIDate(value2);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.resource.place.domain.objects.Location value3 = null;
+		if ( null != valueObject.getTCIWard() ) 
+		{
+			if (valueObject.getTCIWard().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getTCIWard()) != null)
+				{
+					value3 = (ims.core.resource.place.domain.objects.Location)domMap.get(valueObject.getTCIWard());
+				}
+			}
+			else
+			{
+				value3 = (ims.core.resource.place.domain.objects.Location)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.Location.class, valueObject.getTCIWard().getBoId());
+			}
+		}
+		domainObject.setTCIWard(value3);
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getComments() != null && valueObject.getComments().equals(""))
+		{
+			valueObject.setComments(null);
+		}
+		domainObject.setComments(valueObject.getComments());
+		ims.framework.utils.Time time5 = valueObject.getTCITime();
+		String value5 = null;
+		if ( time5 != null ) 
+		{
+			value5 = time5.toString();
+		}
+		domainObject.setTCITime(value5);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.resource.place.domain.objects.Location value6 = null;
+		if ( null != valueObject.getTCIHospital() ) 
+		{
+			if (valueObject.getTCIHospital().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getTCIHospital()) != null)
+				{
+					value6 = (ims.core.resource.place.domain.objects.Location)domMap.get(valueObject.getTCIHospital());
+				}
+			}
+			else
+			{
+				value6 = (ims.core.resource.place.domain.objects.Location)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.Location.class, valueObject.getTCIHospital().getBoId());
+			}
+		}
+		domainObject.setTCIHospital(value6);
 
 		return domainObject;
 	}

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -67,11 +72,11 @@ public class Logic extends BaseLogic
 		updateControlState();
 	}
 
-	private void updateControlState()
-	{
+	private void updateControlState() //WDEV-22796
+	{ 
 		EmergencyAttendanceBillingVo currentEmergAttBilling = (form.getLocalContext().getAttendanceDetailsRefIsNotNull() ? domain.getAttendanceBillingByEmergencyAttendance(form.getLocalContext().getAttendanceDetailsRef()) : null);
 
-		form.btnNew().setVisible(FormMode.VIEW.equals(form.getMode()) && currentEmergAttBilling == null);
+		form.btnNew().setVisible(FormMode.VIEW.equals(form.getMode()) && currentEmergAttBilling == null && form.getLocalContext().getAttendanceDetailsRefIsNotNull()); //WDEV-22956
 		form.btnEdit().setVisible(FormMode.VIEW.equals(form.getMode()) && currentEmergAttBilling != null);
 
 		form.cmbIsPatientExempt().setRequired(true);
@@ -88,66 +93,65 @@ public class Logic extends BaseLogic
 				form.lblExemptionReason().setVisible(controlConfig.getIsVisible());
 
 				form.cmbExemptionReason().setVisible(controlConfig.getIsVisible());
+				form.cmbExemptionReason().setEnabled(FormMode.EDIT.equals(form.getMode()) && controlConfig.getIsEditable() && !YesNo.NO.equals(form.cmbIsPatientExempt().getValue()));
 				form.cmbExemptionReason().setRequired(controlConfig.getIsRequired() || YesNo.YES.equals(form.cmbIsPatientExempt().getValue()));
-				form.cmbExemptionReason().setEnabled(FormMode.EDIT.equals(form.getMode()) && controlConfig.getIsEditable());
-
 			}
 			else if (EXEMPTION_REASON_OTHER.equals(controlConfig.getControlIMSID()))
 			{
 				form.lblExemptionReasonOther().setVisible(controlConfig.getIsVisible());
 
 				form.txtExemptionReasonOther().setVisible(controlConfig.getIsVisible());
+				form.txtExemptionReasonOther().setEnabled(FormMode.EDIT.equals(form.getMode()) && !YesNo.NO.equals(form.cmbIsPatientExempt().getValue()) && (controlConfig.getIsEditable() || ExemptionReason.EXEMPT_OTHER.equals(form.cmbExemptionReason().getValue())));
 				form.txtExemptionReasonOther().setRequired(controlConfig.getIsRequired() || ExemptionReason.EXEMPT_OTHER.equals(form.cmbExemptionReason().getValue()));
-				form.txtExemptionReasonOther().setEnabled(FormMode.EDIT.equals(form.getMode()) && (controlConfig.getIsEditable() || ExemptionReason.EXEMPT_OTHER.equals(form.cmbExemptionReason().getValue())));
-
 			}
 			else if (PAYMENT_MADE.equals(controlConfig.getControlIMSID()))
 			{
 				form.lblPaymentMade().setVisible(controlConfig.getIsVisible());
 
 				form.cmbPaymentMade().setVisible(controlConfig.getIsVisible());
+				form.cmbPaymentMade().setEnabled(FormMode.EDIT.equals(form.getMode()) && controlConfig.getIsEditable() && !YesNo.YES.equals(form.cmbIsPatientExempt().getValue()));
 				form.cmbPaymentMade().setRequired(controlConfig.getIsRequired() || YesNo.NO.equals(form.cmbIsPatientExempt().getValue()));
-				form.cmbPaymentMade().setEnabled(FormMode.EDIT.equals(form.getMode()) && controlConfig.getIsEditable());
-
 			}
 			else if (PAYMENT_TYPE.equals(controlConfig.getControlIMSID()))
 			{
 				form.lblPaymentType().setVisible(controlConfig.getIsVisible());
 
 				form.cmbPaymentType().setVisible(controlConfig.getIsVisible());
+				form.cmbPaymentType().setEnabled(FormMode.EDIT.equals(form.getMode()) && controlConfig.getIsEditable() && !YesNo.NO.equals(form.cmbPaymentMade().getValue()));
 				form.cmbPaymentType().setRequired(controlConfig.getIsRequired() || (YesNo.NO.equals(form.cmbIsPatientExempt().getValue()) && !YesNo.NO.equals(form.cmbPaymentMade().getValue())));//WDEV-17160
-				form.cmbPaymentType().setEnabled(FormMode.EDIT.equals(form.getMode()) && controlConfig.getIsEditable());
-
 			}
-			else if (INVOICE_AMOUNT.equals(controlConfig.getControlIMSID()))
+			else if (INVOICE_AMOUNT.equals(controlConfig.getControlIMSID())) 
 			{
 				form.lblInvoiceAmount().setVisible(controlConfig.getIsVisible());
-
-				form.intInvoiceAmount().setVisible(controlConfig.getIsVisible());
-				form.intInvoiceAmount().setRequired(controlConfig.getIsRequired() || (YesNo.NO.equals(form.cmbIsPatientExempt().getValue()) && !YesNo.NO.equals(form.cmbPaymentMade().getValue())));//WDEV-17160
-				form.intInvoiceAmount().setEnabled(FormMode.EDIT.equals(form.getMode()) && controlConfig.getIsEditable());
-
+				
+				//WDEV-22795
+				form.cmbInvoiceAmount().setVisible(controlConfig.getIsVisible());
+				form.cmbInvoiceAmount().setEnabled(FormMode.EDIT.equals(form.getMode()) && controlConfig.getIsEditable() && !YesNo.YES.equals(form.cmbIsPatientExempt().getValue()));
+				form.cmbInvoiceAmount().setRequired(controlConfig.getIsRequired() || (YesNo.NO.equals(form.cmbIsPatientExempt().getValue()) && !YesNo.NO.equals(form.cmbPaymentMade().getValue())));//WDEV-17160
 			}
 			else if (REASON_FOR_NON_PAYMENT.equals(controlConfig.getControlIMSID()))
 			{
 				form.lblReasonForNonPayment().setVisible(controlConfig.getIsVisible());
 
 				form.cmbReasonForNonPayment().setVisible(controlConfig.getIsVisible());
-				form.cmbReasonForNonPayment().setRequired(controlConfig.getIsRequired() || (YesNo.NO.equals(form.cmbIsPatientExempt().getValue()) && YesNo.NO.equals(form.cmbPaymentMade().getValue())));
-				form.cmbReasonForNonPayment().setEnabled(FormMode.EDIT.equals(form.getMode()) && controlConfig.getIsEditable());
-
+				form.cmbReasonForNonPayment().setEnabled(FormMode.EDIT.equals(form.getMode()) && controlConfig.getIsEditable() && !YesNo.YES.equals(form.cmbIsPatientExempt().getValue()) && !YesNo.YES.equals(form.cmbPaymentMade().getValue())); //WDEV-22955
+				form.cmbReasonForNonPayment().setRequired(controlConfig.getIsRequired() || (YesNo.NO.equals(form.cmbIsPatientExempt().getValue()) && YesNo.NO.equals(form.cmbPaymentMade().getValue())) && !YesNo.YES.equals(form.cmbPaymentMade().getValue()));
 			}
 			else if (PAYMENT_REFUNDED.equals(controlConfig.getControlIMSID()))
 			{
 				form.lblPaymentRefunded().setVisible(controlConfig.getIsVisible());
 
 				form.cmbPaymentRefunded().setVisible(controlConfig.getIsVisible());
+				form.cmbPaymentRefunded().setEnabled(FormMode.EDIT.equals(form.getMode()) && controlConfig.getIsEditable() && !YesNo.YES.equals(form.cmbIsPatientExempt().getValue()));
 				form.cmbPaymentRefunded().setRequired(controlConfig.getIsRequired());
-				form.cmbPaymentRefunded().setEnabled(FormMode.EDIT.equals(form.getMode()) && controlConfig.getIsEditable());
-
 			}
 		}
 
+		//WDEV-22956
+		boolean SVUH_FUNCTIONALITY = ConfigFlag.UI.SVUH_MANDATORY_DEMOGRAPHIC_ATTRIBUTES.getValue();
+		form.btnSave().setVisible(FormMode.EDIT.equals(form.getMode()) && (!Boolean.TRUE.equals(form.getLocalContext().getIsNewAttendance()) || !SVUH_FUNCTIONALITY || Boolean.TRUE.equals(form.getLocalContext().getIsFinalTab())));
+		form.btnCancel().setVisible(FormMode.EDIT.equals(form.getMode()) && (!Boolean.TRUE.equals(form.getLocalContext().getIsNewAttendance()) || !SVUH_FUNCTIONALITY || Boolean.TRUE.equals(form.getLocalContext().getIsFinalTab())));
+		form.btnNext().setVisible(FormMode.EDIT.equals(form.getMode()) && !form.btnSave().isVisible());
 	}
 
 	@Override
@@ -159,9 +163,7 @@ public class Logic extends BaseLogic
 	@Override
 	protected void onBtnNewClick() throws ims.framework.exceptions.PresentationLogicException
 	{
-		form.setMode(FormMode.EDIT);
-		form.getLocalContext().setSelectedEvent(EmergencyAttendanceEvent.NEW);
-		form.fireCustomControlValueChanged();
+		newInstance(false); //WDEV-22801 //WDEV-22956
 	}
 
 	@Override
@@ -183,6 +185,12 @@ public class Logic extends BaseLogic
 	@Override
 	protected void onBtnSaveClick() throws ims.framework.exceptions.PresentationLogicException
 	{
+		if (ConfigFlag.UI.SVUH_MANDATORY_DEMOGRAPHIC_ATTRIBUTES.getValue() && Boolean.TRUE.equals(form.getLocalContext().getIsNewAttendance())) //WDEV-22956
+		{
+			form.getLocalContext().setSelectedEvent(EmergencyAttendanceEvent.FINISH_SAVE);
+			form.fireCustomControlValueChanged();
+			return;
+		}
 		if (save())
 		{
 			form.getLocalContext().setSelectedEvent(EmergencyAttendanceEvent.SAVE);
@@ -194,7 +202,7 @@ public class Logic extends BaseLogic
 	{
 		EmergencyAttendanceBillingVo emergAttBillingToSave = populateDataFromScreen(form.getLocalContext().getcurrentAttendanceBilling());
 
-		String[] errors = emergAttBillingToSave.validate(getUIErrors());
+		String[] errors = emergAttBillingToSave.validate(getUIErrors(false)); //WDEV-22956
 		if (errors != null && errors.length > 0)
 		{
 			engine.showErrors(errors);
@@ -249,17 +257,22 @@ public class Logic extends BaseLogic
 		attendanceBilling.setExemptionReasonOther(form.txtExemptionReasonOther().getValue());
 		attendanceBilling.setPaymentMade(form.cmbPaymentMade().getValue());
 		attendanceBilling.setPaymentType(form.cmbPaymentType().getValue());
-		attendanceBilling.setInvoiceAmount(form.intInvoiceAmount().getValue());
+		attendanceBilling.setInvoiceAmount(form.cmbInvoiceAmount().getValue()); //WDEV-22795
 		attendanceBilling.setReasonForNonPayment(form.cmbReasonForNonPayment().getValue());
 		attendanceBilling.setPaymentRefunded(form.cmbPaymentRefunded().getValue());
 
 		return attendanceBilling;
 	}
 
-	private String[] getUIErrors()
+	private String[] getUIErrors(Boolean validateMandatoryBoFields) //WDEV-22956
 	{
 		ArrayList<String> errors = new ArrayList<String>();
 
+		if (form.cmbIsPatientExempt().isEnabled() && form.cmbIsPatientExempt().getValue() == null && Boolean.TRUE.equals(validateMandatoryBoFields)) //WDEV-22956
+		{
+			errors.add("Is patient Exempt is mandatory!");
+		}
+		
 		if (form.cmbExemptionReason().isRequired() && form.cmbExemptionReason().getVisible() && form.cmbExemptionReason().isEnabled() && form.cmbExemptionReason().getValue() == null)
 		{
 			errors.add("Exemption Reason is mandatory!");
@@ -280,7 +293,7 @@ public class Logic extends BaseLogic
 			errors.add("Payment Type is mandatory!");
 		}
 
-		if (form.intInvoiceAmount().isRequired() && form.intInvoiceAmount().isVisible() && form.intInvoiceAmount().isEnabled() && form.intInvoiceAmount().getValue() == null)
+		if (form.cmbInvoiceAmount().isRequired() && form.cmbInvoiceAmount().getVisible() && form.cmbInvoiceAmount().isEnabled() && form.cmbInvoiceAmount().getValue() == null) //WDEV-22795
 		{
 			errors.add("Invoice Amount is mandatory!");
 		}
@@ -329,7 +342,7 @@ public class Logic extends BaseLogic
 		form.txtExemptionReasonOther().setValue(attendanceBillingVo.getExemptionReasonOther());
 		form.cmbPaymentMade().setValue(attendanceBillingVo.getPaymentMade());
 		form.cmbPaymentType().setValue(attendanceBillingVo.getPaymentType());
-		form.intInvoiceAmount().setValue(attendanceBillingVo.getInvoiceAmount());
+		form.cmbInvoiceAmount().setValue(attendanceBillingVo.getInvoiceAmount()); //WDEV-22795
 		form.cmbReasonForNonPayment().setValue(attendanceBillingVo.getReasonForNonPayment());
 		form.cmbPaymentRefunded().setValue(attendanceBillingVo.getPaymentRefunded());
 
@@ -342,7 +355,7 @@ public class Logic extends BaseLogic
 		form.txtExemptionReasonOther().setValue(null);
 		form.cmbPaymentMade().setValue(null);
 		form.cmbPaymentType().setValue(null);
-		form.intInvoiceAmount().setValue(null);
+		form.cmbInvoiceAmount().setValue(null); //WDEV-22795
 		form.cmbReasonForNonPayment().setValue(null);
 		form.cmbPaymentRefunded().setValue(null);
 
@@ -361,7 +374,17 @@ public class Logic extends BaseLogic
 	@Override
 	protected void onCmbPaymentMadeValueChanged() throws PresentationLogicException
 	{
+		if (YesNo.NO.equals(form.cmbPaymentMade().getValue())) //WDEV-22796
+		{
+			form.cmbPaymentType().setValue(null);
+		}
+		else if (YesNo.YES.equals(form.cmbPaymentMade().getValue())) //WDEV-22955
+		{
+			form.cmbReasonForNonPayment().setValue(null);
+		}
+		
 		updateControlState();
+		
 	}
 
 	@Override
@@ -374,7 +397,62 @@ public class Logic extends BaseLogic
 	@Override
 	protected void onCmbIsPatientExemptValueChanged() throws PresentationLogicException
 	{
+		//WDEV-22796 //WDEV-22955
+		if (YesNo.YES.equals(form.cmbIsPatientExempt().getValue()))
+		{
+			form.cmbPaymentMade().setValue(YesNo.NO);	
+			form.cmbInvoiceAmount().setValue(null);
+			form.cmbReasonForNonPayment().setValue(null);
+			form.cmbPaymentRefunded().setValue(null);
+			
+			onCmbPaymentMadeValueChanged();
+		}
+		else if (YesNo.NO.equals(form.cmbIsPatientExempt().getValue()))
+		{
+			form.cmbExemptionReason().setValue(null);
+			form.txtExemptionReasonOther().setValue(null);
+		}
+		
+		
 		updateControlState();
 	}
+	
+	//WDEV-22801
+	public void newInstance(Boolean isNewAttendance) //WDEV-22956
+	{
+		clearScreen(); //WDEV-22956
+		form.getLocalContext().setIsNewAttendance(isNewAttendance);
+		
+		form.setMode(FormMode.EDIT);
+		form.getLocalContext().setSelectedEvent(EmergencyAttendanceEvent.NEW);
+		form.fireCustomControlValueChanged();
+	}
 
+	//WDEV-22956
+	@Override
+	protected void onBtnNextClick() throws PresentationLogicException
+	{
+		String[] uiErrors = getUIErrors(true);
+		
+		if (uiErrors != null && uiErrors.length > 0)
+		{
+			engine.showErrors(uiErrors);
+			return;
+		}
+		
+		form.getLocalContext().setSelectedEvent(EmergencyAttendanceEvent.NEXT);
+		form.fireCustomControlValueChanged();
+	}
+	
+	//WDEV-22956
+	public void setIsFinalTab(Boolean isFinalTab)
+	{
+		form.getLocalContext().setIsFinalTab(isFinalTab);
+	}
+
+	//WDEV-22956
+	public EmergencyAttendanceBillingVo getValue()
+	{
+		return populateDataFromScreen(form.getLocalContext().getcurrentAttendanceBilling());
+	}
 }

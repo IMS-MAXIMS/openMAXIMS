@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -38,6 +43,7 @@ import ims.core.vo.ProcedureVoCollection;
 import ims.core.vo.ServiceActivityVo;
 import ims.core.vo.ServiceActivityVoCollection;
 import ims.core.vo.domain.LocationServiceActivityVoAssembler;
+import ims.core.vo.domain.NonUniqueTaxonomyMapVoAssembler;
 import ims.core.vo.domain.ProcedureLiteVoAssembler;
 import ims.core.vo.domain.ProcedureVoAssembler;
 import ims.core.vo.domain.ServiceActivityVoAssembler;
@@ -160,7 +166,8 @@ public class ProcedureListImpl extends DomainImpl implements ims.core.domain.Pro
 		try
 		{
 			domProcedure.getTaxonomyMap().clear();
-			domProcedure.setTaxonomyMap(TaxonomyMapAssembler.extractTaxonomyMapList(factory, voProcedureVo.getTaxonomyMap()));
+//			domProcedure.setTaxonomyMap(TaxonomyMapAssembler.extractTaxonomyMapList(factory, voProcedureVo.getTaxonomyMap()));
+			domProcedure.setTaxonomyMap(NonUniqueTaxonomyMapVoAssembler.extractNonUniqueTaxonomyMapList(factory, voProcedureVo.getTaxonomyMap()));
 
 			factory.save(domProcedure);
 		}
@@ -175,10 +182,10 @@ public class ProcedureListImpl extends DomainImpl implements ims.core.domain.Pro
 				throw new UniqueKeyViolationException("Procedure record called \"" + voProcedureVo.getProcedureName() + "\" already exists. Duplicates not allowed.", e);	
 			}
 							
-			//taxonomy map
-			String dupMessage = Keywords.checkDuplicateTaxonomy(factory, domProcedure, voProcedureVo.getTaxonomyMap(), "getProcedureName");
-			if(dupMessage != null)
-				throw new UniqueKeyViolationException(dupMessage);
+//			//taxonomy map
+//			String dupMessage = Keywords.checkDuplicateTaxonomy(factory, domProcedure, voProcedureVo.getTaxonomyMap(), "getProcedureName");
+//			if(dupMessage != null)
+//				throw new UniqueKeyViolationException(dupMessage);
 						
 			throw (e);
 		}

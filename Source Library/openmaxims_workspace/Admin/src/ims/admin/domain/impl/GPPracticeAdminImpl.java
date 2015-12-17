@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -29,23 +34,33 @@ import ims.admin.domain.OrganisationAndLocation;
 import ims.admin.domain.base.impl.BasePracticeAdminImpl;
 import ims.admin.helper.Keywords;
 import ims.configuration.gen.ConfigFlag;
+import ims.core.admin.domain.objects.ProviderSystem;
+//import ims.core.domain.ADT;
+//import ims.core.domain.impl.ADTImpl;
 import ims.core.resource.place.domain.objects.LocSite;
 import ims.core.resource.place.domain.objects.Organisation;
 import ims.core.resource.place.vo.OrganisationRefVo;
+import ims.core.vo.GP;
 import ims.core.vo.LocSiteVo;
 import ims.core.vo.OrgShortVoCollection;
 import ims.core.vo.OrganisationVo;
 import ims.core.vo.OrganisationVoCollection;
+import ims.core.vo.domain.GPAssembler;
 import ims.core.vo.domain.LocSiteVoAssembler;
 import ims.core.vo.domain.OrgShortVoAssembler;
 import ims.core.vo.domain.OrganisationVoAssembler;
+import ims.core.vo.lookups.MsgEventType;
 import ims.core.vo.lookups.OrganisationType;
+import ims.core.vo.lookups.QueueType;
 import ims.domain.DomainFactory;
 import ims.domain.exceptions.DomainRuntimeException;
 import ims.domain.exceptions.ForeignKeyViolationException;
 import ims.domain.exceptions.StaleObjectException;
 import ims.domain.exceptions.UniqueKeyViolationException;
 import ims.domain.exceptions.UnqViolationUncheckedException;
+import ims.hl7adtout.domain.objects.GPPracticeMessageQueue;
+import ims.ocrr.vo.lookups.OrderMessageStatus;
+import ims.vo.LookupInstVo;
 
 public class GPPracticeAdminImpl extends BasePracticeAdminImpl
 {
@@ -112,7 +127,7 @@ public class GPPracticeAdminImpl extends BasePracticeAdminImpl
 		
 		if (filter.getNameIsNotNull())
 		{
-			clause.append(andStr + " (upper(org.name) like :practiceName) and");
+			clause.append(andStr + " (org.upperName like :practiceName) and"); //WDEV-20219
 			names.add("practiceName");
 			values.add(filter.getName().toUpperCase() + "%");
 		}
@@ -197,7 +212,37 @@ public class GPPracticeAdminImpl extends BasePracticeAdminImpl
 			throw new UniqueKeyViolationException("An Record with this name already exists, Please change", e);
 		}
 		
-		return OrganisationVoAssembler.create(doOrg);
+		//WDEV-19576 Practice Master File HL7 message
+		OrganisationVo assembledOrg = OrganisationVoAssembler.create(doOrg);
+		triggerGPPracticeMasterFileEvent(assembledOrg);
+		
+		return assembledOrg;
+		
+	}
+
+	//WDEV-19576 MFNM05 HL7 processing for GP Practice master file event
+	public void triggerGPPracticeMasterFileEvent(OrganisationRefVo gPPractice) throws StaleObjectException
+	{
+		if(gPPractice!=null)
+		{
+			DomainFactory factory = getDomainFactory();
+			String hqlString = "select ot.providerSystem from OutboundTriggers as ot left join ot.queueType as qt left join qt.instance as i"
+					+ " where(i.id = "+QueueType.GPPRACTICEMASTERFILE.getId()+")";
+
+			java.util.List<ProviderSystem> list = factory.find(hqlString);
+			for (ProviderSystem providerSystem : list)
+			{
+				GPPracticeMessageQueue messageQueue = new GPPracticeMessageQueue();
+				messageQueue.setPractice((Organisation)factory.getDomainObject(gPPractice));
+				messageQueue.setProviderSystem(providerSystem);
+				messageQueue.setWasProcessed(Boolean.FALSE);
+				messageQueue.setMessageStatus(getDomLookup(OrderMessageStatus.CREATED));
+				messageQueue.setMsgType(getDomLookup(MsgEventType.M05));
+				messageQueue.setQueueType(getDomLookup(QueueType.GPPRACTICEMASTERFILE));
+				factory.save(messageQueue);
+			}
+			
+		}
 	}
 
 	public void deletePractice(OrganisationVo orgToDelete) throws ForeignKeyViolationException

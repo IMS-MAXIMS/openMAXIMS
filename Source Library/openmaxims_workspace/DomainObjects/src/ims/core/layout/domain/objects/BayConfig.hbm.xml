@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:36 -->
+<!-- Generated: 12/10/2015, 13:31 -->
 <hibernate-mapping>
 	<class name="ims.core.layout.domain.objects.BayConfig" table="core_bayconfig" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -45,10 +45,106 @@
 			<column name="floorbedsp" sql-type="numeric(10,0)" not-null="true" unique="false" unique-key='bayconfig_idx1'  />
 		</many-to-one>
 <!-- debug: isActive -->
+<!-- debug: male -->
+<!-- debug: female -->
+<!-- debug: pediatric -->
+<!-- debug: dependency -->
+<!-- debug: numOfBeds -->
+<!-- debug: numOfOccupiedBeds -->
+<!-- debug: openingTime -->
+<!-- debug: closingTime -->
+<!-- debug: weekdaysOnly -->
+<!-- debug: bayStatus -->
+<!-- debug: closingDetails -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<list name="closingDetails" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="bayconfig_closingdet_fk">
+				<column name="core_bayconfig_closingdet" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.core.admin.pas.domain.objects.WardBayClosingDetails" />
+		</list>
+<!-- debug: blockingDetails -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<list name="blockingDetails" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="bayconfig_blockingde_fk">
+				<column name="core_bayconfig_blockingde" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.core.admin.pas.domain.objects.WardBayBlockingDetails" />
+		</list>
+<!-- debug: reOpenOutOfHours -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<list name="reOpenOutOfHours" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="bayconfig_reopenouto_fk">
+				<column name="core_bayconfig_reopenouto" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.core.layout.domain.objects.ReopenOutOfHours" />
+		</list>
+<!-- debug: temporaryBayGender -->
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="isActive" type="boolean" access="field" update="true">
 			<column name="isactive"  not-null="true" unique="false"  />
 		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="male" type="boolean" access="field" update="true">
+			<column name="male"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="female" type="boolean" access="field" update="true">
+			<column name="female"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="pediatric" type="boolean" access="field" update="true">
+			<column name="pediatric"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="dependency" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_dependency" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="numOfBeds" type="integer" access="field" update="true">
+			<column name="numofbeds"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="numOfOccupiedBeds" type="integer" access="field" update="true">
+			<column name="numofoccup"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="openingTime" type="string" access="field" update="true">
+			<column name="openingtim"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="closingTime" type="string" access="field" update="true">
+			<column name="closingtim"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="weekdaysOnly" type="boolean" access="field" update="true">
+			<column name="weekdayson"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="bayStatus" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_baystatus" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="temporaryBayGender" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_temporaryb" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
 	</class>
 </hibernate-mapping>

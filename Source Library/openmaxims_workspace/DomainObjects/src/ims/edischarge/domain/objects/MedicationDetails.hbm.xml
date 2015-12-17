@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:35 -->
+<!-- Generated: 12/10/2015, 13:30 -->
 <hibernate-mapping>
 	<class name="ims.edischarge.domain.objects.MedicationDetails" table="edis_medicationdeta" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -35,7 +35,7 @@
 		<!-- A one-to-one relationship using a foreign-key is mapping as a
 			many-to-one with a uniqueness contraint -->
 		<many-to-one name="careContext" class="ims.core.admin.domain.objects.CareContext" unique="true" foreign-key="medicationdeta_carecontex_fk" access="field" cascade="save-update">
-			<column name="carecontex" sql-type="numeric(10,0)" not-null="true" unique="false"  index='carectx_idx' />
+			<column name="carecontex" sql-type="numeric(10,0)" not-null="true" unique="false"  index='ctx_md_idx' />
 		</many-to-one>
 <!-- debug: medicationRecommendations -->
 <!-- debug: tTARequired -->
@@ -75,6 +75,7 @@
 			
 			<one-to-many class="ims.edischarge.domain.objects.TTANote" />
 		</set>
+<!-- debug: tTAReceived -->
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="medicationRecommendations" type="text" access="field" update="true" > 
@@ -85,5 +86,10 @@
 		<many-to-one name="tTARequired" class="ims.domain.lookups.LookupInstance" access="field">
 			<column name="lkp_ttarequire" sql-type="numeric(10,0)" not-null="true" unique="false"   />
 		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="tTAReceived" type="boolean" access="field" update="true">
+			<column name="ttareceive"  not-null="false" unique="false"  />
+		</property>
 	</class>
 </hibernate-mapping>

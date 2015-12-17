@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.scheduling.vo.domain;
@@ -52,6 +57,8 @@ public class BookingAppointmentOutcomeActionsToSaveVoAssembler
 	    valueObjectDest.setIsRIE(valueObjectSrc.getIsRIE());
 		// OutcomeActions
 		valueObjectDest.setOutcomeActions(valueObjectSrc.getOutcomeActions());
+		// ApptBookedOnSameDay
+		valueObjectDest.setApptBookedOnSameDay(valueObjectSrc.getApptBookedOnSameDay());
 	 	return valueObjectDest;
 	 }
 
@@ -344,6 +351,8 @@ public class BookingAppointmentOutcomeActionsToSaveVoAssembler
 			
 		// OutcomeActions
 		valueObject.setOutcomeActions(ims.scheduling.vo.domain.AppointmentOutcomeActionVoAssembler.createAppointmentOutcomeActionVoCollectionFromAppointmentOutcomeAction(map, domainObject.getOutcomeActions()) );
+		// ApptBookedOnSameDay
+		valueObject.setApptBookedOnSameDay( domainObject.isApptBookedOnSameDay() );
  		return valueObject;
 	 }
 
@@ -394,6 +403,7 @@ public class BookingAppointmentOutcomeActionsToSaveVoAssembler
 		domainObject.setVersion(valueObject.getVersion_Booking_Appointment());
 
 		domainObject.setOutcomeActions(ims.scheduling.vo.domain.AppointmentOutcomeActionVoAssembler.extractAppointmentOutcomeActionList(domainFactory, valueObject.getOutcomeActions(), domainObject.getOutcomeActions(), domMap));		
+		domainObject.setApptBookedOnSameDay(valueObject.getApptBookedOnSameDay());
 
 		return domainObject;
 	}

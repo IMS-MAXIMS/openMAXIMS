@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -32,6 +37,7 @@ import ims.core.vo.ClinicalNotesVo;
 import ims.core.vo.ClinicalNotesVoCollection;
 import ims.core.vo.HcpLiteVo;
 import ims.core.vo.MedicVo;
+import ims.core.vo.MemberOfStaffLiteVo;
 import ims.core.vo.MemberOfStaffShortVo;
 import ims.core.vo.MemberOfStaffVo;
 import ims.core.vo.enums.AuthoringLabelType;
@@ -122,11 +128,8 @@ public class Logic extends BaseLogic
 		{
 			form.richNotes().setEnabled(false);	//wdev-15681
 			openNotingDetails();
+			form.btnClose().setEnabled(true); //WDEV-18729 
 		}
-
-		form.btnClose().setEnabled(true);
-		
-	
 	}
 	
 	private String[] getUiErrors() 
@@ -257,23 +260,28 @@ public class Logic extends BaseLogic
 		
 		//Save old Status to check for active
 		ClinicalNoteStatusVo voPreviousStat = clinicalNotesVo.getCurrentStatus();
+		String preEditClinicalNote = clinicalNotesVo.getClinicalNote();////WDEV-18473
 		ClinicalNoteStatusVo voStat = new ClinicalNoteStatusVo();
 		
-		//WDEV-14968
+		//WDEV-14968 //WDEV-18473
+		/*
 		if (voPreviousStat != null)
 		{
-			voStat = voPreviousStat;
+			voStat = (ClinicalNoteStatusVo) voPreviousStat.clone();
 		}
-		
+		*/
 		if(form.getGlobalContext().Core.getClinicalNotingModeIsNotNull()
 				&& form.getGlobalContext().Core.getClinicalNotingMode().equals(ClinicalNotingMode.VALIDATE))
 		{
-			voStat.setClinicalNote(clinicalNotesVo.getClinicalNote());
+			//WDEV-18473
+			//voStat.setClinicalNote(clinicalNotesVo.getClinicalNote());
+			voStat.setClinicalNote(form.richNotes().getText() != null && form.richNotes().getText().length() == 0 ? null : form.richNotes().getValue());
 			voStat.setStatus(ClinicalNotesStatus.ACTIVE);
 		}
 		else
 			voStat.setStatus(form.cmbStatus().getValue());
 		
+		voStat.setPreEditClinicalNote(preEditClinicalNote);//WDEV-18473
 		voStat.setDateTime(new DateTime());
 		voStat.setMOS(mos != null ? mos : null);
 		
@@ -293,10 +301,13 @@ public class Logic extends BaseLogic
 		if (form.getGlobalContext().Core.getClinicalNotingModeIsNotNull())
 			isReviewed = form.getGlobalContext().Core.getClinicalNotingMode().equals(ClinicalNotingMode.REVIEW);
 		
-		if (correctModeIP(voPreviousStat) && !isReviewed  &&
+		if (correctModeIP(voPreviousStat) && !isReviewed  && 
+				clinicalNotesVo.getClinicalNote() != null  && 						//WDEV-18834 - NPE found here during unit testing
 				!clinicalNotesVo.getClinicalNote().equals(form.richNotes().getValue())) //In Correct mode) //In Correct mode
 		{
-			voStat.setClinicalNote(clinicalNotesVo.getClinicalNote());
+			//WDEV-18473
+			//voStat.setClinicalNote(clinicalNotesVo.getClinicalNote());
+			voStat.setClinicalNote(form.richNotes().getText() != null && form.richNotes().getText().length() == 0 ? null : form.richNotes().getValue());
 			clinicalNotesVo.setStatusHistory(addStatusToCollection(clinicalNotesVo.getStatusHistory(), voStat));
 			
 			voStat.setStatus(ClinicalNotesStatus.CORRECTED);
@@ -368,7 +379,7 @@ public class Logic extends BaseLogic
 
 		if (form.richNotes().isVisible())//WDEV-14968
 		{
-			clinicalNotesVo.setClinicalNote(form.richNotes().getValue());
+			clinicalNotesVo.setClinicalNote(form.richNotes().getText() != null && form.richNotes().getText().length() == 0 ? null : form.richNotes().getValue()); //WDEV-18834 - workaround for empty rich text control
 		}
 		else
 		{
@@ -380,7 +391,6 @@ public class Logic extends BaseLogic
 		
 		clinicalNotesVo.setIsDerivedNote(Boolean.FALSE);
 		clinicalNotesVo.setSourceOfNote(SourceOfNote.CLINICALCLINICALNOTE);
-		
 				
 		return clinicalNotesVo;
 	}
@@ -451,15 +461,15 @@ public class Logic extends BaseLogic
 		return voColl;
 	}
 	
-	private boolean correctModeIP(ClinicalNoteStatusVo currentStatus) 
+	private boolean correctModeIP(ClinicalNoteStatusVo currentStatus) //WDEV-18473
 	{
 		if (currentStatus != null &&
 				currentStatus.getStatusIsNotNull() && 
 					(currentStatus.getStatus().equals(ClinicalNotesStatus.ACTIVE) ||
 						currentStatus.getStatus().equals(ClinicalNotesStatus.CORRECTED) ) && 
-							domain.getHcpLiteUser() != null && 
+							domain.getHcpLiteUser() != null)  
 								/*domain.getHcpLiteUser().equals(form.customControlAuthoring().getValue().getAuthoringHcp())*/
-							testDiscipline())
+							
 			return true;
 		else
 			return false;
@@ -539,7 +549,7 @@ public class Logic extends BaseLogic
 		form.richNotes().setEnabled(true);
 		form.cmbStatus().setEnabled(true);
 		form.customControlAuthoring().initializeComponent();
-		
+		initializeRecordingUser();//WDEV-18473
 		form.customControlAuthoring().setEnabledAuthoringHCP(Boolean.TRUE);
 		form.customControlAuthoring().setEnabledDateTime(Boolean.TRUE);
 		
@@ -572,6 +582,18 @@ public class Logic extends BaseLogic
 
 		form.btnClose().setEnabled(false);
 		
+	}
+
+	//WDEV-18473
+	private void initializeRecordingUser() 
+	{
+		Object currentMosUser = domain.getMosUser();
+		if (currentMosUser instanceof MemberOfStaffLiteVo)
+		{
+			form.ccRecordingUser().setValue((MemberOfStaffShortVo)currentMosUser);
+		}
+	
+		form.dtimRecordingDateTime().setValue(new DateTime());
 	}
 
 	private void setCurrentClinicalNote()
@@ -773,6 +795,10 @@ public class Logic extends BaseLogic
 		
 		form.getLocalContext().setclinicalNotesVo(voNote);
 		
+		//WDEV-18473
+		form.ccRecordingUser().setValue(voNote.getRecordingUser());
+		form.dtimRecordingDateTime().setValue(voNote.getRecordingDateTime());
+		
 		settingCustomAuthoring(voNote);
 
 		if (voNote.getClinicalNote().startsWith("<!-- _ims_rich_text_control")) //WDEV-14968
@@ -940,7 +966,7 @@ public class Logic extends BaseLogic
 				if (form.getGlobalContext().Clinical.getCurrentClinicalNoteIsNotNull() &&
 						form.getGlobalContext().Clinical.getCurrentClinicalNote().getCurrentStatusIsNotNull() 
 						&&  form.getGlobalContext().Clinical.getCurrentClinicalNote().getCurrentStatus().getStatusIsNotNull()
-						&&  form.getGlobalContext().Clinical.getCurrentClinicalNote().getCurrentStatus().getStatus().equals(ClinicalNotesStatus.PREVALIDATION) )
+						&&  (form.getGlobalContext().Clinical.getCurrentClinicalNote().getCurrentStatus().getStatus().equals(ClinicalNotesStatus.PREVALIDATION) || form.getGlobalContext().Clinical.getCurrentClinicalNote().getCurrentStatus().getStatus().equals(ClinicalNotesStatus.CORRECTED) )) //WDEV-18901
 				{
 					form.cmbStatus().setEnabled(false);
 				}
@@ -1059,9 +1085,9 @@ public class Logic extends BaseLogic
 			//Draft, HCP OK
 			else if (voClinicalNote.getCurrentStatus().getStatusIsNotNull() &&
 				voClinicalNote.getCurrentStatus().getStatus().equals(ClinicalNotesStatus.DRAFT)	&&
-					domain.getHcpLiteUser() != null	&&
+					domain.getHcpLiteUser() != null	) //WDEV-18901
 						//domain.getHcpLiteUser().equals(form.customControlAuthoring().getValue().getAuthoringHcp())
-					testDiscipline())
+					
 			{
 				fillIPStatusNew();
 			}

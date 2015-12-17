@@ -1,9 +1,33 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.RefMan.vo.domain;
@@ -43,6 +67,22 @@ public class PatientElectiveListForReferralDetailsVoAssembler
 		valueObjectDest.setTCIDetails(valueObjectSrc.getTCIDetails());
 		// PrimaryProcedure
 		valueObjectDest.setPrimaryProcedure(valueObjectSrc.getPrimaryProcedure());
+		// AdmissionType
+		valueObjectDest.setAdmissionType(valueObjectSrc.getAdmissionType());
+		// PreAssessmentRequired
+		valueObjectDest.setPreAssessmentRequired(valueObjectSrc.getPreAssessmentRequired());
+		// FitForSurgery
+		valueObjectDest.setFitForSurgery(valueObjectSrc.getFitForSurgery());
+		// Referral
+		valueObjectDest.setReferral(valueObjectSrc.getReferral());
+		// TheatreAppointment
+		valueObjectDest.setTheatreAppointment(valueObjectSrc.getTheatreAppointment());
+		// RequiresVetting
+		valueObjectDest.setRequiresVetting(valueObjectSrc.getRequiresVetting());
+		// ProcedureDescription
+		valueObjectDest.setProcedureDescription(valueObjectSrc.getProcedureDescription());
+		// Rule28DayStatus
+		valueObjectDest.setRule28DayStatus(valueObjectSrc.getRule28DayStatus());
 	 	return valueObjectDest;
 	 }
 
@@ -356,7 +396,125 @@ public class PatientElectiveListForReferralDetailsVoAssembler
 		valueObject.setTCIDetails(ims.RefMan.vo.domain.ElectiveTCIForReferralDetailsVoAssembler.create(map, domainObject.getTCIDetails()) );
 		// PrimaryProcedure
 		valueObject.setPrimaryProcedure(ims.core.vo.domain.ProcedureLiteVoAssembler.create(map, domainObject.getPrimaryProcedure()) );
- 		return valueObject;
+		// AdmissionType
+		ims.domain.lookups.LookupInstance instance7 = domainObject.getAdmissionType();
+		if ( null != instance7 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance7.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance7.getImage().getImageId(), instance7.getImage().getImagePath());
+			}
+			color = instance7.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.RefMan.vo.lookups.WaitingCardAdmissionType voLookup7 = new ims.RefMan.vo.lookups.WaitingCardAdmissionType(instance7.getId(),instance7.getText(), instance7.isActive(), null, img, color);
+			ims.RefMan.vo.lookups.WaitingCardAdmissionType parentVoLookup7 = voLookup7;
+			ims.domain.lookups.LookupInstance parent7 = instance7.getParent();
+			while (parent7 != null)
+			{
+				if (parent7.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent7.getImage().getImageId(), parent7.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent7.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup7.setParent(new ims.RefMan.vo.lookups.WaitingCardAdmissionType(parent7.getId(),parent7.getText(), parent7.isActive(), null, img, color));
+				parentVoLookup7 = parentVoLookup7.getParent();
+								parent7 = parent7.getParent();
+			}			
+			valueObject.setAdmissionType(voLookup7);
+		}
+				// PreAssessmentRequired
+		valueObject.setPreAssessmentRequired( domainObject.isPreAssessmentRequired() );
+		// FitForSurgery
+		ims.domain.lookups.LookupInstance instance9 = domainObject.getFitForSurgery();
+		if ( null != instance9 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance9.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance9.getImage().getImageId(), instance9.getImage().getImagePath());
+			}
+			color = instance9.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.YesNoUnknown voLookup9 = new ims.core.vo.lookups.YesNoUnknown(instance9.getId(),instance9.getText(), instance9.isActive(), null, img, color);
+			ims.core.vo.lookups.YesNoUnknown parentVoLookup9 = voLookup9;
+			ims.domain.lookups.LookupInstance parent9 = instance9.getParent();
+			while (parent9 != null)
+			{
+				if (parent9.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent9.getImage().getImageId(), parent9.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent9.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup9.setParent(new ims.core.vo.lookups.YesNoUnknown(parent9.getId(),parent9.getText(), parent9.isActive(), null, img, color));
+				parentVoLookup9 = parentVoLookup9.getParent();
+								parent9 = parent9.getParent();
+			}			
+			valueObject.setFitForSurgery(voLookup9);
+		}
+				// Referral
+		valueObject.setReferral(ims.RefMan.vo.domain.CatsReferralforElectiveProceduresVoAssembler.create(map, domainObject.getReferral()) );
+		// TheatreAppointment
+		valueObject.setTheatreAppointment(ims.scheduling.vo.domain.Booking_AppointmentLiteVoAssembler.create(map, domainObject.getTheatreAppointment()) );
+		// RequiresVetting
+		valueObject.setRequiresVetting( domainObject.isRequiresVetting() );
+		// ProcedureDescription
+		valueObject.setProcedureDescription(domainObject.getProcedureDescription());
+		// Rule28DayStatus
+		ims.domain.lookups.LookupInstance instance14 = domainObject.getRule28DayStatus();
+		if ( null != instance14 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance14.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance14.getImage().getImageId(), instance14.getImage().getImagePath());
+			}
+			color = instance14.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.scheduling.vo.lookups.Rule28DayStatus voLookup14 = new ims.scheduling.vo.lookups.Rule28DayStatus(instance14.getId(),instance14.getText(), instance14.isActive(), null, img, color);
+			ims.scheduling.vo.lookups.Rule28DayStatus parentVoLookup14 = voLookup14;
+			ims.domain.lookups.LookupInstance parent14 = instance14.getParent();
+			while (parent14 != null)
+			{
+				if (parent14.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent14.getImage().getImageId(), parent14.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent14.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup14.setParent(new ims.scheduling.vo.lookups.Rule28DayStatus(parent14.getId(),parent14.getText(), parent14.isActive(), null, img, color));
+				parentVoLookup14 = parentVoLookup14.getParent();
+								parent14 = parent14.getParent();
+			}			
+			valueObject.setRule28DayStatus(voLookup14);
+		}
+		 		return valueObject;
 	 }
 
 
@@ -498,6 +656,73 @@ public class PatientElectiveListForReferralDetailsVoAssembler
 			}
 		}
 		domainObject.setPrimaryProcedure(value6);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value7 = null;
+		if ( null != valueObject.getAdmissionType() ) 
+		{
+			value7 =
+				domainFactory.getLookupInstance(valueObject.getAdmissionType().getID());
+		}
+		domainObject.setAdmissionType(value7);
+		domainObject.setPreAssessmentRequired(valueObject.getPreAssessmentRequired());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value9 = null;
+		if ( null != valueObject.getFitForSurgery() ) 
+		{
+			value9 =
+				domainFactory.getLookupInstance(valueObject.getFitForSurgery().getID());
+		}
+		domainObject.setFitForSurgery(value9);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.RefMan.domain.objects.CatsReferral value10 = null;
+		if ( null != valueObject.getReferral() ) 
+		{
+			if (valueObject.getReferral().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getReferral()) != null)
+				{
+					value10 = (ims.RefMan.domain.objects.CatsReferral)domMap.get(valueObject.getReferral());
+				}
+			}
+			else
+			{
+				value10 = (ims.RefMan.domain.objects.CatsReferral)domainFactory.getDomainObject(ims.RefMan.domain.objects.CatsReferral.class, valueObject.getReferral().getBoId());
+			}
+		}
+		domainObject.setReferral(value10);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.scheduling.domain.objects.Booking_Appointment value11 = null;
+		if ( null != valueObject.getTheatreAppointment() ) 
+		{
+			if (valueObject.getTheatreAppointment().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getTheatreAppointment()) != null)
+				{
+					value11 = (ims.scheduling.domain.objects.Booking_Appointment)domMap.get(valueObject.getTheatreAppointment());
+				}
+			}
+			else
+			{
+				value11 = (ims.scheduling.domain.objects.Booking_Appointment)domainFactory.getDomainObject(ims.scheduling.domain.objects.Booking_Appointment.class, valueObject.getTheatreAppointment().getBoId());
+			}
+		}
+		domainObject.setTheatreAppointment(value11);
+		domainObject.setRequiresVetting(valueObject.getRequiresVetting());
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getProcedureDescription() != null && valueObject.getProcedureDescription().equals(""))
+		{
+			valueObject.setProcedureDescription(null);
+		}
+		domainObject.setProcedureDescription(valueObject.getProcedureDescription());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value14 = null;
+		if ( null != valueObject.getRule28DayStatus() ) 
+		{
+			value14 =
+				domainFactory.getLookupInstance(valueObject.getRule28DayStatus().getID());
+		}
+		domainObject.setRule28DayStatus(value14);
 
 		return domainObject;
 	}

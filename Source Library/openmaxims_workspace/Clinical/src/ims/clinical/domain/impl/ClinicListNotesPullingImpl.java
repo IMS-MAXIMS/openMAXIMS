@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -35,6 +40,7 @@ import ims.icp.vo.domain.OutpatientEpisodeWithICPInfoVoAssembler;
 import ims.icp.vo.domain.PatientICPLiteVoAssembler;
 import ims.icps.instantiation.domain.objects.PatientICP;
 import ims.scheduling.domain.objects.Booking_Appointment;
+import ims.scheduling.vo.lookups.SchProfileType;
 import ims.scheduling.vo.lookups.Status_Reason;
 
 import java.util.ArrayList;
@@ -82,9 +88,9 @@ public class ClinicListNotesPullingImpl extends BaseClinicListNotesPullingImpl
 			markers.add("isActive");
 			values.add(Boolean.TRUE);
 
-			query.append(" and appts.session.isTheatreSession = :falseTheatre");
-			markers.add("falseTheatre");
-			values.add(Boolean.FALSE);
+			query.append(" and appts.session.sessionProfileType.id = :OUTPATIENT_SESSION");
+			markers.add("OUTPATIENT_SESSION");
+			values.add(SchProfileType.OUTPATIENT.getID());
 		}
 		
 		query.append(" and appts.apptStatus.id != :CAN_ID ");
@@ -134,7 +140,7 @@ public class ClinicListNotesPullingImpl extends BaseClinicListNotesPullingImpl
 	public ims.scheduling.vo.SessionShortVoCollection listClinics(Integer hospital, ims.framework.utils.Date date)
 	{
 		ClinicListWithICPActions impl = (ClinicListWithICPActions) getDomainImpl(ClinicListwithICPActionsImpl.class);
-		return impl.listClinics(hospital, date);
+		return impl.listClinics(hospital, date,null);	//wdev-19419
 	}
 
 	public void saveCaseNote(ims.scheduling.vo.Booking_AppointmentRefVo appToSave) throws ims.domain.exceptions.StaleObjectException

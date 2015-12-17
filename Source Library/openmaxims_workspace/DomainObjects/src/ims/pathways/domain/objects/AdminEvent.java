@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.pathways.domain.objects;
@@ -49,6 +54,11 @@ public class AdminEvent extends ims.domain.DomainObject implements ims.domain.Sy
 	private String eventDetails;
 	private ims.domain.lookups.LookupInstance outcome;
 	private ims.domain.lookups.LookupInstance eventMethod;
+	private ims.pathways.domain.objects.PathwaysRTTClockImpact rTTClockImpact;
+	private ims.domain.lookups.LookupInstance outcomeReason;
+	/** Earliest Clinically Appropriate Date - used on Decision To Treat for Cancer Referrals */
+	private java.util.Date ecadDate;
+	private Boolean admittedStop;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public AdminEvent (Integer id, int ver)
@@ -99,6 +109,34 @@ public class AdminEvent extends ims.domain.DomainObject implements ims.domain.Sy
 	}
 	public void setEventMethod(ims.domain.lookups.LookupInstance eventMethod) {
 		this.eventMethod = eventMethod;
+	}
+
+	public ims.pathways.domain.objects.PathwaysRTTClockImpact getRTTClockImpact() {
+		return rTTClockImpact;
+	}
+	public void setRTTClockImpact(ims.pathways.domain.objects.PathwaysRTTClockImpact rTTClockImpact) {
+		this.rTTClockImpact = rTTClockImpact;
+	}
+
+	public ims.domain.lookups.LookupInstance getOutcomeReason() {
+		return outcomeReason;
+	}
+	public void setOutcomeReason(ims.domain.lookups.LookupInstance outcomeReason) {
+		this.outcomeReason = outcomeReason;
+	}
+
+	public java.util.Date getEcadDate() {
+		return ecadDate;
+	}
+	public void setEcadDate(java.util.Date ecadDate) {
+		this.ecadDate = ecadDate;
+	}
+
+	public Boolean isAdmittedStop() {
+		return admittedStop;
+	}
+	public void setAdmittedStop(Boolean admittedStop) {
+		this.admittedStop = admittedStop;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -156,6 +194,24 @@ public class AdminEvent extends ims.domain.DomainObject implements ims.domain.Sy
 		auditStr.append("\r\n*eventMethod* :");
 		if (eventMethod != null)
 			auditStr.append(eventMethod.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*rTTClockImpact* :");
+		if (rTTClockImpact != null)
+		{
+			auditStr.append(toShortClassName(rTTClockImpact));
+				
+		    auditStr.append(rTTClockImpact.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*outcomeReason* :");
+		if (outcomeReason != null)
+			auditStr.append(outcomeReason.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*ecadDate* :");
+		auditStr.append(ecadDate);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*admittedStop* :");
+		auditStr.append(admittedStop);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -224,6 +280,30 @@ public class AdminEvent extends ims.domain.DomainObject implements ims.domain.Sy
 			sb.append("<eventMethod>");
 			sb.append(this.getEventMethod().toXMLString()); 
 			sb.append("</eventMethod>");		
+		}
+		if (this.getRTTClockImpact() != null)
+		{
+			sb.append("<rTTClockImpact>");
+			sb.append(this.getRTTClockImpact().toXMLString(domMap)); 	
+			sb.append("</rTTClockImpact>");		
+		}
+		if (this.getOutcomeReason() != null)
+		{
+			sb.append("<outcomeReason>");
+			sb.append(this.getOutcomeReason().toXMLString()); 
+			sb.append("</outcomeReason>");		
+		}
+		if (this.getEcadDate() != null)
+		{
+			sb.append("<ecadDate>");
+			sb.append(new ims.framework.utils.DateTime(this.getEcadDate()).toString(ims.framework.utils.DateTimeFormat.MILLI));
+			sb.append("</ecadDate>");		
+		}
+		if (this.isAdmittedStop() != null)
+		{
+			sb.append("<admittedStop>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isAdmittedStop().toString()));
+			sb.append("</admittedStop>");		
 		}
 		return sb.toString();
 	}
@@ -411,6 +491,28 @@ public class AdminEvent extends ims.domain.DomainObject implements ims.domain.Sy
 			fldEl = fldEl.element("lki");
 			obj.setEventMethod(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
 		}
+		fldEl = el.element("rTTClockImpact");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setRTTClockImpact(ims.pathways.domain.objects.PathwaysRTTClockImpact.getPathwaysRTTClockImpactfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("outcomeReason");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setOutcomeReason(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("ecadDate");
+		if(fldEl != null)
+		{	
+    		obj.setEcadDate(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
+		}
+		fldEl = el.element("admittedStop");
+		if(fldEl != null)
+		{	
+    		obj.setAdmittedStop(new Boolean(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -427,6 +529,10 @@ public class AdminEvent extends ims.domain.DomainObject implements ims.domain.Sy
 		public static final String EventDetails = "eventDetails";
 		public static final String Outcome = "outcome";
 		public static final String EventMethod = "eventMethod";
+		public static final String RTTClockImpact = "rTTClockImpact";
+		public static final String OutcomeReason = "outcomeReason";
+		public static final String EcadDate = "ecadDate";
+		public static final String AdmittedStop = "admittedStop";
 	}
 }
 

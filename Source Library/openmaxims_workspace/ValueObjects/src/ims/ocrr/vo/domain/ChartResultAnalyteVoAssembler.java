@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.ocrr.vo.domain;
@@ -343,19 +348,7 @@ public class ChartResultAnalyteVoAssembler
 			return null;
 			
 		// DatasetType
-		if (domainObject.getDatasetType() != null)
-		{
-			if(domainObject.getDatasetType() instanceof HibernateProxy) // If the proxy is set, there is no need to lazy load, the proxy knows the id already. 
-			{
-				HibernateProxy p = (HibernateProxy) domainObject.getDatasetType();
-				int id = Integer.parseInt(p.getHibernateLazyInitializer().getIdentifier().toString());				
-				valueObject.setDatasetType(new ims.core.charting.vo.DatasetTypeRefVo(id, -1));				
-			}
-			else
-			{
-				valueObject.setDatasetType(new ims.core.charting.vo.DatasetTypeRefVo(domainObject.getDatasetType().getId(), domainObject.getDatasetType().getVersion()));
-			}
-		}
+		valueObject.setDatasetType(ims.core.vo.domain.DataSetTypeVoAssembler.create(map, domainObject.getDatasetType()) );
  		return valueObject;
 	 }
 
@@ -405,26 +398,7 @@ public class ChartResultAnalyteVoAssembler
 		}
 		domainObject.setVersion(valueObject.getVersion_Analyte());
 
-		ims.core.charting.domain.objects.DatasetType value1 = null;
-		if ( null != valueObject.getDatasetType() ) 
-		{
-			if (valueObject.getDatasetType().getBoId() == null)
-			{
-				if (domMap.get(valueObject.getDatasetType()) != null)
-				{
-					value1 = (ims.core.charting.domain.objects.DatasetType)domMap.get(valueObject.getDatasetType());
-				}
-			}
-			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
-			{
-				value1 = domainObject.getDatasetType();	
-			}
-			else
-			{
-				value1 = (ims.core.charting.domain.objects.DatasetType)domainFactory.getDomainObject(ims.core.charting.domain.objects.DatasetType.class, valueObject.getDatasetType().getBoId());
-			}
-		}
-		domainObject.setDatasetType(value1);
+		domainObject.setDatasetType(ims.core.vo.domain.DataSetTypeVoAssembler.extractDatasetType(domainFactory, valueObject.getDatasetType(), domMap));
 
 		return domainObject;
 	}

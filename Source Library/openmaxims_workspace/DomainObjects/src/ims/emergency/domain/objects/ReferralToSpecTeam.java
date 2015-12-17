@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.emergency.domain.objects;
@@ -71,6 +76,8 @@ public class ReferralToSpecTeam extends ims.domain.DomainObject implements ims.d
 	private java.util.List comments;
 	/** NotAccepted */
 	private Boolean notAccepted;
+	private Boolean isSafeguardingConcern;
+	private String safeguardingComments;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public ReferralToSpecTeam (Integer id, int ver)
@@ -176,6 +183,24 @@ public class ReferralToSpecTeam extends ims.domain.DomainObject implements ims.d
 	}
 	public void setNotAccepted(Boolean notAccepted) {
 		this.notAccepted = notAccepted;
+	}
+
+	public Boolean isIsSafeguardingConcern() {
+		return isSafeguardingConcern;
+	}
+	public void setIsSafeguardingConcern(Boolean isSafeguardingConcern) {
+		this.isSafeguardingConcern = isSafeguardingConcern;
+	}
+
+	public String getSafeguardingComments() {
+		return safeguardingComments;
+	}
+	public void setSafeguardingComments(String safeguardingComments) {
+		if ( null != safeguardingComments && safeguardingComments.length() > 500 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for safeguardingComments. Tried to set value: "+
+				safeguardingComments);
+		}
+		this.safeguardingComments = safeguardingComments;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -298,6 +323,12 @@ public class ReferralToSpecTeam extends ims.domain.DomainObject implements ims.d
 		auditStr.append("\r\n*notAccepted* :");
 		auditStr.append(notAccepted);
 	    auditStr.append("; ");
+		auditStr.append("\r\n*isSafeguardingConcern* :");
+		auditStr.append(isSafeguardingConcern);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*safeguardingComments* :");
+		auditStr.append(safeguardingComments);
+	    auditStr.append("; ");
 		return auditStr.toString();
 	}
 	
@@ -416,6 +447,18 @@ public class ReferralToSpecTeam extends ims.domain.DomainObject implements ims.d
 			sb.append("<notAccepted>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isNotAccepted().toString()));
 			sb.append("</notAccepted>");		
+		}
+		if (this.isIsSafeguardingConcern() != null)
+		{
+			sb.append("<isSafeguardingConcern>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsSafeguardingConcern().toString()));
+			sb.append("</isSafeguardingConcern>");		
+		}
+		if (this.getSafeguardingComments() != null)
+		{
+			sb.append("<safeguardingComments>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getSafeguardingComments().toString()));
+			sb.append("</safeguardingComments>");		
 		}
 		return sb.toString();
 	}
@@ -648,6 +691,16 @@ public class ReferralToSpecTeam extends ims.domain.DomainObject implements ims.d
 		{	
     		obj.setNotAccepted(new Boolean(fldEl.getTextTrim()));	
 		}
+		fldEl = el.element("isSafeguardingConcern");
+		if(fldEl != null)
+		{	
+    		obj.setIsSafeguardingConcern(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("safeguardingComments");
+		if(fldEl != null)
+		{	
+    		obj.setSafeguardingComments(new String(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -673,6 +726,8 @@ public class ReferralToSpecTeam extends ims.domain.DomainObject implements ims.d
 		public static final String ReferredBy = "referredBy";
 		public static final String Comments = "comments";
 		public static final String NotAccepted = "notAccepted";
+		public static final String IsSafeguardingConcern = "isSafeguardingConcern";
+		public static final String SafeguardingComments = "safeguardingComments";
 	}
 }
 

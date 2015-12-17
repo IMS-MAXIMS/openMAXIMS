@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -32,7 +37,6 @@ import ims.core.admin.vo.CareContextRefVo;
 import ims.core.admin.vo.EmergencyAttendanceRefVo;
 import ims.core.admin.vo.EpisodeOfCareRefVo;
 import ims.core.resource.people.vo.HcpRefVo;
-import ims.core.resource.people.vo.MedicRefVo;
 import ims.core.resource.people.vo.MemberOfStaffRefVo;
 import ims.core.vo.AuthoringInformationVo;
 import ims.core.vo.Hcp;
@@ -40,6 +44,7 @@ import ims.core.vo.HcpLiteVo;
 import ims.core.vo.MedicVo;
 import ims.core.vo.NurseVo;
 import ims.core.vo.lookups.HcpDisType;
+import ims.core.vo.lookups.PatIdType;
 import ims.domain.exceptions.StaleObjectException;
 import ims.emergency.configuration.vo.TrackingAreaRefVo;
 import ims.emergency.helper.EmergencyDisplayHelper;
@@ -52,18 +57,24 @@ import ims.emergency.vo.EpisodeOfcareLiteVo;
 import ims.emergency.vo.HistoryOfPatientMedsVo;
 import ims.emergency.vo.PatientForTriageVo;
 import ims.emergency.vo.PatientMedsVo;
+import ims.emergency.vo.PatientProblemForClinicianWorklistVo;
+import ims.emergency.vo.SeenByHCPLiteVo;
 import ims.emergency.vo.SeenByHCPVo;
 import ims.emergency.vo.TrackingAttendanceStatusVo;
 import ims.emergency.vo.TrackingForClinicianWorklistAndTriageVo;
 import ims.emergency.vo.TrackingListForClinicianWorklistVo;
+import ims.emergency.vo.TrackingRefVo;
 import ims.emergency.vo.TriageForClinicianWorklistVo;
 import ims.emergency.vo.TriageProtocolAssessmentForTriageVo;
 import ims.emergency.vo.TriageProtocolAssessmentForTriageVoCollection;
 import ims.emergency.vo.enums.DischargeDetails_CustomEvents;
 import ims.emergency.vo.enums.EDAssessmentComponent;
 import ims.emergency.vo.enums.EdAssessment_CustomControlsEvents;
+import ims.emergency.vo.enums.TriageAssessmentAction;
+import ims.emergency.vo.lookups.ModeOfArrival;
 import ims.emergency.vo.lookups.TrackingStatus;
 import ims.emergency.vo.lookups.TriagePriority;
+import ims.emergency.vo.lookups.TriageTabs;
 import ims.framework.Control;
 import ims.framework.FormName;
 import ims.framework.LayerBridge;
@@ -74,15 +85,15 @@ import ims.framework.delegates.CancelArgs;
 import ims.framework.enumerations.DialogResult;
 import ims.framework.enumerations.FormMode;
 import ims.framework.exceptions.PresentationLogicException;
-import ims.framework.utils.Date;
+import ims.framework.interfaces.IAppRole;
+import ims.framework.utils.Color;
 import ims.framework.utils.DateTime;
 import ims.framework.utils.Image;
-import ims.framework.utils.Time;
 import ims.icp.vo.enums.PresentationEvent;
 import ims.icps.instantiation.vo.PatientICPRefVo;
+import ims.ocrr.vo.lookups.Category;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -90,18 +101,26 @@ import java.util.List;
 public class Logic extends BaseLogic
 {
 	private static final long serialVersionUID = 1L;
-	private static final String	COLUMN_NAME			= "0";
-	private static final int EMERGENCY_PATIENT_SUMMARY = 320; 
-	private static final String CARE_CONTEXT_SEED = "CareContext_id";
 	private static final int DISPLAY_TRIAGE	= 1;
 	private static final int DISPLAY_CLINICIANASSESSMNRWORKLIST	 	= 2;
 	private static final int DISPLAY_CLINICIANASSESSMNRWORKLISTWITHSEEN = 3;		//wdev-17252
 	private static final int DISPLAY_TRIAGE_FROM_TRACKING			= 4;			//wdev-17405
-	private static final int TRACKING_SUMMARY = 10;
-	private static final int TRACKING = 11;
+	private static final int DISPLAY_CLINICIANASSESSMNRWORKLISTWITHSEENNURSE = 5;   //WDEV-20429
 	
-	
-	private enum TriagePriorityEnum //WDEV-17208
+	private static final int NOTES_TAB = -2793;
+	private static final int OBS_TAB = -2794;
+	private static final int ICP_TAB = -2795;
+	private static final int SYS_REVIEW_TAB = -2796;
+	private static final int WOUND_IMAGES_TAB = -2797;
+	private static final int MEDS_TAB = -2798;
+	private static final int PMH_TAB = -2799;
+	private static final int SUPP_TAB = -2800;
+	private static final int DISCH_TAB = -2801;
+	private static final int PRESCRIPTION_TAB = -2802;
+	private static final int OUTCOME_TAB = -2803;
+	private static final int CODING_TAB = -2804;
+		
+	public enum TriagePriorityEnum //WDEV-17208
 	{ 
 		Priority1(TriagePriority.PRIORITY1, 1),
 		Priority2(TriagePriority.PRIORITY2, 2),
@@ -130,21 +149,17 @@ public class Logic extends BaseLogic
 		}
 	}
 	
-	public void initialization(Integer display, TrackingForClinicianWorklistAndTriageVo tracking, Boolean showReturnLink)
+	public void initialization(Integer display, TrackingRefVo tracking, Boolean showReturnLink)
 	{
 		form.getLocalContext().setShowTriageOrClinicianAssessmentWoklist(display);
 		form.getLocalContext().setTrackingFromArgument(tracking);
 		form.getLocalContext().setisFormOpenedFromOtherForm(showReturnLink);
 		
-		clearScreen();		//wdev-17295
 		initialize();
-		initializeControls();
-		initialisebuttons();	//wdev-17329
 		open();
+		
 		form.setMode(FormMode.VIEW);
 		
-		boolean isPatientSelected = form.getLocalContext().getSelectedWaitingPatient() != null;
-		boolean hasSeenByHcp = isPatientSelected && form.getLocalContext().getSelectedWaitingPatient().getSeenBy() != null; //WDEV-16816
 		boolean isDischarged = form.getLocalContext().getSelectedWaitingPatient() != null && Boolean.TRUE.equals(form.getLocalContext().getSelectedWaitingPatient().getIsDischarged());  //wdev-17218 
 		boolean isHistoryMode = Boolean.TRUE.equals(form.getLocalContext().getHistoryMode());
 		
@@ -153,8 +168,9 @@ public class Logic extends BaseLogic
 			if( form.getLocalContext().getSelectedWaitingPatient() != null && form.getLocalContext().getSelectedWaitingPatient().getTriageDetails() == null && !isHistoryMode  && !isDischarged) //wdev-17218
 			{
 				//wdev-17286
-				TrackingForClinicianWorklistAndTriageVo TrackingForClinician  = domain.getTrackingForTriage(form.getLocalContext().getSelectedWaitingPatient());
-				if(TrackingForClinician != null && TrackingForClinician.getTriageDetailsIsNotNull())
+				//TrackingForClinicianWorklistAndTriageVo TrackingForClinician  = domain.getTrackingForTriage(form.getLocalContext().getSelectedWaitingPatient());
+				
+				if(Boolean.TRUE.equals(domain.wasTriageAlreadyCreated(form.getLocalContext().getSelectedWaitingPatient())))
 				{
 					engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
 					open();
@@ -174,11 +190,25 @@ public class Logic extends BaseLogic
 		else if(  form.getLocalContext().getShowTriageOrClinicianAssessmentWoklistIsNotNull() && form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_CLINICIANASSESSMNRWORKLISTWITHSEEN))  //wdev-17252 - the same as DISPLAY_CLINICIANASSESSMNRWORKLIST but opens automatically Emergency.EDSeenByAndCompleteDialog dialog  
 		{
 			form.getGlobalContext().Emergency.setNewTriageComponentOpenForm(null);
-			engine.open(form.getForms().Emergency.EDSeenByAndCompleteDialog);
-			
+			engine.open(form.getForms().Emergency.EDSeenByAndCompleteDialog);	
+		}
+		else if(  form.getLocalContext().getShowTriageOrClinicianAssessmentWoklistIsNotNull() && form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_CLINICIANASSESSMNRWORKLISTWITHSEENNURSE))  //WDEV-20429 - the same as DISPLAY_CLINICIANASSESSMNRWORKLIST but opens automatically Emergency.EDSeenByNurseAndCompleteDialog dialog  
+		{
+			form.getGlobalContext().Emergency.setNewTriageComponentOpenForm(null);
+			engine.open(form.getForms().Emergency.EDSeenByNurseAndCompleteDialog);	
+		}
+		
+		//WDEV-21349
+		Integer patientAge = form.getGlobalContext().Core.getPatientShortIsNotNull() ? form.getGlobalContext().Core.getPatientShort().calculateAge() : null;
+		if(patientAge != null && patientAge <= 17)
+		{
+			form.btnSafeguarding().setVisible(true);
+		}
+		else
+		{
+			form.btnSafeguarding().setVisible(false);
 		}
 
-		
 	}
 	
 	protected void onFormOpen(Object[] args) throws ims.framework.exceptions.PresentationLogicException
@@ -220,104 +250,67 @@ public class Logic extends BaseLogic
 
 	private void initialize() 
 	{
+		clearScreen();		//wdev-17295
+		
 		if(engine.getCurrentLocation() != null)
 		{
 			form.getLocalContext().setAttendanceKPIConfig(domain.getAttendanceKPIConfigForClinicianWorklist(engine.getCurrentLocation()));
 		}
 		
-		Object user = domain.getHcpLiteUser();
-		if(user instanceof HcpRefVo)
+		//Object user = domain.getHcpLiteUser();
+		Object mos = domain.getMosUser();
+		
+		if(mos instanceof MemberOfStaffRefVo)
 		{
-			form.getLocalContext().setLoggedHcp((HcpRefVo) user);
+			form.getLocalContext().setLoggedMOS((MemberOfStaffRefVo) mos);
 		}
 		
-		//form.GroupClinicianReview().setValue(GroupClinicianReviewEnumeration.rdoAll);
-		createPatientGridColumns();
+		form.getLocalContext().setLoggedHCPObject(domain.getHcpUser());
+		if(form.getLocalContext().getLoggedHCPObject() instanceof HcpRefVo)
+		{
+			form.getLocalContext().setLoggedHcp((HcpRefVo) form.getLocalContext().getLoggedHCPObject());
+		}
 		
 		form.lyrPatientTriage().tabPathway().ccICP().initialize();
 			
-		if(form.getGlobalContext().Core.getCurrentCareContext() != null)
+		/*if(form.getGlobalContext().Core.getCurrentCareContext() != null)
 		{
 			form.getLocalContext().setSelectedWaitingPatient(domain.getTrackingForClinicianWorklistByCareContext(form.getGlobalContext().Core.getCurrentCareContext()));
-		}
-	}
-
-	/*@Override
-	protected void onBtnStartAssessmentClick() throws PresentationLogicException
-	{
-		form.getGlobalContext().Emergency.setNewTriageComponentOpenForm(null);
-		startClinicianAssessment(form.getLocalContext().getSelectedWaitingPatient());
-	}*/
-
-	private void startClinicianAssessment(TrackingForClinicianWorklistAndTriageVo tracking)
-	{
-		if (tracking == null)
-			return;
+		}*/
 		
-		HcpLiteVo hcpUser = (HcpLiteVo) domain.getHcpLiteUser();
+		//WDEV-18988
+		hideTabs();
 		
-		if (hcpUser == null || !HcpDisType.MEDICAL.equals(hcpUser.getHcpType()))
-		{
-			//engine.open(form.getForms().Emergency.AllocatedMedicDialog);
-			return;
-		}
-		else
-		{
-			// Attempt to save created AllocatedMedic to tracking
-			if (saveSeenByHcp(tracking, new MedicRefVo(hcpUser.getID_Hcp(), hcpUser.getVersion_Hcp())))//WDEV-16816
-			{
-				// Refresh screen
-				open();
-			}
-		}
-	}
-	
-	//WDEV-16816
-	private boolean saveSeenByHcp(TrackingForClinicianWorklistAndTriageVo tracking, MedicRefVo medic)
-	{
-		try
-		{
-			// Create the SeenByHcp record to be associated with tracking
-			SeenByHCPVo seenByHcp = new SeenByHCPVo();
-			seenByHcp.setPatient(tracking.getPatient());
-			seenByHcp.setEpisode(tracking.getEpisode().getEpisodeOfCare());
-			seenByHcp.setAttendance(tracking.getAttendance().getCareContext());
-			seenByHcp.setTrackingArea(tracking.getCurrentArea());
-
-			seenByHcp.setAllocatedDateTime(new DateTime());			
-			seenByHcp.setAllocatedMedic((MedicVo)domain.getHcpUser());		
-			seenByHcp.setSeenDateTime(new DateTime());
-			
-			// Validate SeenByHcp record
-			String[] errors = seenByHcp.validate();
-
-			if (errors != null && errors.length > 0)
-			{
-				engine.showErrors(errors);
-				return false;
-			}
-
-			form.getLocalContext().setSelectedWaitingPatient(domain.saveTrackingSeenByHcp(tracking, seenByHcp));
-
-			return true;
-		}
-		catch (StaleObjectException e)
-		{
-			engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
-			open();
-			return false;
-		}
+		initializeControls();
+		initialisebuttons();	//wdev-17329
+		
+		form.getLocalContext().setPrimaryIDFromPASProviderSystem(domain.getPrimaryIDFromProviderSystem(Category.PAS));  //WDEV-23527
 	}
 
-	private void createPatientGridColumns() 
+	private void hideTabs()
 	{
-		//DynamicGridColumn columnName = form.dyngrdPatients().getColumns().newColumn("Name", COLUMN_NAME);
-		//columnName.setWidth(298);
+		IAppRole role = engine.getLoggedInRole();
+		form.getLocalContext().setTabsConfig(role != null ? domain.getTabsConfigForRole(role.getId()) : null);
+		
+		form.lyrPatientTriage().tabNotes().setHeaderVisible(!tabDisabled(NOTES_TAB));
+		form.lyrPatientTriage().tabObs().setHeaderVisible(!tabDisabled(OBS_TAB));
+		form.lyrPatientTriage().tabObs2().setHeaderVisible(!tabDisabled(OBS_TAB));
+		form.lyrPatientTriage().tabPathway().setHeaderVisible(!tabDisabled(ICP_TAB));
+		form.lyrPatientTriage().tabSysReview().setHeaderVisible(!tabDisabled(SYS_REVIEW_TAB));
+		form.lyrPatientTriage().tabWoundImages().setHeaderVisible(!tabDisabled(WOUND_IMAGES_TAB));
+		form.lyrPatientTriage().tabPatientMeds().setHeaderVisible(!tabDisabled(MEDS_TAB));
+		form.lyrPatientTriage().tabRelevantPMH().setHeaderVisible(false); //WDEV-20424
+		form.lyrPatientTriage().tabSupport().setHeaderVisible(!tabDisabled(SUPP_TAB));
+		form.lyrPatientTriage().tabDischargeDetails().setHeaderVisible(!tabDisabled(DISCH_TAB));
+		form.lyrPatientTriage().tabPagePrescription().setHeaderVisible(!tabDisabled(PRESCRIPTION_TAB));
+		form.lyrPatientTriage().tabPageOutcome().setHeaderVisible(!tabDisabled(OUTCOME_TAB));
+		form.lyrPatientTriage().tabPageCoding().setHeaderVisible(!tabDisabled(CODING_TAB));
+		form.lyrPatientTriage().tabPageHEARTSCoding().setHeaderVisible(!tabDisabled(CODING_TAB));
+		
 	}
 
 	private void open() 
 	{
-		//searchWaitingForClinicianReview();
 		long startTime = System.currentTimeMillis();//WDEV-17337
 		
 		selectedInstance();
@@ -333,11 +326,11 @@ public class Logic extends BaseLogic
 
 	private void clearScreen() 
 	{
-		//form.dyngrdPatients().getRows().clear();
 		form.lblPatientCategory().setValue(null);	//wdev-16751
 		form.lblPresentingComplaint().setValue(null);
 		form.lblPresentingProblem().setValue(null);
 		form.qmbPresentingProblem().clear();		//wdev-16751
+		form.imgPriorityChange().setValue(null);
 		form.imgTriagePriority().setValue(null);
 		form.lblDiscriminator().setValue(null);
 		form.lyrPatientTriage().tabNotes().ccAttendanceClinicalNotes().clear();//WDEV-16791
@@ -350,7 +343,7 @@ public class Logic extends BaseLogic
 		//form.dtimIncidentTime().setValue(null);
 		form.dtimArrivalTime().setValue(null);
 		form.dtimRegistrationTime().setValue(null);
-		form.txtLOS().setValue(null);//WDEV-15818
+		form.htmLOS().setHTML(""); //WDEV-20421
 		form.dtimTriageStartTime().setValue(null);
 		form.dtimTriageEndTime().setValue(null);
 		form.dtimMedicStartTime().setValue(null);
@@ -375,38 +368,7 @@ public class Logic extends BaseLogic
 		}
 	}
 	
-	private Image getPriorityImage(TrackingListForClinicianWorklistVo tracking) 
-	{
-		if(tracking == null || tracking.getTriageDetails() == null)
-			return null;
-		
-		if(TriagePriority.PRIORITY1.equals(tracking.getTriageDetails().getCurrentTriagePriority()))
-			return form.getImages().Emergency.Triage_Priority_P1;
-		else if(TriagePriority.PRIORITY2.equals(tracking.getTriageDetails().getCurrentTriagePriority()))
-			return form.getImages().Emergency.Triage_Priority_P2;
-		else if(TriagePriority.PRIORITY3.equals(tracking.getTriageDetails().getCurrentTriagePriority()))
-			return form.getImages().Emergency.Triage_Priority_P3;
-		else if(TriagePriority.PRIORITY4.equals(tracking.getTriageDetails().getCurrentTriagePriority()))
-			return form.getImages().Emergency.Triage_Priority_P4;
-		else if(TriagePriority.PRIORITY5.equals(tracking.getTriageDetails().getCurrentTriagePriority()))
-			return form.getImages().Emergency.Triage_Priority_P5;
-		else if(TriagePriority.SKIPPED_TRIAGE.equals(tracking.getTriageDetails().getCurrentTriagePriority()))
-			return form.getImages().Emergency.Triage_Priority_SkippedTriage;
-		
-		return null;
-	}
 
-		
-		
-		
-	//@Override
-	/*protected void onDyngrdPatientsRowSelectionChanged(DynamicGridRow row) throws PresentationLogicException 
-	{
-		form.lyrPatientTriage().showtabNotes();
-		
-		selectedInstance();
-		updateControlsState();
-	}*/
 	//wdev-17295
 	private void clearTooltips()
 	{
@@ -525,16 +487,18 @@ public class Logic extends BaseLogic
 		form.getLocalContext().setHistoryMode(false);
 		form.getLocalContext().setSelectedWaitingPatient(null);
 		
-		if( form.getLocalContext().getTrackingFromArgument() instanceof TrackingForClinicianWorklistAndTriageVo)
+		if( form.getLocalContext().getTrackingFromArgument() != null)
 		{
+			form.getLocalContext().setSelectedWaitingPatient(domain.getTrackingForTriage(form.getLocalContext().getTrackingFromArgument()));
+			
 			//WDEV-17745
-			if (form.getLocalContext().getTrackingFromArgument().getAttendance() != null && form.getLocalContext().getTrackingFromArgument().getAttendance().getDischargeDateTime() != null)
+			if (form.getLocalContext().getSelectedWaitingPatient() != null && form.getLocalContext().getSelectedWaitingPatient().getAttendance() != null && form.getLocalContext().getSelectedWaitingPatient().getAttendance().getDischargeDateTime() != null)
 			{
 				form.getLocalContext().setHistoryMode(true);
 			}
 			
-			form.getGlobalContext().Emergency.setTracking(form.getLocalContext().getTrackingFromArgument());
-			form.getLocalContext().setSelectedWaitingPatient(domain.getTrackingForTriage(form.getLocalContext().getTrackingFromArgument()));
+			form.getGlobalContext().Emergency.setTracking(form.getLocalContext().getSelectedWaitingPatient());
+			
 			form.getLocalContext().setTrackingFromArgument(null);//wdev-17598
 		}
 		else if(form.getGlobalContext().Core.getCurrentCareContext() != null)
@@ -587,9 +551,22 @@ public class Logic extends BaseLogic
 		
 		PatientICPRefVo icp = form.getLocalContext().getSelectedWaitingPatient().getTriageDetails() != null ? form.getLocalContext().getSelectedWaitingPatient().getTriageDetails().getCurrentTriagePathway() : null;
 		
-		form.getGlobalContext().Core.setPatientShort(domain.getPatientShort(patient));//WDEV-15815
-		form.getGlobalContext().Core.setEpisodeofCareShort(domain.getEpisodeOfCare(episode));
-		form.getGlobalContext().Core.setCurrentCareContext(domain.getCareContext(careContext));
+		if(form.getGlobalContext().Core.getCurrentCareContext() == null 
+				|| (form.getGlobalContext().Core.getCurrentCareContext() != null 
+						&& careContext != null 
+						&& (!form.getGlobalContext().Core.getCurrentCareContext().getID_CareContext().equals(careContext.getID_CareContext()) 
+								|| domain.isStaleCareContext(form.getGlobalContext().Core.getCurrentCareContext()))))
+		{
+			form.getGlobalContext().Core.setCurrentCareContext(domain.getCareContext(careContext));
+		}
+		if(form.getGlobalContext().Core.getCurrentCareContext() == null)
+		{
+			form.getGlobalContext().Core.setEpisodeofCareShort(domain.getEpisodeOfCare(episode));
+		}
+		if(form.getGlobalContext().Core.getEpisodeofCareShort() == null)
+		{
+			form.getGlobalContext().Core.setPatientShort(domain.getPatientShort(patient));
+		}
 		
 		populateOtherDetails(patient);
 		initializePatientTriageLayer(patient, episode, careContext, problem, icp,form.getLocalContext().getSelectedWaitingPatient());  //wdev-17819
@@ -606,6 +583,7 @@ public class Logic extends BaseLogic
 		
 		populateAttendanceHisyory(patient);
 		
+		form.imgPriorityChange().setValue(getPriorityChange());
 		form.imgTriagePriority().setValue(getPriorityImageByTriagePriority());
 		form.lblPresentingComplaint().setValue((form.getLocalContext().getSelectedWaitingPatient() != null && form.getLocalContext().getSelectedWaitingPatient().getEpisode().getPresentingComplaint() != null) ? form.getLocalContext().getSelectedWaitingPatient().getEpisode().getPresentingComplaint().getText() : "");
 		//wdev-16751
@@ -615,7 +593,7 @@ public class Logic extends BaseLogic
 			
 			if(form.getLocalContext().getSelectedWaitingPatient() != null && form.getLocalContext().getSelectedWaitingPatient().getTriageDetails() != null && form.getLocalContext().getSelectedWaitingPatient().getTriageDetails().getMainPresentingProblem() != null)
 			{
-				ClinicalProblemShortVo problem = domain.getClinicalProblemShortVo(form.getLocalContext().getSelectedWaitingPatient().getTriageDetails().getMainPresentingProblem().getProblem());
+				ClinicalProblemShortVo problem = form.getLocalContext().getSelectedWaitingPatient().getTriageDetails().getMainPresentingProblem().getProblem();
 				
 				if(problem != null)
 				{
@@ -624,9 +602,13 @@ public class Logic extends BaseLogic
 				}
 			}
 		}
-		else if(form.getLocalContext().getShowTriageOrClinicianAssessmentWoklistIsNotNull() && (form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_CLINICIANASSESSMNRWORKLIST) ||form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_CLINICIANASSESSMNRWORKLISTWITHSEEN)))  //wdev-17252
+		else if(form.getLocalContext().getShowTriageOrClinicianAssessmentWoklistIsNotNull() && (form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_CLINICIANASSESSMNRWORKLIST) ||form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_CLINICIANASSESSMNRWORKLISTWITHSEEN) || form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_CLINICIANASSESSMNRWORKLISTWITHSEENNURSE)))  //wdev-17252 //WDEV-20429
 		{
-			form.lblPresentingProblem().setValue((form.getLocalContext().getSelectedWaitingPatient() != null && form.getLocalContext().getSelectedWaitingPatient().getTriageDetails() != null && form.getLocalContext().getSelectedWaitingPatient().getTriageDetails().getMainPresentingProblem() != null) ? form.getLocalContext().getSelectedWaitingPatient().getTriageDetails().getMainPresentingProblem().getPatientProblem() : null);
+			String strTempProblem = (form.getLocalContext().getSelectedWaitingPatient() != null && form.getLocalContext().getSelectedWaitingPatient().getTriageDetails() != null && form.getLocalContext().getSelectedWaitingPatient().getTriageDetails().getMainPresentingProblem() != null) ? form.getLocalContext().getSelectedWaitingPatient().getTriageDetails().getMainPresentingProblem().getPatientProblem() : null; //wdev-19823
+
+			//form.lblPresentingProblem().setValue((form.getLocalContext().getSelectedWaitingPatient() != null && form.getLocalContext().getSelectedWaitingPatient().getTriageDetails() != null && form.getLocalContext().getSelectedWaitingPatient().getTriageDetails().getMainPresentingProblem() != null) ? form.getLocalContext().getSelectedWaitingPatient().getTriageDetails().getMainPresentingProblem().getPatientProblem() : null);
+			form.lblPresentingProblem().setValue(limitlblParentLength(strTempProblem, 23));//WDEV-23436
+			form.lblPresentingProblem().setTooltip(strTempProblem); //wdev-19823
 		}
 		
 		
@@ -639,6 +621,19 @@ public class Logic extends BaseLogic
 		if (ConfigFlag.UI.USE_HEARTS_CONTRACTING.getValue())//wdev-17486
 			populateHEARTSCodinglabels();
 	}
+	private String limitlblParentLength(String parent ,Integer lenght)//WDEV-23101
+	{
+		if(parent == null || lenght == null)//WDEV-23436
+			return parent;
+		
+		if(parent.length()>lenght)
+		{
+			parent = parent.substring(0, lenght) + "...";
+			return parent;
+		}
+		return parent;
+	}
+
 
 	private void populateOtherProblems() 
 	{
@@ -688,6 +683,21 @@ public class Logic extends BaseLogic
 		
 		return null;
 	}
+	
+
+	private Image getPriorityChange()
+	{
+		if (form.getLocalContext().getSelectedWaitingPatient() == null || form.getLocalContext().getSelectedWaitingPatient().getTriageDetails() == null)
+			return null;
+		
+		TriageForClinicianWorklistVo triageDetails = form.getLocalContext().getSelectedWaitingPatient().getTriageDetails();
+		
+		if (triageDetails.getTriagePriorityChange() == null)
+			return null;
+		
+		return triageDetails.getTriagePriorityChange().getImage();
+	}
+
 
 	private void populateAttendanceTimes() 
 	{
@@ -696,25 +706,47 @@ public class Logic extends BaseLogic
 		
 		//form.dtimIncidentTime().setValue(form.getLocalContext().getSelectedWaitingPatient().getEpisode() != null ? form.getLocalContext().getSelectedWaitingPatient().getEpisode().getInjuryDateTime() : null);
 		form.dtimArrivalTime().setValue(form.getLocalContext().getSelectedWaitingPatient().getAttendance() != null ? form.getLocalContext().getSelectedWaitingPatient().getAttendance().getArrivalDateTime() : null);
-		form.dtimRegistrationTime().setValue(form.getLocalContext().getSelectedWaitingPatient().getAttendance() != null ? form.getLocalContext().getSelectedWaitingPatient().getAttendance().getRegistrationDateTime() : null);
+		form.dtimRegistrationTime().setValue(form.getLocalContext().getSelectedWaitingPatient().getAttendance() != null ? form.getLocalContext().getSelectedWaitingPatient().getAttendance().getEndOfRegistrationDateTime() : null);
 		form.dtimTriageStartTime().setValue(form.getLocalContext().getSelectedWaitingPatient().getTriageDetails() != null ? form.getLocalContext().getSelectedWaitingPatient().getTriageDetails().getTriageStartDateTime() : null);
 		form.dtimTriageEndTime().setValue(form.getLocalContext().getSelectedWaitingPatient().getTriageDetails() != null ? form.getLocalContext().getSelectedWaitingPatient().getTriageDetails().getTriageCompletionTime() : null);
 		
-		if( ConfigFlag.DOM.STARTTIME_FOR_LOS_AND_BREACH_CALCULATIONS.getValue().equals("RegistrationDateTime"))	//wdev-18327
-			form.txtLOS().setValue(EmergencyDisplayHelper.minutesToHoursAndMinutes(calculateDateDiffInMinutes(new DateTime(), form.dtimRegistrationTime().getValue())));//WDEV-15818,wdev-18299, wdev-18327
-		else
-			form.txtLOS().setValue(EmergencyDisplayHelper.minutesToHoursAndMinutes(calculateDateDiffInMinutes(new DateTime(), form.dtimArrivalTime().getValue())));//WDEV-15818,wdev-18299
+		//WDEV-19984
+		boolean isDischarged = form.getLocalContext().getSelectedWaitingPatient().getAttendanceIsNotNull() && form.getLocalContext().getSelectedWaitingPatient().getAttendance().getDischargeDateTimeIsNotNull();
+		DateTime registrDateTimeForLOS = form.getLocalContext().getSelectedWaitingPatient().getAttendance() != null ? (form.getLocalContext().getSelectedWaitingPatient().getAttendance().getEndOfRegistrationDateTimeIsNotNull() ? form.getLocalContext().getSelectedWaitingPatient().getAttendance().getEndOfRegistrationDateTime() : form.getLocalContext().getSelectedWaitingPatient().getAttendance().getRegistrationDateTime()) : null;
+		DateTime endTimeForLOS = isDischarged ? form.getLocalContext().getSelectedWaitingPatient().getAttendance().getDischargeDateTime() :  new DateTime();
 		
+		//WDEV-20421
+		Integer intLOS=null;
+		String minHourLOS=null;
+		
+		if (ConfigFlag.DOM.STARTTIME_FOR_LOS_AND_BREACH_CALCULATIONS.getValue().equals("RegistrationDateTime"))	//wdev-18327
+		{	
+			intLOS=calculateDateDiffInMinutes(endTimeForLOS, registrDateTimeForLOS);
+			minHourLOS=(EmergencyDisplayHelper.minutesToHoursAndMinutes(intLOS));
+		}	
+		else
+		{	
+			intLOS=calculateDateDiffInMinutes(endTimeForLOS, form.dtimArrivalTime().getValue());
+			minHourLOS=(EmergencyDisplayHelper.minutesToHoursAndMinutes(intLOS));
+		}
+		
+		if (intLOS!=null && minHourLOS!=null)
+		{
+			setLOSColor(intLOS, minHourLOS);
+		}
+		
+		//WDEV-19984 --------- ends here
 		//if(	form.getLocalContext().getShowTriageOrClinicianAssessmentWoklistIsNotNull() && form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_CLINICIANASSESSMNRWORKLIST))
 		//form.dtimMedicStartTime().setValue(form.getLocalContext().getSelectedWaitingPatient().getTriageDetails() != null ? form.getLocalContext().getSelectedWaitingPatient().getTriageDetails().getMedicInterventionStartDateTime() : null);
 		//wdev-17645
-		SeenByHCPVo seenVo =  domain.getFirstSeenByHCP(form.getGlobalContext().Core.getCurrentCareContext());
+		SeenByHCPLiteVo seenVo = domain.getFirstSeenByHCP(form.getGlobalContext().Core.getCurrentCareContext());
 		form.dtimMedicStartTime().setValue(seenVo != null && seenVo.getSeenDateTimeIsNotNull() ? seenVo.getSeenDateTime():null); 
 		//---------
 		if( ConfigFlag.DOM.STARTTIME_FOR_LOS_AND_BREACH_CALCULATIONS.getValue().equals("RegistrationDateTime"))	//wdev-18327
 			form.dtimDischargeBreachTime().setValue(calculateBreachTime(form.dtimRegistrationTime().getValue()));  //wdev-16751 //WDEV-18323
 		else
 			form.dtimDischargeBreachTime().setValue(calculateBreachTime(form.dtimArrivalTime().getValue()));  //wdev-16751 //WDEV-18323
+		
 		//wdev-17876
 		if( form.getLocalContext().getSelectedWaitingPatient().getIsDischargedIsNotNull() && Boolean.TRUE.equals(form.getLocalContext().getSelectedWaitingPatient().getIsDischarged()) && form.getLocalContext().getSelectedWaitingPatient().getAttendanceIsNotNull()) //wdev-18318 -added a double check that was not necesary
 		{
@@ -730,6 +762,53 @@ public class Logic extends BaseLogic
 			
 			form.lbl1().setValue("Breach Time:");	//wdev-17945
 		}
+	}
+	
+	//WDEV-20421
+	private void setLOSColor(Integer LOS, String minHourLOS ) 
+	{
+		if(LOS == null)
+			return;
+		
+		Color losFontColor = null;
+		Color losBackgroudColor = null;
+		
+		boolean losBreachWarning = false;
+		boolean losBreached = false;
+		
+		if(LOS != null && form.getLocalContext().getAttendanceKPIConfig() != null)
+		{	
+			if(form.getLocalContext().getAttendanceKPIConfig().getLosBreachWarningKPI() != null && form.getLocalContext().getAttendanceKPIConfig().getLosBreachedKPI() != null)
+			{
+				if(LOS >= form.getLocalContext().getAttendanceKPIConfig().getLosBreachWarningKPI() && LOS < form.getLocalContext().getAttendanceKPIConfig().getLosBreachedKPI())
+				{
+					losFontColor = form.getLocalContext().getAttendanceKPIConfig().getLosBreachWarningKPITextColour(); 			
+					losBackgroudColor = form.getLocalContext().getAttendanceKPIConfig().getLosBreachWarningKPIBackgroundColour();	
+					losBreachWarning = true;
+				}
+				else if(LOS >= form.getLocalContext().getAttendanceKPIConfig().getLosBreachedKPI())
+				{
+					losFontColor = form.getLocalContext().getAttendanceKPIConfig().getLosBreachKPITextColour();				
+					losBackgroudColor = form.getLocalContext().getAttendanceKPIConfig().getLosBreachedKPIBackgroundColour();
+					losBreached = true;
+				}
+			}
+		}
+		
+		String strHtml="<div id=\"header\" style=\"";
+		//form.htmLOS().setHTML("<div id=\"header\" style=\"background-color: " + losBackgroudColor.getBean().getValue() +  "; color: " + losFontColor.getBean().getValue() +  ";line-height:19px\">" + minHourLOS + "</div>");
+	
+		if(losBreachWarning || losBreached)
+		{
+			if (losBackgroudColor!=null)
+				strHtml+="background-color: " + losBackgroudColor.getBean().getValue() + ";";
+			
+			if (losFontColor!=null)
+				strHtml+="color: " + losFontColor.getBean().getValue() +  ";";
+		}
+		
+		strHtml+="line-height:19px\">" + minHourLOS + "</div>";
+		form.htmLOS().setHTML(strHtml);
 	}
 	
 	private DateTime calculateDischargeBreachTime(DateTime registrationDateTime) 
@@ -814,7 +893,7 @@ public class Logic extends BaseLogic
 			return;
 		
 		ims.emergency.forms.edassessmentcomponent.GenForm.grdAttendanceHistoryRow row = form.grdAttendanceHistory().getRows().newRow();
-		EpisodeOfcareLiteVo tempVo = domain.getEpisodeOfCareLite(emergencyEpisode.getEpisodeOfCare());	//wdev-16070
+		EpisodeOfcareLiteVo tempVo = emergencyEpisode.getEpisodeOfCare();	//wdev-16070
 		row.setColID(emergencyEpisode.getID_EmergencyEpisode().toString() + (tempVo != null ? " - " + tempVo.getStartDate().toString() : ""));	//wdev-16070
 		row.setBold(true);
 		
@@ -824,6 +903,7 @@ public class Logic extends BaseLogic
 			return;
 		
 		row.setExpanded(true);
+		row.setTooltip(emergencyEpisode.getCategory()!=null ? "<b>Patient Category: </b>" + emergencyEpisode.getCategory().getText() : null); //WDEV-19299
 		
 		for(EmergencyAttendanceForTriageVo emergencyAttendance : emergencyEpisode.getEmergencyAttendances())
 		{
@@ -846,7 +926,11 @@ public class Logic extends BaseLogic
 			return;
 		
 		ims.emergency.forms.edassessmentcomponent.GenForm.grdAttendanceHistoryRow childRow = row.getRows().newRow();
-		childRow.setColID(emergencyAttendance.getID_EmergencyAttendance().toString() + (emergencyAttendance.getRegistrationDateTimeIsNotNull() ? " - " + emergencyAttendance.getRegistrationDateTime().toString() : ""));
+		childRow.setColID((ConfigFlag.GEN.ED_USE_CUSTOM_ATTENDANCE_ID.getValue() && emergencyAttendance.getCustomID() != null ? emergencyAttendance.getCustomID() : emergencyAttendance.getID_EmergencyAttendance().toString()) + (emergencyAttendance.getRegistrationDateTimeIsNotNull() ? " - " + emergencyAttendance.getRegistrationDateTime().toString() : ""));
+		
+		//WDEV-19299
+		PatientProblemForClinicianWorklistVo mainPresentingProblem = domain.getMainPresentingProblem(emergencyAttendance.getCareContext());
+		childRow.setTooltip(mainPresentingProblem!=null ? "<b>Presenting Problem: </b>" +  mainPresentingProblem.getPatientProblem() : null );
 		
 		childRow.setValue((EmergencyAttendanceForTriageLiteVo) emergencyAttendance);
 	}
@@ -859,21 +943,31 @@ public class Logic extends BaseLogic
 		{
 			form.lyrPatientTriage().tabNotes().ccAttendanceClinicalNotes().initialize(patient, episode, careContext, problem,form.getForms().Emergency.EDTriageWorklistToAssessmentForm);//WDEV-16791
 		}
-		else if(form.lyrPatientTriage().tabNotes().isVisible() && form.getLocalContext().getShowTriageOrClinicianAssessmentWoklistIsNotNull() && (form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_CLINICIANASSESSMNRWORKLIST) || form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_CLINICIANASSESSMNRWORKLISTWITHSEEN))) //wdev-17252 //WDEV-17337
+		else if(form.lyrPatientTriage().tabNotes().isVisible() && form.getLocalContext().getShowTriageOrClinicianAssessmentWoklistIsNotNull() && (form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_CLINICIANASSESSMNRWORKLIST) || form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_CLINICIANASSESSMNRWORKLISTWITHSEEN) || form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_CLINICIANASSESSMNRWORKLISTWITHSEENNURSE))) //wdev-17252 //WDEV-17337 //WDEV-20429
 		{
 			form.lyrPatientTriage().tabNotes().ccAttendanceClinicalNotes().initialize(patient, episode, careContext, problem, form.getForms().Emergency.EDClinicianWorklistToAssessmentForm);//WDEV-16791
 		}
 		//----------
 		
 		
-		//WDEV-15996
-		if (form.lyrPatientTriage().tabObs().isVisible() && ConfigFlag.UI.DISPLAY_EXTENDED_OBS_DATA_SET.getValue()==false)//WDEV-17337
+		form.lyrPatientTriage().tabPAWS().setHeaderVisible(false);
+		Integer patientAge = form.getGlobalContext().Core.getPatientShortIsNotNull() ? form.getGlobalContext().Core.getPatientShort().calculateAge() : null;
+		if(patientAge != null && patientAge <= ConfigFlag.GEN.PAEDIATRIC_AGE.getValue() && Boolean.TRUE.equals(ConfigFlag.GEN.ED_OBSERVATIONS_HIDE_VITAL_SIGNS_FOR_PAEDIATRICS.getValue()))
 		{
-			form.lyrPatientTriage().tabObs().ccVitalSigns().initialize();
+			form.lyrPatientTriage().tabPAWS().ccPAWS().initialize(careContext, tracking.getTriageDetails()); //WDEV-21205
+			form.lyrPatientTriage().tabPAWS().setHeaderVisible(true);
 		}
-		else if (form.lyrPatientTriage().tabObs2().isVisible())//WDEV-17337
+		else	
 		{
-			initializeObsLayerTabs();
+			//WDEV-15996
+			if (form.lyrPatientTriage().tabObs().isVisible() && ConfigFlag.UI.DISPLAY_EXTENDED_OBS_DATA_SET.getValue()==false)//WDEV-17337
+			{
+				form.lyrPatientTriage().tabObs().ccVitalSigns().initialize(tracking.getTriageDetails()); //WDEV-20426
+			}
+			else if (form.lyrPatientTriage().tabObs2().isVisible())//WDEV-17337
+			{
+				initializeObsLayerTabs();
+			}
 		}
 		
 		if (form.lyrPatientTriage().tabPatientMeds().isVisible())//WDEV-17337
@@ -895,6 +989,10 @@ public class Logic extends BaseLogic
 		else if (form.lyrPatientTriage().tabSupport().isVisible())//WDEV-17337
 		{
 			form.lyrPatientTriage().tabSupport().ccSupportService().initialize(careContext, episode, patient);
+		}
+		else if (form.lyrPatientTriage().tabPagePrescription().isVisible())//WDEV-18973
+		{
+			form.lyrPatientTriage().tabPagePrescription().ccDischargePrescription().initialize(false, careContext);
 		}
 		else if (form.lyrPatientTriage().tabPageOutcome().isVisible())//WDEV-17337
 		{
@@ -930,7 +1028,7 @@ public class Logic extends BaseLogic
 	{
 		if (form.lyrPatientTriage().tabObs2().lyrObs2().tabVitalSigns().isVisible())
 		{
-			form.lyrPatientTriage().tabObs2().lyrObs2().tabVitalSigns().ccVitalSignsObs().initialize();
+			form.lyrPatientTriage().tabObs2().lyrObs2().tabVitalSigns().ccVitalSignsObs().initialize(form.getLocalContext().getSelectedWaitingPatient().getTriageDetails()); //WDEV-20426
 		}
 		else if (form.lyrPatientTriage().tabObs2().lyrObs2().tabUrinalysis().isVisible())
 		{
@@ -955,17 +1053,22 @@ public class Logic extends BaseLogic
 		clearTooltips();	//wdev-17295
 		setTooltips(); //WDEV-15820
 		
+		boolean isLoggedInUserMemberOfStaff = form.getLocalContext().getLoggedMOS() != null;
 		boolean isTriageCreated = form.getLocalContext().getSelectedWaitingPatientIsNotNull() && form.getLocalContext().getSelectedWaitingPatient().getTriageDetailsIsNotNull();
 		boolean isPatientSelected = form.getLocalContext().getSelectedWaitingPatient() != null;
 		boolean isPatientFemale = isPatientSelected && form.getLocalContext().getSelectedWaitingPatient().getPatientIsNotNull() && ims.core.vo.lookups.Sex.FEMALE.equals(form.getLocalContext().getSelectedWaitingPatient().getPatient().getSex());    //wdev-17255
-		//WDEV-17738
-		boolean isQuickRegistrationPatient = form.getLocalContext().getSelectedWaitingPatient() != null && form.getLocalContext().getSelectedWaitingPatient().getPatient() != null && Boolean.TRUE.equals(form.getLocalContext().getSelectedWaitingPatient().getPatient().getIsQuickRegistrationPatient());
-		
+				
 		//boolean hasMedicAllocated = isPatientSelected && form.getLocalContext().getSelectedWaitingPatient().getCurrentAllocatedMedic() != null;//WDEV-16816
 		//boolean isDischarged=form.getLocalContext().getSelectedWaitingPatient()!=null && form.getLocalContext().getSelectedWaitingPatient().getIsDischarged() != null && Boolean.TRUE.equals(form.getLocalContext().getSelectedWaitingPatient().getIsDischarged());//WDEV-17153
 		boolean hasMainPresentingProblem = ((form.getLocalContext().getSelectedWaitingPatient() != null && form.getLocalContext().getSelectedWaitingPatient().getTriageDetails() != null && form.getLocalContext().getSelectedWaitingPatient().getTriageDetails().getMainPresentingProblem() != null) ? true : false);
-		boolean hasMedicInterventionStartDateTime = ((form.getLocalContext().getSelectedWaitingPatient() != null && form.getLocalContext().getSelectedWaitingPatient().getTriageDetails() != null && form.getLocalContext().getSelectedWaitingPatient().getTriageDetails().getMedicInterventionStartDateTimeIsNotNull()) ? true : false);
-		boolean hasPresentingComplaint = form.getLocalContext().getSelectedWaitingPatient() != null && form.getLocalContext().getSelectedWaitingPatient().getEpisode() != null && form.getLocalContext().getSelectedWaitingPatient().getEpisode().getPresentingComplaintIsNotNull();
+		boolean hasMedicInterventionStartDateTime = ((form.getLocalContext().getSelectedWaitingPatient() != null 
+				&& form.getLocalContext().getSelectedWaitingPatient().getTriageDetails() != null 
+				&& form.getLocalContext().getSelectedWaitingPatient().getTriageDetails().getMedicInterventionStartDateTimeIsNotNull()) ? true : false);
+		//WDEV-21171 //WDEV-23527
+		PatIdType dispIdType = PatIdType.getNegativeInstance(ConfigFlag.UI.DISPLAY_PATID_TYPE.getValue());
+		PatIdType primaryIDFromPASroviderSystem = form.getLocalContext().getPrimaryIDFromPASProviderSystem();
+		boolean isValidPatIDForAdmission = PatIdType.NHSN.equals(dispIdType)? (PatIdType.NHSN.equals(primaryIDFromPASroviderSystem) ? false : isPatientSelected && form.getLocalContext().getSelectedWaitingPatient().getPatientIsNotNull() && primaryIDFromPASroviderSystem!=null && form.getLocalContext().getSelectedWaitingPatient().getPatient().getPatId(primaryIDFromPASroviderSystem) != null) 
+									: (isPatientSelected && form.getLocalContext().getSelectedWaitingPatient().getPatientIsNotNull() && form.getLocalContext().getSelectedWaitingPatient().getPatient().getPatId(dispIdType) != null);
 		
 		form.btnAddMainProblem().setVisible(false);	//wdev-17381
 		
@@ -982,17 +1085,19 @@ public class Logic extends BaseLogic
 		
 		//------------
 		
+		form.imgPriorityChange().setVisible(isPatientSelected && form.getLocalContext().getSelectedWaitingPatient() != null && form.getLocalContext().getSelectedWaitingPatient().getTriageDetails() != null && form.getLocalContext().getSelectedWaitingPatient().getTriageDetails().getTriagePriorityChange() != null);
 		form.imgTriagePriority().setVisible(isPatientSelected && form.getLocalContext().getSelectedWaitingPatient() != null && form.getLocalContext().getSelectedWaitingPatient().getTriageDetails() != null && form.getLocalContext().getSelectedWaitingPatient().getTriageDetails().getCurrentTriagePriority() != null);
 		
-		if( form.getLocalContext().getShowTriageOrClinicianAssessmentWoklistIsNotNull() && (form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_TRIAGE) || form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_TRIAGE_FROM_TRACKING) )) //wdev-17405
+		if(form.getLocalContext().getShowTriageOrClinicianAssessmentWoklistIsNotNull() && (form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_TRIAGE) || form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_TRIAGE_FROM_TRACKING) )) //wdev-17405
 		{
 			form.btnEditMainProblem().setVisible(isPatientSelected && FormMode.VIEW.equals(form.getMode()) && form.qmbPresentingProblem().getValue() != null );   //wdev-17250,wdev-17381
+			form.btnRetriage().setVisible(isPatientSelected && FormMode.VIEW.equals(form.getMode()) && form.qmbPresentingProblem().getValue() != null);
 			
 			//WDEV-15996
 			form.lyrPatientTriage().tabObs().setHeaderVisible(false/*!ConfigFlag.UI.DISPLAY_EXTENDED_OBS_DATA_SET.getValue()*/);
 			form.lyrPatientTriage().tabObs().setHeaderEnabled(isPatientSelected && FormMode.VIEW.equals(form.getMode()) && !ConfigFlag.UI.DISPLAY_EXTENDED_OBS_DATA_SET.getValue());   //wdev-17232
 			
-			form.lyrPatientTriage().tabObs2().setHeaderVisible(true/*ConfigFlag.UI.DISPLAY_EXTENDED_OBS_DATA_SET.getValue()*/);
+			form.lyrPatientTriage().tabObs2().setHeaderVisible(!tabDisabled(OBS_TAB)/*ConfigFlag.UI.DISPLAY_EXTENDED_OBS_DATA_SET.getValue()*/);
 			form.lyrPatientTriage().tabObs2().setHeaderEnabled(isPatientSelected && FormMode.VIEW.equals(form.getMode()) /*&& ConfigFlag.UI.DISPLAY_EXTENDED_OBS_DATA_SET.getValue()*/); //wdev-17232
 			form.lyrPatientTriage().tabObs2().lyrObs2().tabVitalSigns().setHeaderEnabled(isPatientSelected && FormMode.VIEW.equals(form.getMode())/* && ConfigFlag.UI.DISPLAY_EXTENDED_OBS_DATA_SET.getValue()*/); //wdev-17232
 			form.lyrPatientTriage().tabObs2().lyrObs2().tabUrinalysis().setHeaderEnabled(isPatientSelected && FormMode.VIEW.equals(form.getMode())/* && ConfigFlag.UI.DISPLAY_EXTENDED_OBS_DATA_SET.getValue()*/); //wdev-17232
@@ -1035,6 +1140,7 @@ public class Logic extends BaseLogic
 			form.lyrPatientTriage().tabPathway().setHeaderEnabled(isPatientSelected && FormMode.VIEW.equals(form.getMode()));
 			
 			form.lyrPatientTriage().tabDischargeDetails().setHeaderEnabled(isPatientSelected && FormMode.VIEW.equals(form.getMode()));
+			form.lyrPatientTriage().tabPagePrescription().setHeaderEnabled(isPatientSelected && FormMode.VIEW.equals(form.getMode())); //WDEV-18973
 			form.lyrPatientTriage().tabPageOutcome().setHeaderEnabled(isPatientSelected && FormMode.VIEW.equals(form.getMode()));
 			form.lyrPatientTriage().tabPageCoding().setHeaderEnabled(isPatientSelected && FormMode.VIEW.equals(form.getMode()));
 			form.lyrPatientTriage().tabPageHEARTSCoding().setHeaderEnabled(isPatientSelected && FormMode.VIEW.equals(form.getMode()));//wdev-17598
@@ -1067,6 +1173,10 @@ public class Logic extends BaseLogic
 			else if (form.lyrPatientTriage().tabDischargeDetails().isVisible())//WDEV-17337
 			{
 				form.lyrPatientTriage().tabDischargeDetails().ccDischargeDetails_AdviceMobility().setReadOnly(!(isPatientSelected));  //wdev-17350
+			}
+			else if (form.lyrPatientTriage().tabPagePrescription().isVisible())//WDEV-18973
+			{
+				form.lyrPatientTriage().tabPagePrescription().ccDischargePrescription().setReadOnly(!isPatientSelected);
 			}
 			else if (form.lyrPatientTriage().tabPageOutcome().isVisible())//WDEV-17337
 			{
@@ -1101,14 +1211,14 @@ public class Logic extends BaseLogic
 				//form.dtimMedicStartTime().setVisible(true);
 				//form.lbl5().setVisible(true);
 				//form.lbl12().setVisible(true);
-				form.btnMovePatient().setText("Save + Move");
+				form.btnMovePatient().setText(" Save + Move");
 			}
 			else
 			{
 				//form.dtimMedicStartTime().setVisible(false);
 				//form.lbl5().setVisible(false);
 				//form.lbl12().setVisible(false);
-				form.btnMovePatient().setText("Move");
+				form.btnMovePatient().setText(" Move");
 			}
 			
 		}
@@ -1118,13 +1228,14 @@ public class Logic extends BaseLogic
 			form.btnAddMainProblem().setVisible(isPatientSelected && isTriageCreated && FormMode.VIEW.equals(form.getMode()) /*&& !Boolean.TRUE.equals(form.getLocalContext().getHistoryMode())*/ && !hasMainPresentingProblem);	//wdev-17381
 			
 			
-			form.btnEditMainProblem().setVisible(isPatientSelected && FormMode.VIEW.equals(form.getMode()) /* &&  !Boolean.TRUE.equals(form.getLocalContext().getHistoryMode()) */&& hasMainPresentingProblem);  //wdev-17250
+			form.btnEditMainProblem().setVisible(isPatientSelected && FormMode.VIEW.equals(form.getMode()) && hasMainPresentingProblem);  //wdev-17250
+			form.btnRetriage().setVisible(isPatientSelected && FormMode.VIEW.equals(form.getMode()) && hasMainPresentingProblem);
     				
     		//WDEV-15996
     		form.lyrPatientTriage().tabObs().setHeaderVisible(false/*!ConfigFlag.UI.DISPLAY_EXTENDED_OBS_DATA_SET.getValue()*/);
     		form.lyrPatientTriage().tabObs().setHeaderEnabled(isPatientSelected && FormMode.VIEW.equals(form.getMode()) && !ConfigFlag.UI.DISPLAY_EXTENDED_OBS_DATA_SET.getValue());
     		
-    		form.lyrPatientTriage().tabObs2().setHeaderVisible(true/*ConfigFlag.UI.DISPLAY_EXTENDED_OBS_DATA_SET.getValue()*/);
+    		form.lyrPatientTriage().tabObs2().setHeaderVisible(!tabDisabled(OBS_TAB)/*ConfigFlag.UI.DISPLAY_EXTENDED_OBS_DATA_SET.getValue()*/);
     		form.lyrPatientTriage().tabObs2().setHeaderEnabled(isPatientSelected && FormMode.VIEW.equals(form.getMode()) /*&& ConfigFlag.UI.DISPLAY_EXTENDED_OBS_DATA_SET.getValue()*/);
     		form.lyrPatientTriage().tabObs2().lyrObs2().tabVitalSigns().setHeaderEnabled(isPatientSelected && FormMode.VIEW.equals(form.getMode())/* && ConfigFlag.UI.DISPLAY_EXTENDED_OBS_DATA_SET.getValue()*/);
     		form.lyrPatientTriage().tabObs2().lyrObs2().tabUrinalysis().setHeaderEnabled(isPatientSelected && FormMode.VIEW.equals(form.getMode()) /*&& ConfigFlag.UI.DISPLAY_EXTENDED_OBS_DATA_SET.getValue()*/);
@@ -1166,6 +1277,7 @@ public class Logic extends BaseLogic
     		form.lyrPatientTriage().tabPathway().setHeaderEnabled(isPatientSelected && FormMode.VIEW.equals(form.getMode()));
     		form.lyrPatientTriage().tabSupport().setHeaderEnabled(isPatientSelected && FormMode.VIEW.equals(form.getMode()));
     		form.lyrPatientTriage().tabDischargeDetails().setHeaderEnabled(isPatientSelected && FormMode.VIEW.equals(form.getMode()));
+    		form.lyrPatientTriage().tabPagePrescription().setHeaderEnabled(isPatientSelected && FormMode.VIEW.equals(form.getMode())); //WDEV-18973
     		form.lyrPatientTriage().tabPageOutcome().setHeaderEnabled(isPatientSelected && FormMode.VIEW.equals(form.getMode()));
 			form.lyrPatientTriage().tabPageCoding().setHeaderEnabled(isPatientSelected && FormMode.VIEW.equals(form.getMode()));
 			form.lyrPatientTriage().tabPageHEARTSCoding().setHeaderEnabled(isPatientSelected && FormMode.VIEW.equals(form.getMode()));//wdev-17598
@@ -1201,6 +1313,10 @@ public class Logic extends BaseLogic
 				form.lyrPatientTriage().tabSupport().ccSupportService().setEnabled(isPatientSelected);
     		}
     		//form.lyrPatientTriage().tabDischargeDetails().ccDischarge().setReadOnly(!(isPatientSelected && !isHistoryMode));	
+			else if( form.lyrPatientTriage().tabPagePrescription().isVisible()) //WDEV-18973
+			{
+				form.lyrPatientTriage().tabPagePrescription().ccDischargePrescription().setReadOnly(!(isPatientSelected)); 
+			}
 			else if (form.lyrPatientTriage().tabPageOutcome().isVisible())//WDEV-17337
 			{
 				form.lyrPatientTriage().tabPageOutcome().ccDischargeOutcome().setReadOnly(! (isTriageCreated));
@@ -1240,21 +1356,28 @@ public class Logic extends BaseLogic
 			{
 				
 				form.btnSeenCompleteHCP().setVisible(isPatientSelected && ( form.getLocalContext().getSelectedWaitingPatient().getIsDischarged() == null || Boolean.FALSE.equals(form.getLocalContext().getSelectedWaitingPatient().getIsDischarged())));//WDEV-16816 //WDEV-17177
-				form.btnDTA().setVisible(isPatientSelected && !Boolean.TRUE.equals(form.getLocalContext().getHistoryMode()) && !isQuickRegistrationPatient);
+				form.btnSeenCompleteNurse().setVisible(isPatientSelected && ( form.getLocalContext().getSelectedWaitingPatient().getIsDischarged() == null || Boolean.FALSE.equals(form.getLocalContext().getSelectedWaitingPatient().getIsDischarged())));//WDEV-20429
+				form.btnDTA().setVisible(isPatientSelected && !Boolean.TRUE.equals(form.getLocalContext().getHistoryMode()) && isValidPatIDForAdmission && (form.getLocalContext().getSelectedWaitingPatient().getIsDischarged() == null || Boolean.FALSE.equals(form.getLocalContext().getSelectedWaitingPatient().getIsDischarged())) ); //WDEV-22570 //WDEV-23527
 				form.btnReferToSpecialty().setVisible(isPatientSelected && ( form.getLocalContext().getSelectedWaitingPatient().getIsDischarged() == null || Boolean.FALSE.equals(form.getLocalContext().getSelectedWaitingPatient().getIsDischarged())));//WDEV-17177
 				form.btnMovePatient().setVisible(isPatientSelected && (form.getLocalContext().getSelectedWaitingPatient().getIsDischarged() == null || Boolean.FALSE.equals(form.getLocalContext().getSelectedWaitingPatient().getIsDischarged())));
+				
+				form.btnAmbulanceHandover().setVisible(isPatientSelected && (ModeOfArrival.AMBULANCE.equals(form.getLocalContext().getSelectedWaitingPatient().getAttendance().getModeOfArrival()) && (form.getLocalContext().getSelectedWaitingPatient().getIsDischarged() == null || Boolean.FALSE.equals(form.getLocalContext().getSelectedWaitingPatient().getIsDischarged())))); //WDEV-19284  //WDEV-20555
 			
 			}
-			else if(form.getLocalContext().getShowTriageOrClinicianAssessmentWoklistIsNotNull() && (form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_CLINICIANASSESSMNRWORKLIST) || form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_CLINICIANASSESSMNRWORKLISTWITHSEEN) )) //wdev-17252
+			else if(form.getLocalContext().getShowTriageOrClinicianAssessmentWoklistIsNotNull() && (form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_CLINICIANASSESSMNRWORKLIST) || form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_CLINICIANASSESSMNRWORKLISTWITHSEEN) || form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_CLINICIANASSESSMNRWORKLISTWITHSEENNURSE) )) //wdev-17252 //WDEV-20429
 			{
 				
 				form.btnReferToSpecialty().setVisible(isPatientSelected && ( form.getLocalContext().getSelectedWaitingPatient().getIsDischarged() == null || Boolean.FALSE.equals(form.getLocalContext().getSelectedWaitingPatient().getIsDischarged())));//WDEV-17177
-				form.btnDTA().setVisible(isPatientSelected && !Boolean.TRUE.equals(form.getLocalContext().getHistoryMode()) && !isQuickRegistrationPatient);
+				form.btnDTA().setVisible(isPatientSelected && !Boolean.TRUE.equals(form.getLocalContext().getHistoryMode()) && isValidPatIDForAdmission && (form.getLocalContext().getSelectedWaitingPatient().getIsDischarged() == null || Boolean.FALSE.equals(form.getLocalContext().getSelectedWaitingPatient().getIsDischarged())) ); //WDEV-22570 //WDEV-23527
 				form.btnSeenCompleteHCP().setVisible(isPatientSelected && ( form.getLocalContext().getSelectedWaitingPatient().getIsDischarged() == null || Boolean.FALSE.equals(form.getLocalContext().getSelectedWaitingPatient().getIsDischarged())));//WDEV-16816 //WDEV-17177
+				form.btnSeenCompleteNurse().setVisible(isPatientSelected && ( form.getLocalContext().getSelectedWaitingPatient().getIsDischarged() == null || Boolean.FALSE.equals(form.getLocalContext().getSelectedWaitingPatient().getIsDischarged())));//WDEV-20429
 				form.btnMovePatient().setVisible(isPatientSelected && (form.getLocalContext().getSelectedWaitingPatient().getIsDischarged() == null || Boolean.FALSE.equals(form.getLocalContext().getSelectedWaitingPatient().getIsDischarged())));
+				
+				form.btnAmbulanceHandover().setVisible(isPatientSelected && (ModeOfArrival.AMBULANCE.equals(form.getLocalContext().getSelectedWaitingPatient().getAttendance().getModeOfArrival()) && (form.getLocalContext().getSelectedWaitingPatient().getIsDischarged() == null || Boolean.FALSE.equals(form.getLocalContext().getSelectedWaitingPatient().getIsDischarged())))); //WDEV-19284  //WDEV-20555
 			}
-			form.btnOrder().setVisible(isPatientSelected && ( form.getLocalContext().getSelectedWaitingPatient().getIsDischarged() == null || Boolean.FALSE.equals(form.getLocalContext().getSelectedWaitingPatient().getIsDischarged())));  //wdev-17040
-			form.btnOrder().setEnabled(isPatientSelected && ( form.getLocalContext().getSelectedWaitingPatient().getIsDischarged() == null || Boolean.FALSE.equals(form.getLocalContext().getSelectedWaitingPatient().getIsDischarged())));
+			form.btnMovePatient().setEnabled(form.btnMovePatient().isVisible() && isLoggedInUserMemberOfStaff); //WDEV-18893
+			form.btnOrder().setVisible(isPatientSelected && ( form.getLocalContext().getSelectedWaitingPatient().getIsDischarged() == null || Boolean.FALSE.equals(form.getLocalContext().getSelectedWaitingPatient().getIsDischarged())) && Boolean.TRUE.equals(ConfigFlag.UI.ED_ALLOW_ORDERING.getValue()));  //wdev-17040 //WDEV-19231 
+			form.btnOrder().setEnabled(isPatientSelected && ( form.getLocalContext().getSelectedWaitingPatient().getIsDischarged() == null || Boolean.FALSE.equals(form.getLocalContext().getSelectedWaitingPatient().getIsDischarged())) && Boolean.TRUE.equals(ConfigFlag.UI.ED_ALLOW_ORDERING.getValue()));
 			form.btnStartTriage().setVisible(isPatientSelected && ( form.getLocalContext().getSelectedWaitingPatient().getTriageDetails() == null && !Boolean.TRUE.equals(form.getLocalContext().getSelectedWaitingPatient().getIsDischarged()))); 	//wdev-17230
 			form.btnStartTriage().setEnabled(isPatientSelected && ( form.getLocalContext().getSelectedWaitingPatient().getTriageDetails() == null && !Boolean.TRUE.equals(form.getLocalContext().getSelectedWaitingPatient().getIsDischarged())));	//wdev-17230
 			
@@ -1296,9 +1419,44 @@ public class Logic extends BaseLogic
 		//WDEV-16174
 		form.lnkReturnToList().setVisible(FormMode.VIEW.equals(form.getMode()) && form.getLocalContext().getisFormOpenedFromOtherFormIsNotNull() && form.getLocalContext().getisFormOpenedFromOtherForm());
 		
-		form.lyrPatientTriage().tabNotes().setHeaderVisible(true);//WDEV-16791
+		form.lyrPatientTriage().tabNotes().setHeaderVisible(!tabDisabled(NOTES_TAB));//WDEV-16791
 		form.lyrPatientTriage().tabNotes().setHeaderEnabled(isPatientSelected && FormMode.VIEW.equals(form.getMode()));//WDEV-16791
+
+		//WDEV-21142
+		if(disableObsTabs())
+		{
+			form.lyrPatientTriage().tabObs().setHeaderVisible(false);
+			form.lyrPatientTriage().tabObs2().setHeaderVisible(false);
+		}
+	
+	}
+	
+	//WDEV-21142
+	private boolean disableObsTabs()
+	{
+		Integer patientAge = form.getGlobalContext().Core.getPatientShortIsNotNull() ? form.getGlobalContext().Core.getPatientShort().calculateAge() : null;
+		if(patientAge != null && patientAge <= ConfigFlag.GEN.PAEDIATRIC_AGE.getValue() && Boolean.TRUE.equals(ConfigFlag.GEN.ED_OBSERVATIONS_HIDE_VITAL_SIGNS_FOR_PAEDIATRICS.getValue()))
+			return true;
 		
+		return false;
+	}
+
+	private boolean tabDisabled(int obsTab)
+	{
+		if (form.getLocalContext().getTabsConfig() == null || (form.getLocalContext().getTabsConfig() != null && (form.getLocalContext().getTabsConfig().getAvailableTabs() == null || form.getLocalContext().getTabsConfig().getAvailableTabs().size() == 0)))
+			return false;
+		
+		for (int i = 0; i < form.getLocalContext().getTabsConfig().getAvailableTabs().size(); i++)
+		{
+			TriageTabs tab = form.getLocalContext().getTabsConfig().getAvailableTabs().get(i);
+			
+			if (tab.getID() == obsTab)
+			{
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 	@Override
@@ -1341,8 +1499,11 @@ public class Logic extends BaseLogic
 	{
 		form.getGlobalContext().Emergency.setNewTriageComponentOpenForm(null);
 		//boolean hasMedicInterventionStartDateTime = ((form.getLocalContext().getSelectedWaitingPatient() != null && form.getLocalContext().getSelectedWaitingPatient().getTriageDetails() != null && form.getLocalContext().getSelectedWaitingPatient().getTriageDetails().getMedicInterventionStartDateTimeIsNotNull()) ? true : false);
+		
+		/*WDEV-22171
 		if( form.getLocalContext().getShowTriageOrClinicianAssessmentWoklistIsNotNull() && (form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_TRIAGE) || form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_TRIAGE_FROM_TRACKING) ) )  //wdev-17405
 		{
+		*/
 			if(form.getLocalContext().getSelectedWaitingPatient() == null)
 				return;
 			
@@ -1352,101 +1513,68 @@ public class Logic extends BaseLogic
 	    			open();
 			}*/
 			
-			form.getLocalContext().setOldTrackingArea(form.getLocalContext().getSelectedWaitingPatient().getCurrentArea());
-			engine.open(form.getForms().Emergency.SendToAreaDialog, new Object[] {Boolean.TRUE});
+			if (Boolean.TRUE.equals(ConfigFlag.UI.VALIDATE_TRIAGE_AND_DISPLAY_PAIN_SCALE_MANDATORY_MESSAGE.getValue()))//WDEV-19877 
+			{
+    			//WDEV-18994 - start
+    			// if triage form is selected ad Move button pressed: if the triage was stared and no active VitalSign.Pain record exists for
+    			// the current care context the move process will be stopped
+    			Boolean hasPainScaleBeenrecorded = domain.wasPainScaleRecordedForCurrentCareContext(form.getGlobalContext().Core.getCurrentCareContext());
+    			if (!Boolean.TRUE.equals(hasPainScaleBeenrecorded) && 
+    				form.getLocalContext().getSelectedWaitingPatientIsNotNull() && form.getLocalContext().getSelectedWaitingPatient().getTriageDetailsIsNotNull() &&
+    				form.getLocalContext().getSelectedWaitingPatient().getTriageDetails().getTriageStartDateTimeIsNotNull())
+    			{
+    				engine.showMessage("No Pain Scale has been recorded against the Triage record.","Error" ,MessageButtons.OK, MessageIcon.ERROR);
+    				return;
+    			}
+    			
+    			if (form.getLocalContext().getSelectedWaitingPatientIsNotNull() && (!form.getLocalContext().getSelectedWaitingPatient().getTriageDetailsIsNotNull() ||
+    				(form.getLocalContext().getSelectedWaitingPatient().getTriageDetailsIsNotNull() && 
+    				(!form.getLocalContext().getSelectedWaitingPatient().getTriageDetails().getTriageStartDateTimeIsNotNull() || !form.getLocalContext().getSelectedWaitingPatient().getTriageDetails().getCurrentTriageAssessmentIsNotNull()))))
+    			{
+    				form.getLocalContext().setMessageBoxIdForNotCompletedTriage(engine.showMessage("Do you wish to proceed in moving the patient to a new area without completing a Triage Protocol?", "" , MessageButtons.YESNO, MessageIcon.QUESTION));
+    				return;
+    			}
+			}
+			
+			movePatient();
+		/*	
 		}
-		else if(form.getLocalContext().getShowTriageOrClinicianAssessmentWoklistIsNotNull() && (form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_CLINICIANASSESSMNRWORKLIST) || form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_CLINICIANASSESSMNRWORKLISTWITHSEEN)))   //wdev-17252
+		else if(form.getLocalContext().getShowTriageOrClinicianAssessmentWoklistIsNotNull() && (form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_CLINICIANASSESSMNRWORKLIST) || form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_CLINICIANASSESSMNRWORKLISTWITHSEEN) || form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_CLINICIANASSESSMNRWORKLISTWITHSEENNURSE) ))   //wdev-17252  //WDEV-20429
 		{
 			if( form.getLocalContext().getSelectedWaitingPatient() != null)	//wdev-17921    		
 				form.getLocalContext().setOldTrackingArea(form.getLocalContext().getSelectedWaitingPatient().getCurrentArea());
-			
+			form.getGlobalContext().Emergency.setDisplayTriageEndTime(false); //WDEV-18994
     		engine.open(form.getForms().Emergency.SendToAreaDialog, new Object[] {Boolean.TRUE});
 		}
+		*/
 	}
 
-	private boolean saveMedicStartTime() 
+	private void movePatient()
 	{
-		
-		if(form.getLocalContext().getSelectedWaitingPatient() == null || form.getLocalContext().getSelectedWaitingPatient().getTriageDetails() == null)
-			return false;
-		
-		if(form.getLocalContext().getSelectedWaitingPatient().getTriageDetails().getMedicInterventionStartDateTime() != null || form.dtimMedicStartTime().getValue() == null)
-			return false;
-		
-		form.getLocalContext().getSelectedWaitingPatient().getTriageDetails().setMedicInterventionStartDateTime(form.dtimMedicStartTime().getValue());
-		String[] errors = form.getLocalContext().getSelectedWaitingPatient().validate(validateUIRules()); //wdev-17295
-		
-		if(errors != null && errors.length > 0)
+		// if triage form is selected + Patient Status = Awaiting To Be Triaged + Traige was Started => 
+		//if Move button pressed: in this situation the  'Triage End Date Time' field will be displayed on Send To Area Dialog
+		if (shouldTriageEndDateTimeBeDisplayed())
 		{
-			engine.showErrors(errors);
-			return false;
+			form.getGlobalContext().Emergency.setDisplayTriageEndTime(true);
+			form.getGlobalContext().Emergency.setTriageCompletedDateTime( form.getLocalContext().getSelectedWaitingPatient().getTriageDetails().getTriageCompletionTime());
+			form.getGlobalContext().Emergency.setStartTriageDateTime(form.getLocalContext().getSelectedWaitingPatient().getTriageDetails().getTriageStartDateTime());
 		}
+		else
+			form.getGlobalContext().Emergency.setDisplayTriageEndTime(false);	
+		//WDEV-18994 - end
 		
-		try 
-		{
-			domain.saveMedicStartTime(form.getLocalContext().getSelectedWaitingPatient());
-		} 
-		catch (StaleObjectException e) 
-		{
-			e.printStackTrace();
-			engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
-			open();
-			return false;
-		}
-		
-		return true;
+		form.getLocalContext().setOldTrackingArea(form.getLocalContext().getSelectedWaitingPatient().getCurrentArea());
+		engine.open(form.getForms().Emergency.SendToAreaDialog, new Object[] {Boolean.TRUE});	
 	}
-	//wdev-17295
-	private String[] validateUIRules()
+
+	private boolean shouldTriageEndDateTimeBeDisplayed()
 	{
-		
-		ArrayList<String> errorList = new ArrayList<String>();
-		
-		if( form.dtimMedicStartTime().isVisible() &&  form.dtimRegistrationTime().getValue() != null && form.dtimMedicStartTime().getValue() != null /*&& form.dtimMedicStartTime().getValue().isLessThan(form.dtimRegistrationTime().getValue())*/)
-		{
-			Date dtMedicStartTime = form.dtimMedicStartTime().getValue().getDate();
-			Time tMedicStartTime = form.dtimMedicStartTime().getValue().getTime();
-			
-			Date dtRegistrationTime = form.dtimRegistrationTime().getValue().getDate();
-			Time tRegistrationTime = form.dtimRegistrationTime().getValue().getTime();
-			
-			if( dtMedicStartTime.isLessThan(dtRegistrationTime))
-				errorList.add("Clinician Start Time cannot be less than Registration End Time");
-			else if( dtMedicStartTime.equals(dtRegistrationTime))
-			{
-				if( tMedicStartTime.isLessThan(tRegistrationTime))
-					errorList.add("Clinician Start Time cannot be less than Registration End Time");
-			}
-		}
-		if( form.dtimMedicStartTime().isVisible() &&  form.dtimTriageStartTime().getValue() != null && form.dtimMedicStartTime().getValue() != null /*&& form.dtimMedicStartTime().getValue().isLessThan(form.dtimTriageStartTime().getValue())*/)
-		{
-			
-			
-			
-			Date dtMedicStartTime = form.dtimMedicStartTime().getValue().getDate();
-			Time tMedicStartTime = form.dtimMedicStartTime().getValue().getTime();
-			
-			Date dtTriageStartTime= form.dtimTriageStartTime().getValue().getDate();
-			Time tTriageStartTime = form.dtimTriageStartTime().getValue().getTime();
-			
-			if( dtMedicStartTime.isLessThan(dtTriageStartTime))
-				errorList.add("Clinician Start Time cannot be less than Triage Start Time");
-			else if( dtMedicStartTime.equals(dtTriageStartTime))
-			{
-				if( tMedicStartTime.isLessThan(tTriageStartTime))
-					errorList.add("Clinician Start Time cannot be less than Triage Start Time");
-			}
-				
-		}
-		if( form.dtimMedicStartTime().isVisible() && form.dtimMedicStartTime().getValue() != null && form.dtimMedicStartTime().getValue().isGreaterThan(new DateTime()))
-		{
-			errorList.add("Clinician Start Time cannot be in the future");
-		}
-
-		
-		return errorList.toArray(new String[errorList.size()]);
+		if (form.getLocalContext().getSelectedWaitingPatientIsNotNull() && form.getLocalContext().getSelectedWaitingPatient().getTriageDetailsIsNotNull() &&
+			form.getLocalContext().getSelectedWaitingPatient().getTriageDetails().getTriageStartDateTimeIsNotNull() &&
+			form.getLocalContext().getSelectedWaitingPatient().getCurrentStatusIsNotNull() && TrackingStatus.WAITING_TO_BE_TRIAGED.equals(form.getLocalContext().getSelectedWaitingPatient().getCurrentStatus().getStatus()))
+				return true;
+		return false;
 	}
-
 
 	private Integer getOrderByIndex(TriagePriority priority)
 	{
@@ -1542,15 +1670,6 @@ public class Logic extends BaseLogic
 	}
 
 	
-	private void clearGlobalContexts() 
-	{
-		form.getGlobalContext().Core.setCurrentCareContext(null);
-		form.getGlobalContext().Core.setEpisodeofCareShort(null);
-		form.getGlobalContext().Core.setPatientShort(null);
-		form.getGlobalContext().Emergency.setTracking(null);
-		form.getGlobalContext().Emergency.setTriage(null);
-	}
-
 	@Override
 	protected void onCcSupportServiceValueChanged()	throws PresentationLogicException 
 	{
@@ -1609,8 +1728,10 @@ public class Logic extends BaseLogic
 		
 		form.getGlobalContext().Emergency.setTriage(form.getLocalContext().getSelectedWaitingPatient().getTriageDetails());		//wdev-17381
 		form.getGlobalContext().Emergency.setTriageProtocolAssessment(form.getLocalContext().getSelectedWaitingPatient().getTriageDetails().getCurrentTriageAssessment());
-		engine.open(form.getForms().Emergency.TriageProtocolAssessment);
+		engine.open(form.getForms().Emergency.TriageProtocolAssessment, new Object[] {TriageAssessmentAction.EDIT, Boolean.TRUE});
 	}
+	
+	
 	//wdev-17230
 	private void onBtnStartTriageProblemCall()
 	{
@@ -1619,7 +1740,7 @@ public class Logic extends BaseLogic
 			form.getGlobalContext().Emergency.setNewTriageComponentOpenForm(null);
 			form.getGlobalContext().Emergency.setTriage(form.getLocalContext().getSelectedWaitingPatient().getTriageDetails());		//wdev-17381
 			form.getGlobalContext().Emergency.setTriageProtocolAssessment(form.getLocalContext().getSelectedWaitingPatient().getTriageDetails().getCurrentTriageAssessment()); 
-			engine.open(form.getForms().Emergency.TriageProtocolAssessment,new Object[] {Boolean.TRUE});
+			engine.open(form.getForms().Emergency.TriageProtocolAssessment, new Object[] {TriageAssessmentAction.ADD, Boolean.TRUE});
 		}
 	}
 
@@ -1630,12 +1751,12 @@ public class Logic extends BaseLogic
 		{
 			case GenForm.ContextMenus.EmergencyNamespace.OtherProblemsTriageMenu.ADD:
 				form.getGlobalContext().Emergency.setTriageProtocolAssessment(null);
-				engine.open(form.getForms().Emergency.TriageProtocolAssessment);
+				engine.open(form.getForms().Emergency.TriageProtocolAssessment, new Object[] {TriageAssessmentAction.ADD});
 			break;
 			
 			case GenForm.ContextMenus.EmergencyNamespace.OtherProblemsTriageMenu.EDIT:
 				form.getGlobalContext().Emergency.setTriageProtocolAssessment(form.grdProblem().getValue());
-				engine.open(form.getForms().Emergency.TriageProtocolAssessment);
+				engine.open(form.getForms().Emergency.TriageProtocolAssessment, new Object[] {TriageAssessmentAction.EDIT});
 			break;
 		}
 	}
@@ -1680,6 +1801,7 @@ public class Logic extends BaseLogic
 			{
 				form.getLocalContext().setSelectedWaitingPatient(domain.geTrackingForTriageByAttendanceId((EmergencyAttendanceForTriageLiteVo) form.grdAttendanceHistory().getValue()));
 				form.getGlobalContext().Emergency.setTracking(form.getLocalContext().getSelectedWaitingPatient()); //WDEV-17739
+				form.getGlobalContext().Emergency.setTriage(form.getLocalContext().getSelectedWaitingPatient().getTriageDetails());		//wdev-18332
 				//form.dyngrdPatients().setValue(form.getLocalContext().getSelectedWaitingPatient());
 				
 				populateScreenFromData();
@@ -1697,6 +1819,7 @@ public class Logic extends BaseLogic
 			{
 				form.getLocalContext().setSelectedWaitingPatient(domain.geTrackingForTriageByAttendanceId((EmergencyAttendanceForTriageLiteVo) form.grdAttendanceHistory().getValue()));
 				//form.dyngrdPatients().setValue(form.getLocalContext().getSelectedWaitingPatient());
+				form.getGlobalContext().Emergency.setTriage(form.getLocalContext().getSelectedWaitingPatient().getTriageDetails());		//wdev-18332
 				form.getLocalContext().setCurrentAttendance(null);
 				
 				populateScreenFromData();
@@ -1707,11 +1830,20 @@ public class Logic extends BaseLogic
 			{
 				form.getLocalContext().setHistoryMode(false);
 				form.grdAttendanceHistory().setValue(form.getLocalContext().getSelectedWaitingPatient().getAttendance());
+				form.getGlobalContext().Emergency.setTriage(form.getLocalContext().getSelectedWaitingPatient().getTriageDetails());		//wdev-18332
 			}
 			
 			//WDEV-17745
 			form.getLocalContext().setCurrentEvent(EDAssessmentComponent.START_TIMER);
 			form.fireCustomControlValueChanged();
+		}
+		
+		if (form.getLocalContext().getMessageBoxIdForNotCompletedTriageIsNotNull() && form.getLocalContext().getMessageBoxIdForNotCompletedTriage().equals(messageBoxId))
+		{
+			if(DialogResult.YES.equals(result))
+			{
+				movePatient();
+			}
 		}
 	}
 
@@ -1732,15 +1864,16 @@ public class Logic extends BaseLogic
 			if (DialogResult.OK.equals(result))
 			{
 				
+				if (changeStatusOnMove()) //WDEV-22858
 					saveTrackingWithWaitingToBeSeenStatus();
 
-					// WDEV-17428
-					if (Boolean.TRUE.equals(form.getLocalContext().getFinishedTriage()))
-					{
-						form.getLocalContext().setFinishedTriage(null);
-						engine.open(form.getForms().Core.PrintReport);
-					}
-					// clearGlobalContexts(); //WDEV-17623
+				// WDEV-17428
+				if (Boolean.TRUE.equals(form.getLocalContext().getFinishedTriage()))
+				{
+					form.getLocalContext().setFinishedTriage(null);
+					engine.open(form.getForms().Core.PrintReport);
+				}
+				// clearGlobalContexts(); //WDEV-17623
 				
 			}
 		}
@@ -1748,6 +1881,22 @@ public class Logic extends BaseLogic
 		
 		open();
 	}
+	
+	private boolean changeStatusOnMove()
+	{
+		if(form.getLocalContext().getSelectedWaitingPatient() == null)
+			return false;
+		
+		TriageForClinicianWorklistVo triageDetails = form.getLocalContext().getSelectedWaitingPatient().getTriageDetails();
+		TrackingAttendanceStatusVo currentTrackingStatus = form.getLocalContext().getSelectedWaitingPatient().getCurrentStatus();
+		
+		if (triageDetails != null && triageDetails.getCurrentTriagePriority() != null && currentTrackingStatus != null && TrackingStatus.WAITING_TO_BE_TRIAGED.equals(currentTrackingStatus.getStatus()))
+			return true;
+		
+		return false;
+		
+	}
+	
 	private void saveTrackingWithWaitingToBeSeenStatus() 
 	{
 		if(form.getLocalContext().getSelectedWaitingPatient() == null)
@@ -1789,11 +1938,12 @@ public class Logic extends BaseLogic
 		if(tracking == null)
 			return null;
 		
-		if( tracking.getTriageDetailsIsNotNull())  //wdev-17937
+		if( tracking.getTriageDetailsIsNotNull() && tracking.getCurrentAreaIsNotNull())  //wdev-17937 //WDEV-19358 
 			tracking.setCurrentStatus(createTrackingStatus(TrackingStatus.WAITING_TO_BE_SEEN_BY_A_MEDIC));
-		//wdev-16751
-		if( tracking.getTriageDetailsIsNotNull() && !tracking.getTriageDetails().getTriageCompletionTimeIsNotNull() )
-			tracking.getTriageDetails().setTriageCompletionTime(new DateTime());
+		
+		//wdev-16751 WDEV-18994 WDEV-22171
+		if( tracking.getTriageDetailsIsNotNull() && form.getGlobalContext().Emergency.getTriageCompletedDateTime() != null)
+			tracking.getTriageDetails().setTriageCompletionTime(form.getGlobalContext().Emergency.getTriageCompletedDateTime());
 		//--------
 		
 		return tracking;
@@ -1808,28 +1958,12 @@ public class Logic extends BaseLogic
 		status.setAttendance(form.getGlobalContext().Core.getCurrentCareContext());
 		status.setTrackingArea(form.getLocalContext().getOldTrackingArea());
 		status.setStatusDatetime(new DateTime());
-		
-		Object mos = domain.getMosUser();
-		if(mos instanceof MemberOfStaffRefVo)
-		{
-			status.setCreatedBy((MemberOfStaffRefVo) mos);
-		}
-		
+		status.setCreatedBy(form.getLocalContext().getLoggedMOS());
 		status.setStatus(waitingToBeSeenByAMedic);
-		
 		status.setPrevStatus((form.getLocalContext().getSelectedWaitingPatient()!=null && form.getLocalContext().getSelectedWaitingPatient().getCurrentStatus()!=null  ) ? form.getLocalContext().getSelectedWaitingPatient().getCurrentStatus().getStatus() : null);//WDEV-16777
 	
 		return status;
 	}
-	private boolean hasCurentTrackingPriority() 
-	{
-		if(form.getLocalContext().getSelectedWaitingPatient() != null && form.getLocalContext().getSelectedWaitingPatient().getTriageDetails() != null && form.getLocalContext().getSelectedWaitingPatient().getTriageDetails().getCurrentTriagePriority() != null)
-			return true;
-		
-		return false;
-	}
-
-
 	//WDEV-15996
 	@Override
 	protected void onFormClosing(CancelArgs args) throws PresentationLogicException 
@@ -1974,14 +2108,18 @@ public class Logic extends BaseLogic
 		//wdev-15930
 		form.getLocalContext().setAllocatedNurse(null);
 		
-		if(domain.getHcpUser() instanceof Hcp)
+		if(form.getLocalContext().getLoggedHCPObject() instanceof Hcp)
 		{
-			Hcp temp = (Hcp)domain.getHcpUser();
-			if(temp != null)
+			Hcp temp = (Hcp) form.getLocalContext().getLoggedHCPObject();
+		
+			HcpDisType hcptype =getParentNodeHcp(temp.getHcpType()); 
+			if( hcptype != null && hcptype.equals(HcpDisType.NURSING))
 			{
-				HcpDisType hcptype =getParentNodeHcp(temp.getHcpType()); 
-				if( hcptype != null && hcptype.equals(HcpDisType.NURSING))
-					form.getLocalContext().setAllocatedNurse(new SeenByHCPVo());//WDEV-16816
+				form.getLocalContext().setAllocatedNurse(new SeenByHCPVo());//WDEV-16816
+			}
+			else if(hcptype != null && hcptype.equals(HcpDisType.MEDICAL))
+			{
+				form.getLocalContext().setAllocatedMedic(new SeenByHCPVo());
 			}
 		}
 		//---------
@@ -1997,36 +2135,29 @@ public class Logic extends BaseLogic
 			if( tempVo != null)
 			{
 				patmedVo = new PatientMedsVo();
-			
-
 				patmedVo.setPatient(form.getLocalContext().getSelectedWaitingPatientIsNotNull() ? form.getLocalContext().getSelectedWaitingPatient().getPatient():null);
 				patmedVo.setAttendance(form.getLocalContext().getSelectedWaitingPatientIsNotNull() && form.getLocalContext().getSelectedWaitingPatient().getAttendanceIsNotNull() ? form.getLocalContext().getSelectedWaitingPatient().getAttendance().getCareContext():null);
 				patmedVo.setEpisode(form.getLocalContext().getSelectedWaitingPatientIsNotNull() && form.getLocalContext().getSelectedWaitingPatient().getEpisodeIsNotNull() ? form.getLocalContext().getSelectedWaitingPatient().getEpisode().getEpisodeOfCare():null);
-	
 				patmedVo.setMedicationDetailsFromGP(tempVo.getExternalMedDetails());		
-				
-				
 	
 				AuthoringInformationVo authoringInfo = new AuthoringInformationVo();
-	
 				authoringInfo.setAuthoringDateTime(new DateTime());
 	
-				Object hcp = domain.getHcpUser();
-				if (hcp instanceof HcpLiteVo)
+				if (form.getLocalContext().getLoggedHCPObject() instanceof HcpLiteVo)
 				{
-					authoringInfo.setAuthoringHcp((HcpLiteVo) domain.getHcpUser());
+					authoringInfo.setAuthoringHcp((HcpLiteVo) form.getLocalContext().getLoggedHCPObject());
 				}
 	
 				patmedVo.setAuthoringInformation(authoringInfo);
 			}
 		}
 		//------
-		if( saveTracking(patmedVo))	//wdev-17825
+		if(saveTracking(patmedVo))	//wdev-17825
 		{
 			open();
-			
 		}
 	}
+	
 	private boolean saveTracking( PatientMedsVo patmedVo) 
 	{
 		if(form.getLocalContext().getSelectedWaitingPatient() == null)
@@ -2038,8 +2169,8 @@ public class Logic extends BaseLogic
 			return false;
 		
 		//wdev-15930
-		SeenByHCPVo allocNurseVo = populateAllocatedNurse();	//wdev-15930 //WDEV-16816
-		form.getLocalContext().setAllocatedNurse(allocNurseVo) ;//WDEV-16816
+		SeenByHCPVo allocHCPVo = populateAllocatedHCP();	//wdev-15930 //WDEV-16816
+		//form.getLocalContext().setAllocatedNurse(allocNurseVo) ;//WDEV-16816
 				
 		String[] errors = tracking.validate();	
 		if(errors != null && errors.length > 0)
@@ -2050,7 +2181,7 @@ public class Logic extends BaseLogic
 		
 		try 
 		{
-			form.getLocalContext().setSelectedWaitingPatient(domain.saveTracking(tracking,form.getLocalContext().getAllocatedNurse(),patmedVo)); //wdev-15930 //WDEV-16816,wdev-17825
+			form.getLocalContext().setSelectedWaitingPatient(domain.saveTracking(tracking, allocHCPVo, patmedVo)); //wdev-15930 //WDEV-16816,wdev-17825
 		} 
 		catch (StaleObjectException e) 
 		{
@@ -2087,29 +2218,45 @@ public class Logic extends BaseLogic
 	}
 
 	//wdev-15930 //WDEV-16816
-	private SeenByHCPVo populateAllocatedNurse()
+	private SeenByHCPVo populateAllocatedHCP()
 	{
-		if( form.getLocalContext().getAllocatedNurseIsNotNull())
+		if(form.getLocalContext().getAllocatedNurseIsNotNull() || form.getLocalContext().getAllocatedMedicIsNotNull())
 		{
-			SeenByHCPVo tempVo = form.getLocalContext().getAllocatedNurse();
+			SeenByHCPVo tempVo = null;
+			
+			if(form.getLocalContext().getAllocatedNurseIsNotNull())
+			{
+				tempVo = form.getLocalContext().getAllocatedNurse();
+			}
+			else if(form.getLocalContext().getAllocatedMedicIsNotNull())
+			{
+				tempVo = form.getLocalContext().getAllocatedMedic();
+			}
+			
 			tempVo.setPatient(form.getLocalContext().getSelectedWaitingPatient().getPatient());
 			tempVo.setAttendance(form.getLocalContext().getSelectedWaitingPatient().getAttendance().getCareContext());
 			tempVo.setEpisode(form.getLocalContext().getSelectedWaitingPatient().getEpisode().getEpisodeOfCare());
 			tempVo.setTrackingArea(form.getLocalContext().getSelectedWaitingPatient().getCurrentArea());
 			tempVo.setAllocatedDateTime(new DateTime());
 			tempVo.setSeenDateTime(new DateTime());
-			if(domain.getHcpUser() instanceof NurseVo)
+			
+			if(form.getLocalContext().getLoggedHCPObject() instanceof NurseVo)
 			{
-				NurseVo tempHcpVo = (NurseVo) domain.getHcpUser();
+				NurseVo tempHcpVo = (NurseVo) form.getLocalContext().getLoggedHCPObject();
 				tempVo.setAllocatedNurse(tempHcpVo);
+			}
+			else if(form.getLocalContext().getLoggedHCPObject() instanceof MedicVo)
+			{
+				MedicVo tempHcpVo = (MedicVo) form.getLocalContext().getLoggedHCPObject();
+				tempVo.setAllocatedMedic(tempHcpVo);
 			}
 			
 			return tempVo;
-			
 		}
 		
 		return null;
 	}
+	
 	//wdev-15930
 	private HcpDisType getParentNodeHcp(HcpDisType hcpvo)
 	{
@@ -2132,8 +2279,7 @@ public class Logic extends BaseLogic
 		form.getGlobalContext().Emergency.setMainPresentingProblem(form.qmbPresentingProblem().getValue());
 		form.getGlobalContext().Emergency.setTriageProtocolAssessment(null);
 		
-		engine.open(form.getForms().Emergency.TriageProtocolAssessment, new Object[] {form.getLocalContext().getSelectedWaitingPatient().getEpisode().getPresentingComplaint()});
-		
+		engine.open(form.getForms().Emergency.TriageProtocolAssessment, new Object[] {TriageAssessmentAction.ADD, form.getLocalContext().getSelectedWaitingPatient().getEpisode().getPresentingComplaint()});
 	}
 
 	//wdev-16751
@@ -2166,66 +2312,119 @@ public class Logic extends BaseLogic
 	private void initializeControls() 
 	{
 		//WDEV-16791
-		if( form.getLocalContext().getShowTriageOrClinicianAssessmentWoklistIsNotNull() && (form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_TRIAGE) || form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_TRIAGE_FROM_TRACKING) ))  //wdev-17405
+		if( form.getLocalContext().getShowTriageOrClinicianAssessmentWoklistIsNotNull() 
+				&& (form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_TRIAGE) 
+						|| form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_TRIAGE_FROM_TRACKING) ))  //wdev-17405
 		{
 			form.dtimMedicStartTime().setVisible(false);
 			form.lbl5().setVisible(false);
 			form.lbl12().setVisible(false);
 			form.btnSeenCompleteHCP().setVisible(true);//WDEV-16816
+			form.btnSeenCompleteNurse().setVisible(true);//WDEV-20429
 			form.btnDTA().setVisible(true);
+			form.btnAmbulanceHandover().setVisible(true); //WDEV-19284
 			
 			form.lyrPatientTriage().tabObs().setHeaderVisible(false);
-			form.btnMovePatient().setText("Save + Move");
-			
-			form.lyrPatientTriage().showtabNotes();//WDEV-17498
+			form.btnMovePatient().setText(" Save + Move");
 			
 			form.lyrPatientTriage().tabObs().setCaption("Obs");
 			form.lyrPatientTriage().tabObs2().setCaption("Obs");
 			form.lyrPatientTriage().tabPathway().setCaption("Pathway");
-			form.lyrPatientTriage().tabSysReview().setCaption("System Review");
-			form.lyrPatientTriage().tabPatientMeds().setCaption("Patient Meds");
+			form.lyrPatientTriage().tabWoundImages().setCaption("Images"); //WDEV-19099
+			form.lyrPatientTriage().tabSysReview().setCaption(tabDisabled(WOUND_IMAGES_TAB) ? "System Review" : "Sys. Review");//WDEV-19099
+			form.lyrPatientTriage().tabPatientMeds().setCaption("Meds");
 			form.lyrPatientTriage().tabRelevantPMH().setCaption("PMH");
 			form.lyrPatientTriage().tabSupport().setCaption("Support");
-			form.lyrPatientTriage().tabDischargeDetails().setCaption("Discharge Information");//WDEV-17920
+			form.lyrPatientTriage().tabDischargeDetails().setCaption("Disch. Info");//WDEV-17920 //WDEV-19099
 			
 		}
-		else if(form.getLocalContext().getShowTriageOrClinicianAssessmentWoklistIsNotNull() && (form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_CLINICIANASSESSMNRWORKLIST) || form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_CLINICIANASSESSMNRWORKLISTWITHSEEN) )) //wdev-17252
+		else if(form.getLocalContext().getShowTriageOrClinicianAssessmentWoklistIsNotNull() 
+				&& (form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_CLINICIANASSESSMNRWORKLIST) 
+						|| form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_CLINICIANASSESSMNRWORKLISTWITHSEEN)
+						|| form.getLocalContext().getShowTriageOrClinicianAssessmentWoklist().equals(DISPLAY_CLINICIANASSESSMNRWORKLISTWITHSEENNURSE))) //wdev-17252 //WDEV-20429
 		{
 			form.dtimMedicStartTime().setVisible(true);
 			form.lbl5().setVisible(true);
 			form.lbl12().setVisible(true);
 			form.btnSeenCompleteHCP().setVisible(true);//WDEV-16816
+			form.btnSeenCompleteNurse().setVisible(true);//WDEV-20429
 			form.btnDTA().setVisible(true);
+			form.btnAmbulanceHandover().setVisible(true); //WDEV-19284
 			
 			form.lyrPatientTriage().tabObs().setHeaderVisible(false);
 			form.qmbPresentingProblem().setVisible(false);
-			form.lyrPatientTriage().showtabNotes();
+			
 			form.lyrPatientTriage().tabNotes().setCaption("Notes");
 			form.lyrPatientTriage().tabObs().setCaption("Obs");
 			form.lyrPatientTriage().tabObs2().setCaption("Obs");
 			form.lyrPatientTriage().tabPathway().setCaption("ICP");
-			form.lyrPatientTriage().tabSysReview().setCaption("System Review");
-			form.lyrPatientTriage().tabPatientMeds().setCaption("Patient Meds");
+			form.lyrPatientTriage().tabSysReview().setCaption(tabDisabled(WOUND_IMAGES_TAB) ? "System Review" : "Sys. Review"); //WDEV-19099
+			form.lyrPatientTriage().tabWoundImages().setCaption("Images"); //WDEV-19099
+			form.lyrPatientTriage().tabPatientMeds().setCaption("Meds");
 			form.lyrPatientTriage().tabRelevantPMH().setCaption("PMH");
 			form.lyrPatientTriage().tabSupport().setCaption("Support");
-			form.lyrPatientTriage().tabDischargeDetails().setCaption("Discharge Information");//WDEV-17920
-			form.lyrPatientTriage().tabSysReview().setHeaderVisible(true);
-			form.btnMovePatient().setText("Save + Move");
+			form.lyrPatientTriage().tabDischargeDetails().setCaption("Disch. Info");//WDEV-17920
+			form.lyrPatientTriage().tabSysReview().setHeaderVisible(!tabDisabled(SYS_REVIEW_TAB));
+			form.lyrPatientTriage().tabPagePrescription().setCaption(tabDisabled(WOUND_IMAGES_TAB) ? "Prescription" :"Prescr.");//WDEV-19099
+			form.btnMovePatient().setText(" Save + Move");
 		}
-		if (ConfigFlag.UI.USE_HEARTS_CONTRACTING.getValue())
-		{
-			form.lyrPatientTriage().tabPageHEARTSCoding().setHeaderVisible(true);
-			form.lyrPatientTriage().tabPageCoding().setHeaderVisible(false);
-		}
-		else
-		{
-			form.lyrPatientTriage().tabPageHEARTSCoding().setHeaderVisible(false);
-			form.lyrPatientTriage().tabPageCoding().setHeaderVisible(true);
-		}
+		
+		showRelevantTab();
+		
+		form.lyrPatientTriage().tabPageHEARTSCoding().setHeaderVisible(!tabDisabled(CODING_TAB) && ConfigFlag.UI.USE_HEARTS_CONTRACTING.getValue());
+		form.lyrPatientTriage().tabPageCoding().setHeaderVisible(!tabDisabled(CODING_TAB) && !ConfigFlag.UI.USE_HEARTS_CONTRACTING.getValue());
 			
 	}
 
 	
+	private void showRelevantTab()
+	{
+		if (form.lyrPatientTriage().tabNotes().isHeaderVisible())
+			form.lyrPatientTriage().showtabNotes();//WDEV-17498
+		
+		else if (form.lyrPatientTriage().tabObs().isHeaderVisible())
+			form.lyrPatientTriage().showtabObs();
+		
+		else if (form.lyrPatientTriage().tabObs2().isHeaderVisible())
+			form.lyrPatientTriage().showtabObs2();
+		
+		else if (form.lyrPatientTriage().tabPathway().isHeaderVisible())
+			form.lyrPatientTriage().showtabPathway();
+		
+		else if (form.lyrPatientTriage().tabSysReview().isHeaderVisible())
+			form.lyrPatientTriage().showtabSysReview();
+		
+		else if (form.lyrPatientTriage().tabWoundImages().isHeaderVisible())
+			form.lyrPatientTriage().showtabWoundImages();
+		
+		else if (form.lyrPatientTriage().tabPatientMeds().isHeaderVisible())
+			form.lyrPatientTriage().showtabPatientMeds();
+		
+		else if (form.lyrPatientTriage().tabRelevantPMH().isHeaderVisible())
+			form.lyrPatientTriage().showtabRelevantPMH();
+		
+		else if (form.lyrPatientTriage().tabSupport().isHeaderVisible())
+			form.lyrPatientTriage().showtabSupport();
+		
+		else if (form.lyrPatientTriage().tabDischargeDetails().isHeaderVisible())
+			form.lyrPatientTriage().showtabDischargeDetails();
+		
+		else if (form.lyrPatientTriage().tabPagePrescription().isHeaderVisible())
+			form.lyrPatientTriage().showtabPagePrescription();
+		
+		else if (form.lyrPatientTriage().tabPageOutcome().isHeaderVisible())
+			form.lyrPatientTriage().showtabPageOutcome();
+		
+		else if (form.lyrPatientTriage().tabPageCoding().isHeaderVisible())
+			form.lyrPatientTriage().showtabPageCoding();
+		
+		else if (form.lyrPatientTriage().tabPageHEARTSCoding().isHeaderVisible())
+			form.lyrPatientTriage().showtabPageHEARTSCoding();
+		//if none of the tabs should be visible, hide the layer
+		else form.lyrPatientTriage().hide();
+		
+	}
+
 	private void populateHEARTSCodinglabels() 
 	{
 		//WDEV-18313
@@ -2279,13 +2478,6 @@ public class Logic extends BaseLogic
 			
 			form.getLocalContext().setCurrentEvent(FormMode.VIEW.equals(dischOutcomeMode) ? EDAssessmentComponent.START_TIMER : EDAssessmentComponent.STOP_TIMER);//WDEV-17337
 			
-			Boolean isDischarged = form.lyrPatientTriage().tabPageOutcome().ccDischargeOutcome().getRecordedDischarge();
-			
-			//if(isDischarged)
-			//{
-				//clearGlobalContexts();
-				//form.getLocalContext().setTrackingFromArgument(null);
-			//}
 			
 			if(FormMode.VIEW.equals(form.getMode()))
 			{
@@ -2474,8 +2666,16 @@ public class Logic extends BaseLogic
 		form.btnDTA().setImage(form.getImages().Emergency.DTA16);
 		form.btnReferToSpecialty().setImage(form.getImages().Emergency.REFERTO16);
 		form.btnSeenCompleteHCP().setImage(form.getImages().Emergency.SEENCOMPLETE16);
+		form.btnSeenCompleteNurse().setImage(form.getImages().Core.FirstAidKit16); //WDEV-20429
 		form.btnMovePatient().setImage(form.getImages().Emergency.MOVE16);
+		form.btnAmbulanceHandover().setImage(form.getImages().Emergency.Ambulance20); //WDEV-19284
 		
+		//WDEV-19242 
+		if (ConfigFlag.GEN.ED_DTA_ADMISSION_FUNCTIONALITY.getValue().equals("PENDING"))
+		{
+			form.btnDTA().setText("  Bed Request");
+			form.btnDTA().setTooltip("Bed Request");
+		}		
 	}
 
 	//wdev-17381
@@ -2559,5 +2759,57 @@ public class Logic extends BaseLogic
 		FormMode vitalSignMode = form.lyrPatientTriage().tabWoundImages().ccEDAssessmentWoundImages().getMode();
 		form.setMode(vitalSignMode);
 		
+	}
+
+	//WDEV-18973
+	protected void onCcDischargePrescriptionValueChanged()	throws PresentationLogicException
+	{
+		if (EdAssessment_CustomControlsEvents.SAVE.equals(form.lyrPatientTriage().tabPagePrescription().ccDischargePrescription().getSelectedEvent()) || EdAssessment_CustomControlsEvents.CANCEL.equals(form.lyrPatientTriage().tabPagePrescription().ccDischargePrescription().getSelectedEvent()) || EdAssessment_CustomControlsEvents.FORMMODECHANGED.equals(form.lyrPatientTriage().tabPagePrescription().ccDischargePrescription().getSelectedEvent()))
+		{
+			form.lyrPatientTriage().tabPagePrescription().ccDischargePrescription().resetSelectedEvent();
+			refreshOtherDetails();
+		}
+		
+		FormMode prescriptionTabMode = form.lyrPatientTriage().tabPagePrescription().ccDischargePrescription().getMode();
+		form.setMode(prescriptionTabMode);
+		
+		form.getLocalContext().setCurrentEvent(FormMode.VIEW.equals(prescriptionTabMode) ? EDAssessmentComponent.START_TIMER : EDAssessmentComponent.STOP_TIMER);		
+		
+	}
+
+	@Override
+	protected void onBtnRetriageClick() throws PresentationLogicException
+	{
+		form.getGlobalContext().Emergency.setNewTriageComponentOpenForm(null);
+		if(form.getLocalContext().getSelectedWaitingPatient() == null || form.getLocalContext().getSelectedWaitingPatient().getTriageDetails() == null || form.getLocalContext().getSelectedWaitingPatient().getTriageDetails().getCurrentTriageAssessment() == null)
+			return;
+		
+		
+		form.getGlobalContext().Emergency.setTriage(form.getLocalContext().getSelectedWaitingPatient().getTriageDetails());		//wdev-17381
+		
+		form.getGlobalContext().Emergency.setTriageProtocolAssessment(form.getLocalContext().getSelectedWaitingPatient().getTriageDetails().getCurrentTriageAssessment());
+		engine.open(form.getForms().Emergency.TriageProtocolAssessment, new Object[] {TriageAssessmentAction.RETRIAGE});
+	}
+
+	
+	//WDEV-20429
+	@Override
+	protected void onBtnSeenCompleteNurseClick() throws PresentationLogicException
+	{
+		form.getGlobalContext().Emergency.setNewTriageComponentOpenForm(null);
+		engine.open(form.getForms().Emergency.EDSeenByNurseAndCompleteDialog);
+	}
+
+	//WDEV-19284
+	@Override
+	protected void onBtnAmbulanceHandoverClick() throws PresentationLogicException
+	{
+		engine.open(form.getForms().Emergency.AmbulanceDetails, new Object[] {FormMode.EDIT,form.getLocalContext().getSelectedWaitingPatient()!=null ? form.getLocalContext().getSelectedWaitingPatient().getAttendance() : null});
+	}
+
+	//WDEV-21349
+	protected void onBtnSafeguardingClick() throws PresentationLogicException 
+	{
+		engine.open(form.getForms().Emergency.Safeguarding);	
 	}
 }

@@ -1,0 +1,223 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:37 -->
+<hibernate-mapping>
+	<class name="ims.clinical.domain.objects.SurgicalAuditProcedureDetails" table="shcl_surgicalaudpd" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: patient -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="patient" class="ims.core.patient.domain.objects.Patient" unique="true" foreign-key="surgicalaudpd_patient_fk" access="field" cascade="save-update">
+			<column name="patient" sql-type="numeric(10,0)" not-null="true" unique="false"  index='pat_pd_idx' />
+		</many-to-one>
+<!-- debug: careContext -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="careContext" class="ims.core.admin.domain.objects.CareContext" unique="true" foreign-key="surgicalaudpd_carecontex_fk" access="field" cascade="save-update">
+			<column name="carecontex" sql-type="numeric(10,0)" not-null="true" unique="false"  index='ctx_pd_idx' />
+		</many-to-one>
+<!-- debug: authoringInformation -->
+<!-- debug: field.IsAssociation : true -->
+ 		<!-- Component -->
+ 		<component name="authoringInformation" class="ims.core.clinical.domain.objects.AuthoringInformation" >
+
+ 			<many-to-one name="authoringHcp" class="ims.core.resource.people.domain.objects.Hcp" foreign-key="surgicalaudpd_authoringiaut_fk" access="field">
+ 				<column name="authoringiauthoringh" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="authoringDateTime" type="timestamp" access="field" update="true">
+ 				<column name="authoringiauthoringd" not-null="false"  unique="false"   />
+ 			</property>
+ 		</component>
+<!-- debug: anaesthetistNotRequired -->
+<!-- debug: anaesthetists -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- many to many -->
+		<list name="anaesthetists" table="shcl_surgicalaudpd_anaesthet2" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="surgicalaudpd_anaesthet2_fr_fk">
+				<column name="from_side" sql-type="numeric(10,0)" unique="false"   />
+			</key>
+			<index column='idx'/>
+			<many-to-many class="ims.core.resource.people.domain.objects.Medic" foreign-key="surgicalaudpd_anaesthet2_to_fk">
+				<column name="to_side" sql-type="numeric(10,0)" unique="false"   />
+			</many-to-many>
+		</list>
+<!-- debug: anaesthetistAssistNotRequired -->
+<!-- debug: anaesthetistAssistedBy -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- many to many -->
+		<list name="anaesthetistAssistedBy" table="shcl_surgicalaudpd_anaesthet4" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="surgicalaudpd_anaesthet4_fr_fk">
+				<column name="from_side" sql-type="numeric(10,0)" unique="false"   />
+			</key>
+			<index column='idx'/>
+			<many-to-many class="ims.core.resource.people.domain.objects.Medic" foreign-key="surgicalaudpd_anaesthet4_to_fk">
+				<column name="to_side" sql-type="numeric(10,0)" unique="false"   />
+			</many-to-many>
+		</list>
+<!-- debug: opPerformedBy -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- many to many -->
+		<list name="opPerformedBy" table="shcl_surgicalaudpd_opperforme" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="surgicalaudpd_opperforme_fr_fk">
+				<column name="from_side" sql-type="numeric(10,0)" unique="false"   />
+			</key>
+			<index column='idx'/>
+			<many-to-many class="ims.core.resource.people.domain.objects.Medic" foreign-key="surgicalaudpd_opperforme_to_fk">
+				<column name="to_side" sql-type="numeric(10,0)" unique="false"   />
+			</many-to-many>
+		</list>
+<!-- debug: consultantAssistedBy -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- many to many -->
+		<list name="consultantAssistedBy" table="shcl_surgicalaudpd_consultant" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="surgicalaudpd_consultant_fr_fk">
+				<column name="from_side" sql-type="numeric(10,0)" unique="false"   />
+			</key>
+			<index column='idx'/>
+			<many-to-many class="ims.core.resource.people.domain.objects.Medic" foreign-key="surgicalaudpd_consultant_to_fk">
+				<column name="to_side" sql-type="numeric(10,0)" unique="false"   />
+			</many-to-many>
+		</list>
+<!-- debug: radiographers -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- many to many -->
+		<list name="radiographers" table="shcl_surgicalaudpd_radiograph" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="surgicalaudpd_radiograph_fr_fk">
+				<column name="from_side" sql-type="numeric(10,0)" unique="false"   />
+			</key>
+			<index column='idx'/>
+			<many-to-many class="ims.core.resource.people.domain.objects.Hcp" foreign-key="surgicalaudpd_radiograph_to_fk">
+				<column name="to_side" sql-type="numeric(10,0)" unique="false"   />
+			</many-to-many>
+		</list>
+<!-- debug: anaestheticNurse -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- many to many -->
+		<list name="anaestheticNurse" table="shcl_surgicalaudpd_anaesthet5" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="surgicalaudpd_anaesthet5_fr_fk">
+				<column name="from_side" sql-type="numeric(10,0)" unique="false"   />
+			</key>
+			<index column='idx'/>
+			<many-to-many class="ims.core.resource.people.domain.objects.Nurse" foreign-key="surgicalaudpd_anaesthet5_to_fk">
+				<column name="to_side" sql-type="numeric(10,0)" unique="false"   />
+			</many-to-many>
+		</list>
+<!-- debug: locumAnaestNurse -->
+<!-- debug: scrubNurse -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- many to many -->
+		<list name="scrubNurse" table="shcl_surgicalaudpd_scrubnurse" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="surgicalaudpd_scrubnurse_fr_fk">
+				<column name="from_side" sql-type="numeric(10,0)" unique="false"   />
+			</key>
+			<index column='idx'/>
+			<many-to-many class="ims.core.resource.people.domain.objects.Nurse" foreign-key="surgicalaudpd_scrubnurse_to_fk">
+				<column name="to_side" sql-type="numeric(10,0)" unique="false"   />
+			</many-to-many>
+		</list>
+<!-- debug: locumScrubNurse -->
+<!-- debug: circulatingNurse -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- many to many -->
+		<list name="circulatingNurse" table="shcl_surgicalaudpd_circulatin" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="surgicalaudpd_circulatin_fr_fk">
+				<column name="from_side" sql-type="numeric(10,0)" unique="false"   />
+			</key>
+			<index column='idx'/>
+			<many-to-many class="ims.core.resource.people.domain.objects.Nurse" foreign-key="surgicalaudpd_circulatin_to_fk">
+				<column name="to_side" sql-type="numeric(10,0)" unique="false"   />
+			</many-to-many>
+		</list>
+<!-- debug: locumCirculatingNurse -->
+<!-- debug: other -->
+<!-- debug: surgicalCheckListPerformed -->
+<!-- debug: checkListNotPerformedReason -->
+<!-- debug: anaestheticUsed -->
+<!-- debug: anaestheticUsedComment -->
+<!-- debug: enterOpTheatreTime -->
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="anaesthetistNotRequired" type="boolean" access="field" update="true">
+			<column name="anaestheti"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="anaesthetistAssistNotRequired" type="boolean" access="field" update="true">
+			<column name="anaesthet3"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="locumAnaestNurse" type="string" access="field" update="true" > 
+			<column name="locumanaes" length="200"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="locumScrubNurse" type="string" access="field" update="true" > 
+			<column name="locumscrub" length="200"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="locumCirculatingNurse" type="string" access="field" update="true" > 
+			<column name="locumcircu" length="200"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="other" type="string" access="field" update="true" > 
+			<column name="other" length="100"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="surgicalCheckListPerformed" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_surgicalch" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="checkListNotPerformedReason" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_checklistn" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="anaestheticUsed" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_anaesthet6" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="anaestheticUsedComment" type="string" access="field" update="true" > 
+			<column name="anaesthet7" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="enterOpTheatreTime" type="timestamp" access="field" update="true">
+			<column name="enteropthe"  not-null="true" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

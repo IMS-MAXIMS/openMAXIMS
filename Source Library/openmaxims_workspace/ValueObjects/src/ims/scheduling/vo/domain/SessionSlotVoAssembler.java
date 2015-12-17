@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.scheduling.vo.domain;
@@ -78,6 +83,16 @@ public class SessionSlotVoAssembler
 		valueObjectDest.setSession(valueObjectSrc.getSession());
 		// sessDateTime
 		valueObjectDest.setSessDateTime(valueObjectSrc.getSessDateTime());
+		// CancelBlockReason
+		valueObjectDest.setCancelBlockReason(valueObjectSrc.getCancelBlockReason());
+		// CancelBlockComment
+		valueObjectDest.setCancelBlockComment(valueObjectSrc.getCancelBlockComment());
+		// Comment
+		valueObjectDest.setComment(valueObjectSrc.getComment());
+		// Functions
+		valueObjectDest.setFunctions(valueObjectSrc.getFunctions());
+		// wasBlockedCABSlot
+		valueObjectDest.setWasBlockedCABSlot(valueObjectSrc.getWasBlockedCABSlot());
 		// DirectoryOfServices
 		valueObjectDest.setDirectoryOfServices(valueObjectSrc.getDirectoryOfServices());
 	 	return valueObjectDest;
@@ -546,6 +561,50 @@ public class SessionSlotVoAssembler
 		{
 			valueObject.setSessDateTime(new ims.framework.utils.DateTime(sessDateTime) );
 		}
+		// CancelBlockReason
+		ims.domain.lookups.LookupInstance instance15 = domainObject.getCancelBlockReason();
+		if ( null != instance15 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance15.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance15.getImage().getImageId(), instance15.getImage().getImagePath());
+			}
+			color = instance15.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.scheduling.vo.lookups.CancelAppointmentReason voLookup15 = new ims.scheduling.vo.lookups.CancelAppointmentReason(instance15.getId(),instance15.getText(), instance15.isActive(), null, img, color);
+			ims.scheduling.vo.lookups.CancelAppointmentReason parentVoLookup15 = voLookup15;
+			ims.domain.lookups.LookupInstance parent15 = instance15.getParent();
+			while (parent15 != null)
+			{
+				if (parent15.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent15.getImage().getImageId(), parent15.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent15.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup15.setParent(new ims.scheduling.vo.lookups.CancelAppointmentReason(parent15.getId(),parent15.getText(), parent15.isActive(), null, img, color));
+				parentVoLookup15 = parentVoLookup15.getParent();
+								parent15 = parent15.getParent();
+			}			
+			valueObject.setCancelBlockReason(voLookup15);
+		}
+				// CancelBlockComment
+		valueObject.setCancelBlockComment(domainObject.getCancelBlockComment());
+		// Comment
+		valueObject.setComment(domainObject.getComment());
+		// Functions
+		valueObject.setFunctions(ims.core.vo.domain.ServiceFunctionVoAssembler.createServiceFunctionVoCollectionFromServiceFunction(map, domainObject.getFunctions()) );
+		// wasBlockedCABSlot
+		valueObject.setWasBlockedCABSlot( domainObject.isWasBlockedCABSlot() );
 		// DirectoryOfServices
 		valueObject.setDirectoryOfServices(ims.scheduling.vo.domain.DirectoryOfServiceSessionSlotVoAssembler.createDirectoryOfServiceSessionSlotVoCollectionFromDirectoryOfServiceSessionSlot(map, domainObject.getDirectoryOfServices()) );
  		return valueObject;
@@ -657,6 +716,92 @@ public class SessionSlotVoAssembler
 			value14 = dateTime14.getJavaDate();
 		}
 		domainObject.setSessDateTime(value14);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value15 = null;
+		if ( null != valueObject.getCancelBlockReason() ) 
+		{
+			value15 =
+				domainFactory.getLookupInstance(valueObject.getCancelBlockReason().getID());
+		}
+		domainObject.setCancelBlockReason(value15);
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getCancelBlockComment() != null && valueObject.getCancelBlockComment().equals(""))
+		{
+			valueObject.setCancelBlockComment(null);
+		}
+		domainObject.setCancelBlockComment(valueObject.getCancelBlockComment());
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getComment() != null && valueObject.getComment().equals(""))
+		{
+			valueObject.setComment(null);
+		}
+		domainObject.setComment(valueObject.getComment());
+
+		// SaveAsRefVO treated as RefValueObject
+		ims.core.clinical.vo.ServiceFunctionRefVoCollection refCollection18 = new ims.core.clinical.vo.ServiceFunctionRefVoCollection();
+		if (valueObject.getFunctions() != null)
+		{
+			for (int i18=0; i18<valueObject.getFunctions().size(); i18++)
+			{
+				ims.core.clinical.vo.ServiceFunctionRefVo ref18 = (ims.core.clinical.vo.ServiceFunctionRefVo)valueObject.getFunctions().get(i18);
+				refCollection18.add(ref18);
+			}
+		}
+		int size18 = (null == refCollection18) ? 0 : refCollection18.size();		
+		java.util.Set domainFunctions18 = domainObject.getFunctions();
+		if (domainFunctions18 == null)
+		{
+			domainFunctions18 = new java.util.HashSet();
+		}
+		java.util.Set newSet18  = new java.util.HashSet();
+		for(int i=0; i<size18; i++) 
+		{
+			ims.core.clinical.vo.ServiceFunctionRefVo vo = refCollection18.get(i);					
+			ims.core.clinical.domain.objects.ServiceFunction dom = null;
+			if ( null != vo ) 
+			{
+				if (vo.getBoId() == null)
+				{
+					if (domMap.get(vo) != null)
+					{
+						dom = (ims.core.clinical.domain.objects.ServiceFunction)domMap.get(vo);
+					}
+				}
+				else
+				{
+					dom = (ims.core.clinical.domain.objects.ServiceFunction)domainFactory.getDomainObject( ims.core.clinical.domain.objects.ServiceFunction.class, vo.getBoId());
+				}
+			}
+
+			//Trying to avoid the hibernate collection being marked as dirty via its public interface methods. (like add)
+			if (!domainFunctions18.contains(dom))
+			{
+				domainFunctions18.add(dom);
+			}
+			newSet18.add(dom);			
+		}
+		java.util.Set removedSet18 = new java.util.HashSet();
+		java.util.Iterator iter18 = domainFunctions18.iterator();
+		//Find out which objects need to be removed
+		while (iter18.hasNext())
+		{
+			ims.domain.DomainObject o = (ims.domain.DomainObject)iter18.next();			
+			if ((o == null || o.getIsRIE() == null || !o.getIsRIE().booleanValue()) && !newSet18.contains(o))
+			{
+				removedSet18.add(o);
+			}
+		}
+		iter18 = removedSet18.iterator();
+		//Remove the unwanted objects
+		while (iter18.hasNext())
+		{
+			domainFunctions18.remove(iter18.next());
+		}		
+		
+		domainObject.setFunctions(domainFunctions18);		
+		domainObject.setWasBlockedCABSlot(valueObject.getWasBlockedCABSlot());
 		domainObject.setDirectoryOfServices(ims.scheduling.vo.domain.DirectoryOfServiceSessionSlotVoAssembler.extractDirectoryOfServiceSessionSlotSet(domainFactory, valueObject.getDirectoryOfServices(), domainObject.getDirectoryOfServices(), domMap));		
 
 		return domainObject;

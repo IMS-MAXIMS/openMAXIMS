@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:35 -->
+<!-- Generated: 12/10/2015, 13:30 -->
 <hibernate-mapping>
 	<class name="ims.core.configuration.domain.objects.ElectiveListHospitalConfiguration" table="core_waitinglisthos" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -34,8 +34,15 @@
 <!-- debug: field.IsAssociation : true -->
 		<!-- A one-to-one relationship using a foreign-key is mapping as a
 			many-to-one with a uniqueness contraint -->
-		<many-to-one name="listLocation" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="waitinglisthos_listlocati_fk" access="field" cascade="save-update">
+		<many-to-one name="listLocation" class="ims.core.resource.place.domain.objects.LocSite" unique="true" foreign-key="waitinglisthos_listlocati_fk" access="field" cascade="save-update">
 			<column name="listlocati" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: caseNoteFolderLocation -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="caseNoteFolderLocation" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="waitinglisthos_casenotefo_fk" access="field" cascade="save-update">
+			<column name="casenotefo" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
 	</class>
 </hibernate-mapping>

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -1402,9 +1407,15 @@ public class Logic extends BaseLogic
 
 	private void clearDrawingScreen()
 	{
-		form.lyrTabs().tabDrawing().customGraphic().setPatientAssessment(null);
+		clearGraphicCustomControl();
 		form.lyrTabs().tabDrawing().customAuthoringInfo().setValue(null);
 		form.lyrTabs().tabDrawing().cmbGraphicAdnotationImage().setValue(null);
+	}
+
+	private void clearGraphicCustomControl()
+	{
+		form.lyrTabs().tabDrawing().customGraphic().clearScreen(); //WDEV-16961
+		form.lyrTabs().tabDrawing().customGraphic().setPatientAssessment(null);
 	}
 
 	private void updateDrawingButtonStatus()
@@ -2592,24 +2603,13 @@ public class Logic extends BaseLogic
 			engine.showMessage("Please add at least one finding !");
 			return false;
 		}
-
-		AuthoringInformationVo authoringInfo = form.lyrTabs().tabDrawing().customAuthoringInfo().getValue();
-		if (authoringInfo == null)
+		//WDEV-16961
+		if (form.lyrTabs().tabDrawing().customAuthoringInfo().getErrors() != null && form.lyrTabs().tabDrawing().customAuthoringInfo().getErrors().length() > 0)
 		{
-			engine.showMessage("Please enter Authoring HCP and Authoring Date/Time !");
+			engine.showMessage(form.lyrTabs().tabDrawing().customAuthoringInfo().getErrors());
 			return false;
 		}
-		if (authoringInfo.getAuthoringHcp() == null)
-		{
-			engine.showMessage("Please enter Authoring HCP !");
-			return false;
-		}
-		if (authoringInfo.getAuthoringDateTime() == null)
-		{
-			engine.showMessage("Please enter Authoring Date/Time !");
-			return false;
-		}
-
+		
 		return true;
 	}
 
@@ -3721,6 +3721,14 @@ public class Logic extends BaseLogic
 			return;
 		}
 
+		//WDEV-16961
+		if (form.lyrTabs().tabDrawing().cmbGraphicAdnotationImage().getValue() == null)
+		{	
+			clearGraphicCustomControl();
+			form.getLocalContext().setPatientAssessment(null);
+			form.lyrTabs().tabDrawing().customGraphic().setEnabled(Boolean.FALSE);
+			return;
+		}	
 		PatientAssessmentVo patientAssessment = new PatientAssessmentVo();
 
 		//WDEV-11721

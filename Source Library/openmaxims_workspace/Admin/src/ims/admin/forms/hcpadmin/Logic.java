@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -107,6 +112,8 @@ public class Logic extends BaseLogic
 				
 				//WDEV-15544
 				form.lyrDetails().tabMedic().chkIsLocalConsultant().setValue(null);
+				//wdev-20561
+				form.lyrDetails().tabMedic().chkEndoscopist().setValue(null);
 				
 				break;
 			}
@@ -313,6 +320,9 @@ public class Logic extends BaseLogic
 			value.getMos().setCanReferPatient(form.lyrDetails().tabMedic().chkCanReferPatient().getValue());
 		else
 			form.getGlobalContext().Admin.setCanReferPatient(form.lyrDetails().tabMedic().chkCanReferPatient().getValue());
+		
+		//wdev-20561
+		value.setIsHCPaEndoscopist(form.lyrDetails().tabMedic().chkEndoscopist().getValue());
 	}
 
 	private void populateDataFromScreenVoSpecific(TherapistVo value)
@@ -373,6 +383,9 @@ public class Logic extends BaseLogic
 			form.lyrDetails().tabMedic().chkCanReferPatient().setValue(value.getMos().getCanReferPatient());
 		else
 			form.lyrDetails().tabMedic().chkCanReferPatient().setValue(form.getGlobalContext().Admin.getCanReferPatient());
+		
+		//wdev-20561
+		form.lyrDetails().tabMedic().chkEndoscopist().setValue(value.getIsHCPaEndoscopist());
 	}
 	
 	private void populateScreenFromDataVoSpecific(TherapistVo value)

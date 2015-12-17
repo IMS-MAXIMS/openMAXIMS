@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -413,6 +418,7 @@ public class Logic extends BaseLogic
 		populateAllControls(form.getLocalContext().getupdateVoSplintDetails());
 		onCmbCategoryValueRead();
 		updateAllGridMenus();
+		updateControlState(); // WDEV-18720 
 	}
 	
 	private void onCmbCategoryValueRead() 
@@ -427,24 +433,22 @@ public class Logic extends BaseLogic
 				form.ctnDetails().cmbProduct().setEnabled(true);
 				form.ctnDetails().cmbSize().setEnabled(true);
 			}
-			if (form.ctnDetails().cmbCategory().getValue().equals(SplintCategory.CUSTOMISED))
+			else if (form.ctnDetails().cmbCategory().getValue().equals(SplintCategory.CUSTOMISED))
 			{
 				form.ctnDetails().cmbType().setEnabled(true);
 				form.ctnDetails().cmbMaterial().setEnabled(true);
 				form.ctnDetails().cmbBased().setEnabled(true);
 				form.ctnDetails().cmbProduct().setEnabled(false);
 				form.ctnDetails().cmbSize().setEnabled(false);
-			}
-		
-			if (form.ctnDetails().cmbCategory().getValue().equals(SplintCategory.COMBINED))
+			}		
+			else //WDEV-18403 
 			{
 				form.ctnDetails().cmbType().setEnabled(true);
 				form.ctnDetails().cmbMaterial().setEnabled(true);
 				form.ctnDetails().cmbBased().setEnabled(true);
 				form.ctnDetails().cmbProduct().setEnabled(true);
 				form.ctnDetails().cmbSize().setEnabled(true);
-			}
-		
+			}		
 		}
 	}
 	
@@ -462,6 +466,8 @@ public class Logic extends BaseLogic
 		
 		form.ctnDetails().setCollapsed(false);
 		updateAllGridMenus();	
+		
+		updateControlState(); // WDEV-18720 
 	}
 	private void menuNewInstructions()
 	{
@@ -667,14 +673,6 @@ public class Logic extends BaseLogic
 				form.ctnDetails().cmbProduct().setValue(null);
 				form.ctnDetails().cmbSize().setValue(null);
 			}
-			else if(form.ctnDetails().cmbCategory().getValue().equals(SplintCategory.COMBINED))
-			{
-				form.ctnDetails().cmbType().setEnabled(true);
-				form.ctnDetails().cmbMaterial().setEnabled(true);
-				form.ctnDetails().cmbBased().setEnabled(true);
-				form.ctnDetails().cmbProduct().setEnabled(true);
-				form.ctnDetails().cmbSize().setEnabled(true);
-			}
 			else if(form.ctnDetails().cmbCategory().getValue().equals(SplintCategory.COMMERCIAL))
 			{
 				form.ctnDetails().cmbType().setEnabled(false);
@@ -686,9 +684,20 @@ public class Logic extends BaseLogic
 				form.ctnDetails().cmbProduct().setEnabled(true);
 				form.ctnDetails().cmbSize().setEnabled(true);
 			}
+			else //WDEV-18403 
+			{
+				form.ctnDetails().cmbType().setEnabled(true);
+				form.ctnDetails().cmbMaterial().setEnabled(true);
+				form.ctnDetails().cmbBased().setEnabled(true);
+				form.ctnDetails().cmbProduct().setEnabled(true);
+				form.ctnDetails().cmbSize().setEnabled(true);
+			}
 		}
 		else
+		{
 			clearCombos();
+			disableCombos(); //WDEV-18403 
+		}
 		
 	}
 	private void clearCombos()
@@ -718,5 +727,21 @@ public class Logic extends BaseLogic
 	protected void onBtnUpdateClick() throws PresentationLogicException {
 		menuEditSummary();
 		
+	}
+	
+	//WDEV-18720 
+	@Override
+	protected void onChkConsentValueChanged() throws PresentationLogicException
+	{
+		updateControlState();	
+		if (!form.ctnDetails().chkConsent().getValue())
+			form.ctnDetails().dteConsent().setValue(null);
+	}
+	
+	//WDEV-18720 
+	private void updateControlState()
+	{
+		if (FormMode.EDIT.equals(form.getMode()))
+			form.ctnDetails().dteConsent().setEnabled(form.ctnDetails().chkConsent().getValue());
 	}
 }

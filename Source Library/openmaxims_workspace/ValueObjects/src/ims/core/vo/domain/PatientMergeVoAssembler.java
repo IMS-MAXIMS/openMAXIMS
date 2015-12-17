@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.core.vo.domain;
@@ -80,10 +85,10 @@ public class PatientMergeVoAssembler
 		valueObjectDest.setCommChannels(valueObjectSrc.getCommChannels());
 		// nok
 		valueObjectDest.setNok(valueObjectSrc.getNok());
-		// Insurance
-		valueObjectDest.setInsurance(valueObjectSrc.getInsurance());
 		// addresses
 		valueObjectDest.setAddresses(valueObjectSrc.getAddresses());
+		// NationalHealthCover
+		valueObjectDest.setNationalHealthCover(valueObjectSrc.getNationalHealthCover());
 	 	return valueObjectDest;
 	 }
 
@@ -616,10 +621,10 @@ public class PatientMergeVoAssembler
 		valueObject.setCommChannels(ims.core.vo.domain.CommChannelVoAssembler.createCommChannelVoCollectionFromCommunicationChannel(map, domainObject.getCommChannels()) );
 		// nok
 		valueObject.setNok(ims.core.vo.domain.NextOfKinAssembler.create(map, domainObject.getNok()) );
-		// Insurance
-		valueObject.setInsurance(ims.core.vo.domain.InsuranceVoAssembler.create(map, domainObject.getInsurance()) );
 		// addresses
 		valueObject.setAddresses(ims.core.vo.domain.PersonAddressAssembler.createPersonAddressCollectionFromAddress(map, domainObject.getAddresses()) );
+		// NationalHealthCover
+		valueObject.setNationalHealthCover(ims.core.vo.domain.NationalHealthCoverVoAssembler.create(map, domainObject.getNationalHealthCover()) );
  		return valueObject;
 	 }
 
@@ -786,43 +791,26 @@ public class PatientMergeVoAssembler
 			}
 		}
 		domainObject.setNok(value15);
-	// SaveAsRefVO - treated as a refVo in extract methods
-	ims.core.patient.domain.objects.Insurance value16 = null;
-		if ( null != valueObject.getInsurance() ) 
-		{
-			if (valueObject.getInsurance().getBoId() == null)
-			{
-				if (domMap.get(valueObject.getInsurance()) != null)
-				{
-					value16 = (ims.core.patient.domain.objects.Insurance)domMap.get(valueObject.getInsurance());
-				}
-			}
-			else
-			{
-				value16 = (ims.core.patient.domain.objects.Insurance)domainFactory.getDomainObject(ims.core.patient.domain.objects.Insurance.class, valueObject.getInsurance().getBoId());
-			}
-		}
-		domainObject.setInsurance(value16);
 
 		// SaveAsRefVO treated as RefValueObject
-		ims.core.generic.vo.AddressRefVoCollection refCollection17 = new ims.core.generic.vo.AddressRefVoCollection();
+		ims.core.generic.vo.AddressRefVoCollection refCollection16 = new ims.core.generic.vo.AddressRefVoCollection();
 		if (valueObject.getAddresses() != null)
 		{
-			for (int i17=0; i17<valueObject.getAddresses().size(); i17++)
+			for (int i16=0; i16<valueObject.getAddresses().size(); i16++)
 			{
-				ims.core.generic.vo.AddressRefVo ref17 = (ims.core.generic.vo.AddressRefVo)valueObject.getAddresses().get(i17);
-				refCollection17.add(ref17);
+				ims.core.generic.vo.AddressRefVo ref16 = (ims.core.generic.vo.AddressRefVo)valueObject.getAddresses().get(i16);
+				refCollection16.add(ref16);
 			}
 		}
-		int size17 = (null == refCollection17) ? 0 : refCollection17.size();		
-		java.util.List domainAddresses17 = domainObject.getAddresses();
-		if (domainAddresses17 == null)
+		int size16 = (null == refCollection16) ? 0 : refCollection16.size();		
+		java.util.List domainAddresses16 = domainObject.getAddresses();
+		if (domainAddresses16 == null)
 		{
-			domainAddresses17 = new java.util.ArrayList();
+			domainAddresses16 = new java.util.ArrayList();
 		}
-		for(int i=0; i < size17; i++) 
+		for(int i=0; i < size16; i++) 
 		{
-			ims.core.generic.vo.AddressRefVo vo = refCollection17.get(i);			
+			ims.core.generic.vo.AddressRefVo vo = refCollection16.get(i);			
 			ims.core.generic.domain.objects.Address dom = null;
 			if ( null != vo ) 
 			{
@@ -839,29 +827,46 @@ public class PatientMergeVoAssembler
 				}
 			}
 
-			int domIdx = domainAddresses17.indexOf(dom);
+			int domIdx = domainAddresses16.indexOf(dom);
 			if (domIdx == -1)
 			{
-				domainAddresses17.add(i, dom);
+				domainAddresses16.add(i, dom);
 			}
-			else if (i != domIdx && i < domainAddresses17.size())
+			else if (i != domIdx && i < domainAddresses16.size())
 			{
-				Object tmp = domainAddresses17.get(i);
-				domainAddresses17.set(i, domainAddresses17.get(domIdx));
-				domainAddresses17.set(domIdx, tmp);
+				Object tmp = domainAddresses16.get(i);
+				domainAddresses16.set(i, domainAddresses16.get(domIdx));
+				domainAddresses16.set(domIdx, tmp);
 			}
 		}
 		
 		//Remove all ones in domList where index > voCollection.size() as these should
 		//now represent the ones removed from the VO collection. No longer referenced.
-		int i17 = domainAddresses17.size();
-		while (i17 > size17)
+		int i16 = domainAddresses16.size();
+		while (i16 > size16)
 		{
-			domainAddresses17.remove(i17-1);
-			i17 = domainAddresses17.size();
+			domainAddresses16.remove(i16-1);
+			i16 = domainAddresses16.size();
 		}
 		
-		domainObject.setAddresses(domainAddresses17);		
+		domainObject.setAddresses(domainAddresses16);		
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.patient.domain.objects.NationalHealthCover value17 = null;
+		if ( null != valueObject.getNationalHealthCover() ) 
+		{
+			if (valueObject.getNationalHealthCover().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getNationalHealthCover()) != null)
+				{
+					value17 = (ims.core.patient.domain.objects.NationalHealthCover)domMap.get(valueObject.getNationalHealthCover());
+				}
+			}
+			else
+			{
+				value17 = (ims.core.patient.domain.objects.NationalHealthCover)domainFactory.getDomainObject(ims.core.patient.domain.objects.NationalHealthCover.class, valueObject.getNationalHealthCover().getBoId());
+			}
+		}
+		domainObject.setNationalHealthCover(value17);
 
 		return domainObject;
 	}

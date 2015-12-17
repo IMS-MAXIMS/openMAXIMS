@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,6 +15,11 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
@@ -27,12 +32,10 @@ import ims.core.clinical.domain.objects.ServiceFunction;
 import ims.scheduling.domain.objects.DirectoryOfServiceSessionSlot;
 import ims.scheduling.domain.objects.DirectoryofService;
 import ims.scheduling.domain.objects.Profile_Activity;
-import ims.scheduling.domain.objects.Profile_BookingRight;
 import ims.scheduling.domain.objects.Profile_Exc_Time;
 import ims.scheduling.domain.objects.Profile_ListOwner;
 import ims.scheduling.domain.objects.Sch_Session;
 import ims.scheduling.domain.objects.SessionActivity;
-import ims.scheduling.domain.objects.Session_BookingRight;
 import ims.scheduling.domain.objects.Session_Exc_Time;
 import ims.scheduling.domain.objects.Session_ListOwner;
 import ims.scheduling.domain.objects.Session_Slot;
@@ -211,28 +214,11 @@ public class SlotGenerationUtils
 			sessOwner.setHcp(profOwner.getHCP());
 			sessOwner.setMaxNoAppts(profOwner.getMaxNoAppts());
 			sessOwner.setStartTime(profOwner.getStartTime());
+			sessOwner.setAttendingClinician(profOwner.isAttendingClinician());//WDEV-20479
+			sessOwner.setListOwner(profOwner.isListOwner());//WDEV-20479
 			sessListOwners.add(sessOwner);
 		}
 		return sessListOwners;
-	}
-
-	/**
-	 * @param profile
-	 * @return
-	 */
-	public static  Set copyBookingRights(Set profileBookingRights) 
-	{
-		Set sessBookingRights = new HashSet();
-		
-		Iterator it = profileBookingRights.iterator();
-		while (it.hasNext())
-		{
-			Session_BookingRight sessRight = new Session_BookingRight();
-			Profile_BookingRight profRight = (Profile_BookingRight) it.next();
-			sessRight.setRole(profRight.getRole());
-			sessBookingRights.add(sessRight);
-		}
-		return sessBookingRights;
 	}
 
 	/**

@@ -1,0 +1,225 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 12/10/2015, 13:30 -->
+<hibernate-mapping>
+	<class name="ims.core.patient.domain.objects.PDSPatientUpdate" table="core_pdspatientupda" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: commChannels -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<list name="commChannels" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="pdspatientupda_commchanne_fk">
+				<column name="core_pdspatientupda_commchanne" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.core.patient.domain.objects.PDSCommChannelRemoved" />
+		</list>
+<!-- debug: address -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<list name="address" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="pdspatientupda_address_fk">
+				<column name="core_pdspatientupda_address" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.core.patient.domain.objects.PDSAddr" />
+		</list>
+<!-- debug: administrativeGenderCode -->
+<!-- debug: birthTime -->
+<!-- debug: deceasedTime -->
+<!-- debug: languageCodeUpdateMode -->
+<!-- debug: proficiencyLevelCodeUpdateMode -->
+<!-- debug: preferredContactMethodUpdateMode -->
+<!-- debug: preferredContactTimesUpdateMode -->
+<!-- debug: callCentreCallBackConsentUpdateMode -->
+<!-- debug: names -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<list name="names" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="pdspatientupda_names_fk">
+				<column name="core_pdspatientupda_names" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.core.patient.domain.objects.PDSNamesRemoved" />
+		</list>
+<!-- debug: nokAddress -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="nokAddress" class="ims.core.patient.domain.objects.PDSAddr" unique="true" foreign-key="pdspatientupda_nokaddress_fk" access="field" cascade="save-update">
+			<column name="nokaddress" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: nokRelationshipUpdateMode -->
+<!-- debug: nokEffectiveDatesUpdateMode -->
+<!-- debug: nokContactRankUpdateMode -->
+<!-- debug: nokUpdateMode -->
+<!-- debug: nokCommChannels -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<list name="nokCommChannels" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="pdspatientupda_nokcommcha_fk">
+				<column name="core_pdspatientupda_nokcommcha" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.core.patient.domain.objects.PDSCommChannelRemoved" />
+		</list>
+<!-- debug: nokLanguageCommunicationUpdateMode -->
+<!-- debug: pDSUpdateRequest -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="pDSUpdateRequest" class="ims.core.patient.domain.objects.PDSGeneralUpdateRequest" unique="true" foreign-key="pdspatientupda_pdsupdater_fk" access="field" cascade="save-update">
+			<column name="pdsupdater" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: relatives -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<list name="relatives" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="pdspatientupda_relatives_fk">
+				<column name="core_pdspatientupda_relatives" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.core.patient.domain.objects.PDSRelativeRemove" />
+		</list>
+<!-- debug: genderUpdateMode -->
+<!-- debug: dateOfBirthUpdateMode -->
+<!-- debug: dateOfDeathUpdateMode -->
+<!-- debug: consentUpdateMode -->
+<!-- debug: preferredWrittenCommFormatUpdateMode -->
+<!-- debug: deathNotificationUpdateMode -->
+<!-- debug: sCN -->
+<!-- debug: patient -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="patient" class="ims.core.patient.domain.objects.Patient" unique="true" foreign-key="pdspatientupda_patient_fk" access="field" cascade="save-update">
+			<column name="patient" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="administrativeGenderCode" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_administra" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="birthTime" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_birthtime" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="deceasedTime" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_deceasedti" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="languageCodeUpdateMode" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_languageco" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="proficiencyLevelCodeUpdateMode" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_proficienc" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="preferredContactMethodUpdateMode" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_preferredc" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="preferredContactTimesUpdateMode" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_preferred2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="callCentreCallBackConsentUpdateMode" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_callcentre" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="nokRelationshipUpdateMode" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_nokrelatio" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="nokEffectiveDatesUpdateMode" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_nokeffecti" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="nokContactRankUpdateMode" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_nokcontact" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="nokUpdateMode" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_nokupdatem" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="nokLanguageCommunicationUpdateMode" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_noklanguag" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="genderUpdateMode" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_genderupda" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="dateOfBirthUpdateMode" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_dateofbirt" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="dateOfDeathUpdateMode" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_dateofdeat" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="consentUpdateMode" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_consentupd" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="preferredWrittenCommFormatUpdateMode" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_preferredw" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="deathNotificationUpdateMode" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_deathnotif" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="sCN" type="integer" access="field" update="true">
+			<column name="c_s"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

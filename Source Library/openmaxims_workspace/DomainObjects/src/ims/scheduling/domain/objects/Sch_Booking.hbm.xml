@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:36 -->
+<!-- Generated: 12/10/2015, 13:31 -->
 <hibernate-mapping>
 	<class name="ims.scheduling.domain.objects.Sch_Booking" table="schl_sch_booking" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -83,10 +83,11 @@
 <!-- debug: referrerSdsId -->
 <!-- debug: referrerSdsRoleId -->
 <!-- debug: referrerSdsOrgId -->
+<!-- debug: externalID -->
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="bookingComments" type="string" access="field" update="true" > 
-			<column name="bookingcom" length="255"  not-null="false" unique="false"  />
+			<column name="bookingcom" length="500"  not-null="false" unique="false"  />
 		</property>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: IsLookup -->
@@ -137,6 +138,11 @@
 <!-- debug: !IsLookup -->
 		<property name="referrerSdsOrgId" type="string" access="field" update="true" > 
 			<column name="referrers3" length="50"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="externalID" type="string" access="field" update="true" > 
+			<column name="externalid" length="30"  not-null="false" unique="false"  index='idx_ext_id'/>
 		</property>
 	</class>
 </hibernate-mapping>

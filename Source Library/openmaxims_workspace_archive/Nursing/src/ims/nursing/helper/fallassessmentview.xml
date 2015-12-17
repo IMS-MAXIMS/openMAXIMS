@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!-- be careful when you edit this file, the id attribute must be unique -->
+<risk_factors>
+	<risk_factor name="Sex" multiple="N">
+		<description id="1" name="Male" score="1" />
+		<description id="2" name="Female" score="2" />
+	</risk_factor>
+	<risk_factor name="Age" multiple="N">
+		<description id="3" name="60-70" score="1" />
+		<description id="4" name="71-80" score="2" />
+		<description id="5" name="81+" score="1" />
+	</risk_factor>
+	<risk_factor name="Gait" multiple="N">
+		<description id="6" name="Steady" score="0" />
+		<description id="7" name="Hesitant" score="1" />
+		<description id="8" name="Poor Transfer" score="3" />
+		<description id="9" name="Unsteady" score="3" />
+	</risk_factor>
+	<risk_factor name="Sensory deficit" multiple="Y">
+		<description id="10" name="Sight" score="2" />
+		<description id="11" name="Hearing" score="1" />
+		<description id="12" name="Balance" score="2" />
+	</risk_factor>
+	<risk_factor name="Fall History" multiple="N">
+		<description id="13" name="None" score="0" />
+		<description id="14" name="At home" score="2" />
+		<description id="15" name="In ward" score="1" />
+		<description id="16" name="Both" score="3" />
+	</risk_factor>
+	<risk_factor name="Medication" multiple="Y">
+		<description id="17" name="Hypnotics" score="1" />
+		<description id="18" name="Tranquillizers" score="1" />
+		<description id="19" name="Hypotensives" score="1" />
+		<description id="20" name="> 3 Drugs" score="1" />
+	</risk_factor>
+	<risk_factor name="Medical History" multiple="Y">
+		<description id="21" name="Diabetes" score="1" />
+		<description id="22" name="Organic Brain Disease" score="1" />
+		<description id="23" name="Confusion" score="1" />
+		<description id="24" name="Fits" score="1" />
+		<description id="25" name="Acute illness" score="1" />
+		<description id="26" name="Postural hypotension" score="1" />
+	</risk_factor>
+	<risk_factor name="Mobility" multiple="N">
+		<description id="28" name="Full" score="1" />
+		<description id="29" name="Uses aid" score="2" />
+		<description id="30" name="Restricted" score="3" />
+		<description id="31" name="Bed bound" score="1" />
+	</risk_factor>
+</risk_factors>

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.pathways.configuration.domain.objects;
@@ -57,16 +62,20 @@ public class AppointmentOutcomeConfig extends ims.domain.DomainObject implements
 	private ims.pathways.configuration.domain.objects.Event firstDefinitiveTreatmentEvent;
 	/** CanAddtoWaitingList */
 	private Boolean canAddtoWaitingList;
-	/** CanAddtoBookedList */
-	private Boolean canAddtoBookedList;
 	/** CanAddtoPlannedList */
 	private Boolean canAddtoPlannedList;
 	/** CanMakeAppointment */
 	private Boolean canMakeAppointment;
-	/** CanMakeOnwardReferral */
-	private Boolean canMakeOnwardReferral;
 	/** CanTransfer */
 	private Boolean canTransfer;
+	/** UsedForSeen */
+	private Boolean usedForSeen;
+	/** UsedForNotSeen */
+	private Boolean usedForNotSeen;
+	/** UsedForDNA */
+	private Boolean usedForDNA;
+	private Boolean canAddRequestForService;
+	private Boolean canTransferOfCare;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public AppointmentOutcomeConfig (Integer id, int ver)
@@ -125,13 +134,6 @@ public class AppointmentOutcomeConfig extends ims.domain.DomainObject implements
 		this.canAddtoWaitingList = canAddtoWaitingList;
 	}
 
-	public Boolean isCanAddtoBookedList() {
-		return canAddtoBookedList;
-	}
-	public void setCanAddtoBookedList(Boolean canAddtoBookedList) {
-		this.canAddtoBookedList = canAddtoBookedList;
-	}
-
 	public Boolean isCanAddtoPlannedList() {
 		return canAddtoPlannedList;
 	}
@@ -146,18 +148,46 @@ public class AppointmentOutcomeConfig extends ims.domain.DomainObject implements
 		this.canMakeAppointment = canMakeAppointment;
 	}
 
-	public Boolean isCanMakeOnwardReferral() {
-		return canMakeOnwardReferral;
-	}
-	public void setCanMakeOnwardReferral(Boolean canMakeOnwardReferral) {
-		this.canMakeOnwardReferral = canMakeOnwardReferral;
-	}
-
 	public Boolean isCanTransfer() {
 		return canTransfer;
 	}
 	public void setCanTransfer(Boolean canTransfer) {
 		this.canTransfer = canTransfer;
+	}
+
+	public Boolean isUsedForSeen() {
+		return usedForSeen;
+	}
+	public void setUsedForSeen(Boolean usedForSeen) {
+		this.usedForSeen = usedForSeen;
+	}
+
+	public Boolean isUsedForNotSeen() {
+		return usedForNotSeen;
+	}
+	public void setUsedForNotSeen(Boolean usedForNotSeen) {
+		this.usedForNotSeen = usedForNotSeen;
+	}
+
+	public Boolean isUsedForDNA() {
+		return usedForDNA;
+	}
+	public void setUsedForDNA(Boolean usedForDNA) {
+		this.usedForDNA = usedForDNA;
+	}
+
+	public Boolean isCanAddRequestForService() {
+		return canAddRequestForService;
+	}
+	public void setCanAddRequestForService(Boolean canAddRequestForService) {
+		this.canAddRequestForService = canAddRequestForService;
+	}
+
+	public Boolean isCanTransferOfCare() {
+		return canTransferOfCare;
+	}
+	public void setCanTransferOfCare(Boolean canTransferOfCare) {
+		this.canTransferOfCare = canTransferOfCare;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -238,20 +268,29 @@ public class AppointmentOutcomeConfig extends ims.domain.DomainObject implements
 		auditStr.append("\r\n*canAddtoWaitingList* :");
 		auditStr.append(canAddtoWaitingList);
 	    auditStr.append("; ");
-		auditStr.append("\r\n*canAddtoBookedList* :");
-		auditStr.append(canAddtoBookedList);
-	    auditStr.append("; ");
 		auditStr.append("\r\n*canAddtoPlannedList* :");
 		auditStr.append(canAddtoPlannedList);
 	    auditStr.append("; ");
 		auditStr.append("\r\n*canMakeAppointment* :");
 		auditStr.append(canMakeAppointment);
 	    auditStr.append("; ");
-		auditStr.append("\r\n*canMakeOnwardReferral* :");
-		auditStr.append(canMakeOnwardReferral);
-	    auditStr.append("; ");
 		auditStr.append("\r\n*canTransfer* :");
 		auditStr.append(canTransfer);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*usedForSeen* :");
+		auditStr.append(usedForSeen);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*usedForNotSeen* :");
+		auditStr.append(usedForNotSeen);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*usedForDNA* :");
+		auditStr.append(usedForDNA);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*canAddRequestForService* :");
+		auditStr.append(canAddRequestForService);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*canTransferOfCare* :");
+		auditStr.append(canTransferOfCare);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -330,12 +369,6 @@ public class AppointmentOutcomeConfig extends ims.domain.DomainObject implements
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isCanAddtoWaitingList().toString()));
 			sb.append("</canAddtoWaitingList>");		
 		}
-		if (this.isCanAddtoBookedList() != null)
-		{
-			sb.append("<canAddtoBookedList>");
-			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isCanAddtoBookedList().toString()));
-			sb.append("</canAddtoBookedList>");		
-		}
 		if (this.isCanAddtoPlannedList() != null)
 		{
 			sb.append("<canAddtoPlannedList>");
@@ -348,17 +381,41 @@ public class AppointmentOutcomeConfig extends ims.domain.DomainObject implements
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isCanMakeAppointment().toString()));
 			sb.append("</canMakeAppointment>");		
 		}
-		if (this.isCanMakeOnwardReferral() != null)
-		{
-			sb.append("<canMakeOnwardReferral>");
-			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isCanMakeOnwardReferral().toString()));
-			sb.append("</canMakeOnwardReferral>");		
-		}
 		if (this.isCanTransfer() != null)
 		{
 			sb.append("<canTransfer>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isCanTransfer().toString()));
 			sb.append("</canTransfer>");		
+		}
+		if (this.isUsedForSeen() != null)
+		{
+			sb.append("<usedForSeen>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isUsedForSeen().toString()));
+			sb.append("</usedForSeen>");		
+		}
+		if (this.isUsedForNotSeen() != null)
+		{
+			sb.append("<usedForNotSeen>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isUsedForNotSeen().toString()));
+			sb.append("</usedForNotSeen>");		
+		}
+		if (this.isUsedForDNA() != null)
+		{
+			sb.append("<usedForDNA>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isUsedForDNA().toString()));
+			sb.append("</usedForDNA>");		
+		}
+		if (this.isCanAddRequestForService() != null)
+		{
+			sb.append("<canAddRequestForService>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isCanAddRequestForService().toString()));
+			sb.append("</canAddRequestForService>");		
+		}
+		if (this.isCanTransferOfCare() != null)
+		{
+			sb.append("<canTransferOfCare>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isCanTransferOfCare().toString()));
+			sb.append("</canTransferOfCare>");		
 		}
 		return sb.toString();
 	}
@@ -551,11 +608,6 @@ public class AppointmentOutcomeConfig extends ims.domain.DomainObject implements
 		{	
     		obj.setCanAddtoWaitingList(new Boolean(fldEl.getTextTrim()));	
 		}
-		fldEl = el.element("canAddtoBookedList");
-		if(fldEl != null)
-		{	
-    		obj.setCanAddtoBookedList(new Boolean(fldEl.getTextTrim()));	
-		}
 		fldEl = el.element("canAddtoPlannedList");
 		if(fldEl != null)
 		{	
@@ -566,15 +618,35 @@ public class AppointmentOutcomeConfig extends ims.domain.DomainObject implements
 		{	
     		obj.setCanMakeAppointment(new Boolean(fldEl.getTextTrim()));	
 		}
-		fldEl = el.element("canMakeOnwardReferral");
-		if(fldEl != null)
-		{	
-    		obj.setCanMakeOnwardReferral(new Boolean(fldEl.getTextTrim()));	
-		}
 		fldEl = el.element("canTransfer");
 		if(fldEl != null)
 		{	
     		obj.setCanTransfer(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("usedForSeen");
+		if(fldEl != null)
+		{	
+    		obj.setUsedForSeen(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("usedForNotSeen");
+		if(fldEl != null)
+		{	
+    		obj.setUsedForNotSeen(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("usedForDNA");
+		if(fldEl != null)
+		{	
+    		obj.setUsedForDNA(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("canAddRequestForService");
+		if(fldEl != null)
+		{	
+    		obj.setCanAddRequestForService(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("canTransferOfCare");
+		if(fldEl != null)
+		{	
+    		obj.setCanTransferOfCare(new Boolean(fldEl.getTextTrim()));	
 		}
 	}
 
@@ -594,11 +666,14 @@ public class AppointmentOutcomeConfig extends ims.domain.DomainObject implements
 		public static final String ShowFirstDefinitiveTreatment = "showFirstDefinitiveTreatment";
 		public static final String FirstDefinitiveTreatmentEvent = "firstDefinitiveTreatmentEvent";
 		public static final String CanAddtoWaitingList = "canAddtoWaitingList";
-		public static final String CanAddtoBookedList = "canAddtoBookedList";
 		public static final String CanAddtoPlannedList = "canAddtoPlannedList";
 		public static final String CanMakeAppointment = "canMakeAppointment";
-		public static final String CanMakeOnwardReferral = "canMakeOnwardReferral";
 		public static final String CanTransfer = "canTransfer";
+		public static final String UsedForSeen = "usedForSeen";
+		public static final String UsedForNotSeen = "usedForNotSeen";
+		public static final String UsedForDNA = "usedForDNA";
+		public static final String CanAddRequestForService = "canAddRequestForService";
+		public static final String CanTransferOfCare = "canTransferOfCare";
 	}
 }
 

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.emergency.vo.domain;
@@ -64,6 +69,10 @@ public class TrackingSaveVoAssembler
 		valueObjectDest.setAssociatedPendingEmergencyAdmission(valueObjectSrc.getAssociatedPendingEmergencyAdmission());
 		// CurrentTransferRecord
 		valueObjectDest.setCurrentTransferRecord(valueObjectSrc.getCurrentTransferRecord());
+		// TriageDetails
+		valueObjectDest.setTriageDetails(valueObjectSrc.getTriageDetails());
+		// SeenBy
+		valueObjectDest.setSeenBy(valueObjectSrc.getSeenBy());
 	 	return valueObjectDest;
 	 }
 
@@ -380,6 +389,10 @@ public class TrackingSaveVoAssembler
 		valueObject.setAssociatedPendingEmergencyAdmission(ims.emergency.vo.domain.PendingEmergencyAdmissionForTrackingVoAssembler.create(map, domainObject.getAssociatedPendingEmergencyAdmission()) );
 		// CurrentTransferRecord
 		valueObject.setCurrentTransferRecord(ims.emergency.vo.domain.EDTransferVoAssembler.create(map, domainObject.getCurrentTransferRecord()) );
+		// TriageDetails
+		valueObject.setTriageDetails(ims.emergency.vo.domain.TriageForClinicianWorklistVoAssembler.create(map, domainObject.getTriageDetails()) );
+		// SeenBy
+		valueObject.setSeenBy(ims.emergency.vo.domain.SeenByForTrackingAndAttendanceWorklistVoAssembler.create(map, domainObject.getSeenBy()) );
  		return valueObject;
 	 }
 
@@ -455,6 +468,8 @@ public class TrackingSaveVoAssembler
 		domainObject.setCurrentArea(value5);
 		domainObject.setAssociatedPendingEmergencyAdmission(ims.emergency.vo.domain.PendingEmergencyAdmissionForTrackingVoAssembler.extractPendingEmergencyAdmission(domainFactory, valueObject.getAssociatedPendingEmergencyAdmission(), domMap));
 		domainObject.setCurrentTransferRecord(ims.emergency.vo.domain.EDTransferVoAssembler.extractEDTransfer(domainFactory, valueObject.getCurrentTransferRecord(), domMap));
+		domainObject.setTriageDetails(ims.emergency.vo.domain.TriageForClinicianWorklistVoAssembler.extractTriage(domainFactory, valueObject.getTriageDetails(), domMap));
+		domainObject.setSeenBy(ims.emergency.vo.domain.SeenByForTrackingAndAttendanceWorklistVoAssembler.extractSeenByHCP(domainFactory, valueObject.getSeenBy(), domMap));
 
 		return domainObject;
 	}

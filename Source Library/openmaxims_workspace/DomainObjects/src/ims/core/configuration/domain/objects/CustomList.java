@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.configuration.domain.objects;
@@ -57,6 +62,10 @@ public class CustomList extends ims.domain.DomainObject implements ims.domain.Sy
 	private ims.core.resource.people.domain.objects.MemberOfStaff listOwner;
 	/** isActive */
 	private Boolean isActive;
+	/** isReadOnly */
+	private Boolean isReadOnly;
+	/** isFullAccess */
+	private Boolean isFullAccess;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public CustomList (Integer id, int ver)
@@ -123,6 +132,20 @@ public class CustomList extends ims.domain.DomainObject implements ims.domain.Sy
 		this.isActive = isActive;
 	}
 
+	public Boolean isIsReadOnly() {
+		return isReadOnly;
+	}
+	public void setIsReadOnly(Boolean isReadOnly) {
+		this.isReadOnly = isReadOnly;
+	}
+
+	public Boolean isIsFullAccess() {
+		return isFullAccess;
+	}
+	public void setIsFullAccess(Boolean isFullAccess) {
+		this.isFullAccess = isFullAccess;
+	}
+
 	public ims.domain.SystemInformation getSystemInformation() {
 		if (systemInformation == null) systemInformation = new ims.domain.SystemInformation();
 		return systemInformation;
@@ -184,6 +207,12 @@ public class CustomList extends ims.domain.DomainObject implements ims.domain.Sy
 	    auditStr.append("; ");
 		auditStr.append("\r\n*isActive* :");
 		auditStr.append(isActive);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*isReadOnly* :");
+		auditStr.append(isReadOnly);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*isFullAccess* :");
+		auditStr.append(isFullAccess);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -264,6 +293,18 @@ public class CustomList extends ims.domain.DomainObject implements ims.domain.Sy
 			sb.append("<isActive>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsActive().toString()));
 			sb.append("</isActive>");		
+		}
+		if (this.isIsReadOnly() != null)
+		{
+			sb.append("<isReadOnly>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsReadOnly().toString()));
+			sb.append("</isReadOnly>");		
+		}
+		if (this.isIsFullAccess() != null)
+		{
+			sb.append("<isFullAccess>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsFullAccess().toString()));
+			sb.append("</isFullAccess>");		
 		}
 		return sb.toString();
 	}
@@ -461,6 +502,16 @@ public class CustomList extends ims.domain.DomainObject implements ims.domain.Sy
 		{	
     		obj.setIsActive(new Boolean(fldEl.getTextTrim()));	
 		}
+		fldEl = el.element("isReadOnly");
+		if(fldEl != null)
+		{	
+    		obj.setIsReadOnly(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("isFullAccess");
+		if(fldEl != null)
+		{	
+    		obj.setIsFullAccess(new Boolean(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -479,6 +530,8 @@ public class CustomList extends ims.domain.DomainObject implements ims.domain.Sy
 		public static final String Date = "date";
 		public static final String ListOwner = "listOwner";
 		public static final String IsActive = "isActive";
+		public static final String IsReadOnly = "isReadOnly";
+		public static final String IsFullAccess = "isFullAccess";
 	}
 }
 

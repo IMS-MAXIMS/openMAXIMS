@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -528,8 +533,17 @@ public class Logic extends BaseLogic
 			form.lyrDetails().tabDetails().customConsultant().setEnabled(true);     //wdev-13301
 		}
 		
-		form.lyrDetails().tabTeletherapy().setHeaderVisible(RadiotherapyType.TELETHERAPY.equals(form.lyrDetails().tabDetails().cmbRadiotherapyType().getValue()));
-		form.lyrDetails().tabBrachytherapy().setHeaderVisible(RadiotherapyType.BRACHYTHERAPY.equals(form.lyrDetails().tabDetails().cmbRadiotherapyType().getValue()));
+
+		//WDEV-19069
+		boolean teleTherapySelected = RadiotherapyType.TELETHERAPY.equals(form.lyrDetails().tabDetails().cmbRadiotherapyType().getValue());
+		boolean brachyTherapySelected = RadiotherapyType.BRACHYTHERAPY.equals(form.lyrDetails().tabDetails().cmbRadiotherapyType().getValue());
+		form.lyrDetails().tabTeletherapy().setHeaderVisible(teleTherapySelected);
+		form.lyrDetails().tabBrachytherapy().setHeaderVisible(brachyTherapySelected);
+		
+		form.lyrDetails().tabDetails().setVisible(!teleTherapySelected && !brachyTherapySelected);
+		form.lyrDetails().tabTeletherapy().setVisible(teleTherapySelected);
+		form.lyrDetails().tabBrachytherapy().setVisible(brachyTherapySelected);
+		//WDEV-19069 ---------ends here
 		
 		//form.lyrDetails().tabDetails().ccPrescribing().setMode(form.getMode());
 		form.lyrDetails().tabDetails().customConsultant().setMode(form.getMode());
@@ -700,10 +714,10 @@ public class Logic extends BaseLogic
 		ArrayList<String> errors = new ArrayList<String>();
 		
 		if (form.lyrDetails().tabDetails().dteDecisionTreat().getValue() != null && form.lyrDetails().tabDetails().dteDecisionTreat().getValue().isGreaterThan(new Date()))
-			errors.add("Date Decision to Treat can not be set in the future.");
+			errors.add("Date Decision to Treat cannot be set in the future."); //WDEV-18762
 
 		if (form.lyrDetails().tabDetails().dteStart().getValue() != null && form.lyrDetails().tabDetails().dteEnd().getValue() != null && form.lyrDetails().tabDetails().dteStart().getValue().isGreaterThan(form.lyrDetails().tabDetails().dteEnd().getValue()))
-			errors.add("Actual Start Date can not be greater than Actual End Date.");
+			errors.add("Actual Start Date cannot be greater than Actual End Date."); //WDEV-18762
 		
 		if (errors.size() == 0)
 			return null;

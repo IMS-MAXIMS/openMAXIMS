@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -31,10 +36,12 @@ import ims.domain.exceptions.StaleObjectException;
 import ims.emergency.forms.pendingarrivals.GenForm.grdResultsRow;
 import ims.emergency.vo.EmergencyAttendanceForPendingArrivalsVo;
 import ims.emergency.vo.EmergencyAttendanceForPendingArrivalsVoCollection;
+import ims.emergency.vo.PendingArrivalsSearchCriteriaVo;
 import ims.emergency.vo.TrackingAttendanceStatusVo;
 import ims.emergency.vo.TrackingForQuickRegistrationVo;
 import ims.emergency.vo.lookups.TrackingStatus;
 import ims.framework.FormName;
+import ims.framework.MessageButtons;
 import ims.framework.enumerations.DialogResult;
 import ims.framework.exceptions.PresentationLogicException;
 import ims.framework.utils.DateTime;
@@ -46,6 +53,12 @@ public class Logic extends BaseLogic
 	@Override
 	protected void onFormOpen(Object[] args) throws ims.framework.exceptions.PresentationLogicException
 	{
+		//WDEV-19389
+		if (form.getGlobalContext().Emergency.getPendingArrivalsSearchCriteriaIsNotNull())
+		{
+			setSearchCriteria(form.getGlobalContext().Emergency.getPendingArrivalsSearchCriteria());
+		}
+		
 		open();
 	}
 
@@ -53,34 +66,30 @@ public class Logic extends BaseLogic
 	{
 		doSearch();
 	}
+	
+	private PendingArrivalsSearchCriteriaVo getSearchCriteria()
+	{
+		PendingArrivalsSearchCriteriaVo searchCriteria = new PendingArrivalsSearchCriteriaVo();
+		
+		searchCriteria.setSurname(form.txtSurname().getValue());
+		searchCriteria.setForename(form.txtForename().getValue());
+		searchCriteria.setSourceOfReferral(form.cmbSourceOfReferral().getValue());
+		
+		return searchCriteria;
+	}
+	
+	private void setSearchCriteria(PendingArrivalsSearchCriteriaVo pendingArrivalsSearchCriteriaVo) 
+	{
+		form.txtSurname().setValue(pendingArrivalsSearchCriteriaVo.getSurname());
+		form.txtForename().setValue(pendingArrivalsSearchCriteriaVo.getForename());
+		form.cmbSourceOfReferral().setValue(pendingArrivalsSearchCriteriaVo.getSourceOfReferral());
+	}
 
 	@Override
 	protected void onBtnRemovePatientClick() throws ims.framework.exceptions.PresentationLogicException
 	{
-		EmergencyAttendanceForPendingArrivalsVo record = form.grdResults().getSelectedRow().getValue();
-		if (record == null)
-			return;
-
-		// Check SOE on selection
-		if (record.getID_EmergencyAttendanceIsNotNull() && domain.isStaleEmergencyAttendance(record))
-		{
-			engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
-			open();
-			return;
-		}
-
-		String comment = "Patient Removed from Arrival List - DNA";
-		
-		try
-		{
-			domain.markAsRie(form.getLocalContext().getselectedRecord(), engine.getFormName(), form.getLocalContext().getselectedRecord().getPatient().getID_Patient(),  null, form.getLocalContext().getselectedRecord().getCareContext().getID_CareContext(), comment);
-		}
-		catch (StaleObjectException e)
-		{
-			e.printStackTrace();
-		}
-		
-		doSearch();
+		//WDEV-19686 
+		engine.showMessage("Are you sure you want to remove the patient from Pending Arrivals List?", "Warning", MessageButtons.YESNO);
 	}
 
 	@Override
@@ -137,6 +146,7 @@ public class Logic extends BaseLogic
 		form.getGlobalContext().Core.setPatientShort(null);
 		form.getGlobalContext().Core.setCurrentCareContext(null);	
 		updateControlsState();
+		form.getGlobalContext().Emergency.setPendingArrivalsSearchCriteria(null);//WDEV-19389
 	}
 
 	@Override
@@ -170,7 +180,9 @@ public class Logic extends BaseLogic
 		}
 
 		EmergencyAttendanceForPendingArrivalsVoCollection coll = domain.listPendingArrivals(currentLocation, form.txtSurname().getValue(), form.txtForename().getValue(), form.cmbSourceOfReferral().getValue());
-
+		
+		form.getGlobalContext().Emergency.setPendingArrivalsSearchCriteria(getSearchCriteria());//WDEV-19389
+		
 		if (coll == null || coll.size() == 0)
 		{
 			engine.showMessage("There are no Records for the Search Criteria Provided");
@@ -320,5 +332,34 @@ public class Logic extends BaseLogic
 		return trackingAttStatus;
 	}
 
-	
+	@Override
+	protected void onMessageBoxClosed(int messageBoxId, DialogResult result) throws PresentationLogicException
+	{
+		if (DialogResult.YES.equals(result))
+		{
+    		EmergencyAttendanceForPendingArrivalsVo record = form.grdResults().getSelectedRow().getValue();
+    		if (record == null)
+    			return;
+    
+    		// Check SOE on selection
+    		if (record.getID_EmergencyAttendanceIsNotNull() && domain.isStaleEmergencyAttendance(record))
+    		{
+    			engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
+    			open();
+    			return;
+    		}
+    
+    		String comment = "Patient Removed from Arrival List - DNA";
+    		
+    		try
+    		{
+    			domain.markAsRie(form.getLocalContext().getselectedRecord(), engine.getFormName(), form.getLocalContext().getselectedRecord().getPatient().getID_Patient(),  null, form.getLocalContext().getselectedRecord().getCareContext().getID_CareContext(), comment);
+    		}
+    		catch (StaleObjectException e)
+    		{
+    			e.printStackTrace();
+    		}
+		}
+		doSearch();
+	}
 }

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.admin.domain.objects;
@@ -55,6 +60,7 @@ public class EDAttendenceformsConfig extends ims.domain.DomainObject implements 
 	  * Collection of ims.core.admin.domain.objects.EDAttendenceControlsConfig.
 	  */
 	private java.util.List controlsConfigItems;
+	private Boolean displayPrintDialog;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public EDAttendenceformsConfig (Integer id, int ver)
@@ -104,6 +110,13 @@ public class EDAttendenceformsConfig extends ims.domain.DomainObject implements 
 	}
 	public void setControlsConfigItems(java.util.List paramValue) {
 		this.controlsConfigItems = paramValue;
+	}
+
+	public Boolean isDisplayPrintDialog() {
+		return displayPrintDialog;
+	}
+	public void setDisplayPrintDialog(Boolean displayPrintDialog) {
+		this.displayPrintDialog = displayPrintDialog;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -175,6 +188,9 @@ public class EDAttendenceformsConfig extends ims.domain.DomainObject implements 
 			auditStr.append("] " + i4);
 		}
 	    auditStr.append("; ");
+		auditStr.append("\r\n*displayPrintDialog* :");
+		auditStr.append(displayPrintDialog);
+	    auditStr.append("; ");
 		return auditStr.toString();
 	}
 	
@@ -245,6 +261,12 @@ public class EDAttendenceformsConfig extends ims.domain.DomainObject implements 
 			sb.append(ims.domain.DomainObject.toXMLString(this.getControlsConfigItems(), domMap));
 			sb.append("</controlsConfigItems>");		
 			}
+		}
+		if (this.isDisplayPrintDialog() != null)
+		{
+			sb.append("<displayPrintDialog>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isDisplayPrintDialog().toString()));
+			sb.append("</displayPrintDialog>");		
 		}
 		return sb.toString();
 	}
@@ -430,6 +452,11 @@ public class EDAttendenceformsConfig extends ims.domain.DomainObject implements 
 			fldEl = fldEl.element("list");	
 			obj.setControlsConfigItems(ims.core.admin.domain.objects.EDAttendenceControlsConfig.fromListXMLString(fldEl, factory, obj.getControlsConfigItems(), domMap));
 		}
+		fldEl = el.element("displayPrintDialog");
+		if(fldEl != null)
+		{	
+    		obj.setDisplayPrintDialog(new Boolean(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -447,6 +474,7 @@ public class EDAttendenceformsConfig extends ims.domain.DomainObject implements 
 		public static final String InvoicesBillingTabVisible = "invoicesBillingTabVisible";
 		public static final String InsuranceTabVisible = "insuranceTabVisible";
 		public static final String ControlsConfigItems = "controlsConfigItems";
+		public static final String DisplayPrintDialog = "displayPrintDialog";
 	}
 }
 

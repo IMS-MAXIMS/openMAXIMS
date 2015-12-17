@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.core.vo.domain;
@@ -66,8 +71,6 @@ public class DischargedEpisodeADTVoAssembler
 		valueObjectDest.setMethodOfDischarge(valueObjectSrc.getMethodOfDischarge());
 		// WasTreatmentDeferred
 		valueObjectDest.setWasTreatmentDeferred(valueObjectSrc.getWasTreatmentDeferred());
-		// TreatmentDeferredReason
-		valueObjectDest.setTreatmentDeferredReason(valueObjectSrc.getTreatmentDeferredReason());
 		// EighteenWeekClockStopped
 		valueObjectDest.setEighteenWeekClockStopped(valueObjectSrc.getEighteenWeekClockStopped());
 		// DischargeReadyDate
@@ -78,6 +81,14 @@ public class DischargedEpisodeADTVoAssembler
 		valueObjectDest.setVTEAssessmentStatus(valueObjectSrc.getVTEAssessmentStatus());
 		// VTERiskAssessment
 		valueObjectDest.setVTERiskAssessment(valueObjectSrc.getVTERiskAssessment());
+		// WasDiagnosticDeferred
+		valueObjectDest.setWasDiagnosticDeferred(valueObjectSrc.getWasDiagnosticDeferred());
+		// WasTreatmentGiven
+		valueObjectDest.setWasTreatmentGiven(valueObjectSrc.getWasTreatmentGiven());
+		// DeferredReason
+		valueObjectDest.setDeferredReason(valueObjectSrc.getDeferredReason());
+		// DischargingWard
+		valueObjectDest.setDischargingWard(valueObjectSrc.getDischargingWard());
 	 	return valueObjectDest;
 	 }
 
@@ -470,43 +481,7 @@ public class DischargedEpisodeADTVoAssembler
 		}
 				// WasTreatmentDeferred
 		valueObject.setWasTreatmentDeferred( domainObject.isWasTreatmentDeferred() );
-		// TreatmentDeferredReason
-		ims.domain.lookups.LookupInstance instance9 = domainObject.getTreatmentDeferredReason();
-		if ( null != instance9 ) {
-			ims.framework.utils.ImagePath img = null;
-			ims.framework.utils.Color color = null;		
-			img = null;
-			if (instance9.getImage() != null) 
-			{
-				img = new ims.framework.utils.ImagePath(instance9.getImage().getImageId(), instance9.getImage().getImagePath());
-			}
-			color = instance9.getColor();
-			if (color != null) 
-				color.getValue();
-
-			ims.core.vo.lookups.TreatmentDeferredReason voLookup9 = new ims.core.vo.lookups.TreatmentDeferredReason(instance9.getId(),instance9.getText(), instance9.isActive(), null, img, color);
-			ims.core.vo.lookups.TreatmentDeferredReason parentVoLookup9 = voLookup9;
-			ims.domain.lookups.LookupInstance parent9 = instance9.getParent();
-			while (parent9 != null)
-			{
-				if (parent9.getImage() != null) 
-				{
-					img = new ims.framework.utils.ImagePath(parent9.getImage().getImageId(), parent9.getImage().getImagePath() );
-				}
-				else 
-				{
-					img = null;
-				}
-				color = parent9.getColor();
-    			if (color != null) 
-    				color.getValue();
-								parentVoLookup9.setParent(new ims.core.vo.lookups.TreatmentDeferredReason(parent9.getId(),parent9.getText(), parent9.isActive(), null, img, color));
-				parentVoLookup9 = parentVoLookup9.getParent();
-								parent9 = parent9.getParent();
-			}			
-			valueObject.setTreatmentDeferredReason(voLookup9);
-		}
-				// EighteenWeekClockStopped
+		// EighteenWeekClockStopped
 		valueObject.setEighteenWeekClockStopped( domainObject.isEighteenWeekClockStopped() );
 		// DischargeReadyDate
 		java.util.Date DischargeReadyDate = domainObject.getDischargeReadyDate();
@@ -529,40 +504,40 @@ public class DischargedEpisodeADTVoAssembler
 			}
 		}
 		// VTEAssessmentStatus
-		ims.domain.lookups.LookupInstance instance13 = domainObject.getVTEAssessmentStatus();
-		if ( null != instance13 ) {
+		ims.domain.lookups.LookupInstance instance12 = domainObject.getVTEAssessmentStatus();
+		if ( null != instance12 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
 			img = null;
-			if (instance13.getImage() != null) 
+			if (instance12.getImage() != null) 
 			{
-				img = new ims.framework.utils.ImagePath(instance13.getImage().getImageId(), instance13.getImage().getImagePath());
+				img = new ims.framework.utils.ImagePath(instance12.getImage().getImageId(), instance12.getImage().getImagePath());
 			}
-			color = instance13.getColor();
+			color = instance12.getColor();
 			if (color != null) 
 				color.getValue();
 
-			ims.clinical.vo.lookups.VTEAsessmentStatus voLookup13 = new ims.clinical.vo.lookups.VTEAsessmentStatus(instance13.getId(),instance13.getText(), instance13.isActive(), null, img, color);
-			ims.clinical.vo.lookups.VTEAsessmentStatus parentVoLookup13 = voLookup13;
-			ims.domain.lookups.LookupInstance parent13 = instance13.getParent();
-			while (parent13 != null)
+			ims.clinical.vo.lookups.VTEAsessmentStatus voLookup12 = new ims.clinical.vo.lookups.VTEAsessmentStatus(instance12.getId(),instance12.getText(), instance12.isActive(), null, img, color);
+			ims.clinical.vo.lookups.VTEAsessmentStatus parentVoLookup12 = voLookup12;
+			ims.domain.lookups.LookupInstance parent12 = instance12.getParent();
+			while (parent12 != null)
 			{
-				if (parent13.getImage() != null) 
+				if (parent12.getImage() != null) 
 				{
-					img = new ims.framework.utils.ImagePath(parent13.getImage().getImageId(), parent13.getImage().getImagePath() );
+					img = new ims.framework.utils.ImagePath(parent12.getImage().getImageId(), parent12.getImage().getImagePath() );
 				}
 				else 
 				{
 					img = null;
 				}
-				color = parent13.getColor();
+				color = parent12.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup13.setParent(new ims.clinical.vo.lookups.VTEAsessmentStatus(parent13.getId(),parent13.getText(), parent13.isActive(), null, img, color));
-				parentVoLookup13 = parentVoLookup13.getParent();
-								parent13 = parent13.getParent();
+								parentVoLookup12.setParent(new ims.clinical.vo.lookups.VTEAsessmentStatus(parent12.getId(),parent12.getText(), parent12.isActive(), null, img, color));
+				parentVoLookup12 = parentVoLookup12.getParent();
+								parent12 = parent12.getParent();
 			}			
-			valueObject.setVTEAssessmentStatus(voLookup13);
+			valueObject.setVTEAssessmentStatus(voLookup12);
 		}
 				// VTERiskAssessment
 		if (domainObject.getVTERiskAssessment() != null)
@@ -576,6 +551,60 @@ public class DischargedEpisodeADTVoAssembler
 			else
 			{
 				valueObject.setVTERiskAssessment(new ims.core.clinical.vo.VTERiskAssessmentRefVo(domainObject.getVTERiskAssessment().getId(), domainObject.getVTERiskAssessment().getVersion()));
+			}
+		}
+		// WasDiagnosticDeferred
+		valueObject.setWasDiagnosticDeferred( domainObject.isWasDiagnosticDeferred() );
+		// WasTreatmentGiven
+		valueObject.setWasTreatmentGiven( domainObject.isWasTreatmentGiven() );
+		// DeferredReason
+		ims.domain.lookups.LookupInstance instance16 = domainObject.getDereferredReason();
+		if ( null != instance16 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance16.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance16.getImage().getImageId(), instance16.getImage().getImagePath());
+			}
+			color = instance16.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.scheduling.vo.lookups.CancelAppointmentReason voLookup16 = new ims.scheduling.vo.lookups.CancelAppointmentReason(instance16.getId(),instance16.getText(), instance16.isActive(), null, img, color);
+			ims.scheduling.vo.lookups.CancelAppointmentReason parentVoLookup16 = voLookup16;
+			ims.domain.lookups.LookupInstance parent16 = instance16.getParent();
+			while (parent16 != null)
+			{
+				if (parent16.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent16.getImage().getImageId(), parent16.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent16.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup16.setParent(new ims.scheduling.vo.lookups.CancelAppointmentReason(parent16.getId(),parent16.getText(), parent16.isActive(), null, img, color));
+				parentVoLookup16 = parentVoLookup16.getParent();
+								parent16 = parent16.getParent();
+			}			
+			valueObject.setDeferredReason(voLookup16);
+		}
+				// DischargingWard
+		if (domainObject.getDischargingWard() != null)
+		{
+			if(domainObject.getDischargingWard() instanceof HibernateProxy) // If the proxy is set, there is no need to lazy load, the proxy knows the id already. 
+			{
+				HibernateProxy p = (HibernateProxy) domainObject.getDischargingWard();
+				int id = Integer.parseInt(p.getHibernateLazyInitializer().getIdentifier().toString());				
+				valueObject.setDischargingWard(new ims.core.resource.place.vo.LocationRefVo(id, -1));				
+			}
+			else
+			{
+				valueObject.setDischargingWard(new ims.core.resource.place.vo.LocationRefVo(domainObject.getDischargingWard().getId(), domainObject.getDischargingWard().getVersion()));
 			}
 		}
  		return valueObject;
@@ -761,70 +790,92 @@ public class DischargedEpisodeADTVoAssembler
 		}
 		domainObject.setMethodOfDischarge(value7);
 		domainObject.setWasTreatmentDeferred(valueObject.getWasTreatmentDeferred());
-		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value9 = null;
-		if ( null != valueObject.getTreatmentDeferredReason() ) 
-		{
-			value9 =
-				domainFactory.getLookupInstance(valueObject.getTreatmentDeferredReason().getID());
-		}
-		domainObject.setTreatmentDeferredReason(value9);
 		domainObject.setEighteenWeekClockStopped(valueObject.getEighteenWeekClockStopped());
-		java.util.Date value11 = null;
-		ims.framework.utils.Date date11 = valueObject.getDischargeReadyDate();		
-		if ( date11 != null ) 
+		java.util.Date value10 = null;
+		ims.framework.utils.Date date10 = valueObject.getDischargeReadyDate();		
+		if ( date10 != null ) 
 		{
-			value11 = date11.getDate();
+			value10 = date10.getDate();
 		}
-		domainObject.setDischargeReadyDate(value11);
-		ims.core.admin.pas.domain.objects.AdmissionDetail value12 = null;
+		domainObject.setDischargeReadyDate(value10);
+		ims.core.admin.pas.domain.objects.AdmissionDetail value11 = null;
 		if ( null != valueObject.getAdmissionDetail() ) 
 		{
 			if (valueObject.getAdmissionDetail().getBoId() == null)
 			{
 				if (domMap.get(valueObject.getAdmissionDetail()) != null)
 				{
-					value12 = (ims.core.admin.pas.domain.objects.AdmissionDetail)domMap.get(valueObject.getAdmissionDetail());
+					value11 = (ims.core.admin.pas.domain.objects.AdmissionDetail)domMap.get(valueObject.getAdmissionDetail());
 				}
 			}
 			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
 			{
-				value12 = domainObject.getAdmissionDetail();	
+				value11 = domainObject.getAdmissionDetail();	
 			}
 			else
 			{
-				value12 = (ims.core.admin.pas.domain.objects.AdmissionDetail)domainFactory.getDomainObject(ims.core.admin.pas.domain.objects.AdmissionDetail.class, valueObject.getAdmissionDetail().getBoId());
+				value11 = (ims.core.admin.pas.domain.objects.AdmissionDetail)domainFactory.getDomainObject(ims.core.admin.pas.domain.objects.AdmissionDetail.class, valueObject.getAdmissionDetail().getBoId());
 			}
 		}
-		domainObject.setAdmissionDetail(value12);
+		domainObject.setAdmissionDetail(value11);
 		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value13 = null;
+		ims.domain.lookups.LookupInstance value12 = null;
 		if ( null != valueObject.getVTEAssessmentStatus() ) 
 		{
-			value13 =
+			value12 =
 				domainFactory.getLookupInstance(valueObject.getVTEAssessmentStatus().getID());
 		}
-		domainObject.setVTEAssessmentStatus(value13);
-		ims.core.clinical.domain.objects.VTERiskAssessment value14 = null;
+		domainObject.setVTEAssessmentStatus(value12);
+		ims.core.clinical.domain.objects.VTERiskAssessment value13 = null;
 		if ( null != valueObject.getVTERiskAssessment() ) 
 		{
 			if (valueObject.getVTERiskAssessment().getBoId() == null)
 			{
 				if (domMap.get(valueObject.getVTERiskAssessment()) != null)
 				{
-					value14 = (ims.core.clinical.domain.objects.VTERiskAssessment)domMap.get(valueObject.getVTERiskAssessment());
+					value13 = (ims.core.clinical.domain.objects.VTERiskAssessment)domMap.get(valueObject.getVTERiskAssessment());
 				}
 			}
 			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
 			{
-				value14 = domainObject.getVTERiskAssessment();	
+				value13 = domainObject.getVTERiskAssessment();	
 			}
 			else
 			{
-				value14 = (ims.core.clinical.domain.objects.VTERiskAssessment)domainFactory.getDomainObject(ims.core.clinical.domain.objects.VTERiskAssessment.class, valueObject.getVTERiskAssessment().getBoId());
+				value13 = (ims.core.clinical.domain.objects.VTERiskAssessment)domainFactory.getDomainObject(ims.core.clinical.domain.objects.VTERiskAssessment.class, valueObject.getVTERiskAssessment().getBoId());
 			}
 		}
-		domainObject.setVTERiskAssessment(value14);
+		domainObject.setVTERiskAssessment(value13);
+		domainObject.setWasDiagnosticDeferred(valueObject.getWasDiagnosticDeferred());
+		domainObject.setWasTreatmentGiven(valueObject.getWasTreatmentGiven());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value16 = null;
+		if ( null != valueObject.getDeferredReason() ) 
+		{
+			value16 =
+				domainFactory.getLookupInstance(valueObject.getDeferredReason().getID());
+		}
+		domainObject.setDereferredReason(value16);
+		ims.core.resource.place.domain.objects.Location value17 = null;
+		if ( null != valueObject.getDischargingWard() ) 
+		{
+			if (valueObject.getDischargingWard().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getDischargingWard()) != null)
+				{
+					value17 = (ims.core.resource.place.domain.objects.Location)domMap.get(valueObject.getDischargingWard());
+				}
+			}
+			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
+			{
+				value17 = domainObject.getDischargingWard();	
+			}
+			else
+			{
+				value17 = (ims.core.resource.place.domain.objects.Location)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.Location.class, valueObject.getDischargingWard().getBoId());
+			}
+		}
+		domainObject.setDischargingWard(value17);
 
 		return domainObject;
 	}

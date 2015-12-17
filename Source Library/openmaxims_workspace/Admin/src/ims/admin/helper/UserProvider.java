@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -110,6 +115,20 @@ public class UserProvider extends DomainImpl implements IUserProvider
 		AppUserVo fulluser = AppUserVoAssembler.create(domUser); 
 		user = fulluser;
 		user.setClearPassword(newPassword);
+		
+		return user;
+	}
+	
+	public IAppUser lockAccount(IAppUser user, boolean value) throws Exception 
+	{
+		DomainFactory factory = getDomainFactory();
+		AppUser domUser = (AppUser)factory.getDomainObject(AppUser.class, user.getUserId());
+		domUser.setLocked(Boolean.valueOf(value));
+						
+		factory.save(domUser);
+		
+		AppUserVo fulluser = AppUserVoAssembler.create(domUser); 
+		user = fulluser;	
 		
 		return user;
 	}

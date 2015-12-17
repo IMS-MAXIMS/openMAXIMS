@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.admin.pas.domain.objects;
@@ -48,6 +53,19 @@ public class ConsultantStay extends ims.domain.DomainObject implements java.io.S
 	private ims.core.resource.people.domain.objects.Medic consultant;
 	/** transferDateTime */
 	private java.util.Date transferDateTime;
+	private java.util.Date endDateTime;
+	private ims.domain.lookups.LookupInstance specialty;
+	/** Coding Status for FCE */
+	private ims.domain.lookups.LookupInstance codingStatus;
+	/** Coding Comments in Maxims
+	  * Collection of ims.clinical.domain.objects.CodingComment.
+	  */
+	private java.util.List codingComment;
+	/** Histology Status */
+	private ims.domain.lookups.LookupInstance histologyStatus;
+	private ims.core.clinical.domain.objects.Service service;
+	/** Patient Status */
+	private ims.domain.lookups.LookupInstance patientStatus;
     public ConsultantStay (Integer id, int ver)
     {
     	super(id, ver);
@@ -78,6 +96,58 @@ public class ConsultantStay extends ims.domain.DomainObject implements java.io.S
 	}
 	public void setTransferDateTime(java.util.Date transferDateTime) {
 		this.transferDateTime = transferDateTime;
+	}
+
+	public java.util.Date getEndDateTime() {
+		return endDateTime;
+	}
+	public void setEndDateTime(java.util.Date endDateTime) {
+		this.endDateTime = endDateTime;
+	}
+
+	public ims.domain.lookups.LookupInstance getSpecialty() {
+		return specialty;
+	}
+	public void setSpecialty(ims.domain.lookups.LookupInstance specialty) {
+		this.specialty = specialty;
+	}
+
+	public ims.domain.lookups.LookupInstance getCodingStatus() {
+		return codingStatus;
+	}
+	public void setCodingStatus(ims.domain.lookups.LookupInstance codingStatus) {
+		this.codingStatus = codingStatus;
+	}
+
+	public java.util.List getCodingComment() {
+		if ( null == codingComment ) {
+			codingComment = new java.util.ArrayList();
+		}
+		return codingComment;
+	}
+	public void setCodingComment(java.util.List paramValue) {
+		this.codingComment = paramValue;
+	}
+
+	public ims.domain.lookups.LookupInstance getHistologyStatus() {
+		return histologyStatus;
+	}
+	public void setHistologyStatus(ims.domain.lookups.LookupInstance histologyStatus) {
+		this.histologyStatus = histologyStatus;
+	}
+
+	public ims.core.clinical.domain.objects.Service getService() {
+		return service;
+	}
+	public void setService(ims.core.clinical.domain.objects.Service service) {
+		this.service = service;
+	}
+
+	public ims.domain.lookups.LookupInstance getPatientStatus() {
+		return patientStatus;
+	}
+	public void setPatientStatus(ims.domain.lookups.LookupInstance patientStatus) {
+		this.patientStatus = patientStatus;
 	}
 
 	/**
@@ -121,6 +191,56 @@ public class ConsultantStay extends ims.domain.DomainObject implements java.io.S
 	    auditStr.append("; ");
 		auditStr.append("\r\n*transferDateTime* :");
 		auditStr.append(transferDateTime);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*endDateTime* :");
+		auditStr.append(endDateTime);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*specialty* :");
+		if (specialty != null)
+			auditStr.append(specialty.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*codingStatus* :");
+		if (codingStatus != null)
+			auditStr.append(codingStatus.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*codingComment* :");
+		if (codingComment != null)
+		{
+		int i6=0;
+		for (i6=0; i6<codingComment.size(); i6++)
+		{
+			if (i6 > 0)
+				auditStr.append(",");
+			ims.clinical.domain.objects.CodingComment obj = (ims.clinical.domain.objects.CodingComment)codingComment.get(i6);
+		    if (obj != null)
+			{
+				if (i6 == 0)
+				{
+				auditStr.append(toShortClassName(obj));
+				auditStr.append("[");
+				}
+		        auditStr.append(obj.getId());
+			}
+		}
+		if (i6 > 0)
+			auditStr.append("] " + i6);
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*histologyStatus* :");
+		if (histologyStatus != null)
+			auditStr.append(histologyStatus.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*service* :");
+		if (service != null)
+		{
+			auditStr.append(toShortClassName(service));
+				
+		    auditStr.append(service.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*patientStatus* :");
+		if (patientStatus != null)
+			auditStr.append(patientStatus.getText());
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -177,6 +297,51 @@ public class ConsultantStay extends ims.domain.DomainObject implements java.io.S
 			sb.append("<transferDateTime>");
 			sb.append(new ims.framework.utils.DateTime(this.getTransferDateTime()).toString(ims.framework.utils.DateTimeFormat.MILLI));
 			sb.append("</transferDateTime>");		
+		}
+		if (this.getEndDateTime() != null)
+		{
+			sb.append("<endDateTime>");
+			sb.append(new ims.framework.utils.DateTime(this.getEndDateTime()).toString(ims.framework.utils.DateTimeFormat.MILLI));
+			sb.append("</endDateTime>");		
+		}
+		if (this.getSpecialty() != null)
+		{
+			sb.append("<specialty>");
+			sb.append(this.getSpecialty().toXMLString()); 
+			sb.append("</specialty>");		
+		}
+		if (this.getCodingStatus() != null)
+		{
+			sb.append("<codingStatus>");
+			sb.append(this.getCodingStatus().toXMLString()); 
+			sb.append("</codingStatus>");		
+		}
+		if (this.getCodingComment() != null)
+		{
+			if (this.getCodingComment().size() > 0 )
+			{
+			sb.append("<codingComment>");
+			sb.append(ims.domain.DomainObject.toXMLString(this.getCodingComment(), domMap));
+			sb.append("</codingComment>");		
+			}
+		}
+		if (this.getHistologyStatus() != null)
+		{
+			sb.append("<histologyStatus>");
+			sb.append(this.getHistologyStatus().toXMLString()); 
+			sb.append("</histologyStatus>");		
+		}
+		if (this.getService() != null)
+		{
+			sb.append("<service>");
+			sb.append(this.getService().toXMLString(domMap)); 	
+			sb.append("</service>");		
+		}
+		if (this.getPatientStatus() != null)
+		{
+			sb.append("<patientStatus>");
+			sb.append(this.getPatientStatus().toXMLString()); 
+			sb.append("</patientStatus>");		
 		}
 		return sb.toString();
 	}
@@ -352,11 +517,53 @@ public class ConsultantStay extends ims.domain.DomainObject implements java.io.S
 		{	
     		obj.setTransferDateTime(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
 		}
+		fldEl = el.element("endDateTime");
+		if(fldEl != null)
+		{	
+    		obj.setEndDateTime(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
+		}
+		fldEl = el.element("specialty");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setSpecialty(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("codingStatus");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setCodingStatus(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("codingComment");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("list");	
+			obj.setCodingComment(ims.clinical.domain.objects.CodingComment.fromListXMLString(fldEl, factory, obj.getCodingComment(), domMap));
+		}
+		fldEl = el.element("histologyStatus");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setHistologyStatus(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("service");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setService(ims.core.clinical.domain.objects.Service.getServicefromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("patientStatus");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setPatientStatus(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
 	}
 
 	public static String[] getCollectionFields()
 	{
 		return new String[]{
+		 "codingComment"
 		};
 	}
 
@@ -366,6 +573,13 @@ public class ConsultantStay extends ims.domain.DomainObject implements java.io.S
 	public static final String ID = "id";
 		public static final String Consultant = "consultant";
 		public static final String TransferDateTime = "transferDateTime";
+		public static final String EndDateTime = "endDateTime";
+		public static final String Specialty = "specialty";
+		public static final String CodingStatus = "codingStatus";
+		public static final String CodingComment = "codingComment";
+		public static final String HistologyStatus = "histologyStatus";
+		public static final String Service = "service";
+		public static final String PatientStatus = "patientStatus";
 	}
 }
 

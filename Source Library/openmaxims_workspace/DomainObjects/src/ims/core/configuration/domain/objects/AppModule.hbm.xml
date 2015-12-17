@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 12/10/2015, 13:30 -->
+<hibernate-mapping>
+	<class name="ims.core.configuration.domain.objects.AppModule" table="core_appmodule" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: hibernateClassContent -->
+<!-- debug: moduleName -->
+<!-- debug: forms -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<set name="forms" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="appmodule_forms_fk">
+				<column name="core_appmodule_forms" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.core.configuration.domain.objects.AppForm" />
+		</set>
+<!-- debug: sites -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- inverse side of many-to-many -->
+		<list name="sites" inverse="true" table="core_appsite_modules" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="appsite_modules_to_fk">
+				<column name="to_side" sql-type="numeric(10,0)" unique="false"   />
+			</key>
+			<index column='idx'/>
+			<many-to-many class="ims.core.configuration.domain.objects.AppSite" foreign-key="appsite_modules_fr_fk">
+				<column name="from_side" sql-type="numeric(10,0)" unique="false"   />
+			</many-to-many>
+		</list>
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="moduleName" type="string" access="field" update="true" > 
+			<column name="modulename" length="100"  not-null="true" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

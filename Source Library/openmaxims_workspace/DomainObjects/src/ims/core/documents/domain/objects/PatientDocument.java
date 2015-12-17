@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.documents.domain.objects;
@@ -112,6 +117,8 @@ public class PatientDocument extends ims.domain.DomainObject implements ims.doma
 	/** Record triggered for MDM HL7 messaging */
 	private Boolean wasTriggered;
 	private Boolean copyPatientOnCorrespondence;
+	/** Indicates the Doc has an Enclosure */
+	private Boolean hasEnclosure;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public PatientDocument (Integer id, int ver)
@@ -370,6 +377,13 @@ public class PatientDocument extends ims.domain.DomainObject implements ims.doma
 		this.copyPatientOnCorrespondence = copyPatientOnCorrespondence;
 	}
 
+	public Boolean isHasEnclosure() {
+		return hasEnclosure;
+	}
+	public void setHasEnclosure(Boolean hasEnclosure) {
+		this.hasEnclosure = hasEnclosure;
+	}
+
 	public ims.domain.SystemInformation getSystemInformation() {
 		if (systemInformation == null) systemInformation = new ims.domain.SystemInformation();
 		return systemInformation;
@@ -608,6 +622,9 @@ public class PatientDocument extends ims.domain.DomainObject implements ims.doma
 	    auditStr.append("; ");
 		auditStr.append("\r\n*copyPatientOnCorrespondence* :");
 		auditStr.append(copyPatientOnCorrespondence);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*hasEnclosure* :");
+		auditStr.append(hasEnclosure);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -850,6 +867,12 @@ public class PatientDocument extends ims.domain.DomainObject implements ims.doma
 			sb.append("<copyPatientOnCorrespondence>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isCopyPatientOnCorrespondence().toString()));
 			sb.append("</copyPatientOnCorrespondence>");		
+		}
+		if (this.isHasEnclosure() != null)
+		{
+			sb.append("<hasEnclosure>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isHasEnclosure().toString()));
+			sb.append("</hasEnclosure>");		
 		}
 		return sb.toString();
 	}
@@ -1194,6 +1217,11 @@ public class PatientDocument extends ims.domain.DomainObject implements ims.doma
 		{	
     		obj.setCopyPatientOnCorrespondence(new Boolean(fldEl.getTextTrim()));	
 		}
+		fldEl = el.element("hasEnclosure");
+		if(fldEl != null)
+		{	
+    		obj.setHasEnclosure(new Boolean(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -1273,6 +1301,7 @@ catch (Exception e)
 		public static final String EmailStatus = "emailStatus";
 		public static final String WasTriggered = "wasTriggered";
 		public static final String CopyPatientOnCorrespondence = "copyPatientOnCorrespondence";
+		public static final String HasEnclosure = "hasEnclosure";
 	}
 }
 

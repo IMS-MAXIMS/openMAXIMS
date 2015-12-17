@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:36 -->
+<hibernate-mapping>
+	<class name="ims.core.clinical.coding.domain.objects.Icd10AmBlock" table="core_icd10amblock" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="assigned"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: hibernateClassContent -->
+<!-- debug: ascii_desc -->
+<!-- debug: ascii_short_desc -->
+<!-- debug: effective_from -->
+<!-- debug: inactive -->
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="ascii_desc" type="string" access="field" update="true" > 
+			<column name="ascii_desc" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="ascii_short_desc" type="string" access="field" update="true" > 
+			<column name="ascii_shor" length="40"  not-null="false" unique="false"  index='icd10amblock_idx1'/>
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="effective_from" type="date" access="field" update="true">
+			<column name="effective_"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="inactive" type="date" access="field" update="true">
+			<column name="inactive"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

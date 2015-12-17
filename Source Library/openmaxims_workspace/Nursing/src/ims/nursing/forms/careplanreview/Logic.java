@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -32,11 +37,9 @@ import ims.core.vo.PatientShort;
 import ims.core.vo.LocMostVo;
 import ims.core.vo.LocMostVoCollection;
 import ims.core.vo.PatientShortCollection;
-import ims.nursing.forms.careplanreview.GlobalContext.COEContext.CarePlanReviewContext;
 import ims.nursing.vo.CarePlanOverview;
 import ims.nursing.vo.CarePlanOverviewCollection;
 import ims.nursing.vo.CarePlanStatus;
-import ims.framework.exceptions.FormOpenException;
 import ims.framework.exceptions.PresentationLogicException;
 import ims.core.vo.lookups.LocationType;
 import ims.framework.utils.Color;
@@ -49,6 +52,11 @@ public class Logic extends BaseLogic
 		fillHospitalListCombo();
 
 		form.imbRefresh().setEnabled(false);
+		
+		if (form.getGlobalContext().COE.CarePlanReview.getSearchCriteria() != null)
+		{
+			setSearchCriteria(form.getGlobalContext().COE.CarePlanReview.getSearchCriteria());
+		}
 
 		open();
 
@@ -77,36 +85,6 @@ public class Logic extends BaseLogic
 	{
 		// Select the Chosen Ward in combo
 
-		if ((engine.getPreviousNonDialogFormName() != null) && (engine.getPreviousNonDialogFormName().equals(form.getForms().Nursing.CarePlanDetails)) && (form.getGlobalContext().Core.getHospital() != null) && (form.getGlobalContext().Core.getWard() != null))
-		{
-			if (form.getGlobalContext().COE.CarePlanReview.getSearchCriteria() != null)
-			{
-
-				form.cmbHospital().setValue(form.getGlobalContext().COE.CarePlanReview.getSearchCriteria().getHospital());
-
-				try
-				{
-					onCmbHospitalValueChanged();
-					form.cmbWard().setValue(form.getGlobalContext().COE.CarePlanReview.getSearchCriteria().getWard());
-
-					onCmbWardValueChanged();
-
-					form.cmbPatient().setValue(form.getGlobalContext().COE.CarePlanReview.getSearchCriteria().getCareContextVo());
-
-					onCmbPatientValueChanged();
-					
-/*					if (form.grdCarePlans().getRows().get(0).getValue()!= null )
-					form.grdCarePlans().setValue(form.grdCarePlans().getRows().get(0).getValue());
-*/					
-					// onBtnOKClick();
-				}
-				catch (PresentationLogicException e)
-				{
-					throw new FormOpenException();
-				}
-			}
-		}
-
 		form.btnConfirm().setEnabled(false);
 		form.btnReviewHistory().setEnabled(false);
 	}
@@ -121,6 +99,9 @@ public class Logic extends BaseLogic
 
 	protected void onCmbPatientValueChanged() throws ims.framework.exceptions.PresentationLogicException
 	{
+		form.grdCarePlans().getRows().clear();
+		form.imbRefresh().setEnabled(false);
+		form.getGlobalContext().COE.CarePlanReview.setSearchCriteria(getSearchCriteria());//WDEV-19389 
 		if (form.cmbHospital().getValue() == null)
 			return;
 
@@ -163,20 +144,22 @@ public class Logic extends BaseLogic
 
 		onImbRefreshClick();
 		
-		
-		
 		form.imbRefresh().setEnabled(true);
 	}
 
 	protected void onCmbWardValueChanged() throws ims.framework.exceptions.PresentationLogicException
 	{
+		form.cmbPatient().clear(); //WDEV-19389 
+		form.grdCarePlans().getRows().clear(); //WDEV-19389 
+		form.imbRefresh().setEnabled(false);
+		form.getGlobalContext().COE.CarePlanReview.setSearchCriteria(getSearchCriteria()); //WDEV-19389 
+		
 		// We need to call the InpatientEpisode list for the ward selected
 		if (form.cmbWard().getValue() == null)
+		{
 			return;
+		}
 
-		form.imbRefresh().setEnabled(false);
-		form.cmbPatient().clear();
-		form.grdCarePlans().getRows().clear();
 		LocMostVo voWard = form.cmbWard().getValue();
 		form.getGlobalContext().Core.setWard(voWard);
 
@@ -233,15 +216,48 @@ public class Logic extends BaseLogic
 		}
 		return null;
 	}
-
-	protected void onBtnConfirmClick() throws ims.framework.exceptions.PresentationLogicException
+	
+	private CarePlanReviewVo getSearchCriteria()
 	{
 		CarePlanReviewVo careplan = new CarePlanReviewVo();
 		careplan.setCareContextVo(form.cmbPatient().getValue());
 		careplan.setHospital(form.cmbHospital().getValue());
 		careplan.setWard(form.cmbWard().getValue());
+		
+		return careplan;
+	}
+	
+	
+	private void setSearchCriteria(CarePlanReviewVo carePlanReviewVo)
+	{
+		form.cmbHospital().setValue(carePlanReviewVo.getHospital());
+		try
+		{
+			onCmbHospitalValueChanged();
+		}
+		catch (PresentationLogicException e)
+		{e.printStackTrace();}
+		
+		form.cmbWard().setValue(carePlanReviewVo.getWard());
+		try
+		{
+			onCmbWardValueChanged();
+		}
+		catch (PresentationLogicException e)
+		{e.printStackTrace();}
+		
+		form.cmbPatient().setValue(carePlanReviewVo.getCareContextVo());
+		try
+		{
+			onCmbPatientValueChanged();
+		}
+		catch (PresentationLogicException e)
+		{e.printStackTrace();}
+	}
 
-		form.getGlobalContext().COE.CarePlanReview.setSearchCriteria(careplan);
+	protected void onBtnConfirmClick() throws ims.framework.exceptions.PresentationLogicException
+	{
+		form.getGlobalContext().COE.CarePlanReview.setSearchCriteria(getSearchCriteria());
 		form.getGlobalContext().COE.setCarePlanID(form.grdCarePlans().getValue().getID_CarePlan());
 		engine.open(form.getForms().Nursing.CarePlanDetails);
 	}
@@ -257,6 +273,7 @@ public class Logic extends BaseLogic
 		form.cmbPatient().clear();
 		form.cmbWard().clear();
 		form.grdCarePlans().getRows().clear();
+		form.getGlobalContext().COE.CarePlanReview.setSearchCriteria(getSearchCriteria()); //WDEV-19389 
 		if (form.cmbHospital().getValue() == null)
 			return;
 

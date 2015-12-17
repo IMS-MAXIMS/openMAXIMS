@@ -1,9 +1,33 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.RefMan.vo.domain;
@@ -41,6 +65,22 @@ public class ReferralCodingItemVoAssembler
 		valueObjectDest.setICD10(valueObjectSrc.getICD10());
 		// ProcLaterality
 		valueObjectDest.setProcLaterality(valueObjectSrc.getProcLaterality());
+		// Investigation
+		valueObjectDest.setInvestigation(valueObjectSrc.getInvestigation());
+		// HRG
+		valueObjectDest.setHRG(valueObjectSrc.getHRG());
+		// DaggerAsterisk
+		valueObjectDest.setDaggerAsterisk(valueObjectSrc.getDaggerAsterisk());
+		// CodingTypeIndicator
+		valueObjectDest.setCodingTypeIndicator(valueObjectSrc.getCodingTypeIndicator());
+		// FirstInSet
+		valueObjectDest.setFirstInSet(valueObjectSrc.getFirstInSet());
+		// PrimarySecondaryInd
+		valueObjectDest.setPrimarySecondaryInd(valueObjectSrc.getPrimarySecondaryInd());
+		// ProcConsandTheatreCode
+		valueObjectDest.setProcConsandTheatreCode(valueObjectSrc.getProcConsandTheatreCode());
+		// ProcedureDateTime
+		valueObjectDest.setProcedureDateTime(valueObjectSrc.getProcedureDateTime());
 	 	return valueObjectDest;
 	 }
 
@@ -375,7 +415,23 @@ public class ReferralCodingItemVoAssembler
 			}			
 			valueObject.setProcLaterality(voLookup5);
 		}
-		 		return valueObject;
+				// Investigation
+		valueObject.setInvestigation(ims.ocrr.vo.domain.OrderInvestigationLiteVoAssembler.create(map, domainObject.getInvestigation()) );
+		// HRG
+		valueObject.setHRG(domainObject.getHRG());
+		// DaggerAsterisk
+		valueObject.setDaggerAsterisk(domainObject.getDaggerAsterisk());
+		// CodingTypeIndicator
+		valueObject.setCodingTypeIndicator(domainObject.getCodingTypeIndicator());
+		// FirstInSet
+		valueObject.setFirstInSet(domainObject.getFirstInSet());
+		// PrimarySecondaryInd
+		valueObject.setPrimarySecondaryInd(domainObject.getPrimarySecondaryInd());
+		// ProcConsandTheatreCode
+		valueObject.setProcConsandTheatreCode(domainObject.getProcConsandTheatreCode());
+		// ProcedureDateTime
+		valueObject.setProcedureDateTime(domainObject.getProcedureDateTime());
+ 		return valueObject;
 	 }
 
 
@@ -480,6 +536,72 @@ public class ReferralCodingItemVoAssembler
 				domainFactory.getLookupInstance(valueObject.getProcLaterality().getID());
 		}
 		domainObject.setProcLaterality(value5);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.ocrr.orderingresults.domain.objects.OrderInvestigation value6 = null;
+		if ( null != valueObject.getInvestigation() ) 
+		{
+			if (valueObject.getInvestigation().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getInvestigation()) != null)
+				{
+					value6 = (ims.ocrr.orderingresults.domain.objects.OrderInvestigation)domMap.get(valueObject.getInvestigation());
+				}
+			}
+			else
+			{
+				value6 = (ims.ocrr.orderingresults.domain.objects.OrderInvestigation)domainFactory.getDomainObject(ims.ocrr.orderingresults.domain.objects.OrderInvestigation.class, valueObject.getInvestigation().getBoId());
+			}
+		}
+		domainObject.setInvestigation(value6);
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getHRG() != null && valueObject.getHRG().equals(""))
+		{
+			valueObject.setHRG(null);
+		}
+		domainObject.setHRG(valueObject.getHRG());
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getDaggerAsterisk() != null && valueObject.getDaggerAsterisk().equals(""))
+		{
+			valueObject.setDaggerAsterisk(null);
+		}
+		domainObject.setDaggerAsterisk(valueObject.getDaggerAsterisk());
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getCodingTypeIndicator() != null && valueObject.getCodingTypeIndicator().equals(""))
+		{
+			valueObject.setCodingTypeIndicator(null);
+		}
+		domainObject.setCodingTypeIndicator(valueObject.getCodingTypeIndicator());
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getFirstInSet() != null && valueObject.getFirstInSet().equals(""))
+		{
+			valueObject.setFirstInSet(null);
+		}
+		domainObject.setFirstInSet(valueObject.getFirstInSet());
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getPrimarySecondaryInd() != null && valueObject.getPrimarySecondaryInd().equals(""))
+		{
+			valueObject.setPrimarySecondaryInd(null);
+		}
+		domainObject.setPrimarySecondaryInd(valueObject.getPrimarySecondaryInd());
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getProcConsandTheatreCode() != null && valueObject.getProcConsandTheatreCode().equals(""))
+		{
+			valueObject.setProcConsandTheatreCode(null);
+		}
+		domainObject.setProcConsandTheatreCode(valueObject.getProcConsandTheatreCode());
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getProcedureDateTime() != null && valueObject.getProcedureDateTime().equals(""))
+		{
+			valueObject.setProcedureDateTime(null);
+		}
+		domainObject.setProcedureDateTime(valueObject.getProcedureDateTime());
 
 		return domainObject;
 	}

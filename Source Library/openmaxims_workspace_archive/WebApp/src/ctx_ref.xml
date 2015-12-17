@@ -1,0 +1,20 @@
+<GlobalContextDependencies>
+	<context name="Core.PatientShort" key="_cvp_Core.PatientShort">
+		<reference name="Core.CurrentClinicalContact" key="_cvp_Core.CurrentClinicalContact" />
+		<reference name="Core.CurrentCareContext" key="_cvp_Core.CurrentCareContext" />
+		<reference name="Core.EpisodeofCareShort" key="_cvp_Core.EpisodeofCareShort" />
+		<reference name="Core.CurrentCareContext.ContextType" key="_cvp_Core.CurrentCareContext.ContextType" />
+		<reference name="CareUk.CatsReferral" key="_cvp_CareUk.CatsReferral" />
+		<reference name="Naes.Referral" key="_cvp_Naes.Referral" />
+		<reference name="ICP.PatientICPRecord" key="_cv_ICP.PatientICPRecord" />
+		<reference name="Oncology.CancerContactSearchCriteriaVo" key="_cvp_Oncology.CancerContactSearchCriteriaVo" />
+	</context>
+	<context name="Core.CurrentCareContext" key="_cvp_Core.CurrentCareContext">
+		<reference name="Core.CurrentClinicalContact" key="_cvp_Core.CurrentClinicalContact" />
+	</context>
+	<context name="Core.EpisodeofCareShort" key="_cvp_Core.EpisodeofCareShort">
+		<reference name="Core.CurrentClinicalContact" key="_cvp_Core.CurrentClinicalContact" />
+		<reference name="Core.CurrentCareContext" key="_cvp_Core.CurrentCareContext" />
+		<reference name="Core.CurrentCareContext.ContextType" key="_cvp_Core.CurrentCareContext.ContextType" />
+	</context>
+</GlobalContextDependencies>

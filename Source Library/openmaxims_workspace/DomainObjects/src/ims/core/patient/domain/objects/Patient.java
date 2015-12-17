@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.patient.domain.objects;
@@ -93,8 +98,8 @@ public class Patient extends ims.domain.DomainObject implements ims.domain.Syste
 	private ims.domain.lookups.LookupInstance nationality;
 	/** Ward patient is in, if currently an inpatient */
 	private ims.core.resource.place.domain.objects.Location ward;
-	/** Patient Medical Insurance Details */
-	private ims.core.patient.domain.objects.Insurance insurance;
+	/** Patient Medical Cover Details(Non Insurance) */
+	private ims.core.patient.domain.objects.NationalHealthCover nationalHealthCover;
 	/** Patient that data has been merged to  */
 	private ims.core.patient.domain.objects.Patient associatedPatient;
 	/** Set to false if patient is deleted from PMI */
@@ -149,6 +154,61 @@ public class Patient extends ims.domain.DomainObject implements ims.domain.Syste
 	private java.util.Date copyPatientOnCorrespondenceDate;
 	/** This value should be the same as the one InpatientEpisode.pasEvent.Consultant (if an Inpatient Episode exists) */
 	private ims.core.resource.people.domain.objects.Medic currentResponsibleConsultant;
+	/** The value of the Primary Identifier used to find/validate patient */
+	private String primaryIdValueUsed;
+	/** Dementia Breach Date Time */
+	private java.util.Date dementiaBreachDateTime;
+	/** DementiaWorklistStatus */
+	private ims.domain.lookups.LookupInstance dementiaWorklistStatus;
+	/** AlternativeContact */
+	private ims.core.patient.domain.objects.PatientContactPreference alternativeContact;
+	/** HealthBoard */
+	private ims.domain.lookups.LookupInstance healthBoard;
+	private Boolean hasScannedCaseNoteFolders;
+	/** 
+	  * Collection of ims.core.clinical.domain.objects.SupportNetworkFamily.
+	  */
+	private java.util.Set supportNetworkFamily;
+	/** Current CaseNote Location */
+	private ims.core.resource.place.domain.objects.Location currentCaseNoteLocation;
+	/** Case Note Last Transfer Date */
+	private java.util.Date caseNoteLastTransferDate;
+	private String timeOfBirth;
+	/** PDS - Indicates whether the death notification is formal or informal. */
+	private ims.domain.lookups.LookupInstance pDSDeathNotificationStatus;
+	/** PDS Primary Care additional information returned */
+	private ims.core.domain.objects.PatientGP pDSPatientGP;
+	/** InterpreterRequired */
+	private Boolean pDSInterpreterRequired;
+	/** PDS Relatives of the patient
+	  * Collection of ims.core.patient.domain.objects.Relative.
+	  */
+	private java.util.List pDSrelatives;
+	/** PDS Update Inforamtion */
+	private ims.core.patient.domain.objects.PDSPatientUpdate pDSPatientUpdate;
+	/** Patient Assigned Gp History
+	  * Collection of ims.core.domain.objects.PatientGP.
+	  */
+	private java.util.List pDSPatientGPHistory;
+	/** School College */
+	private ims.core.resource.place.domain.objects.School school;
+	/** Identifies if the patient is an overseas visitor  */
+	private Boolean overseasVisitor;
+	private ims.domain.lookups.LookupInstance overseasClassification;
+	/** A record which is explicitly exempt from synchronisation for a given period of time, normally because of some data anomaly */
+	private Boolean decoupled;
+	/** Last date that a PDS crosscheck was performed */
+	private java.util.Date pDSDateLastChecked;
+	/** Has the patient lived in the UK for the last 12 months? */
+	private Boolean hasLivedUK;
+	/** Patient Status/Category - NHS, Private */
+	private ims.domain.lookups.LookupInstance patientCategory;
+	/** School or Colledge from Emergency Episode */
+	private ims.domain.lookups.LookupInstance schoolOrCollege;
+	private Boolean isChildInPublicCare;
+	private ims.domain.lookups.LookupInstance publicCareNeed;
+	/** Occupation if age is not paediatric. */
+	private String txtOccupation;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public Patient (Integer id, int ver)
@@ -325,11 +385,11 @@ public class Patient extends ims.domain.DomainObject implements ims.domain.Syste
 		this.ward = ward;
 	}
 
-	public ims.core.patient.domain.objects.Insurance getInsurance() {
-		return insurance;
+	public ims.core.patient.domain.objects.NationalHealthCover getNationalHealthCover() {
+		return nationalHealthCover;
 	}
-	public void setInsurance(ims.core.patient.domain.objects.Insurance insurance) {
-		this.insurance = insurance;
+	public void setNationalHealthCover(ims.core.patient.domain.objects.NationalHealthCover nationalHealthCover) {
+		this.nationalHealthCover = nationalHealthCover;
 	}
 
 	public ims.core.patient.domain.objects.Patient getAssociatedPatient() {
@@ -529,6 +589,212 @@ public class Patient extends ims.domain.DomainObject implements ims.domain.Syste
 	}
 	public void setCurrentResponsibleConsultant(ims.core.resource.people.domain.objects.Medic currentResponsibleConsultant) {
 		this.currentResponsibleConsultant = currentResponsibleConsultant;
+	}
+
+	public String getPrimaryIdValueUsed() {
+		return primaryIdValueUsed;
+	}
+	public void setPrimaryIdValueUsed(String primaryIdValueUsed) {
+		if ( null != primaryIdValueUsed && primaryIdValueUsed.length() > 50 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for primaryIdValueUsed. Tried to set value: "+
+				primaryIdValueUsed);
+		}
+		this.primaryIdValueUsed = primaryIdValueUsed;
+	}
+
+	public java.util.Date getDementiaBreachDateTime() {
+		return dementiaBreachDateTime;
+	}
+	public void setDementiaBreachDateTime(java.util.Date dementiaBreachDateTime) {
+		this.dementiaBreachDateTime = dementiaBreachDateTime;
+	}
+
+	public ims.domain.lookups.LookupInstance getDementiaWorklistStatus() {
+		return dementiaWorklistStatus;
+	}
+	public void setDementiaWorklistStatus(ims.domain.lookups.LookupInstance dementiaWorklistStatus) {
+		this.dementiaWorklistStatus = dementiaWorklistStatus;
+	}
+
+	public ims.core.patient.domain.objects.PatientContactPreference getAlternativeContact() {
+		return alternativeContact;
+	}
+	public void setAlternativeContact(ims.core.patient.domain.objects.PatientContactPreference alternativeContact) {
+		this.alternativeContact = alternativeContact;
+	}
+
+	public ims.domain.lookups.LookupInstance getHealthBoard() {
+		return healthBoard;
+	}
+	public void setHealthBoard(ims.domain.lookups.LookupInstance healthBoard) {
+		this.healthBoard = healthBoard;
+	}
+
+	public Boolean isHasScannedCaseNoteFolders() {
+		return hasScannedCaseNoteFolders;
+	}
+	public void setHasScannedCaseNoteFolders(Boolean hasScannedCaseNoteFolders) {
+		this.hasScannedCaseNoteFolders = hasScannedCaseNoteFolders;
+	}
+
+	public java.util.Set getSupportNetworkFamily() {
+		if ( null == supportNetworkFamily ) {
+			supportNetworkFamily = new java.util.HashSet();
+		}
+		return supportNetworkFamily;
+	}
+	public void setSupportNetworkFamily(java.util.Set paramValue) {
+		this.supportNetworkFamily = paramValue;
+	}
+
+	public ims.core.resource.place.domain.objects.Location getCurrentCaseNoteLocation() {
+		return currentCaseNoteLocation;
+	}
+	public void setCurrentCaseNoteLocation(ims.core.resource.place.domain.objects.Location currentCaseNoteLocation) {
+		this.currentCaseNoteLocation = currentCaseNoteLocation;
+	}
+
+	public java.util.Date getCaseNoteLastTransferDate() {
+		return caseNoteLastTransferDate;
+	}
+	public void setCaseNoteLastTransferDate(java.util.Date caseNoteLastTransferDate) {
+		this.caseNoteLastTransferDate = caseNoteLastTransferDate;
+	}
+
+	public String getTimeOfBirth() {
+		return timeOfBirth;
+	}
+	public void setTimeOfBirth(String timeOfBirth) {
+		this.timeOfBirth = timeOfBirth;
+	}
+
+	public ims.domain.lookups.LookupInstance getPDSDeathNotificationStatus() {
+		return pDSDeathNotificationStatus;
+	}
+	public void setPDSDeathNotificationStatus(ims.domain.lookups.LookupInstance pDSDeathNotificationStatus) {
+		this.pDSDeathNotificationStatus = pDSDeathNotificationStatus;
+	}
+
+	public ims.core.domain.objects.PatientGP getPDSPatientGP() {
+		return pDSPatientGP;
+	}
+	public void setPDSPatientGP(ims.core.domain.objects.PatientGP pDSPatientGP) {
+		this.pDSPatientGP = pDSPatientGP;
+	}
+
+	public Boolean isPDSInterpreterRequired() {
+		return pDSInterpreterRequired;
+	}
+	public void setPDSInterpreterRequired(Boolean pDSInterpreterRequired) {
+		this.pDSInterpreterRequired = pDSInterpreterRequired;
+	}
+
+	public java.util.List getPDSrelatives() {
+		if ( null == pDSrelatives ) {
+			pDSrelatives = new java.util.ArrayList();
+		}
+		return pDSrelatives;
+	}
+	public void setPDSrelatives(java.util.List paramValue) {
+		this.pDSrelatives = paramValue;
+	}
+
+	public ims.core.patient.domain.objects.PDSPatientUpdate getPDSPatientUpdate() {
+		return pDSPatientUpdate;
+	}
+	public void setPDSPatientUpdate(ims.core.patient.domain.objects.PDSPatientUpdate pDSPatientUpdate) {
+		this.pDSPatientUpdate = pDSPatientUpdate;
+	}
+
+	public java.util.List getPDSPatientGPHistory() {
+		if ( null == pDSPatientGPHistory ) {
+			pDSPatientGPHistory = new java.util.ArrayList();
+		}
+		return pDSPatientGPHistory;
+	}
+	public void setPDSPatientGPHistory(java.util.List paramValue) {
+		this.pDSPatientGPHistory = paramValue;
+	}
+
+	public ims.core.resource.place.domain.objects.School getSchool() {
+		return school;
+	}
+	public void setSchool(ims.core.resource.place.domain.objects.School school) {
+		this.school = school;
+	}
+
+	public Boolean isOverseasVisitor() {
+		return overseasVisitor;
+	}
+	public void setOverseasVisitor(Boolean overseasVisitor) {
+		this.overseasVisitor = overseasVisitor;
+	}
+
+	public ims.domain.lookups.LookupInstance getOverseasClassification() {
+		return overseasClassification;
+	}
+	public void setOverseasClassification(ims.domain.lookups.LookupInstance overseasClassification) {
+		this.overseasClassification = overseasClassification;
+	}
+
+	public Boolean isDecoupled() {
+		return decoupled;
+	}
+	public void setDecoupled(Boolean decoupled) {
+		this.decoupled = decoupled;
+	}
+
+	public java.util.Date getPDSDateLastChecked() {
+		return pDSDateLastChecked;
+	}
+	public void setPDSDateLastChecked(java.util.Date pDSDateLastChecked) {
+		this.pDSDateLastChecked = pDSDateLastChecked;
+	}
+
+	public Boolean isHasLivedUK() {
+		return hasLivedUK;
+	}
+	public void setHasLivedUK(Boolean hasLivedUK) {
+		this.hasLivedUK = hasLivedUK;
+	}
+
+	public ims.domain.lookups.LookupInstance getPatientCategory() {
+		return patientCategory;
+	}
+	public void setPatientCategory(ims.domain.lookups.LookupInstance patientCategory) {
+		this.patientCategory = patientCategory;
+	}
+
+	public ims.domain.lookups.LookupInstance getSchoolOrCollege() {
+		return schoolOrCollege;
+	}
+	public void setSchoolOrCollege(ims.domain.lookups.LookupInstance schoolOrCollege) {
+		this.schoolOrCollege = schoolOrCollege;
+	}
+
+	public Boolean isIsChildInPublicCare() {
+		return isChildInPublicCare;
+	}
+	public void setIsChildInPublicCare(Boolean isChildInPublicCare) {
+		this.isChildInPublicCare = isChildInPublicCare;
+	}
+
+	public ims.domain.lookups.LookupInstance getPublicCareNeed() {
+		return publicCareNeed;
+	}
+	public void setPublicCareNeed(ims.domain.lookups.LookupInstance publicCareNeed) {
+		this.publicCareNeed = publicCareNeed;
+	}
+
+	public String getTxtOccupation() {
+		return txtOccupation;
+	}
+	public void setTxtOccupation(String txtOccupation) {
+		if ( null != txtOccupation && txtOccupation.length() > 255 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for txtOccupation. Tried to set value: "+
+				txtOccupation);
+		}
+		this.txtOccupation = txtOccupation;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -739,12 +1005,12 @@ public class Patient extends ims.domain.DomainObject implements ims.domain.Syste
 		    auditStr.append(ward.getId());
 		}
 	    auditStr.append("; ");
-		auditStr.append("\r\n*insurance* :");
-		if (insurance != null)
+		auditStr.append("\r\n*nationalHealthCover* :");
+		if (nationalHealthCover != null)
 		{
-			auditStr.append(toShortClassName(insurance));
+			auditStr.append(toShortClassName(nationalHealthCover));
 				
-		    auditStr.append(insurance.toString());
+		    auditStr.append(nationalHealthCover.toString());
 		}
 	    auditStr.append("; ");
 		auditStr.append("\r\n*associatedPatient* :");
@@ -915,6 +1181,182 @@ public class Patient extends ims.domain.DomainObject implements ims.domain.Syste
 				
 		    auditStr.append(currentResponsibleConsultant.getId());
 		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*primaryIdValueUsed* :");
+		auditStr.append(primaryIdValueUsed);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*dementiaBreachDateTime* :");
+		auditStr.append(dementiaBreachDateTime);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*dementiaWorklistStatus* :");
+		if (dementiaWorklistStatus != null)
+			auditStr.append(dementiaWorklistStatus.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*alternativeContact* :");
+		if (alternativeContact != null)
+		{
+			auditStr.append(toShortClassName(alternativeContact));
+				
+		    auditStr.append(alternativeContact.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*healthBoard* :");
+		if (healthBoard != null)
+			auditStr.append(healthBoard.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*hasScannedCaseNoteFolders* :");
+		auditStr.append(hasScannedCaseNoteFolders);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*supportNetworkFamily* :");
+		if (supportNetworkFamily != null)
+		{
+			java.util.Iterator it56 = supportNetworkFamily.iterator();
+			int i56=0;
+			while (it56.hasNext())
+			{
+				if (i56 > 0)
+					auditStr.append(",");
+				ims.core.clinical.domain.objects.SupportNetworkFamily obj = (ims.core.clinical.domain.objects.SupportNetworkFamily)it56.next();
+		if (obj != null)
+		{
+		   if (i56 == 0)
+		   {
+			auditStr.append(toShortClassName(obj));
+			auditStr.append("[");
+		   }
+		
+		   auditStr.append(obj.getId());
+		}
+			i56++;
+		}
+		if (i56 > 0)
+			auditStr.append("] " + i56);
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*currentCaseNoteLocation* :");
+		if (currentCaseNoteLocation != null)
+		{
+			auditStr.append(toShortClassName(currentCaseNoteLocation));
+				
+		    auditStr.append(currentCaseNoteLocation.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*caseNoteLastTransferDate* :");
+		auditStr.append(caseNoteLastTransferDate);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*timeOfBirth* :");
+		auditStr.append(timeOfBirth);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*pDSDeathNotificationStatus* :");
+		if (pDSDeathNotificationStatus != null)
+			auditStr.append(pDSDeathNotificationStatus.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*pDSPatientGP* :");
+		if (pDSPatientGP != null)
+		{
+			auditStr.append(toShortClassName(pDSPatientGP));
+				
+		    auditStr.append(pDSPatientGP.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*pDSInterpreterRequired* :");
+		auditStr.append(pDSInterpreterRequired);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*pDSrelatives* :");
+		if (pDSrelatives != null)
+		{
+		int i63=0;
+		for (i63=0; i63<pDSrelatives.size(); i63++)
+		{
+			if (i63 > 0)
+				auditStr.append(",");
+			ims.core.patient.domain.objects.Relative obj = (ims.core.patient.domain.objects.Relative)pDSrelatives.get(i63);
+		    if (obj != null)
+			{
+				if (i63 == 0)
+				{
+				auditStr.append(toShortClassName(obj));
+				auditStr.append("[");
+				}
+		        auditStr.append(obj.getId());
+			}
+		}
+		if (i63 > 0)
+			auditStr.append("] " + i63);
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*pDSPatientUpdate* :");
+		if (pDSPatientUpdate != null)
+		{
+			auditStr.append(toShortClassName(pDSPatientUpdate));
+				
+		    auditStr.append(pDSPatientUpdate.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*pDSPatientGPHistory* :");
+		if (pDSPatientGPHistory != null)
+		{
+		int i65=0;
+		for (i65=0; i65<pDSPatientGPHistory.size(); i65++)
+		{
+			if (i65 > 0)
+				auditStr.append(",");
+			ims.core.domain.objects.PatientGP obj = (ims.core.domain.objects.PatientGP)pDSPatientGPHistory.get(i65);
+		    if (obj != null)
+			{
+				if (i65 == 0)
+				{
+				auditStr.append(toShortClassName(obj));
+				auditStr.append("[");
+				}
+		        auditStr.append(obj.getId());
+			}
+		}
+		if (i65 > 0)
+			auditStr.append("] " + i65);
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*school* :");
+		if (school != null)
+		{
+			auditStr.append(toShortClassName(school));
+				
+		    auditStr.append(school.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*overseasVisitor* :");
+		auditStr.append(overseasVisitor);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*overseasClassification* :");
+		if (overseasClassification != null)
+			auditStr.append(overseasClassification.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*decoupled* :");
+		auditStr.append(decoupled);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*pDSDateLastChecked* :");
+		auditStr.append(pDSDateLastChecked);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*hasLivedUK* :");
+		auditStr.append(hasLivedUK);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*patientCategory* :");
+		if (patientCategory != null)
+			auditStr.append(patientCategory.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*schoolOrCollege* :");
+		if (schoolOrCollege != null)
+			auditStr.append(schoolOrCollege.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*isChildInPublicCare* :");
+		auditStr.append(isChildInPublicCare);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*publicCareNeed* :");
+		if (publicCareNeed != null)
+			auditStr.append(publicCareNeed.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*txtOccupation* :");
+		auditStr.append(txtOccupation);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -1095,11 +1537,11 @@ public class Patient extends ims.domain.DomainObject implements ims.domain.Syste
 			sb.append(this.getWard().toXMLString(domMap)); 	
 			sb.append("</ward>");		
 		}
-		if (this.getInsurance() != null)
+		if (this.getNationalHealthCover() != null)
 		{
-			sb.append("<insurance>");
-			sb.append(this.getInsurance().toXMLString(domMap)); 	
-			sb.append("</insurance>");		
+			sb.append("<nationalHealthCover>");
+			sb.append(this.getNationalHealthCover().toXMLString(domMap)); 	
+			sb.append("</nationalHealthCover>");		
 		}
 		if (this.getAssociatedPatient() != null)
 		{
@@ -1268,6 +1710,177 @@ public class Patient extends ims.domain.DomainObject implements ims.domain.Syste
 			sb.append("<currentResponsibleConsultant>");
 			sb.append(this.getCurrentResponsibleConsultant().toXMLString(domMap)); 	
 			sb.append("</currentResponsibleConsultant>");		
+		}
+		if (this.getPrimaryIdValueUsed() != null)
+		{
+			sb.append("<primaryIdValueUsed>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getPrimaryIdValueUsed().toString()));
+			sb.append("</primaryIdValueUsed>");		
+		}
+		if (this.getDementiaBreachDateTime() != null)
+		{
+			sb.append("<dementiaBreachDateTime>");
+			sb.append(new ims.framework.utils.DateTime(this.getDementiaBreachDateTime()).toString(ims.framework.utils.DateTimeFormat.MILLI));
+			sb.append("</dementiaBreachDateTime>");		
+		}
+		if (this.getDementiaWorklistStatus() != null)
+		{
+			sb.append("<dementiaWorklistStatus>");
+			sb.append(this.getDementiaWorklistStatus().toXMLString()); 
+			sb.append("</dementiaWorklistStatus>");		
+		}
+		if (this.getAlternativeContact() != null)
+		{
+			sb.append("<alternativeContact>");
+			sb.append(this.getAlternativeContact().toXMLString(domMap)); 	
+			sb.append("</alternativeContact>");		
+		}
+		if (this.getHealthBoard() != null)
+		{
+			sb.append("<healthBoard>");
+			sb.append(this.getHealthBoard().toXMLString()); 
+			sb.append("</healthBoard>");		
+		}
+		if (this.isHasScannedCaseNoteFolders() != null)
+		{
+			sb.append("<hasScannedCaseNoteFolders>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isHasScannedCaseNoteFolders().toString()));
+			sb.append("</hasScannedCaseNoteFolders>");		
+		}
+		if (this.getSupportNetworkFamily() != null)
+		{
+			if (this.getSupportNetworkFamily().size() > 0 )
+			{
+			sb.append("<supportNetworkFamily>");
+			sb.append(ims.domain.DomainObject.toXMLString(this.getSupportNetworkFamily(), domMap));
+			sb.append("</supportNetworkFamily>");		
+			}
+		}
+		if (this.getCurrentCaseNoteLocation() != null)
+		{
+			sb.append("<currentCaseNoteLocation>");
+			sb.append(this.getCurrentCaseNoteLocation().toXMLString(domMap)); 	
+			sb.append("</currentCaseNoteLocation>");		
+		}
+		if (this.getCaseNoteLastTransferDate() != null)
+		{
+			sb.append("<caseNoteLastTransferDate>");
+			sb.append(new ims.framework.utils.DateTime(this.getCaseNoteLastTransferDate()).toString(ims.framework.utils.DateTimeFormat.MILLI));
+			sb.append("</caseNoteLastTransferDate>");		
+		}
+		if (this.getTimeOfBirth() != null)
+		{
+			sb.append("<timeOfBirth>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getTimeOfBirth().toString()));
+			sb.append("</timeOfBirth>");		
+		}
+		if (this.getPDSDeathNotificationStatus() != null)
+		{
+			sb.append("<pDSDeathNotificationStatus>");
+			sb.append(this.getPDSDeathNotificationStatus().toXMLString()); 
+			sb.append("</pDSDeathNotificationStatus>");		
+		}
+		if (this.getPDSPatientGP() != null)
+		{
+			sb.append("<pDSPatientGP>");
+			sb.append(this.getPDSPatientGP().toXMLString(domMap)); 	
+			sb.append("</pDSPatientGP>");		
+		}
+		if (this.isPDSInterpreterRequired() != null)
+		{
+			sb.append("<pDSInterpreterRequired>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isPDSInterpreterRequired().toString()));
+			sb.append("</pDSInterpreterRequired>");		
+		}
+		if (this.getPDSrelatives() != null)
+		{
+			if (this.getPDSrelatives().size() > 0 )
+			{
+			sb.append("<pDSrelatives>");
+			sb.append(ims.domain.DomainObject.toXMLString(this.getPDSrelatives(), domMap));
+			sb.append("</pDSrelatives>");		
+			}
+		}
+		if (this.getPDSPatientUpdate() != null)
+		{
+			sb.append("<pDSPatientUpdate>");
+			sb.append(this.getPDSPatientUpdate().toXMLString(domMap)); 	
+			sb.append("</pDSPatientUpdate>");		
+		}
+		if (this.getPDSPatientGPHistory() != null)
+		{
+			if (this.getPDSPatientGPHistory().size() > 0 )
+			{
+			sb.append("<pDSPatientGPHistory>");
+			sb.append(ims.domain.DomainObject.toXMLString(this.getPDSPatientGPHistory(), domMap));
+			sb.append("</pDSPatientGPHistory>");		
+			}
+		}
+		if (this.getSchool() != null)
+		{
+			sb.append("<school>");
+			sb.append(this.getSchool().toXMLString(domMap)); 	
+			sb.append("</school>");		
+		}
+		if (this.isOverseasVisitor() != null)
+		{
+			sb.append("<overseasVisitor>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isOverseasVisitor().toString()));
+			sb.append("</overseasVisitor>");		
+		}
+		if (this.getOverseasClassification() != null)
+		{
+			sb.append("<overseasClassification>");
+			sb.append(this.getOverseasClassification().toXMLString()); 
+			sb.append("</overseasClassification>");		
+		}
+		if (this.isDecoupled() != null)
+		{
+			sb.append("<decoupled>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isDecoupled().toString()));
+			sb.append("</decoupled>");		
+		}
+		if (this.getPDSDateLastChecked() != null)
+		{
+			sb.append("<pDSDateLastChecked>");
+			sb.append(new ims.framework.utils.DateTime(this.getPDSDateLastChecked()).toString(ims.framework.utils.DateTimeFormat.MILLI));
+			sb.append("</pDSDateLastChecked>");		
+		}
+		if (this.isHasLivedUK() != null)
+		{
+			sb.append("<hasLivedUK>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isHasLivedUK().toString()));
+			sb.append("</hasLivedUK>");		
+		}
+		if (this.getPatientCategory() != null)
+		{
+			sb.append("<patientCategory>");
+			sb.append(this.getPatientCategory().toXMLString()); 
+			sb.append("</patientCategory>");		
+		}
+		if (this.getSchoolOrCollege() != null)
+		{
+			sb.append("<schoolOrCollege>");
+			sb.append(this.getSchoolOrCollege().toXMLString()); 
+			sb.append("</schoolOrCollege>");		
+		}
+		if (this.isIsChildInPublicCare() != null)
+		{
+			sb.append("<isChildInPublicCare>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsChildInPublicCare().toString()));
+			sb.append("</isChildInPublicCare>");		
+		}
+		if (this.getPublicCareNeed() != null)
+		{
+			sb.append("<publicCareNeed>");
+			sb.append(this.getPublicCareNeed().toXMLString()); 
+			sb.append("</publicCareNeed>");		
+		}
+		if (this.getTxtOccupation() != null)
+		{
+			sb.append("<txtOccupation>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getTxtOccupation().toString()));
+			sb.append("</txtOccupation>");		
 		}
 		return sb.toString();
 	}
@@ -1556,11 +2169,11 @@ public class Patient extends ims.domain.DomainObject implements ims.domain.Syste
 			fldEl = fldEl.element("class");		
 			obj.setWard(ims.core.resource.place.domain.objects.Location.getLocationfromXML(fldEl, factory, domMap)); 
 		}
-		fldEl = el.element("insurance");
+		fldEl = el.element("nationalHealthCover");
 		if(fldEl != null)
 		{
 			fldEl = fldEl.element("class");		
-			obj.setInsurance(ims.core.patient.domain.objects.Insurance.getInsurancefromXML(fldEl, factory, domMap)); 
+			obj.setNationalHealthCover(ims.core.patient.domain.objects.NationalHealthCover.getNationalHealthCoverfromXML(fldEl, factory, domMap)); 
 		}
 		fldEl = el.element("associatedPatient");
 		if(fldEl != null)
@@ -1712,6 +2325,156 @@ public class Patient extends ims.domain.DomainObject implements ims.domain.Syste
 			fldEl = fldEl.element("class");		
 			obj.setCurrentResponsibleConsultant(ims.core.resource.people.domain.objects.Medic.getMedicfromXML(fldEl, factory, domMap)); 
 		}
+		fldEl = el.element("primaryIdValueUsed");
+		if(fldEl != null)
+		{	
+    		obj.setPrimaryIdValueUsed(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("dementiaBreachDateTime");
+		if(fldEl != null)
+		{	
+    		obj.setDementiaBreachDateTime(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
+		}
+		fldEl = el.element("dementiaWorklistStatus");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setDementiaWorklistStatus(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("alternativeContact");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setAlternativeContact(ims.core.patient.domain.objects.PatientContactPreference.getPatientContactPreferencefromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("healthBoard");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setHealthBoard(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("hasScannedCaseNoteFolders");
+		if(fldEl != null)
+		{	
+    		obj.setHasScannedCaseNoteFolders(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("supportNetworkFamily");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("set");	
+			obj.setSupportNetworkFamily(ims.core.clinical.domain.objects.SupportNetworkFamily.fromSetXMLString(fldEl, factory, obj.getSupportNetworkFamily(), domMap));
+		}
+		fldEl = el.element("currentCaseNoteLocation");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setCurrentCaseNoteLocation(ims.core.resource.place.domain.objects.Location.getLocationfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("caseNoteLastTransferDate");
+		if(fldEl != null)
+		{	
+    		obj.setCaseNoteLastTransferDate(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
+		}
+		fldEl = el.element("timeOfBirth");
+		if(fldEl != null)
+		{	
+    		obj.setTimeOfBirth(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("pDSDeathNotificationStatus");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setPDSDeathNotificationStatus(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("pDSPatientGP");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setPDSPatientGP(ims.core.domain.objects.PatientGP.getPatientGPfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("pDSInterpreterRequired");
+		if(fldEl != null)
+		{	
+    		obj.setPDSInterpreterRequired(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("pDSrelatives");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("list");	
+			obj.setPDSrelatives(ims.core.patient.domain.objects.Relative.fromListXMLString(fldEl, factory, obj.getPDSrelatives(), domMap));
+		}
+		fldEl = el.element("pDSPatientUpdate");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setPDSPatientUpdate(ims.core.patient.domain.objects.PDSPatientUpdate.getPDSPatientUpdatefromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("pDSPatientGPHistory");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("list");	
+			obj.setPDSPatientGPHistory(ims.core.domain.objects.PatientGP.fromListXMLString(fldEl, factory, obj.getPDSPatientGPHistory(), domMap));
+		}
+		fldEl = el.element("school");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setSchool(ims.core.resource.place.domain.objects.School.getSchoolfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("overseasVisitor");
+		if(fldEl != null)
+		{	
+    		obj.setOverseasVisitor(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("overseasClassification");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setOverseasClassification(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("decoupled");
+		if(fldEl != null)
+		{	
+    		obj.setDecoupled(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("pDSDateLastChecked");
+		if(fldEl != null)
+		{	
+    		obj.setPDSDateLastChecked(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
+		}
+		fldEl = el.element("hasLivedUK");
+		if(fldEl != null)
+		{	
+    		obj.setHasLivedUK(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("patientCategory");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setPatientCategory(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("schoolOrCollege");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setSchoolOrCollege(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("isChildInPublicCare");
+		if(fldEl != null)
+		{	
+    		obj.setIsChildInPublicCare(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("publicCareNeed");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setPublicCareNeed(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("txtOccupation");
+		if(fldEl != null)
+		{	
+    		obj.setTxtOccupation(new String(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -1722,6 +2485,9 @@ public class Patient extends ims.domain.DomainObject implements ims.domain.Syste
 		, "addresses"
 		, "commChannels"
 		, "patientAlerts"
+		, "supportNetworkFamily"
+		, "pDSrelatives"
+		, "pDSPatientGPHistory"
 		};
 	}
 
@@ -1735,23 +2501,70 @@ public String getMergedMessage(Patient patient)
 	{
 		if(patient.getName() != null)
 		{
-			sbMessage.append(patient.getName().getForename() != null ? patient.getName().getForename():"" + " ");    //wdev-13104
+			sbMessage.append(patient.getName().getForename() != null ? patient.getName().getForename()+" ":"" + " ");   //wdev-13104  //WDEV-22238
 			sbMessage.append(patient.getName().getSurname());
 			if (patient.getDob() != null) 
-				sbMessage.append(" " + new ims.framework.utils.PartialDate(patient.getDob()).toString());   
+				sbMessage.append(" with DOB: " + new ims.framework.utils.PartialDate(patient.getDob()).toString());   //WDEV-22238
 		}
 		if(this.name != null)
 		{
 			sbMessage.append(" has been merged with \r");
-			sbMessage.append(this.name.getForename() != null ? this.name.getForename():"" + " ");					//wdev-13104	
+			sbMessage.append(this.name.getForename() != null ? this.name.getForename()+" ":"" + " ");				//wdev-13104  //WDEV-22238	 
 			sbMessage.append(this.name.getSurname());
 			if (this.dob != null) 
-				sbMessage.append(" " + new ims.framework.utils.PartialDate(this.dob).toString());   
+				sbMessage.append(" with DOB: " + new ims.framework.utils.PartialDate(this.dob).toString());   //WDEV-22238
 		}
 		return sbMessage.toString();
 	}	
 	return "";
 }
+
+	/**
+	getAgeInYearsOn
+	*/
+	/*
+	 * Calculate patient age on a particular date if dob is not set returns null
+	 */
+	public Integer getAgeInYearsOn(java.util.Date date)
+	{
+		if (dob != null&&date!=null)
+		{		
+			int patAge = 0;
+			java.util.Date endDate = null;
+			if(dod!=null)
+			{
+				endDate=dod.after(date)?date:dod;
+			}
+			else
+			{
+				endDate=date;
+			}
+			patAge = new ims.framework.utils.Age(new ims.framework.utils.Date(new ims.framework.utils.PartialDate(this.dob).toDate()),new ims.framework.utils.Date( endDate)).getYears();
+			return new Integer(patAge); 
+		}
+		return null; // No Age
+	}
+	
+
+
+	/**
+	isPaediatricOn
+	*/
+	/**
+	 * Checks if a patient is below the Paediatric age on a particular date
+	 * if no DOB recorded for patient returns false
+	 * @param date
+	 * @return
+	 */
+	public Boolean isPaediatricOn(java.util.Date date)
+	{
+		Integer age = getAgeInYearsOn(date);
+		if (age!=null &&age.compareTo(Integer.valueOf(ims.configuration.gen.ConfigFlag.GEN.PAEDIATRIC_AGE.getValue()))<=0)
+			return true;
+		else
+			return false;
+	}
+
 
 
 	public void createHCPAlert(ims.domain.DomainFactory factory, ims.rules.engine.RulesRuntimeEngine engine, String message, int alertType)
@@ -1873,7 +2686,7 @@ public String getMergedMessage(Patient patient)
 		public static final String Language = "language";
 		public static final String Nationality = "nationality";
 		public static final String Ward = "ward";
-		public static final String Insurance = "insurance";
+		public static final String NationalHealthCover = "nationalHealthCover";
 		public static final String AssociatedPatient = "associatedPatient";
 		public static final String IsActive = "isActive";
 		public static final String CommChannels = "commChannels";
@@ -1901,6 +2714,33 @@ public String getMergedMessage(Patient patient)
 		public static final String CopyPatientOnCorrespondence = "copyPatientOnCorrespondence";
 		public static final String CopyPatientOnCorrespondenceDate = "copyPatientOnCorrespondenceDate";
 		public static final String CurrentResponsibleConsultant = "currentResponsibleConsultant";
+		public static final String PrimaryIdValueUsed = "primaryIdValueUsed";
+		public static final String DementiaBreachDateTime = "dementiaBreachDateTime";
+		public static final String DementiaWorklistStatus = "dementiaWorklistStatus";
+		public static final String AlternativeContact = "alternativeContact";
+		public static final String HealthBoard = "healthBoard";
+		public static final String HasScannedCaseNoteFolders = "hasScannedCaseNoteFolders";
+		public static final String SupportNetworkFamily = "supportNetworkFamily";
+		public static final String CurrentCaseNoteLocation = "currentCaseNoteLocation";
+		public static final String CaseNoteLastTransferDate = "caseNoteLastTransferDate";
+		public static final String TimeOfBirth = "timeOfBirth";
+		public static final String PDSDeathNotificationStatus = "pDSDeathNotificationStatus";
+		public static final String PDSPatientGP = "pDSPatientGP";
+		public static final String PDSInterpreterRequired = "pDSInterpreterRequired";
+		public static final String PDSrelatives = "pDSrelatives";
+		public static final String PDSPatientUpdate = "pDSPatientUpdate";
+		public static final String PDSPatientGPHistory = "pDSPatientGPHistory";
+		public static final String School = "school";
+		public static final String OverseasVisitor = "overseasVisitor";
+		public static final String OverseasClassification = "overseasClassification";
+		public static final String Decoupled = "decoupled";
+		public static final String PDSDateLastChecked = "pDSDateLastChecked";
+		public static final String HasLivedUK = "hasLivedUK";
+		public static final String PatientCategory = "patientCategory";
+		public static final String SchoolOrCollege = "schoolOrCollege";
+		public static final String IsChildInPublicCare = "isChildInPublicCare";
+		public static final String PublicCareNeed = "publicCareNeed";
+		public static final String TxtOccupation = "txtOccupation";
 	}
 }
 

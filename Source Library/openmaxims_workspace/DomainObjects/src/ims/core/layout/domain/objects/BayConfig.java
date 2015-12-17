@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.layout.domain.objects;
@@ -51,6 +56,29 @@ public class BayConfig extends ims.domain.DomainObject implements ims.domain.Sys
 	private ims.core.layout.domain.objects.FloorBedSpaceLayout floorBedSpaceLayout;
 	/** isActive */
 	private Boolean isActive;
+	private Boolean male;
+	private Boolean female;
+	private Boolean pediatric;
+	private ims.domain.lookups.LookupInstance dependency;
+	private Integer numOfBeds;
+	private Integer numOfOccupiedBeds;
+	private String openingTime;
+	private String closingTime;
+	private Boolean weekdaysOnly;
+	private ims.domain.lookups.LookupInstance bayStatus;
+	/** 
+	  * Collection of ims.core.admin.pas.domain.objects.WardBayClosingDetails.
+	  */
+	private java.util.List closingDetails;
+	/** 
+	  * Collection of ims.core.admin.pas.domain.objects.WardBayBlockingDetails.
+	  */
+	private java.util.List blockingDetails;
+	/** 
+	  * Collection of ims.core.layout.domain.objects.ReopenOutOfHours.
+	  */
+	private java.util.List reOpenOutOfHours;
+	private ims.domain.lookups.LookupInstance temporaryBayGender;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public BayConfig (Integer id, int ver)
@@ -90,6 +118,113 @@ public class BayConfig extends ims.domain.DomainObject implements ims.domain.Sys
 	}
 	public void setIsActive(Boolean isActive) {
 		this.isActive = isActive;
+	}
+
+	public Boolean isMale() {
+		return male;
+	}
+	public void setMale(Boolean male) {
+		this.male = male;
+	}
+
+	public Boolean isFemale() {
+		return female;
+	}
+	public void setFemale(Boolean female) {
+		this.female = female;
+	}
+
+	public Boolean isPediatric() {
+		return pediatric;
+	}
+	public void setPediatric(Boolean pediatric) {
+		this.pediatric = pediatric;
+	}
+
+	public ims.domain.lookups.LookupInstance getDependency() {
+		return dependency;
+	}
+	public void setDependency(ims.domain.lookups.LookupInstance dependency) {
+		this.dependency = dependency;
+	}
+
+	public Integer getNumOfBeds() {
+		return numOfBeds;
+	}
+	public void setNumOfBeds(Integer numOfBeds) {
+		this.numOfBeds = numOfBeds;
+	}
+
+	public Integer getNumOfOccupiedBeds() {
+		return numOfOccupiedBeds;
+	}
+	public void setNumOfOccupiedBeds(Integer numOfOccupiedBeds) {
+		this.numOfOccupiedBeds = numOfOccupiedBeds;
+	}
+
+	public String getOpeningTime() {
+		return openingTime;
+	}
+	public void setOpeningTime(String openingTime) {
+		this.openingTime = openingTime;
+	}
+
+	public String getClosingTime() {
+		return closingTime;
+	}
+	public void setClosingTime(String closingTime) {
+		this.closingTime = closingTime;
+	}
+
+	public Boolean isWeekdaysOnly() {
+		return weekdaysOnly;
+	}
+	public void setWeekdaysOnly(Boolean weekdaysOnly) {
+		this.weekdaysOnly = weekdaysOnly;
+	}
+
+	public ims.domain.lookups.LookupInstance getBayStatus() {
+		return bayStatus;
+	}
+	public void setBayStatus(ims.domain.lookups.LookupInstance bayStatus) {
+		this.bayStatus = bayStatus;
+	}
+
+	public java.util.List getClosingDetails() {
+		if ( null == closingDetails ) {
+			closingDetails = new java.util.ArrayList();
+		}
+		return closingDetails;
+	}
+	public void setClosingDetails(java.util.List paramValue) {
+		this.closingDetails = paramValue;
+	}
+
+	public java.util.List getBlockingDetails() {
+		if ( null == blockingDetails ) {
+			blockingDetails = new java.util.ArrayList();
+		}
+		return blockingDetails;
+	}
+	public void setBlockingDetails(java.util.List paramValue) {
+		this.blockingDetails = paramValue;
+	}
+
+	public java.util.List getReOpenOutOfHours() {
+		if ( null == reOpenOutOfHours ) {
+			reOpenOutOfHours = new java.util.ArrayList();
+		}
+		return reOpenOutOfHours;
+	}
+	public void setReOpenOutOfHours(java.util.List paramValue) {
+		this.reOpenOutOfHours = paramValue;
+	}
+
+	public ims.domain.lookups.LookupInstance getTemporaryBayGender() {
+		return temporaryBayGender;
+	}
+	public void setTemporaryBayGender(ims.domain.lookups.LookupInstance temporaryBayGender) {
+		this.temporaryBayGender = temporaryBayGender;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -228,6 +363,111 @@ public class BayConfig extends ims.domain.DomainObject implements ims.domain.Sys
 		auditStr.append("\r\n*isActive* :");
 		auditStr.append(isActive);
 	    auditStr.append("; ");
+		auditStr.append("\r\n*male* :");
+		auditStr.append(male);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*female* :");
+		auditStr.append(female);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*pediatric* :");
+		auditStr.append(pediatric);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*dependency* :");
+		if (dependency != null)
+			auditStr.append(dependency.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*numOfBeds* :");
+		auditStr.append(numOfBeds);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*numOfOccupiedBeds* :");
+		auditStr.append(numOfOccupiedBeds);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*openingTime* :");
+		auditStr.append(openingTime);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*closingTime* :");
+		auditStr.append(closingTime);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*weekdaysOnly* :");
+		auditStr.append(weekdaysOnly);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*bayStatus* :");
+		if (bayStatus != null)
+			auditStr.append(bayStatus.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*closingDetails* :");
+		if (closingDetails != null)
+		{
+		int i14=0;
+		for (i14=0; i14<closingDetails.size(); i14++)
+		{
+			if (i14 > 0)
+				auditStr.append(",");
+			ims.core.admin.pas.domain.objects.WardBayClosingDetails obj = (ims.core.admin.pas.domain.objects.WardBayClosingDetails)closingDetails.get(i14);
+		    if (obj != null)
+			{
+				if (i14 == 0)
+				{
+				auditStr.append(toShortClassName(obj));
+				auditStr.append("[");
+				}
+		        auditStr.append(obj.getId());
+			}
+		}
+		if (i14 > 0)
+			auditStr.append("] " + i14);
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*blockingDetails* :");
+		if (blockingDetails != null)
+		{
+		int i15=0;
+		for (i15=0; i15<blockingDetails.size(); i15++)
+		{
+			if (i15 > 0)
+				auditStr.append(",");
+			ims.core.admin.pas.domain.objects.WardBayBlockingDetails obj = (ims.core.admin.pas.domain.objects.WardBayBlockingDetails)blockingDetails.get(i15);
+		    if (obj != null)
+			{
+				if (i15 == 0)
+				{
+				auditStr.append(toShortClassName(obj));
+				auditStr.append("[");
+				}
+		        auditStr.append(obj.getId());
+			}
+		}
+		if (i15 > 0)
+			auditStr.append("] " + i15);
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*reOpenOutOfHours* :");
+		if (reOpenOutOfHours != null)
+		{
+		int i16=0;
+		for (i16=0; i16<reOpenOutOfHours.size(); i16++)
+		{
+			if (i16 > 0)
+				auditStr.append(",");
+			ims.core.layout.domain.objects.ReopenOutOfHours obj = (ims.core.layout.domain.objects.ReopenOutOfHours)reOpenOutOfHours.get(i16);
+		    if (obj != null)
+			{
+				if (i16 == 0)
+				{
+				auditStr.append(toShortClassName(obj));
+				auditStr.append("[");
+				}
+		        auditStr.append(obj.getId());
+			}
+		}
+		if (i16 > 0)
+			auditStr.append("] " + i16);
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*temporaryBayGender* :");
+		if (temporaryBayGender != null)
+			auditStr.append(temporaryBayGender.getText());
+	    auditStr.append("; ");
 		return auditStr.toString();
 	}
 	
@@ -289,6 +529,99 @@ public class BayConfig extends ims.domain.DomainObject implements ims.domain.Sys
 			sb.append("<isActive>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsActive().toString()));
 			sb.append("</isActive>");		
+		}
+		if (this.isMale() != null)
+		{
+			sb.append("<male>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isMale().toString()));
+			sb.append("</male>");		
+		}
+		if (this.isFemale() != null)
+		{
+			sb.append("<female>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isFemale().toString()));
+			sb.append("</female>");		
+		}
+		if (this.isPediatric() != null)
+		{
+			sb.append("<pediatric>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isPediatric().toString()));
+			sb.append("</pediatric>");		
+		}
+		if (this.getDependency() != null)
+		{
+			sb.append("<dependency>");
+			sb.append(this.getDependency().toXMLString()); 
+			sb.append("</dependency>");		
+		}
+		if (this.getNumOfBeds() != null)
+		{
+			sb.append("<numOfBeds>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getNumOfBeds().toString()));
+			sb.append("</numOfBeds>");		
+		}
+		if (this.getNumOfOccupiedBeds() != null)
+		{
+			sb.append("<numOfOccupiedBeds>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getNumOfOccupiedBeds().toString()));
+			sb.append("</numOfOccupiedBeds>");		
+		}
+		if (this.getOpeningTime() != null)
+		{
+			sb.append("<openingTime>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getOpeningTime().toString()));
+			sb.append("</openingTime>");		
+		}
+		if (this.getClosingTime() != null)
+		{
+			sb.append("<closingTime>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getClosingTime().toString()));
+			sb.append("</closingTime>");		
+		}
+		if (this.isWeekdaysOnly() != null)
+		{
+			sb.append("<weekdaysOnly>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isWeekdaysOnly().toString()));
+			sb.append("</weekdaysOnly>");		
+		}
+		if (this.getBayStatus() != null)
+		{
+			sb.append("<bayStatus>");
+			sb.append(this.getBayStatus().toXMLString()); 
+			sb.append("</bayStatus>");		
+		}
+		if (this.getClosingDetails() != null)
+		{
+			if (this.getClosingDetails().size() > 0 )
+			{
+			sb.append("<closingDetails>");
+			sb.append(ims.domain.DomainObject.toXMLString(this.getClosingDetails(), domMap));
+			sb.append("</closingDetails>");		
+			}
+		}
+		if (this.getBlockingDetails() != null)
+		{
+			if (this.getBlockingDetails().size() > 0 )
+			{
+			sb.append("<blockingDetails>");
+			sb.append(ims.domain.DomainObject.toXMLString(this.getBlockingDetails(), domMap));
+			sb.append("</blockingDetails>");		
+			}
+		}
+		if (this.getReOpenOutOfHours() != null)
+		{
+			if (this.getReOpenOutOfHours().size() > 0 )
+			{
+			sb.append("<reOpenOutOfHours>");
+			sb.append(ims.domain.DomainObject.toXMLString(this.getReOpenOutOfHours(), domMap));
+			sb.append("</reOpenOutOfHours>");		
+			}
+		}
+		if (this.getTemporaryBayGender() != null)
+		{
+			sb.append("<temporaryBayGender>");
+			sb.append(this.getTemporaryBayGender().toXMLString()); 
+			sb.append("</temporaryBayGender>");		
 		}
 		return sb.toString();
 	}
@@ -470,11 +803,90 @@ public class BayConfig extends ims.domain.DomainObject implements ims.domain.Sys
 		{	
     		obj.setIsActive(new Boolean(fldEl.getTextTrim()));	
 		}
+		fldEl = el.element("male");
+		if(fldEl != null)
+		{	
+    		obj.setMale(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("female");
+		if(fldEl != null)
+		{	
+    		obj.setFemale(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("pediatric");
+		if(fldEl != null)
+		{	
+    		obj.setPediatric(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("dependency");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setDependency(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("numOfBeds");
+		if(fldEl != null)
+		{	
+    		obj.setNumOfBeds(new Integer(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("numOfOccupiedBeds");
+		if(fldEl != null)
+		{	
+    		obj.setNumOfOccupiedBeds(new Integer(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("openingTime");
+		if(fldEl != null)
+		{	
+    		obj.setOpeningTime(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("closingTime");
+		if(fldEl != null)
+		{	
+    		obj.setClosingTime(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("weekdaysOnly");
+		if(fldEl != null)
+		{	
+    		obj.setWeekdaysOnly(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("bayStatus");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setBayStatus(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("closingDetails");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("list");	
+			obj.setClosingDetails(ims.core.admin.pas.domain.objects.WardBayClosingDetails.fromListXMLString(fldEl, factory, obj.getClosingDetails(), domMap));
+		}
+		fldEl = el.element("blockingDetails");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("list");	
+			obj.setBlockingDetails(ims.core.admin.pas.domain.objects.WardBayBlockingDetails.fromListXMLString(fldEl, factory, obj.getBlockingDetails(), domMap));
+		}
+		fldEl = el.element("reOpenOutOfHours");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("list");	
+			obj.setReOpenOutOfHours(ims.core.layout.domain.objects.ReopenOutOfHours.fromListXMLString(fldEl, factory, obj.getReOpenOutOfHours(), domMap));
+		}
+		fldEl = el.element("temporaryBayGender");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setTemporaryBayGender(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
 	}
 
 	public static String[] getCollectionFields()
 	{
 		return new String[]{
+		 "closingDetails"
+		, "blockingDetails"
+		, "reOpenOutOfHours"
 		};
 	}
 
@@ -485,6 +897,20 @@ public class BayConfig extends ims.domain.DomainObject implements ims.domain.Sys
 		public static final String Bay = "bay";
 		public static final String FloorBedSpaceLayout = "floorBedSpaceLayout";
 		public static final String IsActive = "isActive";
+		public static final String Male = "male";
+		public static final String Female = "female";
+		public static final String Pediatric = "pediatric";
+		public static final String Dependency = "dependency";
+		public static final String NumOfBeds = "numOfBeds";
+		public static final String NumOfOccupiedBeds = "numOfOccupiedBeds";
+		public static final String OpeningTime = "openingTime";
+		public static final String ClosingTime = "closingTime";
+		public static final String WeekdaysOnly = "weekdaysOnly";
+		public static final String BayStatus = "bayStatus";
+		public static final String ClosingDetails = "closingDetails";
+		public static final String BlockingDetails = "blockingDetails";
+		public static final String ReOpenOutOfHours = "reOpenOutOfHours";
+		public static final String TemporaryBayGender = "temporaryBayGender";
 	}
 }
 

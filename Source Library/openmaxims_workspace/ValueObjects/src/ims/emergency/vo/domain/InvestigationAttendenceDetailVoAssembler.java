@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.emergency.vo.domain;
@@ -50,12 +55,6 @@ public class InvestigationAttendenceDetailVoAssembler
 		}
 		valueObjectDest.setID_InvestigationAttendenceDetail(valueObjectSrc.getID_InvestigationAttendenceDetail());
 	    valueObjectDest.setIsRIE(valueObjectSrc.getIsRIE());
-		// Patient
-		valueObjectDest.setPatient(valueObjectSrc.getPatient());
-		// Episode
-		valueObjectDest.setEpisode(valueObjectSrc.getEpisode());
-		// Attendance
-		valueObjectDest.setAttendance(valueObjectSrc.getAttendance());
 		// AuthoringInformation
 		valueObjectDest.setAuthoringInformation(valueObjectSrc.getAuthoringInformation());
 		// AttendenceInvestigation
@@ -64,6 +63,8 @@ public class InvestigationAttendenceDetailVoAssembler
 		valueObjectDest.setActive(valueObjectSrc.getActive());
 		// AddedDuringCoding
 		valueObjectDest.setAddedDuringCoding(valueObjectSrc.getAddedDuringCoding());
+		// OCSInvestigation
+		valueObjectDest.setOCSInvestigation(valueObjectSrc.getOCSInvestigation());
 	 	return valueObjectDest;
 	 }
 
@@ -354,90 +355,50 @@ public class InvestigationAttendenceDetailVoAssembler
 		if ((valueObject.getIsRIE() == null || valueObject.getIsRIE().booleanValue() == false) && domainObject.isIncludeRecord())
 			return null;
 			
-		// Patient
-		if (domainObject.getPatient() != null)
-		{
-			if(domainObject.getPatient() instanceof HibernateProxy) // If the proxy is set, there is no need to lazy load, the proxy knows the id already. 
-			{
-				HibernateProxy p = (HibernateProxy) domainObject.getPatient();
-				int id = Integer.parseInt(p.getHibernateLazyInitializer().getIdentifier().toString());				
-				valueObject.setPatient(new ims.core.patient.vo.PatientRefVo(id, -1));				
-			}
-			else
-			{
-				valueObject.setPatient(new ims.core.patient.vo.PatientRefVo(domainObject.getPatient().getId(), domainObject.getPatient().getVersion()));
-			}
-		}
-		// Episode
-		if (domainObject.getEpisode() != null)
-		{
-			if(domainObject.getEpisode() instanceof HibernateProxy) // If the proxy is set, there is no need to lazy load, the proxy knows the id already. 
-			{
-				HibernateProxy p = (HibernateProxy) domainObject.getEpisode();
-				int id = Integer.parseInt(p.getHibernateLazyInitializer().getIdentifier().toString());				
-				valueObject.setEpisode(new ims.core.admin.vo.EpisodeOfCareRefVo(id, -1));				
-			}
-			else
-			{
-				valueObject.setEpisode(new ims.core.admin.vo.EpisodeOfCareRefVo(domainObject.getEpisode().getId(), domainObject.getEpisode().getVersion()));
-			}
-		}
-		// Attendance
-		if (domainObject.getAttendance() != null)
-		{
-			if(domainObject.getAttendance() instanceof HibernateProxy) // If the proxy is set, there is no need to lazy load, the proxy knows the id already. 
-			{
-				HibernateProxy p = (HibernateProxy) domainObject.getAttendance();
-				int id = Integer.parseInt(p.getHibernateLazyInitializer().getIdentifier().toString());				
-				valueObject.setAttendance(new ims.core.admin.vo.CareContextRefVo(id, -1));				
-			}
-			else
-			{
-				valueObject.setAttendance(new ims.core.admin.vo.CareContextRefVo(domainObject.getAttendance().getId(), domainObject.getAttendance().getVersion()));
-			}
-		}
 		// AuthoringInformation
 		valueObject.setAuthoringInformation(ims.core.vo.domain.AuthoringInformationVoAssembler.create(map, domainObject.getAuthoringInformation()) );
 		// AttendenceInvestigation
-		ims.domain.lookups.LookupInstance instance5 = domainObject.getAttendenceInvestigation();
-		if ( null != instance5 ) {
+		ims.domain.lookups.LookupInstance instance2 = domainObject.getAttendenceInvestigation();
+		if ( null != instance2 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
 			img = null;
-			if (instance5.getImage() != null) 
+			if (instance2.getImage() != null) 
 			{
-				img = new ims.framework.utils.ImagePath(instance5.getImage().getImageId(), instance5.getImage().getImagePath());
+				img = new ims.framework.utils.ImagePath(instance2.getImage().getImageId(), instance2.getImage().getImagePath());
 			}
-			color = instance5.getColor();
+			color = instance2.getColor();
 			if (color != null) 
 				color.getValue();
 
-			ims.emergency.vo.lookups.AttendenceInvestigation voLookup5 = new ims.emergency.vo.lookups.AttendenceInvestigation(instance5.getId(),instance5.getText(), instance5.isActive(), null, img, color);
-			ims.emergency.vo.lookups.AttendenceInvestigation parentVoLookup5 = voLookup5;
-			ims.domain.lookups.LookupInstance parent5 = instance5.getParent();
-			while (parent5 != null)
+			ims.emergency.vo.lookups.AttendenceInvestigation voLookup2 = new ims.emergency.vo.lookups.AttendenceInvestigation(instance2.getId(),instance2.getText(), instance2.isActive(), null, img, color);
+			ims.emergency.vo.lookups.AttendenceInvestigation parentVoLookup2 = voLookup2;
+			ims.domain.lookups.LookupInstance parent2 = instance2.getParent();
+			while (parent2 != null)
 			{
-				if (parent5.getImage() != null) 
+				if (parent2.getImage() != null) 
 				{
-					img = new ims.framework.utils.ImagePath(parent5.getImage().getImageId(), parent5.getImage().getImagePath() );
+					img = new ims.framework.utils.ImagePath(parent2.getImage().getImageId(), parent2.getImage().getImagePath() );
 				}
 				else 
 				{
 					img = null;
 				}
-				color = parent5.getColor();
+				color = parent2.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup5.setParent(new ims.emergency.vo.lookups.AttendenceInvestigation(parent5.getId(),parent5.getText(), parent5.isActive(), null, img, color));
-				parentVoLookup5 = parentVoLookup5.getParent();
-								parent5 = parent5.getParent();
+								parentVoLookup2.setParent(new ims.emergency.vo.lookups.AttendenceInvestigation(parent2.getId(),parent2.getText(), parent2.isActive(), null, img, color));
+				parentVoLookup2 = parentVoLookup2.getParent();
+								parent2 = parent2.getParent();
 			}			
-			valueObject.setAttendenceInvestigation(voLookup5);
+			valueObject.setAttendenceInvestigation(voLookup2);
 		}
 				// Active
 		valueObject.setActive( domainObject.isActive() );
 		// AddedDuringCoding
 		valueObject.setAddedDuringCoding( domainObject.isAddedDuringCoding() );
+		// OCSInvestigation
+		valueObject.setOCSInvestigation(ims.emergency.vo.domain.OrderInvestigationForAttendenceNotesCcVoAssembler.create(map, domainObject.getOCSInvestigation()) );
  		return valueObject;
 	 }
 
@@ -487,77 +448,34 @@ public class InvestigationAttendenceDetailVoAssembler
 		}
 		domainObject.setVersion(valueObject.getVersion_InvestigationAttendenceDetail());
 
-		ims.core.patient.domain.objects.Patient value1 = null;
-		if ( null != valueObject.getPatient() ) 
-		{
-			if (valueObject.getPatient().getBoId() == null)
-			{
-				if (domMap.get(valueObject.getPatient()) != null)
-				{
-					value1 = (ims.core.patient.domain.objects.Patient)domMap.get(valueObject.getPatient());
-				}
-			}
-			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
-			{
-				value1 = domainObject.getPatient();	
-			}
-			else
-			{
-				value1 = (ims.core.patient.domain.objects.Patient)domainFactory.getDomainObject(ims.core.patient.domain.objects.Patient.class, valueObject.getPatient().getBoId());
-			}
-		}
-		domainObject.setPatient(value1);
-		ims.core.admin.domain.objects.EpisodeOfCare value2 = null;
-		if ( null != valueObject.getEpisode() ) 
-		{
-			if (valueObject.getEpisode().getBoId() == null)
-			{
-				if (domMap.get(valueObject.getEpisode()) != null)
-				{
-					value2 = (ims.core.admin.domain.objects.EpisodeOfCare)domMap.get(valueObject.getEpisode());
-				}
-			}
-			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
-			{
-				value2 = domainObject.getEpisode();	
-			}
-			else
-			{
-				value2 = (ims.core.admin.domain.objects.EpisodeOfCare)domainFactory.getDomainObject(ims.core.admin.domain.objects.EpisodeOfCare.class, valueObject.getEpisode().getBoId());
-			}
-		}
-		domainObject.setEpisode(value2);
-		ims.core.admin.domain.objects.CareContext value3 = null;
-		if ( null != valueObject.getAttendance() ) 
-		{
-			if (valueObject.getAttendance().getBoId() == null)
-			{
-				if (domMap.get(valueObject.getAttendance()) != null)
-				{
-					value3 = (ims.core.admin.domain.objects.CareContext)domMap.get(valueObject.getAttendance());
-				}
-			}
-			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
-			{
-				value3 = domainObject.getAttendance();	
-			}
-			else
-			{
-				value3 = (ims.core.admin.domain.objects.CareContext)domainFactory.getDomainObject(ims.core.admin.domain.objects.CareContext.class, valueObject.getAttendance().getBoId());
-			}
-		}
-		domainObject.setAttendance(value3);
 		domainObject.setAuthoringInformation(ims.core.vo.domain.AuthoringInformationVoAssembler.extractAuthoringInformation(domainFactory, valueObject.getAuthoringInformation(), domMap));
 		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value5 = null;
+		ims.domain.lookups.LookupInstance value2 = null;
 		if ( null != valueObject.getAttendenceInvestigation() ) 
 		{
-			value5 =
+			value2 =
 				domainFactory.getLookupInstance(valueObject.getAttendenceInvestigation().getID());
 		}
-		domainObject.setAttendenceInvestigation(value5);
+		domainObject.setAttendenceInvestigation(value2);
 		domainObject.setActive(valueObject.getActive());
 		domainObject.setAddedDuringCoding(valueObject.getAddedDuringCoding());
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.ocrr.orderingresults.domain.objects.OrderInvestigation value5 = null;
+		if ( null != valueObject.getOCSInvestigation() ) 
+		{
+			if (valueObject.getOCSInvestigation().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getOCSInvestigation()) != null)
+				{
+					value5 = (ims.ocrr.orderingresults.domain.objects.OrderInvestigation)domMap.get(valueObject.getOCSInvestigation());
+				}
+			}
+			else
+			{
+				value5 = (ims.ocrr.orderingresults.domain.objects.OrderInvestigation)domainFactory.getDomainObject(ims.ocrr.orderingresults.domain.objects.OrderInvestigation.class, valueObject.getOCSInvestigation().getBoId());
+			}
+		}
+		domainObject.setOCSInvestigation(value5);
 
 		return domainObject;
 	}

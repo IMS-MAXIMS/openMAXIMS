@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -114,7 +119,7 @@ public class ClinicAdminImpl extends BaseClinicAdminImpl
 		}		
 		if (strClinicName != null && strClinicName.length() > 0)
 		{
-			hql.append(prepend + " (upper(clin.clinicName) like :clinName) ");
+			hql.append(prepend + " (clin.upperName like :clinName) "); //WDEV-20219
 			names.add("clinName");
 			values.add("%" + strClinicName.toUpperCase() + "%");
 		}

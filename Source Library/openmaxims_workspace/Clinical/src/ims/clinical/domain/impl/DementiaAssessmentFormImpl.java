@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -30,6 +35,8 @@ import ims.clinical.vo.domain.DementiaVoAssembler;
 import ims.core.clinical.domain.objects.Dementia;
 import ims.core.clinical.domain.objects.DementiaAssessAndInvestigate;
 import ims.core.clinical.vo.DementiaAssessAndInvestigateRefVo;
+import ims.core.clinical.vo.DementiaRefVo;
+import ims.core.patient.vo.PatientRefVo;
 import ims.core.vo.lookups.DementiaWorklistStatus;
 import ims.domain.DomainFactory;
 import ims.domain.exceptions.DomainInterfaceException;
@@ -38,25 +45,51 @@ import ims.domain.exceptions.StaleObjectException;
 import ims.framework.FormName;
 import ims.framework.exceptions.CodingRuntimeException;
 
+import java.util.ArrayList;
+
 public class DementiaAssessmentFormImpl extends BaseDementiaAssessmentFormImpl
 {
 
 	private static final long serialVersionUID = 1L;
 
-	public ims.clinical.vo.DementiaVo getDementia(ims.core.clinical.vo.DementiaRefVo dementiaRef)
+	
+	/**
+	 *	Retrieve specified Dementia record
+	 *	@param
+	 *		dementia - Dementia record to be retrieved
+	 *	@return
+	 *		<li> Dementia record based on parameter value passed </li>
+	 *		<li> <b>null</b> - if parameter value passed is null or lacks an ID </li>
+	 */
+	public DementiaVo getDementia(DementiaRefVo dementia)
 	{
-		if (dementiaRef == null || dementiaRef.getID_Dementia()== null)
-		{
-			throw new CodingRuntimeException("Cannot get DementiaVo on null Id ");
-		}
+		if (dementia == null || dementia.getID_Dementia()== null)
+			return null;
 
-		DomainFactory factory = getDomainFactory();
-
-		Dementia domainDementia = (Dementia) factory.getDomainObject(Dementia.class, dementiaRef.getID_Dementia());
-
-		return DementiaVoAssembler.create(domainDementia);
+		return DementiaVoAssembler.create((Dementia) getDomainFactory().getDomainObject(Dementia.class, dementia.getID_Dementia()));
 	}
 
+	
+	public DementiaVo getDementiaForPatient(PatientRefVo patient)
+	{
+		if (patient == null || patient.getID_Patient() == null)
+			return null;
+		
+		String query = "SELECT dem FROM Dementia AS dem LEFT JOIN dem.patient AS pat LEFT JOIN dem.currentWorklistStatus AS curStatus LEFT JOIN curStatus.status AS status WHERE pat.id = :PAT_ID AND (dem.isRIE is null OR dem.isRIE = 0) AND status.id <> :EXCLUDED";
+		
+		ArrayList<String> paramNames = new ArrayList<String>();
+		ArrayList<Object> paramValues = new ArrayList<Object>();
+		
+		paramNames.add("PAT_ID");
+		paramValues.add(patient.getID_Patient());
+		
+		paramNames.add("EXCLUDED");
+		paramValues.add(DementiaWorklistStatus.EXCLUDED.getID());
+		
+		return DementiaVoAssembler.create((Dementia) getDomainFactory().findFirst(query, paramNames, paramValues));
+	}
+
+	
 	public DementiaVo rieAMTSRecord(DementiaVo voDementia, FormName formName, Integer patientId, Integer contactId, Integer careContextId, String rieMessage) throws DomainInterfaceException, StaleObjectException
 	{
 		//RIE AMTS and its Comment 
@@ -72,7 +105,7 @@ public class DementiaAssessmentFormImpl extends BaseDementiaAssessmentFormImpl
 		if (voDementia.getStepOneFindIsNotNull())
 			markAsRie(voDementia.getStepOneFind(), formName, patientId, contactId, careContextId, rieMessage);
 
-		//also need to update dementia with NULL for the AMTSStep2record / replace currentstatus record with one from history / remove most recent history record and NULL AMTS score
+		//also need to update dementia with NULL for the AMTSStep2record / replace current status record with one from history / remove most recent history record and NULL AMTS score
 		voDementia.setStepOneFind(null);
 		voDementia.setStepTwoAssess(null);
 		
@@ -80,7 +113,10 @@ public class DementiaAssessmentFormImpl extends BaseDementiaAssessmentFormImpl
 		{
 			if (voDementia.getHistoricalWorklistStatus().get(i).getStatusIsNotNull()
 				&& voDementia.getHistoricalWorklistStatus().get(i).getStatus().equals(DementiaWorklistStatus.STEP_ONE_FIND_OUTSTANDING))
+			{
 				voDementia.setCurrentWorklistStatus(voDementia.getHistoricalWorklistStatus().get(i));
+				voDementia.getPatient().setDementiaWorklistStatus(voDementia.getCurrentWorklistStatus().getStatus());
+			}
 	//		else
 	//			markAsRie(voDementia.getHistoricalWorklistStatus().get(i), formName, patientId, contactId, careContextId, rieMessage);
 		}

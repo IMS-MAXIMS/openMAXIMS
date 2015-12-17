@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -35,6 +40,7 @@ import ims.core.vo.NurseVo;
 import ims.core.vo.ShiftDetailsVo;
 import ims.core.vo.SignatoryShiftDetailsVo;
 import ims.core.vo.SignatoryShiftDetailsVoCollection;
+import ims.core.vo.TotalFluidBalanceSearchCriteriaVo;
 import ims.core.vo.lookups.DailyPatternType;
 import ims.core.vo.lookups.DailyTimePeriods;
 import ims.core.vo.lookups.DailyTimePeriodsCollection;
@@ -66,7 +72,19 @@ public class Logic extends BaseLogic
 			|| (form.getGlobalContext().Core.getCurrentDailyPatternConfigVo().getSignatoryPeriod().size() == 0) )
 			throw new FormOpenException("The is no Fluid Balance configuration available or the saved configuration has no Signatory periods configured. ");
 			
-		open(false);//WDEV-15228
+		//WDEV-19389 
+		if (!(form.getGlobalContext().Core.getCurrentCareContextIsNotNull() && form.getGlobalContext().Core.getTotalFluidBalanceSearchCriteriaIsNotNull() && form.getGlobalContext().Core.getCurrentCareContext().equals(form.getGlobalContext().Core.getTotalFluidBalanceSearchCriteria().getCareContext())))
+			form.getGlobalContext().Core.setTotalFluidBalanceSearchCriteria(null);
+		
+		if(form.getGlobalContext().Core.getTotalFluidBalanceSearchCriteriaIsNotNull())
+		{
+			setSearchCriteria(form.getGlobalContext().Core.getTotalFluidBalanceSearchCriteria());
+			open(true);
+		}
+		else
+			open(false);//WDEV-15228
+		//WDEV-19389 - end
+		
 	}
 	
 	private void initialise()
@@ -77,6 +95,23 @@ public class Logic extends BaseLogic
 		
 		form.dteDateTo().setValue(new Date());
 		form.dteDateFrom().setValue(new Date().addDay(-7));
+	}
+	
+	private TotalFluidBalanceSearchCriteriaVo getSearchCriteria()
+	{
+		TotalFluidBalanceSearchCriteriaVo searchCriteria = new TotalFluidBalanceSearchCriteriaVo();
+		
+		searchCriteria.setFromDate(form.dteDateFrom().getValue());
+		searchCriteria.setToDate(form.dteDateTo().getValue());
+		searchCriteria.setCareContext(form.getGlobalContext().Core.getCurrentCareContext());
+		
+		return searchCriteria;
+	}
+	
+	private void setSearchCriteria(TotalFluidBalanceSearchCriteriaVo totalFluidBalanceSearchCriteriaVo) 
+	{
+		form.dteDateFrom().setValue(totalFluidBalanceSearchCriteriaVo.getFromDate());
+		form.dteDateTo().setValue(totalFluidBalanceSearchCriteriaVo.getToDate());
 	}
 
 	protected void onFormDialogClosed(ims.framework.FormName formName, ims.framework.enumerations.DialogResult result) throws ims.framework.exceptions.PresentationLogicException
@@ -200,6 +235,9 @@ public class Logic extends BaseLogic
 		{
 			engine.showMessage("No records found.");
 		}
+		
+		if (showNoRecordsMessage)
+			form.getGlobalContext().Core.setTotalFluidBalanceSearchCriteria(getSearchCriteria());
 		
 		form.setMode(FormMode.VIEW);
 	}

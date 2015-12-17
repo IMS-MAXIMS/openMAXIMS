@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.pathways.domain.objects;
@@ -57,6 +62,8 @@ public class RTTStatusEventMap extends ims.domain.DomainObject implements ims.do
 	private ims.domain.lookups.LookupInstance encounterType;
 	/** Depending on selected Encounter Type parent type this is used to record an instance */
 	private ims.domain.lookups.LookupInstance encounterInstance;
+	private ims.pathways.configuration.domain.objects.Event undoEvent;
+	private Boolean displayUndoEvent;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public RTTStatusEventMap (Integer id, int ver)
@@ -117,6 +124,20 @@ public class RTTStatusEventMap extends ims.domain.DomainObject implements ims.do
 	}
 	public void setEncounterInstance(ims.domain.lookups.LookupInstance encounterInstance) {
 		this.encounterInstance = encounterInstance;
+	}
+
+	public ims.pathways.configuration.domain.objects.Event getUndoEvent() {
+		return undoEvent;
+	}
+	public void setUndoEvent(ims.pathways.configuration.domain.objects.Event undoEvent) {
+		this.undoEvent = undoEvent;
+	}
+
+	public Boolean isDisplayUndoEvent() {
+		return displayUndoEvent;
+	}
+	public void setDisplayUndoEvent(Boolean displayUndoEvent) {
+		this.displayUndoEvent = displayUndoEvent;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -190,6 +211,17 @@ public class RTTStatusEventMap extends ims.domain.DomainObject implements ims.do
 		auditStr.append("\r\n*encounterInstance* :");
 		if (encounterInstance != null)
 			auditStr.append(encounterInstance.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*undoEvent* :");
+		if (undoEvent != null)
+		{
+			auditStr.append(toShortClassName(undoEvent));
+				
+		    auditStr.append(undoEvent.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*displayUndoEvent* :");
+		auditStr.append(displayUndoEvent);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -271,6 +303,18 @@ public class RTTStatusEventMap extends ims.domain.DomainObject implements ims.do
 			sb.append(this.getEncounterInstance().toXMLString()); 	
 			sb.append(this.getEncounterInstance().toXMLString()); 
 			sb.append("</encounterInstance>");		
+		}
+		if (this.getUndoEvent() != null)
+		{
+			sb.append("<undoEvent>");
+			sb.append(this.getUndoEvent().toXMLString(domMap)); 	
+			sb.append("</undoEvent>");		
+		}
+		if (this.isDisplayUndoEvent() != null)
+		{
+			sb.append("<displayUndoEvent>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isDisplayUndoEvent().toString()));
+			sb.append("</displayUndoEvent>");		
 		}
 		return sb.toString();
 	}
@@ -469,6 +513,17 @@ public class RTTStatusEventMap extends ims.domain.DomainObject implements ims.do
 		{	
     		obj.setEncounterInstance(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory));	
 		}
+		fldEl = el.element("undoEvent");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setUndoEvent(ims.pathways.configuration.domain.objects.Event.getEventfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("displayUndoEvent");
+		if(fldEl != null)
+		{	
+    		obj.setDisplayUndoEvent(new Boolean(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -487,6 +542,8 @@ public class RTTStatusEventMap extends ims.domain.DomainObject implements ims.do
 		public static final String CurrentRTTStatus = "currentRTTStatus";
 		public static final String EncounterType = "encounterType";
 		public static final String EncounterInstance = "encounterInstance";
+		public static final String UndoEvent = "undoEvent";
+		public static final String DisplayUndoEvent = "displayUndoEvent";
 	}
 }
 

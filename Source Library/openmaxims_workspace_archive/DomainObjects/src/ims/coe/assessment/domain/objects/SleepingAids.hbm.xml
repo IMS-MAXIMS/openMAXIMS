@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:35 -->
+<hibernate-mapping>
+	<class name="ims.coe.assessment.domain.objects.SleepingAids" table="coe_sleepaids" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: hibernateClassContent -->
+<!-- debug: patientTakeMedicationToSleep -->
+<!-- debug: otherMethods -->
+<!-- debug: sleepMedication -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="sleepMedication" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="sleepaids_sleepmedic_fk">
+				<column name="coe_sleepaids_sleepmedic" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.coe.assessment.domain.objects.SleepingMedication" />
+		</set>
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: IsLookup -->
+		<many-to-one name="patientTakeMedicationToSleep" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_patienttak" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="otherMethods" type="string" access="field" update="true" > 
+			<column name="othermetho" length="500"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.clinical.domain.objects;
@@ -55,6 +60,8 @@ public class VTERiskAssessment extends ims.domain.DomainObject implements ims.do
 	private ims.core.clinical.domain.objects.RecordingUserInformation recordingInformation;
 	/** VTE Assessment Status */
 	private ims.domain.lookups.LookupInstance vTEAssessmentStatus;
+	/** Under what context has this been recorded */
+	private ims.domain.lookups.LookupInstance contextType;
 	/** CompletedBy */
 	private ims.core.clinical.domain.objects.RecordingUserInformation completedBy;
 	/** Medical Patient Not expected to have reduced  mobility relative to normal  state */
@@ -119,10 +126,20 @@ public class VTERiskAssessment extends ims.domain.DomainObject implements ims.do
 	private ims.domain.lookups.LookupInstance lumbarPuncturePrevious4hrs;
 	/** Risk Group */
 	private ims.domain.lookups.LookupInstance riskGroup;
-	/** Prophylaxis Offered */
-	private ims.domain.lookups.LookupInstance prophylaxisOffered;
+	/** Prophylaxis Offered
+	  * Collection of ims.domain.lookups.LookupInstance.
+	  */
+	private java.util.List prophylaxisOffered;
 	/** Surgery involving lower limb or pelvis with total anaesthetic + surgical time > 60 mins */
 	private ims.domain.lookups.LookupInstance surgeryLowerLimbPelvis60mins;
+	private String comments;
+	/** Boolean to specify whether an assessment is being used at present */
+	private Boolean used;
+	/** User that set the status to validation declined */
+	private ims.core.clinical.domain.objects.AuthoringInformation declinedInformation;
+	/** User that validated this assessment */
+	private ims.core.clinical.domain.objects.AuthoringInformation validatedInformation;
+	private ims.domain.lookups.LookupInstance declinedReason;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public VTERiskAssessment (Integer id, int ver)
@@ -176,6 +193,13 @@ public class VTERiskAssessment extends ims.domain.DomainObject implements ims.do
 	}
 	public void setVTEAssessmentStatus(ims.domain.lookups.LookupInstance vTEAssessmentStatus) {
 		this.vTEAssessmentStatus = vTEAssessmentStatus;
+	}
+
+	public ims.domain.lookups.LookupInstance getContextType() {
+		return contextType;
+	}
+	public void setContextType(ims.domain.lookups.LookupInstance contextType) {
+		this.contextType = contextType;
 	}
 
 	public ims.core.clinical.domain.objects.RecordingUserInformation getCompletedBy() {
@@ -402,11 +426,14 @@ public class VTERiskAssessment extends ims.domain.DomainObject implements ims.do
 		this.riskGroup = riskGroup;
 	}
 
-	public ims.domain.lookups.LookupInstance getProphylaxisOffered() {
+	public java.util.List getProphylaxisOffered() {
+		if ( null == prophylaxisOffered ) {
+			prophylaxisOffered = new java.util.ArrayList();
+		}
 		return prophylaxisOffered;
 	}
-	public void setProphylaxisOffered(ims.domain.lookups.LookupInstance prophylaxisOffered) {
-		this.prophylaxisOffered = prophylaxisOffered;
+	public void setProphylaxisOffered(java.util.List paramValue) {
+		this.prophylaxisOffered = paramValue;
 	}
 
 	public ims.domain.lookups.LookupInstance getSurgeryLowerLimbPelvis60mins() {
@@ -414,6 +441,45 @@ public class VTERiskAssessment extends ims.domain.DomainObject implements ims.do
 	}
 	public void setSurgeryLowerLimbPelvis60mins(ims.domain.lookups.LookupInstance surgeryLowerLimbPelvis60mins) {
 		this.surgeryLowerLimbPelvis60mins = surgeryLowerLimbPelvis60mins;
+	}
+
+	public String getComments() {
+		return comments;
+	}
+	public void setComments(String comments) {
+		if ( null != comments && comments.length() > 250 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for comments. Tried to set value: "+
+				comments);
+		}
+		this.comments = comments;
+	}
+
+	public Boolean isUsed() {
+		return used;
+	}
+	public void setUsed(Boolean used) {
+		this.used = used;
+	}
+
+	public ims.core.clinical.domain.objects.AuthoringInformation getDeclinedInformation() {
+		return declinedInformation;
+	}
+	public void setDeclinedInformation(ims.core.clinical.domain.objects.AuthoringInformation declinedInformation) {
+		this.declinedInformation = declinedInformation;
+	}
+
+	public ims.core.clinical.domain.objects.AuthoringInformation getValidatedInformation() {
+		return validatedInformation;
+	}
+	public void setValidatedInformation(ims.core.clinical.domain.objects.AuthoringInformation validatedInformation) {
+		this.validatedInformation = validatedInformation;
+	}
+
+	public ims.domain.lookups.LookupInstance getDeclinedReason() {
+		return declinedReason;
+	}
+	public void setDeclinedReason(ims.domain.lookups.LookupInstance declinedReason) {
+		this.declinedReason = declinedReason;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -488,6 +554,10 @@ public class VTERiskAssessment extends ims.domain.DomainObject implements ims.do
 		auditStr.append("\r\n*vTEAssessmentStatus* :");
 		if (vTEAssessmentStatus != null)
 			auditStr.append(vTEAssessmentStatus.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*contextType* :");
+		if (contextType != null)
+			auditStr.append(contextType.getText());
 	    auditStr.append("; ");
 		auditStr.append("\r\n*completedBy* :");
 		if (completedBy != null)
@@ -623,11 +693,48 @@ public class VTERiskAssessment extends ims.domain.DomainObject implements ims.do
 	    auditStr.append("; ");
 		auditStr.append("\r\n*prophylaxisOffered* :");
 		if (prophylaxisOffered != null)
-			auditStr.append(prophylaxisOffered.getText());
+		{
+		int i39=0;
+		for (i39=0; i39<prophylaxisOffered.size(); i39++)
+		{
+			if (i39 > 0)
+				auditStr.append(",");
+			ims.domain.lookups.LookupInstance obj = (ims.domain.lookups.LookupInstance)prophylaxisOffered.get(i39);
+			auditStr.append(obj.getText());
+		}
+		if (i39 > 0)
+			auditStr.append("] " + i39);
+		}
 	    auditStr.append("; ");
 		auditStr.append("\r\n*surgeryLowerLimbPelvis60mins* :");
 		if (surgeryLowerLimbPelvis60mins != null)
 			auditStr.append(surgeryLowerLimbPelvis60mins.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*comments* :");
+		auditStr.append(comments);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*used* :");
+		auditStr.append(used);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*declinedInformation* :");
+		if (declinedInformation != null)
+		{
+			auditStr.append(toShortClassName(declinedInformation));
+				
+		    auditStr.append(declinedInformation.toString());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*validatedInformation* :");
+		if (validatedInformation != null)
+		{
+			auditStr.append(toShortClassName(validatedInformation));
+				
+		    auditStr.append(validatedInformation.toString());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*declinedReason* :");
+		if (declinedReason != null)
+			auditStr.append(declinedReason.getText());
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -702,6 +809,12 @@ public class VTERiskAssessment extends ims.domain.DomainObject implements ims.do
 			sb.append("<vTEAssessmentStatus>");
 			sb.append(this.getVTEAssessmentStatus().toXMLString()); 
 			sb.append("</vTEAssessmentStatus>");		
+		}
+		if (this.getContextType() != null)
+		{
+			sb.append("<contextType>");
+			sb.append(this.getContextType().toXMLString()); 
+			sb.append("</contextType>");		
 		}
 		if (this.getCompletedBy() != null)
 		{
@@ -897,15 +1010,48 @@ public class VTERiskAssessment extends ims.domain.DomainObject implements ims.do
 		}
 		if (this.getProphylaxisOffered() != null)
 		{
+			if (this.getProphylaxisOffered().size() > 0 )
+			{
 			sb.append("<prophylaxisOffered>");
-			sb.append(this.getProphylaxisOffered().toXMLString()); 
+			sb.append(ims.domain.lookups.LookupInstance.toXMLString(this.getProphylaxisOffered())); 
 			sb.append("</prophylaxisOffered>");		
+			}
 		}
 		if (this.getSurgeryLowerLimbPelvis60mins() != null)
 		{
 			sb.append("<surgeryLowerLimbPelvis60mins>");
 			sb.append(this.getSurgeryLowerLimbPelvis60mins().toXMLString()); 
 			sb.append("</surgeryLowerLimbPelvis60mins>");		
+		}
+		if (this.getComments() != null)
+		{
+			sb.append("<comments>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getComments().toString()));
+			sb.append("</comments>");		
+		}
+		if (this.isUsed() != null)
+		{
+			sb.append("<used>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isUsed().toString()));
+			sb.append("</used>");		
+		}
+		if (this.getDeclinedInformation() != null)
+		{
+			sb.append("<declinedInformation>");
+			sb.append(this.getDeclinedInformation().toXMLString(domMap)); 	
+			sb.append("</declinedInformation>");		
+		}
+		if (this.getValidatedInformation() != null)
+		{
+			sb.append("<validatedInformation>");
+			sb.append(this.getValidatedInformation().toXMLString(domMap)); 	
+			sb.append("</validatedInformation>");		
+		}
+		if (this.getDeclinedReason() != null)
+		{
+			sb.append("<declinedReason>");
+			sb.append(this.getDeclinedReason().toXMLString()); 
+			sb.append("</declinedReason>");		
 		}
 		return sb.toString();
 	}
@@ -1099,6 +1245,12 @@ public class VTERiskAssessment extends ims.domain.DomainObject implements ims.do
 		{
 			fldEl = fldEl.element("lki");
 			obj.setVTEAssessmentStatus(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("contextType");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setContextType(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
 		}
 		fldEl = el.element("completedBy");
 		if(fldEl != null)
@@ -1295,8 +1447,8 @@ public class VTERiskAssessment extends ims.domain.DomainObject implements ims.do
 		fldEl = el.element("prophylaxisOffered");
 		if(fldEl != null)
 		{
-			fldEl = fldEl.element("lki");
-			obj.setProphylaxisOffered(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+			fldEl = fldEl.element("list");	
+			obj.setProphylaxisOffered(ims.domain.lookups.LookupInstance.fromListXMLString(fldEl, factory, obj.getProphylaxisOffered())); 
 		}
 		fldEl = el.element("surgeryLowerLimbPelvis60mins");
 		if(fldEl != null)
@@ -1304,11 +1456,40 @@ public class VTERiskAssessment extends ims.domain.DomainObject implements ims.do
 			fldEl = fldEl.element("lki");
 			obj.setSurgeryLowerLimbPelvis60mins(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
 		}
+		fldEl = el.element("comments");
+		if(fldEl != null)
+		{	
+    		obj.setComments(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("used");
+		if(fldEl != null)
+		{	
+    		obj.setUsed(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("declinedInformation");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setDeclinedInformation(ims.core.clinical.domain.objects.AuthoringInformation.getAuthoringInformationfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("validatedInformation");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setValidatedInformation(ims.core.clinical.domain.objects.AuthoringInformation.getAuthoringInformationfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("declinedReason");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setDeclinedReason(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
 	}
 
 	public static String[] getCollectionFields()
 	{
 		return new String[]{
+		 "prophylaxisOffered"
 		};
 	}
 
@@ -1321,6 +1502,7 @@ public class VTERiskAssessment extends ims.domain.DomainObject implements ims.do
 		public static final String AuthoringInformation = "authoringInformation";
 		public static final String RecordingInformation = "recordingInformation";
 		public static final String VTEAssessmentStatus = "vTEAssessmentStatus";
+		public static final String ContextType = "contextType";
 		public static final String CompletedBy = "completedBy";
 		public static final String NotExpectedReducedMobility = "notExpectedReducedMobility";
 		public static final String ActiveCancer = "activeCancer";
@@ -1355,6 +1537,11 @@ public class VTERiskAssessment extends ims.domain.DomainObject implements ims.do
 		public static final String RiskGroup = "riskGroup";
 		public static final String ProphylaxisOffered = "prophylaxisOffered";
 		public static final String SurgeryLowerLimbPelvis60mins = "surgeryLowerLimbPelvis60mins";
+		public static final String Comments = "comments";
+		public static final String Used = "used";
+		public static final String DeclinedInformation = "declinedInformation";
+		public static final String ValidatedInformation = "validatedInformation";
+		public static final String DeclinedReason = "declinedReason";
 	}
 }
 

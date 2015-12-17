@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,15 +15,20 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 
 /*
  * This code was generated.
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:38
+ * Generated: 13/10/2015, 13:23
  */
 package ims.core.vo.lookups;
 
@@ -35,6 +40,981 @@ import ims.domain.lookups.LookupService;
  * 
  */
 public final class LookupHelper {
+	public static UnrecordedObservationsReasonCollection getUnrecordedObservationsReason(LookupService lookupService) {
+		UnrecordedObservationsReasonCollection collection =
+			(UnrecordedObservationsReasonCollection) lookupService.getLookupCollection(UnrecordedObservationsReason.TYPE_ID, 
+				UnrecordedObservationsReasonCollection.class, UnrecordedObservationsReason.class);
+		return collection;
+	}
+
+	public static UnrecordedObservationsReason getUnrecordedObservationsReasonInstance(LookupService lookupService, int id) 
+	{
+		return (UnrecordedObservationsReason)lookupService.getLookupInstance(UnrecordedObservationsReason.class, UnrecordedObservationsReason.TYPE_ID, id);
+	}
+	
+
+	public static PendingEmergencyAdmissionTypeCollection getPendingEmergencyAdmissionType(LookupService lookupService) {
+		PendingEmergencyAdmissionTypeCollection collection =
+			(PendingEmergencyAdmissionTypeCollection) lookupService.getLookupCollection(PendingEmergencyAdmissionType.TYPE_ID, 
+				PendingEmergencyAdmissionTypeCollection.class, PendingEmergencyAdmissionType.class);
+		return collection;
+	}
+
+	public static PendingEmergencyAdmissionType getPendingEmergencyAdmissionTypeInstance(LookupService lookupService, int id) 
+	{
+		return (PendingEmergencyAdmissionType)lookupService.getLookupInstance(PendingEmergencyAdmissionType.class, PendingEmergencyAdmissionType.TYPE_ID, id);
+	}
+	
+
+	public static MsgUpdateTypeCollection getMsgUpdateType(LookupService lookupService) {
+		MsgUpdateTypeCollection collection =
+			(MsgUpdateTypeCollection) lookupService.getLookupCollection(MsgUpdateType.TYPE_ID, 
+				MsgUpdateTypeCollection.class, MsgUpdateType.class);
+		return collection;
+	}
+
+	public static MsgUpdateType getMsgUpdateTypeInstance(LookupService lookupService, int id) 
+	{
+		return (MsgUpdateType)lookupService.getLookupInstance(MsgUpdateType.class, MsgUpdateType.TYPE_ID, id);
+	}
+	
+
+	public static SourceOfEmergencyReferralCollection getSourceOfEmergencyReferral(LookupService lookupService) {
+		SourceOfEmergencyReferralCollection collection =
+			(SourceOfEmergencyReferralCollection) lookupService.getLookupCollection(SourceOfEmergencyReferral.TYPE_ID, 
+				SourceOfEmergencyReferralCollection.class, SourceOfEmergencyReferral.class);
+		return collection;
+	}
+
+	public static SourceOfEmergencyReferral getSourceOfEmergencyReferralInstance(LookupService lookupService, int id) 
+	{
+		return (SourceOfEmergencyReferral)lookupService.getLookupInstance(SourceOfEmergencyReferral.class, SourceOfEmergencyReferral.TYPE_ID, id);
+	}
+	
+
+	public static InstitutionCollection getInstitution(LookupService lookupService) {
+		InstitutionCollection collection =
+			(InstitutionCollection) lookupService.getLookupCollection(Institution.TYPE_ID, 
+				InstitutionCollection.class, Institution.class);
+		return collection;
+	}
+
+	public static Institution getInstitutionInstance(LookupService lookupService, int id) 
+	{
+		return (Institution)lookupService.getLookupInstance(Institution.class, Institution.TYPE_ID, id);
+	}
+	
+
+	public static YesNoNotApplicableCollection getYesNoNotApplicable(LookupService lookupService) {
+		YesNoNotApplicableCollection collection =
+			(YesNoNotApplicableCollection) lookupService.getLookupCollection(YesNoNotApplicable.TYPE_ID, 
+				YesNoNotApplicableCollection.class, YesNoNotApplicable.class);
+		return collection;
+	}
+
+	public static YesNoNotApplicable getYesNoNotApplicableInstance(LookupService lookupService, int id) 
+	{
+		return (YesNoNotApplicable)lookupService.getLookupInstance(YesNoNotApplicable.class, YesNoNotApplicable.TYPE_ID, id);
+	}
+	
+
+	public static YesNotApplicableCollection getYesNotApplicable(LookupService lookupService) {
+		YesNotApplicableCollection collection =
+			(YesNotApplicableCollection) lookupService.getLookupCollection(YesNotApplicable.TYPE_ID, 
+				YesNotApplicableCollection.class, YesNotApplicable.class);
+		return collection;
+	}
+
+	public static YesNotApplicable getYesNotApplicableInstance(LookupService lookupService, int id) 
+	{
+		return (YesNotApplicable)lookupService.getLookupInstance(YesNotApplicable.class, YesNotApplicable.TYPE_ID, id);
+	}
+	
+
+	public static YesUnableCollection getYesUnable(LookupService lookupService) {
+		YesUnableCollection collection =
+			(YesUnableCollection) lookupService.getLookupCollection(YesUnable.TYPE_ID, 
+				YesUnableCollection.class, YesUnable.class);
+		return collection;
+	}
+
+	public static YesUnable getYesUnableInstance(LookupService lookupService, int id) 
+	{
+		return (YesUnable)lookupService.getLookupInstance(YesUnable.class, YesUnable.TYPE_ID, id);
+	}
+	
+
+	public static PDSProvisionTypeCollection getPDSProvisionType(LookupService lookupService) {
+		PDSProvisionTypeCollection collection =
+			(PDSProvisionTypeCollection) lookupService.getLookupCollection(PDSProvisionType.TYPE_ID, 
+				PDSProvisionTypeCollection.class, PDSProvisionType.class);
+		return collection;
+	}
+
+	public static PDSProvisionType getPDSProvisionTypeInstance(LookupService lookupService, int id) 
+	{
+		return (PDSProvisionType)lookupService.getLookupInstance(PDSProvisionType.class, PDSProvisionType.TYPE_ID, id);
+	}
+	
+
+	public static OtherHCPCollection getOtherHCP(LookupService lookupService) {
+		OtherHCPCollection collection =
+			(OtherHCPCollection) lookupService.getLookupCollection(OtherHCP.TYPE_ID, 
+				OtherHCPCollection.class, OtherHCP.class);
+		return collection;
+	}
+
+	public static OtherHCP getOtherHCPInstance(LookupService lookupService, int id) 
+	{
+		return (OtherHCP)lookupService.getLookupInstance(OtherHCP.class, OtherHCP.TYPE_ID, id);
+	}
+	
+
+	public static ReasonForAdmissionToGenderSpecificBayCollection getReasonForAdmissionToGenderSpecificBay(LookupService lookupService) {
+		ReasonForAdmissionToGenderSpecificBayCollection collection =
+			(ReasonForAdmissionToGenderSpecificBayCollection) lookupService.getLookupCollection(ReasonForAdmissionToGenderSpecificBay.TYPE_ID, 
+				ReasonForAdmissionToGenderSpecificBayCollection.class, ReasonForAdmissionToGenderSpecificBay.class);
+		return collection;
+	}
+
+	public static ReasonForAdmissionToGenderSpecificBay getReasonForAdmissionToGenderSpecificBayInstance(LookupService lookupService, int id) 
+	{
+		return (ReasonForAdmissionToGenderSpecificBay)lookupService.getLookupInstance(ReasonForAdmissionToGenderSpecificBay.class, ReasonForAdmissionToGenderSpecificBay.TYPE_ID, id);
+	}
+	
+
+	public static PDSUpdateModeCollection getPDSUpdateMode(LookupService lookupService) {
+		PDSUpdateModeCollection collection =
+			(PDSUpdateModeCollection) lookupService.getLookupCollection(PDSUpdateMode.TYPE_ID, 
+				PDSUpdateModeCollection.class, PDSUpdateMode.class);
+		return collection;
+	}
+
+	public static PDSUpdateMode getPDSUpdateModeInstance(LookupService lookupService, int id) 
+	{
+		return (PDSUpdateMode)lookupService.getLookupInstance(PDSUpdateMode.class, PDSUpdateMode.TYPE_ID, id);
+	}
+	
+
+	public static PDSUpdateTypeCollection getPDSUpdateType(LookupService lookupService) {
+		PDSUpdateTypeCollection collection =
+			(PDSUpdateTypeCollection) lookupService.getLookupCollection(PDSUpdateType.TYPE_ID, 
+				PDSUpdateTypeCollection.class, PDSUpdateType.class);
+		return collection;
+	}
+
+	public static PDSUpdateType getPDSUpdateTypeInstance(LookupService lookupService, int id) 
+	{
+		return (PDSUpdateType)lookupService.getLookupInstance(PDSUpdateType.class, PDSUpdateType.TYPE_ID, id);
+	}
+	
+
+	public static PDSAsyncRequestTypeCollection getPDSAsyncRequestType(LookupService lookupService) {
+		PDSAsyncRequestTypeCollection collection =
+			(PDSAsyncRequestTypeCollection) lookupService.getLookupCollection(PDSAsyncRequestType.TYPE_ID, 
+				PDSAsyncRequestTypeCollection.class, PDSAsyncRequestType.class);
+		return collection;
+	}
+
+	public static PDSAsyncRequestType getPDSAsyncRequestTypeInstance(LookupService lookupService, int id) 
+	{
+		return (PDSAsyncRequestType)lookupService.getLookupInstance(PDSAsyncRequestType.class, PDSAsyncRequestType.TYPE_ID, id);
+	}
+	
+
+	public static ReasonCannotGoDischargeLoungeCollection getReasonCannotGoDischargeLounge(LookupService lookupService) {
+		ReasonCannotGoDischargeLoungeCollection collection =
+			(ReasonCannotGoDischargeLoungeCollection) lookupService.getLookupCollection(ReasonCannotGoDischargeLounge.TYPE_ID, 
+				ReasonCannotGoDischargeLoungeCollection.class, ReasonCannotGoDischargeLounge.class);
+		return collection;
+	}
+
+	public static ReasonCannotGoDischargeLounge getReasonCannotGoDischargeLoungeInstance(LookupService lookupService, int id) 
+	{
+		return (ReasonCannotGoDischargeLounge)lookupService.getLookupInstance(ReasonCannotGoDischargeLounge.class, ReasonCannotGoDischargeLounge.TYPE_ID, id);
+	}
+	
+
+	public static ReasonDelayDischargeCollection getReasonDelayDischarge(LookupService lookupService) {
+		ReasonDelayDischargeCollection collection =
+			(ReasonDelayDischargeCollection) lookupService.getLookupCollection(ReasonDelayDischarge.TYPE_ID, 
+				ReasonDelayDischargeCollection.class, ReasonDelayDischarge.class);
+		return collection;
+	}
+
+	public static ReasonDelayDischarge getReasonDelayDischargeInstance(LookupService lookupService, int id) 
+	{
+		return (ReasonDelayDischarge)lookupService.getLookupInstance(ReasonDelayDischarge.class, ReasonDelayDischarge.TYPE_ID, id);
+	}
+	
+
+	public static ExtendedLengthOfStayReasonCollection getExtendedLengthOfStayReason(LookupService lookupService) {
+		ExtendedLengthOfStayReasonCollection collection =
+			(ExtendedLengthOfStayReasonCollection) lookupService.getLookupCollection(ExtendedLengthOfStayReason.TYPE_ID, 
+				ExtendedLengthOfStayReasonCollection.class, ExtendedLengthOfStayReason.class);
+		return collection;
+	}
+
+	public static ExtendedLengthOfStayReason getExtendedLengthOfStayReasonInstance(LookupService lookupService, int id) 
+	{
+		return (ExtendedLengthOfStayReason)lookupService.getLookupInstance(ExtendedLengthOfStayReason.class, ExtendedLengthOfStayReason.TYPE_ID, id);
+	}
+	
+
+	public static PDSAckDetailTypeCollection getPDSAckDetailType(LookupService lookupService) {
+		PDSAckDetailTypeCollection collection =
+			(PDSAckDetailTypeCollection) lookupService.getLookupCollection(PDSAckDetailType.TYPE_ID, 
+				PDSAckDetailTypeCollection.class, PDSAckDetailType.class);
+		return collection;
+	}
+
+	public static PDSAckDetailType getPDSAckDetailTypeInstance(LookupService lookupService, int id) 
+	{
+		return (PDSAckDetailType)lookupService.getLookupInstance(PDSAckDetailType.class, PDSAckDetailType.TYPE_ID, id);
+	}
+	
+
+	public static PDSRequestAckStatusCollection getPDSRequestAckStatus(LookupService lookupService) {
+		PDSRequestAckStatusCollection collection =
+			(PDSRequestAckStatusCollection) lookupService.getLookupCollection(PDSRequestAckStatus.TYPE_ID, 
+				PDSRequestAckStatusCollection.class, PDSRequestAckStatus.class);
+		return collection;
+	}
+
+	public static PDSRequestAckStatus getPDSRequestAckStatusInstance(LookupService lookupService, int id) 
+	{
+		return (PDSRequestAckStatus)lookupService.getLookupInstance(PDSRequestAckStatus.class, PDSRequestAckStatus.TYPE_ID, id);
+	}
+	
+
+	public static PDSNhsNumberStatusCollection getPDSNhsNumberStatus(LookupService lookupService) {
+		PDSNhsNumberStatusCollection collection =
+			(PDSNhsNumberStatusCollection) lookupService.getLookupCollection(PDSNhsNumberStatus.TYPE_ID, 
+				PDSNhsNumberStatusCollection.class, PDSNhsNumberStatus.class);
+		return collection;
+	}
+
+	public static PDSNhsNumberStatus getPDSNhsNumberStatusInstance(LookupService lookupService, int id) 
+	{
+		return (PDSNhsNumberStatus)lookupService.getLookupInstance(PDSNhsNumberStatus.class, PDSNhsNumberStatus.TYPE_ID, id);
+	}
+	
+
+	public static PDSIgnoreHistoryIndicatorCollection getPDSIgnoreHistoryIndicator(LookupService lookupService) {
+		PDSIgnoreHistoryIndicatorCollection collection =
+			(PDSIgnoreHistoryIndicatorCollection) lookupService.getLookupCollection(PDSIgnoreHistoryIndicator.TYPE_ID, 
+				PDSIgnoreHistoryIndicatorCollection.class, PDSIgnoreHistoryIndicator.class);
+		return collection;
+	}
+
+	public static PDSIgnoreHistoryIndicator getPDSIgnoreHistoryIndicatorInstance(LookupService lookupService, int id) 
+	{
+		return (PDSIgnoreHistoryIndicator)lookupService.getLookupInstance(PDSIgnoreHistoryIndicator.class, PDSIgnoreHistoryIndicator.TYPE_ID, id);
+	}
+	
+
+	public static PDSHistoryDataFlagCollection getPDSHistoryDataFlag(LookupService lookupService) {
+		PDSHistoryDataFlagCollection collection =
+			(PDSHistoryDataFlagCollection) lookupService.getLookupCollection(PDSHistoryDataFlag.TYPE_ID, 
+				PDSHistoryDataFlagCollection.class, PDSHistoryDataFlag.class);
+		return collection;
+	}
+
+	public static PDSHistoryDataFlag getPDSHistoryDataFlagInstance(LookupService lookupService, int id) 
+	{
+		return (PDSHistoryDataFlag)lookupService.getLookupInstance(PDSHistoryDataFlag.class, PDSHistoryDataFlag.TYPE_ID, id);
+	}
+	
+
+	public static PDSBackOfficeOutcomeCollection getPDSBackOfficeOutcome(LookupService lookupService) {
+		PDSBackOfficeOutcomeCollection collection =
+			(PDSBackOfficeOutcomeCollection) lookupService.getLookupCollection(PDSBackOfficeOutcome.TYPE_ID, 
+				PDSBackOfficeOutcomeCollection.class, PDSBackOfficeOutcome.class);
+		return collection;
+	}
+
+	public static PDSBackOfficeOutcome getPDSBackOfficeOutcomeInstance(LookupService lookupService, int id) 
+	{
+		return (PDSBackOfficeOutcome)lookupService.getLookupInstance(PDSBackOfficeOutcome.class, PDSBackOfficeOutcome.TYPE_ID, id);
+	}
+	
+
+	public static WardBayBlockingReasonCollection getWardBayBlockingReason(LookupService lookupService) {
+		WardBayBlockingReasonCollection collection =
+			(WardBayBlockingReasonCollection) lookupService.getLookupCollection(WardBayBlockingReason.TYPE_ID, 
+				WardBayBlockingReasonCollection.class, WardBayBlockingReason.class);
+		return collection;
+	}
+
+	public static WardBayBlockingReason getWardBayBlockingReasonInstance(LookupService lookupService, int id) 
+	{
+		return (WardBayBlockingReason)lookupService.getLookupInstance(WardBayBlockingReason.class, WardBayBlockingReason.TYPE_ID, id);
+	}
+	
+
+	public static WardBayClosingReasonCollection getWardBayClosingReason(LookupService lookupService) {
+		WardBayClosingReasonCollection collection =
+			(WardBayClosingReasonCollection) lookupService.getLookupCollection(WardBayClosingReason.TYPE_ID, 
+				WardBayClosingReasonCollection.class, WardBayClosingReason.class);
+		return collection;
+	}
+
+	public static WardBayClosingReason getWardBayClosingReasonInstance(LookupService lookupService, int id) 
+	{
+		return (WardBayClosingReason)lookupService.getLookupInstance(WardBayClosingReason.class, WardBayClosingReason.TYPE_ID, id);
+	}
+	
+
+	public static WardBayStatusCollection getWardBayStatus(LookupService lookupService) {
+		WardBayStatusCollection collection =
+			(WardBayStatusCollection) lookupService.getLookupCollection(WardBayStatus.TYPE_ID, 
+				WardBayStatusCollection.class, WardBayStatus.class);
+		return collection;
+	}
+
+	public static WardBayStatus getWardBayStatusInstance(LookupService lookupService, int id) 
+	{
+		return (WardBayStatus)lookupService.getLookupInstance(WardBayStatus.class, WardBayStatus.TYPE_ID, id);
+	}
+	
+
+	public static PDSResidentialStatusCollection getPDSResidentialStatus(LookupService lookupService) {
+		PDSResidentialStatusCollection collection =
+			(PDSResidentialStatusCollection) lookupService.getLookupCollection(PDSResidentialStatus.TYPE_ID, 
+				PDSResidentialStatusCollection.class, PDSResidentialStatus.class);
+		return collection;
+	}
+
+	public static PDSResidentialStatus getPDSResidentialStatusInstance(LookupService lookupService, int id) 
+	{
+		return (PDSResidentialStatus)lookupService.getLookupInstance(PDSResidentialStatus.class, PDSResidentialStatus.TYPE_ID, id);
+	}
+	
+
+	public static PDSRelatedPersonRoleCollection getPDSRelatedPersonRole(LookupService lookupService) {
+		PDSRelatedPersonRoleCollection collection =
+			(PDSRelatedPersonRoleCollection) lookupService.getLookupCollection(PDSRelatedPersonRole.TYPE_ID, 
+				PDSRelatedPersonRoleCollection.class, PDSRelatedPersonRole.class);
+		return collection;
+	}
+
+	public static PDSRelatedPersonRole getPDSRelatedPersonRoleInstance(LookupService lookupService, int id) 
+	{
+		return (PDSRelatedPersonRole)lookupService.getLookupInstance(PDSRelatedPersonRole.class, PDSRelatedPersonRole.TYPE_ID, id);
+	}
+	
+
+	public static PDSRegisteringAuthorityTypeCollection getPDSRegisteringAuthorityType(LookupService lookupService) {
+		PDSRegisteringAuthorityTypeCollection collection =
+			(PDSRegisteringAuthorityTypeCollection) lookupService.getLookupCollection(PDSRegisteringAuthorityType.TYPE_ID, 
+				PDSRegisteringAuthorityTypeCollection.class, PDSRegisteringAuthorityType.class);
+		return collection;
+	}
+
+	public static PDSRegisteringAuthorityType getPDSRegisteringAuthorityTypeInstance(LookupService lookupService, int id) 
+	{
+		return (PDSRegisteringAuthorityType)lookupService.getLookupInstance(PDSRegisteringAuthorityType.class, PDSRegisteringAuthorityType.TYPE_ID, id);
+	}
+	
+
+	public static PDSPreviousNHSContactIndicatorCollection getPDSPreviousNHSContactIndicator(LookupService lookupService) {
+		PDSPreviousNHSContactIndicatorCollection collection =
+			(PDSPreviousNHSContactIndicatorCollection) lookupService.getLookupCollection(PDSPreviousNHSContactIndicator.TYPE_ID, 
+				PDSPreviousNHSContactIndicatorCollection.class, PDSPreviousNHSContactIndicator.class);
+		return collection;
+	}
+
+	public static PDSPreviousNHSContactIndicator getPDSPreviousNHSContactIndicatorInstance(LookupService lookupService, int id) 
+	{
+		return (PDSPreviousNHSContactIndicator)lookupService.getLookupInstance(PDSPreviousNHSContactIndicator.class, PDSPreviousNHSContactIndicator.TYPE_ID, id);
+	}
+	
+
+	public static PreferredWrittenCommunicationCollection getPreferredWrittenCommunication(LookupService lookupService) {
+		PreferredWrittenCommunicationCollection collection =
+			(PreferredWrittenCommunicationCollection) lookupService.getLookupCollection(PreferredWrittenCommunication.TYPE_ID, 
+				PreferredWrittenCommunicationCollection.class, PreferredWrittenCommunication.class);
+		return collection;
+	}
+
+	public static PreferredWrittenCommunication getPreferredWrittenCommunicationInstance(LookupService lookupService, int id) 
+	{
+		return (PreferredWrittenCommunication)lookupService.getLookupInstance(PreferredWrittenCommunication.class, PreferredWrittenCommunication.TYPE_ID, id);
+	}
+	
+
+	public static PDSConsentCollection getPDSConsent(LookupService lookupService) {
+		PDSConsentCollection collection =
+			(PDSConsentCollection) lookupService.getLookupCollection(PDSConsent.TYPE_ID, 
+				PDSConsentCollection.class, PDSConsent.class);
+		return collection;
+	}
+
+	public static PDSConsent getPDSConsentInstance(LookupService lookupService, int id) 
+	{
+		return (PDSConsent)lookupService.getLookupInstance(PDSConsent.class, PDSConsent.TYPE_ID, id);
+	}
+	
+
+	public static PDSBackOfficeWorkPriorityCollection getPDSBackOfficeWorkPriority(LookupService lookupService) {
+		PDSBackOfficeWorkPriorityCollection collection =
+			(PDSBackOfficeWorkPriorityCollection) lookupService.getLookupCollection(PDSBackOfficeWorkPriority.TYPE_ID, 
+				PDSBackOfficeWorkPriorityCollection.class, PDSBackOfficeWorkPriority.class);
+		return collection;
+	}
+
+	public static PDSBackOfficeWorkPriority getPDSBackOfficeWorkPriorityInstance(LookupService lookupService, int id) 
+	{
+		return (PDSBackOfficeWorkPriority)lookupService.getLookupInstance(PDSBackOfficeWorkPriority.class, PDSBackOfficeWorkPriority.TYPE_ID, id);
+	}
+	
+
+	public static PDSBackOfficeWorkStatusCollection getPDSBackOfficeWorkStatus(LookupService lookupService) {
+		PDSBackOfficeWorkStatusCollection collection =
+			(PDSBackOfficeWorkStatusCollection) lookupService.getLookupCollection(PDSBackOfficeWorkStatus.TYPE_ID, 
+				PDSBackOfficeWorkStatusCollection.class, PDSBackOfficeWorkStatus.class);
+		return collection;
+	}
+
+	public static PDSBackOfficeWorkStatus getPDSBackOfficeWorkStatusInstance(LookupService lookupService, int id) 
+	{
+		return (PDSBackOfficeWorkStatus)lookupService.getLookupInstance(PDSBackOfficeWorkStatus.class, PDSBackOfficeWorkStatus.TYPE_ID, id);
+	}
+	
+
+	public static PDSBackOfficeTypeCollection getPDSBackOfficeType(LookupService lookupService) {
+		PDSBackOfficeTypeCollection collection =
+			(PDSBackOfficeTypeCollection) lookupService.getLookupCollection(PDSBackOfficeType.TYPE_ID, 
+				PDSBackOfficeTypeCollection.class, PDSBackOfficeType.class);
+		return collection;
+	}
+
+	public static PDSBackOfficeType getPDSBackOfficeTypeInstance(LookupService lookupService, int id) 
+	{
+		return (PDSBackOfficeType)lookupService.getLookupInstance(PDSBackOfficeType.class, PDSBackOfficeType.TYPE_ID, id);
+	}
+	
+
+	public static PDSSearchTypeCollection getPDSSearchType(LookupService lookupService) {
+		PDSSearchTypeCollection collection =
+			(PDSSearchTypeCollection) lookupService.getLookupCollection(PDSSearchType.TYPE_ID, 
+				PDSSearchTypeCollection.class, PDSSearchType.class);
+		return collection;
+	}
+
+	public static PDSSearchType getPDSSearchTypeInstance(LookupService lookupService, int id) 
+	{
+		return (PDSSearchType)lookupService.getLookupInstance(PDSSearchType.class, PDSSearchType.TYPE_ID, id);
+	}
+	
+
+	public static ProcedureEndoscopyTypeCollection getProcedureEndoscopyType(LookupService lookupService) {
+		ProcedureEndoscopyTypeCollection collection =
+			(ProcedureEndoscopyTypeCollection) lookupService.getLookupCollection(ProcedureEndoscopyType.TYPE_ID, 
+				ProcedureEndoscopyTypeCollection.class, ProcedureEndoscopyType.class);
+		return collection;
+	}
+
+	public static ProcedureEndoscopyType getProcedureEndoscopyTypeInstance(LookupService lookupService, int id) 
+	{
+		return (ProcedureEndoscopyType)lookupService.getLookupInstance(ProcedureEndoscopyType.class, ProcedureEndoscopyType.TYPE_ID, id);
+	}
+	
+
+	public static OBSProtocolTypeCollection getOBSProtocolType(LookupService lookupService) {
+		OBSProtocolTypeCollection collection =
+			(OBSProtocolTypeCollection) lookupService.getLookupCollection(OBSProtocolType.TYPE_ID, 
+				OBSProtocolTypeCollection.class, OBSProtocolType.class);
+		return collection;
+	}
+
+	public static OBSProtocolType getOBSProtocolTypeInstance(LookupService lookupService, int id) 
+	{
+		return (OBSProtocolType)lookupService.getLookupInstance(OBSProtocolType.class, OBSProtocolType.TYPE_ID, id);
+	}
+	
+
+	public static ChartableOccurrenceTypeCollection getChartableOccurrenceType(LookupService lookupService) {
+		ChartableOccurrenceTypeCollection collection =
+			(ChartableOccurrenceTypeCollection) lookupService.getLookupCollection(ChartableOccurrenceType.TYPE_ID, 
+				ChartableOccurrenceTypeCollection.class, ChartableOccurrenceType.class);
+		return collection;
+	}
+
+	public static ChartableOccurrenceType getChartableOccurrenceTypeInstance(LookupService lookupService, int id) 
+	{
+		return (ChartableOccurrenceType)lookupService.getLookupInstance(ChartableOccurrenceType.class, ChartableOccurrenceType.TYPE_ID, id);
+	}
+	
+
+	public static ActionsTakenCollection getActionsTaken(LookupService lookupService) {
+		ActionsTakenCollection collection =
+			(ActionsTakenCollection) lookupService.getLookupCollection(ActionsTaken.TYPE_ID, 
+				ActionsTakenCollection.class, ActionsTaken.class);
+		return collection;
+	}
+
+	public static ActionsTaken getActionsTakenInstance(LookupService lookupService, int id) 
+	{
+		return (ActionsTaken)lookupService.getLookupInstance(ActionsTaken.class, ActionsTaken.TYPE_ID, id);
+	}
+	
+
+	public static ProcedureWoundClassCollection getProcedureWoundClass(LookupService lookupService) {
+		ProcedureWoundClassCollection collection =
+			(ProcedureWoundClassCollection) lookupService.getLookupCollection(ProcedureWoundClass.TYPE_ID, 
+				ProcedureWoundClassCollection.class, ProcedureWoundClass.class);
+		return collection;
+	}
+
+	public static ProcedureWoundClass getProcedureWoundClassInstance(LookupService lookupService, int id) 
+	{
+		return (ProcedureWoundClass)lookupService.getLookupInstance(ProcedureWoundClass.class, ProcedureWoundClass.TYPE_ID, id);
+	}
+	
+
+	public static SpecimenDestinationCollection getSpecimenDestination(LookupService lookupService) {
+		SpecimenDestinationCollection collection =
+			(SpecimenDestinationCollection) lookupService.getLookupCollection(SpecimenDestination.TYPE_ID, 
+				SpecimenDestinationCollection.class, SpecimenDestination.class);
+		return collection;
+	}
+
+	public static SpecimenDestination getSpecimenDestinationInstance(LookupService lookupService, int id) 
+	{
+		return (SpecimenDestination)lookupService.getLookupInstance(SpecimenDestination.class, SpecimenDestination.TYPE_ID, id);
+	}
+	
+
+	public static IrrigantSolutionCollection getIrrigantSolution(LookupService lookupService) {
+		IrrigantSolutionCollection collection =
+			(IrrigantSolutionCollection) lookupService.getLookupCollection(IrrigantSolution.TYPE_ID, 
+				IrrigantSolutionCollection.class, IrrigantSolution.class);
+		return collection;
+	}
+
+	public static IrrigantSolution getIrrigantSolutionInstance(LookupService lookupService, int id) 
+	{
+		return (IrrigantSolution)lookupService.getLookupInstance(IrrigantSolution.class, IrrigantSolution.TYPE_ID, id);
+	}
+	
+
+	public static LaserPatientSafetyMeasuresCollection getLaserPatientSafetyMeasures(LookupService lookupService) {
+		LaserPatientSafetyMeasuresCollection collection =
+			(LaserPatientSafetyMeasuresCollection) lookupService.getLookupCollection(LaserPatientSafetyMeasures.TYPE_ID, 
+				LaserPatientSafetyMeasuresCollection.class, LaserPatientSafetyMeasures.class);
+		return collection;
+	}
+
+	public static LaserPatientSafetyMeasures getLaserPatientSafetyMeasuresInstance(LookupService lookupService, int id) 
+	{
+		return (LaserPatientSafetyMeasures)lookupService.getLookupInstance(LaserPatientSafetyMeasures.class, LaserPatientSafetyMeasures.TYPE_ID, id);
+	}
+	
+
+	public static LaserModeCollection getLaserMode(LookupService lookupService) {
+		LaserModeCollection collection =
+			(LaserModeCollection) lookupService.getLookupCollection(LaserMode.TYPE_ID, 
+				LaserModeCollection.class, LaserMode.class);
+		return collection;
+	}
+
+	public static LaserMode getLaserModeInstance(LookupService lookupService, int id) 
+	{
+		return (LaserMode)lookupService.getLookupInstance(LaserMode.class, LaserMode.TYPE_ID, id);
+	}
+	
+
+	public static LaserDeviceSerialNumberCollection getLaserDeviceSerialNumber(LookupService lookupService) {
+		LaserDeviceSerialNumberCollection collection =
+			(LaserDeviceSerialNumberCollection) lookupService.getLookupCollection(LaserDeviceSerialNumber.TYPE_ID, 
+				LaserDeviceSerialNumberCollection.class, LaserDeviceSerialNumber.class);
+		return collection;
+	}
+
+	public static LaserDeviceSerialNumber getLaserDeviceSerialNumberInstance(LookupService lookupService, int id) 
+	{
+		return (LaserDeviceSerialNumber)lookupService.getLookupInstance(LaserDeviceSerialNumber.class, LaserDeviceSerialNumber.TYPE_ID, id);
+	}
+	
+
+	public static LaserDeviceNameCollection getLaserDeviceName(LookupService lookupService) {
+		LaserDeviceNameCollection collection =
+			(LaserDeviceNameCollection) lookupService.getLookupCollection(LaserDeviceName.TYPE_ID, 
+				LaserDeviceNameCollection.class, LaserDeviceName.class);
+		return collection;
+	}
+
+	public static LaserDeviceName getLaserDeviceNameInstance(LookupService lookupService, int id) 
+	{
+		return (LaserDeviceName)lookupService.getLookupInstance(LaserDeviceName.class, LaserDeviceName.TYPE_ID, id);
+	}
+	
+
+	public static DiathermyPadSiteCollection getDiathermyPadSite(LookupService lookupService) {
+		DiathermyPadSiteCollection collection =
+			(DiathermyPadSiteCollection) lookupService.getLookupCollection(DiathermyPadSite.TYPE_ID, 
+				DiathermyPadSiteCollection.class, DiathermyPadSite.class);
+		return collection;
+	}
+
+	public static DiathermyPadSite getDiathermyPadSiteInstance(LookupService lookupService, int id) 
+	{
+		return (DiathermyPadSite)lookupService.getLookupInstance(DiathermyPadSite.class, DiathermyPadSite.TYPE_ID, id);
+	}
+	
+
+	public static DiathermyDeviceSerialNumberCollection getDiathermyDeviceSerialNumber(LookupService lookupService) {
+		DiathermyDeviceSerialNumberCollection collection =
+			(DiathermyDeviceSerialNumberCollection) lookupService.getLookupCollection(DiathermyDeviceSerialNumber.TYPE_ID, 
+				DiathermyDeviceSerialNumberCollection.class, DiathermyDeviceSerialNumber.class);
+		return collection;
+	}
+
+	public static DiathermyDeviceSerialNumber getDiathermyDeviceSerialNumberInstance(LookupService lookupService, int id) 
+	{
+		return (DiathermyDeviceSerialNumber)lookupService.getLookupInstance(DiathermyDeviceSerialNumber.class, DiathermyDeviceSerialNumber.TYPE_ID, id);
+	}
+	
+
+	public static CodingStatusCollection getCodingStatus(LookupService lookupService) {
+		CodingStatusCollection collection =
+			(CodingStatusCollection) lookupService.getLookupCollection(CodingStatus.TYPE_ID, 
+				CodingStatusCollection.class, CodingStatus.class);
+		return collection;
+	}
+
+	public static CodingStatus getCodingStatusInstance(LookupService lookupService, int id) 
+	{
+		return (CodingStatus)lookupService.getLookupInstance(CodingStatus.class, CodingStatus.TYPE_ID, id);
+	}
+	
+
+	public static TransferReasonCollection getTransferReason(LookupService lookupService) {
+		TransferReasonCollection collection =
+			(TransferReasonCollection) lookupService.getLookupCollection(TransferReason.TYPE_ID, 
+				TransferReasonCollection.class, TransferReason.class);
+		return collection;
+	}
+
+	public static TransferReason getTransferReasonInstance(LookupService lookupService, int id) 
+	{
+		return (TransferReason)lookupService.getLookupInstance(TransferReason.class, TransferReason.TYPE_ID, id);
+	}
+	
+
+	public static UncodedReasonCollection getUncodedReason(LookupService lookupService) {
+		UncodedReasonCollection collection =
+			(UncodedReasonCollection) lookupService.getLookupCollection(UncodedReason.TYPE_ID, 
+				UncodedReasonCollection.class, UncodedReason.class);
+		return collection;
+	}
+
+	public static UncodedReason getUncodedReasonInstance(LookupService lookupService, int id) 
+	{
+		return (UncodedReason)lookupService.getLookupInstance(UncodedReason.class, UncodedReason.TYPE_ID, id);
+	}
+	
+
+	public static FolderCaseNoteCollection getFolderCaseNote(LookupService lookupService) {
+		FolderCaseNoteCollection collection =
+			(FolderCaseNoteCollection) lookupService.getLookupCollection(FolderCaseNote.TYPE_ID, 
+				FolderCaseNoteCollection.class, FolderCaseNote.class);
+		return collection;
+	}
+
+	public static FolderCaseNote getFolderCaseNoteInstance(LookupService lookupService, int id) 
+	{
+		return (FolderCaseNote)lookupService.getLookupInstance(FolderCaseNote.class, FolderCaseNote.TYPE_ID, id);
+	}
+	
+
+	public static CaseNoteRequestCancellationReasonCollection getCaseNoteRequestCancellationReason(LookupService lookupService) {
+		CaseNoteRequestCancellationReasonCollection collection =
+			(CaseNoteRequestCancellationReasonCollection) lookupService.getLookupCollection(CaseNoteRequestCancellationReason.TYPE_ID, 
+				CaseNoteRequestCancellationReasonCollection.class, CaseNoteRequestCancellationReason.class);
+		return collection;
+	}
+
+	public static CaseNoteRequestCancellationReason getCaseNoteRequestCancellationReasonInstance(LookupService lookupService, int id) 
+	{
+		return (CaseNoteRequestCancellationReason)lookupService.getLookupInstance(CaseNoteRequestCancellationReason.class, CaseNoteRequestCancellationReason.TYPE_ID, id);
+	}
+	
+
+	public static CaseNoteReasonForTransferCollection getCaseNoteReasonForTransfer(LookupService lookupService) {
+		CaseNoteReasonForTransferCollection collection =
+			(CaseNoteReasonForTransferCollection) lookupService.getLookupCollection(CaseNoteReasonForTransfer.TYPE_ID, 
+				CaseNoteReasonForTransferCollection.class, CaseNoteReasonForTransfer.class);
+		return collection;
+	}
+
+	public static CaseNoteReasonForTransfer getCaseNoteReasonForTransferInstance(LookupService lookupService, int id) 
+	{
+		return (CaseNoteReasonForTransfer)lookupService.getLookupInstance(CaseNoteReasonForTransfer.class, CaseNoteReasonForTransfer.TYPE_ID, id);
+	}
+	
+
+	public static CaseNoteRequestStatusCollection getCaseNoteRequestStatus(LookupService lookupService) {
+		CaseNoteRequestStatusCollection collection =
+			(CaseNoteRequestStatusCollection) lookupService.getLookupCollection(CaseNoteRequestStatus.TYPE_ID, 
+				CaseNoteRequestStatusCollection.class, CaseNoteRequestStatus.class);
+		return collection;
+	}
+
+	public static CaseNoteRequestStatus getCaseNoteRequestStatusInstance(LookupService lookupService, int id) 
+	{
+		return (CaseNoteRequestStatus)lookupService.getLookupInstance(CaseNoteRequestStatus.class, CaseNoteRequestStatus.TYPE_ID, id);
+	}
+	
+
+	public static CaseNoteReasonForRequestCollection getCaseNoteReasonForRequest(LookupService lookupService) {
+		CaseNoteReasonForRequestCollection collection =
+			(CaseNoteReasonForRequestCollection) lookupService.getLookupCollection(CaseNoteReasonForRequest.TYPE_ID, 
+				CaseNoteReasonForRequestCollection.class, CaseNoteReasonForRequest.class);
+		return collection;
+	}
+
+	public static CaseNoteReasonForRequest getCaseNoteReasonForRequestInstance(LookupService lookupService, int id) 
+	{
+		return (CaseNoteReasonForRequest)lookupService.getLookupInstance(CaseNoteReasonForRequest.class, CaseNoteReasonForRequest.TYPE_ID, id);
+	}
+	
+
+	public static CaseNoteStatusCollection getCaseNoteStatus(LookupService lookupService) {
+		CaseNoteStatusCollection collection =
+			(CaseNoteStatusCollection) lookupService.getLookupCollection(CaseNoteStatus.TYPE_ID, 
+				CaseNoteStatusCollection.class, CaseNoteStatus.class);
+		return collection;
+	}
+
+	public static CaseNoteStatus getCaseNoteStatusInstance(LookupService lookupService, int id) 
+	{
+		return (CaseNoteStatus)lookupService.getLookupInstance(CaseNoteStatus.class, CaseNoteStatus.TYPE_ID, id);
+	}
+	
+
+	public static CaseNoteTypeCollection getCaseNoteType(LookupService lookupService) {
+		CaseNoteTypeCollection collection =
+			(CaseNoteTypeCollection) lookupService.getLookupCollection(CaseNoteType.TYPE_ID, 
+				CaseNoteTypeCollection.class, CaseNoteType.class);
+		return collection;
+	}
+
+	public static CaseNoteType getCaseNoteTypeInstance(LookupService lookupService, int id) 
+	{
+		return (CaseNoteType)lookupService.getLookupInstance(CaseNoteType.class, CaseNoteType.TYPE_ID, id);
+	}
+	
+
+	public static UndoDODFiledsCollection getUndoDODFileds(LookupService lookupService) {
+		UndoDODFiledsCollection collection =
+			(UndoDODFiledsCollection) lookupService.getLookupCollection(UndoDODFileds.TYPE_ID, 
+				UndoDODFiledsCollection.class, UndoDODFileds.class);
+		return collection;
+	}
+
+	public static UndoDODFileds getUndoDODFiledsInstance(LookupService lookupService, int id) 
+	{
+		return (UndoDODFileds)lookupService.getLookupInstance(UndoDODFileds.class, UndoDODFileds.TYPE_ID, id);
+	}
+	
+
+	public static ReasonForBreachingFirstApptKPICollection getReasonForBreachingFirstApptKPI(LookupService lookupService) {
+		ReasonForBreachingFirstApptKPICollection collection =
+			(ReasonForBreachingFirstApptKPICollection) lookupService.getLookupCollection(ReasonForBreachingFirstApptKPI.TYPE_ID, 
+				ReasonForBreachingFirstApptKPICollection.class, ReasonForBreachingFirstApptKPI.class);
+		return collection;
+	}
+
+	public static ReasonForBreachingFirstApptKPI getReasonForBreachingFirstApptKPIInstance(LookupService lookupService, int id) 
+	{
+		return (ReasonForBreachingFirstApptKPI)lookupService.getLookupInstance(ReasonForBreachingFirstApptKPI.class, ReasonForBreachingFirstApptKPI.TYPE_ID, id);
+	}
+	
+
+	public static PDSSynchronisationRelevantDatasetFieldsCollection getPDSSynchronisationRelevantDatasetFields(LookupService lookupService) {
+		PDSSynchronisationRelevantDatasetFieldsCollection collection =
+			(PDSSynchronisationRelevantDatasetFieldsCollection) lookupService.getLookupCollection(PDSSynchronisationRelevantDatasetFields.TYPE_ID, 
+				PDSSynchronisationRelevantDatasetFieldsCollection.class, PDSSynchronisationRelevantDatasetFields.class);
+		return collection;
+	}
+
+	public static PDSSynchronisationRelevantDatasetFields getPDSSynchronisationRelevantDatasetFieldsInstance(LookupService lookupService, int id) 
+	{
+		return (PDSSynchronisationRelevantDatasetFields)lookupService.getLookupInstance(PDSSynchronisationRelevantDatasetFields.class, PDSSynchronisationRelevantDatasetFields.TYPE_ID, id);
+	}
+	
+
+	public static AccomodationRequestedTypeCollection getAccomodationRequestedType(LookupService lookupService) {
+		AccomodationRequestedTypeCollection collection =
+			(AccomodationRequestedTypeCollection) lookupService.getLookupCollection(AccomodationRequestedType.TYPE_ID, 
+				AccomodationRequestedTypeCollection.class, AccomodationRequestedType.class);
+		return collection;
+	}
+
+	public static AccomodationRequestedType getAccomodationRequestedTypeInstance(LookupService lookupService, int id) 
+	{
+		return (AccomodationRequestedType)lookupService.getLookupInstance(AccomodationRequestedType.class, AccomodationRequestedType.TYPE_ID, id);
+	}
+	
+
+	public static HealthBoardCollection getHealthBoard(LookupService lookupService) {
+		HealthBoardCollection collection =
+			(HealthBoardCollection) lookupService.getLookupCollection(HealthBoard.TYPE_ID, 
+				HealthBoardCollection.class, HealthBoard.class);
+		return collection;
+	}
+
+	public static HealthBoard getHealthBoardInstance(LookupService lookupService, int id) 
+	{
+		return (HealthBoard)lookupService.getLookupInstance(HealthBoard.class, HealthBoard.TYPE_ID, id);
+	}
+	
+
+	public static PreferredContactTimeCollection getPreferredContactTime(LookupService lookupService) {
+		PreferredContactTimeCollection collection =
+			(PreferredContactTimeCollection) lookupService.getLookupCollection(PreferredContactTime.TYPE_ID, 
+				PreferredContactTimeCollection.class, PreferredContactTime.class);
+		return collection;
+	}
+
+	public static PreferredContactTime getPreferredContactTimeInstance(LookupService lookupService, int id) 
+	{
+		return (PreferredContactTime)lookupService.getLookupInstance(PreferredContactTime.class, PreferredContactTime.TYPE_ID, id);
+	}
+	
+
+	public static ContactMethodCollection getContactMethod(LookupService lookupService) {
+		ContactMethodCollection collection =
+			(ContactMethodCollection) lookupService.getLookupCollection(ContactMethod.TYPE_ID, 
+				ContactMethodCollection.class, ContactMethod.class);
+		return collection;
+	}
+
+	public static ContactMethod getContactMethodInstance(LookupService lookupService, int id) 
+	{
+		return (ContactMethod)lookupService.getLookupInstance(ContactMethod.class, ContactMethod.TYPE_ID, id);
+	}
+	
+
+	public static InternalReferralStatusCollection getInternalReferralStatus(LookupService lookupService) {
+		InternalReferralStatusCollection collection =
+			(InternalReferralStatusCollection) lookupService.getLookupCollection(InternalReferralStatus.TYPE_ID, 
+				InternalReferralStatusCollection.class, InternalReferralStatus.class);
+		return collection;
+	}
+
+	public static InternalReferralStatus getInternalReferralStatusInstance(LookupService lookupService, int id) 
+	{
+		return (InternalReferralStatus)lookupService.getLookupInstance(InternalReferralStatus.class, InternalReferralStatus.TYPE_ID, id);
+	}
+	
+
+	public static ISOUnitCollection getISOUnit(LookupService lookupService) {
+		ISOUnitCollection collection =
+			(ISOUnitCollection) lookupService.getLookupCollection(ISOUnit.TYPE_ID, 
+				ISOUnitCollection.class, ISOUnit.class);
+		return collection;
+	}
+
+	public static ISOUnit getISOUnitInstance(LookupService lookupService, int id) 
+	{
+		return (ISOUnit)lookupService.getLookupInstance(ISOUnit.class, ISOUnit.TYPE_ID, id);
+	}
+	
+
+	public static DiagnosisDivisionsCollection getDiagnosisDivisions(LookupService lookupService) {
+		DiagnosisDivisionsCollection collection =
+			(DiagnosisDivisionsCollection) lookupService.getLookupCollection(DiagnosisDivisions.TYPE_ID, 
+				DiagnosisDivisionsCollection.class, DiagnosisDivisions.class);
+		return collection;
+	}
+
+	public static DiagnosisDivisions getDiagnosisDivisionsInstance(LookupService lookupService, int id) 
+	{
+		return (DiagnosisDivisions)lookupService.getLookupInstance(DiagnosisDivisions.class, DiagnosisDivisions.TYPE_ID, id);
+	}
+	
+
+	public static PatientDiagnosisStatusCollection getPatientDiagnosisStatus(LookupService lookupService) {
+		PatientDiagnosisStatusCollection collection =
+			(PatientDiagnosisStatusCollection) lookupService.getLookupCollection(PatientDiagnosisStatus.TYPE_ID, 
+				PatientDiagnosisStatusCollection.class, PatientDiagnosisStatus.class);
+		return collection;
+	}
+
+	public static PatientDiagnosisStatus getPatientDiagnosisStatusInstance(LookupService lookupService, int id) 
+	{
+		return (PatientDiagnosisStatus)lookupService.getLookupInstance(PatientDiagnosisStatus.class, PatientDiagnosisStatus.TYPE_ID, id);
+	}
+	
+
+	public static BayDependencyLevelCollection getBayDependencyLevel(LookupService lookupService) {
+		BayDependencyLevelCollection collection =
+			(BayDependencyLevelCollection) lookupService.getLookupCollection(BayDependencyLevel.TYPE_ID, 
+				BayDependencyLevelCollection.class, BayDependencyLevel.class);
+		return collection;
+	}
+
+	public static BayDependencyLevel getBayDependencyLevelInstance(LookupService lookupService, int id) 
+	{
+		return (BayDependencyLevel)lookupService.getLookupInstance(BayDependencyLevel.class, BayDependencyLevel.TYPE_ID, id);
+	}
+	
+
+	public static GenderAdmissionReasonCollection getGenderAdmissionReason(LookupService lookupService) {
+		GenderAdmissionReasonCollection collection =
+			(GenderAdmissionReasonCollection) lookupService.getLookupCollection(GenderAdmissionReason.TYPE_ID, 
+				GenderAdmissionReasonCollection.class, GenderAdmissionReason.class);
+		return collection;
+	}
+
+	public static GenderAdmissionReason getGenderAdmissionReasonInstance(LookupService lookupService, int id) 
+	{
+		return (GenderAdmissionReason)lookupService.getLookupInstance(GenderAdmissionReason.class, GenderAdmissionReason.TYPE_ID, id);
+	}
+	
+
+	public static TrackingMovementTypeCollection getTrackingMovementType(LookupService lookupService) {
+		TrackingMovementTypeCollection collection =
+			(TrackingMovementTypeCollection) lookupService.getLookupCollection(TrackingMovementType.TYPE_ID, 
+				TrackingMovementTypeCollection.class, TrackingMovementType.class);
+		return collection;
+	}
+
+	public static TrackingMovementType getTrackingMovementTypeInstance(LookupService lookupService, int id) 
+	{
+		return (TrackingMovementType)lookupService.getLookupInstance(TrackingMovementType.class, TrackingMovementType.TYPE_ID, id);
+	}
+	
+
+	public static ReasonForAdmissionOutOfOpeningHoursCollection getReasonForAdmissionOutOfOpeningHours(LookupService lookupService) {
+		ReasonForAdmissionOutOfOpeningHoursCollection collection =
+			(ReasonForAdmissionOutOfOpeningHoursCollection) lookupService.getLookupCollection(ReasonForAdmissionOutOfOpeningHours.TYPE_ID, 
+				ReasonForAdmissionOutOfOpeningHoursCollection.class, ReasonForAdmissionOutOfOpeningHours.class);
+		return collection;
+	}
+
+	public static ReasonForAdmissionOutOfOpeningHours getReasonForAdmissionOutOfOpeningHoursInstance(LookupService lookupService, int id) 
+	{
+		return (ReasonForAdmissionOutOfOpeningHours)lookupService.getLookupInstance(ReasonForAdmissionOutOfOpeningHours.class, ReasonForAdmissionOutOfOpeningHours.TYPE_ID, id);
+	}
+	
+
+	public static ReasonforPrivateBedAllocationCollection getReasonforPrivateBedAllocation(LookupService lookupService) {
+		ReasonforPrivateBedAllocationCollection collection =
+			(ReasonforPrivateBedAllocationCollection) lookupService.getLookupCollection(ReasonforPrivateBedAllocation.TYPE_ID, 
+				ReasonforPrivateBedAllocationCollection.class, ReasonforPrivateBedAllocation.class);
+		return collection;
+	}
+
+	public static ReasonforPrivateBedAllocation getReasonforPrivateBedAllocationInstance(LookupService lookupService, int id) 
+	{
+		return (ReasonforPrivateBedAllocation)lookupService.getLookupInstance(ReasonforPrivateBedAllocation.class, ReasonforPrivateBedAllocation.TYPE_ID, id);
+	}
+	
+
 	public static InitatorCollection getInitator(LookupService lookupService) {
 		InitatorCollection collection =
 			(InitatorCollection) lookupService.getLookupCollection(Initator.TYPE_ID, 
@@ -165,16 +1145,16 @@ public final class LookupHelper {
 	}
 	
 
-	public static PreferredCommunicationLanguageCollection getPreferredCommunicationLanguage(LookupService lookupService) {
-		PreferredCommunicationLanguageCollection collection =
-			(PreferredCommunicationLanguageCollection) lookupService.getLookupCollection(PreferredCommunicationLanguage.TYPE_ID, 
-				PreferredCommunicationLanguageCollection.class, PreferredCommunicationLanguage.class);
+	public static PDSPreferredCommunicationLanguageCollection getPDSPreferredCommunicationLanguage(LookupService lookupService) {
+		PDSPreferredCommunicationLanguageCollection collection =
+			(PDSPreferredCommunicationLanguageCollection) lookupService.getLookupCollection(PDSPreferredCommunicationLanguage.TYPE_ID, 
+				PDSPreferredCommunicationLanguageCollection.class, PDSPreferredCommunicationLanguage.class);
 		return collection;
 	}
 
-	public static PreferredCommunicationLanguage getPreferredCommunicationLanguageInstance(LookupService lookupService, int id) 
+	public static PDSPreferredCommunicationLanguage getPDSPreferredCommunicationLanguageInstance(LookupService lookupService, int id) 
 	{
-		return (PreferredCommunicationLanguage)lookupService.getLookupInstance(PreferredCommunicationLanguage.class, PreferredCommunicationLanguage.TYPE_ID, id);
+		return (PDSPreferredCommunicationLanguage)lookupService.getLookupInstance(PDSPreferredCommunicationLanguage.class, PDSPreferredCommunicationLanguage.TYPE_ID, id);
 	}
 	
 
@@ -256,16 +1236,16 @@ public final class LookupHelper {
 	}
 	
 
-	public static PrivateInsuranceStatusCollection getPrivateInsuranceStatus(LookupService lookupService) {
-		PrivateInsuranceStatusCollection collection =
-			(PrivateInsuranceStatusCollection) lookupService.getLookupCollection(PrivateInsuranceStatus.TYPE_ID, 
-				PrivateInsuranceStatusCollection.class, PrivateInsuranceStatus.class);
+	public static MediaTypeCollection getMediaType(LookupService lookupService) {
+		MediaTypeCollection collection =
+			(MediaTypeCollection) lookupService.getLookupCollection(MediaType.TYPE_ID, 
+				MediaTypeCollection.class, MediaType.class);
 		return collection;
 	}
 
-	public static PrivateInsuranceStatus getPrivateInsuranceStatusInstance(LookupService lookupService, int id) 
+	public static MediaType getMediaTypeInstance(LookupService lookupService, int id) 
 	{
-		return (PrivateInsuranceStatus)lookupService.getLookupInstance(PrivateInsuranceStatus.class, PrivateInsuranceStatus.TYPE_ID, id);
+		return (MediaType)lookupService.getLookupInstance(MediaType.class, MediaType.TYPE_ID, id);
 	}
 	
 
@@ -438,6 +1418,19 @@ public final class LookupHelper {
 	}
 	
 
+	public static ReadmissionTypeCollection getReadmissionType(LookupService lookupService) {
+		ReadmissionTypeCollection collection =
+			(ReadmissionTypeCollection) lookupService.getLookupCollection(ReadmissionType.TYPE_ID, 
+				ReadmissionTypeCollection.class, ReadmissionType.class);
+		return collection;
+	}
+
+	public static ReadmissionType getReadmissionTypeInstance(LookupService lookupService, int id) 
+	{
+		return (ReadmissionType)lookupService.getLookupInstance(ReadmissionType.class, ReadmissionType.TYPE_ID, id);
+	}
+	
+
 	public static BedTypeRequestedCollection getBedTypeRequested(LookupService lookupService) {
 		BedTypeRequestedCollection collection =
 			(BedTypeRequestedCollection) lookupService.getLookupCollection(BedTypeRequested.TYPE_ID, 
@@ -464,16 +1457,16 @@ public final class LookupHelper {
 	}
 	
 
-	public static DischargeReasonCollection getDischargeReason(LookupService lookupService) {
-		DischargeReasonCollection collection =
-			(DischargeReasonCollection) lookupService.getLookupCollection(DischargeReason.TYPE_ID, 
-				DischargeReasonCollection.class, DischargeReason.class);
+	public static OverallImpressionCollection getOverallImpression(LookupService lookupService) {
+		OverallImpressionCollection collection =
+			(OverallImpressionCollection) lookupService.getLookupCollection(OverallImpression.TYPE_ID, 
+				OverallImpressionCollection.class, OverallImpression.class);
 		return collection;
 	}
 
-	public static DischargeReason getDischargeReasonInstance(LookupService lookupService, int id) 
+	public static OverallImpression getOverallImpressionInstance(LookupService lookupService, int id) 
 	{
-		return (DischargeReason)lookupService.getLookupInstance(DischargeReason.class, DischargeReason.TYPE_ID, id);
+		return (OverallImpression)lookupService.getLookupInstance(OverallImpression.class, OverallImpression.TYPE_ID, id);
 	}
 	
 
@@ -656,6 +1649,19 @@ public final class LookupHelper {
 	public static TCIType getTCITypeInstance(LookupService lookupService, int id) 
 	{
 		return (TCIType)lookupService.getLookupInstance(TCIType.class, TCIType.TYPE_ID, id);
+	}
+	
+
+	public static AlphabetCollection getAlphabet(LookupService lookupService) {
+		AlphabetCollection collection =
+			(AlphabetCollection) lookupService.getLookupCollection(Alphabet.TYPE_ID, 
+				AlphabetCollection.class, Alphabet.class);
+		return collection;
+	}
+
+	public static Alphabet getAlphabetInstance(LookupService lookupService, int id) 
+	{
+		return (Alphabet)lookupService.getLookupInstance(Alphabet.class, Alphabet.TYPE_ID, id);
 	}
 	
 
@@ -880,6 +1886,19 @@ public final class LookupHelper {
 	}
 	
 
+	public static ConfidentialReasonCollection getConfidentialReason(LookupService lookupService) {
+		ConfidentialReasonCollection collection =
+			(ConfidentialReasonCollection) lookupService.getLookupCollection(ConfidentialReason.TYPE_ID, 
+				ConfidentialReasonCollection.class, ConfidentialReason.class);
+		return collection;
+	}
+
+	public static ConfidentialReason getConfidentialReasonInstance(LookupService lookupService, int id) 
+	{
+		return (ConfidentialReason)lookupService.getLookupInstance(ConfidentialReason.class, ConfidentialReason.TYPE_ID, id);
+	}
+	
+
 	public static WorklistContactTypeCollection getWorklistContactType(LookupService lookupService) {
 		WorklistContactTypeCollection collection =
 			(WorklistContactTypeCollection) lookupService.getLookupCollection(WorklistContactType.TYPE_ID, 
@@ -903,6 +1922,32 @@ public final class LookupHelper {
 	public static RegistrationSourceOfInfo getRegistrationSourceOfInfoInstance(LookupService lookupService, int id) 
 	{
 		return (RegistrationSourceOfInfo)lookupService.getLookupInstance(RegistrationSourceOfInfo.class, RegistrationSourceOfInfo.TYPE_ID, id);
+	}
+	
+
+	public static DodSourceCollection getDodSource(LookupService lookupService) {
+		DodSourceCollection collection =
+			(DodSourceCollection) lookupService.getLookupCollection(DodSource.TYPE_ID, 
+				DodSourceCollection.class, DodSource.class);
+		return collection;
+	}
+
+	public static DodSource getDodSourceInstance(LookupService lookupService, int id) 
+	{
+		return (DodSource)lookupService.getLookupInstance(DodSource.class, DodSource.TYPE_ID, id);
+	}
+	
+
+	public static NationalityCollection getNationality(LookupService lookupService) {
+		NationalityCollection collection =
+			(NationalityCollection) lookupService.getLookupCollection(Nationality.TYPE_ID, 
+				NationalityCollection.class, Nationality.class);
+		return collection;
+	}
+
+	public static Nationality getNationalityInstance(LookupService lookupService, int id) 
+	{
+		return (Nationality)lookupService.getLookupInstance(Nationality.class, Nationality.TYPE_ID, id);
 	}
 	
 
@@ -968,19 +2013,6 @@ public final class LookupHelper {
 	public static ConsciousLevel getConsciousLevelInstance(LookupService lookupService, int id) 
 	{
 		return (ConsciousLevel)lookupService.getLookupInstance(ConsciousLevel.class, ConsciousLevel.TYPE_ID, id);
-	}
-	
-
-	public static CauseofDeathCollection getCauseofDeath(LookupService lookupService) {
-		CauseofDeathCollection collection =
-			(CauseofDeathCollection) lookupService.getLookupCollection(CauseofDeath.TYPE_ID, 
-				CauseofDeathCollection.class, CauseofDeath.class);
-		return collection;
-	}
-
-	public static CauseofDeath getCauseofDeathInstance(LookupService lookupService, int id) 
-	{
-		return (CauseofDeath)lookupService.getLookupInstance(CauseofDeath.class, CauseofDeath.TYPE_ID, id);
 	}
 	
 
@@ -1153,29 +2185,16 @@ public final class LookupHelper {
 	}
 	
 
-	public static SourceOfNoteCollection getSourceOfNote(LookupService lookupService) {
-		SourceOfNoteCollection collection =
-			(SourceOfNoteCollection) lookupService.getLookupCollection(SourceOfNote.TYPE_ID, 
-				SourceOfNoteCollection.class, SourceOfNote.class);
+	public static MedicationCommencedDiscontinuedTypeCollection getMedicationCommencedDiscontinuedType(LookupService lookupService) {
+		MedicationCommencedDiscontinuedTypeCollection collection =
+			(MedicationCommencedDiscontinuedTypeCollection) lookupService.getLookupCollection(MedicationCommencedDiscontinuedType.TYPE_ID, 
+				MedicationCommencedDiscontinuedTypeCollection.class, MedicationCommencedDiscontinuedType.class);
 		return collection;
 	}
 
-	public static SourceOfNote getSourceOfNoteInstance(LookupService lookupService, int id) 
+	public static MedicationCommencedDiscontinuedType getMedicationCommencedDiscontinuedTypeInstance(LookupService lookupService, int id) 
 	{
-		return (SourceOfNote)lookupService.getLookupInstance(SourceOfNote.class, SourceOfNote.TYPE_ID, id);
-	}
-	
-
-	public static MedciationCommencedDiscontinuedTypeCollection getMedciationCommencedDiscontinuedType(LookupService lookupService) {
-		MedciationCommencedDiscontinuedTypeCollection collection =
-			(MedciationCommencedDiscontinuedTypeCollection) lookupService.getLookupCollection(MedciationCommencedDiscontinuedType.TYPE_ID, 
-				MedciationCommencedDiscontinuedTypeCollection.class, MedciationCommencedDiscontinuedType.class);
-		return collection;
-	}
-
-	public static MedciationCommencedDiscontinuedType getMedciationCommencedDiscontinuedTypeInstance(LookupService lookupService, int id) 
-	{
-		return (MedciationCommencedDiscontinuedType)lookupService.getLookupInstance(MedciationCommencedDiscontinuedType.class, MedciationCommencedDiscontinuedType.TYPE_ID, id);
+		return (MedicationCommencedDiscontinuedType)lookupService.getLookupInstance(MedicationCommencedDiscontinuedType.class, MedicationCommencedDiscontinuedType.TYPE_ID, id);
 	}
 	
 
@@ -1189,19 +2208,6 @@ public final class LookupHelper {
 	public static MedOverviewCorrectness getMedOverviewCorrectnessInstance(LookupService lookupService, int id) 
 	{
 		return (MedOverviewCorrectness)lookupService.getLookupInstance(MedOverviewCorrectness.class, MedOverviewCorrectness.TYPE_ID, id);
-	}
-	
-
-	public static LineTypeStatusCollection getLineTypeStatus(LookupService lookupService) {
-		LineTypeStatusCollection collection =
-			(LineTypeStatusCollection) lookupService.getLookupCollection(LineTypeStatus.TYPE_ID, 
-				LineTypeStatusCollection.class, LineTypeStatus.class);
-		return collection;
-	}
-
-	public static LineTypeStatus getLineTypeStatusInstance(LookupService lookupService, int id) 
-	{
-		return (LineTypeStatus)lookupService.getLookupInstance(LineTypeStatus.class, LineTypeStatus.TYPE_ID, id);
 	}
 	
 
@@ -1231,29 +2237,16 @@ public final class LookupHelper {
 	}
 	
 
-	public static CBGTypeCollection getCBGType(LookupService lookupService) {
-		CBGTypeCollection collection =
-			(CBGTypeCollection) lookupService.getLookupCollection(CBGType.TYPE_ID, 
-				CBGTypeCollection.class, CBGType.class);
+	public static OBSTypeCollection getOBSType(LookupService lookupService) {
+		OBSTypeCollection collection =
+			(OBSTypeCollection) lookupService.getLookupCollection(OBSType.TYPE_ID, 
+				OBSTypeCollection.class, OBSType.class);
 		return collection;
 	}
 
-	public static CBGType getCBGTypeInstance(LookupService lookupService, int id) 
+	public static OBSType getOBSTypeInstance(LookupService lookupService, int id) 
 	{
-		return (CBGType)lookupService.getLookupInstance(CBGType.class, CBGType.TYPE_ID, id);
-	}
-	
-
-	public static SECSTypesCollection getSECSTypes(LookupService lookupService) {
-		SECSTypesCollection collection =
-			(SECSTypesCollection) lookupService.getLookupCollection(SECSTypes.TYPE_ID, 
-				SECSTypesCollection.class, SECSTypes.class);
-		return collection;
-	}
-
-	public static SECSTypes getSECSTypesInstance(LookupService lookupService, int id) 
-	{
-		return (SECSTypes)lookupService.getLookupInstance(SECSTypes.class, SECSTypes.TYPE_ID, id);
+		return (OBSType)lookupService.getLookupInstance(OBSType.class, OBSType.TYPE_ID, id);
 	}
 	
 
@@ -1280,58 +2273,6 @@ public final class LookupHelper {
 	public static VitalSignsMonitoringFrequency getVitalSignsMonitoringFrequencyInstance(LookupService lookupService, int id) 
 	{
 		return (VitalSignsMonitoringFrequency)lookupService.getLookupInstance(VitalSignsMonitoringFrequency.class, VitalSignsMonitoringFrequency.TYPE_ID, id);
-	}
-	
-
-	public static LineColourPointIconCollection getLineColourPointIcon(LookupService lookupService) {
-		LineColourPointIconCollection collection =
-			(LineColourPointIconCollection) lookupService.getLookupCollection(LineColourPointIcon.TYPE_ID, 
-				LineColourPointIconCollection.class, LineColourPointIcon.class);
-		return collection;
-	}
-
-	public static LineColourPointIcon getLineColourPointIconInstance(LookupService lookupService, int id) 
-	{
-		return (LineColourPointIcon)lookupService.getLookupInstance(LineColourPointIcon.class, LineColourPointIcon.TYPE_ID, id);
-	}
-	
-
-	public static LineTypeCollection getLineType(LookupService lookupService) {
-		LineTypeCollection collection =
-			(LineTypeCollection) lookupService.getLookupCollection(LineType.TYPE_ID, 
-				LineTypeCollection.class, LineType.class);
-		return collection;
-	}
-
-	public static LineType getLineTypeInstance(LookupService lookupService, int id) 
-	{
-		return (LineType)lookupService.getLookupInstance(LineType.class, LineType.TYPE_ID, id);
-	}
-	
-
-	public static DataSetCategoryCollection getDataSetCategory(LookupService lookupService) {
-		DataSetCategoryCollection collection =
-			(DataSetCategoryCollection) lookupService.getLookupCollection(DataSetCategory.TYPE_ID, 
-				DataSetCategoryCollection.class, DataSetCategory.class);
-		return collection;
-	}
-
-	public static DataSetCategory getDataSetCategoryInstance(LookupService lookupService, int id) 
-	{
-		return (DataSetCategory)lookupService.getLookupInstance(DataSetCategory.class, DataSetCategory.TYPE_ID, id);
-	}
-	
-
-	public static ResuscitationStatusCollection getResuscitationStatus(LookupService lookupService) {
-		ResuscitationStatusCollection collection =
-			(ResuscitationStatusCollection) lookupService.getLookupCollection(ResuscitationStatus.TYPE_ID, 
-				ResuscitationStatusCollection.class, ResuscitationStatus.class);
-		return collection;
-	}
-
-	public static ResuscitationStatus getResuscitationStatusInstance(LookupService lookupService, int id) 
-	{
-		return (ResuscitationStatus)lookupService.getLookupInstance(ResuscitationStatus.class, ResuscitationStatus.TYPE_ID, id);
 	}
 	
 
@@ -1608,6 +2549,19 @@ public final class LookupHelper {
 	}
 	
 
+	public static UnitsPerWeekCollection getUnitsPerWeek(LookupService lookupService) {
+		UnitsPerWeekCollection collection =
+			(UnitsPerWeekCollection) lookupService.getLookupCollection(UnitsPerWeek.TYPE_ID, 
+				UnitsPerWeekCollection.class, UnitsPerWeek.class);
+		return collection;
+	}
+
+	public static UnitsPerWeek getUnitsPerWeekInstance(LookupService lookupService, int id) 
+	{
+		return (UnitsPerWeek)lookupService.getLookupInstance(UnitsPerWeek.class, UnitsPerWeek.TYPE_ID, id);
+	}
+	
+
 	public static PulseOximetryValuesCollection getPulseOximetryValues(LookupService lookupService) {
 		PulseOximetryValuesCollection collection =
 			(PulseOximetryValuesCollection) lookupService.getLookupCollection(PulseOximetryValues.TYPE_ID, 
@@ -1631,19 +2585,6 @@ public final class LookupHelper {
 	public static YesNo getYesNoInstance(LookupService lookupService, int id) 
 	{
 		return (YesNo)lookupService.getLookupInstance(YesNo.class, YesNo.TYPE_ID, id);
-	}
-	
-
-	public static TimeWeeksMonthsYearsCollection getTimeWeeksMonthsYears(LookupService lookupService) {
-		TimeWeeksMonthsYearsCollection collection =
-			(TimeWeeksMonthsYearsCollection) lookupService.getLookupCollection(TimeWeeksMonthsYears.TYPE_ID, 
-				TimeWeeksMonthsYearsCollection.class, TimeWeeksMonthsYears.class);
-		return collection;
-	}
-
-	public static TimeWeeksMonthsYears getTimeWeeksMonthsYearsInstance(LookupService lookupService, int id) 
-	{
-		return (TimeWeeksMonthsYears)lookupService.getLookupInstance(TimeWeeksMonthsYears.class, TimeWeeksMonthsYears.TYPE_ID, id);
 	}
 	
 
@@ -2141,6 +3082,253 @@ public final class LookupHelper {
 	}
 	
 
+	public static EligibilityCollection getEligibility(LookupService lookupService) {
+		EligibilityCollection collection =
+			(EligibilityCollection) lookupService.getLookupCollection(Eligibility.TYPE_ID, 
+				EligibilityCollection.class, Eligibility.class);
+		return collection;
+	}
+
+	public static Eligibility getEligibilityInstance(LookupService lookupService, int id) 
+	{
+		return (Eligibility)lookupService.getLookupInstance(Eligibility.class, Eligibility.TYPE_ID, id);
+	}
+	
+
+	public static TransferReasonForPendingEmergencyAdmissionRequestCollection getTransferReasonForPendingEmergencyAdmissionRequest(LookupService lookupService) {
+		TransferReasonForPendingEmergencyAdmissionRequestCollection collection =
+			(TransferReasonForPendingEmergencyAdmissionRequestCollection) lookupService.getLookupCollection(TransferReasonForPendingEmergencyAdmissionRequest.TYPE_ID, 
+				TransferReasonForPendingEmergencyAdmissionRequestCollection.class, TransferReasonForPendingEmergencyAdmissionRequest.class);
+		return collection;
+	}
+
+	public static TransferReasonForPendingEmergencyAdmissionRequest getTransferReasonForPendingEmergencyAdmissionRequestInstance(LookupService lookupService, int id) 
+	{
+		return (TransferReasonForPendingEmergencyAdmissionRequest)lookupService.getLookupInstance(TransferReasonForPendingEmergencyAdmissionRequest.class, TransferReasonForPendingEmergencyAdmissionRequest.TYPE_ID, id);
+	}
+	
+
+	public static PDSLetterRunTypeCollection getPDSLetterRunType(LookupService lookupService) {
+		PDSLetterRunTypeCollection collection =
+			(PDSLetterRunTypeCollection) lookupService.getLookupCollection(PDSLetterRunType.TYPE_ID, 
+				PDSLetterRunTypeCollection.class, PDSLetterRunType.class);
+		return collection;
+	}
+
+	public static PDSLetterRunType getPDSLetterRunTypeInstance(LookupService lookupService, int id) 
+	{
+		return (PDSLetterRunType)lookupService.getLookupInstance(PDSLetterRunType.class, PDSLetterRunType.TYPE_ID, id);
+	}
+	
+
+	public static PDSConsentTypeCollection getPDSConsentType(LookupService lookupService) {
+		PDSConsentTypeCollection collection =
+			(PDSConsentTypeCollection) lookupService.getLookupCollection(PDSConsentType.TYPE_ID, 
+				PDSConsentTypeCollection.class, PDSConsentType.class);
+		return collection;
+	}
+
+	public static PDSConsentType getPDSConsentTypeInstance(LookupService lookupService, int id) 
+	{
+		return (PDSConsentType)lookupService.getLookupInstance(PDSConsentType.class, PDSConsentType.TYPE_ID, id);
+	}
+	
+
+	public static PendingAdmissionStatusCollection getPendingAdmissionStatus(LookupService lookupService) {
+		PendingAdmissionStatusCollection collection =
+			(PendingAdmissionStatusCollection) lookupService.getLookupCollection(PendingAdmissionStatus.TYPE_ID, 
+				PendingAdmissionStatusCollection.class, PendingAdmissionStatus.class);
+		return collection;
+	}
+
+	public static PendingAdmissionStatus getPendingAdmissionStatusInstance(LookupService lookupService, int id) 
+	{
+		return (PendingAdmissionStatus)lookupService.getLookupInstance(PendingAdmissionStatus.class, PendingAdmissionStatus.TYPE_ID, id);
+	}
+	
+
+	public static PDSContactMethodCollection getPDSContactMethod(LookupService lookupService) {
+		PDSContactMethodCollection collection =
+			(PDSContactMethodCollection) lookupService.getLookupCollection(PDSContactMethod.TYPE_ID, 
+				PDSContactMethodCollection.class, PDSContactMethod.class);
+		return collection;
+	}
+
+	public static PDSContactMethod getPDSContactMethodInstance(LookupService lookupService, int id) 
+	{
+		return (PDSContactMethod)lookupService.getLookupInstance(PDSContactMethod.class, PDSContactMethod.TYPE_ID, id);
+	}
+	
+
+	public static OverseasVisitorStatusCassificationCollection getOverseasVisitorStatusCassification(LookupService lookupService) {
+		OverseasVisitorStatusCassificationCollection collection =
+			(OverseasVisitorStatusCassificationCollection) lookupService.getLookupCollection(OverseasVisitorStatusCassification.TYPE_ID, 
+				OverseasVisitorStatusCassificationCollection.class, OverseasVisitorStatusCassification.class);
+		return collection;
+	}
+
+	public static OverseasVisitorStatusCassification getOverseasVisitorStatusCassificationInstance(LookupService lookupService, int id) 
+	{
+		return (OverseasVisitorStatusCassification)lookupService.getLookupInstance(OverseasVisitorStatusCassification.class, OverseasVisitorStatusCassification.TYPE_ID, id);
+	}
+	
+
+	public static PDSChannelUsageCollection getPDSChannelUsage(LookupService lookupService) {
+		PDSChannelUsageCollection collection =
+			(PDSChannelUsageCollection) lookupService.getLookupCollection(PDSChannelUsage.TYPE_ID, 
+				PDSChannelUsageCollection.class, PDSChannelUsage.class);
+		return collection;
+	}
+
+	public static PDSChannelUsage getPDSChannelUsageInstance(LookupService lookupService, int id) 
+	{
+		return (PDSChannelUsage)lookupService.getLookupInstance(PDSChannelUsage.class, PDSChannelUsage.TYPE_ID, id);
+	}
+	
+
+	public static WardAttendanceOutcomeCollection getWardAttendanceOutcome(LookupService lookupService) {
+		WardAttendanceOutcomeCollection collection =
+			(WardAttendanceOutcomeCollection) lookupService.getLookupCollection(WardAttendanceOutcome.TYPE_ID, 
+				WardAttendanceOutcomeCollection.class, WardAttendanceOutcome.class);
+		return collection;
+	}
+
+	public static WardAttendanceOutcome getWardAttendanceOutcomeInstance(LookupService lookupService, int id) 
+	{
+		return (WardAttendanceOutcome)lookupService.getLookupInstance(WardAttendanceOutcome.class, WardAttendanceOutcome.TYPE_ID, id);
+	}
+	
+
+	public static PDSPersonRoleCollection getPDSPersonRole(LookupService lookupService) {
+		PDSPersonRoleCollection collection =
+			(PDSPersonRoleCollection) lookupService.getLookupCollection(PDSPersonRole.TYPE_ID, 
+				PDSPersonRoleCollection.class, PDSPersonRole.class);
+		return collection;
+	}
+
+	public static PDSPersonRole getPDSPersonRoleInstance(LookupService lookupService, int id) 
+	{
+		return (PDSPersonRole)lookupService.getLookupInstance(PDSPersonRole.class, PDSPersonRole.TYPE_ID, id);
+	}
+	
+
+	public static CaseNoteCommentTypeCollection getCaseNoteCommentType(LookupService lookupService) {
+		CaseNoteCommentTypeCollection collection =
+			(CaseNoteCommentTypeCollection) lookupService.getLookupCollection(CaseNoteCommentType.TYPE_ID, 
+				CaseNoteCommentTypeCollection.class, CaseNoteCommentType.class);
+		return collection;
+	}
+
+	public static CaseNoteCommentType getCaseNoteCommentTypeInstance(LookupService lookupService, int id) 
+	{
+		return (CaseNoteCommentType)lookupService.getLookupInstance(CaseNoteCommentType.class, CaseNoteCommentType.TYPE_ID, id);
+	}
+	
+
+	public static PDSSearchStatusCollection getPDSSearchStatus(LookupService lookupService) {
+		PDSSearchStatusCollection collection =
+			(PDSSearchStatusCollection) lookupService.getLookupCollection(PDSSearchStatus.TYPE_ID, 
+				PDSSearchStatusCollection.class, PDSSearchStatus.class);
+		return collection;
+	}
+
+	public static PDSSearchStatus getPDSSearchStatusInstance(LookupService lookupService, int id) 
+	{
+		return (PDSSearchStatus)lookupService.getLookupInstance(PDSSearchStatus.class, PDSSearchStatus.TYPE_ID, id);
+	}
+	
+
+	public static WardBayReopenReasonCollection getWardBayReopenReason(LookupService lookupService) {
+		WardBayReopenReasonCollection collection =
+			(WardBayReopenReasonCollection) lookupService.getLookupCollection(WardBayReopenReason.TYPE_ID, 
+				WardBayReopenReasonCollection.class, WardBayReopenReason.class);
+		return collection;
+	}
+
+	public static WardBayReopenReason getWardBayReopenReasonInstance(LookupService lookupService, int id) 
+	{
+		return (WardBayReopenReason)lookupService.getLookupInstance(WardBayReopenReason.class, WardBayReopenReason.TYPE_ID, id);
+	}
+	
+
+	public static TransferCancellationReasonCollection getTransferCancellationReason(LookupService lookupService) {
+		TransferCancellationReasonCollection collection =
+			(TransferCancellationReasonCollection) lookupService.getLookupCollection(TransferCancellationReason.TYPE_ID, 
+				TransferCancellationReasonCollection.class, TransferCancellationReason.class);
+		return collection;
+	}
+
+	public static TransferCancellationReason getTransferCancellationReasonInstance(LookupService lookupService, int id) 
+	{
+		return (TransferCancellationReason)lookupService.getLookupInstance(TransferCancellationReason.class, TransferCancellationReason.TYPE_ID, id);
+	}
+	
+
+	public static ReferralTypeForTriageActionCollection getReferralTypeForTriageAction(LookupService lookupService) {
+		ReferralTypeForTriageActionCollection collection =
+			(ReferralTypeForTriageActionCollection) lookupService.getLookupCollection(ReferralTypeForTriageAction.TYPE_ID, 
+				ReferralTypeForTriageActionCollection.class, ReferralTypeForTriageAction.class);
+		return collection;
+	}
+
+	public static ReferralTypeForTriageAction getReferralTypeForTriageActionInstance(LookupService lookupService, int id) 
+	{
+		return (ReferralTypeForTriageAction)lookupService.getLookupInstance(ReferralTypeForTriageAction.class, ReferralTypeForTriageAction.TYPE_ID, id);
+	}
+	
+
+	public static MissingItemsCollection getMissingItems(LookupService lookupService) {
+		MissingItemsCollection collection =
+			(MissingItemsCollection) lookupService.getLookupCollection(MissingItems.TYPE_ID, 
+				MissingItemsCollection.class, MissingItems.class);
+		return collection;
+	}
+
+	public static MissingItems getMissingItemsInstance(LookupService lookupService, int id) 
+	{
+		return (MissingItems)lookupService.getLookupInstance(MissingItems.class, MissingItems.TYPE_ID, id);
+	}
+	
+
+	public static WoundPackingTypeCollection getWoundPackingType(LookupService lookupService) {
+		WoundPackingTypeCollection collection =
+			(WoundPackingTypeCollection) lookupService.getLookupCollection(WoundPackingType.TYPE_ID, 
+				WoundPackingTypeCollection.class, WoundPackingType.class);
+		return collection;
+	}
+
+	public static WoundPackingType getWoundPackingTypeInstance(LookupService lookupService, int id) 
+	{
+		return (WoundPackingType)lookupService.getLookupInstance(WoundPackingType.class, WoundPackingType.TYPE_ID, id);
+	}
+	
+
+	public static PatientPreparationCollection getPatientPreparation(LookupService lookupService) {
+		PatientPreparationCollection collection =
+			(PatientPreparationCollection) lookupService.getLookupCollection(PatientPreparation.TYPE_ID, 
+				PatientPreparationCollection.class, PatientPreparation.class);
+		return collection;
+	}
+
+	public static PatientPreparation getPatientPreparationInstance(LookupService lookupService, int id) 
+	{
+		return (PatientPreparation)lookupService.getLookupInstance(PatientPreparation.class, PatientPreparation.TYPE_ID, id);
+	}
+	
+
+	public static AlertAccessRightsCollection getAlertAccessRights(LookupService lookupService) {
+		AlertAccessRightsCollection collection =
+			(AlertAccessRightsCollection) lookupService.getLookupCollection(AlertAccessRights.TYPE_ID, 
+				AlertAccessRightsCollection.class, AlertAccessRights.class);
+		return collection;
+	}
+
+	public static AlertAccessRights getAlertAccessRightsInstance(LookupService lookupService, int id) 
+	{
+		return (AlertAccessRights)lookupService.getLookupInstance(AlertAccessRights.class, AlertAccessRights.TYPE_ID, id);
+	}
+	
+
 	public static KeyDateTypeCollection getKeyDateType(LookupService lookupService) {
 		KeyDateTypeCollection collection =
 			(KeyDateTypeCollection) lookupService.getLookupCollection(KeyDateType.TYPE_ID, 
@@ -2154,16 +3342,29 @@ public final class LookupHelper {
 	}
 	
 
-	public static CareContextStatusCollection getCareContextStatus(LookupService lookupService) {
-		CareContextStatusCollection collection =
-			(CareContextStatusCollection) lookupService.getLookupCollection(CareContextStatus.TYPE_ID, 
-				CareContextStatusCollection.class, CareContextStatus.class);
+	public static PrivateInsuranceStatusCollection getPrivateInsuranceStatus(LookupService lookupService) {
+		PrivateInsuranceStatusCollection collection =
+			(PrivateInsuranceStatusCollection) lookupService.getLookupCollection(PrivateInsuranceStatus.TYPE_ID, 
+				PrivateInsuranceStatusCollection.class, PrivateInsuranceStatus.class);
 		return collection;
 	}
 
-	public static CareContextStatus getCareContextStatusInstance(LookupService lookupService, int id) 
+	public static PrivateInsuranceStatus getPrivateInsuranceStatusInstance(LookupService lookupService, int id) 
 	{
-		return (CareContextStatus)lookupService.getLookupInstance(CareContextStatus.class, CareContextStatus.TYPE_ID, id);
+		return (PrivateInsuranceStatus)lookupService.getLookupInstance(PrivateInsuranceStatus.class, PrivateInsuranceStatus.TYPE_ID, id);
+	}
+	
+
+	public static CorrectedReasonCollection getCorrectedReason(LookupService lookupService) {
+		CorrectedReasonCollection collection =
+			(CorrectedReasonCollection) lookupService.getLookupCollection(CorrectedReason.TYPE_ID, 
+				CorrectedReasonCollection.class, CorrectedReason.class);
+		return collection;
+	}
+
+	public static CorrectedReason getCorrectedReasonInstance(LookupService lookupService, int id) 
+	{
+		return (CorrectedReason)lookupService.getLookupInstance(CorrectedReason.class, CorrectedReason.TYPE_ID, id);
 	}
 	
 
@@ -2180,16 +3381,16 @@ public final class LookupHelper {
 	}
 	
 
-	public static ReadmissionTypeCollection getReadmissionType(LookupService lookupService) {
-		ReadmissionTypeCollection collection =
-			(ReadmissionTypeCollection) lookupService.getLookupCollection(ReadmissionType.TYPE_ID, 
-				ReadmissionTypeCollection.class, ReadmissionType.class);
+	public static TimeWeeksMonthsYearsCollection getTimeWeeksMonthsYears(LookupService lookupService) {
+		TimeWeeksMonthsYearsCollection collection =
+			(TimeWeeksMonthsYearsCollection) lookupService.getLookupCollection(TimeWeeksMonthsYears.TYPE_ID, 
+				TimeWeeksMonthsYearsCollection.class, TimeWeeksMonthsYears.class);
 		return collection;
 	}
 
-	public static ReadmissionType getReadmissionTypeInstance(LookupService lookupService, int id) 
+	public static TimeWeeksMonthsYears getTimeWeeksMonthsYearsInstance(LookupService lookupService, int id) 
 	{
-		return (ReadmissionType)lookupService.getLookupInstance(ReadmissionType.class, ReadmissionType.TYPE_ID, id);
+		return (TimeWeeksMonthsYears)lookupService.getLookupInstance(TimeWeeksMonthsYears.class, TimeWeeksMonthsYears.TYPE_ID, id);
 	}
 	
 
@@ -2206,16 +3407,16 @@ public final class LookupHelper {
 	}
 	
 
-	public static OverallImpressionCollection getOverallImpression(LookupService lookupService) {
-		OverallImpressionCollection collection =
-			(OverallImpressionCollection) lookupService.getLookupCollection(OverallImpression.TYPE_ID, 
-				OverallImpressionCollection.class, OverallImpression.class);
+	public static DischargeReasonCollection getDischargeReason(LookupService lookupService) {
+		DischargeReasonCollection collection =
+			(DischargeReasonCollection) lookupService.getLookupCollection(DischargeReason.TYPE_ID, 
+				DischargeReasonCollection.class, DischargeReason.class);
 		return collection;
 	}
 
-	public static OverallImpression getOverallImpressionInstance(LookupService lookupService, int id) 
+	public static DischargeReason getDischargeReasonInstance(LookupService lookupService, int id) 
 	{
-		return (OverallImpression)lookupService.getLookupInstance(OverallImpression.class, OverallImpression.TYPE_ID, id);
+		return (DischargeReason)lookupService.getLookupInstance(DischargeReason.class, DischargeReason.TYPE_ID, id);
 	}
 	
 
@@ -2232,6 +3433,110 @@ public final class LookupHelper {
 	}
 	
 
+	public static CauseofDeathCollection getCauseofDeath(LookupService lookupService) {
+		CauseofDeathCollection collection =
+			(CauseofDeathCollection) lookupService.getLookupCollection(CauseofDeath.TYPE_ID, 
+				CauseofDeathCollection.class, CauseofDeath.class);
+		return collection;
+	}
+
+	public static CauseofDeath getCauseofDeathInstance(LookupService lookupService, int id) 
+	{
+		return (CauseofDeath)lookupService.getLookupInstance(CauseofDeath.class, CauseofDeath.TYPE_ID, id);
+	}
+	
+
+	public static SourceOfNoteCollection getSourceOfNote(LookupService lookupService) {
+		SourceOfNoteCollection collection =
+			(SourceOfNoteCollection) lookupService.getLookupCollection(SourceOfNote.TYPE_ID, 
+				SourceOfNoteCollection.class, SourceOfNote.class);
+		return collection;
+	}
+
+	public static SourceOfNote getSourceOfNoteInstance(LookupService lookupService, int id) 
+	{
+		return (SourceOfNote)lookupService.getLookupInstance(SourceOfNote.class, SourceOfNote.TYPE_ID, id);
+	}
+	
+
+	public static LineTypeStatusCollection getLineTypeStatus(LookupService lookupService) {
+		LineTypeStatusCollection collection =
+			(LineTypeStatusCollection) lookupService.getLookupCollection(LineTypeStatus.TYPE_ID, 
+				LineTypeStatusCollection.class, LineTypeStatus.class);
+		return collection;
+	}
+
+	public static LineTypeStatus getLineTypeStatusInstance(LookupService lookupService, int id) 
+	{
+		return (LineTypeStatus)lookupService.getLookupInstance(LineTypeStatus.class, LineTypeStatus.TYPE_ID, id);
+	}
+	
+
+	public static CBGTypeCollection getCBGType(LookupService lookupService) {
+		CBGTypeCollection collection =
+			(CBGTypeCollection) lookupService.getLookupCollection(CBGType.TYPE_ID, 
+				CBGTypeCollection.class, CBGType.class);
+		return collection;
+	}
+
+	public static CBGType getCBGTypeInstance(LookupService lookupService, int id) 
+	{
+		return (CBGType)lookupService.getLookupInstance(CBGType.class, CBGType.TYPE_ID, id);
+	}
+	
+
+	public static LineColourPointIconCollection getLineColourPointIcon(LookupService lookupService) {
+		LineColourPointIconCollection collection =
+			(LineColourPointIconCollection) lookupService.getLookupCollection(LineColourPointIcon.TYPE_ID, 
+				LineColourPointIconCollection.class, LineColourPointIcon.class);
+		return collection;
+	}
+
+	public static LineColourPointIcon getLineColourPointIconInstance(LookupService lookupService, int id) 
+	{
+		return (LineColourPointIcon)lookupService.getLookupInstance(LineColourPointIcon.class, LineColourPointIcon.TYPE_ID, id);
+	}
+	
+
+	public static LineTypeCollection getLineType(LookupService lookupService) {
+		LineTypeCollection collection =
+			(LineTypeCollection) lookupService.getLookupCollection(LineType.TYPE_ID, 
+				LineTypeCollection.class, LineType.class);
+		return collection;
+	}
+
+	public static LineType getLineTypeInstance(LookupService lookupService, int id) 
+	{
+		return (LineType)lookupService.getLookupInstance(LineType.class, LineType.TYPE_ID, id);
+	}
+	
+
+	public static DataSetCategoryCollection getDataSetCategory(LookupService lookupService) {
+		DataSetCategoryCollection collection =
+			(DataSetCategoryCollection) lookupService.getLookupCollection(DataSetCategory.TYPE_ID, 
+				DataSetCategoryCollection.class, DataSetCategory.class);
+		return collection;
+	}
+
+	public static DataSetCategory getDataSetCategoryInstance(LookupService lookupService, int id) 
+	{
+		return (DataSetCategory)lookupService.getLookupInstance(DataSetCategory.class, DataSetCategory.TYPE_ID, id);
+	}
+	
+
+	public static ResuscitationStatusCollection getResuscitationStatus(LookupService lookupService) {
+		ResuscitationStatusCollection collection =
+			(ResuscitationStatusCollection) lookupService.getLookupCollection(ResuscitationStatus.TYPE_ID, 
+				ResuscitationStatusCollection.class, ResuscitationStatus.class);
+		return collection;
+	}
+
+	public static ResuscitationStatus getResuscitationStatusInstance(LookupService lookupService, int id) 
+	{
+		return (ResuscitationStatus)lookupService.getLookupInstance(ResuscitationStatus.class, ResuscitationStatus.TYPE_ID, id);
+	}
+	
+
 	public static AreaOfNeedCollection getAreaOfNeed(LookupService lookupService) {
 		AreaOfNeedCollection collection =
 			(AreaOfNeedCollection) lookupService.getLookupCollection(AreaOfNeed.TYPE_ID, 
@@ -2242,19 +3547,6 @@ public final class LookupHelper {
 	public static AreaOfNeed getAreaOfNeedInstance(LookupService lookupService, int id) 
 	{
 		return (AreaOfNeed)lookupService.getLookupInstance(AreaOfNeed.class, AreaOfNeed.TYPE_ID, id);
-	}
-	
-
-	public static UnitsPerWeekCollection getUnitsPerWeek(LookupService lookupService) {
-		UnitsPerWeekCollection collection =
-			(UnitsPerWeekCollection) lookupService.getLookupCollection(UnitsPerWeek.TYPE_ID, 
-				UnitsPerWeekCollection.class, UnitsPerWeek.class);
-		return collection;
-	}
-
-	public static UnitsPerWeek getUnitsPerWeekInstance(LookupService lookupService, int id) 
-	{
-		return (UnitsPerWeek)lookupService.getLookupInstance(UnitsPerWeek.class, UnitsPerWeek.TYPE_ID, id);
 	}
 	
 
@@ -2440,19 +3732,6 @@ public final class LookupHelper {
 	}
 	
 
-	public static ReferralTypeCollection getReferralType(LookupService lookupService) {
-		ReferralTypeCollection collection =
-			(ReferralTypeCollection) lookupService.getLookupCollection(ReferralType.TYPE_ID, 
-				ReferralTypeCollection.class, ReferralType.class);
-		return collection;
-	}
-
-	public static ReferralType getReferralTypeInstance(LookupService lookupService, int id) 
-	{
-		return (ReferralType)lookupService.getLookupInstance(ReferralType.class, ReferralType.TYPE_ID, id);
-	}
-	
-
 	public static TracheostomyTypeCollection getTracheostomyType(LookupService lookupService) {
 		TracheostomyTypeCollection collection =
 			(TracheostomyTypeCollection) lookupService.getLookupCollection(TracheostomyType.TYPE_ID, 
@@ -2476,6 +3755,19 @@ public final class LookupHelper {
 	public static NameType getNameTypeInstance(LookupService lookupService, int id) 
 	{
 		return (NameType)lookupService.getLookupInstance(NameType.class, NameType.TYPE_ID, id);
+	}
+	
+
+	public static PolicyTypeCollection getPolicyType(LookupService lookupService) {
+		PolicyTypeCollection collection =
+			(PolicyTypeCollection) lookupService.getLookupCollection(PolicyType.TYPE_ID, 
+				PolicyTypeCollection.class, PolicyType.class);
+		return collection;
+	}
+
+	public static PolicyType getPolicyTypeInstance(LookupService lookupService, int id) 
+	{
+		return (PolicyType)lookupService.getLookupInstance(PolicyType.class, PolicyType.TYPE_ID, id);
 	}
 	
 
@@ -2671,19 +3963,6 @@ public final class LookupHelper {
 	public static VSBPSite getVSBPSiteInstance(LookupService lookupService, int id) 
 	{
 		return (VSBPSite)lookupService.getLookupInstance(VSBPSite.class, VSBPSite.TYPE_ID, id);
-	}
-	
-
-	public static VSPulseRhythmCollection getVSPulseRhythm(LookupService lookupService) {
-		VSPulseRhythmCollection collection =
-			(VSPulseRhythmCollection) lookupService.getLookupCollection(VSPulseRhythm.TYPE_ID, 
-				VSPulseRhythmCollection.class, VSPulseRhythm.class);
-		return collection;
-	}
-
-	public static VSPulseRhythm getVSPulseRhythmInstance(LookupService lookupService, int id) 
-	{
-		return (VSPulseRhythm)lookupService.getLookupInstance(VSPulseRhythm.class, VSPulseRhythm.TYPE_ID, id);
 	}
 	
 
@@ -2921,16 +4200,55 @@ public final class LookupHelper {
 	}
 	
 
-	public static CorrectedReasonCollection getCorrectedReason(LookupService lookupService) {
-		CorrectedReasonCollection collection =
-			(CorrectedReasonCollection) lookupService.getLookupCollection(CorrectedReason.TYPE_ID, 
-				CorrectedReasonCollection.class, CorrectedReason.class);
+	public static TimeUnitsSecondsToYearsCollection getTimeUnitsSecondsToYears(LookupService lookupService) {
+		TimeUnitsSecondsToYearsCollection collection =
+			(TimeUnitsSecondsToYearsCollection) lookupService.getLookupCollection(TimeUnitsSecondsToYears.TYPE_ID, 
+				TimeUnitsSecondsToYearsCollection.class, TimeUnitsSecondsToYears.class);
 		return collection;
 	}
 
-	public static CorrectedReason getCorrectedReasonInstance(LookupService lookupService, int id) 
+	public static TimeUnitsSecondsToYears getTimeUnitsSecondsToYearsInstance(LookupService lookupService, int id) 
 	{
-		return (CorrectedReason)lookupService.getLookupInstance(CorrectedReason.class, CorrectedReason.TYPE_ID, id);
+		return (TimeUnitsSecondsToYears)lookupService.getLookupInstance(TimeUnitsSecondsToYears.class, TimeUnitsSecondsToYears.TYPE_ID, id);
+	}
+	
+
+	public static PublicCareNeedCollection getPublicCareNeed(LookupService lookupService) {
+		PublicCareNeedCollection collection =
+			(PublicCareNeedCollection) lookupService.getLookupCollection(PublicCareNeed.TYPE_ID, 
+				PublicCareNeedCollection.class, PublicCareNeed.class);
+		return collection;
+	}
+
+	public static PublicCareNeed getPublicCareNeedInstance(LookupService lookupService, int id) 
+	{
+		return (PublicCareNeed)lookupService.getLookupInstance(PublicCareNeed.class, PublicCareNeed.TYPE_ID, id);
+	}
+	
+
+	public static CancelPendingAdmissionReasonCollection getCancelPendingAdmissionReason(LookupService lookupService) {
+		CancelPendingAdmissionReasonCollection collection =
+			(CancelPendingAdmissionReasonCollection) lookupService.getLookupCollection(CancelPendingAdmissionReason.TYPE_ID, 
+				CancelPendingAdmissionReasonCollection.class, CancelPendingAdmissionReason.class);
+		return collection;
+	}
+
+	public static CancelPendingAdmissionReason getCancelPendingAdmissionReasonInstance(LookupService lookupService, int id) 
+	{
+		return (CancelPendingAdmissionReason)lookupService.getLookupInstance(CancelPendingAdmissionReason.class, CancelPendingAdmissionReason.TYPE_ID, id);
+	}
+	
+
+	public static CareContextStatusCollection getCareContextStatus(LookupService lookupService) {
+		CareContextStatusCollection collection =
+			(CareContextStatusCollection) lookupService.getLookupCollection(CareContextStatus.TYPE_ID, 
+				CareContextStatusCollection.class, CareContextStatus.class);
+		return collection;
+	}
+
+	public static CareContextStatus getCareContextStatusInstance(LookupService lookupService, int id) 
+	{
+		return (CareContextStatus)lookupService.getLookupInstance(CareContextStatus.class, CareContextStatus.TYPE_ID, id);
 	}
 	
 
@@ -3207,6 +4525,19 @@ public final class LookupHelper {
 	}
 	
 
+	public static ReferralTypeCollection getReferralType(LookupService lookupService) {
+		ReferralTypeCollection collection =
+			(ReferralTypeCollection) lookupService.getLookupCollection(ReferralType.TYPE_ID, 
+				ReferralTypeCollection.class, ReferralType.class);
+		return collection;
+	}
+
+	public static ReferralType getReferralTypeInstance(LookupService lookupService, int id) 
+	{
+		return (ReferralType)lookupService.getLookupInstance(ReferralType.class, ReferralType.TYPE_ID, id);
+	}
+	
+
 	public static PatientConcernStatusCollection getPatientConcernStatus(LookupService lookupService) {
 		PatientConcernStatusCollection collection =
 			(PatientConcernStatusCollection) lookupService.getLookupCollection(PatientConcernStatus.TYPE_ID, 
@@ -3282,6 +4613,19 @@ public final class LookupHelper {
 	public static PersonHealthActCategory getPersonHealthActCategoryInstance(LookupService lookupService, int id) 
 	{
 		return (PersonHealthActCategory)lookupService.getLookupInstance(PersonHealthActCategory.class, PersonHealthActCategory.TYPE_ID, id);
+	}
+	
+
+	public static VSPulseRhythmCollection getVSPulseRhythm(LookupService lookupService) {
+		VSPulseRhythmCollection collection =
+			(VSPulseRhythmCollection) lookupService.getLookupCollection(VSPulseRhythm.TYPE_ID, 
+				VSPulseRhythmCollection.class, VSPulseRhythm.class);
+		return collection;
+	}
+
+	public static VSPulseRhythm getVSPulseRhythmInstance(LookupService lookupService, int id) 
+	{
+		return (VSPulseRhythm)lookupService.getLookupInstance(VSPulseRhythm.class, VSPulseRhythm.TYPE_ID, id);
 	}
 	
 }

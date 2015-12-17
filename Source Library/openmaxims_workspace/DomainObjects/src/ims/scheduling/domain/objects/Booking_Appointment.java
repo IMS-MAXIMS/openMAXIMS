@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.scheduling.domain.objects;
@@ -182,6 +187,55 @@ public class Booking_Appointment extends ims.domain.DomainObject implements ims.
 	private ims.domain.lookups.LookupInstance category;
 	/** CaseNotesPulled */
 	private Boolean caseNotesPulled;
+	/** How many provider cancellations have taken place for this appointment */
+	private Integer numProviderCancellations;
+	private Boolean wasPrinted;
+	private ims.core.documents.domain.objects.PatientDocument bookingLetter;
+	private Integer numPatientCancellations;
+	/** First Appt KPI Date */
+	private java.util.Date firstApptKPIDate;
+	/** RTT Breach KPI Date */
+	private java.util.Date rTTBreachKPIDate;
+	/** Reason For Breaching First Appt KPI */
+	private ims.domain.lookups.LookupInstance reasonForBreachingFirstApptKPI;
+	/** Breach Comments */
+	private String commentsForBreachingFirstApptKPI;
+	/** Outpatient functionality to mark a Appointment as one that should not be moved. */
+	private Boolean doNotMove;
+	private java.util.Date date28DayRuleBreach;
+	private ims.domain.lookups.LookupInstance day28BreachReason;
+	private String day28BreachComment;
+	/** Linked Appointments
+	  * Collection of ims.scheduling.domain.objects.Booking_Appointment.
+	  */
+	private java.util.Set linkedAppointments;
+	private Boolean outcomeHasRTTClockImpact;
+	/** Appointment Outcome RTT Clock Impact */
+	private ims.pathways.domain.objects.PathwaysRTTClockImpact rTTClockImpact;
+	private java.util.Date outcomeDateTime;
+	private Boolean statusSavedFromOutcome;
+	private ims.pathways.domain.objects.PathwaysRTTClockImpact bookedRTTClockImpact;
+	private Boolean isFlexibleAppointment;
+	private Boolean isWardAttendance;
+	private ims.core.clinical.domain.objects.ServiceFunction serviceFunction;
+	private ims.domain.lookups.LookupInstance wardAttendanceHcpType;
+	private ims.domain.lookups.LookupInstance wardAttendanceOutcome;
+	private String wardAttendanceOutcomeComment;
+	private Boolean firstConsultationActivity;
+	private ims.domain.lookups.LookupInstance patientCategory;
+	/** Patient Elective List set when book appointment from Pre-Assessment worklist */
+	private ims.RefMan.domain.objects.PatientElectiveList electiveList;
+	/** Boolean indicator that this appointment booked on same day as patient attended another */
+	private Boolean apptBookedOnSameDay;
+	/** Indicates that this appointment was cancelled as part of profile maintenance */
+	private Boolean isDisplaced;
+	/** Has the appointment date being communicated and agreed with Patient */
+	private Boolean wasApptCommunicated;
+	/** First Activity For Referral */
+	private Boolean firstActivityForReferral;
+	private ims.core.resource.people.domain.objects.Hcp listOwnerBooked;
+	/** ProcedureDetails */
+	private String procedureDetails;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public Booking_Appointment (Integer id, int ver)
@@ -307,7 +361,7 @@ public class Booking_Appointment extends ims.domain.DomainObject implements ims.
 		return comments;
 	}
 	public void setComments(String comments) {
-		if ( null != comments && comments.length() > 255 ) {
+		if ( null != comments && comments.length() > 500 ) {
 			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for comments. Tried to set value: "+
 				comments);
 		}
@@ -699,6 +753,256 @@ public class Booking_Appointment extends ims.domain.DomainObject implements ims.
 	}
 	public void setCaseNotesPulled(Boolean caseNotesPulled) {
 		this.caseNotesPulled = caseNotesPulled;
+	}
+
+	public Integer getNumProviderCancellations() {
+		return numProviderCancellations;
+	}
+	public void setNumProviderCancellations(Integer numProviderCancellations) {
+		this.numProviderCancellations = numProviderCancellations;
+	}
+
+	public Boolean isWasPrinted() {
+		return wasPrinted;
+	}
+	public void setWasPrinted(Boolean wasPrinted) {
+		this.wasPrinted = wasPrinted;
+	}
+
+	public ims.core.documents.domain.objects.PatientDocument getBookingLetter() {
+		return bookingLetter;
+	}
+	public void setBookingLetter(ims.core.documents.domain.objects.PatientDocument bookingLetter) {
+		this.bookingLetter = bookingLetter;
+	}
+
+	public Integer getNumPatientCancellations() {
+		return numPatientCancellations;
+	}
+	public void setNumPatientCancellations(Integer numPatientCancellations) {
+		this.numPatientCancellations = numPatientCancellations;
+	}
+
+	public java.util.Date getFirstApptKPIDate() {
+		return firstApptKPIDate;
+	}
+	public void setFirstApptKPIDate(java.util.Date firstApptKPIDate) {
+		this.firstApptKPIDate = firstApptKPIDate;
+	}
+
+	public java.util.Date getRTTBreachKPIDate() {
+		return rTTBreachKPIDate;
+	}
+	public void setRTTBreachKPIDate(java.util.Date rTTBreachKPIDate) {
+		this.rTTBreachKPIDate = rTTBreachKPIDate;
+	}
+
+	public ims.domain.lookups.LookupInstance getReasonForBreachingFirstApptKPI() {
+		return reasonForBreachingFirstApptKPI;
+	}
+	public void setReasonForBreachingFirstApptKPI(ims.domain.lookups.LookupInstance reasonForBreachingFirstApptKPI) {
+		this.reasonForBreachingFirstApptKPI = reasonForBreachingFirstApptKPI;
+	}
+
+	public String getCommentsForBreachingFirstApptKPI() {
+		return commentsForBreachingFirstApptKPI;
+	}
+	public void setCommentsForBreachingFirstApptKPI(String commentsForBreachingFirstApptKPI) {
+		if ( null != commentsForBreachingFirstApptKPI && commentsForBreachingFirstApptKPI.length() > 1000 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for commentsForBreachingFirstApptKPI. Tried to set value: "+
+				commentsForBreachingFirstApptKPI);
+		}
+		this.commentsForBreachingFirstApptKPI = commentsForBreachingFirstApptKPI;
+	}
+
+	public Boolean isDoNotMove() {
+		return doNotMove;
+	}
+	public void setDoNotMove(Boolean doNotMove) {
+		this.doNotMove = doNotMove;
+	}
+
+	public java.util.Date getDate28DayRuleBreach() {
+		return date28DayRuleBreach;
+	}
+	public void setDate28DayRuleBreach(java.util.Date date28DayRuleBreach) {
+		this.date28DayRuleBreach = date28DayRuleBreach;
+	}
+
+	public ims.domain.lookups.LookupInstance getDay28BreachReason() {
+		return day28BreachReason;
+	}
+	public void setDay28BreachReason(ims.domain.lookups.LookupInstance day28BreachReason) {
+		this.day28BreachReason = day28BreachReason;
+	}
+
+	public String getDay28BreachComment() {
+		return day28BreachComment;
+	}
+	public void setDay28BreachComment(String day28BreachComment) {
+		if ( null != day28BreachComment && day28BreachComment.length() > 255 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for day28BreachComment. Tried to set value: "+
+				day28BreachComment);
+		}
+		this.day28BreachComment = day28BreachComment;
+	}
+
+	public java.util.Set getLinkedAppointments() {
+		if ( null == linkedAppointments ) {
+			linkedAppointments = new java.util.HashSet();
+		}
+		return linkedAppointments;
+	}
+	public void setLinkedAppointments(java.util.Set paramValue) {
+		this.linkedAppointments = paramValue;
+	}
+
+	public Boolean isOutcomeHasRTTClockImpact() {
+		return outcomeHasRTTClockImpact;
+	}
+	public void setOutcomeHasRTTClockImpact(Boolean outcomeHasRTTClockImpact) {
+		this.outcomeHasRTTClockImpact = outcomeHasRTTClockImpact;
+	}
+
+	public ims.pathways.domain.objects.PathwaysRTTClockImpact getRTTClockImpact() {
+		return rTTClockImpact;
+	}
+	public void setRTTClockImpact(ims.pathways.domain.objects.PathwaysRTTClockImpact rTTClockImpact) {
+		this.rTTClockImpact = rTTClockImpact;
+	}
+
+	public java.util.Date getOutcomeDateTime() {
+		return outcomeDateTime;
+	}
+	public void setOutcomeDateTime(java.util.Date outcomeDateTime) {
+		this.outcomeDateTime = outcomeDateTime;
+	}
+
+	public Boolean isStatusSavedFromOutcome() {
+		return statusSavedFromOutcome;
+	}
+	public void setStatusSavedFromOutcome(Boolean statusSavedFromOutcome) {
+		this.statusSavedFromOutcome = statusSavedFromOutcome;
+	}
+
+	public ims.pathways.domain.objects.PathwaysRTTClockImpact getBookedRTTClockImpact() {
+		return bookedRTTClockImpact;
+	}
+	public void setBookedRTTClockImpact(ims.pathways.domain.objects.PathwaysRTTClockImpact bookedRTTClockImpact) {
+		this.bookedRTTClockImpact = bookedRTTClockImpact;
+	}
+
+	public Boolean isIsFlexibleAppointment() {
+		return isFlexibleAppointment;
+	}
+	public void setIsFlexibleAppointment(Boolean isFlexibleAppointment) {
+		this.isFlexibleAppointment = isFlexibleAppointment;
+	}
+
+	public Boolean isIsWardAttendance() {
+		return isWardAttendance;
+	}
+	public void setIsWardAttendance(Boolean isWardAttendance) {
+		this.isWardAttendance = isWardAttendance;
+	}
+
+	public ims.core.clinical.domain.objects.ServiceFunction getServiceFunction() {
+		return serviceFunction;
+	}
+	public void setServiceFunction(ims.core.clinical.domain.objects.ServiceFunction serviceFunction) {
+		this.serviceFunction = serviceFunction;
+	}
+
+	public ims.domain.lookups.LookupInstance getWardAttendanceHcpType() {
+		return wardAttendanceHcpType;
+	}
+	public void setWardAttendanceHcpType(ims.domain.lookups.LookupInstance wardAttendanceHcpType) {
+		this.wardAttendanceHcpType = wardAttendanceHcpType;
+	}
+
+	public ims.domain.lookups.LookupInstance getWardAttendanceOutcome() {
+		return wardAttendanceOutcome;
+	}
+	public void setWardAttendanceOutcome(ims.domain.lookups.LookupInstance wardAttendanceOutcome) {
+		this.wardAttendanceOutcome = wardAttendanceOutcome;
+	}
+
+	public String getWardAttendanceOutcomeComment() {
+		return wardAttendanceOutcomeComment;
+	}
+	public void setWardAttendanceOutcomeComment(String wardAttendanceOutcomeComment) {
+		if ( null != wardAttendanceOutcomeComment && wardAttendanceOutcomeComment.length() > 1500 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for wardAttendanceOutcomeComment. Tried to set value: "+
+				wardAttendanceOutcomeComment);
+		}
+		this.wardAttendanceOutcomeComment = wardAttendanceOutcomeComment;
+	}
+
+	public Boolean isFirstConsultationActivity() {
+		return firstConsultationActivity;
+	}
+	public void setFirstConsultationActivity(Boolean firstConsultationActivity) {
+		this.firstConsultationActivity = firstConsultationActivity;
+	}
+
+	public ims.domain.lookups.LookupInstance getPatientCategory() {
+		return patientCategory;
+	}
+	public void setPatientCategory(ims.domain.lookups.LookupInstance patientCategory) {
+		this.patientCategory = patientCategory;
+	}
+
+	public ims.RefMan.domain.objects.PatientElectiveList getElectiveList() {
+		return electiveList;
+	}
+	public void setElectiveList(ims.RefMan.domain.objects.PatientElectiveList electiveList) {
+		this.electiveList = electiveList;
+	}
+
+	public Boolean isApptBookedOnSameDay() {
+		return apptBookedOnSameDay;
+	}
+	public void setApptBookedOnSameDay(Boolean apptBookedOnSameDay) {
+		this.apptBookedOnSameDay = apptBookedOnSameDay;
+	}
+
+	public Boolean isIsDisplaced() {
+		return isDisplaced;
+	}
+	public void setIsDisplaced(Boolean isDisplaced) {
+		this.isDisplaced = isDisplaced;
+	}
+
+	public Boolean isWasApptCommunicated() {
+		return wasApptCommunicated;
+	}
+	public void setWasApptCommunicated(Boolean wasApptCommunicated) {
+		this.wasApptCommunicated = wasApptCommunicated;
+	}
+
+	public Boolean isFirstActivityForReferral() {
+		return firstActivityForReferral;
+	}
+	public void setFirstActivityForReferral(Boolean firstActivityForReferral) {
+		this.firstActivityForReferral = firstActivityForReferral;
+	}
+
+	public ims.core.resource.people.domain.objects.Hcp getListOwnerBooked() {
+		return listOwnerBooked;
+	}
+	public void setListOwnerBooked(ims.core.resource.people.domain.objects.Hcp listOwnerBooked) {
+		this.listOwnerBooked = listOwnerBooked;
+	}
+
+	public String getProcedureDetails() {
+		return procedureDetails;
+	}
+	public void setProcedureDetails(String procedureDetails) {
+		if ( null != procedureDetails && procedureDetails.length() > 500 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for procedureDetails. Tried to set value: "+
+				procedureDetails);
+		}
+		this.procedureDetails = procedureDetails;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -1148,6 +1452,163 @@ public class Booking_Appointment extends ims.domain.DomainObject implements ims.
 		auditStr.append("\r\n*caseNotesPulled* :");
 		auditStr.append(caseNotesPulled);
 	    auditStr.append("; ");
+		auditStr.append("\r\n*numProviderCancellations* :");
+		auditStr.append(numProviderCancellations);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*wasPrinted* :");
+		auditStr.append(wasPrinted);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*bookingLetter* :");
+		if (bookingLetter != null)
+		{
+			auditStr.append(toShortClassName(bookingLetter));
+				
+		    auditStr.append(bookingLetter.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*numPatientCancellations* :");
+		auditStr.append(numPatientCancellations);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*firstApptKPIDate* :");
+		auditStr.append(firstApptKPIDate);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*rTTBreachKPIDate* :");
+		auditStr.append(rTTBreachKPIDate);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*reasonForBreachingFirstApptKPI* :");
+		if (reasonForBreachingFirstApptKPI != null)
+			auditStr.append(reasonForBreachingFirstApptKPI.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*commentsForBreachingFirstApptKPI* :");
+		auditStr.append(commentsForBreachingFirstApptKPI);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*doNotMove* :");
+		auditStr.append(doNotMove);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*date28DayRuleBreach* :");
+		auditStr.append(date28DayRuleBreach);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*day28BreachReason* :");
+		if (day28BreachReason != null)
+			auditStr.append(day28BreachReason.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*day28BreachComment* :");
+		auditStr.append(day28BreachComment);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*linkedAppointments* :");
+		if (linkedAppointments != null)
+		{
+			java.util.Iterator it75 = linkedAppointments.iterator();
+			int i75=0;
+			while (it75.hasNext())
+			{
+				if (i75 > 0)
+					auditStr.append(",");
+				ims.scheduling.domain.objects.Booking_Appointment obj = (ims.scheduling.domain.objects.Booking_Appointment)it75.next();
+		if (obj != null)
+		{
+		   if (i75 == 0)
+		   {
+			auditStr.append(toShortClassName(obj));
+			auditStr.append("[");
+		   }
+		
+		   auditStr.append(obj.getId());
+		}
+			i75++;
+		}
+		if (i75 > 0)
+			auditStr.append("] " + i75);
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*outcomeHasRTTClockImpact* :");
+		auditStr.append(outcomeHasRTTClockImpact);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*rTTClockImpact* :");
+		if (rTTClockImpact != null)
+		{
+			auditStr.append(toShortClassName(rTTClockImpact));
+				
+		    auditStr.append(rTTClockImpact.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*outcomeDateTime* :");
+		auditStr.append(outcomeDateTime);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*statusSavedFromOutcome* :");
+		auditStr.append(statusSavedFromOutcome);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*bookedRTTClockImpact* :");
+		if (bookedRTTClockImpact != null)
+		{
+			auditStr.append(toShortClassName(bookedRTTClockImpact));
+				
+		    auditStr.append(bookedRTTClockImpact.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*isFlexibleAppointment* :");
+		auditStr.append(isFlexibleAppointment);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*isWardAttendance* :");
+		auditStr.append(isWardAttendance);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*serviceFunction* :");
+		if (serviceFunction != null)
+		{
+			auditStr.append(toShortClassName(serviceFunction));
+				
+		    auditStr.append(serviceFunction.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*wardAttendanceHcpType* :");
+		if (wardAttendanceHcpType != null)
+			auditStr.append(wardAttendanceHcpType.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*wardAttendanceOutcome* :");
+		if (wardAttendanceOutcome != null)
+			auditStr.append(wardAttendanceOutcome.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*wardAttendanceOutcomeComment* :");
+		auditStr.append(wardAttendanceOutcomeComment);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*firstConsultationActivity* :");
+		auditStr.append(firstConsultationActivity);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*patientCategory* :");
+		if (patientCategory != null)
+			auditStr.append(patientCategory.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*electiveList* :");
+		if (electiveList != null)
+		{
+			auditStr.append(toShortClassName(electiveList));
+				
+		    auditStr.append(electiveList.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*apptBookedOnSameDay* :");
+		auditStr.append(apptBookedOnSameDay);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*isDisplaced* :");
+		auditStr.append(isDisplaced);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*wasApptCommunicated* :");
+		auditStr.append(wasApptCommunicated);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*firstActivityForReferral* :");
+		auditStr.append(firstActivityForReferral);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*listOwnerBooked* :");
+		if (listOwnerBooked != null)
+		{
+			auditStr.append(toShortClassName(listOwnerBooked));
+				
+		    auditStr.append(listOwnerBooked.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*procedureDetails* :");
+		auditStr.append(procedureDetails);
+	    auditStr.append("; ");
 		return auditStr.toString();
 	}
 	
@@ -1584,6 +2045,207 @@ public class Booking_Appointment extends ims.domain.DomainObject implements ims.
 			sb.append("<caseNotesPulled>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isCaseNotesPulled().toString()));
 			sb.append("</caseNotesPulled>");		
+		}
+		if (this.getNumProviderCancellations() != null)
+		{
+			sb.append("<numProviderCancellations>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getNumProviderCancellations().toString()));
+			sb.append("</numProviderCancellations>");		
+		}
+		if (this.isWasPrinted() != null)
+		{
+			sb.append("<wasPrinted>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isWasPrinted().toString()));
+			sb.append("</wasPrinted>");		
+		}
+		if (this.getBookingLetter() != null)
+		{
+			sb.append("<bookingLetter>");
+			sb.append(this.getBookingLetter().toXMLString(domMap)); 	
+			sb.append("</bookingLetter>");		
+		}
+		if (this.getNumPatientCancellations() != null)
+		{
+			sb.append("<numPatientCancellations>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getNumPatientCancellations().toString()));
+			sb.append("</numPatientCancellations>");		
+		}
+		if (this.getFirstApptKPIDate() != null)
+		{
+			sb.append("<firstApptKPIDate>");
+			sb.append(new ims.framework.utils.DateTime(this.getFirstApptKPIDate()).toString(ims.framework.utils.DateTimeFormat.MILLI));
+			sb.append("</firstApptKPIDate>");		
+		}
+		if (this.getRTTBreachKPIDate() != null)
+		{
+			sb.append("<rTTBreachKPIDate>");
+			sb.append(new ims.framework.utils.DateTime(this.getRTTBreachKPIDate()).toString(ims.framework.utils.DateTimeFormat.MILLI));
+			sb.append("</rTTBreachKPIDate>");		
+		}
+		if (this.getReasonForBreachingFirstApptKPI() != null)
+		{
+			sb.append("<reasonForBreachingFirstApptKPI>");
+			sb.append(this.getReasonForBreachingFirstApptKPI().toXMLString()); 
+			sb.append("</reasonForBreachingFirstApptKPI>");		
+		}
+		if (this.getCommentsForBreachingFirstApptKPI() != null)
+		{
+			sb.append("<commentsForBreachingFirstApptKPI>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getCommentsForBreachingFirstApptKPI().toString()));
+			sb.append("</commentsForBreachingFirstApptKPI>");		
+		}
+		if (this.isDoNotMove() != null)
+		{
+			sb.append("<doNotMove>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isDoNotMove().toString()));
+			sb.append("</doNotMove>");		
+		}
+		if (this.getDate28DayRuleBreach() != null)
+		{
+			sb.append("<date28DayRuleBreach>");
+			sb.append(new ims.framework.utils.DateTime(this.getDate28DayRuleBreach()).toString(ims.framework.utils.DateTimeFormat.MILLI));
+			sb.append("</date28DayRuleBreach>");		
+		}
+		if (this.getDay28BreachReason() != null)
+		{
+			sb.append("<day28BreachReason>");
+			sb.append(this.getDay28BreachReason().toXMLString()); 
+			sb.append("</day28BreachReason>");		
+		}
+		if (this.getDay28BreachComment() != null)
+		{
+			sb.append("<day28BreachComment>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getDay28BreachComment().toString()));
+			sb.append("</day28BreachComment>");		
+		}
+		if (this.getLinkedAppointments() != null)
+		{
+			if (this.getLinkedAppointments().size() > 0 )
+			{
+			sb.append("<linkedAppointments>");
+			sb.append(ims.domain.DomainObject.toXMLString(this.getLinkedAppointments(), domMap));
+			sb.append("</linkedAppointments>");		
+			}
+		}
+		if (this.isOutcomeHasRTTClockImpact() != null)
+		{
+			sb.append("<outcomeHasRTTClockImpact>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isOutcomeHasRTTClockImpact().toString()));
+			sb.append("</outcomeHasRTTClockImpact>");		
+		}
+		if (this.getRTTClockImpact() != null)
+		{
+			sb.append("<rTTClockImpact>");
+			sb.append(this.getRTTClockImpact().toXMLString(domMap)); 	
+			sb.append("</rTTClockImpact>");		
+		}
+		if (this.getOutcomeDateTime() != null)
+		{
+			sb.append("<outcomeDateTime>");
+			sb.append(new ims.framework.utils.DateTime(this.getOutcomeDateTime()).toString(ims.framework.utils.DateTimeFormat.MILLI));
+			sb.append("</outcomeDateTime>");		
+		}
+		if (this.isStatusSavedFromOutcome() != null)
+		{
+			sb.append("<statusSavedFromOutcome>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isStatusSavedFromOutcome().toString()));
+			sb.append("</statusSavedFromOutcome>");		
+		}
+		if (this.getBookedRTTClockImpact() != null)
+		{
+			sb.append("<bookedRTTClockImpact>");
+			sb.append(this.getBookedRTTClockImpact().toXMLString(domMap)); 	
+			sb.append("</bookedRTTClockImpact>");		
+		}
+		if (this.isIsFlexibleAppointment() != null)
+		{
+			sb.append("<isFlexibleAppointment>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsFlexibleAppointment().toString()));
+			sb.append("</isFlexibleAppointment>");		
+		}
+		if (this.isIsWardAttendance() != null)
+		{
+			sb.append("<isWardAttendance>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsWardAttendance().toString()));
+			sb.append("</isWardAttendance>");		
+		}
+		if (this.getServiceFunction() != null)
+		{
+			sb.append("<serviceFunction>");
+			sb.append(this.getServiceFunction().toXMLString(domMap)); 	
+			sb.append("</serviceFunction>");		
+		}
+		if (this.getWardAttendanceHcpType() != null)
+		{
+			sb.append("<wardAttendanceHcpType>");
+			sb.append(this.getWardAttendanceHcpType().toXMLString()); 
+			sb.append("</wardAttendanceHcpType>");		
+		}
+		if (this.getWardAttendanceOutcome() != null)
+		{
+			sb.append("<wardAttendanceOutcome>");
+			sb.append(this.getWardAttendanceOutcome().toXMLString()); 
+			sb.append("</wardAttendanceOutcome>");		
+		}
+		if (this.getWardAttendanceOutcomeComment() != null)
+		{
+			sb.append("<wardAttendanceOutcomeComment>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getWardAttendanceOutcomeComment().toString()));
+			sb.append("</wardAttendanceOutcomeComment>");		
+		}
+		if (this.isFirstConsultationActivity() != null)
+		{
+			sb.append("<firstConsultationActivity>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isFirstConsultationActivity().toString()));
+			sb.append("</firstConsultationActivity>");		
+		}
+		if (this.getPatientCategory() != null)
+		{
+			sb.append("<patientCategory>");
+			sb.append(this.getPatientCategory().toXMLString()); 
+			sb.append("</patientCategory>");		
+		}
+		if (this.getElectiveList() != null)
+		{
+			sb.append("<electiveList>");
+			sb.append(this.getElectiveList().toXMLString(domMap)); 	
+			sb.append("</electiveList>");		
+		}
+		if (this.isApptBookedOnSameDay() != null)
+		{
+			sb.append("<apptBookedOnSameDay>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isApptBookedOnSameDay().toString()));
+			sb.append("</apptBookedOnSameDay>");		
+		}
+		if (this.isIsDisplaced() != null)
+		{
+			sb.append("<isDisplaced>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsDisplaced().toString()));
+			sb.append("</isDisplaced>");		
+		}
+		if (this.isWasApptCommunicated() != null)
+		{
+			sb.append("<wasApptCommunicated>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isWasApptCommunicated().toString()));
+			sb.append("</wasApptCommunicated>");		
+		}
+		if (this.isFirstActivityForReferral() != null)
+		{
+			sb.append("<firstActivityForReferral>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isFirstActivityForReferral().toString()));
+			sb.append("</firstActivityForReferral>");		
+		}
+		if (this.getListOwnerBooked() != null)
+		{
+			sb.append("<listOwnerBooked>");
+			sb.append(this.getListOwnerBooked().toXMLString(domMap)); 	
+			sb.append("</listOwnerBooked>");		
+		}
+		if (this.getProcedureDetails() != null)
+		{
+			sb.append("<procedureDetails>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getProcedureDetails().toString()));
+			sb.append("</procedureDetails>");		
 		}
 		return sb.toString();
 	}
@@ -2089,6 +2751,183 @@ public class Booking_Appointment extends ims.domain.DomainObject implements ims.
 		{	
     		obj.setCaseNotesPulled(new Boolean(fldEl.getTextTrim()));	
 		}
+		fldEl = el.element("numProviderCancellations");
+		if(fldEl != null)
+		{	
+    		obj.setNumProviderCancellations(new Integer(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("wasPrinted");
+		if(fldEl != null)
+		{	
+    		obj.setWasPrinted(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("bookingLetter");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setBookingLetter(ims.core.documents.domain.objects.PatientDocument.getPatientDocumentfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("numPatientCancellations");
+		if(fldEl != null)
+		{	
+    		obj.setNumPatientCancellations(new Integer(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("firstApptKPIDate");
+		if(fldEl != null)
+		{	
+    		obj.setFirstApptKPIDate(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
+		}
+		fldEl = el.element("rTTBreachKPIDate");
+		if(fldEl != null)
+		{	
+    		obj.setRTTBreachKPIDate(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
+		}
+		fldEl = el.element("reasonForBreachingFirstApptKPI");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setReasonForBreachingFirstApptKPI(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("commentsForBreachingFirstApptKPI");
+		if(fldEl != null)
+		{	
+    		obj.setCommentsForBreachingFirstApptKPI(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("doNotMove");
+		if(fldEl != null)
+		{	
+    		obj.setDoNotMove(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("date28DayRuleBreach");
+		if(fldEl != null)
+		{	
+    		obj.setDate28DayRuleBreach(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
+		}
+		fldEl = el.element("day28BreachReason");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setDay28BreachReason(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("day28BreachComment");
+		if(fldEl != null)
+		{	
+    		obj.setDay28BreachComment(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("linkedAppointments");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("set");	
+			obj.setLinkedAppointments(ims.scheduling.domain.objects.Booking_Appointment.fromSetXMLString(fldEl, factory, obj.getLinkedAppointments(), domMap));
+		}
+		fldEl = el.element("outcomeHasRTTClockImpact");
+		if(fldEl != null)
+		{	
+    		obj.setOutcomeHasRTTClockImpact(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("rTTClockImpact");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setRTTClockImpact(ims.pathways.domain.objects.PathwaysRTTClockImpact.getPathwaysRTTClockImpactfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("outcomeDateTime");
+		if(fldEl != null)
+		{	
+    		obj.setOutcomeDateTime(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
+		}
+		fldEl = el.element("statusSavedFromOutcome");
+		if(fldEl != null)
+		{	
+    		obj.setStatusSavedFromOutcome(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("bookedRTTClockImpact");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setBookedRTTClockImpact(ims.pathways.domain.objects.PathwaysRTTClockImpact.getPathwaysRTTClockImpactfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("isFlexibleAppointment");
+		if(fldEl != null)
+		{	
+    		obj.setIsFlexibleAppointment(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("isWardAttendance");
+		if(fldEl != null)
+		{	
+    		obj.setIsWardAttendance(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("serviceFunction");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setServiceFunction(ims.core.clinical.domain.objects.ServiceFunction.getServiceFunctionfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("wardAttendanceHcpType");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setWardAttendanceHcpType(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("wardAttendanceOutcome");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setWardAttendanceOutcome(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("wardAttendanceOutcomeComment");
+		if(fldEl != null)
+		{	
+    		obj.setWardAttendanceOutcomeComment(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("firstConsultationActivity");
+		if(fldEl != null)
+		{	
+    		obj.setFirstConsultationActivity(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("patientCategory");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setPatientCategory(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("electiveList");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setElectiveList(ims.RefMan.domain.objects.PatientElectiveList.getPatientElectiveListfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("apptBookedOnSameDay");
+		if(fldEl != null)
+		{	
+    		obj.setApptBookedOnSameDay(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("isDisplaced");
+		if(fldEl != null)
+		{	
+    		obj.setIsDisplaced(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("wasApptCommunicated");
+		if(fldEl != null)
+		{	
+    		obj.setWasApptCommunicated(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("firstActivityForReferral");
+		if(fldEl != null)
+		{	
+    		obj.setFirstActivityForReferral(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("listOwnerBooked");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setListOwnerBooked(ims.core.resource.people.domain.objects.Hcp.getHcpfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("procedureDetails");
+		if(fldEl != null)
+		{	
+    		obj.setProcedureDetails(new String(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -2101,6 +2940,7 @@ public class Booking_Appointment extends ims.domain.DomainObject implements ims.
 		, "outpatientProcedures"
 		, "outpatientDiagnoses"
 		, "outcomeActions"
+		, "linkedAppointments"
 		};
 	}
 
@@ -2202,6 +3042,39 @@ public String buildCabMessage(ims.domain.lookups.LookupInstance requestType)
 		public static final String OutcomeActions = "outcomeActions";
 		public static final String Category = "category";
 		public static final String CaseNotesPulled = "caseNotesPulled";
+		public static final String NumProviderCancellations = "numProviderCancellations";
+		public static final String WasPrinted = "wasPrinted";
+		public static final String BookingLetter = "bookingLetter";
+		public static final String NumPatientCancellations = "numPatientCancellations";
+		public static final String FirstApptKPIDate = "firstApptKPIDate";
+		public static final String RTTBreachKPIDate = "rTTBreachKPIDate";
+		public static final String ReasonForBreachingFirstApptKPI = "reasonForBreachingFirstApptKPI";
+		public static final String CommentsForBreachingFirstApptKPI = "commentsForBreachingFirstApptKPI";
+		public static final String DoNotMove = "doNotMove";
+		public static final String Date28DayRuleBreach = "date28DayRuleBreach";
+		public static final String Day28BreachReason = "day28BreachReason";
+		public static final String Day28BreachComment = "day28BreachComment";
+		public static final String LinkedAppointments = "linkedAppointments";
+		public static final String OutcomeHasRTTClockImpact = "outcomeHasRTTClockImpact";
+		public static final String RTTClockImpact = "rTTClockImpact";
+		public static final String OutcomeDateTime = "outcomeDateTime";
+		public static final String StatusSavedFromOutcome = "statusSavedFromOutcome";
+		public static final String BookedRTTClockImpact = "bookedRTTClockImpact";
+		public static final String IsFlexibleAppointment = "isFlexibleAppointment";
+		public static final String IsWardAttendance = "isWardAttendance";
+		public static final String ServiceFunction = "serviceFunction";
+		public static final String WardAttendanceHcpType = "wardAttendanceHcpType";
+		public static final String WardAttendanceOutcome = "wardAttendanceOutcome";
+		public static final String WardAttendanceOutcomeComment = "wardAttendanceOutcomeComment";
+		public static final String FirstConsultationActivity = "firstConsultationActivity";
+		public static final String PatientCategory = "patientCategory";
+		public static final String ElectiveList = "electiveList";
+		public static final String ApptBookedOnSameDay = "apptBookedOnSameDay";
+		public static final String IsDisplaced = "isDisplaced";
+		public static final String WasApptCommunicated = "wasApptCommunicated";
+		public static final String FirstActivityForReferral = "firstActivityForReferral";
+		public static final String ListOwnerBooked = "listOwnerBooked";
+		public static final String ProcedureDetails = "procedureDetails";
 	}
 }
 

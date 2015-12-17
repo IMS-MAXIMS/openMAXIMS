@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.core.vo.domain;
@@ -72,6 +77,8 @@ public class PasEventWithReferringGPVoAssembler
 		valueObjectDest.setLocation(valueObjectSrc.getLocation());
 		// EpisodeFinancialClass
 		valueObjectDest.setEpisodeFinancialClass(valueObjectSrc.getEpisodeFinancialClass());
+		// Service
+		valueObjectDest.setService(valueObjectSrc.getService());
 		// eventDateTime
 		valueObjectDest.setEventDateTime(valueObjectSrc.getEventDateTime());
 		// pasEventId
@@ -564,7 +571,9 @@ public class PasEventWithReferringGPVoAssembler
 			}			
 			valueObject.setEpisodeFinancialClass(voLookup11);
 		}
-				// eventDateTime
+				// Service
+		valueObject.setService(ims.core.vo.domain.ServiceLiteVoAssembler.create(map, domainObject.getService()) );
+		// eventDateTime
 		java.util.Date eventDateTime = domainObject.getEventDateTime();
 		if ( null != eventDateTime ) 
 		{
@@ -575,40 +584,40 @@ public class PasEventWithReferringGPVoAssembler
 		// Consultant
 		valueObject.setConsultant(ims.core.vo.domain.MedicWithMappingsLiteVoAssembler.create(map, domainObject.getConsultant()) );
 		// EventType
-		ims.domain.lookups.LookupInstance instance15 = domainObject.getEventType();
-		if ( null != instance15 ) {
+		ims.domain.lookups.LookupInstance instance16 = domainObject.getEventType();
+		if ( null != instance16 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
 			img = null;
-			if (instance15.getImage() != null) 
+			if (instance16.getImage() != null) 
 			{
-				img = new ims.framework.utils.ImagePath(instance15.getImage().getImageId(), instance15.getImage().getImagePath());
+				img = new ims.framework.utils.ImagePath(instance16.getImage().getImageId(), instance16.getImage().getImagePath());
 			}
-			color = instance15.getColor();
+			color = instance16.getColor();
 			if (color != null) 
 				color.getValue();
 
-			ims.core.vo.lookups.PasEventType voLookup15 = new ims.core.vo.lookups.PasEventType(instance15.getId(),instance15.getText(), instance15.isActive(), null, img, color);
-			ims.core.vo.lookups.PasEventType parentVoLookup15 = voLookup15;
-			ims.domain.lookups.LookupInstance parent15 = instance15.getParent();
-			while (parent15 != null)
+			ims.core.vo.lookups.PasEventType voLookup16 = new ims.core.vo.lookups.PasEventType(instance16.getId(),instance16.getText(), instance16.isActive(), null, img, color);
+			ims.core.vo.lookups.PasEventType parentVoLookup16 = voLookup16;
+			ims.domain.lookups.LookupInstance parent16 = instance16.getParent();
+			while (parent16 != null)
 			{
-				if (parent15.getImage() != null) 
+				if (parent16.getImage() != null) 
 				{
-					img = new ims.framework.utils.ImagePath(parent15.getImage().getImageId(), parent15.getImage().getImagePath() );
+					img = new ims.framework.utils.ImagePath(parent16.getImage().getImageId(), parent16.getImage().getImagePath() );
 				}
 				else 
 				{
 					img = null;
 				}
-				color = parent15.getColor();
+				color = parent16.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup15.setParent(new ims.core.vo.lookups.PasEventType(parent15.getId(),parent15.getText(), parent15.isActive(), null, img, color));
-				parentVoLookup15 = parentVoLookup15.getParent();
-								parent15 = parent15.getParent();
+								parentVoLookup16.setParent(new ims.core.vo.lookups.PasEventType(parent16.getId(),parent16.getText(), parent16.isActive(), null, img, color));
+				parentVoLookup16 = parentVoLookup16.getParent();
+								parent16 = parent16.getParent();
 			}			
-			valueObject.setEventType(voLookup15);
+			valueObject.setEventType(voLookup16);
 		}
 				// pasEpisodeId
 		valueObject.setPasEpisodeId(domainObject.getPasEpisodeId());
@@ -670,8 +679,40 @@ public class PasEventWithReferringGPVoAssembler
 		}
 		domainObject.setSourceOfReferral(value1);
 		domainObject.setIsVip(valueObject.getIsVip());
-		domainObject.setReferringGP(ims.core.vo.domain.GpLiteVoAssembler.extractGp(domainFactory, valueObject.getReferringGP(), domMap));
-		domainObject.setReferringGpSurgery(ims.core.vo.domain.LocSiteShortVoAssembler.extractLocSite(domainFactory, valueObject.getReferringGpSurgery(), domMap));
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.resource.people.domain.objects.Gp value3 = null;
+		if ( null != valueObject.getReferringGP() ) 
+		{
+			if (valueObject.getReferringGP().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getReferringGP()) != null)
+				{
+					value3 = (ims.core.resource.people.domain.objects.Gp)domMap.get(valueObject.getReferringGP());
+				}
+			}
+			else
+			{
+				value3 = (ims.core.resource.people.domain.objects.Gp)domainFactory.getDomainObject(ims.core.resource.people.domain.objects.Gp.class, valueObject.getReferringGP().getBoId());
+			}
+		}
+		domainObject.setReferringGP(value3);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.resource.place.domain.objects.LocSite value4 = null;
+		if ( null != valueObject.getReferringGpSurgery() ) 
+		{
+			if (valueObject.getReferringGpSurgery().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getReferringGpSurgery()) != null)
+				{
+					value4 = (ims.core.resource.place.domain.objects.LocSite)domMap.get(valueObject.getReferringGpSurgery());
+				}
+			}
+			else
+			{
+				value4 = (ims.core.resource.place.domain.objects.LocSite)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.LocSite.class, valueObject.getReferringGpSurgery().getBoId());
+			}
+		}
+		domainObject.setReferringGpSurgery(value4);
 		// create LookupInstance from vo LookupType
 		ims.domain.lookups.LookupInstance value5 = null;
 		if ( null != valueObject.getCspDocumentStatus() ) 
@@ -688,7 +729,23 @@ public class PasEventWithReferringGPVoAssembler
 				domainFactory.getLookupInstance(valueObject.getPASSpecialty().getID());
 		}
 		domainObject.setPASSpecialty(value6);
-		domainObject.setAttendingHCP(ims.core.vo.domain.HcpMinVoAssembler.extractHcp(domainFactory, valueObject.getAttendingHCP(), domMap));
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.resource.people.domain.objects.Hcp value7 = null;
+		if ( null != valueObject.getAttendingHCP() ) 
+		{
+			if (valueObject.getAttendingHCP().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getAttendingHCP()) != null)
+				{
+					value7 = (ims.core.resource.people.domain.objects.Hcp)domMap.get(valueObject.getAttendingHCP());
+				}
+			}
+			else
+			{
+				value7 = (ims.core.resource.people.domain.objects.Hcp)domainFactory.getDomainObject(ims.core.resource.people.domain.objects.Hcp.class, valueObject.getAttendingHCP().getBoId());
+			}
+		}
+		domainObject.setAttendingHCP(value7);
 	// SaveAsRefVO - treated as a refVo in extract methods
 	ims.core.patient.domain.objects.Patient value8 = null;
 		if ( null != valueObject.getPatient() ) 
@@ -739,13 +796,30 @@ public class PasEventWithReferringGPVoAssembler
 				domainFactory.getLookupInstance(valueObject.getEpisodeFinancialClass().getID());
 		}
 		domainObject.setEpisodeFinancialClass(value11);
-		ims.framework.utils.DateTime dateTime12 = valueObject.getEventDateTime();
-		java.util.Date value12 = null;
-		if ( dateTime12 != null ) 
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.clinical.domain.objects.Service value12 = null;
+		if ( null != valueObject.getService() ) 
 		{
-			value12 = dateTime12.getJavaDate();
+			if (valueObject.getService().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getService()) != null)
+				{
+					value12 = (ims.core.clinical.domain.objects.Service)domMap.get(valueObject.getService());
+				}
+			}
+			else
+			{
+				value12 = (ims.core.clinical.domain.objects.Service)domainFactory.getDomainObject(ims.core.clinical.domain.objects.Service.class, valueObject.getService().getBoId());
+			}
 		}
-		domainObject.setEventDateTime(value12);
+		domainObject.setService(value12);
+		ims.framework.utils.DateTime dateTime13 = valueObject.getEventDateTime();
+		java.util.Date value13 = null;
+		if ( dateTime13 != null ) 
+		{
+			value13 = dateTime13.getJavaDate();
+		}
+		domainObject.setEventDateTime(value13);
 		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
 		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
 		if (valueObject.getPasEventId() != null && valueObject.getPasEventId().equals(""))
@@ -753,15 +827,31 @@ public class PasEventWithReferringGPVoAssembler
 			valueObject.setPasEventId(null);
 		}
 		domainObject.setPasEventId(valueObject.getPasEventId());
-		domainObject.setConsultant(ims.core.vo.domain.MedicWithMappingsLiteVoAssembler.extractMedic(domainFactory, valueObject.getConsultant(), domMap));
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.resource.people.domain.objects.Medic value15 = null;
+		if ( null != valueObject.getConsultant() ) 
+		{
+			if (valueObject.getConsultant().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getConsultant()) != null)
+				{
+					value15 = (ims.core.resource.people.domain.objects.Medic)domMap.get(valueObject.getConsultant());
+				}
+			}
+			else
+			{
+				value15 = (ims.core.resource.people.domain.objects.Medic)domainFactory.getDomainObject(ims.core.resource.people.domain.objects.Medic.class, valueObject.getConsultant().getBoId());
+			}
+		}
+		domainObject.setConsultant(value15);
 		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value15 = null;
+		ims.domain.lookups.LookupInstance value16 = null;
 		if ( null != valueObject.getEventType() ) 
 		{
-			value15 =
+			value16 =
 				domainFactory.getLookupInstance(valueObject.getEventType().getID());
 		}
-		domainObject.setEventType(value15);
+		domainObject.setEventType(value16);
 		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
 		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
 		if (valueObject.getPasEpisodeId() != null && valueObject.getPasEpisodeId().equals(""))

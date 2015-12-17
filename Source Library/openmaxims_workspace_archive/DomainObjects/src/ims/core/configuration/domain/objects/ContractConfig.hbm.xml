@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:37 -->
+<hibernate-mapping>
+	<class name="ims.core.configuration.domain.objects.ContractConfig" table="core_contractconfig" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: contractId -->
+<!-- debug: contractOrganisation -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="contractOrganisation" class="ims.core.resource.place.domain.objects.Organisation" unique="true" foreign-key="contractconfig_contractor_fk" access="field" cascade="save-update">
+			<column name="contractor" sql-type="numeric(10,0)" not-null="true" unique="false"  index='contract_org_idx' />
+		</many-to-one>
+<!-- debug: contractName -->
+<!-- debug: status -->
+<!-- debug: daysToRTTBreachDate -->
+<!-- debug: daysTo1stAppt -->
+<!-- debug: contractKPIHistory -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<list name="contractKPIHistory" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="contractconfig_contractkp_fk">
+				<column name="core_contractconfig_contractkp" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.core.configuration.domain.objects.ContractConfigKPIHistory" />
+		</list>
+<!-- debug: contractType -->
+<!-- debug: serviceLocations -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<list name="serviceLocations" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="contractconfig_serviceloc_fk">
+				<column name="core_contractconfig_serviceloc" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.core.configuration.domain.objects.ContractServiceLocationsConfig" />
+		</list>
+<!-- debug: cCGsForContract -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<list name="cCGsForContract" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="contractconfig_ccgsforcon_fk">
+				<column name="core_contractconfig_ccgsforcon" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.core.configuration.domain.objects.CCGToContractConfig" />
+		</list>
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="contractId" type="string" access="field" update="true" > 
+			<column name="contractid" length="25"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="contractName" type="string" access="field" update="true" > 
+			<column name="contractna" length="255"  not-null="true" unique="false"  index='contract_name_idx'/>
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="status" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_status" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="daysToRTTBreachDate" type="integer" access="field" update="true">
+			<column name="daystorttb"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="daysTo1stAppt" type="integer" access="field" update="true">
+			<column name="daysto1sta"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="contractType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_contractty" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+	</class>
+</hibernate-mapping>

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.scheduling.domain.objects;
@@ -91,10 +96,6 @@ public class Sch_Session extends ims.domain.DomainObject implements ims.domain.S
 	  * Collection of ims.scheduling.domain.objects.Session_Slot.
 	  */
 	private java.util.Set sessionSlots;
-	/** BookingRights
-	  * Collection of ims.scheduling.domain.objects.Session_BookingRight.
-	  */
-	private java.util.Set bookingRights;
 	/** DirectoryOfServices
 	  * Collection of ims.scheduling.domain.objects.DirectoryofService.
 	  */
@@ -119,8 +120,6 @@ public class Sch_Session extends ims.domain.DomainObject implements ims.domain.S
 	private java.util.Set activityPathwayEvents;
 	/** TheatreProceduresRemaining */
 	private ims.scheduling.domain.objects.SessionTheatreProceduresRemanining theatreProceduresRemaining;
-	/** Theatre Session */
-	private Boolean isTheatreSession;
 	/** Day Case / Inpatient */
 	private ims.domain.lookups.LookupInstance theatreType;
 	/** SessionActivities
@@ -151,6 +150,33 @@ public class Sch_Session extends ims.domain.DomainObject implements ims.domain.S
 	private Boolean wasSessionMoved;
 	/** Consultation Media Type */
 	private ims.domain.lookups.LookupInstance consMediaType;
+	private String sessionComment;
+	/** Profile List Type  */
+	private ims.domain.lookups.LookupInstance listType;
+	/** Overall Responsible HCP */
+	private ims.core.resource.people.domain.objects.Hcp responsibleHCP;
+	private java.util.Date locationMovedDateTime;
+	/** This is the location at which the case note folders for patients booked into slots created by that profile are required */
+	private ims.core.resource.place.domain.objects.Location caseNoteFolderLocation;
+	private Boolean caseNoteFolderNotRequired;
+	/** Session Profile Type (Outpatient, Theatre, Ward Attendance) */
+	private ims.domain.lookups.LookupInstance sessionProfileType;
+	/** Safety Brief Delay for Theatre Session Mins */
+	private Integer safetyBriefDelayMins;
+	/** Safety Brief Delay Reason Details */
+	private String safetyBriefDelayReasonDetails;
+	/** Debrief Date Times
+	  * Collection of ims.clinical.domain.objects.SessionDebriefDetail.
+	  */
+	private java.util.List debriefDateTimes;
+	/** Delay Reason for Safety Brief in Session */
+	private ims.domain.lookups.LookupInstance safetyBriefDelayReason;
+	/** On Session Move, specify if a letter is required */
+	private Boolean letterRequired;
+	/** 
+	  * Collection of ims.scheduling.domain.objects.SessionMove.
+	  */
+	private java.util.List sessionMove;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public Sch_Session (Integer id, int ver)
@@ -336,16 +362,6 @@ public class Sch_Session extends ims.domain.DomainObject implements ims.domain.S
 		this.sessionSlots = paramValue;
 	}
 
-	public java.util.Set getBookingRights() {
-		if ( null == bookingRights ) {
-			bookingRights = new java.util.HashSet();
-		}
-		return bookingRights;
-	}
-	public void setBookingRights(java.util.Set paramValue) {
-		this.bookingRights = paramValue;
-	}
-
 	public java.util.Set getDirectoryofServices() {
 		if ( null == directoryofServices ) {
 			directoryofServices = new java.util.HashSet();
@@ -412,13 +428,6 @@ public class Sch_Session extends ims.domain.DomainObject implements ims.domain.S
 	}
 	public void setTheatreProceduresRemaining(ims.scheduling.domain.objects.SessionTheatreProceduresRemanining theatreProceduresRemaining) {
 		this.theatreProceduresRemaining = theatreProceduresRemaining;
-	}
-
-	public Boolean isIsTheatreSession() {
-		return isTheatreSession;
-	}
-	public void setIsTheatreSession(Boolean isTheatreSession) {
-		this.isTheatreSession = isTheatreSession;
 	}
 
 	public ims.domain.lookups.LookupInstance getTheatreType() {
@@ -512,6 +521,111 @@ public class Sch_Session extends ims.domain.DomainObject implements ims.domain.S
 	}
 	public void setConsMediaType(ims.domain.lookups.LookupInstance consMediaType) {
 		this.consMediaType = consMediaType;
+	}
+
+	public String getSessionComment() {
+		return sessionComment;
+	}
+	public void setSessionComment(String sessionComment) {
+		if ( null != sessionComment && sessionComment.length() > 500 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for sessionComment. Tried to set value: "+
+				sessionComment);
+		}
+		this.sessionComment = sessionComment;
+	}
+
+	public ims.domain.lookups.LookupInstance getListType() {
+		return listType;
+	}
+	public void setListType(ims.domain.lookups.LookupInstance listType) {
+		this.listType = listType;
+	}
+
+	public ims.core.resource.people.domain.objects.Hcp getResponsibleHCP() {
+		return responsibleHCP;
+	}
+	public void setResponsibleHCP(ims.core.resource.people.domain.objects.Hcp responsibleHCP) {
+		this.responsibleHCP = responsibleHCP;
+	}
+
+	public java.util.Date getLocationMovedDateTime() {
+		return locationMovedDateTime;
+	}
+	public void setLocationMovedDateTime(java.util.Date locationMovedDateTime) {
+		this.locationMovedDateTime = locationMovedDateTime;
+	}
+
+	public ims.core.resource.place.domain.objects.Location getCaseNoteFolderLocation() {
+		return caseNoteFolderLocation;
+	}
+	public void setCaseNoteFolderLocation(ims.core.resource.place.domain.objects.Location caseNoteFolderLocation) {
+		this.caseNoteFolderLocation = caseNoteFolderLocation;
+	}
+
+	public Boolean isCaseNoteFolderNotRequired() {
+		return caseNoteFolderNotRequired;
+	}
+	public void setCaseNoteFolderNotRequired(Boolean caseNoteFolderNotRequired) {
+		this.caseNoteFolderNotRequired = caseNoteFolderNotRequired;
+	}
+
+	public ims.domain.lookups.LookupInstance getSessionProfileType() {
+		return sessionProfileType;
+	}
+	public void setSessionProfileType(ims.domain.lookups.LookupInstance sessionProfileType) {
+		this.sessionProfileType = sessionProfileType;
+	}
+
+	public Integer getSafetyBriefDelayMins() {
+		return safetyBriefDelayMins;
+	}
+	public void setSafetyBriefDelayMins(Integer safetyBriefDelayMins) {
+		this.safetyBriefDelayMins = safetyBriefDelayMins;
+	}
+
+	public String getSafetyBriefDelayReasonDetails() {
+		return safetyBriefDelayReasonDetails;
+	}
+	public void setSafetyBriefDelayReasonDetails(String safetyBriefDelayReasonDetails) {
+		if ( null != safetyBriefDelayReasonDetails && safetyBriefDelayReasonDetails.length() > 2000 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for safetyBriefDelayReasonDetails. Tried to set value: "+
+				safetyBriefDelayReasonDetails);
+		}
+		this.safetyBriefDelayReasonDetails = safetyBriefDelayReasonDetails;
+	}
+
+	public java.util.List getDebriefDateTimes() {
+		if ( null == debriefDateTimes ) {
+			debriefDateTimes = new java.util.ArrayList();
+		}
+		return debriefDateTimes;
+	}
+	public void setDebriefDateTimes(java.util.List paramValue) {
+		this.debriefDateTimes = paramValue;
+	}
+
+	public ims.domain.lookups.LookupInstance getSafetyBriefDelayReason() {
+		return safetyBriefDelayReason;
+	}
+	public void setSafetyBriefDelayReason(ims.domain.lookups.LookupInstance safetyBriefDelayReason) {
+		this.safetyBriefDelayReason = safetyBriefDelayReason;
+	}
+
+	public Boolean isLetterRequired() {
+		return letterRequired;
+	}
+	public void setLetterRequired(Boolean letterRequired) {
+		this.letterRequired = letterRequired;
+	}
+
+	public java.util.List getSessionMove() {
+		if ( null == sessionMove ) {
+			sessionMove = new java.util.ArrayList();
+		}
+		return sessionMove;
+	}
+	public void setSessionMove(java.util.List paramValue) {
+		this.sessionMove = paramValue;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -659,16 +773,16 @@ public class Sch_Session extends ims.domain.DomainObject implements ims.domain.S
 			auditStr.append("] " + i22);
 		}
 	    auditStr.append("; ");
-		auditStr.append("\r\n*bookingRights* :");
-		if (bookingRights != null)
+		auditStr.append("\r\n*directoryofServices* :");
+		if (directoryofServices != null)
 		{
-			java.util.Iterator it23 = bookingRights.iterator();
+			java.util.Iterator it23 = directoryofServices.iterator();
 			int i23=0;
 			while (it23.hasNext())
 			{
 				if (i23 > 0)
 					auditStr.append(",");
-				ims.scheduling.domain.objects.Session_BookingRight obj = (ims.scheduling.domain.objects.Session_BookingRight)it23.next();
+				ims.scheduling.domain.objects.DirectoryofService obj = (ims.scheduling.domain.objects.DirectoryofService)it23.next();
 		if (obj != null)
 		{
 		   if (i23 == 0)
@@ -685,16 +799,16 @@ public class Sch_Session extends ims.domain.DomainObject implements ims.domain.S
 			auditStr.append("] " + i23);
 		}
 	    auditStr.append("; ");
-		auditStr.append("\r\n*directoryofServices* :");
-		if (directoryofServices != null)
+		auditStr.append("\r\n*listOwners* :");
+		if (listOwners != null)
 		{
-			java.util.Iterator it24 = directoryofServices.iterator();
+			java.util.Iterator it24 = listOwners.iterator();
 			int i24=0;
 			while (it24.hasNext())
 			{
 				if (i24 > 0)
 					auditStr.append(",");
-				ims.scheduling.domain.objects.DirectoryofService obj = (ims.scheduling.domain.objects.DirectoryofService)it24.next();
+				ims.scheduling.domain.objects.Session_ListOwner obj = (ims.scheduling.domain.objects.Session_ListOwner)it24.next();
 		if (obj != null)
 		{
 		   if (i24 == 0)
@@ -711,16 +825,16 @@ public class Sch_Session extends ims.domain.DomainObject implements ims.domain.S
 			auditStr.append("] " + i24);
 		}
 	    auditStr.append("; ");
-		auditStr.append("\r\n*listOwners* :");
-		if (listOwners != null)
+		auditStr.append("\r\n*exclusionTimes* :");
+		if (exclusionTimes != null)
 		{
-			java.util.Iterator it25 = listOwners.iterator();
+			java.util.Iterator it25 = exclusionTimes.iterator();
 			int i25=0;
 			while (it25.hasNext())
 			{
 				if (i25 > 0)
 					auditStr.append(",");
-				ims.scheduling.domain.objects.Session_ListOwner obj = (ims.scheduling.domain.objects.Session_ListOwner)it25.next();
+				ims.scheduling.domain.objects.Session_Exc_Time obj = (ims.scheduling.domain.objects.Session_Exc_Time)it25.next();
 		if (obj != null)
 		{
 		   if (i25 == 0)
@@ -737,32 +851,6 @@ public class Sch_Session extends ims.domain.DomainObject implements ims.domain.S
 			auditStr.append("] " + i25);
 		}
 	    auditStr.append("; ");
-		auditStr.append("\r\n*exclusionTimes* :");
-		if (exclusionTimes != null)
-		{
-			java.util.Iterator it26 = exclusionTimes.iterator();
-			int i26=0;
-			while (it26.hasNext())
-			{
-				if (i26 > 0)
-					auditStr.append(",");
-				ims.scheduling.domain.objects.Session_Exc_Time obj = (ims.scheduling.domain.objects.Session_Exc_Time)it26.next();
-		if (obj != null)
-		{
-		   if (i26 == 0)
-		   {
-			auditStr.append(toShortClassName(obj));
-			auditStr.append("[");
-		   }
-		
-		   auditStr.append(obj.getId());
-		}
-			i26++;
-		}
-		if (i26 > 0)
-			auditStr.append("] " + i26);
-		}
-	    auditStr.append("; ");
 		auditStr.append("\r\n*isModified* :");
 		auditStr.append(isModified);
 	    auditStr.append("; ");
@@ -775,16 +863,16 @@ public class Sch_Session extends ims.domain.DomainObject implements ims.domain.S
 		auditStr.append("\r\n*activityPathwayEvents* :");
 		if (activityPathwayEvents != null)
 		{
-			java.util.Iterator it30 = activityPathwayEvents.iterator();
-			int i30=0;
-			while (it30.hasNext())
+			java.util.Iterator it29 = activityPathwayEvents.iterator();
+			int i29=0;
+			while (it29.hasNext())
 			{
-				if (i30 > 0)
+				if (i29 > 0)
 					auditStr.append(",");
-				ims.scheduling.domain.objects.SessionActivityPathwayEvent obj = (ims.scheduling.domain.objects.SessionActivityPathwayEvent)it30.next();
+				ims.scheduling.domain.objects.SessionActivityPathwayEvent obj = (ims.scheduling.domain.objects.SessionActivityPathwayEvent)it29.next();
 		if (obj != null)
 		{
-		   if (i30 == 0)
+		   if (i29 == 0)
 		   {
 			auditStr.append(toShortClassName(obj));
 			auditStr.append("[");
@@ -792,10 +880,10 @@ public class Sch_Session extends ims.domain.DomainObject implements ims.domain.S
 		
 		   auditStr.append(obj.getId());
 		}
-			i30++;
+			i29++;
 		}
-		if (i30 > 0)
-			auditStr.append("] " + i30);
+		if (i29 > 0)
+			auditStr.append("] " + i29);
 		}
 	    auditStr.append("; ");
 		auditStr.append("\r\n*theatreProceduresRemaining* :");
@@ -806,9 +894,6 @@ public class Sch_Session extends ims.domain.DomainObject implements ims.domain.S
 		    auditStr.append(theatreProceduresRemaining.getId());
 		}
 	    auditStr.append("; ");
-		auditStr.append("\r\n*isTheatreSession* :");
-		auditStr.append(isTheatreSession);
-	    auditStr.append("; ");
 		auditStr.append("\r\n*theatreType* :");
 		if (theatreType != null)
 			auditStr.append(theatreType.getText());
@@ -816,13 +901,42 @@ public class Sch_Session extends ims.domain.DomainObject implements ims.domain.S
 		auditStr.append("\r\n*sessionActivities* :");
 		if (sessionActivities != null)
 		{
-			java.util.Iterator it34 = sessionActivities.iterator();
+			java.util.Iterator it32 = sessionActivities.iterator();
+			int i32=0;
+			while (it32.hasNext())
+			{
+				if (i32 > 0)
+					auditStr.append(",");
+				ims.scheduling.domain.objects.SessionActivity obj = (ims.scheduling.domain.objects.SessionActivity)it32.next();
+		if (obj != null)
+		{
+		   if (i32 == 0)
+		   {
+			auditStr.append(toShortClassName(obj));
+			auditStr.append("[");
+		   }
+		
+		   auditStr.append(obj.getId());
+		}
+			i32++;
+		}
+		if (i32 > 0)
+			auditStr.append("] " + i32);
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*maxContinuousAvailableMins* :");
+		auditStr.append(maxContinuousAvailableMins);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*theatreSlots* :");
+		if (theatreSlots != null)
+		{
+			java.util.Iterator it34 = theatreSlots.iterator();
 			int i34=0;
 			while (it34.hasNext())
 			{
 				if (i34 > 0)
 					auditStr.append(",");
-				ims.scheduling.domain.objects.SessionActivity obj = (ims.scheduling.domain.objects.SessionActivity)it34.next();
+				ims.scheduling.domain.objects.SessionTheatreTCISlot obj = (ims.scheduling.domain.objects.SessionTheatreTCISlot)it34.next();
 		if (obj != null)
 		{
 		   if (i34 == 0)
@@ -839,19 +953,31 @@ public class Sch_Session extends ims.domain.DomainObject implements ims.domain.S
 			auditStr.append("] " + i34);
 		}
 	    auditStr.append("; ");
-		auditStr.append("\r\n*maxContinuousAvailableMins* :");
-		auditStr.append(maxContinuousAvailableMins);
-	    auditStr.append("; ");
-		auditStr.append("\r\n*theatreSlots* :");
-		if (theatreSlots != null)
+		auditStr.append("\r\n*anaestheticType* :");
+		if (anaestheticType != null)
 		{
-			java.util.Iterator it36 = theatreSlots.iterator();
+		int i35=0;
+		for (i35=0; i35<anaestheticType.size(); i35++)
+		{
+			if (i35 > 0)
+				auditStr.append(",");
+			ims.domain.lookups.LookupInstance obj = (ims.domain.lookups.LookupInstance)anaestheticType.get(i35);
+			auditStr.append(obj.getText());
+		}
+		if (i35 > 0)
+			auditStr.append("] " + i35);
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*parentChildSlots* :");
+		if (parentChildSlots != null)
+		{
+			java.util.Iterator it36 = parentChildSlots.iterator();
 			int i36=0;
 			while (it36.hasNext())
 			{
 				if (i36 > 0)
 					auditStr.append(",");
-				ims.scheduling.domain.objects.SessionTheatreTCISlot obj = (ims.scheduling.domain.objects.SessionTheatreTCISlot)it36.next();
+				ims.scheduling.domain.objects.SessionParentChildSlot obj = (ims.scheduling.domain.objects.SessionParentChildSlot)it36.next();
 		if (obj != null)
 		{
 		   if (i36 == 0)
@@ -866,47 +992,6 @@ public class Sch_Session extends ims.domain.DomainObject implements ims.domain.S
 		}
 		if (i36 > 0)
 			auditStr.append("] " + i36);
-		}
-	    auditStr.append("; ");
-		auditStr.append("\r\n*anaestheticType* :");
-		if (anaestheticType != null)
-		{
-		int i37=0;
-		for (i37=0; i37<anaestheticType.size(); i37++)
-		{
-			if (i37 > 0)
-				auditStr.append(",");
-			ims.domain.lookups.LookupInstance obj = (ims.domain.lookups.LookupInstance)anaestheticType.get(i37);
-			auditStr.append(obj.getText());
-		}
-		if (i37 > 0)
-			auditStr.append("] " + i37);
-		}
-	    auditStr.append("; ");
-		auditStr.append("\r\n*parentChildSlots* :");
-		if (parentChildSlots != null)
-		{
-			java.util.Iterator it38 = parentChildSlots.iterator();
-			int i38=0;
-			while (it38.hasNext())
-			{
-				if (i38 > 0)
-					auditStr.append(",");
-				ims.scheduling.domain.objects.SessionParentChildSlot obj = (ims.scheduling.domain.objects.SessionParentChildSlot)it38.next();
-		if (obj != null)
-		{
-		   if (i38 == 0)
-		   {
-			auditStr.append(toShortClassName(obj));
-			auditStr.append("[");
-		   }
-		
-		   auditStr.append(obj.getId());
-		}
-			i38++;
-		}
-		if (i38 > 0)
-			auditStr.append("] " + i38);
 		}
 	    auditStr.append("; ");
 		auditStr.append("\r\n*slotType* :");
@@ -926,6 +1011,98 @@ public class Sch_Session extends ims.domain.DomainObject implements ims.domain.S
 		auditStr.append("\r\n*consMediaType* :");
 		if (consMediaType != null)
 			auditStr.append(consMediaType.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*sessionComment* :");
+		auditStr.append(sessionComment);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*listType* :");
+		if (listType != null)
+			auditStr.append(listType.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*responsibleHCP* :");
+		if (responsibleHCP != null)
+		{
+			auditStr.append(toShortClassName(responsibleHCP));
+				
+		    auditStr.append(responsibleHCP.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*locationMovedDateTime* :");
+		auditStr.append(locationMovedDateTime);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*caseNoteFolderLocation* :");
+		if (caseNoteFolderLocation != null)
+		{
+			auditStr.append(toShortClassName(caseNoteFolderLocation));
+				
+		    auditStr.append(caseNoteFolderLocation.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*caseNoteFolderNotRequired* :");
+		auditStr.append(caseNoteFolderNotRequired);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*sessionProfileType* :");
+		if (sessionProfileType != null)
+			auditStr.append(sessionProfileType.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*safetyBriefDelayMins* :");
+		auditStr.append(safetyBriefDelayMins);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*safetyBriefDelayReasonDetails* :");
+		auditStr.append(safetyBriefDelayReasonDetails);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*debriefDateTimes* :");
+		if (debriefDateTimes != null)
+		{
+		int i51=0;
+		for (i51=0; i51<debriefDateTimes.size(); i51++)
+		{
+			if (i51 > 0)
+				auditStr.append(",");
+			ims.clinical.domain.objects.SessionDebriefDetail obj = (ims.clinical.domain.objects.SessionDebriefDetail)debriefDateTimes.get(i51);
+		    if (obj != null)
+			{
+				if (i51 == 0)
+				{
+				auditStr.append(toShortClassName(obj));
+				auditStr.append("[");
+				}
+		        auditStr.append(obj.getId());
+			}
+		}
+		if (i51 > 0)
+			auditStr.append("] " + i51);
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*safetyBriefDelayReason* :");
+		if (safetyBriefDelayReason != null)
+			auditStr.append(safetyBriefDelayReason.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*letterRequired* :");
+		auditStr.append(letterRequired);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*sessionMove* :");
+		if (sessionMove != null)
+		{
+		int i54=0;
+		for (i54=0; i54<sessionMove.size(); i54++)
+		{
+			if (i54 > 0)
+				auditStr.append(",");
+			ims.scheduling.domain.objects.SessionMove obj = (ims.scheduling.domain.objects.SessionMove)sessionMove.get(i54);
+		    if (obj != null)
+			{
+				if (i54 == 0)
+				{
+				auditStr.append(toShortClassName(obj));
+				auditStr.append("[");
+				}
+		        auditStr.append(obj.getId());
+			}
+		}
+		if (i54 > 0)
+			auditStr.append("] " + i54);
+		}
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -1106,15 +1283,6 @@ public class Sch_Session extends ims.domain.DomainObject implements ims.domain.S
 			sb.append("</sessionSlots>");		
 			}
 		}
-		if (this.getBookingRights() != null)
-		{
-			if (this.getBookingRights().size() > 0 )
-			{
-			sb.append("<bookingRights>");
-			sb.append(ims.domain.DomainObject.toXMLString(this.getBookingRights(), domMap));
-			sb.append("</bookingRights>");		
-			}
-		}
 		if (this.getDirectoryofServices() != null)
 		{
 			if (this.getDirectoryofServices().size() > 0 )
@@ -1174,12 +1342,6 @@ public class Sch_Session extends ims.domain.DomainObject implements ims.domain.S
 			sb.append("<theatreProceduresRemaining>");
 			sb.append(this.getTheatreProceduresRemaining().toXMLString(domMap)); 	
 			sb.append("</theatreProceduresRemaining>");		
-		}
-		if (this.isIsTheatreSession() != null)
-		{
-			sb.append("<isTheatreSession>");
-			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsTheatreSession().toString()));
-			sb.append("</isTheatreSession>");		
 		}
 		if (this.getTheatreType() != null)
 		{
@@ -1258,6 +1420,90 @@ public class Sch_Session extends ims.domain.DomainObject implements ims.domain.S
 			sb.append("<consMediaType>");
 			sb.append(this.getConsMediaType().toXMLString()); 
 			sb.append("</consMediaType>");		
+		}
+		if (this.getSessionComment() != null)
+		{
+			sb.append("<sessionComment>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getSessionComment().toString()));
+			sb.append("</sessionComment>");		
+		}
+		if (this.getListType() != null)
+		{
+			sb.append("<listType>");
+			sb.append(this.getListType().toXMLString()); 
+			sb.append("</listType>");		
+		}
+		if (this.getResponsibleHCP() != null)
+		{
+			sb.append("<responsibleHCP>");
+			sb.append(this.getResponsibleHCP().toXMLString(domMap)); 	
+			sb.append("</responsibleHCP>");		
+		}
+		if (this.getLocationMovedDateTime() != null)
+		{
+			sb.append("<locationMovedDateTime>");
+			sb.append(new ims.framework.utils.DateTime(this.getLocationMovedDateTime()).toString(ims.framework.utils.DateTimeFormat.MILLI));
+			sb.append("</locationMovedDateTime>");		
+		}
+		if (this.getCaseNoteFolderLocation() != null)
+		{
+			sb.append("<caseNoteFolderLocation>");
+			sb.append(this.getCaseNoteFolderLocation().toXMLString(domMap)); 	
+			sb.append("</caseNoteFolderLocation>");		
+		}
+		if (this.isCaseNoteFolderNotRequired() != null)
+		{
+			sb.append("<caseNoteFolderNotRequired>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isCaseNoteFolderNotRequired().toString()));
+			sb.append("</caseNoteFolderNotRequired>");		
+		}
+		if (this.getSessionProfileType() != null)
+		{
+			sb.append("<sessionProfileType>");
+			sb.append(this.getSessionProfileType().toXMLString()); 
+			sb.append("</sessionProfileType>");		
+		}
+		if (this.getSafetyBriefDelayMins() != null)
+		{
+			sb.append("<safetyBriefDelayMins>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getSafetyBriefDelayMins().toString()));
+			sb.append("</safetyBriefDelayMins>");		
+		}
+		if (this.getSafetyBriefDelayReasonDetails() != null)
+		{
+			sb.append("<safetyBriefDelayReasonDetails>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getSafetyBriefDelayReasonDetails().toString()));
+			sb.append("</safetyBriefDelayReasonDetails>");		
+		}
+		if (this.getDebriefDateTimes() != null)
+		{
+			if (this.getDebriefDateTimes().size() > 0 )
+			{
+			sb.append("<debriefDateTimes>");
+			sb.append(ims.domain.DomainObject.toXMLString(this.getDebriefDateTimes(), domMap));
+			sb.append("</debriefDateTimes>");		
+			}
+		}
+		if (this.getSafetyBriefDelayReason() != null)
+		{
+			sb.append("<safetyBriefDelayReason>");
+			sb.append(this.getSafetyBriefDelayReason().toXMLString()); 
+			sb.append("</safetyBriefDelayReason>");		
+		}
+		if (this.isLetterRequired() != null)
+		{
+			sb.append("<letterRequired>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isLetterRequired().toString()));
+			sb.append("</letterRequired>");		
+		}
+		if (this.getSessionMove() != null)
+		{
+			if (this.getSessionMove().size() > 0 )
+			{
+			sb.append("<sessionMove>");
+			sb.append(ims.domain.DomainObject.toXMLString(this.getSessionMove(), domMap));
+			sb.append("</sessionMove>");		
+			}
 		}
 		return sb.toString();
 	}
@@ -1540,12 +1786,6 @@ public class Sch_Session extends ims.domain.DomainObject implements ims.domain.S
 			fldEl = fldEl.element("set");	
 			obj.setSessionSlots(ims.scheduling.domain.objects.Session_Slot.fromSetXMLString(fldEl, factory, obj.getSessionSlots(), domMap));
 		}
-		fldEl = el.element("bookingRights");
-		if(fldEl != null)
-		{
-			fldEl = fldEl.element("set");	
-			obj.setBookingRights(ims.scheduling.domain.objects.Session_BookingRight.fromSetXMLString(fldEl, factory, obj.getBookingRights(), domMap));
-		}
 		fldEl = el.element("directoryofServices");
 		if(fldEl != null)
 		{
@@ -1590,11 +1830,6 @@ public class Sch_Session extends ims.domain.DomainObject implements ims.domain.S
 		{
 			fldEl = fldEl.element("class");		
 			obj.setTheatreProceduresRemaining(ims.scheduling.domain.objects.SessionTheatreProceduresRemanining.getSessionTheatreProceduresRemaniningfromXML(fldEl, factory, domMap)); 
-		}
-		fldEl = el.element("isTheatreSession");
-		if(fldEl != null)
-		{	
-    		obj.setIsTheatreSession(new Boolean(fldEl.getTextTrim()));	
 		}
 		fldEl = el.element("theatreType");
 		if(fldEl != null)
@@ -1659,13 +1894,84 @@ public class Sch_Session extends ims.domain.DomainObject implements ims.domain.S
 			fldEl = fldEl.element("lki");
 			obj.setConsMediaType(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
 		}
+		fldEl = el.element("sessionComment");
+		if(fldEl != null)
+		{	
+    		obj.setSessionComment(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("listType");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setListType(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("responsibleHCP");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setResponsibleHCP(ims.core.resource.people.domain.objects.Hcp.getHcpfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("locationMovedDateTime");
+		if(fldEl != null)
+		{	
+    		obj.setLocationMovedDateTime(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
+		}
+		fldEl = el.element("caseNoteFolderLocation");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setCaseNoteFolderLocation(ims.core.resource.place.domain.objects.Location.getLocationfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("caseNoteFolderNotRequired");
+		if(fldEl != null)
+		{	
+    		obj.setCaseNoteFolderNotRequired(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("sessionProfileType");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setSessionProfileType(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("safetyBriefDelayMins");
+		if(fldEl != null)
+		{	
+    		obj.setSafetyBriefDelayMins(new Integer(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("safetyBriefDelayReasonDetails");
+		if(fldEl != null)
+		{	
+    		obj.setSafetyBriefDelayReasonDetails(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("debriefDateTimes");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("list");	
+			obj.setDebriefDateTimes(ims.clinical.domain.objects.SessionDebriefDetail.fromListXMLString(fldEl, factory, obj.getDebriefDateTimes(), domMap));
+		}
+		fldEl = el.element("safetyBriefDelayReason");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setSafetyBriefDelayReason(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("letterRequired");
+		if(fldEl != null)
+		{	
+    		obj.setLetterRequired(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("sessionMove");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("list");	
+			obj.setSessionMove(ims.scheduling.domain.objects.SessionMove.fromListXMLString(fldEl, factory, obj.getSessionMove(), domMap));
+		}
 	}
 
 	public static String[] getCollectionFields()
 	{
 		return new String[]{
 		 "sessionSlots"
-		, "bookingRights"
 		, "directoryofServices"
 		, "listOwners"
 		, "exclusionTimes"
@@ -1674,6 +1980,8 @@ public class Sch_Session extends ims.domain.DomainObject implements ims.domain.S
 		, "theatreSlots"
 		, "anaestheticType"
 		, "parentChildSlots"
+		, "debriefDateTimes"
+		, "sessionMove"
 		};
 	}
 
@@ -1713,7 +2021,6 @@ public void incrementRemainingSlots(int incrementBy)
 		public static final String LastAppInterval = "lastAppInterval";
 		public static final String MaxNoAppts = "maxNoAppts";
 		public static final String SessionSlots = "sessionSlots";
-		public static final String BookingRights = "bookingRights";
 		public static final String DirectoryofServices = "directoryofServices";
 		public static final String ListOwners = "listOwners";
 		public static final String ExclusionTimes = "exclusionTimes";
@@ -1722,7 +2029,6 @@ public void incrementRemainingSlots(int incrementBy)
 		public static final String IsActive = "isActive";
 		public static final String ActivityPathwayEvents = "activityPathwayEvents";
 		public static final String TheatreProceduresRemaining = "theatreProceduresRemaining";
-		public static final String IsTheatreSession = "isTheatreSession";
 		public static final String TheatreType = "theatreType";
 		public static final String SessionActivities = "sessionActivities";
 		public static final String MaxContinuousAvailableMins = "maxContinuousAvailableMins";
@@ -1734,6 +2040,19 @@ public void incrementRemainingSlots(int incrementBy)
 		public static final String Comment = "comment";
 		public static final String WasSessionMoved = "wasSessionMoved";
 		public static final String ConsMediaType = "consMediaType";
+		public static final String SessionComment = "sessionComment";
+		public static final String ListType = "listType";
+		public static final String ResponsibleHCP = "responsibleHCP";
+		public static final String LocationMovedDateTime = "locationMovedDateTime";
+		public static final String CaseNoteFolderLocation = "caseNoteFolderLocation";
+		public static final String CaseNoteFolderNotRequired = "caseNoteFolderNotRequired";
+		public static final String SessionProfileType = "sessionProfileType";
+		public static final String SafetyBriefDelayMins = "safetyBriefDelayMins";
+		public static final String SafetyBriefDelayReasonDetails = "safetyBriefDelayReasonDetails";
+		public static final String DebriefDateTimes = "debriefDateTimes";
+		public static final String SafetyBriefDelayReason = "safetyBriefDelayReason";
+		public static final String LetterRequired = "letterRequired";
+		public static final String SessionMove = "sessionMove";
 	}
 }
 

@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:37 -->
+<!-- Generated: 12/10/2015, 13:31 -->
 <hibernate-mapping>
 	<class name="ims.scheduling.domain.objects.Appt_Tracking_Status_History" table="schl_appt_tracking" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -39,7 +39,7 @@
 		<!-- A one-to-one relationship using a foreign-key is mapping as a
 			many-to-one with a uniqueness contraint -->
 		<many-to-one name="changedBy" class="ims.core.resource.people.domain.objects.MemberOfStaff" unique="true" foreign-key="appt_tracking_changedby_fk" access="field" cascade="save-update">
-			<column name="changedby" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+			<column name="changedby" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
 <!-- debug: !IsAssociation && !IsCollection -->
 

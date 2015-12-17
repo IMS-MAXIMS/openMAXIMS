@@ -1,9 +1,33 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.RefMan.vo.domain;
@@ -55,6 +79,20 @@ public class ReferralAppointmentDetailsVoAssembler
 		valueObjectDest.setRTTClockImpact(valueObjectSrc.getRTTClockImpact());
 		// PathwayID
 		valueObjectDest.setPathwayID(valueObjectSrc.getPathwayID());
+		// Urgency
+		valueObjectDest.setUrgency(valueObjectSrc.getUrgency());
+		// current31TargetDate
+		valueObjectDest.setCurrent31TargetDate(valueObjectSrc.getCurrent31TargetDate());
+		// current62TargetDate
+		valueObjectDest.setCurrent62TargetDate(valueObjectSrc.getCurrent62TargetDate());
+		// ConsultationActivityRequired
+		valueObjectDest.setConsultationActivityRequired(valueObjectSrc.getConsultationActivityRequired());
+		// Contract
+		valueObjectDest.setContract(valueObjectSrc.getContract());
+		// IsEmergencyReferral
+		valueObjectDest.setIsEmergencyReferral(valueObjectSrc.getIsEmergencyReferral());
+		// TriageOutcome
+		valueObjectDest.setTriageOutcome(valueObjectSrc.getTriageOutcome());
 	 	return valueObjectDest;
 	 }
 
@@ -369,6 +407,74 @@ public class ReferralAppointmentDetailsVoAssembler
 		valueObject.setRTTClockImpact( domainObject.isRTTClockImpact() );
 		// PathwayID
 		valueObject.setPathwayID(domainObject.getPathwayID());
+		// Urgency
+		ims.domain.lookups.LookupInstance instance13 = domainObject.getUrgency();
+		if ( null != instance13 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance13.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance13.getImage().getImageId(), instance13.getImage().getImagePath());
+			}
+			color = instance13.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.RefMan.vo.lookups.ReferralUrgency voLookup13 = new ims.RefMan.vo.lookups.ReferralUrgency(instance13.getId(),instance13.getText(), instance13.isActive(), null, img, color);
+			ims.RefMan.vo.lookups.ReferralUrgency parentVoLookup13 = voLookup13;
+			ims.domain.lookups.LookupInstance parent13 = instance13.getParent();
+			while (parent13 != null)
+			{
+				if (parent13.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent13.getImage().getImageId(), parent13.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent13.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup13.setParent(new ims.RefMan.vo.lookups.ReferralUrgency(parent13.getId(),parent13.getText(), parent13.isActive(), null, img, color));
+				parentVoLookup13 = parentVoLookup13.getParent();
+								parent13 = parent13.getParent();
+			}			
+			valueObject.setUrgency(voLookup13);
+		}
+				// current31TargetDate
+		java.util.Date current31TargetDate = domainObject.getCurrent31TargetDate();
+		if ( null != current31TargetDate ) 
+		{
+			valueObject.setCurrent31TargetDate(new ims.framework.utils.Date(current31TargetDate) );
+		}
+		// current62TargetDate
+		java.util.Date current62TargetDate = domainObject.getCurrent62TargetDate();
+		if ( null != current62TargetDate ) 
+		{
+			valueObject.setCurrent62TargetDate(new ims.framework.utils.Date(current62TargetDate) );
+		}
+		// ConsultationActivityRequired
+		valueObject.setConsultationActivityRequired( domainObject.isConsultationActivityRequired() );
+		// Contract
+		if (domainObject.getContract() != null)
+		{
+			if(domainObject.getContract() instanceof HibernateProxy) // If the proxy is set, there is no need to lazy load, the proxy knows the id already. 
+			{
+				HibernateProxy p = (HibernateProxy) domainObject.getContract();
+				int id = Integer.parseInt(p.getHibernateLazyInitializer().getIdentifier().toString());				
+				valueObject.setContract(new ims.core.configuration.vo.ContractConfigRefVo(id, -1));				
+			}
+			else
+			{
+				valueObject.setContract(new ims.core.configuration.vo.ContractConfigRefVo(domainObject.getContract().getId(), domainObject.getContract().getVersion()));
+			}
+		}
+		// IsEmergencyReferral
+		valueObject.setIsEmergencyReferral( domainObject.isIsEmergencyReferral() );
+		// TriageOutcome
+		valueObject.setTriageOutcome(ims.RefMan.vo.domain.TriageOutcomeLiteVoAssembler.create(map, domainObject.getTriageOutcome()) );
  		return valueObject;
 	 }
 
@@ -568,6 +674,51 @@ public class ReferralAppointmentDetailsVoAssembler
 			valueObject.setPathwayID(null);
 		}
 		domainObject.setPathwayID(valueObject.getPathwayID());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value13 = null;
+		if ( null != valueObject.getUrgency() ) 
+		{
+			value13 =
+				domainFactory.getLookupInstance(valueObject.getUrgency().getID());
+		}
+		domainObject.setUrgency(value13);
+		java.util.Date value14 = null;
+		ims.framework.utils.Date date14 = valueObject.getCurrent31TargetDate();		
+		if ( date14 != null ) 
+		{
+			value14 = date14.getDate();
+		}
+		domainObject.setCurrent31TargetDate(value14);
+		java.util.Date value15 = null;
+		ims.framework.utils.Date date15 = valueObject.getCurrent62TargetDate();		
+		if ( date15 != null ) 
+		{
+			value15 = date15.getDate();
+		}
+		domainObject.setCurrent62TargetDate(value15);
+		domainObject.setConsultationActivityRequired(valueObject.getConsultationActivityRequired());
+		ims.core.configuration.domain.objects.ContractConfig value17 = null;
+		if ( null != valueObject.getContract() ) 
+		{
+			if (valueObject.getContract().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getContract()) != null)
+				{
+					value17 = (ims.core.configuration.domain.objects.ContractConfig)domMap.get(valueObject.getContract());
+				}
+			}
+			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
+			{
+				value17 = domainObject.getContract();	
+			}
+			else
+			{
+				value17 = (ims.core.configuration.domain.objects.ContractConfig)domainFactory.getDomainObject(ims.core.configuration.domain.objects.ContractConfig.class, valueObject.getContract().getBoId());
+			}
+		}
+		domainObject.setContract(value17);
+		domainObject.setIsEmergencyReferral(valueObject.getIsEmergencyReferral());
+		domainObject.setTriageOutcome(ims.RefMan.vo.domain.TriageOutcomeLiteVoAssembler.extractTriageOutcome(domainFactory, valueObject.getTriageOutcome(), domMap));
 
 		return domainObject;
 	}

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -36,7 +41,10 @@ import ims.emergency.vo.TrackingAreaShortVo;
 import ims.emergency.vo.TrackingAreaShortVoCollection;
 import ims.emergency.vo.TrackingForClinicianWorklistAndTriageVo;
 import ims.emergency.vo.TrackingForClinicianWorklistAndTriageVoCollection;
+import ims.emergency.vo.WhiteBoardEditVo;
+import ims.emergency.vo.enums.EDWhiteBoardDynGrdComboValues;
 import ims.emergency.vo.lookups.AttendanceClinicalNoteType;
+import ims.framework.FormName;
 import ims.framework.controls.DynamicGridCell;
 import ims.framework.controls.DynamicGridCellTable;
 import ims.framework.controls.DynamicGridCellTable.TableCell;
@@ -47,11 +55,13 @@ import ims.framework.controls.DynamicGridColumn;
 import ims.framework.controls.DynamicGridRow;
 import ims.framework.enumerations.Align;
 import ims.framework.enumerations.Alignment;
+import ims.framework.enumerations.DialogResult;
 import ims.framework.enumerations.DynamicCellType;
 import ims.framework.enumerations.FontFamily;
 import ims.framework.enumerations.FontWeight;
 import ims.framework.enumerations.VerticalAlignment;
 import ims.framework.exceptions.PresentationLogicException;
+import ims.framework.interfaces.ILocation;
 import ims.framework.utils.Base64;
 import ims.framework.utils.Color;
 import ims.framework.utils.DateTime;
@@ -83,6 +93,10 @@ public class Logic extends BaseLogic
 	private static final String	COLUMN_NPO				= "10";
 	private static final String	COLUMN_ISOLATION		= "11";
 	private static final String	COLUMN_COMMENT			= "12";
+	
+	private static final int REQUIRED = 1;
+	private static final int COMPLETE = 2;
+	private static final int NOT_REQUIRED = 3;
 	
 	
 	private static final int DISPLAY_CLINICIANASSESSMNRWORKLIST	 = 0;
@@ -134,6 +148,7 @@ public class Logic extends BaseLogic
 		form.btnSeenCompleteHCP().setImage(form.getImages().Emergency.SEENCOMPLETE16);	
 		form.btnAllocatedCubicle().setImage(form.getImages().Emergency.ALLOCATECUBICLE16);	
 		form.btnAssessmentDetails().setImage(form.getImages().Emergency.ASSESSMNTDETAILS16);
+		form.btnClose().setImage(form.getImages().Core.Remove);
 		
 	}
 	
@@ -171,44 +186,42 @@ public class Logic extends BaseLogic
 		column.setReadOnly(true);
 		
 		column = form.dyngrdWhiteBoard().getColumns().newColumn("Location",COLUMN_LOCATION);
-		column.setWidth(60);
-		column.setAlignment(Alignment.RIGHT);
+		column.setWidth(160);
+		column.setAlignment(Alignment.LEFT);
 		column.setVerticalAlignment(VerticalAlignment.MIDDLE);
-
 		column.setHeaderAlignment(Alignment.LEFT);
-		
 			
 		column = form.dyngrdWhiteBoard().getColumns().newColumn("",COLUMN_PAIN_ASSESSMENT);
 		column.setWidth(30);
-		column.setAlignment(Alignment.RIGHT);
+		column.setAlignment(Alignment.CENTER);
 		column.setVerticalAlignment(VerticalAlignment.MIDDLE);
 		column.setCaptionImage(form.getImages().Assessment.Assessment24);
 		column.setHeaderAlignment(Alignment.LEFT);
 		
 		column = form.dyngrdWhiteBoard().getColumns().newColumn("",COLUMN_WATERLOW);
 		column.setWidth(30);
-		column.setAlignment(Alignment.RIGHT);
+		column.setAlignment(Alignment.CENTER);
 		column.setVerticalAlignment(VerticalAlignment.MIDDLE);
 		column.setCaptionImage(form.getImages().Nursing.WaterlowView24);
 		column.setHeaderAlignment(Alignment.LEFT);
 		
 		column = form.dyngrdWhiteBoard().getColumns().newColumn("",COLUMN_FALLS);
 		column.setWidth(30);
-		column.setAlignment(Alignment.RIGHT);
+		column.setAlignment(Alignment.CENTER);
 		column.setVerticalAlignment(VerticalAlignment.MIDDLE);
 		column.setCaptionImage(form.getImages().Nursing.FallAssessment24);
 		column.setHeaderAlignment(Alignment.LEFT);
 		
 		column = form.dyngrdWhiteBoard().getColumns().newColumn("",COLUMN_ISAR);
 		column.setWidth(30);
-		column.setAlignment(Alignment.RIGHT);
+		column.setAlignment(Alignment.CENTER);
 		column.setVerticalAlignment(VerticalAlignment.MIDDLE);
 		column.setCaptionImage(form.getImages().Emergency.Risk24);
 		column.setHeaderAlignment(Alignment.LEFT);
 		
 		column = form.dyngrdWhiteBoard().getColumns().newColumn("Referral",COLUMN_REFERRAL);
-		column.setWidth(100);
-		column.setAlignment(Alignment.RIGHT);
+		column.setWidth(110);
+		column.setAlignment(Alignment.LEFT);
 		column.setVerticalAlignment(VerticalAlignment.MIDDLE);
 		column.setHeaderAlignment(Alignment.LEFT);
 		
@@ -226,19 +239,19 @@ public class Logic extends BaseLogic
 		
 		column = form.dyngrdWhiteBoard().getColumns().newColumn("ECG",COLUMN_ECG);
 		column.setWidth(35);
-		column.setAlignment(Alignment.RIGHT);
+		column.setAlignment(Alignment.CENTER);
 		column.setVerticalAlignment(VerticalAlignment.MIDDLE);
 		column.setHeaderAlignment(Alignment.LEFT);
 		
 		column = form.dyngrdWhiteBoard().getColumns().newColumn("NPO",COLUMN_NPO);
 		column.setWidth(35);
-		column.setAlignment(Alignment.RIGHT);
+		column.setAlignment(Alignment.CENTER);
 		column.setVerticalAlignment(VerticalAlignment.MIDDLE);
 		column.setHeaderAlignment(Alignment.LEFT);
 		
 		column = form.dyngrdWhiteBoard().getColumns().newColumn("Isolation",COLUMN_ISOLATION);
 		column.setWidth(65);
-		column.setAlignment(Alignment.RIGHT);
+		column.setAlignment(Alignment.CENTER);
 		column.setVerticalAlignment(VerticalAlignment.MIDDLE);
 		column.setHeaderAlignment(Alignment.LEFT);
 		
@@ -278,10 +291,11 @@ public class Logic extends BaseLogic
 		//trackingPatiens.sort(new TrackingComparator());
 		for(int i = 0; i < trackingPatiens.size();i++)
 		{
+			ILocation currentLocation = engine.getCurrentLocation();
 			TrackingForClinicianWorklistAndTriageVo tempVo = trackingPatiens.get(i);
 			if( tempVo != null)
 			{
-				addRowToDyngrd(tempVo);
+				addRowToDyngrd(tempVo, currentLocation);
 				
 			}
 			
@@ -303,7 +317,7 @@ public class Logic extends BaseLogic
 		}
 	}
 	
-	private void addRowToDyngrd(TrackingForClinicianWorklistAndTriageVo tempVo)
+	private void addRowToDyngrd(TrackingForClinicianWorklistAndTriageVo tempVo, ILocation currentLocation)
 	{
 		if(	tempVo == null)
 			return;
@@ -314,33 +328,33 @@ public class Logic extends BaseLogic
 		addPatientCell(tempVo,row);
 		
 		DynamicGridCell cellLoc = row.getCells().newCell(getColumn(COLUMN_LOCATION), DynamicCellType.STRING);
-		cellLoc.setValue("Location");
-		cellLoc.setTooltip("Location");
+		cellLoc.setValue(currentLocation != null ? currentLocation.getName() : "");
+		cellLoc.setTooltip(currentLocation != null ? currentLocation.getName() : "");
 		cellLoc.setReadOnly(true);
 		
 		DynamicGridCell cellPain = row.getCells().newCell(getColumn(COLUMN_PAIN_ASSESSMENT), DynamicCellType.INT);
-		cellPain.setValue(0);
-		cellPain.setTooltip("0");
+		cellPain.setValue(3);
+		cellPain.setTooltip("Pain");
 		cellPain.setReadOnly(true);
 		
 		DynamicGridCell cellWaterlow = row.getCells().newCell(getColumn(COLUMN_WATERLOW), DynamicCellType.INT);
-		cellWaterlow.setValue(0);
-		cellWaterlow.setTooltip("0");
+		cellWaterlow.setValue(1);
+		cellWaterlow.setTooltip("Waterlow");
 		cellWaterlow.setReadOnly(true);
 		
 		DynamicGridCell cellFalls = row.getCells().newCell(getColumn(COLUMN_FALLS), DynamicCellType.INT);
-		cellFalls.setValue(0);
-		cellFalls.setTooltip("0");
+		cellFalls.setValue(2);
+		cellFalls.setTooltip("Falls");
 		cellFalls.setReadOnly(true);
 		
 		DynamicGridCell cellISAR = row.getCells().newCell(getColumn(COLUMN_ISAR), DynamicCellType.INT);
-		cellISAR.setValue(0);
-		cellISAR.setTooltip("0");
+		cellISAR.setValue(3);
+		cellISAR.setTooltip("ISAR");
 		cellISAR.setReadOnly(true);
 		
 		DynamicGridCell cellReferral = row.getCells().newCell(getColumn(COLUMN_REFERRAL), DynamicCellType.STRING);
-		cellReferral.setValue(null);
-		cellReferral.setTooltip("");
+		cellReferral.setValue(tempVo.getCurrentReferral() != null && tempVo.getCurrentReferral().getSpecialty() != null ? tempVo.getCurrentReferral().getSpecialty().getText() : "");
+		cellReferral.setTooltip((String) cellReferral.getValue());
 		cellReferral.setReadOnly(true);
 		
 		DynamicGridCell cellObs = row.getCells().newCell(getColumn(COLUMN_OBS_REQUIRED), DynamicCellType.ENUMERATION);
@@ -776,7 +790,6 @@ public class Logic extends BaseLogic
 	@Override
 	protected void onDyngrdWhiteBoardCellButtonClicked(DynamicGridCell cell)
 	{
-		System.out.println("Cell Button Clicked");
 		form.dyngrdWhiteBoard().setValue(cell.getRow().getValue());
 		setGlobalContexts((TrackingForClinicianWorklistAndTriageVo)form.dyngrdWhiteBoard().getValue());
 		engine.open(form.getForms().Emergency.AttendanceClinicalNoteDialog, new Object[] {AttendanceClinicalNoteType.NURSE, null,null});
@@ -785,9 +798,68 @@ public class Logic extends BaseLogic
 	@Override
 	protected void onDyngrdWhiteBoardRowSelectionChanged(DynamicGridRow row) throws PresentationLogicException
 	{
-		System.out.println("Row Selection");
 		setGlobalContexts((TrackingForClinicianWorklistAndTriageVo)form.dyngrdWhiteBoard().getValue());
-		engine.open(form.getForms().Emergency.EDWhiteBoardEditDialog, new Object[] {form.cmbArea().getValue(),form.cmbStatus().getValue()});
+		populateGCFromRow(row);
+		engine.open(form.getForms().Emergency.EDWhiteBoardEditDialog);
+	}
+
+	private void populateGCFromRow(DynamicGridRow row)
+	{
+		WhiteBoardEditVo data = new WhiteBoardEditVo();
+
+		Object columnObsReq = row.getCells().get(getColumn(COLUMN_OBS_REQUIRED)).getValue();
+		Object columnMedsGiven = row.getCells().get(getColumn(COLUMN_MEDS_GIVEN)).getValue();
+
+		if (columnObsReq != null)
+		{
+
+			if (columnObsReq.equals(EDWhiteBoardDynGrdComboValues.REQUIRED))
+			{
+				data.setObsRequired(REQUIRED);
+			}
+			else if (columnObsReq.equals(EDWhiteBoardDynGrdComboValues.COMPLETE))
+			{
+				data.setObsRequired(COMPLETE);
+			}
+			else if (columnObsReq.equals(EDWhiteBoardDynGrdComboValues.NOT_REQUIRED))
+			{
+				data.setObsRequired(NOT_REQUIRED);
+			}
+		}
+
+		if (columnMedsGiven != null)
+		{
+
+			if (columnMedsGiven.equals(EDWhiteBoardDynGrdComboValues.REQUIRED))
+			{
+				data.setMedsGiven(REQUIRED);
+			}
+			else if (columnMedsGiven.equals(EDWhiteBoardDynGrdComboValues.COMPLETE))
+			{
+				data.setMedsGiven(COMPLETE);
+			}
+			else if (columnMedsGiven.equals(EDWhiteBoardDynGrdComboValues.NOT_REQUIRED))
+			{
+				data.setMedsGiven(NOT_REQUIRED);
+			}
+		}
+
+		data.setECG((Boolean) row.getCells().get(getColumn(COLUMN_ECG)).getValue());
+
+		data.setNPO((Boolean) row.getCells().get(getColumn(COLUMN_NPO)).getValue());
+
+		data.setIsolation((Boolean) row.getCells().get(getColumn(COLUMN_ISOLATION)).getValue());
+		
+		data.setPainAssessments((Integer) row.getCells().get(getColumn(COLUMN_PAIN_ASSESSMENT)).getValue());
+		
+		data.setWaterlowAssessments((Integer) row.getCells().get(getColumn(COLUMN_WATERLOW)).getValue());
+		
+		data.setFallsAssessment((Integer) row.getCells().get(getColumn(COLUMN_FALLS)).getValue());
+		
+		data.setIsarAssessments((Integer) row.getCells().get(getColumn(COLUMN_ISAR)).getValue());
+
+		form.getGlobalContext().Emergency.setWhiteBoardEdit(data);
+
 	}
 
 	@Override
@@ -851,29 +923,63 @@ public class Logic extends BaseLogic
 	@Override
 	protected void onDyngrdWhiteBoardCellValueChanged(DynamicGridCell cell)
 	{
-		System.out.println("Cell value changed");
 		form.dyngrdWhiteBoard().setValue(cell.getRow().getValue());
+		
+		populateGCFromRow(form.dyngrdWhiteBoard().getSelectedRow());
+		
 		setGlobalContexts((TrackingForClinicianWorklistAndTriageVo)form.dyngrdWhiteBoard().getValue());
+			
 		
 		if (getColumn(COLUMN_OBS_REQUIRED).equals(cell.getColumn()))
 		{
-			engine.open(form.getForms().Emergency.EDWhiteBoardEditDialog, new Object[] {ims.emergency.vo.enums.EDWhiteBoardEvent.OBS_REQ_COL_VALUE_CHANGED,cell.getValue()});
+			
+			if (cell.getValue().equals(EDWhiteBoardDynGrdComboValues.REQUIRED))
+			{
+				form.getGlobalContext().Emergency.getWhiteBoardEdit().setObsRequired(REQUIRED);
+			}
+			else if (cell.getValue().equals(EDWhiteBoardDynGrdComboValues.COMPLETE))
+			{
+				form.getGlobalContext().Emergency.getWhiteBoardEdit().setObsRequired(COMPLETE);
+			}
+			else if (cell.getValue().equals(EDWhiteBoardDynGrdComboValues.NOT_REQUIRED))
+			{
+				form.getGlobalContext().Emergency.getWhiteBoardEdit().setObsRequired(NOT_REQUIRED);
+			}
+			
+			engine.open(form.getForms().Emergency.EDWhiteBoardEditDialog);
 		}
 		else if (getColumn(COLUMN_MEDS_GIVEN).equals(cell.getColumn()))
 		{
-			engine.open(form.getForms().Emergency.EDWhiteBoardEditDialog, new Object[] {ims.emergency.vo.enums.EDWhiteBoardEvent.MEDS_GIVEN_COL_VALUE_CHANGED,cell.getValue()});
+			if (cell.getValue().equals(EDWhiteBoardDynGrdComboValues.REQUIRED))
+			{
+				form.getGlobalContext().Emergency.getWhiteBoardEdit().setMedsGiven(REQUIRED);
+			}
+			else if (cell.getValue().equals(EDWhiteBoardDynGrdComboValues.COMPLETE))
+			{
+				form.getGlobalContext().Emergency.getWhiteBoardEdit().setMedsGiven(COMPLETE);
+			}
+			else if (cell.getValue().equals(EDWhiteBoardDynGrdComboValues.NOT_REQUIRED))
+			{
+				form.getGlobalContext().Emergency.getWhiteBoardEdit().setMedsGiven(NOT_REQUIRED);
+			}
+			
+			engine.open(form.getForms().Emergency.EDWhiteBoardEditDialog);
 		}
 		else if (getColumn(COLUMN_ECG).equals(cell.getColumn()))
 		{
-			engine.open(form.getForms().Emergency.EDWhiteBoardEditDialog, new Object[] {ims.emergency.vo.enums.EDWhiteBoardEvent.ECG_COL_VALUE_CHANGED,cell.getValue()});
+			form.getGlobalContext().Emergency.getWhiteBoardEdit().setECG((Boolean)cell.getValue());
+			engine.open(form.getForms().Emergency.EDWhiteBoardEditDialog);
+			
 		}
 		else if (getColumn(COLUMN_NPO).equals(cell.getColumn()))
 		{
-			engine.open(form.getForms().Emergency.EDWhiteBoardEditDialog, new Object[] {ims.emergency.vo.enums.EDWhiteBoardEvent.NPO_COL_VALUE_CHANGED,cell.getValue()});
+			form.getGlobalContext().Emergency.getWhiteBoardEdit().setNPO((Boolean)cell.getValue());
+			engine.open(form.getForms().Emergency.EDWhiteBoardEditDialog);
 		}
 		else if (getColumn(COLUMN_ISOLATION).equals(cell.getColumn()))
 		{
-			engine.open(form.getForms().Emergency.EDWhiteBoardEditDialog, new Object[] {ims.emergency.vo.enums.EDWhiteBoardEvent.ISOLATION_COL_VALUE_CHANGED,cell.getValue()});
+			form.getGlobalContext().Emergency.getWhiteBoardEdit().setIsolation((Boolean)cell.getValue());
+			engine.open(form.getForms().Emergency.EDWhiteBoardEditDialog);
 		}
 		else if (getColumn(COLUMN_COMMENT).equals(cell.getColumn()))
 		{
@@ -891,6 +997,64 @@ public class Logic extends BaseLogic
 		form.getGlobalContext().Emergency.setTracking(tracking);
 		
 		updateControlsState();
+		
+	}
+
+	@Override
+	protected void onFormDialogClosed(FormName formName, DialogResult result) throws PresentationLogicException
+	{
+		if (formName.equals(form.getForms().Emergency.EDWhiteBoardEditDialog) && DialogResult.OK.equals(result))
+		{
+			if (form.getGlobalContext().Emergency.getWhiteBoardEdit() != null)
+			{
+				if (form.getGlobalContext().Emergency.getWhiteBoardEdit().getObsRequired() != null)
+				{
+					if (form.getGlobalContext().Emergency.getWhiteBoardEdit().getObsRequired() == REQUIRED)
+					{
+						form.dyngrdWhiteBoard().getSelectedRow().getCells().get(getColumn(COLUMN_OBS_REQUIRED)).setValue(EDWhiteBoardDynGrdComboValues.REQUIRED);
+					}
+					else if (form.getGlobalContext().Emergency.getWhiteBoardEdit().getObsRequired() == COMPLETE)
+					{
+						form.dyngrdWhiteBoard().getSelectedRow().getCells().get(getColumn(COLUMN_OBS_REQUIRED)).setValue(EDWhiteBoardDynGrdComboValues.COMPLETE);
+					}
+					else if (form.getGlobalContext().Emergency.getWhiteBoardEdit().getObsRequired() == NOT_REQUIRED)
+					{
+						form.dyngrdWhiteBoard().getSelectedRow().getCells().get(getColumn(COLUMN_OBS_REQUIRED)).setValue(EDWhiteBoardDynGrdComboValues.NOT_REQUIRED);
+					}
+				}
+				else
+					form.dyngrdWhiteBoard().getSelectedRow().getCells().get(getColumn(COLUMN_OBS_REQUIRED)).setValue(null);
+
+				if (form.getGlobalContext().Emergency.getWhiteBoardEdit().getMedsGiven() != null)
+				{
+					if (form.getGlobalContext().Emergency.getWhiteBoardEdit().getMedsGiven() == REQUIRED)
+					{
+						form.dyngrdWhiteBoard().getSelectedRow().getCells().get(getColumn(COLUMN_MEDS_GIVEN)).setValue(EDWhiteBoardDynGrdComboValues.REQUIRED);
+					}
+					else if (form.getGlobalContext().Emergency.getWhiteBoardEdit().getMedsGiven() == COMPLETE)
+					{
+						form.dyngrdWhiteBoard().getSelectedRow().getCells().get(getColumn(COLUMN_MEDS_GIVEN)).setValue(EDWhiteBoardDynGrdComboValues.COMPLETE);
+					}
+					else if (form.getGlobalContext().Emergency.getWhiteBoardEdit().getMedsGiven() == NOT_REQUIRED)
+					{
+						form.dyngrdWhiteBoard().getSelectedRow().getCells().get(getColumn(COLUMN_MEDS_GIVEN)).setValue(EDWhiteBoardDynGrdComboValues.NOT_REQUIRED);
+					}
+				}
+				else
+					form.dyngrdWhiteBoard().getSelectedRow().getCells().get(getColumn(COLUMN_MEDS_GIVEN)).setValue(null);
+
+				form.dyngrdWhiteBoard().getSelectedRow().getCells().get(getColumn(COLUMN_ECG)).setValue(form.getGlobalContext().Emergency.getWhiteBoardEdit().getECG());
+				form.dyngrdWhiteBoard().getSelectedRow().getCells().get(getColumn(COLUMN_NPO)).setValue(form.getGlobalContext().Emergency.getWhiteBoardEdit().getNPO());
+				form.dyngrdWhiteBoard().getSelectedRow().getCells().get(getColumn(COLUMN_ISOLATION)).setValue(form.getGlobalContext().Emergency.getWhiteBoardEdit().getIsolation());
+
+			}
+		}
+	}
+
+	@Override
+	protected void onBtnCloseClick() throws PresentationLogicException
+	{
+		engine.close(DialogResult.OK);
 		
 	}
 }

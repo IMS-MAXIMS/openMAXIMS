@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:36 -->
+<!-- Generated: 12/10/2015, 13:31 -->
 <hibernate-mapping>
 	<class name="ims.core.admin.pas.domain.objects.PASEvent" table="core_pas_event" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -88,6 +88,13 @@
 			many-to-one with a uniqueness contraint -->
 		<many-to-one name="attendingHCP" class="ims.core.resource.people.domain.objects.Hcp" unique="true" foreign-key="pas_event_attendingh_fk" access="field" cascade="save-update">
 			<column name="attendingh" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: service -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="service" class="ims.core.clinical.domain.objects.Service" unique="true" foreign-key="pas_event_service_fk" access="field" cascade="save-update">
+			<column name="service" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
 <!-- debug: !IsAssociation && !IsCollection -->
 

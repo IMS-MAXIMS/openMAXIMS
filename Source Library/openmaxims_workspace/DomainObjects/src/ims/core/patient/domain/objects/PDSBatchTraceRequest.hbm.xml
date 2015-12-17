@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 12/10/2015, 13:30 -->
+<hibernate-mapping>
+	<subclass name="ims.core.patient.domain.objects.PDSBatchTraceRequest" lazy="true" discriminator-value="pdsb" extends="ims.core.patient.domain.objects.PDSAsyncRequest" >
+<!-- debug: hibernateClassContent -->
+<!-- debug: pDSAckException -->
+<!-- debug: retryCount -->
+<!-- debug: pDSBatchTraceItems -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<list name="pDSBatchTraceItems" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="pdsbatchtracer_pdsbatchtr_fk">
+				<column name="core_pdsbatchtracer_pdsbatchtr" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.core.patient.domain.objects.PDSBatchTraceParams" />
+		</list>
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="pDSAckException" type="string" access="field" update="true" > 
+			<column name="pdsackexce" length="200"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="retryCount" type="integer" access="field" update="true">
+			<column name="retrycount"  not-null="false" unique="false"  />
+		</property>
+	</subclass>
+</hibernate-mapping>

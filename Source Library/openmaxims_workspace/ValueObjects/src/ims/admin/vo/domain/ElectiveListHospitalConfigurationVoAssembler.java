@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.admin.vo.domain;
@@ -50,6 +55,8 @@ public class ElectiveListHospitalConfigurationVoAssembler
 		}
 		valueObjectDest.setID_ElectiveListHospitalConfiguration(valueObjectSrc.getID_ElectiveListHospitalConfiguration());
 	    valueObjectDest.setIsRIE(valueObjectSrc.getIsRIE());
+		// CaseNoteFolderLocation
+		valueObjectDest.setCaseNoteFolderLocation(valueObjectSrc.getCaseNoteFolderLocation());
 		// ListLocation
 		valueObjectDest.setListLocation(valueObjectSrc.getListLocation());
 	 	return valueObjectDest;
@@ -342,8 +349,10 @@ public class ElectiveListHospitalConfigurationVoAssembler
 		if ((valueObject.getIsRIE() == null || valueObject.getIsRIE().booleanValue() == false) && domainObject.isIncludeRecord())
 			return null;
 			
+		// CaseNoteFolderLocation
+		valueObject.setCaseNoteFolderLocation(ims.core.vo.domain.LocationLiteVoAssembler.create(map, domainObject.getCaseNoteFolderLocation()) );
 		// ListLocation
-		valueObject.setListLocation(ims.core.vo.domain.LocationLiteVoAssembler.create(map, domainObject.getListLocation()) );
+		valueObject.setListLocation(ims.core.vo.domain.LocSiteLiteVoAssembler.create(map, domainObject.getListLocation()) );
  		return valueObject;
 	 }
 
@@ -395,21 +404,38 @@ public class ElectiveListHospitalConfigurationVoAssembler
 
 	// SaveAsRefVO - treated as a refVo in extract methods
 	ims.core.resource.place.domain.objects.Location value1 = null;
+		if ( null != valueObject.getCaseNoteFolderLocation() ) 
+		{
+			if (valueObject.getCaseNoteFolderLocation().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getCaseNoteFolderLocation()) != null)
+				{
+					value1 = (ims.core.resource.place.domain.objects.Location)domMap.get(valueObject.getCaseNoteFolderLocation());
+				}
+			}
+			else
+			{
+				value1 = (ims.core.resource.place.domain.objects.Location)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.Location.class, valueObject.getCaseNoteFolderLocation().getBoId());
+			}
+		}
+		domainObject.setCaseNoteFolderLocation(value1);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.resource.place.domain.objects.LocSite value2 = null;
 		if ( null != valueObject.getListLocation() ) 
 		{
 			if (valueObject.getListLocation().getBoId() == null)
 			{
 				if (domMap.get(valueObject.getListLocation()) != null)
 				{
-					value1 = (ims.core.resource.place.domain.objects.Location)domMap.get(valueObject.getListLocation());
+					value2 = (ims.core.resource.place.domain.objects.LocSite)domMap.get(valueObject.getListLocation());
 				}
 			}
 			else
 			{
-				value1 = (ims.core.resource.place.domain.objects.Location)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.Location.class, valueObject.getListLocation().getBoId());
+				value2 = (ims.core.resource.place.domain.objects.LocSite)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.LocSite.class, valueObject.getListLocation().getBoId());
 			}
 		}
-		domainObject.setListLocation(value1);
+		domainObject.setListLocation(value2);
 
 		return domainObject;
 	}

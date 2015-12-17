@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -55,6 +60,7 @@ import ims.ocrr.forms.specimencollectionclinic.GenForm.lyrPatDetailsLayer.tabPag
 import ims.ocrr.forms.specimencollectionclinic.GenForm.lyrPatDetailsLayer.tabPagePatientListContainer.grdPatientRow;
 import ims.ocrr.helper.PhlebotomyHelper;
 import ims.ocrr.vo.OrderSpecimenListVo;
+import ims.ocrr.vo.SpecimenCollectionClinicSearchCriteriaVo;
 import ims.ocrr.vo.SpecimenContainerVoCollection;
 import ims.ocrr.vo.SpecimenWorkListItemListVo;
 import ims.ocrr.vo.SpecimenWorkListItemListVoCollection;
@@ -81,10 +87,29 @@ public class Logic extends BaseLogic
 	private static final String	TEXT_COL		= "-8";
 	private static final String	INFO_COL		= "-9";
 	private static final String	BTN_COL			= "-10";
+	
+	private static final int LIST_ALL					= 1;
+	private static final int LIST_FORCOLLECTION			= 2;
+	private static final int LIST_COLLECTED				= 3;
+	private static final int LIST_COULDNOTCOLLECT		= 4;
 
 	protected void onFormOpen() throws PresentationLogicException
 	{
 		initialize();
+		
+		if (form.getGlobalContext().OCRR.getSpecimenCollectionClinicSearchCriteriaIsNotNull() && 
+			((form.getGlobalContext().OCRR.getSpecimenCollectionClinicSearchCriteria().getPatientIsNotNull() && form.getGlobalContext().Core.getPatientShortIsNotNull() && !form.getGlobalContext().Core.getPatientShort().equals(form.getGlobalContext().OCRR.getSpecimenCollectionClinicSearchCriteria().getPatient())) ||
+			(!form.getGlobalContext().OCRR.getSpecimenCollectionClinicSearchCriteria().getPatientIsNotNull() && form.getGlobalContext().Core.getPatientShortIsNotNull())))
+				form.getGlobalContext().OCRR.setSpecimenCollectionClinicSearchCriteria(null);
+		
+		if (form.getGlobalContext().OCRR.getSpecimenCollectionClinicSearchCriteriaIsNotNull())
+		{
+			setSearchCriteria(form.getGlobalContext().OCRR.getSpecimenCollectionClinicSearchCriteria());
+			
+			if ((!form.getGlobalContext().OCRR.getSpecimenCollectionClinicSearchCriteria().getPatientIsNotNull() && patientsSearch(false)) ||
+				(form.getGlobalContext().OCRR.getSpecimenCollectionClinicSearchCriteria().getPatientIsNotNull() && patientsSearch(true) && selectPatient()))
+				form.getGlobalContext().OCRR.setSpecimenCollectionClinicSearchCriteria(getSearchCriteria());
+		} 
 	}
 
 	public void initialize()
@@ -100,10 +125,13 @@ public class Logic extends BaseLogic
 	protected void onGrdPatientListSelectionChanged() throws ims.framework.exceptions.PresentationLogicException
 	{
 		engine.clearAlerts();
-		selectPatient();
+		if (selectPatient())
+		{
+			form.getGlobalContext().OCRR.setSpecimenCollectionClinicSearchCriteria(getSearchCriteria());
+		}
 	}
 
-	private void selectPatient()
+	private boolean selectPatient()
 	{
 		PatientShort voPatShort = form.lyrPatDetails().tabPagePatientList().grdPatient().getValue();
 		
@@ -111,11 +139,12 @@ public class Logic extends BaseLogic
 		{
 			Patient voPatient = replicatePatientIfNeeded(voPatShort);
 			if(voPatient == null)
-				return;
+				return false;
 			else
 				voPatShort = voPatient;
 		}
-
+		else if (voPatShort == null)
+			return false;
 
 		setPatientIntoContext(voPatShort);
 		
@@ -123,6 +152,8 @@ public class Logic extends BaseLogic
 		form.lyrPatDetails().showtabPagePatientDetails();
 		populatePatientDetails(voPatShort);
 		populateCollectDataGrid(voPatShort, getStatus());
+		
+		return true;
 	}
 
 	private Patient replicatePatientIfNeeded(PatientShort voPatShort) 
@@ -154,6 +185,7 @@ public class Logic extends BaseLogic
 	{
 		clear();
 		form.getGlobalContext().Core.setPatientShort(null);
+		form.getGlobalContext().OCRR.setSpecimenCollectionClinicSearchCriteria(null);
 	}
 
 	private void clear()
@@ -171,13 +203,19 @@ public class Logic extends BaseLogic
 
 	protected void onImbSearchClick() throws ims.framework.exceptions.PresentationLogicException
 	{
+		if (patientsSearch(false))
+			form.getGlobalContext().OCRR.setSpecimenCollectionClinicSearchCriteria(getSearchCriteria());		
+	}
+	
+	private boolean patientsSearch(Boolean selectPatient)
+	{
 		form.lyrPatDetails().tabPagePatientList().grdPatient().getRows().clear();
 		clearPatientDetails();
 		//wdev-16622
 		form.dyngrdCollect().getRows().clear();
 		//------------
 		form.lyrPatDetails().tabPagePatientList().grdPatient().setValue(null);
-		form.getGlobalContext().Core.setPatientShort(null);
+		//form.getGlobalContext().Core.setPatientShort(null);
 		form.lyrPatDetails().showtabPagePatientList();
 
 		PatientFilter filter = new PatientFilter();
@@ -194,7 +232,7 @@ public class Logic extends BaseLogic
 			if (form.txtSSurname().getValue() == null || form.txtSSurname().getValue().length() == 0)
 			{
 				engine.showMessage("Please enter a surname search string");
-				return;
+				return false;
 			}
 
 			if (ims.configuration.gen.ConfigFlag.UI.SEARCH_REQ_FORENAME.getValue())
@@ -202,7 +240,7 @@ public class Logic extends BaseLogic
 				if (form.txtSForename().getValue() == null || form.txtSForename().getValue().length() == 0)
 				{
 					engine.showMessage("Please enter at least the first character of the forename");
-					return;
+					return false;
 				}
 			}
 
@@ -221,13 +259,13 @@ public class Logic extends BaseLogic
 		catch (DomainInterfaceException e)
 		{
 			engine.showMessage(e.getMessage());
-			return;
+			return false;
 		}
 
 		if (psColl == null || psColl.size() == 0)
 		{
 			engine.showMessage("No patients found");
-			return;
+			return true;
 		}
 
 		for (int i = 0; i < psColl.size(); i++)
@@ -235,7 +273,111 @@ public class Logic extends BaseLogic
 			PatientShort ps = psColl.get(i);
 			addPatient(ps);
 		}
+		
+		//WDEV-19389 
+		if (form.getGlobalContext().OCRR.getSpecimenCollectionClinicSearchCriteriaIsNotNull() &&
+			form.getGlobalContext().OCRR.getSpecimenCollectionClinicSearchCriteria().getPatientIsNotNull() &&
+			( (form.getGlobalContext().Core.getPatientShortIsNotNull() && 
+			   form.getGlobalContext().Core.getPatientShort().equals(form.getGlobalContext().OCRR.getSpecimenCollectionClinicSearchCriteria().getPatient())) || 
+			  !form.getGlobalContext().Core.getPatientShortIsNotNull() ) &&
+			selectPatient)
+				form.lyrPatDetails().tabPagePatientList().grdPatient().setValue(form.getGlobalContext().OCRR.getSpecimenCollectionClinicSearchCriteria().getPatient());
+		else
+			form.getGlobalContext().Core.setPatientShort(null);
+		
+		return true;
 	}
+
+	private SpecimenCollectionClinicSearchCriteriaVo getSearchCriteria()
+	{
+		SpecimenCollectionClinicSearchCriteriaVo searchCriteria = new SpecimenCollectionClinicSearchCriteriaVo();
+		
+		searchCriteria.setIdType(form.cmbSIDType().getValue());
+		searchCriteria.setIDValue(form.txtSID().getValue());
+		searchCriteria.setSurname(form.txtSSurname().getValue());
+		searchCriteria.setForename(form.txtSForename().getValue());
+		searchCriteria.setSex(form.cmbSSex().getValue());
+		searchCriteria.setDOB(form.pdtSDOB().getValue());
+		
+		if (form.txtSForename().getValue() == null && form.txtSSurname().getValue() == null && form.txtSID().getValue() == null)
+				return null;
+		
+		searchCriteria.setPatient(form.lyrPatDetails().tabPagePatientList().grdPatient().getValue());
+		searchCriteria.setSearchType(getSearchType());
+		
+		return searchCriteria;
+	}
+	
+	private void setSearchCriteria(SpecimenCollectionClinicSearchCriteriaVo specimenCollectionClinicSearchCriteriaVo) 
+	{
+		
+		form.cmbSIDType().setValue(specimenCollectionClinicSearchCriteriaVo.getIdType());
+		form.txtSID().setValue(specimenCollectionClinicSearchCriteriaVo.getIDValue());
+		form.txtSSurname().setValue(specimenCollectionClinicSearchCriteriaVo.getSurname());
+		form.txtSForename().setValue(specimenCollectionClinicSearchCriteriaVo.getForename());
+		form.cmbSSex().setValue(specimenCollectionClinicSearchCriteriaVo.getSex());
+		form.pdtSDOB().setValue(specimenCollectionClinicSearchCriteriaVo.getDOB());
+		
+		if (form.getGlobalContext().OCRR.getSpecimenCollectionClinicSearchCriteriaIsNotNull() &&
+				form.getGlobalContext().OCRR.getSpecimenCollectionClinicSearchCriteria().getPatientIsNotNull() &&
+				( (form.getGlobalContext().Core.getPatientShortIsNotNull() && 
+				   form.getGlobalContext().Core.getPatientShort().equals(form.getGlobalContext().OCRR.getSpecimenCollectionClinicSearchCriteria().getPatient())) || 
+				  !form.getGlobalContext().Core.getPatientShortIsNotNull() ))
+		{
+			form.lyrPatDetails().tabPagePatientList().grdPatient().setValue(specimenCollectionClinicSearchCriteriaVo.getPatient());
+			setSearchType(specimenCollectionClinicSearchCriteriaVo.getSearchType());
+		}
+		else
+		{
+			form.lyrPatDetails().tabPagePatientList().grdPatient().setValue(null);
+			
+		}
+	}
+	
+	private void setSearchType(Integer searchType) 
+	{
+		if (searchType == null)
+			return;
+		
+		switch (searchType)
+		{
+		case LIST_ALL:
+			form.GroupStatus().setValue(GroupStatusEnumeration.rdoAll);
+			break;
+		case LIST_FORCOLLECTION:
+			form.GroupStatus().setValue(GroupStatusEnumeration.rdoForCollection);
+			break;
+		case LIST_COLLECTED:
+			form.GroupStatus().setValue(GroupStatusEnumeration.rdoCollected);
+			break;
+		case LIST_COULDNOTCOLLECT:
+			form.GroupStatus().setValue(GroupStatusEnumeration.rdoCancelled);
+			break;
+		}		
+	}
+
+	private Integer getSearchType() 
+	{
+		GroupStatusEnumeration searchType = form.GroupStatus().getValue();
+		if (GroupStatusEnumeration.rdoAll.equals(searchType))
+		{
+			return LIST_ALL;
+		}
+		if (GroupStatusEnumeration.rdoForCollection.equals(searchType))
+		{
+			return LIST_FORCOLLECTION;
+		}
+		if (GroupStatusEnumeration.rdoCollected.equals(searchType))
+		{
+			return LIST_COLLECTED;
+		}
+		if (GroupStatusEnumeration.rdoCancelled.equals(searchType))
+		{
+			return LIST_COULDNOTCOLLECT;
+		}
+		return null;
+	}
+
 
 	private void addPatient(PatientShort ps) 
 	{
@@ -1269,7 +1411,10 @@ public class Logic extends BaseLogic
 	{
 		PatientShort voPatShort = form.lyrPatDetails().tabPagePatientList().grdPatient().getValue();
 		if(voPatShort != null)
+		{
+			form.getGlobalContext().OCRR.setSpecimenCollectionClinicSearchCriteria(getSearchCriteria());
 			populateCollectDataGrid(voPatShort, getStatus());
+		}
 	}
 	
 	private SpecimenCollectionStatus getStatus()
@@ -1406,14 +1551,14 @@ public class Logic extends BaseLogic
 		}
 	}
 	
-	private void displaySelectedPatient() 
+	private boolean displaySelectedPatient() 
 	{
 		if(form.getGlobalContext().Core.getPatientShortIsNotNull())
 		{
 			PatientShort patient = form.getGlobalContext().Core.getPatientShort();
 			Patient voPatient = replicatePatientIfNeeded(patient);
 			if(voPatient == null)
-				return;
+				return false;
 						
 			if(voPatient != null)
 			{
@@ -1422,7 +1567,11 @@ public class Logic extends BaseLogic
 				selectPatient();
 				form.lyrPatDetails().showtabPagePatientDetails();
 			}
+			
+			return true;
 		}
+		
+		return false;
 	}
 	
 	//calculate dynamically the max length of the comment based on what you can expect when saving the colector comment.

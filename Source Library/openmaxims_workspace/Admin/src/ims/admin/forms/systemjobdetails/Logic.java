@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -38,6 +43,7 @@ import ims.framework.enumerations.DialogResult;
 import ims.framework.enumerations.NotificationDelivery;
 import ims.framework.exceptions.PresentationLogicException;
 import ims.framework.interfaces.ISchedulerServlet;
+import ims.framework.utils.Date;
 import ims.framework.utils.DateTime;
 import ims.framework.utils.DateTimeFormat;
 import ims.framework.utils.StringUtils;
@@ -71,6 +77,8 @@ public class Logic extends BaseLogic
 	public static final  int	SCHEDULER_TAB		= -4;
 	public static final  int	CONFIGURATION_TAB	= -5;
 	public static final  int	NOTIFICATIONS_TAB	= -6;
+	
+	public static final Integer PATIENT_CLINICAL_NOTES_FOR_EVOLVE_INGESTION_IMSID = new Integer(9);
 		
 	@Override
 	protected void onFormOpen(Object[] args) throws ims.framework.exceptions.PresentationLogicException
@@ -246,7 +254,7 @@ public class Logic extends BaseLogic
 		form.lyrConfiguration().showtabScheduling();
 		form.getLocalContext().setCurrentSelectedTab(SCHEDULER_TAB);
 		form.lyrConfiguration().tabScheduling().cmbFrequency().setValue(JobRunningFrequency.RUNONCE);
-		form.lyrConfiguration().tabScheduling().dtimStartDate().setValue(new DateTime());
+		form.lyrConfiguration().tabScheduling().dtimStartDate().setValue(PATIENT_CLINICAL_NOTES_FOR_EVOLVE_INGESTION_IMSID.equals(form.getGlobalContext().Admin.getSystemJob().getImsId()) ? new DateTime(new Date().addDay(1), new Time(2, 0, 0)): new DateTime()); //WDEV-19128
 		onCmbCronValueChanged();
 		
 		showLyrConfigurationTabs(true, false, false);			
@@ -1533,7 +1541,7 @@ public class Logic extends BaseLogic
 												if (form.lyrConfiguration().tabConfiguration().dynamicFormConfiguration().getOpenedForm() == null)
 												{
 													formName = new FormName(form.getLocalContext().getSystemJob().getConfigFormId());
-													form.lyrConfiguration().tabConfiguration().dynamicFormConfiguration().open(formName);
+													form.lyrConfiguration().tabConfiguration().dynamicFormConfiguration().open(formName, new Object[] {PATIENT_CLINICAL_NOTES_FOR_EVOLVE_INGESTION_IMSID.equals(form.getGlobalContext().Admin.getSystemJob().getImsId()) ? form.lyrConfiguration().tabScheduling().dtimStartDate().getValue() : null} ); //WDEV-19128
 												}
 												
 												showLyrConfigurationTabs(false, true, false);
@@ -1601,21 +1609,21 @@ public class Logic extends BaseLogic
 					if (form.getLocalContext().getConfiguredJob().getScheduledJob().getConfigFormId() > 0)
 					{
 						formName = new FormName(form.getLocalContext().getConfiguredJob().getScheduledJob().getConfigFormId());
-						form.lyrConfiguration().tabConfiguration().dynamicFormConfiguration().open(formName);
+						form.lyrConfiguration().tabConfiguration().dynamicFormConfiguration().open(formName, new Object[] {PATIENT_CLINICAL_NOTES_FOR_EVOLVE_INGESTION_IMSID.equals(form.getGlobalContext().Admin.getSystemJob().getImsId()) ? form.lyrConfiguration().tabScheduling().dtimStartDate().getValue() : null} ); //WDEV-19128);
 					}											
 				}
 			}
 		}
 		else if (tab.equals(form.lyrConfiguration().tabNotification()))
 		{
-			updateContextMenu();
 			form.getLocalContext().setPreviousSelectedTab(NOTIFICATIONS_TAB);
 			if (form.getLocalContext().getPreviousSelectedTabIsNotNull() && form.getLocalContext().getPreviousSelectedTab().equals(SCHEDULER_TAB))
 			{
 				saveJobScheduler();
 			}
 			
-			populateNotificationTab(form.getLocalContext().getConfiguredJob());
+			populateNotificationTab(form.getLocalContext().getConfiguredJob());		
+			updateContextMenu(); //WDEV-19771 update context menu state called incorrectly before population
 		}
 	}
 
@@ -1700,14 +1708,16 @@ public class Logic extends BaseLogic
 	}
 
 	@Override
-	protected void onGrdFailedSelectionChanged()	throws PresentationLogicException 
+	protected void onGrdFailedSelectionChanged() throws PresentationLogicException 
 	{	
+		form.lyrConfiguration().tabNotification().grdSuccessfuly().setValue(null); //WDEV-19771
 		updateContextMenu();
 	}
 
 	@Override
-	protected void onGrdSuccessfulySelectionChanged()	throws PresentationLogicException 
+	protected void onGrdSuccessfulySelectionChanged() throws PresentationLogicException 
 	{	
+		form.lyrConfiguration().tabNotification().grdFailed().setValue(null); //WDEV-19771
 		updateContextMenu();
 	}
 
@@ -1725,7 +1735,7 @@ public class Logic extends BaseLogic
 				break;
 				case GenForm.ContextMenus.AdminNamespace.SystemJobDetailsNotification.Edit:
 					form.getLocalContext().setNotificationJobStatus(true);
-					form.getGlobalContext().Admin.setSystemJobNotification(form.lyrConfiguration().tabNotification().grdSuccessfuly().getSelectedRow().getValue());
+					form.getGlobalContext().Admin.setSystemJobNotification(form.lyrConfiguration().tabNotification().grdSuccessfuly().getValue());
 					engine.open(form.getForms().Admin.SystemJobNotificationDialog);
 				break;
 				case GenForm.ContextMenus.AdminNamespace.SystemJobDetailsNotification.Remove:
@@ -1745,7 +1755,7 @@ public class Logic extends BaseLogic
 				break;
 				case GenForm.ContextMenus.AdminNamespace.SystemJobDetailsNotificationFailed.Edit:
 					form.getLocalContext().setNotificationJobStatus(false);//WDEV-17275
-					form.getGlobalContext().Admin.setSystemJobNotification(form.lyrConfiguration().tabNotification().grdFailed().getSelectedRow().getValue());
+					form.getGlobalContext().Admin.setSystemJobNotification(form.lyrConfiguration().tabNotification().grdFailed().getValue());
 					engine.open(form.getForms().Admin.SystemJobNotificationDialog);
 				break;
 				case GenForm.ContextMenus.AdminNamespace.SystemJobDetailsNotificationFailed.Remove:
@@ -1761,12 +1771,12 @@ public class Logic extends BaseLogic
 	private void updateContextMenu() 
 	{
 		form.getContextMenus().Admin.getSystemJobDetailsNotificationNewItem().setVisible(true);
-		form.getContextMenus().Admin.getSystemJobDetailsNotificationEditItem().setVisible(form.lyrConfiguration().tabNotification().grdSuccessfuly().getSelectedRow() != null ?  true: false);
-		form.getContextMenus().Admin.getSystemJobDetailsNotificationRemoveItem().setVisible(form.lyrConfiguration().tabNotification().grdSuccessfuly().getSelectedRow() != null ?  true: false);
+		form.getContextMenus().Admin.getSystemJobDetailsNotificationEditItem().setVisible(form.lyrConfiguration().tabNotification().grdSuccessfuly().getValue() != null); //WDEV-19771
+		form.getContextMenus().Admin.getSystemJobDetailsNotificationRemoveItem().setVisible(form.lyrConfiguration().tabNotification().grdSuccessfuly().getValue() != null); //WDEV-19771
 		
 		form.getContextMenus().Admin.getSystemJobDetailsNotificationFailedNewItem().setVisible(true);
-		form.getContextMenus().Admin.getSystemJobDetailsNotificationFailedEditItem().setVisible(form.lyrConfiguration().tabNotification().grdFailed().getSelectedRow() != null ?  true: false);
-		form.getContextMenus().Admin.getSystemJobDetailsNotificationFailedRemoveItem().setVisible(form.lyrConfiguration().tabNotification().grdFailed().getSelectedRow() != null ?  true: false);
+		form.getContextMenus().Admin.getSystemJobDetailsNotificationFailedEditItem().setVisible(form.lyrConfiguration().tabNotification().grdFailed().getValue() != null); //WDEV-19771
+		form.getContextMenus().Admin.getSystemJobDetailsNotificationFailedRemoveItem().setVisible(form.lyrConfiguration().tabNotification().grdFailed().getValue() != null); //WDEV-19771
 	}
 
 	@Override

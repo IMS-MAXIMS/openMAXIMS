@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -30,6 +35,7 @@ import ims.clinical.forms.patientproblems.GenForm.ctnDetailsContainer.Group1Enum
 import ims.clinical.forms.patientproblems.GenForm.grdProblemListRow;
 import ims.clinical.vo.ClinicalDIAssociationVoCollection;
 import ims.clinical.vo.ClinicalProblemShortVo;
+import ims.clinical.vo.PatientProblemsSearchCriteriaVo;
 import ims.clinical.vo.lookups.CodingItemType;
 import ims.core.vo.AuthoringInformationVo;
 import ims.core.vo.CSPrimaryProblemVo;
@@ -60,9 +66,36 @@ public class Logic extends BaseLogic
 	{
 		initialize();
 		initializeCustomControl();
+	
+		//WDEV-19389 
+		if (!(form.getGlobalContext().Core.getPatientShortIsNotNull() && form.getGlobalContext().Clinical.getPatientProblemsSearchCriteriaIsNotNull() && form.getGlobalContext().Clinical.getPatientProblemsSearchCriteria().getPatientIsNotNull() && form.getGlobalContext().Core.getPatientShort().equals(form.getGlobalContext().Clinical.getPatientProblemsSearchCriteria().getPatient())))
+			form.getGlobalContext().Clinical.setPatientProblemsSearchCriteria(null);
+		
+		if(form.getGlobalContext().Clinical.getPatientProblemsSearchCriteriaIsNotNull())
+		{
+			setSearchCriteria(form.getGlobalContext().Clinical.getPatientProblemsSearchCriteria());
+		}
+		//WDEV-19389 - end
+		
 		open();
 		postInitialize();
 		updateControlsState();
+	}
+	
+	private PatientProblemsSearchCriteriaVo getSearchCriteria()
+	{
+		PatientProblemsSearchCriteriaVo searchCriteria = new PatientProblemsSearchCriteriaVo();
+		
+		searchCriteria.setExcludeResolved(Boolean.TRUE.equals(form.chkRemoveResolved().getValue()) ? true : false);
+		searchCriteria.setPatient(form.getGlobalContext().Core.getPatientShort());
+		
+		return searchCriteria;
+	}
+	
+	
+	private void setSearchCriteria(PatientProblemsSearchCriteriaVo patientProblemsSearchCriteriaVo)
+	{
+		form.chkRemoveResolved().setValue(patientProblemsSearchCriteriaVo.getExcludeResolved());	
 	}
 	
 	protected void onFormModeChanged()
@@ -922,6 +955,8 @@ public class Logic extends BaseLogic
 		{
 			populateListControl(domain.listPatientProblemsByPatient(form.getGlobalContext().Core.getPatientShort(), Boolean.FALSE));	
 		}
+		
+		form.getGlobalContext().Clinical.setPatientProblemsSearchCriteria(getSearchCriteria());//WDEV-19389 
 		updateControlsState();
 	}
 

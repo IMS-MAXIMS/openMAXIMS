@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -45,6 +50,7 @@ import ims.core.patient.domain.objects.Patient;
 import ims.core.patient.vo.PatientRefVo;
 import ims.core.resource.place.domain.objects.LocSite;
 import ims.core.resource.place.domain.objects.Location;
+import ims.core.vo.LocationLiteVoCollection;
 import ims.core.vo.PatientShort;
 import ims.core.vo.domain.LocSiteLiteVoAssembler;
 import ims.core.vo.domain.PatientShortAssembler;
@@ -55,11 +61,9 @@ import ims.domain.exceptions.DomainInterfaceException;
 import ims.domain.exceptions.StaleObjectException;
 import ims.framework.FormName;
 import ims.framework.exceptions.CodingRuntimeException;
-import ims.framework.utils.DateTime;
 import ims.vo.LookupInstVo;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class DementiaWorklistImpl extends BaseDementiaWorklistImpl
@@ -78,7 +82,7 @@ public class DementiaWorklistImpl extends BaseDementiaWorklistImpl
 
 		hql.append(" select hosp from LocSite as hosp left join hosp.type as hosptype");
 		hql.append(" where hosp.isActive = 1 and hosp.isVirtual = 0 and hosptype.id=:HospType");
-		hql.append(" order by UPPER(hosp.name) asc");
+		hql.append(" order by hosp.upperName asc"); //WDEV-20219 UPPER(hosp.name)
 
 		markers.add("HospType");
 		values.add(LocationType.HOSP.getID());
@@ -145,6 +149,7 @@ public class DementiaWorklistImpl extends BaseDementiaWorklistImpl
 		
 		ArrayList<String> markers = new ArrayList<String>();
 		ArrayList<Object> values = new ArrayList<Object>();
+		boolean isCaseSensitivePatIdSearch = ConfigFlag.DOM.CASE_SENSITIVE_PATID.getValue(); //WDEV-18817
 
 		String andStr = "";
 
@@ -250,11 +255,11 @@ public class DementiaWorklistImpl extends BaseDementiaWorklistImpl
 		{
 			hql.append(" left join patient.identifiers as identifiers ");
 			hqlConditions.append(andStr);
-			hqlConditions.append(" identifiers.type = :idType and identifiers.value = :idValue ");
+			hqlConditions.append(" identifiers.type = :idType and " + (!isCaseSensitivePatIdSearch ? "UPPER(identifiers.value)" : "identifiers.value") + " = :idValue"); //WDEV-18817
 			markers.add("idType");
 			values.add(getDomLookup(searchCriteria.getPatIdType()));
 			markers.add("idValue");
-			values.add(searchCriteria.getPatIdValue());
+			values.add(!isCaseSensitivePatIdSearch ? searchCriteria.getPatIdValue().trim().toUpperCase() : searchCriteria.getPatIdValue().trim()); //WDEV-18817
 			andStr = " and ";
 		}
 
@@ -405,7 +410,7 @@ public class DementiaWorklistImpl extends BaseDementiaWorklistImpl
 	{
 		String hqlSB = "";
 		PatIdType dispIdType = PatIdType.getNegativeInstance(ConfigFlag.UI.DISPLAY_PATID_TYPE.getValue()); 
-		hqlSB = "select new ims.clinical.helper.DementialManualClass( dem.id, pattitle.text, pat.name.surname, pat.name.forename,"+
+		hqlSB = "select new ims.clinical.helper.DementialManualClass( dem.id, pattitle.text, pat.name.surname, pat.name.forename,"+ //WDEV-21318
 				"(select max(p21_1.value) from Patient as p11_1 left join p11_1.identifiers as p21_1 where (p21_1.type = " +
 				dispIdType.getID() +
 				" and p11_1.id = pat.id)) as HOSPNUM, " +
@@ -414,7 +419,7 @@ public class DementiaWorklistImpl extends BaseDementiaWorklistImpl
 				" demstatexcl.text, dem.isExcludedFromWorklist, " +
 				" dem.dischargeDateTime," +
 				" dem.breachDateTime, " +
-				"dem.deliriumConfirmed, dem.dementiaConfirmed ) ";
+				"dem.deliriumConfirmed, dem.dementiaConfirmed, dem.aMTSScore ) ";//WDEV-21318
 
 		hqlSB += "from Dementia as dem left join dem.patient as pat left join pat.name.title as pattitle left join pat.identifiers as patident "+ 
 		"left join dem.currentWorklistStatus as demstat left join demstat.status as demstatus left join demstat.reasonForExclusion as demstatexcl "+ 
@@ -423,7 +428,7 @@ public class DementiaWorklistImpl extends BaseDementiaWorklistImpl
 		StringBuffer hqlConditions = new StringBuffer();
 		ArrayList<String> markers = new ArrayList<String>();
 		ArrayList<Object> values = new ArrayList<Object>();
-
+		boolean isCaseSensitivePatIdSearch = ConfigFlag.DOM.CASE_SENSITIVE_PATID.getValue(); //WDEV-18817
 		String andStr = "";
 
 		//work list should not list patient with DOD or Dementia is RIE
@@ -439,15 +444,24 @@ public class DementiaWorklistImpl extends BaseDementiaWorklistImpl
 			values.add(searchCriteria.getWard().getID_Location());
 			andStr = " and ";
 		}
-		else if(searchCriteria.getHospitalIsNotNull())
+		//WDEV-20933
+		else if (searchCriteria.getHospital() != null && searchCriteria.getWard() == null)
 		{
-			hqlConditions.append(andStr);
-			hqlConditions.append(" admward.parentLocation.id = :hospital");
+			LocationLiteVoCollection wards = listWards(searchCriteria.getHospital(), null);
+			hqlConditions.append(andStr).append("(");
+			if (wards.size() > 0)
+			{	
+				hqlConditions.append(" admward.id in ").append(getWardIds(wards));
+				hqlConditions.append(" OR ");
+			}
+			hqlConditions.append(" admward.parentLocation.id = :hospital ");
+			hqlConditions.append(")");
+			
 			markers.add("hospital");
 			values.add(searchCriteria.getHospital().getID_Location());
 			andStr = " and ";
 		}
-		
+
 		if (searchCriteria.getAdmissionDateFromIsNotNull())
 		{
 			hqlConditions.append(andStr);
@@ -522,15 +536,19 @@ public class DementiaWorklistImpl extends BaseDementiaWorklistImpl
 		if (searchCriteria.getPatIdTypeIsNotNull() && searchCriteria.getPatIdValueIsNotNull())
 		{
 			hqlConditions.append(andStr);
-			hqlConditions.append(" patident.type = :idType and patident.value = :idValue ");
+			hqlConditions.append(" patident.type = :idType and " + (!isCaseSensitivePatIdSearch ? "UPPER(patident.value)" : "patident.value") + " = :idValue "); //WDEV-18817
 			markers.add("idType");
 			values.add(getDomLookup(searchCriteria.getPatIdType()));
 			markers.add("idValue");
-			String idVal = searchCriteria.getPatIdValue().trim();			
+			String idVal = searchCriteria.getPatIdValue();	
+			if (!isCaseSensitivePatIdSearch) //WDEV-18817
+			{
+				idVal = idVal.toUpperCase();
+			}
 			if (searchCriteria.getPatIdType().equals(PatIdType.NHSN))//wdev-16377
 				values.add(searchCriteria.getPatIdValue().replace(" ", ""));
 			else
-				values.add(searchCriteria.getPatIdValue());
+				values.add(idVal.trim()); //WDEV-18790
 			andStr = " and ";
 		}
 
@@ -612,11 +630,50 @@ public class DementiaWorklistImpl extends BaseDementiaWorklistImpl
 			voItem.setBreachDateTime(doDem.getBreechDateTime());// != null ? new ims.framework.utils.DateTime	(doDem.getBreachDateTime()) : null);
 			voItem.setDeliriumConfirmed(doDem.getisDeliriumConfirmed());
 			voItem.setDementiaConfirmed(doDem.getisDementiaConfirmed());
+			voItem.setAMTSScore(doDem.getAMTSScore());//WDEV-21318
 
 			voColl.add(voItem);
 		}
 		
 		return voColl;	
 
+	}
+	
+	//WDEV-20933
+	private String getWardIds(LocationLiteVoCollection wards)
+	{
+		if (wards == null || wards.size() == 0)
+			return "";
+		
+		StringBuilder idList = new StringBuilder();
+		idList.append("(");
+		for (int i=0; i<wards.size();i++)
+		{
+			idList.append(wards.get(i).getID_Location());
+			if(i < wards.size() - 1)
+				idList.append(", ");		
+		}
+		idList.append(") ");
+		
+		return idList.toString();
+	}
+
+	//wdev-18630
+	public String[] getSystemReportAndTemplate(Integer imsId) 
+	{
+		String[] result = null;
+		
+		DomainFactory factory = getDomainFactory();
+		
+		List lst = factory.find("select r1_1.reportXml, t1_1.templateXml, r1_1.reportName, r1_1.reportDescription, t1_1.name, t1_1.description from ReportBo as r1_1 left join r1_1.templates as t1_1 where (r1_1.imsId= :imsid) order by t1_1.name", new String[] {"imsid"}, new Object[] {imsId});
+		
+		if(lst.iterator().hasNext())
+		{
+			Object[] obj = (Object[])lst.iterator().next();
+			
+			result = new String[] {(String)obj[0], (String)obj[1], (String)obj[2], (String)obj[3], (String)obj[4], (String)obj[5]};
+		}
+		
+		return result;
 	}
 }

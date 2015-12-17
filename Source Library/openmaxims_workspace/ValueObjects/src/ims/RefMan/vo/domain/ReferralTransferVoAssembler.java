@@ -1,9 +1,33 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.RefMan.vo.domain;
@@ -31,14 +55,20 @@ public class ReferralTransferVoAssembler
 		}
 		valueObjectDest.setID_ReferralTransfer(valueObjectSrc.getID_ReferralTransfer());
 	    valueObjectDest.setIsRIE(valueObjectSrc.getIsRIE());
-		// RTTStatusDate
-		valueObjectDest.setRTTStatusDate(valueObjectSrc.getRTTStatusDate());
 		// OtherPatientNumber
 		valueObjectDest.setOtherPatientNumber(valueObjectSrc.getOtherPatientNumber());
-		// OTherOrganisationCode
-		valueObjectDest.setOTherOrganisationCode(valueObjectSrc.getOTherOrganisationCode());
 		// CurrentRTTStatus
 		valueObjectDest.setCurrentRTTStatus(valueObjectSrc.getCurrentRTTStatus());
+		// OTherOrganisationCode
+		valueObjectDest.setOTherOrganisationCode(valueObjectSrc.getOTherOrganisationCode());
+		// ReferringOrganisationCode
+		valueObjectDest.setReferringOrganisationCode(valueObjectSrc.getReferringOrganisationCode());
+		// PathwayID
+		valueObjectDest.setPathwayID(valueObjectSrc.getPathwayID());
+		// RTTStartDate
+		valueObjectDest.setRTTStartDate(valueObjectSrc.getRTTStartDate());
+		// RTTStatusDate
+		valueObjectDest.setRTTStatusDate(valueObjectSrc.getRTTStatusDate());
 	 	return valueObjectDest;
 	 }
 
@@ -329,18 +359,62 @@ public class ReferralTransferVoAssembler
 		if ((valueObject.getIsRIE() == null || valueObject.getIsRIE().booleanValue() == false) && domainObject.isIncludeRecord())
 			return null;
 			
+		// OtherPatientNumber
+		valueObject.setOtherPatientNumber(domainObject.getOtherPatientNumber());
+		// CurrentRTTStatus
+		valueObject.setCurrentRTTStatus(ims.pathways.vo.domain.RTTStatusPointVoAssembler.create(map, domainObject.getCurrentRTTStatus()) );
+		// OTherOrganisationCode
+		ims.domain.lookups.LookupInstance instance3 = domainObject.getOTherOrganisationCode();
+		if ( null != instance3 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance3.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance3.getImage().getImageId(), instance3.getImage().getImagePath());
+			}
+			color = instance3.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.RefMan.vo.lookups.OtherProviders voLookup3 = new ims.RefMan.vo.lookups.OtherProviders(instance3.getId(),instance3.getText(), instance3.isActive(), null, img, color);
+			ims.RefMan.vo.lookups.OtherProviders parentVoLookup3 = voLookup3;
+			ims.domain.lookups.LookupInstance parent3 = instance3.getParent();
+			while (parent3 != null)
+			{
+				if (parent3.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent3.getImage().getImageId(), parent3.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent3.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup3.setParent(new ims.RefMan.vo.lookups.OtherProviders(parent3.getId(),parent3.getText(), parent3.isActive(), null, img, color));
+				parentVoLookup3 = parentVoLookup3.getParent();
+								parent3 = parent3.getParent();
+			}			
+			valueObject.setOTherOrganisationCode(voLookup3);
+		}
+				// ReferringOrganisationCode
+		valueObject.setReferringOrganisationCode(domainObject.getReferringOrganisationCode());
+		// PathwayID
+		valueObject.setPathwayID(domainObject.getPathwayID());
+		// RTTStartDate
+		java.util.Date RTTStartDate = domainObject.getRTTStartDate();
+		if ( null != RTTStartDate ) 
+		{
+			valueObject.setRTTStartDate(new ims.framework.utils.Date(RTTStartDate) );
+		}
 		// RTTStatusDate
 		java.util.Date RTTStatusDate = domainObject.getRTTStatusDate();
 		if ( null != RTTStatusDate ) 
 		{
-			valueObject.setRTTStatusDate(new ims.framework.utils.Date(RTTStatusDate) );
+			valueObject.setRTTStatusDate(new ims.framework.utils.DateTime(RTTStatusDate) );
 		}
-		// OtherPatientNumber
-		valueObject.setOtherPatientNumber(domainObject.getOtherPatientNumber());
-		// OTherOrganisationCode
-		valueObject.setOTherOrganisationCode(domainObject.getOTherOrganisationCode());
-		// CurrentRTTStatus
-		valueObject.setCurrentRTTStatus(ims.pathways.vo.domain.RTTStatusPointVoAssembler.create(map, domainObject.getCurrentRTTStatus()) );
  		return valueObject;
 	 }
 
@@ -390,13 +464,6 @@ public class ReferralTransferVoAssembler
 		}
 		domainObject.setVersion(valueObject.getVersion_ReferralTransfer());
 
-		java.util.Date value1 = null;
-		ims.framework.utils.Date date1 = valueObject.getRTTStatusDate();		
-		if ( date1 != null ) 
-		{
-			value1 = date1.getDate();
-		}
-		domainObject.setRTTStatusDate(value1);
 		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
 		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
 		if (valueObject.getOtherPatientNumber() != null && valueObject.getOtherPatientNumber().equals(""))
@@ -404,14 +471,43 @@ public class ReferralTransferVoAssembler
 			valueObject.setOtherPatientNumber(null);
 		}
 		domainObject.setOtherPatientNumber(valueObject.getOtherPatientNumber());
+		domainObject.setCurrentRTTStatus(ims.pathways.vo.domain.RTTStatusPointVoAssembler.extractRTTStatusPoint(domainFactory, valueObject.getCurrentRTTStatus(), domMap));
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value3 = null;
+		if ( null != valueObject.getOTherOrganisationCode() ) 
+		{
+			value3 =
+				domainFactory.getLookupInstance(valueObject.getOTherOrganisationCode().getID());
+		}
+		domainObject.setOTherOrganisationCode(value3);
 		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
 		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
-		if (valueObject.getOTherOrganisationCode() != null && valueObject.getOTherOrganisationCode().equals(""))
+		if (valueObject.getReferringOrganisationCode() != null && valueObject.getReferringOrganisationCode().equals(""))
 		{
-			valueObject.setOTherOrganisationCode(null);
+			valueObject.setReferringOrganisationCode(null);
 		}
-		domainObject.setOTherOrganisationCode(valueObject.getOTherOrganisationCode());
-		domainObject.setCurrentRTTStatus(ims.pathways.vo.domain.RTTStatusPointVoAssembler.extractRTTStatusPoint(domainFactory, valueObject.getCurrentRTTStatus(), domMap));
+		domainObject.setReferringOrganisationCode(valueObject.getReferringOrganisationCode());
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getPathwayID() != null && valueObject.getPathwayID().equals(""))
+		{
+			valueObject.setPathwayID(null);
+		}
+		domainObject.setPathwayID(valueObject.getPathwayID());
+		java.util.Date value6 = null;
+		ims.framework.utils.Date date6 = valueObject.getRTTStartDate();		
+		if ( date6 != null ) 
+		{
+			value6 = date6.getDate();
+		}
+		domainObject.setRTTStartDate(value6);
+		ims.framework.utils.DateTime dateTime7 = valueObject.getRTTStatusDate();
+		java.util.Date value7 = null;
+		if ( dateTime7 != null ) 
+		{
+			value7 = dateTime7.getJavaDate();
+		}
+		domainObject.setRTTStatusDate(value7);
 
 		return domainObject;
 	}

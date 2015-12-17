@@ -1,0 +1,79 @@
+<samlp:Response xmlns:samlp="urn:oasis:names:tc:SAML:1.0:protocol" ResponseID="null" InResponseTo="null" MajorVersion="1" MinorVersion="1" IssueInstant="2015-02-20T08:28:31Z" Recipient="172.16.143.51">
+    <samlp:Status>
+        <samlp:StatusCode Value="samlp:Success"/>
+    </samlp:Status>
+    <saml:Assertion xmlns:saml="urn:oasis:names:tc:SAML:1.0:assertion" MajorVersion="1" MinorVersion="1" AssertionID="d80f9785464d2dd8b6889e0db9f5ab27688634daa" Issuer="http://iam-careid-development:8080" IssueInstant="2015-02-20T08:28:31Z">
+        <saml:Conditions NotBefore="2015-02-20T08:25:31Z" NotOnOrAfter="2015-02-20T08:29:31Z"/>
+        <saml:AttributeStatement>
+            <saml:Subject>
+                <saml:NameIdentifier NameQualifier="o=nhs">uid=555005007101,ou=People,o=nhs</saml:NameIdentifier>
+                <saml:SubjectConfirmation>
+                    <saml:ConfirmationMethod>urn:com:sun:identity</saml:ConfirmationMethod>
+                    <saml:SubjectConfirmationData>
+                        <saml:Assertion MajorVersion="1" MinorVersion="1" AssertionID="8f0eb115f7a8feedf254922a05d52131d23ad807y" Issuer="http://iam-careid-development:8080" IssueInstant="2015-02-20T08:28:31Z">
+                            <saml:Conditions NotBefore="2015-02-20T08:25:31Z" NotOnOrAfter="2015-02-20T08:29:31Z"/>
+                            <saml:AuthenticationStatement AuthenticationInstant="2015-02-20T08:25:39Z" AuthenticationMethod="urn:com:sun:identity:ExtendedLoginModule">
+                                <saml:Subject>
+                                    <saml:NameIdentifier NameQualifier="o=nhs">uid=555005007101,ou=People,o=nhs</saml:NameIdentifier>
+                                    <saml:SubjectConfirmation>
+                                        <saml:ConfirmationMethod>urn:com:sun:identity</saml:ConfirmationMethod>
+                                        <saml:SubjectConfirmationData>AQIC5wM2LY4SfcywnDRRp8C+DgKCmgKNEgY1Zb3GQNoJBiA=@AAJTSQACMDE=#</saml:SubjectConfirmationData>
+                                    </saml:SubjectConfirmation>
+                                </saml:Subject>
+                                <saml:SubjectLocality IPAddress="172.16.143.51"/>
+                            </saml:AuthenticationStatement>
+                        </saml:Assertion>
+                    </saml:SubjectConfirmationData>
+                </saml:SubjectConfirmation>
+            </saml:Subject>
+            <saml:Attribute AttributeName="ssbAssertionVersion" AttributeNamespace="http://www.syntegra.com">
+                <saml:AttributeValue>1.1</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute AttributeName="cn" AttributeNamespace="http://www.syntegra.com">
+                <saml:AttributeValue>Nesbitt Sean Mr</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute AttributeName="uid" AttributeNamespace="http://www.syntegra.com">
+                <saml:AttributeValue>555005007101</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute AttributeName="ssbSessionRoleUid" AttributeNamespace="http://www.syntegra.com">
+                <saml:AttributeValue>555005342107</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute AttributeName="ssbMode" AttributeNamespace="http://www.syntegra.com">
+                <saml:AttributeValue>0</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute AttributeName="nhsIdCode" AttributeNamespace="http://www.syntegra.com">
+                <saml:AttributeValue>RME</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute AttributeName="o" AttributeNamespace="http://www.syntegra.com">
+                <saml:AttributeValue>COMMUNICARE NHS TRUST</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute AttributeName="nhsAreaOfWorkCodes" AttributeNamespace="http://www.syntegra.com">
+                <saml:AttributeValue>P8001:Q8001:T6092</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute AttributeName="nhsBusinessFunctions" AttributeNamespace="http://www.syntegra.com">
+                <saml:AttributeValue>Access DSA</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute AttributeName="nhsBusinessFunctionsCodes" AttributeNamespace="http://www.syntegra.com">
+                <saml:AttributeValue>B0089</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute AttributeName="nhsAreaOfWork" AttributeNamespace="http://www.syntegra.com">
+                <saml:AttributeValue>"Secondary Care":"Secondary Care":"Secondary Care"</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute AttributeName="nhsJobRole" AttributeNamespace="http://www.syntegra.com">
+                <saml:AttributeValue>"Admin &amp; Clerical":"Admin":"Demographic Administrator"</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute AttributeName="uniqueIdentifier" AttributeNamespace="http://www.syntegra.com">
+                <saml:AttributeValue>555005342107</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute AttributeName="nhsJobRoleCode" AttributeNamespace="http://www.syntegra.com">
+                <saml:AttributeValue>S0080:G0440:R5110</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute AttributeName="nhsWorkGroupsCodes" AttributeNamespace="http://www.syntegra.com">
+                <saml:AttributeValue>555005330103</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute AttributeName="nhsWorkGroups" AttributeNamespace="http://www.syntegra.com">
+                <saml:AttributeValue>DemographicWG</saml:AttributeValue>
+            </saml:Attribute>
+        </saml:AttributeStatement>
+    </saml:Assertion>
+</samlp:Response>

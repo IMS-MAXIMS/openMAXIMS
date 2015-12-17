@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.clinical.configuration.domain.objects;
@@ -53,6 +58,7 @@ public class SECS extends ims.domain.DomainObject implements ims.domain.SystemIn
 	private Integer eWSTriggerScore;
 	/** Assessment type triggered if EWS Trigger Score exceeded */
 	private ims.assessment.configuration.domain.objects.UserAssessment eWSProtocol;
+	private ims.domain.lookups.LookupInstance oBSProtocolType;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public SECS (Integer id, int ver)
@@ -95,6 +101,13 @@ public class SECS extends ims.domain.DomainObject implements ims.domain.SystemIn
 	}
 	public void setEWSProtocol(ims.assessment.configuration.domain.objects.UserAssessment eWSProtocol) {
 		this.eWSProtocol = eWSProtocol;
+	}
+
+	public ims.domain.lookups.LookupInstance getOBSProtocolType() {
+		return oBSProtocolType;
+	}
+	public void setOBSProtocolType(ims.domain.lookups.LookupInstance oBSProtocolType) {
+		this.oBSProtocolType = oBSProtocolType;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -168,6 +181,10 @@ public class SECS extends ims.domain.DomainObject implements ims.domain.SystemIn
 		    auditStr.append(eWSProtocol.getId());
 		}
 	    auditStr.append("; ");
+		auditStr.append("\r\n*oBSProtocolType* :");
+		if (oBSProtocolType != null)
+			auditStr.append(oBSProtocolType.getText());
+	    auditStr.append("; ");
 		return auditStr.toString();
 	}
 	
@@ -232,6 +249,12 @@ public class SECS extends ims.domain.DomainObject implements ims.domain.SystemIn
 			sb.append("<eWSProtocol>");
 			sb.append(this.getEWSProtocol().toXMLString(domMap)); 	
 			sb.append("</eWSProtocol>");		
+		}
+		if (this.getOBSProtocolType() != null)
+		{
+			sb.append("<oBSProtocolType>");
+			sb.append(this.getOBSProtocolType().toXMLString()); 
+			sb.append("</oBSProtocolType>");		
 		}
 		return sb.toString();
 	}
@@ -413,6 +436,12 @@ public class SECS extends ims.domain.DomainObject implements ims.domain.SystemIn
 			fldEl = fldEl.element("class");		
 			obj.setEWSProtocol(ims.assessment.configuration.domain.objects.UserAssessment.getUserAssessmentfromXML(fldEl, factory, domMap)); 
 		}
+		fldEl = el.element("oBSProtocolType");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setOBSProtocolType(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -429,6 +458,7 @@ public class SECS extends ims.domain.DomainObject implements ims.domain.SystemIn
 		public static final String Configuration = "configuration";
 		public static final String EWSTriggerScore = "eWSTriggerScore";
 		public static final String EWSProtocol = "eWSProtocol";
+		public static final String OBSProtocolType = "oBSProtocolType";
 	}
 }
 

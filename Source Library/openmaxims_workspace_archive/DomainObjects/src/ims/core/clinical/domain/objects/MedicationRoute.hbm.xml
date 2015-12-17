@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:35 -->
+<hibernate-mapping>
+	<class name="ims.core.clinical.domain.objects.MedicationRoute" table="core_medicationrout" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: hibernateClassContent -->
+<!-- debug: route -->
+<!-- debug: routeUnits -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+ 		<!-- Component Set -->
+ 		<list name="routeUnits" table="core_medicationrout_routeunits" lazy="true" >
+ 			<key foreign-key="medicationrout_routeunits_i_fk">
+ 				<column name="id" sql-type="numeric(10,0)" not-null="true" />
+ 			</key>
+ 			<index column='idx'/>
+ 			<!-- Composite -->
+ 			<composite-element class="ims.core.clinical.domain.objects.MedicationUnit" >
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="doseUnit" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_doseunit" not-null="true" sql-type="numeric(10,0)"  unique="false"   />
+ 				</many-to-one>
+ 			</composite-element>
+ 		</list>
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: IsLookup -->
+		<many-to-one name="route" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_route" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+	</class>
+</hibernate-mapping>

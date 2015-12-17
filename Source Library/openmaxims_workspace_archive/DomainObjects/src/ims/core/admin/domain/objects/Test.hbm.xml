@@ -1,0 +1,93 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:35 -->
+<hibernate-mapping>
+	<class name="ims.core.admin.domain.objects.Test" table="core_test" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: stringField -->
+<!-- debug: intField -->
+<!-- debug: booleanField -->
+<!-- debug: decimalField -->
+<!-- debug: dateField -->
+<!-- debug: timeField -->
+<!-- debug: dateTimeField -->
+<!-- debug: partialDateField -->
+<!-- debug: testColl -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<set name="testColl" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="test_testcoll_fk">
+				<column name="core_test_testcoll" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.core.admin.domain.objects.TestColl" />
+		</set>
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="stringField" type="string" access="field" update="true" > 
+			<column name="stringfiel" length="12"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="intField" type="integer" access="field" update="true">
+			<column name="intfield"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="booleanField" type="boolean" access="field" update="true">
+			<column name="booleanfie"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="decimalField" type="float" access="field" update="true">
+			<column name="decimalfie" sql-type="numeric(10,2)"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dateField" type="date" access="field" update="true">
+			<column name="datefield"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="timeField" type="string" access="field" update="true">
+			<column name="timefield"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dateTimeField" type="timestamp" access="field" update="true">
+			<column name="datetimefi"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="partialDateField" type="integer" access="field" update="true">
+			<column name="partialdat"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

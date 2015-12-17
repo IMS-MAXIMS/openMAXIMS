@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -34,6 +39,7 @@ import ims.RefMan.vo.domain.TCIForPatientElectiveListAppointmentDNAVoAssembler;
 import ims.chooseandbook.vo.lookups.ActionRequestType;
 import ims.configuration.gen.ConfigFlag;
 import ims.core.admin.domain.objects.CareSpell;
+import ims.core.helper.IClinicListDNAAppt;
 import ims.core.patient.vo.PatientRefVo;
 import ims.core.resource.people.domain.objects.MemberOfStaff;
 import ims.core.vo.ActivityVo;
@@ -88,6 +94,7 @@ import ims.scheduling.domain.objects.DirectoryOfServiceSessionSlot;
 import ims.scheduling.domain.objects.Sch_Session;
 import ims.scheduling.domain.objects.Session_Slot;
 import ims.scheduling.helper.CABRequests;
+import ims.scheduling.vo.BookingAppointmentOutcomeVo;
 import ims.scheduling.vo.Booking_AppointmentRefVo;
 import ims.scheduling.vo.Booking_AppointmentVo;
 import ims.scheduling.vo.DirectoryOfServiceVo;
@@ -104,6 +111,8 @@ import ims.scheduling.vo.domain.Booking_AppointmentVoAssembler;
 import ims.scheduling.vo.domain.Sch_BookingVoAssembler;
 import ims.scheduling.vo.domain.SessionShortVoAssembler;
 import ims.scheduling.vo.domain.SessionSlotVoAssembler;
+import ims.scheduling.vo.lookups.LookupHelper;
+import ims.scheduling.vo.lookups.ProfileListType;
 import ims.scheduling.vo.lookups.Status_Reason;
 import ims.vo.LookupInstVo;
 
@@ -112,13 +121,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-public class ClinicListImpl extends DomainImpl implements ims.scheduling.domain.ClinicList, ims.domain.impl.Transactional
+public class ClinicListImpl extends DomainImpl implements ims.scheduling.domain.ClinicList, ims.domain.impl.Transactional, IClinicListDNAAppt
 {
 	private static final long serialVersionUID = 1L;
 	
 	private static final int PATIENT_DNA_NAT_CODE = 33;
 
-	public SessionShortVoCollection listSession(ServiceShortVo service, ServiceFunctionVoCollection functionColl, ProfileShortVo profile, Date sessionDate) 
+	public SessionShortVoCollection listSession(ServiceShortVo service, ServiceFunctionVoCollection functionColl, ProfileShortVo profile, Date sessionDate, ProfileListType listtype)	//wdev-19419 
 	{
 		DomainFactory factory = getDomainFactory();
 		SessionShortVoCollection voCollSessionShort = new SessionShortVoCollection();
@@ -133,10 +142,20 @@ public class ClinicListImpl extends DomainImpl implements ims.scheduling.domain.
 		}
 		else
 		{
-			sessions = factory.find(" from Sch_Session session where session.sessionDate = :sessionDate and " +
+			if( listtype == null )
+			{
+				sessions = factory.find(" from Sch_Session session where session.sessionDate = :sessionDate and " +
 									" session.sch_Profile.id = :profileId",
 									new String[]{"sessionDate","profileId"},
 									new Object[]{sessionDate.getDate(), profile.getID_Sch_Profile()});
+			}
+			else
+			{
+				sessions = factory.find(" from Sch_Session session where session.sessionDate = :sessionDate and " +
+						" session.sch_Profile.id = :profileId and session.listType.id = :idListType",
+						new String[]{"sessionDate","profileId","idListType"},
+						new Object[]{sessionDate.getDate(), profile.getID_Sch_Profile(),getDomLookup(listtype).getId()});
+			}
 		}
 		
 		voCollSessionShort = SessionShortVoAssembler.createSessionShortVoCollectionFromSch_Session(sessions);
@@ -201,7 +220,7 @@ public class ClinicListImpl extends DomainImpl implements ims.scheduling.domain.
 	public ProfileShortVoCollection listProfiles(ServiceShortVo service, DirectoryOfServiceVo directoryOfService, Boolean activeOnly) 
 	{
 		Profiles impl = (Profiles) getDomainImpl(ProfilesImpl.class);
-		return impl.listProfiles(service, directoryOfService, null, activeOnly, true, false, null, null);//WDEV-12952 exclude theatre's	(param 5 true & param 6 false)	
+		return impl.listProfiles(service, directoryOfService, null, activeOnly, true, false, null, null,false);//WDEV-12952 exclude theatre's	(param 5 true & param 6 false)  //wdev-20074	
 	}
 
 	//WDEV-12568 //WDEV-18325
@@ -246,8 +265,20 @@ public class ClinicListImpl extends DomainImpl implements ims.scheduling.domain.
 			throw new DomainRuntimeException("Domain Error occured in dnaAppt " + e.getMessage(), e);
 		}
 		
+		// WDEV-23646 - Ensure the correct event Date Time is used when creating a new RTT Status
+		// When an appointment is DNA - use the Appointment Outcome Date/Time, or if not available - use the Appointment Date + Current Time
+		java.util.Date eventDateTime = null;
+		
+		if (appt != null && appt.getOutcomeDateTime() != null)
+		{
+			eventDateTime = appt.getOutcomeDateTime().getJavaDate();
+		}
+		else
+		{
+			eventDateTime = new DateTime(appt.getAppointmentDate(), appt.getApptStartTime()).getJavaDate();
+		}
 		//WDEV-18524
-		CatsReferral doCats = updateCatsReferral(factory, catsReferral, isFirstAppointmentActivity);
+		CatsReferral doCats = updateCatsReferral(factory, catsReferral, isFirstAppointmentActivity, eventDateTime);
 			
 		try
 		{
@@ -255,14 +286,21 @@ public class ClinicListImpl extends DomainImpl implements ims.scheduling.domain.
 		}
 		catch(StaleObjectException e)
 		{
-			doCats = updateCatsReferral(factory, catsReferral, isFirstAppointmentActivity);
+			doCats = updateCatsReferral(factory, catsReferral, isFirstAppointmentActivity, eventDateTime);
 			factory.save(doCats);
 		}
 		
 		//WDEV-18524
 		if (doCats != null && isFirstAppointmentActivity && Boolean.TRUE.equals(doCats.isRTTClockImpact()) && doCats.getJourney() != null && doCats.getJourney().getCurrentClock() != null)
 		{	
-			instantiatePatientEvent(doCats);
+			DateTime apptDateTime = null;
+			Status_Reason status_Reason = null;
+			if(doAppt!=null )
+			{
+				status_Reason =(doAppt.getApptStatus()!= null ? LookupHelper.getStatus_ReasonInstance(getLookupService(), doAppt.getApptStatus().getId()):null);
+				apptDateTime = new DateTime(new Date( doAppt.getAppointmentDate()),new Time(doAppt.getApptStartTime()));
+			}
+			instantiatePatientEvent(doCats,apptDateTime,status_Reason);
 		}
 
 		if(ConfigFlag.GEN.ICAB_ENABLED.getValue())
@@ -272,11 +310,12 @@ public class ClinicListImpl extends DomainImpl implements ims.scheduling.domain.
 		}
 	}
 	
-	private CatsReferral updateCatsReferral(DomainFactory factory, CatsReferralForClinicListVo catsReferralVo, Boolean isFirstAppointmentActivity)
+	// WDEV-23646 - Ensure the correct event Date Time is used when creating a new RTT Status
+	private CatsReferral updateCatsReferral(DomainFactory factory, CatsReferralForClinicListVo catsReferralVo, Boolean isFirstAppointmentActivity, java.util.Date eventDateTime)
 	{
 		//WDEV-18524
 		CatsReferral doCats = (CatsReferral) factory.getDomainObject(CatsReferral.class, catsReferralVo.getID_CatsReferral());
-		doCats.setHasDNAApptsForReview(catsReferralVo.getHasDNAApptsForReview());
+		doCats.setConsultationActivityRequired(catsReferralVo.getConsultationActivityRequired());//WDEV-20748
 		
 		//WDEV-18325
 		PathwayRTTStatus rttSTatusDO = null;
@@ -289,7 +328,7 @@ public class ClinicListImpl extends DomainImpl implements ims.scheduling.domain.
 
 				int dnaNatCode = PATIENT_DNA_NAT_CODE;
 
-				rttSTatusDO = createPatientRTTStatus(dnaNatCode);
+				rttSTatusDO = createPatientRTTStatus(dnaNatCode, eventDateTime);
 
 				if  (journeyDO != null)
 				{
@@ -315,7 +354,8 @@ public class ClinicListImpl extends DomainImpl implements ims.scheduling.domain.
 		return doCats;
 	}
 
-	private PathwayRTTStatus createPatientRTTStatus(int nationalCode) //WDEV-18325
+	// WDEV-23646 - Ensure the correct event Date Time is used when creating a new RTT Status
+	private PathwayRTTStatus createPatientRTTStatus(int nationalCode, java.util.Date eventDateTime) //WDEV-18325
 	{
 		PathwayRTTStatus rttSTatusDO = new PathwayRTTStatus();
 		
@@ -332,14 +372,20 @@ public class ClinicListImpl extends DomainImpl implements ims.scheduling.domain.
 		}
 		
 		rttSTatusDO.setStatusBy(doMos);
-		rttSTatusDO.setStatusDateTime(new java.util.Date());
+		rttSTatusDO.setStatusDateTime(eventDateTime);
 		
 		rttSTatusDO.setSetting("O");
 		
 		return rttSTatusDO;
 	}
-
-	private void  instantiatePatientEvent(CatsReferral doCats) throws StaleObjectException, DomainInterfaceException //WDEV-18325
+	private DateTime getDNAEventDateTime(DateTime apptDateTime, Status_Reason apptStatus) 
+	{
+		if (!Status_Reason.DNA.equals(apptStatus))				
+			return null;
+		
+		return new DateTime(apptDateTime);
+	}
+	private void  instantiatePatientEvent(CatsReferral doCats,DateTime apptDateTime, Status_Reason apptStatus) throws StaleObjectException, DomainInterfaceException //WDEV-18325
 	{	
 		if (!ConfigFlag.DOM.RTT_STATUS_POINT_FUNCTIONALITY.getValue())
 			return;
@@ -360,7 +406,7 @@ public class ClinicListImpl extends DomainImpl implements ims.scheduling.domain.
 		PatientEventVo patEvent = new PatientEventVo();
 		patEvent.setPatient((PatientRefVo)PatientListVoAssembler.create(doCats.getPatient()));
 		patEvent.setEvent(rttEventMap.getEvent());
-		patEvent.setEventDateTime(new DateTime());
+		patEvent.setEventDateTime(getDNAEventDateTime(apptDateTime, apptStatus) != null ? getDNAEventDateTime(apptDateTime, apptStatus):new DateTime());
 		patEvent.setEventStatus(EventStatus.ACTIVE);
 		patEvent.setJourney(PatientJourneyVoAssembler.create(doCats.getJourney()));
 		
@@ -389,7 +435,7 @@ public class ClinicListImpl extends DomainImpl implements ims.scheduling.domain.
 		if (rttStatusPoint == null || rttStatusPoint.getId() == null)	
 			return null;
 
-		String hql = "select event from RTTStatusEventMap as event left join event.currentRTTStatus as rttstat where event.active = 1 and rttstat.nationalCode = :natCode";
+		String hql = "select event from RTTStatusEventMap as event left join event.currentRTTStatus as rttstat where event.active = 1 and rttstat.nationalCode = :natCode and event.encounterType is null ";
 
 		DomainFactory factory = getDomainFactory();
 
@@ -463,7 +509,7 @@ public class ClinicListImpl extends DomainImpl implements ims.scheduling.domain.
 	public PatientEventVo createAndSaveEvent(Event event, Booking_Appointment doAppt, PatientJourneyVo voJourney) throws DomainInterfaceException, StaleObjectException
 	{
 		PatientEventVo voEvent = new PatientEventVo();
-		voEvent.setEventDateTime(new DateTime());
+		voEvent.setEventDateTime(!Status_Reason.DNA.equals(doAppt.getApptStatus()) ? new DateTime(): new DateTime(new Date(doAppt.getAppointmentDate()), new Time(doAppt.getApptStartTime())));//WDEV-20603
 		voEvent.setEvent(new EventRefVo(event.getId(),event.getVersion()));
 		voEvent.setScheduledDate(new DateTime(new Date(doAppt.getAppointmentDate()), new Time(doAppt.getApptStartTime())));
 		
@@ -528,7 +574,7 @@ public class ClinicListImpl extends DomainImpl implements ims.scheduling.domain.
 			impl.cancelSlot(sessionSlot, requestType, requestSource);
 	}
 
-	public Booking_AppointmentVo cancelAppt(Booking_AppointmentVo appt, ActionRequestType requestType, String requestSource) throws StaleObjectException 
+	public Booking_AppointmentVo cancelAppt(Booking_AppointmentVo appt, ActionRequestType requestType, String requestSource) throws DomainInterfaceException, StaleObjectException  
 	{		
 			SessionAdmin impl = (SessionAdmin) getDomainImpl(SessionAdminImpl.class);
 			return impl.cancelAppt(appt, requestType, requestSource);
@@ -754,5 +800,6 @@ public class ClinicListImpl extends DomainImpl implements ims.scheduling.domain.
 		
 		return PatientElectiveListForDNAAppointmentsVoAssembler.create((PatientElectiveList) getDomainFactory().findFirst(query, "APPT_ID", appointment.getID_Booking_Appointment()));
 	}
+
 
 }

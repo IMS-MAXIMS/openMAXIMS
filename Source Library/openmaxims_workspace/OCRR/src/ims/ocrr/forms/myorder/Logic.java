@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -74,6 +79,7 @@ import ims.core.vo.lookups.ContextType;
 import ims.core.vo.lookups.HcpDisType;
 import ims.core.vo.lookups.LocationType;
 import ims.core.vo.lookups.Sex;
+import ims.domain.exceptions.DomainInterfaceException;
 import ims.domain.exceptions.StaleObjectException;
 import ims.framework.Control;
 import ims.framework.controls.DynamicGrid;
@@ -102,7 +108,6 @@ import ims.ocrr.forms.myorder.GenForm.lyrDetailsLayer.tabPathDetailsContainer.ly
 import ims.ocrr.forms.myorder.GenForm.lyrDetailsLayer.tabRadDetailsContainer.grdRadOrdersRow;
 import ims.ocrr.helper.MyOrderQuestionsPopulation;
 import ims.ocrr.helper.PhlebotomyHelper;
-import ims.ocrr.orderingresults.vo.OcsOrderSessionRefVo;
 import ims.ocrr.orderingresults.vo.OrderInvestigationRefVo;
 import ims.ocrr.orderingresults.vo.OrderInvestigationRefVoCollection;
 import ims.ocrr.orderingresults.vo.OrderSpecimenRefVoCollection;
@@ -218,6 +223,16 @@ public class Logic extends BaseLogic
 	private static final String HIDE_CLINIC_STRING = "Outpatient Department - Hide Clinic";
 
 	private static final String CARE_UK_UI_ORDER = "CARE_UK";
+	
+	
+	/**
+	 * @author George Josan
+	 * WDEV-20203
+	 * Values for Order Category default
+	 */
+	private static final String DEFAULT_ORDER_CATEGORY_PATIENT_FINANCIAL = "Patient Financial Class";
+	private static final String DEFAULT_ORDER_CATEGORY_SELECTED_DEFAULT = "Default selected value";
+	private static final String DEFAULT_ORDER_CATEGORY_NONE = "None";
 
 	
 	//---------------------------------------------------------------------------------------------------------------------------------------------
@@ -946,19 +961,19 @@ public class Logic extends BaseLogic
 
 		LocationLiteVoCollection departments = domain.listActiveOutpatientDepartment(hospital);
 
-		for (int i = 0; i < departments.size(); i++)
+		if (departments != null)
 		{
-			LocationLiteVo department = departments.get(i);
+			for (LocationLiteVo department : departments)
+			{
+				form.lyrDetails().tabGenDetails().cmbDepartment().newRow(department, department.getIItemText());
+			}
 
-			if (department == null)
-				continue;
 
-			form.lyrDetails().tabGenDetails().cmbDepartment().newRow(department, department.getIItemText());
-		}
-
-		if (departments.size() == 1)
-		{
-			form.lyrDetails().tabGenDetails().cmbDepartment().setValue(departments.get(0));
+			if (!ConfigFlag.UI.OCS_ORDERING_DEFAULT_HOSPITAL_AND_OP_DEPT_TO_BLANK.getValue()
+					&& departments.size() == 1)
+			{
+					form.lyrDetails().tabGenDetails().cmbDepartment().setValue(departments.get(0));
+			}
 		}
 	}
 
@@ -2004,6 +2019,8 @@ public class Logic extends BaseLogic
     			form.lyrDetails().tabGenDetails().cmbHospital().newRow(hospital, hospital.getName());
     			form.lyrDetails().tabGenDetails().cmbHospital().setValue(hospital);
     		}
+    		
+    		loadOutpatientDepartment();
 		}
 		
 		// Clinic - radio button
@@ -3084,12 +3101,24 @@ public class Logic extends BaseLogic
 
 		if (form.getLocalContext().getOcsOrder() == null || form.getLocalContext().getOcsOrder().getID_OcsOrderSession() == null)
 		{
-			// WDEV-12841
-			// Get latest PasEvent for patient
-			PasEventShortVo pasEvent = domain.getLatestPasEvent(form.getGlobalContext().Core.getPatientShort());
-			
-			if (pasEvent != null && pasEvent.getEpisodeFinancialClass() != null)
-				form.lyrDetails().tabGenDetails().cmbOrderCategory().setValue(pasEvent.getEpisodeFinancialClass());
+			/**
+			 * @author George Josan
+			 * WDEV-20203
+			 * Default on the Order Category depending on the flag value to Patient Financial Class or to default chosen value
+			 */
+			if (DEFAULT_ORDER_CATEGORY_PATIENT_FINANCIAL.equals(ConfigFlag.UI.DEFAULT_ORDER_CATEGORY.getValue()))
+			{
+    			// WDEV-12841
+    			// Get latest PasEvent for patient
+    			PasEventShortVo pasEvent = domain.getLatestPasEvent(form.getGlobalContext().Core.getPatientShort());
+    			
+    			if (pasEvent != null && pasEvent.getEpisodeFinancialClass() != null)
+    				form.lyrDetails().tabGenDetails().cmbOrderCategory().setValue(pasEvent.getEpisodeFinancialClass());
+			}
+			else if (DEFAULT_ORDER_CATEGORY_SELECTED_DEFAULT.equals(ConfigFlag.UI.DEFAULT_ORDER_CATEGORY.getValue()))
+			{
+				defaultcmbOrderCategoryLookupValue();
+			}
 		}
 		
 
@@ -3951,86 +3980,103 @@ public class Logic extends BaseLogic
 
 	private void placeOrder()
 	{
-		ORDERSTATE state = getOcsOrderAuthorisingState();
+		int repeats = 0;
 
-		OcsOrderVo voOcsOrder = form.getLocalContext().getOcsOrder();
-		
-		populateOrderInstanceData(voOcsOrder);
-
-		String[] arrErrors = voOcsOrder.validate(validateOcsOrder(voOcsOrder));
-		if (arrErrors != null)
+		do
 		{
-			engine.showErrors(arrErrors);
-			form.getLocalContext().setClosedRounds(null);
-			form.getLocalContext().setWorkListItems(null);
-			return;
-		}
-
-		SpecimenWorkListItemVoCollection workListItems = form.getLocalContext().getWorkListItems();
-		
-		try
-		{
-			voOcsOrder = domain.saveOcsOrder(voOcsOrder, workListItems, state, form.getGlobalContext().RefMan.getCatsReferral(), form.getGlobalContext().Rotherham.getAppointmentToLink());
-
-			// WDEV-13999
-			// CARE UK project functionality ONLY
-			if (CARE_UK_UI_ORDER.equals(ConfigFlag.UI.ORDER_ENTRY_UI_TYPE.getValue()) && form.getGlobalContext().OCRR.getOrderInvestigationToAmendIsNotNull())
+			try
 			{
-				// When amending an investigation the appointment linked to it might be:
-				// - cancelled if the modality for the investigation was changed from the one in the investigation to amend
-				// - or associated with the new investigation instead of the old one
-				changeInvestigationAppointment(voOcsOrder, form.getGlobalContext().OCRR.getOrderInvestigationToAmend());
-				
-				
-				OrderInvestigationForStatusChangeVo investigationToAmendStatus = domain.getOrderInvestigation(form.getGlobalContext().OCRR.getOrderInvestigationToAmend());
-				
-				// Create new status for investigation to amend
-				OrderedInvestigationStatusVo newStatus = new OrderedInvestigationStatusVo();
-				
-				newStatus.setOrdInvStatus(OrderInvStatus.AMENDED);
-				newStatus.setChangeDateTime(new DateTime());
-				newStatus.setChangeUser(engine.getLoggedInUser().getUserRealName() != null ? engine.getLoggedInUser().getUserRealName() : engine.getLoggedInUser().getUsername());
-				newStatus.setStatusChangeReason(InvestigationStatusChangeReason.AMENDED);
-				newStatus.setStatusReason(InvestigationStatusChangeReason.AMENDED.getText());
-				newStatus.setProcessedDateTime(new DateTime());
-				
-				// Set status
-				investigationToAmendStatus.setOrdInvCurrentStatus(newStatus);
-				if (!investigationToAmendStatus.getOrdInvStatusHistoryIsNotNull())
+				ORDERSTATE state = getOcsOrderAuthorisingState();
+
+				OcsOrderVo voOcsOrder = form.getLocalContext().getOcsOrder();
+
+				populateOrderInstanceData(voOcsOrder);
+
+				String[] arrErrors = voOcsOrder.validate(validateOcsOrder(voOcsOrder));
+				if (arrErrors != null)
 				{
-					investigationToAmendStatus.setOrdInvStatusHistory(new OrderedInvestigationStatusVoCollection());
+					engine.showErrors(arrErrors);
+					form.getLocalContext().setClosedRounds(null);
+					form.getLocalContext().setWorkListItems(null);
+					return;
 				}
-				
-				investigationToAmendStatus.getOrdInvStatusHistory().add(newStatus);
-				
-				domain.updateInvestigationStatus(investigationToAmendStatus);
-			}
 
-			if ((ConfigFlag.UI.ORDER_ENTRY_UI_TYPE.getValue().equals("CARE_UK") || ConfigFlag.UI.ORDER_ENTRY_UI_TYPE.getValue().equals("UKSH")) && form.getGlobalContext().RefMan.getCatsReferralIsNotNull()) // WDEV-11881
+				SpecimenWorkListItemVoCollection workListItems = form.getLocalContext().getWorkListItems();
+
+				voOcsOrder = domain.saveOcsOrder(voOcsOrder, workListItems, state, form.getGlobalContext().RefMan.getCatsReferral(), form.getGlobalContext().Rotherham.getAppointmentToLink());
+
+				// WDEV-13999
+				// CARE UK project functionality ONLY
+				if (CARE_UK_UI_ORDER.equals(ConfigFlag.UI.ORDER_ENTRY_UI_TYPE.getValue()) && form.getGlobalContext().OCRR.getOrderInvestigationToAmendIsNotNull())
+				{
+					// When amending an investigation the appointment linked to it might be:
+					// - cancelled if the modality for the investigation was changed from the one in the investigation to amend
+					// - or associated with the new investigation instead of the old one
+					changeInvestigationAppointment(voOcsOrder, form.getGlobalContext().OCRR.getOrderInvestigationToAmend());
+
+
+					OrderInvestigationForStatusChangeVo investigationToAmendStatus = domain.getOrderInvestigation(form.getGlobalContext().OCRR.getOrderInvestigationToAmend());
+
+					// Create new status for investigation to amend
+					OrderedInvestigationStatusVo newStatus = new OrderedInvestigationStatusVo();
+
+					newStatus.setOrdInvStatus(OrderInvStatus.AMENDED);
+					newStatus.setChangeDateTime(new DateTime());
+					newStatus.setChangeUser(engine.getLoggedInUser().getUserRealName() != null ? engine.getLoggedInUser().getUserRealName() : engine.getLoggedInUser().getUsername());
+					newStatus.setStatusChangeReason(InvestigationStatusChangeReason.AMENDED);
+					newStatus.setStatusReason(InvestigationStatusChangeReason.AMENDED.getText());
+					newStatus.setProcessedDateTime(new DateTime());
+
+					// Set status
+					investigationToAmendStatus.setOrdInvCurrentStatus(newStatus);
+					if (!investigationToAmendStatus.getOrdInvStatusHistoryIsNotNull())
+					{
+						investigationToAmendStatus.setOrdInvStatusHistory(new OrderedInvestigationStatusVoCollection());
+					}
+
+					investigationToAmendStatus.getOrdInvStatusHistory().add(newStatus);
+
+					domain.updateInvestigationStatus(investigationToAmendStatus);
+				}
+
+				if ((ConfigFlag.UI.ORDER_ENTRY_UI_TYPE.getValue().equals("CARE_UK") || ConfigFlag.UI.ORDER_ENTRY_UI_TYPE.getValue().equals("UKSH")) && form.getGlobalContext().RefMan.getCatsReferralIsNotNull()) // WDEV-11881
+				{
+					domain.updateCatsReferralAdditionalInvStatus(form.getGlobalContext().RefMan.getCatsReferral());
+				}
+
+				processOrder(state, engine.hasRight(AppRight.CAN_AUTHORIZE_CLINICAL_IMAGING_ORDERS), engine.hasRight(AppRight.CAN_AUTHORIZE_PATHOLOGY_ORDERS), voOcsOrder);
+				if (form.getGlobalContext().RefMan.getCatsReferral() != null)
+					form.getGlobalContext().RefMan.setCatsReferral(domain.getCatsReferralListVo(form.getGlobalContext().RefMan.getCatsReferral()));// wdev-12864
+				
+				return;
+			}
+			catch (StaleObjectException e)
 			{
-				domain.updateCatsReferralAdditionalInvStatus(form.getGlobalContext().RefMan.getCatsReferral());
+				if (form.getGlobalContext().RefMan.getCatsReferral() != null)
+					form.getGlobalContext().RefMan.setCatsReferral(domain.getCatsReferralListVo(form.getGlobalContext().RefMan.getCatsReferral()));// wdev-12864
+
+				engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
+				engine.close(DialogResult.CANCEL);
+				return;
+			}
+			catch (DomainInterfaceException e)
+			{
+				repeats++;
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
-		catch (StaleObjectException e)
-		{
-			if (form.getGlobalContext().RefMan.getCatsReferral() != null)
-				form.getGlobalContext().RefMan.setCatsReferral(domain.getCatsReferralListVo(form.getGlobalContext().RefMan.getCatsReferral()));// wdev-12864
-
-			engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
-			engine.close(DialogResult.CANCEL);
-			return;
-		}
-
-		processOrder(state, engine.hasRight(AppRight.CAN_AUTHORIZE_CLINICAL_IMAGING_ORDERS), engine.hasRight(AppRight.CAN_AUTHORIZE_PATHOLOGY_ORDERS), voOcsOrder);
-		if (form.getGlobalContext().RefMan.getCatsReferral() != null)
-			form.getGlobalContext().RefMan.setCatsReferral(domain.getCatsReferralListVo(form.getGlobalContext().RefMan.getCatsReferral()));// wdev-12864
+		while (repeats < 3);
+		
+		engine.showMessage("An Error occured during the process. Please try again or start the process again.");
 	}
 
 
 	/**
 	 * Function used to cancel the appointment / or associate with the new investigation (or first investigation in order if multiple are selected for order)
+	 * @throws DomainInterfaceException 
 	 */
-	private void changeInvestigationAppointment(OcsOrderVo newOrder, OrderInvestigationLiteVo investigationToAmend) throws StaleObjectException
+	private void changeInvestigationAppointment(OcsOrderVo newOrder, OrderInvestigationLiteVo investigationToAmend) throws StaleObjectException, DomainInterfaceException
 	{
 		// Get appointment linked to order investigation if any
 		OrderInvWithStatusApptVo orderInvAppointment = domain.getOrderInvestigationAppointment(investigationToAmend);
@@ -4054,9 +4100,6 @@ public class Logic extends BaseLogic
 			if (!Status_Reason.CANCELLED.equals(appointment.getApptStatus()))
 			{
 				cancelAppointment(appointment);
-
-				// OK to do this as this function should only be called in CARE UK project
-				domain.updateCatsReferralCancelStatus(form.getGlobalContext().RefMan.getCatsReferral());
 			}
 		}
 		else
@@ -4131,8 +4174,9 @@ public class Logic extends BaseLogic
 
 	/**
 	 * Function used to cancel appointment (in case the investigation amended has it's modality changed)
+	 * @throws DomainInterfaceException 
 	 */
-	private void cancelAppointment(Booking_AppointmentVo appointment) throws StaleObjectException
+	private void cancelAppointment(Booking_AppointmentVo appointment) throws StaleObjectException, DomainInterfaceException
 	{
 		// Set current appointment status and history to reflect CANCEL status
 		appointment.setApptStatus(Status_Reason.CANCELLED);
@@ -4155,7 +4199,7 @@ public class Logic extends BaseLogic
 		// Open appointment slot
 		if (appointment.getSessionSlotIsNotNull())
 		{
-			appointment.getSessionSlot().setStatus(Status_Reason.SLOTOPENED);
+			appointment.getSessionSlot().setStatus(appointment.getSession().getAppropiateSessionSlotStatus()); //WDEV-18940
 		}
 
 		domain.cancelAppointment(appointment, ActionRequestType.NOTIFY_APPT_CANCEL, "Investigation Ammended & Madality Changed - Appointment Cancelled");
@@ -4185,6 +4229,9 @@ public class Logic extends BaseLogic
 		{
 			status.setApptTime(appointment.getApptStartTime());
 		}
+		
+		status.setSession(appointment.getSessionIsNotNull() ? appointment.getSession() : null); //WDEV-23185
+		
 		return status;
 	}
 
@@ -4219,6 +4266,12 @@ public class Logic extends BaseLogic
 	{
 		boolean printLabels = false;
 		boolean clinicalInvestigationsOnly = true;
+		
+		//WDEV-16808
+		boolean hasPathologyInvestigations = false;
+		boolean hasClinicalImagingInvestigations = false;
+		boolean hasClinicalInvestigations = false;
+		//-----------
 		
 		form.getGlobalContext().OCRR.setPatientOrNowOnly(Boolean.TRUE);
 		for (int i = 0; i < voOcsOrder.getSpecimens().size(); i++)
@@ -4260,9 +4313,21 @@ public class Logic extends BaseLogic
 		{
 			if (!Category.CLINICAL.equals(investigation.getInvestigation().getInvestigationIndex().getCategory()))
 				clinicalInvestigationsOnly = false;
+			
+			//WDEV-16808
+			if (Category.CLINICALIMAGING.equals(investigation.getInvestigation().getInvestigationIndex().getCategory()))
+				hasClinicalImagingInvestigations = true;
+			
+			if (Category.PATHOLOGY.equals(investigation.getInvestigation().getInvestigationIndex().getCategory()))
+				hasPathologyInvestigations = true;
+			
+			if (Category.CLINICAL.equals(investigation.getInvestigation().getInvestigationIndex().getCategory()))
+				hasClinicalInvestigations = true;
+			//--------------
 		}
-
-		if (printLabels == true && (canAuthorisePathology == true || canAuthoriseClinicalImaging == true || clinicalInvestigationsOnly == true))
+		
+		//WDEV-16808
+		if (printLabels == true && ((canAuthorisePathology == true && hasPathologyInvestigations) || (canAuthoriseClinicalImaging == true && hasClinicalImagingInvestigations) || clinicalInvestigationsOnly == true || (Boolean.TRUE.equals(hasClinicalInvestigations)) && (canAuthorisePathology || canAuthoriseClinicalImaging)))
 		{
 			form.getGlobalContext().OCRR.PathologyResults.setOrder(voOcsOrder);
 
@@ -4621,7 +4686,15 @@ public class Logic extends BaseLogic
 		voOcsOrder.setWasProcessed(Boolean.FALSE);
 
 		// WDEV-4578
-		voOcsOrder.setCareContext(form.getGlobalContext().Core.CareContextSelectDialog.getChosenCareContext());
+		if(ConfigFlag.DOM.CREATE_ORDERS_WITH_CARECONTEXT_ONLY.getValue())
+		{
+			voOcsOrder.setCareContext(form.getGlobalContext().Core.CareContextSelectDialog.getChosenCareContext());
+		}
+		else
+		{
+			voOcsOrder.setCareContext(form.getGlobalContext().Core.getCurrentCareContext());
+		}
+		
 		if (form.getGlobalContext().Core.CareContextSelectDialog.getChosenCareContextIsNotNull())
 			voOcsOrder.setOrderingHospital(form.getGlobalContext().Core.CareContextSelectDialog.getChosenCareContext().getOrderingHospital());
 	}
@@ -7051,39 +7124,36 @@ public class Logic extends BaseLogic
 				form.lyrDetails().tabGenDetails().grpPatientLocation().setValue(grpPatientLocationEnumeration.rdoClinic);
 
 				// WDEV-14424
-				if (!Boolean.TRUE.equals(ConfigFlag.UI.OCS_ORDERING_DEFAULT_HOSPITAL_AND_OP_DEPT_TO_BLANK.getValue()))
+				if (form.getForms().Clinical.ClinicListWithICPActions.equals(form.getGlobalContext().Core.getSelectingPatientForm()))
 				{
-					if (form.getForms().Clinical.ClinicListWithICPActions.equals(form.getGlobalContext().Core.getSelectingPatientForm()))
+					// Default the hospital from Clinic List with ICP Actions, else default to currently selected one
+					LocShortVo orderingLocation = form.getGlobalContext().Core.getSelectedLocationForOrdering();
+					if (orderingLocation != null)
 					{
-						// Default the hospital from Clinic List with ICP Actions, else default to currently selected one
-						LocShortVo orderingLocation = form.getGlobalContext().Core.getSelectedLocationForOrdering();
-						if (orderingLocation != null)
-						{
-							if (LocationType.HOSP.equals(orderingLocation.getType()))
-								defaultInHospital(orderingLocation);
-							else
-								displayHospital(orderingLocation);
-						}
+						if (LocationType.HOSP.equals(orderingLocation.getType()))
+							defaultInHospital(orderingLocation);
 						else
-						{
-							displayHospital(voOutPatAttend.getClinic());
-							form.lyrDetails().tabGenDetails().qmbLocation().setValue(voOutPatAttend.getClinic());
-						}
-						
-						loadOutpatientDepartment();
+							displayHospital(orderingLocation);
 					}
 					else
 					{
-    					form.lyrDetails().tabGenDetails().qmbLocation().newRow(voOutPatAttend.getClinic(), voOutPatAttend.getClinic().getClinicName());
-    					displayHospital(voOutPatAttend.getClinic());
-    
-    					// WDEV-9075
-    					if (voOutPatAttend.getClinicIsNotNull())
-    						form.lyrDetails().tabGenDetails().qmbLocation().newRow(voOutPatAttend.getClinic(), voOutPatAttend.getClinic().getClinicName());
-    
-    					form.lyrDetails().tabGenDetails().qmbLocation().setValue(voOutPatAttend.getClinic());
+						displayHospital(voOutPatAttend.getClinic());
+						form.lyrDetails().tabGenDetails().qmbLocation().setValue(voOutPatAttend.getClinic());
 					}
 				}
+				else
+				{
+					form.lyrDetails().tabGenDetails().qmbLocation().newRow(voOutPatAttend.getClinic(), voOutPatAttend.getClinic().getClinicName());
+					displayHospital(voOutPatAttend.getClinic());
+
+					// WDEV-9075
+					if (voOutPatAttend.getClinicIsNotNull())
+						form.lyrDetails().tabGenDetails().qmbLocation().newRow(voOutPatAttend.getClinic(), voOutPatAttend.getClinic().getClinicName());
+
+					form.lyrDetails().tabGenDetails().qmbLocation().setValue(voOutPatAttend.getClinic());
+				}
+				
+				loadOutpatientDepartment();
 			}
 			
 			form.lyrDetails().tabGenDetails().qmbClinician().clear();
@@ -7123,20 +7193,6 @@ public class Logic extends BaseLogic
 					form.lyrDetails().tabGenDetails().grpPatientLocation().setValue(grpPatientLocationEnumeration.rdoClinic);
 					loadOutpatientDepartment();
 				}
-//    			else if (form.getForms().Clinical.ClinicListWithICPActions.equals(form.getGlobalContext().Core.getSelectingPatientForm()))
-//    			{
-//					// Default the hospital from Clinic List with ICP Actions, else default to currently selected one
-//					LocShortVo orderingLocation = form.getGlobalContext().Core.getSelectedLocationForOrdering();
-//					if (orderingLocation != null)
-//					{
-//						if (LocationType.HOSP.equals(orderingLocation.getType()))
-//							defaultInHospital(orderingLocation);
-//						else
-//							displayHospital(orderingLocation);
-//					}
-//    				
-//    				loadOutpatientDepartment();
-//    			}
 				else	// If patient was not selected from Outpatient List or Clinic List with ICP Actions
 				{
         			form.lyrDetails().tabGenDetails().grpPatientLocation().setValue(grpPatientLocationEnumeration.rdoAandE);
@@ -7181,7 +7237,7 @@ public class Logic extends BaseLogic
 
 		// WDEV-11915
 		if (grpPatientLocationEnumeration.rdoClinic.equals(form.lyrDetails().tabGenDetails().grpPatientLocation().getValue())
-				&& (!Boolean.TRUE.equals(ConfigFlag.UI.OCS_ORDERING_DEFAULT_HOSPITAL_AND_OP_DEPT_TO_BLANK.getValue()) || voOutPatAttend == null))
+				&& (voOutPatAttend == null))
 		{
 			loadOutpatientDepartment();
 			setDepartmentValue();
@@ -7239,17 +7295,21 @@ public class Logic extends BaseLogic
 	/**
 	 * method that goes back up the organisational structure to find a Locsite of type hospital for the LocLiteVo or ClinicLiteVo
 	 */
-	private void displayHospital(ValueObject voLocOrClinic)
+	private void displayHospital(ValueObject locationOrClinic)
 	{
-		ILocation iLocation = domain.getParentHospital(voLocOrClinic);
+		ILocation hospital = domain.getParentHospital(locationOrClinic);
 		
-		defaultInHospital(iLocation);
+		defaultInHospital(hospital);
 	}
 	
 
+	/**
+	 * Will only default in hospital if flag is set to false
+	 */
 	private void defaultInHospital(ILocation hospital)
 	{
-		if (hospital != null)
+		if (!ConfigFlag.UI.OCS_ORDERING_DEFAULT_HOSPITAL_AND_OP_DEPT_TO_BLANK.getValue()
+				&& hospital != null)
 		{
 			if (!form.lyrDetails().tabGenDetails().cmbHospital().getValues().contains(hospital))
 				form.lyrDetails().tabGenDetails().cmbHospital().newRow(hospital, hospital.getName());
@@ -7633,14 +7693,14 @@ public class Logic extends BaseLogic
 
 	private LocShortMappingsVoCollection listActiveHospitals()
 	{
-		LocShortMappingsVoCollection voCollHospitals = form.getLocalContext().getActiveHospitals();
-		if (voCollHospitals == null)
+		LocShortMappingsVoCollection hospitals = form.getLocalContext().getActiveHospitals();
+		if (hospitals == null)
 		{
-			voCollHospitals = domain.listActiveHospitals();
-			form.getLocalContext().setActiveHospitals(voCollHospitals);
+			hospitals = domain.listActiveHospitals();
+			form.getLocalContext().setActiveHospitals(hospitals);
 		}
 
-		return voCollHospitals;
+		return hospitals;
 	}
 
 	private void loadHospitals(LocShortMappingsVoCollection voCollHospitals, DynamicGridCell cellReportTo)

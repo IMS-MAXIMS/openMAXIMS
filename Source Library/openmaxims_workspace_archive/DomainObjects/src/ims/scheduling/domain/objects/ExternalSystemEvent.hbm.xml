@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:37 -->
+<hibernate-mapping>
+	<class name="ims.scheduling.domain.objects.ExternalSystemEvent" table="schl_externalsy" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: appointment -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="appointment" class="ims.scheduling.domain.objects.Booking_Appointment" unique="true" foreign-key="externalsy_appointmen_fk" access="field" cascade="save-update">
+			<column name="appointmen" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: wasProcessed -->
+<!-- debug: processedDateTime -->
+<!-- debug: eventType -->
+<!-- debug: providerSystem -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="providerSystem" class="ims.core.admin.domain.objects.ProviderSystem" unique="true" foreign-key="externalsy_providersy_fk" access="field" cascade="save-update">
+			<column name="providersy" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: messageStatus -->
+<!-- debug: msgText -->
+<!-- debug: failureMsg -->
+<!-- debug: investigation -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="investigation" class="ims.ocrr.orderingresults.domain.objects.OrderInvestigation" unique="true" foreign-key="externalsy_investigat_fk" access="field" cascade="save-update">
+			<column name="investigat" sql-type="numeric(10,0)" not-null="false" unique="false"  index='inv_idx' />
+		</many-to-one>
+<!-- debug: ackText -->
+<!-- debug: cancelledAppointmentLocation -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="cancelledAppointmentLocation" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="externalsy_cancelleda_fk" access="field" cascade="save-update">
+			<column name="cancelleda" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="wasProcessed" type="boolean" access="field" update="true">
+			<column name="wasprocess"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="processedDateTime" type="timestamp" access="field" update="true">
+			<column name="processedd"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="eventType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_eventtype" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="messageStatus" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_messagesta" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="msgText" type="text" access="field" update="true" > 
+			<column name="msgtext"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="failureMsg" type="string" access="field" update="true" > 
+			<column name="failuremsg" length="1000"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="ackText" type="string" access="field" update="true" > 
+			<column name="acktext" length="1000"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.admin.pas.domain.objects;
@@ -77,6 +82,7 @@ public class PASEvent extends ims.domain.DomainObject implements ims.domain.Syst
 	private ims.domain.lookups.LookupInstance episodeFinancialClass;
 	/** PV1-7 */
 	private ims.core.resource.people.domain.objects.Hcp attendingHCP;
+	private ims.core.clinical.domain.objects.Service service;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public PASEvent (Integer id, int ver)
@@ -222,6 +228,13 @@ public class PASEvent extends ims.domain.DomainObject implements ims.domain.Syst
 	}
 	public void setAttendingHCP(ims.core.resource.people.domain.objects.Hcp attendingHCP) {
 		this.attendingHCP = attendingHCP;
+	}
+
+	public ims.core.clinical.domain.objects.Service getService() {
+		return service;
+	}
+	public void setService(ims.core.clinical.domain.objects.Service service) {
+		this.service = service;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -433,6 +446,14 @@ public class PASEvent extends ims.domain.DomainObject implements ims.domain.Syst
 		    auditStr.append(attendingHCP.getId());
 		}
 	    auditStr.append("; ");
+		auditStr.append("\r\n*service* :");
+		if (service != null)
+		{
+			auditStr.append(toShortClassName(service));
+				
+		    auditStr.append(service.getId());
+		}
+	    auditStr.append("; ");
 		return auditStr.toString();
 	}
 	
@@ -578,6 +599,12 @@ public class PASEvent extends ims.domain.DomainObject implements ims.domain.Syst
 			sb.append("<attendingHCP>");
 			sb.append(this.getAttendingHCP().toXMLString(domMap)); 	
 			sb.append("</attendingHCP>");		
+		}
+		if (this.getService() != null)
+		{
+			sb.append("<service>");
+			sb.append(this.getService().toXMLString(domMap)); 	
+			sb.append("</service>");		
 		}
 		return sb.toString();
 	}
@@ -840,6 +867,12 @@ public class PASEvent extends ims.domain.DomainObject implements ims.domain.Syst
 			fldEl = fldEl.element("class");		
 			obj.setAttendingHCP(ims.core.resource.people.domain.objects.Hcp.getHcpfromXML(fldEl, factory, domMap)); 
 		}
+		fldEl = el.element("service");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setService(ims.core.clinical.domain.objects.Service.getServicefromXML(fldEl, factory, domMap)); 
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -869,6 +902,7 @@ public class PASEvent extends ims.domain.DomainObject implements ims.domain.Syst
 		public static final String PASSpecialty = "pASSpecialty";
 		public static final String EpisodeFinancialClass = "episodeFinancialClass";
 		public static final String AttendingHCP = "attendingHCP";
+		public static final String Service = "service";
 	}
 }
 

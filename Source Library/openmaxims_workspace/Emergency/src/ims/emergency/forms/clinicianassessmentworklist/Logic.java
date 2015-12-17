@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -57,6 +62,7 @@ import ims.emergency.vo.TriagePriorityKpConfigVo;
 import ims.emergency.vo.TriageProtocolAssessmentForTriageVo;
 import ims.emergency.vo.TriageProtocolAssessmentForTriageVoCollection;
 import ims.emergency.vo.enums.DischargeDetails_CustomEvents;
+import ims.emergency.vo.enums.TriageAssessmentAction;
 import ims.emergency.vo.lookups.TrackingStatus;
 import ims.emergency.vo.lookups.TriagePriority;
 import ims.framework.Control;
@@ -1216,18 +1222,18 @@ public class Logic extends BaseLogic
 	private void initializePatientTriageLayer(PatientForTriageVo patient, EpisodeOfCareRefVo episode, CareContextRefVo careContext, ClinicalProblemRefVo problem, PatientICPRefVo icp) 
 	{
 		form.lyrPatientTriage().tabNotes().ccMedicNotes().initialize(patient, episode, careContext, problem);
-		
+		TrackingForClinicianWorklistAndTriageVo trackVo = domain.getTrackingForClinicianWorklistAndTriageVo(form.getLocalContext().getSelectedWaitingPatient());  //wdev-17819
 		//WDEV-15996
 		if (ConfigFlag.UI.DISPLAY_EXTENDED_OBS_DATA_SET.getValue()==false)
 		{
-			form.lyrPatientTriage().tabObs().ccVitalSigns().initialize();
+			form.lyrPatientTriage().tabObs().ccVitalSigns().initialize(trackVo.getTriageDetails()); //WDEV-20426
 		}
 		else
 		{
 			initializeObsLayerTabs();
 		}
 		
-		TrackingForClinicianWorklistAndTriageVo trackVo = domain.getTrackingForClinicianWorklistAndTriageVo(form.getLocalContext().getSelectedWaitingPatient());  //wdev-17819
+		
 		form.lyrPatientTriage().tabPatientMeds().ccPatientMeds().initialize(patient, careContext, episode,trackVo);	//wdev-17819
 		form.lyrPatientTriage().tabRelevantPMH().ccRelevantPMH().initialize(careContext, patient, episode);
 		form.lyrPatientTriage().tabSysReview().ccSystemReview().initialize(careContext, episode, patient, problem);
@@ -1241,7 +1247,7 @@ public class Logic extends BaseLogic
 	{
 		if (form.lyrPatientTriage().tabObs2().lyrObs2().tabVitalSigns().isVisible())
 		{
-			form.lyrPatientTriage().tabObs2().lyrObs2().tabVitalSigns().ccVitalSignsObs().initialize();
+			form.lyrPatientTriage().tabObs2().lyrObs2().tabVitalSigns().ccVitalSignsObs().initialize(form.getLocalContext().getSelectedWaitingPatient().getTriageDetails()); //WDEV-20426
 		}
 		else if (form.lyrPatientTriage().tabObs2().lyrObs2().tabUrinalysis().isVisible())
 		{
@@ -1614,7 +1620,7 @@ public class Logic extends BaseLogic
 			return;
 		
 		form.getGlobalContext().Emergency.setTriageProtocolAssessment(form.getLocalContext().getSelectedWaitingPatient().getTriageDetails().getCurrentTriageAssessment());
-		engine.open(form.getForms().Emergency.TriageProtocolAssessment);
+		engine.open(form.getForms().Emergency.TriageProtocolAssessment, new Object[] {TriageAssessmentAction.EDIT});
 	}
 
 	@Override
@@ -1624,12 +1630,12 @@ public class Logic extends BaseLogic
 		{
 			case GenForm.ContextMenus.EmergencyNamespace.OtherProblemsTriageMenu.ADD:
 				form.getGlobalContext().Emergency.setTriageProtocolAssessment(null);
-				engine.open(form.getForms().Emergency.TriageProtocolAssessment);
+				engine.open(form.getForms().Emergency.TriageProtocolAssessment, new Object[] {TriageAssessmentAction.ADD});
 			break;
 			
 			case GenForm.ContextMenus.EmergencyNamespace.OtherProblemsTriageMenu.EDIT:
 				form.getGlobalContext().Emergency.setTriageProtocolAssessment(form.grdProblem().getValue());
-				engine.open(form.getForms().Emergency.TriageProtocolAssessment);
+				engine.open(form.getForms().Emergency.TriageProtocolAssessment, new Object[] {TriageAssessmentAction.EDIT});
 			break;
 		}
 	}
@@ -1801,7 +1807,7 @@ public class Logic extends BaseLogic
 		{
     		if (tab.equals(form.lyrPatientTriage().tabObs2().lyrObs2().tabVitalSigns()))
     		{
-    			form.lyrPatientTriage().tabObs2().lyrObs2().tabVitalSigns().ccVitalSignsObs().initialize();
+    			form.lyrPatientTriage().tabObs2().lyrObs2().tabVitalSigns().ccVitalSignsObs().initialize(form.getLocalContext().getSelectedWaitingPatient().getTriageDetails()); //WDEV-20426
     		}
     		else if (tab.equals(form.lyrPatientTriage().tabObs2().lyrObs2().tabUrinalysis()))
     		{

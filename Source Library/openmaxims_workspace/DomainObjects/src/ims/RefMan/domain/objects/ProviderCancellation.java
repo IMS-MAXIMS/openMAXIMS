@@ -1,9 +1,33 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.RefMan.domain.objects;
@@ -42,6 +66,7 @@ public class ProviderCancellation extends ims.domain.DomainObject implements ims
 	private Boolean wasOutputtedToWeeklyReport;
 	/** wasOutputtedToMonthlyReport */
 	private Boolean wasOutputtedToMonthlyReport;
+	private ims.pathways.domain.objects.PathwaysRTTClockImpact rTTClockImpact;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public ProviderCancellation (Integer id, int ver)
@@ -126,6 +151,13 @@ public class ProviderCancellation extends ims.domain.DomainObject implements ims
 		this.wasOutputtedToMonthlyReport = wasOutputtedToMonthlyReport;
 	}
 
+	public ims.pathways.domain.objects.PathwaysRTTClockImpact getRTTClockImpact() {
+		return rTTClockImpact;
+	}
+	public void setRTTClockImpact(ims.pathways.domain.objects.PathwaysRTTClockImpact rTTClockImpact) {
+		this.rTTClockImpact = rTTClockImpact;
+	}
+
 	public ims.domain.SystemInformation getSystemInformation() {
 		if (systemInformation == null) systemInformation = new ims.domain.SystemInformation();
 		return systemInformation;
@@ -187,6 +219,14 @@ public class ProviderCancellation extends ims.domain.DomainObject implements ims
 	    auditStr.append("; ");
 		auditStr.append("\r\n*wasOutputtedToMonthlyReport* :");
 		auditStr.append(wasOutputtedToMonthlyReport);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*rTTClockImpact* :");
+		if (rTTClockImpact != null)
+		{
+			auditStr.append(toShortClassName(rTTClockImpact));
+				
+		    auditStr.append(rTTClockImpact.getId());
+		}
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -279,6 +319,12 @@ public class ProviderCancellation extends ims.domain.DomainObject implements ims
 			sb.append("<wasOutputtedToMonthlyReport>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isWasOutputtedToMonthlyReport().toString()));
 			sb.append("</wasOutputtedToMonthlyReport>");		
+		}
+		if (this.getRTTClockImpact() != null)
+		{
+			sb.append("<rTTClockImpact>");
+			sb.append(this.getRTTClockImpact().toXMLString(domMap)); 	
+			sb.append("</rTTClockImpact>");		
 		}
 		return sb.toString();
 	}
@@ -484,6 +530,12 @@ public class ProviderCancellation extends ims.domain.DomainObject implements ims
 		{	
     		obj.setWasOutputtedToMonthlyReport(new Boolean(fldEl.getTextTrim()));	
 		}
+		fldEl = el.element("rTTClockImpact");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setRTTClockImpact(ims.pathways.domain.objects.PathwaysRTTClockImpact.getPathwaysRTTClockImpactfromXML(fldEl, factory, domMap)); 
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -504,6 +556,7 @@ public class ProviderCancellation extends ims.domain.DomainObject implements ims
 		public static final String UniqueLineRefNo = "uniqueLineRefNo";
 		public static final String WasOutputtedToWeeklyReport = "wasOutputtedToWeeklyReport";
 		public static final String WasOutputtedToMonthlyReport = "wasOutputtedToMonthlyReport";
+		public static final String RTTClockImpact = "rTTClockImpact";
 	}
 }
 

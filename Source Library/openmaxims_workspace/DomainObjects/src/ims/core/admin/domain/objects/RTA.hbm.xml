@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:36 -->
+<!-- Generated: 12/10/2015, 13:30 -->
 <hibernate-mapping>
 	<class name="ims.core.admin.domain.objects.RTA" table="core_rta" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -60,12 +60,41 @@
  			</property>
 
  			<property name="middleName" type="string" access="field" update="true">
- 				<column name="drivernamemiddlename" length="40" not-null="false"  unique="false"   />
+ 				<column name="drivernamemiddlename" length="100" not-null="false"  unique="false"   />
  			</property>
 
  			<!-- debug: IsLookup -->
  			<many-to-one name="title" class="ims.domain.lookups.LookupInstance" access="field">
  				<column name="lkp_drivernametitle" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="namesuffix" type="string" access="field" update="true">
+ 				<column name="drivernamenamesuffix" length="35" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="objectidentifier" type="string" access="field" update="true">
+ 				<column name="drivernameobjectiden" length="14" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="beffdate" type="date" access="field" update="true">
+ 				<column name="drivernamebeffdate" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="beffdatecnf" type="boolean" access="field" update="true">
+ 				<column name="drivernamebeffdatecn" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="betdate" type="date" access="field" update="true">
+ 				<column name="drivernamebetdate" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="betdatecnf" type="boolean" access="field" update="true">
+ 				<column name="drivernamebetdatecnf" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<!-- debug: IsLookup -->
+ 			<many-to-one name="pdsUpdateMode" class="ims.domain.lookups.LookupInstance" access="field">
+ 				<column name="lkp_drivernamepdsupdatem" sql-type="numeric(10,0)" not-null="false" unique="false"   />
  			</many-to-one>
  		</component>
 <!-- debug: driverAddress -->
@@ -129,6 +158,57 @@
 
  			<property name="otherphone" type="string" access="field" update="true">
  				<column name="driveraddrotherphone" length="30" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<!-- debug: IsLookup -->
+ 			<many-to-one name="areaOfResidence" class="ims.domain.lookups.LookupInstance" access="field">
+ 				<column name="lkp_driveraddrareaofresi" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="pafkey" type="string" access="field" update="true">
+ 				<column name="driveraddrpafkey" length="8" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="description" type="string" access="field" update="true">
+ 				<column name="driveraddrdescriptio" length="100" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="objectidentifier" type="string" access="field" update="true">
+ 				<column name="driveraddrobjectiden" length="14" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="beffdate" type="date" access="field" update="true">
+ 				<column name="driveraddrbeffdate" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="beffdatecnf" type="boolean" access="field" update="true">
+ 				<column name="driveraddrbeffdatecn" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="betdate" type="date" access="field" update="true">
+ 				<column name="driveraddrbetdate" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="betdatecnf" type="boolean" access="field" update="true">
+ 				<column name="driveraddrbetdatecnf" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<!-- debug: IsLookup -->
+ 			<many-to-one name="pdsUpdateMode" class="ims.domain.lookups.LookupInstance" access="field">
+ 				<column name="lkp_driveraddrpdsupdatem" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<!-- debug: IsLookup -->
+ 			<many-to-one name="country" class="ims.domain.lookups.LookupInstance" access="field">
+ 				<column name="lkp_driveraddrcountry" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="noFixedAbode" type="boolean" access="field" update="true">
+ 				<column name="driveraddrnofixedabo" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="careHome" type="boolean" access="field" update="true">
+ 				<column name="driveraddrcarehome" not-null="false"  unique="false"   />
  			</property>
  		</component>
 <!-- debug: notes -->

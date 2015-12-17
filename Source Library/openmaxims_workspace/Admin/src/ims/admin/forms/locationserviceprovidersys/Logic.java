@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -207,7 +212,7 @@ public class Logic extends BaseLogic
 		
 		if(checkIfProviderSystemExistInNode(voLocSvcProviderSys) == true)
 		{
-			engine.showErrors(new String[]{"You can not replace a provider with an existing provider."});
+			engine.showErrors(new String[]{"You cannot replace a provider with another already associated with this location."}); //WDEV-18762
 			return false;
 		}
 
@@ -310,7 +315,7 @@ public class Logic extends BaseLogic
 		clearInstanceControls();
 		voOrg.setParentOrganisation(null);
 		OrganisationVoCollection voColl = domain.listOrganisation(voOrg);
-		new OrgTreeHelper(form.getImages().Admin.Organisation, form.getImages().Admin.Organisation, form.getImages().Admin.LocationSite, form.getImages().Admin.LocationSite, form.getImages().Admin.Location, form.getImages().Admin.Location).populateOrgTree(form.treHeader(), voColl, false, false, true);
+		new OrgTreeHelper(form.getImages().Admin.Organisation, form.getImages().Admin.Organisation, form.getImages().Admin.LocationSite, form.getImages().Admin.LocationSite, form.getImages().Admin.Location, form.getImages().Admin.Location).populateOrgTree(form.treHeader(), voColl, false, false, false, true, false);
 		form.treHeader().expandAll();
 		form.setMode(FormMode.VIEW);
 	}

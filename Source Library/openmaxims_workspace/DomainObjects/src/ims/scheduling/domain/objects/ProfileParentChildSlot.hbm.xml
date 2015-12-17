@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:37 -->
+<!-- Generated: 12/10/2015, 13:31 -->
 <hibernate-mapping>
 	<class name="ims.scheduling.domain.objects.ProfileParentChildSlot" table="schl_profileparentc" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -35,6 +35,15 @@
 <!-- debug: isActive -->
 <!-- debug: duration -->
 <!-- debug: endTm -->
+<!-- debug: priority -->
+<!-- debug: slotResp -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="slotResp" class="ims.scheduling.domain.objects.Profile_ListOwner" unique="true" foreign-key="profileparentc_slotresp_fk" access="field" cascade="save-update">
+			<column name="slotresp" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: numberSlotsReq -->
 <!-- debug: !IsAssociation && !IsCollection -->
 
 <!-- debug: !IsLookup -->
@@ -60,6 +69,16 @@
 <!-- debug: !IsLookup -->
 		<property name="endTm" type="string" access="field" update="true">
 			<column name="endtm"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="priority" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_priority" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="numberSlotsReq" type="integer" access="field" update="true">
+			<column name="numberslot"  not-null="false" unique="false"  />
 		</property>
 	</class>
 </hibernate-mapping>

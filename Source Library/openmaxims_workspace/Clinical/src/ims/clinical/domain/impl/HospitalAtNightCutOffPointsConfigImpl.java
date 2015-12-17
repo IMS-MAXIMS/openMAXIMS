@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -46,7 +51,7 @@ public class HospitalAtNightCutOffPointsConfigImpl extends BaseHospitalAtNightCu
 	public ims.clinical.vo.HospitalAtNightCutOffPointsConfigVoCollection listHospitalsConfig()
 	{
 		DomainFactory factory = getDomainFactory();
-		String query = "from HospitalAtNightCutOverPointsConfig as h1_1 order by UPPER(h1_1.hospital.name) asc  ";
+		String query = "from HospitalAtNightCutOverPointsConfig as h1_1 order by h1_1.hospital.upperName asc  "; //WDEV-20219 UPPER(h1_1.hospital.name)
 
 		return HospitalAtNightCutOffPointsConfigVoAssembler.createHospitalAtNightCutOffPointsConfigVoCollectionFromHospitalAtNightCutOverPointsConfig(factory.find(query));
 	}
@@ -107,7 +112,7 @@ public class HospitalAtNightCutOffPointsConfigImpl extends BaseHospitalAtNightCu
 		hql.append(" select hosp from LocSite as hosp left join hosp.type as hosptype");
 		hql.append(" where hosp.name like :HospNam and hosp.isActive = 1 and hosp.isVirtual = 0 and hosptype.id=:HospType");
 		hql.append(" and hosp.id not in (select h1_1.hospital.id  from HospitalAtNightCutOverPointsConfig as h1_1)"); //WDEV-14022 
-		hql.append(" order by UPPER(hosp.name) asc");
+		hql.append(" order by hosp.upperName asc"); //WDEV-20219 UPPER(hosp.name)
 
 		markers.add("HospNam");
 		markers.add("HospType");
@@ -118,7 +123,6 @@ public class HospitalAtNightCutOffPointsConfigImpl extends BaseHospitalAtNightCu
 
 	}
 
-//	@Override
 	public void deleteHospitalConfig(HospitalAtNightCutOffPointsConfigVo hospitalConfig) throws ForeignKeyViolationException
 	{
 		if (hospitalConfig == null)
@@ -139,7 +143,6 @@ public class HospitalAtNightCutOffPointsConfigImpl extends BaseHospitalAtNightCu
 
 	}
 
-//	@Override
 	public Boolean isStale(HospitalAtNightCutOffPointsConfigVo selectedHospitalConfig)
 	{
 

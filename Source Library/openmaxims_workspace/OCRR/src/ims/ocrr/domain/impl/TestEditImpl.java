@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -226,17 +231,23 @@ public class TestEditImpl extends DomainImpl implements ims.ocrr.domain.TestEdit
 					// its not an addon and it is pathology
 					// ensure that no records exist where specimetype is equal
 					// and is addon = true
-					String hql = "select inv from Investigation inv left join inv.pathInvDetails path left join path.specimens as spec left join inv.investigationIndex idx where inv.providerService.id = :idProviderService and inv.providerInvCode = :invCode and inv.activeStatus = :activeStatus ";
+					////WDEV-19696 change - ensure that no records exist for the same service, provider system, inv. code and specimen even if provider location is different.
+					String hql = "select inv from Investigation inv left join inv.pathInvDetails path left join path.specimens as spec left join inv.investigationIndex idx where (inv.providerService.id = :idProviderService or (inv.providerService.locationService.service.id = :idService and inv.providerService.providerSystem.id = :idProvSystem)) and inv.providerInvCode = :invCode and inv.activeStatus = :activeStatus ";
 					ArrayList markers = new ArrayList();
 					ArrayList values = new ArrayList();
 
 					markers.add("idProviderService");
 					markers.add("invCode");
 					markers.add("activeStatus");
+					markers.add("idService"); //WDEV-19696
+					markers.add("idProvSystem"); //WDEV-19696
 
 					values.add(voInvestigationIndex.getInvestigations().get(i).getProviderService().getID_LocSvcProviderSys());
 					values.add(voInvestigationIndex.getInvestigations().get(i).getProviderInvCode());
 					values.add(getDomLookup(PreActiveActiveInactiveStatus.ACTIVE));
+					//WDEV-19696
+					values.add(voInvestigationIndex.getInvestigations().get(i).getProviderService().getLocationService().getService().getID_Service());
+					values.add(voInvestigationIndex.getInvestigations().get(i).getProviderService().getProviderSystem().getID_ProviderSystem());
 
 					if (isPathology)
 					{
@@ -366,12 +377,16 @@ public class TestEditImpl extends DomainImpl implements ims.ocrr.domain.TestEdit
 	 * WDEV-4338 07/04/08 checks for if a certain taxonomy is already in use.
 	 * 
 	 */
-
-	public Boolean checkDuplicateTaxonomyMapping(TaxonomyMap voTaxonomyMap)
+	public Boolean checkDuplicateTaxonomyMapping(TaxonomyMap voTaxonomyMap,	InvestigationIndexRefVo investigationIndex) 
 	{
 		DomainFactory factory = getDomainFactory();
-
-		String hql = "select map.taxonomyCode" + " from InvestigationIndex as index left join index.taxonomyMap as map" + " where(map.taxonomyCode ='" + voTaxonomyMap.getTaxonomyCode().toString() + "')";
+		
+		String hql=null;
+		// WDEV-19728 - When checking for duplicates, we need to ensure that it isn't the current record we are checking against!
+		if (investigationIndex == null)
+			hql = "select map.taxonomyCode" + " from InvestigationIndex as index left join index.taxonomyMap as map" + " where(map.taxonomyCode ='" + voTaxonomyMap.getTaxonomyCode().toString() + "')";
+		else
+			hql = "select map.taxonomyCode" + " from InvestigationIndex as index left join index.taxonomyMap as map" + " where  index.id != " + investigationIndex.getID_InvestigationIndex() + " and (map.taxonomyCode ='" + voTaxonomyMap.getTaxonomyCode().toString() + "')";
 
 		List duplicates = factory.find(hql);
 
@@ -856,6 +871,7 @@ public class TestEditImpl extends DomainImpl implements ims.ocrr.domain.TestEdit
 		}
 		return fResult.toString();
 	}
+
 
 
 	

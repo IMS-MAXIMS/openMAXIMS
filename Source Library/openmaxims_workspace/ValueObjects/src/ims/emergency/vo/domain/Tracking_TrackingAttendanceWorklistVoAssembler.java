@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.emergency.vo.domain;
@@ -64,6 +69,10 @@ public class Tracking_TrackingAttendanceWorklistVoAssembler
 		valueObjectDest.setCurrentArea(valueObjectSrc.getCurrentArea());
 		// SeenBy
 		valueObjectDest.setSeenBy(valueObjectSrc.getSeenBy());
+		// SeenByNurse
+		valueObjectDest.setSeenByNurse(valueObjectSrc.getSeenByNurse());
+		// RequiringDischargeDocumentationReview
+		valueObjectDest.setRequiringDischargeDocumentationReview(valueObjectSrc.getRequiringDischargeDocumentationReview());
 	 	return valueObjectDest;
 	 }
 
@@ -368,6 +377,10 @@ public class Tracking_TrackingAttendanceWorklistVoAssembler
 		valueObject.setCurrentArea(ims.emergency.vo.domain.TrackingAreaForTrackingLiteVoAssembler.create(map, domainObject.getCurrentArea()) );
 		// SeenBy
 		valueObject.setSeenBy(ims.emergency.vo.domain.SeenByForTrackingAndAttendanceWorklistVoAssembler.create(map, domainObject.getSeenBy()) );
+		// SeenByNurse
+		valueObject.setSeenByNurse(ims.emergency.vo.domain.SeenByForTrackingAndAttendanceWorklistVoAssembler.create(map, domainObject.getSeenByNurse()) );
+		// RequiringDischargeDocumentationReview
+		valueObject.setRequiringDischargeDocumentationReview( domainObject.isRequiringDischargeDocumentationReview() );
  		return valueObject;
 	 }
 
@@ -504,6 +517,24 @@ public class Tracking_TrackingAttendanceWorklistVoAssembler
 			}
 		}
 		domainObject.setSeenBy(value7);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.emergency.domain.objects.SeenByHCP value8 = null;
+		if ( null != valueObject.getSeenByNurse() ) 
+		{
+			if (valueObject.getSeenByNurse().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getSeenByNurse()) != null)
+				{
+					value8 = (ims.emergency.domain.objects.SeenByHCP)domMap.get(valueObject.getSeenByNurse());
+				}
+			}
+			else
+			{
+				value8 = (ims.emergency.domain.objects.SeenByHCP)domainFactory.getDomainObject(ims.emergency.domain.objects.SeenByHCP.class, valueObject.getSeenByNurse().getBoId());
+			}
+		}
+		domainObject.setSeenByNurse(value8);
+		domainObject.setRequiringDischargeDocumentationReview(valueObject.getRequiringDischargeDocumentationReview());
 
 		return domainObject;
 	}

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.scheduling.vo.domain;
@@ -68,6 +73,14 @@ public class SessionSlotForSessionManagementVoAssembler
 		valueObjectDest.setDirectoryOfServices(valueObjectSrc.getDirectoryOfServices());
 		// Priority
 		valueObjectDest.setPriority(valueObjectSrc.getPriority());
+		// Comment
+		valueObjectDest.setComment(valueObjectSrc.getComment());
+		// Functions
+		valueObjectDest.setFunctions(valueObjectSrc.getFunctions());
+		// CancelBlockReason
+		valueObjectDest.setCancelBlockReason(valueObjectSrc.getCancelBlockReason());
+		// CancelBlockComment
+		valueObjectDest.setCancelBlockComment(valueObjectSrc.getCancelBlockComment());
 	 	return valueObjectDest;
 	 }
 
@@ -359,7 +372,7 @@ public class SessionSlotForSessionManagementVoAssembler
 			return null;
 			
 		// Activity
-		valueObject.setActivity(ims.core.vo.domain.ActivityLiteVoAssembler.create(map, domainObject.getActivity()) );
+		valueObject.setActivity(ims.core.vo.domain.ActivityForSessionManagementVoAssembler.create(map, domainObject.getActivity()) );
 		// StartTm
 		String StartTm = domainObject.getStartTm();
 		if ( null != StartTm ) 
@@ -448,7 +461,49 @@ public class SessionSlotForSessionManagementVoAssembler
 			}			
 			valueObject.setPriority(voLookup9);
 		}
-		 		return valueObject;
+				// Comment
+		valueObject.setComment(domainObject.getComment());
+		// Functions
+		valueObject.setFunctions(ims.core.vo.domain.ServiceFunctionLiteVoAssembler.createServiceFunctionLiteVoCollectionFromServiceFunction(map, domainObject.getFunctions()) );
+		// CancelBlockReason
+		ims.domain.lookups.LookupInstance instance12 = domainObject.getCancelBlockReason();
+		if ( null != instance12 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance12.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance12.getImage().getImageId(), instance12.getImage().getImagePath());
+			}
+			color = instance12.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.scheduling.vo.lookups.CancelAppointmentReason voLookup12 = new ims.scheduling.vo.lookups.CancelAppointmentReason(instance12.getId(),instance12.getText(), instance12.isActive(), null, img, color);
+			ims.scheduling.vo.lookups.CancelAppointmentReason parentVoLookup12 = voLookup12;
+			ims.domain.lookups.LookupInstance parent12 = instance12.getParent();
+			while (parent12 != null)
+			{
+				if (parent12.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent12.getImage().getImageId(), parent12.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent12.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup12.setParent(new ims.scheduling.vo.lookups.CancelAppointmentReason(parent12.getId(),parent12.getText(), parent12.isActive(), null, img, color));
+				parentVoLookup12 = parentVoLookup12.getParent();
+								parent12 = parent12.getParent();
+			}			
+			valueObject.setCancelBlockReason(voLookup12);
+		}
+				// CancelBlockComment
+		valueObject.setCancelBlockComment(domainObject.getCancelBlockComment());
+ 		return valueObject;
 	 }
 
 
@@ -636,6 +691,91 @@ public class SessionSlotForSessionManagementVoAssembler
 				domainFactory.getLookupInstance(valueObject.getPriority().getID());
 		}
 		domainObject.setPriority(value9);
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getComment() != null && valueObject.getComment().equals(""))
+		{
+			valueObject.setComment(null);
+		}
+		domainObject.setComment(valueObject.getComment());
+
+		// SaveAsRefVO treated as RefValueObject
+		ims.core.clinical.vo.ServiceFunctionRefVoCollection refCollection11 = new ims.core.clinical.vo.ServiceFunctionRefVoCollection();
+		if (valueObject.getFunctions() != null)
+		{
+			for (int i11=0; i11<valueObject.getFunctions().size(); i11++)
+			{
+				ims.core.clinical.vo.ServiceFunctionRefVo ref11 = (ims.core.clinical.vo.ServiceFunctionRefVo)valueObject.getFunctions().get(i11);
+				refCollection11.add(ref11);
+			}
+		}
+		int size11 = (null == refCollection11) ? 0 : refCollection11.size();		
+		java.util.Set domainFunctions11 = domainObject.getFunctions();
+		if (domainFunctions11 == null)
+		{
+			domainFunctions11 = new java.util.HashSet();
+		}
+		java.util.Set newSet11  = new java.util.HashSet();
+		for(int i=0; i<size11; i++) 
+		{
+			ims.core.clinical.vo.ServiceFunctionRefVo vo = refCollection11.get(i);					
+			ims.core.clinical.domain.objects.ServiceFunction dom = null;
+			if ( null != vo ) 
+			{
+				if (vo.getBoId() == null)
+				{
+					if (domMap.get(vo) != null)
+					{
+						dom = (ims.core.clinical.domain.objects.ServiceFunction)domMap.get(vo);
+					}
+				}
+				else
+				{
+					dom = (ims.core.clinical.domain.objects.ServiceFunction)domainFactory.getDomainObject( ims.core.clinical.domain.objects.ServiceFunction.class, vo.getBoId());
+				}
+			}
+
+			//Trying to avoid the hibernate collection being marked as dirty via its public interface methods. (like add)
+			if (!domainFunctions11.contains(dom))
+			{
+				domainFunctions11.add(dom);
+			}
+			newSet11.add(dom);			
+		}
+		java.util.Set removedSet11 = new java.util.HashSet();
+		java.util.Iterator iter11 = domainFunctions11.iterator();
+		//Find out which objects need to be removed
+		while (iter11.hasNext())
+		{
+			ims.domain.DomainObject o = (ims.domain.DomainObject)iter11.next();			
+			if ((o == null || o.getIsRIE() == null || !o.getIsRIE().booleanValue()) && !newSet11.contains(o))
+			{
+				removedSet11.add(o);
+			}
+		}
+		iter11 = removedSet11.iterator();
+		//Remove the unwanted objects
+		while (iter11.hasNext())
+		{
+			domainFunctions11.remove(iter11.next());
+		}		
+		
+		domainObject.setFunctions(domainFunctions11);		
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value12 = null;
+		if ( null != valueObject.getCancelBlockReason() ) 
+		{
+			value12 =
+				domainFactory.getLookupInstance(valueObject.getCancelBlockReason().getID());
+		}
+		domainObject.setCancelBlockReason(value12);
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getCancelBlockComment() != null && valueObject.getCancelBlockComment().equals(""))
+		{
+			valueObject.setCancelBlockComment(null);
+		}
+		domainObject.setCancelBlockComment(valueObject.getCancelBlockComment());
 
 		return domainObject;
 	}

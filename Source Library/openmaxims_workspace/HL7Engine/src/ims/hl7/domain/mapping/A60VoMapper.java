@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -35,6 +40,7 @@ import ims.domain.exceptions.StaleObjectException;
 import ims.domain.exceptions.UniqueKeyViolationException;
 
 import ims.framework.utils.PartialDate;
+import ims.hl7.domain.EventResponse;
 import ims.hl7.utils.HL7Errors;
 import ims.hl7.utils.HL7Utils;
 import ims.hl7.utils.SegName;
@@ -53,24 +59,39 @@ public class A60VoMapper extends VoMapper
 	
 	// This event is called when an patient allergy is received
 
-	public Message processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception
-	{		
+	//WDEV-20112
+//	public Message processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception
+	public EventResponse processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception
+	{
+		//WDEV-20112
+		EventResponse response = new EventResponse(); //WDEV-20112
+		
 		try {
-			processPatientAllergy(msg, providerSystem);
+			//WDEV-20112
+//			processPatientAllergy(msg, providerSystem);
+			response = processPatientAllergy(msg, providerSystem, response); //WDEV-20112
 		}
 		catch (Exception ex)
 		{
-			return HL7Utils.buildRejAck(msg.get("MSH"), ex.getClass().getName() + " occurred. " + ex.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems()));
+			//WDEV-20112
+//			return HL7Utils.buildRejAck(msg.get("MSH"), ex.getClass().getName() + " occurred. " + ex.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems()));
+			response.setMessage(HL7Utils.buildRejAck(msg.get("MSH"), ex.getClass().getName() + " occurred. " + ex.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems())));
+			return response; //WDEV-20112
 		}
 		
-		Message ack = HL7Utils.buildPosAck(msg.get("MSH"), toConfigItemArray(providerSystem.getConfigItems()));
-		return ack;	
+		//WDEV-20112
+//		Message ack = HL7Utils.buildPosAck(msg.get("MSH"), toConfigItemArray(providerSystem.getConfigItems()));
+//		return ack;	
+		response.setMessage(HL7Utils.buildPosAck(msg.get("MSH"), toConfigItemArray(providerSystem.getConfigItems())));
+		return response; //WDEV-20112
 		
 	}
 
-	private void processPatientAllergy(Message msg, ProviderSystemVo providerSystem) throws Exception
+	//WDEV-20112
+//	private void processPatientAllergy(Message msg, ProviderSystemVo providerSystem) throws Exception
+	private EventResponse processPatientAllergy(Message msg, ProviderSystemVo providerSystem, EventResponse response) throws Exception //WDEV-20112
 	{
-	
+		
 		//http://jira/browse/WDEV-13713
 		//Please populate the Clinical Term and Description fields with the Allergen from IAM:3.2 and the Effect field with the data from IAM:9
 		//Please append to the Effect data the following " - Reported by: " and the value from IAM:14.2 
@@ -162,7 +183,13 @@ public class A60VoMapper extends VoMapper
 				*/
 								
 				//patient info
-				pa.setPatient(this.getPatient(a60Mess, providerSystem));			
+				pa.setPatient(this.getPatient(a60Mess, providerSystem));
+				
+				//WDEV-20112
+				if(pa.getPatientIsNotNull())
+				{
+					response.setPatient(pa.getPatient());
+				} //WDEV-20112
 								
 				//TODO allery code may not be given...			
 				//!AM.3.3	Allergen Description	Chemical Name	
@@ -372,6 +399,10 @@ public class A60VoMapper extends VoMapper
 			
 			
 		}		
+		
+		//WDEV-20112
+//		response.setMessage(msg);
+		return response; //WDEV-20112
 		
 	}
 

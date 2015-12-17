@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.admin.pas.domain.objects;
@@ -103,6 +108,16 @@ public class InpatientEpisode extends ims.domain.DomainObject implements ims.dom
 	private ims.domain.lookups.LookupInstance vTEAssessmentStatus;
 	/** VTE Risk Assessment */
 	private ims.core.clinical.domain.objects.VTERiskAssessment vTERiskAssessment;
+	/** Used when status set to Completed, but none actually recorded */
+	private ims.domain.lookups.LookupInstance vTEAssessmentStatusReason;
+	private ims.clinical.domain.objects.PatientSECS latestSECSScore;
+	private ims.core.admin.pas.domain.objects.TrackingMovement currentTrackingMovement;
+	/** 
+	  * Collection of ims.core.admin.pas.domain.objects.TrackingMovement.
+	  */
+	private java.util.List trackingMovementHistory;
+	private Boolean isReadyToLeave;
+	private java.util.Date readyToLeaveDecisionDateTime;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public InpatientEpisode (Integer id, int ver)
@@ -253,7 +268,7 @@ public class InpatientEpisode extends ims.domain.DomainObject implements ims.dom
 		return reasonForAdmission;
 	}
 	public void setReasonForAdmission(String reasonForAdmission) {
-		if ( null != reasonForAdmission && reasonForAdmission.length() > 32 ) {
+		if ( null != reasonForAdmission && reasonForAdmission.length() > 255 ) {
 			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for reasonForAdmission. Tried to set value: "+
 				reasonForAdmission);
 		}
@@ -328,6 +343,51 @@ public class InpatientEpisode extends ims.domain.DomainObject implements ims.dom
 	}
 	public void setVTERiskAssessment(ims.core.clinical.domain.objects.VTERiskAssessment vTERiskAssessment) {
 		this.vTERiskAssessment = vTERiskAssessment;
+	}
+
+	public ims.domain.lookups.LookupInstance getVTEAssessmentStatusReason() {
+		return vTEAssessmentStatusReason;
+	}
+	public void setVTEAssessmentStatusReason(ims.domain.lookups.LookupInstance vTEAssessmentStatusReason) {
+		this.vTEAssessmentStatusReason = vTEAssessmentStatusReason;
+	}
+
+	public ims.clinical.domain.objects.PatientSECS getLatestSECSScore() {
+		return latestSECSScore;
+	}
+	public void setLatestSECSScore(ims.clinical.domain.objects.PatientSECS latestSECSScore) {
+		this.latestSECSScore = latestSECSScore;
+	}
+
+	public ims.core.admin.pas.domain.objects.TrackingMovement getCurrentTrackingMovement() {
+		return currentTrackingMovement;
+	}
+	public void setCurrentTrackingMovement(ims.core.admin.pas.domain.objects.TrackingMovement currentTrackingMovement) {
+		this.currentTrackingMovement = currentTrackingMovement;
+	}
+
+	public java.util.List getTrackingMovementHistory() {
+		if ( null == trackingMovementHistory ) {
+			trackingMovementHistory = new java.util.ArrayList();
+		}
+		return trackingMovementHistory;
+	}
+	public void setTrackingMovementHistory(java.util.List paramValue) {
+		this.trackingMovementHistory = paramValue;
+	}
+
+	public Boolean isIsReadyToLeave() {
+		return isReadyToLeave;
+	}
+	public void setIsReadyToLeave(Boolean isReadyToLeave) {
+		this.isReadyToLeave = isReadyToLeave;
+	}
+
+	public java.util.Date getReadyToLeaveDecisionDateTime() {
+		return readyToLeaveDecisionDateTime;
+	}
+	public void setReadyToLeaveDecisionDateTime(java.util.Date readyToLeaveDecisionDateTime) {
+		this.readyToLeaveDecisionDateTime = readyToLeaveDecisionDateTime;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -529,6 +589,55 @@ public class InpatientEpisode extends ims.domain.DomainObject implements ims.dom
 				
 		    auditStr.append(vTERiskAssessment.getId());
 		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*vTEAssessmentStatusReason* :");
+		if (vTEAssessmentStatusReason != null)
+			auditStr.append(vTEAssessmentStatusReason.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*latestSECSScore* :");
+		if (latestSECSScore != null)
+		{
+			auditStr.append(toShortClassName(latestSECSScore));
+				
+		    auditStr.append(latestSECSScore.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*currentTrackingMovement* :");
+		if (currentTrackingMovement != null)
+		{
+			auditStr.append(toShortClassName(currentTrackingMovement));
+				
+		    auditStr.append(currentTrackingMovement.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*trackingMovementHistory* :");
+		if (trackingMovementHistory != null)
+		{
+		int i30=0;
+		for (i30=0; i30<trackingMovementHistory.size(); i30++)
+		{
+			if (i30 > 0)
+				auditStr.append(",");
+			ims.core.admin.pas.domain.objects.TrackingMovement obj = (ims.core.admin.pas.domain.objects.TrackingMovement)trackingMovementHistory.get(i30);
+		    if (obj != null)
+			{
+				if (i30 == 0)
+				{
+				auditStr.append(toShortClassName(obj));
+				auditStr.append("[");
+				}
+		        auditStr.append(obj.getId());
+			}
+		}
+		if (i30 > 0)
+			auditStr.append("] " + i30);
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*isReadyToLeave* :");
+		auditStr.append(isReadyToLeave);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*readyToLeaveDecisionDateTime* :");
+		auditStr.append(readyToLeaveDecisionDateTime);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -738,6 +847,45 @@ public class InpatientEpisode extends ims.domain.DomainObject implements ims.dom
 			sb.append("<vTERiskAssessment>");
 			sb.append(this.getVTERiskAssessment().toXMLString(domMap)); 	
 			sb.append("</vTERiskAssessment>");		
+		}
+		if (this.getVTEAssessmentStatusReason() != null)
+		{
+			sb.append("<vTEAssessmentStatusReason>");
+			sb.append(this.getVTEAssessmentStatusReason().toXMLString()); 
+			sb.append("</vTEAssessmentStatusReason>");		
+		}
+		if (this.getLatestSECSScore() != null)
+		{
+			sb.append("<latestSECSScore>");
+			sb.append(this.getLatestSECSScore().toXMLString(domMap)); 	
+			sb.append("</latestSECSScore>");		
+		}
+		if (this.getCurrentTrackingMovement() != null)
+		{
+			sb.append("<currentTrackingMovement>");
+			sb.append(this.getCurrentTrackingMovement().toXMLString(domMap)); 	
+			sb.append("</currentTrackingMovement>");		
+		}
+		if (this.getTrackingMovementHistory() != null)
+		{
+			if (this.getTrackingMovementHistory().size() > 0 )
+			{
+			sb.append("<trackingMovementHistory>");
+			sb.append(ims.domain.DomainObject.toXMLString(this.getTrackingMovementHistory(), domMap));
+			sb.append("</trackingMovementHistory>");		
+			}
+		}
+		if (this.isIsReadyToLeave() != null)
+		{
+			sb.append("<isReadyToLeave>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsReadyToLeave().toString()));
+			sb.append("</isReadyToLeave>");		
+		}
+		if (this.getReadyToLeaveDecisionDateTime() != null)
+		{
+			sb.append("<readyToLeaveDecisionDateTime>");
+			sb.append(new ims.framework.utils.DateTime(this.getReadyToLeaveDecisionDateTime()).toString(ims.framework.utils.DateTimeFormat.MILLI));
+			sb.append("</readyToLeaveDecisionDateTime>");		
 		}
 		return sb.toString();
 	}
@@ -1042,6 +1190,40 @@ public class InpatientEpisode extends ims.domain.DomainObject implements ims.dom
 			fldEl = fldEl.element("class");		
 			obj.setVTERiskAssessment(ims.core.clinical.domain.objects.VTERiskAssessment.getVTERiskAssessmentfromXML(fldEl, factory, domMap)); 
 		}
+		fldEl = el.element("vTEAssessmentStatusReason");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setVTEAssessmentStatusReason(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("latestSECSScore");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setLatestSECSScore(ims.clinical.domain.objects.PatientSECS.getPatientSECSfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("currentTrackingMovement");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setCurrentTrackingMovement(ims.core.admin.pas.domain.objects.TrackingMovement.getTrackingMovementfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("trackingMovementHistory");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("list");	
+			obj.setTrackingMovementHistory(ims.core.admin.pas.domain.objects.TrackingMovement.fromListXMLString(fldEl, factory, obj.getTrackingMovementHistory(), domMap));
+		}
+		fldEl = el.element("isReadyToLeave");
+		if(fldEl != null)
+		{	
+    		obj.setIsReadyToLeave(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("readyToLeaveDecisionDateTime");
+		if(fldEl != null)
+		{	
+    		obj.setReadyToLeaveDecisionDateTime(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -1050,6 +1232,7 @@ public class InpatientEpisode extends ims.domain.DomainObject implements ims.dom
 		 "wardStays"
 		, "consultantStays"
 		, "homeLeaves"
+		, "trackingMovementHistory"
 		};
 	}
 
@@ -1083,6 +1266,12 @@ public class InpatientEpisode extends ims.domain.DomainObject implements ims.dom
 		public static final String VacatedBedNumber = "vacatedBedNumber";
 		public static final String VTEAssessmentStatus = "vTEAssessmentStatus";
 		public static final String VTERiskAssessment = "vTERiskAssessment";
+		public static final String VTEAssessmentStatusReason = "vTEAssessmentStatusReason";
+		public static final String LatestSECSScore = "latestSECSScore";
+		public static final String CurrentTrackingMovement = "currentTrackingMovement";
+		public static final String TrackingMovementHistory = "trackingMovementHistory";
+		public static final String IsReadyToLeave = "isReadyToLeave";
+		public static final String ReadyToLeaveDecisionDateTime = "readyToLeaveDecisionDateTime";
 	}
 }
 

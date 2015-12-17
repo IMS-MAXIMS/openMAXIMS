@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -32,32 +37,76 @@ public class Logic extends BaseLogic
 {
 	private static final long serialVersionUID = 1L;
 
+	//WDEV-18420
 	@Override
 	protected void onlyrListsTabChanged(LayerBridge tab) 
 	{
+		if( form.lyrLists().tabPagePendingEmergencyAdmissions() != null && form.lyrLists().tabPagePendingEmergencyAdmissions().ccPendingEDAdms() != null) //wdev-11804
+			form.lyrLists().tabPagePendingEmergencyAdmissions().ccPendingEDAdms().leaveComponent(); 					//wdev-11804
+		
 		if (tab.equals(form.lyrLists().tabPageCurrentIP()))
 			form.lyrLists().tabPageCurrentIP().ccCurrentIPList().refresh();
 
 		if (tab.equals(form.lyrLists().tabPagePendingElectiveAdmissions()))
+		{
+			form.lyrLists().tabPagePendingElectiveAdmissions().ccPending().open();
 			form.lyrLists().tabPagePendingElectiveAdmissions().ccPending().refresh();
+		}
 		
 		if (tab.equals(form.lyrLists().tabPageBedState()))
+		{
+			form.lyrLists().tabPageBedState().ccBedState().open();
 			form.lyrLists().tabPageBedState().ccBedState().refresh();
+		}
 
 		if (tab.equals(form.lyrLists().tabPageRecentDischarges()))
+		{
+			form.lyrLists().tabPageRecentDischarges().ccRecentDischarges().open();
 			form.lyrLists().tabPageRecentDischarges().ccRecentDischarges().refresh();
+		}
 
 		if (tab.equals(form.lyrLists().tabPagePendingEmergencyAdmissions()))
-			form.lyrLists().tabPagePendingEmergencyAdmissions().ccPengingEmergencyAdms().refresh(false);
+		{
+			form.lyrLists().tabPagePendingEmergencyAdmissions().ccPendingEDAdms().open();
+			form.lyrLists().tabPagePendingEmergencyAdmissions().ccPendingEDAdms().refresh(false);
+		}
 
 		if (tab.equals(form.lyrLists().tabPageTransfers()))
+		{
+			form.lyrLists().tabPageTransfers().ccTransfers().open();
 			form.lyrLists().tabPageTransfers().ccTransfers().refresh();
+		}
 
 		if (tab.equals(form.lyrLists().tabPagePendingDischarges()))
+		{
+			form.lyrLists().tabPagePendingDischarges().cc1().open();
 			form.lyrLists().tabPagePendingDischarges().cc1().refresh();
+		}
 		
 		if (tab.equals(form.lyrLists().tabElectiveListPendingElectiveAdms()))
+		{
+			form.lyrLists().tabElectiveListPendingElectiveAdms().ccPendingEL().open();
 			form.lyrLists().tabElectiveListPendingElectiveAdms().ccPendingEL().refresh();
+		}
+		if (tab.equals(form.lyrLists().tabPendingEmergencies()))
+		{
+			if (!form.lyrLists().tabPendingEmergencies().isInitialized())
+			{	
+				form.lyrLists().tabPendingEmergencies().ccPendingEmergenciesAdm().initializeCustomControl();
+			}
+			form.lyrLists().tabPendingEmergencies().ccPendingEmergenciesAdm().setFocusOnSearch();
+			form.lyrLists().tabPendingEmergencies().ccPendingEmergenciesAdm().refresh();
+
+		}
+		if (tab.equals(form.lyrLists().tabPendingEmergencyTheatre()))
+		{
+			if (!form.lyrLists().tabPendingEmergencyTheatre().isInitialized())
+			{	
+				form.lyrLists().tabPendingEmergencyTheatre().ccPendingEmergencyTheatreAdm().initializeCustomControl();
+			}
+			form.lyrLists().tabPendingEmergencyTheatre().ccPendingEmergencyTheatreAdm().setFocusOnSearch();
+			form.lyrLists().tabPendingEmergencyTheatre().ccPendingEmergencyTheatreAdm().refresh();
+		}
 	}
 
 	@Override
@@ -80,27 +129,46 @@ public class Logic extends BaseLogic
 		
 		form.lyrLists().tabPagePendingElectiveAdmissions().setHeaderVisible(!isElectiveListFunctionalityInUse);
 		form.lyrLists().tabElectiveListPendingElectiveAdms().setHeaderVisible(isElectiveListFunctionalityInUse);
+		
+		form.lyrLists().tabPendingEmergencies().setHeaderVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"));
+		form.lyrLists().tabPendingEmergencyTheatre().setHeaderVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"));
+		
+		updateControlsState(); //WDEV-23632
 	}
 
 	@Override
 	protected void onTimer(Timer timer) throws PresentationLogicException
 	{
-		form.lyrLists().tabPagePendingEmergencyAdmissions().ccPengingEmergencyAdms().refresh(true);
+		form.lyrLists().tabPagePendingEmergencyAdmissions().ccPendingEDAdms().refresh(true);
 	}
 
 	@Override
-	protected void onCcPengingEmergencyAdmsValueChanged() throws PresentationLogicException
+	protected void onCcPendingEDAdmsValueChanged() throws PresentationLogicException
 	{
-		if(form.lyrLists().tabPagePendingEmergencyAdmissions().ccPengingEmergencyAdms().getEventFired() != null)
+		if(form.lyrLists().tabPagePendingEmergencyAdmissions().ccPendingEDAdms().getEventFired() != null)
 		{
-			if(form.lyrLists().tabPagePendingEmergencyAdmissions().ccPengingEmergencyAdms(). getEventFired().equals(PendingEmergencyEventFired.START_TIMER))
+			if(form.lyrLists().tabPagePendingEmergencyAdmissions().ccPendingEDAdms(). getEventFired().equals(PendingEmergencyEventFired.START_TIMER))
 			{
 				form.getTimers().gettimerPendingEmergency().setEnabled(true);
 			}
-			else if(form.lyrLists().tabPagePendingEmergencyAdmissions().ccPengingEmergencyAdms(). getEventFired().equals(PendingEmergencyEventFired.STOP_TIMER))
+			else if(form.lyrLists().tabPagePendingEmergencyAdmissions().ccPendingEDAdms(). getEventFired().equals(PendingEmergencyEventFired.STOP_TIMER))
 			{
 				form.getTimers().gettimerPendingEmergency().setEnabled(false);
 			}
 		}	
+	}
+	
+	//WDEV-23632
+	private void updateControlsState()
+	{
+		boolean showBedManagementDashboardButton = ConfigFlag.GEN.BED_MANAGEMENT_DASHBOARD_URL.getValue() != null && ConfigFlag.GEN.BED_MANAGEMENT_DASHBOARD_URL.getValue().length() > 0;
+		form.btnBedManagementDashboard().setVisible(showBedManagementDashboardButton);
+	}
+
+	//WDEV-23632
+	@Override
+	protected void onBtnBedManagementDashboardClick() throws PresentationLogicException 
+	{
+		engine.openDashboard(ConfigFlag.GEN.BED_MANAGEMENT_DASHBOARD_URL.getValue(), null);
 	}
 }

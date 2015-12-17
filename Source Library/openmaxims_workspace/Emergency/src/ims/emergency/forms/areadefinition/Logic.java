@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -140,11 +145,11 @@ public class Logic extends BaseLogic
 			case GenForm.ContextMenus.EmergencyNamespace.AreaDefinition.Add:
 				form.getGlobalContext().Emergency.setTrackingArea(null);
 				form.getLocalContext().setSelectedEvent(null);
-				engine.open(form.getForms().Emergency.AddEditArea);
+				engine.open(form.getForms().Emergency.AddEditArea, "Add Area");
 				break;
 			case GenForm.ContextMenus.EmergencyNamespace.AreaDefinition.Edit:
 				form.getLocalContext().setSelectedEvent(AreaDefinitionEvent.EDIT);
-				engine.open(form.getForms().Emergency.AddEditArea);
+				engine.open(form.getForms().Emergency.AddEditArea, "Edit Area");
 				break;
 			case GenForm.ContextMenus.EmergencyNamespace.AreaDefinition.Remove:
 				form.getLocalContext().setSelectedEvent(null);
@@ -192,7 +197,7 @@ public class Logic extends BaseLogic
 		form.getContextMenus().Emergency.getAreaDefinitionMoveUpItem().setVisible(form.getMode().equals(FormMode.EDIT) && form.grdAreaDefinition().canMoveCurrentUp() && form.getLocalContext().getSelectedAreaIsNotNull() && form.grdAreaDefinition().getSelectedRow().getValue().getIsOverallViewIsNotNull() && !form.grdAreaDefinition().getSelectedRow().getValue().getIsOverallView() && form.grdAreaDefinition().getSelectedRow().getValue().getIsRegistrationAreaIsNotNull() && !form.grdAreaDefinition().getSelectedRow().getValue().getIsRegistrationArea());
 		form.getContextMenus().Emergency.getAreaDefinitionRemoveItem().setVisible(form.getMode().equals(FormMode.EDIT) && form.grdAreaDefinition().getSelectedRow() != null && form.getLocalContext().getSelectedAreaIsNotNull() && form.grdAreaDefinition().getSelectedRow().getValue().getIsOverallViewIsNotNull() && !form.grdAreaDefinition().getSelectedRow().getValue().getIsOverallView() && form.grdAreaDefinition().getSelectedRow().getValue().getIsRegistrationAreaIsNotNull() && !form.grdAreaDefinition().getSelectedRow().getValue().getIsRegistrationArea() && form.grdAreaDefinition().getSelectedRow().getValue().getID_TrackingArea() == null);
 		form.getContextMenus().Emergency.getAreaDefinitionSendToConfigItem().setVisible(form.getMode().equals(FormMode.VIEW) && form.grdAreaDefinition().getSelectedRow() != null && form.getLocalContext().getisTrackingConfigActive() && form.grdAreaDefinition().getSelectedRow().getValue().getIsOverallViewIsNotNull() && !form.grdAreaDefinition().getSelectedRow().getValue().getIsOverallView() && !ims.core.vo.lookups.PreActiveActiveInactiveStatus.INACTIVE.equals(form.grdAreaDefinition().getSelectedRow().getValue().getStatus()));
-		form.getContextMenus().Emergency.getAreaDefinitionImportAreaDefinitionItem().setVisible(form.getMode().equals(FormMode.EDIT) && ! form.getLocalContext().getTrackingAreaCollectionIsNotNull()); 
+		form.getContextMenus().Emergency.getAreaDefinitionImportAreaDefinitionItem().setVisible(form.getMode().equals(FormMode.EDIT) && (form.getLocalContext().getTrackingAreaCollection() == null || form.getLocalContext().getTrackingAreaCollection().size() == 0)); //WDEV-21479 
 	}
 
 	private boolean isSecondToLast()
@@ -278,6 +283,10 @@ public class Logic extends BaseLogic
 						row.setBackColor(Color.Beige);
 					}
 
+					//WDEV-19091
+					areaDefinition.setAssociatedWorkflowMandatory(trackingArea.get(i).getAssociatedWorkflowMandatory());
+					areaDefinition.setWorkflowConfig(trackingArea.get(i).getWorkflowConfig());
+					
 					row.setValue(areaDefinition);
 				}
 			}
@@ -289,7 +298,7 @@ public class Logic extends BaseLogic
 				form.grdAreaDefinition().setValue(null);
 				form.getLocalContext().setSelectedArea(null);
 				form.getGlobalContext().Emergency.setTrackingArea(null);
-				//updateControlsState();
+				updateControlsState();
 			}
 		}
 
@@ -297,21 +306,23 @@ public class Logic extends BaseLogic
 
 	private void addAreaDefinition(boolean update)
 	{
-		grdAreaDefinitionRow row;
-
+		//WDEV-21479
+		grdAreaDefinitionRow row = update ? form.grdAreaDefinition().getSelectedRow() : form.grdAreaDefinition().getRows().newRowAt(0);
+		
+		if (row == null)
+			return;
+		
 		form.getGlobalContext().Emergency.getTrackingArea().setEDLocation(form.getGlobalContext().Emergency.getEDLocation());
 
 		if (update)
 		{
-			row = form.grdAreaDefinition().getSelectedRow();
 			form.getGlobalContext().Emergency.getTrackingArea().setIsOverallView(row.getValue().getIsOverallView());
-			form.getGlobalContext().Emergency.getTrackingArea().setIsRegistrationArea(row.getValue().getIsRegistrationArea());
+			form.getGlobalContext().Emergency.getTrackingArea().setIsRegistrationArea(row.getValue().getIsRegistrationArea());			
 		}
 		else
 		{
 			form.getGlobalContext().Emergency.getTrackingArea().setIsOverallView(false);
-			form.getGlobalContext().Emergency.getTrackingArea().setIsRegistrationArea(false);
-			row = form.grdAreaDefinition().getRows().newRowAt(0);
+			form.getGlobalContext().Emergency.getTrackingArea().setIsRegistrationArea(false);			
 		}
 
 		row.setArea(form.getGlobalContext().Emergency.getTrackingArea().getAreaDisplayName());

@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:36 -->
+<!-- Generated: 12/10/2015, 13:31 -->
 <hibernate-mapping>
 	<class name="ims.scheduling.domain.objects.AppointmentOutcomeAction" table="schl_appointmentout" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -32,12 +32,21 @@
 <!-- debug: hibernateClassContent -->
 <!-- debug: appointmentAction -->
 <!-- debug: outcomeOfAction -->
-<!-- debug: futureAppointmentDetails -->
+<!-- debug: futureAppointmentDetail -->
 <!-- debug: field.IsAssociation : true -->
 		<!-- A one-to-one relationship using a foreign-key is mapping as a
 			many-to-one with a uniqueness contraint -->
-		<many-to-one name="futureAppointmentDetails" class="ims.scheduling.domain.objects.FutureAppointmentDetails" unique="true" foreign-key="appointmentout_futureappo_fk" access="field" cascade="save-update">
+		<many-to-one name="futureAppointmentDetail" class="ims.scheduling.domain.objects.FutureAppointmentDetails" unique="true" foreign-key="appointmentout_futureappo_fk" access="field" cascade="save-update">
 			<column name="futureappo" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: iPTOUT -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="iPTOUT" class="ims.RefMan.domain.objects.InterProviderTransferOut" unique="true" foreign-key="appointmentout_iptout_fk" access="field" cascade="all">
+			<column name="iptout" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
 <!-- debug: !IsAssociation && !IsCollection -->
 

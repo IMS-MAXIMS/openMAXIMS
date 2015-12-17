@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.core.vo.domain;
@@ -66,6 +71,28 @@ public class PacsConfigurationVoAssembler
 		valueObjectDest.setAccessionTestValue(valueObjectSrc.getAccessionTestValue());
 		// PACSClientType
 		valueObjectDest.setPACSClientType(valueObjectSrc.getPACSClientType());
+		// UseLoggedUserName
+		valueObjectDest.setUseLoggedUserName(valueObjectSrc.getUseLoggedUserName());
+		// PrimaryIdentifier
+		valueObjectDest.setPrimaryIdentifier(valueObjectSrc.getPrimaryIdentifier());
+		// SecondaryIdentifier
+		valueObjectDest.setSecondaryIdentifier(valueObjectSrc.getSecondaryIdentifier());
+		// PatientIdentifierParam
+		valueObjectDest.setPatientIdentifierParam(valueObjectSrc.getPatientIdentifierParam());
+		// IssuerOfIdentifierParam
+		valueObjectDest.setIssuerOfIdentifierParam(valueObjectSrc.getIssuerOfIdentifierParam());
+		// SessionTimeParam
+		valueObjectDest.setSessionTimeParam(valueObjectSrc.getSessionTimeParam());
+		// PrimaryIdentifierCode
+		valueObjectDest.setPrimaryIdentifierCode(valueObjectSrc.getPrimaryIdentifierCode());
+		// SecondaryIdentifierCode
+		valueObjectDest.setSecondaryIdentifierCode(valueObjectSrc.getSecondaryIdentifierCode());
+		// AESKey
+		valueObjectDest.setAESKey(valueObjectSrc.getAESKey());
+		// UseEncryptedToken
+		valueObjectDest.setUseEncryptedToken(valueObjectSrc.getUseEncryptedToken());
+		// EncryptedTokenParam
+		valueObjectDest.setEncryptedTokenParam(valueObjectSrc.getEncryptedTokenParam());
 	 	return valueObjectDest;
 	 }
 
@@ -406,7 +433,97 @@ public class PacsConfigurationVoAssembler
 			}			
 			valueObject.setPACSClientType(voLookup8);
 		}
-		 		return valueObject;
+				// UseLoggedUserName
+		valueObject.setUseLoggedUserName( domainObject.isUseLoggedUserName() );
+		// PrimaryIdentifier
+		ims.domain.lookups.LookupInstance instance10 = domainObject.getPrimaryIdentifier();
+		if ( null != instance10 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance10.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance10.getImage().getImageId(), instance10.getImage().getImagePath());
+			}
+			color = instance10.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.PatIdType voLookup10 = new ims.core.vo.lookups.PatIdType(instance10.getId(),instance10.getText(), instance10.isActive(), null, img, color);
+			ims.core.vo.lookups.PatIdType parentVoLookup10 = voLookup10;
+			ims.domain.lookups.LookupInstance parent10 = instance10.getParent();
+			while (parent10 != null)
+			{
+				if (parent10.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent10.getImage().getImageId(), parent10.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent10.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup10.setParent(new ims.core.vo.lookups.PatIdType(parent10.getId(),parent10.getText(), parent10.isActive(), null, img, color));
+				parentVoLookup10 = parentVoLookup10.getParent();
+								parent10 = parent10.getParent();
+			}			
+			valueObject.setPrimaryIdentifier(voLookup10);
+		}
+				// SecondaryIdentifier
+		ims.domain.lookups.LookupInstance instance11 = domainObject.getSecondaryIdentifier();
+		if ( null != instance11 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance11.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance11.getImage().getImageId(), instance11.getImage().getImagePath());
+			}
+			color = instance11.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.PatIdType voLookup11 = new ims.core.vo.lookups.PatIdType(instance11.getId(),instance11.getText(), instance11.isActive(), null, img, color);
+			ims.core.vo.lookups.PatIdType parentVoLookup11 = voLookup11;
+			ims.domain.lookups.LookupInstance parent11 = instance11.getParent();
+			while (parent11 != null)
+			{
+				if (parent11.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent11.getImage().getImageId(), parent11.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent11.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup11.setParent(new ims.core.vo.lookups.PatIdType(parent11.getId(),parent11.getText(), parent11.isActive(), null, img, color));
+				parentVoLookup11 = parentVoLookup11.getParent();
+								parent11 = parent11.getParent();
+			}			
+			valueObject.setSecondaryIdentifier(voLookup11);
+		}
+				// PatientIdentifierParam
+		valueObject.setPatientIdentifierParam(domainObject.getPatientIdentifierParam());
+		// IssuerOfIdentifierParam
+		valueObject.setIssuerOfIdentifierParam(domainObject.getIssuerOfIdentifierParam());
+		// SessionTimeParam
+		valueObject.setSessionTimeParam(domainObject.getSessionTimeParam());
+		// PrimaryIdentifierCode
+		valueObject.setPrimaryIdentifierCode(domainObject.getPrimaryIdentifierCode());
+		// SecondaryIdentifierCode
+		valueObject.setSecondaryIdentifierCode(domainObject.getSecondaryIdentifierCode());
+		// AESKey
+		valueObject.setAESKey(domainObject.getAESKey());
+		// UseEncryptedToken
+		valueObject.setUseEncryptedToken( domainObject.isUseEncryptedToken() );
+		// EncryptedTokenParam
+		valueObject.setEncryptedTokenParam(domainObject.getEncryptedTokenParam());
+ 		return valueObject;
 	 }
 
 
@@ -512,6 +629,73 @@ public class PacsConfigurationVoAssembler
 				domainFactory.getLookupInstance(valueObject.getPACSClientType().getID());
 		}
 		domainObject.setPACSClientType(value8);
+		domainObject.setUseLoggedUserName(valueObject.getUseLoggedUserName());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value10 = null;
+		if ( null != valueObject.getPrimaryIdentifier() ) 
+		{
+			value10 =
+				domainFactory.getLookupInstance(valueObject.getPrimaryIdentifier().getID());
+		}
+		domainObject.setPrimaryIdentifier(value10);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value11 = null;
+		if ( null != valueObject.getSecondaryIdentifier() ) 
+		{
+			value11 =
+				domainFactory.getLookupInstance(valueObject.getSecondaryIdentifier().getID());
+		}
+		domainObject.setSecondaryIdentifier(value11);
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getPatientIdentifierParam() != null && valueObject.getPatientIdentifierParam().equals(""))
+		{
+			valueObject.setPatientIdentifierParam(null);
+		}
+		domainObject.setPatientIdentifierParam(valueObject.getPatientIdentifierParam());
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getIssuerOfIdentifierParam() != null && valueObject.getIssuerOfIdentifierParam().equals(""))
+		{
+			valueObject.setIssuerOfIdentifierParam(null);
+		}
+		domainObject.setIssuerOfIdentifierParam(valueObject.getIssuerOfIdentifierParam());
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getSessionTimeParam() != null && valueObject.getSessionTimeParam().equals(""))
+		{
+			valueObject.setSessionTimeParam(null);
+		}
+		domainObject.setSessionTimeParam(valueObject.getSessionTimeParam());
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getPrimaryIdentifierCode() != null && valueObject.getPrimaryIdentifierCode().equals(""))
+		{
+			valueObject.setPrimaryIdentifierCode(null);
+		}
+		domainObject.setPrimaryIdentifierCode(valueObject.getPrimaryIdentifierCode());
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getSecondaryIdentifierCode() != null && valueObject.getSecondaryIdentifierCode().equals(""))
+		{
+			valueObject.setSecondaryIdentifierCode(null);
+		}
+		domainObject.setSecondaryIdentifierCode(valueObject.getSecondaryIdentifierCode());
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getAESKey() != null && valueObject.getAESKey().equals(""))
+		{
+			valueObject.setAESKey(null);
+		}
+		domainObject.setAESKey(valueObject.getAESKey());
+		domainObject.setUseEncryptedToken(valueObject.getUseEncryptedToken());
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getEncryptedTokenParam() != null && valueObject.getEncryptedTokenParam().equals(""))
+		{
+			valueObject.setEncryptedTokenParam(null);
+		}
+		domainObject.setEncryptedTokenParam(valueObject.getEncryptedTokenParam());
 
 		return domainObject;
 	}

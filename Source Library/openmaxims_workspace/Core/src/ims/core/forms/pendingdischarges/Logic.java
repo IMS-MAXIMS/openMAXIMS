@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -30,28 +35,46 @@ import ims.core.vo.InpatientEpisodeForPendingDischargesVoCollection;
 import ims.core.vo.LocMostVo;
 import ims.core.vo.LocationLiteVo;
 import ims.core.vo.LocationLiteVoCollection;
+import ims.core.vo.PatientId;
 import ims.core.vo.PendingDischargesVo;
+import ims.core.vo.PendingTransfersVo;
+import ims.core.vo.enums.BedInfoAction;
 import ims.core.vo.lookups.LocationType;
 import ims.core.vo.lookups.PatIdType;
 import ims.core.vo.lookups.TimeUnitsSecondsToMonths;
+import ims.core.vo.lookups.WardBayStatus;
+import ims.framework.Control;
+import ims.framework.FormName;
 import ims.framework.MessageButtons;
 import ims.framework.MessageIcon;
+import ims.framework.enumerations.DialogResult;
 import ims.framework.enumerations.SortOrder;
 import ims.framework.exceptions.PresentationLogicException;
 import ims.framework.utils.Color;
-import ims.framework.utils.Date;
+import ims.framework.utils.DateTime;
+import ims.framework.utils.PartialDate;
+import ims.framework.utils.beans.ColorBean;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class Logic extends BaseLogic
 {
 	private static final long serialVersionUID = 1L;
 	
 	private static final int COL_AGE = 4;
-	private static final int COL_ESTIMATED_DISCHAGE_DATETIME = 8;
-
+	private static final int COL_ESTIMATED_DISCHAGE_DATETIME = 9;
+	
+	private static final String INTENSE_ORANGE_COLOR_HEXA_CODE = "#FF6600";
+	
 	@Override
 	protected void onFormOpen(Object[] args) throws ims.framework.exceptions.PresentationLogicException
+	{
+		
+	}	
+
+	//WDEV-18420
+	public void open() 
 	{
 		initialise();
 
@@ -64,25 +87,33 @@ public class Logic extends BaseLogic
 		{
 			form.int1().setValue(24);
 			form.cmbTime().setValue(TimeUnitsSecondsToMonths.HOURS);
+			form.chkConfirmed().setValue(true);
 		}
 	}
 	
 	private void initialise()
 	{
 		clearControls();
+		PatIdType negativeInstance = PatIdType.getNegativeInstance(ConfigFlag.UI.DISPLAY_PATID_TYPE.getValue());//WDEV-20926
 		//Load the list of active hospitals in order to fill the current hospital combo.
-		form.cmbIDType().setValue(PatIdType.getNegativeInstance(ConfigFlag.UI.DISPLAY_PATID_TYPE.getValue()));
-
+		form.cmbIDType().setValue(negativeInstance);
+		form.grdDischarges().setColHOSNUMCaption(negativeInstance.getText());//WDEV-20926
+		form.getGlobalContext().Core.setPatientShort(null);
+		form.getGlobalContext().Core.setCurrentCareContext(null);
+		form.getGlobalContext().Core.setSelectingPatientForm(engine.getFormName());
+		
 		loadHospitals();
 		if (form.cmbCurrentHospital().getValue() == null && engine.getCurrentLocation() != null)
 
 		{
 			//Try and load the logged in location as a ward
 			LocMostVo voLoc = domain.getLocation((LocationRefVo)engine.getCurrentLocation());
+			LocationLiteVo currentHospital = domain.getCurrentHospital(engine.getCurrentLocation()); //WDEV-20707
 			if (voLoc != null && voLoc.getTypeIsNotNull()
 				&& voLoc.getType().equals(LocationType.WARD))
 			{
-				form.cmbCurrentHospital().setValue(voLoc.getParentLocation());
+				//form.cmbCurrentHospital().setValue(voLoc.getParentLocation());
+				form.cmbCurrentHospital().setValue(currentHospital); //WDEV-20707
 	
 				form.cmbCurrentWard().newRow(voLoc, voLoc.getName());
 				form.cmbCurrentWard().setValue(voLoc);
@@ -96,7 +127,7 @@ public class Logic extends BaseLogic
 	{
 		PendingDischargesVo pendingDischarge = form.getGlobalContext().STHK.getPendingDischargesListFilter();
 		//We fill all the criteria search elements
-		if (pendingDischarge!=null)
+		if (pendingDischarge != null)
 		{
 			if (pendingDischarge.getTimeUnitsIsNotNull())
 				form.cmbTime().setValue(pendingDischarge.getTimeUnits());
@@ -117,6 +148,9 @@ public class Logic extends BaseLogic
 			loadWards();
 			if (pendingDischarge.getWardIsNotNull())
 				form.cmbCurrentWard().setValue(pendingDischarge.getWard());
+			form.chkConfirmed().setValue(Boolean.TRUE.equals(pendingDischarge.getConfirmedDischarge()));
+			form.chkEstDischarge().setValue(Boolean.TRUE.equals(pendingDischarge.getPotentialDischarge()));
+			form.chkReadytoLeave().setValue(Boolean.TRUE.equals(pendingDischarge.getReadyToLeave()));
 
 		}
 	}
@@ -124,23 +158,25 @@ public class Logic extends BaseLogic
 
 	{
 		form.grdDischarges().getRows().clear();
-		form.lblTotal().setValue("Total : 0"); // WDEV-18099 
+		form.lblTotal().setValue("Total: 0"); // WDEV-18099
+		clearGCSelection(false);
+		updateControlState();
 		
 		//We validate that if both fields of time units have been introduced. If not, we show a message with the error.
 		String[] errors = validate();
 		if (errors!=null)
 		{
-			engine.showErrors(errors);
+			engine.showErrors(errors);			
 			return;
 		}
 		InpatientEpisodeForPendingDischargesVoCollection discharges=new InpatientEpisodeForPendingDischargesVoCollection();
 		PendingDischargesVo discharge=new PendingDischargesVo();
 		if (form.cmbCurrentHospital().getValue()!=null)
 			discharge.setCurrentHospital(form.cmbCurrentHospital().getValue());
-		//Algorighm to calculate the estimated discharte time, depending on the time units introduced by the user 
+		//Algorithm to calculate the estimated discharge time, depending on the time units introduced by the user 
 		if (form.cmbTime().getValue()!=null&&form.int1().getValue()!=null)
 		{
-			Date d= new Date();
+			DateTime d= new DateTime();
 			if (form.cmbTime().getValue().equals(TimeUnitsSecondsToMonths.SECONDS))
 				d.addSeconds(form.int1().getValue());
 			if (form.cmbTime().getValue().equals(TimeUnitsSecondsToMonths.MINUTES))
@@ -148,9 +184,9 @@ public class Logic extends BaseLogic
 			if (form.cmbTime().getValue().equals(TimeUnitsSecondsToMonths.HOURS))
 				d.addSeconds(form.int1().getValue() * 3600);
 			if (form.cmbTime().getValue().equals(TimeUnitsSecondsToMonths.DAYS))
-				d.addDay(form.int1().getValue());
+				d.addDays(form.int1().getValue());
 			if (form.cmbTime().getValue().equals(TimeUnitsSecondsToMonths.WEEKS))
-				d.addDay(form.int1().getValue()*7);
+				d.addDays(form.int1().getValue()*7);
 			if (form.cmbTime().getValue().equals(TimeUnitsSecondsToMonths.MONTHS))
 				d.addMonth(form.int1().getValue());
 			discharge.setEstDischargeDate(d);
@@ -183,8 +219,13 @@ public class Logic extends BaseLogic
 		if (form.cmbCurrentWard().getValue()!=null)
 			discharge.setWard(form.cmbCurrentWard().getValue());
 		//When the user clicks on the button search, the global context variable is filled with the search criteria.
-		if (form.chkQueryConfirmed().getValue())
-			discharge.setQueryPending(form.chkQueryConfirmed().getValue());
+		
+		if (form.chkConfirmed().getValue())
+			discharge.setConfirmedDischarge(form.chkConfirmed().getValue());
+		if (form.chkEstDischarge().getValue())
+			discharge.setPotentialDischarge(form.chkEstDischarge().getValue());
+		if (form.chkReadytoLeave().getValue())
+			discharge.setReadyToLeave(form.chkReadytoLeave().getValue());
 		
 		//When the user clicks on the button search, the global context variable is filled with the search criteria.
 		form.getGlobalContext().STHK.setPendingDischargesListFilter(discharge);
@@ -192,11 +233,15 @@ public class Logic extends BaseLogic
 		if (discharge.countFieldsWithValue() == 1 
 			&& discharge.getIDTypeIsNotNull() )
 		{
-			engine.showMessage("Please enter some valid search criteria.", "Invalid search cirteria", MessageButtons.OK, MessageIcon.ERROR);
+			engine.showMessage("Please enter some valid search criteria.", "Invalid search criteria", MessageButtons.OK, MessageIcon.ERROR);
 			return;
 		}
-
-
+		//WDEV-22319
+		if (discharge.countFieldsWithValue()>0 && !Boolean.TRUE.equals(discharge.getPotentialDischarge()) && !Boolean.TRUE.equals(discharge.getConfirmedDischarge()) && !Boolean.TRUE.equals(discharge.getReadyToLeave()))
+		{
+			engine.showErrors(new String[]{"Either 'Est. Discharge' or 'Confirmed - Ready for Discharge' or 'Ready to Leave' is mandatory for selection"});
+			return;
+		}
 		//If all the fields are empty, we show an error message. If not, we do the search.
 		if (discharge.countFieldsWithValue()>0)
 			discharges = domain.listPendingDischarges(discharge);
@@ -214,7 +259,7 @@ public class Logic extends BaseLogic
 		}
 		//If there are results, we update the label at the bottom of the component, showing the number of results that matched the criteria.
 		if (discharges != null)
-			form.lblTotal().setValue("Total : " + String.valueOf(discharges.size()));
+			form.lblTotal().setValue("Total: " + String.valueOf(discharges.size()));
 
 		//We populate the grid with the results.
 		populateGrid(discharges, voToFind);
@@ -223,10 +268,23 @@ public class Logic extends BaseLogic
 	public void refresh()
 	{
 		refreshSearchCriteria();
-		search(form.grdDischarges().getSelectedRow() != null ? form.grdDischarges().getValue() : null); //WDEV-16192
-		updateControlState(); // WDEV-18123 
+		if (form.getGlobalContext().STHK.getPendingDischargesListFilter() != null)
+		{	
+			search(form.grdDischarges().getSelectedRow() != null ? form.grdDischarges().getValue() : null); //WDEV-16192
+			updateControlState();// WDEV-18123
+		} 
 	}
-
+	private String getWardStatusTextDisplay(WardBayStatus wardStatus)
+	{
+		if (wardStatus == null || WardBayStatus.OPEN.equals(wardStatus))
+			return "<div style =\"color:#008000;padding-top: 5px;\">" + WardBayStatus.OPEN.getText() + "</div>";//WDEV-20770
+		else if (WardBayStatus.CLOSED.equals(wardStatus))
+			return "<div style =\"color:#FF0000;padding-top: 5px;\">" + WardBayStatus.CLOSED.getText() + "</div>";
+		else if  (WardBayStatus.BLOCKED.equals(wardStatus))
+			return "<div style =\"color:#FFBF00;padding-top: 5px;\">" + WardBayStatus.BLOCKED.getText() + "</div>";
+		
+		return null;
+	}	
 	private void loadHospitals() 
 	{
 		LocationLiteVoCollection hospitals = domain.getActiveHospitals();
@@ -252,9 +310,9 @@ public class Logic extends BaseLogic
 	protected void onImbClearClick() throws ims.framework.exceptions.PresentationLogicException
 	{
 		clearControls();
-		updateControlState(); //WDEV-18123 
+		clearGCSelection(true);		
 		form.getGlobalContext().STHK.setPendingDischargesListFilter(null);
-		
+		updateControlState(); //WDEV-18123 		
 	}
 	private void clearControls() 
 	{
@@ -266,8 +324,10 @@ public class Logic extends BaseLogic
 		form.txtForeName().setValue(null);
 		form.txtSurname().setValue(null);
 		form.txtIDNum().setValue(null);
-		form.chkQueryConfirmed().setValue(false);
-		form.lblTotal().setValue("Total : 0");
+		form.chkConfirmed().setValue(false);
+		form.chkEstDischarge().setValue(false);
+		form.chkReadytoLeave().setValue(false);
+		form.lblTotal().setValue("Total: 0");
 	}
 
 	@Override
@@ -277,8 +337,14 @@ public class Logic extends BaseLogic
 		updateControlState(); // WDEV-18123 
 	}
 	
+	
 	private void populateGrid(InpatientEpisodeForPendingDischargesVoCollection discharges, InpatientEpisodeForPendingDischargesVo voToFind) 
 	{
+		// Clear the grid
+		form.grdDischarges().getRows().clear();
+		
+		if (discharges == null)
+			return;
 
 		for (InpatientEpisodeForPendingDischargesVo item : discharges) 
 		{
@@ -289,46 +355,144 @@ public class Logic extends BaseLogic
 				{
 					item.getPasEvent().getPatient().calculateAge();
 
-					row.setColHOSNUM(item.getPasEvent().getPatient().getHospnum().getValue());
+					//WDEV-20926
+					if (	item.getPasEvent().getPatient().getIdentifiersIsNotNull()
+							&& item.getPasEvent().getPatient().getIdentifiers().size() > 0
+						)
+					{
+						//WDEV-22960
+						StringBuilder tooltip = new StringBuilder();
+						PatientId patNHSId = item.getPasEvent().getPatient().getPatId(PatIdType.NHSN);
+						PatientId displayId = item.getPasEvent().getPatient().getDisplayId();
+						
+						if(displayId == null)
+						{
+							if(patNHSId != null)
+							{
+								tooltip.append("NHSN: ").append(patNHSId.getValue());
+								row.setColHOSNUM(patNHSId.getValue());
+								row.setCellColHOSNUMTooltip(tooltip.toString());	
+							}
+						}
+						else
+						{
+							String name = ims.configuration.ConfigFlag.UI.DISPLAY_PATID_TYPE.getValue();
+							ims.core.vo.lookups.PatIdType type = ims.core.vo.lookups.PatIdType.getNegativeInstance(name);
+							
+							tooltip.append(name).append(": ").append(displayId.getValue().toString()).append("<br />");
+								
+							if(patNHSId != null && !PatIdType.NHSN.equals(type))
+							{
+								tooltip.append("NHSN: ").append(patNHSId.getValue());	
+							}
+							row.setColHOSNUM(displayId.getValue().toString());//WDEV-20926
+							row.setCellColHOSNUMTooltip(tooltip.toString());
+						}
+						//end WDEV-22960
+						
+					}
+					
 					if (item.getPasEvent().getPatient().getAgeIsNotNull())
-						row.setcolAge(item.getPasEvent().getPatient().getAge().toString());
+					{
+						//row.setcolAge(item.getPasEvent().getPatient().getAge().toString());
+						row.setcolAge(item.getPasEvent().getPatient().calculateAgeText());				//wdev-21464
+						row.setCellcolAgeTooltip(item.getPasEvent().getPatient().calculateAgeText());	//wdev-21464
+					}
 					if (item.getPasEvent().getPatient().getSexIsNotNull())
+					{
 						row.setColPatSex(item.getPasEvent().getPatient().getSex().getText());
-					if (item.getPasEvent().getPatient().getNameIsNotNull())
+						row.setCellColPatSexTooltip(item.getPasEvent().getPatient().getSex().getText());//WDEV-22737
+					}
+					
+					if (item.getPasEvent().getPatient().getNameIsNotNull())//WDEV-22209
+					{
 						if (item.getPasEvent().getPatient().getName().getSurnameIsNotNull())
+						{
 							row.setColSurname(item.getPasEvent().getPatient().getName().getSurname());
+							row.setCellColSurnameTooltip(item.getPasEvent().getPatient().getName().getSurname());//WDEV-22737
+						}
 						if (item.getPasEvent().getPatient().getName().getForenameIsNotNull())
+						{
 							row.setColForename(item.getPasEvent().getPatient().getName().getForename());
-
+							row.setCellColForenameTooltip(item.getPasEvent().getPatient().getName().getForename());//WDEV-22737
+						}
+					}
 
 				}
 			if (item.getPasEvent().getConsultantIsNotNull())
 				if (item.getPasEvent().getConsultant().getMosIsNotNull())
 					if (item.getPasEvent().getConsultant().getMos().getNameIsNotNull())
+					{
 						row.setColConsultant(item.getPasEvent().getConsultant().getMos().getName().toString());
+						row.setCellColConsultantTooltip(item.getPasEvent().getConsultant().getMos().getName().toString());//WDEV-22737
+					}
 			if (item.getPasEvent().getLocationIsNotNull())
 				if (item.getPasEvent().getLocation().getNameIsNotNull())
+				{
 					row.setColWard(item.getPasEvent().getLocation().getName());
+					row.setCellColWardTooltip(item.getPasEvent().getLocation().getName());//WDEV-22737
+				}
 			if (item.getBedIsNotNull())
 				if (item.getBed().getBedSpaceIsNotNull())
 					if (item.getBed().getBedSpace().getBedSpaceTypeIsNotNull())
+					{
 						row.setColLocation(item.getBed().getBedSpace().getBedSpaceType().getText());
+						row.setCellColLocationTooltip(item.getBed().getBedSpace().getBedSpaceType().getText());//WDEV-22737
+					}
 			if (item.getEstDischargeDateIsNotNull())
-				row.setColDateTime(item.getEstDischargeDate().toString());
-			
-			if(item.isDischargeDueWithin24Hrs())
 			{
-				if(item.getIsConfirmedDischarge() == null || item.getIsConfirmedDischarge().equals(false))
-					row.setBackColor(Color.Orange);
-				else if(item.getIsConfirmedDischargeIsNotNull() && item.getIsConfirmedDischarge().equals(true))
-					row.setBackColor(Color.Red);
-			}	
-			
+				row.setColDateTime(item.getEstDischargeDate().toString());
+				row.setCellColDateTimeTooltip(item.getEstDischargeDate().toString());//WDEV-22737
+			}
+		
+			if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS")) //WDEV-20328
+			{
+				row.setColWardStatus(getWardStatusTextDisplay(item.getWardStatus()));
+				row.setCellColWardStatusTooltip(item.getWardStatus() != null ? item.getWardStatus().getText() : null);//WDEV-22737
+			}
+			//WDEV-21842
+			Color rowColour = getRowColor(item);
+			if (rowColour != null)
+			{
+				row.setBackColor(rowColour);
+			}
+			//WDEV-21842 ---
+			//WDEV-21828
 			if (voToFind != null 
 				&& voToFind.equals(item))
 				form.grdDischarges().setValue(voToFind);
 
 		}
+	}
+	//WDEV-22443
+	private Color getRowColor(InpatientEpisodeForPendingDischargesVo item)
+	{
+		if (item == null)
+			return null;
+		
+		ColorBean darkOrangeBean = new ColorBean();
+		darkOrangeBean.setName("Dark Orange");
+		darkOrangeBean.setValue(INTENSE_ORANGE_COLOR_HEXA_CODE);
+		Color darkOrange = new Color(darkOrangeBean);
+		
+		if (isPatientOnTrackingMovement(item)) //WDEV-22309
+			return Color.RoyalBlue;		
+		if (Boolean.TRUE.equals(item.getIsOnHomeLeave()))
+			return Color.LightGray;
+		if (item.isDischargeDueWithin24Hrs())
+			return Boolean.TRUE.equals(item.getIsConfirmedDischarge()) ? Color.Red : darkOrange;		
+		
+		return null;
+	}
+	private boolean isPatientOnTrackingMovement(InpatientEpisodeForPendingDischargesVo record)
+	{
+		if (record == null || record.getCurrentTrackingMovement() == null)
+			return false;
+		
+		if (Boolean.TRUE.equals(record.getCurrentTrackingMovement().getPatientReturned()))
+			return false;
+		
+		return true;
 	}
 	@Override
 	protected void onCmbCurrentHospitalValueChanged() throws PresentationLogicException 
@@ -355,10 +519,12 @@ public class Logic extends BaseLogic
 	{
 		ArrayList <String> errors=new ArrayList<String>();
 		if ((form.cmbTime().getValue()!=null && form.int1().getValue()==null)||(form.cmbTime().getValue()==null&&form.int1().getValue()!=null))
-			errors.add("If you want to add Time Period to the criteria, both fields are Mandatory");
+			errors.add("If Time Period is selected, both fields are mandatory");
+		if (form.cmbTime().getValue() != null && form.int1().getValue() != null && !form.chkConfirmed().getValue() && !form.chkEstDischarge().getValue() && !form.chkReadytoLeave().getValue())
+			errors.add("If a time period is specified, either 'Est. Discharge' or 'Confirmed - Ready for Discharge' or 'Ready to Leave' is mandatory for selection");
 		if (errors.size()>0)
-			return  errors.toArray(new String[0]);
-		else return null;
+			return  errors.toArray(new String[errors.size()]);
+		return null;
 	}
 	
 	
@@ -381,13 +547,20 @@ public class Logic extends BaseLogic
 	{
 		// Get discharge records from grid
 		InpatientEpisodeForPendingDischargesVoCollection records = form.grdDischarges().getValues();
+		
+		//no need to sort less than 2 records
+		
+		if (records.size() < 2) //WDEV-20835
+			return;
+		
 		// Toggle sort order for column
 		sortOrderToggle(column);
 		
 		// Determine column - sort records after it
 		if (COL_AGE == column)
 		{
-			records.sort(InpatientEpisodeForPendingDischargesVo.getAgeComparator(form.getLocalContext().getSortOrderAge()));
+			//records.sort(InpatientEpisodeForPendingDischargesVo.getAgeComparator(form.getLocalContext().getSortOrderAge()));
+			records.sort(new AgeDOBComparator(form.getLocalContext().getSortOrderAge()));	//wdev-21464
 		}
 		else if (COL_ESTIMATED_DISCHAGE_DATETIME == column)
 		{
@@ -402,6 +575,46 @@ public class Logic extends BaseLogic
 		// Update selection
 		form.grdDischarges().setValue(selectedValue);
 	}
+	//wdev-21464
+	public static class AgeDOBComparator implements Comparator<Object>
+	{
+		private int direction = 1;
+		
+		public AgeDOBComparator()
+		{
+			this(SortOrder.ASCENDING);
+		}	
+		public AgeDOBComparator(SortOrder order)
+		{		
+			direction = SortOrder.DESCENDING.equals(order) ? -1 : 1;		
+		}
+		
+		public int compare(Object o1, Object o2)
+		{
+			PartialDate pdate1 = null;
+			PartialDate pdate2 = null;
+					
+			if (o1 instanceof InpatientEpisodeForPendingDischargesVo && o2 instanceof InpatientEpisodeForPendingDischargesVo)
+			{
+				InpatientEpisodeForPendingDischargesVo ps1 = (InpatientEpisodeForPendingDischargesVo)o1;
+				pdate1 = ps1.getPasEventIsNotNull()  && ps1.getPasEvent().getPatientIsNotNull() ? ps1.getPasEvent().getPatient().getDob() : null;
+				InpatientEpisodeForPendingDischargesVo ps2 = (InpatientEpisodeForPendingDischargesVo)o2;
+				pdate2 = ps2.getPasEventIsNotNull() && ps2.getPasEvent().getPatientIsNotNull()  ? ps2.getPasEvent().getPatient().getDob() : null;
+			}
+			
+			
+			
+			if (pdate1 != null && pdate2 != null)
+				return  pdate1.compareTo(pdate2)*direction;
+			if (pdate1 != null)
+				return direction;
+			if (pdate2 != null)
+				return -1*direction;
+			
+			return 0;
+		}
+	}
+
 
 	/**
 	 *	WDEV-13136
@@ -448,5 +661,95 @@ public class Logic extends BaseLogic
 	{
 		form.int1().setRequired(form.int1().getValue() == null && form.cmbTime().getValue() != null);
 		form.cmbTime().setRequired(form.int1().getValue() != null && form.cmbTime().getValue() == null);
+		
+		//WDEV-22926
+		form.getContextMenus().Core.hideAllPendingDischargesMenuItems();
+		form.getContextMenus().Core.getPendingDischargesDISCHARGEItem().setVisible(form.grdDischarges().getValue() != null);
+		form.getContextMenus().Core.getPendingDischargesEDIT_PENDING_DISCHARGEItem().setVisible(form.grdDischarges().getValue() != null);
 	}
+
+	@Override
+	protected void onGrdDischargesSelectionChanged() throws PresentationLogicException
+	{		
+		setGCOnSelection();
+		updateControlState();
+	}
+
+	private void setGCOnSelection()
+	{
+		clearGCSelection(true);
+		
+		InpatientEpisodeForPendingDischargesVo selectedGridVal = form.grdDischarges().getValue();
+		if (selectedGridVal == null)
+			return;
+		
+		form.getGlobalContext().Core.setCurrentCareContext(selectedGridVal.getPasEvent() != null ? domain.getCurrentCareContext(selectedGridVal.getPasEvent()) : null);
+		if (form.getGlobalContext().Core.getCurrentCareContext() == null)
+			form.getGlobalContext().Core.setPatientShort(selectedGridVal.getPasEvent().getPatient());		
+	}
+
+	private void clearGCSelection(boolean bIncludePersistent)
+	{
+		if (bIncludePersistent)
+		{	
+			form.getGlobalContext().Core.setPatientShort(null);
+			form.getGlobalContext().Core.setCurrentCareContext(null);
+		}
+		form.getGlobalContext().Core.setSelectedWaitingAreaPatient(null);
+		form.getGlobalContext().Core.setSelectedBedSpaceState(null);
+		form.getGlobalContext().Core.setBedInfoAction(null);
+	}
+	//WDEV-22926
+	@Override
+	protected void onContextMenuItemClick(int menuItemID, Control sender)	throws PresentationLogicException
+	{
+
+		switch (menuItemID)
+		{
+		case GenForm.ContextMenus.CoreNamespace.PendingDischarges.EDIT_PENDING_DISCHARGE:
+			setGCOnMenuAction(menuItemID);
+			break;
+		case GenForm.ContextMenus.CoreNamespace.PendingDischarges.DISCHARGE:
+			setGCOnMenuAction(menuItemID);
+			break;
+		}
+		updateControlState();
+	}
+	//WDEV-22926
+	private void setGCOnMenuAction(int menuAction)
+	{
+		InpatientEpisodeForPendingDischargesVo selectedGridVal = form.grdDischarges().getValue();
+		if (selectedGridVal == null)
+			return;
+
+		if (selectedGridVal.getBedIsNotNull())
+		{	
+			form.getGlobalContext().Core.setSelectedBedSpaceState(domain.getBedSpaceStateForInpatient(selectedGridVal.getBed()));
+			if (GenForm.ContextMenus.CoreNamespace.PendingDischarges.DISCHARGE == menuAction)
+				form.getGlobalContext().Core.setBedInfoAction(BedInfoAction.DISCHARGEPENDINGPATIENT);
+		}
+		else
+		{	
+			form.getGlobalContext().Core.setSelectedWaitingAreaPatient(domain.getWaitingAreaPatient(selectedGridVal));
+			if (GenForm.ContextMenus.CoreNamespace.PendingDischarges.DISCHARGE == menuAction)
+				form.getGlobalContext().Core.setBedInfoAction(BedInfoAction.DISCHARGEPENDINGPATIENT);
+
+		}
+		if (form.getGlobalContext().Core.getBedInfoAction() == null)
+			form.getGlobalContext().Core.setBedInfoAction(BedInfoAction.EDIT_READY_FOR_DISCHARGE);
+		engine.open(form.getForms().Core.BedInfoDialog);
+	}
+
+	@Override
+	protected void onFormDialogClosed(FormName formName, DialogResult result) throws PresentationLogicException
+	{
+		if (form.getForms().Core.BedInfoDialog.equals(formName))
+		{
+			search(null);
+			if (!DialogResult.OK.equals(result))
+				form.getGlobalContext().Core.setPatientShort(form.getGlobalContext().Core.getPatientShort());			
+		}
+		updateControlState();		
+	}
+
 }

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -32,6 +37,7 @@ import ims.core.vo.CommChannelVoCollection;
 import ims.core.vo.GpVo;
 import ims.core.vo.Gp_PracticesVo;
 import ims.core.vo.Gp_PracticesVoCollection;
+import ims.core.vo.HrgConfigLiteVo;
 import ims.core.vo.LocSiteUpprNameVo;
 import ims.core.vo.LocSiteUpprNameVoCollection;
 import ims.core.vo.OrgVo;
@@ -106,8 +112,10 @@ public class TaxonomyLoaderHelper extends TaxonomyLoader {
 		} else if (codeType
 				.equals(ims.core.vo.lookups.TaxonomyType.CCG)) {
 			taxonomyLoader = new TaxonomyCCGLoader(domain, fileFormat);
+		} else if (codeType.equals(ims.core.vo.lookups.TaxonomyType.HRG)) 
+		{
+			taxonomyLoader = new TaxonomyHRGLoader(domain, fileFormat);
 		}
-		
 	}
 
 	public void load(String filename, String mapfile, StringBuffer delimeter,
@@ -118,7 +126,7 @@ public class TaxonomyLoaderHelper extends TaxonomyLoader {
 			this.setRecordsUpdated(taxonomyLoader.getRecordsUpdated());
 		} else
 			throw new IOException(
-					"No load implemtation for selected taxonomy type.");
+					"No load implementation for selected taxonomy type.");
 	}
 
 	public TextileString getLoadReport(ims.core.vo.lookups.TaxonomyType codeType) {
@@ -783,12 +791,19 @@ final class TaxonomyGPLoader extends TaxonomyLoader
 			}									
 			
 			String nameString = loadImpl.getString("GPNAME");
-			PersonName name = new PersonName();
+			
+			//WDEV-22675
+			PersonName name = vo.getName();
+			if (name==null)
+				name = new PersonName();
+
+			//Update Surname and Title Only
+			//TODO Review if Surname different should we create a new name?
 			name.setSurname(nameString);
 			name.setTitle(title);
 			vo.setName(name);
 			vo.getName().setUppers(); //WDEV-14173
-			
+			//WDEV-22675
 
 			String closeDate = loadImpl.getString("CLOSEDATE");
 			if (closeDate == null || !("".equals(closeDate))) {
@@ -968,6 +983,90 @@ final class TaxonomyOPCS4Loader extends TaxonomyLoader {
 		}
 	}
 
+}
+
+final class TaxonomyHRGLoader extends TaxonomyLoader {
+	ims.admin.domain.TaxonomyCodeAdmin domainTaxonomy;
+
+	public TaxonomyHRGLoader(ims.admin.domain.TaxonomyCodeAdmin domain,
+			ims.admin.vo.lookups.FileFormatType ft) {
+		if (ft != null) {
+			if (ft.equals(ims.admin.vo.lookups.FileFormatType.XML))
+				loadActions = new TaxonomyLoadXml();
+			else if (ft.equals(ims.admin.vo.lookups.FileFormatType.FIXEDLENGTH))
+				loadActions = new FlatFileLoad();
+			else if (ft.equals(ims.admin.vo.lookups.FileFormatType.DELIMITED))
+				loadActions = new TaxonomyLoadDelimited();
+		}
+		domainTaxonomy = domain;
+	}
+
+	public void load(String filename, String mapFile, StringBuffer delimeter,
+			StringBuffer qualifier) throws IOException {
+		int recInserted = 0;
+		int recUpdated = 0;
+
+		if (loadActions == null)
+			throw new IOException(
+					"No loader implementation for this type of file");
+
+		loadActions.load(filename, mapFile, delimeter, qualifier, true);
+
+		HrgConfigLiteVo vo = null;
+
+		if (loadActions.getClass().equals(TaxonomyLoadDelimited.class)) 
+		{
+			// fixedlength represetation read
+			TaxonomyLoadDelimited loadImpl = (TaxonomyLoadDelimited) loadActions;
+			while (loadImpl.next()) 
+			{
+				try 
+				{
+					if (loadImpl.getString("HrgCode") != "") 
+					{
+						if(loadImpl.getString("Type") != null && loadImpl.getString("Type").equalsIgnoreCase("D"))
+						{
+    						vo = domainTaxonomy.getHRGCode(loadImpl.getString("HrgCode"));
+    						if (vo != null) 
+    						{
+    							// update
+    							vo.setHRGDescription(loadImpl.getString("HrgDescription"));
+    							
+    							recUpdated++;
+    						} 
+    						else 
+    						{
+    							// insert
+    							vo = new HrgConfigLiteVo();
+    							vo.setHRGCode(loadImpl.getString("HrgCode"));
+    							vo.setHRGDescription(loadImpl.getString("HrgDescription"));
+    							
+    							recInserted++;
+    						}
+    
+    						String[] err = vo.validate();
+    						if (err != null && err.length > 0)
+    							throw new DomainInterfaceException(err.toString());
+    						else
+    							domainTaxonomy.saveHRG(vo);
+						}
+					}
+
+				} catch (DomainInterfaceException e) {
+					throw new IOException(e.getMessage());
+				} catch (StaleObjectException e) {
+					throw new IOException(e.getMessage());
+				} catch (UniqueKeyViolationException e) {
+					throw new IOException(e.getMessage());
+				} catch (NoSuchElementException e) {
+					throw new IOException(e.getMessage());
+				}
+			}
+
+			setRecordsInserted(recInserted);
+			setRecordsUpdated(recUpdated);
+		}
+	}
 }
 
 final class TaxonomyIcd10Loader extends TaxonomyLoader {
@@ -1559,15 +1658,8 @@ final class TaxonomyLoadDelimited implements ITaxonomyLoadActions {
 		return null;
 	}
 
-	public void load(String filename, String definitionFile,
-			StringBuffer delimeter, StringBuffer qualifier,
-			boolean ignoreFirstRecord) {
-
-	}
-
 	public void load(String file, String fileMap, StringBuffer delimeter,
-			StringBuffer qualifier) throws IOException {
-		// TODO Auto-generated method stub
+			StringBuffer qualifier,	boolean ignoreFirstRecord) throws IOException {
 		try {
 			if (delimeter.length() > 0 && delimeter.toString() != "") {
 				if (fileMap != null) {
@@ -1609,9 +1701,15 @@ final class TaxonomyLoadDelimited implements ITaxonomyLoadActions {
 			throw new IOException(e.getMessage());
 		}
 
-		if (ds.getErrorCount() > 0) {
+		if (!ignoreFirstRecord && ds.getErrorCount() > 0) {
 			throw new IOException(ds.getErrors().toString());
 		}
+
+	}
+
+	public void load(String file, String fileMap, StringBuffer delimeter,
+			StringBuffer qualifier) throws IOException {
+		load(file, fileMap, delimeter, qualifier, false);
 
 	}
 

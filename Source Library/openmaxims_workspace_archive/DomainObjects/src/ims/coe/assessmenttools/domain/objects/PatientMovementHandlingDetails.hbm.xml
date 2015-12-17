@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:37 -->
+<hibernate-mapping>
+	<class name="ims.coe.assessmenttools.domain.objects.PatientMovementHandlingDetails" table="coe_toolpmdt" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: hibernateClassContent -->
+<!-- debug: movement -->
+<!-- debug: mechanicalEquipment -->
+<!-- debug: equipmentOther -->
+<!-- debug: numberOfStaff -->
+<!-- debug: details -->
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: IsLookup -->
+		<many-to-one name="movement" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_movement" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="mechanicalEquipment" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_mechanical" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="equipmentOther" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_equipmento" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="numberOfStaff" type="integer" access="field" update="true">
+			<column name="numberofst"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="details" type="string" access="field" update="true">
+			<column name="details"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

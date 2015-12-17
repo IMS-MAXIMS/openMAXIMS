@@ -1,3 +1,27 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 package ims.RefMan.helper;
 
 import java.util.Date;
@@ -8,8 +32,9 @@ public class CatsReferralManualClass
 	private String patient_title;
 	private String patient_surname;
 	private String patient_forename;
-	private String any_nhsnum;
-	private String verified_nhsnum;
+	//private String any_nhsnum;
+	//private String verified_nhsnum;
+	private String display_PatID;//WDEV-19621
 	private Date patient_dod;
 	private Date ReferralDate;
 	private Integer LinkedICPID;
@@ -32,13 +57,22 @@ public class CatsReferralManualClass
 	private Date DateRecieved;
 	private Boolean HasDocuments;
 	private Boolean HasReferralLetter;
+	private Date EndDateKPI;		//wdev-19673
+	private Integer UrgencyID; //WDEV-20275
+	private String UrgencyText; //WDEV-20275
+	private Integer TriageOutcomeStatusId;
+	private String TriageOutcomeStatusText;
+	private Integer HasTriagePendingDiagnosticResult;  //WDEV-20880
+	private Boolean RTTClockImpact;
+	private String UBRN;//wdev-22497
 
 	public CatsReferralManualClass(Integer CatsReferralId,
 								String patient_title,
 								String patient_surname,
 								String patient_forename,
-								String any_nhsnum,
-								String verified_nhsnum,
+								//String any_nhsnum,
+								//String verified_nhsnum,
+								String display_PatID, //WDEV-19621
 								Date patient_dod,
 								Integer LinkedICPID,
 								Integer LinkedELEID,
@@ -60,14 +94,23 @@ public class CatsReferralManualClass
 								Integer AssociatedPatientId,
 								Date DateRecieved,
 								Boolean HasDocuments,
-								Boolean HasReferralLetter)
+								Boolean HasReferralLetter,
+								Date EndDateKPI,
+								Integer UrgencyID,//WDEV-20275
+								String UrgencyText,//WDEV-20275
+								Integer TriageOutcomeStatusId,
+								String TriageOutcomeStatusText,
+								Integer HasTriagePendingDiagnosticResult, //WDEV-20880
+								Boolean RTTClockImpact,
+								String UBRN)
 	{
 		this.CatsReferralId = CatsReferralId;
 		this.patient_title = patient_title;
 		this.patient_surname = patient_surname;
 		this.patient_forename = patient_forename;
-		this.any_nhsnum = any_nhsnum;
-		this.verified_nhsnum = verified_nhsnum;
+		//this.any_nhsnum = any_nhsnum;
+		//this.verified_nhsnum = verified_nhsnum;
+		this.display_PatID=display_PatID; //WDEV-19621
 		this.patient_dod = patient_dod;
 		this.LinkedICPID = LinkedICPID;
 		this.LinkedELEID = LinkedELEID;
@@ -90,6 +133,14 @@ public class CatsReferralManualClass
 		this.DateRecieved = DateRecieved;
 		this.HasDocuments = HasDocuments;
 		this.HasReferralLetter = HasReferralLetter;
+		this.EndDateKPI = EndDateKPI;	//wdev-19673
+		this.UrgencyID = UrgencyID; //WDEV-20275
+		this.UrgencyText = UrgencyText; //WDEV-20275
+		this.TriageOutcomeStatusId = TriageOutcomeStatusId;
+		this.TriageOutcomeStatusText = TriageOutcomeStatusText;
+		this.HasTriagePendingDiagnosticResult=HasTriagePendingDiagnosticResult; //WDEV-20880
+		this.RTTClockImpact = RTTClockImpact;
+		this.UBRN= UBRN;
 	}
 
 	public Integer getCatsReferralId()
@@ -99,23 +150,42 @@ public class CatsReferralManualClass
 	public String getPatientName()
 	{
 		String temp;
-			
-		temp = this.patient_title != null ? this.patient_title + " ": "";
-		temp += this.patient_forename != null ? this.patient_forename : "";
-		temp += " ";
-		temp += this.patient_surname != null ? this.patient_surname : "";
+				
+		temp = this.patient_surname != null ? this.patient_surname + " ": ""; //WDEV-20055
+		temp += this.patient_forename != null ? this.patient_forename + " " : ""; //WDEV-20055
+		temp += this.patient_title != null ? this.patient_title: "";
+		
 		return temp;
 	}
+	//WDEV-19665 
+	public String getPatientSurname()
+	{
+		return this.patient_surname;
+	}
+	public String getPatientForename()
+	{
+		return this.patient_forename;
+	}
+	public String getPatientTitle()
+	{
+		return this.patient_title;
+	}	
 	
-	public String getPatientnhsnum()
+	/*public String getPatientnhsnum()
 	{
 		return this.verified_nhsnum;
 	}
 	public String getAnynhsnum()
 	{
 		return this.any_nhsnum;
-	}
+	}*/
 
+	//WDEV-19621
+	public String getDysplayPatID()
+	{
+		return this.display_PatID;
+	}
+	
 	public Date getPatientDOD()
 	{
 		return this.patient_dod;
@@ -211,6 +281,12 @@ public class CatsReferralManualClass
 		return this.DateRecieved;
 	}
 
+	//WDEV-20752
+	public Date getReferralDate()
+	{
+		return this.ReferralDate;
+	}
+	
 	public Boolean getHasDocuments()
 	{
 		return this.HasDocuments;
@@ -225,5 +301,45 @@ public class CatsReferralManualClass
 	{
 		return this.LinkedELEID;
 	}
-
+	//wdev-19673
+	public Date getEndDateKPI()
+	{
+		return this.EndDateKPI;
+	}
+	
+	// start WDEV-20275
+	public Integer getReferralUrgencyID()
+	{
+		return this.UrgencyID;
+	}
+	
+	public String getReferralUrgencyText()
+	{
+		return this.UrgencyText;
+	}
+	// end WDEV-20275
+	
+	public Integer getTriageOutcomeStatusId()
+	{
+		return this.TriageOutcomeStatusId;
+	}
+	
+	public String getTriageOutcomeStatusString()
+	{
+		return this.TriageOutcomeStatusText;
+	}
+	
+	public Integer getHasTriagePendingDiagnosticResult() //WDEV-20880
+	{
+		return this.HasTriagePendingDiagnosticResult;
+	}
+	
+	public Boolean getRTTClockImpact()
+	{
+		return this.RTTClockImpact;
+	}
+	public String getUBRN()
+	{
+		return this.UBRN;
+	}
 }

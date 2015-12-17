@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:23
  *
  */
 package ims.clinical.vo.domain;
@@ -68,6 +73,10 @@ public class TTAMedicationVoAssembler
 		valueObjectDest.setRoute(valueObjectSrc.getRoute());
 		// SysInfo
 		valueObjectDest.setSysInfo(valueObjectSrc.getSysInfo());
+		// MedComments
+		valueObjectDest.setMedComments(valueObjectSrc.getMedComments());
+		// SortOrder
+		valueObjectDest.setSortOrder(valueObjectSrc.getSortOrder());
 	 	return valueObjectDest;
 	 }
 
@@ -483,6 +492,10 @@ public class TTAMedicationVoAssembler
 				// SysInfo
 		// set system information
 		valueObject.setSysInfo(ims.vo.domain.SystemInformationAssembler.create(domainObject.getSystemInformation()));
+		// MedComments
+		valueObject.setMedComments(ims.clinical.vo.domain.TTANoteVoAssembler.createTTANoteVoCollectionFromTTANote(map, domainObject.getMedComments()) );
+		// SortOrder
+		valueObject.setSortOrder(domainObject.getSortOrder());
  		return valueObject;
 	 }
 
@@ -579,6 +592,66 @@ public class TTAMedicationVoAssembler
 				domainFactory.getLookupInstance(valueObject.getRoute().getID());
 		}
 		domainObject.setRoute(value8);
+
+		// SaveAsRefVO treated as RefValueObject
+		ims.edischarge.vo.TTANoteRefVoCollection refCollection10 = new ims.edischarge.vo.TTANoteRefVoCollection();
+		if (valueObject.getMedComments() != null)
+		{
+			for (int i10=0; i10<valueObject.getMedComments().size(); i10++)
+			{
+				ims.edischarge.vo.TTANoteRefVo ref10 = (ims.edischarge.vo.TTANoteRefVo)valueObject.getMedComments().get(i10);
+				refCollection10.add(ref10);
+			}
+		}
+		int size10 = (null == refCollection10) ? 0 : refCollection10.size();		
+		java.util.List domainMedComments10 = domainObject.getMedComments();
+		if (domainMedComments10 == null)
+		{
+			domainMedComments10 = new java.util.ArrayList();
+		}
+		for(int i=0; i < size10; i++) 
+		{
+			ims.edischarge.vo.TTANoteRefVo vo = refCollection10.get(i);			
+			ims.edischarge.domain.objects.TTANote dom = null;
+			if ( null != vo ) 
+			{
+				if (vo.getBoId() == null)
+				{
+					if (domMap.get(vo) != null)
+					{
+						dom = (ims.edischarge.domain.objects.TTANote)domMap.get(vo);
+					}
+				}
+				else
+				{
+					dom = (ims.edischarge.domain.objects.TTANote)domainFactory.getDomainObject( ims.edischarge.domain.objects.TTANote.class, vo.getBoId());
+				}
+			}
+
+			int domIdx = domainMedComments10.indexOf(dom);
+			if (domIdx == -1)
+			{
+				domainMedComments10.add(i, dom);
+			}
+			else if (i != domIdx && i < domainMedComments10.size())
+			{
+				Object tmp = domainMedComments10.get(i);
+				domainMedComments10.set(i, domainMedComments10.get(domIdx));
+				domainMedComments10.set(domIdx, tmp);
+			}
+		}
+		
+		//Remove all ones in domList where index > voCollection.size() as these should
+		//now represent the ones removed from the VO collection. No longer referenced.
+		int i10 = domainMedComments10.size();
+		while (i10 > size10)
+		{
+			domainMedComments10.remove(i10-1);
+			i10 = domainMedComments10.size();
+		}
+		
+		domainObject.setMedComments(domainMedComments10);		
+		domainObject.setSortOrder(valueObject.getSortOrder());
 
 		return domainObject;
 	}

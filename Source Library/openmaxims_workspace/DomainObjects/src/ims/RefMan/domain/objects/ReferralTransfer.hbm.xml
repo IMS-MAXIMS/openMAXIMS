@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:37 -->
+<!-- Generated: 12/10/2015, 13:32 -->
 <hibernate-mapping>
 	<class name="ims.RefMan.domain.objects.ReferralTransfer" table="care_referraltransf" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -40,21 +40,39 @@
 		<many-to-one name="currentRTTStatus" class="ims.pathways.configuration.domain.objects.RTTStatusPoint" unique="true" foreign-key="referraltransf_currentrtt_fk" access="field" cascade="save-update">
 			<column name="currentrtt" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
+<!-- debug: pathwayID -->
+<!-- debug: referringOrganisationCode -->
+<!-- debug: rTTStartDate -->
 <!-- debug: !IsAssociation && !IsCollection -->
 
 <!-- debug: !IsLookup -->
-		<property name="rTTStatusDate" type="date" access="field" update="true">
+		<property name="rTTStatusDate" type="timestamp" access="field" update="true">
 			<column name="rttstatusd"  not-null="false" unique="false"  />
 		</property>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="otherPatientNumber" type="string" access="field" update="true" > 
-			<column name="otherpatie" length="50"  not-null="true" unique="false"  />
+			<column name="otherpatie" length="50"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="oTherOrganisationCode" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_otherorgan" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="pathwayID" type="string" access="field" update="true" > 
+			<column name="pathwayid" length="30"  not-null="false" unique="false"  />
 		</property>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
-		<property name="oTherOrganisationCode" type="string" access="field" update="true" > 
-			<column name="otherorgan" length="5"  not-null="true" unique="false"  />
+		<property name="referringOrganisationCode" type="string" access="field" update="true" > 
+			<column name="referringo" length="50"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="rTTStartDate" type="date" access="field" update="true">
+			<column name="rttstartda"  not-null="false" unique="false"  />
 		</property>
 	</class>
 </hibernate-mapping>

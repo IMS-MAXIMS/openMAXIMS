@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.patient.domain.objects;
@@ -53,6 +58,8 @@ public class MergedTables extends ims.domain.DomainObject implements java.io.Ser
 	private Integer objectId;
 	/** Name of the Attribute being updated */
 	private String attributeName;
+	/** The actual database column name that was updated */
+	private String columnName;
     public MergedTables (Integer id, int ver)
     {
     	super(id, ver);
@@ -114,6 +121,17 @@ public class MergedTables extends ims.domain.DomainObject implements java.io.Ser
 		this.attributeName = attributeName;
 	}
 
+	public String getColumnName() {
+		return columnName;
+	}
+	public void setColumnName(String columnName) {
+		if ( null != columnName && columnName.length() > 150 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for columnName. Tried to set value: "+
+				columnName);
+		}
+		this.columnName = columnName;
+	}
+
 	/**
 	 * isConfigurationObject
 	 * Taken from the Usage property of the business object, this method will return
@@ -156,6 +174,9 @@ public class MergedTables extends ims.domain.DomainObject implements java.io.Ser
 	    auditStr.append("; ");
 		auditStr.append("\r\n*attributeName* :");
 		auditStr.append(attributeName);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*columnName* :");
+		auditStr.append(columnName);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -210,6 +231,12 @@ public class MergedTables extends ims.domain.DomainObject implements java.io.Ser
 			sb.append("<attributeName>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getAttributeName().toString()));
 			sb.append("</attributeName>");		
+		}
+		if (this.getColumnName() != null)
+		{
+			sb.append("<columnName>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getColumnName().toString()));
+			sb.append("</columnName>");		
 		}
 		return sb.toString();
 	}
@@ -376,6 +403,11 @@ public class MergedTables extends ims.domain.DomainObject implements java.io.Ser
 		{	
     		obj.setAttributeName(new String(fldEl.getTextTrim()));	
 		}
+		fldEl = el.element("columnName");
+		if(fldEl != null)
+		{	
+    		obj.setColumnName(new String(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -392,6 +424,7 @@ public class MergedTables extends ims.domain.DomainObject implements java.io.Ser
 		public static final String EntityName = "entityName";
 		public static final String ObjectId = "objectId";
 		public static final String AttributeName = "attributeName";
+		public static final String ColumnName = "columnName";
 	}
 }
 

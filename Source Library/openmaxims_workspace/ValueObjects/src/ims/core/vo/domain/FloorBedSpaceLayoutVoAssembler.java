@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.core.vo.domain;
@@ -52,14 +57,14 @@ public class FloorBedSpaceLayoutVoAssembler
 	    valueObjectDest.setIsRIE(valueObjectSrc.getIsRIE());
 		// FloorLayout
 		valueObjectDest.setFloorLayout(valueObjectSrc.getFloorLayout());
-		// BedSpaces
-		valueObjectDest.setBedSpaces(valueObjectSrc.getBedSpaces());
 		// Name
 		valueObjectDest.setName(valueObjectSrc.getName());
 		// Status
 		valueObjectDest.setStatus(valueObjectSrc.getStatus());
 		// isTemplate
 		valueObjectDest.setIsTemplate(valueObjectSrc.getIsTemplate());
+		// BedSpaces
+		valueObjectDest.setBedSpaces(valueObjectSrc.getBedSpaces());
 	 	return valueObjectDest;
 	 }
 
@@ -352,48 +357,48 @@ public class FloorBedSpaceLayoutVoAssembler
 			
 		// FloorLayout
 		valueObject.setFloorLayout(ims.core.vo.domain.FloorLayoutVoAssembler.create(map, domainObject.getFloorLayout()) );
-		// BedSpaces
-		valueObject.setBedSpaces(ims.core.vo.domain.BedSpaceVoAssembler.createBedSpaceVoCollectionFromBedSpace(map, domainObject.getBedSpaces()) );
 		// Name
 		valueObject.setName(domainObject.getName());
 		// Status
-		ims.domain.lookups.LookupInstance instance4 = domainObject.getStatus();
-		if ( null != instance4 ) {
+		ims.domain.lookups.LookupInstance instance3 = domainObject.getStatus();
+		if ( null != instance3 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
 			img = null;
-			if (instance4.getImage() != null) 
+			if (instance3.getImage() != null) 
 			{
-				img = new ims.framework.utils.ImagePath(instance4.getImage().getImageId(), instance4.getImage().getImagePath());
+				img = new ims.framework.utils.ImagePath(instance3.getImage().getImageId(), instance3.getImage().getImagePath());
 			}
-			color = instance4.getColor();
+			color = instance3.getColor();
 			if (color != null) 
 				color.getValue();
 
-			ims.core.vo.lookups.PreActiveActiveInactiveStatus voLookup4 = new ims.core.vo.lookups.PreActiveActiveInactiveStatus(instance4.getId(),instance4.getText(), instance4.isActive(), null, img, color);
-			ims.core.vo.lookups.PreActiveActiveInactiveStatus parentVoLookup4 = voLookup4;
-			ims.domain.lookups.LookupInstance parent4 = instance4.getParent();
-			while (parent4 != null)
+			ims.core.vo.lookups.PreActiveActiveInactiveStatus voLookup3 = new ims.core.vo.lookups.PreActiveActiveInactiveStatus(instance3.getId(),instance3.getText(), instance3.isActive(), null, img, color);
+			ims.core.vo.lookups.PreActiveActiveInactiveStatus parentVoLookup3 = voLookup3;
+			ims.domain.lookups.LookupInstance parent3 = instance3.getParent();
+			while (parent3 != null)
 			{
-				if (parent4.getImage() != null) 
+				if (parent3.getImage() != null) 
 				{
-					img = new ims.framework.utils.ImagePath(parent4.getImage().getImageId(), parent4.getImage().getImagePath() );
+					img = new ims.framework.utils.ImagePath(parent3.getImage().getImageId(), parent3.getImage().getImagePath() );
 				}
 				else 
 				{
 					img = null;
 				}
-				color = parent4.getColor();
+				color = parent3.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup4.setParent(new ims.core.vo.lookups.PreActiveActiveInactiveStatus(parent4.getId(),parent4.getText(), parent4.isActive(), null, img, color));
-				parentVoLookup4 = parentVoLookup4.getParent();
-								parent4 = parent4.getParent();
+								parentVoLookup3.setParent(new ims.core.vo.lookups.PreActiveActiveInactiveStatus(parent3.getId(),parent3.getText(), parent3.isActive(), null, img, color));
+				parentVoLookup3 = parentVoLookup3.getParent();
+								parent3 = parent3.getParent();
 			}			
-			valueObject.setStatus(voLookup4);
+			valueObject.setStatus(voLookup3);
 		}
 				// isTemplate
 		valueObject.setIsTemplate( domainObject.isIsTemplate() );
+		// BedSpaces
+		valueObject.setBedSpaces(ims.core.vo.domain.BedSpaceVoAssembler.createBedSpaceVoCollectionFromBedSpace(map, domainObject.getBedSpaces()) );
  		return valueObject;
 	 }
 
@@ -444,7 +449,6 @@ public class FloorBedSpaceLayoutVoAssembler
 		domainObject.setVersion(valueObject.getVersion_FloorBedSpaceLayout());
 
 		domainObject.setFloorLayout(ims.core.vo.domain.FloorLayoutVoAssembler.extractFloorLayout(domainFactory, valueObject.getFloorLayout(), domMap));
-		domainObject.setBedSpaces(ims.core.vo.domain.BedSpaceVoAssembler.extractBedSpaceSet(domainFactory, valueObject.getBedSpaces(), domainObject.getBedSpaces(), domMap));		
 		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
 		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
 		if (valueObject.getName() != null && valueObject.getName().equals(""))
@@ -453,14 +457,15 @@ public class FloorBedSpaceLayoutVoAssembler
 		}
 		domainObject.setName(valueObject.getName());
 		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value4 = null;
+		ims.domain.lookups.LookupInstance value3 = null;
 		if ( null != valueObject.getStatus() ) 
 		{
-			value4 =
+			value3 =
 				domainFactory.getLookupInstance(valueObject.getStatus().getID());
 		}
-		domainObject.setStatus(value4);
+		domainObject.setStatus(value3);
 		domainObject.setIsTemplate(valueObject.getIsTemplate());
+		domainObject.setBedSpaces(ims.core.vo.domain.BedSpaceVoAssembler.extractBedSpaceSet(domainFactory, valueObject.getBedSpaces(), domainObject.getBedSpaces(), domMap));		
 
 		return domainObject;
 	}

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.pathways.vo.domain;
@@ -50,12 +55,14 @@ public class PatientJourneyCommentsVoAssembler
 		}
 		valueObjectDest.setID_PatientPathwayJourney(valueObjectSrc.getID_PatientPathwayJourney());
 	    valueObjectDest.setIsRIE(valueObjectSrc.getIsRIE());
-		// Comments
-		valueObjectDest.setComments(valueObjectSrc.getComments());
 		// isCancerPathway
 		valueObjectDest.setIsCancerPathway(valueObjectSrc.getIsCancerPathway());
 		// cancerPathwayDate
 		valueObjectDest.setCancerPathwayDate(valueObjectSrc.getCancerPathwayDate());
+		// LinkedComments
+		valueObjectDest.setLinkedComments(valueObjectSrc.getLinkedComments());
+		// PatientJourneyBreachReason
+		valueObjectDest.setPatientJourneyBreachReason(valueObjectSrc.getPatientJourneyBreachReason());
 	 	return valueObjectDest;
 	 }
 
@@ -346,8 +353,6 @@ public class PatientJourneyCommentsVoAssembler
 		if ((valueObject.getIsRIE() == null || valueObject.getIsRIE().booleanValue() == false) && domainObject.isIncludeRecord())
 			return null;
 			
-		// Comments
-		valueObject.setComments(domainObject.getComments());
 		// isCancerPathway
 		valueObject.setIsCancerPathway( domainObject.isIsCancerPathway() );
 		// cancerPathwayDate
@@ -356,6 +361,17 @@ public class PatientJourneyCommentsVoAssembler
 		{
 			valueObject.setCancerPathwayDate(new ims.framework.utils.Date(cancerPathwayDate) );
 		}
+		// LinkedComments
+		valueObject.setLinkedComments(ims.pathways.vo.domain.PatientJourneyCommentLiteVoAssembler.createPatientJourneyCommentLiteVoCollectionFromPatientJourneyComment(map, domainObject.getLinkedComments()) );
+		// PatientJourneyBreachReason
+		ims.pathways.vo.PatientJourneyBreachRefVoCollection PatientJourneyBreachReason = new ims.pathways.vo.PatientJourneyBreachRefVoCollection();
+		for(java.util.Iterator iterator = domainObject.getPatientJourneyBreachReason().iterator(); iterator.hasNext(); ) 
+		{
+			ims.pathways.domain.objects.PatientJourneyBreach tmp = (ims.pathways.domain.objects.PatientJourneyBreach)iterator.next();
+			if (tmp != null)
+				PatientJourneyBreachReason.add(new ims.pathways.vo.PatientJourneyBreachRefVo(tmp.getId(),tmp.getVersion()));
+		}
+		valueObject.setPatientJourneyBreachReason(PatientJourneyBreachReason);
  		return valueObject;
 	 }
 
@@ -405,21 +421,123 @@ public class PatientJourneyCommentsVoAssembler
 		}
 		domainObject.setVersion(valueObject.getVersion_PatientPathwayJourney());
 
-		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
-		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
-		if (valueObject.getComments() != null && valueObject.getComments().equals(""))
-		{
-			valueObject.setComments(null);
-		}
-		domainObject.setComments(valueObject.getComments());
 		domainObject.setIsCancerPathway(valueObject.getIsCancerPathway());
-		java.util.Date value3 = null;
-		ims.framework.utils.Date date3 = valueObject.getCancerPathwayDate();		
-		if ( date3 != null ) 
+		java.util.Date value2 = null;
+		ims.framework.utils.Date date2 = valueObject.getCancerPathwayDate();		
+		if ( date2 != null ) 
 		{
-			value3 = date3.getDate();
+			value2 = date2.getDate();
 		}
-		domainObject.setCancerPathwayDate(value3);
+		domainObject.setCancerPathwayDate(value2);
+
+		// SaveAsRefVO treated as RefValueObject
+		ims.pathways.vo.PatientJourneyCommentRefVoCollection refCollection3 = new ims.pathways.vo.PatientJourneyCommentRefVoCollection();
+		if (valueObject.getLinkedComments() != null)
+		{
+			for (int i3=0; i3<valueObject.getLinkedComments().size(); i3++)
+			{
+				ims.pathways.vo.PatientJourneyCommentRefVo ref3 = (ims.pathways.vo.PatientJourneyCommentRefVo)valueObject.getLinkedComments().get(i3);
+				refCollection3.add(ref3);
+			}
+		}
+		int size3 = (null == refCollection3) ? 0 : refCollection3.size();		
+		java.util.List domainLinkedComments3 = domainObject.getLinkedComments();
+		if (domainLinkedComments3 == null)
+		{
+			domainLinkedComments3 = new java.util.ArrayList();
+		}
+		for(int i=0; i < size3; i++) 
+		{
+			ims.pathways.vo.PatientJourneyCommentRefVo vo = refCollection3.get(i);			
+			ims.pathways.domain.objects.PatientJourneyComment dom = null;
+			if ( null != vo ) 
+			{
+				if (vo.getBoId() == null)
+				{
+					if (domMap.get(vo) != null)
+					{
+						dom = (ims.pathways.domain.objects.PatientJourneyComment)domMap.get(vo);
+					}
+				}
+				else
+				{
+					dom = (ims.pathways.domain.objects.PatientJourneyComment)domainFactory.getDomainObject( ims.pathways.domain.objects.PatientJourneyComment.class, vo.getBoId());
+				}
+			}
+
+			int domIdx = domainLinkedComments3.indexOf(dom);
+			if (domIdx == -1)
+			{
+				domainLinkedComments3.add(i, dom);
+			}
+			else if (i != domIdx && i < domainLinkedComments3.size())
+			{
+				Object tmp = domainLinkedComments3.get(i);
+				domainLinkedComments3.set(i, domainLinkedComments3.get(domIdx));
+				domainLinkedComments3.set(domIdx, tmp);
+			}
+		}
+		
+		//Remove all ones in domList where index > voCollection.size() as these should
+		//now represent the ones removed from the VO collection. No longer referenced.
+		int i3 = domainLinkedComments3.size();
+		while (i3 > size3)
+		{
+			domainLinkedComments3.remove(i3-1);
+			i3 = domainLinkedComments3.size();
+		}
+		
+		domainObject.setLinkedComments(domainLinkedComments3);		
+
+		ims.pathways.vo.PatientJourneyBreachRefVoCollection refCollection4 = valueObject.getPatientJourneyBreachReason();
+		int size4 = (null == refCollection4) ? 0 : refCollection4.size();		
+		java.util.List domainPatientJourneyBreachReason4 = domainObject.getPatientJourneyBreachReason();
+		if (domainPatientJourneyBreachReason4 == null)
+		{
+			domainPatientJourneyBreachReason4 = new java.util.ArrayList();
+		}
+		for(int i=0; i < size4; i++) 
+		{
+			ims.pathways.vo.PatientJourneyBreachRefVo vo = refCollection4.get(i);			
+			ims.pathways.domain.objects.PatientJourneyBreach dom = null;
+			if ( null != vo ) 
+			{
+				if (vo.getBoId() == null)
+				{
+					if (domMap.get(vo) != null)
+					{
+						dom = (ims.pathways.domain.objects.PatientJourneyBreach)domMap.get(vo);
+					}
+				}
+				else
+				{
+					dom = (ims.pathways.domain.objects.PatientJourneyBreach)domainFactory.getDomainObject( ims.pathways.domain.objects.PatientJourneyBreach.class, vo.getBoId());
+				}
+			}
+
+			int domIdx = domainPatientJourneyBreachReason4.indexOf(dom);
+			if (domIdx == -1)
+			{
+				domainPatientJourneyBreachReason4.add(i, dom);
+			}
+			else if (i != domIdx && i < domainPatientJourneyBreachReason4.size())
+			{
+				Object tmp = domainPatientJourneyBreachReason4.get(i);
+				domainPatientJourneyBreachReason4.set(i, domainPatientJourneyBreachReason4.get(domIdx));
+				domainPatientJourneyBreachReason4.set(domIdx, tmp);
+			}
+		}
+		
+		//Remove all ones in domList where index > voCollection.size() as these should
+		//now represent the ones removed from the VO collection. No longer referenced.
+		int i4 = domainPatientJourneyBreachReason4.size();
+		while (i4 > size4)
+		{
+			domainPatientJourneyBreachReason4.remove(i4-1);
+			i4 = domainPatientJourneyBreachReason4.size();
+		}
+		
+		domainObject.setPatientJourneyBreachReason(domainPatientJourneyBreachReason4);		
 
 		return domainObject;
 	}

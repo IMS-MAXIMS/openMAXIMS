@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -44,6 +49,7 @@ public final class MedicationDosesDynamicGridPopulation
 	private static final int		COMMENCED_DATE_ID		= 7;
 	private static final int		AUDIT_ID				= 8;
 	private static final int		COPY_ID					= 9;
+	private static final int		COMMENT_ID				= 10; //WDEV-20591
 
 	private static final Integer	COL_MED_DESC_OR_DOSE	= new Integer(DESC_OR_DOSE_ID);
 	private static final Integer	COL_MED_DESC_OR_ROUTE	= new Integer(DESC_OR_ROUTE_ID);
@@ -54,12 +60,14 @@ public final class MedicationDosesDynamicGridPopulation
 	private static final Integer	COL_MED_COMMENCED_DATE	= new Integer(7);
 	private static final Integer	COL_AUDIT				= new Integer(AUDIT_ID);
 	private static final Integer	COL_COPY				= new Integer(COPY_ID);
+	private static final Integer	COL_MED_COMMENT			= new Integer(COMMENT_ID); //WDEV-20591
 	
 	private static final Integer	COL_DOSE_DOSE			= new Integer(DESC_OR_DOSE_ID);
 	private static final Integer	COL_DOSE_ROUTE			= new Integer(DESC_OR_ROUTE_ID);
 	private static final Integer	COL_DOSE_TIMES			= new Integer(FREQ_OR_TIMES_ID);
 	private static final Integer	COL_DOSE_COMMENCED_BY	= new Integer(COMMENCED_BY_ID);
 	private static final Integer	COL_DOSE_COMMENCED_DATE	= new Integer(COMMENCED_DATE_ID);
+	private static final Integer	COL_DOSE_COMMENT		= new Integer(COMMENT_ID); //WDEV-20591
 
 	private static final Color		FIRST_COLOUR			= Color.Beige;
 	private static final Color		SECOND_COLOUR			= Color.White;
@@ -131,7 +139,9 @@ public final class MedicationDosesDynamicGridPopulation
 		
 		column = this.grid.getColumns().newColumn("Route");
 		column.setIdentifier(COL_MED_DESC_OR_ROUTE);
-		column.setWidth(130 - offset/4);
+		//WDEV-21114
+//		column.setWidth(130 - offset/4);
+		column.setWidth(100 - offset/4);
 
 		column = this.grid.getColumns().newColumn("Frequency/Times");
 		column.setIdentifier(COL_MED_FREQ_OR_TIMES);
@@ -165,6 +175,12 @@ public final class MedicationDosesDynamicGridPopulation
 
 		column = this.grid.getColumns().newColumn("");
 		column.setIdentifier(COL_AUDIT);
+//		column.setWidth(-1);
+		column.setWidth(check_width);
+		
+		//WDEV-20591
+		column = this.grid.getColumns().newColumn("Comment");
+		column.setIdentifier(COL_MED_COMMENT);
 		column.setWidth(-1);
 		
 	}
@@ -232,10 +248,12 @@ public final class MedicationDosesDynamicGridPopulation
 			cell1.setIdentifier(voMed.getOtherMedicationText());
 			//WDEV-1204 - add tooltip
 			cell1.setTooltip(voMed.getDiscontinuedTooltip());
-	
+			
+
 			DynamicGridCell cell2 = row.getCells().newCell(getColByIdentifier(COL_MED_FREQ_OR_TIMES), DynamicCellType.LABEL);
 			cell2.setValue(voMed.getFrequencyIsNotNull() ? voMed.getFrequency().toString() : "");
 			cell2.setIdentifier(voMed.getFrequency());
+			cell2.setTooltip(voMed.getDiscontinuedTooltip());
 			
 			if(hasDischargeInfo())
 			{
@@ -249,10 +267,12 @@ public final class MedicationDosesDynamicGridPopulation
 			DynamicGridCell cell3 = row.getCells().newCell(getColByIdentifier(COL_MED_COMMENCED_BY), DynamicCellType.LABEL);
 			cell3.setValue(voMed.getHcpCommencedIsNotNull() ? voMed.getHcpCommenced().toString() : "");
 			cell3.setIdentifier(voMed.getFrequency());
+			cell3.setTooltip(voMed.getDiscontinuedTooltip());
 	
 			DynamicGridCell cell4 = row.getCells().newCell(getColByIdentifier(COL_MED_COMMENCED_DATE), DynamicCellType.LABEL);
 			cell4.setValue(voMed.getCommencedDateIsNotNull() ? voMed.getCommencedDate().toString() : "");
 			cell4.setIdentifier(voMed.getFrequency());
+			cell4.setTooltip(voMed.getDiscontinuedTooltip());
 			
 			DynamicGridCell cellAudit = row.getCells().newCell(getColByIdentifier(COL_AUDIT), DynamicCellType.IMAGE);
 			if (voMed.getSysInfoIsNotNull() && voMed.getSysInfo().getLastupdateUser() != null)
@@ -266,9 +286,17 @@ public final class MedicationDosesDynamicGridPopulation
 				DynamicGridCell cellChecked = row.getCells().newCell(getColByIdentifier(COL_COPY), DynamicCellType.BOOL);
 				cellChecked.setValue(Boolean.TRUE);
 				cellChecked.setIdentifier(null);
-			}		
+			}
+			
+			//WDEV-20591
+			DynamicGridCell cell5 = row.getCells().newCell(getColByIdentifier(COL_MED_COMMENT), DynamicCellType.LABEL);
+			cell5.setValue(voMed.getCommentIsNotNull() ? voMed.getComment() : "");
+			cell5.setIdentifier(voMed.getFrequency());
+			cell5.setTooltip(voMed.getDiscontinuedTooltip());
+			
 	
 			row.setValue(voMed);
+			
 			
 			for (int i = 0 ; i < voMed.getPrescribedDoses().size() ; i ++)
 				addDoseRow(row, voMed.getPrescribedDoses().get(i), bHideDiscontinued, objColor);
@@ -302,19 +330,30 @@ public final class MedicationDosesDynamicGridPopulation
 		DynamicGridCell cell2= childRow.getCells().newCell(getColByIdentifier(COL_DOSE_ROUTE), DynamicCellType.LABEL);
 		cell2.setValue(voDose.getAdminRouteIsNotNull() ? voDose.getAdminRoute().toString() : "");
 		cell2.setIdentifier(voDose.getAdminRoute());
+		cell2.setTooltip(voDose.getDiscontinuedTooltip());
 	
 		DynamicGridCell cell3 = childRow.getCells().newCell(getColByIdentifier(COL_DOSE_TIMES), DynamicCellType.LABEL);
 		cell3.setValue(voDose.getAdminTimesIsNotNull() ? createTimesString(voDose.getAdminTimes()) : "");
 		cell3.setTooltip(voDose.getAdminTimesIsNotNull() ? createTimesString(voDose.getAdminTimes()) : "");
 		cell3.setIdentifier(voDose.getAdminTimes());
+		cell3.setTooltip(voDose.getDiscontinuedTooltip());
 	
 		DynamicGridCell cell4 = childRow.getCells().newCell(getColByIdentifier(COL_DOSE_COMMENCED_BY), DynamicCellType.LABEL);
 		cell4.setValue(voDose.getDoseStartHcpIsNotNull() ? voDose.getDoseStartHcp().toString() : "");
 		cell4.setIdentifier(voDose.getDose());
+		cell4.setTooltip(voDose.getDiscontinuedTooltip());
 			
 		DynamicGridCell cell5 = childRow.getCells().newCell(getColByIdentifier(COL_DOSE_COMMENCED_DATE), DynamicCellType.LABEL);
 		cell5.setValue(voDose.getDoseStartDateIsNotNull() ? voDose.getDoseStartDate().toString() : "");
 		cell5.setIdentifier(voDose.getDose());
+		cell5.setTooltip(voDose.getDiscontinuedTooltip());
+		
+		//WDEV-20591
+		DynamicGridCell cell6 = childRow.getCells().newCell(getColByIdentifier(COL_DOSE_COMMENT), DynamicCellType.LABEL);
+		cell6.setValue(voDose.getCommentIsNotNull() ? voDose.getComment().toString() : "");
+		cell6.setIdentifier(voDose.getComment());
+		cell6.setTooltip(voDose.getDiscontinuedTooltip());
+		
 	
 		childRow.setValue(voDose);
 			

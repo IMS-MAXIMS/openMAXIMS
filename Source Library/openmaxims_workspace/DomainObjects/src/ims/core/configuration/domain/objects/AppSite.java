@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.configuration.domain.objects;
@@ -47,6 +52,12 @@ public class AppSite extends ims.domain.DomainObject implements java.io.Serializ
 
 	/** Site */
 	private ims.domain.lookups.LookupInstance site;
+	/** Textual description of the site */
+	private String siteName;
+	/** List of Modules associated with this site
+	  * Collection of ims.core.configuration.domain.objects.AppModule.
+	  */
+	private java.util.List modules;
     public AppSite (Integer id, int ver)
     {
     	super(id, ver);
@@ -77,6 +88,27 @@ public class AppSite extends ims.domain.DomainObject implements java.io.Serializ
 	}
 	public void setSite(ims.domain.lookups.LookupInstance site) {
 		this.site = site;
+	}
+
+	public String getSiteName() {
+		return siteName;
+	}
+	public void setSiteName(String siteName) {
+		if ( null != siteName && siteName.length() > 50 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for siteName. Tried to set value: "+
+				siteName);
+		}
+		this.siteName = siteName;
+	}
+
+	public java.util.List getModules() {
+		if ( null == modules ) {
+			modules = new java.util.ArrayList();
+		}
+		return modules;
+	}
+	public void setModules(java.util.List paramValue) {
+		this.modules = paramValue;
 	}
 
 	/**
@@ -113,6 +145,32 @@ public class AppSite extends ims.domain.DomainObject implements java.io.Serializ
 		auditStr.append("\r\n*site* :");
 		if (site != null)
 			auditStr.append(site.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*siteName* :");
+		auditStr.append(siteName);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*modules* :");
+		if (modules != null)
+		{
+		int i3=0;
+		for (i3=0; i3<modules.size(); i3++)
+		{
+			if (i3 > 0)
+				auditStr.append(",");
+			ims.core.configuration.domain.objects.AppModule obj = (ims.core.configuration.domain.objects.AppModule)modules.get(i3);
+		    if (obj != null)
+			{
+				if (i3 == 0)
+				{
+				auditStr.append(toShortClassName(obj));
+				auditStr.append("[");
+				}
+		        auditStr.append(obj.getId());
+			}
+		}
+		if (i3 > 0)
+			auditStr.append("] " + i3);
+		}
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -163,6 +221,21 @@ public class AppSite extends ims.domain.DomainObject implements java.io.Serializ
 			sb.append("<site>");
 			sb.append(this.getSite().toXMLString()); 
 			sb.append("</site>");		
+		}
+		if (this.getSiteName() != null)
+		{
+			sb.append("<siteName>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getSiteName().toString()));
+			sb.append("</siteName>");		
+		}
+		if (this.getModules() != null)
+		{
+			if (this.getModules().size() > 0 )
+			{
+			sb.append("<modules>");
+			sb.append(ims.domain.DomainObject.toXMLString(this.getModules(), domMap));
+			sb.append("</modules>");		
+			}
 		}
 		return sb.toString();
 	}
@@ -333,11 +406,23 @@ public class AppSite extends ims.domain.DomainObject implements java.io.Serializ
 			fldEl = fldEl.element("lki");
 			obj.setSite(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
 		}
+		fldEl = el.element("siteName");
+		if(fldEl != null)
+		{	
+    		obj.setSiteName(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("modules");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("list");	
+			obj.setModules(ims.core.configuration.domain.objects.AppModule.fromListXMLString(fldEl, factory, obj.getModules(), domMap));
+		}
 	}
 
 	public static String[] getCollectionFields()
 	{
 		return new String[]{
+		 "modules"
 		};
 	}
 
@@ -346,6 +431,8 @@ public class AppSite extends ims.domain.DomainObject implements java.io.Serializ
 	{
 	public static final String ID = "id";
 		public static final String Site = "site";
+		public static final String SiteName = "siteName";
+		public static final String Modules = "modules";
 	}
 }
 

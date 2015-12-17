@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -169,11 +174,6 @@ public class Logic extends BaseLogic
 			if(voSessionApptOrder.getSession().getListOwnersIsNotNull())
 				form.txtListOwner().setValue(voSessionApptOrder.getSession().getListOwners().toString());
 				
-			if(voSessionApptOrder.getSession().getTheatreProceduresRemainingIsNotNull() && voSessionApptOrder.getSession().getTheatreProceduresRemaining().getProcedureDetailsIsNotNull()){
-				
-				form.txtProcedure().setValue(voSessionApptOrder.getSession().getTheatreProceduresRemaining().getProcedureDetails().toString());
-				form.txtProcedure().setTooltip(voSessionApptOrder.getSession().getTheatreProceduresRemaining().getProcedureDetails().toString());
-			}
 		}
 		
 		if(voSessionApptOrder.getAppointmentsIsNotNull())
@@ -310,8 +310,6 @@ public class Logic extends BaseLogic
 		form.txtListOwner().setValue("");
 		form.txtDate().setValue("");
 		form.txtFinalisedBy().setValue("");
-		form.txtProcedure().setValue("");
-		form.txtProcedure().setTooltip(" ");
 		form.txtFinalisedDT().setValue("");
 		form.grdAppts().getRows().clear();
 	}

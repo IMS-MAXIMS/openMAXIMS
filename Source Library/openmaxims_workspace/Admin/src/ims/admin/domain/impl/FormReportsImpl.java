@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -75,8 +80,7 @@ public class FormReportsImpl extends DomainImpl implements ims.admin.domain.Form
 	{
 		DomainFactory factory = getDomainFactory();
 		ims.admin.vo.ReportVoCollection collection = new ims.admin.vo.ReportVoCollection();
-		
-		List reps = factory.find("from FormReportBo fr where fr.form.id = :formId and fr.report.isActive = :isActive", new String[]{"formId", "isActive"}, new Object[]{formId, Boolean.TRUE});
+		List reps = factory.find("from FormReportBo fr  where fr.form.id = :formId  and fr.report.isActive = :isActive and fr.report.templates.isActive = 1", new String[]{"formId", "isActive"}, new Object[]{formId, Boolean.TRUE});//WDEV-23731
 		if (reps != null && !reps.isEmpty())
 		{
 			for (Iterator iter = reps.iterator(); iter.hasNext();) 

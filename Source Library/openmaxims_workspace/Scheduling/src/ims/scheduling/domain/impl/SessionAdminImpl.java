@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -32,21 +37,42 @@ import ims.admin.vo.AppRoleShortVoCollection;
 import ims.admin.vo.AppUserShortVo;
 import ims.admin.vo.AppUserShortVoCollection;
 import ims.admin.vo.domain.AppRoleShortVoAssembler;
+import ims.admin.vo.lookups.HardCodedEvents;
+import ims.RefMan.domain.objects.CATSReferralStatus;
 import ims.RefMan.domain.objects.CatsReferral;
 import ims.RefMan.domain.objects.OrderInvAppt;
+import ims.RefMan.vo.CatsReferralForTheatreBookingLiteVo;
 import ims.RefMan.vo.CatsReferralRefVo;
+import ims.RefMan.vo.CatsReferralStatusVo;
+import ims.RefMan.vo.domain.CatsReferralForTheatreBookingLiteVoAssembler;
+import ims.RefMan.vo.domain.CatsReferralStatusVoAssembler;
 import ims.RefMan.vo.lookups.AdditionalInvestigationAppointmentsStatus;
+import ims.RefMan.vo.lookups.ReferralApptStatus;
 import ims.chooseandbook.vo.lookups.ActionRequestType;
 import ims.configuration.gen.ConfigFlag;
+import ims.core.domain.PatientCaseNotes;
+import ims.core.domain.impl.PatientCaseNotesImpl;
 import ims.core.helper.IElectiveListCancelAppt;
 import ims.core.resource.people.vo.HcpRefVo;
 import ims.core.resource.people.vo.HcpRefVoCollection;
+import ims.core.resource.people.vo.MemberOfStaffRefVo;
+import ims.core.resource.place.domain.objects.Activity;
+import ims.core.resource.place.vo.ActivityRefVo;
 import ims.core.vo.ActivityLiteVoCollection;
+import ims.core.vo.ActivityWithImageLiteVo;
 import ims.core.vo.HcpFilter;
 import ims.core.vo.HcpLiteVoCollection;
+import ims.core.vo.MemberOfStaffLiteVo;
 import ims.core.vo.MemberOfStaffShortVo;
 import ims.core.vo.MemberOfStaffShortVoCollection;
+import ims.core.vo.PatientCaseNoteRequestLiteVoCollection;
 import ims.core.vo.ProcedureLiteVoCollection;
+import ims.core.vo.domain.ActivityWithImageLiteVoAssembler;
+import ims.core.vo.domain.MemberOfStaffLiteVoAssembler;
+import ims.core.vo.domain.PatientCaseNoteRequestLiteVoAssembler;
+import ims.core.vo.lookups.CaseNoteRequestCancellationReason;
+import ims.core.vo.lookups.CaseNoteRequestStatus;
+import ims.core.vo.lookups.PreActiveActiveInactiveStatus;
 import ims.core.vo.lookups.ReferralManagementContractType;
 import ims.domain.DomainFactory;
 import ims.domain.exceptions.DomainInterfaceException;
@@ -54,6 +80,9 @@ import ims.domain.exceptions.DomainRuntimeException;
 import ims.domain.exceptions.StaleObjectException;
 import ims.domain.impl.DomainImpl;
 import ims.domain.lookups.LookupInstance;
+import ims.domain.lookups.LookupMapping;
+import ims.framework.enumerations.SystemLogLevel;
+import ims.framework.enumerations.SystemLogType;
 import ims.framework.exceptions.CodingRuntimeException;
 import ims.framework.utils.Date;
 import ims.framework.utils.DateTime;
@@ -64,11 +93,16 @@ import ims.ocrr.orderingresults.vo.OrderInvestigationRefVo;
 import ims.ocrr.vo.lookups.Category;
 import ims.ocrr.vo.lookups.OrderInvStatus;
 import ims.pathways.configuration.domain.objects.Event;
+import ims.pathways.configuration.domain.objects.RTTStatusPoint;
 import ims.pathways.configuration.vo.EventRefVo;
 import ims.pathways.domain.HL7PathwayIf;
 import ims.pathways.domain.impl.HL7PathwayIfImpl;
+import ims.pathways.domain.objects.PathwayClock;
+import ims.pathways.domain.objects.PathwayRTTStatus;
 import ims.pathways.domain.objects.PatientEvent;
+import ims.pathways.domain.objects.PatientJourneyStatus;
 import ims.pathways.domain.objects.PatientJourneyTarget;
+import ims.pathways.domain.objects.PatientPathwayJourney;
 import ims.pathways.helper.ISchedulingCancelAppt;
 import ims.pathways.vo.PatientEventVo;
 import ims.pathways.vo.PatientJourneyTargetRefVo;
@@ -76,21 +110,29 @@ import ims.pathways.vo.PatientJourneyTargetVo;
 import ims.pathways.vo.PatientJourneyVo;
 import ims.pathways.vo.domain.PatientEventVoAssembler;
 import ims.pathways.vo.domain.PatientJourneyTargetVoAssembler;
+import ims.pathways.vo.domain.PatientJourneyVoAssembler;
+import ims.pathways.vo.lookups.JourneyStatus;
+import ims.scheduling.domain.AppointmentOutcomeDialog;
 import ims.scheduling.domain.OCSExternalEvents;
 import ims.scheduling.domain.Profiles;
 import ims.scheduling.domain.SessionDetailsEdit;
+import ims.scheduling.domain.TheatreSessionManagement;
 import ims.scheduling.domain.objects.Appointment_Status;
 import ims.scheduling.domain.objects.Booking_Appointment;
 import ims.scheduling.domain.objects.DirectoryOfServiceSessionSlot;
+import ims.scheduling.domain.objects.PendingEmergencyTheatre;
 import ims.scheduling.domain.objects.Sch_Session;
+import ims.scheduling.domain.objects.Sch_Session_Appointment_Order;
 import ims.scheduling.domain.objects.SessionActivityPathwayEvent;
 import ims.scheduling.domain.objects.SessionParentChildSlot;
 import ims.scheduling.domain.objects.SessionSlotStatus;
 import ims.scheduling.domain.objects.SessionTheatreTCISlot;
 import ims.scheduling.domain.objects.Session_Slot;
-import ims.scheduling.domain.objects.TheatreProcedure;
 import ims.scheduling.helper.CABRequests;
+import ims.scheduling.helper.IEndOfCare;
 import ims.scheduling.vo.Appointment_StatusVo;
+import ims.scheduling.vo.Appointment_StatusVoCollection;
+import ims.scheduling.vo.BookingAppointmentForLinkedAppointmentsVo;
 import ims.scheduling.vo.BookingAppointmentLiteVoCollection;
 import ims.scheduling.vo.Booking_AppointmentRefVo;
 import ims.scheduling.vo.Booking_AppointmentVo;
@@ -99,6 +141,8 @@ import ims.scheduling.vo.DirectoryofServiceRefVo;
 import ims.scheduling.vo.ProfileLiteVoCollection;
 import ims.scheduling.vo.Sch_ProfileRefVo;
 import ims.scheduling.vo.Sch_SessionRefVo;
+import ims.scheduling.vo.Sch_Session_Appointment_OrderVo;
+import ims.scheduling.vo.SessionParentChildSlotVo;
 import ims.scheduling.vo.SessionShortVo;
 import ims.scheduling.vo.SessionSlotVo;
 import ims.scheduling.vo.SessionTheatreVo;
@@ -107,15 +151,20 @@ import ims.scheduling.vo.domain.BookingAppointmentLiteVoAssembler;
 import ims.scheduling.vo.domain.Booking_AppointmentVoAssembler;
 import ims.scheduling.vo.domain.DirectoryOfServiceLiteVoAssembler;
 import ims.scheduling.vo.domain.ProfileLiteVoAssembler;
+import ims.scheduling.vo.domain.Sch_Session_Appointment_OrderVoAssembler;
 import ims.scheduling.vo.domain.SessionShortVoAssembler;
 import ims.scheduling.vo.domain.SessionSlotVoAssembler;
 import ims.scheduling.vo.domain.SessionTheatreVoAssembler;
 import ims.scheduling.vo.domain.SessionVoAssembler;
+import ims.scheduling.vo.lookups.CancelAppointmentReason;
+import ims.scheduling.vo.lookups.PendingEmergencyTheatreStatus;
+import ims.scheduling.vo.lookups.SchProfileType;
 import ims.scheduling.vo.lookups.SchedCABSlotType;
 import ims.scheduling.vo.lookups.Session_Status_and_Reason;
 import ims.scheduling.vo.lookups.Status_Reason;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -124,8 +173,18 @@ import java.util.Set;
 public class SessionAdminImpl extends DomainImpl implements ims.scheduling.domain.SessionAdmin, SessionDetailsEdit, ims.domain.impl.Transactional, ISchedulingCancelAppt, IElectiveListCancelAppt
 {
 	private static final long	serialVersionUID	= 1L;
+	
+	private static final String INTEND_TO_GO_PRIVATE = "27";
+	private static final String OTHER_REFERRAL_CANCELLATION = "41";
+	private static final String PATIENT_DIED = "20";
+	private static final String REQUEST_RAISED_IN_ERROR = "40";
+	private static final String TREATMENT_NO_LONGER_REQUIRED = "28";
+	
+	private static final int END_PATHWAY_NATIONAL_CODE = 34;
+	
+	private static final String CHOOSE_AND_BOOK = "Choose and Book";
 
-	public ims.scheduling.vo.SessionShortVoCollection listSession(Sch_ProfileRefVo profile, DirectoryofServiceRefVo dos, Date startDate, Date endDate)
+	public ims.scheduling.vo.SessionShortVoCollection listSession(Sch_ProfileRefVo profile, DirectoryofServiceRefVo dos, Date startDate, Date endDate, Session_Status_and_Reason status) //wdev-19395
 	{
 		DomainFactory factory = getDomainFactory();
 
@@ -163,6 +222,15 @@ public class SessionAdminImpl extends DomainImpl implements ims.scheduling.domai
 			values.add(endDate.getDate());
 			andStr = " and ";
 		}
+		//wdev-19395
+		if( status != null )
+		{
+			condStr.append(andStr + " sess.sessionStatus = :statusId");
+			markers.add("statusId");
+			values.add(getDomLookup(status));
+			andStr = " and ";
+		}
+		//----------
 
 		if (andStr.equals(" and ") && dos == null)
 			hql += " where ";
@@ -242,11 +310,36 @@ public class SessionAdminImpl extends DomainImpl implements ims.scheduling.domai
 	 * editingSlots parameter determines if the call to save Session was made
 	 * from SessionAdmin or SessionDetailsEdit if it is set to true then it was
 	 * called from SessionDetailsEdit
+	 * @throws DomainInterfaceException 
 	 */
-	public SessionVo saveSession(SessionVo session, Boolean editingSlots) throws StaleObjectException
+	public SessionVo saveSession(SessionVo session, Boolean editingSlots) throws DomainInterfaceException, StaleObjectException
 	{
 		if (!session.isValidated())
 			throw new DomainRuntimeException("SessionVo not Validated");
+		
+		// Remove Slot Responsible for slots that no longer have the HCP in the list owners of the session 
+		if (session.getSessionSlots() != null)
+		{
+			for (int i = session.getSessionSlots().size() - 1; i >= 0; i--)
+			{
+				SessionSlotVo slot = session.getSessionSlots().get(i);
+				
+				if (!session.getListOwners().contains(slot.getSlotResp()))
+					slot.setSlotResp(null);
+			}
+		}
+		
+		// Remove Slot Responsible for parent child slots that no longer have the HCP in the list owners of the session
+		if (session.getParentChildSlots() != null)
+		{
+			for (int i = session.getParentChildSlots().size() - 1; i >= 0; i--)
+			{
+				SessionParentChildSlotVo parentSessionSlot = session.getParentChildSlots().get(i);
+				
+				if (!session.getListOwners().contains(parentSessionSlot.getSlotResp()))
+					parentSessionSlot.setSlotResp(null);
+			}
+		}
 
 		DomainFactory factory = getDomainFactory();
 		Sch_Session doSession = SessionVoAssembler.extractSch_Session(factory, session);
@@ -269,7 +362,7 @@ public class SessionAdminImpl extends DomainImpl implements ims.scheduling.domai
 					{
 						Session_Slot doSlot = (Session_Slot) it.next();
 
-						// WDEV-10148 - need to look at slottype here and if its
+						// WDEV-10148 - need to look at slot type here and if its
 						// local skip the c&b messaging and setting to
 						// cancel_provisional etc below
 						if (doSlot.getDirectAccessSlot() != null && doSlot.getDirectAccessSlot().equals(getDomLookup(SchedCABSlotType.LOCAL)))
@@ -278,8 +371,7 @@ public class SessionAdminImpl extends DomainImpl implements ims.scheduling.domai
 							continue;
 						}
 
-						// WDEV-8887 - we dont want to cancel an already pending
-						// cancelation
+						// WDEV-8887 - we don't want to cancel an already pending cancelation
 						if (doSlot.getStatus() != null && (doSlot.getStatus().equals(getDomLookup(Status_Reason.CANCEL_PROVISIONAL)) || doSlot.getStatus().equals(getDomLookup(Status_Reason.CANCELLED))))
 							continue;
 
@@ -301,9 +393,17 @@ public class SessionAdminImpl extends DomainImpl implements ims.scheduling.domai
 								{
 									CABRequests.placeOutgoingRequest(factory, getDomLookup(ActionRequestType.NOTIFY_SLOT_CANCEL), slotCabMessage.toString(), "Session Block requested through Session Admin");
 								}
+								
+								doSlot.setStatus(getDomLookup(Status_Reason.CANCEL_PROVISIONAL));
+								
 								slotCabMessage.setLength(0);
 							}
-							doSlot.setStatus(getDomLookup(Status_Reason.CANCEL_PROVISIONAL));
+							
+							if (slotCabMessage.length() > 0) //WDEV-20082 make sure slot isPublished 
+							{
+								doSlot.setStatus(getDomLookup(Status_Reason.CANCEL_PROVISIONAL));
+							}
+							
 							doSlot.setIsActive(Boolean.FALSE);
 						}
 					}
@@ -331,7 +431,7 @@ public class SessionAdminImpl extends DomainImpl implements ims.scheduling.domai
 				if (editingSlots)
 				{
 					if (session.getSessionSlots().get(i).getStatus().equals(Status_Reason.CANCELLED) || session.getSessionSlots().get(i).getStatus().equals(Status_Reason.BLOCKED))
-						cancelSlot(session.getSessionSlots().get(i), ActionRequestType.NOTIFY_SLOT_CANCEL, "Cancel Slot requested through SessionAdmin");
+						cancelSlot(session.getSessionSlots().get(i), ActionRequestType.NOTIFY_SLOT_CANCEL, "Cancel Slot requested through Session Management");
 				}
 				else
 				{
@@ -339,11 +439,11 @@ public class SessionAdminImpl extends DomainImpl implements ims.scheduling.domai
 					{
 						if (session.getSessionSlots().get(i).getAppointmentIsNotNull())
 						{
-							cancelAppt(session.getSessionSlots().get(i).getAppointment(), ActionRequestType.NOTIFY_APPT_CANCEL, "Cancel Appt requested from Session Admin");
+							cancelAppt(session.getSessionSlots().get(i).getAppointment(), ActionRequestType.NOTIFY_APPT_CANCEL, "Cancel Appt requested from Session Management");
 						}
 						else
 						{
-							cancelSlot(session.getSessionSlots().get(i), ActionRequestType.NOTIFY_SLOT_CANCEL, "Cancel Slot requested through SessionAdmin");
+							cancelSlot(session.getSessionSlots().get(i), ActionRequestType.NOTIFY_SLOT_CANCEL, "Cancel Slot requested through Session Management");
 						}
 					}
 				}
@@ -351,7 +451,7 @@ public class SessionAdminImpl extends DomainImpl implements ims.scheduling.domai
 		}
 
 		// WDEV-11731
-		saveSessionForMaxContinuousTime(session);
+//		saveSessionForMaxContinuousTime(session);
 
 		return SessionVoAssembler.create(doSession);
 	}
@@ -433,7 +533,7 @@ public class SessionAdminImpl extends DomainImpl implements ims.scheduling.domai
 		// increment slots remaining if its a cancel
 		// wdev-5745 only for non-icab bookings as they will get set to
 		// provisional only
-		if ((doAppt.isIsCABBooking() == null || doAppt.isIsCABBooking().booleanValue() == false) && doAppt.getApptStatus().equals(getDomLookup(Status_Reason.CANCELLED)))
+		if ((doAppt.isIsCABBooking() == null || doAppt.isIsCABBooking().booleanValue() == false) && doAppt.getApptStatus().equals(getDomLookup(Status_Reason.CANCELLED)) && doAppt.getSession() != null) //WDEV-19379
 			doAppt.getSession().incrementRemainingSlots(1);
 
 		// WDEV-8921 - if we are cancelling a flexible slot increment the time remaining for the session 	<- Nice try, but no
@@ -462,7 +562,14 @@ public class SessionAdminImpl extends DomainImpl implements ims.scheduling.domai
 
 		// WDEV-5745 only set to cancelled provisional at this stage
 		if (doAppt.isIsCABBooking() != null && doAppt.isIsCABBooking().booleanValue() == true && ConfigFlag.GEN.ICAB_ENABLED.getValue())
+		{
 			doAppt.setApptStatus(getDomLookup(Status_Reason.CANCEL_PROVISIONAL));
+			
+			if(doAppt.getCurrentStatusRecord() != null)
+			{
+				doAppt.getCurrentStatusRecord().setStatus(getDomLookup(Status_Reason.CANCEL_PROVISIONAL));
+			}
+		}
 
 		// WDEV-5021
 		updateJourney(doAppt, true);
@@ -475,6 +582,7 @@ public class SessionAdminImpl extends DomainImpl implements ims.scheduling.domai
 
 		// WDEV-11780
 		factory.save(doAppt);
+		factory.refresh(doAppt);
 
 		return doAppt;
 	}
@@ -495,113 +603,592 @@ public class SessionAdminImpl extends DomainImpl implements ims.scheduling.domai
 		return mins;
 	}
 
-	public Booking_AppointmentVo cancelAppt(Booking_AppointmentVo appt, ActionRequestType requestType, String requestSource) throws StaleObjectException
+	public Booking_AppointmentVo cancelAppt(Booking_AppointmentVo appt, ActionRequestType requestType, String requestSource) throws DomainInterfaceException, StaleObjectException
 	{
-		DomainFactory factory = getDomainFactory();
-		Booking_Appointment doAppt = saveAppt(factory, appt);
+		System.out.println("DEBUG " + getLoggedInUser().getHostName() + ": Domain Cancel Appointment - Start.");
 		
-		if (ConfigFlag.GEN.ICAB_ENABLED.getValue())
+		try
 		{
-			if (doAppt.isIsCABBooking() != null && doAppt.isIsCABBooking().booleanValue())
-				doAppt = CABRequests.sendRequestandUpdateReferences(factory, getDomLookup(requestType), doAppt, requestSource);
-		}
+			String sessionCancel = "Cancel Appt requested from Session Management";
 
-		// if the appt has been cancelled,break the link between sessionslot and
-		// booking_appt
-		// wdev-5745 do not clear link with slot for icab bookings
-		if (requestType.equals(ActionRequestType.NOTIFY_APPT_CANCEL) && (doAppt.isIsCABBooking() == null || doAppt.isIsCABBooking().booleanValue() == false))
-		{
-			if (doAppt != null)
+			DomainFactory factory = getDomainFactory();
+
+			Booking_Appointment doAppt = saveAppt(factory, appt);
+			System.out.println("DEBUG " + getLoggedInUser().getHostName() + ": Domain Cancel Appointment - Step 1: Save appointment.");
+
+			//WDEV-20643
+			CatsReferral catsReferral = getCatsReferralForAppointmentID(doAppt);
+			System.out.println("DEBUG " + getLoggedInUser().getHostName() + ": Domain Cancel Appointment - Step 2: Get Cats Referral.");
+
+
+
+			//		//**************************************
+			//		if (appt != null && catsReferral != null)
+			//		{
+			//			CatsReferralRefVo catsReferralRef = new CatsReferralRefVo(catsReferral.getId(), catsReferral.getVersion());
+			//			Booking_AppointmentRefVo apptRefVo = new Booking_AppointmentRefVo(appt.getID_Booking_Appointment(), appt.getVersion_Booking_Appointment());
+			//			updateCatsReferralAdditionalInvStatus(catsReferralRef, apptRefVo);
+			//		}
+
+
+			//**************************************
+
+			if (catsReferral!=null && Boolean.TRUE.equals(doAppt.isRequiresRebook())) //WDEV-21290
 			{
-				if (doAppt.getSessionSlot() != null)
+				CatsReferralRefVo catsReferralRef = new CatsReferralRefVo(catsReferral.getId(), catsReferral.getVersion());
+
+				if (Boolean.TRUE.equals(doAppt.isFirstConsultationActivity()))
 				{
-					doAppt.getSessionSlot().clearUBRN();
-					doAppt.getSessionSlot().setStatus(getDomLookup(Status_Reason.SLOTOPENED));
-					doAppt.getSessionSlot().setAppointment(null);
-					doAppt.setSessionSlot(null);
+					updateCatsReferralConsultationActivityRequired(catsReferralRef, true);
+					System.out.println("DEBUG " + getLoggedInUser().getHostName() + ": Domain Cancel Appointment - Step 3: update referral consultation activity.");
+
+				}
+				//WDEV-22375 
+				else if (doAppt.getTheatreBooking() == null) //make sure its not a theatre appointment
+				{
+					updateCatsReferralRebookingSubsequentActivity(catsReferralRef, true);
+					System.out.println("DEBUG " + getLoggedInUser().getHostName() + ": Domain Cancel Appointment - Step 3: update referral rebooking activity.");
+
+				}
+			}
+
+			if (sessionCancel.equals(requestSource))
+			{
+				if (catsReferral != null)
+				{
+					System.out.println("DEBUG " + getLoggedInUser().getHostName() + ": Domain Cancel Appointment - Step 4: update referral additional Inv Status.");
+					CatsReferralRefVo catsReferralRef = new CatsReferralRefVo(catsReferral.getId(), catsReferral.getVersion());
+					updateCatsReferralCancelStatus(catsReferralRef);
+					updateCatsReferralAdditionalInvStatus(catsReferralRef, new Booking_AppointmentRefVo(doAppt.getId(), doAppt.getVersion()));
+				}
+			}
+
+			//WDEV-19489
+			boolean hasTCI = doAppt.getTheatreBooking() != null && hasTCI(new Booking_AppointmentRefVo(doAppt.getId(), doAppt.getVersion()));
+			System.out.println("DEBUG " + getLoggedInUser().getHostName() + ": Domain Cancel Appointment - Step 5: Cancel Case Note Requests.");
+			cancelCaseNoteRequests(Booking_AppointmentVoAssembler.create(doAppt),hasTCI);
+
+			//WDEV-19543
+			if (appt.getLinkedApptsToBeCancelledIsNotNull() && appt.getLinkedApptsToBeCancelled().size()>0)
+			{
+				for (int i=0;i<appt.getLinkedApptsToBeCancelled().size(); i++)
+				{
+					Booking_AppointmentVo  voLinkedAppt=getBookingAppointment(appt.getLinkedApptsToBeCancelled().get(i));
+
+					if (Status_Reason.BOOKED.equals(voLinkedAppt.getApptStatus()))
+					{
+						System.out.println("DEBUG " + getLoggedInUser().getHostName() + ": Domain Cancel Appointment - Step 6: Cancel linked appointment.");
+						cancelLinkedApp(voLinkedAppt, appt , requestType, requestSource);
+					}
+				}
+			}
+
+
+			if (ConfigFlag.GEN.ICAB_ENABLED.getValue())
+			{
+				if (Boolean.TRUE.equals(doAppt.isIsCABBooking()))
+				{					
+					if (doAppt.getSessionSlot() != null && Status_Reason.CANCEL_PROVISIONAL.getId() == doAppt.getApptStatus().getId())
+					{	
+						doAppt.getSessionSlot().setStatus(getDomLookup(Status_Reason.CANCELLED_PENDING_APPT));
+					}
+					doAppt = CABRequests.sendRequestandUpdateReferences(factory, getDomLookup(requestType), doAppt, requestSource);
+				}	
+			}
+
+			// if the appt has been cancelled,break the link between sessionslot and
+			// booking_appt
+			// wdev-5745 do not clear link with slot for icab bookings
+			if (requestType.equals(ActionRequestType.NOTIFY_APPT_CANCEL) && (doAppt.isIsCABBooking() == null || doAppt.isIsCABBooking().booleanValue() == false))
+			{
+				if (doAppt != null)
+				{
+					if (doAppt.getSessionSlot() != null)
+					{
+						doAppt.getSessionSlot().clearUBRN();
+						doAppt.getSessionSlot().setStatus(getDomLookup(getAppropiateSessionSlotStatus(doAppt.getSessionSlot().getSession()))); //WDEV-18940 //WDEV-20103  - NPE fix
+						doAppt.getSessionSlot().setAppointment(null);
+						doAppt.setSessionSlot(null);
+					}
+					//WDEV-20333 flexible session with fixed slots
+					else if (doAppt.getTheatreBooking() == null && doAppt.getParentChildSlot() != null)
+					{
+						SessionParentChildSlot doSlot = doAppt.getParentChildSlot();
+						Sch_Session_Appointment_OrderVo sessionApptOrder = getSessionApptOrderBySession(appt.getSession());
+
+						if (sessionApptOrder!=null && sessionApptOrder.getFinalisedByIsNotNull() && sessionApptOrder.getFinalisedDateTimeIsNotNull())
+						{
+							doSlot = closeParentChildSlot(doSlot);	
+						}
+						else
+						{	
+							// re-open the slot that is not used now
+							doSlot = reOpenTheatreFixedSlot(doSlot);
+						}
+
+					}
+
+					System.out.println("DEBUG " + getLoggedInUser().getHostName() + ": Domain Cancel Appointment - Step 7: Break link between appointment and slot.");
+					factory.save(doAppt);
+				}
+
+				List<?> ordInvAppts = factory.find("from OrderInvAppt oia where oia.appointment.id = '" + doAppt.getId() + "'");
+				if (ordInvAppts.size() > 0)
+				{
+					OrderInvestigation doOrderInv = ((OrderInvAppt) ordInvAppts.iterator().next()).getOrderInvestigation();
+
+					OCSExternalEvents implE = (OCSExternalEvents) getDomainImpl(OCSExternalEventsImpl.class);
+					implE.generateAppointmentCancelEvent(new Booking_AppointmentRefVo(doAppt.getId(), doAppt.getVersion()), new OrderInvestigationRefVo(doOrderInv.getId(), doOrderInv.getVersion()));
+
+					Integer nContractTypeId = getContractTypeIdFromReferralContractForBookingId(doAppt.getId());
+					if ( nContractTypeId != null 
+							&& nContractTypeId == ReferralManagementContractType.DIAGNOSTIC.getId())
+					{
+						doOrderInv.setAppointmentDate(null);
+						factory.save(doOrderInv);
+
+						implE = (OCSExternalEvents) getDomainImpl(OCSExternalEventsImpl.class);
+						implE.generateOrderUpdateEvent(new Booking_AppointmentRefVo(doAppt.getId(), doAppt.getVersion()), new OrderInvestigationRefVo(doOrderInv.getId(), doOrderInv.getVersion()));
+					}
+					
+					System.out.println("DEBUG " + getLoggedInUser().getHostName() + ": Domain Cancel Appointment - Step 8: update order investigations.");
+				}
+			}
+			else if (requestType.equals(ActionRequestType.NOTIFY_APPT_CANCEL))
+			{
+				if(doAppt != null && doAppt.getSessionSlot() != null) //WDEV-12348
+					doAppt.getSessionSlot().setIsActive(Boolean.FALSE); // wdev-5745
+			}
+
+			if (doAppt.getTheatreBooking() != null)
+			{
+				System.out.println("DEBUG " + getLoggedInUser().getHostName() + ": Domain Cancel Appointment - Step 9: update procedure numbers left - start.");
+
+				updateProcedureNumLeftAndRemainingMins(doAppt);
+
+				Sch_Session_Appointment_OrderVo sessionApptOrder = getSessionApptOrderBySession(appt.getSession()); //WDEV-22595
+
+				// WDEV-11777 re-open theatre slot
+				if (doAppt.getTheatreSlot() != null)
+				{
+					SessionTheatreTCISlot doTheatreSlot = doAppt.getTheatreSlot();
+
+					//WDEV-22595
+					if (sessionApptOrder!=null && sessionApptOrder.getFinalisedByIsNotNull() && sessionApptOrder.getFinalisedDateTimeIsNotNull())
+					{
+						doTheatreSlot=closeTheatreTCISlot(doTheatreSlot);	
+					}
+					else
+					{	
+						// re-open the slot that is not used now
+						doTheatreSlot = reOpenTheatreTCISlot(doTheatreSlot);
+					}
+				}
+
+				//WDEV-12918
+				if (doAppt.getParentChildSlot() != null)
+				{
+					SessionParentChildSlot doSlot = doAppt.getParentChildSlot();
+
+					//WDEV-22595
+					if (sessionApptOrder!=null && sessionApptOrder.getFinalisedByIsNotNull() && sessionApptOrder.getFinalisedDateTimeIsNotNull())
+					{
+						doSlot = closeParentChildSlot(doSlot);	
+					}
+					else
+					{	
+						// re-open the slot that is not used now
+						doSlot = reOpenTheatreFixedSlot(doSlot);
+					}
 				}
 
 				factory.save(doAppt);
-			}
-			
-			List<?> ordInvAppts = factory.find("from OrderInvAppt oia where oia.appointment.id = '" + doAppt.getId() + "'");
-			if (ordInvAppts.size() > 0)
-			{
-				OrderInvestigation doOrderInv = ((OrderInvAppt) ordInvAppts.iterator().next()).getOrderInvestigation();
-
-				OCSExternalEvents implE = (OCSExternalEvents) getDomainImpl(OCSExternalEventsImpl.class);
-				implE.generateAppointmentCancelEvent(new Booking_AppointmentRefVo(doAppt.getId(), doAppt.getVersion()), new OrderInvestigationRefVo(doOrderInv.getId(), doOrderInv.getVersion()));
-
-				Integer nContractTypeId = getContractTypeIdFromReferralContractForBookingId(doAppt.getId());
-				if ( nContractTypeId != null 
-					&& nContractTypeId == ReferralManagementContractType.DIAGNOSTIC.getId())
-				{
-					doOrderInv.setAppointmentDate(null);
-					factory.save(doOrderInv);
-
-					implE = (OCSExternalEvents) getDomainImpl(OCSExternalEventsImpl.class);
-					implE.generateOrderUpdateEvent(new Booking_AppointmentRefVo(doAppt.getId(), doAppt.getVersion()), new OrderInvestigationRefVo(doOrderInv.getId(), doOrderInv.getVersion()));
-				}
-			}
-		}
-		else if (requestType.equals(ActionRequestType.NOTIFY_APPT_CANCEL))
-		{
-			if(doAppt != null && doAppt.getSessionSlot() != null) //WDEV-12348
-				doAppt.getSessionSlot().setIsActive(Boolean.FALSE); // wdev-5745
-		}
-		
-		if (doAppt.getTheatreBooking() != null)
-		{
-			updateProcedureNumLeftAndRemainingMins(doAppt);
-
-			// WDEV-11777 re-open theatre slot
-			if (doAppt.getTheatreSlot() != null)
-			{
-				SessionTheatreTCISlot doTheatreSlot = doAppt.getTheatreSlot();
-
-				// re-open the slot that is not used now
-				doTheatreSlot = reOpenTheatreTCISlot(doTheatreSlot);
-			}
-			
-			//WDEV-12918
-			if (doAppt.getParentChildSlot() != null)
-			{
-				SessionParentChildSlot doSlot = doAppt.getParentChildSlot();
 				
-				// re-open the slot that is not used now
-				doSlot = reOpenTheatreFixedSlot(doSlot);
+				System.out.println("DEBUG " + getLoggedInUser().getHostName() + ": Domain Cancel Appointment - Step 9: update procedure numbers left - end.");
+
+				updatePendingEmergecyTheatre(doAppt);
+				
+				System.out.println("DEBUG " + getLoggedInUser().getHostName() + ": Domain Cancel Appointment - Step 10: update theatre emergency appointment - end.");
+			}
+
+			Booking_AppointmentVo voAppt = Booking_AppointmentVoAssembler.create(doAppt);
+
+			// WDEV-11731 - only for flexible sessions
+//			saveSessionForMaxContinuousTime(SessionShortVoAssembler.create(doAppt.getSession()));
+
+			//	WDEV-15944 Is it possible to create a pathway event based on this booking?
+			if (ConfigFlag.DOM.INSTANTIATE_EVENT_FROM_SCHEDULING.getValue())
+			{
+				ims.scheduling.domain.BookAppointment impl = (ims.scheduling.domain.BookAppointment) getDomainImpl(ims.scheduling.domain.impl.BookAppointmentImpl.class);
+				impl.instantiateEvent(voAppt, "C", requestSource);
 			}
 			
-			factory.save(doAppt);
+			if (voAppt == null)
+			{
+				System.out.println("DEBUG " + getLoggedInUser().getHostName() + ": Domain Cancel Appointment - Step 11: Appointment is NULL.");
+			}
+
+			System.out.println("DEBUG " + getLoggedInUser().getHostName() + ": Domain Cancel Appointment - Step 11: Success.");
+			
+			return voAppt;
 		}
-
-		Booking_AppointmentVo voAppt = Booking_AppointmentVoAssembler.create(doAppt);
-
-		// WDEV-11731 - only for flexible sessions
-		saveSessionForMaxContinuousTime(SessionShortVoAssembler.create(doAppt.getSession()));
-
-		//	WDEV-15944 Is it possible to create a pathway event based on this booking?
-		if (ConfigFlag.DOM.INSTANTIATE_EVENT_FROM_SCHEDULING.getValue())
+		catch (StaleObjectException staleException)
 		{
-			ims.scheduling.domain.BookAppointment impl = (ims.scheduling.domain.BookAppointment) getDomainImpl(ims.scheduling.domain.impl.BookAppointmentImpl.class);
-			impl.instantiateEvent(voAppt, "C", requestSource);
+			System.out.println("DEBUG " + getLoggedInUser().getHostName() + ": Domain Cancel Appointment - STALE OBJECT EXCEPTION.");
+			throw staleException;
 		}
-		return voAppt;
+		catch (Exception exception)
+		{
+			System.out.println("DEBUG " + getLoggedInUser().getHostName() + ": Domain Cancel Appointment - OTHER EXCEPTION." + Arrays.toString(exception.getStackTrace()));
+			throw new DomainInterfaceException("Unknown Exception thrown.");
+		}
 	}
 
-	private SessionParentChildSlot reOpenTheatreFixedSlot(SessionParentChildSlot doChangeFromSlot)
+	//WDEV-22595
+	private SessionParentChildSlot closeParentChildSlot(SessionParentChildSlot doSlot)
+	{
+		if (doSlot==null)
+			return null;
+		
+		if(doSlot.getAppointment() != null)
+		{
+			doSlot.getAppointment().setParentChildSlot(null);
+			doSlot.setAppointment(null);
+			
+		}
+		
+		doSlot.setStatus(getDomLookup(Status_Reason.CLOSED));
+		doSlot.setStatusReason(getDomLookup(Status_Reason.CLOSED));
+		doSlot.setParentSlot(null);
+		
+		return doSlot;
+	}
+
+	//WDEV-22595
+	private SessionTheatreTCISlot closeTheatreTCISlot(SessionTheatreTCISlot doTheatreSlot)
+	{
+		if (doTheatreSlot==null)
+			return null;
+		
+		if(doTheatreSlot.getAppointment() != null)
+		{
+			doTheatreSlot.getAppointment().setParentChildSlot(null);
+			doTheatreSlot.setAppointment(null);
+			
+		}
+		
+		doTheatreSlot.setStatus(getDomLookup(Status_Reason.CLOSED));
+		doTheatreSlot.setStatusReason(getDomLookup(Status_Reason.CLOSED));
+		
+		return doTheatreSlot;
+	}
+	
+	//WDEV-23321
+	//WDEV-22595
+	private Sch_Session_Appointment_OrderVo getSessionApptOrderBySession(Sch_SessionRefVo session)
+	{
+		if (session == null || session.getID_Sch_Session() == null)
+		{
+			return null;
+		}
+
+		Sch_Session_Appointment_Order doSessApptOrder = null;
+
+		doSessApptOrder = Sch_Session_Appointment_Order.getSch_Session_Appointment_OrderFromSession(getDomainFactory() , session.getID_Sch_Session());
+
+		if (doSessApptOrder != null)
+			return Sch_Session_Appointment_OrderVoAssembler.create(doSessApptOrder); 
+
+		return null;
+	}
+	//WDEV-23321 - ends here
+	
+	private void updateCatsReferralRebookingSubsequentActivity(CatsReferralRefVo catsReferral, Boolean hasRebookingSubsequentActivity) throws StaleObjectException
+	{
+		
+		if(catsReferral == null )
+			return;
+		
+		DomainFactory factory = getDomainFactory();
+		
+		CatsReferral doCatsReferral = (CatsReferral) factory.getDomainObject(catsReferral);
+		
+		doCatsReferral.setHasRebookingSubsequentActivity(hasRebookingSubsequentActivity);
+		factory.save(doCatsReferral);
+	}
+
+	private void updatePendingEmergecyTheatre(Booking_Appointment doAppt) throws StaleObjectException
+	{
+		
+	 PendingEmergencyTheatre pet =	getPendingEmergencyTheatreForAppt(doAppt);
+	
+	 if (pet == null)
+		 return;
+	 
+	 pet.setCurrentStatus(getDomLookup(PendingEmergencyTheatreStatus.THEATRE_SLOT_TO_BE_BOOKED));
+	 
+	 getDomainFactory().save(pet);
+		
+	}
+
+	private PendingEmergencyTheatre getPendingEmergencyTheatreForAppt(Booking_Appointment appointment)
+	{
+		if (appointment == null || appointment.getId() == null)
+			return null;
+
+		DomainFactory factory = getDomainFactory();
+		List pet = factory.find("select pet from PendingEmergencyTheatre as pet left join pet.currentStatus as status left join pet.theatreAppointmentBooked as appt where appt.id = :appointmentID and status.id = :theatreSlotBookedID )", new String[] { "appointmentID", "theatreSlotBookedID" }, new Object[] { appointment.getId(), PendingEmergencyTheatreStatus.THEATRE_SLOT_BOOKED.getID()});
+
+		if (pet != null && pet.size() > 0 && pet.get(0) instanceof PendingEmergencyTheatre)
+			return (PendingEmergencyTheatre) pet.get(0);
+
+		return null;
+	}
+
+	//WDEV-19543
+	private Booking_AppointmentVo cancelLinkedApp(Booking_AppointmentVo voLinkedApptFull, Booking_AppointmentVo parentAppointment , ActionRequestType requestType, String requestSource) throws DomainInterfaceException, StaleObjectException 
+	{
+		
+		Appointment_StatusVo parentApptCurrentStatus = parentAppointment.getCurrentStatusRecord();
+		
+		// appt status and status history
+		voLinkedApptFull.setApptStatus(Status_Reason.CANCELLED);
+		voLinkedApptFull.setApptStatusReas(parentApptCurrentStatus.getStatusReason());	
+		voLinkedApptFull.setRequiresRebook(parentAppointment.getRequiresRebook());
+		
+		Appointment_StatusVo voApptStatus = populateStatus(voLinkedApptFull, parentApptCurrentStatus, Status_Reason.CANCELLED);
+		voLinkedApptFull.setCurrentStatusRecord(voApptStatus);
+
+		Appointment_StatusVoCollection voCollApptStatusHistory = voLinkedApptFull.getApptStatusHistory();
+		
+		if(voCollApptStatusHistory == null)
+			voCollApptStatusHistory = new Appointment_StatusVoCollection();
+		
+		voCollApptStatusHistory.add(voApptStatus);
+		voLinkedApptFull.setApptStatusHistory(voCollApptStatusHistory);
+		
+		if(Status_Reason.HOSPITALCANCELLED.equals(parentApptCurrentStatus.getStatusReason()))
+		{
+			int numProviderCancellations = 0;
+			
+			if(voLinkedApptFull.getNumProviderCancellations() != null)
+			{
+				numProviderCancellations = voLinkedApptFull.getNumProviderCancellations();
+			}
+			numProviderCancellations += 1;
+			
+			voLinkedApptFull.setNumProviderCancellations(numProviderCancellations);
+		}
+		
+		if(Status_Reason.PATIENTCANCELLED.equals(parentApptCurrentStatus.getStatusReason()))
+		{
+			int numPatientCancellations = 0;
+			
+			if(voLinkedApptFull.getNumPatientCancellations() != null)
+			{
+				numPatientCancellations = voLinkedApptFull.getNumPatientCancellations();
+			}
+			numPatientCancellations += 1;
+			
+			voLinkedApptFull.setNumPatientCancellations(numPatientCancellations);
+		}
+	
+    	if (voLinkedApptFull.getSessionSlotIsNotNull() && voLinkedApptFull.getSessionIsNotNull())
+    		voLinkedApptFull.getSessionSlot().setStatus(voLinkedApptFull.getSession().getAppropiateSessionSlotStatus());
+    	
+    	voLinkedApptFull.validate();
+    
+    	voLinkedApptFull = cancelAppt(voLinkedApptFull, ActionRequestType.NOTIFY_APPT_CANCEL, requestSource);
+    	
+    	 CatsReferralForTheatreBookingLiteVo catsRef = getCatsReferralForAppointment(voLinkedApptFull);
+    	
+    	//WDEV-20643
+    	if (catsRef != null && Boolean.TRUE.equals(voLinkedApptFull.getFirstConsultationActivity()))
+		{
+			updateCatsReferralConsultationActivityRequired(catsRef, true); 
+		}
+    	
+    	updateCatsReferralAdditionalInvStatus(catsRef, voLinkedApptFull);	
+    	updateCatsReferralCancelStatus(catsRef);
+    	return voLinkedApptFull;
+
+	}
+	private boolean hasTCI(Booking_AppointmentRefVo appt)
+	{		
+		AppointmentOutcomeDialog outcomeImpl = (AppointmentOutcomeDialog) getDomainImpl(AppointmentOutcomeDialogImpl.class);
+		return outcomeImpl.hasTCI(appt);
+	}
+	//WDEV-20643
+	public void updateCatsReferralConsultationActivityRequired(CatsReferralRefVo catsReferral, Boolean consultationActivityRequired) throws StaleObjectException
+	{
+		if(catsReferral == null || catsReferral.getID_CatsReferral() == null)
+			throw new CodingRuntimeException("catsReferral is null or id not provided in method updateCatsReferralConsultationActivityRequired");
+		
+		DomainFactory factory = getDomainFactory();
+		
+		CatsReferral doCatsReferral = (CatsReferral) factory.getDomainObject(catsReferral);
+		
+		doCatsReferral.setConsultationActivityRequired(consultationActivityRequired);
+		factory.save(doCatsReferral);
+	}
+
+		
+	//WDEV-19543
+	public void updateCatsReferralCancelStatus(CatsReferralRefVo catsReferral) throws StaleObjectException 
+	{
+		
+		return; //WDEV-22375
+		
+		/*
+		if(catsReferral == null || catsReferral.getID_CatsReferral() == null)
+			throw new CodingRuntimeException("catsReferral is null or id not provided in method updateCatsReferralCancelStatus");
+		
+		DomainFactory factory = getDomainFactory();
+		
+		CatsReferral doCatsReferral = (CatsReferral) factory.getDomainObject(catsReferral);
+		
+		doCatsReferral.setHasCancelledApptsForReview(true);
+		factory.save(doCatsReferral);
+		*/
+	}
+	
+	//WDEV-19543
+	private CatsReferralForTheatreBookingLiteVo getCatsReferralForAppointment(Booking_AppointmentRefVo appt)
+	{
+		if(appt == null || appt.getID_Booking_Appointment() == null)
+			throw new CodingRuntimeException("appt is null or id not provide for getCatsReferralForAppointment");
+		
+		DomainFactory factory = getDomainFactory();
+		List catsRefId = factory.find("select catsRef.id from CatsReferral as catsRef left join catsRef.appointments as bookAppt where (bookAppt.id = '" + appt.getID_Booking_Appointment() + "')");
+		if(catsRefId != null && catsRefId.size() > 0 && catsRefId.get(0) != null)
+		{
+			Integer val = (Integer) catsRefId.get(0);
+			if(val != null && val.intValue() > 0)
+			{
+			//	return new CatsReferralRefVo(val, 0);//wdev-11902
+				return CatsReferralForTheatreBookingLiteVoAssembler.create((CatsReferral)getDomainFactory().getDomainObject(CatsReferral.class, val));//voReferralRef.getID_CatsReferral()));
+			}
+		}	
+		return null;		
+	}
+	
+	//WDEV-19543
+	private Appointment_StatusVo populateStatus(Booking_AppointmentVo voAppt, Appointment_StatusVo parentApptCurrentStatus, Status_Reason status) 
+	{
+		Appointment_StatusVo voApptStatus = new Appointment_StatusVo();
+		
+		voApptStatus.setApptDate(voAppt.getAppointmentDate());
+		if (voAppt.getSessionSlotIsNotNull())
+		{
+			voApptStatus.setApptTime(voAppt.getSessionSlot().getStartTm());
+			voApptStatus.setStatusChangeDateTime(new DateTime());
+			voApptStatus.setPriority(voAppt.getSessionSlot().getPriority());
+		}
+		//WDEV-11887
+		else if(voAppt.getApptStartTimeIsNotNull())
+		{
+			voApptStatus.setApptTime(voAppt.getApptStartTime());
+			voApptStatus.setStatusChangeDateTime(new DateTime());
+		}
+		
+		// if reason is cancelled retrieve values set in cancel dialog
+		if(status.equals(Status_Reason.CANCELLED))
+		{
+			if(parentApptCurrentStatus!=null)
+			{
+				voApptStatus.setStatus(parentApptCurrentStatus.getStatus());
+				voApptStatus.setStatusReason(parentApptCurrentStatus.getStatusReason());
+				voApptStatus.setCancellationReason(parentApptCurrentStatus.getCancellationReason());
+				voApptStatus.setRebookSelected(parentApptCurrentStatus.getRebookSelected());
+				voApptStatus.setComment(parentApptCurrentStatus.getComment());
+				//--------------
+				voApptStatus.setEarliestOfferedDate(voAppt.getEarliestOfferedDate());
+				///-----------
+			}
+		}
+		else
+		{
+			voApptStatus.setStatus(status);
+			voApptStatus.setStatusReason(status);
+		}
+		
+		//WDEV-23185
+		if (voAppt.getSession() != null)
+		{
+			voApptStatus.setSession(voAppt.getSession());
+		} //WDEV-23185
+
+		return voApptStatus;
+	}
+
+	//WDEV-19543
+	private Booking_AppointmentVo getBookingAppointment(BookingAppointmentForLinkedAppointmentsVo voAppt)
+	{
+		if(voAppt == null || voAppt.getID_Booking_Appointment() == null)
+			throw new CodingRuntimeException("Cannnot return Booking_Appointments for a null Id.");
+		
+		Booking_Appointment doBooking = (Booking_Appointment) getDomainFactory().getDomainObject(Booking_Appointment.class, voAppt.getID_Booking_Appointment());
+		
+		return Booking_AppointmentVoAssembler.create(doBooking);
+	}
+
+	private void cancelCaseNoteRequests(Booking_AppointmentVo appointment, boolean hasTCI) throws StaleObjectException
+	{
+		PatientCaseNoteRequestLiteVoCollection requestsForCancellation = getLinkedCaseNoteOpenRequests(appointment);
+		
+		if (requestsForCancellation == null || requestsForCancellation.size() == 0)
+			return;
+		
+		Object mos = getMosUser();
+		
+		PatientCaseNotes impl = (PatientCaseNotes) getDomainImpl(PatientCaseNotesImpl.class);
+		
+		for (int i = 0; i < requestsForCancellation.size(); i++)
+		{
+			CaseNoteRequestCancellationReason reqCancellationReason = hasTCI ? CaseNoteRequestCancellationReason.TCI_CANCELLED : CaseNoteRequestCancellationReason.APPOINTMENT_CANCELLED; //WDEV-20989
+			impl.cancelRequest(requestsForCancellation.get(i), (MemberOfStaffRefVo) mos, reqCancellationReason);
+		}
+	}
+
+	private PatientCaseNoteRequestLiteVoCollection getLinkedCaseNoteOpenRequests(Booking_AppointmentVo appointment)
+	{
+		if(appointment == null)
+			   return null;
+		
+		List<?> list = getDomainFactory().find("select req from PatientCaseNoteRequest as req left join req.appointment as appt left join req.requestStatus as status " +
+				"where (appt.id = :appointmentID and status.id = :requestStatusID)", new String[] {"appointmentID", "requestStatusID"}, new Object[] {appointment.getID_Booking_Appointment(), CaseNoteRequestStatus.OPEN.getID()});
+		
+		return PatientCaseNoteRequestLiteVoAssembler.createPatientCaseNoteRequestLiteVoCollectionFromPatientCaseNoteRequest(list);
+	}
+
+	//WDEV-18940 now checks if session was blocked/cancelled before re-opening slot
+	private Status_Reason getAppropiateSessionSlotStatus(Sch_Session apptSessionDO) 
+	{
+		if (apptSessionDO == null)
+			return Status_Reason.SLOTOPENED;
+		if (getDomLookup(Session_Status_and_Reason.BLOCKED).equals(apptSessionDO.getSessionStatus()))
+			return Status_Reason.BLOCKED;
+		else if (getDomLookup(Session_Status_and_Reason.CANCELLED).equals(apptSessionDO.getSessionStatus()))
+			return Status_Reason.CANCELLED;
+		return Status_Reason.SLOTOPENED;
+	}
+	private SessionParentChildSlot reOpenTheatreFixedSlot(SessionParentChildSlot doChangeFromSlot) //WDEV-19379
 	{
 		if (doChangeFromSlot == null)
 			return null;
 
 		doChangeFromSlot.setAppointment(null);
-		doChangeFromSlot.setStatus(getDomLookup(Status_Reason.SLOTOPENED));
 		
-		if(doChangeFromSlot.getSession() != null)
+		Sch_Session doFromSlotSession = doChangeFromSlot.getSession();
+		
+		if(doFromSlotSession != null)
 		{
-			if(doChangeFromSlot.getSession().getParentChildSlots() != null)
+			Status_Reason slotStatusToReinstate = getAppropiateSessionSlotStatus(doFromSlotSession);
+			doChangeFromSlot.setStatus(getDomLookup(slotStatusToReinstate)); // WDEV-18940
+			
+			if(doFromSlotSession.getParentChildSlots() != null)
 			{
-				Iterator<?> it = doChangeFromSlot.getSession().getParentChildSlots().iterator();
+				Iterator<?> it = doFromSlotSession.getParentChildSlots().iterator();
 				while(it.hasNext())
 				{
 					//release child slots
@@ -609,7 +1196,7 @@ public class SessionAdminImpl extends DomainImpl implements ims.scheduling.domai
 					if(doSlot.getParentSlot() != null && doSlot.getParentSlot().equals(doChangeFromSlot))
 					{
 						doSlot.setParentSlot(null);
-						doSlot.setStatus(getDomLookup(Status_Reason.SLOTOPENED));
+						doSlot.setStatus(getDomLookup(slotStatusToReinstate));
 					}
 				}
 			}
@@ -642,15 +1229,18 @@ public class SessionAdminImpl extends DomainImpl implements ims.scheduling.domai
 		// WDEV-11908
 		if (doChangeFromSlot == null)
 			return null;
-
+		
+		Sch_Session doFromSlotSession = doChangeFromSlot.getSession(); //WDEV-18940
+		Status_Reason slotStatusToReinstate = getAppropiateSessionSlotStatus(doFromSlotSession); //WDEV-18940
+		
 		// WDEV-11908
 		if (doChangeFromSlot.getAppointment() != null)
 			doChangeFromSlot.getAppointment().setTheatreSlot(null);
 
 		doChangeFromSlot.setAppointment(null);
 
-		doChangeFromSlot.setStatus(getDomLookup(Status_Reason.SLOTOPENED));
-		doChangeFromSlot.setStatusReason(getDomLookup(Status_Reason.SLOTOPENED));
+		doChangeFromSlot.setStatus(getDomLookup(slotStatusToReinstate)); //WDEV-18940
+		doChangeFromSlot.setStatusReason(getDomLookup(slotStatusToReinstate)); //WDEV-18940
 
 		SessionSlotStatus doStat = new SessionSlotStatus();
 		doStat.setDateTime(new java.util.Date());
@@ -664,24 +1254,13 @@ public class SessionAdminImpl extends DomainImpl implements ims.scheduling.domai
 	private void updateProcedureNumLeftAndRemainingMins(Booking_Appointment doAppt)
 	{
 		int procedureMinsUsed = 0;
+		int slotsDuration = 0;
+		
 		Sch_Session doTheatreSession = doAppt.getSession();
 		if (doAppt.getTheatreBooking() != null)
 		{
 			if (doAppt.getTheatreBooking().getProcedure() != null)
 			{
-				if (doAppt.getSession().getTheatreProceduresRemaining() != null && doAppt.getSession().getTheatreProceduresRemaining().getProcedureDetails() != null)
-				{
-					Iterator it1 = doAppt.getSession().getTheatreProceduresRemaining().getProcedureDetails().iterator();
-					while (it1.hasNext())
-					{
-						TheatreProcedure doTheatreProc = (TheatreProcedure) it1.next();
-						if (doTheatreProc.getProcedure() != null)
-						{
-							if (doTheatreProc.getProcedure().getId().equals(doAppt.getTheatreBooking().getProcedure().getId()) && (doTheatreProc.isIsLimited() != null && doTheatreProc.isIsLimited()) && doTheatreProc.getNumberOfProceduresLeft() != null)
-								doTheatreProc.setNumberOfProceduresLeft(new Integer(doTheatreProc.getNumberOfProceduresLeft().intValue() + 1));
-						}
-					}
-				}
 				// WDEV-9643
 				if (doAppt.getCustomProcedureDuration() != null)
 					procedureMinsUsed += doAppt.getCustomProcedureDuration().intValue();
@@ -691,8 +1270,35 @@ public class SessionAdminImpl extends DomainImpl implements ims.scheduling.domai
 			}
 		}
 
-		if (procedureMinsUsed > 0 && doTheatreSession != null && doTheatreSession.getTheatreProceduresRemaining() != null && doTheatreSession.getTheatreProceduresRemaining().getRemainingTimeInMins() != null)
-			doTheatreSession.getTheatreProceduresRemaining().setRemainingTimeInMins(new Integer(doTheatreSession.getTheatreProceduresRemaining().getRemainingTimeInMins().intValue() + procedureMinsUsed));
+		//WDEV-23620 calculate the occupied slots duration
+		if (doAppt.getParentChildSlot() != null && doAppt.getParentChildSlot().getDuration() != null) 
+			slotsDuration = slotsDuration + doAppt.getParentChildSlot().getDuration();
+		
+		if(doTheatreSession != null && doTheatreSession.getParentChildSlots() != null)
+		{
+			
+			Iterator<?> it = doTheatreSession.getParentChildSlots().iterator();
+			while(it.hasNext())
+			{
+				SessionParentChildSlot doSlot = (SessionParentChildSlot) it.next();
+					
+				if(doSlot.getParentSlot() != null && doSlot.getParentSlot().equals(doAppt.getParentChildSlot()))
+				{
+					if (doSlot.getDuration() != null)
+						slotsDuration = slotsDuration + doSlot.getDuration();
+				}
+			}
+		}
+		
+		if ( doTheatreSession != null && doTheatreSession.getTheatreProceduresRemaining() != null && doTheatreSession.getTheatreProceduresRemaining().getRemainingTimeInMins() != null)
+		{
+			if (slotsDuration > 0 && slotsDuration < procedureMinsUsed) //WDEV-23620 this means overbook
+			{
+				doTheatreSession.getTheatreProceduresRemaining().setRemainingTimeInMins(new Integer(doTheatreSession.getTheatreProceduresRemaining().getRemainingTimeInMins().intValue() + slotsDuration));
+			} 
+			else if (procedureMinsUsed > 0 )
+				doTheatreSession.getTheatreProceduresRemaining().setRemainingTimeInMins(new Integer(doTheatreSession.getTheatreProceduresRemaining().getRemainingTimeInMins().intValue() + procedureMinsUsed));
+		}
 	}
 
 	public AppUserShortVoCollection listUsers()
@@ -731,136 +1337,379 @@ public class SessionAdminImpl extends DomainImpl implements ims.scheduling.domai
 		//WDEV-17929
 		doSession.setComment(voApptCancelStatus.getComment());
 		doSession.setCancellationReason(getDomLookup(voApptCancelStatus.getCancellationReason()));
-
-		Iterator<?> it = doSession.getSessionSlots().iterator();
-
-		boolean publishedSlot = false;
 		StringBuffer slotCabMessage = new StringBuffer();
-		while (it.hasNext())
+		
+		//WDEV-19046 ---- starts here
+		if (isFlexible)
 		{
-			Session_Slot doSlot = (Session_Slot) it.next();
-
-			//WDEV-18466
-			//if (doSlot.getAppointment() != null)
-				//throw new DomainInterfaceException("Appointments exist within this session. It cannot be cancelled, blocking is possible instead."); //WDEV-15338
-
-			if (cancelAppointment && doSlot.getAppointment() != null && getDomLookup(Status_Reason.BOOKED).equals(doSlot.getAppointment().getApptStatus()))
+			//flexible session with fixed slots
+			if (doSession.getParentChildSlots() != null && doSession.getParentChildSlots().size() > 0)
 			{
-				Booking_Appointment doAppToBeCancelled = doSlot.getAppointment();
-				doAppToBeCancelled.setApptStatus(getDomLookup(Status_Reason.CANCELLED));
-				
-				Appointment_Status appStatus = new Appointment_Status();
-				
-				appStatus.setStatus(getDomLookup(Status_Reason.CANCELLED));
-				appStatus.setStatusReason(getDomLookup(Status_Reason.SLOTOPENED));
-				appStatus.setStatusChangeDateTime(new java.util.Date());
-				
-				doAppToBeCancelled.setCurrentStatusRecord(appStatus);
-				
-				if (doAppToBeCancelled.getApptStatusHistory() == null)
-					doAppToBeCancelled.setApptStatusHistory(new HashSet());
-				
-				doAppToBeCancelled.getApptStatusHistory().add(appStatus);
-				
-				if (doAppToBeCancelled.getSessionSlot() != null)
-				{
-					doAppToBeCancelled.getSessionSlot().setStatus(getDomLookup(Status_Reason.SLOTOPENED));
-				}
-				
-				Booking_AppointmentVo appToBeCancelledVo = Booking_AppointmentVoAssembler.create(doAppToBeCancelled);
-				cancelAppt(appToBeCancelledVo, ActionRequestType.NOTIFY_SLOT_CANCEL, "Cancel Appt requested from Session Admin" );
+				updateParentChildSlots(doSession, voApptCancelStatus, cancelAppointment);
 			}
-			
-			
-			// WDEV-8887 - we dont want to cancel an already pending cancelation
-			if (doSlot.getStatus() != null && doSlot.getStatus().equals(getDomLookup(Status_Reason.CANCEL_PROVISIONAL)))
-				continue;
-
-			// wdev-5726 - Set dos slots to unpublished
-			// update isPublished for all DOS off the slot
-			if (!publishedSlot)
+			//flexible session
+			else if (cancelAppointment)
 			{
-				Iterator<?> it2 = doSlot.getDirectoryOfServices().iterator();
-				while (it2.hasNext())
+				List<?> apptsToBeCancelled = getApptsValidForCancellation(doSession);
+				
+				if (apptsToBeCancelled != null)
 				{
-					ims.scheduling.domain.objects.DirectoryOfServiceSessionSlot slotDos = (DirectoryOfServiceSessionSlot) it2.next();
-					if (slotDos.isIsPublished() != null && slotDos.isIsPublished().booleanValue() == true)
+					Iterator<?> it = apptsToBeCancelled.iterator();
+
+					while (it.hasNext())
 					{
-						publishedSlot = true;
-						break;
-						// wdev-5745 - set this
-						// laterslotDos.setIsPublished(false);
+						Booking_Appointment apptToBeCancelledDO = (Booking_Appointment) it.next();
+						if (getDomLookup(Status_Reason.BOOKED).equals(apptToBeCancelledDO.getApptStatus()))
+						{
+							apptToBeCancelledDO.setApptStatus(getDomLookup(Status_Reason.CANCELLED));
+
+							Appointment_Status appStatus = new Appointment_Status();
+
+							appStatus.setApptDate(apptToBeCancelledDO.getAppointmentDate());
+							appStatus.setApptTime(apptToBeCancelledDO.getApptStartTime());
+							appStatus.setStatus(getDomLookup(Status_Reason.CANCELLED));
+							appStatus.setStatusReason(getDomLookup(Status_Reason.CANCELLED));
+							appStatus.setStatusChangeDateTime(new java.util.Date());
+							//WDEV-23185
+							if (apptToBeCancelledDO.getSession() != null)
+							{
+								appStatus.setSession(apptToBeCancelledDO.getSession());
+							} //WDEV-23185
+
+							apptToBeCancelledDO.setCurrentStatusRecord(appStatus);
+
+							if (apptToBeCancelledDO.getApptStatusHistory() == null)
+								apptToBeCancelledDO.setApptStatusHistory(new HashSet());
+
+							apptToBeCancelledDO.getApptStatusHistory().add(appStatus);
+
+							if (Status_Reason.HOSPITALCANCELLED.equals(voApptCancelStatus.getStatusReason()))
+							{
+								int numProviderCancellations = 0;
+
+								if (apptToBeCancelledDO.getNumProviderCancellations() != null)
+								{
+									numProviderCancellations = apptToBeCancelledDO.getNumProviderCancellations();
+								}
+								numProviderCancellations += 1;
+
+								apptToBeCancelledDO.setNumProviderCancellations(numProviderCancellations);
+							}
+
+							Booking_AppointmentVo appToBeCancelledVo = Booking_AppointmentVoAssembler.create(apptToBeCancelledDO);
+							
+							//WDEV-22350 when cancelling an Outpatient session, make sure the appointment is marked as Re-Booking required 
+							appToBeCancelledVo.setRequiresRebook(true);
+							
+							cancelAppt(appToBeCancelledVo, ActionRequestType.NOTIFY_APPT_CANCEL, "Cancel Appt requested from Session Management");
+						}
+
 					}
 				}
 			}
-
-			if (publishedSlot)
+		} 
+		else if (getDomLookup(SchProfileType.THEATRE).equals(doSession.getSessionProfileType()))
+		{
+			//theatre session session with fixed slots
+			if (doSession.getParentChildSlots() != null && doSession.getParentChildSlots().size() > 0)
 			{
-				doSlot.setStatus(getDomLookup(Status_Reason.CANCEL_PROVISIONAL));
-				doSlot.setIsActive(Boolean.FALSE); // wdev-6713
+				updateParentChildSlots(doSession, voApptCancelStatus, cancelAppointment);
 			}
-			else
-				doSlot.setStatus(getDomLookup(Status_Reason.CANCELLED));
+		}
+		else //WDEV-19046 ---- end
+		{	
+			Iterator<?> it = doSession.getSessionSlots().iterator();
+			boolean publishedSlot = false;
+			
+			while (it.hasNext())
+			{
+				Session_Slot doSlot = (Session_Slot) it.next();
+
+				//WDEV-18466
+				//if (doSlot.getAppointment() != null)
+				//throw new DomainInterfaceException("Appointments exist within this session. It cannot be cancelled, blocking is possible instead."); //WDEV-15338
+
+				if (cancelAppointment && doSlot.getAppointment() != null && getDomLookup(Status_Reason.BOOKED).equals(doSlot.getAppointment().getApptStatus()))
+				{
+					Booking_Appointment doAppToBeCancelled = doSlot.getAppointment();
+					doAppToBeCancelled.setApptStatus(getDomLookup(Status_Reason.CANCELLED));
+
+					Appointment_Status appStatus = new Appointment_Status();
+
+					appStatus.setApptDate(doAppToBeCancelled.getAppointmentDate());
+					appStatus.setApptTime(doAppToBeCancelled.getApptStartTime());
+					appStatus.setStatus(getDomLookup(Status_Reason.CANCELLED));
+					appStatus.setStatusReason(getDomLookup(Status_Reason.CANCELLED)); //WDEV-19046
+					appStatus.setStatusChangeDateTime(new java.util.Date());
+					//WDEV-23185
+					if (doAppToBeCancelled.getSession() != null)
+					{
+						appStatus.setSession(doAppToBeCancelled.getSession());
+					} //WDEV-23185
+
+					doAppToBeCancelled.setCurrentStatusRecord(appStatus);
+
+					if (doAppToBeCancelled.getApptStatusHistory() == null)
+						doAppToBeCancelled.setApptStatusHistory(new HashSet());
+
+					doAppToBeCancelled.getApptStatusHistory().add(appStatus);
+
+					if (doAppToBeCancelled.getSessionSlot() != null)
+					{
+						doAppToBeCancelled.getSessionSlot().setStatus(getDomLookup(Status_Reason.SLOTOPENED));
+					}
+					
+					if(Status_Reason.HOSPITALCANCELLED.equals(voApptCancelStatus.getStatusReason()))
+					{
+						int numProviderCancellations = 0;
+						
+						if(doAppToBeCancelled.getNumProviderCancellations() != null)
+						{
+							numProviderCancellations = doAppToBeCancelled.getNumProviderCancellations();
+						}
+						numProviderCancellations += 1;
+						
+						doAppToBeCancelled.setNumProviderCancellations(numProviderCancellations);
+					}
+
+					Booking_AppointmentVo appToBeCancelledVo = Booking_AppointmentVoAssembler.create(doAppToBeCancelled);
+					
+					//WDEV-22350 when cancelling an Outpatient session, make sure the appointment is marked as Re-Booking required 
+					appToBeCancelledVo.setRequiresRebook(true);
+					
+					cancelAppt(appToBeCancelledVo, ActionRequestType.NOTIFY_APPT_CANCEL, "Cancel Appt requested from Session Management" );
+				}
+
+				// WDEV-8887 - we dont want to cancel an already pending cancelation
+				if (doSlot.getStatus() != null && doSlot.getStatus().equals(getDomLookup(Status_Reason.CANCEL_PROVISIONAL)))
+					continue;
+
+				// wdev-5726 - Set dos slots to unpublished
+				// update isPublished for all DOS off the slot
+				if (!publishedSlot)
+				{
+					Iterator<?> it2 = doSlot.getDirectoryOfServices().iterator();
+					while (it2.hasNext())
+					{
+						ims.scheduling.domain.objects.DirectoryOfServiceSessionSlot slotDos = (DirectoryOfServiceSessionSlot) it2.next();
+						if (slotDos.isIsPublished() != null && slotDos.isIsPublished().booleanValue() == true)
+						{
+							publishedSlot = true;
+							break;
+							// wdev-5745 - set this
+							// laterslotDos.setIsPublished(false);
+						}
+					}
+				}
+
+				if (publishedSlot)
+				{
+					doSlot.setStatus(getDomLookup(Status_Reason.CANCEL_PROVISIONAL));
+					doSlot.setIsActive(Boolean.FALSE); // wdev-6713
+				}
+				else
+					doSlot.setStatus(getDomLookup(Status_Reason.CANCELLED));
+				doSlot.setStatusReason(getDomLookup(voApptCancelStatus.getStatusReason()));
+				SessionSlotStatus doSlotStatus = new SessionSlotStatus();
+				doSlotStatus.setDateTime(new DateTime(new Date(), new Time()).getJavaDate());
+				doSlotStatus.setStatus(getDomLookup(voApptCancelStatus.getStatus()));
+				doSlotStatus.setStatusReason(getDomLookup(voApptCancelStatus.getStatusReason()));
+				doSlot.getStatusReasonHistory().add(doSlotStatus);
+
+				// Do not send request if the slot status is now
+				// cancelled_pending_appt as that request will be sent when
+				// confirmation
+				// of appointment cancellation is received from CAB
+				if (ConfigFlag.GEN.ICAB_ENABLED.getValue() && doSlot.getStatus().getId() != Status_Reason.CANCELLED_PENDING_APPT.getId())
+				{
+					slotCabMessage.append(doSlot.buildCabMessage());
+					if (slotCabMessage.length() > 1300) // 1500 is max size - send
+						// if reached and start
+						// again
+					{
+						if (ims.configuration.gen.ConfigFlag.DOM.SCHEDULING_SLOTS_CREATION.getValue().equals("Choose and Book"))
+						{
+							CABRequests.placeOutgoingRequest(factory, getDomLookup(ActionRequestType.NOTIFY_SLOT_CANCEL), slotCabMessage.toString(), "Slot Cancel requested through Session Admin");
+						}
+						slotCabMessage.setLength(0);
+					}
+				}
+
+			} //WDEV-23690
+			/*if (publishedSlot)
+			{
+				doSession.setSessionStatus(getDomLookup(Session_Status_and_Reason.CANCEL_PROVISIONAL));
+				doSession.setStatusReason(getDomLookup(Session_Status_and_Reason.CANCEL_PROVISIONAL));
+			}*/
+		}
+
+		factory.save(doSession);
+
+		if (!isFlexible) //WDEV-19046 ---- 
+		{	
+			if (ConfigFlag.GEN.ICAB_ENABLED.getValue() && slotCabMessage.length() > 0)
+			{
+				if (ims.configuration.gen.ConfigFlag.DOM.SCHEDULING_SLOTS_CREATION.getValue().equals("Choose and Book"))
+				{
+					CABRequests.placeOutgoingRequest(factory, getDomLookup(ActionRequestType.NOTIFY_SLOT_CANCEL), slotCabMessage.toString(), "Slot Cancel requested through Session Admin");
+				}
+			}
+
+			// update Journey
+			Iterator<?> it1 = doSession.getSessionSlots().iterator();
+			while (it1.hasNext())
+			{
+				Session_Slot doSlot = (Session_Slot) it1.next();
+				if (doSlot.getAppointment() != null)
+					updateJourney(doSlot.getAppointment(), true);
+			}
+		}
+	}
+	
+	//WDEV-22845
+	private void cancelTCIAndReferralEROD(CatsReferralRefVo catsReferral, Booking_AppointmentRefVo apptRef, CancelAppointmentReason cancelAppointmentReason, String cancellationComment, Boolean isProviderCancellation , Boolean isPatientCancellation, Boolean cancelledForNonmedicalReason) throws StaleObjectException //WDEV-18249
+	{
+		TheatreSessionManagement impl = (TheatreSessionManagement) getDomainImpl(TheatreSessionManagementImpl.class);
+		impl.cancelTCIAndReferralEROD(catsReferral, apptRef, cancelAppointmentReason, cancellationComment, isProviderCancellation, isPatientCancellation, cancelledForNonmedicalReason);
+	}
+
+	//WDEV-20068
+	private void updateParentChildSlots(Sch_Session doSession, Appointment_StatusVo voApptCancelStatus, Boolean cancelAppointment) throws DomainInterfaceException, StaleObjectException 
+	{
+		Iterator<?> it = doSession.getParentChildSlots().iterator();
+		boolean electiveListFunctionalityEnabled = ConfigFlag.GEN.USE_ELECTIVE_LIST_FUNCTIONALITY.getValue();
+		
+		while (it.hasNext())
+		{
+			SessionParentChildSlot doSlot = (SessionParentChildSlot) it.next();
+			
+			if (doSlot.getStatus() != null && doSlot.getStatus().equals(getDomLookup(Status_Reason.CANCEL_PROVISIONAL)))
+				continue;
+
+			doSlot.setStatus(getDomLookup(Status_Reason.CANCELLED));
 			doSlot.setStatusReason(getDomLookup(voApptCancelStatus.getStatusReason()));
+			
 			SessionSlotStatus doSlotStatus = new SessionSlotStatus();
 			doSlotStatus.setDateTime(new DateTime(new Date(), new Time()).getJavaDate());
 			doSlotStatus.setStatus(getDomLookup(voApptCancelStatus.getStatus()));
 			doSlotStatus.setStatusReason(getDomLookup(voApptCancelStatus.getStatusReason()));
 			doSlot.getStatusReasonHistory().add(doSlotStatus);
-
-			// Do not send request if the slot status is now
-			// cancelled_pending_appt as that request will be sent when
-			// confirmation
-			// of appointment cancellation is received from CAB
-			if (ConfigFlag.GEN.ICAB_ENABLED.getValue() && doSlot.getStatus().getId() != Status_Reason.CANCELLED_PENDING_APPT.getId())
+			
+			if (cancelAppointment && doSlot.getAppointment() != null && getDomLookup(Status_Reason.BOOKED).equals(doSlot.getAppointment().getApptStatus()))
 			{
-				slotCabMessage.append(doSlot.buildCabMessage());
-				if (slotCabMessage.length() > 1300) // 1500 is max size - send
-													// if reached and start
-													// again
+				Booking_Appointment doAppToBeCancelled = doSlot.getAppointment();
+				doAppToBeCancelled.setApptStatus(getDomLookup(Status_Reason.CANCELLED));
+
+				Appointment_Status appStatus = new Appointment_Status();
+
+				appStatus.setApptDate(doAppToBeCancelled.getAppointmentDate());
+				appStatus.setApptTime(doAppToBeCancelled.getApptStartTime());
+				appStatus.setStatus(getDomLookup(Status_Reason.CANCELLED));
+				appStatus.setStatusReason(getDomLookup(Status_Reason.CANCELLED));
+				appStatus.setStatusChangeDateTime(new java.util.Date());
+				//WDEV-23185
+				if (doAppToBeCancelled.getSession() != null)
 				{
-					if (ims.configuration.gen.ConfigFlag.DOM.SCHEDULING_SLOTS_CREATION.getValue().equals("Choose and Book"))
+					appStatus.setSession(doAppToBeCancelled.getSession());
+				} //WDEV-23185
+
+				doAppToBeCancelled.setCurrentStatusRecord(appStatus);
+
+				if (doAppToBeCancelled.getApptStatusHistory() == null)
+					doAppToBeCancelled.setApptStatusHistory(new HashSet());
+
+				doAppToBeCancelled.getApptStatusHistory().add(appStatus);
+
+				if (doAppToBeCancelled.getSessionSlot() != null)
+				{
+					doAppToBeCancelled.getSessionSlot().setStatus(getDomLookup(Status_Reason.SLOTOPENED));
+				}
+				
+				if(Status_Reason.HOSPITALCANCELLED.equals(voApptCancelStatus.getStatusReason()))
+				{
+					int numProviderCancellations = 0;
+					
+					if(doAppToBeCancelled.getNumProviderCancellations() != null)
 					{
-						CABRequests.placeOutgoingRequest(factory, getDomLookup(ActionRequestType.NOTIFY_SLOT_CANCEL), slotCabMessage.toString(), "Slot Cancel requested through Session Admin");
+						numProviderCancellations = doAppToBeCancelled.getNumProviderCancellations();
 					}
-					slotCabMessage.setLength(0);
+					numProviderCancellations += 1;
+					
+					doAppToBeCancelled.setNumProviderCancellations(numProviderCancellations);
+				}
+
+				Booking_AppointmentVo appToBeCancelledVo = Booking_AppointmentVoAssembler.create(doAppToBeCancelled);
+				
+				//WDEV-22350 when cancelling an Outpatient session (flexible session in this case), make sure the appointment is marked as Re-Booking required 
+				if (!getDomLookup(SchProfileType.THEATRE).equals(doSession.getSessionProfileType()))
+					appToBeCancelledVo.setRequiresRebook(true);
+
+				cancelAppt(appToBeCancelledVo, ActionRequestType.NOTIFY_APPT_CANCEL, "Cancel Appt requested from Session Management" );
+				
+				//WDEV-23068
+				if (electiveListFunctionalityEnabled)
+				{
+					boolean hasTCI = appToBeCancelledVo.getTheatreBooking() != null && hasTCI(appToBeCancelledVo);
+					if (hasTCI)
+					{	
+						CatsReferralForTheatreBookingLiteVo catsReferral = getCatsReferralForAppointment(appToBeCancelledVo);
+						cancelTCIAndReferralEROD(catsReferral, appToBeCancelledVo, voApptCancelStatus.getCancellationReason(), voApptCancelStatus.getComment(), Status_Reason.HOSPITALCANCELLED.equals(voApptCancelStatus.getStatusReason()), Status_Reason.PATIENTCANCELLED.equals(voApptCancelStatus.getStatusReason()), Boolean.TRUE.equals(voApptCancelStatus.getCancelledForNonMedicalReason()));
+					}
 				}
 			}
-
 		}
-		if (publishedSlot)
-		{
-			doSession.setSessionStatus(getDomLookup(Session_Status_and_Reason.CANCEL_PROVISIONAL));
-			doSession.setStatusReason(getDomLookup(Session_Status_and_Reason.CANCEL_PROVISIONAL));
-		}
-
-		factory.save(doSession);
-
-		if (ConfigFlag.GEN.ICAB_ENABLED.getValue() && slotCabMessage.length() > 0)
-		{
-			if (ims.configuration.gen.ConfigFlag.DOM.SCHEDULING_SLOTS_CREATION.getValue().equals("Choose and Book"))
-			{
-				CABRequests.placeOutgoingRequest(factory, getDomLookup(ActionRequestType.NOTIFY_SLOT_CANCEL), slotCabMessage.toString(), "Slot Cancel requested through Session Admin");
-			}
-		}
-
-		// update Journey
-		Iterator<?> it1 = doSession.getSessionSlots().iterator();
-		while (it1.hasNext())
-		{
-			Session_Slot doSlot = (Session_Slot) it1.next();
-			if (doSlot.getAppointment() != null)
-				updateJourney(doSlot.getAppointment(), true);
-		}
+	}	
+	//WDEV-19046
+	public  List<?> getApptsValidForCancellation(Sch_Session sessionDO) throws DomainInterfaceException
+	{
+		if (sessionDO == null || sessionDO.getId() == null)
+			throw new DomainInterfaceException ("Session parameter cannot be null.");
+		StringBuilder hqlMain = new StringBuilder();
+		
+		hqlMain.append("select appts from Sch_Booking as bookingSession left join bookingSession.appointments as appts left join appts.session as schedSession where schedSession.id = :SESSIONID and (appts.isRIE is null OR appts.isRIE = 0) order by appts.apptStartTime asc");
+		
+		DomainFactory domainFactory = getDomainFactory();
+		
+		List<?> appts = domainFactory.find(hqlMain.toString(), new String[]{"SESSIONID"}, new Object[]{sessionDO.getId()});
+		
+		if (appts == null || appts.isEmpty())
+			return null;
+		
+		return appts;
 	}
-
+	
 	public void updateJourney(Booking_Appointment doAppt, Boolean isCancel) throws StaleObjectException
 	{
+		DomainFactory factory = getDomainFactory();
+		PatientEventVo voEvent = null;
+		//WDEV-19772 - start
+		if (ConfigFlag.DOM.PATHWAY_ENTITY_EVENT_FUNCTIONALITY.getValue() && isCancel && doAppt.getActivity() != null && doAppt.getActivity().isFirstAppointment())			
+		{
+			CatsReferral catsReferral = getCatsReferralForAppointmentID(doAppt);
+			PatientPathwayJourney patientJBo = catsReferral != null ? catsReferral.getJourney() : null;
+			
+			if (patientJBo != null && patientJBo.getId() != null)
+			{
+				try
+    			{
+    				PatientJourneyVo patientJ = PatientJourneyVoAssembler.create((PatientPathwayJourney) factory.getDomainObject(PatientPathwayJourney.class, patientJBo.getId()));
+    				voEvent = createAndSaveEvent(getHardCodedEvent(HardCodedEvents.APPOINTMENTCANCELLED.getId()), doAppt, patientJ);
+    			}
+    				catch (DomainInterfaceException e)
+    			{throw new DomainRuntimeException("Domain Error occured in save Event " + e.getMessage(), e);}
+    				
+    			if (voEvent != null)
+    				doAppt.getPathwayEvents().add(PatientEventVoAssembler.extractPatientEvent(factory, voEvent));
+    			
+    			return;
+			}			
+		}
+		//WDEV-19772 - end
+		
 		if (!ConfigFlag.DOM.SCHEDULING_LINKED_TO_PATHWAYS.getValue())
 			return;
 
-		DomainFactory factory = getDomainFactory();
-		PatientEventVo voEvent = null;
+
 		if (doAppt.getPathwayEvents() != null && doAppt.getPathwayEvents().size() > 0)
 		{
 			Iterator<?> it = doAppt.getSession().getActivityPathwayEvents().iterator();
@@ -885,9 +1734,45 @@ public class SessionAdminImpl extends DomainImpl implements ims.scheduling.domai
 		if (voEvent != null)
 			doAppt.getPathwayEvents().add(PatientEventVoAssembler.extractPatientEvent(factory, voEvent));
 	}
+	
+	//WDEV-19772 
+	private CatsReferral getCatsReferralForAppointmentID(Booking_Appointment appt)
+	{
+		if(appt == null || appt.getId() == null)
+			throw new CodingRuntimeException("Appointment ID cannot be null");
+		
+		DomainFactory factory = getDomainFactory();
+		List catsRefId = factory.find("select catsRef from CatsReferral as catsRef left join catsRef.appointments as bookAppt where (bookAppt.id = '" + appt.getId() + "')");
+		if(catsRefId != null && catsRefId.size() > 0 && catsRefId.get(0) != null)
+		{
+			Integer val = (Integer) ((CatsReferral) catsRefId.get(0)).getId();
+			if(val != null && val.intValue() > 0)
+			{
+				return (CatsReferral)getDomainFactory().getDomainObject(CatsReferral.class, val);
+			}
+		}	
+		return null;		
+	}
+
+	//WDEV-19772
+	public Event getHardCodedEvent(int event_Id)
+	{
+		StringBuilder hqlBuilder = new StringBuilder("select event from Event as event left join event.status as s where event.id = :eventID and s.id = :statusID");
+		
+		List <?> list = getDomainFactory().find(hqlBuilder.toString(),new String[] {"eventID", "statusID"},new Object[] {event_Id, PreActiveActiveInactiveStatus.ACTIVE.getID()});
+		
+		if (list == null || list.size() == 0)
+			return null;
+		
+		return (Event) list.get(0);
+	}
 
 	public PatientEventVo createAndSaveEvent(Event event, Booking_Appointment doAppt, PatientJourneyVo voJourney) throws DomainInterfaceException, StaleObjectException
 	{
+		//WDEV-19772 
+		if (event == null)
+			return null;
+		
 		PatientEventVo voEvent = new PatientEventVo();
 		voEvent.setEventDateTime(new DateTime());
 		voEvent.setEvent(new EventRefVo(event.getId(), event.getVersion()));
@@ -958,8 +1843,14 @@ public class SessionAdminImpl extends DomainImpl implements ims.scheduling.domai
 		return AppRoleShortVoAssembler.createAppRoleShortVoCollectionFromAppRole(getDomainFactory().find(query));
 	}
 
-	// WDEV-6050
 	public void updateCatsReferralAdditionalInvStatus(CatsReferralRefVo catsReferral) throws StaleObjectException
+	{
+		updateCatsReferralAdditionalInvStatus(catsReferral, null);
+	}
+
+	//WDEV-23545 - this method can be called with appointment parameter = null only for CAB functionality.
+	//WDEV-6050
+	public void updateCatsReferralAdditionalInvStatus(CatsReferralRefVo catsReferral, Booking_AppointmentRefVo appointment) throws StaleObjectException
 	{
 		if (catsReferral == null || catsReferral.getID_CatsReferral() == null)
 			throw new CodingRuntimeException("catsReferral is null or id not provided in method updateCatsReferralAdditionalInvStatus");
@@ -967,12 +1858,104 @@ public class SessionAdminImpl extends DomainImpl implements ims.scheduling.domai
 		DomainFactory factory = getDomainFactory();
 
 		CatsReferral doCatsReferral = (CatsReferral) factory.getDomainObject(catsReferral);
+		
+		// WDEV-19909 check the appointment has the Cancelled Status and it's the one from CatsReferral.ConsultationAppt
+		if (appointment != null)
+		{
+			Booking_Appointment doAppointment = (Booking_Appointment) factory.getDomainObject(appointment);
 
+			if (doAppointment != null && doAppointment.getApptStatus() != null && doAppointment.getApptStatus().equals(getDomLookup(Status_Reason.CANCELLED)) 
+				&& doCatsReferral != null && doCatsReferral.getConsultationAppt() != null && doCatsReferral.getConsultationAppt().getId().equals(doAppointment.getId()))
+			{
+				doCatsReferral.setConsultationAppt(null);
+				
+				CatsReferralStatusVo statusForHistory = new CatsReferralStatusVo(); 		
+				
+				statusForHistory.setReferralStatus(ReferralApptStatus.FIRST_CONSULTATION_APPOINTMENT_CANCELLED);
+				statusForHistory.setAuthoringUser((MemberOfStaffRefVo)getMosUser());
+				statusForHistory.setStatusDateTime(new DateTime());
+				
+				CATSReferralStatus domCATSReferralStatus = CatsReferralStatusVoAssembler.extractCATSReferralStatus(factory, statusForHistory);
+				factory.save(domCATSReferralStatus);
+
+				if ( doCatsReferral.getStatusHistory() == null)
+					 doCatsReferral.setStatusHistory(new java.util.HashSet());
+				
+				doCatsReferral.getStatusHistory().add(domCATSReferralStatus);
+			}
+			
+			if(doCatsReferral != null && doAppointment != null && Boolean.TRUE.equals(doCatsReferral.isIsCAB()) && Boolean.TRUE.equals(doAppointment.isIsCABBooking()))
+			{
+				if(doAppointment.getApptStatus() != null && doAppointment.getApptStatus().equals(getDomLookup(Status_Reason.CANCELLED)))
+				{
+					if (!atLeastOneBookedCABAppointmentInCatsReferral(doCatsReferral))//WDEV-22915
+						doCatsReferral.setConsultationActivityRequired(true);
+				
+					LookupInstance cancelReason = doAppointment.getCurrentStatusRecord() != null ? doAppointment.getCurrentStatusRecord().getCancellationReason() : null;//getCancelReasonForTheMostRecentCancelledAppointment(doCatsReferral);
+					
+					if(cancelReason == null)// 	WDEV-23585
+					{
+						cancelReason = getCancelReasonFromCancelProvisionalStatus(doAppointment);
+						
+						if (doCatsReferral.getAppointments() != null & doCatsReferral.getAppointments().size() > 0)
+						{
+							Iterator it = doCatsReferral.getAppointments().iterator();
+							while (it.hasNext())
+							{
+								Booking_Appointment doAppt = (Booking_Appointment) it.next();
+								if(doAppt != null && doAppt.getId() == doAppointment.getId())
+								{
+									if(doAppt.getCurrentStatusRecord() != null && doAppt.getCurrentStatusRecord().getStatus() != null && doAppt.getCurrentStatusRecord().getStatus().equals(getDomLookup(Status_Reason.CANCELLED)))
+									{
+										doAppt.getCurrentStatusRecord().setCancellationReason(cancelReason);
+									}
+									
+									if(doAppt.getApptStatusHistory() != null)
+									{
+										Iterator itSec = doAppt.getApptStatusHistory().iterator();
+										while(itSec.hasNext())
+										{
+											Appointment_Status statusSec = (Appointment_Status) itSec.next();
+											
+											if(statusSec.getStatus() != null && statusSec.getStatus().equals(getDomLookup(Status_Reason.CANCELLED)))
+											{
+												statusSec.setCancellationReason(cancelReason);
+											}
+										}
+									}
+								}
+							}
+						}
+					}// 	WDEV-23585
+				
+					if(cancelReason != null && cancelReason.getMappings() != null && cancelReason.getMappings().size() > 0)
+					{
+    					Iterator it = cancelReason.getMappings().iterator();
+    					while(it.hasNext())
+    					{
+    						LookupMapping map = (LookupMapping) it.next();
+    						
+    						if(map.getExtSystem() != null && map.getExtSystem().equalsIgnoreCase(CHOOSE_AND_BOOK) && map.getExtCode() != null
+    								&& (map.getExtCode().equals(INTEND_TO_GO_PRIVATE) || map.getExtCode().equals(OTHER_REFERRAL_CANCELLATION) || map.getExtCode().equals(PATIENT_DIED) || map.getExtCode().equals(REQUEST_RAISED_IN_ERROR) || map.getExtCode().equals(TREATMENT_NO_LONGER_REQUIRED)))
+    						{
+    							// WDEV-23646 - Ensure the correct event Date Time is used when creating a new RTT Status
+    							// The correct date is current date as this is the appointment cancellation date.
+    							java.util.Date eventDateTime = new java.util.Date(); 
+								setReferralEndOfCareAndStopClock(doCatsReferral, eventDateTime);
+    						}
+    					}
+    				}
+				}
+			}
+		}
+		
 		// 1. DNA & 2. CANCEL
 		if (doCatsReferral.getAppointments().size() > 0)
 		{
 			boolean bSave = false;
 			boolean bReview = false;
+			int numProviderCancellations = 0;
+			int numPatientCancellations = 0;
 			Iterator it = doCatsReferral.getAppointments().iterator();
 			while (it.hasNext())
 			{
@@ -983,59 +1966,53 @@ public class SessionAdminImpl extends DomainImpl implements ims.scheduling.domai
 					bSave = true;
 					doCatsReferral.setAdditionalInvApptsStatus(getDomLookup(AdditionalInvestigationAppointmentsStatus.DNA));
 
-					// WDEV-11958
-					if (doAppt.getApptStatus().equals(getDomLookup(Status_Reason.CANCELLED)) && (doAppt.isWasReviewed() == null || !doAppt.isWasReviewed()))
+					// WDEV-11958 WDEV-21585 only for Outpatient Appointments
+					if (doAppt.getTheatreBooking() == null && doAppt.getApptStatus().equals(getDomLookup(Status_Reason.CANCELLED)) && (doAppt.isWasReviewed() == null || !doAppt.isWasReviewed()))
 						bReview = true;
 					
 					//wdev-15779
-					if( doAppt.getApptStatus().equals(getDomLookup(Status_Reason.CANCELLED)) && Boolean.TRUE.equals(doAppt.isIsCABBooking()) && doCatsReferral.getICABReferral() != null && doCatsReferral.getICABReferral().getUBRN() != null) //wdev-15779
+					if( doAppt.getApptStatus().equals(getDomLookup(Status_Reason.CANCELLED)) 
+							&& Boolean.TRUE.equals(doAppt.isIsCABBooking()) 
+							&& doCatsReferral.getICABReferral() != null 
+							&& doCatsReferral.getICABReferral().getUBRN() != null) //wdev-15779
 					{
 						if( existsNonCanceledAppointmentsInCatsReferral(doCatsReferral) == true)
 							bReview = false;
 					}
-
+				}
+				
+				if(doAppt.getTheatreBooking() == null && doAppt.getNumProviderCancellations() != null)
+				{
+					numProviderCancellations += doAppt.getNumProviderCancellations();
+				}
+				if(doAppt.getTheatreBooking() == null && doAppt.getNumPatientCancellations() != null)
+				{
+					numPatientCancellations += doAppt.getNumPatientCancellations();
 				}
 			}
+			
+			if (numProviderCancellations > 0 
+					&& (doCatsReferral.getNumProviderCancelledAppts() == null 
+						|| (doCatsReferral.getNumProviderCancelledAppts() != null 
+								&& numProviderCancellations != doCatsReferral.getNumProviderCancelledAppts().intValue())))
+			{
+				doCatsReferral.setNumProviderCancelledAppts(numProviderCancellations);
+				bSave = true;
+			}
+			
+			if (numPatientCancellations > 0 
+					&& (doCatsReferral.getNumPatientCancelledAppts() == null 
+						|| (doCatsReferral.getNumPatientCancelledAppts() != null 
+								&& numPatientCancellations != doCatsReferral.getNumPatientCancelledAppts().intValue())))
+			{
+				doCatsReferral.setNumPatientCancelledAppts(numPatientCancellations);
+				bSave = true;
+			}
+			
 			if (bSave)
 			{
-				if (bReview)
-					doCatsReferral.setHasCancelledApptsForReview(Boolean.TRUE); // CAB
-																				// Cancellations.
-																				// wdev-8288
 				factory.save(doCatsReferral);
 			}
-
-			// WDEV-11878
-			// final check to see are there actually any cancelled appts if not
-			// set the setHasCancelledApptsForReview back to false
-			int countOfCancelledAppts = 0;
-			int countOfDnaAppts = 0;
-			Iterator it1 = doCatsReferral.getAppointments().iterator();
-			while (it1.hasNext())
-			{
-				Booking_Appointment doAppt = (Booking_Appointment) it1.next();
-				if (doAppt.getApptStatus() != null)
-				{
-					if (doAppt.getApptStatus().equals(getDomLookup(Status_Reason.CANCELLED)))
-						if (doAppt.isWasReviewed() == null || !doAppt.isWasReviewed())
-							countOfCancelledAppts++;
-
-					/*if (doAppt.getApptStatus().equals(getDomLookup(Status_Reason.DNA)))
-						if (doAppt.isWasReviewed() == null || !doAppt.isWasReviewed())
-							countOfDnaAppts++;*/
-				}
-			}
-
-			if (countOfCancelledAppts == 0)
-			{
-				doCatsReferral.setHasCancelledApptsForReview(Boolean.FALSE);
-				factory.save(doCatsReferral);
-			}
-			/*if (countOfDnaAppts == 0)
-			{
-				doCatsReferral.setHasDNAApptsForReview(Boolean.FALSE);
-				factory.save(doCatsReferral);
-			}*/
 
 		}
 		// 3. TOBEBOOKED
@@ -1142,6 +2119,177 @@ public class SessionAdminImpl extends DomainImpl implements ims.scheduling.domai
 
 		factory.save(doCatsReferral);
 	}
+	
+	private LookupInstance getCancelReasonFromCancelProvisionalStatus(Booking_Appointment doAppointment)
+	{
+		if(doAppointment == null || doAppointment.getApptStatusHistory() == null)
+			return null;
+		
+		Iterator it = doAppointment.getApptStatusHistory().iterator();
+		while(it.hasNext())
+		{
+			Appointment_Status status = (Appointment_Status) it.next();
+			
+			if(status.getStatus() != null && status.getStatus().equals(getDomLookup(Status_Reason.CANCEL_PROVISIONAL)))
+			{
+				return status.getCancellationReason();
+			}
+		}
+		
+		return null;
+	}
+
+	// WDEV-23646 - Ensure the correct event Date Time is used when creating a new RTT Status
+	private void setReferralEndOfCareAndStopClock(CatsReferral doCatsReferral, java.util.Date eventDateTime) throws StaleObjectException
+	{
+		try
+		{
+			Class<?> referralImpl = Class.forName("ims.RefMan.domain.impl.ReferralDetailsImpl");
+			IEndOfCare clockImpactImpl = (IEndOfCare) getDomainImpl(referralImpl);
+			clockImpactImpl.setReferralEndOfCareAndCancelAllFutureApptAndTCI(doCatsReferral, null);
+		}
+		catch (ClassNotFoundException exception)
+		{
+			createSystemLogEntry(SystemLogType.APPLICATION, SystemLogLevel.INFORMATION, "Class 'ReferralDetailsImpl' was not found when attempting to close down the pathway and referral for CAB. This functionality might not be available in the application.");
+		}
+		
+		endPathwayJourney(doCatsReferral, eventDateTime);
+	}
+
+	
+	// WDEV-23646 - Ensure the correct event Date Time is used when creating a new RTT Status
+	private void endPathwayJourney(CatsReferral doCatsReferral, java.util.Date eventDateTime)
+	{
+		if (doCatsReferral.getJourney() != null)
+		{
+			PatientJourneyStatus journeyStatus = new PatientJourneyStatus();
+			journeyStatus.setDateTime(new java.util.Date());
+			journeyStatus.setStatus(getDomLookup(JourneyStatus.ENDPATHWAYJOURNEY));
+
+			if (doCatsReferral.getJourney().getStatusHistory() == null)
+			{
+				doCatsReferral.getJourney().setStatusHistory(new HashSet());
+			}
+			
+			doCatsReferral.getJourney().setEndedOnDate(new java.util.Date());
+			doCatsReferral.getJourney().setCurrentStatus(journeyStatus);
+			doCatsReferral.getJourney().getStatusHistory().add(journeyStatus);
+			
+			if(Boolean.TRUE.equals(doCatsReferral.isRTTClockImpact()))
+			{
+    			PathwayRTTStatus finalRTTStatus = createRTTStatus(END_PATHWAY_NATIONAL_CODE, eventDateTime);
+    			
+        		PathwayClock finalClock = doCatsReferral.getJourney().getCurrentClock();
+        			
+        		if (finalClock != null)
+        		{
+        			if (finalClock.getRTTStatusHistory() == null)
+        				finalClock.setRTTStatusHistory(new ArrayList());
+        
+        			finalClock.setCurrentRTTStatus(finalRTTStatus);
+        			finalClock.getRTTStatusHistory().add(finalRTTStatus);
+        				
+        			if (finalClock.getStartDate() != null && finalClock.getStopDate() == null)
+            		{
+            			finalClock.setStopDate(new java.util.Date());
+            		}
+        		}
+        			
+        		doCatsReferral.setCurrentRTTStatus(finalRTTStatus);
+			}
+		}
+	}
+	
+	
+	// WDEV-23646 - Ensure the correct event Date Time is used when creating a new RTT Status
+	private PathwayRTTStatus createRTTStatus(Integer nationalCode, java.util.Date eventDateTime)
+	{
+		PathwayRTTStatus rttStatus = new PathwayRTTStatus();
+		rttStatus.setRTTStatus(getRTTStatusPoint(nationalCode));
+		rttStatus.setStatusDateTime(eventDateTime);
+		
+		Object mos = getMosUser();
+		if (mos instanceof MemberOfStaffLiteVo)
+		{
+			rttStatus.setStatusBy(MemberOfStaffLiteVoAssembler.extractMemberOfStaff(getDomainFactory(), (MemberOfStaffLiteVo) mos));
+		}
+
+		return rttStatus;
+	}
+	
+	private RTTStatusPoint getRTTStatusPoint(Integer nationalCode)
+	{
+		if (nationalCode == null)
+			return null;
+		
+		String query = "SELECT statusPoint FROM RTTStatusPoint AS statusPoint WHERE statusPoint.nationalCode = :NAT_CODE";
+		
+		return (RTTStatusPoint) getDomainFactory().findFirst(query, "NAT_CODE", nationalCode);
+	}
+
+	private LookupInstance getCancelReasonForTheMostRecentCancelledAppointment(CatsReferral doCatsReferral)
+	{
+		if(doCatsReferral == null || doCatsReferral.getAppointments() == null || doCatsReferral.getAppointments().size() == 0)
+			return null;
+		
+		Iterator it = doCatsReferral.getAppointments().iterator();
+		
+		java.util.Date mostRecentUpdate = null;
+		Booking_Appointment lastCancelledAppointment = null;
+		
+		while (it.hasNext())
+		{
+			Booking_Appointment doAppt = (Booking_Appointment) it.next();
+
+			if (doAppt.getApptStatus() != null && doAppt.getApptStatus().equals(getDomLookup(Status_Reason.CANCELLED)))
+			{
+				java.util.Date apptLastUpdate = doAppt.getSystemInformation().getLastUpdateDateTime();
+				
+				if(apptLastUpdate == null)
+				{
+					apptLastUpdate = doAppt.getSystemInformation().getCreationDateTime();
+				}
+				
+				if(mostRecentUpdate == null || (mostRecentUpdate.before(apptLastUpdate)))
+				{
+					mostRecentUpdate = apptLastUpdate;
+					lastCancelledAppointment = doAppt;
+				}
+			}
+		}
+		
+		if(lastCancelledAppointment != null && lastCancelledAppointment.getCurrentStatusRecord() != null)
+		{
+			return lastCancelledAppointment.getCurrentStatusRecord().getCancellationReason();
+		}
+		
+		return null;
+	}
+
+	//WDEV-22915
+	private boolean atLeastOneBookedCABAppointmentInCatsReferral(CatsReferral doCatsReferral) 
+	{
+		if( doCatsReferral == null || doCatsReferral.getAppointments() == null)
+			return false;
+		
+		if (doCatsReferral.getAppointments().size() > 0)
+		{
+			
+			Iterator it = doCatsReferral.getAppointments().iterator();
+			while (it.hasNext())
+			{
+				Booking_Appointment doAppt = (Booking_Appointment) it.next();
+
+				if( doAppt!=null && doAppt.getApptStatus() != null && doAppt.getApptStatus().equals(getDomLookup(Status_Reason.BOOKED)) && Boolean.TRUE.equals(doAppt.isIsCABBooking())) //WDEV-23453
+					return true;
+			}
+			
+			return false;
+		}
+		return false;
+	}
+	//WDEV-22915 ends here
+
 	//----------wdev-15779
 	private boolean existsNonCanceledAppointmentsInCatsReferral(CatsReferral doCatsReferral)
 	{
@@ -1276,12 +2424,17 @@ public class SessionAdminImpl extends DomainImpl implements ims.scheduling.domai
 		if (session == null || session.getID_Sch_Session() == null)
 			throw new CodingRuntimeException("session is null or id not provided in method listNonCancelledAppointmentsForSession");
 
-		List lstAppts = getDomainFactory().find("from Booking_Appointment appt where appt.session.id = " + session.getID_Sch_Session() + " and appt.apptStatus.id <> " + Integer.valueOf(Status_Reason.CANCELLED.getID()) + " and (appt.session.isTheatreSession is null or appt.session.isTheatreSession = false) order by appt.apptStartTime ");
+		List lstAppts = getDomainFactory().find("from Booking_Appointment appt where appt.session.id = " + session.getID_Sch_Session() + " and appt.apptStatus.id <> " + Integer.valueOf(Status_Reason.CANCELLED.getID()) + " and (appt.session.sessionProfileType.id = " + SchProfileType.OUTPATIENT.getID() + ") order by appt.apptStartTime ");
 		return BookingAppointmentLiteVoAssembler.createBookingAppointmentLiteVoCollectionFromBooking_Appointment(lstAppts);
 	}
 
+	@Deprecated
 	public void saveSessionForMaxContinuousTime(SessionShortVo session) throws StaleObjectException
 	{
+		//WDEV-19379
+		if (session==null)
+			return;
+		
 		if (session.getIsFixedIsNotNull() && !session.getIsFixed())
 		{
 			// WDEV-11731 - do update here by getting all appointments - only
@@ -1300,5 +2453,14 @@ public class SessionAdminImpl extends DomainImpl implements ims.scheduling.domai
 			throw new CodingRuntimeException("session is null or id not provided in method getTheatreSession");
 		
 		return SessionTheatreVoAssembler.create((Sch_Session) getDomainFactory().getDomainObject(session));
+	}
+
+	//wdev-19496
+	public ActivityWithImageLiteVo getActivityWithImage(ActivityRefVo activityRef)
+	{
+		if( activityRef == null || activityRef.getID_Activity() == null )
+			throw new CodingRuntimeException("ActivityRefVo is null or id not provided in method getActivityWithImage");
+		
+		return ActivityWithImageLiteVoAssembler.create((Activity) getDomainFactory().getDomainObject(activityRef));
 	}
 }

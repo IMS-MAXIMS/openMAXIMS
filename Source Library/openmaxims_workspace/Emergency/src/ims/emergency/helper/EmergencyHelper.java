@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,6 +15,11 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 package ims.emergency.helper;
@@ -25,38 +30,59 @@ import ims.admin.vo.lookups.EDAttendenceControlType;
 import ims.core.admin.domain.objects.ChartRequested;
 import ims.core.admin.domain.objects.EmergencyAttendance;
 import ims.core.admin.domain.objects.EmergencyAttendanceBilling;
+import ims.core.admin.pas.domain.objects.PendingEmergencyAdmission;
+import ims.core.admin.pas.vo.PendingEmergencyAdmissionRefVo;
+import ims.core.admin.vo.CareContextRefVo;
 import ims.core.admin.vo.EmergencyAttendanceBillingRefVo;
 import ims.core.admin.vo.EmergencyAttendanceRefVo;
+import ims.core.admin.vo.EpisodeOfCareRefVo;
 import ims.core.patient.vo.PatientRefVo;
 import ims.core.resource.people.vo.HcpRefVo;
+import ims.core.resource.people.vo.MemberOfStaffRefVo;
 import ims.core.resource.place.domain.objects.Location;
+import ims.core.vo.AuthoringInformationVo;
 import ims.core.vo.CareContextShortVoCollection;
 import ims.core.vo.EDAttendanceformsConfigVo;
+import ims.core.vo.HcpLiteVo;
 import ims.core.vo.LocationLiteVo;
+import ims.core.vo.PendingEmergencyAdmissionAdmitVo;
 import ims.core.vo.domain.CareContextShortVoAssembler;
 import ims.core.vo.domain.EDAttendanceformsConfigVoAssembler;
 import ims.core.vo.domain.LocationLiteVoAssembler;
+import ims.core.vo.domain.PendingEmergencyAdmissionAdmitVoAssembler;
+import ims.core.vo.lookups.EmergencyAdmissionStatus;
 import ims.core.vo.lookups.HcpDisType;
 import ims.core.vo.lookups.LocationType;
 import ims.core.vo.lookups.LookupHelper;
 import ims.core.vo.lookups.Specialty;
 import ims.domain.DomainFactory;
+import ims.domain.exceptions.StaleObjectException;
 import ims.domain.impl.DomainImpl;
+import ims.emergency.configuration.vo.TrackingAreaRefVo;
+import ims.emergency.domain.objects.Tracking;
 import ims.emergency.vo.AttendanceDetailsVo;
+import ims.emergency.vo.CareContextForAttendanceNotesVoCollection;
 import ims.emergency.vo.ChartRequestedVo;
 import ims.emergency.vo.EmergencyAttendanceBillingVo;
+import ims.emergency.vo.TrackingAttendanceOutcomeVo;
+import ims.emergency.vo.TrackingAttendanceStatusVo;
 import ims.emergency.vo.TrackingSendToAreaVo;
 import ims.emergency.vo.TrackingSendToAreaVoCollection;
 import ims.emergency.vo.domain.AttendanceDetailsVoAssembler;
+import ims.emergency.vo.domain.CareContextForAttendanceNotesVoAssembler;
 import ims.emergency.vo.domain.ChartRequestedVoAssembler;
 import ims.emergency.vo.domain.EmergencyAttendanceBillingVoAssembler;
+import ims.emergency.vo.domain.TrackingAttendanceOutcomeVoAssembler;
 import ims.emergency.vo.domain.TrackingSendToAreaVoAssembler;
+import ims.emergency.vo.lookups.AttendanceOutcome;
+import ims.emergency.vo.lookups.TrackingStatus;
 import ims.framework.exceptions.CodingRuntimeException;
 import ims.framework.interfaces.ILocation;
+import ims.framework.utils.DateTime;
 
 import java.util.List;
 
-public class EmergencyHelper extends DomainImpl implements IEmergencyHelper
+public class EmergencyHelper extends DomainImpl implements IEmergencyHelper, ims.core.helper.IEmergencyHelper
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -112,7 +138,7 @@ public class EmergencyHelper extends DomainImpl implements IEmergencyHelper
 		DomainFactory factory = getDomainFactory();
 	
 		StringBuffer hql = new StringBuffer();
-		hql.append("select chartReq from ChartRequested as chartReq left join chartReq.emergencyAttendence as emergeAtt  where 	(emergeAtt.id = :emergAttID) ");
+		hql.append("select chartReq from ChartRequested as chartReq left join chartReq.emergencyAttendence as emergeAtt  where 	(emergeAtt.id = :emergAttID and (emergeAtt.isRIE is null or emergeAtt.isRIE = 0) ) "); //WDEV-22956
 
 		List<?> list = factory.find(hql.toString(), new String[] { "emergAttID" }, new Object[] { emergencyAttendanceRef.getID_EmergencyAttendance() });
 
@@ -134,7 +160,7 @@ public class EmergencyHelper extends DomainImpl implements IEmergencyHelper
 		DomainFactory factory = getDomainFactory();
 	
 		StringBuffer hql = new StringBuffer();
-		hql.append("select emergeAttBilling from EmergencyAttendanceBilling as emergeAttBilling left join emergeAttBilling.emergencyAttendence as emergeAtt  where 	(emergeAtt.id = :emergAttID) ");
+		hql.append("select emergeAttBilling from EmergencyAttendanceBilling as emergeAttBilling left join emergeAttBilling.emergencyAttendence as emergeAtt  where 	(emergeAtt.id = :emergAttID and (emergeAtt.isRIE is null or emergeAtt.isRIE = 0)) "); //WDEV-22956
 
 		List<?> list = factory.find(hql.toString(), new String[] { "emergAttID" }, new Object[] { emergencyAttendanceRef.getID_EmergencyAttendance() });
 
@@ -206,6 +232,23 @@ public class EmergencyHelper extends DomainImpl implements IEmergencyHelper
 		return CareContextShortVoAssembler.createCareContextShortVoCollectionFromCareContext(list);
 	}
 	
+	public CareContextForAttendanceNotesVoCollection getCareContextsLiteByPatient(PatientRefVo patientRef)
+	{
+		if (patientRef == null || patientRef.getID_Patient() == null)
+		{
+			throw new CodingRuntimeException("Cannot get CareContextShortVoCollection on null Id for Patient ");
+		}
+		
+		DomainFactory factory = getDomainFactory();
+
+		StringBuffer hql = new StringBuffer();
+		hql.append("select careContext from CareContext as careContext left join careContext.episodeOfCare as episOfCare left join episOfCare.careSpell as careSpell where careSpell.patient.id = :patID ");
+
+		List<?> list = factory.find(hql.toString(), new String[] { "patID" }, new Object[] { patientRef.getID_Patient() });
+
+		return CareContextForAttendanceNotesVoAssembler.createCareContextForAttendanceNotesVoCollectionFromCareContext(list);
+	}
+	
 	//WDEV-16791
 	public Specialty getSpecialtyForHCP(HcpRefVo hcpRef, HcpDisType hcpDisType)
 	{
@@ -269,5 +312,74 @@ public class EmergencyHelper extends DomainImpl implements IEmergencyHelper
 		}
 		
 		return null;
+	}
+
+
+	public PendingEmergencyAdmissionAdmitVo autoDischargeFromEmergencyTracking(PendingEmergencyAdmissionRefVo pendingEmergencyAdmissionRef, DateTime conclusionDateTime, HcpLiteVo consultant) throws StaleObjectException
+	{
+		if (pendingEmergencyAdmissionRef == null || pendingEmergencyAdmissionRef.getID_PendingEmergencyAdmission() == null)
+			throw new CodingRuntimeException("Invalid parameter: PendingEmergencyAdmission record cannot be null.");
+
+		DomainFactory factory = getDomainFactory();
+		
+		// Get Tracking record
+		StringBuilder queryTracking = new StringBuilder("SELECT tracking ");
+		queryTracking.append(" FROM Tracking AS tracking ");
+		queryTracking.append(" LEFT JOIN tracking.associatedPendingEmergencyAdmission AS emergency ");
+		
+		queryTracking.append(" WHERE emergency.id = :ER_ADMISSION_ID ");
+		
+		
+		Tracking doTracking = (Tracking) factory.findFirst(queryTracking.toString(), "ER_ADMISSION_ID", pendingEmergencyAdmissionRef.getID_PendingEmergencyAdmission());
+		TrackingAttendanceOutcomeVo tracking = TrackingAttendanceOutcomeVoAssembler.create(doTracking);
+		
+		// Set the Conclusion and Outcome details
+		tracking.getAttendance().setConclusionDateTime(conclusionDateTime);
+		tracking.getAttendance().setOutcome(AttendanceOutcome.ADMISSIONS);
+		tracking.getAttendance().setDischargeDateTime(conclusionDateTime);
+		
+		AuthoringInformationVo discharghingAuthoringInformation = new AuthoringInformationVo();
+		discharghingAuthoringInformation.setAuthoringDateTime(conclusionDateTime);
+		discharghingAuthoringInformation.setAuthoringHcp(consultant);
+		
+		tracking.getAttendance().setDischargingHCP(discharghingAuthoringInformation);
+		
+		// Set tracking status
+		// Create new current status (Decision To Admit) for tracking
+		TrackingAttendanceStatusVo newStatus = new TrackingAttendanceStatusVo();
+
+		newStatus.setPatient(new PatientRefVo(doTracking.getPatient().getId(), doTracking.getPatient().getVersion()));
+		newStatus.setEpisode(new EpisodeOfCareRefVo(doTracking.getEpisode().getEpisodeOfCare().getId(), doTracking.getEpisode().getEpisodeOfCare().getVersion()));
+		newStatus.setAttendance(new CareContextRefVo(doTracking.getAttendance().getCareContext().getId(), doTracking.getAttendance().getCareContext().getVersion()));
+		if (doTracking.getCurrentArea() != null)
+			newStatus.setTrackingArea(new TrackingAreaRefVo(doTracking.getCurrentArea().getId(), doTracking.getCurrentArea().getVersion()));
+		newStatus.setStatusDatetime(new DateTime());
+		newStatus.setCreatedBy((MemberOfStaffRefVo) getMosUser());
+		newStatus.setStatus(TrackingStatus.DISCHARGED);
+		
+		newStatus.setPrevStatus((tracking != null && tracking.getCurrentStatus() != null) ? tracking.getCurrentStatus().getStatus() : null);
+		newStatus.setPrevTrackingArea((tracking != null && tracking.getCurrentStatus() != null) ? tracking.getCurrentStatus().getTrackingArea() : null);
+		tracking.setCurrentStatus(newStatus);
+		
+		// Set the status of the associated PendingEmergencyAddmision
+		if (tracking.getAssociatedPendingEmergencyAdmission() != null && EmergencyAdmissionStatus.DTA.equals(tracking.getAssociatedPendingEmergencyAdmission().getAdmissionStatus()))
+		{
+			tracking.getAssociatedPendingEmergencyAdmission().setAdmissionStatus(EmergencyAdmissionStatus.DISCHARGED);
+			tracking.getAssociatedPendingEmergencyAdmission().setConclusionDate(conclusionDateTime);
+		}
+		
+		tracking.setRequiringDischargeDocumentationReview(true);
+		
+		// Set Discharging data
+		tracking.setIsDischarged(Boolean.TRUE);
+		tracking.setCurrentArea(null);
+		tracking.getAttendance().getCareContext().setEndDateTime(conclusionDateTime);
+		
+		// Save Tracking record
+		doTracking = TrackingAttendanceOutcomeVoAssembler.extractTracking(getDomainFactory(), tracking);
+		factory.save(doTracking);
+		
+		// Return updated PendingEmergencyAdmission
+		return PendingEmergencyAdmissionAdmitVoAssembler.create((PendingEmergencyAdmission) factory.getDomainObject(PendingEmergencyAdmission.class, pendingEmergencyAdmissionRef.getID_PendingEmergencyAdmission()));
 	}
 }

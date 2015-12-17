@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:35 -->
+<!-- Generated: 12/10/2015, 13:29 -->
 <hibernate-mapping>
 	<class name="ims.core.configuration.domain.objects.EDDischargeSummarySchedule" table="core_eddischargesum" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -42,6 +42,7 @@
 <!-- debug: successfulEmailsNo -->
 <!-- debug: failedEmailsNo -->
 <!-- debug: printedLettersNo -->
+<!-- debug: printLettersOnly -->
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="generatedLettersNo" type="integer" access="field" update="true">
@@ -66,6 +67,11 @@
 <!-- debug: !IsLookup -->
 		<property name="printedLettersNo" type="integer" access="field" update="true">
 			<column name="printedlet"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="printLettersOnly" type="boolean" access="field" update="true">
+			<column name="printlette"  not-null="false" unique="false"  />
 		</property>
 	</class>
 </hibernate-mapping>

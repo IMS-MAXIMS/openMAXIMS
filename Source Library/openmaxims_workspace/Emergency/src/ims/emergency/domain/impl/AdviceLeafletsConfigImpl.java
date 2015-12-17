@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -34,6 +39,7 @@ import ims.emergency.vo.AdviceLeafletsForPresentingProblemConfigVoCollection;
 import ims.emergency.vo.domain.AdviceLeafletsForPresentingProblemConfigVoAssembler;
 import ims.framework.exceptions.CodingRuntimeException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AdviceLeafletsConfigImpl extends BaseAdviceLeafletsConfigImpl
@@ -116,6 +122,66 @@ public class AdviceLeafletsConfigImpl extends BaseAdviceLeafletsConfigImpl
 		AdviceLeafletsConfig domainAdviceLeaflet = (AdviceLeafletsConfig) factory.getDomainObject(AdviceLeafletsConfig.class, adviceLeaflet.getID_AdviceLeafletsConfig());
 
 		return AdviceLeafletsForPresentingProblemConfigVoAssembler.create(domainAdviceLeaflet);
+	}
+
+	//WDEV-20437
+	public AdviceLeafletsForPresentingProblemConfigVoCollection listPrePrintedAdviceLeaflet(String prePrintedAdviceLeafletName)
+	{
+		StringBuffer hql = new StringBuffer();
+		StringBuffer hqlConditions = new StringBuffer();
+		
+		ArrayList<String> markers = new ArrayList<String>();
+		ArrayList<Object> values = new ArrayList<Object>();
+		String andStr = " ";
+		
+		hql.append("select advLeaflet from AdviceLeafletsConfig as advLeaflet ");
+		
+		hqlConditions.append(andStr + " advLeaflet.template is null ");
+		andStr = " and ";
+		
+		if (prePrintedAdviceLeafletName !=null)
+		{	
+    		hqlConditions.append(andStr + " UPPER(advLeaflet.adviceLeafletName) like UPPER(:advLeafletName) ");
+    		markers.add("advLeafletName");
+    		values.add("%" + prePrintedAdviceLeafletName + "%"); //WDEV-20825
+    		andStr = " and ";
+		}
+
+		if (hqlConditions.length() > 0)
+		{
+			hqlConditions.insert(0, " where (");
+			hqlConditions.append(" ) ");
+		}
+
+		hql.append(hqlConditions.toString() + " order by UPPER(advLeaflet.adviceLeafletName)");
+		
+		DomainFactory factory = getDomainFactory();
+		List <?>list = factory.find(hql.toString(), markers, values);
+		
+		return AdviceLeafletsForPresentingProblemConfigVoAssembler.createAdviceLeafletsForPresentingProblemConfigVoCollectionFromAdviceLeafletsConfig(list);
+	}
+
+	//WDEV-20437
+	public AdviceLeafletsForPresentingProblemConfigVo getAdviceLeafletByName(String advLeafletName)
+	{
+		if (advLeafletName == null || advLeafletName.length()==0)
+		{
+			throw new CodingRuntimeException("Cannot get AdviceLeafletsForPresentingProblemConfigVo on null Name ");
+		}
+
+		DomainFactory factory = getDomainFactory();
+
+		StringBuffer hql = new StringBuffer();
+		hql.append("select advice from AdviceLeafletsConfig as advice where advice.adviceLeafletName= :advLeafletName ");
+
+		List<?> list = factory.find(hql.toString(), new String[] { "advLeafletName" }, new Object[] { advLeafletName });
+		
+		if (list==null || list.size()==0)
+		{
+			return null;
+		}
+		
+		return AdviceLeafletsForPresentingProblemConfigVoAssembler.create((AdviceLeafletsConfig)(list.get(0)));
 	}
 
 }

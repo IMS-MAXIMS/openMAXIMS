@@ -1,9 +1,33 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.RefMan.vo.domain;
@@ -37,6 +61,10 @@ public class ReferralERODHistoryVoAssembler
 		valueObjectDest.setERODDate2(valueObjectSrc.getERODDate2());
 		// PatAvailFromDate
 		valueObjectDest.setPatAvailFromDate(valueObjectSrc.getPatAvailFromDate());
+		// ERODReason
+		valueObjectDest.setERODReason(valueObjectSrc.getERODReason());
+		// ERODReasonComment
+		valueObjectDest.setERODReasonComment(valueObjectSrc.getERODReasonComment());
 	 	return valueObjectDest;
 	 }
 
@@ -345,6 +373,44 @@ public class ReferralERODHistoryVoAssembler
 		{
 			valueObject.setPatAvailFromDate(new ims.framework.utils.Date(PatAvailFromDate) );
 		}
+		// ERODReason
+		ims.domain.lookups.LookupInstance instance4 = domainObject.getERODReason();
+		if ( null != instance4 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance4.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance4.getImage().getImageId(), instance4.getImage().getImagePath());
+			}
+			color = instance4.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.RefMan.vo.lookups.ERODReason voLookup4 = new ims.RefMan.vo.lookups.ERODReason(instance4.getId(),instance4.getText(), instance4.isActive(), null, img, color);
+			ims.RefMan.vo.lookups.ERODReason parentVoLookup4 = voLookup4;
+			ims.domain.lookups.LookupInstance parent4 = instance4.getParent();
+			while (parent4 != null)
+			{
+				if (parent4.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent4.getImage().getImageId(), parent4.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent4.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup4.setParent(new ims.RefMan.vo.lookups.ERODReason(parent4.getId(),parent4.getText(), parent4.isActive(), null, img, color));
+				parentVoLookup4 = parentVoLookup4.getParent();
+								parent4 = parent4.getParent();
+			}			
+			valueObject.setERODReason(voLookup4);
+		}
+				// ERODReasonComment
+		valueObject.setERODReasonComment(domainObject.getERODReasonComment());
  		return valueObject;
 	 }
 
@@ -415,6 +481,21 @@ public class ReferralERODHistoryVoAssembler
 			value3 = date3.getDate();
 		}
 		domainObject.setPatAvailFromDate(value3);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value4 = null;
+		if ( null != valueObject.getERODReason() ) 
+		{
+			value4 =
+				domainFactory.getLookupInstance(valueObject.getERODReason().getID());
+		}
+		domainObject.setERODReason(value4);
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getERODReasonComment() != null && valueObject.getERODReasonComment().equals(""))
+		{
+			valueObject.setERODReasonComment(null);
+		}
+		domainObject.setERODReasonComment(valueObject.getERODReasonComment());
 
 		return domainObject;
 	}

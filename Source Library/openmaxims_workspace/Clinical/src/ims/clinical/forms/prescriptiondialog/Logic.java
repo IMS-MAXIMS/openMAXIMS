@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,58 +15,86 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 package ims.clinical.forms.prescriptiondialog;
 
+import ims.configuration.gen.ConfigFlag;
+import ims.core.vo.MedicationLiteVo;
 import ims.core.vo.MedicationLiteVoCollection;
 import ims.core.vo.PatientMedicationLiteVo;
 import ims.core.vo.lookups.Specialty;
 import ims.framework.enumerations.DialogResult;
 import ims.framework.exceptions.PresentationLogicException;
+import ims.framework.utils.Color;
+
+import java.util.ArrayList;
 
 public class Logic extends BaseLogic
 {
 	private static final long serialVersionUID = 1L;
 	
+	private static final Integer NO_CODE_ITEM_SELECTED_ID = new Integer(-1);
+	private static final String	NO_CODE_ITEM_SELECTED	= "Medication not listed here";		
+	
 	@Override
 	protected void onFormOpen(Object[] args) throws ims.framework.exceptions.PresentationLogicException
 	{
-		initialize();//WDEV-14054
+		initialize(args);//WDEV-14054 //WDEV-18980
 		open();//	WDEV-14054
 		updateControlsState();//	WDEV-14054
 	}
 
-	//WDEV-14054
-	private void initialize()
+	//WDEV-14054 //WDEV-18980
+	private void initialize(Object[] args)
 	{
+		form.getLocalContext().setPrescribedMedication(null);
+		if (args != null && args.length > 0)//WDEV-18980
+		{
+			if (args.length >= 1 && args[0] != null && args[0] instanceof PatientMedicationLiteVo)
+				form.getLocalContext().setPrescribedMedication((PatientMedicationLiteVo) args[0]);
+			form.getGlobalContext().RefMan.setPrescriptionMedication(null);
+		}
 		form.qmbMedication().setFocus();
+		form.getLocalContext().setbAllowFreeTextMedication(ConfigFlag.GEN.PRESCRIPTION_ALLOW_FREETEXT_MEDICATION.getValue()); //WDEV-18980		
 	}
 
 	//	WDEV-14054
 	private void open()
-	{
-		populateScreenFromData();
+	{		
+		populateScreenFromData(form.getLocalContext().getPrescribedMedication() != null ? form.getLocalContext().getPrescribedMedication() : form.getGlobalContext().RefMan.getPrescriptionMedication()); //WDEV-18980 
 	}
 
-	//	WDEV-14054
-	private void populateScreenFromData()
+	//	WDEV-14054 ////WDEV-18980
+	private void populateScreenFromData(PatientMedicationLiteVo medication)
 	{
 		clearScreen();
 		
-		if(form.getGlobalContext().RefMan.getPrescriptionMedication() == null)
+		if(medication == null)
 			return;
-		
-		form.qmbMedication().newRow(form.getGlobalContext().RefMan.getPrescriptionMedication().getMedication(),form.getGlobalContext().RefMan.getPrescriptionMedication().getMedication().getMedicationName());
-		form.qmbMedication().setValue(form.getGlobalContext().RefMan.getPrescriptionMedication().getMedication());
-		form.cmbFrequency().setValue(form.getGlobalContext().RefMan.getPrescriptionMedication().getFrequency());
-		form.intNoOfDaysSupply().setValue(form.getGlobalContext().RefMan.getPrescriptionMedication().getNoDaysSupply());
+		if (medication.getMedication() != null)
+		{	
+			form.qmbMedication().newRow(medication.getMedication(),medication.getMedication().getMedicationName());
+			form.qmbMedication().setValue(medication.getMedication());
+		}
+		else
+		{	
+			addGenericMedicationRow(true);
+		}	
+		form.txtOtherMed().setValue(medication.getMedication() != null ? null: medication.getOtherMedicationText());
+		form.cmbFrequency().setValue(medication.getFrequency());
+		form.intNoOfDaysSupply().setValue(medication.getNoDaysSupply());
 	}
 
 	//	WDEV-14054
 	private void clearScreen()
 	{
-		form.qmbMedication().setValue(null);
+		form.qmbMedication().clear();
 		clearDetails();
 	}
 
@@ -96,8 +124,10 @@ public class Logic extends BaseLogic
 			engine.showErrors(errors);	
 			return false;
 		}
+		form.getGlobalContext().Emergency.setPrescriptionDrug(medicationData);
 		
 		form.getGlobalContext().RefMan.setPrescriptionMedication(medicationData);
+				
 		return true;
 	}
 		
@@ -112,6 +142,10 @@ public class Logic extends BaseLogic
 	{
 		PatientMedicationLiteVo voPatientMedicationLite = null;
 		
+		if (form.getLocalContext().getPrescribedMedication() != null) //WDEV-18980
+		{
+			voPatientMedicationLite = (PatientMedicationLiteVo) form.getLocalContext().getPrescribedMedication() .clone();
+		}
 		if(form.getGlobalContext().RefMan.getPrescriptionMedication() != null)
 		{
 			voPatientMedicationLite = (PatientMedicationLiteVo) form.getGlobalContext().RefMan.getPrescriptionMedication().clone();
@@ -125,7 +159,7 @@ public class Logic extends BaseLogic
 		voPatientMedicationLite.setPatient(form.getGlobalContext().Core.getPatientShort());
 		
 		voPatientMedicationLite.setMedication(form.qmbMedication().getValue());
-		voPatientMedicationLite.setOtherMedicationText(form.qmbMedication().getValue() != null ? form.qmbMedication().getValue().getMedicationName() : null);
+		voPatientMedicationLite.setOtherMedicationText(getOtherMedicationTextToSave());
 		voPatientMedicationLite.setFrequency(form.cmbFrequency().getValue());
 		voPatientMedicationLite.setNoDaysSupply(form.intNoOfDaysSupply().getValue());
 									
@@ -136,10 +170,17 @@ public class Logic extends BaseLogic
 	@Override
 	protected void onQmbMedicationValueChanged() throws PresentationLogicException
 	{
+		if (form.qmbMedication().getValue() == null || !NO_CODE_ITEM_SELECTED_ID.equals(form.qmbMedication().getValue().getID_Medication()))
+			form.txtOtherMed().setValue(null);
 		setDefaultValues();
-		updateControlsState();
+		updateControlsState();		
 	}
 	
+	private String getOtherMedicationTextToSave() //WDEV-18980
+	{
+		return form.qmbMedication().getValue() != null ? NO_CODE_ITEM_SELECTED_ID.equals(form.qmbMedication().getValue().getID_Medication()) ? form.txtOtherMed().getValue() : form.qmbMedication().getValue().getMedicationName() : null;
+	}
+		
 	//	WDEV-14054
 	private void setDefaultValues()
 	{
@@ -155,9 +196,17 @@ public class Logic extends BaseLogic
 	//	WDEV-14054
 	private void updateControlsState()
 	{
-		form.qmbMedication().setEnabled(form.getGlobalContext().RefMan.getPrescriptionMedication() == null);
+		form.qmbMedication().setEnabled(form.getLocalContext().getPrescribedMedication() == null && form.getGlobalContext().RefMan.getPrescriptionMedication() == null);
+		updateOtherMedicationControlsState(Boolean.TRUE.equals(form.getLocalContext().getbAllowFreeTextMedication()));//WDEV-18980
 		form.cmbFrequency().setEnabled(form.qmbMedication().getValue() != null);
 		form.intNoOfDaysSupply().setEnabled(form.qmbMedication().getValue() != null);
+	}
+
+	private void updateOtherMedicationControlsState(boolean showOtherControls)//WDEV-18980
+	{
+		form.lblOtherMeds().setVisible(showOtherControls);
+		form.txtOtherMed().setVisible(showOtherControls);
+		form.txtOtherMed().setEnabled(showOtherControls && form.qmbMedication().getValue() != null && NO_CODE_ITEM_SELECTED_ID.equals(form.qmbMedication().getValue().getID_Medication()));
 	}
 	
 	//	WDEV-14054
@@ -174,21 +223,63 @@ public class Logic extends BaseLogic
 	{
 		form.qmbMedication().clear();
 		
-		MedicationLiteVoCollection listMedications = domain.listMedications(value, form.getGlobalContext().RefMan.getDrugsAlreadyAddedToPrescription(), getSpecialty());
+		boolean excludeControlledDrugs = ConfigFlag.GEN.PRESCRIPTION_EXCLUDE_CONTROLLED_DRUGS_ON_SEARCH.getValue(); //WDEV-18980
+		
+		String drugsAlreadyInPresc = form.getGlobalContext().RefMan.getDrugsAlreadyAddedToPrescription() != null ? form.getGlobalContext().RefMan.getDrugsAlreadyAddedToPrescription() : getListofExistingMeds();
+		MedicationLiteVoCollection listMedications = domain.listMedications(value, drugsAlreadyInPresc, getSpecialty(),excludeControlledDrugs); //WDEV-18980
+		
 		if (listMedications == null || listMedications.size() == 0)
 		{
-			form.qmbMedication().showOpened();
+			addGenericMedicationRow(false);	
+			form.qmbMedication().showOpened(); //WDEV-18980
 			return;
 		}
-		
 		for (int i = 0 ; i < listMedications.size() ; i++)
 		{
 			form.qmbMedication().newRow(listMedications.get(i),listMedications.get(i).getMedicationName());
 		}
-		
+		addGenericMedicationRow(false);	//WDEV-18980
 		form.qmbMedication().showOpened();
 	}
 	
+	private String getListofExistingMeds()
+	{
+		if (form.getGlobalContext().Emergency.getMedsAlreadyAddedInPrescription() == null || form.getGlobalContext().Emergency.getMedsAlreadyAddedInPrescription().size() == 0)
+			return null;
+		
+		ArrayList<Integer> idList = form.getGlobalContext().Emergency.getMedsAlreadyAddedInPrescription();
+		StringBuilder textualIDList = new StringBuilder();
+		String commaStr =""; //WDEV-19179
+		
+		for (Integer myID : idList)
+		{
+			if (myID == null)
+				continue;
+			textualIDList.append(commaStr + String.valueOf(myID)); //WDEV-19179
+			commaStr = ", "; //WDEV-19179
+		}
+
+		return textualIDList.toString().trim();
+	}
+	private void addGenericMedicationRow(boolean canSetValue) {
+		if (Boolean.TRUE.equals(form.getLocalContext().getbAllowFreeTextMedication())) //WDEV-18980
+		{
+			MedicationLiteVo genericMedicationVo = getGenericRowMedicationRecord();
+			form.qmbMedication().newRow(genericMedicationVo,genericMedicationVo.getMedicationName(), Color.Red);
+			if (canSetValue)
+				form.qmbMedication().setValue(genericMedicationVo);
+		}
+	}
+	
+	private MedicationLiteVo getGenericRowMedicationRecord()
+	{
+		MedicationLiteVo voMedicationConfig = new MedicationLiteVo();
+		
+		voMedicationConfig.setID_Medication(new Integer(NO_CODE_ITEM_SELECTED_ID));
+		voMedicationConfig.setMedicationName(NO_CODE_ITEM_SELECTED);
+		
+		return voMedicationConfig;
+	}
 	private Specialty getSpecialty()
 	{
 		if ((form.getGlobalContext().Core.getCurrentClinicalContactIsNotNull()) && (form.getGlobalContext().Core.getCurrentClinicalContact().getSpecialtyIsNotNull()))

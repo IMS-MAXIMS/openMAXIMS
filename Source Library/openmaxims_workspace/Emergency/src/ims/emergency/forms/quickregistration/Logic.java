@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -35,7 +40,7 @@ import ims.core.vo.LocationLiteVo;
 import ims.core.vo.MemberOfStaffLiteVo;
 import ims.core.vo.MemberOfStaffShortVo;
 import ims.core.vo.PatientFilter;
-import ims.core.vo.PatientLiteVo;
+import ims.core.vo.PatientLite_IdentifiersVo;
 import ims.core.vo.PatientShort;
 import ims.core.vo.PersonName;
 import ims.core.vo.lookups.ContextType;
@@ -125,7 +130,7 @@ public class Logic extends BaseLogic
 		//WDEV-15958
 		//PatientLiteVo patient = populatePatient();
 	
-		PatientLiteVo patient = null;
+		PatientLite_IdentifiersVo patient = null;
 		if (form.getGlobalContext().Emergency.getSelectedPatientIsNotNull())
 		{
 			patient=domain.getPatient(form.getGlobalContext().Emergency.getSelectedPatient());
@@ -259,9 +264,9 @@ public class Logic extends BaseLogic
 		return trackingVo;
 	}
 
-	private PatientLiteVo populatePatient()
+	private PatientLite_IdentifiersVo populatePatient()
 	{
-		PatientLiteVo patient = new PatientLiteVo();
+		PatientLite_IdentifiersVo patient = new PatientLite_IdentifiersVo();
 
 		PersonName name = new PersonName();
 		name.setSurname(form.txtSurname().getValue());
@@ -295,6 +300,7 @@ public class Logic extends BaseLogic
 		// Populate EmergencyAttendance
 		voEmergencyAttendance.setArrivalDateTime(form.dtimArrival().getValue());
 		voEmergencyAttendance.setRegistrationDateTime(form.dtimArrival().getValue());
+		voEmergencyAttendance.setEndOfRegistrationDateTime(new DateTime()); //WDEV-19984
 		voEmergencyAttendance.setEmergencyEpisode(voEmergencyEpisode);
 		voEmergencyAttendance.setCareContext(form.getLocalContext().getcareContextToSave());
 		voEmergencyAttendance.setEpisode(voEmergencyEpisode);
@@ -366,18 +372,26 @@ public class Logic extends BaseLogic
 			return null;
 	}
 
-	private Integer calculateAge()
+	private Integer calculateAge() //WDEV-23085 
 	{
 		if (form.getLocalContext().getpatientToSaveIsNotNull())
 		{
 			PartialDate dob = form.pdtDOB().getValue();
+			Date dod = form.getGlobalContext().Emergency.getSelectedPatient() != null ? form.getGlobalContext().Emergency.getSelectedPatient().getDod() : null;
 			Date arrival = form.dtimArrival().getValue() != null ? form.dtimArrival().getValue().getDate() : null;
 			int patAge = 0;
 			if (dob != null)
 			{
-				patAge = new ims.framework.utils.Age(dob, arrival).getYears();
-			}
-			return new Integer(patAge);
+				if (dod != null)
+				{
+					patAge = dod.yearDiff(dob);
+				}
+				else
+				{
+					patAge = new ims.framework.utils.Age(dob, arrival).getYears();
+				}
+				return new Integer(patAge);
+			}			
 		}
 		return null;
 	}
@@ -570,7 +584,7 @@ public class Logic extends BaseLogic
 			else
 				form.getLocalContext().getpatientToSave().setIsQuickRegistrationPatient(Boolean.FALSE);
 			
-			PatientLiteVo patient = form.getLocalContext().getpatientToSave();
+			PatientLite_IdentifiersVo patient = form.getLocalContext().getpatientToSave();
 			String[] patientErrors = patient.validate();
 			if (patientErrors != null && patientErrors.length > 0)
 			{

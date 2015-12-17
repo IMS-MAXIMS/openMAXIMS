@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -36,14 +41,22 @@ import ims.core.vo.HcpFilter;
 import ims.core.vo.HcpLiteVo;
 import ims.core.vo.HcpLiteVoCollection;
 import ims.core.vo.LocShortVo;
+import ims.core.vo.LocShortVoCollection;
+import ims.core.vo.LocationLiteVo;
 import ims.core.vo.LocationLiteVoCollection;
 import ims.core.vo.PersonName;
 import ims.core.vo.ProcedureLiteVo;
-import ims.core.vo.ProcedureLiteVoCollection;
+import ims.core.vo.ProcedureNameVo;
+import ims.core.vo.ProcedureNameVoCollection;
+import ims.core.vo.ServiceFunctionLiteVo;
+import ims.core.vo.ServiceFunctionLiteVoCollection;
 import ims.core.vo.ServiceShortVo;
 import ims.core.vo.ServiceVo;
 import ims.core.vo.ServiceVoCollection;
 import ims.core.vo.enums.MosType;
+import ims.core.vo.lookups.LocationType;
+import ims.core.vo.lookups.ServiceFunction;
+import ims.core.vo.lookups.ServiceFunctionCollection;
 import ims.domain.exceptions.StaleObjectException;
 import ims.domain.exceptions.UniqueKeyViolationException;
 import ims.framework.Control;
@@ -60,11 +73,18 @@ import ims.framework.utils.Date;
 import ims.framework.utils.DayOfWeek;
 import ims.framework.utils.Time;
 import ims.scheduling.forms.profiles.GenForm.lyrDetailsLayer.tabActivitiesContainer.grdActivitiesRow;
+import ims.scheduling.forms.profiles.GenForm.lyrDetailsLayer.tabActivitiesWithSlotsContainer.grdActivitiesSlotsRow;
+import ims.scheduling.forms.profiles.GenForm.lyrDetailsLayer.tabActivitiesWithSlotsContainer.grdSlotsRow;
 import ims.scheduling.forms.profiles.GenForm.lyrDetailsLayer.tabBookingRightsContainer.grdBookingRightsRow;
 import ims.scheduling.forms.profiles.GenForm.lyrDetailsLayer.tabDOSContainer.grdDOSRow;
+import ims.scheduling.forms.profiles.GenForm.lyrDetailsLayer.tabGeneralDetailsContainer.GroupFlexibleProfileEnumeration;
+import ims.scheduling.forms.profiles.GenForm.lyrDetailsLayer.tabGeneralDetailsContainer.GroupHospitalEnumeration;
+import ims.scheduling.forms.profiles.GenForm.lyrDetailsLayer.tabGeneralDetailsContainer.GroupProfileTypeEnumeration;
+import ims.scheduling.forms.profiles.GenForm.lyrDetailsLayer.tabGeneralDetailsContainer.grdServiceFunctionsRow;
 import ims.scheduling.forms.profiles.GenForm.lyrDetailsLayer.tabListOwnersContainer.grdListOwnerRow;
 import ims.scheduling.forms.profiles.GenForm.lyrDetailsLayer.tabTemplatesContainer.grdTemplatesRow;
 import ims.scheduling.forms.profiles.GenForm.lyrDetailsLayer.tabTheatreContainer.grdTheatreRow;
+import ims.scheduling.forms.profiles.GenForm.lyrDetailsLayer.tabTheatreContainer.grdTheatreServiceRow;
 import ims.scheduling.forms.profiles.GenForm.lyrDetailsLayer.tabTheatreContainer.lyrSlotsLayer.tabTCIContainer.grdTCITimesRow;
 import ims.scheduling.forms.profiles.GenForm.lyrDetailsLayer.tabTheatreContainer.lyrSlotsLayer.tabTheatreSlotsContainer.grdParentChildSlotsRow;
 import ims.scheduling.vo.DirectoryOfServiceVo;
@@ -90,21 +110,29 @@ import ims.scheduling.vo.Profile_ListOwnerVoCollection;
 import ims.scheduling.vo.Profile_SlotGenericVo;
 import ims.scheduling.vo.Profile_SlotGenericVoCollection;
 import ims.scheduling.vo.Sch_ProfileGenericVo;
+import ims.scheduling.vo.Sch_ProfileRefVo;
 import ims.scheduling.vo.SlotDirectoryOfServiceVo;
 import ims.scheduling.vo.SlotDirectoryOfServiceVoCollection;
 import ims.scheduling.vo.TheatreDetailLiteVo;
 import ims.scheduling.vo.TheatreDetailLiteVoCollection;
 import ims.scheduling.vo.lookups.ConsultationMediaType;
 import ims.scheduling.vo.lookups.Profile_Interval_Type;
+import ims.scheduling.vo.lookups.SchProfileType;
 import ims.scheduling.vo.lookups.SchedCABSlotType;
+import ims.scheduling.vo.lookups.Sched_Prfile_Cat;
 import ims.scheduling.vo.lookups.Sched_Profile_Type;
 import ims.scheduling.vo.lookups.SlotType;
+import ims.scheduling.vo.lookups.TheatreType;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Logic extends BaseLogic
 {
+	private static final String LIST_OWNER_PROCEDURES = "List Owner";
+	private static final String SERVICE_PROCEDURES = "Service";
+	
+	
 	protected void onFormOpen() throws FormOpenException
 	{
 		initialiseScreenAndLists();
@@ -119,11 +147,25 @@ public class Logic extends BaseLogic
 		
 
 		// workaround to show location is required
-		form.lyrDetails().tabGeneralDetails().lblLocStar().setTextColor(Color.Red);
-		form.lyrDetails().tabGeneralDetails().lblLocStar().setTooltip("Required");
+		//form.lyrDetails().tabGeneralDetails().lblLocStar().setTextColor(Color.Red);	//wdev-20233
+		//form.lyrDetails().tabGeneralDetails().lblLocStar().setTooltip("Required");	wdev-20233
 		
-		form.lyrDetails().tabTheatre().setVisible(form.lyrDetails().tabGeneralDetails().chkTheatre().getValue());
-		form.lyrDetails().tabTheatre().setHeaderVisible(form.lyrDetails().tabGeneralDetails().chkTheatre().getValue());
+		//form.lyrDetails().tabGeneralDetails().lblCNLocStar().setTextColor(Color.Red);	//wdev-20233
+		//form.lyrDetails().tabGeneralDetails().lblCNLocStar().setTooltip("Required");	//wdev-20233
+		
+		//wdev-20074
+		form.lyrDetails().tabGeneralDetails().lblFlexibleProfileStar().setTextColor(Color.Red);
+		form.lyrDetails().tabGeneralDetails().lblFlexibleProfileStar().setTooltip("Required");
+		
+		form.lyrDetails().tabGeneralDetails().lblProfileTypeStar().setTextColor(Color.Red);
+		form.lyrDetails().tabGeneralDetails().lblProfileTypeStar().setTooltip("Required");
+		
+		form.lyrDetails().tabTheatre().setVisible( GroupProfileTypeEnumeration.rdoTheatre.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()) /*form.lyrDetails().tabGeneralDetails().chkTheatre().getValue()*/);		//wdev-20074
+		form.lyrDetails().tabTheatre().setHeaderVisible(GroupProfileTypeEnumeration.rdoTheatre.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()) /*form.lyrDetails().tabGeneralDetails().chkTheatre().getValue()*/);	//wdev-20074
+		
+		//wdev-20074
+		form.lyrDetails().tabGeneralDetails().GroupProfileType().setValue(GroupProfileTypeEnumeration.rdoOutpatient);
+		form.lyrDetails().tabGeneralDetails().GroupFlexibleProfile().setValue(GroupFlexibleProfileEnumeration.rdoNo);
 		
 		//WDEV-12918
 		if(ConfigFlag.DOM.THEATRE_SESSION_TYPE.getValue().equals("TCI"))
@@ -156,24 +198,41 @@ public class Logic extends BaseLogic
 		
 		//WDEV-13362
 		form.ccListOwner().initialize(MosType.HCP);
+		
+		//wdev-19419
+		//form.lyrDetails().tabListOwners().ccConsultant().initialize(MosType.HCP);		//wdev-20074
+		//wdev-19921
+		form.btnAdd().setImage(form.getImages().Core.Add);
+		form.btnEdit().setImage(form.getImages().Core.Edit);
+		form.btnCloneThisProfile().setImage(form.getImages().Core.Copy);
+		//---------
 			
+		
+		radioButtonGroupProfileTypeValueChanged();
+		//----------
 		updateControlState();
 	}
 
 	private void loadActivities()
 	{
-		form.getLocalContext().setProfileActivities(domain.listActivity());
+		form.getLocalContext().setProfileActivities(domain.listActivityByService(form.lyrDetails().tabGeneralDetails().cmbSpeciality().getValue(),(GroupFlexibleProfileEnumeration.rdoYes.equals(form.lyrDetails().tabGeneralDetails().GroupFlexibleProfile().getValue()) ? Boolean.TRUE:Boolean.FALSE)) /*domain.listActivity()*/);	//wdev-20074
 	}
 
 	private void loadHospitals()
 	{
 		LocationLiteVoCollection voCollHosp = domain.listActiveHospitalsLite();
 		form.cmbHospFilter().clear();
+		form.lyrDetails().tabGeneralDetails().cmbHospital().clear();	//wdev-20233
+		form.lyrDetails().tabGeneralDetails().cmbOtherHosp().clear(); //WDEV-21203
 
 		for (int i = 0; i < voCollHosp.size(); i++)
+		{
 			form.cmbHospFilter().newRow(voCollHosp.get(i), voCollHosp.get(i).getName());
+			form.lyrDetails().tabGeneralDetails().cmbHospital().newRow(voCollHosp.get(i), voCollHosp.get(i).getName());		//wdev-20233
+			form.lyrDetails().tabGeneralDetails().cmbOtherHosp().newRow(voCollHosp.get(i), voCollHosp.get(i).getName()); //WDEV-21203
+		}
 	}
-
+	
 	private void loadServices()
 	{
 		ServiceVoCollection voCollServices = domain.listServices();
@@ -213,26 +272,52 @@ public class Logic extends BaseLogic
 		clearGlobalContexts();
 
 		super.clearScreen();
+		form.lyrDetails().tabGeneralDetails().GroupHospital().setValue(GroupHospitalEnumeration.rdoProfileHospital);//WDEV-22289
 		form.lyrDetails().tabGeneralDetails().chklistAnaesthetictype().setValues(null); //WDEV-12918
 		form.lyrDetails().tabDOS().grdDOS().getRows().clear();
 		form.lyrDetails().tabSlots().grdSlotsGeneral().getRows().clear();
-		form.lyrDetails().tabGeneralDetails().txtLocation().setValue(null);
+			
+		form.lyrDetails().tabGeneralDetails().cmbHospital().setValue(null);	//wdev-20233
+		form.lyrDetails().tabGeneralDetails().qmbLocation().clear();		//wdev-20233
+		
+		form.lyrDetails().tabGeneralDetails().chkProfileHasChooseAndBookActivity().setValue(null);	//wdev-20262
+		form.lyrDetails().tabGeneralDetails().qmbCaseNoteLocation().clear();	//wdev-20074
+		form.lyrDetails().tabGeneralDetails().chkCaseNotesNotRequired().setValue(null);
 		form.lyrDetails().tabGeneralDetails().cmbSpeciality().setValue(null);
-		form.lyrDetails().tabGeneralDetails().chkFlexible().setValue(false);
+		form.lyrDetails().tabGeneralDetails().intAutoGeneratePeriodWeeks().setValue(null);
+		form.lyrDetails().tabGeneralDetails().chkReadyToGenerateSessions().setValue(null);
+		form.lyrDetails().tabGeneralDetails().chkProfileHasChooseAndBookActivity().setValue(null);
+		
+		
 		//WDEV-18369
 		form.lyrDetails().tabGeneralDetails().cmbConsMediaType().setValue(null);
 		form.lyrDetails().tabBookingRights().grdBookingRights().getRows().clear();
+		//wdev - wdev-19419
+		form.lyrDetails().tabListOwners().cmbListType().setValue(null);
+		//form.lyrDetails().tabListOwners().ccConsultant().setValue(null);	//wdev-20074
+		
 		form.lyrDetails().tabListOwners().grdListOwner().getRows().clear();
 		form.lyrDetails().tabExclusion().grdExclDates().getRows().clear();
 		form.lyrDetails().tabExclusion().grdExclPeriods().getRows().clear();
 		form.lyrDetails().tabTemplates().grdTemplates().getRows().clear();
 		form.lyrDetails().tabActivities().grdActivities().getRows().clear();
+		form.lyrDetails().tabActivitiesWithSlots().grdActivitiesSlots().getRows().clear();
+		form.lyrDetails().tabActivitiesWithSlots().grdSlots().getRows().clear();
 		form.lyrDetails().tabTheatre().grdTheatre().getRows().clear();
+		form.lyrDetails().tabTheatre().grdTheatreService().getRows().clear();
 		form.lyrDetails().tabTheatre().lyrSlots().tabTCI().grdTCITimes().getRows().clear(); //WDEV-11777
 		form.lyrDetails().tabTheatre().lyrSlots().tabTheatreSlots().grdParentChildSlots().getRows().clear();
 		
 		enableAndClearIntervalControls(NOINTERVAL, false, true);
 		//WDEV-12282 Comment this line will temporary fix issue until further investigation.  form.lyrDetails().showtabGeneralDetails();
+		
+		
+		//wdev-20074
+		form.lyrDetails().tabGeneralDetails().GroupProfileType().setValue(GroupProfileTypeEnumeration.rdoOutpatient);
+		form.lyrDetails().tabGeneralDetails().GroupFlexibleProfile().setValue(GroupFlexibleProfileEnumeration.rdoNo);
+		form.lyrDetails().tabGeneralDetails().grdServiceFunctions().getRows().clear();
+		form.lyrDetails().tabGeneralDetails().grdServiceFunctions().setVisible(false);
+		//---------
 	}
 
 	private void clearGlobalContexts()
@@ -247,14 +332,29 @@ public class Logic extends BaseLogic
 		form.getLocalContext().setSlots(null);
 	}
 
-	private void searchProfiles()
+	private void searchProfiles(boolean fromBtn)
 	{
 		form.grdProfiles().getRows().clear();
+		if (fromBtn)
+		{	
+			form.getLocalContext().setCurrentProfile(null);
+		}
 		clearScreen();//WDEV-14644
 		//WDEV-16799
-		ProfileShortVoCollection coll = domain.listProfiles((ServiceVo) form.cmbFilterSpecialty().getValue(), form.qmbFilterDirectoryOfService().getValue(), form.cmbHospFilter().getValue(), form.chkActiveOnly().getValue() == false ? null : true, form.chkFilterOutpatients().getValue(), form.chkFilterTheatre().getValue(), form.txtName().getValue(), form.ccListOwner().getValue());
+		ProfileShortVoCollection coll = domain.listProfiles((ServiceVo) form.cmbFilterSpecialty().getValue(), form.qmbFilterDirectoryOfService().getValue(), form.cmbHospFilter().getValue(), form.chkActiveOnly().getValue() == false ? null : true, form.chkFilterOutpatients().getValue(), form.chkFilterTheatre().getValue(), form.txtName().getValue(), form.ccListOwner().getValue(),form.chkFilterWardAttendance().getValue());	//wdev-20074
 		if (coll == null || coll.size() == 0)
 			return;
+		
+		//wdev-20074
+		if (form.getLocalContext().getCurrentProfile() != null && form.getLocalContext().getCurrentProfile().getID_Sch_Profile() != null)
+		{
+			if( !coll.contains(form.getLocalContext().getCurrentProfile()))
+				form.getLocalContext().setCurrentProfile(null);
+		}
+		else
+		{
+			form.getLocalContext().setCurrentProfile(null);
+		}
 
 		GenForm.grdProfilesRow row;
 		for (int i = 0; i < coll.size(); i++)
@@ -274,21 +374,86 @@ public class Logic extends BaseLogic
 
 	protected void onBtnLocationClick() throws PresentationLogicException
 	{
-		engine.open(form.getForms().Admin.LocationSelect);
+		if( GroupProfileTypeEnumeration.rdoWardAttendance.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()))  //wdev-20067
+			engine.open(form.getForms().Admin.LocationSelect, new Object[]{ims.core.vo.lookups.LocationType.WARD});
+		else	
+			engine.open(form.getForms().Admin.LocationSelect);
 	}
 
 	protected void onCmbSpecialityValueChanged() throws PresentationLogicException
 	{
+		
+		
+		cmbSpecialityValueChanged();
+		
+		//wdev-20074
+		if(  ConfigFlag.GEN.THEATRE_PROFILE_PROCEDURES.getValue().equals(SERVICE_PROCEDURES))
+		{
+			if( GroupProfileTypeEnumeration.rdoTheatre.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()) )
+			{
+				form.lyrDetails().tabTheatre().grdTheatreService().getRows().clear();
+			}
+		}
+	}
+	
+	//wdev-20074
+	
+	private void cmbSpecialityValueChanged()
+	{
 		form.getGlobalContext().Scheduling.setProfileService(form.lyrDetails().tabGeneralDetails().cmbSpeciality().getValue());
-
+				
 		if (form.lyrDetails().tabGeneralDetails().cmbSpeciality().getValue() == null)
 		{
 			form.lyrDetails().tabDOS().grdDOS().getRows().clear();
+			form.lyrDetails().tabGeneralDetails().grdServiceFunctions().setVisible(false);		//wdev-20074
 			return;
+		}
+		else
+		{
+			//wdev-20074
+			ServiceFunctionLiteVoCollection voCollServiceFunctions = domain.listServiceFunctionByService(form.lyrDetails().tabGeneralDetails().cmbSpeciality().getValue());
+			if( voCollServiceFunctions != null && voCollServiceFunctions.size() > 0)
+			{
+				if( GroupProfileTypeEnumeration.rdoOutpatient.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()) || GroupProfileTypeEnumeration.rdoWardAttendance.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()))
+				{
+					form.lyrDetails().tabGeneralDetails().grdServiceFunctions().setVisible(true);
+					populateServiceFunctionGrid(voCollServiceFunctions);
+				}
+			}
+			else
+			{
+				form.lyrDetails().tabGeneralDetails().grdServiceFunctions().setVisible(false);
+			}
 		}
 
 		loadDos(form.lyrDetails().tabGeneralDetails().cmbSpeciality().getValue());
+		
+		form.getLocalContext().setProfileActivities(domain.listActivityByService(form.lyrDetails().tabGeneralDetails().cmbSpeciality().getValue(),(GroupFlexibleProfileEnumeration.rdoYes.equals(form.lyrDetails().tabGeneralDetails().GroupFlexibleProfile().getValue()) ? Boolean.TRUE:Boolean.FALSE))    );	//wdev-20074
+
 	}
+	//wdev-20074
+	private void populateServiceFunctionGrid(ServiceFunctionLiteVoCollection voCollServiceFunctions)
+	{
+		form.lyrDetails().tabGeneralDetails().grdServiceFunctions().getRows().clear();
+		if( voCollServiceFunctions == null || voCollServiceFunctions.size() == 0 )
+			return;
+		for( int i = 0; i < voCollServiceFunctions.size();i++ )
+		{
+			
+			ServiceFunctionLiteVo tempVo = voCollServiceFunctions.get(i); 
+			if( tempVo != null )
+			{
+				grdServiceFunctionsRow row = form.lyrDetails().tabGeneralDetails().grdServiceFunctions().getRows().newRow();
+				row.setColumnFunctions(tempVo.getFunction().getText());
+				row.setColumnSelect(false);
+				row.setValue(tempVo.getFunction());
+				
+				
+			}
+		}
+		
+	}
+	//-----------
 
 	private void loadDos(ServiceShortVo voService)
 	{
@@ -302,13 +467,41 @@ public class Logic extends BaseLogic
 		{
 			voDirService.setService(voService);
 			// WDEV-5584
-			voDirService.setLocation(form.getLocalContext().getCurrentProfileIsNotNull() ? form.getLocalContext().getCurrentProfile().getSchLocation() : null);
+			voDirService.setLocation(form.lyrDetails().tabGeneralDetails().cmbHospital().getValue());	//wdev-20074
 			voDirService.setIsActive(Boolean.TRUE);
 
-			if (form.getMode().equals(FormMode.EDIT))
-				populateDOSGrid(domain.listDOS(voDirService), showSelected);
+			
+			//WDEV-20896 the DOS will now be populated will all records depending only on service
+			populateDOSGrid(domain.listDOS(voDirService, null), showSelected);
+			
+			//ims.core.vo.lookups.ServiceFunctionCollection tempColl = getFunctionsCollFromGeneralDetailsTab();	//wdev-20262
+			//populateDOSGrid(domain.listDOS(voDirService,tempColl), showSelected);	//wdev-20262
 		}
 	}
+	//wdev-20262
+	//get collection of active ServiceFunction from  "Clinic Type / Function" grid in general details tab
+	private ims.core.vo.lookups.ServiceFunctionCollection getFunctionsCollFromGeneralDetailsTab()
+	{
+		ServiceFunctionLiteVoCollection voCollServiceFunctions = domain.listServiceFunctionByService(form.lyrDetails().tabGeneralDetails().cmbSpeciality().getValue());
+		ims.core.vo.lookups.ServiceFunctionCollection tempColl = new ServiceFunctionCollection();
+		if( form.lyrDetails().tabGeneralDetails().grdServiceFunctions().getRows().size() >  0)
+		{
+			for(int m = 0; m < form.lyrDetails().tabGeneralDetails().grdServiceFunctions().getRows().size();m++)
+			{
+				grdServiceFunctionsRow rowF = form.lyrDetails().tabGeneralDetails().grdServiceFunctions().getRows().get(m);
+				if( rowF.getColumnSelect() == true)
+				{
+					if( isFunctionInCollection(voCollServiceFunctions,rowF.getValue()) == true)			 
+						tempColl.add(rowF.getValue());			//take only active function from  - "Clinic Type / Function" grid in general details tab
+				}
+			}
+		}
+		if( tempColl != null && tempColl.size() == 0)
+			tempColl = null;
+		
+		return tempColl;
+	}
+	//---------
 
 	protected void onGrdProfilesSelectionChanged() throws PresentationLogicException
 	{
@@ -321,6 +514,7 @@ public class Logic extends BaseLogic
 		
 		// Reset to General Details tab
 		form.lyrDetails().showtabGeneralDetails();
+		form.getGlobalContext().Scheduling.setProfile(form.grdProfiles().getValue());
 		
 		updateControlState();
 	}
@@ -340,54 +534,215 @@ public class Logic extends BaseLogic
 
 	protected void populateScreenFromData(Sch_ProfileGenericVo voProfile, ProfileTemplateVoCollection templates)
 	{
-		super.populateScreenFromData(voProfile);
-
-		if (voProfile == null)
+		if (voProfile == null || voProfile.getID_Sch_Profile() == null) //if it is new profile return
 			return;
 		
-		form.lyrDetails().tabGeneralDetails().chkFlexible().setValue(!voProfile.getIsFixed());
+		super.populateScreenFromData(voProfile); //WDEV-20178
+		
+		//form.lyrDetails().tabGeneralDetails().chkFlexible().setValue(!Boolean.TRUE.equals(voProfile.getIsFixed())); //WDEV-20049, //wdev-20074
+		//wdev-20074
+		if( Boolean.TRUE.equals(voProfile.getIsFixed()))
+		{
+			form.lyrDetails().tabGeneralDetails().GroupFlexibleProfile().setValue(GroupFlexibleProfileEnumeration.rdoNo);
+		}
+		else
+		{
+			form.lyrDetails().tabGeneralDetails().GroupFlexibleProfile().setValue(GroupFlexibleProfileEnumeration.rdoYes);
+		}
+		
+		form.lyrDetails().tabGeneralDetails().cmbHospital().setValue(voProfile.getHospital());
+		
+		//WDEV-21203
+		if (voProfile.getIsOtherHospital() != null && Boolean.TRUE.equals(voProfile.getIsOtherHospital()))
+			form.lyrDetails().tabGeneralDetails().GroupHospital().setValue(GroupHospitalEnumeration.rdoOtherHospital);
+		else
+			form.lyrDetails().tabGeneralDetails().GroupHospital().setValue(GroupHospitalEnumeration.rdoProfileHospital);
+		
+		form.lyrDetails().tabGeneralDetails().cmbOtherHosp().setValue(voProfile.getOtherHospital());
+		//end WDEV-21203
+			
+		//-------------
+		//form.lyrDetails().tabGeneralDetails().GroupFlexibleProfile().setValue(voProfile.getIsFixedIsNotNull() ? (Boolean.TRUE.equals(voProfile.getIsFixed())? GroupFlexibleProfileEnumeration.rdoNo : GroupFlexibleProfileEnumeration.rdoYes) :null);
+			
 		//WDEV-18369
 		form.lyrDetails().tabGeneralDetails().cmbConsMediaType().setValue(voProfile.getConsMediaType());
+		
+		//wdev-20074
+		form.lyrDetails().tabGeneralDetails().intAutoGeneratePeriodWeeks().setValue(voProfile.getAutoGeneratePeriod());
+		form.lyrDetails().tabGeneralDetails().chkReadyToGenerateSessions().setValue(voProfile.getReadyToGenerate());
+		if( voProfile.getProfileTypeIsNotNull() )
+		{
+			if( voProfile.getProfileType().equals( SchProfileType.OUTPATIENT))
+				form.lyrDetails().tabGeneralDetails().GroupProfileType().setValue(GroupProfileTypeEnumeration.rdoOutpatient);
+			else if( voProfile.getProfileType().equals( SchProfileType.THEATRE))
+				form.lyrDetails().tabGeneralDetails().GroupProfileType().setValue(GroupProfileTypeEnumeration.rdoTheatre);
+			else if( voProfile.getProfileType().equals( SchProfileType.WARD_ATTENDANCE))
+				form.lyrDetails().tabGeneralDetails().GroupProfileType().setValue(GroupProfileTypeEnumeration.rdoWardAttendance);
+			
+			radioButtonGroupProfileTypeValueChanged();
+			updateControlState();
+		}
+		else
+		{
+			/*if( Boolean.TRUE.equals(voProfile.getIsTheatreProfile()) )		//this code should be removed, it is used for old records that doesn't has profiletype 
+			{
+				form.lyrDetails().tabGeneralDetails().GroupProfileType().setValue(GroupProfileTypeEnumeration.rdoTheatre);
+				
+			}
+			else
+			{
+				form.lyrDetails().tabGeneralDetails().GroupProfileType().setValue(GroupProfileTypeEnumeration.rdoOutpatient);
+			}
+			radioButtonGroupProfileTypeValueChanged();*/
+		}
+		
+		form.lyrDetails().tabGeneralDetails().chkProfileHasChooseAndBookActivity().setValue(voProfile.getHasChooseBookActivity());
+		chkProfileHasChooseAndBookActivityValueChanged();
+		
+		//WDEV-19518
+		form.getGlobalContext().Admin.setProfileLocation(voProfile.getSchLocation());
+		form.getGlobalContext().Admin.setProfileCaseNoteFoldersLocation(voProfile.getCaseNoteFolderLocation());
+		form.lyrDetails().tabGeneralDetails().chkCaseNotesNotRequired().setValue(voProfile.getCaseNoteFolderNotRequired());
+		setLocation(voProfile.getSchLocation());
+		setCaseNoteFolderLocation(voProfile.getCaseNoteFolderLocation(), true); //WDEV-19631
+		//WDEV-19518 ----ends here
 
-		if(voProfile.getIsTheatreProfile() == null || voProfile.getIsTheatreProfile() == false)
+		form.lyrDetails().tabGeneralDetails().cmbSpeciality().setValue(voProfile.getService());
+		
+		//wdev-20074
+		if( form.lyrDetails().tabGeneralDetails().cmbSpeciality().getValues() != null && !form.lyrDetails().tabGeneralDetails().cmbSpeciality().getValues().contains(voProfile.getService()) )
+		{
+			if( voProfile.getService() != null )
+			{
+				form.lyrDetails().tabGeneralDetails().cmbSpeciality().newRow(voProfile.getService(), voProfile.getService().getServiceName());
+				form.lyrDetails().tabGeneralDetails().cmbSpeciality().setValue(voProfile.getService());
+			}
+		}
+		//---------
+		
+		cmbSpecialityValueChanged();
+		
+		//wdev-20074
+		//form.lyrDetails().tabGeneralDetails().grdServiceFunctions().getRows().clear();
+		//form.lyrDetails().tabGeneralDetails().grdServiceFunctions().setVisible(false);
+		if( GroupProfileTypeEnumeration.rdoOutpatient.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()) || GroupProfileTypeEnumeration.rdoWardAttendance.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()))
+		{
+    		if( voProfile.getFunctionIsNotNull() && voProfile.getFunction().size() > 0)
+    		{
+    			form.lyrDetails().tabGeneralDetails().grdServiceFunctions().setVisible(true);
+    			for( int k = 0; k < voProfile.getFunction().size();k++ )
+    			{
+    				
+
+    				ServiceFunction tempLk =  voProfile.getFunction().get(k); 
+    				if( tempLk != null )
+    				{
+    					if( setColSelectTrueIfGridContainFunction(tempLk) == false)
+    					{
+        					grdServiceFunctionsRow row = form.lyrDetails().tabGeneralDetails().grdServiceFunctions().getRows().newRow();
+        					row.setColumnFunctions(tempLk.getText());
+        					row.setColumnSelect(true);
+        					row.setBackColor(Color.LightYellow);
+        					row.setValue(tempLk);
+    					}
+    					
+    				}
+    			}
+    			//wdsev-20448
+    			if( form.lyrDetails().tabGeneralDetails().chkProfileHasChooseAndBookActivity().isVisible() && form.lyrDetails().tabGeneralDetails().chkProfileHasChooseAndBookActivity().getValue() == true)
+    				loadDos(form.lyrDetails().tabGeneralDetails().cmbSpeciality().getValue(), false);
+    			//---------
+    		}
+		}
+		//----------- end of wdev-20074
+		
+		
+		//--------------
+		
+
+		if( !SchProfileType.THEATRE.equals(voProfile.getProfileType()) /*voProfile.getIsTheatreProfile() == null || voProfile.getIsTheatreProfile() == false */)
 		{
 			if(voProfile.getIsFixed() != null && !voProfile.getIsFixed())
 			{
-				//Activities (Flexible Profile)
-				form.lyrDetails().tabActivities().grdActivities().getRows().clear();
-				if (voProfile.getProfileActivitiesIsNotNull())
+				if (ConfigFlag.DOM.PROFILE_FLEXIBLE_TYPE.getValue().equals("WITHOUT_SLOTS"))
 				{
-					ProfileActivityVo voProfAct = null;
-					GenForm.lyrDetailsLayer.tabActivitiesContainer.grdActivitiesRow aRow = null;
-					for (int i = 0; i < voProfile.getProfileActivities().size(); i++)
+					//Activities (Flexible Profile)
+					form.lyrDetails().tabActivities().grdActivities().getRows().clear();
+					if (voProfile.getProfileActivitiesIsNotNull())
 					{
-						voProfAct = voProfile.getProfileActivities().get(i);
-						aRow = form.lyrDetails().tabActivities().grdActivities().getRows().newRow();
-						
-						//addActivitiesToRow WDEV-8810
-						if(form.getLocalContext().getProfileActivitiesIsNotNull())
+						ProfileActivityVo voProfAct = null;
+						GenForm.lyrDetailsLayer.tabActivitiesContainer.grdActivitiesRow aRow = null;
+						for (int i = 0; i < voProfile.getProfileActivities().size(); i++)
 						{
-							for(ActivityLiteVo voActivity : form.getLocalContext().getProfileActivities())
-								aRow.getcolActivity().newRow(voActivity, voActivity.getName());
-						}
-						
-						if(voProfAct.getActivityIsNotNull())
-						{
+							voProfAct = voProfile.getProfileActivities().get(i);
+							aRow = form.lyrDetails().tabActivities().grdActivities().getRows().newRow();
+							
+							//addActivitiesToRow WDEV-8810
 							if(form.getLocalContext().getProfileActivitiesIsNotNull())
 							{
-								//if the activity has not been added
-								if(!form.getLocalContext().getProfileActivities().contains(voProfAct.getActivity()))
+								for(ActivityLiteVo voActivity : form.getLocalContext().getProfileActivities())
+									aRow.getcolActivity().newRow(voActivity, voActivity.getName());
+							}
+							
+							if(voProfAct.getActivityIsNotNull())
+							{
+								if(form.getLocalContext().getProfileActivitiesIsNotNull())
+								{
+									//if the activity has not been added
+									if(!form.getLocalContext().getProfileActivities().contains(voProfAct.getActivity()))
+										aRow.getcolActivity().newRow(voProfAct.getActivity(), voProfAct.getActivity().getName());
+								}
+								else
 									aRow.getcolActivity().newRow(voProfAct.getActivity(), voProfAct.getActivity().getName());
 							}
-							else
-								aRow.getcolActivity().newRow(voProfAct.getActivity(), voProfAct.getActivity().getName());
+							
+							aRow.getcolActivity().setValue(voProfAct.getActivity());
+							aRow.setcolActive(voProfAct.getIsActive());
+							
+							aRow.setValue(voProfAct);
+							aRow.setSelectable(false);
 						}
+					}
+				}
+				else if (ConfigFlag.DOM.PROFILE_FLEXIBLE_TYPE.getValue().equals("WITH_SLOTS"))
+				{
+					//Outpatient Flexible Profile
+					
+					form.lyrDetails().tabActivitiesWithSlots().grdActivitiesSlots().getRows().clear();
+					
+					if (voProfile.getProfileActivities() != null)
+					{
 						
-						aRow.getcolActivity().setValue(voProfAct.getActivity());
-						aRow.setcolActive(voProfAct.getIsActive());
-						
-						aRow.setValue(voProfAct);
-						aRow.setSelectable(false);
+						for (int i = 0; i < voProfile.getProfileActivities().size(); i++)
+						{
+							ProfileActivityVo voProfAct = voProfile.getProfileActivities().get(i);
+							grdActivitiesSlotsRow aRow = form.lyrDetails().tabActivitiesWithSlots().grdActivitiesSlots().getRows().newRow();
+							
+							if(voProfAct.getActivity() != null)
+							{
+								aRow.getColActivity().newRow(voProfAct.getActivity(), voProfAct.getActivity().getName());
+							}
+							
+							aRow.getColActivity().setValue(voProfAct.getActivity());
+							aRow.setColActive(voProfAct.getIsActive());
+							
+							aRow.setValue(voProfAct);
+							aRow.setSelectable(false);
+						}
+					}
+					
+					form.lyrDetails().tabActivitiesWithSlots().grdSlots().getRows().clear();
+					
+					if (voProfile.getParentChildSlots() != null)
+					{
+						voProfile.getParentChildSlots().sort();
+
+						for (ProfileParentChildSlotVo voParentChildSlot : voProfile.getParentChildSlots())
+						{
+							grdSlotsRow pcRow = form.lyrDetails().tabActivitiesWithSlots().grdSlots().getRows().newRow();
+							updateRowForOutpatientFlexibleSlot(voParentChildSlot, pcRow);
+							pcRow.setSelectable(false);
+						}
 					}
 				}
 			}
@@ -426,26 +781,55 @@ public class Logic extends BaseLogic
 				form.lyrDetails().tabGeneralDetails().chklistAnaesthetictype().setValues(voProfile.getAnaestheticType().toArray());
 			//Theatre Detail
 			form.lyrDetails().tabTheatre().grdTheatre().getRows().clear();
+			form.lyrDetails().tabTheatre().grdTheatreService().getRows().clear();
 			if (voProfile.getTheatreDetailsIsNotNull())
 			{
 				TheatreDetailLiteVo voTheatre = null;
-				GenForm.lyrDetailsLayer.tabTheatreContainer.grdTheatreRow tRow = null;
-				for (int i = 0; i < voProfile.getTheatreDetails().size(); i++)
+
+				if( ConfigFlag.GEN.THEATRE_PROFILE_PROCEDURES.getValue().equals(LIST_OWNER_PROCEDURES))
 				{
-					voTheatre = voProfile.getTheatreDetails().get(i);
-					if (voTheatre.getIsActive())
+					GenForm.lyrDetailsLayer.tabTheatreContainer.grdTheatreRow tRow = null;
+					for (int i = 0; i < voProfile.getTheatreDetails().size(); i++)
 					{
-						tRow = form.lyrDetails().tabTheatre().grdTheatre().getRows().newRow();
-						if(voTheatre.getProcedureIsNotNull())
-							tRow.getcolProcedure().newRow(voTheatre.getProcedure(), voTheatre.getProcedure().getProcedureName());
-						
-						tRow.getcolProcedure().setValue(voTheatre.getProcedure());
-						tRow.setcolActive(voTheatre.getIsActive());
-						if(voTheatre.getMaxNoIsNotNull())
-							tRow.setcolMax(voTheatre.getMaxNo());
-						
-						tRow.setValue(voTheatre);
-						tRow.setSelectable(false);
+						voTheatre = voProfile.getTheatreDetails().get(i);
+						if (voTheatre.getIsActive())
+						{
+							tRow = form.lyrDetails().tabTheatre().grdTheatre().getRows().newRow();
+							if(voTheatre.getProcedureIsNotNull())
+								tRow.getcolProcedure().newRow(voTheatre.getProcedure(), voTheatre.getProcedure().getProcedureName());
+
+							tRow.getcolProcedure().setValue(voTheatre.getProcedure());
+							tRow.setcolActive(voTheatre.getIsActive());
+							if(voTheatre.getMaxNoIsNotNull())
+								tRow.setcolMax(voTheatre.getMaxNo());
+
+							tRow.setValue(voTheatre);
+							tRow.setSelectable(false);
+						}
+					}
+				}
+				else
+				{
+					GenForm.lyrDetailsLayer.tabTheatreContainer.grdTheatreServiceRow tRow = null;
+					for (int i = 0; i < voProfile.getTheatreDetails().size(); i++)
+					{
+						voTheatre = voProfile.getTheatreDetails().get(i);
+						if (voTheatre.getIsActive())
+						{
+							tRow = form.lyrDetails().tabTheatre().grdTheatreService().getRows().newRow();
+							if(voTheatre.getProcedureIsNotNull())
+							{
+								tRow.setcolProcedure(voTheatre.getProcedure().getProcedureName());
+								tRow.setcolProcedureReadOnly(true);
+							}
+
+							tRow.setcolActive(voTheatre.getIsActive());
+							if(voTheatre.getMaxNoIsNotNull())
+								tRow.setcolMax(voTheatre.getMaxNo());
+
+							tRow.setValue(voTheatre);
+							tRow.setSelectable(false);
+						}
 					}
 				}
 			}
@@ -502,23 +886,66 @@ public class Logic extends BaseLogic
 				}	
 			}
 		}
-		
-		form.getGlobalContext().Admin.setProfileLocation(voProfile.getSchLocation());
-		setLocation();
+		//WDEV-19518
+		/*form.getGlobalContext().Admin.setProfileLocation(voProfile.getSchLocation());
+		form.getGlobalContext().Admin.setProfileCaseNoteFoldersLocation(voProfile.getCaseNoteFolderLocation());
+		form.lyrDetails().tabGeneralDetails().chkCaseNotesNotRequired().setValue(voProfile.getCaseNoteFolderNotRequired());
+		setLocation(voProfile.getSchLocation());
+		setCaseNoteFolderLocation(voProfile.getCaseNoteFolderLocation(), true); //WDEV-19631
+		//WDEV-19518 ----ends here
 
 		form.lyrDetails().tabGeneralDetails().cmbSpeciality().setValue(voProfile.getService());
-		try
+		//wdev-20074
+		if( form.lyrDetails().tabGeneralDetails().cmbSpeciality().getValues() != null && !form.lyrDetails().tabGeneralDetails().cmbSpeciality().getValues().contains(voProfile.getService()))
 		{
-			onCmbSpecialityValueChanged();
+			if( voProfile.getService() != null )
+			{
+				form.lyrDetails().tabGeneralDetails().cmbSpeciality().newRow(voProfile.getService(), voProfile.getService().getServiceName());
+				form.lyrDetails().tabGeneralDetails().cmbSpeciality().setValue(voProfile.getService());
+			}
 		}
-		catch (PresentationLogicException e)
+		//---------
+		
+		cmbSpecialityValueChanged(); */
+		
+		//wdev-20074
+		//form.lyrDetails().tabGeneralDetails().grdServiceFunctions().getRows().clear();
+		//form.lyrDetails().tabGeneralDetails().grdServiceFunctions().setVisible(false);
+		/*if( GroupProfileTypeEnumeration.rdoOutpatient.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()) || GroupProfileTypeEnumeration.rdoWardAttendance.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()))
 		{
-		}
+    		if( voProfile.getFunctionIsNotNull() && voProfile.getFunction().size() > 0)
+    		{
+    			form.lyrDetails().tabGeneralDetails().grdServiceFunctions().setVisible(true);
+    			for( int k = 0; k < voProfile.getFunction().size();k++ )
+    			{
+    				
+
+    				ServiceFunction tempLk =  voProfile.getFunction().get(k); 
+    				if( tempLk != null )
+    				{
+    					if( setColSelectTrueIfGridContainFunction(tempLk) == false)
+    					{
+        					grdServiceFunctionsRow row = form.lyrDetails().tabGeneralDetails().grdServiceFunctions().getRows().newRow();
+        					row.setColumnFunctions(tempLk.getText());
+        					row.setColumnSelect(true);
+        					row.setBackColor(Color.LightYellow);
+        					row.setValue(tempLk);
+    					}
+    					
+    				}
+    			}
+    			//wdsev-20448
+    			if( form.lyrDetails().tabGeneralDetails().chkProfileHasChooseAndBookActivity().isVisible() && form.lyrDetails().tabGeneralDetails().chkProfileHasChooseAndBookActivity().getValue() == true)
+    				loadDos(form.lyrDetails().tabGeneralDetails().cmbSpeciality().getValue(), false);
+    			//---------
+    		}
+		}*/
+		//----------- end of wdev-20074
 
 		// Populate the Booking Rights Grid
 		form.lyrDetails().tabBookingRights().grdBookingRights().getRows().clear();
 		GenForm.lyrDetailsLayer.tabBookingRightsContainer.grdBookingRightsRow bRow;
-		for (int i = 0; i < voProfile.getBookingRights().size(); i++)
+		for (int i = 0; voProfile.getBookingRights() != null && i < voProfile.getBookingRights().size(); i++)
 		{
 			Profile_BookRightsVo rightVo = voProfile.getBookingRights().get(i);
 			bRow = form.lyrDetails().tabBookingRights().grdBookingRights().getRows().newRow();
@@ -528,6 +955,10 @@ public class Logic extends BaseLogic
 			bRow.setReadOnly(true);
 			bRow.setSelectable(false);
 		}
+		//wdev-19419
+		form.lyrDetails().tabListOwners().cmbListType().setValue(voProfile.getListType());
+		//form.lyrDetails().tabListOwners().ccConsultant().setValue(voProfile.getResponsibleHCP());		//wdev-20074
+		//----------
 
 		// List Owners
 		form.lyrDetails().tabListOwners().grdListOwner().getRows().clear();
@@ -542,6 +973,13 @@ public class Logic extends BaseLogic
 				lRow.getColHcp().newRow(listVo.getHCP(), listVo.getHCP().getName().toString());
 				lRow.getColHcp().setValue(listVo.getHCP());
 			}
+			//wdev-20074
+			if( listVo.getAttendingClinicianIsNotNull() )
+				lRow.setColAttendingClinician(listVo.getAttendingClinician());
+			
+			if( listVo.getListOwnerIsNotNull() )
+				lRow.setColListOwner(listVo.getListOwner());
+			//----------
 			lRow.setReadOnly(true);
 			lRow.setSelectable(false);
 		}
@@ -590,6 +1028,24 @@ public class Logic extends BaseLogic
 			}
 		}
 	}
+	//wdev-20074
+	//set colSelect to TRUE if grid contain tempLk argument 
+	private boolean setColSelectTrueIfGridContainFunction(ServiceFunction tempLk )
+	{
+		for(int i = 0;i < form.lyrDetails().tabGeneralDetails().grdServiceFunctions().getRows().size();i++)
+		{
+			grdServiceFunctionsRow row = form.lyrDetails().tabGeneralDetails().grdServiceFunctions().getRows().get(i);
+			if( row != null && tempLk != null && row.getValue() != null && tempLk.equals(row.getValue()))
+			{
+				row.setColumnSelect(true);
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	//---- end wdev-20074
 
 	private boolean dosAdded(DirectoryOfServiceVo voDirService)
 	{
@@ -618,7 +1074,7 @@ public class Logic extends BaseLogic
 
 	protected void onChkActiveOnlyValueChanged() throws PresentationLogicException
 	{
-		searchProfiles();
+		searchProfiles(true);
 	}
 
 	protected Sch_ProfileGenericVo populateDataFromScreen(Sch_ProfileGenericVo profile)
@@ -629,23 +1085,94 @@ public class Logic extends BaseLogic
 		else
 			profile.setService(null);
 
-		profile.setIsFixed(!form.lyrDetails().tabGeneralDetails().chkFlexible().getValue());
+		
+		
+		//profile.setIsFixed(!form.lyrDetails().tabGeneralDetails().chkFlexible().getValue());	//wdev-20074
 		// copying name to description also
 		profile.setDescription(form.lyrDetails().tabGeneralDetails().txtProfileName().getValue());
 		profile.setIsActive(new Boolean(form.lyrDetails().tabGeneralDetails().chkProfileActive().getValue()));
-		profile.setPrfCategory(form.lyrDetails().tabGeneralDetails().cmbCategory().getValue());
+		profile.setPrfCategory(Sched_Prfile_Cat.STANDARD /*form.lyrDetails().tabGeneralDetails().cmbCategory().getValue()*/); //wdev-20074
 		profile.setPrftype(Sched_Profile_Type.SINGLE);
 		
-		//WDEV-18369
-		profile.setConsMediaType(form.lyrDetails().tabGeneralDetails().cmbConsMediaType().getValue());
+		//wdev-20233
+		profile.setSchLocation(form.lyrDetails().tabGeneralDetails().qmbLocation().getValue());
+		
+		//wdev-20074
+		profile.setAutoGeneratePeriod(form.lyrDetails().tabGeneralDetails().intAutoGeneratePeriodWeeks().getValue());
+		profile.setReadyToGenerate(form.lyrDetails().tabGeneralDetails().chkReadyToGenerateSessions().getValue());
 
+		profile.setHospital(form.lyrDetails().tabGeneralDetails().cmbHospital().getValue());
+		
+		//WDEV-21203
+		if(GroupHospitalEnumeration.rdoOtherHospital.equals(form.lyrDetails().tabGeneralDetails().GroupHospital().getValue()))
+		{
+			profile.setIsOtherHospital(true);
+			profile.setOtherHospital(form.lyrDetails().tabGeneralDetails().cmbOtherHosp().getValue());
+		}
+		else
+		{
+			profile.setIsOtherHospital(false);
+			profile.setOtherHospital(null);
+		}
+		//end WDEV-21203
+		
+		if( GroupProfileTypeEnumeration.rdoOutpatient.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()) )
+		{
+			profile.setProfileType(SchProfileType.OUTPATIENT);
+			//profile.setIsTheatreProfile(false);
+		}
+		else if( GroupProfileTypeEnumeration.rdoTheatre.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue())  )
+		{
+			profile.setProfileType(SchProfileType.THEATRE);
+			//profile.setIsTheatreProfile(true);
+			
+		}
+		else if( GroupProfileTypeEnumeration.rdoWardAttendance.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue())  )
+		{
+			profile.setProfileType(SchProfileType.WARD_ATTENDANCE);
+			//profile.setIsTheatreProfile(false);
+		}
+		//--------- end of wdev-20074
+		
+		
+		
 		if (form.lyrDetails().tabDOS().isHeaderVisible())
 			profile.setDirectoryOfServices(getSelectedDosColl());
 
-		if(!form.lyrDetails().tabGeneralDetails().chkTheatre().getValue())
+		if( GroupProfileTypeEnumeration.rdoOutpatient.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()) || GroupProfileTypeEnumeration.rdoWardAttendance.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()) /* !form.lyrDetails().tabGeneralDetails().chkTheatre().getValue()*/) //wdev-20074 
 		{
+			//wdev-20074
+			profile.setHasChooseBookActivity(form.lyrDetails().tabGeneralDetails().chkProfileHasChooseAndBookActivity().getValue());
+			//WDEV-18369
+			profile.setConsMediaType(form.lyrDetails().tabGeneralDetails().cmbConsMediaType().getValue());
+			ims.core.vo.lookups.ServiceFunctionCollection tempColl = new ServiceFunctionCollection();
+			if( form.lyrDetails().tabGeneralDetails().grdServiceFunctions().getRows().size() >  0)
+			{
+				for(int m = 0; m < form.lyrDetails().tabGeneralDetails().grdServiceFunctions().getRows().size();m++)
+				{
+					grdServiceFunctionsRow row = form.lyrDetails().tabGeneralDetails().grdServiceFunctions().getRows().get(m);
+					if( row.getColumnSelect() == true)
+					{
+						tempColl.add(row.getValue());
+					}
+				}
+			}
+			if( tempColl != null && tempColl.size() > 0)
+				profile.setFunction(tempColl);
+			else
+				profile.setFunction(null);
 			
-			if(form.lyrDetails().tabGeneralDetails().chkFlexible().getValue())
+			if( form.lyrDetails().tabGeneralDetails().GroupFlexibleProfile().getValue().equals(GroupFlexibleProfileEnumeration.rdoYes))
+			{
+				profile.setIsFixed(false);
+			}
+			else
+				profile.setIsFixed(true);
+			
+			
+			//--------- end of wdev-20074
+			
+			if( GroupFlexibleProfileEnumeration.rdoYes.equals(form.lyrDetails().tabGeneralDetails().GroupFlexibleProfile().getValue())/*form.lyrDetails().tabGeneralDetails().chkFlexible().getValue()*/)	//wdev-20074
 			{
 				//populate ProfileActivities
 				ProfileActivityVoCollection voCollAct = profile.getProfileActivities();
@@ -653,15 +1180,65 @@ public class Logic extends BaseLogic
 					voCollAct = new ProfileActivityVoCollection();
 				else
 					voCollAct.clear();
-					
-				for(int i=0;i<form.lyrDetails().tabActivities().grdActivities().getRows().size(); i++)
+				
+				
+				if (ConfigFlag.DOM.PROFILE_FLEXIBLE_TYPE.getValue().equals("WITHOUT_SLOTS"))
 				{
-					grdActivitiesRow aRow = form.lyrDetails().tabActivities().grdActivities().getRows().get(i);
-					ProfileActivityVo voProfAct = aRow.getValue();
-					voProfAct.setActivity((ActivityLiteVo) aRow.getcolActivity().getValue());
-					voProfAct.setIsActive(aRow.getcolActive());
-					voCollAct.add(voProfAct);
+					for (int i = 0; i < form.lyrDetails().tabActivities().grdActivities().getRows().size(); i++)
+					{
+						grdActivitiesRow aRow = form.lyrDetails().tabActivities().grdActivities().getRows().get(i);
+						ProfileActivityVo voProfAct = aRow.getValue();
+						voProfAct.setActivity((ActivityLiteVo) aRow.getcolActivity().getValue());
+						voProfAct.setIsActive(aRow.getcolActive());
+						voCollAct.add(voProfAct);
+					}
 				}
+				else if (ConfigFlag.DOM.PROFILE_FLEXIBLE_TYPE.getValue().equals("WITH_SLOTS"))
+				{
+					for (int i = 0; i < form.lyrDetails().tabActivitiesWithSlots().grdActivitiesSlots().getRows().size(); i++)
+					{
+						grdActivitiesSlotsRow aRow = form.lyrDetails().tabActivitiesWithSlots().grdActivitiesSlots().getRows().get(i);
+						ProfileActivityVo voProfAct = aRow.getValue();
+						voProfAct.setActivity((ActivityLiteVo) aRow.getColActivity().getValue());
+						voProfAct.setIsActive(aRow.getColActive());
+						voCollAct.add(voProfAct);
+					}
+					
+					ProfileParentChildSlotVoCollection voCollParentChildSlots = profile.getParentChildSlots();
+					
+					if(voCollParentChildSlots == null)
+						voCollParentChildSlots = new ProfileParentChildSlotVoCollection();
+					else
+						voCollParentChildSlots.clear();
+					
+					for(int i = 0; i < form.lyrDetails().tabActivitiesWithSlots().grdSlots().getRows().size(); i++)
+					{
+						grdSlotsRow tRow = form.lyrDetails().tabActivitiesWithSlots().grdSlots().getRows().get(i);
+						ProfileParentChildSlotVo voParentChildSlot = tRow.getValue();
+						voCollParentChildSlots.add(voParentChildSlot);
+					}
+					
+					/*
+					//add the inactivated (removed) items to the collection
+					if(form.getLocalContext().getParentChildSlotsIsNotNull())
+					{
+						for(ProfileParentChildSlotVo voSlot : form.getLocalContext().getParentChildSlots())
+						{
+							//WDEV-18216 check if the slot id is not null
+							for (int i=0; i < voCollParentChildSlots.size(); i++)
+							{
+								if (voCollParentChildSlots.get(i).getID_ProfileParentChildSlot() != null && !voCollParentChildSlots.get(i).equals(voSlot)) 
+								{
+									voSlot.setIsActive(false);
+									voCollParentChildSlots.add(voSlot);
+								}
+							}
+						}
+					}
+					*/
+					profile.setParentChildSlots(voCollParentChildSlots);
+				}
+				
 				profile.setProfileActivities(voCollAct);
 			}
 			else
@@ -684,8 +1261,10 @@ public class Logic extends BaseLogic
 				profile.setProfileSlots(coll);
 			}
 		}
-		else if(form.lyrDetails().tabGeneralDetails().chkTheatre().getValue())
+		else if( GroupProfileTypeEnumeration.rdoTheatre.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()) /*form.lyrDetails().tabGeneralDetails().chkTheatre().getValue()*/)
 		{
+			profile.setIsFixed(true);	//wdev-20074
+			
 			//WDEV-12918
 			if(form.lyrDetails().tabGeneralDetails().chklistAnaesthetictype().getValues() != null && form.lyrDetails().tabGeneralDetails().chklistAnaesthetictype().getValues().length > 0)
 			{
@@ -694,6 +1273,8 @@ public class Logic extends BaseLogic
 				for(int i=0;i<collAnaes.length;i++)
 					profile.getAnaestheticType().add(collAnaes[i]);
 			}
+			else //WDEV-19854 
+				profile.setAnaestheticType(null);
 				
 			//populate theatre detail
 			TheatreDetailLiteVoCollection voCollTheatre = profile.getTheatreDetails();
@@ -702,14 +1283,30 @@ public class Logic extends BaseLogic
 			else
 				voCollTheatre.clear();
 				
-			for(int i=0;i<form.lyrDetails().tabTheatre().grdTheatre().getRows().size(); i++)
+			
+			if( ConfigFlag.GEN.THEATRE_PROFILE_PROCEDURES.getValue().equals(LIST_OWNER_PROCEDURES))
 			{
-				grdTheatreRow thRow = form.lyrDetails().tabTheatre().grdTheatre().getRows().get(i);
-				TheatreDetailLiteVo voTheatre = thRow.getValue();
-				voTheatre.setProcedure((ProcedureLiteVo) thRow.getcolProcedure().getValue());
-				voTheatre.setMaxNo(thRow.getcolMax());
-				voTheatre.setIsActive(thRow.getcolActive());
-				voCollTheatre.add(voTheatre);
+				for(int i=0;i<form.lyrDetails().tabTheatre().grdTheatre().getRows().size(); i++)
+				{
+					grdTheatreRow thRow = form.lyrDetails().tabTheatre().grdTheatre().getRows().get(i);
+					TheatreDetailLiteVo voTheatre = thRow.getValue();
+					voTheatre.setProcedure((ProcedureNameVo) thRow.getcolProcedure().getValue());
+					voTheatre.setMaxNo(thRow.getcolMax());
+					voTheatre.setIsActive(thRow.getcolActive());
+					voCollTheatre.add(voTheatre);
+				}
+			}
+			else
+			{
+				for(int i=0;i<form.lyrDetails().tabTheatre().grdTheatreService().getRows().size(); i++)
+				{
+					grdTheatreServiceRow thRow = form.lyrDetails().tabTheatre().grdTheatreService().getRows().get(i);
+					TheatreDetailLiteVo voTheatre = thRow.getValue();
+					voTheatre.setProcedure(thRow.getValue().getProcedure());
+					voTheatre.setMaxNo(thRow.getcolMax());
+					voTheatre.setIsActive(thRow.getcolActive());
+					voCollTheatre.add(voTheatre);
+				}
 			}
 			profile.setTheatreDetails(voCollTheatre);
 							
@@ -800,10 +1397,15 @@ public class Logic extends BaseLogic
 			Profile_BookRightsVo vo = bRow.getValue();
 			AppRoleShortVo voAppRole = (AppRoleShortVo) bRow.getcolRole().getValue();
 			vo.setRole(voAppRole);
-			bRow.setReadOnly(true);
 			rightsColl.add(vo);
 		}
 		profile.setBookingRights(rightsColl);
+		
+		//wdev-19419
+		profile.setListType(form.lyrDetails().tabListOwners().cmbListType().getValue());
+		//profile.setResponsibleHCP((HcpLiteVo) form.lyrDetails().tabListOwners().ccConsultant().getValue());	//wdev-20074
+		
+		//---------
 
 		// Set the List Owners for the profile
 		GenForm.lyrDetailsLayer.tabListOwnersContainer.grdListOwnerRow oRow;
@@ -813,6 +1415,10 @@ public class Logic extends BaseLogic
 			oRow = form.lyrDetails().tabListOwners().grdListOwner().getRows().get(i);
 			Profile_ListOwnerVo vo = oRow.getValue();
 			vo.setHCP((HcpLiteVo) oRow.getColHcp().getValue());
+			//wdev-20074
+			vo.setListOwner(oRow.getColListOwner());
+			vo.setAttendingClinician(oRow.getColAttendingClinician());
+			//---------
 			ownerColl.add(vo);
 		}
 		profile.setListOwners(ownerColl);
@@ -830,6 +1436,20 @@ public class Logic extends BaseLogic
 				}
 			}
 		}
+		
+		//wdev-20891
+		if (profile.getParentChildSlotsIsNotNull() )
+		{
+			for (ProfileParentChildSlotVo voParentProfleSlot : profile.getParentChildSlots())
+			{
+				if (voParentProfleSlot.getSlotRespIsNotNull())
+				{
+					if (!profile.getListOwners().contains(voParentProfleSlot.getSlotResp()))
+						voParentProfleSlot.setSlotResp(null);
+				}
+			}
+		}
+		///----------
 
 		// Set the Exclusion Dates for the profile
 		GenForm.lyrDetailsLayer.tabExclusionContainer.grdExclDatesRow eRow;
@@ -893,7 +1513,7 @@ public class Logic extends BaseLogic
 		Sch_ProfileGenericVo profile = form.getLocalContext().getCurrentProfile();
 		this.populateDataFromScreen(profile);
 
-		String[] errors = profile.validate(getUIValidationRules(profile));
+		String[] errors = profile.validate(getUIValidationRules(form.getLocalContext().getCurrentProfile()));
 		if (errors != null)
 		{
 			engine.showErrors(errors);
@@ -902,7 +1522,7 @@ public class Logic extends BaseLogic
 
 		try
 		{
-			profile = domain.saveGenericProfile(profile, populateTemplatesFromScreen());
+			form.getLocalContext().setCurrentProfile(domain.saveGenericProfile(profile, populateTemplatesFromScreen()));
 		}
 		catch (UniqueKeyViolationException e)
 		{
@@ -923,14 +1543,39 @@ public class Logic extends BaseLogic
 
 		Date newDate = validateStartDateIsSunday(form.lyrDetails().tabProfileDetails().dteStartDate().getValue());
 		if (newDate != null)
-			errors.add("'Week Starting' Date must be a Sunday");
-
-		//WDEV-7323 - if configuring a theatre ignore slot validation
-		if(!form.lyrDetails().tabGeneralDetails().chkTheatre().getValue())
+			errors.add("'Week Starting' date must be a Sunday");
+		
+		//wdev-20074
+		if( form.lyrDetails().tabGeneralDetails().chkCaseNotesNotRequired().isVisible())
 		{
-			if(profile.getIsFixed())
+			if (profile.getCaseNoteFolderLocation() == null && !Boolean.TRUE.equals(profile.getCaseNoteFolderNotRequired())) //WDEV-19518
+				errors.add("'Case Note Folders Location' is mandatory");
+		}
+		//wdev-20233 
+		if( form.lyrDetails().tabGeneralDetails().cmbTheatreType().getVisible() && form.lyrDetails().tabGeneralDetails().cmbTheatreType().getValue() != null && form.lyrDetails().tabGeneralDetails().cmbTheatreType().getValue().equals(TheatreType.EMERGENCY))
+		{
+			if( form.lyrDetails().tabTheatre().grdTheatre().getRows().size() > 0)
+				errors.add(" No procedures are to be saved for Emergency Theatre type ");
+		}
+		//wdev-20074
+		if( form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue() == null || form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue().equals(GroupProfileTypeEnumeration.None))
+			errors.add("Profile Type is mandatory");
+		
+		if( GroupProfileTypeEnumeration.rdoOutpatient.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()) || GroupProfileTypeEnumeration.rdoWardAttendance.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue())) //wdev-20074
+		{
+			if( form.lyrDetails().tabGeneralDetails().GroupFlexibleProfile().getValue() == null || form.lyrDetails().tabGeneralDetails().GroupFlexibleProfile().getValue().equals(GroupFlexibleProfileEnumeration.None))
 			{
-				if (profile.getProfileSlots() == null || profile.getProfileSlots().size() == 0)
+				errors.add("Flexible Profile is mandatory");
+			}
+		}
+		//-------
+		
+		//WDEV-7323 - if configuring a theatre ignore slot validation
+		if( GroupProfileTypeEnumeration.rdoOutpatient.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()) || GroupProfileTypeEnumeration.rdoWardAttendance.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()) /*!form.lyrDetails().tabGeneralDetails().chkTheatre().getValue()*/)	//wdev-20074
+		{
+			if(Boolean.TRUE.equals(profile.getIsFixed()))
+			{
+				if ((Boolean.TRUE.equals(profile.getIsActive())) && (profile.getProfileSlots() == null || profile.getProfileSlots().size() == 0 || isAllSlotsInactive(profile.getProfileSlots())) || (Boolean.FALSE.equals(profile.getIsActive()) && ((profile.getProfileSlots() == null || profile.getProfileSlots().size() == 0))))	//wdev-20448 //WDEV-23013
 					errors.add("Slots are mandatory");
 				else
 				{
@@ -1002,9 +1647,23 @@ public class Logic extends BaseLogic
 					//WDEV-10003
 					if(countCabSlots > 0)
 					{
-						if(profile.getDirectoryOfServices() == null || profile.getDirectoryOfServices().size() == 0)
-							errors.add("Directory of Service must be selected as there are non-local slots present.");
-					}	
+						if (form.lyrDetails().tabDOS().isHeaderVisible())		//wdev-20074
+						{
+    						if(profile.getDirectoryOfServices() == null || profile.getDirectoryOfServices().size() == 0)
+    							errors.add("Directory of Service must be selected as there are non-local slots present.");
+						}
+						
+					}
+					else	//wdev-20448
+					{
+						//wdev-20074
+						if( form.lyrDetails().tabGeneralDetails().chkProfileHasChooseAndBookActivity().isVisible() && form.lyrDetails().tabGeneralDetails().chkProfileHasChooseAndBookActivity().getValue() )
+						{
+							if( !profile.getDirectoryOfServicesIsNotNull() || profile.getDirectoryOfServices().size() == 0)
+								errors.add("At least one Directory of Service must be selected ");
+						}
+						//--------
+					}
 				}
 			}	
 			else
@@ -1015,7 +1674,7 @@ public class Logic extends BaseLogic
 				{
 					//count active there must be at least one
 					int activeCount = 0;
-					for (ProfileActivityVo voProfAct : profile.getProfileActivities())
+					for( ProfileActivityVo voProfAct : profile.getProfileActivities())
 					{
 						if(voProfAct.getActivity() == null)
 							errors.add("Activity is mandatory on the Activities Tab");
@@ -1023,8 +1682,24 @@ public class Logic extends BaseLogic
 						if (voProfAct.getActivity() != null && (voProfAct.getIsActiveIsNotNull() && voProfAct.getIsActive()))
 							activeCount++;	
 					}
-					if(activeCount == 0)
+					if( activeCount == 0)
 						errors.add("You must select one active Activity on the Activities Tab");
+					
+					//wdev-20448
+					if( ConfigFlag.DOM.PROFILE_FLEXIBLE_TYPE.getValue().equals("WITH_SLOTS"))
+					{
+						if( isAllActivitiesTabSlotsInactiveOrMissing())
+							errors.add("Slots are mandatory");
+						if( isDuplicateActivitiesWithSlots())
+							errors.add("Duplicate Activities not allowed.");
+												
+					}
+					if( ConfigFlag.DOM.PROFILE_FLEXIBLE_TYPE.getValue().equals("WITHOUT_SLOTS"))
+					{
+						if( isDuplicateActivitiesWithoutSlots())
+							errors.add("Duplicate Activities not allowed.");
+					}
+					//----end wdev-20448
 				}
 			}
 		}
@@ -1032,8 +1707,17 @@ public class Logic extends BaseLogic
 		{
 			if(profile.getListOwners() == null || profile.getListOwners().size() == 0)
 				errors.add("At Least one record is mandatory on the List Owners Tab");
-			if(profile.getTheatreDetails() == null || profile.getTheatreDetails().size() == 0)
-				errors.add("At Least one record is mandatory on the Theatre Tab");
+			
+			
+			//wdev-20233 WDEV-21874
+			if( form.lyrDetails().tabGeneralDetails().cmbTheatreType().getVisible() && form.lyrDetails().tabGeneralDetails().cmbTheatreType().getValue() != null && !form.lyrDetails().tabGeneralDetails().cmbTheatreType().getValue().equals(TheatreType.EMERGENCY) && !form.lyrDetails().tabGeneralDetails().cmbTheatreType().getValue().equals(TheatreType.EMERGENCY_NON_TO))
+			{
+    			if(profile.getTheatreDetails() == null || profile.getTheatreDetails().size() == 0 || isAllTheatreProceduresInactive())	//wdev-20074
+    				errors.add("At Least one record is mandatory on the Theatre Tab");
+    			
+    			if( isDuplicateTheatreProcedures())	//wdev-20074
+    				errors.add("Duplicate Procedures not allowed.");
+			}
 			if(ConfigFlag.DOM.THEATRE_SESSION_TYPE.getValue().equals("Fixed") && !atLeastOneSlotIsActive(profile.getParentChildSlots()))//WDEV-13224
 				errors.add("At least one Theatre Slot must be defined on Theatre Tab");
 			
@@ -1109,10 +1793,231 @@ public class Logic extends BaseLogic
 					errors.add("Profile 'End Date' cannot be before 'Last Generated Date' (" + profile.getLastGenDate().toString() + ")");			
 			}
 		}
+		//wdev-20074
+		GenForm.lyrDetailsLayer.tabBookingRightsContainer.grdBookingRightsRow bRow;
+		if( form.lyrDetails().tabBookingRights().grdBookingRights().getRows().size() > 0 )
+		{
+			bRow = form.lyrDetails().tabBookingRights().grdBookingRights().getRows().get(0);
+			AppRoleShortVo voAppRole = (AppRoleShortVo) bRow.getcolRole().getValue();
+			
+			for(int i = 1; i < form.lyrDetails().tabBookingRights().grdBookingRights().getRows().size();i++)
+			{
+				bRow = form.lyrDetails().tabBookingRights().grdBookingRights().getRows().get(i);
+				AppRoleShortVo tempvoAppRole = (AppRoleShortVo) bRow.getcolRole().getValue();
+				if( voAppRole != null && tempvoAppRole != null && voAppRole.equals(tempvoAppRole))
+				{
+					errors.add("Duplicate Role Rights not allowed.");
+				}
+			}
+		}
+		
+		if( isDuplicateListOwners() == true )
+		{
+			errors.add("Duplicate List Owners not allowed.");
+		}
+		//--------------
 		
 		
 
 		return errors.size() > 0 ? errors.toArray(new String[0]) : null;
+	}
+	//wdev-20448
+	private boolean isDuplicateActivitiesWithSlots()
+	{
+		boolean isDuplicateActivities = false;
+		boolean isAllInactive = true;
+		
+		if( form.lyrDetails().tabActivitiesWithSlots().grdActivitiesSlots().getRows().size() == 0)
+			return isDuplicateActivities;
+		
+		grdActivitiesSlotsRow oRow = null;
+		int m = 0;
+		for( m = 0; m < form.lyrDetails().tabActivitiesWithSlots().grdActivitiesSlots().getRows().size(); m++)
+		{
+			
+			oRow = form.lyrDetails().tabActivitiesWithSlots().grdActivitiesSlots().getRows().get(m);
+			if( oRow.getColActive() == true)
+			{
+				isAllInactive = false;
+				break;
+			}
+		}
+		if( isAllInactive == true)
+			return false;
+		
+		for (int i = 0; i < form.lyrDetails().tabActivitiesWithSlots().grdActivitiesSlots().getRows().size(); i++)
+		{
+			grdActivitiesSlotsRow oRow1 = form.lyrDetails().tabActivitiesWithSlots().grdActivitiesSlots().getRows().get(i);
+			if( m != i && oRow1 != null &&  oRow.getValue() != null && oRow1.getValue() != null && oRow.getValue().getActivityIsNotNull() && oRow1.getValue().getActivityIsNotNull() && oRow.getValue().getActivity().equals(oRow1.getValue().getActivity()) && oRow1.getColActive())
+				isDuplicateActivities = true;
+		}
+		
+		return isDuplicateActivities;
+	}
+	//wdev-20448
+	private boolean isDuplicateActivitiesWithoutSlots()
+	{
+		boolean isDuplicateActivities = false;
+		boolean isAllInactive = true;
+		
+		
+		if( form.lyrDetails().tabActivities().grdActivities().getRows().size() == 0)
+			return isDuplicateActivities;
+		
+		grdActivitiesRow oRow = null;
+		int m = 0;
+		for( m = 0; m < form.lyrDetails().tabActivities().grdActivities().getRows().size(); m++)
+		{
+			
+			oRow = form.lyrDetails().tabActivities().grdActivities().getRows().get(m);
+			if( oRow.getcolActive() == true)
+			{
+				isAllInactive = false;
+				break;
+			}
+		}
+		
+		if( isAllInactive == true )
+			return false;
+		
+		for (int i = 0; i < form.lyrDetails().tabActivities().grdActivities().getRows().size(); i++)
+		{
+			grdActivitiesRow oRow1 = form.lyrDetails().tabActivities().grdActivities().getRows().get(i);
+			if( m != i && oRow1 != null &&  oRow.getValue() != null && oRow1.getValue() != null && oRow.getValue().getActivityIsNotNull() && oRow1.getValue().getActivityIsNotNull() && oRow.getValue().getActivity().equals(oRow1.getValue().getActivity()) && oRow1.getcolActive())
+				isDuplicateActivities = true;
+		}
+		
+		return isDuplicateActivities;
+	}
+	private boolean isAllActivitiesTabSlotsInactiveOrMissing()
+	{
+		if( form.lyrDetails().tabActivitiesWithSlots().grdSlots().getRows().size() == 0)
+			return true;
+		
+		boolean isAllSlotsInactive = true;
+		for(int i = 0;i < form.lyrDetails().tabActivitiesWithSlots().grdSlots().getRows().size(); i++)
+		{
+			grdSlotsRow shRow = form.lyrDetails().tabActivitiesWithSlots().grdSlots().getRows().get(i);
+			if( shRow.getColActive() == true )
+				isAllSlotsInactive = false;
+		}
+		
+		return isAllSlotsInactive;
+	}
+	
+	//wdev-20448
+	private boolean isAllSlotsInactive(Profile_SlotGenericVoCollection  tempColl)
+	{
+		if( tempColl == null || tempColl.size() == 0)
+			return false;
+		boolean isAllProceduresInactive = true;
+		for(int i = 0; i < tempColl.size(); i++)
+		{
+			Profile_SlotGenericVo tempVo = tempColl.get(i);
+			if( tempVo != null &&  Boolean.TRUE.equals(tempVo.getIsActive()))
+				isAllProceduresInactive = false;
+		}
+		
+		return isAllProceduresInactive;
+	}
+	//wdev-20074 //WDEV-21641
+	private boolean isDuplicateListOwners() 
+	{
+		if( form.lyrDetails().tabListOwners().grdListOwner().getRows().size() == 0)
+			return false;
+		
+		for (int i = 0; i <form.lyrDetails().tabListOwners().grdListOwner().getRows().size(); i++)
+		{
+			grdListOwnerRow row1 = form.lyrDetails().tabListOwners().grdListOwner().getRows().get(i);
+			HcpLiteVo hcp1 = row1.getColHcp()!=null && row1.getColHcp().getValue()!=null && row1.getColHcp().getValue() instanceof HcpLiteVo  ? (HcpLiteVo)row1.getColHcp().getValue(): null;
+			for (int j = i+1; j < form.lyrDetails().tabListOwners().grdListOwner().getRows().size(); j++)
+			{
+				grdListOwnerRow row2 = form.lyrDetails().tabListOwners().grdListOwner().getRows().get(j);
+				HcpLiteVo hcp2 = row2.getColHcp()!=null && row2.getColHcp().getValue()!=null && row2.getColHcp().getValue() instanceof HcpLiteVo  ? (HcpLiteVo)row2.getColHcp().getValue(): null;
+				if( hcp1!=null && hcp2 != null && hcp1.equals(hcp2))
+					return true;
+			}
+		}
+		
+		return false;
+	}
+	//wdev-20074
+	private boolean isDuplicateTheatreProcedures()
+	{
+		if (ConfigFlag.GEN.THEATRE_PROFILE_PROCEDURES.getValue().equals(LIST_OWNER_PROCEDURES))
+		{	
+			if (form.lyrDetails().tabTheatre().grdTheatre().getRows().size() == 0)
+				return false;
+			
+			for (int i = 0; i < form.lyrDetails().tabTheatre().grdTheatre().getRows().size(); i++)
+			{
+				grdTheatreRow thRow1 = form.lyrDetails().tabTheatre().grdTheatre().getRows().get(i);
+				ProcedureNameVo proc1 = thRow1.getValue() != null && thRow1.getValue().getProcedure() != null ? thRow1.getValue().getProcedure() : null;
+				
+				if (thRow1.getcolActive())
+				{
+					for (int j = i + 1; j < form.lyrDetails().tabTheatre().grdTheatre().getRows().size(); j++)
+					{
+						grdTheatreRow thRow2 = form.lyrDetails().tabTheatre().grdTheatre().getRows().get(j);
+						ProcedureNameVo proc2 = thRow2.getValue() != null && thRow2.getValue().getProcedure() != null ? thRow2.getValue().getProcedure() : null;
+						
+						if (proc1 != null && proc2 != null && proc1.equals(proc2) && thRow2.getcolActive())
+							return true;
+					}
+				}
+			}
+		}
+		else if (ConfigFlag.GEN.THEATRE_PROFILE_PROCEDURES.getValue().equals(SERVICE_PROCEDURES))
+		{
+			if (form.lyrDetails().tabTheatre().grdTheatreService().getRows().size() == 0)
+				return false;
+			
+			for (int i = 0; i < form.lyrDetails().tabTheatre().grdTheatreService().getRows().size(); i++)
+			{
+				grdTheatreServiceRow thRow1 = form.lyrDetails().tabTheatre().grdTheatreService().getRows().get(i);
+				ProcedureNameVo proc1 = thRow1.getValue() != null && thRow1.getValue().getProcedure() != null ? thRow1.getValue().getProcedure() : null;
+				
+				if (thRow1.getcolActive())
+				{
+					for (int j = i + 1; j < form.lyrDetails().tabTheatre().grdTheatreService().getRows().size(); j++)
+					{
+						grdTheatreServiceRow thRow2 = form.lyrDetails().tabTheatre().grdTheatreService().getRows().get(j);
+						ProcedureNameVo proc2 = thRow2.getValue() != null && thRow2.getValue().getProcedure() != null ? thRow2.getValue().getProcedure() : null;
+						
+						if (proc1 != null && proc2 != null && proc1.equals(proc2) && thRow2.getcolActive())
+							return true;
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+	
+	//wdev-20074
+	private boolean isAllTheatreProceduresInactive()
+	{
+		if (ConfigFlag.GEN.THEATRE_PROFILE_PROCEDURES.getValue().equals(LIST_OWNER_PROCEDURES))
+		{
+			for (int i = 0; i < form.lyrDetails().tabTheatre().grdTheatre().getRows().size(); i++)
+			{
+				grdTheatreRow thRow = form.lyrDetails().tabTheatre().grdTheatre().getRows().get(i);
+				
+				if (thRow.getcolActive() == true)
+					return false;
+			}
+		}
+		else if (ConfigFlag.GEN.THEATRE_PROFILE_PROCEDURES.getValue().equals(SERVICE_PROCEDURES))
+		{
+			for (int i = 0; i < form.lyrDetails().tabTheatre().grdTheatreService().getRows().size(); i++)
+			{
+				grdTheatreServiceRow thRow = form.lyrDetails().tabTheatre().grdTheatreService().getRows().get(i);
+				if (thRow.getcolActive() == true)
+					return false;
+			}
+		}
+
+		return true ;
 	}
 
 	//WDEV-13224
@@ -1138,17 +2043,35 @@ public class Logic extends BaseLogic
 		if (profile == null || voSlotDirService == null)
 			return true;
 
-		if (profile.getSchLocationIsNotNull() && voSlotDirService.getDirectoryOfServiceIsNotNull())
-			return profile.getSchLocation().equals(voSlotDirService.getDirectoryOfService().getLocation());
-
+		if (profile.getSchLocation() != null && voSlotDirService.getDirectoryOfService() != null)
+		{
+			if (profile.getSchLocation().equals(voSlotDirService.getDirectoryOfService().getLocation()))
+			{
+				return true;
+			} //WDEV-21898
+			else return domain.onTheSameHospital(form.lyrDetails().tabGeneralDetails().cmbHospital().getValue(), voSlotDirService.getDirectoryOfService().getLocation());
+		}
+			
 		return false;
 	}
 
 	private void open()
 	{
 		this.clearScreen();
-		searchProfiles();
-		form.grdProfiles().setValue(null);
+		searchProfiles(false);
+		form.grdProfiles().setValue(form.getLocalContext().getCurrentProfileIsNotNull() ? (ProfileShortVo) form.getLocalContext().getCurrentProfile() : null);
+		form.getGlobalContext().Scheduling.setProfile(form.grdProfiles().getValue());
+		form.lyrDetails().tabSlots().chkSlotsActiveOnly().setValue(true);
+		//wdev-20074
+		if (form.getLocalContext().getCurrentProfile() != null && form.getLocalContext().getCurrentProfile().getID_Sch_Profile() != null)
+		{
+    		Sch_ProfileGenericVo voProfile = domain.getGenericProfileDetails(form.getLocalContext().getCurrentProfile());
+    		form.getLocalContext().setCurrentProfile(voProfile);
+		}
+		//---------
+		this.populateScreenFromData(form.getLocalContext().getCurrentProfile(), listTemplates());
+		// Reset to General Details tab
+		form.lyrDetails().showtabGeneralDetails(); //WDEV-18821
 		form.setMode(FormMode.VIEW);	
 	}
 
@@ -1167,11 +2090,14 @@ public class Logic extends BaseLogic
 
 	protected void onBtnCancelClick() throws PresentationLogicException
 	{
-		this.clearScreen();
-		searchProfiles();
-		form.grdProfiles().setValue(null);
-		form.setMode(FormMode.VIEW);
-		updateControlState();
+		
+		open();	 //WDEV-18821
+	}
+	//wdev-20891
+	private void removeListOwnerFromRespSlot( Profile_ListOwnerVo record)
+	{
+		if( record == null)
+			return;
 	}
 
 	protected void onContextMenuItemClick(int menuItemID, Control sender) throws PresentationLogicException
@@ -1195,18 +2121,22 @@ public class Logic extends BaseLogic
 			// list owners
 			case GenForm.ContextMenus.SchedulingNamespace.ProfileListOwners.ADD :
 				addListOwner();
+				updateControlState();
 			break;
 			case GenForm.ContextMenus.SchedulingNamespace.ProfileListOwners.EDIT :
 				form.lyrDetails().tabListOwners().grdListOwner().getSelectedRow().setReadOnly(false);
 			break;
 			case GenForm.ContextMenus.SchedulingNamespace.ProfileListOwners.REMOVE :
-				form.lyrDetails().tabListOwners().grdListOwner().removeSelectedRow();
-				updateControlState();
+				
+				//WDEV-20893
+				form.getLocalContext().setlistOwnerRemoveConfirm(engine.showMessage("List Owner will be removed from both List Owners/Attending Clinician and Slots.", "Confirm remove", MessageButtons.YESNO, MessageIcon.WARNING));
+				
 			break;
 
 			// slots general
 			case GenForm.ContextMenus.SchedulingNamespace.ProfileSlotsGeneral.ADD :
 				addSlotGeneral();
+				
 			break;
 			case GenForm.ContextMenus.SchedulingNamespace.ProfileSlotsGeneral.EDIT :
 				editSlotGeneral();
@@ -1236,6 +2166,7 @@ public class Logic extends BaseLogic
 			// booking rights
 			case GenForm.ContextMenus.SchedulingNamespace.ProfileBookingRights.ADD :
 				addBookingRight();
+				updateControlState();//WDEV-20512
 			break;
 			case GenForm.ContextMenus.SchedulingNamespace.ProfileBookingRights.EDIT :
 				form.lyrDetails().tabBookingRights().grdBookingRights().getSelectedRow().setReadOnly(false);
@@ -1248,6 +2179,7 @@ public class Logic extends BaseLogic
 			// exclusion dates
 			case GenForm.ContextMenus.SchedulingNamespace.ProfileExclusionDates.ADD :
 				addExclusionDate();
+				updateControlState();//WDEV-22337
 			break;
 			case GenForm.ContextMenus.SchedulingNamespace.ProfileExclusionDates.EDIT :
 				form.lyrDetails().tabExclusion().grdExclDates().getSelectedRow().setReadOnly(false);
@@ -1260,6 +2192,7 @@ public class Logic extends BaseLogic
 			// exclusion times
 			case GenForm.ContextMenus.SchedulingNamespace.ProfileExclusionTimes.ADD :
 				addExclusionTime();
+				updateControlState();//WDEV-22337
 			break;
 			case GenForm.ContextMenus.SchedulingNamespace.ProfileExclusionTimes.EDIT :
 				form.lyrDetails().tabExclusion().grdExclPeriods().getSelectedRow().setReadOnly(false);
@@ -1281,6 +2214,7 @@ public class Logic extends BaseLogic
 			// theatre
 			case GenForm.ContextMenus.SchedulingNamespace.ProfileTheatre.ADD :
 				addTheatre();
+				updateControlState();
 			break;
 			case GenForm.ContextMenus.SchedulingNamespace.ProfileTheatre.REMOVE :
 				removeTheatre();
@@ -1313,7 +2247,187 @@ public class Logic extends BaseLogic
 				removeActivity();
 				updateControlState();
 			break;
+			
+			case GenForm.ContextMenus.SchedulingNamespace.FlexibleProfileSlot.ADD:
+				addFlexibleSlot();
+			break;
+			
+			case GenForm.ContextMenus.SchedulingNamespace.FlexibleProfileSlot.EDIT:
+				editFlexibleSlot();
+			break;
+				
+			case GenForm.ContextMenus.SchedulingNamespace.FlexibleProfileSlot.INACTIVATE:
+				
+				if(form.lyrDetails().tabActivitiesWithSlots().grdSlots().getValue() != null)
+				{
+					form.lyrDetails().tabActivitiesWithSlots().grdSlots().getValue().setIsActive(false);
+					form.lyrDetails().tabActivitiesWithSlots().grdSlots().getSelectedRow().setColActive(false);
+				}
+				
+				updateControlState();
+			break;
+			
+			case GenForm.ContextMenus.SchedulingNamespace.ProfileServiceFunctions.SELECT_ALL:		//wdev-20074
+				selectAllServiceFunctions();
+				loadDos(form.lyrDetails().tabGeneralDetails().cmbSpeciality().getValue(), false);	//wdev-20262
+			break;
+			
+			case GenForm.ContextMenus.SchedulingNamespace.ProfileServiceFunctions.DESELECT_ALL:		//wdev-20074
+				deselectAllServiceFunctions();
+				loadDos(form.lyrDetails().tabGeneralDetails().cmbSpeciality().getValue(), false);	//wdev-20262
+				
+			break;
+			
+			
+			
+			case GenForm.ContextMenus.SchedulingNamespace.ProfileDOS.ADD_SPECIALTY_DOS:
+				openDosSpecialtyDialog();
+				
+			break;
 		}
+	}
+	private void openDosSpecialtyDialog()
+	{
+		List<String> errors = new ArrayList<String>();
+
+		if (form.lyrDetails().tabGeneralDetails().cmbHospital().getValue() == null)
+			errors.add("Hospital on General Details Tab is mandatory");
+
+		if (form.lyrDetails().tabGeneralDetails().cmbSpeciality().getValue() == null)
+			errors.add("Service on General Details Tab is mandatory");
+
+		String[] arrErrors = errors.toArray(new String[0]);
+		if (arrErrors.length > 0)
+		{
+			engine.showErrors(arrErrors);
+			return;
+		}
+		
+		engine.open(form.getForms().Scheduling.DosSpecialtySelection,new Object[] {form.lyrDetails().tabGeneralDetails().cmbHospital().getValue(), form.lyrDetails().tabGeneralDetails().cmbSpeciality().getValue()});
+	}
+
+	//wdev-20074
+	private void removeTheatreProcedures()
+	{
+		if( ConfigFlag.GEN.THEATRE_PROFILE_PROCEDURES.getValue().equals(LIST_OWNER_PROCEDURES))
+		{
+			if( GroupProfileTypeEnumeration.rdoTheatre.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()) )
+			{
+				if(form.lyrDetails().tabListOwners().grdListOwner().getRows().size() == 0)
+				{
+					form.lyrDetails().tabTheatre().grdTheatre().getRows().clear();
+					return;
+				}
+					
+				ProcedureNameVoCollection voCollProcedure = null;
+								
+				HcpRefVoCollection voCollHcp = new HcpRefVoCollection();
+				for(int i=0;i<form.lyrDetails().tabListOwners().grdListOwner().getRows().size();i++)
+					voCollHcp.add ((HcpRefVo) form.lyrDetails().tabListOwners().grdListOwner().getRows().get(i).getColHcp().getValue());
+
+				if (voCollHcp.size() > 0)
+					voCollProcedure = domain.listProcedureByHcpAndNameLite(voCollHcp, "%%%");
+				else
+					return;
+				
+				List<Integer> listProcIndex = new ArrayList<Integer>();
+				
+				if( voCollProcedure != null && voCollProcedure.size() > 0)
+				{
+					GenForm.lyrDetailsLayer.tabTheatreContainer.grdTheatreRow tRow;
+					for( int m = 0; m < form.lyrDetails().tabTheatre().grdTheatre().getRows().size();m++)
+					{
+						tRow = form.lyrDetails().tabTheatre().grdTheatre().getRows().get(m);
+						ProcedureNameVo tempVo = (ProcedureNameVo) tRow.getcolProcedure().getValue();
+						if( tempVo != null )
+						{
+							if( !voCollProcedure.contains(tempVo))
+							{
+								
+								
+								listProcIndex.add(m);
+								
+							}
+						}
+					}
+					for( Integer index:listProcIndex)
+					{
+						form.lyrDetails().tabTheatre().grdTheatre().getRows().remove(index);
+					}
+					
+					
+				}
+					
+			}
+			
+		}
+		
+	}
+	
+	//-------
+	//wdev-20074
+	private void selectAllServiceFunctions()
+	{
+		
+		for(int i = 0; i < form.lyrDetails().tabGeneralDetails().grdServiceFunctions().getRows().size();i++)
+		{
+			grdServiceFunctionsRow row = form.lyrDetails().tabGeneralDetails().grdServiceFunctions().getRows().get(i);
+			row.setColumnSelect(true);
+		}
+		
+	}
+	private void deselectAllServiceFunctions()
+	{
+		
+		for(int i = 0; i < form.lyrDetails().tabGeneralDetails().grdServiceFunctions().getRows().size();i++)
+		{
+			grdServiceFunctionsRow row = form.lyrDetails().tabGeneralDetails().grdServiceFunctions().getRows().get(i);
+			row.setColumnSelect(false);
+		}
+		
+	}
+	//--------------------
+
+
+	private void editFlexibleSlot()
+	{
+		form.getGlobalContext().Scheduling.setListOwnerCollection(getSelectedListOwnersColl());
+		form.getGlobalContext().Scheduling.setOutpatientFlexibleProfileSlot(form.lyrDetails().tabActivitiesWithSlots().grdSlots().getValue());
+		openFlexibleSlotsDialog();
+	}
+
+	private void addFlexibleSlot()
+	{
+		form.getGlobalContext().Scheduling.setOutpatientFlexibleProfileSlot(null);
+		form.getGlobalContext().Scheduling.setProfileStartTime(form.lyrDetails().tabProfileDetails().timStartTime().getValue());
+		form.getGlobalContext().Scheduling.setProfileEndTime(form.lyrDetails().tabProfileDetails().timEndTime().getValue());
+		form.getGlobalContext().Scheduling.setListOwnerCollection(getSelectedListOwnersColl());
+		
+		openFlexibleSlotsDialog();
+	}
+
+	private void openFlexibleSlotsDialog()
+	{
+			List<String> errors = new ArrayList<String>();
+
+			if (form.lyrDetails().tabProfileDetails().timStartTime().getValue() == null)
+				errors.add("Start Time on Profile Details Tab is mandatory");
+
+			if (form.lyrDetails().tabProfileDetails().timEndTime().getValue() == null)
+				errors.add("End Time on Profile Details Tab is mandatory");
+
+			String[] arrErrors = errors.toArray(new String[0]);
+			
+			if (arrErrors.length > 0)
+			{
+				engine.showErrors(arrErrors);
+				return;
+			}
+
+			form.getGlobalContext().Scheduling.setProfileStartTime(form.lyrDetails().tabProfileDetails().timStartTime().getValue());
+			form.getGlobalContext().Scheduling.setProfileEndTime(form.lyrDetails().tabProfileDetails().timEndTime().getValue());
+
+			engine.open(form.getForms().Scheduling.FlexibleProfileSlot);
 	}
 
 	//WDEV-12918
@@ -1370,7 +2484,15 @@ public class Logic extends BaseLogic
 
 	private void removeActivity()
 	{
-		form.lyrDetails().tabActivities().grdActivities().removeSelectedRow();
+		if (form.lyrDetails().tabActivities().isHeaderVisible())
+		{
+			form.lyrDetails().tabActivities().grdActivities().removeSelectedRow();
+		}
+		else if (form.lyrDetails().tabActivitiesWithSlots().isHeaderVisible())
+		{
+			form.lyrDetails().tabActivitiesWithSlots().grdActivitiesSlots().removeSelectedRow();
+		}
+			
 		updateControlState();
 	}
 
@@ -1382,35 +2504,78 @@ public class Logic extends BaseLogic
 			return;
 		}
 		
-		GenForm.lyrDetailsLayer.tabActivitiesContainer.grdActivitiesRow aRow = form.lyrDetails().tabActivities().grdActivities().getRows().newRow(true);
-		
-		if(form.getLocalContext().getProfileActivities() != null)
+		if (form.lyrDetails().tabActivities().isHeaderVisible())
 		{
-			for (ActivityLiteVo voActivity : form.getLocalContext().getProfileActivities())
-				aRow.getcolActivity().newRow(voActivity, voActivity.getName());
-			
-			if(form.getLocalContext().getProfileActivities().size() == 1)
-				aRow.getcolActivity().setValue(form.getLocalContext().getProfileActivities().get(0));
+			GenForm.lyrDetailsLayer.tabActivitiesContainer.grdActivitiesRow aRow = form.lyrDetails().tabActivities().grdActivities().getRows().newRow(true);
+
+			if (form.getLocalContext().getProfileActivities() != null)
+			{
+				for (ActivityLiteVo voActivity : form.getLocalContext().getProfileActivities())
+					aRow.getcolActivity().newRow(voActivity, voActivity.getName());
+
+				if (form.getLocalContext().getProfileActivities().size() == 1)
+					aRow.getcolActivity().setValue(form.getLocalContext().getProfileActivities().get(0));
+			}
+
+			aRow.setcolActive(true);
+			aRow.setValue(new ProfileActivityVo());
+			aRow.setReadOnly(false);
+		}
+		else if (form.lyrDetails().tabActivitiesWithSlots().isHeaderVisible())
+		{
+			grdActivitiesSlotsRow bRow = form.lyrDetails().tabActivitiesWithSlots().grdActivitiesSlots().getRows().newRow(true);
+
+			if (form.getLocalContext().getProfileActivities() != null)
+			{
+				for (ActivityLiteVo voActivity : form.getLocalContext().getProfileActivities())
+					bRow.getColActivity().newRow(voActivity, voActivity.getName());
+
+				if (form.getLocalContext().getProfileActivities().size() == 1)
+					bRow.getColActivity().setValue(form.getLocalContext().getProfileActivities().get(0));
+			}
+
+			bRow.setColActive(true);
+			bRow.setValue(new ProfileActivityVo());
+			bRow.setReadOnly(false);
+
 		}
 		
-		aRow.setcolActive(true);
-		aRow.setValue(new ProfileActivityVo());
-		aRow.setReadOnly(false);
+		updateControlState();
 	}
 
 	private void removeTheatre()
 	{
-		form.lyrDetails().tabTheatre().grdTheatre().removeSelectedRow();
+		if(ConfigFlag.GEN.THEATRE_PROFILE_PROCEDURES.getValue().equals(SERVICE_PROCEDURES))
+			form.lyrDetails().tabTheatre().grdTheatreService().removeSelectedRow();
+		
+		else if(ConfigFlag.GEN.THEATRE_PROFILE_PROCEDURES.getValue().equals(LIST_OWNER_PROCEDURES))
+			form.lyrDetails().tabTheatre().grdTheatre().removeSelectedRow();
+			
 		updateControlState();
 	}
 
 	private void addTheatre()
 	{
-		GenForm.lyrDetailsLayer.tabTheatreContainer.grdTheatreRow tRow = form.lyrDetails().tabTheatre().grdTheatre().getRows().newRow(true);
-		tRow.setValue(new TheatreDetailLiteVo());
-		//WDEV-9907
-		tRow.setcolActive(true);
-		tRow.setReadOnly(false);
+		if(ConfigFlag.GEN.THEATRE_PROFILE_PROCEDURES.getValue().equals(SERVICE_PROCEDURES))
+		{
+			ServiceShortVo service = form.lyrDetails().tabGeneralDetails().cmbSpeciality().getValue();
+			if(service == null)
+			{
+				engine.showErrors(new String[] {"Service is mandatory."});
+				return;
+			}
+			
+			engine.open(form.getForms().Admin.ProcedureSpecialtyHotlist, new Object[] {service.getSpecialty(),Boolean.FALSE, Boolean.TRUE});	//wdev-20233 WDEV-21233 //WDEV-22034
+			
+		}
+		else if(ConfigFlag.GEN.THEATRE_PROFILE_PROCEDURES.getValue().equals(LIST_OWNER_PROCEDURES))
+		{
+			GenForm.lyrDetailsLayer.tabTheatreContainer.grdTheatreRow tRow = form.lyrDetails().tabTheatre().grdTheatre().getRows().newRow(true);
+			tRow.setValue(new TheatreDetailLiteVo());
+			//WDEV-9907
+			tRow.setcolActive(true);
+			tRow.setReadOnly(false);
+		}
 	}
 
 	private void addExclusionTime()
@@ -1437,14 +2602,66 @@ public class Logic extends BaseLogic
 	private void editSlotGeneral()
 	{
 		form.getGlobalContext().Scheduling.setProfileSlotGeneric((Profile_SlotGenericVo)form.lyrDetails().tabSlots().grdSlotsGeneral().getValue());
+		populateServiceFunctionsGlobalContext();	//wdev-20074
 		openSlotsDialog();
 	}
 
 	private void addSlotGeneral()
 	{
 		form.getGlobalContext().Scheduling.setProfileSlotGeneric(new Profile_SlotGenericVo());
+		
+		populateServiceFunctionsGlobalContext();	//wdev-20074
 		openSlotsDialog();
 	}
+	//wdev-20074
+	//set  ServiceFunctions Global Context  with a collection of active ServiceFunction from  "Clinic Type / Function" grid in general details tab
+	private void populateServiceFunctionsGlobalContext()
+	{
+		if(  GroupProfileTypeEnumeration.rdoOutpatient.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()) || GroupProfileTypeEnumeration.rdoWardAttendance.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()))
+		{
+			if( form.lyrDetails().tabGeneralDetails().cmbSpeciality().getValue() != null )	//wdev-20262
+			{
+				
+    			ServiceFunctionLiteVoCollection voCollServiceFunctions = domain.listServiceFunctionByService(form.lyrDetails().tabGeneralDetails().cmbSpeciality().getValue());
+    			ims.core.vo.lookups.ServiceFunctionCollection temColl = new ServiceFunctionCollection();
+    			for( int h = 0; h < form.lyrDetails().tabGeneralDetails().grdServiceFunctions().getRows().size();h++)
+    			{
+    				grdServiceFunctionsRow row = form.lyrDetails().tabGeneralDetails().grdServiceFunctions().getRows().get(h);
+    				if( row.getColumnSelect() )
+    				{
+    					if( isFunctionInCollection(voCollServiceFunctions,row.getValue()) == true)	
+    						temColl.add(row.getValue());		//take only active function from  - "Clinic Type / Function" grid in general details tab
+    				}
+    			}
+    			if( temColl != null && temColl.size() > 0)
+    				form.getGlobalContext().Scheduling.setServiceFunctions(temColl);
+    			else
+    				form.getGlobalContext().Scheduling.setServiceFunctions(null);
+			
+			}
+		}
+		else
+			form.getGlobalContext().Scheduling.setServiceFunctions(null);	
+	}
+	private boolean isFunctionInCollection(ServiceFunctionLiteVoCollection voCollServiceFunctions, ims.core.vo.lookups.ServiceFunction tempLkp)
+	{
+		if( voCollServiceFunctions == null || voCollServiceFunctions.size() == 0 || tempLkp == null)
+			return false;
+		
+		for(ServiceFunctionLiteVo tempVo : voCollServiceFunctions)
+		{
+			if( tempVo != null && tempVo.getFunctionIsNotNull())
+			{
+				if( tempVo.getFunction().equals(tempLkp))
+					return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	
+	//----------
 
 	private void openSlotsDialog()
 	{
@@ -1472,7 +2689,8 @@ public class Logic extends BaseLogic
 		form.getGlobalContext().Scheduling.setListOwnerCollection(getSelectedListOwnersColl());
 		form.getGlobalContext().Scheduling.setDirectoryofServicesCollection(getSelectedDosColl());
 
-		engine.open(form.getForms().Scheduling.ProfilesSlotGeneric);
+		
+		engine.open(form.getForms().Scheduling.ProfilesSlotGeneric,new Object[] {form.lyrDetails().tabGeneralDetails().cmbHospital().getValue(),(GroupFlexibleProfileEnumeration.rdoYes.equals(form.lyrDetails().tabGeneralDetails().GroupFlexibleProfile().getValue()) ? Boolean.TRUE:Boolean.FALSE), form.lyrDetails().tabGeneralDetails().chkProfileHasChooseAndBookActivity().getValue()});	//wdev-20188
 	}
 
 	private void addListOwner()
@@ -1503,39 +2721,62 @@ public class Logic extends BaseLogic
 
 	private void updateRecord()
 	{
+		
+		form.getLocalContext().setprofileHasSessions(form.grdProfiles().getValue() != null && form.grdProfiles().getValue().getLastGenDate() != null);//WDEV-21906 WDEV-22294
 		form.setMode(FormMode.EDIT);
-		form.lyrDetails().tabGeneralDetails().chkProfileActive().setEnabled(true);
+		
+		//form.lyrDetails().tabGeneralDetails().chkProfileActive().setEnabled(true);
 
-		if (ConfigFlag.DOM.SCHEDULING_SLOTS_CREATION.getValue().equals("Choose and Book"))
+		/*if (ConfigFlag.DOM.SCHEDULING_SLOTS_CREATION.getValue().equals("Choose and Book"))		//wdev-20074
 		{
 			// Load the dos not selected
 			ServiceShortVo voService = form.lyrDetails().tabGeneralDetails().cmbSpeciality().getValue();
 			if (voService != null)
-				loadDos(voService, true);
+				loadDos(voService, false);
+		}*/
+		if (form.getLocalContext().getCurrentProfileIsNotNull() && form.getLocalContext().getCurrentProfile().getCaseNoteFolderLocation() != null && !Boolean.TRUE.equals(form.getLocalContext().getCurrentProfile().getCaseNoteFolderNotRequired())) //WDEV-19631
+		{
+			if (!Boolean.TRUE.equals(form.getLocalContext().getCurrentProfile().getCaseNoteFolderLocation().getCaseNoteFolderLocation()))
+			{
+				form.getLocalContext().getCurrentProfile().setCaseNoteFolderLocation(null);
+				//form.lyrDetails().tabGeneralDetails().txtCaseNoteLocation().setValue(null);	//wdev-20074
+				form.lyrDetails().tabGeneralDetails().qmbCaseNoteLocation().setValue(null);		//wdev-20074
+			}
+
 		}
 	}
 
 	private void addRecord()
 	{
 		form.setMode(FormMode.EDIT);
-		form.lyrDetails().tabGeneralDetails().chkProfileActive().setEnabled(true);
+		form.getGlobalContext().Scheduling.setProfile(null);
+		//form.lyrDetails().tabGeneralDetails().chkProfileActive().setEnabled(true);
 		form.getLocalContext().setCurrentProfile(new Sch_ProfileGenericVo());
 		
 		this.clearScreen();
 		form.lyrDetails().tabGeneralDetails().chkProfileActive().setValue(true);
 		form.grdProfiles().setValue(null);
+		form.getLocalContext().setprofileHasSessions(Boolean.FALSE);
 		form.lyrDetails().showtabGeneralDetails();
 		//WDEV-18369
 		form.lyrDetails().tabGeneralDetails().cmbConsMediaType().setValue(ConsultationMediaType.FACETOFACE);
+		
+		form.lyrDetails().tabGeneralDetails().GroupProfileType().setValue(GroupProfileTypeEnumeration.rdoOutpatient);	//wdev-20074
+		form.lyrDetails().tabGeneralDetails().GroupFlexibleProfile().setValue(GroupFlexibleProfileEnumeration.rdoNo);	//wdev-20074
+		
+		radioButtonGroupProfileTypeValueChanged();
 		updateControlState();
-
 	}
 
 	private void cloneRecord()
 	{
+		
+		form.grdProfiles().setValue(null);
+		form.getLocalContext().setprofileHasSessions(Boolean.FALSE);
+	
+		form.lyrDetails().tabGeneralDetails().chkProfileActive().setValue(false);			//wdev-20051
+		form.lyrDetails().tabGeneralDetails().chkReadyToGenerateSessions().setValue(false);	//wdev-20051
 		form.setMode(FormMode.EDIT);
-		form.lyrDetails().tabGeneralDetails().chkProfileActive().setValue(true);
-		form.lyrDetails().tabGeneralDetails().chkProfileActive().setEnabled(false);
 		
 		form.getLocalContext().getCurrentProfile().clearIDAndVersion();
 		if (form.getLocalContext().getCurrentProfile().getProfileSlotsIsNotNull() && form.getLocalContext().getCurrentProfile().getProfileSlots().size() > 0)
@@ -1679,11 +2920,18 @@ public class Logic extends BaseLogic
 
 	protected void onFormDialogClosed(FormName formName, DialogResult result) throws PresentationLogicException
 	{
-		if (formName.equals(form.getForms().Admin.LocationSelect) && result.equals(DialogResult.OK))
+		if (formName.equals(form.getForms().Admin.LocationSelect) && result.equals(DialogResult.OK)) //WDEV-19518
 		{
-			setLocation();
-			onCmbSpecialityValueChanged();
-		}
+			if (form.getGlobalContext().Admin.getProfileLocation() != null)
+			{	
+				setLocation(form.getGlobalContext().Admin.getProfileLocation());
+			}
+			else if (form.getGlobalContext().Admin.getProfileCaseNoteFoldersLocation() != null)
+			{	
+				setCaseNoteFolderLocation(form.getGlobalContext().Admin.getProfileCaseNoteFoldersLocation(), false);
+			}
+			cmbSpecialityValueChanged();	//wdev-20074
+		}	
 		else if (formName.equals(form.getForms().Scheduling.ProfilesSlotGeneric) && (result.equals(DialogResult.OK)))
 		{
 			Profile_SlotGenericVo vo = form.getGlobalContext().Scheduling.getProfileSlotGeneric();
@@ -1730,11 +2978,184 @@ public class Logic extends BaseLogic
 			int lastMenuItemId = form.getLocalContext().getLastMenuItem().intValue();
 			if (lastMenuItemId == GenForm.ContextMenus.SchedulingNamespace.ProfileTheatreSlots.ADD)
 			{
+				if(isOverlapingOfTime(vo) == true)	//wdev-20233
+				{
+					engine.showMessage("Overlapping of time is not allowed!");
+					return;
+				}
 				grdParentChildSlotsRow row = form.lyrDetails().tabTheatre().lyrSlots().tabTheatreSlots().grdParentChildSlots().getRows().newRow();
 				populateParentChilSlotsRow(row, vo);
 				row.setSelectable(true);
 				updateControlState();
 			}
+		}
+		else if (formName.equals(form.getForms().Admin.ProcedureSpecialtyHotlist))
+		{
+			if(result.equals(DialogResult.OK))
+			{
+				addSelectedProcedures();
+			}
+			
+			form.getGlobalContext().Clinical.setSelectedProcedures(null);
+		}
+		else if (formName.equals(form.getForms().Scheduling.FlexibleProfileSlot) && result.equals(DialogResult.OK))
+		{
+
+			ProfileParentChildSlotVo vo = form.getGlobalContext().Scheduling.getOutpatientFlexibleProfileSlot();
+
+			if (vo == null)
+				return;
+			
+			int lastMenuItemId = form.getLocalContext().getLastMenuItem().intValue();
+			
+			if (lastMenuItemId == GenForm.ContextMenus.SchedulingNamespace.FlexibleProfileSlot.ADD)		
+			{
+				//add a new row
+				grdSlotsRow row = form.lyrDetails().tabActivitiesWithSlots().grdSlots().getRows().newRow();
+				updateRowForOutpatientFlexibleSlot(vo, row);
+				
+				form.lyrDetails().tabActivitiesWithSlots().grdSlots().setValue(vo);
+				
+			}
+			else if (lastMenuItemId == GenForm.ContextMenus.SchedulingNamespace.FlexibleProfileSlot.EDIT)
+			{
+				//get selected row
+				grdSlotsRow row = form.lyrDetails().tabActivitiesWithSlots().grdSlots().getSelectedRow();
+				updateRowForOutpatientFlexibleSlot(vo, row);
+			}
+			
+			updateControlState();
+		}
+		else if (formName.equals(form.getForms().Scheduling.DosSpecialtySelection) && result.equals(DialogResult.OK))
+		{
+			DirectoryOfServiceVoCollection dosCollToAdd = form.getGlobalContext().Scheduling.getDirectoryofServicesCollection();
+			
+			for (int i = 0; i < dosCollToAdd.size(); i++)
+			{
+				if (dosCollToAdd.get(i) == null)
+					continue;
+				
+				if (dosAlreadyInList(dosCollToAdd.get(i)))
+					continue;
+				
+				grdDOSRow row = form.lyrDetails().tabDOS().grdDOS().getRows().newRow();
+				
+				row.setValue(dosCollToAdd.get(i));
+				row.setcolDosId(dosCollToAdd.get(i).getDoSId());
+				row.setcolDosName(dosCollToAdd.get(i).getDoSName());
+				row.setColSelected(true);
+			}
+			
+		}
+			
+	}
+	private boolean dosAlreadyInList(DirectoryOfServiceVo dos)
+	{
+		DirectoryOfServiceVoCollection alreadyAddedDos = form.lyrDetails().tabDOS().grdDOS().getValues();
+		
+		if (alreadyAddedDos == null || alreadyAddedDos.size() == 0)
+			return false;
+		
+		for (int i = 0; i < alreadyAddedDos.size(); i++)
+		{
+			if (alreadyAddedDos.get(i) == null)
+				continue;
+			
+			if (alreadyAddedDos.get(i).getID_DirectoryofService().equals(dos.getID_DirectoryofService()))
+				return true;
+		}
+		
+		return false;
+		
+	}
+
+	//wdev-20233
+	private boolean isOverlapingOfTime(ProfileParentChildSlotVo vo)
+	{
+		if( form.lyrDetails().tabTheatre().lyrSlots().tabTheatreSlots().grdParentChildSlots().getRows().size() == 0)
+			return false;
+		boolean flagis = false;
+		for(int i = 0;i < form.lyrDetails().tabTheatre().lyrSlots().tabTheatreSlots().grdParentChildSlots().getRows().size();i++)
+		{
+			ProfileParentChildSlotVo tempVo = form.lyrDetails().tabTheatre().lyrSlots().tabTheatreSlots().grdParentChildSlots().getRows().get(i).getValue();
+			if( tempVo != null && vo != null && tempVo.getStartTime() != null &&  tempVo.getEndTmIsNotNull() && vo.getStartTimeIsNotNull() && vo.getEndTmIsNotNull())
+			{
+				if( ( vo.getStartTime().isLessThan(tempVo.getStartTime()) && vo.getEndTm().isLessThan(tempVo.getStartTime())) || ( vo.getStartTime().isGreaterThan(tempVo.getEndTm()) &&  vo.getEndTm().isGreaterThan(tempVo.getEndTm())))
+					;
+				else
+					flagis = true;
+			}
+		}
+		return flagis;
+	}
+
+	private void updateRowForOutpatientFlexibleSlot(ProfileParentChildSlotVo vo, grdSlotsRow row)
+	{
+		row.setColStartTime(vo.getStartTime() != null ? vo.getStartTime().toString() : "");
+		row.setColDuration(vo.getDuration() != null ? vo.getDuration().toString() : "");
+		row.setColPriority(vo.getPriority() != null ? vo.getPriority().getText() : "");
+		row.setColActive(vo.getIsActive());
+		row.setValue(vo);
+	}
+	
+	//WDEV-19518
+	private void setCaseNoteFolderLocation(LocShortVo profileCaseNoteFoldersLocation, boolean wasAlreadySavedAgainstProfile)
+	{
+		
+		Sch_ProfileGenericVo voProfile = form.getLocalContext().getCurrentProfile();
+		voProfile.setCaseNoteFolderLocation(profileCaseNoteFoldersLocation);
+		form.getLocalContext().setCurrentProfile(voProfile);
+
+		if (profileCaseNoteFoldersLocation == null)
+			return;
+		
+		//wdev-20233
+		form.lyrDetails().tabGeneralDetails().qmbCaseNoteLocation().setValue(!wasAlreadySavedAgainstProfile && Boolean.TRUE.equals(profileCaseNoteFoldersLocation.getCaseNoteFolderLocation()) ? profileCaseNoteFoldersLocation : profileCaseNoteFoldersLocation);
+		if( form.lyrDetails().tabGeneralDetails().qmbCaseNoteLocation().getValues() == null)
+		{
+			if( voProfile.getCaseNoteFolderLocationIsNotNull())
+			{
+				form.lyrDetails().tabGeneralDetails().qmbCaseNoteLocation().newRow(voProfile.getCaseNoteFolderLocation(), voProfile.getCaseNoteFolderLocation().getName());
+				form.lyrDetails().tabGeneralDetails().qmbCaseNoteLocation().setValue(voProfile.getCaseNoteFolderLocation());
+			}
+		}
+		else if( form.lyrDetails().tabGeneralDetails().qmbCaseNoteLocation().getValues() != null && !form.lyrDetails().tabGeneralDetails().qmbCaseNoteLocation().getValues().contains(voProfile.getSchLocation()))
+		{
+			if( voProfile.getCaseNoteFolderLocationIsNotNull())
+			{
+				form.lyrDetails().tabGeneralDetails().qmbCaseNoteLocation().newRow(voProfile.getCaseNoteFolderLocation(), voProfile.getCaseNoteFolderLocation().getName());
+				form.lyrDetails().tabGeneralDetails().qmbCaseNoteLocation().setValue(voProfile.getCaseNoteFolderLocation());
+			}
+
+		}
+
+	}
+
+	private void addSelectedProcedures()
+	{
+		if(form.getGlobalContext().Clinical.getSelectedProcedures() == null)
+			return;
+
+		for(ProcedureLiteVo procedure : form.getGlobalContext().Clinical.getSelectedProcedures())
+		{
+			if(procedure == null)
+				continue;
+			
+			GenForm.lyrDetailsLayer.tabTheatreContainer.grdTheatreServiceRow tRow = form.lyrDetails().tabTheatre().grdTheatreService().getRows().newRow(true);
+			
+			ProcedureNameVo proc = new ProcedureNameVo();
+			proc.setID_Procedure(procedure.getID_Procedure());
+			proc.setProcedureName(procedure.getProcedureName());
+
+			TheatreDetailLiteVo theatreProcedure = new TheatreDetailLiteVo();
+			theatreProcedure.setProcedure(proc);
+			
+			tRow.setcolProcedure(proc.getProcedureName());
+			tRow.setcolProcedureReadOnly(true);
+			tRow.setcolActive(true);
+			tRow.setReadOnly(false);
+
+			tRow.setValue(theatreProcedure);
 		}
 	}
 
@@ -1776,17 +3197,62 @@ public class Logic extends BaseLogic
 
 		return false;
 	}
-
-	private void setLocation()
+	//WDEV-19518
+	private void setLocation(LocShortVo voLocShort)
 	{
-		LocShortVo voLocShort = form.getGlobalContext().Admin.getProfileLocation();
-
 		Sch_ProfileGenericVo voProfile = form.getLocalContext().getCurrentProfile();
 		voProfile.setSchLocation(voLocShort);
+		boolean isSelectedLocationCaseNote = voLocShort != null && Boolean.TRUE.equals(voLocShort.getCaseNoteFolderLocation());
+		if (voProfile.getID_Sch_Profile() == null && voProfile.getCaseNoteFolderLocation() == null && !Boolean.TRUE.equals(voProfile.getCaseNoteFolderNotRequired()))
+		{	
+			voProfile.setCaseNoteFolderLocation(isSelectedLocationCaseNote ? voLocShort : null);
+			//form.lyrDetails().tabGeneralDetails().txtCaseNoteLocation().setValue(isSelectedLocationCaseNote ? voLocShort.getName() : null);
+						
+			//wdev-20074
+			form.lyrDetails().tabGeneralDetails().qmbCaseNoteLocation().setValue(isSelectedLocationCaseNote ? voLocShort : null);
+			if( form.lyrDetails().tabGeneralDetails().qmbCaseNoteLocation().getValues() == null)
+			{
+				if( voLocShort != null)
+				{
+					form.lyrDetails().tabGeneralDetails().qmbCaseNoteLocation().newRow(voLocShort, voLocShort.getName());
+					form.lyrDetails().tabGeneralDetails().qmbCaseNoteLocation().setValue(voLocShort);
+				}
+			}
+			else if( form.lyrDetails().tabGeneralDetails().qmbCaseNoteLocation().getValues() != null && !form.lyrDetails().tabGeneralDetails().qmbCaseNoteLocation().getValues().contains(voProfile.getSchLocation()))
+			{
+				if( voLocShort != null)
+				{
+					form.lyrDetails().tabGeneralDetails().qmbCaseNoteLocation().newRow(voLocShort, voLocShort.getName());
+					form.lyrDetails().tabGeneralDetails().qmbCaseNoteLocation().setValue(voLocShort);
+				}
+
+			}
+
+		}
 		form.getLocalContext().setCurrentProfile(voProfile);
 
-		form.lyrDetails().tabGeneralDetails().txtLocation().setValue(voLocShort.getName());
-	}
+		//form.lyrDetails().tabGeneralDetails().txtLocation().setValue(voLocShort != null ? voLocShort.getName() : null ); //wdev-20233
+		//wdev-20233
+		form.lyrDetails().tabGeneralDetails().qmbLocation().setValue(voProfile.getSchLocation());
+		if( form.lyrDetails().tabGeneralDetails().qmbLocation().getValues() == null)
+		{
+			if( voProfile.getSchLocationIsNotNull())
+			{
+				form.lyrDetails().tabGeneralDetails().qmbLocation().newRow(voProfile.getSchLocation(), voProfile.getSchLocation().getName());
+				form.lyrDetails().tabGeneralDetails().qmbLocation().setValue(voProfile.getSchLocation());
+			}
+		}
+		else if( form.lyrDetails().tabGeneralDetails().qmbLocation().getValues() != null && !form.lyrDetails().tabGeneralDetails().qmbLocation().getValues().contains(voProfile.getSchLocation()))
+		{
+			if( voProfile.getSchLocationIsNotNull())
+			{
+				form.lyrDetails().tabGeneralDetails().qmbLocation().newRow(voProfile.getSchLocation(), voProfile.getSchLocation().getName());
+				form.lyrDetails().tabGeneralDetails().qmbLocation().setValue(voProfile.getSchLocation());
+			}
+
+		}
+		
+	}	
 
 	private void populateSlotsRow(GenForm.lyrDetailsLayer.tabSlotsContainer.grdSlotsGeneralRow row, Profile_SlotGenericVo vo, boolean selectable)
 	{
@@ -1800,8 +3266,24 @@ public class Logic extends BaseLogic
 			row.setcolSlotsPriority(vo.getPriority().getText());
 		if (vo.getStartTmIsNotNull())
 			row.setcolSlotsStartTime(vo.getStartTm().toString());
-
-		row.setSelectable(selectable);
+		row.setcolSlotsEndTime(vo.getEndTimeIsNotNull() ? vo.getEndTime().toString() : null); //WDEV-19702
+		
+		//wdev-20262
+		if( vo.getFunctionsIsNotNull())
+		{
+			if( vo.getFunctions().size() > 0)
+			{
+				ServiceFunctionLiteVo tempServVo = domain.getServiceFunction(vo.getFunctions().get(0));
+				row.setcolSlotsFunction(tempServVo != null && tempServVo.getFunctionIsNotNull() ? tempServVo.getFunction().getIItemText():null);
+				
+			}
+			else
+				row.setcolSlotsFunction(null);
+		}
+		else
+			row.setcolSlotsFunction(null);
+		
+		row.setSelectable(selectable && FormMode.EDIT.equals(form.getMode())); //WDEV-23611 
 	}
 
 	protected void onCmbIntervalTypeValueChanged() throws PresentationLogicException
@@ -1814,21 +3296,26 @@ public class Logic extends BaseLogic
 		if (form.lyrDetails().tabProfileDetails().cmbIntervalType().getValue() == null)
 		{
 			enableAndClearIntervalControls(NOINTERVAL, false, bClearFields);
+			form.lyrDetails().tabProfileDetails().lblMonthWeek().setValue("");	//wdev-20074
 			return;
 		}
 
 		if (form.lyrDetails().tabProfileDetails().cmbIntervalType().getValue().equals(Profile_Interval_Type.MONTHLY))
 		{
+			form.lyrDetails().tabProfileDetails().lblMonthWeek().setValue("Month(s)");	//wdev-20074
 			enableAndClearIntervalControls(MONTHLYINTERVAL, true, bClearFields);
 		}
 		else if (form.lyrDetails().tabProfileDetails().cmbIntervalType().getValue().equals(Profile_Interval_Type.WEEKLY))
 		{
+			form.lyrDetails().tabProfileDetails().lblMonthWeek().setValue("Week(s)");	//wdev-20074
 			enableAndClearIntervalControls(WEEKLYINTERVAL, true, bClearFields);
 		}
 	}
 
 	private void enableAndClearIntervalControls(int intervalType, boolean bEnable, boolean bClearFields)
 	{
+		boolean profileHasSessions = Boolean.TRUE.equals(form.getLocalContext().getprofileHasSessions());
+		
 		if (bClearFields)
 		{
 			form.lyrDetails().tabProfileDetails().chkFive().setValue(false);
@@ -1866,19 +3353,19 @@ public class Logic extends BaseLogic
 				form.lyrDetails().tabProfileDetails().chkSunday().setEnabled(false);
 			break;
 			case MONTHLYINTERVAL :
-				form.lyrDetails().tabProfileDetails().chkFive().setEnabled(form.getMode().equals(FormMode.EDIT));
-				form.lyrDetails().tabProfileDetails().chkFour().setEnabled(form.getMode().equals(FormMode.EDIT));
-				form.lyrDetails().tabProfileDetails().chkThree().setEnabled(form.getMode().equals(FormMode.EDIT));
-				form.lyrDetails().tabProfileDetails().chkTwo().setEnabled(form.getMode().equals(FormMode.EDIT));
-				form.lyrDetails().tabProfileDetails().chkOne().setEnabled(form.getMode().equals(FormMode.EDIT));
+				form.lyrDetails().tabProfileDetails().chkFive().setEnabled(!profileHasSessions && form.getMode().equals(FormMode.EDIT));
+				form.lyrDetails().tabProfileDetails().chkFour().setEnabled(!profileHasSessions && form.getMode().equals(FormMode.EDIT));
+				form.lyrDetails().tabProfileDetails().chkThree().setEnabled(!profileHasSessions && form.getMode().equals(FormMode.EDIT));
+				form.lyrDetails().tabProfileDetails().chkTwo().setEnabled(!profileHasSessions && form.getMode().equals(FormMode.EDIT));
+				form.lyrDetails().tabProfileDetails().chkOne().setEnabled(!profileHasSessions && form.getMode().equals(FormMode.EDIT));
 
-				form.lyrDetails().tabProfileDetails().chkMonday().setEnabled(form.getMode().equals(FormMode.EDIT));
-				form.lyrDetails().tabProfileDetails().chkTuesday().setEnabled(form.getMode().equals(FormMode.EDIT));
-				form.lyrDetails().tabProfileDetails().chkWednesday().setEnabled(form.getMode().equals(FormMode.EDIT));
-				form.lyrDetails().tabProfileDetails().chkThursday().setEnabled(form.getMode().equals(FormMode.EDIT));
-				form.lyrDetails().tabProfileDetails().chkFriday().setEnabled(form.getMode().equals(FormMode.EDIT));
-				form.lyrDetails().tabProfileDetails().chkSaturday().setEnabled(form.getMode().equals(FormMode.EDIT));
-				form.lyrDetails().tabProfileDetails().chkSunday().setEnabled(form.getMode().equals(FormMode.EDIT));
+				form.lyrDetails().tabProfileDetails().chkMonday().setEnabled(!profileHasSessions && form.getMode().equals(FormMode.EDIT));
+				form.lyrDetails().tabProfileDetails().chkTuesday().setEnabled(!profileHasSessions && form.getMode().equals(FormMode.EDIT));
+				form.lyrDetails().tabProfileDetails().chkWednesday().setEnabled(!profileHasSessions && form.getMode().equals(FormMode.EDIT));
+				form.lyrDetails().tabProfileDetails().chkThursday().setEnabled(!profileHasSessions && form.getMode().equals(FormMode.EDIT));
+				form.lyrDetails().tabProfileDetails().chkFriday().setEnabled(!profileHasSessions && form.getMode().equals(FormMode.EDIT));
+				form.lyrDetails().tabProfileDetails().chkSaturday().setEnabled(!profileHasSessions && form.getMode().equals(FormMode.EDIT));
+				form.lyrDetails().tabProfileDetails().chkSunday().setEnabled(!profileHasSessions && form.getMode().equals(FormMode.EDIT));
 			break;
 			case WEEKLYINTERVAL :
 				form.lyrDetails().tabProfileDetails().chkFive().setEnabled(false);
@@ -1887,13 +3374,13 @@ public class Logic extends BaseLogic
 				form.lyrDetails().tabProfileDetails().chkTwo().setEnabled(false);
 				form.lyrDetails().tabProfileDetails().chkOne().setEnabled(false);
 
-				form.lyrDetails().tabProfileDetails().chkMonday().setEnabled(form.getMode().equals(FormMode.EDIT));
-				form.lyrDetails().tabProfileDetails().chkTuesday().setEnabled(form.getMode().equals(FormMode.EDIT));
-				form.lyrDetails().tabProfileDetails().chkWednesday().setEnabled(form.getMode().equals(FormMode.EDIT));
-				form.lyrDetails().tabProfileDetails().chkThursday().setEnabled(form.getMode().equals(FormMode.EDIT));
-				form.lyrDetails().tabProfileDetails().chkFriday().setEnabled(form.getMode().equals(FormMode.EDIT));
-				form.lyrDetails().tabProfileDetails().chkSaturday().setEnabled(form.getMode().equals(FormMode.EDIT));
-				form.lyrDetails().tabProfileDetails().chkSunday().setEnabled(form.getMode().equals(FormMode.EDIT));
+				form.lyrDetails().tabProfileDetails().chkMonday().setEnabled(!profileHasSessions && form.getMode().equals(FormMode.EDIT));
+				form.lyrDetails().tabProfileDetails().chkTuesday().setEnabled(!profileHasSessions && form.getMode().equals(FormMode.EDIT));
+				form.lyrDetails().tabProfileDetails().chkWednesday().setEnabled(!profileHasSessions && form.getMode().equals(FormMode.EDIT));
+				form.lyrDetails().tabProfileDetails().chkThursday().setEnabled(!profileHasSessions && form.getMode().equals(FormMode.EDIT));
+				form.lyrDetails().tabProfileDetails().chkFriday().setEnabled(!profileHasSessions && form.getMode().equals(FormMode.EDIT));
+				form.lyrDetails().tabProfileDetails().chkSaturday().setEnabled(!profileHasSessions && form.getMode().equals(FormMode.EDIT));
+				form.lyrDetails().tabProfileDetails().chkSunday().setEnabled(!profileHasSessions && form.getMode().equals(FormMode.EDIT));
 			break;
 		}
 	}
@@ -1907,8 +3394,19 @@ public class Logic extends BaseLogic
 		voName.setSurname(text);
 		filter.setQueryName(voName);
 
-		HcpLiteVoCollection voCollHcp = domain.listHcpLite(filter);
-		if (voCollHcp.size() == 0)
+		//HcpLiteVoCollection voCollHcp = domain.listHcpLite(filter);
+		//wdev-20074
+		if( form.lyrDetails().tabGeneralDetails().cmbSpeciality().getValue() == null )
+		{
+			engine.showMessage("Please Select a Service!");
+			return; 
+		}
+		ims.core.vo.lookups.ServiceFunctionCollection tempColl = getFunctionsCollFromGeneralDetailsTab();	//wdev-20262
+				
+		HcpLiteVoCollection voCollHcp = domain.listHcpLiteBySerbiceFunction(filter,form.lyrDetails().tabGeneralDetails().cmbSpeciality().getValue(),tempColl);
+		//-----------
+		
+		if( voCollHcp == null || voCollHcp.size() == 0)
 		{
 			engine.showMessage("No matching records found");
 			return;
@@ -1928,7 +3426,7 @@ public class Logic extends BaseLogic
 
 	protected void onBtnSearchClick() throws PresentationLogicException
 	{
-		searchProfiles();
+		searchProfiles(true);
 		updateControlState();//WDEV-14644
 		if (form.grdProfiles().getRows().size() == 0)
 			engine.showMessage("No matching Profiles found.");
@@ -1946,10 +3444,12 @@ public class Logic extends BaseLogic
 		form.ccListOwner().clear();
 		form.chkFilterOutpatients().setValue(false);
 		form.chkFilterTheatre().setValue(false);
+		form.chkFilterWardAttendance().setValue(false);	//wdev-20074
 		
 		form.grdProfiles().getRows().clear();
 		
 		this.clearScreen();
+		form.getLocalContext().setCurrentProfile(null);
 		updateControlState();//WDEV-14644
 	}
 
@@ -1983,20 +3483,123 @@ public class Logic extends BaseLogic
 		form.getContextMenus().Scheduling.hideAllProfileActivityMenuItems();
 		form.getContextMenus().Scheduling.hideAllProfileTheatreTCITimesMenuItems(); //WDEV-11777
 		form.getContextMenus().Scheduling.hideAllProfileTheatreSlotsMenuItems(); //WDEV-12918
+		form.getContextMenus().Scheduling.hideAllFlexibleProfileSlotMenuItems();
+		form.getContextMenus().Scheduling.hideAllProfileServiceFunctionsMenuItems();	//wdev-20074
+		form.getContextMenus().Scheduling.hideAllProfileDOSMenuItems();
+		
+		//WDEV-21906
+		Boolean profileHasSessions = Boolean.TRUE.equals(form.getLocalContext().getprofileHasSessions());
+		Boolean selectedProfile = form.grdProfiles().getValue() != null;
+		
+		form.lyrDetails().tabGeneralDetails().GroupProfileType().setEnabled(form.getMode().equals(FormMode.EDIT) && !selectedProfile);
+		form.lyrDetails().tabGeneralDetails().GroupFlexibleProfile().setEnabled(form.getMode().equals(FormMode.EDIT) && !selectedProfile);
+		form.lyrDetails().tabGeneralDetails().chkProfileHasChooseAndBookActivity().setEnabled(form.getMode().equals(FormMode.EDIT) && !selectedProfile); //WDEV-21137
+		form.lyrDetails().tabGeneralDetails().txtProfileName().setEnabled(form.getMode().equals(FormMode.EDIT) && ((selectedProfile && !profileHasSessions) || !selectedProfile));
+		form.lyrDetails().tabGeneralDetails().chkProfileActive().setEnabled(form.getMode().equals(FormMode.EDIT));//WDEV-22299
+		form.lyrDetails().tabGeneralDetails().cmbHospital().setEnabled(form.getMode().equals(FormMode.EDIT) && ((selectedProfile && !profileHasSessions) || !selectedProfile));
+		form.lyrDetails().tabGeneralDetails().qmbLocation().setEnabled(form.getMode().equals(FormMode.EDIT) && ((selectedProfile && !profileHasSessions) || !selectedProfile));
+		form.lyrDetails().tabGeneralDetails().cmbSpeciality().setEnabled(form.getMode().equals(FormMode.EDIT) && ((selectedProfile && !profileHasSessions) || !selectedProfile));
+		form.lyrDetails().tabGeneralDetails().grdServiceFunctions().setEnabled(form.getMode().equals(FormMode.EDIT) && ((selectedProfile && !profileHasSessions) || !selectedProfile));
+		form.lyrDetails().tabGeneralDetails().chkCaseNotesNotRequired().setEnabled(form.getMode().equals(FormMode.EDIT) && ((selectedProfile && !profileHasSessions) || !selectedProfile));
+		form.lyrDetails().tabGeneralDetails().cmbTheatreType().setEnabled(form.getMode().equals(FormMode.EDIT) && ((selectedProfile && !profileHasSessions) || !selectedProfile));
+		form.lyrDetails().tabGeneralDetails().chklistAnaesthetictype().setEnabled(form.getMode().equals(FormMode.EDIT) && ((selectedProfile && !profileHasSessions) || !selectedProfile));
+		form.lyrDetails().tabGeneralDetails().qmbCaseNoteLocation().setEnabled(form.getMode().equals(FormMode.EDIT) && ((selectedProfile && !profileHasSessions) || !selectedProfile));
+		form.lyrDetails().tabGeneralDetails().cmbConsMediaType().setEnabled(form.getMode().equals(FormMode.EDIT) && ((selectedProfile && !profileHasSessions) || !selectedProfile));
+		form.lyrDetails().tabGeneralDetails().intAutoGeneratePeriodWeeks().setEnabled(form.getMode().equals(FormMode.EDIT) && ((selectedProfile && !profileHasSessions) || !selectedProfile));
+		form.lyrDetails().tabGeneralDetails().chkReadyToGenerateSessions().setEnabled(form.getMode().equals(FormMode.EDIT) && Boolean.TRUE.equals(form.lyrDetails().tabGeneralDetails().chkProfileActive().getValue()));
+		
+		form.lyrDetails().tabProfileDetails().dteStartDate().setEnabled(form.getMode().equals(FormMode.EDIT) && ((selectedProfile && !profileHasSessions) || !selectedProfile));
+		form.lyrDetails().tabProfileDetails().dteEndDate().setEnabled(form.getMode().equals(FormMode.EDIT));
+		form.lyrDetails().tabProfileDetails().timStartTime().setEnabled(form.getMode().equals(FormMode.EDIT) && ((selectedProfile && !profileHasSessions) || !selectedProfile));
+		form.lyrDetails().tabProfileDetails().timEndTime().setEnabled(form.getMode().equals(FormMode.EDIT) && ((selectedProfile && !profileHasSessions) || !selectedProfile));
+		form.lyrDetails().tabProfileDetails().cmbIntervalType().setEnabled(form.getMode().equals(FormMode.EDIT) && ((selectedProfile && !profileHasSessions) || !selectedProfile));
+		form.lyrDetails().tabProfileDetails().intIntSize().setEnabled(form.getMode().equals(FormMode.EDIT) && ((selectedProfile && !profileHasSessions) || !selectedProfile));
+		
+		form.lyrDetails().tabListOwners().cmbListType().setEnabled(form.getMode().equals(FormMode.EDIT) && ((selectedProfile && !profileHasSessions) || !selectedProfile));
+		
+		form.lyrDetails().tabSlots().chkSlotsActiveOnly().setEnabled(true); //WDEV-23611 - enabled all the time, even for generated profiles // && ((selectedProfile && !profileHasSessions) || !selectedProfile));
+				
+		if(form.getMode().equals(FormMode.EDIT))
+		{
+			form.lyrDetails().tabListOwners().grdListOwner().setReadOnly(selectedProfile && profileHasSessions);
+			form.lyrDetails().tabDOS().grdDOS().setReadOnly(selectedProfile && profileHasSessions);
+			form.lyrDetails().tabSlots().grdSlotsGeneral().setReadOnly(selectedProfile && profileHasSessions);
+			form.lyrDetails().tabActivities().grdActivities().setReadOnly(selectedProfile && profileHasSessions);
+			form.lyrDetails().tabActivitiesWithSlots().grdActivitiesSlots().setReadOnly(selectedProfile && profileHasSessions);
+			form.lyrDetails().tabActivitiesWithSlots().grdSlots().setReadOnly(selectedProfile && profileHasSessions);
+			form.lyrDetails().tabTheatre().grdTheatre().setReadOnly(selectedProfile);
+			form.lyrDetails().tabTheatre().grdTheatreService().setReadOnly(selectedProfile);
+
+			
+			form.lyrDetails().tabTheatre().lyrSlots().tabTCI().grdTCITimes().setReadOnly(selectedProfile && profileHasSessions);
+			form.lyrDetails().tabTheatre().lyrSlots().tabTheatreSlots().grdParentChildSlots().setReadOnly(selectedProfile && profileHasSessions);
+			
+			form.lyrDetails().tabExclusion().grdExclDates().setReadOnly(selectedProfile && profileHasSessions);
+			form.lyrDetails().tabExclusion().grdExclPeriods().setReadOnly(selectedProfile && profileHasSessions);
+			
+			form.lyrDetails().tabTemplates().grdTemplates().setReadOnly(selectedProfile && profileHasSessions);
+		}
+		
+		//wdev-20074
+		//form.lyrDetails().tabGeneralDetails().GroupProfileType().setEnabled(form.getMode().equals(FormMode.EDIT));
+		//form.lyrDetails().tabGeneralDetails().GroupFlexibleProfile().setEnabled(form.getMode().equals(FormMode.EDIT));
+		form.lyrDetails().tabGeneralDetails().lblProfileTypeStar().setVisible(form.getMode().equals(FormMode.EDIT) && !selectedProfile);
+		form.lyrDetails().tabGeneralDetails().lblFlexibleProfileStar().setVisible( form.getMode().equals(FormMode.EDIT) && ( GroupProfileTypeEnumeration.rdoOutpatient.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()) ) && !selectedProfile);
+		//form.lyrDetails().tabGeneralDetails().grdServiceFunctions().setEnabled(form.getMode().equals(FormMode.EDIT));
+		//form.lyrDetails().tabGeneralDetails().intAutoGeneratePeriodWeeks().setEnabled(form.getMode().equals(FormMode.EDIT));
+		//form.lyrDetails().tabGeneralDetails().chkReadyToGenerateSessions().setEnabled(form.getMode().equals(FormMode.EDIT));
+		
+		//outpatient and ward attendance and theatre profile type
+		form.lyrDetails().tabGeneralDetails().lblFlexibleProfile().setVisible(GroupProfileTypeEnumeration.rdoOutpatient.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()) || GroupProfileTypeEnumeration.rdoWardAttendance.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()));
+		form.lyrDetails().tabGeneralDetails().GroupFlexibleProfile().setVisible(GroupProfileTypeEnumeration.rdoOutpatient.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()) || GroupProfileTypeEnumeration.rdoWardAttendance.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()));
+		
+		form.lyrDetails().tabGeneralDetails().GroupFlexibleProfile().setVisible(GroupFlexibleProfileEnumeration.rdoYes,GroupProfileTypeEnumeration.rdoOutpatient.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()) || GroupProfileTypeEnumeration.rdoWardAttendance.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()));
+		form.lyrDetails().tabGeneralDetails().GroupFlexibleProfile().setVisible(GroupFlexibleProfileEnumeration.rdoNo, GroupProfileTypeEnumeration.rdoOutpatient.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()));
+		form.lyrDetails().tabGeneralDetails().GroupFlexibleProfile().setEnabled(GroupFlexibleProfileEnumeration.rdoYes, GroupProfileTypeEnumeration.rdoOutpatient.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()) || GroupProfileTypeEnumeration.rdoWardAttendance.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()));
+		form.lyrDetails().tabGeneralDetails().GroupFlexibleProfile().setEnabled(GroupFlexibleProfileEnumeration.rdoNo, GroupProfileTypeEnumeration.rdoOutpatient.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()));
+		
+		form.lyrDetails().tabGeneralDetails().chkProfileHasChooseAndBookActivity().setVisible(GroupProfileTypeEnumeration.rdoOutpatient.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()));
+		form.lyrDetails().tabGeneralDetails().chkCaseNotesNotRequired().setVisible(GroupProfileTypeEnumeration.rdoOutpatient.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()) || GroupProfileTypeEnumeration.rdoWardAttendance.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()));
+		form.lyrDetails().tabGeneralDetails().lblCaseNoteLocation().setVisible(GroupProfileTypeEnumeration.rdoOutpatient.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()) || GroupProfileTypeEnumeration.rdoWardAttendance.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()));
+		//form.lyrDetails().tabGeneralDetails().txtCaseNoteLocation().setVisible(true);
+		//WDEV-21203
+		form.lyrDetails().tabGeneralDetails().GroupHospital().setVisible(GroupProfileTypeEnumeration.rdoOutpatient.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()) || GroupProfileTypeEnumeration.rdoWardAttendance.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()));
+		form.lyrDetails().tabGeneralDetails().qmbCaseNoteLocation().setVisible(GroupProfileTypeEnumeration.rdoOutpatient.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()) || GroupProfileTypeEnumeration.rdoWardAttendance.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()));
+		
+		//form.lyrDetails().tabGeneralDetails().btnCaseNotesLocation().setVisible(true);
+		//form.lyrDetails().tabGeneralDetails().lblCNLocStar().setVisible(true);
+		form.lyrDetails().tabGeneralDetails().lblConsultationType().setVisible(GroupProfileTypeEnumeration.rdoOutpatient.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()) || GroupProfileTypeEnumeration.rdoWardAttendance.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()));
+		form.lyrDetails().tabGeneralDetails().cmbConsMediaType().setVisible(GroupProfileTypeEnumeration.rdoOutpatient.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()) || GroupProfileTypeEnumeration.rdoWardAttendance.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()));
+		
+		form.lyrDetails().tabGeneralDetails().lblTheatreType().setVisible(GroupProfileTypeEnumeration.rdoTheatre.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()));
+		form.lyrDetails().tabGeneralDetails().cmbTheatreType().setVisible(GroupProfileTypeEnumeration.rdoTheatre.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()));
+		form.lyrDetails().tabGeneralDetails().lblAnaesType().setVisible(GroupProfileTypeEnumeration.rdoTheatre.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()));
+		form.lyrDetails().tabGeneralDetails().chklistAnaesthetictype().setVisible(GroupProfileTypeEnumeration.rdoTheatre.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()));
+	
+		if( GroupProfileTypeEnumeration.rdoTheatre.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()))
+			form.lyrDetails().tabGeneralDetails().grdServiceFunctions().setVisible(false);
+				
+		//----------------------
+		
+		form.getContextMenus().Scheduling.getProfileDOSADD_SPECIALTY_DOSItem().setVisible(form.getMode().equals(FormMode.EDIT) && !profileHasSessions);
 		
 		if (ConfigFlag.UI.CAN_CONFIGURE_THEATRE_PROFILES.getValue())
 		{
-			form.lyrDetails().tabGeneralDetails().chkTheatre().setVisible(true);
-			form.lyrDetails().tabGeneralDetails().lblTheatreType().setVisible(true);
-			form.lyrDetails().tabGeneralDetails().chkTheatre().setEnabled(form.getMode().equals(FormMode.VIEW) ? false : true);
-			form.lyrDetails().tabGeneralDetails().cmbTheatreType().setVisible(true);
-			form.lyrDetails().tabGeneralDetails().cmbTheatreType().setEnabled(form.getMode().equals(FormMode.EDIT) && form.lyrDetails().tabGeneralDetails().chkTheatre().getValue() ? true : false);
-			//WDEV-12918
-			form.lyrDetails().tabGeneralDetails().chklistAnaesthetictype().setVisible(true);
-			form.lyrDetails().tabGeneralDetails().chklistAnaesthetictype().setEnabled(form.getMode().equals(FormMode.EDIT) && form.lyrDetails().tabGeneralDetails().chkTheatre().getValue() ? true : false);
+			//form.lyrDetails().tabGeneralDetails().chkTheatre().setVisible(true);		wdev-20074
+			form.lyrDetails().tabGeneralDetails().GroupProfileType().setVisible(GroupProfileTypeEnumeration.rdoTheatre, true);	//wdev-20074
+			if(GroupProfileTypeEnumeration.rdoTheatre.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()))
+			{
+    			form.lyrDetails().tabGeneralDetails().lblTheatreType().setVisible(true);
+    			//form.lyrDetails().tabGeneralDetails().chkTheatre().setEnabled(form.getMode().equals(FormMode.VIEW) ? false : true); //wdev-20074
+    			form.lyrDetails().tabGeneralDetails().cmbTheatreType().setVisible(true);
+    			//form.lyrDetails().tabGeneralDetails().cmbTheatreType().setEnabled(form.getMode().equals(FormMode.EDIT) /*&& form.lyrDetails().tabGeneralDetails().chkTheatre().getValue() */ ? true : false);   //wdev-20074
+    			//WDEV-12918
+    			form.lyrDetails().tabGeneralDetails().chklistAnaesthetictype().setVisible(true);
+    			//form.lyrDetails().tabGeneralDetails().chklistAnaesthetictype().setEnabled(form.getMode().equals(FormMode.EDIT) /* && form.lyrDetails().tabGeneralDetails().chkTheatre().getValue() */ ? true : false);  //wdev-20074
+			}
 			
 			//default SlotType according to ConfigFlag if we are adding a new TheatreProfile
-			if(form.getLocalContext().getCurrentProfile() != null && form.getLocalContext().getCurrentProfile().getID_Sch_Profile() == null && form.lyrDetails().tabGeneralDetails().cmbSlotType().getValue() == null && form.lyrDetails().tabGeneralDetails().chkTheatre().getValue() == true && form.getMode().equals(FormMode.EDIT))
+			if(form.getLocalContext().getCurrentProfile() != null && form.getLocalContext().getCurrentProfile().getID_Sch_Profile() == null && form.lyrDetails().tabGeneralDetails().cmbSlotType().getValue() == null && GroupProfileTypeEnumeration.rdoTheatre.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()) /*form.lyrDetails().tabGeneralDetails().chkTheatre().getValue() == true*/ && form.getMode().equals(FormMode.EDIT))  //wdev-20074
 			{
 				if(ConfigFlag.DOM.THEATRE_SESSION_TYPE.getValue().equals("TCI"))
 					form.lyrDetails().tabGeneralDetails().cmbSlotType().setValue(SlotType.THEATRETCITIME);
@@ -2015,7 +3618,8 @@ public class Logic extends BaseLogic
 		}
 		else
 		{
-			form.lyrDetails().tabGeneralDetails().chkTheatre().setVisible(false);
+			//form.lyrDetails().tabGeneralDetails().chkTheatre().setVisible(false);  //wdev-20074
+			form.lyrDetails().tabGeneralDetails().GroupProfileType().setVisible(GroupProfileTypeEnumeration.rdoTheatre, false);		//wdev-20074
 			form.lyrDetails().tabGeneralDetails().cmbTheatreType().setVisible(false);
 			form.lyrDetails().tabGeneralDetails().lblTheatreType().setVisible(false);
 			//WDEV-12918
@@ -2023,7 +3627,7 @@ public class Logic extends BaseLogic
 			form.lyrDetails().tabGeneralDetails().lblAnaesType().setVisible(false);
 		}
 		
-		if (form.lyrDetails().tabGeneralDetails().chkTheatre().getValue())
+		if ( GroupProfileTypeEnumeration.rdoTheatre.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()) /*form.lyrDetails().tabGeneralDetails().chkTheatre().getValue()*/)  //wdev-20074
 		{
 			form.lyrDetails().tabDOS().setHeaderVisible(false);
 			form.lyrDetails().tabSlots().setHeaderVisible(false);
@@ -2041,37 +3645,96 @@ public class Logic extends BaseLogic
 		}
 		
 		form.lyrDetails().tabActivities().setHeaderVisible(false);
-		if(form.lyrDetails().tabGeneralDetails().chkFlexible().getValue())
+		form.lyrDetails().tabActivitiesWithSlots().setHeaderVisible(false);
+		
+		if(  GroupProfileTypeEnumeration.rdoWardAttendance.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()) )  //wdev-20074
+		{
+			form.lyrDetails().tabGeneralDetails().GroupFlexibleProfile().setValue(GroupFlexibleProfileEnumeration.rdoYes);
+			
+		}
+		
+		if( GroupFlexibleProfileEnumeration.rdoYes.equals(form.lyrDetails().tabGeneralDetails().GroupFlexibleProfile().getValue()) /*form.lyrDetails().tabGeneralDetails().chkFlexible().getValue()*/)	//wdev-20074
 		{
 			form.lyrDetails().tabDOS().setHeaderVisible(false);
 			form.lyrDetails().tabSlots().setHeaderVisible(false);
-			form.lyrDetails().tabActivities().setHeaderVisible(true);
+			
+			if (ConfigFlag.DOM.PROFILE_FLEXIBLE_TYPE.getValue().equals("WITHOUT_SLOTS"))
+				form.lyrDetails().tabActivities().setHeaderVisible(true);
+			else if (ConfigFlag.DOM.PROFILE_FLEXIBLE_TYPE.getValue().equals("WITH_SLOTS"))
+				form.lyrDetails().tabActivitiesWithSlots().setHeaderVisible(true);
 		}
-
+		
+		if( !GroupProfileTypeEnumeration.rdoTheatre.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()))		//wdev-20074
+		{
+    		form.lyrDetails().tabGeneralDetails().lblCaseNoteLocation().setVisible(!form.lyrDetails().tabGeneralDetails().chkCaseNotesNotRequired().getValue());
+    		//form.lyrDetails().tabGeneralDetails().txtCaseNoteLocation().setVisible(!form.lyrDetails().tabGeneralDetails().chkCaseNotesNotRequired().getValue());
+    		form.lyrDetails().tabGeneralDetails().qmbCaseNoteLocation().setVisible(!form.lyrDetails().tabGeneralDetails().chkCaseNotesNotRequired().getValue());
+    		//form.lyrDetails().tabGeneralDetails().txtCaseNoteLocation().setEnabled(false);
+    		//form.lyrDetails().tabGeneralDetails().txtCaseNoteLocation().setRequired(false);
+    		//form.lyrDetails().tabGeneralDetails().btnCaseNotesLocation().setVisible(!form.lyrDetails().tabGeneralDetails().chkCaseNotesNotRequired().getValue());
+    		//form.lyrDetails().tabGeneralDetails().btnCaseNotesLocation().setEnabled(FormMode.EDIT.equals(form.getMode()) && !form.lyrDetails().tabGeneralDetails().chkCaseNotesNotRequired().getValue());
+    		//form.lyrDetails().tabGeneralDetails().lblCNLocStar().setVisible(FormMode.EDIT.equals(form.getMode()) && !form.lyrDetails().tabGeneralDetails().chkCaseNotesNotRequired().getValue());
+    		
+    		//WDEV-21203
+    		form.lyrDetails().tabGeneralDetails().GroupHospital().setVisible(Boolean.FALSE.equals(form.lyrDetails().tabGeneralDetails().chkCaseNotesNotRequired().getValue()));
+    		form.lyrDetails().tabGeneralDetails().GroupHospital().setEnabled(FormMode.EDIT.equals(form.getMode()) && !profileHasSessions); 
+    		form.lyrDetails().tabGeneralDetails().cmbOtherHosp().setEnabled(FormMode.EDIT.equals(form.getMode()) && !profileHasSessions);
+		}
+		
+		form.lyrDetails().tabGeneralDetails().cmbOtherHosp().setVisible(!GroupProfileTypeEnumeration.rdoTheatre.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()) && Boolean.FALSE.equals(form.lyrDetails().tabGeneralDetails().chkCaseNotesNotRequired().getValue()) && GroupHospitalEnumeration.rdoOtherHospital.equals(form.lyrDetails().tabGeneralDetails().GroupHospital().getValue())); //WDEV-21203
+		
+//		form.lyrDetails().tabGeneralDetails().cmbTheatreType().setEnabled(form.getMode().equals(FormMode.EDIT));				//wdev-20074
+//		form.lyrDetails().tabGeneralDetails().chklistAnaesthetictype().setEnabled(form.getMode().equals(FormMode.EDIT));		//wdev-20074
+//		form.lyrDetails().tabGeneralDetails().cmbConsMediaType().setEnabled(form.getMode().equals(FormMode.EDIT));				//wdev-20074
+		form.getContextMenus().Scheduling.getProfileServiceFunctionsSELECT_ALLItem().setVisible(form.getMode().equals(FormMode.EDIT) && form.lyrDetails().tabGeneralDetails().grdServiceFunctions().getRows().size() > 0);	//wdev-20074
+		form.getContextMenus().Scheduling.getProfileServiceFunctionsDESELECT_ALLItem().setVisible(form.getMode().equals(FormMode.EDIT) && form.lyrDetails().tabGeneralDetails().grdServiceFunctions().getRows().size() > 0);	//wdev-20074
+		
 		if (form.getMode().equals(FormMode.VIEW))
 		{
+			//form.lyrDetails().tabGeneralDetails().qmbCaseNoteLocation().setEnabled(false);	//wdev-20074
 			form.getContextMenus().Scheduling.getProfilesMenuADDItem().setVisible(true);
-			form.getContextMenus().Scheduling.getProfilesMenuUPDATEItem().setVisible(form.grdProfiles().getValue() != null);
-			form.getContextMenus().Scheduling.getProfilesMenuCLONE_PROFILEItem().setVisible(form.grdProfiles().getValue() != null);
+			form.getContextMenus().Scheduling.getProfilesMenuUPDATEItem().setVisible(selectedProfile);
+			form.getContextMenus().Scheduling.getProfilesMenuCLONE_PROFILEItem().setVisible(selectedProfile);
+			
+			//form.lyrDetails().tabGeneralDetails().chkProfileHasChooseAndBookActivity().setEnabled(false);	//wdev-20074
+			//form.lyrDetails().tabGeneralDetails().chkCaseNotesNotRequired().setEnabled(false);				//wdev-20074
+			
+			//wdev-19921
+			form.btnAdd().setVisible(true);
+			form.btnEdit().setVisible(selectedProfile);
+			form.btnCloneThisProfile().setVisible(selectedProfile);
+			//----------
 			//WDEV-16799 
 			form.qmbFilterDirectoryOfService().setEnabled(true);
 			//WDEV-13362
 			form.ccListOwner().setEnabled(true);
+			//form.lyrDetails().tabGeneralDetails().btnCaseNotesLocation().setEnabled(false);
+			//form.lyrDetails().tabGeneralDetails().lblCNLocStar().setVisible(false);
+			
+			
+			form.lyrDetails().tabGeneralDetails().grdServiceFunctions().setReadOnly(true);	//wdev-20074
+			form.lyrDetails().tabTheatre().grdTheatre().setReadOnly(true);
+			form.lyrDetails().tabTheatre().grdTheatreService().setReadOnly(true);
 		}
 		else if (form.getMode().equals(FormMode.EDIT))	
 		{
+			//form.lyrDetails().tabGeneralDetails().qmbCaseNoteLocation().setEnabled(true);	//wdev-20074
+			//form.lyrDetails().tabGeneralDetails().chkProfileHasChooseAndBookActivity().setEnabled(true);	//wdev-20074
+			//form.lyrDetails().tabGeneralDetails().chkCaseNotesNotRequired().setEnabled(true);				//wdev-20074
+			
 			//WDEV-13362
 			form.ccListOwner().setEnabled(false);
 			//WDEV-16799
 			form.qmbFilterDirectoryOfService().setEnabled(false);
 			//WDEV-7615
-			form.lyrDetails().tabGeneralDetails().cmbTheatreType().setEnabled(form.lyrDetails().tabGeneralDetails().chkTheatre().getValue());
-			//WDEV-18369 
-			form.lyrDetails().tabGeneralDetails().cmbConsMediaType().setEnabled(!form.lyrDetails().tabGeneralDetails().chkTheatre().getValue());
-			//WDEV-12918
-			form.lyrDetails().tabGeneralDetails().chklistAnaesthetictype().setEnabled(form.lyrDetails().tabGeneralDetails().chkTheatre().getValue());
+			//form.lyrDetails().tabGeneralDetails().cmbTheatreType().setEnabled(true/*form.lyrDetails().tabGeneralDetails().chkTheatre().getValue()*/);		//wdev-20074
 			
-			if(!form.lyrDetails().tabGeneralDetails().chkTheatre().getValue()) 
+			//WDEV-18369 
+			//form.lyrDetails().tabGeneralDetails().cmbConsMediaType().setEnabled(!form.lyrDetails().tabGeneralDetails().chkTheatre().getValue());			//wdev-20074
+			//WDEV-12918
+			//form.lyrDetails().tabGeneralDetails().chklistAnaesthetictype().setEnabled(form.lyrDetails().tabGeneralDetails().chkTheatre().getValue());		//wdev-20074
+			
+			if( GroupProfileTypeEnumeration.rdoOutpatient.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()) || GroupProfileTypeEnumeration.rdoWardAttendance.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()) /*!form.lyrDetails().tabGeneralDetails().chkTheatre().getValue()*/)  //wdev-20074 
 			{
 				form.lyrDetails().tabGeneralDetails().cmbTheatreType().setValue(null);
 				//WDEV-12918
@@ -2080,8 +3743,8 @@ public class Logic extends BaseLogic
 			}
 			
 			// WDEV-6918
-			if (form.grdProfiles().getValue() != null)
-				form.lyrDetails().tabProfileDetails().dteStartDate().setEnabled(form.grdProfiles().getValue().getLastActualGenDate() == null);
+			if (selectedProfile)
+				form.lyrDetails().tabProfileDetails().dteStartDate().setEnabled(form.grdProfiles().getValue().getLastActualGenDate() == null && !profileHasSessions);
 			else
 				form.lyrDetails().tabProfileDetails().dteStartDate().setEnabled(true);
 
@@ -2090,37 +3753,97 @@ public class Logic extends BaseLogic
 			form.getContextMenus().Scheduling.getProfilesMenuADDItem().setVisible(false);
 			form.getContextMenus().Scheduling.getProfilesMenuUPDATEItem().setVisible(false);
 			form.getContextMenus().Scheduling.getProfilesMenuCLONE_PROFILEItem().setVisible(false);
+			
+			//wdev-19921
+			form.btnAdd().setVisible(false);
+			form.btnEdit().setVisible(false);
+			form.btnCloneThisProfile().setVisible(false);
+			//----------
 
 			form.getContextMenus().Scheduling.getProfileBookingRightsADDItem().setVisible(true);
-			form.getContextMenus().Scheduling.getProfileTemplatesADDTEMPLATEItem().setVisible(true);
-			form.getContextMenus().Scheduling.getProfileExclusionDatesADDItem().setVisible(true);
-			form.getContextMenus().Scheduling.getProfileExclusionTimesADDItem().setVisible(true);
-			form.getContextMenus().Scheduling.getProfileSlotsGeneralADDItem().setVisible(true);
-			form.getContextMenus().Scheduling.getProfileListOwnersADDItem().setVisible(true);
-			form.getContextMenus().Scheduling.getProfileTheatreADDItem().setVisible(true);
-			form.getContextMenus().Scheduling.getProfileTheatreTCITimesADDItem().setVisible(true); //WDEV-11777
-			form.getContextMenus().Scheduling.getProfileActivityADDItem().setVisible(true);
-			form.getContextMenus().Scheduling.getProfileTheatreSlotsADDItem().setVisible(true); //WDEV-12918
+			form.getContextMenus().Scheduling.getProfileTemplatesADDTEMPLATEItem().setVisible(true); //WDEV-21904 MAXIMS_10.5.1.0
+			form.getContextMenus().Scheduling.getProfileExclusionDatesADDItem().setVisible(!profileHasSessions);
+			form.getContextMenus().Scheduling.getProfileExclusionTimesADDItem().setVisible(!profileHasSessions);
+			form.getContextMenus().Scheduling.getProfileSlotsGeneralADDItem().setVisible(!profileHasSessions);
+			form.getContextMenus().Scheduling.getProfileListOwnersADDItem().setVisible(!profileHasSessions);
+			form.getContextMenus().Scheduling.getProfileTheatreADDItem().setVisible(!TheatreType.EMERGENCY.equals(form.lyrDetails().tabGeneralDetails().cmbTheatreType().getValue()) && !TheatreType.EMERGENCY_NON_TO.equals(form.lyrDetails().tabGeneralDetails().cmbTheatreType().getValue()));	//wdev-20233
+			form.getContextMenus().Scheduling.getProfileTheatreTCITimesADDItem().setVisible(!profileHasSessions); //WDEV-11777
+			form.getContextMenus().Scheduling.getProfileActivityADDItem().setVisible(!profileHasSessions);
+			form.getContextMenus().Scheduling.getProfileTheatreSlotsADDItem().setVisible(!profileHasSessions); //WDEV-12918
 
 			form.getContextMenus().Scheduling.getProfileBookingRightsEDITItem().setVisible(form.lyrDetails().tabBookingRights().grdBookingRights().getSelectedRow() != null);
-			form.getContextMenus().Scheduling.getProfileExclusionDatesEDITItem().setVisible(form.lyrDetails().tabExclusion().grdExclDates().getSelectedRow() != null);
-			form.getContextMenus().Scheduling.getProfileExclusionTimesEDITItem().setVisible(form.lyrDetails().tabExclusion().grdExclPeriods().getSelectedRow() != null);
-			form.getContextMenus().Scheduling.getProfileSlotsGeneralEDITItem().setVisible(form.lyrDetails().tabSlots().grdSlotsGeneral().getSelectedRow() != null);
-			form.getContextMenus().Scheduling.getProfileListOwnersEDITItem().setVisible(form.lyrDetails().tabListOwners().grdListOwner().getSelectedRow() != null);
+			form.getContextMenus().Scheduling.getProfileExclusionDatesEDITItem().setVisible(form.lyrDetails().tabExclusion().grdExclDates().getSelectedRow() != null && !profileHasSessions);
+			form.getContextMenus().Scheduling.getProfileExclusionTimesEDITItem().setVisible(form.lyrDetails().tabExclusion().grdExclPeriods().getSelectedRow() != null && !profileHasSessions);
+			form.getContextMenus().Scheduling.getProfileSlotsGeneralEDITItem().setVisible(form.lyrDetails().tabSlots().grdSlotsGeneral().getSelectedRow() != null && !profileHasSessions);
+			form.getContextMenus().Scheduling.getProfileListOwnersEDITItem().setVisible(form.lyrDetails().tabListOwners().grdListOwner().getSelectedRow() != null && !profileHasSessions);
 
 			form.getContextMenus().Scheduling.getProfileBookingRightsREMOVEItem().setVisible(form.lyrDetails().tabBookingRights().grdBookingRights().getSelectedRow() != null);
-			form.getContextMenus().Scheduling.getProfileTemplatesREMOVETEMPLATEItem().setVisible(form.lyrDetails().tabTemplates().grdTemplates().getSelectedRow() != null);
-			form.getContextMenus().Scheduling.getProfileExclusionDatesREMOVEItem().setVisible(form.lyrDetails().tabExclusion().grdExclDates().getSelectedRow() != null);
-			form.getContextMenus().Scheduling.getProfileExclusionTimesREMOVEItem().setVisible(form.lyrDetails().tabExclusion().grdExclPeriods().getSelectedRow() != null);
-			form.getContextMenus().Scheduling.getProfileSlotsGeneralREMOVEItem().setVisible(form.lyrDetails().tabSlots().grdSlotsGeneral().getSelectedRow() != null && form.lyrDetails().tabSlots().grdSlotsGeneral().getSelectedRow().getcolSlotsActive());
-			form.getContextMenus().Scheduling.getProfileListOwnersREMOVEItem().setVisible(form.lyrDetails().tabListOwners().grdListOwner().getSelectedRow() != null);
-			form.getContextMenus().Scheduling.getProfileTheatreREMOVEItem().setVisible(form.lyrDetails().tabTheatre().grdTheatre().getSelectedRow() != null);
-			form.getContextMenus().Scheduling.getProfileActivityREMOVEItem().setVisible(form.lyrDetails().tabActivities().grdActivities().getSelectedRow() != null);
-			form.getContextMenus().Scheduling.getProfileTheatreTCITimesREMOVEItem().setVisible(form.lyrDetails().tabTheatre().lyrSlots().tabTCI().grdTCITimes().getSelectedRow() != null); //WDEV-11777
-			form.getContextMenus().Scheduling.getProfileTheatreSlotsREMOVEItem().setVisible(form.lyrDetails().tabTheatre().lyrSlots().tabTheatreSlots().grdParentChildSlots().getSelectedRow() != null); //WDEV-12918
+			form.getContextMenus().Scheduling.getProfileTemplatesREMOVETEMPLATEItem().setVisible(form.lyrDetails().tabTemplates().grdTemplates().getSelectedRow() != null && !profileHasSessions);
+			form.getContextMenus().Scheduling.getProfileExclusionDatesREMOVEItem().setVisible(form.lyrDetails().tabExclusion().grdExclDates().getSelectedRow() != null && !profileHasSessions);
+			form.getContextMenus().Scheduling.getProfileExclusionTimesREMOVEItem().setVisible(form.lyrDetails().tabExclusion().grdExclPeriods().getSelectedRow() != null && !profileHasSessions);
+			form.getContextMenus().Scheduling.getProfileSlotsGeneralREMOVEItem().setVisible(form.lyrDetails().tabSlots().grdSlotsGeneral().getSelectedRow() != null && form.lyrDetails().tabSlots().grdSlotsGeneral().getSelectedRow().getcolSlotsActive() && !profileHasSessions);
+			form.getContextMenus().Scheduling.getProfileListOwnersREMOVEItem().setVisible(form.lyrDetails().tabListOwners().grdListOwner().getSelectedRow() != null && !profileHasSessions);
+			
+			if (Boolean.TRUE.equals(ConfigFlag.GEN.THEATRE_PROFILE_PROCEDURES.getValue().equals(LIST_OWNER_PROCEDURES)))
+				form.getContextMenus().Scheduling.getProfileTheatreREMOVEItem().setVisible(form.lyrDetails().tabTheatre().grdTheatre().getSelectedRow() != null);
+			else
+				form.getContextMenus().Scheduling.getProfileTheatreREMOVEItem().setVisible(form.lyrDetails().tabTheatre().grdTheatreService().getSelectedRow() != null);
+			
+			
+			form.getContextMenus().Scheduling.getProfileActivityREMOVEItem().setVisible((form.lyrDetails().tabActivities().grdActivities().getSelectedRow() != null || form.lyrDetails().tabActivitiesWithSlots().grdActivitiesSlots().getSelectedRow() != null) && !profileHasSessions);
+			form.getContextMenus().Scheduling.getProfileTheatreTCITimesREMOVEItem().setVisible(form.lyrDetails().tabTheatre().lyrSlots().tabTCI().grdTCITimes().getSelectedRow() != null && !profileHasSessions); //WDEV-11777
+			
+			ProfileParentChildSlotVo rowSelectedValue = form.lyrDetails().tabTheatre().lyrSlots().tabTheatreSlots().grdParentChildSlots().getValue(); //WDEV-19953
+			form.getContextMenus().Scheduling.getProfileTheatreSlotsREMOVEItem().setVisible( rowSelectedValue!=null && (rowSelectedValue.getID_ProfileParentChildSlot()==null || (rowSelectedValue.getID_ProfileParentChildSlotIsNotNull() && !domain.isParentChildSlotUsed(rowSelectedValue))) && !profileHasSessions); //WDEV-12918  //WDEV-19953
+			
+			form.getContextMenus().Scheduling.getFlexibleProfileSlotADDItem().setVisible(!profileHasSessions);
+			form.getContextMenus().Scheduling.getFlexibleProfileSlotEDITItem().setVisible(form.lyrDetails().tabActivitiesWithSlots().grdSlots().getSelectedRow() != null && !profileHasSessions);
+			form.getContextMenus().Scheduling.getFlexibleProfileSlotINACTIVATEItem().setVisible(form.lyrDetails().tabActivitiesWithSlots().grdSlots().getSelectedRow() != null && form.lyrDetails().tabActivitiesWithSlots().grdSlots().getSelectedRow().getColActive() && !profileHasSessions);
+			
+			
+			form.lyrDetails().tabGeneralDetails().grdServiceFunctions().setReadOnly(false);	//wdev-20074
+			
+			
 		}
+		
+		
+		if( GroupProfileTypeEnumeration.rdoOutpatient.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()))
+		{
+			if( !ConfigFlag.DOM.SCHEDULING_SLOTS_CREATION.getValue().equals(new String("Local Only")) &&  GroupFlexibleProfileEnumeration.rdoNo.equals(form.lyrDetails().tabGeneralDetails().GroupFlexibleProfile().getValue()))
+			{
+				form.lyrDetails().tabGeneralDetails().chkProfileHasChooseAndBookActivity().setVisible(true);
+				
+				if( form.lyrDetails().tabGeneralDetails().chkProfileHasChooseAndBookActivity().getValue() == true)
+					form.lyrDetails().tabDOS().setHeaderVisible(true);
+				else
+					form.lyrDetails().tabDOS().setHeaderVisible(false);
+					
+								
+				
+			}
+			else
+			{
+				form.lyrDetails().tabGeneralDetails().chkProfileHasChooseAndBookActivity().setVisible(false);
+			}
+		}
+		
+		boolean isGrdTheatreListOwnerVisible = Boolean.TRUE.equals(ConfigFlag.GEN.THEATRE_PROFILE_PROCEDURES.getValue().equals(LIST_OWNER_PROCEDURES)) &&
+					GroupProfileTypeEnumeration.rdoTheatre.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue());
+		
+		boolean isGrdTheatreServiceVisible = Boolean.TRUE.equals(ConfigFlag.GEN.THEATRE_PROFILE_PROCEDURES.getValue().equals(SERVICE_PROCEDURES)) &&
+		GroupProfileTypeEnumeration.rdoTheatre.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue());
 
+		
+		form.lyrDetails().tabTheatre().grdTheatre().setVisible(isGrdTheatreListOwnerVisible);
+		form.lyrDetails().tabTheatre().grdTheatreService().setVisible(isGrdTheatreServiceVisible);
+
+		boolean isFlexibleWhithoutSlots = form.getLocalContext().getCurrentProfile() != null && !Boolean.TRUE.equals(form.getLocalContext().getCurrentProfile().getIsFixed()) && ConfigFlag.DOM.PROFILE_FLEXIBLE_TYPE.getValue().equals("WITHOUT_SLOTS");
+		form.btnPreview().setVisible(FormMode.VIEW.equals(form.getMode()) && selectedProfile && !isFlexibleWhithoutSlots);
+		form.btnPreview().setEnabled(selectedProfile && Boolean.TRUE.equals(form.grdProfiles().getValue().getIsActive()));
+		form.chkFilterWardAttendance().setEnabled(FormMode.VIEW.equals(form.getMode()));	//wdev-20074
+		
 		setIntervalControlStates(false);
+		
 	}
 
 	private void enableRowSelection()
@@ -2160,6 +3883,11 @@ public class Logic extends BaseLogic
 			form.lyrDetails().tabTheatre().grdTheatre().getRows().get(i).setSelectable(true);
 		}
 		
+		for (int i = 0; i < form.lyrDetails().tabTheatre().grdTheatreService().getRows().size(); i++)
+		{
+			form.lyrDetails().tabTheatre().grdTheatreService().getRows().get(i).setSelectable(true);
+		}
+		
 		for (int i = 0; i < form.lyrDetails().tabActivities().grdActivities().getRows().size(); i++)
 		{
 			form.lyrDetails().tabActivities().grdActivities().getRows().get(i).setSelectable(true);
@@ -2169,6 +3897,16 @@ public class Logic extends BaseLogic
 		for (int i = 0; i < form.lyrDetails().tabTheatre().lyrSlots().tabTCI().grdTCITimes().getRows().size(); i++)
 		{
 			form.lyrDetails().tabTheatre().lyrSlots().tabTCI().grdTCITimes().getRows().get(i).setSelectable(true);
+		}
+		
+		for (int i = 0; i < form.lyrDetails().tabActivitiesWithSlots().grdActivitiesSlots().getRows().size(); i++)
+		{
+			form.lyrDetails().tabActivitiesWithSlots().grdActivitiesSlots().getRows().get(i).setSelectable(true);
+		}
+		
+		for (int i = 0; i < form.lyrDetails().tabActivitiesWithSlots().grdSlots().getRows().size(); i++)
+		{
+			form.lyrDetails().tabActivitiesWithSlots().grdSlots().getRows().get(i).setSelectable(true);
 		}
 		
 	}
@@ -2254,7 +3992,7 @@ public class Logic extends BaseLogic
 	private final static int	MONTHLYINTERVAL	= 2;
 	private final static int	NOINTERVAL		= 3;
 
-	@Override
+	/*@Override
 	protected void onChkTheatreValueChanged() throws PresentationLogicException
 	{
 		if(form.lyrDetails().tabGeneralDetails().chkTheatre().getValue())
@@ -2264,33 +4002,48 @@ public class Logic extends BaseLogic
 			form.lyrDetails().tabGeneralDetails().cmbConsMediaType().setValue(null);
 		}	
 		updateControlState();	
-	}
+	}*/
 
 	@Override
 	protected void onGrdTheatreGridQueryComboBoxTextSubmited(int column, grdTheatreRow row, String text) throws PresentationLogicException
 	{
 		if(form.lyrDetails().tabListOwners().grdListOwner().getRows().size() == 0)
+		{
+			row.getcolProcedure().setEditedText("");
 			return;
-		
+		}
+
 		row.getcolProcedure().clear();
-		
+
+		ProcedureNameVoCollection voCollProcedure = null;
+
 		HcpRefVoCollection voCollHcp = new HcpRefVoCollection();
+
 		for(int i=0;i<form.lyrDetails().tabListOwners().grdListOwner().getRows().size();i++)
 			voCollHcp.add ((HcpRefVo) form.lyrDetails().tabListOwners().grdListOwner().getRows().get(i).getColHcp().getValue());
 
-		ProcedureLiteVoCollection voCollProcedure = domain.listProcedureByHcpAndName(voCollHcp, text);
-		if(voCollProcedure != null)
+		if (voCollHcp.size() > 0)
+			voCollProcedure = domain.listProcedureByHcpAndNameLite(voCollHcp, text);
+		else
 		{
-			for(ProcedureLiteVo voProc : voCollProcedure)
+			row.getcolProcedure().setEditedText("");
+			return;
+		}
+
+		if (voCollProcedure != null && voCollProcedure.size() > 0)
+		{
+			row.getcolProcedure().clear();
+			for(ProcedureNameVo voProc : voCollProcedure)
+			{
 				row.getcolProcedure().newRow(voProc, voProc.getProcedureName());
-			
-			if(voCollProcedure.size() > 1)
-				row.getcolProcedure().showOpened();
-			else if(voCollProcedure.size() == 1)
+			}
+			if(voCollProcedure.size() == 1)
 				row.getcolProcedure().setValue(voCollProcedure.get(0));
 			else
-				engine.showMessage("No matching records found");
+				row.getcolProcedure().showOpened();
 		}
+		else
+			row.getcolProcedure().setEditedText("");
 	}
 
 	@Override
@@ -2298,15 +4051,21 @@ public class Logic extends BaseLogic
 	{
 		updateControlState();
 	}
-
+	
 	@Override
+	protected void onGrdTheatreServiceSelectionChanged() throws PresentationLogicException 
+	{
+		updateControlState();
+	}
+
+	/*@Override
 	protected void onChkFlexibleValueChanged() throws PresentationLogicException
 	{
 		if(form.lyrDetails().tabGeneralDetails().chkFlexible().getValue())
 			form.lyrDetails().tabGeneralDetails().chkTheatre().setValue(false);
 		
 		updateControlState();
-	}
+	}*/
 
 	@Override
 	protected void onGrdActivitiesSelectionChanged() throws PresentationLogicException
@@ -2328,8 +4087,12 @@ public class Logic extends BaseLogic
 		// the message box for user to confirm / deny DOS removal from slot
 		if(!isChecked && hasSlotAssociated(row.getValue()))
 		{
-			form.getLocalContext().setSelectedDos(row.getValue());
-			form.getLocalContext().setDosMessageBoxID(engine.showMessage("Remove DoS's from Corresponding Slots", "Modify Slots", MessageButtons.YESNO, MessageIcon.QUESTION));
+			//WDEV-20896
+			engine.showMessage("This DOS record is currently configured against a slot. The DOS must be removed from the Slot before it can be de-selected.", "Warning", MessageButtons.OK, MessageIcon.WARNING);
+			row.setColSelected(true);
+			
+			//form.getLocalContext().setSelectedDos(row.getValue());
+			//form.getLocalContext().setDosMessageBoxID(engine.showMessage("Remove DoS's from Corresponding Slots", "Modify Slots", MessageButtons.YESNO, MessageIcon.QUESTION));
 		}
 		else
 			form.getLocalContext().setSelectedDos(null);
@@ -2396,6 +4159,16 @@ public class Logic extends BaseLogic
 					form.getLocalContext().setSelectedDos(null);
 			}
 		}
+		
+		//WDEV-20893
+		else if (form.getLocalContext().getlistOwnerRemoveConfirm() != null && messageBoxId == form.getLocalContext().getlistOwnerRemoveConfirm() && (DialogResult.YES).equals(result))
+		{
+			form.getLocalContext().setlistOwnerRemoveConfirm(null);
+			
+			form.lyrDetails().tabListOwners().grdListOwner().removeSelectedRow();
+			removeTheatreProcedures();	//wdev-20074
+			updateControlState();
+		}
 	}
 
 	@Override
@@ -2409,7 +4182,8 @@ public class Logic extends BaseLogic
 		Profile_SlotGenericVoCollection voCollSlots = form.getLocalContext().getSlots();
 		filterSlotsDisplay(voCollSlots, true);
 		
-		updateControlState();
+		if (FormMode.EDIT.equals(form.getMode())) //WDEV-23611
+			updateControlState();
 	}
 
 	//WDEV-12039 need to hold persisted and non-persisted slots locally to allow filtering of unsaved data
@@ -2484,7 +4258,7 @@ public class Logic extends BaseLogic
 	private void listDos(DirectoryOfServiceVo voDosFilter) 
 	{		
 			form.qmbFilterDirectoryOfService().clear();
-			DirectoryOfServiceVoCollection voCollDoS = domain.listDOS(voDosFilter);
+			DirectoryOfServiceVoCollection voCollDoS = domain.listDOS(voDosFilter,null);	//wdev-20262
 			
 			if (voCollDoS == null || voCollDoS.size() == 0)
 			{	
@@ -2506,4 +4280,367 @@ public class Logic extends BaseLogic
 				form.qmbFilterDirectoryOfService().showOpened();
 			}
 	}
-}
+	//WDEV-19518
+	@Override
+	protected void onChkCaseNotesNotRequiredValueChanged()	throws PresentationLogicException
+	{
+		//form.lyrDetails().tabGeneralDetails().txtCaseNoteLocation().setValue(null);
+		form.lyrDetails().tabGeneralDetails().qmbCaseNoteLocation().clear();
+		
+		Sch_ProfileGenericVo profileVo = form.getLocalContext().getCurrentProfile();
+		profileVo.setCaseNoteFolderNotRequired(form.lyrDetails().tabGeneralDetails().chkCaseNotesNotRequired().getValue());
+		if (form.lyrDetails().tabGeneralDetails().chkCaseNotesNotRequired().getValue())
+			profileVo.setCaseNoteFolderLocation(null);
+		form.getLocalContext().setCurrentProfile(profileVo);
+		
+		//WDEV-21203
+		if(Boolean.TRUE.equals(form.lyrDetails().tabGeneralDetails().chkCaseNotesNotRequired().getValue()))
+		{
+			form.lyrDetails().tabGeneralDetails().GroupHospital().setValue(null);
+			form.lyrDetails().tabGeneralDetails().cmbOtherHosp().setValue(null);
+		}
+		
+		updateControlState();
+		
+	}
+
+	/*@Override
+	protected void onBtnCaseNotesLocationClick() throws PresentationLogicException
+	{
+		engine.open(form.getForms().Admin.LocationSelect, new Object[]{Boolean.TRUE});
+		
+	}*/
+
+	@Override
+	protected void onGrdActivitiesSlotsSelectionChanged() throws PresentationLogicException
+	{
+		updateControlState();
+		
+	}
+
+	@Override
+	protected void onGrdSlotsSelectionChanged() throws PresentationLogicException
+	{
+		updateControlState();
+		
+	}
+
+	@Override
+	protected void onBtnPreviewClick() throws PresentationLogicException
+	{
+		engine.open(form.getForms().Scheduling.ProfilePreview);
+		
+	}
+
+	//wdev-19921
+	protected void onBtnCloneThisProfileClick() throws PresentationLogicException
+	{
+		cloneRecord();
+		
+	}
+
+	//wdev-19921
+	protected void onBtnEditClick() throws PresentationLogicException
+	{
+		updateRecord();
+		
+	}
+
+	//wdev-19921
+	protected void onBtnAddClick() throws PresentationLogicException
+	{
+		addRecord();
+		
+	}
+
+	//wdev-20074
+	protected void onRadioButtonGroupFlexibleProfileValueChanged() throws PresentationLogicException
+	{
+		if( GroupFlexibleProfileEnumeration.rdoYes.equals(form.lyrDetails().tabGeneralDetails().GroupFlexibleProfile().getValue()))
+		{
+			form.lyrDetails().tabGeneralDetails().chkProfileHasChooseAndBookActivity().setValue(false);
+			loadActivities();
+		}
+		
+		updateControlState();
+		
+	}
+
+	//wdev-20074
+	protected void onRadioButtonGroupProfileTypeValueChanged() throws PresentationLogicException
+	{
+		cmbHospitalValueChanged();
+		radioButtonGroupProfileTypeValueChanged();
+		cmbSpecialityValueChanged();
+		updateControlState();
+		
+	}
+	private void radioButtonGroupProfileTypeValueChanged()
+	{
+		if( form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue().equals(GroupProfileTypeEnumeration.rdoOutpatient))
+		{
+			clearProfileTheatreControls();
+		}
+		else if( form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue().equals(GroupProfileTypeEnumeration.rdoTheatre))
+		{
+			clearOutpatientControls();
+			
+			form.lyrDetails().tabGeneralDetails().cmbConsMediaType().setValue(null);
+			form.lyrDetails().tabGeneralDetails().GroupFlexibleProfile().setValue(null);
+		}
+		else if( form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue().equals(GroupProfileTypeEnumeration.rdoWardAttendance))
+		{
+			clearProfileTheatreControls();
+			form.lyrDetails().tabGeneralDetails().chkProfileHasChooseAndBookActivity().setValue(false);
+		}
+		
+		
+	}
+	
+	private void clearProfileTheatreControls()
+	{
+		form.lyrDetails().tabGeneralDetails().cmbTheatreType().setValue(null);
+		form.lyrDetails().tabGeneralDetails().chklistAnaesthetictype().setValues(null);
+		//WDEV-20939
+		if(form.getLocalContext().getCurrentProfileIsNotNull() && form.getLocalContext().getCurrentProfile().getID_Sch_ProfileIsNotNull())
+			form.lyrDetails().tabGeneralDetails().GroupFlexibleProfile().setValue(SchProfileType.OUTPATIENT.equals(form.getLocalContext().getCurrentProfile().getProfileType())
+																				&& !Boolean.TRUE.equals(form.getLocalContext().getCurrentProfile().getIsFixed())
+																				? GroupFlexibleProfileEnumeration.rdoYes
+																				: GroupFlexibleProfileEnumeration.rdoNo		
+																				);
+		
+		else
+			form.lyrDetails().tabGeneralDetails().GroupFlexibleProfile().setValue(GroupFlexibleProfileEnumeration.rdoNo	);
+	}
+	private void clearOutpatientControls()
+	{
+		form.lyrDetails().tabGeneralDetails().GroupFlexibleProfile().setValue(null);
+		form.lyrDetails().tabGeneralDetails().chkProfileHasChooseAndBookActivity().setValue(null);
+		form.lyrDetails().tabGeneralDetails().chkCaseNotesNotRequired().setValue(null);
+		//form.lyrDetails().tabGeneralDetails().txtCaseNoteLocation().setValue(null);
+		form.lyrDetails().tabGeneralDetails().qmbCaseNoteLocation().clear();
+		form.lyrDetails().tabGeneralDetails().cmbConsMediaType().setValue(null);
+		
+		
+	}
+		
+	//wdev-20074
+	protected void onChkProfileHasChooseAndBookActivityValueChanged() throws PresentationLogicException
+	{
+		chkProfileHasChooseAndBookActivityValueChanged();
+		
+	}
+	private void chkProfileHasChooseAndBookActivityValueChanged()
+	{
+		if( GroupProfileTypeEnumeration.rdoOutpatient.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()))
+		{
+			if( !ConfigFlag.DOM.SCHEDULING_SLOTS_CREATION.getValue().equals(new String("Local Only")) &&  GroupFlexibleProfileEnumeration.rdoNo.equals(form.lyrDetails().tabGeneralDetails().GroupFlexibleProfile().getValue()))
+			{
+				if( form.lyrDetails().tabGeneralDetails().chkProfileHasChooseAndBookActivity().getValue() == true)
+				{
+					form.lyrDetails().tabDOS().setHeaderVisible(true);
+					loadDos(form.lyrDetails().tabGeneralDetails().cmbSpeciality().getValue(), false);
+				}
+				else
+					form.lyrDetails().tabDOS().setHeaderVisible(false);
+				
+							
+			}
+			
+		}
+	}
+
+	//wdev-20233
+	protected void onQmbLocationValueChanged() throws PresentationLogicException
+	{
+		cmbSpecialityValueChanged();	//wdev-20074
+		
+	}
+
+	//wdev-20233
+	protected void onQmbLocationTextSubmited(String value) throws PresentationLogicException
+	{
+		if( form.lyrDetails().tabGeneralDetails().cmbHospital().getValue() == null )
+		{
+			engine.showMessage("Select a Hospital");
+			return;
+		}
+		form.lyrDetails().tabGeneralDetails().qmbLocation().clear();
+		LocShortVoCollection tempColl = null;
+		
+		if( GroupProfileTypeEnumeration.rdoOutpatient.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()))
+		{
+			tempColl = domain.getLocationByParent(form.lyrDetails().tabGeneralDetails().cmbHospital().getValue() , value, LocationType.CLINIC);
+		}
+		else if( GroupProfileTypeEnumeration.rdoTheatre.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()))
+		{
+			tempColl = domain.getLocationByParent(form.lyrDetails().tabGeneralDetails().cmbHospital().getValue() , value, LocationType.THEATRE);
+		}
+		else if( GroupProfileTypeEnumeration.rdoWardAttendance.equals(form.lyrDetails().tabGeneralDetails().GroupProfileType().getValue()))
+		{
+			tempColl = domain.getLocationByParent(form.lyrDetails().tabGeneralDetails().cmbHospital().getValue() , value, LocationType.WARD);
+		}
+		else
+		{
+			engine.showMessage("Select a Profile Type");
+			return;
+		}
+		
+		if( tempColl == null)
+			return;
+		
+		for (LocShortVo loc : tempColl)
+		{
+			form.lyrDetails().tabGeneralDetails().qmbLocation().newRow(loc, loc.getName());
+		}
+		
+		if (tempColl.size() == 1)
+		{
+			form.lyrDetails().tabGeneralDetails().qmbLocation().setValue(tempColl.get(0));
+			//updateWardSelection();
+		}
+		else
+		{
+			form.lyrDetails().tabGeneralDetails().qmbLocation().showOpened();
+		}
+		
+		cmbSpecialityValueChanged();	//wdev-20074
+		
+		
+	}
+
+	//wdev-20233
+	protected void onCmbHospitalValueChanged() throws PresentationLogicException
+	{
+		
+		cmbHospitalValueChanged();
+		
+	}
+	private void cmbHospitalValueChanged()
+	{
+		form.lyrDetails().tabGeneralDetails().qmbLocation().clear();
+		form.lyrDetails().tabGeneralDetails().qmbCaseNoteLocation().clear();
+	}
+
+	//wdev-20233
+	protected void onCmbTheatreTypeValueChanged() throws PresentationLogicException
+	{
+		boolean sessionTypeUrgent = TheatreType.EMERGENCY.equals(form.lyrDetails().tabGeneralDetails().cmbTheatreType().getValue()) || TheatreType.EMERGENCY_NON_TO.equals(form.lyrDetails().tabGeneralDetails().cmbTheatreType().getValue());
+		
+		if (sessionTypeUrgent)
+		{
+			form.lyrDetails().tabTheatre().grdTheatre().getRows().clear();
+			form.lyrDetails().tabTheatre().grdTheatreService().getRows().clear();
+		}
+			
+		updateControlState();
+		
+	}
+
+	//wdev-20074
+	protected void onQmbCaseNoteLocationValueChanged() throws PresentationLogicException
+	{
+		setCaseNoteFolderLocation(form.lyrDetails().tabGeneralDetails().qmbCaseNoteLocation().getValue(), false);
+		
+	}
+	//WDEV-21203
+	private void populateCaseNoteFolderLocationByHospital(String value, LocationLiteVo hospital)
+	{
+		form.lyrDetails().tabGeneralDetails().qmbCaseNoteLocation().clear();
+		LocShortVoCollection tempColl = null;
+		
+		tempColl = domain.getCaseNoteFolderLocationByParent(hospital, value, null);
+		
+		if( tempColl == null)
+			return;
+		
+		for (LocShortVo loc : tempColl)
+		{
+			form.lyrDetails().tabGeneralDetails().qmbCaseNoteLocation().newRow(loc, loc.getName());
+		}
+		
+		if (tempColl.size() == 1)
+		{
+			form.lyrDetails().tabGeneralDetails().qmbCaseNoteLocation().setValue(tempColl.get(0));
+			setCaseNoteFolderLocation(form.lyrDetails().tabGeneralDetails().qmbCaseNoteLocation().getValue(), false); //WDEV-20798
+			//updateWardSelection();
+		}
+		else
+		{
+			form.lyrDetails().tabGeneralDetails().qmbCaseNoteLocation().showOpened();
+		}
+	}
+
+	//wdev-20074
+	protected void onQmbCaseNoteLocationTextSubmited(String value) throws PresentationLogicException
+	{
+		//WDEV-21203
+		if(GroupHospitalEnumeration.rdoOtherHospital.equals(form.lyrDetails().tabGeneralDetails().GroupHospital().getValue()))
+		{
+			if (form.lyrDetails().tabGeneralDetails().cmbOtherHosp().getValue() == null )
+			{
+				engine.showMessage("Select Other Hospital");
+				return;
+			}
+			populateCaseNoteFolderLocationByHospital(value, form.lyrDetails().tabGeneralDetails().cmbOtherHosp().getValue());
+		}
+		else
+		{
+			if(form.lyrDetails().tabGeneralDetails().cmbHospital().getValue() == null )
+			{
+				engine.showMessage("Select a Hospital");
+				return;
+			}
+			populateCaseNoteFolderLocationByHospital(value, form.lyrDetails().tabGeneralDetails().cmbHospital().getValue());
+		}
+		
+	}
+
+	//wdev-20262
+	protected void onGrdServiceFunctionsGridCheckBoxClicked(int column, grdServiceFunctionsRow row, boolean isChecked) throws PresentationLogicException
+	{
+		/* no need to do anything now WDEV-20896
+		if( form.lyrDetails().tabGeneralDetails().chkProfileHasChooseAndBookActivity().isVisible() && form.lyrDetails().tabGeneralDetails().chkProfileHasChooseAndBookActivity().getValue() == true)
+			loadDos(form.lyrDetails().tabGeneralDetails().cmbSpeciality().getValue(), false);
+		*/
+		
+	}
+
+	private boolean profileHasGeneratedSessions(Sch_ProfileRefVo profile) 
+	{
+		if (profile == null)
+			return false;
+
+		int sesionCount = domain.countSessionsForProfile(profile);
+
+		if (sesionCount > 0)
+			return true;
+		else
+			return false;
+	}	
+	//----------
+
+	//WDEV-21203
+	protected void onRadioButtonGroupHospitalValueChanged()  throws PresentationLogicException 
+	{
+		form.lyrDetails().tabGeneralDetails().cmbOtherHosp().setVisible(GroupHospitalEnumeration.rdoOtherHospital.equals(form.lyrDetails().tabGeneralDetails().GroupHospital().getValue()));
+		form.lyrDetails().tabGeneralDetails().cmbOtherHosp().setValue(null);
+		form.lyrDetails().tabGeneralDetails().qmbCaseNoteLocation().clear();
+		form.getLocalContext().getCurrentProfile().setCaseNoteFolderLocation(null);
+	}
+
+
+	protected void onCmbOtherHospValueChanged() throws PresentationLogicException 
+	{
+		form.lyrDetails().tabGeneralDetails().qmbCaseNoteLocation().clear();
+		form.getLocalContext().getCurrentProfile().setCaseNoteFolderLocation(null);
+	}
+
+	@Override
+	protected void onChkProfileActiveValueChanged() throws PresentationLogicException
+	{
+		form.lyrDetails().tabGeneralDetails().chkReadyToGenerateSessions().setValue(Boolean.FALSE);
+		updateControlState();
+	}
+
+}	

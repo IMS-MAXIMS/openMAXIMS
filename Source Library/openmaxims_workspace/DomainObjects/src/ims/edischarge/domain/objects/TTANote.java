@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.edischarge.domain.objects;
@@ -47,6 +52,10 @@ public class TTANote extends ims.domain.DomainObject implements ims.domain.Syste
 
 	/** TTA Comment */
 	private String tTAComment;
+	/** SourceOfInformation */
+	private String sourceOfInformation;
+	/** NoteDate */
+	private String noteDate;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public TTANote (Integer id, int ver)
@@ -76,6 +85,28 @@ public class TTANote extends ims.domain.DomainObject implements ims.domain.Syste
 				tTAComment);
 		}
 		this.tTAComment = tTAComment;
+	}
+
+	public String getSourceOfInformation() {
+		return sourceOfInformation;
+	}
+	public void setSourceOfInformation(String sourceOfInformation) {
+		if ( null != sourceOfInformation && sourceOfInformation.length() > 100 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for sourceOfInformation. Tried to set value: "+
+				sourceOfInformation);
+		}
+		this.sourceOfInformation = sourceOfInformation;
+	}
+
+	public String getNoteDate() {
+		return noteDate;
+	}
+	public void setNoteDate(String noteDate) {
+		if ( null != noteDate && noteDate.length() > 50 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for noteDate. Tried to set value: "+
+				noteDate);
+		}
+		this.noteDate = noteDate;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -117,6 +148,12 @@ public class TTANote extends ims.domain.DomainObject implements ims.domain.Syste
 		
 		auditStr.append("\r\n*tTAComment* :");
 		auditStr.append(tTAComment);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*sourceOfInformation* :");
+		auditStr.append(sourceOfInformation);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*noteDate* :");
+		auditStr.append(noteDate);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -167,6 +204,18 @@ public class TTANote extends ims.domain.DomainObject implements ims.domain.Syste
 			sb.append("<tTAComment>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getTTAComment().toString()));
 			sb.append("</tTAComment>");		
+		}
+		if (this.getSourceOfInformation() != null)
+		{
+			sb.append("<sourceOfInformation>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getSourceOfInformation().toString()));
+			sb.append("</sourceOfInformation>");		
+		}
+		if (this.getNoteDate() != null)
+		{
+			sb.append("<noteDate>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getNoteDate().toString()));
+			sb.append("</noteDate>");		
 		}
 		return sb.toString();
 	}
@@ -336,6 +385,16 @@ public class TTANote extends ims.domain.DomainObject implements ims.domain.Syste
 		{	
     		obj.setTTAComment(new String(fldEl.getTextTrim()));	
 		}
+		fldEl = el.element("sourceOfInformation");
+		if(fldEl != null)
+		{	
+    		obj.setSourceOfInformation(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("noteDate");
+		if(fldEl != null)
+		{	
+    		obj.setNoteDate(new String(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -349,6 +408,8 @@ public class TTANote extends ims.domain.DomainObject implements ims.domain.Syste
 	{
 	public static final String ID = "id";
 		public static final String TTAComment = "tTAComment";
+		public static final String SourceOfInformation = "sourceOfInformation";
+		public static final String NoteDate = "noteDate";
 	}
 }
 

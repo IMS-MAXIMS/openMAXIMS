@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -32,6 +37,8 @@ import ims.admin.vo.AppRoleShortVoCollection;
 import ims.admin.vo.AppRoleVo;
 import ims.admin.vo.AppTopButtonConfigShortVoCollection;
 import ims.admin.vo.AppTopButtonConfigVo;
+import ims.admin.vo.RBACBaselineJobRoleLiteVoCollection;
+import ims.admin.vo.RBACBaselineJobRoleVo;
 import ims.admin.vo.domain.AppFormVoAssembler;
 import ims.admin.vo.domain.AppNavShortVoAssembler;
 import ims.admin.vo.domain.AppNavigationVoAssembler;
@@ -39,6 +46,10 @@ import ims.admin.vo.domain.AppRoleShortVoAssembler;
 import ims.admin.vo.domain.AppRoleVoAssembler;
 import ims.admin.vo.domain.AppTopButtonConfigShortVoAssembler;
 import ims.admin.vo.domain.AppTopButtonConfigVoAssembler;
+import ims.admin.vo.domain.RBACBaselineJobRoleLiteVoAssembler;
+import ims.admin.vo.domain.RBACBaselineJobRoleVoAssembler;
+import ims.core.admin.domain.objects.RBACBaselineJobRole;
+import ims.core.admin.vo.RBACBaselineJobRoleRefVo;
 import ims.core.configuration.domain.objects.AppForm;
 import ims.core.configuration.domain.objects.AppNavigation;
 import ims.core.configuration.domain.objects.AppRole;
@@ -49,11 +60,13 @@ import ims.core.configuration.vo.AppTopButtonConfigRefVo;
 import ims.core.vo.TaxonomyMap;
 import ims.core.vo.lookups.TaxonomyType;
 import ims.domain.DomainFactory;
+import ims.domain.SessionData;
 import ims.domain.exceptions.DomainRuntimeException;
 import ims.domain.exceptions.StaleObjectException;
 import ims.domain.exceptions.UniqueKeyViolationException;
 import ims.domain.exceptions.UnqViolationUncheckedException;
 import ims.domain.impl.DomainImpl;
+import ims.framework.SessionConstants;
 
 public class ApplicationRolesImpl extends DomainImpl implements ims.admin.domain.ApplicationRoles, ims.domain.impl.Transactional
 {
@@ -106,6 +119,11 @@ public class ApplicationRolesImpl extends DomainImpl implements ims.admin.domain
 		{		
 			throw new UniqueKeyViolationException("A role with this name already exists within the system, please change", e);
 		}
+		
+		//Map role to client ID
+		SessionData sessData = (SessionData)factory.getDomainSession().getAttribute(SessionConstants.SESSION_DATA);  
+		sessData.clientAutolockTimer.get().put(sessData.uniqueClientId.get(), voRole);		
+		
 		return AppRoleVoAssembler.create(domRole);
 	}
 	
@@ -142,6 +160,23 @@ public class ApplicationRolesImpl extends DomainImpl implements ims.admin.domain
 		
 		return AppTopButtonConfigVoAssembler.create((AppTopButtonConfig)getDomainFactory().getDomainObject(config));
 	}
+	
+	//WDEV-20420
+	public RBACBaselineJobRoleLiteVoCollection listSpineRBAC() 
+	{
+		// TODO Auto-generated method stub
+		return RBACBaselineJobRoleLiteVoAssembler.createRBACBaselineJobRoleLiteVoCollectionFromRBACBaselineJobRole(getDomainFactory().find(" FROM RBACBaselineJobRole AS rbacbjr ORDER BY UPPER(rbacbjr.roleCode) ASC"));
+	}
+
+	public RBACBaselineJobRoleVo getSpineRBAC(RBACBaselineJobRoleRefVo roleCode) 
+	{
+		if (roleCode == null)
+			return null;
+		
+		return RBACBaselineJobRoleVoAssembler.create((RBACBaselineJobRole) getDomainFactory().getDomainObject(roleCode));
+	}
+	//WDEV-20420 - ends here
+	
 	public AppFormVo getForm(AppFormRefVo form) 
 	{
 		return AppFormVoAssembler.create((AppForm)getDomainFactory().getDomainObject(form));

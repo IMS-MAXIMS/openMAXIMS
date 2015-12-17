@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.core.vo.domain;
@@ -90,6 +95,22 @@ public class PatientShortAssembler
 		valueObjectDest.setOCSNotification(valueObjectSrc.getOCSNotification());
 		// CurrentResponsibleConsultant
 		valueObjectDest.setCurrentResponsibleConsultant(valueObjectSrc.getCurrentResponsibleConsultant());
+		// DementiaBreachDateTime
+		valueObjectDest.setDementiaBreachDateTime(valueObjectSrc.getDementiaBreachDateTime());
+		// DementiaWorklistStatus
+		valueObjectDest.setDementiaWorklistStatus(valueObjectSrc.getDementiaWorklistStatus());
+		// MRNStatus
+		valueObjectDest.setMRNStatus(valueObjectSrc.getMRNStatus());
+		// hasScannedCaseNoteFolders
+		valueObjectDest.setHasScannedCaseNoteFolders(valueObjectSrc.getHasScannedCaseNoteFolders());
+		// IsConfidential
+		valueObjectDest.setIsConfidential(valueObjectSrc.getIsConfidential());
+		// TimeOfBirth
+		valueObjectDest.setTimeOfBirth(valueObjectSrc.getTimeOfBirth());
+		// PatientCategory
+		valueObjectDest.setPatientCategory(valueObjectSrc.getPatientCategory());
+		// PDSPatientGP
+		valueObjectDest.setPDSPatientGP(valueObjectSrc.getPDSPatientGP());
 	 	return valueObjectDest;
 	 }
 
@@ -615,6 +636,132 @@ public class PatientShortAssembler
 				valueObject.setCurrentResponsibleConsultant(new ims.core.resource.people.vo.MedicRefVo(domainObject.getCurrentResponsibleConsultant().getId(), domainObject.getCurrentResponsibleConsultant().getVersion()));
 			}
 		}
+		// DementiaBreachDateTime
+		java.util.Date DementiaBreachDateTime = domainObject.getDementiaBreachDateTime();
+		if ( null != DementiaBreachDateTime ) 
+		{
+			valueObject.setDementiaBreachDateTime(new ims.framework.utils.DateTime(DementiaBreachDateTime) );
+		}
+		// DementiaWorklistStatus
+		ims.domain.lookups.LookupInstance instance22 = domainObject.getDementiaWorklistStatus();
+		if ( null != instance22 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance22.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance22.getImage().getImageId(), instance22.getImage().getImagePath());
+			}
+			color = instance22.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.DementiaWorklistStatus voLookup22 = new ims.core.vo.lookups.DementiaWorklistStatus(instance22.getId(),instance22.getText(), instance22.isActive(), null, img, color);
+			ims.core.vo.lookups.DementiaWorklistStatus parentVoLookup22 = voLookup22;
+			ims.domain.lookups.LookupInstance parent22 = instance22.getParent();
+			while (parent22 != null)
+			{
+				if (parent22.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent22.getImage().getImageId(), parent22.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent22.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup22.setParent(new ims.core.vo.lookups.DementiaWorklistStatus(parent22.getId(),parent22.getText(), parent22.isActive(), null, img, color));
+				parentVoLookup22 = parentVoLookup22.getParent();
+								parent22 = parent22.getParent();
+			}			
+			valueObject.setDementiaWorklistStatus(voLookup22);
+		}
+				// MRNStatus
+		ims.domain.lookups.LookupInstance instance23 = domainObject.getMRNStatus();
+		if ( null != instance23 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance23.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance23.getImage().getImageId(), instance23.getImage().getImagePath());
+			}
+			color = instance23.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.MRNStatus voLookup23 = new ims.core.vo.lookups.MRNStatus(instance23.getId(),instance23.getText(), instance23.isActive(), null, img, color);
+			ims.core.vo.lookups.MRNStatus parentVoLookup23 = voLookup23;
+			ims.domain.lookups.LookupInstance parent23 = instance23.getParent();
+			while (parent23 != null)
+			{
+				if (parent23.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent23.getImage().getImageId(), parent23.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent23.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup23.setParent(new ims.core.vo.lookups.MRNStatus(parent23.getId(),parent23.getText(), parent23.isActive(), null, img, color));
+				parentVoLookup23 = parentVoLookup23.getParent();
+								parent23 = parent23.getParent();
+			}			
+			valueObject.setMRNStatus(voLookup23);
+		}
+				// hasScannedCaseNoteFolders
+		valueObject.setHasScannedCaseNoteFolders( domainObject.isHasScannedCaseNoteFolders() );
+		// IsConfidential
+		valueObject.setIsConfidential( domainObject.isIsConfidential() );
+		// TimeOfBirth
+		String TimeOfBirth = domainObject.getTimeOfBirth();
+		if ( null != TimeOfBirth ) 
+		{
+			valueObject.setTimeOfBirth(new ims.framework.utils.Time(TimeOfBirth) );
+		}
+		// PatientCategory
+		ims.domain.lookups.LookupInstance instance27 = domainObject.getPatientCategory();
+		if ( null != instance27 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance27.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance27.getImage().getImageId(), instance27.getImage().getImagePath());
+			}
+			color = instance27.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.PatientStatus voLookup27 = new ims.core.vo.lookups.PatientStatus(instance27.getId(),instance27.getText(), instance27.isActive(), null, img, color);
+			ims.core.vo.lookups.PatientStatus parentVoLookup27 = voLookup27;
+			ims.domain.lookups.LookupInstance parent27 = instance27.getParent();
+			while (parent27 != null)
+			{
+				if (parent27.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent27.getImage().getImageId(), parent27.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent27.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup27.setParent(new ims.core.vo.lookups.PatientStatus(parent27.getId(),parent27.getText(), parent27.isActive(), null, img, color));
+				parentVoLookup27 = parentVoLookup27.getParent();
+								parent27 = parent27.getParent();
+			}			
+			valueObject.setPatientCategory(voLookup27);
+		}
+				// PDSPatientGP
+		valueObject.setPDSPatientGP(ims.core.vo.domain.PDSPatientGPVoAssembler.create(map, domainObject.getPDSPatientGP()) );
  		return valueObject;
 	 }
 
@@ -771,6 +918,47 @@ public class PatientShortAssembler
 			}
 		}
 		domainObject.setCurrentResponsibleConsultant(value20);
+		ims.framework.utils.DateTime dateTime21 = valueObject.getDementiaBreachDateTime();
+		java.util.Date value21 = null;
+		if ( dateTime21 != null ) 
+		{
+			value21 = dateTime21.getJavaDate();
+		}
+		domainObject.setDementiaBreachDateTime(value21);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value22 = null;
+		if ( null != valueObject.getDementiaWorklistStatus() ) 
+		{
+			value22 =
+				domainFactory.getLookupInstance(valueObject.getDementiaWorklistStatus().getID());
+		}
+		domainObject.setDementiaWorklistStatus(value22);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value23 = null;
+		if ( null != valueObject.getMRNStatus() ) 
+		{
+			value23 =
+				domainFactory.getLookupInstance(valueObject.getMRNStatus().getID());
+		}
+		domainObject.setMRNStatus(value23);
+		domainObject.setHasScannedCaseNoteFolders(valueObject.getHasScannedCaseNoteFolders());
+		domainObject.setIsConfidential(valueObject.getIsConfidential());
+		ims.framework.utils.Time time26 = valueObject.getTimeOfBirth();
+		String value26 = null;
+		if ( time26 != null ) 
+		{
+			value26 = time26.toString();
+		}
+		domainObject.setTimeOfBirth(value26);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value27 = null;
+		if ( null != valueObject.getPatientCategory() ) 
+		{
+			value27 =
+				domainFactory.getLookupInstance(valueObject.getPatientCategory().getID());
+		}
+		domainObject.setPatientCategory(value27);
+		domainObject.setPDSPatientGP(ims.core.vo.domain.PDSPatientGPVoAssembler.extractPatientGP(domainFactory, valueObject.getPDSPatientGP(), domMap));
 
 		return domainObject;
 	}

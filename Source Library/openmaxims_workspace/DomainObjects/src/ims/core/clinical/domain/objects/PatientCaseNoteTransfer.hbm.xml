@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 12/10/2015, 13:30 -->
+<hibernate-mapping>
+	<class name="ims.core.clinical.domain.objects.PatientCaseNoteTransfer" table="core_patientcasetra" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: patient -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="patient" class="ims.core.patient.domain.objects.Patient" unique="true" foreign-key="patientcasetra_patient_fk" access="field" cascade="save-update">
+			<column name="patient" sql-type="numeric(10,0)" not-null="true" unique="false"  index='transfer_idx' />
+		</many-to-one>
+<!-- debug: caseNote -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="caseNote" class="ims.core.clinical.domain.objects.PatientCaseNote" unique="true" foreign-key="patientcasetra_casenote_fk" access="field" cascade="save-update">
+			<column name="casenote" sql-type="numeric(10,0)" not-null="true" unique="false"  index='transfer_idx' />
+		</many-to-one>
+<!-- debug: transferredFromLocation -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="transferredFromLocation" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="patientcasetra_transferre_fk" access="field" cascade="save-update">
+			<column name="transferre" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: transferredToLocation -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="transferredToLocation" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="patientcasetra_transferr2_fk" access="field" cascade="save-update">
+			<column name="transferr2" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: transferredBy -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="transferredBy" class="ims.core.resource.people.domain.objects.MemberOfStaff" unique="true" foreign-key="patientcasetra_transferr3_fk" access="field" cascade="save-update">
+			<column name="transferr3" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: transferDate -->
+<!-- debug: reasonForTransfer -->
+<!-- debug: tansferComment -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="tansferComment" class="ims.core.clinical.domain.objects.PatientCaseNoteComment" unique="true" foreign-key="patientcasetra_tansfercom_fk" access="field" cascade="save-update">
+			<column name="tansfercom" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="transferDate" type="timestamp" access="field" update="true">
+			<column name="transferda"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="reasonForTransfer" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_reasonfort" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+	</class>
+</hibernate-mapping>

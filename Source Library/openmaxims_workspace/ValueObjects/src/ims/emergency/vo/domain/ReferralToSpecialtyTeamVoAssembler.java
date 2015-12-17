@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.emergency.vo.domain;
@@ -76,6 +81,10 @@ public class ReferralToSpecialtyTeamVoAssembler
 		valueObjectDest.setSystemInformation(valueObjectSrc.getSystemInformation());
 		// NotAccepted
 		valueObjectDest.setNotAccepted(valueObjectSrc.getNotAccepted());
+		// IsSafeguardingConcern
+		valueObjectDest.setIsSafeguardingConcern(valueObjectSrc.getIsSafeguardingConcern());
+		// SafeguardingComments
+		valueObjectDest.setSafeguardingComments(valueObjectSrc.getSafeguardingComments());
 	 	return valueObjectDest;
 	 }
 
@@ -367,19 +376,7 @@ public class ReferralToSpecialtyTeamVoAssembler
 			return null;
 			
 		// Patient
-		if (domainObject.getPatient() != null)
-		{
-			if(domainObject.getPatient() instanceof HibernateProxy) // If the proxy is set, there is no need to lazy load, the proxy knows the id already. 
-			{
-				HibernateProxy p = (HibernateProxy) domainObject.getPatient();
-				int id = Integer.parseInt(p.getHibernateLazyInitializer().getIdentifier().toString());				
-				valueObject.setPatient(new ims.core.patient.vo.PatientRefVo(id, -1));				
-			}
-			else
-			{
-				valueObject.setPatient(new ims.core.patient.vo.PatientRefVo(domainObject.getPatient().getId(), domainObject.getPatient().getVersion()));
-			}
-		}
+		valueObject.setPatient(ims.core.vo.domain.PatientShortListVoAssembler.create(map, domainObject.getPatient()) );
 		// Episode
 		if (domainObject.getEpisode() != null)
 		{
@@ -521,6 +518,10 @@ public class ReferralToSpecialtyTeamVoAssembler
 		valueObject.setSystemInformation(ims.vo.domain.SystemInformationAssembler.create(domainObject.getSystemInformation()));
 		// NotAccepted
 		valueObject.setNotAccepted( domainObject.isNotAccepted() );
+		// IsSafeguardingConcern
+		valueObject.setIsSafeguardingConcern( domainObject.isIsSafeguardingConcern() );
+		// SafeguardingComments
+		valueObject.setSafeguardingComments(domainObject.getSafeguardingComments());
  		return valueObject;
 	 }
 
@@ -570,7 +571,8 @@ public class ReferralToSpecialtyTeamVoAssembler
 		}
 		domainObject.setVersion(valueObject.getVersion_ReferralToSpecTeam());
 
-		ims.core.patient.domain.objects.Patient value1 = null;
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.patient.domain.objects.Patient value1 = null;
 		if ( null != valueObject.getPatient() ) 
 		{
 			if (valueObject.getPatient().getBoId() == null)
@@ -579,10 +581,6 @@ public class ReferralToSpecialtyTeamVoAssembler
 				{
 					value1 = (ims.core.patient.domain.objects.Patient)domMap.get(valueObject.getPatient());
 				}
-			}
-			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
-			{
-				value1 = domainObject.getPatient();	
 			}
 			else
 			{
@@ -706,6 +704,14 @@ public class ReferralToSpecialtyTeamVoAssembler
 		domainObject.setReferredBy(value10);
 		domainObject.setComments(ims.emergency.vo.domain.AttendanceClinicalNotesVoAssembler.extractAttendanceClinicalNotesList(domainFactory, valueObject.getComments(), domainObject.getComments(), domMap));		
 		domainObject.setNotAccepted(valueObject.getNotAccepted());
+		domainObject.setIsSafeguardingConcern(valueObject.getIsSafeguardingConcern());
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getSafeguardingComments() != null && valueObject.getSafeguardingComments().equals(""))
+		{
+			valueObject.setSafeguardingComments(null);
+		}
+		domainObject.setSafeguardingComments(valueObject.getSafeguardingComments());
 
 		return domainObject;
 	}

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -33,26 +38,34 @@ import ims.clinical.vo.domain.InpatientEpisodeForVTERiskAsessmentVoAssembler;
 import ims.clinical.vo.domain.VTERiskAssessmentShortVoAssembler;
 import ims.clinical.vo.domain.VTERiskAssessmentVoAssembler;
 import ims.clinical.vo.lookups.VTEAsessmentStatus;
+import ims.clinical.vo.lookups.VTEAssessmentContextType;
 import ims.core.admin.pas.domain.objects.DischargedEpisode;
 import ims.core.admin.pas.domain.objects.InpatientEpisode;
 import ims.core.admin.pas.vo.DischargedEpisodeRefVo;
 import ims.core.admin.pas.vo.InpatientEpisodeRefVo;
 import ims.core.admin.pas.vo.PASEventRefVo;
 import ims.core.clinical.domain.objects.VTERiskAssessment;
+import ims.core.clinical.vo.VTERiskAssessmentRefVo;
+import ims.core.domain.objects.PatientSummaryRecord;
+import ims.core.patient.vo.PatientRefVo;
 import ims.core.vo.CareContextShortVo;
 import ims.core.vo.CareContextShortVoCollection;
 import ims.core.vo.DischargedEpisodeForVTERiskAssessmentWorklistVo;
 import ims.core.vo.DischargedEpisodeForVTERiskAssessmentWorklistVoCollection;
+import ims.core.vo.PatientSummaryRecordVo;
+import ims.core.vo.VTEAssessmentConfigVo;
 import ims.core.vo.domain.CareContextShortVoAssembler;
 import ims.core.vo.domain.DischargedEpisodeForVTERiskAssessmentWorklistVoAssembler;
+import ims.core.vo.domain.PatientSummaryRecordVoAssembler;
+import ims.core.vo.domain.VTEAssessmentConfigVoAssembler;
 import ims.domain.DomainFactory;
-import ims.domain.exceptions.DomainInterfaceException;
 import ims.domain.exceptions.DomainRuntimeException;
 import ims.domain.exceptions.StaleObjectException;
 import ims.domain.exceptions.UniqueKeyViolationException;
 import ims.framework.enumerations.SortOrder;
 import ims.framework.exceptions.CodingRuntimeException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class VTERiskAssessmentImpl extends BaseVTERiskAssessmentImpl
@@ -109,6 +122,40 @@ public class VTERiskAssessmentImpl extends BaseVTERiskAssessmentImpl
 		
 		if(idVTE == null)//check if it is a new VTE Risk Assessment record
 		{
+			//WDEV-19627 save a PatientSummaryRecord, not if its for a discahrge episode
+			if ( discharge == null && (VTEAssessmentContextType.PREOP.equals(vteRiskAssess.getContextType()) || VTEAssessmentContextType.INPATIENT.equals(vteRiskAssess.getContextType())))
+			{
+				PatientSummaryRecordVo summaryRecord = null;
+				
+				summaryRecord = getSummaryRecordForPatient(vteRiskAssess.getPatient(), vteRiskAssess.getContextType());
+			
+				if (summaryRecord == null)
+					summaryRecord = new PatientSummaryRecordVo();
+
+				summaryRecord.setPatient(vteRiskAssess.getPatient());
+				
+				if (VTEAssessmentContextType.PREOP.equals(vteRiskAssess.getContextType()))
+				{
+					summaryRecord.setPreOpVTEAssessment(vteRiskAssess);
+					summaryRecord.setInpatientVTEAssessment(null);
+					summaryRecord.setPreOpVTEValidationDate(null);
+				}
+				else if (VTEAssessmentContextType.INPATIENT.equals(vteRiskAssess.getContextType()))
+				{
+					summaryRecord.setInpatientVTEAssessment(vteRiskAssess);
+					summaryRecord.setPreOpVTEAssessment(null);
+					summaryRecord.setPreOpVTECompletedDate(null);
+					summaryRecord.setPreOpVTEValidationDate(null);
+				}
+				
+				if (vteRiskAssess.getCompletedBy() != null && vteRiskAssess.getCompletedBy().getRecordingDateTime() != null)
+					summaryRecord.setPreOpVTECompletedDate(vteRiskAssess.getCompletedBy().getRecordingDateTime().getDate());
+
+				PatientSummaryRecord doPatientSummaryRecord = PatientSummaryRecordVoAssembler.extractPatientSummaryRecord(factory, summaryRecord);
+				factory.save(doPatientSummaryRecord);
+
+			}
+			
 			if(inpatEpisodeVTEriskAsses != null)
 			{			
 				if(inpatEpisodeVTEriskAsses.getVTERiskAssessment() == null)
@@ -121,6 +168,7 @@ public class VTERiskAssessmentImpl extends BaseVTERiskAssessmentImpl
 					}
 					
 					InpatientEpisode doInpatientEpisode = InpatientEpisodeForVTERiskAsessmentVoAssembler.extractInpatientEpisode(factory, inpatEpisodeVTEriskAsses);
+					
 					if( doInpatientEpisode != null)
 					{
 						factory.save(doInpatientEpisode);
@@ -133,12 +181,13 @@ public class VTERiskAssessmentImpl extends BaseVTERiskAssessmentImpl
 				{
 					discharge.setVTERiskAssessment(vteRiskAssess);
 					
-					if( VTEAsessmentStatus.REQUIRED.equals(discharge.getVTEAssessmentStatus()))
+					if (VTEAsessmentStatus.REQUIRED.equals(discharge.getVTEAssessmentStatus()))
 					{
-						discharge.setVTEAssessmentStatus(vteRiskAssess.getVTEAssessmentStatus());
+						discharge.setVTEAssessmentStatus(VTEAssessmentContextType.PREOP.equals(vteRiskAssess.getContextType()) ? VTEAsessmentStatus.VALIDATION_REQUIRED : vteRiskAssess.getVTEAssessmentStatus());
 					}
 					
 					DischargedEpisode doDischargeEpisode = DischargedEpisodeForVTERiskAssessmentWorklistVoAssembler.extractDischargedEpisode(factory, discharge);
+					
 					if( doDischargeEpisode != null)
 					{
 						factory.save(doDischargeEpisode);
@@ -183,8 +232,29 @@ public class VTERiskAssessmentImpl extends BaseVTERiskAssessmentImpl
 		
 		return vteRiskAssess;
 	}
-
 	
+	private VTEAssessmentConfigVo getVteConfig()
+	{
+
+		List list = getDomainFactory().find("select config from VTEAssessmentConfig as config ");
+			
+		if (list == null || list.size() == 0)
+			return null;
+		
+		return VTEAssessmentConfigVoAssembler.createVTEAssessmentConfigVoCollectionFromVTEAssessmentConfig(list).get(0);
+	}
+
+	private PatientSummaryRecordVo getSummaryRecordForPatient(PatientRefVo patient, VTEAssessmentContextType contextType)
+	{
+
+		List list = getDomainFactory().find("select summaryRecord from PatientSummaryRecord as summaryRecord left join summaryRecord.patient as pat where pat.id = :patID", new String[] {"patID"}, new Object[] {patient.getID_Patient()});
+		
+		if (list == null || list.size() == 0)
+			return null;
+		
+		return PatientSummaryRecordVoAssembler.createPatientSummaryRecordVoCollectionFromPatientSummaryRecord(list).get(0);
+	}
+
 	public InpatientEpisodeForVTERiskAsessmentVo getInpatientEpisodes( PASEventRefVo pasRefVo) 
 	{
 		if(pasRefVo == null )
@@ -379,5 +449,166 @@ public class VTERiskAssessmentImpl extends BaseVTERiskAssessmentImpl
 		DischargedEpisode doDischargedEpisode = (DischargedEpisode) factory.getDomainObject(DischargedEpisode.class, dischargeRef.getID_DischargedEpisode());
 				
 		return DischargedEpisodeForVTERiskAssessmentWorklistVoAssembler.create(doDischargedEpisode);
+	}
+
+	public Boolean patientHasTCIForToday(PatientRefVo patient)
+	{
+		if (patient == null)
+			throw new DomainRuntimeException("Cannot get Patient on null Id.");
+
+		DomainFactory factory = getDomainFactory();
+
+		ArrayList<String> markers = new ArrayList<String>();
+		ArrayList<Object> values = new ArrayList<Object>();
+
+		String hql = " select pea from PendingElectiveAdmission as pea left join pea.pasEvent as pasEv left join pasEv.patient as pat where pat.id = :patientId and pea.tCIDate = :tciDate " +
+			   "and (pea.isRIE is null or pea.isRIE = 0)";
+
+		markers.add("patientId");
+		values.add(patient.getID_Patient());
+		
+		markers.add("tciDate");
+		values.add(new java.util.Date());
+
+		List<?> list = factory.find(hql, markers, values);
+
+		if (list != null && list.size() > 0)
+			return true;
+
+		return false;
+	}
+
+	public InpatientEpisodeForVTERiskAsessmentVo getInpatientEpisode(PatientRefVo patient)
+	{
+		if (patient == null)
+			throw new DomainRuntimeException("Cannot get Patient on null Id.");
+
+		DomainFactory factory = getDomainFactory();
+
+		ArrayList<String> markers = new ArrayList<String>();
+		ArrayList<Object> values = new ArrayList<Object>();
+
+		String hql = " select ip from InpatientEpisode as ip left join ip.pasEvent as pasEvent left join pasEvent.patient as patient where patient.id = :patientId";
+
+		markers.add("patientId");
+		values.add(patient.getID_Patient());
+
+		List<?> list = factory.find(hql, markers, values);
+
+		if (list != null && list.size() > 0)
+			return 	InpatientEpisodeForVTERiskAsessmentVoAssembler.createInpatientEpisodeForVTERiskAsessmentVoCollectionFromInpatientEpisode(list).get(0);
+		
+		return null;
+	}
+
+	public VTERiskAssessmentShortVo getValidPreOpVteFromPatientSummaryForValidation(PatientRefVo patientRef)
+	{
+		
+		ims.framework.utils.Date today = new ims.framework.utils.Date();
+		
+		VTEAssessmentConfigVo vteConfig = getVteConfig();
+		
+		if (vteConfig != null && vteConfig.getPreOpAssessmentValidPeriod() != null)
+		{
+			today.addDay(-1*vteConfig.getPreOpAssessmentValidPeriod());
+		}
+		
+		List list = getDomainFactory().find("select preOpVte from PatientSummaryRecord as summaryRecord left join summaryRecord.patient as pat left join summaryRecord.preOpVTEAssessment as preOpVte where pat.id = :patientID and " +
+				" (preOpVte.isRIE is null or preOpVte.isRIE = 0) and summaryRecord.preOpVTECompletedDate >= :invalidDate and summaryRecord.preOpVTEValidationDate is null", new String[] {"patientID", "invalidDate"}, new Object[] {patientRef.getID_Patient(), today.getDate()});
+		
+		if (list == null || list.size() == 0 || list.get(0) == null)
+			return null;
+		
+		return VTERiskAssessmentShortVoAssembler.createVTERiskAssessmentShortVoCollectionFromVTERiskAssessment(list).get(0);
+	}
+	
+	public PatientSummaryRecordVo getPatientSummaryForRecord(VTERiskAssessmentRefVo vteAssessmentRef, PatientRefVo patientRef)
+	{
+		if (vteAssessmentRef == null || vteAssessmentRef.getID_VTERiskAssessment() == null)
+			return null;
+		
+		List list = getDomainFactory().find("select summaryRecord from PatientSummaryRecord as summaryRecord left join summaryRecord.patient as pat left join summaryRecord.preOpVTEAssessment as preOpVte left join summaryRecord.inpatientVTEAssessment as inpVte where pat.id = :patientID and (preOpVte.id = :vteID or inpVte.id = :vteID)", new String[] {"vteID", "patientID"}, new Object[] {vteAssessmentRef.getID_VTERiskAssessment(), patientRef.getID_Patient()});
+		
+		if (list == null || list.size() == 0)
+			return null;
+		
+		return PatientSummaryRecordVoAssembler.createPatientSummaryRecordVoCollectionFromPatientSummaryRecord(list).get(0);
+	}
+
+	public InpatientEpisodeForVTERiskAsessmentVo getInpatientEpisodeForRecord(VTERiskAssessmentRefVo vteAssessmentRef, PatientRefVo patientRef)
+	{
+		if (patientRef == null || vteAssessmentRef == null)
+			return null;
+
+		DomainFactory factory = getDomainFactory();
+
+		ArrayList<String> markers = new ArrayList<String>();
+		ArrayList<Object> values = new ArrayList<Object>();
+
+		String hql = " select inpatEp from InpatientEpisode as inpatEp left join inpatEp.pasEvent as pasEv left join pasEv.patient as pat left join inpatEp.vTERiskAssessment as vte where pat.id = :patientID and vte.id = :vteID";
+
+		markers.add("patientID");
+		values.add(patientRef.getID_Patient());
+
+		markers.add("vteID");
+		values.add(vteAssessmentRef.getID_VTERiskAssessment());
+		
+		List<?> list = factory.find(hql, markers, values);
+
+		if (list != null && list.size() > 0)
+			return 	InpatientEpisodeForVTERiskAsessmentVoAssembler.createInpatientEpisodeForVTERiskAsessmentVoCollectionFromInpatientEpisode(list).get(0);
+		
+		return null;
+	}
+
+	public DischargedEpisodeForVTERiskAssessmentWorklistVo getDischargedEpisodeForRecord(VTERiskAssessmentRefVo vteAssessmentRef, PatientRefVo patientRef)
+	{
+		if (patientRef == null || vteAssessmentRef == null)
+			return null;
+
+		DomainFactory factory = getDomainFactory();
+
+		ArrayList<String> markers = new ArrayList<String>();
+		ArrayList<Object> values = new ArrayList<Object>();
+
+		String hql = " select dischargeEp from DischargedEpisode as dischargeEp left join dischargeEp.pasEvent as pasEv left join pasEv.patient as pat left join dischargeEp.vTERiskAssessment as vte where pat.id = :patientID and vte.id = :vteID";
+
+		markers.add("patientID");
+		values.add(patientRef.getID_Patient());
+
+		markers.add("vteID");
+		values.add(vteAssessmentRef.getID_VTERiskAssessment());
+		
+		List<?> list = factory.find(hql, markers, values);
+
+		if (list != null && list.size() > 0)
+			return 	DischargedEpisodeForVTERiskAssessmentWorklistVoAssembler.createDischargedEpisodeForVTERiskAssessmentWorklistVoCollectionFromDischargedEpisode(list).get(0);
+		
+		return null;
+	}
+
+	public VTERiskAssessmentVo saveVTERiskAssess(VTERiskAssessmentVo vteToSave) throws StaleObjectException
+	{
+		if (vteToSave == null)
+		{
+			throw new DomainRuntimeException("VTERiskAssessment cannot be null");
+		}
+		
+		DomainFactory factory = getDomainFactory();
+		
+		VTERiskAssessment doVTERiskAssessment = VTERiskAssessmentVoAssembler.extractVTERiskAssessment(factory, vteToSave);
+		factory.save(doVTERiskAssessment);
+		
+		return VTERiskAssessmentVoAssembler.create(doVTERiskAssessment);
+	}
+
+	public void savePatientSummaryRecord(PatientSummaryRecordVo summaryRecordToSave) throws StaleObjectException
+	{
+		DomainFactory factory = getDomainFactory();
+		
+		PatientSummaryRecord doSummaryRecord = PatientSummaryRecordVoAssembler.extractPatientSummaryRecord(factory, summaryRecordToSave);
+		
+		factory.save(doSummaryRecord);
+		
 	}
 }

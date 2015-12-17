@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:35 -->
+<!-- Generated: 12/10/2015, 13:30 -->
 <hibernate-mapping>
 	<class name="ims.core.configuration.domain.objects.CustomList" table="core_customlist" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -42,6 +42,8 @@
 			<column name="listowner" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
 <!-- debug: isActive -->
+<!-- debug: isReadOnly -->
+<!-- debug: isFullAccess -->
 <!-- debug: !IsAssociation && !IsCollection -->
 
 <!-- debug: IsLookup -->
@@ -67,6 +69,16 @@
 <!-- debug: !IsLookup -->
 		<property name="isActive" type="boolean" access="field" update="true">
 			<column name="isactive"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isReadOnly" type="boolean" access="field" update="true">
+			<column name="isreadonly"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isFullAccess" type="boolean" access="field" update="true">
+			<column name="isfullacce"  not-null="false" unique="false"  />
 		</property>
 	</class>
 </hibernate-mapping>

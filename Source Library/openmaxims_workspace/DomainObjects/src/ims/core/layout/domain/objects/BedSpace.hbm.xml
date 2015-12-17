@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:37 -->
+<!-- Generated: 12/10/2015, 13:32 -->
 <hibernate-mapping>
 	<class name="ims.core.layout.domain.objects.BedSpace" table="core_bedspace" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -37,6 +37,8 @@
 <!-- debug: bedNumber -->
 <!-- debug: textPosition -->
 <!-- debug: imagePosition -->
+<!-- debug: privateBed -->
+<!-- debug: dependency -->
 <!-- debug: !IsAssociation && !IsCollection -->
 
 <!-- debug: !IsLookup -->
@@ -73,5 +75,15 @@
 		<property name="imagePosition" type="string" access="field" update="true" > 
 			<column name="imageposit" length="1"  not-null="true" unique="false"  />
 		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="privateBed" type="boolean" access="field" update="true">
+			<column name="privatebed"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="dependency" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_dependency" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
 	</class>
 </hibernate-mapping>

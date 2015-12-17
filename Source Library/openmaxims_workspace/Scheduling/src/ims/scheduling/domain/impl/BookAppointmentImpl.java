@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -30,6 +35,7 @@ import ims.RefMan.vo.lookups.ICABReferralStatus;
 import ims.RefMan.vo.lookups.ReferralApptStatus;
 import ims.chooseandbook.vo.lookups.ActionRequestType;
 import ims.configuration.gen.ConfigFlag;
+import ims.core.admin.domain.objects.EmergencyAttendance;
 import ims.core.admin.domain.objects.ICABReferral;
 import ims.core.admin.domain.objects.ProviderSystem;
 import ims.core.clinical.domain.objects.TaxonomyMap;
@@ -56,6 +62,9 @@ import ims.domain.hibernate3.IMSCriteria;
 import ims.domain.impl.DomainImpl;
 import ims.domain.impl.DomainImplFlyweightFactory;
 import ims.domain.lookups.LookupMapping;
+import ims.emergency.vo.EmergencyAttendanceOutcomeVo;
+import ims.emergency.vo.domain.EmergencyAttendanceOutcomeVoAssembler;
+import ims.framework.enumerations.SortOrder;
 import ims.framework.enumerations.SystemLogLevel;
 import ims.framework.enumerations.SystemLogType;
 import ims.framework.exceptions.CodingRuntimeException;
@@ -116,6 +125,7 @@ import ims.vo.interfaces.IMos;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -301,12 +311,22 @@ public class BookAppointmentImpl extends DomainImpl implements ims.scheduling.do
 	/**
 	 * !! Take Caution if modifying this method as it is used by Choose and Book via WebServices
 	 */
-	public Sch_BookingVo saveBooking(Sch_BookingVo voBooking, SlotEventPathwayVoCollection voCollSlotEvPathway, SessionShortVo session) throws DomainInterfaceException, StaleObjectException 
+	public Sch_BookingVo saveBooking(Sch_BookingVo voBooking, SlotEventPathwayVoCollection voCollSlotEvPathway, SessionShortVo session, EmergencyAttendanceOutcomeVo emergAttendance) throws DomainInterfaceException, StaleObjectException //WDEV-19060 
 	{
 		if (voBooking == null)
 			throw new CodingRuntimeException("voBooking is null in method saveBooking");
 
 		DomainFactory factory = getDomainFactory();
+		
+		//wdev-19582
+		if( voBooking.getPatientIsNotNull())
+		{
+			Patient doPatient= (Patient)factory.getDomainObject(Patient.class,voBooking.getPatient().getID_Patient());
+			PatientShort patShVo = PatientShortAssembler.create(doPatient);
+			voBooking.setPatient(patShVo);
+					
+		}
+		//---------
 		
 		Sch_Booking doBooking = Sch_BookingVoAssembler.extractSch_Booking(factory, voBooking);
 
@@ -379,9 +399,29 @@ public class BookAppointmentImpl extends DomainImpl implements ims.scheduling.do
 		SessionAdmin impl = (SessionAdmin) getDomainImpl(SessionAdminImpl.class);
 		impl.saveSessionForMaxContinuousTime(session);
 		
+		saveEmergencyAttendance(factory, emergAttendance,voBooking); //WDEV-19060
+		
 		return voBooking;	
 	}
 
+	//WDEV-19060
+	private void saveEmergencyAttendance(DomainFactory factory, EmergencyAttendanceOutcomeVo emergAttendance, Sch_BookingVo voBooking) throws StaleObjectException
+	{
+		if (emergAttendance==null || emergAttendance.getEDClinicDetails()==null)
+			return;
+		
+		Booking_AppointmentVoCollection collAppts = voBooking.getAppointments();
+		
+		if (collAppts!=null && collAppts.size()>0)
+		{
+			collAppts=collAppts.sort(new ApptDateTimeComparator(SortOrder.ASCENDING));
+			
+			emergAttendance.getEDClinicDetails().setEDClinicAppt(collAppts.get(0));
+			
+			EmergencyAttendance doEmergAtt = EmergencyAttendanceOutcomeVoAssembler.extractEmergencyAttendance(factory, emergAttendance);
+			factory.save(doEmergAtt);
+		}
+	}
 
 	private void reduceRemainingSlotsOrTimes(Booking_Appointment doBookAppt) 
 	{
@@ -608,7 +648,7 @@ public class BookAppointmentImpl extends DomainImpl implements ims.scheduling.do
 			throw new CodingRuntimeException("session is null or id not provided in method hasBookingRights");
 
 		DomainFactory factory = getDomainFactory();
-		String hql = "select count(bookRight.id) from Sch_Session as session left join session.bookingRights as bookRight where (session.id = :idSession and bookRight.role.id = :idRole)";
+		String hql = "select count(bookRight.id) from Sch_Session as session left join session.sch_Profile as profile left join profile.bookingRights as bookRight where (session.id = :idSession and bookRight.role.id = :idRole)"; //WDEV-21137
 
 		int count = -1;
 		List lstCount = factory.find(hql, new String[]{"idSession", "idRole"}, new Object[]{session.getID_Sch_Session(), role.getId()});
@@ -628,8 +668,19 @@ public class BookAppointmentImpl extends DomainImpl implements ims.scheduling.do
 			throw new CodingRuntimeException("service parameter null or id not provided for listSessionLiteByService");
 
 		DomainFactory factory = getDomainFactory();
-		List profiles = factory.find("from Sch_Profile prof where prof.service.id = :idService", new String[]{"idService"}, new Object[]{service.getID_Service()});
-		return ProfileLiteVoAssembler.createProfileLiteVoCollectionFromSch_Profile(profiles);
+		
+		String query = "SELECT prof FROM Sch_Profile AS prof LEFT JOIN prof.service AS service WHERE service.id = :ID_SERVICE AND ((prof.isActive = 1) OR (prof.lastGenDate is not null AND prof.lastGenDate >= :DATE_PARAMETER))";
+		
+		ArrayList<String> paramNames = new ArrayList<String>();
+		ArrayList<Object> paramValues = new ArrayList<Object>();
+		
+		paramNames.add("ID_SERVICE");
+		paramValues.add(service.getID_Service());
+		
+		paramNames.add("DATE_PARAMETER");
+		paramValues.add(new Date().getDate());
+		
+		return ProfileLiteVoAssembler.createProfileLiteVoCollectionFromSch_Profile(factory.find(query, paramNames, paramValues));
 	}
 	
 	public ProfileLiteVoCollection listTemplateByProfile(ProfileLiteVo profile)
@@ -837,5 +888,64 @@ public class BookAppointmentImpl extends DomainImpl implements ims.scheduling.do
 			throw new DomainRuntimeException("Session can not be null");
 		
 		return SessionIntermediateVoAssembler.create((Sch_Session) getDomainFactory().getDomainObject(Sch_Session.class, session.getID_Sch_Session()));
+	}
+	
+	//WDEV-19060
+	public class ApptDateTimeComparator implements Comparator<Object>
+	{
+		private int direction = 1;
+		
+		public ApptDateTimeComparator()
+		{
+			this(SortOrder.ASCENDING);
+		}
+		
+		public ApptDateTimeComparator(SortOrder order)
+		{
+			if (order == SortOrder.DESCENDING)
+				direction = -1;
+			
+		}
+		
+		public int compare(Object ob1, Object ob2)
+		{
+			DateTime rez1 = null;
+			DateTime rez2 = null;
+
+			if (ob1 instanceof Booking_AppointmentVo)
+			{
+				Booking_AppointmentVo ps1 = (Booking_AppointmentVo) ob1;
+
+				DateTime apptDateTime = new DateTime();
+
+				if (ps1.getApptStartTimeIsNotNull())
+					apptDateTime.setDateTime(ps1.getAppointmentDate(), ps1.getApptStartTime());
+				
+				rez1 = ps1.getAppointmentDate() != null ? apptDateTime : null;
+			}
+
+			if (ob2 instanceof Booking_AppointmentVo)
+			{
+				Booking_AppointmentVo ps2 = (Booking_AppointmentVo) ob2;
+
+				DateTime apptDateTime = new DateTime();
+
+				if (ps2.getApptStartTimeIsNotNull())
+					apptDateTime.setDateTime(ps2.getAppointmentDate(), ps2.getApptStartTime());
+				
+				rez2 = ps2.getAppointmentDate() != null ? apptDateTime : null;
+			}
+
+			if (rez1 != null && rez2 != null)
+				return rez1.compareTo(rez2) * direction;
+
+			if (rez1 != null && rez2 == null)
+				return direction;
+
+			if (rez2 != null && rez1 == null)
+				return (-1) * direction;
+
+			return 0;
+		}
 	}
 }

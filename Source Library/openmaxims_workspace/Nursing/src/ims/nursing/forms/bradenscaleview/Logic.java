@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -35,6 +40,7 @@ import ims.nursing.helper.RiskAssessmentHelper;
 import ims.nursing.vo.BradenScale;
 import ims.nursing.vo.BradenScaleCollection;
 import ims.nursing.vo.BradenScaleDetailsCollection;
+import ims.nursing.vo.BradenScaleSearchCriteriaVo;
 import ims.domain.exceptions.DomainInterfaceException;
 import ims.framework.FormName;
 import ims.framework.enumerations.DialogResult;
@@ -64,7 +70,18 @@ public class Logic extends BaseLogic
 		form.cmbFilter().newRow(LAST_YEAR, "Within the last year");
 		form.cmbFilter().newRow(ALL, "All");
 
-		form.cmbFilter().setValue(LAST_WEEK);
+		//WDEV-19389 --- start
+		if (!(form.getGlobalContext().Core.getCurrentCareContextIsNotNull() && form.getGlobalContext().Nursing.getBradenScaleSearchCriteriaIsNotNull() && form.getGlobalContext().Nursing.getBradenScaleSearchCriteria().getCareContextIsNotNull() && form.getGlobalContext().Core.getCurrentCareContext().equals(form.getGlobalContext().Nursing.getBradenScaleSearchCriteria().getCareContext())))
+			form.getGlobalContext().Nursing.setBradenScaleSearchCriteria(null);
+		
+		if(form.getGlobalContext().Nursing.getBradenScaleSearchCriteriaIsNotNull())
+		{
+			setSearchCriteria(form.getGlobalContext().Nursing.getBradenScaleSearchCriteria());
+		}
+		else
+			form.cmbFilter().setValue(LAST_WEEK);
+		//WDEV-19389 --- end
+		
 		filterValueChanged();
 		
 		try
@@ -90,6 +107,24 @@ public class Logic extends BaseLogic
 		updateControlsState();
 	}
 
+	private BradenScaleSearchCriteriaVo getSearchCriteria()
+	{
+		BradenScaleSearchCriteriaVo searchCriteria = new BradenScaleSearchCriteriaVo();
+		
+		searchCriteria.setFilter(form.cmbFilter().getValue());
+		searchCriteria.setCareContext(form.getGlobalContext().Core.getCurrentCareContext());
+		
+		return searchCriteria;
+	}
+	
+	
+	private void setSearchCriteria(BradenScaleSearchCriteriaVo bradenScaleSearchCriteriaVo)
+	{
+		form.cmbFilter().setValue(bradenScaleSearchCriteriaVo.getFilter());	
+		filterValueChanged();
+		updateControlsState();
+	}
+	
 	private void filterValueChanged()
 	{
 		//WDEV-2446 
@@ -140,6 +175,7 @@ public class Logic extends BaseLogic
 			{
 				engine.showMessage(e1.getMessage());
 			}
+			form.getGlobalContext().Nursing.setBradenScaleSearchCriteria(getSearchCriteria());//WDEV-19389 
 		}
 		else
 		{
@@ -151,8 +187,9 @@ public class Logic extends BaseLogic
 			form.getLocalContext().setGroupIndex(new Integer(0));
 	
 			populateScreenFromData();
+			form.getGlobalContext().Nursing.setBradenScaleSearchCriteria(null);//WDEV-19389 
 		}
-
+		
 	}
 
 	protected void onBtnNewClick() throws PresentationLogicException

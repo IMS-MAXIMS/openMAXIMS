@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.admin.pas.domain.objects;
@@ -55,6 +60,23 @@ public class WardStay extends ims.domain.DomainObject implements java.io.Seriali
 	private ims.domain.lookups.LookupInstance wardType;
 	/** Bed */
 	private ims.core.layout.domain.objects.BedSpace bedSpace;
+	/** The same as BayConfig.Location for chosen Bay */
+	private ims.core.resource.place.domain.objects.Location bay;
+	/** Patient Status */
+	private ims.domain.lookups.LookupInstance patientStatus;
+	/** Reason why patient was allocated to a private bed, event though patient doesn't it has a different patient category. */
+	private ims.domain.lookups.LookupInstance reasonPrivateBedAllocated;
+	/** Reason why patient was admitted outside of configred hours */
+	private ims.domain.lookups.LookupInstance reasonAdmittingOutsideHours;
+	/** Reason why patient was admitted to different gender specific bay */
+	private ims.domain.lookups.LookupInstance reasonGenderBreach;
+	private Boolean admitedInMixedGenderBay;
+	private String reasonPrivateBedAllocatedComment;
+	private String reasonAdmittingOutsideHoursComment;
+	private String reasonGenderBreachComment;
+	private ims.core.clinical.domain.objects.Service service;
+	private ims.domain.lookups.LookupInstance transferReason;
+	private String transferComment;
     public WardStay (Integer id, int ver)
     {
     	super(id, ver);
@@ -106,6 +128,106 @@ public class WardStay extends ims.domain.DomainObject implements java.io.Seriali
 	}
 	public void setBedSpace(ims.core.layout.domain.objects.BedSpace bedSpace) {
 		this.bedSpace = bedSpace;
+	}
+
+	public ims.core.resource.place.domain.objects.Location getBay() {
+		return bay;
+	}
+	public void setBay(ims.core.resource.place.domain.objects.Location bay) {
+		this.bay = bay;
+	}
+
+	public ims.domain.lookups.LookupInstance getPatientStatus() {
+		return patientStatus;
+	}
+	public void setPatientStatus(ims.domain.lookups.LookupInstance patientStatus) {
+		this.patientStatus = patientStatus;
+	}
+
+	public ims.domain.lookups.LookupInstance getReasonPrivateBedAllocated() {
+		return reasonPrivateBedAllocated;
+	}
+	public void setReasonPrivateBedAllocated(ims.domain.lookups.LookupInstance reasonPrivateBedAllocated) {
+		this.reasonPrivateBedAllocated = reasonPrivateBedAllocated;
+	}
+
+	public ims.domain.lookups.LookupInstance getReasonAdmittingOutsideHours() {
+		return reasonAdmittingOutsideHours;
+	}
+	public void setReasonAdmittingOutsideHours(ims.domain.lookups.LookupInstance reasonAdmittingOutsideHours) {
+		this.reasonAdmittingOutsideHours = reasonAdmittingOutsideHours;
+	}
+
+	public ims.domain.lookups.LookupInstance getReasonGenderBreach() {
+		return reasonGenderBreach;
+	}
+	public void setReasonGenderBreach(ims.domain.lookups.LookupInstance reasonGenderBreach) {
+		this.reasonGenderBreach = reasonGenderBreach;
+	}
+
+	public Boolean isAdmitedInMixedGenderBay() {
+		return admitedInMixedGenderBay;
+	}
+	public void setAdmitedInMixedGenderBay(Boolean admitedInMixedGenderBay) {
+		this.admitedInMixedGenderBay = admitedInMixedGenderBay;
+	}
+
+	public String getReasonPrivateBedAllocatedComment() {
+		return reasonPrivateBedAllocatedComment;
+	}
+	public void setReasonPrivateBedAllocatedComment(String reasonPrivateBedAllocatedComment) {
+		if ( null != reasonPrivateBedAllocatedComment && reasonPrivateBedAllocatedComment.length() > 250 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for reasonPrivateBedAllocatedComment. Tried to set value: "+
+				reasonPrivateBedAllocatedComment);
+		}
+		this.reasonPrivateBedAllocatedComment = reasonPrivateBedAllocatedComment;
+	}
+
+	public String getReasonAdmittingOutsideHoursComment() {
+		return reasonAdmittingOutsideHoursComment;
+	}
+	public void setReasonAdmittingOutsideHoursComment(String reasonAdmittingOutsideHoursComment) {
+		if ( null != reasonAdmittingOutsideHoursComment && reasonAdmittingOutsideHoursComment.length() > 250 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for reasonAdmittingOutsideHoursComment. Tried to set value: "+
+				reasonAdmittingOutsideHoursComment);
+		}
+		this.reasonAdmittingOutsideHoursComment = reasonAdmittingOutsideHoursComment;
+	}
+
+	public String getReasonGenderBreachComment() {
+		return reasonGenderBreachComment;
+	}
+	public void setReasonGenderBreachComment(String reasonGenderBreachComment) {
+		if ( null != reasonGenderBreachComment && reasonGenderBreachComment.length() > 250 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for reasonGenderBreachComment. Tried to set value: "+
+				reasonGenderBreachComment);
+		}
+		this.reasonGenderBreachComment = reasonGenderBreachComment;
+	}
+
+	public ims.core.clinical.domain.objects.Service getService() {
+		return service;
+	}
+	public void setService(ims.core.clinical.domain.objects.Service service) {
+		this.service = service;
+	}
+
+	public ims.domain.lookups.LookupInstance getTransferReason() {
+		return transferReason;
+	}
+	public void setTransferReason(ims.domain.lookups.LookupInstance transferReason) {
+		this.transferReason = transferReason;
+	}
+
+	public String getTransferComment() {
+		return transferComment;
+	}
+	public void setTransferComment(String transferComment) {
+		if ( null != transferComment && transferComment.length() > 250 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for transferComment. Tried to set value: "+
+				transferComment);
+		}
+		this.transferComment = transferComment;
 	}
 
 	/**
@@ -164,6 +286,57 @@ public class WardStay extends ims.domain.DomainObject implements java.io.Seriali
 				
 		    auditStr.append(bedSpace.getId());
 		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*bay* :");
+		if (bay != null)
+		{
+			auditStr.append(toShortClassName(bay));
+				
+		    auditStr.append(bay.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*patientStatus* :");
+		if (patientStatus != null)
+			auditStr.append(patientStatus.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*reasonPrivateBedAllocated* :");
+		if (reasonPrivateBedAllocated != null)
+			auditStr.append(reasonPrivateBedAllocated.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*reasonAdmittingOutsideHours* :");
+		if (reasonAdmittingOutsideHours != null)
+			auditStr.append(reasonAdmittingOutsideHours.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*reasonGenderBreach* :");
+		if (reasonGenderBreach != null)
+			auditStr.append(reasonGenderBreach.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*admitedInMixedGenderBay* :");
+		auditStr.append(admitedInMixedGenderBay);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*reasonPrivateBedAllocatedComment* :");
+		auditStr.append(reasonPrivateBedAllocatedComment);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*reasonAdmittingOutsideHoursComment* :");
+		auditStr.append(reasonAdmittingOutsideHoursComment);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*reasonGenderBreachComment* :");
+		auditStr.append(reasonGenderBreachComment);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*service* :");
+		if (service != null)
+		{
+			auditStr.append(toShortClassName(service));
+				
+		    auditStr.append(service.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*transferReason* :");
+		if (transferReason != null)
+			auditStr.append(transferReason.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*transferComment* :");
+		auditStr.append(transferComment);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -238,6 +411,78 @@ public class WardStay extends ims.domain.DomainObject implements java.io.Seriali
 			sb.append("<bedSpace>");
 			sb.append(this.getBedSpace().toXMLString(domMap)); 	
 			sb.append("</bedSpace>");		
+		}
+		if (this.getBay() != null)
+		{
+			sb.append("<bay>");
+			sb.append(this.getBay().toXMLString(domMap)); 	
+			sb.append("</bay>");		
+		}
+		if (this.getPatientStatus() != null)
+		{
+			sb.append("<patientStatus>");
+			sb.append(this.getPatientStatus().toXMLString()); 
+			sb.append("</patientStatus>");		
+		}
+		if (this.getReasonPrivateBedAllocated() != null)
+		{
+			sb.append("<reasonPrivateBedAllocated>");
+			sb.append(this.getReasonPrivateBedAllocated().toXMLString()); 
+			sb.append("</reasonPrivateBedAllocated>");		
+		}
+		if (this.getReasonAdmittingOutsideHours() != null)
+		{
+			sb.append("<reasonAdmittingOutsideHours>");
+			sb.append(this.getReasonAdmittingOutsideHours().toXMLString()); 
+			sb.append("</reasonAdmittingOutsideHours>");		
+		}
+		if (this.getReasonGenderBreach() != null)
+		{
+			sb.append("<reasonGenderBreach>");
+			sb.append(this.getReasonGenderBreach().toXMLString()); 
+			sb.append("</reasonGenderBreach>");		
+		}
+		if (this.isAdmitedInMixedGenderBay() != null)
+		{
+			sb.append("<admitedInMixedGenderBay>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isAdmitedInMixedGenderBay().toString()));
+			sb.append("</admitedInMixedGenderBay>");		
+		}
+		if (this.getReasonPrivateBedAllocatedComment() != null)
+		{
+			sb.append("<reasonPrivateBedAllocatedComment>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getReasonPrivateBedAllocatedComment().toString()));
+			sb.append("</reasonPrivateBedAllocatedComment>");		
+		}
+		if (this.getReasonAdmittingOutsideHoursComment() != null)
+		{
+			sb.append("<reasonAdmittingOutsideHoursComment>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getReasonAdmittingOutsideHoursComment().toString()));
+			sb.append("</reasonAdmittingOutsideHoursComment>");		
+		}
+		if (this.getReasonGenderBreachComment() != null)
+		{
+			sb.append("<reasonGenderBreachComment>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getReasonGenderBreachComment().toString()));
+			sb.append("</reasonGenderBreachComment>");		
+		}
+		if (this.getService() != null)
+		{
+			sb.append("<service>");
+			sb.append(this.getService().toXMLString(domMap)); 	
+			sb.append("</service>");		
+		}
+		if (this.getTransferReason() != null)
+		{
+			sb.append("<transferReason>");
+			sb.append(this.getTransferReason().toXMLString()); 
+			sb.append("</transferReason>");		
+		}
+		if (this.getTransferComment() != null)
+		{
+			sb.append("<transferComment>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getTransferComment().toString()));
+			sb.append("</transferComment>");		
 		}
 		return sb.toString();
 	}
@@ -430,6 +675,73 @@ public class WardStay extends ims.domain.DomainObject implements java.io.Seriali
 			fldEl = fldEl.element("class");		
 			obj.setBedSpace(ims.core.layout.domain.objects.BedSpace.getBedSpacefromXML(fldEl, factory, domMap)); 
 		}
+		fldEl = el.element("bay");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setBay(ims.core.resource.place.domain.objects.Location.getLocationfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("patientStatus");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setPatientStatus(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("reasonPrivateBedAllocated");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setReasonPrivateBedAllocated(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("reasonAdmittingOutsideHours");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setReasonAdmittingOutsideHours(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("reasonGenderBreach");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setReasonGenderBreach(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("admitedInMixedGenderBay");
+		if(fldEl != null)
+		{	
+    		obj.setAdmitedInMixedGenderBay(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("reasonPrivateBedAllocatedComment");
+		if(fldEl != null)
+		{	
+    		obj.setReasonPrivateBedAllocatedComment(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("reasonAdmittingOutsideHoursComment");
+		if(fldEl != null)
+		{	
+    		obj.setReasonAdmittingOutsideHoursComment(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("reasonGenderBreachComment");
+		if(fldEl != null)
+		{	
+    		obj.setReasonGenderBreachComment(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("service");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setService(ims.core.clinical.domain.objects.Service.getServicefromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("transferReason");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setTransferReason(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("transferComment");
+		if(fldEl != null)
+		{	
+    		obj.setTransferComment(new String(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -447,6 +759,18 @@ public class WardStay extends ims.domain.DomainObject implements java.io.Seriali
 		public static final String TransferOutDateTime = "transferOutDateTime";
 		public static final String WardType = "wardType";
 		public static final String BedSpace = "bedSpace";
+		public static final String Bay = "bay";
+		public static final String PatientStatus = "patientStatus";
+		public static final String ReasonPrivateBedAllocated = "reasonPrivateBedAllocated";
+		public static final String ReasonAdmittingOutsideHours = "reasonAdmittingOutsideHours";
+		public static final String ReasonGenderBreach = "reasonGenderBreach";
+		public static final String AdmitedInMixedGenderBay = "admitedInMixedGenderBay";
+		public static final String ReasonPrivateBedAllocatedComment = "reasonPrivateBedAllocatedComment";
+		public static final String ReasonAdmittingOutsideHoursComment = "reasonAdmittingOutsideHoursComment";
+		public static final String ReasonGenderBreachComment = "reasonGenderBreachComment";
+		public static final String Service = "service";
+		public static final String TransferReason = "transferReason";
+		public static final String TransferComment = "transferComment";
 	}
 }
 

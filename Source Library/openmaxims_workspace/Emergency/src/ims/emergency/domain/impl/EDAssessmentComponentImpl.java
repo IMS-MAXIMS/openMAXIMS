@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -29,10 +34,13 @@ import ims.core.admin.domain.objects.EmergencyAttendance;
 import ims.core.admin.domain.objects.EpisodeOfCare;
 import ims.core.admin.vo.CareContextRefVo;
 import ims.core.admin.vo.EmergencyAttendanceRefVo;
+import ims.core.clinical.domain.objects.PatientProblem;
 import ims.core.patient.domain.objects.Patient;
 import ims.core.patient.vo.PatientRefVo;
 import ims.core.resource.people.domain.objects.Hcp;
 import ims.core.vo.HcpLiteVo;
+import ims.core.vo.MedicVo;
+import ims.core.vo.NurseVo;
 import ims.core.vo.domain.CareContextShortVoAssembler;
 import ims.core.vo.domain.EpisodeofCareShortVoAssembler;
 import ims.core.vo.domain.HcpLiteVoAssembler;
@@ -53,6 +61,8 @@ import ims.emergency.vo.EmergencyAttendanceForTriageLiteVo;
 import ims.emergency.vo.HistoryOfPatientMedsVo;
 import ims.emergency.vo.HistoryOfPatientMedsVoCollection;
 import ims.emergency.vo.PatientMedsVo;
+import ims.emergency.vo.PatientProblemForClinicianWorklistVo;
+import ims.emergency.vo.SeenByHCPLiteVo;
 import ims.emergency.vo.SeenByHCPVo;
 import ims.emergency.vo.TrackingAttendanceStatusVo;
 import ims.emergency.vo.TrackingForClinicianWorklistAndTriageVo;
@@ -60,19 +70,24 @@ import ims.emergency.vo.TrackingListForClinicianWorklistVo;
 import ims.emergency.vo.TrackingListForClinicianWorklistVoCollection;
 import ims.emergency.vo.TrackingRefVo;
 import ims.emergency.vo.TriageForClinicianWorklistVo;
+import ims.emergency.vo.TriageTabConfigVo;
 import ims.emergency.vo.domain.AttendanceKPIConfigForClinicianWorklistVoAssembler;
 import ims.emergency.vo.domain.EmergencyAttendanceForTriageLiteVoAssembler;
 import ims.emergency.vo.domain.EpisodeOfcareLiteVoAssembler;
 import ims.emergency.vo.domain.HistoryOfPatientMedsVoAssembler;
 import ims.emergency.vo.domain.PatientMedsVoAssembler;
+import ims.emergency.vo.domain.PatientProblemForClinicianWorklistVoAssembler;
+import ims.emergency.vo.domain.SeenByHCPLiteVoAssembler;
 import ims.emergency.vo.domain.SeenByHCPVoAssembler;
 import ims.emergency.vo.domain.TrackingAttendanceStatusVoAssembler;
 import ims.emergency.vo.domain.TrackingForClinicianWorklistAndTriageVoAssembler;
 import ims.emergency.vo.domain.TrackingListForClinicianWorklistVoAssembler;
 import ims.emergency.vo.domain.TriageForClinicianWorklistVoAssembler;
+import ims.emergency.vo.domain.TriageTabConfigVoAssembler;
 import ims.emergency.vo.lookups.TrackingStatus;
 import ims.framework.exceptions.CodingRuntimeException;
 import ims.framework.utils.DateTime;
+import ims.ocrr.vo.lookups.Category;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -80,7 +95,6 @@ import java.util.List;
 
 public class EDAssessmentComponentImpl extends BaseEDAssessmentComponentImpl
 {
-
 	private static final long serialVersionUID = 1L;
 
 	public ims.emergency.vo.EmergencyEpisodeForTriageVoCollection listAttendanceHistory(ims.core.patient.vo.PatientRefVo patient)
@@ -228,7 +242,7 @@ public class EDAssessmentComponentImpl extends BaseEDAssessmentComponentImpl
 			throw new CodingRuntimeException("Cannot get AttendanceKPIConfig for a null EDLocation Id.");
 		
 		DomainFactory factory = getDomainFactory();
-		String query = "select kpi from AttendanceKPIConfig as kpi left join kpi.eDLocation as loc where loc.id = :EDLoc";
+		String query = "select kpi from AttendanceKPIConfig as kpi where kpi.eDLocation.id = :EDLoc";
 		
 		List<?> list = factory.find(query, new String[] {"EDLoc"}, new Object[] {edLocation.getID()});
 		
@@ -451,13 +465,40 @@ public class EDAssessmentComponentImpl extends BaseEDAssessmentComponentImpl
 		else if (seenByHcp == null && patmed==null  && tracking.getCurrentStatusIsNotNull() && TrackingStatus.WAITING_TO_BE_SEEN_BY_A_MEDIC.equals(tracking.getCurrentStatus().getStatus()))//WDEV-18278
 		{
     		//on Move,when setting the status to WAITING_TO_BE_SEEN_BY_A_MEDIC, mark currentSeenByAsCompleted and set SeenBy from Tracking to null
-    		SeenByHCP doSeenByHcp = doTracking.getSeenBy();
-    		if (doSeenByHcp!=null)
-    		{
-    			doSeenByHcp.setCompletedDateTime(new Date());
-    			factory.save(doSeenByHcp);
-    			doTracking.setSeenBy(null);
-    		}
+			//wdev-19372
+			Object mos = getHcpUser();
+			boolean matchLogedUserSeenHCP = false;
+			if( mos instanceof MedicVo)
+			{
+				MedicVo medVo = ((MedicVo) mos);
+				if( tracking.getSeenByIsNotNull())
+				{
+					if( medVo.equals(tracking.getSeenBy().getAllocatedMedic()))
+						matchLogedUserSeenHCP = true;
+				}
+			}
+			else if( mos instanceof NurseVo)
+			{
+				NurseVo nursVo = ((NurseVo) mos);
+				if( tracking.getSeenByIsNotNull() )
+				{
+					if( nursVo.equals(tracking.getSeenBy().getAllocatedNurse()))
+						matchLogedUserSeenHCP = true;
+				}
+			}
+
+			
+			//------------
+			if( matchLogedUserSeenHCP == true )	//wdev-19372
+			{
+        		SeenByHCP doSeenByHcp = doTracking.getSeenBy();
+        		if (doSeenByHcp!=null)
+        		{
+        			doSeenByHcp.setCompletedDateTime(new Date());
+        			factory.save(doSeenByHcp);
+        			doTracking.setSeenBy(null);
+        		}
+			}
 		}
 		
 		if( doTriage != null) 
@@ -489,7 +530,7 @@ public class EDAssessmentComponentImpl extends BaseEDAssessmentComponentImpl
 	}
 
 	//wdev-17645
-	public SeenByHCPVo getFirstSeenByHCP(CareContextRefVo careContextRef) 
+	public SeenByHCPLiteVo getFirstSeenByHCP(CareContextRefVo careContextRef) 
 	{
 		if (careContextRef == null || careContextRef.getID_CareContext() == null)
 		{
@@ -504,7 +545,7 @@ public class EDAssessmentComponentImpl extends BaseEDAssessmentComponentImpl
 		List<?> list = factory.find(hql.toString(), new String[] { "attID" }, new Object[] { careContextRef.getID_CareContext() });
 		if( list != null && list.size() >  0)
 		{
-			return SeenByHCPVoAssembler.create((SeenByHCP) list.get(0));
+			return SeenByHCPLiteVoAssembler.create((SeenByHCP) list.get(0));
 			
 		}
 
@@ -608,4 +649,87 @@ public class EDAssessmentComponentImpl extends BaseEDAssessmentComponentImpl
     	return null;
     }
 
+    //WDEV-18994
+	public Boolean wasPainScaleRecordedForCurrentCareContext(CareContextRefVo careContext)
+	{
+		if(careContext == null)
+    		throw new CodingRuntimeException("CareContext cannot be null.");
+    	
+    	String query = "select p from VitalSigns as vs left join vs.careContext as cc left join vs.pain as p where (vs.isRIE = 0 or vs.isRIE is null ) and vs.pain is not null  and  (p.isRIE = 0 or p.isRIE is null ) and cc.id =:careContextID ";
+    	
+    	List<?> list=getDomainFactory().find(query, new String[] {"careContextID"}, new Object[] {careContext.getID_CareContext()});
+    	
+    	if (list != null && list.size() > 0)
+    		return true;
+    	
+		return false;
+	}
+
+	//WDEV-18988
+	public TriageTabConfigVo getTabsConfigForRole(Integer roleId)
+	{
+		if (roleId == null)
+			throw new CodingRuntimeException("Cannot get TriageTabConfig on null Role Id");
+		
+		List list = getDomainFactory().find("select tabConfig from TriageTabConfiguration as tabConfig left join tabConfig.role as configRole where (configRole.id = :roleId)", 
+				new String[] {"roleId"}, new Object[] {roleId});
+		
+		if (list == null || list.size() == 0)
+			return null;
+		
+		return TriageTabConfigVoAssembler.createTriageTabConfigVoCollectionFromTriageTabConfiguration(list).get(0);
+	}
+	
+	//WDEV-19299
+	public PatientProblemForClinicianWorklistVo getMainPresentingProblem(CareContextRefVo careContextRef)
+	{
+		if(careContextRef == null || careContextRef.getID_CareContext() == null)
+			throw new CodingRuntimeException("Cannot get PatientProblemForClinicianWorklistVo record for a null CareContext Id.");
+		
+		DomainFactory factory = getDomainFactory();
+		String query = "select tr.mainPresentingProblem from Triage as tr left join tr.attendance as att where att.id = :AttendanceId";
+		
+		List<?> list = factory.find(query, new String[] {"AttendanceId"}, new Object[] {careContextRef.getID_CareContext()});
+		
+		if(list == null || list.size() == 0)
+			return null;
+		
+		return PatientProblemForClinicianWorklistVoAssembler.create((PatientProblem) list.get(0));
+	}
+
+	public Boolean wasTriageAlreadyCreated(TrackingRefVo tracking)
+	{
+		if(tracking == null || tracking.getID_Tracking() == null)
+			return false;
+		
+		String query = "select triage.id from Tracking as tracking left join tracking.triageDetails as triage where tracking.id = :TrackingId and triage.id is not null";
+		List<?> list = getDomainFactory().find(query, new String[] {"TrackingId"}, new Object[] {tracking.getID_Tracking()});
+		
+		if(list != null && list.size() > 0)
+			return true;
+		
+		return false;
+	}
+
+	public Boolean isStaleCareContext(CareContextRefVo careContext)
+	{
+		if(careContext == null || careContext.getID_CareContext() == null)
+			return false;
+		
+		DomainFactory factory = getDomainFactory();
+		
+		List<?> cc = factory.find("select cc.id from CareContext as cc where cc.id = :CareContextID and cc.version > :CareContextVersion", new String[] {"CareContextID", "CareContextVersion"}, new Object[] {careContext.getID_CareContext(), careContext.getVersion_CareContext()});
+		
+		if(cc != null && cc.size() > 0)
+			return true;
+		
+		return false;
+	}
+
+	//WDEV-23527
+	public PatIdType getPrimaryIDFromProviderSystem(Category category)
+	{
+		ims.emergency.domain.Tracking impl = (ims.emergency.domain.Tracking )getDomainImpl(TrackingImpl.class);
+		return impl.getPrimaryIDFromProviderSystem(category);
+	}
 }

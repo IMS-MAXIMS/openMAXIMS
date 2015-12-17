@@ -10,13 +10,25 @@
    <parameter name="process_ocs_counts" value="yes" />
    
    <excludeEntities>
-   	 <entity name="PersonName" />
-   	 <entity name="Address" />
-	 <entity name="PatientId" />
-	 <entity name="CommunicationChannel" />
-	 <entity name="PatientOCSSeenResults" />
-	 <entity name="PatientOCSNewResults" />`
-	 <entity name="PatientNoAllergyInfo" />
-	 <entity name="PatientNoAlertInfo" />
-</excludeEntities>   
+		<entity name="PersonName" />
+        <entity name="Address" />
+        <entity name="PatientId" />
+        <entity name="CommunicationChannel" />
+        <entity name="PatientOCSSeenResults" />
+        <entity name="PatientOCSNewResults" />
+        <entity name="PatientNotification" /> 
+        <entity name="PatientNoAllergyInfo" />
+        <entity name="PatientNoAlertInfo" />
+        <entity name="PatientGP" />
+        <entity name="Relative" />
+        <entity name="NextOfKin" />
+        <entity name="NearestLegalRel" />
+        <entity name="PDSAsyncRequest" />
+        <entity name="PDSAdvancedSearchRequest" />
+        <entity name="PDSPatientUpdate" />
+        <entity name="PatientMedicalInsurance" />
+        <entity name="PDSBatchTraceRequest" />
+        <entity name="PatientAlertCategories" />	
+   </excludeEntities>   
+
 </configuration>

@@ -1,0 +1,191 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:37 -->
+<hibernate-mapping>
+	<class name="ims.clinical.domain.objects.SurgicalAuditPreOpChecks" table="shcl_surgicalauditp" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: patient -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="patient" class="ims.core.patient.domain.objects.Patient" unique="true" foreign-key="surgicalauditp_patient_fk" access="field" cascade="save-update">
+			<column name="patient" sql-type="numeric(10,0)" not-null="true" unique="false"  index='pat_preop_c_idx' />
+		</many-to-one>
+<!-- debug: careContext -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="careContext" class="ims.core.admin.domain.objects.CareContext" unique="true" foreign-key="surgicalauditp_carecontex_fk" access="field" cascade="save-update">
+			<column name="carecontex" sql-type="numeric(10,0)" not-null="true" unique="false"  index='ctx_preop_c_idx' />
+		</many-to-one>
+<!-- debug: authoringInformation -->
+<!-- debug: field.IsAssociation : true -->
+ 		<!-- Component -->
+ 		<component name="authoringInformation" class="ims.core.clinical.domain.objects.AuthoringInformation" >
+
+ 			<many-to-one name="authoringHcp" class="ims.core.resource.people.domain.objects.Hcp" foreign-key="surgicalauditp_authoringiau_fk" access="field">
+ 				<column name="authoringiauthoringh" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="authoringDateTime" type="timestamp" access="field" update="true">
+ 				<column name="authoringiauthoringd" not-null="false"  unique="false"   />
+ 			</property>
+ 		</component>
+<!-- debug: plannedProcedures -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- one to many -->
+		<list name="plannedProcedures" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="surgicalauditp_plannedpro_fk">
+				<column name="shcl_surgicalauditp_plannedpro" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.core.clinical.domain.objects.PatientProcedure" />
+		</list>
+<!-- debug: consultant -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="consultant" class="ims.core.resource.people.domain.objects.Medic" unique="true" foreign-key="surgicalauditp_consultant_fk" access="field" cascade="save-update">
+			<column name="consultant" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: sentForTime -->
+<!-- debug: arrivalTime -->
+<!-- debug: leaveHoldingTime -->
+<!-- debug: accompanyingNurse -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="accompanyingNurse" class="ims.core.resource.people.domain.objects.Nurse" unique="true" foreign-key="surgicalauditp_accompanyi_fk" access="field" cascade="save-update">
+			<column name="accompanyi" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: accompanyingLocumBool -->
+<!-- debug: accompanyingLocumNurse -->
+<!-- debug: transferredFrom -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="transferredFrom" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="surgicalauditp_transferre_fk" access="field" cascade="save-update">
+			<column name="transferre" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: aSAGrade -->
+<!-- debug: consentReceived -->
+<!-- debug: consentAuthBy -->
+<!-- debug: bMI -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="bMI" class="ims.core.vitals.domain.objects.VitalSigns" unique="true" foreign-key="surgicalauditp_bmi_fk" access="field" cascade="save-update">
+			<column name="bmi" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: siteMarked -->
+<!-- debug: actionTaken -->
+<!-- debug: confirmPatientDetails -->
+<!-- debug: preOpCheckDone -->
+<!-- debug: theatreNurse -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="theatreNurse" class="ims.core.resource.people.domain.objects.Nurse" unique="true" foreign-key="surgicalauditp_theatrenur_fk" access="field" cascade="save-update">
+			<column name="theatrenur" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: theatreNurseLocumBool -->
+<!-- debug: theatreNurseLocumNurse -->
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="sentForTime" type="timestamp" access="field" update="true">
+			<column name="sentfortim"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="arrivalTime" type="timestamp" access="field" update="true">
+			<column name="arrivaltim"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="leaveHoldingTime" type="timestamp" access="field" update="true">
+			<column name="leaveholdi"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="accompanyingLocumBool" type="boolean" access="field" update="true">
+			<column name="accompany2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="accompanyingLocumNurse" type="string" access="field" update="true" > 
+			<column name="accompany3" length="100"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="aSAGrade" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_asagrade" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="consentReceived" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_consentrec" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="consentAuthBy" type="string" access="field" update="true" > 
+			<column name="consentaut" length="250"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="siteMarked" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_sitemarked" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="actionTaken" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_actiontake" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="confirmPatientDetails" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_confirmpat" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="preOpCheckDone" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_preopcheck" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="theatreNurseLocumBool" type="boolean" access="field" update="true">
+			<column name="theatrenu2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="theatreNurseLocumNurse" type="string" access="field" update="true" > 
+			<column name="theatrenu3" length="100"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

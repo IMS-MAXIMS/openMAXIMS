@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.clinical.vo.domain;
@@ -54,18 +59,20 @@ public class PatientSECSVoAssembler
 		valueObjectDest.setCareContext(valueObjectSrc.getCareContext());
 		// VitalSign
 		valueObjectDest.setVitalSign(valueObjectSrc.getVitalSign());
-		// AuthoringInformation
-		valueObjectDest.setAuthoringInformation(valueObjectSrc.getAuthoringInformation());
-		// Escalated
-		valueObjectDest.setEscalated(valueObjectSrc.getEscalated());
-		// SECSScore
-		valueObjectDest.setSECSScore(valueObjectSrc.getSECSScore());
 		// ActionTaken
 		valueObjectDest.setActionTaken(valueObjectSrc.getActionTaken());
 		// ScoreDetails
 		valueObjectDest.setScoreDetails(valueObjectSrc.getScoreDetails());
 		// RecordingInformation
 		valueObjectDest.setRecordingInformation(valueObjectSrc.getRecordingInformation());
+		// Escalated
+		valueObjectDest.setEscalated(valueObjectSrc.getEscalated());
+		// SECSScore
+		valueObjectDest.setSECSScore(valueObjectSrc.getSECSScore());
+		// OBSProtocolType
+		valueObjectDest.setOBSProtocolType(valueObjectSrc.getOBSProtocolType());
+		// AuthoringInformation
+		valueObjectDest.setAuthoringInformation(valueObjectSrc.getAuthoringInformation());
 	 	return valueObjectDest;
 	 }
 
@@ -384,18 +391,54 @@ public class PatientSECSVoAssembler
 				valueObject.setVitalSign(new ims.core.vitals.vo.VitalSignsRefVo(domainObject.getVitalSign().getId(), domainObject.getVitalSign().getVersion()));
 			}
 		}
-		// AuthoringInformation
-		valueObject.setAuthoringInformation(ims.core.vo.domain.AuthoringInformationVoAssembler.create(map, domainObject.getAuthoringInformation()) );
-		// Escalated
-		valueObject.setEscalated( domainObject.isEscalated() );
-		// SECSScore
-		valueObject.setSECSScore(domainObject.getSECSScore());
 		// ActionTaken
 		valueObject.setActionTaken(domainObject.getActionTaken());
 		// ScoreDetails
 		valueObject.setScoreDetails(domainObject.getScoreDetails());
 		// RecordingInformation
 		valueObject.setRecordingInformation(ims.core.vo.domain.RecordingUserInformationVoAssembler.create(map, domainObject.getRecordingInformation()) );
+		// Escalated
+		valueObject.setEscalated( domainObject.isEscalated() );
+		// SECSScore
+		valueObject.setSECSScore(domainObject.getSECSScore());
+		// OBSProtocolType
+		ims.domain.lookups.LookupInstance instance8 = domainObject.getOBSProtocolType();
+		if ( null != instance8 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance8.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance8.getImage().getImageId(), instance8.getImage().getImagePath());
+			}
+			color = instance8.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.OBSProtocolType voLookup8 = new ims.core.vo.lookups.OBSProtocolType(instance8.getId(),instance8.getText(), instance8.isActive(), null, img, color);
+			ims.core.vo.lookups.OBSProtocolType parentVoLookup8 = voLookup8;
+			ims.domain.lookups.LookupInstance parent8 = instance8.getParent();
+			while (parent8 != null)
+			{
+				if (parent8.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent8.getImage().getImageId(), parent8.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent8.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup8.setParent(new ims.core.vo.lookups.OBSProtocolType(parent8.getId(),parent8.getText(), parent8.isActive(), null, img, color));
+				parentVoLookup8 = parentVoLookup8.getParent();
+								parent8 = parent8.getParent();
+			}			
+			valueObject.setOBSProtocolType(voLookup8);
+		}
+				// AuthoringInformation
+		valueObject.setAuthoringInformation(ims.core.vo.domain.AuthoringInformationVoAssembler.create(map, domainObject.getAuthoringInformation()) );
  		return valueObject;
 	 }
 
@@ -485,9 +528,6 @@ public class PatientSECSVoAssembler
 			}
 		}
 		domainObject.setVitalSign(value2);
-		domainObject.setAuthoringInformation(ims.core.vo.domain.AuthoringInformationVoAssembler.extractAuthoringInformation(domainFactory, valueObject.getAuthoringInformation(), domMap));
-		domainObject.setEscalated(valueObject.getEscalated());
-		domainObject.setSECSScore(valueObject.getSECSScore());
 		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
 		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
 		if (valueObject.getActionTaken() != null && valueObject.getActionTaken().equals(""))
@@ -503,6 +543,17 @@ public class PatientSECSVoAssembler
 		}
 		domainObject.setScoreDetails(valueObject.getScoreDetails());
 		domainObject.setRecordingInformation(ims.core.vo.domain.RecordingUserInformationVoAssembler.extractRecordingUserInformation(domainFactory, valueObject.getRecordingInformation(), domMap));
+		domainObject.setEscalated(valueObject.getEscalated());
+		domainObject.setSECSScore(valueObject.getSECSScore());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value8 = null;
+		if ( null != valueObject.getOBSProtocolType() ) 
+		{
+			value8 =
+				domainFactory.getLookupInstance(valueObject.getOBSProtocolType().getID());
+		}
+		domainObject.setOBSProtocolType(value8);
+		domainObject.setAuthoringInformation(ims.core.vo.domain.AuthoringInformationVoAssembler.extractAuthoringInformation(domainFactory, valueObject.getAuthoringInformation(), domMap));
 
 		return domainObject;
 	}

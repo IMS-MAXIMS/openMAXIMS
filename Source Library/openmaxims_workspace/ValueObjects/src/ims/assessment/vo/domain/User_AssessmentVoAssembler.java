@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.assessment.vo.domain;
@@ -88,6 +93,8 @@ public class User_AssessmentVoAssembler
 		valueObjectDest.setAssessmentRoles(valueObjectSrc.getAssessmentRoles());
 		// Category
 		valueObjectDest.setCategory(valueObjectSrc.getCategory());
+		// ActiveStatus
+		valueObjectDest.setActiveStatus(valueObjectSrc.getActiveStatus());
 	 	return valueObjectDest;
 	 }
 
@@ -564,6 +571,42 @@ public class User_AssessmentVoAssembler
 			}			
 			valueObject.setCategory(voLookup19);
 		}
+				// ActiveStatus
+		ims.domain.lookups.LookupInstance instance20 = domainObject.getActiveStatus();
+		if ( null != instance20 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance20.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance20.getImage().getImageId(), instance20.getImage().getImagePath());
+			}
+			color = instance20.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.PreActiveActiveInactiveStatus voLookup20 = new ims.core.vo.lookups.PreActiveActiveInactiveStatus(instance20.getId(),instance20.getText(), instance20.isActive(), null, img, color);
+			ims.core.vo.lookups.PreActiveActiveInactiveStatus parentVoLookup20 = voLookup20;
+			ims.domain.lookups.LookupInstance parent20 = instance20.getParent();
+			while (parent20 != null)
+			{
+				if (parent20.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent20.getImage().getImageId(), parent20.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent20.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup20.setParent(new ims.core.vo.lookups.PreActiveActiveInactiveStatus(parent20.getId(),parent20.getText(), parent20.isActive(), null, img, color));
+				parentVoLookup20 = parentVoLookup20.getParent();
+								parent20 = parent20.getParent();
+			}			
+			valueObject.setActiveStatus(voLookup20);
+		}
 		 		return valueObject;
 	 }
 
@@ -771,6 +814,14 @@ public class User_AssessmentVoAssembler
 				domainFactory.getLookupInstance(valueObject.getCategory().getID());
 		}
 		domainObject.setCategory(value19);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value20 = null;
+		if ( null != valueObject.getActiveStatus() ) 
+		{
+			value20 =
+				domainFactory.getLookupInstance(valueObject.getActiveStatus().getID());
+		}
+		domainObject.setActiveStatus(value20);
 
 		return domainObject;
 	}

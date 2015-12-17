@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,6 +15,11 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 package ims.core.helper;
@@ -28,7 +33,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import capscan.client.McConnection;
 import capscan.client.NcConnection;
-
 import ims.configuration.EnvironmentConfig;
 import ims.configuration.gen.ConfigFlag;
 import ims.core.resource.place.domain.objects.CCGPCTPCCodes;
@@ -38,6 +42,8 @@ import ims.domain.exceptions.DomainRuntimeException;
 import ims.domain.impl.DomainImpl;
 import ims.domain.addressmanager.AddressManager;
 import ims.framework.enumerations.LatitudeLogitudeFormat;
+import ims.framework.enumerations.SystemLogLevel;
+import ims.framework.enumerations.SystemLogType;
 import ims.framework.exceptions.PresentationLogicException;
 import ims.framework.interfaces.IAddress;
 import ims.framework.interfaces.IAddressProvider;
@@ -809,8 +815,8 @@ public class AddressManagmentProvider extends DomainImpl implements IAddressProv
     
     private synchronized IAddress searchForAddress(IAddress searchCriteria, String searchTypeText, String listItem, String searchStatus) throws PresentationLogicException    
 	{    	
-    	//LOG.info("getAddressByPostcode:");
-    	
+    	//LOG.info("getAddressByPostcode:");    	
+    	    	
     	if (searchCriteria == null)
     		throw new PresentationLogicException("No Search Criteria given.");
 
@@ -961,6 +967,10 @@ public class AddressManagmentProvider extends DomainImpl implements IAddressProv
     		return null;
     	}
 
+    	//WDEV-19795
+    	int EventId = createSystemLogEntry(SystemLogType.PostCodeLookup, SystemLogLevel.INFORMATION, "Postcode lookup:" + select.toString() + " " + where.toString() + " " + data.toString()).getSystemLogEventId();
+    	//WDEV-19795
+    	
     	resultsSearch = addressManagerConnection.search(searchType, select, where, data, 15);
     	
         if (resultsSearch != null && addressManagerConnection != null && addressManagerConnection.errno() == capscan.client.McConnection.OK) 
@@ -1001,11 +1011,32 @@ public class AddressManagmentProvider extends DomainImpl implements IAddressProv
             if (select.size() > 1)
             {  
             	String strSubBuildingName = getColumnValue("SUBBUILDING");
+            	boolean displaystrSubBuildingName = false;
+            	
             	String strBuildingName = getColumnValue("BUILDINGNAME");
             	if (strSubBuildingName != null && !strSubBuildingName.equals(""))
             	{
             		if (!strBuildingName.equals(""))
-            			searchCriteria.setAddressBuildingName(strSubBuildingName + ", " + getColumnValue("BUILDINGNAME"));
+            		{
+            			//WDEV-17696
+            			if (ConfigFlag.DOM.HEARTS_REPLICATE_PATIENTS.getValue())
+            			{
+            				if (strSubBuildingName != null && strBuildingName!= null && ConfigFlag.DOM.HEARTS_ADDRESS_LINE_MAXLEN != null)
+            				{
+	            				if (strSubBuildingName.length()	+ strBuildingName.length() <= ConfigFlag.DOM.HEARTS_ADDRESS_LINE_MAXLEN.getValue())
+	            				{	            			
+		            				searchCriteria.setAddressBuildingName(strSubBuildingName + ", " + strBuildingName);
+		            				displaystrSubBuildingName = true;
+	            				}
+	                			else
+	                				searchCriteria.setAddressBuildingName(strBuildingName);	            				
+            				}
+                			else
+                				searchCriteria.setAddressBuildingName(strBuildingName);            				
+            			}
+            			else
+            				searchCriteria.setAddressBuildingName(strBuildingName);
+            		}
             		else
             			searchCriteria.setAddressBuildingName(strSubBuildingName);
             	}
@@ -1013,6 +1044,7 @@ public class AddressManagmentProvider extends DomainImpl implements IAddressProv
             	{
             		searchCriteria.setAddressBuildingName(strBuildingName);
             	}
+            	
             	searchCriteria.setAddressBuildingNumber(getColumnValue("BUILDINGNUMBER"));            	
             	searchCriteria.setAddressLocality(getColumnValue("LOCALITY"));
             	//WDEV-15963
@@ -1032,8 +1064,16 @@ public class AddressManagmentProvider extends DomainImpl implements IAddressProv
             	//WDEV-15963            	
             	searchCriteria.setAddressPostCode(getColumnValue("POSTCODE(PP=16)"));
             	searchCriteria.setAddressSearchText(getColumnValue("SEARCHSTATUS"));
-            	searchCriteria.setAddressOrganisation(getColumnValue("ORGANISATION"));
             	
+            	//WDEV-17696
+            	if (displaystrSubBuildingName)
+            		searchCriteria.setAddressOrganisation(getColumnValue("ORGANISATION"));
+            	else if (getColumnValue("ORGANISATION") != null)
+            	{
+            		
+            		String strSubBuildingNameNoComma = strSubBuildingName !=null && strSubBuildingName.length()>0  ? "," + strSubBuildingName: ""; //WDEV-19643
+            		searchCriteria.setAddressOrganisation(!getColumnValue("ORGANISATION").equals("")?getColumnValue("ORGANISATION") + strSubBuildingNameNoComma : strSubBuildingName);
+            	}
             	//WDEV-14455
             	if (ConfigFlag.UI.CAPSCAN_USE_OLDPCT_CODE.getValue()) 
         		{
@@ -1265,6 +1305,107 @@ public class AddressManagmentProvider extends DomainImpl implements IAddressProv
 		}
 		
 		return null;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * WDEV-21978
+	 * WDEV-21975
+	 * @see ims.framework.interfaces.IAddressProvider#validPostcode(java.lang.String)
+	 * Validate post code
+	 * Receives post code and returns it if valid. return null if invalid
+	 * 
+	 * if EnvironmentConfig.getCapscanServerName() is blank, will return blank (for non PDS forms)
+	 */
+	public String validPostcode(String postCode) 
+	{
+
+    	select = new Vector<String>();
+        where = new Vector();
+        data = new Vector();
+        String r="";
+        
+        String l_query="SELECT AMBIGLIST,ORGANISATION,SUBBUILDING,BUILDINGNAME,BUILDINGNUMBER," +
+		"DEPSTREET,STREET,DEPLOCALITY,LOCALITY,POSTTOWN,COUNTY," +
+		"POSTCODE(PP=16),ADDR,ADDKEY,ORGKEY,LISTTYPE,SEARCHSTATUS," +
+		"LISTCOUNT,AMBIGLIST,BARCODE,ADEPOS,ADESCORE,ADPNRLOC," +
+		"MSCORE,FFLAG,RESCODE,ERRNO,ERRTEXT,COUNTRY,COUNTRYCODE," +
+		"MATCHLVL,PCLVL,INPCLVL,PCCHGLVL,PCCHGTYP,VANITYFLAGS," +
+		"ELEMS_UNMATCHED,ELEMS_MATCHED,ELEMS_CORRECT," +
+		"ELEMS_MISSPELLED,ELEMS_MISSING,FIELDSTATUS," +
+		"OUTPUTSTATUS,ADDFMT_ABBR,ADDFMT_CONC,ADDFMT_TRUN," +
+		"ADDFMT_ELIM,ADMINNUMBER,TRADNUMBER,LONLOCOUT,ADMINCOUNTY," +
+		"TRADCOUNTY,PCG,DHA,OLDPCG,OLDDHA from BROWSE WHERE POSTCODE=\""+stripspaces(postCode)+"\"";
+		
+    	try
+    	{
+    		parseQuery(l_query.toString());
+    		LOG.info("CAPSCAN Query: " + l_query.toString());
+    	}
+    	catch (Exception e)
+    	{
+    		LOG.error(e.getMessage());
+    		//WDEV-23175    		
+    		int EventId = createSystemLogEntry(SystemLogType.APPLICATION, SystemLogLevel.INFORMATION, "Postcode lookup:" + e.getMessage()).getSystemLogEventId();
+    		return postCode;//WDEV-23175 - On any exception return the postcode to allow the user to continue
+    		//WDEV-23175    		
+    	}
+		
+		capscan.client.McConnection addressManagerConnection = null;
+    	try
+    	{    		
+    		addressManagerConnection = AddressManager.getConnection(); 
+    		if (addressManagerConnection == null || 
+    				(addressManagerConnection != null && addressManagerConnection.errno() != 0)
+    				|| (addressManagerConnection != null && addressManagerConnection.errno() != 1))
+    		{
+    			AddressManager.connect(EnvironmentConfig.getCapscanServerName(), EnvironmentConfig.getCapscanPool(), McConnection.STATELESS);
+    			addressManagerConnection = AddressManager.getConnection();
+    		}    		
+    	}
+    	catch (Exception e)
+    	{
+    		LOG.error(e.getMessage());
+    		//WDEV-23175
+    		int EventId = createSystemLogEntry(SystemLogType.APPLICATION, SystemLogLevel.INFORMATION, "Postcode lookup:" + e.getMessage()).getSystemLogEventId();
+    		return postCode;//WDEV-23175 - On any exception return the postcode to allow the user to continue
+    		//WDEV-23175
+    	}
+    	
+    	if (addressManagerConnection == null)
+    	{
+    		LOG.error("Error getting Address Manager connection. Please see server logs for more information.");
+    		//WDEV-23175    		
+    		int EventId = createSystemLogEntry(SystemLogType.APPLICATION, SystemLogLevel.INFORMATION, "Error getting Address Manager connection. Please see server logs for more information.").getSystemLogEventId();
+    		return postCode;//WDEV-23175 - On any exception return the postcode to allow the user to continue
+    		//WDEV-23175
+    	}
+
+    	int EventId = createSystemLogEntry(SystemLogType.PostCodeLookup, SystemLogLevel.INFORMATION, "Postcode lookup:" + select.toString() + " " + where.toString() + " " + data.toString()).getSystemLogEventId();
+    	
+    	// WDEV-23175 resultsSearch = null even with valid connection
+    	try
+    	{    		
+	    	resultsSearch = addressManagerConnection.search(searchType, select, where, data, 15);
+	    	r = getColumnValue("POSTCODE(PP=16)");
+    	}
+    	catch(Exception e2) // WDEV-23175 catch any other exceptions (e.g expired licence - you will get a connection but results will be null)
+    	{
+    		LOG.error("Error getting results from CAPSCAN server connection. Got the connection but no results.  Please check CAPSCAN licence"+e2.getMessage());
+    		//WDEV-23175    		
+    		EventId = createSystemLogEntry(SystemLogType.APPLICATION, SystemLogLevel.INFORMATION, "Error getting results from CAPSCAN server connection. Got the connection but no results.  Please check CAPSCAN licence"+e2.getMessage()).getSystemLogEventId();
+    		return postCode;  // Return the postCode to allow the user to continue
+    		//WDEV-23175    		
+    	}
+    	
+        if (!stripspaces(postCode).equals(stripspaces(r)))
+        {
+        	return null;
+        }
+        else
+        {
+        	return r;
+        }
 	}
 	
 }

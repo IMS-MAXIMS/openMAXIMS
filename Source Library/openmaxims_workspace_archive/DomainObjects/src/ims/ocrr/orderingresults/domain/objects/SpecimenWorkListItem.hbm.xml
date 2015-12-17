@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:34 -->
+<hibernate-mapping>
+	<class name="ims.ocrr.orderingresults.domain.objects.SpecimenWorkListItem" table="ocrr_specimenworkli" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: specimen -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="specimen" class="ims.ocrr.orderingresults.domain.objects.OrderSpecimen" unique="true" foreign-key="specimenworkli_specimen_fk" access="field" cascade="save-update">
+			<column name="specimen" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: listType -->
+<!-- debug: dateToCollect -->
+<!-- debug: roundToCollect -->
+<!-- debug: timeToCollect -->
+<!-- debug: collectionStatus -->
+<!-- debug: ward -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="ward" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="specimenworkli_ward_fk" access="field" cascade="save-update">
+			<column name="ward" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: printed -->
+<!-- debug: dFTOrderInvestigation -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="dFTOrderInvestigation" class="ims.ocrr.orderingresults.domain.objects.OrderInvestigation" unique="true" foreign-key="specimenworkli_dftorderin_fk" access="field" cascade="save-update">
+			<column name="dftorderin" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="listType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_listtype" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dateToCollect" type="date" access="field" update="true">
+			<column name="datetocoll"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="roundToCollect" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_roundtocol" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="timeToCollect" type="string" access="field" update="true">
+			<column name="timetocoll"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="collectionStatus" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_collection" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="printed" type="boolean" access="field" update="true">
+			<column name="printed"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

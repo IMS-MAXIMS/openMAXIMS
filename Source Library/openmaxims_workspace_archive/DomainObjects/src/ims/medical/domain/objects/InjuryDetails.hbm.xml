@@ -1,0 +1,133 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:34 -->
+<hibernate-mapping>
+	<class name="ims.medical.domain.objects.InjuryDetails" table="med_injurydetails" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: injuryDate -->
+<!-- debug: injuryTime -->
+<!-- debug: referralDate -->
+<!-- debug: transferDate -->
+<!-- debug: sufferedLOC -->
+<!-- debug: durLOC -->
+<!-- debug: durLOCUnit -->
+<!-- debug: requiresVentillation -->
+<!-- debug: descriptionOfInjury -->
+<!-- debug: presentingComplaints -->
+<!-- debug: associatedFactor -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="associatedFactor" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="injurydetails_associated_fk">
+				<column name="med_injurydetails_associated" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.medical.domain.objects.InjuryAssocFactor" />
+		</set>
+<!-- debug: modeOfInjury -->
+<!-- debug: causeOfInjury -->
+<!-- debug: mechanismOfInjury -->
+<!-- debug: clinicalContact -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="clinicalContact" class="ims.core.admin.domain.objects.ClinicalContact" unique="true" foreign-key="injurydetails_clinicalco_fk" access="field" cascade="save-update">
+			<column name="clinicalco" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="injuryDate" type="date" access="field" update="true">
+			<column name="injurydate"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="injuryTime" type="string" access="field" update="true">
+			<column name="injurytime"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="referralDate" type="date" access="field" update="true">
+			<column name="referralda"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="transferDate" type="date" access="field" update="true">
+			<column name="transferda"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="sufferedLOC" type="boolean" access="field" update="true">
+			<column name="sufferedlo"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="durLOC" type="integer" access="field" update="true">
+			<column name="durloc"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="durLOCUnit" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_durlocunit" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="requiresVentillation" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_requiresve" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="descriptionOfInjury" type="string" access="field" update="true" > 
+			<column name="descriptio" length="2000"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="presentingComplaints" type="string" access="field" update="true" > 
+			<column name="presenting" length="2000"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="modeOfInjury" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_modeofinju" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="causeOfInjury" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_causeofinj" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="mechanismOfInjury" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_mechanismo" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+	</class>
+</hibernate-mapping>

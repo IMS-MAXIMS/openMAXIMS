@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:34 -->
+<!-- Generated: 12/10/2015, 13:28 -->
 <hibernate-mapping>
 	<class name="ims.oncology.domain.objects.ContactTypesByDisciplineItem" table="onco_contacttypesb2" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -39,6 +39,27 @@
 		<many-to-one name="parent" class="ims.oncology.domain.objects.ContactTypesByDisciplineItem" unique="true" foreign-key="contacttypesb2_parent_fk" access="field" cascade="save-update">
 			<column name="parent" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
+<!-- debug: taxonomyMap -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+ 		<!-- Component Set -->
+ 		<list name="taxonomyMap" table="onco_contacttypesb2_taxonomyma" lazy="true" >
+ 			<key foreign-key="contacttypesb2_taxonomyma_i_fk">
+ 				<column name="id" sql-type="numeric(10,0)" not-null="true" />
+ 			</key>
+ 			<index column='idx'/>
+ 			<!-- Composite -->
+ 			<composite-element class="ims.core.clinical.domain.objects.TaxonomyMap" >
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="taxonomyName" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_taxonomyna" not-null="true" sql-type="numeric(10,0)"  unique="false" unique-key='taxonomy_unq1'  />
+ 				</many-to-one>
+ 				<property name="taxonomyCode" type="string" access="field" update="true">
+ 					<column name="taxonomyco" length="30" not-null="true"  unique="false" unique-key='taxonomy_unq1'   />
+ 				</property>
+ 			</composite-element>
+ 		</list>
 <!-- debug: !IsAssociation && !IsCollection -->
 
 <!-- debug: !IsLookup -->

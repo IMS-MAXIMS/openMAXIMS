@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:37 -->
+<hibernate-mapping>
+	<subclass name="ims.coe.assessment.domain.objects.SpiritualityComponent" lazy="true" discriminator-value="SPIR" extends="ims.nursing.assessment.domain.objects.AssessmentComponent" >
+<!-- debug: hibernateClassContent -->
+<!-- debug: religion -->
+<!-- debug: beliefOrFaith -->
+<!-- debug: practicingMember -->
+<!-- debug: continuePracticing -->
+<!-- debug: name -->
+<!-- debug: address -->
+<!-- debug: telephoneNumber -->
+<!-- debug: requirements -->
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="religion" type="string" access="field" update="true">
+			<column name="religion"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="beliefOrFaith" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_belieforfa" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="practicingMember" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_practicing" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="continuePracticing" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_continuepr" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="name" type="string" access="field" update="true">
+			<column name="name"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="address" type="string" access="field" update="true">
+			<column name="address"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="telephoneNumber" type="string" access="field" update="true" > 
+			<column name="telephonen" length="30"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="requirements" type="string" access="field" update="true">
+			<column name="requiremen"  not-null="false" unique="false"  />
+		</property>
+	</subclass>
+</hibernate-mapping>

@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:35 -->
+<hibernate-mapping>
+	<subclass name="ims.coe.assessment.domain.objects.BladderComponent" lazy="true" discriminator-value="BLAD" extends="ims.nursing.assessment.domain.objects.AssessmentComponent" >
+<!-- debug: hibernateClassContent -->
+<!-- debug: continence -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="continence" class="ims.nursing.assessment.domain.objects.BladderContinence" unique="true" foreign-key="bladcomp_continence_fk" access="field" cascade="all">
+			<column name="continence" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: bladderMicturition -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="bladderMicturition" class="ims.nursing.assessment.domain.objects.BladderMicturition" unique="true" foreign-key="bladcomp_bladdermic_fk" access="field" cascade="all">
+			<column name="bladdermic" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: assistanceContinence -->
+<!-- debug: bladderSkills -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<list name="bladderSkills" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="bladcomp_bladderski_fk">
+				<column name="coe_bladcomp_bladderski" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.coe.assessment.domain.objects.BladderSkills" />
+		</list>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="assistanceContinence" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_assistance" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+	</subclass>
+</hibernate-mapping>

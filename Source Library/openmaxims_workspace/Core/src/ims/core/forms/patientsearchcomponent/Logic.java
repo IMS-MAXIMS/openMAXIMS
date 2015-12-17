@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -53,13 +58,18 @@ public class Logic extends BaseLogic
 	private static final Integer COL_DOB = new Integer(6);
 	private static final Integer COL_ADDRESS = new Integer(7);	
 	private static final Integer COL_OPTIONAL = new Integer(8);
+	private static final String  DEMOGRAPHICS_TYPE_UK = "UK";
 
 	private void setDefaults()
 	{
 		//form.Surname().setFocus();
 		
-		PatIdType dispIdType = PatIdType.getNegativeInstance(ConfigFlag.UI.DISPLAY_PATID_TYPE.getValue()); 
-		form.PatientID().setValue(dispIdType);
+		form.getLocalContext().setDefaultPatIdType((ims.core.vo.lookups.PatIdType)domain.getLookupService().getDefaultInstance(ims.core.vo.lookups.PatIdType.class, engine.getFormName().getID(), ims.core.vo.lookups.PatIdType.TYPE_ID));
+		
+		if(form.getLocalContext().getDefaultPatIdType() == null)
+			form.getLocalContext().setDefaultPatIdType(PatIdType.HOSPNUM);
+		
+		form.PatientID().setValue(form.getLocalContext().getDefaultPatIdType());
 		form.Identifier().setValue("");
 		
 		if (!ConfigFlag.UI.DISPLAY_ADDRESS_AND_COUNTY_PATIENT_SEARCH.getValue())
@@ -109,6 +119,18 @@ public class Logic extends BaseLogic
 				form.Identifier().setFocus();
 			}
 		}*/
+		
+		//WDEV-19076 
+		if (DEMOGRAPHICS_TYPE_UK.equals(ConfigFlag.UI.DEMOGRAPHICS_TYPE.getValue()))
+		{
+			form.lbl3().setVisible(true);
+			form.txtNHSNumber().setVisible(true);			
+		}
+		else
+		{
+			form.lbl3().setVisible(false);
+			form.txtNHSNumber().setVisible(false);
+		}
 	}
 
 	private void formatPatientResultsGrid()
@@ -195,7 +217,10 @@ public class Logic extends BaseLogic
 		form.chkSwap().setValue(Boolean.FALSE);
 		
 		if(bClearIdentifier)
+		{
 			form.Identifier().setValue("");
+			form.txtNHSNumber().setValue(null);
+		}
 	}
 
 	protected void onImbResetClick() throws PresentationLogicException 
@@ -208,7 +233,7 @@ public class Logic extends BaseLogic
 	{
 		form.dyngrdPatient().getRows().clear();
 		clearSearchFields(true);
-		form.PatientID().setValue(PatIdType.getNegativeInstance(ConfigFlag.UI.DISPLAY_PATID_TYPE.getValue()));
+		form.PatientID().setValue(form.getLocalContext().getDefaultPatIdType());
 		form.Identifier().setValue(null);
 		
 		//WDEV-18576
@@ -235,15 +260,20 @@ public class Logic extends BaseLogic
 	private void doSearch()
 	{
 		form.dyngrdPatient().getRows().clear();
+		form.getLocalContext().setSelectedPatient(null); //WDEV-20015
+		form.getLocalContext().setLastEvent(PatientSearchEvent.NONE); //WDEV-20015
 		form.lblTotal().setValue("Total : " + form.dyngrdPatient().getRows().size());//WDEV-15958
 		
-		if (form.Identifier().getValue() != null && form.Identifier().getValue().length() > 0)
+		if ((form.Identifier().getValue() != null && form.Identifier().getValue().length() > 0) || form.txtNHSNumber().getValue() != null)
 		{
-			if (form.PatientID().getValue() == null)
+			if(form.txtNHSNumber().getValue() != null)
+				form.Identifier().setValue(null);
+			
+			if (form.Identifier().getValue() != null && form.Identifier().getValue().length() > 0 && form.PatientID().getValue() == null)
 			{
 				engine.showMessage("Please select a Patient ID Type");
 				form.PatientID().setFocus();
-				form.getLocalContext().setLastEvent(PatientSearchEvent.NONE);//WDEV-15958
+				//form.getLocalContext().setLastEvent(PatientSearchEvent.NONE);//WDEV-15958
 				return;
 			}
 			clearSearchFields(false);
@@ -251,27 +281,29 @@ public class Logic extends BaseLogic
 		else if (form.txtPostCode().getValue() == null || form.txtPostCode().getValue().trim().length() == 0) //WDEV-18576
 		{
 			// If it is a local search strip out the non-alpha except % chars before validation
+			//WDEV-18642
+			String nonReplacedCharsForSearchRegEx = ConfigFlag.GEN.PATIENT_SEARCH_ALLOW_NUMERIC_CHARS.getValue() ? "[^a-zA-Z0-9%]" :"[^a-zA-Z%]";
 			if ((ConfigFlag.DOM.PATIENT_SEARCH_TYPE.getValue().equals("LOCAL"))
-					&& (form.Surname().getValue() == null || form.Surname().getValue().replaceAll("[^a-zA-Z%]", "").length() == 0))
+					&& (form.Surname().getValue() == null || form.Surname().getValue().replaceAll(nonReplacedCharsForSearchRegEx, "").length() == 0)) //WDEV-18642
 			{
 				engine.showMessage("Please enter a valid Surname");  //wdev-17892
-				form.getLocalContext().setLastEvent(PatientSearchEvent.NONE);//WDEV-15958
+				//form.getLocalContext().setLastEvent(PatientSearchEvent.NONE);//WDEV-15958
 				return;
 			}
 			else if (form.Surname().getValue() == null || form.Surname().getValue().length() == 0)
 			{
 				engine.showMessage("Please enter a valid Surname");			//wdev-17892
-				form.getLocalContext().setLastEvent(PatientSearchEvent.NONE);//WDEV-15958
+				//form.getLocalContext().setLastEvent(PatientSearchEvent.NONE);//WDEV-15958
 				return;
 			}
 
 			// Mandatory Search on forname
 			if((ConfigFlag.DOM.PATIENT_SEARCH_TYPE.getValue().equals("LOCAL"))
 					&&(ConfigFlag.UI.SEARCH_REQ_FORENAME.getValue())
-					&&(form.Forename().getValue() == null || form.Forename().getValue().replaceAll("[^a-zA-Z%]", "").length() == 0))
+					&&(form.Forename().getValue() == null || form.Forename().getValue().replaceAll(nonReplacedCharsForSearchRegEx, "").length() == 0)) //WDEV-18642
 			{
 				   engine.showMessage("Please enter a valid Forename"); //wdev-17892
-				   form.getLocalContext().setLastEvent(PatientSearchEvent.NONE);//WDEV-15958
+				   //form.getLocalContext().setLastEvent(PatientSearchEvent.NONE);//WDEV-15958
 				   return;
 			}
 			
@@ -279,7 +311,7 @@ public class Logic extends BaseLogic
 				 (form.Forename().getValue() == null || form.Forename().getValue().length() == 0))
 			{
 				   engine.showMessage("Please enter a valid Forename");  //wdev-17892
-				   form.getLocalContext().setLastEvent(PatientSearchEvent.NONE);//WDEV-15958
+				   //form.getLocalContext().setLastEvent(PatientSearchEvent.NONE);//WDEV-15958
 				   return;
 			}
 		}		
@@ -293,19 +325,19 @@ public class Logic extends BaseLogic
 			psColl = domain.searchPatients(form.getLocalContext().getPatientFilter());
 		} catch (DomainInterfaceException e) {
 			engine.showMessage(e.getMessage());
-			form.getLocalContext().setLastEvent(PatientSearchEvent.NONE);//WDEV-15958
+			//form.getLocalContext().setLastEvent(PatientSearchEvent.NONE);//WDEV-15958
 			return;
 		}
 		
 		if (psColl.size() == 0) 
 		{
 			engine.showMessage("No patients found");
-			form.getLocalContext().setLastEvent(PatientSearchEvent.NONE);//WDEV-15958
+			//form.getLocalContext().setLastEvent(PatientSearchEvent.NONE);//WDEV-15958
 			return;
 		}	
 
 		populateGridWithPatients(psColl);
-		form.getLocalContext().setLastEvent(PatientSearchEvent.NONE);
+		//form.getLocalContext().setLastEvent(PatientSearchEvent.NONE);
 	}
 
 	private void populateGridWithPatients(PatientShortCollection psColl)
@@ -348,6 +380,17 @@ public class Logic extends BaseLogic
 				//Using this as there is no specific flag to say this is NTPF!!!
 				if(ConfigFlag.DOM.ENABLE_EXCHEQUER_CODES_VALIDATION.getValue())
 					cellLabel.setTooltip(ps.getNTPFDisplayString());
+			}
+			else	//wdev-19167
+			{
+				//wdev-19167
+				if( ims.core.vo.lookups.PatIdType.getNegativeInstance(ims.configuration.ConfigFlag.UI.DISPLAY_PATID_TYPE.getValue()).equals(ims.core.vo.lookups.PatIdType.MRNNUM) && ps.getPatId(ims.core.vo.lookups.PatIdType.MRNNUM) == null )
+				{
+					DynamicGridCell cellLabel = row.getCells().newCell(form.dyngrdPatient().getColumns().getByIdentifier(COL_IDENTIFIER), DynamicCellType.STRING);
+					cellLabel.setValue(ps.getMRNStatusIsNotNull() ? ps.getMRNStatus().getIItemText():null );
+					
+				}
+				//------------
 			}
 			
 			if (ps.getSex() != null) 
@@ -453,19 +496,23 @@ public class Logic extends BaseLogic
 			voPatFilter.setExcludeDeceasedPatients(Boolean.TRUE);
 		}
 		
-		if (form.Identifier().getValue() != null && form.Identifier().getValue().length() > 0)
+		if ((form.Identifier().getValue() != null && form.Identifier().getValue().length() > 0) || form.txtNHSNumber().getValue() != null)
 		{
-			if (form.PatientID().getValue() == null)
+			if(form.Identifier().getValue() != null && form.Identifier().getValue().length() > 0)
 			{
-				engine.showMessage("Please select a Patient ID Type");
-				form.PatientID().setFocus();
-				return;
+    			if (form.PatientID().getValue() == null)
+    			{
+    				engine.showMessage("Please select a Patient ID Type");
+    				form.PatientID().setFocus();
+    				return;
+    			}
+    			PatientId pid = new PatientId();
+    			pid.setType(form.PatientID().getValue());	
+    			pid.setValue(form.Identifier().getValue());			
+    			voPatFilter.setPersId(pid);
 			}
-			PatientId pid = new PatientId();
-			pid.setType(form.PatientID().getValue());	
-			pid.setValue(form.Identifier().getValue());			
-			voPatFilter.setPersId(pid);
 		
+			voPatFilter.setNHSNumber(form.txtNHSNumber().getValue());
 		}
 		else
 		{
@@ -557,6 +604,13 @@ public class Logic extends BaseLogic
     		form.Identifier().setFocus();
     	}
 		
+	}
+	
+	public void setSearchAsDefaultButton() //WDEV-19136
+	{
+		form.imbSearch().setAsDefaultButton();
+		form.imbSearch().setFocus();
+		form.getLocalContext().setLastEvent(PatientSearchEvent.NONE); //WDEV-20015
 	}
 	
 	@Override
@@ -709,6 +763,8 @@ public class Logic extends BaseLogic
 			
 			doSearch();
 		}
+		else
+			form.getLocalContext().setLastEvent(PatientSearchEvent.NONE); //WDEV-18590
 		
 	}
 }

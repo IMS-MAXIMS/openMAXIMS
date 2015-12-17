@@ -1,0 +1,387 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:35 -->
+<hibernate-mapping>
+	<class name="ims.oncology.domain.objects.PrimaryTumourDetails" table="onco_primarytumourd" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: careContext -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="careContext" class="ims.core.admin.domain.objects.CareContext" unique="true" foreign-key="primarytumourd_carecontex_fk" access="field" cascade="save-update">
+			<column name="carecontex" sql-type="numeric(10,0)" not-null="false" unique="false"  index='ctx_idx' />
+		</many-to-one>
+<!-- debug: patientDiagnosis -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="patientDiagnosis" class="ims.core.clinical.domain.objects.PatientDiagnosis" unique="true" foreign-key="primarytumourd_patientdia_fk" access="field" cascade="save-update">
+			<column name="patientdia" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: authoringInformation -->
+<!-- debug: field.IsAssociation : true -->
+ 		<!-- Component -->
+ 		<component name="authoringInformation" class="ims.core.clinical.domain.objects.AuthoringInformation" >
+
+ 			<many-to-one name="authoringHcp" class="ims.core.resource.people.domain.objects.Hcp" foreign-key="primarytumourd_authoringiau_fk" access="field">
+ 				<column name="authoringiauthoringh" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="authoringDateTime" type="timestamp" access="field" update="true">
+ 				<column name="authoringiauthoringd" not-null="false"  unique="false"   />
+ 			</property>
+ 		</component>
+<!-- debug: tumourGroup -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="tumourGroup" class="ims.oncology.configuration.domain.objects.TumourGroup" unique="true" foreign-key="primarytumourd_tumourgrou_fk" access="field" cascade="save-update">
+			<column name="tumourgrou" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: tumourSite -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="tumourSite" class="ims.oncology.configuration.domain.objects.TumourSite" unique="true" foreign-key="primarytumourd_tumoursite_fk" access="field" cascade="save-update">
+			<column name="tumoursite" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: tumourLaterality -->
+<!-- debug: benign -->
+<!-- debug: tumourStatus -->
+<!-- debug: endDate -->
+<!-- debug: tumourHistology -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="tumourHistology" class="ims.oncology.configuration.domain.objects.TumourHistology" unique="true" foreign-key="primarytumourd_tumourhist_fk" access="field" cascade="save-update">
+			<column name="tumourhist" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: histologySource -->
+<!-- debug: gradeofDifferentation -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="gradeofDifferentation" class="ims.oncology.configuration.domain.objects.HistopathologicGrade" unique="true" foreign-key="primarytumourd_gradeofdif_fk" access="field" cascade="save-update">
+			<column name="gradeofdif" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: differentatationSource -->
+<!-- debug: stagingClassifications -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="stagingClassifications" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="primarytumourd_stagingcla_fk">
+				<column name="onco_primarytumourd_stagingcla" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.oncology.domain.objects.PatientTumourClassification" />
+		</set>
+<!-- debug: preTreatmentTVal -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="preTreatmentTVal" class="ims.oncology.configuration.domain.objects.TumourGroupSiteTNMValue" unique="true" foreign-key="primarytumourd_pretreatme_fk" access="field" cascade="save-update">
+			<column name="pretreatme" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: preTreatmentTCert -->
+<!-- debug: preTreatmentNVal -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="preTreatmentNVal" class="ims.oncology.configuration.domain.objects.TumourGroupSiteTNMValue" unique="true" foreign-key="primarytumourd_pretreatm3_fk" access="field" cascade="save-update">
+			<column name="pretreatm3" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: preTreatmentNCert -->
+<!-- debug: preTreatmentMVal -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="preTreatmentMVal" class="ims.oncology.configuration.domain.objects.TumourGroupSiteTNMValue" unique="true" foreign-key="primarytumourd_pretreatm5_fk" access="field" cascade="save-update">
+			<column name="pretreatm5" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: preTreatmentMCert -->
+<!-- debug: preTreatmentSerumMarker -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="preTreatmentSerumMarker" class="ims.oncology.configuration.domain.objects.TumourSerumMarker" unique="true" foreign-key="primarytumourd_pretreatm7_fk" access="field" cascade="save-update">
+			<column name="pretreatm7" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: over45Status -->
+<!-- debug: preTreatmentOverall -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="preTreatmentOverall" class="ims.oncology.configuration.domain.objects.TumourGroupSiteOverallStaging" unique="true" foreign-key="primarytumourd_pretreatm8_fk" access="field" cascade="save-update">
+			<column name="pretreatm8" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: preTreatmentOverAllCert -->
+<!-- debug: integratedTVal -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="integratedTVal" class="ims.oncology.configuration.domain.objects.TumourGroupSiteTNMValue" unique="true" foreign-key="primarytumourd_integrated_fk" access="field" cascade="save-update">
+			<column name="integrated" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: integratedNVal -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="integratedNVal" class="ims.oncology.configuration.domain.objects.TumourGroupSiteTNMValue" unique="true" foreign-key="primarytumourd_integrate2_fk" access="field" cascade="save-update">
+			<column name="integrate2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: integratedMVal -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="integratedMVal" class="ims.oncology.configuration.domain.objects.TumourGroupSiteTNMValue" unique="true" foreign-key="primarytumourd_integrate3_fk" access="field" cascade="save-update">
+			<column name="integrate3" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: isCurrent -->
+<!-- debug: basisofDiagnosis -->
+<!-- debug: tumourRecurrence -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="tumourRecurrence" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="primarytumourd_tumourrecu_fk">
+				<column name="onco_primarytumourd_tumourrecu" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.oncology.domain.objects.PatientTumourRecurrence" />
+		</set>
+<!-- debug: episodeOfCare -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="episodeOfCare" class="ims.core.admin.domain.objects.EpisodeOfCare" unique="true" foreign-key="primarytumourd_episodeofc_fk" access="field" cascade="save-update">
+			<column name="episodeofc" sql-type="numeric(10,0)" not-null="true" unique="false"  index='epi_idx' />
+		</many-to-one>
+<!-- debug: tumourVersion -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="tumourVersion" class="ims.oncology.configuration.domain.objects.TNMStagingClassificationVersion" unique="true" foreign-key="primarytumourd_tumourvers_fk" access="field" cascade="save-update">
+			<column name="tumourvers" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: pathologicalTVal -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="pathologicalTVal" class="ims.oncology.configuration.domain.objects.TumourGroupSiteTNMValue" unique="true" foreign-key="primarytumourd_pathologic_fk" access="field" cascade="save-update">
+			<column name="pathologic" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: pathologicalNVal -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="pathologicalNVal" class="ims.oncology.configuration.domain.objects.TumourGroupSiteTNMValue" unique="true" foreign-key="primarytumourd_pathologi2_fk" access="field" cascade="save-update">
+			<column name="pathologi2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: pathologicalMVal -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="pathologicalMVal" class="ims.oncology.configuration.domain.objects.TumourGroupSiteTNMValue" unique="true" foreign-key="primarytumourd_pathologi3_fk" access="field" cascade="save-update">
+			<column name="pathologi3" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: assessment -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="assessment" class="ims.assessment.instantiation.domain.objects.PatientAssessment" unique="true" foreign-key="primarytumourd_assessment_fk" access="field" cascade="save-update">
+			<column name="assessment" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: movedToPrognostic -->
+<!-- debug: prognosticLocation -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="prognosticLocation" class="ims.oncology.configuration.domain.objects.PrognosticLocationConfig" unique="true" foreign-key="primarytumourd_prognostic_fk" access="field" cascade="save-update">
+			<column name="prognostic" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: prognosticRisk -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="prognosticRisk" class="ims.oncology.configuration.domain.objects.PrognosticRiskConfiguration" unique="true" foreign-key="primarytumourd_prognosti2_fk" access="field" cascade="save-update">
+			<column name="prognosti2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: prognosticPSA -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="prognosticPSA" class="ims.oncology.configuration.domain.objects.PSAConfig" unique="true" foreign-key="primarytumourd_prognosti3_fk" access="field" cascade="save-update">
+			<column name="prognosti3" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: prognosticGleason -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="prognosticGleason" class="ims.oncology.configuration.domain.objects.GleasonConfig" unique="true" foreign-key="primarytumourd_prognosti4_fk" access="field" cascade="save-update">
+			<column name="prognosti4" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: prognosticGrouping -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="prognosticGrouping" class="ims.oncology.configuration.domain.objects.PrognosticGrouping" unique="true" foreign-key="primarytumourd_prognosti5_fk" access="field" cascade="save-update">
+			<column name="prognosti5" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: prognosticGroupingCert -->
+<!-- debug: prognosticTVal -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="prognosticTVal" class="ims.oncology.configuration.domain.objects.TumourGroupSiteTNMValue" unique="true" foreign-key="primarytumourd_prognosti7_fk" access="field" cascade="save-update">
+			<column name="prognosti7" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: prognosticNVal -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="prognosticNVal" class="ims.oncology.configuration.domain.objects.TumourGroupSiteTNMValue" unique="true" foreign-key="primarytumourd_prognosti8_fk" access="field" cascade="save-update">
+			<column name="prognosti8" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: prognosticMVal -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="prognosticMVal" class="ims.oncology.configuration.domain.objects.TumourGroupSiteTNMValue" unique="true" foreign-key="primarytumourd_prognosti9_fk" access="field" cascade="save-update">
+			<column name="prognosti9" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: prognosticTCert -->
+<!-- debug: prognosticNCert -->
+<!-- debug: prognosticMCert -->
+<!-- debug: pathologicalDate -->
+<!-- debug: integratedDate -->
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="tumourLaterality" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_tumourlate" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="benign" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_benign" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="tumourStatus" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_tumourstat" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="endDate" type="date" access="field" update="true">
+			<column name="enddate"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="histologySource" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_histologys" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="differentatationSource" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_differenta" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="preTreatmentTCert" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_pretreatm2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="preTreatmentNCert" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_pretreatm4" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="preTreatmentMCert" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_pretreatm6" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="over45Status" type="string" access="field" update="true" > 
+			<column name="over45stat" length="1"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="preTreatmentOverAllCert" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_pretreatm9" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isCurrent" type="boolean" access="field" update="true">
+			<column name="iscurrent"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="basisofDiagnosis" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_basisofdia" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="movedToPrognostic" type="boolean" access="field" update="true">
+			<column name="movedtopro"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="prognosticGroupingCert" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_prognosti6" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="prognosticTCert" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_prognost10" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="prognosticNCert" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_prognost11" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="prognosticMCert" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_prognost12" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="pathologicalDate" type="date" access="field" update="true">
+			<column name="pathologi4"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="integratedDate" type="date" access="field" update="true">
+			<column name="integrate4"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

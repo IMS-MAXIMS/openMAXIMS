@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -38,14 +43,13 @@ import ims.core.vo.DataSetTypeVo;
 import ims.core.vo.enums.ChartingEvents;
 import ims.core.vo.lookups.Sex;
 import ims.domain.exceptions.DomainInterfaceException;
-import ims.framework.MessageButtons;
-import ims.framework.MessageIcon;
 import ims.framework.enumerations.DialogResult;
 import ims.framework.enumerations.SortOrder;
 import ims.framework.exceptions.PresentationLogicException;
 import ims.framework.utils.Date;
 import ims.ocrr.configuration.vo.AnalyteRefVo;
-import ims.ocrr.configuration.vo.AnalyteRefVoCollection;
+import ims.ocrr.vo.ChartResultAnalyteVo;
+import ims.ocrr.vo.ChartResultAnalyteVoCollection;
 import ims.ocrr.vo.OrderInvestigationChartVo;
 import ims.ocrr.vo.OrderResultCommentsVo;
 import ims.ocrr.vo.OrderSpecimenChartVo;
@@ -71,11 +75,13 @@ public class Logic extends BaseLogic
 	{
 		private DataSetTypeVo dataset;
 		private AnalyteRefVo analyte;
+		private String refRange;
 		
-		public DatasetAnalyte(DataSetTypeVo dataset, AnalyteRefVo analyte)
+		public DatasetAnalyte(DataSetTypeVo dataset, AnalyteRefVo analyte, String refRange)
 		{
 			this.dataset = dataset;
 			this.analyte = analyte;
+			this.refRange = refRange;
 		}
 		
 		public DataSetTypeVo getDataset()
@@ -85,6 +91,10 @@ public class Logic extends BaseLogic
 		public AnalyteRefVo getAnalyte()
 		{
 			return this.analyte;
+		}
+		public String getRefRange()
+		{
+			return this.refRange;
 		}
 	}
 	
@@ -223,7 +233,7 @@ public class Logic extends BaseLogic
 				//WDEV-16618
 				if(!selectedPatientSexIsKnown() && VIEW_GRAPHICAL.equals(form.cmbView().getValue()))
 				{
-					engine.showMessage("Patient sex is unknown.", "Search Error", MessageButtons.OK, MessageIcon.ERROR);
+					engine.showErrors("Search Error", new String[] {"The patient's sex is unknown."}); //WDEV-16931 as workaround
 					return;
 				}
 				
@@ -283,34 +293,36 @@ public class Logic extends BaseLogic
 		return results;
 	}
 	
-	private AnalyteRefVoCollection getAnalytes(ChartResultVoCollection results) throws PresentationLogicException
+	private ChartResultAnalyteVoCollection getAnalytes(ChartResultVoCollection results) throws PresentationLogicException
 	{
 		if(results == null)
-			return new AnalyteRefVoCollection();
+			return new ChartResultAnalyteVoCollection();
 		
-		AnalyteRefVoCollection analytes = new AnalyteRefVoCollection();
+		ChartResultAnalyteVoCollection analytes = new ChartResultAnalyteVoCollection();
 		
-		for(int x = 0; x < results.size(); x++)
+		for(ChartResultVo result : results)
 		{
-			ChartResultVo result = results.get(x);
-			
-			if(result.getAnalyte() == null || result.getAnalyte().getID_Analyte() == null)
+			ChartResultAnalyteVo analyte = result.getAnalyte();
+
+			if(analyte == null || analyte.getID_Analyte() == null)
 				throw new PresentationLogicException("Invalid result analyte");
 			
-			if(analytes.indexOf(result.getAnalyte()) < 0)
-				analytes.add(result.getAnalyte());
+			analyte.setRefRange(result.getRefRange());
+			
+			if(analytes.indexOf(analyte) < 0)
+				analytes.add(analyte);
 		}
 		
 		return analytes;
 	}
-	private DatasetAnalyte[] getDatasetCollection(AnalyteRefVoCollection analytes)
+	private DatasetAnalyte[] getDatasetCollection(ChartResultAnalyteVoCollection analytes)
 	{
 		ArrayList<DatasetAnalyte> resultCollection = new ArrayList<DatasetAnalyte>();
 		
-		for(int x = 0; x < analytes.size(); x++)
+		for(ChartResultAnalyteVo chartResultAnalyteVo : analytes)
 		{
-			DataSetTypeVo dataset = domain.getDataset(analytes.get(x));
-			resultCollection.add(new DatasetAnalyte(dataset, analytes.get(x)));
+			DataSetTypeVo dataset = chartResultAnalyteVo.getDatasetType();
+			resultCollection.add(new DatasetAnalyte(dataset, chartResultAnalyteVo, chartResultAnalyteVo.getRefRange()));
 		}
 		
 		DatasetAnalyte[] result = new DatasetAnalyte[resultCollection.size()];
@@ -373,7 +385,7 @@ public class Logic extends BaseLogic
 				group.setMaxValue(maxValue);
 				
 				if (form.cmbView().getValue().equals(VIEW_TABULAR))
-					group.setRefRange(results.get(x).getRefRange() == null ? "-" : results.get(x).getRefRange());
+					group.setRefRange(datesetGroups[x].getRefRange() == null ? "-" : datesetGroups[x].getRefRange());
 				else
 					group.setRefRange((minValue == null ? "?" : minValue.toString()) + "-" + (maxValue == null ? "?" : maxValue.toString()));
 
@@ -392,7 +404,7 @@ public class Logic extends BaseLogic
 						{
 							if(chartResult.getSpecimenComments().getCollDateTimeFiller() != null)
 							{
-								value.setDate(chartResult.getSpecimenComments().getCollDateTimeFiller());
+								value.setDate(chartResult.getObsDateTime() != null ? chartResult.getObsDateTime() : chartResult.getSpecimenComments().getCollDateTimeFiller()); //WDEV-19986
 								value.setIsTimeSuplied(chartResult.getSpecimenComments().getColTimeFillerSupplied());
 							}
 							else
@@ -585,14 +597,14 @@ public class Logic extends BaseLogic
 		ArrayList<String> errors = new ArrayList<String>();
 		
 		if(!selectedPatientSexIsKnown() && VIEW_GRAPHICAL.equals(form.cmbView().getValue()))
-			errors.add("Patient sex is unknown");
+			errors.add("The patient's sex is unknown"); //WDEV-16931 - misspellings
 		if(form.dteStart().getValue() == null)
-			errors.add("'From date' is mandatory");//WDEV-15802
+			errors.add("'From' date is mandatory");//WDEV-15802
 		if(form.dteEnd().getValue() == null)
-			errors.add("'To date' is mandatory");//WDEV-15802
+			errors.add("'To' date is mandatory");//WDEV-15802
 		if (form.dteStart().getValue() != null && form.dteEnd().getValue() != null && form.dteStart().getValue().isGreaterThan(form.dteEnd().getValue()))
 		{
-			errors.add("'From date' must be before 'To date'");
+			errors.add("'From' date cannot be later than 'To' date");
 		}
 		
 		if(errors.size() > 0)
@@ -651,7 +663,7 @@ public class Logic extends BaseLogic
 	{
 		if(!selectedPatientSexIsKnown() && VIEW_GRAPHICAL.equals(form.cmbView().getValue())) //WDEV-16876
 		{
-			engine.showMessage("Patient sex is unknown.", "Search Error", MessageButtons.OK, MessageIcon.ERROR);
+			engine.showErrors("Search Error", new String[]{"The patient's sex is unknown."}); //WDEV-16931 as workaround
 			return;
 		}
 		form.getGlobalContext().OCRR.setSelectGroupsInViewGraphic(Boolean.TRUE); //wdev-13893

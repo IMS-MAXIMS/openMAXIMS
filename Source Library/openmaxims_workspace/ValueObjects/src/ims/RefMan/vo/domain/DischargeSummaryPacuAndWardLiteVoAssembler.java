@@ -1,9 +1,33 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.RefMan.vo.domain;
@@ -35,8 +59,8 @@ public class DischargeSummaryPacuAndWardLiteVoAssembler
 		valueObjectDest.setCatsReferral(valueObjectSrc.getCatsReferral());
 		// AuthoringInformation
 		valueObjectDest.setAuthoringInformation(valueObjectSrc.getAuthoringInformation());
-		// DischargeDate
-		valueObjectDest.setDischargeDate(valueObjectSrc.getDischargeDate());
+		// DischargeDateTime
+		valueObjectDest.setDischargeDateTime(valueObjectSrc.getDischargeDateTime());
 		// DischargeType
 		valueObjectDest.setDischargeType(valueObjectSrc.getDischargeType());
 		// DischargeEpisode
@@ -349,11 +373,11 @@ public class DischargeSummaryPacuAndWardLiteVoAssembler
 		}
 		// AuthoringInformation
 		valueObject.setAuthoringInformation(ims.core.vo.domain.AuthoringInformationVoAssembler.create(map, domainObject.getAuthoringInformation()) );
-		// DischargeDate
-		java.util.Date DischargeDate = domainObject.getDischargeDate();
-		if ( null != DischargeDate ) 
+		// DischargeDateTime
+		java.util.Date DischargeDateTime = domainObject.getDischargeDateTime();
+		if ( null != DischargeDateTime ) 
 		{
-			valueObject.setDischargeDate(new ims.framework.utils.Date(DischargeDate) );
+			valueObject.setDischargeDateTime(new ims.framework.utils.DateTime(DischargeDateTime) );
 		}
 		// DischargeType
 		ims.domain.lookups.LookupInstance instance4 = domainObject.getDischargeType();
@@ -477,13 +501,13 @@ public class DischargeSummaryPacuAndWardLiteVoAssembler
 		}
 		domainObject.setCatsReferral(value1);
 		domainObject.setAuthoringInformation(ims.core.vo.domain.AuthoringInformationVoAssembler.extractAuthoringInformation(domainFactory, valueObject.getAuthoringInformation(), domMap));
+		ims.framework.utils.DateTime dateTime3 = valueObject.getDischargeDateTime();
 		java.util.Date value3 = null;
-		ims.framework.utils.Date date3 = valueObject.getDischargeDate();		
-		if ( date3 != null ) 
+		if ( dateTime3 != null ) 
 		{
-			value3 = date3.getDate();
+			value3 = dateTime3.getJavaDate();
 		}
-		domainObject.setDischargeDate(value3);
+		domainObject.setDischargeDateTime(value3);
 		// create LookupInstance from vo LookupType
 		ims.domain.lookups.LookupInstance value4 = null;
 		if ( null != valueObject.getDischargeType() ) 

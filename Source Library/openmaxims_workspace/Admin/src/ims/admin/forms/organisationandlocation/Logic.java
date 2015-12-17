@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -89,11 +94,14 @@ public class Logic extends BaseLogic
 		form.chkActiveOnly().setValue(true);
 				
 		//if we are using postcode - we are not using county(ireland only)
-		if (ConfigFlag.UI.DEMOGRAPHICS_USE_POSTCODE.getValue())
+		if (ConfigFlag.UI.DEMOGRAPHICS_USE_POSTCODE.getValue()) //WDEV-20202
 		{
 			form.ctn1().lyr1().tabOrg().cmbOrgCounty().setVisible(false);
+			form.ctn1().lyr1().tabOrg().lblOrgCounty().setVisible(false);
 			form.ctn1().lyr1().tabLoc().cmbLocCounty().setVisible(false);
+			form.ctn1().lyr1().tabLoc().lblLocCounty().setVisible(false);
 			form.ctn1().lyr1().tabLocSite().cmbLocSiteCounty().setVisible(false);
+			form.ctn1().lyr1().tabLocSite().lblLocSiteCounty().setVisible(false);
 		}
 		else
 		{
@@ -120,9 +128,12 @@ public class Logic extends BaseLogic
 		form.ctn1().lyr1().tabLoc().cmbLocType().removeRow(ims.core.vo.lookups.LocationType.BAY);
 		form.ctn1().lyr1().tabLocSite().cmbLocSiteType().removeRow(ims.core.vo.lookups.LocationType.BAY);
 		
-		//WDEV-9731
-		form.ctn1().lyr1().tabLoc().cmbLocType().removeRow(ims.core.vo.lookups.LocationType.CLINIC);
-		form.ctn1().lyr1().tabLocSite().cmbLocSiteType().removeRow(ims.core.vo.lookups.LocationType.CLINIC);
+		//WDEV-9731 WDEV-20199
+		if (!ConfigFlag.UI.CLINIC_LOCATION_TYPE_AVAILABLE.getValue())
+		{
+			form.ctn1().lyr1().tabLoc().cmbLocType().removeRow(ims.core.vo.lookups.LocationType.CLINIC);
+			form.ctn1().lyr1().tabLocSite().cmbLocSiteType().removeRow(ims.core.vo.lookups.LocationType.CLINIC);
+		}
 		
 		// legend
 		form.ctn1().lyr1().tabBlank().imgOrganisation().setValue(form.getImages().Admin.Organisation);
@@ -190,11 +201,21 @@ public class Logic extends BaseLogic
 		OrganisationVoCollection voColl = null;
 		voColl = domain.listRootOrgsNoGpp();	
 
-		new OrgTreeHelper(form.getImages().Admin.Organisation, form.getImages().Admin.OrgDisabled, form.getImages().Admin.LocationSite, form.getImages().Admin.LocSiteDisabled, form.getImages().Admin.Location, form.getImages().Admin.LocDisabled).populateOrgTree(form.treOrgLoc(), voColl, false, !form.chkActiveOnly().getValue(), false);
+		new OrgTreeHelper(form.getImages().Admin.Organisation, form.getImages().Admin.OrgDisabled, form.getImages().Admin.LocationSite, form.getImages().Admin.LocSiteDisabled, form.getImages().Admin.Location, form.getImages().Admin.LocDisabled).populateOrgTree(form.treOrgLoc(), voColl, false, !form.chkActiveOnly().getValue(), true, false, form.chkViewCaseNote().getValue()); //WDEV-19532
 		form.treOrgLoc().expandAll();
 		
+		selectNodeInTree(); //WDEV-19677
 		
+	}
+
+	//WDEV-19677
+	private void selectNodeInTree()
+	{
+		if (form.getLocalContext().getSelectedParent()==null)
+			return;
 		
+		form.treOrgLoc().setValue(form.getLocalContext().getSelectedParent());
+		treeOrgLocTreeViewSelectionChanged(form.treOrgLoc().getSelectedNode());//WDEV-20007
 	}
 
 	protected void onTreOrgLocTreeViewSelectionChanged(ims.framework.controls.TreeNode node) throws ims.framework.exceptions.PresentationLogicException
@@ -207,12 +228,15 @@ public class Logic extends BaseLogic
 		if (node == null)
 			return;
 		
+		setParentNodeInLocalContext();//WDEV-19677
+		
 		form.getContextMenus().hideAllOrganisationLocationMenuItems();
 		
 		form.getContextMenus().getOrganisationLocationCREATEROOTORGItem().setVisible(true);
 		form.getContextMenus().getOrganisationLocationREMOVEItem().setVisible(false);
 		form.getContextMenus().getOrganisationLocationEDITItem().setVisible(true);
 		form.getContextMenus().getOrganisationLocationRENAMEItem().setVisible(true);
+		form.getContextMenus().getOrganisationLocationEDITItem().setText("Edit");	
 		
 		if (node.getValue() instanceof OrganisationVo)
 		{
@@ -292,7 +316,7 @@ public class Logic extends BaseLogic
 			}
 			
 			if (vo.getIsActiveIsNotNull())
-				if (vo.getIsActive()&& !vo.getIsVirtual())
+				if (vo.getIsActive())//&& !vo.getIsVirtual())
 				{
 					form.getContextMenus().getOrganisationLocationCREATEORGHEREItem().setVisible(false);
 					form.getContextMenus().getOrganisationLocationCREATELOCItem().setVisible(true);
@@ -326,7 +350,8 @@ public class Logic extends BaseLogic
 				{
 					form.getContextMenus().hideAllOrganisationLocationMenuItems();
 					form.getContextMenus().getOrganisationLocationCREATEROOTORGItem().setVisible(true);
-					
+					form.getContextMenus().getOrganisationLocationEDITItem().setVisible(true);
+					form.getContextMenus().getOrganisationLocationEDITItem().setText("Edit Taxonomy Mappings");					
 				}
 			}
 			
@@ -461,6 +486,7 @@ public class Logic extends BaseLogic
 		form.ctn1().lyr1().tabLoc().cmbLocType().setValue(value.getType());
 		form.ctn1().lyr1().tabLoc().chkReferringHosp().setValue(value.getReferringHospitalIsNotNull() ? value.getReferringHospital().booleanValue() : false);
 		form.ctn1().lyr1().tabLoc().chkTreatingHosp().setValue(value.getTreatingHospIsNotNull() ? value.getTreatingHosp().booleanValue() : false);
+		form.ctn1().lyr1().tabLoc().chkCaseNoteLocation().setValue(value.getCaseNoteFolderLocation());
 		
 		//wdev-17000
 		if( LocationType.WARD.equals(form.ctn1().lyr1().tabLoc().cmbLocType().getValue()) )
@@ -486,9 +512,9 @@ public class Logic extends BaseLogic
 					printers.append(",");
 				}
 			}
-			//WDEV-15817 space is displayed for tooltip as a workaround
+			
 			form.ctn1().lyr1().tabLoc().txtLocPrinters().setValue(printers.toString());
-			form.ctn1().lyr1().tabLoc().txtLocPrinters().setTooltip(printers.toString() != null && printers.toString().length() > 0 ? printers.toString() : " ");
+			form.ctn1().lyr1().tabLoc().txtLocPrinters().setTooltip(printers.toString() != null && printers.toString().length() > 0 ? printers.toString() : "");
 									
 			form.ctn1().lyr1().tabLoc().lblDefaultPrintForLocation().setValue(value.getDefaultPrinterIsNotNull() ? value.getDefaultPrinter().getName() : "No default printer selected ");
 			form.ctn1().lyr1().tabLoc().lblDesignatedPrinterForNewResultsForLocation().setValue(value.getDesignatedPrinterForNewResultsIsNotNull() ? value.getDesignatedPrinterForNewResults().getName() : "No designated printer for new results selected");
@@ -556,6 +582,7 @@ public class Logic extends BaseLogic
 		form.ctn1().lyr1().tabLocSite().chkLocSiteAllSecure().setValue(value.getAllSecureAccommodationIsNotNull() ? value.getAllSecureAccommodation().booleanValue() : false);
 		form.ctn1().lyr1().tabLocSite().chkLocSiteReferringHos().setValue(value.getReferringHospitalIsNotNull() ? value.getReferringHospital().booleanValue() : false);
 		form.ctn1().lyr1().tabLocSite().chkLocSiteTreatingHos().setValue(value.getTreatingHospIsNotNull() ? value.getTreatingHosp().booleanValue() : false);
+		form.ctn1().lyr1().tabLocSite().chkCaseNotesLocSite().setValue(value.getCaseNoteFolderLocation());
 		
 		//wdev-17000
 		if( LocationType.WARD.equals(form.ctn1().lyr1().tabLocSite().cmbLocSiteType().getValue()) )
@@ -588,10 +615,9 @@ public class Logic extends BaseLogic
 			form.ctn1().lyr1().tabLocSite().lblDefaultPrinterToBeSetForLocSite().setValue(value.getDefaultPrinterIsNotNull() ? value.getDefaultPrinter().getName() : "No default printer selected ");
 			form.ctn1().lyr1().tabLocSite().lblDesignatedPrinterForNewResultsToBeSetForLocSite().setValue(value.getDesignatedPrinterForNewResultsIsNotNull() ? value.getDesignatedPrinterForNewResults().getName() : "No designated printer for new results selected");
 			form.ctn1().lyr1().tabLocSite().lblDesignatedPrinterForOCSOrderToBeSetForLocSite().setValue(value.getDesignatedPrinterForOCSOrderIsNotNull() ? value.getDesignatedPrinterForOCSOrder().getName() : "No designated printer for ocs order selected");
-			//WDEV-15817 G.M. space added as a workaround
+			
 			form.ctn1().lyr1().tabLocSite().txtLsPrinters().setValue(printers.toString());
-			form.ctn1().lyr1().tabLocSite().txtLsPrinters().setTooltip(printers.toString() != null && printers.toString().length() > 0 ? printers.toString() : " ");	//wdev-15817
-			form.ctn1().lyr1().tabLoc().txtLocPrinters().setTooltip(printers.toString() != null && printers.toString().length() > 0 ? printers.toString() : " ");
+			form.ctn1().lyr1().tabLocSite().txtLsPrinters().setTooltip(printers.toString() != null && printers.toString().length() > 0 ? printers.toString() : "");
 			
 			form.getGlobalContext().setCurrentLocationID(value.getID_Location());
 		}
@@ -652,6 +678,7 @@ public class Logic extends BaseLogic
 		form.ctn1().lyr1().tabOrg().txtOrgName().setFocus();
 		form.getLocalContext().setSavingRootOrg(null);
 
+		form.ctn1().setCollapsed(false);//WDEV-20007
 	}
 
 	private void createRootOrganisation()
@@ -666,7 +693,6 @@ public class Logic extends BaseLogic
 		form.ctn1().setCollapsed(false);
 		form.getGlobalContext().setPrintersSelected(null);
 		form.ctn1().lyr1().tabOrg().txtOrgName().setFocus();
-
 	}
 
 	private void createLocation()
@@ -674,7 +700,7 @@ public class Logic extends BaseLogic
 		TreeNode node = form.treOrgLoc().getSelectedNode();
 		if (node == null)
 			return;
-
+		
 		if (node.getValue() instanceof OrganisationVo)
 		{
 			form.getLocalContext().setEditObject(new LocSiteVo());
@@ -683,6 +709,7 @@ public class Logic extends BaseLogic
 			form.ctn1().lyr1().tabLocSite().txtLocSiteName().setFocus();
 			form.ctn1().lyr1().tabLocSite().chkDisplayInEDTrackingLocSite().setVisible(false);	//wdev-17000
 			form.ctn1().lyr1().tabLocSite().chkDisplayInEDTrackingLocSite().setValue(null);		//wdev-17000
+			form.ctn1().lyr1().tabLocSite().chkCaseNotesLocSite().setValue(true);
 		}
 		else
 		{
@@ -692,6 +719,10 @@ public class Logic extends BaseLogic
 			form.ctn1().lyr1().tabLoc().txtLocName().setFocus();
 			form.ctn1().lyr1().tabLoc().chkDisplayInEDTrackingLoc().setVisible(false);  //wdev-17000
 			form.ctn1().lyr1().tabLoc().chkDisplayInEDTrackingLoc().setValue(null);		//wdev-17000
+			form.ctn1().lyr1().tabLoc().chkCaseNoteLocation().setValue(true);
+			
+			boolean isVirtual = node != null && isVirtual(node.getValue());
+			form.ctn1().lyr1().tabLoc().chkVirtualLocation().setValue(isVirtual);	
 		}
 
 		hideContextMenus();
@@ -702,6 +733,24 @@ public class Logic extends BaseLogic
 						
 		form.getGlobalContext().setDefaultPrinter(null);
 		form.getGlobalContext().setDesignatedPrinterForNewResults(null);
+		
+		form.ctn1().setCollapsed(false);//WDEV-20007
+	}
+
+	private boolean isVirtual(Object parentLocation)
+	{
+		boolean isVirtual = false;
+		
+		if(parentLocation instanceof LocSiteVo)
+		{
+			isVirtual = Boolean.TRUE.equals(((LocSiteVo) parentLocation).getIsVirtual());
+		}
+		else if(parentLocation instanceof LocMostVo)
+		{
+			isVirtual = Boolean.TRUE.equals(((LocMostVo) parentLocation).getIsVirtual());
+		}
+		
+		return isVirtual;
 	}
 
 	private void editItem()
@@ -720,15 +769,19 @@ public class Logic extends BaseLogic
 			form.getLocalContext().setEditObject((LocSiteVo) node.getValue());
 			form.ctn1().lyr1().tabLocSite().txtLocSiteName().setFocus();
 		}
-		else if (node.getValue() instanceof LocMostVo)
+		else if (node.getValue() instanceof LocMostVo) //WDEV-20202
 		{
 			form.getLocalContext().setEditObject((LocMostVo) node.getValue());
-			form.ctn1().lyr1().tabLoc().txtLocName().setFocus();
+			if (!LocationType.BAY.equals(((LocMostVo)form.getLocalContext().getEditObject()).getType()))
+			{
+				form.ctn1().lyr1().tabLoc().txtLocName().setFocus();
+			}
 		}
 
 		hideContextMenus();
 		setFormMode(FormMode.EDIT);
-		form.getContextMenus().getGenericGridAddItem().setVisible(true);		
+		form.getContextMenus().getGenericGridAddItem().setVisible(true);	
+		form.ctn1().setCollapsed(false);//WDEV-20007
 	}
 
 	private void setFormMode(FormMode mode)
@@ -834,6 +887,7 @@ public class Logic extends BaseLogic
 		value.setAllSecureAccommodation(new Boolean(form.ctn1().lyr1().tabLocSite().chkLocSiteAllSecure().getValue()));
 		value.setReferringHospital(new Boolean(form.ctn1().lyr1().tabLocSite().chkLocSiteReferringHos().getValue()));
 		value.setTreatingHosp(new Boolean(form.ctn1().lyr1().tabLocSite().chkLocSiteTreatingHos().getValue()));
+		value.setCaseNoteFolderLocation(form.ctn1().lyr1().tabLocSite().chkCaseNotesLocSite().getValue());
 		
 		//wdev-17000
 		if( LocationType.WARD.equals(form.ctn1().lyr1().tabLocSite().cmbLocSiteType().getValue()) )
@@ -924,6 +978,7 @@ public class Logic extends BaseLogic
 		value.setType(form.ctn1().lyr1().tabLoc().cmbLocType().getValue());
 		value.setReferringHospital(new Boolean(form.ctn1().lyr1().tabLoc().chkReferringHosp().getValue()));
 		value.setTreatingHosp(new Boolean(form.ctn1().lyr1().tabLoc().chkTreatingHosp().getValue()));
+		value.setCaseNoteFolderLocation(form.ctn1().lyr1().tabLoc().chkCaseNoteLocation().getValue());
 		
 		//wdev-17000
 		if( LocationType.WARD.equals(form.ctn1().lyr1().tabLoc().cmbLocType().getValue()) )
@@ -1087,8 +1142,17 @@ public class Logic extends BaseLogic
 					//wdev-12855
 					voLoc = domain.getLocMost(((LocMostVo)form.getLocalContext().getEditObject()).getID_Location());
 					//---------
-					populateDataFromScreen(voLoc);
-					if(voLoc.countFieldsWithValue() > 0)
+					boolean isBay = LocationType.BAY.equals(voLoc.getType()); //WDEV-20202
+					if (!isBay)
+					{	
+						populateDataFromScreen(voLoc);
+					}
+					else
+					{
+						voLoc.setCodeMappings(getCodeMappings(form.ctn1().lyr1().tabLoc().grdLocMappings()));
+					}
+					
+					if (voLoc.countFieldsWithValue() > 0 && !isBay)
 					{
 						String dupLocNameMessage = checkLocationNameIsUnique(voLoc);
 						if (dupLocNameMessage != null)
@@ -1229,7 +1293,7 @@ public class Logic extends BaseLogic
 			
 		try
 		{
-			save(voOrg, voLocSite, voLoc);
+			save(voOrg, voLocSite, voLoc, childLoc);
 		}
 		catch (StaleObjectException e)
 		{
@@ -1309,7 +1373,7 @@ public class Logic extends BaseLogic
 		
 	}
 
-	private void save(OrganisationVo voOrg, LocSiteVo voLocSite, LocMostVo voLoc) throws UniqueKeyViolationException, StaleObjectException 
+	private void save(OrganisationVo voOrg, LocSiteVo voLocSite, LocMostVo voLoc, LocMostVo childLoc) throws UniqueKeyViolationException, StaleObjectException 
 	{
 		if (voOrg != null)
 		{	
@@ -1321,7 +1385,15 @@ public class Logic extends BaseLogic
 			if(form.getLocalContext().getEditObject() instanceof LocSiteVo && ((LocSiteVo)form.getLocalContext().getEditObject()).getID_LocationIsNotNull() && voLocSite.getVersion_Location() != ((LocSiteVo)form.getLocalContext().getEditObject()).getVersion_Location())
 				throw new StaleObjectException(null);
 			
-			domain.saveLocationSite(voLocSite);
+//			domain.saveLocationSite(voLocSite);
+			
+			//WDEV-19576
+			if(childLoc !=null)
+			{
+				domain.saveLocationSite(voLocSite, childLoc);
+			}
+			else domain.saveLocationSite(voLocSite);
+			
 		}
 		else if (voLoc != null)
 		{
@@ -1374,9 +1446,10 @@ public class Logic extends BaseLogic
 		form.ctn1().lyr1().tabLocSite().chkLocSiteAllSecure().setValue(false);
 		form.ctn1().lyr1().tabLocSite().chkLocSiteReferringHos().setValue(false);
 		form.ctn1().lyr1().tabLocSite().chkLocSiteTreatingHos().setValue(false);
+		form.ctn1().lyr1().tabLocSite().chkCaseNotesLocSite().setValue(false);
 		form.ctn1().lyr1().tabLocSite().grdSiteMappings().getRows().clear();
 		form.ctn1().lyr1().tabLocSite().txtLsPrinters().setValue(null);
-		form.ctn1().lyr1().tabLocSite().txtLsPrinters().setTooltip(" "); 		//wdev-15817 G.M. space added as a workaround
+		form.ctn1().lyr1().tabLocSite().txtLsPrinters().setTooltip("");
 		form.ctn1().lyr1().tabLocSite().lblDefaultPrinterToBeSetForLocSite().setValue(null);
 		form.ctn1().lyr1().tabLocSite().lblDesignatedPrinterForNewResultsToBeSetForLocSite().setValue(null);
 		form.ctn1().lyr1().tabLocSite().lblDesignatedPrinterForOCSOrderToBeSetForLocSite().setValue(null);
@@ -1398,9 +1471,10 @@ public class Logic extends BaseLogic
 		form.ctn1().lyr1().tabLoc().cmbLocType().setValue(null);
 		form.ctn1().lyr1().tabLoc().chkReferringHosp().setValue(false);
 		form.ctn1().lyr1().tabLoc().chkTreatingHosp().setValue(false);
+		form.ctn1().lyr1().tabLoc().chkCaseNoteLocation().setValue(false);
 		form.ctn1().lyr1().tabLoc().grdLocMappings().getRows().clear();
 		form.ctn1().lyr1().tabLoc().txtLocPrinters().setValue(null);
-		form.ctn1().lyr1().tabLoc().txtLocPrinters().setTooltip(" ");	//wdev-15817 G.M. space added as a workaround
+		form.ctn1().lyr1().tabLoc().txtLocPrinters().setTooltip("");
 		form.ctn1().lyr1().tabLoc().lblDefaultPrintForLocation().setValue(null);
 		form.ctn1().lyr1().tabLoc().lblDesignatedPrinterForNewResultsForLocation().setValue(null);
 		form.ctn1().lyr1().tabLoc().lblDesignatedPrinterForOCSOrderToBeSetForLocation().setValue(null);
@@ -1440,7 +1514,7 @@ public class Logic extends BaseLogic
 	protected void onContextMenuItemClick(int menuItemID, Control sender) throws PresentationLogicException
 	{
 		switch (menuItemID)
-		{
+		{ 
 			case GenForm.ContextMenus.OrganisationLocation.CREATELOC :
 				createLocation();
 			break;
@@ -1509,6 +1583,27 @@ public class Logic extends BaseLogic
 		}
 	}
 
+	//WDEV-19677
+	private void setParentNodeInLocalContext()
+	{
+		TreeNode node = form.treOrgLoc().getSelectedNode();
+		if (node == null)
+			return;
+
+		if (node.getValue() instanceof OrganisationVo)
+		{
+			form.getLocalContext().setSelectedParent((OrganisationVo) node.getValue());
+		}
+		else if (node.getValue() instanceof LocSiteVo)
+		{
+			form.getLocalContext().setSelectedParent((LocSiteVo) node.getValue());
+		}
+		else if (node.getValue() instanceof LocMostVo)
+		{
+			form.getLocalContext().setSelectedParent((LocMostVo) node.getValue());
+		}
+	}
+
 	private void renameItem()
 	{
 		form.treOrgLoc().beginEditSelectedNode();		
@@ -1549,9 +1644,9 @@ public class Logic extends BaseLogic
 						form.ctn1().lyr1().tabLocSite().lblDesignatedPrinterForOCSOrderToBeSetForLocSite().setValue(designatedPrinterForOCSOrder.getIPrinterName());	
 					else
 						form.ctn1().lyr1().tabLocSite().lblDesignatedPrinterForOCSOrderToBeSetForLocSite().setValue("No designated printer for ocs order selected");
-					//WDEV-15817 - workaround until FWUI-1759 is fixed, set tooltip to one space
+					
 					form.ctn1().lyr1().tabLocSite().txtLsPrinters().setValue(printers.toString());
-					form.ctn1().lyr1().tabLocSite().txtLsPrinters().setTooltip(printers.toString() != null && printers.toString().length() > 0 ? printers.toString() : " ");					
+					form.ctn1().lyr1().tabLocSite().txtLsPrinters().setTooltip(printers.toString() != null && printers.toString().length() > 0 ? printers.toString() : "");					
 				}
 				else if(form.ctn1().lyr1().tabLoc().isVisible())
 				{	
@@ -1577,9 +1672,9 @@ public class Logic extends BaseLogic
 						form.ctn1().lyr1().tabLoc().lblDesignatedPrinterForOCSOrderToBeSetForLocation().setValue(designatedPrinterForOCSOrder.getIPrinterName());
 					else
 						form.ctn1().lyr1().tabLoc().lblDesignatedPrinterForOCSOrderToBeSetForLocation().setValue("No designated printer for ocs order selected");
-					//WDEV-15817 - workaround until FWUI-1759 is fixed, set tooltip to one space
+					
 					form.ctn1().lyr1().tabLoc().txtLocPrinters().setValue(printers.toString());
-					form.ctn1().lyr1().tabLoc().txtLocPrinters().setTooltip(printers.toString() != null && printers.toString().length() > 0 ? printers.toString() : " ");
+					form.ctn1().lyr1().tabLoc().txtLocPrinters().setTooltip(printers.toString() != null && printers.toString().length() > 0 ? printers.toString() : "");
 					
 				}
 			}
@@ -1615,6 +1710,8 @@ public class Logic extends BaseLogic
 		defaultContextMenus();
 		form.ctn1().setCollapsed(true);		
 		form.ctn1().lyr1().showtabBlank();
+		
+		form.getLocalContext().setSelectedParent(null); //WDEV-19677
 	}
 	
 	/**
@@ -1758,9 +1855,9 @@ public class Logic extends BaseLogic
 		//WDEV-7083
 		if(node.getValue() instanceof LocMostVo)
 		{
-			if( ((LocMostVo)node.getValue()).getType().equals(LocationType.BAY) )
+			if (LocationType.BAY.equals(((LocMostVo)node.getValue()).getType()))
 			{
-				engine.showErrors(new String[]{"Bay Configuation can not be edited on this screen"});
+				engine.showErrors(new String[]{"Configuration for locations of type 'Bay' cannot be changed from this screen."}); //WDEV-18762
 				open();
 				return;
 			}
@@ -1893,34 +1990,61 @@ public class Logic extends BaseLogic
 		
 		if(isEditable)
 		{
-			//WDEV-7083 Bays now created and configured on BayLayoutConfig
-			form.ctn1().lyr1().tabLoc().cmbLocType().removeRow(ims.core.vo.lookups.LocationType.BAY);
-			form.ctn1().lyr1().tabLocSite().cmbLocSiteType().removeRow(ims.core.vo.lookups.LocationType.BAY);
+			//WDEV-7083 Bays now created and configured on BayLayoutConfig //WDEV-20202 allow edit of Bays to a certain point
+			if (form.getLocalContext().getEditObject() == null ||  form.getLocalContext().getEditObject() instanceof LocSiteVo || (form.getLocalContext().getEditObject() instanceof LocMostVo && !LocationType.BAY.equals(((LocMostVo)form.getLocalContext().getEditObject()).getType())))
+			{	
+				form.ctn1().lyr1().tabLoc().cmbLocType().removeRow(ims.core.vo.lookups.LocationType.BAY);
+				form.ctn1().lyr1().tabLocSite().cmbLocSiteType().removeRow(ims.core.vo.lookups.LocationType.BAY);
+			}
 			
-			if (form.getLocalContext().getEditObject() instanceof LocMostVo)
+			if (form.getLocalContext().getEditObject() instanceof LocMostVo) //WDEV-20202 changes for Bay
 			{
 				LocMostVo loc = (LocMostVo)form.getLocalContext().getEditObject();
+				TreeNode node = form.treOrgLoc().getSelectedNode();
 				
 				boolean hasNoChilds = !loc.getLocationsIsNotNull() || loc.getLocations().size() == 0;
+				boolean isVirtual = node != null && isVirtual(node.getValue());
+				boolean isBay = loc != null && LocationType.BAY.equals(loc.getType()); 
+								
+				updateLocationControlsState(isBay);
 				
-				form.ctn1().lyr1().tabLoc().chkVirtualLocation().setEnabled(hasNoChilds);
-				form.ctn1().lyr1().tabLocSite().chkVirtualLocationSite().setEnabled(hasNoChilds);
+				form.ctn1().lyr1().tabLoc().chkVirtualLocation().setEnabled(!isVirtual);
+				
+				form.ctn1().lyr1().tabLoc().chkVirtualLocation().setEnabled(hasNoChilds && !(LocationType.CASE_NOTE_FOLDER_LOCATION.equals(form.ctn1().lyr1().tabLoc().cmbLocType().getValue()) || LocationType.MEDICAL_RECORDS.equals(form.ctn1().lyr1().tabLoc().cmbLocType().getValue()) || LocationType.BAY.equals(form.ctn1().lyr1().tabLoc().cmbLocType().getValue())) && !isVirtual); //WDEV-19545 //WDEV-20202
+				form.ctn1().lyr1().tabLocSite().chkVirtualLocationSite().setEnabled(hasNoChilds && !(LocationType.CASE_NOTE_FOLDER_LOCATION.equals(form.ctn1().lyr1().tabLocSite().cmbLocSiteType().getValue()) || LocationType.MEDICAL_RECORDS.equals(form.ctn1().lyr1().tabLocSite().cmbLocSiteType().getValue()))); //WDEV-19545 //WDEV-20202
 			}
 			//wdev-17000
-			if( LocationType.WARD.equals(form.ctn1().lyr1().tabLoc().cmbLocType().getValue()) )
+			if (LocationType.WARD.equals(form.ctn1().lyr1().tabLoc().cmbLocType().getValue()))
 			{
 				form.ctn1().lyr1().tabLoc().chkDisplayInEDTrackingLoc().setEnabled(true);
 			}
-			if( LocationType.WARD.equals(form.ctn1().lyr1().tabLocSite().cmbLocSiteType().getValue()) )
+			if (LocationType.WARD.equals(form.ctn1().lyr1().tabLocSite().cmbLocSiteType().getValue()))
 			{
 				form.ctn1().lyr1().tabLocSite().chkDisplayInEDTrackingLocSite().setEnabled(true);
 			}
 			
 		}
 		
-			
+		form.ctn1().lyr1().tabLoc().chkCaseNoteLocation().setEnabled(FormMode.EDIT.equals(form.getMode()) && !(LocationType.CASE_NOTE_FOLDER_LOCATION.equals(form.ctn1().lyr1().tabLoc().cmbLocType().getValue()) || LocationType.MEDICAL_RECORDS.equals(form.ctn1().lyr1().tabLoc().cmbLocType().getValue()) || LocationType.BAY.equals(form.ctn1().lyr1().tabLoc().cmbLocType().getValue()))); //WDEV-19545 //WDEV-20202
+		form.ctn1().lyr1().tabLocSite().chkCaseNotesLocSite().setEnabled(FormMode.EDIT.equals(form.getMode()) && !(LocationType.CASE_NOTE_FOLDER_LOCATION.equals(form.ctn1().lyr1().tabLocSite().cmbLocSiteType().getValue()) || LocationType.MEDICAL_RECORDS.equals(form.ctn1().lyr1().tabLocSite().cmbLocSiteType().getValue()))); ////WDEV-19545 //WDEV-20202
 	}
-	
+	//WDEV-20202
+	private void updateLocationControlsState(boolean isBay)
+	{
+		form.ctn1().lyr1().tabLoc().txtLocName().setEnabled(!isBay);
+		form.ctn1().lyr1().tabLoc().txtLocAdd1().setEnabled(!isBay);
+		form.ctn1().lyr1().tabLoc().txtLocAdd2().setEnabled(!isBay);
+		form.ctn1().lyr1().tabLoc().txtLocAdd3().setEnabled(!isBay);
+		form.ctn1().lyr1().tabLoc().txtLocAdd4().setEnabled(!isBay);
+		form.ctn1().lyr1().tabLoc().txtLocAdd5().setEnabled(!isBay);
+		form.ctn1().lyr1().tabLoc().cmbLocCounty().setEnabled(!isBay);
+		form.ctn1().lyr1().tabLoc().cmbLocType().setEnabled(!isBay);
+		form.ctn1().lyr1().tabLoc().txtLocPhone().setEnabled(!isBay);
+		form.ctn1().lyr1().tabLoc().txtLocFaxNo().setEnabled(!isBay);
+		form.ctn1().lyr1().tabLoc().txtLocPostCode().setEnabled(!isBay);
+		form.ctn1().lyr1().tabLoc().btnLocPrinterSelect().setEnabled(!isBay);
+	}
+
 	//WDEV-2578 
 	private boolean checkMandatorySpecEXCHCode()
 	{
@@ -2008,6 +2132,8 @@ public class Logic extends BaseLogic
 		
 	protected void onCmbLocTypeValueChanged() throws PresentationLogicException 
 	{
+		boolean caseNoteLocationType = LocationType.CASE_NOTE_FOLDER_LOCATION.equals(form.ctn1().lyr1().tabLoc().cmbLocType().getValue()) || LocationType.MEDICAL_RECORDS.equals(form.ctn1().lyr1().tabLoc().cmbLocType().getValue()); //WDEV-19545
+		
 		//wdev-17000
 		if( LocationType.WARD.equals(form.ctn1().lyr1().tabLoc().cmbLocType().getValue()) )
 			form.ctn1().lyr1().tabLoc().chkDisplayInEDTrackingLoc().setVisible(true);
@@ -2017,6 +2143,12 @@ public class Logic extends BaseLogic
 			form.ctn1().lyr1().tabLoc().chkDisplayInEDTrackingLoc().setValue(null);
 		}
 		
+		if (caseNoteLocationType)
+		{
+			form.ctn1().lyr1().tabLoc().chkCaseNoteLocation().setValue(true);
+			form.ctn1().lyr1().tabLoc().chkVirtualLocation().setValue(caseNoteLocationType);
+		}
+		
 		updateControlsState();
 		
 	}
@@ -2024,6 +2156,7 @@ public class Logic extends BaseLogic
 	
 	protected void onCmbLocSiteTypeValueChanged() throws PresentationLogicException 
 	{
+		boolean caseNoteLocationSiteType = LocationType.CASE_NOTE_FOLDER_LOCATION.equals(form.ctn1().lyr1().tabLocSite().cmbLocSiteType().getValue()) || LocationType.MEDICAL_RECORDS.equals(form.ctn1().lyr1().tabLocSite().cmbLocSiteType().getValue()); //WDEV-19545 ////WDEV-20072
 		
 		//wdev-17000
 		if( LocationType.WARD.equals(form.ctn1().lyr1().tabLocSite().cmbLocSiteType().getValue()) )
@@ -2034,6 +2167,19 @@ public class Logic extends BaseLogic
 			form.ctn1().lyr1().tabLocSite().chkDisplayInEDTrackingLocSite().setValue(null);
 		}
 		
+		if (caseNoteLocationSiteType) ///WDEV-20072
+		{
+			form.ctn1().lyr1().tabLocSite().chkCaseNotesLocSite().setValue(true);
+			form.ctn1().lyr1().tabLocSite().chkVirtualLocationSite().setValue(caseNoteLocationSiteType); //WDEV-20072
+		}
+				
 		updateControlsState();
+	}
+
+	@Override
+	protected void onChkCaseNoteValueChanged() throws PresentationLogicException
+	{
+		open();
+		
 	}
 }

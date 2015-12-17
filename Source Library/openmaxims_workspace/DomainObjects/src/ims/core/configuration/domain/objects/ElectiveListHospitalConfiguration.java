@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.configuration.domain.objects;
@@ -46,7 +51,8 @@ public class ElectiveListHospitalConfiguration extends ims.domain.DomainObject i
 	}
 
 	/** ListLocation */
-	private ims.core.resource.place.domain.objects.Location listLocation;
+	private ims.core.resource.place.domain.objects.LocSite listLocation;
+	private ims.core.resource.place.domain.objects.Location caseNoteFolderLocation;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public ElectiveListHospitalConfiguration (Integer id, int ver)
@@ -67,11 +73,18 @@ public class ElectiveListHospitalConfiguration extends ims.domain.DomainObject i
 	}
 
 
-	public ims.core.resource.place.domain.objects.Location getListLocation() {
+	public ims.core.resource.place.domain.objects.LocSite getListLocation() {
 		return listLocation;
 	}
-	public void setListLocation(ims.core.resource.place.domain.objects.Location listLocation) {
+	public void setListLocation(ims.core.resource.place.domain.objects.LocSite listLocation) {
 		this.listLocation = listLocation;
+	}
+
+	public ims.core.resource.place.domain.objects.Location getCaseNoteFolderLocation() {
+		return caseNoteFolderLocation;
+	}
+	public void setCaseNoteFolderLocation(ims.core.resource.place.domain.objects.Location caseNoteFolderLocation) {
+		this.caseNoteFolderLocation = caseNoteFolderLocation;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -117,6 +130,14 @@ public class ElectiveListHospitalConfiguration extends ims.domain.DomainObject i
 			auditStr.append(toShortClassName(listLocation));
 				
 		    auditStr.append(listLocation.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*caseNoteFolderLocation* :");
+		if (caseNoteFolderLocation != null)
+		{
+			auditStr.append(toShortClassName(caseNoteFolderLocation));
+				
+		    auditStr.append(caseNoteFolderLocation.getId());
 		}
 	    auditStr.append("; ");
 		return auditStr.toString();
@@ -168,6 +189,12 @@ public class ElectiveListHospitalConfiguration extends ims.domain.DomainObject i
 			sb.append("<listLocation>");
 			sb.append(this.getListLocation().toXMLString(domMap)); 	
 			sb.append("</listLocation>");		
+		}
+		if (this.getCaseNoteFolderLocation() != null)
+		{
+			sb.append("<caseNoteFolderLocation>");
+			sb.append(this.getCaseNoteFolderLocation().toXMLString(domMap)); 	
+			sb.append("</caseNoteFolderLocation>");		
 		}
 		return sb.toString();
 	}
@@ -336,7 +363,13 @@ public class ElectiveListHospitalConfiguration extends ims.domain.DomainObject i
 		if(fldEl != null)
 		{
 			fldEl = fldEl.element("class");		
-			obj.setListLocation(ims.core.resource.place.domain.objects.Location.getLocationfromXML(fldEl, factory, domMap)); 
+			obj.setListLocation(ims.core.resource.place.domain.objects.LocSite.getLocSitefromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("caseNoteFolderLocation");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setCaseNoteFolderLocation(ims.core.resource.place.domain.objects.Location.getLocationfromXML(fldEl, factory, domMap)); 
 		}
 	}
 
@@ -351,6 +384,7 @@ public class ElectiveListHospitalConfiguration extends ims.domain.DomainObject i
 	{
 	public static final String ID = "id";
 		public static final String ListLocation = "listLocation";
+		public static final String CaseNoteFolderLocation = "caseNoteFolderLocation";
 	}
 }
 

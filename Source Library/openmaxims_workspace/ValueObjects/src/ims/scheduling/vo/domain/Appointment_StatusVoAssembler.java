@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.scheduling.vo.domain;
@@ -76,6 +81,16 @@ public class Appointment_StatusVoAssembler
 		valueObjectDest.setStatusChangeDateTime(valueObjectSrc.getStatusChangeDateTime());
 		// SysInformation
 		valueObjectDest.setSysInformation(valueObjectSrc.getSysInformation());
+		// wasLetterPrinted
+		valueObjectDest.setWasLetterPrinted(valueObjectSrc.getWasLetterPrinted());
+		// Couldnotbeseen
+		valueObjectDest.setCouldnotbeseen(valueObjectSrc.getCouldnotbeseen());
+		// CareProfessionalReadyToSee
+		valueObjectDest.setCareProfessionalReadyToSee(valueObjectSrc.getCareProfessionalReadyToSee());
+		// CareProfessionalNotReadyToSee
+		valueObjectDest.setCareProfessionalNotReadyToSee(valueObjectSrc.getCareProfessionalNotReadyToSee());
+		// Session
+		valueObjectDest.setSession(valueObjectSrc.getSession());
 	 	return valueObjectDest;
 	 }
 
@@ -591,6 +606,28 @@ public class Appointment_StatusVoAssembler
 		// SysInformation
 		// set system information
 		valueObject.setSysInformation(ims.vo.domain.SystemInformationAssembler.create(domainObject.getSystemInformation()));
+		// wasLetterPrinted
+		valueObject.setWasLetterPrinted( domainObject.isWasLetterPrinted() );
+		// Couldnotbeseen
+		valueObject.setCouldnotbeseen( domainObject.isCouldnotbeseen() );
+		// CareProfessionalReadyToSee
+		valueObject.setCareProfessionalReadyToSee( domainObject.isCareProfessionalReadyToSee() );
+		// CareProfessionalNotReadyToSee
+		valueObject.setCareProfessionalNotReadyToSee( domainObject.isCareProfessionalNotReadyToSee() );
+		// Session
+		if (domainObject.getSession() != null)
+		{
+			if(domainObject.getSession() instanceof HibernateProxy) // If the proxy is set, there is no need to lazy load, the proxy knows the id already. 
+			{
+				HibernateProxy p = (HibernateProxy) domainObject.getSession();
+				int id = Integer.parseInt(p.getHibernateLazyInitializer().getIdentifier().toString());				
+				valueObject.setSession(new ims.scheduling.vo.Sch_SessionRefVo(id, -1));				
+			}
+			else
+			{
+				valueObject.setSession(new ims.scheduling.vo.Sch_SessionRefVo(domainObject.getSession().getId(), domainObject.getSession().getVersion()));
+			}
+		}
  		return valueObject;
 	 }
 
@@ -736,6 +773,30 @@ public class Appointment_StatusVoAssembler
 			value12 = dateTime12.getJavaDate();
 		}
 		domainObject.setStatusChangeDateTime(value12);
+		domainObject.setWasLetterPrinted(valueObject.getWasLetterPrinted());
+		domainObject.setCouldnotbeseen(valueObject.getCouldnotbeseen());
+		domainObject.setCareProfessionalReadyToSee(valueObject.getCareProfessionalReadyToSee());
+		domainObject.setCareProfessionalNotReadyToSee(valueObject.getCareProfessionalNotReadyToSee());
+		ims.scheduling.domain.objects.Sch_Session value18 = null;
+		if ( null != valueObject.getSession() ) 
+		{
+			if (valueObject.getSession().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getSession()) != null)
+				{
+					value18 = (ims.scheduling.domain.objects.Sch_Session)domMap.get(valueObject.getSession());
+				}
+			}
+			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
+			{
+				value18 = domainObject.getSession();	
+			}
+			else
+			{
+				value18 = (ims.scheduling.domain.objects.Sch_Session)domainFactory.getDomainObject(ims.scheduling.domain.objects.Sch_Session.class, valueObject.getSession().getBoId());
+			}
+		}
+		domainObject.setSession(value18);
 
 		return domainObject;
 	}

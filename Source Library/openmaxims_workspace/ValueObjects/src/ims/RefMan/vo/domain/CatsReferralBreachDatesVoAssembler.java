@@ -1,9 +1,33 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:23
  *
  */
 package ims.RefMan.vo.domain;
@@ -35,6 +59,14 @@ public class CatsReferralBreachDatesVoAssembler
 		valueObjectDest.setReferralDetails(valueObjectSrc.getReferralDetails());
 		// isCAB
 		valueObjectDest.setIsCAB(valueObjectSrc.getIsCAB());
+		// CurrentRTTStatus
+		valueObjectDest.setCurrentRTTStatus(valueObjectSrc.getCurrentRTTStatus());
+		// CareContext
+		valueObjectDest.setCareContext(valueObjectSrc.getCareContext());
+		// Contract
+		valueObjectDest.setContract(valueObjectSrc.getContract());
+		// ICABReferral
+		valueObjectDest.setICABReferral(valueObjectSrc.getICABReferral());
 	 	return valueObjectDest;
 	 }
 
@@ -329,6 +361,26 @@ public class CatsReferralBreachDatesVoAssembler
 		valueObject.setReferralDetails(ims.RefMan.vo.domain.ReferralLetterDetailsClinicListListVoAssembler.create(map, domainObject.getReferralDetails()) );
 		// isCAB
 		valueObject.setIsCAB( domainObject.isIsCAB() );
+		// CurrentRTTStatus
+		valueObject.setCurrentRTTStatus(ims.pathways.vo.domain.PathwayRTTStatusVoAssembler.create(map, domainObject.getCurrentRTTStatus()) );
+		// CareContext
+		if (domainObject.getCareContext() != null)
+		{
+			if(domainObject.getCareContext() instanceof HibernateProxy) // If the proxy is set, there is no need to lazy load, the proxy knows the id already. 
+			{
+				HibernateProxy p = (HibernateProxy) domainObject.getCareContext();
+				int id = Integer.parseInt(p.getHibernateLazyInitializer().getIdentifier().toString());				
+				valueObject.setCareContext(new ims.core.admin.vo.CareContextRefVo(id, -1));				
+			}
+			else
+			{
+				valueObject.setCareContext(new ims.core.admin.vo.CareContextRefVo(domainObject.getCareContext().getId(), domainObject.getCareContext().getVersion()));
+			}
+		}
+		// Contract
+		valueObject.setContract(ims.RefMan.vo.domain.ContractConfigShortVoAssembler.create(map, domainObject.getContract()) );
+		// ICABReferral
+		valueObject.setICABReferral(ims.admin.vo.domain.ICABReferralLiteVoAssembler.create(map, domainObject.getICABReferral()) );
  		return valueObject;
 	 }
 
@@ -396,6 +448,61 @@ public class CatsReferralBreachDatesVoAssembler
 		}
 		domainObject.setReferralDetails(value1);
 		domainObject.setIsCAB(valueObject.getIsCAB());
+		domainObject.setCurrentRTTStatus(ims.pathways.vo.domain.PathwayRTTStatusVoAssembler.extractPathwayRTTStatus(domainFactory, valueObject.getCurrentRTTStatus(), domMap));
+		ims.core.admin.domain.objects.CareContext value4 = null;
+		if ( null != valueObject.getCareContext() ) 
+		{
+			if (valueObject.getCareContext().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getCareContext()) != null)
+				{
+					value4 = (ims.core.admin.domain.objects.CareContext)domMap.get(valueObject.getCareContext());
+				}
+			}
+			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
+			{
+				value4 = domainObject.getCareContext();	
+			}
+			else
+			{
+				value4 = (ims.core.admin.domain.objects.CareContext)domainFactory.getDomainObject(ims.core.admin.domain.objects.CareContext.class, valueObject.getCareContext().getBoId());
+			}
+		}
+		domainObject.setCareContext(value4);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.configuration.domain.objects.ContractConfig value5 = null;
+		if ( null != valueObject.getContract() ) 
+		{
+			if (valueObject.getContract().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getContract()) != null)
+				{
+					value5 = (ims.core.configuration.domain.objects.ContractConfig)domMap.get(valueObject.getContract());
+				}
+			}
+			else
+			{
+				value5 = (ims.core.configuration.domain.objects.ContractConfig)domainFactory.getDomainObject(ims.core.configuration.domain.objects.ContractConfig.class, valueObject.getContract().getBoId());
+			}
+		}
+		domainObject.setContract(value5);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.admin.domain.objects.ICABReferral value6 = null;
+		if ( null != valueObject.getICABReferral() ) 
+		{
+			if (valueObject.getICABReferral().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getICABReferral()) != null)
+				{
+					value6 = (ims.core.admin.domain.objects.ICABReferral)domMap.get(valueObject.getICABReferral());
+				}
+			}
+			else
+			{
+				value6 = (ims.core.admin.domain.objects.ICABReferral)domainFactory.getDomainObject(ims.core.admin.domain.objects.ICABReferral.class, valueObject.getICABReferral().getBoId());
+			}
+		}
+		domainObject.setICABReferral(value6);
 
 		return domainObject;
 	}

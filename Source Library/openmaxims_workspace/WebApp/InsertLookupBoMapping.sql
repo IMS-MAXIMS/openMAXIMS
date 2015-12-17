@@ -20,9 +20,9 @@ go
 
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_phygfeet', 'lkp_patientatt', 1021014, 'PersonalHygieneFeet', 'patientAttendChiropodist')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_documentcatego', 'lkp_category', 1021220, 'DocumentCategoryConfig', 'category')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patdiagnosis', 'lkp_specialty', 621, 'PatientDiagnosis', 'specialty')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_brthcomp', 'lkp_breathingt', 1001047, 'BreathingComponent', 'breathingTreatment')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_documentcatego', 'lkp_category', 1021220, 'DocumentCategoryConfig', 'category')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_inpat_epis', 'lkp_readmissio', 1021257, 'InpatientEpisode', 'readmissionType')
 go
@@ -34,15 +34,23 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pendingelectiv', 'lkp_management', 1021255, 'PendingElectiveAdmission', 'managementIntention')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vaccinemanufac', 'lkp_status', 1021124, 'VaccineManufacturerBatch', 'status')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_triagepriority', 'lkp_priorityb8', 1021145, 'TriagePriorityKPConfig', 'priorityBreachedKPIFlashingText')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_finalcountintr', 'lkp_missingite', 1231170, 'FinalCountIntraOp', 'missingItems')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_propertyitem', 'lkp_item', 1001075, 'PropertyItem', 'item')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('spin_resplungfields', 'lkp_lungfield', 1051135, 'RespLungFields', 'lungField')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vitalsigns', 'lkp_unrecorded', 1021395, 'VitalSigns', 'unrecordedObservationsReason')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_orderchangeres', 'lkp_messagesta', 1161039, 'OrderChangeResponseQueue', 'messageStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_sportsactivity', 'lkp_c_sele', 1021145, 'SportsActivity', 'select')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_specimencolle3', 'lkp_c_ti', 1161041, 'SpecimenCollectionListConfigDetails', 'time')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('naes_actiondetailst', 'lkp_status', 1351001, 'ActionDetailStatus', 'status')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_drawingimage2', 'lkp_category', 1021115, 'DrawingImage', 'category')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_workonadmissio', 'lkp_referdea', 1021014, 'WorkOnAdmission', 'referDEA')
 go
@@ -50,25 +58,33 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_eatswall', 'lkp_status', 1021014, 'EatingSwallowingDetails', 'status')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_allergiesdetai', 'lkp_sourceofin', 1021033, 'PatientAllergy', 'sourceofInformation')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientcasereq', 'lkp_cancellati', 1021316, 'PatientCaseNoteRequest', 'cancellationReason')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_clinicalnotes', 'lkp_forreviewd', 1021048, 'ClinicalNotes', 'forReviewDiscipline')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_rta', 'lkp_rtatype', 1291006, 'RTA', 'rTAType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyepiso', 'lkp_sourceofre', 1291000, 'EmergencyEpisode', 'sourceOfReferral')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_protocol', 'lkp_gatingopt3', 1451007, 'Protocol', 'gatingOptsDefault')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_preassessoutc', 'lkp_pacemakerd', 1021145, 'PreAssessmentOutcome', 'paceMakerDefib')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_adviceleaflets', 'lkp_adviceleaf', 1021006, 'AdviceLeaflets', 'adviceLeaflet')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_dementiafind', 'lkp_camsaltere', 1021145, 'DementiaFind', 'cAMSAlteredLevel')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_elactionsheet', 'lkp_treatsitel', 1021063, 'ElectronicActionSheet', 'treatSiteLaterality')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_userworkqueue', 'lkp_procedurec', 1021098, 'UserWorkQueue', 'procedureContext')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_skinassrev', 'lkp_secondaryd', 1001036, 'SkinAssessmentReview', 'secondaryDressing')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_telecomusagety', 'lkp_c_usa', 1021374, 'TelecomUsageType', 'usage')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_neuexamsensbo', 'lkp_franklegra', 1051131, 'NeuExamSens', 'frankleGrade')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patienthomesit', 'lkp_accomtype', 1231047, 'PatientHomeSituation', 'accomType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_contractconfig', 'lkp_contractty', 1021266, 'ContractConfig', 'contractType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_edattendenceco', 'lkp_controltyp', 1031027, 'EDAttendenceControlsConfig', 'controlType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_ward_stay', 'lkp_wardtype', 1021228, 'WardStay', 'wardType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pthw_target', 'lkp_targetdate', 1321012, 'Target', 'targetDateCalculation')
 go
@@ -76,11 +92,13 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_ventilationtra', 'lkp_patientint', 1021014, 'VentilationTracheostomy', 'patientIntubated')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_hcgtestitem', 'lkp_serumhcg', 1291040, 'HCGTestItem', 'serumHCG')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_connectivetiss', 'lkp_laterality', 1021032, 'ConnectiveTissueMassage', 'laterality')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyepiso', 'lkp_category', 1291002, 'EmergencyEpisode', 'category')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_theatrebooking', 'lkp_secondary2', 1021032, 'TheatreBooking', 'secondaryProcLaterality')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_printagent', 'lkp_jobtype', 1101047, 'PrintAgent', 'jobType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_theatrebooking', 'lkp_state', 1141035, 'TheatreBooking', 'state')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patientmeetinv', 'lkp_status', 1231014, 'PatientMeetingInvitee', 'status')
 go
@@ -88,13 +106,21 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_hospitalatnipd', 'lkp_clinicalta', 1231120, 'HospitalAtNightPatientDetail', 'clinicalTasks')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pthw_event', 'lkp_status', 1021124, 'Event', 'status')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_protocol', 'lkp_dentistreq', 1451000, 'Protocol', 'dentistRequired')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_whiteboardques', 'lkp_answertype', 1021122, 'WhiteBoardQuestionConfig', 'answerType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_pendingemergen', 'lkp_proclatera', 1021032, 'PendingEmergencyTheatre', 'procLaterality')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_hist_outpat_at', 'lkp_cancellati', 1141007, 'HistoricOutpatientAttendance', 'cancellationReason')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_gpchecklist', 'lkp_status', 1021014, 'GPChecklist', 'status')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_ttamedicationd', 'lkp_form', 1231071, 'TTAMedicationDetail', 'form')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_attendancerequ', 'lkp_status', 1291049, 'AttendanceRequiringContracting', 'status')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsbackofficei', 'lkp_outcome', 1021355, 'PDSBackOfficeItem', 'outcome')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_thermalactivit', 'lkp_laterality', 1021032, 'ThermalActivity', 'laterality')
 go
@@ -104,7 +130,11 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_opdfertilitycl', 'lkp_treatments', 1051127, 'OPDFertClinic', 'treatmentsoffered')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsconsenthist', 'lkp_consent', 1021343, 'pdsConsentHistory', 'consent')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_skinassfind', 'lkp_pressureso', 1001028, 'SkinAssessmentFindings', 'pressureSoreGrade')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_medication', 'lkp_commencedb', 1021184, 'PatientMedicationDose', 'commencedByType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_splintdetails', 'lkp_splinttype', 2287, 'SplintDetails', 'splintType')
 go
@@ -112,9 +142,15 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_container', 'lkp_volumeunit', 1161009, 'Container', 'volumeUnits')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_whiteboardques', 'lkp_genderspec', 1031002, 'WhiteBoardQuestionConfig', 'genderSpecific')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_diathermydetai', 'lkp_padsite', 1021324, 'DiathermyDetailIntraOp', 'padSite')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patient', 'lkp_homefolder', 1021268, 'Patient', 'homeFolderLocation')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('spin_resplungfields', 'lkp_lungfield', 1051135, 'RespLungFields', 'lungField')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patientspecial', 'lkp_specialnee', 1021217, 'PatientSpecialNeed', 'specialNeed')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_laserdetailint', 'lkp_lasermode', 1021327, 'LaserDetailIntraOp', 'laserMode')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_wheelchaircush', 'lkp_cushioncat', 1051062, 'WheelchairCushion', 'cushionCategory')
 go
@@ -122,9 +158,13 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_cliniciannoted', 'lkp_status', 1021124, 'ClinicianNoteDefaultTextConfig', 'status')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_elactionsheet', 'lkp_oralcontra', 1451006, 'ElectronicActionSheet', 'oralContrast')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_thermalactivit', 'lkp_thermal', 1051024, 'ThermalActivity', 'thermal')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_triage', 'lkp_currenttr3', 1291020, 'Triage', 'currentTriagePriority')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_orderinvestiga', 'lkp_resultspec', , 'OrderInvestigation', 'resultSpecimenType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_comment', 'lkp_commenttyp', 1101036, 'Comment', 'commentType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_sessionparentc', 'lkp_status', 1141007, 'SessionParentChildSlot', 'status')
 go
@@ -136,29 +176,25 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_communicationp', 'lkp_status', 1021014, 'CommunicationProblems', 'status')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_goalplanning', 'lkp_primecance', 1231042, 'GoalPlanning', 'primeCancelReason')
-go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_dischargesumma', 'lkp_jobtype', 1231105, 'DischargeSummarySchedule', 'jobType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsadvancedsea', 'lkp_gender', 632, 'PDSAdvancedSearchRequest', 'gender')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pendingelectiv', 'lkp_electivead', 1021234, 'PendingElectiveAdmission', 'electiveAdmissionStatus')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_tciforpatiente', 'lkp_kpiexceede', 1341047, 'TCIForPatientElectiveList', 'kPIExceededReason')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_reviewreferral', 'lkp_reviewtype', 1341014, 'ReviewReferralDetail', 'reviewType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_drugtoxicolog2', 'lkp_toxicology', 1291038, 'DrugToxicologyItem', 'toxicologyType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_appt_history_s', 'lkp_cancellati', 1141003, 'Appointment_Status', 'cancellationReason')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_referraltospec', 'lkp_specialty', 621, 'ReferralToSpecTeam', 'specialty')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_intraoperative', 'lkp_anaesthet3', 1231122, 'IntraOperativeCareRecord', 'anaestheticUsed')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_triagepriority', 'lkp_priorityb3', 1021145, 'TriagePriorityKPConfig', 'priorityBreachWarningKPIFlashingText')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_powerchairskil', 'lkp_powerchair', 1051065, 'PowerchairSkillsAssessment', 'powerchairSkill')
-go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_cataractintrao', 'lkp_wasswabnee', 1021145, 'CataractIntraOperative', 'wasSwabNeedleCountCorrect')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_internalreferr', 'lkp_referralty', 1251092, 'InternalReferral', 'referralType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_datasettype', 'lkp_defaultlin', 1021174, 'DatasetType', 'defaultLineType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vteriskassessm', 'lkp_otherproce', 1021145, 'VTERiskAssessment', 'otherProcedureWithHighBleedingRisk')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_fieldhelptext', 'lkp_field', 1041001, 'FieldHelpText', 'field')
 go
@@ -166,11 +202,15 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patient', 'lkp_sourceofin', 1021212, 'Patient', 'sourceOfInformation')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_eatcomp', 'lkp_difficulti', 1021014, 'EatingComponent', 'difficultiesWithSwallowing')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patient', 'lkp_patientcat', 1021112, 'Patient', 'patientCategory')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_nutritionalmet', 'lkp_nutritiona', 1001014, 'NutritionalMethod', 'nutritionalMethod')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_teletherapydet', 'lkp_beamtype', 1251017, 'TeletherapyDetails', 'beamType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_organisation', 'lkp_c_ty', 1021067, 'Organisation', 'type')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patprocedure', 'lkp_procsite', 1021031, 'PatientProcedure', 'procSite')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_referralstatus', 'lkp_linkedrefe', 1341000, 'ReferralStatusConfig', 'linkedReferralStatus')
 go
@@ -180,19 +220,21 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_safeenvironmen', 'lkp_riskofauto', 1021014, 'SafeEnvironmentComponent', 'riskOfAutonomicDysreflexia')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_skinpreperatio', 'lkp_skinprepar', 1231089, 'SkinPreperation', 'skinPreparationUsed')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_drgractv', 'lkp_ability', 1211020, 'DressingandGroomingActivities', 'ability')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_sch_booking', 'lkp_patientsta', 1021112, 'Sch_Booking', 'patientStatus')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_locall', 'lkp_calltype', 1101049, 'LoCall', 'callType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_resultcomponen', 'lkp_normalcyst', 1161037, 'ResultComponent', 'normalcyStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_dischargeservi', 'lkp_patientmob', 1021191, 'DischargeServicesAndAdvice', 'patientMobility')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_roomdetails', 'lkp_environmen', 1051179, 'RoomDetails', 'environmentVisitRoomType')
-go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_orderchangeres', 'lkp_msgtype', 1021260, 'OrderChangeResponseQueue', 'msgType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patientabsentp', 'lkp_sourceofin', 1021033, 'PatientAbsentProcedure', 'sourceofInformation')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_commhear', 'lkp_hearingaid', 1021014, 'CommunicationHearing', 'hearingAid')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_outpat_att', 'lkp_appointme2', 1141007, 'OutpatientAttendance', 'appointmentStatus')
 go
@@ -212,25 +254,45 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('asse_screeningprofi', 'lkp_contexttyp', 1021167, 'ScreeningProfile', 'contextType')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pci_clientbirthdet', 'lkp_episiotomy', 1021014, 'ClientBirthDetails', 'episiotomy')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientconcern', 'lkp_concernsta', 1021079, 'PatientConcern', 'concernStatus')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_catsreferral', 'lkp_additional', 1341007, 'CatsReferral', 'additionalInvApptsStatus')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyatten', 'lkp_dischargel', 1231076, 'EmergencyAttendance', 'dischargeLetterStatus')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_waitlistdetail', 'lkp_waitinglis', 1101008, 'LoCallWaitingListDetails', 'waitingListType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_resultcomponen', 'lkp_edsubtype', 1161053, 'ResultComponent', 'eDSubType')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_chemotoxicity', 'lkp_toxicityty', 1251067, 'ChemoTxToxicityType', 'toxicityType')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_softtissuemass', 'lkp_stmassagea', 904, 'SoftTissueMassage', 'sTMassageArea')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_treatmentgroup', 'lkp_treatmentg', 1251108, 'TreatmentGroupTechniqueConfig', 'treatmentGroup')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_wheelchaircush', 'lkp_cushionmod', 1051063, 'WheelchairCushion', 'cushionModification')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_sessiontheatre', 'lkp_status', 1141007, 'SessionTheatreTCISlot', 'status')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdspatientupda', 'lkp_preferredw', 1021367, 'PDSPatientUpdate', 'preferredWrittenCommFormatUpdateMode')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_racpreferral', 'lkp_sourceofre', 1021025, 'RACPReferral', 'sourceofReferral')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_bedspacestates', 'lkp_bedstatus', 1021229, 'BedSpaceStateStatus', 'bedStatus')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_racpplanadvice', 'lkp_advicegive', 1021248, 'RACPPlanAdvice', 'adviceGivenPatient')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_gppracticemess', 'lkp_queuetype', 1021259, 'GPPracticeMessageQueue', 'queueType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_nurbowelcompon', 'lkp_bowelrout2', 1001059, 'NurBowelComponent', 'bowelRoutinePerformedBy')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_appt_history_s', 'lkp_priority', 1141009, 'Appointment_Status', 'priority')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patprocedure', 'lkp_specialty', 621, 'PatientProcedure', 'specialty')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_handtest', 'lkp_dominantha', 1121015, 'HandTest', 'dominantHand')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_futureappointm', 'lkp_source', 1141034, 'FutureAppointmentDetails', 'source')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('asse_graphicgssessm', 'lkp_assessment', 1021137, 'GraphicAssessment', 'assessmentType')
 go
@@ -238,9 +300,13 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_admissiondetai', 'lkp_specialty', 621, 'AdmissionDetail', 'specialty')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_dischargedetai', 'lkp_dischargel', 1231076, 'DischargeDetails', 'dischargeLetterStatus')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_ttamedication', 'lkp_doseunit', 1021015, 'TTAMedication', 'doseUnit')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_bladskil', 'lkp_skills', 1011005, 'BladderSkills', 'skills')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_clinicaltrials', 'lkp_placeoffer', 1021145, 'ClinicalTrials', 'placeOfferedOnTrial')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_booking_appoin', 'lkp_priority', 1141009, 'Booking_Appointment', 'priority')
 go
@@ -248,9 +314,15 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pthw_target', 'lkp_eventlinkt', 1321002, 'Target', 'eventLinkType')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_transferhistor', 'lkp_transferre', 1021319, 'TransferHistory', 'transferReason')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsadvancedse2', 'lkp_gender', 632, 'PDSAdvancedSearchResult', 'gender')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_edattendanceme', 'lkp_queuetype', 1021259, 'EdAttendanceMessageQueue', 'queueType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_phygfeet', 'lkp_conditiono', 1011066, 'PersonalHygieneFeet', 'conditionOfFeet')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_booking_appoin', 'lkp_patientcat', 1021112, 'Booking_Appointment', 'patientCategory')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_rehabilitation', 'lkp_activityty', 1026, 'RehabilitationActivity', 'activityType')
 go
@@ -262,37 +334,49 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_chartrequested', 'lkp_chartrequi', 1021145, 'ChartRequested', 'chartRequiredbyTriage')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_servicetriagea', 'lkp_linkeddiag', 1021336, 'ServiceTriageAction', 'linkedDiagnostic')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_bedspace', 'lkp_wardtype', 1021228, 'BedSpace', 'wardType')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_ordermessage', 'lkp_ordercateg', 1161000, 'OrderMessage', 'orderCategory')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_skinassrev', 'lkp_odour', 1001033, 'SkinAssessmentReview', 'odour')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_futureplanfoll', 'lkp_followupi2', 1021130, 'FuturePlanFollowUp', 'followUpInUnit')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patientprepera', 'lkp_rightarmpo', 1231156, 'PatientPreperationIntraOp', 'rightArmPosition')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_dementiaworkli', 'lkp_reasonfore', 1021282, 'DementiaWorklistStatus', 'reasonForExclusion')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_patientwaitin4', 'lkp_electivel4', 1291057, 'PatientElectiveList', 'electiveListReason')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patientmeeting', 'lkp_status', 1231012, 'PatientMeeting', 'status')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_pathologydetai', 'lkp_specimenna', 1251043, 'PathologyDetails', 'specimenNature')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_electrotherap3', 'lkp_warninggiv', 1021014, 'ElectrotherapyPneumatic', 'warningGiven')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pendingemergen', 'lkp_c_ty', 1021380, 'PendingEmergencyAdmission', 'type')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_commhear', 'lkp_hearingimp', 1021014, 'CommunicationHearing', 'hearingImpairment')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_booking_appoin', 'lkp_actcomplet', 1141006, 'Booking_Appointment', 'actCompleteFlag')
-go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vteriskassessm', 'lkp_lumbarpun2', 1021145, 'VTERiskAssessment', 'lumbarPuncturePrevious4hrs')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_propertyitem', 'lkp_status', 1001076, 'PropertyItem', 'status')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_inpat_epis', 'lkp_admissiont', 1021231, 'InpatientEpisode', 'admissionType')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_wardmessageque', 'lkp_msgtype', 1021260, 'WardMessageQueue', 'msgType')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('icps_patienticpphss', 'lkp_status', 1181013, 'PatientICPPhaseStatus', 'status')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_imagingevents', 'lkp_investigat', 1251088, 'Imagingevents', 'investigationResult')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdscommchannel', 'lkp_c_usa', 1021374, 'PDSCommChannelRemoved', 'usage')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_appointmentmes', 'lkp_queuetype', 1021259, 'AppointmentMessageQueue', 'queueType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_dischargedepis', 'lkp_readmissio', 1021257, 'DischargedEpisode', 'readmissionType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_brachytherapyd', 'lkp_brachyther', 1251023, 'BrachytherapyDetails', 'brachytherapyType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_inpatientepiso', 'lkp_queuetype', 1021259, 'InpatientEpisodeQueue', 'queueType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_dementiatermco', 'lkp_field', 1041002, 'DementiaTermConfig', 'field')
 go
@@ -300,13 +384,19 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_electivelistst', 'lkp_removaloth', 1341046, 'ElectiveListStatus', 'removalOtherReason')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pci_clientschestva', 'lkp_terminatio', 1331012, 'ClientScheduleStageVaccine', 'terminationReason')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyatten', 'lkp_outcome', 1291014, 'EmergencyAttendance', 'outcome')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_brachytherapyd', 'lkp_anaestheti', 1251019, 'BrachytherapyDetails', 'anaestheticReq')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_elactionsheet', 'lkp_ivcontrast', 1451005, 'ElectronicActionSheet', 'iVContrast')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_protocol', 'lkp_mridefault', 1021145, 'Protocol', 'mRIDefault')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vteriskassessm', 'lkp_obesity', 1021145, 'VTERiskAssessment', 'obesity')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientnoaller', 'lkp_allergysta', 1021207, 'PatientNoAllergyInfo', 'allergyStatus')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_booking_appoin', 'lkp_wardatten2', 1021373, 'Booking_Appointment', 'wardAttendanceOutcome')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patienthomesit', 'lkp_stairs', 1231052, 'PatientHomeSituation', 'stairs')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_clin_team', 'lkp_teamtype', 1021181, 'ClinicalTeam', 'teamType')
 go
@@ -314,9 +404,11 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_commmob', 'lkp_bedtype', 1001016, 'MobilityComponent', 'bedType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_patientwaitin4', 'lkp_patientsta', 1341033, 'PatientElectiveList', 'patientStatus')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_patientpropert', 'lkp_propertybo', 1021014, 'PatientProperty', 'propertyBookComplete')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_providersystem', 'lkp_primarypat', 624, 'ProviderSystem', 'primaryPatientId')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_wardbayblockin', 'lkp_reopenreas', 1021353, 'WardBayBlockingDetails', 'reopenReason')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_strengtheningp', 'lkp_excercise', 1051069, 'StrengtheningProgram', 'excercise')
 go
@@ -330,25 +422,45 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_sleepreferral', 'lkp_oximetryva', 1021146, 'SleepReferral', 'oximetryValues')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_ventilationch2', 'lkp_suction', 1021014, 'VentilationChart', 'suction')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pthw_pathwaysrttclo', 'lkp_initialcl2', 1321021, 'PathwaysRTTClockImpact', 'initialClockState')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_ventilationtra', 'lkp_patientven', 1021014, 'VentilationTracheostomy', 'patientVentilated')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_inpatientdisch', 'lkp_outcome', 1231032, 'InpatientDischargeNoteFollowup', 'outcome')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_spinepath', 'lkp_modeofinju', 1051098, 'MskSpinePath', 'modeOfInjury')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_elactionsheet', 'lkp_concurrent', 1021145, 'ElectronicActionSheet', 'concurrentSystemicTreatment')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_dischargesumm3', 'lkp_procedurec', 1021098, 'DischargeSummaryProcedure', 'procedureContext')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_patientwaitin4', 'lkp_wlpatientr', 1021014, 'PatientElectiveList', 'wLPatientReceivingAnticoagulantTherapy')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_alertpidbarcon', 'lkp_alertcateg', 1021024, 'AlertPIDBarConfig', 'alertCategoryPosition1')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_procedure', 'lkp_procedures', 1021096, 'Procedure', 'procedureStatus')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_appointmentmes', 'lkp_messagesta', 1161039, 'AppointmentMessageQueue', 'messageStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_suitableforsur', 'lkp_anaestheti', 1231108, 'SuitableForSurgeryAssessment', 'anaestheticType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_deeptissuemass', 'lkp_dfmassagea', 2346, 'DeepFrictionMassage', 'dFMassageArea')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_bayconfig', 'lkp_dependency', 1021298, 'BayConfig', 'dependency')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_paincomp', 'lkp_patientexp', 1021014, 'PainComponent', 'patientExperiencePainAnyTime')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_exchequermappi', 'lkp_datetype', 1101052, 'ExchequerMapping', 'dateType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pthw_eventtarget', 'lkp_status', 1021124, 'EventTarget', 'status')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pendingemergen', 'lkp_bedtypereq', 1021256, 'PendingEmergencyAdmission', 'bedTypeRequested')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_elactionsheet', 'lkp_petct', 1021145, 'ElectronicActionSheet', 'petCT')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_patientdocumen', 'lkp_queuetype', 1021259, 'PatientDocumentMessageQueue', 'queueType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_triageprotasse', 'lkp_triageprio', 1291020, 'TriageProtocolAssessment', 'triagePriority')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vaccinemanufac', 'lkp_manufactur', 1231065, 'VaccineManufacturerBatch', 'manufacturer')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_summarydetail', 'lkp_c_secti', 1231114, 'SummaryDetail', 'section')
 go
@@ -356,31 +468,45 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_clin_contact', 'lkp_specialty', 621, 'ClinicalContact', 'specialty')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_intraoperativd', 'lkp_irrigantso', 1021329, 'IntraOperativeDetails', 'irrigantSolution')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_outpat_att', 'lkp_cancellati', 1141007, 'OutpatientAttendance', 'cancellationReason')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_surgicalopnote', 'lkp_followupt2', 1341032, 'SurgicalOpNotes', 'followUpTypeIn')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vitalsigns', 'lkp_recordedsi', 1021058, 'VitalSigns', 'recordedSigns')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_orderchangeres', 'lkp_queuetype', 1021259, 'OrderChangeResponseQueue', 'queueType')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_trackingarea', 'lkp_areatype', 1291035, 'TrackingArea', 'areaType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_imagingevents', 'lkp_anatomical', 1251013, 'Imagingevents', 'anatomicalSite')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_sch_session', 'lkp_sessionsta', 1141004, 'Sch_Session', 'sessionStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_wheelchairski2', 'lkp_wheelchair', 1051067, 'WheelchairSkills', 'wheelchairSkills')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_finalcountintr', 'lkp_instrument', 1021377, 'FinalCountIntraOp', 'instrumentsCorrect')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_electivelistst', 'lkp_electiveli', 1021288, 'ElectiveListStatus', 'electiveListStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_eatcomp', 'lkp_nutritiona', 1001014, 'EatingComponent', 'nutritionalMethod')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_deathcondition', 'lkp_causeofdea', 1021203, 'DeathConditions', 'causeofDeath')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_brthcomp', 'lkp_acutechron', 1211030, 'BreathingComponent', 'acuteChronic')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_specimenworkli', 'lkp_listtype', 1161020, 'SpecimenWorkListItem', 'listType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patprocedure', 'lkp_incomplete', 1021274, 'PatientProcedure', 'incompleteReason')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsadvancedsea', 'lkp_ignorehist', 1021357, 'PDSAdvancedSearchRequest', 'ignoreHistoryIndicator')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_orderentrytem2', 'lkp_divider', 1161019, 'OrderEntryTemplateComponent', 'divider')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('corr_noletterisrequ', 'lkp_specialtie', 621, 'NoLetterIsRequired', 'specialties')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_prof', 'lkp_consmediat', 1141025, 'Sch_Profile', 'consMediaType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_booking_appoin', 'lkp_outcomerea', 1031030, 'Booking_Appointment', 'outcomeReason')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientcasenot', 'lkp_c_ty', 1021311, 'PatientCaseNote', 'type')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_neonatal', 'lkp_feeding', 1331003, 'NeoNatal', 'feeding')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_summary', 'lkp_ttastatus', 1231111, 'Summary', 'tTAStatus')
 go
@@ -388,15 +514,23 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patient', 'lkp_prefcommla', 1021280, 'Patient', 'prefCommLanguage')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsbackofficei', 'lkp_priority', 1021342, 'PDSBackOfficeItem', 'priority')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_pendingemergen', 'lkp_currentsta', 1141039, 'PendingEmergencyTheatre', 'currentStatus')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_problemhotlist', 'lkp_specialty', 621, 'ProblemHotlist', 'specialty')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_commcaredet', 'lkp_userdefin3', 1331007, 'CommunityCareDetail', 'userDefinedField3')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_patientcheckli', 'lkp_status', 1021014, 'PatientCheckList', 'status')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_clin_contact', 'lkp_contacttyp', 1021092, 'ClinicalContact', 'contactType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_dischargesumm2', 'lkp_discharges', 1101027, 'DischargeSummaryStatus', 'dischargeStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_bowelostomy', 'lkp_ostomytype', 1001008, 'BowelOstomy', 'ostomyType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_awaitingclinic', 'lkp_clinicalin', 1341028, 'AwaitingClinicalInfo', 'clinicalInfoAwaiting')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pain', 'lkp_pain', 1001023, 'Pain', 'pain')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('corr_clinicaccess', 'lkp_accessrigh', 1111005, 'ClinicAccess', 'accessRight')
 go
@@ -406,7 +540,7 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_systemreviewsy', 'lkp_absentpres', 1231015, 'SystemReviewSymptoms', 'absentPresent')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_surgicalaudpd', 'lkp_anaesthet6', 1231108, 'SurgicalAuditProcedureDetails', 'anaestheticUsed')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_externalsy', 'lkp_eventtype', 1141017, 'ExternalSystemEvent', 'eventType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_dailypattern', 'lkp_dailypatte', 1021171, 'DailyPattern', 'dailyPatternType')
 go
@@ -420,7 +554,11 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_nurse', 'lkp_specialty', 621, 'Nurse', 'specialty')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_sessionactivit', 'lkp_appointmen', 1141007, 'SessionActivityPathwayEvent', 'appointmentStatus')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_referraloutcom', 'lkp_catsfinalr', 1341017, 'ReferralOutcome', 'catsFinalReportStatus')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientcontact', 'lkp_pdsprefer2', 1021344, 'PatientContactPreference', 'pdsPreferredWrittenComm')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientnosuppo', 'lkp_supportnet', 1021209, 'PatientNoSupportNetworkStatusInfo', 'supportNetworkStatus')
 go
@@ -436,11 +574,17 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patdiagnosis', 'lkp_basisofdia', 1021042, 'PatientDiagnosis', 'basisofDiagnosis')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_internalreferr', 'lkp_referralre', 1251092, 'InternalReferral', 'referralReason')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_patientwaitin4', 'lkp_fitforsurg', 1021014, 'PatientElectiveList', 'fitForSurgery')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdspatientupda', 'lkp_nokcontact', 1021367, 'PDSPatientUpdate', 'nokContactRankUpdateMode')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_gpmessagequeue', 'lkp_msgtype', 1021260, 'GPMessageQueue', 'msgType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientcasereq', 'lkp_requeststa', 1021314, 'PatientCaseNoteRequest', 'requestStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('corr_templateassoci', 'lkp_specialtie', 621, 'TemplateAssociations', 'specialties')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_theatretrscolo', 'lkp_trackingst', 1231116, 'TheatreTrackingStatusColourConfig', 'trackingStatus')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_irrigantdetail', 'lkp_irrigant', 1021329, 'IrrigantDetailIntraOp', 'irrigant')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_painassrev', 'lkp_onset', 1001024, 'PainAssessmentReview', 'onset')
 go
@@ -448,21 +592,25 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_racpsymptomris', 'lkp_diabetesst', 1231078, 'RACPSymptomRiskFactors', 'diabetesStatus')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_plinthworktrea', 'lkp_treatment', 1121009, 'PlinthWorkTreatment', 'treatment')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_reportnoteprin', 'lkp_notetype', 1341023, 'ReportNotePrintTemplate', 'noteType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_investigation', 'lkp_activestat', 1021124, 'Investigation', 'activeStatus')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_performedproca', 'lkp_antibiotic', 1021377, 'PerfProcAndSignOutIntraOp', 'antibioticsAfterKnifeToSkin')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_trackingattend', 'lkp_prevstatus', 1291019, 'TrackingAttendanceStatus', 'prevStatus')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_casr', 'lkp_statusreas', 1101006, 'CaseReferral', 'statusReason')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_phygcomp', 'lkp_assisstanc', 1021014, 'PersonalHygieneComponent', 'assisstanceWithPersonalHygiene')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_elactionsheet', 'lkp_delayedrea', 1281026, 'ElectronicActionSheet', 'delayedReason')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_medicationform', 'lkp_form', 1231071, 'MedicationForm', 'form')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_splintdetails', 'lkp_splintcate', 1041, 'SplintDetails', 'splintCategory')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_followup', 'lkp_morbidity4', 1251010, 'FollowUp', 'morbidityCodeCancerCombination')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_skinassfind', 'lkp_cleansedwi', 1001009, 'SkinAssessmentFindings', 'cleansedWith')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_respiratorytre', 'lkp_posturaldr', 1051109, 'RespiratoryTreatment', 'posturalDrainage')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_activitypathwa', 'lkp_appointmen', 1141007, 'ActivityStatusToPathwayEvent', 'appointmentStatus')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsbackofficei', 'lkp_currentsta', 1021341, 'PDSBackOfficeItem', 'currentStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_commcomp', 'lkp_difficulty', 1021014, 'CommunicationComponent', 'difficultyInCommunication')
 go
@@ -472,19 +620,25 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_sch_session', 'lkp_consmediat', 1141025, 'Sch_Session', 'consMediaType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_wheelchairref', 'lkp_chairtype', 1051140, 'WheelchairReferral', 'chairType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patientprepera', 'lkp_rightlegpo', 1231157, 'PatientPreperationIntraOp', 'rightLegPosition')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_illicitdrugdet', 'lkp_substance', 1021123, 'IllicitDrugDetails', 'substance')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyepiso', 'lkp_sourceofre', 1291000, 'EmergencyEpisode', 'sourceOfReferral')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_neonatal', 'lkp_feeding', 1331003, 'NeoNatal', 'feeding')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_mrsatreatmentd', 'lkp_treatment', 1001067, 'MRSATreatmentDetails', 'treatment')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_mobilitycompon', 'lkp_orthosesus', 1051076, 'NurMobilityComponent', 'orthosesUsed')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_attenddiaginvt', 'lkp_investiga3', 1291065, 'AttendDiagInvTreatStatus', 'investigationReason')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_booking_appoin', 'lkp_wardattend', 1021048, 'Booking_Appointment', 'wardAttendanceHcpType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pci_clientbirthdet', 'lkp_breastfee3', 1331003, 'ClientBirthDetails', 'breastFeedingAt3months')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_alternativeadu', 'lkp_adultspec2', 1161009, 'AlternativeAdultContainers', 'adultSpecVolUnit')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_tumourgroupspc', 'lkp_associated', 621, 'TumourGroupSpecialty', 'associatedSpecialty')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_roomdetails', 'lkp_homevisitr', 1051091, 'RoomDetails', 'homeVisitRoomType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_treatmentgroup', 'lkp_treatmentt', 3415, 'TreatmentGroupTechniqueConfig', 'treatmentTechniques')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_dementiaassess', 'lkp_q3currenty', 1021145, 'DementiaAssessAndInvestigate', 'q3CurrentYear')
 go
@@ -494,15 +648,23 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_handjaymarfind', 'lkp_laterality', 1021063, 'HandJaymarFinding', 'laterality')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_trackingworkfl', 'lkp_dischargeo', 1291014, 'TrackingWorkflowConfig', 'dischargeOutcome')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_primarytumourd', 'lkp_benign', 1021014, 'PrimaryTumourDetails', 'benign')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_episofcare', 'lkp_relationsh', 1021165, 'EpisodeOfCare', 'relationship')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patprocedure', 'lkp_procsite', 1021031, 'PatientProcedure', 'procSite')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_planofcare', 'lkp_c_gro', 1231039, 'PlanOfCare', 'group')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_protocol', 'lkp_dentistdef', 1021145, 'Protocol', 'dentistDefault')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsgeneralupda', 'lkp_status', 1021354, 'PDSGeneralUpdateRequest', 'status')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_brthcough', 'lkp_sputumtype', 1011027, 'BreathingCough', 'sputumType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_electrothpneum', 'lkp_area', 2622, 'ElectrotherapyPneumaticTreatment', 'area')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pthw_event', 'lkp_cancellat2', 1141003, 'Event', 'cancellationReason')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_dischargedepis', 'lkp_admissiont', 1021231, 'DischargedEpisode', 'admissionType')
 go
@@ -512,7 +674,13 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_urinalysis', 'lkp_bilirubin', 1021062, 'Urinalysis', 'bilirubin')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patprocedure', 'lkp_procedurei', 1021046, 'PatientProcedure', 'procedureIntent')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_dischargedepis', 'lkp_methodofdi', 1021239, 'DischargedEpisode', 'methodOfDischarge')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_elactionsheet', 'lkp_gatingopti', 1451007, 'ElectronicActionSheet', 'gatingOptions')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_followup', 'lkp_morbidityc', 1251007, 'FollowUp', 'morbidityCodeSurgery')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patientpmhche2', 'lkp_selected', 1021014, 'PatientPMHChecklistDiagnosis', 'selected')
 go
@@ -520,41 +688,57 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('corr_cspdetail', 'lkp_specialint', 1111004, 'CorrespondenceDetails', 'specialInterest')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_racpeecg', 'lkp_protocol', 1231079, 'RACPExerciseECG', 'protocol')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_redirectreferr', 'lkp_redirectre', 1341063, 'RedirectReferralDetails', 'redirectReason')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patient', 'lkp_sex', 632, 'Patient', 'sex')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_followup', 'lkp_dyspneasco', 1251109, 'FollowUp', 'dyspneaScore')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_chemocycledeta', 'lkp_dayonedeli', 1251098, 'ChemoCycleDetailsCCO', 'dayOneDeliveryCode')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_hist_outpat_at', 'lkp_appointme2', 1141007, 'HistoricOutpatientAttendance', 'appointmentStatus')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_elactionsheet', 'lkp_patientsta', 3197, 'ElectronicActionSheet', 'patientStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_neuroreflexeso', 'lkp_othermodal', 1051108, 'NeuroReflexesOtherFindings', 'otherModality')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_infectcontrdet', 'lkp_result', 1011010, 'InfectionControlDetails', 'result')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_pendingemergen', 'lkp_theatretyp', 1141022, 'PendingEmergencyTheatre', 'theatreType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_sleepfindings', 'lkp_answer', 1021014, 'SleepFindings', 'answer')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_toolptdt', 'lkp_assessment', 1011090, 'PatientMovementHandlingScreeningDetails', 'assessment')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_skincomp', 'lkp_skincondit', 1011075, 'SkinComponent', 'skinCondition')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_containertypes', 'lkp_manufactur', 1161013, 'PathSpecimenContainer', 'manufacturer')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_alertsdetails', 'lkp_sourceofin', 1021033, 'PatientAlert', 'sourceofInformation')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_patientwaitin4', 'lkp_priority', 1341036, 'PatientElectiveList', 'priority')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patient', 'lkp_religion', 780, 'Patient', 'religion')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientcontact', 'lkp_preferred2', 1021304, 'PatientContactPreference', 'preferredContactMethod')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_futureappointm', 'lkp__3rdapptp2', 1021078, 'FutureAppointmentDetails', '_3rdApptPeriodType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_safetylevel', 'lkp_status', 1021014, 'SafetyLevel', 'status')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_followup', 'lkp_nodalstatu', 1251001, 'FollowUp', 'nodalStatus')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_futureappointm', 'lkp__1stapptp2', 1021078, 'FutureAppointmentDetails', '_1stApptPeriodType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_commvisn', 'lkp_wearglasse', 1021014, 'CommunicationVision', 'wearGlasses')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_commcaredet', 'lkp_userdefin5', 1331009, 'CommunityCareDetail', 'userDefinedField5')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_elactionsheet', 'lkp_immobtype', 1451009, 'ElectronicActionSheet', 'immobType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_gaittreatment', 'lkp_environmen', 1051074, 'GaitTreatment', 'environment')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vteriskassessm', 'lkp_concurrent', 1021145, 'VTERiskAssessment', 'concurrentAnticoagulants')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_anaestheticsig', 'lkp_patientsta', 1021377, 'AnaestheticSignIn', 'patientStarved')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_intraoperativd', 'lkp_needlecoun', 1021145, 'IntraOperativeDetails', 'needleCount')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_spinepath', 'lkp_modeofinju', 1051098, 'MskSpinePath', 'modeOfInjury')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_racpeecg', 'lkp_painexperi', 1361000, 'RACPExerciseECG', 'painExperienced')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_cleansinganddr', 'lkp_bathingpat', 1001053, 'CleansingandDressingComponent', 'bathingPattern')
-go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_futureappointm', 'lkp_periodtype', 1021078, 'FutureAppointmentDetails', 'periodType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_pataction', 'lkp_plannedreg', 1251027, 'PatAction', 'plannedRegime')
 go
@@ -566,19 +750,33 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_cancercareplan', 'lkp_careplanin', 1251046, 'CancerCarePlan', 'carePlanIntent')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_elactionsheet', 'lkp_mouldrooma', 1451010, 'ElectronicActionSheet', 'mouldRoomActivity')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_primarytumourd', 'lkp_histologys', 1251061, 'PrimaryTumourDetails', 'histologySource')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_skinassrev', 'lkp_secondaryd', 1001036, 'SkinAssessmentReview', 'secondaryDressing')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_followup', 'lkp_morbidity2', 1251008, 'FollowUp', 'morbidityCodeCancerChemotherapy')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_mskjbmovements', 'lkp_limited', 1051173, 'MskJointMovement', 'limited')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_topbutton', 'lkp_action', 1031001, 'AppTopButton', 'action')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_admissiondetai', 'lkp_extendedle', 1021361, 'AdmissionDetail', 'extendedLengthOfStayReason')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_chartrequested', 'lkp_reasonnotr', 1031028, 'ChartRequested', 'reasonnotrequested')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_electrotherap7', 'lkp_laterality', 1021032, 'ElectrotherapyUltrasoundTreatment', 'laterality')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_softtissuemass', 'lkp_stmassaget', 906, 'SoftTissueMassage', 'sTMassageType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_admissiondetai', 'lkp_resusstatu', 1021172, 'AdmissionDetails', 'resusStatus')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_bladskil', 'lkp_dependency', 1211020, 'BladderSkills', 'dependency')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_chartrequested', 'lkp_chartrecei', 1021145, 'ChartRequested', 'chartReceived')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vteriskassessm', 'lkp_historyofv', 1021145, 'VTERiskAssessment', 'historyOfVTE')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_specimenintrao', 'lkp_specimende', 1231163, 'SpecimenIntraOp', 'specimenDestination')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_reviewpatiente', 'lkp_reviewtype', 1341048, 'ReviewPatientElectiveList', 'reviewType')
 go
@@ -586,23 +784,33 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_tciforpatiente', 'lkp_planningel', 1341038, 'TCIForPatientElectiveList', 'planningElective')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_primarytumour', 'lkp_status', 1021124, 'PrimaryTumour', 'status')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_rededialmateri', 'lkp_material', 1051016, 'RemedialMaterial', 'material')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_opdfertilitycl', 'lkp_spermfroze', 1051126, 'OPDFertClinic', 'spermFrozen')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_opderectdysfxn', 'lkp_treatdiscu', 1021014, 'OPDErectDysfxn', 'treatDiscussed')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_pendingemergen', 'lkp_removalrea', 1141040, 'PendingEmergencyTheatre', 'removalReason')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsadvancedse2', 'lkp_nametype', 1021072, 'PDSAdvancedSearchResult', 'nameType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_surgerydetails', 'lkp_asagrade', 1021202, 'SurgeryDetails', 'aSAGrade')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_illicitdrugs', 'lkp_drugsused2', 1021014, 'IllicitDrugs', 'drugsUsedIntravenously')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_healthylodger', 'lkp_relationsh', 519, 'HealthyLodger', 'relationshipToPatient')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_patientwaitin4', 'lkp_tobeplann2', 1021078, 'PatientElectiveList', 'toBePlannedInUnit')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_opderectdysfxn', 'lkp_advleaflet', 1021014, 'OPDErectDysfxn', 'advLeafletGiven')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pendingtransfe', 'lkp_specialty', 621, 'PendingTransfers', 'specialty')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_sessionactivit', 'lkp_appointmen', 1141007, 'SessionActivityPathwayEvent', 'appointmentStatus')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_racppastmedica', 'lkp_ecgfinding', 1021246, 'RACPPastMedicalHistory', 'eCGFindings')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('icps_icp', 'lkp_c_ty', 11021117, 'ICP', 'type')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pci_clientschestva', 'lkp_schedulety', 1331014, 'ClientScheduleStageVaccine', 'scheduleType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_illicitdrugdet', 'lkp_urinetestr', 1021118, 'IllicitDrugDetails', 'urineTestResult')
 go
@@ -610,25 +818,39 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_furthermanagem', 'lkp_tlttype', 1341022, 'FurtherManagement', 'tLTType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_attendancekpic', 'lkp_losbreach6', 1021145, 'AttendanceKPIConfig', 'losBreachedKPIFlashingText')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsadvancedsea', 'lkp_searchstat', 1021354, 'PDSAdvancedSearchRequest', 'searchStatus')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_nacscoring', 'lkp_c_ty', 1021134, 'NacScoring', 'type')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_elactionsheet', 'lkp_seenat', 3196, 'ElectronicActionSheet', 'seenAt')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_mskgroups', 'lkp_jointgener', 1051137, 'MskGroups', 'jointGeneralFindings')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_dischargesumm3', 'lkp_status', 1101038, 'DischargeSummaryProcedure', 'status')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_anaestheticsig', 'lkp_operations', 1021376, 'AnaestheticSignIn', 'operationSiteMarked')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_contact', 'lkp_contacttyp', 1121019, 'Contact', 'contactType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_bayconfig', 'lkp_baystatus', 1021350, 'BayConfig', 'bayStatus')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_workallocation', 'lkp_referralst', 1341000, 'WorkAllocation', 'referralStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_painassrev', 'lkp_progressio', 1001025, 'PainAssessmentReview', 'progression')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_columndetail', 'lkp_c_colu', 1291016, 'ColumnDetail', 'column')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_hydrotherapy', 'lkp_equipment', 1051006, 'Hydrotherapy', 'equipment')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_primarytumourd', 'lkp_tumourlate', 1021032, 'PrimaryTumourDetails', 'tumourLaterality')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_charttypedatas', 'lkp_linetype', 1021174, 'ChartTypeDataset', 'lineType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_hydrotherapy', 'lkp_equipment', 1051006, 'Hydrotherapy', 'equipment')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyatte2', 'lkp_paymentref', 1021145, 'EmergencyAttendanceBilling', 'paymentRefunded')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_edattendanceme', 'lkp_messagesta', 1161039, 'EdAttendanceMessageQueue', 'messageStatus')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_admissiondetai', 'lkp_sourceofem', 1021383, 'AdmissionDetail', 'sourceOfEmergencyReferral')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_accomhome', 'lkp_homefacili', 1011002, 'AccommodationHomeFacilities', 'homeFacilities')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_treatmentinter', 'lkp_treatment2', 1231134, 'TreatmentIntervention', 'treatmentInterventionType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyatten', 'lkp_ambulanced', 1291066, 'EmergencyAttendance', 'ambulanceDelayReason')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vitalsignsmoni', 'lkp_groupfrequ', 1021176, 'VitalSignsMonitoring', 'groupFrequency')
 go
@@ -640,7 +862,7 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_opdfertilitycl', 'lkp_bladderdra', 1051117, 'OPDFertClinic', 'bladderDrainage')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_procedure', 'lkp_procedures', 1021096, 'Procedure', 'procedureStatus')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_roomdetails', 'lkp_homevisitr', 1051091, 'RoomDetails', 'homeVisitRoomType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_opdrelpres', 'lkp_relrelatio', 519, 'OPDRelPres', 'relRelationship')
 go
@@ -648,9 +870,15 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_socialhistory', 'lkp_occupation', 625, 'SocialHistory', 'occupation')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_consultationou', 'lkp_dischargem', 1021190, 'ConsultationOutcome', 'dischargeMethod')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_bowelctp', 'lkp_leakageoff', 1021014, 'BowelConstipation', 'leakageOfFaecesAtPresent')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_containertypes', 'lkp_material', 1161014, 'PathSpecimenContainer', 'material')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientnoaller', 'lkp_allergysta', 1021207, 'PatientNoAllergyInfo', 'allergyStatus')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_imagingevents', 'lkp_investigat', 1251088, 'Imagingevents', 'investigationResult')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsnamesremove', 'lkp_pdsupdatem', 1021367, 'PDSNamesRemoved', 'pdsUpdateMode')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_commsplg', 'lkp_communicat', 1011036, 'CommunicationSpeechAndLanguage', 'communicates')
 go
@@ -660,9 +888,9 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_treatmentequip', 'lkp_c_ty', 1121011, 'TreatmentEquipmentConfig', 'type')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_dischargeoutco', 'lkp_dischargeo', 1341009, 'DischargeOutcome', 'dischargeOtherType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_casr', 'lkp_currentsta', 1101006, 'CaseReferral', 'currentStatus')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_suitableforsur', 'lkp_suitablefo', 1021014, 'SuitableForSurgeryAssessment', 'suitableForSurgery')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('corr_cspdetail', 'lkp_currentsta', 1021127, 'CorrespondenceDetails', 'currentStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_surgeryassista', 'lkp_assistantg', 1021065, 'SurgeryAssistants', 'assistantGrade')
 go
@@ -670,15 +898,23 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_careplaninterv', 'lkp_frequency', 1001087, 'CarePlanIntervention', 'frequency')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_sch_session', 'lkp_sessionsta', 1141004, 'Sch_Session', 'sessionStatus')
-go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_ventilationch2', 'lkp_c_mo', 1021068, 'VentilationChart', 'mode')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_mergedpatient', 'lkp_occupation', 625, 'MergedPatient', 'occupation')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_obsform', 'lkp_formtype', 1011006, 'ObservationForm', 'formType')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_hcgtestitem', 'lkp_urinehcg', 1291040, 'HCGTestItem', 'urineHCG')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_services', 'lkp_servicecat', 1021022, 'Service', 'serviceCategory')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_locall', 'lkp_callerrela', 1101000, 'LoCall', 'callerRelationship')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_modalityconfig', 'lkp_modality', 3422, 'ModalityConfig', 'modality')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_tgroupsitetnmv', 'lkp_clinicalpa', 1251084, 'TumourGroupSiteTNMValue', 'clinicalPathological')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_finalcountintr', 'lkp_swabsaccou', 1021377, 'FinalCountIntraOp', 'swabsAccountableItemscorrect')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_failedemailsde', 'lkp_jobtype', 1231105, 'FailedEmailsDetails', 'jobType')
 go
@@ -688,25 +924,37 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('asse_userassessment', 'lkp_activestat', 1021124, 'UserAssessment', 'activeStatus')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_urinalysis', 'lkp_urobilinog', 1021062, 'Urinalysis', 'urobilinogen')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_spinepath', 'lkp_typeofinju', 1051153, 'MskSpinePath', 'typeOfInjury')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patient', 'lkp_healthboar', 1021306, 'Patient', 'healthBoard')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_servicetriagea', 'lkp_otherhcpva', 1021370, 'ServiceTriageAction', 'otherHCPValues')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vteriskassessm', 'lkp_surgerysig', 1021145, 'VTERiskAssessment', 'surgerySignificantMobilityReduction')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_servicefunctio', 'lkp_c_functi', 1021097, 'ServiceFunction', 'function')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_clinicalreferr', 'lkp_referralty', 1231136, 'ClinicalReferrals', 'referralType')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientcorecli', 'lkp_noalertsou', 1021033, 'PatientCoreClinicalData', 'noAlertSourceofInformation')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_neuinterpret', 'lkp_spinalsynd', 1051149, 'NeuInterpret', 'spinalSyndrome')
-go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_erectdysfxtrea', 'lkp_tried', 1021014, 'OPDErectDysfxTreatments', 'tried')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_gpdetails', 'lkp_treatingco', 1101020, 'GPDetails', 'treatingCountry')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_handrangeofmov', 'lkp_dominantha', 1121016, 'HandRangeOfMovement', 'dominantHand')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vteriskassessm', 'lkp_prophylaxi', 1231124, 'VTERiskAssessment', 'prophylaxisOffered')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_medprobonadmbo', 'lkp_specialty', 621, 'PatientProblem', 'specialty')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_equipment', 'lkp_fundedby', 1021086, 'Equipment', 'fundedBy')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_diathermydetai', 'lkp_serialnumb', 1231160, 'DiathermyDetailIntraOp', 'serialNumber')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_skinassrev', 'lkp_exudateamo', 1001031, 'SkinAssessmentReview', 'exudateAmount')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_pataction', 'lkp_category', 3245, 'PatAction', 'category')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsadvancedsea', 'lkp_dodpartial', 1021390, 'PDSAdvancedSearchRequest', 'dODPartialSearchBy')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_gaitreeducatio', 'lkp_gaitaspect', 1051000, 'GaitReEducation', 'gaitAspect')
 go
@@ -714,11 +962,13 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_wheelchaircush', 'lkp_cushionacc', 1051064, 'WheelchairCushion', 'cushionAccessory')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdspatientupda', 'lkp_dateofdeat', 1021367, 'PDSPatientUpdate', 'dateOfDeathUpdateMode')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_demographiccon', 'lkp_channeltyp', 1021149, 'DemographicControlsConfig', 'channelType')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_phygftfg', 'lkp_status', 1021032, 'PersonalHygieneFeetFindings', 'status')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_mskexamjointbd', 'lkp_bone', 1051138, 'MSkExamJointBonesDetail', 'bone')
-go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_toolpmdt', 'lkp_movement', 1011092, 'PatientMovementHandlingDetails', 'movement')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_charttypedatas', 'lkp_linetype', 1021174, 'ChartTypeDataset', 'lineType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_tiig', 'lkp_assaultwea', 1291027, 'TIIG', 'assaultWeapon')
 go
@@ -726,13 +976,19 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_surgerydetails', 'lkp_consultant', 1021201, 'SurgeryDetails', 'consultantPresence')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_tiig', 'lkp_genderofat', 1291031, 'TIIG', 'genderofAttacker')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_performedproca', 'lkp_anyequipme', 1021377, 'PerfProcAndSignOutIntraOp', 'anyEquipmentProblemsAddressed')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_inpatientdashb', 'lkp_category', 1031041, 'InpatientDashboardConfig', 'category')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_alertpidbarcon', 'lkp_alertcate4', 1021024, 'AlertPIDBarConfig', 'alertCategoryPosition4')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_pathologydetai', 'lkp_servicere2', 1251042, 'PathologyDetails', 'serviceReportStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_dementiaconfig', 'lkp_admissiont', 1021226, 'DementiaConfiguration', 'admissionTypes')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_skinassrev', 'lkp_cleansedwi', 1001009, 'SkinAssessmentReview', 'cleansedWith')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsadvancedsea', 'lkp_dobrangeun', 1021390, 'PDSAdvancedSearchRequest', 'dOBRangeUnit')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_otherassessmen', 'lkp_assessmen2', 1271004, 'OtherAssessmentSummary', 'assessmentName')
 go
@@ -742,45 +998,59 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_remedialactivi', 'lkp_activity', 1051017, 'RemedialActivity', 'activity')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_codingcomment', 'lkp_structured', 1231145, 'CodingComment', 'structuredComment')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_sch_session', 'lkp_cancellati', 1141003, 'Sch_Session', 'cancellationReason')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientcasetra', 'lkp_reasonfort', 1021313, 'PatientCaseNoteTransfer', 'reasonForTransfer')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_careplanmodali', 'lkp_treatmentm', 1251050, 'CarePlanModality', 'treatmentModality')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_elactionsheet', 'lkp_clinicalt2', 1251107, 'ElectronicActionSheet', 'clinicalTrial')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_radiotherapy', 'lkp_reasondel2', 1251102, 'RadiotherapyDetails', 'reasonDelay2')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_bedspace', 'lkp_wardtype', 1021228, 'BedSpace', 'wardType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsadvancedsea', 'lkp_dobpartial', 1021390, 'PDSAdvancedSearchRequest', 'dOBPartialSearchBy')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_wheelchaircush', 'lkp_covertype', 1051145, 'WheelchairCushion', 'coverType')
-go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_reviewreferral', 'lkp_reviewtype', 1341014, 'ReviewReferralDetail', 'reviewType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_mskjbmovements', 'lkp_movetype', 1051128, 'MskJointMovement', 'moveType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vteriskassessm', 'lkp_ageoversix', 1021145, 'VTERiskAssessment', 'ageOverSixty')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patprocedure', 'lkp_surgeonsgr', 1021065, 'PatientProcedure', 'surgeonsGrade')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_futureapptst', 'lkp_pendingsta', 1141032, 'FutureAppointmentStatus', 'pendingStatus')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_attendancekpic', 'lkp_awaitingc3', 1021145, 'AttendanceKPIConfig', 'awaitingClinicianBreachWarningKPIFlashingText')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_referralsource', 'lkp_urgency', 1341036, 'ReferralSourceUrgency', 'urgency')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_wardmixedsexbr', 'lkp_reasonforg', 1021368, 'WardMixedSexBreach', 'reasonForGenderBreach')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_clinicalcorres', 'lkp_c_ty', 1231031, 'ClinicalCorrespondence', 'type')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_specimencolle3', 'lkp_dayofweek', 1161042, 'SpecimenCollectionListConfigDetails', 'dayOfWeek')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_dementiafind', 'lkp_camsinatte', 1021145, 'DementiaFind', 'cAMSInattention')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_functionaltra2', 'lkp_equipment', 1051046, 'FunctionalTransfersTechnique', 'equipment')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_allergiesdetai', 'lkp_sourceofin', 1021033, 'PatientAllergy', 'sourceofInformation')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_diagnosismanag', 'lkp_patientcon', 1021145, 'DiagnosisManagement', 'patientConsent')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_valuable', 'lkp_hasvaluabl', 1021145, 'Valuable', 'hasValuable')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_elactionsheet', 'lkp_ip_op_plan', 3204, 'ElectronicActionSheet', 'iP_OP_Planning')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyepiso', 'lkp_category', 1291002, 'EmergencyEpisode', 'category')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('icps_patienticpacts', 'lkp_status', 1181014, 'PatientICPActionStatus', 'status')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientcontact', 'lkp_pdsupdatem', 1021367, 'PatientContactPreference', 'pdsUpdateMode')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_phygactv', 'lkp_ability', 1211020, 'PersonalHygieneActivities', 'ability')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patient', 'lkp_occupation', 625, 'Patient', 'occupation')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_chemotherapyde', 'lkp_drugtherap', 1251026, 'ChemotherapyDetails', 'drugTherapyType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_finalcountintr', 'lkp_actionstak', 1231171, 'FinalCountIntraOp', 'actionsTaken')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_locationdepart', 'lkp_defaultdep', 1291036, 'LocationDepartmentTypes', 'defaultDepartmentType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pas_event', 'lkp_specialty', 621, 'PASEvent', 'specialty')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_rehabilitation', 'lkp_location', 1081, 'RehabilitationActivity', 'location')
 go
@@ -788,7 +1058,7 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_supportnetwor2', 'lkp_carerrelat', 1021017, 'SupportNetworkFamily', 'carerRelationship')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_ward_stay', 'lkp_wardtype', 1021228, 'WardStay', 'wardType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdspatientupda', 'lkp_preferred2', 1021367, 'PDSPatientUpdate', 'preferredContactTimesUpdateMode')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyatten', 'lkp_accompanie', 1291010, 'EmergencyAttendance', 'accompaniedBy')
 go
@@ -800,7 +1070,7 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_radiotherapy', 'lkp_treatement', 1251014, 'RadiotherapyDetails', 'treatementIntent')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_sportsactivity', 'lkp_sportsacti', 1051072, 'SportsActivity', 'sportsActivity')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_cancerreferral', 'lkp_perfstatus', 1251045, 'CancerReferralDetails', 'perfStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_waitingtimesad', 'lkp_reasreferr', 1251053, 'WaitingTimesAdjustmentsandReasons', 'reasReferralFirstSeen')
 go
@@ -808,17 +1078,27 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patienttranspo', 'lkp_transport', 1141010, 'PatientTransportRequirements', 'transport')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_brthcomp', 'lkp_acutechron', 1211030, 'BreathingComponent', 'acuteChronic')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_referralletter', 'lkp_c_langua', 532, 'ReferralLetterDetails', 'language')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pers_relative', 'lkp_callbckcon', 1021343, 'Relative', 'callbckCons')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_intervchdet', 'lkp_assistance', 1001070, 'InterventionChartDetails', 'assistanceRequired')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_opdfertilitycl', 'lkp_semencultu', 1051122, 'OPDFertClinic', 'semenCulture')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_orderinvestiga', 'lkp_resultspec', , 'OrderInvestigation', 'resultSpecimenType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_clinicalrefer2', 'lkp_referralst', 1021303, 'ClinicalReferralStatus', 'referralStatus')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_protocol', 'lkp_status', 1021124, 'Protocol', 'status')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_workflowaction', 'lkp_internalre', 1021303, 'WorkflowActionInternalRef', 'internalReferralStatus')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_referraltransf', 'lkp_otherorgan', 1341051, 'ReferralTransfer', 'oTherOrganisationCode')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_medicationdeta', 'lkp_contextrec', 1021076, 'PatientMedication', 'contextRecorded')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_actions', 'lkp_actionlist', 1011098, 'Actions', 'actionList')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_dischargedetai', 'lkp_methodofdi', 1021239, 'DischargeDetails', 'methodOfDischarge')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_dementiafind', 'lkp_camsacuteo', 1021145, 'DementiaFind', 'cAMSAcuteOnset')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_diathermyplate', 'lkp_diathermyt', 1231093, 'DiathermyPlateDetail', 'diathermyType')
 go
@@ -832,7 +1112,11 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_chemotherapyde', 'lkp_txchangere', 1251029, 'ChemotherapyDetails', 'txChangeReason')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_bladskil', 'lkp_dependency', 1211020, 'BladderSkills', 'dependency')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_illicitdrugs', 'lkp_drugsusedi', 1021014, 'IllicitDrugs', 'drugsUsedInThePastMonth')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_illicitdrugdet', 'lkp_substance', 1021123, 'IllicitDrugDetails', 'substance')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pthw_pathwaysrttclo', 'lkp_finalcloc2', 1321021, 'PathwaysRTTClockImpact', 'finalClockState')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_drgractv', 'lkp_activities', 1011043, 'DressingandGroomingActivities', 'activities')
 go
@@ -844,6 +1128,14 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_investigations', 'lkp_investigat', 1021087, 'Investigations', 'investigation')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_sch_session', 'lkp_theatretyp', 1141022, 'Sch_Session', 'theatreType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_ward_stay', 'lkp_reasonpriv', 1021293, 'WardStay', 'reasonPrivateBedAllocated')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_gppracticemess', 'lkp_messagesta', 1161039, 'GPPracticeMessageQueue', 'messageStatus')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_orderinvappt', 'lkp_status', 1021241, 'OrderInvAppt', 'status')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_specimencolle2', 'lkp_listtype', 1161020, 'SpecimenCollectionListConfig', 'listType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pendingtransfe', 'lkp_passpecial', 1021269, 'PendingTransfers', 'pASSpecialty')
@@ -852,43 +1144,67 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_admitassess', 'lkp_assessmen2', 1211029, 'AdmissionAssessment', 'assessmentStatus')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_diagnosismanag', 'lkp_actionrequ', 1021145, 'DiagnosisManagement', 'actionRequiredByGP')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_tracking', 'lkp_supplement', 1231076, 'Tracking', 'supplementaryLetterStatus')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_electrotherap7', 'lkp_areatreate', 1051040, 'ElectrotherapyUltrasoundTreatment', 'areaTreated')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_contact', 'lkp_referringp', 1121017, 'Contact', 'referringProblem')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_boweldhr', 'lkp_pronetodia', 1021014, 'BowelDiarrhoea', 'proneToDiarrhoea')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_surgicalopnote', 'lkp_anaestheti', 1231108, 'SurgicalOperationNotes', 'anaestheticGiven')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_painassfind', 'lkp_onset', 1001024, 'PainAssessmentFindings', 'onset')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vteassessexcl', 'lkp_specialty', 621, 'VTEAssessmentExclusions', 'specialty')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pas_event', 'lkp_episodefin', 1161035, 'PASEvent', 'episodeFinancialClass')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_needsassessmen', 'lkp_needassess', 1231016, 'NeedsAssessment', 'needAssessmentNumber')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_pendingemergen', 'lkp_currentloc', 1141038, 'PendingEmergencyTheatre', 'currentLocationOfPatient')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_surgerydetails', 'lkp_specialtyf', 1231060, 'SurgeryDetails', 'specialtyFunctionCode')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_codeddiagnosis', 'lkp_status', 1021159, 'CodedDiagnosisStatus', 'status')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_cancercareplan', 'lkp_currentsta', 1251074, 'CancerCarePlan', 'currentStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_edtransfer', 'lkp_tohospital', 1291050, 'EDTransfer', 'toHospital')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_medicationdeta', 'lkp_contextrec', 1021076, 'PatientMedication', 'contextRecorded')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_accommodation', 'lkp_accommodat', 2603, 'Accommodation', 'accommodationType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_mdtmeeting', 'lkp_listpatien', 1231017, 'MDTMeeting', 'listPatientisOn')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_protocol', 'lkp_ivcontras2', 1451005, 'Protocol', 'iVContrastList')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_racpeecg', 'lkp_interpreta', 1231085, 'RACPExerciseECG', 'interpretation')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_theatrebooking', 'lkp_proclatera', 1021032, 'TheatreBooking', 'procLaterality')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_localanaesthet', 'lkp_localanaes', 1231098, 'LocalAnaestheticAdministered', 'localAnaesthetic')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_investigationa', 'lkp_attendence', 1291046, 'InvestigationAttendenceDetail', 'attendenceInvestigation')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_edtransfer', 'lkp_transferes', 1291051, 'EDTransfer', 'transferEscort')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_patientwaitin4', 'lkp_electivel4', 1291057, 'PatientElectiveList', 'electiveListReason')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_sess_slot', 'lkp_directacce', 1141014, 'Session_Slot', 'directAccessSlot')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_specimencollec', 'lkp_listtype', 1161020, 'SpecimenCollectionStatus', 'listType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_followup', 'lkp_treatmentt', 1251006, 'FollowUp', 'treatmentType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_edadmission', 'lkp_allocatedb', 1291053, 'EDPartialAdmission', 'allocatedBedType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_codingcomment', 'lkp_commentsta', 1231146, 'CodingComment', 'commentStatus')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_admissiondetai', 'lkp_medicallyf', 1021145, 'AdmissionDetail', 'medicallyFitForDischarge')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_pathologydetai', 'lkp_investigat', 1251036, 'PathologyDetails', 'investigationType')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_opdfertilitycl', 'lkp_achieveere', 1051029, 'OPDFertClinic', 'achieveErection')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('spin_patientsocials', 'lkp_modality', 1051097, 'PatientSocialStatus', 'modality')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_procedure', 'lkp_defaultana', 1231108, 'Procedure', 'defaultAnaestheticType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_protocol', 'lkp_gatingopt2', 1451007, 'Protocol', 'gatingOptsList')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_waitingtimesad', 'lkp_delayreasd', 1251057, 'WaitingTimesAdjustmentsandReasons', 'delayReasDecTreatTreat')
 go
@@ -896,15 +1212,19 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_racpsymptomris', 'lkp_symptomdur', 1231077, 'RACPSymptomRiskFactors', 'symptomDuration')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_teletherapydet', 'lkp_generalana', 1021145, 'TeletherapyDetails', 'generalAnaesthetic')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_electivelistme', 'lkp_msgtype', 1021260, 'ElectiveListMessageQueue', 'msgType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_peripheralrefl', 'lkp_leftfindin', 1051130, 'NeuroReflexesPeripheralFindings', 'leftFinding')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pacsconfigurti', 'lkp_primaryide', 624, 'PACSConfiguration', 'primaryIdentifier')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pendingemergen', 'lkp_admissions', 1021230, 'PendingEmergencyAdmission', 'admissionStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_specimencollec', 'lkp_collection', 1161045, 'SpecimenCollectionStatus', 'collectionStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_adaptations', 'lkp_fundedby', 1021086, 'Adaptations', 'fundedBy')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientgp', 'lkp_lkp_provis', 1021371, 'PatientGP', 'lkp_provisiontype')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patientprepera', 'lkp_patienttr2', 1231154, 'PatientPreperationIntraOp', 'patientTransferFromOperatingTableVia1')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_onwardreferrtr', 'lkp_serviceref', 1341034, 'OnwardReferralFromTriage', 'serviceReferredInto')
 go
@@ -920,13 +1240,15 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_referral', 'lkp_specialty', 621, 'Referral', 'specialty')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_bedspace', 'lkp_dependency', 1021298, 'BedSpace', 'dependency')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vitalsignitemf', 'lkp_vitalsignt', 1021058, 'VitalSignItemFrequency', 'vitalSignType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_document', 'lkp_status', 1021127, 'Document', 'status')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_chemoregimensc', 'lkp_dayonedeli', 1251098, 'ChemoRegimensConfig', 'dayOneDeliveryCode')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_bowelctp', 'lkp_leakageof2', 1021014, 'BowelConstipation', 'leakageOfFaecesPast')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_teletherapydet', 'lkp_beamenergy', 1251080, 'TeletherapyDetails', 'beamEnergy')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_primarytumourd', 'lkp_pretreatm6', 1251035, 'PrimaryTumourDetails', 'preTreatmentMCert')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_tiltexercise', 'lkp_tiltsuppor', 1121012, 'TiltExercise', 'tiltSupportExercise')
 go
@@ -936,8 +1258,6 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_phygftfg', 'lkp_findings', 1011069, 'PersonalHygieneFeetFindings', 'findings')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_bowelctp', 'lkp_leakageof2', 1021014, 'BowelConstipation', 'leakageOfFaecesPast')
-go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vteriskassessm', 'lkp_activeblee', 1021145, 'VTERiskAssessment', 'activeBleeding')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_wheelchairdet', 'lkp_wheelchai4', 1051143, 'WheelchairDetails', 'wheelchairFootplates')
@@ -946,7 +1266,11 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_rehabilitation', 'lkp_technique', 1051009, 'RehabilitationActivity', 'technique')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_bedspacestates', 'lkp_bedstatus', 1021229, 'BedSpaceStateStatus', 'bedStatus')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_cons_stay', 'lkp_specialty', 621, 'ConsultantStay', 'specialty')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_reasonfordelay', 'lkp_reasondela', 1021362, 'ReasonForDelayedDischarge', 'reasonDelayDischarge')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsrelativecon', 'lkp_preferredc', 1021381, 'PDSRelativeContactPref', 'preferredContactMethod')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyepiso', 'lkp_mobility', 1021191, 'EmergencyEpisode', 'mobility')
 go
@@ -958,9 +1282,7 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_mrsasitesresul', 'lkp_result', 1001066, 'MRSASitesResults', 'result')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_clinicalcorres', 'lkp_c_ty', 1231031, 'ClinicalCorrespondence', 'type')
-go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vteriskassessm', 'lkp_useofhrt', 1021145, 'VTERiskAssessment', 'useOfHRT')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_medicationdeta', 'lkp_isdiscont4', 1021037, 'PatientMedication', 'isDiscontinuedReason')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_orderspecimen', 'lkp_requestedt', 1161043, 'OrderSpecimen', 'requestedType')
 go
@@ -972,13 +1294,21 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_careplanmodali', 'lkp_patientagr', 1021145, 'CarePlanModality', 'patientAgreed')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_booking_appoin', 'lkp_arrivalsta', 1141011, 'Booking_Appointment', 'arrivalStatus')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_commhear', 'lkp_hearingai2', 1021014, 'CommunicationHearing', 'hearingAidWithPatientOnAdmission')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_vtmhotlist', 'lkp_specialty', 621, 'VTMHotlist', 'specialty')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('naes_naesreferral', 'lkp_affectedey', 1021032, 'NAESReferral', 'affectedEye')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_racpmedicatio2', 'lkp_medicatio2', 1231087, 'RACPMedicationStatus', 'medicationStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_tiig', 'lkp_previously', 1291032, 'TIIG', 'previouslyAssulatedByAttacker')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_reportsrequire', 'lkp_reportsreq', 1341023, 'ReportsRequiredForPrinting', 'reportsRequired')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_outlier', 'lkp_outliersub', 1101010, 'Outlier', 'outlierSubType1')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_divisionaldiag', 'lkp_division', 1021301, 'DivisionalDiagnoses', 'division')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_userworkqueue', 'lkp_currentsta', 1101040, 'UserWorkQueue', 'currentStatus')
 go
@@ -988,69 +1318,89 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_wheelchaircush', 'lkp_cushiontyp', 1051062, 'WheelchairCushion', 'cushionType')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_radiotherapysc', 'lkp_messagesta', 1161039, 'RadioTherapySchedQueue', 'messageStatus')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyepiso', 'lkp_school', 1291012, 'EmergencyEpisode', 'school')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_brachytherapyd', 'lkp_brachydeli', 1251068, 'BrachytherapyDetails', 'brachyDeliveryType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_phygcomp', 'lkp_condition2', 1011074, 'PersonalHygieneComponent', 'conditionOfNails')
-go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientfamilyh', 'lkp_relationsh', 1021017, 'PatientFamilyHistory', 'relationship')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientcasereq', 'lkp_reasonforr', 1021313, 'PatientCaseNoteRequest', 'reasonForRequest')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_allertypereact', 'lkp_reaction', 1021026, 'AllergenTypeReaction', 'reaction')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_skincomp', 'lkp_frequencyo', 1001019, 'SkinComponent', 'frequencyOfTurns')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_nacscoring', 'lkp_c_ty', 1021134, 'NacScoring', 'type')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_repositioningp', 'lkp_positioni2', 1021145, 'RepositioningPlan', 'positioningSuitable')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pthw_patjourstatus', 'lkp_status', 1321005, 'PatientJourneyStatus', 'status')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_statusrecord', 'lkp_status', 1451012, 'EASStatusRecord', 'status')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_thermalactivit', 'lkp_thermaltyp', 1051024, 'ThermalActivity', 'thermalType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_sessiontheatre', 'lkp_statusreas', 1141007, 'SessionTheatreTCISlot', 'statusReason')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('corr_cspdetail', 'lkp_currentsta', 1021127, 'CorrespondenceDetails', 'currentStatus')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_ventilationch2', 'lkp_painscale', 1001023, 'VentilationChart', 'painScale')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_bowelregime', 'lkp_bowelregim', 1001055, 'BowelRegime', 'bowelRegime')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vteriskassessm', 'lkp_anaestheti', 1021145, 'VTERiskAssessment', 'anaestheticAndSurgery')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pci_scheduleconfig', 'lkp_status', 1021124, 'ScheduleConfiguration', 'status')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_prof', 'lkp_pasclinic', 1141018, 'Sch_Profile', 'pASClinic')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_cognitivefunct', 'lkp_answer', 1021014, 'CognitiveFunction', 'answer')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pthw_patientjourne3', 'lkp_breachreas', 1321018, 'PatientJourneyBreach', 'breachReason')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_tcioutcomeforp', 'lkp_outcomerea', 1341041, 'TCIOutcomeForPatientElectiveList', 'outcomeReason')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_sch_session', 'lkp_anaestheti', 1231108, 'Sch_Session', 'anaestheticType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_drawingimage2', 'lkp_category', 1021115, 'DrawingImage', 'category')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_futureappointm', 'lkp_weekinthem', 1341070, 'FutureAppointmentDetails', 'weekInTheMonth')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_alertsdetails', 'lkp_alertconfi', 1021027, 'PatientAlert', 'alertConfirmedStatus')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyepiso', 'lkp_presenting', 1291003, 'EmergencyEpisode', 'presentingComplaint')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_safeenvironmen', 'lkp_haveaheadi', 1021014, 'SafeEnvironmentComponent', 'haveAHeadInjury')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('corr_categorynote', 'lkp_category', 1111001, 'CategoryNotes', 'category')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patientprepera', 'lkp_patienttra', 1231154, 'PatientPreperationIntraOp', 'patientTransferToOperatingTableVia')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_fintransmessqu', 'lkp_queuetype', 1021259, 'FinTransMessQueue', 'queueType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_tiig', 'lkp_genderofat', 1291031, 'TIIG', 'genderofAttacker')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_alertpidbarcon', 'lkp_alertcate2', 1021024, 'AlertPIDBarConfig', 'alertCategoryPosition2')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_medic', 'lkp_grade', 1021065, 'Medic', 'grade')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_respiratorytr2', 'lkp_treatment', 1051111, 'RespiratoryTreatmentDetail', 'treatment')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_accommodation', 'lkp_accommodat', 2603, 'Accommodation', 'accommodationType')
-go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_remedialactivi', 'lkp_activitypo', 1051019, 'RemedialActivity', 'activityPosition')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_ttamedication', 'lkp_route', 1021035, 'TTAMedication', 'route')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patientprepera', 'lkp_leftarmpos', 1231156, 'PatientPreperationIntraOp', 'leftArmPosition')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_servicetriagea', 'lkp_directtoli', 1021336, 'ServiceTriageAction', 'directToList')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pci_clientbirthdet', 'lkp_maritalsta', 1331002, 'ClientBirthDetails', 'maritalStatusAtBirth')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_surgicalopnote', 'lkp_followupty', 1341031, 'SurgicalOpNotes', 'followUpType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_functionaltra2', 'lkp_technique', 1051045, 'FunctionalTransfersTechnique', 'technique')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_skinassfind', 'lkp_odour', 1001033, 'SkinAssessmentFindings', 'odour')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdscommchannel', 'lkp_pdsupdatem', 1021367, 'PDSCommChannelRemoved', 'pdsUpdateMode')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_elactionsheet', 'lkp_pegrequire', 1021145, 'ElectronicActionSheet', 'pegRequired')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patientprepera', 'lkp_fluidwarme', 1021145, 'PatientPreperationIntraOp', 'fluidWarmerUsed')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_environmental2', 'lkp_location', 1051071, 'EnvironmentalVisit', 'location')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_clinoutcome', 'lkp_clinicalo2', 1341030, 'ClinicalOutcome', 'clinicalOutcomeContext')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_equipment', 'lkp_supplier', 1021083, 'Equipment', 'supplier')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_clinicalrefer3', 'lkp_notetype', 1231138, 'ClinicalReferralNotes', 'noteType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_patientwaitin4', 'lkp_priority', 1341036, 'PatientElectiveList', 'priority')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_equipment', 'lkp_supplier', 1021083, 'Equipment', 'supplier')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pers_relative', 'lkp_relationsh', 519, 'Relative', 'relationship')
 go
@@ -1060,17 +1410,23 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_tiig', 'lkp_hadpatient', 1291023, 'TIIG', 'hadPatientConsumedAlcohol')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_waitlistdetail', 'lkp_category', 1101007, 'LoCallWaitingListDetails', 'category')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_tracking', 'lkp_reasonforb', 1291048, 'Tracking', 'reasonForBreach')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_opdspasasslimb', 'lkp_movement', 1051128, 'OPDSpasAssLimbs', 'movement')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_surgicalaudco', 'lkp_reasonforc', 1231130, 'SurgicalAuditCancelOperation', 'reasonForCancellation')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_servicetriagea', 'lkp_defaultac2', 1341068, 'ServiceTriageAction', 'defaultActionForCABReferral')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('asse_userdefinedobj', 'lkp_objecttype', 1021151, 'UserDefinedObject', 'objectType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_patientdocumen', 'lkp_msgtype', 1021260, 'PatientDocumentMessageQueue', 'msgType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_illicitdrugdet', 'lkp_frequency', 1021038, 'IllicitDrugDetails', 'frequency')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_patientwaitin4', 'lkp_generalana', 1021145, 'PatientElectiveList', 'generalAnaesthetic')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_questionanswer', 'lkp_answertype', 1021122, 'QuestionAnswerType', 'answerType')
 go
@@ -1082,23 +1438,41 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('corr_glossaryprofil', 'lkp_specifiert', 1111003, 'GlossaryProfile', 'specifierType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_chemocycledeta', 'lkp_procuremen', 1251097, 'ChemoCycleDetailsCCO', 'procurementCode')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_sess_slot', 'lkp_priority', 1141009, 'Session_Slot', 'priority')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('corr_recipient', 'lkp_recipientt', 1111011, 'Recipient', 'recipientType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_demographicsmq', 'lkp_queuetype', 1021259, 'DemographicsMessageQueue', 'queueType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pci_clientschestva', 'lkp_terminate2', 1331011, 'ClientScheduleStageVaccine', 'terminatedBy')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_ward_stay', 'lkp_transferre', 1021319, 'WardStay', 'transferReason')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patient', 'lkp_dementiawo', 1021281, 'Patient', 'dementiaWorklistStatus')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_inpatientepiso', 'lkp_messagesta', 1161039, 'InpatientEpisodeQueue', 'messageStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_socialhistory', 'lkp_fittotakeh', 1021014, 'SocialHistory', 'fitToTakeHome')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_splintsinstruc', 'lkp_instructio', 1051058, 'SplintsInstructionDetails', 'instructionLeaflet')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_eatmand', 'lkp_status', 1021014, 'EatingManualDexterity', 'status')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_radiotoxicity', 'lkp_toxicityty', 1251066, 'RadioTxToxicityType', 'toxicityType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_brachytherapyd', 'lkp_anaestheti', 1251019, 'BrachytherapyDetails', 'anaestheticReq')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_opdfertilitycl', 'lkp_ejaculatio', 1051152, 'OPDFertClinic', 'ejaculation')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_chemotherapyde', 'lkp_outcometim', 1021145, 'ChemotherapyDetails', 'outcomeTimeDelay')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_eatmand', 'lkp_status', 1021014, 'EatingManualDexterity', 'status')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_hcgtestitem', 'lkp_serumhcg', 1291040, 'HCGTestItem', 'serumHCG')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_sessionparentc', 'lkp_cancelbloc', 1141003, 'SessionParentChildSlot', 'cancelBlockReason')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_catheterdetail', 'lkp_catheterin', 1021145, 'CatheterDetail', 'catheterInserted')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('icps_icpaction', 'lkp_status', 1021124, 'ICPAction', 'status')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_internalreferr', 'lkp_referralre', 1251092, 'InternalReferral', 'referralReason')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_generalquestio', 'lkp_questiongr', 1161046, 'GeneralQuestionAnswer', 'questionGroup')
 go
@@ -1114,25 +1488,29 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_referralsrecor', 'lkp_cancerstat', 1021197, 'ReferralsRecording', 'cancerStatus')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_protocol', 'lkp_immobtyper', 1451000, 'Protocol', 'immobTypeRequired')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_clinicalnotes', 'lkp_c_discipli', 1021048, 'ClinicalNotes', 'discipline')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_tiig', 'lkp_consumedor', 1291024, 'TIIG', 'consumedOrPurchasedAlcoholFrom')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_opderectdysfxn', 'lkp_erectionqu', 1051054, 'OPDErectDysfxn', 'erectionQual')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_pendingemergen', 'lkp_urgencycat', 1141037, 'PendingEmergencyTheatre', 'urgencyCategory')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_rehabilitation', 'lkp_independen', 2223, 'RehabilitationActivity', 'independenceLevel')
-go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_teletherapydet', 'lkp_multiplepl', 1021145, 'TeletherapyDetails', 'multiplePlanning')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patientprepera', 'lkp_skinintegr', 1021145, 'PatientPreperationIntraOp', 'skinIntegrityMaintained')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_ventilationch2', 'lkp_physio', 1021014, 'VentilationChart', 'physio')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyatten', 'lkp_modeofarri', 1291009, 'EmergencyAttendance', 'modeOfArrival')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_clinicalrefer2', 'lkp_rejectionr', 1341001, 'ClinicalReferralStatus', 'rejectionReason')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_remedialactivi', 'lkp_independen', 1051020, 'RemedialActivity', 'independence')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_appt_history_s', 'lkp_pasclinic', 1141018, 'Appointment_Status', 'pASClinic')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('naes_actionplan', 'lkp_recall', 1021145, 'ActionPlan', 'recall')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_appdbimage', 'lkp_imagetype', 1031018, 'AppDBImage', 'imageType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pthw_extevenmap', 'lkp_detail', 1321001, 'ExternalEventMapping', 'detail')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_interprovidert', 'lkp_iptorganis', 1341051, 'InterProviderTransferOut', 'iPTOrganisation')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_patientdocumen', 'lkp_messagesta', 1161039, 'PatientDocumentMessageQueue', 'messageStatus')
 go
@@ -1150,7 +1528,9 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_brthcough', 'lkp_sputumamou', 1011026, 'BreathingCough', 'sputumAmount')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_bowelctp', 'lkp_leakageoff', 1021014, 'BowelConstipation', 'leakageOfFaecesAtPresent')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_documentcateg2', 'lkp_documentca', 1021220, 'DocumentCategoryToFormCfg', 'documentCategory')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_medication', 'lkp_admintimes', 1021036, 'PatientMedicationDose', 'adminTimes')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_rehabilitation', 'lkp_activity', 1026, 'RehabilitationActivity', 'activity')
 go
@@ -1160,21 +1540,31 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_batchpricing', 'lkp_status', 1101053, 'BatchPricing', 'status')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_cons_stay', 'lkp_patientsta', 1021112, 'ConsultantStay', 'patientStatus')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_edadmission', 'lkp_allocateds', 1291054, 'EDPartialAdmission', 'allocatedStatus')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pthw_event', 'lkp_cancellati', 1141007, 'Event', 'cancellationType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_chemotherapyde', 'lkp_delayreas2', 1081034, 'ChemotherapyDetails', 'delayReason2')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pthw_rttstatusevent', 'lkp_encounteri', , 'RTTStatusEventMap', 'encounterInstance')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_fintransmessqu', 'lkp_messagesta', 1161039, 'FinTransMessQueue', 'messageStatus')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patientprepera', 'lkp_warmingbla', 1021145, 'PatientPreperationIntraOp', 'warmingBlanketUsed')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_remedialactivi', 'lkp_subjective', 1051021, 'RemedialActivity', 'subjectiveObs')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_commvisn', 'lkp_effectedey', 1021032, 'CommunicationVision', 'effectedEyes')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('icps_icpaction', 'lkp_linkedtype', 1021114, 'ICPAction', 'linkedType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_trackingarea', 'lkp_status', 1021124, 'TrackingArea', 'status')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_wardbayconfig', 'lkp_mainspecia', 621, 'WardBayConfig', 'mainSpecialty')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_gaittreatment', 'lkp_supervisio', 1051077, 'GaitTreatment', 'supervisionLevel')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_ocsorder', 'lkp_authorisat', 1161048, 'OcsOrderSession', 'authorisationOrderStatus')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_patientwaitin4', 'lkp_procedure2', 1341052, 'PatientElectiveList', 'proceduredToBeCarriedBy')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vteriskassessm', 'lkp_acquiredbl', 1021145, 'VTERiskAssessment', 'acquiredBleeding')
 go
@@ -1188,23 +1578,39 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_racpeecg', 'lkp_dysponea', 1211031, 'RACPExerciseECG', 'dysponea')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_intraoperativd', 'lkp_procedurew', 1021332, 'IntraOperativeDetails', 'procedureWoundClass')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_medication', 'lkp_doseunit', 1021015, 'PatientMedicationDose', 'doseUnit')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patient', 'lkp_confidenti', 1021214, 'Patient', 'confidentialReason')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_dementiaassess', 'lkp_confirmmed', 1021145, 'DementiaAssessAndInvestigate', 'confirmMedicationReview')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_splintdetails', 'lkp_splintsize', 2286, 'SplintDetails', 'splintSize')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_boweldhr', 'lkp_odour', 1011016, 'BowelDiarrhoea', 'odour')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_radiotherapysc', 'lkp_queuetype', 1021259, 'RadioTherapySchedQueue', 'queueType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_casr', 'lkp_referralso', 1101009, 'CaseReferral', 'referralSource')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_referralsrecor', 'lkp_referralst', 1021148, 'ReferralsRecording', 'referralStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_dischargeservi', 'lkp_equipment', 1291047, 'DischargeServicesAndAdvice', 'equipment')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_patientwaitin4', 'lkp_electivead', 1341039, 'PatientElectiveList', 'electiveAdmissionType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_allertypereact', 'lkp_allergenty', 1021028, 'AllergenTypeReaction', 'allergenType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_postdischargel', 'lkp_personcont', 1291060, 'PostDischargeLiaison', 'personContacted')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_illicitdrugs', 'lkp_useanyothe', 1021014, 'IllicitDrugs', 'useAnyOtherDrugs')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vteriskassessm', 'lkp_thrombocyt', 1021145, 'VTERiskAssessment', 'thrombocytopenia')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_catheterdrains', 'lkp_c_ty', 1231162, 'CatheterDrainsTubeIntraOp', 'type')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_referralreject', 'lkp_reason', 1341001, 'ReferralReject', 'reason')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_investigation', 'lkp_c_ty', 1161055, 'Investigation', 'type')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_contractconfig', 'lkp_contractty', 1021266, 'ContractConfig', 'contractType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_treatmentsites', 'lkp_treatments', 1451002, 'TreatmentSites', 'treatmentSite')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_allergiesdetai', 'lkp_allergenty', 1021028, 'PatientAllergy', 'allergenType')
 go
@@ -1212,23 +1618,39 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('asse_graphicgssessm', 'lkp_assessmen3', 621, 'GraphicAssessment', 'assessmentSpecialties')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_painmed', 'lkp_frequency', 1021038, 'PainMedication', 'frequency')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_cognitivefunct', 'lkp_c_functi', 1051162, 'CognitiveFunction', 'function')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_intraoperative', 'lkp_readmissio', 1021257, 'IntraOperativeCareRecord', 'readmissionType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_boweldiarrhoea', 'lkp_sufferfrom', 1001060, 'BowelDiarrhoeaConstipation', 'sufferFrom')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_intraoperativd', 'lkp_laserdevic', 1021325, 'IntraOperativeDetails', 'laserDeviceName')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patienthomesit', 'lkp_floorlevel', 1231051, 'PatientHomeSituation', 'floorLevel')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pci_clientschestva', 'lkp_vaccineman', 1231065, 'ClientScheduleStageVaccine', 'vaccineManufacturer')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_pendingemergen', 'lkp_secondary2', 1021032, 'PendingEmergencyTheatre', 'secondaryProcLaterality')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_admissiondetai', 'lkp_reasoncann', 1021363, 'AdmissionDetail', 'reasonCannotGoDischargeLounge')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_elactionsheet', 'lkp_dentistreq', 1021145, 'ElectronicActionSheet', 'dentistRequired')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_invasivedevic2', 'lkp_durationun', 1021078, 'InvasiveDeviceType', 'durationUnit')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_equipment', 'lkp_suppliedfo', 1021084, 'Equipment', 'suppliedFor')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patient', 'lkp_publiccare', 1021388, 'Patient', 'publicCareNeed')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_vipscore', 'lkp_vipscale', 1231036, 'VIPScore', 'vIPScale')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_investigation', 'lkp_minreorde2', 1161007, 'Investigation', 'minReorderPeriodUnit')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_townland', 'lkp_county', 1101022, 'Townland', 'county')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_actualplandeta', 'lkp_actualtre2', 1251078, 'ActualPlanDetails', 'actualTreatmentType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_consultationou', 'lkp_dischargem', 1021190, 'ConsultationOutcome', 'dischargeMethod')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_mskgroups', 'lkp_handmoveme', 1051176, 'MskGroups', 'handMovementTests')
 go
@@ -1244,17 +1666,25 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_prof', 'lkp_intervalty', 1141002, 'Sch_Profile', 'intervalType')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_dischargedetai', 'lkp_methodofdi', 1021239, 'DischargeDetails', 'methodOfDischarge')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_pataction', 'lkp_patientsta', 3197, 'PatAction', 'patientStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_infectioncontr', 'lkp_mrsa', 1021014, 'InfectionControlComponent', 'mRSA')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_sess_slot', 'lkp_bookingsou', 1141016, 'Session_Slot', 'bookingSource')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_opderectdysfxn', 'lkp_erectionqu', 1051054, 'OPDErectDysfxn', 'erectionQual')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_protocol', 'lkp_ivcontrast', 1451000, 'Protocol', 'iVContrastRequired')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_dischargesumma', 'lkp_discharget', 1341003, 'DischargeSummaryPacuAndWard', 'dischargeType')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_eatoral', 'lkp_oralassess', 1011050, 'EatingOralAssessment', 'oralAssessment')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_waitingtimesad', 'lkp_reasfirsts', 1251054, 'WaitingTimesAdjustmentsandReasons', 'reasFirstSeenDecTreat')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_emotasses', 'lkp_c_sele', 1021014, 'EmotionalStateAssessment', 'select')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_dementiaassess', 'lkp_confirmmed', 1021145, 'DementiaAssessAndInvestigate', 'confirmMedicationReview')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_stretchingdeta', 'lkp_stretching', 1121006, 'StretchingDetails', 'stretchingArea')
 go
@@ -1262,11 +1692,11 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_skinassfind', 'lkp_exudateamo', 1001031, 'SkinAssessmentFindings', 'exudateAmount')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_comment', 'lkp_context', 1101036, 'Comment', 'context')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_suspensiondeta', 'lkp_initator', 1021292, 'SuspensionDetailsForPatientElectiveList', 'initator')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_chemotherapyde', 'lkp_outcomesum', 1251105, 'ChemotherapyDetails', 'outcomeSummary')
-go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_externalsy', 'lkp_eventtype', 1141017, 'ExternalSystemEvent', 'eventType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_fitforsurgerya', 'lkp_anaestheti', 1231108, 'FitForSurgeryAssesment', 'anaestheticType')
 go
@@ -1276,11 +1706,19 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_bowelctp', 'lkp_pronetocon', 1021014, 'BowelConstipation', 'proneToConstipation')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_referralerod', 'lkp_erodreason', 1341050, 'ReferralEROD', 'eRODReason')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_surgicalauditp', 'lkp_consentrec', 1021145, 'SurgicalAuditPreOpChecks', 'consentReceived')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vteriskassessm', 'lkp_otherproce', 1021145, 'VTERiskAssessment', 'otherProcedureWithHighBleedingRisk')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_linkeddiagnost', 'lkp_diagnostic', 1031033, 'LinkedDiagnostic', 'diagnostics')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_dischargedepis', 'lkp_vteassess2', 1231144, 'DischargedEpisode', 'vTEAssessmentStatusReason')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pthw_eventrttevent', 'lkp_status', 1021124, 'EventRTTEvent', 'status')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_radiotherapy', 'lkp_treatingho', 1251096, 'RadiotherapyDetails', 'treatingHospital')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsasyncreques', 'lkp_pdsack', 1021359, 'PDSAsyncRequest', 'pDSAck')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_onwardreferral', 'lkp_onwardref3', 1341016, 'OnwardReferral', 'onwardReferralReason')
 go
@@ -1294,21 +1732,31 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_procedurehotli', 'lkp_specialty', 621, 'ProcedureHotlist', 'specialty')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_cons_stay', 'lkp_codingstat', 1021321, 'ConsultantStay', 'codingStatus')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_mergedpatient', 'lkp_ethnicorig', 762, 'MergedPatient', 'ethnicOrigin')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_clinicalcdiass', 'lkp_reverseass', 1231022, 'Clinicalcdiassociations', 'reverseAssociation')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_linkedcatsrefe', 'lkp_referralre', 1341057, 'LinkedCatsReferral', 'referralRelationType')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_medicationhotl', 'lkp_specialty', 621, 'MedicationHotlist', 'specialty')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdspatientupda', 'lkp_proficienc', 1021367, 'PDSPatientUpdate', 'proficiencyLevelCodeUpdateMode')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_homedetails', 'lkp_ownerships', 2605, 'HomeDetails', 'ownershipStatus')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_neurootsensfin', 'lkp_sensationt', 1051132, 'NeuRootSensFinding', 'sensationType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_ward_stay', 'lkp_patientsta', 1021112, 'WardStay', 'patientStatus')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_ward_stay', 'lkp_reasongend', 1021368, 'WardStay', 'reasonGenderBreach')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_functionaltra2', 'lkp_finishposi', 1051047, 'FunctionalTransfersTechnique', 'finishPosition')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientcasenot', 'lkp_status', 1021312, 'PatientCaseNote', 'status')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_ded', 'lkp_county', 1101022, 'DED', 'county')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_remedial', 'lkp_remediallo', 2047, 'Remedial', 'remedialLocation')
-go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_catsreferralst', 'lkp_referralst', 1341000, 'CATSReferralStatus', 'referralStatus')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_goalplanning', 'lkp_goalplann2', 1231041, 'GoalPlanning', 'goalPlanningOutcome')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_propertycheckl', 'lkp_movementty', 1001077, 'PropertyChecklist', 'movementType')
 go
@@ -1316,19 +1764,29 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_chartrequested', 'lkp_requestedb', 1021145, 'ChartRequested', 'requestedbyReception')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patient', 'lkp_dodsource', 1021211, 'Patient', 'dodSource')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pthw_pathwaysrttclo', 'lkp_source', 1321017, 'PathwaysRTTClockImpact', 'source')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientdiagnos', 'lkp_status', 1021159, 'PatientDiagnosisStatus', 'status')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_gaittreatment', 'lkp_gaittechni', 1051075, 'GaitTreatment', 'gaitTechnique')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_locall', 'lkp_medicalins', 1021145, 'LoCall', 'medicalInsurance')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_surgicalauditp', 'lkp_actiontake', 1231126, 'SurgicalAuditPreOpChecks', 'actionTaken')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsadvancedse2', 'lkp_nhsnumbert', 624, 'PDSAdvancedSearchResult', 'nHSNumberType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_circulatorscru', 'lkp_circulator', 1231152, 'CirculatorScrubNurseRole', 'circulatorScrubNurseRole')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_urinalysis', 'lkp_ph', 1021057, 'Urinalysis', 'pH')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_allertypereact', 'lkp_allergenty', 1021028, 'AllergenTypeReaction', 'allergenType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_powerchairskil', 'lkp_powerchair', 1051065, 'PowerchairSkillsAssessment', 'powerchairSkill')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_appt_tracking', 'lkp_trackingst', 1141023, 'Appt_Tracking_Status_History', 'trackingStatus')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_teletherapydet', 'lkp_generalana', 1021145, 'TeletherapyDetails', 'generalAnaesthetic')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_neuroreflexesa', 'lkp_analtestfi', 1051107, 'NeuroReflexesAnalTests', 'analTestfinding')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsbackoffices', 'lkp_status', 1021341, 'PDSBackOfficeStatus', 'status')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_anaestheticsig', 'lkp_laanaesthe', 1231149, 'AnaestheticSignIn', 'lAAnaestheticBlockType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_brachytxtreatm', 'lkp_c_ty', 1251069, 'BrachyTxTreatmentDetails', 'type')
 go
@@ -1336,7 +1794,7 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_appointmentcli', 'lkp_clinicaln2', 1341035, 'AppointmentClinicalNotes', 'clinicalNoteType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_medicationdeta', 'lkp_isdiscont4', 1021037, 'PatientMedication', 'isDiscontinuedReason')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_skinassfind', 'lkp_odour', 1001033, 'SkinAssessmentFindings', 'odour')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_pathologydetai', 'lkp_status', 1251082, 'PathologyDetails', 'status')
 go
@@ -1346,23 +1804,39 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_pattreatmentpl', 'lkp_activestat', 1021145, 'PatTreatmentPlanGroupSiteTech', 'activeStatus')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_dischargedepis', 'lkp_dereferred', 1141003, 'DischargedEpisode', 'dereferredReason')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_nurbladdercomp', 'lkp_aidsused', 1001062, 'NurBladderComponent', 'aidsUsed')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_clinicaloutcom', 'lkp_category', 1231117, 'ClinicalOutcomeCategoryProcedureRequiredConfig', 'category')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_specimencollec', 'lkp_listtype', 1161020, 'SpecimenCollectionStatus', 'listType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_dischargedetai', 'lkp_discharges', 1231104, 'DischargeDetails', 'dischargeSupplementaryLetterStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_commsplg', 'lkp_spokenlang', 532, 'CommunicationSpeechAndLanguage', 'spokenLanguage')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_demographicsmq', 'lkp_queuetype', 1021259, 'DemographicsMessageQueue', 'queueType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_elactionsheet', 'lkp_agent', 1451003, 'ElectronicActionSheet', 'agent')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientcontact', 'lkp_pdsconsent', 1021343, 'PatientContactPreference', 'pdsConsent')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_manchestertria', 'lkp_activestat', 1021124, 'ManchesterTriageProtocolConfiguration', 'activeStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_brthcough', 'lkp_anycough', 1021014, 'BreathingCough', 'anyCough')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_painassfind', 'lkp_depth', 1001026, 'PainAssessmentFindings', 'depth')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_alertsdetails', 'lkp_sourceofin', 1021033, 'PatientAlert', 'sourceofInformation')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_irrigantdetail', 'lkp_warmed', 1021145, 'IrrigantDetailIntraOp', 'warmed')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_patientwaitin4', 'lkp_admissiont', 1341056, 'PatientElectiveList', 'admissionType')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_roomdetails', 'lkp_unitofmeas', 1051178, 'RoomDetails', 'unitOfMeasure')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_dischargesumma', 'lkp_discharget', 1341003, 'DischargeSummaryPacuAndWard', 'dischargeType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientcasecom', 'lkp_notetype', 1021369, 'PatientCaseNoteComment', 'noteType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pthw_adminevent', 'lkp_outcomerea', 1321020, 'AdminEvent', 'outcomeReason')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_diathermydetai', 'lkp_diathermym', 1231161, 'DiathermyDetailIntraOp', 'diathermyMode')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_urinalysis', 'lkp_ketones', 1021062, 'Urinalysis', 'ketones')
 go
@@ -1370,13 +1844,15 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vitalsignitemf', 'lkp_frequency', 1021176, 'VitalSignItemFrequency', 'frequency')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_chargedescmess', 'lkp_queuetype', 1021259, 'ChargeDescMessQueue', 'queueType')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_datasettype', 'lkp_unitofmeas', 1161036, 'DatasetType', 'unitOfMeasure')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_actvlevl', 'lkp_ability', 1211020, 'ActivityLevel', 'ability')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_diagnosishotli', 'lkp_specialty', 621, 'DiagnosisHotlist', 'specialty')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patientabsentd', 'lkp_sourceofin', 1021033, 'PatientAbsentDiagnosis', 'sourceofInformation')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_plinthworkanal', 'lkp_balanceana', 1121007, 'PlinthWorkAnalysis', 'balanceAnalysis')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_skinassfind', 'lkp_pain', 1001034, 'SkinAssessmentFindings', 'pain')
 go
@@ -1384,7 +1860,9 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_appnavform', 'lkp_accessforr', 1031000, 'AppNavForm', 'accessForRip')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_racpexamfindin', 'lkp_auscultat2', 1021247, 'RACPExamFindings', 'auscultationFinding')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientcontact', 'lkp_pdsprefer3', 1021381, 'PatientContactPreference', 'pdsPreferredContactMethod')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pendingtransfe', 'lkp_patientsta', 1021112, 'PendingTransfers', 'patientStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_chemotherapyde', 'lkp_treatmentr', 1251028, 'ChemotherapyDetails', 'treatmentResponse')
 go
@@ -1394,9 +1872,11 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_bowelctp', 'lkp_stainingof', 1021014, 'BowelConstipation', 'stainingOfFaeces')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_sch_session', 'lkp_slottype', 1141024, 'Sch_Session', 'slotType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_sleepaids', 'lkp_patienttak', 1021014, 'SleepingAids', 'patientTakeMedicationToSleep')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_injurydetails', 'lkp_modeofinju', 1051098, 'InjuryDetails', 'modeOfInjury')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_mosmessagequeu', 'lkp_messagesta', 1161039, 'MOSMessageQueue', 'messageStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_medication', 'lkp_adminroute', 1021035, 'PatientMedicationDose', 'adminRoute')
 go
@@ -1408,9 +1888,19 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_investigation', 'lkp_eventtype', 1161056, 'Investigation', 'eventType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_complementary2', 'lkp_complement', 1051001, 'ComplementaryTherapyDetails', 'complementaryTherapy')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_intraoperativd', 'lkp_specimende', 1021330, 'IntraOperativeDetails', 'specimenDestination')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_location', 'lkp_c_ty', 1021069, 'Location', 'type')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_protocol', 'lkp_imrtlist', 1451008, 'Protocol', 'iMRTList')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_locall', 'lkp_insurancet', 1101048, 'LoCall', 'insuranceType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyatte2', 'lkp_invoiceamo', 1291072, 'EmergencyAttendanceBilling', 'invoiceAmount')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_primarytumour', 'lkp_primarytum', 1451001, 'PrimaryTumour', 'primaryTumour')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_patientwhiteb4', 'lkp_actionstat', 1291070, 'PatientWhiteboardActions', 'actionStatus')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsapptletterr', 'lkp_lettertype', 1021387, 'PDSApptLetterRun', 'letterType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_bedspace', 'lkp_bedspacety', 1021235, 'BedSpace', 'bedSpaceType')
 go
@@ -1428,25 +1918,31 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_futureplanfoll', 'lkp_hospitalfo', 1021145, 'FuturePlanFollowUp', 'hospitalFollowUp')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('icps_icp', 'lkp_specialty', 621, 'ICP', 'specialty')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_outlier', 'lkp_extraleng2', 1101037, 'Outlier', 'extraLengthOfStayUnit')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_intrefsettings', 'lkp_newconditi', 1231140, 'InternalReferralSettings', 'newConditionReferralBackToGP')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_areaofneedsno2', 'lkp_areaofneed', 1021164, 'AreaofNeedsNotingDetail', 'areaofNeed')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_edattendanceme', 'lkp_messagesta', 1161039, 'EdAttendanceMessageQueue', 'messageStatus')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_prof', 'lkp_theatretyp', 1141022, 'Sch_Profile', 'theatreType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_commvisn', 'lkp_wearglasse', 1021014, 'CommunicationVision', 'wearGlasses')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('naes_actionplantemp', 'lkp_activestat', 1021124, 'ActionPlanTemplate', 'activeStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_intraoperativd', 'lkp_patientpos', 1021075, 'IntraOperativeDetails', 'patientPosition')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_neuinterpret', 'lkp_asiagrade', 1051148, 'NeuInterpret', 'asiaGrade')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_stagingcodeexp', 'lkp_codingstat', 1021321, 'StagingCodeExport', 'codingStatus')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patient', 'lkp_maritalsta', 766, 'Patient', 'maritalStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pthw_targetreadjust', 'lkp_targetread', 1321013, 'TargetReadjustment', 'targetReadjustment')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_surgicalauditr', 'lkp_confirmpat', 1021145, 'SurgicalAuditRecovery', 'confirmPatientArrival')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_peripheralrefl', 'lkp_peripheral', 1051130, 'NeuroReflexesPeripheralFindings', 'peripheralReflex')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_illicitdrugs', 'lkp_useanyothe', 1021014, 'IllicitDrugs', 'useAnyOtherDrugs')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_patientturns', 'lkp_position', 1021075, 'PatientTurns', 'position')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vteriskassessm', 'lkp_reducedmob', 1021145, 'VTERiskAssessment', 'reducedMobility')
 go
@@ -1454,11 +1950,11 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_mskjbmovements', 'lkp_movefindin', 1051129, 'MskJointMovement', 'moveFinding')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyepiso', 'lkp_school', 1291012, 'EmergencyEpisode', 'school')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_prof', 'lkp_listtype', 1141028, 'Sch_Profile', 'listType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_chemoregimensc', 'lkp_deliveryco', 1251099, 'ChemoRegimensConfig', 'deliveryCodeAllOtherDays')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('corr_noletterisrequ', 'lkp_specialtie', 621, 'NoLetterIsRequired', 'specialties')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_radiotherapy', 'lkp_treatingho', 1251096, 'RadiotherapyDetails', 'treatingHospital')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pthw_patientevent', 'lkp_specialty', 621, 'PatientEvent', 'specialty')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_catsreferral', 'lkp_isfinalrep', 1341017, 'CatsReferral', 'isFinalReportRequired')
 go
@@ -1466,7 +1962,7 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_tcioutcomeforp', 'lkp_outcome', 1341045, 'TCIOutcomeForPatientElectiveList', 'outcome')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_orderinvappt', 'lkp_status', 1021241, 'OrderInvAppt', 'status')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdspatientupda', 'lkp_nokrelatio', 1021367, 'PDSPatientUpdate', 'nokRelationshipUpdateMode')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_electrotherap7', 'lkp_wave', 1051041, 'ElectrotherapyUltrasoundTreatment', 'wave')
 go
@@ -1480,8 +1976,6 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_orderentrytemp', 'lkp_activestat', 1021124, 'OrderEntryTemplate', 'activeStatus')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_peripheralrefl', 'lkp_peripheral', 1051130, 'NeuroReflexesPeripheralFindings', 'peripheralReflex')
-go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_resultcomponen', 'lkp_resvaltype', 1161032, 'ResultComponent', 'resValType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('asse_graphicassess3', 'lkp_activestat', 1021124, 'GraphicAssessmentFindingQuestion', 'activeStatus')
@@ -1490,11 +1984,15 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vteriskassessm', 'lkp_acutestrok', 1021145, 'VTERiskAssessment', 'acuteStroke')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_trackingarea', 'lkp_status', 1021124, 'TrackingArea', 'status')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_inpatientepiso', 'lkp_updatetype', 1021391, 'InpatientEpisodeQueue', 'updateType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_chartrequested', 'lkp_reasonnotr', 1031028, 'ChartRequested', 'reasonnotrequested')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pci_clientbirthdet', 'lkp_placeofbir', 1331000, 'ClientBirthDetails', 'placeOfBirth')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pas_event', 'lkp_passpecial', 1021269, 'PASEvent', 'pASSpecialty')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_patientwaitin4', 'lkp_admittedi2', 1341055, 'PatientElectiveList', 'admittedInUnitOfTime')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patient', 'lkp_schoolorco', 1291012, 'Patient', 'schoolOrCollege')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_commcaredet', 'lkp_userdefine', 1331005, 'CommunityCareDetail', 'userDefinedField1')
 go
@@ -1506,33 +2004,47 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_temperature', 'lkp_recordings', 1021050, 'Temperature', 'recordingSite')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_erectdysfxtrea', 'lkp_treatment', 1051095, 'OPDErectDysfxTreatments', 'treatment')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_futureplan', 'lkp_hospitalfo', 1021145, 'FuturePlan', 'hospitalFollowUp')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_protocol', 'lkp_petctdefau', 1021145, 'Protocol', 'petCTDefault')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_protocol', 'lkp_simulation', 1021145, 'Protocol', 'simulationDefault')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_clinicalnotesa', 'lkp_notingmeth', 1231040, 'ClinicalNotesAdditional', 'notingMethod')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_reopenoutofhou', 'lkp_reopenreas', 1021353, 'ReopenOutOfHours', 'reopenReason')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_ventilationch2', 'lkp_position', 1021075, 'VentilationChart', 'position')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_drawingimage2', 'lkp_imagestatu', 1021113, 'DrawingImage', 'imageStatus')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_profileparentc', 'lkp_priority', 1141009, 'ProfileParentChildSlot', 'priority')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_illicitdrugs', 'lkp_drugsusedi', 1021014, 'IllicitDrugs', 'drugsUsedInThePastMonth')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_clinicaloutcom', 'lkp_category', 1231117, 'ClinicalOutcomeConfig', 'category')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_wardbayconfig', 'lkp_wardstatus', 1021350, 'WardBayConfig', 'wardStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_futureplan', 'lkp_fittoretur', 1021145, 'FuturePlan', 'fitToReturnToWork')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_statusworkflow', 'lkp_workflowst', 1291019, 'StatusWorkflowConfig', 'workflowStatus')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_futureapptst', 'lkp_removalrea', 1141033, 'FutureAppointmentStatus', 'removalReason')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_opderectdysfxn', 'lkp_actualleaf', 1021006, 'OPDErectDysfxn', 'actualLeafletsGiven')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_nurbowelcompon', 'lkp_usualbowel', 1001056, 'NurBowelComponent', 'usualBowelPattern')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patprocedure', 'lkp_procedurei', 1021046, 'PatientProcedure', 'procedureIntent')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdspatientupda', 'lkp_languageco', 1021367, 'PDSPatientUpdate', 'languageCodeUpdateMode')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_floorlayout', 'lkp_status', 1021124, 'FloorLayout', 'status')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_sess_slot', 'lkp_priority', 1141009, 'Session_Slot', 'priority')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_booking_appoin', 'lkp_arrivalsta', 1141011, 'Booking_Appointment', 'arrivalStatus')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_sch_session', 'lkp_listtype', 1141028, 'Sch_Session', 'listType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_adaptations', 'lkp_itemtype', 1051094, 'Adaptations', 'itemType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patprocedure', 'lkp_procedureo', 1231034, 'PatientProcedure', 'procedureOutcome')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_surgerydetails', 'lkp_proceduret', 1021199, 'SurgeryDetails', 'procedureType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patienthomesit', 'lkp_toiletloca', 1231056, 'PatientHomeSituation', 'toiletLocation')
 go
@@ -1540,9 +2052,11 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_adaptations', 'lkp_supplier', 1021083, 'Adaptations', 'supplier')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_services', 'lkp_servicecat', 1021022, 'Service', 'serviceCategory')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_handovercounti', 'lkp_countstatu', 1231169, 'HandoverCountIntraOp', 'countStatus')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_edadmission', 'lkp_allocatedb', 1291053, 'EDPartialAdmission', 'allocatedBedType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_skincomp', 'lkp_frequencyo', 1001019, 'SkinComponent', 'frequencyOfTurns')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_summary', 'lkp_discharges', 1231104, 'Summary', 'dischargeSupplementaryLetterStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pendingtransfe', 'lkp_wardtype', 1021228, 'PendingTransfers', 'wardType')
 go
@@ -1551,6 +2065,10 @@ go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_pathologydetai', 'lkp_excisionma', 1251041, 'PathologyDetails', 'excisionMargin')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyatten', 'lkp_emergencyd', 1291008, 'EmergencyAttendance', 'emergencyDeptType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pthw_rttstatus', 'lkp_rttstatusu', 1321022, 'PathwayRTTStatus', 'rTTStatusUpdateReason')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patprocedure', 'lkp_procedureu', 1021161, 'PatientProcedure', 'procedureUrgency')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_handjaymar', 'lkp_jaymarleve', 1121000, 'HandJaymar', 'jaymarLevel')
 go
@@ -1562,15 +2080,27 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vitalsigns', 'lkp_urine2mlkg', 1021205, 'VitalSigns', 'urine2mlkgkhr')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_attenddiaginvt', 'lkp_treatment2', 1291064, 'AttendDiagInvTreatStatus', 'treatmentReason')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('asse_userassessment', 'lkp_copylastfr', 1271005, 'UserAssessment', 'copyLastFromContext')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_electrothpneum', 'lkp_cycle', 2624, 'ElectrotherapyPneumaticTreatment', 'cycle')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_protocol', 'lkp_conssessde', 1021145, 'Protocol', 'consSessDefault')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_radiotherapysc', 'lkp_msgtype', 1021260, 'RadioTherapySchedQueue', 'msgType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_elactionsheet', 'lkp_planconsse', 1021145, 'ElectronicActionSheet', 'planConsSession')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_dischargeservi', 'lkp_transporta', 1141010, 'DischargeServicesAndAdvice', 'transportArrangedType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_suspensiondeta', 'lkp_suspension', 1341044, 'SuspensionDetailsForPatientElectiveList', 'suspensionReason')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyatte2', 'lkp_paymenttyp', 1331010, 'EmergencyAttendanceBilling', 'paymentType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_dementiafind', 'lkp_camsdisorg', 1021145, 'DementiaFind', 'cAMSDisorganisedThinking')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_elactionsheet', 'lkp_simulation', 1021145, 'ElectronicActionSheet', 'simulationRequired')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_frameexercises', 'lkp_framesuppo', 1121012, 'FrameExerciseSupport', 'frameSupportExercise')
 go
@@ -1578,13 +2108,17 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_commsplu', 'lkp_speechandl', 1011033, 'CommunicationSpeechAndLanguageUnderstanding', 'speechAndLanguageUnderstanding')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyepiso', 'lkp_elapsedper', 1291004, 'EmergencyEpisode', 'elapsedPeriod')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_communicationp', 'lkp_problemswi', 1001046, 'CommunicationProblems', 'problemsWith')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_radiotherapy', 'lkp_performanc', 2936, 'RadiotherapyDetails', 'performanceStatusAtDDT')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_dischargedetai', 'lkp_dischargi3', 621, 'DischargeDetails', 'dischargingSpecialty')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vteriskassessm', 'lkp_dehydratio', 1021145, 'VTERiskAssessment', 'dehydration')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_interventiont2', 'lkp_interventi', 1021145, 'InterventionTreatmentDetail', 'interventionTreatmentComplete')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pci_scheduleconfig', 'lkp_schedulety', 1331014, 'ScheduleConfiguration', 'scheduleType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_mdtnotes', 'lkp_area', 1231033, 'MDTNotes', 'area')
 go
@@ -1594,19 +2128,37 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_activity', 'lkp_activityty', 1021125, 'Activity', 'activityType')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_booking_appoin', 'lkp_reasonforb', 1021309, 'Booking_Appointment', 'reasonForBreachingFirstApptKPI')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_mskjbmovements', 'lkp_qualitativ', 1051174, 'MskJointMovement', 'qualitativeRange')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_location', 'lkp_c_ty', 1021069, 'Location', 'type')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientcasenot', 'lkp_folder', 1021317, 'PatientCaseNote', 'folder')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyatten', 'lkp_depttype', 1291008, 'EmergencyAttendance', 'deptType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_prof_slot', 'lkp_directacce', 1141014, 'Profile_Slot', 'directAccessSlot')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_prof', 'lkp_consmediat', 1141025, 'Sch_Profile', 'consMediaType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_sess_slot', 'lkp_cancelbloc', 1141003, 'Session_Slot', 'cancelBlockReason')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_medicationdeta', 'lkp_frequency', 1021038, 'PatientMedication', 'frequency')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_opdfertilitycl', 'lkp_infxnscree', 1051120, 'OPDFertClinic', 'infxnScreening')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_codingcomment', 'lkp_codingtype', 1231147, 'CodingComment', 'codingType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_peripheralrefl', 'lkp_leftfindin', 1051130, 'NeuroReflexesPeripheralFindings', 'leftFinding')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pendingelectiv', 'lkp_tcitype', 1021237, 'PendingElectiveAdmission', 'tCIType')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_servicediagnos', 'lkp_diagnostic', 1031033, 'ServiceDiagnostics', 'diagnostics')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_futureplanfoll', 'lkp_followupty', 1021258, 'FuturePlanFollowUp', 'followUpType')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('asse_userassessment', 'lkp_assessmen3', 621, 'UserAssessment', 'assessmentSpecialties')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_emotasses', 'lkp_c_sele', 1021014, 'EmotionalStateAssessment', 'select')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_drains', 'lkp_sutured', 1021145, 'Drains', 'sutured')
 go
@@ -1614,13 +2166,19 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_secslookupscor', 'lkp_lookupinst', , 'SECSLookupScore', 'lookupInstance')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vteriskassessm', 'lkp_significan', 1021145, 'VTERiskAssessment', 'significantMorbidities')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_theatrebooking', 'lkp_anaestheti', 1231108, 'TheatreBooking', 'anaestheticType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_questioninform', 'lkp_classifica', 1021119, 'QuestionInformation', 'classification')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pci_clientbirthdet', 'lkp_breastfeed', 1021014, 'ClientBirthDetails', 'breastFeeding')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pthw_rttevent', 'lkp_action', 1321003, 'RTTEvent', 'action')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('corr_cspdetailstath', 'lkp_status', 1021127, 'CorrespondenceStatusHistory', 'status')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_tciforpatiente', 'lkp__28reasond', 1341066, 'TCIForPatientElectiveList', '_28ReasonDeclined')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_baytimesadmiss', 'lkp_reasonfora', 1021294, 'BayTimesAdmissionBreach', 'reasonForAdmissionOutOfOpeningHours')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_chemocycledeta', 'lkp_regimen', 1251027, 'ChemoCycleDetailsCCO', 'regimen')
 go
@@ -1628,25 +2186,41 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_drgrcomp', 'lkp_assistance', 1021014, 'DressingandGroomingComponent', 'assistanceWithDressingAndGrooming')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_chemoregimensc', 'lkp_procuremen', 1251097, 'ChemoRegimensConfig', 'procurementCode')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_episodeofcares', 'lkp_status', 1021276, 'EpisodeOfCareStatusHistory', 'status')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('icps_icp', 'lkp_specialty', 621, 'ICP', 'specialty')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_chemodosagedet', 'lkp_provideror', 1251106, 'ChemoDosageDetails', 'providerOrganisation')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_goalplanning', 'lkp_goalplann2', 1231041, 'GoalPlanning', 'goalPlanningOutcome')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_boweldhr', 'lkp_consistenc', 1011015, 'BowelDiarrhoea', 'consistency')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('naes_naesreferral', 'lkp_secondarys', 1021014, 'NAESReferral', 'secondarySurgery')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_dischargedetai', 'lkp_dischargem', 1021190, 'DischargeDetails', 'dischargeMethod')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_infectcontrdet', 'lkp_infectionc', 1011009, 'InfectionControlDetails', 'infectionControlType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_protocol', 'lkp_oralcontr3', 1451006, 'Protocol', 'oralContrastDefault')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patientpmhche3', 'lkp_sourceofin', 1021033, 'PatientPMHChecklistProcedure', 'sourceofInformation')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_pataction', 'lkp_transport', 3202, 'PatAction', 'transport')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_futureappointm', 'lkp_recurring', 1341069, 'FutureAppointmentDetails', 'recurring')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_customlist', 'lkp_specialty', 621, 'CustomList', 'specialty')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_referralletter', 'lkp_transportr', 1021145, 'ReferralLetterDetails', 'transportRequired')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_protocol', 'lkp_ivcontras3', 1451005, 'Protocol', 'iVContrastDefault')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_intraoperativd', 'lkp_chartableo', 1021335, 'IntraOperativeDetails', 'chartableOccurrenceType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_injurydetails', 'lkp_causeofinj', 1051099, 'InjuryDetails', 'causeOfInjury')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_sch_session', 'lkp_theatretyp', 1141022, 'Sch_Session', 'theatreType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_sch_session', 'lkp_sessionpro', 1141030, 'Sch_Session', 'sessionProfileType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_dementiaassess', 'lkp_q7yearww2e', 1021145, 'DementiaAssessAndInvestigate', 'q7YearWW2Ended')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_clinicaltrials', 'lkp_externalpr', 1021145, 'ClinicalTrials', 'externalProcedure')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_nureatingcompo', 'lkp_difficulti', 1021014, 'NurEatingComponent', 'difficultiesInSwallowing')
 go
@@ -1656,45 +2230,63 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_orderentrytemp', 'lkp_templateca', 1161021, 'OrderEntryTemplate', 'templateCategory')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_hcplocation', 'lkp_casetypes', 1101008, 'HcpLocation', 'caseTypes')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_medonadmisover', 'lkp_c_ty', 1231027, 'MedicationOverview', 'type')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('icps_icpaction', 'lkp_c_discipli', 1021048, 'ICPAction', 'discipline')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patdiagnosis', 'lkp_sourceofin', 1021033, 'PatientDiagnosis', 'sourceofInformation')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_hcplocsvc', 'lkp_c_functi', 1021097, 'HcpLocationService', 'function')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pendingelectiv', 'lkp_admissions', 1021227, 'PendingElectiveAdmission', 'admissionSource')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_presentingcoho', 'lkp_specialty', 621, 'PresentingComplaintHotlist', 'specialty')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_medication2', 'lkp_frequencyd', 1021038, 'Medication', 'frequencyDefault')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_procedure', 'lkp_endoscopyt', 1021338, 'Procedure', 'endoscopyType')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patienthomesit', 'lkp_rails', 1231053, 'PatientHomeSituation', 'rails')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_mskgroups', 'lkp_jointgener', 1051137, 'MskGroups', 'jointGeneralFindings')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_rehabilitation', 'lkp_purpose', 1080, 'RehabilitationActivity', 'purpose')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_dementiaassess', 'lkp_q6recognis', 1021145, 'DementiaAssessAndInvestigate', 'q6RecognisePeople')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_preassessoutc', 'lkp_anaestheti', 1231108, 'PreAssessmentOutcome', 'anaestheticType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pthw_patientjourne2', 'lkp_commentlev', 1321016, 'PatientJourneyComment', 'commentLevel')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_teletherapydet', 'lkp_anaestheti', 1251019, 'TeletherapyDetails', 'anaestheticReq')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_patienttumourr', 'lkp_recurrenc2', 1251086, 'PatientTumourRecurrence', 'recurrenceSite')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_orderchangeres', 'lkp_queuetype', 1021259, 'OrderChangeResponseQueue', 'queueType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_chemotherapyde', 'lkp_outcometim', 1021145, 'ChemotherapyDetails', 'outcomeTimeDelay')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('corr_categorynote', 'lkp_category', 1111001, 'CategoryNotes', 'category')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_cancermdtmeeti', 'lkp_comorbidit', 1251044, 'CancerMDTMeeting', 'coMorbidityAssessment')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_commhear', 'lkp_hearingai2', 1021014, 'CommunicationHearing', 'hearingAidWithPatientOnAdmission')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyatten', 'lkp_modeofarri', 1291009, 'EmergencyAttendance', 'modeOfArrival')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_commmob', 'lkp_chairtype', 1001017, 'MobilityComponent', 'chairType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_eatcomp', 'lkp_difficulti', 1021014, 'EatingComponent', 'difficultiesWithSwallowing')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_attendancekpic', 'lkp_losbreach6', 1021145, 'AttendanceKPIConfig', 'losBreachedKPIFlashingText')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_procedureconte', 'lkp_context', 1021098, 'ActivityContextPricingDetails', 'context')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_leiscomp', 'lkp_alcoholsoc', 1021014, 'LeisureComponent', 'alcoholSocially')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pacsconfigurti', 'lkp_secondaryi', 624, 'PACSConfiguration', 'secondaryIdentifier')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_electrothpneum', 'lkp_splints', 2623, 'ElectrotherapyPneumaticTreatment', 'splints')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_statusworkflow', 'lkp_departureo', 1291014, 'StatusWorkflowConfig', 'departureOutcomeDefault')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsbackofficei', 'lkp_c_ty', 1021340, 'PDSBackOfficeItem', 'type')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_onwardreferrtr', 'lkp_agreewithd', 1021145, 'OnwardReferralFromTriage', 'agreeWithDecision')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_medicationrout', 'lkp_route', 1021035, 'MedicationRoute', 'route')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_protocol', 'lkp_immobtypel', 1451009, 'Protocol', 'immobTypeList')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_prof', 'lkp_prfcategor', 1141001, 'Sch_Profile', 'prfCategory')
 go
@@ -1716,6 +2308,10 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_medication', 'lkp_durationun', 1021078, 'PatientMedicationDose', 'durationUnits')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pendingnoedeme', 'lkp_category', 1021112, 'PendingNoEDEmergencyAdmit', 'category')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_chemotherapyde', 'lkp_drugtherap', 1251026, 'ChemotherapyDetails', 'drugTherapyType')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_catsreferral', 'lkp_discharget', 1341026, 'CatsReferral', 'dischargeToGPDetailsReviewStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patienttarget', 'lkp_loa', 1231011, 'PatientGoalTarget', 'lOA')
@@ -1724,7 +2320,15 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('icps_icpstages', 'lkp_status', 1021124, 'ICPStage', 'status')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_outcomeaccepte', 'lkp_actionrequ', 1341060, 'OutcomeAcceptedDetails', 'actionRequired')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_protocol', 'lkp_gatingopts', 1451000, 'Protocol', 'gatingOptsRequired')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pers_relative', 'lkp_c_ro', 1021372, 'Relative', 'role')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_datasettype', 'lkp_category', 1021173, 'DatasetType', 'category')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('icps_icpaction', 'lkp_linkedtype', 1021114, 'ICPAction', 'linkedType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_intraoperative', 'lkp_admissiont', 1021231, 'IntraOperativeCareRecord', 'admissionType')
 go
@@ -1732,25 +2336,39 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_tabledevice', 'lkp_tabledevic', 1231101, 'TableDevice', 'tableDevice')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_handovercounti', 'lkp_incorrectc', 1231174, 'HandoverCountIntraOp', 'incorrectCountStatus')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_ttamedicationd', 'lkp_route', 1021035, 'TTAMedicationDetail', 'route')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_intraoperativd', 'lkp_missingite', 1021333, 'IntraOperativeDetails', 'missingItems')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_patientwaitin4', 'lkp_patientrec', 1021014, 'PatientElectiveList', 'patientReceivingAnticoagulantTherapy')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_patientwaitin4', 'lkp_proclatera', 1021032, 'PatientElectiveList', 'procLaterality')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_internalreferr', 'lkp_status', 1021124, 'InternalReferral', 'status')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_investigation', 'lkp_turnaround', 1161007, 'Investigation', 'turnaroundMeasure')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientcontact', 'lkp_preferredc', 1021305, 'PatientContactPreference', 'preferredContactTimes')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_surgicalaudtn', 'lkp_operationt', 1021161, 'SurgicalAuditPreOpChecksTheatreNurse', 'operationType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_plasticsurgery', 'lkp_anaestheti', 1231108, 'PlasticSurgeryAndBurns', 'anaestheticType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_edattendenceco', 'lkp_controltyp', 1031027, 'EDAttendenceControlsConfig', 'controlType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_boweldhr', 'lkp_odour', 1011016, 'BowelDiarrhoea', 'odour')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_skinassrev', 'lkp_exudateamo', 1001031, 'SkinAssessmentReview', 'exudateAmount')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_mobilitycompon', 'lkp_mobilityst', 1001050, 'NurMobilityComponent', 'mobilityStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_sleepcomp', 'lkp_patienthav', 1021014, 'SleepingComponent', 'patientHaveDifficultyInSleeping')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_tcioutcomeforp', 'lkp_cancellati', 1141003, 'TCIOutcomeForPatientElectiveList', 'cancellationReason')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_referralletter', 'lkp_interprete', 1021145, 'ReferralLetterDetails', 'interpreterRequired')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_skincomp', 'lkp_chairtype', 1001017, 'SkinComponent', 'chairType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_equipment', 'lkp_fundedby', 1021086, 'Equipment', 'fundedBy')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('asse_patientassessi', 'lkp_status', 1021163, 'PatientAssessment', 'status')
 go
@@ -1758,13 +2376,17 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_clinicalnoteno', 'lkp_status', 1021143, 'ClinicalNoteNoteStatus', 'status')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_locationdepart', 'lkp_department', 1291036, 'LocationDepartmentTypes', 'departmentTypes')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_plinthworktrea', 'lkp_treatment', 1121009, 'PlinthWorkTreatment', 'treatment')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_radiotherapy', 'lkp_diseasetre', 1251101, 'RadiotherapyDetails', 'diseaseTreatment')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_servicetriagea', 'lkp_changecabo', 1021336, 'ServiceTriageAction', 'changeCABOPA')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_allergyreactio', 'lkp_reaction', 1021026, 'PatientAllergyReaction', 'reaction')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_deeptissuemass', 'lkp_dfmassages', 2346, 'DeepFrictionMassage', 'dFMassageStructure')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_booking_appoin', 'lkp_day28breac', 1141029, 'Booking_Appointment', 'day28BreachReason')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_alertsdetails', 'lkp_alerttype', 1021024, 'PatientAlert', 'alertType')
 go
@@ -1778,9 +2400,9 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_admissioncheck', 'lkp_checklisti', 1001074, 'AdmissionChecklist', 'checklistItem')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pendingelectiv', 'lkp_wardtype', 1021228, 'PendingElectiveAdmission', 'wardType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_primarytumour', 'lkp_agents', 1451003, 'PrimaryTumour', 'agents')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_rehabilitation', 'lkp_purpose', 1080, 'RehabilitationActivity', 'purpose')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pendingelectiv', 'lkp_wardtype', 1021228, 'PendingElectiveAdmission', 'wardType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_racpreferral', 'lkp_referralre', 1021194, 'RACPReferral', 'referralReason')
 go
@@ -1792,33 +2414,53 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('asse_patientassessi', 'lkp_dpptype', 1271003, 'PatientAssessment', 'dPPType')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_referralletter', 'lkp_transportr', 1021145, 'ReferralLetterDetails', 'transportRequired')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyatten', 'lkp_requiressi', 1291071, 'EmergencyAttendance', 'requiresSignOff')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_wheelchairref', 'lkp_chairtype', 1051140, 'WheelchairReferral', 'chairType')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_flubaldetails', 'lkp_c_ty', 1021077, 'FluidsBalanceDetails', 'type')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_intraoperativd', 'lkp_laserpatie', 1021328, 'IntraOperativeDetails', 'laserPatientSafetyMeasures')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_bladcont', 'lkp_day', 1001001, 'BladderContinence', 'day')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_fitforsurgerya', 'lkp_notfitreas', 1231088, 'FitForSurgeryAssesment', 'notFitReason')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_ventilationtra', 'lkp_breathsspo', 1021014, 'VentilationTracheostomy', 'breathsSpontaneously')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_telecomusagety', 'lkp_defaultcha', 1021149, 'TelecomUsageType', 'defaultChannelType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_orderinvestiga', 'lkp_displayfla', 1161040, 'OrderInvestigation', 'displayFlag')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_orderchangeres', 'lkp_causingsta', 1161027, 'OrderChangeResponseQueue', 'causingStatus')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('icps_icp', 'lkp_status', 1021124, 'ICP', 'status')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_ward_stay', 'lkp_reasonadmi', 1021294, 'WardStay', 'reasonAdmittingOutsideHours')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_containertypes', 'lkp_volumeunit', 1161009, 'PathSpecimenContainer', 'volumeUnits')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_toolpmdt', 'lkp_mechanical', 1011093, 'PatientMovementHandlingDetails', 'mechanicalEquipment')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_skinassrev', 'lkp_woundbed', 1001029, 'SkinAssessmentReview', 'woundBed')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pci_clientbirthdet', 'lkp_breastfee2', 1331003, 'ClientBirthDetails', 'breastFeedingAtDischarge')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_tiig', 'lkp_assaultloc', 1291026, 'TIIG', 'assaultLocation')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_socialhistory', 'lkp_occupatio3', 1021157, 'SocialHistory', 'occupationStatus')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_laserdetailint', 'lkp_patientsaf', 1021328, 'LaserDetailIntraOp', 'patientSafetyMeasures')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_painassfind', 'lkp_progressio', 1001025, 'PainAssessmentFindings', 'progression')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_skincomp', 'lkp_bedtype', 1001016, 'SkinComponent', 'bedType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_alertpidbarcon', 'lkp_alertcate3', 1021024, 'AlertPIDBarConfig', 'alertCategoryPosition3')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_mskexamjointbd', 'lkp_generalfi2', 1051137, 'MSkExamJointBonesDetail', 'generalFindingsJoint')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_prof', 'lkp_c_functi', 1021097, 'Sch_Profile', 'function')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_cancercareplan', 'lkp_recurrence', 1251073, 'CancerCarePlan', 'recurrenceIndicator')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyatten', 'lkp_depttype', 1291008, 'EmergencyAttendance', 'deptType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_futureappointm', 'lkp_requesttos', 1141036, 'FutureAppointmentDetails', 'requestToSchedule')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_medic', 'lkp_medictype', 1021048, 'Medic', 'medicType')
 go
@@ -1832,13 +2474,17 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_sleepfindings', 'lkp_finding', 1051167, 'SleepFindings', 'finding')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_pataction', 'lkp_priority', 3201, 'PatAction', 'priority')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_waitingtimesad', 'lkp_delayreasr', 1251056, 'WaitingTimesAdjustmentsandReasons', 'delayReasReferralTreat')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_socialhistory', 'lkp_smokingsta', 1021007, 'SocialHistory', 'smokingStatus')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_medic', 'lkp_specialty', 621, 'Medic', 'specialty')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_dischargedetai', 'lkp_discharged', 1011097, 'DischargeDetails', 'dischargeDestination')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_providersystem', 'lkp_codesystem', 1021047, 'ProviderSystem', 'codeSystem')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdspatientupda', 'lkp_callcentre', 1021367, 'PDSPatientUpdate', 'callCentreCallBackConsentUpdateMode')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_drgrcomp', 'lkp_shavingpre', 1011046, 'DressingandGroomingComponent', 'shavingPreference')
 go
@@ -1846,7 +2492,9 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('asse_userassessmen4', 'lkp_activestat', 1021124, 'AssessmentQuestionGroup', 'activeStatus')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_commhear', 'lkp_effectedea', 1021032, 'CommunicationHearing', 'effectedEars')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdspatientupda', 'lkp_dateofbirt', 1021367, 'PDSPatientUpdate', 'dateOfBirthUpdateMode')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_socialhistory', 'lkp_smokingsta', 1021007, 'SocialHistory', 'smokingStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_wheelchairref', 'lkp_patientinf', 1021014, 'WheelchairReferral', 'patientInformed')
 go
@@ -1864,19 +2512,31 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_soapnote', 'lkp_areaofneed', 1021164, 'SoapNote', 'areaofNeed')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_waitlistdetail', 'lkp_waitingli4', 1101039, 'LoCallWaitingListDetails', 'waitingListLengthQualifier')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_appointmentcli', 'lkp_notestatus', 1341024, 'AppointmentClinicalNotes', 'noteStatus')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_specialinteres', 'lkp_specialint', 1111004, 'SpecialInterestDetail', 'specialInterestCategory')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyepiso', 'lkp_presenting', 1291003, 'EmergencyEpisode', 'presentingComplaint')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_racpsymptoms', 'lkp_rapcsympto', 1021243, 'RACPSymptoms', 'rAPCSymptom')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_communicationc', 'lkp_usethecall', 1021014, 'NurCommunicationComponent', 'useTheCallBell')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_treatmentsites', 'lkp_defaultsca', 1451004, 'TreatmentSites', 'defaultScanLimit')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_splintdetails', 'lkp_product', 1044, 'SplintDetails', 'product')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_cancellationty', 'lkp_cancellat2', 1141003, 'CancellationTypeReason', 'cancellationReason')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pthw_event', 'lkp_status', 1021124, 'Event', 'status')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientmedical', 'lkp_policytype', 1021271, 'PatientMedicalInsurance', 'policyType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vteriskassessm', 'lkp_useofostog', 1021145, 'VTERiskAssessment', 'useOfOstogren')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patprocedure', 'lkp_surgeonsgr', 1021065, 'PatientProcedure', 'surgeonsGrade')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_chargedescmess', 'lkp_messagesta', 1161039, 'ChargeDescMessQueue', 'messageStatus')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_equipment', 'lkp_suppliedfo', 1021084, 'Equipment', 'suppliedFor')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_prof', 'lkp_profiletyp', 1141030, 'Sch_Profile', 'profileType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_medication', 'lkp_stoppedbyt', 1021184, 'PatientMedicationDose', 'stoppedByType')
 go
@@ -1888,11 +2548,17 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_surgerydetails', 'lkp_discharge2', 1231061, 'SurgeryDetails', 'dischargeDestination')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsbackofficei', 'lkp_updatetype', 1021366, 'PDSBackOfficeItem', 'updateType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_patientwaitin4', 'lkp_requiredth', 1141022, 'PatientElectiveList', 'requiredTheatreType')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_attendanceclin', 'lkp_specialty', 621, 'AttendanceClinicalNotes', 'specialty')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_painmed', 'lkp_medication', 1011063, 'PainMedication', 'medication')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('corr_glossary', 'lkp_glossary', 1111002, 'Glossary', 'glossary')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_clinicaltrials', 'lkp_acceptedtr', 1021145, 'ClinicalTrials', 'acceptedTrialOffer')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_patactionstatu', 'lkp_actionstat', 1281026, 'PatActionStatusPoint', 'actionStatusReason')
 go
@@ -1902,29 +2568,35 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_ventilationtra', 'lkp_tracheosto', 1021073, 'VentilationTracheostomy', 'tracheostomyType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_surgerydetails', 'lkp_proceduret', 1021199, 'SurgeryDetails', 'procedureType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_patientwaitin4', 'lkp_anaestheti', 1231108, 'PatientElectiveList', 'anaestheticType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_hcgtestitem', 'lkp_urinehcg', 1291040, 'HCGTestItem', 'urineHCG')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_sch_session', 'lkp_slottype', 1141024, 'Sch_Session', 'slotType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pendingtransfe', 'lkp_currentsta', 1021232, 'PendingTransfers', 'currentStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_chemotherapyde', 'lkp_performanc', 2936, 'ChemotherapyDetails', 'performanceStatus')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patprocedure', 'lkp_specialty', 621, 'PatientProcedure', 'specialty')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_patientwaitin4', 'lkp_followperi', 1021145, 'PatientElectiveList', 'followPeriOperativeguidelines')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_appointmentcal', 'lkp_reason', 1341006, 'AppointmentCallAttempts', 'reason')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pthw_extevenmap', 'lkp_detail', 1321001, 'ExternalEventMapping', 'detail')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patientprepera', 'lkp_waspatient', 1021145, 'PatientPreperationIntraOp', 'wasPatientWarmed')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pthw_patientjourne2', 'lkp_reasonnov2', 1321019, 'PatientJourneyComment', 'reasonNoValidation')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_racpplanadvice', 'lkp_secondaryp', 1021250, 'RACPPlanAdvice', 'secondaryPlans')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_bowelregime', 'lkp_status', 1021014, 'BowelRegime', 'status')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('icps_patientcritica', 'lkp_criticalev', 1181000, 'PatientCriticalEvents', 'criticalEvent')
-go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_eatcomp', 'lkp_describeap', 1011055, 'EatingComponent', 'describeAppetite')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_followupnote', 'lkp_followupty', 1021258, 'FollowUpNote', 'followUpType')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_skincomp', 'lkp_bedtype', 1001016, 'SkinComponent', 'bedType')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyatten', 'lkp_patientatt', 1291052, 'EmergencyAttendance', 'patientAttendanceStatus')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_surgicalauditp', 'lkp_asagrade', 1021202, 'SurgicalAuditPreOpChecks', 'aSAGrade')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_inpatientadtme', 'lkp_msgtype', 1021260, 'InPatientADTMessageQueue', 'msgType')
 go
@@ -1938,21 +2610,27 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_categoryproced', 'lkp_category', 1021261, 'CategoryProcedures', 'category')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_trackingmoveme', 'lkp_movementty', 1021296, 'TrackingMovement', 'movementType')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_serverdocument', 'lkp_filetype', 1021218, 'ServerDocument', 'fileType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_bladcont', 'lkp_night', 1001001, 'BladderContinence', 'night')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_casr', 'lkp_caseclassi', 1101035, 'CaseReferral', 'caseClassification')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_referral', 'lkp_referralpr', 1021193, 'Referral', 'referralPriority')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patdiagnosis', 'lkp_specialty', 621, 'PatientDiagnosis', 'specialty')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdspatientupda', 'lkp_consentupd', 1021367, 'PDSPatientUpdate', 'consentUpdateMode')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_sch_booking', 'lkp_bookingsys', 1141005, 'Sch_Booking', 'bookingSysType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_brachytherapyd', 'lkp_prescripti', 1251103, 'BrachytherapyDetails', 'prescriptionPoint')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_followup', 'lkp_metastatic', 1251002, 'FollowUp', 'metastaticStatus')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_socialhistory', 'lkp_liveswith', 1021094, 'SocialHistory', 'livesWith')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_prof', 'lkp_anaestheti', 1231108, 'Sch_Profile', 'anaestheticType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_ambulancearriv', 'lkp_ambulancea', 1291009, 'AmbulanceArrivalsConfig', 'ambulanceArrivals')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_cancercontacts', 'lkp_hcpdiscipl', 1021048, 'CancerContacts', 'hCPDiscipline')
 go
@@ -1962,25 +2640,33 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_admissiondetai', 'lkp_sourceofad', 1021227, 'AdmissionDetail', 'sourceOfAdmission')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pupils', 'lkp_pupilrigh2', 1021056, 'Pupils', 'pupilRightReaction')
-go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_referralsrecor', 'lkp_referralso', 1231045, 'ReferralsRecording', 'referralSource')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('naes_templateaction', 'lkp_actions', 1351000, 'TemplateAction', 'actions')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_ventilationtra', 'lkp_requiresat', 1021014, 'VentilationTracheostomy', 'requiresATracheostomy')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patientmeeting', 'lkp_status', 1231012, 'PatientMeeting', 'status')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_modalityconfig', 'lkp_unit', 3424, 'ModalityConfig', 'unit')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_profileripple', 'lkp_cancellati', 1141003, 'ProfileRipple', 'cancellationReason')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_plinthworkacti', 'lkp_position', 1121014, 'PlinthWorkActivities', 'position')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patprocedure', 'lkp_infosource', 1021033, 'PatientProcedure', 'infoSource')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_discriminatorc', 'lkp_defaulttri', 1291020, 'DiscriminatorConfig', 'defaultTriagePriority')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_admissiondetai', 'lkp_resusstatu', 1021172, 'AdmissionDetails', 'resusStatus')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_reportnoteprin', 'lkp_notetype', 1341023, 'ReportNotePrintTemplate', 'noteType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vteriskassessm', 'lkp_useofostog', 1021145, 'VTERiskAssessment', 'useOfOstogren')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_sleepmed', 'lkp_route', 1021035, 'SleepingMedication', 'route')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vteriskassessm', 'lkp_lumbarpun2', 1021145, 'VTERiskAssessment', 'lumbarPuncturePrevious4hrs')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_systemreviewsy', 'lkp_durationun', 1021130, 'SystemReviewSymptoms', 'durationUnit')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_wheelchairdet', 'lkp_wheelchair', 1051140, 'WheelchairDetails', 'wheelchairType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_rehabilitation', 'lkp_independen', 2223, 'RehabilitationActivity', 'independenceLevel')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_protocol', 'lkp_petctrequi', 1451000, 'Protocol', 'petCTRequired')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_dischargeoutco', 'lkp_discharget', 1341003, 'DischargeOutcome', 'dischargeType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vteriskassessm', 'lkp_varicoseve', 1021145, 'VTERiskAssessment', 'varicoseVeins')
 go
@@ -1988,21 +2674,33 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_eatcomp', 'lkp_specialdie', 1001015, 'EatingComponent', 'specialDiet')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_anaestheticsig', 'lkp_riskorgrea', 1021145, 'AnaestheticSignIn', 'riskOrGreaterThan500mlBloodLoss')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_drawingimage2', 'lkp_c_ty', 1021115, 'DrawingImage', 'type')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_neonatal', 'lkp_route', 1021035, 'NeoNatal', 'route')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientcorecli', 'lkp_supportnet', 1021209, 'PatientCoreClinicalData', 'supportNetworkStatus')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_dischargedepis', 'lkp_discharge2', 1011097, 'DischargedEpisode', 'dischargeDestination')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientdocumen', 'lkp_category', 1021220, 'PatientDocument', 'category')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_protocol', 'lkp_appropcccl', 1021145, 'Protocol', 'appropCCCL')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_intraoperativd', 'lkp_nationaljo', 1021145, 'IntraOperativeDetails', 'nationalJointRegistryCompleted')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_resultcomponen', 'lkp_displayfla', 1161040, 'ResultComponent', 'displayFlag')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_neuroreflexesa', 'lkp_analtest', 1051107, 'NeuroReflexesAnalTests', 'analTest')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_cancellationty', 'lkp_cancellat2', 1141003, 'CancellationTypeReason', 'cancellationReason')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsbatchtracep', 'lkp_status', 1021354, 'PDSBatchTraceParams', 'status')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_skinassfind', 'lkp_frequencyo', 1001037, 'SkinAssessmentFindings', 'frequencyOfChange')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_respiratorytre', 'lkp_referoncal', 1021014, 'RespiratoryTreatment', 'referOnCallPhysio')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_outlier', 'lkp_clinicalco', 1101011, 'Outlier', 'clinicalComplication')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_dementiaassess', 'lkp_q5nameofho', 1021145, 'DementiaAssessAndInvestigate', 'q5NameOfHospital')
 go
@@ -2010,7 +2708,7 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_brthcomp', 'lkp_difficulty', 1021014, 'BreathingComponent', 'difficultyBreathing')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_toolpmdt', 'lkp_mechanical', 1011093, 'PatientMovementHandlingDetails', 'mechanicalEquipment')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patientgoal', 'lkp_goaltype', 1231009, 'PatientGoal', 'goalType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_transfers', 'lkp_patienttra', 1001052, 'Transfers', 'patientTransfers')
 go
@@ -2022,6 +2720,8 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_adaptations', 'lkp_loan', 1021085, 'Adaptations', 'loan')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientcorecli', 'lkp_allergysta', 1021207, 'PatientCoreClinicalData', 'allergyStatus')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_dftcollectiont', 'lkp_sitecollec', 1161043, 'DFTCollectionTypesConfig', 'siteCollectionType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_checklistitems', 'lkp_checklisti', 1231002, 'ChecklistItems', 'checklistItem')
@@ -2030,11 +2730,17 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_opdspasticitya', 'lkp_treatmentp', 1051156, 'OPDSpasticityAssessTreat', 'treatmentPlan')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_mrsatreatmentd', 'lkp_treatment', 1001067, 'MRSATreatmentDetails', 'treatment')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_elactionsheet', 'lkp_mriforcore', 1021145, 'ElectronicActionSheet', 'mRIforCoReg')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_triage', 'lkp_triageprio', 1291058, 'Triage', 'triagePriorityChange')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_tracking', 'lkp_dischargel', 1231076, 'Tracking', 'dischargeLetterStatus')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_opdfertilitycl', 'lkp_achieveere', 1051029, 'OPDFertClinic', 'achieveErection')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_patientwaitin4', 'lkp_wlanaesthe', 1231108, 'PatientElectiveList', 'wLAnaestheticType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_painassfind', 'lkp_onset', 1001024, 'PainAssessmentFindings', 'onset')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_hcpservicefunc', 'lkp_c_functi', 1021097, 'HCPServiceFunction', 'function')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_electrotreat', 'lkp_c_si', 1051039, 'ElectrotherapyTensTreatment', 'size')
 go
@@ -2042,25 +2748,43 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_bloodsugar', 'lkp_c_ty', 1021179, 'BloodSugar', 'type')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientdocumen', 'lkp_category', 1021220, 'PatientDocument', 'category')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patientsecs', 'lkp_obsprotoco', 1021337, 'PatientSECS', 'oBSProtocolType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_transfers', 'lkp_assistance', 1211020, 'Transfers', 'assistanceRequired')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyepiso', 'lkp_incidentlo', 1291001, 'EmergencyEpisode', 'incidentLocation')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vteriskassessm', 'lkp_surgerylow', 1021145, 'VTERiskAssessment', 'surgeryLowerLimbPelvis60mins')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_racpeecg', 'lkp_otherfindi', 1231083, 'RACPExerciseECG', 'otherFindings')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_racpexamfindin', 'lkp_auscultat2', 1021247, 'RACPExamFindings', 'auscultationFinding')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_racpplanadvice', 'lkp_advicegiv2', 1021249, 'RACPPlanAdvice', 'adviceGivenToGP')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_presentingcoho', 'lkp_specialty', 621, 'PresentingComplaintHotlist', 'specialty')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_protocol', 'lkp_mouldrooml', 1451010, 'Protocol', 'mouldRoomList')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pthw_adminevent', 'lkp_outcome', 1321015, 'AdminEvent', 'outcome')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vteriskassessm', 'lkp_hipkneerep', 1021145, 'VTERiskAssessment', 'hipKneeReplacement')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_codeddiagforat', 'lkp_sourceofin', 1021033, 'CodedDiagForAttendance', 'sourceofInformation')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_intraoperativd', 'lkp_dressing', 1231092, 'IntraOperativeDetails', 'dressing')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_onwardreferrtr', 'lkp_requestedb', 1021145, 'OnwardReferralFromTriage', 'requestedByGP')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_preassessoutc', 'lkp_noticeper2', 1021078, 'PreAssessmentOutcome', 'noticePeriodType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_chemotherapyde', 'lkp_outcomedos', 1021145, 'ChemotherapyDetails', 'outcomeDoseReduction')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_attendancekpic', 'lkp_awaitingt8', 1021145, 'AttendanceKPIConfig', 'awaitingTriageBreachKPIFlashingText')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_surgicalauditp', 'lkp_asagrade', 1021202, 'SurgicalAuditPreOpChecks', 'aSAGrade')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_ventilationtra', 'lkp_tracheost2', 1021074, 'VentilationTracheostomy', 'tracheostomyAccessories')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_discriminatorc', 'lkp_defaulttri', 1291020, 'DiscriminatorConfig', 'defaultTriagePriority')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_treatmentgroup', 'lkp_active', 1021124, 'TreatmentGroupTechniqueConfig', 'active')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_commvisn', 'lkp_registered', 1021014, 'CommunicationVision', 'registeredBlind')
 go
@@ -2068,7 +2792,11 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_catsreferral', 'lkp_issecondar', 1341017, 'CatsReferral', 'isSecondaryReportRequired')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_skinprepintrao', 'lkp_surgicalsi', 1231159, 'SkinPrepIntraOp', 'surgicalSiteSkinPrepSolution')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_handlingmoveme', 'lkp_mechanical', 1001084, 'HandlingMovementDetail', 'mechanicalEquipment')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pci_clientbirthdet', 'lkp_breastfee4', 1331003, 'ClientBirthDetails', 'breastFeedingAtPHN')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_caetgoryqa', 'lkp_category', 1161000, 'CategoryQuestionAnswer', 'category')
 go
@@ -2078,17 +2806,31 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_orderinvestiga', 'lkp_resultstat', 1161038, 'OrderInvestigation', 'resultStatus')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_preassessoutc', 'lkp_proclatera', 1021032, 'PreAssessmentOutcome', 'procLaterality')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_externalsy', 'lkp_messagesta', 1161039, 'ExternalSystemEvent', 'messageStatus')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_clinicalnotes', 'lkp_forreviewd', 1021048, 'ClinicalNotes', 'forReviewDiscipline')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_protocol', 'lkp_imrtdefaul', 1451008, 'Protocol', 'iMRTDefault')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pci_clientschestva', 'lkp_cancellati', 1331016, 'ClientScheduleStageVaccine', 'cancellationReason')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_appointmentout', 'lkp_appointmen', 1141027, 'AppointmentOutcomeAction', 'appointmentAction')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_carecontextsta', 'lkp_status', 1021262, 'CareContextStatusHistory', 'status')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_slot_history', 'lkp_statusreas', 1141007, 'SessionSlotStatus', 'statusReason')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_clinicaloutcom', 'lkp_specialty', 621, 'ClinicalOutcomeConfig', 'specialty')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_clinicianspeci', 'lkp_specialtie', 621, 'ClinicianSpecialtiesConfig', 'specialties')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_ventilationtra', 'lkp_breathsspo', 1021014, 'VentilationTracheostomy', 'breathsSpontaneously')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_dischargesumma', 'lkp_resultstof', 1021014, 'DischargeSummary', 'resultsToFollow')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_servicetriagea', 'lkp_changecab2', 1021336, 'ServiceTriageAction', 'changeCABOPAandDirectToList')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_opdfertilitycl', 'lkp_methodssuc', 1051125, 'OPDFertClinic', 'methodssuccessWith')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_chemocycledeta', 'lkp_deliveryco', 1251099, 'ChemoCycleDetailsCCO', 'deliveryCodeAllOtherDays')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_actvlevl', 'lkp_activity', 1011003, 'ActivityLevel', 'activity')
 go
@@ -2100,6 +2842,8 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_opdfertclinics', 'lkp_semenfindi', 1051123, 'OPDFertClinicSemenAna', 'semenFinding')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_anaestheticsig', 'lkp_knowndiffi', 1021145, 'AnaestheticSignIn', 'knownDifficultAirway')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_pataction', 'lkp_unit', 3424, 'PatAction', 'unit')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_surgicalauditp', 'lkp_confirmpat', 1021145, 'SurgicalAuditPreOpChecks', 'confirmPatientDetails')
@@ -2108,13 +2852,17 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_jobnotificatio', 'lkp_delivery', 1031019, 'ConfiguredJobNotification', 'delivery')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_patientpropert', 'lkp_propertybo', 1021014, 'PatientProperty', 'propertyBookComplete')
-go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_taxonomyupload', 'lkp_taxonomyel', 1021242, 'TaxonomyUpload', 'taxonomyElement')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_sessionparentc', 'lkp_priority', 1141009, 'SessionParentChildSlot', 'priority')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_procedureconte', 'lkp_c_curren', 1021099, 'ActivityContextPricingDetails', 'currency')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_elactionsheet', 'lkp_imagetrans', 1021145, 'ElectronicActionSheet', 'imageTransfer')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_wheelchairskil', 'lkp_wheelchair', 1051067, 'WheelchairSkillsAssessment', 'wheelchairSkill')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_investigation', 'lkp_activestat', 1021124, 'Investigation', 'activeStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_systemreviewfo', 'lkp_c_syst', 1231133, 'SystemReviewForPresentingProblemConfig', 'system')
 go
@@ -2136,7 +2884,11 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_internalreferr', 'lkp_referralso', 1251093, 'InternalReferral', 'referralSource')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_activitypathwa', 'lkp_appointmen', 1141007, 'ActivityStatusToPathwayEvent', 'appointmentStatus')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_datasettype', 'lkp_defaultlin', 1021174, 'DatasetType', 'defaultLineType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_followup', 'lkp_primarytum', 1251000, 'FollowUp', 'primaryTumourStatus')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_wardmessageque', 'lkp_queuetype', 1021259, 'WardMessageQueue', 'queueType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_teletherapydet', 'lkp_nooffields', 1251060, 'TeletherapyDetails', 'noOfFields')
 go
@@ -2150,9 +2902,11 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_socialhistory', 'lkp_fittocaref', 1021014, 'SocialHistory', 'fitToCareForPatient')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_spircomp', 'lkp_continuepr', 1021014, 'SpiritualityComponent', 'continuePracticing')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_functionaltra2', 'lkp_equipment', 1051046, 'FunctionalTransfersTechnique', 'equipment')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_edadmission', 'lkp_admittingc', 1291021, 'EDPartialAdmission', 'admittingConsultant')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdspatientupda', 'lkp_deceasedti', 1021367, 'PDSPatientUpdate', 'deceasedTime')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pci_clientbirthdet', 'lkp_pkutest', 1021014, 'ClientBirthDetails', 'pKUTest')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_resultcomponen', 'lkp_resultspec', , 'ResultComponent', 'resultSpecimenType')
 go
@@ -2161,6 +2915,8 @@ go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pupils', 'lkp_pupilleftr', 1021056, 'Pupils', 'pupilLeftReaction')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_helptext', 'lkp_textcatego', 1161005, 'HelpText', 'textCategory')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsconsenthist', 'lkp_consenttyp', 1021386, 'pdsConsentHistory', 'consentType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_futureplan', 'lkp_statemento', 1021145, 'FuturePlan', 'statementOfFitnessToWorkIssue')
 go
@@ -2175,6 +2931,12 @@ go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientdocumen', 'lkp_status', 1021124, 'PatientDocument', 'status')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyatten', 'lkp_urgencylev', 1291033, 'EmergencyAttendance', 'urgencyLevel')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_theatretrscolo', 'lkp_trackingst', 1231116, 'TheatreTrackingStatusColourConfig', 'trackingStatus')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyatten', 'lkp_gpletterst', 1291067, 'EmergencyAttendance', 'gPLetterStatus')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_specimencolle3', 'lkp_c_ti', 1161041, 'SpecimenCollectionListConfigDetails', 'time')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_providersystem', 'lkp_category', 1161000, 'ProviderSystem', 'category')
 go
@@ -2194,19 +2956,27 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_notetype', 'lkp_notetype', 1231043, 'NoteType', 'noteType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('spin_respobserv', 'lkp_observfind', 1051134, 'RespObserv', 'observFind')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_patientwaitin4', 'lkp_secondary2', 1021032, 'PatientElectiveList', 'secondaryProcLaterality')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_outboundtrigge', 'lkp_queuetype', 1021259, 'OutboundTriggers', 'queueType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_fitforsurgerya', 'lkp_notfitreas', 1231088, 'FitForSurgeryAssesment', 'notFitReason')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pthw_pathway', 'lkp_journeycou', 1321011, 'Pathway', 'journeyCountType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_chemotherapyde', 'lkp_status', 1021124, 'ChemotherapyDetails', 'status')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patprocedure', 'lkp_procedureu', 1021161, 'PatientProcedure', 'procedureUrgency')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_tciforpatiente', 'lkp_rule28days', 1141041, 'TCIForPatientElectiveList', 'rule28DayStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_icabreferral', 'lkp_status', 1341002, 'ICABReferral', 'status')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_eatoral', 'lkp_status', 1021014, 'EatingOralAssessment', 'status')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_woundpackingin', 'lkp_inplaceond', 1021145, 'WoundPackingIntraOp', 'inPlaceOnDeparture')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_injuryassociat', 'lkp_associated', 1051102, 'InjuryAssocFactor', 'associatedFactor')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_clinicalrefer2', 'lkp_internalre', 1231139, 'ClinicalReferralStatus', 'internalReferralStatusChangeReason')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_sch_session', 'lkp_pasclinic', 1141018, 'Sch_Session', 'pASClinic')
 go
@@ -2214,29 +2984,39 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pthw_target', 'lkp_status', 1021124, 'Target', 'status')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdspatientupda', 'lkp_deathnotif', 1021367, 'PDSPatientUpdate', 'deathNotificationUpdateMode')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patientcasecon', 'lkp_discharge2', 1021130, 'PatientCaseConference', 'dischargeDelayUnit')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_inpat_epis', 'lkp_vteassessm', 1231125, 'InpatientEpisode', 'vTEAssessmentStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pas_event', 'lkp_eventtype', 1021186, 'PASEvent', 'eventType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_opdfertilitycl', 'lkp_sexdrive', 1051116, 'OPDFertClinic', 'sexDrive')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_skinpreperatio', 'lkp_skinprepar', 1231089, 'SkinPreperation', 'skinPreparationUsed')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_followupcare', 'lkp_followupto', 1101018, 'FollowUpCare', 'followUpTo')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pers_relative', 'lkp_pdsupdatem', 1021367, 'Relative', 'pdsUpdateMode')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patienthomesit', 'lkp_railside', 1231054, 'PatientHomeSituation', 'railSide')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pendingnoedeme', 'lkp_sourceofem', 1021383, 'PendingNoEDEmergencyAdmit', 'sourceOfEmergencyReferral')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_primarytumourd', 'lkp_pretreatm9', 1251035, 'PrimaryTumourDetails', 'preTreatmentOverAllCert')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_mandatoryedout', 'lkp_codingoutc', 1291014, 'MandatoryEDOutcomeCoding', 'codingOutcomes')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_pattreatpl', 'lkp_treatmenti', 3199, 'PatTreatmentPlan', 'treatmentIntent')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_skincomp', 'lkp_turntype', 1001048, 'SkinComponent', 'turnType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('naes_actionplan', 'lkp_recallperi', 1021141, 'ActionPlan', 'recallPeriod')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_dementiafind', 'lkp_deliriumco', 1021145, 'DementiaFind', 'deliriumConfirmed')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyatte2', 'lkp_paymentmad', 1021145, 'EmergencyAttendanceBilling', 'paymentMade')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_charttypedatas', 'lkp_linecolour', 1021175, 'ChartTypeDataset', 'lineColourPointIcon')
-go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_dementiaassess', 'lkp_q7yearww2e', 1021145, 'DementiaAssessAndInvestigate', 'q7YearWW2Ended')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_pacslaunchaudi', 'lkp_pacsclient', 1021286, 'PACSLaunchAudit', 'pACSClientType')
 go
@@ -2248,9 +3028,9 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_dressingsandai', 'lkp_periodinte', 1021130, 'DressingsAndAids', 'periodInterval')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pendingtransfe', 'lkp_currentsta', 1021232, 'PendingTransfers', 'currentStatus')
-go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_smokingdetails', 'lkp_smokingwha', 1021008, 'SmokingDetails', 'smokingWhat')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_elactionsheet', 'lkp_ip_op_trea', 3204, 'ElectronicActionSheet', 'iP_OP_Treatment')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_vipscore', 'lkp_action', 1231037, 'VIPScore', 'action')
 go
@@ -2260,9 +3040,9 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_temperature', 'lkp_instrument', 1021051, 'Temperature', 'instrument')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patientgoal', 'lkp_areaofneed', 1231010, 'PatientGoal', 'areaOfNeed')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_intraoperativd', 'lkp_skinclosur', 1231090, 'IntraOperativeDetails', 'skinClosure')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_suspensiondeta', 'lkp_suspension', 1341044, 'SuspensionDetailsForPatientElectiveList', 'suspensionReason')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_secs', 'lkp_obsprotoco', 1021337, 'SECS', 'oBSProtocolType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_resultspecimen', 'lkp_alternates', 1161052, 'ResultSpecimenTypes', 'alternateSpecimenTypes')
 go
@@ -2272,25 +3052,27 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_edadmission', 'lkp_specialty', 621, 'EDPartialAdmission', 'specialty')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_toolptdt', 'lkp_assessment', 1011090, 'PatientMovementHandlingScreeningDetails', 'assessment')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_racpeecg', 'lkp_protocol', 1231079, 'RACPExerciseECG', 'protocol')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_demographicsmq', 'lkp_messagesta', 1161039, 'DemographicsMessageQueue', 'messageStatus')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('naes_naesreferral', 'lkp_c_langua', 532, 'NAESReferral', 'language')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsrelativecon', 'lkp_pdsprefer2', 1021344, 'PDSRelativeContactPref', 'pdsPreferredWrittenComm')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_tiig', 'lkp_attackerha', 1291025, 'TIIG', 'attackerHadConsumedAlcohol')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_electrotreat', 'lkp_model', 1051035, 'ElectrotherapyTensTreatment', 'model')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsaddr', 'lkp_addresstyp', 1021222, 'PDSAddr', 'addressType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_prof', 'lkp_prftype', 1141000, 'Sch_Profile', 'prftype')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_suitableforsur', 'lkp_suitablefo', 1021014, 'SuitableForSurgeryAssessment', 'suitableForSurgery')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_illicitdrugdet', 'lkp_currentsta', 1231106, 'IllicitDrugDetails', 'currentStatus')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_gaittreatment', 'lkp_supervisio', 1051077, 'GaitTreatment', 'supervisionLevel')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_deeptissuemass', 'lkp_dfmassagea', 2346, 'DeepFrictionMassage', 'dFMassageArea')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_diathermyplate', 'lkp_skinshaved', 1021145, 'DiathermyPlateDetail', 'skinShaved')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_presproblemche', 'lkp_specialty', 621, 'PresProblemChecklistConfig', 'specialty')
-go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_primarytumourd', 'lkp_pretreatm6', 1251035, 'PrimaryTumourDetails', 'preTreatmentMCert')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('corr_templatecatego', 'lkp_dischargec', 1111001, 'TemplateCategory', 'dischargeCategories')
 go
@@ -2299,6 +3081,8 @@ go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('asse_graphicfinding', 'lkp_activestat', 1021124, 'DrawingGraphicFinding', 'activeStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_orderinvestiga', 'lkp_collection', 1161043, 'OrderInvestigation', 'collectionType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_protocol', 'lkp_oralcontr2', 1451006, 'Protocol', 'oralContrastList')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_skincomp', 'lkp_mattressty', 1001020, 'SkinComponent', 'mattressType')
 go
@@ -2310,17 +3094,17 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_orderspecimen', 'lkp_sitecd', 1161028, 'OrderSpecimen', 'siteCd')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_edtransfer', 'lkp_transferes', 1291051, 'EDTransfer', 'transferEscort')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyatten', 'lkp_attendanc4', 1291056, 'EmergencyAttendance', 'attendanceReasonNotVerified')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patienthomesit', 'lkp_fittocaref', 1021014, 'PatientHomeSituation', 'fitToCareForPatient')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_splintdetails', 'lkp_splintsize', 2286, 'SplintDetails', 'splintSize')
-go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_bladdermictr', 'lkp_urinarydiv', 1001003, 'BladderMicturition', 'urinaryDiversion')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_whiteboardques', 'lkp_answertype', 1021122, 'WhiteBoardQuestionConfig', 'answerType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('icps_icp', 'lkp_status', 1021124, 'ICP', 'status')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_attendancekpic', 'lkp_losbreach3', 1021145, 'AttendanceKPIConfig', 'losBreachWarningKPIFlashingText')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pendingnoedeme', 'lkp_transferre', 1021389, 'PendingNoEDEmergencyAdmit', 'transferReason')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_nurbowelcompon', 'lkp_bowelsopen', 1021014, 'NurBowelComponent', 'bowelsOpenSpontaneously')
 go
@@ -2332,11 +3116,15 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_furthermanagem', 'lkp_anothercon', 1341005, 'FurtherManagement', 'anotherConsultationAppt')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_laserdetailint', 'lkp_deviceseri', 1021326, 'LaserDetailIntraOp', 'deviceSerialNumber')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_procedureconte', 'lkp_pricecateg', 1101007, 'ActivityContextPricingDetails', 'priceCategory')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_urinalysis', 'lkp_blood', 1021062, 'Urinalysis', 'blood')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_cancercareplan', 'lkp_noanticanc', 1251047, 'CancerCarePlan', 'noAntiCancerTxReason')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pendingnoedeme', 'lkp_c_ty', 1021380, 'PendingNoEDEmergencyAdmit', 'type')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('icps_patienticpstas', 'lkp_status', 1181012, 'PatientICPStageStatus', 'status')
 go
@@ -2346,15 +3134,29 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vteriskassessm', 'lkp_activecanc', 1021145, 'VTERiskAssessment', 'activeCancer')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_anaestheticsig', 'lkp_procedurea', 1021375, 'AnaestheticSignIn', 'procedureAndSiteConfirmedByPatient')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_carecontexthis', 'lkp_context', 1021167, 'CareContextHistory', 'context')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientconcern', 'lkp_teamidenti', 1021048, 'PatientConcern', 'teamIdentified')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pthw_patientevent', 'lkp_specialty', 621, 'PatientEvent', 'specialty')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_elactionsheet', 'lkp_treatmentt', 3202, 'ElectronicActionSheet', 'treatmentTransport')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_postdischargel', 'lkp_contactmet', 1021304, 'PostDischargeLiaison', 'contactMethod')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_contact', 'lkp_caseload', 1121017, 'Contact', 'caseload')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_sportsactivity', 'lkp_sportsacti', 1051072, 'SportsActivity', 'sportsActivity')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pci_gmspayments', 'lkp_gmspayment', 1331015, 'GmsPayments', 'gMSPaymentType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_needsassessme2', 'lkp_componentt', 1021137, 'NeedsAssessmentComponentScore', 'componentType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_plinthworkanal', 'lkp_balanceana', 1121007, 'PlinthWorkAnalysis', 'balanceAnalysis')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsasyncreques', 'lkp_pdsackdeta', 1021360, 'PDSAsyncRequest', 'pDSAckDetailType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_surgicalaudpd', 'lkp_anaesthet6', 1231108, 'SurgicalAuditProcedureDetails', 'anaestheticUsed')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_trackingworkfl', 'lkp_trackingst', 1291019, 'TrackingWorkflowConfig', 'trackingStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_theatrebooking', 'lkp_tcitime', 1141021, 'TheatreBooking', 'tCITime')
 go
@@ -2372,23 +3174,49 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_carecontexthis', 'lkp_locationty', 1021093, 'CareContextHistory', 'locationType')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_triageoutcome', 'lkp_triageoutc', 1341059, 'TriageOutcome', 'triageOutcomeStatus')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('asse_userassessment', 'lkp_category', 1021133, 'UserAssessment', 'category')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_documentstatus', 'lkp_correspond', 1021127, 'DocumentStatus', 'correspondenceStatus')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_medicationrout', 'lkp_route', 1021035, 'MedicationRoute', 'route')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_splintdetails', 'lkp_area', 1043, 'SplintDetails', 'area')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_referralletter', 'lkp_c_langua', 532, 'ReferralLetterDetails', 'language')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_phygcomp', 'lkp_condition2', 1011074, 'PersonalHygieneComponent', 'conditionOfNails')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_chemocycledeta', 'lkp_procuremen', 1251097, 'ChemoCycleDetailsCCO', 'procurementCode')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_casenotetracki', 'lkp_defaultfol', 1021317, 'CaseNoteTrackingConfig', 'defaultFolderForAutomaticCaseNote')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_skinclosureint', 'lkp_skinclosur', 1231100, 'SkinClosureIntraOp', 'skinClosureType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsconfigurati', 'lkp_dod_date_2', 1021390, 'PDSConfiguration', 'dOD_DATE_RANGE_TYPE')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_appt_history_s', 'lkp_statusreas', 1141007, 'Appointment_Status', 'statusReason')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_urinalysis', 'lkp_urobilinog', 1021062, 'Urinalysis', 'urobilinogen')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_chemoregimensc', 'lkp_deliveryco', 1251099, 'ChemoRegimensConfig', 'deliveryCodeAllOtherDays')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_telecomtype', 'lkp_channeltyp', 1021149, 'TelecomType', 'channelType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_dischargesumma', 'lkp_instructio', 1021014, 'DischargeSummary', 'instructionsGiven')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_gpchecklist', 'lkp_checklist', 1101019, 'GPChecklist', 'checkList')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_opderectdysfxn', 'lkp_consetnfor', 1021014, 'OPDErectDysfxn', 'consetnFormSigned')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_commhear', 'lkp_batteriesi', 1021014, 'CommunicationHearing', 'batteriesInOrder')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_painmed', 'lkp_route', 1021035, 'PainMedication', 'route')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdspatientupda', 'lkp_birthtime', 1021367, 'PDSPatientUpdate', 'birthTime')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patientchartab', 'lkp_chartableo', 1231151, 'PatientChartableOccurance', 'chartableOccuranceType')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patprocedure', 'lkp_proclatera', 1021032, 'PatientProcedure', 'procLaterality')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_treatmentsites', 'lkp_status', 1021124, 'TreatmentSites', 'status')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_outlier', 'lkp_outliersu2', 1101010, 'Outlier', 'outlierSubType2')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_brachytherapyd', 'lkp_brachythe3', 1251025, 'BrachytherapyDetails', 'brachyTherapyUnsealedSourceType')
 go
@@ -2396,21 +3224,35 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_catsreferral', 'lkp_onwardrefe', 1341015, 'CatsReferral', 'onwardReferralStatus')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_mskgroups', 'lkp_bones', 1051138, 'MskGroups', 'bones')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('icps_patientcritica', 'lkp_criticalev', 1181000, 'PatientCriticalEvents', 'criticalEvent')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_preassessoutc', 'lkp_receivinga', 1021014, 'PreAssessmentOutcome', 'receivingAntiCoag')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_dischargeoutco', 'lkp_dischargeo', 1341009, 'DischargeOutcome', 'dischargeOtherType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_respiratorytr2', 'lkp_status', 1021014, 'RespiratoryTreatmentDetail', 'status')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_servicetriagea', 'lkp_linkedopas', 1021336, 'ServiceTriageAction', 'linkedOPAsAndDiagnostic')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_discharge', 'lkp_destinatio', 1011097, 'Discharge', 'destination')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_infectioncontr', 'lkp_controlreq', 1021014, 'InfectionControlComponent', 'controlRequirement')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdspatientupda', 'lkp_administra', 1021367, 'PDSPatientUpdate', 'administrativeGenderCode')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_outlier', 'lkp_outliertyp', 1101010, 'Outlier', 'outlierType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_catsreferral', 'lkp_patientcat', 1021112, 'CatsReferral', 'patientCategory')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_commcaredet', 'lkp_userdefin2', 1331006, 'CommunityCareDetail', 'userDefinedField2')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_inpatientadtme', 'lkp_queuetype', 1021259, 'InPatientADTMessageQueue', 'queueType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_referralletter', 'lkp_referrerty', 1021025, 'ReferralLetterDetails', 'referrerType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_chemotherapyde', 'lkp_clinicaltr', 1021145, 'ChemotherapyDetails', 'clinicalTrial')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('asse_userdefinedobj', 'lkp_activestat', 1021124, 'UserDefinedObject', 'activeStatus')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdspatientupda', 'lkp_nokupdatem', 1021367, 'PDSPatientUpdate', 'nokUpdateMode')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patientcasecon', 'lkp_caseconfou', 1231008, 'PatientCaseConference', 'caseConfOutCome')
 go
@@ -2422,11 +3264,17 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_electrotherap7', 'lkp_intensity', 1051044, 'ElectrotherapyUltrasoundTreatment', 'intensity')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_intraoperativd', 'lkp_actionstak', 1021334, 'IntraOperativeDetails', 'actionsTaken')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_preassessoutc', 'lkp_theatretyp', 1141022, 'PreAssessmentOutcome', 'theatreType')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_medic', 'lkp_thirdspeci', 621, 'Medic', 'thirdSpecialty')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patientprepera', 'lkp_positionin', 1231158, 'PatientPreperationIntraOp', 'positioningDevices')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_referralsrecor', 'lkp_specialtyf', 1231060, 'ReferralsRecording', 'specialtyFunctionCode')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_dischargedetai', 'lkp_dischargel', 1231076, 'DischargeDetails', 'dischargeLetterStatus')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pci_vaccinestatus', 'lkp_terminated', 1331011, 'VaccineStatus', 'terminatedBy')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_nurbowelcompon', 'lkp_timeofday', 1001057, 'NurBowelComponent', 'timeOfDay')
 go
@@ -2434,17 +3282,21 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_primarytumourd', 'lkp_prognost12', 1251035, 'PrimaryTumourDetails', 'prognosticMCert')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_functionaltra2', 'lkp_finishposi', 1051047, 'FunctionalTransfersTechnique', 'finishPosition')
-go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_deeptissuemass', 'lkp_laterality', 1021032, 'DeepFrictionMassage', 'laterality')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vteriskassessm', 'lkp_lumbarpunc', 1021145, 'VTERiskAssessment', 'lumbarPunctureWithinNext12hrs')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_referralsrecor', 'lkp_reasonforr', 1021194, 'ReferralsRecording', 'reasonForReferral')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_protocol', 'lkp_clinicaltr', 1251107, 'Protocol', 'clinicalTrial')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_nursingnotes', 'lkp_mrsaresult', 1001066, 'NursingNotes', 'mRSAResult')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_futureplan', 'lkp_medicalcer', 1021145, 'FuturePlan', 'medicalCertificationIssued')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_nureatingcompo', 'lkp_patientreq', 1021014, 'NurEatingComponent', 'patientRequireAssistance')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_followup', 'lkp_morbidity3', 1251009, 'FollowUp', 'morbidityCodeCancerRadiotherapy')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_medicationdeta', 'lkp_supplied', 1021014, 'PatientMedication', 'supplied')
 go
@@ -2452,25 +3304,31 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_phygcomp', 'lkp_conditiono', 1011072, 'PersonalHygieneComponent', 'conditionOfHair')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_commhear', 'lkp_hearingaid', 1021014, 'CommunicationHearing', 'hearingAid')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_codeddiagforat', 'lkp_diaglatera', 1021032, 'CodedDiagForAttendance', 'diagLaterality')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patientpmhche2', 'lkp_sourceofin', 1021033, 'PatientPMHChecklistDiagnosis', 'sourceofInformation')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_rehabilitation', 'lkp_activitygr', 1026, 'RehabilitationActivity', 'activityGroup')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_accomhous', 'lkp_assisstanc', 1021014, 'AccommodationHousing', 'assisstanceToOthers')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_dementiafind', 'lkp_camsacuteo', 1021145, 'DementiaFind', 'cAMSAcuteOnset')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patient', 'lkp_religion', 780, 'Patient', 'religion')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_careplanmodali', 'lkp_modalityst', 1251052, 'CarePlanModality', 'modalityStatus')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_wheelchairdet', 'lkp_wheelchair', 1051140, 'WheelchairDetails', 'wheelchairType')
-go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vteriskassessm', 'lkp_notexpecte', 1021145, 'VTERiskAssessment', 'notExpectedReducedMobility')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_opa', 'lkp_otherhcpva', 1021370, 'OPA', 'otherHCPValue')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_postdischargel', 'lkp_letterrevi', 1291062, 'PostDischargeLiaison', 'letterReviewStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_catsreferral', 'lkp_onwardref2', 1341016, 'CatsReferral', 'onwardReferralReason')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_boweldhr', 'lkp_colour', 1011017, 'BowelDiarrhoea', 'colour')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyatte2', 'lkp_reasonforn', 1431010, 'EmergencyAttendanceBilling', 'reasonForNonPayment')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pendingadmissi', 'lkp_cancelreas', 1021382, 'PendingAdmissionStatus', 'cancelReason')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_supportnetwor3', 'lkp_profession', 1021048, 'SupportNetworkProfessional', 'profession')
 go
@@ -2480,15 +3338,23 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_ttamedicationd', 'lkp_doseunit', 1021015, 'TTAMedicationDetail', 'doseUnit')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_electivelistst', 'lkp_electiveli', 1021288, 'ElectiveListStatus', 'electiveListStatus')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pci_vaccinestatus', 'lkp_status', 1331013, 'VaccineStatus', 'status')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('corr_specialtyacces', 'lkp_accessrigh', 1111005, 'SpecialtyAccess', 'accessRight')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyepiso', 'lkp_incidentlo', 1291001, 'EmergencyEpisode', 'incidentLocation')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_electivelistme', 'lkp_messagesta', 1161039, 'ElectiveListMessageQueue', 'messageStatus')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_mskexamjointbd', 'lkp_generalfi2', 1051137, 'MSkExamJointBonesDetail', 'generalFindingsJoint')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_anaestheticsig', 'lkp_ispatientd', 1021145, 'AnaestheticSignIn', 'isPatientDiabetic')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_futureappointm', 'lkp__1stapptfu', 1021097, 'FutureAppointmentDetails', '_1stApptFunction')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_drawingimage2', 'lkp_imagestatu', 1021113, 'DrawingImage', 'imageStatus')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_ventilationtra', 'lkp_modeofvent', 1021068, 'VentilationTracheostomy', 'modeOfVentilation')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_futureplan', 'lkp_returntowo', 1231109, 'FuturePlan', 'returnToWorkAdvice')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_intraoperativd', 'lkp_patientpre', 1021322, 'IntraOperativeDetails', 'patientPreparation')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_tourniquetdeta', 'lkp_tourniquet', 1021145, 'TourniquetDetail', 'tourniquet')
 go
@@ -2500,11 +3366,13 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_racpeecg', 'lkp_stopreason', 1231082, 'RACPExerciseECG', 'stopReasons')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_hcplocation', 'lkp_casetypes', 1101008, 'HcpLocation', 'caseTypes')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_cons_stay', 'lkp_histologys', 1231148, 'ConsultantStay', 'histologyStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_commsplu', 'lkp_status', 1021014, 'CommunicationSpeechAndLanguageUnderstanding', 'status')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_primarytumourd', 'lkp_pretreatm4', 1251035, 'PrimaryTumourDetails', 'preTreatmentNCert')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_patientcheckli', 'lkp_checklist', 1101023, 'PatientCheckList', 'checkList')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_primarytumourd', 'lkp_differenta', 1251062, 'PrimaryTumourDetails', 'differentatationSource')
 go
@@ -2512,9 +3380,15 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_investigation', 'lkp_femalemin2', 1161007, 'Investigation', 'femaleMinReorderPeriodUnit')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_elactionsheet', 'lkp_planningct', 1451004, 'ElectronicActionSheet', 'planningCT')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_surgicalauditp', 'lkp_sitemarked', 1021145, 'SurgicalAuditPreOpChecks', 'siteMarked')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_clinicaloutcom', 'lkp_category', 1231117, 'ClinicalOutcomeConfig', 'category')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdspatientupda', 'lkp_genderupda', 1021367, 'PDSPatientUpdate', 'genderUpdateMode')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_admissiondetai', 'lkp_histologys', 1231148, 'AdmissionDetail', 'histologyStatus')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_mskexamjointbd', 'lkp_bone', 1051138, 'MSkExamJointBonesDetail', 'bone')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vteriskassessm', 'lkp_knownthrom', 1021145, 'VTERiskAssessment', 'knownThrombophilias')
 go
@@ -2526,27 +3400,39 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_racpsymptomris', 'lkp_riskfacto2', 1021244, 'RACPSymptomRiskFactors', 'riskFactors')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_vtmhotlist', 'lkp_specialty', 621, 'VTMHotlist', 'specialty')
-go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_fluidbalinstan', 'lkp_timeperiod', 1021180, 'FluidBalanceInstance', 'timePeriod')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_dementiafind', 'lkp_hasformald', 1021145, 'DementiaFind', 'hasFormalDiagnosisOfDementia')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_appcontextvari', 'lkp_valuetype', 1031011, 'AppContextVariable', 'valueType')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_skinclosureint', 'lkp_procedurew', 1021332, 'SkinClosureIntraOp', 'procedureWoundClass')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('naes_naesreferral', 'lkp_implanttyp', 1351003, 'NAESReferral', 'implantType')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_bladdermngm', 'lkp_method', 1001004, 'BladderManagement', 'method')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_boweldhr', 'lkp_amount', 1011013, 'BowelDiarrhoea', 'amount')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_locallstatus', 'lkp_reason', 1101002, 'LoCallStatus', 'reason')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('spin_respobserv', 'lkp_observtype', 1051134, 'RespObserv', 'observType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_pataction', 'lkp_status', 1281026, 'PatAction', 'status')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patientabsentd', 'lkp_sourceofin', 1021033, 'PatientAbsentDiagnosis', 'sourceofInformation')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_gpmessagequeue', 'lkp_queuetype', 1021259, 'GPMessageQueue', 'queueType')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_repositioningp', 'lkp_blanching', 1001072, 'RepositioningPlan', 'blanching')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_protocol', 'lkp_oralcontra', 1451000, 'Protocol', 'oralContrastRequired')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_casr', 'lkp_casetype', 1101008, 'CaseReferral', 'caseType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_bladcomp', 'lkp_assistance', 1021014, 'BladderComponent', 'assistanceContinence')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_medication', 'lkp_doseunit', 1021015, 'PatientMedicationDose', 'doseUnit')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_brthcomp', 'lkp_breathingt', 1001047, 'BreathingComponent', 'breathingTreatment')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_hcplocationacc', 'lkp_accreditat', 1021111, 'HcpLocationAccredHis', 'accreditationStatus')
 go
@@ -2554,17 +3440,27 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_futureplan', 'lkp_refrainfr2', 1021130, 'FuturePlan', 'refrainFromWorkUnit')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_primarytumourd', 'lkp_tumourlate', 1021032, 'PrimaryTumourDetails', 'tumourLaterality')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_sess_slot', 'lkp_statusreas', 1141007, 'Session_Slot', 'statusReason')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_commcaredet', 'lkp_userdefin4', 1331008, 'CommunityCareDetail', 'userDefinedField4')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_hist_outpat_at', 'lkp_appointme2', 1141007, 'HistoricOutpatientAttendance', 'appointmentStatus')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_referralurgenc', 'lkp_urgency', 1341036, 'ReferralUrgencyUpdates', 'urgency')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_cancermdtmeeti', 'lkp_patientper', 1251045, 'CancerMDTMeeting', 'patientPerformanceStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_mskjbmovements', 'lkp_moveaction', 1051175, 'MskJointMovement', 'moveAction')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_trackingattend', 'lkp_prevstatus', 1291019, 'TrackingAttendanceStatus', 'prevStatus')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_pmhchecklist', 'lkp_specialty', 621, 'PMHChecklistConfig', 'specialty')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_electrotherap2', 'lkp_warninggiv', 1021014, 'ElectrotherapyUltrasound', 'warningGiven')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_protocol', 'lkp_mouldroomr', 1451000, 'Protocol', 'mouldRoomRequired')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_catsreferralst', 'lkp_referralst', 1341000, 'CATSReferralStatus', 'referralStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_signatoryshift', 'lkp_endtime', 1021180, 'SignatoryShiftDetails', 'endTime')
 go
@@ -2576,9 +3472,19 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_medicationdeta', 'lkp_discontinu', 1021184, 'PatientMedication', 'discontinuedByType')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_codingdelay', 'lkp_codingdela', 1021318, 'CodingDelay', 'codingDelayReason')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_referralsource', 'lkp_sourceofre', 1021025, 'ReferralSourceUrgency', 'sourceOfReferral')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_patientwaitin4', 'lkp_renalfunct', 1021145, 'PatientElectiveList', 'renalFunctionAssessment')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_pattreatpl', 'lkp_seenlocati', 3196, 'PatTreatmentPlan', 'seenLocation')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_inpatientadtme', 'lkp_queuetype', 1021259, 'InPatientADTMessageQueue', 'queueType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_dischargesumma', 'lkp_issurveyse', 1021145, 'DischargeSummary', 'isSurveySent')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_mosmessagequeu', 'lkp_msgtype', 1021260, 'MOSMessageQueue', 'msgType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_dischargedepis', 'lkp_discharge2', 1011097, 'DischargedEpisode', 'dischargeDestination')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_bowelmed', 'lkp_frequency', 1021038, 'BowelMedication', 'frequency')
 go
@@ -2596,6 +3502,14 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pthw_pathway', 'lkp_specialty', 621, 'Pathway', 'specialty')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsgeneralupda', 'lkp_updatetype', 1021366, 'PDSGeneralUpdateRequest', 'updateType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_laserdetailint', 'lkp_devicename', 1021325, 'LaserDetailIntraOp', 'deviceName')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_tciforpatiente', 'lkp_day28breac', 1141029, 'TCIForPatientElectiveList', 'day28BreachReason')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_intraopcasesta', 'lkp_anaestheti', 1231108, 'IntraOpCaseStaffDetails', 'anaestheticType')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_ventilationch2', 'lkp_probechang', 1021145, 'VentilationChart', 'probeChange')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_admissiondetaq', 'lkp_question', 1001074, 'AdmissionDetailsQuestions', 'question')
@@ -2604,7 +3518,7 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_orderinvestiga', 'lkp_orderprior', 1161004, 'OrderInvestigation', 'orderPriority')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_booking_appoin', 'lkp_apptconfir', 1141012, 'Booking_Appointment', 'apptConfirmStatus')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('naes_naesreferral', 'lkp_referralre', 1021194, 'NAESReferral', 'referralReason')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_suitableforsur', 'lkp_theatretyp', 1141022, 'SuitableForSurgeryAssessment', 'theatreType')
 go
@@ -2612,17 +3526,19 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_episodeofcareh', 'lkp_specialty', 621, 'EpisodeOfCareHistory', 'specialty')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_medication', 'lkp_commencedb', 1021184, 'PatientMedicationDose', 'commencedByType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_prognosticgrp', 'lkp_prognostic', 1251095, 'PrognosticGrouping', 'prognosticGroup')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_datasettype', 'lkp_deflinecol', 1021175, 'DatasetType', 'defLineColPtIcon')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_planofcare', 'lkp_c_gro', 1231039, 'PlanOfCare', 'group')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_protocol', 'lkp_mricoregre', 1451000, 'Protocol', 'mRICoRegRequired')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_providercancel', 'lkp_reason', 1341011, 'ProviderCancellation', 'reason')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientimplant', 'lkp_charactere', 1021090, 'PatientCharacteristic', 'characteresticType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_onwardreferrtr', 'lkp_requestedb', 1021145, 'OnwardReferralFromTriage', 'requestedByGP')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_waitlistdetail', 'lkp_currentst2', 1101002, 'LoCallWaitingListDetails', 'currentStatusReason')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_elactionsheet', 'lkp_priority', 3201, 'ElectronicActionSheet', 'priority')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_tgroupsitetnmv', 'lkp_tnmtype', 1251033, 'TumourGroupSiteTNMValue', 'tNMType')
 go
@@ -2636,15 +3552,21 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_medication', 'lkp_isstoppedr', 1021037, 'PatientMedicationDose', 'isStoppedReason')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pci_clientbirthdet', 'lkp_epidural', 1021014, 'ClientBirthDetails', 'epidural')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_commsplg', 'lkp_speechlang', 1021014, 'CommunicationSpeechAndLanguage', 'speechLanguageDifficulty')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_hydrotherapy', 'lkp_levelofass', 1051002, 'Hydrotherapy', 'levelOfAssistance')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_fintransmessqu', 'lkp_msgtype', 1021260, 'FinTransMessQueue', 'msgType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_dementiaassess', 'lkp_q6recognis', 1021145, 'DementiaAssessAndInvestigate', 'q6RecognisePeople')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_tourniquetdeta', 'lkp_tournique3', 1231103, 'TourniquetDetail', 'tourniquetPressure')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_primarytumourd', 'lkp_tumourstat', 1251085, 'PrimaryTumourDetails', 'tumourStatus')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_patientturns', 'lkp_position', 1021075, 'PatientTurns', 'position')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pci_stageconfigura', 'lkp_stage', 1331004, 'StageConfiguration', 'stage')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_brachytherapyd', 'lkp_patienttyp', 1251087, 'BrachytherapyDetails', 'patientType')
 go
@@ -2652,7 +3574,9 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_nutritionalmet', 'lkp_c_ty', 1001064, 'NutritionalMethod', 'type')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_sessiontheatre', 'lkp_status', 1141007, 'SessionTheatreTCISlot', 'status')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_commhear', 'lkp_effectedea', 1021032, 'CommunicationHearing', 'effectedEars')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_bayconfig', 'lkp_temporaryb', 632, 'BayConfig', 'temporaryBayGender')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_admissiondetai', 'lkp_preferredl', 1001085, 'AdmissionDetails', 'preferredLang')
 go
@@ -2668,13 +3592,25 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_ventilationch2', 'lkp_cuff', 1021088, 'VentilationChart', 'cuff')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_imagingevents', 'lkp_anatomical', 1251013, 'Imagingevents', 'anatomicalSite')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_chemocycledeta', 'lkp_treatmentt', 1251100, 'ChemoCycleDetailsCCO', 'treatmentType')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_contact', 'lkp_hcpdiscipl', 1021048, 'Contact', 'hCPDiscipline')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_protocol', 'lkp_immobtyped', 1451009, 'Protocol', 'immobTypeDefault')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_painassrev', 'lkp_depth', 1001026, 'PainAssessmentReview', 'depth')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_radiotherapy', 'lkp_anatomical', 1251015, 'RadiotherapyDetails', 'anatomicalTreatmentSite')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_sleepmed', 'lkp_route', 1021035, 'SleepingMedication', 'route')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_urinalysis', 'lkp_protein', 1021062, 'Urinalysis', 'protein')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_dementiaassess', 'lkp_q9countbac', 1021145, 'DementiaAssessAndInvestigate', 'q9CountBackwards')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_intraoperativd', 'lkp_diathermy3', 1021324, 'IntraOperativeDetails', 'diathermyPadSite')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_mskjoints', 'lkp_movements', 1051128, 'MskJoints', 'movements')
 go
@@ -2684,15 +3620,17 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_jobnotificatio', 'lkp_priority', 1031020, 'ConfiguredJobNotification', 'priority')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_medic', 'lkp_specialty', 621, 'Medic', 'specialty')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_inpat_epis', 'lkp_vteassess2', 1231144, 'InpatientEpisode', 'vTEAssessmentStatusReason')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_summary', 'lkp_hashadanyp', 1021145, 'Summary', 'hasHadAnyProceduresPerformed')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_referralsrecor', 'lkp_urgentcanc', 1021196, 'ReferralsRecording', 'urgentCancerReferralType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_connectivetiss', 'lkp_laterality', 1021032, 'ConnectiveTissueMassage', 'laterality')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsadvancedsea', 'lkp_historicda', 1021356, 'PDSAdvancedSearchRequest', 'historicDataFlag')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_ventilationtra', 'lkp_tracheost2', 1021074, 'VentilationTracheostomy', 'tracheostomyAccessories')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_primarytumour', 'lkp_defaultage', 1451003, 'PrimaryTumour', 'defaultAgent')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('naes_naesreferral', 'lkp_interprete', 1021014, 'NAESReferral', 'interpreterRequired')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_dischargesumma', 'lkp_medicallyi', 1341010, 'DischargeSummaryPacuAndWard', 'medicallyIncomplete')
 go
@@ -2704,7 +3642,7 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_containertypes', 'lkp_c_si', 1161015, 'PathSpecimenContainer', 'size')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientcorecli', 'lkp_allergysta', 1021207, 'PatientCoreClinicalData', 'allergyStatus')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_neuinterpret', 'lkp_spinalsynd', 1051149, 'NeuInterpret', 'spinalSyndrome')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyatten', 'lkp_edconsulta', 1291043, 'EmergencyAttendance', 'eDConsultant')
 go
@@ -2712,17 +3650,23 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_chemotherapyde', 'lkp_treatments', 1251096, 'ChemotherapyDetails', 'treatmentSite')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_followup', 'lkp_performanc', 1251004, 'FollowUp', 'performanceStatus')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_wardbayblockin', 'lkp_reasonforb', 1021352, 'WardBayBlockingDetails', 'reasonForBlocking')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_patientwaitin4', 'lkp_electivead', 1341039, 'PatientElectiveList', 'electiveAdmissionType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_preassessoutc', 'lkp_pacemakert', 1231164, 'PreAssessmentOutcome', 'paceMakerType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_servicetriagea', 'lkp_opaandlink', 1021336, 'ServiceTriageAction', 'oPAAndLinkedDiagostic')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_admitassess', 'lkp_assessment', 1211000, 'AdmissionAssessment', 'assessmentType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_hcp', 'lkp_hcptype', 1021048, 'Hcp', 'hcpType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_outboundtrigge', 'lkp_queuetype', 1021259, 'OutboundTriggers', 'queueType')
-go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_surgerydetails', 'lkp_anaesthet2', 1021065, 'SurgeryDetails', 'anaesthetistGrade')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patienthomesit', 'lkp_liveswith', 1021094, 'PatientHomeSituation', 'livesWith')
-go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_summary', 'lkp_discharges', 1231104, 'Summary', 'dischargeSupplementaryLetterStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_extendeddischa', 'lkp_discharger', 1021253, 'ExtendedDischargeDetail', 'dischargeReason')
 go
@@ -2734,11 +3678,11 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_infectioncontr', 'lkp_tb', 1021014, 'InfectionControlComponent', 'tB')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pthw_adminevent', 'lkp_outcome', 1321015, 'AdminEvent', 'outcome')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsbatchtracep', 'lkp_gender', 632, 'PDSBatchTraceParams', 'gender')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_painassfind', 'lkp_severity', 1001023, 'PainAssessmentFindings', 'severity')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_slot_history', 'lkp_statusreas', 1141007, 'SessionSlotStatus', 'statusReason')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_opdfertilitycl', 'lkp_sexdrive', 1051116, 'OPDFertClinic', 'sexDrive')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_racppastmedica', 'lkp_relevantdi', 1021245, 'RACPPastMedicalHistory', 'relevantDiagnosis')
 go
@@ -2750,11 +3694,11 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_frameexercise', 'lkp_frameexerc', 1121012, 'FrameExercise', 'frameExerciseSupportType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyatten', 'lkp_attendanc4', 1291056, 'EmergencyAttendance', 'attendanceReasonNotVerified')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_anaestheticsig', 'lkp_anaestheti', 1231108, 'AnaestheticSignIn', 'anaestheticType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_chemoregimensc', 'lkp_status', 1021124, 'ChemoRegimensConfig', 'status')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_ventilationch2', 'lkp_suction', 1021014, 'VentilationChart', 'suction')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('spin_respobserv', 'lkp_observfind', 1051134, 'RespObserv', 'observFind')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_summary', 'lkp_dischargel', 1231076, 'Summary', 'dischargeLetterStatus')
 go
@@ -2768,9 +3712,15 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pendingelectiv', 'lkp_admissionm', 1021226, 'PendingElectiveAdmission', 'admissionMethod')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_skincomp', 'lkp_skincondit', 1011075, 'SkinComponent', 'skinCondition')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_radiotherapy', 'lkp_concurrent', 1021145, 'RadiotherapyDetails', 'concurrentChemotherapy')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_radiotherapy', 'lkp_anatomical', 1251015, 'RadiotherapyDetails', 'anatomicalTreatmentSite')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_sleepfindings', 'lkp_answer', 1021014, 'SleepFindings', 'answer')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_casestatus', 'lkp_statusreas', 1101006, 'CaseStatus', 'statusReason')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pthw_rttstatuspoint', 'lkp_appointmen', 1141020, 'RTTStatusPoint', 'appointmentOutcomes')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_postdischargel', 'lkp_reasonforc', 1291061, 'PostDischargeLiaison', 'reasonForContact')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_radiotherapy', 'lkp_diseasesta', 1251101, 'RadiotherapyDetails', 'diseaseStatus')
 go
@@ -2784,43 +3734,65 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_ocsorder', 'lkp_patmobilit', 1161025, 'OcsOrderSession', 'patMobility')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_remedial', 'lkp_remediallo', 2047, 'Remedial', 'remedialLocation')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_teletherapydet', 'lkp_hasadjacen', 1021145, 'TeletherapyDetails', 'hasAdjacentFields')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_mskexamjointbd', 'lkp_laterality', 1021063, 'MSkExamJointBonesDetail', 'laterality')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_racpplanadvice', 'lkp_overallimp', 1021251, 'RACPPlanAdvice', 'overallImpression')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_clinicaltrials', 'lkp_clinicaltr', 1251107, 'ClinicalTrials', 'clinicalTrial')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_rehabilitation', 'lkp_equipment', 1051008, 'RehabilitationActivity', 'equipment')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_servicetriagea', 'lkp_linkedopa2', 1021336, 'ServiceTriageAction', 'linkedOPAs')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_drains', 'lkp_drains', 1021145, 'Drains', 'drains')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_anaestheticsig', 'lkp_allergies2', 1021375, 'AnaestheticSignIn', 'allergiesConfirmedByPatient')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vteriskassessm', 'lkp_dehydratio', 1021145, 'VTERiskAssessment', 'dehydration')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_tciforpatiente', 'lkp_rttbreachr', 1141029, 'TCIForPatientElectiveList', 'rTTBreachReason')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_containertypes', 'lkp_colour', 1161033, 'PathSpecimenContainer', 'colour')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_electivelistme', 'lkp_queuetype', 1021259, 'ElectiveListMessageQueue', 'queueType')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_pathologydetai', 'lkp_vascularly', 1251040, 'PathologyDetails', 'vascularLymphInvasion')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_ventilationch2', 'lkp_painscale', 1001023, 'VentilationChart', 'painScale')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_dischargesumma', 'lkp_jobtype', 1231105, 'DischargeSummarySchedule', 'jobType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('asse_screenproficom', 'lkp_activestat', 1021124, 'ScreeningProfileComponent', 'activeStatus')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_infectcontrdet', 'lkp_result', 1011010, 'InfectionControlDetails', 'result')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_attendancekpic', 'lkp_awaitingc3', 1021145, 'AttendanceKPIConfig', 'awaitingClinicianBreachWarningKPIFlashingText')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_careplantempl', 'lkp_assessment', 1211028, 'CarePlanTemplate', 'assessmentComponent')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_painmed', 'lkp_route', 1021035, 'PainMedication', 'route')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vteriskassessm', 'lkp_useofhrt', 1021145, 'VTERiskAssessment', 'useOfHRT')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_actvlevl', 'lkp_aidsused', 1011008, 'ActivityLevel', 'aidsUsed')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_actualplandeta', 'lkp_plannedtre', 1251078, 'ActualPlanDetails', 'plannedTreatmentType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_pataction', 'lkp_priority', 3201, 'PatAction', 'priority')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_sch_session', 'lkp_safetybri3', 1141042, 'Sch_Session', 'safetyBriefDelayReason')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_investigationi', 'lkp_category', 1161000, 'InvestigationIndex', 'category')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_plinthworkanal', 'lkp_staticanal', 1021145, 'PlinthWorkAnalysis', 'staticAnalysis')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pendingtransfe', 'lkp_transferr2', 1021319, 'PendingTransfers', 'transferReason')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_thermalactivit', 'lkp_area', 1051025, 'ThermalActivity', 'area')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_preassessoutc', 'lkp_therapyact', 1231165, 'PreAssessmentOutcome', 'therapyAction')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_personaldetail', 'lkp_occupation', 625, 'PersonalDetailsComponent', 'occupation')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pendingelectiv', 'lkp_patientsta', 1021112, 'PendingElectiveAdmission', 'patientStatus')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_casr', 'lkp_casecatego', 1101007, 'CaseReferral', 'caseCategory')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patienthomesit', 'lkp_lift', 1231049, 'PatientHomeSituation', 'lift')
 go
@@ -2830,23 +3802,31 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientconcern', 'lkp_allocatedt', 1021048, 'PatientConcern', 'allocatedToTeam')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_drgractv', 'lkp_ability', 1211020, 'DressingandGroomingActivities', 'ability')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_appt_history_s', 'lkp_pasclinic', 1141018, 'Appointment_Status', 'pASClinic')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_edtransfer', 'lkp_transfermo', 1291009, 'EDTransfer', 'transferMode')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_neuinterpret', 'lkp_completein', 1051150, 'NeuInterpret', 'completeIncomplete')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_servicetriagea', 'lkp_opa', 1021336, 'ServiceTriageAction', 'oPA')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_mergedpatient', 'lkp_maritalsta', 766, 'MergedPatient', 'maritalStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vteriskassessm', 'lkp_uncontroll', 1021145, 'VTERiskAssessment', 'uncontrolledHypertension')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_surgicalauditp', 'lkp_actiontake', 1231126, 'SurgicalAuditPreOpChecks', 'actionTaken')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('naes_naesreferral', 'lkp_implant', 1021014, 'NAESReferral', 'implant')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patientprepera', 'lkp_bodypositi', 1231155, 'PatientPreperationIntraOp', 'bodyPosition')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_attendancekpic', 'lkp_awaitingc8', 1021145, 'AttendanceKPIConfig', 'awaitingClinicianBreachKPIFlashingText')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_accomhome', 'lkp_status', 1021014, 'AccommodationHomeFacilities', 'status')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_followup', 'lkp_patientfol', 1251005, 'FollowUp', 'patientFollowUpStatus')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_dementiaassess', 'lkp_q1age', 1021145, 'DementiaAssessAndInvestigate', 'q1Age')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_handrangeofmov', 'lkp_dominantha', 1121016, 'HandRangeOfMovement', 'dominantHand')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_intraoperativd', 'lkp_laserdevi2', 1021326, 'IntraOperativeDetails', 'laserDeviceSerialNumber')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_medicationdeta', 'lkp_commencedb', 1021184, 'PatientMedication', 'commencedByType')
 go
@@ -2862,25 +3842,41 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_hcplocation', 'lkp_accreditat', 1021111, 'HcpLocation', 'accreditationStatus')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_elactionsheet', 'lkp_planningtr', 3202, 'ElectronicActionSheet', 'planningTransport')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('spin_motorchartdeta', 'lkp_laterality', 1021063, 'MotorChartDetails', 'laterality')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_finalcountintr', 'lkp_sharpsothe', 1021377, 'FinalCountIntraOp', 'sharpsOtherCorrectAndRemovedFromSet')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdspatientupda', 'lkp_preferredc', 1021367, 'PDSPatientUpdate', 'preferredContactMethodUpdateMode')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_stoolscale', 'lkp_stooltype', 1001054, 'StoolScale', 'stoolType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_commvisn', 'lkp_wearlenses', 1021014, 'CommunicationVision', 'wearLenses')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_chemocycledeta', 'lkp_deliveryco', 1251099, 'ChemoCycleDetailsCCO', 'deliveryCodeAllOtherDays')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vteriskassessm', 'lkp_contexttyp', 1231143, 'VTERiskAssessment', 'contextType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_phygcomp', 'lkp_assisstanc', 1021014, 'PersonalHygieneComponent', 'assisstanceWithPersonalHygiene')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_assessmentcomp', 'lkp_componentt', 1211028, 'AssessmentComponent', 'componentType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('naes_actiondetail', 'lkp_action', 1351000, 'ActionDetail', 'action')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_surgicalaudds', 'lkp_operations', 1231131, 'SurgicalAuditOperationDetailStatus', 'operationStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_phygactv', 'lkp_activities', 1001018, 'PersonalHygieneActivities', 'activities')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_erectdysfxtrea', 'lkp_treatment', 1051095, 'OPDErectDysfxTreatments', 'treatment')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_surgicalauditr', 'lkp_confirmpat', 1021145, 'SurgicalAuditRecovery', 'confirmPatientArrival')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_catsreferral', 'lkp_cancertype', 1341054, 'CatsReferral', 'cancerType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_dischargedepis', 'lkp_treatmentd', 1021240, 'DischargedEpisode', 'treatmentDeferredReason')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pendingemergen', 'lkp_specialty', 621, 'PendingEmergencyAdmission', 'specialty')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_allergyreactio', 'lkp_severity', 1021021, 'PatientAllergyReaction', 'severity')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_tourniquetintr', 'lkp_site', 1231167, 'TourniquetIntraOp', 'site')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_booking_appoin', 'lkp_apptstatus', 1141007, 'Booking_Appointment', 'apptStatus')
 go
@@ -2890,25 +3886,45 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientdocumen', 'lkp_specialty', 621, 'PatientDocument', 'specialty')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_intraoperativd', 'lkp_woundpacki', 1021331, 'IntraOperativeDetails', 'woundPackingType')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_electrotreat', 'lkp_area', 1051034, 'ElectrotherapyTensTreatment', 'area')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('hl7_outbound', 'lkp_messagecat', 1411000, 'HL7Outbound', 'messageCategory')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_questioninform', 'lkp_genderspec', 1031002, 'QuestionInformation', 'genderSpecific')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pthw_adminevent', 'lkp_eventmetho', 1141025, 'AdminEvent', 'eventMethod')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_woundpackingin', 'lkp_packingtyp', 1021331, 'WoundPackingIntraOp', 'packingType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_followup', 'lkp_markerresp', 1251003, 'FollowUp', 'markerResponseStatus')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_opderectdysfxn', 'lkp_treatdiscu', 1021014, 'OPDErectDysfxn', 'treatDiscussed')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_goalplanning', 'lkp_discharge2', 1021130, 'GoalPlanning', 'dischargeDelayUnit')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_demographicsmq', 'lkp_messagesta', 1161039, 'DemographicsMessageQueue', 'messageStatus')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_waitlistdetail', 'lkp_currentsta', 1101002, 'LoCallWaitingListDetails', 'currentStatus')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('asse_userdefinedob2', 'lkp_activestat', 1021124, 'UserDefinedObjectComponent', 'activeStatus')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patientprepera', 'lkp_patientpre', 1231153, 'PatientPreperationIntraOp', 'patientPreparation')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_procedure', 'lkp_surgeoncat', 1041003, 'Procedure', 'surgeonCategory')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_dischargedetai', 'lkp_dischargem', 1021190, 'DischargeDetails', 'dischargeMethod')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_casestatus', 'lkp_status', 1101006, 'CaseStatus', 'status')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patient', 'lkp_overseascl', 1021379, 'Patient', 'overseasClassification')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_electrotherap7', 'lkp_areatreate', 1051040, 'ElectrotherapyUltrasoundTreatment', 'areaTreated')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_dischargesumma', 'lkp_followupty', 1341013, 'DischargeSummaryPacuAndWard', 'followupType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_patientturns', 'lkp_duration', 1001049, 'PatientTurns', 'duration')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_appsite', 'lkp_site', 1021238, 'AppSite', 'site')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_preassessoutc', 'lkp_patientdia', 1021145, 'PreAssessmentOutcome', 'patientDiabetic')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_investigationi', 'lkp_activestat', 1021124, 'InvestigationIndex', 'activeStatus')
 go
@@ -2924,11 +3940,15 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_drgrpref', 'lkp_preference', 1011044, 'DressingandGroomingPreferences', 'preferences')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_locall', 'lkp_whereheard', 1101001, 'LoCall', 'whereHeard')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_functionaltra2', 'lkp_risk', 1051048, 'FunctionalTransfersTechnique', 'risk')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_dementiafind', 'lkp_awarenessq', 1021145, 'DementiaFind', 'awarenessQuestion')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_opdgennotes', 'lkp_opdnextuni', 1021141, 'OPDGenNotes', 'opdNextUnits')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_appt_history_s', 'lkp_cancellati', 1141003, 'Appointment_Status', 'cancellationReason')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_medicationonad', 'lkp_recordmed2', 1021145, 'MedicationOnAdmissionAndChanges', 'recordMedicationChanges')
 go
@@ -2936,21 +3956,25 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_catsreferral', 'lkp_referralca', 1341033, 'CatsReferral', 'referralCategory')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_referralsrecor', 'lkp_delayreaso', 1231059, 'ReferralsRecording', 'delayReasonGPUrgentReferral')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_ventilationtra', 'lkp_typeofvent', 1021066, 'VentilationTracheostomy', 'typeOfVentilator')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_toolpmdt', 'lkp_movement', 1011092, 'PatientMovementHandlingDetails', 'movement')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_complementary2', 'lkp_complement', 1051001, 'ComplementaryTherapyDetails', 'complementaryTherapy')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vteriskassessm', 'lkp_pregnancy', 1021145, 'VTERiskAssessment', 'pregnancy')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_medicationdeta', 'lkp_ttarequire', 1231075, 'MedicationDetails', 'tTARequired')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patienthomesit', 'lkp_stairs', 1231052, 'PatientHomeSituation', 'stairs')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyatten', 'lkp_accomodati', 1021307, 'EmergencyAttendance', 'accomodationRequestedType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_mskgroups', 'lkp_grouptype', 1051177, 'MskGroups', 'groupType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_rta', 'lkp_policestat', 1291034, 'RTA', 'policeStation')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_ventilationtra', 'lkp_modeofvent', 1021068, 'VentilationTracheostomy', 'modeOfVentilation')
-go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_medicationonad', 'lkp_recordmedi', 1021145, 'MedicationOnAdmissionAndChanges', 'recordMedicationOnAdmission')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_protocol', 'lkp_planctrequ', 1451000, 'Protocol', 'planCTRequired')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_edattendanceme', 'lkp_msgtype', 1021260, 'EdAttendanceMessageQueue', 'msgType')
 go
@@ -2958,11 +3982,15 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_needsassessmen', 'lkp_attachbook', 1021145, 'NeedsAssessment', 'attachBookletToSummarySheet')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_workallocation', 'lkp_referralst', 1341000, 'WorkAllocation', 'referralStatus')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_documentstatus', 'lkp_correspond', 1021127, 'DocumentStatus', 'correspondenceStatus')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_protocol', 'lkp_conssessre', 1451000, 'Protocol', 'consSessRequired')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_epworthsleepas', 'lkp_chanceofsl', 1051168, 'EpworthSleepAssessment', 'chanceOfSleep')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_referral', 'lkp_referralty', 1021081, 'Referral', 'referralType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_appt_tracking', 'lkp_trackingst', 1141023, 'Appt_Tracking_Status_History', 'trackingStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_pattreatmentpl', 'lkp_treatmentt', 3415, 'PatTreatmentPlanGroupSiteTech', 'treatmentTechnique')
 go
@@ -2976,45 +4004,63 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyepiso', 'lkp_occupation', 625, 'EmergencyEpisode', 'occupation')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_futureplanfoll', 'lkp_followupty', 1021258, 'FuturePlanFollowUp', 'followUpType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_goalplanning', 'lkp_primecance', 1231042, 'GoalPlanning', 'primeCancelReason')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_bladcont', 'lkp_bladderemp', 1021014, 'BladderContinence', 'bladderEmptySpontaneously')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_nutritionalmet', 'lkp_nutritiona', 1001014, 'NutritionalMethod', 'nutritionalMethod')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientfamilyh', 'lkp_relationsh', 1021017, 'PatientFamilyHistory', 'relationship')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientdocumen', 'lkp_correspond', 1021127, 'PatientDocument', 'correspondenceStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientdocumen', 'lkp_emailstatu', 1021277, 'PatientDocument', 'emailStatus')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_referraltospec', 'lkp_specialty', 621, 'ReferralToSpecTeam', 'specialty')
-go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vitalsignmonit', 'lkp_vitalssign', 1021058, 'VitalSignMonitoringGroup', 'vitalsSigns')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_appointmentout', 'lkp_appointmen', 1141027, 'AppointmentOutcomeAction', 'appointmentAction')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_chemoregimensc', 'lkp_procuremen', 1251097, 'ChemoRegimensConfig', 'procurementCode')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_skincomp', 'lkp_chairtype', 1001017, 'SkinComponent', 'chairType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_referralurgenc', 'lkp_reasonforc', 1341064, 'ReferralUrgencyUpdates', 'reasonForChangeUrgency')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_referralsrecor', 'lkp_primarypre', 1231046, 'ReferralsRecording', 'primaryPreceeding')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_telecomusagety', 'lkp_channeltyp', 1021149, 'TelecomUsageType', 'channelTypes')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_elactionsheet', 'lkp_removalrea', 1451014, 'ElectronicActionSheet', 'removalReason')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_chemotherapyde', 'lkp_cancertrea', 1251014, 'ChemotherapyDetails', 'cancerTreatementIntent')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_commsplg', 'lkp_verbally', 1011037, 'CommunicationSpeechAndLanguage', 'verbally')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_mskgroups', 'lkp_bonegenera', 1051136, 'MskGroups', 'boneGeneralFindings')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_boweldhr', 'lkp_consistenc', 1011015, 'BowelDiarrhoea', 'consistency')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_referralletter', 'lkp_initiatedf', 1341058, 'ReferralLetterDetails', 'initiatedFrom')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_activemonitori', 'lkp_activemoni', 1341029, 'ActiveMonitoring', 'activeMonitoringReason')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vteriskassessm', 'lkp_significan', 1021145, 'VTERiskAssessment', 'significantMorbidities')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_handovercounti', 'lkp_counttype', 1231168, 'HandoverCountIntraOp', 'countType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_investigationi', 'lkp_sites', 1161028, 'InvestigationIndex', 'sites')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_radiotherapy', 'lkp_concurrent', 1021145, 'RadiotherapyDetails', 'concurrentChemotherapy')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_electrotreat', 'lkp_model', 1051035, 'ElectrotherapyTensTreatment', 'model')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_orderset', 'lkp_activestat', 1021124, 'OrderSet', 'activeStatus')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_contact', 'lkp_consentrea', 1121018, 'Contact', 'consentReason')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_primarytumourd', 'lkp_prognosti6', 1251035, 'PrimaryTumourDetails', 'prognosticGroupingCert')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_sessionmove', 'lkp_reason', 1141003, 'SessionMove', 'reason')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_protocol', 'lkp_mouldroomd', 1451010, 'Protocol', 'mouldRoomDefault')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_pataction', 'lkp_attendinga', 3204, 'PatAction', 'attendingAs')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_commsplg', 'lkp_verbally', 1011037, 'CommunicationSpeechAndLanguage', 'verbally')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_triage', 'lkp_currenttr3', 1291020, 'Triage', 'currentTriagePriority')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_ane_att', 'lkp_modeofarri', 1021128, 'AEAttendance', 'modeOfArrival')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_anaestheticsig', 'lkp_leftandrig', 1231150, 'AnaestheticSignIn', 'leftAndRightSideCheckedAndSorrectSideMarked')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_visualacuity', 'lkp_systemused', 1021061, 'VisualAcuity', 'systemUsed')
 go
@@ -3022,37 +4068,51 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_resultcomponen', 'lkp_unitofmeas', 1161036, 'ResultComponent', 'unitOfMeasure')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_neuroreflexesa', 'lkp_analtestfi', 1051107, 'NeuroReflexesAnalTests', 'analTestfinding')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_mskgroups', 'lkp_bones', 1051138, 'MskGroups', 'bones')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('asse_screeningprofi', 'lkp_activestat', 1021124, 'ScreeningProfile', 'activeStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_referral', 'lkp_sourceofre', 1021025, 'Referral', 'sourceOfReferral')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_planofcare', 'lkp_status', 1001069, 'PlanOfCare', 'status')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_elactionsheet', 'lkp_imrt', 1451008, 'ElectronicActionSheet', 'iMRT')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyatten', 'lkp_attendanc3', 1021033, 'EmergencyAttendance', 'attendanceSourceOfData')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_linkeddiagnost', 'lkp_periodtype', 1021078, 'LinkedDiagnostic', 'periodType')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patientabsentd', 'lkp_status', 1231035, 'PatientAbsentDiagnosis', 'status')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_inpatientepiso', 'lkp_msgtype', 1021260, 'InpatientEpisodeQueue', 'msgType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_epworthsleepas', 'lkp_sleepscore', 1051161, 'EpworthSleepAssessment', 'sleepScore')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_electrotreat', 'lkp_laterality', 1021032, 'ElectrotherapyTensTreatment', 'laterality')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_sleepaids', 'lkp_patienttak', 1021014, 'SleepingAids', 'patientTakeMedicationToSleep')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_respiratorytre', 'lkp_posturaldr', 1051109, 'RespiratoryTreatment', 'posturalDrainage')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyatten', 'lkp_attendance', 1291007, 'EmergencyAttendance', 'attendanceType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('corr_specialtyacces', 'lkp_specialty', 621, 'SpecialtyAccess', 'specialty')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_intraoperativd', 'lkp_nationaljo', 1021145, 'IntraOperativeDetails', 'nationalJointRegistryCompleted')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_specialinteres', 'lkp_specialint', 1111004, 'SpecialInterestDetail', 'specialInterestCategory')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_rehabilitation', 'lkp_activityca', 1026, 'RehabilitationActivity', 'activityCategory')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_sch_session', 'lkp_sessiontyp', 1141000, 'Sch_Session', 'sessionType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_medication', 'lkp_admintimes', 1021036, 'PatientMedicationDose', 'adminTimes')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_spinepath', 'lkp_mechanismo', 1051098, 'MskSpinePath', 'mechanismOfInjury')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_electrotherap7', 'lkp_muscleaspe', 2239, 'ElectrotherapyUltrasoundTreatment', 'muscleAspect')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_systemreviewsy', 'lkp_durationun', 1021130, 'SystemReviewSymptoms', 'durationUnit')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_racpeecg', 'lkp_preassesse', 1231080, 'RACPExerciseECG', 'preAssessesCHD')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_nurse', 'lkp_nursetype', 1021048, 'Nurse', 'nurseType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_accommodation', 'lkp_livingarra', 1011000, 'Accommodation', 'livingArrangements')
 go
@@ -3060,17 +4120,21 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_booking_appoin', 'lkp_category', 1341033, 'Booking_Appointment', 'category')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_clinicaloutcom', 'lkp_specialty', 621, 'ClinicalOutcomeConfig', 'specialty')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_anaestheticsig', 'lkp_intraopera', 1021145, 'AnaestheticSignIn', 'intraoperativeFluidsRequired')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_clinicaloutcom', 'lkp_category', 1231117, 'ClinicalOutcomeCategoryProcedureRequiredConfig', 'category')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_services', 'lkp_turnaround', 1161007, 'Service', 'turnaroundMeasure')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_locallstatus', 'lkp_status', 1101002, 'LoCallStatus', 'status')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_admissiondetai', 'lkp_patientsta', 1021112, 'AdmissionDetail', 'patientStatus')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_protocol', 'lkp_imrtrequir', 1451000, 'Protocol', 'iMRTRequired')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_infectioncontr', 'lkp_clostridiu', 1021014, 'InfectionControlComponent', 'clostridium')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_procedure', 'lkp_anaestheti', 1041003, 'Procedure', 'anaesthetistCategory')
-go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_racppastmedica', 'lkp_ecgfinding', 1021246, 'RACPPastMedicalHistory', 'eCGFindings')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_questioninform', 'lkp_status', 1021124, 'QuestionInformation', 'status')
 go
@@ -3080,19 +4144,21 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_extendedadmiss', 'lkp_referredfr', 1021283, 'ExtendedAdmissionDetail', 'referredFromType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_safeenvironmen', 'lkp_haveaheadi', 1021014, 'SafeEnvironmentComponent', 'haveAHeadInjury')
-go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_plinthworkanal', 'lkp_dynamic', 1021145, 'PlinthWorkAnalysis', 'dynamic')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_specimen', 'lkp_c_ty', 1161029, 'Specimen', 'type')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_episodeofcareh', 'lkp_relationsh', 1021165, 'EpisodeOfCareHistory', 'relationship')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pci_vaccinestatus', 'lkp_terminatio', 1331012, 'VaccineStatus', 'terminationReason')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_signatoryperio', 'lkp_timeperiod', 1021180, 'SignatoryPeriod', 'timePeriods')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientfamilyh', 'lkp_relativeli', 1021014, 'PatientFamilyHistory', 'relativeLiving')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_attendancekpic', 'lkp_awaitingc8', 1021145, 'AttendanceKPIConfig', 'awaitingClinicianBreachKPIFlashingText')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_racpplanadvice', 'lkp_overallimp', 1021251, 'RACPPlanAdvice', 'overallImpression')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_procedure', 'lkp_genderspec', 1031002, 'Procedure', 'genderSpecific')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_gp', 'lkp_status', 1021110, 'Gp', 'status')
 go
@@ -3104,25 +4170,39 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patient', 'lkp_ethnicorig', 762, 'Patient', 'ethnicOrigin')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_awaitingclinic', 'lkp_clinicalin', 1341028, 'AwaitingClinicalInfo', 'clinicalInfoAwaiting')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_skinassrev', 'lkp_pressureso', 1001028, 'SkinAssessmentReview', 'pressureSoreGrade')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ntpf_dischargesumma', 'lkp_discharges', 1101027, 'DischargeSummary', 'dischargeStatus')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_servicetriagea', 'lkp_directtol2', 1021336, 'ServiceTriageAction', 'directToListAndOPA')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_powerchairskil', 'lkp_powerchai2', 1051066, 'PowerchairSkillsAssessment', 'powerchairSkillAssLevel')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_onwardreferrtr', 'lkp_referralco', 1021145, 'OnwardReferralFromTriage', 'referralComplete')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdspatientupda', 'lkp_nokeffecti', 1021367, 'PDSPatientUpdate', 'nokEffectiveDatesUpdateMode')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_wheelchairsurf', 'lkp_surface', 1051114, 'WheelchairSurfaceDistance', 'surface')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_manchestertria', 'lkp_activestat', 1021124, 'ManchesterTriageProtocolConfiguration', 'activeStatus')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_referralsrecor', 'lkp_delayreaso', 1231059, 'ReferralsRecording', 'delayReasonGPUrgentReferral')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pain', 'lkp_pain', 1001023, 'Pain', 'pain')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_locationdepart', 'lkp_department', 1291036, 'LocationDepartmentTypes', 'departmentTypes')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pers_relative', 'lkp_pdslanguag', 1021280, 'Relative', 'pDSlanguage')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_gppracticemess', 'lkp_msgtype', 1021260, 'GPPracticeMessageQueue', 'msgType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_suitableforsur', 'lkp_reasonnots', 1341020, 'SuitableForSurgeryAssessment', 'reasonNotSuitable')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_resultcomponen', 'lkp_specimenso', 1161029, 'ResultComponent', 'specimenSource')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_referralsrecor', 'lkp_primarypre', 1231046, 'ReferralsRecording', 'primaryPreceeding')
-go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_medprobonadmbo', 'lkp_source', 1021033, 'PatientProblem', 'source')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_filmpacket', 'lkp_mediatype', 1021273, 'FilmPacket', 'mediaType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_preassessoutc', 'lkp_secondary2', 1021032, 'PreAssessmentOutcome', 'secondaryProcLaterality')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_tourniquetdeta', 'lkp_tournique2', 1231102, 'TourniquetDetail', 'tourniquetPosition')
 go
@@ -3130,13 +4210,17 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_deathdetails', 'lkp_deathcoded', 1021187, 'DeathDetails', 'deathCodeDiscrepency')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_protocol', 'lkp_pegrequire', 1451000, 'Protocol', 'pegRequired')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_whiteboardques', 'lkp_genderspec', 1031002, 'WhiteBoardQuestionConfig', 'genderSpecific')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_hydrotherapy', 'lkp_transferou', 1051004, 'Hydrotherapy', 'transferOut')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patientpmhche2', 'lkp_sourceofin', 1021033, 'PatientPMHChecklistDiagnosis', 'sourceofInformation')
-go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pas_event', 'lkp_specialty', 621, 'PASEvent', 'specialty')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_teletherapydet', 'lkp_beamenergy', 1251080, 'TeletherapyDetails', 'beamEnergy')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_repositioningp', 'lkp_position', 1021075, 'RepositioningPlan', 'position')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_wardbayclosing', 'lkp_reopenreas', 1021353, 'WardBayClosingDetails', 'reopenReason')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_peripheralrefl', 'lkp_rightfindi', 1051130, 'NeuroReflexesPeripheralFindings', 'rightFinding')
 go
@@ -3144,13 +4228,13 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientmedical', 'lkp_currentsta', 1021272, 'PatientMedicalInsurance', 'currentStatus')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_intraoperativd', 'lkp_skinclosur', 1231090, 'IntraOperativeDetails', 'skinClosure')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsaddr', 'lkp_pdsupdatem', 1021367, 'PDSAddr', 'pdsUpdateMode')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_functionalasse', 'lkp_functional', 1011099, 'FunctionalAndSupport', 'functionalSupports')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_attendanceclin', 'lkp_notetype', 1291045, 'AttendanceClinicalNotes', 'noteType')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_racpsymptoms', 'lkp_rapcsympto', 1021243, 'RACPSymptoms', 'rAPCSymptom')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_transferhistor', 'lkp_canceltran', 1021349, 'TransferHistory', 'cancelTransferReason')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_dementiaassess', 'lkp_q2dob', 1021145, 'DementiaAssessAndInvestigate', 'q2DOB')
 go
@@ -3162,7 +4246,17 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('asse_graphicgssessm', 'lkp_activestat', 1021124, 'GraphicAssessment', 'activeStatus')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_elactionsheet', 'lkp_appropcccl', 1021145, 'ElectronicActionSheet', 'appropCCCL')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patientchartab', 'lkp_periopstag', 1231173, 'PatientChartableOccurance', 'periOpStage')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patient', 'lkp_pdsdeathno', 1031036, 'Patient', 'pDSDeathNotificationStatus')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_nureatingcompo', 'lkp_specialdie', 1001015, 'NurEatingComponent', 'specialDiet')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_futureappointm', 'lkp__2ndapptfu', 1021097, 'FutureAppointmentDetails', '_2ndApptFunction')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pthw_adminevent', 'lkp_eventmetho', 1141025, 'AdminEvent', 'eventMethod')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_catheterdetail', 'lkp_difficulty', 1021145, 'CatheterDetail', 'difficultyWithInsertion')
 go
@@ -3170,11 +4264,15 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_tunourgroupsit', 'lkp_overallsta', 1251075, 'TumourGroupSiteOverallStaging', 'overallStageDescription')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_booking_appoin', 'lkp_apptconfir', 1141012, 'Booking_Appointment', 'apptConfirmStatus')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_chemotherapyde', 'lkp_chemoradia', 1021145, 'ChemotherapyDetails', 'chemoRadiation')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patient', 'lkp_c_langua', 532, 'Patient', 'language')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vteriskassessm', 'lkp_hipfractur', 1021145, 'VTERiskAssessment', 'hipFracture')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_chargedescmess', 'lkp_msgtype', 1021260, 'ChargeDescMessQueue', 'msgType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_functionalasse', 'lkp_status', 1021014, 'FunctionalAndSupport', 'status')
 go
@@ -3188,19 +4286,25 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_wheelchairasse', 'lkp_chairtype', 1051140, 'WheelchairAssessment', 'chairType')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_patientwaitin4', 'lkp_patientcat', 1021112, 'PatientElectiveList', 'patientCategory')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_skinassfind', 'lkp_primarydre', 1001035, 'SkinAssessmentFindings', 'primaryDressing')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_sessionparentc', 'lkp_statusreas', 1141007, 'SessionParentChildSlot', 'statusReason')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_futureappointm', 'lkp__2ndapptp2', 1021078, 'FutureAppointmentDetails', '_2ndApptPeriodType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_caseconfhcpsta', 'lkp_attendance', 1231014, 'CaseConfMOSStatus', 'attendanceStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_brthcomp', 'lkp_breathingd', 1211031, 'BreathingComponent', 'breathingDyspnoea')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_locationdepart', 'lkp_defaultdep', 1291036, 'LocationDepartmentTypes', 'defaultDepartmentType')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_appointmentout', 'lkp_outcomeofa', 1141026, 'AppointmentOutcomeAction', 'outcomeOfAction')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_splintswearreg', 'lkp_weartimere', 1051023, 'SplintsWearRegime', 'wearTimeRegime')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_prognosticgrp', 'lkp_prognostic', 1251095, 'PrognosticGrouping', 'prognosticGroup')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_questioninform', 'lkp_classifica', 1021119, 'QuestionInformation', 'classification')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_educationtocar', 'lkp_carer', 1121005, 'EducationToCarers', 'carer')
 go
@@ -3208,17 +4312,19 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_balanceactivit', 'lkp_balanceact', 1121010, 'BalanceActivities', 'balanceActivities')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_elactionsheet', 'lkp_intent', 3199, 'ElectronicActionSheet', 'intent')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_opdspasassesst', 'lkp_opdtreatgo', 1051159, 'OPDSpasAssessTreatGoal', 'oPDTreatGoalStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pthw_extevenmap', 'lkp_c_gro', 1321000, 'ExternalEventMapping', 'group')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_wheelchaircush', 'lkp_cushionsiz', 1051146, 'WheelchairCushion', 'cushionSize')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_wardmessageque', 'lkp_messagesta', 1161039, 'WardMessageQueue', 'messageStatus')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_catsreferralst', 'lkp_secondopin', 1341027, 'CATSReferralStatus', 'secondOpinionCategory')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('asse_dppquestiongro', 'lkp_c_gro', 1231039, 'DPPQuestionGroup', 'group')
-go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patient', 'lkp_homefolder', 1021268, 'Patient', 'homeFolderLocation')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_skinassfind', 'lkp_woundtype', 1001038, 'SkinAssessmentFindings', 'woundType')
 go
@@ -3228,15 +4334,21 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_infectioncontr', 'lkp_norovirus', 1021014, 'InfectionControlComponent', 'norovirus')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_sess_slot', 'lkp_statusreas', 1141007, 'Session_Slot', 'statusReason')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsconfigurati', 'lkp_dob_date_2', 1021390, 'PDSConfiguration', 'dOB_DATE_RANGE_TYPE')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patientgoal', 'lkp_areaofneed', 1231010, 'PatientGoal', 'areaOfNeed')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_futureappointm', 'lkp__3rdapptfu', 1021097, 'FutureAppointmentDetails', '_3rdApptFunction')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_appointmentcli', 'lkp_notetype', 1341023, 'AppointmentClinicalNotes', 'noteType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_electivelistst', 'lkp_removalrea', 1341043, 'ElectiveListStatus', 'removalReason')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_appsite', 'lkp_site', 1021238, 'AppSite', 'site')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patientprepera', 'lkp_leftlegpos', 1231157, 'PatientPreperationIntraOp', 'leftLegPosition')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_racpreferral', 'lkp_delayreaso', 1021265, 'RACPReferral', 'delayReason')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_diagnosismanag', 'lkp_actionrequ', 1021145, 'DiagnosisManagement', 'actionRequiredByGP')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pthw_pathwaytargetr', 'lkp_status', 1021124, 'PathwayTargetRTTEvent', 'status')
 go
@@ -3244,9 +4356,11 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_pattreatmentpl', 'lkp_treatmentg', 1251108, 'PatTreatmentPlanGroupSiteTech', 'treatmentGroupSite')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_nurse', 'lkp_nursetype', 1021048, 'Nurse', 'nurseType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_teletherapydet', 'lkp_multiplepl', 1021145, 'TeletherapyDetails', 'multiplePlanning')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patdiagnosis', 'lkp_site', 1231021, 'PatientDiagnosis', 'site')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_gpmessagequeue', 'lkp_messagesta', 1161039, 'GPMessageQueue', 'messageStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_mergedpatient', 'lkp_c_langua', 532, 'MergedPatient', 'language')
 go
@@ -3258,13 +4372,23 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_opdspasticitya', 'lkp_botulismtr', 1051157, 'OPDSpasticityAssessTreat', 'botulismTreatment')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_patientwaitin4', 'lkp_patientsta', 1341033, 'PatientElectiveList', 'patientStatus')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_chemotherapyde', 'lkp_regimenacr', 1251027, 'ChemotherapyDetails', 'regimenAcronym')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patdiagnosis', 'lkp_diaglatera', 1021032, 'PatientDiagnosis', 'diagLaterality')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_patientwaitin4', 'lkp_rule28days', 1141041, 'PatientElectiveList', 'rule28DayStatus')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_alcohol', 'lkp_unitsperwe', 1021147, 'Alcohol', 'unitsPerWeek')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_signatoryshift', 'lkp_starttime', 1021180, 'SignatoryShiftDetails', 'startTime')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('asse_userdefinedobj', 'lkp_activestat', 1021124, 'UserDefinedObject', 'activeStatus')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_edadmission', 'lkp_accomodati', 1021307, 'EDPartialAdmission', 'accomodationRequestedType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_appointmentmes', 'lkp_msgtype', 1021260, 'AppointmentMessageQueue', 'msgType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyatte2', 'lkp_exemptionr', 1291044, 'EmergencyAttendanceBilling', 'exemptionReason')
 go
@@ -3274,33 +4398,51 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_opdfertilitycl', 'lkp_testatroph', 1051118, 'OPDFertClinic', 'testAtrophy')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsbackofficei', 'lkp_registerya', 1021346, 'PDSBackOfficeItem', 'registeryAuthorityType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_servicetriagea', 'lkp_cabopaandd', 1021336, 'ServiceTriageAction', 'cABOPAandDirectToList')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('cab_actionrequest', 'lkp_requesttyp', 1001006, 'ActionRequest', 'requestType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_ttamedication', 'lkp_gptocontin', 1021145, 'TTAMedication', 'gpToContinue')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_orderchangeres', 'lkp_messagesta', 1161039, 'OrderChangeResponseQueue', 'messageStatus')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientnodiagi', 'lkp_diagnosiss', 1021300, 'PatientNoDiagInfoForCC', 'diagnosisStatus')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patient', 'lkp_nationalit', 1021210, 'Patient', 'nationality')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patientabsentp', 'lkp_selected', 1231035, 'PatientAbsentProcedure', 'selected')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_whiteboardothe', 'lkp_otheractio', 1291059, 'WhiteBoardOtherActions', 'otherActionType')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_printlocationc', 'lkp_printcentr', 1021145, 'PrintLocationConfig', 'printCentral')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_pattreatpl', 'lkp_treatments', 1251108, 'PatTreatmentPlan', 'treatmentSites')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientcontact', 'lkp_pdsconsen2', 1021386, 'PatientContactPreference', 'pdsConsentType')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_electronicpres', 'lkp_button', 1021278, 'ElectronicPrescribingConfig', 'button')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_admissiondetai', 'lkp_codingstat', 1021321, 'AdmissionDetail', 'codingStatus')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_clinicalnotes', 'lkp_notetype', 1021169, 'ClinicalNotes', 'noteType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('adto_mosmessagequeu', 'lkp_queuetype', 1021259, 'MOSMessageQueue', 'queueType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_drugtoxicolog2', 'lkp_toxicolog2', 1291039, 'DrugToxicologyItem', 'toxicologyResult')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_accomhous', 'lkp_currentliv', 1011000, 'AccommodationHousing', 'currentLivingArrangements')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pthw_patjourstatus', 'lkp_status', 1321005, 'PatientJourneyStatus', 'status')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_resultspecimen', 'lkp_specimenty', 1161029, 'ResultSpecimenTypes', 'specimenType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_protocol', 'lkp_pegdefault', 1021145, 'Protocol', 'pEGDefault')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_intraoperativd', 'lkp_diathermyd', 1021323, 'IntraOperativeDetails', 'diathermyDeviceSerialNumber')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_clinicalcdiass', 'lkp_associatio', 1231022, 'Clinicalcdiassociations', 'associationDescription')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_dischargeoutco', 'lkp_discharget', 1341003, 'DischargeOutcome', 'dischargeType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patient', 'lkp_dodsource', 1021211, 'Patient', 'dodSource')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_chemotherapyde', 'lkp_delayreaso', 1081034, 'ChemotherapyDetails', 'delayReason1')
 go
@@ -3308,7 +4450,11 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_memberofstaff', 'lkp_stafftype', 1021116, 'MemberOfStaff', 'staffType')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_cancerreferral', 'lkp_firstthera', 1021014, 'CancerReferralDetails', 'firstTheraInter')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_hospitalatnpds', 'lkp_status', 1231121, 'HospitalAtNightPatientDetailStatus', 'status')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_chemoregimensc', 'lkp_dayonedeli', 1251098, 'ChemoRegimensConfig', 'dayOneDeliveryCode')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_erectdysfxtrea', 'lkp_treatscore', 1021089, 'OPDErectDysfxTreatments', 'treatScore')
 go
@@ -3322,23 +4468,35 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('asse_userassessmen2', 'lkp_activestat', 1021124, 'AssessmentQuestion', 'activeStatus')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_spircomp', 'lkp_continuepr', 1021014, 'SpiritualityComponent', 'continuePracticing')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_patientwaitin4', 'lkp_caregiven', 1341053, 'PatientElectiveList', 'careGiven')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_surgicalaudod', 'lkp_reasonforc', 1231130, 'SurgicalAuditOperationDetail', 'reasonForCancellation')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_skinassrev', 'lkp_exudatetyp', 1001032, 'SkinAssessmentReview', 'exudateType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_statusrecord', 'lkp_removalrea', 1451014, 'EASStatusRecord', 'removalReason')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_boweldhr', 'lkp_frequency', 1011014, 'BowelDiarrhoea', 'frequency')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pthw_pathwaytarget', 'lkp_status', 1021124, 'PathwayTarget', 'status')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_emergencyepiso', 'lkp_elapsedper', 1291004, 'EmergencyEpisode', 'elapsedPeriod')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsadvancedse2', 'lkp_title', 706, 'PDSAdvancedSearchResult', 'title')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_neurootsensfin', 'lkp_sensationt', 1051132, 'NeuRootSensFinding', 'sensationType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_roomdetails', 'lkp_environmen', 1051179, 'RoomDetails', 'environmentVisitRoomType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_workonadmissio', 'lkp_worksiteas', 1021014, 'WorkOnAdmission', 'workSiteAssessment')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pci_clientschestva', 'lkp_paymenttyp', 1331010, 'ClientScheduleStageVaccine', 'paymentType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_hospitalatnipd', 'lkp_mews', 1231118, 'HospitalAtNightPatientDetail', 'mEWS')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_documentcatego', 'lkp_specialty', 621, 'DocumentCategoryConfig', 'specialty')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_primarytumourd', 'lkp_prognost10', 1251035, 'PrimaryTumourDetails', 'prognosticTCert')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_patientwaitin4', 'lkp_precolonos', 1021145, 'PatientElectiveList', 'preColonoscopyAssessmentRequired')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_chemocycledeta', 'lkp_performanc', 2936, 'ChemoCycleDetailsCCO', 'performanceStatus')
 go
@@ -3346,7 +4504,9 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_medonadmisover', 'lkp_correctnes', 1021183, 'MedicationOverview', 'correctness')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_topbutton', 'lkp_action', 1031001, 'AppTopButton', 'action')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsadvancedsea', 'lkp_searchtype', 1021339, 'PDSAdvancedSearchRequest', 'searchType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_treatmentsites', 'lkp_scanlimits', 1451004, 'TreatmentSites', 'scanLimits')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_nursingnotes', 'lkp_smokingsta', 1021007, 'NursingNotes', 'smokingStatus')
 go
@@ -3356,13 +4516,23 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_pataction', 'lkp_aneastheti', 3541, 'PatAction', 'aneasthetic')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pendingnoedeme', 'lkp_sourceofre', 1021025, 'PendingNoEDEmergencyAdmit', 'sourceOfReferral')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patienthomesit', 'lkp_supervised', 1231048, 'PatientHomeSituation', 'supervisedBy')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patientnoaller', 'lkp_sourceofin', 1021033, 'PatientNoAllergyInfo', 'sourceofInformation')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pendingemergen', 'lkp_transferre', 1021319, 'PendingEmergencyAdmission', 'transferReason')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('schl_booking_appoin', 'lkp_dispcode', 1141008, 'Booking_Appointment', 'dispCode')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_wardbayclosing', 'lkp_reasonforc', 1021351, 'WardBayClosingDetails', 'reasonForClosure')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pci_clientbirthdet', 'lkp_deliveryme', 1331001, 'ClientBirthDetails', 'deliveryMethod')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patinvasivedev', 'lkp_sentforcul', 1021145, 'PatientInvasiveDevice', 'sentForCulture')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_wardbayconfig', 'lkp_mainspecia', 621, 'WardBayConfig', 'mainSpecialty')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_outpatientnote', 'lkp_reviewinun', 1231030, 'OutpatientNotesOutcome', 'reviewinUnits')
 go
@@ -3378,13 +4548,13 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_wheelchairdet', 'lkp_wheelchai2', 1051140, 'WheelchairDetails', 'wheelchairModel')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_transfers', 'lkp_assistance', 1211020, 'Transfers', 'assistanceRequired')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_catsreferral', 'lkp_additional', 1341007, 'CatsReferral', 'additionalInvApptsStatus')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_painmed', 'lkp_frequency', 1021038, 'PainMedication', 'frequency')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_patprocedure', 'lkp_incomplete', 1021274, 'PatientProcedure', 'incompleteReason')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_intraoperativd', 'lkp_lasermode', 1021327, 'IntraOperativeDetails', 'laserMode')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_systemreviewsy', 'lkp_symptom', 1231001, 'SystemReviewSymptoms', 'symptom')
-go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_pataction', 'lkp_category', 3245, 'PatAction', 'category')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_tnmstagingclas', 'lkp_status', 1021124, 'TNMStagingClassificationVersion', 'status')
 go
@@ -3394,11 +4564,15 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ther_adaptations', 'lkp_itemcatego', 1051094, 'Adaptations', 'itemCategory')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_patientgoal', 'lkp_goaltype', 1231009, 'PatientGoal', 'goalType')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsadvancedsea', 'lkp_dodrangeun', 1021390, 'PDSAdvancedSearchRequest', 'dODRangeUnit')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_ventilationtra', 'lkp_typeofvent', 1021066, 'VentilationTracheostomy', 'typeOfVentilator')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pupils', 'lkp_pupilrigh2', 1021056, 'Pupils', 'pupilRightReaction')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('edis_futureplan', 'lkp_medicalcer', 1021145, 'FuturePlan', 'medicalCertificationIssued')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdspatientupda', 'lkp_noklanguag', 1021367, 'PDSPatientUpdate', 'nokLanguageCommunicationUpdateMode')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_servicetriagea', 'lkp_defaultact', 1341067, 'ServiceTriageAction', 'defaultActionForManualReferral')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_triagetabconfi', 'lkp_availablet', 1291063, 'TriageTabConfiguration', 'availableTabs')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_opdfertilitycl', 'lkp_erectdysfx', 1051115, 'OPDFertClinic', 'erectDysfxTreatments')
 go
@@ -3406,13 +4580,23 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('coe_bowelmed', 'lkp_route', 1021035, 'BowelMedication', 'route')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_episodeofcares', 'lkp_status', 1021276, 'EpisodeOfCareStatusHistory', 'status')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_cancertypeitem', 'lkp_cancertype', 1341054, 'CancerTypeItemConfig', 'cancerType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_primarytumourd', 'lkp_prognost10', 1251035, 'PrimaryTumourDetails', 'prognosticTCert')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('shcl_anaestheticsig', 'lkp_procedure2', 1021376, 'AnaestheticSignIn', 'procedureAndSiteConfirmedByPractitioner')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_onwardreferral', 'lkp_rejectedby', 1341012, 'OnwardReferral', 'rejectedBy')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_tiig', 'lkp_relationsh', 1291028, 'TIIG', 'relationshipToAttacker')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_bladcont', 'lkp_night', 1001001, 'BladderContinence', 'night')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_eatcomp', 'lkp_requireass', 1021014, 'EatingComponent', 'requireAssistance')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_elactionsheet', 'lkp_patientcon', 1021145, 'ElectronicActionSheet', 'patientConsent')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('naes_naesreferral', 'lkp_referredby', 1351004, 'NAESReferral', 'referredBy')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vitalsignsmoni', 'lkp_durationun', 1021177, 'VitalSignsMonitoring', 'durationUnit')
 go
@@ -3420,17 +4604,33 @@ insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_fi
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('emer_attendanceclin', 'lkp_c_discipli', 1021048, 'AttendanceClinicalNotes', 'discipline')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_protocol', 'lkp_planctdefa', 1021145, 'Protocol', 'planCTDefault')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ns_communicationc', 'lkp_difficulty', 1021014, 'NurCommunicationComponent', 'difficultyInCommunication')
 go
-insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('med_spinepath', 'lkp_mechanismo', 1051098, 'MskSpinePath', 'mechanismOfInjury')
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('eas_protocol', 'lkp_simlrequir', 1451000, 'Protocol', 'simlRequired')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pendingadmissi', 'lkp_status', 1021384, 'PendingAdmissionStatus', 'status')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_linkeddiagnost', 'lkp_sameday', 1341061, 'LinkedDiagnostic', 'sameDay')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('ocrr_container', 'lkp_c_ty', 1161057, 'Container', 'type')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('care_electivelistst', 'lkp_undoremova', 1341049, 'ElectiveListStatus', 'undoRemovalReason')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_teletherapydet', 'lkp_retreatmen', 1021145, 'TeletherapyDetails', 'retreatment')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsasyncreques', 'lkp_requesttyp', 1021364, 'PDSAsyncRequest', 'requestType')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('pthw_extevenmap', 'lkp_specialty', 621, 'ExternalEventMapping', 'specialty')
 go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('onco_contacttypesby', 'lkp_c_discipli', 1021048, 'ContactTypesByDiscipline', 'discipline')
 go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_vteriskassessm', 'lkp_declinedre', 1231144, 'VTERiskAssessment', 'declinedReason')
+go
 insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_therapist', 'lkp_therapistt', 1021048, 'Therapist', 'therapistType')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('naes_naesreferral', 'lkp_underlying', 1351002, 'NAESReferral', 'underlyingReason')
+go
+insert into applookup_type_col_map(table_name, col_name, type_id, bo_name, bo_field) values('core_pdsrelativerem', 'lkp_pdsupdatem', 1021367, 'PDSRelativeRemove', 'pdsUpdateMode')
 go

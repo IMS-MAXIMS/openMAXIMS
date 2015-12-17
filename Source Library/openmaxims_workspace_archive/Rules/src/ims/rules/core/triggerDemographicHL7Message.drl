@@ -1,0 +1,26 @@
+package ims.rules.userrules;
+
+import ims.core.patient.domain.objects.Patient;
+import ims.rules.engine.RulesRuntimeEngine;
+import ims.domain.DomainFactory;
+
+global RulesRuntimeEngine engine;
+global DomainFactory factory;
+
+function boolean isConditionMeet5536693712667b757458f90d13d65cb9330(ims.core.patient.domain.objects.Patient entity)
+{
+	if((entity.getId() != null)&& entity.isSaveComplete() != null && entity.isSaveComplete())
+		return true;
+	return false;
+}
+
+rule "adtFeed"
+no-loop true
+salience 0
+when
+	entity : ims.core.patient.domain.objects.Patient();
+	eval(isConditionMeet5536693712667b757458f90d13d65cb9330(entity));
+then
+	engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Rule 'adtFeed' was fired.");
+	entity.triggerDemographicsMessage(factory, engine);
+end

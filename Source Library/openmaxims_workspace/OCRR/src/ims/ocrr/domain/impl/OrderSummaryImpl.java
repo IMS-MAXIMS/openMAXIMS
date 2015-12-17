@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -152,11 +157,14 @@ public class OrderSummaryImpl extends BaseOrderSummaryDialogImpl
 	private void setDefaults(OrderInvestigation doOrderInv, ORDERSTATE state)
 	{		
 		//WDEV-13409 - don't authorise individual cancelled investigations if they are part of a valid order
+		//WDEV-16993 - don't authorise individual investigations already authorised, having ORDERED status
 		if (state != null && state.equals(ORDERSTATE.AUTHORISING))
 		{
 			if(doOrderInv.getOrdInvCurrentStatus() != null && doOrderInv.getOrdInvCurrentStatus().getOrdInvStatus() != null)
 			{
-				if(doOrderInv.getOrdInvCurrentStatus().getOrdInvStatus().equals(getDomLookup(OrderInvStatus.CANCEL_REQUEST)) || doOrderInv.getOrdInvCurrentStatus().getOrdInvStatus().equals(getDomLookup(OrderInvStatus.CANCELLED)))
+				if (getDomLookup(OrderInvStatus.CANCEL_REQUEST).equals(doOrderInv.getOrdInvCurrentStatus().getOrdInvStatus()) 
+						|| getDomLookup(OrderInvStatus.CANCELLED).equals(doOrderInv.getOrdInvCurrentStatus().getOrdInvStatus())
+							|| getDomLookup(OrderInvStatus.ORDERED).equals(doOrderInv.getOrdInvCurrentStatus().getOrdInvStatus()))
 				{
 					return;
 				}
@@ -204,7 +212,8 @@ public class OrderSummaryImpl extends BaseOrderSummaryDialogImpl
 			doOrderInvest = (OrderInvestigation) it1.next();
 			
 			if (!getDomLookup(OrderInvStatus.CANCEL_REQUEST).equals(doOrderInvest.getOrdInvCurrentStatus().getOrdInvStatus())
-					&& !getDomLookup(OrderInvStatus.CANCELLED).equals(doOrderInvest.getOrdInvCurrentStatus().getOrdInvStatus()))
+					&& !getDomLookup(OrderInvStatus.CANCELLED).equals(doOrderInvest.getOrdInvCurrentStatus().getOrdInvStatus())
+					&&  !getDomLookup(OrderInvStatus.ORDERED).equals(doOrderInvest.getOrdInvCurrentStatus().getOrdInvStatus())) ////WDEV-16993
 			{
 				setDefaults(doOrderInvest, state);
 			}

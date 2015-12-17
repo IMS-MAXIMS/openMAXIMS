@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -1422,18 +1427,22 @@ public class Logic extends BaseLogic
 		form.setMode(FormMode.VIEW);
 	}
 
+	
 	@Override
 	protected void onlyrSupportServicesTabChanged(LayerBridge tab) 
 	{
+		if (FormMode.EDIT.equals(form.getMode()))
+			return;
+		
 		if (tab.equals(form.lyrSupportServices().tabPageProf()))
 			openProfessional();
 		else if (tab.equals(form.lyrSupportServices().tabPageServices()))
 			openServices();
 		else if (tab.equals(form.lyrSupportServices().tabPageFamily()))
 			openFamily();
-		
-		
 	}
+
+	
 	public void setEnabled(Boolean value)
 	{
 		form.getLocalContext().setisEnabled(value);
@@ -2133,6 +2142,10 @@ public class Logic extends BaseLogic
 			
 			if (form.lyrSupportServices().tabPageServices().isVisible())
 				form.lyrSupportServices().tabPageServices().chkSupplyServiceDetail().setVisible(form.lyrSupportServices().tabPageServices().isVisible());
+			
+			//WDEV-19827 
+			form.lyrSupportServices().tabPageProf().lblNoneAtPresentPro().setVisible(false);
+			form.lyrSupportServices().tabPageServices().lblNoneAtPresentSer().setVisible(false);
 			
 			form.fireCustomControlValueChanged();
 		}

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.emergency.domain.objects;
@@ -89,6 +94,13 @@ public class Tracking extends ims.domain.DomainObject implements ims.domain.Syst
 	private ims.emergency.domain.objects.EDTransfer currentTransferRecord;
 	/** CurrentPartialAdmission */
 	private ims.emergency.domain.objects.EDPartialAdmission currentPartialAdmission;
+	private Boolean displayInED;
+	private String reasonForBreachComments;
+	/** Seen By Nurse */
+	private ims.emergency.domain.objects.SeenByHCP seenByNurse;
+	private Boolean requiringDischargeDocumentationReview;
+	/** SupplementaryLetterStatus */
+	private ims.domain.lookups.LookupInstance supplementaryLetterStatus;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public Tracking (Integer id, int ver)
@@ -261,6 +273,45 @@ public class Tracking extends ims.domain.DomainObject implements ims.domain.Syst
 	}
 	public void setCurrentPartialAdmission(ims.emergency.domain.objects.EDPartialAdmission currentPartialAdmission) {
 		this.currentPartialAdmission = currentPartialAdmission;
+	}
+
+	public Boolean isDisplayInED() {
+		return displayInED;
+	}
+	public void setDisplayInED(Boolean displayInED) {
+		this.displayInED = displayInED;
+	}
+
+	public String getReasonForBreachComments() {
+		return reasonForBreachComments;
+	}
+	public void setReasonForBreachComments(String reasonForBreachComments) {
+		if ( null != reasonForBreachComments && reasonForBreachComments.length() > 1500 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for reasonForBreachComments. Tried to set value: "+
+				reasonForBreachComments);
+		}
+		this.reasonForBreachComments = reasonForBreachComments;
+	}
+
+	public ims.emergency.domain.objects.SeenByHCP getSeenByNurse() {
+		return seenByNurse;
+	}
+	public void setSeenByNurse(ims.emergency.domain.objects.SeenByHCP seenByNurse) {
+		this.seenByNurse = seenByNurse;
+	}
+
+	public Boolean isRequiringDischargeDocumentationReview() {
+		return requiringDischargeDocumentationReview;
+	}
+	public void setRequiringDischargeDocumentationReview(Boolean requiringDischargeDocumentationReview) {
+		this.requiringDischargeDocumentationReview = requiringDischargeDocumentationReview;
+	}
+
+	public ims.domain.lookups.LookupInstance getSupplementaryLetterStatus() {
+		return supplementaryLetterStatus;
+	}
+	public void setSupplementaryLetterStatus(ims.domain.lookups.LookupInstance supplementaryLetterStatus) {
+		this.supplementaryLetterStatus = supplementaryLetterStatus;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -443,6 +494,27 @@ public class Tracking extends ims.domain.DomainObject implements ims.domain.Syst
 		    auditStr.append(currentPartialAdmission.getId());
 		}
 	    auditStr.append("; ");
+		auditStr.append("\r\n*displayInED* :");
+		auditStr.append(displayInED);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*reasonForBreachComments* :");
+		auditStr.append(reasonForBreachComments);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*seenByNurse* :");
+		if (seenByNurse != null)
+		{
+			auditStr.append(toShortClassName(seenByNurse));
+				
+		    auditStr.append(seenByNurse.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*requiringDischargeDocumentationReview* :");
+		auditStr.append(requiringDischargeDocumentationReview);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*supplementaryLetterStatus* :");
+		if (supplementaryLetterStatus != null)
+			auditStr.append(supplementaryLetterStatus.getText());
+	    auditStr.append("; ");
 		return auditStr.toString();
 	}
 	
@@ -618,6 +690,36 @@ public class Tracking extends ims.domain.DomainObject implements ims.domain.Syst
 			sb.append("<currentPartialAdmission>");
 			sb.append(this.getCurrentPartialAdmission().toXMLString(domMap)); 	
 			sb.append("</currentPartialAdmission>");		
+		}
+		if (this.isDisplayInED() != null)
+		{
+			sb.append("<displayInED>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isDisplayInED().toString()));
+			sb.append("</displayInED>");		
+		}
+		if (this.getReasonForBreachComments() != null)
+		{
+			sb.append("<reasonForBreachComments>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getReasonForBreachComments().toString()));
+			sb.append("</reasonForBreachComments>");		
+		}
+		if (this.getSeenByNurse() != null)
+		{
+			sb.append("<seenByNurse>");
+			sb.append(this.getSeenByNurse().toXMLString(domMap)); 	
+			sb.append("</seenByNurse>");		
+		}
+		if (this.isRequiringDischargeDocumentationReview() != null)
+		{
+			sb.append("<requiringDischargeDocumentationReview>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isRequiringDischargeDocumentationReview().toString()));
+			sb.append("</requiringDischargeDocumentationReview>");		
+		}
+		if (this.getSupplementaryLetterStatus() != null)
+		{
+			sb.append("<supplementaryLetterStatus>");
+			sb.append(this.getSupplementaryLetterStatus().toXMLString()); 
+			sb.append("</supplementaryLetterStatus>");		
 		}
 		return sb.toString();
 	}
@@ -909,6 +1011,33 @@ public class Tracking extends ims.domain.DomainObject implements ims.domain.Syst
 			fldEl = fldEl.element("class");		
 			obj.setCurrentPartialAdmission(ims.emergency.domain.objects.EDPartialAdmission.getEDPartialAdmissionfromXML(fldEl, factory, domMap)); 
 		}
+		fldEl = el.element("displayInED");
+		if(fldEl != null)
+		{	
+    		obj.setDisplayInED(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("reasonForBreachComments");
+		if(fldEl != null)
+		{	
+    		obj.setReasonForBreachComments(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("seenByNurse");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setSeenByNurse(ims.emergency.domain.objects.SeenByHCP.getSeenByHCPfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("requiringDischargeDocumentationReview");
+		if(fldEl != null)
+		{	
+    		obj.setRequiringDischargeDocumentationReview(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("supplementaryLetterStatus");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setSupplementaryLetterStatus(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -943,6 +1072,11 @@ public class Tracking extends ims.domain.DomainObject implements ims.domain.Syst
 		public static final String ReasonForBreach = "reasonForBreach";
 		public static final String CurrentTransferRecord = "currentTransferRecord";
 		public static final String CurrentPartialAdmission = "currentPartialAdmission";
+		public static final String DisplayInED = "displayInED";
+		public static final String ReasonForBreachComments = "reasonForBreachComments";
+		public static final String SeenByNurse = "seenByNurse";
+		public static final String RequiringDischargeDocumentationReview = "requiringDischargeDocumentationReview";
+		public static final String SupplementaryLetterStatus = "supplementaryLetterStatus";
 	}
 }
 

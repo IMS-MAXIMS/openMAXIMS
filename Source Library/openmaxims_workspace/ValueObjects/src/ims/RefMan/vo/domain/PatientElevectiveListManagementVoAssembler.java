@@ -1,9 +1,33 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.RefMan.vo.domain;
@@ -71,10 +95,14 @@ public class PatientElevectiveListManagementVoAssembler
 		valueObjectDest.setElectiveListStatus(valueObjectSrc.getElectiveListStatus());
 		// PatientStatus
 		valueObjectDest.setPatientStatus(valueObjectSrc.getPatientStatus());
-		// RequiresTCIBy
-		valueObjectDest.setRequiresTCIBy(valueObjectSrc.getRequiresTCIBy());
 		// ElectiveListReason
 		valueObjectDest.setElectiveListReason(valueObjectSrc.getElectiveListReason());
+		// ProcLaterality
+		valueObjectDest.setProcLaterality(valueObjectSrc.getProcLaterality());
+		// CreatingAppointment
+		valueObjectDest.setCreatingAppointment(valueObjectSrc.getCreatingAppointment());
+		// Priority
+		valueObjectDest.setPriority(valueObjectSrc.getPriority());
 	 	return valueObjectDest;
 	 }
 
@@ -368,19 +396,7 @@ public class PatientElevectiveListManagementVoAssembler
 		// Patient
 		valueObject.setPatient(ims.core.vo.domain.PatientLite_IdentifiersVoAssembler.create(map, domainObject.getPatient()) );
 		// Referral
-		if (domainObject.getReferral() != null)
-		{
-			if(domainObject.getReferral() instanceof HibernateProxy) // If the proxy is set, there is no need to lazy load, the proxy knows the id already. 
-			{
-				HibernateProxy p = (HibernateProxy) domainObject.getReferral();
-				int id = Integer.parseInt(p.getHibernateLazyInitializer().getIdentifier().toString());				
-				valueObject.setReferral(new ims.RefMan.vo.CatsReferralRefVo(id, -1));				
-			}
-			else
-			{
-				valueObject.setReferral(new ims.RefMan.vo.CatsReferralRefVo(domainObject.getReferral().getId(), domainObject.getReferral().getVersion()));
-			}
-		}
+		valueObject.setReferral(ims.RefMan.vo.domain.CatsReferralForElectiveListManagementVoAssembler.create(map, domainObject.getReferral()) );
 		// Consultant
 		valueObject.setConsultant(ims.core.vo.domain.HcpLiteVoAssembler.create(map, domainObject.getConsultant()) );
 		// DateOnList
@@ -570,14 +586,44 @@ public class PatientElevectiveListManagementVoAssembler
 			}			
 			valueObject.setPatientStatus(voLookup20);
 		}
-				// RequiresTCIBy
-		java.util.Date RequiresTCIBy = domainObject.getRequiresTCIBy();
-		if ( null != RequiresTCIBy ) 
-		{
-			valueObject.setRequiresTCIBy(new ims.framework.utils.Date(RequiresTCIBy) );
+				// ElectiveListReason
+		ims.domain.lookups.LookupInstance instance21 = domainObject.getElectiveListReason();
+		if ( null != instance21 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance21.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance21.getImage().getImageId(), instance21.getImage().getImagePath());
+			}
+			color = instance21.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.emergency.vo.lookups.ElectiveListReason voLookup21 = new ims.emergency.vo.lookups.ElectiveListReason(instance21.getId(),instance21.getText(), instance21.isActive(), null, img, color);
+			ims.emergency.vo.lookups.ElectiveListReason parentVoLookup21 = voLookup21;
+			ims.domain.lookups.LookupInstance parent21 = instance21.getParent();
+			while (parent21 != null)
+			{
+				if (parent21.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent21.getImage().getImageId(), parent21.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent21.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup21.setParent(new ims.emergency.vo.lookups.ElectiveListReason(parent21.getId(),parent21.getText(), parent21.isActive(), null, img, color));
+				parentVoLookup21 = parentVoLookup21.getParent();
+								parent21 = parent21.getParent();
+			}			
+			valueObject.setElectiveListReason(voLookup21);
 		}
-		// ElectiveListReason
-		ims.domain.lookups.LookupInstance instance22 = domainObject.getElectiveListReason();
+				// ProcLaterality
+		ims.domain.lookups.LookupInstance instance22 = domainObject.getProcLaterality();
 		if ( null != instance22 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
@@ -590,8 +636,8 @@ public class PatientElevectiveListManagementVoAssembler
 			if (color != null) 
 				color.getValue();
 
-			ims.emergency.vo.lookups.ElectiveListReason voLookup22 = new ims.emergency.vo.lookups.ElectiveListReason(instance22.getId(),instance22.getText(), instance22.isActive(), null, img, color);
-			ims.emergency.vo.lookups.ElectiveListReason parentVoLookup22 = voLookup22;
+			ims.core.vo.lookups.LateralityLRB voLookup22 = new ims.core.vo.lookups.LateralityLRB(instance22.getId(),instance22.getText(), instance22.isActive(), null, img, color);
+			ims.core.vo.lookups.LateralityLRB parentVoLookup22 = voLookup22;
 			ims.domain.lookups.LookupInstance parent22 = instance22.getParent();
 			while (parent22 != null)
 			{
@@ -606,11 +652,49 @@ public class PatientElevectiveListManagementVoAssembler
 				color = parent22.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup22.setParent(new ims.emergency.vo.lookups.ElectiveListReason(parent22.getId(),parent22.getText(), parent22.isActive(), null, img, color));
+								parentVoLookup22.setParent(new ims.core.vo.lookups.LateralityLRB(parent22.getId(),parent22.getText(), parent22.isActive(), null, img, color));
 				parentVoLookup22 = parentVoLookup22.getParent();
 								parent22 = parent22.getParent();
 			}			
-			valueObject.setElectiveListReason(voLookup22);
+			valueObject.setProcLaterality(voLookup22);
+		}
+				// CreatingAppointment
+		valueObject.setCreatingAppointment(ims.RefMan.vo.domain.Booking_AppointmentOutcomeForElectiveListVoAssembler.create(map, domainObject.getCreatingAppointment()) );
+		// Priority
+		ims.domain.lookups.LookupInstance instance24 = domainObject.getPriority();
+		if ( null != instance24 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance24.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance24.getImage().getImageId(), instance24.getImage().getImagePath());
+			}
+			color = instance24.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.RefMan.vo.lookups.ReferralUrgency voLookup24 = new ims.RefMan.vo.lookups.ReferralUrgency(instance24.getId(),instance24.getText(), instance24.isActive(), null, img, color);
+			ims.RefMan.vo.lookups.ReferralUrgency parentVoLookup24 = voLookup24;
+			ims.domain.lookups.LookupInstance parent24 = instance24.getParent();
+			while (parent24 != null)
+			{
+				if (parent24.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent24.getImage().getImageId(), parent24.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent24.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup24.setParent(new ims.RefMan.vo.lookups.ReferralUrgency(parent24.getId(),parent24.getText(), parent24.isActive(), null, img, color));
+				parentVoLookup24 = parentVoLookup24.getParent();
+								parent24 = parent24.getParent();
+			}			
+			valueObject.setPriority(voLookup24);
 		}
 		 		return valueObject;
 	 }
@@ -678,7 +762,8 @@ public class PatientElevectiveListManagementVoAssembler
 			}
 		}
 		domainObject.setPatient(value1);
-		ims.RefMan.domain.objects.CatsReferral value2 = null;
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.RefMan.domain.objects.CatsReferral value2 = null;
 		if ( null != valueObject.getReferral() ) 
 		{
 			if (valueObject.getReferral().getBoId() == null)
@@ -687,10 +772,6 @@ public class PatientElevectiveListManagementVoAssembler
 				{
 					value2 = (ims.RefMan.domain.objects.CatsReferral)domMap.get(valueObject.getReferral());
 				}
-			}
-			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
-			{
-				value2 = domainObject.getReferral();	
 			}
 			else
 			{
@@ -1027,21 +1108,47 @@ public class PatientElevectiveListManagementVoAssembler
 				domainFactory.getLookupInstance(valueObject.getPatientStatus().getID());
 		}
 		domainObject.setPatientStatus(value20);
-		java.util.Date value21 = null;
-		ims.framework.utils.Date date21 = valueObject.getRequiresTCIBy();		
-		if ( date21 != null ) 
-		{
-			value21 = date21.getDate();
-		}
-		domainObject.setRequiresTCIBy(value21);
 		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value22 = null;
+		ims.domain.lookups.LookupInstance value21 = null;
 		if ( null != valueObject.getElectiveListReason() ) 
 		{
-			value22 =
+			value21 =
 				domainFactory.getLookupInstance(valueObject.getElectiveListReason().getID());
 		}
-		domainObject.setElectiveListReason(value22);
+		domainObject.setElectiveListReason(value21);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value22 = null;
+		if ( null != valueObject.getProcLaterality() ) 
+		{
+			value22 =
+				domainFactory.getLookupInstance(valueObject.getProcLaterality().getID());
+		}
+		domainObject.setProcLaterality(value22);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.scheduling.domain.objects.Booking_Appointment value23 = null;
+		if ( null != valueObject.getCreatingAppointment() ) 
+		{
+			if (valueObject.getCreatingAppointment().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getCreatingAppointment()) != null)
+				{
+					value23 = (ims.scheduling.domain.objects.Booking_Appointment)domMap.get(valueObject.getCreatingAppointment());
+				}
+			}
+			else
+			{
+				value23 = (ims.scheduling.domain.objects.Booking_Appointment)domainFactory.getDomainObject(ims.scheduling.domain.objects.Booking_Appointment.class, valueObject.getCreatingAppointment().getBoId());
+			}
+		}
+		domainObject.setCreatingAppointment(value23);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value24 = null;
+		if ( null != valueObject.getPriority() ) 
+		{
+			value24 =
+				domainFactory.getLookupInstance(valueObject.getPriority().getID());
+		}
+		domainObject.setPriority(value24);
 
 		return domainObject;
 	}

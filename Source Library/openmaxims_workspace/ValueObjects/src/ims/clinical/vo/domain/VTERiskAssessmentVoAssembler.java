@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.clinical.vo.domain;
@@ -124,10 +129,22 @@ public class VTERiskAssessmentVoAssembler
 		valueObjectDest.setLumbarPuncturePrevious4hrs(valueObjectSrc.getLumbarPuncturePrevious4hrs());
 		// RiskGroup
 		valueObjectDest.setRiskGroup(valueObjectSrc.getRiskGroup());
-		// ProphylaxisOffered
-		valueObjectDest.setProphylaxisOffered(valueObjectSrc.getProphylaxisOffered());
 		// SurgeryLowerLimbPelvis60mins
 		valueObjectDest.setSurgeryLowerLimbPelvis60mins(valueObjectSrc.getSurgeryLowerLimbPelvis60mins());
+		// ProphylaxisOffered
+		valueObjectDest.setProphylaxisOffered(valueObjectSrc.getProphylaxisOffered());
+		// Comments
+		valueObjectDest.setComments(valueObjectSrc.getComments());
+		// ContextType
+		valueObjectDest.setContextType(valueObjectSrc.getContextType());
+		// used
+		valueObjectDest.setUsed(valueObjectSrc.getUsed());
+		// DeclinedInformation
+		valueObjectDest.setDeclinedInformation(valueObjectSrc.getDeclinedInformation());
+		// ValidatedInformation
+		valueObjectDest.setValidatedInformation(valueObjectSrc.getValidatedInformation());
+		// DeclinedReason
+		valueObjectDest.setDeclinedReason(valueObjectSrc.getDeclinedReason());
 	 	return valueObjectDest;
 	 }
 
@@ -1592,8 +1609,8 @@ public class VTERiskAssessmentVoAssembler
 			}			
 			valueObject.setRiskGroup(voLookup37);
 		}
-				// ProphylaxisOffered
-		ims.domain.lookups.LookupInstance instance38 = domainObject.getProphylaxisOffered();
+				// SurgeryLowerLimbPelvis60mins
+		ims.domain.lookups.LookupInstance instance38 = domainObject.getSurgeryLowerLimbPelvis60mins();
 		if ( null != instance38 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
@@ -1606,8 +1623,8 @@ public class VTERiskAssessmentVoAssembler
 			if (color != null) 
 				color.getValue();
 
-			ims.clinical.vo.lookups.ProphylaxisOffered voLookup38 = new ims.clinical.vo.lookups.ProphylaxisOffered(instance38.getId(),instance38.getText(), instance38.isActive(), null, img, color);
-			ims.clinical.vo.lookups.ProphylaxisOffered parentVoLookup38 = voLookup38;
+			ims.core.vo.lookups.YesNo voLookup38 = new ims.core.vo.lookups.YesNo(instance38.getId(),instance38.getText(), instance38.isActive(), null, img, color);
+			ims.core.vo.lookups.YesNo parentVoLookup38 = voLookup38;
 			ims.domain.lookups.LookupInstance parent38 = instance38.getParent();
 			while (parent38 != null)
 			{
@@ -1622,47 +1639,135 @@ public class VTERiskAssessmentVoAssembler
 				color = parent38.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup38.setParent(new ims.clinical.vo.lookups.ProphylaxisOffered(parent38.getId(),parent38.getText(), parent38.isActive(), null, img, color));
+								parentVoLookup38.setParent(new ims.core.vo.lookups.YesNo(parent38.getId(),parent38.getText(), parent38.isActive(), null, img, color));
 				parentVoLookup38 = parentVoLookup38.getParent();
 								parent38 = parent38.getParent();
 			}			
-			valueObject.setProphylaxisOffered(voLookup38);
+			valueObject.setSurgeryLowerLimbPelvis60mins(voLookup38);
 		}
-				// SurgeryLowerLimbPelvis60mins
-		ims.domain.lookups.LookupInstance instance39 = domainObject.getSurgeryLowerLimbPelvis60mins();
-		if ( null != instance39 ) {
+				// ProphylaxisOffered
+		java.util.List listProphylaxisOffered = domainObject.getProphylaxisOffered();
+		ims.clinical.vo.lookups.ProphylaxisOfferedCollection ProphylaxisOffered = new ims.clinical.vo.lookups.ProphylaxisOfferedCollection();
+		for(java.util.Iterator iterator = listProphylaxisOffered.iterator(); iterator.hasNext(); ) 
+		{
 			ims.framework.utils.ImagePath img = null;
-			ims.framework.utils.Color color = null;		
-			img = null;
-			if (instance39.getImage() != null) 
+			ims.framework.utils.Color color = null;
+		
+			ims.domain.lookups.LookupInstance instance = 
+				(ims.domain.lookups.LookupInstance) iterator.next();
+			if (instance.getImage() != null) 
 			{
-				img = new ims.framework.utils.ImagePath(instance39.getImage().getImageId(), instance39.getImage().getImagePath());
+				img = new ims.framework.utils.ImagePath(instance.getImage().getImageId(), instance.getImage().getImagePath());
 			}
-			color = instance39.getColor();
+			else 
+			{
+				img = null;
+			}
+			color = instance.getColor();
 			if (color != null) 
 				color.getValue();
-
-			ims.core.vo.lookups.YesNo voLookup39 = new ims.core.vo.lookups.YesNo(instance39.getId(),instance39.getText(), instance39.isActive(), null, img, color);
-			ims.core.vo.lookups.YesNo parentVoLookup39 = voLookup39;
-			ims.domain.lookups.LookupInstance parent39 = instance39.getParent();
-			while (parent39 != null)
+			ims.clinical.vo.lookups.ProphylaxisOffered voInstance = new ims.clinical.vo.lookups.ProphylaxisOffered(instance.getId(),instance.getText(), instance.isActive(), null, img, color);
+			ims.clinical.vo.lookups.ProphylaxisOffered parentVoInstance = voInstance;
+			ims.domain.lookups.LookupInstance parent = instance.getParent();
+			while (parent != null)
 			{
-				if (parent39.getImage() != null) 
+				if (parent.getImage() != null) 
 				{
-					img = new ims.framework.utils.ImagePath(parent39.getImage().getImageId(), parent39.getImage().getImagePath() );
+					img = new ims.framework.utils.ImagePath(parent.getImage().getImageId(), parent.getImage().getImagePath());
 				}
 				else 
 				{
 					img = null;
 				}
-				color = parent39.getColor();
+				color = parent.getColor();
+				if (color != null) 
+					color.getValue();
+								parentVoInstance.setParent(new ims.clinical.vo.lookups.ProphylaxisOffered(parent.getId(),parent.getText(), parent.isActive(), null, img, color));
+				parentVoInstance = parentVoInstance.getParent();
+								parent = parent.getParent();
+			}			
+			ProphylaxisOffered.add(voInstance);
+		}
+		valueObject.setProphylaxisOffered( ProphylaxisOffered );
+		// Comments
+		valueObject.setComments(domainObject.getComments());
+		// ContextType
+		ims.domain.lookups.LookupInstance instance41 = domainObject.getContextType();
+		if ( null != instance41 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance41.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance41.getImage().getImageId(), instance41.getImage().getImagePath());
+			}
+			color = instance41.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.clinical.vo.lookups.VTEAssessmentContextType voLookup41 = new ims.clinical.vo.lookups.VTEAssessmentContextType(instance41.getId(),instance41.getText(), instance41.isActive(), null, img, color);
+			ims.clinical.vo.lookups.VTEAssessmentContextType parentVoLookup41 = voLookup41;
+			ims.domain.lookups.LookupInstance parent41 = instance41.getParent();
+			while (parent41 != null)
+			{
+				if (parent41.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent41.getImage().getImageId(), parent41.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent41.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup39.setParent(new ims.core.vo.lookups.YesNo(parent39.getId(),parent39.getText(), parent39.isActive(), null, img, color));
-				parentVoLookup39 = parentVoLookup39.getParent();
-								parent39 = parent39.getParent();
+								parentVoLookup41.setParent(new ims.clinical.vo.lookups.VTEAssessmentContextType(parent41.getId(),parent41.getText(), parent41.isActive(), null, img, color));
+				parentVoLookup41 = parentVoLookup41.getParent();
+								parent41 = parent41.getParent();
 			}			
-			valueObject.setSurgeryLowerLimbPelvis60mins(voLookup39);
+			valueObject.setContextType(voLookup41);
+		}
+				// used
+		valueObject.setUsed( domainObject.isUsed() );
+		// DeclinedInformation
+		valueObject.setDeclinedInformation(ims.core.vo.domain.AuthoringInformationVoAssembler.create(map, domainObject.getDeclinedInformation()) );
+		// ValidatedInformation
+		valueObject.setValidatedInformation(ims.core.vo.domain.AuthoringInformationVoAssembler.create(map, domainObject.getValidatedInformation()) );
+		// DeclinedReason
+		ims.domain.lookups.LookupInstance instance45 = domainObject.getDeclinedReason();
+		if ( null != instance45 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance45.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance45.getImage().getImageId(), instance45.getImage().getImagePath());
+			}
+			color = instance45.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.clinical.vo.lookups.VTEAssessmentStatusReason voLookup45 = new ims.clinical.vo.lookups.VTEAssessmentStatusReason(instance45.getId(),instance45.getText(), instance45.isActive(), null, img, color);
+			ims.clinical.vo.lookups.VTEAssessmentStatusReason parentVoLookup45 = voLookup45;
+			ims.domain.lookups.LookupInstance parent45 = instance45.getParent();
+			while (parent45 != null)
+			{
+				if (parent45.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent45.getImage().getImageId(), parent45.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent45.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup45.setParent(new ims.clinical.vo.lookups.VTEAssessmentStatusReason(parent45.getId(),parent45.getText(), parent45.isActive(), null, img, color));
+				parentVoLookup45 = parentVoLookup45.getParent();
+								parent45 = parent45.getParent();
+			}			
+			valueObject.setDeclinedReason(voLookup45);
 		}
 		 		return valueObject;
 	 }
@@ -2011,20 +2116,79 @@ public class VTERiskAssessmentVoAssembler
 		domainObject.setRiskGroup(value37);
 		// create LookupInstance from vo LookupType
 		ims.domain.lookups.LookupInstance value38 = null;
-		if ( null != valueObject.getProphylaxisOffered() ) 
-		{
-			value38 =
-				domainFactory.getLookupInstance(valueObject.getProphylaxisOffered().getID());
-		}
-		domainObject.setProphylaxisOffered(value38);
-		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value39 = null;
 		if ( null != valueObject.getSurgeryLowerLimbPelvis60mins() ) 
 		{
-			value39 =
+			value38 =
 				domainFactory.getLookupInstance(valueObject.getSurgeryLowerLimbPelvis60mins().getID());
 		}
-		domainObject.setSurgeryLowerLimbPelvis60mins(value39);
+		domainObject.setSurgeryLowerLimbPelvis60mins(value38);
+		ims.clinical.vo.lookups.ProphylaxisOfferedCollection collection39 =
+	valueObject.getProphylaxisOffered();
+	    java.util.List domainProphylaxisOffered = domainObject.getProphylaxisOffered();;			
+	    int collection39Size=0;
+		if (collection39 == null)
+		{
+			domainProphylaxisOffered = new java.util.ArrayList(0);
+		}
+		else
+		{
+			collection39Size = collection39.size();
+		}
+		
+		for(int i=0; i<collection39Size; i++) 
+		{
+			int instanceId = collection39.get(i).getID();
+			ims.domain.lookups.LookupInstanceRef dom =new ims.domain.lookups.LookupInstanceRef(domainFactory.getLookupInstance(instanceId));
+			
+			int domIdx = domainProphylaxisOffered.indexOf(dom);
+			if (domIdx == -1)
+			{
+				domainProphylaxisOffered.add(i, dom);
+			}
+			else if (i != domIdx && i < domainProphylaxisOffered.size())
+			{
+				Object tmp = domainProphylaxisOffered.get(i);
+				domainProphylaxisOffered.set(i, domainProphylaxisOffered.get(domIdx));
+				domainProphylaxisOffered.set(domIdx, tmp);
+			}
+		}
+		
+		//Remove all ones in domList where index > voCollection.size() as these should
+		//now represent the ones removed from the VO collection. No longer referenced.
+		int j39 = domainProphylaxisOffered.size();
+		while (j39 > collection39Size)
+		{
+			domainProphylaxisOffered.remove(j39-1);
+			j39 = domainProphylaxisOffered.size();
+		}
+
+		domainObject.setProphylaxisOffered(domainProphylaxisOffered);		
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getComments() != null && valueObject.getComments().equals(""))
+		{
+			valueObject.setComments(null);
+		}
+		domainObject.setComments(valueObject.getComments());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value41 = null;
+		if ( null != valueObject.getContextType() ) 
+		{
+			value41 =
+				domainFactory.getLookupInstance(valueObject.getContextType().getID());
+		}
+		domainObject.setContextType(value41);
+		domainObject.setUsed(valueObject.getUsed());
+		domainObject.setDeclinedInformation(ims.core.vo.domain.AuthoringInformationVoAssembler.extractAuthoringInformation(domainFactory, valueObject.getDeclinedInformation(), domMap));
+		domainObject.setValidatedInformation(ims.core.vo.domain.AuthoringInformationVoAssembler.extractAuthoringInformation(domainFactory, valueObject.getValidatedInformation(), domMap));
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value45 = null;
+		if ( null != valueObject.getDeclinedReason() ) 
+		{
+			value45 =
+				domainFactory.getLookupInstance(valueObject.getDeclinedReason().getID());
+		}
+		domainObject.setDeclinedReason(value45);
 
 		return domainObject;
 	}

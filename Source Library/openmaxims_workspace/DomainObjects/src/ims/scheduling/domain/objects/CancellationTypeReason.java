@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.scheduling.domain.objects;
@@ -49,6 +54,10 @@ public class CancellationTypeReason extends ims.domain.DomainObject implements i
 	private ims.domain.lookups.LookupInstance cancellationType;
 	/** Cancellation Reason */
 	private ims.domain.lookups.LookupInstance cancellationReason;
+	/** Cancelled for a Non Medical Reason */
+	private Boolean isNonMedicalReason;
+	private Boolean outpatients;
+	private Boolean tCITheatre;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public CancellationTypeReason (Integer id, int ver)
@@ -81,6 +90,27 @@ public class CancellationTypeReason extends ims.domain.DomainObject implements i
 	}
 	public void setCancellationReason(ims.domain.lookups.LookupInstance cancellationReason) {
 		this.cancellationReason = cancellationReason;
+	}
+
+	public Boolean isIsNonMedicalReason() {
+		return isNonMedicalReason;
+	}
+	public void setIsNonMedicalReason(Boolean isNonMedicalReason) {
+		this.isNonMedicalReason = isNonMedicalReason;
+	}
+
+	public Boolean isOutpatients() {
+		return outpatients;
+	}
+	public void setOutpatients(Boolean outpatients) {
+		this.outpatients = outpatients;
+	}
+
+	public Boolean isTCITheatre() {
+		return tCITheatre;
+	}
+	public void setTCITheatre(Boolean tCITheatre) {
+		this.tCITheatre = tCITheatre;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -127,6 +157,15 @@ public class CancellationTypeReason extends ims.domain.DomainObject implements i
 		auditStr.append("\r\n*cancellationReason* :");
 		if (cancellationReason != null)
 			auditStr.append(cancellationReason.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*isNonMedicalReason* :");
+		auditStr.append(isNonMedicalReason);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*outpatients* :");
+		auditStr.append(outpatients);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*tCITheatre* :");
+		auditStr.append(tCITheatre);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -183,6 +222,24 @@ public class CancellationTypeReason extends ims.domain.DomainObject implements i
 			sb.append("<cancellationReason>");
 			sb.append(this.getCancellationReason().toXMLString()); 
 			sb.append("</cancellationReason>");		
+		}
+		if (this.isIsNonMedicalReason() != null)
+		{
+			sb.append("<isNonMedicalReason>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsNonMedicalReason().toString()));
+			sb.append("</isNonMedicalReason>");		
+		}
+		if (this.isOutpatients() != null)
+		{
+			sb.append("<outpatients>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isOutpatients().toString()));
+			sb.append("</outpatients>");		
+		}
+		if (this.isTCITheatre() != null)
+		{
+			sb.append("<tCITheatre>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isTCITheatre().toString()));
+			sb.append("</tCITheatre>");		
 		}
 		return sb.toString();
 	}
@@ -359,6 +416,21 @@ public class CancellationTypeReason extends ims.domain.DomainObject implements i
 			fldEl = fldEl.element("lki");
 			obj.setCancellationReason(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
 		}
+		fldEl = el.element("isNonMedicalReason");
+		if(fldEl != null)
+		{	
+    		obj.setIsNonMedicalReason(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("outpatients");
+		if(fldEl != null)
+		{	
+    		obj.setOutpatients(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("tCITheatre");
+		if(fldEl != null)
+		{	
+    		obj.setTCITheatre(new Boolean(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -373,6 +445,9 @@ public class CancellationTypeReason extends ims.domain.DomainObject implements i
 	public static final String ID = "id";
 		public static final String CancellationType = "cancellationType";
 		public static final String CancellationReason = "cancellationReason";
+		public static final String IsNonMedicalReason = "isNonMedicalReason";
+		public static final String Outpatients = "outpatients";
+		public static final String TCITheatre = "tCITheatre";
 	}
 }
 

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -29,12 +34,15 @@ import ims.core.vo.PersonName;
 import ims.core.vo.lookups.AddressType;
 import ims.core.vo.lookups.ChannelType;
 import ims.core.vo.lookups.PersonRelationship;
-import ims.framework.MessageButtons;
-import ims.framework.MessageIcon;
 import ims.framework.enumerations.DialogResult;
 import ims.framework.enumerations.FormMode;
 import ims.framework.exceptions.FormOpenException;
 import ims.framework.exceptions.PresentationLogicException;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Logic extends BaseLogic
 {
@@ -63,6 +71,8 @@ public class Logic extends BaseLogic
 			{
 				if(nok.getCommChannels().getCommunicationChannel(ChannelType.WORK_PHONE) != null)
 					form.txtPhoneWork().setValue(nok.getCommChannels().getCommunicationChannel(ChannelType.WORK_PHONE).getCommValue());
+				if(nok.getCommChannels().getCommunicationChannel(ChannelType.MOBILE) != null)
+					form.txtMobilePhone().setValue(nok.getCommChannels().getCommunicationChannel(ChannelType.MOBILE).getCommValue());
 				
 				//WDEV-8427 - interface uses commchannel but screen uses phone field in NOK
 				if(ConfigFlag.DOM.HEARTS_REPLICATE_PATIENTS.getValue())
@@ -82,6 +92,9 @@ public class Logic extends BaseLogic
 					}
 				}
 			}
+
+			form.lblMiddlename().setVisible(!isSVUH());
+			form.txtNOKMiddlename().setVisible(!isSVUH());
 			
 			if (nok.getRelationship() == null)
 			{
@@ -111,12 +124,29 @@ public class Logic extends BaseLogic
 		}
 		
 		updateControlsState();//WDEV-17185
+		
+		//wdev-19232
+		if( ConfigFlag.UI.SVUH_MANDATORY_DEMOGRAPHIC_ATTRIBUTES.getValue() == true )
+		{
+			form.txtNOKForename().setRequired(true);
+			form.txtNOKSName().setRequired(true);
+			form.ccAddressSearch().setRequireAdress(true);
+			form.cmbRelationship().setRequired(true);
+		}
+		
+		form.lblMiddlename().setVisible(!isSVUH());
+		form.txtNOKMiddlename().setVisible(!isSVUH());
 	}
 
 	//WDEV-17185
 	private void updateControlsState() 
 	{
 		form.txtNOKSName().setRequired(isAddressRecorded());
+		
+		if( ConfigFlag.UI.SVUH_MANDATORY_DEMOGRAPHIC_ATTRIBUTES.getValue() == true )
+		{
+			form.txtNOKSName().setRequired(true);
+		}		
 	}
 
 	private void populateScreenFromData(PersonAddress address)
@@ -134,15 +164,15 @@ public class Logic extends BaseLogic
 
 	protected void onBtnOKClick() throws PresentationLogicException
 	{
-		NextOfKin nok = null; 
 		
-	    if(form.txtNOKSName().getValue()==null && isAddressRecorded())//WDEV-17185
-	    {
-	    	form.getLocalContext().setErrorMessage(engine.showMessage("NOK surname is mandatory.", "", MessageButtons.OK, MessageIcon.INFORMATION));
-	    	updateControlsState();//WDEV-17185
+		
+		String[] errors = vallidateUI();
+		if (errors != null && errors.length > 0)
+		{
+			engine.showErrors(errors);
 			return;
-	    }
-	    			    		    		   
+		}
+		NextOfKin nok = null; 	    		    		   
 		if (form.getGlobalContext().Core.getNOKDetailsIsNotNull())
 		{
 			nok = (NextOfKin) form.getGlobalContext().Core.getNOKDetails().clone();
@@ -159,10 +189,12 @@ public class Logic extends BaseLogic
 			nok.getAddress().setAddressType(AddressType.NOKHOME);
 			
 			// If the address is present also update the Home Phone in communication channels
-			if (ConfigFlag.DOM.HEARTS_REPLICATE_PATIENTS.getValue() && nok.getCommChannelsIsNotNull())
+			//WDEV-23460
+			if (ConfigFlag.DOM.HEARTS_REPLICATE_PATIENTS.getValue() || Boolean.TRUE.equals(ConfigFlag.UI.SVUH_MANDATORY_DEMOGRAPHIC_ATTRIBUTES.getValue())/*&& nok.getCommChannelsIsNotNull()*/)
 			{
 				nok.addCommunicationChannel(ChannelType.HOME_PHONE, nok.getAddress().getPhone());
 			}
+			//WDEV-23460 - ends here
 		}
 		
 		if (form.txtPhoneWork().getValue() != null && !form.txtPhoneWork().getValue().equals(""))
@@ -174,6 +206,15 @@ public class Logic extends BaseLogic
 			nok.addCommunicationChannel(ChannelType.WORK_PHONE, null);
 		}
 
+		if (form.txtMobilePhone().getValue() != null && !form.txtMobilePhone().getValue().equals(""))
+		{
+			nok.addCommunicationChannel(ChannelType.MOBILE, form.txtMobilePhone().getValue());
+		}
+		else
+		{
+			nok.addCommunicationChannel(ChannelType.MOBILE, null);
+		}
+		
 		PersonName name = nok.getName();
 		if (name == null)
 			name = new PersonName();
@@ -194,6 +235,62 @@ public class Logic extends BaseLogic
 		engine.close(DialogResult.OK);
 	}
 
+	private String[] vallidateUI()//WDEV-23008
+	{
+		List<String> uiErrors = new ArrayList<String>();
+		//wdev-19232
+		if( ConfigFlag.UI.SVUH_MANDATORY_DEMOGRAPHIC_ATTRIBUTES.getValue() == true )
+		{
+			if( form.txtNOKSName().getValue()==null || form.txtNOKSName().getValue().equals(""))
+				uiErrors.add("NOK Surname is mandatory.");
+
+			if( form.txtNOKForename().getValue()==null || form.txtNOKForename().getValue().equals(""))
+				uiErrors.add("NOK Forename is mandatory.");
+
+			if( form.cmbRelationship().getValue() == null)
+			{
+				uiErrors.add("NOK Relationship is mandatory.");
+			}
+			PersonAddress personAddress = form.ccAddressSearch().getValue();
+			if( personAddress==null || personAddress.getLine1()==null || personAddress.getLine1()=="")
+			{
+				uiErrors.add("Please enter the first line of the Address.");
+			}
+		}
+		else if(form.txtNOKSName().getValue()==null && isAddressRecorded())//WDEV-17185
+		{
+			uiErrors.add("NOK Surname is mandatory.");
+			updateControlsState();//WDEV-17185
+		}
+		
+		if(form.txtNOKSName().getValue()!= null && checkConsecutiveSpace(form.txtNOKSName().getValue()))
+		{
+			uiErrors.add("Please remove consecutive and or leading/trailing spaces in Surname");
+		}
+		if(form.txtNOKForename().getValue()!= null && checkConsecutiveSpace(form.txtNOKForename().getValue()))
+		{
+			uiErrors.add("Please remove consecutive and or leading/trailing spaces in Forename");
+		}
+		return  uiErrors.size() > 0 ? uiErrors.toArray(new String[uiErrors.size()]) : null;
+	}
+
+	private boolean checkConsecutiveSpace(String string) //WDEV-23008
+	{
+		if (string==null)
+			return false;
+
+		Pattern pattern = Pattern.compile("\\p{javaWhitespace}{2,}");
+		Matcher m = pattern.matcher(string);
+		if (m.find())
+			return true;
+		
+		if (Character.isWhitespace(string.charAt(0)) || Character.isWhitespace(string.charAt(string.length() - 1))) {
+	        return true;
+	    }
+		
+		return false;
+	} 
+	
 	//WDEV-17185
 	private boolean isAddressRecorded() 
 	{
@@ -201,7 +298,7 @@ public class Logic extends BaseLogic
 		
 		if((address!=null && (address.getLine1IsNotNull() || address.getLine2IsNotNull()
 				|| address.getLine3IsNotNull() || address.getLine4IsNotNull() || address.getPhoneIsNotNull() || address.getPostCodeIsNotNull() || address.getPCTIsNotNull()))
-				|| form.txtPhoneWork().getValue()!=null)
+				|| form.txtPhoneWork().getValue()!=null || form.txtMobilePhone().getValue()!=null)
 			return true;
 		
 		return false;
@@ -214,7 +311,7 @@ public class Logic extends BaseLogic
 		
 		if(form.txtNOKSName().getValue()!= null || form.txtNOKMiddlename().getValue() != null || form.txtNOKForename().getValue() != null || form.cmbTitle().getValue()!=null || (address!=null && (address.getLine1IsNotNull() || address.getLine2IsNotNull()
 				|| address.getLine3IsNotNull() || address.getLine4IsNotNull() || address.getPhoneIsNotNull() || address.getPhoneIsNotNull()))
-				|| form.txtPhoneWork().getValue()!=null || form.cmbRelationship().getValue()!=null)
+				|| form.txtPhoneWork().getValue()!=null || form.cmbRelationship().getValue()!=null || form.txtMobilePhone().getValue()!=null)
 			return false;
 		
 		return true;
@@ -249,7 +346,7 @@ public class Logic extends BaseLogic
 			PersonAddress personAddress = (PersonAddress) form.getGlobalContext().Core.getNOKPersonAddress().clone();
 			
 			//start WDEV-14370
-			if (ConfigFlag.UI.DEMOGRAPHICS_TYPE.getValue().equals("UK"))
+			//if (ConfigFlag.UI.DEMOGRAPHICS_TYPE.getValue().equals("UK"))
 			{
 				personAddress.setPhone(form.getGlobalContext().Core.getCommChannels().getCommunicationChannel(ChannelType.HOME_PHONE) !=null ? form.getGlobalContext().Core.getCommChannels().getCommunicationChannel(ChannelType.HOME_PHONE).getCommValue() : null);
 			}
@@ -258,17 +355,19 @@ public class Logic extends BaseLogic
 			form.ccAddressSearch().setComponentEnabled(false);//WDEV-17432
 			
 			populateScreenFromData(personAddress);
-			displayPhoneNumbers();
+			//displayPhoneNumbers();
 			
 			form.ccAddressSearch().setComponentEnabled(true);//WDEV-17432
 		}
 	}
 
+	/*
 	private void displayPhoneNumbers()
 	{
-		form.txtPhoneWork().setValue(form.getGlobalContext().Core.getCommChannels().getCommunicationChannel(ChannelType.WORK_PHONE) !=null ? form.getGlobalContext().Core.getCommChannels().getCommunicationChannel(ChannelType.WORK_PHONE).getCommValue() : null);
-		
+		form.txtPhoneWork().setValue(form.getGlobalContext().Core.getCommChannelsIsNotNull() && form.getGlobalContext().Core.getCommChannels().getCommunicationChannel(ChannelType.WORK_PHONE) !=null ? form.getGlobalContext().Core.getCommChannels().getCommunicationChannel(ChannelType.WORK_PHONE).getCommValue() : null); //wdev-19079
+		form.txtMobilePhone().setValue(form.getGlobalContext().Core.getCommChannelsIsNotNull() && form.getGlobalContext().Core.getCommChannels().getCommunicationChannel(ChannelType.MOBILE) !=null ? form.getGlobalContext().Core.getCommChannels().getCommunicationChannel(ChannelType.MOBILE).getCommValue() : null); //WDEV-22900
 	}
+	*/
 
 	@Override
 	protected void onBtnClearFieldsClick() throws PresentationLogicException 
@@ -283,4 +382,19 @@ public class Logic extends BaseLogic
 		
 		updateControlsState();//WDEV-17185
 	}
+
+	@Override
+	protected void onFormModeChanged()
+	{
+		if(!isSVUH())
+		{
+    		form.txtNOKMiddlename().setEnabled(form.getMode().equals(FormMode.EDIT));
+		}
+	}
+	
+	private boolean isSVUH()
+	{
+		return ims.configuration.gen.ConfigFlag.UI.DEMOGRAPHICS_TYPE.getValue().equals("IRISH");
+	}
+	
 }

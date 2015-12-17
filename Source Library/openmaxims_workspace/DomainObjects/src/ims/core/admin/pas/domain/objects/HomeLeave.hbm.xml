@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:36 -->
+<!-- Generated: 12/10/2015, 13:31 -->
 <hibernate-mapping>
 	<class name="ims.core.admin.pas.domain.objects.HomeLeave" table="core_homeleave" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -37,6 +37,7 @@
 <!-- debug: dateReturnedFromHomeLeave -->
 <!-- debug: timeReturnedFromHomeLeave -->
 <!-- debug: vacatedBedNumber -->
+<!-- debug: bedRetained -->
 <!-- debug: !IsAssociation && !IsCollection -->
 
 <!-- debug: !IsLookup -->
@@ -72,6 +73,11 @@
 <!-- debug: !IsLookup -->
 		<property name="vacatedBedNumber" type="string" access="field" update="true" > 
 			<column name="vacatedbed" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="bedRetained" type="boolean" access="field" update="true">
+			<column name="bedretaine"  not-null="false" unique="false"  />
 		</property>
 	</class>
 </hibernate-mapping>

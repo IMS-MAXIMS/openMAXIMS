@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:36 -->
+<!-- Generated: 12/10/2015, 13:32 -->
 <hibernate-mapping>
 	<class name="ims.emergency.domain.objects.EDPartialAdmission" table="emer_edadmission" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -33,6 +33,12 @@
 <!-- debug: decisionToAdmitDateTime -->
 <!-- debug: specialty -->
 <!-- debug: admittingConsultant -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="admittingConsultant" class="ims.core.resource.people.domain.objects.Hcp" unique="true" foreign-key="edadmission_admittingc_fk" access="field" cascade="save-update">
+			<column name="admittingc" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
 <!-- debug: allocatedDateTime -->
 <!-- debug: allocatedBedType -->
 <!-- debug: allocatedBedNote -->
@@ -52,6 +58,22 @@
 		<many-to-one name="admissionWard" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="edadmission_admissionw_fk" access="field" cascade="save-update">
 			<column name="admissionw" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
+<!-- debug: authoringInfo -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+ 		<!-- Component -->
+ 		<component name="authoringInfo" class="ims.core.clinical.domain.objects.AuthoringInformation" >
+
+ 			<many-to-one name="authoringHcp" class="ims.core.resource.people.domain.objects.Hcp" foreign-key="edadmission_authoringiautho_fk" access="field">
+ 				<column name="authoringiauthoringh" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="authoringDateTime" type="timestamp" access="field" update="true">
+ 				<column name="authoringiauthoringd" not-null="false"  unique="false"   />
+ 			</property>
+ 		</component>
+<!-- debug: accomodationRequestedType -->
 <!-- debug: !IsAssociation && !IsCollection -->
 
 <!-- debug: !IsLookup -->
@@ -62,11 +84,6 @@
 <!-- debug: IsLookup -->
 		<many-to-one name="specialty" class="ims.domain.lookups.LookupInstance" access="field">
 			<column name="lkp_specialty" sql-type="numeric(10,0)" not-null="true" unique="false"   />
-		</many-to-one>
-<!-- debug: !IsAssociation && !IsCollection -->
-<!-- debug: IsLookup -->
-		<many-to-one name="admittingConsultant" class="ims.domain.lookups.LookupInstance" access="field">
-			<column name="lkp_admittingc" sql-type="numeric(10,0)" not-null="true" unique="false"   />
 		</many-to-one>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
@@ -93,5 +110,10 @@
 		<property name="admissionDateTime" type="timestamp" access="field" update="true">
 			<column name="admissiond"  not-null="false" unique="false"  />
 		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="accomodationRequestedType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_accomodati" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
 	</class>
 </hibernate-mapping>

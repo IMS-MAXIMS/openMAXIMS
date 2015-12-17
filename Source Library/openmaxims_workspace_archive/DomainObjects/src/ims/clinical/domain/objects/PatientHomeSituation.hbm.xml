@@ -1,0 +1,213 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:34 -->
+<hibernate-mapping>
+	<class name="ims.clinical.domain.objects.PatientHomeSituation" table="shcl_patienthomesit" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: authoringInformation -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+ 		<!-- Component -->
+ 		<component name="authoringInformation" class="ims.core.clinical.domain.objects.AuthoringInformation" >
+
+ 			<many-to-one name="authoringHcp" class="ims.core.resource.people.domain.objects.Hcp" foreign-key="patienthomesit_authoringiau_fk" access="field">
+ 				<column name="authoringiauthoringh" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="authoringDateTime" type="timestamp" access="field" update="true">
+ 				<column name="authoringiauthoringd" not-null="false"  unique="false"   />
+ 			</property>
+ 		</component>
+<!-- debug: careContext -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="careContext" class="ims.core.admin.domain.objects.CareContext" unique="true" foreign-key="patienthomesit_carecontex_fk" access="field" cascade="save-update">
+			<column name="carecontex" sql-type="numeric(10,0)" not-null="true" unique="false"  index='ctx_idx' />
+		</many-to-one>
+<!-- debug: clinicalContact -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="clinicalContact" class="ims.core.admin.domain.objects.ClinicalContact" unique="true" foreign-key="patienthomesit_clinicalco_fk" access="field" cascade="save-update">
+			<column name="clinicalco" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: livesWith -->
+<!-- debug: livesWithDetails -->
+<!-- debug: fitToCareForPatient -->
+<!-- debug: fitToTakeHome -->
+<!-- debug: accomType -->
+<!-- debug: accomTypeOther -->
+<!-- debug: ownership -->
+<!-- debug: supervisedBy -->
+<!-- debug: superviseName -->
+<!-- debug: superviseAddress -->
+<!-- debug: supervisePhoneNo -->
+<!-- debug: floorLevel -->
+<!-- debug: lift -->
+<!-- debug: stairs -->
+<!-- debug: stairsLift -->
+<!-- debug: rails -->
+<!-- debug: railSide -->
+<!-- debug: bathroom -->
+<!-- debug: bathroomLocation -->
+<!-- debug: toilet -->
+<!-- debug: toiletLocation -->
+<!-- debug: shower -->
+<!-- debug: showerLocation -->
+<!-- debug: houseKeys -->
+<!-- debug: spareSet -->
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="livesWith" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_liveswith" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="livesWithDetails" type="string" access="field" update="true">
+			<column name="liveswithd"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="fitToCareForPatient" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_fittocaref" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="fitToTakeHome" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_fittotakeh" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="accomType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_accomtype" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="accomTypeOther" type="string" access="field" update="true">
+			<column name="accomtypeo"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="ownership" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_ownership" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="supervisedBy" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_supervised" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="superviseName" type="string" access="field" update="true">
+			<column name="supervisen"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="superviseAddress" type="string" access="field" update="true">
+			<column name="supervisea"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="supervisePhoneNo" type="string" access="field" update="true">
+			<column name="supervisep"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="floorLevel" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_floorlevel" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="lift" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_lift" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="stairs" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_stairs" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="stairsLift" type="string" access="field" update="true">
+			<column name="stairslift"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="rails" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_rails" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="railSide" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_railside" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="bathroom" type="string" access="field" update="true">
+			<column name="bathroom"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="bathroomLocation" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_bathroomlo" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="toilet" type="string" access="field" update="true">
+			<column name="toilet"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="toiletLocation" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_toiletloca" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="shower" type="string" access="field" update="true">
+			<column name="shower"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="showerLocation" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_showerloca" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="houseKeys" type="string" access="field" update="true">
+			<column name="housekeys"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="spareSet" type="string" access="field" update="true">
+			<column name="spareset"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

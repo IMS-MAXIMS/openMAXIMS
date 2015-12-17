@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -48,6 +53,7 @@ import ims.ocrr.forms.noninpatientspecimencollection.BaseLogic;
 import ims.ocrr.forms.noninpatientspecimencollection.GenForm;
 import ims.ocrr.forms.noninpatientspecimencollection.GenForm.GroupCollectedEnumeration;
 import ims.ocrr.helper.PhlebotomyHelper;
+import ims.ocrr.vo.NonInpSpecCollectionSearchCriteriaVo;
 import ims.ocrr.vo.OrderedInvestigationStatusVo;
 import ims.ocrr.vo.OrderedInvestigationStatusVoCollection;
 import ims.ocrr.vo.SpecimenCollectionStatusVo;
@@ -81,13 +87,103 @@ public class Logic extends BaseLogic
 	private static final String	INFO_COL		= "-8";
 	private static final String	BTN_COL			= "-9";
 	
+	private static final int LIST_ALL					= 1;
+	private static final int LIST_FOR_COLLECTION		= 2;
+	private static final int LIST_NOT_COLLECTED			= 3;
+	private static final int LIST_COLLECTED				= 4;
+	private static final int LIST_COLLECTION_CANCELLED	= 5;
+	
 	protected void onFormOpen(Object[] args) throws PresentationLogicException
 	{
 		initialize();
+		
+		if (form.getGlobalContext().OCRR.getNonInpSpecCollectionSearchCriteriaIsNotNull())
+		{
+			setSearchCriteria(form.getGlobalContext().OCRR.getNonInpSpecCollectionSearchCriteria());
+			populateCollectDataGrid();
+			enableContextMenu();
+		}
 	}
+	
+	private NonInpSpecCollectionSearchCriteriaVo getSearchCriteria()
+	{
+		NonInpSpecCollectionSearchCriteriaVo searchCriteria = new NonInpSpecCollectionSearchCriteriaVo();
+		
+		searchCriteria.setFromDate(form.dteFrom().getValue());
+		searchCriteria.setFromTime(form.timFrom().getValue());
+		searchCriteria.setToDate(form.dteTo().getValue());
+		searchCriteria.setToTime(form.timTo().getValue());
+		searchCriteria.setViewType(getViewType());
+	
+		return searchCriteria;
+	}
+	
+	
+	private void setSearchCriteria(NonInpSpecCollectionSearchCriteriaVo nonInpSpecCollectionSearchCriteriaVo)
+	{
+		setViewType(nonInpSpecCollectionSearchCriteriaVo.getViewType());
+		form.dteFrom().setValue(nonInpSpecCollectionSearchCriteriaVo.getFromDate());
+		form.timFrom().setValue(nonInpSpecCollectionSearchCriteriaVo.getFromTime());
+		form.dteTo().setValue(nonInpSpecCollectionSearchCriteriaVo.getToDate());
+		form.timTo().setValue(nonInpSpecCollectionSearchCriteriaVo.getToTime());
+	}
+	
+	private void setViewType(Integer searchType)
+	{
+		if (searchType == null)
+			return;
+		
+		switch (searchType)
+		{
+		case LIST_ALL:
+			form.GroupCollected().setValue(GroupCollectedEnumeration.rdoAll);
+			break;
+		case LIST_FOR_COLLECTION:
+			form.GroupCollected().setValue(GroupCollectedEnumeration.rdoForCollection);
+			break;
+		case LIST_NOT_COLLECTED:
+			form.GroupCollected().setValue(GroupCollectedEnumeration.rdoOutstanding);
+			break;
+		case LIST_COLLECTED:
+			form.GroupCollected().setValue(GroupCollectedEnumeration.rdoCollected);
+			break;
+		case LIST_COLLECTION_CANCELLED:
+			form.GroupCollected().setValue(GroupCollectedEnumeration.rdoCancelled);
+			break;
+		}				
+	}
+
+	private Integer getViewType()
+	{
+		GroupCollectedEnumeration searchType = form.GroupCollected().getValue();
+		if (GroupCollectedEnumeration.rdoAll.equals(searchType))
+		{
+			return LIST_ALL;
+		}
+		if (GroupCollectedEnumeration.rdoForCollection.equals(searchType))
+		{
+			return LIST_FOR_COLLECTION;
+		}
+		if (GroupCollectedEnumeration.rdoOutstanding.equals(searchType))
+		{
+			return LIST_NOT_COLLECTED;
+		}
+		if (GroupCollectedEnumeration.rdoCollected.equals(searchType))
+		{
+			return LIST_COLLECTED;
+		}
+		if (GroupCollectedEnumeration.rdoCancelled.equals(searchType))
+		{
+			return LIST_COLLECTION_CANCELLED;
+		}
+		
+		return null;
+	}
+	
 	protected void onImbClearClick() throws ims.framework.exceptions.PresentationLogicException
 	{
 		clearSearchControls();
+		form.getGlobalContext().OCRR.setNonInpSpecCollectionSearchCriteria(null); //WDEV-19389 
 	}
 	protected void onImbSearchClick() throws ims.framework.exceptions.PresentationLogicException
 	{
@@ -95,6 +191,7 @@ public class Logic extends BaseLogic
 			return;
 		
 		populateCollectDataGrid();
+		form.getGlobalContext().OCRR.setNonInpSpecCollectionSearchCriteria(getSearchCriteria()); //WDEV-19389 
 		enableContextMenu();
 	}
 	private void populateCollectDataGrid()

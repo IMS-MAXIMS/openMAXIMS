@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:35 -->
+<!-- Generated: 12/10/2015, 13:29 -->
 <hibernate-mapping>
 	<class name="ims.core.admin.domain.objects.EmergencyAttendance" table="core_emergencyatten" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -144,7 +144,7 @@
 <!-- debug: IsAggregation : true -->
 <!-- debug: IsComposition : true -->
  		<!-- Component -->
- 		<component name="insurance" class="ims.core.patient.domain.objects.Insurance" >
+ 		<component name="insurance" class="ims.core.patient.domain.objects.NationalHealthCover" >
 
  			<property name="medicalCardNo" type="string" access="field" update="true">
  				<column name="insurancemedicalcar" length="50" not-null="false"  unique="false"   />
@@ -184,6 +184,16 @@
  			<property name="medicalCardExpiryDate" type="integer" access="field" update="true">
  				<column name="insurancemedicalca3" not-null="false"  unique="false"   />
  			</property>
+
+ 			<!-- debug: IsLookup -->
+ 			<many-to-one name="eHICInstitutionCode" class="ims.domain.lookups.LookupInstance" access="field">
+ 				<column name="lkp_insuranceehicinsti2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<!-- debug: IsLookup -->
+ 			<many-to-one name="eligibility" class="ims.domain.lookups.LookupInstance" access="field">
+ 				<column name="lkp_insuranceeligibili2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
  		</component>
 <!-- debug: patientMedicalInsurance -->
 <!-- debug: field.IsAssociation : true -->
@@ -192,6 +202,27 @@
 		<many-to-one name="patientMedicalInsurance" class="ims.core.clinical.domain.objects.PatientMedicalInsurance" unique="true" foreign-key="emergencyatten_patientmed_fk" access="field" cascade="save-update">
 			<column name="patientmed" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
+<!-- debug: usePrivateHealthInsurance -->
+<!-- debug: endOfRegistrationDateTime -->
+<!-- debug: eDClinicDetails -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="eDClinicDetails" class="ims.core.clinical.domain.objects.EDClinicDetails" unique="true" foreign-key="emergencyatten_edclinicde_fk" access="field" cascade="save-update">
+			<column name="edclinicde" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: ambulanceHandoverDateTime -->
+<!-- debug: ambulanceDelayReason -->
+<!-- debug: attendanceOutcomeComment -->
+<!-- debug: attendanceDischargeComment -->
+<!-- debug: gPLetterStatus -->
+<!-- debug: customID -->
+<!-- debug: accomodationRequestedType -->
+<!-- debug: attendanceSupplementaryComment -->
+<!-- debug: isDischargeLetterRequired -->
+<!-- debug: dischargeLetterStatus -->
+<!-- debug: ambulanceDelayReasonComment -->
+<!-- debug: requiresSignOff -->
 <!-- debug: !IsAssociation && !IsCollection -->
 
 <!-- debug: !IsLookup -->
@@ -393,5 +424,75 @@
 		<property name="sequenceNumber" type="string" access="field" update="true" > 
 			<column name="sequencenu" length="6"  not-null="false" unique="false"  />
 		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="usePrivateHealthInsurance" type="boolean" access="field" update="true">
+			<column name="useprivate"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="endOfRegistrationDateTime" type="timestamp" access="field" update="true">
+			<column name="endofregis"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="ambulanceHandoverDateTime" type="timestamp" access="field" update="true">
+			<column name="ambulanceh"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="ambulanceDelayReason" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_ambulanced" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="attendanceOutcomeComment" type="text" access="field" update="true" > 
+			<column name="attendanc5"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="attendanceDischargeComment" type="text" access="field" update="true" > 
+			<column name="attendanc6"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="gPLetterStatus" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_gpletterst" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="customID" type="string" access="field" update="true" > 
+			<column name="customid" length="20"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="accomodationRequestedType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_accomodati" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="attendanceSupplementaryComment" type="text" access="field" update="true" > 
+			<column name="attendanc7"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isDischargeLetterRequired" type="boolean" access="field" update="true">
+			<column name="isdischarg"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="dischargeLetterStatus" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_dischargel" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="ambulanceDelayReasonComment" type="text" access="field" update="true" > 
+			<column name="ambulance2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="requiresSignOff" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_requiressi" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
 	</class>
 </hibernate-mapping>

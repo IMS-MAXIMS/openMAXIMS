@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:35 -->
+<hibernate-mapping>
+	<class name="ims.spinalinjuries.shared.domain.objects.RespExamDetails" table="spin_respexamdetail" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: observations -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="observations" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="respexamdetail_observatio_fk">
+				<column name="spin_respexamdetail_observatio" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.spinalinjuries.shared.domain.objects.RespObserv" />
+		</set>
+<!-- debug: auscultation -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="auscultation" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="respexamdetail_auscultati_fk">
+				<column name="spin_respexamdetail_auscultati" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.spinalinjuries.shared.domain.objects.RespAuscultation" />
+		</set>
+<!-- debug: airEntry -->
+<!-- debug: lungFields -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="lungFields" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="respexamdetail_lungfields_fk">
+				<column name="spin_respexamdetail_lungfields" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.spinalinjuries.shared.domain.objects.RespLungFields" />
+		</set>
+<!-- debug: additionalFactors -->
+<!-- debug: analysisofAsses -->
+<!-- debug: assNotes -->
+<!-- debug: clinicalContact -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="clinicalContact" class="ims.core.admin.domain.objects.ClinicalContact" unique="true" foreign-key="respexamdetail_clinicalco_fk" access="field" cascade="save-update">
+			<column name="clinicalco" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="airEntry" type="boolean" access="field" update="true">
+			<column name="airentry"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="additionalFactors" type="string" access="field" update="true" > 
+			<column name="additional" length="500"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="analysisofAsses" type="string" access="field" update="true" > 
+			<column name="analysisof" length="500"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="assNotes" type="string" access="field" update="true" > 
+			<column name="assnotes" length="500"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

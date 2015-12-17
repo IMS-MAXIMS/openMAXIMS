@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -44,7 +49,7 @@ public class ReferralServicesImpl extends BaseReferralServicesImpl
 	public ims.core.vo.ServiceLiteVoCollection getServices()
 	{
 		DomainFactory factory = getDomainFactory();
-		StringBuffer hql = new StringBuffer("from Service as service where service.isRIE is null and service.isActive = :isActive");
+		StringBuffer hql = new StringBuffer("from Service as service where service.isRIE is null and service.isActive = :isActive order by service.serviceName asc");  //wdev-20862
 		List list = factory.find(hql.toString(), new String[]{"isActive"}, new Object[]{true});
 		ServiceLiteVoCollection serviceLiteVoColl = ServiceLiteVoAssembler.createServiceLiteVoCollectionFromService(list);
 		

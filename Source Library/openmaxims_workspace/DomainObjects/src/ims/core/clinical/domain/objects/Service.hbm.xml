@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:34 -->
+<!-- Generated: 12/10/2015, 13:29 -->
 <hibernate-mapping>
 	<class name="ims.core.clinical.domain.objects.Service" table="core_services" lazy="true" discriminator-value="null" >
 		<cache usage="nonstrict-read-write" />
@@ -33,13 +33,19 @@
  			</key>
  			<index column='idx'/>
  			<!-- Composite -->
- 			<composite-element class="ims.core.clinical.domain.objects.TaxonomyMap" >
+ 			<composite-element class="ims.core.clinical.domain.objects.NonUniqueTaxonomyMap" >
  				<!-- debug: IsLookup -->
  				<many-to-one name="taxonomyName" class="ims.domain.lookups.LookupInstance" access="field">
- 					<column name="lkp_taxonomyna" not-null="true" sql-type="numeric(10,0)"  unique="false" unique-key='taxonomy_unq1'  />
+ 					<column name="lkp_taxonomyna" not-null="true" sql-type="numeric(10,0)"  unique="false"   />
  				</many-to-one>
  				<property name="taxonomyCode" type="string" access="field" update="true">
- 					<column name="taxonomyco" length="30" not-null="true"  unique="false" unique-key='taxonomy_unq1'   />
+ 					<column name="taxonomyco" length="30" not-null="true"  unique="false"    />
+ 				</property>
+ 				<property name="effectiveFrom" type="date" access="field" update="true">
+ 					<column name="effectivef" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="effectiveTo" type="date" access="field" update="true">
+ 					<column name="effectivet" not-null="false"  unique="false"   />
  				</property>
  			</composite-element>
  		</list>
@@ -49,6 +55,9 @@
 <!-- debug: turnaroundMeasure -->
 <!-- debug: expectedTurnaround -->
 <!-- debug: maternityIndicator -->
+<!-- debug: isSubjectToRTTClock -->
+<!-- debug: directSelfReferralsAccepted -->
+<!-- debug: isPreAssessmentCompletionExempt -->
 <!-- debug: !IsAssociation && !IsCollection -->
 
 <!-- debug: !IsLookup -->
@@ -104,6 +113,21 @@
 <!-- debug: !IsLookup -->
 		<property name="maternityIndicator" type="boolean" access="field" update="true">
 			<column name="maternityi"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isSubjectToRTTClock" type="boolean" access="field" update="true">
+			<column name="issubjectt"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="directSelfReferralsAccepted" type="boolean" access="field" update="true">
+			<column name="directself"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isPreAssessmentCompletionExempt" type="boolean" access="field" update="true">
+			<column name="ispreasses"  not-null="false" unique="false"  />
 		</property>
 	</class>
 </hibernate-mapping>

@@ -1,0 +1,94 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!-- be careful when you edit this file, the id attribute must be unique -->
+<risk_factors>
+	<risk_factor name="A" multiple="N" description="Has food intake declined over the past 3 months due to loss of appetite, digestive problems, chewing or swallowing difficulties?">
+		<description id="1" name="Severe loss of appetite" score="0" description="" />
+		<description id="2" name="Moderate loss of appetite" score="1" description="" />
+		<description id="3" name="No loss of appetite" score="2" description="" />
+	</risk_factor>
+	<risk_factor name="B" multiple="N" description="Weight loss during last months">
+		<description id="4" name="Weight loss greater than 3 kg (6.6 lbs)" score="0" description="" />
+		<description id="5" name="Does not know" score="1" description="" />
+		<description id="6" name="Weight loss between 1 and 3 kg (2.2 and 6.6 lbs)" score="2" description="" />
+		<description id="7" name="No weight loss" score="3" description="" />
+	</risk_factor>
+	<risk_factor name="C" multiple="N" description="Mobility">
+		<description id="8" name="Bed or chair bound" score="0" description="" />
+		<description id="9" name="Able to get out of bed/chair but does not go out" score="1" description="" />
+		<description id="10" name="Goes out" score="2" description="" />
+	</risk_factor>
+	<risk_factor name="D" multiple="N" description="Has suffered psychological stress or acute disease in the past 3 months?">
+		<description id="11" name="Yes" score="0" description="" />
+		<description id="12" name="No" score="2" description="" />
+	</risk_factor>
+	<risk_factor name="E" multiple="N" description="Neuropsychological problems">
+		<description id="13" name="Severe dementia or depression" score="0" description="" />
+		<description id="14" name="Mild dementia" score="1" description="" />
+		<description id="15" name="No psychological problems" score="2" description="" />
+	</risk_factor>
+	<risk_factor name="F" multiple="N" description="Body Mass Index (BMI) (weight in kg) / (height in m2)">
+		<description id="16" name="BMI less than 19" score="0" description="" />
+		<description id="17" name="BMI 19 to less than 21" score="1" description="" />
+		<description id="18" name="BMI 21 to less than 23" score="2" description="" />
+		<description id="19" name="BMI 23 or greater" score="3" description="" />
+	</risk_factor>
+
+	<risk_factor name="G" multiple="N" description="Lives independently (not in a nursing home or hospital)?">
+		<description id="20" name="Yes" score="1" description="" />
+		<description id="21" name="No" score="0" description="" />
+	</risk_factor>
+	<risk_factor name="H" multiple="N" description="Takes more than 3 prescription drugs per day?">
+		<description id="22" name="Yes" score="0" description="" />
+		<description id="23" name="No" score="1" description="" />
+	</risk_factor>
+	<risk_factor name="I" multiple="N" description="Pressure sores or skin ulcers?">
+		<description id="24" name="Yes" score="0" description="" />
+		<description id="25" name="No" score="1" description="" />
+	</risk_factor>
+	<risk_factor name="J" multiple="N" description="How many full meals does the patient eat daily?">
+		<description id="26" name="1 meal" score="0" description="" />
+		<description id="27" name="2 meals" score="1" description="" />
+		<description id="28" name="3 meals" score="2" description="" />
+	</risk_factor>
+	<risk_factor name="K" multiple="Y" description="Selected consumption markers for protein intake">
+		<description id="29" name="At least one serving of dairy products (milk, cheese, yogurt) per day?" score="1" description="" />
+		<description id="30" name="Two or more serving of legumes or eggs per week?" score="1" description="" />
+		<description id="31" name="Meat, fish or poultry every day?" score="1" description="" />
+	</risk_factor>
+	<risk_factor name="L" multiple="N" description="Consumes two or more servings of fruits or vegetables per day?">
+		<description id="32" name="Yes" score="1" description="" />
+		<description id="33" name="No" score="0" description="" />
+	</risk_factor>
+	<risk_factor name="M" multiple="N" description="How much fluid (water, juice, coffee, tea, milk…) is consumed per day?">
+		<description id="34" name="Less than 3 cups" score="0" description="" />
+		<description id="35" name="3 to 5 cups" score="0.5" description="" />
+		<description id="36" name="More than 5 cups" score="1" description="" />
+	</risk_factor>
+	<risk_factor name="N" multiple="N" description="Mode of feeding">
+		<description id="37" name="Unable to eat without assistance" score="0" description="" />
+		<description id="38" name="Self-fed with some difficulty" score="1" description="" />
+		<description id="39" name="Self-fed without any problem" score="2" description="" />
+	</risk_factor>
+	<risk_factor name="O" multiple="N" description="Self view of nutritional status">
+		<description id="40" name="View self as being malnourished" score="0" description="" />
+		<description id="41" name="Is uncertain of nutritional state" score="1" description="" />
+		<description id="42" name="Views self as having no nutritional problem" score="2" description="" />
+	</risk_factor>
+	<risk_factor name="P" multiple="N" description="In comparison with other people of the same age,how do they consider their health status?">
+		<description id="43" name="Not as good" score="0.0" description="" />
+		<description id="44" name="Does not know" score="0.5" description="" />
+		<description id="45" name="As good" score="1.0" description="" />
+		<description id="46" name="Better" score="2.0" description="" />
+	</risk_factor>
+	<risk_factor name="Q" multiple="N" description="Mid-arm circumference (MAC) in cm">
+		<description id="47" name="MAC less than 21" score="0" description="" />
+		<description id="48" name="MAC 21 to 22" score="0.5" description="" />
+		<description id="49" name="MAC 22 or greater" score="1" description="" />
+	</risk_factor>
+	<risk_factor name="R" multiple="N" description="Calf circumference (CC) in cm">
+		<description id="50" name="CC less than 31" score="0" description="" />
+		<description id="51" name="CC 31 or greater" score="1" description="" />
+	</risk_factor>
+
+</risk_factors>

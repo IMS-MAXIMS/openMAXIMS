@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -320,6 +325,7 @@ public class Logic extends BaseLogic
 	}
 	private void updateControlsState()
 	{
+		form.btnNew().setVisible(form.getMode().equals(FormMode.VIEW));		//wdev-20004
 		form.btnEdit().setVisible(form.getMode().equals(FormMode.VIEW) && form.grdExternalResource().getSelectedRow() != null);
 		form.cmbHcpTypeDetails().setRequired(true);
 		if( form.cmbExternalResourceTypeDetails().getValue() != null && form.cmbExternalResourceTypeDetails().getValue().equals(ExternalResourceType.ERT_HCP))
@@ -329,7 +335,8 @@ public class Logic extends BaseLogic
 				form.cmbHcpTypeDetails().setEnabled(true);
 				form.cmbHcpTypeDetails().setRequired(true);
 			}
-						
+			else
+				form.cmbHcpTypeDetails().setEnabled(false);		//wdev-20004		
 		}
 		else
 		{
@@ -337,6 +344,8 @@ public class Logic extends BaseLogic
 			{
 				form.cmbHcpTypeDetails().setEnabled(false);
 			}
+			else
+				form.cmbHcpTypeDetails().setEnabled(false);		//wdev-20004
 		}
 		
 		if( form.cmbResourceType().getValue() != null && form.cmbResourceType().getValue().equals(ExternalResourceType.ERT_HCP))

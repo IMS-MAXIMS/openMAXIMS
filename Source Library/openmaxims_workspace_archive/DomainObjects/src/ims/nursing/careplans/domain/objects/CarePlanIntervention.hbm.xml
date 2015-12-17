@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:35 -->
+<hibernate-mapping>
+	<class name="ims.nursing.careplans.domain.objects.CarePlanIntervention" table="ns_careplaninterv" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: hibernateClassContent -->
+<!-- debug: description -->
+<!-- debug: startDate -->
+<!-- debug: startBy -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="startBy" class="ims.core.resource.people.domain.objects.Hcp" unique="true" foreign-key="careplaninterv_startby_fk" access="field" cascade="save-update">
+			<column name="startby" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: stopDate -->
+<!-- debug: stopBy -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="stopBy" class="ims.core.resource.people.domain.objects.Hcp" unique="true" foreign-key="careplaninterv_stopby_fk" access="field" cascade="save-update">
+			<column name="stopby" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: active -->
+<!-- debug: order -->
+<!-- debug: recInError -->
+<!-- debug: interventionType -->
+<!-- debug: additionalInfo -->
+<!-- debug: frequency -->
+<!-- debug: isRemoved -->
+<!-- debug: removedDate -->
+<!-- debug: recordingInformation -->
+<!-- debug: field.IsAssociation : true -->
+ 		<!-- Component -->
+ 		<component name="recordingInformation" class="ims.core.clinical.domain.objects.RecordingUserInformation" >
+
+ 			<many-to-one name="recordingUser" class="ims.core.resource.people.domain.objects.MemberOfStaff" foreign-key="careplaninterv_recordingire_fk" access="field">
+ 				<column name="recordingirecordingu" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="recordingDateTime" type="timestamp" access="field" update="true">
+ 				<column name="recordingirecordingd" not-null="false"  unique="false"   />
+ 			</property>
+ 		</component>
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="description" type="string" access="field" update="true" > 
+			<column name="descriptio" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="startDate" type="date" access="field" update="true">
+			<column name="startdate"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="stopDate" type="date" access="field" update="true">
+			<column name="stopdate"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="active" type="boolean" access="field" update="true">
+			<column name="active"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="order" type="integer" access="field" update="true">
+			<column name="c_ord"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="recInError" type="boolean" access="field" update="true">
+			<column name="recinerror"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="interventionType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_interventi" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="additionalInfo" type="string" access="field" update="true" > 
+			<column name="additional" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="frequency" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_frequency" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isRemoved" type="boolean" access="field" update="true">
+			<column name="isremoved"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="removedDate" type="date" access="field" update="true">
+			<column name="removeddat"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

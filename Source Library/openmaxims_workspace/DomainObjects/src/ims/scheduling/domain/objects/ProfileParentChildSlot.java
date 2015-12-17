@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.scheduling.domain.objects;
@@ -55,6 +60,9 @@ public class ProfileParentChildSlot extends ims.domain.DomainObject implements i
 	private Integer duration;
 	/** End Time */
 	private String endTm;
+	private ims.domain.lookups.LookupInstance priority;
+	private ims.scheduling.domain.objects.Profile_ListOwner slotResp;
+	private Integer numberSlotsReq;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public ProfileParentChildSlot (Integer id, int ver)
@@ -110,6 +118,27 @@ public class ProfileParentChildSlot extends ims.domain.DomainObject implements i
 		this.endTm = endTm;
 	}
 
+	public ims.domain.lookups.LookupInstance getPriority() {
+		return priority;
+	}
+	public void setPriority(ims.domain.lookups.LookupInstance priority) {
+		this.priority = priority;
+	}
+
+	public ims.scheduling.domain.objects.Profile_ListOwner getSlotResp() {
+		return slotResp;
+	}
+	public void setSlotResp(ims.scheduling.domain.objects.Profile_ListOwner slotResp) {
+		this.slotResp = slotResp;
+	}
+
+	public Integer getNumberSlotsReq() {
+		return numberSlotsReq;
+	}
+	public void setNumberSlotsReq(Integer numberSlotsReq) {
+		this.numberSlotsReq = numberSlotsReq;
+	}
+
 	public ims.domain.SystemInformation getSystemInformation() {
 		if (systemInformation == null) systemInformation = new ims.domain.SystemInformation();
 		return systemInformation;
@@ -161,6 +190,21 @@ public class ProfileParentChildSlot extends ims.domain.DomainObject implements i
 	    auditStr.append("; ");
 		auditStr.append("\r\n*endTm* :");
 		auditStr.append(endTm);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*priority* :");
+		if (priority != null)
+			auditStr.append(priority.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*slotResp* :");
+		if (slotResp != null)
+		{
+			auditStr.append(toShortClassName(slotResp));
+				
+		    auditStr.append(slotResp.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*numberSlotsReq* :");
+		auditStr.append(numberSlotsReq);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -235,6 +279,24 @@ public class ProfileParentChildSlot extends ims.domain.DomainObject implements i
 			sb.append("<endTm>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getEndTm().toString()));
 			sb.append("</endTm>");		
+		}
+		if (this.getPriority() != null)
+		{
+			sb.append("<priority>");
+			sb.append(this.getPriority().toXMLString()); 
+			sb.append("</priority>");		
+		}
+		if (this.getSlotResp() != null)
+		{
+			sb.append("<slotResp>");
+			sb.append(this.getSlotResp().toXMLString(domMap)); 	
+			sb.append("</slotResp>");		
+		}
+		if (this.getNumberSlotsReq() != null)
+		{
+			sb.append("<numberSlotsReq>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getNumberSlotsReq().toString()));
+			sb.append("</numberSlotsReq>");		
 		}
 		return sb.toString();
 	}
@@ -424,6 +486,23 @@ public class ProfileParentChildSlot extends ims.domain.DomainObject implements i
 		{	
     		obj.setEndTm(new String(fldEl.getTextTrim()));	
 		}
+		fldEl = el.element("priority");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setPriority(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("slotResp");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setSlotResp(ims.scheduling.domain.objects.Profile_ListOwner.getProfile_ListOwnerfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("numberSlotsReq");
+		if(fldEl != null)
+		{	
+    		obj.setNumberSlotsReq(new Integer(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -441,6 +520,9 @@ public class ProfileParentChildSlot extends ims.domain.DomainObject implements i
 		public static final String IsActive = "isActive";
 		public static final String Duration = "duration";
 		public static final String EndTm = "endTm";
+		public static final String Priority = "priority";
+		public static final String SlotResp = "slotResp";
+		public static final String NumberSlotsReq = "numberSlotsReq";
 	}
 }
 

@@ -1,0 +1,87 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:36 -->
+<hibernate-mapping>
+	<class name="ims.ocrr.orderingresults.domain.objects.OrderMessage" table="ocrr_ordermessage" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: orderDetails -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- many to one -->
+		<many-to-one name="orderDetails" class="ims.ocrr.orderingresults.domain.objects.OcsOrderSession" foreign-key="ordermessage_orderdetai_fk" access="field" cascade="save-update">
+			<column name="orderdetai" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: investigations -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<set name="investigations" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="ordermessage_investigat_fk">
+				<column name="ocrr_ordermessage_investigat" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.ocrr.orderingresults.domain.objects.OrderInvestigation" />
+		</set>
+<!-- debug: messageStatus -->
+<!-- debug: providerSystem -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="providerSystem" class="ims.core.admin.domain.objects.ProviderSystem" unique="true" foreign-key="ordermessage_providersy_fk" access="field" cascade="save-update">
+			<column name="providersy" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: placerOrdNum -->
+<!-- debug: hL7Message -->
+<!-- debug: orderCategory -->
+<!-- debug: failureMessage -->
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="messageStatus" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_messagesta" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="placerOrdNum" type="string" access="field" update="true" > 
+			<column name="placerordn" length="20"  not-null="true" unique="false" unique-key='order_msg_unq1' />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="hL7Message" type="text" access="field" update="true" > 
+			<column name="hl7message"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="orderCategory" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_ordercateg" sql-type="numeric(10,0)" not-null="true" unique="false" unique-key='order_msg_unq1'  />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="failureMessage" type="string" access="field" update="true" > 
+			<column name="failuremes" length="1000"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

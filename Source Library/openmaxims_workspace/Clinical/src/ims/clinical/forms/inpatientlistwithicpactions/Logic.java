@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -256,6 +261,18 @@ public class Logic extends BaseLogic
 		
 		return filterVo;
 	}
+	
+	//WDEV-22353
+	private Boolean isNotMosUser(String message)
+	{
+		Object mos = domain.getMosUser();
+		if (mos == null)
+		{
+			engine.showMessage(message, "Not Allowed", MessageButtons.OK, MessageIcon.WARNING);
+			return true;
+		}
+		return false;
+	}
 
 	@Override
 	protected void onContextMenuItemClick(int menuItemID, Control sender) throws PresentationLogicException 
@@ -273,15 +290,27 @@ public class Logic extends BaseLogic
 			break;
 			
 			case GenForm.ContextMenus.ClinicalNamespace.IpWardListMenu.DISCHARGE:
-				if (form.grdInpatientsWithICPS().getValue().getICPInfoIsNotNull())
-					form.getGlobalContext().Core.setCurrentCareContext(domain.getCareContext(form.grdInpatientsWithICPS().getValue().getICPInfo().getCareContext()));
-				form.getGlobalContext().RefMan.setCatsReferral(domain.getCatsReferralRef(form.grdInpatientsWithICPS().getValue()));
-				engine.open(form.getForms().RefMan.DischargeSummaryWardPacuDialogAlias);
+				//WDEV-22353
+				if(!isNotMosUser("Logged in user is not associated with a Member of Staff. Discharge cannot continue."))
+				{
+					if (form.grdInpatientsWithICPS().getValue().getICPInfoIsNotNull())
+					{
+						form.getGlobalContext().Core.setCurrentCareContext(domain.getCareContext(form.grdInpatientsWithICPS().getValue().getICPInfo().getCareContext()));
+					}
+					form.getGlobalContext().RefMan.setCatsReferral(domain.getCatsReferralRef(form.grdInpatientsWithICPS().getValue()));
+					engine.open(form.getForms().RefMan.DischargeSummaryWardPacuDialogAlias);
+				}
 			break;
 				
 			case GenForm.ContextMenus.ClinicalNamespace.IpWardListMenu.TRANSFER:
-				if (form.grdInpatientsWithICPS().getValue() != null)
-					engine.open(form.getForms().Core.InpatientTransferDialog, new Object[]{ form.grdInpatientsWithICPS().getValue()});
+				//WDEV-22353
+				if(!isNotMosUser("Logged in user is not associated with a Member of Staff. Transfer cannot continue."))
+				{
+					if (form.grdInpatientsWithICPS().getValue() != null)
+					{
+						engine.open(form.getForms().Core.InpatientTransferDialog, new Object[]{ form.grdInpatientsWithICPS().getValue()});
+					}
+				}
 			break;
 				
 			default:

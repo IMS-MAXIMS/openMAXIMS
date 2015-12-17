@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 12/10/2015, 13:31 -->
+<hibernate-mapping>
+	<class name="ims.core.admin.pas.domain.objects.HealthyLodger" table="core_healthylodger" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: name -->
+<!-- debug: field.IsAssociation : true -->
+ 		<!-- Component -->
+ 		<component name="name" class="ims.core.generic.domain.objects.PersonName" >
+
+ 			<!-- debug: IsLookup -->
+ 			<many-to-one name="nameType" class="ims.domain.lookups.LookupInstance" access="field">
+ 				<column name="lkp_namenametype" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="surname" type="string" access="field" update="true">
+ 				<column name="namesurname" length="40" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="upperSurname" type="string" access="field" update="true">
+ 				<column name="nameuppersurna" length="40" not-null="false"  unique="false"  index='name_idx' />
+ 			</property>
+
+ 			<property name="forename" type="string" access="field" update="true">
+ 				<column name="nameforename" length="40" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="upperForename" type="string" access="field" update="true">
+ 				<column name="nameupperforen" length="40" not-null="false"  unique="false"  index='name_idx' />
+ 			</property>
+
+ 			<property name="middleName" type="string" access="field" update="true">
+ 				<column name="namemiddlename" length="100" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<!-- debug: IsLookup -->
+ 			<many-to-one name="title" class="ims.domain.lookups.LookupInstance" access="field">
+ 				<column name="lkp_nametitle" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="namesuffix" type="string" access="field" update="true">
+ 				<column name="namenamesuffix" length="35" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="objectidentifier" type="string" access="field" update="true">
+ 				<column name="nameobjectiden" length="14" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="beffdate" type="date" access="field" update="true">
+ 				<column name="namebeffdate" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="beffdatecnf" type="boolean" access="field" update="true">
+ 				<column name="namebeffdatecn" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="betdate" type="date" access="field" update="true">
+ 				<column name="namebetdate" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="betdatecnf" type="boolean" access="field" update="true">
+ 				<column name="namebetdatecnf" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<!-- debug: IsLookup -->
+ 			<many-to-one name="pdsUpdateMode" class="ims.domain.lookups.LookupInstance" access="field">
+ 				<column name="lkp_namepdsupdatem" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+ 		</component>
+<!-- debug: relationshipToPatient -->
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="relationshipToPatient" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_relationsh" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+	</class>
+</hibernate-mapping>

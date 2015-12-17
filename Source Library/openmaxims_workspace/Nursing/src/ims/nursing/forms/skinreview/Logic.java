@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -36,11 +41,13 @@ import ims.framework.utils.DateFormat;
 import ims.framework.utils.DateTime;
 import ims.framework.utils.Time;
 import ims.framework.utils.TimeFormat;
+import ims.nursing.forms.skinreview.GenForm.GroupActiveEnumeration;
 import ims.nursing.vo.SkinAssessment;
 import ims.nursing.vo.SkinAssessmentCollection;
 import ims.nursing.vo.SkinAssessmentFindings;
 import ims.nursing.vo.SkinAssessmentReview;
 import ims.nursing.vo.SkinAssessmentReviewCollection;
+import ims.nursing.vo.SkinReviewSearchCriteriaVo;
 import ims.nursing.vo.lookups.PainStatus;
 import com.ims.query.builder.client.QueryBuilderClient;
 import com.ims.query.builder.client.SeedValue;
@@ -50,11 +57,30 @@ import ims.core.vo.CareContextShortVoCollection;
 
 public class Logic extends BaseLogic
 {
+	private static final int LIST_ALL			= 2;
+	private static final int LIST_ACTIVE		= 1;
+	
 	protected void onFormOpen() throws ims.framework.exceptions.FormOpenException
 	{
 		initialize();
-		open();
-	
+		//WDEV-19389 
+		if (!(form.getGlobalContext().Core.getCurrentCareContextIsNotNull() && form.getGlobalContext().Nursing.getSkinReviewSearchCriteriaIsNotNull() && form.getGlobalContext().Core.getCurrentCareContext().equals(form.getGlobalContext().Nursing.getSkinReviewSearchCriteria().getCareContext())))
+			form.getGlobalContext().Nursing.setSkinReviewSearchCriteria(null);
+		
+		if(form.getGlobalContext().Nursing.getSkinReviewSearchCriteriaIsNotNull())
+		{
+			try
+			{
+				setSearchCriteria(form.getGlobalContext().Nursing.getSkinReviewSearchCriteria());
+				onComboBoxSiteValueChanged();
+			}
+			catch (PresentationLogicException e)
+			{e.printStackTrace();}
+
+		}
+		else
+			open();
+		//WDEV-19389 - end	
 	}
 	
 	private void initialize()
@@ -108,6 +134,63 @@ public class Logic extends BaseLogic
 			form.linkClinicalNote().setVisible(false);
 		}		
 	}	
+	
+	private SkinReviewSearchCriteriaVo getSearchCriteria()
+	{
+		SkinReviewSearchCriteriaVo searchCriteria = new SkinReviewSearchCriteriaVo();
+		
+		searchCriteria.setViewType(getViewType());
+		searchCriteria.setSelectedCareContext(form.recbrAssessment().getValue());
+		searchCriteria.setAssessment(form.comboBoxAssessment().getValue());
+		searchCriteria.setFindings(form.comboBoxSite().getValue());
+		searchCriteria.setCareContext(form.getGlobalContext().Core.getCurrentCareContext());
+		
+		return searchCriteria;
+	}
+	
+	
+	private void setSearchCriteria(SkinReviewSearchCriteriaVo skinReviewSearchCriteriaVo) throws PresentationLogicException
+	{
+		form.recbrAssessment().setValue(skinReviewSearchCriteriaVo.getSelectedCareContext());
+		onRecbrAssessmentValueChanged();
+		form.comboBoxAssessment().setValue(skinReviewSearchCriteriaVo.getAssessment());
+		onComboBoxAssessmentValueChanged();
+		setViewType(skinReviewSearchCriteriaVo.getViewType());
+		onRadioButtonGroupActiveValueChanged();
+		form.comboBoxSite().setValue(skinReviewSearchCriteriaVo.getFindings());
+	}
+
+	private void setViewType(Integer searchType)
+	{
+		if (searchType == null)
+			return;
+		
+		switch (searchType)
+		{
+		case LIST_ALL:
+			form.GroupActive().setValue(GroupActiveEnumeration.rdoAll);
+			break;
+		case LIST_ACTIVE:
+			form.GroupActive().setValue(GroupActiveEnumeration.rdoActive);
+			break;
+		}				
+	}
+
+	private Integer getViewType()
+	{
+		GroupActiveEnumeration searchType = form.GroupActive().getValue();
+		if (GroupActiveEnumeration.rdoAll.equals(searchType))
+		{
+			return LIST_ALL;
+		}
+		if (GroupActiveEnumeration.rdoActive.equals(searchType))
+		{
+			return LIST_ACTIVE;
+		}
+		
+		return null;
+	}
+	
 	protected void onFormDialogClosed(ims.framework.FormName formName, ims.framework.enumerations.DialogResult result) throws ims.framework.exceptions.PresentationLogicException
 	{
 		if(formName.equals(form.getForms().Nursing.SkinReviewDialog) && result.equals(DialogResult.OK))
@@ -249,6 +332,8 @@ public class Logic extends BaseLogic
 			form.btnNext().setEnabled(false);
 			form.btnPrevious().setEnabled(false);
 		}
+		
+    	form.getGlobalContext().Nursing.setSkinReviewSearchCriteria(getSearchCriteria());//WDEV-19389 
 	}
 
 	private void populateReviewDetails()
@@ -651,11 +736,14 @@ public class Logic extends BaseLogic
 													  (findingVO.getIsDiscontinuedAssess()  != null && findingVO.getIsDiscontinuedAssess().booleanValue()? "  (" + PainStatus.DISCONTINUED.toString()+")":""));
 			}
 			form.getGlobalContext().COE.SkinBodyChart.setSelectedSkinAssessment(form.comboBoxAssessment().getValue());
-			
+			form.getGlobalContext().Nursing.setSkinReviewSearchCriteria(getSearchCriteria());//WDEV-19389 
 			onComboBoxSiteValueChanged();
 		}
 		else
+		{
 			form.getLocalContext().setSkinAssessment(null);
+			form.getGlobalContext().Nursing.setSkinReviewSearchCriteria(null);//WDEV-19389 
+		}
 		
 		form.bNew().setEnabled(false);
 		form.btnNext().setEnabled(false);
@@ -925,7 +1013,7 @@ public class Logic extends BaseLogic
 	protected void onRecbrAssessmentValueChanged() throws PresentationLogicException
 	{
 		clearGlobalContext();
-		
+		form.getGlobalContext().Nursing.setSkinReviewSearchCriteria(null);//WDEV-19389 
 		populateInstance(form.recbrAssessment().getValue());
 		
 		updateControlStatus();		

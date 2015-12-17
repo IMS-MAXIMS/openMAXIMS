@@ -1,9 +1,33 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.RefMan.vo.domain;
@@ -33,6 +57,14 @@ public class CatsReferralCurrentStatusVoAssembler
 	    valueObjectDest.setIsRIE(valueObjectSrc.getIsRIE());
 		// CurrentStatus
 		valueObjectDest.setCurrentStatus(valueObjectSrc.getCurrentStatus());
+		// ConsultationActivityRequired
+		valueObjectDest.setConsultationActivityRequired(valueObjectSrc.getConsultationActivityRequired());
+		// hasDNAorNotSeenActivity
+		valueObjectDest.setHasDNAorNotSeenActivity(valueObjectSrc.getHasDNAorNotSeenActivity());
+		// hasRebookingSubsequentActivity
+		valueObjectDest.setHasRebookingSubsequentActivity(valueObjectSrc.getHasRebookingSubsequentActivity());
+		// redirectCAB
+		valueObjectDest.setRedirectCAB(valueObjectSrc.getRedirectCAB());
 	 	return valueObjectDest;
 	 }
 
@@ -325,6 +357,14 @@ public class CatsReferralCurrentStatusVoAssembler
 			
 		// CurrentStatus
 		valueObject.setCurrentStatus(ims.RefMan.vo.domain.CatsReferralStatusLiteVoAssembler.create(map, domainObject.getCurrentStatus()) );
+		// ConsultationActivityRequired
+		valueObject.setConsultationActivityRequired( domainObject.isConsultationActivityRequired() );
+		// hasDNAorNotSeenActivity
+		valueObject.setHasDNAorNotSeenActivity( domainObject.isHasDNAorNotSeenActivity() );
+		// hasRebookingSubsequentActivity
+		valueObject.setHasRebookingSubsequentActivity( domainObject.isHasRebookingSubsequentActivity() );
+		// redirectCAB
+		valueObject.setRedirectCAB( domainObject.isRedirectCAB() );
  		return valueObject;
 	 }
 
@@ -391,6 +431,10 @@ public class CatsReferralCurrentStatusVoAssembler
 			}
 		}
 		domainObject.setCurrentStatus(value1);
+		domainObject.setConsultationActivityRequired(valueObject.getConsultationActivityRequired());
+		domainObject.setHasDNAorNotSeenActivity(valueObject.getHasDNAorNotSeenActivity());
+		domainObject.setHasRebookingSubsequentActivity(valueObject.getHasRebookingSubsequentActivity());
+		domainObject.setRedirectCAB(valueObject.getRedirectCAB());
 
 		return domainObject;
 	}

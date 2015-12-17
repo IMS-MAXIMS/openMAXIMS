@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -33,7 +38,9 @@ import ims.core.vo.LocMostVo;
 import ims.core.vo.LocationLiteVo;
 import ims.core.vo.LocationLiteVoCollection;
 import ims.core.vo.PatientAlertLiteVo;
+import ims.core.vo.PatientId;
 import ims.core.vo.PatientShort;
+import ims.core.vo.PendingTransferForBedReadyDetailsVo;
 import ims.core.vo.PendingTransfersFilterVo;
 import ims.core.vo.PendingTransfersVo;
 import ims.core.vo.PendingTransfersVoCollection;
@@ -44,6 +51,7 @@ import ims.core.vo.lookups.HcpDisType;
 import ims.core.vo.lookups.LocationType;
 import ims.core.vo.lookups.LookupHelper;
 import ims.core.vo.lookups.PatIdType;
+import ims.core.vo.lookups.WardBayStatus;
 import ims.domain.exceptions.DomainInterfaceException;
 import ims.domain.exceptions.StaleObjectException;
 import ims.framework.Control;
@@ -56,9 +64,13 @@ import ims.framework.controls.DynamicGridColumn;
 import ims.framework.controls.DynamicGridRow;
 import ims.framework.enumerations.DialogResult;
 import ims.framework.enumerations.DynamicCellType;
+import ims.framework.enumerations.FormMode;
 import ims.framework.enumerations.SortMode;
 import ims.framework.enumerations.SortOrder;
 import ims.framework.exceptions.PresentationLogicException;
+import ims.framework.utils.Color;
+import ims.framework.utils.beans.ColorBean;
+import ims.scheduling.vo.PendingEmergencyTheatreListVo;
 import ims.vo.LookupInstVo;
 
 import java.util.ArrayList;
@@ -198,6 +210,61 @@ public class Logic extends BaseLogic
 		return 0;
 		}
 	}
+	
+	// WDEV-20305 //WDEV-20918 to work with both grid value types
+	private static class CommentsComparator implements Comparator<Object>
+	{
+		private int direction;
+
+		public CommentsComparator(SortOrder sortOrderComments)
+		{
+			if (SortOrder.ASCENDING.equals(sortOrderComments))
+				direction = 1;
+			else
+				direction = -1;
+		}
+
+		public int compare(Object c1, Object c2)
+		{
+			PendingTransfersVo o1 = c1 instanceof PendingTransfersVo ? (PendingTransfersVo) c1 : null;
+			PendingTransfersVo o2 = c2 instanceof PendingTransfersVo ? (PendingTransfersVo) c2 : null;
+
+			InpatientEpisodeVo i1 =  c1 instanceof InpatientEpisodeVo ? (InpatientEpisodeVo) c1 : null;
+			InpatientEpisodeVo i2 =  c1 instanceof InpatientEpisodeVo ? (InpatientEpisodeVo) c2 : null;
+
+			Integer val1 = 0;
+			Integer val2 = 0;
+
+			if (o1 != null && o2 != null && (o1.getInpatientEpisode().getComments() != null || o2.getInpatientEpisode().getComments() != null || o1.getTransferComment() != null || o2.getTransferComment() != null))
+			{
+				val1 = (o1.getInpatientEpisode().getComments() != null || o1.getTransferComment() != null) ? 1 : 0;
+				val2 = (o2.getInpatientEpisode().getComments() != null || o2.getTransferComment() != null) ? 1 : 0;
+			}
+			else if (i1 != null && i2 != null && (i1.getComments() != null || i2.getComments() != null || i1.getTransferComment() != null || i2.getTransferComment() != null))
+			{
+				val1 = (i1.getComments() != null || i1.getTransferComment() != null) ? 1 : 0;
+				val2 = (i2.getComments() != null || i2.getTransferComment() != null) ? 1 : 0;
+			}
+
+			if (val1 != 0 && val2 != 0)
+			{
+				return val1.compareTo(val2) * direction;
+			}
+
+			if (val1 != 0 && val2 == 0)
+			{
+				return direction;
+			}
+
+			if (val2 != 0 && val1 == 0)
+			{
+				return -1 * direction;
+			}	
+
+			return 0;
+		}
+	}
+	
 
 	public static final Integer	COLSURNAME			= new Integer(0);
 	public static final Integer	COLFORENAME			= new Integer(1);
@@ -206,19 +273,26 @@ public class Logic extends BaseLogic
 	public static final Integer	COLALERT			= new Integer(-4);
 	public static final Integer	COLCONSULTANT		= new Integer(-5);
 	public static final Integer	COLCURRENTWARD		= new Integer(-6);
-	public static final Integer	COLOTHERWARD		= new Integer(-7);
-	public static final Integer	COLREQUESTDATE		= new Integer(-8);
-	public static final Integer	COLCOMMENTS			= new Integer(-9);
-	public static final Integer	COLDATETIME			= new Integer(-10);
-
+	public static final Integer	COLCURRENTWARDSTS	= new Integer(-7);
+	public static final Integer	COLOTHERWARD		= new Integer(-8);
+	public static final Integer	COLREQUESTDATE		= new Integer(-9);
+	public static final Integer	COLCOMMENTS			= new Integer(-10);
+	public static final Integer	COLDATETIME			= new Integer(-11);
+	public static final Integer	COLTRANSFERREASON	= new Integer(-12);
+	
 	private static final long	serialVersionUID	= 1L;
 
 	@Override
 	protected void onFormOpen(Object[] args) throws ims.framework.exceptions.PresentationLogicException
 	{
-		initialise();
+		
 	}
 	
+	//WDEV-18420
+	public void open() 
+	{
+		initialise();
+	}
 	
 	@Override
 	/**
@@ -251,6 +325,9 @@ public class Logic extends BaseLogic
 		// Get records from grid
 		PendingTransfersVoCollection records = populatePendingTransferRecordsFromGrid();
 		
+		if (records.size() < 2)
+			return;
+		
 		// Toggle sort order for column
 		sortOrderToggle(columnIdentifier);
 		
@@ -263,6 +340,11 @@ public class Logic extends BaseLogic
 		else if (COLALERT.equals(columnIdentifier))
 		{
 			records.sort(new AlertCompartor(form.getLocalContext().getSortOrderAlerts()));
+		}
+		//WDEV-20305
+		else if (COLCOMMENTS.equals(columnIdentifier))
+		{
+			records.sort(new CommentsComparator(form.getLocalContext().getSortOrderComments()));
 		}
 		
 		// Get current selection
@@ -329,6 +411,9 @@ public class Logic extends BaseLogic
 		// Get records from grid
 		InpatientEpisodeVoCollection records = populateInpatientRecordsFromGrid();
 		
+		if (records.size() < 2)
+			return;
+		
 		// Toggle sort order for column
 		sortOrderToggle(columnIdentifier);
 		
@@ -337,7 +422,11 @@ public class Logic extends BaseLogic
 		{
 			records.sort(new InpatientEpisodeRequestDateTimeCompartor(form.getLocalContext().getSortOrderRequestDate()));
 		}
-		
+		//WDEV-20305
+		if (COLCOMMENTS.equals(columnIdentifier))
+		{
+			records.sort(new CommentsComparator(form.getLocalContext().getSortOrderComments()));
+		}
 		// Get current selection
 		Object selectedRecord = form.dyngrdPatients().getValue();
 		// Populate records to grid
@@ -400,6 +489,19 @@ public class Logic extends BaseLogic
 		else
 		{
 			form.getLocalContext().setSortOrderAlerts(null);
+		}
+		
+		//WDEV-20305
+		if (COLCOMMENTS.equals(columnIdentifer))
+		{
+			if (SortOrder.ASCENDING.equals(form.getLocalContext().getSortOrderComments()))
+				form.getLocalContext().setSortOrderComments(SortOrder.DESCENDING);
+			else
+				form.getLocalContext().setSortOrderComments(SortOrder.ASCENDING);
+		}
+		else
+		{
+			form.getLocalContext().setSortOrderComments(null);
 		}
 	}
 
@@ -529,8 +631,8 @@ public class Logic extends BaseLogic
 			inpatientEpisodeSelectedRecord = (InpatientEpisodeVo) form.dyngrdPatients().getValue();
 		
 		form.dyngrdPatients().getRows().clear(); // WDEV-18099 
-		form.lblTotal().setValue("Total : 0"); // WDEV-18099 
-		form.getContextMenus().hideAllGenericGridMenuItems();
+		form.lblTotal().setValue("Total: 0"); // WDEV-18099 
+		updateContextMenusState();
 
 		PendingTransfersFilterVo voPendingTransfersFilter = populateDataFromScreen();
 		form.getGlobalContext().STHK.setTransfersListFilter(voPendingTransfersFilter);
@@ -543,7 +645,7 @@ public class Logic extends BaseLogic
 
 		if (voPendingTransfersFilter.countFieldsWithValue() == 2 && voPendingTransfersFilter.getIDTypeIsNotNull() && voPendingTransfersFilter.getPendingTransferIsNotNull())
 		{
-			engine.showMessage("Please enter some valid search criteria.", "Invalid search cirteria", MessageButtons.OK, MessageIcon.ERROR);
+			engine.showMessage("Please enter some valid search criteria.", "Invalid search criteria", MessageButtons.OK, MessageIcon.ERROR);
 			return;
 		}
 
@@ -559,7 +661,7 @@ public class Logic extends BaseLogic
 				return;
 			}
 			if (pendingTransfers != null)
-				form.lblTotal().setValue("Total : " + String.valueOf(pendingTransfers.size()));
+				form.lblTotal().setValue("Total: " + String.valueOf(pendingTransfers.size()));
 
 			for (int i = 0; pendingTransfers != null && i < pendingTransfers.size(); i++)
 				addNewPendingTransfersDynamicGridRow(pendingTransfers.get(i));
@@ -576,7 +678,7 @@ public class Logic extends BaseLogic
 				return;
 			}
 			if (inpatientEpisodes != null)
-				form.lblTotal().setValue("Total : " + String.valueOf(inpatientEpisodes.size()));
+				form.lblTotal().setValue("Total: " + String.valueOf(inpatientEpisodes.size()));
 
 			for (int i = 0; inpatientEpisodes != null && i < inpatientEpisodes.size(); i++)
 				addNewInpatientEpisodeDynamicGridRow(inpatientEpisodes.get(i));
@@ -597,10 +699,12 @@ public class Logic extends BaseLogic
 		{
 			DynamicGridCell snameCell = newRow.getCells().newCell(getColumn(COLSURNAME), DynamicCellType.LABEL);
 			snameCell.setValue(voInpatientEpisode.getPasEvent().getPatient().getName().getSurname());
+			snameCell.setTooltip(voInpatientEpisode.getPasEvent().getPatient().getName().getSurname()); //WDEV-22737
 			snameCell.setReadOnly(true);
 
 			DynamicGridCell fnameCell = newRow.getCells().newCell(getColumn(COLFORENAME), DynamicCellType.LABEL);
 			fnameCell.setValue(voInpatientEpisode.getPasEvent().getPatient().getName().getForename());
+			fnameCell.setTooltip(voInpatientEpisode.getPasEvent().getPatient().getName().getForename()); //WDEV-22737
 			fnameCell.setReadOnly(true);
 		}
 
@@ -608,12 +712,39 @@ public class Logic extends BaseLogic
 		if (voInpatientEpisode.getPasEventIsNotNull() 
 			&& voInpatientEpisode.getPasEvent().getPatientIsNotNull() 
 			&& voInpatientEpisode.getPasEvent().getPatient().getIdentifiersIsNotNull()
-			&& voInpatientEpisode.getPasEvent().getPatient().getIdentifiers().size() > 0
-			&& voInpatientEpisode.getPasEvent().getPatient().getPatId(PatIdType.HOSPNUM) != null
-			&& voInpatientEpisode.getPasEvent().getPatient().getPatId(PatIdType.HOSPNUM).getValueIsNotNull())
+			&& voInpatientEpisode.getPasEvent().getPatient().getIdentifiers().size() > 0)
 		{
 			DynamicGridCell hospnumCell = newRow.getCells().newCell(getColumn(COLHOSPNUM), DynamicCellType.LABEL);
-			hospnumCell.setValue(voInpatientEpisode.getPasEvent().getPatient().getHospnum().getValue().toString());
+			//WDEV-22960
+			StringBuilder tooltip = new StringBuilder();
+			PatientId patNHSId = voInpatientEpisode.getPasEvent().getPatient().getPatId(PatIdType.NHSN);
+			PatientId displayId = voInpatientEpisode.getPasEvent().getPatient().getDisplayId();
+			
+			if(displayId == null)
+			{
+				if(patNHSId != null)
+				{
+					tooltip.append("NHSN: ").append(patNHSId.getValue());
+					hospnumCell.setValue(patNHSId.getValue());
+					hospnumCell.setTooltip(tooltip.toString());	
+				}
+			}
+			else
+			{
+				String name = ims.configuration.ConfigFlag.UI.DISPLAY_PATID_TYPE.getValue();
+				ims.core.vo.lookups.PatIdType type = ims.core.vo.lookups.PatIdType.getNegativeInstance(name);
+				
+				tooltip.append(name).append(": ").append(displayId.getValue().toString()).append("<br />");
+					
+				if(patNHSId != null && !PatIdType.NHSN.equals(type))
+				{
+					tooltip.append("NHSN: ").append(patNHSId.getValue());	
+				}
+				hospnumCell.setValue(displayId.getValue().toString());//WDEV-20926
+				hospnumCell.setTooltip(tooltip.toString());
+			}
+			//end WDEV-22960
+			
 			hospnumCell.setReadOnly(true);
 		}
 
@@ -621,6 +752,7 @@ public class Logic extends BaseLogic
 		{
 			DynamicGridCell patientCell = newRow.getCells().newCell(getColumn(COLSEX), DynamicCellType.LABEL);
 			patientCell.setValue(voInpatientEpisode.getPasEvent().getPatient().getSexIsNotNull() ? voInpatientEpisode.getPasEvent().getPatient().getSex().toString() : "");
+			patientCell.setTooltip(voInpatientEpisode.getPasEvent().getPatient().getSexIsNotNull() ? voInpatientEpisode.getPasEvent().getPatient().getSex().toString() : ""); //WDEV-22737
 			patientCell.setReadOnly(true);
 		}
 
@@ -628,6 +760,7 @@ public class Logic extends BaseLogic
 		{
 			DynamicGridCell patientCell = newRow.getCells().newCell(getColumn(COLCONSULTANT), DynamicCellType.LABEL);
 			patientCell.setValue(voInpatientEpisode.getPasEvent().getConsultantIsNotNull() ? voInpatientEpisode.getPasEvent().getConsultant().toString() : "");
+			patientCell.setTooltip(voInpatientEpisode.getPasEvent().getConsultantIsNotNull() ? voInpatientEpisode.getPasEvent().getConsultant().toString() : ""); //WDEV-22737
 			patientCell.setReadOnly(true);
 		}
 
@@ -635,9 +768,38 @@ public class Logic extends BaseLogic
 		{
 			DynamicGridCell patientCell = newRow.getCells().newCell(getColumn(COLCURRENTWARD), DynamicCellType.LABEL);
 			patientCell.setValue(voInpatientEpisode.getPasEvent().getLocationIsNotNull() ? voInpatientEpisode.getPasEvent().getLocation().toString() : "");
+			patientCell.setTooltip(voInpatientEpisode.getPasEvent().getLocationIsNotNull() ? voInpatientEpisode.getPasEvent().getLocation().toString() : ""); //WDEV-22737
 			patientCell.setReadOnly(true);
 		}
-
+		
+		if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+		{
+			DynamicGridCell wardStatusCell = newRow.getCells().newCell(getColumn(COLCURRENTWARDSTS), DynamicCellType.LABEL);
+			wardStatusCell.setValue(voInpatientEpisode.getWardStatusIsNotNull() ? voInpatientEpisode.getWardStatus().getText() : WardBayStatus.OPEN.getText());
+			//WDEV-22737
+			wardStatusCell.setTooltip(voInpatientEpisode.getWardStatusIsNotNull() ? voInpatientEpisode.getWardStatus().getText() : WardBayStatus.OPEN.getText());
+			wardStatusCell.setReadOnly(true);
+			
+			if (voInpatientEpisode.getWardStatus() == null || WardBayStatus.OPEN.equals(voInpatientEpisode.getWardStatus()))
+			{
+				wardStatusCell.setTextColor(Color.Green);
+			}
+			else if (WardBayStatus.BLOCKED.equals(voInpatientEpisode.getWardStatus()))
+			{
+				ColorBean amberBean = new ColorBean();
+				amberBean.setValue("#FFBF00");
+				amberBean.setName("Amber");
+				wardStatusCell.setTextColor(new Color(amberBean));
+			}
+			else if (WardBayStatus.CLOSED.equals(voInpatientEpisode.getWardStatus()))
+			{
+				wardStatusCell.setTextColor(Color.Red);
+			}
+			DynamicGridCell transfReasonCell = newRow.getCells().newCell(getColumn(COLTRANSFERREASON), DynamicCellType.LABEL);
+			transfReasonCell.setValue(voInpatientEpisode.getTransferReasonIsNotNull() ? voInpatientEpisode.getTransferReason().getText() : null);
+			transfReasonCell.setTooltip(voInpatientEpisode.getTransferReasonIsNotNull() ? voInpatientEpisode.getTransferReason().getText() : null);//WDEV-22737
+			transfReasonCell.setReadOnly(true);
+		}
 		if (voInpatientEpisode.getWardStaysIsNotNull() && voInpatientEpisode.getWardStays().size() > 1)
 		{
 			//WDEV-8798
@@ -647,20 +809,26 @@ public class Logic extends BaseLogic
 
 			DynamicGridCell prevWardCell = newRow.getCells().newCell(getColumn(COLOTHERWARD), DynamicCellType.LABEL);
 			prevWardCell.setValue(voPreviousWardStay.getWardIsNotNull() ? voPreviousWardStay.getWard().getName() : "");
+			prevWardCell.setTooltip(voPreviousWardStay.getWardIsNotNull() ? voPreviousWardStay.getWard().getName() : ""); //WDEV-22737
 			prevWardCell.setReadOnly(true);
 
 			DynamicGridCell tdtCell = newRow.getCells().newCell(getColumn(COLDATETIME), DynamicCellType.LABEL);
 			tdtCell.setValue(voPreviousWardStay.getTransferDateTimeIsNotNull() ? voPreviousWardStay.getTransferDateTime().toString() : "");
+			tdtCell.setTooltip(voPreviousWardStay.getTransferDateTimeIsNotNull() ? voPreviousWardStay.getTransferDateTime().toString() : ""); //WDEV-22737
 			tdtCell.setReadOnly(true);
 		}
 		
-		if (voInpatientEpisode != null && voInpatientEpisode.getCommentsIsNotNull() && voInpatientEpisode.getPasEvent().getPatientIsNotNull())
+		if (voInpatientEpisode != null && (voInpatientEpisode.getCommentsIsNotNull() || (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && voInpatientEpisode.getTransferCommentIsNotNull())) && voInpatientEpisode.getPasEvent().getPatientIsNotNull())
 		{
 			DynamicGridCell patientCell = newRow.getCells().newCell(getColumn(COLCOMMENTS), DynamicCellType.IMAGEBUTTON);
+			
+			patientCell.setReadOnly(voInpatientEpisode.getComments() == null);
+			patientCell.setAutoPostBack(voInpatientEpisode.getCommentsIsNotNull());
+		
 			patientCell.setReadOnly(false);
 			patientCell.setAutoPostBack(true);
 			patientCell.setValue(form.getImages().Core.Memo);
-			patientCell.setTooltip(voInpatientEpisode.getComments());
+			patientCell.setTooltip(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") ? ((voInpatientEpisode.getTransferCommentIsNotNull() ? "<b> Transfer Comment:</b> " + voInpatientEpisode.getTransferComment() + "<br/>" : "") + (voInpatientEpisode.getCommentsIsNotNull() ? "<b>Bed Manager Comments:</b> " + voInpatientEpisode.getComments() : "")) : (voInpatientEpisode.getComments() != null ? voInpatientEpisode.getComments() : ""));
 		}
 
 		newRow.setValue(voInpatientEpisode);
@@ -679,9 +847,11 @@ public class Logic extends BaseLogic
 		{
 			// Try and load the logged in location as a ward
 			LocMostVo voLoc = domain.getLocation((LocationRefVo) engine.getCurrentLocation());
+			LocationLiteVo currentHospital = domain.getCurrentHospital(engine.getCurrentLocation()); //WDEV-20707
 			if (voLoc != null && voLoc.getTypeIsNotNull() && voLoc.getType().equals(LocationType.WARD))
 			{
-				form.cmbCurrentHosp().setValue(voLoc.getParentLocation());
+				//form.cmbCurrentHosp().setValue(voLoc.getParentLocation());
+				form.cmbCurrentHosp().setValue(currentHospital); //WDEV-20707
 
 				form.qmbCurrentWard().newRow(voLoc, voLoc.getName());
 				form.qmbCurrentWard().setValue(voLoc);
@@ -740,88 +910,142 @@ public class Logic extends BaseLogic
 
 		form.dyngrdPatients().clear();
 		form.dyngrdPatients().setSelectable(true);
-		form.getContextMenus().hideAllGenericGridMenuItems();
+		form.getContextMenus().Core.hideAllTransfersMenuItems();
 
 		if (bPendingTransfers)
 		{
 			DynamicGridColumn surnameColumn = form.dyngrdPatients().getColumns().newColumn("Surname", COLSURNAME);
 			surnameColumn.setSortMode(SortMode.AUTOMATIC);
-			surnameColumn.setWidth(72);
+			surnameColumn.setCanGrow(true);
+			surnameColumn.setWidth(70);
 
 			DynamicGridColumn forenameColumn = form.dyngrdPatients().getColumns().newColumn("Forename", COLFORENAME);
 			forenameColumn.setSortMode(SortMode.AUTOMATIC);
-			forenameColumn.setWidth(72);
-
-			DynamicGridColumn hospnumColumn = form.dyngrdPatients().getColumns().newColumn("Hosp. No.", COLHOSPNUM);
+			forenameColumn.setCanGrow(true);
+			forenameColumn.setWidth(70);
+			
+			PatIdType displayId = PatIdType.getNegativeInstance(ConfigFlag.UI.DISPLAY_PATID_TYPE.getValue());
+			
+			DynamicGridColumn hospnumColumn = form.dyngrdPatients().getColumns().newColumn(displayId.getText(), COLHOSPNUM);
 			hospnumColumn.setSortMode(SortMode.AUTOMATIC);
-			hospnumColumn.setWidth(68);
+			hospnumColumn.setCanGrow(true);
+			hospnumColumn.setWidth(69);
 
 			DynamicGridColumn sexColumn = form.dyngrdPatients().getColumns().newColumn("Sex", COLSEX);
 			sexColumn.setSortMode(SortMode.AUTOMATIC);
-			sexColumn.setWidth(40);
+			sexColumn.setWidth(35);
 
 			DynamicGridColumn alertColumn = form.dyngrdPatients().getColumns().newColumn("Alert", COLALERT);
 			alertColumn.setSortMode(SortMode.MANUAL);
-			alertColumn.setWidth(47);
+			alertColumn.setWidth(42);
 
 			DynamicGridColumn consultantColumn = form.dyngrdPatients().getColumns().newColumn("Consultant", COLCONSULTANT);
 			consultantColumn.setSortMode(SortMode.AUTOMATIC);
-			consultantColumn.setWidth(81);
+			consultantColumn.setCanGrow(true);
+			consultantColumn.setWidth(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") ? 74: 81);
 
 			DynamicGridColumn currentWardColumn = form.dyngrdPatients().getColumns().newColumn("Current Ward", COLCURRENTWARD);
 			currentWardColumn.setSortMode(SortMode.AUTOMATIC);
+			currentWardColumn.setCanGrow(true);
 			currentWardColumn.setWidth(90);
+			
+			if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+			{	
+				DynamicGridColumn currentWardStsColumn = form.dyngrdPatients().getColumns().newColumn("W. Status", COLCURRENTWARDSTS);
+				currentWardStsColumn.setHeaderTooltip("Current Ward Status");
+				currentWardStsColumn.setCanGrow(true);
+				currentWardStsColumn.setSortMode(SortMode.AUTOMATIC);
+				currentWardStsColumn.setWidth(65);
+			}
 
-			DynamicGridColumn otherWardColumn = form.dyngrdPatients().getColumns().newColumn("Destination Ward", COLOTHERWARD);
+			DynamicGridColumn otherWardColumn = form.dyngrdPatients().getColumns().newColumn("Dest. Ward", COLOTHERWARD);
 			otherWardColumn.setSortMode(SortMode.AUTOMATIC);
-			otherWardColumn.setWidth(110);
+			otherWardColumn.setCanGrow(true);
+			otherWardColumn.setWidth(80);
 
 			DynamicGridColumn requestDateColumn = form.dyngrdPatients().getColumns().newColumn("Request Date", COLREQUESTDATE);
 			requestDateColumn.setSortMode(SortMode.AUTOMATIC);
+			requestDateColumn.setCanGrow(true);
 			requestDateColumn.setWidth(88);
-
+			
+			if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+			{	
+				DynamicGridColumn currentWardStsColumn = form.dyngrdPatients().getColumns().newColumn("Reason", COLTRANSFERREASON);
+				currentWardStsColumn.setSortMode(SortMode.AUTOMATIC);
+				currentWardStsColumn.setCanGrow(true);
+				currentWardStsColumn.setWidth(52);
+			}
+			
 			DynamicGridColumn commentsColumn = form.dyngrdPatients().getColumns().newColumn("Comments", COLCOMMENTS);
+			commentsColumn.setSortMode(SortMode.MANUAL); //WDEV-20305
 			commentsColumn.setWidth(-1);
 		}
 		else
 		{
 			DynamicGridColumn surnameColumn = form.dyngrdPatients().getColumns().newColumn("Surname", COLSURNAME);
 			surnameColumn.setSortMode(SortMode.AUTOMATIC);
-			surnameColumn.setWidth(80);
+			surnameColumn.setCanGrow(true);
+			surnameColumn.setWidth(72);
 
 			DynamicGridColumn forenameColumn = form.dyngrdPatients().getColumns().newColumn("Forename", COLFORENAME);
 			forenameColumn.setSortMode(SortMode.AUTOMATIC);
-			forenameColumn.setWidth(80);
-
-			DynamicGridColumn hospnumColumn = form.dyngrdPatients().getColumns().newColumn("Hosp. No.", COLHOSPNUM);
+			forenameColumn.setCanGrow(true);
+			forenameColumn.setWidth(72);
+			
+			PatIdType displayId = PatIdType.getNegativeInstance(ConfigFlag.UI.DISPLAY_PATID_TYPE.getValue());
+			
+			DynamicGridColumn hospnumColumn = form.dyngrdPatients().getColumns().newColumn(displayId.getText(), COLHOSPNUM);
 			hospnumColumn.setSortMode(SortMode.AUTOMATIC);
-			hospnumColumn.setWidth(90);
+			hospnumColumn.setCanGrow(true);
+			hospnumColumn.setWidth(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") ? 71 : 90);
 
 			DynamicGridColumn sexColumn = form.dyngrdPatients().getColumns().newColumn("Sex", COLSEX);
 			sexColumn.setSortMode(SortMode.AUTOMATIC);
-			sexColumn.setWidth(45);
+			sexColumn.setWidth(35);
 
 			DynamicGridColumn consultantColumn = form.dyngrdPatients().getColumns().newColumn("Consultant", COLCONSULTANT);
 			consultantColumn.setSortMode(SortMode.AUTOMATIC);
-			consultantColumn.setWidth(90);
+			consultantColumn.setCanGrow(true);
+			consultantColumn.setWidth(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") ? 75 : 90);
 
 			DynamicGridColumn currentWardColumn = form.dyngrdPatients().getColumns().newColumn("Current Ward", COLCURRENTWARD);
 			currentWardColumn.setSortMode(SortMode.AUTOMATIC);
-			currentWardColumn.setWidth(110);
+			currentWardColumn.setCanGrow(true);
+			currentWardColumn.setWidth(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") ? 90 : 110);
+			
+			if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+			{	
+				DynamicGridColumn currentWardStsColumn = form.dyngrdPatients().getColumns().newColumn("W. Status", COLCURRENTWARDSTS);
+				currentWardStsColumn.setHeaderTooltip("Current Ward Status");
+				currentWardStsColumn.setSortMode(SortMode.AUTOMATIC);
+				currentWardStsColumn.setCanGrow(true);
+				currentWardStsColumn.setWidth(65);
+			}
 
-			DynamicGridColumn otherWardColumn = form.dyngrdPatients().getColumns().newColumn("Previous Ward", COLOTHERWARD);
+			DynamicGridColumn otherWardColumn = form.dyngrdPatients().getColumns().newColumn("Prev. Ward", COLOTHERWARD);
 			otherWardColumn.setSortMode(SortMode.AUTOMATIC);
-			otherWardColumn.setWidth(110);
+			otherWardColumn.setCanGrow(true);
+			otherWardColumn.setWidth(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") ? 80: 110);
 
-			DynamicGridColumn transferDateTimeColumn = form.dyngrdPatients().getColumns().newColumn("Transfer Date/time", COLDATETIME);
+			DynamicGridColumn transferDateTimeColumn = form.dyngrdPatients().getColumns().newColumn("Transfer Date/Time", COLDATETIME);
 			transferDateTimeColumn.setSortMode(SortMode.AUTOMATIC);
-			transferDateTimeColumn.setWidth(120);
+			transferDateTimeColumn.setCanGrow(true);
+			transferDateTimeColumn.setWidth(124);
+			
+			if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+			{	
+				DynamicGridColumn currentWardStsColumn = form.dyngrdPatients().getColumns().newColumn("Reason", COLTRANSFERREASON);
+				currentWardStsColumn.setSortMode(SortMode.AUTOMATIC);
+				currentWardStsColumn.setCanGrow(true);
+				currentWardStsColumn.setWidth(53);
+			}
 			
 			DynamicGridColumn commentsColumn = form.dyngrdPatients().getColumns().newColumn("Comments", COLCOMMENTS);
+			commentsColumn.setSortMode(SortMode.MANUAL); //WDEV-20305
 			commentsColumn.setWidth(-1);
 		}
 
-		form.lblTotal().setValue("Total : 0");
+		form.lblTotal().setValue("Total: 0");
 	}
 
 	@Override
@@ -835,6 +1059,7 @@ public class Logic extends BaseLogic
 		if (form.Tranfers().getValue().equals(GenForm.TranfersEnumeration.rdoPendingTransfers))
 		{
 			form.lblOtherWard().setValue("Destination Ward:");
+			form.lbl2().setValue("Destination Hospital:"); //WDEV-18607 
 			form.cmbAlert().setVisible(true);
 			form.lblAlert().setVisible(true);
 
@@ -843,6 +1068,7 @@ public class Logic extends BaseLogic
 		else if (form.Tranfers().getValue().equals(GenForm.TranfersEnumeration.rdoRecentTransfers))
 		{
 			form.lblOtherWard().setValue("Previous Ward:");
+			form.lbl2().setValue("Previous Hospital:"); //WDEV-18607 
 			form.cmbAlert().setVisible(false);
 			form.lblAlert().setVisible(false);
 
@@ -854,12 +1080,13 @@ public class Logic extends BaseLogic
 	protected void onImbClearClick() throws ims.framework.exceptions.PresentationLogicException
 	{
 		clearControls();
-		form.getContextMenus().hideAllGenericGridMenuItems();
-
-		form.lblTotal().setValue("Total : 0");
+		
+		form.lblTotal().setValue("Total: 0");
 
 		form.dyngrdPatients().getRows().clear();
-
+		
+		updateContextMenusState();
+		
 		// Clear the selected patient information in the Engine
 		form.getGlobalContext().Core.setSelectingPatientForm(null);
 		form.getGlobalContext().Core.setPatientShort(null);
@@ -886,8 +1113,9 @@ public class Logic extends BaseLogic
 	protected void onImbSearchClick() throws ims.framework.exceptions.PresentationLogicException
 	{
 		search(true);
-	}
+	}	
 
+	
 	private void addNewPendingTransfersDynamicGridRow(PendingTransfersVo voPendingTransfers)
 	{
 		voPendingTransfers.setActiveAlerts(false);	// WDEV-18011
@@ -900,10 +1128,12 @@ public class Logic extends BaseLogic
 		{
 			DynamicGridCell snameCell = newRow.getCells().newCell(getColumn(COLSURNAME), DynamicCellType.LABEL);
 			snameCell.setValue(voPendingTransfers.getInpatientEpisode().getPasEvent().getPatient().getName().getSurname());
+			snameCell.setTooltip(voPendingTransfers.getInpatientEpisode().getPasEvent().getPatient().getName().getSurname());//WDEV-22737
 			snameCell.setReadOnly(true);
 
 			DynamicGridCell fnameCell = newRow.getCells().newCell(getColumn(COLFORENAME), DynamicCellType.LABEL);
 			fnameCell.setValue(voPendingTransfers.getInpatientEpisode().getPasEvent().getPatient().getName().getForename());
+			fnameCell.setTooltip(voPendingTransfers.getInpatientEpisode().getPasEvent().getPatient().getName().getForename());//WDEV-22737
 			fnameCell.setReadOnly(true);
 		}
 
@@ -912,10 +1142,41 @@ public class Logic extends BaseLogic
 			&& voPendingTransfers.getInpatientEpisode().getPasEventIsNotNull() 
 			&& voPendingTransfers.getInpatientEpisode().getPasEvent().getPatientIsNotNull() 
 			&& voPendingTransfers.getInpatientEpisode().getPasEvent().getPatient().getIdentifiersIsNotNull()
-			&& voPendingTransfers.getInpatientEpisode().getPasEvent().getPatient().getPatId(PatIdType.HOSPNUM) != null)
+			&& voPendingTransfers.getInpatientEpisode().getPasEvent().getPatient().getIdentifiers().size() > 0)
 		{
 			DynamicGridCell hospnumCell = newRow.getCells().newCell(getColumn(COLHOSPNUM), DynamicCellType.LABEL);
-			hospnumCell.setValue(voPendingTransfers.getInpatientEpisode().getPasEvent().getPatient().getPatId(PatIdType.HOSPNUM).getValueIsNotNull() ? voPendingTransfers.getInpatientEpisode().getPasEvent().getPatient().getPatId(PatIdType.HOSPNUM).getValue().toString() : "");
+			
+			//WDEV-22960
+			StringBuilder tooltip = new StringBuilder();
+			PatientId patNHSId = voPendingTransfers.getInpatientEpisode().getPasEvent().getPatient().getPatId(PatIdType.NHSN);
+			PatientId displayId = voPendingTransfers.getInpatientEpisode().getPasEvent().getPatient().getDisplayId();
+			
+			if(displayId == null)
+			{
+				if(patNHSId != null)
+				{
+					tooltip.append("NHSN: ").append(patNHSId.getValue());
+					hospnumCell.setValue(patNHSId.getValue());
+					hospnumCell.setTooltip(tooltip.toString());	
+				}
+			}
+			else
+			{
+				String name = ims.configuration.ConfigFlag.UI.DISPLAY_PATID_TYPE.getValue();
+				ims.core.vo.lookups.PatIdType type = ims.core.vo.lookups.PatIdType.getNegativeInstance(name);
+				
+				tooltip.append(name).append(": ").append(displayId.getValue().toString()).append("<br />");
+					
+				if(patNHSId != null && !PatIdType.NHSN.equals(type))
+				{
+					tooltip.append("NHSN: ").append(patNHSId.getValue());	
+				}
+				hospnumCell.setValue(displayId.getValue().toString());//WDEV-20926
+				hospnumCell.setTooltip(tooltip.toString());
+			}
+			//end WDEV-22960
+
+			
 			hospnumCell.setReadOnly(true);
 		}
 
@@ -923,6 +1184,7 @@ public class Logic extends BaseLogic
 		{
 			DynamicGridCell patientCell = newRow.getCells().newCell(getColumn(COLSEX), DynamicCellType.LABEL);
 			patientCell.setValue(voPendingTransfers.getInpatientEpisode().getPasEvent().getPatient().getSex().toString());
+			patientCell.setTooltip(voPendingTransfers.getInpatientEpisode().getPasEvent().getPatient().getSex().toString());//WDEV-22737
 			patientCell.setReadOnly(true);
 		}
 
@@ -945,7 +1207,8 @@ public class Logic extends BaseLogic
 				}
 				if (tempBool)
 				{
-					patientCell.setValue(form.getImages().Core.Alert16); // WDEV-18011 	
+					patientCell.setValue(form.getImages().Core.Alert16); // WDEV-18011
+					patientCell.setTooltip("Alert(s) present");
 					voPendingTransfers.setActiveAlerts(true);	// WDEV-18011 				
 				}
 			}
@@ -956,6 +1219,7 @@ public class Logic extends BaseLogic
 		{
 			DynamicGridCell patientCell = newRow.getCells().newCell(getColumn(COLCONSULTANT), DynamicCellType.LABEL);
 			patientCell.setValue(voPendingTransfers.getInpatientEpisode().getPasEvent().getConsultant().toString());
+			patientCell.setTooltip(voPendingTransfers.getInpatientEpisode().getPasEvent().getConsultant().toString());//WDEV-22737
 			patientCell.setReadOnly(true);
 		}
 
@@ -963,6 +1227,7 @@ public class Logic extends BaseLogic
 		{
 			DynamicGridCell patientCell = newRow.getCells().newCell(getColumn(COLCURRENTWARD), DynamicCellType.LABEL);
 			patientCell.setValue(voPendingTransfers.getInpatientEpisode().getPasEvent().getLocation().toString());
+			patientCell.setTooltip(voPendingTransfers.getInpatientEpisode().getPasEvent().getLocation().toString());//WDEV-22737
 			patientCell.setReadOnly(true);
 		}
 
@@ -970,6 +1235,7 @@ public class Logic extends BaseLogic
 		{
 			DynamicGridCell patientCell = newRow.getCells().newCell(getColumn(COLOTHERWARD), DynamicCellType.LABEL);
 			patientCell.setValue(voPendingTransfers.getDestinationWard().toString());
+			patientCell.setTooltip(voPendingTransfers.getDestinationWard().toString());//WDEV-22737
 			patientCell.setReadOnly(true);
 		}
 
@@ -977,16 +1243,49 @@ public class Logic extends BaseLogic
 		{
 			DynamicGridCell patientCell = newRow.getCells().newCell(getColumn(COLREQUESTDATE), DynamicCellType.LABEL);
 			patientCell.setValue(voPendingTransfers.getTransferRequestDateTime().toString());
+			patientCell.setTooltip(voPendingTransfers.getTransferRequestDateTime().toString());//WDEV-22737
 			patientCell.setReadOnly(true);
 		}
 
-		if (voPendingTransfers.getInpatientEpisodeIsNotNull() && voPendingTransfers.getInpatientEpisode().getCommentsIsNotNull() && voPendingTransfers.getInpatientEpisode().getPasEvent().getPatientIsNotNull())
+		if (voPendingTransfers.getInpatientEpisodeIsNotNull() && (voPendingTransfers.getInpatientEpisode().getCommentsIsNotNull() || (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && (voPendingTransfers.getTransferCommentIsNotNull() || voPendingTransfers.getBedAvailableDateTimeIsNotNull()))) && voPendingTransfers.getInpatientEpisode().getPasEvent().getPatientIsNotNull())
 		{
 			DynamicGridCell patientCell = newRow.getCells().newCell(getColumn(COLCOMMENTS), DynamicCellType.IMAGEBUTTON);
-			patientCell.setReadOnly(false);
-			patientCell.setAutoPostBack(true);
+			
+			patientCell.setReadOnly(voPendingTransfers.getInpatientEpisode() == null  || voPendingTransfers.getInpatientEpisode().getComments() == null);
+			patientCell.setAutoPostBack(voPendingTransfers.getInpatientEpisodeIsNotNull() && voPendingTransfers.getInpatientEpisode().getCommentsIsNotNull());
+			
 			patientCell.setValue(form.getImages().Core.Memo);
-			patientCell.setTooltip(voPendingTransfers.getInpatientEpisode().getComments());
+			patientCell.setTooltip(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") ? ((voPendingTransfers.getTransferCommentIsNotNull() ? "<b> Transfer Comment:</b> " + voPendingTransfers.getTransferComment() + "<br/>" : "") + (voPendingTransfers.getInpatientEpisode().getCommentsIsNotNull() ? "<b>Bed Manager Comments:</b> " + voPendingTransfers.getInpatientEpisode().getComments() + "<br/>" : "") + "<b>Bed Available Date/Time:</b> " +  (voPendingTransfers.getBedAvailableDateTimeIsNotNull() ? voPendingTransfers.getBedAvailableDateTime().toString() : "") ) : (voPendingTransfers.getInpatientEpisode().getComments() != null ? voPendingTransfers.getInpatientEpisode().getComments() : ""));
+		}
+		if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+		{
+			DynamicGridCell wardStatusCell = newRow.getCells().newCell(getColumn(COLCURRENTWARDSTS), DynamicCellType.LABEL);
+			wardStatusCell.setValue(voPendingTransfers.getWardStatusIsNotNull() ? voPendingTransfers.getWardStatus().getText() : WardBayStatus.OPEN.getText());
+			//WDEV-22737
+			wardStatusCell.setTooltip(voPendingTransfers.getWardStatusIsNotNull() ? voPendingTransfers.getWardStatus().getText() : WardBayStatus.OPEN.getText());
+			wardStatusCell.setReadOnly(true);
+			
+			if (voPendingTransfers.getWardStatus() == null || WardBayStatus.OPEN.equals(voPendingTransfers.getWardStatus()))
+			{
+				wardStatusCell.setTextColor(Color.Green);
+			}
+			else if (WardBayStatus.BLOCKED.equals(voPendingTransfers.getWardStatus()))
+			{
+				ColorBean amberBean = new ColorBean();
+				amberBean.setValue("#FFBF00");
+				amberBean.setName("Amber");
+				wardStatusCell.setTextColor(new Color(amberBean));
+			}
+			else if (WardBayStatus.CLOSED.equals(voPendingTransfers.getWardStatus()))
+			{
+				wardStatusCell.setTextColor(Color.Red);
+			}
+			
+			DynamicGridCell transfReasonCell = newRow.getCells().newCell(getColumn(COLTRANSFERREASON), DynamicCellType.LABEL);
+			transfReasonCell.setValue(voPendingTransfers.getTransferReasonIsNotNull() ? voPendingTransfers.getTransferReason().getText() : null);
+			//WDEV-22737
+			transfReasonCell.setTooltip(voPendingTransfers.getTransferReasonIsNotNull() ? voPendingTransfers.getTransferReason().getText() : null);
+			transfReasonCell.setReadOnly(true);
 		}
 
 		newRow.setValue(voPendingTransfers);
@@ -1117,16 +1416,22 @@ public class Logic extends BaseLogic
 	private void updateGlobalContextPatientSelection(Object value)
 	{
 		setPatientGlobalContext(null);
-		
+		form.getGlobalContext().Core.setCurrentCareContext(null);
+
 		if (value == null)
 			return;
 
 		if (value instanceof InpatientEpisodeVo)
 		{
 			InpatientEpisodeVo vo = (InpatientEpisodeVo) value;
-			if (vo != null && vo.getPasEventIsNotNull() && vo.getPasEvent().getPatientIsNotNull())
+			if (vo != null && vo.getPasEventIsNotNull())
 			{
-				setPatientGlobalContext(vo.getPasEvent().getPatient());
+				form.getGlobalContext().Core.setCurrentCareContext(domain.getCurrentCareContext(vo.getPasEvent()));
+				if (form.getGlobalContext().Core.getCurrentCareContext() == null)
+				{
+					setPatientGlobalContext(vo.getPasEvent().getPatient());
+				}
+				
 			}
 		}
 		else if (value instanceof PendingTransfersVo)
@@ -1134,20 +1439,24 @@ public class Logic extends BaseLogic
 			PendingTransfersVo vo = (PendingTransfersVo) value;
 			if (vo != null && vo.getInpatientEpisodeIsNotNull() && vo.getInpatientEpisode().getPasEventIsNotNull() && vo.getInpatientEpisode().getPasEvent().getPatientIsNotNull())
 			{
-				setPatientGlobalContext(domain.getPatientShort(vo.getInpatientEpisode().getPasEvent().getPatient()));
-			}
+				form.getGlobalContext().Core.setCurrentCareContext(domain.getCurrentCareContext(vo.getInpatientEpisode().getPasEvent()));
+				if (form.getGlobalContext().Core.getCurrentCareContext() == null)
+				{
+					setPatientGlobalContext(domain.getPatientShort(vo.getInpatientEpisode().getPasEvent().getPatient()));
+				}
+			}			
 		}
 	}
-
 
 	/**
 	 * @param ps
 	 */
 	private void setPatientGlobalContext(PatientShort patient)
 	{
-		form.getGlobalContext().Core.setSelectingPatientForm(engine.getFormName());
 		form.getGlobalContext().Core.setPatientToBeDisplayed(patient);
 		form.getGlobalContext().Core.setPatientShort(patient);
+		if (patient != null)
+			form.getGlobalContext().Core.setSelectingPatientForm(engine.getFormName());
 	}
 
 	public void refresh()
@@ -1161,10 +1470,37 @@ public class Logic extends BaseLogic
 	{
 		switch (menuItemID)
 		{
-			case GenForm.ContextMenus.GenericGrid.Add :
+			case GenForm.ContextMenus.CoreNamespace.Transfers.ADD:
 				addEditComment(null);
-			break;
+				break;
+			case GenForm.ContextMenus.CoreNamespace.Transfers.BED_READY:
+				recordBedReadyDetails();
+				break;
+			//WDEV-22681
+			case GenForm.ContextMenus.CoreNamespace.Transfers.EDIT_TRANSFER:
+				editTransferDetails();
+				break;
 		}
+		updateContextMenusState();
+	}
+
+	private void editTransferDetails()
+	{
+		if (!isNotMosUser("Logged-in user is not associated with a Member of Staff. Cannot Edit Transfer."))
+		{	
+			PendingTransfersVo selTransfer = (PendingTransfersVo) form.dyngrdPatients().getValue();
+			if (selTransfer == null)
+				return;
+			engine.open(form.getForms().Core.ADTEditTransferDetailsDialog, new Object[]{selTransfer.toPendingTransfersRefVo()});
+		}		
+	}
+
+	private void recordBedReadyDetails()
+	{
+		if (!(form.dyngrdPatients().getValue() instanceof PendingTransfersVo))
+			return;
+		PendingTransferForBedReadyDetailsVo voBedReadyTransf = (PendingTransferForBedReadyDetailsVo)form.dyngrdPatients().getValue();
+		engine.open(form.getForms().Core.BedReadyDetailsDialog, new Object[]{voBedReadyTransf, FormMode.EDIT});		
 	}
 
 	private void addEditComment(DynamicGridCell cell)
@@ -1180,7 +1516,8 @@ public class Logic extends BaseLogic
 
 				form.getGlobalContext().Core.setCommentDialogString(voTrans.getInpatientEpisodeIsNotNull() ? voTrans.getInpatientEpisode().getComments() : "");
 				form.dyngrdPatients().getSelectedRow().setValue(voTrans);
-				updateGlobalContextPatientSelection(voTrans);//WDEV-18065 
+				if( !form.getGlobalContext().Core.getPatientShortIsNotNull() || !( voTrans != null && voTrans.getInpatientEpisodeIsNotNull() &&  voTrans.getInpatientEpisode().getPasEventIsNotNull() && voTrans.getInpatientEpisode().getPasEvent().getPatientIsNotNull() &&  form.getGlobalContext().Core.getPatientShort().getID_Patient().equals(voTrans.getInpatientEpisode().getPasEvent().getPatient().getID_Patient())))	//wdev-22250
+					updateGlobalContextPatientSelection(voTrans);//WDEV-18065 
 				engine.open(form.getForms().Core.CommentDialog);
 			}
 			else if (form.dyngrdPatients().getSelectedRow().getValue() instanceof InpatientEpisodeVo)
@@ -1188,7 +1525,8 @@ public class Logic extends BaseLogic
 				InpatientEpisodeVo voEpis = (InpatientEpisodeVo) form.dyngrdPatients().getSelectedRow().getValue();
 
 				form.getGlobalContext().Core.setCommentDialogString(voEpis.getComments());
-				updateGlobalContextPatientSelection(voEpis);//WDEV-18065 
+				if( !form.getGlobalContext().Core.getPatientShortIsNotNull() || !( voEpis != null && voEpis.getPasEventIsNotNull()  && voEpis.getPasEvent().getPatientIsNotNull() &&  form.getGlobalContext().Core.getPatientShort().getID_Patient().equals(voEpis.getPasEvent().getPatient().getID_Patient())))	//wdev-22250
+					updateGlobalContextPatientSelection(voEpis);//WDEV-18065 
 				engine.open(form.getForms().Core.CommentDialog);
 			}	
 		}
@@ -1197,12 +1535,13 @@ public class Logic extends BaseLogic
 	@Override
 	protected void onFormDialogClosed(FormName formName, DialogResult result) throws PresentationLogicException
 	{
-		if (formName.equals(form.getForms().Core.CommentDialog) && result.equals(DialogResult.OK))
+		if ((formName.equals(form.getForms().Core.CommentDialog) || formName.equals(form.getForms().Core.BedReadyDetailsDialog)) && result.equals(DialogResult.OK))
 		{
 			if (form.dyngrdPatients().getSelectedRow().getValue() instanceof PendingTransfersVo)
 			{
 				PendingTransfersVo voTrans = ((PendingTransfersVo) form.dyngrdPatients().getSelectedRow().getValue());
 				voTrans.getInpatientEpisode().setComments(form.getGlobalContext().Core.getCommentDialogString());
+				voTrans.setBedAvailableDateTime(form.getGlobalContext().Core.getBedReadyDetails() != null  ? form.getGlobalContext().Core.getBedReadyDetails().getBedAvailableDateTime() : null);
 				
 				String[] errors = voTrans.validate();
 				if (errors != null)
@@ -1252,6 +1591,11 @@ public class Logic extends BaseLogic
 			}	
 			search(false);
 		}
+		//WDEV-22681
+		if (formName.equals(form.getForms().Core.ADTEditTransferDetailsDialog) && !DialogResult.CANCEL.equals(result))
+		{
+			search(false);
+		}
 		updateContextMenusState();
 	}
 
@@ -1260,16 +1604,30 @@ public class Logic extends BaseLogic
 	{
 		addEditComment(cell);
 	}
-
+	private boolean isNotMosUser(String message)
+	{
+		Object mos = domain.getMosUser();
+		if (mos == null)
+		{
+			engine.showMessage(message, "Not Allowed", MessageButtons.OK, MessageIcon.INFORMATION);
+			return true;
+		}
+		return false;
+	}
 	private void updateContextMenusState()
 	{
-		form.getContextMenus().hideAllGenericGridMenuItems();
-		form.getContextMenus().getGenericGridAddItem().setText("Add/Edit Comment");
-		form.getContextMenus().getGenericGridAddItem().setVisible(form.dyngrdPatients().getValue() != null); //WDEV-18011 
+		form.getContextMenus().Core.hideAllTransfersMenuItems();
+		boolean nonHeartsFunct = ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS");
+		
+		//WDEV-22681
+		form.getContextMenus().Core.getTransfersADDItem().setVisible(form.dyngrdPatients().getValue() != null); //WDEV-18011 
+		form.getContextMenus().Core.getTransfersBED_READYItem().setVisible(nonHeartsFunct && form.dyngrdPatients().getValue() instanceof PendingTransfersVo);
+		form.getContextMenus().Core.getTransfersEDIT_TRANSFERItem().setVisible(nonHeartsFunct && form.dyngrdPatients().getValue() instanceof PendingTransfersVo);
 	}
 
 	private DynamicGridColumn getColumn(Integer identifier)
 	{
 		return form.dyngrdPatients().getColumns().getByIdentifier(identifier);
 	}
+
 }

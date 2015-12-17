@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:34 -->
+<!-- Generated: 12/10/2015, 13:28 -->
 <hibernate-mapping>
 	<class name="ims.core.clinical.domain.objects.ClinicalNoteNoteStatus" table="core_clinicalnoteno" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -49,6 +49,7 @@
 		<many-to-one name="correctedBy" class="ims.core.resource.people.domain.objects.MemberOfStaff" unique="true" foreign-key="clinicalnoteno_correctedb_fk" access="field" cascade="save-update">
 			<column name="correctedb" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
+<!-- debug: preEditClinicalNote -->
 <!-- debug: !IsAssociation && !IsCollection -->
 
 <!-- debug: IsLookup -->
@@ -74,6 +75,11 @@
 <!-- debug: !IsLookup -->
 		<property name="correctionConfirmed" type="boolean" access="field" update="true">
 			<column name="correctio2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="preEditClinicalNote" type="text" access="field" update="true" > 
+			<column name="preeditcli"  not-null="false" unique="false"  />
 		</property>
 	</class>
 </hibernate-mapping>

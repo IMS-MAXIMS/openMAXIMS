@@ -1,9 +1,33 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.RefMan.vo.domain;
@@ -43,6 +67,14 @@ public class ReferralCodingVoAssembler
 		valueObjectDest.setPasEvent(valueObjectSrc.getPasEvent());
 		// Comments
 		valueObjectDest.setComments(valueObjectSrc.getComments());
+		// Appointment
+		valueObjectDest.setAppointment(valueObjectSrc.getAppointment());
+		// Active
+		valueObjectDest.setActive(valueObjectSrc.getActive());
+		// StagingCodeExport
+		valueObjectDest.setStagingCodeExport(valueObjectSrc.getStagingCodeExport());
+		// FCE
+		valueObjectDest.setFCE(valueObjectSrc.getFCE());
 	 	return valueObjectDest;
 	 }
 
@@ -373,6 +405,14 @@ public class ReferralCodingVoAssembler
 		}
 		// Comments
 		valueObject.setComments(domainObject.getComments());
+		// Appointment
+		valueObject.setAppointment(ims.scheduling.vo.domain.BookingAppointmentOutpatientCodingVoAssembler.create(map, domainObject.getAppointment()) );
+		// Active
+		valueObject.setActive( domainObject.isActive() );
+		// StagingCodeExport
+		valueObject.setStagingCodeExport(ims.RefMan.vo.domain.StageCodeExportVoAssembler.createStageCodeExportVoCollectionFromStagingCodeExport(map, domainObject.getStagingCodeExport()) );
+		// FCE
+		valueObject.setFCE(ims.core.vo.domain.ConsultantStayVoAssembler.create(map, domainObject.getFCE()) );
  		return valueObject;
 	 }
 
@@ -494,6 +534,84 @@ public class ReferralCodingVoAssembler
 			valueObject.setComments(null);
 		}
 		domainObject.setComments(valueObject.getComments());
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.scheduling.domain.objects.Booking_Appointment value7 = null;
+		if ( null != valueObject.getAppointment() ) 
+		{
+			if (valueObject.getAppointment().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getAppointment()) != null)
+				{
+					value7 = (ims.scheduling.domain.objects.Booking_Appointment)domMap.get(valueObject.getAppointment());
+				}
+			}
+			else
+			{
+				value7 = (ims.scheduling.domain.objects.Booking_Appointment)domainFactory.getDomainObject(ims.scheduling.domain.objects.Booking_Appointment.class, valueObject.getAppointment().getBoId());
+			}
+		}
+		domainObject.setAppointment(value7);
+		domainObject.setActive(valueObject.getActive());
+
+		// SaveAsRefVO treated as RefValueObject
+		ims.RefMan.vo.StagingCodeExportRefVoCollection refCollection9 = new ims.RefMan.vo.StagingCodeExportRefVoCollection();
+		if (valueObject.getStagingCodeExport() != null)
+		{
+			for (int i9=0; i9<valueObject.getStagingCodeExport().size(); i9++)
+			{
+				ims.RefMan.vo.StagingCodeExportRefVo ref9 = (ims.RefMan.vo.StagingCodeExportRefVo)valueObject.getStagingCodeExport().get(i9);
+				refCollection9.add(ref9);
+			}
+		}
+		int size9 = (null == refCollection9) ? 0 : refCollection9.size();		
+		java.util.List domainStagingCodeExport9 = domainObject.getStagingCodeExport();
+		if (domainStagingCodeExport9 == null)
+		{
+			domainStagingCodeExport9 = new java.util.ArrayList();
+		}
+		for(int i=0; i < size9; i++) 
+		{
+			ims.RefMan.vo.StagingCodeExportRefVo vo = refCollection9.get(i);			
+			ims.RefMan.domain.objects.StagingCodeExport dom = null;
+			if ( null != vo ) 
+			{
+				if (vo.getBoId() == null)
+				{
+					if (domMap.get(vo) != null)
+					{
+						dom = (ims.RefMan.domain.objects.StagingCodeExport)domMap.get(vo);
+					}
+				}
+				else
+				{
+					dom = (ims.RefMan.domain.objects.StagingCodeExport)domainFactory.getDomainObject( ims.RefMan.domain.objects.StagingCodeExport.class, vo.getBoId());
+				}
+			}
+
+			int domIdx = domainStagingCodeExport9.indexOf(dom);
+			if (domIdx == -1)
+			{
+				domainStagingCodeExport9.add(i, dom);
+			}
+			else if (i != domIdx && i < domainStagingCodeExport9.size())
+			{
+				Object tmp = domainStagingCodeExport9.get(i);
+				domainStagingCodeExport9.set(i, domainStagingCodeExport9.get(domIdx));
+				domainStagingCodeExport9.set(domIdx, tmp);
+			}
+		}
+		
+		//Remove all ones in domList where index > voCollection.size() as these should
+		//now represent the ones removed from the VO collection. No longer referenced.
+		int i9 = domainStagingCodeExport9.size();
+		while (i9 > size9)
+		{
+			domainStagingCodeExport9.remove(i9-1);
+			i9 = domainStagingCodeExport9.size();
+		}
+		
+		domainObject.setStagingCodeExport(domainStagingCodeExport9);		
+		domainObject.setFCE(ims.core.vo.domain.ConsultantStayVoAssembler.extractConsultantStay(domainFactory, valueObject.getFCE(), domMap));
 
 		return domainObject;
 	}

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.emergency.domain.objects;
@@ -45,14 +50,10 @@ public class InvestigationAttendenceDetail extends ims.domain.DomainObject imple
 		return true;
 	}
 
-	/** Patient */
-	private ims.core.patient.domain.objects.Patient patient;
-	/** Emergency Episode */
-	private ims.core.admin.domain.objects.EpisodeOfCare episode;
-	/** Emergency Attendance */
-	private ims.core.admin.domain.objects.CareContext attendance;
 	/** AuthoringInformation */
 	private ims.core.clinical.domain.objects.AuthoringInformation authoringInformation;
+	/** OCSInvestigation */
+	private ims.ocrr.orderingresults.domain.objects.OrderInvestigation oCSInvestigation;
 	/** Attendence Investigatio */
 	private ims.domain.lookups.LookupInstance attendenceInvestigation;
 	/** Active */
@@ -79,32 +80,18 @@ public class InvestigationAttendenceDetail extends ims.domain.DomainObject imple
 	}
 
 
-	public ims.core.patient.domain.objects.Patient getPatient() {
-		return patient;
-	}
-	public void setPatient(ims.core.patient.domain.objects.Patient patient) {
-		this.patient = patient;
-	}
-
-	public ims.core.admin.domain.objects.EpisodeOfCare getEpisode() {
-		return episode;
-	}
-	public void setEpisode(ims.core.admin.domain.objects.EpisodeOfCare episode) {
-		this.episode = episode;
-	}
-
-	public ims.core.admin.domain.objects.CareContext getAttendance() {
-		return attendance;
-	}
-	public void setAttendance(ims.core.admin.domain.objects.CareContext attendance) {
-		this.attendance = attendance;
-	}
-
 	public ims.core.clinical.domain.objects.AuthoringInformation getAuthoringInformation() {
 		return authoringInformation;
 	}
 	public void setAuthoringInformation(ims.core.clinical.domain.objects.AuthoringInformation authoringInformation) {
 		this.authoringInformation = authoringInformation;
+	}
+
+	public ims.ocrr.orderingresults.domain.objects.OrderInvestigation getOCSInvestigation() {
+		return oCSInvestigation;
+	}
+	public void setOCSInvestigation(ims.ocrr.orderingresults.domain.objects.OrderInvestigation oCSInvestigation) {
+		this.oCSInvestigation = oCSInvestigation;
 	}
 
 	public ims.domain.lookups.LookupInstance getAttendenceInvestigation() {
@@ -165,36 +152,20 @@ public class InvestigationAttendenceDetail extends ims.domain.DomainObject imple
 	{
 		StringBuffer auditStr = new StringBuffer();
 		
-		auditStr.append("\r\n*patient* :");
-		if (patient != null)
-		{
-			auditStr.append(toShortClassName(patient));
-				
-		    auditStr.append(patient.getId());
-		}
-	    auditStr.append("; ");
-		auditStr.append("\r\n*episode* :");
-		if (episode != null)
-		{
-			auditStr.append(toShortClassName(episode));
-				
-		    auditStr.append(episode.getId());
-		}
-	    auditStr.append("; ");
-		auditStr.append("\r\n*attendance* :");
-		if (attendance != null)
-		{
-			auditStr.append(toShortClassName(attendance));
-				
-		    auditStr.append(attendance.getId());
-		}
-	    auditStr.append("; ");
 		auditStr.append("\r\n*authoringInformation* :");
 		if (authoringInformation != null)
 		{
 			auditStr.append(toShortClassName(authoringInformation));
 				
 		    auditStr.append(authoringInformation.toString());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*oCSInvestigation* :");
+		if (oCSInvestigation != null)
+		{
+			auditStr.append(toShortClassName(oCSInvestigation));
+				
+		    auditStr.append(oCSInvestigation.getId());
 		}
 	    auditStr.append("; ");
 		auditStr.append("\r\n*attendenceInvestigation* :");
@@ -251,29 +222,17 @@ public class InvestigationAttendenceDetail extends ims.domain.DomainObject imple
 	public String fieldsToXMLString(java.util.HashMap domMap)
 	{
 		StringBuffer sb = new StringBuffer();
-		if (this.getPatient() != null)
-		{
-			sb.append("<patient>");
-			sb.append(this.getPatient().toXMLString(domMap)); 	
-			sb.append("</patient>");		
-		}
-		if (this.getEpisode() != null)
-		{
-			sb.append("<episode>");
-			sb.append(this.getEpisode().toXMLString(domMap)); 	
-			sb.append("</episode>");		
-		}
-		if (this.getAttendance() != null)
-		{
-			sb.append("<attendance>");
-			sb.append(this.getAttendance().toXMLString(domMap)); 	
-			sb.append("</attendance>");		
-		}
 		if (this.getAuthoringInformation() != null)
 		{
 			sb.append("<authoringInformation>");
 			sb.append(this.getAuthoringInformation().toXMLString(domMap)); 	
 			sb.append("</authoringInformation>");		
+		}
+		if (this.getOCSInvestigation() != null)
+		{
+			sb.append("<oCSInvestigation>");
+			sb.append(this.getOCSInvestigation().toXMLString(domMap)); 	
+			sb.append("</oCSInvestigation>");		
 		}
 		if (this.getAttendenceInvestigation() != null)
 		{
@@ -456,29 +415,17 @@ public class InvestigationAttendenceDetail extends ims.domain.DomainObject imple
 	public static void fillFieldsfromXML(org.dom4j.Element el, ims.domain.DomainFactory factory, InvestigationAttendenceDetail obj, java.util.HashMap domMap) throws Exception
 	{
 		org.dom4j.Element fldEl;
-		fldEl = el.element("patient");
-		if(fldEl != null)
-		{
-			fldEl = fldEl.element("class");		
-			obj.setPatient(ims.core.patient.domain.objects.Patient.getPatientfromXML(fldEl, factory, domMap)); 
-		}
-		fldEl = el.element("episode");
-		if(fldEl != null)
-		{
-			fldEl = fldEl.element("class");		
-			obj.setEpisode(ims.core.admin.domain.objects.EpisodeOfCare.getEpisodeOfCarefromXML(fldEl, factory, domMap)); 
-		}
-		fldEl = el.element("attendance");
-		if(fldEl != null)
-		{
-			fldEl = fldEl.element("class");		
-			obj.setAttendance(ims.core.admin.domain.objects.CareContext.getCareContextfromXML(fldEl, factory, domMap)); 
-		}
 		fldEl = el.element("authoringInformation");
 		if(fldEl != null)
 		{
 			fldEl = fldEl.element("class");		
 			obj.setAuthoringInformation(ims.core.clinical.domain.objects.AuthoringInformation.getAuthoringInformationfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("oCSInvestigation");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setOCSInvestigation(ims.ocrr.orderingresults.domain.objects.OrderInvestigation.getOrderInvestigationfromXML(fldEl, factory, domMap)); 
 		}
 		fldEl = el.element("attendenceInvestigation");
 		if(fldEl != null)
@@ -508,10 +455,8 @@ public class InvestigationAttendenceDetail extends ims.domain.DomainObject imple
 	public static class FieldNames	
 	{
 	public static final String ID = "id";
-		public static final String Patient = "patient";
-		public static final String Episode = "episode";
-		public static final String Attendance = "attendance";
 		public static final String AuthoringInformation = "authoringInformation";
+		public static final String OCSInvestigation = "oCSInvestigation";
 		public static final String AttendenceInvestigation = "attendenceInvestigation";
 		public static final String Active = "active";
 		public static final String AddedDuringCoding = "addedDuringCoding";

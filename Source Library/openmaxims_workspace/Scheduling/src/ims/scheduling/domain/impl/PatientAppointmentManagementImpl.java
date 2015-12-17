@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -43,6 +48,7 @@ import ims.core.vo.domain.ProcedureLiteVoAssembler;
 import ims.core.vo.domain.ServiceLiteVoAssembler;
 import ims.core.vo.lookups.ServiceCategory;
 import ims.domain.DomainFactory;
+import ims.domain.exceptions.DomainInterfaceException;
 import ims.domain.exceptions.StaleObjectException;
 import ims.framework.exceptions.CodingRuntimeException;
 import ims.framework.utils.Date;
@@ -55,6 +61,7 @@ import ims.scheduling.domain.SessionAdmin;
 import ims.scheduling.domain.base.impl.BasePatientAppointmentManagementImpl;
 import ims.scheduling.domain.objects.Booking_Appointment;
 import ims.scheduling.helper.CABRequests;
+import ims.scheduling.vo.BookingAppointmentForLinkedAppointmentsVoCollection;
 import ims.scheduling.vo.Booking_AppointmentRefVo;
 import ims.scheduling.vo.Booking_AppointmentShortVo;
 import ims.scheduling.vo.Booking_AppointmentShortVoCollection;
@@ -102,13 +109,15 @@ public class PatientAppointmentManagementImpl extends BasePatientAppointmentMana
 	}
 
 	//WDEV-10883,wdev-12090
-	public Booking_AppointmentVo saveBookingAppt(Booking_AppointmentShortVo appt, Boolean undoArrival, Boolean bUndoDNA) throws StaleObjectException
+	public Booking_AppointmentVo saveBookingAppt(Booking_AppointmentShortVo appt, Boolean undoArrival, Boolean bUndoDNA) throws DomainInterfaceException, StaleObjectException
 	{
 		if(appt == null)
 			throw new CodingRuntimeException("appt parameter is null in method saveBookingAppt");
 		if(!appt.isValidated())
 			throw new CodingRuntimeException("appt parameter has not been validated");
 	
+		BookingAppointmentForLinkedAppointmentsVoCollection collLinkedApptToBeCancelled = appt.getLinkedApptsToBeCancelledIsNotNull() ? (BookingAppointmentForLinkedAppointmentsVoCollection)appt.getLinkedApptsToBeCancelled().clone() : null;  //WDEV-19543
+		
 		DomainFactory factory = getDomainFactory();	
 		
 		//WDEV-12942 - starts here
@@ -135,9 +144,12 @@ public class PatientAppointmentManagementImpl extends BasePatientAppointmentMana
 		if(doBookAppt.getApptStatus() != null && doBookAppt.getApptStatus().equals(getDomLookup(Status_Reason.CANCELLED)))
 		{
 			SessionAdmin implSessionAdmin = (SessionAdmin) getDomainImpl(SessionAdminImpl.class);
-			Booking_AppointmentVo voAppt = Booking_AppointmentVoAssembler.create(doBookAppt);
-			voAppt = implSessionAdmin.cancelAppt(Booking_AppointmentVoAssembler.create(doBookAppt), ActionRequestType.NOTIFY_APPT_CANCEL, "Patient Appointment management");
-			return voAppt;
+			//WDEV-19543
+			Booking_AppointmentVo voAppt = Booking_AppointmentVoAssembler.create(doBookAppt);	
+			voAppt.setLinkedApptsToBeCancelled(collLinkedApptToBeCancelled);
+			
+			voAppt = implSessionAdmin.cancelAppt(voAppt, ActionRequestType.NOTIFY_APPT_CANCEL, "Patient Appointment management");
+			return voAppt;	
 		}	
 		
 		factory.save(doBookAppt);
@@ -186,8 +198,13 @@ public class PatientAppointmentManagementImpl extends BasePatientAppointmentMana
 		return null;
 	}
 
-	//stub for method that is only implemented in RefMan
 	public void updateCatsReferralAdditionalInvStatus(CatsReferralRefVo catsReferral) throws StaleObjectException
+	{
+		updateCatsReferralAdditionalInvStatus(catsReferral, null);
+	}
+
+	//stub for method that is only implemented in RefMan
+	public void updateCatsReferralAdditionalInvStatus(CatsReferralRefVo catsReferral, Booking_AppointmentRefVo appt) throws StaleObjectException
 	{
 		return;
 	}
@@ -248,7 +265,7 @@ public class PatientAppointmentManagementImpl extends BasePatientAppointmentMana
 	
 
 	
-	public Booking_AppointmentVo saveBookingApptFull(Booking_AppointmentVo bookingApptFull, Boolean isProcessedForRTT) throws StaleObjectException
+	public Booking_AppointmentVo saveBookingApptFull(Booking_AppointmentVo bookingApptFull, Boolean isProcessedForRTT) throws DomainInterfaceException, StaleObjectException 
 	{
 		if(bookingApptFull == null)
 			throw new CodingRuntimeException("appt parameter is null in method saveBookingAppt");
@@ -333,7 +350,7 @@ public class PatientAppointmentManagementImpl extends BasePatientAppointmentMana
 		
 		
 		//wdev-12090
-		clearhasDNAApptsForReview(factory, doBookAppt);
+		//WDEV-22375 clearhasDNAApptsForReview(factory, doBookAppt);
 		//---
 			
 		if(doBookAppt.getApptStatus().equals(getDomLookup(Status_Reason.ARRIVAL)))
@@ -368,6 +385,8 @@ public class PatientAppointmentManagementImpl extends BasePatientAppointmentMana
 			factory.save(doCatsRef);
 		}
 	}
+	
+	/*
 	private void clearhasDNAApptsForReview(DomainFactory factory, Booking_Appointment doBookAppt) throws StaleObjectException
 	{
 		if(factory == null || doBookAppt == null)
@@ -381,6 +400,8 @@ public class PatientAppointmentManagementImpl extends BasePatientAppointmentMana
 			factory.save(doCatsRef);
 		}
 	}
+	*/
+	
 	private void saveLastApptArrivedDate(DomainFactory factory, Booking_Appointment doBookAppt) throws StaleObjectException
 	{
 		if(factory == null || doBookAppt == null)
@@ -395,5 +416,4 @@ public class PatientAppointmentManagementImpl extends BasePatientAppointmentMana
 		}
 	}
 	//------------------------
-
 }

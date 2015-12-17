@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -73,11 +78,7 @@ public class Logic extends BaseLogic
 {
 	private static final long serialVersionUID = 1L;
 
-	protected void onFormOpen() throws ims.framework.exceptions.PresentationLogicException
-	{
-		initialize();
-		open();
-	}
+
 	private void open()
 	{
 		populateScreenFromData( form.getGlobalContext().Clinical.PatientSummary.getCareSpell());
@@ -470,7 +471,7 @@ public class Logic extends BaseLogic
 		form.lblClinicalContact().setTextColor(Color.Purple);
 		form.lblEpisodeOfCare().setTextColor(Color.Purple);
 		form.lblContext().setTextColor(Color.Purple);
-		
+		initializeCaption();//WDEV-20331
 		if(!ConfigFlag.UI.DISPLAY_BED_NUMBER_FOR_CARECONTEXT.getValue()){
 			form.lblBedNumber().setVisible(false);
 			form.txtBedNumber().setVisible(false);
@@ -480,13 +481,58 @@ public class Logic extends BaseLogic
 		form.lblPASWorkflowID().setVisible(ConfigFlag.UI.CARE_SPELL_CREATE_PAS_EVENT_FROM_WORKFLOWID.getValue());
 	
 		if(ConfigFlag.GEN.LINK_REFERRALS_TO_EPISODE.getValue())
+		{
 			loadReferralsGrid();
+			form.grdReferrals().setReadOnly(false);//WDEV-19721
+		}
 		else
 			form.grdReferrals().setVisible(false);
 		
 		form.cmbConSpecialty().setRequired(ConfigFlag.UI.SPECIALTY_MANDATORY_ON_CREATION_OF_A_CLINICAL_CONTACT.getValue());
 	}
 	
+	//WDEV-20331
+	private void initializeCaption()
+	{
+		if(form.getGlobalContext().Core.getCareSpellDialogModeIsNotNull()) 
+		{
+			CareSpellDialogMode careSpellDialogMode = form.getGlobalContext().Core.getCareSpellDialogMode();
+
+			if(CareSpellDialogMode.EDITEPISODEOFCARE.equals(careSpellDialogMode))
+			{
+				engine.setCaption("Edit Episode of Care");
+			}
+			else if(CareSpellDialogMode.NEWEPISODEOFCARE.equals(careSpellDialogMode))
+			{
+				engine.setCaption("New Episode of Care");
+			}
+			else if(CareSpellDialogMode.NEWCAREGROUPING.equals(careSpellDialogMode))
+			{
+				engine.setCaption("New Problem Group");
+			}
+			else if(CareSpellDialogMode.EDITCAREGROUPING.equals(careSpellDialogMode))
+			{
+				engine.setCaption("Edit Problem Group");
+			}
+			else if(CareSpellDialogMode.ADDCONTACT.equals(careSpellDialogMode))
+			{
+				engine.setCaption("New Clinical Contact");
+			}
+			else if(CareSpellDialogMode.EDITCONTACT.equals(careSpellDialogMode))
+			{
+				engine.setCaption("Edit Clinical Contact");
+			}
+			else if(CareSpellDialogMode.ADDCONTACTCONTEXTDETAILS.equals(careSpellDialogMode))
+			{
+				engine.setCaption("New Care Context");
+			}
+			else if(CareSpellDialogMode.EDITCONTACTCONTEXTDETAILS.equals(careSpellDialogMode))
+			{
+				engine.setCaption("Edit Care Context");
+			}
+		}
+
+	}
 	private void loadReferralsGrid() {
 		ReferralLiteVoCollection voCollReferrals = domain.listReferralsByPatient(form.getGlobalContext().Core.getPatientShort());
 		
@@ -1343,6 +1389,13 @@ public class Logic extends BaseLogic
 		else if(column==4 && row.getColLink() && form.grdReferrals().getRows().size()==1)
 			row.setColPrimary(true);
 		
+	}
+	
+	@Override
+	protected void onFormOpen() throws PresentationLogicException
+	{
+		initialize();
+		open();
 	}
 	
 	

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.resource.domain.objects;
@@ -55,6 +60,7 @@ public class ServiceActivity extends ims.domain.DomainObject implements ims.doma
 	private java.util.List taxonomyMap;
 	/** Active Indicator */
 	private Boolean isActive;
+	private Boolean isFlexible;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public ServiceActivity (Integer id, int ver)
@@ -104,6 +110,13 @@ public class ServiceActivity extends ims.domain.DomainObject implements ims.doma
 	}
 	public void setIsActive(Boolean isActive) {
 		this.isActive = isActive;
+	}
+
+	public Boolean isIsFlexible() {
+		return isFlexible;
+	}
+	public void setIsFlexible(Boolean isFlexible) {
+		this.isFlexible = isFlexible;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -185,6 +198,9 @@ public class ServiceActivity extends ims.domain.DomainObject implements ims.doma
 		auditStr.append("\r\n*isActive* :");
 		auditStr.append(isActive);
 	    auditStr.append("; ");
+		auditStr.append("\r\n*isFlexible* :");
+		auditStr.append(isFlexible);
+	    auditStr.append("; ");
 		return auditStr.toString();
 	}
 	
@@ -255,6 +271,12 @@ public class ServiceActivity extends ims.domain.DomainObject implements ims.doma
 			sb.append("<isActive>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsActive().toString()));
 			sb.append("</isActive>");		
+		}
+		if (this.isIsFlexible() != null)
+		{
+			sb.append("<isFlexible>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsFlexible().toString()));
+			sb.append("</isFlexible>");		
 		}
 		return sb.toString();
 	}
@@ -442,6 +464,11 @@ public class ServiceActivity extends ims.domain.DomainObject implements ims.doma
 		{	
     		obj.setIsActive(new Boolean(fldEl.getTextTrim()));	
 		}
+		fldEl = el.element("isFlexible");
+		if(fldEl != null)
+		{	
+    		obj.setIsFlexible(new Boolean(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -459,6 +486,7 @@ public class ServiceActivity extends ims.domain.DomainObject implements ims.doma
 		public static final String Activity = "activity";
 		public static final String TaxonomyMap = "taxonomyMap";
 		public static final String IsActive = "isActive";
+		public static final String IsFlexible = "isFlexible";
 	}
 }
 

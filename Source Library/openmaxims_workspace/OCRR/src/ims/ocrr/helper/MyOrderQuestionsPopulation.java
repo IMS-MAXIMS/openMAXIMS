@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -215,7 +220,7 @@ public final class MyOrderQuestionsPopulation
 			columnsAnswer[x].setDynamicWidthSupported(true);
 		}
 		
-		GeneralQuestionAnswerVoCollection collInvQuestions = getQuestionsByType(questions, OrderQuestionType.INVESTIGATION);
+		GeneralQuestionAnswerVoCollection collInvQuestions = questions; // getQuestionsByType(questions, OrderQuestionType.INVESTIGATION);
 		if(collInvQuestions != null)
 		{
 			for(int i=0; i<collInvQuestions.size(); i++)
@@ -2474,7 +2479,7 @@ public final class MyOrderQuestionsPopulation
 	private static final Integer	QUESTION_COLUMN							= new Integer(-1);
 
 	// Default Values
-	private static final int		DEFAULT_QUESTION_COLUMN_WIDTH			= 450; //290 was the old value modified to 450 for WDEV-15814
+	private static final int		DEFAULT_QUESTION_COLUMN_WIDTH			= 360; //290 was the old value modified to 450 for WDEV-15814
 	private static final int		DEFAULT_YESNO_ANSWER_CELL_WIDTH			= 25;
 	private static final int		DEFAULT_TIME_ANSWER_CELL_WIDTH			= 80;
 	private static final int		DEFAULT_TEXT_ANSWER_CELL_WIDTH			= 200;

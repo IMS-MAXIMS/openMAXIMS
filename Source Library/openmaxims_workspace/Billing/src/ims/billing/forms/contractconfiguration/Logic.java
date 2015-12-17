@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -205,7 +210,7 @@ public class Logic extends BaseLogic
 				
 				childRow = dynRow.getRows().newRow();
 				cell = childRow.getCells().newCell(getColumn(COL_NAME), DynamicCellType.HTMLVIEW);	
-				cell.setValue("<img src='" + form.getImages().Admin.AdminAction24.getImagePath() +  "'/><font color=#0000FF>Oral Analgesia – co-codamol, paracetamol");
+				cell.setValue("<img src='" + form.getImages().Admin.AdminAction24.getImagePath() +  "'/><font color=#0000FF>Oral Analgesia â€“ co-codamol, paracetamol");
 				
 				cell = childRow.getCells().newCell(getColumn(COL_COST), DynamicCellType.HTMLVIEW);	
 				cell.setValue("<i>290</i>");
@@ -221,7 +226,7 @@ public class Logic extends BaseLogic
 				
 				childRow = dynRow.getRows().newRow();
 				cell = childRow.getCells().newCell(getColumn(COL_NAME), DynamicCellType.HTMLVIEW);	
-				cell.setValue("<img src='" + form.getImages().Admin.AdminAction24.getImagePath() +  "'/><font color=#0000FF>Anti-inflammatories – voltarol, brufen");
+				cell.setValue("<img src='" + form.getImages().Admin.AdminAction24.getImagePath() +  "'/><font color=#0000FF>Anti-inflammatories â€“ voltarol, brufen");
 				
 				cell = childRow.getCells().newCell(getColumn(COL_COST), DynamicCellType.HTMLVIEW);	
 				cell.setValue("<i>290</i>");
@@ -370,7 +375,7 @@ public class Logic extends BaseLogic
 				
 				childRow = dynRow.getRows().newRow();
 				cell = childRow.getCells().newCell(getColumn(COL_NAME), DynamicCellType.HTMLVIEW);	
-				cell.setValue("<img src='" + form.getImages().Admin.AdminAction24.getImagePath() +  "'/><font color=#0000FF>Dressing pack – Small, Large");
+				cell.setValue("<img src='" + form.getImages().Admin.AdminAction24.getImagePath() +  "'/><font color=#0000FF>Dressing pack â€“ Small, Large");
 				
 				cell = childRow.getCells().newCell(getColumn(COL_COST), DynamicCellType.HTMLVIEW);	
 				cell.setValue("<i>290</i>");
@@ -495,7 +500,7 @@ public class Logic extends BaseLogic
 				
 				childRow = dynRow.getRows().newRow();
 				cell = childRow.getCells().newCell(getColumn(COL_NAME), DynamicCellType.HTMLVIEW);	
-				cell.setValue("<img src='" + form.getImages().Admin.AdminAction24.getImagePath() +  "'/><font color=#0000FF>Diathermy Plate with lead – Adult");
+				cell.setValue("<img src='" + form.getImages().Admin.AdminAction24.getImagePath() +  "'/><font color=#0000FF>Diathermy Plate with lead â€“ Adult");
 				
 				cell = childRow.getCells().newCell(getColumn(COL_COST), DynamicCellType.HTMLVIEW);	
 				cell.setValue("<i>290</i>");
@@ -585,7 +590,7 @@ public class Logic extends BaseLogic
 				
 				childRow = dynRow.getRows().newRow();
 				cell = childRow.getCells().newCell(getColumn(COL_NAME), DynamicCellType.HTMLVIEW);	
-				cell.setValue("<img src='" + form.getImages().Admin.AdminAction24.getImagePath() +  "'/><font color=#0000FF>Surgical stockings – small, medium, large");
+				cell.setValue("<img src='" + form.getImages().Admin.AdminAction24.getImagePath() +  "'/><font color=#0000FF>Surgical stockings â€“ small, medium, large");
 				
 				cell = childRow.getCells().newCell(getColumn(COL_COST), DynamicCellType.HTMLVIEW);	
 				cell.setValue("<i>290</i>");
@@ -615,7 +620,7 @@ public class Logic extends BaseLogic
 				
 				childRow = dynRow.getRows().newRow();
 				cell = childRow.getCells().newCell(getColumn(COL_NAME), DynamicCellType.HTMLVIEW);	
-				cell.setValue("<img src='" + form.getImages().Admin.AdminAction24.getImagePath() +  "'/><font color=#0000FF>Tubigrip – A – F");
+				cell.setValue("<img src='" + form.getImages().Admin.AdminAction24.getImagePath() +  "'/><font color=#0000FF>Tubigrip â€“ A â€“ F");
 				
 				cell = childRow.getCells().newCell(getColumn(COL_COST), DynamicCellType.HTMLVIEW);	
 				cell.setValue("<i>290</i>");
@@ -630,7 +635,7 @@ public class Logic extends BaseLogic
 				
 				childRow = dynRow.getRows().newRow();
 				cell = childRow.getCells().newCell(getColumn(COL_NAME), DynamicCellType.HTMLVIEW);	
-				cell.setValue("<img src='" + form.getImages().Admin.AdminAction24.getImagePath() +  "'/><font color=#0000FF>Blood transfusion – 2 units");
+				cell.setValue("<img src='" + form.getImages().Admin.AdminAction24.getImagePath() +  "'/><font color=#0000FF>Blood transfusion â€“ 2 units");
 				
 				cell = childRow.getCells().newCell(getColumn(COL_COST), DynamicCellType.HTMLVIEW);	
 				cell.setValue("<i>290</i>");
@@ -645,7 +650,7 @@ public class Logic extends BaseLogic
 				
 				childRow = dynRow.getRows().newRow();
 				cell = childRow.getCells().newCell(getColumn(COL_NAME), DynamicCellType.HTMLVIEW);	
-				cell.setValue("<img src='" + form.getImages().Admin.AdminAction24.getImagePath() +  "'/><font color=#0000FF>IV fluids – Normal Saline, Dextrose Saline");
+				cell.setValue("<img src='" + form.getImages().Admin.AdminAction24.getImagePath() +  "'/><font color=#0000FF>IV fluids â€“ Normal Saline, Dextrose Saline");
 				
 				cell = childRow.getCells().newCell(getColumn(COL_COST), DynamicCellType.HTMLVIEW);	
 				cell.setValue("<i>290</i>");
@@ -704,7 +709,7 @@ public class Logic extends BaseLogic
 				
 				childRow = dynRow.getRows().newRow();
 				cell = childRow.getCells().newCell(getColumn(COL_NAME), DynamicCellType.HTMLVIEW);	
-				cell.setValue("<img src='" + form.getImages().Admin.AdminAction24.getImagePath() +  "'/><font color=#0000FF>MRI – 1 area");
+				cell.setValue("<img src='" + form.getImages().Admin.AdminAction24.getImagePath() +  "'/><font color=#0000FF>MRI â€“ 1 area");
 				
 				cell = childRow.getCells().newCell(getColumn(COL_COST), DynamicCellType.HTMLVIEW);	
 				cell.setValue("<i>290</i>");
@@ -719,7 +724,7 @@ public class Logic extends BaseLogic
 				
 				childRow = dynRow.getRows().newRow();
 				cell = childRow.getCells().newCell(getColumn(COL_NAME), DynamicCellType.HTMLVIEW);	
-				cell.setValue("<img src='" + form.getImages().Admin.AdminAction24.getImagePath() +  "'/><font color=#0000FF>X-Ray – 1 joint, 3 views");
+				cell.setValue("<img src='" + form.getImages().Admin.AdminAction24.getImagePath() +  "'/><font color=#0000FF>X-Ray â€“ 1 joint, 3 views");
 				
 				cell = childRow.getCells().newCell(getColumn(COL_COST), DynamicCellType.HTMLVIEW);	
 				cell.setValue("<i>290</i>");
@@ -740,7 +745,7 @@ public class Logic extends BaseLogic
 				dynRow.setExpanded(true);
 				
 				cell = childRow.getCells().newCell(getColumn(COL_NAME), DynamicCellType.HTMLVIEW);	
-				cell.setValue("<img src='" + form.getImages().Admin.AdminAction24.getImagePath() +  "'/><font color=#0000FF>Biochemistry – U&E, CRP");
+				cell.setValue("<img src='" + form.getImages().Admin.AdminAction24.getImagePath() +  "'/><font color=#0000FF>Biochemistry â€“ U&E, CRP");
 				
 				cell = childRow.getCells().newCell(getColumn(COL_COST), DynamicCellType.HTMLVIEW);	
 				cell.setValue("<i>290</i>");

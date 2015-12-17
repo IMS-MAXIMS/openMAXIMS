@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.emergency.domain.objects;
@@ -45,6 +50,14 @@ public class EDTransfer extends ims.domain.DomainObject implements ims.domain.Sy
 		return true;
 	}
 
+	/** Patient */
+	private ims.core.patient.domain.objects.Patient patient;
+	/** Emergency Episode */
+	private ims.core.admin.domain.objects.EpisodeOfCare episode;
+	/** Emergency Attendance */
+	private ims.core.admin.domain.objects.CareContext attendance;
+	/** User */
+	private ims.core.resource.people.domain.objects.Hcp referredBy;
 	private java.util.Date referredDateTime;
 	private java.util.Date acceptedDateTime;
 	private ims.domain.lookups.LookupInstance toHospital;
@@ -52,6 +65,8 @@ public class EDTransfer extends ims.domain.DomainObject implements ims.domain.Sy
 	private ims.domain.lookups.LookupInstance transferMode;
 	private ims.domain.lookups.LookupInstance transferEscort;
 	private String comment;
+	/** NotAccepted */
+	private Boolean notAccepted;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public EDTransfer (Integer id, int ver)
@@ -71,6 +86,34 @@ public class EDTransfer extends ims.domain.DomainObject implements ims.domain.Sy
 		return ims.emergency.domain.objects.EDTransfer.class;
 	}
 
+
+	public ims.core.patient.domain.objects.Patient getPatient() {
+		return patient;
+	}
+	public void setPatient(ims.core.patient.domain.objects.Patient patient) {
+		this.patient = patient;
+	}
+
+	public ims.core.admin.domain.objects.EpisodeOfCare getEpisode() {
+		return episode;
+	}
+	public void setEpisode(ims.core.admin.domain.objects.EpisodeOfCare episode) {
+		this.episode = episode;
+	}
+
+	public ims.core.admin.domain.objects.CareContext getAttendance() {
+		return attendance;
+	}
+	public void setAttendance(ims.core.admin.domain.objects.CareContext attendance) {
+		this.attendance = attendance;
+	}
+
+	public ims.core.resource.people.domain.objects.Hcp getReferredBy() {
+		return referredBy;
+	}
+	public void setReferredBy(ims.core.resource.people.domain.objects.Hcp referredBy) {
+		this.referredBy = referredBy;
+	}
 
 	public java.util.Date getReferredDateTime() {
 		return referredDateTime;
@@ -129,6 +172,13 @@ public class EDTransfer extends ims.domain.DomainObject implements ims.domain.Sy
 		this.comment = comment;
 	}
 
+	public Boolean isNotAccepted() {
+		return notAccepted;
+	}
+	public void setNotAccepted(Boolean notAccepted) {
+		this.notAccepted = notAccepted;
+	}
+
 	public ims.domain.SystemInformation getSystemInformation() {
 		if (systemInformation == null) systemInformation = new ims.domain.SystemInformation();
 		return systemInformation;
@@ -166,6 +216,38 @@ public class EDTransfer extends ims.domain.DomainObject implements ims.domain.Sy
 	{
 		StringBuffer auditStr = new StringBuffer();
 		
+		auditStr.append("\r\n*patient* :");
+		if (patient != null)
+		{
+			auditStr.append(toShortClassName(patient));
+				
+		    auditStr.append(patient.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*episode* :");
+		if (episode != null)
+		{
+			auditStr.append(toShortClassName(episode));
+				
+		    auditStr.append(episode.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*attendance* :");
+		if (attendance != null)
+		{
+			auditStr.append(toShortClassName(attendance));
+				
+		    auditStr.append(attendance.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*referredBy* :");
+		if (referredBy != null)
+		{
+			auditStr.append(toShortClassName(referredBy));
+				
+		    auditStr.append(referredBy.getId());
+		}
+	    auditStr.append("; ");
 		auditStr.append("\r\n*referredDateTime* :");
 		auditStr.append(referredDateTime);
 	    auditStr.append("; ");
@@ -189,6 +271,9 @@ public class EDTransfer extends ims.domain.DomainObject implements ims.domain.Sy
 	    auditStr.append("; ");
 		auditStr.append("\r\n*comment* :");
 		auditStr.append(comment);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*notAccepted* :");
+		auditStr.append(notAccepted);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -234,6 +319,30 @@ public class EDTransfer extends ims.domain.DomainObject implements ims.domain.Sy
 	public String fieldsToXMLString(java.util.HashMap domMap)
 	{
 		StringBuffer sb = new StringBuffer();
+		if (this.getPatient() != null)
+		{
+			sb.append("<patient>");
+			sb.append(this.getPatient().toXMLString(domMap)); 	
+			sb.append("</patient>");		
+		}
+		if (this.getEpisode() != null)
+		{
+			sb.append("<episode>");
+			sb.append(this.getEpisode().toXMLString(domMap)); 	
+			sb.append("</episode>");		
+		}
+		if (this.getAttendance() != null)
+		{
+			sb.append("<attendance>");
+			sb.append(this.getAttendance().toXMLString(domMap)); 	
+			sb.append("</attendance>");		
+		}
+		if (this.getReferredBy() != null)
+		{
+			sb.append("<referredBy>");
+			sb.append(this.getReferredBy().toXMLString(domMap)); 	
+			sb.append("</referredBy>");		
+		}
 		if (this.getReferredDateTime() != null)
 		{
 			sb.append("<referredDateTime>");
@@ -275,6 +384,12 @@ public class EDTransfer extends ims.domain.DomainObject implements ims.domain.Sy
 			sb.append("<comment>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getComment().toString()));
 			sb.append("</comment>");		
+		}
+		if (this.isNotAccepted() != null)
+		{
+			sb.append("<notAccepted>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isNotAccepted().toString()));
+			sb.append("</notAccepted>");		
 		}
 		return sb.toString();
 	}
@@ -439,6 +554,30 @@ public class EDTransfer extends ims.domain.DomainObject implements ims.domain.Sy
 	public static void fillFieldsfromXML(org.dom4j.Element el, ims.domain.DomainFactory factory, EDTransfer obj, java.util.HashMap domMap) throws Exception
 	{
 		org.dom4j.Element fldEl;
+		fldEl = el.element("patient");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setPatient(ims.core.patient.domain.objects.Patient.getPatientfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("episode");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setEpisode(ims.core.admin.domain.objects.EpisodeOfCare.getEpisodeOfCarefromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("attendance");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setAttendance(ims.core.admin.domain.objects.CareContext.getCareContextfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("referredBy");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setReferredBy(ims.core.resource.people.domain.objects.Hcp.getHcpfromXML(fldEl, factory, domMap)); 
+		}
 		fldEl = el.element("referredDateTime");
 		if(fldEl != null)
 		{	
@@ -477,6 +616,11 @@ public class EDTransfer extends ims.domain.DomainObject implements ims.domain.Sy
 		{	
     		obj.setComment(new String(fldEl.getTextTrim()));	
 		}
+		fldEl = el.element("notAccepted");
+		if(fldEl != null)
+		{	
+    		obj.setNotAccepted(new Boolean(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -489,6 +633,10 @@ public class EDTransfer extends ims.domain.DomainObject implements ims.domain.Sy
 	public static class FieldNames	
 	{
 	public static final String ID = "id";
+		public static final String Patient = "patient";
+		public static final String Episode = "episode";
+		public static final String Attendance = "attendance";
+		public static final String ReferredBy = "referredBy";
 		public static final String ReferredDateTime = "referredDateTime";
 		public static final String AcceptedDateTime = "acceptedDateTime";
 		public static final String ToHospital = "toHospital";
@@ -496,6 +644,7 @@ public class EDTransfer extends ims.domain.DomainObject implements ims.domain.Sy
 		public static final String TransferMode = "transferMode";
 		public static final String TransferEscort = "transferEscort";
 		public static final String Comment = "comment";
+		public static final String NotAccepted = "notAccepted";
 	}
 }
 

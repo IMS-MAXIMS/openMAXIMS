@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!-- be careful when you edit this file, the id attribute must be unique -->
+<risk_factors>
+	<risk_factor name="Weight loss in the last 3 months (Unintentional)" multiple="N">
+		<description id="1" name="No weight loss" score="0" />
+		<description id="2" name="0 - 3 kg weight" score="1" />
+		<description id="3" name="3 - 6 kg weight loss" score="2" />
+		<description id="4" name="6 kg or more" score="3" />
+	</risk_factor>
+	<risk_factor name="Body Mass Index" multiple="N">
+		<description id="5" name="20 or more" score="0" />
+		<description id="6" name="18 or 19" score="1" />
+		<description id="7" name="15 - 17" score="2" />
+		<description id="8" name="Less than 15" score="3" />
+	</risk_factor>
+	<risk_factor name="Appetite" multiple="N">
+		<description id="9" name="Good appetite, manages most of 3 meals/day" score="0" />
+		<description id="10" name="Poor appetite, poor intake - leaving > half of meals provided" score="2" />
+		<description id="11" name="Appetite nil or virtually nil, unable to eat, NBM (for > 4 meals)" score="3" />
+	</risk_factor>
+	<risk_factor name="Ability to eat / retain food / state of hydration" multiple="N">
+		<description id="12" name="No difficulties eating, able to eat independently, tolerating enteral feed. No diarrhoea or vomiting/well hydrated" score="0" />
+		<description id="13" name="Problems handling food, eg needs special cutlery. Vomiting/frequent regurgitation (or possetting)/mild diarrhoea" score="1" />
+		<description id="14" name="Difficulty swallowing, requires modified consistency. Problems with dentures, chewing, enteral feeds, affecting food intake" score="2" />
+		<description id="15" name="Unable to take food orally. Unable to swallow (complete dysphagia). Severe vomiting and / or diarrhoea, malabsorption. Dehydrated" score="3" />
+	</risk_factor>
+	<risk_factor name="Other factors" multiple="N">
+		<description id="16" name="No - includes admission for investigations" score="0" />
+		<description id="17" name="Mild – minor surgery, minor infection, CVA" score="1" />
+		<description id="18" name="Moderate - chronic disease, major surgery, infection. Fractures, pressure sores/ulcers. Inflammatory bowel disease, other GI disease" score="2" />
+		<description id="19" name="Severe - multiple injuries, multiple fractures/burns. Multiple deep pressure sores/ulcers, severe sepsis. Carcinoma/malignant disease" score="3" />
+	</risk_factor>
+</risk_factors>

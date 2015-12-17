@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -95,7 +100,7 @@ import ims.core.vo.lookups.GPStatus;
 import ims.core.vo.lookups.LocationType;
 import ims.core.vo.lookups.PollStatus;
 import ims.domain.DomainFactory;
-import ims.domain.DomainObject;
+import ims.domain.exceptions.DomainInterfaceException;
 import ims.domain.exceptions.DomainRuntimeException;
 import ims.domain.exceptions.ForeignKeyViolationException;
 import ims.domain.exceptions.StaleObjectException;
@@ -106,7 +111,6 @@ import ims.framework.interfaces.ILocation;
 import ims.framework.utils.Date;
 import ims.framework.utils.DateTime;
 import ims.framework.utils.Time;
-import ims.ocrr.configuration.domain.objects.Container;
 import ims.ocrr.configuration.domain.objects.DFTCollectionTypesConfig;
 import ims.ocrr.configuration.domain.objects.Investigation;
 import ims.ocrr.configuration.domain.objects.InvestigationIndex;
@@ -114,7 +118,6 @@ import ims.ocrr.configuration.domain.objects.Specimen;
 import ims.ocrr.configuration.vo.InvestigationIndexRefVo;
 import ims.ocrr.configuration.vo.InvestigationRefVo;
 import ims.ocrr.domain.CategoryQuestions;
-import ims.ocrr.domain.DFTCollectionTypeConfigurations;
 import ims.ocrr.domain.ServiceQuestions;
 import ims.ocrr.domain.SpecimenCollectionConfig;
 import ims.ocrr.helper.IOCRRSchedulingHelper;
@@ -142,7 +145,6 @@ import ims.ocrr.vo.OrderInvestigationVo;
 import ims.ocrr.vo.OrderSpecimenVo;
 import ims.ocrr.vo.OrderSpecimenVoCollection;
 import ims.ocrr.vo.PathInvDetailsVo;
-import ims.ocrr.vo.PathSpecimenContainerVo;
 import ims.ocrr.vo.PathSpecimenContainerVoCollection;
 import ims.ocrr.vo.PhlebotomyRoundShortVoCollection;
 import ims.ocrr.vo.ServiceQuestionShortVoCollection;
@@ -197,8 +199,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-
-import com.sun.org.apache.bcel.internal.generic.NEW;
 
 public class MyOrderImpl extends DomainImpl implements ims.ocrr.domain.MyOrder, ims.domain.impl.Transactional
 {
@@ -806,7 +806,7 @@ public class MyOrderImpl extends DomainImpl implements ims.ocrr.domain.MyOrder, 
 	public ClinicLiteVoCollection listClinicsForHospitalByNameLite(LocationRefVo location, String name)
 	{
 		DomainFactory factory = getDomainFactory();
-		List clinics = factory.find("from Clinic clin where clin.clinicLocation.id = :idLocation and upper(clin.clinicName) like :clinName and clin.isActive = 1 order by clin.clinicName", new String[]{"idLocation", "clinName"}, new Object[]{location.getID_Location(), "%" + name.toUpperCase() + "%"});
+		List clinics = factory.find("from Clinic clin where clin.clinicLocation.id = :idLocation and clin.upperName like :clinName and clin.isActive = 1 order by clin.upperName", new String[]{"idLocation", "clinName"}, new Object[]{location.getID_Location(), "%" + name.toUpperCase() + "%"}); //WDEV-20219 
 		return ClinicLiteVoAssembler.createClinicLiteVoCollectionFromClinic(clinics);
 	}
 
@@ -1308,25 +1308,13 @@ public class MyOrderImpl extends DomainImpl implements ims.ocrr.domain.MyOrder, 
 
 	/**
 	 *	Function used to cancel an appointment
+	 * @throws DomainInterfaceException 
 	 */
-	public Booking_AppointmentVo cancelAppointment(Booking_AppointmentVo appointment, ActionRequestType requestType, String requestSource) throws StaleObjectException
+	public Booking_AppointmentVo cancelAppointment(Booking_AppointmentVo appointment, ActionRequestType requestType, String requestSource) throws StaleObjectException, DomainInterfaceException
 	{
 		SessionAdmin impl = (SessionAdmin) getDomainImpl(SessionAdminImpl.class);
 		
 		return impl.cancelAppt(appointment, requestType, requestSource);
-	}
-
-	public void updateCatsReferralCancelStatus(CatsReferralRefVo referral) throws StaleObjectException
-	{
-		if(referral == null || referral.getID_CatsReferral() == null)
-			throw new CodingRuntimeException("catsReferral is null or id not provided in method updateCatsReferralAdditionalInvStatus");
-		
-		DomainFactory factory = getDomainFactory();
-		
-		CatsReferral doCatsReferral = (CatsReferral) factory.getDomainObject(referral);
-		
-		doCatsReferral.setHasCancelledApptsForReview(true);
-		factory.save(doCatsReferral);
 	}
 
 	/**

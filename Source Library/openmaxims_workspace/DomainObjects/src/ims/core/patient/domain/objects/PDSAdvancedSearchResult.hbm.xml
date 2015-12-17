@@ -1,0 +1,175 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 12/10/2015, 13:30 -->
+<hibernate-mapping>
+	<class name="ims.core.patient.domain.objects.PDSAdvancedSearchResult" table="core_pdsadvancedse2" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: nHSNumber -->
+<!-- debug: surname -->
+<!-- debug: upperSurname -->
+<!-- debug: forename -->
+<!-- debug: upperForename -->
+<!-- debug: preferredName -->
+<!-- debug: gender -->
+<!-- debug: dateOfBirth -->
+<!-- debug: dateOfDeath -->
+<!-- debug: primaryCareInfo -->
+<!-- debug: confidentialityCode -->
+<!-- debug: nHSNumberType -->
+<!-- debug: title -->
+<!-- debug: nameType -->
+<!-- debug: namesuffix -->
+<!-- debug: pDSAddresses -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<list name="pDSAddresses" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="pdsadvancedse2_pdsaddress_fk">
+				<column name="core_pdsadvancedse2_pdsaddress" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.core.patient.domain.objects.PDSAddr" />
+		</list>
+<!-- debug: pDSTellecoms -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<list name="pDSTellecoms" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="pdsadvancedse2_pdstelleco_fk">
+				<column name="core_pdsadvancedse2_pdstelleco" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.core.patient.domain.objects.PDSTel" />
+		</list>
+<!-- debug: pdsErrCreationTime -->
+<!-- debug: pdsErrInteractionId -->
+<!-- debug: pdsErrProcessingCode -->
+<!-- debug: pdsErrQueryResponseCode -->
+<!-- debug: pdsErrId -->
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="nHSNumber" type="string" access="field" update="true" > 
+			<column name="nhsnumber" length="12"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="surname" type="string" access="field" update="true" > 
+			<column name="surname" length="40"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="upperSurname" type="string" access="field" update="true" > 
+			<column name="uppersurna" length="40"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="forename" type="string" access="field" update="true" > 
+			<column name="forename" length="40"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="upperForename" type="string" access="field" update="true" > 
+			<column name="upperforen" length="40"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="preferredName" type="string" access="field" update="true" > 
+			<column name="preferredn" length="40"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="gender" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_gender" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dateOfBirth" type="date" access="field" update="true">
+			<column name="dateofbirt"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dateOfDeath" type="date" access="field" update="true">
+			<column name="dateofdeat"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="primaryCareInfo" type="string" access="field" update="true" > 
+			<column name="primarycar" length="40"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="confidentialityCode" type="string" access="field" update="true" > 
+			<column name="confidenti" length="1"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="nHSNumberType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_nhsnumbert" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="title" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_title" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="nameType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_nametype" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="namesuffix" type="string" access="field" update="true" > 
+			<column name="namesuffix" length="35"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="pdsErrCreationTime" type="timestamp" access="field" update="true">
+			<column name="pdserrcrea"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="pdsErrInteractionId" type="string" access="field" update="true" > 
+			<column name="pdserrinte" length="100"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="pdsErrProcessingCode" type="string" access="field" update="true" > 
+			<column name="pdserrproc" length="100"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="pdsErrQueryResponseCode" type="string" access="field" update="true" > 
+			<column name="pdserrquer" length="2000"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="pdsErrId" type="string" access="field" update="true" > 
+			<column name="pdserrid" length="100"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

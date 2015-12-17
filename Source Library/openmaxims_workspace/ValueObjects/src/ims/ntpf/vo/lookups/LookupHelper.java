@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,15 +15,20 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 
 /*
  * This code was generated.
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:38
+ * Generated: 13/10/2015, 13:23
  */
 package ims.ntpf.vo.lookups;
 
@@ -35,32 +40,6 @@ import ims.domain.lookups.LookupService;
  * 
  */
 public final class LookupHelper {
-	public static BatchStatusCollection getBatchStatus(LookupService lookupService) {
-		BatchStatusCollection collection =
-			(BatchStatusCollection) lookupService.getLookupCollection(BatchStatus.TYPE_ID, 
-				BatchStatusCollection.class, BatchStatus.class);
-		return collection;
-	}
-
-	public static BatchStatus getBatchStatusInstance(LookupService lookupService, int id) 
-	{
-		return (BatchStatus)lookupService.getLookupInstance(BatchStatus.class, BatchStatus.TYPE_ID, id);
-	}
-	
-
-	public static AccountingTypeCollection getAccountingType(LookupService lookupService) {
-		AccountingTypeCollection collection =
-			(AccountingTypeCollection) lookupService.getLookupCollection(AccountingType.TYPE_ID, 
-				AccountingTypeCollection.class, AccountingType.class);
-		return collection;
-	}
-
-	public static AccountingType getAccountingTypeInstance(LookupService lookupService, int id) 
-	{
-		return (AccountingType)lookupService.getLookupInstance(AccountingType.class, AccountingType.TYPE_ID, id);
-	}
-	
-
 	public static CallTypeCollection getCallType(LookupService lookupService) {
 		CallTypeCollection collection =
 			(CallTypeCollection) lookupService.getLookupCollection(CallType.TYPE_ID, 
@@ -74,16 +53,16 @@ public final class LookupHelper {
 	}
 	
 
-	public static InsuranceTypeCollection getInsuranceType(LookupService lookupService) {
-		InsuranceTypeCollection collection =
-			(InsuranceTypeCollection) lookupService.getLookupCollection(InsuranceType.TYPE_ID, 
-				InsuranceTypeCollection.class, InsuranceType.class);
+	public static PatientTypeCollection getPatientType(LookupService lookupService) {
+		PatientTypeCollection collection =
+			(PatientTypeCollection) lookupService.getLookupCollection(PatientType.TYPE_ID, 
+				PatientTypeCollection.class, PatientType.class);
 		return collection;
 	}
 
-	public static InsuranceType getInsuranceTypeInstance(LookupService lookupService, int id) 
+	public static PatientType getPatientTypeInstance(LookupService lookupService, int id) 
 	{
-		return (InsuranceType)lookupService.getLookupInstance(InsuranceType.class, InsuranceType.TYPE_ID, id);
+		return (PatientType)lookupService.getLookupInstance(PatientType.class, PatientType.TYPE_ID, id);
 	}
 	
 
@@ -139,19 +118,6 @@ public final class LookupHelper {
 	}
 	
 
-	public static PatientCheckListCollection getPatientCheckList(LookupService lookupService) {
-		PatientCheckListCollection collection =
-			(PatientCheckListCollection) lookupService.getLookupCollection(PatientCheckList.TYPE_ID, 
-				PatientCheckListCollection.class, PatientCheckList.class);
-		return collection;
-	}
-
-	public static PatientCheckList getPatientCheckListInstance(LookupService lookupService, int id) 
-	{
-		return (PatientCheckList)lookupService.getLookupInstance(PatientCheckList.class, PatientCheckList.TYPE_ID, id);
-	}
-	
-
 	public static CountyCollection getCounty(LookupService lookupService) {
 		CountyCollection collection =
 			(CountyCollection) lookupService.getLookupCollection(County.TYPE_ID, 
@@ -191,16 +157,55 @@ public final class LookupHelper {
 	}
 	
 
-	public static PatientTypeCollection getPatientType(LookupService lookupService) {
-		PatientTypeCollection collection =
-			(PatientTypeCollection) lookupService.getLookupCollection(PatientType.TYPE_ID, 
-				PatientTypeCollection.class, PatientType.class);
+	public static BatchStatusCollection getBatchStatus(LookupService lookupService) {
+		BatchStatusCollection collection =
+			(BatchStatusCollection) lookupService.getLookupCollection(BatchStatus.TYPE_ID, 
+				BatchStatusCollection.class, BatchStatus.class);
 		return collection;
 	}
 
-	public static PatientType getPatientTypeInstance(LookupService lookupService, int id) 
+	public static BatchStatus getBatchStatusInstance(LookupService lookupService, int id) 
 	{
-		return (PatientType)lookupService.getLookupInstance(PatientType.class, PatientType.TYPE_ID, id);
+		return (BatchStatus)lookupService.getLookupInstance(BatchStatus.class, BatchStatus.TYPE_ID, id);
+	}
+	
+
+	public static AccountingTypeCollection getAccountingType(LookupService lookupService) {
+		AccountingTypeCollection collection =
+			(AccountingTypeCollection) lookupService.getLookupCollection(AccountingType.TYPE_ID, 
+				AccountingTypeCollection.class, AccountingType.class);
+		return collection;
+	}
+
+	public static AccountingType getAccountingTypeInstance(LookupService lookupService, int id) 
+	{
+		return (AccountingType)lookupService.getLookupInstance(AccountingType.class, AccountingType.TYPE_ID, id);
+	}
+	
+
+	public static InsuranceTypeCollection getInsuranceType(LookupService lookupService) {
+		InsuranceTypeCollection collection =
+			(InsuranceTypeCollection) lookupService.getLookupCollection(InsuranceType.TYPE_ID, 
+				InsuranceTypeCollection.class, InsuranceType.class);
+		return collection;
+	}
+
+	public static InsuranceType getInsuranceTypeInstance(LookupService lookupService, int id) 
+	{
+		return (InsuranceType)lookupService.getLookupInstance(InsuranceType.class, InsuranceType.TYPE_ID, id);
+	}
+	
+
+	public static PatientCheckListCollection getPatientCheckList(LookupService lookupService) {
+		PatientCheckListCollection collection =
+			(PatientCheckListCollection) lookupService.getLookupCollection(PatientCheckList.TYPE_ID, 
+				PatientCheckListCollection.class, PatientCheckList.class);
+		return collection;
+	}
+
+	public static PatientCheckList getPatientCheckListInstance(LookupService lookupService, int id) 
+	{
+		return (PatientCheckList)lookupService.getLookupInstance(PatientCheckList.class, PatientCheckList.TYPE_ID, id);
 	}
 	
 

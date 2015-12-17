@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,12 +15,18 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 package ims.hl7.domain.mapping;
 
 import ims.core.vo.OutPatientAttendanceVo;
 import ims.core.vo.Patient;
+import ims.hl7.domain.EventResponse;
 import ims.hl7.utils.HL7Errors;
 import ims.hl7.utils.HL7Utils;
 import ims.ocrr.vo.ProviderSystemVo;
@@ -32,7 +38,9 @@ import ca.uhn.hl7v2.model.v24.segment.EVN;
 public class A04VoMapper extends VoMapper
 {
 
-	public Message processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception
+	//WDEV-20112
+//	public Message processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception
+	public EventResponse processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception //WDEV-20112
 	{
 		return(processPatientAttendance(msg, providerSystem));
 	}
@@ -42,17 +50,27 @@ public class A04VoMapper extends VoMapper
 		return null;
 	}
 	
-	
-	private Message processPatientAttendance(Message msg, ProviderSystemVo providerSystem) throws HL7Exception
+
+	//WDEV-20112
+//	private Message processPatientAttendance(Message msg, ProviderSystemVo providerSystem) throws HL7Exception
+	private EventResponse processPatientAttendance(Message msg, ProviderSystemVo providerSystem) throws HL7Exception
 	{
 		Patient patVo;
+		//WDEV-20112
+		EventResponse response = new EventResponse(); //WDEV-20112
+		
 		try
 		{
 			patVo = savePatient(msg, providerSystem);
+			//WDEV-20112
+			response.setPatient(patVo); //WDEV-20112
 		}
 		catch (Exception ex)
 		{
-			return HL7Utils.buildRejAck( msg.get("MSH"), "Exception: " + ex.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems()));
+			//WDEV-20112
+//			return HL7Utils.buildRejAck( msg.get("MSH"), "Exception: " + ex.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems()));
+			response.setMessage(HL7Utils.buildRejAck(msg.get("MSH"), "Exception: " + ex.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems())));
+			return response; //WDEV-20112
 		}
 		OutPatientAttendanceVo attVo;
 		try
@@ -87,11 +105,17 @@ public class A04VoMapper extends VoMapper
 		}
 		catch (Exception ex)
 		{
-			return HL7Utils.buildRejAck( msg.get("MSH"), "Exception: " + ex.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems()));
+			//WDEV-20112
+//			return HL7Utils.buildRejAck( msg.get("MSH"), "Exception: " + ex.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems()));
+			response.setMessage(HL7Utils.buildRejAck(msg.get("MSH"), "Exception: " + ex.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems())));
+			return response; //WDEV-20112
 		}
 
-		Message ack = HL7Utils.buildPosAck( msg.get("MSH"), toConfigItemArray(providerSystem.getConfigItems()));
-		return ack;
+		//WDEV-20112
+//		Message ack = HL7Utils.buildPosAck( msg.get("MSH"), toConfigItemArray(providerSystem.getConfigItems()));
+//		return ack;
+		response.setMessage(HL7Utils.buildPosAck( msg.get("MSH"), toConfigItemArray(providerSystem.getConfigItems())));
+		return response; //WDEV-20112
 	}
 	
 }

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -36,10 +41,13 @@ import ims.admin.domain.impl.OrganisationAndLocationImpl;
 import ims.core.admin.pas.domain.objects.OutpatientAttendance;
 import ims.core.admin.pas.domain.objects.PASEvent;
 import ims.core.admin.pas.vo.PASEventRefVo;
+import ims.core.resource.people.domain.objects.MemberOfStaff;
+import ims.core.resource.people.vo.MemberOfStaffRefVo;
 import ims.core.vo.LocationLiteVoCollection;
 import ims.core.vo.MemberOfStaffShortVo;
 import ims.core.vo.MemberOfStaffShortVoCollection;
 import ims.core.vo.OutPatientListSearchCriteriaVo;
+import ims.core.vo.domain.MemberOfStaffShortVoAssembler;
 import ims.core.vo.domain.OutPatientAttendanceVoAssembler;
 import ims.core.vo.domain.PasEventVoAssembler;
 import ims.core.vo.lookups.DocumentStatus;
@@ -52,6 +60,7 @@ import ims.correspondence.vo.CorrespondencePatientListsVoCollection;
 import ims.correspondence.vo.domain.CorrespondenceDetailsVoAssembler;
 import ims.correspondence.vo.domain.UserAccessVoAssembler;
 import ims.domain.DomainFactory;
+import ims.domain.exceptions.DomainRuntimeException;
 import ims.framework.exceptions.CodingRuntimeException;
 
 public class CorrespondenceOutpatientListImpl extends BaseCorrespondenceOutpatientListImpl
@@ -237,5 +246,13 @@ public class CorrespondenceOutpatientListImpl extends BaseCorrespondenceOutpatie
 	public MemberOfStaffShortVoCollection listMembersOfStaff(MemberOfStaffShortVo filter) {
 		MosAdmin mosAdmin = (MosAdmin) getDomainImpl(MosAdminImpl.class);
 		return mosAdmin.listMembersOfStaff(filter);
+	}
+
+	public MemberOfStaffShortVo getMOS(MemberOfStaffRefVo mos)
+	{
+		if (mos == null || mos.getID_MemberOfStaff() == null)
+			return null;
+
+		return MemberOfStaffShortVoAssembler.create((MemberOfStaff) getDomainFactory().getDomainObject(MemberOfStaff.class, mos.getID_MemberOfStaff()));
 	}
 }

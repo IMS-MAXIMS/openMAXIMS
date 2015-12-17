@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -34,21 +39,44 @@ import ims.framework.enumerations.SortOrder;
 import ims.framework.exceptions.PresentationLogicException;
 import ims.framework.utils.DateFormat;
 import ims.framework.utils.TimeFormat;
+import ims.nursing.forms.painreview.GenForm.FilterEnumeration;
 import ims.nursing.vo.PainAssessment;
 import ims.nursing.vo.PainAssessmentCollection;
 import ims.nursing.vo.PainAssessmentFindings;
 import ims.nursing.vo.PainAssessmentReview;
 import ims.nursing.vo.PainAssessmentReviewCollection;
+import ims.nursing.vo.PainReviewSearchCriteriaVo;
 import ims.nursing.vo.lookups.PainStatus;
 import ims.core.vo.CareContextShortVo;
 import ims.core.vo.CareContextShortVoCollection;
 
 public class Logic extends BaseLogic
 {
+	private static final int LIST_ALL			= 2;
+	private static final int LIST_ACTIVE		= 1;
+	
 	protected void onFormOpen() throws ims.framework.exceptions.FormOpenException
 	{
 		initialize();
-		open();
+		//WDEV-19389 
+		if (!(form.getGlobalContext().Core.getCurrentCareContextIsNotNull() && form.getGlobalContext().Nursing.getPainReviewSearchCriteriaIsNotNull() && form.getGlobalContext().Core.getCurrentCareContext().equals(form.getGlobalContext().Nursing.getPainReviewSearchCriteria().getCareContext())))
+			form.getGlobalContext().Nursing.setPainReviewSearchCriteria(null);
+		
+		if(form.getGlobalContext().Nursing.getPainReviewSearchCriteriaIsNotNull())
+		{
+			try
+			{
+				setSearchCriteria(form.getGlobalContext().Nursing.getPainReviewSearchCriteria());
+				onCmbSiteValueChanged();
+			}
+			catch (PresentationLogicException e)
+			{e.printStackTrace();}
+
+		}
+		else
+			open();
+		//WDEV-19389 - end
+		
 
 	}
 	private void initialize()
@@ -107,6 +135,63 @@ public class Logic extends BaseLogic
 			form.lnkClinicalNotes().setVisible(false);
 		
 	}
+	
+	private PainReviewSearchCriteriaVo getSearchCriteria()
+	{
+		PainReviewSearchCriteriaVo searchCriteria = new PainReviewSearchCriteriaVo();
+		
+		searchCriteria.setViewType(getViewType());
+		searchCriteria.setSelectedCareContext(form.recbrAssessment().getValue());
+		searchCriteria.setAssessment(form.cmbAssessment().getValue());
+		searchCriteria.setFindings(form.cmbSite().getValue());
+		searchCriteria.setCareContext(form.getGlobalContext().Core.getCurrentCareContext());
+		
+		return searchCriteria;
+	}
+	
+	
+	private void setSearchCriteria(PainReviewSearchCriteriaVo painReviewSearchCriteriaVo) throws PresentationLogicException
+	{
+		form.recbrAssessment().setValue(painReviewSearchCriteriaVo.getSelectedCareContext());
+		onRecbrAssessmentValueChanged();
+		form.cmbAssessment().setValue(painReviewSearchCriteriaVo.getAssessment());
+		onCmbAssessmentValueChanged();
+		setViewType(painReviewSearchCriteriaVo.getViewType());
+		onRadioButtonFilterValueChanged();
+		form.cmbSite().setValue(painReviewSearchCriteriaVo.getFindings());
+	}
+
+	private void setViewType(Integer searchType)
+	{
+		if (searchType == null)
+			return;
+		
+		switch (searchType)
+		{
+		case LIST_ALL:
+			form.Filter().setValue(FilterEnumeration.rdoAll);
+			break;
+		case LIST_ACTIVE:
+			form.Filter().setValue(FilterEnumeration.rdoActive);
+			break;
+		}				
+	}
+
+	private Integer getViewType()
+	{
+		FilterEnumeration searchType = form.Filter().getValue();
+		if (FilterEnumeration.rdoAll.equals(searchType))
+		{
+			return LIST_ALL;
+		}
+		if (FilterEnumeration.rdoActive.equals(searchType))
+		{
+			return LIST_ACTIVE;
+		}
+		
+		return null;
+	}
+	
 	protected void onBNewClick() throws ims.framework.exceptions.PresentationLogicException
 	{
 		//------- Add a new review VO and set it in the Context to be used in the dialog
@@ -168,9 +253,13 @@ public class Logic extends BaseLogic
 		if(form.cmbAssessment().getValue() != null){
 			form.getGlobalContext().COE.PainBodyChart.setPainAssessmentVO(form.cmbAssessment().getValue());
 			form.getLocalContext().setPainAssessment(form.cmbAssessment().getValue());
+			form.getGlobalContext().Nursing.setPainReviewSearchCriteria(getSearchCriteria()); // WDEV-19389 
 		}
 		else
-			form.getLocalContext().setPainAssessment(null);
+		{
+			form.getLocalContext().setPainAssessment(null);		
+			form.getGlobalContext().Nursing.setPainReviewSearchCriteria(null); // WDEV-19389 
+		}
 		
 		
 		form.btnNext().setEnabled(false);
@@ -238,9 +327,9 @@ public class Logic extends BaseLogic
 		{
 			form.btnNew().setEnabled(false);
 			form.btnNext().setEnabled(false);
-			form.btnPrevious().setEnabled(false);
+			form.btnPrevious().setEnabled(false); 
 		}
-			
+		form.getGlobalContext().Nursing.setPainReviewSearchCriteria(getSearchCriteria()); // WDEV-19389 
 	}
 	
 	private void populateReviewDetails()
@@ -709,7 +798,7 @@ public class Logic extends BaseLogic
 	protected void onRecbrAssessmentValueChanged() throws PresentationLogicException
 	{
 		clearGlobalContext();
-
+		form.getGlobalContext().Nursing.setPainReviewSearchCriteria(null); // WDEV-19389 
 		populateInstance(form.recbrAssessment().getValue(),true);
 		
 		updateControlStatus();		

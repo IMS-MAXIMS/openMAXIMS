@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.emergency.vo.domain;
@@ -80,6 +85,14 @@ public class TrackingVoAssembler
 		valueObjectDest.setSeenBy(valueObjectSrc.getSeenBy());
 		// CurrentTransferRecord
 		valueObjectDest.setCurrentTransferRecord(valueObjectSrc.getCurrentTransferRecord());
+		// CurrentPartialAdmission
+		valueObjectDest.setCurrentPartialAdmission(valueObjectSrc.getCurrentPartialAdmission());
+		// SeenByNurse
+		valueObjectDest.setSeenByNurse(valueObjectSrc.getSeenByNurse());
+		// RequiringDischargeDocumentationReview
+		valueObjectDest.setRequiringDischargeDocumentationReview(valueObjectSrc.getRequiringDischargeDocumentationReview());
+		// AssociatedPendingEmergencyAdmission
+		valueObjectDest.setAssociatedPendingEmergencyAdmission(valueObjectSrc.getAssociatedPendingEmergencyAdmission());
 	 	return valueObjectDest;
 	 }
 
@@ -401,9 +414,17 @@ public class TrackingVoAssembler
 		// isDischarged
 		valueObject.setIsDischarged( domainObject.isIsDischarged() );
 		// SeenBy
-		valueObject.setSeenBy(ims.emergency.vo.domain.SeenByHCPVoAssembler.create(map, domainObject.getSeenBy()) );
+		valueObject.setSeenBy(ims.emergency.vo.domain.SeenByHCPForTrackingVoAssembler.create(map, domainObject.getSeenBy()) );
 		// CurrentTransferRecord
-		valueObject.setCurrentTransferRecord(ims.emergency.vo.domain.EDTransferVoAssembler.create(map, domainObject.getCurrentTransferRecord()) );
+		valueObject.setCurrentTransferRecord(ims.emergency.vo.domain.EDTransferForTrackingVoAssembler.create(map, domainObject.getCurrentTransferRecord()) );
+		// CurrentPartialAdmission
+		valueObject.setCurrentPartialAdmission(ims.emergency.vo.domain.EDPartialAdmissionForTrackingVoAssembler.create(map, domainObject.getCurrentPartialAdmission()) );
+		// SeenByNurse
+		valueObject.setSeenByNurse(ims.emergency.vo.domain.SeenByHCPForTrackingVoAssembler.create(map, domainObject.getSeenByNurse()) );
+		// RequiringDischargeDocumentationReview
+		valueObject.setRequiringDischargeDocumentationReview( domainObject.isRequiringDischargeDocumentationReview() );
+		// AssociatedPendingEmergencyAdmission
+		valueObject.setAssociatedPendingEmergencyAdmission(ims.emergency.vo.domain.PendingEmergencyAdmissionForTrackingFormVoAssembler.create(map, domainObject.getAssociatedPendingEmergencyAdmission()) );
  		return valueObject;
 	 }
 
@@ -536,7 +557,23 @@ public class TrackingVoAssembler
 		}
 		domainObject.setCurrentDNW(value12);
 		domainObject.setIsDischarged(valueObject.getIsDischarged());
-		domainObject.setSeenBy(ims.emergency.vo.domain.SeenByHCPVoAssembler.extractSeenByHCP(domainFactory, valueObject.getSeenBy(), domMap));
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.emergency.domain.objects.SeenByHCP value14 = null;
+		if ( null != valueObject.getSeenBy() ) 
+		{
+			if (valueObject.getSeenBy().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getSeenBy()) != null)
+				{
+					value14 = (ims.emergency.domain.objects.SeenByHCP)domMap.get(valueObject.getSeenBy());
+				}
+			}
+			else
+			{
+				value14 = (ims.emergency.domain.objects.SeenByHCP)domainFactory.getDomainObject(ims.emergency.domain.objects.SeenByHCP.class, valueObject.getSeenBy().getBoId());
+			}
+		}
+		domainObject.setSeenBy(value14);
 	// SaveAsRefVO - treated as a refVo in extract methods
 	ims.emergency.domain.objects.EDTransfer value15 = null;
 		if ( null != valueObject.getCurrentTransferRecord() ) 
@@ -554,6 +591,58 @@ public class TrackingVoAssembler
 			}
 		}
 		domainObject.setCurrentTransferRecord(value15);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.emergency.domain.objects.EDPartialAdmission value16 = null;
+		if ( null != valueObject.getCurrentPartialAdmission() ) 
+		{
+			if (valueObject.getCurrentPartialAdmission().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getCurrentPartialAdmission()) != null)
+				{
+					value16 = (ims.emergency.domain.objects.EDPartialAdmission)domMap.get(valueObject.getCurrentPartialAdmission());
+				}
+			}
+			else
+			{
+				value16 = (ims.emergency.domain.objects.EDPartialAdmission)domainFactory.getDomainObject(ims.emergency.domain.objects.EDPartialAdmission.class, valueObject.getCurrentPartialAdmission().getBoId());
+			}
+		}
+		domainObject.setCurrentPartialAdmission(value16);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.emergency.domain.objects.SeenByHCP value17 = null;
+		if ( null != valueObject.getSeenByNurse() ) 
+		{
+			if (valueObject.getSeenByNurse().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getSeenByNurse()) != null)
+				{
+					value17 = (ims.emergency.domain.objects.SeenByHCP)domMap.get(valueObject.getSeenByNurse());
+				}
+			}
+			else
+			{
+				value17 = (ims.emergency.domain.objects.SeenByHCP)domainFactory.getDomainObject(ims.emergency.domain.objects.SeenByHCP.class, valueObject.getSeenByNurse().getBoId());
+			}
+		}
+		domainObject.setSeenByNurse(value17);
+		domainObject.setRequiringDischargeDocumentationReview(valueObject.getRequiringDischargeDocumentationReview());
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.admin.pas.domain.objects.PendingEmergencyAdmission value19 = null;
+		if ( null != valueObject.getAssociatedPendingEmergencyAdmission() ) 
+		{
+			if (valueObject.getAssociatedPendingEmergencyAdmission().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getAssociatedPendingEmergencyAdmission()) != null)
+				{
+					value19 = (ims.core.admin.pas.domain.objects.PendingEmergencyAdmission)domMap.get(valueObject.getAssociatedPendingEmergencyAdmission());
+				}
+			}
+			else
+			{
+				value19 = (ims.core.admin.pas.domain.objects.PendingEmergencyAdmission)domainFactory.getDomainObject(ims.core.admin.pas.domain.objects.PendingEmergencyAdmission.class, valueObject.getAssociatedPendingEmergencyAdmission().getBoId());
+			}
+		}
+		domainObject.setAssociatedPendingEmergencyAdmission(value19);
 
 		return domainObject;
 	}

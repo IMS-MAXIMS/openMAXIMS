@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.edischarge.domain.objects;
@@ -63,6 +68,8 @@ public class MedicationDetails extends ims.domain.DomainObject implements ims.do
 	  * Collection of ims.edischarge.domain.objects.TTANote.
 	  */
 	private java.util.Set tTAComments;
+	/** TTAReceived */
+	private Boolean tTAReceived;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public MedicationDetails (Integer id, int ver)
@@ -132,6 +139,13 @@ public class MedicationDetails extends ims.domain.DomainObject implements ims.do
 	}
 	public void setTTAComments(java.util.Set paramValue) {
 		this.tTAComments = paramValue;
+	}
+
+	public Boolean isTTAReceived() {
+		return tTAReceived;
+	}
+	public void setTTAReceived(Boolean tTAReceived) {
+		this.tTAReceived = tTAReceived;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -264,6 +278,9 @@ public class MedicationDetails extends ims.domain.DomainObject implements ims.do
 			auditStr.append("] " + i6);
 		}
 	    auditStr.append("; ");
+		auditStr.append("\r\n*tTAReceived* :");
+		auditStr.append(tTAReceived);
+	    auditStr.append("; ");
 		return auditStr.toString();
 	}
 	
@@ -352,6 +369,12 @@ public class MedicationDetails extends ims.domain.DomainObject implements ims.do
 			sb.append(ims.domain.DomainObject.toXMLString(this.getTTAComments(), domMap));
 			sb.append("</tTAComments>");		
 			}
+		}
+		if (this.isTTAReceived() != null)
+		{
+			sb.append("<tTAReceived>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isTTAReceived().toString()));
+			sb.append("</tTAReceived>");		
 		}
 		return sb.toString();
 	}
@@ -551,6 +574,11 @@ public class MedicationDetails extends ims.domain.DomainObject implements ims.do
 			fldEl = fldEl.element("set");	
 			obj.setTTAComments(ims.edischarge.domain.objects.TTANote.fromSetXMLString(fldEl, factory, obj.getTTAComments(), domMap));
 		}
+		fldEl = el.element("tTAReceived");
+		if(fldEl != null)
+		{	
+    		obj.setTTAReceived(new Boolean(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -572,6 +600,7 @@ public class MedicationDetails extends ims.domain.DomainObject implements ims.do
 		public static final String TTAs = "tTAs";
 		public static final String AdmissionMedicationChanges = "admissionMedicationChanges";
 		public static final String TTAComments = "tTAComments";
+		public static final String TTAReceived = "tTAReceived";
 	}
 }
 

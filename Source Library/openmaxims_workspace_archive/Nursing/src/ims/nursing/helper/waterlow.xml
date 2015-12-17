@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!-- be careful when you edit this file, the id attribute must be unique -->
+<risk_factors>
+	<risk_factor name="Sex" multiple="N" mandatory="Y">
+		<description id="1" name="Male" score="1" />
+		<description id="2" name="Female" score="2" />
+	</risk_factor>
+	<risk_factor name="Age" multiple="N" mandatory="Y">
+		<description id="3" name="14-49" score="1" />
+		<description id="4" name="50-64" score="2" />
+		<description id="5" name="65-74" score="3" />
+		<description id="6" name="75-80" score="4" />
+		<description id="7" name="80+" score="5" />
+	</risk_factor>
+	<risk_factor name="Appetite" multiple="N" mandatory="Y">
+		<description id="8" name="Average" score="0" />
+		<description id="9" name="Poor" score="1" />
+		<description id="10" name="NG tube/fluids only" score="2" />
+		<description id="11" name="Anorexic" score="3" />
+	</risk_factor>
+	<risk_factor name="Continence" multiple="N" mandatory="Y">
+		<description id="12" name="Complete/catheterized" score="0" />
+		<description id="13" name="Occasional incontinence" score="1" />
+		<description id="14" name="Catheter/incontinent of faeces" score="2" />
+		<description id="15" name="Doubly incontinent" score="3" />
+	</risk_factor>
+	<risk_factor name="Skin" multiple="Y" mandatory="Y">
+		<description id="16" name="Healthy" score="0" />
+		<description id="17" name="Tissue paper/dry" score="1" />
+		<description id="18" name="Clammy/oedametous" score="1" />
+		<description id="19" name="Discoloured" score="2" />
+		<description id="20" name="Broken spot" score="3" />
+	</risk_factor>
+	<risk_factor name="Mobility" multiple="N" mandatory="Y">
+		<description id="21" name="Full" score="0" />
+		<description id="22" name="Restless/fidgety" score="1" />
+		<description id="23" name="Apathetic" score="2" />
+		<description id="24" name="Restricted" score="3" />
+		<description id="25" name="Bed bound" score="4" />
+		<description id="26" name="Chair bound" score="5" />
+	</risk_factor>
+	<risk_factor name="Build/weight for height" multiple="N" mandatory="Y">
+		<description id="27" name="Average" score="0" />
+		<description id="28" name="Above average" score="1" />
+		<description id="29" name="Obese" score="2" />
+		<description id="30" name="Below average" score="3" />
+	</risk_factor>
+	<risk_factor name="Cardiovascular" multiple="Y" mandatory="N">
+		<description id="31" name="Terminal cachexia etc." score="9" />
+		<description id="32" name="Cardiac failure" score="5" />
+		<description id="33" name="Peripheral vascular disease" score="5" />
+		<description id="34" name="Anaemia" score="2" />
+		<description id="35" name="Smoker" score="1" />
+	</risk_factor>
+	<risk_factor name="Neurological - Diabetes, CVA, MS, Paralegia, Motor Sensor " multiple="N" mandatory="Y">
+		<description id="36" name="None" score="0" />
+		<description id="37" name="Slight" score="4" />
+		<description id="38" name="Moderate" score="5" />
+		<description id="39" name="Severe" score="6" />
+	</risk_factor>
+	<risk_factor name="Medication" multiple="N" mandatory="N">
+		<description id="41" name="Steroids, Cytotoxic, High Dose Anti-inflammatory" score="4" />
+	</risk_factor>
+	<risk_factor name="Surgery/trauma" multiple="Y" mandatory="N">
+		<description id="44" name="Orthopedic(below waist)" score="5" />
+		<description id="45" name="Op more than 2 hours" score="5" />
+	</risk_factor>
+</risk_factors>

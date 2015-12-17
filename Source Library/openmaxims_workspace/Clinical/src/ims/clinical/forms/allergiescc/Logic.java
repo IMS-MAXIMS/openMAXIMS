@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -198,15 +203,18 @@ public class Logic extends BaseLogic
 	{
 		form.imbNew().setEnabled(Boolean.TRUE.equals(form.getLocalContext().getIsEnabled()));
 		form.imbEdit().setEnabled(Boolean.TRUE.equals(form.getLocalContext().getIsEnabled()) && form.grdAllergies().getValue() != null);
+		form.imbView().setEnabled(Boolean.TRUE.equals(form.getLocalContext().getIsEnabled()) && form.grdAllergies().getValue() != null); //WDEV-22359
 		//WDEV-17686
 		form.chkNoAllergies().setEnabled((Boolean.TRUE.equals(form.getLocalContext().getIsEnabled()) || (!Boolean.TRUE.equals(form.getLocalContext().getIsHidden()) && FormMode.VIEW.equals(form.getMode()))) && form.grdAllergies().getRows().size() == 0 && !form.chkNoAllergies().getValue());//WDEV-17605
 		
 		form.getContextMenus().Clinical.getAllergiesCcMenuADDItem().setVisible(Boolean.TRUE.equals(form.getLocalContext().getIsEnabled()) || (!Boolean.TRUE.equals(form.getLocalContext().getIsHidden()) && FormMode.VIEW.equals(form.getMode())));//WDEV-17605
+		form.getContextMenus().Clinical.getAllergiesCcMenuVIEWItem().setVisible((Boolean.TRUE.equals(form.getLocalContext().getIsEnabled()) || (!Boolean.TRUE.equals(form.getLocalContext().getIsHidden()) && FormMode.VIEW.equals(form.getMode()))) && form.grdAllergies().getValue() != null); //WDEV-22359
 		form.getContextMenus().Clinical.getAllergiesCcMenuEDITItem().setVisible((Boolean.TRUE.equals(form.getLocalContext().getIsEnabled()) || (!Boolean.TRUE.equals(form.getLocalContext().getIsHidden()) && FormMode.VIEW.equals(form.getMode()))) && form.grdAllergies().getValue() != null);//WDEV-17605
 		
 		//WDEV-17605
 		form.imbNew().setVisible(!Boolean.TRUE.equals(form.getLocalContext().getIsHidden()));
 		form.imbEdit().setVisible(!Boolean.TRUE.equals(form.getLocalContext().getIsHidden()));
+		form.imbView().setVisible(!Boolean.TRUE.equals(form.getLocalContext().getIsHidden())); //WDEV-22359
 	}
 
 	@Override
@@ -215,7 +223,7 @@ public class Logic extends BaseLogic
 		if(form.grdAllergies().getValue() == null)
 			return;
 		
-		engine.open(form.getForms().Clinical.AllergiesForTriage, new Object[] {form.grdAllergies().getValue().getID_PatientAllergy()});
+		engine.open(form.getForms().Clinical.AllergiesForTriage, new Object[] {form.grdAllergies().getValue().getID_PatientAllergy(),Boolean.TRUE}); //WDEV-22359
 	}
 
 	@Override
@@ -224,6 +232,17 @@ public class Logic extends BaseLogic
 		form.getLocalContext().setselectedAllergy(null);//WDEV-16176
 		engine.open(form.getForms().Clinical.AllergiesForTriage);
 	}
+	
+	//WDEV-22359
+	@Override
+	protected void onImbViewClick() throws PresentationLogicException 
+	{
+		if(form.grdAllergies().getValue() == null)
+			return;
+		
+		engine.open(form.getForms().Clinical.AllergiesForTriage, new Object[] {form.grdAllergies().getValue().getID_PatientAllergy(),Boolean.FALSE});
+	}
+	//WDEV-22359 ends here
 
 	public void clear() 
 	{
@@ -247,8 +266,17 @@ public class Logic extends BaseLogic
 				if(form.grdAllergies().getValue() == null)
 					return;
 				
-				engine.open(form.getForms().Clinical.AllergiesForTriage, new Object[] {form.grdAllergies().getValue().getID_PatientAllergy()});
+				engine.open(form.getForms().Clinical.AllergiesForTriage, new Object[] {form.grdAllergies().getValue().getID_PatientAllergy(),Boolean.TRUE}); //WDEV-22359
 			break;
+			
+			//WDEV-22359
+			case GenForm.ContextMenus.ClinicalNamespace.AllergiesCcMenu.VIEW:
+				if(form.grdAllergies().getValue() == null)
+					return;
+				
+				engine.open(form.getForms().Clinical.AllergiesForTriage, new Object[] {form.grdAllergies().getValue().getID_PatientAllergy(),Boolean.FALSE});
+			break;
+			//WDEV-22359 ends here
 		}
 		
 		updateControlsState();

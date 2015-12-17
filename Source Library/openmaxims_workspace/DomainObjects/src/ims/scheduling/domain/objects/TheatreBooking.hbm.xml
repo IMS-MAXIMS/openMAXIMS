@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:37 -->
+<!-- Generated: 12/10/2015, 13:31 -->
 <hibernate-mapping>
 	<class name="ims.scheduling.domain.objects.TheatreBooking" table="schl_theatrebooking" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -47,6 +47,16 @@
 <!-- debug: tCITime -->
 <!-- debug: suitableForSurgeryProcedure -->
 <!-- debug: anaestheticType -->
+<!-- debug: procLaterality -->
+<!-- debug: state -->
+<!-- debug: secondaryProcedure -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="secondaryProcedure" class="ims.core.clinical.domain.objects.Procedure" unique="true" foreign-key="theatrebooking_secondaryp_fk" access="field" cascade="save-update">
+			<column name="secondaryp" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: secondaryProcLaterality -->
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: IsLookup -->
 		<many-to-one name="tCITime" class="ims.domain.lookups.LookupInstance" access="field">
@@ -61,6 +71,21 @@
 <!-- debug: IsLookup -->
 		<many-to-one name="anaestheticType" class="ims.domain.lookups.LookupInstance" access="field">
 			<column name="lkp_anaestheti" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="procLaterality" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_proclatera" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="state" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_state" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="secondaryProcLaterality" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_secondary2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
 	</class>
 </hibernate-mapping>

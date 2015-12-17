@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,13 +15,22 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 package ims.hl7.domain.mapping;
 
+import java.text.ParseException;
+
 import org.apache.log4j.Logger;
 
+
 import ims.configuration.gen.ConfigFlag;
+import ims.core.vo.AddressVo;
 import ims.core.vo.CommChannelVo;
 import ims.core.vo.CommChannelVoCollection;
 import ims.core.vo.GP;
@@ -33,6 +42,7 @@ import ims.core.vo.MedicVo;
 import ims.core.vo.MemberOfStaffVo;
 import ims.core.vo.NurseVo;
 import ims.core.vo.OrganisationVo;
+import ims.core.vo.OrganisationWithSitesVo;
 import ims.core.vo.PersonAddress;
 import ims.core.vo.TaxonomyMap;
 import ims.core.vo.TaxonomyMapCollection;
@@ -50,13 +60,24 @@ import ims.domain.exceptions.DomainInterfaceException;
 import ims.domain.exceptions.StaleObjectException;
 import ims.domain.exceptions.UniqueKeyViolationException;
 import ims.framework.utils.DateTime;
+import ims.framework.utils.DateTimeFormat;
+import ims.hl7.domain.EventResponse;
 import ims.hl7.utils.HL7Errors;
 import ims.hl7.utils.HL7Utils;
+import ims.hl7.vo.GPMessageQueueVo;
+import ims.hl7.vo.MOSMessageQueueVo;
+import ims.hl7.vo.ifGPMessageQueueVo;
+import ims.hl7.vo.ifMOSMessageQueueVo;
 import ims.ocrr.vo.ProviderSystemVo;
+import ims.vo.interfaces.IHL7OutboundMessageHandler;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.v24.datatype.CE;
+import ca.uhn.hl7v2.model.v24.datatype.XAD;
 import ca.uhn.hl7v2.model.v24.group.MFN_M02_MFESTFPRAORG;
+import ca.uhn.hl7v2.model.v24.message.MFN_M02;
 import ca.uhn.hl7v2.model.v24.segment.LOC;
+import ca.uhn.hl7v2.model.v24.segment.MFE;
 import ca.uhn.hl7v2.model.v24.segment.MFI;
 import ca.uhn.hl7v2.model.v24.segment.PRA;
 import ca.uhn.hl7v2.model.v24.segment.STF;
@@ -71,11 +92,17 @@ public class M02VoMapper extends VoMapper
 	private static final Logger		LOG		= Logger.getLogger(M02VoMapper.class);
 
 
-	public Message processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception
+	//WDEV-20112
+//	public Message processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception
+	public EventResponse processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception //WDEV-20112
 	{
 		// We need to first check whether this is a GP or a Consultant that we
 		// are processing.  For GPs, we need to populate the GPVo, and
 		// for consultants, we need to populate the Hcp Vo
+		
+		//WDEV-20112
+		EventResponse response = new EventResponse(); //WDEV-20112
+		
 		try
 		{
 			if (isGPStaffType(msg))
@@ -96,7 +123,10 @@ public class M02VoMapper extends VoMapper
 					{
 						this.errorCount++;
 						ie.printStackTrace();
-						return HL7Utils.buildRejAck(msg.get("MSH"), "Exception. " + ie.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems()));
+						//WDEV-20112
+//						return HL7Utils.buildRejAck(msg.get("MSH"), "Exception. " + ie.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems()));
+						response.setMessage(HL7Utils.buildRejAck(msg.get("MSH"), "Exception. " + ie.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems())));
+						return response; //WDEV-20112
 					}
 
 				}
@@ -109,11 +139,17 @@ public class M02VoMapper extends VoMapper
 		catch (Exception ex)
 		{
 			LOG.error(ex.getMessage(), ex);
-			return HL7Utils.buildRejAck(msg.get("MSH"), ex.getClass().getName() + " occurred. " + ex.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems()));
+			//WDEV-20112
+//			return HL7Utils.buildRejAck(msg.get("MSH"), ex.getClass().getName() + " occurred. " + ex.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems()));
+			response.setMessage(HL7Utils.buildRejAck(msg.get("MSH"), ex.getClass().getName() + " occurred. " + ex.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems())));
+			return response; //WDEV-20112
 		}
 
-		Message ack = HL7Utils.buildPosAck(msg.get("MSH"), toConfigItemArray(providerSystem.getConfigItems()));
-		return ack;	
+		//WDEV-20112
+//		Message ack = HL7Utils.buildPosAck(msg.get("MSH"), toConfigItemArray(providerSystem.getConfigItems()));
+//		return ack;
+		response.setMessage( HL7Utils.buildPosAck(msg.get("MSH"), toConfigItemArray(providerSystem.getConfigItems())));
+		return response; //WDEV-20112
 	}
 	
 	private void processMedic(Message msg, ProviderSystemVo providerSystem) throws HL7Exception
@@ -209,7 +245,9 @@ public class M02VoMapper extends VoMapper
 		MemberOfStaffVo mos = null;
 		if (pasCode != null && pasCode.length() > 0)
 		{
-			mos = mosAdmin.getMemberOfStaffByTaxonomyType(pasCode, TaxonomyType.PAS);			
+			//WDEV-20278
+//			mos = mosAdmin.getMemberOfStaffByTaxonomyType(pasCode, TaxonomyType.PAS);			
+			mos = mosAdmin.getMemberOfStaffByTaxonomyType(pasCode, providerSystem.getCodeSystem()); //WDEV-20278			
 		}
 		
 		if (mos == null && nationalCode != null && nationalCode.length() > 0)
@@ -394,8 +432,10 @@ public class M02VoMapper extends VoMapper
 		GP gpVo = gpAdmin.getGPByTaxonomyType(nationalCode, TaxonomyType.NAT_GP_CODE);
 		
 		if (gpVo == null && pasCode != null)  // Try by PAS CODE
-			gpVo = gpAdmin.getGPByTaxonomyType(pasCode, TaxonomyType.PAS);
-			
+			//WDEV-20278
+			// gpVo = gpAdmin.getGPByTaxonomyType(pasCode, TaxonomyType.PAS);
+			gpVo = gpAdmin.getGPByTaxonomyType(pasCode, providerSystem.getCodeSystem()); //WDEV-20278
+		
 		// GP Practices
 		GpToPracticesVoCollection coll = new GpToPracticesVoCollection();
 
@@ -425,7 +465,9 @@ public class M02VoMapper extends VoMapper
 			gpVo.setEmailAddress(stf.getEMailAddress(0).getValue());
 		}
 		if (pasCode != null)
-			gpVo.setExternalCode(TaxonomyType.PAS, pasCode);
+			//WDEV-20278
+			//gpVo.setExternalCode(TaxonomyType.PAS, pasCode);
+			gpVo.setExternalCode(providerSystem.getCodeSystem(), pasCode); //WDEV-20278
 
 		// TODO check this out
 		// Multiple practices seems to be handled funny with hapi
@@ -438,18 +480,23 @@ public class M02VoMapper extends VoMapper
 		LOC loc = getNextLOC(mfn_m02, i);
 		while (loc != null)
 		{
-			OrganisationVo orgVo = populateOrganisationFromLOC(loc,mfn_m02.getPRA(),providerSystem);
+			OrganisationVo orgVo = populatePracticeFromLOC(loc,mfn_m02.getPRA(),providerSystem);
 			String segName = (i == 0) ? "LOC" : "LOC" + (i+1);
 			int surgeryCount = mfn_m02.currentReps(segName);
+			PRA pra  = mfn_m02.getPRA();
 			for (int j = 0; j < surgeryCount; j++)
 			{
 				loc = (LOC) mfn_m02.get(segName, j);
-				LocSiteVo siteVo = populateLocSiteFromLOC(loc, stf, orgVo,providerSystem);
+				LocSiteVo siteVo = populateSurgeryFromSTForLOC(pra,loc, stf, orgVo,providerSystem);
 
 				//WDEV-9447 - iterate through current collection to see if this Locsite is already there
 				//if it is, compare all fields - if all equal add as normal, if not, delete and add as new one
 				//this method will delete the surgery if it's there and modified.
-				checkModifiedSurgery(orgVo.getLocationSites(),siteVo);				
+				checkModifiedSurgery(orgVo.getLocationSites(),siteVo);		
+				if(orgVo.getLocationSites().contains(siteVo))
+				{
+					orgVo.getLocationSites().remove(siteVo);
+				}
 				orgVo.getLocationSites().add(siteVo);				
 				orgVo = saveOrganisation(orgVo);
 				
@@ -458,9 +505,7 @@ public class M02VoMapper extends VoMapper
 			//WDEV-9674
 			if (ConfigFlag.HL7.HEARTS_GP_MODEL.getValue() == true)
 			{
-				//PRA[10] (Date Left practice determines if we've to de-activet/remove the link)				
-				PRA pra  = mfn_m02.getPRA();				
-				addOrRemoveLink(coll,pra,gpVo,orgVo,i);								
+				addOrRemoveLink(coll,pra,gpVo,orgVo,i,nationalCode);								
 			}
 			else
 				linkGPtoPractice(coll,gpVo,orgVo,i,false);			
@@ -469,10 +514,14 @@ public class M02VoMapper extends VoMapper
 			//In Hearts, if GP has practices, it's active. end of story.
 			if (ConfigFlag.HL7.HEARTS_GP_MODEL.getValue() == true)
 			{
-				if(coll.size() > 0)
-					gpVo.setStatus(GPStatus.ACTIVE);
-				else
-					gpVo.setStatus(GPStatus.INACTIVE);
+				orgVo=updatePracticeStatus(orgVo); //http://jira/browse/WDEV-18379
+				gpVo.setPractices(coll);
+				gpVo = updateGpStatus(gpVo);
+				
+//				if(coll.size() > 0)
+//					gpVo.setStatus(GPStatus.ACTIVE);
+//				else
+//					gpVo.setStatus(GPStatus.INACTIVE);
 			}
 			else
 				gpVo.setStatus(GPStatus.ACTIVE);
@@ -485,12 +534,111 @@ public class M02VoMapper extends VoMapper
 		return gpVo;
 	}
 	
-	private void addOrRemoveLink(GpToPracticesVoCollection coll, PRA pra, GP gpVo, OrganisationVo orgVo, int i) throws HL7Exception
+	/*
+	 * checks the active status of all the contained surgeries and 
+	 * updates the practice status
+	 */
+	private OrganisationVo updatePracticeStatus(OrganisationVo practiceVo)
+	{
+	if(practiceVo!=null&&practiceVo.getLocationSitesIsNotNull()&&practiceVo.getLocationSites().size()>0)
+	{
+		practiceVo.setIsActive(Boolean.FALSE); //inactive 
+		for (LocSiteVo surgery : practiceVo.getLocationSites())
+		{
+			if(surgery.getIsActiveIsNotNull()&&surgery.getIsActive().equals(Boolean.TRUE))
+			{
+				practiceVo.setIsActive(Boolean.TRUE); // if there is an active surgery the practice is active
+				break;
+			}
+		}
+	}
+	return practiceVo;
+	}
+
+	
+	/*
+	 * updates the GP status to active if linked to any active practices/surgeries
+	 */
+	private GP updateGpStatus(GP gp)
+	{
+		if(gp!=null)
+		{
+			gp.setStatus(GPStatus.INACTIVE);
+			String gMCCode = gp.getNationalCode();
+			if(gp.getPracticesIsNotNull()&&gp.getPractices().size()>0 &&gMCCode!=null)
+			{
+				for (GpToPracticesVo gpToPracticesVo : gp.getPractices())
+				{
+					if(gpToPracticesVo.getPracticeIsNotNull()&&gpToPracticesVo.getPractice().getIsActive()!=null&&gpToPracticesVo.getPractice().getIsActive())
+					{
+						if(gpToPracticesVo.getPractice().getLocationSitesIsNotNull()&&gpToPracticesVo.getPractice().getLocationSites().size()>0)
+						{
+							for (LocSiteVo surgery : gpToPracticesVo.getPractice().getLocationSites()) {
+								if(surgery.getIsActiveIsNotNull() && 
+										surgery.getIsActive().equals(Boolean.TRUE)&&
+										surgery.getPasCode()!=null&&
+										gMCCode!=null&&
+										gMCCode.trim()!=null&&
+										surgery.getPasCode().toUpperCase().matches("\\S+_"+gMCCode.trim().toUpperCase()+"_\\S+")) //http://jira/browse/WDEV-15535 changed filter from PAS to GMC 
+								{
+									gp.setStatus(GPStatus.ACTIVE);
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return gp;
+	}
+	
+	
+	private boolean containsSurgeryForGp(OrganisationWithSitesVo practice, String gMCCode)
+	{
+		if(practice != null 
+				&&practice.getLocationSitesIsNotNull()&&practice.getLocationSites().size()>0)
+		{
+			for (LocSiteVo surgery : practice.getLocationSites()) {
+				if(surgery.getIsActiveIsNotNull() && 
+						surgery.getIsActive().equals(Boolean.TRUE)&&
+						surgery.getPasCode()!=null&&
+						gMCCode!=null&&
+						gMCCode.trim()!=null&&
+						surgery.getPasCode().toUpperCase().matches("\\S+_"+gMCCode.trim().toUpperCase()+"_\\S+")) //http://jira/browse/WDEV-15535 changed filter from PAS to GMC 
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	
+	
+	
+	private boolean containsPrimary(GpToPracticesVoCollection coll)
+	{
+		if (coll!=null)
+		{
+			for (GpToPracticesVo gpToPracticesVo : coll)
+			{
+				if(gpToPracticesVo.getIsPrimaryPracticeIsNotNull()
+						&&gpToPracticesVo.getIsPrimaryPractice().equals(Boolean.TRUE))
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	private void addOrRemoveLink(GpToPracticesVoCollection coll, PRA pra, GP gpVo, OrganisationVo practiceVo, int i,String gpNatCode) throws HL7Exception
 	{
 		boolean bSetPrimary = false;
 		boolean bLinked = false;
 		
-		String natCode = pra.getPractitionerGroup(0).getIdentifier().getValue();
+		String practiceNatCode = pra.getPractitionerGroup(0).getIdentifier().getValue();
 		if (pra.getPractitionerCategory().length > 0 && pra.getPractitionerCategory(0).getValue().equalsIgnoreCase("M")) bSetPrimary = true;
 		
 		DateTime dateLeft = null;
@@ -512,25 +660,34 @@ public class M02VoMapper extends VoMapper
 			{
 				if (coll.get(j).getPracticeIsNotNull() && coll.get(j).getPractice().getCodeMappingsIsNotNull())
 				{									
-					if (coll.get(j).getPractice().getNationalLocCode() != null && coll.get(j).getPractice().getNationalLocCode().equals(natCode))
+					if (coll.get(j).getPractice().getNationalLocCode() != null 
+							&& coll.get(j).getPractice().getNationalLocCode().equals(practiceNatCode))
 					{
 						bLinked = true;
 						break;
 					}
 				}
 			}
-			if (bLinked && dateLeft != null && dateLeft.isLessOrEqualThan(today))
+			
+			if (bLinked && dateLeft != null && dateLeft.isLessOrEqualThan(today)) //if in collection and not active any more -- remove
 			{
-				coll.get(j).setPractice(orgVo); //http://jira/browse/WDEV-12049 caused a SOE
-				coll.remove(j);
+				coll.get(j).setPractice(practiceVo); //http://jira/browse/WDEV-12049 caused a SOE
+				if(!containsSurgeryForGp(practiceVo,gpNatCode))
+				{
+					coll.remove(j); //remove if not hearts!
+				}
+				if(!containsPrimary(coll)&&coll.size()>0)
+				{
+					coll.get(0).setIsPrimaryPractice(Boolean.TRUE);
+				}
 			}
 			else if ( (dateLeft == null || dateLeft.isGreaterThan(today)))
 			{
 				if (!bLinked)
-					linkGPtoPractice(coll,gpVo,orgVo,i,bSetPrimary);
+					linkGPtoPractice(coll,gpVo,practiceVo,i,bSetPrimary);
 				else
 				{
-					coll.get(j).setPractice(orgVo);
+					coll.get(j).setPractice(practiceVo);
 					coll.get(j).setIsPrimaryPractice(bSetPrimary);
 					// http://jira/browse/WDEV-12050 set all the others to not primary if this is primary
 					if(bSetPrimary)
@@ -592,11 +749,6 @@ public class M02VoMapper extends VoMapper
 		{
 			orgVo = orgLoc.saveOrganisation(orgVo);
 		}
-//		catch (StaleObjectException e)
-//		{
-//			LOG.error("GP Practice has been modified by another user/process - please try again");
-//			throw new HL7Exception("LocationSite has been modified by another user/process - please try again", e);
-//		}
 		catch (UniqueKeyViolationException e)
 		{
 			LOG.error("UniqueKeyViolationException occurred saving GP Practice " + e.getMessage(), e);
@@ -717,7 +869,7 @@ public class M02VoMapper extends VoMapper
 		}
 	}
 	
-	private OrganisationVo populateOrganisationFromLOC(LOC loc,PRA pra,ProviderSystemVo providerSystem) throws HL7Exception
+	private OrganisationVo populatePracticeFromLOC(LOC loc,PRA pra,ProviderSystemVo providerSystem) throws HL7Exception
 	{
 		String practiceCode = loc.getPrimaryKeyValueLOC().getPointOfCare().getValue();
 		
@@ -728,42 +880,113 @@ public class M02VoMapper extends VoMapper
 		}
 		// wdev-11515 end
 		
-		
-		OrganisationVo vo = orgLoc.getOrganisationByTaxonomyType(practiceCode, TaxonomyType.NAT_LOC_CODE);
-		if (vo == null)
+		boolean newPractice=false;
+		OrganisationVo practiceVo = orgLoc.getOrganisationByTaxonomyType(practiceCode, TaxonomyType.NAT_LOC_CODE);
+		if (practiceVo == null)
 		{
-			vo = new OrganisationVo();
-			vo.setIsActive(Boolean.TRUE);
-			vo.setType(OrganisationType.GPP);
-			vo.setCodeMappings(new TaxonomyMapCollection());
+			newPractice=true;
+			practiceVo = new OrganisationVo();
+			practiceVo.setIsActive(Boolean.TRUE);
+			practiceVo.setType(OrganisationType.GPP);
+			practiceVo.setCodeMappings(new TaxonomyMapCollection());
 			TaxonomyMap map = new TaxonomyMap();
 			map.setTaxonomyCode(practiceCode);
 			map.setTaxonomyName(TaxonomyType.NAT_LOC_CODE);
-			vo.getCodeMappings().add(map);
-			vo.setLocationSites(new LocSiteVoCollection());
-		}	
-		if (pra.getDateLeftPractice().getValue()==null) //http://jira/browse/WDEV-12049
-		{
-			if (loc.getLocationDescription().getValue()==null||loc.getLocationDescription().getValue().equals(Hl7Null))
+			practiceVo.getCodeMappings().add(map);
+			practiceVo.setLocationSites(new LocSiteVoCollection());
+			//http://jira/browse/WDEV-18379
+			if (ConfigFlag.HL7.HEARTS_GP_MODEL.getValue() == true)
 			{
-				throw new HL7Exception("Practice Name (Location Description, LOC-2) is Mandatory");
+				DateTime dateLeft=null;
+				if (pra.getDateLeftPractice().getValue() != null)
+				{
+					try 
+					{
+						dateLeft = new DateTime(pra.getDateLeftPractice().getValue());
+					} catch (ParseException e)
+					{
+						e.printStackTrace();
+						throw new HL7Exception("Error parsing PRA-10 (Date Left Practice)");
+					}
+					DateTime today = new DateTime();
+					if(dateLeft != null && dateLeft.isLessOrEqualThan(today))
+					{
+						practiceVo.setIsActive(Boolean.FALSE);
+					}
+					else
+					{
+						practiceVo.setIsActive(Boolean.TRUE);
+					}
+				}
+				else
+				{
+					practiceVo.setIsActive(Boolean.TRUE);
+				}
 			}
-			vo.setName(loc.getLocationDescription().getValue());
-			vo.setAddress(populateAddressVoFromXAD(vo.getAddress(), loc.getLocationAddress(0),providerSystem, AddressType.ORGANISATION));
-			if (vo.getAddress() != null)
+		}	
+		if (pra.getDateLeftPractice().getValue()==null||newPractice) //http://jira/browse/WDEV-12049
+		{
+			if(ConfigFlag.HL7.HEARTS_GP_MODEL.getValue() == true) //Hearts does not hold the pratctice name
 			{
-				vo.getAddress().setPhone(loc.getLocationPhone(0).getAnyText().getValue());
-				vo.getAddress().setAddressType(AddressType.PRACTICE);
+				String practiceName = getPracticeNameFromAddress(loc.getLocationAddress(0));
+				if(practiceName !=null) //http://jira/browse/WDEV-18795
+				{
+					practiceVo.setName(practiceName);
+				}
+				
+				if(practiceVo.getName() ==null)
+				{
+					throw new HL7Exception("Practice Name is a Mandatory field");
+				}
+//				practiceVo.setName(practiceName);
+			}
+			else
+			{
+				if (loc.getLocationDescription().getValue()==null||loc.getLocationDescription().getValue().equals(Hl7Null))
+				{
+					throw new HL7Exception("Practice Name (Location Description, LOC-2) is Mandatory");
+				}
+				practiceVo.setName(loc.getLocationDescription().getValue());
+			}
+			practiceVo.setAddress(populateAddressVoFromXAD(practiceVo.getAddress(), loc.getLocationAddress(0),providerSystem, AddressType.ORGANISATION));
+			if (practiceVo.getAddress() != null)
+			{
+				practiceVo.getAddress().setPhone(loc.getLocationPhone(0).getAnyText().getValue());
+				practiceVo.getAddress().setAddressType(AddressType.PRACTICE);
 				
 				// WDEV-16839 If the Address PCT/CCG value is set, set it at this root level too
-				if (vo.getAddress().getPCTIsNotNull())
-					vo.setPctCode(vo.getAddress().getPCT());
+				if (practiceVo.getAddress().getPCTIsNotNull())
+					practiceVo.setPctCode(practiceVo.getAddress().getPCT());
 			}
+
 			//WDEV-9447
-			vo.setCommChannels(populateCommChannels(loc,null));
+			practiceVo.setCommChannels(populateCommChannels(loc,null));
 
 		} //end http://jira/browse/WDEV-12049
-		return vo;
+		return practiceVo;
+	}
+	
+	private String getPracticeNameFromAddress(XAD xad)
+	{
+		if(xad!=null)
+		{
+			String line = xad.getStreetAddress().getStreetOrMailingAddress().getValue();
+			if (line != null && !line.equals(Hl7Null))
+				return line;
+			line = xad.getOtherDesignation().getValue();
+			if (line != null && !line.equals(Hl7Null))
+				return line;
+			line = xad.getCity().getValue();
+			if (line != null && !line.equals(Hl7Null))
+				return line;
+			line = xad.getStateOrProvince().getValue();
+			if (line != null && !line.equals(Hl7Null))
+				return line;
+			line = xad.getOtherGeographicDesignation().getValue();
+			if (line != null && !line.equals(Hl7Null))
+				return line;
+		}
+		return null;
 	}
 	
 	private CommChannelVoCollection populateCommChannels(LOC loc, STF stf) throws HL7Exception
@@ -789,60 +1012,559 @@ public class M02VoMapper extends VoMapper
 		return commChannels; 
 	}
 	
-	private LocSiteVo populateLocSiteFromLOC(LOC loc, STF stf, OrganisationVo parentOrg,ProviderSystemVo providerSystem) throws HL7Exception
+	private LocSiteVo populateSurgeryFromSTForLOC(PRA pra,LOC loc, STF stf, OrganisationVo parentOrg,ProviderSystemVo providerSystem) throws HL7Exception
 	{
 		String practiceCode = loc.getPrimaryKeyValueLOC().getPointOfCare().getValue();
 		String surgeryCode = loc.getPrimaryKeyValueLOC().getComponent(0).getExtraComponents().getComponent(0).getData().toString();
 		String practiceSurgeryCode = practiceCode + "_" + surgeryCode;
-	
-		LocSiteVo vo = orgLoc.getLocSiteByTaxonomyType(practiceSurgeryCode, TaxonomyType.PAS);
-		if (vo == null)
+
+		//WDEV-20278
+//		LocSiteVo surgery = orgLoc.getLocSiteByTaxonomyType(practiceSurgeryCode, TaxonomyType.PAS);
+		LocSiteVo surgery = orgLoc.getLocSiteByTaxonomyType(practiceSurgeryCode, providerSystem.getCodeSystem()); //WDEV-20278
+		if (surgery == null)
 		{
-			vo = new LocSiteVo();
-			vo.setIsActive(Boolean.TRUE);
-			vo.setType(LocationType.SURGERY);
-			vo.setCodeMappings(new TaxonomyMapCollection());
+			surgery = new LocSiteVo();
+			surgery.setIsActive(Boolean.TRUE);
+			surgery.setType(LocationType.SURGERY);
+			surgery.setCodeMappings(new TaxonomyMapCollection());
 			TaxonomyMap map = new TaxonomyMap();
 			map.setTaxonomyCode(practiceSurgeryCode);
-			map.setTaxonomyName(TaxonomyType.PAS);
-			vo.getCodeMappings().add(map);
-			vo.setIsVirtual(Boolean.FALSE);
-			vo.setAddress(new PersonAddress());
+			//WDEV-20278
+//			map.setTaxonomyName(TaxonomyType.PAS);
+			map.setTaxonomyName(providerSystem.getCodeSystem()); //WDEV-20278
+			surgery.getCodeMappings().add(map);
+			surgery.setIsVirtual(Boolean.FALSE);
+			surgery.setAddress(new PersonAddress());
 
 		}			
-		vo.setName(loc.getLocationDescription().getValue() + " - Surgery " + surgeryCode);
-		if (vo.getAddress() == null)
-			vo.setAddress(new PersonAddress());
+		surgery.setName(loc.getLocationDescription().getValue() + " - Surgery " + surgeryCode);
+		if (surgery.getAddress() == null)
+			surgery.setAddress(new PersonAddress());
 		
 		//WDEV-9447
 		//if office address provided in STF segment, use that for surgery, otherwise use the LOC details.
 		if (stf.getOfficeHomeAddress().length > 0)
 		{
-			vo.setAddress(populateAddressVoFromXAD(vo.getAddress(), stf.getOfficeHomeAddress(0),providerSystem, AddressType.SURGERY));
-			if (vo.getAddressIsNotNull()) //address may have been cleared/blanked
-				vo.getAddress().setPhone(stf.getPhone(0).getAnyText().getValue());
-			vo.setCommChannels(populateCommChannels(null,stf));				
+			surgery.setAddress(populateAddressVoFromXAD(surgery.getAddress(), stf.getOfficeHomeAddress(0),providerSystem, AddressType.SURGERY));
+			if (surgery.getAddressIsNotNull()) //address may have been cleared/blanked
+				surgery.getAddress().setPhone(stf.getPhone(0).getAnyText().getValue());
+			surgery.setCommChannels(populateCommChannels(null,stf));				
 		}
-		else
+		else if (ConfigFlag.HL7.HEARTS_GP_MODEL.getValue() != true) // Never update the Surgery from the LOC address for HEARTS WDEV-18378
 		{
-			vo.setAddress(populateAddressVoFromXAD(vo.getAddress(), loc.getLocationAddress(0),providerSystem, AddressType.SURGERY));
-			if (vo.getAddressIsNotNull()) //address may have been cleared/blanked
-				vo.getAddress().setPhone(loc.getLocationPhone(0).getAnyText().getValue());
-			vo.setCommChannels(populateCommChannels(loc,null));				
+			surgery.setAddress(populateAddressVoFromXAD(surgery.getAddress(), loc.getLocationAddress(0),providerSystem, AddressType.SURGERY));
+			if (surgery.getAddressIsNotNull()) //address may have been cleared/blanked
+				surgery.getAddress().setPhone(loc.getLocationPhone(0).getAnyText().getValue());
+			surgery.setCommChannels(populateCommChannels(loc,null));				
 		}
-		if(vo.getAddressIsNotNull())
+		if(surgery.getAddressIsNotNull())
 		{
-			vo.getAddress().setAddressType(AddressType.SURGERY);
+			surgery.getAddress().setAddressType(AddressType.SURGERY);
 		}
-		
-		vo.setParentOrganisation(parentOrg);
-		return vo;
+		if (ConfigFlag.HL7.HEARTS_GP_MODEL.getValue() == true)
+		{
+			DateTime dateLeft=null;
+			if (pra.getDateLeftPractice().getValue() != null)
+			{
+				try 
+				{
+					dateLeft = new DateTime(pra.getDateLeftPractice().getValue());
+				} catch (ParseException e)
+				{
+					e.printStackTrace();
+					throw new HL7Exception("Error parsing PRA-10 (Date Left Practice)");
+				}
+				DateTime today = new DateTime();
+				if(dateLeft != null && dateLeft.isLessOrEqualThan(today))
+				{
+					surgery.setIsActive(Boolean.FALSE);
+				}
+				else
+				{
+					surgery.setIsActive(Boolean.TRUE);
+					parentOrg.setIsActive(Boolean.TRUE);
+				}
+			}
+			else
+			{
+				surgery.setIsActive(Boolean.TRUE);
+				parentOrg.setIsActive(Boolean.TRUE);
+			}
+		}
+		surgery.setParentOrganisation(parentOrg);
+		return surgery;
 	}
 	
+	//WDEV-19576
+	public Message populateMessage(IHL7OutboundMessageHandler event) throws Exception
+	{
+		LOG.debug("M02VoMapper populateMessage: entry");
+		MFN_M02 message = new MFN_M02();
+		MFI mfi = message.getMFI();
+		MFE mfe = message.getMFN_M02_MFESTFPRAORG().getMFE();
+		STF stf = message.getMFN_M02_MFESTFPRAORG().getSTF();
+		PRA pra = message.getMFN_M02_MFESTFPRAORG().getPRA();
+		
+		if(event instanceof GPMessageQueueVo)
+		{
+			GPMessageQueueVo feedVo = (GPMessageQueueVo)event;
+			ifGPMessageQueueVo gPDetails = adt.getGPMessageQueueDetails(feedVo);
+			
+			//MFI-1 Master file identifier (CE) 
+			mfi.getMasterFileIdentifier().getIdentifier().setValue("PRA");
+
+			//MFI-4 Entered Date Time (ST)
+			if(gPDetails != null
+					&& gPDetails.getSystemInformation() != null
+					&& gPDetails.getSystemInformation().getLastupdateDateTime() != null)
+			{
+				mfi.getEnteredDateTime().getTimeOfAnEvent().setValue(gPDetails.getSystemInformation().getLastupdateDateTime().toString(DateTimeFormat.ISO));
+			}
+			else if(gPDetails != null
+					&& gPDetails.getSystemInformation() != null
+					&& gPDetails.getSystemInformation().getCreationDateTime() != null)
+			{
+				mfi.getEnteredDateTime().getTimeOfAnEvent().setValue(gPDetails.getSystemInformation().getCreationDateTime().toString(DateTimeFormat.ISO));
+			}
+
+			//MFE-1 Record Level Event Code (ID) 
+			//[MAD for new record, MUP for updated record]
+			mfe.getRecordLevelEventCode().setValue("MAD");
+			if(gPDetails != null
+					&& gPDetails.getSystemInformation() != null 
+					&& gPDetails.getSystemInformation().getLastupdateDateTime()!=null)
+				mfe.getRecordLevelEventCode().setValue("MUP");
+
+			//MFE-4 Primary key value (Varies) 
+			//[All MemberOfStaff code mappings as repeating fields]
+			TaxonomyMapCollection codeMappings = gPDetails.getCodeMappings();
+			if(codeMappings != null)
+			{
+				for (int i=0; i<codeMappings.size(); i++)
+				{
+					CE type = new CE();
+					if(codeMappings.get(i).getTaxonomyCode() != null 
+							&& codeMappings.get(i).getTaxonomyCode().length() > 0
+							&& codeMappings.get(i).getTaxonomyName().getText() != null
+							&& codeMappings.get(i).getTaxonomyName().getText().length() > 0)
+					{
+						type.getIdentifier().setValue(codeMappings.get(i).getTaxonomyCode());
+						type.getText().setValue(codeMappings.get(i).getTaxonomyName().getText());
+						mfe.getPrimaryKeyValueMFE(i).setData(type);
+					}
+				}
+			}
+			
+			//STF-1 Primary key value (CE)
+			//PRA-1 Primary key value (CE)
+			if(codeMappings != null)
+			{
+				for (TaxonomyMap taxonomyMap : codeMappings)
+				{
+					if(taxonomyMap.getTaxonomyCode() != null
+						&& taxonomyMap.getTaxonomyCode().length() > 0
+						&& taxonomyMap.getTaxonomyName().equals(TaxonomyType.NAT_GP_CODE))
+					{
+						stf.getPrimaryKeyValueSTF().getIdentifier().setValue(taxonomyMap.getTaxonomyCode().toString());
+						stf.getPrimaryKeyValueSTF().getNameOfCodingSystem().setValue(taxonomyMap.getTaxonomyName().toString());
+						pra.getPrimaryKeyValuePRA().getIdentifier().setValue(taxonomyMap.getTaxonomyCode());
+						pra.getPrimaryKeyValuePRA().getText().setValue(taxonomyMap.getTaxonomyName().toString());
+						break;
+					}
+				}
+			}
+			
+			//STF-2 Staff ID code (CX) 
+			//[Repeating field all GP code mappings]
+			if(codeMappings!=null)
+			{
+				for (int i=0; i<codeMappings.size(); i++)
+				{
+					if(codeMappings.get(i).getTaxonomyName() != null
+						&& codeMappings.get(i).getTaxonomyName().getText().length() > 0
+						&& codeMappings.get(i).getTaxonomyCode() != null
+						&& codeMappings.get(i).getTaxonomyCode().length() > 0)
+					{
+						stf.getStaffIDCode(i).getID().setValue(codeMappings.get(i).getTaxonomyCode());
+						stf.getStaffIDCode(i).getIdentifierTypeCode().setValue(codeMappings.get(i).getTaxonomyName().toString());
+					}
+				}
+			}
+			
+			//STF-3 Staff name (XPN)
+			if(gPDetails != null
+					&& gPDetails.getName() !=null)
+			{
+				renderNameVoToXPN(gPDetails.getName(), stf.getStaffName(0), event.getProviderSystem());
+			}
+
+			//STF-4 Staff type (IS)
+			stf.getStaffType(0).setValue("GP");
+
+			//STF-7 Active/inactive flag (ID)
+			if(gPDetails != null
+					&& gPDetails.getStatus() !=null 
+					&& gPDetails.getStatus().getId()==GPStatus.ACTIVE.getID())
+			{
+				stf.getActiveInactiveFlag().setValue("A");
+			}
+			else stf.getActiveInactiveFlag().setValue("I");
+						
+			//STF-10 Phone (XTN)
+			if(gPDetails != null
+					&& gPDetails.getCommChannelsIsNotNull())
+			{
+				int comChannelCount = 0;
+				
+				for (int i=0; i<gPDetails.getCommChannels().size(); i++)
+				{
+					CommChannelVo commVo = gPDetails.getCommChannels().get(i);
+					
+					if(commVo.getCommValue() != null && commVo.getCommValue().length() > 0)
+					{
+						if(commVo.getChannelType().equals(ChannelType.EMAIL))
+						{
+							stf.getPhone(comChannelCount).getTelecommunicationUseCode().setValue("NET");
+							stf.getPhone(comChannelCount).getTelecommunicationEquipmentType().setValue("Internet");
+							stf.getPhone(comChannelCount).getAnyText().setValue(commVo.getCommValue());
+							comChannelCount++;
+						}
+							
+						else if(commVo.getChannelType().equals(ChannelType.MOBILE))
+						{
+							stf.getPhone(comChannelCount).getTelecommunicationUseCode().setValue("ORN");
+							stf.getPhone(comChannelCount).getTelecommunicationEquipmentType().setValue("CP");
+							stf.getPhone(comChannelCount).getAnyText().setValue(commVo.getCommValue());						
+							comChannelCount++;
+						}
+						
+						else if(commVo.getChannelType().equals(ChannelType.GEN_PHONE))
+						{
+							stf.getPhone(comChannelCount).getTelecommunicationUseCode().setValue("PRN");
+							stf.getPhone(comChannelCount).getTelecommunicationEquipmentType().setValue("PH");
+							stf.getPhone(comChannelCount).getAnyText().setValue(commVo.getCommValue());						
+							comChannelCount++;
+						}
+	
+						else if(commVo.getChannelType().equals(ChannelType.HOME_PHONE))
+						{
+							stf.getPhone(comChannelCount).getTelecommunicationUseCode().setValue("PRN");
+							stf.getPhone(comChannelCount).getTelecommunicationEquipmentType().setValue("PH");
+							stf.getPhone(comChannelCount).getAnyText().setValue(commVo.getCommValue());												
+							comChannelCount++;
+						}
+						
+						else if(commVo.getChannelType().equals(ChannelType.FAX))
+						{
+							stf.getPhone(comChannelCount).getTelecommunicationUseCode().setValue("WPN");
+							stf.getPhone(comChannelCount).getTelecommunicationEquipmentType().setValue("FX");
+							stf.getPhone(comChannelCount).getAnyText().setValue(commVo.getCommValue());												
+							comChannelCount++;
+						}
+	
+						else if(commVo.getChannelType().equals(ChannelType.WORK_PHONE))
+						{
+							stf.getPhone(comChannelCount).getTelecommunicationUseCode().setValue("WPN");
+							stf.getPhone(comChannelCount).getTelecommunicationEquipmentType().setValue("PH");
+							stf.getPhone(comChannelCount).getAnyText().setValue(commVo.getCommValue());
+							comChannelCount++;
+						}
+						
+						else if(commVo.getChannelType().equals(ChannelType.BLEEP))
+						{
+							stf.getPhone(comChannelCount).getTelecommunicationUseCode().setValue("BPN");
+							stf.getPhone(comChannelCount).getTelecommunicationEquipmentType().setValue("BP");
+							stf.getPhone(comChannelCount).getAnyText().setValue(commVo.getCommValue());
+							comChannelCount++;
+						}
+
+					}
+				}
+			}						
+			
+			//STF-11 Office/home address (XAD)
+//			if(gPDetails != null
+//					&& gPDetails.getPractices() != null
+//					&& gPDetails.getPractices().get(0) != null
+//					&& gPDetails.getPractices().get(0).getPractice() != null
+//					&& gPDetails.getPractices().get(0).getPractice().getAddress() != null)
+//			{
+//				AddressVo addressVo = gPDetails.getPractices().get(0).getPractice().getAddress();
+//				if(addressVo!=null)
+//				{
+//					 renderOrgAddressVoToXAD(addressVo, stf.getOfficeHomeAddress(0), event.getProviderSystem());
+//				}
+//			}
+			//WDEV-20039 Ensure that M02VoMapper traps empty GP practices collection
+//			if(gPDetails.getPractices() != null)
+			if(gPDetails != null
+				&& gPDetails.getPractices() != null) //WDEV-20039
+			{
+				int addressIterator = 0; //WDEV-22691
+				for (int i=0; i<gPDetails.getPractices().size(); i++)
+				{
+					if(gPDetails.getPractices().get(i) != null
+						&& gPDetails.getPractices().get(i).getPractice() != null
+						&& gPDetails.getPractices().get(i).getPractice().getAddress() != null)
+						{
+							AddressVo addressVo = gPDetails.getPractices().get(i).getPractice().getAddress();
+							//WDEV-22691
+//							if(addressVo != null)
+//								renderOrgAddressVoToXAD(addressVo, stf.getOfficeHomeAddress(i), event.getProviderSystem());
+							if (addressVo != null)
+							{
+								renderOrgAddressVoToXAD(addressVo, stf.getOfficeHomeAddress(addressIterator), event.getProviderSystem());
+								addressIterator++;
+							} //WDEV-22691
+						}
+				}
+			}
+		
+
+			//PRA-2 Practitioner group (CE) 
+			//[Repeating list of Practice National Codes where GP works - external code type is NAT_LOC_CODE]
+			// Note: Possible for there to be multiple mappings per practice. Hence the loop within a loop!
+			if(gPDetails != null
+					&& gPDetails.getPractices() != null)
+			{
+				int pracGroupIterator = 0; //WDEV-22691
+				for (int i=0; i<gPDetails.getPractices().size(); i++)
+				{
+//					if(gPDetails.getPractices().get(i).getPractice().getCodeMappings() != null) //WDEV-22597
+					if (gPDetails.getPractices().get(i).getPractice() != null
+							&& gPDetails.getPractices().get(i).getPractice().getCodeMappings() != null)
+					{
+						for (int j=0; j<gPDetails.getPractices().get(i).getPractice().getCodeMappings().size(); j++)
+						{
+							TaxonomyMap codeMapping = gPDetails.getPractices().get(i).getPractice().getCodeMappings().get(j);
+							if(codeMapping.getTaxonomyCode() != null
+									&& codeMapping.getTaxonomyCode().length() > 0
+									&& codeMapping.getTaxonomyName().equals(TaxonomyType.NAT_LOC_CODE))
+							{
+								// WDEV-22691
+//								pra.getPractitionerGroup(i).getIdentifier().setValue(codeMapping.getTaxonomyCode());
+//								pra.getPractitionerGroup(i).getNameOfCodingSystem().setValue(codeMapping.getTaxonomyName().toString());
+								pra.getPractitionerGroup(pracGroupIterator).getIdentifier().setValue(codeMapping.getTaxonomyCode());
+								pra.getPractitionerGroup(pracGroupIterator).getNameOfCodingSystem().setValue(codeMapping.getTaxonomyName().toString());
+								pracGroupIterator ++; //WDEV-22691
+							}							
+						}
+					}
+				}
+			}
+
+			//PRA-3 Practitioner category  (IS)
+			pra.getPractitionerCategory(0).setValue("GP");
+
+		}
+		
+		
+		
+		
+		else if(event instanceof MOSMessageQueueVo)
+		{
+			MOSMessageQueueVo feedVo = (MOSMessageQueueVo)event;
+			ifMOSMessageQueueVo mosDetails = adt.getMOSMessageQueueDetails(feedVo);
+			
+			//MFI-1 Master file identifier (CE) 
+			mfi.getMasterFileIdentifier().getIdentifier().setValue("STF");
+
+			//MFI-4 Entered date/time (TS)
+			if(mosDetails.getSystemInformation().getLastupdateDateTime()!= null)
+			{
+				mfi.getEnteredDateTime().getTimeOfAnEvent().setValue(mosDetails.getSystemInformation().getLastupdateDateTime().toString(DateTimeFormat.ISO));
+			}
+			else if(mosDetails.getSystemInformation().getCreationDateTime() != null)
+			{
+				mfi.getEnteredDateTime().getTimeOfAnEvent().setValue(mosDetails.getSystemInformation().getCreationDateTime().toString(DateTimeFormat.ISO));
+			}
+			
+			//MFE-1 Record Level Event Code (ID) [MAD for new, MUP for update]
+			mfe.getRecordLevelEventCode().setValue("MAD");
+			if(mosDetails.getSystemInformation().getLastupdateDateTime() != null)
+				mfe.getRecordLevelEventCode().setValue("MUP");
+
+			//MFE-4 Primary key value0 (Varies) 
+			//[All MemberOfStaff code mappings as repeating fields]
+			TaxonomyMapCollection codeMappings = mosDetails.getCodeMappings();
+			if(codeMappings != null)
+			{
+				for (int i=0; i<codeMappings.size(); i++)
+				{
+					CE type = new CE();
+					if(codeMappings.get(i).getTaxonomyCode() != null 
+							&& codeMappings.get(i).getTaxonomyCode().length() > 0
+							&& codeMappings.get(i).getTaxonomyName() != null
+							&& codeMappings.get(i).getTaxonomyName().getText().length() > 0)
+					{
+						type.getIdentifier().setValue(codeMappings.get(i).getTaxonomyCode());
+						type.getText().setValue(codeMappings.get(i).getTaxonomyName().getText());
+						mfe.getPrimaryKeyValueMFE(i).setData(type);
+					}
+				}
+			}
+	
+			//STF-1 Primary key value (CE)
+			if(codeMappings != null)
+			{
+				for (TaxonomyMap taxonomyMap : codeMappings)
+				{
+					if(taxonomyMap.getTaxonomyCode() != null
+							&& taxonomyMap.getTaxonomyCode().length() > 0
+							&& taxonomyMap.getTaxonomyName().equals(TaxonomyType.NAT_CONS_CODE))
+					{
+						stf.getPrimaryKeyValueSTF().getIdentifier().setValue(taxonomyMap.getTaxonomyCode().toString());
+						stf.getPrimaryKeyValueSTF().getNameOfCodingSystem().setValue(taxonomyMap.getTaxonomyName().toString());
+						break;
+					}
+				}
+			}
+			
+			//STF-2 Staff ID code (CX)
+			if(codeMappings != null)
+			{
+				for (int i=0; i<codeMappings.size(); i++)
+				{
+					if(codeMappings.get(i).getTaxonomyCode() != null 
+							&& codeMappings.get(i).getTaxonomyCode().length() > 0
+							&& codeMappings.get(i).getTaxonomyName() != null
+							&& codeMappings.get(i).getTaxonomyName().getText().length() > 0)
+					{
+						stf.getStaffIDCode(i).getID().setValue(codeMappings.get(i).getTaxonomyCode().toString());
+						stf.getStaffIDCode(i).getIdentifierTypeCode().setValue(codeMappings.get(i).getTaxonomyName().getText());
+					}
+				}
+			}
+
+			//STF-3 Staff name (XPN)
+			if(mosDetails.getName() != null)
+			{
+				renderNameVoToXPN(mosDetails.getName(), stf.getStaffName(0), event.getProviderSystem());
+			}
+			
+			//STF-4 Staff type (IS)
+			if(mosDetails.getHcpTypeIsNotNull())
+			{
+				stf.getStaffType(0).setValue(svc.getRemoteLookup(mosDetails.getHcpType().getID(), event.getProviderSystem().getCodeSystem().getText()));
+			}
+			//WDEV-21148
+//			else if(mosDetails.getStaffType().getID() > 0)
+			else if(mosDetails.getStaffTypeIsNotNull()
+					&& mosDetails.getStaffType().getID() > 0)
+			{
+				stf.getStaffType(0).setValue(svc.getRemoteLookup(mosDetails.getStaffType().getID(), event.getProviderSystem().getCodeSystem().getText()));
+			}
+
+			//STF-7 Active/inactive flag (ID)
+			if(mosDetails.getIsActive() !=null && mosDetails.getIsActive().toString().equalsIgnoreCase("TRUE"))
+			{
+				stf.getActiveInactiveFlag().setValue("A");
+			}
+			else stf.getActiveInactiveFlag().setValue("I");
+
+		
+			//STF-10 Phone  (XTN)
+			if(mosDetails.getCommChannels() != null)
+			{
+				int comChannelCount = 0;
+				
+				for (int i=0; i<mosDetails.getCommChannels().size(); i++)
+				{
+					CommChannelVo commVo = mosDetails.getCommChannels().get(i);
+					
+					if(commVo.getCommValue() != null && commVo.getCommValue().length() > 0)
+					{
+						if(commVo.getChannelType().equals(ChannelType.EMAIL))
+						{
+							stf.getPhone(comChannelCount).getTelecommunicationUseCode().setValue("NET");
+							stf.getPhone(comChannelCount).getTelecommunicationEquipmentType().setValue("Internet");
+							stf.getPhone(comChannelCount).getAnyText().setValue(commVo.getCommValue());
+							comChannelCount++;
+						}
+							
+						else if(commVo.getChannelType().equals(ChannelType.MOBILE))
+						{
+							stf.getPhone(comChannelCount).getTelecommunicationUseCode().setValue("ORN");
+							stf.getPhone(comChannelCount).getTelecommunicationEquipmentType().setValue("CP");
+							stf.getPhone(comChannelCount).getAnyText().setValue(commVo.getCommValue());						
+							comChannelCount++;
+						}
+						
+						else if(commVo.getChannelType().equals(ChannelType.GEN_PHONE))
+						{
+							stf.getPhone(comChannelCount).getTelecommunicationUseCode().setValue("PRN");
+							stf.getPhone(comChannelCount).getTelecommunicationEquipmentType().setValue("PH");
+							stf.getPhone(comChannelCount).getAnyText().setValue(commVo.getCommValue());						
+							comChannelCount++;
+						}
+	
+						else if(commVo.getChannelType().equals(ChannelType.HOME_PHONE))
+						{
+							stf.getPhone(comChannelCount).getTelecommunicationUseCode().setValue("PRN");
+							stf.getPhone(comChannelCount).getTelecommunicationEquipmentType().setValue("PH");
+							stf.getPhone(comChannelCount).getAnyText().setValue(commVo.getCommValue());												
+							comChannelCount++;
+						}
+						
+						else if(commVo.getChannelType().equals(ChannelType.FAX))
+						{
+							stf.getPhone(comChannelCount).getTelecommunicationUseCode().setValue("WPN");
+							stf.getPhone(comChannelCount).getTelecommunicationEquipmentType().setValue("FX");
+							stf.getPhone(comChannelCount).getAnyText().setValue(commVo.getCommValue());												
+							comChannelCount++;
+						}
+	
+						else if(commVo.getChannelType().equals(ChannelType.WORK_PHONE))
+						{
+							stf.getPhone(comChannelCount).getTelecommunicationUseCode().setValue("WPN");
+							stf.getPhone(comChannelCount).getTelecommunicationEquipmentType().setValue("PH");
+							stf.getPhone(comChannelCount).getAnyText().setValue(commVo.getCommValue());
+							comChannelCount++;
+						}
+						
+						else if(commVo.getChannelType().equals(ChannelType.BLEEP))
+						{
+							stf.getPhone(comChannelCount).getTelecommunicationUseCode().setValue("BPN");
+							stf.getPhone(comChannelCount).getTelecommunicationEquipmentType().setValue("BP");
+							stf.getPhone(comChannelCount).getAnyText().setValue(commVo.getCommValue());
+							comChannelCount++;
+						}
+
+					}
+				}
+			}
+		}
+		
+				
+		populateMSH( event.getProviderSystem(),  message.getMSH(),Long.toString( new java.util.Date().getTime()),"MFN","M02");
+
+		//MFI-2 Master File Application Identifier (HD)
+		//[same as MSH-3 Sending Application] 
+		if(message.getMSH().getSendingApplication().getNamespaceID().getValue().length() > 0 
+				&& message.getMSH().getSendingApplication().getNamespaceID() != null)
+		{
+			mfi.getMasterFileApplicationIdentifier().getNamespaceID().setValue(message.getMSH().getSendingApplication().getNamespaceID().getValue());
+		}
+		
+		//MFI-3 File Level Event Code (ID)
+		mfi.getFileLevelEventCode().setValue("UPD");
+		
+		//MFI-6 Response level code (ID)
+		mfi.getResponseLevelCode().setValue("NE");
+		
+		//MFE-5 Primary key value (ID)
+		mfe.getPrimaryKeyValueType(0).setValue("CE");
+		
+		return message;
+
+	}
+
+	@Override
 	public Message populateMessage()
 	{
-		// Not required for inbound messages
+		// TODO Auto-generated method stub
 		return null;
 	}
+
 
 }

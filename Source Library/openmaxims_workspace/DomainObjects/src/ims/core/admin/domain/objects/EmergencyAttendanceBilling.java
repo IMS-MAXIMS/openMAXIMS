@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.admin.domain.objects;
@@ -64,7 +69,7 @@ public class EmergencyAttendanceBilling extends ims.domain.DomainObject implemen
 	/** Payment Type */
 	private ims.domain.lookups.LookupInstance paymentType;
 	/** Invoice Amount */
-	private Integer invoiceAmount;
+	private ims.domain.lookups.LookupInstance invoiceAmount;
 	/** Reason For Non Payment */
 	private ims.domain.lookups.LookupInstance reasonForNonPayment;
 	/** Payment Refunded */
@@ -156,10 +161,10 @@ public class EmergencyAttendanceBilling extends ims.domain.DomainObject implemen
 		this.paymentType = paymentType;
 	}
 
-	public Integer getInvoiceAmount() {
+	public ims.domain.lookups.LookupInstance getInvoiceAmount() {
 		return invoiceAmount;
 	}
-	public void setInvoiceAmount(Integer invoiceAmount) {
+	public void setInvoiceAmount(ims.domain.lookups.LookupInstance invoiceAmount) {
 		this.invoiceAmount = invoiceAmount;
 	}
 
@@ -266,7 +271,8 @@ public class EmergencyAttendanceBilling extends ims.domain.DomainObject implemen
 			auditStr.append(paymentType.getText());
 	    auditStr.append("; ");
 		auditStr.append("\r\n*invoiceAmount* :");
-		auditStr.append(invoiceAmount);
+		if (invoiceAmount != null)
+			auditStr.append(invoiceAmount.getText());
 	    auditStr.append("; ");
 		auditStr.append("\r\n*reasonForNonPayment* :");
 		if (reasonForNonPayment != null)
@@ -377,7 +383,7 @@ public class EmergencyAttendanceBilling extends ims.domain.DomainObject implemen
 		if (this.getInvoiceAmount() != null)
 		{
 			sb.append("<invoiceAmount>");
-			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getInvoiceAmount().toString()));
+			sb.append(this.getInvoiceAmount().toXMLString()); 
 			sb.append("</invoiceAmount>");		
 		}
 		if (this.getReasonForNonPayment() != null)
@@ -610,8 +616,9 @@ public class EmergencyAttendanceBilling extends ims.domain.DomainObject implemen
 		}
 		fldEl = el.element("invoiceAmount");
 		if(fldEl != null)
-		{	
-    		obj.setInvoiceAmount(new Integer(fldEl.getTextTrim()));	
+		{
+			fldEl = fldEl.element("lki");
+			obj.setInvoiceAmount(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
 		}
 		fldEl = el.element("reasonForNonPayment");
 		if(fldEl != null)

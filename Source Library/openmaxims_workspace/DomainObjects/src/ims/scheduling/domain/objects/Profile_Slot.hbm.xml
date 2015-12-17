@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:36 -->
+<!-- Generated: 12/10/2015, 13:31 -->
 <hibernate-mapping>
 	<class name="ims.scheduling.domain.objects.Profile_Slot" table="schl_prof_slot" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -74,6 +74,7 @@
 		<many-to-one name="slotResp" class="ims.scheduling.domain.objects.Profile_ListOwner" unique="true" foreign-key="prof_slot_slotresp_fk" access="field" cascade="save-update">
 			<column name="slotresp" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
+<!-- debug: endTime -->
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="startTm" type="string" access="field" update="true">
@@ -113,6 +114,11 @@
 <!-- debug: !IsLookup -->
 		<property name="isActive" type="boolean" access="field" update="true">
 			<column name="isactive"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="endTime" type="string" access="field" update="true">
+			<column name="endtime"  not-null="false" unique="false"  />
 		</property>
 	</class>
 </hibernate-mapping>

@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:36 -->
+<hibernate-mapping>
+	<class name="ims.nursing.careplans.domain.objects.CarePlanTemplate" table="ns_careplantempl" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: hibernateClassContent -->
+<!-- debug: creationDate -->
+<!-- debug: title -->
+<!-- debug: assessmentComponent -->
+<!-- debug: active -->
+<!-- debug: objectives -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="objectives" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="careplantempl_objectives_fk">
+				<column name="ns_careplantempl_objectives" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.nursing.careplans.domain.objects.CarePlanTemplateObjective" />
+		</set>
+<!-- debug: interventions -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<list name="interventions" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="careplantempl_interventi_fk">
+				<column name="ns_careplantempl_interventi" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.nursing.careplans.domain.objects.CarePlanTemplateIntervention" />
+		</list>
+<!-- debug: assessmentComponents -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- inverse side of many-to-many -->
+		<set name="assessmentComponents" inverse="true" table="ns_assessmentcomp_careplante" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="assessmentcomp_careplant_to_fk">
+				<column name="to_side" sql-type="numeric(10,0)" unique="false"   />
+			</key>
+			
+			<many-to-many class="ims.nursing.assessment.domain.objects.AssessmentComponent" foreign-key="assessmentcomp_careplant_fr_fk">
+				<column name="from_side" sql-type="numeric(10,0)" unique="false"   />
+			</many-to-many>
+		</set>
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="creationDate" type="date" access="field" update="true">
+			<column name="creationda"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="title" type="string" access="field" update="true" > 
+			<column name="title" length="255"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="assessmentComponent" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_assessment" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="active" type="boolean" access="field" update="true">
+			<column name="active"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

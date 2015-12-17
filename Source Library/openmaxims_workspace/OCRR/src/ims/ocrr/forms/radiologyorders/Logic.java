@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -49,6 +54,7 @@ import ims.ocrr.vo.OrdInvXOStatusHistoryLiteVo;
 import ims.ocrr.vo.OrdInvXOStatusHistoryLiteVoCollection;
 import ims.ocrr.vo.RadiologyOrderVo;
 import ims.ocrr.vo.RadiologyOrderVoCollection;
+import ims.ocrr.vo.RadiologyOrdersSearchCriteriaVo;
 import ims.ocrr.vo.RoleDisciplineSecurityLevelLiteGCVo;
 import ims.ocrr.vo.SecurityLevelConfigVo;
 import ims.ocrr.vo.lookups.Category;
@@ -69,10 +75,19 @@ public class Logic extends BaseLogic
 	protected void onFormOpen(Object[] args)
 	{
 		initialize();
+		
+		//WDEV-19389 
+		if (form.getGlobalContext().OCRR.getRadiologyOrdersSearchCriteriaIsNotNull())
+		{
+			setSearchCriteria(form.getGlobalContext().OCRR.getRadiologyOrdersSearchCriteria());
+			if (search())
+				form.getGlobalContext().OCRR.setRadiologyOrdersSearchCriteria(getSearchCriteria());
+		}	
 	}
 
 	protected void onImbClearClick()
 	{
+		form.getGlobalContext().OCRR.setRadiologyOrdersSearchCriteria(null);//WDEV-19389 
 		form.cmbDepartment().setValue(null);
 		form.cmbService().clear();
 		// WDEV-11643
@@ -89,8 +104,16 @@ public class Logic extends BaseLogic
 	
 	protected void onImbSearchClick()
 	{
+		//WDEV-19389 
+		if (search())
+			form.getGlobalContext().OCRR.setRadiologyOrdersSearchCriteria(getSearchCriteria());
+
+	}
+
+	private boolean search()
+	{
 		if(validateUISearchCriteria() == false)
-			return;
+			return false;
 		
 		form.getLocalContext().setPrintingContext(null);
 		
@@ -106,6 +129,39 @@ public class Logic extends BaseLogic
 		populateResultsGrid(listRadOrderInvestigation);
 		
 		enablePrintButton();
+		
+		return true;
+	}
+	
+	private RadiologyOrdersSearchCriteriaVo getSearchCriteria()
+	{
+		RadiologyOrdersSearchCriteriaVo searchCriteria = new RadiologyOrdersSearchCriteriaVo();
+		
+		searchCriteria.setLocation(form.cmbDepartment().getValue());
+		searchCriteria.setDiscipline(form.cmbService().getValue());
+		searchCriteria.setFromDate(form.dteFrom().getValue());
+		searchCriteria.setToDate(form.dteTo().getValue());
+		searchCriteria.setComplete(form.chkCompleted().getValue());
+		
+		return searchCriteria;
+	}
+	
+	private void setSearchCriteria(RadiologyOrdersSearchCriteriaVo radiologyOrdersSearchCriteriaVo) 
+	{
+		if (radiologyOrdersSearchCriteriaVo.getLocationIsNotNull())
+		{
+			form.cmbDepartment().newRow(radiologyOrdersSearchCriteriaVo.getLocation(), radiologyOrdersSearchCriteriaVo.getLocation().getName());
+			form.cmbDepartment().setValue(radiologyOrdersSearchCriteriaVo.getLocation());
+		}
+		if (radiologyOrdersSearchCriteriaVo.getDisciplineIsNotNull())
+		{
+			form.cmbService().newRow(radiologyOrdersSearchCriteriaVo.getDiscipline(), radiologyOrdersSearchCriteriaVo.getDiscipline().getServiceName());
+			form.cmbService().setValue(radiologyOrdersSearchCriteriaVo.getDiscipline());
+		}
+		
+		form.dteFrom().setValue(radiologyOrdersSearchCriteriaVo.getFromDate());
+		form.dteTo().setValue(radiologyOrdersSearchCriteriaVo.getToDate());
+		form.chkCompleted().setValue(Boolean.TRUE.equals(radiologyOrdersSearchCriteriaVo.getComplete()) ? true : false);		
 	}
 
 	protected void onCmbDepartmentValueChanged()
@@ -445,7 +501,7 @@ public class Logic extends BaseLogic
 		// WDEV-11643
 		if (form.dteFrom().getValue() != null && form.dteTo().getValue() != null && form.dteTo().getValue().isLessThan(form.dteFrom().getValue()))
 		{
-			engine.showMessage("From date can not be set after To date");
+			engine.showMessage("From date cannot be greater than To date"); //WDEV-18762
 			form.dteFrom().setFocus();
 			return false;
 		}

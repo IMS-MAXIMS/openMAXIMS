@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.emergency.vo.domain;
@@ -60,6 +65,10 @@ public class TriageForTriageProtocolAssessmentVoAssembler
 		valueObjectDest.setCurrentTriagePathway(valueObjectSrc.getCurrentTriagePathway());
 		// Episode
 		valueObjectDest.setEpisode(valueObjectSrc.getEpisode());
+		// InitialTriageAssessment
+		valueObjectDest.setInitialTriageAssessment(valueObjectSrc.getInitialTriageAssessment());
+		// TriagePriorityChange
+		valueObjectDest.setTriagePriorityChange(valueObjectSrc.getTriagePriorityChange());
 	 	return valueObjectDest;
 	 }
 
@@ -418,7 +427,45 @@ public class TriageForTriageProtocolAssessmentVoAssembler
 				valueObject.setEpisode(new ims.core.admin.vo.EpisodeOfCareRefVo(domainObject.getEpisode().getId(), domainObject.getEpisode().getVersion()));
 			}
 		}
- 		return valueObject;
+		// InitialTriageAssessment
+		valueObject.setInitialTriageAssessment(ims.emergency.vo.domain.TriageProtocolAssessmentLiteVoAssembler.create(map, domainObject.getInitialTriageAssessment()) );
+		// TriagePriorityChange
+		ims.domain.lookups.LookupInstance instance7 = domainObject.getTriagePriorityChange();
+		if ( null != instance7 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance7.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance7.getImage().getImageId(), instance7.getImage().getImagePath());
+			}
+			color = instance7.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.emergency.vo.lookups.TriagePriorityChange voLookup7 = new ims.emergency.vo.lookups.TriagePriorityChange(instance7.getId(),instance7.getText(), instance7.isActive(), null, img, color);
+			ims.emergency.vo.lookups.TriagePriorityChange parentVoLookup7 = voLookup7;
+			ims.domain.lookups.LookupInstance parent7 = instance7.getParent();
+			while (parent7 != null)
+			{
+				if (parent7.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent7.getImage().getImageId(), parent7.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent7.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup7.setParent(new ims.emergency.vo.lookups.TriagePriorityChange(parent7.getId(),parent7.getText(), parent7.isActive(), null, img, color));
+				parentVoLookup7 = parentVoLookup7.getParent();
+								parent7 = parent7.getParent();
+			}			
+			valueObject.setTriagePriorityChange(voLookup7);
+		}
+		 		return valueObject;
 	 }
 
 
@@ -517,6 +564,15 @@ public class TriageForTriageProtocolAssessmentVoAssembler
 			}
 		}
 		domainObject.setEpisode(value5);
+		domainObject.setInitialTriageAssessment(ims.emergency.vo.domain.TriageProtocolAssessmentLiteVoAssembler.extractTriageProtocolAssessment(domainFactory, valueObject.getInitialTriageAssessment(), domMap));
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value7 = null;
+		if ( null != valueObject.getTriagePriorityChange() ) 
+		{
+			value7 =
+				domainFactory.getLookupInstance(valueObject.getTriagePriorityChange().getID());
+		}
+		domainObject.setTriagePriorityChange(value7);
 
 		return domainObject;
 	}

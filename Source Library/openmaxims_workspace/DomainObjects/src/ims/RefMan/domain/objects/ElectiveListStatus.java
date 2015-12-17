@@ -1,9 +1,33 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.RefMan.domain.objects;
@@ -38,6 +62,8 @@ public class ElectiveListStatus extends ims.domain.DomainObject implements ims.d
 	private ims.domain.lookups.LookupInstance removalReason;
 	/** RemovalOtherReason */
 	private ims.domain.lookups.LookupInstance removalOtherReason;
+	/** Undo Removal Reason */
+	private ims.domain.lookups.LookupInstance undoRemovalReason;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public ElectiveListStatus (Integer id, int ver)
@@ -104,6 +130,13 @@ public class ElectiveListStatus extends ims.domain.DomainObject implements ims.d
 		this.removalOtherReason = removalOtherReason;
 	}
 
+	public ims.domain.lookups.LookupInstance getUndoRemovalReason() {
+		return undoRemovalReason;
+	}
+	public void setUndoRemovalReason(ims.domain.lookups.LookupInstance undoRemovalReason) {
+		this.undoRemovalReason = undoRemovalReason;
+	}
+
 	public ims.domain.SystemInformation getSystemInformation() {
 		if (systemInformation == null) systemInformation = new ims.domain.SystemInformation();
 		return systemInformation;
@@ -166,6 +199,10 @@ public class ElectiveListStatus extends ims.domain.DomainObject implements ims.d
 		auditStr.append("\r\n*removalOtherReason* :");
 		if (removalOtherReason != null)
 			auditStr.append(removalOtherReason.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*undoRemovalReason* :");
+		if (undoRemovalReason != null)
+			auditStr.append(undoRemovalReason.getText());
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -246,6 +283,12 @@ public class ElectiveListStatus extends ims.domain.DomainObject implements ims.d
 			sb.append("<removalOtherReason>");
 			sb.append(this.getRemovalOtherReason().toXMLString()); 
 			sb.append("</removalOtherReason>");		
+		}
+		if (this.getUndoRemovalReason() != null)
+		{
+			sb.append("<undoRemovalReason>");
+			sb.append(this.getUndoRemovalReason().toXMLString()); 
+			sb.append("</undoRemovalReason>");		
 		}
 		return sb.toString();
 	}
@@ -444,6 +487,12 @@ public class ElectiveListStatus extends ims.domain.DomainObject implements ims.d
 			fldEl = fldEl.element("lki");
 			obj.setRemovalOtherReason(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
 		}
+		fldEl = el.element("undoRemovalReason");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setUndoRemovalReason(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -462,6 +511,7 @@ public class ElectiveListStatus extends ims.domain.DomainObject implements ims.d
 		public static final String StatusComment = "statusComment";
 		public static final String RemovalReason = "removalReason";
 		public static final String RemovalOtherReason = "removalOtherReason";
+		public static final String UndoRemovalReason = "undoRemovalReason";
 	}
 }
 

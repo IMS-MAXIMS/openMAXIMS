@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.emergency.vo.domain;
@@ -62,6 +67,10 @@ public class ifEDAttendanceVoAssembler
 		valueObjectDest.setEmergencyEpisode(valueObjectSrc.getEmergencyEpisode());
 		// Patient
 		valueObjectDest.setPatient(valueObjectSrc.getPatient());
+		// customID
+		valueObjectDest.setCustomID(valueObjectSrc.getCustomID());
+		// PatientAttendanceStatus
+		valueObjectDest.setPatientAttendanceStatus(valueObjectSrc.getPatientAttendanceStatus());
 	 	return valueObjectDest;
 	 }
 
@@ -406,7 +415,45 @@ public class ifEDAttendanceVoAssembler
 		valueObject.setEmergencyEpisode(ims.emergency.vo.domain.ifEDEpisodeVoAssembler.create(map, domainObject.getEmergencyEpisode()) );
 		// Patient
 		valueObject.setPatient(ims.core.vo.domain.PatientAssembler.create(map, domainObject.getPatient()) );
- 		return valueObject;
+		// customID
+		valueObject.setCustomID(domainObject.getCustomID());
+		// PatientAttendanceStatus
+		ims.domain.lookups.LookupInstance instance8 = domainObject.getPatientAttendanceStatus();
+		if ( null != instance8 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance8.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance8.getImage().getImageId(), instance8.getImage().getImagePath());
+			}
+			color = instance8.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.emergency.vo.lookups.PatientAttendanceStatus voLookup8 = new ims.emergency.vo.lookups.PatientAttendanceStatus(instance8.getId(),instance8.getText(), instance8.isActive(), null, img, color);
+			ims.emergency.vo.lookups.PatientAttendanceStatus parentVoLookup8 = voLookup8;
+			ims.domain.lookups.LookupInstance parent8 = instance8.getParent();
+			while (parent8 != null)
+			{
+				if (parent8.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent8.getImage().getImageId(), parent8.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent8.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup8.setParent(new ims.emergency.vo.lookups.PatientAttendanceStatus(parent8.getId(),parent8.getText(), parent8.isActive(), null, img, color));
+				parentVoLookup8 = parentVoLookup8.getParent();
+								parent8 = parent8.getParent();
+			}			
+			valueObject.setPatientAttendanceStatus(voLookup8);
+		}
+		 		return valueObject;
 	 }
 
 
@@ -528,6 +575,21 @@ public class ifEDAttendanceVoAssembler
 			}
 		}
 		domainObject.setPatient(value6);
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getCustomID() != null && valueObject.getCustomID().equals(""))
+		{
+			valueObject.setCustomID(null);
+		}
+		domainObject.setCustomID(valueObject.getCustomID());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value8 = null;
+		if ( null != valueObject.getPatientAttendanceStatus() ) 
+		{
+			value8 =
+				domainFactory.getLookupInstance(valueObject.getPatientAttendanceStatus().getID());
+		}
+		domainObject.setPatientAttendanceStatus(value8);
 
 		return domainObject;
 	}

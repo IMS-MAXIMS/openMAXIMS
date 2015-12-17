@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,15 +15,20 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 
 /*
  * This code was generated.
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:38
+ * Generated: 13/10/2015, 13:23
  */
 package ims.ccosched.vo.lookups;
 
@@ -87,6 +92,45 @@ public final class LookupHelper {
 	}
 	
 
+	public static SeenAtCollection getSeenAt(LookupService lookupService) {
+		SeenAtCollection collection =
+			(SeenAtCollection) lookupService.getLookupCollection(SeenAt.TYPE_ID, 
+				SeenAtCollection.class, SeenAt.class);
+		return collection;
+	}
+
+	public static SeenAt getSeenAtInstance(LookupService lookupService, int id) 
+	{
+		return (SeenAt)lookupService.getLookupInstance(SeenAt.class, SeenAt.TYPE_ID, id);
+	}
+	
+
+	public static RequirementsCollection getRequirements(LookupService lookupService) {
+		RequirementsCollection collection =
+			(RequirementsCollection) lookupService.getLookupCollection(Requirements.TYPE_ID, 
+				RequirementsCollection.class, Requirements.class);
+		return collection;
+	}
+
+	public static Requirements getRequirementsInstance(LookupService lookupService, int id) 
+	{
+		return (Requirements)lookupService.getLookupInstance(Requirements.class, Requirements.TYPE_ID, id);
+	}
+	
+
+	public static ReasonDNACollection getReasonDNA(LookupService lookupService) {
+		ReasonDNACollection collection =
+			(ReasonDNACollection) lookupService.getLookupCollection(ReasonDNA.TYPE_ID, 
+				ReasonDNACollection.class, ReasonDNA.class);
+		return collection;
+	}
+
+	public static ReasonDNA getReasonDNAInstance(LookupService lookupService, int id) 
+	{
+		return (ReasonDNA)lookupService.getLookupInstance(ReasonDNA.class, ReasonDNA.TYPE_ID, id);
+	}
+	
+
 	public static PriorityCollection getPriority(LookupService lookupService) {
 		PriorityCollection collection =
 			(PriorityCollection) lookupService.getLookupCollection(Priority.TYPE_ID, 
@@ -97,6 +141,45 @@ public final class LookupHelper {
 	public static Priority getPriorityInstance(LookupService lookupService, int id) 
 	{
 		return (Priority)lookupService.getLookupInstance(Priority.class, Priority.TYPE_ID, id);
+	}
+	
+
+	public static PlannedRegimeCollection getPlannedRegime(LookupService lookupService) {
+		PlannedRegimeCollection collection =
+			(PlannedRegimeCollection) lookupService.getLookupCollection(PlannedRegime.TYPE_ID, 
+				PlannedRegimeCollection.class, PlannedRegime.class);
+		return collection;
+	}
+
+	public static PlannedRegime getPlannedRegimeInstance(LookupService lookupService, int id) 
+	{
+		return (PlannedRegime)lookupService.getLookupInstance(PlannedRegime.class, PlannedRegime.TYPE_ID, id);
+	}
+	
+
+	public static PeriodCollection getPeriod(LookupService lookupService) {
+		PeriodCollection collection =
+			(PeriodCollection) lookupService.getLookupCollection(Period.TYPE_ID, 
+				PeriodCollection.class, Period.class);
+		return collection;
+	}
+
+	public static Period getPeriodInstance(LookupService lookupService, int id) 
+	{
+		return (Period)lookupService.getLookupInstance(Period.class, Period.TYPE_ID, id);
+	}
+	
+
+	public static DoctorsWorkListItemCollection getDoctorsWorkListItem(LookupService lookupService) {
+		DoctorsWorkListItemCollection collection =
+			(DoctorsWorkListItemCollection) lookupService.getLookupCollection(DoctorsWorkListItem.TYPE_ID, 
+				DoctorsWorkListItemCollection.class, DoctorsWorkListItem.class);
+		return collection;
+	}
+
+	public static DoctorsWorkListItem getDoctorsWorkListItemInstance(LookupService lookupService, int id) 
+	{
+		return (DoctorsWorkListItem)lookupService.getLookupInstance(DoctorsWorkListItem.class, DoctorsWorkListItem.TYPE_ID, id);
 	}
 	
 
@@ -152,6 +235,19 @@ public final class LookupHelper {
 	}
 	
 
+	public static ReasonIncompleteCollection getReasonIncomplete(LookupService lookupService) {
+		ReasonIncompleteCollection collection =
+			(ReasonIncompleteCollection) lookupService.getLookupCollection(ReasonIncomplete.TYPE_ID, 
+				ReasonIncompleteCollection.class, ReasonIncomplete.class);
+		return collection;
+	}
+
+	public static ReasonIncomplete getReasonIncompleteInstance(LookupService lookupService, int id) 
+	{
+		return (ReasonIncomplete)lookupService.getLookupInstance(ReasonIncomplete.class, ReasonIncomplete.TYPE_ID, id);
+	}
+	
+
 	public static ModalityCollection getModality(LookupService lookupService) {
 		ModalityCollection collection =
 			(ModalityCollection) lookupService.getLookupCollection(Modality.TYPE_ID, 
@@ -162,6 +258,45 @@ public final class LookupHelper {
 	public static Modality getModalityInstance(LookupService lookupService, int id) 
 	{
 		return (Modality)lookupService.getLookupInstance(Modality.class, Modality.TYPE_ID, id);
+	}
+	
+
+	public static LocationCollection getLocation(LookupService lookupService) {
+		LocationCollection collection =
+			(LocationCollection) lookupService.getLookupCollection(Location.TYPE_ID, 
+				LocationCollection.class, Location.class);
+		return collection;
+	}
+
+	public static Location getLocationInstance(LookupService lookupService, int id) 
+	{
+		return (Location)lookupService.getLookupInstance(Location.class, Location.TYPE_ID, id);
+	}
+	
+
+	public static ConfirmationStatusCollection getConfirmationStatus(LookupService lookupService) {
+		ConfirmationStatusCollection collection =
+			(ConfirmationStatusCollection) lookupService.getLookupCollection(ConfirmationStatus.TYPE_ID, 
+				ConfirmationStatusCollection.class, ConfirmationStatus.class);
+		return collection;
+	}
+
+	public static ConfirmationStatus getConfirmationStatusInstance(LookupService lookupService, int id) 
+	{
+		return (ConfirmationStatus)lookupService.getLookupInstance(ConfirmationStatus.class, ConfirmationStatus.TYPE_ID, id);
+	}
+	
+
+	public static BookingSystemTypeCollection getBookingSystemType(LookupService lookupService) {
+		BookingSystemTypeCollection collection =
+			(BookingSystemTypeCollection) lookupService.getLookupCollection(BookingSystemType.TYPE_ID, 
+				BookingSystemTypeCollection.class, BookingSystemType.class);
+		return collection;
+	}
+
+	public static BookingSystemType getBookingSystemTypeInstance(LookupService lookupService, int id) 
+	{
+		return (BookingSystemType)lookupService.getLookupInstance(BookingSystemType.class, BookingSystemType.TYPE_ID, id);
 	}
 	
 

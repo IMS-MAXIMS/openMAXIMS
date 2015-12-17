@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -48,6 +53,7 @@ public final class PatientDocument extends ims.rules.types.RulesEngineEntity
 		fieldEntityIndex = entities.indexOf(new ims.rules.helper.DocumentStatus(entities));
 		super.fields.add(new ims.rules.types.RulesEngineField("77954832010102294536128037932", "DocumentStatusHistory", "", true, ims.rules.types.RulesEngineFieldType.ENTITY, (fieldEntityIndex >= 0 ? entities.get(fieldEntityIndex) : new ims.rules.helper.DocumentStatus(entities)), 0, "DocumentStatusHistory", this));
 		super.fields.add(new ims.rules.types.RulesEngineField("71950942012291017226205586081", "wasTriggered", "", false, ims.rules.types.RulesEngineFieldType.BOOLEAN, null, 0, "wasTriggered", this));
+		super.fields.add(new ims.rules.types.RulesEngineField("957560120131213850543811471950", "wasTriggered", "", false, ims.rules.types.RulesEngineFieldType.BOOLEAN, null, 0, "hasEnclosure", this));
 		super.actions = new ArrayList<ims.rules.types.RulesEngineEntityMethod>();
 		java.util.List<ims.rules.types.RulesEngineEntityMethodArgument> arguments = null;
 		arguments = new ArrayList<ims.rules.types.RulesEngineEntityMethodArgument>();

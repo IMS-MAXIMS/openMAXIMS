@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -44,8 +49,8 @@ import ims.core.vo.PatientMedicationVoCollection;
 import ims.core.vo.PersonName;
 import ims.core.vo.lookups.HcpDisType;
 import ims.core.vo.lookups.LookupHelper;
-import ims.core.vo.lookups.MedciationCommencedDiscontinuedType;
-import ims.core.vo.lookups.MedciationCommencedDiscontinuedTypeCollection;
+import ims.core.vo.lookups.MedicationCommencedDiscontinuedType;
+import ims.core.vo.lookups.MedicationCommencedDiscontinuedTypeCollection;
 import ims.core.vo.lookups.MedicationRoute;
 import ims.core.vo.lookups.MedicationRouteCollection;
 import ims.core.vo.lookups.MedicationTimesOfAdministration;
@@ -72,6 +77,8 @@ public class Logic extends BaseLogic
 	private static final Integer COL_DOSE_COMMENCED_BY_TYPE = new Integer(4);
 	private static final Integer COL_DOSE_COMMENCED_BY = new Integer(5);
 	private static final Integer COL_DOSE_COMMENCED_DATE = new Integer(6);
+	//WDEV-20591
+	private static final Integer COL_DOSE_COMMENT = new Integer(7);
 
 	private static final long serialVersionUID = 1L;
 
@@ -79,10 +86,84 @@ public class Logic extends BaseLogic
 	{
 		initialize();
 		initializeCustomnControl();
-		open();
+		open(true);
 		if(isDialog())
 		{
 			newMedicationInstance();
+			return;
+		}
+		
+		if (isMedicationMultipleDosesOnAdmission())
+		{
+			if (!(form.getGlobalContext().Core.getCurrentCareContextIsNotNull() && form.getGlobalContext().Clinical.getMedMultipleDosesAdmSearchCriteiaIsNotNull() && form.getGlobalContext().Core.getCurrentCareContext().equals(form.getGlobalContext().Clinical.getMedMultipleDosesAdmSearchCriteia().getCareContext())))
+				form.getGlobalContext().Clinical.setMedMultipleDosesAdmSearchCriteia(null);
+			setCareContextSearchCriteria(form.getGlobalContext().Clinical.getMedMultipleDosesAdmSearchCriteia());			
+		}
+		else if (isMedicationMultipleDosesOnDischarge())
+		{
+			if (!(form.getGlobalContext().Core.getCurrentCareContextIsNotNull() && form.getGlobalContext().Clinical.getMedMultipleDosesDisSearchCriteriaIsNotNull() && form.getGlobalContext().Core.getCurrentCareContext().equals(form.getGlobalContext().Clinical.getMedMultipleDosesDisSearchCriteria().getCareContext())))
+				form.getGlobalContext().Clinical.setMedMultipleDosesDisSearchCriteria(null);
+			setCareContextSearchCriteria(form.getGlobalContext().Clinical.getMedMultipleDosesDisSearchCriteria());
+		}
+		else if (isMedicationMultipleDosesOPD())
+		{
+			if (!(form.getGlobalContext().Core.getCurrentCareContextIsNotNull() && form.getGlobalContext().Clinical.getMedMultipleDosesOPDSearchCriteriaIsNotNull() && form.getGlobalContext().Core.getCurrentCareContext().equals(form.getGlobalContext().Clinical.getMedMultipleDosesOPDSearchCriteria().getCareContext())))
+				form.getGlobalContext().Clinical.setMedMultipleDosesOPDSearchCriteria(null);
+			setCareContextSearchCriteria(form.getGlobalContext().Clinical.getMedMultipleDosesOPDSearchCriteria());
+		}
+		else if (isMedicationMultipleDosesPatientLevel())
+		{
+			if (!(form.getGlobalContext().Core.getPatientShortIsNotNull() && form.getGlobalContext().Clinical.getMedMultipleDosesPatSearchCriteriaIsNotNull() && form.getGlobalContext().Core.getPatientShort().equals(form.getGlobalContext().Clinical.getMedMultipleDosesPatSearchCriteria().getPatientRef())))
+				form.getGlobalContext().Clinical.setMedMultipleDosesPatSearchCriteria(null);
+			setPatientSearchCriteria(form.getGlobalContext().Clinical.getMedMultipleDosesPatSearchCriteria());
+		}
+		
+		
+	}
+
+	private void setCareContextSearchCriteria(MedicationOverViewFilterVo medicationOverViewFilterVo)
+	{
+		if (form.chkFilter().isVisible() && medicationOverViewFilterVo != null)
+		{
+			form.chkFilter().setValue(medicationOverViewFilterVo.getFilter());	
+			open(true);
+		}
+	}
+	
+	private MedicationOverViewFilterVo getSearchCriteria()
+	{
+		MedicationOverViewFilterVo searchCriteria = new MedicationOverViewFilterVo();
+		
+		searchCriteria.setType(form.getLocalContext().getScreenType());
+		searchCriteria.setFilter(Boolean.TRUE.equals(form.chkFilter().getValue()) ? true : false);
+		searchCriteria.setPatientRef(form.getGlobalContext().Core.getPatientShort());
+		searchCriteria.setCareContext(form.getGlobalContext().Core.getCurrentCareContext());
+		searchCriteria.setSelectedMedication(form.recbrOverviews().getValue());
+
+		if (isMedicationMultipleDosesPatientLevel())
+		{
+			searchCriteria.setSelectedMedication(form.recbrOverviews().getValue());
+		}
+		
+		return searchCriteria;
+	}
+	
+	
+	private void setPatientSearchCriteria(MedicationOverViewFilterVo medicationOverViewFilterVo)
+	{
+		if (form.chkFilter().isVisible() && medicationOverViewFilterVo != null && medicationOverViewFilterVo.getSelectedMedication() != null)
+		{
+			form.chkFilter().setValue(medicationOverViewFilterVo.getFilter());
+			try
+			{
+				filterValueChange(false);
+				form.recbrOverviews().setValue(medicationOverViewFilterVo.getSelectedMedication());
+				onRecbrOverviewsValueChanged();
+			}
+			catch (PresentationLogicException e)
+			{ e.printStackTrace(); }
+			
+			openOverview(domain.getMedicationOverView(form.recbrOverviews().getValue()));
 		}
 	}
 	
@@ -141,7 +222,9 @@ public class Logic extends BaseLogic
 		MedicationSnapShot screenType = form.getLocalContext().getScreenType();
 		if (screenType != null)
 		{
-			if (screenType.equals(MedicationSnapShot.DISCHARGE) || screenType.equals(MedicationSnapShot.OPD))
+			//WDEV-20591
+//			if (screenType.equals(MedicationSnapShot.DISCHARGE) || screenType.equals(MedicationSnapShot.OPD))
+			if (screenType.equals(MedicationSnapShot.DISCHARGE))
 			{
 				form.ctnDetails().lblIncludeinTTO().setVisible(true);
 				form.ctnDetails().chkTTO().setVisible(true);
@@ -229,7 +312,7 @@ public class Logic extends BaseLogic
 				{			
 					engine.showMessage(e.getMessage());
 				}		
-				open();
+				open(true);
 			}
 			else if (form.getLocalContext().getbDiscontinueDose().booleanValue())
 			{
@@ -284,7 +367,7 @@ public class Logic extends BaseLogic
 					engine.showMessage(e.getMessage());
 				}		
 
-				open();
+				open(true);
 			}
 		}
 
@@ -424,49 +507,51 @@ public class Logic extends BaseLogic
 		form.customControlAuthoringInfo().setValue(null);
 		clearInstanceControls();
 	}
-	private void open() 
-	{
+	private void open(Boolean search) 
+	{		
 		form.ctnDetails().setCollapsed(true);
 		MedicationOverViewVo voOverView = new MedicationOverViewVo();
 
 		PatientRefVo voPat = new PatientRefVo();
 		voPat.setID_Patient(form.getGlobalContext().Core.getPatientShort().getID_Patient());
-		MedicationOverViewFilterVo voFilter = new MedicationOverViewFilterVo();
+		MedicationOverViewFilterVo voFilter = getSearchCriteria();
 		
 		clearAll();		//wdev-15370
-		
-		voFilter.setType(form.getLocalContext().getScreenType());
-		
-		voFilter.setCareContext(form.getGlobalContext().Core.getCurrentCareContext());
-		voFilter.setPatientRef(voPat);
-		
+
 		MedicationOverViewLiteVoCollection voColl = null;
 		
 		if (form.getLocalContext().getScreenTypeIsNotNull() 
-				&& form.getLocalContext().getScreenType().equals(MedicationSnapShot.PATIENT))
+				&& form.getLocalContext().getScreenType().equals(MedicationSnapShot.PATIENT) )
 		{
-			voColl = domain.listMedicationOverviews(voFilter);
-			if (voColl == null)
+			if(search)
 			{
-				engine.showMessage("There is no current Medication Overview for this patient.");
-				form.setMode(FormMode.VIEW);
-				displayOrHideEnableDisableScreenSpecificControls();
-				return;
-			}
+    			voColl = domain.listMedicationOverviews(voFilter);
+    			if (voColl == null)
+    			{
+    				engine.showMessage("There is no current Medication Overview for this patient.");
+    				form.setMode(FormMode.VIEW);
+    				displayOrHideEnableDisableScreenSpecificControls();
+    				return;
+    			}
+    
+    			for (int i = 0 ; i < voColl.size() ; i++)
+    			{
+    				MedicationOverViewLiteVo voOverLite = voColl.get(i);
+    				StringBuffer sb = new StringBuffer();
+    				sb.append(voOverLite.getTypeIsNotNull() ? voOverLite.getType().toString()+ ", " : "");
+    				sb.append(voOverLite.getAuthoringInformationIsNotNull() ? voOverLite.getAuthoringInformation().toString(" - ") + ", " : "");
+    				
+    				form.recbrOverviews().newRow(voOverLite, sb.toString());
+    			}
+    			if (voColl.size() > 0)
+    			{
+    				form.recbrOverviews().setValue(voColl.get(0));
 
-			for (int i = 0 ; i < voColl.size() ; i++)
-			{
-				MedicationOverViewLiteVo voOverLite = voColl.get(i);
-				StringBuffer sb = new StringBuffer();
-				sb.append(voOverLite.getTypeIsNotNull() ? voOverLite.getType().toString()+ ", " : "");
-				sb.append(voOverLite.getAuthoringInformationIsNotNull() ? voOverLite.getAuthoringInformation().toString(" - ") + ", " : "");
-				
-				form.recbrOverviews().newRow(voOverLite, sb.toString());
+    			}
 			}
-			if (voColl.size() > 0)
+			if (form.recbrOverviews().getValue() != null)
 			{
-				form.recbrOverviews().setValue(voColl.get(0));
-				voOverView = domain.getMedicationOverView(voColl.get(0));
+				voOverView = domain.getMedicationOverView(form.recbrOverviews().getValue());
 				openOverview(voOverView);
 			}
 		}
@@ -594,10 +679,15 @@ public class Logic extends BaseLogic
 		form.ctnDetails().chkTTO().setEnabled(bEditable);
 		form.ctnDetails().intNumDays().setEnabled(bEditable);
 		form.ctnDetails().cmbFrequency().setEnabled(bEditable);
+		//WDEV-20591
+		form.ctnDetails().txtComment().setEnabled(bEditable);
+		//Enable comment field if medication is NOT discontinued
+		form.ctnDetails().txtComment().setEnabled(!(form.getLocalContext().getSelectedInstance().getIsDiscontinuedIsNotNull() ? form.getLocalContext().getSelectedInstance().getIsDiscontinued().booleanValue() : false));
 		
 		//For an update to a non-discontinued med only allow editing of Frequency and Source. Not allowed edit Doses. Can only add and remove them.
 		form.ctnDetails().cmbFrequency().setEnabled(!(form.getLocalContext().getSelectedInstance().getIsDiscontinuedIsNotNull() ? form.getLocalContext().getSelectedInstance().getIsDiscontinued().booleanValue() : false));
-	}	
+	}
+	
 	protected void onFormModeChanged()
 	{
 		updateControlsState();
@@ -673,7 +763,7 @@ public class Logic extends BaseLogic
 		
 	protected void onBtnCancelClick() throws ims.framework.exceptions.PresentationLogicException
 	{
-		open();
+		open(true);
 		form.ctnDetails().chkTTO().setEnabled(false);
 		form.ctnDetails().intNumDays().setEnabled(false);
 	}
@@ -681,7 +771,7 @@ public class Logic extends BaseLogic
 	protected void onBtnSaveClick() throws ims.framework.exceptions.PresentationLogicException
 	{
 		if(save())
-			open();		
+			open(true);		
 	}
 	
 	private void newMedicationInstance() 
@@ -702,7 +792,7 @@ public class Logic extends BaseLogic
 		
 		//Defaulting Authoring HCP and Date
 		form.ctnDetails().dteCommenced().setValue(new Date());
-		form.ctnDetails().cmbCommencedBy().setValue(MedciationCommencedDiscontinuedType.MOS);
+		form.ctnDetails().cmbCommencedBy().setValue(MedicationCommencedDiscontinuedType.MOS);
 		Hcp hcp = (Hcp) domain.getHcpUser();
 		if(hcp != null)
 		{
@@ -726,6 +816,8 @@ public class Logic extends BaseLogic
 		form.ctnDetails().chkTTO().setValue(false);
 		form.ctnDetails().intNumDays().setValue(null);
 		form.ctnDetails().dyngrdDoses().getRows().clear();
+		//WDEV-20591
+		form.ctnDetails().txtComment().setValue(null);
 	}
 
 	private void setDefaultInstanceControls() 
@@ -735,7 +827,6 @@ public class Logic extends BaseLogic
 
 	private void populateInstanceControls(PatientMedicationVo voSelectedInstance) 
 	{
-		
 		form.ctnDetails().customControlCodingItem().setValue(voSelectedInstance);		
 		form.ctnDetails().cmbSource().setValue(voSelectedInstance.getSourceofInformation());
 		form.ctnDetails().cmbFrequency().setValue(voSelectedInstance.getFrequency());
@@ -754,6 +845,7 @@ public class Logic extends BaseLogic
 			form.ctnDetails().qmbCommencedBy().setValue(null);
 		
 		form.ctnDetails().dteCommenced().setValue(voSelectedInstance.getCommencedDate() != null ? new Date(voSelectedInstance.getCommencedDate()) : null); //WDEV-7141
+		form.ctnDetails().txtComment().setValue(voSelectedInstance.getComment()); //WDEV-20591
 		
 		fillDosesGridReadOnly(voSelectedInstance.getPrescribedDoses());
 	}
@@ -797,7 +889,16 @@ public class Logic extends BaseLogic
 			DynamicGridCell cell5 = childRow.getCells().newCell(form.ctnDetails().dyngrdDoses().getColumns().getByIdentifier(COL_DOSE_COMMENCED_DATE), DynamicCellType.LABEL);
 			cell5.setValue(voDose.getDoseStartDateIsNotNull() ? voDose.getDoseStartDate().toString() : null);
 			cell5.setIdentifier(voDose.getDoseStartDate());
-			cell5.setWidth(-1);
+			//WDEV-20591
+//			cell5.setWidth(-1);
+			cell5.setWidth(80);
+			
+			//WDEV-20591
+			DynamicGridCell cell7 = childRow.getCells().newCell(form.ctnDetails().dyngrdDoses().getColumns().getByIdentifier(COL_DOSE_COMMENT), DynamicCellType.LABEL);
+			cell7.setValue(voDose.getCommentIsNotNull() ? voDose.getComment() : null);
+			cell7.setIdentifier(voDose.getComment());
+			cell7.setWidth(-1);
+			
 			
 
 			childRow.setValue(voDose);
@@ -848,6 +949,7 @@ public class Logic extends BaseLogic
 
 		voSelectedInstance.setSourceofInformation(form.ctnDetails().cmbSource().getValue());
 		voSelectedInstance.setFrequency(form.ctnDetails().cmbFrequency().getValue());
+		voSelectedInstance.setComment(form.ctnDetails().txtComment().getValue()); //WDEV-20591
 
 		voSelectedInstance.setIsInTTO(new Boolean(form.ctnDetails().chkTTO().getValue()));		
 		voSelectedInstance.setNoDaysSupply(form.ctnDetails().intNumDays().getValue());
@@ -883,10 +985,12 @@ public class Logic extends BaseLogic
 
 				voDose.setAdminTimes(coll);
 
-				voDose.setCommencedByType((MedciationCommencedDiscontinuedType) pRow.getCells().get(form.ctnDetails().dyngrdDoses().getColumns().getByIdentifier(COL_DOSE_COMMENCED_BY_TYPE)).getValue());
+				voDose.setCommencedByType((MedicationCommencedDiscontinuedType) pRow.getCells().get(form.ctnDetails().dyngrdDoses().getColumns().getByIdentifier(COL_DOSE_COMMENCED_BY_TYPE)).getValue());
 
 				voDose.setDoseStartDate((Date) pRow.getCells().get(form.ctnDetails().dyngrdDoses().getColumns().getByIdentifier(COL_DOSE_COMMENCED_DATE)).getValue());
 				voDose.setDoseStartHcp((Hcp) pRow.getCells().get(form.ctnDetails().dyngrdDoses().getColumns().getByIdentifier(COL_DOSE_COMMENCED_BY)).getValue());
+				//WDEV-20591
+				voDose.setComment((String) pRow.getCells().get(form.ctnDetails().dyngrdDoses().getColumns().getByIdentifier(COL_DOSE_COMMENT)).getValue()); 
 
 				voDose.setAuthoringInformation(form.customControlAuthoringInfo().getValue());
 			}
@@ -952,7 +1056,7 @@ public class Logic extends BaseLogic
 		catch (StaleObjectException e) 
 		{			
 			engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue()); //WDEV-17974
-			open();
+			open(true);
 			form.dyngrdMedication().setValue(currentInstance);
 			DynamicGridRow selectedRow = form.dyngrdMedication().getSelectedRow();
 			if(selectedRow != null)
@@ -1013,9 +1117,16 @@ public class Logic extends BaseLogic
 
 		column = form.ctnDetails().dyngrdDoses().getColumns().newColumn("Date");
 		column.setIdentifier(COL_DOSE_COMMENCED_DATE);
+//		column.setWidth(-1); //WDEV-20591
+		column.setWidth(80);
+		column.setDynamicWidthSupported(true);
+
+		//WDEV-20591
+		column = form.ctnDetails().dyngrdDoses().getColumns().newColumn("Comment");
+		column.setIdentifier(COL_DOSE_COMMENT);
 		column.setWidth(-1);
 		column.setDynamicWidthSupported(true);
-		
+
 	}
 
 	private void bindCellToLookup(DynamicGridCell cell, Class class1)
@@ -1040,13 +1151,13 @@ public class Logic extends BaseLogic
 			cell.setIdentifier(MedicationTimesOfAdministration.class);
 		}
 		
-		if(class1.equals(MedciationCommencedDiscontinuedType.class))
+		if(class1.equals(MedicationCommencedDiscontinuedType.class))
 		{
-			MedciationCommencedDiscontinuedTypeCollection coll = LookupHelper.getMedciationCommencedDiscontinuedType(domain.getLookupService());
+			MedicationCommencedDiscontinuedTypeCollection coll = LookupHelper.getMedicationCommencedDiscontinuedType(domain.getLookupService());
 			for(int i = 0 ; i < coll.size() ; i++) 
 				cell.getItems().newItem(coll.get(i));
 
-			cell.setIdentifier(MedciationCommencedDiscontinuedType.class);
+			cell.setIdentifier(MedicationCommencedDiscontinuedType.class);
 		}
 		
 		
@@ -1147,8 +1258,8 @@ public class Logic extends BaseLogic
 
 		DynamicGridCell cell6= doseRow.getCells().newCell(form.ctnDetails().dyngrdDoses().getColumns().getByIdentifier(COL_DOSE_COMMENCED_BY_TYPE), DynamicCellType.ENUMERATION);
 		cell6.setReadOnly(false);
-		bindCellToLookup(cell6, MedciationCommencedDiscontinuedType.class);
-		cell6.setValue(MedciationCommencedDiscontinuedType.MOS);
+		bindCellToLookup(cell6, MedicationCommencedDiscontinuedType.class);
+		cell6.setValue(MedicationCommencedDiscontinuedType.MOS);
 		cell6.setTooltip("Please select a Commenced by Type");
 		cell6.setAutoPostBack(true);
 		cell6.setWidth(140);
@@ -1171,7 +1282,18 @@ public class Logic extends BaseLogic
 		cell5.setValue(new Date());
 		cell5.setReadOnly(false);
 		cell5.setTooltip("Please select a Date");
-		cell5.setWidth(-1);
+		//WDEV-20591
+//		cell5.setWidth(-1);
+		cell5.setWidth(80);
+		
+		//WDEV-20591
+		DynamicGridCell cell7 = doseRow.getCells().newCell(form.ctnDetails().dyngrdDoses().getColumns().getByIdentifier(COL_DOSE_COMMENT), DynamicCellType.STRING);
+		cell7.setStringMaxLength(255);
+		cell7.setValidationMessage("This text is restricted to 255 characters");
+		cell7.setReadOnly(false);
+		cell7.setTooltip("Please enter a Comment");
+		cell7.setWidth(-1);
+		
 
 		doseRow.setExpanded(true);
 		
@@ -1243,11 +1365,11 @@ public class Logic extends BaseLogic
 	{
 		if ( (cell != null)
 				&& (cell.getType().getID() == DynamicCellType.ENUMERATION.getID())
-				&& (cell.getIdentifier().equals(MedciationCommencedDiscontinuedType.class) ) )
+				&& (cell.getIdentifier().equals(MedicationCommencedDiscontinuedType.class) ) )
 		{
 			if (cell.getValue() != null)
 			{
-				if (cell.getValue().equals(MedciationCommencedDiscontinuedType.MOS) )
+				if (cell.getValue().equals(MedicationCommencedDiscontinuedType.MOS) )
 				{
 					DynamicGridRow pRow  = cell.getRow();
 					DynamicGridCell cellQmbBy = pRow.getCells().get(form.ctnDetails().dyngrdDoses().getColumns().getByIdentifier(COL_DOSE_COMMENCED_BY));
@@ -1315,7 +1437,22 @@ public class Logic extends BaseLogic
 
 	protected void onChkFilterValueChanged() throws PresentationLogicException 
 	{
-		open();		
+		filterValueChange(true);
+	}
+
+	private void filterValueChange(Boolean doSearch)
+	{
+		if (isMedicationMultipleDosesOnAdmission() || isDialog())
+			form.getGlobalContext().Clinical.setMedMultipleDosesAdmSearchCriteia(getSearchCriteria());
+		else if (isMedicationMultipleDosesOnDischarge())
+			form.getGlobalContext().Clinical.setMedMultipleDosesDisSearchCriteria(getSearchCriteria());
+		else if (isMedicationMultipleDosesOPD())
+			form.getGlobalContext().Clinical.setMedMultipleDosesOPDSearchCriteria(getSearchCriteria());
+		else if (isMedicationMultipleDosesPatientLevel())
+			form.getGlobalContext().Clinical.setMedMultipleDosesPatSearchCriteria(getSearchCriteria());
+
+		open(doSearch);
+		
 	}
 
 	private MedicationDosesDynamicGridPopulation getHelper()
@@ -1359,12 +1496,13 @@ public class Logic extends BaseLogic
 		
 		form.setMode(FormMode.VIEW);
 		displayOrHideEnableDisableScreenSpecificControls();
+		form.getGlobalContext().Clinical.setMedMultipleDosesPatSearchCriteria(getSearchCriteria());
 	}
 
 	protected void onCmbCommencedByValueChanged() throws PresentationLogicException 
 	{
 		if ( (form.ctnDetails().cmbCommencedBy().getValue() != null)
-				&& (form.ctnDetails().cmbCommencedBy().getValue().equals(MedciationCommencedDiscontinuedType.MOS)) )
+				&& (form.ctnDetails().cmbCommencedBy().getValue().equals(MedicationCommencedDiscontinuedType.MOS)) )
 		{
 			form.ctnDetails().qmbCommencedBy().setEnabled(true);
 			defaultHCP();

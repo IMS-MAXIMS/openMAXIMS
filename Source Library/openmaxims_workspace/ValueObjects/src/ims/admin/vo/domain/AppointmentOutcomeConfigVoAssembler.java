@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.admin.vo.domain;
@@ -56,20 +61,26 @@ public class AppointmentOutcomeConfigVoAssembler
 		valueObjectDest.setShowFirstDefinitiveTreatment(valueObjectSrc.getShowFirstDefinitiveTreatment());
 		// CanAddtoWaitingList
 		valueObjectDest.setCanAddtoWaitingList(valueObjectSrc.getCanAddtoWaitingList());
-		// CanAddtoBookedList
-		valueObjectDest.setCanAddtoBookedList(valueObjectSrc.getCanAddtoBookedList());
 		// CanAddtoPlannedList
 		valueObjectDest.setCanAddtoPlannedList(valueObjectSrc.getCanAddtoPlannedList());
 		// CanMakeAppointment
 		valueObjectDest.setCanMakeAppointment(valueObjectSrc.getCanMakeAppointment());
-		// CanMakeOnwardReferral
-		valueObjectDest.setCanMakeOnwardReferral(valueObjectSrc.getCanMakeOnwardReferral());
 		// CanTransfer
 		valueObjectDest.setCanTransfer(valueObjectSrc.getCanTransfer());
 		// AppointmentOutcome
 		valueObjectDest.setAppointmentOutcome(valueObjectSrc.getAppointmentOutcome());
 		// FirstDefinitiveTreatmentEvent
 		valueObjectDest.setFirstDefinitiveTreatmentEvent(valueObjectSrc.getFirstDefinitiveTreatmentEvent());
+		// UsedForSeen
+		valueObjectDest.setUsedForSeen(valueObjectSrc.getUsedForSeen());
+		// UsedForNotSeen
+		valueObjectDest.setUsedForNotSeen(valueObjectSrc.getUsedForNotSeen());
+		// UsedForDNA
+		valueObjectDest.setUsedForDNA(valueObjectSrc.getUsedForDNA());
+		// CanAddRequestForService
+		valueObjectDest.setCanAddRequestForService(valueObjectSrc.getCanAddRequestForService());
+		// CanTransferOfCare
+		valueObjectDest.setCanTransferOfCare(valueObjectSrc.getCanTransferOfCare());
 	 	return valueObjectDest;
 	 }
 
@@ -366,54 +377,60 @@ public class AppointmentOutcomeConfigVoAssembler
 		valueObject.setShowFirstDefinitiveTreatment( domainObject.isShowFirstDefinitiveTreatment() );
 		// CanAddtoWaitingList
 		valueObject.setCanAddtoWaitingList( domainObject.isCanAddtoWaitingList() );
-		// CanAddtoBookedList
-		valueObject.setCanAddtoBookedList( domainObject.isCanAddtoBookedList() );
 		// CanAddtoPlannedList
 		valueObject.setCanAddtoPlannedList( domainObject.isCanAddtoPlannedList() );
 		// CanMakeAppointment
 		valueObject.setCanMakeAppointment( domainObject.isCanMakeAppointment() );
-		// CanMakeOnwardReferral
-		valueObject.setCanMakeOnwardReferral( domainObject.isCanMakeOnwardReferral() );
 		// CanTransfer
 		valueObject.setCanTransfer( domainObject.isCanTransfer() );
 		// AppointmentOutcome
-		ims.domain.lookups.LookupInstance instance9 = domainObject.getAppointmentOutcome();
-		if ( null != instance9 ) {
+		ims.domain.lookups.LookupInstance instance7 = domainObject.getAppointmentOutcome();
+		if ( null != instance7 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
 			img = null;
-			if (instance9.getImage() != null) 
+			if (instance7.getImage() != null) 
 			{
-				img = new ims.framework.utils.ImagePath(instance9.getImage().getImageId(), instance9.getImage().getImagePath());
+				img = new ims.framework.utils.ImagePath(instance7.getImage().getImageId(), instance7.getImage().getImagePath());
 			}
-			color = instance9.getColor();
+			color = instance7.getColor();
 			if (color != null) 
 				color.getValue();
 
-			ims.scheduling.vo.lookups.ApptOutcome voLookup9 = new ims.scheduling.vo.lookups.ApptOutcome(instance9.getId(),instance9.getText(), instance9.isActive(), null, img, color);
-			ims.scheduling.vo.lookups.ApptOutcome parentVoLookup9 = voLookup9;
-			ims.domain.lookups.LookupInstance parent9 = instance9.getParent();
-			while (parent9 != null)
+			ims.scheduling.vo.lookups.ApptOutcome voLookup7 = new ims.scheduling.vo.lookups.ApptOutcome(instance7.getId(),instance7.getText(), instance7.isActive(), null, img, color);
+			ims.scheduling.vo.lookups.ApptOutcome parentVoLookup7 = voLookup7;
+			ims.domain.lookups.LookupInstance parent7 = instance7.getParent();
+			while (parent7 != null)
 			{
-				if (parent9.getImage() != null) 
+				if (parent7.getImage() != null) 
 				{
-					img = new ims.framework.utils.ImagePath(parent9.getImage().getImageId(), parent9.getImage().getImagePath() );
+					img = new ims.framework.utils.ImagePath(parent7.getImage().getImageId(), parent7.getImage().getImagePath() );
 				}
 				else 
 				{
 					img = null;
 				}
-				color = parent9.getColor();
+				color = parent7.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup9.setParent(new ims.scheduling.vo.lookups.ApptOutcome(parent9.getId(),parent9.getText(), parent9.isActive(), null, img, color));
-				parentVoLookup9 = parentVoLookup9.getParent();
-								parent9 = parent9.getParent();
+								parentVoLookup7.setParent(new ims.scheduling.vo.lookups.ApptOutcome(parent7.getId(),parent7.getText(), parent7.isActive(), null, img, color));
+				parentVoLookup7 = parentVoLookup7.getParent();
+								parent7 = parent7.getParent();
 			}			
-			valueObject.setAppointmentOutcome(voLookup9);
+			valueObject.setAppointmentOutcome(voLookup7);
 		}
 				// FirstDefinitiveTreatmentEvent
 		valueObject.setFirstDefinitiveTreatmentEvent(ims.pathways.vo.domain.EventLiteVoAssembler.create(map, domainObject.getFirstDefinitiveTreatmentEvent()) );
+		// UsedForSeen
+		valueObject.setUsedForSeen( domainObject.isUsedForSeen() );
+		// UsedForNotSeen
+		valueObject.setUsedForNotSeen( domainObject.isUsedForNotSeen() );
+		// UsedForDNA
+		valueObject.setUsedForDNA( domainObject.isUsedForDNA() );
+		// CanAddRequestForService
+		valueObject.setCanAddRequestForService( domainObject.isCanAddRequestForService() );
+		// CanTransferOfCare
+		valueObject.setCanTransferOfCare( domainObject.isCanTransferOfCare() );
  		return valueObject;
 	 }
 
@@ -466,36 +483,39 @@ public class AppointmentOutcomeConfigVoAssembler
 		domainObject.setAppointmentOutcomeReasons(ims.admin.vo.domain.AppointmentOutcomeReasonVoAssembler.extractAppointmentOutcomeReasonsList(domainFactory, valueObject.getAppointmentOutcomeReasons(), domainObject.getAppointmentOutcomeReasons(), domMap));		
 		domainObject.setShowFirstDefinitiveTreatment(valueObject.getShowFirstDefinitiveTreatment());
 		domainObject.setCanAddtoWaitingList(valueObject.getCanAddtoWaitingList());
-		domainObject.setCanAddtoBookedList(valueObject.getCanAddtoBookedList());
 		domainObject.setCanAddtoPlannedList(valueObject.getCanAddtoPlannedList());
 		domainObject.setCanMakeAppointment(valueObject.getCanMakeAppointment());
-		domainObject.setCanMakeOnwardReferral(valueObject.getCanMakeOnwardReferral());
 		domainObject.setCanTransfer(valueObject.getCanTransfer());
 		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value9 = null;
+		ims.domain.lookups.LookupInstance value7 = null;
 		if ( null != valueObject.getAppointmentOutcome() ) 
 		{
-			value9 =
+			value7 =
 				domainFactory.getLookupInstance(valueObject.getAppointmentOutcome().getID());
 		}
-		domainObject.setAppointmentOutcome(value9);
+		domainObject.setAppointmentOutcome(value7);
 	// SaveAsRefVO - treated as a refVo in extract methods
-	ims.pathways.configuration.domain.objects.Event value10 = null;
+	ims.pathways.configuration.domain.objects.Event value8 = null;
 		if ( null != valueObject.getFirstDefinitiveTreatmentEvent() ) 
 		{
 			if (valueObject.getFirstDefinitiveTreatmentEvent().getBoId() == null)
 			{
 				if (domMap.get(valueObject.getFirstDefinitiveTreatmentEvent()) != null)
 				{
-					value10 = (ims.pathways.configuration.domain.objects.Event)domMap.get(valueObject.getFirstDefinitiveTreatmentEvent());
+					value8 = (ims.pathways.configuration.domain.objects.Event)domMap.get(valueObject.getFirstDefinitiveTreatmentEvent());
 				}
 			}
 			else
 			{
-				value10 = (ims.pathways.configuration.domain.objects.Event)domainFactory.getDomainObject(ims.pathways.configuration.domain.objects.Event.class, valueObject.getFirstDefinitiveTreatmentEvent().getBoId());
+				value8 = (ims.pathways.configuration.domain.objects.Event)domainFactory.getDomainObject(ims.pathways.configuration.domain.objects.Event.class, valueObject.getFirstDefinitiveTreatmentEvent().getBoId());
 			}
 		}
-		domainObject.setFirstDefinitiveTreatmentEvent(value10);
+		domainObject.setFirstDefinitiveTreatmentEvent(value8);
+		domainObject.setUsedForSeen(valueObject.getUsedForSeen());
+		domainObject.setUsedForNotSeen(valueObject.getUsedForNotSeen());
+		domainObject.setUsedForDNA(valueObject.getUsedForDNA());
+		domainObject.setCanAddRequestForService(valueObject.getCanAddRequestForService());
+		domainObject.setCanTransferOfCare(valueObject.getCanTransferOfCare());
 
 		return domainObject;
 	}

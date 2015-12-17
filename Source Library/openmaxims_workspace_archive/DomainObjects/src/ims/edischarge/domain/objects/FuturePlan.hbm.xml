@@ -1,0 +1,246 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:37 -->
+<hibernate-mapping>
+	<class name="ims.edischarge.domain.objects.FuturePlan" table="edis_futureplan" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: careContext -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="careContext" class="ims.core.admin.domain.objects.CareContext" unique="true" foreign-key="futureplan_carecontex_fk" access="field" cascade="save-update">
+			<column name="carecontex" sql-type="numeric(10,0)" not-null="true" unique="false"  index='carectx_idx' />
+		</many-to-one>
+<!-- debug: hospitalFollowUp -->
+<!-- debug: followupIn -->
+<!-- debug: followupInInterval -->
+<!-- debug: followupHCP -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="followupHCP" class="ims.core.resource.people.domain.objects.Hcp" unique="true" foreign-key="futureplan_followuphc_fk" access="field" cascade="save-update">
+			<column name="followuphc" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: hospitalPlan -->
+<!-- debug: actionsforGPandCommunity -->
+<!-- debug: resultsAwaited -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- many to many -->
+		<set name="resultsAwaited" table="edis_futureplan_resultsawa" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="futureplan_resultsawa_fr_fk">
+				<column name="from_side" sql-type="numeric(10,0)" unique="false"   />
+			</key>
+			
+			<many-to-many class="ims.ocrr.orderingresults.domain.objects.OrderInvestigation" foreign-key="futureplan_resultsawa_to_fk">
+				<column name="to_side" sql-type="numeric(10,0)" unique="false"   />
+			</many-to-many>
+		</set>
+<!-- debug: otherResultsAwaited -->
+<!-- debug: medicalCertificationIssued -->
+<!-- debug: certificateExpiresDate -->
+<!-- debug: refrainFromWorkValue -->
+<!-- debug: refrainFromWorkUnit -->
+<!-- debug: comments -->
+<!-- debug: dischargeDetails -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="dischargeDetails" class="ims.edischarge.domain.objects.DischargeDetails" unique="true" foreign-key="futureplan_discharged_fk" access="field" cascade="save-update">
+			<column name="discharged" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: wasNurseEnabledDischarge -->
+<!-- debug: followUpDetails -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="followUpDetails" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="futureplan_followupde_fk">
+				<column name="edis_futureplan_followupde" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.edischarge.domain.objects.FuturePlanFollowUp" />
+		</set>
+<!-- debug: linkedSurgicalOperationNote -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="linkedSurgicalOperationNote" class="ims.clinical.domain.objects.SurgicalOperationNotes" unique="true" foreign-key="futureplan_linkedsurg_fk" access="field" cascade="save-update">
+			<column name="linkedsurg" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: nurseEnabledInstructions -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="nurseEnabledInstructions" class="ims.edischarge.domain.objects.NurseEnabledInstructions" unique="true" foreign-key="futureplan_nurseenabl_fk" access="field" cascade="save-update">
+			<column name="nurseenabl" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: livesAlone -->
+<!-- debug: statementOfFitnessToWorkIssue -->
+<!-- debug: fitToReturnToWork -->
+<!-- debug: returnToWorkAdvice -->
+<!-- debug: adviceApplicatiableFor -->
+<!-- debug: adviceApplicatiableForUnit -->
+<!-- debug: isComplete -->
+<!-- debug: certificateStartsDate -->
+<!-- debug: isSugicalOpNotesComplete -->
+<!-- debug: opNotesActionsforGPandCommunity -->
+<!-- debug: opNotesFollowUpDetails -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- many to many -->
+		<set name="opNotesFollowUpDetails" table="edis_futureplan_opnotesfol" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="futureplan_opnotesfol_fr_fk">
+				<column name="from_side" sql-type="numeric(10,0)" unique="false"   />
+			</key>
+			
+			<many-to-many class="ims.edischarge.domain.objects.FuturePlanFollowUp" foreign-key="futureplan_opnotesfol_to_fk">
+				<column name="to_side" sql-type="numeric(10,0)" unique="false"   />
+			</many-to-many>
+		</set>
+<!-- debug: opNotesNurseEnabledInstructions -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="opNotesNurseEnabledInstructions" class="ims.edischarge.domain.objects.NurseEnabledInstructions" unique="true" foreign-key="futureplan_opnotesnur_fk" access="field" cascade="save-update">
+			<column name="opnotesnur" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="hospitalFollowUp" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_hospitalfo" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="followupIn" type="integer" access="field" update="true">
+			<column name="followupin"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="followupInInterval" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_followupi2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="hospitalPlan" type="text" access="field" update="true" > 
+			<column name="hospitalpl"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="actionsforGPandCommunity" type="text" access="field" update="true" > 
+			<column name="actionsfor"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="otherResultsAwaited" type="text" access="field" update="true" > 
+			<column name="otherresul"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="medicalCertificationIssued" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_medicalcer" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="certificateExpiresDate" type="date" access="field" update="true">
+			<column name="certificat"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="refrainFromWorkValue" type="integer" access="field" update="true">
+			<column name="refrainfro"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="refrainFromWorkUnit" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_refrainfr2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="comments" type="text" access="field" update="true" > 
+			<column name="comments"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="wasNurseEnabledDischarge" type="boolean" access="field" update="true">
+			<column name="wasnurseen"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="livesAlone" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_livesalone" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="statementOfFitnessToWorkIssue" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_statemento" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="fitToReturnToWork" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_fittoretur" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="returnToWorkAdvice" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_returntowo" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="adviceApplicatiableFor" type="integer" access="field" update="true">
+			<column name="adviceappl"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="adviceApplicatiableForUnit" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_adviceapp2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isComplete" type="boolean" access="field" update="true">
+			<column name="iscomplete"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="certificateStartsDate" type="date" access="field" update="true">
+			<column name="certifica2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isSugicalOpNotesComplete" type="boolean" access="field" update="true">
+			<column name="issugicalo"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="opNotesActionsforGPandCommunity" type="text" access="field" update="true" > 
+			<column name="opnotesact"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

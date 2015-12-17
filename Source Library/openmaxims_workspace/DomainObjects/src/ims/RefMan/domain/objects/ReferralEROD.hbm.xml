@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:37 -->
+<!-- Generated: 12/10/2015, 13:32 -->
 <hibernate-mapping>
 	<class name="ims.RefMan.domain.objects.ReferralEROD" table="care_referralerod" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -52,6 +52,10 @@
 			<column name="pathwayclo" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
 <!-- debug: erodStatus -->
+<!-- debug: eRODReason -->
+<!-- debug: eRODReasonComment -->
+<!-- debug: isExtendedDelay -->
+<!-- debug: dateOfOffer -->
 <!-- debug: !IsAssociation && !IsCollection -->
 
 <!-- debug: !IsLookup -->
@@ -61,7 +65,7 @@
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="eRODDate2" type="date" access="field" update="true">
-			<column name="eroddate2"  not-null="true" unique="false"  />
+			<column name="eroddate2"  not-null="false" unique="false"  />
 		</property>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
@@ -93,5 +97,25 @@
 		<many-to-one name="erodStatus" class="ims.domain.lookups.LookupInstance" access="field">
 			<column name="lkp_erodstatus" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="eRODReason" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_erodreason" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="eRODReasonComment" type="string" access="field" update="true" > 
+			<column name="erodreaso2" length="1500"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isExtendedDelay" type="boolean" access="field" update="true">
+			<column name="isextended"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dateOfOffer" type="date" access="field" update="true">
+			<column name="dateofoffe"  not-null="false" unique="false"  />
+		</property>
 	</class>
 </hibernate-mapping>

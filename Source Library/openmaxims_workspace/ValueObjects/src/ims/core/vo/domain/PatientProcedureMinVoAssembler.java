@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.core.vo.domain;
@@ -52,6 +57,20 @@ public class PatientProcedureMinVoAssembler
 	    valueObjectDest.setIsRIE(valueObjectSrc.getIsRIE());
 		// Procedure
 		valueObjectDest.setProcedure(valueObjectSrc.getProcedure());
+		// ProcLaterality
+		valueObjectDest.setProcLaterality(valueObjectSrc.getProcLaterality());
+		// Notes
+		valueObjectDest.setNotes(valueObjectSrc.getNotes());
+		// isPrimary
+		valueObjectDest.setIsPrimary(valueObjectSrc.getIsPrimary());
+		// ProcedureStatus
+		valueObjectDest.setProcedureStatus(valueObjectSrc.getProcedureStatus());
+		// DatePlanned
+		valueObjectDest.setDatePlanned(valueObjectSrc.getDatePlanned());
+		// ProcDate
+		valueObjectDest.setProcDate(valueObjectSrc.getProcDate());
+		// ProcTime
+		valueObjectDest.setProcTime(valueObjectSrc.getProcTime());
 	 	return valueObjectDest;
 	 }
 
@@ -344,6 +363,100 @@ public class PatientProcedureMinVoAssembler
 			
 		// Procedure
 		valueObject.setProcedure(ims.core.vo.domain.ProcedureLiteVoAssembler.create(map, domainObject.getProcedure()) );
+		// ProcLaterality
+		ims.domain.lookups.LookupInstance instance2 = domainObject.getProcLaterality();
+		if ( null != instance2 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance2.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance2.getImage().getImageId(), instance2.getImage().getImagePath());
+			}
+			color = instance2.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.LateralityLRB voLookup2 = new ims.core.vo.lookups.LateralityLRB(instance2.getId(),instance2.getText(), instance2.isActive(), null, img, color);
+			ims.core.vo.lookups.LateralityLRB parentVoLookup2 = voLookup2;
+			ims.domain.lookups.LookupInstance parent2 = instance2.getParent();
+			while (parent2 != null)
+			{
+				if (parent2.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent2.getImage().getImageId(), parent2.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent2.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup2.setParent(new ims.core.vo.lookups.LateralityLRB(parent2.getId(),parent2.getText(), parent2.isActive(), null, img, color));
+				parentVoLookup2 = parentVoLookup2.getParent();
+								parent2 = parent2.getParent();
+			}			
+			valueObject.setProcLaterality(voLookup2);
+		}
+				// Notes
+		valueObject.setNotes(domainObject.getNotes());
+		// isPrimary
+		valueObject.setIsPrimary( domainObject.isIsPrimary() );
+		// ProcedureStatus
+		ims.domain.lookups.LookupInstance instance5 = domainObject.getProcedureStatus();
+		if ( null != instance5 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance5.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance5.getImage().getImageId(), instance5.getImage().getImagePath());
+			}
+			color = instance5.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.PatientProcedureStatus voLookup5 = new ims.core.vo.lookups.PatientProcedureStatus(instance5.getId(),instance5.getText(), instance5.isActive(), null, img, color);
+			ims.core.vo.lookups.PatientProcedureStatus parentVoLookup5 = voLookup5;
+			ims.domain.lookups.LookupInstance parent5 = instance5.getParent();
+			while (parent5 != null)
+			{
+				if (parent5.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent5.getImage().getImageId(), parent5.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent5.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup5.setParent(new ims.core.vo.lookups.PatientProcedureStatus(parent5.getId(),parent5.getText(), parent5.isActive(), null, img, color));
+				parentVoLookup5 = parentVoLookup5.getParent();
+								parent5 = parent5.getParent();
+			}			
+			valueObject.setProcedureStatus(voLookup5);
+		}
+				// DatePlanned
+		Integer DatePlanned = domainObject.getDatePlanned();
+		if ( null != DatePlanned ) 
+		{
+			valueObject.setDatePlanned(new ims.framework.utils.PartialDate(DatePlanned) );
+		}
+		// ProcDate
+		Integer ProcDate = domainObject.getProcDate();
+		if ( null != ProcDate ) 
+		{
+			valueObject.setProcDate(new ims.framework.utils.PartialDate(ProcDate) );
+		}
+		// ProcTime
+		String ProcTime = domainObject.getProcTime();
+		if ( null != ProcTime ) 
+		{
+			valueObject.setProcTime(new ims.framework.utils.Time(ProcTime) );
+		}
  		return valueObject;
 	 }
 
@@ -410,6 +523,51 @@ public class PatientProcedureMinVoAssembler
 			}
 		}
 		domainObject.setProcedure(value1);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value2 = null;
+		if ( null != valueObject.getProcLaterality() ) 
+		{
+			value2 =
+				domainFactory.getLookupInstance(valueObject.getProcLaterality().getID());
+		}
+		domainObject.setProcLaterality(value2);
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getNotes() != null && valueObject.getNotes().equals(""))
+		{
+			valueObject.setNotes(null);
+		}
+		domainObject.setNotes(valueObject.getNotes());
+		domainObject.setIsPrimary(valueObject.getIsPrimary());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value5 = null;
+		if ( null != valueObject.getProcedureStatus() ) 
+		{
+			value5 =
+				domainFactory.getLookupInstance(valueObject.getProcedureStatus().getID());
+		}
+		domainObject.setProcedureStatus(value5);
+		ims.framework.utils.PartialDate DatePlanned = valueObject.getDatePlanned();
+		Integer value6 = null;
+		if ( null != DatePlanned ) 
+		{
+			value6 = DatePlanned.toInteger();
+		}
+		domainObject.setDatePlanned(value6);
+		ims.framework.utils.PartialDate ProcDate = valueObject.getProcDate();
+		Integer value7 = null;
+		if ( null != ProcDate ) 
+		{
+			value7 = ProcDate.toInteger();
+		}
+		domainObject.setProcDate(value7);
+		ims.framework.utils.Time time8 = valueObject.getProcTime();
+		String value8 = null;
+		if ( time8 != null ) 
+		{
+			value8 = time8.toString();
+		}
+		domainObject.setProcTime(value8);
 
 		return domainObject;
 	}

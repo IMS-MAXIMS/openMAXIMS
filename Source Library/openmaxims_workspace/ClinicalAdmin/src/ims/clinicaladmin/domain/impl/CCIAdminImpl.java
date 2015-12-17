@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -79,6 +84,7 @@ import ims.core.vo.CancerImagingEventVo;
 import ims.core.vo.DiagnosisVo;
 import ims.core.vo.MedicationFullVo;
 import ims.core.vo.ProcedureVo;
+import ims.core.vo.TaxonomyMapCollection;
 import ims.core.vo.VaccineVo;
 import ims.core.vo.domain.AllergenDetailsAssembler;
 import ims.core.vo.domain.AllergenVoAssembler;
@@ -404,10 +410,12 @@ public class CCIAdminImpl extends BaseCCIAdminImpl
 		catch(UnqViolationUncheckedException e)
 		{		
 			//check for taxonomy map duplication
-			String dupMessage = Keywords.checkDuplicateTaxonomy(factory, domCci, fullCci.getCciMappings(), methodName);
+			if(fullCci.getCciMappings() instanceof TaxonomyMapCollection)
+			{
+			String dupMessage = Keywords.checkDuplicateTaxonomy(factory, domCci,(TaxonomyMapCollection) fullCci.getCciMappings(), methodName);
 			if(dupMessage != null)
 				throw new UniqueKeyViolationException(dupMessage);
-			
+			}
 			//else is name duplication
 			throw new UniqueKeyViolationException(cciType.toString() + " record called \"" + fullCci.getIGenericItemInfoName() + "\" already exists. Duplicates not allowed.", e);		
 		}

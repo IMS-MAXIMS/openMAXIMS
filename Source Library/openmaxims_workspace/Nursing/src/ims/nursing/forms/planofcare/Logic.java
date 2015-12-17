@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -44,6 +49,7 @@ import ims.nursing.vo.PlanOfCareHistoryVoCollection;
 import ims.nursing.vo.PlanOfCareListVo;
 import ims.nursing.vo.PlanOfCareListVoCollection;
 import ims.nursing.vo.PlanOfCareLiteVo;
+import ims.nursing.vo.PlanOfCareSearchCriteriaVo;
 import ims.nursing.vo.PlanOfCareVo;
 import ims.nursing.vo.lookups.PlanOfCareStatus;
 
@@ -76,8 +82,45 @@ public class Logic extends BaseLogic
 		else
 		{
 			initialize();
-			open();
+			
+			//WDEV-19389 
+			if (!(form.getGlobalContext().Core.getCurrentCareContextIsNotNull() && form.getGlobalContext().Nursing.getPlanOfCareSearchCriteriaIsNotNull() && form.getGlobalContext().Core.getCurrentCareContext().equals(form.getGlobalContext().Nursing.getPlanOfCareSearchCriteria().getCareContext())))
+			{
+				form.getGlobalContext().Nursing.setPlanOfCareSearchCriteria(null);
+			}
+			
+			if(form.getGlobalContext().Nursing.getPlanOfCareSearchCriteriaIsNotNull())
+			{
+				setSearchCriteria(form.getGlobalContext().Nursing.getPlanOfCareSearchCriteria());
+				try
+				{
+					onCmbStatusValueChanged();
+				}
+				catch (PresentationLogicException e)
+				{
+					e.printStackTrace();
+				}
+			}
+			else
+				open();
+			//WDEV-19389 - end
 		}
+	}
+	
+	private PlanOfCareSearchCriteriaVo getSearchCriteria()
+	{
+		PlanOfCareSearchCriteriaVo searchCriteria = new PlanOfCareSearchCriteriaVo();
+		
+		searchCriteria.setFilter(form.lyrPOC().tabPocList().cmbStatus().getValue());
+		searchCriteria.setCareContext(form.getGlobalContext().Core.getCurrentCareContext());
+		
+		return searchCriteria;
+	}
+	
+	
+	private void setSearchCriteria(PlanOfCareSearchCriteriaVo planOfCareSearchCriteriaVo)
+	{
+		form.lyrPOC().tabPocList().cmbStatus().setValue(planOfCareSearchCriteriaVo.getFilter());	
 	}
 
 	private void open()
@@ -351,6 +394,8 @@ public class Logic extends BaseLogic
 			form.lyrPOC().tabPocList().cmbStatus().setValue(PlanOfCareStatus.CURRENT);
 			listPlansOfCareByStatus(PlanOfCareStatus.CURRENT);
 		}	
+		
+		form.getGlobalContext().Nursing.setPlanOfCareSearchCriteria(getSearchCriteria());//WDEV-19389 
 	}
 
 	private void listPlansOfCareByStatus(PlanOfCareStatus status)

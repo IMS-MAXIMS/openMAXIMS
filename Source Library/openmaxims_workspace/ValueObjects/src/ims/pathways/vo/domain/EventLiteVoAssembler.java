@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:23
  *
  */
 package ims.pathways.vo.domain;
@@ -72,6 +77,10 @@ public class EventLiteVoAssembler
 		valueObjectDest.setEndsPathway(valueObjectSrc.getEndsPathway());
 		// IsManualScheduledEvent
 		valueObjectDest.setIsManualScheduledEvent(valueObjectSrc.getIsManualScheduledEvent());
+		// CancellationType
+		valueObjectDest.setCancellationType(valueObjectSrc.getCancellationType());
+		// CancellationReason
+		valueObjectDest.setCancellationReason(valueObjectSrc.getCancellationReason());
 	 	return valueObjectDest;
 	 }
 
@@ -452,7 +461,79 @@ public class EventLiteVoAssembler
 		valueObject.setEndsPathway( domainObject.isEndsPathway() );
 		// IsManualScheduledEvent
 		valueObject.setIsManualScheduledEvent( domainObject.isIsManualScheduledEvent() );
- 		return valueObject;
+		// CancellationType
+		ims.domain.lookups.LookupInstance instance12 = domainObject.getCancellationType();
+		if ( null != instance12 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance12.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance12.getImage().getImageId(), instance12.getImage().getImagePath());
+			}
+			color = instance12.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.scheduling.vo.lookups.Status_Reason voLookup12 = new ims.scheduling.vo.lookups.Status_Reason(instance12.getId(),instance12.getText(), instance12.isActive(), null, img, color);
+			ims.scheduling.vo.lookups.Status_Reason parentVoLookup12 = voLookup12;
+			ims.domain.lookups.LookupInstance parent12 = instance12.getParent();
+			while (parent12 != null)
+			{
+				if (parent12.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent12.getImage().getImageId(), parent12.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent12.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup12.setParent(new ims.scheduling.vo.lookups.Status_Reason(parent12.getId(),parent12.getText(), parent12.isActive(), null, img, color));
+				parentVoLookup12 = parentVoLookup12.getParent();
+								parent12 = parent12.getParent();
+			}			
+			valueObject.setCancellationType(voLookup12);
+		}
+				// CancellationReason
+		ims.domain.lookups.LookupInstance instance13 = domainObject.getCancellationReason();
+		if ( null != instance13 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance13.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance13.getImage().getImageId(), instance13.getImage().getImagePath());
+			}
+			color = instance13.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.scheduling.vo.lookups.CancelAppointmentReason voLookup13 = new ims.scheduling.vo.lookups.CancelAppointmentReason(instance13.getId(),instance13.getText(), instance13.isActive(), null, img, color);
+			ims.scheduling.vo.lookups.CancelAppointmentReason parentVoLookup13 = voLookup13;
+			ims.domain.lookups.LookupInstance parent13 = instance13.getParent();
+			while (parent13 != null)
+			{
+				if (parent13.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent13.getImage().getImageId(), parent13.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent13.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup13.setParent(new ims.scheduling.vo.lookups.CancelAppointmentReason(parent13.getId(),parent13.getText(), parent13.isActive(), null, img, color));
+				parentVoLookup13 = parentVoLookup13.getParent();
+								parent13 = parent13.getParent();
+			}			
+			valueObject.setCancellationReason(voLookup13);
+		}
+		 		return valueObject;
 	 }
 
 
@@ -538,6 +619,22 @@ public class EventLiteVoAssembler
 		domainObject.setStopsClock(valueObject.getStopsClock());
 		domainObject.setEndsPathway(valueObject.getEndsPathway());
 		domainObject.setIsManualScheduledEvent(valueObject.getIsManualScheduledEvent());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value12 = null;
+		if ( null != valueObject.getCancellationType() ) 
+		{
+			value12 =
+				domainFactory.getLookupInstance(valueObject.getCancellationType().getID());
+		}
+		domainObject.setCancellationType(value12);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value13 = null;
+		if ( null != valueObject.getCancellationReason() ) 
+		{
+			value13 =
+				domainFactory.getLookupInstance(valueObject.getCancellationReason().getID());
+		}
+		domainObject.setCancellationReason(value13);
 
 		return domainObject;
 	}

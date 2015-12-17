@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:34 -->
+<!-- Generated: 12/10/2015, 13:29 -->
 <hibernate-mapping>
 	<class name="ims.clinical.domain.objects.PatientSECS" table="shcl_patientsecs" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -74,6 +74,7 @@
  				<column name="recordingirecordingd" not-null="false"  unique="false"   />
  			</property>
  		</component>
+<!-- debug: oBSProtocolType -->
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="escalated" type="boolean" access="field" update="true">
@@ -92,7 +93,12 @@
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="scoreDetails" type="string" access="field" update="true" > 
-			<column name="scoredetai" length="500"  not-null="false" unique="false"  />
+			<column name="scoredetai" length="1000"  not-null="false" unique="false"  />
 		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="oBSProtocolType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_obsprotoco" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
 	</class>
 </hibernate-mapping>

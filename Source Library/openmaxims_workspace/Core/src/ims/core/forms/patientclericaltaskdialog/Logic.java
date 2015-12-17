@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -251,10 +256,19 @@ public class Logic extends BaseLogic
 	private void updateControlsState() 
 	{
 		//WDEV-14080
-		form.btnEdit().setVisible(form.getMode().equals(FormMode.VIEW) && form.grdPatClericalTask().getValue()!=null && form.getLocalContext().getlocalContextClericalTaskIsNotNull() && form.getLocalContext().getlocalContextClericalTask().getStatus().equals(PatientClericalTaskStatus.OUTSTANDING));
-		form.btnTaskComplete().setVisible(form.getMode().equals(FormMode.VIEW) && form.grdPatClericalTask().getValue()!=null && form.getLocalContext().getlocalContextClericalTaskIsNotNull() &&form.getLocalContext().getlocalContextClericalTask().getStatus().equals(PatientClericalTaskStatus.OUTSTANDING));
 		
-		form.btnNew().setEnabled(form.getMode().equals(FormMode.VIEW) && engine.hasRight(AppRight.CAN_ALLOCATE_PATIENT_CLERICAL_TASKS));
+		Boolean setDisabled = form.getGlobalContext().Core.getOpenPatientClericalTaskAsReadOnlyIsNotNull() && Boolean.TRUE.equals(form.getGlobalContext().Core.getOpenPatientClericalTaskAsReadOnly());
+		
+		if (form.getMode().equals(FormMode.VIEW))
+		{
+			form.btnEdit().setVisible(form.grdPatClericalTask().getValue()!=null && form.getLocalContext().getlocalContextClericalTaskIsNotNull() && form.getLocalContext().getlocalContextClericalTask().getStatus().equals(PatientClericalTaskStatus.OUTSTANDING));
+			form.btnEdit().setEnabled(!setDisabled); //WDEV-17124
+			
+			form.btnTaskComplete().setVisible(form.grdPatClericalTask().getValue()!=null && form.getLocalContext().getlocalContextClericalTaskIsNotNull() &&form.getLocalContext().getlocalContextClericalTask().getStatus().equals(PatientClericalTaskStatus.OUTSTANDING));
+			form.btnTaskComplete().setEnabled(!setDisabled); //WDEV-17124
+		}
+		
+		form.btnNew().setEnabled(!setDisabled && form.getMode().equals(FormMode.VIEW) && engine.hasRight(AppRight.CAN_ALLOCATE_PATIENT_CLERICAL_TASKS)); //WDEV-17124
 		form.btnNew().setVisible(form.getMode().equals(FormMode.VIEW));
 				
 		form.ccRequestor().setEnabled(form.getMode().equals(FormMode.EDIT));

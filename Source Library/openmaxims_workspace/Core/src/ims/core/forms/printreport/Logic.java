@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -43,6 +48,7 @@ import ims.core.vo.lookups.DocumentStatus;
 import ims.core.vo.lookups.FileType;
 import ims.core.vo.lookups.PreActiveActiveInactiveStatus;
 import ims.domain.exceptions.StaleObjectException;
+import ims.framework.FormName;
 import ims.framework.IReportField;
 import ims.framework.enumerations.DialogResult;
 import ims.framework.enumerations.PrinterScope;
@@ -69,10 +75,18 @@ public class Logic extends BaseLogic
 	private static final int PREVIEW_REPORT = 1;
 	private static final int PRINT_REPORT = 2;
 	
-	protected void onFormOpen() throws ims.framework.exceptions.FormOpenException
+	protected void onFormOpen(Object[] args) throws ims.framework.exceptions.FormOpenException
 	{
+		if(args != null && args.length > 0)
+		{
+			if(args[0] instanceof FormName)
+			{
+				form.getLocalContext().setDialogName((FormName) args[0]);
+			}
+		}
 		
-		form.ccPrinters().initialize(domain.getCurrentLocation(), PrinterScope.DEFAULT, false);		
+		form.ccPrinters().initialize(domain.getCurrentLocation(), PrinterScope.DEFAULT, false);	
+		form.intNoOfCopies().setValue(1);
 		
 		if(form.getGlobalContext().Core.getPrepareForPrintingIsNotNull() && form.getGlobalContext().Core.getPrepareForPrinting().equals(Boolean.TRUE))
 		{
@@ -225,7 +239,14 @@ public class Logic extends BaseLogic
 	
 	protected void onBtnPreviewClick() throws ims.framework.exceptions.PresentationLogicException
 	{
-		buildReport(PREVIEW_REPORT);
+		if(buildReport(PREVIEW_REPORT))//wdev-19130
+		{
+			//WDEV-17772
+			if (ConfigFlag.GEN.CREATE_NEW_PATIENTDOCUMENT_ON_PRINTREPORTDIALOG.getValue() && form.chkStoreCopy().getValue())
+			{
+				savePatientDocument();
+			}
+		}
 	}
 	private boolean buildReport(int action)
 	{
@@ -241,43 +262,53 @@ public class Logic extends BaseLogic
 		ReportTemplateVo template = (ReportTemplateVo)form.grdReports().getValue();
 		QueryBuilderClient client = new QueryBuilderClient(urlQueryServer, engine.getSessionId());
 		
-		ReportSeedVo voReportSeed = new ReportSeedVo();
-
-		IReportField[] reportField = engine.getFormData(engine.getPreviousNonDialogFormName(), voReportSeed.getIseeds(template.getReport().getSeeds()));
-		
-		if (reportField != null)
+		//WDEV-20395
+		if (form.getGlobalContext().RefMan.getDischargedEpisodeRefCollIsNotNull() && form.getGlobalContext().RefMan.getDischargedEpisodeRefColl().size()>0)
 		{
-			String seedName;
-			
-			ReportSeedParsedVoCollection seeds = null;
-			
-			try
-			{
-				seeds = parseSeedsFromXML(template.getReport().getReportXml());
-			}
-			catch (DocumentException e)
-			{
-				e.printStackTrace();
-				
-				engine.showMessage(e.getMessage());
-				return false;
-			}
-			
-			for (int i = 0; i < reportField.length; i++)
-			{
-				try
-				{
-					seedName = getSeedName(reportField[i], seeds);
-					
-					client.addSeed(new SeedValue(seedName, reportField[i].getValue(), Class.forName(reportField[i].getType())));
-				} 
-				catch (ClassNotFoundException e)
-				{
-					engine.showMessage("Error building the report: " + e.toString());
-				}
-			}		
+			for (int i = 0; i <form.getGlobalContext().RefMan.getDischargedEpisodeRefColl().size(); i++)	
+			{	
+				client.addSeed(new SeedValue("ID", form.getGlobalContext().RefMan.getDischargedEpisodeRefColl().get(i).getID_DischargedEpisode(), Integer.class));
+			}	
 		}
-
+		else
+		{
+    		ReportSeedVo voReportSeed = new ReportSeedVo();
+    
+    		IReportField[] reportField = engine.getFormData((form.getLocalContext().getDialogName() != null ? form.getLocalContext().getDialogName() : engine.getPreviousNonDialogFormName()), voReportSeed.getIseeds(template.getReport().getSeeds()));
+    		
+    		if (reportField != null)
+    		{
+    			String seedName;
+    			
+    			ReportSeedParsedVoCollection seeds = null;
+    			
+    			try
+    			{
+    				seeds = parseSeedsFromXML(template.getReport().getReportXml());
+    			}
+    			catch (DocumentException e)
+    			{
+    				e.printStackTrace();
+    				
+    				engine.showMessage(e.getMessage());
+    				return false;
+    			}
+    			
+    			for (int i = 0; i < reportField.length; i++)
+    			{
+    				try
+    				{
+    					seedName = getSeedName(reportField[i], seeds);
+    					
+    					client.addSeed(new SeedValue(seedName, reportField[i].getValue(), Class.forName(reportField[i].getType())));
+    				} 
+    				catch (ClassNotFoundException e)
+    				{
+    					engine.showMessage("Error building the report: " + e.toString());
+    				}
+    			}		
+    		}
+		}
 		
 		if(action == PREVIEW_REPORT)
 		{
@@ -293,43 +324,62 @@ public class Logic extends BaseLogic
 			} 
 	
 			engine.openUrl(result);
+			
+			if (ConfigFlag.GEN.CREATE_NEW_PATIENTDOCUMENT_ON_PRINTREPORTDIALOG.getValue() && form.chkStoreCopy().getValue())
+				return createReport(client, template, urlReportServer, action);
 		}
 		else if(action == PRINT_REPORT)
 		{
-			try
+			if(form.intNoOfCopies().getValue() == null)
 			{
-				//WDEV-17772
-				byte[] reportContent = client.buildReport(template.getReport().getReportXml(), template.getTemplateXml(), urlReportServer, "PDF", form.ccPrinters().getSelectedPrinter().getIPrinterName(),1);
-				
-				String fileName = generateName() + ".pdf";
-				engine.uploadFile(ConfigFlag.GEN.PDF_UPLOAD_URL.getValue(), reportContent, fileName, ConfigFlag.GEN.FILE_UPLOAD_DIR.getValue() + "/");//WDEV-15470
-				
-				String path = null;// client.buildReportAndUpload(obj[0], obj[1], urlReportServer, QueryBuilderClient.PDF, printerName, 1);
-				
-				int year  = new DateTime().getDate().getYear();
-				int month = new DateTime().getDate().getMonth();
-				int day   = new DateTime().getDate().getDay();
-				
-				if(fileName != null && fileName.length() > 0)
-					path = year + "/" + month + "/" + day + "/" + fileName;//WDEV-15470
-
-				// Create Server document VO if uploads succeeds
-				ServerDocumentVo document = new ServerDocumentVo();
-				document.setFileName(path);
-				document.setFileType(FileType.PDF);
-				
-				form.getLocalContext().setServerDocument(document);
-			} 
-			catch (QueryBuilderClientException e1)
-			{
-				engine.showMessage("Error building the report: " + e1.toString());
+				engine.showErrors(new String[] {"Number of Copies is mandatory."});
 				return false;
-			} 
+			}
+			
+			return createReport(client, template, urlReportServer, action);
 		}
 		
 		return true;
 	}
 	
+	private boolean createReport(QueryBuilderClient client, ReportTemplateVo template, String urlReportServer, int action)
+	{
+		try
+		{
+			byte[] reportContent = null;
+			//WDEV-17772
+			if(form.ccPrinters().getSelectedPrinter() == null || action == PREVIEW_REPORT) //WDEV-23493
+				reportContent = client.buildReport(template.getReport().getReportXml(), template.getTemplateXml(), urlReportServer, "PDF", "",form.intNoOfCopies().getValue());
+			else
+				reportContent = client.buildReport(template.getReport().getReportXml(), template.getTemplateXml(), urlReportServer, "PDF", form.ccPrinters().getSelectedPrinter().getIPrinterName(),form.intNoOfCopies().getValue());
+			
+			String fileName = generateName() + ".pdf";
+			engine.uploadFile(ConfigFlag.GEN.PDF_UPLOAD_URL.getValue(), reportContent, fileName, ConfigFlag.GEN.FILE_UPLOAD_DIR.getValue() + "/");//WDEV-15470
+			
+			String path = null;// client.buildReportAndUpload(obj[0], obj[1], urlReportServer, QueryBuilderClient.PDF, printerName, 1);
+			
+			int year  = new DateTime().getDate().getYear();
+			int month = new DateTime().getDate().getMonth();
+			int day   = new DateTime().getDate().getDay();
+			
+			if(fileName != null && fileName.length() > 0)
+				path = year + "/" + month + "/" + day + "/" + fileName;//WDEV-15470
+
+			// Create Server document VO if uploads succeeds
+			ServerDocumentVo document = new ServerDocumentVo();
+			document.setFileName(path);
+			document.setFileType(FileType.PDF);
+			
+			form.getLocalContext().setServerDocument(document);
+		} 
+		catch (QueryBuilderClientException e1)
+		{
+			engine.showMessage("Error building the report: " + e1.toString());
+			return false;
+		} 
+		return true;
+	}
+
 	//WDEV-17772
 	private String generateName() 
 	{
@@ -386,7 +436,7 @@ public class Logic extends BaseLogic
 	
 	private void open()
 	{
-		ReportVoCollection coll = domain.listReports(new Integer(engine.getPreviousNonDialogFormName().getID()));
+		ReportVoCollection coll = domain.listReports(new Integer(form.getLocalContext().getDialogName() != null ? form.getLocalContext().getDialogName().getID() : engine.getPreviousNonDialogFormName().getID()));
 		
 		for(int i = 0; i < coll.size(); i++)
 		{
@@ -405,10 +455,13 @@ public class Logic extends BaseLogic
 				{
 					ReportTemplateVo template = report.getTemplates().get(j);
 					
-					grdReportsRow templateRow = row.getRows().newRow();
-					templateRow.setcolName(template.getName());
-					templateRow.setcolDescription(template.getDescription());
-					templateRow.setValue(template);
+					if(Boolean.TRUE.equals(template.getIsActive()))
+					{
+    					grdReportsRow templateRow = row.getRows().newRow();
+    					templateRow.setcolName(template.getName());
+    					templateRow.setcolDescription(template.getDescription());
+    					templateRow.setValue(template);
+					}
 				}
 				
 				row.setExpanded(true);
@@ -429,7 +482,7 @@ public class Logic extends BaseLogic
 
 		ReportSeedVo voReportSeed = new ReportSeedVo();
 		
-		return engine.formHasData(engine.getPreviousNonDialogFormName(), voReportSeed.getIseeds(report.getSeeds()));
+		return engine.formHasData((form.getLocalContext().getDialogName() != null ? form.getLocalContext().getDialogName() : engine.getPreviousNonDialogFormName()), voReportSeed.getIseeds(report.getSeeds()));
 	}
 	protected void onChkAllValueChanged() throws PresentationLogicException
 	{
@@ -486,5 +539,4 @@ public class Logic extends BaseLogic
 
 		return seeds;
 	}
-	
 }

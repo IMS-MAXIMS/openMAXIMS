@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:36 -->
+<hibernate-mapping>
+	<class name="ims.nursing.assessment.domain.objects.BladderContinence" table="ns_bladcont" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: hibernateClassContent -->
+<!-- debug: day -->
+<!-- debug: night -->
+<!-- debug: problemType -->
+<!-- debug: IsCollection : true -->
+		<!-- collection of Lookup instances -->
+		<list name="problemType" table="ns_bladcont_problemtyp" lazy="true" access="field">
+			<key foreign-key="bladcont_problemtyp_ofk">
+				<column name="owner" sql-type="numeric(10,0)"/>
+			</key>
+			<index column="idx"/>
+			<composite-element class="ims.domain.lookups.LookupInstanceRef">
+				<many-to-one name="instance" class="ims.domain.lookups.LookupInstance" access="field">
+					<column name="instance_id" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+				</many-to-one>
+			</composite-element>
+		</list>
+<!-- debug: otherProblem -->
+<!-- debug: bladderEmptySpontaneously -->
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: IsLookup -->
+		<many-to-one name="day" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_day" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="night" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_night" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="otherProblem" type="string" access="field" update="true">
+			<column name="otherprobl"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="bladderEmptySpontaneously" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_bladderemp" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+	</class>
+</hibernate-mapping>

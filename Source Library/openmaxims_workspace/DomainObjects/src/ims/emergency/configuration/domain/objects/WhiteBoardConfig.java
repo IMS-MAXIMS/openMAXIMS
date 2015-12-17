@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.emergency.configuration.domain.objects;
@@ -51,26 +56,18 @@ public class WhiteBoardConfig extends ims.domain.DomainObject implements ims.dom
 	private ims.emergency.configuration.domain.objects.TrackingArea currentArea;
 	/** is Active */
 	private Boolean isActive;
-	/** Show Meds Given Column */
-	private Boolean medsGiven;
-	/** Show Obs Taken Column */
-	private Boolean obsTaken;
-	/** Show ECG Column */
-	private Boolean eCG;
-	/** Show NPO Column */
-	private Boolean nPO;
-	/** Show Isolation Column */
-	private Boolean isolation;
 	/** Answer Options
 	  * Collection of ims.emergency.configuration.domain.objects.WhiteBoardAssessmentConfig.
 	  */
 	private java.util.List assessments;
-	/** Answer Options
-	  * Collection of ims.emergency.configuration.domain.objects.WhiteBoardQuestionConfig.
+	/** SelectedActions
+	  * Collection of ims.emergency.configuration.domain.objects.WhiteBoardOtherActions.
 	  */
-	private java.util.List otherQuestions;
+	private java.util.List selectedActions;
 	/** Show Comments Column */
 	private Boolean comments;
+	/** RefreshInterval - minutes */
+	private Integer refreshInterval;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public WhiteBoardConfig (Integer id, int ver)
@@ -112,41 +109,6 @@ public class WhiteBoardConfig extends ims.domain.DomainObject implements ims.dom
 		this.isActive = isActive;
 	}
 
-	public Boolean isMedsGiven() {
-		return medsGiven;
-	}
-	public void setMedsGiven(Boolean medsGiven) {
-		this.medsGiven = medsGiven;
-	}
-
-	public Boolean isObsTaken() {
-		return obsTaken;
-	}
-	public void setObsTaken(Boolean obsTaken) {
-		this.obsTaken = obsTaken;
-	}
-
-	public Boolean isECG() {
-		return eCG;
-	}
-	public void setECG(Boolean eCG) {
-		this.eCG = eCG;
-	}
-
-	public Boolean isNPO() {
-		return nPO;
-	}
-	public void setNPO(Boolean nPO) {
-		this.nPO = nPO;
-	}
-
-	public Boolean isIsolation() {
-		return isolation;
-	}
-	public void setIsolation(Boolean isolation) {
-		this.isolation = isolation;
-	}
-
 	public java.util.List getAssessments() {
 		if ( null == assessments ) {
 			assessments = new java.util.ArrayList();
@@ -157,14 +119,14 @@ public class WhiteBoardConfig extends ims.domain.DomainObject implements ims.dom
 		this.assessments = paramValue;
 	}
 
-	public java.util.List getOtherQuestions() {
-		if ( null == otherQuestions ) {
-			otherQuestions = new java.util.ArrayList();
+	public java.util.List getSelectedActions() {
+		if ( null == selectedActions ) {
+			selectedActions = new java.util.ArrayList();
 		}
-		return otherQuestions;
+		return selectedActions;
 	}
-	public void setOtherQuestions(java.util.List paramValue) {
-		this.otherQuestions = paramValue;
+	public void setSelectedActions(java.util.List paramValue) {
+		this.selectedActions = paramValue;
 	}
 
 	public Boolean isComments() {
@@ -172,6 +134,13 @@ public class WhiteBoardConfig extends ims.domain.DomainObject implements ims.dom
 	}
 	public void setComments(Boolean comments) {
 		this.comments = comments;
+	}
+
+	public Integer getRefreshInterval() {
+		return refreshInterval;
+	}
+	public void setRefreshInterval(Integer refreshInterval) {
+		this.refreshInterval = refreshInterval;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -230,33 +199,18 @@ public class WhiteBoardConfig extends ims.domain.DomainObject implements ims.dom
 		auditStr.append("\r\n*isActive* :");
 		auditStr.append(isActive);
 	    auditStr.append("; ");
-		auditStr.append("\r\n*medsGiven* :");
-		auditStr.append(medsGiven);
-	    auditStr.append("; ");
-		auditStr.append("\r\n*obsTaken* :");
-		auditStr.append(obsTaken);
-	    auditStr.append("; ");
-		auditStr.append("\r\n*eCG* :");
-		auditStr.append(eCG);
-	    auditStr.append("; ");
-		auditStr.append("\r\n*nPO* :");
-		auditStr.append(nPO);
-	    auditStr.append("; ");
-		auditStr.append("\r\n*isolation* :");
-		auditStr.append(isolation);
-	    auditStr.append("; ");
 		auditStr.append("\r\n*assessments* :");
 		if (assessments != null)
 		{
-		int i9=0;
-		for (i9=0; i9<assessments.size(); i9++)
+		int i4=0;
+		for (i4=0; i4<assessments.size(); i4++)
 		{
-			if (i9 > 0)
+			if (i4 > 0)
 				auditStr.append(",");
-			ims.emergency.configuration.domain.objects.WhiteBoardAssessmentConfig obj = (ims.emergency.configuration.domain.objects.WhiteBoardAssessmentConfig)assessments.get(i9);
+			ims.emergency.configuration.domain.objects.WhiteBoardAssessmentConfig obj = (ims.emergency.configuration.domain.objects.WhiteBoardAssessmentConfig)assessments.get(i4);
 		    if (obj != null)
 			{
-				if (i9 == 0)
+				if (i4 == 0)
 				{
 				auditStr.append(toShortClassName(obj));
 				auditStr.append("[");
@@ -264,22 +218,22 @@ public class WhiteBoardConfig extends ims.domain.DomainObject implements ims.dom
 		        auditStr.append(obj.getId());
 			}
 		}
-		if (i9 > 0)
-			auditStr.append("] " + i9);
+		if (i4 > 0)
+			auditStr.append("] " + i4);
 		}
 	    auditStr.append("; ");
-		auditStr.append("\r\n*otherQuestions* :");
-		if (otherQuestions != null)
+		auditStr.append("\r\n*selectedActions* :");
+		if (selectedActions != null)
 		{
-		int i10=0;
-		for (i10=0; i10<otherQuestions.size(); i10++)
+		int i5=0;
+		for (i5=0; i5<selectedActions.size(); i5++)
 		{
-			if (i10 > 0)
+			if (i5 > 0)
 				auditStr.append(",");
-			ims.emergency.configuration.domain.objects.WhiteBoardQuestionConfig obj = (ims.emergency.configuration.domain.objects.WhiteBoardQuestionConfig)otherQuestions.get(i10);
+			ims.emergency.configuration.domain.objects.WhiteBoardOtherActions obj = (ims.emergency.configuration.domain.objects.WhiteBoardOtherActions)selectedActions.get(i5);
 		    if (obj != null)
 			{
-				if (i10 == 0)
+				if (i5 == 0)
 				{
 				auditStr.append(toShortClassName(obj));
 				auditStr.append("[");
@@ -287,12 +241,15 @@ public class WhiteBoardConfig extends ims.domain.DomainObject implements ims.dom
 		        auditStr.append(obj.getId());
 			}
 		}
-		if (i10 > 0)
-			auditStr.append("] " + i10);
+		if (i5 > 0)
+			auditStr.append("] " + i5);
 		}
 	    auditStr.append("; ");
 		auditStr.append("\r\n*comments* :");
 		auditStr.append(comments);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*refreshInterval* :");
+		auditStr.append(refreshInterval);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -356,36 +313,6 @@ public class WhiteBoardConfig extends ims.domain.DomainObject implements ims.dom
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsActive().toString()));
 			sb.append("</isActive>");		
 		}
-		if (this.isMedsGiven() != null)
-		{
-			sb.append("<medsGiven>");
-			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isMedsGiven().toString()));
-			sb.append("</medsGiven>");		
-		}
-		if (this.isObsTaken() != null)
-		{
-			sb.append("<obsTaken>");
-			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isObsTaken().toString()));
-			sb.append("</obsTaken>");		
-		}
-		if (this.isECG() != null)
-		{
-			sb.append("<eCG>");
-			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isECG().toString()));
-			sb.append("</eCG>");		
-		}
-		if (this.isNPO() != null)
-		{
-			sb.append("<nPO>");
-			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isNPO().toString()));
-			sb.append("</nPO>");		
-		}
-		if (this.isIsolation() != null)
-		{
-			sb.append("<isolation>");
-			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsolation().toString()));
-			sb.append("</isolation>");		
-		}
 		if (this.getAssessments() != null)
 		{
 			if (this.getAssessments().size() > 0 )
@@ -395,13 +322,13 @@ public class WhiteBoardConfig extends ims.domain.DomainObject implements ims.dom
 			sb.append("</assessments>");		
 			}
 		}
-		if (this.getOtherQuestions() != null)
+		if (this.getSelectedActions() != null)
 		{
-			if (this.getOtherQuestions().size() > 0 )
+			if (this.getSelectedActions().size() > 0 )
 			{
-			sb.append("<otherQuestions>");
-			sb.append(ims.domain.DomainObject.toXMLString(this.getOtherQuestions(), domMap));
-			sb.append("</otherQuestions>");		
+			sb.append("<selectedActions>");
+			sb.append(ims.domain.DomainObject.toXMLString(this.getSelectedActions(), domMap));
+			sb.append("</selectedActions>");		
 			}
 		}
 		if (this.isComments() != null)
@@ -409,6 +336,12 @@ public class WhiteBoardConfig extends ims.domain.DomainObject implements ims.dom
 			sb.append("<comments>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isComments().toString()));
 			sb.append("</comments>");		
+		}
+		if (this.getRefreshInterval() != null)
+		{
+			sb.append("<refreshInterval>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getRefreshInterval().toString()));
+			sb.append("</refreshInterval>");		
 		}
 		return sb.toString();
 	}
@@ -590,47 +523,27 @@ public class WhiteBoardConfig extends ims.domain.DomainObject implements ims.dom
 		{	
     		obj.setIsActive(new Boolean(fldEl.getTextTrim()));	
 		}
-		fldEl = el.element("medsGiven");
-		if(fldEl != null)
-		{	
-    		obj.setMedsGiven(new Boolean(fldEl.getTextTrim()));	
-		}
-		fldEl = el.element("obsTaken");
-		if(fldEl != null)
-		{	
-    		obj.setObsTaken(new Boolean(fldEl.getTextTrim()));	
-		}
-		fldEl = el.element("eCG");
-		if(fldEl != null)
-		{	
-    		obj.setECG(new Boolean(fldEl.getTextTrim()));	
-		}
-		fldEl = el.element("nPO");
-		if(fldEl != null)
-		{	
-    		obj.setNPO(new Boolean(fldEl.getTextTrim()));	
-		}
-		fldEl = el.element("isolation");
-		if(fldEl != null)
-		{	
-    		obj.setIsolation(new Boolean(fldEl.getTextTrim()));	
-		}
 		fldEl = el.element("assessments");
 		if(fldEl != null)
 		{
 			fldEl = fldEl.element("list");	
 			obj.setAssessments(ims.emergency.configuration.domain.objects.WhiteBoardAssessmentConfig.fromListXMLString(fldEl, factory, obj.getAssessments(), domMap));
 		}
-		fldEl = el.element("otherQuestions");
+		fldEl = el.element("selectedActions");
 		if(fldEl != null)
 		{
 			fldEl = fldEl.element("list");	
-			obj.setOtherQuestions(ims.emergency.configuration.domain.objects.WhiteBoardQuestionConfig.fromListXMLString(fldEl, factory, obj.getOtherQuestions(), domMap));
+			obj.setSelectedActions(ims.emergency.configuration.domain.objects.WhiteBoardOtherActions.fromListXMLString(fldEl, factory, obj.getSelectedActions(), domMap));
 		}
 		fldEl = el.element("comments");
 		if(fldEl != null)
 		{	
     		obj.setComments(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("refreshInterval");
+		if(fldEl != null)
+		{	
+    		obj.setRefreshInterval(new Integer(fldEl.getTextTrim()));	
 		}
 	}
 
@@ -638,7 +551,7 @@ public class WhiteBoardConfig extends ims.domain.DomainObject implements ims.dom
 	{
 		return new String[]{
 		 "assessments"
-		, "otherQuestions"
+		, "selectedActions"
 		};
 	}
 
@@ -649,14 +562,10 @@ public class WhiteBoardConfig extends ims.domain.DomainObject implements ims.dom
 		public static final String EDLocation = "eDLocation";
 		public static final String CurrentArea = "currentArea";
 		public static final String IsActive = "isActive";
-		public static final String MedsGiven = "medsGiven";
-		public static final String ObsTaken = "obsTaken";
-		public static final String ECG = "eCG";
-		public static final String NPO = "nPO";
-		public static final String Isolation = "isolation";
 		public static final String Assessments = "assessments";
-		public static final String OtherQuestions = "otherQuestions";
+		public static final String SelectedActions = "selectedActions";
 		public static final String Comments = "comments";
+		public static final String RefreshInterval = "refreshInterval";
 	}
 }
 

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -58,9 +63,9 @@ public final class Entities implements ims.rules.interfaces.IRulesEngineEntities
 		new MedicationOnAdmissionandChanges(entities);
 		new Diagnosis(entities);
 		new MedicationConfig(entities);
+		new TaxonomyMapping(entities);
 		new DiagnosisCurrentStatus(entities);
 		new InvestigationIndex(entities);
-		new Investigation(entities);
 		new DocumentStatus(entities);
 		new PatientDocument(entities);
 		new AuthoringInformation(entities);
@@ -80,8 +85,10 @@ public final class Entities implements ims.rules.interfaces.IRulesEngineEntities
 		new PatientCareSpell(entities);
 		new Plastics(entities);
 		new TTAMedications(entities);
+		new TTAandPharmacy(entities);
 		new Patient(entities);
 		new IntraOperativeCareRecord(entities);
+		new Investigation(entities);
 		new ClinicalImagingResult(entities);
 		new OrderDetails(entities);
 		new PathologyResult(entities);
@@ -93,7 +100,6 @@ public final class Entities implements ims.rules.interfaces.IRulesEngineEntities
 		new ICPActionConfiguration(entities);
 		new ICPStageConfiguration(entities);
 		new ICPPhaseConfiguration(entities);
-		new TTAandPharmacy(entities);
 		new ReferralCurrentStatus(entities);
 		new ConsultantOutpatientAppointmentOutcome(entities);
 		new OutpatientPreAssessment(entities);

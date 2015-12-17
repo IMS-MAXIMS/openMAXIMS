@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:35 -->
+<!-- Generated: 12/10/2015, 13:30 -->
 <hibernate-mapping>
 	<class name="ims.core.configuration.domain.objects.AppSite" table="core_appsite" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -17,11 +17,29 @@
 		</property>
 <!-- debug: hibernateClassContent -->
 <!-- debug: site -->
+<!-- debug: siteName -->
+<!-- debug: modules -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- many to many -->
+		<list name="modules" table="core_appsite_modules" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="appsite_modules_fr_fk">
+				<column name="from_side" sql-type="numeric(10,0)" unique="false"   />
+			</key>
+			<index column='idx'/>
+			<many-to-many class="ims.core.configuration.domain.objects.AppModule" foreign-key="appsite_modules_to_fk">
+				<column name="to_side" sql-type="numeric(10,0)" unique="false"   />
+			</many-to-many>
+		</list>
 <!-- debug: !IsAssociation && !IsCollection -->
 
 <!-- debug: IsLookup -->
 		<many-to-one name="site" class="ims.domain.lookups.LookupInstance" access="field">
 			<column name="lkp_site" sql-type="numeric(10,0)" not-null="true" unique="true"   />
 		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="siteName" type="string" access="field" update="true" > 
+			<column name="sitename" length="50"  not-null="false" unique="false"  />
+		</property>
 	</class>
 </hibernate-mapping>

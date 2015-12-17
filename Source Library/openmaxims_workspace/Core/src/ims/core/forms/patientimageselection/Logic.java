@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -217,6 +222,8 @@ public class Logic extends BaseLogic
 		if (!found)
         {
        	 	engine.showMessage("Sorry, your uploaded file type is not allowed! (Only jpg, png, gif)");
+       	 	form.lyrPatientImage().tabUpload().imgImageUpload().setValue(form.getImages().Core.NoPatientImage);	//wdev-19044			
+			form.btnSave().setEnabled(false);																	//wdev-19044		
         	return;
         }     
         
@@ -230,6 +237,8 @@ public class Logic extends BaseLogic
         if (!allowSize)
         {
        	 	engine.showMessage("Sorry, your uploaded file size is too big! (Max size 200KB)");
+       	 	form.lyrPatientImage().tabUpload().imgImageUpload().setValue(form.getImages().Core.NoPatientImage);	//wdev-19044			
+			form.btnSave().setEnabled(false);																	//wdev-19044	
         	return;
         }        
                 

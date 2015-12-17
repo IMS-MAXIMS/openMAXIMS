@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:36 -->
+<!-- Generated: 12/10/2015, 13:32 -->
 <hibernate-mapping>
 	<class name="ims.emergency.domain.objects.EDTransfer" table="emer_edtransfer" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -30,6 +30,34 @@
 			</property>
 		</component>
 <!-- debug: hibernateClassContent -->
+<!-- debug: patient -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="patient" class="ims.core.patient.domain.objects.Patient" unique="true" foreign-key="edtransfer_patient_fk" access="field" cascade="save-update">
+			<column name="patient" sql-type="numeric(10,0)" not-null="true" unique="false"  index='patient_idx' />
+		</many-to-one>
+<!-- debug: episode -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="episode" class="ims.core.admin.domain.objects.EpisodeOfCare" unique="true" foreign-key="edtransfer_episode_fk" access="field" cascade="save-update">
+			<column name="episode" sql-type="numeric(10,0)" not-null="true" unique="false"  index='episode_idx' />
+		</many-to-one>
+<!-- debug: attendance -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="attendance" class="ims.core.admin.domain.objects.CareContext" unique="true" foreign-key="edtransfer_attendance_fk" access="field" cascade="save-update">
+			<column name="attendance" sql-type="numeric(10,0)" not-null="true" unique="false"  index='attendance_idx' />
+		</many-to-one>
+<!-- debug: referredBy -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="referredBy" class="ims.core.resource.people.domain.objects.Hcp" unique="true" foreign-key="edtransfer_referredby_fk" access="field" cascade="save-update">
+			<column name="referredby" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
 <!-- debug: referredDateTime -->
 <!-- debug: acceptedDateTime -->
 <!-- debug: toHospital -->
@@ -37,8 +65,8 @@
 <!-- debug: transferMode -->
 <!-- debug: transferEscort -->
 <!-- debug: comment -->
+<!-- debug: notAccepted -->
 <!-- debug: !IsAssociation && !IsCollection -->
-
 <!-- debug: !IsLookup -->
 		<property name="referredDateTime" type="timestamp" access="field" update="true">
 			<column name="referredda"  not-null="true" unique="false"  />
@@ -72,6 +100,11 @@
 <!-- debug: !IsLookup -->
 		<property name="comment" type="string" access="field" update="true" > 
 			<column name="c_comme" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="notAccepted" type="boolean" access="field" update="true">
+			<column name="notaccepte"  not-null="false" unique="false"  />
 		</property>
 	</class>
 </hibernate-mapping>

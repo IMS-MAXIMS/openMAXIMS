@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,49 +15,70 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
-//#############################################################################
-//#EOH
-//#############################################################################
-//#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
-//#                                                                           #
-//#  This program is free software: you can redistribute it and/or modify     #
-//#  it under the terms of the GNU Affero General Public License as           #
-//#  published by the Free Software Foundation, either version 3 of the       #
-//#  License, or (at your option) any later version.                          # 
-//#                                                                           #
-//#  This program is distributed in the hope that it will be useful,          #
-//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
-//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
-//#  GNU Affero General Public License for more details.                      #
-//#                                                                           #
-//#  You should have received a copy of the GNU Affero General Public License #
-//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
+
 package ims.alerts;
 
 import ims.framework.Alert;
+import ims.framework.enumerations.AlertCategory;
 
 public class PatientAlert extends Alert
 {
-	private static final long serialVersionUID = 1L;
+      private static final long serialVersionUID = 1L;
 
-	public PatientAlert(String tooltip)
-	{
-		super(new ImageHelper(102519), null, tooltip);
-	}
-	public PatientAlert(Object data, String tooltip)
-	{
-		super(new ImageHelper(102519), data, tooltip);
-	}
-	public Object getValue()
-	{
-		return super.data;
-	}
-	public final int getIndex()
-	{
-		return 2;
-	}
+      public PatientAlert(String tooltip)
+      {
+            super(new ImageHelper(102519), null, tooltip);
+      }
+
+      public PatientAlert(String tooltip, AlertCategory category)
+      {
+            super(getImage(category), null, tooltip, category, true);
+      }
+      
+      public PatientAlert(Object data, String tooltip)
+      {
+            super(new ImageHelper(102519), data, tooltip);
+      }
+
+      public PatientAlert(Object data, String tooltip, AlertCategory category)
+      {
+            super(getImage(category), data, tooltip, category, true);
+      }
+
+      public Object getValue()
+      {
+            return super.data;
+      }
+
+      public final int getIndex()
+      {
+            return 2;
+      }
+
+      private static ImageHelper getImage(AlertCategory category)
+      {
+            if (category == AlertCategory.ONE)
+                  return new ImageHelper(102662);
+
+            if (category == AlertCategory.TWO)
+                  return new ImageHelper(102666);
+
+            if (category == AlertCategory.THREE)
+                  return new ImageHelper(102670);
+
+            if (category == AlertCategory.FOUR)
+                  return new ImageHelper(102674);
+
+            if (category == AlertCategory.OTHER)
+                  return new ImageHelper(102519);
+            
+            return new ImageHelper(102519);
+      }
 }

@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 12/10/2015, 13:29 -->
+<hibernate-mapping>
+	<class name="ims.dto_move.domain.objects.StaffActivity" table="dto_staffactivity" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="assigned"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: hibernateClassContent -->
+<!-- debug: mos -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="mos" class="ims.core.resource.people.domain.objects.MemberOfStaff" unique="true" foreign-key="staffactivity_mos_fk" access="field" cascade="save-update">
+			<column name="mos" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: active -->
+<!-- debug: activityDetail -->
+<!-- debug: field.IsAssociation : true -->
+ 		<!-- Component Set -->
+ 		<list name="activityDetail" table="dto_staffactivity_activityde" lazy="true" >
+ 			<key foreign-key="staffactivity_activityde_id_fk">
+ 				<column name="id" sql-type="numeric(10,0)" not-null="true" />
+ 			</key>
+ 			<index column='idx'/>
+ 			<!-- Composite -->
+ 			<composite-element class="ims.dto_move.domain.objects.StaffActvityDetail" >
+ 				<many-to-one name="group" class="ims.dto_move.domain.objects.ActivityGroup" foreign-key="staffactivity_c_gro_fk" access="field">
+ 					<column name="c_gro" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+ 				</many-to-one>
+ 				<property name="active" type="string" access="field" update="true">
+ 					<column name="active" length="1" not-null="false"  unique="false"    />
+ 				</property>
+ 				<property name="activityId" type="integer" access="field" update="true">
+ 					<column name="activityid" not-null="true"  unique="false"   />
+ 				</property>
+ 			</composite-element>
+ 		</list>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="active" type="string" access="field" update="true" > 
+			<column name="active" length="1"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

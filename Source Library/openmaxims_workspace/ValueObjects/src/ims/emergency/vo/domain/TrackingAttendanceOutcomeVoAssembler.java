@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.emergency.vo.domain;
@@ -66,6 +71,14 @@ public class TrackingAttendanceOutcomeVoAssembler
 		valueObjectDest.setCurrentDNW(valueObjectSrc.getCurrentDNW());
 		// ReasonForBreach
 		valueObjectDest.setReasonForBreach(valueObjectSrc.getReasonForBreach());
+		// CurrentPartialAdmission
+		valueObjectDest.setCurrentPartialAdmission(valueObjectSrc.getCurrentPartialAdmission());
+		// DisplayInED
+		valueObjectDest.setDisplayInED(valueObjectSrc.getDisplayInED());
+		// ReasonForBreachComments
+		valueObjectDest.setReasonForBreachComments(valueObjectSrc.getReasonForBreachComments());
+		// RequiringDischargeDocumentationReview
+		valueObjectDest.setRequiringDischargeDocumentationReview(valueObjectSrc.getRequiringDischargeDocumentationReview());
 	 	return valueObjectDest;
 	 }
 
@@ -418,7 +431,15 @@ public class TrackingAttendanceOutcomeVoAssembler
 			}			
 			valueObject.setReasonForBreach(voLookup8);
 		}
-		 		return valueObject;
+				// CurrentPartialAdmission
+		valueObject.setCurrentPartialAdmission(ims.emergency.vo.domain.EDPartialAdmissionForDischargeDetailOutcomeVoAssembler.create(map, domainObject.getCurrentPartialAdmission()) );
+		// DisplayInED
+		valueObject.setDisplayInED( domainObject.isDisplayInED() );
+		// ReasonForBreachComments
+		valueObject.setReasonForBreachComments(domainObject.getReasonForBreachComments());
+		// RequiringDischargeDocumentationReview
+		valueObject.setRequiringDischargeDocumentationReview( domainObject.isRequiringDischargeDocumentationReview() );
+ 		return valueObject;
 	 }
 
 
@@ -501,6 +522,16 @@ public class TrackingAttendanceOutcomeVoAssembler
 				domainFactory.getLookupInstance(valueObject.getReasonForBreach().getID());
 		}
 		domainObject.setReasonForBreach(value8);
+		domainObject.setCurrentPartialAdmission(ims.emergency.vo.domain.EDPartialAdmissionForDischargeDetailOutcomeVoAssembler.extractEDPartialAdmission(domainFactory, valueObject.getCurrentPartialAdmission(), domMap));
+		domainObject.setDisplayInED(valueObject.getDisplayInED());
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getReasonForBreachComments() != null && valueObject.getReasonForBreachComments().equals(""))
+		{
+			valueObject.setReasonForBreachComments(null);
+		}
+		domainObject.setReasonForBreachComments(valueObject.getReasonForBreachComments());
+		domainObject.setRequiringDischargeDocumentationReview(valueObject.getRequiringDischargeDocumentationReview());
 
 		return domainObject;
 	}

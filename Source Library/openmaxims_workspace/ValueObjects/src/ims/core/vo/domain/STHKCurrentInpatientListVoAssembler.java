@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.core.vo.domain;
@@ -70,6 +75,14 @@ public class STHKCurrentInpatientListVoAssembler
 		valueObjectDest.setExpectedDateOfReturn(valueObjectSrc.getExpectedDateOfReturn());
 		// ExpectedTimeOfReturn
 		valueObjectDest.setExpectedTimeOfReturn(valueObjectSrc.getExpectedTimeOfReturn());
+		// LatestSECSScore
+		valueObjectDest.setLatestSECSScore(valueObjectSrc.getLatestSECSScore());
+		// CurrentTrackingMovement
+		valueObjectDest.setCurrentTrackingMovement(valueObjectSrc.getCurrentTrackingMovement());
+		// DateOnHomeLeave
+		valueObjectDest.setDateOnHomeLeave(valueObjectSrc.getDateOnHomeLeave());
+		// TimeOnHomeLeave
+		valueObjectDest.setTimeOnHomeLeave(valueObjectSrc.getTimeOnHomeLeave());
 	 	return valueObjectDest;
 	 }
 
@@ -366,7 +379,7 @@ public class STHKCurrentInpatientListVoAssembler
 		java.util.Date EstDischargeDate = domainObject.getEstDischargeDate();
 		if ( null != EstDischargeDate ) 
 		{
-			valueObject.setEstDischargeDate(new ims.framework.utils.Date(EstDischargeDate) );
+			valueObject.setEstDischargeDate(new ims.framework.utils.DateTime(EstDischargeDate) );
 		}
 		// Comments
 		valueObject.setComments(domainObject.getComments());
@@ -430,6 +443,22 @@ public class STHKCurrentInpatientListVoAssembler
 		{
 			valueObject.setExpectedTimeOfReturn(new ims.framework.utils.Time(ExpectedTimeOfReturn) );
 		}
+		// LatestSECSScore
+		valueObject.setLatestSECSScore(ims.clinical.vo.domain.PatientSECSLiteVoAssembler.create(map, domainObject.getLatestSECSScore()) );
+		// CurrentTrackingMovement
+		valueObject.setCurrentTrackingMovement(ims.core.vo.domain.TrackingMovementLiteVoAssembler.create(map, domainObject.getCurrentTrackingMovement()) );
+		// DateOnHomeLeave
+		java.util.Date DateOnHomeLeave = domainObject.getDateOnHomeLeave();
+		if ( null != DateOnHomeLeave ) 
+		{
+			valueObject.setDateOnHomeLeave(new ims.framework.utils.Date(DateOnHomeLeave) );
+		}
+		// TimeOnHomeLeave
+		String TimeOnHomeLeave = domainObject.getTimeOnHomeLeave();
+		if ( null != TimeOnHomeLeave ) 
+		{
+			valueObject.setTimeOnHomeLeave(new ims.framework.utils.Time(TimeOnHomeLeave) );
+		}
  		return valueObject;
 	 }
 
@@ -480,11 +509,11 @@ public class STHKCurrentInpatientListVoAssembler
 		domainObject.setVersion(valueObject.getVersion_InpatientEpisode());
 
 		domainObject.setPasEvent(ims.core.vo.domain.PasEventForSTHKListVoAssembler.extractPASEvent(domainFactory, valueObject.getPasEvent(), domMap));
+		ims.framework.utils.DateTime dateTime2 = valueObject.getEstDischargeDate();
 		java.util.Date value2 = null;
-		ims.framework.utils.Date date2 = valueObject.getEstDischargeDate();		
-		if ( date2 != null ) 
+		if ( dateTime2 != null ) 
 		{
-			value2 = date2.getDate();
+			value2 = dateTime2.getJavaDate();
 		}
 		domainObject.setEstDischargeDate(value2);
 		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
@@ -526,6 +555,54 @@ public class STHKCurrentInpatientListVoAssembler
 			value10 = time10.toString();
 		}
 		domainObject.setExpectedTimeOfReturn(value10);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.clinical.domain.objects.PatientSECS value11 = null;
+		if ( null != valueObject.getLatestSECSScore() ) 
+		{
+			if (valueObject.getLatestSECSScore().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getLatestSECSScore()) != null)
+				{
+					value11 = (ims.clinical.domain.objects.PatientSECS)domMap.get(valueObject.getLatestSECSScore());
+				}
+			}
+			else
+			{
+				value11 = (ims.clinical.domain.objects.PatientSECS)domainFactory.getDomainObject(ims.clinical.domain.objects.PatientSECS.class, valueObject.getLatestSECSScore().getBoId());
+			}
+		}
+		domainObject.setLatestSECSScore(value11);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.admin.pas.domain.objects.TrackingMovement value12 = null;
+		if ( null != valueObject.getCurrentTrackingMovement() ) 
+		{
+			if (valueObject.getCurrentTrackingMovement().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getCurrentTrackingMovement()) != null)
+				{
+					value12 = (ims.core.admin.pas.domain.objects.TrackingMovement)domMap.get(valueObject.getCurrentTrackingMovement());
+				}
+			}
+			else
+			{
+				value12 = (ims.core.admin.pas.domain.objects.TrackingMovement)domainFactory.getDomainObject(ims.core.admin.pas.domain.objects.TrackingMovement.class, valueObject.getCurrentTrackingMovement().getBoId());
+			}
+		}
+		domainObject.setCurrentTrackingMovement(value12);
+		java.util.Date value13 = null;
+		ims.framework.utils.Date date13 = valueObject.getDateOnHomeLeave();		
+		if ( date13 != null ) 
+		{
+			value13 = date13.getDate();
+		}
+		domainObject.setDateOnHomeLeave(value13);
+		ims.framework.utils.Time time14 = valueObject.getTimeOnHomeLeave();
+		String value14 = null;
+		if ( time14 != null ) 
+		{
+			value14 = time14.toString();
+		}
+		domainObject.setTimeOnHomeLeave(value14);
 
 		return domainObject;
 	}

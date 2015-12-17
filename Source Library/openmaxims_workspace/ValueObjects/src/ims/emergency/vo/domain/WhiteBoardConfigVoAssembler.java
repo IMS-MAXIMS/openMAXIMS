@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.emergency.vo.domain;
@@ -54,24 +59,16 @@ public class WhiteBoardConfigVoAssembler
 		valueObjectDest.setEDLocation(valueObjectSrc.getEDLocation());
 		// isActive
 		valueObjectDest.setIsActive(valueObjectSrc.getIsActive());
-		// MedsGiven
-		valueObjectDest.setMedsGiven(valueObjectSrc.getMedsGiven());
-		// ObsTaken
-		valueObjectDest.setObsTaken(valueObjectSrc.getObsTaken());
-		// ECG
-		valueObjectDest.setECG(valueObjectSrc.getECG());
-		// NPO
-		valueObjectDest.setNPO(valueObjectSrc.getNPO());
-		// Isolation
-		valueObjectDest.setIsolation(valueObjectSrc.getIsolation());
 		// Assessments
 		valueObjectDest.setAssessments(valueObjectSrc.getAssessments());
-		// OtherQuestions
-		valueObjectDest.setOtherQuestions(valueObjectSrc.getOtherQuestions());
 		// Comments
 		valueObjectDest.setComments(valueObjectSrc.getComments());
 		// CurrentArea
 		valueObjectDest.setCurrentArea(valueObjectSrc.getCurrentArea());
+		// SelectedActions
+		valueObjectDest.setSelectedActions(valueObjectSrc.getSelectedActions());
+		// RefreshInterval
+		valueObjectDest.setRefreshInterval(valueObjectSrc.getRefreshInterval());
 	 	return valueObjectDest;
 	 }
 
@@ -366,24 +363,16 @@ public class WhiteBoardConfigVoAssembler
 		valueObject.setEDLocation(ims.core.vo.domain.LocationLiteVoAssembler.create(map, domainObject.getEDLocation()) );
 		// isActive
 		valueObject.setIsActive( domainObject.isIsActive() );
-		// MedsGiven
-		valueObject.setMedsGiven( domainObject.isMedsGiven() );
-		// ObsTaken
-		valueObject.setObsTaken( domainObject.isObsTaken() );
-		// ECG
-		valueObject.setECG( domainObject.isECG() );
-		// NPO
-		valueObject.setNPO( domainObject.isNPO() );
-		// Isolation
-		valueObject.setIsolation( domainObject.isIsolation() );
 		// Assessments
 		valueObject.setAssessments(ims.emergency.vo.domain.WhiteBoardAssessmentConfigVoAssembler.createWhiteBoardAssessmentConfigVoCollectionFromWhiteBoardAssessmentConfig(map, domainObject.getAssessments()) );
-		// OtherQuestions
-		valueObject.setOtherQuestions(ims.emergency.vo.domain.WhiteBoardQuestionConfigVoAssembler.createWhiteBoardQuestionConfigVoCollectionFromWhiteBoardQuestionConfig(map, domainObject.getOtherQuestions()) );
 		// Comments
 		valueObject.setComments( domainObject.isComments() );
 		// CurrentArea
 		valueObject.setCurrentArea(ims.emergency.vo.domain.TrackingAreaLiteVoAssembler.create(map, domainObject.getCurrentArea()) );
+		// SelectedActions
+		valueObject.setSelectedActions(ims.emergency.vo.domain.WhiteBoardOtherActionsVoAssembler.createWhiteBoardOtherActionsVoCollectionFromWhiteBoardOtherActions(map, domainObject.getSelectedActions()) );
+		// RefreshInterval
+		valueObject.setRefreshInterval(domainObject.getRefreshInterval());
  		return valueObject;
 	 }
 
@@ -451,31 +440,27 @@ public class WhiteBoardConfigVoAssembler
 		}
 		domainObject.setEDLocation(value1);
 		domainObject.setIsActive(valueObject.getIsActive());
-		domainObject.setMedsGiven(valueObject.getMedsGiven());
-		domainObject.setObsTaken(valueObject.getObsTaken());
-		domainObject.setECG(valueObject.getECG());
-		domainObject.setNPO(valueObject.getNPO());
-		domainObject.setIsolation(valueObject.getIsolation());
 		domainObject.setAssessments(ims.emergency.vo.domain.WhiteBoardAssessmentConfigVoAssembler.extractWhiteBoardAssessmentConfigList(domainFactory, valueObject.getAssessments(), domainObject.getAssessments(), domMap));		
-		domainObject.setOtherQuestions(ims.emergency.vo.domain.WhiteBoardQuestionConfigVoAssembler.extractWhiteBoardQuestionConfigList(domainFactory, valueObject.getOtherQuestions(), domainObject.getOtherQuestions(), domMap));		
 		domainObject.setComments(valueObject.getComments());
 	// SaveAsRefVO - treated as a refVo in extract methods
-	ims.emergency.configuration.domain.objects.TrackingArea value11 = null;
+	ims.emergency.configuration.domain.objects.TrackingArea value5 = null;
 		if ( null != valueObject.getCurrentArea() ) 
 		{
 			if (valueObject.getCurrentArea().getBoId() == null)
 			{
 				if (domMap.get(valueObject.getCurrentArea()) != null)
 				{
-					value11 = (ims.emergency.configuration.domain.objects.TrackingArea)domMap.get(valueObject.getCurrentArea());
+					value5 = (ims.emergency.configuration.domain.objects.TrackingArea)domMap.get(valueObject.getCurrentArea());
 				}
 			}
 			else
 			{
-				value11 = (ims.emergency.configuration.domain.objects.TrackingArea)domainFactory.getDomainObject(ims.emergency.configuration.domain.objects.TrackingArea.class, valueObject.getCurrentArea().getBoId());
+				value5 = (ims.emergency.configuration.domain.objects.TrackingArea)domainFactory.getDomainObject(ims.emergency.configuration.domain.objects.TrackingArea.class, valueObject.getCurrentArea().getBoId());
 			}
 		}
-		domainObject.setCurrentArea(value11);
+		domainObject.setCurrentArea(value5);
+		domainObject.setSelectedActions(ims.emergency.vo.domain.WhiteBoardOtherActionsVoAssembler.extractWhiteBoardOtherActionsList(domainFactory, valueObject.getSelectedActions(), domainObject.getSelectedActions(), domMap));		
+		domainObject.setRefreshInterval(valueObject.getRefreshInterval());
 
 		return domainObject;
 	}

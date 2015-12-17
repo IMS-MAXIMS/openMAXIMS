@@ -1,0 +1,85 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 12/10/2015, 13:29 -->
+<hibernate-mapping>
+	<class name="ims.core.admin.pas.domain.objects.WardMixedSexBreach" table="core_wardmixedsexbr" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: ward -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="ward" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="wardmixedsexbr_ward_fk" access="field" cascade="save-update">
+			<column name="ward" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: bay -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="bay" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="wardmixedsexbr_bay_fk" access="field" cascade="save-update">
+			<column name="bay" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: admissionDateTime -->
+<!-- debug: memberOfStaff -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="memberOfStaff" class="ims.core.resource.people.domain.objects.MemberOfStaff" unique="true" foreign-key="wardmixedsexbr_memberofst_fk" access="field" cascade="save-update">
+			<column name="memberofst" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: malePatients -->
+<!-- debug: femalePatients -->
+<!-- debug: reasonForGenderBreach -->
+<!-- debug: reasonForGenderBreachComment -->
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="admissionDateTime" type="timestamp" access="field" update="true">
+			<column name="admissiond"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="malePatients" type="integer" access="field" update="true">
+			<column name="malepatien"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="femalePatients" type="integer" access="field" update="true">
+			<column name="femalepati"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="reasonForGenderBreach" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_reasonforg" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="reasonForGenderBreachComment" type="string" access="field" update="true" > 
+			<column name="reasonfor2" length="250"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

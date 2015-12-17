@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:35 -->
+<!-- Generated: 12/10/2015, 13:30 -->
 <hibernate-mapping>
 	<class name="ims.nursing.careplans.domain.objects.CarePlanIntervention" table="ns_careplaninterv" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -40,7 +40,6 @@
 <!-- debug: additionalInfo -->
 <!-- debug: frequency -->
 <!-- debug: isRemoved -->
-<!-- debug: removedDate -->
 <!-- debug: recordingInformation -->
 <!-- debug: field.IsAssociation : true -->
  		<!-- Component -->
@@ -52,6 +51,32 @@
 
  			<property name="recordingDateTime" type="timestamp" access="field" update="true">
  				<column name="recordingirecordingd" not-null="false"  unique="false"   />
+ 			</property>
+ 		</component>
+<!-- debug: removalAuthoringInformation -->
+<!-- debug: field.IsAssociation : true -->
+ 		<!-- Component -->
+ 		<component name="removalAuthoringInformation" class="ims.core.clinical.domain.objects.AuthoringInformation" >
+
+ 			<many-to-one name="authoringHcp" class="ims.core.resource.people.domain.objects.Hcp" foreign-key="careplaninterv_removalautau_fk" access="field">
+ 				<column name="removalautauthoringh" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="authoringDateTime" type="timestamp" access="field" update="true">
+ 				<column name="removalautauthoringd" not-null="false"  unique="false"   />
+ 			</property>
+ 		</component>
+<!-- debug: reinstatingAuthoringInformation -->
+<!-- debug: field.IsAssociation : true -->
+ 		<!-- Component -->
+ 		<component name="reinstatingAuthoringInformation" class="ims.core.clinical.domain.objects.AuthoringInformation" >
+
+ 			<many-to-one name="authoringHcp" class="ims.core.resource.people.domain.objects.Hcp" foreign-key="careplaninterv_reinstatinau_fk" access="field">
+ 				<column name="reinstatinauthoringh" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="authoringDateTime" type="timestamp" access="field" update="true">
+ 				<column name="reinstatinauthoringd" not-null="false"  unique="false"   />
  			</property>
  		</component>
 <!-- debug: !IsAssociation && !IsCollection -->
@@ -104,11 +129,6 @@
 <!-- debug: !IsLookup -->
 		<property name="isRemoved" type="boolean" access="field" update="true">
 			<column name="isremoved"  not-null="false" unique="false"  />
-		</property>
-<!-- debug: !IsAssociation && !IsCollection -->
-<!-- debug: !IsLookup -->
-		<property name="removedDate" type="date" access="field" update="true">
-			<column name="removeddat"  not-null="false" unique="false"  />
 		</property>
 	</class>
 </hibernate-mapping>

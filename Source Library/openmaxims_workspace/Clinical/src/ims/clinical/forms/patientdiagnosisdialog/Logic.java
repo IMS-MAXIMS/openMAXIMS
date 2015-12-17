@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -133,6 +138,7 @@ public class Logic extends BaseLogic
 		form.chkMain().setValue(false);
 		CSPrimaryDiagnosisVo primDiag= getPrimaryDiagnosisRecord(record);
 		form.chkMain().setValue(primDiag!=null && Boolean.TRUE.equals(primDiag.getIsActive()));
+		form.chkDiagnosedOnAdmission().setValue(record.getDiagnosedOnAdmissionIsNotNull() ? record.getDiagnosedOnAdmission().booleanValue() : false); //WDEV-19860
 		
 	}
 	private CSPrimaryDiagnosisVo populatePrimaryDiagnosisDataFromScreen(CSPrimaryDiagnosisVo primaryDiagnosisVo, PatientDiagnosisRefVo patientDiagnosisRef, boolean isPrimary)
@@ -223,6 +229,7 @@ public class Logic extends BaseLogic
 			record.setDiagnosedDate(new PartialDate());
 			record.setSourceofInformation(SourceofInformation.CLINICALCONTACT);
 			record.setEpisodeOfCare(form.getGlobalContext().Core.getEpisodeofCareShort());
+			record.setDiagnosedOnAdmission(form.chkDiagnosedOnAdmission().getValue()); //WDEV-19860
 		}
 			
 		//PatientDiagnosisStatusVo status = record.getCurrentStatus();
@@ -277,6 +284,7 @@ public class Logic extends BaseLogic
 		boolean hidePrimary = engine.getPreviosFormName().equals(form.getForms().Scheduling.AppointmentOutcomeDialog);
 		form.lblPrimary().setVisible(!hidePrimary);
 		form.chkMain().setVisible(!hidePrimary);
-		form.chkMain().setEnabled(FormMode.EDIT.equals(form.getMode()));	
+		form.chkMain().setEnabled(FormMode.EDIT.equals(form.getMode()));
+		form.chkDiagnosedOnAdmission().setEnabled(FormMode.EDIT.equals(form.getMode()) && (form.getGlobalContext().Clinical.getSelectedPatientDiagnosisOPNotes() == null || form.getGlobalContext().Clinical.getSelectedPatientDiagnosisOPNotes().getID_PatientDiagnosis() == null));  //WDEV-19860
 	}
 }

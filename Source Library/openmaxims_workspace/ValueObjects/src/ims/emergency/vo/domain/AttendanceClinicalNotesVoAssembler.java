@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.emergency.vo.domain;
@@ -391,7 +396,19 @@ public class AttendanceClinicalNotesVoAssembler
 			}
 		}
 		// Attendance
-		valueObject.setAttendance(ims.core.vo.domain.CareContextShortVoAssembler.create(map, domainObject.getAttendance()) );
+		if (domainObject.getAttendance() != null)
+		{
+			if(domainObject.getAttendance() instanceof HibernateProxy) // If the proxy is set, there is no need to lazy load, the proxy knows the id already. 
+			{
+				HibernateProxy p = (HibernateProxy) domainObject.getAttendance();
+				int id = Integer.parseInt(p.getHibernateLazyInitializer().getIdentifier().toString());				
+				valueObject.setAttendance(new ims.core.admin.vo.CareContextRefVo(id, -1));				
+			}
+			else
+			{
+				valueObject.setAttendance(new ims.core.admin.vo.CareContextRefVo(domainObject.getAttendance().getId(), domainObject.getAttendance().getVersion()));
+			}
+		}
 		// AuthoringInformation
 		valueObject.setAuthoringInformation(ims.core.vo.domain.AuthoringInformationVoAssembler.create(map, domainObject.getAuthoringInformation()) );
 		// ClinicalNote
@@ -599,8 +616,7 @@ public class AttendanceClinicalNotesVoAssembler
 			}
 		}
 		domainObject.setEpisode(value2);
-	// SaveAsRefVO - treated as a refVo in extract methods
-	ims.core.admin.domain.objects.CareContext value3 = null;
+		ims.core.admin.domain.objects.CareContext value3 = null;
 		if ( null != valueObject.getAttendance() ) 
 		{
 			if (valueObject.getAttendance().getBoId() == null)
@@ -609,6 +625,10 @@ public class AttendanceClinicalNotesVoAssembler
 				{
 					value3 = (ims.core.admin.domain.objects.CareContext)domMap.get(valueObject.getAttendance());
 				}
+			}
+			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
+			{
+				value3 = domainObject.getAttendance();	
 			}
 			else
 			{

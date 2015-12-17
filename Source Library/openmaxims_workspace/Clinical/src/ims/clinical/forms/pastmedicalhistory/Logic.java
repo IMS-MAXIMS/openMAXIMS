@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -31,7 +36,6 @@ import ims.core.vo.PatientDiagnosisVoCollection;
 import ims.core.vo.PatientPastMedicalHistoryVo;
 import ims.core.vo.PatientProcedureShortVo;
 import ims.core.vo.PatientProcedureShortVoCollection;
-import ims.core.vo.PatientShort;
 import ims.core.vo.ProcedureVo;
 import ims.core.vo.TaxonomyMap;
 import ims.domain.exceptions.StaleObjectException;
@@ -43,9 +47,7 @@ import ims.framework.utils.Date;
 import ims.framework.utils.PartialDate;
 import ims.vo.ValueObject;
 
-import java.awt.List;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -56,9 +58,7 @@ public class Logic extends BaseLogic
 
 	protected void onFormOpen() throws ims.framework.exceptions.FormOpenException
 	{
-		open();
-		
-	
+		open();	
 	}
 
 	private void open()
@@ -79,7 +79,7 @@ public class Logic extends BaseLogic
 		form.customControlDiagProc().setTaxonomySearch(false);
 		
 		
-		
+		form.btnUpdate().setVisible(false);//WDEV-22620
 		form.btnUpdate().setEnabled(false);
 
 		
@@ -102,18 +102,28 @@ public class Logic extends BaseLogic
 				{
 					DiagLiteVo voDiagnosis = getNoItemPMHDiagnosis();
 					row.setcolDiagProc(voDiagnosis.getDiagnosisName());
+					row.setCellcolDiagProcTooltip(voDiagnosis.getDiagnosisName());
 				}
 				else
+				{	
 					row.setcolDiagProc(voPMHVo.getDiagnosis().get(i).getDiagnosis().getDiagnosisName());
+					row.setCellcolDiagProcTooltip(voPMHVo.getDiagnosis().get(i).getDiagnosis().getDiagnosisName());
+				}	
 
 				if (voPMHVo.getDiagnosis().get(i).getDiagnosedDate() != null)
 					row.setcolDate(voPMHVo.getDiagnosis().get(i).getDiagnosedDate().toString());
 				if (voPMHVo.getDiagnosis().get(i).getSourceofInformation() != null)
 					row.setcolSource(voPMHVo.getDiagnosis().get(i).getSourceofInformation().toString());
-				row.setcolComments(voPMHVo.getDiagnosis().get(i).getNotes());
-				
+				if (voPMHVo.getDiagnosis().get(i).getNotes() != null)
+				{	
+					row.setcolComments(voPMHVo.getDiagnosis().get(i).getNotes());
+					row.setCellcolCommentsTooltip(voPMHVo.getDiagnosis().get(i).getNotes());
+				}				
 				if (voPMHVo.getDiagnosis().get(i).getDiagnosisDescriptionIsNotNull())
+				{	
 					row.setcolDescription(voPMHVo.getDiagnosis().get(i).getDiagnosisDescription());
+					row.setCellcolDescriptionTooltip(voPMHVo.getDiagnosis().get(i).getDiagnosisDescription());
+				}	
 
 				row.setValue(voPMHVo.getDiagnosis().get(i));
 			}
@@ -126,18 +136,29 @@ public class Logic extends BaseLogic
 				{
 					ProcedureVo voProcedure = getNoItemPMHProcedure();
 					row.setcolDiagProc(voProcedure.getProcedureName());
+					row.setCellcolDiagProcTooltip(voProcedure.getProcedureName());
 				}
 				else
+				{	
 					row.setcolDiagProc(voPMHVo.getProcedure().get(j).getProcedure().getProcedureName());
+					row.setCellcolDiagProcTooltip(voPMHVo.getProcedure().get(j).getProcedure().getProcedureName());
+				}	
 
 				if (voPMHVo.getProcedure().get(j).getProcDate() != null)
 					row.setcolDate(voPMHVo.getProcedure().get(j).getProcDate().toString());
 				if (voPMHVo.getProcedure().get(j).getInfoSource() != null)
 					row.setcolSource(voPMHVo.getProcedure().get(j).getInfoSource().toString());
-				row.setcolComments(voPMHVo.getProcedure().get(j).getNotes());
+				if (voPMHVo.getProcedure().get(j).getNotes() != null)
+				{
+					row.setcolComments(voPMHVo.getProcedure().get(j).getNotes());
+					row.setCellcolCommentsTooltip(voPMHVo.getProcedure().get(j).getNotes());
+				}	
 
 				if (voPMHVo.getProcedure().get(j).getProcedureDescriptionIsNotNull())
+				{	
 					row.setcolDescription(voPMHVo.getProcedure().get(j).getProcedureDescription());
+					row.setCellcolDescriptionTooltip(voPMHVo.getProcedure().get(j).getProcedureDescription());
+				}	
 
 				row.setValue(voPMHVo.getProcedure().get(j));
 			}
@@ -330,7 +351,7 @@ public class Logic extends BaseLogic
 		{
 			if (form.pdtDate().getValue().isGreaterThan(new Date()))
 			{
-				engine.showMessage("'Date Identified' can not be in the future");
+				engine.showMessage("'Date Identified' cannot be set to a date in the future."); //WDEV-18762
 				return;
 			}
 		}
@@ -590,6 +611,8 @@ public class Logic extends BaseLogic
 	//wdev-10811
 	protected void onGridDiagnosisGridHeaderClicked(int column)	throws PresentationLogicException 
 	{
+		if (form.gridDiagnosis().getRows().size() < 2)
+			return;
 		
 		if(column == COL_DATE)
 		{
@@ -598,13 +621,11 @@ public class Logic extends BaseLogic
 			else
 				form.getLocalContext().setDateSortOrder(SortOrder.DESCENDING);
 			
-			pupulateDiagProcGrid(manualSortDate(form.getLocalContext().getDateSortOrder()));
+			populateDiagProcGrid(manualSortDate(form.getLocalContext().getDateSortOrder()));
 			
 		}
-		// TODO Auto-generated method stub
-		
 	}
-	private void pupulateDiagProcGrid(ArrayList list)
+	private void populateDiagProcGrid(ArrayList list)
 	{
 		
 		if(list != null && list.size() > 0)

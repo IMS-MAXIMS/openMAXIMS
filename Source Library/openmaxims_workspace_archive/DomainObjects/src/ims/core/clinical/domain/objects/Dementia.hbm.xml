@@ -1,0 +1,151 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:35 -->
+<hibernate-mapping>
+	<class name="ims.core.clinical.domain.objects.Dementia" table="core_dementia" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: patient -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="patient" class="ims.core.patient.domain.objects.Patient" unique="true" foreign-key="dementia_patient_fk" access="field" cascade="save-update">
+			<column name="patient" sql-type="numeric(10,0)" not-null="true" unique="false"  index='patient_idx' />
+		</many-to-one>
+<!-- debug: admissionDateTime -->
+<!-- debug: breachDateTime -->
+<!-- debug: ageOnAdmission -->
+<!-- debug: dischargeDateTime -->
+<!-- debug: currentWorklistStatus -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="currentWorklistStatus" class="ims.core.clinical.domain.objects.DementiaWorklistStatus" unique="true" foreign-key="dementia_currentwor_fk" access="field" cascade="save-update">
+			<column name="currentwor" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: historicalWorklistStatus -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- one to many -->
+		<list name="historicalWorklistStatus" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="dementia_historical_fk">
+				<column name="core_dementia_historical" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.core.clinical.domain.objects.DementiaWorklistStatus" />
+		</list>
+<!-- debug: dementiaConfirmed -->
+<!-- debug: deliriumConfirmed -->
+<!-- debug: aMTSScore -->
+<!-- debug: stepOneFind -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="stepOneFind" class="ims.core.clinical.domain.objects.DementiaFind" unique="true" foreign-key="dementia_steponefin_fk" access="field" cascade="all">
+			<column name="steponefin" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: stepTwoAssess -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="stepTwoAssess" class="ims.core.clinical.domain.objects.DementiaAssessAndInvestigate" unique="true" foreign-key="dementia_steptwoass_fk" access="field" cascade="all">
+			<column name="steptwoass" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: confirmedPatientPutOnDementiaPathway -->
+<!-- debug: admissionDetail -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="admissionDetail" class="ims.core.admin.pas.domain.objects.AdmissionDetail" unique="true" foreign-key="dementia_admission2_fk" access="field" cascade="save-update">
+			<column name="admission2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: isExcludedFromWorklist -->
+<!-- debug: followUpAssessments -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<list name="followUpAssessments" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="dementia_followupas_fk">
+				<column name="core_dementia_followupas" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.core.clinical.domain.objects.DementiaAssessAndInvestigate" />
+		</list>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="admissionDateTime" type="timestamp" access="field" update="true">
+			<column name="admissiond"  not-null="true" unique="false"  index='dementia_admd_idx'/>
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="breachDateTime" type="timestamp" access="field" update="true">
+			<column name="breachdate"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="ageOnAdmission" type="integer" access="field" update="true">
+			<column name="ageonadmis"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dischargeDateTime" type="timestamp" access="field" update="true">
+			<column name="discharged"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dementiaConfirmed" type="boolean" access="field" update="true">
+			<column name="dementiaco"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="deliriumConfirmed" type="boolean" access="field" update="true">
+			<column name="deliriumco"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="aMTSScore" type="integer" access="field" update="true">
+			<column name="amtsscore"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="confirmedPatientPutOnDementiaPathway" type="boolean" access="field" update="true">
+			<column name="confirmedp"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isExcludedFromWorklist" type="boolean" access="field" update="true">
+			<column name="isexcluded"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

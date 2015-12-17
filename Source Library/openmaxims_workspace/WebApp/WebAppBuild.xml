@@ -65,7 +65,7 @@
 	</target>
 
 	<!-- Compile Clinical-->
-	<target name="Clinical" depends="Core, Assessment, Pathways" >
+	<target name="Clinical" depends="Core, Assessment, Pathways, Scheduling" >
 	<mkdir dir="${workspace}Clinical/bin" />
 		<delete includeEmptyDirs="true" quiet="true">
 			<fileset dir="${workspace}Clinical/bin">
@@ -105,9 +105,23 @@
 		</delete>									
 		<javac debug="on" classpath="${ant_classpath};${workspace}Admin/bin/;${workspace}Core/bin/;${workspace}Clinical/bin/;${workspace}ClinicalAdmin/bin/;${workspace}Nursing/bin/;${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;" destdir="${workspace}COE/bin/" srcdir="${workspace}COE/src/"  includes="**/*.java" />
 	</target>
+	
+	<!-- Compile EAS -->
+	<target name="EAS" depends="Core,Admin,OCRR" >
+		<mkdir dir="${workspace}EAS/bin" />
+		<delete includeEmptyDirs="true" quiet="true">
+			<fileset dir="${workspace}EAS/bin">
+				<patternset>
+					<include name="**/*.class"/>
+				</patternset>
+			</fileset>
+		</delete>
+		<javac debug="on" classpath="${ant_classpath};${workspace}Admin/bin/;${workspace}Core/bin/;${workspace}OCRR/bin/;${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;" destdir="${workspace}EAS/bin/" srcdir="${workspace}EAS/src/"  includes="**/*.java" />
+	</target>
+
 
 	<!-- Compile Oncology -->
-	<target name="Oncology" depends="Admin, Core, Clinical, ClinicalAdmin" >
+	<target name="Oncology" depends="Admin, Core, Clinical, ClinicalAdmin, EAS" >
 		<mkdir dir="${workspace}Oncology/bin" />
 		<delete includeEmptyDirs="true" quiet="true">
 			<fileset dir="${workspace}Oncology/bin">
@@ -116,7 +130,7 @@
 				</patternset>
 			</fileset>
 		</delete>											
-		<javac debug="on" classpath="${ant_classpath};${workspace}Admin/bin/;${workspace}Core/bin/;${workspace}Clinical/bin/;${workspace}ClinicalAdmin/bin/;${workspace}Assessment/bin/;${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;" destdir="${workspace}Oncology/bin/" srcdir="${workspace}Oncology/src/"  includes="**/*.java" />
+		<javac debug="on" classpath="${ant_classpath};${workspace}Admin/bin/;${workspace}Core/bin/;${workspace}Clinical/bin/;${workspace}ClinicalAdmin/bin/;${workspace}Assessment/bin/;${workspace}EAS/bin/;${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;" destdir="${workspace}Oncology/bin/" srcdir="${workspace}Oncology/src/"  includes="**/*.java" />
 	</target>
 
 	<!-- Compile OCS_IF -->
@@ -171,6 +185,18 @@
 		<javac debug="on" classpath="${ant_classpath};${workspace}Admin/bin/;${workspace}Core/bin/;${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;" destdir="${workspace}Pathways/bin/" srcdir="${workspace}Pathways/src/"  includes="**/*.java" />
 	</target>
 	
+	<!-- Compile ClinicalAdmin-->
+	<target name="ClinicalAdmin" depends="Admin" >
+	<mkdir dir="${workspace}ClinicalAdmin/bin" />
+		<delete includeEmptyDirs="true" quiet="true">
+			<fileset dir="${workspace}Pathways/bin">
+				<patternset>
+					<include name="**/*.class"/>
+				</patternset>
+			</fileset>
+		</delete>																				
+		<javac debug="on" classpath="${ant_classpath};${workspace}Admin/bin/;${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;" destdir="${workspace}ClinicalAdmin/bin/" srcdir="${workspace}ClinicalAdmin/src/"  includes="**/*.java" />
+	</target>
 	<!-- Compile RefMan-->
 	<target name="RefMan" depends="Admin, Core, Scheduling,OCS_IF, OCRR, ClinicalAdmin, Assessment, Pathways" >
 		<mkdir dir="${workspace}RefMan/bin" />
@@ -246,7 +272,7 @@
 				</patternset>
 			</fileset>
 		</delete>																																
-		<javac debug="on" classpath="${ant_classpath};${libdir}hapi.jar;${libdir}hl7utils.jar;${libdir}ImsServer.jar;${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;${workspace}Admin/bin/;${workspace}Assessment/bin/;${workspace}Pathways/bin/;${workspace}Core/bin/;${workspace}OCS_IF/bin/;${workspace}Assessment/bin/;${workspace}Clinical/bin/;" destdir="${workspace}HL7Engine/bin/" srcdir="${workspace}HL7Engine/src/" includes="**/*.java" />
+		<javac debug="on" classpath="${ant_classpath};${libdir}hapi.jar;${libdir}hl7utils.jar;${libdir}ImsServer.jar;${libdir}joda-time-2.3.jar;${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;${workspace}Admin/bin/;${workspace}Assessment/bin/;${workspace}Pathways/bin/;${workspace}Core/bin/;${workspace}OCS_IF/bin/;${workspace}Assessment/bin/;${workspace}Clinical/bin/;" destdir="${workspace}HL7Engine/bin/" srcdir="${workspace}HL7Engine/src/" includes="**/*.java" />
 	</target>
 
 	<!-- Compile Billing -->
@@ -277,7 +303,7 @@
 
 
 	<!-- Gather all War File dependencies -->
-	<target name="WarDependencies" depends="Core,ICP,Assessment,RefMan,Nursing,COE,OCRR,OCS_IF,Therapies,Racpc,SpinalInjuries,Oncology,HL7Engine,Clinical,ClinicalAdmin,Correspondence,Pathways,Scheduling,Emergency,Billing,MappingFiles,WebAppFiles,WebAppSource" >
+	<target name="WarDependencies" depends="Core,ICP,Assessment,RefMan,Nursing,EAS,COE,OCRR,OCS_IF,Therapies,Racpc,SpinalInjuries,Oncology,HL7Engine,Clinical,ClinicalAdmin,Correspondence,Pathways,Scheduling,Emergency,Billing,MappingFiles,WebAppFiles,WebAppSource" >
 		<echo>All War File Dependencies have now been executed</echo>
 	</target>
 
@@ -331,6 +357,7 @@ ims.warfile.timestamp=${timestamp}
 			<classes dir="${workspace}OCS_IF/bin" />
 			<classes dir="${workspace}Assessment/bin" />
 			<classes dir="${workspace}RefMan/bin" />
+			<classes dir="${workspace}EAS/bin" />
 			<classes dir="${workspace}Oncology/bin" />
      			<classes dir="${workspace}Clinical/bin" />
 			<classes dir="${workspace}ClinicalAdmin/bin" />

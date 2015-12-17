@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:35 -->
+<hibernate-mapping>
+	<subclass name="ims.nursing.assessmenttools.domain.objects.Waterlow" lazy="true" discriminator-value="wate" extends="ims.core.clinical.domain.objects.AssessmentTool" >
+<!-- debug: hibernateClassContent -->
+<!-- debug: assessmentDetails -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="assessmentDetails" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="waterlow_assessment_fk">
+				<column name="ns_waterlow_assessment" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.nursing.assessmenttools.domain.objects.WaterlowDetails" />
+		</set>
+<!-- debug: comment -->
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="comment" type="string" access="field" update="true" > 
+			<column name="c_comme" length="250"  not-null="false" unique="false"  />
+		</property>
+	</subclass>
+</hibernate-mapping>

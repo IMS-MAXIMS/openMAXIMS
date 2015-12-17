@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,15 +15,20 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 
 /*
  * This code was generated.
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:38
+ * Generated: 13/10/2015, 13:23
  */
 package ims.pathways.vo.lookups;
 
@@ -35,6 +40,19 @@ import ims.domain.lookups.LookupService;
  * 
  */
 public final class LookupHelper {
+	public static NoValidationReasonCollection getNoValidationReason(LookupService lookupService) {
+		NoValidationReasonCollection collection =
+			(NoValidationReasonCollection) lookupService.getLookupCollection(NoValidationReason.TYPE_ID, 
+				NoValidationReasonCollection.class, NoValidationReason.class);
+		return collection;
+	}
+
+	public static NoValidationReason getNoValidationReasonInstance(LookupService lookupService, int id) 
+	{
+		return (NoValidationReason)lookupService.getLookupInstance(NoValidationReason.class, NoValidationReason.TYPE_ID, id);
+	}
+	
+
 	public static AdminEventOutcomeCollection getAdminEventOutcome(LookupService lookupService) {
 		AdminEventOutcomeCollection collection =
 			(AdminEventOutcomeCollection) lookupService.getLookupCollection(AdminEventOutcome.TYPE_ID, 
@@ -139,19 +157,6 @@ public final class LookupHelper {
 	}
 	
 
-	public static RTTActionCollection getRTTAction(LookupService lookupService) {
-		RTTActionCollection collection =
-			(RTTActionCollection) lookupService.getLookupCollection(RTTAction.TYPE_ID, 
-				RTTActionCollection.class, RTTAction.class);
-		return collection;
-	}
-
-	public static RTTAction getRTTActionInstance(LookupService lookupService, int id) 
-	{
-		return (RTTAction)lookupService.getLookupInstance(RTTAction.class, RTTAction.TYPE_ID, id);
-	}
-	
-
 	public static EventLinkTypeCollection getEventLinkType(LookupService lookupService) {
 		EventLinkTypeCollection collection =
 			(EventLinkTypeCollection) lookupService.getLookupCollection(EventLinkType.TYPE_ID, 
@@ -191,6 +196,71 @@ public final class LookupHelper {
 	}
 	
 
+	public static RTTActionCollection getRTTAction(LookupService lookupService) {
+		RTTActionCollection collection =
+			(RTTActionCollection) lookupService.getLookupCollection(RTTAction.TYPE_ID, 
+				RTTActionCollection.class, RTTAction.class);
+		return collection;
+	}
+
+	public static RTTAction getRTTActionInstance(LookupService lookupService, int id) 
+	{
+		return (RTTAction)lookupService.getLookupInstance(RTTAction.class, RTTAction.TYPE_ID, id);
+	}
+	
+
+	public static RTTStatusUpdateReasonCollection getRTTStatusUpdateReason(LookupService lookupService) {
+		RTTStatusUpdateReasonCollection collection =
+			(RTTStatusUpdateReasonCollection) lookupService.getLookupCollection(RTTStatusUpdateReason.TYPE_ID, 
+				RTTStatusUpdateReasonCollection.class, RTTStatusUpdateReason.class);
+		return collection;
+	}
+
+	public static RTTStatusUpdateReason getRTTStatusUpdateReasonInstance(LookupService lookupService, int id) 
+	{
+		return (RTTStatusUpdateReason)lookupService.getLookupInstance(RTTStatusUpdateReason.class, RTTStatusUpdateReason.TYPE_ID, id);
+	}
+	
+
+	public static PatientJourneyBreachReasonCollection getPatientJourneyBreachReason(LookupService lookupService) {
+		PatientJourneyBreachReasonCollection collection =
+			(PatientJourneyBreachReasonCollection) lookupService.getLookupCollection(PatientJourneyBreachReason.TYPE_ID, 
+				PatientJourneyBreachReasonCollection.class, PatientJourneyBreachReason.class);
+		return collection;
+	}
+
+	public static PatientJourneyBreachReason getPatientJourneyBreachReasonInstance(LookupService lookupService, int id) 
+	{
+		return (PatientJourneyBreachReason)lookupService.getLookupInstance(PatientJourneyBreachReason.class, PatientJourneyBreachReason.TYPE_ID, id);
+	}
+	
+
+	public static CommentLevelCollection getCommentLevel(LookupService lookupService) {
+		CommentLevelCollection collection =
+			(CommentLevelCollection) lookupService.getLookupCollection(CommentLevel.TYPE_ID, 
+				CommentLevelCollection.class, CommentLevel.class);
+		return collection;
+	}
+
+	public static CommentLevel getCommentLevelInstance(LookupService lookupService, int id) 
+	{
+		return (CommentLevel)lookupService.getLookupInstance(CommentLevel.class, CommentLevel.TYPE_ID, id);
+	}
+	
+
+	public static RTTClockImpactSourceCollection getRTTClockImpactSource(LookupService lookupService) {
+		RTTClockImpactSourceCollection collection =
+			(RTTClockImpactSourceCollection) lookupService.getLookupCollection(RTTClockImpactSource.TYPE_ID, 
+				RTTClockImpactSourceCollection.class, RTTClockImpactSource.class);
+		return collection;
+	}
+
+	public static RTTClockImpactSource getRTTClockImpactSourceInstance(LookupService lookupService, int id) 
+	{
+		return (RTTClockImpactSource)lookupService.getLookupInstance(RTTClockImpactSource.class, RTTClockImpactSource.TYPE_ID, id);
+	}
+	
+
 	public static PathwaysGroupCollection getPathwaysGroup(LookupService lookupService) {
 		PathwaysGroupCollection collection =
 			(PathwaysGroupCollection) lookupService.getLookupCollection(PathwaysGroup.TYPE_ID, 
@@ -201,6 +271,32 @@ public final class LookupHelper {
 	public static PathwaysGroup getPathwaysGroupInstance(LookupService lookupService, int id) 
 	{
 		return (PathwaysGroup)lookupService.getLookupInstance(PathwaysGroup.class, PathwaysGroup.TYPE_ID, id);
+	}
+	
+
+	public static RTTClockStateCollection getRTTClockState(LookupService lookupService) {
+		RTTClockStateCollection collection =
+			(RTTClockStateCollection) lookupService.getLookupCollection(RTTClockState.TYPE_ID, 
+				RTTClockStateCollection.class, RTTClockState.class);
+		return collection;
+	}
+
+	public static RTTClockState getRTTClockStateInstance(LookupService lookupService, int id) 
+	{
+		return (RTTClockState)lookupService.getLookupInstance(RTTClockState.class, RTTClockState.TYPE_ID, id);
+	}
+	
+
+	public static AdminEventOutcomeReasonCollection getAdminEventOutcomeReason(LookupService lookupService) {
+		AdminEventOutcomeReasonCollection collection =
+			(AdminEventOutcomeReasonCollection) lookupService.getLookupCollection(AdminEventOutcomeReason.TYPE_ID, 
+				AdminEventOutcomeReasonCollection.class, AdminEventOutcomeReason.class);
+		return collection;
+	}
+
+	public static AdminEventOutcomeReason getAdminEventOutcomeReasonInstance(LookupService lookupService, int id) 
+	{
+		return (AdminEventOutcomeReason)lookupService.getLookupInstance(AdminEventOutcomeReason.class, AdminEventOutcomeReason.TYPE_ID, id);
 	}
 	
 

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.core.vo.domain;
@@ -62,6 +67,8 @@ public class AddressVoAssembler
 		valueObjectDest.setLine5(valueObjectSrc.getLine5());
 		// postCode
 		valueObjectDest.setPostCode(valueObjectSrc.getPostCode());
+		// AddressType
+		valueObjectDest.setAddressType(valueObjectSrc.getAddressType());
 	 	return valueObjectDest;
 	 }
 
@@ -364,7 +371,43 @@ public class AddressVoAssembler
 		valueObject.setLine5(domainObject.getLine5());
 		// postCode
 		valueObject.setPostCode(domainObject.getPostCode());
- 		return valueObject;
+		// AddressType
+		ims.domain.lookups.LookupInstance instance7 = domainObject.getAddressType();
+		if ( null != instance7 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance7.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance7.getImage().getImageId(), instance7.getImage().getImagePath());
+			}
+			color = instance7.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.AddressType voLookup7 = new ims.core.vo.lookups.AddressType(instance7.getId(),instance7.getText(), instance7.isActive(), null, img, color);
+			ims.core.vo.lookups.AddressType parentVoLookup7 = voLookup7;
+			ims.domain.lookups.LookupInstance parent7 = instance7.getParent();
+			while (parent7 != null)
+			{
+				if (parent7.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent7.getImage().getImageId(), parent7.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent7.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup7.setParent(new ims.core.vo.lookups.AddressType(parent7.getId(),parent7.getText(), parent7.isActive(), null, img, color));
+				parentVoLookup7 = parentVoLookup7.getParent();
+								parent7 = parent7.getParent();
+			}			
+			valueObject.setAddressType(voLookup7);
+		}
+		 		return valueObject;
 	 }
 
 
@@ -455,6 +498,14 @@ public class AddressVoAssembler
 			valueObject.setPostCode(null);
 		}
 		domainObject.setPostCode(valueObject.getPostCode());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value7 = null;
+		if ( null != valueObject.getAddressType() ) 
+		{
+			value7 =
+				domainFactory.getLookupInstance(valueObject.getAddressType().getID());
+		}
+		domainObject.setAddressType(value7);
 
 		return domainObject;
 	}

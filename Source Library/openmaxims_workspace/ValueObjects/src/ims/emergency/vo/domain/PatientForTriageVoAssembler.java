@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.emergency.vo.domain;
@@ -64,6 +69,8 @@ public class PatientForTriageVoAssembler
 		valueObjectDest.setIsQuickRegistrationPatient(valueObjectSrc.getIsQuickRegistrationPatient());
 		// OCSNotification
 		valueObjectDest.setOCSNotification(valueObjectSrc.getOCSNotification());
+		// MRNStatus
+		valueObjectDest.setMRNStatus(valueObjectSrc.getMRNStatus());
 	 	return valueObjectDest;
 	 }
 
@@ -406,7 +413,43 @@ public class PatientForTriageVoAssembler
 		valueObject.setIsQuickRegistrationPatient( domainObject.isIsQuickRegistrationPatient() );
 		// OCSNotification
 		valueObject.setOCSNotification(ims.core.vo.domain.PatientNotificationsFillerOnlyVoAssembler.create(map, domainObject.getOCSNotification()) );
- 		return valueObject;
+		// MRNStatus
+		ims.domain.lookups.LookupInstance instance8 = domainObject.getMRNStatus();
+		if ( null != instance8 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance8.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance8.getImage().getImageId(), instance8.getImage().getImagePath());
+			}
+			color = instance8.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.MRNStatus voLookup8 = new ims.core.vo.lookups.MRNStatus(instance8.getId(),instance8.getText(), instance8.isActive(), null, img, color);
+			ims.core.vo.lookups.MRNStatus parentVoLookup8 = voLookup8;
+			ims.domain.lookups.LookupInstance parent8 = instance8.getParent();
+			while (parent8 != null)
+			{
+				if (parent8.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent8.getImage().getImageId(), parent8.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent8.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup8.setParent(new ims.core.vo.lookups.MRNStatus(parent8.getId(),parent8.getText(), parent8.isActive(), null, img, color));
+				parentVoLookup8 = parentVoLookup8.getParent();
+								parent8 = parent8.getParent();
+			}			
+			valueObject.setMRNStatus(voLookup8);
+		}
+		 		return valueObject;
 	 }
 
 
@@ -581,6 +624,14 @@ public class PatientForTriageVoAssembler
 			}
 		}
 		domainObject.setOCSNotification(value7);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value8 = null;
+		if ( null != valueObject.getMRNStatus() ) 
+		{
+			value8 =
+				domainFactory.getLookupInstance(valueObject.getMRNStatus().getID());
+		}
+		domainObject.setMRNStatus(value8);
 
 		return domainObject;
 	}

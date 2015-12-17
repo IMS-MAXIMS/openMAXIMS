@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -68,6 +73,7 @@ public class Logic extends BaseLogic
 	{
 		clearSearchCriteria();
 		clearPatientList();
+		form.getGlobalContext().Correspondence.setPatientListSearchCriteria(null);//WDEV-19389 
 	}
 
 	protected void onImbSearchClick() throws ims.framework.exceptions.PresentationLogicException
@@ -354,9 +360,12 @@ public class Logic extends BaseLogic
 
 	private void displayInpatientSearchCriteria(ims.core.vo.PatientListsFilterVo voFilter)
 	{
-
+		clearSearchCriteria();//WDEV-19389 
 		if (voFilter.getConsultantIsNotNull())
+		{
+			form.qmbConsultants().newRow(voFilter.getConsultant(), voFilter.getConsultant().getName().toString());
 			form.qmbConsultants().setValue(voFilter.getConsultant());
+		}
 
 		if (voFilter.getHospitalIsNotNull())
 		{
@@ -368,7 +377,24 @@ public class Logic extends BaseLogic
 				form.cmbWard().setValue(voFilter.getWard());
 			}
 		}
-
+		//WDEV-19389 
+		form.dteDischargeDateFrom().setValue(voFilter.getDischargeDateFrom());
+		form.dteDichargeDateTo().setValue(voFilter.getDischargeDateTo());
+		form.cmbStatusOfLetter().setValue(voFilter.getDocumentStatus());
+		
+		if (voFilter.getDictatedByIsNotNull())
+		{
+			form.qmbDictatedBy().newRow(voFilter.getDictatedBy(), voFilter.getDictatedBy().getName().toString());
+			form.qmbDictatedBy().setValue(voFilter.getDictatedBy());
+		}
+		
+		form.chkCurrentOnly().setValue(voFilter.getInPatientSearch());
+		try
+		{
+			onChkCurrentOnlyValueChanged();
+		}
+		catch (PresentationLogicException e)
+		{e.printStackTrace();}
 		search();
 
 	}
@@ -381,6 +407,14 @@ public class Logic extends BaseLogic
 		form.cmbWard().setValue(null);
 		form.qmbConsultants().clear();
 		form.qmbConsultants().setValue(null);
+		//WDEV-19389 
+		form.cmbStatusOfLetter().setValue(null);
+		form.qmbDictatedBy().clear();
+		form.chkCurrentOnly().setValue(null);
+		form.dteDichargeDateTo().setEnabled(true);
+		form.dteDischargeDateFrom().setEnabled(true);
+		form.dteDichargeDateTo().setValue(null);
+		form.dteDischargeDateFrom().setValue(null);
 	}
 
 	private void clearPatientList()
@@ -434,7 +468,8 @@ public class Logic extends BaseLogic
 		voFilter.setDocumentStatus(form.cmbStatusOfLetter().getValue());
 		voFilter.setDischargeDateFrom(form.dteDischargeDateFrom().getValue());
 		voFilter.setDischargeDateTo(form.dteDichargeDateTo().getValue());
-
+		voFilter.setInPatientSearch(Boolean.TRUE.equals(form.chkCurrentOnly().getValue()) ? true : false);//WDEV-19389 
+		
 		return voFilter;
 	}
 

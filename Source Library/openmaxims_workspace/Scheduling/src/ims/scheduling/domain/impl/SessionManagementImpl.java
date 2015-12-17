@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -37,8 +42,11 @@ import ims.chooseandbook.vo.lookups.ActionRequestType;
 import ims.configuration.gen.ConfigFlag;
 import ims.core.patient.domain.objects.Patient;
 import ims.core.patient.vo.PatientRefVo;
+import ims.core.resource.place.domain.objects.Activity;
 import ims.core.resource.place.domain.objects.LocSite;
 import ims.core.resource.place.domain.objects.Location;
+import ims.core.resource.place.vo.ActivityRefVo;
+import ims.core.vo.ActivityWithImageLiteVo;
 import ims.core.vo.HcpFilter;
 import ims.core.vo.HcpLiteVoCollection;
 import ims.core.vo.LocShortMappingsVoCollection;
@@ -46,6 +54,7 @@ import ims.core.vo.LocationLiteVo;
 import ims.core.vo.LocationLiteVoCollection;
 import ims.core.vo.PatientShort;
 import ims.core.vo.ServiceVoCollection;
+import ims.core.vo.domain.ActivityWithImageLiteVoAssembler;
 import ims.core.vo.domain.LocShortMappingsVoAssembler;
 import ims.core.vo.domain.PatientShortAssembler;
 import ims.core.vo.lookups.LocationType;
@@ -59,12 +68,16 @@ import ims.scheduling.domain.SessionAdmin;
 import ims.scheduling.domain.base.impl.BaseSessionManagementImpl;
 import ims.scheduling.domain.objects.Booking_Appointment;
 import ims.scheduling.domain.objects.Sch_Session;
+import ims.scheduling.domain.objects.SessionParentChildSlot;
 import ims.scheduling.domain.objects.Session_Slot;
 import ims.scheduling.vo.Appointment_StatusVo;
+import ims.scheduling.vo.BookingAppointmentForSessionManagementVo;
+import ims.scheduling.vo.BookingAppointmentForSessionManagementVoCollection;
 import ims.scheduling.vo.Booking_AppointmentRefVo;
 import ims.scheduling.vo.Booking_AppointmentVo;
 import ims.scheduling.vo.ProfileLiteVoCollection;
 import ims.scheduling.vo.Sch_SessionRefVo;
+import ims.scheduling.vo.SessionFlexibleSlotForSessionManagementVoCollection;
 import ims.scheduling.vo.SessionManagementSearchCriteriaVo;
 import ims.scheduling.vo.SessionManagementVo;
 import ims.scheduling.vo.SessionManagementVoCollection;
@@ -72,18 +85,23 @@ import ims.scheduling.vo.SessionParentChildSlotVoCollection;
 import ims.scheduling.vo.SessionServiceAndSlotActivityVo;
 import ims.scheduling.vo.SessionShortVo;
 import ims.scheduling.vo.SessionSlotForSessionManagementVoCollection;
-import ims.scheduling.vo.SessionSlotVo;
+import ims.scheduling.vo.SessionSlotVoCollection;
 import ims.scheduling.vo.SessionVo;
+import ims.scheduling.vo.domain.BookingAppointmentForSessionManagementVoAssembler;
 import ims.scheduling.vo.domain.Booking_AppointmentVoAssembler;
 import ims.scheduling.vo.domain.ProfileLiteVoAssembler;
+import ims.scheduling.vo.domain.SessionFlexibleSlotForSessionManagementVoAssembler;
 import ims.scheduling.vo.domain.SessionManagementVoAssembler;
+import ims.scheduling.vo.domain.SessionParentChildSlotVoAssembler;
 import ims.scheduling.vo.domain.SessionShortVoAssembler;
 import ims.scheduling.vo.domain.SessionSlotForSessionManagementVoAssembler;
 import ims.scheduling.vo.domain.SessionSlotVoAssembler;
 import ims.scheduling.vo.domain.SessionVoAssembler;
-import ims.scheduling.vo.lookups.SchedCABSlotType;
+import ims.scheduling.vo.lookups.SchProfileType;
+import ims.scheduling.vo.lookups.Status_Reason;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class SessionManagementImpl extends BaseSessionManagementImpl
@@ -96,9 +114,9 @@ public class SessionManagementImpl extends BaseSessionManagementImpl
 		if (profileName == null || profileName.length() == 0)
 			throw new CodingRuntimeException("Cannot search on a null ProfileName");
 
-		String query = "SELECT profile FROM Sch_Profile AS profile WHERE upper(profile.name) like :ProfileName and profile.isActive = 1 and (profile.isTheatreProfile is null OR profile.isTheatreProfile = 0) ORDER BY UPPER(profile.name) ASC";
+		String query = "SELECT profile FROM Sch_Profile AS profile WHERE upper(profile.name) like :ProfileName and profile.isActive = 1 and (profile.profileType.id = :OUTPATIENT_THEATRE) ORDER BY UPPER(profile.name) ASC";
 
-		return ProfileLiteVoAssembler.createProfileLiteVoCollectionFromSch_Profile(getDomainFactory().find(query, new String[] { "ProfileName" }, new Object[] { profileName.toUpperCase() + "%" }));
+		return ProfileLiteVoAssembler.createProfileLiteVoCollectionFromSch_Profile(getDomainFactory().find(query, new String[] { "ProfileName", "OUTPATIENT_THEATRE" }, new Object[] { profileName.toUpperCase() + "%", SchProfileType.OUTPATIENT.getID() }));
 	}
 
 	public LocationLiteVoCollection listActiveHospitals()
@@ -138,10 +156,13 @@ public class SessionManagementImpl extends BaseSessionManagementImpl
 		return null;
 	}
 
-	public LocShortMappingsVoCollection listActiveWardsForHospital(LocationLiteVo location)
+	public LocShortMappingsVoCollection listActiveLocationsForHospital(LocationLiteVo location)
 	{
-		OrganisationAndLocation locImpl = (OrganisationAndLocation) getDomainImpl(OrganisationAndLocationImpl.class);
-		return locImpl.listActiveWardsForHospital(location);
+		if (location == null)
+			return null;
+		//http://jira/browse/WDEV-21222 
+		OrganisationAndLocation impl = (OrganisationAndLocation)getDomainImpl(OrganisationAndLocationImpl.class);
+		return impl.listActiveLocationsForHospital(location,new int[]{LocationType.CLINIC.getID(),LocationType.OUTPATIENT_DEPT.getID()});
 	}
 
 	public HcpLiteVoCollection listHcpLite(HcpFilter filter)
@@ -173,20 +194,37 @@ public class SessionManagementImpl extends BaseSessionManagementImpl
 
 			if (searchCriteria.getLocation() != null)
 			{
-				hql += " left join sess.schLocation as location ";
+				
+				if (LocationType.CLINIC.equals(searchCriteria.getLocation().getType()))
+				{
+					hql += " left join sess.schLocation as location ";
 
-				condStr.append(andStr + " location.id = :locationID ");
-				markers.add("locationID");
-				values.add(searchCriteria.getLocation().getID_Location());
-				andStr = " and ";
+					condStr.append(andStr + " location.id = :locationID ");
+					markers.add("locationID");
+					values.add(searchCriteria.getLocation().getID_Location());
+					andStr = " and ";
+				}
+				else if (LocationType.OUTPATIENT_DEPT.equals(searchCriteria.getLocation().getType()))
+				{
+					hql += " left join sess.schLocation as location ";
+
+					condStr.append(andStr + " (location.id = :locationID or (location.parentLocation.id = :locationID)) ");
+					markers.add("locationID");
+					values.add(searchCriteria.getLocation().getID_Location());
+					andStr = " and ";
+				} 
 			}
 			else if (searchCriteria.getHospital() != null)
 			{
+				
+				//String ids = getLocationsIdsForHospital(searchCriteria.getHospital());
+				//http://jira/browse/WDEV-21222
+				OrganisationAndLocation impl = (OrganisationAndLocation)getDomainImpl(OrganisationAndLocationImpl.class);
+				String ids = impl.getChildLocationsIdsForLocation(searchCriteria.getHospital().getBoId(), null, Boolean.TRUE,Boolean.FALSE);
+		
 				hql += " left join sess.schLocation as location ";
 
-				condStr.append(andStr + " location.id = :hospitalID ");
-				markers.add("hospitalID");
-				values.add(searchCriteria.getHospital().getID_Location());
+				condStr.append(andStr + " location.id in ( " + ids + " ) ");
 				andStr = " and ";
 			}
 
@@ -207,7 +245,7 @@ public class SessionManagementImpl extends BaseSessionManagementImpl
 
 				hql += " left join sess.listOwners as owners ";
 
-				condStr.append(andStr + " owners.hcp in ( " + ownersIDs + " ) ");
+				condStr.append(andStr + " owners.hcp.id in ( " + ownersIDs + " )  and owners.listOwner = 1 "); //WDEV-20479
 
 				andStr = " and ";
 			}
@@ -237,9 +275,29 @@ public class SessionManagementImpl extends BaseSessionManagementImpl
 				values.add(searchCriteria.getDateTo().getDate());
 				andStr = " and ";
 			}
+			//wdev-19419
+			if( searchCriteria.getListType() != null)
+			{
+				condStr.append(andStr + " sess.listType.id = :listtypeId ");
+				markers.add("listtypeId");
+				values.add(getDomLookup(searchCriteria.getListType()).getId());
+				andStr = " and ";
+			}
+			/* WDEV-20479
+			if( searchCriteria.getConsultant() != null)
+			{
+				condStr.append(andStr + " sess.responsibleHCP.id = :respHCPId ");
+				markers.add("respHCPId");
+				values.add(searchCriteria.getConsultant().getID_Hcp());
+				andStr = " and ";
+			}
+			*/
+			//--------
 		}
 		
-		condStr.append(andStr + " (sess.isTheatreSession is null OR sess.isTheatreSession = 0) ");
+		condStr.append(andStr + " (sess.sessionProfileType.id = :OUTPATIENT_SESSION) ");
+		markers.add("OUTPATIENT_SESSION");
+		values.add(SchProfileType.OUTPATIENT.getID());
 
 		condStr.append(" order by sess.sessionDate asc ");
 
@@ -269,7 +327,7 @@ public class SessionManagementImpl extends BaseSessionManagementImpl
 		return ids;
 	}
 
-	public SessionSlotForSessionManagementVoCollection getSlotsForSession(Sch_SessionRefVo sessionRef)
+	public SessionSlotForSessionManagementVoCollection getFixedSlotsForSession(Sch_SessionRefVo sessionRef)
 	{
 		if (sessionRef == null)
 		{
@@ -320,30 +378,34 @@ public class SessionManagementImpl extends BaseSessionManagementImpl
 		return SessionShortVoAssembler.create((Sch_Session) getDomainFactory().getDomainObject(Sch_Session.class, sessionRef.getID_Sch_Session()));
 	}
 
-	public void addSlotToSession(SessionManagementVo session, SessionSlotVo slot) throws StaleObjectException
+	public void addFixedSlotsToSession(SessionManagementVo session, SessionSlotVoCollection slots) throws StaleObjectException
 	{
-		if (session == null || slot == null)
-			throw new CodingRuntimeException("session or slot is null in method addSlotToSession");
+		if (session == null)
+			throw new CodingRuntimeException("session is null in method addSlotToSession");
 
+		if (slots == null || slots.size() == 0)
+			return;
+		
 		DomainFactory factory = getDomainFactory();
-		Session_Slot doSlot = SessionSlotVoAssembler.extractSession_Slot(factory, slot);
-		doSlot.setDirectAccessSlot(getDomLookup(SchedCABSlotType.LOCAL));
-
 		Sch_Session doSession = (Sch_Session) factory.getDomainObject(Sch_Session.class, session.getID_Sch_Session());
-
-		doSlot.setSession(doSession);
-		doSlot.setIsActive(true);
-		doSession.getSessionSlots().add(doSlot);
 
 		// update remaining slots
 		int remainingSlots = doSession.getRemainingSlots();
-		remainingSlots += 1;
+		remainingSlots += slots.size();
 		int totalslots = doSession.getTotalSlots();
-		totalslots += 1;
-
+		totalslots += slots.size();
+		
+		for (int i = 0; i < slots.size(); i++)
+		{
+			Session_Slot doSlot = SessionSlotVoAssembler.extractSession_Slot(factory, slots.get(i));
+			doSlot.setSession(doSession);
+			doSlot.setIsActive(true);
+			doSession.getSessionSlots().add(doSlot);
+		}
+		
 		doSession.setRemainingSlots(remainingSlots);
 		doSession.setTotalSlots(totalslots);
-
+		
 		factory.save(doSession);
 
 	}
@@ -371,7 +433,7 @@ public class SessionManagementImpl extends BaseSessionManagementImpl
 		return SessionManagementVoAssembler.create((Sch_Session) getDomainFactory().getDomainObject(Sch_Session.class, sessionRef.getID_Sch_Session()));
 	}
 
-	public SessionVo saveSession(SessionVo session, Boolean editingSlots) throws StaleObjectException
+	public SessionVo saveSession(SessionVo session, Boolean editingSlots) throws DomainInterfaceException, StaleObjectException
 	{
 		SessionAdmin impl = (SessionAdmin) getDomainImpl(SessionAdminImpl.class);
 		return impl.saveSession(session, editingSlots);
@@ -433,7 +495,7 @@ public class SessionManagementImpl extends BaseSessionManagementImpl
 		return impl.getServiceAndActivityByAppt(appt, isFlexible);
 	}
 
-	public Booking_AppointmentVo cancelAppt(Booking_AppointmentVo appt, ActionRequestType requestType, String requestSource) throws StaleObjectException
+	public Booking_AppointmentVo cancelAppt(Booking_AppointmentVo appt, ActionRequestType requestType, String requestSource) throws DomainInterfaceException, StaleObjectException
 	{
 		SessionAdmin impl = (SessionAdmin) getDomainImpl(SessionAdminImpl.class);
 		return impl.cancelAppt(appt, requestType, requestSource);
@@ -441,23 +503,20 @@ public class SessionManagementImpl extends BaseSessionManagementImpl
 
 	public void updateCatsReferralAdditionalInvStatus(CatsReferralRefVo catsReferral) throws StaleObjectException
 	{
+		updateCatsReferralAdditionalInvStatus(catsReferral, null);
+	}
+	
+	public void updateCatsReferralAdditionalInvStatus(CatsReferralRefVo catsReferral, Booking_AppointmentRefVo appt) throws StaleObjectException
+	{
 		SessionAdmin impl = (SessionAdmin) getDomainImpl(SessionAdminImpl.class);
-		impl.updateCatsReferralAdditionalInvStatus(catsReferral);
+		impl.updateCatsReferralAdditionalInvStatus(catsReferral, appt);
 		
 	}
 
-	public void updateCatsReferralCancelStatus(CatsReferralRefVo catsReferral) throws StaleObjectException
+	public void updateCatsReferralCancelStatus(CatsReferralRefVo catsReferral) throws StaleObjectException  //WDEV-19543
 	{
-		if(catsReferral == null || catsReferral.getID_CatsReferral() == null)
-			throw new CodingRuntimeException("catsReferral is null or id not provided in method updateCatsReferralAdditionalInvStatus");
-		
-		DomainFactory factory = getDomainFactory();
-		
-		CatsReferral doCatsReferral = (CatsReferral) factory.getDomainObject(catsReferral);
-		
-		doCatsReferral.setHasCancelledApptsForReview(true);
-		factory.save(doCatsReferral);
-		
+		SessionAdmin impl = (SessionAdmin) getDomainImpl(SessionAdminImpl.class);
+		impl.updateCatsReferralCancelStatus(catsReferral);
 	}
 
 	public PatientShort getPatientShort(PatientRefVo patientRef)
@@ -467,5 +526,102 @@ public class SessionManagementImpl extends BaseSessionManagementImpl
 		
 		return PatientShortAssembler.create((Patient) getDomainFactory().getDomainObject(Patient.class, patientRef.getID_Patient()));
 	}
-	
+
+	public SessionManagementVo justSaveSession(SessionManagementVo sessionToSave) throws StaleObjectException
+	{
+		if (sessionToSave == null)
+			throw new CodingRuntimeException("Cannot save null Session");
+
+		DomainFactory factory = getDomainFactory();
+		Sch_Session domainSession = SessionManagementVoAssembler.extractSch_Session(factory, sessionToSave);
+
+		factory.save(domainSession);
+		
+		return SessionManagementVoAssembler.create(domainSession);
+	}
+
+	public void saveAppointment(BookingAppointmentForSessionManagementVo appointmentToSave) throws StaleObjectException
+	{
+		if (appointmentToSave == null)
+			throw new CodingRuntimeException("Cannot save null Appointment");
+
+		DomainFactory factory = getDomainFactory();
+		Booking_Appointment domainAppointment = BookingAppointmentForSessionManagementVoAssembler.extractBooking_Appointment(factory, appointmentToSave);
+
+		factory.save(domainAppointment);
+		
+	}
+
+	//wdev-19496
+	public ActivityWithImageLiteVo getActivityWithImage(ActivityRefVo activityRef)
+	{
+		if( activityRef == null || activityRef.getID_Activity() == null )
+			throw new CodingRuntimeException("ActivityRefVo is null or id not provided in method getActivityWithImage");
+		
+		return ActivityWithImageLiteVoAssembler.create((Activity) getDomainFactory().getDomainObject(activityRef));
+	}
+
+	public SessionFlexibleSlotForSessionManagementVoCollection getFlexibleSlotsForSession(Sch_SessionRefVo sessionRef)
+	{
+		if (sessionRef == null)
+		{
+			throw new CodingRuntimeException("Cannot get Slots on null SessionID");
+		}
+
+		DomainFactory factory = getDomainFactory();
+		ArrayList<String> markers = new ArrayList<String>();
+		ArrayList<Object> values = new ArrayList<Object>();
+
+		StringBuffer hql = new StringBuffer();
+		hql.append("select slots from Sch_Session as session left join session.parentChildSlots as slots where session.id = :sessionID order by slots.startTime asc");
+
+		markers.add("sessionID");
+		values.add(sessionRef.getID_Sch_Session());
+
+		return SessionFlexibleSlotForSessionManagementVoAssembler.createSessionFlexibleSlotForSessionManagementVoCollectionFromSessionParentChildSlot(factory.find(hql.toString(), markers, values));
+	}
+
+	public void addFlexibleSlotsToSession(SessionManagementVo session, SessionParentChildSlotVoCollection slots) throws StaleObjectException
+	{
+		if (session == null)
+			throw new CodingRuntimeException("session is null in method addSlotToSession");
+
+		if (slots == null || slots.size() == 0)
+			return;
+		
+		DomainFactory factory = getDomainFactory();
+		Sch_Session doSession = (Sch_Session) factory.getDomainObject(Sch_Session.class, session.getID_Sch_Session());
+		
+		for (int i = 0; i < slots.size(); i++)
+		{
+			SessionParentChildSlot doSlot = SessionParentChildSlotVoAssembler.extractSessionParentChildSlot(factory, slots.get(i));
+			doSession.getParentChildSlots().add(doSlot);
+		}
+		
+		factory.save(doSession);
+		
+	}
+
+	//WDEV-20588
+	public BookingAppointmentForSessionManagementVoCollection getCancelledAppointmentsForSession(Sch_SessionRefVo session) 
+	{
+		if (session == null || session.getID_Sch_Session() == null)
+			return null;
+
+		DomainFactory factory = getDomainFactory();
+		ArrayList<String> markers = new ArrayList<String>();
+		ArrayList<Object> values = new ArrayList<Object>();
+
+		StringBuffer hql = new StringBuffer();
+		hql.append("select appt from Booking_Appointment as appt left join appt.session as sess left join appt.currentStatusRecord as currentStatus left join currentStatus.status as status where sess.id = :sessionID and status.id = :statusID and appt.requiresRebook = 1");
+
+		markers.add("sessionID");
+		values.add(session.getID_Sch_Session());
+		
+		markers.add("statusID");
+		values.add(Status_Reason.CANCELLED.getId());
+
+		return BookingAppointmentForSessionManagementVoAssembler.createBookingAppointmentForSessionManagementVoCollectionFromBooking_Appointment(factory.find(hql.toString(), markers, values));
+		
+	}
 }

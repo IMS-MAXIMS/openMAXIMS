@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.clinical.domain.objects;
@@ -112,6 +117,7 @@ public class PatientMedication extends ims.domain.DomainObject implements ims.do
 	private Boolean selfMedicating;
 	/** RecordingInformation */
 	private ims.core.clinical.domain.objects.RecordingUserInformation recordingInformation;
+	private String comment;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public PatientMedication (Integer id, int ver)
@@ -389,6 +395,17 @@ public class PatientMedication extends ims.domain.DomainObject implements ims.do
 		this.recordingInformation = recordingInformation;
 	}
 
+	public String getComment() {
+		return comment;
+	}
+	public void setComment(String comment) {
+		if ( null != comment && comment.length() > 255 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for comment. Tried to set value: "+
+				comment);
+		}
+		this.comment = comment;
+	}
+
 	public ims.domain.SystemInformation getSystemInformation() {
 		if (systemInformation == null) systemInformation = new ims.domain.SystemInformation();
 		return systemInformation;
@@ -599,6 +616,9 @@ public class PatientMedication extends ims.domain.DomainObject implements ims.do
 				
 		    auditStr.append(recordingInformation.toString());
 		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*comment* :");
+		auditStr.append(comment);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -850,6 +870,12 @@ public class PatientMedication extends ims.domain.DomainObject implements ims.do
 			sb.append("<recordingInformation>");
 			sb.append(this.getRecordingInformation().toXMLString(domMap)); 	
 			sb.append("</recordingInformation>");		
+		}
+		if (this.getComment() != null)
+		{
+			sb.append("<comment>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getComment().toString()));
+			sb.append("</comment>");		
 		}
 		return sb.toString();
 	}
@@ -1201,6 +1227,11 @@ public class PatientMedication extends ims.domain.DomainObject implements ims.do
 			fldEl = fldEl.element("class");		
 			obj.setRecordingInformation(ims.core.clinical.domain.objects.RecordingUserInformation.getRecordingUserInformationfromXML(fldEl, factory, domMap)); 
 		}
+		fldEl = el.element("comment");
+		if(fldEl != null)
+		{	
+    		obj.setComment(new String(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -1248,6 +1279,7 @@ public class PatientMedication extends ims.domain.DomainObject implements ims.do
 		public static final String ExpiryDate = "expiryDate";
 		public static final String SelfMedicating = "selfMedicating";
 		public static final String RecordingInformation = "recordingInformation";
+		public static final String Comment = "comment";
 	}
 }
 

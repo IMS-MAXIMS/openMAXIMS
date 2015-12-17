@@ -1,9 +1,33 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.RefMan.domain.objects;
@@ -31,9 +55,12 @@ public class ReferralTransfer extends ims.domain.DomainObject implements ims.dom
 	/** Patient number at other Provider */
 	private String otherPatientNumber;
 	/** Organisation Code of other Provider  */
-	private String oTherOrganisationCode;
+	private ims.domain.lookups.LookupInstance oTherOrganisationCode;
 	/** CurrentRTTStatus  */
 	private ims.pathways.configuration.domain.objects.RTTStatusPoint currentRTTStatus;
+	private String pathwayID;
+	private String referringOrganisationCode;
+	private java.util.Date rTTStartDate;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public ReferralTransfer (Integer id, int ver)
@@ -72,14 +99,10 @@ public class ReferralTransfer extends ims.domain.DomainObject implements ims.dom
 		this.otherPatientNumber = otherPatientNumber;
 	}
 
-	public String getOTherOrganisationCode() {
+	public ims.domain.lookups.LookupInstance getOTherOrganisationCode() {
 		return oTherOrganisationCode;
 	}
-	public void setOTherOrganisationCode(String oTherOrganisationCode) {
-		if ( null != oTherOrganisationCode && oTherOrganisationCode.length() > 5 ) {
-			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for oTherOrganisationCode. Tried to set value: "+
-				oTherOrganisationCode);
-		}
+	public void setOTherOrganisationCode(ims.domain.lookups.LookupInstance oTherOrganisationCode) {
 		this.oTherOrganisationCode = oTherOrganisationCode;
 	}
 
@@ -88,6 +111,35 @@ public class ReferralTransfer extends ims.domain.DomainObject implements ims.dom
 	}
 	public void setCurrentRTTStatus(ims.pathways.configuration.domain.objects.RTTStatusPoint currentRTTStatus) {
 		this.currentRTTStatus = currentRTTStatus;
+	}
+
+	public String getPathwayID() {
+		return pathwayID;
+	}
+	public void setPathwayID(String pathwayID) {
+		if ( null != pathwayID && pathwayID.length() > 30 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for pathwayID. Tried to set value: "+
+				pathwayID);
+		}
+		this.pathwayID = pathwayID;
+	}
+
+	public String getReferringOrganisationCode() {
+		return referringOrganisationCode;
+	}
+	public void setReferringOrganisationCode(String referringOrganisationCode) {
+		if ( null != referringOrganisationCode && referringOrganisationCode.length() > 50 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for referringOrganisationCode. Tried to set value: "+
+				referringOrganisationCode);
+		}
+		this.referringOrganisationCode = referringOrganisationCode;
+	}
+
+	public java.util.Date getRTTStartDate() {
+		return rTTStartDate;
+	}
+	public void setRTTStartDate(java.util.Date rTTStartDate) {
+		this.rTTStartDate = rTTStartDate;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -134,7 +186,8 @@ public class ReferralTransfer extends ims.domain.DomainObject implements ims.dom
 		auditStr.append(otherPatientNumber);
 	    auditStr.append("; ");
 		auditStr.append("\r\n*oTherOrganisationCode* :");
-		auditStr.append(oTherOrganisationCode);
+		if (oTherOrganisationCode != null)
+			auditStr.append(oTherOrganisationCode.getText());
 	    auditStr.append("; ");
 		auditStr.append("\r\n*currentRTTStatus* :");
 		if (currentRTTStatus != null)
@@ -143,6 +196,15 @@ public class ReferralTransfer extends ims.domain.DomainObject implements ims.dom
 				
 		    auditStr.append(currentRTTStatus.getId());
 		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*pathwayID* :");
+		auditStr.append(pathwayID);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*referringOrganisationCode* :");
+		auditStr.append(referringOrganisationCode);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*rTTStartDate* :");
+		auditStr.append(rTTStartDate);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -203,7 +265,7 @@ public class ReferralTransfer extends ims.domain.DomainObject implements ims.dom
 		if (this.getOTherOrganisationCode() != null)
 		{
 			sb.append("<oTherOrganisationCode>");
-			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getOTherOrganisationCode().toString()));
+			sb.append(this.getOTherOrganisationCode().toXMLString()); 
 			sb.append("</oTherOrganisationCode>");		
 		}
 		if (this.getCurrentRTTStatus() != null)
@@ -211,6 +273,24 @@ public class ReferralTransfer extends ims.domain.DomainObject implements ims.dom
 			sb.append("<currentRTTStatus>");
 			sb.append(this.getCurrentRTTStatus().toXMLString(domMap)); 	
 			sb.append("</currentRTTStatus>");		
+		}
+		if (this.getPathwayID() != null)
+		{
+			sb.append("<pathwayID>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getPathwayID().toString()));
+			sb.append("</pathwayID>");		
+		}
+		if (this.getReferringOrganisationCode() != null)
+		{
+			sb.append("<referringOrganisationCode>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getReferringOrganisationCode().toString()));
+			sb.append("</referringOrganisationCode>");		
+		}
+		if (this.getRTTStartDate() != null)
+		{
+			sb.append("<rTTStartDate>");
+			sb.append(new ims.framework.utils.DateTime(this.getRTTStartDate()).toString(ims.framework.utils.DateTimeFormat.MILLI));
+			sb.append("</rTTStartDate>");		
 		}
 		return sb.toString();
 	}
@@ -387,14 +467,30 @@ public class ReferralTransfer extends ims.domain.DomainObject implements ims.dom
 		}
 		fldEl = el.element("oTherOrganisationCode");
 		if(fldEl != null)
-		{	
-    		obj.setOTherOrganisationCode(new String(fldEl.getTextTrim()));	
+		{
+			fldEl = fldEl.element("lki");
+			obj.setOTherOrganisationCode(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
 		}
 		fldEl = el.element("currentRTTStatus");
 		if(fldEl != null)
 		{
 			fldEl = fldEl.element("class");		
 			obj.setCurrentRTTStatus(ims.pathways.configuration.domain.objects.RTTStatusPoint.getRTTStatusPointfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("pathwayID");
+		if(fldEl != null)
+		{	
+    		obj.setPathwayID(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("referringOrganisationCode");
+		if(fldEl != null)
+		{	
+    		obj.setReferringOrganisationCode(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("rTTStartDate");
+		if(fldEl != null)
+		{	
+    		obj.setRTTStartDate(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
 		}
 	}
 
@@ -412,6 +508,9 @@ public class ReferralTransfer extends ims.domain.DomainObject implements ims.dom
 		public static final String OtherPatientNumber = "otherPatientNumber";
 		public static final String OTherOrganisationCode = "oTherOrganisationCode";
 		public static final String CurrentRTTStatus = "currentRTTStatus";
+		public static final String PathwayID = "pathwayID";
+		public static final String ReferringOrganisationCode = "referringOrganisationCode";
+		public static final String RTTStartDate = "rTTStartDate";
 	}
 }
 

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -97,17 +102,21 @@ public class Logic extends BaseLogic
 	// ---- Interface Implementation Methods -----
 	public void initializeComponent()
 	{
-		setDefaultValuesToControls(false);//WDEV-11523		
+		setDefaultValuesToControls(false, false);//WDEV-11523 //WDEV-18846		
 	}
 	//WDEV-11523
-	public void initializeComponent(Boolean ignoreClinicalContact)
+	public void initializeComponent(Boolean ignoreClinicalContact, Boolean ignoreClinicalContactDate) //WDEV-18846
 	{
-		setDefaultValuesToControls(ignoreClinicalContact!=null?ignoreClinicalContact.booleanValue():false);
+		if (ignoreClinicalContact != null && Boolean.TRUE.equals(ignoreClinicalContact))
+			setDefaultValuesToControls(true, false);
+		else
+			setDefaultValuesToControls(false, ignoreClinicalContactDate != null ? ignoreClinicalContactDate.booleanValue() : false);
 	}
 
+	
 	public void initializeComponent(HcpDisType hcpType)
 	{
-		setDefaultValuesToControls(false);
+		setDefaultValuesToControls(false, false); //WDEV-18846
 		setHcpDisciplineType(hcpType);
 	}
 
@@ -352,13 +361,13 @@ public class Logic extends BaseLogic
 	// ------ End Protected Methods ----------
 
 	// ------ Private Methods ----------------
-	private void setDefaultValuesToControls(boolean ignoreClinicalContact)//WDEV-11523
+	private void setDefaultValuesToControls(boolean ignoreClinicalContact, boolean ignoreClinicalContactDate)//WDEV-11523 //WDEV-18846
 	{
 		AuthoringInformationVo voAuthoring = new AuthoringInformationVo();
 		
 		if(!ignoreClinicalContact && form.getGlobalContext().Core.getCurrentClinicalContactIsNotNull())//WDEV-11523
 		{
-			voAuthoring.setAuthoringDateTime(form.getGlobalContext().Core.getCurrentClinicalContact().getStartDateTime() == null ? new DateTime() : form.getGlobalContext().Core.getCurrentClinicalContact().getStartDateTime());
+			voAuthoring.setAuthoringDateTime(Boolean.TRUE.equals(ignoreClinicalContactDate) ? new DateTime() : (form.getGlobalContext().Core.getCurrentClinicalContact().getStartDateTime() != null ?  form.getGlobalContext().Core.getCurrentClinicalContact().getStartDateTime() : new DateTime())); //WDEV-18846
 			voAuthoring.setAuthoringHcp(form.getGlobalContext().Core.getCurrentClinicalContact().getSeenBy());			
 		}
 		else
@@ -436,6 +445,4 @@ public class Logic extends BaseLogic
 		return form.getLocalContext().getIsRequiredIsNotNull()?form.getLocalContext().getIsRequired().booleanValue():false;
 	}
 	// ------ End Private Methods ----------------	
-
-	
 }

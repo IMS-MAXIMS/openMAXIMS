@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -37,6 +42,7 @@ import ims.core.configuration.domain.objects.AppUser;
 import ims.core.configuration.domain.objects.ConfiguredJob;
 import ims.core.configuration.domain.objects.ConfiguredJobExecutionSummary;
 import ims.core.configuration.domain.objects.SystemJob;
+import ims.core.configuration.vo.AppRoleRefVo;
 import ims.core.vo.ConfiguredJobExecutionSummaryVo;
 import ims.core.vo.domain.ConfiguredJobExecutionSummaryVoAssembler;
 import ims.domain.DomainFactory;
@@ -161,5 +167,26 @@ public class SystemJobsImpl extends BaseSystemJobsImpl
 		AppUser domAppUser = (AppUser)factory.getDomainObject(AppUser.class, voRef.getID_AppUser()); 
 		
 		return AppUserShortVoAssembler.create(domAppUser);
+	}
+	
+	//wdev-20542
+
+	public String getRoleCodeFromAppRoleSpineRbac(Integer appRef)
+	{
+		if( appRef == null )
+			return null;
+		
+		DomainFactory factory = getDomainFactory();
+				
+		String hqlString = "select r1_1.roleCode from AppRole as a1_1 left join a1_1.spineRbac as r1_1 where (a1_1.id = :imsId)";
+		List jobs = factory.find(hqlString, new String[] {"imsId"}, new Object[] {appRef});
+		
+		if (jobs != null && jobs.size() > 0)
+		{
+			String code = (String) jobs.get(0);
+			return code;
+		}
+		
+		return null; 
 	}
 }

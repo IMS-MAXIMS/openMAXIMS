@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.scheduling.vo.domain;
@@ -64,6 +69,14 @@ public class BookingAppointmentClinicListListVoAssembler
 		valueObjectDest.setIsCABBooking(valueObjectSrc.getIsCABBooking());
 		// Session
 		valueObjectDest.setSession(valueObjectSrc.getSession());
+		// wasPrinted
+		valueObjectDest.setWasPrinted(valueObjectSrc.getWasPrinted());
+		// BookingLetter
+		valueObjectDest.setBookingLetter(valueObjectSrc.getBookingLetter());
+		// numProviderCancellations
+		valueObjectDest.setNumProviderCancellations(valueObjectSrc.getNumProviderCancellations());
+		// numPatientCancellations
+		valueObjectDest.setNumPatientCancellations(valueObjectSrc.getNumPatientCancellations());
 	 	return valueObjectDest;
 	 }
 
@@ -410,6 +423,14 @@ public class BookingAppointmentClinicListListVoAssembler
 		valueObject.setIsCABBooking( domainObject.isIsCABBooking() );
 		// Session
 		valueObject.setSession(ims.scheduling.vo.domain.SessionClinicListListVoAssembler.create(map, domainObject.getSession()) );
+		// wasPrinted
+		valueObject.setWasPrinted( domainObject.isWasPrinted() );
+		// BookingLetter
+		valueObject.setBookingLetter(ims.core.vo.domain.PatientDocumentLiteVoAssembler.create(map, domainObject.getBookingLetter()) );
+		// numProviderCancellations
+		valueObject.setNumProviderCancellations(domainObject.getNumProviderCancellations());
+		// numPatientCancellations
+		valueObject.setNumPatientCancellations(domainObject.getNumPatientCancellations());
  		return valueObject;
 	 }
 
@@ -533,6 +554,26 @@ public class BookingAppointmentClinicListListVoAssembler
 			}
 		}
 		domainObject.setSession(value7);
+		domainObject.setWasPrinted(valueObject.getWasPrinted());
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.documents.domain.objects.PatientDocument value9 = null;
+		if ( null != valueObject.getBookingLetter() ) 
+		{
+			if (valueObject.getBookingLetter().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getBookingLetter()) != null)
+				{
+					value9 = (ims.core.documents.domain.objects.PatientDocument)domMap.get(valueObject.getBookingLetter());
+				}
+			}
+			else
+			{
+				value9 = (ims.core.documents.domain.objects.PatientDocument)domainFactory.getDomainObject(ims.core.documents.domain.objects.PatientDocument.class, valueObject.getBookingLetter().getBoId());
+			}
+		}
+		domainObject.setBookingLetter(value9);
+		domainObject.setNumProviderCancellations(valueObject.getNumProviderCancellations());
+		domainObject.setNumPatientCancellations(valueObject.getNumPatientCancellations());
 
 		return domainObject;
 	}

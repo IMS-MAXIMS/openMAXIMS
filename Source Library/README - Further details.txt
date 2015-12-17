@@ -15,10 +15,10 @@ could occur. For a simple test deployment these passwords are not important, but
 should be set to a locally agreed but secure string.
 
 openmaxims_workspace\Admin\src\ims\admin\forms\configflags\Logic.java
-line 432: set system password details - gives access to change configflags on built system
+line 437: set system password details - gives access to change configflags on built system
 -----------------------------------------------------------------------------------------------------------
 openmaxims_workspace\Admin\src\ims\admin\forms\applicationusers\Logic.java
-line 807: set system password details - gives access to master account on built system
+line 895: set system password details - gives access to master account on built system
 -----------------------------------------------------------------------------------------------------------
 
 
@@ -26,25 +26,23 @@ TO COMPLETE THE DEPLOYMENT PROCESS:
 
 (These changes can be made post-build)
 
-For access to NHS PDS and C&B services over N3:
+For access to NHS PDS and eRS (C&B) services over N3:
 openmaxims_workspace\WebApp\cabgw_configuration.xml
-line 15: actual PDS URL required
-line 17: actual user name required
-line 19: actual user password required
+Substitute actual values wherever "xxxxx" appears
 -----------------------------------------------------------------------------------------------------------
 If using the MS SQL Server 2008/12 database:
 openmaxims_workspace\WebApp\MAXIMS_RefDataMSQ05.sql
-line 79854: actual username and password strings required for default user
-line 79856: actual username and password strings required for default user
+line 107302: actual username and password strings required for default user
+line 107304: actual username and password strings required for default user
 -----------------------------------------------------------------------------------------------------------
 If using the Oracle 10/11 database:
 openmaxims_workspace\WebApp\MAXIMS_RefDataORA.sql
-line 93463: actual username and password strings required for default user
-line 93465: actual username and password strings required for default user
+line 123836: actual username and password strings required for default user
+line 123838: actual username and password strings required for default user
 -----------------------------------------------------------------------------------------------------------
 openmaxims_workspace\WebApp\WEB-INF\web.xml
 lines 94 and 98: actual username and password for HL7 service to access DB
 -----------------------------------------------------------------------------------------------------------
 openmaxims_workspace\WebApp\src\configuration.xml
-Line 4588: your system admin password details needed
+Line 5740: your system admin password details needed
 -----------------------------------------------------------------------------------------------------------

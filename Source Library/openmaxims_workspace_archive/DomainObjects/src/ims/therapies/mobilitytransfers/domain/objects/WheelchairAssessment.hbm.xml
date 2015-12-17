@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:35 -->
+<hibernate-mapping>
+	<class name="ims.therapies.mobilitytransfers.domain.objects.WheelchairAssessment" table="ther_wheelchairasse" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: hibernateClassContent -->
+<!-- debug: clinicalContact -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="clinicalContact" class="ims.core.admin.domain.objects.ClinicalContact" unique="true" foreign-key="wheelchairasse_clinicalco_fk" access="field" cascade="save-update">
+			<column name="clinicalco" sql-type="numeric(10,0)" not-null="true" unique="false"  index='ctc_idx' />
+		</many-to-one>
+<!-- debug: authoringDateTime -->
+<!-- debug: authoringCP -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="authoringCP" class="ims.core.resource.people.domain.objects.Hcp" unique="true" foreign-key="wheelchairasse_authoringc_fk" access="field" cascade="save-update">
+			<column name="authoringc" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: chairType -->
+<!-- debug: surfaceDistance -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="surfaceDistance" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="wheelchairasse_surfacedis_fk">
+				<column name="ther_wheelchairasse_surfacedis" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.therapies.mobilitytransfers.domain.objects.WheelchairSurfaceDistance" />
+		</set>
+<!-- debug: powerchairSkillsAssess -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="powerchairSkillsAssess" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="wheelchairasse_powerchair_fk">
+				<column name="ther_wheelchairasse_powerchair" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.therapies.mobilitytransfers.domain.objects.PowerchairSkillsAssessment" />
+		</set>
+<!-- debug: wheelchairSkillsAssess -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="wheelchairSkillsAssess" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="wheelchairasse_wheelchair_fk">
+				<column name="ther_wheelchairasse_wheelchair" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.therapies.mobilitytransfers.domain.objects.WheelchairSkillsAssessment" />
+		</set>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="authoringDateTime" type="timestamp" access="field" update="true">
+			<column name="authoringd"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="chairType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_chairtype" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+	</class>
+</hibernate-mapping>

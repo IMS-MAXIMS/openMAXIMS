@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -82,7 +87,7 @@ public class EntityEventMapImpl extends BaseEntityEventMapImpl
 
 		if (textSupplied != null)
 		{
-			conditions.append(" UPPER(events.name) like :text and status.text = :activeStatus ");
+			conditions.append(" events.upperName like :text and status.text = :activeStatus "); //WDEV-20219 UPPER(events.name)
 			marques.add("text");
 			values.add(textSupplied.toUpperCase() + "%");
 			marques.add("activeStatus");
@@ -107,12 +112,20 @@ public class EntityEventMapImpl extends BaseEntityEventMapImpl
 		PathwayEntityEventMapVoCollection pathwayEntityEventMapVoCollection = new PathwayEntityEventMapVoCollection();
 		DomainFactory factory = getDomainFactory();
 		String query = " select entityEvents, event From PathwayEntityEvent as entityEvents, Event as event where (event.id = (entityEvents.event)) order by entityEvents.entityName asc ";
+		String query2 = " select entityEvents From PathwayEntityEvent as entityEvents where event is null order by entityEvents.entityName asc ";
 		List<?> pathwayEntityEventList = factory.find(query);
+		List<?> pathwayEntityEventList2 = factory.find(query2);
 		
 		for (int i = 0; i< pathwayEntityEventList.size(); i++)
 		{
 			PathwayEntityEventMapVo record =convertPathwayEntityEventBoToPathwayEntityEventMapVo((PathwayEntityEvent)((Object[]) pathwayEntityEventList.get(i))[0]);
 			record.setEvent(EventLiteVoAssembler.create((Event) ((Object[]) pathwayEntityEventList.get(i))[1]));
+			pathwayEntityEventMapVoCollection.add(record);
+		}
+
+		for (int i = 0; i< pathwayEntityEventList2.size(); i++)
+		{
+			PathwayEntityEventMapVo record =convertPathwayEntityEventBoToPathwayEntityEventMapVo((PathwayEntityEvent)pathwayEntityEventList2.get(i));
 			pathwayEntityEventMapVoCollection.add(record);
 		}
 		
@@ -153,6 +166,7 @@ public class EntityEventMapImpl extends BaseEntityEventMapImpl
 		pathwayEntity.setDescription(doPathwayEntityEvent.getDescription());
 		pathwayEntity.setScheduledDateTimeField(doPathwayEntityEvent.getScheduledDateField());
 		pathwayEntity.setActive(doPathwayEntityEvent.isActive());
+		pathwayEntity.setTargetMethod(doPathwayEntityEvent.getTargetMethod());
 		
 		return pathwayEntity;
 	}
@@ -171,7 +185,8 @@ public class EntityEventMapImpl extends BaseEntityEventMapImpl
 		doPathwayEntityEvent.setEvent(pathwayEntity.getEventId());
 		doPathwayEntityEvent.setRule(pathwayEntity.getRule());
 		doPathwayEntityEvent.setDescription(pathwayEntity.getDescription());
-		doPathwayEntityEvent.setScheduledDateField(pathwayEntity.getScheduledDateTimeField()); 
+		doPathwayEntityEvent.setScheduledDateField(pathwayEntity.getScheduledDateTimeField());
+		doPathwayEntityEvent.setTargetMethod(pathwayEntity.getTargetMethod());
 		
 		return doPathwayEntityEvent;
 	}

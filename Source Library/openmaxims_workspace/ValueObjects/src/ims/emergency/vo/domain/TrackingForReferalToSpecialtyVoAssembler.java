@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.emergency.vo.domain;
@@ -60,6 +65,8 @@ public class TrackingForReferalToSpecialtyVoAssembler
 		valueObjectDest.setCurrentStatus(valueObjectSrc.getCurrentStatus());
 		// Attendance
 		valueObjectDest.setAttendance(valueObjectSrc.getAttendance());
+		// Patient
+		valueObjectDest.setPatient(valueObjectSrc.getPatient());
 	 	return valueObjectDest;
 	 }
 
@@ -360,6 +367,8 @@ public class TrackingForReferalToSpecialtyVoAssembler
 		valueObject.setCurrentStatus(ims.emergency.vo.domain.TrackingAttendanceStatusVoAssembler.create(map, domainObject.getCurrentStatus()) );
 		// Attendance
 		valueObject.setAttendance(ims.emergency.vo.domain.AttendanceDetailsForReferralToSpecialtyVoAssembler.create(map, domainObject.getAttendance()) );
+		// Patient
+		valueObject.setPatient(ims.core.vo.domain.PatientShortListVoAssembler.create(map, domainObject.getPatient()) );
  		return valueObject;
 	 }
 
@@ -430,6 +439,23 @@ public class TrackingForReferalToSpecialtyVoAssembler
 		domainObject.setIsDischarged(valueObject.getIsDischarged());
 		domainObject.setCurrentStatus(ims.emergency.vo.domain.TrackingAttendanceStatusVoAssembler.extractTrackingAttendanceStatus(domainFactory, valueObject.getCurrentStatus(), domMap));
 		domainObject.setAttendance(ims.emergency.vo.domain.AttendanceDetailsForReferralToSpecialtyVoAssembler.extractEmergencyAttendance(domainFactory, valueObject.getAttendance(), domMap));
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.patient.domain.objects.Patient value6 = null;
+		if ( null != valueObject.getPatient() ) 
+		{
+			if (valueObject.getPatient().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getPatient()) != null)
+				{
+					value6 = (ims.core.patient.domain.objects.Patient)domMap.get(valueObject.getPatient());
+				}
+			}
+			else
+			{
+				value6 = (ims.core.patient.domain.objects.Patient)domainFactory.getDomainObject(ims.core.patient.domain.objects.Patient.class, valueObject.getPatient().getBoId());
+			}
+		}
+		domainObject.setPatient(value6);
 
 		return domainObject;
 	}

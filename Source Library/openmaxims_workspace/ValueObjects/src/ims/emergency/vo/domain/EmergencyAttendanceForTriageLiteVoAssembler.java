@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.emergency.vo.domain;
@@ -76,6 +81,12 @@ public class EmergencyAttendanceForTriageLiteVoAssembler
 		valueObjectDest.setPurchaser(valueObjectSrc.getPurchaser());
 		// SequenceNumber
 		valueObjectDest.setSequenceNumber(valueObjectSrc.getSequenceNumber());
+		// customID
+		valueObjectDest.setCustomID(valueObjectSrc.getCustomID());
+		// EndOfRegistrationDateTime
+		valueObjectDest.setEndOfRegistrationDateTime(valueObjectSrc.getEndOfRegistrationDateTime());
+		// ModeOfArrival
+		valueObjectDest.setModeOfArrival(valueObjectSrc.getModeOfArrival());
 		// RegistrationDateTime
 		valueObjectDest.setRegistrationDateTime(valueObjectSrc.getRegistrationDateTime());
 		// AgeAtAttendance
@@ -488,7 +499,51 @@ public class EmergencyAttendanceForTriageLiteVoAssembler
 		valueObject.setPurchaser(domainObject.getPurchaser());
 		// SequenceNumber
 		valueObject.setSequenceNumber(domainObject.getSequenceNumber());
-		// RegistrationDateTime
+		// customID
+		valueObject.setCustomID(domainObject.getCustomID());
+		// EndOfRegistrationDateTime
+		java.util.Date EndOfRegistrationDateTime = domainObject.getEndOfRegistrationDateTime();
+		if ( null != EndOfRegistrationDateTime ) 
+		{
+			valueObject.setEndOfRegistrationDateTime(new ims.framework.utils.DateTime(EndOfRegistrationDateTime) );
+		}
+		// ModeOfArrival
+		ims.domain.lookups.LookupInstance instance16 = domainObject.getModeOfArrival();
+		if ( null != instance16 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance16.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance16.getImage().getImageId(), instance16.getImage().getImagePath());
+			}
+			color = instance16.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.emergency.vo.lookups.ModeOfArrival voLookup16 = new ims.emergency.vo.lookups.ModeOfArrival(instance16.getId(),instance16.getText(), instance16.isActive(), null, img, color);
+			ims.emergency.vo.lookups.ModeOfArrival parentVoLookup16 = voLookup16;
+			ims.domain.lookups.LookupInstance parent16 = instance16.getParent();
+			while (parent16 != null)
+			{
+				if (parent16.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent16.getImage().getImageId(), parent16.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent16.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup16.setParent(new ims.emergency.vo.lookups.ModeOfArrival(parent16.getId(),parent16.getText(), parent16.isActive(), null, img, color));
+				parentVoLookup16 = parentVoLookup16.getParent();
+								parent16 = parent16.getParent();
+			}			
+			valueObject.setModeOfArrival(voLookup16);
+		}
+				// RegistrationDateTime
 		java.util.Date RegistrationDateTime = domainObject.getRegistrationDateTime();
 		if ( null != RegistrationDateTime ) 
 		{
@@ -651,13 +706,35 @@ public class EmergencyAttendanceForTriageLiteVoAssembler
 			valueObject.setSequenceNumber(null);
 		}
 		domainObject.setSequenceNumber(valueObject.getSequenceNumber());
-		ims.framework.utils.DateTime dateTime14 = valueObject.getRegistrationDateTime();
-		java.util.Date value14 = null;
-		if ( dateTime14 != null ) 
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getCustomID() != null && valueObject.getCustomID().equals(""))
 		{
-			value14 = dateTime14.getJavaDate();
+			valueObject.setCustomID(null);
 		}
-		domainObject.setRegistrationDateTime(value14);
+		domainObject.setCustomID(valueObject.getCustomID());
+		ims.framework.utils.DateTime dateTime15 = valueObject.getEndOfRegistrationDateTime();
+		java.util.Date value15 = null;
+		if ( dateTime15 != null ) 
+		{
+			value15 = dateTime15.getJavaDate();
+		}
+		domainObject.setEndOfRegistrationDateTime(value15);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value16 = null;
+		if ( null != valueObject.getModeOfArrival() ) 
+		{
+			value16 =
+				domainFactory.getLookupInstance(valueObject.getModeOfArrival().getID());
+		}
+		domainObject.setModeOfArrival(value16);
+		ims.framework.utils.DateTime dateTime17 = valueObject.getRegistrationDateTime();
+		java.util.Date value17 = null;
+		if ( dateTime17 != null ) 
+		{
+			value17 = dateTime17.getJavaDate();
+		}
+		domainObject.setRegistrationDateTime(value17);
 		domainObject.setAgeAtAttendance(valueObject.getAgeAtAttendance());
 
 		return domainObject;

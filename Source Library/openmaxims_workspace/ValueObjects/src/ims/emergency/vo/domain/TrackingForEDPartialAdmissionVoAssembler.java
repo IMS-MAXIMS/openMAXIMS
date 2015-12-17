@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.emergency.vo.domain;
@@ -54,12 +59,14 @@ public class TrackingForEDPartialAdmissionVoAssembler
 		valueObjectDest.setCurrentStatus(valueObjectSrc.getCurrentStatus());
 		// CurrentPartialAdmission
 		valueObjectDest.setCurrentPartialAdmission(valueObjectSrc.getCurrentPartialAdmission());
-		// CurrentArea
-		valueObjectDest.setCurrentArea(valueObjectSrc.getCurrentArea());
 		// isDischarged
 		valueObjectDest.setIsDischarged(valueObjectSrc.getIsDischarged());
 		// CurrentReferral
 		valueObjectDest.setCurrentReferral(valueObjectSrc.getCurrentReferral());
+		// Attendance
+		valueObjectDest.setAttendance(valueObjectSrc.getAttendance());
+		// CurrentArea
+		valueObjectDest.setCurrentArea(valueObjectSrc.getCurrentArea());
 	 	return valueObjectDest;
 	 }
 
@@ -354,12 +361,26 @@ public class TrackingForEDPartialAdmissionVoAssembler
 		valueObject.setCurrentStatus(ims.emergency.vo.domain.TrackingAttendanceStatusVoAssembler.create(map, domainObject.getCurrentStatus()) );
 		// CurrentPartialAdmission
 		valueObject.setCurrentPartialAdmission(ims.emergency.vo.domain.EDPartialAdmissionVoAssembler.create(map, domainObject.getCurrentPartialAdmission()) );
-		// CurrentArea
-		valueObject.setCurrentArea(ims.emergency.vo.domain.TrackingAreaLiteVoAssembler.create(map, domainObject.getCurrentArea()) );
 		// isDischarged
 		valueObject.setIsDischarged( domainObject.isIsDischarged() );
 		// CurrentReferral
-		valueObject.setCurrentReferral(ims.emergency.vo.domain.ReferralToSpecialtyTeamVoAssembler.create(map, domainObject.getCurrentReferral()) );
+		valueObject.setCurrentReferral(ims.emergency.vo.domain.ReferralToSpecialtyTeamForPartialAdmissionVoAssembler.create(map, domainObject.getCurrentReferral()) );
+		// Attendance
+		valueObject.setAttendance(ims.emergency.vo.domain.EmergencyAttendanceForPartialAdmissionVoAssembler.create(map, domainObject.getAttendance()) );
+		// CurrentArea
+		if (domainObject.getCurrentArea() != null)
+		{
+			if(domainObject.getCurrentArea() instanceof HibernateProxy) // If the proxy is set, there is no need to lazy load, the proxy knows the id already. 
+			{
+				HibernateProxy p = (HibernateProxy) domainObject.getCurrentArea();
+				int id = Integer.parseInt(p.getHibernateLazyInitializer().getIdentifier().toString());				
+				valueObject.setCurrentArea(new ims.emergency.configuration.vo.TrackingAreaRefVo(id, -1));				
+			}
+			else
+			{
+				valueObject.setCurrentArea(new ims.emergency.configuration.vo.TrackingAreaRefVo(domainObject.getCurrentArea().getId(), domainObject.getCurrentArea().getVersion()));
+			}
+		}
  		return valueObject;
 	 }
 
@@ -411,41 +432,45 @@ public class TrackingForEDPartialAdmissionVoAssembler
 
 		domainObject.setCurrentStatus(ims.emergency.vo.domain.TrackingAttendanceStatusVoAssembler.extractTrackingAttendanceStatus(domainFactory, valueObject.getCurrentStatus(), domMap));
 		domainObject.setCurrentPartialAdmission(ims.emergency.vo.domain.EDPartialAdmissionVoAssembler.extractEDPartialAdmission(domainFactory, valueObject.getCurrentPartialAdmission(), domMap));
-	// SaveAsRefVO - treated as a refVo in extract methods
-	ims.emergency.configuration.domain.objects.TrackingArea value3 = null;
-		if ( null != valueObject.getCurrentArea() ) 
-		{
-			if (valueObject.getCurrentArea().getBoId() == null)
-			{
-				if (domMap.get(valueObject.getCurrentArea()) != null)
-				{
-					value3 = (ims.emergency.configuration.domain.objects.TrackingArea)domMap.get(valueObject.getCurrentArea());
-				}
-			}
-			else
-			{
-				value3 = (ims.emergency.configuration.domain.objects.TrackingArea)domainFactory.getDomainObject(ims.emergency.configuration.domain.objects.TrackingArea.class, valueObject.getCurrentArea().getBoId());
-			}
-		}
-		domainObject.setCurrentArea(value3);
 		domainObject.setIsDischarged(valueObject.getIsDischarged());
 	// SaveAsRefVO - treated as a refVo in extract methods
-	ims.emergency.domain.objects.ReferralToSpecTeam value5 = null;
+	ims.emergency.domain.objects.ReferralToSpecTeam value4 = null;
 		if ( null != valueObject.getCurrentReferral() ) 
 		{
 			if (valueObject.getCurrentReferral().getBoId() == null)
 			{
 				if (domMap.get(valueObject.getCurrentReferral()) != null)
 				{
-					value5 = (ims.emergency.domain.objects.ReferralToSpecTeam)domMap.get(valueObject.getCurrentReferral());
+					value4 = (ims.emergency.domain.objects.ReferralToSpecTeam)domMap.get(valueObject.getCurrentReferral());
 				}
 			}
 			else
 			{
-				value5 = (ims.emergency.domain.objects.ReferralToSpecTeam)domainFactory.getDomainObject(ims.emergency.domain.objects.ReferralToSpecTeam.class, valueObject.getCurrentReferral().getBoId());
+				value4 = (ims.emergency.domain.objects.ReferralToSpecTeam)domainFactory.getDomainObject(ims.emergency.domain.objects.ReferralToSpecTeam.class, valueObject.getCurrentReferral().getBoId());
 			}
 		}
-		domainObject.setCurrentReferral(value5);
+		domainObject.setCurrentReferral(value4);
+		domainObject.setAttendance(ims.emergency.vo.domain.EmergencyAttendanceForPartialAdmissionVoAssembler.extractEmergencyAttendance(domainFactory, valueObject.getAttendance(), domMap));
+		ims.emergency.configuration.domain.objects.TrackingArea value6 = null;
+		if ( null != valueObject.getCurrentArea() ) 
+		{
+			if (valueObject.getCurrentArea().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getCurrentArea()) != null)
+				{
+					value6 = (ims.emergency.configuration.domain.objects.TrackingArea)domMap.get(valueObject.getCurrentArea());
+				}
+			}
+			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
+			{
+				value6 = domainObject.getCurrentArea();	
+			}
+			else
+			{
+				value6 = (ims.emergency.configuration.domain.objects.TrackingArea)domainFactory.getDomainObject(ims.emergency.configuration.domain.objects.TrackingArea.class, valueObject.getCurrentArea().getBoId());
+			}
+		}
+		domainObject.setCurrentArea(value6);
 
 		return domainObject;
 	}

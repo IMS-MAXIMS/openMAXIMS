@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -60,6 +65,9 @@ public class Logic extends BaseLogic
 	protected void onFormOpen() throws ims.framework.exceptions.PresentationLogicException
 	{
 		initialize();
+		 //WDEV-19389
+		if(form.getGlobalContext().Clinical.getCurrentCorrespondanceSearchCriteriaIsNotNull())
+			setSearchCriteria(form.getGlobalContext().Clinical.getCurrentCorrespondanceSearchCriteria());
 		open();
 	}
 	
@@ -85,24 +93,34 @@ public class Logic extends BaseLogic
 		{
 			if (form.getGlobalContext().Clinical.getCurrentCorrespondanceSearchCriteriaIsNotNull())
 			{
-				if (form.getGlobalContext().Clinical.getCurrentCorrespondanceSearchCriteria().getAuthoringHCP() != null)
-				{
-					form.qmbAuthoringHCP().newRow(form.getGlobalContext().Clinical.getCurrentCorrespondanceSearchCriteria().getAuthoringHCP(), form.getGlobalContext().Clinical.getCurrentCorrespondanceSearchCriteria().getAuthoringHCP().getName().toShortForm() );
-					form.qmbAuthoringHCP().setValue(form.getGlobalContext().Clinical.getCurrentCorrespondanceSearchCriteria().getAuthoringHCP());
-				}
-				if (form.getGlobalContext().Clinical.getCurrentCorrespondanceSearchCriteria().getResponsibleHCP() != null)
-				{
-					form.qmbResponsibleHCP().newRow(form.getGlobalContext().Clinical.getCurrentCorrespondanceSearchCriteria().getResponsibleHCP(), form.getGlobalContext().Clinical.getCurrentCorrespondanceSearchCriteria().getResponsibleHCP().getName().toShortForm() );
-					form.qmbResponsibleHCP().setValue(form.getGlobalContext().Clinical.getCurrentCorrespondanceSearchCriteria().getResponsibleHCP());
-				}
-				form.dteFrom().setValue(form.getGlobalContext().Clinical.getCurrentCorrespondanceSearchCriteria().getDateFrom());
-				form.dteTo().setValue(form.getGlobalContext().Clinical.getCurrentCorrespondanceSearchCriteria().getDateTo());
-				form.cmbCorrespondanceType().setValue(form.getGlobalContext().Clinical.getCurrentCorrespondanceSearchCriteria().getCorrespondanceType());
-				form.cmbStatus().setValue(form.getGlobalContext().Clinical.getCurrentCorrespondanceSearchCriteria().getCorrespondanceStatus());
-				
+				setSearchCriteria(form.getGlobalContext().Clinical.getCurrentCorrespondanceSearchCriteria()); //WDEV-19389
 				searchCorrespondance();
 			}
 		}
+	}
+
+	private void setSearchCriteria(CorrespondenceSearchCriteriaVo currentCorrespondanceSearchCriteria)
+	{
+		if (currentCorrespondanceSearchCriteria.getAuthoringHCP() != null)
+		{
+			form.qmbAuthoringHCP().newRow(currentCorrespondanceSearchCriteria.getAuthoringHCP(), currentCorrespondanceSearchCriteria.getAuthoringHCP().getName().toString());
+			form.qmbAuthoringHCP().setValue(currentCorrespondanceSearchCriteria.getAuthoringHCP());
+		}
+		else
+			form.qmbAuthoringHCP().clear(); //WDEV-19389 
+
+		if (currentCorrespondanceSearchCriteria.getResponsibleHCP() != null)
+		{
+			form.qmbResponsibleHCP().newRow(currentCorrespondanceSearchCriteria.getResponsibleHCP(), currentCorrespondanceSearchCriteria.getResponsibleHCP().getName().toString());
+			form.qmbResponsibleHCP().setValue(currentCorrespondanceSearchCriteria.getResponsibleHCP());
+		}
+		else
+			form.qmbResponsibleHCP().clear();  //WDEV-19389
+		
+		form.dteFrom().setValue(currentCorrespondanceSearchCriteria.getDateFrom());
+		form.dteTo().setValue(currentCorrespondanceSearchCriteria.getDateTo());
+		form.cmbCorrespondanceType().setValue(currentCorrespondanceSearchCriteria.getCorrespondanceType());
+		form.cmbStatus().setValue(currentCorrespondanceSearchCriteria.getCorrespondanceStatus());		
 	}
 
 	private void formatGrid() 
@@ -173,6 +191,7 @@ public class Logic extends BaseLogic
 	{
 		clearScreen();
 		clearPatientRelatedContexts();
+		form.getGlobalContext().Clinical.setCurrentCorrespondanceSearchCriteria(null); //WDEV-19389 
 		enableContextMenu();
 	}
 	
@@ -201,8 +220,7 @@ public class Logic extends BaseLogic
 		if(form.dyngrdCorrespondence().getRows().size() < 1)
 			engine.showMessage("No records found");
 		
-			
-		
+		form.getGlobalContext().Clinical.setCurrentCorrespondanceSearchCriteria(createSearchCriteria());//	WDEV-19389 	
 	}
 	
 	private void searchCorrespondance() 

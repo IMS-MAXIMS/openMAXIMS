@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -99,7 +104,7 @@ public class Logic extends BaseLogic
 				
 				form.cmbChartRequestedByReception().setVisible(controlConfig.getIsVisible());
 				form.cmbChartRequestedByReception().setRequired(controlConfig.getIsRequired());
-				form.cmbChartRequestedByReception().setEnabled(FormMode.EDIT.equals(form.getMode()) && controlConfig.getIsEditable());
+				form.cmbChartRequestedByReception().setEnabled(FormMode.EDIT.equals(form.getMode()) && controlConfig.getIsEditable() && !YesNo.NO.equals(form.cmbChartRequiredByTriage().getValue())); //WDEV-22797
 								
 			}
 			else if (DATE_TIME_REQUESTED.equals(controlConfig.getControlIMSID()))
@@ -108,7 +113,7 @@ public class Logic extends BaseLogic
 				
 				form.dtimDateTimeRequested().setVisible(controlConfig.getIsVisible());
 				form.dtimDateTimeRequested().setRequired(controlConfig.getIsRequired());
-				form.dtimDateTimeRequested().setEnabled(FormMode.EDIT.equals(form.getMode()) && controlConfig.getIsEditable());
+				form.dtimDateTimeRequested().setEnabled(FormMode.EDIT.equals(form.getMode()) && controlConfig.getIsEditable() && !YesNo.NO.equals(form.cmbChartRequiredByTriage().getValue())); //WDEV-22797
 				
 			}
 			else if (REASON_NON_REQUESTED.equals(controlConfig.getControlIMSID()))
@@ -117,7 +122,7 @@ public class Logic extends BaseLogic
 				
 				form.cmbReasonNotRequested().setVisible(controlConfig.getIsVisible());
 				form.cmbReasonNotRequested().setRequired(controlConfig.getIsRequired() || YesNo.NO.equals(form.cmbChartRequestedByReception().getValue()));
-				form.cmbReasonNotRequested().setEnabled(FormMode.EDIT.equals(form.getMode()) && controlConfig.getIsEditable());
+				form.cmbReasonNotRequested().setEnabled(FormMode.EDIT.equals(form.getMode()) && controlConfig.getIsEditable() && !YesNo.NO.equals(form.cmbChartRequiredByTriage().getValue()) && !YesNo.YES.equals(form.cmbChartRequestedByReception().getValue())); //WDEV-22797   //WDEV-22901
 				
 			}
 			else if (CHART_RECEIVED.equals(controlConfig.getControlIMSID()))
@@ -126,7 +131,7 @@ public class Logic extends BaseLogic
 				
 				form.cmbChartReceived().setVisible(controlConfig.getIsVisible());
 				form.cmbChartReceived().setRequired(controlConfig.getIsRequired());
-				form.cmbChartReceived().setEnabled(FormMode.EDIT.equals(form.getMode()) && controlConfig.getIsEditable());
+				form.cmbChartReceived().setEnabled(FormMode.EDIT.equals(form.getMode()) && controlConfig.getIsEditable() && !YesNo.NO.equals(form.cmbChartRequiredByTriage().getValue())); //WDEV-22797
 				
 			}
 			else if (DATE_TIME_RECEIVED.equals(controlConfig.getControlIMSID()))
@@ -135,7 +140,7 @@ public class Logic extends BaseLogic
 				
 				form.dtimDateTimeReceived().setVisible(controlConfig.getIsVisible());
 				form.dtimDateTimeReceived().setRequired(controlConfig.getIsRequired());
-				form.dtimDateTimeReceived().setEnabled(FormMode.EDIT.equals(form.getMode()) && controlConfig.getIsEditable());
+				form.dtimDateTimeReceived().setEnabled(FormMode.EDIT.equals(form.getMode()) && controlConfig.getIsEditable() && !YesNo.NO.equals(form.cmbChartRequiredByTriage().getValue())); //WDEV-22797
 				
 			}
 			else if (COMMENTS.equals(controlConfig.getControlIMSID()))
@@ -144,11 +149,16 @@ public class Logic extends BaseLogic
 				
 				form.txtComments().setVisible(controlConfig.getIsVisible());
 				form.txtComments().setRequired(controlConfig.getIsRequired());
-				form.txtComments().setEnabled(FormMode.EDIT.equals(form.getMode()) && controlConfig.getIsEditable());
+				form.txtComments().setEnabled(FormMode.EDIT.equals(form.getMode()) && controlConfig.getIsEditable() && !YesNo.NO.equals(form.cmbChartRequiredByTriage().getValue())); //WDEV-22797
 				
 			}
 		}
 		
+		//WDEV-22956
+		boolean SVUH_FUNCTIONALITY	= ConfigFlag.UI.SVUH_MANDATORY_DEMOGRAPHIC_ATTRIBUTES.getValue();
+		form.btnSave().setVisible(FormMode.EDIT.equals(form.getMode()) && (!Boolean.TRUE.equals(form.getLocalContext().getIsNewAttendance()) || !SVUH_FUNCTIONALITY || Boolean.TRUE.equals(form.getLocalContext().getIsFinalTab())));
+		form.btnCancel().setVisible(FormMode.EDIT.equals(form.getMode()) && (!Boolean.TRUE.equals(form.getLocalContext().getIsNewAttendance()) || !SVUH_FUNCTIONALITY || Boolean.TRUE.equals(form.getLocalContext().getIsFinalTab())));
+		form.btnNext().setVisible(FormMode.EDIT.equals(form.getMode()) && !form.btnSave().isVisible());
 	}
 	@Override
 	protected void onFormOpen(Object[] args) throws ims.framework.exceptions.PresentationLogicException
@@ -158,9 +168,7 @@ public class Logic extends BaseLogic
 	@Override
 	protected void onBtnNewClick() throws ims.framework.exceptions.PresentationLogicException
 	{
-		form.setMode(FormMode.EDIT);
-		form.getLocalContext().setSelectedEvent(EmergencyAttendanceEvent.NEW);
-		form.fireCustomControlValueChanged();
+		newInstance(false); //WDEV-22801 //WDEV-22956
 	}
 	@Override
 	protected void onBtnEditClick() throws ims.framework.exceptions.PresentationLogicException
@@ -178,6 +186,13 @@ public class Logic extends BaseLogic
 	@Override
 	protected void onBtnSaveClick() throws ims.framework.exceptions.PresentationLogicException
 	{
+		if (ConfigFlag.UI.SVUH_MANDATORY_DEMOGRAPHIC_ATTRIBUTES.getValue() && Boolean.TRUE.equals(form.getLocalContext().getIsNewAttendance())) //WDEV-22956
+		{
+			form.getLocalContext().setSelectedEvent(EmergencyAttendanceEvent.FINISH_SAVE);
+			form.fireCustomControlValueChanged();
+			return;
+		}
+		
 		if (save())
 		{
 			form.getLocalContext().setSelectedEvent(EmergencyAttendanceEvent.SAVE);
@@ -383,9 +398,68 @@ public class Logic extends BaseLogic
 	protected void onCmbChartRequestedByReceptionValueChanged() throws PresentationLogicException
 	{
 		if (YesNo.YES.equals(form.cmbChartRequestedByReception().getValue()))
-				form.dtimDateTimeRequested().setValue(new DateTime());
+		{
+			form.dtimDateTimeRequested().setValue(new DateTime());
+			form.cmbReasonNotRequested().setValue(null); //WDEV-22901
+		}
 		updateControlState();
 	}
-	
+
+	//WDEV-22797
+	@Override
+	protected void onCmbChartRequiredByTriageValueChanged() throws PresentationLogicException
+	{
+		if (YesNo.NO.equals(form.cmbChartRequiredByTriage().getValue()))
+		{
+			form.cmbChartRequestedByReception().setValue(null);
+    		form.dtimDateTimeRequested().setValue(null);
+    		form.cmbReasonNotRequested().setValue(null);
+    		form.cmbChartReceived().setValue(null);
+    		form.dtimDateTimeReceived().setValue(null);
+    		form.txtComments().setValue(null);
+		}
+		updateControlState();
+	}
+
+	//WDEV-22801
+	public void newInstance(Boolean isNewAttendance) //WDEV-22956
+	{
+		//WDEV-22956
+		clearScreen();
+		form.getLocalContext().setIsNewAttendance(isNewAttendance);
+		
+		form.setMode(FormMode.EDIT);
+		form.getLocalContext().setSelectedEvent(EmergencyAttendanceEvent.NEW);
+		form.fireCustomControlValueChanged();
+	}
+
+	//WDEV-22956
+	@Override
+	protected void onBtnNextClick() throws PresentationLogicException
+	{
+		String[] uiErrors = getUIErrors();
+		
+		if (uiErrors != null && uiErrors.length > 0)
+		{
+			engine.showErrors(uiErrors);
+			return;
+		}
+		
+		form.getLocalContext().setSelectedEvent(EmergencyAttendanceEvent.NEXT);
+		form.fireCustomControlValueChanged();
+	}
+
+	//WDEV-22956
+	public void setIsFinalTab(Boolean isFinalTab)
+	{
+		form.getLocalContext().setIsFinalTab(isFinalTab);
+	}
+
+	//WDEV-22956
+	public ChartRequestedVo getValue()
+	{
+		return populateDataFromScreen(form.getLocalContext().getcurrentChartRequested());
+	}
+
 	
 }

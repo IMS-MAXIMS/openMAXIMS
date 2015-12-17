@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -36,9 +41,12 @@ import ims.framework.controls.DynamicGridRow;
 import ims.framework.enumerations.DialogResult;
 import ims.framework.enumerations.DynamicCellType;
 import ims.framework.enumerations.FormMode;
+import ims.framework.enumerations.SortOrder;
 import ims.framework.exceptions.CodingRuntimeException;
 import ims.framework.exceptions.PresentationLogicException;
 import ims.framework.utils.Color;
+
+import java.util.Comparator;
 public class Logic extends BaseLogic
 {
 	private static final long serialVersionUID = 1L;
@@ -67,15 +75,9 @@ public class Logic extends BaseLogic
 			for(LocationLiteVo voHosp : voCollHospital)
 				form.cmbHospital().newRow(voHosp, voHosp.getName());
 		}
-				
-		initializeLayouts();
 		initializeDynamicGrid();
 	}
 	
-	private void initializeLayouts()
-	{
-		form.getLocalContext().setActiveLayouts(domain.listFloorBedLayouts());
-	}
 	
 	private void initializeDynamicGrid() 
 	{
@@ -125,6 +127,8 @@ public class Logic extends BaseLogic
 		row.setValue(voWardBayConfig);
 		
 		loadBays(voWardBayConfig, row);
+		
+		
 	}
 		
 	private void loadBays(WardBayConfigVo voWardBayConfig, DynamicGridRow row)
@@ -135,14 +139,15 @@ public class Logic extends BaseLogic
 		BayConfigVoCollection bays = voWardBayConfig.getBays();
 		if(bays != null)
 		{
-			for(int x = 0; x < bays.size(); x++)			
+			BayConfigVoCollection baysSorted = bays.sort(new BayComparator(SortOrder.ASCENDING)); //WDEV-20228
+			for(int x = 0; x < baysSorted.size(); x++)			
 			{
-			 //wdev-13964
-			 if (bays.get(x).getIsActive())
-			 {
-				 addBay(row, bays.get(x)); 
-			 }
-								
+				//wdev-13964
+				if (baysSorted.get(x).getIsActive())
+				{
+					addBay(row, baysSorted.get(x)); 
+				}
+
 			}
 		}
 	}
@@ -259,15 +264,18 @@ public class Logic extends BaseLogic
 	}
 	
 	private void updateControlState()
-	{
-		form.getContextMenus().Core.getBayLayoutConfigCONFIGURE_WARDItem().setVisible(form.getMode().equals(FormMode.VIEW) && form.cmbHospital().getValue() != null);
-		for(int i=0;i<form.dyngrdLinks().getRows().size();i++)
+	{		
+		//WDEV-22809
+		int rowCount = form.dyngrdLinks().getRows().size();
+		
+		for(int i=0;i<rowCount;i++)
 		{
 			DynamicGridRow lRow = form.dyngrdLinks().getRows().get(i);
 			lRow.setSelectable(form.getMode().equals(FormMode.EDIT));
 		}
-		
-		form.btnEdit().setVisible(form.getMode().equals(FormMode.VIEW) && form.cmbHospital().getValue() != null);
+		//WDEV-22809
+		form.getContextMenus().Core.getBayLayoutConfigCONFIGURE_WARDItem().setVisible(FormMode.VIEW.equals(form.getMode()) && form.cmbHospital().getValue() != null && rowCount > 0);
+		form.btnEdit().setVisible(FormMode.VIEW.equals(form.getMode()) && form.cmbHospital().getValue() != null && rowCount > 0);
 	}
 	
 	@Override
@@ -286,4 +294,33 @@ public class Logic extends BaseLogic
 	{
 		updateControlState();
 	}
+
+	class BayComparator implements Comparator<BayConfigVo>
+	{
+		private int order = 1;
+		public BayComparator()
+		{
+			order = 1;
+		}
+		public BayComparator(SortOrder order)
+		{
+			this.order = SortOrder.DESCENDING.equals(order) ? -1 : 1;
+		}
+
+		public int compare(BayConfigVo o1, BayConfigVo o2)
+		{
+			if (o1 != null && o1.getBayIsNotNull() && o2 != null && o2.getBayIsNotNull())
+				return order*o1.getBay().getName().compareToIgnoreCase(o2.getBay().getName());
+
+			if (o1 == null || !o1.getBayIsNotNull() || !o1.getBay().getNameIsNotNull())
+				return -1*order;
+
+			if (o2 == null || !o2.getBayIsNotNull() || !o2.getBay().getNameIsNotNull())
+				return order;	
+
+			return 0;
+		}
+
+	}
+
 }

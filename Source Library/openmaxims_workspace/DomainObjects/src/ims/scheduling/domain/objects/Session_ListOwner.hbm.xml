@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:36 -->
+<!-- Generated: 12/10/2015, 13:31 -->
 <hibernate-mapping>
 	<class name="ims.scheduling.domain.objects.Session_ListOwner" table="schl_session_listow" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -26,6 +26,8 @@
 		<many-to-one name="hcp" class="ims.core.resource.people.domain.objects.Hcp" unique="true" foreign-key="session_listow_hcp_fk" access="field" cascade="save-update">
 			<column name="hcp" sql-type="numeric(10,0)" not-null="true" unique="false"   />
 		</many-to-one>
+<!-- debug: listOwner -->
+<!-- debug: attendingClinician -->
 <!-- debug: !IsAssociation && !IsCollection -->
 
 <!-- debug: !IsLookup -->
@@ -41,6 +43,16 @@
 <!-- debug: !IsLookup -->
 		<property name="maxNoAppts" type="integer" access="field" update="true">
 			<column name="maxnoappts"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="listOwner" type="boolean" access="field" update="true">
+			<column name="listowner"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="attendingClinician" type="boolean" access="field" update="true">
+			<column name="attendingc"  not-null="false" unique="false"  />
 		</property>
 	</class>
 </hibernate-mapping>

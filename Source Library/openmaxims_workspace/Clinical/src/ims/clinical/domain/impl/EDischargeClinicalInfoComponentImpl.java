@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -143,5 +148,37 @@ public class EDischargeClinicalInfoComponentImpl extends BaseEDischargeClinicalI
 		sb.append(" order by oi.repDateTime desc, oi.ordInvSeq asc");
 
 		return OrderInvestigationBookingVoAssembler.createOrderInvestigationBookingVoCollectionFromOrderInvestigation(getDomainFactory().find(sb.toString(), markers, values));
+	}
+
+	//wdev-18892
+	public OrderInvestigationBookingVoCollection listClinicalInvestigationsResults(PatientRefVo patientRefVo, Integer numDays) 
+	{
+		if (numDays == null)
+			throw new CodingRuntimeException("Invalid numDays");
+
+		if (patientRefVo == null)
+			throw new CodingRuntimeException("Invalid patientRefVo");
+
+		Date dtFrom = new Date().addDay(-numDays);
+
+		ArrayList<String> markers = new ArrayList<String>();
+		ArrayList<Object> values = new ArrayList<Object>();
+		StringBuffer sb = new StringBuffer("SELECT oi FROM OrderInvestigation AS oi LEFT JOIN oi.resultDetails AS resDetails where");
+		
+		sb.append(" oi.systemInformation.creationDateTime >= :fromDate");
+		markers.add("fromDate");
+		values.add(dtFrom.getDate());
+
+		sb.append(" and oi.resultDetails is not null ");
+		
+		sb.append(" and ");
+		sb.append(" oi.orderDetails.patient.id = :pat ");
+		markers.add("pat");
+		values.add(patientRefVo.getID_Patient());
+
+		sb.append(" order by oi.repDateTime desc, oi.ordInvSeq asc");
+
+		return OrderInvestigationBookingVoAssembler.createOrderInvestigationBookingVoCollectionFromOrderInvestigation(getDomainFactory().find(sb.toString(), markers, values));
+	
 	}
 }

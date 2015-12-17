@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:36 -->
+<!-- Generated: 12/10/2015, 13:31 -->
 <hibernate-mapping>
 	<class name="ims.core.configuration.domain.objects.ContractServiceLocationsConfig" table="core_contractservic" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -44,10 +44,22 @@
 			<column name="location" sql-type="numeric(10,0)" not-null="true" unique="false"   />
 		</many-to-one>
 <!-- debug: contractId -->
+<!-- debug: daysToRTTBreachDate -->
+<!-- debug: daysTo1stAppt -->
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="contractId" type="string" access="field" update="true" > 
 			<column name="contractid" length="25"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="daysToRTTBreachDate" type="integer" access="field" update="true">
+			<column name="daystorttb"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="daysTo1stAppt" type="integer" access="field" update="true">
+			<column name="daysto1sta"  not-null="false" unique="false"  />
 		</property>
 	</class>
 </hibernate-mapping>

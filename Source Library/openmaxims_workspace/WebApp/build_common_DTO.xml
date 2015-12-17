@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." name="BuildCommonDTO" default="init" >	
+
+	<property environment="env"/>
+	<property name="libdir" value="${workspace}WebApp/WEB-INF/lib/" />
+	<property name="tomcatdir" value="${env.TOMCAT_HOME}/common/lib/" />
+	<property name="servletlibs" value="${tomcatdir}jasper-runtime.jar;${tomcatdir}jsp-api.jar;${tomcatdir}servlet-api.jar;" />
+	<property name="jdbclibs" value="${libdir}SQLServerJdbc.jar;${libdir}OracleJdbc.jar;" />
+	<property name="framework.jars" value="${libdir}framework.jar;${libdir}base.jar;${libdir}domain.jar" />
+	<property name="ant_classpath" value="${classpath};${framework.jars};${libdir}dto.jar;${libdir}mail.jar;${libdir}activation.jar;${libdir}dom4j.jar;${libdir}log4j.jar;${jdbclibs};${libdir}ImsQueryBuilderClient.jar;${servletlibs};" />
+	<property name="soap_classpath" value="${libdir}axis.jar;${libdir}saaj.jar;${libdir}jaxrpc.jar;" />
+
+	<fileset id="WebApp.lib.jar.files" dir="${workspace}WebApp/WEB-INF/lib">
+		<include name="**/*.jar"/>
+	</fileset>	
+
+	<taskdef name="splash" 
+			classname="org.apache.tools.ant.taskdefs.optional.splash.SplashTask">
+	</taskdef>
+
+	<target name="splash" unless="nosplash" description="Display the logo">
+		<splash imageurl="file:${workspace}WebApp/g/logo-part-1.gif" showduration="0"/>
+	</target>
+
+	<target name="display">
+		<echo message="ant.file = ${ant.file}" />
+		<echo message="ant.home = ${ant.home}" />
+		<echo message="ant.project.name = ${ant.project.name}" />
+		<echo message="ant.java.version = ${ant.java.version}" />
+		<echo message="ant.version = ${ant.version}" />
+		<echo message="basedir = ${basedir}" />
+	 
+		<echo message="user.name = ${user.name}" />
+		<echo message="user.home = ${user.home}" />
+		<echo message="java.home = ${java.home}" />
+	</target> 
+	
+	<target name="init" depends="display" >
+		<tstamp>
+			<format property="timestamp" pattern="yyyyMMdd HH:mm:ss" />
+		</tstamp>
+		<buildnumber file="\\webapps\BuildNumbers\DevBuildNumber" />
+		<mkdir dir="${workspace}Admin/src" />
+		<mkdir dir="${workspace}Admin/bin" />
+		<mkdir dir="${workspace}Alerts/src" />
+		<mkdir dir="${workspace}Alerts/bin" />
+		<mkdir dir="${workspace}Core/src" />
+		<mkdir dir="${workspace}Core/bin" />
+		<mkdir dir="${workspace}ClinicalAdmin/src" />
+		<mkdir dir="${workspace}ClinicalAdmin/bin" />
+		<mkdir dir="${workspace}Clinical/src" />
+		<mkdir dir="${workspace}Clinical/bin" />
+		<mkdir dir="${workspace}DTOClients/src" />
+		<mkdir dir="${workspace}DTOClients/bin" />
+		<mkdir dir="${workspace}ValueObjects/src" />
+		<mkdir dir="${workspace}ValueObjects/bin" />
+		<mkdir dir="${workspace}WebApp/WEB-INF/classes" />
+	</target>
+
+	<!-- Compile ValueObjects -->
+	<target name="ValueObjects" depends="init" >
+		<javac debug="on" classpath="${ant_classpath}" destdir="${workspace}ValueObjects/bin/" srcdir="${workspace}ValueObjects/src/" includes="**/*.java" />
+	</target>
+
+	<!-- Compile Alerts -->
+	<target name="Alerts" depends="init" >
+		<javac debug="on" classpath="${ant_classpath}" destdir="${workspace}Alerts/bin/" srcdir="${workspace}Alerts/src/" includes="**/*.java" />
+	</target>
+
+	<!-- Compile DTOClients -->
+	<target name="DTOClients" depends="init" >
+		<javac debug="on" classpath="${ant_classpath}" destdir="${workspace}DTOClients/bin/" srcdir="${workspace}DTOClients/src/" includes="**/*.java" />
+	</target>
+
+	<!-- Compile Admin -->
+	<target name="Admin" depends="ValueObjects, DTOClients" >
+		<javac debug="on" classpath="${ant_classpath};${libdir}hapi.jar;${workspace}ValueObjects/bin/;${workspace}DTOClients/bin/;" destdir="${workspace}Admin/bin/" srcdir="${workspace}Admin/src/" includes="**/*.java" />
+	</target>
+
+	<!-- JavaDoc Admin -->
+	<target name="AdminJavaDoc" depends="Admin" >
+		<javadoc packagenames="ims.admin.*" source="1.4" sourcepath="${workspace}Admin/src" destdir="${workspace}Admin/doc" use="true" author="false" version="true"> </javadoc>
+	</target>
+
+	<!-- Compile ClinicalAdmin-->
+	<target name="ClinicalAdmin" depends="Admin" >
+		<javac debug="on" classpath="${ant_classpath};${workspace}ValueObjects/bin/;${workspace}Admin/bin/;" destdir="${workspace}ClinicalAdmin/bin/" srcdir="${workspace}ClinicalAdmin/src/"  includes="**/*.java" />
+	</target>
+
+	<!-- Compile Core -->
+	<target name="Core" depends="Alerts, ClinicalAdmin" >
+		<javac debug="on" classpath="${ant_classpath};${workspace}ClinicalAdmin/bin/;${workspace}Admin/bin/;${workspace}Alerts/bin/;${workspace}DTOClients/bin/;${workspace}ValueObjects/bin/;" destdir="${workspace}Core/bin/" srcdir="${workspace}Core/src/" includes="**/*.java" />
+	</target>
+
+	<!-- JavaDoc Core -->
+	<target name="CoreJavaDoc" depends="Core" >
+		<javadoc packagenames="ims.core.*" source="1.4" sourcepath="${workspace}Core/src" destdir="${workspace}Core/doc" use="true" author="false" version="true"> </javadoc>
+	</target>
+
+	<!-- Compile Clinical-->
+	<target name="Clinical" depends="Core" >
+		<javac debug="on" classpath="${ant_classpath};${libdir}velocity-1.4.jar;${workspace}ValueObjects/bin/;${workspace}Admin/bin/;${workspace}Alerts/bin/;${workspace}Core/bin/;${workspace}ClinicalAdmin/bin/;" destdir="${workspace}Clinical/bin/" srcdir="${workspace}Clinical/src/"  includes="**/*.java" />
+	</target>
+
+	<!-- Copy WebApp Files -->
+	<target name="WebAppFiles" depends="init" >
+		<copy todir="${workspace}WebApp/WEB-INF/classes" overwrite="true" >
+		    <fileset dir="${workspace}WebApp/src" excludes="ims/**, vssver.scc, hibernate.properties" />
+		</copy>
+	</target>
+
+	<!-- Compile WebAppSource -->
+	<target name="WebAppSource" depends="init" >
+		<javac debug="on" classpath="${ant_classpath};${soap_classpath};${workspace}ValueObjects/bin/;${workspace}Scheduling/bin" destdir="${workspace}WebApp/WEB-INF/classes" srcdir="${workspace}WebApp/src/" includes="**/*.java" />
+	</target>
+
+
+	<fileset dir="${workspace}WebApp" id="WebApp.static.content">
+		<include name="g/**" />
+		<include name="Images/**" />
+		<include name="jsCN/**" />
+		<include name="themes/**" />
+		<include name="blank.html" />
+		<include name="idea.html" />
+		<include name="1024.html" />
+		<include name="full-screen.html" />
+	</fileset>
+
+	<fileset dir="${workspace}WebApp/WEB-INF/lib" id="WebApp.lib.content">
+		<include name="framework.jar" />
+		<include name="domain.jar" />
+		<include name="base.jar" />
+		<include name="dto.jar" />
+		<include name="asm.jar" />
+		<include name="antlr.jar" />
+		<include name="commons-pool.jar" />
+		<include name="c3p0.jar" />
+		<include name="hibernate3.jar" />
+		<include name="ehcache.jar" />
+		<include name="cglib.jar" />
+		<include name="dom4j.jar" />
+		<include name="jaxen.jar" />
+		<include name="odmg.jar" />
+		<include name="log4j.jar" />
+		<include name="xercesImpl.jar" />
+		<include name="xmlParserAPIs.jar" />
+		<include name="commons-logging.jar" />
+		<include name="commons-collections.jar" />
+		<include name="mail.jar" />
+		<include name="activation.jar" />
+		<include name="ImsQueryBuilderClient.jar" />
+		<include name="QueryBuilder3.jar" />
+		<include name="HttpReportClient.jar" />
+		<include name="commons-httpclient-3.0.jar" />
+		<include name="bsh-2.0b2.jar" />
+		<include name="commons-codec-1.3.jar" />
+		<include name="velocity-1.4.jar" />		
+		<include name="cos.jar" />
+		<include name="itext.jar" />				
+		<include name="hl7utils.jar" />
+		<include name="mime-util-2.1.2.jar" />
+		<include name="commons-discovery.jar" />
+		<include name="commons-digester.jar" />
+		<include name="commons-betwixt-0.6.jar" />
+		<include name="WebJContextor.jar" />
+		<include name="jamon-2.2.jar" />
+		<include name="commons-cli-1.0.jar" />
+		<include name="commons-io-1.3.1.jar" />
+		<include name="jodconverter-2.2.1.jar" />
+		<include name="jodconverter-cli-2.2.1.jar" />
+		<include name="juh-2.3.0.jar" />
+		<include name="jurt-2.3.0.jar" />
+		<include name="ridl-2.3.0.jar" />
+		<include name="slf4j-api-1.4.3.jar" />
+		<include name="slf4j-jdk14-1.4.3.jar" />
+		<include name="unoil-2.3.0.jar" />
+		<include name="xstream-1.2.2.jar" />
+		<include name="drools-compiler-5.5.0.Final.jar" />
+		<include name="drools-core-5.5.0.Final.jar" />
+		<include name="knowledge-api-5.5.0.Final.jar" />
+		<include name="knowledge-internal-api-5.5.0.Final.jar" />
+		<include name="mvel2-2.1.3.Final.jar" />		
+	</fileset>
+
+</project>

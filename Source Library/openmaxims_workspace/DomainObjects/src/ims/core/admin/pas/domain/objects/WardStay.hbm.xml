@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:36 -->
+<!-- Generated: 12/10/2015, 13:31 -->
 <hibernate-mapping>
 	<class name="ims.core.admin.pas.domain.objects.WardStay" table="core_ward_stay" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -33,6 +33,30 @@
 		<many-to-one name="bedSpace" class="ims.core.layout.domain.objects.BedSpace" unique="true" foreign-key="ward_stay_bedspace_fk" access="field" cascade="save-update">
 			<column name="bedspace" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
+<!-- debug: bay -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="bay" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="ward_stay_bay_fk" access="field" cascade="save-update">
+			<column name="bay" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: patientStatus -->
+<!-- debug: reasonPrivateBedAllocated -->
+<!-- debug: reasonAdmittingOutsideHours -->
+<!-- debug: reasonGenderBreach -->
+<!-- debug: admitedInMixedGenderBay -->
+<!-- debug: reasonPrivateBedAllocatedComment -->
+<!-- debug: reasonAdmittingOutsideHoursComment -->
+<!-- debug: reasonGenderBreachComment -->
+<!-- debug: service -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="service" class="ims.core.clinical.domain.objects.Service" unique="true" foreign-key="ward_stay_service_fk" access="field" cascade="save-update">
+			<column name="service" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: transferReason -->
+<!-- debug: transferComment -->
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="transferDateTime" type="timestamp" access="field" update="true">
@@ -48,5 +72,55 @@
 		<many-to-one name="wardType" class="ims.domain.lookups.LookupInstance" access="field">
 			<column name="lkp_wardtype" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="patientStatus" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_patientsta" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="reasonPrivateBedAllocated" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_reasonpriv" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="reasonAdmittingOutsideHours" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_reasonadmi" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="reasonGenderBreach" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_reasongend" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="admitedInMixedGenderBay" type="boolean" access="field" update="true">
+			<column name="admitedinm"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="reasonPrivateBedAllocatedComment" type="string" access="field" update="true" > 
+			<column name="reasonpri2" length="250"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="reasonAdmittingOutsideHoursComment" type="string" access="field" update="true" > 
+			<column name="reasonadm2" length="250"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="reasonGenderBreachComment" type="string" access="field" update="true" > 
+			<column name="reasongen2" length="250"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="transferReason" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_transferre" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="transferComment" type="string" access="field" update="true" > 
+			<column name="transferco" length="250"  not-null="false" unique="false"  />
+		</property>
 	</class>
 </hibernate-mapping>

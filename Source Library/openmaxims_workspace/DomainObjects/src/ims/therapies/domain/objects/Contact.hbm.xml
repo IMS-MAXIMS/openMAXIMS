@@ -1,0 +1,172 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 12/10/2015, 13:30 -->
+<hibernate-mapping>
+	<class name="ims.therapies.domain.objects.Contact" table="ther_contact" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: careContext -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="careContext" class="ims.core.admin.domain.objects.CareContext" unique="true" foreign-key="contact_carecontex_fk" access="field" cascade="save-update">
+			<column name="carecontex" sql-type="numeric(10,0)" not-null="false" unique="false"  index='ctx_idx' />
+		</many-to-one>
+<!-- debug: contactHCP -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="contactHCP" class="ims.core.resource.people.domain.objects.Hcp" unique="true" foreign-key="contact_contacthcp_fk" access="field" cascade="save-update">
+			<column name="contacthcp" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: hCPDiscipline -->
+<!-- debug: contactDateTime -->
+<!-- debug: episodeOfCare -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="episodeOfCare" class="ims.core.admin.domain.objects.EpisodeOfCare" unique="true" foreign-key="contact_episodeofc_fk" access="field" cascade="save-update">
+			<column name="episodeofc" sql-type="numeric(10,0)" not-null="true" unique="false"  index='epi_idx' />
+		</many-to-one>
+<!-- debug: recordingInfo -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+ 		<!-- Component -->
+ 		<component name="recordingInfo" class="ims.core.clinical.domain.objects.AuthoringInformation" >
+
+ 			<many-to-one name="authoringHcp" class="ims.core.resource.people.domain.objects.Hcp" foreign-key="contact_recordingiauthoring_fk" access="field">
+ 				<column name="recordingiauthoringh" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="authoringDateTime" type="timestamp" access="field" update="true">
+ 				<column name="recordingiauthoringd" not-null="false"  unique="false"   />
+ 			</property>
+ 		</component>
+<!-- debug: contactType -->
+<!-- debug: referringProblem -->
+<!-- debug: consentReason -->
+<!-- debug: isFirstContact -->
+<!-- debug: activities -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- many to many -->
+		<list name="activities" table="ther_contact_activities" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="contact_activities_fr_fk">
+				<column name="from_side" sql-type="numeric(10,0)" unique="false"   />
+			</key>
+			<index column='idx'/>
+			<many-to-many class="ims.oncology.domain.objects.ContactTypesByDisciplineItem" foreign-key="contact_activities_to_fk">
+				<column name="to_side" sql-type="numeric(10,0)" unique="false"   />
+			</many-to-many>
+		</list>
+<!-- debug: patientConsentToTreatment -->
+<!-- debug: timeRequired -->
+<!-- debug: timeSpent -->
+<!-- debug: numOfAdditionalHCPs -->
+<!-- debug: responsibleHCP -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="responsibleHCP" class="ims.core.resource.people.domain.objects.Hcp" unique="true" foreign-key="contact_responsibl_fk" access="field" cascade="save-update">
+			<column name="responsibl" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: noActivityUndertaken -->
+<!-- debug: additionalHCPs -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- one to many -->
+		<list name="additionalHCPs" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="contact_additional_fk">
+				<column name="ther_contact_additional" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.therapies.domain.objects.AdditionalHCP" />
+		</list>
+<!-- debug: caseload -->
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="hCPDiscipline" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_hcpdiscipl" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="contactDateTime" type="timestamp" access="field" update="true">
+			<column name="contactdat"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="contactType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_contacttyp" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="referringProblem" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_referringp" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="consentReason" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_consentrea" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isFirstContact" type="boolean" access="field" update="true">
+			<column name="isfirstcon"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="patientConsentToTreatment" type="boolean" access="field" update="true">
+			<column name="patientcon"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="timeRequired" type="integer" access="field" update="true">
+			<column name="timerequir"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="timeSpent" type="integer" access="field" update="true">
+			<column name="timespent"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="numOfAdditionalHCPs" type="integer" access="field" update="true">
+			<column name="numofaddit"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="noActivityUndertaken" type="boolean" access="field" update="true">
+			<column name="noactivity"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="caseload" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_caseload" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+	</class>
+</hibernate-mapping>

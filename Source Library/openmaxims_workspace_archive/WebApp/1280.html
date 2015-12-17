@@ -1,0 +1,29 @@
+<script>
+	var search = location.search;
+if(!search) search = "";
+var option = "fullscreen=yes, "
+if(navigator.appVersion.indexOf("MSIE 7") < 0)
+{
+	option = "fullscreen=no, "
+}
+var newWindow = window.open("ideagz.html" + search, "imswa_jscnqa", option + "toolbar=no, menubar=no, scrollbars=no, resizable=yes, location=no, directories=no, status=no");
+if (newWindow != null )
+{
+	newWindow.opener = window.self;
+	oldwindow = window.self;
+	oldwindow.opener = window.self;
+	newWindow.resizeTo(1280, 1024);
+	newWindow.moveTo((screen.availWidth - 1280) / 2, (screen.availHeight - 1024) / 2);
+	newWindow.focus();
+	if (newWindow)
+	{
+		window.open('', '_parent', '');
+		self.opener = this;
+		self.close();
+	}
+}
+else
+{
+	window.alert("WARNING: A popup blocker prevented the application from being started.");
+}
+</script>

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -30,10 +35,15 @@ import ims.admin.vo.domain.AppFormVoAssembler;
 import ims.admin.vo.domain.AppNavShortVoAssembler;
 import ims.admin.vo.domain.AppNavigationVoAssembler;
 import ims.admin.vo.domain.ReportTemplateLiteVoAssembler;
+import ims.assessment.configuration.domain.objects.GraphicAssessment;
+import ims.assessment.configuration.domain.objects.UserAssessment;
+import ims.assessment.configuration.vo.GraphicAssessmentRefVo;
+import ims.assessment.configuration.vo.UserAssessmentRefVo;
 import ims.assessment.vo.domain.GraphicAssessmentShortVoAssembler;
 import ims.assessment.vo.domain.UserAssessmentLiteVoAssembler;
 import ims.core.configuration.domain.objects.AppForm;
 import ims.core.configuration.domain.objects.AppNavigation;
+import ims.core.configuration.vo.AppNavigationRefVo;
 import ims.core.vo.lookups.PreActiveActiveInactiveStatus;
 import ims.core.vo.lookups.UserDefinedAssessmentType;
 import ims.domain.exceptions.DomainRuntimeException;
@@ -41,6 +51,8 @@ import ims.domain.exceptions.StaleObjectException;
 import ims.domain.exceptions.UniqueKeyViolationException;
 import ims.domain.exceptions.UnqViolationUncheckedException;
 import ims.domain.hibernate3.DomainFactory;
+import ims.vo.ValueObject;
+import ims.vo.ValueObjectRef;
 
 import java.util.ArrayList;
 
@@ -60,6 +72,7 @@ public class NavigationAdminProtImpl extends BaseNavigationAdminProtImpl
 			params.add("activeOnly");
 			values.add(onlyActive);
 		}
+		query += " order by upper(an.navigationName) asc"; //WDEV-20232
 		return AppNavShortVoAssembler.createAppNavShortVoCollectionFromAppNavigation(getDomainFactory().find(query,params,values));
 	}
 	/**
@@ -133,6 +146,34 @@ public class NavigationAdminProtImpl extends BaseNavigationAdminProtImpl
 		}
 		
 		return AppNavigationVoAssembler.create(domNav);
+	}
+	
+	//WDEV-19366
+	public ValueObject getAssessment(ValueObjectRef refVo)
+	{
+		if (refVo instanceof UserAssessmentRefVo)
+		{
+			UserAssessmentRefVo assess = (UserAssessmentRefVo)refVo;
+			return UserAssessmentLiteVoAssembler.create((UserAssessment)getDomainFactory().getDomainObject(assess));
+		}
+		else if (refVo instanceof GraphicAssessmentRefVo)
+		{
+			GraphicAssessmentRefVo assess = (GraphicAssessmentRefVo)refVo;
+			return GraphicAssessmentShortVoAssembler.create((GraphicAssessment)getDomainFactory().getDomainObject(assess));
+		}
+		else
+		{
+			return null;
+		}
+	}
+	@Override
+	public Boolean navigationHasAssociatedRole(AppNavigationRefVo navigation) 
+	{
+		String hql = "SELECT COUNT(role.id) from AppRole as role left join role.navigation as nav WHERE (role.isActive = 1 AND nav.id = :NAV)";
+		
+		long count = getDomainFactory().countWithHQL(hql, new String[]{"NAV"}, new Object[]{navigation.getID_AppNavigation()});
+		
+		return count > 0;
 	}
 
 }

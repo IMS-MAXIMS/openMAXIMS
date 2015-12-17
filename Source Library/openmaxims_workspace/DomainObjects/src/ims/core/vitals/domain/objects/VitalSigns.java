@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.vitals.domain.objects;
@@ -147,6 +152,8 @@ public class VitalSigns extends ims.domain.DomainObject implements ims.domain.Sy
 	private ims.domain.lookups.LookupInstance patientCausingConcern;
 	/** RecordingInformation */
 	private ims.core.clinical.domain.objects.RecordingUserInformation recordingInformation;
+	/** Reason for Not recording full set of Observations */
+	private ims.domain.lookups.LookupInstance unrecordedObservationsReason;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public VitalSigns (Integer id, int ver)
@@ -466,6 +473,13 @@ public class VitalSigns extends ims.domain.DomainObject implements ims.domain.Sy
 	}
 	public void setRecordingInformation(ims.core.clinical.domain.objects.RecordingUserInformation recordingInformation) {
 		this.recordingInformation = recordingInformation;
+	}
+
+	public ims.domain.lookups.LookupInstance getUnrecordedObservationsReason() {
+		return unrecordedObservationsReason;
+	}
+	public void setUnrecordedObservationsReason(ims.domain.lookups.LookupInstance unrecordedObservationsReason) {
+		this.unrecordedObservationsReason = unrecordedObservationsReason;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -1022,6 +1036,10 @@ public class VitalSigns extends ims.domain.DomainObject implements ims.domain.Sy
 		    auditStr.append(recordingInformation.toString());
 		}
 	    auditStr.append("; ");
+		auditStr.append("\r\n*unrecordedObservationsReason* :");
+		if (unrecordedObservationsReason != null)
+			auditStr.append(unrecordedObservationsReason.getText());
+	    auditStr.append("; ");
 		return auditStr.toString();
 	}
 	
@@ -1329,6 +1347,12 @@ public class VitalSigns extends ims.domain.DomainObject implements ims.domain.Sy
 			sb.append("<recordingInformation>");
 			sb.append(this.getRecordingInformation().toXMLString(domMap)); 	
 			sb.append("</recordingInformation>");		
+		}
+		if (this.getUnrecordedObservationsReason() != null)
+		{
+			sb.append("<unrecordedObservationsReason>");
+			sb.append(this.getUnrecordedObservationsReason().toXMLString()); 
+			sb.append("</unrecordedObservationsReason>");		
 		}
 		return sb.toString();
 	}
@@ -1713,6 +1737,12 @@ public class VitalSigns extends ims.domain.DomainObject implements ims.domain.Sy
 			fldEl = fldEl.element("class");		
 			obj.setRecordingInformation(ims.core.clinical.domain.objects.RecordingUserInformation.getRecordingUserInformationfromXML(fldEl, factory, domMap)); 
 		}
+		fldEl = el.element("unrecordedObservationsReason");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setUnrecordedObservationsReason(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -1776,6 +1806,7 @@ public class VitalSigns extends ims.domain.DomainObject implements ims.domain.Sy
 		public static final String AuthoringInformation = "authoringInformation";
 		public static final String PatientCausingConcern = "patientCausingConcern";
 		public static final String RecordingInformation = "recordingInformation";
+		public static final String UnrecordedObservationsReason = "unrecordedObservationsReason";
 	}
 }
 

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.emergency.vo.domain;
@@ -58,6 +63,14 @@ public class TriageForTrackingVoAssembler
 		valueObjectDest.setMainPresentingProblem(valueObjectSrc.getMainPresentingProblem());
 		// MedicInterventionStartDateTime
 		valueObjectDest.setMedicInterventionStartDateTime(valueObjectSrc.getMedicInterventionStartDateTime());
+		// OBSScore
+		valueObjectDest.setOBSScore(valueObjectSrc.getOBSScore());
+		// PAWSScore
+		valueObjectDest.setPAWSScore(valueObjectSrc.getPAWSScore());
+		// TriageCompletionTime
+		valueObjectDest.setTriageCompletionTime(valueObjectSrc.getTriageCompletionTime());
+		// CurrentTriageAssessment
+		valueObjectDest.setCurrentTriageAssessment(valueObjectSrc.getCurrentTriageAssessment());
 	 	return valueObjectDest;
 	 }
 
@@ -398,6 +411,30 @@ public class TriageForTrackingVoAssembler
 		{
 			valueObject.setMedicInterventionStartDateTime(new ims.framework.utils.DateTime(MedicInterventionStartDateTime) );
 		}
+		// OBSScore
+		valueObject.setOBSScore(domainObject.getOBSScore());
+		// PAWSScore
+		valueObject.setPAWSScore(domainObject.getPAWSScore());
+		// TriageCompletionTime
+		java.util.Date TriageCompletionTime = domainObject.getTriageCompletionTime();
+		if ( null != TriageCompletionTime ) 
+		{
+			valueObject.setTriageCompletionTime(new ims.framework.utils.DateTime(TriageCompletionTime) );
+		}
+		// CurrentTriageAssessment
+		if (domainObject.getCurrentTriageAssessment() != null)
+		{
+			if(domainObject.getCurrentTriageAssessment() instanceof HibernateProxy) // If the proxy is set, there is no need to lazy load, the proxy knows the id already. 
+			{
+				HibernateProxy p = (HibernateProxy) domainObject.getCurrentTriageAssessment();
+				int id = Integer.parseInt(p.getHibernateLazyInitializer().getIdentifier().toString());				
+				valueObject.setCurrentTriageAssessment(new ims.emergency.vo.TriageProtocolAssessmentRefVo(id, -1));				
+			}
+			else
+			{
+				valueObject.setCurrentTriageAssessment(new ims.emergency.vo.TriageProtocolAssessmentRefVo(domainObject.getCurrentTriageAssessment().getId(), domainObject.getCurrentTriageAssessment().getVersion()));
+			}
+		}
  		return valueObject;
 	 }
 
@@ -486,6 +523,35 @@ public class TriageForTrackingVoAssembler
 			value4 = dateTime4.getJavaDate();
 		}
 		domainObject.setMedicInterventionStartDateTime(value4);
+		domainObject.setOBSScore(valueObject.getOBSScore());
+		domainObject.setPAWSScore(valueObject.getPAWSScore());
+		ims.framework.utils.DateTime dateTime7 = valueObject.getTriageCompletionTime();
+		java.util.Date value7 = null;
+		if ( dateTime7 != null ) 
+		{
+			value7 = dateTime7.getJavaDate();
+		}
+		domainObject.setTriageCompletionTime(value7);
+		ims.emergency.domain.objects.TriageProtocolAssessment value8 = null;
+		if ( null != valueObject.getCurrentTriageAssessment() ) 
+		{
+			if (valueObject.getCurrentTriageAssessment().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getCurrentTriageAssessment()) != null)
+				{
+					value8 = (ims.emergency.domain.objects.TriageProtocolAssessment)domMap.get(valueObject.getCurrentTriageAssessment());
+				}
+			}
+			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
+			{
+				value8 = domainObject.getCurrentTriageAssessment();	
+			}
+			else
+			{
+				value8 = (ims.emergency.domain.objects.TriageProtocolAssessment)domainFactory.getDomainObject(ims.emergency.domain.objects.TriageProtocolAssessment.class, valueObject.getCurrentTriageAssessment().getBoId());
+			}
+		}
+		domainObject.setCurrentTriageAssessment(value8);
 
 		return domainObject;
 	}

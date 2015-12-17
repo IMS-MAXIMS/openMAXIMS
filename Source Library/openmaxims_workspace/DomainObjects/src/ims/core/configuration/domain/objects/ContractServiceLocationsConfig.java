@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.configuration.domain.objects;
@@ -51,6 +56,10 @@ public class ContractServiceLocationsConfig extends ims.domain.DomainObject impl
 	private ims.core.resource.place.domain.objects.Location location;
 	/** ContractId */
 	private String contractId;
+	/** No of days until RTT Breach */
+	private Integer daysToRTTBreachDate;
+	/** Number of Days To 1st Outpatient Appointment */
+	private Integer daysTo1stAppt;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public ContractServiceLocationsConfig (Integer id, int ver)
@@ -94,6 +103,20 @@ public class ContractServiceLocationsConfig extends ims.domain.DomainObject impl
 				contractId);
 		}
 		this.contractId = contractId;
+	}
+
+	public Integer getDaysToRTTBreachDate() {
+		return daysToRTTBreachDate;
+	}
+	public void setDaysToRTTBreachDate(Integer daysToRTTBreachDate) {
+		this.daysToRTTBreachDate = daysToRTTBreachDate;
+	}
+
+	public Integer getDaysTo1stAppt() {
+		return daysTo1stAppt;
+	}
+	public void setDaysTo1stAppt(Integer daysTo1stAppt) {
+		this.daysTo1stAppt = daysTo1stAppt;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -151,6 +174,12 @@ public class ContractServiceLocationsConfig extends ims.domain.DomainObject impl
 	    auditStr.append("; ");
 		auditStr.append("\r\n*contractId* :");
 		auditStr.append(contractId);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*daysToRTTBreachDate* :");
+		auditStr.append(daysToRTTBreachDate);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*daysTo1stAppt* :");
+		auditStr.append(daysTo1stAppt);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -213,6 +242,18 @@ public class ContractServiceLocationsConfig extends ims.domain.DomainObject impl
 			sb.append("<contractId>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getContractId().toString()));
 			sb.append("</contractId>");		
+		}
+		if (this.getDaysToRTTBreachDate() != null)
+		{
+			sb.append("<daysToRTTBreachDate>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getDaysToRTTBreachDate().toString()));
+			sb.append("</daysToRTTBreachDate>");		
+		}
+		if (this.getDaysTo1stAppt() != null)
+		{
+			sb.append("<daysTo1stAppt>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getDaysTo1stAppt().toString()));
+			sb.append("</daysTo1stAppt>");		
 		}
 		return sb.toString();
 	}
@@ -394,6 +435,16 @@ public class ContractServiceLocationsConfig extends ims.domain.DomainObject impl
 		{	
     		obj.setContractId(new String(fldEl.getTextTrim()));	
 		}
+		fldEl = el.element("daysToRTTBreachDate");
+		if(fldEl != null)
+		{	
+    		obj.setDaysToRTTBreachDate(new Integer(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("daysTo1stAppt");
+		if(fldEl != null)
+		{	
+    		obj.setDaysTo1stAppt(new Integer(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -409,6 +460,8 @@ public class ContractServiceLocationsConfig extends ims.domain.DomainObject impl
 		public static final String Service = "service";
 		public static final String Location = "location";
 		public static final String ContractId = "contractId";
+		public static final String DaysToRTTBreachDate = "daysToRTTBreachDate";
+		public static final String DaysTo1stAppt = "daysTo1stAppt";
 	}
 }
 

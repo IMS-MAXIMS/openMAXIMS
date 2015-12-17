@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -32,6 +37,7 @@ import ims.core.vo.Patient;
 import ims.core.vo.PatientFilter;
 import ims.core.vo.PatientId;
 import ims.core.vo.PatientIdCollection;
+import ims.core.vo.PatientLiteVo; //http://jira/browse/WDEV-18798
 import ims.core.vo.PatientShort;
 import ims.core.vo.PatientShortCollection;
 import ims.core.vo.ServiceShortVo;
@@ -46,6 +52,7 @@ import ims.domain.exceptions.ForeignKeyViolationException;
 import ims.domain.exceptions.StaleObjectException;
 import ims.framework.utils.DateTime;
 import ims.framework.utils.PartialDate;
+import ims.hl7.domain.EventResponse;
 import ims.hl7.utils.HL7Errors;
 import ims.hl7.utils.HL7Utils;
 import ims.ocrr.orderingresults.vo.OrderSpecimenRefVo;
@@ -93,7 +100,10 @@ import ims.ocs_if.vo.IfResultDetailsVoCollection;
 import ims.vo.LookupInstVo;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -130,40 +140,61 @@ public class R01VoMapper extends VoMapper
 {
 	private static final Logger	LOG	= Logger.getLogger(R01VoMapper.class);
 
-	public Message processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception
+	//WDEV-20112
+//	public Message processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception
+	public EventResponse processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception //WDEV-20112
 	{
+		//WDEV-20112
+		EventResponse response = new EventResponse(); //WDEV-20112
+		
 		try
 		{
-			processResult(msg,providerSystem);
+			//WDEV-20112
+			//processResult(msg,providerSystem);
+			response = processResult(msg, providerSystem, response); //WDEV-20112
 		}
 		catch (StaleObjectException soe)
 		{
 			try
 			{
-				System.out.println("Handeling SOE");
+				System.out.println("Handling SOE");
 				Thread.sleep(10000);
-				processResult(msg,providerSystem);
+				//WDEV-20112
+//				processResult(msg,providerSystem);
+				response = processResult(msg, providerSystem, response); //WDEV-20112
 			}
 			catch(Exception ie)
 			{
 				this.errorCount++;
 				ie.printStackTrace();
-				return HL7Utils.buildRejAck(msg.get("MSH"), "Exception. " + ie.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems()));
+				//WDEV-20112
+//				return HL7Utils.buildRejAck(msg.get("MSH"), "Exception. " + ie.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems()));
+				response.setMessage(HL7Utils.buildRejAck(msg.get("MSH"), "Exception. " + ie.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems())));
+				return response; //WDEV-20112
 			}
 		}
 		catch (Exception ex)
 		{
 			this.errorCount++;
 			ex.printStackTrace();
-			return HL7Utils.buildRejAck(msg.get("MSH"), "Exception. " + ex.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems()));
+			//WDEV-20112
+//			return HL7Utils.buildRejAck(msg.get("MSH"), "Exception. " + ex.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems()));
+			response.setMessage(HL7Utils.buildRejAck(msg.get("MSH"), "Exception. " + ex.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems())));
+			return response; //WDEV-20112
 		}
 
-		Message ack = HL7Utils.buildPosAck(msg.get("MSH"), toConfigItemArray(providerSystem.getConfigItems()));
-		return ack;
+		//WDEV-20112
+//		Message ack = HL7Utils.buildPosAck(msg.get("MSH"), toConfigItemArray(providerSystem.getConfigItems()));
+//		return ack;
+		response.setMessage(HL7Utils.buildPosAck(msg.get("MSH"), toConfigItemArray(providerSystem.getConfigItems())));
+		return response;  //WDEV-20112
 	}
 
-	protected void processResult(Message msg, ProviderSystemVo providerSystem) throws Exception
+	//WDEV-20112
+//	protected void processResult(Message msg, ProviderSystemVo providerSystem) throws Exception
+	protected EventResponse processResult(Message msg, ProviderSystemVo providerSystem, EventResponse response) throws Exception //WDEV-20112
 	{
+
 		String placerOrdNum = "";
 		String fillerOrdNum = "";
 
@@ -210,6 +241,7 @@ public class R01VoMapper extends VoMapper
 		for (int i = 0; i < pid_count; i++)
 		{
 			PID pid = null;
+			String matchingPatientID = null;//http://jira/browse/WDEV-18798
 			int invCount = 0;
 			if (msg instanceof ORM_O01)
 			{
@@ -385,20 +417,29 @@ public class R01VoMapper extends VoMapper
 					
 					orderCreated=true;
 					voOrder = processOrderCreation(msg,providerSystem,category,providerSystemConfigItems);
+					if(voOrder!=null)//http://jira/browse/WDEV-18798
+					{
+						matchingPatientID = voOrder.getPrimaryIdValueUsed();
+					}
 					//JME: No need to do anymore if this is not a result message
 					if (!(msg instanceof ORU_R01))
-							return;
+						//WDEV-20112
+//							return;
+							return response; //WDEV-20112
 				}	
 				else 
 				{
 					if(pid.getPatientIdentifierList().length!=0) //WDEV-12230 Check there is a PID segment
 					{
-						Boolean isValidPatient=demog.validatePatient(populatePatientFromPID(pid,providerSystem),voOrder.getPatient());
-						if(null==isValidPatient||!isValidPatient)
+						matchingPatientID=demog.validatePatient(getPrimaryIdFromPid(pid,providerSystem),voOrder.getPatient()); //WDEV-19142
+						if(null==matchingPatientID)
 						{
 							throw new HL7Exception("Patient mismatch between Order and message.");
 						}
 					}
+
+					//WDEV-20112
+					response.setPatient(voOrder.getPatient()); //WDEV-20112
 					
 					// http://jira/browse/WDEV-11907
 					if(ConfigFlag.HL7.ALLOW_HL7_UPDATES_TO_LOCATION_AND_CONSULTANT.getValue())
@@ -420,9 +461,9 @@ public class R01VoMapper extends VoMapper
 				
 				//  The order has been created/updated at this stage, we now concentrate on the result
 				if (bPathology)
-					spcVo = processPATHResult(msg, voOrder, placerOrdNum, fillerOrdNum, spcVo, hl7App, orc, obr, pid, orc_group, providerSystem, i, j, invResVoColl,specimenResults,historicResultDetails,providerSystemConfigItems);
+					spcVo = processPATHResult(msg, voOrder, placerOrdNum, fillerOrdNum, spcVo, hl7App, orc, obr, pid, orc_group, providerSystem, i, j, invResVoColl,specimenResults,historicResultDetails,providerSystemConfigItems,matchingPatientID);//http://jira/browse/WDEV-18798
 				else
-					processRADResult(msg, voOrder, placerOrdNum, fillerOrdNum, hl7App, orc, obr, pid, orc_group, providerSystem, j);
+					processRADResult(msg, voOrder, placerOrdNum, fillerOrdNum, hl7App, orc, obr, pid, orc_group, providerSystem, j,matchingPatientID);//http://jira/browse/WDEV-18798
 //			}
 			
 			if (bPathology)
@@ -442,6 +483,8 @@ public class R01VoMapper extends VoMapper
 			}
 		}
 		}
+		//WDEV-20112
+		return response; //WDEV-20112
 	}
 
 	/**
@@ -465,7 +508,7 @@ public class R01VoMapper extends VoMapper
 		}
 		return false;
 	}
-	private void processRADResult(Message msg, IfOcsOrderVo voOrder, String placerOrdNum, String fillerOrdNum, String hl7App, ORC orc, OBR obr, PID pid, ORU_R01_ORCOBRNTECTDOBXNTEFT1CTI orc_group, ProviderSystemVo providerSystem, int invCount) throws Exception
+	private void processRADResult(Message msg, IfOcsOrderVo voOrder, String placerOrdNum, String fillerOrdNum, String hl7App, ORC orc, OBR obr, PID pid, ORU_R01_ORCOBRNTECTDOBXNTEFT1CTI orc_group, ProviderSystemVo providerSystem, int invCount,String matchingIdValue) throws Exception//http://jira/browse/WDEV-18798
 	{
 		// wdev-2397 specimen source is now part of the search criteria to get the investigation
 		IfOrderInvestigationVo orderInvfromMsg=null;
@@ -519,6 +562,12 @@ public class R01VoMapper extends VoMapper
 			
 			invVo = ocsIfInbound.getOrderInvestigation(voOrder, cfgInv, siteSource, null,placerOrdNum,fillerOrdNum);  // wdev-3597 Rad Order no specimen
 			
+			if(!(msg instanceof ORU_R01)&&invVo.getResultDetailsIsNotNull()) //http://jira/browse/WDEV-18066
+			{
+				throw new HL7Exception("Non result message for resulted Investigation");
+			}
+
+			
 			if((msg instanceof ORM_O01 || msg instanceof OMG_O19)&&("CARE_UK".equals(ConfigFlag.HL7.EXTENDED_HL7_PROCESSING.getValue())))
 					{
 				// Only create a new investigation if the service is the same for the existing OrderInv and the new one
@@ -549,7 +598,11 @@ public class R01VoMapper extends VoMapper
 			if("SN".equals(orc.getOrderControl().getValue()))
 			{
 				//IF it is a SN send number order we create a new order
-				processOrderCreation(msg, providerSystem, Category.CLINICALIMAGING, toConfigItemArray(providerSystem.getConfigItems()) );
+				IfOcsOrderVo orderVo = processOrderCreation(msg, providerSystem, Category.CLINICALIMAGING, toConfigItemArray(providerSystem.getConfigItems()) );//http://jira/browse/WDEV-18798
+				if(orderVo!=null)
+				{
+					matchingIdValue = orderVo.getPrimaryIdValueUsed();
+				}
 			}
 
 		}
@@ -669,7 +722,11 @@ public class R01VoMapper extends VoMapper
 		else
 		{
 			IfOrdInvResultVo invResVo = createInvResVoFromResVo(invVo);					
-			invResVo.setResultDemographics(getResDemoVoFromSeg(pid, providerSystem));
+			invResVo.setResultDemographics(getResDemoVoFromSeg(pid, providerSystem,matchingIdValue));//http://jira/browse/WDEV-18798
+			if(invResVo.getWasSecondaryMatchingUsedIsNotNull()&&invResVo.getWasSecondaryMatchingUsed())
+			{
+				invResVo.getResultDemographics().setHospNum(null);
+			}
 			
 			if(invResVo.getResultDetails()==null)
 			{
@@ -710,7 +767,7 @@ public class R01VoMapper extends VoMapper
 	}
 
 
-	private IfOrderSpecimenVo processPATHResult(Message msg, IfOcsOrderVo voOrder, String placerOrdNum, String fillerOrdNum, IfOrderSpecimenVo spcVo, String hl7App, ORC orc, OBR obr, PID pid, ORU_R01_ORCOBRNTECTDOBXNTEFT1CTI orc_group, ProviderSystemVo providerSystem, int pdCount, int invCount, IfOrderInvestigationVoCollection invResVoColl,IfOcsPathResultVoCollection specResults,IfResultDetailsVoCollection historicResultDetails, ConfigItems[] providerSystemConfigItems) throws Exception
+	private IfOrderSpecimenVo processPATHResult(Message msg, IfOcsOrderVo voOrder, String placerOrdNum, String fillerOrdNum, IfOrderSpecimenVo spcVo, String hl7App, ORC orc, OBR obr, PID pid, ORU_R01_ORCOBRNTECTDOBXNTEFT1CTI orc_group, ProviderSystemVo providerSystem, int pdCount, int invCount, IfOrderInvestigationVoCollection invResVoColl,IfOcsPathResultVoCollection specResults,IfResultDetailsVoCollection historicResultDetails, ConfigItems[] providerSystemConfigItems,String matchingIdValue) throws Exception//http://jira/browse/WDEV-18798
 	{
 		//JP 20060802
 		ServiceShortVo discip = null;
@@ -798,6 +855,12 @@ public class R01VoMapper extends VoMapper
 		{
 			invVo = ocsIfInbound.getOrderInvestigation(voOrder, cfgInv, null, spcVo,placerOrdNum,fillerOrdNum);
 		}
+		//if the inv has a result and the message is not a result message reject the message
+		if(!(msg instanceof ORU_R01)&&(invVo!=null)&&invVo.getResultDetailsIsNotNull()) //http://jira/browse/WDEV-18066 http://jira/browse/WDEV-20666
+		{
+			throw new HL7Exception("Non result message for resulted Investigation");
+		}
+		
 		if (invVo == null)
 		{
 			invVo = new IfOrderInvestigationVo();
@@ -936,7 +999,7 @@ public class R01VoMapper extends VoMapper
 
 			
 			
-			invVo.setResultDemographics(getResDemoVoFromSeg(pid, providerSystem));
+			invVo.setResultDemographics(getResDemoVoFromSeg(pid, providerSystem,matchingIdValue));//http://jira/browse/WDEV-18798
 			
 			// get component collection from OBXs
 			IfOcsResCompVoCollection componentColl = new IfOcsResCompVoCollection();
@@ -1210,6 +1273,7 @@ public class R01VoMapper extends VoMapper
 	
 	private IfOcsOrderVo processOrderCreation(Message ormMsg, ProviderSystemVo providerSystem, Category orderCategory, ConfigItems[] configItems) throws Exception
 	{		
+		String matchingPatientID=null;//http://jira/browse/WDEV-18798
 		String sendingApplication = HL7Utils.getSendingApplication(ormMsg);
 		if (orderCategory == null)
 			throw new HL7Exception("Cannot find provider system for sending Application " + sendingApplication);
@@ -1246,7 +1310,13 @@ public class R01VoMapper extends VoMapper
 		
 		// Populate Patient
 		Patient patVo = getPrimaryIdFromPid(pid, providerSystem);
-		PatientRefVo patLite = getDemog().getPatientLite(patVo);
+		PatientRefVo patientRefVo=null;//http://jira/browse/WDEV-18798
+		PatientLiteVo patLite = getDemog().getPatientLite(patVo);
+		if(patLite!=null)
+		{
+			matchingPatientID=patLite.getPrimaryIdValueUsed();
+		}
+		patientRefVo=patLite;
 		IfOcsOrderVo order = new IfOcsOrderVo();
 		Boolean secondaryPatientMatch=false;
 		
@@ -1255,7 +1325,7 @@ public class R01VoMapper extends VoMapper
 			order.setOrderingHospital(getProviderHospital( pid,providerSystem));
 		}
 
-		if (patLite == null)
+		if (patientRefVo == null)//http://jira/browse/WDEV-18798
 		{
 			//Secondary patient search 
 			//WDEV-13033 
@@ -1283,10 +1353,10 @@ public class R01VoMapper extends VoMapper
 				}
 				order.setPatient(patients.get(0));
 				secondaryPatientMatch=true;
-				patLite=patients.get(0);
+				patientRefVo=patients.get(0);//http://jira/browse/WDEV-18798
 			}
 		}
-		if (patLite == null)
+		if (patientRefVo == null)//http://jira/browse/WDEV-18798
 		{
 			
 			// wdev-2945 PatientRegistration is not allowed, reject the message
@@ -1534,7 +1604,10 @@ public class R01VoMapper extends VoMapper
 		String errors[] = order.validate();
 		if (errors != null)
 			throw new HL7Exception("Validation errors found for order - " + VoMapper.toDisplayString(errors));
-		return ocsIfInbound.saveOrder(order);
+		IfOcsOrderVo orderVo =  ocsIfInbound.saveOrder(order);//http://jira/browse/WDEV-18798
+		orderVo.setPrimaryIdValueUsed(matchingPatientID);
+		return orderVo;
+		
 	}
 
 	private LocSiteRefVo getProviderHospital(PID pid,ProviderSystemVo providerSystem) throws HL7Exception
@@ -2617,7 +2690,7 @@ public class R01VoMapper extends VoMapper
 		return ((NTE) nte_group.get("NTE", i));
 	}
 
-	private ResultDemographicsVo getResDemoVoFromSeg(PID pid, ProviderSystemVo providerSystem) throws Exception
+	private ResultDemographicsVo getResDemoVoFromSeg(PID pid, ProviderSystemVo providerSystem,String matchingID) throws Exception//http://jira/browse/WDEV-18798
 	{
 		LOG.debug("R01VoMapper getResDemoVoFromSeg: entry");
 		ResultDemographicsVo demoVo = new ResultDemographicsVo();
@@ -2640,9 +2713,7 @@ public class R01VoMapper extends VoMapper
 					patColl.get(i).getType().equals(PatIdType.DISTRICT)||
 					patColl.get(i).getType().equals(PatIdType.EMPI)) // http://jira/browse/WDEV-10137
 			{
-//				demoVo.setHospNum(pid.getPatientIdentifierList(i).getID().getValue());
-				demoVo.setHospNum(patColl.get(i).getValue());
-				
+				demoVo.setHospNum(patColl.get(i).getValue());//http://jira/browse/WDEV-18798
 			}
 		}
 		//WDEV-4822, JP
@@ -2659,7 +2730,10 @@ public class R01VoMapper extends VoMapper
 					demoVo.setHospNum(patIdVo.getValue());
 			}
 		}
-		
+		if(matchingID!=null)//http://jira/browse/WDEV-18798
+		{
+			demoVo.setHospNum(matchingID);
+		}
 		demoVo.setSex((Sex) svc.getLocalLookup(Sex.class, Sex.TYPE_ID, providerSystem.getCodeSystem().getText(), pid.getAdministrativeSex().getValue()));
 		demoVo.setName(populateNameVoFromXPN(demoVo.getName(), pid.getPatientName(0),providerSystem));
 		demoVo.getName().setUppers();
@@ -2705,8 +2779,8 @@ public class R01VoMapper extends VoMapper
 		if (obx.getObservationResultStatus().getValue() != null && !resCompVo.getResultStatusIsNotNull())
 			throw new HL7Exception("Observation Result Status (OBX-11) does not map to a valid local lookup (ResultStatus) - Message Rejected");
 
-		
-		resCompVo.setResValType((ResultValueType) svc.getLocalLookup(ResultValueType.class, ResultValueType.TYPE_ID, providerSystem.getCodeSystem().getText(), obx.getValueType().getValue()));
+		String valueType = obx.getValueType().getValue();
+		resCompVo.setResValType((ResultValueType) svc.getLocalLookup(ResultValueType.class, ResultValueType.TYPE_ID, providerSystem.getCodeSystem().getText(),valueType ));
 
 		//http://jira/browse/WDEV-2175
 		//JME: 20061123
@@ -2799,11 +2873,11 @@ public class R01VoMapper extends VoMapper
 		}
 		String analyteExtText = obx.getObservationIdentifier().getText().getValue();
 		
-		if (analyteExtText==null||null==analyteExtText.trim()||"".equals(analyteExtText.trim()))
+		if (doAnalyteCheck(valueType)&&(analyteExtText==null||null==analyteExtText.trim()||"".equals(analyteExtText.trim()))) //http://jira/browse/WDEV-21674
 		{
-			throw new HL7Exception("Observation Identifier text OBX-3-2 is mandatory");
+			throw new HL7Exception("Observation Identifier text OBX-3-2 is mandatory for Value Type:"+(valueType!=null?valueType:"")); //http://jira/browse/WDEV-21674
 		}
-		IfAnalyteVo analyteVo = ocsIfInbound.getAnalyte(analyteExtCode, analyteExtText, providerInvSearch, units);
+		IfAnalyteVo analyteVo = ocsIfInbound.getAnalyte(analyteExtCode, analyteExtText, providerInvSearch, units,doAnalyteCheck(valueType)); //http://jira/browse/WDEV-21674
 		if (analyteVo == null)
 			throw new HL7Exception("Analyte is null");
 		resCompVo.setAnalyte(analyteVo);
@@ -2812,6 +2886,13 @@ public class R01VoMapper extends VoMapper
 		resCompVo.setResultComponentComments(getResultComments(obx_nte));
 		LOG.debug("R01VoMapper getCompVoFromSeg: exit");
 		return resCompVo;
+	}
+	//http://jira/browse/WDEV-21674
+	private Boolean doAnalyteCheck(String valueType) 
+	{
+		List<String> skippedValueTypes = new ArrayList<String>();
+		skippedValueTypes = Arrays.asList(ConfigFlag.GEN.ANALYTE_CHECK_NOT_REQUIRED_VALUETYPES.getValue().split(","));
+		return Boolean.valueOf(!skippedValueTypes.contains(valueType));
 	}
 
 	private IfOcsResCommentVo getCommentVoFromSeg(NTE nte) throws HL7Exception

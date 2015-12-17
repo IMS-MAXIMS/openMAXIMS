@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:35 -->
+<!-- Generated: 12/10/2015, 13:30 -->
 <hibernate-mapping>
 	<class name="ims.core.configuration.domain.objects.AppUser" table="core_appuser" lazy="true" discriminator-value="null" >
 		<cache usage="nonstrict-read-write" />
@@ -90,6 +90,8 @@
 <!-- debug: lDAPUsername -->
 <!-- debug: lDAPPassword -->
 <!-- debug: secretKey -->
+<!-- debug: locked -->
+<!-- debug: sdsUserId -->
 <!-- debug: !IsAssociation && !IsCollection -->
 
 <!-- debug: !IsLookup -->
@@ -155,6 +157,16 @@
 <!-- debug: !IsLookup -->
 		<property name="secretKey" type="string" access="field" update="true" > 
 			<column name="secretkey" length="32"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="locked" type="boolean" access="field" update="true">
+			<column name="c_lock"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="sdsUserId" type="string" access="field" update="true" > 
+			<column name="sdsuserid" length="30"  not-null="false" unique="false"  />
 		</property>
 	</class>
 </hibernate-mapping>

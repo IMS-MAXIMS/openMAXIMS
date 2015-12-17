@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -34,6 +39,7 @@ import ims.core.vo.lookups.PatIdType;
 import ims.core.vo.lookups.TaxonomyType;
 import ims.domain.DomainObject;
 import ims.domain.exceptions.StaleObjectException;
+import ims.domain.exceptions.UniqueKeyViolationException;
 import ims.framework.FormName;
 import ims.framework.controls.DynamicGridCell;
 import ims.framework.controls.DynamicGridCellItem;
@@ -257,7 +263,12 @@ public class Logic extends BaseLogic
 			engine.showMessage(ims.configuration.gen.ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
 			open();
 			return false;
+		} 
+		catch (UniqueKeyViolationException e) //WDEV-18771
+		{
+			updateRecord();
 		}
+		
 		form.getGlobalContext().OCRR.setLastUpdatedPathRadResult(form.getGlobalContext().OCRR.getCurrentPathRadResult());
 		return true;
 	}

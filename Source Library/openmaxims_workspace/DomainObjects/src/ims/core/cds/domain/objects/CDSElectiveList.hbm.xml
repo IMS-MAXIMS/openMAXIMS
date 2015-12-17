@@ -1,0 +1,467 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 12/10/2015, 13:32 -->
+<hibernate-mapping>
+	<class name="ims.core.cds.domain.objects.CDSElectiveList" table="core_cdselectivelis" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: cDSApplicableDate -->
+<!-- debug: cDSSenderOrgCode -->
+<!-- debug: uBRN -->
+<!-- debug: pathwayIdentifier -->
+<!-- debug: pathwayOrgCode -->
+<!-- debug: referralToTreatmentStatus -->
+<!-- debug: waitTimeMeasureType -->
+<!-- debug: rTTStartDate -->
+<!-- debug: rTTEndDate -->
+<!-- debug: localPatientIdentifier -->
+<!-- debug: cCGOrgCode -->
+<!-- debug: withHeldIdentityReason -->
+<!-- debug: patIdOrgCode -->
+<!-- debug: nHSNumber -->
+<!-- debug: nHSNumberStatusInd -->
+<!-- debug: patientName -->
+<!-- debug: patientAddress -->
+<!-- debug: postCode -->
+<!-- debug: pCTOrgCode -->
+<!-- debug: dateOfBirth -->
+<!-- debug: personGender -->
+<!-- debug: carerSupportInd -->
+<!-- debug: commSerialNumber -->
+<!-- debug: nHSServAgreeLineNum -->
+<!-- debug: providerRefNum -->
+<!-- debug: commissionerReferenceNum -->
+<!-- debug: orgCodeProvider -->
+<!-- debug: orgCodeCommissioner -->
+<!-- debug: nHSServAgreeChangeDate -->
+<!-- debug: electiveListID -->
+<!-- debug: adminCategory -->
+<!-- debug: countSuspendedDays -->
+<!-- debug: eLEStatus -->
+<!-- debug: eLEType -->
+<!-- debug: intendedManagement -->
+<!-- debug: intendedProcedure -->
+<!-- debug: priorityTypeCode -->
+<!-- debug: patientClassification -->
+<!-- debug: decidedToAdmitDate -->
+<!-- debug: ageAtCDSActivity -->
+<!-- debug: admissionMethod -->
+<!-- debug: overseasVisitorStatus -->
+<!-- debug: guarenteedAdmissionDate -->
+<!-- debug: lastDNACancelledDate -->
+<!-- debug: lastReviewedDate -->
+<!-- debug: consultantCode -->
+<!-- debug: specialtyCode -->
+<!-- debug: treatmentFuncCode -->
+<!-- debug: localSubSpecialtyCode -->
+<!-- debug: procedureScheme -->
+<!-- debug: procedure -->
+<!-- debug: procedureDate -->
+<!-- debug: profRegistrationCode -->
+<!-- debug: profRegistrationID -->
+<!-- debug: patientGPCode -->
+<!-- debug: patientGPPractice -->
+<!-- debug: referrerCode -->
+<!-- debug: referrerPractice -->
+<!-- debug: outcomeCode -->
+<!-- debug: dateTCIOffered -->
+<!-- debug: eRODate -->
+<!-- debug: origDecisionToAdmitDate -->
+<!-- debug: startDate -->
+<!-- debug: removalReason -->
+<!-- debug: removalDate -->
+<!-- debug: episodeStartDate -->
+<!-- debug: oPCSProcedureGroup -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<list name="oPCSProcedureGroup" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="cdselectivelis_opcsproced_fk">
+				<column name="core_cdselectivelis_opcsproced" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.core.cds.domain.objects.CDSProcedureDetails" />
+		</list>
+<!-- debug: rEADProcedureGroup -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="rEADProcedureGroup" class="ims.core.cds.domain.objects.CDSProcedureDetails" unique="true" foreign-key="cdselectivelis_readproced_fk" access="field" cascade="save-update">
+			<column name="readproced" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: locationGroup -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="locationGroup" class="ims.core.cds.domain.objects.CDSWaitingListLocGroup" unique="true" foreign-key="cdselectivelis_locationgr_fk" access="field" cascade="save-update">
+			<column name="locationgr" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: careContextId -->
+<!-- debug: hRGCode -->
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="cDSApplicableDate" type="timestamp" access="field" update="true">
+			<column name="cdsapplica"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="cDSSenderOrgCode" type="string" access="field" update="true" > 
+			<column name="cdssendero" length="5"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="uBRN" type="string" access="field" update="true" > 
+			<column name="ubrn" length="12"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="pathwayIdentifier" type="string" access="field" update="true" > 
+			<column name="pathwayide" length="20"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="pathwayOrgCode" type="string" access="field" update="true" > 
+			<column name="pathwayorg" length="3"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="referralToTreatmentStatus" type="string" access="field" update="true" > 
+			<column name="referralto" length="2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="waitTimeMeasureType" type="string" access="field" update="true" > 
+			<column name="waittimeme" length="2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="rTTStartDate" type="date" access="field" update="true">
+			<column name="rttstartda"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="rTTEndDate" type="date" access="field" update="true">
+			<column name="rttenddate"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="localPatientIdentifier" type="string" access="field" update="true" > 
+			<column name="localpatie" length="10"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="cCGOrgCode" type="string" access="field" update="true" > 
+			<column name="ccgorgcode" length="3"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="withHeldIdentityReason" type="string" access="field" update="true" > 
+			<column name="withheldid" length="2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="patIdOrgCode" type="string" access="field" update="true" > 
+			<column name="patidorgco" length="5"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="nHSNumber" type="string" access="field" update="true" > 
+			<column name="nhsnumber" length="17"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="nHSNumberStatusInd" type="string" access="field" update="true" > 
+			<column name="nhsnumbers" length="2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="patientName" type="string" access="field" update="true" > 
+			<column name="patientnam" length="70"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="patientAddress" type="string" access="field" update="true" > 
+			<column name="patientadd" length="175"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="postCode" type="string" access="field" update="true" > 
+			<column name="postcode" length="8"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="pCTOrgCode" type="string" access="field" update="true" > 
+			<column name="pctorgcode" length="3"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dateOfBirth" type="date" access="field" update="true">
+			<column name="dateofbirt"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="personGender" type="string" access="field" update="true" > 
+			<column name="persongend" length="1"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="carerSupportInd" type="string" access="field" update="true" > 
+			<column name="carersuppo" length="2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="commSerialNumber" type="string" access="field" update="true" > 
+			<column name="commserial" length="6"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="nHSServAgreeLineNum" type="string" access="field" update="true" > 
+			<column name="nhsservagr" length="10"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="providerRefNum" type="string" access="field" update="true" > 
+			<column name="providerre" length="17"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="commissionerReferenceNum" type="string" access="field" update="true" > 
+			<column name="commission" length="17"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="orgCodeProvider" type="string" access="field" update="true" > 
+			<column name="orgcodepro" length="5"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="orgCodeCommissioner" type="string" access="field" update="true" > 
+			<column name="orgcodecom" length="5"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="nHSServAgreeChangeDate" type="date" access="field" update="true">
+			<column name="nhsservag2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="electiveListID" type="string" access="field" update="true" > 
+			<column name="electiveli" length="12"  not-null="false" unique="true"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="adminCategory" type="string" access="field" update="true" > 
+			<column name="admincateg" length="2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="countSuspendedDays" type="integer" access="field" update="true">
+			<column name="countsuspe"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="eLEStatus" type="string" access="field" update="true" > 
+			<column name="elestatus" length="2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="eLEType" type="string" access="field" update="true" > 
+			<column name="eletype" length="2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="intendedManagement" type="string" access="field" update="true" > 
+			<column name="intendedma" length="1"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="intendedProcedure" type="string" access="field" update="true" > 
+			<column name="intendedpr" length="1"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="priorityTypeCode" type="string" access="field" update="true" > 
+			<column name="priorityty" length="1"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="patientClassification" type="string" access="field" update="true" > 
+			<column name="patientcla" length="1"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="decidedToAdmitDate" type="date" access="field" update="true">
+			<column name="decidedtoa"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="ageAtCDSActivity" type="integer" access="field" update="true">
+			<column name="ageatcdsac"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="admissionMethod" type="string" access="field" update="true" > 
+			<column name="admissionm" length="2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="overseasVisitorStatus" type="string" access="field" update="true" > 
+			<column name="overseasvi" length="1"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="guarenteedAdmissionDate" type="date" access="field" update="true">
+			<column name="guarenteed"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="lastDNACancelledDate" type="date" access="field" update="true">
+			<column name="lastdnacan"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="lastReviewedDate" type="date" access="field" update="true">
+			<column name="lastreview"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="consultantCode" type="string" access="field" update="true" > 
+			<column name="consultant" length="8"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="specialtyCode" type="string" access="field" update="true" > 
+			<column name="specialtyc" length="3"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="treatmentFuncCode" type="string" access="field" update="true" > 
+			<column name="treatmentf" length="3"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="localSubSpecialtyCode" type="string" access="field" update="true" > 
+			<column name="localsubsp" length="8"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="procedureScheme" type="string" access="field" update="true" > 
+			<column name="procedures" length="2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="procedure" type="string" access="field" update="true" > 
+			<column name="c_procedu" length="4"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="procedureDate" type="date" access="field" update="true">
+			<column name="procedured"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="profRegistrationCode" type="string" access="field" update="true" > 
+			<column name="profregist" length="2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="profRegistrationID" type="string" access="field" update="true" > 
+			<column name="profregis2" length="12"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="patientGPCode" type="string" access="field" update="true" > 
+			<column name="patientgpc" length="8"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="patientGPPractice" type="string" access="field" update="true" > 
+			<column name="patientgpp" length="6"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="referrerCode" type="string" access="field" update="true" > 
+			<column name="referrerco" length="8"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="referrerPractice" type="string" access="field" update="true" > 
+			<column name="referrerpr" length="6"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="outcomeCode" type="string" access="field" update="true" > 
+			<column name="outcomecod" length="1"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dateTCIOffered" type="date" access="field" update="true">
+			<column name="datetcioff"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="eRODate" type="date" access="field" update="true">
+			<column name="erodate"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="origDecisionToAdmitDate" type="date" access="field" update="true">
+			<column name="origdecisi"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="startDate" type="date" access="field" update="true">
+			<column name="startdate"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="removalReason" type="string" access="field" update="true" > 
+			<column name="removalrea" length="1"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="removalDate" type="date" access="field" update="true">
+			<column name="removaldat"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="episodeStartDate" type="date" access="field" update="true">
+			<column name="episodesta"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="careContextId" type="integer" access="field" update="true">
+			<column name="carecontex"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="hRGCode" type="string" access="field" update="true" > 
+			<column name="hrgcode" length="25"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

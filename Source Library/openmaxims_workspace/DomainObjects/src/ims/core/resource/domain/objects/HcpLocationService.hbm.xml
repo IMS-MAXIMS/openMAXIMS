@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:36 -->
+<!-- Generated: 12/10/2015, 13:31 -->
 <hibernate-mapping>
 	<class name="ims.core.resource.domain.objects.HcpLocationService" table="core_hcplocsvc" lazy="true" discriminator-value="null" >
 		<cache usage="nonstrict-read-write" />
@@ -22,7 +22,21 @@
 		<!-- A one-to-one relationship using a foreign-key is mapping as a
 			many-to-one with a uniqueness contraint -->
 		<many-to-one name="service" class="ims.core.clinical.domain.objects.Service" unique="true" foreign-key="hcplocsvc_service_fk" access="field" cascade="save-update">
-			<column name="service" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+			<column name="service" sql-type="numeric(10,0)" not-null="true" unique="false"   />
 		</many-to-one>
+<!-- debug: function -->
+<!-- debug: IsCollection : true -->
+		<!-- collection of Lookup instances -->
+		<list name="function" table="core_hcplocsvc_c_functi" lazy="true" access="field">
+			<key foreign-key="hcplocsvc_c_functi_ofk">
+				<column name="owner" sql-type="numeric(10,0)"/>
+			</key>
+			<index column="idx"/>
+			<composite-element class="ims.domain.lookups.LookupInstanceRef">
+				<many-to-one name="instance" class="ims.domain.lookups.LookupInstance" access="field">
+					<column name="instance_id" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+				</many-to-one>
+			</composite-element>
+		</list>
 	</class>
 </hibernate-mapping>

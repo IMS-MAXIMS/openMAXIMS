@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,16 +15,23 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 package ims.clinical.helper;
 
 import ims.admin.helper.Keywords;
 import ims.clinical.vo.DischargeDetailsVoCollection;
+import ims.clinical.vo.RTLSummaryVo;
 import ims.clinical.vo.TTAMedicationAndPharmacyVo;
 import ims.clinical.vo.TTAMedicationAndPharmacyVoCollection;
 import ims.clinical.vo.TTAMedicationDetailVo;
 import ims.clinical.vo.domain.DischargeDetailsVoAssembler;
+import ims.clinical.vo.domain.RTLSummaryVoAssembler;
 import ims.clinical.vo.domain.TTAMedicationAndPharmacyVoAssembler;
 import ims.clinical.vo.lookups.DischargeLetterStatus;
 import ims.clinical.vo.lookups.EDischargeSummarySection;
@@ -49,6 +56,7 @@ import ims.domain.exceptions.UniqueKeyViolationException;
 import ims.domain.exceptions.UnqViolationUncheckedException;
 import ims.domain.impl.DomainImpl;
 import ims.edischarge.domain.objects.DischargeDetails;
+import ims.edischarge.domain.objects.RTLSummary;
 import ims.edischarge.domain.objects.Summary;
 import ims.edischarge.domain.objects.SummaryDetail;
 import ims.edischarge.domain.objects.TTAMedicationAndPharmacy;
@@ -355,5 +363,22 @@ public class EDischargeHelper extends DomainImpl implements IEDischargeHelper
 		//Actually this is a stale. Meaning that somebody else removed that type from additional info
 		//throw new CodingRuntimeException("Summary Detail record not instantiated for " + section.getText());
 		throw new StaleObjectException(null);
+	}
+
+	//WDEV-18622
+	public RTLSummaryVo getRTLSummaryForCareContext(CareContextRefVo careContextRefVo)
+	{
+		if (careContextRefVo == null || careContextRefVo.getID_CareContext() == null)
+			return null;
+		DomainFactory factory = getDomainFactory();
+		String hql = "select rtl from RTLSummary rtl left join rtl.careContext as cc where cc.id = :ccontextID";
+		
+		List rtlsummary = factory.find(hql, new String[]{"ccontextID"}, new Object[]{careContextRefVo.getID_CareContext()});
+
+		if (rtlsummary != null && rtlsummary.size() > 0)
+		{
+			return RTLSummaryVoAssembler.create((RTLSummary)rtlsummary.get(0));
+		}
+		return null;
 	}
 }

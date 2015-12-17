@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.scheduling.vo.domain;
@@ -112,6 +117,56 @@ public class Booking_AppointmentVoAssembler
 		valueObjectDest.setConsMediaType(valueObjectSrc.getConsMediaType());
 		// Category
 		valueObjectDest.setCategory(valueObjectSrc.getCategory());
+		// numProviderCancellations
+		valueObjectDest.setNumProviderCancellations(valueObjectSrc.getNumProviderCancellations());
+		// wasPrinted
+		valueObjectDest.setWasPrinted(valueObjectSrc.getWasPrinted());
+		// BookingLetter
+		valueObjectDest.setBookingLetter(valueObjectSrc.getBookingLetter());
+		// numPatientCancellations
+		valueObjectDest.setNumPatientCancellations(valueObjectSrc.getNumPatientCancellations());
+		// FirstApptKPIDate
+		valueObjectDest.setFirstApptKPIDate(valueObjectSrc.getFirstApptKPIDate());
+		// RTTBreachKPIDate
+		valueObjectDest.setRTTBreachKPIDate(valueObjectSrc.getRTTBreachKPIDate());
+		// ReasonForBreachingFirstApptKPI
+		valueObjectDest.setReasonForBreachingFirstApptKPI(valueObjectSrc.getReasonForBreachingFirstApptKPI());
+		// CommentsForBreachingFirstApptKPI
+		valueObjectDest.setCommentsForBreachingFirstApptKPI(valueObjectSrc.getCommentsForBreachingFirstApptKPI());
+		// Date28DayRuleBreach
+		valueObjectDest.setDate28DayRuleBreach(valueObjectSrc.getDate28DayRuleBreach());
+		// DoNotMove
+		valueObjectDest.setDoNotMove(valueObjectSrc.getDoNotMove());
+		// LinkedAppointments
+		valueObjectDest.setLinkedAppointments(valueObjectSrc.getLinkedAppointments());
+		// Day28BreachReason
+		valueObjectDest.setDay28BreachReason(valueObjectSrc.getDay28BreachReason());
+		// Day28BreachComment
+		valueObjectDest.setDay28BreachComment(valueObjectSrc.getDay28BreachComment());
+		// ParentChildSlot
+		valueObjectDest.setParentChildSlot(valueObjectSrc.getParentChildSlot());
+		// isFlexibleAppointment
+		valueObjectDest.setIsFlexibleAppointment(valueObjectSrc.getIsFlexibleAppointment());
+		// isWardAttendance
+		valueObjectDest.setIsWardAttendance(valueObjectSrc.getIsWardAttendance());
+		// ServiceFunction
+		valueObjectDest.setServiceFunction(valueObjectSrc.getServiceFunction());
+		// firstConsultationActivity
+		valueObjectDest.setFirstConsultationActivity(valueObjectSrc.getFirstConsultationActivity());
+		// ElectiveList
+		valueObjectDest.setElectiveList(valueObjectSrc.getElectiveList());
+		// PatientCategory
+		valueObjectDest.setPatientCategory(valueObjectSrc.getPatientCategory());
+		// ApptBookedOnSameDay
+		valueObjectDest.setApptBookedOnSameDay(valueObjectSrc.getApptBookedOnSameDay());
+		// wasApptCommunicated
+		valueObjectDest.setWasApptCommunicated(valueObjectSrc.getWasApptCommunicated());
+		// isDisplaced
+		valueObjectDest.setIsDisplaced(valueObjectSrc.getIsDisplaced());
+		// ListOwnerBooked
+		valueObjectDest.setListOwnerBooked(valueObjectSrc.getListOwnerBooked());
+		// OutcomeDateTime
+		valueObjectDest.setOutcomeDateTime(valueObjectSrc.getOutcomeDateTime());
 	 	return valueObjectDest;
 	 }
 
@@ -762,7 +817,187 @@ public class Booking_AppointmentVoAssembler
 			}			
 			valueObject.setCategory(voLookup31);
 		}
-		 		return valueObject;
+				// numProviderCancellations
+		valueObject.setNumProviderCancellations(domainObject.getNumProviderCancellations());
+		// wasPrinted
+		valueObject.setWasPrinted( domainObject.isWasPrinted() );
+		// BookingLetter
+		valueObject.setBookingLetter(ims.core.vo.domain.PatientDocumentLiteVoAssembler.create(map, domainObject.getBookingLetter()) );
+		// numPatientCancellations
+		valueObject.setNumPatientCancellations(domainObject.getNumPatientCancellations());
+		// FirstApptKPIDate
+		java.util.Date FirstApptKPIDate = domainObject.getFirstApptKPIDate();
+		if ( null != FirstApptKPIDate ) 
+		{
+			valueObject.setFirstApptKPIDate(new ims.framework.utils.Date(FirstApptKPIDate) );
+		}
+		// RTTBreachKPIDate
+		java.util.Date RTTBreachKPIDate = domainObject.getRTTBreachKPIDate();
+		if ( null != RTTBreachKPIDate ) 
+		{
+			valueObject.setRTTBreachKPIDate(new ims.framework.utils.Date(RTTBreachKPIDate) );
+		}
+		// ReasonForBreachingFirstApptKPI
+		ims.domain.lookups.LookupInstance instance38 = domainObject.getReasonForBreachingFirstApptKPI();
+		if ( null != instance38 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance38.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance38.getImage().getImageId(), instance38.getImage().getImagePath());
+			}
+			color = instance38.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.ReasonForBreachingFirstApptKPI voLookup38 = new ims.core.vo.lookups.ReasonForBreachingFirstApptKPI(instance38.getId(),instance38.getText(), instance38.isActive(), null, img, color);
+			ims.core.vo.lookups.ReasonForBreachingFirstApptKPI parentVoLookup38 = voLookup38;
+			ims.domain.lookups.LookupInstance parent38 = instance38.getParent();
+			while (parent38 != null)
+			{
+				if (parent38.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent38.getImage().getImageId(), parent38.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent38.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup38.setParent(new ims.core.vo.lookups.ReasonForBreachingFirstApptKPI(parent38.getId(),parent38.getText(), parent38.isActive(), null, img, color));
+				parentVoLookup38 = parentVoLookup38.getParent();
+								parent38 = parent38.getParent();
+			}			
+			valueObject.setReasonForBreachingFirstApptKPI(voLookup38);
+		}
+				// CommentsForBreachingFirstApptKPI
+		valueObject.setCommentsForBreachingFirstApptKPI(domainObject.getCommentsForBreachingFirstApptKPI());
+		// Date28DayRuleBreach
+		java.util.Date Date28DayRuleBreach = domainObject.getDate28DayRuleBreach();
+		if ( null != Date28DayRuleBreach ) 
+		{
+			valueObject.setDate28DayRuleBreach(new ims.framework.utils.Date(Date28DayRuleBreach) );
+		}
+		// DoNotMove
+		valueObject.setDoNotMove( domainObject.isDoNotMove() );
+		// LinkedAppointments
+		valueObject.setLinkedAppointments(ims.scheduling.vo.domain.BookingAppointmentForLinkedAppointmentsVoAssembler.createBookingAppointmentForLinkedAppointmentsVoCollectionFromBooking_Appointment(map, domainObject.getLinkedAppointments()) );
+		// Day28BreachReason
+		ims.domain.lookups.LookupInstance instance43 = domainObject.getDay28BreachReason();
+		if ( null != instance43 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance43.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance43.getImage().getImageId(), instance43.getImage().getImagePath());
+			}
+			color = instance43.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.scheduling.vo.lookups.RTTWeekWaitOr28DayRuleBreachReason voLookup43 = new ims.scheduling.vo.lookups.RTTWeekWaitOr28DayRuleBreachReason(instance43.getId(),instance43.getText(), instance43.isActive(), null, img, color);
+			ims.scheduling.vo.lookups.RTTWeekWaitOr28DayRuleBreachReason parentVoLookup43 = voLookup43;
+			ims.domain.lookups.LookupInstance parent43 = instance43.getParent();
+			while (parent43 != null)
+			{
+				if (parent43.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent43.getImage().getImageId(), parent43.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent43.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup43.setParent(new ims.scheduling.vo.lookups.RTTWeekWaitOr28DayRuleBreachReason(parent43.getId(),parent43.getText(), parent43.isActive(), null, img, color));
+				parentVoLookup43 = parentVoLookup43.getParent();
+								parent43 = parent43.getParent();
+			}			
+			valueObject.setDay28BreachReason(voLookup43);
+		}
+				// Day28BreachComment
+		valueObject.setDay28BreachComment(domainObject.getDay28BreachComment());
+		// ParentChildSlot
+		valueObject.setParentChildSlot(ims.scheduling.vo.domain.SessionParentChildSlotForBookingVoAssembler.create(map, domainObject.getParentChildSlot()) );
+		// isFlexibleAppointment
+		valueObject.setIsFlexibleAppointment( domainObject.isIsFlexibleAppointment() );
+		// isWardAttendance
+		valueObject.setIsWardAttendance( domainObject.isIsWardAttendance() );
+		// ServiceFunction
+		valueObject.setServiceFunction(ims.core.vo.domain.ServiceFunctionLiteVoAssembler.create(map, domainObject.getServiceFunction()) );
+		// firstConsultationActivity
+		valueObject.setFirstConsultationActivity( domainObject.isFirstConsultationActivity() );
+		// ElectiveList
+		if (domainObject.getElectiveList() != null)
+		{
+			if(domainObject.getElectiveList() instanceof HibernateProxy) // If the proxy is set, there is no need to lazy load, the proxy knows the id already. 
+			{
+				HibernateProxy p = (HibernateProxy) domainObject.getElectiveList();
+				int id = Integer.parseInt(p.getHibernateLazyInitializer().getIdentifier().toString());				
+				valueObject.setElectiveList(new ims.RefMan.vo.PatientElectiveListRefVo(id, -1));				
+			}
+			else
+			{
+				valueObject.setElectiveList(new ims.RefMan.vo.PatientElectiveListRefVo(domainObject.getElectiveList().getId(), domainObject.getElectiveList().getVersion()));
+			}
+		}
+		// PatientCategory
+		ims.domain.lookups.LookupInstance instance51 = domainObject.getPatientCategory();
+		if ( null != instance51 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance51.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance51.getImage().getImageId(), instance51.getImage().getImagePath());
+			}
+			color = instance51.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.PatientStatus voLookup51 = new ims.core.vo.lookups.PatientStatus(instance51.getId(),instance51.getText(), instance51.isActive(), null, img, color);
+			ims.core.vo.lookups.PatientStatus parentVoLookup51 = voLookup51;
+			ims.domain.lookups.LookupInstance parent51 = instance51.getParent();
+			while (parent51 != null)
+			{
+				if (parent51.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent51.getImage().getImageId(), parent51.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent51.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup51.setParent(new ims.core.vo.lookups.PatientStatus(parent51.getId(),parent51.getText(), parent51.isActive(), null, img, color));
+				parentVoLookup51 = parentVoLookup51.getParent();
+								parent51 = parent51.getParent();
+			}			
+			valueObject.setPatientCategory(voLookup51);
+		}
+				// ApptBookedOnSameDay
+		valueObject.setApptBookedOnSameDay( domainObject.isApptBookedOnSameDay() );
+		// wasApptCommunicated
+		valueObject.setWasApptCommunicated( domainObject.isWasApptCommunicated() );
+		// isDisplaced
+		valueObject.setIsDisplaced( domainObject.isIsDisplaced() );
+		// ListOwnerBooked
+		valueObject.setListOwnerBooked(ims.core.vo.domain.HcpLiteVoAssembler.create(map, domainObject.getListOwnerBooked()) );
+		// OutcomeDateTime
+		java.util.Date OutcomeDateTime = domainObject.getOutcomeDateTime();
+		if ( null != OutcomeDateTime ) 
+		{
+			valueObject.setOutcomeDateTime(new ims.framework.utils.DateTime(OutcomeDateTime) );
+		}
+ 		return valueObject;
 	 }
 
 
@@ -1028,6 +1263,217 @@ public class Booking_AppointmentVoAssembler
 				domainFactory.getLookupInstance(valueObject.getCategory().getID());
 		}
 		domainObject.setCategory(value31);
+		domainObject.setNumProviderCancellations(valueObject.getNumProviderCancellations());
+		domainObject.setWasPrinted(valueObject.getWasPrinted());
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.documents.domain.objects.PatientDocument value34 = null;
+		if ( null != valueObject.getBookingLetter() ) 
+		{
+			if (valueObject.getBookingLetter().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getBookingLetter()) != null)
+				{
+					value34 = (ims.core.documents.domain.objects.PatientDocument)domMap.get(valueObject.getBookingLetter());
+				}
+			}
+			else
+			{
+				value34 = (ims.core.documents.domain.objects.PatientDocument)domainFactory.getDomainObject(ims.core.documents.domain.objects.PatientDocument.class, valueObject.getBookingLetter().getBoId());
+			}
+		}
+		domainObject.setBookingLetter(value34);
+		domainObject.setNumPatientCancellations(valueObject.getNumPatientCancellations());
+		java.util.Date value36 = null;
+		ims.framework.utils.Date date36 = valueObject.getFirstApptKPIDate();		
+		if ( date36 != null ) 
+		{
+			value36 = date36.getDate();
+		}
+		domainObject.setFirstApptKPIDate(value36);
+		java.util.Date value37 = null;
+		ims.framework.utils.Date date37 = valueObject.getRTTBreachKPIDate();		
+		if ( date37 != null ) 
+		{
+			value37 = date37.getDate();
+		}
+		domainObject.setRTTBreachKPIDate(value37);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value38 = null;
+		if ( null != valueObject.getReasonForBreachingFirstApptKPI() ) 
+		{
+			value38 =
+				domainFactory.getLookupInstance(valueObject.getReasonForBreachingFirstApptKPI().getID());
+		}
+		domainObject.setReasonForBreachingFirstApptKPI(value38);
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getCommentsForBreachingFirstApptKPI() != null && valueObject.getCommentsForBreachingFirstApptKPI().equals(""))
+		{
+			valueObject.setCommentsForBreachingFirstApptKPI(null);
+		}
+		domainObject.setCommentsForBreachingFirstApptKPI(valueObject.getCommentsForBreachingFirstApptKPI());
+		java.util.Date value40 = null;
+		ims.framework.utils.Date date40 = valueObject.getDate28DayRuleBreach();		
+		if ( date40 != null ) 
+		{
+			value40 = date40.getDate();
+		}
+		domainObject.setDate28DayRuleBreach(value40);
+		domainObject.setDoNotMove(valueObject.getDoNotMove());
+
+		// SaveAsRefVO treated as RefValueObject
+		ims.scheduling.vo.Booking_AppointmentRefVoCollection refCollection42 = new ims.scheduling.vo.Booking_AppointmentRefVoCollection();
+		if (valueObject.getLinkedAppointments() != null)
+		{
+			for (int i42=0; i42<valueObject.getLinkedAppointments().size(); i42++)
+			{
+				ims.scheduling.vo.Booking_AppointmentRefVo ref42 = (ims.scheduling.vo.Booking_AppointmentRefVo)valueObject.getLinkedAppointments().get(i42);
+				refCollection42.add(ref42);
+			}
+		}
+		int size42 = (null == refCollection42) ? 0 : refCollection42.size();		
+		java.util.Set domainLinkedAppointments42 = domainObject.getLinkedAppointments();
+		if (domainLinkedAppointments42 == null)
+		{
+			domainLinkedAppointments42 = new java.util.HashSet();
+		}
+		java.util.Set newSet42  = new java.util.HashSet();
+		for(int i=0; i<size42; i++) 
+		{
+			ims.scheduling.vo.Booking_AppointmentRefVo vo = refCollection42.get(i);					
+			ims.scheduling.domain.objects.Booking_Appointment dom = null;
+			if ( null != vo ) 
+			{
+				if (vo.getBoId() == null)
+				{
+					if (domMap.get(vo) != null)
+					{
+						dom = (ims.scheduling.domain.objects.Booking_Appointment)domMap.get(vo);
+					}
+				}
+				else
+				{
+					dom = (ims.scheduling.domain.objects.Booking_Appointment)domainFactory.getDomainObject( ims.scheduling.domain.objects.Booking_Appointment.class, vo.getBoId());
+				}
+			}
+
+			//Trying to avoid the hibernate collection being marked as dirty via its public interface methods. (like add)
+			if (!domainLinkedAppointments42.contains(dom))
+			{
+				domainLinkedAppointments42.add(dom);
+			}
+			newSet42.add(dom);			
+		}
+		java.util.Set removedSet42 = new java.util.HashSet();
+		java.util.Iterator iter42 = domainLinkedAppointments42.iterator();
+		//Find out which objects need to be removed
+		while (iter42.hasNext())
+		{
+			ims.domain.DomainObject o = (ims.domain.DomainObject)iter42.next();			
+			if ((o == null || o.getIsRIE() == null || !o.getIsRIE().booleanValue()) && !newSet42.contains(o))
+			{
+				removedSet42.add(o);
+			}
+		}
+		iter42 = removedSet42.iterator();
+		//Remove the unwanted objects
+		while (iter42.hasNext())
+		{
+			domainLinkedAppointments42.remove(iter42.next());
+		}		
+		
+		domainObject.setLinkedAppointments(domainLinkedAppointments42);		
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value43 = null;
+		if ( null != valueObject.getDay28BreachReason() ) 
+		{
+			value43 =
+				domainFactory.getLookupInstance(valueObject.getDay28BreachReason().getID());
+		}
+		domainObject.setDay28BreachReason(value43);
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getDay28BreachComment() != null && valueObject.getDay28BreachComment().equals(""))
+		{
+			valueObject.setDay28BreachComment(null);
+		}
+		domainObject.setDay28BreachComment(valueObject.getDay28BreachComment());
+		domainObject.setParentChildSlot(ims.scheduling.vo.domain.SessionParentChildSlotForBookingVoAssembler.extractSessionParentChildSlot(domainFactory, valueObject.getParentChildSlot(), domMap));
+		domainObject.setIsFlexibleAppointment(valueObject.getIsFlexibleAppointment());
+		domainObject.setIsWardAttendance(valueObject.getIsWardAttendance());
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.clinical.domain.objects.ServiceFunction value48 = null;
+		if ( null != valueObject.getServiceFunction() ) 
+		{
+			if (valueObject.getServiceFunction().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getServiceFunction()) != null)
+				{
+					value48 = (ims.core.clinical.domain.objects.ServiceFunction)domMap.get(valueObject.getServiceFunction());
+				}
+			}
+			else
+			{
+				value48 = (ims.core.clinical.domain.objects.ServiceFunction)domainFactory.getDomainObject(ims.core.clinical.domain.objects.ServiceFunction.class, valueObject.getServiceFunction().getBoId());
+			}
+		}
+		domainObject.setServiceFunction(value48);
+		domainObject.setFirstConsultationActivity(valueObject.getFirstConsultationActivity());
+		ims.RefMan.domain.objects.PatientElectiveList value50 = null;
+		if ( null != valueObject.getElectiveList() ) 
+		{
+			if (valueObject.getElectiveList().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getElectiveList()) != null)
+				{
+					value50 = (ims.RefMan.domain.objects.PatientElectiveList)domMap.get(valueObject.getElectiveList());
+				}
+			}
+			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
+			{
+				value50 = domainObject.getElectiveList();	
+			}
+			else
+			{
+				value50 = (ims.RefMan.domain.objects.PatientElectiveList)domainFactory.getDomainObject(ims.RefMan.domain.objects.PatientElectiveList.class, valueObject.getElectiveList().getBoId());
+			}
+		}
+		domainObject.setElectiveList(value50);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value51 = null;
+		if ( null != valueObject.getPatientCategory() ) 
+		{
+			value51 =
+				domainFactory.getLookupInstance(valueObject.getPatientCategory().getID());
+		}
+		domainObject.setPatientCategory(value51);
+		domainObject.setApptBookedOnSameDay(valueObject.getApptBookedOnSameDay());
+		domainObject.setWasApptCommunicated(valueObject.getWasApptCommunicated());
+		domainObject.setIsDisplaced(valueObject.getIsDisplaced());
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.resource.people.domain.objects.Hcp value55 = null;
+		if ( null != valueObject.getListOwnerBooked() ) 
+		{
+			if (valueObject.getListOwnerBooked().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getListOwnerBooked()) != null)
+				{
+					value55 = (ims.core.resource.people.domain.objects.Hcp)domMap.get(valueObject.getListOwnerBooked());
+				}
+			}
+			else
+			{
+				value55 = (ims.core.resource.people.domain.objects.Hcp)domainFactory.getDomainObject(ims.core.resource.people.domain.objects.Hcp.class, valueObject.getListOwnerBooked().getBoId());
+			}
+		}
+		domainObject.setListOwnerBooked(value55);
+		ims.framework.utils.DateTime dateTime56 = valueObject.getOutcomeDateTime();
+		java.util.Date value56 = null;
+		if ( dateTime56 != null ) 
+		{
+			value56 = dateTime56.getJavaDate();
+		}
+		domainObject.setOutcomeDateTime(value56);
 
 		return domainObject;
 	}

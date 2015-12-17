@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.core.vo.domain;
@@ -62,6 +67,10 @@ public class PasEventADTVoAssembler
 		valueObjectDest.setPASSpecialty(valueObjectSrc.getPASSpecialty());
 		// EventType
 		valueObjectDest.setEventType(valueObjectSrc.getEventType());
+		// eventDateTime
+		valueObjectDest.setEventDateTime(valueObjectSrc.getEventDateTime());
+		// Service
+		valueObjectDest.setService(valueObjectSrc.getService());
 	 	return valueObjectDest;
 	 }
 
@@ -353,9 +362,9 @@ public class PasEventADTVoAssembler
 			return null;
 			
 		// patient
-		valueObject.setPatient(ims.core.vo.domain.PatientShortAssembler.create(map, domainObject.getPatient()) );
+		valueObject.setPatient(ims.core.vo.domain.PatientLite_IdentifiersVoAssembler.create(map, domainObject.getPatient()) );
 		// Consultant
-		valueObject.setConsultant((ims.core.vo.MedicVo)ims.core.vo.domain.MedicVoAssembler.create(map, domainObject.getConsultant()) );
+		valueObject.setConsultant(ims.core.vo.domain.MedicVoAssembler.create(map, domainObject.getConsultant()) );
 		// Specialty
 		ims.domain.lookups.LookupInstance instance3 = domainObject.getSpecialty();
 		if ( null != instance3 ) {
@@ -466,7 +475,15 @@ public class PasEventADTVoAssembler
 			}			
 			valueObject.setEventType(voLookup6);
 		}
-		 		return valueObject;
+				// eventDateTime
+		java.util.Date eventDateTime = domainObject.getEventDateTime();
+		if ( null != eventDateTime ) 
+		{
+			valueObject.setEventDateTime(new ims.framework.utils.DateTime(eventDateTime) );
+		}
+		// Service
+		valueObject.setService(ims.core.vo.domain.ServiceLiteVoAssembler.create(map, domainObject.getService()) );
+ 		return valueObject;
 	 }
 
 
@@ -532,7 +549,23 @@ public class PasEventADTVoAssembler
 			}
 		}
 		domainObject.setPatient(value1);
-		domainObject.setConsultant(ims.core.vo.domain.MedicVoAssembler.extractMedic(domainFactory, (ims.core.vo.MedicVo)valueObject.getConsultant(), domMap));
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.resource.people.domain.objects.Medic value2 = null;
+		if ( null != valueObject.getConsultant() ) 
+		{
+			if (valueObject.getConsultant().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getConsultant()) != null)
+				{
+					value2 = (ims.core.resource.people.domain.objects.Medic)domMap.get(valueObject.getConsultant());
+				}
+			}
+			else
+			{
+				value2 = (ims.core.resource.people.domain.objects.Medic)domainFactory.getDomainObject(ims.core.resource.people.domain.objects.Medic.class, valueObject.getConsultant().getBoId());
+			}
+		}
+		domainObject.setConsultant(value2);
 		// create LookupInstance from vo LookupType
 		ims.domain.lookups.LookupInstance value3 = null;
 		if ( null != valueObject.getSpecialty() ) 
@@ -541,7 +574,23 @@ public class PasEventADTVoAssembler
 				domainFactory.getLookupInstance(valueObject.getSpecialty().getID());
 		}
 		domainObject.setSpecialty(value3);
-		domainObject.setLocation(ims.core.vo.domain.LocationLiteVoAssembler.extractLocation(domainFactory, valueObject.getLocation(), domMap));
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.resource.place.domain.objects.Location value4 = null;
+		if ( null != valueObject.getLocation() ) 
+		{
+			if (valueObject.getLocation().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getLocation()) != null)
+				{
+					value4 = (ims.core.resource.place.domain.objects.Location)domMap.get(valueObject.getLocation());
+				}
+			}
+			else
+			{
+				value4 = (ims.core.resource.place.domain.objects.Location)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.Location.class, valueObject.getLocation().getBoId());
+			}
+		}
+		domainObject.setLocation(value4);
 		// create LookupInstance from vo LookupType
 		ims.domain.lookups.LookupInstance value5 = null;
 		if ( null != valueObject.getPASSpecialty() ) 
@@ -558,6 +607,30 @@ public class PasEventADTVoAssembler
 				domainFactory.getLookupInstance(valueObject.getEventType().getID());
 		}
 		domainObject.setEventType(value6);
+		ims.framework.utils.DateTime dateTime7 = valueObject.getEventDateTime();
+		java.util.Date value7 = null;
+		if ( dateTime7 != null ) 
+		{
+			value7 = dateTime7.getJavaDate();
+		}
+		domainObject.setEventDateTime(value7);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.clinical.domain.objects.Service value8 = null;
+		if ( null != valueObject.getService() ) 
+		{
+			if (valueObject.getService().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getService()) != null)
+				{
+					value8 = (ims.core.clinical.domain.objects.Service)domMap.get(valueObject.getService());
+				}
+			}
+			else
+			{
+				value8 = (ims.core.clinical.domain.objects.Service)domainFactory.getDomainObject(ims.core.clinical.domain.objects.Service.class, valueObject.getService().getBoId());
+			}
+		}
+		domainObject.setService(value8);
 
 		return domainObject;
 	}

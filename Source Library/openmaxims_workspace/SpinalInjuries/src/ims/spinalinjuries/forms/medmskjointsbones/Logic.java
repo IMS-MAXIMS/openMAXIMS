@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -29,7 +34,6 @@ import ims.core.vo.AuthoringInformationVo;
 import ims.core.vo.CareContextLiteVo;
 import ims.core.vo.CareContextShortVo;
 import ims.core.vo.ClinicalContactShortVo;
-import ims.core.vo.HcpLiteVo;
 import ims.core.vo.MskGroupVo;
 import ims.core.vo.MskGroupVoCollection;
 import ims.core.vo.MskJointMovementVo;
@@ -44,7 +48,6 @@ import ims.framework.enumerations.FormMode;
 import ims.framework.enumerations.SortOrder;
 import ims.framework.exceptions.PresentationLogicException;
 import ims.framework.utils.Color;
-import ims.framework.utils.DateTime;
 import ims.generalmedical.vo.MedicalProbOnAdmisVo;
 import ims.generalmedical.vo.MskBoneJointShortVo;
 import ims.generalmedical.vo.MskBoneJointShortVoCollection;
@@ -220,20 +223,15 @@ public class Logic extends BaseLogic
 	private void newParentInstance()
 	{
 		form.grdIndex().getRows().clear();
-		MskBoneJointVo voMskBoneJoint = new MskBoneJointVo();
-		if (!engine.getFormName().equals(form.getForms().SpinalInjuries.MedMskJointsBones))
-		{
-			voMskBoneJoint.setAuthoringDateTime(new DateTime());
-			HcpLiteVo hcp = (HcpLiteVo) domain.getHcpLiteUser();
-			if (hcp != null)
-				voMskBoneJoint.setAuthoringCP(hcp);
-		}
-		else
-		{
-			voMskBoneJoint.setAuthoringCP(form.getGlobalContext().Core.getCurrentClinicalContact().getSeenBy());
-			voMskBoneJoint.setAuthoringDateTime(form.getGlobalContext().Core.getCurrentClinicalContact().getStartDateTime());
-		}
+		//WDEV-18846
+		setDefaultAuthoringInfo();
 
+		MskBoneJointVo voMskBoneJoint = new MskBoneJointVo();
+		if (form.ccAuthoring().getValue() != null)
+		{	
+			voMskBoneJoint.setAuthoringDateTime(form.ccAuthoring().getValue().getAuthoringDateTime());
+			voMskBoneJoint.setAuthoringCP(form.ccAuthoring().getValue().getAuthoringHcp());
+		}
 		if (engine.getFormName().equals(form.getForms().SpinalInjuries.MedMskJointsBonesDialog))
 		{
 			// all records are going to be saved under the careContext in one record for all outpatient Clinical contacts,
@@ -250,7 +248,25 @@ public class Logic extends BaseLogic
 		form.getLocalContext().setSelectedRecord(voMskBoneJoint);
 
 	}
-
+	
+	//WDEV-18846 - start
+	private void setDefaultAuthoringInfo()
+	{		
+		boolean isLoggedOnUserHCP = domain.getHcpLiteUser() != null;
+		if (isLoggedOnUserHCP)
+		{
+			form.ccAuthoring().initializeComponent(true,null);
+		}
+		else
+		{
+			if (form.getGlobalContext().Core.getCurrentClinicalContact() != null)
+			{
+				form.ccAuthoring().initializeComponent(false,true); //WDEV-15172 
+			}
+		}
+	}	
+	//---------- end WDEV-18846
+	
 	private void populateParentInstanceControls(MskBoneJointVo voMskBoneJoint)
 	{
 		if (voMskBoneJoint != null)
@@ -1602,13 +1618,13 @@ public class Logic extends BaseLogic
 
 	private void updateControlsState()
 	{
-		prepareAuthoringControls();
+		enableAuthoringControls(FormMode.EDIT.equals(form.getMode())); //WDEV-18846
 		enableRecordBrowser();
 		updateContextMenusState();
 		setAddApplyCaption();
 	}
 
-	private void prepareAuthoringControls()
+	/*private void prepareAuthoringControls()
 	{
 		if (engine.getFormName().equals(form.getForms().SpinalInjuries.MedMskJointsBonesInpatient))
 		{
@@ -1635,7 +1651,7 @@ public class Logic extends BaseLogic
 		{
 			enableAuthoringControls(false);
 		}
-	}
+	}*/
 
 	private void enableAuthoringControls(boolean enable)
 	{

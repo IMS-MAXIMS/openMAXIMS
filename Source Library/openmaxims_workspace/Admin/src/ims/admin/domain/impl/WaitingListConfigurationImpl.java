@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -29,20 +34,26 @@ import ims.admin.vo.domain.ServiceForElectiveListConfigVoAssembler;
 import ims.core.configuration.domain.objects.ElectiveListConfiguration;
 import ims.core.configuration.vo.ElectiveListConfigurationRefVo;
 import ims.core.resource.people.vo.HcpRefVo;
+import ims.core.resource.place.domain.objects.Location;
+import ims.core.resource.place.vo.LocSiteRefVo;
 import ims.core.vo.HcpLiteVoCollection;
+import ims.core.vo.LocSiteLiteVoCollection;
 import ims.core.vo.LocationLiteVoCollection;
 import ims.core.vo.domain.HcpLiteVoAssembler;
+import ims.core.vo.domain.LocSiteLiteVoAssembler;
 import ims.core.vo.domain.LocationLiteVoAssembler;
 import ims.core.vo.lookups.LocationType;
 import ims.core.vo.lookups.ServiceCategory;
 import ims.domain.DomainFactory;
 import ims.domain.exceptions.DomainRuntimeException;
+import ims.framework.enumerations.SortOrder;
 import ims.framework.exceptions.CodingRuntimeException;
 import ims.framework.utils.Date;
 import ims.framework.utils.DateTime;
 import ims.framework.utils.Time;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -64,7 +75,7 @@ public class WaitingListConfigurationImpl extends BaseElectiveListConfigurationI
 	}
 	*/
 	
-	public LocationLiteVoCollection listHospitals(String name)
+	public LocSiteLiteVoCollection listHospitals(String name) //WDEV-20064
 	{
 		DomainFactory factory = getDomainFactory();
 
@@ -73,24 +84,25 @@ public class WaitingListConfigurationImpl extends BaseElectiveListConfigurationI
 
 		StringBuffer hql = new StringBuffer();
 
-		hql.append(" select loc from Location as loc ");
-		hql.append(" where loc.upperName like :LocName and loc.isActive = 1 and loc.isVirtual = 0 and loc.type <> :surgery ");
+		hql.append(" select loc from LocSite as loc ");//WDEV-20064
+		hql.append(" where loc.upperName like :LocName and loc.isActive = 1 and loc.isVirtual = 0 and loc.type = :Hospital ");
 		hql.append(" order by loc.upperName asc");
 		
 		markers.add("LocName");
 		values.add(name.toUpperCase()+"%");
 		
-		markers.add("surgery");
-		values.add(getDomLookup(LocationType.SURGERY));
+		markers.add("Hospital");
+		values.add(getDomLookup(LocationType.HOSP));
 		
-		return LocationLiteVoAssembler.createLocationLiteVoCollectionFromLocation(factory.find(hql.toString(), markers, values));
+		return LocSiteLiteVoAssembler.createLocSiteLiteVoCollectionFromLocSite(factory.find(hql.toString(), markers, values));
 	}
 
 	public ims.admin.vo.ServiceForElectiveListConfigVoCollection listServices(String name)
 	{
-		StringBuilder hqlBuilder = new StringBuilder("select s1_1 from Service as s1_1 where s1_1.upperName like :servName and s1_1.isActive = 1 and s1_1.serviceCategory.id <> :patCategoryID ");
+		//WDEV-20064
+		StringBuilder hqlBuilder = new StringBuilder("select s1_1 from Service as s1_1 where s1_1.upperName like :servName and s1_1.isActive = 1 and s1_1.serviceCategory.id =:clinicalCategoryID order by s1_1.upperName asc");
 				
-		List <?> dos = getDomainFactory().find(hqlBuilder.toString(),new String[] {"servName","patCategoryID"},new Object[] {name.toUpperCase()+"%",ServiceCategory.PATHOLOGY_DISCIPLINE.getID()});
+		List <?> dos = getDomainFactory().find(hqlBuilder.toString(),new String[] {"servName","clinicalCategoryID"},new Object[] {name.toUpperCase()+"%",ServiceCategory.CLINICAL.getID()});
 		
 		if (dos == null || dos.size() == 0)
 			return null;
@@ -336,18 +348,17 @@ public class WaitingListConfigurationImpl extends BaseElectiveListConfigurationI
 		markers.add("hcp");
 		values.add(consultantRef.getID_Hcp());
 		
-		if (serviceVo.getSpecialty()!=null)
-		{
-			hql.append(" and wLC.service.specialty.id=:Specialty ");
-			markers.add("Specialty");
-			values.add(serviceVo.getSpecialty().getID());
-		}
-		else
-		{
+		//WDEV-21153 - comment this  code
+//		if (serviceVo.getSpecialty()!=null)
+//		{
+//			hql.append(" and wLC.service.specialty.id=:Specialty ");
+//			markers.add("Specialty");
+//			values.add(serviceVo.getSpecialty().getID());
+//		}
 			hql.append(" and wLC.service.id = :serv "); 
 			markers.add("serv");
 			values.add(serviceVo.getID_Service());
-		}
+			//end WDEV-21153
 			
 		
 		if (waitingListConfigRef!=null && waitingListConfigRef.getID_ElectiveListConfigurationIsNotNull())
@@ -359,7 +370,7 @@ public class WaitingListConfigurationImpl extends BaseElectiveListConfigurationI
 		
 		if (startDate!=null && endDate!=null)
 		{
-			hql.append(" and ((wLC.startDate <= :StartDate and  wLC.endDate >= :StartDate ) or ( wLC.startDate <= :EndDate and wLC.endDate >= :EndDate) or (wLC.startDate >= :StartDate and wLC.endDate <= :EndDate) )");
+			hql.append(" and ((wLC.startDate <= :StartDate and  wLC.endDate is null ) or ( wLC.startDate <= :EndDate and wLC.endDate is null) or (wLC.startDate <= :StartDate and  wLC.endDate >= :StartDate ) or ( wLC.startDate <= :EndDate and wLC.endDate >= :EndDate) or (wLC.startDate >= :StartDate and wLC.endDate <= :EndDate) )");
 			
 			markers.add("StartDate");
 			DateTime startDateTime = new DateTime(startDate, new Time(0, 0));
@@ -371,7 +382,7 @@ public class WaitingListConfigurationImpl extends BaseElectiveListConfigurationI
 		}
 		else if (startDate!=null && endDate==null)
 		{
-			hql.append(" and (wLC.startDate <= :StartDate and  wLC.endDate >= :StartDate ) ");
+			hql.append(" and ((wLC.startDate <= :StartDate and  wLC.endDate >= :StartDate ) or (wLC.startDate <= :StartDate and  wLC.endDate is null )or (wLC.endDate >= :StartDate ) or (wLC.endDate is null) ) ");
 			
 			markers.add("StartDate");
 			DateTime startDateTime = new DateTime(startDate, new Time(0, 0));
@@ -397,8 +408,8 @@ public class WaitingListConfigurationImpl extends BaseElectiveListConfigurationI
 
 		DomainFactory factory = getDomainFactory();
 		StringBuffer hql = new StringBuffer();
-
-		hql.append(" SELECT COUNT(pel.id) FROM PatientElectiveList AS pel LEFT JOIN pel.electiveList AS elConfig WHERE elConfig.id = :configID ");
+		//WDEV-18522 
+		hql.append(" SELECT COUNT(pel.id) FROM PatientElectiveList AS pel LEFT JOIN pel.electiveList AS elConfig left join pel.electiveListStatus as els left join els.electiveListStatus as lels WHERE elConfig.id = :configID and lels.id <> -2603 ");
 
 		Object[] count = factory.find(hql.toString(), new String[] { "configID" }, new Object[] { configRef.getID_ElectiveListConfiguration() }).toArray();
 
@@ -410,6 +421,62 @@ public class WaitingListConfigurationImpl extends BaseElectiveListConfigurationI
 
 		return Boolean.TRUE;
 	}
+
+	//WDEV-20064
+	public LocationLiteVoCollection listCaseNoteLocationByParentLocation(LocSiteRefVo parentLocSite, String name)
+	{
+		if (parentLocSite==null)
+			return null;
+		
+        if(name != null)
+        {
+              String[] arr = null;
+              if(name.contains("%"))
+              {
+                    arr = name.split("%");
+                    if(arr.length > 0)
+                          name = arr[0] + "%";
+                    else
+                          name = "%";
+              }
+        }
+       
+        DomainFactory factory = getDomainFactory();
+        Location doLocation = (Location) factory.getDomainObject(Location.class, parentLocSite.getID_Location());
+        ArrayList listItems = new ArrayList();
+        buildLocationsList(doLocation, listItems, null, true, name);
+
+        return LocationLiteVoAssembler.createLocationLiteVoCollectionFromLocation(listItems).sort(SortOrder.ASCENDING);
+
+	}
+
+	private void buildLocationsList(Location location, ArrayList<Location> listItems, LocationType type, Boolean isActive, String name)
+    {
+		if((type == null || location.getType().equals(getDomLookup(type))) 
+            && location.isIsActive().equals(isActive) 
+            && (name == null || name.equals("%") || location.getUpperName().indexOf(name.toUpperCase()) > -1)
+            && (location.isIsVirtual().equals(Boolean.FALSE) || (location.isIsVirtual().equals(Boolean.TRUE) && location.getType().equals(getDomLookup(LocationType.CASE_NOTE_FOLDER_LOCATION)))) //WDEV-20844 - to list also locations of type Case Note Folder Location that are virtual locations
+            && Boolean.TRUE.equals(location.isCaseNoteFolderLocation())) 
+    	{
+            listItems.add(location);
+    	}
+		
+		Iterator it = location.getLocations().iterator();
+		while(it.hasNext())
+		{
+            Location doLocation = (Location) it.next();
+            if((type == null || doLocation.getType().equals(getDomLookup(type))) 
+                  && doLocation.isIsActive().equals(isActive) 
+                  && (name == null || name.equals("%") || doLocation.getUpperName().indexOf(name.toUpperCase()) > -1)
+                  && (doLocation.isIsVirtual().equals(Boolean.FALSE) || (doLocation.isIsVirtual().equals(Boolean.TRUE) && doLocation.getType().equals(getDomLookup(LocationType.CASE_NOTE_FOLDER_LOCATION)))) //WDEV-20844 - to list also locations of type Case Note Folder Location that are virtual locations
+                  && Boolean.TRUE.equals(doLocation.isCaseNoteFolderLocation())) 
+            {
+                  listItems.add(doLocation);
+            }
+            
+            buildLocationsList(doLocation, listItems, type, isActive, name);
+		}
+    }
 
 	
 }

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -45,6 +50,7 @@ import ims.core.vo.HcpLiteVo;
 import ims.core.vo.HcpLiteVoCollection;
 import ims.core.vo.ServiceLiteVoCollection;
 import ims.core.vo.lookups.LineType;
+import ims.core.vo.lookups.LocationType;
 import ims.core.vo.lookups.Sex;
 import ims.domain.exceptions.DomainInterfaceException;
 import ims.framework.FormName;
@@ -59,6 +65,8 @@ import ims.framework.utils.Date;
 import ims.framework.utils.DateTime;
 import ims.framework.utils.Image;
 import ims.framework.utils.Time;
+import ims.ocrr.forms.pathologyresults.GenForm.lyrMainLayer.tabSearchContainer.GroupFilterResultsEnumeration;
+import ims.ocrr.forms.pathologyresults.GenForm.lyrMainLayer.tabSearchContainer.GroupInpatientOutpatientEnumeration;
 import ims.ocrr.forms.pathologyresults.GenForm.lyrMainLayer.tabSearchContainer.GrpCriteriaEnumeration;
 import ims.ocrr.forms.pathologyresults.GenForm.lyrMainLayer.tabSearchContainer.grdResultsRow;
 import ims.ocrr.vo.InvestigationIndexLiteVo;
@@ -68,6 +76,8 @@ import ims.ocrr.vo.OcsPathRadResultVoCollection;
 import ims.ocrr.vo.OrderInvestigationChartVo;
 import ims.ocrr.vo.OrderResultCommentsVo;
 import ims.ocrr.vo.OrderedInvestigationStatusVo;
+import ims.ocrr.vo.PathologyOrdersResultsChartingCriteriaVo;
+import ims.ocrr.vo.PathologyOrdersResultsSearchCriteriaVo;
 import ims.ocrr.vo.PathologyResultListShortVo;
 import ims.ocrr.vo.PathologyResultListShortVoCollection;
 import ims.ocrr.vo.PathologySpecimenLiteVo;
@@ -99,10 +109,175 @@ public class Logic extends BaseLogic
 
 	private static final Integer	VIEW_GRAPHICAL		= new Integer(0);
 	private static final Integer	VIEW_TABULAR		= new Integer(1);	
+	
+	private static final int LIST_ALL				= 1;
+	private static final int LIST_RESULTS_ONLY		= 2;
+	
+	private static final int IPOP_ALL			= 1;
+	private static final int IPOP_INPATIENT		= 2;
+	private static final int IPOP_OUTPATIENT	= 3;
+	
 
+	
 	protected void onFormOpen() throws ims.framework.exceptions.PresentationLogicException
 	{
 		initialize();
+		
+		//WDEV-19389 
+		if (!(form.getGlobalContext().Core.getPatientShortIsNotNull() && 
+			((form.getGlobalContext().OCRR.getPathologyOrdersResultsSearchCriteriaIsNotNull() && form.getGlobalContext().Core.getPatientShort().equals(form.getGlobalContext().OCRR.getPathologyOrdersResultsSearchCriteria().getPatient())) || 
+			 (form.getGlobalContext().OCRR.getPathologyOrdersResultsChartingCriteriaIsNotNull() && form.getGlobalContext().Core.getPatientShort().equals(form.getGlobalContext().OCRR.getPathologyOrdersResultsChartingCriteria().getPatient())) ) ) )
+		{
+			form.getGlobalContext().OCRR.setPathologyOrdersResultsChartingCriteria(null);
+			form.getGlobalContext().OCRR.setPathologyOrdersResultsSearchCriteria(null);
+		}
+		
+		if(form.getGlobalContext().OCRR.getPathologyOrdersResultsSearchCriteriaIsNotNull() &&
+		   form.getGlobalContext().Core.getPatientShortIsNotNull() &&
+		   form.getGlobalContext().Core.getPatientShort().equals(form.getGlobalContext().OCRR.getPathologyOrdersResultsSearchCriteria().getPatient())	)
+		{
+			setSearchCriteria(form.getGlobalContext().OCRR.getPathologyOrdersResultsSearchCriteria());
+			search();
+		}
+		//-------------
+		
+		updateControlsState();
+	}
+	
+	private PathologyOrdersResultsSearchCriteriaVo getSearchCriteria()
+	{
+		PathologyOrdersResultsSearchCriteriaVo searchCriteria = new PathologyOrdersResultsSearchCriteriaVo();
+		
+		searchCriteria.setRespClinician(form.lyrMain().tabSearch().qmbClinician().getValue());
+		searchCriteria.setService(form.lyrMain().tabSearch().cmbDiscipline().getValue());
+		searchCriteria.setFromDate(form.lyrMain().tabSearch().dteFrom().getValue());
+		searchCriteria.setToDate(form.lyrMain().tabSearch().dteTo().getValue());
+		searchCriteria.setSearchType(getSearchType());
+		searchCriteria.setInpatientOutpatientSearchType(getInpatientOutpatientSearchType());
+		searchCriteria.setInvestigation(form.lyrMain().tabSearch().qmbInvestigationType().getValue());
+		searchCriteria.setPatient(form.getGlobalContext().Core.getPatientShort());
+		
+		
+		return searchCriteria;
+	}
+
+	private void setSearchCriteria(PathologyOrdersResultsSearchCriteriaVo pathologyOrdersResultsSearchCriteriaVo) 
+	{
+		if (pathologyOrdersResultsSearchCriteriaVo.getRespClinicianIsNotNull())
+		{
+			form.lyrMain().tabSearch().qmbClinician().newRow(pathologyOrdersResultsSearchCriteriaVo.getRespClinician(), pathologyOrdersResultsSearchCriteriaVo.getRespClinician().getName().toString());
+			form.lyrMain().tabSearch().qmbClinician().setValue(pathologyOrdersResultsSearchCriteriaVo.getRespClinician());
+		}
+		if (pathologyOrdersResultsSearchCriteriaVo.getInvestigationIsNotNull())
+		{
+			form.lyrMain().tabSearch().qmbInvestigationType().newRow(pathologyOrdersResultsSearchCriteriaVo.getInvestigation(), pathologyOrdersResultsSearchCriteriaVo.getInvestigation().getName());
+			form.lyrMain().tabSearch().qmbInvestigationType().setValue(pathologyOrdersResultsSearchCriteriaVo.getInvestigation());
+		}
+		
+		form.lyrMain().tabSearch().dteFrom().setValue(pathologyOrdersResultsSearchCriteriaVo.getFromDate());
+		form.lyrMain().tabSearch().dteTo().setValue(pathologyOrdersResultsSearchCriteriaVo.getToDate());
+		form.lyrMain().tabSearch().cmbDiscipline().setValue(pathologyOrdersResultsSearchCriteriaVo.getService());
+		setInpatientOutpatientSearchType(pathologyOrdersResultsSearchCriteriaVo.getInpatientOutpatientSearchType());
+		setSearchType(pathologyOrdersResultsSearchCriteriaVo.getSearchType());		
+	}
+	
+	
+	private void setInpatientOutpatientSearchType(Integer inpatientOutpatientSearchType)
+	{
+		if (inpatientOutpatientSearchType == null)
+			return;
+		
+		switch (inpatientOutpatientSearchType)
+		{
+			case IPOP_ALL:
+				form.lyrMain().tabSearch().GroupInpatientOutpatient().setValue(GroupInpatientOutpatientEnumeration.rdoIPOPAll);
+				break;
+				
+			case IPOP_INPATIENT:
+				form.lyrMain().tabSearch().GroupInpatientOutpatient().setValue(GroupInpatientOutpatientEnumeration.rdoIPOPInpatient);
+				break;
+				
+			case IPOP_OUTPATIENT:
+				form.lyrMain().tabSearch().GroupInpatientOutpatient().setValue(GroupInpatientOutpatientEnumeration.rdoIPOPOutpatient);
+				break;
+		}
+	}
+
+	private void setSearchType(Integer searchType)
+	{
+		if (searchType == null)
+			return;
+		
+		switch (searchType)
+		{
+		case LIST_ALL:
+			form.lyrMain().tabSearch().GroupFilterResults().setValue(GroupFilterResultsEnumeration.rdoAll);
+			break;
+		case LIST_RESULTS_ONLY:
+			form.lyrMain().tabSearch().GroupFilterResults().setValue(GroupFilterResultsEnumeration.rdoResultsOnly);
+			break;
+		}			
+	}
+
+	private Integer getInpatientOutpatientSearchType()
+	{
+		GroupInpatientOutpatientEnumeration inpatientOutpatientSearchType = form.lyrMain().tabSearch().GroupInpatientOutpatient().getValue();
+		
+		if (GroupInpatientOutpatientEnumeration.rdoIPOPAll.equals(inpatientOutpatientSearchType))
+			return IPOP_ALL;
+		
+		if (GroupInpatientOutpatientEnumeration.rdoIPOPInpatient.equals(inpatientOutpatientSearchType))
+			return IPOP_INPATIENT;
+		
+		if (GroupInpatientOutpatientEnumeration.rdoIPOPOutpatient.equals(inpatientOutpatientSearchType))
+			return IPOP_OUTPATIENT;
+		
+		return null;
+	}
+
+	
+	private Integer getSearchType()
+	{
+		GroupFilterResultsEnumeration searchType = form.lyrMain().tabSearch().GroupFilterResults().getValue();
+		if (GroupFilterResultsEnumeration.rdoAll.equals(searchType))
+		{
+			return LIST_ALL;
+		}
+		if (GroupFilterResultsEnumeration.rdoResultsOnly.equals(searchType))
+		{
+			return LIST_RESULTS_ONLY;
+		}	
+		return null;
+	}
+	
+	private PathologyOrdersResultsChartingCriteriaVo getChartingSearchCriteria()
+	{
+		PathologyOrdersResultsChartingCriteriaVo searchCriteria = new PathologyOrdersResultsChartingCriteriaVo();
+		
+		searchCriteria.setView(form.lyrMain().tabCharting().cmbChartingView().getValue());
+		searchCriteria.setProfile(form.lyrMain().tabCharting().cmbChartType().getValue());
+		searchCriteria.setFromDate(form.lyrMain().tabCharting().dteChartingStartDate().getValue());
+		searchCriteria.setToDate(form.lyrMain().tabCharting().dteChartingEndDate().getValue());
+		searchCriteria.setPatient(form.getGlobalContext().Core.getPatientShort());
+		
+		return searchCriteria;
+	}
+
+	private void setChartingSearchCriteria(PathologyOrdersResultsChartingCriteriaVo pathologyOrdersResultsChartingCriteriaVo) 
+	{
+		form.lyrMain().tabCharting().cmbChartingView().setValue(pathologyOrdersResultsChartingCriteriaVo.getView());
+		try
+		{
+			onCmbChartingViewValueChanged();
+		}
+		catch (PresentationLogicException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		form.lyrMain().tabCharting().cmbChartType().setValue(pathologyOrdersResultsChartingCriteriaVo.getProfile());
+		form.lyrMain().tabCharting().dteChartingStartDate().setValue(pathologyOrdersResultsChartingCriteriaVo.getFromDate());
+		form.lyrMain().tabCharting().dteChartingEndDate().setValue(pathologyOrdersResultsChartingCriteriaVo.getToDate());			
 	}
 
 	protected void onCmbChartingViewValueChanged() throws PresentationLogicException
@@ -172,12 +347,16 @@ public class Logic extends BaseLogic
 	protected void onImbClearClick() throws ims.framework.exceptions.PresentationLogicException
 	{
 		clearControls();
+		form.getGlobalContext().OCRR.setPathologyOrdersResultsSearchCriteria(null);//WDEV-19389 
 	}
 
 	protected void onImbSearchClick() throws ims.framework.exceptions.PresentationLogicException
 	{
 		if (validateSearchCriteria())
+		{
 			search();
+			form.getGlobalContext().OCRR.setPathologyOrdersResultsSearchCriteria(getSearchCriteria());//WDEV-19389 
+		}
 	}
 
 	protected void onQmbClinicianTextSubmited(String value) throws PresentationLogicException
@@ -193,6 +372,7 @@ public class Logic extends BaseLogic
 		populateChartTypes();
 		form.lyrMain().tabSearch().GroupFilterResults().setValue(GenForm.lyrMainLayer.tabSearchContainer.GroupFilterResultsEnumeration.rdoAll);
 		form.lyrMain().tabSearch().GrpCriteria().setValue(GenForm.lyrMainLayer.tabSearchContainer.GrpCriteriaEnumeration.rdoBegins);
+		form.lyrMain().tabSearch().GroupInpatientOutpatient().setValue(GroupInpatientOutpatientEnumeration.rdoIPOPAll);
 		updateTotal(0);
 
 		form.lyrMain().tabCharting().dteChartingStartDate().setValue(new Date().addYear(-1));
@@ -236,6 +416,7 @@ public class Logic extends BaseLogic
 		// form.qmbOrderingLocation().clear();
 		form.lyrMain().tabSearch().qmbClinician().clear();
 		form.lyrMain().tabSearch().GroupFilterResults().setValue(GenForm.lyrMainLayer.tabSearchContainer.GroupFilterResultsEnumeration.rdoAll);
+		form.lyrMain().tabSearch().GroupInpatientOutpatient().setValue(GroupInpatientOutpatientEnumeration.rdoIPOPAll);
 		form.lyrMain().tabSearch().grdResults().getRows().clear();
 		
 		updateTotal(0); //WDEV-16981
@@ -358,7 +539,11 @@ public class Logic extends BaseLogic
 		PathologyResultListShortVoCollection results;
 		try
 		{
-			results = domain.listResults(form.getGlobalContext().Core.getPatientShort(), form.lyrMain().tabSearch().dteFrom().getValue(), form.lyrMain().tabSearch().dteTo().getValue(), form.lyrMain().tabSearch().qmbInvestigationType().getValue(), form.lyrMain().tabSearch().cmbDiscipline().getValue(), form.lyrMain().tabSearch().qmbClinician().getValue(), new Boolean(form.lyrMain().tabSearch().GroupFilterResults().getValue() == GenForm.lyrMainLayer.tabSearchContainer.GroupFilterResultsEnumeration.rdoResultsOnly));
+			results = domain.listResults(form.getGlobalContext().Core.getPatientShort(), form.lyrMain().tabSearch().dteFrom().getValue(), form.lyrMain().tabSearch().dteTo().getValue(),
+												form.lyrMain().tabSearch().qmbInvestigationType().getValue(), form.lyrMain().tabSearch().cmbDiscipline().getValue(),
+												form.lyrMain().tabSearch().qmbClinician().getValue(), getInpatientOutpatientSearchType(),
+												new Boolean(form.lyrMain().tabSearch().GroupFilterResults().getValue() == GenForm.lyrMainLayer.tabSearchContainer.GroupFilterResultsEnumeration.rdoResultsOnly),
+												form.lyrMain().tabSearch().chkChecked().getValue(), form.lyrMain().tabSearch().chkUnchecked().getValue());
 		}
 		catch (DomainInterfaceException e)
 		{
@@ -553,6 +738,16 @@ public class Logic extends BaseLogic
 			row.setTooltipForColStatus(szTooltip);
 
 			row.setBackColor(parentRow.getBackColor());
+		}
+		
+		
+		if (result.getPatientLocation() != null && LocationType.WARD.equals(result.getPatientLocation().getType()))
+		{
+			row.setColType("I/P");
+		}
+		else if (result.getPatientClinic() != null || result.getOrderDetails().getOutpatientDept() != null)
+		{
+			row.setColType("O/P");
 		}
 		
 		// WDEV-13872
@@ -875,9 +1070,23 @@ public class Logic extends BaseLogic
 
 	protected void onRadioButtonGroupFilterResultsValueChanged() throws PresentationLogicException
 	{
+		form.lyrMain().tabSearch().chkChecked().setValue(null);
+		form.lyrMain().tabSearch().chkUnchecked().setValue(null);
+		
+		updateControlsState();
+		
 		//WDEV-10227
 		if (validateSearchCriteria())
+		{
 			search();
+			form.getGlobalContext().OCRR.setPathologyOrdersResultsSearchCriteria(getSearchCriteria());//WDEV-19389 
+		}
+	}
+
+	private void updateControlsState()
+	{
+		form.lyrMain().tabSearch().chkChecked().setVisible(Boolean.TRUE.equals(ConfigFlag.UI.PATIENT_PATHOLOGY_FILTERS.getValue()) && GroupFilterResultsEnumeration.rdoResultsOnly.equals(form.lyrMain().tabSearch().GroupFilterResults().getValue()));
+		form.lyrMain().tabSearch().chkUnchecked().setVisible(Boolean.TRUE.equals(ConfigFlag.UI.PATIENT_PATHOLOGY_FILTERS.getValue()) && GroupFilterResultsEnumeration.rdoResultsOnly.equals(form.lyrMain().tabSearch().GroupFilterResults().getValue()));
 	}
 
 	protected void onFormDialogClosed(FormName formName, DialogResult result) throws PresentationLogicException
@@ -897,7 +1106,8 @@ public class Logic extends BaseLogic
 
 	protected void onBtnSearchChartingClick() throws PresentationLogicException
 	{
-		searchChartingResults();
+		if(searchChartingResults())
+			form.getGlobalContext().OCRR.setPathologyOrdersResultsChartingCriteria(getChartingSearchCriteria());
 	}
 
 	private void populateChartTypes()
@@ -919,7 +1129,7 @@ public class Logic extends BaseLogic
 		form.lyrMain().tabCharting().cmbChartType().newRow(value, value.getName());
 	}
 
-	private void searchChartingResults()
+	private boolean searchChartingResults()
 	{
 		if (USE_DEMO_VALUES)
 		{
@@ -929,7 +1139,7 @@ public class Logic extends BaseLogic
 		else
 		{
 			if (!canSearchChartingResults())
-				return;
+				return false;
 
 
 
@@ -940,7 +1150,7 @@ public class Logic extends BaseLogic
 			catch (DomainInterfaceException e)
 			{
 				engine.showMessage(e.getMessage());
-				return;
+				return false;
 			}
 			form.getLocalContext().setChartType(domain.getChartType(form.lyrMain().tabCharting().cmbChartType().getValue()));
 			
@@ -952,6 +1162,7 @@ public class Logic extends BaseLogic
 			}
 			populateChartingControl();
 		}
+		return true;
 	}
 
 	private void populateChartingControl() 
@@ -1567,6 +1778,12 @@ public class Logic extends BaseLogic
 	@Override
 	protected void onlyrMainTabChanged(LayerBridge tab)
 	{
+		//WDEV-19389 
+		if (tab.equals(form.lyrMain().tabCharting()) && form.getGlobalContext().OCRR.getPathologyOrdersResultsChartingCriteriaIsNotNull())
+		{
+			setChartingSearchCriteria(form.getGlobalContext().OCRR.getPathologyOrdersResultsChartingCriteria());
+			searchChartingResults();
+		}
 		updatePrintCumulativeButtonStatus();
 	}
 

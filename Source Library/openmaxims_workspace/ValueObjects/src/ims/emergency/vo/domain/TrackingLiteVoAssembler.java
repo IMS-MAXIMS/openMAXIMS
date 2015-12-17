@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.emergency.vo.domain;
@@ -58,6 +63,16 @@ public class TrackingLiteVoAssembler
 		valueObjectDest.setIsDischarged(valueObjectSrc.getIsDischarged());
 		// LastMovementDateTime
 		valueObjectDest.setLastMovementDateTime(valueObjectSrc.getLastMovementDateTime());
+		// Attendance
+		valueObjectDest.setAttendance(valueObjectSrc.getAttendance());
+		// CurrentPartialAdmission
+		valueObjectDest.setCurrentPartialAdmission(valueObjectSrc.getCurrentPartialAdmission());
+		// CurrentCubicle
+		valueObjectDest.setCurrentCubicle(valueObjectSrc.getCurrentCubicle());
+		// CurrentStatus
+		valueObjectDest.setCurrentStatus(valueObjectSrc.getCurrentStatus());
+		// DisplayInED
+		valueObjectDest.setDisplayInED(valueObjectSrc.getDisplayInED());
 	 	return valueObjectDest;
 	 }
 
@@ -372,6 +387,16 @@ public class TrackingLiteVoAssembler
 		{
 			valueObject.setLastMovementDateTime(new ims.framework.utils.DateTime(LastMovementDateTime) );
 		}
+		// Attendance
+		valueObject.setAttendance(ims.emergency.vo.domain.EmergencyAttendanceForSendToAreaVoAssembler.create(map, domainObject.getAttendance()) );
+		// CurrentPartialAdmission
+		valueObject.setCurrentPartialAdmission(ims.emergency.vo.domain.CurrentPartialAdmissionForSendToAreaVoAssembler.create(map, domainObject.getCurrentPartialAdmission()) );
+		// CurrentCubicle
+		valueObject.setCurrentCubicle(ims.emergency.vo.domain.CubicleAllocationVoAssembler.create(map, domainObject.getCurrentCubicle()) );
+		// CurrentStatus
+		valueObject.setCurrentStatus(ims.emergency.vo.domain.TrackingAttendanceStatusVoAssembler.create(map, domainObject.getCurrentStatus()) );
+		// DisplayInED
+		valueObject.setDisplayInED( domainObject.isDisplayInED() );
  		return valueObject;
 	 }
 
@@ -450,6 +475,11 @@ public class TrackingLiteVoAssembler
 			value4 = dateTime4.getJavaDate();
 		}
 		domainObject.setLastMovementDateTime(value4);
+		domainObject.setAttendance(ims.emergency.vo.domain.EmergencyAttendanceForSendToAreaVoAssembler.extractEmergencyAttendance(domainFactory, valueObject.getAttendance(), domMap));
+		domainObject.setCurrentPartialAdmission(ims.emergency.vo.domain.CurrentPartialAdmissionForSendToAreaVoAssembler.extractEDPartialAdmission(domainFactory, valueObject.getCurrentPartialAdmission(), domMap));
+		domainObject.setCurrentCubicle(ims.emergency.vo.domain.CubicleAllocationVoAssembler.extractCubicleAllocation(domainFactory, valueObject.getCurrentCubicle(), domMap));
+		domainObject.setCurrentStatus(ims.emergency.vo.domain.TrackingAttendanceStatusVoAssembler.extractTrackingAttendanceStatus(domainFactory, valueObject.getCurrentStatus(), domMap));
+		domainObject.setDisplayInED(valueObject.getDisplayInED());
 
 		return domainObject;
 	}

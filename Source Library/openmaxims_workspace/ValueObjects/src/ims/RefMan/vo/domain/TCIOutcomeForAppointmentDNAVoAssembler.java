@@ -1,9 +1,33 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.RefMan.vo.domain;
@@ -41,6 +65,10 @@ public class TCIOutcomeForAppointmentDNAVoAssembler
 		valueObjectDest.setOutcomeReason(valueObjectSrc.getOutcomeReason());
 		// CancelledForNonMedicalReason
 		valueObjectDest.setCancelledForNonMedicalReason(valueObjectSrc.getCancelledForNonMedicalReason());
+		// CancellationReason
+		valueObjectDest.setCancellationReason(valueObjectSrc.getCancellationReason());
+		// ReasonComments
+		valueObjectDest.setReasonComments(valueObjectSrc.getReasonComments());
 	 	return valueObjectDest;
 	 }
 
@@ -425,6 +453,44 @@ public class TCIOutcomeForAppointmentDNAVoAssembler
 		}
 				// CancelledForNonMedicalReason
 		valueObject.setCancelledForNonMedicalReason( domainObject.isCancelledForNonMedicalReason() );
+		// CancellationReason
+		ims.domain.lookups.LookupInstance instance6 = domainObject.getCancellationReason();
+		if ( null != instance6 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance6.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance6.getImage().getImageId(), instance6.getImage().getImagePath());
+			}
+			color = instance6.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.scheduling.vo.lookups.CancelAppointmentReason voLookup6 = new ims.scheduling.vo.lookups.CancelAppointmentReason(instance6.getId(),instance6.getText(), instance6.isActive(), null, img, color);
+			ims.scheduling.vo.lookups.CancelAppointmentReason parentVoLookup6 = voLookup6;
+			ims.domain.lookups.LookupInstance parent6 = instance6.getParent();
+			while (parent6 != null)
+			{
+				if (parent6.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent6.getImage().getImageId(), parent6.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent6.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup6.setParent(new ims.scheduling.vo.lookups.CancelAppointmentReason(parent6.getId(),parent6.getText(), parent6.isActive(), null, img, color));
+				parentVoLookup6 = parentVoLookup6.getParent();
+								parent6 = parent6.getParent();
+			}			
+			valueObject.setCancellationReason(voLookup6);
+		}
+				// ReasonComments
+		valueObject.setReasonComments(domainObject.getReasonComments());
  		return valueObject;
 	 }
 
@@ -518,6 +584,21 @@ public class TCIOutcomeForAppointmentDNAVoAssembler
 		}
 		domainObject.setOutcomeReason(value4);
 		domainObject.setCancelledForNonMedicalReason(valueObject.getCancelledForNonMedicalReason());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value6 = null;
+		if ( null != valueObject.getCancellationReason() ) 
+		{
+			value6 =
+				domainFactory.getLookupInstance(valueObject.getCancellationReason().getID());
+		}
+		domainObject.setCancellationReason(value6);
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getReasonComments() != null && valueObject.getReasonComments().equals(""))
+		{
+			valueObject.setReasonComments(null);
+		}
+		domainObject.setReasonComments(valueObject.getReasonComments());
 
 		return domainObject;
 	}

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -39,6 +44,7 @@ public class Logic extends BaseLogic
 	protected void onFormOpen(Object[] args) throws ims.framework.exceptions.PresentationLogicException
 	{
 		form.getLocalContext().setpersonAddress(form.getGlobalContext().Core.getPersonAddress());
+		displayRelevantFields(); //WDEV-17700 fields are now visible depending on DEMOGRAPHICS_TYPE flag
 		displayAddress();
 		
 		//Do automatic search
@@ -64,6 +70,23 @@ public class Logic extends BaseLogic
 		form.btnSelect().setEnabled(false);
 	}
 	
+	private void displayRelevantFields() //WDEV-17700
+	{
+		boolean irishDemographicsEnabled = ConfigFlag.UI.DEMOGRAPHICS_TYPE.getValue().equals("IRISH");
+		
+		form.txtAddress5().setVisible(!irishDemographicsEnabled && !ConfigFlag.DOM.HEARTS_REPLICATE_PATIENTS.getValue());
+		form.txtAddress5().setEnabled(Boolean.FALSE);
+		form.cmbAreaOfResidence().setVisible(irishDemographicsEnabled);
+		form.lblAreaOfResidence().setVisible(irishDemographicsEnabled);
+		form.cmbAreaOfResidence().setEnabled(Boolean.FALSE);
+		form.cmbCounty().setVisible(irishDemographicsEnabled);
+		form.lblCounty().setVisible(irishDemographicsEnabled);
+		form.cmbCounty().setEnabled(Boolean.FALSE);
+		form.lblCCGCode().setVisible(!irishDemographicsEnabled);
+		form.txtPctCode().setVisible(!irishDemographicsEnabled);
+		form.txtPctCode().setEnabled(Boolean.FALSE);
+	}
+
 	private void searchAddress(String searchTypeText,String listItem,String searchStatus) 
 	{
 		boolean lbBuildingNameDisplayed = false;
@@ -109,14 +132,15 @@ public class Logic extends BaseLogic
 							{
 								if (form.getLocalContext().getpersonAddress().getOrganisation().length() 
 										+ form.getLocalContext().getpersonAddress().getAddressBuildingName().length() 
-										<= form.getLocalContext().getpersonAddress().getLine1MaxLength())
+										<= ConfigFlag.DOM.HEARTS_ADDRESS_LINE_MAXLEN.getValue())
 								{
 									lbBuildingNameDisplayed = true;
 									form.txtAddress1().setValue(form.getLocalContext().getpersonAddress().getOrganisation() + "," + form.getLocalContext().getpersonAddress().getAddressBuildingName());																
 								}
 								else
 								{
-									form.txtAddress1().setValue(form.getLocalContext().getpersonAddress().getOrganisation().substring(0, form.getLocalContext().getpersonAddress().getOrganisation().length()<=form.getLocalContext().getpersonAddress().getLine1MaxLength()?form.getLocalContext().getpersonAddress().getOrganisation().length():form.getLocalContext().getpersonAddress().getLine1MaxLength()));																
+									//special case for where there is a sub building
+									form.txtAddress1().setValue(form.getLocalContext().getpersonAddress().getOrganisation().substring(0, form.getLocalContext().getpersonAddress().getOrganisation().length()<=30?form.getLocalContext().getpersonAddress().getOrganisation().length():30));																
 								}
 							}
 							else
@@ -133,7 +157,7 @@ public class Logic extends BaseLogic
 							else
 							{
 								if ((form.getLocalContext().getpersonAddress().getAddressBuildingName() + "," + form.getLocalContext().getpersonAddress().getAddressBuildingNumber()).length() 
-										<= ims.core.vo.PersonAddress.getLine2MaxLength())
+										<= ConfigFlag.DOM.HEARTS_ADDRESS_LINE_MAXLEN.getValue())
 								{
 									form.txtAddress2().setValue(form.getLocalContext().getpersonAddress().getAddressBuildingName() + "," + form.getLocalContext().getpersonAddress().getAddressBuildingNumber());
 									lbBuildingNumberDisplayed = true;
@@ -157,7 +181,7 @@ public class Logic extends BaseLogic
 								address3 += form.getLocalContext().getpersonAddress().getAddressLocality() != null ? form.getLocalContext().getpersonAddress().getAddressLocality() : "";
 								
 								if ((address3 + form.getLocalContext().getpersonAddress().getAddressPostTown()).length() 
-										<= ims.core.vo.PersonAddress.getLine3MaxLength())
+										<= ConfigFlag.DOM.HEARTS_ADDRESS_LINE_MAXLEN.getValue())
 								{
 									address3 += form.getLocalContext().getpersonAddress().getAddressPostTown() != null ? (address3.length() > 0 ? "," : "") + form.getLocalContext().getpersonAddress().getAddressPostTown() : "";
 									lbPostTownDisplayed = true;
@@ -180,14 +204,14 @@ public class Logic extends BaseLogic
 							if (form.getLocalContext().getpersonAddress().getOrganisationIsNotNull() && !form.getLocalContext().getpersonAddress().getOrganisation().equals(""))
 							{
 								if (form.getLocalContext().getpersonAddress().getOrganisation().length() + form.getLocalContext().getpersonAddress().getAddressBuildingName().length() 
-										<= form.getLocalContext().getpersonAddress().getLine1MaxLength())
+										<= ConfigFlag.DOM.HEARTS_ADDRESS_LINE_MAXLEN.getValue())
 								{
 									lbBuildingNameDisplayed = true;
 									form.txtAddress1().setValue(form.getLocalContext().getpersonAddress().getOrganisation() + "," + form.getLocalContext().getpersonAddress().getAddressBuildingName());								
 								}
 								else
 								{
-									form.txtAddress1().setValue(form.getLocalContext().getpersonAddress().getOrganisation().substring(0, form.getLocalContext().getpersonAddress().getOrganisation().length()<=form.getLocalContext().getpersonAddress().getLine1MaxLength()?form.getLocalContext().getpersonAddress().getOrganisation().length():form.getLocalContext().getpersonAddress().getLine1MaxLength()));																
+									form.txtAddress1().setValue(form.getLocalContext().getpersonAddress().getOrganisation().substring(0, form.getLocalContext().getpersonAddress().getOrganisation().length()<=30?form.getLocalContext().getpersonAddress().getOrganisation().length():30));																
 								}
 							}
 							else
@@ -210,7 +234,7 @@ public class Logic extends BaseLogic
 									{
 										//form.txtAddress2().setValue(form.getLocalContext().getpersonAddress().getAddressBuildingName() + "," + form.getLocalContext().getpersonAddress().getAddressStreet());
 										if ((form.getLocalContext().getpersonAddress().getAddressBuildingName() + "," + form.getLocalContext().getpersonAddress().getAddressStreet()).length() 
-												<= ims.core.vo.PersonAddress.getLine2MaxLength())
+												<= ConfigFlag.DOM.HEARTS_ADDRESS_LINE_MAXLEN.getValue())
 										{
 											form.txtAddress2().setValue(form.getLocalContext().getpersonAddress().getAddressBuildingName() + "," + form.getLocalContext().getpersonAddress().getAddressBuildingNumber());
 											lbBuildingNameDisplayed = true;
@@ -246,7 +270,7 @@ public class Logic extends BaseLogic
 									{
 										//form.txtAddress2().setValue(form.getLocalContext().getpersonAddress().getAddressBuildingName() + "," + form.getLocalContext().getpersonAddress().getAddressStreet());
 										if ((form.getLocalContext().getpersonAddress().getAddressBuildingName() + "," + form.getLocalContext().getpersonAddress().getAddressStreet()).length() 
-												<= ims.core.vo.PersonAddress.getLine2MaxLength())
+												<= ConfigFlag.DOM.HEARTS_ADDRESS_LINE_MAXLEN.getValue())
 										{
 											form.txtAddress2().setValue(form.getLocalContext().getpersonAddress().getAddressBuildingName() + "," + form.getLocalContext().getpersonAddress().getAddressBuildingNumber());
 											lbBuildingNameDisplayed = true;
@@ -274,8 +298,10 @@ public class Logic extends BaseLogic
 										form.txtAddress4().setValue("");
 									form.txtAddress5().setValue("");
 								}
-								if (form.getLocalContext().getpersonAddress().getCounty()!=null)
+								if (form.getLocalContext().getpersonAddress().getCounty() != null)
 									form.cmbCounty().setValue(form.getLocalContext().getpersonAddress().getCounty());
+								if (form.getLocalContext().getpersonAddress().getAreaOfResidence() != null)
+									form.cmbAreaOfResidence().setValue(form.getLocalContext().getpersonAddress().getAreaOfResidence());
 							}						
 							else
 							{
@@ -309,7 +335,7 @@ public class Logic extends BaseLogic
 								&& !form.getLocalContext().getpersonAddress().getOrganisation().equals(""))
 						{
 							if ((form.getLocalContext().getpersonAddress().getOrganisation() + "," + form.getLocalContext().getpersonAddress().getAddressStreet()).length()
-									<= ims.core.vo.PersonAddress.getLine1MaxLength())
+									<= ConfigFlag.DOM.HEARTS_ADDRESS_LINE_MAXLEN.getValue())
 							{
 								form.txtAddress1().setValue(form.getLocalContext().getpersonAddress().getOrganisation() + "," 
 									+ form.getLocalContext().getpersonAddress().getAddressStreet());
@@ -317,7 +343,7 @@ public class Logic extends BaseLogic
 							}
 							else
 							{
-								form.txtAddress1().setValue(form.getLocalContext().getpersonAddress().getOrganisation().substring(0, form.getLocalContext().getpersonAddress().getOrganisation().length()<=form.getLocalContext().getpersonAddress().getLine1MaxLength()?form.getLocalContext().getpersonAddress().getOrganisation().length():form.getLocalContext().getpersonAddress().getLine1MaxLength()));
+								form.txtAddress1().setValue(form.getLocalContext().getpersonAddress().getOrganisation().substring(0, form.getLocalContext().getpersonAddress().getOrganisation().length()<=30?form.getLocalContext().getpersonAddress().getOrganisation().length():30));
 							}						
 						}
 						else

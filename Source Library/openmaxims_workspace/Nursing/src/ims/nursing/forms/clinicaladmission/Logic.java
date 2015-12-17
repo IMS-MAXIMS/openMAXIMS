@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -132,11 +137,11 @@ public class Logic extends BaseLogic
 	protected void onBtnCopyClick() throws ims.framework.exceptions.PresentationLogicException
 	{
 		if(form.getLocalContext().getpreviousClinicalAdmission() == null)
-			throw new CodingRuntimeException("Copy Last option can not be available when no previous Clinical Admission is recorded for selected patient.");
+			throw new CodingRuntimeException("Copy Last option cannot be available when no previous Clinical Admission is recorded for selected patient.");
 		
 		if(!isCurrentCCLinkedToPASEvent())
 		{
-			engine.showMessage("Patient is not a current inpatient");
+			engine.showMessage("Patient is not currently an inpatient."); //WDEV-18762
 		}
 		
 		form.setMode(FormMode.EDIT);

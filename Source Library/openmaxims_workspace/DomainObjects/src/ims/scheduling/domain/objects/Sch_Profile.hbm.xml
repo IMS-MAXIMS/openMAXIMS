@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:36 -->
+<!-- Generated: 12/10/2015, 13:31 -->
 <hibernate-mapping>
 	<class name="ims.scheduling.domain.objects.Sch_Profile" table="schl_prof" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -100,10 +100,8 @@
 		</set>
 <!-- debug: listOwners -->
 <!-- debug: field.IsAssociation : true -->
-<!-- debug: IsAggregation : true -->
-<!-- debug: IsComposition : true -->
 		<!-- one to many -->
-		<set name="listOwners" lazy="true" access="field" cascade="all-delete-orphan">
+		<set name="listOwners" lazy="true" access="field" cascade="save-update">
 			<key foreign-key="prof_listowners_fk">
 				<column name="schl_prof_listowners" sql-type="numeric(10,0)" />
 			</key>
@@ -160,7 +158,6 @@
 			
 			<one-to-many class="ims.scheduling.domain.objects.TheatreDetail" />
 		</set>
-<!-- debug: isTheatreProfile -->
 <!-- debug: theatreType -->
 <!-- debug: profileActivities -->
 <!-- debug: field.IsAssociation : true -->
@@ -214,6 +211,55 @@
 			<one-to-many class="ims.scheduling.domain.objects.ProfileParentChildSlot" />
 		</set>
 <!-- debug: consMediaType -->
+<!-- debug: listType -->
+<!-- debug: responsibleHCP -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="responsibleHCP" class="ims.core.resource.people.domain.objects.Hcp" unique="true" foreign-key="prof_responsibl_fk" access="field" cascade="save-update">
+			<column name="responsibl" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: caseNoteFolderLocation -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="caseNoteFolderLocation" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="prof_casenotefo_fk" access="field" cascade="save-update">
+			<column name="casenotefo" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: caseNoteFolderNotRequired -->
+<!-- debug: function -->
+<!-- debug: IsCollection : true -->
+		<!-- collection of Lookup instances -->
+		<list name="function" table="schl_prof_c_functi" lazy="true" access="field">
+			<key foreign-key="prof_c_functi_ofk">
+				<column name="owner" sql-type="numeric(10,0)"/>
+			</key>
+			<index column="idx"/>
+			<composite-element class="ims.domain.lookups.LookupInstanceRef">
+				<many-to-one name="instance" class="ims.domain.lookups.LookupInstance" access="field">
+					<column name="instance_id" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+				</many-to-one>
+			</composite-element>
+		</list>
+<!-- debug: hasChooseBookActivity -->
+<!-- debug: autoGeneratePeriod -->
+<!-- debug: readyToGenerate -->
+<!-- debug: profileType -->
+<!-- debug: hospital -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="hospital" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="prof_hospital_fk" access="field" cascade="save-update">
+			<column name="hospital" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: isOtherHospital -->
+<!-- debug: otherHospital -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="otherHospital" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="prof_otherhospi_fk" access="field" cascade="save-update">
+			<column name="otherhospi" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
 <!-- debug: !IsAssociation && !IsCollection -->
 
 <!-- debug: !IsLookup -->
@@ -376,11 +422,6 @@
 			<column name="lastactual"  not-null="false" unique="false"  />
 		</property>
 <!-- debug: !IsAssociation && !IsCollection -->
-<!-- debug: !IsLookup -->
-		<property name="isTheatreProfile" type="boolean" access="field" update="true">
-			<column name="istheatrep"  not-null="false" unique="false"  />
-		</property>
-<!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: IsLookup -->
 		<many-to-one name="theatreType" class="ims.domain.lookups.LookupInstance" access="field">
 			<column name="lkp_theatretyp" sql-type="numeric(10,0)" not-null="false" unique="false"   />
@@ -395,5 +436,40 @@
 		<many-to-one name="consMediaType" class="ims.domain.lookups.LookupInstance" access="field">
 			<column name="lkp_consmediat" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="listType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_listtype" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="caseNoteFolderNotRequired" type="boolean" access="field" update="true">
+			<column name="casenotef2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="hasChooseBookActivity" type="boolean" access="field" update="true">
+			<column name="haschooseb"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="autoGeneratePeriod" type="integer" access="field" update="true">
+			<column name="autogenera"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="readyToGenerate" type="boolean" access="field" update="true">
+			<column name="readytogen"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="profileType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_profiletyp" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isOtherHospital" type="boolean" access="field" update="true">
+			<column name="isotherhos"  not-null="false" unique="false"  />
+		</property>
 	</class>
 </hibernate-mapping>

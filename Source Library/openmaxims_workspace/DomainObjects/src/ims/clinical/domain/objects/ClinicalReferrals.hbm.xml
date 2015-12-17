@@ -1,0 +1,196 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 12/10/2015, 13:32 -->
+<hibernate-mapping>
+	<class name="ims.clinical.domain.objects.ClinicalReferrals" table="shcl_clinicalreferr" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: patient -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="patient" class="ims.core.patient.domain.objects.Patient" unique="true" foreign-key="clinicalreferr_patient_fk" access="field" cascade="save-update">
+			<column name="patient" sql-type="numeric(10,0)" not-null="true" unique="false"  index='patient_idx' />
+		</many-to-one>
+<!-- debug: referralType -->
+<!-- debug: currentReferralStatus -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="currentReferralStatus" class="ims.clinical.domain.objects.ClinicalReferralStatus" unique="true" foreign-key="clinicalreferr_currentref_fk" access="field" cascade="save-update">
+			<column name="currentref" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: historyOfReferralStatus -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- one to many -->
+		<list name="historyOfReferralStatus" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="clinicalreferr_historyofr_fk">
+				<column name="shcl_clinicalreferr_historyofr" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.clinical.domain.objects.ClinicalReferralStatus" />
+		</list>
+<!-- debug: referringService -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="referringService" class="ims.core.clinical.domain.objects.Service" unique="true" foreign-key="clinicalreferr_referrings_fk" access="field" cascade="save-update">
+			<column name="referrings" sql-type="numeric(10,0)" not-null="false" unique="false"  index='referingserv' />
+		</many-to-one>
+<!-- debug: referringHCP -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="referringHCP" class="ims.core.resource.people.domain.objects.Hcp" unique="true" foreign-key="clinicalreferr_referringh_fk" access="field" cascade="save-update">
+			<column name="referringh" sql-type="numeric(10,0)" not-null="true" unique="false"  index='referinghcp' />
+		</many-to-one>
+<!-- debug: referToService -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="referToService" class="ims.clinical.configuration.domain.objects.ServiceConfigIntReferral" unique="true" foreign-key="clinicalreferr_refertoser_fk" access="field" cascade="save-update">
+			<column name="refertoser" sql-type="numeric(10,0)" not-null="true" unique="false"  index='refertoserv' />
+		</many-to-one>
+<!-- debug: referToHCP -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="referToHCP" class="ims.core.resource.people.domain.objects.Hcp" unique="true" foreign-key="clinicalreferr_refertohcp_fk" access="field" cascade="save-update">
+			<column name="refertohcp" sql-type="numeric(10,0)" not-null="false" unique="false"  index='refertohcp' />
+		</many-to-one>
+<!-- debug: urgentReferral -->
+<!-- debug: newCondition -->
+<!-- debug: requiresAuthorisation -->
+<!-- debug: serviceSpecificAnswers -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<list name="serviceSpecificAnswers" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="clinicalreferr_servicespe_fk">
+				<column name="shcl_clinicalreferr_servicespe" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.assessment.instantiation.domain.objects.PatientAssessmentQuestion" />
+		</list>
+<!-- debug: reasonForReferral -->
+<!-- debug: dateDecisionToRefer -->
+<!-- debug: pathwayID -->
+<!-- debug: recordingInfo -->
+<!-- debug: field.IsAssociation : true -->
+ 		<!-- Component -->
+ 		<component name="recordingInfo" class="ims.core.clinical.domain.objects.RecordingUserInformation" >
+
+ 			<many-to-one name="recordingUser" class="ims.core.resource.people.domain.objects.MemberOfStaff" foreign-key="clinicalreferr_recordingire_fk" access="field">
+ 				<column name="recordingirecordingu" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="recordingDateTime" type="timestamp" access="field" update="true">
+ 				<column name="recordingirecordingd" not-null="false"  unique="false"   />
+ 			</property>
+ 		</component>
+<!-- debug: referralDocument -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- one to many -->
+		<set name="referralDocument" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="clinicalreferr_referraldo_fk">
+				<column name="shcl_clinicalreferr_referraldo" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.core.documents.domain.objects.PatientDocument" />
+		</set>
+<!-- debug: clinicalReferralNotes -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<list name="clinicalReferralNotes" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="clinicalreferr_clinicalre_fk">
+				<column name="shcl_clinicalreferr_clinicalre" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.clinical.domain.objects.ClinicalReferralNotes" />
+		</list>
+<!-- debug: acknowledgeRejection -->
+<!-- debug: authorisingInfo -->
+<!-- debug: field.IsAssociation : true -->
+ 		<!-- Component -->
+ 		<component name="authorisingInfo" class="ims.core.clinical.domain.objects.RecordingUserInformation" >
+
+ 			<many-to-one name="recordingUser" class="ims.core.resource.people.domain.objects.MemberOfStaff" foreign-key="clinicalreferr_authorisinre_fk" access="field">
+ 				<column name="authorisinrecordingu" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="recordingDateTime" type="timestamp" access="field" update="true">
+ 				<column name="authorisinrecordingd" not-null="false"  unique="false"   />
+ 			</property>
+ 		</component>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="referralType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_referralty" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="urgentReferral" type="boolean" access="field" update="true">
+			<column name="urgentrefe"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="newCondition" type="boolean" access="field" update="true">
+			<column name="newconditi"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="requiresAuthorisation" type="boolean" access="field" update="true">
+			<column name="requiresau"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="reasonForReferral" type="string" access="field" update="true" > 
+			<column name="reasonforr" length="1000"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dateDecisionToRefer" type="date" access="field" update="true">
+			<column name="datedecisi"  not-null="true" unique="false"  index='referdate'/>
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="pathwayID" type="string" access="field" update="true" > 
+			<column name="pathwayid" length="20"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="acknowledgeRejection" type="boolean" access="field" update="true">
+			<column name="acknowledg"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

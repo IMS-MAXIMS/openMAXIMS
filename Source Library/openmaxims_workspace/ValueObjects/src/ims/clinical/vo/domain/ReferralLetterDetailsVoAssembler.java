@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.clinical.vo.domain;
@@ -116,6 +121,14 @@ public class ReferralLetterDetailsVoAssembler
 		valueObjectDest.setRefererAddress(valueObjectSrc.getRefererAddress());
 		// TransferedBY
 		valueObjectDest.setTransferedBY(valueObjectSrc.getTransferedBY());
+		// OtherCommChannels
+		valueObjectDest.setOtherCommChannels(valueObjectSrc.getOtherCommChannels());
+		// InitiatedFrom
+		valueObjectDest.setInitiatedFrom(valueObjectSrc.getInitiatedFrom());
+		// OtherLocation
+		valueObjectDest.setOtherLocation(valueObjectSrc.getOtherLocation());
+		// ServiceUpdateHistory
+		valueObjectDest.setServiceUpdateHistory(valueObjectSrc.getServiceUpdateHistory());
 	 	return valueObjectDest;
 	 }
 
@@ -674,6 +687,48 @@ public class ReferralLetterDetailsVoAssembler
 		valueObject.setRefererAddress(domainObject.getRefererAddress());
 		// TransferedBY
 		valueObject.setTransferedBY(domainObject.getTransferedBY());
+		// OtherCommChannels
+		valueObject.setOtherCommChannels(ims.core.vo.domain.CommChannelVoAssembler.createCommChannelVoCollectionFromCommunicationChannel(map, domainObject.getOtherCommChannels()) );
+		// InitiatedFrom
+		ims.domain.lookups.LookupInstance instance35 = domainObject.getInitiatedFrom();
+		if ( null != instance35 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance35.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance35.getImage().getImageId(), instance35.getImage().getImagePath());
+			}
+			color = instance35.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.RefMan.vo.lookups.ReferralInitiatedFrom voLookup35 = new ims.RefMan.vo.lookups.ReferralInitiatedFrom(instance35.getId(),instance35.getText(), instance35.isActive(), null, img, color);
+			ims.RefMan.vo.lookups.ReferralInitiatedFrom parentVoLookup35 = voLookup35;
+			ims.domain.lookups.LookupInstance parent35 = instance35.getParent();
+			while (parent35 != null)
+			{
+				if (parent35.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent35.getImage().getImageId(), parent35.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent35.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup35.setParent(new ims.RefMan.vo.lookups.ReferralInitiatedFrom(parent35.getId(),parent35.getText(), parent35.isActive(), null, img, color));
+				parentVoLookup35 = parentVoLookup35.getParent();
+								parent35 = parent35.getParent();
+			}			
+			valueObject.setInitiatedFrom(voLookup35);
+		}
+				// OtherLocation
+		valueObject.setOtherLocation(domainObject.getOtherLocation());
+		// ServiceUpdateHistory
+		valueObject.setServiceUpdateHistory(ims.RefMan.vo.domain.ReferralServiceUpdatesVoAssembler.createReferralServiceUpdatesVoCollectionFromReferralServiceUpdates(map, domainObject.getServiceUpdateHistory()) );
  		return valueObject;
 	 }
 
@@ -809,7 +864,23 @@ public class ReferralLetterDetailsVoAssembler
 				domainFactory.getLookupInstance(valueObject.getTransport().getID());
 		}
 		domainObject.setTransport(value11);
-		domainObject.setAuthoringUser(ims.core.vo.domain.MemberOfStaffLiteVoAssembler.extractMemberOfStaff(domainFactory, valueObject.getAuthoringUser(), domMap));
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.resource.people.domain.objects.MemberOfStaff value12 = null;
+		if ( null != valueObject.getAuthoringUser() ) 
+		{
+			if (valueObject.getAuthoringUser().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getAuthoringUser()) != null)
+				{
+					value12 = (ims.core.resource.people.domain.objects.MemberOfStaff)domMap.get(valueObject.getAuthoringUser());
+				}
+			}
+			else
+			{
+				value12 = (ims.core.resource.people.domain.objects.MemberOfStaff)domainFactory.getDomainObject(ims.core.resource.people.domain.objects.MemberOfStaff.class, valueObject.getAuthoringUser().getBoId());
+			}
+		}
+		domainObject.setAuthoringUser(value12);
 		ims.framework.utils.DateTime dateTime13 = valueObject.getAuthoringDateTime();
 		java.util.Date value13 = null;
 		if ( dateTime13 != null ) 
@@ -825,23 +896,7 @@ public class ReferralLetterDetailsVoAssembler
 			valueObject.setPCT(null);
 		}
 		domainObject.setPCT(valueObject.getPCT());
-	// SaveAsRefVO - treated as a refVo in extract methods
-	ims.core.clinical.domain.objects.ServiceFunction value16 = null;
-		if ( null != valueObject.getFunction() ) 
-		{
-			if (valueObject.getFunction().getBoId() == null)
-			{
-				if (domMap.get(valueObject.getFunction()) != null)
-				{
-					value16 = (ims.core.clinical.domain.objects.ServiceFunction)domMap.get(valueObject.getFunction());
-				}
-			}
-			else
-			{
-				value16 = (ims.core.clinical.domain.objects.ServiceFunction)domainFactory.getDomainObject(ims.core.clinical.domain.objects.ServiceFunction.class, valueObject.getFunction().getBoId());
-			}
-		}
-		domainObject.setFunction(value16);
+		domainObject.setFunction(ims.core.vo.domain.ServiceFunctionLiteVoAssembler.extractServiceFunction(domainFactory, valueObject.getFunction(), domMap));
 		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
 		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
 		if (valueObject.getOtherLanguage() != null && valueObject.getOtherLanguage().equals(""))
@@ -864,7 +919,23 @@ public class ReferralLetterDetailsVoAssembler
 			valueObject.setDadUbrn(null);
 		}
 		domainObject.setDadUbrn(valueObject.getDadUbrn());
-		domainObject.setPractice(ims.core.vo.domain.OrganisationWithSitesVoAssembler.extractOrganisation(domainFactory, valueObject.getPractice(), domMap));
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.resource.place.domain.objects.Organisation value21 = null;
+		if ( null != valueObject.getPractice() ) 
+		{
+			if (valueObject.getPractice().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getPractice()) != null)
+				{
+					value21 = (ims.core.resource.place.domain.objects.Organisation)domMap.get(valueObject.getPractice());
+				}
+			}
+			else
+			{
+				value21 = (ims.core.resource.place.domain.objects.Organisation)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.Organisation.class, valueObject.getPractice().getBoId());
+			}
+		}
+		domainObject.setPractice(value21);
 		domainObject.setIsReferrerPatientsGp(valueObject.getIsReferrerPatientsGp());
 	// SaveAsRefVO - treated as a refVo in extract methods
 	ims.core.clinical.domain.objects.Procedure value23 = null;
@@ -977,6 +1048,23 @@ public class ReferralLetterDetailsVoAssembler
 			valueObject.setTransferedBY(null);
 		}
 		domainObject.setTransferedBY(valueObject.getTransferedBY());
+		domainObject.setOtherCommChannels(ims.core.vo.domain.CommChannelVoAssembler.extractCommunicationChannelList(domainFactory, valueObject.getOtherCommChannels(), domainObject.getOtherCommChannels(), domMap));		
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value35 = null;
+		if ( null != valueObject.getInitiatedFrom() ) 
+		{
+			value35 =
+				domainFactory.getLookupInstance(valueObject.getInitiatedFrom().getID());
+		}
+		domainObject.setInitiatedFrom(value35);
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getOtherLocation() != null && valueObject.getOtherLocation().equals(""))
+		{
+			valueObject.setOtherLocation(null);
+		}
+		domainObject.setOtherLocation(valueObject.getOtherLocation());
+		domainObject.setServiceUpdateHistory(ims.RefMan.vo.domain.ReferralServiceUpdatesVoAssembler.extractReferralServiceUpdatesList(domainFactory, valueObject.getServiceUpdateHistory(), domainObject.getServiceUpdateHistory(), domMap));		
 
 		return domainObject;
 	}

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -496,13 +501,13 @@ public class Logic extends BaseLogic
 		// Check to see if both dates were filled
 		if ((form.dteDateTo().getValue() != null && form.dteFromDate().getValue() == null) || (form.dteDateTo().getValue() == null && form.dteFromDate().getValue() != null))
 		{
-			listOfErrors.add("From and To dates must be both completed.");
+			listOfErrors.add("Both 'From Date' and 'To Date' must be entered."); //WDEV-18762
 		}
 		
 		// Check From and To date to be in succession
 		if (form.dteDateTo().getValue() != null && form.dteFromDate().getValue() != null && form.dteDateTo().getValue().isLessThan(form.dteFromDate().getValue()))
 		{
-			listOfErrors.add("From date can not be set after To date.");
+			listOfErrors.add("'From Date' cannot be set later than 'To Date'."); //WDEV-18762
 		}
 
 		// Check to see if any errors were found

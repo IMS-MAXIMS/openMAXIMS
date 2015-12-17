@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -29,6 +34,7 @@ import ims.admin.domain.ClinicAdmin;
 import ims.admin.domain.OrganisationAndLocation;
 import ims.admin.domain.impl.ClinicAdminImpl;
 import ims.admin.domain.impl.OrganisationAndLocationImpl;
+import ims.admin.vo.DocumentCategoryToFormCfgVo;
 import ims.admin.vo.ReportTemplateVo;
 import ims.admin.vo.domain.ReportTemplateVoAssembler;
 import ims.clinical.vo.PatientSummaryNoteByHcpShortVo;
@@ -40,6 +46,7 @@ import ims.core.admin.pas.vo.PASEventRefVo;
 import ims.core.admin.vo.TemplateBoRefVo;
 import ims.core.documents.domain.objects.PatientDocument;
 import ims.core.documents.vo.PatientDocumentRefVo;
+import ims.core.domain.DocumentWorklist;
 import ims.core.domain.base.impl.BaseClinicLetterBatchCreateImpl;
 import ims.core.patient.vo.PatientRefVo;
 import ims.core.resource.place.vo.ClinicRefVo;
@@ -287,5 +294,11 @@ public class ClinicLetterBatchCreateImpl extends BaseClinicLetterBatchCreateImpl
 				return coll.get(0);
 		}
 		return null;
+	}
+
+	public DocumentCategoryToFormCfgVo getDocumentCategoryConfig(Integer appFormId) 
+	{
+		DocumentWorklist impl = (DocumentWorklist)getDomainImpl(DocumentWorklistImpl.class);
+		return impl.getDocumentCategoryConfig(appFormId);
 	}
 }

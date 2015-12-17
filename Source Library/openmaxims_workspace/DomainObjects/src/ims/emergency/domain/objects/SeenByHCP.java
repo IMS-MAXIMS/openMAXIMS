@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.emergency.domain.objects;
@@ -67,6 +72,7 @@ public class SeenByHCP extends ims.domain.DomainObject implements ims.domain.Sys
 	  * Collection of ims.emergency.domain.objects.AttendanceClinicalNotes.
 	  */
 	private java.util.List seenByHCPNotes;
+	private Boolean signOff;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public SeenByHCP (Integer id, int ver)
@@ -158,6 +164,13 @@ public class SeenByHCP extends ims.domain.DomainObject implements ims.domain.Sys
 	}
 	public void setSeenByHCPNotes(java.util.List paramValue) {
 		this.seenByHCPNotes = paramValue;
+	}
+
+	public Boolean isSignOff() {
+		return signOff;
+	}
+	public void setSignOff(Boolean signOff) {
+		this.signOff = signOff;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -277,6 +290,9 @@ public class SeenByHCP extends ims.domain.DomainObject implements ims.domain.Sys
 			auditStr.append("] " + i10);
 		}
 	    auditStr.append("; ");
+		auditStr.append("\r\n*signOff* :");
+		auditStr.append(signOff);
+	    auditStr.append("; ");
 		return auditStr.toString();
 	}
 	
@@ -383,6 +399,12 @@ public class SeenByHCP extends ims.domain.DomainObject implements ims.domain.Sys
 			sb.append(ims.domain.DomainObject.toXMLString(this.getSeenByHCPNotes(), domMap));
 			sb.append("</seenByHCPNotes>");		
 			}
+		}
+		if (this.isSignOff() != null)
+		{
+			sb.append("<signOff>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isSignOff().toString()));
+			sb.append("</signOff>");		
 		}
 		return sb.toString();
 	}
@@ -604,6 +626,11 @@ public class SeenByHCP extends ims.domain.DomainObject implements ims.domain.Sys
 			fldEl = fldEl.element("list");	
 			obj.setSeenByHCPNotes(ims.emergency.domain.objects.AttendanceClinicalNotes.fromListXMLString(fldEl, factory, obj.getSeenByHCPNotes(), domMap));
 		}
+		fldEl = el.element("signOff");
+		if(fldEl != null)
+		{	
+    		obj.setSignOff(new Boolean(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -627,6 +654,7 @@ public class SeenByHCP extends ims.domain.DomainObject implements ims.domain.Sys
 		public static final String SeenDateTime = "seenDateTime";
 		public static final String CompletedDateTime = "completedDateTime";
 		public static final String SeenByHCPNotes = "seenByHCPNotes";
+		public static final String SignOff = "signOff";
 	}
 }
 

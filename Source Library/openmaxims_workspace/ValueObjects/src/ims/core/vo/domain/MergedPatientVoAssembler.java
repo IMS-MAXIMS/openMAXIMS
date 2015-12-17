@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.core.vo.domain;
@@ -429,7 +434,7 @@ public class MergedPatientVoAssembler
 		// address
 		valueObject.setAddress(ims.core.vo.domain.PersonAddressAssembler.create(map, domainObject.getAddress()) );
 		// identifiers
-		valueObject.setIdentifiers(ims.core.vo.domain.PatientIdAssembler.createPatientIdCollectionFromPatientId(map, domainObject.getIdentifiers()) );
+		valueObject.setIdentifiers(ims.core.vo.domain.NonUniquePatientIdVoAssembler.createNonUniquePatientIdVoCollectionFromNonUniquePatientId(map, domainObject.getIdentifiers()) );
 		// gp
 		if (domainObject.getGp() != null)
 		{
@@ -643,7 +648,7 @@ public class MergedPatientVoAssembler
 				// CommChannels
 		valueObject.setCommChannels(ims.core.vo.domain.CommChannelVoAssembler.createCommChannelVoCollectionFromCommunicationChannel(map, domainObject.getCommChannels()) );
 		// Insurance
-		valueObject.setInsurance(ims.core.vo.domain.InsuranceVoAssembler.create(map, domainObject.getInsurance()) );
+		valueObject.setInsurance(ims.core.vo.domain.NationalHealthCoverVoAssembler.create(map, domainObject.getInsurance()) );
 		// addresses
 		valueObject.setAddresses(ims.core.vo.domain.PersonAddressAssembler.createPersonAddressCollectionFromAddress(map, domainObject.getAddresses()) );
 		// DestiantionPatient
@@ -733,7 +738,7 @@ public class MergedPatientVoAssembler
 		}
 		domainObject.setDod(value4);
 		domainObject.setAddress(ims.core.vo.domain.PersonAddressAssembler.extractAddress(domainFactory, valueObject.getAddress(), domMap));
-		domainObject.setIdentifiers(ims.core.vo.domain.PatientIdAssembler.extractPatientIdList(domainFactory, valueObject.getIdentifiers(), domainObject.getIdentifiers(), domMap));		
+		domainObject.setIdentifiers(ims.core.vo.domain.NonUniquePatientIdVoAssembler.extractNonUniquePatientIdList(domainFactory, valueObject.getIdentifiers(), domainObject.getIdentifiers(), domMap));		
 		ims.core.resource.people.domain.objects.Gp value7 = null;
 		if ( null != valueObject.getGp() ) 
 		{
@@ -816,7 +821,7 @@ public class MergedPatientVoAssembler
 		}
 		domainObject.setLanguage(value14);
 		domainObject.setCommChannels(ims.core.vo.domain.CommChannelVoAssembler.extractCommunicationChannelList(domainFactory, valueObject.getCommChannels(), domainObject.getCommChannels(), domMap));		
-		domainObject.setInsurance(ims.core.vo.domain.InsuranceVoAssembler.extractInsurance(domainFactory, valueObject.getInsurance(), domMap));
+		domainObject.setInsurance(ims.core.vo.domain.NationalHealthCoverVoAssembler.extractNationalHealthCover(domainFactory, valueObject.getInsurance(), domMap));
 		domainObject.setAddresses(ims.core.vo.domain.PersonAddressAssembler.extractAddressList(domainFactory, valueObject.getAddresses(), domainObject.getAddresses(), domMap));		
 		ims.core.patient.domain.objects.Patient value18 = null;
 		if ( null != valueObject.getDestiantionPatient() ) 

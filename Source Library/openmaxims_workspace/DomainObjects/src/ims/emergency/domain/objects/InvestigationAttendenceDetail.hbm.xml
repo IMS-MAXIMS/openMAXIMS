@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:37 -->
+<!-- Generated: 12/10/2015, 13:32 -->
 <hibernate-mapping>
 	<class name="ims.emergency.domain.objects.InvestigationAttendenceDetail" table="emer_investigationa" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -30,27 +30,6 @@
 			</property>
 		</component>
 <!-- debug: hibernateClassContent -->
-<!-- debug: patient -->
-<!-- debug: field.IsAssociation : true -->
-		<!-- A one-to-one relationship using a foreign-key is mapping as a
-			many-to-one with a uniqueness contraint -->
-		<many-to-one name="patient" class="ims.core.patient.domain.objects.Patient" unique="true" foreign-key="investigationa_patient_fk" access="field" cascade="save-update">
-			<column name="patient" sql-type="numeric(10,0)" not-null="true" unique="false"  index='patient_idx' />
-		</many-to-one>
-<!-- debug: episode -->
-<!-- debug: field.IsAssociation : true -->
-		<!-- A one-to-one relationship using a foreign-key is mapping as a
-			many-to-one with a uniqueness contraint -->
-		<many-to-one name="episode" class="ims.core.admin.domain.objects.EpisodeOfCare" unique="true" foreign-key="investigationa_episode_fk" access="field" cascade="save-update">
-			<column name="episode" sql-type="numeric(10,0)" not-null="true" unique="false"  index='episode_idx' />
-		</many-to-one>
-<!-- debug: attendance -->
-<!-- debug: field.IsAssociation : true -->
-		<!-- A one-to-one relationship using a foreign-key is mapping as a
-			many-to-one with a uniqueness contraint -->
-		<many-to-one name="attendance" class="ims.core.admin.domain.objects.CareContext" unique="true" foreign-key="investigationa_attendance_fk" access="field" cascade="save-update">
-			<column name="attendance" sql-type="numeric(10,0)" not-null="true" unique="false"  index='attendance_idx' />
-		</many-to-one>
 <!-- debug: authoringInformation -->
 <!-- debug: field.IsAssociation : true -->
  		<!-- Component -->
@@ -64,13 +43,20 @@
  				<column name="authoringiauthoringd" not-null="false"  unique="false"   />
  			</property>
  		</component>
+<!-- debug: oCSInvestigation -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="oCSInvestigation" class="ims.ocrr.orderingresults.domain.objects.OrderInvestigation" unique="true" foreign-key="investigationa_ocsinvesti_fk" access="field" cascade="save-update">
+			<column name="ocsinvesti" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
 <!-- debug: attendenceInvestigation -->
 <!-- debug: active -->
 <!-- debug: addedDuringCoding -->
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: IsLookup -->
 		<many-to-one name="attendenceInvestigation" class="ims.domain.lookups.LookupInstance" access="field">
-			<column name="lkp_attendence" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+			<column name="lkp_attendence" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->

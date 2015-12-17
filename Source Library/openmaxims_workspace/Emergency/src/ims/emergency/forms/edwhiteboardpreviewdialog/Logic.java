@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -53,12 +58,7 @@ public class Logic extends BaseLogic
 
 	private static final String	COLUMN_PATIENT			= "0";
 	private static final String	COLUMN_LOCATION			= "1";
-	private static final String	COLUMN_OBS_REQUIRED		= "2";
-	private static final String	COLUMN_MEDS_GIVEN		= "3";
-	private static final String	COLUMN_ECG				= "4";
-	private static final String	COLUMN_NPO				= "5";
-	private static final String	COLUMN_ISOLATION		= "6";
-	private static final String	COLUMN_COMMENT			= "7";
+	private static final String	COLUMN_COMMENT			= "2";
 	
 	@Override
 	protected void onFormOpen(Object[] args) throws ims.framework.exceptions.PresentationLogicException
@@ -83,7 +83,6 @@ public class Logic extends BaseLogic
 		
 		addAssessmentsToGrid(row,form.getGlobalContext().Emergency.getWhiteBoardConfig().getAssessments());
 		addFixedQuestions(row,form.getGlobalContext().Emergency.getWhiteBoardConfig());
-		addConfigurableQuestions(row,form.getGlobalContext().Emergency.getWhiteBoardConfig().getOtherQuestions());
 		
 		if (form.getGlobalContext().Emergency.getWhiteBoardConfig().getComments())
 		{
@@ -123,41 +122,7 @@ public class Logic extends BaseLogic
 
 	private void addFixedQuestions(DynamicGridRow row, WhiteBoardConfigVo whiteBoardConfig)
 	{
-		if (whiteBoardConfig.getObsTaken())
-		{
-		DynamicGridCell cellObs = row.getCells().newCell(getColumnByIdentifier(COLUMN_OBS_REQUIRED), DynamicCellType.ENUMERATION);
-		populateCellCombo(cellObs);
-		}
 		
-		if (whiteBoardConfig.getMedsGiven())
-		{
-		DynamicGridCell cellMeds = row.getCells().newCell(getColumnByIdentifier(COLUMN_MEDS_GIVEN), DynamicCellType.ENUMERATION);
-		populateCellCombo(cellMeds);
-		}
-		
-		if (whiteBoardConfig.getECG())
-		{
-		DynamicGridCell cellECG = row.getCells().newCell(getColumnByIdentifier(COLUMN_ECG), DynamicCellType.BOOL);
-		cellECG.setValue(null);
-		cellECG.setAutoPostBack(true);
-		cellECG.setReadOnly(false);
-		}
-		
-		if (whiteBoardConfig.getNPO())
-		{
-		DynamicGridCell cellNPO = row.getCells().newCell(getColumnByIdentifier(COLUMN_NPO), DynamicCellType.BOOL);
-		cellNPO.setValue(null);
-		cellNPO.setAutoPostBack(true);
-		cellNPO.setReadOnly(false);
-		}
-		
-		if (whiteBoardConfig.getIsolation())
-		{
-		DynamicGridCell cellIsolation = row.getCells().newCell(getColumnByIdentifier(COLUMN_ISOLATION), DynamicCellType.BOOL);
-		cellIsolation.setValue(null);
-		cellIsolation.setAutoPostBack(true);
-		cellIsolation.setReadOnly(false);
-		}
 
 	}
 	
@@ -464,8 +429,6 @@ public class Logic extends BaseLogic
 		column.setHeaderAlignment(Alignment.LEFT);
 		
 		initializeWithAssessments(form.getGlobalContext().Emergency.getWhiteBoardConfig().getAssessments());
-		initializeWithFixedQuestions(form.getGlobalContext().Emergency.getWhiteBoardConfig());
-		initializeWithConfigurableQuestions(form.getGlobalContext().Emergency.getWhiteBoardConfig().getOtherQuestions());
 		
 		if (form.getGlobalContext().Emergency.getWhiteBoardConfig().getComments())
 		{
@@ -495,54 +458,6 @@ public class Logic extends BaseLogic
 		column.setIdentifier(whiteBoardQuestionConfigVo);
 	}
 
-	private void initializeWithFixedQuestions(WhiteBoardConfigVo whiteBoardConfig)
-	{
-		DynamicGridColumn column;
-		if (whiteBoardConfig.getMedsGiven())
-		{
-			column = form.dyngrdWhiteBoard().getColumns().newColumn("Meds Given",COLUMN_MEDS_GIVEN);
-			column.setWidth(100);
-			column.setAlignment(Alignment.LEFT);
-			column.setVerticalAlignment(VerticalAlignment.MIDDLE);
-			column.setHeaderAlignment(Alignment.LEFT);
-		}
-		
-		if (whiteBoardConfig.getObsTaken())
-		{
-    		column = form.dyngrdWhiteBoard().getColumns().newColumn("Obs Required",COLUMN_OBS_REQUIRED);
-    		column.setWidth(100);
-    		column.setAlignment(Alignment.LEFT);
-    		column.setVerticalAlignment(VerticalAlignment.MIDDLE);
-    		column.setHeaderAlignment(Alignment.LEFT);
-		}
-		
-		if (whiteBoardConfig.getECG())
-		{
-    		column = form.dyngrdWhiteBoard().getColumns().newColumn("ECG",COLUMN_ECG);
-    		column.setWidth(35);
-    		column.setAlignment(Alignment.LEFT);
-    		column.setVerticalAlignment(VerticalAlignment.MIDDLE);
-    		column.setHeaderAlignment(Alignment.LEFT);
-		}
-		
-		if (whiteBoardConfig.getNPO())
-		{
-    		column = form.dyngrdWhiteBoard().getColumns().newColumn("NPO",COLUMN_NPO);
-    		column.setWidth(35);
-    		column.setAlignment(Alignment.LEFT);
-    		column.setVerticalAlignment(VerticalAlignment.MIDDLE);
-    		column.setHeaderAlignment(Alignment.LEFT);
-		}
-		
-		if (whiteBoardConfig.getIsolation())
-		{
-    		column = form.dyngrdWhiteBoard().getColumns().newColumn("Isolation",COLUMN_ISOLATION);
-    		column.setWidth(65);
-    		column.setAlignment(Alignment.LEFT);
-    		column.setVerticalAlignment(VerticalAlignment.MIDDLE);
-    		column.setHeaderAlignment(Alignment.LEFT);
-		}
-	}
 
 	private void initializeWithAssessments(WhiteBoardAssessmentConfigVoCollection collAssessmentColumns)
 	{

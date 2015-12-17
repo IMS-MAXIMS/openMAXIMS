@@ -1,0 +1,105 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:37 -->
+<hibernate-mapping>
+	<class name="ims.icps.configuration.domain.objects.ICPPhase" table="icps_icpphases" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: name -->
+<!-- debug: description -->
+<!-- debug: sequence -->
+<!-- debug: helpURL -->
+<!-- debug: status -->
+<!-- debug: isActivatedOnInitiation -->
+<!-- debug: actions -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- one to many -->
+		<set name="actions" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="icpphases_actions_fk">
+				<column name="icps_icpphases_actions" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.icps.configuration.domain.objects.ICPAction" />
+		</set>
+<!-- debug: goals -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="goals" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="icpphases_goals_fk">
+				<column name="icps_icpphases_goals" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.icps.configuration.domain.objects.ICPPhaseGoal" />
+		</set>
+<!-- debug: rules -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- one to many -->
+		<set name="rules" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="icpphases_rules_fk">
+				<column name="icps_icpphases_rules" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.core.admin.domain.objects.BusinessRule" />
+		</set>
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="name" type="string" access="field" update="true" > 
+			<column name="name" length="255"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="description" type="string" access="field" update="true" > 
+			<column name="descriptio" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="sequence" type="integer" access="field" update="true">
+			<column name="c_sequen"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="helpURL" type="string" access="field" update="true" > 
+			<column name="helpurl" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="status" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_status" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isActivatedOnInitiation" type="boolean" access="field" update="true">
+			<column name="isactivate"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

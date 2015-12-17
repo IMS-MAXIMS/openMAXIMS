@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.emergency.vo.domain;
@@ -345,19 +350,7 @@ public class PatientProblemForClinicianWorklistVoAssembler
 			return null;
 			
 		// Problem
-		if (domainObject.getProblem() != null)
-		{
-			if(domainObject.getProblem() instanceof HibernateProxy) // If the proxy is set, there is no need to lazy load, the proxy knows the id already. 
-			{
-				HibernateProxy p = (HibernateProxy) domainObject.getProblem();
-				int id = Integer.parseInt(p.getHibernateLazyInitializer().getIdentifier().toString());				
-				valueObject.setProblem(new ims.clinical.configuration.vo.ClinicalProblemRefVo(id, -1));				
-			}
-			else
-			{
-				valueObject.setProblem(new ims.clinical.configuration.vo.ClinicalProblemRefVo(domainObject.getProblem().getId(), domainObject.getProblem().getVersion()));
-			}
-		}
+		valueObject.setProblem(ims.clinical.vo.domain.ClinicalProblemShortVoAssembler.create(map, domainObject.getProblem()) );
 		// PatientProblem
 		valueObject.setPatientProblem(domainObject.getPatientProblem());
  		return valueObject;
@@ -409,7 +402,8 @@ public class PatientProblemForClinicianWorklistVoAssembler
 		}
 		domainObject.setVersion(valueObject.getVersion_PatientProblem());
 
-		ims.clinical.configuration.domain.objects.ClinicalProblem value1 = null;
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.clinical.configuration.domain.objects.ClinicalProblem value1 = null;
 		if ( null != valueObject.getProblem() ) 
 		{
 			if (valueObject.getProblem().getBoId() == null)
@@ -418,10 +412,6 @@ public class PatientProblemForClinicianWorklistVoAssembler
 				{
 					value1 = (ims.clinical.configuration.domain.objects.ClinicalProblem)domMap.get(valueObject.getProblem());
 				}
-			}
-			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
-			{
-				value1 = domainObject.getProblem();	
 			}
 			else
 			{

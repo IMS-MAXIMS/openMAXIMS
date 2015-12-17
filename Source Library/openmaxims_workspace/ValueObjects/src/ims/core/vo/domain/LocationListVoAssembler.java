@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.core.vo.domain;
@@ -54,6 +59,10 @@ public class LocationListVoAssembler
 		valueObjectDest.setName(valueObjectSrc.getName());
 		// Address
 		valueObjectDest.setAddress(valueObjectSrc.getAddress());
+		// Type
+		valueObjectDest.setType(valueObjectSrc.getType());
+		// parentLocation
+		valueObjectDest.setParentLocation(valueObjectSrc.getParentLocation());
 	 	return valueObjectDest;
 	 }
 
@@ -348,6 +357,44 @@ public class LocationListVoAssembler
 		valueObject.setName(domainObject.getName());
 		// Address
 		valueObject.setAddress(ims.core.vo.domain.AddressVoAssembler.create(map, domainObject.getAddress()) );
+		// Type
+		ims.domain.lookups.LookupInstance instance3 = domainObject.getType();
+		if ( null != instance3 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance3.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance3.getImage().getImageId(), instance3.getImage().getImagePath());
+			}
+			color = instance3.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.LocationType voLookup3 = new ims.core.vo.lookups.LocationType(instance3.getId(),instance3.getText(), instance3.isActive(), null, img, color);
+			ims.core.vo.lookups.LocationType parentVoLookup3 = voLookup3;
+			ims.domain.lookups.LookupInstance parent3 = instance3.getParent();
+			while (parent3 != null)
+			{
+				if (parent3.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent3.getImage().getImageId(), parent3.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent3.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup3.setParent(new ims.core.vo.lookups.LocationType(parent3.getId(),parent3.getText(), parent3.isActive(), null, img, color));
+				parentVoLookup3 = parentVoLookup3.getParent();
+								parent3 = parent3.getParent();
+			}			
+			valueObject.setType(voLookup3);
+		}
+				// parentLocation
+		valueObject.setParentLocation(ims.core.vo.domain.LocationListVoAssembler.create(map, domainObject.getParentLocation()) );
  		return valueObject;
 	 }
 
@@ -421,6 +468,31 @@ public class LocationListVoAssembler
 			}
 		}
 		domainObject.setAddress(value2);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value3 = null;
+		if ( null != valueObject.getType() ) 
+		{
+			value3 =
+				domainFactory.getLookupInstance(valueObject.getType().getID());
+		}
+		domainObject.setType(value3);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.resource.place.domain.objects.Location value4 = null;
+		if ( null != valueObject.getParentLocation() ) 
+		{
+			if (valueObject.getParentLocation().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getParentLocation()) != null)
+				{
+					value4 = (ims.core.resource.place.domain.objects.Location)domMap.get(valueObject.getParentLocation());
+				}
+			}
+			else
+			{
+				value4 = (ims.core.resource.place.domain.objects.Location)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.Location.class, valueObject.getParentLocation().getBoId());
+			}
+		}
+		domainObject.setParentLocation(value4);
 
 		return domainObject;
 	}

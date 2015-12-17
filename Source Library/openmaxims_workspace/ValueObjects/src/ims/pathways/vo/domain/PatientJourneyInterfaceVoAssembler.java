@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:23
  *
  */
 package ims.pathways.vo.domain;
@@ -66,8 +71,14 @@ public class PatientJourneyInterfaceVoAssembler
 		valueObjectDest.setStatusHistory(valueObjectSrc.getStatusHistory());
 		// Referral
 		valueObjectDest.setReferral(valueObjectSrc.getReferral());
-		// Comments
-		valueObjectDest.setComments(valueObjectSrc.getComments());
+		// LinkedComments
+		valueObjectDest.setLinkedComments(valueObjectSrc.getLinkedComments());
+		// NextValidationDate
+		valueObjectDest.setNextValidationDate(valueObjectSrc.getNextValidationDate());
+		// CurrentClock
+		valueObjectDest.setCurrentClock(valueObjectSrc.getCurrentClock());
+		// LastValidationDate
+		valueObjectDest.setLastValidationDate(valueObjectSrc.getLastValidationDate());
 	 	return valueObjectDest;
 	 }
 
@@ -382,8 +393,22 @@ public class PatientJourneyInterfaceVoAssembler
 		valueObject.setStatusHistory(ims.pathways.vo.domain.PatientJourneyStatusVoAssembler.createPatientJourneyStatusVoCollectionFromPatientJourneyStatus(map, domainObject.getStatusHistory()) );
 		// Referral
 		valueObject.setReferral(ims.core.vo.domain.ReferralListVoAssembler.create(map, domainObject.getReferral()) );
-		// Comments
-		valueObject.setComments(domainObject.getComments());
+		// LinkedComments
+		valueObject.setLinkedComments(ims.pathways.vo.domain.PatientJourneyCommentLiteVoAssembler.createPatientJourneyCommentLiteVoCollectionFromPatientJourneyComment(map, domainObject.getLinkedComments()) );
+		// NextValidationDate
+		java.util.Date NextValidationDate = domainObject.getNextValidationDate();
+		if ( null != NextValidationDate ) 
+		{
+			valueObject.setNextValidationDate(new ims.framework.utils.Date(NextValidationDate) );
+		}
+		// CurrentClock
+		valueObject.setCurrentClock(ims.pathways.vo.domain.PathwayCurrentClockForRttStatusVoAssembler.create(map, domainObject.getCurrentClock()) );
+		// LastValidationDate
+		java.util.Date LastValidationDate = domainObject.getLastValidationDate();
+		if ( null != LastValidationDate ) 
+		{
+			valueObject.setLastValidationDate(new ims.framework.utils.Date(LastValidationDate) );
+		}
  		return valueObject;
 	 }
 
@@ -469,13 +494,96 @@ public class PatientJourneyInterfaceVoAssembler
 			}
 		}
 		domainObject.setReferral(value8);
-		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
-		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
-		if (valueObject.getComments() != null && valueObject.getComments().equals(""))
+
+		// SaveAsRefVO treated as RefValueObject
+		ims.pathways.vo.PatientJourneyCommentRefVoCollection refCollection9 = new ims.pathways.vo.PatientJourneyCommentRefVoCollection();
+		if (valueObject.getLinkedComments() != null)
 		{
-			valueObject.setComments(null);
+			for (int i9=0; i9<valueObject.getLinkedComments().size(); i9++)
+			{
+				ims.pathways.vo.PatientJourneyCommentRefVo ref9 = (ims.pathways.vo.PatientJourneyCommentRefVo)valueObject.getLinkedComments().get(i9);
+				refCollection9.add(ref9);
+			}
 		}
-		domainObject.setComments(valueObject.getComments());
+		int size9 = (null == refCollection9) ? 0 : refCollection9.size();		
+		java.util.List domainLinkedComments9 = domainObject.getLinkedComments();
+		if (domainLinkedComments9 == null)
+		{
+			domainLinkedComments9 = new java.util.ArrayList();
+		}
+		for(int i=0; i < size9; i++) 
+		{
+			ims.pathways.vo.PatientJourneyCommentRefVo vo = refCollection9.get(i);			
+			ims.pathways.domain.objects.PatientJourneyComment dom = null;
+			if ( null != vo ) 
+			{
+				if (vo.getBoId() == null)
+				{
+					if (domMap.get(vo) != null)
+					{
+						dom = (ims.pathways.domain.objects.PatientJourneyComment)domMap.get(vo);
+					}
+				}
+				else
+				{
+					dom = (ims.pathways.domain.objects.PatientJourneyComment)domainFactory.getDomainObject( ims.pathways.domain.objects.PatientJourneyComment.class, vo.getBoId());
+				}
+			}
+
+			int domIdx = domainLinkedComments9.indexOf(dom);
+			if (domIdx == -1)
+			{
+				domainLinkedComments9.add(i, dom);
+			}
+			else if (i != domIdx && i < domainLinkedComments9.size())
+			{
+				Object tmp = domainLinkedComments9.get(i);
+				domainLinkedComments9.set(i, domainLinkedComments9.get(domIdx));
+				domainLinkedComments9.set(domIdx, tmp);
+			}
+		}
+		
+		//Remove all ones in domList where index > voCollection.size() as these should
+		//now represent the ones removed from the VO collection. No longer referenced.
+		int i9 = domainLinkedComments9.size();
+		while (i9 > size9)
+		{
+			domainLinkedComments9.remove(i9-1);
+			i9 = domainLinkedComments9.size();
+		}
+		
+		domainObject.setLinkedComments(domainLinkedComments9);		
+		java.util.Date value10 = null;
+		ims.framework.utils.Date date10 = valueObject.getNextValidationDate();		
+		if ( date10 != null ) 
+		{
+			value10 = date10.getDate();
+		}
+		domainObject.setNextValidationDate(value10);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.pathways.domain.objects.PathwayClock value11 = null;
+		if ( null != valueObject.getCurrentClock() ) 
+		{
+			if (valueObject.getCurrentClock().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getCurrentClock()) != null)
+				{
+					value11 = (ims.pathways.domain.objects.PathwayClock)domMap.get(valueObject.getCurrentClock());
+				}
+			}
+			else
+			{
+				value11 = (ims.pathways.domain.objects.PathwayClock)domainFactory.getDomainObject(ims.pathways.domain.objects.PathwayClock.class, valueObject.getCurrentClock().getBoId());
+			}
+		}
+		domainObject.setCurrentClock(value11);
+		java.util.Date value12 = null;
+		ims.framework.utils.Date date12 = valueObject.getLastValidationDate();		
+		if ( date12 != null ) 
+		{
+			value12 = date12.getDate();
+		}
+		domainObject.setLastValidationDate(value12);
 
 		return domainObject;
 	}

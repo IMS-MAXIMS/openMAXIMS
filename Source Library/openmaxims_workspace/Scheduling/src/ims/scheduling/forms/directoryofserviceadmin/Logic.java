@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -36,6 +41,7 @@ import ims.domain.exceptions.UniqueKeyViolationException;
 import ims.framework.enumerations.FormMode;
 import ims.framework.exceptions.PresentationLogicException;
 import ims.framework.utils.Color;
+import ims.scheduling.forms.directoryofserviceadmin.GenForm.grdFunctionsRow;
 import ims.scheduling.vo.DirectoryOfServiceVo;
 import ims.scheduling.vo.DirectoryOfServiceVoCollection;
 
@@ -173,14 +179,15 @@ public class Logic extends BaseLogic
 		voDirService.setDoSName(form.txtName().getValue());
 		voDirService.setService(form.cmbService().getValue());
 		voDirService.setIsActive(new Boolean(form.chkActive().getValue()));
+		voDirService.setRTTClockImpact(form.chkRTTClockImpact().getValue());//WDEV-19457
 		voDirService.setLocation(form.qmbLocation().getValue());
 		//voDirService.setOrganisation(form.cmbOrganisation().getValue());
 		//WDEV-11662
 		voDirService.setContract(form.cmbContract().getValue());
 
-		ServiceFunctionVoCollection voCollFuncs = voDirService.getFunctions();
-		if (voCollFuncs == null)
-			voCollFuncs = new ServiceFunctionVoCollection();
+		//ServiceFunctionVoCollection voCollFuncs = voDirService.getFunctions();		//wdev-20262
+		//if (voCollFuncs == null)														//wdev-20262					
+		ServiceFunctionVoCollection voCollFuncs = new ServiceFunctionVoCollection();	//wdev-20262
 
 		for (int i = 0; i < form.grdFunctions().getRows().size(); i++)
 		{
@@ -219,6 +226,7 @@ public class Logic extends BaseLogic
 		form.txtId().setValue(voDirService.getDoSId());
 		form.txtName().setValue(voDirService.getDoSName());
 		form.chkActive().setValue(voDirService.getIsActiveIsNotNull() ? voDirService.getIsActive().booleanValue() : false);
+		form.chkRTTClockImpact().setValue(voDirService.getRTTClockImpact());//WDEV-19457
 		form.cmbService().setValue(voDirService.getService());
 		//WDEV-11662 form.cmbOrganisation().setValue(voDirService.getOrganisation());
 		//WDEV-11662-Begin
@@ -334,6 +342,7 @@ public class Logic extends BaseLogic
 		removeNonActiveContracts();
 		form.qmbLocation().clear();
 		form.chkActive().setValue(false);
+		form.chkRTTClockImpact().setValue(false);//WDEV-19457
 	}
 
 	private ServiceShortVoCollection listServices(String value)
@@ -516,4 +525,18 @@ public class Logic extends BaseLogic
 		
 	}
 	//End WDEV-11662
+
+	//wdev-20262
+	protected void onGrdFunctionsGridCheckBoxClicked(int column, grdFunctionsRow row, boolean isChecked) throws PresentationLogicException
+	{
+		for( int i = 0; i < form.grdFunctions().getRows().size();i++)
+		{
+			grdFunctionsRow rowtemp = form.grdFunctions().getRows().get(i);
+			if( !row.getValue().equals(rowtemp.getValue()))
+			{
+				rowtemp.setColSelect(false);
+			}
+		}
+		
+	}
 }

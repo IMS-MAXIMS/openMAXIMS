@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.scheduling.domain.objects;
@@ -49,8 +54,10 @@ public class AppointmentOutcomeAction extends ims.domain.DomainObject implements
 	private ims.domain.lookups.LookupInstance appointmentAction;
 	/** OutcomeOfAction */
 	private ims.domain.lookups.LookupInstance outcomeOfAction;
-	/** FutureAppointmentDetails */
-	private ims.scheduling.domain.objects.FutureAppointmentDetails futureAppointmentDetails;
+	/** Future Appointment Details */
+	private ims.scheduling.domain.objects.FutureAppointmentDetails futureAppointmentDetail;
+	/** IPT Out */
+	private ims.RefMan.domain.objects.InterProviderTransferOut iPTOUT;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public AppointmentOutcomeAction (Integer id, int ver)
@@ -85,11 +92,18 @@ public class AppointmentOutcomeAction extends ims.domain.DomainObject implements
 		this.outcomeOfAction = outcomeOfAction;
 	}
 
-	public ims.scheduling.domain.objects.FutureAppointmentDetails getFutureAppointmentDetails() {
-		return futureAppointmentDetails;
+	public ims.scheduling.domain.objects.FutureAppointmentDetails getFutureAppointmentDetail() {
+		return futureAppointmentDetail;
 	}
-	public void setFutureAppointmentDetails(ims.scheduling.domain.objects.FutureAppointmentDetails futureAppointmentDetails) {
-		this.futureAppointmentDetails = futureAppointmentDetails;
+	public void setFutureAppointmentDetail(ims.scheduling.domain.objects.FutureAppointmentDetails futureAppointmentDetail) {
+		this.futureAppointmentDetail = futureAppointmentDetail;
+	}
+
+	public ims.RefMan.domain.objects.InterProviderTransferOut getIPTOUT() {
+		return iPTOUT;
+	}
+	public void setIPTOUT(ims.RefMan.domain.objects.InterProviderTransferOut iPTOUT) {
+		this.iPTOUT = iPTOUT;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -137,12 +151,20 @@ public class AppointmentOutcomeAction extends ims.domain.DomainObject implements
 		if (outcomeOfAction != null)
 			auditStr.append(outcomeOfAction.getText());
 	    auditStr.append("; ");
-		auditStr.append("\r\n*futureAppointmentDetails* :");
-		if (futureAppointmentDetails != null)
+		auditStr.append("\r\n*futureAppointmentDetail* :");
+		if (futureAppointmentDetail != null)
 		{
-			auditStr.append(toShortClassName(futureAppointmentDetails));
+			auditStr.append(toShortClassName(futureAppointmentDetail));
 				
-		    auditStr.append(futureAppointmentDetails.getId());
+		    auditStr.append(futureAppointmentDetail.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*iPTOUT* :");
+		if (iPTOUT != null)
+		{
+			auditStr.append(toShortClassName(iPTOUT));
+				
+		    auditStr.append(iPTOUT.getId());
 		}
 	    auditStr.append("; ");
 		return auditStr.toString();
@@ -201,11 +223,17 @@ public class AppointmentOutcomeAction extends ims.domain.DomainObject implements
 			sb.append(this.getOutcomeOfAction().toXMLString()); 
 			sb.append("</outcomeOfAction>");		
 		}
-		if (this.getFutureAppointmentDetails() != null)
+		if (this.getFutureAppointmentDetail() != null)
 		{
-			sb.append("<futureAppointmentDetails>");
-			sb.append(this.getFutureAppointmentDetails().toXMLString(domMap)); 	
-			sb.append("</futureAppointmentDetails>");		
+			sb.append("<futureAppointmentDetail>");
+			sb.append(this.getFutureAppointmentDetail().toXMLString(domMap)); 	
+			sb.append("</futureAppointmentDetail>");		
+		}
+		if (this.getIPTOUT() != null)
+		{
+			sb.append("<iPTOUT>");
+			sb.append(this.getIPTOUT().toXMLString(domMap)); 	
+			sb.append("</iPTOUT>");		
 		}
 		return sb.toString();
 	}
@@ -382,11 +410,17 @@ public class AppointmentOutcomeAction extends ims.domain.DomainObject implements
 			fldEl = fldEl.element("lki");
 			obj.setOutcomeOfAction(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
 		}
-		fldEl = el.element("futureAppointmentDetails");
+		fldEl = el.element("futureAppointmentDetail");
 		if(fldEl != null)
 		{
 			fldEl = fldEl.element("class");		
-			obj.setFutureAppointmentDetails(ims.scheduling.domain.objects.FutureAppointmentDetails.getFutureAppointmentDetailsfromXML(fldEl, factory, domMap)); 
+			obj.setFutureAppointmentDetail(ims.scheduling.domain.objects.FutureAppointmentDetails.getFutureAppointmentDetailsfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("iPTOUT");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setIPTOUT(ims.RefMan.domain.objects.InterProviderTransferOut.getInterProviderTransferOutfromXML(fldEl, factory, domMap)); 
 		}
 	}
 
@@ -402,7 +436,8 @@ public class AppointmentOutcomeAction extends ims.domain.DomainObject implements
 	public static final String ID = "id";
 		public static final String AppointmentAction = "appointmentAction";
 		public static final String OutcomeOfAction = "outcomeOfAction";
-		public static final String FutureAppointmentDetails = "futureAppointmentDetails";
+		public static final String FutureAppointmentDetail = "futureAppointmentDetail";
+		public static final String IPTOUT = "iPTOUT";
 	}
 }
 

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -34,6 +39,7 @@ import ims.core.admin.domain.objects.EpisodeOfCare;
 import ims.core.admin.domain.objects.RTA;
 import ims.core.admin.domain.objects.TIIG;
 import ims.core.admin.vo.CareContextRefVo;
+import ims.core.admin.vo.CareSpellRefVo;
 import ims.core.admin.vo.EmergencyAttendanceRefVo;
 import ims.core.admin.vo.EmergencyEpisodeRefVo;
 import ims.core.admin.vo.EpisodeOfCareRefVo;
@@ -44,9 +50,11 @@ import ims.core.patient.vo.PatientRefVo;
 import ims.core.resource.people.domain.objects.Gp;
 import ims.core.resource.place.domain.objects.LocSite;
 import ims.core.resource.place.vo.LocationRefVo;
+import ims.core.vo.CareContextShortVo;
 import ims.core.vo.CareContextVo;
 import ims.core.vo.CareSpellVo;
 import ims.core.vo.EDAttendanceformsConfigVo;
+import ims.core.vo.EpisodeofCareLiteVo;
 import ims.core.vo.EpisodeofCareVo;
 import ims.core.vo.GpLiteWithNameVo;
 import ims.core.vo.GpShortVo;
@@ -62,14 +70,17 @@ import ims.core.vo.domain.LocSiteShortVoAssembler;
 import ims.domain.DomainFactory;
 import ims.domain.exceptions.StaleObjectException;
 import ims.emergency.configuration.domain.objects.LocationDepartmentTypes;
+import ims.emergency.domain.EmergencyAttendanceDetailsCc;
 import ims.emergency.domain.base.impl.BaseAttendanceDetailsImpl;
 import ims.emergency.domain.objects.Tracking;
 import ims.emergency.helper.EmergencyHelper;
 import ims.emergency.helper.IEmergencyHelper;
 import ims.emergency.vo.AttendanceDetailsVo;
-import ims.emergency.vo.AttendanceDetailsVoCollection;
 import ims.emergency.vo.ChartRequestedVo;
 import ims.emergency.vo.EmergencyAttendanceBillingVo;
+import ims.emergency.vo.EmergencyAttendanceNonInsuranceHealthCoverVo;
+import ims.emergency.vo.EmergencyAttendanceShortVo;
+import ims.emergency.vo.EmergencyEpisodeShortVoCollection;
 import ims.emergency.vo.EpisodeDetailsVo;
 import ims.emergency.vo.EpisodeDetailsVoCollection;
 import ims.emergency.vo.EpisodeOfcareLiteVo;
@@ -77,7 +88,10 @@ import ims.emergency.vo.LocationDepartmentTypesVo;
 import ims.emergency.vo.RTAVo;
 import ims.emergency.vo.TIIGVo;
 import ims.emergency.vo.TrackingSendToAreaVo;
+import ims.emergency.vo.TrackingSendToAreaVoCollection;
 import ims.emergency.vo.domain.AttendanceDetailsVoAssembler;
+import ims.emergency.vo.domain.EmergencyAttendanceNonInsuranceHealthCoverVoAssembler;
+import ims.emergency.vo.domain.EmergencyEpisodeShortVoAssembler;
 import ims.emergency.vo.domain.EpisodeDetailsVoAssembler;
 import ims.emergency.vo.domain.EpisodeOfcareLiteVoAssembler;
 import ims.emergency.vo.domain.LocationDepartmentTypesVoAssembler;
@@ -85,6 +99,7 @@ import ims.emergency.vo.domain.RTAVoAssembler;
 import ims.emergency.vo.domain.TIIGVoAssembler;
 import ims.emergency.vo.domain.TrackingSendToAreaVoAssembler;
 import ims.emergency.vo.enums.AttendanceHistoryDialog;
+import ims.framework.FormName;
 import ims.framework.enumerations.SortOrder;
 import ims.framework.exceptions.CodingRuntimeException;
 import ims.framework.utils.DateTime;
@@ -111,37 +126,32 @@ public class AttendanceDetailsImpl extends BaseAttendanceDetailsImpl
 		return CareSpellVoAssembler.createCareSpellVoCollectionFromCareSpell(careSpell).get(0);
 	}
 		
-	public EpisodeDetailsVoCollection listEmergencyEpisodeByPatient(PatientRefVo patientRefVo, 
-			Integer maxRecords,
-				AttendanceHistoryDialog type, 
-					DateTime scheduledDate, 
-						DateTime unscheduledDate)
+	public EmergencyEpisodeShortVoCollection listEmergencyEpisodes(PatientRefVo patientRefVo, Integer maxRecords, AttendanceHistoryDialog type, DateTime scheduledDate, DateTime unscheduledDate)
 	{
 		if(patientRefVo == null || patientRefVo.getID_Patient() == null)
 			throw new CodingRuntimeException("Patient not provided");
 		
 		DomainFactory factory = getDomainFactory();
 		
-		String hsql = " select e1_1 from EmergencyEpisode as e1_1 ";
-		hsql += " left join e1_1.episodeOfCare as e2_1 ";
-		hsql += " left join e2_1.careSpell as c1_1 ";
-		hsql += " left join c1_1.patient as p1_1 ";
-		hsql += " where e1_1.isRIE is null and p1_1.id = :idPatient";
+		StringBuilder hsql = new StringBuilder(" SELECT e1_1 FROM EmergencyEpisode AS e1_1 ");
+		hsql.append(" LEFT JOIN e1_1.patient AS p1_1 ");
+		hsql.append(" LEFT JOIN e1_1.episodeOfCare AS e2_1 ");
+		hsql.append(" WHERE e1_1.isRIE is null and p1_1.id = :idPatient");
 		
 		if (type != null)
 		{
 			if (type.equals(AttendanceHistoryDialog.SCHEDULED))
 			{
-				hsql += " and e1_1.injuryDateTime >= :scheduledDate";
+				hsql.append(" and e1_1.injuryDateTime >= :scheduledDate");
 			}
 			if (type.equals(AttendanceHistoryDialog.UNSCHEDULED))
 			{
-				hsql += " and (e1_1.injuryDateTime >= :unscheduledDate and e1_1.injuryDateTime < :scheduledDate)";
+				hsql.append(" and (e1_1.injuryDateTime >= :unscheduledDate and e1_1.injuryDateTime < :scheduledDate)");
 			}
 		}
-		hsql += " order by e2_1.startDate desc";		//wdev-16070
+		hsql.append(" order by e2_1.startDate desc");		//wdev-16070
 		
-		List episodeDetails = null;
+		List<?> episodeDetails = null;
 		
 		if (maxRecords != 0)
 		{
@@ -149,16 +159,16 @@ public class AttendanceDetailsImpl extends BaseAttendanceDetailsImpl
 			{
 				if (type.equals(AttendanceHistoryDialog.SCHEDULED))
 				{
-					episodeDetails = factory.find(hsql, new String[] {"scheduledDate","idPatient"}, new Object[] {scheduledDate.getJavaDate(), patientRefVo.getID_Patient()},maxRecords);
+					episodeDetails = factory.find(hsql.toString(), new String[] {"scheduledDate","idPatient"}, new Object[] {scheduledDate.getJavaDate(), patientRefVo.getID_Patient()},maxRecords);
 				}
 				if (type.equals(AttendanceHistoryDialog.UNSCHEDULED))
 				{
-					episodeDetails = factory.find(hsql, new String[] {"scheduledDate","unscheduledDate","idPatient"}, new Object[] {scheduledDate.getJavaDate(), unscheduledDate.getJavaDate(), patientRefVo.getID_Patient()},maxRecords);
+					episodeDetails = factory.find(hsql.toString(), new String[] {"scheduledDate","unscheduledDate","idPatient"}, new Object[] {scheduledDate.getJavaDate(), unscheduledDate.getJavaDate(), patientRefVo.getID_Patient()},maxRecords);
 				}
 			}
 			else
 			{
-				episodeDetails = factory.find(hsql, new String[] {"idPatient"}, new Object[] {patientRefVo.getID_Patient()},maxRecords);
+				episodeDetails = factory.find(hsql.toString(), new String[] {"idPatient"}, new Object[] {patientRefVo.getID_Patient()},maxRecords);
 			}
 		}
 		else
@@ -167,22 +177,22 @@ public class AttendanceDetailsImpl extends BaseAttendanceDetailsImpl
 			{
 				if (type.equals(AttendanceHistoryDialog.SCHEDULED))
 				{
-					episodeDetails = factory.find(hsql, new String[] {"scheduledDate","idPatient"}, new Object[] {scheduledDate.getJavaDate(), patientRefVo.getID_Patient()});
+					episodeDetails = factory.find(hsql.toString(), new String[] {"scheduledDate","idPatient"}, new Object[] {scheduledDate.getJavaDate(), patientRefVo.getID_Patient()});
 				}
 				if (type.equals(AttendanceHistoryDialog.UNSCHEDULED))
 				{
-					episodeDetails = factory.find(hsql, new String[] {"scheduledDate","unscheduledDate","idPatient"}, new Object[] {scheduledDate.getJavaDate(), unscheduledDate.getJavaDate(), patientRefVo.getID_Patient()});
+					episodeDetails = factory.find(hsql.toString(), new String[] {"scheduledDate","unscheduledDate","idPatient"}, new Object[] {scheduledDate.getJavaDate(), unscheduledDate.getJavaDate(), patientRefVo.getID_Patient()});
 				}
 			}
 			else
 			{
-				episodeDetails = factory.find(hsql, new String[] {"idPatient"}, new Object[] {patientRefVo.getID_Patient()});
+				episodeDetails = factory.find(hsql.toString(), new String[] {"idPatient"}, new Object[] {patientRefVo.getID_Patient()});
 			}
 		}
 		
 		
 		if ( episodeDetails != null && episodeDetails.size() > 0)
-			 return EpisodeDetailsVoAssembler.createEpisodeDetailsVoCollectionFromEmergencyEpisode(episodeDetails).sort(SortOrder.DESCENDING);
+			 return EmergencyEpisodeShortVoAssembler.createEmergencyEpisodeShortVoCollectionFromEmergencyEpisode(episodeDetails).sort(SortOrder.DESCENDING);
 			
 		
 		return null;
@@ -386,27 +396,20 @@ public class AttendanceDetailsImpl extends BaseAttendanceDetailsImpl
 	//wdev-14420
 	public AttendanceDetailsVo getLastAttendance(PatientRefVo patientRef) 
 	{
-		if(patientRef == null)
+		if (patientRef == null)
 			throw new CodingRuntimeException("Patient not provided");
 
 		DomainFactory factory = getDomainFactory();
 		
+		// Query to list back the latest 
+		StringBuilder query = new StringBuilder("SELECT erAttend ");
+		query.append("FROM EmergencyEpisode AS erEp LEFT JOIN erEp.patient AS pat LEFT JOIN erEp.emergencyAttendances AS erAttend ");
+		query.append("WHERE (erAttend.isRIE is null OR erAttend.isRIE = 0) AND pat.id = :PATIENT_ID AND ");
+		query.append("(erAttend.arrivalDateTime = ");
+			query.append("(SELECT MAX(erAttend2.arrivalDateTime) FROM EmergencyEpisode AS erEp2 LEFT JOIN erEp2.patient AS patient2 LEFT JOIN erEp2.emergencyAttendances AS erAttend2 ");
+			query.append(" WHERE patient2.id = :PATIENT_ID)) ");
 
-		String hsql = 	"select e3_1 from EmergencyEpisode as e1_1 left join e1_1.episodeOfCare as e2_1 left join e2_1.careSpell as c1_1 left join c1_1.patient as p1_1 left join e1_1.emergencyAttendances as e3_1 where (e3_1.arrivalDateTime = " +
-						"(select  max (xe3_1.arrivalDateTime)   from EmergencyEpisode as xe1_1 left join xe1_1.episodeOfCare as xe2_1 left join xe2_1.careSpell as xc1_1 left join xc1_1.patient as xp1_1 left join xe1_1.emergencyAttendances as xe3_1  " +
-						"where (xc1_1.patient.id =:idPatient )) and c1_1.patient.id =:idPatient1 )";
-		
-			
-		List attendances = factory.find(hsql, new String[] {"idPatient","idPatient1"}, new Object[] {patientRef.getID_Patient(),patientRef.getID_Patient()});
-		if(attendances != null && attendances.size() > 0)
-		{
-			AttendanceDetailsVoCollection attColl = AttendanceDetailsVoAssembler.createAttendanceDetailsVoCollectionFromEmergencyAttendance(attendances);
-			if( attColl != null && attColl.size() > 0)
-				return attColl.get(0);
-		}
-		return null;
-	
-
+		return	AttendanceDetailsVoAssembler.create((EmergencyAttendance) factory.findFirst(query.toString(), "PATIENT_ID", patientRef.getID_Patient()));
 	}
 
 	//wdev-14420
@@ -497,6 +500,9 @@ public class AttendanceDetailsImpl extends BaseAttendanceDetailsImpl
 	//wdev-16673
 	public AttendanceDetailsVo getAttendanceDetails(EmergencyAttendanceRefVo attendanceDetailsRef)
 	{
+		if (attendanceDetailsRef == null || attendanceDetailsRef.getID_EmergencyAttendance() == null)
+			return null;
+		
 		IEmergencyHelper impl = (IEmergencyHelper)getDomainImpl(EmergencyHelper.class);
 		return impl.getAttendanceDetails(attendanceDetailsRef);
 	}
@@ -515,4 +521,124 @@ public class AttendanceDetailsImpl extends BaseAttendanceDetailsImpl
 		return impl.getEDAttendanceControlsConfig(controlType);
 	}
 
+	//wdev-19015
+	public EmergencyAttendanceNonInsuranceHealthCoverVo getEmergencyAttendanceNonInsuranceHealthCoverVo(EmergencyAttendanceRefVo attendanceRef)
+	{
+		if( attendanceRef == null )
+			throw new CodingRuntimeException("EmergencyAttendanceRefVo not provided");
+		
+		DomainFactory factory = getDomainFactory();
+		EmergencyAttendance doEmergencyAttendancee = (EmergencyAttendance) factory.getDomainObject(EmergencyAttendance.class, attendanceRef.getID_EmergencyAttendance());
+		return EmergencyAttendanceNonInsuranceHealthCoverVoAssembler.create(doEmergencyAttendancee);
+	}
+
+	//wdev-19040
+	public void rieAttendanceDetails(EmergencyAttendanceShortVo attendanceDetails, FormName formName, Integer patId, Integer contactId, Integer careContextId, String comment, CareContextShortVo carecontext, EpisodeofCareLiteVo episode, CareSpellVo carespell, EpisodeDetailsVo emergencyepisode, TrackingSendToAreaVo tracking) throws StaleObjectException
+	{
+		if( episode == null &&  carespell == null && emergencyepisode == null)
+		{
+			
+			if( attendanceDetails != null)
+				markAsRie(attendanceDetails, formName, patId, contactId, careContextId, comment);
+			if(	carecontext != null)
+				markAsRie(carecontext, formName, patId, contactId, careContextId, comment);
+			if( tracking != null)
+				markAsRie(tracking, formName, patId, contactId, careContextId, comment);
+			
+		}
+		else
+		{
+			if( emergencyepisode != null)
+				markAsRie(emergencyepisode, formName, patId, contactId, careContextId, comment);
+			if( attendanceDetails != null)
+				markAsRie(attendanceDetails, formName, patId, contactId, careContextId, comment);
+			if( carecontext != null )
+				markAsRie(carecontext, formName, patId, contactId, careContextId, comment);
+			if( episode != null )
+			{
+				if( countCareContextByEpisodeOfcare(episode) == 0)	//wdev-19363
+					markAsRie(episode, formName, patId, contactId, careContextId, comment);
+			}
+			if( carespell != null)
+			{
+				if( countEpisodeOfCareByCareSpell(carespell) == 0)	//wdev-19363
+					markAsRie(carespell, formName, patId, contactId, careContextId, comment);
+			}
+			if( tracking != null)
+				markAsRie(tracking, formName, patId, contactId, careContextId, comment);
+			
+		}
+			
+		
+		
+		if( attendanceDetails != null )	//wdev-17949
+		{
+			EmergencyAttendanceDetailsCc tempImpl = (EmergencyAttendanceDetailsCc)getDomainImpl(EmergencyAttendanceDetailsCcImpl.class);
+			tempImpl.triggerAttendanceCancelRegistrationEvent(attendanceDetails);
+		}
+
+			
+	}
+
+	//wdev-19040
+	public TrackingSendToAreaVo getTrackingSendToAreaVoByAttendanceDetails(EmergencyAttendanceRefVo attendanceDetailsRef)
+	{
+		
+		if( attendanceDetailsRef == null)
+			return null;
+		
+				
+		DomainFactory factory = getDomainFactory();
+		
+		String hsql = "select t1_1 from Tracking as t1_1 left join t1_1.attendance as e1_1 where	(e1_1.id = :attendanceId and t1_1.isRIE is null ) ";
+		 
+		List tracking = factory.find(hsql, new String[] {"attendanceId"}, new Object[] {attendanceDetailsRef.getID_EmergencyAttendance()});
+		if( tracking != null && tracking.size() > 0)
+		{
+			TrackingSendToAreaVoCollection trackingColl = TrackingSendToAreaVoAssembler.createTrackingSendToAreaVoCollectionFromTracking(tracking);
+			if( trackingColl != null && trackingColl.size() > 0)
+				return trackingColl.get(0);
+		}
+		return null;
+	}
+
+	//wdev-19363
+	public Integer countCareContextByEpisodeOfcare(EpisodeOfCareRefVo episodeRef)
+	{
+		if( episodeRef == null || !episodeRef.getID_EpisodeOfCareIsNotNull())
+			return null;
+		
+		DomainFactory factory = getDomainFactory();
+		
+		String hsql = 	"select count (c1_1.id)	from CareContext as c1_1 left join c1_1.episodeOfCare as e1_1 where	(e1_1.id = :episodeId and ( c1_1.isRIE = null or c1_1.isRIE = 0)) group by c1_1.id ";
+					
+		List carecontexts = factory.find(hsql, new String[] {"episodeId"}, new Object[] {episodeRef.getID_EpisodeOfCare()});
+		if( carecontexts != null && carecontexts.size() > 0)
+		{
+			return ((Long)carecontexts.get(0)).intValue();
+		}
+		
+		return 0;//WDEV-19392
+		
+	}
+
+	//wdev-19363
+	public Integer countEpisodeOfCareByCareSpell(CareSpellRefVo careSpellRef)
+	{
+		if( careSpellRef == null || !careSpellRef.getID_CareSpellIsNotNull())
+			return null;
+		
+		DomainFactory factory = getDomainFactory();
+		
+		String hsql = "select count (e1_1.id) from EpisodeOfCare as e1_1 left join e1_1.careSpell as c1_1 where (c1_1.id = :careSpellId and (e1_1.isRIE = null or e1_1.isRIE = 0)) group by e1_1.id";
+					
+		List carecontexts = factory.find(hsql, new String[] {"careSpellId"}, new Object[] {careSpellRef.getID_CareSpell()});
+		if( carecontexts != null && carecontexts.size() > 0)
+		{
+			return ((Long)carecontexts.get(0)).intValue();
+		}
+		
+		return 0;//WDEV-19392
+		
+	}
 }

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.oncology.domain.objects;
@@ -51,6 +56,10 @@ public class ContactTypesByDisciplineItem extends ims.domain.DomainObject implem
 	private Boolean active;
 	/** Parent */
 	private ims.oncology.domain.objects.ContactTypesByDisciplineItem parent;
+	/** TaxonomyMap
+	  * Collection of ims.core.clinical.domain.objects.TaxonomyMap.
+	  */
+	private java.util.List taxonomyMap;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public ContactTypesByDisciplineItem (Integer id, int ver)
@@ -94,6 +103,16 @@ public class ContactTypesByDisciplineItem extends ims.domain.DomainObject implem
 	}
 	public void setParent(ims.oncology.domain.objects.ContactTypesByDisciplineItem parent) {
 		this.parent = parent;
+	}
+
+	public java.util.List getTaxonomyMap() {
+		if ( null == taxonomyMap ) {
+			taxonomyMap = new java.util.ArrayList();
+		}
+		return taxonomyMap;
+	}
+	public void setTaxonomyMap(java.util.List paramValue) {
+		this.taxonomyMap = paramValue;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -145,6 +164,29 @@ public class ContactTypesByDisciplineItem extends ims.domain.DomainObject implem
 			auditStr.append(toShortClassName(parent));
 				
 		    auditStr.append(parent.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*taxonomyMap* :");
+		if (taxonomyMap != null)
+		{
+		int i4=0;
+		for (i4=0; i4<taxonomyMap.size(); i4++)
+		{
+			if (i4 > 0)
+				auditStr.append(",");
+			ims.core.clinical.domain.objects.TaxonomyMap obj = (ims.core.clinical.domain.objects.TaxonomyMap)taxonomyMap.get(i4);
+		    if (obj != null)
+			{
+				if (i4 == 0)
+				{
+				auditStr.append(toShortClassName(obj));
+				auditStr.append("[");
+				}
+		        auditStr.append(obj.toString());
+			}
+		}
+		if (i4 > 0)
+			auditStr.append("] " + i4);
 		}
 	    auditStr.append("; ");
 		return auditStr.toString();
@@ -208,6 +250,15 @@ public class ContactTypesByDisciplineItem extends ims.domain.DomainObject implem
 			sb.append("<parent>");
 			sb.append(this.getParent().toXMLString(domMap)); 	
 			sb.append("</parent>");		
+		}
+		if (this.getTaxonomyMap() != null)
+		{
+			if (this.getTaxonomyMap().size() > 0 )
+			{
+			sb.append("<taxonomyMap>");
+			sb.append(ims.domain.DomainObject.toXMLString(this.getTaxonomyMap(), domMap));
+			sb.append("</taxonomyMap>");		
+			}
 		}
 		return sb.toString();
 	}
@@ -388,11 +439,18 @@ public class ContactTypesByDisciplineItem extends ims.domain.DomainObject implem
 			fldEl = fldEl.element("class");		
 			obj.setParent(ims.oncology.domain.objects.ContactTypesByDisciplineItem.getContactTypesByDisciplineItemfromXML(fldEl, factory, domMap)); 
 		}
+		fldEl = el.element("taxonomyMap");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("list");	
+			obj.setTaxonomyMap(ims.core.clinical.domain.objects.TaxonomyMap.fromListXMLString(fldEl, factory, obj.getTaxonomyMap(), domMap));
+		}
 	}
 
 	public static String[] getCollectionFields()
 	{
 		return new String[]{
+		 "taxonomyMap"
 		};
 	}
 
@@ -403,6 +461,7 @@ public class ContactTypesByDisciplineItem extends ims.domain.DomainObject implem
 		public static final String ContactType = "contactType";
 		public static final String Active = "active";
 		public static final String Parent = "parent";
+		public static final String TaxonomyMap = "taxonomyMap";
 	}
 }
 

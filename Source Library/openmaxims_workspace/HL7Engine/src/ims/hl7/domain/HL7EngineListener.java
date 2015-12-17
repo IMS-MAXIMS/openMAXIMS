@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -91,11 +96,15 @@ public class HL7EngineListener implements IHL7InterfaceComponent
 		server.registerApplication(MsgTypes.ADT, EvnCodes.A11, app); //Delete an Admission		
 		server.registerApplication(MsgTypes.ADT, EvnCodes.A12, app); //Delete a Transfer		
 		server.registerApplication(MsgTypes.ADT, EvnCodes.A13, app); //Delete a Discharge
+		server.registerApplication(MsgTypes.ADT, EvnCodes.A15, app); //Pending transfer WDEV-19974
 		server.registerApplication(MsgTypes.ADT, EvnCodes.A21, app); //Send on leave
 		server.registerApplication(MsgTypes.ADT, EvnCodes.A22, app); //Return from leave
+		server.registerApplication(MsgTypes.ADT, EvnCodes.A26, app); //Cancel ending transfer WDEV-19974
 		server.registerApplication(MsgTypes.ADT, EvnCodes.A52, app); //Delete on leave
 		server.registerApplication(MsgTypes.ADT, EvnCodes.A53, app); //Delete on leave
 		server.registerApplication(MsgTypes.ADT, EvnCodes.A60, app); //Allergy messages
+		server.registerApplication(MsgTypes.ADT, EvnCodes.A16, app); //WDEV-20445 Pending discharge messages
+		server.registerApplication(MsgTypes.ADT, EvnCodes.A25, app); //WDEV-20445 Cancel pending discharge messages
 		
 		//OUTPATIENT ADT Messages handled
 		server.registerApplication(MsgTypes.ADT, EvnCodes.A05, app); //Book an Appointment
@@ -129,6 +138,9 @@ public class HL7EngineListener implements IHL7InterfaceComponent
 		server.registerApplication(MsgTypes.REF, EvnCodes.I12, app);
 		server.registerApplication(MsgTypes.REF, EvnCodes.I13, app);
 		server.registerApplication(MsgTypes.REF, EvnCodes.I14, app);
+		
+		//WDEV-19563 Arrive and unarrive appointment via an external system
+		server.registerApplication(MsgTypes.SIU, EvnCodes.S14, app);
 		
 		server.registerApplication("ACK", "*", app); //ACK Message	
 		

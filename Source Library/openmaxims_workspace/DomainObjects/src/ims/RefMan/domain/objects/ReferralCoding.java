@@ -1,9 +1,33 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.RefMan.domain.objects;
@@ -30,6 +54,8 @@ public class ReferralCoding extends ims.domain.DomainObject implements ims.domai
 	private ims.RefMan.domain.objects.CatsReferral catsReferral;
 	/** PasEvent */
 	private ims.core.admin.pas.domain.objects.PASEvent pasEvent;
+	/** Appointment for Outpatient Coding */
+	private ims.scheduling.domain.objects.Booking_Appointment appointment;
 	/** CodingItems
 	  * Collection of ims.RefMan.domain.objects.ReferralCodingItem.
 	  */
@@ -40,6 +66,14 @@ public class ReferralCoding extends ims.domain.DomainObject implements ims.domai
 	private java.util.Date authoringDateTime;
 	/** Comments */
 	private String comments;
+	/** Active / Inactive indicator */
+	private Boolean active;
+	/** StagingExportData for external coder
+	  * Collection of ims.RefMan.domain.objects.StagingCodeExport.
+	  */
+	private java.util.List stagingCodeExport;
+	/** Finished Consultant Episode */
+	private ims.core.admin.pas.domain.objects.ConsultantStay fCE;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public ReferralCoding (Integer id, int ver)
@@ -72,6 +106,13 @@ public class ReferralCoding extends ims.domain.DomainObject implements ims.domai
 	}
 	public void setPasEvent(ims.core.admin.pas.domain.objects.PASEvent pasEvent) {
 		this.pasEvent = pasEvent;
+	}
+
+	public ims.scheduling.domain.objects.Booking_Appointment getAppointment() {
+		return appointment;
+	}
+	public void setAppointment(ims.scheduling.domain.objects.Booking_Appointment appointment) {
+		this.appointment = appointment;
 	}
 
 	public java.util.List getCodingItems() {
@@ -107,6 +148,30 @@ public class ReferralCoding extends ims.domain.DomainObject implements ims.domai
 				comments);
 		}
 		this.comments = comments;
+	}
+
+	public Boolean isActive() {
+		return active;
+	}
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+
+	public java.util.List getStagingCodeExport() {
+		if ( null == stagingCodeExport ) {
+			stagingCodeExport = new java.util.ArrayList();
+		}
+		return stagingCodeExport;
+	}
+	public void setStagingCodeExport(java.util.List paramValue) {
+		this.stagingCodeExport = paramValue;
+	}
+
+	public ims.core.admin.pas.domain.objects.ConsultantStay getFCE() {
+		return fCE;
+	}
+	public void setFCE(ims.core.admin.pas.domain.objects.ConsultantStay fCE) {
+		this.fCE = fCE;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -162,18 +227,26 @@ public class ReferralCoding extends ims.domain.DomainObject implements ims.domai
 		    auditStr.append(pasEvent.getId());
 		}
 	    auditStr.append("; ");
+		auditStr.append("\r\n*appointment* :");
+		if (appointment != null)
+		{
+			auditStr.append(toShortClassName(appointment));
+				
+		    auditStr.append(appointment.getId());
+		}
+	    auditStr.append("; ");
 		auditStr.append("\r\n*codingItems* :");
 		if (codingItems != null)
 		{
-		int i3=0;
-		for (i3=0; i3<codingItems.size(); i3++)
+		int i4=0;
+		for (i4=0; i4<codingItems.size(); i4++)
 		{
-			if (i3 > 0)
+			if (i4 > 0)
 				auditStr.append(",");
-			ims.RefMan.domain.objects.ReferralCodingItem obj = (ims.RefMan.domain.objects.ReferralCodingItem)codingItems.get(i3);
+			ims.RefMan.domain.objects.ReferralCodingItem obj = (ims.RefMan.domain.objects.ReferralCodingItem)codingItems.get(i4);
 		    if (obj != null)
 			{
-				if (i3 == 0)
+				if (i4 == 0)
 				{
 				auditStr.append(toShortClassName(obj));
 				auditStr.append("[");
@@ -181,8 +254,8 @@ public class ReferralCoding extends ims.domain.DomainObject implements ims.domai
 		        auditStr.append(obj.getId());
 			}
 		}
-		if (i3 > 0)
-			auditStr.append("] " + i3);
+		if (i4 > 0)
+			auditStr.append("] " + i4);
 		}
 	    auditStr.append("; ");
 		auditStr.append("\r\n*authoringMOS* :");
@@ -198,6 +271,40 @@ public class ReferralCoding extends ims.domain.DomainObject implements ims.domai
 	    auditStr.append("; ");
 		auditStr.append("\r\n*comments* :");
 		auditStr.append(comments);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*active* :");
+		auditStr.append(active);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*stagingCodeExport* :");
+		if (stagingCodeExport != null)
+		{
+		int i9=0;
+		for (i9=0; i9<stagingCodeExport.size(); i9++)
+		{
+			if (i9 > 0)
+				auditStr.append(",");
+			ims.RefMan.domain.objects.StagingCodeExport obj = (ims.RefMan.domain.objects.StagingCodeExport)stagingCodeExport.get(i9);
+		    if (obj != null)
+			{
+				if (i9 == 0)
+				{
+				auditStr.append(toShortClassName(obj));
+				auditStr.append("[");
+				}
+		        auditStr.append(obj.getId());
+			}
+		}
+		if (i9 > 0)
+			auditStr.append("] " + i9);
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*fCE* :");
+		if (fCE != null)
+		{
+			auditStr.append(toShortClassName(fCE));
+				
+		    auditStr.append(fCE.getId());
+		}
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -255,6 +362,12 @@ public class ReferralCoding extends ims.domain.DomainObject implements ims.domai
 			sb.append(this.getPasEvent().toXMLString(domMap)); 	
 			sb.append("</pasEvent>");		
 		}
+		if (this.getAppointment() != null)
+		{
+			sb.append("<appointment>");
+			sb.append(this.getAppointment().toXMLString(domMap)); 	
+			sb.append("</appointment>");		
+		}
 		if (this.getCodingItems() != null)
 		{
 			if (this.getCodingItems().size() > 0 )
@@ -281,6 +394,27 @@ public class ReferralCoding extends ims.domain.DomainObject implements ims.domai
 			sb.append("<comments>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getComments().toString()));
 			sb.append("</comments>");		
+		}
+		if (this.isActive() != null)
+		{
+			sb.append("<active>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isActive().toString()));
+			sb.append("</active>");		
+		}
+		if (this.getStagingCodeExport() != null)
+		{
+			if (this.getStagingCodeExport().size() > 0 )
+			{
+			sb.append("<stagingCodeExport>");
+			sb.append(ims.domain.DomainObject.toXMLString(this.getStagingCodeExport(), domMap));
+			sb.append("</stagingCodeExport>");		
+			}
+		}
+		if (this.getFCE() != null)
+		{
+			sb.append("<fCE>");
+			sb.append(this.getFCE().toXMLString(domMap)); 	
+			sb.append("</fCE>");		
 		}
 		return sb.toString();
 	}
@@ -457,6 +591,12 @@ public class ReferralCoding extends ims.domain.DomainObject implements ims.domai
 			fldEl = fldEl.element("class");		
 			obj.setPasEvent(ims.core.admin.pas.domain.objects.PASEvent.getPASEventfromXML(fldEl, factory, domMap)); 
 		}
+		fldEl = el.element("appointment");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setAppointment(ims.scheduling.domain.objects.Booking_Appointment.getBooking_AppointmentfromXML(fldEl, factory, domMap)); 
+		}
 		fldEl = el.element("codingItems");
 		if(fldEl != null)
 		{
@@ -479,12 +619,30 @@ public class ReferralCoding extends ims.domain.DomainObject implements ims.domai
 		{	
     		obj.setComments(new String(fldEl.getTextTrim()));	
 		}
+		fldEl = el.element("active");
+		if(fldEl != null)
+		{	
+    		obj.setActive(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("stagingCodeExport");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("list");	
+			obj.setStagingCodeExport(ims.RefMan.domain.objects.StagingCodeExport.fromListXMLString(fldEl, factory, obj.getStagingCodeExport(), domMap));
+		}
+		fldEl = el.element("fCE");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setFCE(ims.core.admin.pas.domain.objects.ConsultantStay.getConsultantStayfromXML(fldEl, factory, domMap)); 
+		}
 	}
 
 	public static String[] getCollectionFields()
 	{
 		return new String[]{
 		 "codingItems"
+		, "stagingCodeExport"
 		};
 	}
 
@@ -494,10 +652,14 @@ public class ReferralCoding extends ims.domain.DomainObject implements ims.domai
 	public static final String ID = "id";
 		public static final String CatsReferral = "catsReferral";
 		public static final String PasEvent = "pasEvent";
+		public static final String Appointment = "appointment";
 		public static final String CodingItems = "codingItems";
 		public static final String AuthoringMOS = "authoringMOS";
 		public static final String AuthoringDateTime = "authoringDateTime";
 		public static final String Comments = "comments";
+		public static final String Active = "active";
+		public static final String StagingCodeExport = "stagingCodeExport";
+		public static final String FCE = "fCE";
 	}
 }
 

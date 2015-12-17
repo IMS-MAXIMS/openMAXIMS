@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:37 -->
+<!-- Generated: 12/10/2015, 13:32 -->
 <hibernate-mapping>
 	<class name="ims.RefMan.domain.objects.DischargeSummaryPacuAndWard" table="care_dischargesumma" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -52,7 +52,7 @@
  				<column name="authoringiauthoringd" not-null="false"  unique="false"   />
  			</property>
  		</component>
-<!-- debug: dischargeDate -->
+<!-- debug: dischargeDateTime -->
 <!-- debug: dischargeType -->
 <!-- debug: admissionSummary -->
 <!-- debug: diagnosis -->
@@ -132,13 +132,13 @@
 <!-- debug: isCurrent -->
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
-		<property name="dischargeDate" type="date" access="field" update="true">
-			<column name="discharged"  not-null="true" unique="false"  />
+		<property name="dischargeDateTime" type="timestamp" access="field" update="true">
+			<column name="discharged"  not-null="false" unique="false"  />
 		</property>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: IsLookup -->
 		<many-to-one name="dischargeType" class="ims.domain.lookups.LookupInstance" access="field">
-			<column name="lkp_discharget" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+			<column name="lkp_discharget" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->

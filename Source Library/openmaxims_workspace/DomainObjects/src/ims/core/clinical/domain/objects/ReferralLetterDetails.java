@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.clinical.domain.objects;
@@ -110,6 +115,20 @@ public class ReferralLetterDetails extends ims.domain.DomainObject implements im
 	private String refererAddress;
 	/** TransferedBY */
 	private String transferedBY;
+	/** Communication Channels
+	  * Collection of ims.core.generic.domain.objects.CommunicationChannel.
+	  */
+	private java.util.List otherCommChannels;
+	private ims.domain.lookups.LookupInstance initiatedFrom;
+	private String otherLocation;
+	/** Service */
+	private ims.core.clinical.domain.objects.Service originalService;
+	/** 
+	  * Collection of ims.RefMan.domain.objects.ReferralServiceUpdates.
+	  */
+	private java.util.List serviceUpdateHistory;
+	/** Original Consultant */
+	private ims.core.resource.people.domain.objects.Hcp originalConsultant;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public ReferralLetterDetails (Integer id, int ver)
@@ -389,6 +408,58 @@ public class ReferralLetterDetails extends ims.domain.DomainObject implements im
 		this.transferedBY = transferedBY;
 	}
 
+	public java.util.List getOtherCommChannels() {
+		if ( null == otherCommChannels ) {
+			otherCommChannels = new java.util.ArrayList();
+		}
+		return otherCommChannels;
+	}
+	public void setOtherCommChannels(java.util.List paramValue) {
+		this.otherCommChannels = paramValue;
+	}
+
+	public ims.domain.lookups.LookupInstance getInitiatedFrom() {
+		return initiatedFrom;
+	}
+	public void setInitiatedFrom(ims.domain.lookups.LookupInstance initiatedFrom) {
+		this.initiatedFrom = initiatedFrom;
+	}
+
+	public String getOtherLocation() {
+		return otherLocation;
+	}
+	public void setOtherLocation(String otherLocation) {
+		if ( null != otherLocation && otherLocation.length() > 500 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for otherLocation. Tried to set value: "+
+				otherLocation);
+		}
+		this.otherLocation = otherLocation;
+	}
+
+	public ims.core.clinical.domain.objects.Service getOriginalService() {
+		return originalService;
+	}
+	public void setOriginalService(ims.core.clinical.domain.objects.Service originalService) {
+		this.originalService = originalService;
+	}
+
+	public java.util.List getServiceUpdateHistory() {
+		if ( null == serviceUpdateHistory ) {
+			serviceUpdateHistory = new java.util.ArrayList();
+		}
+		return serviceUpdateHistory;
+	}
+	public void setServiceUpdateHistory(java.util.List paramValue) {
+		this.serviceUpdateHistory = paramValue;
+	}
+
+	public ims.core.resource.people.domain.objects.Hcp getOriginalConsultant() {
+		return originalConsultant;
+	}
+	public void setOriginalConsultant(ims.core.resource.people.domain.objects.Hcp originalConsultant) {
+		this.originalConsultant = originalConsultant;
+	}
+
 	public ims.domain.SystemInformation getSystemInformation() {
 		if (systemInformation == null) systemInformation = new ims.domain.SystemInformation();
 		return systemInformation;
@@ -579,6 +650,75 @@ public class ReferralLetterDetails extends ims.domain.DomainObject implements im
 	    auditStr.append("; ");
 		auditStr.append("\r\n*transferedBY* :");
 		auditStr.append(transferedBY);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*otherCommChannels* :");
+		if (otherCommChannels != null)
+		{
+		int i34=0;
+		for (i34=0; i34<otherCommChannels.size(); i34++)
+		{
+			if (i34 > 0)
+				auditStr.append(",");
+			ims.core.generic.domain.objects.CommunicationChannel obj = (ims.core.generic.domain.objects.CommunicationChannel)otherCommChannels.get(i34);
+		    if (obj != null)
+			{
+				if (i34 == 0)
+				{
+				auditStr.append(toShortClassName(obj));
+				auditStr.append("[");
+				}
+		        auditStr.append(obj.toString());
+			}
+		}
+		if (i34 > 0)
+			auditStr.append("] " + i34);
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*initiatedFrom* :");
+		if (initiatedFrom != null)
+			auditStr.append(initiatedFrom.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*otherLocation* :");
+		auditStr.append(otherLocation);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*originalService* :");
+		if (originalService != null)
+		{
+			auditStr.append(toShortClassName(originalService));
+				
+		    auditStr.append(originalService.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*serviceUpdateHistory* :");
+		if (serviceUpdateHistory != null)
+		{
+		int i38=0;
+		for (i38=0; i38<serviceUpdateHistory.size(); i38++)
+		{
+			if (i38 > 0)
+				auditStr.append(",");
+			ims.RefMan.domain.objects.ReferralServiceUpdates obj = (ims.RefMan.domain.objects.ReferralServiceUpdates)serviceUpdateHistory.get(i38);
+		    if (obj != null)
+			{
+				if (i38 == 0)
+				{
+				auditStr.append(toShortClassName(obj));
+				auditStr.append("[");
+				}
+		        auditStr.append(obj.getId());
+			}
+		}
+		if (i38 > 0)
+			auditStr.append("] " + i38);
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*originalConsultant* :");
+		if (originalConsultant != null)
+		{
+			auditStr.append(toShortClassName(originalConsultant));
+				
+		    auditStr.append(originalConsultant.getId());
+		}
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -821,6 +961,48 @@ public class ReferralLetterDetails extends ims.domain.DomainObject implements im
 			sb.append("<transferedBY>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getTransferedBY().toString()));
 			sb.append("</transferedBY>");		
+		}
+		if (this.getOtherCommChannels() != null)
+		{
+			if (this.getOtherCommChannels().size() > 0 )
+			{
+			sb.append("<otherCommChannels>");
+			sb.append(ims.domain.DomainObject.toXMLString(this.getOtherCommChannels(), domMap));
+			sb.append("</otherCommChannels>");		
+			}
+		}
+		if (this.getInitiatedFrom() != null)
+		{
+			sb.append("<initiatedFrom>");
+			sb.append(this.getInitiatedFrom().toXMLString()); 
+			sb.append("</initiatedFrom>");		
+		}
+		if (this.getOtherLocation() != null)
+		{
+			sb.append("<otherLocation>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getOtherLocation().toString()));
+			sb.append("</otherLocation>");		
+		}
+		if (this.getOriginalService() != null)
+		{
+			sb.append("<originalService>");
+			sb.append(this.getOriginalService().toXMLString(domMap)); 	
+			sb.append("</originalService>");		
+		}
+		if (this.getServiceUpdateHistory() != null)
+		{
+			if (this.getServiceUpdateHistory().size() > 0 )
+			{
+			sb.append("<serviceUpdateHistory>");
+			sb.append(ims.domain.DomainObject.toXMLString(this.getServiceUpdateHistory(), domMap));
+			sb.append("</serviceUpdateHistory>");		
+			}
+		}
+		if (this.getOriginalConsultant() != null)
+		{
+			sb.append("<originalConsultant>");
+			sb.append(this.getOriginalConsultant().toXMLString(domMap)); 	
+			sb.append("</originalConsultant>");		
 		}
 		return sb.toString();
 	}
@@ -1165,11 +1347,48 @@ public class ReferralLetterDetails extends ims.domain.DomainObject implements im
 		{	
     		obj.setTransferedBY(new String(fldEl.getTextTrim()));	
 		}
+		fldEl = el.element("otherCommChannels");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("list");	
+			obj.setOtherCommChannels(ims.core.generic.domain.objects.CommunicationChannel.fromListXMLString(fldEl, factory, obj.getOtherCommChannels(), domMap));
+		}
+		fldEl = el.element("initiatedFrom");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setInitiatedFrom(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("otherLocation");
+		if(fldEl != null)
+		{	
+    		obj.setOtherLocation(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("originalService");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setOriginalService(ims.core.clinical.domain.objects.Service.getServicefromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("serviceUpdateHistory");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("list");	
+			obj.setServiceUpdateHistory(ims.RefMan.domain.objects.ReferralServiceUpdates.fromListXMLString(fldEl, factory, obj.getServiceUpdateHistory(), domMap));
+		}
+		fldEl = el.element("originalConsultant");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setOriginalConsultant(ims.core.resource.people.domain.objects.Hcp.getHcpfromXML(fldEl, factory, domMap)); 
+		}
 	}
 
 	public static String[] getCollectionFields()
 	{
 		return new String[]{
+		 "otherCommChannels"
+		, "serviceUpdateHistory"
 		};
 	}
 
@@ -1222,6 +1441,12 @@ public class ReferralLetterDetails extends ims.domain.DomainObject implements im
 		public static final String ReferringConsultant = "referringConsultant";
 		public static final String RefererAddress = "refererAddress";
 		public static final String TransferedBY = "transferedBY";
+		public static final String OtherCommChannels = "otherCommChannels";
+		public static final String InitiatedFrom = "initiatedFrom";
+		public static final String OtherLocation = "otherLocation";
+		public static final String OriginalService = "originalService";
+		public static final String ServiceUpdateHistory = "serviceUpdateHistory";
+		public static final String OriginalConsultant = "originalConsultant";
 	}
 }
 

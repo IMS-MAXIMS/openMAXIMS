@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.admin.domain.objects;
@@ -63,6 +68,8 @@ public class DementiaConfiguration extends ims.domain.DomainObject implements im
 	  * Collection of ims.core.admin.domain.objects.DementiaColourConfig.
 	  */
 	private java.util.List colourConfig;
+	/** Recently Assessed */
+	private ims.framework.utils.Color recentlyAssessed;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public DementiaConfiguration (Integer id, int ver)
@@ -136,6 +143,13 @@ public class DementiaConfiguration extends ims.domain.DomainObject implements im
 	}
 	public void setColourConfig(java.util.List paramValue) {
 		this.colourConfig = paramValue;
+	}
+
+	public ims.framework.utils.Color getRecentlyAssessed() {
+		return recentlyAssessed;
+	}
+	public void setRecentlyAssessed(ims.framework.utils.Color recentlyAssessed) {
+		this.recentlyAssessed = recentlyAssessed;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -228,6 +242,9 @@ public class DementiaConfiguration extends ims.domain.DomainObject implements im
 			auditStr.append("] " + i7);
 		}
 	    auditStr.append("; ");
+		auditStr.append("\r\n*recentlyAssessed* :");
+		auditStr.append(recentlyAssessed);
+	    auditStr.append("; ");
 		return auditStr.toString();
 	}
 	
@@ -319,6 +336,12 @@ public class DementiaConfiguration extends ims.domain.DomainObject implements im
 			sb.append(ims.domain.DomainObject.toXMLString(this.getColourConfig(), domMap));
 			sb.append("</colourConfig>");		
 			}
+		}
+		if (this.getRecentlyAssessed() != null)
+		{
+			sb.append("<recentlyAssessed>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getRecentlyAssessed().toString()));
+			sb.append("</recentlyAssessed>");		
 		}
 		return sb.toString();
 	}
@@ -520,6 +543,11 @@ public class DementiaConfiguration extends ims.domain.DomainObject implements im
 			fldEl = fldEl.element("list");	
 			obj.setColourConfig(ims.core.admin.domain.objects.DementiaColourConfig.fromListXMLString(fldEl, factory, obj.getColourConfig(), domMap));
 		}
+		fldEl = el.element("recentlyAssessed");
+		if(fldEl != null)
+		{	
+    		obj.setRecentlyAssessed(ims.framework.utils.Color.getColor(fldEl.getTextTrim()));		
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -559,6 +587,7 @@ public class DementiaConfiguration extends ims.domain.DomainObject implements im
 		public static final String AMTSThresholdScore = "aMTSThresholdScore";
 		public static final String AdmissionTypes = "admissionTypes";
 		public static final String ColourConfig = "colourConfig";
+		public static final String RecentlyAssessed = "recentlyAssessed";
 	}
 }
 

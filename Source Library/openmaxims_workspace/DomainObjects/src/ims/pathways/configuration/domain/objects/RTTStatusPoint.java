@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.pathways.configuration.domain.objects;
@@ -55,6 +60,10 @@ public class RTTStatusPoint extends ims.domain.DomainObject implements ims.domai
 	  * Collection of ims.pathways.configuration.domain.objects.RTTStatusPoint.
 	  */
 	private java.util.List children;
+	/** 
+	  * Collection of ims.domain.lookups.LookupInstance.
+	  */
+	private java.util.List appointmentOutcomes;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public RTTStatusPoint (Integer id, int ver)
@@ -112,6 +121,16 @@ public class RTTStatusPoint extends ims.domain.DomainObject implements ims.domai
 	}
 	public void setChildren(java.util.List paramValue) {
 		this.children = paramValue;
+	}
+
+	public java.util.List getAppointmentOutcomes() {
+		if ( null == appointmentOutcomes ) {
+			appointmentOutcomes = new java.util.ArrayList();
+		}
+		return appointmentOutcomes;
+	}
+	public void setAppointmentOutcomes(java.util.List paramValue) {
+		this.appointmentOutcomes = paramValue;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -183,6 +202,21 @@ public class RTTStatusPoint extends ims.domain.DomainObject implements ims.domai
 			auditStr.append("] " + i4);
 		}
 	    auditStr.append("; ");
+		auditStr.append("\r\n*appointmentOutcomes* :");
+		if (appointmentOutcomes != null)
+		{
+		int i5=0;
+		for (i5=0; i5<appointmentOutcomes.size(); i5++)
+		{
+			if (i5 > 0)
+				auditStr.append(",");
+			ims.domain.lookups.LookupInstance obj = (ims.domain.lookups.LookupInstance)appointmentOutcomes.get(i5);
+			auditStr.append(obj.getText());
+		}
+		if (i5 > 0)
+			auditStr.append("] " + i5);
+		}
+	    auditStr.append("; ");
 		return auditStr.toString();
 	}
 	
@@ -252,6 +286,15 @@ public class RTTStatusPoint extends ims.domain.DomainObject implements ims.domai
 			sb.append("<children>");
 			sb.append(ims.domain.DomainObject.toXMLString(this.getChildren(), domMap));
 			sb.append("</children>");		
+			}
+		}
+		if (this.getAppointmentOutcomes() != null)
+		{
+			if (this.getAppointmentOutcomes().size() > 0 )
+			{
+			sb.append("<appointmentOutcomes>");
+			sb.append(ims.domain.lookups.LookupInstance.toXMLString(this.getAppointmentOutcomes())); 
+			sb.append("</appointmentOutcomes>");		
 			}
 		}
 		return sb.toString();
@@ -438,12 +481,19 @@ public class RTTStatusPoint extends ims.domain.DomainObject implements ims.domai
 			fldEl = fldEl.element("list");	
 			obj.setChildren(ims.pathways.configuration.domain.objects.RTTStatusPoint.fromListXMLString(fldEl, factory, obj.getChildren(), domMap));
 		}
+		fldEl = el.element("appointmentOutcomes");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("list");	
+			obj.setAppointmentOutcomes(ims.domain.lookups.LookupInstance.fromListXMLString(fldEl, factory, obj.getAppointmentOutcomes())); 
+		}
 	}
 
 	public static String[] getCollectionFields()
 	{
 		return new String[]{
 		 "children"
+		, "appointmentOutcomes"
 		};
 	}
 
@@ -455,6 +505,7 @@ public class RTTStatusPoint extends ims.domain.DomainObject implements ims.domai
 		public static final String Description = "description";
 		public static final String LocalCode = "localCode";
 		public static final String Children = "children";
+		public static final String AppointmentOutcomes = "appointmentOutcomes";
 	}
 }
 

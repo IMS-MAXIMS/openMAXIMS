@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -38,7 +43,7 @@ public class PrescriptionDialogImpl extends BasePrescriptionDialogImpl
 {
 	private static final long serialVersionUID = 1L;
 
-	public ims.core.vo.MedicationLiteVoCollection listMedications(String filter, String ignored, Specialty specialty)
+	public MedicationLiteVoCollection listMedications(String filter, String ignored, Specialty specialty, Boolean excludeControlledDrugs)
 	{
 		if(filter == null)
 			return null;
@@ -64,6 +69,11 @@ public class PrescriptionDialogImpl extends BasePrescriptionDialogImpl
 		{
         	sql.append(" and a.id not in ("+ignored+")");
 		}
+        
+        if (Boolean.TRUE.equals(excludeControlledDrugs)) //WDEV-18980
+        {
+        	sql.append(" and (a.iscontroll is null OR a.iscontroll = 0)");
+        }
         
         sql.append(" order by upper(a.medication)");
         

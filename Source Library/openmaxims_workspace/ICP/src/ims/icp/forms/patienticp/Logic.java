@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -104,6 +109,8 @@ public class Logic extends BaseLogic
 	protected void onFormOpen() throws PresentationLogicException
 	{
 		initializeDisciplineCombobox();
+		form.lyrMain().tabPageActions().chkCompletedAct().setValue(true); //WDEV-19895
+		form.lyrMain().tabPageActions().chkOutstandingAct().setValue(true);//WDEV-19895
 		initLoggedInUser();
 
 		form.getLocalContext().setDisciplineType(domain.getCurrentUserDiscipline());
@@ -120,10 +127,12 @@ public class Logic extends BaseLogic
 
 		createGridColumns();
 
-		open(null);
+		open(null, true, true); //WDEV-19895
 
 		form.lnkReturn().setVisible(false);
-		if (engine.getPreviousNonDialogFormName().equals(form.getForms().Clinical.PatientICPList) || engine.getPreviousNonDialogFormName().equals(form.getForms().Clinical.ClinicListWithICPActions))
+		if (engine.getPreviousNonDialogFormName().equals(form.getForms().Clinical.PatientICPList)
+				|| engine.getPreviousNonDialogFormName().equals(form.getForms().Clinical.ClinicListWithICPActions)
+				|| engine.getPreviousNonDialogFormName().equals(form.getForms().RefMan.TheatreList))
 			form.lnkReturn().setVisible(true);
 	}
 
@@ -156,9 +165,11 @@ public class Logic extends BaseLogic
 	{
 		// Clear discipline combo-box
 		form.lyrMain().tabPageActions().cmbDiscipline().setValue(null);
+		form.lyrMain().tabPageActions().chkOutstandingAct().setValue(true);//WDEV-19895
+		form.lyrMain().tabPageActions().chkCompletedAct().setValue(true);//WDEV-19895
 
 		// Open populate with default view
-		open(null);
+		open(null,true,true);	//WDEV-19895
 
 	}
 
@@ -171,7 +182,7 @@ public class Logic extends BaseLogic
 	@Override
 	protected void onBtnViewClick() throws PresentationLogicException
 	{
-		open(form.lyrMain().tabPageActions().cmbDiscipline().getValue());
+		open(form.lyrMain().tabPageActions().cmbDiscipline().getValue(), form.lyrMain().tabPageActions().chkOutstandingAct().getValue(), form.lyrMain().tabPageActions().chkCompletedAct().getValue()); //WDEV-19895
 	}
 
 	private void initLoggedInUser()
@@ -180,7 +191,7 @@ public class Logic extends BaseLogic
 		form.getLocalContext().setLoggedInHcp(hcpLiteUser instanceof HcpLiteVo ? (HcpRefVo) hcpLiteUser : null);
 	}
 
-	private void open(HcpDisType discipline) throws PresentationLogicException
+	private void open(HcpDisType discipline, boolean bShowOutstanding, boolean bShowCompleted) throws PresentationLogicException //WDEV-19895
 	{
 		form.setMode(FormMode.VIEW);
 
@@ -359,6 +370,8 @@ public class Logic extends BaseLogic
 										{
 											if (ICPActionStatus.MET.equals(action.getCurrentStatus().getStatus()) || ICPActionStatus.NOT_MET.equals(action.getCurrentStatus().getStatus()) || ICPActionStatus.OUTSTANDING.equals(action.getCurrentStatus().getStatus()))
 											{
+												if ((bShowCompleted && (ICPActionStatus.MET.equals(action.getCurrentStatus().getStatus()) || ICPActionStatus.NOT_MET.equals(action.getCurrentStatus().getStatus()))) || (bShowOutstanding && ICPActionStatus.OUTSTANDING.equals(action.getCurrentStatus().getStatus()))) //WDEV-19895
+												{
 												DynamicGridRow rowAction = phaseRow.getRows().newRow();
 
 												cell = rowAction.getCells().newCell(form.lyrMain().tabPageActions().grdActions().getColumns().getByIdentifier(COL_ACTION), DynamicCellType.STRING);
@@ -376,11 +389,13 @@ public class Logic extends BaseLogic
 												cell.setValue(null);
 												cell.setTooltip("");
 
+												
 												if (Boolean.TRUE.equals(action.getRequiresCounterSigning()))
 												{
 													cell.setValue(form.getImages().ICP.ACTION_OUTSANDING_ENABLED_16);
 													cell.setTooltip("Requires counter-signing");
 												}
+												
 
 												cell.setWidth(50);
 												cell.setReadOnly(true);
@@ -412,6 +427,16 @@ public class Logic extends BaseLogic
 													}
 
 													cell.setTooltip(toolTip.toString());
+													//wdev-18745  // WDEV-22980
+													if( ICPCompLinkedType.NONE.equals(action.getAction().getLinkedType()) && (action.getCurrentStatus() != null && action.getCurrentStatus().getStatus() != null 
+													&& !action.getCurrentStatus().getStatus().equals(ICPActionStatus.MET) && !action.getCurrentStatus().getStatus().equals(ICPActionStatus.NOT_MET)))
+													{
+														cell.setValue(form.getImages().ICP.NoAssociation_16);
+														cell.setTooltip("No Association");
+													}
+													//---------
+													
+													
 													cell.setWidth(50);
 												}
 
@@ -421,7 +446,13 @@ public class Logic extends BaseLogic
 
 												if (isActionEditable(action))
 												{
-													rowAction.setBackColor(InScopeColor);
+													rowAction.setBold(true); //WDEV-19895
+													//rowAction.setBackColor(InScopeColor);	//wdev-18745
+												}
+												else	//wdev-18745
+												{
+													cell.setValue(form.getImages().ICP.DisciplineNoAction_16);
+													cell.setTooltip("Discipline No Action");
 												}
 
 												if (action.getActionIsNotNull() && action.getAction().getHelpURLIsNotNull() && action.getAction().getHelpURL().trim().length() > 0)
@@ -432,8 +463,10 @@ public class Logic extends BaseLogic
 													cell.setWidth(50);
 												}
 
+												}
 											}
 										}
+
 									}
 
 									// phaseRow.setExpanded(true);
@@ -627,33 +660,33 @@ public class Logic extends BaseLogic
 		{
 			form.lyrMain().tabPageActions().grdActions().setValue(null);
 
-			open(form.lyrMain().tabPageActions().cmbDiscipline().getValue());
+			open(form.lyrMain().tabPageActions().cmbDiscipline().getValue(), form.lyrMain().tabPageActions().chkOutstandingAct().getValue(), form.lyrMain().tabPageActions().chkCompletedAct().getValue()); //WDEV-19895
 			form.lyrMain().showtabPageActions();
 		}
 		else if (formName.equals(form.getForms().ICP.ICPCritcalEvents) && result.equals(DialogResult.OK))
 		{
-			open(form.lyrMain().tabPageActions().cmbDiscipline().getValue());
+			open(form.lyrMain().tabPageActions().cmbDiscipline().getValue(), form.lyrMain().tabPageActions().chkOutstandingAct().getValue(), form.lyrMain().tabPageActions().chkCompletedAct().getValue()); //WDEV-19895
 			form.lyrMain().showtabPageActions();
 		}
 		else if (formName.equals(form.getForms().ICP.BringIntoScope) && result.equals(DialogResult.OK))
 		{
 			form.lyrMain().tabPageActions().grdActions().setValue(null);
 			form.getLocalContext().setSelectedAction(null);
-			open(form.lyrMain().tabPageActions().cmbDiscipline().getValue());
+			open(form.lyrMain().tabPageActions().cmbDiscipline().getValue(), form.lyrMain().tabPageActions().chkOutstandingAct().getValue(), form.lyrMain().tabPageActions().chkCompletedAct().getValue()); //WDEV-19895
 			form.lyrMain().showtabPageActions();
 		}
 		else if (formName.equals(form.getForms().ICP.ICPEvaluationNotes) && result.equals(DialogResult.OK))
 		{
-			open(form.lyrMain().tabPageActions().cmbDiscipline().getValue());
+			open(form.lyrMain().tabPageActions().cmbDiscipline().getValue(), form.lyrMain().tabPageActions().chkOutstandingAct().getValue(), form.lyrMain().tabPageActions().chkCompletedAct().getValue()); //WDEV-19895
 			form.lyrMain().showtabPageActions();
 		}
 		else if (formName.equals(form.getForms().ICP.ActivateStagePhases) && result.equals(DialogResult.OK))
 		{
-			open(form.lyrMain().tabPageActions().cmbDiscipline().getValue());
+			open(form.lyrMain().tabPageActions().cmbDiscipline().getValue(), form.lyrMain().tabPageActions().chkOutstandingAct().getValue(), form.lyrMain().tabPageActions().chkCompletedAct().getValue()); //WDEV-19895
 			form.lyrMain().showtabPageActions();
 		}
 		
-		open(form.lyrMain().tabPageActions().cmbDiscipline().getValue());
+		open(form.lyrMain().tabPageActions().cmbDiscipline().getValue(), form.lyrMain().tabPageActions().chkOutstandingAct().getValue(), form.lyrMain().tabPageActions().chkCompletedAct().getValue()); //WDEV-19895
 		
 		// Update controls & context menu
 		updateControlsState();
@@ -734,7 +767,7 @@ public class Logic extends BaseLogic
 			form.getGlobalContext().ICP.setPatientICPRecord(domain.inactivateStagePhase(form.getGlobalContext().ICP.getPatientICPRecord(), (ValueObject) form.lyrMain().tabPageActions().grdActions().getValue()));
 
 			// Refresh screen
-			open(form.lyrMain().tabPageActions().cmbDiscipline().getValue());
+			open(form.lyrMain().tabPageActions().cmbDiscipline().getValue(), form.lyrMain().tabPageActions().chkOutstandingAct().getValue(), form.lyrMain().tabPageActions().chkCompletedAct().getValue()); //WDEV-19895
 		}
 		// Treat exceptions
 		catch (DomainInterfaceException exception)
@@ -748,7 +781,7 @@ public class Logic extends BaseLogic
 			// Show message
 			engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
 			// Refresh screen
-			open(form.lyrMain().tabPageActions().cmbDiscipline().getValue());
+			open(form.lyrMain().tabPageActions().cmbDiscipline().getValue(), form.lyrMain().tabPageActions().chkOutstandingAct().getValue(), form.lyrMain().tabPageActions().chkCompletedAct().getValue()); //WDEV-19895
 		}
 	}
 
@@ -823,7 +856,7 @@ public class Logic extends BaseLogic
 			engine.showMessage(ims.configuration.gen.ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
 		}
 
-		open(form.lyrMain().tabPageActions().cmbDiscipline().getValue());
+		open(form.lyrMain().tabPageActions().cmbDiscipline().getValue(), form.lyrMain().tabPageActions().chkOutstandingAct().getValue(), form.lyrMain().tabPageActions().chkCompletedAct().getValue()); //WDEV-19895
 	}
 
 	private void doActionNotMet() throws PresentationLogicException
@@ -842,11 +875,11 @@ public class Logic extends BaseLogic
 		{
 			e.printStackTrace();
 			engine.showMessage(ims.configuration.gen.ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
-			open(form.lyrMain().tabPageActions().cmbDiscipline().getValue());
+			open(form.lyrMain().tabPageActions().cmbDiscipline().getValue(), form.lyrMain().tabPageActions().chkOutstandingAct().getValue(), form.lyrMain().tabPageActions().chkCompletedAct().getValue()); //WDEV-19895
 			return;
 		}
 
-		open(form.lyrMain().tabPageActions().cmbDiscipline().getValue());
+		open(form.lyrMain().tabPageActions().cmbDiscipline().getValue(), form.lyrMain().tabPageActions().chkOutstandingAct().getValue(), form.lyrMain().tabPageActions().chkCompletedAct().getValue()); //WDEV-19895
 	}
 
 	private void doRecordVariance()
@@ -1658,7 +1691,9 @@ public class Logic extends BaseLogic
 		{
 			PatientICPActionViewVo action = (PatientICPActionViewVo) obj;
 
-			if (InScopeColor.equals(form.lyrMain().tabPageActions().grdActions().getSelectedRow().getBackColor()))
+			//if (InScopeColor.equals(form.lyrMain().tabPageActions().grdActions().getSelectedRow().getBackColor()))
+			//{
+			if (isActionEditable(action))	//wdev-19805
 			{
 				if (ICPActionStatus.OUTSTANDING.equals(action.getCurrentStatus().getStatus()))
 				{
@@ -1670,6 +1705,7 @@ public class Logic extends BaseLogic
 					form.getContextMenus().ICP.getActionMenuRecordVarianceItem().setVisible(true);
 				}
 			}
+			//}
 		}
 	}
 
@@ -1767,7 +1803,7 @@ public class Logic extends BaseLogic
 
 	private void updateControlsState()
 	{
-		form.lyrMain().tabPageActions().btnView().setEnabled(form.lyrMain().tabPageActions().cmbDiscipline().getValue() != null);
+		form.lyrMain().tabPageActions().btnView().setEnabled(form.lyrMain().tabPageActions().cmbDiscipline().getValue() != null || form.lyrMain().tabPageActions().chkCompletedAct().getValue() || form.lyrMain().tabPageActions().chkOutstandingAct().getValue());
 		form.lyrMain().tabPageDetails().btnClose().setVisible(false);
 
 		if (form.getMode().equals(FormMode.VIEW))
@@ -2749,5 +2785,19 @@ public class Logic extends BaseLogic
 		form.lyrMain().tabPageClinicDetails().setHeaderEnabled(enable);
 
 		form.lyrMain().tabPageClinicDetails().recbrLinkedActions().setEnabled(enable);
+	}
+
+	@Override
+	protected void onChkOutstandingActValueChanged() throws PresentationLogicException //WDEV-19895
+	{
+		updateControlsState();
+		
+	}
+
+	@Override
+	protected void onChkCompletedActValueChanged()	throws PresentationLogicException //WDEV-19895
+	{
+		updateControlsState();
+		
 	}
 }

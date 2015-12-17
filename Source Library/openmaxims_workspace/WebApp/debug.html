@@ -1,0 +1,61 @@
+<html>
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8" > 
+<xml:namespace ns="urn:schemas-microsoft-com:vml" prefix="v"/>
+
+<script src="jsCN/debug/jscn.js"></script>
+
+<script>
+
+function sendCustomEvent(xml) {
+	if (xml =="") {
+		var xml = document.Scan.getImage();	
+	}
+	CNFormManager.getActiveFormManager().postData(xml);
+}
+function sendAppletEvent(xml) 
+{
+	var xml = document.Medicode.getData();	
+	CNFormManager.getActiveFormManager().postData(xml);
+}
+</script>
+
+<style>
+html, body { margin: 0; }
+v\:*{ behavior: url(#default#vml); }
+</style>
+</head>
+
+<body>
+
+
+
+
+<div id="cn_progressBar" style="font: 11px tahoma; height: 100%; width: 100%; position: relative; text-align: center; ">
+  <!--[if gte IE 7]>
+  <img src="themes/new-blue/g/login-bg.png" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; "/>
+  <v:roundrect arcsize=".1" strokecolor="#7ca8d5" style="position: relative; top: 47%; width: 268px; xheight: 50px; padding: 8px 10px 4px 10px; ">
+    <v:fill type="gradient" color="#c1ddff" color2="#fff"/>
+    <div style="font: 11px tahoma; text-align: center; ">Application is loading, please wait...</div>
+    <img src="g/und-progress-bar-1.gif" style="margin-top: 4px; width: 250px; height: 16px; "/>
+  </v:roundrect>
+  <![endif]-->
+  <![if (lt IE 6)|!IE]>
+  <div style="position: relative; top: 45%; width: 420px; padding: 10px; background: #fff; border: 1px solid #7ca8d5; margin: 0 auto; text-align: center; ">
+    <img src="g/error-2.gif" style="xfloat: left; vertical-align: middle; "/>
+    This application requires Internet Explorer 6 or higher.
+  </div>
+  <![endif]>
+</div>
+
+<!--[if gte IE 6]>
+<div id="cn_globalPlaceholder">
+</div>
+<script src="jsCN/forminit.js"></script>
+<![endif]-->
+
+</body>
+</html>
+

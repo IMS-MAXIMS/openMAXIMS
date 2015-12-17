@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -104,6 +109,8 @@ public class Logic extends BaseLogic
 			form.btnClose().setVisible(false);
 		
 		form.ctnGPDetails().setCollapsed(true);
+		//WDEV-18377
+		form.customControlGpSearch().initialize(true, true);
 		form.customControlGpSearch().setSearchButtonAsDefault();
 		formatPracticesSurgeryGrid();
 	}
@@ -280,6 +287,15 @@ public class Logic extends BaseLogic
 			form.ctnGPDetails().lyrGPDetails().tabGPDetails().txtSurname().setFocus();
 			return false;
 		}
+		
+		//WDEV-19661
+		if (form.ctnGPDetails().lyrGPDetails().tabGPDetails().cmbGPStatus().getValue() == null)
+		{
+			engine.showMessage("'Status' is a mandatory field");
+			form.ctnGPDetails().lyrGPDetails().tabGPDetails().cmbGPStatus().setFocus();
+			return false;
+		}
+		
 		if (form.ctnGPDetails().lyrGPDetails().tabPractices().dyngrdPractices().getRows().size() == 0)
 		{
 			engine.showMessage("Please enter a Practice for the selected GP");

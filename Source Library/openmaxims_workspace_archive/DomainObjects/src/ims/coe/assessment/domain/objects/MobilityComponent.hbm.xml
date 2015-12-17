@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:35 -->
+<hibernate-mapping>
+	<subclass name="ims.coe.assessment.domain.objects.MobilityComponent" lazy="true" discriminator-value="MOBL" extends="ims.nursing.assessment.domain.objects.AssessmentComponent" >
+<!-- debug: hibernateClassContent -->
+<!-- debug: notes -->
+<!-- debug: bedType -->
+<!-- debug: chairType -->
+<!-- debug: assistanceWithMobility -->
+<!-- debug: optionalFallAssessment -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="optionalFallAssessment" class="ims.coe.assessmenttools.domain.objects.FallAssessment" unique="true" foreign-key="commmob_optionalfa_fk" access="field" cascade="save-update">
+			<column name="optionalfa" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: patientHandling -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="patientHandling" class="ims.coe.assessmenttools.domain.objects.PatientMovementHandlingScreening" unique="true" foreign-key="commmob_patienthan_fk" access="field" cascade="save-update">
+			<column name="patienthan" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: patientMovement -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="patientMovement" class="ims.coe.assessmenttools.domain.objects.PatientMovementHandling" unique="true" foreign-key="commmob_patientmov_fk" access="field" cascade="save-update">
+			<column name="patientmov" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: fallAssessmentScore -->
+<!-- debug: environmentChecklist -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="environmentChecklist" class="ims.nursing.domain.objects.EnvironmentalChecklist" unique="true" foreign-key="commmob_environmen_fk" access="field" cascade="save-update">
+			<column name="environmen" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="notes" type="string" access="field" update="true" > 
+			<column name="notes" length="500"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="bedType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_bedtype" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="chairType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_chairtype" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="assistanceWithMobility" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_assistance" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="fallAssessmentScore" type="integer" access="field" update="true">
+			<column name="fallassess"  not-null="false" unique="false"  />
+		</property>
+	</subclass>
+</hibernate-mapping>

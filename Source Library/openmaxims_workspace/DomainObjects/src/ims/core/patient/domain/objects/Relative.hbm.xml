@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:36 -->
+<!-- Generated: 12/10/2015, 13:30 -->
 <hibernate-mapping>
 	<class name="ims.core.patient.domain.objects.Relative" table="core_pers_relative" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -45,12 +45,41 @@
  			</property>
 
  			<property name="middleName" type="string" access="field" update="true">
- 				<column name="namemiddlename" length="40" not-null="false"  unique="false"   />
+ 				<column name="namemiddlename" length="100" not-null="false"  unique="false"   />
  			</property>
 
  			<!-- debug: IsLookup -->
  			<many-to-one name="title" class="ims.domain.lookups.LookupInstance" access="field">
  				<column name="lkp_nametitle" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="namesuffix" type="string" access="field" update="true">
+ 				<column name="namenamesuffix" length="35" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="objectidentifier" type="string" access="field" update="true">
+ 				<column name="nameobjectiden" length="14" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="beffdate" type="date" access="field" update="true">
+ 				<column name="namebeffdate" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="beffdatecnf" type="boolean" access="field" update="true">
+ 				<column name="namebeffdatecn" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="betdate" type="date" access="field" update="true">
+ 				<column name="namebetdate" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="betdatecnf" type="boolean" access="field" update="true">
+ 				<column name="namebetdatecnf" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<!-- debug: IsLookup -->
+ 			<many-to-one name="pdsUpdateMode" class="ims.domain.lookups.LookupInstance" access="field">
+ 				<column name="lkp_namepdsupdatem" sql-type="numeric(10,0)" not-null="false" unique="false"   />
  			</many-to-one>
  		</component>
 <!-- debug: address -->
@@ -115,6 +144,57 @@
  			<property name="otherphone" type="string" access="field" update="true">
  				<column name="addressotherphone" length="30" not-null="false"  unique="false"   />
  			</property>
+
+ 			<!-- debug: IsLookup -->
+ 			<many-to-one name="areaOfResidence" class="ims.domain.lookups.LookupInstance" access="field">
+ 				<column name="lkp_addressareaofresi" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="pafkey" type="string" access="field" update="true">
+ 				<column name="addresspafkey" length="8" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="description" type="string" access="field" update="true">
+ 				<column name="addressdescriptio" length="100" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="objectidentifier" type="string" access="field" update="true">
+ 				<column name="addressobjectiden" length="14" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="beffdate" type="date" access="field" update="true">
+ 				<column name="addressbeffdate" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="beffdatecnf" type="boolean" access="field" update="true">
+ 				<column name="addressbeffdatecn" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="betdate" type="date" access="field" update="true">
+ 				<column name="addressbetdate" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="betdatecnf" type="boolean" access="field" update="true">
+ 				<column name="addressbetdatecnf" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<!-- debug: IsLookup -->
+ 			<many-to-one name="pdsUpdateMode" class="ims.domain.lookups.LookupInstance" access="field">
+ 				<column name="lkp_addresspdsupdatem" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<!-- debug: IsLookup -->
+ 			<many-to-one name="country" class="ims.domain.lookups.LookupInstance" access="field">
+ 				<column name="lkp_addresscountry" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="noFixedAbode" type="boolean" access="field" update="true">
+ 				<column name="addressnofixedabo" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="careHome" type="boolean" access="field" update="true">
+ 				<column name="addresscarehome" not-null="false"  unique="false"   />
+ 			</property>
  		</component>
 <!-- debug: relationship -->
 <!-- debug: commChannels -->
@@ -136,12 +216,150 @@
  				<property name="commValue" type="string" access="field" update="true">
  					<column name="commvalue" length="50" not-null="true"  unique="false"    />
  				</property>
+ 				<property name="objectidentifier" type="string" access="field" update="true">
+ 					<column name="objectiden" length="14" not-null="false"  unique="false"    />
+ 				</property>
+ 				<property name="beffdate" type="date" access="field" update="true">
+ 					<column name="beffdate" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="beffdatecnf" type="boolean" access="field" update="true">
+ 					<column name="beffdatecn" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="betdate" type="date" access="field" update="true">
+ 					<column name="betdate" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="betdatecnf" type="boolean" access="field" update="true">
+ 					<column name="betdatecnf" not-null="false"  unique="false"   />
+ 				</property>
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="pdsUpdateMode" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_pdsupdatem" not-null="false" sql-type="numeric(10,0)"  unique="false"   />
+ 				</many-to-one>
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="channelUsage" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_channelusa" not-null="false" sql-type="numeric(10,0)"  unique="false"   />
+ 				</many-to-one>
  			</composite-element>
  		</list>
+<!-- debug: pdsUpdateMode -->
+<!-- debug: objectidentifier -->
+<!-- debug: role -->
+<!-- debug: nhsNum -->
+<!-- debug: contactRank -->
+<!-- debug: nokInd -->
+<!-- debug: cpyCorresp -->
+<!-- debug: callbckCons -->
+<!-- debug: beffdate -->
+<!-- debug: beffdatecnf -->
+<!-- debug: betdate -->
+<!-- debug: betdatecnf -->
+<!-- debug: active -->
+<!-- debug: dob -->
+<!-- debug: pDScontactPreferences -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="pDScontactPreferences" class="ims.core.patient.domain.objects.PDSRelativeContactPref" unique="true" foreign-key="pers_relative_pdscontact_fk" access="field" cascade="save-update">
+			<column name="pdscontact" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: pDSlanguage -->
+<!-- debug: pDSInterpreterRequired -->
+<!-- debug: pending -->
+<!-- debug: isConfidential -->
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: IsLookup -->
 		<many-to-one name="relationship" class="ims.domain.lookups.LookupInstance" access="field">
 			<column name="lkp_relationsh" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="pdsUpdateMode" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_pdsupdatem" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="objectidentifier" type="string" access="field" update="true" > 
+			<column name="objectiden" length="14"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="role" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_c_ro" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="nhsNum" type="string" access="field" update="true" > 
+			<column name="nhsnum" length="50"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="contactRank" type="string" access="field" update="true" > 
+			<column name="contactran" length="2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="nokInd" type="boolean" access="field" update="true">
+			<column name="nokind"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="cpyCorresp" type="boolean" access="field" update="true">
+			<column name="cpycorresp"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="callbckCons" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_callbckcon" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="beffdate" type="date" access="field" update="true">
+			<column name="beffdate"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="beffdatecnf" type="boolean" access="field" update="true">
+			<column name="beffdatecn"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="betdate" type="date" access="field" update="true">
+			<column name="betdate"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="betdatecnf" type="boolean" access="field" update="true">
+			<column name="betdatecnf"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="active" type="boolean" access="field" update="true">
+			<column name="active"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dob" type="integer" access="field" update="true">
+			<column name="dob"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="pDSlanguage" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_pdslanguag" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="pDSInterpreterRequired" type="boolean" access="field" update="true">
+			<column name="pdsinterpr"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="pending" type="boolean" access="field" update="true">
+			<column name="pending"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isConfidential" type="boolean" access="field" update="true">
+			<column name="isconfiden"  not-null="false" unique="false"  />
+		</property>
 	</class>
 </hibernate-mapping>

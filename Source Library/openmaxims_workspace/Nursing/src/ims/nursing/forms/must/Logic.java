@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -226,9 +231,14 @@ public class Logic extends BaseLogic
 				((form.ctnMust().decHeight().getValue() >= 0 && form.ctnMust().decHeight().getValue() < 1) ||
 					(form.ctnMust().decWeight().getValue() >= 0 && form.ctnMust().decWeight().getValue() < 1)))
 		{
-			listOfErrors.add("A non-zero and greather than 1 value needs to be specified for Height and Weight");					
+			listOfErrors.add("A non-zero and greater than 1 value needs to be specified for Height and Weight"); //WDEV-19619 					
 		}
-		
+		//WDEV-19619
+		if (form.ctnMust().decPreviousWeight().getValue() != null  &&				
+					(form.ctnMust().decPreviousWeight().getValue() >= 0 && form.ctnMust().decPreviousWeight().getValue() < 1))
+		{
+			listOfErrors.add("A non-zero and greater than 1 value needs to be specified for Previous Healthy Weight");					
+		}
 		if(ConfigFlag.UI.HW_MEASURED_ESTIMATED_FUNCTIONALITY.getValue())//WDEV-15193
 		{
 			if (form.ctnMust().GroupH().getValue() == GroupHEnumeration.None)
@@ -239,19 +249,14 @@ public class Logic extends BaseLogic
 			{
 				listOfErrors.add("You must specify if Weight was estimated or measured.");
 			}
-		}
-		
+		}		
 		int errorCount = listOfErrors.size();
 		if(errorCount == 0)
 		{
 			return null;
 		}
-		String[] result = new String[errorCount];
-		for(int x = 0; x < errorCount; x++)
-			result[x] = (String)listOfErrors.get(x);
-		
-		return result;
-		
+				
+		return listOfErrors.toArray(new String[errorCount]); //WDEV-19619
 	}
 	public boolean save() throws PresentationLogicException
 	{

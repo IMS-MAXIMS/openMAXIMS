@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,10 +15,16 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 package ims.hl7.domain.mapping;
 
+import ims.hl7.domain.EventResponse;
 import ims.hl7.domain.HL7EngineApplication;
 import ims.hl7.utils.EvnCodes;
 import ims.ocrr.vo.ProviderSystemVo;
@@ -28,7 +34,9 @@ import ca.uhn.hl7v2.model.Message;
 public class O20VoMapper extends VoMapper {
 
 	@Override
-	public Message processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception 
+	//WDEV-20112
+//	public Message processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception 
+	public EventResponse processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception 
 	{
 		O02VoMapper o02mapper = (O02VoMapper) HL7EngineApplication.getVoMapper(EvnCodes.O02);
 		if (o02mapper == null)

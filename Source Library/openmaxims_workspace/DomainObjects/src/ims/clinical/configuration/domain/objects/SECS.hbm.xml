@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:36 -->
+<!-- Generated: 12/10/2015, 13:31 -->
 <hibernate-mapping>
 	<class name="ims.clinical.configuration.domain.objects.SECS" table="shcl_secs" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -50,10 +50,16 @@
 		<many-to-one name="eWSProtocol" class="ims.assessment.configuration.domain.objects.UserAssessment" unique="true" foreign-key="secs_ewsprotoco_fk" access="field" cascade="save-update">
 			<column name="ewsprotoco" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
+<!-- debug: oBSProtocolType -->
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="eWSTriggerScore" type="integer" access="field" update="true">
 			<column name="ewstrigger"  not-null="true" unique="false"  />
 		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="oBSProtocolType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_obsprotoco" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
 	</class>
 </hibernate-mapping>

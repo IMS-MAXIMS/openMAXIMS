@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -200,7 +205,7 @@ public class Logic extends BaseLogic
 		boolean hasActiveAllerts = false;
 		
 		PatientAlertEDischargeVoCollection voColl = new PatientAlertEDischargeVoCollection();
-		PatientAlertEDischargeVoCollection voCollection = domain.listPatientAlerts(form.getGlobalContext().Core.getPatientShort(), Boolean.FALSE);
+		PatientAlertEDischargeVoCollection voCollection = domain.listPatientAlerts(form.getGlobalContext().Core.getPatientShort(), Boolean.FALSE, engine.getLoggedInRole());
 		
 		if(voCollection != null 
 			&& voCollection.size() > 0)
@@ -600,7 +605,7 @@ public class Logic extends BaseLogic
 		{
 			if(dateIdentified.isGreaterThan(new Date()))
 			{
-				errors.add("'Date Identified' can not be in the future");				
+				errors.add("'Date Identified' cannot be set to a date in the future."); //WDEV-18762				
 			}
 			
 			PartialDate pdob = form.getGlobalContext().Core.getPatientShort().getDob();			
@@ -608,7 +613,7 @@ public class Logic extends BaseLogic
 			{
 				PartialDate dateToCompare = new PartialDate(dateIdentified.getYear(), dateIdentified.getMonth() == null ? pdob.getMonth() : dateIdentified.getMonth(), dateIdentified.getDay() == null ? pdob.getDay() : dateIdentified.getDay());
 				if (dateToCompare.isLessThan(pdob))
-					errors.add("'Date Identified' cannot be previous to DOB");									
+					errors.add("'Date Identified' cannot be set to a date earlier than patient's Date of Birth.");	//WDEV-18762								
 			}
 		}				
 		
@@ -1017,7 +1022,7 @@ public class Logic extends BaseLogic
 		{
 			if (form.ctnAllergy().pdtAllergyDateIdentified().getValue() != null && form.ctnAllergy().pdtAllergyDateIdentified().getValue().isGreaterThan(new Date()))
 			{
-				engine.showMessage("'Date Identified' can not be in the future");
+				engine.showMessage("'Date Identified' cannot be set to a date in the future."); //WDEV-18762
 				return;
 			}
 			

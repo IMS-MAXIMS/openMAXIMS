@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -318,7 +323,7 @@ public class Logic extends BaseLogic
 			voAuthoring.setAuthoringDateTime(new DateTime());
 			voAuthoring.setAuthoringHcp((HcpLiteVo) domain.getHcpLiteUser());
 			voNewPatProc.setAuthoringInformation(voAuthoring);
-			voNewPatProc.setCareContext(form.getGlobalContext().Core.getCurrentCareContext());
+			//voNewPatProc.setCareContext(form.getGlobalContext().Core.getCurrentCareContext());wdev-19906
 			voNewPatProc.setProcedureStatus(PatientProcedureStatus.PERFORMED);
 
 			String[] uiErrors = null;
@@ -364,7 +369,7 @@ public class Logic extends BaseLogic
 
 		if (form.lyr1().tabCareRecord().dtimSurgeryStart().getValue() != null && form.lyr1().tabCareRecord().dtimSurgeryFinish().getValue() != null && form.lyr1().tabCareRecord().dtimSurgeryStart().getValue().isGreaterThan(form.lyr1().tabCareRecord().dtimSurgeryFinish().getValue()))
 		{
-			uiErrors.add("Surgery start can not be set after Surgery finish.");
+			uiErrors.add("'Surgery Start' date/time cannot be later than 'Surgery Finish' date/time."); //WDEV-18762
 		}
 
 		if (!(form.lyr1().tabCareRecord().PlannedUnplanned().getValue().equals(PlannedUnplannedEnumeration.rdoPlanned) || form.lyr1().tabCareRecord().PlannedUnplanned().getValue().equals(PlannedUnplannedEnumeration.rdoUnplanned)))
@@ -379,7 +384,7 @@ public class Logic extends BaseLogic
 		//wdev-11676
 		if (form.lyr1().tabDetails().ctn1().dtimCatheterInTime().getValue() != null && form.lyr1().tabDetails().ctn1().dtimCatheterOutTime().getValue() != null && form.lyr1().tabDetails().ctn1().dtimCatheterInTime().getValue().isGreaterThan(form.lyr1().tabDetails().ctn1().dtimCatheterOutTime().getValue()))
 		{
-			uiErrors.add("Catheter In Time can not be set after Catheter Out Time.");
+			uiErrors.add("'Catheter In Time' cannot be later than 'Catheter Out Time'."); //WDEV-18762
 		}
 		//----------
 
@@ -461,7 +466,9 @@ public class Logic extends BaseLogic
 			// WDEV-9886: If we are creating a new IntraOperativeCareRecordVo then link the PAS EVENT from Care Context
 			currentRecord.setPasEvent(form.getGlobalContext().Core.getCurrentCareContextIsNotNull() ? form.getGlobalContext().Core.getCurrentCareContext().getPasEvent() : null);
 		}
-		currentRecord.setCareContext(form.getGlobalContext().Core.getCurrentCareContext());
+		if (currentRecord.getCareContext() == null) //wdev-19906
+			currentRecord.setCareContext(form.getGlobalContext().Core.getCurrentCareContext());
+		
 		currentRecord.setAuthoringInformation(form.lyr1().tabCareRecord().ccAuth().getValue());
 
 		if (form.getGlobalContext().Clinical.getPatientProcedureForIntraOperativeDialogIsNotNull())

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -140,15 +145,21 @@ public class PatientMergeImpl extends BasePatientMergeImpl
 	public void saveMessageQueueForProvider(MergeRequest request, PatientMergeHistory history, Patient destPatient, Patient sourcePatient) throws StaleObjectException
 	{
 		DomainFactory factory = getDomainFactory();
-		String hql = " select prov from ProviderSystem prov join prov.configItems cfg where " +
-		                 " cfg.propertyName = 'SendDeomgraphicFeed' and cfg.propertyValue='TRUE'";
+//		String hql = " select prov from ProviderSystem prov join prov.configItems cfg where " +
+//		                 " cfg.propertyName = 'SendDeomgraphicFeed' and cfg.propertyValue='TRUE'";
 		
-		List lst = factory.find(hql);
+		String hql = "select ot.providerSystem from OutboundTriggers as ot left join ot.queueType as qt left join qt.instance as i"
+				+ " where(i.id = "+QueueType.DEMOGRAPHICFEED.getId()+")";
 
-		for (int i=0; i<lst.size(); i++)
+		java.util.List<ProviderSystem> list = factory.find(hql);
+		
+		
+//		List lst = factory.find(hql);
+
+		for (int i=0; i<list.size(); i++)
 		{
 		
-			ProviderSystem prov = (ProviderSystem) lst.get(i);
+			ProviderSystem prov = (ProviderSystem) list.get(i);
 
 			DemographicsMessageQueue queue = new DemographicsMessageQueue();
 			queue.setMergeHistory(history);
@@ -191,6 +202,12 @@ public class PatientMergeImpl extends BasePatientMergeImpl
 			throw new DomainInterfaceException("Both source and destination patients equal - merge ignored");
 		}
 
+		// WDEV-23955 Is this an ICAB merge request
+		boolean icabMergeRequest=false;
+		if (domRequest != null && domRequest.getSystemInformation() != null && domRequest.getSystemInformation().getCreationUser() != null && domRequest.getSystemInformation().getCreationUser().equalsIgnoreCase("ICAB"))
+			icabMergeRequest=true;
+		
+		
 		// Now we can begin transaction handling for each merge request
 		StringBuffer hql;
 		// For each table in tablesList, get the list of affected items.
@@ -212,6 +229,7 @@ public class PatientMergeImpl extends BasePatientMergeImpl
 					det.setObjectId(obj);
 					det.setEntityName(tableDet.getEntityName());
 					det.setAttributeName(tableDet.getAttributeName());
+					det.setColumnName(tableDet.getColumnName());  // WDEV-21952
 					mergedTablesList.add(det);
 				}
 			}
@@ -256,9 +274,18 @@ public class PatientMergeImpl extends BasePatientMergeImpl
 		
 			//WDEV-4333
 			PatientIdCollection sourceIds=null;
-			if (mergeIdentifiers && Boolean.TRUE.equals(request.getMergeIdentifiers()))  // maxgen-656, WDEV-17888
+			if (mergeIdentifiers)// && Boolean.TRUE.equals(request.getMergeIdentifiers()))  // maxgen-656, WDEV-17888
 			{
-				sourceIds = mergePatientIdentifiers(factory, srcPat, destPat);
+				sourceIds = mergePatientIdentifiers(factory, srcPat, destPat, icabMergeRequest);  // WDEV-23955
+			}
+			else//When merging, if not merging identifiers, we should switch off the verified flag on the source patient. If the same NHS number is associated with the destination patient and this is not verified, set the duplicate number in the source.
+			{
+				setDuplicateNHSInSource(factory, srcPat, destPat);
+				
+				// WDEV-23955 If source is ICAB, we may need to move the original Identifier from Source to Patient
+				if (icabMergeRequest)
+					moveGeneratePatidToDestination(factory, srcPat, destPat);
+				
 			}
 
 			factory.save(destPat);
@@ -266,18 +293,18 @@ public class PatientMergeImpl extends BasePatientMergeImpl
 			history.setComment("Patient Merge Processed Successfully");
 			history.setDatabaseName(ConfigFlag.DBNAME.getValue());
 			IAppUser usr = getSession().getUser();
-			if (usr != null)
+			if (usr != null)// 
 				history.setHostname(usr.getHostName());
 			history.setCreationDateTime(new java.util.Date());
 			history.setDestinationPatId(domRequest.getDestinationPatId());
 			history.setSourcePatId(domRequest.getSourcePatId());
 			history.setRequestedBy(domRequest.getRequestedBy());
 			history.setItems(mergedTablesList);
-			history.setMergeIdentifiers(request.getMergeIdentifiers());//WDEV-17888
+			//history.setMergeIdentifiers(request.getMergeIdentifiers());//WDEV-17888, WDEV-23721
 			
 			// Only the non-merge identifiers are moved to history
 			// WDEV-15050 
-			if (mergeIdentifiers && Boolean.TRUE.equals(request.getMergeIdentifiers())) //WDEV-17888
+			if (mergeIdentifiers)// && Boolean.TRUE.equals(request.getMergeIdentifiers())) //WDEV-17888
 			{
 				history.setPatientIds(new ArrayList());
 				for (int k=0; k<sourceIds.size(); k++)
@@ -344,6 +371,14 @@ public class PatientMergeImpl extends BasePatientMergeImpl
 					{
 						srcNot.setPatient(destPat);
 						factory.save(srcNot);
+						
+						// WDEV-18800 - The Notification is also held against the patient
+						// Need to clear from source and set in destination
+						destPat.setOCSNotification(srcNot);
+						srcPat.setOCSNotification(null);
+						factory.save(srcPat);
+						factory.save(destPat);
+
 					}
 					
 					// Destination and source record found, add values together, save to destination and RIE the source
@@ -408,11 +443,113 @@ public class PatientMergeImpl extends BasePatientMergeImpl
 		} 
 	}
 	
-	private PatientIdCollection mergePatientIdentifiers(DomainFactory factory, Patient srcPat, Patient destPat) throws SQLException, DomainInterfaceException, StaleObjectException, UniqueKeyViolationException
+	/**
+	 * WDEV-23955
+	 * moveGeneratePatidToDestination
+	 * Method called from merge with source ICAB.  It will move the generate_pat_id type from source to patient so that the new patient retains the original PAS identifier.
+	 * It will also remove the destination generate patid type.
+	 * @param factory
+	 * @param srcPat
+	 * @param destPat
+	 * @throws StaleObjectException 
+	 */
+	private void moveGeneratePatidToDestination(DomainFactory factory,	Patient srcPat, Patient destPat) throws StaleObjectException 
+	{
+		// WDEV-23955 If merging from ICAB and USE_PATIENT_NUMBER is true, we want to clear the GENERATE_PATID_TYPE from the destination before we start the move from source
+		if (ConfigFlag.DOM.USE_PATIENT_NUMBER.getValue() == true)
+		{
+			// WDEV-23561 - we only want to set this number if an identifier of this type does not exist for the patient.
+			PatIdType patIdType = PatIdType.getNegativeInstance(ConfigFlag.GEN.GENERATE_PATID_TYPE.getValue());
+			if (patIdType != null)
+			{
+				ims.core.patient.domain.objects.PatientId srcPatientId = getIdentifierForType(srcPat.getIdentifiers(), patIdType);
+					
+				if (srcPatientId != null)
+				{
+					srcPat.getIdentifiers().remove(srcPatientId);
+					factory.save(srcPat);  // Need to save source pat with no ids before assigning to destination as otherwise, hibernate complains
+					destPat.getIdentifiers().add(srcPatientId);
+				}
+
+				ims.core.patient.domain.objects.PatientId destPatientId = getIdentifierForType(destPat.getIdentifiers(), patIdType);
+				if (destPatientId != null)
+					destPat.getIdentifiers().remove(destPatientId);
+			}			
+		}
+		
+	}
+	private void setDuplicateNHSInSource(DomainFactory factory, Patient srcPat, Patient destPat) throws SQLException, DomainInterfaceException, StaleObjectException, UniqueKeyViolationException
+	{
+		List sourceIds = srcPat.getIdentifiers();
+
+		boolean save = false;
+		for(int i=0;i<sourceIds.size();i++)
+		{
+			ims.core.patient.domain.objects.PatientId id = (ims.core.patient.domain.objects.PatientId) sourceIds.get(i);
+			
+			if(id == null || id.getType() == null)
+				continue;
+
+			if (id.getType().getId() == PatIdType.NHSN.getID())
+			{
+				id.setVerified(false);
+				save = true;
+				
+				Integer duplicateNumber = checkForDuplicateInDestination(destPat.getIdentifiers(), id);
+				if(duplicateNumber != null)
+				{
+					id.setDuplicateNHSNum(duplicateNumber);
+				}
+			}
+		}
+		
+		if(save)
+		{
+			factory.save(srcPat);
+		}
+	}
+	
+	private Integer checkForDuplicateInDestination(List identifiers, ims.core.patient.domain.objects.PatientId sourceId) 
+	{
+		if (identifiers == null || sourceId == null || sourceId.getValue() == null)
+			return null;
+		
+		Integer duplicate = null;
+		
+		for (int i=0; i<identifiers.size(); i++)
+		{
+			ims.core.patient.domain.objects.PatientId patId = (ims.core.patient.domain.objects.PatientId) identifiers.get(i);
+			
+			if (patId.getType().getId() == PatIdType.NHSN.getID() && patId.getValue().equals(sourceId.getValue()) && (sourceId.getDuplicateNHSNum() == null || sourceId.getDuplicateNHSNum() == 0) && patId.getDuplicateNHSNum() != null && patId.getDuplicateNHSNum() > 0)
+			{
+				duplicate = patId.getDuplicateNHSNum();
+				patId.setDuplicateNHSNum(null);
+				
+				return duplicate;
+			}
+		}
+		
+		return null;
+	}
+	
+	private PatientIdCollection mergePatientIdentifiers(DomainFactory factory, Patient srcPat, Patient destPat, boolean icabMergeRequest) throws SQLException, DomainInterfaceException, StaleObjectException, UniqueKeyViolationException
 	{
 		ims.core.vo.Patient sourcePatient = PatientAssembler.create(srcPat);
 		PatientIdCollection sourceIds = (PatientIdCollection) sourcePatient.getIdentifiers().clone();
 
+		// WDEV-23955 If merging from ICAB and USE_PATIENT_NUMBER is true, we want to clear the GENERATE_PATID_TYPE from the destination before we start the move from source
+		if (icabMergeRequest && ConfigFlag.DOM.USE_PATIENT_NUMBER.getValue() == true)
+		{
+			// WDEV-23561 - we only want to set this number if an identifier of this type does not exist for the patient.
+			PatIdType patIdType = PatIdType.getNegativeInstance(ConfigFlag.GEN.GENERATE_PATID_TYPE.getValue());
+			if (patIdType != null)
+			{
+				ims.core.patient.domain.objects.PatientId destPatientId = getIdentifierForType(destPat.getIdentifiers(), patIdType);
+				if (destPatientId != null)
+					destPat.getIdentifiers().remove(destPatientId);
+			}			
+		}
+		
 		srcPat.getIdentifiers().clear();  // Source identifiers moved to destination
 		factory.save(srcPat);  // Need to save source pat with no ids before assigning to destination as otherwise, hibernate complains
 
@@ -424,7 +561,7 @@ public class PatientMergeImpl extends BasePatientMergeImpl
 			// wdev-6169 Do not move the nhsn over if it's the same as the nhsn for the destination patient
 			if (id.getType().getId() == PatIdType.NHSN.getID())
 			{
-				if (getNHSN(destPat.getIdentifiers()).equals(id.getValue()))
+				if (getNHSN(destPat.getIdentifiers()).equals(id.getIdValue()))  // WDEV-23955 - GetIdValue should be used as it does not include spaces
 					continue;
 
 				// wdev-6148 If moving an NHSN value over and it is verified, set it to unverified
@@ -438,6 +575,7 @@ public class PatientMergeImpl extends BasePatientMergeImpl
 						sourcePatient.getName().getSurname().equals(DUMMY_PATIENT))
 					continue;  // Do no insert them
 			}
+			
 
 			
 			id.setMerged(true);
@@ -459,6 +597,27 @@ public class PatientMergeImpl extends BasePatientMergeImpl
 				return patId.getValue();
 		}
 		return "";
+	}
+	
+	/**
+	 * WDEv-23955
+	 * Method to return the identifier value for the type sent in the message
+	 * @param identifiers  List of identifiers for the patient
+	 * @param idType Identifier type to search for
+	 * @return Value for the identifier or empty null
+	 */
+	private ims.core.patient.domain.objects.PatientId getIdentifierForType(List identifiers, PatIdType idType)   // WDEV-23955
+	{
+		if (identifiers == null || idType == null)
+			return null;
+		
+		for (int i=0; i<identifiers.size(); i++)
+		{
+			ims.core.patient.domain.objects.PatientId patId = (ims.core.patient.domain.objects.PatientId) identifiers.get(i);
+			if (patId.getType().getId() == idType.getID())
+				return patId;
+		}
+		return null;
 	}
 	
 	/**

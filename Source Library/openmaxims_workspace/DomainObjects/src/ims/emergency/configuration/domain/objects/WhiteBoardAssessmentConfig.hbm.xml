@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:35 -->
+<!-- Generated: 12/10/2015, 13:29 -->
 <hibernate-mapping>
 	<class name="ims.emergency.configuration.domain.objects.WhiteBoardAssessmentConfig" table="emer_whiteboardasse" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -38,17 +38,18 @@
 		<many-to-one name="icon" class="ims.core.configuration.domain.objects.AppImage" unique="true" foreign-key="whiteboardasse_icon_fk" access="field" cascade="save-update">
 			<column name="icon" sql-type="numeric(10,0)" not-null="true" unique="false"   />
 		</many-to-one>
-<!-- debug: mAXIMSMappingValue -->
+<!-- debug: associatedAssessment -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="associatedAssessment" class="ims.assessment.configuration.domain.objects.UserAssessment" unique="true" foreign-key="whiteboardasse_associated_fk" access="field" cascade="save-update">
+			<column name="associated" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
 <!-- debug: !IsAssociation && !IsCollection -->
 
 <!-- debug: !IsLookup -->
 		<property name="name" type="string" access="field" update="true" > 
 			<column name="name" length="500"  not-null="true" unique="false"  />
-		</property>
-<!-- debug: !IsAssociation && !IsCollection -->
-<!-- debug: !IsLookup -->
-		<property name="mAXIMSMappingValue" type="string" access="field" update="true" > 
-			<column name="maximsmapp" length="30"  not-null="true" unique="false"  />
 		</property>
 	</class>
 </hibernate-mapping>

@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:37 -->
+<!-- Generated: 12/10/2015, 13:32 -->
 <hibernate-mapping>
 	<class name="ims.core.clinical.domain.objects.PatientMedication" table="core_medicationdeta" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -143,6 +143,7 @@
  				<column name="recordingirecordingd" not-null="false"  unique="false"   />
  			</property>
  		</component>
+<!-- debug: comment -->
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="otherMedicationText" type="string" access="field" update="true" > 
@@ -262,6 +263,11 @@
 <!-- debug: !IsLookup -->
 		<property name="selfMedicating" type="boolean" access="field" update="true">
 			<column name="selfmedica"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="comment" type="string" access="field" update="true" > 
+			<column name="c_comme" length="255"  not-null="false" unique="false"  />
 		</property>
 	</class>
 </hibernate-mapping>

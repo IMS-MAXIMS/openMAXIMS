@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -209,6 +214,23 @@ public class OcsIfInboundImpl extends BaseOcsIfInboundImpl
 			currStatus.setStatusReason("Updated Result Received");
 		}
 		ordInvBo.getOrdInvStatusHistory().add(currStatus);
+		
+		//http://jira/browse/WDEV-18641
+		if (ordInvBo.getPatientClinic() == null && ordInvBo.getPatientLocation() == null&&ordInvBo.getOrderDetails()!=null)  // One or the other would be set
+		{ 
+			ordInvBo.setPatientClinic(ordInvBo.getOrderDetails().getPatientClinic());
+			ordInvBo.setPatientLocation(ordInvBo.getOrderDetails().getPatientLocation());
+			
+			// WDEV-18165 set ParentLocation dependent on current location
+			if (ordInvBo.getPatientLocation() != null)
+				ordInvBo.setParentLocation(ordInvBo.getPatientLocation().getParentLocation());
+			else if (ordInvBo.getPatientClinic() != null)
+				ordInvBo.setParentLocation(ordInvBo.getPatientClinic().getClinicLocation());
+
+			ordInvBo.setResponsibleClinician(ordInvBo.getOrderDetails().getResponsibleClinician());
+			ordInvBo.setResponsibleGp(ordInvBo.getOrderDetails().getResponsibleGp());
+		}
+		
 		if(ordInvBo!=null
 				&&ordInvBo.getOrderDetails()!=null
 				&&ordInvBo.getOrderDetails().getPatient()!=null)
@@ -219,7 +241,47 @@ public class OcsIfInboundImpl extends BaseOcsIfInboundImpl
 			factory.save(patientNew);
 		}
 		factory.save(ordInvBo);
+		
+		//http://jira/browse/WDEV-18641 set teh placer number		
+		Set<?> invSet =ordInvBo.getOrderDetails().getInvestigations();
+		DecimalFormat myFormatter = new DecimalFormat("000000000");
+		myFormatter = new DecimalFormat("000000000");  // Required for placer order number
+		
+		for (Object tempInv : invSet) {
+			OrderInvestigation ordInv = (OrderInvestigation)tempInv;
+			if(ordInv.getPlacerOrdNum()==null&&!hasSpecimen(ordInv)&&!isDFT(ordInv))
+			{
+				ordInv.setPlacerOrdNum(myFormatter.format(ordInv.getId()));
+			}
+		}
+		factory.save(ordInvBo.getOrderDetails());
 		return;
+	}
+	
+	boolean hasSpecimen(OrderInvestigation ordInv)
+	{
+		if(ordInv.getSpecimen()!=null&&ordInv.getSpecimen().size()>0)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	boolean isDFT(OrderInvestigation ordInv)
+	{
+		if(ordInv!=null&&ordInv.getInvestigation()!=null
+			&&ordInv.getInvestigation().getEventType()!=null
+			&&ordInv.getInvestigation().getEventType().equals(getDomLookup(InvEventType.TIME_SERIES)))
+			{
+				return true;
+			}
+		else
+		{
+			return false;
+		}
 	}
 	
 	public void savePathResult(IfOrderSpecimenVo specimenVo, String placerNumX, String fillerNumX, String hl7AppX,Boolean statusChecked,IfResultDetailsVoCollection historicResultDetails,IfOrderInvestigationVo orderInvestigation) throws DomainInterfaceException , StaleObjectException, ForeignKeyViolationException
@@ -734,7 +796,7 @@ public class OcsIfInboundImpl extends BaseOcsIfInboundImpl
 			
 	}
 	
-	public IfAnalyteVo getAnalyte(String extCode, String extTxt, IfProviderInvSearchVo search, ResultUnitOfMeasure unitOfMeasure) throws DomainInterfaceException,StaleObjectException 
+	public IfAnalyteVo getAnalyte(String extCode, String extTxt, IfProviderInvSearchVo search, ResultUnitOfMeasure unitOfMeasure, Boolean doAnalyteCheck) throws DomainInterfaceException,StaleObjectException //http://jira/browse/WDEV-21674
 	{
 		if (search == null)
 			return null;
@@ -777,7 +839,8 @@ public class OcsIfInboundImpl extends BaseOcsIfInboundImpl
 			else 
 			{
 				Analyte analyte = (Analyte) l.get(0);
-				if(analyte.getAnalyteExtText()!=null
+				if((doAnalyteCheck!=null&&Boolean.TRUE.equals(doAnalyteCheck)) //WDEV-21674 MAXIMS 10.1.2
+						&&analyte.getAnalyteExtText()!=null
 						&&extTxt!=null
 						&&!analyte.getAnalyteExtText().trim().toUpperCase().equals(extTxt.trim().toUpperCase()))
 				{

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -39,11 +44,14 @@ import ims.core.vo.DiagLiteVo;
 import ims.core.vo.DiagnosisVo;
 import ims.core.vo.MedicationLiteVo;
 import ims.core.vo.MedicationVo;
+import ims.core.vo.NonUniqueTaxonomyMapVoCollection;
 import ims.core.vo.ProcedureLiteVo;
 import ims.core.vo.ProcedureVo;
 import ims.core.vo.TaxonomyMap;
 import ims.core.vo.TaxonomyMapCollection;
+import ims.core.vo.lookups.DiagnosisDivisions;
 import ims.core.vo.lookups.Specialty;
+import ims.core.vo.lookups.TaxonomyType;
 import ims.domain.exceptions.DomainInterfaceException;
 import ims.domain.exceptions.StaleObjectException;
 import ims.domain.exceptions.UniqueKeyViolationException;
@@ -62,8 +70,10 @@ public class Logic extends BaseLogic
 	private static final long serialVersionUID = 1L;
 	private static final int NO_CODE_ITEM_SELECTED_ID = -1;
 	private static final int SEARCH_ALL_ITEMS_SELECTED_ID = -2;
+	private static final int SEARCH_DIAGNOSES_DATABASE_ID = -3;
 	private static final String	NO_CODE_ITEM_SELECTED	= "No Suitable Term Found";		
 	private static final String	SEARCH_ALL_ITEM_SELECTED = "Search all ";
+	private static final String	SEARCH_DIAGNOSES_DATABASE = "Search Diagnoses Database";
 	
 	public boolean taxonomySearchEnabled = ConfigFlag.UI.RESTRICT_TAXONOMY_ACCESS.getValue();
 	
@@ -77,6 +87,7 @@ public class Logic extends BaseLogic
 	
 	protected void onQmbCodingItemTextSubmited(String value) throws ims.framework.exceptions.PresentationLogicException
 	{
+		
 		codingItemTextSubmitted(value,true);//WDEV-11979
 	}
 	
@@ -99,7 +110,7 @@ public class Logic extends BaseLogic
 		
 		if (form.getLocalContext().getParentEditing().booleanValue() && item != null)
 		{
-			if ( item.iItemID != null && (item.iItemID.intValue()!= NO_CODE_ITEM_SELECTED_ID ) && (item.iItemID.intValue()!= SEARCH_ALL_ITEMS_SELECTED_ID ) )
+			if ( item.iItemID != null && (item.iItemID.intValue()!= NO_CODE_ITEM_SELECTED_ID ) && (item.iItemID.intValue()!= SEARCH_ALL_ITEMS_SELECTED_ID ) && (item.iItemID.intValue()!= SEARCH_DIAGNOSES_DATABASE_ID ))
 			{
 				form.txtDescription().setValue(item.strItem);				
 				
@@ -113,14 +124,14 @@ public class Logic extends BaseLogic
 				
 				form.getLocalContext().setNoValueFound(false);
 			}
-			else if ( item.iItemID != null && (item.iItemID.intValue() == NO_CODE_ITEM_SELECTED_ID  || item.iItemID.intValue() == SEARCH_ALL_ITEMS_SELECTED_ID))
+			else if ( item.iItemID != null && (item.iItemID.intValue() == NO_CODE_ITEM_SELECTED_ID  || item.iItemID.intValue() == SEARCH_ALL_ITEMS_SELECTED_ID || item.iItemID.intValue() == SEARCH_DIAGNOSES_DATABASE_ID))
 			{
 				form.txtDescription().setEnabled(true);
 				form.qmbCodingItem().setEnabled(false);			
 				form.getLocalContext().setNoValueFound(true);
 				form.txtDescription().setValue("");			
 			}
-			else if (item.iItemID != null && (item.iItemID.intValue() == SEARCH_ALL_ITEMS_SELECTED_ID ) )
+			else if (item.iItemID != null && (item.iItemID.intValue() == SEARCH_ALL_ITEMS_SELECTED_ID))
 				bSearchAllSelected = true; 
 			else if (item.iItemID != null)
 				form.txtDescription().setValue(form.getLocalContext().getCodingItemTextSubmitted());
@@ -139,6 +150,10 @@ public class Logic extends BaseLogic
 		form.qmbCodingItem().clear();
 		
 		form.getLocalContext().setCodingItemTextSubmitted(value);
+		
+		if (value == null || value.length() == 0)
+			return;
+		
 		ValueObjectCollection voCollItems = listCodingItems(value);
 		
 		if (voCollItems != null && voCollItems.getItems() != null)
@@ -152,6 +167,9 @@ public class Logic extends BaseLogic
 				
 				addItemRow(item);
 			}
+			
+			if (items.length == 0)
+				form.qmbCodingItem().clear();
 		
 			if(!form.getLocalContext().getDisableNoTermFoundItem() && !form.getLocalContext().getTaxonomyRestricted() && form.getLocalContext().getCodingLookupTypeIsNotNull() && !form.getLocalContext().getCodingLookupType().equals(CodingItemType.MEDICATION))					
 				addGenericNOItemRow();
@@ -163,7 +181,7 @@ public class Logic extends BaseLogic
 				addGenericNOItemRow();
 			}
 			
-			if (form.getLocalContext().getboolHotlist().booleanValue() == true 
+			if ((form.getLocalContext().getboolHotlist().booleanValue() == true || Boolean.FALSE.equals(form.getLocalContext().getSearchDiagnosesDatabase())) 
 					&& form.getLocalContext().getboolSearchAllSelected().equals(Boolean.FALSE))
 				addGenericSEARCHItemRow();
 	
@@ -350,7 +368,15 @@ public class Logic extends BaseLogic
 			voDiagnosis = hotlistItem.getDiagnosis();			
 		}	
 		else if (voItem instanceof DiagLiteVo)
+		{
 			voDiagnosis = ((DiagLiteVo)voItem);
+		}
+		else if (voItem instanceof TaxonomyMap)
+		{
+			form.getGlobalContext().Core.setTaxonomyMap((TaxonomyMap) voItem);
+			taxonomySearchOK();
+			voDiagnosis = (DiagLiteVo) form.qmbCodingItem().getValue();
+		}
 
 		return voDiagnosis;
 	}
@@ -440,6 +466,12 @@ public class Logic extends BaseLogic
 			CancerImagingEventLiteVo voCIE = (CancerImagingEventLiteVo)item;
 			form.qmbCodingItem().newRow(voCIE, voCIE.getImagingEventName(), voCIE.getIsActiveIsNotNull() && !voCIE.getIsActive().booleanValue() ? Color.Gray : Color.Default);
 		}
+		
+		else if (item instanceof TaxonomyMap)
+		{
+			TaxonomyMap voCIE = (TaxonomyMap)item;
+			form.qmbCodingItem().newRow(voCIE, voCIE.getDescription());
+		}
 	}
 
 	private void addGenericNOItemRow()
@@ -508,6 +540,8 @@ public class Logic extends BaseLogic
 		CodingItemType lkpCodingType = form.getLocalContext().getCodingLookupType();
 		
 		boolean bHotlist = form.getLocalContext().getboolHotlistIsNotNull() ? form.getLocalContext().getboolHotlist().booleanValue() : false;
+		
+		boolean divisionSelected = form.getLocalContext().getDiagnosisDivision() == null ? false : true;
 
 		ValueObjectCollection voCollItems = null;
 		
@@ -520,9 +554,22 @@ public class Logic extends BaseLogic
 			else if (CodingItemType.DIAGNOSIS.equals(lkpCodingType) || CodingItemType.FAMILY_HISTORY.equals(lkpCodingType))  //wdev-13429
 			{
 				if (bHotlist)
+				{
 					voCollItems = domain.listHotListDiagnosis(value, form.getLocalContext().getSpecialty()).sort();
-				else
-					voCollItems = domain.listDiagnosisLiteVo(value).sort(); 
+				}
+				else if (divisionSelected)
+				{
+					voCollItems = domain.listDivisionDiagnoses(value, form.getLocalContext().getDiagnosisDivision()).sort();
+				}
+				else if (Boolean.TRUE.equals(form.getLocalContext().getSearchDiagnosesDatabase()))
+					{
+						TaxonomyMap filter = new TaxonomyMap();
+						filter.setTaxonomyName(getTaxonomyLookupByName(ConfigFlag.GEN.EDISCHARGE_DIAGNOSIS_SEARCH_TAXONOMY_TYPE.getValue()));
+						filter.setDescription(value);
+						voCollItems = domain.searchCodes(filter);
+					}
+					else
+						voCollItems = domain.listDiagnosisLiteVo(value).sort(); 
 			}
 			else if (CodingItemType.PROBLEM.equals(lkpCodingType))		//wdev-13429
 			{
@@ -534,9 +581,9 @@ public class Logic extends BaseLogic
 			else if (CodingItemType.PROCEDURE.equals(lkpCodingType))	//wdev-13429
 			{
 				if (bHotlist)
-					voCollItems = domain.listHotlistProcedureShort(value, form.getLocalContext().getSpecialty()).sort();				
+					voCollItems = domain.listHotlistProcedureShort(value, form.getLocalContext().getSpecialty(),form.getLocalContext().getboolOutPatientOnly()).sort();		//wdev-19500				
 				else
-					voCollItems = domain.listProcLiteVo(value).sort();
+					voCollItems = domain.listProcLiteVo(value, form.getLocalContext().getboolOutPatientOnly()).sort();		//wdev-19500
 			}
 			else if (CodingItemType.IMAGING_EVENT.equals(lkpCodingType))	//wdev-13429
 			{
@@ -548,9 +595,9 @@ public class Logic extends BaseLogic
 			else if (lkpCodingType != null && lkpCodingType.getId() == CodingItemType.MEDICATION.getId())
 			{
 				if (bHotlist)
-					voCollItems = domain.listHotlistMedication(value, form.getLocalContext().getSpecialty()).sort();				
+					voCollItems = domain.listHotlistMedication(value, form.getLocalContext().getSpecialty(),form.getLocalContext().getDrugsAlreadyAddedToPrescriptionStringID()).sort(); //WDEV-20283				
 				else
-					voCollItems = domain.listMedications(value).sort();
+					voCollItems = domain.listMedications(value,form.getLocalContext().getDrugsAlreadyAddedToPrescriptionStringID()).sort(); //WDEV-20283
 				
 			}
 		}
@@ -565,6 +612,49 @@ public class Logic extends BaseLogic
 	}
 	
 		
+	private TaxonomyType getTaxonomyLookupByName(String name)
+	{
+		if (TaxonomyType.READ3.getText().toUpperCase().equals(name.toUpperCase()))
+		{
+			return TaxonomyType.READ3;
+		}
+		else if (TaxonomyType.SNOMED.getText().toUpperCase().equals(name.toUpperCase()))
+		{
+			return TaxonomyType.SNOMED;
+		}
+		else if (TaxonomyType.ICD10.getText().equals(name))
+		{
+			return TaxonomyType.ICD10;
+		}	
+		else if (TaxonomyType.NAT_SPEC_CODE.getText().equals(name.trim()))
+		{
+			return TaxonomyType.NAT_SPEC_CODE;
+		}
+		else if (TaxonomyType.NAT_TREAT_CODE.getText().equals(name.trim()))
+		{
+			return TaxonomyType.NAT_TREAT_CODE;
+		}
+		else if (TaxonomyType.OPCS4.getText().equals(name))
+		{
+			return TaxonomyType.OPCS4;
+		}	
+		else if (TaxonomyType.VTM.getText().equals(name))
+		{
+			return TaxonomyType.VTM;
+		}
+		else if (TaxonomyType.VMP.getText().equals(name))
+		{
+			return TaxonomyType.VMP;
+		}	
+		else if (TaxonomyType.AMP.getText().equals(name))
+		{
+			return TaxonomyType.AMP;
+		}
+		
+		return null;
+	}
+
+
 	private AllergenVo getGenericRowAllergen(boolean bAll)
 	{
 		AllergenVo voAllergen = new AllergenVo();
@@ -586,7 +676,12 @@ public class Logic extends BaseLogic
 	{
 		DiagnosisVo voDiagnosis = new DiagnosisVo();
 		
-		if (bAll)		
+		if (form.getLocalContext().getSearchDiagnosesDatabase() != null && bAll)
+		{
+			voDiagnosis.setID_Diagnosis((new Integer(SEARCH_DIAGNOSES_DATABASE_ID)));
+			voDiagnosis.setDiagnosisName(SEARCH_DIAGNOSES_DATABASE);
+		}
+		else if (form.getLocalContext().getSearchDiagnosesDatabase() == null && bAll)		
 		{
 			voDiagnosis.setID_Diagnosis((new Integer(SEARCH_ALL_ITEMS_SELECTED_ID)));
 			voDiagnosis.setDiagnosisName(SEARCH_ALL_ITEM_SELECTED + "Diagnoses");
@@ -958,7 +1053,7 @@ public class Logic extends BaseLogic
 			// Create New Procedure
 			ProcedureVo voProcedure = new ProcedureVo();
 			voProcedure.setProcedureName(taxonomyMap.getDescription());
-			voProcedure.setTaxonomyMap(new TaxonomyMapCollection());
+			voProcedure.setTaxonomyMap(new NonUniqueTaxonomyMapVoCollection());
 			voProcedure.setIsActive(new Boolean(true));
 
 			String[] errors = voProcedure.validate();
@@ -1118,6 +1213,7 @@ public class Logic extends BaseLogic
 
 	protected void onFormOpen() throws PresentationLogicException 
 	{
+		form.getLocalContext().setboolOutPatientOnly(Boolean.FALSE);	//wdev-19500
 		form.getLocalContext().setDisableNoTermFoundItem(ConfigFlag.UI.DISABLE_NO_SUITABLE_TERM_FOUND_ITEM.getValue());		
 		
 		form.getLocalContext().setTaxonomyRestricted(ConfigFlag.UI.RESTRICT_TAXONOMY_ACCESS.getValue());
@@ -1416,6 +1512,46 @@ public class Logic extends BaseLogic
 		{
 			form.imbSearch().setVisible(false);		
 		}
+
+
+	public void setDivisionOrDiagnosesDatabase(DiagnosisDivisions division, Boolean searchDiagnosesDatabase)
+	{
+		form.getLocalContext().setSearchDiagnosesDatabase(searchDiagnosesDatabase);
+		form.getLocalContext().setDiagnosisDivision(division);
+		
+		if (division != null || Boolean.TRUE.equals(searchDiagnosesDatabase))
+			form.getLocalContext().setboolHotlist(false);
+		
+	}
+
+
+	public Boolean isDiagnosesDatabaseSelected()
+	{
+		if (form.qmbCodingItem().getValue() == null)
+			return false;
+		
+		if (CodingItemType.DIAGNOSIS.equals(form.getLocalContext().getCodingLookupType()))
+		{
+			DiagLiteVo voDiagnosis = (DiagLiteVo) form.qmbCodingItem().getValue();
+			return voDiagnosis.getID_Diagnosis().intValue() == SEARCH_DIAGNOSES_DATABASE_ID ? Boolean.TRUE : Boolean.FALSE;
+		}
+		
+		return false;
+	}
+
+
+	//wdev-19500
+	public void setOutpatientOnly(Boolean outpat)
+	{
+		form.getLocalContext().setboolOutPatientOnly(outpat);
+		
+	}
+
+	//WDEV-20283
+	public void setDrugsAlreadyAddedToPrescriptionStringID(String drugsAlreadyAddedToPrescriptionStringID)
+	{
+		form.getLocalContext().setDrugsAlreadyAddedToPrescriptionStringID(drugsAlreadyAddedToPrescriptionStringID);
+	}
 
 		
 }

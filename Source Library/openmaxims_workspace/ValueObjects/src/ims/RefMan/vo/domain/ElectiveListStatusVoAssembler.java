@@ -1,9 +1,33 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.RefMan.vo.domain;
@@ -43,6 +67,8 @@ public class ElectiveListStatusVoAssembler
 		valueObjectDest.setRemovalReason(valueObjectSrc.getRemovalReason());
 		// RemovalOtherReason
 		valueObjectDest.setRemovalOtherReason(valueObjectSrc.getRemovalOtherReason());
+		// UndoRemovalReason
+		valueObjectDest.setUndoRemovalReason(valueObjectSrc.getUndoRemovalReason());
 	 	return valueObjectDest;
 	 }
 
@@ -451,6 +477,42 @@ public class ElectiveListStatusVoAssembler
 			}			
 			valueObject.setRemovalOtherReason(voLookup6);
 		}
+				// UndoRemovalReason
+		ims.domain.lookups.LookupInstance instance7 = domainObject.getUndoRemovalReason();
+		if ( null != instance7 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance7.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance7.getImage().getImageId(), instance7.getImage().getImagePath());
+			}
+			color = instance7.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.RefMan.vo.lookups.ElectiveListUndoReason voLookup7 = new ims.RefMan.vo.lookups.ElectiveListUndoReason(instance7.getId(),instance7.getText(), instance7.isActive(), null, img, color);
+			ims.RefMan.vo.lookups.ElectiveListUndoReason parentVoLookup7 = voLookup7;
+			ims.domain.lookups.LookupInstance parent7 = instance7.getParent();
+			while (parent7 != null)
+			{
+				if (parent7.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent7.getImage().getImageId(), parent7.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent7.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup7.setParent(new ims.RefMan.vo.lookups.ElectiveListUndoReason(parent7.getId(),parent7.getText(), parent7.isActive(), null, img, color));
+				parentVoLookup7 = parentVoLookup7.getParent();
+								parent7 = parent7.getParent();
+			}			
+			valueObject.setUndoRemovalReason(voLookup7);
+		}
 		 		return valueObject;
 	 }
 
@@ -555,6 +617,14 @@ public class ElectiveListStatusVoAssembler
 				domainFactory.getLookupInstance(valueObject.getRemovalOtherReason().getID());
 		}
 		domainObject.setRemovalOtherReason(value6);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value7 = null;
+		if ( null != valueObject.getUndoRemovalReason() ) 
+		{
+			value7 =
+				domainFactory.getLookupInstance(valueObject.getUndoRemovalReason().getID());
+		}
+		domainObject.setUndoRemovalReason(value7);
 
 		return domainObject;
 	}

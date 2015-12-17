@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:35 -->
+<!-- Generated: 12/10/2015, 13:29 -->
 <hibernate-mapping>
 	<class name="ims.core.clinical.domain.objects.VTERiskAssessment" table="core_vteriskassessm" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -42,7 +42,7 @@
 		<!-- A one-to-one relationship using a foreign-key is mapping as a
 			many-to-one with a uniqueness contraint -->
 		<many-to-one name="careContext" class="ims.core.admin.domain.objects.CareContext" unique="true" foreign-key="vteriskassessm_carecontex_fk" access="field" cascade="save-update">
-			<column name="carecontex" sql-type="numeric(10,0)" not-null="true" unique="false"  index='care_ctx_idx' />
+			<column name="carecontex" sql-type="numeric(10,0)" not-null="false" unique="false"  index='care_ctx_idx' />
 		</many-to-one>
 <!-- debug: authoringInformation -->
 <!-- debug: field.IsAssociation : true -->
@@ -71,6 +71,7 @@
  			</property>
  		</component>
 <!-- debug: vTEAssessmentStatus -->
+<!-- debug: contextType -->
 <!-- debug: completedBy -->
 <!-- debug: field.IsAssociation : true -->
  		<!-- Component -->
@@ -116,11 +117,58 @@
 <!-- debug: lumbarPuncturePrevious4hrs -->
 <!-- debug: riskGroup -->
 <!-- debug: prophylaxisOffered -->
+<!-- debug: IsCollection : true -->
+		<!-- collection of Lookup instances -->
+		<list name="prophylaxisOffered" table="core_vteriskassessm_prophylaxi" lazy="true" access="field">
+			<key foreign-key="vteriskassessm_prophylaxi_ofk">
+				<column name="owner" sql-type="numeric(10,0)"/>
+			</key>
+			<index column="idx"/>
+			<composite-element class="ims.domain.lookups.LookupInstanceRef">
+				<many-to-one name="instance" class="ims.domain.lookups.LookupInstance" access="field">
+					<column name="instance_id" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+				</many-to-one>
+			</composite-element>
+		</list>
 <!-- debug: surgeryLowerLimbPelvis60mins -->
+<!-- debug: comments -->
+<!-- debug: used -->
+<!-- debug: declinedInformation -->
+<!-- debug: field.IsAssociation : true -->
+ 		<!-- Component -->
+ 		<component name="declinedInformation" class="ims.core.clinical.domain.objects.AuthoringInformation" >
+
+ 			<many-to-one name="authoringHcp" class="ims.core.resource.people.domain.objects.Hcp" foreign-key="vteriskassessm_declinedinau_fk" access="field">
+ 				<column name="declinedinauthoringh" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="authoringDateTime" type="timestamp" access="field" update="true">
+ 				<column name="declinedinauthoringd" not-null="false"  unique="false"   />
+ 			</property>
+ 		</component>
+<!-- debug: validatedInformation -->
+<!-- debug: field.IsAssociation : true -->
+ 		<!-- Component -->
+ 		<component name="validatedInformation" class="ims.core.clinical.domain.objects.AuthoringInformation" >
+
+ 			<many-to-one name="authoringHcp" class="ims.core.resource.people.domain.objects.Hcp" foreign-key="vteriskassessm_validatediau_fk" access="field">
+ 				<column name="validatediauthoringh" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="authoringDateTime" type="timestamp" access="field" update="true">
+ 				<column name="validatediauthoringd" not-null="false"  unique="false"   />
+ 			</property>
+ 		</component>
+<!-- debug: declinedReason -->
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: IsLookup -->
 		<many-to-one name="vTEAssessmentStatus" class="ims.domain.lookups.LookupInstance" access="field">
 			<column name="lkp_vteassessm" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="contextType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_contexttyp" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: IsLookup -->
@@ -279,13 +327,23 @@
 		</many-to-one>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: IsLookup -->
-		<many-to-one name="prophylaxisOffered" class="ims.domain.lookups.LookupInstance" access="field">
-			<column name="lkp_prophylaxi" sql-type="numeric(10,0)" not-null="false" unique="false"   />
-		</many-to-one>
-<!-- debug: !IsAssociation && !IsCollection -->
-<!-- debug: IsLookup -->
 		<many-to-one name="surgeryLowerLimbPelvis60mins" class="ims.domain.lookups.LookupInstance" access="field">
 			<column name="lkp_surgerylow" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="comments" type="string" access="field" update="true" > 
+			<column name="comments" length="250"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="used" type="boolean" access="field" update="true">
+			<column name="used"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="declinedReason" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_declinedre" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
 	</class>
 </hibernate-mapping>

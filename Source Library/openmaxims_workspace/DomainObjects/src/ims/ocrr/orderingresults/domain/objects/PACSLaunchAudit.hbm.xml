@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:37 -->
+<!-- Generated: 12/10/2015, 13:32 -->
 <hibernate-mapping>
 	<class name="ims.ocrr.orderingresults.domain.objects.PACSLaunchAudit" table="ocrr_pacslaunchaudi" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -51,7 +51,7 @@
 
 <!-- debug: !IsLookup -->
 		<property name="accessionNo" type="string" access="field" update="true" > 
-			<column name="accessionn" length="25"  not-null="true" unique="false"  />
+			<column name="accessionn" length="25"  not-null="false" unique="false"  />
 		</property>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->

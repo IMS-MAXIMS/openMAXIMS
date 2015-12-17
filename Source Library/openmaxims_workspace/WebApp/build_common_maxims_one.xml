@@ -1,0 +1,668 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." name="BuildCommonMaximsOne" default="init" >	
+
+	<property environment="env"/>
+	<property name="libdir" value="${workspace}WebApp/WEB-INF/lib/" />
+	<property name="newtomcatdir" value="${env.TOMCAT_HOME}/lib/" />
+	<property name="tomcatdir" value="${env.TOMCAT_HOME}/common/lib/" />
+	<property name="servletlibs" value="${tomcatdir}jasper-runtime.jar;${tomcatdir}jsp-api.jar;${tomcatdir}servlet-api.jar;" />
+	<property name="newservletlibs" value="${newtomcatdir}jasper-runtime.jar;${newtomcatdir}jsp-api.jar;${newtomcatdir}servlet-api.jar;" />
+	<property name="jdbclibs" value="${libdir}SQLServerJdbc.jar;${libdir}OracleJdbc.jar;${libdir}hsqldb.jar" />
+	<property name="framework.jars" value="${libdir}framework.jar;${libdir}base.jar;${libdir}domain.jar;${libdir}configflag.jar" />
+	<property name="ant_classpath" value="${classpath};${framework.jars};${libdir}dto.jar;${libdir}mail.jar;${libdir}activation.jar;${libdir}dom4j.jar;${libdir}log4j.jar;${jdbclibs};${libdir}ImsQueryBuilderClient.jar;${servletlibs};${newservletlibs};${libdir}hibernate3.jar;${libdir}hapi.jar;${libdir}flatpack-3.1.1.jar;${libdir}itext.jar;${libdir}hl7utils.jar;${libdir}commons-io-1.4.jar;${libdir}jamon-2.2.jar;" />
+	<property name="soap_classpath" value="${libdir}axis.jar;${libdir}saaj.jar;${libdir}jaxrpc.jar;" />
+	<property name="last.schema.location" value="\\Webapps\LastSchemas" />
+	<property name="last.schema.location_rom" value="\\Webapps\LastSchemasRom" />
+	<property environment="env"/> 
+	<property name="env.HOSTNAME" value="${env.COMPUTERNAME}"/> 
+
+	
+	<!-- ************************************************************* -->
+	<!-- Set up the sqlterminator, driver and url base on DBTYPE value -->
+	<!-- ************************************************************* -->
+
+	<!-- Oracle JDBC Settings -->
+	<condition property="sqlterminator" value="/" >
+		<equals arg1="${dbtype}" arg2="ORA" casesensitive="false" trim="true" />
+	</condition>
+	<condition property="driver" value="oracle.jdbc.driver.OracleDriver" >
+		<equals arg1="${dbtype}" arg2="ORA" casesensitive="false" trim="true" />
+	</condition>
+	<condition property="url" value="jdbc:oracle:thin:@//${dbHost}:${dbPort}/${dbName}" >
+		<equals arg1="${dbtype}" arg2="ORA" casesensitive="false" trim="true" />
+	</condition>
+	<condition property="url_rom" value="jdbc:oracle:thin:@//${dbHost_rom}:${dbPort_rom}/${dbName_rom}" >
+		<equals arg1="${dbtype}" arg2="ORA" casesensitive="false" trim="true" />
+	</condition>
+	
+	<!-- Sybase JDBC Settings -->	
+	<condition property="sqlterminator" value="go" >
+		<equals arg1="${dbtype}" arg2="SYB" casesensitive="false" trim="true" />
+	</condition>
+	<condition property="driver" value="com.imsmaxims.jdbc.sybase.SybaseDriver" >
+		<equals arg1="${dbtype}" arg2="SYB" casesensitive="false" trim="true" />
+	</condition>
+	<condition property="url" value="jdbc:imsmaxims:sybase://${dbHost}:${dbPort};databaseName=${dbName}" >
+		<equals arg1="${dbtype}" arg2="SYB" casesensitive="false" trim="true" />
+	</condition>
+	<condition property="url_rom" value="jdbc:imsmaxims:sybase://${dbHost_rom}:${dbPort_rom};databaseName=${dbName_rom}" >
+		<equals arg1="${dbtype}" arg2="SYB" casesensitive="false" trim="true" />
+	</condition>
+
+	<!-- SQLServer JDBC Settings -->	
+	<condition property="sqlterminator" value="go" >
+		<equals arg1="${dbtype}" arg2="MSQ" casesensitive="false" trim="true" />
+	</condition>		
+	<condition property="driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" >
+		<equals arg1="${dbtype}" arg2="MSQ" casesensitive="false" trim="true" />
+	</condition>
+	<condition property="url" value="jdbc:sqlserver://${dbHost}:${dbPort};databaseName=${dbName}" >
+		<equals arg1="${dbtype}" arg2="MSQ" casesensitive="false" trim="true" />
+	</condition>
+	<condition property="url_rom" value="jdbc:sqlserver://${dbHost_rom}:${dbPort_rom};databaseName=${dbName_rom}" >
+		<equals arg1="${dbtype}" arg2="MSQ" casesensitive="false" trim="true" />
+	</condition>
+
+	<!-- SQLServer 2005 JDBC Settings -->	
+	<condition property="sqlterminator" value="go" >
+		<equals arg1="${dbtype}" arg2="MSQ05" casesensitive="false" trim="true" />
+	</condition>		
+	<condition property="driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" >
+		<equals arg1="${dbtype}" arg2="MSQ05" casesensitive="false" trim="true" />
+	</condition>
+	<condition property="url" value="jdbc:sqlserver://${dbHost}:${dbPort};databaseName=${dbName}" >
+		<equals arg1="${dbtype}" arg2="MSQ05" casesensitive="false" trim="true" />
+	</condition>
+	<condition property="url_rom" value="jdbc:sqlserver://${dbHost_rom}:${dbPort_rom};databaseName=${dbName_rom}" >
+		<equals arg1="${dbtype}" arg2="MSQ05" casesensitive="false" trim="true" />
+	</condition>
+
+	
+	<!-- HSQLDB JDBC Settings -->	
+	<condition property="sqlterminator" value=";" >
+		<equals arg1="${dbtype}" arg2="HSQ" casesensitive="false" trim="true" />
+	</condition>		
+	<condition property="driver" value="org.hsqldb.jdbcDriver" >
+		<equals arg1="${dbtype}" arg2="HSQ" casesensitive="false" trim="true" />
+	</condition>
+	<condition property="url" value="jdbc:hsqldb:file:${dbName}" >
+		<equals arg1="${dbtype}" arg2="HSQ" casesensitive="false" trim="true" />
+	</condition>
+	<condition property="url_rom" value="jdbc:hsqldb:file:${dbName_rom}" >
+		<equals arg1="${dbtype}" arg2="HSQ" casesensitive="false" trim="true" />
+	</condition>
+
+	<!-- Dialect Settings -->	
+	<condition property="ims.dialect" value="org.hibernate.dialect.SQLServerDialect" >
+		<equals arg1="${dbtype}" arg2="MSQ" casesensitive="false" trim="true" />
+	</condition>	
+	<condition property="ims.dialect" value="org.hibernate.dialect.SQLServerDialect" >
+		<equals arg1="${dbtype}" arg2="MSQ05" casesensitive="false" trim="true" />
+	</condition>	
+	<condition property="ims.dialect" value="org.hibernate.dialect.SybaseDialect" >
+		<equals arg1="${dbtype}" arg2="SYB" casesensitive="false" trim="true" />
+	</condition>
+	<condition property="ims.dialect" value="org.hibernate.dialect.Oracle9Dialect" >
+		<equals arg1="${dbtype}" arg2="ORA" casesensitive="false" trim="true" />
+	</condition>
+	<condition property="ims.dialect" value="org.hibernate.dialect.HSQLDialect" >
+		<equals arg1="${dbtype}" arg2="HSQ" casesensitive="false" trim="true" />
+	</condition>
+
+	<!-- Set up correct hibernate Schema Export class name -->	
+	<condition property="hib.schemaexport.class" value="net.sf.hibernate.tool.hbm2ddl.SchemaExportTask" >
+		<equals arg1="${hib.version}" arg2="2" casesensitive="false" trim="true" />
+	</condition>		
+	<condition property="hib.schemaexport.class" value="org.hibernate.tool.hbm2ddl.SchemaExportTask" >
+		<equals arg1="${hib.version}" arg2="3" casesensitive="false" trim="true" />
+	</condition>		
+
+
+	<fileset id="WebApp.lib.jar.files" dir="${workspace}WebApp/WEB-INF/lib">
+		<include name="**/*.jar"/>
+	</fileset>	
+
+	<taskdef name="splash" 
+			classname="org.apache.tools.ant.taskdefs.optional.splash.SplashTask">
+	</taskdef>
+
+	<target name="splash" unless="nosplash" description="Display the logo">
+		<splash imageurl="file:${workspace}WebApp/g/logo-part-1.gif" showduration="0"/>
+	</target>
+
+	<target name="display">
+		<echo message="ant.file = ${ant.file}" />
+		<echo message="ant.home = ${ant.home}" />
+		<echo message="ant.project.name = ${ant.project.name}" />
+		<echo message="ant.java.version = ${ant.java.version}" />
+		<echo message="ant.version = ${ant.version}" />
+		<echo message="basedir = ${basedir}" />
+	 
+		<echo message="user.name = ${user.name}" />
+		<echo message="user.home = ${user.home}" />
+		<echo message="java.home = ${java.home}" />
+	</target> 
+	
+	<target name="init" depends="display" >
+		<tstamp>
+			<format property="timestamp" pattern="yyyyMMdd HH:mm:ss" />
+		</tstamp>
+		<buildnumber file="C:\jinstall\utils\DevBuildNumber" />
+		<mkdir dir="${workspace}Admin/src" />
+		<mkdir dir="${workspace}Admin/bin" />
+		<mkdir dir="${workspace}Alerts/src" />
+		<mkdir dir="${workspace}Alerts/bin" />
+		<mkdir dir="${workspace}Core/src" />
+		<mkdir dir="${workspace}Core/bin" />
+		<mkdir dir="${workspace}ClinicalAdmin/src" />
+		<mkdir dir="${workspace}ClinicalAdmin/bin" />
+		<mkdir dir="${workspace}Clinical/src" />
+		<mkdir dir="${workspace}Clinical/bin" />
+		<mkdir dir="${workspace}DomainObjects/src" />
+		<mkdir dir="${workspace}DomainObjects/bin" />
+		<mkdir dir="${workspace}DTOClients/src" />
+		<mkdir dir="${workspace}DTOClients/bin" />
+		<mkdir dir="${workspace}ValueObjects/src" />
+		<mkdir dir="${workspace}ValueObjects/bin" />
+		<mkdir dir="${workspace}WebApp/WEB-INF/classes" />
+		<!--
+		<cvs dest="${libdir}" command="update"/>
+		<cvs dest="${workspace}DomainObjects" command="update"/>
+		-->
+	</target>
+
+	<!-- Compile DomainObjects -->
+	<target name="DomainObjects" depends="init" >
+		<javac debug="on" classpath="${ant_classpath}" destdir="${workspace}DomainObjects/bin/" srcdir="${workspace}DomainObjects/src/" includes="**/*.java" />
+	</target>
+
+	<!-- Compile ValueObjects -->
+		<target name="ValueObjects" depends="DomainObjects" >
+			<javac debug="on" fork="true" classpath="${ant_classpath};${libdir}hibernate3.jar;${workspace}DomainObjects/bin/" destdir="${workspace}ValueObjects/bin/" srcdir="${workspace}ValueObjects/src/" includes="**/*.java" >
+			 <compilerarg line="-J-Xms512m -J-Xmx2048m" />
+			 </javac>
+		</target>
+
+	<!-- Compile Alerts -->
+	<target name="Alerts" depends="init" >
+		<javac debug="on" classpath="${ant_classpath}" destdir="${workspace}Alerts/bin/" srcdir="${workspace}Alerts/src/" includes="**/*.java" />
+	</target>
+
+	<!-- Compile DTOClients -->
+	<target name="DTOClients" depends="init" >
+		<javac debug="on" classpath="${ant_classpath}" destdir="${workspace}DTOClients/bin/" srcdir="${workspace}DTOClients/src/" includes="**/*.java" />
+	</target>
+
+	<!-- Compile Admin -->
+	<target name="Admin" depends="ValueObjects, DTOClients" >
+		<javac debug="on" classpath="${ant_classpath};${tomcatdir}tomcat-dbcp.jar;${tomcatdir}naming-factory-dbcp.jar;${newtomcatdir}tomcat-dbcp.jar;${newtomcatdir}naming-factory-dbcp.jar;${libdir}jaxrpc.jar;${libdir}hapi.jar;${libdir}hl7utils.jar;${libdir}jamon-2.2.jar;${libdir}/xstream-1.2.2.jar;${libdir}/quartz.jar;${libdir}/c3p0.jar;${libdir}/quartz-modified.jar;${libdir}commons-io-1.3.1.jar;${libdir}commons-httpclient-3.0.jar;${libdir}xercesImpl.jar;${libdir}commons-dbcp.jar;${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;${workspace}DTOClients/bin/;" destdir="${workspace}Admin/bin/" srcdir="${workspace}Admin/src/" includes="**/*.java" />
+	</target>
+
+	<!-- JavaDoc Admin -->
+	<target name="AdminJavaDoc" depends="Admin" >
+		<javadoc packagenames="ims.admin.*" source="1.4" sourcepath="${workspace}Admin/src" destdir="${workspace}Admin/doc" use="true" author="false" version="true"> </javadoc>
+	</target>
+
+	<!-- Compile ClinicalAdmin-->
+	<target name="ClinicalAdmin" depends="Admin" >
+		<javac debug="on" classpath="${ant_classpath};${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;${workspace}Admin/bin/;" destdir="${workspace}ClinicalAdmin/bin/" srcdir="${workspace}ClinicalAdmin/src/"  includes="**/*.java" />
+	</target>
+
+	<!-- Compile Core -->
+	<target name="Core" depends="Alerts, ClinicalAdmin" >
+		<javac debug="on" classpath="${ant_classpath};${libdir}joda-time-1.6.jar;${libdir}jaxrpc.jar;${libdir}saaj.jar;${libdir}wsdl4j.jar;${libdir}axis.jar;${libdir}jdom.jar;${libdir}mime-util-2.1.2.jar;${libdir}/quartz.jar;${libdir}jodconverter-core-3.0-beta-3.jar;${libdir}ImsServer.jar;${libdir}log4j.jar;${libdir}itext.jar;${libdir}plugin.jar;${libdir}capscan.jar;${libdir}j-interopdeps.jar;${libdir}jcifs-1.2.19.jar;${libdir}j-interop.jar;${libdir}Esendex.jar;${workspace}ClinicalAdmin/bin/;${workspace}Admin/bin/;${workspace}Alerts/bin/;${workspace}DomainObjects/bin/;${workspace}DTOClients/bin/;${workspace}ValueObjects/bin/;" destdir="${workspace}Core/bin/" srcdir="${workspace}Core/src/" includes="**/*.java" />
+	</target>
+	
+	<!-- JavaDoc Core -->
+	<target name="CoreJavaDoc" depends="Core" >
+		<javadoc packagenames="ims.core.*" source="1.4" sourcepath="${workspace}Core/src" destdir="${workspace}Core/doc" use="true" author="false" version="true"> </javadoc>
+	</target>
+
+	<!-- Copy Mapping Files -->
+	<target name="MappingFiles" depends="init" >
+		<copy todir="${workspace}DomainObjects/bin/ims">
+		    <fileset dir="${workspace}DomainObjects/src/ims">
+		    	<include name="**/*.hbm.xml" />
+		    </fileset>
+		  </copy>
+	</target>
+
+	<!-- Copy WebApp Files -->
+	<target name="WebAppFiles" depends="init" >
+		<copy todir="${workspace}WebApp/WEB-INF/classes" overwrite="true" >
+		    <fileset dir="${workspace}WebApp/src" excludes="ims/**, vssver.scc, hibernate.properties" />
+		</copy>
+	</target>
+
+	<!-- Compile WebAppSource -->
+	<target name="WebAppSource" depends="init" >
+		<javac debug="on" classpath="${ant_classpath};${soap_classpath};${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;${workspace}Core/bin;${workspace}Scheduling/bin;${workspace}Admin/bin;${workspace}RefMan/bin" destdir="${workspace}WebApp/WEB-INF/classes" srcdir="${workspace}WebApp/src/" includes="**/*.java" />
+	</target>
+
+	<target name="GenerateDropScript" depends="init" >
+		<sql 
+		   driver="${driver}"
+		   url="${url}"	
+		   userid="${userid}" 
+		   password="${password}"
+		   classpath="${ant_classpath}" 
+		   delimiter="${sqlterminator}" 
+		   delimitertype="row"		   
+		   print="true"
+   		   autocommit="true"
+		   output="${workspace}DomainObjects/drop_schema.sql"
+		   append="false" >
+		 <fileset dir="${workspace}DomainObjects/scripts/${dbtype}/">
+			<include name="gen_drops${dbtype}.sql"/> 
+		 </fileset>			
+		</sql>	
+		<replace file="${workspace}DomainObjects/drop_schema.sql" token="SQL_LINE" />
+		<replace file="${workspace}DomainObjects/drop_schema.sql" token="0 rows affected" />
+	</target>
+	
+	<target name="GenerateBackupScript" >
+		<sql 
+		   driver="${driver}"
+		   url="${url}"	
+		   userid="${userid}" 
+		   password="${password}"
+		   classpath="${ant_classpath}" 
+		   delimiter="${sqlterminator}" 
+		   delimitertype="row"	
+   		   autocommit="true"	   
+		   print="true"
+		   output="${workspace}DomainObjects/backup_data.sql"
+		   append="false" >
+		 <fileset dir="${workspace}DomainObjects/scripts/${dbtype}/">
+			<include name="gen_backup${dbtype}.sql"/> 
+		 </fileset>			
+		</sql>	
+		<replace file="${workspace}DomainObjects/backup_data.sql" token="SQL_LINE" />
+		<replace file="${workspace}DomainObjects/backup_data.sql" token="0 rows affected" />
+	</target>
+
+	<target name="GenerateMinRestoreScript" depends="GenerateDropScript">
+		<sql 
+		   driver="${driver}"
+		   url="${url}"	
+		   userid="${userid}" 
+		   password="${password}"
+		   classpath="${ant_classpath}" 
+		   delimiter="${sqlterminator}" 
+		   delimitertype="row"		   
+		   print="true"
+   		   autocommit="true"
+		   output="${workspace}DomainObjects/restore_min_data.sql"
+		   append="false"
+		   keepformat="true" >
+		 <fileset dir="${workspace}DomainObjects/scripts/${dbtype}/">
+			<include name="gen_min_restore${dbtype}.sql"/> 
+		 </fileset>			
+		</sql>	
+		<replace file="${workspace}DomainObjects/restore_min_data.sql" token="SQL_LINE" />
+		<replace file="${workspace}DomainObjects/restore_min_data.sql" token="0 rows affected" />
+		<replace file="${workspace}DomainObjects/restore_min_data.sql" token="1 rows affected" />
+	</target>
+
+	<target name="GenerateRestoreScript" depends="GenerateBackupScript, GenerateDropScript">
+		<sql 
+		   driver="${driver}"
+		   url="${url}"	
+		   userid="${userid}" 
+		   password="${password}"
+		   classpath="${ant_classpath}" 
+		   delimiter="${sqlterminator}" 
+		   delimitertype="row"		   
+		   print="true"
+   		   autocommit="true"
+		   output="${workspace}DomainObjects/restore_data.sql"
+		   append="false"
+		   keepformat="true" >
+		 <fileset dir="${workspace}DomainObjects/scripts/${dbtype}/">
+			<include name="gen_restore${dbtype}.sql"/> 
+		 </fileset>			
+		</sql>	
+		<replace file="${workspace}DomainObjects/restore_data.sql" token="SQL_LINE" />
+		<replace file="${workspace}DomainObjects/restore_data.sql" token="0 rows affected" />
+		<replace file="${workspace}DomainObjects/restore_data.sql" token="1 rows affected" />
+	</target>
+
+
+		<target name="SchemaRefreshAllNoBackup" depends="GenerateMinRestoreScript, SchemaExport" >
+	  <copy file="${workspace}WebApp/${project.name}_RefData.sql" 
+		tofile="${workspace}WebApp/${project.name}_RefDataMSQ.sql" 
+		overwrite="true" />
+		<copy file="${workspace}WebApp/${project.name}_RefData.sql" 
+		tofile="${workspace}WebApp/${project.name}_RefDataMSQ05.sql" 
+		overwrite="true" />
+	  <copy file="${workspace}WebApp/${project.name}_RefData.sql" 
+		tofile="${workspace}WebApp/${project.name}_RefDataSYB.sql" 
+		overwrite="true" />
+	  <sql 
+		   driver="${driver}"
+		   url="${url}"	
+		   userid="${userid}" 
+		   password="${password}"
+		   classpath="${ant_classpath}" 
+		   delimiter="${sqlterminator}" 
+		   autocommit="true"
+		   onerror="continue" 
+		   delimitertype="row" >
+		 <fileset dir="${workspace}DomainObjects/">
+			<include name="drop_schema.sql"/> 
+		 </fileset>
+		 <fileset dir="${workspace}DomainObjects/">
+			<include name="create_schema.sql"/> 
+		 </fileset>
+		 <fileset dir="${workspace}WebApp/">
+			<include name="${project.name}_RefData${dbtype}.sql"/> 
+		 </fileset>
+	  </sql>
+	  <copy file="${workspace}DomainObjects/create_schema.sql" 
+		tofile="${last.schema.location}/${project.name}_${dbHost}_${dbName}_last_schema.sql" 
+		overwrite="true" />
+	</target>
+	
+	<target name="SchemaRefreshAllNoBackupRomania" depends="GenerateMinRestoreScript, SchemaExport" >
+	  <copy file="${workspace}WebApp/${project.name}_RefData.sql" 
+		tofile="${workspace}WebApp/${project.name}_RefDataMSQ.sql" 
+		overwrite="true" />
+		<copy file="${workspace}WebApp/${project.name}_RefData.sql" 
+		tofile="${workspace}WebApp/${project.name}_RefDataMSQ05.sql" 
+		overwrite="true" />
+	  <copy file="${workspace}WebApp/${project.name}_RefData.sql" 
+		tofile="${workspace}WebApp/${project.name}_RefDataSYB.sql" 
+		overwrite="true" />
+	  <sql 
+		   driver="${driver}"
+		   url="${url_rom}"	
+		   userid="${userid_rom}" 
+		   password="${password_rom}"
+		   classpath="${ant_classpath}" 
+		   delimiter="${sqlterminator}" 
+		   autocommit="true"
+		   onerror="continue" 
+		   delimitertype="row" >
+		 <fileset dir="${workspace}DomainObjects/">
+			<include name="drop_schema.sql"/> 
+		 </fileset>
+		 <fileset dir="${workspace}DomainObjects/">
+			<include name="create_schema.sql"/> 
+		 </fileset>
+		 <fileset dir="${workspace}WebApp/">
+			<include name="${project.name}_RefData${dbtype}.sql"/> 
+		 </fileset>
+	  </sql>
+	  <copy file="${workspace}DomainObjects/create_schema.sql" 
+		tofile="${last.schema.location_rom}/${project.name}_${dbHost_rom}_${dbName_rom}_last_schema.sql" 
+		overwrite="true" />
+	</target>
+	
+	
+
+	<target name="SchemaRefreshNoBackup" depends="GenerateMinRestoreScript, SchemaExport" >
+	  <copy file="${workspace}WebApp/${project.name}_RefData.sql" 
+		tofile="${workspace}WebApp/${project.name}_RefDataMSQ.sql" 
+		overwrite="true" />
+		<copy file="${workspace}WebApp/${project.name}_RefData.sql" 
+		tofile="${workspace}WebApp/${project.name}_RefDataMSQ05.sql" 
+		overwrite="true" />
+	  <copy file="${workspace}WebApp/${project.name}_RefData.sql" 
+		tofile="${workspace}WebApp/${project.name}_RefDataSYB.sql" 
+		overwrite="true" />
+	  <sql 
+		   driver="${driver}"
+		   url="${url}"	
+		   userid="${userid}" 
+		   password="${password}"
+		   classpath="${ant_classpath}" 
+		   delimiter="${sqlterminator}" 
+		   autocommit="true"
+		   onerror="continue" 
+		   delimitertype="row" >
+		 <fileset dir="${workspace}DomainObjects/">
+			<include name="drop_schema.sql"/> 
+		 </fileset>
+		 <fileset dir="${workspace}DomainObjects/">
+			<include name="create_schema.sql"/> 
+		 </fileset>
+		 <fileset dir="${workspace}DomainObjects/">
+			<include name="restore_min_data.sql"/> 
+		 </fileset>
+		 <fileset dir="${workspace}WebApp/">
+			<include name="${project.name}_RefData${dbtype}.sql"/> 
+		 </fileset>
+	  </sql>
+	  <copy file="${workspace}DomainObjects/create_schema.sql" 
+		tofile="${last.schema.location}/${project.name}_${dbHost}_${dbName}_last_schema.sql" 
+		overwrite="true" />
+	</target>
+	
+	<target name="CopyRefDataFiles" >
+		  <copy file="${workspace}WebApp/${project.name}_RefData.sql" 
+			tofile="${workspace}WebApp/${project.name}_RefDataMSQ.sql" 
+			overwrite="true" />
+		  <copy file="${workspace}WebApp/${project.name}_RefData.sql" 
+			tofile="${workspace}WebApp/${project.name}_RefDataMSQ05.sql" 
+			overwrite="true" />
+		  <copy file="${workspace}WebApp/${project.name}_RefData.sql" 
+			tofile="${workspace}WebApp/${project.name}_RefDataSYB.sql" 
+			overwrite="true" />	
+	</target>
+
+	<target name="RefData" depends="CopyRefDataFiles" >
+		  <sql 
+			   driver="${driver}"
+			   url="${url}"	
+			   userid="${userid}" 
+			   password="${password}"
+			   classpath="${ant_classpath}" 
+			   delimiter="${sqlterminator}" 
+			   autocommit="true"
+			   onerror="continue" 
+			   delimitertype="row" >
+			 <fileset dir="${workspace}WebApp/">
+				<include name="${project.name}_RefData${dbtype}.sql"/> 
+			 </fileset>
+		  </sql>		
+	</target>		
+	
+	<target name="SchemaRefresh" depends="CopyRefDataFiles, GenerateRestoreScript, SchemaExport" unless="schema.refresh.not.required" >
+	  <sql 
+		   driver="${driver}"
+		   url="${url}"	
+		   userid="${userid}" 
+		   password="${password}"
+		   classpath="${ant_classpath}" 
+		   delimiter="${sqlterminator}" 
+		   autocommit="true"
+		   onerror="continue" 
+		   delimitertype="row" >
+		 <fileset dir="${workspace}DomainObjects/">
+			<include name="backup_data.sql"/> 
+		 </fileset>
+		 <fileset dir="${workspace}DomainObjects/">
+			<include name="drop_schema.sql"/> 
+		 </fileset>
+		 <fileset dir="${workspace}DomainObjects/">
+			<include name="create_schema.sql"/> 
+		 </fileset>
+		 <fileset dir="${workspace}DomainObjects/">
+			<include name="restore_data.sql"/> 
+		 </fileset>
+		 <fileset dir="${workspace}WebApp/">
+			<include name="${project.name}_RefData${dbtype}.sql"/> 
+		 </fileset>
+	  </sql>
+	  <copy file="${workspace}DomainObjects/create_schema.sql" 
+		tofile="${last.schema.location}/${project.name}_${dbHost}_${dbName}_last_schema.sql" 
+		overwrite="true" />
+	</target>
+
+	<target name="SchemaExport" depends="DomainObjects, MappingFiles, WebAppFiles" >
+	 	<taskdef name="schemaexport" 
+	 		classname="${hib.schemaexport.class}">
+			<classpath id="class.path">
+				<pathelement location="${workspace}WebApp/WEB-INF/classes"/>
+				<pathelement location="${workspace}Domain/bin"/>
+				<pathelement location="${workspace}DomainObjects/bin"/>
+		 		<pathelement location="${workspace}Cabgw/bin"/>
+				<fileset refid="WebApp.lib.jar.files"/>
+			</classpath>
+		</taskdef>
+		<echo>hibernateSchemaExport</echo>
+		<schemaexport 
+			config="${workspace}WebApp/WEB-INF/classes/hibernate.cfg.xml"			
+			quiet="yes"
+			text="yes"
+			drop="no"
+			create="yes"
+			lookup_fk="no"
+			delimiter="&#xA;${sqlterminator}"
+			dialect="${ims.dialect}"
+			output="${workspace}DomainObjects/create_schema.sql">
+		</schemaexport>
+		<condition property="schema.refresh.not.required">
+		  <filesmatch 
+			file1="${workspace}DomainObjects/create_schema.sql" 
+			file2="${last.schema.location}\${project.name}_${dbHost}_${dbName}_last_schema.sql"
+		  />
+	    </condition>		
+	</target>
+
+	<target name="SchemaRecreate"  >
+	 	<taskdef name="schemaexport" 
+	 		classname="${hib.schemaexport.class}">
+			<classpath id="class.path">
+				<fileset dir="${workspace}WebApp">
+					<include name="recreate.jar" />
+				</fileset>
+				<fileset refid="WebApp.lib.jar.files"/>
+			</classpath>
+		</taskdef>
+		<echo>hibernateSchemaExport</echo>
+		<schemaexport 
+			config="hibernate.cfg.xml"			
+			quiet="yes"
+			text="yes"
+			drop="no"
+			create="yes"
+			lookup_fk="no"
+			delimiter="&#xA;${sqlterminator}"
+			dialect="${ims.dialect}"
+			output="recreate_schema.sql">
+		</schemaexport>
+	</target>
+
+	
+	<fileset dir="${workspace}WebApp" id="WebApp.static.content">
+		<include name="g/**" />
+		<include name="Images/**" />
+		<include name="reports/**" />
+		<include name="applet/**" />
+		<include name="flash/**" />
+		<include name="jsCN/forminit.js" />
+		<include name="themes/**" />
+		<include name="packed/**" />
+		<include name="Certificates/**" />
+		<include name="blank.html" />
+		<include name="ideagz.html" />
+		<include name="1024.html" />
+		<include name="1280.html" />
+		<include name="full-screen.html" />
+	    <include name="WEB-INF/server-config.wsdd"/>
+		<include name="dictionary.dic" />
+		<include name="treecache.xml"/>
+		<include name="pojocache.xml"/>
+	</fileset>
+
+	<fileset dir="${workspace}WebApp/WEB-INF/lib" id="WebApp.lib.content">
+		<include name="framework.jar" />
+		<include name="domain.jar" />
+		<include name="base.jar" />
+		<include name="configflag.jar" />
+		<include name="dto.jar" />
+		<include name="asm.jar" />
+		<include name="axis.jar" />
+		<include name="jaxrpc.jar" />
+		<include name="saaj.jar" />
+		<include name="wsdl4j.jar" />
+		<include name="capscan.jar" />
+		<include name="antlr.jar" />
+		<include name="commons-pool.jar" />
+		<include name="commons-dbcp.jar" />		
+		<include name="c3p0.jar" />
+		<include name="hibernate3.jar" />
+		<include name="ehcache.jar" />
+		<include name="cglib.jar" />
+		<include name="dom4j.jar" />
+		<include name="jaxen.jar" />
+		<include name="odmg.jar" />
+		<include name="log4j.jar" />
+		<include name="xercesImpl.jar" />
+		<include name="commons-logging.jar" />
+		<include name="commons-collections.jar" />
+		<include name="mail.jar" />
+		<include name="activation.jar" />
+		<include name="ImsQueryBuilderClient.jar" />
+		<include name="QueryBuilder3.jar" />
+		<include name="HttpReportClient.jar" />
+		<include name="commons-httpclient-3.0.jar" />
+		<include name="bsh-2.0b2.jar" />
+		<include name="commons-codec-1.3.jar" />
+		<include name="velocity-1.4.jar" />		
+		<include name="cos.jar" />		
+		<include name="hl7utils.jar" />
+		<include name="commons-discovery.jar" />
+		<include name="commons-digester.jar" />
+		<include name="commons-betwixt-0.6.jar" />
+		<include name="WebJContextor.jar" />
+		<include name="jamon-2.2.jar" />
+		<include name="itext.jar" />
+		<include name="commons-cli-1.1.jar" />
+		<include name="commons-io-1.4.jar" />
+		<include name="jodconverter-core-3.0-beta-3.jar" />
+		<include name="mime-util-2.1.2.jar" />
+		<include name="json-20080701.jar" />		
+		<include name="juh-3.1.0.jar" />		
+		<include name="jurt-3.1.0.jar" />
+		<include name="ridl-3.1.0.jar" />
+		<include name="unoil-3.1.0.jar" />
+		<include name="xstream-1.2.2.jar" />
+		<include name="drools-compiler-5.5.0.Final.jar" />
+		<include name="drools-core-5.5.0.Final.jar" />
+		<include name="knowledge-api-5.5.0.Final.jar" />
+		<include name="knowledge-internal-api-5.5.0.Final.jar" />
+		<include name="mvel2-2.1.3.Final.jar" />		
+		<include name="antlr-runtime-3.1.1.jar" />
+		<include name="org.eclipse.jdt.core_3.4.4.v_894_R34x.jar" />
+		<include name="flatpack-3.1.1.jar" />
+		<include name="slf4j-api-1.5.8.jar" />
+		<include name="slf4j-jcl-1.5.8.jar" />
+		<include name="jdom.jar" />
+		<include name="ImsServer.jar"/>
+		<include name="apns-0.1.5-jar-with-dependencies.jar"/>
+		<include name="jsoup-1.5.2.jar"/>
+		<include name="jackson-all-1.6.1.jar"/>
+		<include name="Esendex.jar"/>
+		<include name="joda-time-1.6.jar"/>
+	</fileset>
+	
+	<target name="EmailResultSuccess">
+	<mail mailhost="mailstore.ie.imsgrp.net" mailport="25" user="devenv@imsmaxims.com" password="devenv10" subject="${ant.project.name}  Dev Build Succeeded">
+		<from address="devenv@imsmaxims.com"/>
+		<replyto address="devenv@imsmaxims.com"/>
+	<to address="maxims_dev@imsmaxims.com"/>
+	<message>The ${ant.project.name} development build has completed successfully - http://${env.HOSTNAME}/${ant.project.name}_DEV </message>
+	</mail>
+	</target>
+
+	<target name="EmailResultFail"  >
+	<mail mailhost="mailstore.ie.imsgrp.net" mailport="25" user="devenv@imsmaxims.com" password="devenv10" subject="${ant.project.name} Dev Build Failed" messagefile="c:/jinstall/utils/devbuild_${ant.project.name}.log">
+		<from address="devenv@imsmaxims.com"/>
+		<replyto address="devenv@imsmaxims.com"/>
+	<to address="maxims_dev@imsmaxims.com"/>
+  </mail>
+	</target>
+
+</project>

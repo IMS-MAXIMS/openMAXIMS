@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -29,6 +34,7 @@ import com.ims.query.builder.client.SeedValue;
 import com.ims.query.builder.client.exceptions.QueryBuilderClientException;
 
 import ims.admin.forms.dataview.GenForm.grdAuditRow;
+import ims.admin.vo.DataViewSearchCriteriaVo;
 import ims.admin.vo.ReportTemplateBoRefLiteVoCollection;
 import ims.admin.vo.ReportTemplateVo;
 import ims.configuration.gen.ConfigFlag;
@@ -52,6 +58,17 @@ public class Logic extends BaseLogic
 	protected void onFormOpen() throws ims.framework.exceptions.PresentationLogicException
 	{
 		initialize(); 
+		
+		//WDEV-19389 
+		if (!(form.getGlobalContext().Core.getPatientShortIsNotNull() && form.getGlobalContext().Admin.getDataViewSearchCriteriaIsNotNull() && form.getGlobalContext().Admin.getDataViewSearchCriteria().getPatientIsNotNull() && form.getGlobalContext().Core.getPatientShort().equals(form.getGlobalContext().Admin.getDataViewSearchCriteria().getPatient())))
+			form.getGlobalContext().Admin.setDataViewSearchCriteria(null);
+		
+		if(form.getGlobalContext().Admin.getDataViewSearchCriteriaIsNotNull())
+		{
+			setSearchCriteria(form.getGlobalContext().Admin.getDataViewSearchCriteria());
+			search();
+		}
+		//WDEV-19389 - end
 	}
 
 	private void initialize()
@@ -71,6 +88,34 @@ public class Logic extends BaseLogic
 		
 		setDefaults();
 	
+	}
+	
+	private DataViewSearchCriteriaVo getSearchCriteria()
+	{
+		DataViewSearchCriteriaVo searchCriteria = new DataViewSearchCriteriaVo();
+		
+		searchCriteria.setDataItemReview(form.cmbClass().getValue());
+		searchCriteria.setFromDate(form.dteStart().getValue());
+		searchCriteria.setToDate(form.dteTo().getValue());
+		searchCriteria.setEpisodeOfCare(form.cmbEpisodeOfCare().getValue());
+		searchCriteria.setCareContext(form.cmbCareContext().getValue());
+		searchCriteria.setClinicalContact(form.cmbClinicalContact().getValue());
+		searchCriteria.setPatient(form.getGlobalContext().Core.getPatientShort());
+		
+		return searchCriteria;
+	}
+	
+	
+	private void setSearchCriteria(DataViewSearchCriteriaVo dataViewSearchCriteriaVo) throws PresentationLogicException
+	{
+		form.cmbClass().setValue(dataViewSearchCriteriaVo.getDataItemReview());
+		form.dteStart().setValue(dataViewSearchCriteriaVo.getFromDate());
+		form.dteTo().setValue(dataViewSearchCriteriaVo.getToDate());
+		form.cmbEpisodeOfCare().setValue(dataViewSearchCriteriaVo.getEpisodeOfCare());
+		onCmbEpisodeOfCareValueChanged();
+		form.cmbCareContext().setValue(dataViewSearchCriteriaVo.getCareContext());
+		onCmbCareContextValueChanged();
+		form.cmbClinicalContact().setValue(dataViewSearchCriteriaVo.getClinicalContact());
 	}
 
 	private void setDefaults()
@@ -152,6 +197,7 @@ public class Logic extends BaseLogic
 		form.dteTo().setValue(null);
 		
 		form.ctnDetails().htmDetails().setHTML("");
+		form.getGlobalContext().Admin.setDataViewSearchCriteria(null);//WDEV-19389 
 	}
 
 	protected void onImbSearchClick() throws PresentationLogicException
@@ -202,6 +248,7 @@ public class Logic extends BaseLogic
 		}
 			
 		AuditVoCollection coll = domain.listAuditRecords(form.cmbClass().getValue(), form.dteStart().getValue(), form.dteTo().getValue(),voCareContextColl, form.cmbClinicalContact().getValue(),form.getGlobalContext().Core.getPatientShort());
+		form.getGlobalContext().Admin.setDataViewSearchCriteria(getSearchCriteria());//WDEV-19389 
 		
 		// WDEV-18111 
 		if (coll == null || coll.size() == 0)

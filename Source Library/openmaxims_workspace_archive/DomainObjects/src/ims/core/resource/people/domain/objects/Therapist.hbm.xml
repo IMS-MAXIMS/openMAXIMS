@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:37 -->
+<hibernate-mapping>
+	<subclass name="ims.core.resource.people.domain.objects.Therapist" lazy="false" discriminator-value="THER" extends="ims.core.resource.people.domain.objects.Hcp" >
+<!-- debug: hibernateClassContent -->
+<!-- debug: therapistType -->
+<!-- debug: specialty -->
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: IsLookup -->
+		<many-to-one name="therapistType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_therapistt" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="specialty" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_specialty" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+	</subclass>
+</hibernate-mapping>

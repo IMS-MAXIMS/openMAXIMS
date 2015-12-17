@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -106,7 +111,7 @@ public class LocationServiceImpl extends DomainImpl implements ims.admin.domain.
 		}
 		if (locationService.getServiceIsNotNull() && locationService.getService().getServiceName() != null)
 		{
-			condStr.append(andStr + " upper(locService.service.serviceName) like :serviceName");
+			condStr.append(andStr + " locService.service.upperName like :serviceName"); //WDEV-20219 upper(locService.service.serviceName)
 			markers.add("serviceName");
 			values.add(locationService.getService().getServiceName().toUpperCase() + "%");
 			andStr = " and ";
@@ -439,7 +444,7 @@ public class LocationServiceImpl extends DomainImpl implements ims.admin.domain.
 	{
 		DomainFactory factory = getDomainFactory();
 		if (activeOnly.booleanValue())
-			return ServiceVoAssembler.createServiceVoCollectionFromService(factory.find("from Service service where service.isActive = :active", new String[]{"active"}, new Object[]{activeOnly}));
+			return ServiceVoAssembler.createServiceVoCollectionFromService(factory.find("from Service service where service.isActive = :active order by service.serviceName asc  ", new String[]{"active"}, new Object[]{activeOnly})); //WDEV-22950
 
 		return ServiceVoAssembler.createServiceVoCollectionFromService(factory.listDomainObjects(Service.class)).sort();
 	}

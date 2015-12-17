@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.core.vo.domain;
@@ -58,6 +63,16 @@ public class PatientIdAssembler
 		valueObjectDest.setVerified(valueObjectSrc.getVerified());
 		// merged
 		valueObjectDest.setMerged(valueObjectSrc.getMerged());
+		// duplicateNHSNum
+		valueObjectDest.setDuplicateNHSNum(valueObjectSrc.getDuplicateNHSNum());
+		// beffdate
+		valueObjectDest.setBeffdate(valueObjectSrc.getBeffdate());
+		// beffdatecnf
+		valueObjectDest.setBeffdatecnf(valueObjectSrc.getBeffdatecnf());
+		// betdate
+		valueObjectDest.setBetdate(valueObjectSrc.getBetdate());
+		// betdatecnf
+		valueObjectDest.setBetdatecnf(valueObjectSrc.getBetdatecnf());
 	 	return valueObjectDest;
 	 }
 
@@ -390,6 +405,24 @@ public class PatientIdAssembler
 		valueObject.setVerified( domainObject.isVerified() );
 		// merged
 		valueObject.setMerged( domainObject.isMerged() );
+		// duplicateNHSNum
+		valueObject.setDuplicateNHSNum(domainObject.getDuplicateNHSNum());
+		// beffdate
+		java.util.Date beffdate = domainObject.getBeffdate();
+		if ( null != beffdate ) 
+		{
+			valueObject.setBeffdate(new ims.framework.utils.Date(beffdate) );
+		}
+		// beffdatecnf
+		valueObject.setBeffdatecnf( domainObject.isBeffdatecnf() );
+		// betdate
+		java.util.Date betdate = domainObject.getBetdate();
+		if ( null != betdate ) 
+		{
+			valueObject.setBetdate(new ims.framework.utils.Date(betdate) );
+		}
+		// betdatecnf
+		valueObject.setBetdatecnf( domainObject.isBetdatecnf() );
  		return valueObject;
 	 }
 
@@ -456,6 +489,23 @@ public class PatientIdAssembler
 		domainObject.setValue(valueObject.getIdValue());
 		domainObject.setVerified(valueObject.getVerified());
 		domainObject.setMerged(valueObject.getMerged());
+		domainObject.setDuplicateNHSNum(valueObject.getDuplicateNHSNum());
+		java.util.Date value6 = null;
+		ims.framework.utils.Date date6 = valueObject.getBeffdate();		
+		if ( date6 != null ) 
+		{
+			value6 = date6.getDate();
+		}
+		domainObject.setBeffdate(value6);
+		domainObject.setBeffdatecnf(valueObject.getBeffdatecnf());
+		java.util.Date value8 = null;
+		ims.framework.utils.Date date8 = valueObject.getBetdate();		
+		if ( date8 != null ) 
+		{
+			value8 = date8.getDate();
+		}
+		domainObject.setBetdate(value8);
+		domainObject.setBetdatecnf(valueObject.getBetdatecnf());
 
 		return domainObject;
 	}

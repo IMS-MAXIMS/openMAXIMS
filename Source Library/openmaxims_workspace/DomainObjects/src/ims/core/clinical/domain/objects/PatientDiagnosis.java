@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.clinical.domain.objects;
@@ -68,7 +73,7 @@ public class PatientDiagnosis extends ims.domain.DomainObject implements ims.dom
 	/** Date Resolved */
 	private java.util.Date dateResolved;
 	/** Resolved HCP */
-	private ims.core.resource.people.domain.objects.Medic resolvedHCP;
+	private ims.core.resource.people.domain.objects.Hcp resolvedHCP;
 	/** isComplication */
 	private Boolean isComplication;
 	/** CurrentStatus */
@@ -128,6 +133,7 @@ public class PatientDiagnosis extends ims.domain.DomainObject implements ims.dom
 	private Boolean addedDuringCoding;
 	/** Coding Sequence set on Coding Form */
 	private Integer codingSequence;
+	private Boolean diagnosedOnAdmission;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public PatientDiagnosis (Integer id, int ver)
@@ -233,10 +239,10 @@ public class PatientDiagnosis extends ims.domain.DomainObject implements ims.dom
 		this.dateResolved = dateResolved;
 	}
 
-	public ims.core.resource.people.domain.objects.Medic getResolvedHCP() {
+	public ims.core.resource.people.domain.objects.Hcp getResolvedHCP() {
 		return resolvedHCP;
 	}
-	public void setResolvedHCP(ims.core.resource.people.domain.objects.Medic resolvedHCP) {
+	public void setResolvedHCP(ims.core.resource.people.domain.objects.Hcp resolvedHCP) {
 		this.resolvedHCP = resolvedHCP;
 	}
 
@@ -428,6 +434,13 @@ public class PatientDiagnosis extends ims.domain.DomainObject implements ims.dom
 	}
 	public void setCodingSequence(Integer codingSequence) {
 		this.codingSequence = codingSequence;
+	}
+
+	public Boolean isDiagnosedOnAdmission() {
+		return diagnosedOnAdmission;
+	}
+	public void setDiagnosedOnAdmission(Boolean diagnosedOnAdmission) {
+		this.diagnosedOnAdmission = diagnosedOnAdmission;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -745,6 +758,9 @@ public class PatientDiagnosis extends ims.domain.DomainObject implements ims.dom
 		auditStr.append("\r\n*codingSequence* :");
 		auditStr.append(codingSequence);
 	    auditStr.append("; ");
+		auditStr.append("\r\n*diagnosedOnAdmission* :");
+		auditStr.append(diagnosedOnAdmission);
+	    auditStr.append("; ");
 		return auditStr.toString();
 	}
 	
@@ -1023,6 +1039,12 @@ public class PatientDiagnosis extends ims.domain.DomainObject implements ims.dom
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getCodingSequence().toString()));
 			sb.append("</codingSequence>");		
 		}
+		if (this.isDiagnosedOnAdmission() != null)
+		{
+			sb.append("<diagnosedOnAdmission>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isDiagnosedOnAdmission().toString()));
+			sb.append("</diagnosedOnAdmission>");		
+		}
 		return sb.toString();
 	}
 		
@@ -1250,7 +1272,7 @@ public class PatientDiagnosis extends ims.domain.DomainObject implements ims.dom
 		if(fldEl != null)
 		{
 			fldEl = fldEl.element("class");		
-			obj.setResolvedHCP(ims.core.resource.people.domain.objects.Medic.getMedicfromXML(fldEl, factory, domMap)); 
+			obj.setResolvedHCP(ims.core.resource.people.domain.objects.Hcp.getHcpfromXML(fldEl, factory, domMap)); 
 		}
 		fldEl = el.element("isComplication");
 		if(fldEl != null)
@@ -1386,6 +1408,11 @@ public class PatientDiagnosis extends ims.domain.DomainObject implements ims.dom
 		{	
     		obj.setCodingSequence(new Integer(fldEl.getTextTrim()));	
 		}
+		fldEl = el.element("diagnosedOnAdmission");
+		if(fldEl != null)
+		{	
+    		obj.setDiagnosedOnAdmission(new Boolean(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -1440,6 +1467,7 @@ public class PatientDiagnosis extends ims.domain.DomainObject implements ims.dom
 		public static final String EpisodeOfCare = "episodeOfCare";
 		public static final String AddedDuringCoding = "addedDuringCoding";
 		public static final String CodingSequence = "codingSequence";
+		public static final String DiagnosedOnAdmission = "diagnosedOnAdmission";
 	}
 }
 

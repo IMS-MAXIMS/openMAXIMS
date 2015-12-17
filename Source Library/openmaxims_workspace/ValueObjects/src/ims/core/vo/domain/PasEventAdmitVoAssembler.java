@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.core.vo.domain;
@@ -68,6 +73,8 @@ public class PasEventAdmitVoAssembler
 		valueObjectDest.setSourceOfReferral(valueObjectSrc.getSourceOfReferral());
 		// PASSpecialty
 		valueObjectDest.setPASSpecialty(valueObjectSrc.getPASSpecialty());
+		// Service
+		valueObjectDest.setService(valueObjectSrc.getService());
 	 	return valueObjectDest;
 	 }
 
@@ -365,7 +372,7 @@ public class PasEventAdmitVoAssembler
 			valueObject.setEventDateTime(new ims.framework.utils.DateTime(eventDateTime) );
 		}
 		// patient
-		valueObject.setPatient(ims.core.vo.domain.PatientShortAssembler.create(map, domainObject.getPatient()) );
+		valueObject.setPatient(ims.core.vo.domain.PatientLite_IdentifiersVoAssembler.create(map, domainObject.getPatient()) );
 		// pasEventId
 		valueObject.setPasEventId(domainObject.getPasEventId());
 		// EventType
@@ -405,7 +412,19 @@ public class PasEventAdmitVoAssembler
 			valueObject.setEventType(voLookup4);
 		}
 				// Consultant
-		valueObject.setConsultant((ims.core.vo.MedicVo)ims.core.vo.domain.MedicVoAssembler.create(map, domainObject.getConsultant()) );
+		if (domainObject.getConsultant() != null)
+		{
+			if(domainObject.getConsultant() instanceof HibernateProxy) // If the proxy is set, there is no need to lazy load, the proxy knows the id already. 
+			{
+				HibernateProxy p = (HibernateProxy) domainObject.getConsultant();
+				int id = Integer.parseInt(p.getHibernateLazyInitializer().getIdentifier().toString());				
+				valueObject.setConsultant(new ims.core.resource.people.vo.MedicRefVo(id, -1));				
+			}
+			else
+			{
+				valueObject.setConsultant(new ims.core.resource.people.vo.MedicRefVo(domainObject.getConsultant().getId(), domainObject.getConsultant().getVersion()));
+			}
+		}
 		// Specialty
 		ims.domain.lookups.LookupInstance instance6 = domainObject.getSpecialty();
 		if ( null != instance6 ) {
@@ -528,7 +547,9 @@ public class PasEventAdmitVoAssembler
 			}			
 			valueObject.setPASSpecialty(voLookup9);
 		}
-		 		return valueObject;
+				// Service
+		valueObject.setService(ims.core.vo.domain.ServiceLiteVoAssembler.create(map, domainObject.getService()) );
+ 		return valueObject;
 	 }
 
 
@@ -584,7 +605,7 @@ public class PasEventAdmitVoAssembler
 			value1 = dateTime1.getJavaDate();
 		}
 		domainObject.setEventDateTime(value1);
-		domainObject.setPatient(ims.core.vo.domain.PatientShortAssembler.extractPatient(domainFactory, valueObject.getPatient(), domMap));
+		domainObject.setPatient(ims.core.vo.domain.PatientLite_IdentifiersVoAssembler.extractPatient(domainFactory, valueObject.getPatient(), domMap));
 		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
 		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
 		if (valueObject.getPasEventId() != null && valueObject.getPasEventId().equals(""))
@@ -600,7 +621,26 @@ public class PasEventAdmitVoAssembler
 				domainFactory.getLookupInstance(valueObject.getEventType().getID());
 		}
 		domainObject.setEventType(value4);
-		domainObject.setConsultant(ims.core.vo.domain.MedicVoAssembler.extractMedic(domainFactory, (ims.core.vo.MedicVo)valueObject.getConsultant(), domMap));
+		ims.core.resource.people.domain.objects.Medic value5 = null;
+		if ( null != valueObject.getConsultant() ) 
+		{
+			if (valueObject.getConsultant().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getConsultant()) != null)
+				{
+					value5 = (ims.core.resource.people.domain.objects.Medic)domMap.get(valueObject.getConsultant());
+				}
+			}
+			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
+			{
+				value5 = domainObject.getConsultant();	
+			}
+			else
+			{
+				value5 = (ims.core.resource.people.domain.objects.Medic)domainFactory.getDomainObject(ims.core.resource.people.domain.objects.Medic.class, valueObject.getConsultant().getBoId());
+			}
+		}
+		domainObject.setConsultant(value5);
 		// create LookupInstance from vo LookupType
 		ims.domain.lookups.LookupInstance value6 = null;
 		if ( null != valueObject.getSpecialty() ) 
@@ -645,6 +685,23 @@ public class PasEventAdmitVoAssembler
 				domainFactory.getLookupInstance(valueObject.getPASSpecialty().getID());
 		}
 		domainObject.setPASSpecialty(value9);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.clinical.domain.objects.Service value10 = null;
+		if ( null != valueObject.getService() ) 
+		{
+			if (valueObject.getService().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getService()) != null)
+				{
+					value10 = (ims.core.clinical.domain.objects.Service)domMap.get(valueObject.getService());
+				}
+			}
+			else
+			{
+				value10 = (ims.core.clinical.domain.objects.Service)domainFactory.getDomainObject(ims.core.clinical.domain.objects.Service.class, valueObject.getService().getBoId());
+			}
+		}
+		domainObject.setService(value10);
 
 		return domainObject;
 	}

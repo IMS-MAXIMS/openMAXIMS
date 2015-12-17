@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.pathways.domain.objects;
@@ -53,6 +58,10 @@ public class PathwayRTTStatus extends ims.domain.DomainObject implements ims.dom
 	private java.util.Date statusDateTime;
 	/** Value of either O or I to indicate if patient was inpatient at time status was set */
 	private String setting;
+	/** Reason why RTT status was updated in Maintenance */
+	private ims.domain.lookups.LookupInstance rTTStatusUpdateReason;
+	/** reason why RTT Status was updated in Maintenance */
+	private String rTTStatusUpdateComment;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public PathwayRTTStatus (Integer id, int ver)
@@ -103,6 +112,24 @@ public class PathwayRTTStatus extends ims.domain.DomainObject implements ims.dom
 				setting);
 		}
 		this.setting = setting;
+	}
+
+	public ims.domain.lookups.LookupInstance getRTTStatusUpdateReason() {
+		return rTTStatusUpdateReason;
+	}
+	public void setRTTStatusUpdateReason(ims.domain.lookups.LookupInstance rTTStatusUpdateReason) {
+		this.rTTStatusUpdateReason = rTTStatusUpdateReason;
+	}
+
+	public String getRTTStatusUpdateComment() {
+		return rTTStatusUpdateComment;
+	}
+	public void setRTTStatusUpdateComment(String rTTStatusUpdateComment) {
+		if ( null != rTTStatusUpdateComment && rTTStatusUpdateComment.length() > 500 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for rTTStatusUpdateComment. Tried to set value: "+
+				rTTStatusUpdateComment);
+		}
+		this.rTTStatusUpdateComment = rTTStatusUpdateComment;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -163,6 +190,13 @@ public class PathwayRTTStatus extends ims.domain.DomainObject implements ims.dom
 	    auditStr.append("; ");
 		auditStr.append("\r\n*setting* :");
 		auditStr.append(setting);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*rTTStatusUpdateReason* :");
+		if (rTTStatusUpdateReason != null)
+			auditStr.append(rTTStatusUpdateReason.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*rTTStatusUpdateComment* :");
+		auditStr.append(rTTStatusUpdateComment);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -231,6 +265,18 @@ public class PathwayRTTStatus extends ims.domain.DomainObject implements ims.dom
 			sb.append("<setting>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getSetting().toString()));
 			sb.append("</setting>");		
+		}
+		if (this.getRTTStatusUpdateReason() != null)
+		{
+			sb.append("<rTTStatusUpdateReason>");
+			sb.append(this.getRTTStatusUpdateReason().toXMLString()); 
+			sb.append("</rTTStatusUpdateReason>");		
+		}
+		if (this.getRTTStatusUpdateComment() != null)
+		{
+			sb.append("<rTTStatusUpdateComment>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getRTTStatusUpdateComment().toString()));
+			sb.append("</rTTStatusUpdateComment>");		
 		}
 		return sb.toString();
 	}
@@ -417,6 +463,17 @@ public class PathwayRTTStatus extends ims.domain.DomainObject implements ims.dom
 		{	
     		obj.setSetting(new String(fldEl.getTextTrim()));	
 		}
+		fldEl = el.element("rTTStatusUpdateReason");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setRTTStatusUpdateReason(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("rTTStatusUpdateComment");
+		if(fldEl != null)
+		{	
+    		obj.setRTTStatusUpdateComment(new String(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -433,6 +490,8 @@ public class PathwayRTTStatus extends ims.domain.DomainObject implements ims.dom
 		public static final String StatusBy = "statusBy";
 		public static final String StatusDateTime = "statusDateTime";
 		public static final String Setting = "setting";
+		public static final String RTTStatusUpdateReason = "rTTStatusUpdateReason";
+		public static final String RTTStatusUpdateComment = "rTTStatusUpdateComment";
 	}
 }
 

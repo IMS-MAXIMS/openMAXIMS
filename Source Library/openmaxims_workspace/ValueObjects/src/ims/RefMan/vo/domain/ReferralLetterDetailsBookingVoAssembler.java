@@ -1,9 +1,33 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.RefMan.vo.domain;
@@ -39,6 +63,12 @@ public class ReferralLetterDetailsBookingVoAssembler
 		valueObjectDest.setDateOfReferral(valueObjectSrc.getDateOfReferral());
 		// DateReferralReceived
 		valueObjectDest.setDateReferralReceived(valueObjectSrc.getDateReferralReceived());
+		// End18WW
+		valueObjectDest.setEnd18WW(valueObjectSrc.getEnd18WW());
+		// EndDateKPI
+		valueObjectDest.setEndDateKPI(valueObjectSrc.getEndDateKPI());
+		// ReferrerType
+		valueObjectDest.setReferrerType(valueObjectSrc.getReferrerType());
 	 	return valueObjectDest;
 	 }
 
@@ -345,7 +375,55 @@ public class ReferralLetterDetailsBookingVoAssembler
 		{
 			valueObject.setDateReferralReceived(new ims.framework.utils.Date(DateReferralReceived) );
 		}
- 		return valueObject;
+		// End18WW
+		java.util.Date End18WW = domainObject.getEnd18WW();
+		if ( null != End18WW ) 
+		{
+			valueObject.setEnd18WW(new ims.framework.utils.Date(End18WW) );
+		}
+		// EndDateKPI
+		java.util.Date EndDateKPI = domainObject.getEndDateKPI();
+		if ( null != EndDateKPI ) 
+		{
+			valueObject.setEndDateKPI(new ims.framework.utils.Date(EndDateKPI) );
+		}
+		// ReferrerType
+		ims.domain.lookups.LookupInstance instance7 = domainObject.getReferrerType();
+		if ( null != instance7 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance7.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance7.getImage().getImageId(), instance7.getImage().getImagePath());
+			}
+			color = instance7.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.SourceOfReferral voLookup7 = new ims.core.vo.lookups.SourceOfReferral(instance7.getId(),instance7.getText(), instance7.isActive(), null, img, color);
+			ims.core.vo.lookups.SourceOfReferral parentVoLookup7 = voLookup7;
+			ims.domain.lookups.LookupInstance parent7 = instance7.getParent();
+			while (parent7 != null)
+			{
+				if (parent7.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent7.getImage().getImageId(), parent7.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent7.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup7.setParent(new ims.core.vo.lookups.SourceOfReferral(parent7.getId(),parent7.getText(), parent7.isActive(), null, img, color));
+				parentVoLookup7 = parentVoLookup7.getParent();
+								parent7 = parent7.getParent();
+			}			
+			valueObject.setReferrerType(voLookup7);
+		}
+		 		return valueObject;
 	 }
 
 
@@ -410,6 +488,28 @@ public class ReferralLetterDetailsBookingVoAssembler
 			value4 = date4.getDate();
 		}
 		domainObject.setDateReferralReceived(value4);
+		java.util.Date value5 = null;
+		ims.framework.utils.Date date5 = valueObject.getEnd18WW();		
+		if ( date5 != null ) 
+		{
+			value5 = date5.getDate();
+		}
+		domainObject.setEnd18WW(value5);
+		java.util.Date value6 = null;
+		ims.framework.utils.Date date6 = valueObject.getEndDateKPI();		
+		if ( date6 != null ) 
+		{
+			value6 = date6.getDate();
+		}
+		domainObject.setEndDateKPI(value6);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value7 = null;
+		if ( null != valueObject.getReferrerType() ) 
+		{
+			value7 =
+				domainFactory.getLookupInstance(valueObject.getReferrerType().getID());
+		}
+		domainObject.setReferrerType(value7);
 
 		return domainObject;
 	}

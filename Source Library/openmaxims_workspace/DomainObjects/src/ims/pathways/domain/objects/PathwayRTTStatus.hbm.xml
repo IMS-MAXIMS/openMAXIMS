@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:36 -->
+<!-- Generated: 12/10/2015, 13:31 -->
 <hibernate-mapping>
 	<class name="ims.pathways.domain.objects.PathwayRTTStatus" table="pthw_rttstatus" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -46,6 +46,8 @@
 		</many-to-one>
 <!-- debug: statusDateTime -->
 <!-- debug: setting -->
+<!-- debug: rTTStatusUpdateReason -->
+<!-- debug: rTTStatusUpdateComment -->
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="statusDateTime" type="timestamp" access="field" update="true">
@@ -55,6 +57,16 @@
 <!-- debug: !IsLookup -->
 		<property name="setting" type="string" access="field" update="true" > 
 			<column name="setting" length="1"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="rTTStatusUpdateReason" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_rttstatusu" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="rTTStatusUpdateComment" type="string" access="field" update="true" > 
+			<column name="rttstatus2" length="500"  not-null="false" unique="false"  />
 		</property>
 	</class>
 </hibernate-mapping>

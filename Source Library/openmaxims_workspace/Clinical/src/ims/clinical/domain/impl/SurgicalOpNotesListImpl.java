@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -91,8 +96,8 @@ public class SurgicalOpNotesListImpl extends BaseSurgicalOpNotesListImpl
 	public ims.core.vo.LocationLiteVoCollection listHospitals(String filterName)
 	{
 		String hql = "from Location as l1_1 where "+
-		"(UPPER(l1_1.name) like :nameFilter and l1_1.isActive = 1 and l1_1.type.id = :hospTypeId) "+ 
-		"order by l1_1.name asc"; 
+		"(UPPER(l1_1.name) like :nameFilter and l1_1.isActive = 1 and l1_1.isVirtual = 0 and l1_1.type.id = :hospTypeId) "+ 
+		"order by l1_1.name asc"; //WDEV-19532
 		List<?> result = getDomainFactory().find(hql,new String[]{"nameFilter","hospTypeId"},
 				new Object[]{"%"+filterName.toUpperCase()+"%",LocationType.HOSP.getID()});						//wdev-16291
 		if (result == null || result.size() == 0)

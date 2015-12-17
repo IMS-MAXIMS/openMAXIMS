@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -34,8 +39,8 @@ import ims.RefMan.vo.PatientElectiveListRefVo;
 import ims.RefMan.vo.PatientElectiveTCIBedManagerCommentVo;
 import ims.RefMan.vo.domain.PatientElectiveListForPendingAdmissionVoAssembler;
 import ims.RefMan.vo.domain.PatientElectiveTCIBedManagerCommentVoAssembler;
-import ims.RefMan.vo.lookups.ElectiveAdmissionType;
 import ims.configuration.gen.ConfigFlag;
+import ims.core.domain.WardView;
 import ims.core.domain.base.impl.BasePendingElectiveAdmissionsListELComponentImpl;
 import ims.core.patient.domain.objects.Patient;
 import ims.core.patient.vo.PatientRefVo;
@@ -52,14 +57,18 @@ import ims.core.vo.domain.LocMostVoAssembler;
 import ims.core.vo.domain.LocationLiteVoAssembler;
 import ims.core.vo.domain.PatientShortAssembler;
 import ims.core.vo.lookups.PatIdType;
+import ims.core.vo.lookups.WaitingListStatus;
 import ims.domain.DomainFactory;
 import ims.domain.exceptions.StaleObjectException;
+import ims.domain.lookups.LookupInstance;
 import ims.framework.exceptions.CodingRuntimeException;
+import ims.framework.interfaces.ILocation;
 import ims.framework.utils.DateTime;
 import ims.framework.utils.Time;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 public class PendingElectiveAdmissionsListELComponentImpl extends BasePendingElectiveAdmissionsListELComponentImpl
 {
@@ -120,15 +129,22 @@ public class PendingElectiveAdmissionsListELComponentImpl extends BasePendingEle
 
 		ArrayList<String> markers = new ArrayList<String>();
 		ArrayList<Serializable> values = new ArrayList<Serializable>();
+		boolean isCaseSensitivePatIdSearch = ConfigFlag.DOM.CASE_SENSITIVE_PATID.getValue();  //WDEV-18817
 
 		StringBuffer sb = new StringBuffer();
 		String andStr = "";
 
-		String hql = "select pel from PatientElectiveList as pel left join pel.patient as pat"; 
-
+		String hql = "select pel, (select wcfg.wardStatus from WardBayConfig wcfg WHERE wcfg.ward.id = pel.tCIDetails.tCIWard.id) from PatientElectiveList as pel left join pel.patient as pat"; 
+		
 		String strSearchSurname = "";
 		String strSearchForename = "";
-
+		
+		//WDEV-20809 mandatory conditions for search
+		sb.append(andStr + " pel.tCIDetails is not null AND pel.tCIDetails.tCIDate is not null AND pel.tCIDetails.isActive = :ACTIVE AND pel.tCIDetails.currentOutcome is null AND"); //WDEV-20328
+		markers.add("ACTIVE");
+		values.add(Boolean.TRUE);
+		sb.append (" (pel.isRIE is null OR pel.isRIE = 0) AND "); //WDEV-20902 //WDEV-22642
+		
 		if (searchFilter.getHospNumIsNotNull())
 		{
 			hql += " left join pat.identifiers as ids ";
@@ -136,17 +152,17 @@ public class PendingElectiveAdmissionsListELComponentImpl extends BasePendingEle
 			String idVal = searchFilter.getHospNum().trim();			
 			if (searchFilter.getIDType().equals(PatIdType.NHSN))
 				idVal = searchFilter.getHospNum().replace(" ", "");//wdev-7305
-			
-			if(!ConfigFlag.DOM.CASE_SENSITIVE_PATID.getValue())
+			if (!isCaseSensitivePatIdSearch)	//WDEV-18817
+			{	
 				idVal = idVal.toUpperCase();
-
+			}
 			if (searchFilter.getIDType().equals(PatIdType.NHSN))
 			{
-				sb.append(andStr + " ids.value like :idnum ");
+				sb.append(andStr + (!isCaseSensitivePatIdSearch ? " UPPER(ids.value)" : " ids.value") + " like :idnum"); //WDEV-18817 
 				idVal += "%";
 			}
 			else
-				sb.append(andStr + " ids.value = :idnum");
+				sb.append(andStr + (!isCaseSensitivePatIdSearch ? " UPPER(ids.value)" : " ids.value") + " = :idnum"); //WDEV-18817
 
 			markers.add("idnum");
 			values.add(idVal);
@@ -209,7 +225,7 @@ public class PendingElectiveAdmissionsListELComponentImpl extends BasePendingEle
 		{
 			hql += " left join pat.patientAlerts as patAlerts ";
 
-			sb.append(andStr + "patAlerts.alertType = :alertID");
+			sb.append(andStr + " patAlerts.alertType = :alertID");
 			markers.add("alertID");
 			values.add(getDomLookup(searchFilter.getAlert()));
 			andStr = " and ";
@@ -217,8 +233,8 @@ public class PendingElectiveAdmissionsListELComponentImpl extends BasePendingEle
 
 		if (searchFilter.getConsultantIsNotNull())
 		{
-			hql += " left join pel.consultant as cons ";
-			sb.append(andStr + " cons.id = :cons");
+			hql += " left join pel.responsibleHCP as respHCP "; //WDEV-22774
+			sb.append(andStr + " respHCP.id = :cons");
 			markers.add("cons");
 			values.add(searchFilter.getConsultant().getID_Hcp());
 			andStr = " and ";
@@ -226,7 +242,7 @@ public class PendingElectiveAdmissionsListELComponentImpl extends BasePendingEle
 		
 		if (searchFilter.getHospitalIsNotNull())
 		{
-			sb.append(andStr + " pel.ward.parentLocation.id = :hosp");
+			sb.append(andStr + " pel.tCIDetails.tCIHospital.id = :hosp");//WDEV-19348
 			markers.add("hosp");
 			values.add(searchFilter.getHospital().getID_Location());
 			andStr = " and ";
@@ -234,7 +250,7 @@ public class PendingElectiveAdmissionsListELComponentImpl extends BasePendingEle
 		
 		if (searchFilter.getWardIsNotNull())
 		{
-			sb.append(andStr + " pel.ward.id = :ward");
+			sb.append(andStr + " pel.tCIDetails.tCIWard.id = :ward");//WDEV-19348
 			markers.add("ward");
 			values.add(searchFilter.getWard().getID_Location());
 			andStr = " and ";
@@ -272,16 +288,49 @@ public class PendingElectiveAdmissionsListELComponentImpl extends BasePendingEle
 			andStr = " and ";
 		}
 		
+		if (searchFilter.getElectiveAdmissionTypeIsNotNull())
+		{	
+			sb.append(andStr + " pel.electiveAdmissionType.id = :ELECTIVE_TYPE");
+			markers.add("ELECTIVE_TYPE");
+			values.add(searchFilter.getElectiveAdmissionType().getID());
+			andStr = " and ";
+		}
 		
-		sb.append(andStr + " pel.electiveAdmissionType = :stat");
-		markers.add("stat");
-		values.add(getDomLookup(ElectiveAdmissionType.BOOKED_TYPE12));
+		//WDEV-20809
+		sb.append(andStr + " pel.electiveListStatus.electiveListStatus.id = :TCI_GIVEN");
+		markers.add("TCI_GIVEN");
+		values.add(WaitingListStatus.TCI_GIVEN.getID());
 		
 		hql += " where ";
 		hql += sb.toString();
 		
-		
-		return PatientElectiveListForPendingAdmissionVoAssembler.createPatientElectiveListForPendingAdmissionVoCollectionFromPatientElectiveList(getDomainFactory().find(hql.toString(), markers, values));
+		//WDEV-20328 -- start
+		List<?> results = getDomainFactory().find(hql.toString(), markers, values);
+
+		if (results == null || results.isEmpty())
+			return null;
+		PatientElectiveListForPendingAdmissionVoCollection collResults = new PatientElectiveListForPendingAdmissionVoCollection();
+		for (int i = 0; i<results.size();i++)
+		{
+			if (results.get(i) != null && results.get(i) instanceof Object[])
+			{
+				Object[] ret = (Object[]) results.get(i);
+				PatientElectiveListForPendingAdmissionVo vo = new PatientElectiveListForPendingAdmissionVo();
+				if (ret[0] instanceof PatientElectiveList)
+				{	
+					vo = PatientElectiveListForPendingAdmissionVoAssembler.create((PatientElectiveList) ret[0]);
+					
+					if (ret[1] instanceof LookupInstance)
+					{	
+						vo.setWardStatus(ims.core.vo.lookups.LookupHelper.getWardBayStatusInstance(getLookupService(), ((LookupInstance) ret[1]).getId()));
+					}
+					collResults.add(vo);	
+				}							
+			}					
+		}
+		return collResults;
+		//WDEV-20328 --- ends here
+		//return PatientElectiveListForPendingAdmissionVoAssembler.createPatientElectiveListForPendingAdmissionVoCollectionFromPatientElectiveList(getDomainFactory().find(hql.toString(), markers, values));
 	}
 
 	public PatientShort getPatientShort(PatientRefVo patientRef)
@@ -309,6 +358,14 @@ public class PendingElectiveAdmissionsListELComponentImpl extends BasePendingEle
 		TCIForPatientElectiveList domainTCIDetails = PatientElectiveTCIBedManagerCommentVoAssembler.extractTCIForPatientElectiveList(factory, tciDetails);
 
 		factory.save(domainTCIDetails);
+	}
+
+
+	//WDEV-20707
+	public LocationLiteVo getCurrentHospital(ILocation location) 
+	{
+		WardView impl = (WardView)getDomainImpl(WardViewImpl.class);
+		return impl.getCurrentHospital(location);
 	}
 
 	

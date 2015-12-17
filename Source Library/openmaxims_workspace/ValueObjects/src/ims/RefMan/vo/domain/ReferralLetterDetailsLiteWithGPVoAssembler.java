@@ -1,9 +1,33 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.RefMan.vo.domain;
@@ -61,6 +85,10 @@ public class ReferralLetterDetailsLiteWithGPVoAssembler
 		valueObjectDest.setEnd18WW(valueObjectSrc.getEnd18WW());
 		// Consultant
 		valueObjectDest.setConsultant(valueObjectSrc.getConsultant());
+		// Function
+		valueObjectDest.setFunction(valueObjectSrc.getFunction());
+		// OriginalDateOfReferral
+		valueObjectDest.setOriginalDateOfReferral(valueObjectSrc.getOriginalDateOfReferral());
 	 	return valueObjectDest;
 	 }
 
@@ -472,18 +500,14 @@ public class ReferralLetterDetailsLiteWithGPVoAssembler
 			valueObject.setEnd18WW(new ims.framework.utils.Date(End18WW) );
 		}
 		// Consultant
-		if (domainObject.getConsultant() != null)
+		valueObject.setConsultant(ims.core.vo.domain.HcpMinVoAssembler.create(map, domainObject.getConsultant()) );
+		// Function
+		valueObject.setFunction(ims.core.vo.domain.ServiceFunctionLiteVoAssembler.create(map, domainObject.getFunction()) );
+		// OriginalDateOfReferral
+		java.util.Date OriginalDateOfReferral = domainObject.getOriginalDateOfReferral();
+		if ( null != OriginalDateOfReferral ) 
 		{
-			if(domainObject.getConsultant() instanceof HibernateProxy) // If the proxy is set, there is no need to lazy load, the proxy knows the id already. 
-			{
-				HibernateProxy p = (HibernateProxy) domainObject.getConsultant();
-				int id = Integer.parseInt(p.getHibernateLazyInitializer().getIdentifier().toString());				
-				valueObject.setConsultant(new ims.core.resource.people.vo.HcpRefVo(id, -1));				
-			}
-			else
-			{
-				valueObject.setConsultant(new ims.core.resource.people.vo.HcpRefVo(domainObject.getConsultant().getId(), domainObject.getConsultant().getVersion()));
-			}
+			valueObject.setOriginalDateOfReferral(new ims.framework.utils.Date(OriginalDateOfReferral) );
 		}
  		return valueObject;
 	 }
@@ -642,26 +666,31 @@ public class ReferralLetterDetailsLiteWithGPVoAssembler
 			value14 = date14.getDate();
 		}
 		domainObject.setEnd18WW(value14);
-		ims.core.resource.people.domain.objects.Hcp value15 = null;
-		if ( null != valueObject.getConsultant() ) 
+		domainObject.setConsultant(ims.core.vo.domain.HcpMinVoAssembler.extractHcp(domainFactory, valueObject.getConsultant(), domMap));
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.clinical.domain.objects.ServiceFunction value16 = null;
+		if ( null != valueObject.getFunction() ) 
 		{
-			if (valueObject.getConsultant().getBoId() == null)
+			if (valueObject.getFunction().getBoId() == null)
 			{
-				if (domMap.get(valueObject.getConsultant()) != null)
+				if (domMap.get(valueObject.getFunction()) != null)
 				{
-					value15 = (ims.core.resource.people.domain.objects.Hcp)domMap.get(valueObject.getConsultant());
+					value16 = (ims.core.clinical.domain.objects.ServiceFunction)domMap.get(valueObject.getFunction());
 				}
-			}
-			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
-			{
-				value15 = domainObject.getConsultant();	
 			}
 			else
 			{
-				value15 = (ims.core.resource.people.domain.objects.Hcp)domainFactory.getDomainObject(ims.core.resource.people.domain.objects.Hcp.class, valueObject.getConsultant().getBoId());
+				value16 = (ims.core.clinical.domain.objects.ServiceFunction)domainFactory.getDomainObject(ims.core.clinical.domain.objects.ServiceFunction.class, valueObject.getFunction().getBoId());
 			}
 		}
-		domainObject.setConsultant(value15);
+		domainObject.setFunction(value16);
+		java.util.Date value17 = null;
+		ims.framework.utils.Date date17 = valueObject.getOriginalDateOfReferral();		
+		if ( date17 != null ) 
+		{
+			value17 = date17.getDate();
+		}
+		domainObject.setOriginalDateOfReferral(value17);
 
 		return domainObject;
 	}

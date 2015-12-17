@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -31,12 +36,15 @@ import ims.emergency.vo.CubicleAllocationVo;
 import ims.emergency.vo.TrackingAreaCubiclesVo;
 import ims.emergency.vo.TrackingAreaLiteVo;
 import ims.emergency.vo.TrackingCubicleRoomBedVo;
+import ims.emergency.vo.TrackingCubicleRoomBedVoCollection;
 import ims.emergency.vo.TrackingForAllocateCubicleVo;
 import ims.emergency.vo.TrackingLiteVo;
+import ims.framework.FormName;
 import ims.framework.enumerations.DialogResult;
 import ims.framework.enumerations.FormMode;
 import ims.framework.enumerations.SortOrder;
 import ims.framework.exceptions.PresentationLogicException;
+import ims.framework.utils.Color;
 import ims.framework.utils.DateTime;
 
 import java.util.ArrayList;
@@ -46,17 +54,15 @@ public class Logic extends BaseLogic
 {
 	private static final long serialVersionUID = 1L;
 
-	
-	protected void onFormOpen(Object[] args) throws ims.framework.exceptions.PresentationLogicException
+	protected void onFormOpen(Object[] args) throws ims.framework.exceptions.PresentationLogicException 
 	{
 		initialize();
-		if( form.getGlobalContext().Emergency.getTracking() != null)
-			form.getLocalContext().setCurrentTracking(domain.getTracking(form.getGlobalContext().Emergency.getTracking()));
+		
 		//initializeCubiclesRoomsBedsCombo();  //wdev-16011
 		open();
 		
 		//wdev-17430
-		if(	form.recbrAllocateCubicle().getValue() == null)
+		if(	form.recbrAllocateCubicle().getValue() == null || form.getLocalContext().getCurrentTracking().getCurrentCubicle()==null) //WDEV-20720
 			newInstanceNewClick();		
 		else
 		{
@@ -65,7 +71,7 @@ public class Logic extends BaseLogic
 				TrackingLiteVo tempLiteVo = domain.getTrackingLiteVo(form.getGlobalContext().Emergency.getTracking());
 				if( tempLiteVo != null && tempLiteVo.getCurrentAreaIsNotNull() )
 				{
-					if( !Boolean.TRUE.equals(domain.isAllocateCubicleForCurrentTrackingArea(tempLiteVo.getCurrentArea())))
+					if( !Boolean.TRUE.equals(domain.isAllocateCubicleForCurrentTrackingArea(tempLiteVo.getCurrentArea(),form.getGlobalContext().Core.getCurrentCareContext())))
 					{
 						newInstanceNewClick();
 					}
@@ -77,6 +83,11 @@ public class Logic extends BaseLogic
 	private void open()
 	{
 		clear();
+		
+		//WDEV-20720
+		if( form.getGlobalContext().Emergency.getTracking() != null)
+			form.getLocalContext().setCurrentTracking(domain.getTracking(form.getGlobalContext().Emergency.getTracking()));
+		
 		CubicleAllocationShortVoCollection tempColl = domain.listCubicleAllocationShortVo(form.getGlobalContext().Core.getCurrentCareContext());
 		populateRecordBrowser(tempColl);
 		if(	form.recbrAllocateCubicle().getValue() != null)
@@ -94,9 +105,18 @@ public class Logic extends BaseLogic
 			TrackingAreaCubiclesVo tempVo = domain.getTrackingAreaCubicles(form.getLocalContext().getCurrentTracking().getCurrentArea());
 			if( tempVo != null && tempVo.getCubiclesRoomsBedsIsNotNull())
 			{
+				//WDEV-20720
+				TrackingCubicleRoomBedVoCollection collCurrentlyAllocatedCubicle = domain.getCurrentlyAllocatedCubicles(form.getLocalContext().getCurrentTracking().getCurrentArea());
 				for(int i = 0;i < tempVo.getCubiclesRoomsBeds().size();i++)
 				{
-					form.cmbCubicle().newRow(tempVo.getCubiclesRoomsBeds().get(i), tempVo.getCubiclesRoomsBeds().get(i).getCubicleRoomBedName());
+					if (collCurrentlyAllocatedCubicle!=null && collCurrentlyAllocatedCubicle.size()>0 && collCurrentlyAllocatedCubicle.contains(tempVo.getCubiclesRoomsBeds().get(i)))
+					{
+						form.cmbCubicle().newRow(tempVo.getCubiclesRoomsBeds().get(i), tempVo.getCubiclesRoomsBeds().get(i).getCubicleRoomBedName(), Color.Red);
+					}
+					else
+					{
+						form.cmbCubicle().newRow(tempVo.getCubiclesRoomsBeds().get(i), tempVo.getCubiclesRoomsBeds().get(i).getCubicleRoomBedName());
+					}
 				}
 			}
 			
@@ -104,7 +124,7 @@ public class Logic extends BaseLogic
 	}
 	private void initialize()
 	{
-		
+		form.btnRIE().setImage(form.getImages().Core.Alert_RedTriangle2);
 		form.getLocalContext().setCurrentCubicleAllocation(null);
 		form.getLocalContext().setCurrentTracking(null);
 		
@@ -125,7 +145,16 @@ public class Logic extends BaseLogic
 				String s3 = (tempVo.getTrackingAreaIsNotNull() && tempVo.getTrackingArea().getAreaDisplayNameIsNotNull()) ? tempVo.getTrackingArea().getAreaDisplayName():"";
 				String s4 = tempVo.getAllocatedByIsNotNull() ? tempVo.getAllocatedBy().getName().toString():"";
 				String s5 = s1+" - "+s2+" - "+s3+" - "+s4 ;
-				form.recbrAllocateCubicle().newRow(tempVo, s5);
+				
+				//WDEV-20720
+				if (form.getLocalContext().getCurrentTracking().getCurrentCubicle()!=null && form.getLocalContext().getCurrentTracking().getCurrentCubicle().getID_CubicleAllocation().equals(tempVo.getID_CubicleAllocation()))
+				{
+					form.recbrAllocateCubicle().newRow(tempVo, s5, Color.Green);
+				}
+				else
+				{
+					form.recbrAllocateCubicle().newRow(tempVo, s5);
+				}
 			}
 		}
 		if(	form.getLocalContext().getCurrentCubicleAllocationIsNotNull() && form.getLocalContext().getCurrentCubicleAllocation().getID_CubicleAllocationIsNotNull())
@@ -348,6 +377,7 @@ public class Logic extends BaseLogic
 		
 		form.getLocalContext().setCurrentCubicleAllocation(domain.getCubicleAllocation(form.recbrAllocateCubicle().getValue()));
 		populateScreenFromData(form.getLocalContext().getCurrentCubicleAllocation());
+		updateControlsState();//WDEV-20720
 		
 	}
 	private void populateScreenFromData(CubicleAllocationVo cubic)
@@ -360,20 +390,30 @@ public class Logic extends BaseLogic
 			form.cmbCubicle().setValue(cubic.getCubicleRoomBed());	//wdev-16011
 			form.lblNameOfTrackingArea().setValue(cubic.getTrackingAreaIsNotNull()? cubic.getTrackingArea().getAreaDisplayName():"");
 			//wdev-16011
+			
 			form.cmbCubicle().clear();
 			if( cubic.getTrackingAreaIsNotNull())
 			{
-				
-				
-					TrackingAreaCubiclesVo tempVo = domain.getTrackingAreaCubicles(cubic.getTrackingArea());
-					if( tempVo != null && tempVo.getCubiclesRoomsBedsIsNotNull())
+				TrackingAreaCubiclesVo tempVo = domain.getTrackingAreaCubicles(cubic.getTrackingArea()); 
+				if( tempVo != null && tempVo.getCubiclesRoomsBedsIsNotNull())
+				{
+					//WDEV-20720
+					TrackingCubicleRoomBedVoCollection collCurrentlyAllocatedCubicle = domain.getCurrentlyAllocatedCubicles(form.getLocalContext().getCurrentTracking().getCurrentArea());
+					
+					for(int i = 0;i < tempVo.getCubiclesRoomsBeds().size();i++)
 					{
-						for(int i = 0;i < tempVo.getCubiclesRoomsBeds().size();i++)
+						if (collCurrentlyAllocatedCubicle!=null && collCurrentlyAllocatedCubicle.size()>0 && collCurrentlyAllocatedCubicle.contains(tempVo.getCubiclesRoomsBeds().get(i)))
+						{
+							form.cmbCubicle().newRow(tempVo.getCubiclesRoomsBeds().get(i), tempVo.getCubiclesRoomsBeds().get(i).getCubicleRoomBedName(), Color.Red);
+						}
+						else
 						{
 							form.cmbCubicle().newRow(tempVo.getCubiclesRoomsBeds().get(i), tempVo.getCubiclesRoomsBeds().get(i).getCubicleRoomBedName());
 						}
 					}
-					form.cmbCubicle().setValue(cubic.getCubicleRoomBed());
+				}
+				
+				form.cmbCubicle().setValue(cubic.getCubicleRoomBed());
 					
 				
 			}
@@ -395,7 +435,12 @@ public class Logic extends BaseLogic
 		{
 			form.btnEdit().setVisible(true);
 			form.btnEdit().setEnabled(form.recbrAllocateCubicle().getValue() != null);
+			
+			form.btnRIE().setVisible(true);
+			form.btnRIE().setEnabled(form.recbrAllocateCubicle().getValue() != null);
 		}
+		
+		form.btnUnallocateCubicle().setVisible(form.getMode().equals(FormMode.VIEW) && form.getLocalContext().getCurrentTracking().getCurrentCubicleIsNotNull() && form.recbrAllocateCubicle().getValue()!=null &&  form.getLocalContext().getCurrentTracking().getCurrentCubicle().getID_CubicleAllocation().equals(form.recbrAllocateCubicle().getValue().getID_CubicleAllocation()));//WDEV-20720
 	}
 	public class AllocatedDateComparator implements Comparator
 	{
@@ -439,8 +484,102 @@ public class Logic extends BaseLogic
 	protected void onBtnCloseClick() throws PresentationLogicException 
 	{
 		engine.close(DialogResult.CANCEL);
-		
 	}
-
 	
+	@Override
+	protected void onBtnRIEClick() throws PresentationLogicException
+	{
+		engine.open(form.getForms().Core.RieConfirmationDialog);
+	}
+	
+	private boolean markAsRIE()
+	{
+		if (form.recbrAllocateCubicle().getValue() == null)
+			return false;
+		
+		if (domain.isStale(form.recbrAllocateCubicle().getValue()))
+        {
+        	engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
+        	form.getLocalContext().setCurrentCubicleAllocation(null);
+        	open();
+        	return false;
+        }
+		
+		TrackingForAllocateCubicleVo tracking = null;
+		form.getLocalContext().setCurrentTracking(domain.getTracking(form.getGlobalContext().Emergency.getTracking()));
+		
+		if(form.getLocalContext().getCurrentTracking() != null && form.recbrAllocateCubicle().getValue().equals(form.getLocalContext().getCurrentTracking().getCurrentCubicle()))
+		{
+			tracking = form.getLocalContext().getCurrentTracking();
+			tracking.setCurrentCubicle(null);
+		}
+     
+		try 
+		{
+			domain.markCubicleAsRIEAndSaveTracking(form.recbrAllocateCubicle().getValue(), tracking, engine.getFormName(), form.getGlobalContext().Core.getPatientShort() != null ? form.getGlobalContext().Core.getPatientShort().getID_Patient() : null, form.getGlobalContext().Core.getCurrentCareContext() != null ? form.getGlobalContext().Core.getCurrentCareContext().getID_CareContext() : null, form.getGlobalContext().Core.getRieMessage());	
+		} 
+		catch (StaleObjectException e) 
+		{
+			engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
+			form.getLocalContext().setCurrentCubicleAllocation(null);
+			open();
+			return false;
+		}
+		
+		return true;
+	}
+	
+	@Override
+	protected void onFormDialogClosed(FormName formName, DialogResult result) throws PresentationLogicException
+	{
+		if(form.getForms().Core.RieConfirmationDialog.equals(formName))
+		{
+			if(DialogResult.OK.equals(result))
+			{
+				if(markAsRIE())
+				{
+					form.getLocalContext().setCurrentCubicleAllocation(null);
+					open();
+				}
+			}
+		}
+	}
+	
+	//WDEV-20720
+	@Override
+	protected void onBtnUnallocateCubicleClick() throws PresentationLogicException
+	{
+		if(unallocateCubicle())
+		{
+			form.getLocalContext().setCurrentCubicleAllocation(null);
+			open();
+		}
+	}
+	
+	//WDEV-20720
+	private boolean unallocateCubicle()
+	{	
+		TrackingForAllocateCubicleVo tracking = null;
+		form.getLocalContext().setCurrentTracking(domain.getTracking(form.getGlobalContext().Emergency.getTracking()));
+	
+		if(form.getLocalContext().getCurrentTracking()!= null && form.getLocalContext().getCurrentTracking().getCurrentCubicleIsNotNull())
+		{
+			tracking = form.getLocalContext().getCurrentTracking();
+			tracking.setCurrentCubicle(null);
+		}
+     
+		try 
+		{
+			form.getLocalContext().setCurrentCubicleAllocation(domain.saveCubicleAllocation(null, tracking));	
+		} 
+		catch (StaleObjectException e) 
+		{
+			engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
+			form.getLocalContext().setCurrentCubicleAllocation(null);
+			open();
+			return false;
+		}
+		
+		return true;
+	}
 }

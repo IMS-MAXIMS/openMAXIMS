@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -48,6 +53,7 @@ import ims.scheduling.vo.SessionSlotStatusVo;
 import ims.scheduling.vo.SessionSlotStatusVoCollection;
 import ims.scheduling.vo.SessionSlotVo;
 import ims.scheduling.vo.SessionVo;
+import ims.scheduling.vo.lookups.SchProfileType;
 import ims.scheduling.vo.lookups.Session_Status_and_Reason;
 import ims.scheduling.vo.lookups.Status_Reason;
 
@@ -77,7 +83,7 @@ public class Logic extends BaseLogic
 		
 		SessionShortVoCollection voCollSession = new SessionShortVoCollection();
 	
-		voCollSession = domain.listSession(form.qmbProfile().getValue(),form.qmbDoService().getValue(), form.dteFrom().getValue(), form.dteTo().getValue());//WDEV-15190
+		voCollSession = domain.listSession(form.qmbProfile().getValue(),form.qmbDoService().getValue(), form.dteFrom().getValue(), form.dteTo().getValue(),null);//WDEV-15190,wdev-19395
 		populateTree(voCollSession);	
 		
 		if(voCollSession.size() == 0)
@@ -120,9 +126,9 @@ public class Logic extends BaseLogic
 				{
 					if(voCollSession.get(i).getSessionStatus().equals(Session_Status_and_Reason.OPEN))
 						node.setCollapsedImage(form.getImages().Core.Tick);
-					else if(voCollSession.get(i).getSessionStatus().equals(Session_Status_and_Reason.CANCELLED))
+					else if(voCollSession.get(i).getSessionStatus().equals(Session_Status_and_Reason.CANCELLED) || voCollSession.get(i).getSessionStatus().equals(Session_Status_and_Reason.CANCEL_PROVISIONAL))
 					{
-						node.setCollapsedImage(form.getImages().Scheduling.Cancelled);
+						node.setCollapsedImage(voCollSession.get(i).getSessionStatus().equals(Session_Status_and_Reason.CANCELLED) ? form.getImages().Scheduling.Cancelled : form.getImages().Scheduling.Cancel_Provisional);
 						
 						String nodeTooltip = voCollSession.get(i).getCancellationReason() != null ? "<b>Cancellation reason: </b>" + voCollSession.get(i).getCancellationReason().getText() + "<br>": "";
 						
@@ -173,7 +179,7 @@ public class Logic extends BaseLogic
 		}	
 		
 		//WDEV-12918
-		if(voSessionShort.getIsTheatreSessionIsNotNull() && voSessionShort.getIsTheatreSession() && voSessionShort.getSessionDateIsNotNull() && voSessionShort.getSessionDate().isGreaterOrEqualThan(new Date()))
+		if (SchProfileType.THEATRE.equals(voSessionShort.getSessionProfileType()) && voSessionShort.getSessionDateIsNotNull() && voSessionShort.getSessionDate().isGreaterOrEqualThan(new Date()))
 			form.getContextMenus().getSessionAdminMOVEItem().setVisible(true);
 	}
 	
@@ -200,11 +206,27 @@ public class Logic extends BaseLogic
 				updateSessionStatus((SessionShortVo)form.treSessions().getSelectedNode().getValue(), Session_Status_and_Reason.OPEN);
 				break;
 			case GenForm.ContextMenus.SessionAdmin.BLOCK:
-				engine.open(form.getForms().Scheduling.ReasonTextDialog);
+				
+				if (chooseAndBookAppInSession((SessionShortVo)form.treSessions().getSelectedNode().getValue()))
+				{
+					engine.showMessage("Session cannot be Blocked as there are C&B appointments linked.");
+				}
+				else
+					engine.open(form.getForms().Scheduling.ReasonTextDialog);
+				
 				break;
 			case GenForm.ContextMenus.SessionAdmin.CANCEL:
-				// WDEV-17897 pass flag to indicate its a session being cancelled - don't want cancel patient option to be displayed
-				engine.open(form.getForms().Scheduling.CancelAppointmentDialog, new Object[]{true}, "Cancel Session");
+				
+				if (chooseAndBookAppInSession((SessionShortVo)form.treSessions().getSelectedNode().getValue()))
+				{
+					engine.showMessage("Session cannot be Cancelled as there are C&B appointments linked.");
+				}
+				else
+				{
+					// WDEV-17897 pass flag to indicate its a session being cancelled - don't want cancel patient option to be displayed
+					engine.open(form.getForms().Scheduling.CancelAppointmentDialog, new Object[]{true}, "Cancel Session");
+				}
+				
 				break;
 			case GenForm.ContextMenus.SessionAdmin.DELETE:
 				updateSessionStatus((SessionShortVo)form.treSessions().getSelectedNode().getValue(), null);
@@ -216,6 +238,26 @@ public class Logic extends BaseLogic
 		}
 	}
 
+	//WDEV-19329
+	private boolean chooseAndBookAppInSession(SessionShortVo session)
+	{
+		if (ConfigFlag.DOM.ALLOW_BLOCK_SESSION_WITH_CAB_APPTS.getValue())
+			return false;
+		
+		SessionVo sessionVo = domain.getSession(session);
+		
+		if (sessionVo == null || sessionVo.getSessionSlots() == null ||sessionVo.getSessionSlots().size() == 0)
+			return false;
+		
+		for (int i=0;i < sessionVo.getSessionSlots().size();i++)
+		{
+			if (sessionVo.getSessionSlots().get(i).getAppointment() != null && Boolean.TRUE.equals(sessionVo.getSessionSlots().get(i).getAppointment().getIsCABBooking()) && !Status_Reason.CANCELLED.equals(sessionVo.getSessionSlots().get(i).getAppointment().getApptStatus()))
+				return true;
+		}
+		
+		return false;
+	}
+
 	private void launchMoveSessionDialog()
 	{
 		//launch form passing selected session in args
@@ -224,128 +266,153 @@ public class Logic extends BaseLogic
 
 	private void updateSessionStatus(SessionShortVo voSessionShort, Session_Status_and_Reason lkpInstance) 
 	{
-		SessionVo voSession = domain.getSession(voSessionShort);
+		int repeats = 0;
 		
-		if(voSession == null)
-			return;
-		
-		//WDEV-17964
-		if (voSessionShort.getVersion_Sch_Session() !=  voSession.getVersion_Sch_Session())
+		do
 		{
-			engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
-			open();
-			return;
-		}
-		
-		if(lkpInstance != null)
-		{
-			if(!lkpInstance.equals(Session_Status_and_Reason.OPEN))
+			try 
 			{
-				//validation - go through all slots if any have status of cancelled pending appt send error messge to user
-				if(voSession.getSessionSlotsIsNotNull())
+				SessionVo voSession = domain.getSession(voSessionShort);
+
+				if(voSession == null)
+					return;
+
+				//WDEV-17964
+				if (voSessionShort.getVersion_Sch_Session() !=  voSession.getVersion_Sch_Session())
 				{
-					for(int i=0;i<voSession.getSessionSlots().size();i++)
+					engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
+					open();
+					return;
+				}
+
+				if(lkpInstance != null)
+				{
+					if(!lkpInstance.equals(Session_Status_and_Reason.OPEN))
 					{
-						if(voSession.getSessionSlots().get(i).getStatus().equals(Status_Reason.CANCELLED_PENDING_APPT))
+						//validation - go through all slots if any have status of cancelled pending appt send error messge to user
+						if(voSession.getSessionSlotsIsNotNull())
 						{
-							engine.showMessage("Some Session Slots cannot be Cancelled as they are pending confirmation from ChooseAndBook");
-							return;
+							for(int i=0;i<voSession.getSessionSlots().size();i++)
+							{
+								if(voSession.getSessionSlots().get(i).getStatus().equals(Status_Reason.CANCELLED_PENDING_APPT))
+								{
+									engine.showMessage("Some Session Slots cannot be Cancelled as they are pending confirmation from ChooseAndBook");
+									return;
+								}
+							}
 						}
 					}
 				}
-			}
-		}
-		
-		if(lkpInstance == null)
-		{
-			voSession.setIsActive(Boolean.FALSE);
-		}
-		else
-		{
-			voSession.setSessionStatus(lkpInstance);
-			if(lkpInstance.equals(Session_Status_and_Reason.BLOCKED))
-			{
-				voSession.setComment(form.getGlobalContext().Core.getCommentDialogString());
+
+				if(lkpInstance == null)
+				{
+					voSession.setIsActive(Boolean.FALSE);
+				}
+				else
+				{
+
+					if(lkpInstance.equals(Session_Status_and_Reason.BLOCKED))
+					{
+						//WDEV-19410
+						if (form.getGlobalContext().Scheduling.getCancelBlockReasonForSessionManagement() != null)
+						{
+							voSession.setCancellationReason(form.getGlobalContext().Scheduling.getCancelBlockReasonForSessionManagement().getReason());
+							voSession.setComment(form.getGlobalContext().Scheduling.getCancelBlockReasonForSessionManagement().getComment());
+						}
+
+						for(int i=0;i<voSession.getSessionSlots().size();i++)
+						{
+							if(voSession.getSessionSlots().get(i).getAppointment() == null && !Status_Reason.CANCELLED.equals(voSession.getSessionSlots().get(i).getStatus()))
+							{
+								voSession.getSessionSlots().get(i).setStatus(Status_Reason.BLOCKED); 
+								voSession.getSessionSlots().get(i).setStatusReason(Status_Reason.BLOCKED);
+								voSession.getSessionSlots().get(i).setStatusReasonHistory(getSessionStatusHistory(voSession.getSessionSlots().get(i), Status_Reason.BLOCKED));							
+							}
+						}
+					}
+					else if(lkpInstance.equals(Session_Status_and_Reason.CANCELLED))
+					{
+						for(int i=0;i<voSession.getSessionSlots().size();i++)
+						{
+							voSession.getSessionSlots().get(i).setStatus(Status_Reason.CANCELLED);
+
+							if(voSession.getSessionSlots().get(i).getAppointmentIsNotNull())
+							{
+								voSession.getSessionSlots().get(i).getAppointment().setApptStatus(Status_Reason.CANCELLED);
+								voSession.getSessionSlots().get(i).getAppointment().setApptStatusReas(form.getGlobalContext().ChooseAndBook.getSessionSlotStatusReason());
+								Appointment_StatusVo voApptStatus = new Appointment_StatusVo();  // wdev-6034
+
+								voSession.getSessionSlots().get(i).getAppointment().setApptStatusHistory(getApptStatusHistory(voSession.getSessionSlots().get(i),Status_Reason.CANCELLED, voApptStatus));
+								voSession.getSessionSlots().get(i).getAppointment().setCurrentStatusRecord(voApptStatus); // wdev-6034
+								voSession.getSessionSlots().get(i).setStatus(Status_Reason.CANCELLED_PENDING_APPT);
+								voSession.getSessionSlots().get(i).setStatusReasonHistory(getSessionStatusHistory(voSession.getSessionSlots().get(i),Status_Reason.CANCELLED_PENDING_APPT));
+							}
+							else
+							{
+								voSession.getSessionSlots().get(i).setStatusReason(form.getGlobalContext().ChooseAndBook.getSessionSlotStatusReason());	
+								voSession.getSessionSlots().get(i).setStatusReasonHistory(getSessionStatusHistory(voSession.getSessionSlots().get(i), Status_Reason.CANCELLED));
+							}
+						}
+					}
+					else if(lkpInstance.equals(Session_Status_and_Reason.OPEN))
+					{
+						for (int i = 0; i < voSession.getSessionSlots().size(); i++)
+						{
+							//WDEV-7470 - only re-open if appt is null WDEV-19620 and slot is not cancelled
+							if (voSession.getSessionSlots().get(i).getAppointment() == null)
+							{
+								if (Session_Status_and_Reason.CANCELLED.equals(voSession.getSessionStatus()) || Status_Reason.BLOCKED.equals(voSession.getSessionSlots().get(i).getStatus()))
+								{
+									voSession.getSessionSlots().get(i).setStatus(Status_Reason.SLOTOPENED);
+									voSession.getSessionSlots().get(i).setStatusReason(Status_Reason.SLOTOPENED);
+									voSession.getSessionSlots().get(i).setStatusReasonHistory(getSessionStatusHistory(voSession.getSessionSlots().get(i), Status_Reason.SLOTOPENED));
+									//wdev-6713
+									voSession.getSessionSlots().get(i).setIsActive(true);
+								}
+							}
+							//wdev-18911 WDEV-19620
+							else if (voSession.getSessionSlots().get(i).getAppointment() != null && Status_Reason.CANCELLED.equals(voSession.getSessionSlots().get(i).getStatus()))
+							{
+								voSession.getSessionSlots().get(i).setStatus(Status_Reason.SLOTOPENED);
+								voSession.getSessionSlots().get(i).setAppointment(null);
+								voSession.getSessionSlots().get(i).setIsActive(true);
+							}
+						}	
+					}
+
+					voSession.setSessionStatus(lkpInstance);
+
+				}
+
+				String[] arrErrors = voSession.validate();
+
+				if(arrErrors != null)
+				{
+					engine.showErrors(arrErrors);
+					return;
+				}
+
+				domain.saveSession(voSession, false);
 				
-				for(int i=0;i<voSession.getSessionSlots().size();i++)
-				{
-					if(voSession.getSessionSlots().get(i).getAppointment() == null)
-					{
-						voSession.getSessionSlots().get(i).setStatus(Status_Reason.BLOCKED); 
-						voSession.getSessionSlots().get(i).setStatusReason(Status_Reason.BLOCKED);
-						voSession.getSessionSlots().get(i).setStatusReasonHistory(getSessionStatusHistory(voSession.getSessionSlots().get(i), Status_Reason.BLOCKED));							
-					}
-				}
-			}
-			else if(lkpInstance.equals(Session_Status_and_Reason.CANCELLED))
+				open();
+				return;
+			} 
+			catch (StaleObjectException e) 
 			{
-				for(int i=0;i<voSession.getSessionSlots().size();i++)
-				{
-					voSession.getSessionSlots().get(i).setStatus(Status_Reason.CANCELLED);
-					
-					if(voSession.getSessionSlots().get(i).getAppointmentIsNotNull())
-					{
-						voSession.getSessionSlots().get(i).getAppointment().setApptStatus(Status_Reason.CANCELLED);
-						voSession.getSessionSlots().get(i).getAppointment().setApptStatusReas(form.getGlobalContext().ChooseAndBook.getSessionSlotStatusReason());
-						Appointment_StatusVo voApptStatus = new Appointment_StatusVo();  // wdev-6034
-						
-						voSession.getSessionSlots().get(i).getAppointment().setApptStatusHistory(getApptStatusHistory(voSession.getSessionSlots().get(i),Status_Reason.CANCELLED, voApptStatus));
-						voSession.getSessionSlots().get(i).getAppointment().setCurrentStatusRecord(voApptStatus); // wdev-6034
-						voSession.getSessionSlots().get(i).setStatus(Status_Reason.CANCELLED_PENDING_APPT);
-						voSession.getSessionSlots().get(i).setStatusReasonHistory(getSessionStatusHistory(voSession.getSessionSlots().get(i),Status_Reason.CANCELLED_PENDING_APPT));
-					}
-					else
-					{
-						voSession.getSessionSlots().get(i).setStatusReason(form.getGlobalContext().ChooseAndBook.getSessionSlotStatusReason());	
-						voSession.getSessionSlots().get(i).setStatusReasonHistory(getSessionStatusHistory(voSession.getSessionSlots().get(i), Status_Reason.CANCELLED));
-					}
-				}
+				engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
+				open();
+				return;
 			}
-			else if(lkpInstance.equals(Session_Status_and_Reason.OPEN))
+			catch (DomainInterfaceException e)
 			{
-				for(int i=0;i<voSession.getSessionSlots().size();i++)
-				{
-					//WDEV-7470 - only re-open if appt is null
-					if(voSession.getSessionSlots().get(i).getAppointment() == null)
-					{
-						voSession.getSessionSlots().get(i).setStatus(Status_Reason.SLOTOPENED);
-						voSession.getSessionSlots().get(i).setStatusReason(Status_Reason.SLOTOPENED);
-						voSession.getSessionSlots().get(i).setStatusReasonHistory(getSessionStatusHistory(voSession.getSessionSlots().get(i), Status_Reason.SLOTOPENED));
-						//wdev-6713
-						voSession.getSessionSlots().get(i).setIsActive(true);
-					}
-					else	//wdev-18911
-					{
-						if( voSession.getSessionSlots().get(i) != null && voSession.getSessionSlots().get(i).getStatusIsNotNull() && voSession.getSessionSlots().get(i).getStatus().equals(Status_Reason.CANCELLED))
-						{
-							voSession.getSessionSlots().get(i).setStatus(Status_Reason.SLOTOPENED);
-							voSession.getSessionSlots().get(i).setAppointment(null);
-							voSession.getSessionSlots().get(i).setIsActive(true);
-						}
-											
-					}
-				}				
+				repeats++;
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
-			
-		String[] arrErrors = voSession.validate();
+		while (repeats < 3);
 		
-		if(arrErrors != null)
-		{
-			engine.showErrors(arrErrors);
-			return;
-		}
-		
-		try 
-		{
-			domain.saveSession(voSession, false);
-		} 
-		catch (StaleObjectException e) 
-		{
-			engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
-		}
-		
-		open();
+		engine.showMessage("An Error occured during the process. Please try again or start the process again.");
 	}
 	
 	protected void onFormDialogClosed(FormName formName, DialogResult result) throws PresentationLogicException 
@@ -357,9 +424,16 @@ public class Logic extends BaseLogic
 				//WDEV-18466
 				SessionVo domainSession = domain.getSession((SessionShortVo) form.treSessions().getValue());
 				
-				if (isAppInSession(domainSession))
+				if (isAppInSession(domainSession))//WDEV-19440
 				{
-					form.getLocalContext().setCancelAppConfirmationMessageBoxID(engine.showMessage("There are appointments already booked for this Session. These appointments will be cancelled. Do you wish to continue?", "Confirmation message", MessageButtons.YESNO, MessageIcon.QUESTION, MessageDefaultButton.BUTTON1));//WDEV-18528
+					if (isAppInSessionMarkedAsDoNotMove(domainSession) ) 
+					{
+						form.getLocalContext().setCancelAppConfirmationMessageBoxID(engine.showMessage("There are appointments already booked for this Session and at least one is marked as 'Do Not Move'. These appointments will be cancelled. Do you wish to continue?", "Confirmation message", MessageButtons.YESNO, MessageIcon.QUESTION, MessageDefaultButton.BUTTON1));
+					}
+					else
+					{
+						form.getLocalContext().setCancelAppConfirmationMessageBoxID(engine.showMessage("There are appointments already booked for this Session. These appointments will be cancelled. Do you wish to continue?", "Confirmation message", MessageButtons.YESNO, MessageIcon.QUESTION, MessageDefaultButton.BUTTON1));//WDEV-18528
+					}
 				}
 				else
 				{
@@ -399,12 +473,45 @@ public class Logic extends BaseLogic
 		}
 	}
 	
+	//WDEV-19543
+	private boolean hasApptLinkedAppointments(SessionVo session)
+	{
+		if (session==null || session.getSessionSlots()==null)
+			return false;
+		
+		for (int i=0;i<session.getSessionSlots().size();i++)
+		{
+			if (session.getSessionSlots().get(i).getAppointmentIsNotNull() && session.getSessionSlots().get(i).getAppointment().getLinkedAppointmentsIsNotNull() && session.getSessionSlots().get(i).getAppointment().getLinkedAppointments().size()>0)
+				return true;
+		}
+		
+		return false;
+	}
+
+	//WDEV-19440
+	private boolean isAppInSessionMarkedAsDoNotMove(SessionVo session)  //Only for Outpatient Appointments
+	{
+		if (session==null || session.getSessionSlots()==null)
+			return false;
+		
+		for (int i=0;i<session.getSessionSlots().size();i++)
+		{
+			if (session.getSessionSlots().get(i).getAppointmentIsNotNull() && Boolean.TRUE.equals(session.getSessionSlots().get(i).getAppointment().getDoNotMove()))
+				return true;
+		}
+		
+		return false;
+	}
+	
 	//WDEV-18466
 	private boolean isAppInSession(SessionVo session)
 	{
-		if (session==null || (session.getSessionSlots()==null && session.getTheatreSlots()==null))
+		if (session == null || (session.getSessionSlots() == null && session.getTheatreSlots() == null && session.getParentChildSlots() == null) || (!Boolean.TRUE.equals(session.getIsFixed()) && session.getRemainingTime() != null && session.getRemainingTime().equals(session.getDuration())))
 			return false;
-			
+		
+		if (!Boolean.TRUE.equals(session.getIsFixed()) && session.getRemainingTime() != null && session.getRemainingTime().compareTo(session.getDuration()) < 0) //WDEV-19046
+			return true;
+		
 		for (int i=0;i<session.getSessionSlots().size();i++)
 		{
 			if (session.getSessionSlots().get(i).getAppointmentIsNotNull())
@@ -416,6 +523,13 @@ public class Logic extends BaseLogic
 			if (session.getTheatreSlots().get(i).getAppointmentIsNotNull())
 				return true;
 		}
+		
+		for (int i=0;i<session.getParentChildSlots().size();i++)
+		{
+			if (session.getParentChildSlots().get(i).getAppointmentIsNotNull())
+				return true;
+		}
+		
 		return false;
 	}
 
@@ -425,8 +539,14 @@ public class Logic extends BaseLogic
 		{
 			SessionShortVo voSession = (SessionShortVo) form.treSessions().getValue();
 			SessionVo domainSession = domain.getSession(voSession);
+			
+			if (hasApptLinkedAppointments(domainSession))
+			{
+				engine.showMessage("Some appointments being cancelled may have linked appointments - they will not be cancelled in this instance.", "Information message", MessageButtons.OK, MessageIcon.INFORMATION, MessageDefaultButton.BUTTON1);
+			}
+			
 			//WDEV-19046
-			boolean isFlexibleSession = !Boolean.TRUE.equals(domainSession.getIsFixed()) && (domainSession.getSessionSlots() == null || domainSession.getSessionSlots().size() == 0);
+			boolean isFlexibleSession = !Boolean.TRUE.equals(domainSession.getIsFixed());
 			
 			//WDEV-17964
 			if (voSession.getVersion_Sch_Session() !=  domainSession.getVersion_Sch_Session())
@@ -465,6 +585,7 @@ public class Logic extends BaseLogic
 	{
 		voApptStatus.setApptDate(voSessionSlot.getAppointment().getAppointmentDate());
 		voApptStatus.setApptTime(voSessionSlot.getStartTm());
+		voApptStatus.setStatusChangeDateTime(new DateTime());
 		voApptStatus.setStatus(status);
 		voApptStatus.setStatusReason(form.getGlobalContext().ChooseAndBook.getSessionSlotStatusReason());
 		

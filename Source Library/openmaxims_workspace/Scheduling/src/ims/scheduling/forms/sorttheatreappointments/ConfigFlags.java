@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,6 +15,11 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 package ims.scheduling.forms.sorttheatreappointments;
@@ -27,6 +32,7 @@ public final class ConfigFlags extends ims.framework.FormConfigFlags implements 
 
 	public final DISPLAY_PATID_TYPEClass DISPLAY_PATID_TYPE;
 	public final STALE_OBJECT_MESSAGEClass STALE_OBJECT_MESSAGE;
+	public final THEATRE_LIST_HIDE_COME_IN_TIME_COLUMNClass THEATRE_LIST_HIDE_COME_IN_TIME_COLUMN;
 
 	public ConfigFlags(ims.framework.ConfigFlag configFlags)
 	{
@@ -34,6 +40,7 @@ public final class ConfigFlags extends ims.framework.FormConfigFlags implements 
 
 		DISPLAY_PATID_TYPE = new DISPLAY_PATID_TYPEClass(configFlags);
 		STALE_OBJECT_MESSAGE = new STALE_OBJECT_MESSAGEClass(configFlags);
+		THEATRE_LIST_HIDE_COME_IN_TIME_COLUMN = new THEATRE_LIST_HIDE_COME_IN_TIME_COLUMNClass(configFlags);
 	}
 
 	public final class DISPLAY_PATID_TYPEClass implements Serializable
@@ -64,6 +71,21 @@ public final class ConfigFlags extends ims.framework.FormConfigFlags implements 
 		public String getValue()
 		{
 			return (String)configFlags.get("STALE_OBJECT_MESSAGE");
+		}
+	}
+	public final class THEATRE_LIST_HIDE_COME_IN_TIME_COLUMNClass implements Serializable
+	{
+		private static final long serialVersionUID = 1L;
+		private final ims.framework.ConfigFlag configFlags;
+
+		public THEATRE_LIST_HIDE_COME_IN_TIME_COLUMNClass(ims.framework.ConfigFlag configFlags)
+		{
+			this.configFlags = configFlags;
+		}
+
+		public Boolean getValue()
+		{
+			return (Boolean)configFlags.get("THEATRE_LIST_HIDE_COME_IN_TIME_COLUMN");
 		}
 	}
 }

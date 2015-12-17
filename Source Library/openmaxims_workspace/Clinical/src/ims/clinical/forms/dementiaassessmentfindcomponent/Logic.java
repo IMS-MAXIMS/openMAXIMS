@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -53,36 +58,91 @@ public class Logic extends BaseLogic
 {
 	private static final long serialVersionUID = 1L;
 
-	protected void onFormModeChanged()
+	
+	//-------------------------------------------------------------------------------------------------------------------------------------------------------------
+	//	Component interface functions
+	//-------------------------------------------------------------------------------------------------------------------------------------------------------------
+	
+	public void initialize(Boolean isDialog)
 	{
-		updateControlState();
+		populateHelpIcon();
+		
+		form.getLocalContext().setisParentFormDialog(isDialog);
 	}
 
+	
+	public void setValue(DementiaVo dementia)
+	{
+		form.getLocalContext().setselectedDementia(dementia);
+		
+		populateScreenFromData(dementia);
+	}
+
+	public DementiaVo getValue()
+	{
+		return form.getLocalContext().getselectedDementia();
+	}
+
+	
+	public DementiaEventEnumeration getSelectedEvent()
+	{
+
+		return form.getLocalContext().getSelectedEvent();
+	}
+
+	public void resetSelectedEvent()
+	{
+		form.getLocalContext().setSelectedEvent(null);
+	}
+
+
+	//-------------------------------------------------------------------------------------------------------------------------------------------------------------
+	//	Event handlers
+	//-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+	@Override
+	protected void onFormModeChanged()
+	{
+		if (FormMode.EDIT.equals(form.getMode()) && form.getLocalContext().getselectedDementia() != null && form.getLocalContext().getselectedDementia().getStepOneFind() == null)
+		{
+			initializeAuthoringControls();
+		}
+		
+		updateControlsState();
+	}
+	
+
+	@Override
+	protected void onFormDialogClosed(FormName formName, DialogResult result) throws PresentationLogicException
+	{
+		if (formName != null && formName.equals(form.getForms().Core.RieConfirmationDialog) && result != null && result.equals(DialogResult.OK))
+		{
+			form.getLocalContext().setSelectedEvent(DementiaEventEnumeration.MARK_RIE);
+			form.fireCustomControlValueChanged();
+		}
+	}
+
+	
+	@Override
 	protected void onBtnEditClick() throws ims.framework.exceptions.PresentationLogicException
 	{	
 		form.getLocalContext().setselectedDementia(domain.getDementia(form.getLocalContext().getselectedDementia()));
-		populateScreenFromData(form.getLocalContext().getselectedDementia().getStepOneFind());
+		populateScreenFromData(form.getLocalContext().getselectedDementia());
 
 		form.getLocalContext().setSelectedEvent(DementiaEventEnumeration.NEW);
 		form.fireCustomControlValueChanged();
-		form.setMode(FormMode.EDIT);
+//		form.setMode(FormMode.EDIT);
 	}
 
-	protected void onBtnCancelClick() throws ims.framework.exceptions.PresentationLogicException
+
+	@Override
+	protected void onBtnRIEClick() throws PresentationLogicException
 	{
-		if (form.getLocalContext().getselectedDementiaIsNotNull() && form.getLocalContext().getselectedDementia().getStepOneFindIsNotNull())
-		{
-			form.getLocalContext().setSelectedEvent(DementiaEventEnumeration.CANCEL);
-			form.fireCustomControlValueChanged();
-		}
-		else
-		{
-			form.getLocalContext().setSelectedEvent(DementiaEventEnumeration.CLOSE);
-			form.fireCustomControlValueChanged();
-		}
-		
+		engine.open(form.getForms().Core.RieConfirmationDialog);
 	}
 
+
+	@Override
 	protected void onBtnSaveClick() throws ims.framework.exceptions.PresentationLogicException
 	{
 		if (domain.getHcpUser() == null)
@@ -96,33 +156,124 @@ public class Logic extends BaseLogic
 			form.getLocalContext().setSelectedEvent(DementiaEventEnumeration.SAVE);
 			form.fireCustomControlValueChanged();
 		}
-
 	}
 
+
+	@Override
+	protected void onBtnCancelClick() throws ims.framework.exceptions.PresentationLogicException
+	{
+		if (form.getLocalContext().getselectedDementiaIsNotNull() && form.getLocalContext().getselectedDementia().getStepOneFindIsNotNull())
+		{
+			form.getLocalContext().setSelectedEvent(DementiaEventEnumeration.CANCEL);
+			form.fireCustomControlValueChanged();
+		}
+		else
+		{
+			form.getLocalContext().setSelectedEvent(DementiaEventEnumeration.CLOSE);
+			form.fireCustomControlValueChanged();
+		}
+	}
+	
+
+	@Override
+	protected void onBtnCloseClick() throws PresentationLogicException
+	{
+		form.getLocalContext().setSelectedEvent(DementiaEventEnumeration.CLOSE);
+		form.fireCustomControlValueChanged();
+	}
+
+	
+	@Override
+	protected void onRadioButtonGroupQuestion1ValueChanged() throws ims.framework.exceptions.PresentationLogicException
+	{
+		if (GroupQuestion1Enumeration.rdoQuestion1Yes.equals(form.GroupQuestion1().getValue()))
+		{
+			clearQuestion2Controls();
+			clearQuestion3Controls();
+		}
+		
+		updateControlsState();
+	}
+
+	
+	@Override
+	protected void onRadioButtonGroupQuestion2aValueChanged() throws PresentationLogicException
+	{
+		if (GroupQuestion2DCEnumeration.rdoQuestion2DCNo.equals(form.GroupQuestion2DC().getValue()))
+			clearQuestion3Controls();
+
+		updateControlsState();
+	}
+
+
+	@Override
+	protected void onRadioButtonGroupQuestion2bValueChanged() throws PresentationLogicException
+	{
+		if (GroupQuestion2DCEnumeration.rdoQuestion2DCNo.equals(form.GroupQuestion2DC().getValue()))
+			clearQuestion3Controls();
+		
+		updateControlsState();
+	}
+
+	
+	@Override
+	protected void onRadioButtonGroupQuestion2cValueChanged() throws PresentationLogicException
+	{
+		if (GroupQuestion2DCEnumeration.rdoQuestion2DCNo.equals(form.GroupQuestion2DC().getValue()))
+			clearQuestion3Controls();
+		
+		updateControlsState();
+	}
+
+
+	@Override
+	protected void onRadioButtonGroupQuestion2dValueChanged() throws PresentationLogicException
+	{
+		if (GroupQuestion2DCEnumeration.rdoQuestion2DCNo.equals(form.GroupQuestion2DC().getValue()))
+			clearQuestion3Controls();
+		
+		updateControlsState();
+	}
+
+
+	@Override
+	protected void onRadioButtonGroupQuestion2DCValueChanged() throws ims.framework.exceptions.PresentationLogicException
+	{
+		updateControlsState();
+	}
+
+
+	@Override
+	protected void onRadioButtonGroupQuestion3ValueChanged() throws PresentationLogicException
+	{
+		updateControlsState();
+	}
+
+
+
+	//-------------------------------------------------------------------------------------------------------------------------------------------------------------
+	//	Form presentation functions
+	//-------------------------------------------------------------------------------------------------------------------------------------------------------------
+	
+	/**
+	 * 
+	 */
 	private boolean save()
 	{
-		DementiaVo dementiaToSave = populateDataFromScreen((DementiaVo) form.getLocalContext().getselectedDementia().clone());
-
-		String[] errors = dementiaToSave.validate(getUIErrors());
-		if (errors != null && errors.length > 0)
-		{
-			engine.showErrors(errors);
-			return false;
-		}
-
-		// Check SOE
-		// if (surgicalAuditOpDetToSave.getID_SurgicalAuditOperationDetailIsNotNull() && domain.isStale(surgicalAuditOpDetToSave))
-		// {
-		// engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
-		// form.getLocalContext().setSelectedEvent(DementiaEventEnumeration.CANCEL);
-		// form.fireCustomControlValueChanged();
-		// return false;
-
-		// }
-
 		try
 		{
+			DementiaVo dementiaToSave = populateDataFromScreen((DementiaVo) form.getLocalContext().getselectedDementia().clone());
+
+			String[] errors = dementiaToSave.validate(getUIErrors());
+			if (errors != null && errors.length > 0)
+			{
+				engine.showErrors(errors);
+				return false;
+			}
+
 			form.getLocalContext().setselectedDementia(domain.saveDementia(dementiaToSave,form.getForms().Clinical.DementiaAssessmentFINDComponent));//WDEV-16247
+
+			return true;
 		}
 		catch (StaleObjectException e)
 		{
@@ -131,9 +282,244 @@ public class Logic extends BaseLogic
 			form.fireCustomControlValueChanged();
 			return false;
 		}
-
-		return true;
 	}
+
+	
+	/**
+	 * Function used to update the state of controls on screen based on context (FormMode, on-screen values)
+	 */
+	private void updateControlsState()
+	{
+		// Questions enabled/disabled state
+		form.GroupQuestion1().setEnabled(form.getMode().equals(FormMode.EDIT));
+
+		form.GroupQuestion2a().setEnabled(form.getMode().equals(FormMode.EDIT));
+		form.GroupQuestion2b().setEnabled(form.getMode().equals(FormMode.EDIT));
+		form.GroupQuestion2c().setEnabled(form.getMode().equals(FormMode.EDIT));
+		form.GroupQuestion2d().setEnabled(form.getMode().equals(FormMode.EDIT));
+		form.GroupQuestion2DC().setEnabled(false);
+		
+		form.GroupQuestion3().setEnabled(form.getMode().equals(FormMode.EDIT));
+
+
+		// Help icon is disabled
+		form.imbHelpIcon().setEnabled(false);
+		
+		
+		// Show / hide Section 2 questions 
+		showQuery2(GroupQuestion1Enumeration.rdoQuestion1No.equals(form.GroupQuestion1().getValue()) 
+							|| (FormMode.VIEW.equals(form.getMode()) && GroupQuestion1Enumeration.None.equals(form.GroupQuestion1().getValue())));
+
+
+		boolean section2Controls = !form.GroupQuestion2a().getValue().equals(GroupQuestion2aEnumeration.None) && !form.GroupQuestion2b().getValue().equals(GroupQuestion2bEnumeration.None) && !form.GroupQuestion2c().getValue().equals(GroupQuestion2cEnumeration.None) && !form.GroupQuestion2d().getValue().equals(GroupQuestion2dEnumeration.None);
+		
+		// Update Delirium Confirmed value
+		if (section2Controls
+				&& form.GroupQuestion2a().getValue().equals(GroupQuestion2aEnumeration.rdoQuestion2aYes) 
+				&& form.GroupQuestion2b().getValue().equals(GroupQuestion2bEnumeration.rdoQuestion2bYes) 
+				&& (form.GroupQuestion2c().getValue().equals(GroupQuestion2cEnumeration.rdoQuestion2cYes) 
+						|| form.GroupQuestion2d().getValue().equals(GroupQuestion2dEnumeration.rdoQuestion2dYes)))
+		{
+			form.GroupQuestion2DC().setValue(GroupQuestion2DCEnumeration.rdoQuestion2DCYes);
+		}
+		else if (section2Controls)
+		{
+			form.GroupQuestion2DC().setValue(GroupQuestion2DCEnumeration.rdoQuestion2DCNo);
+		}
+
+
+		// Show / hide Section 3 questions
+		showQuery3((GroupQuestion1Enumeration.rdoQuestion1No.equals(form.GroupQuestion1().getValue()) 
+							&& section2Controls 
+							&& GroupQuestion2DCEnumeration.rdoQuestion2DCNo.equals(form.GroupQuestion2DC().getValue()))
+						// In VIEW mode if the record is not started yet
+						|| (FormMode.VIEW.equals(form.getMode()) && GroupQuestion1Enumeration.None.equals(form.GroupQuestion1().getValue())));
+		
+		
+		if (form.getMode().equals(FormMode.EDIT))
+		{
+			form.btnSave().setVisible(true);
+			form.btnSave().setEnabled(form.GroupQuestion1().getValue().equals(GroupQuestion1Enumeration.rdoQuestion1Yes)
+										|| form.GroupQuestion2DC().getValue().equals(GroupQuestion2DCEnumeration.rdoQuestion2DCYes) 
+										|| form.GroupQuestion3().getValue().equals(GroupQuestion3Enumeration.rdoQuestion3Yes)
+										|| form.GroupQuestion3().getValue().equals(GroupQuestion3Enumeration.rdoQuestion3No));
+		}
+		
+		HcpLiteVo hcpUser = (HcpLiteVo) domain.getHcpLiteUser();
+
+
+		// Dementia record
+		DementiaVo dementia = form.getLocalContext().getselectedDementia();
+		
+		// State of EDIT button
+		form.btnEdit().setVisible(FormMode.VIEW.equals(form.getMode()) && hcpUser != null && dementia != null
+										&& (engine.hasRight(AppRight.CAN_EDIT_AND_RIE_DEMENTIA)
+												|| dementia.getStepOneFind() == null						
+												|| (dementia.getStepOneFind() != null && dementia.getStepOneFind().getAuthoringInformation().getAuthoringHcp() != null && dementia.getStepOneFind().getAuthoringInformation().getAuthoringHcp().equals(hcpUser))));
+
+		// State of RIE button
+		form.btnRIE().setVisible(FormMode.VIEW.equals(form.getMode()) && dementia != null && dementia.getStepOneFind() != null
+										&& engine.hasRight(AppRight.CAN_EDIT_AND_RIE_DEMENTIA));
+
+		// State of CLOSE button
+		form.btnClose().setVisible(form.getMode().equals(FormMode.VIEW) && Boolean.TRUE.equals(form.getLocalContext().getisParentFormDialog()));
+	}
+	
+
+	private void showQuery2(Boolean hideshow)
+	{
+		form.lblCAMa().setVisible(hideshow);
+		form.GroupQuestion2a().setVisible(hideshow);
+		form.lblCAMb().setVisible(hideshow);
+		form.GroupQuestion2b().setVisible(hideshow);
+		form.lblCAMc().setVisible(hideshow);
+		form.GroupQuestion2c().setVisible(hideshow);
+		form.lblCAMd().setVisible(hideshow);
+		form.GroupQuestion2d().setVisible(hideshow);
+		form.lblDeliriumConfirmed().setVisible(hideshow);
+		form.GroupQuestion2DC().setVisible(hideshow);
+		form.pnlCAMSScreening().setVisible(hideshow);
+		form.hzlQuestion2().setVisible(hideshow);
+		form.imbHelpIcon().setVisible(hideshow);	//wdev-16420
+	}
+	
+
+	private void showQuery3(Boolean hideshow)
+	{
+		form.lblQ31().setVisible(hideshow);
+		form.lblQ32().setVisible(hideshow);
+		form.lblQ33().setVisible(hideshow);
+		form.GroupQuestion3().setVisible(hideshow);
+		form.hzlQuestion3().setVisible(hideshow);
+	}
+	
+
+	//-------------------------------------------------------------------------------------------------------------------------------------------------------------
+	//	Form data exchange functions
+	//-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+	private void initializeAuthoringControls()
+	{
+		AuthoringInformationVo voAuthoring = new AuthoringInformationVo();
+
+		voAuthoring.setAuthoringDateTime(new DateTime());
+		if (domain.getHcpUser() != null)
+			voAuthoring.setAuthoringHcp((HcpLiteVo) domain.getHcpLiteUser());
+
+		populateAuthoringControls(voAuthoring);
+	}
+
+
+	/**
+	 *	Function used to clear the screen
+	 */
+	private void clearAllControls()
+	{
+		clearAuthoringInfoControls();
+		
+		form.GroupQuestion1().setValue(null);
+		
+		clearQuestion2Controls();
+		clearQuestion3Controls();
+	}
+
+	/**
+	 * Clear Authoring Information labels
+	 */
+	private void clearAuthoringInfoControls()
+	{
+		form.lblAuthoringHcpValue().setValue(null);
+		form.lblAuthoringDateTimeValue().setValue(null);
+	}
+	
+	/**
+	 * Clear Authoring Information labels
+	 */
+	private void clearQuestion2Controls()
+	{
+		form.GroupQuestion2a().setValue(null);
+		form.GroupQuestion2b().setValue(null);
+		form.GroupQuestion2c().setValue(null);
+		form.GroupQuestion2d().setValue(null);
+		form.GroupQuestion2DC().setValue(null);
+	}
+
+	/**
+	 * Clear Authoring Information labels
+	 */
+	private void clearQuestion3Controls()
+	{
+		form.GroupQuestion3().setValue(null);
+	}
+
+	
+	/**
+	 * 
+	 * @param dementia
+	 */
+	private void populateScreenFromData(DementiaVo dementia)
+	{
+		clearAllControls();
+		
+		if (dementia == null || dementia.getStepOneFind() == null)
+			return;
+		
+		// Set Authoring information value
+		populateAuthoringControls(dementia.getStepOneFind().getAuthoringInformation());
+		
+		// Set Question 1 value
+		boolean answerQuestion1 = YesNo.YES.equals(dementia.getStepOneFind().getHasFormalDiagnosisOfDementia());
+		form.GroupQuestion1().setValue(answerQuestion1 ? GroupQuestion1Enumeration.rdoQuestion1Yes : GroupQuestion1Enumeration.rdoQuestion1No);
+		
+		// Set Query 2 value
+		if (!answerQuestion1)
+		{
+			form.GroupQuestion2a().setValue(YesNo.YES.equals(dementia.getStepOneFind().getCAMSAcuteOnset()) ? GroupQuestion2aEnumeration.rdoQuestion2aYes : GroupQuestion2aEnumeration.rdoQuestion2aNo);
+			form.GroupQuestion2b().setValue(YesNo.YES.equals(dementia.getStepOneFind().getCAMSInattention()) ? GroupQuestion2bEnumeration.rdoQuestion2bYes : GroupQuestion2bEnumeration.rdoQuestion2bNo);
+			form.GroupQuestion2c().setValue(YesNo.YES.equals(dementia.getStepOneFind().getCAMSDisorganisedThinking()) ? GroupQuestion2cEnumeration.rdoQuestion2cYes : GroupQuestion2cEnumeration.rdoQuestion2cNo);
+			form.GroupQuestion2d().setValue(YesNo.YES.equals(dementia.getStepOneFind().getCAMSAlteredLevel()) ? GroupQuestion2dEnumeration.rdoQuestion2dYes : GroupQuestion2dEnumeration.rdoQuestion2dNo);
+			
+			boolean answerQuestionDC = YesNo.YES.equals(dementia.getStepOneFind().getDeliriumConfirmed());
+			form.GroupQuestion2DC().setValue(answerQuestionDC ? GroupQuestion2DCEnumeration.rdoQuestion2DCYes : GroupQuestion2DCEnumeration.rdoQuestion2DCNo);
+		
+			// Set Query 3 value
+			if (!answerQuestionDC)
+			{
+				form.GroupQuestion3().setValue(YesNo.YES.equals(dementia.getStepOneFind().getAwarenessQuestion()) ? GroupQuestion3Enumeration.rdoQuestion3Yes : GroupQuestion3Enumeration.rdoQuestion3No);
+			}
+		}
+	}
+	
+	
+	/**
+	 *	Function used to populate Authoring information from Dementia -> Step One record
+	 * 	@param authoring - Authoring Information to be populated
+	 */
+	private void populateAuthoringControls(AuthoringInformationVo authoring)
+	{
+		clearAuthoringInfoControls();
+
+		form.getLocalContext().setAuthoringInfo(authoring);
+
+		if (authoring == null)
+			return;
+
+		
+		form.lblAuthoringDateTimeValue().setValue(authoring.getAuthoringDateTime().toString());
+
+		if (authoring.getAuthoringHcpIsNotNull())
+		{
+			if (authoring.getAuthoringHcp().getIHcpName().length() > 65)
+			{
+				form.lblAuthoringHcpValue().setTooltip(authoring.getAuthoringHcp().getIHcpName());
+				form.lblAuthoringHcpValue().setValue(authoring.getAuthoringHcp().getIHcpName().substring(0, 65));
+			}
+			else
+				form.lblAuthoringHcpValue().setValue(authoring.getAuthoringHcp().getIHcpName());
+		}
+	}
+
 
 	private String[] getUIErrors()
 	{
@@ -169,6 +555,13 @@ public class Logic extends BaseLogic
 				if (dementiaVo.getCurrentWorklistStatusIsNotNull() && !DementiaWorklistStatus.COMPLETED.equals(dementiaVo.getCurrentWorklistStatus().getStatus()))
 				{
 					tempCurrentStatus = populateStatus(DementiaWorklistStatus.COMPLETED, voAuthor);
+					//wdev-18784
+					if( dementiaVo.getPatientIsNotNull())
+					{
+						dementiaVo.getPatient().setDementiaWorklistStatus(null);
+						dementiaVo.getPatient().setDementiaBreachDateTime(null);
+						
+					}
 				}
 			}
 			else if (form.GroupQuestion2DC().getValue().equals(GroupQuestion2DCEnumeration.rdoQuestion2DCYes) || (form.GroupQuestion2DC().getValue().equals(GroupQuestion2DCEnumeration.rdoQuestion2DCNo) && form.GroupQuestion3().getValue().equals(GroupQuestion3Enumeration.rdoQuestion3Yes)))
@@ -176,6 +569,13 @@ public class Logic extends BaseLogic
 				if (dementiaVo.getCurrentWorklistStatusIsNotNull() && !DementiaWorklistStatus.STEP_TWO_ASSESS_INVESTIGATE_OUTSTANDING.equals(dementiaVo.getCurrentWorklistStatus().getStatus()) && dementiaVo.getStepTwoAssess()==null)
 				{
 					tempCurrentStatus = populateStatus(DementiaWorklistStatus.STEP_TWO_ASSESS_INVESTIGATE_OUTSTANDING, voAuthor);
+					//wdev-18784
+					if( dementiaVo.getPatientIsNotNull())
+					{
+						dementiaVo.getPatient().setDementiaWorklistStatus(DementiaWorklistStatus.STEP_TWO_ASSESS_INVESTIGATE_OUTSTANDING);
+						dementiaVo.getPatient().setDementiaBreachDateTime(dementiaVo.getBreachDateTime());
+						
+					}
 				}
 			}
 
@@ -231,298 +631,13 @@ public class Logic extends BaseLogic
 		return stepOneFindVo;
 	}
 
-	protected void onRadioButtonGroupQuestion1ValueChanged() throws ims.framework.exceptions.PresentationLogicException
-	{
 
-		updateControlState();
-		if (form.GroupQuestion1().getValue().equals(GroupQuestion1Enumeration.rdoQuestion1Yes))
-		{
-			clearQuestion2Controls();
-			clearQuestion3Controls();
-		}
-
-	}
-
-	protected void onRadioButtonGroupQuestion2DCValueChanged() throws ims.framework.exceptions.PresentationLogicException
-	{
-		updateControlState();
-
-	}
-
-	private void hideShowQuery2(Boolean hideshow)
-	{
-		form.lblCAMa().setVisible(hideshow);
-		form.GroupQuestion2a().setVisible(hideshow);
-		form.lblCAMb().setVisible(hideshow);
-		form.GroupQuestion2b().setVisible(hideshow);
-		form.lblCAMc().setVisible(hideshow);
-		form.GroupQuestion2c().setVisible(hideshow);
-		form.lblCAMd().setVisible(hideshow);
-		form.GroupQuestion2d().setVisible(hideshow);
-		form.lblDeliriumConfirmed().setVisible(hideshow);
-		form.GroupQuestion2DC().setVisible(hideshow);
-		form.pnlCAMSScreening().setVisible(hideshow);
-		form.hzlQuestion2().setVisible(hideshow);
-		form.imbHelpIcon().setVisible(hideshow);	//wdev-16420
-
-	}
-
-	private void hideShowQuery3(Boolean hideshow)
-	{
-		form.lblQ31().setVisible(hideshow);
-		form.lblQ32().setVisible(hideshow);
-		form.lblQ33().setVisible(hideshow);
-		form.GroupQuestion3().setVisible(hideshow);
-		form.hzlQuestion3().setVisible(hideshow);
-	}
-
-	private void populateScreenFromData(DementiaFindVo stepOneFindVo)
-	{
-		hideShowQuery2(false);
-		hideShowQuery3(false);
-
-		if (stepOneFindVo == null)
-			return;
-
-		populateAuthoringControls(stepOneFindVo.getAuthoringInformation());
-		boolean answeQuestion1 = YesNo.YES.equals(stepOneFindVo.getHasFormalDiagnosisOfDementia());
-		form.GroupQuestion1().setValue(answeQuestion1 ? GroupQuestion1Enumeration.rdoQuestion1Yes : GroupQuestion1Enumeration.rdoQuestion1No);
-
-		if (!answeQuestion1)
-		{
-			hideShowQuery2(true);
-			form.GroupQuestion2a().setValue(YesNo.YES.equals(stepOneFindVo.getCAMSAcuteOnset()) ? GroupQuestion2aEnumeration.rdoQuestion2aYes : GroupQuestion2aEnumeration.rdoQuestion2aNo);
-			form.GroupQuestion2b().setValue(YesNo.YES.equals(stepOneFindVo.getCAMSInattention()) ? GroupQuestion2bEnumeration.rdoQuestion2bYes : GroupQuestion2bEnumeration.rdoQuestion2bNo);
-			form.GroupQuestion2c().setValue(YesNo.YES.equals(stepOneFindVo.getCAMSDisorganisedThinking()) ? GroupQuestion2cEnumeration.rdoQuestion2cYes : GroupQuestion2cEnumeration.rdoQuestion2cNo);
-			form.GroupQuestion2d().setValue(YesNo.YES.equals(stepOneFindVo.getCAMSAlteredLevel()) ? GroupQuestion2dEnumeration.rdoQuestion2dYes : GroupQuestion2dEnumeration.rdoQuestion2dNo);
-
-			boolean answeQuestionDC = YesNo.YES.equals(stepOneFindVo.getDeliriumConfirmed());
-			form.GroupQuestion2DC().setValue(answeQuestionDC ? GroupQuestion2DCEnumeration.rdoQuestion2DCYes : GroupQuestion2DCEnumeration.rdoQuestion2DCNo);
-
-			if (!answeQuestionDC)
-			{
-				hideShowQuery3(true);
-				form.GroupQuestion3().setValue(YesNo.YES.equals(stepOneFindVo.getAwarenessQuestion()) ? GroupQuestion3Enumeration.rdoQuestion3Yes : GroupQuestion3Enumeration.rdoQuestion3No);
-			}
-		}
-
-	}
-
-	private void updateControlState()
-	{
-		boolean bShowQ3Controls = false;
-		if (form.getMode().equals(FormMode.EDIT))
-		{
-			if (!form.GroupQuestion2a().getValue().equals(GroupQuestion2aEnumeration.None) && !form.GroupQuestion2b().getValue().equals(GroupQuestion2bEnumeration.None) && !form.GroupQuestion2c().getValue().equals(GroupQuestion2cEnumeration.None) && !form.GroupQuestion2d().getValue().equals(GroupQuestion2dEnumeration.None))
-				bShowQ3Controls = true;
-
-			if (bShowQ3Controls && form.GroupQuestion2a().getValue().equals(GroupQuestion2aEnumeration.rdoQuestion2aYes) && form.GroupQuestion2b().getValue().equals(GroupQuestion2bEnumeration.rdoQuestion2bYes) && (form.GroupQuestion2c().getValue().equals(GroupQuestion2cEnumeration.rdoQuestion2cYes) || form.GroupQuestion2d().getValue().equals(GroupQuestion2dEnumeration.rdoQuestion2dYes)))
-			{
-				form.GroupQuestion2DC().setValue(GroupQuestion2DCEnumeration.rdoQuestion2DCYes);
-			}
-			else if (bShowQ3Controls)
-			{
-				form.GroupQuestion2DC().setValue(GroupQuestion2DCEnumeration.rdoQuestion2DCNo);
-			}
-
-			form.btnSave().setVisible(true);
-			form.btnSave().setEnabled(form.GroupQuestion1().getValue().equals(GroupQuestion1Enumeration.rdoQuestion1Yes) || form.GroupQuestion2DC().getValue().equals(GroupQuestion2DCEnumeration.rdoQuestion2DCYes) || form.GroupQuestion3().getValue().equals(GroupQuestion3Enumeration.rdoQuestion3Yes) || form.GroupQuestion3().getValue().equals(GroupQuestion3Enumeration.rdoQuestion3No));
-			
-			hideShowQuery2(form.GroupQuestion1().getValue().equals(GroupQuestion1Enumeration.rdoQuestion1No));
-			hideShowQuery3(form.GroupQuestion1().getValue().equals(GroupQuestion1Enumeration.rdoQuestion1No) && bShowQ3Controls && form.GroupQuestion2DC().getValue().equals(GroupQuestion2DCEnumeration.rdoQuestion2DCNo));
-		}
-		form.imbHelpIcon().setEnabled(false);
-		
-		Object hcp = domain.getHcpLiteUser();
-		HcpLiteVo hcpLiteUser=null;
-		if (hcp != null)
-			hcpLiteUser=((HcpLiteVo) hcp);
-		DementiaFindVo voStep1Find = (form.getLocalContext().getselectedDementiaIsNotNull()?form.getLocalContext().getselectedDementia().getStepOneFind():null);
-		
-		form.btnEdit().setVisible(hcpLiteUser!=null && form.getMode().equals(FormMode.VIEW)
-				&& form.getLocalContext().getselectedDementia() != null && voStep1Find !=null
-				&& ((voStep1Find.getAuthoringInformationIsNotNull() && voStep1Find.getAuthoringInformation().getAuthoringHcpIsNotNull() && voStep1Find.getAuthoringInformation().getAuthoringHcp().equals(hcpLiteUser)) || engine.hasRight(AppRight.CAN_EDIT_AND_RIE_DEMENTIA)));
-		form.GroupQuestion1().setEnabled(form.getMode().equals(FormMode.EDIT));
-		form.GroupQuestion2a().setEnabled(form.getMode().equals(FormMode.EDIT));
-		form.GroupQuestion2b().setEnabled(form.getMode().equals(FormMode.EDIT));
-		form.GroupQuestion2c().setEnabled(form.getMode().equals(FormMode.EDIT));
-		form.GroupQuestion2d().setEnabled(form.getMode().equals(FormMode.EDIT));
-		form.GroupQuestion2DC().setEnabled(false);
-		form.GroupQuestion3().setEnabled(form.getMode().equals(FormMode.EDIT));
-
-		form.btnRIE().setVisible(form.getMode().equals(FormMode.VIEW) 
-				&& form.getLocalContext().getselectedDementia() != null 
-				&& form.getLocalContext().getselectedDementia().getStepOneFind() !=null
-				&& engine.hasRight(AppRight.CAN_EDIT_AND_RIE_DEMENTIA)	);
-		form.btnClose().setVisible(form.getMode().equals(FormMode.VIEW) && form.getLocalContext().getisParentFormDialog());
-	}
-
-	protected void onRadioButtonGroupQuestion3ValueChanged() throws PresentationLogicException
-	{
-		updateControlState();
-
-	}
-
-	protected void onRadioButtonGroupQuestion2dValueChanged() throws PresentationLogicException
-	{
-		if (form.GroupQuestion2DC().getValue().equals(GroupQuestion2DCEnumeration.rdoQuestion2DCNo))
-			clearQuestion3Controls();
-		updateControlState();
-
-	}
-
-	protected void onRadioButtonGroupQuestion2cValueChanged() throws PresentationLogicException
-	{
-		if (form.GroupQuestion2DC().getValue().equals(GroupQuestion2DCEnumeration.rdoQuestion2DCNo))
-			clearQuestion3Controls();
-		updateControlState();
-
-	}
-
-	protected void onRadioButtonGroupQuestion2bValueChanged() throws PresentationLogicException
-	{
-		if (form.GroupQuestion2DC().getValue().equals(GroupQuestion2DCEnumeration.rdoQuestion2DCNo))
-			clearQuestion3Controls();
-		updateControlState();
-
-	}
-
-	protected void onRadioButtonGroupQuestion2aValueChanged() throws PresentationLogicException
-	{
-		if (form.GroupQuestion2DC().getValue().equals(GroupQuestion2DCEnumeration.rdoQuestion2DCNo))
-			clearQuestion3Controls();
-
-		updateControlState();
-	}
-
-	private void clearAllControls()
-	{
-		clearAuthoringInfoControls();
-		form.GroupQuestion1().setValue(null);
-		clearQuestion2Controls();
-		clearQuestion3Controls();
-	}
-
-	private void clearAuthoringInfoControls()
-	{
-		form.lblAuthoringHcpValue().setValue(null);
-		form.lblAuthoringDateTimeValue().setValue(null);
-	}
-
-	private void clearQuestion2Controls()
-	{
-		form.GroupQuestion2a().setValue(null);
-		form.GroupQuestion2b().setValue(null);
-		form.GroupQuestion2c().setValue(null);
-		form.GroupQuestion2d().setValue(null);
-		form.GroupQuestion2DC().setValue(null);
-
-	}
-
-	private void clearQuestion3Controls()
-	{
-		form.GroupQuestion3().setValue(null);
-	}
-
-	public void setModeForm(FormMode mode)
-	{
-		form.setMode(mode);
-
-	}
-
-	public DementiaEventEnumeration getSelectedEvent()
-	{
-
-		return form.getLocalContext().getSelectedEvent();
-	}
-
-	public void initialize(DementiaVo dementiaVo, FormMode formMode, Boolean isParentFormDialog)
-	{
-		clearAllControls();
-
-		populateHelpIcon();
-		initializeAuthoringControls();
-		form.getLocalContext().setselectedDementia(dementiaVo);
-		form.getLocalContext().setisParentFormDialog(isParentFormDialog);
-		populateScreenFromData(dementiaVo.getStepOneFind());
-
-		form.setMode(formMode);
-	}
 
 	private void populateHelpIcon()
 	{
-		DementiaTermConfig lkpHint = new DementiaTermConfig();
-		lkpHint.setId(DementiaTermConfig.FIND_FORM_HELP.getID());
-		DementiaTermConfigVo voHint = domain.getHintByLookupID(lkpHint);
+		DementiaTermConfigVo voHint = domain.getHintByLookupID(DementiaTermConfig.FIND_FORM_HELP);
 		if (voHint != null)
 			form.imbHelpIcon().setTooltip(voHint.getHelpText());
-	}
-
-	private void initializeAuthoringControls()
-	{
-		AuthoringInformationVo voAuthoring = new AuthoringInformationVo();
-
-		voAuthoring.setAuthoringDateTime(new DateTime());
-		if (domain.getHcpUser() != null)
-			voAuthoring.setAuthoringHcp((HcpLiteVo) domain.getHcpLiteUser());
-
-		populateAuthoringControls(voAuthoring);
-
-	}
-
-	private void populateAuthoringControls(AuthoringInformationVo voAuthoring)
-	{
-		clearAuthoringInfoControls();
-
-		if (voAuthoring == null)
-			return;
-
-		form.getLocalContext().setAuthoringInfo(voAuthoring);
-		form.lblAuthoringDateTimeValue().setValue(voAuthoring.getAuthoringDateTime().toString());
-		if (voAuthoring.getAuthoringHcpIsNotNull())
-		{
-			if (voAuthoring.getAuthoringHcp().getIHcpName().length() > 65)
-			{
-				form.lblAuthoringHcpValue().setTooltip(voAuthoring.getAuthoringHcp().getIHcpName());
-				form.lblAuthoringHcpValue().setValue(voAuthoring.getAuthoringHcp().getIHcpName().substring(0, 65));
-			}
-			else
-				form.lblAuthoringHcpValue().setValue(voAuthoring.getAuthoringHcp().getIHcpName());
-		}
-	}
-
-	public void resetSelectedEvent()
-	{
-		form.getLocalContext().setSelectedEvent(null);
-	}
-
-	public DementiaVo getValue()
-	{
-		return form.getLocalContext().getselectedDementia();
-	}
-
-	@Override
-	protected void onFormDialogClosed(FormName formName, DialogResult result) throws PresentationLogicException
-	{
-		if (formName != null && formName.equals(form.getForms().Core.RieConfirmationDialog) && result != null && result.equals(DialogResult.OK))
-		{
-			form.getLocalContext().setSelectedEvent(DementiaEventEnumeration.MARK_RIE);
-			form.fireCustomControlValueChanged();
-		}
-	}
-
-
-	@Override
-	protected void onBtnRIEClick() throws PresentationLogicException
-	{
-		engine.open(form.getForms().Core.RieConfirmationDialog);
-	}
-
-	@Override
-	protected void onBtnCloseClick() throws PresentationLogicException
-	{
-		form.getLocalContext().setSelectedEvent(DementiaEventEnumeration.CLOSE);
-		form.fireCustomControlValueChanged();
 	}
 
 }

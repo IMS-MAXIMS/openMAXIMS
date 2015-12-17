@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.admin.vo.domain;
@@ -50,18 +55,32 @@ public class ServiceForElectiveListConfigVoAssembler
 		}
 		valueObjectDest.setID_Service(valueObjectSrc.getID_Service());
 	    valueObjectDest.setIsRIE(valueObjectSrc.getIsRIE());
-		// ServiceName
-		valueObjectDest.setServiceName(valueObjectSrc.getServiceName());
 		// ServiceDescription
 		valueObjectDest.setServiceDescription(valueObjectSrc.getServiceDescription());
-		// ServiceCategory
-		valueObjectDest.setServiceCategory(valueObjectSrc.getServiceCategory());
-		// Specialty
-		valueObjectDest.setSpecialty(valueObjectSrc.getSpecialty());
-		// isActive
-		valueObjectDest.setIsActive(valueObjectSrc.getIsActive());
 		// UpperName
 		valueObjectDest.setUpperName(valueObjectSrc.getUpperName());
+		// ServiceName
+		valueObjectDest.setServiceName(valueObjectSrc.getServiceName());
+		// ServiceCategory
+		valueObjectDest.setServiceCategory(valueObjectSrc.getServiceCategory());
+		// CanBeScheduled
+		valueObjectDest.setCanBeScheduled(valueObjectSrc.getCanBeScheduled());
+		// Specialty
+		valueObjectDest.setSpecialty(valueObjectSrc.getSpecialty());
+		// ExpectedTurnaround
+		valueObjectDest.setExpectedTurnaround(valueObjectSrc.getExpectedTurnaround());
+		// TurnaroundMeasure
+		valueObjectDest.setTurnaroundMeasure(valueObjectSrc.getTurnaroundMeasure());
+		// MaternityIndicator
+		valueObjectDest.setMaternityIndicator(valueObjectSrc.getMaternityIndicator());
+		// isActive
+		valueObjectDest.setIsActive(valueObjectSrc.getIsActive());
+		// IsSubjectToRTTClock
+		valueObjectDest.setIsSubjectToRTTClock(valueObjectSrc.getIsSubjectToRTTClock());
+		// DirectSelfReferralsAccepted
+		valueObjectDest.setDirectSelfReferralsAccepted(valueObjectSrc.getDirectSelfReferralsAccepted());
+		// isPreAssessmentCompletionExempt
+		valueObjectDest.setIsPreAssessmentCompletionExempt(valueObjectSrc.getIsPreAssessmentCompletionExempt());
 	 	return valueObjectDest;
 	 }
 
@@ -352,48 +371,14 @@ public class ServiceForElectiveListConfigVoAssembler
 		if ((valueObject.getIsRIE() == null || valueObject.getIsRIE().booleanValue() == false) && domainObject.isIncludeRecord())
 			return null;
 			
-		// ServiceName
-		valueObject.setServiceName(domainObject.getServiceName());
 		// ServiceDescription
 		valueObject.setServiceDescription(domainObject.getServiceDescription());
+		// UpperName
+		valueObject.setUpperName(domainObject.getUpperName());
+		// ServiceName
+		valueObject.setServiceName(domainObject.getServiceName());
 		// ServiceCategory
-		ims.domain.lookups.LookupInstance instance3 = domainObject.getServiceCategory();
-		if ( null != instance3 ) {
-			ims.framework.utils.ImagePath img = null;
-			ims.framework.utils.Color color = null;		
-			img = null;
-			if (instance3.getImage() != null) 
-			{
-				img = new ims.framework.utils.ImagePath(instance3.getImage().getImageId(), instance3.getImage().getImagePath());
-			}
-			color = instance3.getColor();
-			if (color != null) 
-				color.getValue();
-
-			ims.core.vo.lookups.ServiceCategory voLookup3 = new ims.core.vo.lookups.ServiceCategory(instance3.getId(),instance3.getText(), instance3.isActive(), null, img, color);
-			ims.core.vo.lookups.ServiceCategory parentVoLookup3 = voLookup3;
-			ims.domain.lookups.LookupInstance parent3 = instance3.getParent();
-			while (parent3 != null)
-			{
-				if (parent3.getImage() != null) 
-				{
-					img = new ims.framework.utils.ImagePath(parent3.getImage().getImageId(), parent3.getImage().getImagePath() );
-				}
-				else 
-				{
-					img = null;
-				}
-				color = parent3.getColor();
-    			if (color != null) 
-    				color.getValue();
-								parentVoLookup3.setParent(new ims.core.vo.lookups.ServiceCategory(parent3.getId(),parent3.getText(), parent3.isActive(), null, img, color));
-				parentVoLookup3 = parentVoLookup3.getParent();
-								parent3 = parent3.getParent();
-			}			
-			valueObject.setServiceCategory(voLookup3);
-		}
-				// Specialty
-		ims.domain.lookups.LookupInstance instance4 = domainObject.getSpecialty();
+		ims.domain.lookups.LookupInstance instance4 = domainObject.getServiceCategory();
 		if ( null != instance4 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
@@ -406,8 +391,8 @@ public class ServiceForElectiveListConfigVoAssembler
 			if (color != null) 
 				color.getValue();
 
-			ims.core.vo.lookups.Specialty voLookup4 = new ims.core.vo.lookups.Specialty(instance4.getId(),instance4.getText(), instance4.isActive(), null, img, color);
-			ims.core.vo.lookups.Specialty parentVoLookup4 = voLookup4;
+			ims.core.vo.lookups.ServiceCategory voLookup4 = new ims.core.vo.lookups.ServiceCategory(instance4.getId(),instance4.getText(), instance4.isActive(), null, img, color);
+			ims.core.vo.lookups.ServiceCategory parentVoLookup4 = voLookup4;
 			ims.domain.lookups.LookupInstance parent4 = instance4.getParent();
 			while (parent4 != null)
 			{
@@ -422,16 +407,98 @@ public class ServiceForElectiveListConfigVoAssembler
 				color = parent4.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup4.setParent(new ims.core.vo.lookups.Specialty(parent4.getId(),parent4.getText(), parent4.isActive(), null, img, color));
+								parentVoLookup4.setParent(new ims.core.vo.lookups.ServiceCategory(parent4.getId(),parent4.getText(), parent4.isActive(), null, img, color));
 				parentVoLookup4 = parentVoLookup4.getParent();
 								parent4 = parent4.getParent();
 			}			
-			valueObject.setSpecialty(voLookup4);
+			valueObject.setServiceCategory(voLookup4);
 		}
-				// isActive
+				// CanBeScheduled
+		valueObject.setCanBeScheduled( domainObject.isCanBeScheduled() );
+		// Specialty
+		ims.domain.lookups.LookupInstance instance6 = domainObject.getSpecialty();
+		if ( null != instance6 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance6.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance6.getImage().getImageId(), instance6.getImage().getImagePath());
+			}
+			color = instance6.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.Specialty voLookup6 = new ims.core.vo.lookups.Specialty(instance6.getId(),instance6.getText(), instance6.isActive(), null, img, color);
+			ims.core.vo.lookups.Specialty parentVoLookup6 = voLookup6;
+			ims.domain.lookups.LookupInstance parent6 = instance6.getParent();
+			while (parent6 != null)
+			{
+				if (parent6.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent6.getImage().getImageId(), parent6.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent6.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup6.setParent(new ims.core.vo.lookups.Specialty(parent6.getId(),parent6.getText(), parent6.isActive(), null, img, color));
+				parentVoLookup6 = parentVoLookup6.getParent();
+								parent6 = parent6.getParent();
+			}			
+			valueObject.setSpecialty(voLookup6);
+		}
+				// ExpectedTurnaround
+		valueObject.setExpectedTurnaround(domainObject.getExpectedTurnaround());
+		// TurnaroundMeasure
+		ims.domain.lookups.LookupInstance instance8 = domainObject.getTurnaroundMeasure();
+		if ( null != instance8 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance8.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance8.getImage().getImageId(), instance8.getImage().getImagePath());
+			}
+			color = instance8.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.ocrr.vo.lookups.MinReorderPeriod voLookup8 = new ims.ocrr.vo.lookups.MinReorderPeriod(instance8.getId(),instance8.getText(), instance8.isActive(), null, img, color);
+			ims.ocrr.vo.lookups.MinReorderPeriod parentVoLookup8 = voLookup8;
+			ims.domain.lookups.LookupInstance parent8 = instance8.getParent();
+			while (parent8 != null)
+			{
+				if (parent8.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent8.getImage().getImageId(), parent8.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent8.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup8.setParent(new ims.ocrr.vo.lookups.MinReorderPeriod(parent8.getId(),parent8.getText(), parent8.isActive(), null, img, color));
+				parentVoLookup8 = parentVoLookup8.getParent();
+								parent8 = parent8.getParent();
+			}			
+			valueObject.setTurnaroundMeasure(voLookup8);
+		}
+				// MaternityIndicator
+		valueObject.setMaternityIndicator( domainObject.isMaternityIndicator() );
+		// isActive
 		valueObject.setIsActive( domainObject.isIsActive() );
-		// UpperName
-		valueObject.setUpperName(domainObject.getUpperName());
+		// IsSubjectToRTTClock
+		valueObject.setIsSubjectToRTTClock( domainObject.isIsSubjectToRTTClock() );
+		// DirectSelfReferralsAccepted
+		valueObject.setDirectSelfReferralsAccepted( domainObject.isDirectSelfReferralsAccepted() );
+		// isPreAssessmentCompletionExempt
+		valueObject.setIsPreAssessmentCompletionExempt( domainObject.isIsPreAssessmentCompletionExempt() );
  		return valueObject;
 	 }
 
@@ -483,35 +550,11 @@ public class ServiceForElectiveListConfigVoAssembler
 
 		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
 		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
-		if (valueObject.getServiceName() != null && valueObject.getServiceName().equals(""))
-		{
-			valueObject.setServiceName(null);
-		}
-		domainObject.setServiceName(valueObject.getServiceName());
-		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
-		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
 		if (valueObject.getServiceDescription() != null && valueObject.getServiceDescription().equals(""))
 		{
 			valueObject.setServiceDescription(null);
 		}
 		domainObject.setServiceDescription(valueObject.getServiceDescription());
-		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value3 = null;
-		if ( null != valueObject.getServiceCategory() ) 
-		{
-			value3 =
-				domainFactory.getLookupInstance(valueObject.getServiceCategory().getID());
-		}
-		domainObject.setServiceCategory(value3);
-		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value4 = null;
-		if ( null != valueObject.getSpecialty() ) 
-		{
-			value4 =
-				domainFactory.getLookupInstance(valueObject.getSpecialty().getID());
-		}
-		domainObject.setSpecialty(value4);
-		domainObject.setIsActive(valueObject.getIsActive());
 		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
 		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
 		if (valueObject.getUpperName() != null && valueObject.getUpperName().equals(""))
@@ -519,6 +562,44 @@ public class ServiceForElectiveListConfigVoAssembler
 			valueObject.setUpperName(null);
 		}
 		domainObject.setUpperName(valueObject.getUpperName());
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getServiceName() != null && valueObject.getServiceName().equals(""))
+		{
+			valueObject.setServiceName(null);
+		}
+		domainObject.setServiceName(valueObject.getServiceName());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value4 = null;
+		if ( null != valueObject.getServiceCategory() ) 
+		{
+			value4 =
+				domainFactory.getLookupInstance(valueObject.getServiceCategory().getID());
+		}
+		domainObject.setServiceCategory(value4);
+		domainObject.setCanBeScheduled(valueObject.getCanBeScheduled());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value6 = null;
+		if ( null != valueObject.getSpecialty() ) 
+		{
+			value6 =
+				domainFactory.getLookupInstance(valueObject.getSpecialty().getID());
+		}
+		domainObject.setSpecialty(value6);
+		domainObject.setExpectedTurnaround(valueObject.getExpectedTurnaround());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value8 = null;
+		if ( null != valueObject.getTurnaroundMeasure() ) 
+		{
+			value8 =
+				domainFactory.getLookupInstance(valueObject.getTurnaroundMeasure().getID());
+		}
+		domainObject.setTurnaroundMeasure(value8);
+		domainObject.setMaternityIndicator(valueObject.getMaternityIndicator());
+		domainObject.setIsActive(valueObject.getIsActive());
+		domainObject.setIsSubjectToRTTClock(valueObject.getIsSubjectToRTTClock());
+		domainObject.setDirectSelfReferralsAccepted(valueObject.getDirectSelfReferralsAccepted());
+		domainObject.setIsPreAssessmentCompletionExempt(valueObject.getIsPreAssessmentCompletionExempt());
 
 		return domainObject;
 	}

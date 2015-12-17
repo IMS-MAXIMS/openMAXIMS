@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -88,7 +93,7 @@ public class Logic extends BaseLogic
 				if (((String)args[1]).equals("Consumables"))
 				{
 					grd1Row row = form.grd1().getRows().newRow();
-					row.setColumn1("<b>B0000010</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Diathermy Plate with lead – Adult");
+					row.setColumn1("<b>B0000010</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Diathermy Plate with lead â€“ Adult");
 					row.setColumn2(true);
 					
 					row = form.grd1().getRows().newRow();
@@ -112,7 +117,7 @@ public class Logic extends BaseLogic
 					row.setColumn2(true);
 					
 					row = form.grd1().getRows().newRow();
-					row.setColumn1("<b>B0000070</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Surgical stockings – small, medium, large");
+					row.setColumn1("<b>B0000070</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Surgical stockings â€“ small, medium, large");
 					row.setColumn2(true);
 					
 					row = form.grd1().getRows().newRow();
@@ -120,15 +125,15 @@ public class Logic extends BaseLogic
 					row.setColumn2(true);
 					
 					row = form.grd1().getRows().newRow();
-					row.setColumn1("<b>B0000090</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tubigrip – A – F");
+					row.setColumn1("<b>B0000090</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tubigrip â€“ A â€“ F");
 					row.setColumn2(true);
 					
 					row = form.grd1().getRows().newRow();
-					row.setColumn1("<b>B0000100</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Blood transfusion – 2 units");
+					row.setColumn1("<b>B0000100</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Blood transfusion â€“ 2 units");
 					row.setColumn2(true);
 					
 					row = form.grd1().getRows().newRow();
-					row.setColumn1("<b>B0000110</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV fluids – Normal Saline, Dextrose Saline");
+					row.setColumn1("<b>B0000110</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV fluids â€“ Normal Saline, Dextrose Saline");
 					row.setColumn2(true);
 				}
 				else if (((String)args[1]).equals("Drugs"))

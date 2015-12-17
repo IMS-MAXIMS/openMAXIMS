@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.emergency.vo.domain;
@@ -56,6 +61,12 @@ public class ifPartialAdmissionVoAssembler
 		valueObjectDest.setAllocatedStatus(valueObjectSrc.getAllocatedStatus());
 		// AllocatedWard
 		valueObjectDest.setAllocatedWard(valueObjectSrc.getAllocatedWard());
+		// AccomodationRequestedType
+		valueObjectDest.setAccomodationRequestedType(valueObjectSrc.getAccomodationRequestedType());
+		// AdmittingConsultant
+		valueObjectDest.setAdmittingConsultant(valueObjectSrc.getAdmittingConsultant());
+		// DecisionToAdmitDateTime
+		valueObjectDest.setDecisionToAdmitDateTime(valueObjectSrc.getDecisionToAdmitDateTime());
 	 	return valueObjectDest;
 	 }
 
@@ -420,6 +431,50 @@ public class ifPartialAdmissionVoAssembler
 		}
 				// AllocatedWard
 		valueObject.setAllocatedWard(ims.core.vo.domain.LocShortMappingsVoAssembler.create(map, domainObject.getAllocatedWard()) );
+		// AccomodationRequestedType
+		ims.domain.lookups.LookupInstance instance4 = domainObject.getAccomodationRequestedType();
+		if ( null != instance4 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance4.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance4.getImage().getImageId(), instance4.getImage().getImagePath());
+			}
+			color = instance4.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.AccomodationRequestedType voLookup4 = new ims.core.vo.lookups.AccomodationRequestedType(instance4.getId(),instance4.getText(), instance4.isActive(), null, img, color);
+			ims.core.vo.lookups.AccomodationRequestedType parentVoLookup4 = voLookup4;
+			ims.domain.lookups.LookupInstance parent4 = instance4.getParent();
+			while (parent4 != null)
+			{
+				if (parent4.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent4.getImage().getImageId(), parent4.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent4.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup4.setParent(new ims.core.vo.lookups.AccomodationRequestedType(parent4.getId(),parent4.getText(), parent4.isActive(), null, img, color));
+				parentVoLookup4 = parentVoLookup4.getParent();
+								parent4 = parent4.getParent();
+			}			
+			valueObject.setAccomodationRequestedType(voLookup4);
+		}
+				// AdmittingConsultant
+		valueObject.setAdmittingConsultant(ims.core.vo.domain.HcpAssembler.create(map, domainObject.getAdmittingConsultant()) );
+		// DecisionToAdmitDateTime
+		java.util.Date DecisionToAdmitDateTime = domainObject.getDecisionToAdmitDateTime();
+		if ( null != DecisionToAdmitDateTime ) 
+		{
+			valueObject.setDecisionToAdmitDateTime(new ims.framework.utils.DateTime(DecisionToAdmitDateTime) );
+		}
  		return valueObject;
 	 }
 
@@ -502,6 +557,38 @@ public class ifPartialAdmissionVoAssembler
 			}
 		}
 		domainObject.setAllocatedWard(value3);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value4 = null;
+		if ( null != valueObject.getAccomodationRequestedType() ) 
+		{
+			value4 =
+				domainFactory.getLookupInstance(valueObject.getAccomodationRequestedType().getID());
+		}
+		domainObject.setAccomodationRequestedType(value4);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.resource.people.domain.objects.Hcp value5 = null;
+		if ( null != valueObject.getAdmittingConsultant() ) 
+		{
+			if (valueObject.getAdmittingConsultant().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getAdmittingConsultant()) != null)
+				{
+					value5 = (ims.core.resource.people.domain.objects.Hcp)domMap.get(valueObject.getAdmittingConsultant());
+				}
+			}
+			else
+			{
+				value5 = (ims.core.resource.people.domain.objects.Hcp)domainFactory.getDomainObject(ims.core.resource.people.domain.objects.Hcp.class, valueObject.getAdmittingConsultant().getBoId());
+			}
+		}
+		domainObject.setAdmittingConsultant(value5);
+		ims.framework.utils.DateTime dateTime6 = valueObject.getDecisionToAdmitDateTime();
+		java.util.Date value6 = null;
+		if ( dateTime6 != null ) 
+		{
+			value6 = dateTime6.getJavaDate();
+		}
+		domainObject.setDecisionToAdmitDateTime(value6);
 
 		return domainObject;
 	}

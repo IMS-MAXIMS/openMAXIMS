@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.core.vo.domain;
@@ -60,6 +65,30 @@ public class WardStayVoAssembler
 		valueObjectDest.setWardType(valueObjectSrc.getWardType());
 		// BedSpace
 		valueObjectDest.setBedSpace(valueObjectSrc.getBedSpace());
+		// Bay
+		valueObjectDest.setBay(valueObjectSrc.getBay());
+		// PatientStatus
+		valueObjectDest.setPatientStatus(valueObjectSrc.getPatientStatus());
+		// ReasonPrivateBedAllocated
+		valueObjectDest.setReasonPrivateBedAllocated(valueObjectSrc.getReasonPrivateBedAllocated());
+		// ReasonAdmittingOutsideHours
+		valueObjectDest.setReasonAdmittingOutsideHours(valueObjectSrc.getReasonAdmittingOutsideHours());
+		// ReasonGenderBreach
+		valueObjectDest.setReasonGenderBreach(valueObjectSrc.getReasonGenderBreach());
+		// AdmitedInMixedGenderBay
+		valueObjectDest.setAdmitedInMixedGenderBay(valueObjectSrc.getAdmitedInMixedGenderBay());
+		// ReasonPrivateBedAllocatedComment
+		valueObjectDest.setReasonPrivateBedAllocatedComment(valueObjectSrc.getReasonPrivateBedAllocatedComment());
+		// ReasonAdmittingOutsideHoursComment
+		valueObjectDest.setReasonAdmittingOutsideHoursComment(valueObjectSrc.getReasonAdmittingOutsideHoursComment());
+		// ReasonGenderBreachComment
+		valueObjectDest.setReasonGenderBreachComment(valueObjectSrc.getReasonGenderBreachComment());
+		// Service
+		valueObjectDest.setService(valueObjectSrc.getService());
+		// TransferReason
+		valueObjectDest.setTransferReason(valueObjectSrc.getTransferReason());
+		// TransferComment
+		valueObjectDest.setTransferComment(valueObjectSrc.getTransferComment());
 	 	return valueObjectDest;
 	 }
 
@@ -414,6 +443,200 @@ public class WardStayVoAssembler
 				valueObject.setBedSpace(new ims.core.layout.vo.BedSpaceRefVo(domainObject.getBedSpace().getId(), domainObject.getBedSpace().getVersion()));
 			}
 		}
+		// Bay
+		valueObject.setBay(ims.core.vo.domain.LocationLiteVoAssembler.create(map, domainObject.getBay()) );
+		// PatientStatus
+		ims.domain.lookups.LookupInstance instance7 = domainObject.getPatientStatus();
+		if ( null != instance7 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance7.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance7.getImage().getImageId(), instance7.getImage().getImagePath());
+			}
+			color = instance7.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.PatientStatus voLookup7 = new ims.core.vo.lookups.PatientStatus(instance7.getId(),instance7.getText(), instance7.isActive(), null, img, color);
+			ims.core.vo.lookups.PatientStatus parentVoLookup7 = voLookup7;
+			ims.domain.lookups.LookupInstance parent7 = instance7.getParent();
+			while (parent7 != null)
+			{
+				if (parent7.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent7.getImage().getImageId(), parent7.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent7.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup7.setParent(new ims.core.vo.lookups.PatientStatus(parent7.getId(),parent7.getText(), parent7.isActive(), null, img, color));
+				parentVoLookup7 = parentVoLookup7.getParent();
+								parent7 = parent7.getParent();
+			}			
+			valueObject.setPatientStatus(voLookup7);
+		}
+				// ReasonPrivateBedAllocated
+		ims.domain.lookups.LookupInstance instance8 = domainObject.getReasonPrivateBedAllocated();
+		if ( null != instance8 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance8.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance8.getImage().getImageId(), instance8.getImage().getImagePath());
+			}
+			color = instance8.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.ReasonforPrivateBedAllocation voLookup8 = new ims.core.vo.lookups.ReasonforPrivateBedAllocation(instance8.getId(),instance8.getText(), instance8.isActive(), null, img, color);
+			ims.core.vo.lookups.ReasonforPrivateBedAllocation parentVoLookup8 = voLookup8;
+			ims.domain.lookups.LookupInstance parent8 = instance8.getParent();
+			while (parent8 != null)
+			{
+				if (parent8.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent8.getImage().getImageId(), parent8.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent8.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup8.setParent(new ims.core.vo.lookups.ReasonforPrivateBedAllocation(parent8.getId(),parent8.getText(), parent8.isActive(), null, img, color));
+				parentVoLookup8 = parentVoLookup8.getParent();
+								parent8 = parent8.getParent();
+			}			
+			valueObject.setReasonPrivateBedAllocated(voLookup8);
+		}
+				// ReasonAdmittingOutsideHours
+		ims.domain.lookups.LookupInstance instance9 = domainObject.getReasonAdmittingOutsideHours();
+		if ( null != instance9 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance9.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance9.getImage().getImageId(), instance9.getImage().getImagePath());
+			}
+			color = instance9.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.ReasonForAdmissionOutOfOpeningHours voLookup9 = new ims.core.vo.lookups.ReasonForAdmissionOutOfOpeningHours(instance9.getId(),instance9.getText(), instance9.isActive(), null, img, color);
+			ims.core.vo.lookups.ReasonForAdmissionOutOfOpeningHours parentVoLookup9 = voLookup9;
+			ims.domain.lookups.LookupInstance parent9 = instance9.getParent();
+			while (parent9 != null)
+			{
+				if (parent9.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent9.getImage().getImageId(), parent9.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent9.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup9.setParent(new ims.core.vo.lookups.ReasonForAdmissionOutOfOpeningHours(parent9.getId(),parent9.getText(), parent9.isActive(), null, img, color));
+				parentVoLookup9 = parentVoLookup9.getParent();
+								parent9 = parent9.getParent();
+			}			
+			valueObject.setReasonAdmittingOutsideHours(voLookup9);
+		}
+				// ReasonGenderBreach
+		ims.domain.lookups.LookupInstance instance10 = domainObject.getReasonGenderBreach();
+		if ( null != instance10 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance10.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance10.getImage().getImageId(), instance10.getImage().getImagePath());
+			}
+			color = instance10.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.ReasonForAdmissionToGenderSpecificBay voLookup10 = new ims.core.vo.lookups.ReasonForAdmissionToGenderSpecificBay(instance10.getId(),instance10.getText(), instance10.isActive(), null, img, color);
+			ims.core.vo.lookups.ReasonForAdmissionToGenderSpecificBay parentVoLookup10 = voLookup10;
+			ims.domain.lookups.LookupInstance parent10 = instance10.getParent();
+			while (parent10 != null)
+			{
+				if (parent10.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent10.getImage().getImageId(), parent10.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent10.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup10.setParent(new ims.core.vo.lookups.ReasonForAdmissionToGenderSpecificBay(parent10.getId(),parent10.getText(), parent10.isActive(), null, img, color));
+				parentVoLookup10 = parentVoLookup10.getParent();
+								parent10 = parent10.getParent();
+			}			
+			valueObject.setReasonGenderBreach(voLookup10);
+		}
+				// AdmitedInMixedGenderBay
+		valueObject.setAdmitedInMixedGenderBay( domainObject.isAdmitedInMixedGenderBay() );
+		// ReasonPrivateBedAllocatedComment
+		valueObject.setReasonPrivateBedAllocatedComment(domainObject.getReasonPrivateBedAllocatedComment());
+		// ReasonAdmittingOutsideHoursComment
+		valueObject.setReasonAdmittingOutsideHoursComment(domainObject.getReasonAdmittingOutsideHoursComment());
+		// ReasonGenderBreachComment
+		valueObject.setReasonGenderBreachComment(domainObject.getReasonGenderBreachComment());
+		// Service
+		valueObject.setService(ims.core.vo.domain.ServiceLiteVoAssembler.create(map, domainObject.getService()) );
+		// TransferReason
+		ims.domain.lookups.LookupInstance instance16 = domainObject.getTransferReason();
+		if ( null != instance16 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance16.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance16.getImage().getImageId(), instance16.getImage().getImagePath());
+			}
+			color = instance16.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.TransferReason voLookup16 = new ims.core.vo.lookups.TransferReason(instance16.getId(),instance16.getText(), instance16.isActive(), null, img, color);
+			ims.core.vo.lookups.TransferReason parentVoLookup16 = voLookup16;
+			ims.domain.lookups.LookupInstance parent16 = instance16.getParent();
+			while (parent16 != null)
+			{
+				if (parent16.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent16.getImage().getImageId(), parent16.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent16.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup16.setParent(new ims.core.vo.lookups.TransferReason(parent16.getId(),parent16.getText(), parent16.isActive(), null, img, color));
+				parentVoLookup16 = parentVoLookup16.getParent();
+								parent16 = parent16.getParent();
+			}			
+			valueObject.setTransferReason(voLookup16);
+		}
+				// TransferComment
+		valueObject.setTransferComment(domainObject.getTransferComment());
  		return valueObject;
 	 }
 
@@ -463,7 +686,23 @@ public class WardStayVoAssembler
 		}
 		domainObject.setVersion(valueObject.getVersion_WardStay());
 
-		domainObject.setWard(ims.core.vo.domain.LocationLiteVoAssembler.extractLocation(domainFactory, valueObject.getWard(), domMap));
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.resource.place.domain.objects.Location value1 = null;
+		if ( null != valueObject.getWard() ) 
+		{
+			if (valueObject.getWard().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getWard()) != null)
+				{
+					value1 = (ims.core.resource.place.domain.objects.Location)domMap.get(valueObject.getWard());
+				}
+			}
+			else
+			{
+				value1 = (ims.core.resource.place.domain.objects.Location)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.Location.class, valueObject.getWard().getBoId());
+			}
+		}
+		domainObject.setWard(value1);
 		ims.framework.utils.DateTime dateTime2 = valueObject.getTransferDateTime();
 		java.util.Date value2 = null;
 		if ( dateTime2 != null ) 
@@ -506,6 +745,109 @@ public class WardStayVoAssembler
 			}
 		}
 		domainObject.setBedSpace(value5);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.resource.place.domain.objects.Location value6 = null;
+		if ( null != valueObject.getBay() ) 
+		{
+			if (valueObject.getBay().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getBay()) != null)
+				{
+					value6 = (ims.core.resource.place.domain.objects.Location)domMap.get(valueObject.getBay());
+				}
+			}
+			else
+			{
+				value6 = (ims.core.resource.place.domain.objects.Location)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.Location.class, valueObject.getBay().getBoId());
+			}
+		}
+		domainObject.setBay(value6);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value7 = null;
+		if ( null != valueObject.getPatientStatus() ) 
+		{
+			value7 =
+				domainFactory.getLookupInstance(valueObject.getPatientStatus().getID());
+		}
+		domainObject.setPatientStatus(value7);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value8 = null;
+		if ( null != valueObject.getReasonPrivateBedAllocated() ) 
+		{
+			value8 =
+				domainFactory.getLookupInstance(valueObject.getReasonPrivateBedAllocated().getID());
+		}
+		domainObject.setReasonPrivateBedAllocated(value8);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value9 = null;
+		if ( null != valueObject.getReasonAdmittingOutsideHours() ) 
+		{
+			value9 =
+				domainFactory.getLookupInstance(valueObject.getReasonAdmittingOutsideHours().getID());
+		}
+		domainObject.setReasonAdmittingOutsideHours(value9);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value10 = null;
+		if ( null != valueObject.getReasonGenderBreach() ) 
+		{
+			value10 =
+				domainFactory.getLookupInstance(valueObject.getReasonGenderBreach().getID());
+		}
+		domainObject.setReasonGenderBreach(value10);
+		domainObject.setAdmitedInMixedGenderBay(valueObject.getAdmitedInMixedGenderBay());
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getReasonPrivateBedAllocatedComment() != null && valueObject.getReasonPrivateBedAllocatedComment().equals(""))
+		{
+			valueObject.setReasonPrivateBedAllocatedComment(null);
+		}
+		domainObject.setReasonPrivateBedAllocatedComment(valueObject.getReasonPrivateBedAllocatedComment());
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getReasonAdmittingOutsideHoursComment() != null && valueObject.getReasonAdmittingOutsideHoursComment().equals(""))
+		{
+			valueObject.setReasonAdmittingOutsideHoursComment(null);
+		}
+		domainObject.setReasonAdmittingOutsideHoursComment(valueObject.getReasonAdmittingOutsideHoursComment());
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getReasonGenderBreachComment() != null && valueObject.getReasonGenderBreachComment().equals(""))
+		{
+			valueObject.setReasonGenderBreachComment(null);
+		}
+		domainObject.setReasonGenderBreachComment(valueObject.getReasonGenderBreachComment());
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.clinical.domain.objects.Service value15 = null;
+		if ( null != valueObject.getService() ) 
+		{
+			if (valueObject.getService().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getService()) != null)
+				{
+					value15 = (ims.core.clinical.domain.objects.Service)domMap.get(valueObject.getService());
+				}
+			}
+			else
+			{
+				value15 = (ims.core.clinical.domain.objects.Service)domainFactory.getDomainObject(ims.core.clinical.domain.objects.Service.class, valueObject.getService().getBoId());
+			}
+		}
+		domainObject.setService(value15);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value16 = null;
+		if ( null != valueObject.getTransferReason() ) 
+		{
+			value16 =
+				domainFactory.getLookupInstance(valueObject.getTransferReason().getID());
+		}
+		domainObject.setTransferReason(value16);
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getTransferComment() != null && valueObject.getTransferComment().equals(""))
+		{
+			valueObject.setTransferComment(null);
+		}
+		domainObject.setTransferComment(valueObject.getTransferComment());
 
 		return domainObject;
 	}

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -186,13 +191,13 @@ public class Logic extends BaseLogic
 				{
 					if(form.grdManagement().getRows().get(i).getColDateInserted().isGreaterThan(new Date()))
 					{
-						engine.showMessage("'Date Inserted' can not be in the future.");
+						engine.showMessage("'Date Inserted' cannot be in the future."); //WDEV-18762
 						return;
 					}
 				}
 			}
 		}
-		//Date changed can not be earlier than the Insertion Date
+		//Date changed cannot be earlier than the Insertion Date
 		if(form.grdManagement().getRows().size()>0)
 		{
 			for(int z=0; z<form.grdManagement().getRows().size(); z++)
@@ -201,7 +206,7 @@ public class Logic extends BaseLogic
 				{
 					if(form.grdManagement().getRows().get(z).getColDateInserted().isGreaterThan(form.grdManagement().getRows().get(z).getColDateNextChange()))
 					{
-						engine.showMessage("'Date Next Change' can not be earlier than the 'Date Inserted'");
+						engine.showMessage("'Date Next Change' cannot be earlier than the 'Date Inserted'");//WDEV-18762
 						return;
 					}
 				}
@@ -254,7 +259,7 @@ public class Logic extends BaseLogic
 			{
 				if(bmRow.getColDateInserted().isGreaterThan(bmRow.getColDateNextChange()))
 				{
-					engine.showMessage("'Date Next Change' can not be earlier than the 'Date Inserted'");
+					engine.showMessage("'Date Next Change' cannot be earlier than the 'Date Inserted'");//WDEV-18762
 					return;
 				}
 			}

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.scheduling.vo.domain;
@@ -96,6 +101,22 @@ public class Booking_AppointmentShortVoAssembler
 		valueObjectDest.setTheatreBooking(valueObjectSrc.getTheatreBooking());
 		// SessionSlot
 		valueObjectDest.setSessionSlot(valueObjectSrc.getSessionSlot());
+		// wasPrinted
+		valueObjectDest.setWasPrinted(valueObjectSrc.getWasPrinted());
+		// BookingLetter
+		valueObjectDest.setBookingLetter(valueObjectSrc.getBookingLetter());
+		// numProviderCancellations
+		valueObjectDest.setNumProviderCancellations(valueObjectSrc.getNumProviderCancellations());
+		// numPatientCancellations
+		valueObjectDest.setNumPatientCancellations(valueObjectSrc.getNumPatientCancellations());
+		// Date28DayRuleBreach
+		valueObjectDest.setDate28DayRuleBreach(valueObjectSrc.getDate28DayRuleBreach());
+		// isWardAttendance
+		valueObjectDest.setIsWardAttendance(valueObjectSrc.getIsWardAttendance());
+		// WardAttendanceOutcome
+		valueObjectDest.setWardAttendanceOutcome(valueObjectSrc.getWardAttendanceOutcome());
+		// ElectiveList
+		valueObjectDest.setElectiveList(valueObjectSrc.getElectiveList());
 	 	return valueObjectDest;
 	 }
 
@@ -558,6 +579,72 @@ public class Booking_AppointmentShortVoAssembler
 		valueObject.setTheatreBooking(ims.scheduling.vo.domain.TheatreBookingBaseVoAssembler.create(map, domainObject.getTheatreBooking()) );
 		// SessionSlot
 		valueObject.setSessionSlot(ims.scheduling.vo.domain.SessionSlotForDNAVoAssembler.create(map, domainObject.getSessionSlot()) );
+		// wasPrinted
+		valueObject.setWasPrinted( domainObject.isWasPrinted() );
+		// BookingLetter
+		valueObject.setBookingLetter(ims.core.vo.domain.PatientDocumentLiteVoAssembler.create(map, domainObject.getBookingLetter()) );
+		// numProviderCancellations
+		valueObject.setNumProviderCancellations(domainObject.getNumProviderCancellations());
+		// numPatientCancellations
+		valueObject.setNumPatientCancellations(domainObject.getNumPatientCancellations());
+		// Date28DayRuleBreach
+		java.util.Date Date28DayRuleBreach = domainObject.getDate28DayRuleBreach();
+		if ( null != Date28DayRuleBreach ) 
+		{
+			valueObject.setDate28DayRuleBreach(new ims.framework.utils.Date(Date28DayRuleBreach) );
+		}
+		// isWardAttendance
+		valueObject.setIsWardAttendance( domainObject.isIsWardAttendance() );
+		// WardAttendanceOutcome
+		ims.domain.lookups.LookupInstance instance30 = domainObject.getWardAttendanceOutcome();
+		if ( null != instance30 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance30.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance30.getImage().getImageId(), instance30.getImage().getImagePath());
+			}
+			color = instance30.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.WardAttendanceOutcome voLookup30 = new ims.core.vo.lookups.WardAttendanceOutcome(instance30.getId(),instance30.getText(), instance30.isActive(), null, img, color);
+			ims.core.vo.lookups.WardAttendanceOutcome parentVoLookup30 = voLookup30;
+			ims.domain.lookups.LookupInstance parent30 = instance30.getParent();
+			while (parent30 != null)
+			{
+				if (parent30.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent30.getImage().getImageId(), parent30.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent30.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup30.setParent(new ims.core.vo.lookups.WardAttendanceOutcome(parent30.getId(),parent30.getText(), parent30.isActive(), null, img, color));
+				parentVoLookup30 = parentVoLookup30.getParent();
+								parent30 = parent30.getParent();
+			}			
+			valueObject.setWardAttendanceOutcome(voLookup30);
+		}
+				// ElectiveList
+		if (domainObject.getElectiveList() != null)
+		{
+			if(domainObject.getElectiveList() instanceof HibernateProxy) // If the proxy is set, there is no need to lazy load, the proxy knows the id already. 
+			{
+				HibernateProxy p = (HibernateProxy) domainObject.getElectiveList();
+				int id = Integer.parseInt(p.getHibernateLazyInitializer().getIdentifier().toString());				
+				valueObject.setElectiveList(new ims.RefMan.vo.PatientElectiveListRefVo(id, -1));				
+			}
+			else
+			{
+				valueObject.setElectiveList(new ims.RefMan.vo.PatientElectiveListRefVo(domainObject.getElectiveList().getId(), domainObject.getElectiveList().getVersion()));
+			}
+		}
  		return valueObject;
 	 }
 
@@ -779,6 +866,62 @@ public class Booking_AppointmentShortVoAssembler
 		}
 		domainObject.setTheatreBooking(value22);
 		domainObject.setSessionSlot(ims.scheduling.vo.domain.SessionSlotForDNAVoAssembler.extractSession_Slot(domainFactory, valueObject.getSessionSlot(), domMap));
+		domainObject.setWasPrinted(valueObject.getWasPrinted());
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.documents.domain.objects.PatientDocument value25 = null;
+		if ( null != valueObject.getBookingLetter() ) 
+		{
+			if (valueObject.getBookingLetter().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getBookingLetter()) != null)
+				{
+					value25 = (ims.core.documents.domain.objects.PatientDocument)domMap.get(valueObject.getBookingLetter());
+				}
+			}
+			else
+			{
+				value25 = (ims.core.documents.domain.objects.PatientDocument)domainFactory.getDomainObject(ims.core.documents.domain.objects.PatientDocument.class, valueObject.getBookingLetter().getBoId());
+			}
+		}
+		domainObject.setBookingLetter(value25);
+		domainObject.setNumProviderCancellations(valueObject.getNumProviderCancellations());
+		domainObject.setNumPatientCancellations(valueObject.getNumPatientCancellations());
+		java.util.Date value28 = null;
+		ims.framework.utils.Date date28 = valueObject.getDate28DayRuleBreach();		
+		if ( date28 != null ) 
+		{
+			value28 = date28.getDate();
+		}
+		domainObject.setDate28DayRuleBreach(value28);
+		domainObject.setIsWardAttendance(valueObject.getIsWardAttendance());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value30 = null;
+		if ( null != valueObject.getWardAttendanceOutcome() ) 
+		{
+			value30 =
+				domainFactory.getLookupInstance(valueObject.getWardAttendanceOutcome().getID());
+		}
+		domainObject.setWardAttendanceOutcome(value30);
+		ims.RefMan.domain.objects.PatientElectiveList value31 = null;
+		if ( null != valueObject.getElectiveList() ) 
+		{
+			if (valueObject.getElectiveList().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getElectiveList()) != null)
+				{
+					value31 = (ims.RefMan.domain.objects.PatientElectiveList)domMap.get(valueObject.getElectiveList());
+				}
+			}
+			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
+			{
+				value31 = domainObject.getElectiveList();	
+			}
+			else
+			{
+				value31 = (ims.RefMan.domain.objects.PatientElectiveList)domainFactory.getDomainObject(ims.RefMan.domain.objects.PatientElectiveList.class, valueObject.getElectiveList().getBoId());
+			}
+		}
+		domainObject.setElectiveList(value31);
 
 		return domainObject;
 	}

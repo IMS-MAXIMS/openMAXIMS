@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -121,6 +126,17 @@ public class Logic extends BaseLogic
 		}
 		else if (form.getLocalContext().getDocumentViewLevel().equals(DocumentViewLevel.PATIENT)) 
 		{				
+			if (form.getGlobalContext().Core.getPatientShort() == null) {
+				throw new DomainRuntimeException("Patient is mandatory!");
+			}					
+			listDocumentsAtPatientLevel(form.getLocalContext().getDocumentCategory(), form.getLocalContext().getDocumentViewLevel());
+		}
+		//WDEV-18856
+		else if (form.getLocalContext().getDocumentViewLevel().equals(DocumentViewLevel.CLINICALREFERRAL)) 
+		{	
+			//WDEV-18948
+			form.getGlobalContext().RefMan.setUploadDocumentsDialogDocumentType(DocumentCategory.INTERNAL_REFERRALS);
+			
 			if (form.getGlobalContext().Core.getPatientShort() == null) {
 				throw new DomainRuntimeException("Patient is mandatory!");
 			}					
@@ -298,8 +314,25 @@ public class Logic extends BaseLogic
 		PatientDocumentVoCollection coll = null;
 		TreeMap<String, Integer> map = new TreeMap<String, Integer>();
 				
-		coll = domain.listPatientDocuments(form.getGlobalContext().Core.getPatientShort(), form.getGlobalContext().Core.getCurrentCareContext(), form.getLocalContext().getDocumentCategory(), form.getLocalContext().getCatsReferralRef(), level);
-							
+		coll = domain.listPatientDocuments(form.getGlobalContext().Core.getPatientShort(), form.getGlobalContext().Core.getCurrentCareContext(), form.getLocalContext().getDocumentCategory(), form.getLocalContext().getCatsReferralRef(),form.getGlobalContext().Clinical.getClinicalReferralRef(), level);
+
+		if (DocumentViewLevel.CLINICALREFERRAL.equals(level))
+		{
+			if (form.getGlobalContext().Core.getPatientDocumentsCollectionForClinicalReferral() != null && form.getGlobalContext().Core.getPatientDocumentsCollectionForClinicalReferral().size() > 0)
+			{
+				PatientDocumentVoCollection documentsColl = form.getGlobalContext().Core.getPatientDocumentsCollectionForClinicalReferral();
+				
+				if (coll == null)
+					coll = new PatientDocumentVoCollection();
+				
+				for (int i = 0; i < documentsColl.size(); i++)
+				{
+					coll.add(documentsColl.get(i));
+				}
+			}
+				
+		}
+		
 		if (coll!= null &&
 				coll.size() > 0)
 		{
@@ -328,6 +361,10 @@ public class Logic extends BaseLogic
 		}	
 		
 		setSelectedInstance();//WDEV-13695
+		
+		//remove selection of row, but leave the row expanded. 
+		//http://jira/browse/WDEV-22542 - after selecting the row, the preview is opened + closed. The row is reselected. However if you click on it again nothing happens
+		form.dyngrd().setValue(null);
 	}
 		
 	//WDEV-13695	
@@ -373,10 +410,19 @@ public class Logic extends BaseLogic
 		//start WDEV-13889
 		if ((formName.equals(form.getForms().Core.DocumentPreview)) && (form.dyngrd().getSelectedRow() == null)) 
 		{
-		form.getLocalContext().setSelectedRecord(null);
-		form.fireCustomControlValueChanged();
+			form.getLocalContext().setSelectedRecord(null);
+			form.fireCustomControlValueChanged();
 		}
 		//end
+		
+		if(formName.equals(form.getForms().RefMan.ReferralTriage))
+		{
+			if(result.equals(DialogResult.OK) || result.equals(DialogResult.ABORT))
+			{
+				form.getLocalContext().setComponentAction(UploadDocumentAction.CLOSEDIALOG);
+				form.fireCustomControlValueChanged();
+			}
+		}
 	}
 
 
@@ -410,7 +456,13 @@ public class Logic extends BaseLogic
 
 	private void previewDoc()
 	{
-		engine.open(form.getForms().Core.DocumentPreview, new Object[]{form.getLocalContext().getSelectedRecord()});
+		if(Boolean.TRUE.equals(form.getLocalContext().getOpenReferraltriageDialog()))
+		{
+			engine.open(form.getForms().RefMan.ReferralTriage, new Object[] {form.getLocalContext().getSelectedRecord()});
+			return;
+		}
+		
+		engine.open(form.getForms().Core.DocumentPreview, new Object[]{form.getLocalContext().getSelectedRecord()},true,true);//WDEV-18706
 	}
 
 	@Override
@@ -451,8 +503,13 @@ public class Logic extends BaseLogic
 		
 	}
 
+	public void openReferralTriageDialog(Boolean showReferralTriageDialog)
+	{
+		form.getLocalContext().setOpenReferraltriageDialog(showReferralTriageDialog);
+	}
 
-	
-
-	
+	public UploadDocumentAction getAction()
+	{
+		return form.getLocalContext().getComponentAction();
+	}
 }

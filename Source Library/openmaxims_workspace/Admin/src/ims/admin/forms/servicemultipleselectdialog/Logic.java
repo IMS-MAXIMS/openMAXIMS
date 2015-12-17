@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -30,7 +35,11 @@ import ims.admin.vo.ServiceVoLiteVoCollection;
 import ims.RefMan.vo.ContractConfigShortVo;
 import ims.RefMan.vo.ContractServiceLocationsConfigVoCollection;
 import ims.core.vo.QuestionInformationShortVoCollection;
+import ims.core.vo.ServiceLiteVo;
+import ims.core.vo.ServiceLiteVoCollection;
 import ims.core.vo.lookups.ReferralManagementContractType;
+import ims.framework.MessageButtons;
+import ims.framework.MessageIcon;
 import ims.framework.enumerations.DialogResult;
 
 public class Logic extends BaseLogic
@@ -51,7 +60,7 @@ public class Logic extends BaseLogic
 	
 	protected void onBtnOKClick() throws ims.framework.exceptions.PresentationLogicException
 	{
-		ServiceVoLiteVoCollection tempColl = new ServiceVoLiteVoCollection();
+		ServiceLiteVoCollection tempColl = new ServiceLiteVoCollection(); //WDEV-20945
 		for(int i = 0;i < form.grdSelectedServices().getRows().size();i++)
 		{
 			if(form.grdSelectedServices().getRows().get(i).getColumnSelect())
@@ -109,7 +118,7 @@ public class Logic extends BaseLogic
 	
 	protected void onBtnAddToListClick() throws ims.framework.exceptions.PresentationLogicException
 	{
-		ServiceVoLiteVoCollection voColl = new ServiceVoLiteVoCollection();
+		ServiceLiteVoCollection voColl = new ServiceLiteVoCollection(); //WDEV-20945
 		boolean deleted = true;
 		while(deleted)
 		{
@@ -145,14 +154,14 @@ public class Logic extends BaseLogic
 		
 
 	}
-	private boolean checkIfServiceIsInServiceSelectedGrid(ServiceVoLiteVo  service)
+	private boolean checkIfServiceIsInServiceSelectedGrid(ServiceLiteVo  service)
 	{
 		if(service == null)
 			return false;
 		
 		for(int i = 0;i < form.grdSelectedServices().getRows().size();i++)
 		{
-			ServiceVoLiteVo tempVo = form.grdSelectedServices().getRows().get(i).getValue();
+			ServiceLiteVo tempVo = form.grdSelectedServices().getRows().get(i).getValue(); //WDEV-20945
 			if(service.getID_ServiceIsNotNull() && service.getID_Service().equals(tempVo.getID_Service()))
 				return true;
 		}
@@ -178,7 +187,7 @@ public class Logic extends BaseLogic
 			engine.showMessage("Please enter a Service Name search string");
 			return;
 		}
-		ServiceVoLiteVoCollection serviceColl = domain.getServices(form.txtServiceName().getValue().trim(), form.cmbServiceCategory().getValue());
+		ServiceLiteVoCollection serviceColl = domain.getServices(form.txtServiceName().getValue().trim(), form.cmbServiceCategory().getValue());
 		populateSearchServiceGrid(serviceColl);
 	}
 	private boolean checkCharacter(String name)
@@ -193,14 +202,17 @@ public class Logic extends BaseLogic
 		}
 		return flag;
 	}
-	private void populateSearchServiceGrid(ServiceVoLiteVoCollection serviceColl)
+	private void populateSearchServiceGrid(ServiceLiteVoCollection serviceColl)
 	{
 		form.grdSearchService().getRows().clear();
 		if(serviceColl == null || serviceColl.size() < 1)
+		{	
+			engine.showMessage("No service records were found that match the specified search criteria.", "No Data Found", MessageButtons.OK, MessageIcon.WARNING); //WDEV-18801
 			return;
+		}	
 		for(int i = 0; i < serviceColl.size();i++)
 		{
-			ServiceVoLiteVo record = serviceColl.get(i);
+			ServiceLiteVo record = serviceColl.get(i);
 			if (record == null)
 				continue;
 			grdSearchServiceRow newRow = form.grdSearchService().getRows().newRow();
@@ -216,14 +228,14 @@ public class Logic extends BaseLogic
 			form.grdSearchService().getRows().get(i).setColumnSelect(select);
 		}
 	}
-	private void populateSelectedServiceGrid(ServiceVoLiteVoCollection serviceColl)
+	private void populateSelectedServiceGrid(ServiceLiteVoCollection serviceColl)
 	{
 		
 		if(serviceColl == null || serviceColl.size() < 1)
 			return;
 		for(int i = 0; i < serviceColl.size();i++)
 		{
-			ServiceVoLiteVo record = serviceColl.get(i);
+			ServiceLiteVo record = serviceColl.get(i); //WDEV-20945
 			if (record == null)
 				continue;
 			grdSelectedServicesRow newRow = form.grdSelectedServices().getRows().newRow();

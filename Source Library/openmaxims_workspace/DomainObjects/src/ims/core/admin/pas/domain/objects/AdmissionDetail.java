@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.admin.pas.domain.objects;
@@ -93,6 +98,38 @@ public class AdmissionDetail extends ims.domain.DomainObject implements ims.doma
 	private ims.core.admin.domain.objects.EpisodeOfCare admissionEpisode;
 	/** ExtendedDetails */
 	private ims.core.admin.pas.domain.objects.ExtendedAdmissionDetail extendedDetails;
+	/** CodingStatus */
+	private ims.domain.lookups.LookupInstance codingStatus;
+	/** Coding Comments
+	  * Collection of ims.clinical.domain.objects.CodingComment.
+	  */
+	private java.util.List codingComments;
+	/** Filter worklist entries that are Awaiting Histology
+	  * Collection of ims.clinical.domain.objects.AwaitingHistology.
+	  */
+	private java.util.List awaitingHistology;
+	/** Histology Status */
+	private ims.domain.lookups.LookupInstance histologyStatus;
+	private ims.pathways.domain.objects.PathwaysRTTClockImpact admissionRTTOutcome;
+	private ims.pathways.domain.objects.PathwaysRTTClockImpact dischargeRTTOutcome;
+	private ims.domain.lookups.LookupInstance extendedLengthOfStayReason;
+	private ims.domain.lookups.LookupInstance medicallyFitForDischarge;
+	/** 
+	  * Collection of ims.core.admin.pas.domain.objects.ReasonForDelayedDischarge.
+	  */
+	private java.util.List reasonDelayedDischarge;
+	private Boolean patientRequiresTransport;
+	private ims.core.domain.objects.PatientTransportRequirements transportDetails;
+	/** Patient able to to to Discharge Lounge */
+	private Boolean ableToGoDischargeLounge;
+	private ims.domain.lookups.LookupInstance reasonCannotGoDischargeLounge;
+	private ims.core.clinical.domain.objects.Service service;
+	private Boolean selfAdmitPatient;
+	private ims.domain.lookups.LookupInstance sourceOfEmergencyReferral;
+	private ims.core.admin.pas.domain.objects.HealthyLodger healthyLodger;
+	/** The ward ward where patient was initially admited. */
+	private ims.core.resource.place.domain.objects.Location admissionWard;
+	private ims.clinical.domain.objects.CodingComment lastComment;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public AdmissionDetail (Integer id, int ver)
@@ -290,6 +327,148 @@ public class AdmissionDetail extends ims.domain.DomainObject implements ims.doma
 		this.extendedDetails = extendedDetails;
 	}
 
+	public ims.domain.lookups.LookupInstance getCodingStatus() {
+		return codingStatus;
+	}
+	public void setCodingStatus(ims.domain.lookups.LookupInstance codingStatus) {
+		this.codingStatus = codingStatus;
+	}
+
+	public java.util.List getCodingComments() {
+		if ( null == codingComments ) {
+			codingComments = new java.util.ArrayList();
+		}
+		return codingComments;
+	}
+	public void setCodingComments(java.util.List paramValue) {
+		this.codingComments = paramValue;
+	}
+
+	public java.util.List getAwaitingHistology() {
+		if ( null == awaitingHistology ) {
+			awaitingHistology = new java.util.ArrayList();
+		}
+		return awaitingHistology;
+	}
+	public void setAwaitingHistology(java.util.List paramValue) {
+		this.awaitingHistology = paramValue;
+	}
+
+	public ims.domain.lookups.LookupInstance getHistologyStatus() {
+		return histologyStatus;
+	}
+	public void setHistologyStatus(ims.domain.lookups.LookupInstance histologyStatus) {
+		this.histologyStatus = histologyStatus;
+	}
+
+	public ims.pathways.domain.objects.PathwaysRTTClockImpact getAdmissionRTTOutcome() {
+		return admissionRTTOutcome;
+	}
+	public void setAdmissionRTTOutcome(ims.pathways.domain.objects.PathwaysRTTClockImpact admissionRTTOutcome) {
+		this.admissionRTTOutcome = admissionRTTOutcome;
+	}
+
+	public ims.pathways.domain.objects.PathwaysRTTClockImpact getDischargeRTTOutcome() {
+		return dischargeRTTOutcome;
+	}
+	public void setDischargeRTTOutcome(ims.pathways.domain.objects.PathwaysRTTClockImpact dischargeRTTOutcome) {
+		this.dischargeRTTOutcome = dischargeRTTOutcome;
+	}
+
+	public ims.domain.lookups.LookupInstance getExtendedLengthOfStayReason() {
+		return extendedLengthOfStayReason;
+	}
+	public void setExtendedLengthOfStayReason(ims.domain.lookups.LookupInstance extendedLengthOfStayReason) {
+		this.extendedLengthOfStayReason = extendedLengthOfStayReason;
+	}
+
+	public ims.domain.lookups.LookupInstance getMedicallyFitForDischarge() {
+		return medicallyFitForDischarge;
+	}
+	public void setMedicallyFitForDischarge(ims.domain.lookups.LookupInstance medicallyFitForDischarge) {
+		this.medicallyFitForDischarge = medicallyFitForDischarge;
+	}
+
+	public java.util.List getReasonDelayedDischarge() {
+		if ( null == reasonDelayedDischarge ) {
+			reasonDelayedDischarge = new java.util.ArrayList();
+		}
+		return reasonDelayedDischarge;
+	}
+	public void setReasonDelayedDischarge(java.util.List paramValue) {
+		this.reasonDelayedDischarge = paramValue;
+	}
+
+	public Boolean isPatientRequiresTransport() {
+		return patientRequiresTransport;
+	}
+	public void setPatientRequiresTransport(Boolean patientRequiresTransport) {
+		this.patientRequiresTransport = patientRequiresTransport;
+	}
+
+	public ims.core.domain.objects.PatientTransportRequirements getTransportDetails() {
+		return transportDetails;
+	}
+	public void setTransportDetails(ims.core.domain.objects.PatientTransportRequirements transportDetails) {
+		this.transportDetails = transportDetails;
+	}
+
+	public Boolean isAbleToGoDischargeLounge() {
+		return ableToGoDischargeLounge;
+	}
+	public void setAbleToGoDischargeLounge(Boolean ableToGoDischargeLounge) {
+		this.ableToGoDischargeLounge = ableToGoDischargeLounge;
+	}
+
+	public ims.domain.lookups.LookupInstance getReasonCannotGoDischargeLounge() {
+		return reasonCannotGoDischargeLounge;
+	}
+	public void setReasonCannotGoDischargeLounge(ims.domain.lookups.LookupInstance reasonCannotGoDischargeLounge) {
+		this.reasonCannotGoDischargeLounge = reasonCannotGoDischargeLounge;
+	}
+
+	public ims.core.clinical.domain.objects.Service getService() {
+		return service;
+	}
+	public void setService(ims.core.clinical.domain.objects.Service service) {
+		this.service = service;
+	}
+
+	public Boolean isSelfAdmitPatient() {
+		return selfAdmitPatient;
+	}
+	public void setSelfAdmitPatient(Boolean selfAdmitPatient) {
+		this.selfAdmitPatient = selfAdmitPatient;
+	}
+
+	public ims.domain.lookups.LookupInstance getSourceOfEmergencyReferral() {
+		return sourceOfEmergencyReferral;
+	}
+	public void setSourceOfEmergencyReferral(ims.domain.lookups.LookupInstance sourceOfEmergencyReferral) {
+		this.sourceOfEmergencyReferral = sourceOfEmergencyReferral;
+	}
+
+	public ims.core.admin.pas.domain.objects.HealthyLodger getHealthyLodger() {
+		return healthyLodger;
+	}
+	public void setHealthyLodger(ims.core.admin.pas.domain.objects.HealthyLodger healthyLodger) {
+		this.healthyLodger = healthyLodger;
+	}
+
+	public ims.core.resource.place.domain.objects.Location getAdmissionWard() {
+		return admissionWard;
+	}
+	public void setAdmissionWard(ims.core.resource.place.domain.objects.Location admissionWard) {
+		this.admissionWard = admissionWard;
+	}
+
+	public ims.clinical.domain.objects.CodingComment getLastComment() {
+		return lastComment;
+	}
+	public void setLastComment(ims.clinical.domain.objects.CodingComment lastComment) {
+		this.lastComment = lastComment;
+	}
+
 	public ims.domain.SystemInformation getSystemInformation() {
 		if (systemInformation == null) systemInformation = new ims.domain.SystemInformation();
 		return systemInformation;
@@ -459,6 +638,164 @@ public class AdmissionDetail extends ims.domain.DomainObject implements ims.doma
 			auditStr.append(toShortClassName(extendedDetails));
 				
 		    auditStr.append(extendedDetails.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*codingStatus* :");
+		if (codingStatus != null)
+			auditStr.append(codingStatus.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*codingComments* :");
+		if (codingComments != null)
+		{
+		int i25=0;
+		for (i25=0; i25<codingComments.size(); i25++)
+		{
+			if (i25 > 0)
+				auditStr.append(",");
+			ims.clinical.domain.objects.CodingComment obj = (ims.clinical.domain.objects.CodingComment)codingComments.get(i25);
+		    if (obj != null)
+			{
+				if (i25 == 0)
+				{
+				auditStr.append(toShortClassName(obj));
+				auditStr.append("[");
+				}
+		        auditStr.append(obj.getId());
+			}
+		}
+		if (i25 > 0)
+			auditStr.append("] " + i25);
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*awaitingHistology* :");
+		if (awaitingHistology != null)
+		{
+		int i26=0;
+		for (i26=0; i26<awaitingHistology.size(); i26++)
+		{
+			if (i26 > 0)
+				auditStr.append(",");
+			ims.clinical.domain.objects.AwaitingHistology obj = (ims.clinical.domain.objects.AwaitingHistology)awaitingHistology.get(i26);
+		    if (obj != null)
+			{
+				if (i26 == 0)
+				{
+				auditStr.append(toShortClassName(obj));
+				auditStr.append("[");
+				}
+		        auditStr.append(obj.getId());
+			}
+		}
+		if (i26 > 0)
+			auditStr.append("] " + i26);
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*histologyStatus* :");
+		if (histologyStatus != null)
+			auditStr.append(histologyStatus.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*admissionRTTOutcome* :");
+		if (admissionRTTOutcome != null)
+		{
+			auditStr.append(toShortClassName(admissionRTTOutcome));
+				
+		    auditStr.append(admissionRTTOutcome.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*dischargeRTTOutcome* :");
+		if (dischargeRTTOutcome != null)
+		{
+			auditStr.append(toShortClassName(dischargeRTTOutcome));
+				
+		    auditStr.append(dischargeRTTOutcome.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*extendedLengthOfStayReason* :");
+		if (extendedLengthOfStayReason != null)
+			auditStr.append(extendedLengthOfStayReason.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*medicallyFitForDischarge* :");
+		if (medicallyFitForDischarge != null)
+			auditStr.append(medicallyFitForDischarge.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*reasonDelayedDischarge* :");
+		if (reasonDelayedDischarge != null)
+		{
+		int i32=0;
+		for (i32=0; i32<reasonDelayedDischarge.size(); i32++)
+		{
+			if (i32 > 0)
+				auditStr.append(",");
+			ims.core.admin.pas.domain.objects.ReasonForDelayedDischarge obj = (ims.core.admin.pas.domain.objects.ReasonForDelayedDischarge)reasonDelayedDischarge.get(i32);
+		    if (obj != null)
+			{
+				if (i32 == 0)
+				{
+				auditStr.append(toShortClassName(obj));
+				auditStr.append("[");
+				}
+		        auditStr.append(obj.getId());
+			}
+		}
+		if (i32 > 0)
+			auditStr.append("] " + i32);
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*patientRequiresTransport* :");
+		auditStr.append(patientRequiresTransport);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*transportDetails* :");
+		if (transportDetails != null)
+		{
+			auditStr.append(toShortClassName(transportDetails));
+				
+		    auditStr.append(transportDetails.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*ableToGoDischargeLounge* :");
+		auditStr.append(ableToGoDischargeLounge);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*reasonCannotGoDischargeLounge* :");
+		if (reasonCannotGoDischargeLounge != null)
+			auditStr.append(reasonCannotGoDischargeLounge.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*service* :");
+		if (service != null)
+		{
+			auditStr.append(toShortClassName(service));
+				
+		    auditStr.append(service.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*selfAdmitPatient* :");
+		auditStr.append(selfAdmitPatient);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*sourceOfEmergencyReferral* :");
+		if (sourceOfEmergencyReferral != null)
+			auditStr.append(sourceOfEmergencyReferral.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*healthyLodger* :");
+		if (healthyLodger != null)
+		{
+			auditStr.append(toShortClassName(healthyLodger));
+				
+		    auditStr.append(healthyLodger.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*admissionWard* :");
+		if (admissionWard != null)
+		{
+			auditStr.append(toShortClassName(admissionWard));
+				
+		    auditStr.append(admissionWard.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*lastComment* :");
+		if (lastComment != null)
+		{
+			auditStr.append(toShortClassName(lastComment));
+				
+		    auditStr.append(lastComment.getId());
 		}
 	    auditStr.append("; ");
 		return auditStr.toString();
@@ -645,6 +982,129 @@ public class AdmissionDetail extends ims.domain.DomainObject implements ims.doma
 			sb.append("<extendedDetails>");
 			sb.append(this.getExtendedDetails().toXMLString(domMap)); 	
 			sb.append("</extendedDetails>");		
+		}
+		if (this.getCodingStatus() != null)
+		{
+			sb.append("<codingStatus>");
+			sb.append(this.getCodingStatus().toXMLString()); 
+			sb.append("</codingStatus>");		
+		}
+		if (this.getCodingComments() != null)
+		{
+			if (this.getCodingComments().size() > 0 )
+			{
+			sb.append("<codingComments>");
+			sb.append(ims.domain.DomainObject.toXMLString(this.getCodingComments(), domMap));
+			sb.append("</codingComments>");		
+			}
+		}
+		if (this.getAwaitingHistology() != null)
+		{
+			if (this.getAwaitingHistology().size() > 0 )
+			{
+			sb.append("<awaitingHistology>");
+			sb.append(ims.domain.DomainObject.toXMLString(this.getAwaitingHistology(), domMap));
+			sb.append("</awaitingHistology>");		
+			}
+		}
+		if (this.getHistologyStatus() != null)
+		{
+			sb.append("<histologyStatus>");
+			sb.append(this.getHistologyStatus().toXMLString()); 
+			sb.append("</histologyStatus>");		
+		}
+		if (this.getAdmissionRTTOutcome() != null)
+		{
+			sb.append("<admissionRTTOutcome>");
+			sb.append(this.getAdmissionRTTOutcome().toXMLString(domMap)); 	
+			sb.append("</admissionRTTOutcome>");		
+		}
+		if (this.getDischargeRTTOutcome() != null)
+		{
+			sb.append("<dischargeRTTOutcome>");
+			sb.append(this.getDischargeRTTOutcome().toXMLString(domMap)); 	
+			sb.append("</dischargeRTTOutcome>");		
+		}
+		if (this.getExtendedLengthOfStayReason() != null)
+		{
+			sb.append("<extendedLengthOfStayReason>");
+			sb.append(this.getExtendedLengthOfStayReason().toXMLString()); 
+			sb.append("</extendedLengthOfStayReason>");		
+		}
+		if (this.getMedicallyFitForDischarge() != null)
+		{
+			sb.append("<medicallyFitForDischarge>");
+			sb.append(this.getMedicallyFitForDischarge().toXMLString()); 
+			sb.append("</medicallyFitForDischarge>");		
+		}
+		if (this.getReasonDelayedDischarge() != null)
+		{
+			if (this.getReasonDelayedDischarge().size() > 0 )
+			{
+			sb.append("<reasonDelayedDischarge>");
+			sb.append(ims.domain.DomainObject.toXMLString(this.getReasonDelayedDischarge(), domMap));
+			sb.append("</reasonDelayedDischarge>");		
+			}
+		}
+		if (this.isPatientRequiresTransport() != null)
+		{
+			sb.append("<patientRequiresTransport>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isPatientRequiresTransport().toString()));
+			sb.append("</patientRequiresTransport>");		
+		}
+		if (this.getTransportDetails() != null)
+		{
+			sb.append("<transportDetails>");
+			sb.append(this.getTransportDetails().toXMLString(domMap)); 	
+			sb.append("</transportDetails>");		
+		}
+		if (this.isAbleToGoDischargeLounge() != null)
+		{
+			sb.append("<ableToGoDischargeLounge>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isAbleToGoDischargeLounge().toString()));
+			sb.append("</ableToGoDischargeLounge>");		
+		}
+		if (this.getReasonCannotGoDischargeLounge() != null)
+		{
+			sb.append("<reasonCannotGoDischargeLounge>");
+			sb.append(this.getReasonCannotGoDischargeLounge().toXMLString()); 
+			sb.append("</reasonCannotGoDischargeLounge>");		
+		}
+		if (this.getService() != null)
+		{
+			sb.append("<service>");
+			sb.append(this.getService().toXMLString(domMap)); 	
+			sb.append("</service>");		
+		}
+		if (this.isSelfAdmitPatient() != null)
+		{
+			sb.append("<selfAdmitPatient>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isSelfAdmitPatient().toString()));
+			sb.append("</selfAdmitPatient>");		
+		}
+		if (this.getSourceOfEmergencyReferral() != null)
+		{
+			sb.append("<sourceOfEmergencyReferral>");
+			sb.append(this.getSourceOfEmergencyReferral().toXMLString()); 
+			sb.append("</sourceOfEmergencyReferral>");		
+		}
+		if (this.getHealthyLodger() != null)
+		{
+			sb.append("<healthyLodger>");
+			sb.append(this.getHealthyLodger().toXMLString(domMap)); 	
+			sb.append("</healthyLodger>");		
+		}
+		if (this.getAdmissionWard() != null)
+		{
+			sb.append("<admissionWard>");
+			sb.append(this.getAdmissionWard().toXMLString(domMap)); 	
+			sb.append("</admissionWard>");		
+		}
+		if (this.getLastComment() != null)
+		{
+			sb.append("<lastComment>");
+			sb.append(this.getLastComment().toXMLString(domMap)); 	
+			sb.append("</lastComment>");		
 		}
 		return sb.toString();
 	}
@@ -938,12 +1398,126 @@ public class AdmissionDetail extends ims.domain.DomainObject implements ims.doma
 			fldEl = fldEl.element("class");		
 			obj.setExtendedDetails(ims.core.admin.pas.domain.objects.ExtendedAdmissionDetail.getExtendedAdmissionDetailfromXML(fldEl, factory, domMap)); 
 		}
+		fldEl = el.element("codingStatus");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setCodingStatus(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("codingComments");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("list");	
+			obj.setCodingComments(ims.clinical.domain.objects.CodingComment.fromListXMLString(fldEl, factory, obj.getCodingComments(), domMap));
+		}
+		fldEl = el.element("awaitingHistology");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("list");	
+			obj.setAwaitingHistology(ims.clinical.domain.objects.AwaitingHistology.fromListXMLString(fldEl, factory, obj.getAwaitingHistology(), domMap));
+		}
+		fldEl = el.element("histologyStatus");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setHistologyStatus(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("admissionRTTOutcome");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setAdmissionRTTOutcome(ims.pathways.domain.objects.PathwaysRTTClockImpact.getPathwaysRTTClockImpactfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("dischargeRTTOutcome");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setDischargeRTTOutcome(ims.pathways.domain.objects.PathwaysRTTClockImpact.getPathwaysRTTClockImpactfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("extendedLengthOfStayReason");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setExtendedLengthOfStayReason(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("medicallyFitForDischarge");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setMedicallyFitForDischarge(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("reasonDelayedDischarge");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("list");	
+			obj.setReasonDelayedDischarge(ims.core.admin.pas.domain.objects.ReasonForDelayedDischarge.fromListXMLString(fldEl, factory, obj.getReasonDelayedDischarge(), domMap));
+		}
+		fldEl = el.element("patientRequiresTransport");
+		if(fldEl != null)
+		{	
+    		obj.setPatientRequiresTransport(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("transportDetails");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setTransportDetails(ims.core.domain.objects.PatientTransportRequirements.getPatientTransportRequirementsfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("ableToGoDischargeLounge");
+		if(fldEl != null)
+		{	
+    		obj.setAbleToGoDischargeLounge(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("reasonCannotGoDischargeLounge");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setReasonCannotGoDischargeLounge(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("service");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setService(ims.core.clinical.domain.objects.Service.getServicefromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("selfAdmitPatient");
+		if(fldEl != null)
+		{	
+    		obj.setSelfAdmitPatient(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("sourceOfEmergencyReferral");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setSourceOfEmergencyReferral(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("healthyLodger");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setHealthyLodger(ims.core.admin.pas.domain.objects.HealthyLodger.getHealthyLodgerfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("admissionWard");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setAdmissionWard(ims.core.resource.place.domain.objects.Location.getLocationfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("lastComment");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setLastComment(ims.clinical.domain.objects.CodingComment.getCodingCommentfromXML(fldEl, factory, domMap)); 
+		}
 	}
 
 	public static String[] getCollectionFields()
 	{
 		return new String[]{
 		 "transferHistory"
+		, "codingComments"
+		, "awaitingHistology"
+		, "reasonDelayedDischarge"
 		};
 	}
 
@@ -974,6 +1548,25 @@ public class AdmissionDetail extends ims.domain.DomainObject implements ims.doma
 		public static final String CaseFolderComments = "caseFolderComments";
 		public static final String AdmissionEpisode = "admissionEpisode";
 		public static final String ExtendedDetails = "extendedDetails";
+		public static final String CodingStatus = "codingStatus";
+		public static final String CodingComments = "codingComments";
+		public static final String AwaitingHistology = "awaitingHistology";
+		public static final String HistologyStatus = "histologyStatus";
+		public static final String AdmissionRTTOutcome = "admissionRTTOutcome";
+		public static final String DischargeRTTOutcome = "dischargeRTTOutcome";
+		public static final String ExtendedLengthOfStayReason = "extendedLengthOfStayReason";
+		public static final String MedicallyFitForDischarge = "medicallyFitForDischarge";
+		public static final String ReasonDelayedDischarge = "reasonDelayedDischarge";
+		public static final String PatientRequiresTransport = "patientRequiresTransport";
+		public static final String TransportDetails = "transportDetails";
+		public static final String AbleToGoDischargeLounge = "ableToGoDischargeLounge";
+		public static final String ReasonCannotGoDischargeLounge = "reasonCannotGoDischargeLounge";
+		public static final String Service = "service";
+		public static final String SelfAdmitPatient = "selfAdmitPatient";
+		public static final String SourceOfEmergencyReferral = "sourceOfEmergencyReferral";
+		public static final String HealthyLodger = "healthyLodger";
+		public static final String AdmissionWard = "admissionWard";
+		public static final String LastComment = "lastComment";
 	}
 }
 

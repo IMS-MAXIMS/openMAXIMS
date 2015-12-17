@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.core.vo.domain;
@@ -56,8 +61,6 @@ public class PatientDiagnosisVoAssembler
 		valueObjectDest.setDiagnosedBy(valueObjectSrc.getDiagnosedBy());
 		// isResolved
 		valueObjectDest.setIsResolved(valueObjectSrc.getIsResolved());
-		// ResolvedHCP
-		valueObjectDest.setResolvedHCP(valueObjectSrc.getResolvedHCP());
 		// InformedOfDiagnosis
 		valueObjectDest.setInformedOfDiagnosis(valueObjectSrc.getInformedOfDiagnosis());
 		// Notes
@@ -76,6 +79,8 @@ public class PatientDiagnosisVoAssembler
 		valueObjectDest.setDiagConfirmedDateTime(valueObjectSrc.getDiagConfirmedDateTime());
 		// StatusHistory
 		valueObjectDest.setStatusHistory(valueObjectSrc.getStatusHistory());
+		// ResolvedHCP
+		valueObjectDest.setResolvedHCP(valueObjectSrc.getResolvedHCP());
 		// PrimaryForCareSpells
 		valueObjectDest.setPrimaryForCareSpells(valueObjectSrc.getPrimaryForCareSpells());
 		// isComplication
@@ -114,6 +119,8 @@ public class PatientDiagnosisVoAssembler
 		valueObjectDest.setIsComorbidity(valueObjectSrc.getIsComorbidity());
 		// EpisodeOfCare
 		valueObjectDest.setEpisodeOfCare(valueObjectSrc.getEpisodeOfCare());
+		// diagnosedOnAdmission
+		valueObjectDest.setDiagnosedOnAdmission(valueObjectSrc.getDiagnosedOnAdmission());
 	 	return valueObjectDest;
 	 }
 
@@ -444,8 +451,6 @@ public class PatientDiagnosisVoAssembler
 		valueObject.setDiagnosedBy(ims.core.vo.domain.HcpAssembler.create(map, domainObject.getDiagnosedBy()) );
 		// isResolved
 		valueObject.setIsResolved( domainObject.isIsResolved() );
-		// ResolvedHCP
-		valueObject.setResolvedHCP((ims.core.vo.MedicVo)ims.core.vo.domain.MedicVoAssembler.create(map, domainObject.getResolvedHCP()) );
 		// InformedOfDiagnosis
 		java.util.List listInformedOfDiagnosis = domainObject.getInformedOfDiagnosis();
 		ims.core.vo.lookups.DiagnosisInformedOfDiagnosisCollection InformedOfDiagnosis = new ims.core.vo.lookups.DiagnosisInformedOfDiagnosisCollection();
@@ -493,40 +498,40 @@ public class PatientDiagnosisVoAssembler
 		// Notes
 		valueObject.setNotes(domainObject.getNotes());
 		// Specialty
-		ims.domain.lookups.LookupInstance instance7 = domainObject.getSpecialty();
-		if ( null != instance7 ) {
+		ims.domain.lookups.LookupInstance instance6 = domainObject.getSpecialty();
+		if ( null != instance6 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
 			img = null;
-			if (instance7.getImage() != null) 
+			if (instance6.getImage() != null) 
 			{
-				img = new ims.framework.utils.ImagePath(instance7.getImage().getImageId(), instance7.getImage().getImagePath());
+				img = new ims.framework.utils.ImagePath(instance6.getImage().getImageId(), instance6.getImage().getImagePath());
 			}
-			color = instance7.getColor();
+			color = instance6.getColor();
 			if (color != null) 
 				color.getValue();
 
-			ims.core.vo.lookups.Specialty voLookup7 = new ims.core.vo.lookups.Specialty(instance7.getId(),instance7.getText(), instance7.isActive(), null, img, color);
-			ims.core.vo.lookups.Specialty parentVoLookup7 = voLookup7;
-			ims.domain.lookups.LookupInstance parent7 = instance7.getParent();
-			while (parent7 != null)
+			ims.core.vo.lookups.Specialty voLookup6 = new ims.core.vo.lookups.Specialty(instance6.getId(),instance6.getText(), instance6.isActive(), null, img, color);
+			ims.core.vo.lookups.Specialty parentVoLookup6 = voLookup6;
+			ims.domain.lookups.LookupInstance parent6 = instance6.getParent();
+			while (parent6 != null)
 			{
-				if (parent7.getImage() != null) 
+				if (parent6.getImage() != null) 
 				{
-					img = new ims.framework.utils.ImagePath(parent7.getImage().getImageId(), parent7.getImage().getImagePath() );
+					img = new ims.framework.utils.ImagePath(parent6.getImage().getImageId(), parent6.getImage().getImagePath() );
 				}
 				else 
 				{
 					img = null;
 				}
-				color = parent7.getColor();
+				color = parent6.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup7.setParent(new ims.core.vo.lookups.Specialty(parent7.getId(),parent7.getText(), parent7.isActive(), null, img, color));
-				parentVoLookup7 = parentVoLookup7.getParent();
-								parent7 = parent7.getParent();
+								parentVoLookup6.setParent(new ims.core.vo.lookups.Specialty(parent6.getId(),parent6.getText(), parent6.isActive(), null, img, color));
+				parentVoLookup6 = parentVoLookup6.getParent();
+								parent6 = parent6.getParent();
 			}			
-			valueObject.setSpecialty(voLookup7);
+			valueObject.setSpecialty(voLookup6);
 		}
 				// BasisofDiagnosis
 		java.util.List listBasisofDiagnosis = domainObject.getBasisofDiagnosis();
@@ -575,40 +580,40 @@ public class PatientDiagnosisVoAssembler
 		// ExcludefromOthers
 		valueObject.setExcludefromOthers( domainObject.isExcludefromOthers() );
 		// DiagConfirmedStatus
-		ims.domain.lookups.LookupInstance instance10 = domainObject.getDiagConfirmedStatus();
-		if ( null != instance10 ) {
+		ims.domain.lookups.LookupInstance instance9 = domainObject.getDiagConfirmedStatus();
+		if ( null != instance9 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
 			img = null;
-			if (instance10.getImage() != null) 
+			if (instance9.getImage() != null) 
 			{
-				img = new ims.framework.utils.ImagePath(instance10.getImage().getImageId(), instance10.getImage().getImagePath());
+				img = new ims.framework.utils.ImagePath(instance9.getImage().getImageId(), instance9.getImage().getImagePath());
 			}
-			color = instance10.getColor();
+			color = instance9.getColor();
 			if (color != null) 
 				color.getValue();
 
-			ims.core.vo.lookups.ConfirmedStatus voLookup10 = new ims.core.vo.lookups.ConfirmedStatus(instance10.getId(),instance10.getText(), instance10.isActive(), null, img, color);
-			ims.core.vo.lookups.ConfirmedStatus parentVoLookup10 = voLookup10;
-			ims.domain.lookups.LookupInstance parent10 = instance10.getParent();
-			while (parent10 != null)
+			ims.core.vo.lookups.ConfirmedStatus voLookup9 = new ims.core.vo.lookups.ConfirmedStatus(instance9.getId(),instance9.getText(), instance9.isActive(), null, img, color);
+			ims.core.vo.lookups.ConfirmedStatus parentVoLookup9 = voLookup9;
+			ims.domain.lookups.LookupInstance parent9 = instance9.getParent();
+			while (parent9 != null)
 			{
-				if (parent10.getImage() != null) 
+				if (parent9.getImage() != null) 
 				{
-					img = new ims.framework.utils.ImagePath(parent10.getImage().getImageId(), parent10.getImage().getImagePath() );
+					img = new ims.framework.utils.ImagePath(parent9.getImage().getImageId(), parent9.getImage().getImagePath() );
 				}
 				else 
 				{
 					img = null;
 				}
-				color = parent10.getColor();
+				color = parent9.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup10.setParent(new ims.core.vo.lookups.ConfirmedStatus(parent10.getId(),parent10.getText(), parent10.isActive(), null, img, color));
-				parentVoLookup10 = parentVoLookup10.getParent();
-								parent10 = parent10.getParent();
+								parentVoLookup9.setParent(new ims.core.vo.lookups.ConfirmedStatus(parent9.getId(),parent9.getText(), parent9.isActive(), null, img, color));
+				parentVoLookup9 = parentVoLookup9.getParent();
+								parent9 = parent9.getParent();
 			}			
-			valueObject.setDiagConfirmedStatus(voLookup10);
+			valueObject.setDiagConfirmedStatus(voLookup9);
 		}
 				// DiagConfirmedBy
 		valueObject.setDiagConfirmedBy(ims.core.vo.domain.HcpAssembler.create(map, domainObject.getDiagConfirmedBy()) );
@@ -620,6 +625,8 @@ public class PatientDiagnosisVoAssembler
 		}
 		// StatusHistory
 		valueObject.setStatusHistory(ims.clinical.vo.domain.PatientDiagnosisStatusVoAssembler.createPatientDiagnosisStatusVoCollectionFromPatientDiagnosisStatus(map, domainObject.getStatusHistory()) );
+		// ResolvedHCP
+		valueObject.setResolvedHCP((ims.core.vo.HcpLiteVo)ims.core.vo.domain.HcpLiteVoAssembler.create(map, domainObject.getResolvedHCP()) );
 		// PrimaryForCareSpells
 		valueObject.setPrimaryForCareSpells(ims.core.vo.domain.CSPrimaryDiagnosisVoAssembler.createCSPrimaryDiagnosisVoCollectionFromCsPrimaryDiagnosis(map, domainObject.getPrimaryForCareSpells()) );
 		// isComplication
@@ -751,6 +758,8 @@ public class PatientDiagnosisVoAssembler
 				valueObject.setEpisodeOfCare(new ims.core.admin.vo.EpisodeOfCareRefVo(domainObject.getEpisodeOfCare().getId(), domainObject.getEpisodeOfCare().getVersion()));
 			}
 		}
+		// diagnosedOnAdmission
+		valueObject.setDiagnosedOnAdmission( domainObject.isDiagnosedOnAdmission() );
  		return valueObject;
 	 }
 
@@ -810,23 +819,22 @@ public class PatientDiagnosisVoAssembler
 		domainObject.setSite(value1);
 		domainObject.setDiagnosedBy(ims.core.vo.domain.HcpAssembler.extractHcp(domainFactory, valueObject.getDiagnosedBy(), domMap));
 		domainObject.setIsResolved(valueObject.getIsResolved());
-		domainObject.setResolvedHCP(ims.core.vo.domain.MedicVoAssembler.extractMedic(domainFactory, (ims.core.vo.MedicVo)valueObject.getResolvedHCP(), domMap));
-		ims.core.vo.lookups.DiagnosisInformedOfDiagnosisCollection collection5 =
+		ims.core.vo.lookups.DiagnosisInformedOfDiagnosisCollection collection4 =
 	valueObject.getInformedOfDiagnosis();
 	    java.util.List domainInformedOfDiagnosis = domainObject.getInformedOfDiagnosis();;			
-	    int collection5Size=0;
-		if (collection5 == null)
+	    int collection4Size=0;
+		if (collection4 == null)
 		{
 			domainInformedOfDiagnosis = new java.util.ArrayList(0);
 		}
 		else
 		{
-			collection5Size = collection5.size();
+			collection4Size = collection4.size();
 		}
 		
-		for(int i=0; i<collection5Size; i++) 
+		for(int i=0; i<collection4Size; i++) 
 		{
-			int instanceId = collection5.get(i).getID();
+			int instanceId = collection4.get(i).getID();
 			ims.domain.lookups.LookupInstanceRef dom =new ims.domain.lookups.LookupInstanceRef(domainFactory.getLookupInstance(instanceId));
 			
 			int domIdx = domainInformedOfDiagnosis.indexOf(dom);
@@ -844,11 +852,11 @@ public class PatientDiagnosisVoAssembler
 		
 		//Remove all ones in domList where index > voCollection.size() as these should
 		//now represent the ones removed from the VO collection. No longer referenced.
-		int j5 = domainInformedOfDiagnosis.size();
-		while (j5 > collection5Size)
+		int j4 = domainInformedOfDiagnosis.size();
+		while (j4 > collection4Size)
 		{
-			domainInformedOfDiagnosis.remove(j5-1);
-			j5 = domainInformedOfDiagnosis.size();
+			domainInformedOfDiagnosis.remove(j4-1);
+			j4 = domainInformedOfDiagnosis.size();
 		}
 
 		domainObject.setInformedOfDiagnosis(domainInformedOfDiagnosis);		
@@ -860,29 +868,29 @@ public class PatientDiagnosisVoAssembler
 		}
 		domainObject.setNotes(valueObject.getNotes());
 		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value7 = null;
+		ims.domain.lookups.LookupInstance value6 = null;
 		if ( null != valueObject.getSpecialty() ) 
 		{
-			value7 =
+			value6 =
 				domainFactory.getLookupInstance(valueObject.getSpecialty().getID());
 		}
-		domainObject.setSpecialty(value7);
-		ims.core.vo.lookups.DiagnosisBasisofDiagnosisCollection collection8 =
+		domainObject.setSpecialty(value6);
+		ims.core.vo.lookups.DiagnosisBasisofDiagnosisCollection collection7 =
 	valueObject.getBasisofDiagnosis();
 	    java.util.List domainBasisofDiagnosis = domainObject.getBasisofDiagnosis();;			
-	    int collection8Size=0;
-		if (collection8 == null)
+	    int collection7Size=0;
+		if (collection7 == null)
 		{
 			domainBasisofDiagnosis = new java.util.ArrayList(0);
 		}
 		else
 		{
-			collection8Size = collection8.size();
+			collection7Size = collection7.size();
 		}
 		
-		for(int i=0; i<collection8Size; i++) 
+		for(int i=0; i<collection7Size; i++) 
 		{
-			int instanceId = collection8.get(i).getID();
+			int instanceId = collection7.get(i).getID();
 			ims.domain.lookups.LookupInstanceRef dom =new ims.domain.lookups.LookupInstanceRef(domainFactory.getLookupInstance(instanceId));
 			
 			int domIdx = domainBasisofDiagnosis.indexOf(dom);
@@ -900,32 +908,33 @@ public class PatientDiagnosisVoAssembler
 		
 		//Remove all ones in domList where index > voCollection.size() as these should
 		//now represent the ones removed from the VO collection. No longer referenced.
-		int j8 = domainBasisofDiagnosis.size();
-		while (j8 > collection8Size)
+		int j7 = domainBasisofDiagnosis.size();
+		while (j7 > collection7Size)
 		{
-			domainBasisofDiagnosis.remove(j8-1);
-			j8 = domainBasisofDiagnosis.size();
+			domainBasisofDiagnosis.remove(j7-1);
+			j7 = domainBasisofDiagnosis.size();
 		}
 
 		domainObject.setBasisofDiagnosis(domainBasisofDiagnosis);		
 		domainObject.setExcludefromOthers(valueObject.getExcludefromOthers());
 		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value10 = null;
+		ims.domain.lookups.LookupInstance value9 = null;
 		if ( null != valueObject.getDiagConfirmedStatus() ) 
 		{
-			value10 =
+			value9 =
 				domainFactory.getLookupInstance(valueObject.getDiagConfirmedStatus().getID());
 		}
-		domainObject.setDiagConfirmedStatus(value10);
+		domainObject.setDiagConfirmedStatus(value9);
 		domainObject.setDiagConfirmedBy(ims.core.vo.domain.HcpAssembler.extractHcp(domainFactory, valueObject.getDiagConfirmedBy(), domMap));
-		ims.framework.utils.DateTime dateTime12 = valueObject.getDiagConfirmedDateTime();
-		java.util.Date value12 = null;
-		if ( dateTime12 != null ) 
+		ims.framework.utils.DateTime dateTime11 = valueObject.getDiagConfirmedDateTime();
+		java.util.Date value11 = null;
+		if ( dateTime11 != null ) 
 		{
-			value12 = dateTime12.getJavaDate();
+			value11 = dateTime11.getJavaDate();
 		}
-		domainObject.setDiagConfirmedDateTime(value12);
+		domainObject.setDiagConfirmedDateTime(value11);
 		domainObject.setStatusHistory(ims.clinical.vo.domain.PatientDiagnosisStatusVoAssembler.extractPatientDiagnosisStatusSet(domainFactory, valueObject.getStatusHistory(), domainObject.getStatusHistory(), domMap));		
+		domainObject.setResolvedHCP(ims.core.vo.domain.HcpLiteVoAssembler.extractHcp(domainFactory, (ims.core.vo.HcpLiteVo)valueObject.getResolvedHCP(), domMap));
 		domainObject.setPrimaryForCareSpells(ims.core.vo.domain.CSPrimaryDiagnosisVoAssembler.extractCsPrimaryDiagnosisSet(domainFactory, valueObject.getPrimaryForCareSpells(), domainObject.getPrimaryForCareSpells(), domMap));		
 		domainObject.setIsComplication(valueObject.getIsComplication());
 		java.util.Date value16 = null;
@@ -1039,6 +1048,7 @@ public class PatientDiagnosisVoAssembler
 			}
 		}
 		domainObject.setEpisodeOfCare(value32);
+		domainObject.setDiagnosedOnAdmission(valueObject.getDiagnosedOnAdmission());
 
 		return domainObject;
 	}

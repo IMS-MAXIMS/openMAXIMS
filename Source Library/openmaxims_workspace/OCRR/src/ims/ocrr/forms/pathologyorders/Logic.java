@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -48,6 +53,7 @@ import ims.ocrr.forms.pathologyorders.GenForm.grdResultsRow;
 import ims.ocrr.vo.OrderSpecimenPathologyVo;
 import ims.ocrr.vo.PathologyOrderVo;
 import ims.ocrr.vo.PathologyOrderVoCollection;
+import ims.ocrr.vo.PathologyOrdersSearchCriteriaVo;
 import ims.ocrr.vo.RoleDisciplineSecurityLevelLiteGCVo;
 import ims.ocrr.vo.SecurityLevelConfigVo;
 import ims.ocrr.vo.lookups.Category;
@@ -66,7 +72,16 @@ public class Logic extends BaseLogic
 	protected void onFormOpen(Object[] args) throws ims.framework.exceptions.PresentationLogicException
 	{
 		initialize();
+		
+		//WDEV-19389 
+		if (form.getGlobalContext().OCRR.getPathologyOrdersSearchCriteriaIsNotNull())
+		{
+			setSearchCriteria(form.getGlobalContext().OCRR.getPathologyOrdersSearchCriteria());
+			if (search())
+				form.getGlobalContext().OCRR.setPathologyOrdersSearchCriteria(getSearchCriteria());
+		}		
 	}
+
 	protected void onBtnPrintClick() throws ims.framework.exceptions.PresentationLogicException
 	{
 		String urlQueryServer = ConfigFlag.GEN.QUERY_SERVER_URL.getValue();
@@ -83,7 +98,7 @@ public class Logic extends BaseLogic
 				{
 					if(rep != null)
 					{
-						engine.showMessage("More than one report assigned to this form.");
+						engine.showMessage("More than one report is assigned to this form.");
 						return;
 					}
 					
@@ -191,6 +206,7 @@ public class Logic extends BaseLogic
 	}
 	protected void onImbClearClick() throws ims.framework.exceptions.PresentationLogicException
 	{
+		form.getGlobalContext().OCRR.setPathologyOrdersSearchCriteria(null);//WDEV-19389 
 		form.cmbDepartment().setValue(null);
 		form.cmbService().clear();
 		form.dteFrom().setValue(null);	// WDEV-12692
@@ -204,8 +220,45 @@ public class Logic extends BaseLogic
 	}
 	protected void onImbSearchClick() throws ims.framework.exceptions.PresentationLogicException
 	{
+		//WDEV-19389 
+		if (search())
+			form.getGlobalContext().OCRR.setPathologyOrdersSearchCriteria(getSearchCriteria());
+	}
+	
+	private PathologyOrdersSearchCriteriaVo getSearchCriteria()
+	{
+		PathologyOrdersSearchCriteriaVo searchCriteria = new PathologyOrdersSearchCriteriaVo();
+		
+		searchCriteria.setLocation(form.cmbDepartment().getValue());
+		searchCriteria.setDiscipline(form.cmbService().getValue());
+		searchCriteria.setFromDate(form.dteFrom().getValue());
+		searchCriteria.setToDate(form.dteTo().getValue());
+		
+		return searchCriteria;
+	}
+	
+	private void setSearchCriteria(PathologyOrdersSearchCriteriaVo pathologyOrdersSearchCriteriaVo) 
+	{
+		if (pathologyOrdersSearchCriteriaVo.getLocationIsNotNull())
+		{
+			form.cmbDepartment().newRow(pathologyOrdersSearchCriteriaVo.getLocation(), pathologyOrdersSearchCriteriaVo.getLocation().getName());
+			form.cmbDepartment().setValue(pathologyOrdersSearchCriteriaVo.getLocation());
+		}
+		if (pathologyOrdersSearchCriteriaVo.getDisciplineIsNotNull())
+		{
+			form.cmbService().newRow(pathologyOrdersSearchCriteriaVo.getDiscipline(), pathologyOrdersSearchCriteriaVo.getDiscipline().getServiceName());
+			form.cmbService().setValue(pathologyOrdersSearchCriteriaVo.getDiscipline());
+		}
+		
+		form.dteFrom().setValue(pathologyOrdersSearchCriteriaVo.getFromDate());
+		form.dteTo().setValue(pathologyOrdersSearchCriteriaVo.getToDate());
+		
+	}
+	
+	private boolean search()
+	{
 		if(validateUISearchCriteria() == false)
-			return;
+			return false;
 		
 		form.getLocalContext().setPrintingContext(null);
 		
@@ -222,7 +275,9 @@ public class Logic extends BaseLogic
 		//--------
 		
 		enablePrintButton();
+		return true;
 	}
+	
 	protected void onCmbDepartmentValueChanged() throws ims.framework.exceptions.PresentationLogicException
 	{
 		loadService(form.cmbDepartment().getValue());
@@ -493,7 +548,7 @@ public class Logic extends BaseLogic
 		// WDEV-12692 - 'From Date' must be set before 'To Date'
 		if (form.dteFrom().getValue() != null && form.dteTo().getValue() != null && form.dteFrom().getValue().isGreaterThan(form.dteTo().getValue()))
 		{
-			engine.showMessage("'From' date can not be set after 'To' date");
+			engine.showMessage("'From' date cannot be greater than 'To' date"); //WDEV-18762
 			form.dteFrom().setFocus();
 			return false;
 		}

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -78,8 +83,10 @@ public class PatientSearchImpl extends DTODomainImplementation implements ims.co
 	
 	public PatientShortCollection searchPatients(PatientFilter filter) throws ims.domain.exceptions.DomainInterfaceException 
 	{
+		//WDEV-22567
+		boolean bShowMergedPatients = !ConfigFlag.UI.HIDE_MERGED_PATIENTS_ON_PATIENT_SEARCH.getValue();
 		if(ConfigFlag.DOM.PATIENT_SEARCH_TYPE.getValue().equals("LOCAL"))   
-			return searchPatientsLocal(filter, true);
+			return searchPatientsLocal(filter, bShowMergedPatients);
 		else if(ConfigFlag.DOM.PATIENT_SEARCH_TYPE.getValue().equals("DTO"))
 			return searchPatientsDTO(filter, Boolean.FALSE);
 			
@@ -105,27 +112,38 @@ public class PatientSearchImpl extends DTODomainImplementation implements ims.co
 			patients.Filter.Remote = "N";			
 		}
 
-		if (filter.getPersId() != null)
+		if (filter.getPersId() != null || filter.getNHSNumber() != null)
 		{
-			if (filter.getPersId().getType().equals(PatIdType.HOSPNUM))
+			if (filter.getPersId() != null && filter.getPersId().getType().equals(PatIdType.HOSPNUM))
 			{
 				patients.Filter.Hospnum = filter.getPersId().getValue();
 			}
-			else if (filter.getPersId().getType().equals(PatIdType.PKEY))
+			else if (filter.getPersId() != null && filter.getPersId().getType().equals(PatIdType.PKEY))
 			{
 				patients.Filter.Pkey = filter.getPersId().getValue();
 			}
-			else if (filter.getPersId().getType().equals(PatIdType.NHSN))
+			else if ((filter.getPersId() != null && filter.getPersId().getType().equals(PatIdType.NHSN)) || filter.getNHSNumber() != null)
 			{
-				patients.Filter.Nhsn = filter.getPersId().getValue();
-				if (filter.getPersId().getType().equals(PatIdType.NHSN))
-					patients.Filter.Nhsn = filter.getPersId().getValue().replace(" ", "");//wdev-7305
+				String NHSValue = filter.getNHSNumber();
+				
+				if(NHSValue != null)
+					NHSValue = NHSValue.replace(" ", "");
+				
+				if(NHSValue == null)
+				{
+					NHSValue = filter.getPersId().getValue();
+				
+					if(NHSValue != null)
+						NHSValue = NHSValue.replace(" ", "");
+				}
+				
+				patients.Filter.Nhsn = NHSValue;
 			}
-			else if (filter.getPersId().getType().equals(PatIdType.CHARTNUM))
+			else if (filter.getPersId() != null  && filter.getPersId().getType().equals(PatIdType.CHARTNUM))
 			{
 				patients.Filter.Chartnum = filter.getPersId().getValue().toUpperCase();
 			}
-			else if (filter.getPersId().getType().equals(PatIdType.PPSN))
+			else if (filter.getPersId() != null  && filter.getPersId().getType().equals(PatIdType.PPSN))
 			{
 				patients.Filter.Ppsn = filter.getPersId().getValue();
 			}
@@ -291,6 +309,7 @@ public class PatientSearchImpl extends DTODomainImplementation implements ims.co
 		ArrayList markerValues = new ArrayList();
 		String andStr="";
 		java.util.List patients = null;
+		boolean isCaseSensitivePatIdSearch = ConfigFlag.DOM.CASE_SENSITIVE_PATID.getValue();  //WDEV-18817
 		if (filter.getPersId() != null && filter.getPersId().getValue() != null && !filter.getPersId().getType().equals(PatIdType.NHSN))
 		{
 			//TODO dlaffan - when NTPF.Demographics is merged to Core.Demographics we 
@@ -305,29 +324,27 @@ public class PatientSearchImpl extends DTODomainImplementation implements ims.co
 			String idVal = filter.getPersId().getValue().trim();			
 			if (filter.getPersId().getType().equals(PatIdType.NHSN))
 				idVal = filter.getPersId().getValue().replace(" ", "");//wdev-7305
-			
-			if(!ConfigFlag.DOM.CASE_SENSITIVE_PATID.getValue())
+			if(!isCaseSensitivePatIdSearch)
 			{
-				idVal = idVal.toUpperCase();
+				idVal = idVal.toUpperCase(); //WDEV-18790 -search by identifier not to be case sensitive (FLAG reinstated)
 			}
-
 			if (filter.getPersId().getType().equals(PatIdType.NHSN))
 			{
-				hql.append(" and ids.value like :idValue ");
+				hql.append(" and" + (!isCaseSensitivePatIdSearch ? " UPPER(ids.value)" : " ids.value") + " like :idValue"); //WDEV-18790 
 				idVal += "%";
 			}
 			else
-				hql.append(" and ids.value = :idValue");
+				hql.append(" and" + (!isCaseSensitivePatIdSearch ? " UPPER(ids.value)" : " ids.value") + " = :idValue"); //WDEV-18790 
 
 			if(bReturnMergedPatients == true)
 				hql.append(andStr + " and (p.isActive = :isActive or p.associatedPatient is not null)");
 			else
 				hql.append(andStr + " and p.isActive = :isActive and p.associatedPatient is null");
 			
-			//WDEV-17167
+			//WDEV-17167 //WDEV-21171
 			if (Boolean.TRUE.equals(filter.getExcludeQuickRegistrationPatients()))
 			{
-				hql.append(andStr + " and ((p.isQuickRegistrationPatient is null) OR (p.isQuickRegistrationPatient = 0)) ");
+				hql.append(ConfigFlag.GEN.PATIENT_SEARCH_RETRIEVE_QUICKREGISTRATION_PATIENTS.getValue() ? "" : (andStr + " and ((p.isQuickRegistrationPatient is null) OR (p.isQuickRegistrationPatient = 0)) "));
 			}
 			
 			patients = factory.find(hql.toString(), new String[]{"idValue", "idType", "isActive"}, new Object[]{idVal, getDomLookup(filter.getPersId().getType()),Boolean.TRUE});
@@ -335,7 +352,7 @@ public class PatientSearchImpl extends DTODomainImplementation implements ims.co
 		else
 		{
 			//WDEV-13293 allow all search field values to be used in conjunction with NHSNumber
-			if (filter.getPersId() != null && filter.getPersId().getValue() != null && filter.getPersId().getType().equals(PatIdType.NHSN))
+			if ((filter.getPersId() != null && filter.getPersId().getValue() != null && filter.getPersId().getType().equals(PatIdType.NHSN)) || filter.getNHSNumber() != null)
 			{
 				filterString = new StringBuffer(" from Patient p ");
 				
@@ -346,22 +363,22 @@ public class PatientSearchImpl extends DTODomainImplementation implements ims.co
 
 				filterString.append(" join p.identifiers as ids where ids.type = :idType ");
 				
-				String idVal = filter.getPersId().getValue().trim();			
-				if (filter.getPersId().getType().equals(PatIdType.NHSN))
-					idVal = filter.getPersId().getValue().replace(" ", "");//wdev-7305
+				String idVal = null;
 				
-				if(!ConfigFlag.DOM.CASE_SENSITIVE_PATID.getValue())
+				if(filter.getNHSNumber() != null)
+					idVal = filter.getNHSNumber().trim();
+				
+				if(idVal == null)
+					idVal = filter.getPersId().getValue().trim();
+				
+				idVal = idVal.replace(" ", "");//wdev-7305
+				if(!isCaseSensitivePatIdSearch)
 				{
-					idVal = idVal.toUpperCase();
+					idVal = idVal.toUpperCase(); //WDEV-18790 -search by identifier not to be case sensitive (FLAG reinstated)
 				}
-
-				if (filter.getPersId().getType().equals(PatIdType.NHSN))
-				{
-					filterString.append(" and ids.value like :idValue ");
-					idVal += "%";
-				}
-				else
-					filterString.append(" and ids.value = :idValue");
+				filterString.append(" and" + (!isCaseSensitivePatIdSearch ? " UPPER(ids.value)" : " ids.value") + " like :idValue"); //WDEV-18790 
+				idVal += "%";
+				
 				//WDEV-18285 -  this part was added twice to the query
 				//if(bReturnMergedPatients == true)
 					//filterString.append(andStr + " and (p.isActive = :isActive or p.associatedPatient is not null)");
@@ -369,7 +386,7 @@ public class PatientSearchImpl extends DTODomainImplementation implements ims.co
 				//	filterString.append(andStr + " and p.isActive = :isActive and p.associatedPatient is null");
 				
 				markerNames.add("idType");
-				markerValues.add(getDomLookup(filter.getPersId().getType()));	
+				markerValues.add(getDomLookup(PatIdType.NHSN));	
 				markerNames.add("idValue");
 				markerValues.add(idVal);	
 				
@@ -377,7 +394,8 @@ public class PatientSearchImpl extends DTODomainImplementation implements ims.co
 			}
 			String strSearchSurname = "";
 			String strSearchForename = "";
-			
+			//WDEV-18642 //WDEV-19722 
+//			String nonReplacedCharsForSearchRegExp = ConfigFlag.GEN.PATIENT_SEARCH_ALLOW_NUMERIC_CHARS.getValue() ? "[^a-zA-Z0-9]" :"[^a-zA-Z]";
 			if (filter.getSurname() != null)
 			{
 				if (ConfigFlag.DOM.USE_ALIAS_SURNAME_FUNCTIONALITY.getValue())
@@ -391,9 +409,13 @@ public class PatientSearchImpl extends DTODomainImplementation implements ims.co
 				filterString.append(andStr + " p.name.upperSurname like :surname");
 
 				markerNames.add("surname");
-
-				strSearchSurname = filter.getSurname().toUpperCase().trim();
-				strSearchSurname = strSearchSurname.replaceAll("[^a-zA-Z]", "");
+				
+				//WDEV-19722 
+//				/filter.setSurname(filter.getSurname().replaceAll(nonReplacedCharsForSearchRegExp, "")); //WDEV-18642
+				if (Boolean.FALSE.equals(ConfigFlag.GEN.PATIENT_SEARCH_ALLOW_NUMERIC_CHARS.getValue()))
+					filter.setSurname(filter.getSurname().replaceAll("\\d", "")); 
+				
+				strSearchSurname = filter.getSurname().toUpperCase().trim();				
 
 				if(strSearchSurname.length() >= 40)
 				{
@@ -428,7 +450,11 @@ public class PatientSearchImpl extends DTODomainImplementation implements ims.co
 				filterString.append(andStr + " p.name.upperForename like :forename");
 				markerNames.add("forename");
 
-				filter.setForename(filter.getForename().replaceAll("[^a-zA-Z]", ""));
+				//WDEV-19722
+				//filter.setForename(filter.getForename().replaceAll(nonReplacedCharsForSearchRegExp, ""));
+				if (Boolean.FALSE.equals(ConfigFlag.GEN.PATIENT_SEARCH_ALLOW_NUMERIC_CHARS.getValue()))
+					filter.setForename(filter.getForename().replaceAll("\\d", ""));
+				
 				strSearchForename = filter.getForename().toUpperCase().trim();
 				
 				if(strSearchForename.length() >= 9)
@@ -501,16 +527,16 @@ public class PatientSearchImpl extends DTODomainImplementation implements ims.co
 			markerNames.add("isActive");
 			markerValues.add(Boolean.TRUE);
 			
-			if (Boolean.TRUE.equals(filter.getExcludeQuickRegistrationPatients()))
+			if (Boolean.TRUE.equals(filter.getExcludeQuickRegistrationPatients())) //WDEV-21171
 			{
 				if (andStr.length() == 0)
 				{	
 					andStr = " and ";
 				}
-				filterString.append(andStr + " ((p.isQuickRegistrationPatient is null) OR (p.isQuickRegistrationPatient = 0)) ");
+				filterString.append(ConfigFlag.GEN.PATIENT_SEARCH_RETRIEVE_QUICKREGISTRATION_PATIENTS.getValue() ? "" : (andStr + " ((p.isQuickRegistrationPatient is null) OR (p.isQuickRegistrationPatient = 0)) "));
 			}
 			
-			if (filter.getPersId() != null && filter.getPersId().getValue() != null && filter.getPersId().getType().equals(PatIdType.NHSN))
+			if ((filter.getPersId() != null && filter.getPersId().getValue() != null && filter.getPersId().getType().equals(PatIdType.NHSN)) || filter.getNHSNumber() != null)
 				patients = factory.find(filterString.toString(), markerNames, markerValues, maxPats);
 			else if (ConfigFlag.DOM.USE_ALIAS_SURNAME_FUNCTIONALITY.getValue() && filter.getSurname() != null) 
 				patients = factory.find("from ims.core.patient.domain.objects.Patient p left join p.otherNames as oths where " + filterString.toString() + " order by p.name.upperSurname asc , p.name.upperForename asc", markerNames, markerValues, maxPats);

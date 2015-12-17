@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -55,7 +60,7 @@ public class Logic extends BaseLogic
 		loadCarePlans();
 		
 		form.btnUpdateActions().setVisible(ConfigFlag.GEN.CARE_PLAN_FUNCTIONALITY_TYPE.getValue().toString().equals("CCO"));
-		form.btnUpdateActions().setEnabled(areCarePlansSelected());
+		form.btnUpdateActions().setEnabled(FormMode.EDIT.equals(form.getMode()) && areCarePlansSelected());
 
 		form.labelFlag().setVisible( ! ConfigFlag.GEN.CARE_PLAN_FUNCTIONALITY_TYPE.getValue().toString().equals("CCO"));//wdev-13781
 		form.chkHospitalReport().setVisible( ! ConfigFlag.GEN.CARE_PLAN_FUNCTIONALITY_TYPE.getValue().toString().equals("CCO"));//wdev-13781
@@ -522,7 +527,7 @@ public class Logic extends BaseLogic
 		if (ConfigFlag.GEN.CARE_PLAN_FUNCTIONALITY_TYPE.getValue().toString().equals("CCO"))
 		{
 			form.btnUpdateActions().setVisible(true);
-			form.btnUpdateActions().setEnabled(areCarePlansSelected());
+			form.btnUpdateActions().setEnabled(FormMode.EDIT.equals(form.getMode()) && areCarePlansSelected());
 		}
 		
 	}

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -1111,14 +1116,14 @@ public class ICPConfigImpl extends BaseICPConfigImpl
 		// Create parameters string
 		if (name != null && name.length() > 0)
 		{
-			hqlQuery.append(" where UPPER(mos.name.surname) like :NAME or UPPER(mos.name.forename) like :NAME");
+			hqlQuery.append(" where mos.name.upperSurname like :NAME or mos.name.upperForename like :NAME"); //WDEV-20219
 
 			paramNames.add("NAME");
 			paramValues.add("%" + name.toUpperCase() + "%");
 		}
 
 		// Set order mode
-		hqlQuery.append(" order by UPPER(mos.name.surname) asc");
+		hqlQuery.append(" order by mos.name.upperSurname asc"); //WDEV-20219
 
 		return MemberOfStaffLiteVoAssembler.createMemberOfStaffLiteVoCollectionFromMemberOfStaff(getDomainFactory().find(hqlQuery.toString(), paramNames, paramValues));
 	}

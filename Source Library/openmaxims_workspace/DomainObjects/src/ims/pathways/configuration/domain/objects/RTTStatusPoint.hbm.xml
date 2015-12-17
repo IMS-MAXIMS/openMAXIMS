@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:35 -->
+<!-- Generated: 12/10/2015, 13:30 -->
 <hibernate-mapping>
 	<class name="ims.pathways.configuration.domain.objects.RTTStatusPoint" table="pthw_rttstatuspoint" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -44,6 +44,20 @@
 			<many-to-many class="ims.pathways.configuration.domain.objects.RTTStatusPoint" foreign-key="rttstatuspoint_children_to_fk">
 				<column name="to_side" sql-type="numeric(10,0)" unique="false"   />
 			</many-to-many>
+		</list>
+<!-- debug: appointmentOutcomes -->
+<!-- debug: IsCollection : true -->
+		<!-- collection of Lookup instances -->
+		<list name="appointmentOutcomes" table="pthw_rttstatuspoint_appointmen" lazy="true" access="field">
+			<key foreign-key="rttstatuspoint_appointmen_ofk">
+				<column name="owner" sql-type="numeric(10,0)"/>
+			</key>
+			<index column="idx"/>
+			<composite-element class="ims.domain.lookups.LookupInstanceRef">
+				<many-to-one name="instance" class="ims.domain.lookups.LookupInstance" access="field">
+					<column name="instance_id" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+				</many-to-one>
+			</composite-element>
 		</list>
 <!-- debug: !IsAssociation && !IsCollection -->
 

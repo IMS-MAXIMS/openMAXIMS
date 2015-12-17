@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.pathways.domain.objects;
@@ -59,8 +64,6 @@ public class PatientPathwayJourney extends ims.domain.DomainObject implements im
 	  * Collection of ims.pathways.domain.objects.PatientJourneyStatus.
 	  */
 	private java.util.Set statusHistory;
-	/** TargetEnd Date of this Journey */
-	private java.util.Date targetEndDate;
 	/** Actual End Date of this Journey */
 	private java.util.Date endedOnDate;
 	/** Current Clock */
@@ -77,12 +80,24 @@ public class PatientPathwayJourney extends ims.domain.DomainObject implements im
 	private java.util.Set pathwayHistory;
 	/** Responsible Consultant */
 	private ims.core.resource.people.domain.objects.Hcp responsibleConsultant;
-	/** Comments */
-	private String comments;
 	/** Indicates whether this is a cancer pathway or not */
 	private Boolean isCancerPathway;
 	/** Date the Journey was set as a Cancer Pathway */
 	private java.util.Date cancerPathwayDate;
+	/** LinkedComments
+	  * Collection of ims.pathways.domain.objects.PatientJourneyComment.
+	  */
+	private java.util.List linkedComments;
+	/** LastValidationDate */
+	private java.util.Date lastValidationDate;
+	/** NextValidationDate */
+	private java.util.Date nextValidationDate;
+	/** 
+	  * Collection of ims.pathways.domain.objects.PatientJourneyBreach.
+	  */
+	private java.util.List patientJourneyBreachReason;
+	private java.util.Date validationCompletedDT;
+	private ims.core.resource.people.domain.objects.MemberOfStaff validationCompletedBy;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public PatientPathwayJourney (Integer id, int ver)
@@ -158,13 +173,6 @@ public class PatientPathwayJourney extends ims.domain.DomainObject implements im
 		this.statusHistory = paramValue;
 	}
 
-	public java.util.Date getTargetEndDate() {
-		return targetEndDate;
-	}
-	public void setTargetEndDate(java.util.Date targetEndDate) {
-		this.targetEndDate = targetEndDate;
-	}
-
 	public java.util.Date getEndedOnDate() {
 		return endedOnDate;
 	}
@@ -225,13 +233,6 @@ public class PatientPathwayJourney extends ims.domain.DomainObject implements im
 		this.responsibleConsultant = responsibleConsultant;
 	}
 
-	public String getComments() {
-		return comments;
-	}
-	public void setComments(String comments) {
-		this.comments = comments;
-	}
-
 	public Boolean isIsCancerPathway() {
 		return isCancerPathway;
 	}
@@ -244,6 +245,54 @@ public class PatientPathwayJourney extends ims.domain.DomainObject implements im
 	}
 	public void setCancerPathwayDate(java.util.Date cancerPathwayDate) {
 		this.cancerPathwayDate = cancerPathwayDate;
+	}
+
+	public java.util.List getLinkedComments() {
+		if ( null == linkedComments ) {
+			linkedComments = new java.util.ArrayList();
+		}
+		return linkedComments;
+	}
+	public void setLinkedComments(java.util.List paramValue) {
+		this.linkedComments = paramValue;
+	}
+
+	public java.util.Date getLastValidationDate() {
+		return lastValidationDate;
+	}
+	public void setLastValidationDate(java.util.Date lastValidationDate) {
+		this.lastValidationDate = lastValidationDate;
+	}
+
+	public java.util.Date getNextValidationDate() {
+		return nextValidationDate;
+	}
+	public void setNextValidationDate(java.util.Date nextValidationDate) {
+		this.nextValidationDate = nextValidationDate;
+	}
+
+	public java.util.List getPatientJourneyBreachReason() {
+		if ( null == patientJourneyBreachReason ) {
+			patientJourneyBreachReason = new java.util.ArrayList();
+		}
+		return patientJourneyBreachReason;
+	}
+	public void setPatientJourneyBreachReason(java.util.List paramValue) {
+		this.patientJourneyBreachReason = paramValue;
+	}
+
+	public java.util.Date getValidationCompletedDT() {
+		return validationCompletedDT;
+	}
+	public void setValidationCompletedDT(java.util.Date validationCompletedDT) {
+		this.validationCompletedDT = validationCompletedDT;
+	}
+
+	public ims.core.resource.people.domain.objects.MemberOfStaff getValidationCompletedBy() {
+		return validationCompletedBy;
+	}
+	public void setValidationCompletedBy(ims.core.resource.people.domain.objects.MemberOfStaff validationCompletedBy) {
+		this.validationCompletedBy = validationCompletedBy;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -370,9 +419,6 @@ public class PatientPathwayJourney extends ims.domain.DomainObject implements im
 			auditStr.append("] " + i7);
 		}
 	    auditStr.append("; ");
-		auditStr.append("\r\n*targetEndDate* :");
-		auditStr.append(targetEndDate);
-	    auditStr.append("; ");
 		auditStr.append("\r\n*endedOnDate* :");
 		auditStr.append(endedOnDate);
 	    auditStr.append("; ");
@@ -387,16 +433,16 @@ public class PatientPathwayJourney extends ims.domain.DomainObject implements im
 		auditStr.append("\r\n*clockHistory* :");
 		if (clockHistory != null)
 		{
-			java.util.Iterator it11 = clockHistory.iterator();
-			int i11=0;
-			while (it11.hasNext())
+			java.util.Iterator it10 = clockHistory.iterator();
+			int i10=0;
+			while (it10.hasNext())
 			{
-				if (i11 > 0)
+				if (i10 > 0)
 					auditStr.append(",");
-				ims.pathways.domain.objects.PathwayClock obj = (ims.pathways.domain.objects.PathwayClock)it11.next();
+				ims.pathways.domain.objects.PathwayClock obj = (ims.pathways.domain.objects.PathwayClock)it10.next();
 		if (obj != null)
 		{
-		   if (i11 == 0)
+		   if (i10 == 0)
 		   {
 			auditStr.append(toShortClassName(obj));
 			auditStr.append("[");
@@ -404,10 +450,10 @@ public class PatientPathwayJourney extends ims.domain.DomainObject implements im
 		
 		   auditStr.append(obj.getId());
 		}
-			i11++;
+			i10++;
 		}
-		if (i11 > 0)
-			auditStr.append("] " + i11);
+		if (i10 > 0)
+			auditStr.append("] " + i10);
 		}
 	    auditStr.append("; ");
 		auditStr.append("\r\n*extReferralKey* :");
@@ -416,16 +462,16 @@ public class PatientPathwayJourney extends ims.domain.DomainObject implements im
 		auditStr.append("\r\n*pathwayHistory* :");
 		if (pathwayHistory != null)
 		{
-			java.util.Iterator it13 = pathwayHistory.iterator();
-			int i13=0;
-			while (it13.hasNext())
+			java.util.Iterator it12 = pathwayHistory.iterator();
+			int i12=0;
+			while (it12.hasNext())
 			{
-				if (i13 > 0)
+				if (i12 > 0)
 					auditStr.append(",");
-				ims.pathways.domain.objects.PathwayHistory obj = (ims.pathways.domain.objects.PathwayHistory)it13.next();
+				ims.pathways.domain.objects.PathwayHistory obj = (ims.pathways.domain.objects.PathwayHistory)it12.next();
 		if (obj != null)
 		{
-		   if (i13 == 0)
+		   if (i12 == 0)
 		   {
 			auditStr.append(toShortClassName(obj));
 			auditStr.append("[");
@@ -433,10 +479,10 @@ public class PatientPathwayJourney extends ims.domain.DomainObject implements im
 		
 		   auditStr.append(obj.getId());
 		}
-			i13++;
+			i12++;
 		}
-		if (i13 > 0)
-			auditStr.append("] " + i13);
+		if (i12 > 0)
+			auditStr.append("] " + i12);
 		}
 	    auditStr.append("; ");
 		auditStr.append("\r\n*responsibleConsultant* :");
@@ -447,14 +493,74 @@ public class PatientPathwayJourney extends ims.domain.DomainObject implements im
 		    auditStr.append(responsibleConsultant.getId());
 		}
 	    auditStr.append("; ");
-		auditStr.append("\r\n*comments* :");
-		auditStr.append(comments);
-	    auditStr.append("; ");
 		auditStr.append("\r\n*isCancerPathway* :");
 		auditStr.append(isCancerPathway);
 	    auditStr.append("; ");
 		auditStr.append("\r\n*cancerPathwayDate* :");
 		auditStr.append(cancerPathwayDate);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*linkedComments* :");
+		if (linkedComments != null)
+		{
+		int i16=0;
+		for (i16=0; i16<linkedComments.size(); i16++)
+		{
+			if (i16 > 0)
+				auditStr.append(",");
+			ims.pathways.domain.objects.PatientJourneyComment obj = (ims.pathways.domain.objects.PatientJourneyComment)linkedComments.get(i16);
+		    if (obj != null)
+			{
+				if (i16 == 0)
+				{
+				auditStr.append(toShortClassName(obj));
+				auditStr.append("[");
+				}
+		        auditStr.append(obj.getId());
+			}
+		}
+		if (i16 > 0)
+			auditStr.append("] " + i16);
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*lastValidationDate* :");
+		auditStr.append(lastValidationDate);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*nextValidationDate* :");
+		auditStr.append(nextValidationDate);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*patientJourneyBreachReason* :");
+		if (patientJourneyBreachReason != null)
+		{
+		int i19=0;
+		for (i19=0; i19<patientJourneyBreachReason.size(); i19++)
+		{
+			if (i19 > 0)
+				auditStr.append(",");
+			ims.pathways.domain.objects.PatientJourneyBreach obj = (ims.pathways.domain.objects.PatientJourneyBreach)patientJourneyBreachReason.get(i19);
+		    if (obj != null)
+			{
+				if (i19 == 0)
+				{
+				auditStr.append(toShortClassName(obj));
+				auditStr.append("[");
+				}
+		        auditStr.append(obj.getId());
+			}
+		}
+		if (i19 > 0)
+			auditStr.append("] " + i19);
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*validationCompletedDT* :");
+		auditStr.append(validationCompletedDT);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*validationCompletedBy* :");
+		if (validationCompletedBy != null)
+		{
+			auditStr.append(toShortClassName(validationCompletedBy));
+				
+		    auditStr.append(validationCompletedBy.getId());
+		}
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -548,12 +654,6 @@ public class PatientPathwayJourney extends ims.domain.DomainObject implements im
 			sb.append("</statusHistory>");		
 			}
 		}
-		if (this.getTargetEndDate() != null)
-		{
-			sb.append("<targetEndDate>");
-			sb.append(new ims.framework.utils.DateTime(this.getTargetEndDate()).toString(ims.framework.utils.DateTimeFormat.MILLI));
-			sb.append("</targetEndDate>");		
-		}
 		if (this.getEndedOnDate() != null)
 		{
 			sb.append("<endedOnDate>");
@@ -596,12 +696,6 @@ public class PatientPathwayJourney extends ims.domain.DomainObject implements im
 			sb.append(this.getResponsibleConsultant().toXMLString(domMap)); 	
 			sb.append("</responsibleConsultant>");		
 		}
-		if (this.getComments() != null)
-		{
-			sb.append("<comments>");
-			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getComments().toString()));
-			sb.append("</comments>");		
-		}
 		if (this.isIsCancerPathway() != null)
 		{
 			sb.append("<isCancerPathway>");
@@ -613,6 +707,48 @@ public class PatientPathwayJourney extends ims.domain.DomainObject implements im
 			sb.append("<cancerPathwayDate>");
 			sb.append(new ims.framework.utils.DateTime(this.getCancerPathwayDate()).toString(ims.framework.utils.DateTimeFormat.MILLI));
 			sb.append("</cancerPathwayDate>");		
+		}
+		if (this.getLinkedComments() != null)
+		{
+			if (this.getLinkedComments().size() > 0 )
+			{
+			sb.append("<linkedComments>");
+			sb.append(ims.domain.DomainObject.toXMLString(this.getLinkedComments(), domMap));
+			sb.append("</linkedComments>");		
+			}
+		}
+		if (this.getLastValidationDate() != null)
+		{
+			sb.append("<lastValidationDate>");
+			sb.append(new ims.framework.utils.DateTime(this.getLastValidationDate()).toString(ims.framework.utils.DateTimeFormat.MILLI));
+			sb.append("</lastValidationDate>");		
+		}
+		if (this.getNextValidationDate() != null)
+		{
+			sb.append("<nextValidationDate>");
+			sb.append(new ims.framework.utils.DateTime(this.getNextValidationDate()).toString(ims.framework.utils.DateTimeFormat.MILLI));
+			sb.append("</nextValidationDate>");		
+		}
+		if (this.getPatientJourneyBreachReason() != null)
+		{
+			if (this.getPatientJourneyBreachReason().size() > 0 )
+			{
+			sb.append("<patientJourneyBreachReason>");
+			sb.append(ims.domain.DomainObject.toXMLString(this.getPatientJourneyBreachReason(), domMap));
+			sb.append("</patientJourneyBreachReason>");		
+			}
+		}
+		if (this.getValidationCompletedDT() != null)
+		{
+			sb.append("<validationCompletedDT>");
+			sb.append(new ims.framework.utils.DateTime(this.getValidationCompletedDT()).toString(ims.framework.utils.DateTimeFormat.MILLI));
+			sb.append("</validationCompletedDT>");		
+		}
+		if (this.getValidationCompletedBy() != null)
+		{
+			sb.append("<validationCompletedBy>");
+			sb.append(this.getValidationCompletedBy().toXMLString(domMap)); 	
+			sb.append("</validationCompletedBy>");		
 		}
 		return sb.toString();
 	}
@@ -818,11 +954,6 @@ public class PatientPathwayJourney extends ims.domain.DomainObject implements im
 			fldEl = fldEl.element("set");	
 			obj.setStatusHistory(ims.pathways.domain.objects.PatientJourneyStatus.fromSetXMLString(fldEl, factory, obj.getStatusHistory(), domMap));
 		}
-		fldEl = el.element("targetEndDate");
-		if(fldEl != null)
-		{	
-    		obj.setTargetEndDate(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
-		}
 		fldEl = el.element("endedOnDate");
 		if(fldEl != null)
 		{	
@@ -857,11 +988,6 @@ public class PatientPathwayJourney extends ims.domain.DomainObject implements im
 			fldEl = fldEl.element("class");		
 			obj.setResponsibleConsultant(ims.core.resource.people.domain.objects.Hcp.getHcpfromXML(fldEl, factory, domMap)); 
 		}
-		fldEl = el.element("comments");
-		if(fldEl != null)
-		{	
-    		obj.setComments(new String(fldEl.getTextTrim()));	
-		}
 		fldEl = el.element("isCancerPathway");
 		if(fldEl != null)
 		{	
@@ -872,6 +998,39 @@ public class PatientPathwayJourney extends ims.domain.DomainObject implements im
 		{	
     		obj.setCancerPathwayDate(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
 		}
+		fldEl = el.element("linkedComments");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("list");	
+			obj.setLinkedComments(ims.pathways.domain.objects.PatientJourneyComment.fromListXMLString(fldEl, factory, obj.getLinkedComments(), domMap));
+		}
+		fldEl = el.element("lastValidationDate");
+		if(fldEl != null)
+		{	
+    		obj.setLastValidationDate(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
+		}
+		fldEl = el.element("nextValidationDate");
+		if(fldEl != null)
+		{	
+    		obj.setNextValidationDate(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
+		}
+		fldEl = el.element("patientJourneyBreachReason");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("list");	
+			obj.setPatientJourneyBreachReason(ims.pathways.domain.objects.PatientJourneyBreach.fromListXMLString(fldEl, factory, obj.getPatientJourneyBreachReason(), domMap));
+		}
+		fldEl = el.element("validationCompletedDT");
+		if(fldEl != null)
+		{	
+    		obj.setValidationCompletedDT(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
+		}
+		fldEl = el.element("validationCompletedBy");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setValidationCompletedBy(ims.core.resource.people.domain.objects.MemberOfStaff.getMemberOfStafffromXML(fldEl, factory, domMap)); 
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -881,6 +1040,8 @@ public class PatientPathwayJourney extends ims.domain.DomainObject implements im
 		, "statusHistory"
 		, "clockHistory"
 		, "pathwayHistory"
+		, "linkedComments"
+		, "patientJourneyBreachReason"
 		};
 	}
 
@@ -895,16 +1056,20 @@ public class PatientPathwayJourney extends ims.domain.DomainObject implements im
 		public static final String StartDate = "startDate";
 		public static final String CurrentStatus = "currentStatus";
 		public static final String StatusHistory = "statusHistory";
-		public static final String TargetEndDate = "targetEndDate";
 		public static final String EndedOnDate = "endedOnDate";
 		public static final String CurrentClock = "currentClock";
 		public static final String ClockHistory = "clockHistory";
 		public static final String ExtReferralKey = "extReferralKey";
 		public static final String PathwayHistory = "pathwayHistory";
 		public static final String ResponsibleConsultant = "responsibleConsultant";
-		public static final String Comments = "comments";
 		public static final String IsCancerPathway = "isCancerPathway";
 		public static final String CancerPathwayDate = "cancerPathwayDate";
+		public static final String LinkedComments = "linkedComments";
+		public static final String LastValidationDate = "lastValidationDate";
+		public static final String NextValidationDate = "nextValidationDate";
+		public static final String PatientJourneyBreachReason = "patientJourneyBreachReason";
+		public static final String ValidationCompletedDT = "validationCompletedDT";
+		public static final String ValidationCompletedBy = "validationCompletedBy";
 	}
 }
 

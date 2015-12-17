@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.emergency.domain.objects;
@@ -50,7 +55,7 @@ public class EDPartialAdmission extends ims.domain.DomainObject implements ims.d
 	/** Specialty */
 	private ims.domain.lookups.LookupInstance specialty;
 	/** AdmittingConsultant */
-	private ims.domain.lookups.LookupInstance admittingConsultant;
+	private ims.core.resource.people.domain.objects.Hcp admittingConsultant;
 	/** AllocatedDateTime */
 	private java.util.Date allocatedDateTime;
 	/** Allocated Bed Type */
@@ -65,6 +70,9 @@ public class EDPartialAdmission extends ims.domain.DomainObject implements ims.d
 	private java.util.Date admissionDateTime;
 	/** Admission Ward */
 	private ims.core.resource.place.domain.objects.Location admissionWard;
+	private ims.core.clinical.domain.objects.AuthoringInformation authoringInfo;
+	/** AccomodationRequestedType */
+	private ims.domain.lookups.LookupInstance accomodationRequestedType;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public EDPartialAdmission (Integer id, int ver)
@@ -99,10 +107,10 @@ public class EDPartialAdmission extends ims.domain.DomainObject implements ims.d
 		this.specialty = specialty;
 	}
 
-	public ims.domain.lookups.LookupInstance getAdmittingConsultant() {
+	public ims.core.resource.people.domain.objects.Hcp getAdmittingConsultant() {
 		return admittingConsultant;
 	}
-	public void setAdmittingConsultant(ims.domain.lookups.LookupInstance admittingConsultant) {
+	public void setAdmittingConsultant(ims.core.resource.people.domain.objects.Hcp admittingConsultant) {
 		this.admittingConsultant = admittingConsultant;
 	}
 
@@ -159,6 +167,20 @@ public class EDPartialAdmission extends ims.domain.DomainObject implements ims.d
 		this.admissionWard = admissionWard;
 	}
 
+	public ims.core.clinical.domain.objects.AuthoringInformation getAuthoringInfo() {
+		return authoringInfo;
+	}
+	public void setAuthoringInfo(ims.core.clinical.domain.objects.AuthoringInformation authoringInfo) {
+		this.authoringInfo = authoringInfo;
+	}
+
+	public ims.domain.lookups.LookupInstance getAccomodationRequestedType() {
+		return accomodationRequestedType;
+	}
+	public void setAccomodationRequestedType(ims.domain.lookups.LookupInstance accomodationRequestedType) {
+		this.accomodationRequestedType = accomodationRequestedType;
+	}
+
 	public ims.domain.SystemInformation getSystemInformation() {
 		if (systemInformation == null) systemInformation = new ims.domain.SystemInformation();
 		return systemInformation;
@@ -205,7 +227,11 @@ public class EDPartialAdmission extends ims.domain.DomainObject implements ims.d
 	    auditStr.append("; ");
 		auditStr.append("\r\n*admittingConsultant* :");
 		if (admittingConsultant != null)
-			auditStr.append(admittingConsultant.getText());
+		{
+			auditStr.append(toShortClassName(admittingConsultant));
+				
+		    auditStr.append(admittingConsultant.getId());
+		}
 	    auditStr.append("; ");
 		auditStr.append("\r\n*allocatedDateTime* :");
 		auditStr.append(allocatedDateTime);
@@ -239,6 +265,18 @@ public class EDPartialAdmission extends ims.domain.DomainObject implements ims.d
 				
 		    auditStr.append(admissionWard.getId());
 		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*authoringInfo* :");
+		if (authoringInfo != null)
+		{
+			auditStr.append(toShortClassName(authoringInfo));
+				
+		    auditStr.append(authoringInfo.toString());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*accomodationRequestedType* :");
+		if (accomodationRequestedType != null)
+			auditStr.append(accomodationRequestedType.getText());
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -299,7 +337,7 @@ public class EDPartialAdmission extends ims.domain.DomainObject implements ims.d
 		if (this.getAdmittingConsultant() != null)
 		{
 			sb.append("<admittingConsultant>");
-			sb.append(this.getAdmittingConsultant().toXMLString()); 
+			sb.append(this.getAdmittingConsultant().toXMLString(domMap)); 	
 			sb.append("</admittingConsultant>");		
 		}
 		if (this.getAllocatedDateTime() != null)
@@ -343,6 +381,18 @@ public class EDPartialAdmission extends ims.domain.DomainObject implements ims.d
 			sb.append("<admissionWard>");
 			sb.append(this.getAdmissionWard().toXMLString(domMap)); 	
 			sb.append("</admissionWard>");		
+		}
+		if (this.getAuthoringInfo() != null)
+		{
+			sb.append("<authoringInfo>");
+			sb.append(this.getAuthoringInfo().toXMLString(domMap)); 	
+			sb.append("</authoringInfo>");		
+		}
+		if (this.getAccomodationRequestedType() != null)
+		{
+			sb.append("<accomodationRequestedType>");
+			sb.append(this.getAccomodationRequestedType().toXMLString()); 
+			sb.append("</accomodationRequestedType>");		
 		}
 		return sb.toString();
 	}
@@ -521,8 +571,8 @@ public class EDPartialAdmission extends ims.domain.DomainObject implements ims.d
 		fldEl = el.element("admittingConsultant");
 		if(fldEl != null)
 		{
-			fldEl = fldEl.element("lki");
-			obj.setAdmittingConsultant(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+			fldEl = fldEl.element("class");		
+			obj.setAdmittingConsultant(ims.core.resource.people.domain.objects.Hcp.getHcpfromXML(fldEl, factory, domMap)); 
 		}
 		fldEl = el.element("allocatedDateTime");
 		if(fldEl != null)
@@ -563,6 +613,18 @@ public class EDPartialAdmission extends ims.domain.DomainObject implements ims.d
 			fldEl = fldEl.element("class");		
 			obj.setAdmissionWard(ims.core.resource.place.domain.objects.Location.getLocationfromXML(fldEl, factory, domMap)); 
 		}
+		fldEl = el.element("authoringInfo");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setAuthoringInfo(ims.core.clinical.domain.objects.AuthoringInformation.getAuthoringInformationfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("accomodationRequestedType");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setAccomodationRequestedType(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -585,6 +647,8 @@ public class EDPartialAdmission extends ims.domain.DomainObject implements ims.d
 		public static final String AllocatedStatus = "allocatedStatus";
 		public static final String AdmissionDateTime = "admissionDateTime";
 		public static final String AdmissionWard = "admissionWard";
+		public static final String AuthoringInfo = "authoringInfo";
+		public static final String AccomodationRequestedType = "accomodationRequestedType";
 	}
 }
 

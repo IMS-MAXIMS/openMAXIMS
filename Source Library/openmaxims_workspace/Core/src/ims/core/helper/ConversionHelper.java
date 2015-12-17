@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,6 +15,11 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 package ims.core.helper;
@@ -27,7 +32,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.net.ServerSocket;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.apache.commons.io.IOUtils;
 import org.artofsolving.jodconverter.OfficeDocumentConverter;
@@ -37,10 +45,27 @@ import org.artofsolving.jodconverter.office.OfficeManager;
 
 import com.ims.query.builder.client.QueryBuilderClient;
 import com.ims.query.builder.client.exceptions.QueryBuilderClientException;
+import com.itextpdf.text.BadElementException;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.sun.media.jai.codec.ImageCodec;
+import com.sun.media.jai.codec.ImageDecoder;
+import com.sun.media.jai.codec.TIFFDecodeParam;
 
 import ims.configuration.gen.ConfigFlag;
 import ims.configuration.EnvironmentConfig;
 import ims.domain.impl.DomainImpl;
+
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
+
+import javax.imageio.ImageIO;
+import javax.media.jai.OpImage;
+import javax.media.jai.PlanarImage;
+import javax.media.jai.NullOpImage;
 
 public class ConversionHelper extends DomainImpl
 {   
@@ -50,6 +75,11 @@ public class ConversionHelper extends DomainImpl
 	private static int currentPortNumber = 10000;
 	
 	public void convert(byte[] buffer, String inputFormat, OutputStream outputStream) throws Exception 
+	{
+		convert(buffer, inputFormat, (ByteArrayOutputStream)outputStream);
+	}
+	
+	public void convert(byte[] buffer, String inputFormat, ByteArrayOutputStream outputStream) throws Exception 
 	{	
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		ByteArrayInputStream inStream = new ByteArrayInputStream(buffer);
@@ -61,16 +91,24 @@ public class ConversionHelper extends DomainImpl
 				System.out.println("Using OpenOffice conversion engine");
 				
 				/**************************************************************/
-				try {
-					convertUsingOpenOffice(inStream, inputFormat, outputStream);
+				
+				if (inputFormat.toLowerCase().startsWith("tif"))
+				{
+					convertTiff(outputStream, inStream);
 				}
-				catch (Exception e) {
-					throw new Exception("Conversion failed: ", e.getCause());				
+				else
+				{
+					try {
+						convertUsingOpenOffice(inStream, inputFormat, outputStream);
+					}
+					catch (Exception e) {
+						throw new Exception("Conversion failed: ", e.getCause());				
+					}
+					finally  {
+						outStream.close();
+					}
+					/*************************************************************/
 				}
-				finally  {
-					outStream.close();
-				}
-				/*************************************************************/			
 			}	
 			else if(ConfigFlag.FW.DOCUMENT_CONVERSION_ENGINE.getValue().equals("Microsoft Office"))
 			{			
@@ -88,19 +126,70 @@ public class ConversionHelper extends DomainImpl
 				{
 					System.out.println("Using OpenOffice conversion engine");
 					
-					/**************************************************************/
-					try {
-						convertUsingOpenOffice(inStream, inputFormat, outputStream);
+					if (inputFormat.toLowerCase().startsWith("tif"))
+					{
+						convertTiff(outputStream, inStream);
 					}
-					catch (Exception e) {
-						throw new Exception("Conversion failed: ", e.getCause());					
+					else
+					{
+						/**************************************************************/
+						try {
+							convertUsingOpenOffice(inStream, inputFormat, outputStream);
+						}
+						catch (Exception e) {
+							throw new Exception("Conversion failed: ", e.getCause());					
+						}
+						finally {
+							outStream.close();
+						}
+						/**************************************************************/
 					}
-					finally {
-						outStream.close();
-					}
-					/**************************************************************/
 				}			
 			}
+		}
+	}
+
+	private void convertTiff(ByteArrayOutputStream outputStream, ByteArrayInputStream inStream) throws IOException, DocumentException, BadElementException, MalformedURLException 
+	{
+		TIFFDecodeParam param = null;
+		ImageDecoder decoder = ImageCodec.createImageDecoder("tiff", inStream, param);	
+		System.out.println("Convert TIFF file: Found " + decoder.getNumPages() + " pages");
+		
+		ArrayList<ByteArrayOutputStream> imagesStream = new ArrayList<ByteArrayOutputStream>();
+		
+		int pages = decoder.getNumPages();
+		for (int i = 0; i < pages; i++) 
+		{
+			RenderedImage render = decoder.decodeAsRenderedImage(i);
+			PlanarImage op = new NullOpImage(render, null, null, OpImage.OP_IO_BOUND);
+			BufferedImage imageBuffer = op.getAsBufferedImage();
+			
+			ByteArrayOutputStream os = new ByteArrayOutputStream();
+			ImageIO.write(imageBuffer, "jpg", os);
+			
+			imagesStream.add(os);
+		}
+		
+		if (imagesStream.size() > 0)
+		{						
+			Document document = new Document(PageSize.A4.rotate());
+			PdfWriter writer = PdfWriter.getInstance(document, outputStream);
+			
+			document.open();
+			
+			Iterator<ByteArrayOutputStream> iterator = imagesStream.iterator();
+			while (iterator.hasNext()) 
+		    {
+				document.newPage();
+				Image jpg = Image.getInstance(iterator.next().toByteArray());
+				jpg.scaleAbsolute(document.getPageSize().getWidth(), document.getPageSize().getHeight());
+				document.add(jpg);
+				
+			}
+			
+			document.close();
+			writer.flush();
+			writer.close();
 		}
 	}
 
@@ -296,5 +385,5 @@ public class ConversionHelper extends DomainImpl
 		System.out.println("Starting time : " + (new Float(end-start))/1000 + " seconds");
 		
 		return officeManager;
-	}
+	}			
 }

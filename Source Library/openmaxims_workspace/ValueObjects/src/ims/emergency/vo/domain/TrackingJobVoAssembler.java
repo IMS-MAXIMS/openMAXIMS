@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.emergency.vo.domain;
@@ -60,6 +65,8 @@ public class TrackingJobVoAssembler
 		valueObjectDest.setAttendance(valueObjectSrc.getAttendance());
 		// Episode
 		valueObjectDest.setEpisode(valueObjectSrc.getEpisode());
+		// SupplementaryLetterStatus
+		valueObjectDest.setSupplementaryLetterStatus(valueObjectSrc.getSupplementaryLetterStatus());
 	 	return valueObjectDest;
 	 }
 
@@ -394,7 +401,43 @@ public class TrackingJobVoAssembler
 		valueObject.setAttendance(ims.emergency.vo.domain.EmergencyAttendanceForEDDischargeVoAssembler.create(map, domainObject.getAttendance()) );
 		// Episode
 		valueObject.setEpisode(ims.emergency.vo.domain.EmergencyEpisodeForEDDischargeVoAssembler.create(map, domainObject.getEpisode()) );
- 		return valueObject;
+		// SupplementaryLetterStatus
+		ims.domain.lookups.LookupInstance instance6 = domainObject.getSupplementaryLetterStatus();
+		if ( null != instance6 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance6.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance6.getImage().getImageId(), instance6.getImage().getImagePath());
+			}
+			color = instance6.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.clinical.vo.lookups.DischargeLetterStatus voLookup6 = new ims.clinical.vo.lookups.DischargeLetterStatus(instance6.getId(),instance6.getText(), instance6.isActive(), null, img, color);
+			ims.clinical.vo.lookups.DischargeLetterStatus parentVoLookup6 = voLookup6;
+			ims.domain.lookups.LookupInstance parent6 = instance6.getParent();
+			while (parent6 != null)
+			{
+				if (parent6.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent6.getImage().getImageId(), parent6.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent6.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup6.setParent(new ims.clinical.vo.lookups.DischargeLetterStatus(parent6.getId(),parent6.getText(), parent6.isActive(), null, img, color));
+				parentVoLookup6 = parentVoLookup6.getParent();
+								parent6 = parent6.getParent();
+			}			
+			valueObject.setSupplementaryLetterStatus(voLookup6);
+		}
+		 		return valueObject;
 	 }
 
 
@@ -469,23 +512,7 @@ public class TrackingJobVoAssembler
 			}
 		}
 		domainObject.setPatient(value3);
-	// SaveAsRefVO - treated as a refVo in extract methods
-	ims.core.admin.domain.objects.EmergencyAttendance value4 = null;
-		if ( null != valueObject.getAttendance() ) 
-		{
-			if (valueObject.getAttendance().getBoId() == null)
-			{
-				if (domMap.get(valueObject.getAttendance()) != null)
-				{
-					value4 = (ims.core.admin.domain.objects.EmergencyAttendance)domMap.get(valueObject.getAttendance());
-				}
-			}
-			else
-			{
-				value4 = (ims.core.admin.domain.objects.EmergencyAttendance)domainFactory.getDomainObject(ims.core.admin.domain.objects.EmergencyAttendance.class, valueObject.getAttendance().getBoId());
-			}
-		}
-		domainObject.setAttendance(value4);
+		domainObject.setAttendance(ims.emergency.vo.domain.EmergencyAttendanceForEDDischargeVoAssembler.extractEmergencyAttendance(domainFactory, valueObject.getAttendance(), domMap));
 	// SaveAsRefVO - treated as a refVo in extract methods
 	ims.core.admin.domain.objects.EmergencyEpisode value5 = null;
 		if ( null != valueObject.getEpisode() ) 
@@ -503,6 +530,14 @@ public class TrackingJobVoAssembler
 			}
 		}
 		domainObject.setEpisode(value5);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value6 = null;
+		if ( null != valueObject.getSupplementaryLetterStatus() ) 
+		{
+			value6 =
+				domainFactory.getLookupInstance(valueObject.getSupplementaryLetterStatus().getID());
+		}
+		domainObject.setSupplementaryLetterStatus(value6);
 
 		return domainObject;
 	}

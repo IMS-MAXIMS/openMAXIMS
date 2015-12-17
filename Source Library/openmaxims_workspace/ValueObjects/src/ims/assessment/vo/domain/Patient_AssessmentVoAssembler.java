@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.assessment.vo.domain;
@@ -74,6 +79,8 @@ public class Patient_AssessmentVoAssembler
 		valueObjectDest.setIsAssessmentDocumentSaved(valueObjectSrc.getIsAssessmentDocumentSaved());
 		// AssociatedDocument
 		valueObjectDest.setAssociatedDocument(valueObjectSrc.getAssociatedDocument());
+		// StatusReason
+		valueObjectDest.setStatusReason(valueObjectSrc.getStatusReason());
 	 	return valueObjectDest;
 	 }
 
@@ -486,7 +493,43 @@ public class Patient_AssessmentVoAssembler
 				valueObject.setAssociatedDocument(new ims.core.documents.vo.PatientDocumentRefVo(domainObject.getAssociatedDocument().getId(), domainObject.getAssociatedDocument().getVersion()));
 			}
 		}
- 		return valueObject;
+		// StatusReason
+		ims.domain.lookups.LookupInstance instance13 = domainObject.getStatusReason();
+		if ( null != instance13 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance13.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance13.getImage().getImageId(), instance13.getImage().getImagePath());
+			}
+			color = instance13.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.PatientAssessmentStatusReason voLookup13 = new ims.core.vo.lookups.PatientAssessmentStatusReason(instance13.getId(),instance13.getText(), instance13.isActive(), null, img, color);
+			ims.core.vo.lookups.PatientAssessmentStatusReason parentVoLookup13 = voLookup13;
+			ims.domain.lookups.LookupInstance parent13 = instance13.getParent();
+			while (parent13 != null)
+			{
+				if (parent13.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent13.getImage().getImageId(), parent13.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent13.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup13.setParent(new ims.core.vo.lookups.PatientAssessmentStatusReason(parent13.getId(),parent13.getText(), parent13.isActive(), null, img, color));
+				parentVoLookup13 = parentVoLookup13.getParent();
+								parent13 = parent13.getParent();
+			}			
+			valueObject.setStatusReason(voLookup13);
+		}
+		 		return valueObject;
 	 }
 
 
@@ -671,6 +714,14 @@ public class Patient_AssessmentVoAssembler
 			}
 		}
 		domainObject.setAssociatedDocument(value12);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value13 = null;
+		if ( null != valueObject.getStatusReason() ) 
+		{
+			value13 =
+				domainFactory.getLookupInstance(valueObject.getStatusReason().getID());
+		}
+		domainObject.setStatusReason(value13);
 
 		return domainObject;
 	}

@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:37 -->
+<hibernate-mapping>
+	<subclass name="ims.coe.assessmenttools.domain.objects.InfectionControlRepeatableAssessment" lazy="true" discriminator-value="infr" extends="ims.core.clinical.domain.objects.AssessmentTool" >
+<!-- debug: hibernateClassContent -->
+<!-- debug: infectionControlDetails -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="infectionControlDetails" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="infectcontrass_infectionc_fk">
+				<column name="coe_infectcontrass_infectionc" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.coe.assessmenttools.domain.objects.InfectionControlDetails" />
+		</set>
+	</subclass>
+</hibernate-mapping>

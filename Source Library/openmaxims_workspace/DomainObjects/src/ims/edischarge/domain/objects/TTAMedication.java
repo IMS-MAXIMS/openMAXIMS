@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.edischarge.domain.objects;
@@ -61,8 +66,12 @@ public class TTAMedication extends ims.domain.DomainObject implements ims.domain
 	private ims.domain.lookups.LookupInstance gpToContinue;
 	/** Route */
 	private ims.domain.lookups.LookupInstance route;
-	/** TTAComment */
-	private ims.edischarge.domain.objects.TTANote tTAComment;
+	/** Medication Comments
+	  * Collection of ims.edischarge.domain.objects.TTANote.
+	  */
+	private java.util.List medComments;
+	/** Dispense Sub-ID Counter  */
+	private Integer sortOrder;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public TTAMedication (Integer id, int ver)
@@ -147,11 +156,21 @@ public class TTAMedication extends ims.domain.DomainObject implements ims.domain
 		this.route = route;
 	}
 
-	public ims.edischarge.domain.objects.TTANote getTTAComment() {
-		return tTAComment;
+	public java.util.List getMedComments() {
+		if ( null == medComments ) {
+			medComments = new java.util.ArrayList();
+		}
+		return medComments;
 	}
-	public void setTTAComment(ims.edischarge.domain.objects.TTANote tTAComment) {
-		this.tTAComment = tTAComment;
+	public void setMedComments(java.util.List paramValue) {
+		this.medComments = paramValue;
+	}
+
+	public Integer getSortOrder() {
+		return sortOrder;
+	}
+	public void setSortOrder(Integer sortOrder) {
+		this.sortOrder = sortOrder;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -218,13 +237,31 @@ public class TTAMedication extends ims.domain.DomainObject implements ims.domain
 		if (route != null)
 			auditStr.append(route.getText());
 	    auditStr.append("; ");
-		auditStr.append("\r\n*tTAComment* :");
-		if (tTAComment != null)
+		auditStr.append("\r\n*medComments* :");
+		if (medComments != null)
 		{
-			auditStr.append(toShortClassName(tTAComment));
-				
-		    auditStr.append(tTAComment.getId());
+		int i9=0;
+		for (i9=0; i9<medComments.size(); i9++)
+		{
+			if (i9 > 0)
+				auditStr.append(",");
+			ims.edischarge.domain.objects.TTANote obj = (ims.edischarge.domain.objects.TTANote)medComments.get(i9);
+		    if (obj != null)
+			{
+				if (i9 == 0)
+				{
+				auditStr.append(toShortClassName(obj));
+				auditStr.append("[");
+				}
+		        auditStr.append(obj.getId());
+			}
 		}
+		if (i9 > 0)
+			auditStr.append("] " + i9);
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*sortOrder* :");
+		auditStr.append(sortOrder);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -318,11 +355,20 @@ public class TTAMedication extends ims.domain.DomainObject implements ims.domain
 			sb.append(this.getRoute().toXMLString()); 
 			sb.append("</route>");		
 		}
-		if (this.getTTAComment() != null)
+		if (this.getMedComments() != null)
 		{
-			sb.append("<tTAComment>");
-			sb.append(this.getTTAComment().toXMLString(domMap)); 	
-			sb.append("</tTAComment>");		
+			if (this.getMedComments().size() > 0 )
+			{
+			sb.append("<medComments>");
+			sb.append(ims.domain.DomainObject.toXMLString(this.getMedComments(), domMap));
+			sb.append("</medComments>");		
+			}
+		}
+		if (this.getSortOrder() != null)
+		{
+			sb.append("<sortOrder>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getSortOrder().toString()));
+			sb.append("</sortOrder>");		
 		}
 		return sb.toString();
 	}
@@ -530,17 +576,23 @@ public class TTAMedication extends ims.domain.DomainObject implements ims.domain
 			fldEl = fldEl.element("lki");
 			obj.setRoute(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
 		}
-		fldEl = el.element("tTAComment");
+		fldEl = el.element("medComments");
 		if(fldEl != null)
 		{
-			fldEl = fldEl.element("class");		
-			obj.setTTAComment(ims.edischarge.domain.objects.TTANote.getTTANotefromXML(fldEl, factory, domMap)); 
+			fldEl = fldEl.element("list");	
+			obj.setMedComments(ims.edischarge.domain.objects.TTANote.fromListXMLString(fldEl, factory, obj.getMedComments(), domMap));
+		}
+		fldEl = el.element("sortOrder");
+		if(fldEl != null)
+		{	
+    		obj.setSortOrder(new Integer(fldEl.getTextTrim()));	
 		}
 	}
 
 	public static String[] getCollectionFields()
 	{
 		return new String[]{
+		 "medComments"
 		};
 	}
 
@@ -556,7 +608,8 @@ public class TTAMedication extends ims.domain.DomainObject implements ims.domain
 		public static final String Frequency = "frequency";
 		public static final String GpToContinue = "gpToContinue";
 		public static final String Route = "route";
-		public static final String TTAComment = "tTAComment";
+		public static final String MedComments = "medComments";
+		public static final String SortOrder = "sortOrder";
 	}
 }
 

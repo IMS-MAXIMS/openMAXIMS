@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.core.vo.domain;
@@ -50,8 +55,6 @@ public class ProcedureVoAssembler
 		}
 		valueObjectDest.setID_Procedure(valueObjectSrc.getID_Procedure());
 	    valueObjectDest.setIsRIE(valueObjectSrc.getIsRIE());
-		// taxonomyMap
-		valueObjectDest.setTaxonomyMap(valueObjectSrc.getTaxonomyMap());
 		// Activity
 		valueObjectDest.setActivity(valueObjectSrc.getActivity());
 		// Keywords
@@ -62,6 +65,10 @@ public class ProcedureVoAssembler
 		valueObjectDest.setAnaesthetistCategory(valueObjectSrc.getAnaesthetistCategory());
 		// HospitalCategory
 		valueObjectDest.setHospitalCategory(valueObjectSrc.getHospitalCategory());
+		// OutpatientOnlyProcedure
+		valueObjectDest.setOutpatientOnlyProcedure(valueObjectSrc.getOutpatientOnlyProcedure());
+		// taxonomyMap
+		valueObjectDest.setTaxonomyMap(valueObjectSrc.getTaxonomyMap());
 		// ProcedureName
 		valueObjectDest.setProcedureName(valueObjectSrc.getProcedureName());
 		// isActive
@@ -74,6 +81,20 @@ public class ProcedureVoAssembler
 		valueObjectDest.setTCILagTime(valueObjectSrc.getTCILagTime());
 		// LOS
 		valueObjectDest.setLOS(valueObjectSrc.getLOS());
+		// isLateralityApplicable
+		valueObjectDest.setIsLateralityApplicable(valueObjectSrc.getIsLateralityApplicable());
+		// isBilateralListingApplicable
+		valueObjectDest.setIsBilateralListingApplicable(valueObjectSrc.getIsBilateralListingApplicable());
+		// DefaultAnaestheticType
+		valueObjectDest.setDefaultAnaestheticType(valueObjectSrc.getDefaultAnaestheticType());
+		// GenderSpecific
+		valueObjectDest.setGenderSpecific(valueObjectSrc.getGenderSpecific());
+		// isEndoscopy
+		valueObjectDest.setIsEndoscopy(valueObjectSrc.getIsEndoscopy());
+		// EndoscopyType
+		valueObjectDest.setEndoscopyType(valueObjectSrc.getEndoscopyType());
+		// MedicalWL
+		valueObjectDest.setMedicalWL(valueObjectSrc.getMedicalWL());
 	 	return valueObjectDest;
 	 }
 
@@ -364,14 +385,48 @@ public class ProcedureVoAssembler
 		if ((valueObject.getIsRIE() == null || valueObject.getIsRIE().booleanValue() == false) && domainObject.isIncludeRecord())
 			return null;
 			
-		// taxonomyMap
-		valueObject.setTaxonomyMap(ims.core.vo.domain.TaxonomyMapAssembler.createTaxonomyMapCollectionFromTaxonomyMap(map, domainObject.getTaxonomyMap()) );
 		// Activity
 		valueObject.setActivity(ims.core.vo.domain.ActivityVoAssembler.create(map, domainObject.getActivity()) );
 		// Keywords
 		valueObject.setKeywords(ims.core.vo.domain.KeywordVoAssembler.createKeywordVoCollectionFromKeyword(map, domainObject.getKeywords()) );
 		// SurgeonCategory
-		ims.domain.lookups.LookupInstance instance4 = domainObject.getSurgeonCategory();
+		ims.domain.lookups.LookupInstance instance3 = domainObject.getSurgeonCategory();
+		if ( null != instance3 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance3.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance3.getImage().getImageId(), instance3.getImage().getImagePath());
+			}
+			color = instance3.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.clinicaladmin.vo.lookups.CaseTypeProcedure voLookup3 = new ims.clinicaladmin.vo.lookups.CaseTypeProcedure(instance3.getId(),instance3.getText(), instance3.isActive(), null, img, color);
+			ims.clinicaladmin.vo.lookups.CaseTypeProcedure parentVoLookup3 = voLookup3;
+			ims.domain.lookups.LookupInstance parent3 = instance3.getParent();
+			while (parent3 != null)
+			{
+				if (parent3.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent3.getImage().getImageId(), parent3.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent3.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup3.setParent(new ims.clinicaladmin.vo.lookups.CaseTypeProcedure(parent3.getId(),parent3.getText(), parent3.isActive(), null, img, color));
+				parentVoLookup3 = parentVoLookup3.getParent();
+								parent3 = parent3.getParent();
+			}			
+			valueObject.setSurgeonCategory(voLookup3);
+		}
+				// AnaesthetistCategory
+		ims.domain.lookups.LookupInstance instance4 = domainObject.getAnaesthetistCategory();
 		if ( null != instance4 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
@@ -404,10 +459,10 @@ public class ProcedureVoAssembler
 				parentVoLookup4 = parentVoLookup4.getParent();
 								parent4 = parent4.getParent();
 			}			
-			valueObject.setSurgeonCategory(voLookup4);
+			valueObject.setAnaesthetistCategory(voLookup4);
 		}
-				// AnaesthetistCategory
-		ims.domain.lookups.LookupInstance instance5 = domainObject.getAnaesthetistCategory();
+				// HospitalCategory
+		ims.domain.lookups.LookupInstance instance5 = domainObject.getHospitalCategory();
 		if ( null != instance5 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
@@ -440,83 +495,51 @@ public class ProcedureVoAssembler
 				parentVoLookup5 = parentVoLookup5.getParent();
 								parent5 = parent5.getParent();
 			}			
-			valueObject.setAnaesthetistCategory(voLookup5);
+			valueObject.setHospitalCategory(voLookup5);
 		}
-				// HospitalCategory
-		ims.domain.lookups.LookupInstance instance6 = domainObject.getHospitalCategory();
-		if ( null != instance6 ) {
-			ims.framework.utils.ImagePath img = null;
-			ims.framework.utils.Color color = null;		
-			img = null;
-			if (instance6.getImage() != null) 
-			{
-				img = new ims.framework.utils.ImagePath(instance6.getImage().getImageId(), instance6.getImage().getImagePath());
-			}
-			color = instance6.getColor();
-			if (color != null) 
-				color.getValue();
-
-			ims.clinicaladmin.vo.lookups.CaseTypeProcedure voLookup6 = new ims.clinicaladmin.vo.lookups.CaseTypeProcedure(instance6.getId(),instance6.getText(), instance6.isActive(), null, img, color);
-			ims.clinicaladmin.vo.lookups.CaseTypeProcedure parentVoLookup6 = voLookup6;
-			ims.domain.lookups.LookupInstance parent6 = instance6.getParent();
-			while (parent6 != null)
-			{
-				if (parent6.getImage() != null) 
-				{
-					img = new ims.framework.utils.ImagePath(parent6.getImage().getImageId(), parent6.getImage().getImagePath() );
-				}
-				else 
-				{
-					img = null;
-				}
-				color = parent6.getColor();
-    			if (color != null) 
-    				color.getValue();
-								parentVoLookup6.setParent(new ims.clinicaladmin.vo.lookups.CaseTypeProcedure(parent6.getId(),parent6.getText(), parent6.isActive(), null, img, color));
-				parentVoLookup6 = parentVoLookup6.getParent();
-								parent6 = parent6.getParent();
-			}			
-			valueObject.setHospitalCategory(voLookup6);
-		}
-				// ProcedureName
+				// OutpatientOnlyProcedure
+		valueObject.setOutpatientOnlyProcedure( domainObject.isOutpatientOnlyProcedure() );
+		// taxonomyMap
+		valueObject.setTaxonomyMap(ims.core.vo.domain.NonUniqueTaxonomyMapVoAssembler.createNonUniqueTaxonomyMapVoCollectionFromNonUniqueTaxonomyMap(map, domainObject.getTaxonomyMap()) );
+		// ProcedureName
 		valueObject.setProcedureName(domainObject.getProcedureName());
 		// isActive
 		valueObject.setIsActive( domainObject.isIsActive() );
 		// procedureStatus
-		ims.domain.lookups.LookupInstance instance9 = domainObject.getProcedureStatus();
-		if ( null != instance9 ) {
+		ims.domain.lookups.LookupInstance instance10 = domainObject.getProcedureStatus();
+		if ( null != instance10 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
 			img = null;
-			if (instance9.getImage() != null) 
+			if (instance10.getImage() != null) 
 			{
-				img = new ims.framework.utils.ImagePath(instance9.getImage().getImageId(), instance9.getImage().getImagePath());
+				img = new ims.framework.utils.ImagePath(instance10.getImage().getImageId(), instance10.getImage().getImagePath());
 			}
-			color = instance9.getColor();
+			color = instance10.getColor();
 			if (color != null) 
 				color.getValue();
 
-			ims.core.vo.lookups.ProcedureStatus voLookup9 = new ims.core.vo.lookups.ProcedureStatus(instance9.getId(),instance9.getText(), instance9.isActive(), null, img, color);
-			ims.core.vo.lookups.ProcedureStatus parentVoLookup9 = voLookup9;
-			ims.domain.lookups.LookupInstance parent9 = instance9.getParent();
-			while (parent9 != null)
+			ims.core.vo.lookups.ProcedureStatus voLookup10 = new ims.core.vo.lookups.ProcedureStatus(instance10.getId(),instance10.getText(), instance10.isActive(), null, img, color);
+			ims.core.vo.lookups.ProcedureStatus parentVoLookup10 = voLookup10;
+			ims.domain.lookups.LookupInstance parent10 = instance10.getParent();
+			while (parent10 != null)
 			{
-				if (parent9.getImage() != null) 
+				if (parent10.getImage() != null) 
 				{
-					img = new ims.framework.utils.ImagePath(parent9.getImage().getImageId(), parent9.getImage().getImagePath() );
+					img = new ims.framework.utils.ImagePath(parent10.getImage().getImageId(), parent10.getImage().getImagePath() );
 				}
 				else 
 				{
 					img = null;
 				}
-				color = parent9.getColor();
+				color = parent10.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup9.setParent(new ims.core.vo.lookups.ProcedureStatus(parent9.getId(),parent9.getText(), parent9.isActive(), null, img, color));
-				parentVoLookup9 = parentVoLookup9.getParent();
-								parent9 = parent9.getParent();
+								parentVoLookup10.setParent(new ims.core.vo.lookups.ProcedureStatus(parent10.getId(),parent10.getText(), parent10.isActive(), null, img, color));
+				parentVoLookup10 = parentVoLookup10.getParent();
+								parent10 = parent10.getParent();
 			}			
-			valueObject.setProcedureStatus(voLookup9);
+			valueObject.setProcedureStatus(voLookup10);
 		}
 				// DurationInMins
 		valueObject.setDurationInMins(domainObject.getDurationInMins());
@@ -524,6 +547,122 @@ public class ProcedureVoAssembler
 		valueObject.setTCILagTime(domainObject.getTCILagTime());
 		// LOS
 		valueObject.setLOS(domainObject.getLOS());
+		// isLateralityApplicable
+		valueObject.setIsLateralityApplicable( domainObject.isIsLateralityApplicable() );
+		// isBilateralListingApplicable
+		valueObject.setIsBilateralListingApplicable( domainObject.isIsBilateralListingApplicable() );
+		// DefaultAnaestheticType
+		ims.domain.lookups.LookupInstance instance16 = domainObject.getDefaultAnaestheticType();
+		if ( null != instance16 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance16.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance16.getImage().getImageId(), instance16.getImage().getImagePath());
+			}
+			color = instance16.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.clinical.vo.lookups.AnaestheticType voLookup16 = new ims.clinical.vo.lookups.AnaestheticType(instance16.getId(),instance16.getText(), instance16.isActive(), null, img, color);
+			ims.clinical.vo.lookups.AnaestheticType parentVoLookup16 = voLookup16;
+			ims.domain.lookups.LookupInstance parent16 = instance16.getParent();
+			while (parent16 != null)
+			{
+				if (parent16.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent16.getImage().getImageId(), parent16.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent16.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup16.setParent(new ims.clinical.vo.lookups.AnaestheticType(parent16.getId(),parent16.getText(), parent16.isActive(), null, img, color));
+				parentVoLookup16 = parentVoLookup16.getParent();
+								parent16 = parent16.getParent();
+			}			
+			valueObject.setDefaultAnaestheticType(voLookup16);
+		}
+				// GenderSpecific
+		ims.domain.lookups.LookupInstance instance17 = domainObject.getGenderSpecific();
+		if ( null != instance17 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance17.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance17.getImage().getImageId(), instance17.getImage().getImagePath());
+			}
+			color = instance17.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.admin.vo.lookups.GenderSpecific voLookup17 = new ims.admin.vo.lookups.GenderSpecific(instance17.getId(),instance17.getText(), instance17.isActive(), null, img, color);
+			ims.admin.vo.lookups.GenderSpecific parentVoLookup17 = voLookup17;
+			ims.domain.lookups.LookupInstance parent17 = instance17.getParent();
+			while (parent17 != null)
+			{
+				if (parent17.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent17.getImage().getImageId(), parent17.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent17.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup17.setParent(new ims.admin.vo.lookups.GenderSpecific(parent17.getId(),parent17.getText(), parent17.isActive(), null, img, color));
+				parentVoLookup17 = parentVoLookup17.getParent();
+								parent17 = parent17.getParent();
+			}			
+			valueObject.setGenderSpecific(voLookup17);
+		}
+				// isEndoscopy
+		valueObject.setIsEndoscopy( domainObject.isIsEndoscopy() );
+		// EndoscopyType
+		ims.domain.lookups.LookupInstance instance19 = domainObject.getEndoscopyType();
+		if ( null != instance19 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance19.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance19.getImage().getImageId(), instance19.getImage().getImagePath());
+			}
+			color = instance19.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.ProcedureEndoscopyType voLookup19 = new ims.core.vo.lookups.ProcedureEndoscopyType(instance19.getId(),instance19.getText(), instance19.isActive(), null, img, color);
+			ims.core.vo.lookups.ProcedureEndoscopyType parentVoLookup19 = voLookup19;
+			ims.domain.lookups.LookupInstance parent19 = instance19.getParent();
+			while (parent19 != null)
+			{
+				if (parent19.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent19.getImage().getImageId(), parent19.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent19.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup19.setParent(new ims.core.vo.lookups.ProcedureEndoscopyType(parent19.getId(),parent19.getText(), parent19.isActive(), null, img, color));
+				parentVoLookup19 = parentVoLookup19.getParent();
+								parent19 = parent19.getParent();
+			}			
+			valueObject.setEndoscopyType(voLookup19);
+		}
+				// MedicalWL
+		valueObject.setMedicalWL( domainObject.isMedicalWL() );
  		return valueObject;
 	 }
 
@@ -573,33 +712,34 @@ public class ProcedureVoAssembler
 		}
 		domainObject.setVersion(valueObject.getVersion_Procedure());
 
-		domainObject.setTaxonomyMap(ims.core.vo.domain.TaxonomyMapAssembler.extractTaxonomyMapList(domainFactory, valueObject.getTaxonomyMap(), domainObject.getTaxonomyMap(), domMap));		
 		domainObject.setActivity(ims.core.vo.domain.ActivityVoAssembler.extractActivity(domainFactory, valueObject.getActivity(), domMap));
 		domainObject.setKeywords(ims.core.vo.domain.KeywordVoAssembler.extractKeywordList(domainFactory, valueObject.getKeywords(), domainObject.getKeywords(), domMap));		
 		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value4 = null;
+		ims.domain.lookups.LookupInstance value3 = null;
 		if ( null != valueObject.getSurgeonCategory() ) 
 		{
-			value4 =
+			value3 =
 				domainFactory.getLookupInstance(valueObject.getSurgeonCategory().getID());
 		}
-		domainObject.setSurgeonCategory(value4);
+		domainObject.setSurgeonCategory(value3);
 		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value5 = null;
+		ims.domain.lookups.LookupInstance value4 = null;
 		if ( null != valueObject.getAnaesthetistCategory() ) 
 		{
-			value5 =
+			value4 =
 				domainFactory.getLookupInstance(valueObject.getAnaesthetistCategory().getID());
 		}
-		domainObject.setAnaesthetistCategory(value5);
+		domainObject.setAnaesthetistCategory(value4);
 		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value6 = null;
+		ims.domain.lookups.LookupInstance value5 = null;
 		if ( null != valueObject.getHospitalCategory() ) 
 		{
-			value6 =
+			value5 =
 				domainFactory.getLookupInstance(valueObject.getHospitalCategory().getID());
 		}
-		domainObject.setHospitalCategory(value6);
+		domainObject.setHospitalCategory(value5);
+		domainObject.setOutpatientOnlyProcedure(valueObject.getOutpatientOnlyProcedure());
+		domainObject.setTaxonomyMap(ims.core.vo.domain.NonUniqueTaxonomyMapVoAssembler.extractNonUniqueTaxonomyMapList(domainFactory, valueObject.getTaxonomyMap(), domainObject.getTaxonomyMap(), domMap));		
 		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
 		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
 		if (valueObject.getProcedureName() != null && valueObject.getProcedureName().equals(""))
@@ -609,16 +749,44 @@ public class ProcedureVoAssembler
 		domainObject.setProcedureName(valueObject.getProcedureName());
 		domainObject.setIsActive(valueObject.getIsActive());
 		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value9 = null;
+		ims.domain.lookups.LookupInstance value10 = null;
 		if ( null != valueObject.getProcedureStatus() ) 
 		{
-			value9 =
+			value10 =
 				domainFactory.getLookupInstance(valueObject.getProcedureStatus().getID());
 		}
-		domainObject.setProcedureStatus(value9);
+		domainObject.setProcedureStatus(value10);
 		domainObject.setDurationInMins(valueObject.getDurationInMins());
 		domainObject.setTCILagTime(valueObject.getTCILagTime());
 		domainObject.setLOS(valueObject.getLOS());
+		domainObject.setIsLateralityApplicable(valueObject.getIsLateralityApplicable());
+		domainObject.setIsBilateralListingApplicable(valueObject.getIsBilateralListingApplicable());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value16 = null;
+		if ( null != valueObject.getDefaultAnaestheticType() ) 
+		{
+			value16 =
+				domainFactory.getLookupInstance(valueObject.getDefaultAnaestheticType().getID());
+		}
+		domainObject.setDefaultAnaestheticType(value16);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value17 = null;
+		if ( null != valueObject.getGenderSpecific() ) 
+		{
+			value17 =
+				domainFactory.getLookupInstance(valueObject.getGenderSpecific().getID());
+		}
+		domainObject.setGenderSpecific(value17);
+		domainObject.setIsEndoscopy(valueObject.getIsEndoscopy());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value19 = null;
+		if ( null != valueObject.getEndoscopyType() ) 
+		{
+			value19 =
+				domainFactory.getLookupInstance(valueObject.getEndoscopyType().getID());
+		}
+		domainObject.setEndoscopyType(value19);
+		domainObject.setMedicalWL(valueObject.getMedicalWL());
 
 		return domainObject;
 	}

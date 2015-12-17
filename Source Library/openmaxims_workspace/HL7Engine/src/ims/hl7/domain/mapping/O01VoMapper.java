@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,6 +15,11 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 package ims.hl7.domain.mapping;
@@ -24,7 +29,6 @@ import ims.assessment.helper.UserAssessmentInstHelper;
 import ims.configuration.gen.ConfigFlag;
 import ims.configuration.ConfigItems;
 import ims.core.patient.vo.PatientRefVo;
-import ims.core.vo.ClinicLiteVo;
 import ims.core.vo.CommChannelVo;
 import ims.core.vo.GeneralQuestionAnswerVo;
 import ims.core.vo.GeneralQuestionAnswerVoCollection;
@@ -33,10 +37,9 @@ import ims.core.vo.LocShortMappingsVo;
 import ims.core.vo.MedicVo;
 import ims.core.vo.PatientShort;
 import ims.core.vo.ServiceShortVo;
-import ims.core.vo.TaxonomyMap;
 import ims.core.vo.lookups.ChannelType;
-import ims.core.vo.lookups.LocationType;
 import ims.framework.utils.DateTime;
+import ims.hl7.domain.EventResponse;
 import ims.hl7.domain.HL7EngineApplication;
 import ims.hl7.utils.EvnCodes;
 import ims.hl7.utils.HL7Utils;
@@ -65,7 +68,6 @@ import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v24.datatype.FT;
-import ca.uhn.hl7v2.model.v24.datatype.PL;
 import ca.uhn.hl7v2.model.v24.datatype.SPS;
 import ca.uhn.hl7v2.model.v24.message.ORM_O01;
 import ca.uhn.hl7v2.model.v24.segment.NTE;
@@ -85,7 +87,10 @@ public class O01VoMapper extends VoMapper
 	 * and we need to check for the existence of the specimen.  If not found, we will create the order
 	 * and set wasProcessed to true so that it won't be picked up by our outbound app. </p>
 	 */
-	public Message processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception
+
+	//WDEV-20112
+//	public Message processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception
+	public EventResponse processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception //WDEV-20112
 	{
 		R01VoMapper r01mapper = (R01VoMapper) HL7EngineApplication.getVoMapper(EvnCodes.R01);
 		if (r01mapper == null)
@@ -97,6 +102,7 @@ public class O01VoMapper extends VoMapper
 	
 	public Message populateMessage(IfOrderMessageVo msgVo, IfOutOcsOrderVo newOrder) throws Exception
 	{
+		
 		LOG.debug("O01VoMapper populateMessage: entry");
 		if (msgVo == null || newOrder == null||msgVo.getProviderSystem()==null||msgVo.getProviderSystem().getCodeSystem()==null)
 			throw new Exception("Invalid parameters supplied to populateMessage!");
@@ -445,13 +451,31 @@ public class O01VoMapper extends VoMapper
 		{
 			if(newOrder.getResponsibleGpIsNotNull())
 			{
-				renderGpShortVoToXCN(newOrder.getResponsibleGp(),pv.getReferringDoctor(0),providerSystem);
+				//WDEV-2100
+//				renderGpShortVoToXCN(newOrder.getResponsibleGp(),pv.getReferringDoctor(0),providerSystem);
+				if (ConfigFlag.HL7.USE_CONFIGURED_TAXONOMYTYPES_FOR_XCN.getValue())
+				{
+					renderGpShortVoToReferringDoctor(newOrder.getResponsibleGp(), pv, providerSystem);
+				}
+				else
+				{
+					renderGpShortVoToXCN(newOrder.getResponsibleGp(), pv.getReferringDoctor(0), providerSystem);
+				}
 			}
 			
 		}
 		if (newOrder.getResponsibleClinicianIsNotNull())
 		{
-			renderMemberOfStaffShortVoToXCN(newOrder.getResponsibleClinician().getMos(), pv.getConsultingDoctor(0),providerSystem);
+			//WDEV-21000
+//			renderMemberOfStaffShortVoToXCN(newOrder.getResponsibleClinician().getMos(), pv.getConsultingDoctor(0),providerSystem);
+			if (ConfigFlag.HL7.USE_CONFIGURED_TAXONOMYTYPES_FOR_XCN.getValue())
+			{
+				renderMemberOfStaffShortVoToConsultingDoctor(newOrder.getResponsibleClinician().getMos(), pv, providerSystem);
+			}
+			else
+			{
+				renderMemberOfStaffShortVoToXCN(newOrder.getResponsibleClinician().getMos(), pv.getConsultingDoctor(0), providerSystem);
+			}
 			
 			// wdev-2047 If the clinician has a specialty, render that to PV1-10 for Radiology only
 			if (providerSystem.getCategoryIsNotNull() && providerSystem.getCategory().equals(Category.CLINICALIMAGING))
@@ -656,7 +680,7 @@ public class O01VoMapper extends VoMapper
 	{
 		LOG.debug("O01VoMapper renderOrder: entry");
 
-		// OBR-1   Set ID – OBR   (SI)
+		// OBR-1   Set ID â€“ OBR   (SI)
 		obr.getSetIDOBR().setValue(String.valueOf(id+1));
 
 		// OBR-2   Placer order number   (EI)   00216
@@ -703,9 +727,19 @@ public class O01VoMapper extends VoMapper
 		if (newOrder.getOrderedByIsNotNull())
 		{
 			// ORC-10   Entered by   (XCN)   00224
-			renderMemberOfStaffShortVoToXCN(newOrder.getOrderedBy(), commonOrder.getEnteredBy(0),providerSystem);
+			//WDEV-21000
+//			renderMemberOfStaffShortVoToXCN(newOrder.getOrderedBy(), commonOrder.getEnteredBy(0),providerSystem);
+			if (ConfigFlag.HL7.USE_CONFIGURED_TAXONOMYTYPES_FOR_XCN.getValue())
+			{
+				renderMemberOfStaffShortVoToEnteredBy(newOrder.getOrderedBy(), commonOrder, providerSystem);
+			}
+			else
+			{
+				renderMemberOfStaffShortVoToXCN(newOrder.getOrderedBy(), commonOrder.getEnteredBy(0), providerSystem);
+			}
 
-			// ORC-13   Enterer’s location   (PL)   00227 
+
+			// ORC-13   Entererâ€™s location   (PL)   00227 
 			if (newOrder.getOrderedBy().getPrimaryLocationIsNotNull())
 			{
 				commonOrder.getEntererSLocation().getLocationDescription().setValue(newOrder.getOrderedBy().getPrimaryLocation().getName());
@@ -729,15 +763,36 @@ public class O01VoMapper extends VoMapper
 		{
 			if(newOrder.getResponsibleGpIsNotNull())
 			{
-				renderGpShortVoToXCN(newOrder.getResponsibleGp(), commonOrder.getOrderingProvider(0),providerSystem);
-				renderGpShortVoToXCN(newOrder.getResponsibleGp(), obr.getOrderingProvider(0),providerSystem);
+				//WDEV-21000
+//				renderGpShortVoToXCN(newOrder.getResponsibleGp(), commonOrder.getOrderingProvider(0),providerSystem);
+//				renderGpShortVoToXCN(newOrder.getResponsibleGp(), obr.getOrderingProvider(0),providerSystem);
+				if (ConfigFlag.HL7.USE_CONFIGURED_TAXONOMYTYPES_FOR_XCN.getValue())
+				{
+					renderGpShortVoToOrderingProvider(newOrder.getResponsibleGp(), commonOrder, providerSystem);
+					renderGpShortVoToOrderingProvider(newOrder.getResponsibleGp(), obr, providerSystem);
+				}
+				else
+				{
+					renderGpShortVoToXCN(newOrder.getResponsibleGp(), commonOrder.getOrderingProvider(0), providerSystem);
+					renderGpShortVoToXCN(newOrder.getResponsibleGp(), obr.getOrderingProvider(0), providerSystem);
+				}
 			}
 		}
 		
 		else if (newOrder.getResponsibleClinicianIsNotNull())
 		{
-			renderMemberOfStaffShortVoToXCN(newOrder.getResponsibleClinician().getMos(), commonOrder.getOrderingProvider(0),providerSystem);
-			renderMemberOfStaffShortVoToXCN(newOrder.getResponsibleClinician().getMos(), obr.getOrderingProvider(0),providerSystem);
+			//WDEV-21000
+			if (ConfigFlag.HL7.USE_CONFIGURED_TAXONOMYTYPES_FOR_XCN.getValue())
+			{
+				renderMemberOfStaffShortVoToOrderingProvider(newOrder.getResponsibleClinician().getMos(), commonOrder, providerSystem);
+				renderMemberOfStaffShortVoToOrderingProvider(newOrder.getResponsibleClinician().getMos(), obr, providerSystem);
+			}
+			else
+			{
+				renderMemberOfStaffShortVoToXCN(newOrder.getResponsibleClinician().getMos(), commonOrder.getOrderingProvider(0), providerSystem);
+				renderMemberOfStaffShortVoToXCN(newOrder.getResponsibleClinician().getMos(), obr.getOrderingProvider(0), providerSystem);
+			}
+			
 			// OBR-17   Order callback phone number 
 			
 			if (!ConfigFlag.GEN.SITE_USES_ORDER_BLEEP_EXT_NUMBER.getValue()
@@ -919,7 +974,7 @@ public class O01VoMapper extends VoMapper
 			obr.getDiagnosticServSectID().setValue(extMapping);
 		}
 		
-		// OBR-39   Collector’s comment   (CE)  
+		// OBR-39   Collectorâ€™s comment   (CE)  
 		obr.getCollectorSComment(0).getText().setValue(specimen.getCollectorComment());
 		LOG.debug("O01VoMapper renderSpecimenToOBR: exit");
 
@@ -932,6 +987,7 @@ public class O01VoMapper extends VoMapper
 	
 	public Message populateStatusChangeRadiologyMessage(ExternalEventVo event) throws Exception
 	{
+		
 		LOG.debug("O01VoMapper populateStatusChangeRadiologyMessage: entry");
 		ORM_O01 order = new ORM_O01();
 		
@@ -976,7 +1032,16 @@ public class O01VoMapper extends VoMapper
 		{
 			if(orderVo.getResponsibleGpIsNotNull())
 			{
-				renderGpShortVoToXCN(orderVo.getResponsibleGp(),pv.getReferringDoctor(0),event.getProviderSystem());
+				//WDEV-21000
+//				renderGpShortVoToXCN(orderVo.getResponsibleGp(),pv.getReferringDoctor(0),event.getProviderSystem());
+				if (ConfigFlag.HL7.USE_CONFIGURED_TAXONOMYTYPES_FOR_XCN.getValue())
+				{
+					renderGpShortVoToReferringDoctor(orderVo.getResponsibleGp(), pv, event.getProviderSystem());
+				}
+				else
+				{
+					renderGpShortVoToXCN(orderVo.getResponsibleGp(), pv.getReferringDoctor(0), event.getProviderSystem());
+				}
 			}
 			
 		}
@@ -1040,9 +1105,19 @@ public class O01VoMapper extends VoMapper
 		if (orderVo.getOrderedByIsNotNull())
 		{
 			// ORC-10   Entered by   (XCN)   00224
-			renderMemberOfStaffShortVoToXCN(orderVo.getOrderedBy(), commonOrder.getEnteredBy(0),event.getProviderSystem());
+			//WDEV-21000
+//			renderMemberOfStaffShortVoToXCN(orderVo.getOrderedBy(), commonOrder.getEnteredBy(0),event.getProviderSystem());
+			if (ConfigFlag.HL7.USE_CONFIGURED_TAXONOMYTYPES_FOR_XCN.getValue())
+			{
+				renderMemberOfStaffShortVoToEnteredBy(orderVo.getOrderedBy(), commonOrder, event.getProviderSystem());
+			}
+			else
+			{
+				renderMemberOfStaffShortVoToXCN(orderVo.getOrderedBy(), commonOrder.getEnteredBy(0), event.getProviderSystem());
+			}
 
-			// ORC-13   Enterer’s location   (PL)   00227 
+
+			// ORC-13   Entererâ€™s location   (PL)   00227 
 			if (orderVo.getOrderedBy().getPrimaryLocationIsNotNull())
 			{
 				commonOrder.getEntererSLocation().getLocationDescription().setValue(orderVo.getOrderedBy().getPrimaryLocation().getName());
@@ -1066,13 +1141,31 @@ public class O01VoMapper extends VoMapper
 		{
 			if(orderVo.getResponsibleGpIsNotNull())
 			{
-				renderGpShortVoToXCN(orderVo.getResponsibleGp(), commonOrder.getOrderingProvider(0),event.getProviderSystem());
+				//WDEV-21000
+//				renderGpShortVoToXCN(orderVo.getResponsibleGp(), commonOrder.getOrderingProvider(0),event.getProviderSystem());
+				if (ConfigFlag.HL7.USE_CONFIGURED_TAXONOMYTYPES_FOR_XCN.getValue())
+				{
+					renderGpShortVoToOrderingProvider(orderVo.getResponsibleGp(), commonOrder, event.getProviderSystem());
+				}
+				else
+				{
+					renderGpShortVoToXCN(orderVo.getResponsibleGp(), commonOrder.getOrderingProvider(0), event.getProviderSystem());
+				}
 			}
 		}
 		
 		else if (orderVo.getResponsibleClinicianIsNotNull())
 		{
-			renderMemberOfStaffShortVoToXCN(orderVo.getResponsibleClinician().getMos(), commonOrder.getOrderingProvider(0),event.getProviderSystem());
+			//WDEV-21000
+//			renderMemberOfStaffShortVoToXCN(orderVo.getResponsibleClinician().getMos(), commonOrder.getOrderingProvider(0),event.getProviderSystem());
+			if (ConfigFlag.HL7.USE_CONFIGURED_TAXONOMYTYPES_FOR_XCN.getValue())
+			{
+				renderMemberOfStaffShortVoToOrderingProvider(orderVo.getResponsibleClinician().getMos(), commonOrder, event.getProviderSystem());
+			}
+			else
+			{
+				renderMemberOfStaffShortVoToXCN(orderVo.getResponsibleClinician().getMos(), commonOrder.getOrderingProvider(0), event.getProviderSystem());
+			}
 		}
 		
 		
@@ -1165,7 +1258,7 @@ public class O01VoMapper extends VoMapper
 			obr.getRelevantClinicalInfo().setValue(HL7Utils.toHL7Text(addtNotes));
 		}
 		
-		// OBR-1   Set ID – OBR   (SI)
+		// OBR-1   Set ID â€“ OBR   (SI)
 		obr.getSetIDOBR().setValue(String.valueOf(0+1));
 
 		// OBR-2   Placer order number   (EI)   00216
@@ -1192,7 +1285,9 @@ public class O01VoMapper extends VoMapper
 		order = RefManHelper.PopulateOrderMessage(order,null,orderInv,RefMandomain);
 		}
 		LOG.debug("O01VoMapper populateStatusChangeRadiologyMessage: exit");
+		
 		return order;
+
 	}
 
 }

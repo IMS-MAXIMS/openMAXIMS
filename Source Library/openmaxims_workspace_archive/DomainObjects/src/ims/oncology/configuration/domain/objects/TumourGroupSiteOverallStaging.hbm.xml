@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:34 -->
+<hibernate-mapping>
+	<class name="ims.oncology.configuration.domain.objects.TumourGroupSiteOverallStaging" table="onco_tunourgroupsit" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: tGroup -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="tGroup" class="ims.oncology.configuration.domain.objects.TumourGroup" unique="true" foreign-key="tunourgroupsit_tgroup_fk" access="field" cascade="save-update">
+			<column name="tgroup" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: tSite -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="tSite" class="ims.oncology.configuration.domain.objects.TumourSite" unique="true" foreign-key="tunourgroupsit_tsite_fk" access="field" cascade="save-update">
+			<column name="tsite" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: tVal -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="tVal" class="ims.oncology.configuration.domain.objects.TumourGroupSiteTNMValue" unique="true" foreign-key="tunourgroupsit_tval_fk" access="field" cascade="save-update">
+			<column name="tval" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: nVal -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="nVal" class="ims.oncology.configuration.domain.objects.TumourGroupSiteTNMValue" unique="true" foreign-key="tunourgroupsit_nval_fk" access="field" cascade="save-update">
+			<column name="nval" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: mVal -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="mVal" class="ims.oncology.configuration.domain.objects.TumourGroupSiteTNMValue" unique="true" foreign-key="tunourgroupsit_mval_fk" access="field" cascade="save-update">
+			<column name="mval" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: histVal -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="histVal" class="ims.oncology.configuration.domain.objects.TumourGroupHistology" unique="true" foreign-key="tunourgroupsit_histval_fk" access="field" cascade="save-update">
+			<column name="histval" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: serumMarkerVal -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="serumMarkerVal" class="ims.oncology.configuration.domain.objects.TumourSerumMarker" unique="true" foreign-key="tunourgroupsit_serummarke_fk" access="field" cascade="save-update">
+			<column name="serummarke" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: diffVal -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="diffVal" class="ims.oncology.configuration.domain.objects.TumourGroupHistopathologicGrade" unique="true" foreign-key="tunourgroupsit_diffval_fk" access="field" cascade="save-update">
+			<column name="diffval" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: o45 -->
+<!-- debug: overallStageDescription -->
+<!-- debug: isActive -->
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="o45" type="string" access="field" update="true" > 
+			<column name="o45" length="1"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="overallStageDescription" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_overallsta" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isActive" type="boolean" access="field" update="true">
+			<column name="isactive"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

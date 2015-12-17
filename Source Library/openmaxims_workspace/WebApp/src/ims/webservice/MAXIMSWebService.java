@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:40
+ * Generated: 12/10/2015, 13:36
  *
  */
 package ims.webservice;
@@ -49,6 +54,86 @@ public class MAXIMSWebService extends ims.domain.impl.DomainWebService
 		super.logout(sessionToken);
 	}
 
+	public void refreshLookupCache(
+
+												  Integer typeId
+                                                 ) throws Exception
+	{
+		if (!loggedIn()) throw new Exception("Not logged in!!");
+			
+	Integer v_typeId=null;
+	    if (typeId != null)
+		{
+			v_typeId = typeId;
+	}
+		
+		ims.admin.domain.RemoteAdmin intf = (ims.admin.domain.RemoteAdmin)super.getDomainImpl("ims.admin.domain.impl.RemoteAdminImpl");		
+
+	    intf.refreshLookupCache(
+												  v_typeId 
+                                           ); 
+
+		//super.freeDomainImpl(intf);
+						
+	}
+	public void reloadFlags(
+                                                 ) throws Exception
+	{
+		if (!loggedIn()) throw new Exception("Not logged in!!");
+			
+		
+		ims.admin.domain.RemoteAdmin intf = (ims.admin.domain.RemoteAdmin)super.getDomainImpl("ims.admin.domain.impl.RemoteAdminImpl");		
+
+	    intf.reloadFlags(
+                                           ); 
+
+		//super.freeDomainImpl(intf);
+						
+	}
+	public void saveFlag(
+
+												  String flagName
+
+												 , String flagValue
+                                                 ) throws Exception
+	{
+		if (!loggedIn()) throw new Exception("Not logged in!!");
+			
+	String v_flagName=null;
+	    if (flagName != null)
+		{
+			v_flagName = flagName;
+	}
+	String v_flagValue=null;
+	    if (flagValue != null)
+		{
+			v_flagValue = flagValue;
+	}
+		
+		ims.admin.domain.RemoteAdmin intf = (ims.admin.domain.RemoteAdmin)super.getDomainImpl("ims.admin.domain.impl.RemoteAdminImpl");		
+
+	    intf.saveFlag(
+												  v_flagName 
+												 , v_flagValue 
+                                           ); 
+
+		//super.freeDomainImpl(intf);
+						
+	}
+	public void reloadAuditConfig(
+                                                 ) throws Exception
+	{
+		if (!loggedIn()) throw new Exception("Not logged in!!");
+			
+		
+		ims.admin.domain.RemoteAdmin intf = (ims.admin.domain.RemoteAdmin)super.getDomainImpl("ims.admin.domain.impl.RemoteAdminImpl");		
+
+	    intf.reloadAuditConfig(
+                                           ); 
+
+		//super.freeDomainImpl(intf);
+						
+	}
 	public ims.core.vo.beans.NotificationVoBean[] getNotifications(
                                                  ) throws Exception
 	{
@@ -605,50 +690,6 @@ public class MAXIMSWebService extends ims.domain.impl.DomainWebService
 			return null;
 				return (ims.core.vo.beans.PatientKioskSettingsVoBean)ret.getBean();
 	}
-	public ims.scheduling.vo.beans.Sch_BookingVoBean saveBooking(
-
-												  ims.scheduling.vo.beans.Sch_BookingVoBean booking
-
-												 , ims.vo.RefVoBean catsReferral
-
-												 , Boolean isRebook
-                                                 ) throws Exception
-	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-	ims.scheduling.vo.Sch_BookingVo v_booking=null;
-	    if (booking != null)
-		{
-			v_booking = booking.buildVo();
-			//String[] errors0 = v_booking.validate();
-			//if (errors0 != null)
-			//	throw new Exception("Errors found during value object (booking) validation - " + errors0);
-	
-	}
-	ims.careuk.vo.CatsReferralRefVo v_catsReferral=null;
-	    if (catsReferral != null)
-		{
-			v_catsReferral = catsReferral == null ? null : new ims.careuk.vo.CatsReferralRefVo(catsReferral.getId(), catsReferral.getVersion());
-	}
-	Boolean v_isRebook=null;
-	    if (isRebook != null)
-		{
-			v_isRebook = isRebook;
-	}
-		
-		ims.careuk.domain.BookAppointment intf = (ims.careuk.domain.BookAppointment)super.getDomainImpl("ims.careuk.domain.impl.BookAppointmentImpl");		
-
-	   ims.scheduling.vo.Sch_BookingVo ret = intf.saveBooking(
-												  v_booking 
-												 , v_catsReferral 
-												 , v_isRebook 
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-				if(ret == null)
-			return null;
-				return (ims.scheduling.vo.beans.Sch_BookingVoBean)ret.getBean();
-	}
 	public void processAppointmentForPukkaJ(
 
 												  ims.vo.RefVoBean catsReferral
@@ -658,10 +699,10 @@ public class MAXIMSWebService extends ims.domain.impl.DomainWebService
 	{
 		if (!loggedIn()) throw new Exception("Not logged in!!");
 			
-	ims.careuk.vo.CatsReferralRefVo v_catsReferral=null;
+	ims.RefMan.vo.CatsReferralRefVo v_catsReferral=null;
 	    if (catsReferral != null)
 		{
-			v_catsReferral = catsReferral == null ? null : new ims.careuk.vo.CatsReferralRefVo(catsReferral.getId(), catsReferral.getVersion());
+			v_catsReferral = catsReferral == null ? null : new ims.RefMan.vo.CatsReferralRefVo(catsReferral.getId(), catsReferral.getVersion());
 	}
 	ims.scheduling.vo.Booking_AppointmentRefVo v_appt=null;
 	    if (appt != null)
@@ -669,7 +710,7 @@ public class MAXIMSWebService extends ims.domain.impl.DomainWebService
 			v_appt = appt == null ? null : new ims.scheduling.vo.Booking_AppointmentRefVo(appt.getId(), appt.getVersion());
 	}
 		
-		ims.careuk.domain.BookAppointment intf = (ims.careuk.domain.BookAppointment)super.getDomainImpl("ims.careuk.domain.impl.BookAppointmentImpl");		
+		ims.RefMan.domain.BookAppointment intf = (ims.RefMan.domain.BookAppointment)super.getDomainImpl("ims.RefMan.domain.impl.BookAppointmentImpl");		
 
 	    intf.processAppointmentForPukkaJ(
 												  v_catsReferral 
@@ -688,10 +729,10 @@ public class MAXIMSWebService extends ims.domain.impl.DomainWebService
 	{
 		if (!loggedIn()) throw new Exception("Not logged in!!");
 			
-	ims.careuk.vo.CatsReferralRefVo v_catsReferral=null;
+	ims.RefMan.vo.CatsReferralRefVo v_catsReferral=null;
 	    if (catsReferral != null)
 		{
-			v_catsReferral = catsReferral == null ? null : new ims.careuk.vo.CatsReferralRefVo(catsReferral.getId(), catsReferral.getVersion());
+			v_catsReferral = catsReferral == null ? null : new ims.RefMan.vo.CatsReferralRefVo(catsReferral.getId(), catsReferral.getVersion());
 	}
 	ims.scheduling.vo.Booking_AppointmentRefVo v_appt=null;
 	    if (appt != null)
@@ -699,7 +740,7 @@ public class MAXIMSWebService extends ims.domain.impl.DomainWebService
 			v_appt = appt == null ? null : new ims.scheduling.vo.Booking_AppointmentRefVo(appt.getId(), appt.getVersion());
 	}
 		
-		ims.careuk.domain.BookAppointment intf = (ims.careuk.domain.BookAppointment)super.getDomainImpl("ims.careuk.domain.impl.BookAppointmentImpl");		
+		ims.RefMan.domain.BookAppointment intf = (ims.RefMan.domain.BookAppointment)super.getDomainImpl("ims.RefMan.domain.impl.BookAppointmentImpl");		
 
 	    intf.cancelAppointmentForPukkaJ(
 												  v_catsReferral 
@@ -850,28 +891,6 @@ public class MAXIMSWebService extends ims.domain.impl.DomainWebService
 				if(ret == null)
 			return null;
 				return ret;
-	}
-	public void updateCatsReferralAdditionalInvStatus(
-
-												  ims.vo.RefVoBean catsReferral
-                                                 ) throws Exception
-	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-	ims.careuk.vo.CatsReferralRefVo v_catsReferral=null;
-	    if (catsReferral != null)
-		{
-			v_catsReferral = catsReferral == null ? null : new ims.careuk.vo.CatsReferralRefVo(catsReferral.getId(), catsReferral.getVersion());
-	}
-		
-		ims.scheduling.domain.SessionAdmin intf = (ims.scheduling.domain.SessionAdmin)super.getDomainImpl("ims.scheduling.domain.impl.SessionAdminImpl");		
-
-	    intf.updateCatsReferralAdditionalInvStatus(
-												  v_catsReferral 
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-						
 	}
 	public String getSecurityToken(
 
@@ -1090,6 +1109,104 @@ public class MAXIMSWebService extends ims.domain.impl.DomainWebService
 	    intf.addSeed(
 												  v_name 
 												 , v_value 
+                                           ); 
+
+		//super.freeDomainImpl(intf);
+						
+	}
+	public ims.core.vo.beans.GeoCoOrdVoBean getGeoCoOrds(
+
+												  String poscode
+                                                 ) throws Exception
+	{
+		if (!loggedIn()) throw new Exception("Not logged in!!");
+			
+	String v_poscode=null;
+	    if (poscode != null)
+		{
+			v_poscode = poscode;
+	}
+		
+		ims.core.domain.AddressSearch intf = (ims.core.domain.AddressSearch)super.getDomainImpl("ims.core.domain.impl.AddressSearchImpl");		
+
+	   ims.core.vo.GeoCoOrdVo ret = intf.getGeoCoOrds(
+												  v_poscode 
+                                           ); 
+
+		//super.freeDomainImpl(intf);
+				if(ret == null)
+			return null;
+				return (ims.core.vo.beans.GeoCoOrdVoBean)ret.getBean();
+	}
+	public ims.scheduling.vo.beans.Sch_BookingVoBean saveBooking(
+
+												  ims.scheduling.vo.beans.Sch_BookingVoBean booking
+
+												 , ims.vo.RefVoBean catsReferral
+
+												 , Boolean isRebook
+                                                 ) throws Exception
+	{
+		if (!loggedIn()) throw new Exception("Not logged in!!");
+			
+	ims.scheduling.vo.Sch_BookingVo v_booking=null;
+	    if (booking != null)
+		{
+			v_booking = booking.buildVo();
+			//String[] errors0 = v_booking.validate();
+			//if (errors0 != null)
+			//	throw new Exception("Errors found during value object (booking) validation - " + errors0);
+	
+	}
+	ims.RefMan.vo.CatsReferralRefVo v_catsReferral=null;
+	    if (catsReferral != null)
+		{
+			v_catsReferral = catsReferral == null ? null : new ims.RefMan.vo.CatsReferralRefVo(catsReferral.getId(), catsReferral.getVersion());
+	}
+	Boolean v_isRebook=null;
+	    if (isRebook != null)
+		{
+			v_isRebook = isRebook;
+	}
+		
+		ims.RefMan.domain.BookAppointment intf = (ims.RefMan.domain.BookAppointment)super.getDomainImpl("ims.RefMan.domain.impl.BookAppointmentImpl");		
+
+	   ims.scheduling.vo.Sch_BookingVo ret = intf.saveBooking(
+												  v_booking 
+												 , v_catsReferral 
+												 , v_isRebook 
+                                           ); 
+
+		//super.freeDomainImpl(intf);
+				if(ret == null)
+			return null;
+				return (ims.scheduling.vo.beans.Sch_BookingVoBean)ret.getBean();
+	}
+	public void updateCatsReferralAdditionalInvStatus(
+
+												  ims.vo.RefVoBean catsReferral
+
+												 , ims.vo.RefVoBean appointment
+                                                 ) throws Exception
+	{
+		if (!loggedIn()) throw new Exception("Not logged in!!");
+			
+	ims.RefMan.vo.CatsReferralRefVo v_catsReferral=null;
+	    if (catsReferral != null)
+		{
+			v_catsReferral = catsReferral == null ? null : new ims.RefMan.vo.CatsReferralRefVo(catsReferral.getId(), catsReferral.getVersion());
+	}
+	ims.scheduling.vo.Booking_AppointmentRefVo v_appointment=null;
+	    if (appointment != null)
+		{
+			v_appointment = appointment == null ? null : new ims.scheduling.vo.Booking_AppointmentRefVo(appointment.getId(), appointment.getVersion());
+	}
+		
+		ims.scheduling.domain.SessionAdmin intf = (ims.scheduling.domain.SessionAdmin)super.getDomainImpl("ims.scheduling.domain.impl.SessionAdminImpl");		
+
+	    intf.updateCatsReferralAdditionalInvStatus(
+												  v_catsReferral 
+												 , v_appointment 
                                            ); 
 
 		//super.freeDomainImpl(intf);

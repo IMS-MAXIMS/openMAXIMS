@@ -1,9 +1,33 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.RefMan.vo.domain;
@@ -49,6 +73,16 @@ public class ReferralERODVoAssembler
 		valueObjectDest.setIsActive(valueObjectSrc.getIsActive());
 		// PathWayClock
 		valueObjectDest.setPathWayClock(valueObjectSrc.getPathWayClock());
+		// ERODReason
+		valueObjectDest.setERODReason(valueObjectSrc.getERODReason());
+		// ERODReasonComment
+		valueObjectDest.setERODReasonComment(valueObjectSrc.getERODReasonComment());
+		// ErodStatus
+		valueObjectDest.setErodStatus(valueObjectSrc.getErodStatus());
+		// isExtendedDelay
+		valueObjectDest.setIsExtendedDelay(valueObjectSrc.getIsExtendedDelay());
+		// DateOfOffer
+		valueObjectDest.setDateOfOffer(valueObjectSrc.getDateOfOffer());
 	 	return valueObjectDest;
 	 }
 
@@ -415,6 +449,88 @@ public class ReferralERODVoAssembler
 				valueObject.setPathWayClock(new ims.pathways.vo.PathwayClockRefVo(domainObject.getPathWayClock().getId(), domainObject.getPathWayClock().getVersion()));
 			}
 		}
+		// ERODReason
+		ims.domain.lookups.LookupInstance instance10 = domainObject.getERODReason();
+		if ( null != instance10 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance10.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance10.getImage().getImageId(), instance10.getImage().getImagePath());
+			}
+			color = instance10.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.RefMan.vo.lookups.ERODReason voLookup10 = new ims.RefMan.vo.lookups.ERODReason(instance10.getId(),instance10.getText(), instance10.isActive(), null, img, color);
+			ims.RefMan.vo.lookups.ERODReason parentVoLookup10 = voLookup10;
+			ims.domain.lookups.LookupInstance parent10 = instance10.getParent();
+			while (parent10 != null)
+			{
+				if (parent10.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent10.getImage().getImageId(), parent10.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent10.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup10.setParent(new ims.RefMan.vo.lookups.ERODReason(parent10.getId(),parent10.getText(), parent10.isActive(), null, img, color));
+				parentVoLookup10 = parentVoLookup10.getParent();
+								parent10 = parent10.getParent();
+			}			
+			valueObject.setERODReason(voLookup10);
+		}
+				// ERODReasonComment
+		valueObject.setERODReasonComment(domainObject.getERODReasonComment());
+		// ErodStatus
+		ims.domain.lookups.LookupInstance instance12 = domainObject.getErodStatus();
+		if ( null != instance12 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance12.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance12.getImage().getImageId(), instance12.getImage().getImagePath());
+			}
+			color = instance12.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.RefMan.vo.lookups.ERODStatus voLookup12 = new ims.RefMan.vo.lookups.ERODStatus(instance12.getId(),instance12.getText(), instance12.isActive(), null, img, color);
+			ims.RefMan.vo.lookups.ERODStatus parentVoLookup12 = voLookup12;
+			ims.domain.lookups.LookupInstance parent12 = instance12.getParent();
+			while (parent12 != null)
+			{
+				if (parent12.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent12.getImage().getImageId(), parent12.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent12.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup12.setParent(new ims.RefMan.vo.lookups.ERODStatus(parent12.getId(),parent12.getText(), parent12.isActive(), null, img, color));
+				parentVoLookup12 = parentVoLookup12.getParent();
+								parent12 = parent12.getParent();
+			}			
+			valueObject.setErodStatus(voLookup12);
+		}
+				// isExtendedDelay
+		valueObject.setIsExtendedDelay( domainObject.isIsExtendedDelay() );
+		// DateOfOffer
+		java.util.Date DateOfOffer = domainObject.getDateOfOffer();
+		if ( null != DateOfOffer ) 
+		{
+			valueObject.setDateOfOffer(new ims.framework.utils.Date(DateOfOffer) );
+		}
  		return valueObject;
 	 }
 
@@ -533,6 +649,37 @@ public class ReferralERODVoAssembler
 			}
 		}
 		domainObject.setPathWayClock(value9);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value10 = null;
+		if ( null != valueObject.getERODReason() ) 
+		{
+			value10 =
+				domainFactory.getLookupInstance(valueObject.getERODReason().getID());
+		}
+		domainObject.setERODReason(value10);
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getERODReasonComment() != null && valueObject.getERODReasonComment().equals(""))
+		{
+			valueObject.setERODReasonComment(null);
+		}
+		domainObject.setERODReasonComment(valueObject.getERODReasonComment());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value12 = null;
+		if ( null != valueObject.getErodStatus() ) 
+		{
+			value12 =
+				domainFactory.getLookupInstance(valueObject.getErodStatus().getID());
+		}
+		domainObject.setErodStatus(value12);
+		domainObject.setIsExtendedDelay(valueObject.getIsExtendedDelay());
+		java.util.Date value14 = null;
+		ims.framework.utils.Date date14 = valueObject.getDateOfOffer();		
+		if ( date14 != null ) 
+		{
+			value14 = date14.getDate();
+		}
+		domainObject.setDateOfOffer(value14);
 
 		return domainObject;
 	}

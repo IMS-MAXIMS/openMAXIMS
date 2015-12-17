@@ -1,0 +1,167 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 12/10/2015, 13:32 -->
+<hibernate-mapping>
+	<class name="ims.ntpf.casereferral.domain.objects.Outlier" table="ntpf_outlier" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: outlierType -->
+<!-- debug: comments -->
+<!-- debug: dateOfSurgery -->
+<!-- debug: clinicalComplication -->
+<!-- debug: extraLengthOfStay -->
+<!-- debug: extraLengthOfStayUnit -->
+<!-- debug: extraProcedureInvestigations -->
+<!-- debug: assocCase -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- many to one -->
+		<many-to-one name="assocCase" class="ims.ntpf.casereferral.domain.objects.CaseReferral" foreign-key="outlier_assoccase_fk" access="field" cascade="save-update">
+			<column name="assoccase" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: patient -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="patient" class="ims.core.patient.domain.objects.Patient" unique="true" foreign-key="outlier_patient_fk" access="field" cascade="save-update">
+			<column name="patient" sql-type="numeric(10,0)" not-null="true" unique="false"  index='pat_idx' />
+		</many-to-one>
+<!-- debug: outlierComments -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="outlierComments" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="outlier_outliercom_fk">
+				<column name="ntpf_outlier_outliercom" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.ntpf.common.domain.objects.Comment" />
+		</set>
+<!-- debug: isLinkedToCase -->
+<!-- debug: hasComments -->
+<!-- debug: treatingHospital -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="treatingHospital" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="outlier_treatingho_fk" access="field" cascade="save-update">
+			<column name="treatingho" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: treatingConsultant -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="treatingConsultant" class="ims.core.resource.people.domain.objects.Medic" unique="true" foreign-key="outlier_treatingco_fk" access="field" cascade="save-update">
+			<column name="treatingco" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: specialty -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="specialty" class="ims.core.clinical.domain.objects.Service" unique="true" foreign-key="outlier_specialty_fk" access="field" cascade="save-update">
+			<column name="specialty" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: procedure -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="procedure" class="ims.core.clinical.domain.objects.Procedure" unique="true" foreign-key="outlier_c_procedu_fk" access="field" cascade="save-update">
+			<column name="c_procedu" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: forReview -->
+<!-- debug: outlierSubType1 -->
+<!-- debug: outlierSubType2 -->
+<!-- debug: procedureName -->
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: IsLookup -->
+		<many-to-one name="outlierType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_outliertyp" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="comments" type="text" access="field" update="true" > 
+			<column name="comments"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dateOfSurgery" type="date" access="field" update="true">
+			<column name="dateofsurg"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="clinicalComplication" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_clinicalco" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="extraLengthOfStay" type="integer" access="field" update="true">
+			<column name="extralengt"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="extraLengthOfStayUnit" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_extraleng2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="extraProcedureInvestigations" type="string" access="field" update="true" > 
+			<column name="extraproce" length="500"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isLinkedToCase" type="boolean" access="field" update="true">
+			<column name="islinkedto"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="hasComments" type="boolean" access="field" update="true">
+			<column name="hascomment"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="forReview" type="boolean" access="field" update="true">
+			<column name="forreview"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="outlierSubType1" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_outliersub" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="outlierSubType2" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_outliersu2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="procedureName" type="string" access="field" update="true" > 
+			<column name="proceduren" length="100"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

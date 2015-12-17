@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -1588,12 +1593,12 @@ public class Logic extends BaseLogic
 				&& form.lyrDetails().tabDetails().cmbRegimeAcronym().getValue() == null // in the grid row
 				&& form.lyrDetails().tabDetails().customControlMos().getValue() == null && form.lyrDetails().tabDetails().cmbTreatmentIntent().getValue() == null && form.lyrDetails().tabDetails().cmbTreatmentResponse().getValue() == null)
 		{
-			listOfErrors.add("At least 1 of the grid items (Start Date, Regime, Consultant, Intent or Response) must be entered");
+			listOfErrors.add("At least 1 of the grid items (Start Date, Regime, Consultant, Intent or Response) must be entered.");
 		}
 		
 		if(form.lyrDetails().tabDetails().dtCourseStartDate().getValue() != null && form.lyrDetails().tabDetails().dteCourseEndDate().getValue() != null && form.lyrDetails().tabDetails().dtCourseStartDate().getValue().isGreaterThan(form.lyrDetails().tabDetails().dteCourseEndDate().getValue()))
 		{
-			listOfErrors.add("Course Start Date can not be greater than Course End Date.");
+			listOfErrors.add("Course Start Date cannot be greater than Course End Date."); //WDEV-18762
 		}
 
 		// Check to see if any errors were found

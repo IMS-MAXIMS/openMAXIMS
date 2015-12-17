@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.clinical.domain.objects;
@@ -56,7 +61,7 @@ public class Service extends ims.domain.DomainObject implements java.io.Serializ
 	/** isActive */
 	private Boolean isActive;
 	/** TaxonomyMap
-	  * Collection of ims.core.clinical.domain.objects.TaxonomyMap.
+	  * Collection of ims.core.clinical.domain.objects.NonUniqueTaxonomyMap.
 	  */
 	private java.util.List taxonomyMap;
 	private String upperName;
@@ -70,6 +75,11 @@ public class Service extends ims.domain.DomainObject implements java.io.Serializ
 	private Integer expectedTurnaround;
 	/** MaternityIndicator */
 	private Boolean maternityIndicator;
+	private Boolean isSubjectToRTTClock;
+	/** This is related to ReferralService */
+	private Boolean directSelfReferralsAccepted;
+	/** Pre-Assessment Completion Exempt */
+	private Boolean isPreAssessmentCompletionExempt;
     public Service (Integer id, int ver)
     {
     	super(id, ver);
@@ -189,6 +199,27 @@ public class Service extends ims.domain.DomainObject implements java.io.Serializ
 	}
 	public void setMaternityIndicator(Boolean maternityIndicator) {
 		this.maternityIndicator = maternityIndicator;
+	}
+
+	public Boolean isIsSubjectToRTTClock() {
+		return isSubjectToRTTClock;
+	}
+	public void setIsSubjectToRTTClock(Boolean isSubjectToRTTClock) {
+		this.isSubjectToRTTClock = isSubjectToRTTClock;
+	}
+
+	public Boolean isDirectSelfReferralsAccepted() {
+		return directSelfReferralsAccepted;
+	}
+	public void setDirectSelfReferralsAccepted(Boolean directSelfReferralsAccepted) {
+		this.directSelfReferralsAccepted = directSelfReferralsAccepted;
+	}
+
+	public Boolean isIsPreAssessmentCompletionExempt() {
+		return isPreAssessmentCompletionExempt;
+	}
+	public void setIsPreAssessmentCompletionExempt(Boolean isPreAssessmentCompletionExempt) {
+		this.isPreAssessmentCompletionExempt = isPreAssessmentCompletionExempt;
 	}
 
 	/**
@@ -327,7 +358,7 @@ public class Service extends ims.domain.DomainObject implements java.io.Serializ
 		{
 			if (i6 > 0)
 				auditStr.append(",");
-			ims.core.clinical.domain.objects.TaxonomyMap obj = (ims.core.clinical.domain.objects.TaxonomyMap)taxonomyMap.get(i6);
+			ims.core.clinical.domain.objects.NonUniqueTaxonomyMap obj = (ims.core.clinical.domain.objects.NonUniqueTaxonomyMap)taxonomyMap.get(i6);
 		    if (obj != null)
 			{
 				if (i6 == 0)
@@ -360,6 +391,15 @@ public class Service extends ims.domain.DomainObject implements java.io.Serializ
 	    auditStr.append("; ");
 		auditStr.append("\r\n*maternityIndicator* :");
 		auditStr.append(maternityIndicator);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*isSubjectToRTTClock* :");
+		auditStr.append(isSubjectToRTTClock);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*directSelfReferralsAccepted* :");
+		auditStr.append(directSelfReferralsAccepted);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*isPreAssessmentCompletionExempt* :");
+		auditStr.append(isPreAssessmentCompletionExempt);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -479,6 +519,24 @@ public class Service extends ims.domain.DomainObject implements java.io.Serializ
 			sb.append("<maternityIndicator>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isMaternityIndicator().toString()));
 			sb.append("</maternityIndicator>");		
+		}
+		if (this.isIsSubjectToRTTClock() != null)
+		{
+			sb.append("<isSubjectToRTTClock>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsSubjectToRTTClock().toString()));
+			sb.append("</isSubjectToRTTClock>");		
+		}
+		if (this.isDirectSelfReferralsAccepted() != null)
+		{
+			sb.append("<directSelfReferralsAccepted>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isDirectSelfReferralsAccepted().toString()));
+			sb.append("</directSelfReferralsAccepted>");		
+		}
+		if (this.isIsPreAssessmentCompletionExempt() != null)
+		{
+			sb.append("<isPreAssessmentCompletionExempt>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsPreAssessmentCompletionExempt().toString()));
+			sb.append("</isPreAssessmentCompletionExempt>");		
 		}
 		return sb.toString();
 	}
@@ -674,7 +732,7 @@ public class Service extends ims.domain.DomainObject implements java.io.Serializ
 		if(fldEl != null)
 		{
 			fldEl = fldEl.element("list");	
-			obj.setTaxonomyMap(ims.core.clinical.domain.objects.TaxonomyMap.fromListXMLString(fldEl, factory, obj.getTaxonomyMap(), domMap));
+			obj.setTaxonomyMap(ims.core.clinical.domain.objects.NonUniqueTaxonomyMap.fromListXMLString(fldEl, factory, obj.getTaxonomyMap(), domMap));
 		}
 		fldEl = el.element("upperName");
 		if(fldEl != null)
@@ -707,6 +765,21 @@ public class Service extends ims.domain.DomainObject implements java.io.Serializ
 		{	
     		obj.setMaternityIndicator(new Boolean(fldEl.getTextTrim()));	
 		}
+		fldEl = el.element("isSubjectToRTTClock");
+		if(fldEl != null)
+		{	
+    		obj.setIsSubjectToRTTClock(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("directSelfReferralsAccepted");
+		if(fldEl != null)
+		{	
+    		obj.setDirectSelfReferralsAccepted(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("isPreAssessmentCompletionExempt");
+		if(fldEl != null)
+		{	
+    		obj.setIsPreAssessmentCompletionExempt(new Boolean(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -715,6 +788,26 @@ public class Service extends ims.domain.DomainObject implements java.io.Serializ
 		 "taxonomyMap"
 		};
 	}
+
+	/**
+	getExtCode
+	*/
+public String getExtCode(int taxTypeId)
+{
+	java.util.List l = this.getTaxonomyMap();
+	if (l == null || l.size() == 0) 
+		return null;
+	
+	for (int i = 0; i < l.size(); i++)
+	{
+		ims.core.clinical.domain.objects.NonUniqueTaxonomyMap map = (ims.core.clinical.domain.objects.NonUniqueTaxonomyMap)l.get(i);
+		if (map.getTaxonomyName().getId() == taxTypeId)
+		{
+			return map.getTaxonomyCode();
+		}
+	}
+	return null;
+}
 
 
 	public static class FieldNames	
@@ -732,6 +825,9 @@ public class Service extends ims.domain.DomainObject implements java.io.Serializ
 		public static final String TurnaroundMeasure = "turnaroundMeasure";
 		public static final String ExpectedTurnaround = "expectedTurnaround";
 		public static final String MaternityIndicator = "maternityIndicator";
+		public static final String IsSubjectToRTTClock = "isSubjectToRTTClock";
+		public static final String DirectSelfReferralsAccepted = "directSelfReferralsAccepted";
+		public static final String IsPreAssessmentCompletionExempt = "isPreAssessmentCompletionExempt";
 	}
 }
 

@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:36 -->
+<!-- Generated: 12/10/2015, 13:31 -->
 <hibernate-mapping>
 	<class name="ims.core.generic.domain.objects.ExternalPerson" table="core_externalperson" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -57,12 +57,41 @@
  			</property>
 
  			<property name="middleName" type="string" access="field" update="true">
- 				<column name="namemiddlename" length="40" not-null="false"  unique="false"   />
+ 				<column name="namemiddlename" length="100" not-null="false"  unique="false"   />
  			</property>
 
  			<!-- debug: IsLookup -->
  			<many-to-one name="title" class="ims.domain.lookups.LookupInstance" access="field">
  				<column name="lkp_nametitle" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="namesuffix" type="string" access="field" update="true">
+ 				<column name="namenamesuffix" length="35" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="objectidentifier" type="string" access="field" update="true">
+ 				<column name="nameobjectiden" length="14" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="beffdate" type="date" access="field" update="true">
+ 				<column name="namebeffdate" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="beffdatecnf" type="boolean" access="field" update="true">
+ 				<column name="namebeffdatecn" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="betdate" type="date" access="field" update="true">
+ 				<column name="namebetdate" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="betdatecnf" type="boolean" access="field" update="true">
+ 				<column name="namebetdatecnf" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<!-- debug: IsLookup -->
+ 			<many-to-one name="pdsUpdateMode" class="ims.domain.lookups.LookupInstance" access="field">
+ 				<column name="lkp_namepdsupdatem" sql-type="numeric(10,0)" not-null="false" unique="false"   />
  			</many-to-one>
  		</component>
 <!-- debug: isActive -->
@@ -85,6 +114,29 @@
  				<property name="commValue" type="string" access="field" update="true">
  					<column name="commvalue" length="50" not-null="true"  unique="false"    />
  				</property>
+ 				<property name="objectidentifier" type="string" access="field" update="true">
+ 					<column name="objectiden" length="14" not-null="false"  unique="false"    />
+ 				</property>
+ 				<property name="beffdate" type="date" access="field" update="true">
+ 					<column name="beffdate" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="beffdatecnf" type="boolean" access="field" update="true">
+ 					<column name="beffdatecn" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="betdate" type="date" access="field" update="true">
+ 					<column name="betdate" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="betdatecnf" type="boolean" access="field" update="true">
+ 					<column name="betdatecnf" not-null="false"  unique="false"   />
+ 				</property>
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="pdsUpdateMode" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_pdsupdatem" not-null="false" sql-type="numeric(10,0)"  unique="false"   />
+ 				</many-to-one>
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="channelUsage" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_channelusa" not-null="false" sql-type="numeric(10,0)"  unique="false"   />
+ 				</many-to-one>
  			</composite-element>
  		</list>
 <!-- debug: codeMappings -->
@@ -169,6 +221,57 @@
 
  			<property name="otherphone" type="string" access="field" update="true">
  				<column name="addressotherphone" length="30" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<!-- debug: IsLookup -->
+ 			<many-to-one name="areaOfResidence" class="ims.domain.lookups.LookupInstance" access="field">
+ 				<column name="lkp_addressareaofresi" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="pafkey" type="string" access="field" update="true">
+ 				<column name="addresspafkey" length="8" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="description" type="string" access="field" update="true">
+ 				<column name="addressdescriptio" length="100" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="objectidentifier" type="string" access="field" update="true">
+ 				<column name="addressobjectiden" length="14" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="beffdate" type="date" access="field" update="true">
+ 				<column name="addressbeffdate" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="beffdatecnf" type="boolean" access="field" update="true">
+ 				<column name="addressbeffdatecn" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="betdate" type="date" access="field" update="true">
+ 				<column name="addressbetdate" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="betdatecnf" type="boolean" access="field" update="true">
+ 				<column name="addressbetdatecnf" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<!-- debug: IsLookup -->
+ 			<many-to-one name="pdsUpdateMode" class="ims.domain.lookups.LookupInstance" access="field">
+ 				<column name="lkp_addresspdsupdatem" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<!-- debug: IsLookup -->
+ 			<many-to-one name="country" class="ims.domain.lookups.LookupInstance" access="field">
+ 				<column name="lkp_addresscountry" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="noFixedAbode" type="boolean" access="field" update="true">
+ 				<column name="addressnofixedabo" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="careHome" type="boolean" access="field" update="true">
+ 				<column name="addresscarehome" not-null="false"  unique="false"   />
  			</property>
  		</component>
 <!-- debug: !IsAssociation && !IsCollection -->

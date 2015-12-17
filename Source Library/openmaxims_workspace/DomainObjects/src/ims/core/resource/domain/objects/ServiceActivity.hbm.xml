@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:36 -->
+<!-- Generated: 12/10/2015, 13:31 -->
 <hibernate-mapping>
 	<class name="ims.core.resource.domain.objects.ServiceActivity" table="core_serviceactivit" lazy="true" discriminator-value="null" >
 		<cache usage="nonstrict-read-write" />
@@ -67,10 +67,16 @@
  			</composite-element>
  		</list>
 <!-- debug: isActive -->
+<!-- debug: isFlexible -->
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="isActive" type="boolean" access="field" update="true">
 			<column name="isactive"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isFlexible" type="boolean" access="field" update="true">
+			<column name="isflexible"  not-null="false" unique="false"  />
 		</property>
 	</class>
 </hibernate-mapping>

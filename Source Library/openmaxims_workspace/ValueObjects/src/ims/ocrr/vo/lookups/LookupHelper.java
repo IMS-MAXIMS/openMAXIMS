@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,15 +15,20 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 
 /*
  * This code was generated.
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:38
+ * Generated: 13/10/2015, 13:23
  */
 package ims.ocrr.vo.lookups;
 
@@ -45,6 +50,45 @@ public final class LookupHelper {
 	public static ResultDetailsType getResultDetailsTypeInstance(LookupService lookupService, int id) 
 	{
 		return (ResultDetailsType)lookupService.getLookupInstance(ResultDetailsType.class, ResultDetailsType.TYPE_ID, id);
+	}
+	
+
+	public static InvTypeCollection getInvType(LookupService lookupService) {
+		InvTypeCollection collection =
+			(InvTypeCollection) lookupService.getLookupCollection(InvType.TYPE_ID, 
+				InvTypeCollection.class, InvType.class);
+		return collection;
+	}
+
+	public static InvType getInvTypeInstance(LookupService lookupService, int id) 
+	{
+		return (InvType)lookupService.getLookupInstance(InvType.class, InvType.TYPE_ID, id);
+	}
+	
+
+	public static ResultValueTypeCollection getResultValueType(LookupService lookupService) {
+		ResultValueTypeCollection collection =
+			(ResultValueTypeCollection) lookupService.getLookupCollection(ResultValueType.TYPE_ID, 
+				ResultValueTypeCollection.class, ResultValueType.class);
+		return collection;
+	}
+
+	public static ResultValueType getResultValueTypeInstance(LookupService lookupService, int id) 
+	{
+		return (ResultValueType)lookupService.getLookupInstance(ResultValueType.class, ResultValueType.TYPE_ID, id);
+	}
+	
+
+	public static ResultCommentTypeCollection getResultCommentType(LookupService lookupService) {
+		ResultCommentTypeCollection collection =
+			(ResultCommentTypeCollection) lookupService.getLookupCollection(ResultCommentType.TYPE_ID, 
+				ResultCommentTypeCollection.class, ResultCommentType.class);
+		return collection;
+	}
+
+	public static ResultCommentType getResultCommentTypeInstance(LookupService lookupService, int id) 
+	{
+		return (ResultCommentType)lookupService.getLookupInstance(ResultCommentType.class, ResultCommentType.TYPE_ID, id);
 	}
 	
 
@@ -71,19 +115,6 @@ public final class LookupHelper {
 	public static InvEventType getInvEventTypeInstance(LookupService lookupService, int id) 
 	{
 		return (InvEventType)lookupService.getLookupInstance(InvEventType.class, InvEventType.TYPE_ID, id);
-	}
-	
-
-	public static InvTypeCollection getInvType(LookupService lookupService) {
-		InvTypeCollection collection =
-			(InvTypeCollection) lookupService.getLookupCollection(InvType.TYPE_ID, 
-				InvTypeCollection.class, InvType.class);
-		return collection;
-	}
-
-	public static InvType getInvTypeInstance(LookupService lookupService, int id) 
-	{
-		return (InvType)lookupService.getLookupInstance(InvType.class, InvType.TYPE_ID, id);
 	}
 	
 
@@ -126,19 +157,6 @@ public final class LookupHelper {
 	}
 	
 
-	public static NormalcyStatusCollection getNormalcyStatus(LookupService lookupService) {
-		NormalcyStatusCollection collection =
-			(NormalcyStatusCollection) lookupService.getLookupCollection(NormalcyStatus.TYPE_ID, 
-				NormalcyStatusCollection.class, NormalcyStatus.class);
-		return collection;
-	}
-
-	public static NormalcyStatus getNormalcyStatusInstance(LookupService lookupService, int id) 
-	{
-		return (NormalcyStatus)lookupService.getLookupInstance(NormalcyStatus.class, NormalcyStatus.TYPE_ID, id);
-	}
-	
-
 	public static ResultUnitOfMeasureCollection getResultUnitOfMeasure(LookupService lookupService) {
 		ResultUnitOfMeasureCollection collection =
 			(ResultUnitOfMeasureCollection) lookupService.getLookupCollection(ResultUnitOfMeasure.TYPE_ID, 
@@ -149,32 +167,6 @@ public final class LookupHelper {
 	public static ResultUnitOfMeasure getResultUnitOfMeasureInstance(LookupService lookupService, int id) 
 	{
 		return (ResultUnitOfMeasure)lookupService.getLookupInstance(ResultUnitOfMeasure.class, ResultUnitOfMeasure.TYPE_ID, id);
-	}
-	
-
-	public static ResultValueTypeCollection getResultValueType(LookupService lookupService) {
-		ResultValueTypeCollection collection =
-			(ResultValueTypeCollection) lookupService.getLookupCollection(ResultValueType.TYPE_ID, 
-				ResultValueTypeCollection.class, ResultValueType.class);
-		return collection;
-	}
-
-	public static ResultValueType getResultValueTypeInstance(LookupService lookupService, int id) 
-	{
-		return (ResultValueType)lookupService.getLookupInstance(ResultValueType.class, ResultValueType.TYPE_ID, id);
-	}
-	
-
-	public static ResultCommentTypeCollection getResultCommentType(LookupService lookupService) {
-		ResultCommentTypeCollection collection =
-			(ResultCommentTypeCollection) lookupService.getLookupCollection(ResultCommentType.TYPE_ID, 
-				ResultCommentTypeCollection.class, ResultCommentType.class);
-		return collection;
-	}
-
-	public static ResultCommentType getResultCommentTypeInstance(LookupService lookupService, int id) 
-	{
-		return (ResultCommentType)lookupService.getLookupInstance(ResultCommentType.class, ResultCommentType.TYPE_ID, id);
 	}
 	
 
@@ -438,6 +430,71 @@ public final class LookupHelper {
 	}
 	
 
+	public static DayOfWeekCollection getDayOfWeek(LookupService lookupService) {
+		DayOfWeekCollection collection =
+			(DayOfWeekCollection) lookupService.getLookupCollection(DayOfWeek.TYPE_ID, 
+				DayOfWeekCollection.class, DayOfWeek.class);
+		return collection;
+	}
+
+	public static DayOfWeek getDayOfWeekInstance(LookupService lookupService, int id) 
+	{
+		return (DayOfWeek)lookupService.getLookupInstance(DayOfWeek.class, DayOfWeek.TYPE_ID, id);
+	}
+	
+
+	public static ReportToTypeCollection getReportToType(LookupService lookupService) {
+		ReportToTypeCollection collection =
+			(ReportToTypeCollection) lookupService.getLookupCollection(ReportToType.TYPE_ID, 
+				ReportToTypeCollection.class, ReportToType.class);
+		return collection;
+	}
+
+	public static ReportToType getReportToTypeInstance(LookupService lookupService, int id) 
+	{
+		return (ReportToType)lookupService.getLookupInstance(ReportToType.class, ReportToType.TYPE_ID, id);
+	}
+	
+
+	public static NormalcyStatusCollection getNormalcyStatus(LookupService lookupService) {
+		NormalcyStatusCollection collection =
+			(NormalcyStatusCollection) lookupService.getLookupCollection(NormalcyStatus.TYPE_ID, 
+				NormalcyStatusCollection.class, NormalcyStatus.class);
+		return collection;
+	}
+
+	public static NormalcyStatus getNormalcyStatusInstance(LookupService lookupService, int id) 
+	{
+		return (NormalcyStatus)lookupService.getLookupInstance(NormalcyStatus.class, NormalcyStatus.TYPE_ID, id);
+	}
+	
+
+	public static SelectAndOrderComponentTypeCollection getSelectAndOrderComponentType(LookupService lookupService) {
+		SelectAndOrderComponentTypeCollection collection =
+			(SelectAndOrderComponentTypeCollection) lookupService.getLookupCollection(SelectAndOrderComponentType.TYPE_ID, 
+				SelectAndOrderComponentTypeCollection.class, SelectAndOrderComponentType.class);
+		return collection;
+	}
+
+	public static SelectAndOrderComponentType getSelectAndOrderComponentTypeInstance(LookupService lookupService, int id) 
+	{
+		return (SelectAndOrderComponentType)lookupService.getLookupInstance(SelectAndOrderComponentType.class, SelectAndOrderComponentType.TYPE_ID, id);
+	}
+	
+
+	public static TemplateDividerTypeCollection getTemplateDividerType(LookupService lookupService) {
+		TemplateDividerTypeCollection collection =
+			(TemplateDividerTypeCollection) lookupService.getLookupCollection(TemplateDividerType.TYPE_ID, 
+				TemplateDividerTypeCollection.class, TemplateDividerType.class);
+		return collection;
+	}
+
+	public static TemplateDividerType getTemplateDividerTypeInstance(LookupService lookupService, int id) 
+	{
+		return (TemplateDividerType)lookupService.getLookupInstance(TemplateDividerType.class, TemplateDividerType.TYPE_ID, id);
+	}
+	
+
 	public static ResultEDSubtypeCollection getResultEDSubtype(LookupService lookupService) {
 		ResultEDSubtypeCollection collection =
 			(ResultEDSubtypeCollection) lookupService.getLookupCollection(ResultEDSubtype.TYPE_ID, 
@@ -461,19 +518,6 @@ public final class LookupHelper {
 	public static PrintingLocationType getPrintingLocationTypeInstance(LookupService lookupService, int id) 
 	{
 		return (PrintingLocationType)lookupService.getLookupInstance(PrintingLocationType.class, PrintingLocationType.TYPE_ID, id);
-	}
-	
-
-	public static ReportToTypeCollection getReportToType(LookupService lookupService) {
-		ReportToTypeCollection collection =
-			(ReportToTypeCollection) lookupService.getLookupCollection(ReportToType.TYPE_ID, 
-				ReportToTypeCollection.class, ReportToType.class);
-		return collection;
-	}
-
-	public static ReportToType getReportToTypeInstance(LookupService lookupService, int id) 
-	{
-		return (ReportToType)lookupService.getLookupInstance(ReportToType.class, ReportToType.TYPE_ID, id);
 	}
 	
 
@@ -542,19 +586,6 @@ public final class LookupHelper {
 	}
 	
 
-	public static DayOfWeekCollection getDayOfWeek(LookupService lookupService) {
-		DayOfWeekCollection collection =
-			(DayOfWeekCollection) lookupService.getLookupCollection(DayOfWeek.TYPE_ID, 
-				DayOfWeekCollection.class, DayOfWeek.class);
-		return collection;
-	}
-
-	public static DayOfWeek getDayOfWeekInstance(LookupService lookupService, int id) 
-	{
-		return (DayOfWeek)lookupService.getLookupInstance(DayOfWeek.class, DayOfWeek.TYPE_ID, id);
-	}
-	
-
 	public static OcsDisplayFlagCollection getOcsDisplayFlag(LookupService lookupService) {
 		OcsDisplayFlagCollection collection =
 			(OcsDisplayFlagCollection) lookupService.getLookupCollection(OcsDisplayFlag.TYPE_ID, 
@@ -594,19 +625,6 @@ public final class LookupHelper {
 	}
 	
 
-	public static SelectAndOrderComponentTypeCollection getSelectAndOrderComponentType(LookupService lookupService) {
-		SelectAndOrderComponentTypeCollection collection =
-			(SelectAndOrderComponentTypeCollection) lookupService.getLookupCollection(SelectAndOrderComponentType.TYPE_ID, 
-				SelectAndOrderComponentTypeCollection.class, SelectAndOrderComponentType.class);
-		return collection;
-	}
-
-	public static SelectAndOrderComponentType getSelectAndOrderComponentTypeInstance(LookupService lookupService, int id) 
-	{
-		return (SelectAndOrderComponentType)lookupService.getLookupInstance(SelectAndOrderComponentType.class, SelectAndOrderComponentType.TYPE_ID, id);
-	}
-	
-
 	public static TemplateCategoriesCollection getTemplateCategories(LookupService lookupService) {
 		TemplateCategoriesCollection collection =
 			(TemplateCategoriesCollection) lookupService.getLookupCollection(TemplateCategories.TYPE_ID, 
@@ -630,19 +648,6 @@ public final class LookupHelper {
 	public static SpecimenCollectionMethod getSpecimenCollectionMethodInstance(LookupService lookupService, int id) 
 	{
 		return (SpecimenCollectionMethod)lookupService.getLookupInstance(SpecimenCollectionMethod.class, SpecimenCollectionMethod.TYPE_ID, id);
-	}
-	
-
-	public static TemplateDividerTypeCollection getTemplateDividerType(LookupService lookupService) {
-		TemplateDividerTypeCollection collection =
-			(TemplateDividerTypeCollection) lookupService.getLookupCollection(TemplateDividerType.TYPE_ID, 
-				TemplateDividerTypeCollection.class, TemplateDividerType.class);
-		return collection;
-	}
-
-	public static TemplateDividerType getTemplateDividerTypeInstance(LookupService lookupService, int id) 
-	{
-		return (TemplateDividerType)lookupService.getLookupInstance(TemplateDividerType.class, TemplateDividerType.TYPE_ID, id);
 	}
 	
 

@@ -2,36 +2,54 @@
 <head>
 <title></title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8">
 <xml:namespace ns="urn:schemas-microsoft-com:vml" prefix="v"/>
 
 <script src="packed/jscn.js.gz"></script>
 
 <script>
-
 function sendCustomEvent(xml) {
-	if (xml =="") {
-		var xml = document.Scan.getImage();	
-		xml =="";
-	}
-	
+        if (xml =="") {
+                var xml = document.Scan.getImage();
+                xml =="";
+        }
+
+        CNFormManager.getActiveFormManager()._isPostingBack = false;
+        CNFormManager.getActiveFormManager()._loading = false;
+        CNFormManager.getActiveFormManager().postData(xml);
+}
+function sendAppletEvent(xml) 
+{
+	var xml = document.Medicode.getData();	
 	CNFormManager.getActiveFormManager()._isPostingBack = false;
-	CNFormManager.getActiveFormManager()._loading = false;
-	CNFormManager.getActiveFormManager().postData(xml);
+    CNFormManager.getActiveFormManager()._loading = false;
+    CNFormManager.getActiveFormManager().postData(xml);
 }
 
+function checkName() 
+{
+	var n=window.name;
+	var c = new Date();
+	var d = new Date(2015,2,23,0,0,0,0);
+	if(!n.indexOf('ims') == 0 && c>d)
+	{
+		
+		window.alert("WARNING: This page cannot be called directly");
+		window.open('', '_parent', '');
+		self.opener = this;
+		self.close();
+	}
+}
 </script>
 
 <style>
 html, body { margin: 0; }
 v\:*{ behavior: url(#default#vml); }
 </style>
-</head>
 
 </head>
 
-<body>
-
-<body>
+<body onload="checkName()">
 
 <div id="cn_progressBar" style="font: 11px tahoma; height: 100%; width: 100%; position: relative; text-align: center; ">
   <!--[if gte IE 6]>

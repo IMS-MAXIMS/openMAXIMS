@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:36 -->
+<!-- Generated: 12/10/2015, 13:31 -->
 <hibernate-mapping>
 	<class name="ims.core.admin.pas.domain.objects.DischargedEpisode" table="core_dischargedepis" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -81,6 +81,7 @@
 			<one-to-many class="ims.core.admin.pas.domain.objects.HomeLeave" />
 		</list>
 <!-- debug: vTEAssessmentStatus -->
+<!-- debug: vTEAssessmentStatusReason -->
 <!-- debug: vTERiskAssessment -->
 <!-- debug: field.IsAssociation : true -->
 		<!-- A one-to-one relationship using a foreign-key is mapping as a
@@ -103,6 +104,23 @@
 			<column name="extendedde" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
 <!-- debug: isCoded -->
+<!-- debug: codingDelay -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="codingDelay" class="ims.core.clinical.domain.objects.CodingDelay" unique="true" foreign-key="dischargedepis_codingdela_fk" access="field" cascade="save-update">
+			<column name="codingdela" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: dereferredReason -->
+<!-- debug: wasDiagnosticDeferred -->
+<!-- debug: wasTreatmentGiven -->
+<!-- debug: dischargingWard -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="dischargingWard" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="dischargedepis_dischargin_fk" access="field" cascade="save-update">
+			<column name="dischargin" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="dischargeDateTime" type="timestamp" access="field" update="true">
@@ -159,9 +177,29 @@
 			<column name="lkp_vteassessm" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
 <!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="vTEAssessmentStatusReason" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_vteassess2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="isCoded" type="boolean" access="field" update="true">
 			<column name="iscoded"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="dereferredReason" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_dereferred" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="wasDiagnosticDeferred" type="boolean" access="field" update="true">
+			<column name="wasdiagnos"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="wasTreatmentGiven" type="boolean" access="field" update="true">
+			<column name="wastreatm2"  not-null="false" unique="false"  />
 		</property>
 	</class>
 </hibernate-mapping>

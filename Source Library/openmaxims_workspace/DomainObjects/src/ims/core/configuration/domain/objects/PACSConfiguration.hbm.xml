@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:36 -->
+<!-- Generated: 12/10/2015, 13:31 -->
 <hibernate-mapping>
 	<class name="ims.core.configuration.domain.objects.PACSConfiguration" table="core_pacsconfigurti" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -38,6 +38,17 @@
 <!-- debug: accessionParam -->
 <!-- debug: accessionTestValue -->
 <!-- debug: pACSClientType -->
+<!-- debug: useLoggedUserName -->
+<!-- debug: primaryIdentifier -->
+<!-- debug: secondaryIdentifier -->
+<!-- debug: patientIdentifierParam -->
+<!-- debug: issuerOfIdentifierParam -->
+<!-- debug: sessionTimeParam -->
+<!-- debug: primaryIdentifierCode -->
+<!-- debug: secondaryIdentifierCode -->
+<!-- debug: aESKey -->
+<!-- debug: useEncryptedToken -->
+<!-- debug: encryptedTokenParam -->
 <!-- debug: !IsAssociation && !IsCollection -->
 
 <!-- debug: !IsLookup -->
@@ -52,22 +63,22 @@
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="username" type="string" access="field" update="true" > 
-			<column name="username" length="50"  not-null="true" unique="false"  />
+			<column name="username" length="50"  not-null="false" unique="false"  />
 		</property>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="passwordParam" type="string" access="field" update="true" > 
-			<column name="passwordpa" length="50"  not-null="true" unique="false"  />
+			<column name="passwordpa" length="50"  not-null="false" unique="false"  />
 		</property>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="password" type="string" access="field" update="true" > 
-			<column name="c_passwo" length="50"  not-null="true" unique="false"  />
+			<column name="c_passwo" length="50"  not-null="false" unique="false"  />
 		</property>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="accessionParam" type="string" access="field" update="true" > 
-			<column name="accessionp" length="50"  not-null="true" unique="false"  />
+			<column name="accessionp" length="50"  not-null="false" unique="false"  />
 		</property>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
@@ -79,5 +90,60 @@
 		<many-to-one name="pACSClientType" class="ims.domain.lookups.LookupInstance" access="field">
 			<column name="lkp_pacsclient" sql-type="numeric(10,0)" not-null="true" unique="false"   />
 		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="useLoggedUserName" type="boolean" access="field" update="true">
+			<column name="useloggedu"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="primaryIdentifier" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_primaryide" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="secondaryIdentifier" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_secondaryi" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="patientIdentifierParam" type="string" access="field" update="true" > 
+			<column name="patientide" length="50"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="issuerOfIdentifierParam" type="string" access="field" update="true" > 
+			<column name="issuerofid" length="50"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="sessionTimeParam" type="string" access="field" update="true" > 
+			<column name="sessiontim" length="50"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="primaryIdentifierCode" type="string" access="field" update="true" > 
+			<column name="primaryid2" length="50"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="secondaryIdentifierCode" type="string" access="field" update="true" > 
+			<column name="secondary2" length="50"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="aESKey" type="string" access="field" update="true" > 
+			<column name="aeskey" length="1024"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="useEncryptedToken" type="boolean" access="field" update="true">
+			<column name="useencrypt"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="encryptedTokenParam" type="string" access="field" update="true" > 
+			<column name="encryptedt" length="50"  not-null="false" unique="false"  />
+		</property>
 	</class>
 </hibernate-mapping>

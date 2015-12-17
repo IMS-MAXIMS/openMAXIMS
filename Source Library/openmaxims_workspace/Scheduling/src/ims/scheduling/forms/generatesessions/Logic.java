@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -89,8 +94,18 @@ public class Logic extends BaseLogic
 
 	protected void onChkActiveOnlyValueChanged() throws PresentationLogicException 
 	{
-		super.clearScreen();
-		open();
+		//WDEV-20486
+		// Comment out following two lines. Event was not enabled in dev env, but is being enabled for this change.
+		// Follwoing two lines not needed
+//		super.clearScreen();
+//		open();
+		//WDEV-20486
+		// Ensure qmb is cleared when Active Only flag is changed from false to true
+		if (form.chkActive().getValue())
+		{
+			form.qmbProfile().setEditedText(null);
+			form.qmbProfile().clear();
+		}
 	}
 
 	protected void onTreProfileTreeViewSelectionChanged(TreeNode node) throws PresentationLogicException 
@@ -116,7 +131,8 @@ public class Logic extends BaseLogic
 	private void updateControlsState()
 	{
 		boolean isProfileSelected = form.treProfile().getSelectedNode() != null && form.treProfile().getSelectedNode().getValue() instanceof ProfileShortVo;
-		form.btnCreateAdHocSession().setEnabled(isProfileSelected);
+		
+		form.btnCreateAdHocSession().setEnabled(isProfileSelected); 
 		form.btnGenerateSessions().setEnabled(isProfileSelected);
 		
 	}
@@ -197,10 +213,24 @@ public class Logic extends BaseLogic
 	private void populateQueryCombo(ProfileShortVoCollection loadProfiles) 
 	{
 		if (loadProfiles!=null)
+			//WDEV-20391
+			//			for (ProfileShortVo item: loadProfiles)
+			//				if (item!=null&&item.getNameIsNotNull())
+			//				form.qmbProfile().newRow(item, item.getName());
+			// Clear query combo first
+			// Check Active flag first and populate combo based on value of flag
 		{
+			form.qmbProfile().clear();
 			for (ProfileShortVo item: loadProfiles)
-				if (item!=null&&item.getNameIsNotNull())
+			{
+				if (item != null 
+						&& item.getNameIsNotNull()
+						&& ((form.chkActive().getValue() && item.getIsActive()) || (!form.chkActive().getValue())))
+				{
 					form.qmbProfile().newRow(item, item.getName());
+				}
+			} //WDEV-20391
+			
 			form.qmbProfile().showOpened();
 		}
 		else
@@ -236,4 +266,5 @@ public class Logic extends BaseLogic
 		form.getGlobalContext().Scheduling.setProfileShort((ProfileShortVo) form.treProfile().getValue());
 		engine.open(form.getForms().Scheduling.AdHocDateSelection);
 	}
+
 }

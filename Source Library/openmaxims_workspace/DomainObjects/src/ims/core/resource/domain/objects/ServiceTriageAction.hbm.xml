@@ -1,0 +1,157 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 12/10/2015, 13:31 -->
+<hibernate-mapping>
+	<class name="ims.core.resource.domain.objects.ServiceTriageAction" table="core_servicetriagea" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: service -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="service" class="ims.core.clinical.domain.objects.Service" unique="true" foreign-key="servicetriagea_service_fk" access="field" cascade="save-update">
+			<column name="service" sql-type="numeric(10,0)" not-null="true" unique="true"   />
+		</many-to-one>
+<!-- debug: linkedOPAsAndDiagnostic -->
+<!-- debug: oPA -->
+<!-- debug: oPAAndLinkedDiagostic -->
+<!-- debug: directToList -->
+<!-- debug: directToListAndOPA -->
+<!-- debug: consultant -->
+<!-- debug: sPR -->
+<!-- debug: associateSpecialist -->
+<!-- debug: anyDoctorToSee -->
+<!-- debug: linkedDiagnostic -->
+<!-- debug: otherHCP -->
+<!-- debug: otherHCPValues -->
+<!-- debug: IsCollection : true -->
+		<!-- collection of Lookup instances -->
+		<list name="otherHCPValues" table="core_servicetriagea_otherhcpva" lazy="true" access="field">
+			<key foreign-key="servicetriagea_otherhcpva_ofk">
+				<column name="owner" sql-type="numeric(10,0)"/>
+			</key>
+			<index column="idx"/>
+			<composite-element class="ims.domain.lookups.LookupInstanceRef">
+				<many-to-one name="instance" class="ims.domain.lookups.LookupInstance" access="field">
+					<column name="instance_id" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+				</many-to-one>
+			</composite-element>
+		</list>
+<!-- debug: linkedOPAs -->
+<!-- debug: defaultActionForManualReferral -->
+<!-- debug: defaultActionForCABReferral -->
+<!-- debug: changeCABOPA -->
+<!-- debug: changeCABOPAandDirectToList -->
+<!-- debug: cABOPAandDirectToList -->
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="linkedOPAsAndDiagnostic" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_linkedopas" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="oPA" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_opa" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="oPAAndLinkedDiagostic" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_opaandlink" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="directToList" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_directtoli" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="directToListAndOPA" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_directtol2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="consultant" type="boolean" access="field" update="true">
+			<column name="consultant"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="sPR" type="boolean" access="field" update="true">
+			<column name="spr"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="associateSpecialist" type="boolean" access="field" update="true">
+			<column name="associates"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="anyDoctorToSee" type="boolean" access="field" update="true">
+			<column name="anydoctort"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="linkedDiagnostic" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_linkeddiag" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="otherHCP" type="boolean" access="field" update="true">
+			<column name="otherhcp"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="linkedOPAs" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_linkedopa2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="defaultActionForManualReferral" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_defaultact" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="defaultActionForCABReferral" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_defaultac2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="changeCABOPA" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_changecabo" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="changeCABOPAandDirectToList" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_changecab2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="cABOPAandDirectToList" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_cabopaandd" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+	</class>
+</hibernate-mapping>

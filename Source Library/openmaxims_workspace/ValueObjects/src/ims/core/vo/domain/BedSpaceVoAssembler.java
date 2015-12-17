@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.core.vo.domain;
@@ -52,18 +57,22 @@ public class BedSpaceVoAssembler
 	    valueObjectDest.setIsRIE(valueObjectSrc.getIsRIE());
 		// Vml
 		valueObjectDest.setVml(valueObjectSrc.getVml());
-		// BedNumber
-		valueObjectDest.setBedNumber(valueObjectSrc.getBedNumber());
 		// TextPosition
 		valueObjectDest.setTextPosition(valueObjectSrc.getTextPosition());
 		// ImagePosition
 		valueObjectDest.setImagePosition(valueObjectSrc.getImagePosition());
+		// Dependency
+		valueObjectDest.setDependency(valueObjectSrc.getDependency());
 		// BedSpaceType
 		valueObjectDest.setBedSpaceType(valueObjectSrc.getBedSpaceType());
 		// Description
 		valueObjectDest.setDescription(valueObjectSrc.getDescription());
 		// WardType
 		valueObjectDest.setWardType(valueObjectSrc.getWardType());
+		// BedNumber
+		valueObjectDest.setBedNumber(valueObjectSrc.getBedNumber());
+		// PrivateBed
+		valueObjectDest.setPrivateBed(valueObjectSrc.getPrivateBed());
 	 	return valueObjectDest;
 	 }
 
@@ -356,13 +365,47 @@ public class BedSpaceVoAssembler
 			
 		// Vml
 		valueObject.setVml(domainObject.getVml());
-		// BedNumber
-		valueObject.setBedNumber(domainObject.getBedNumber());
 		// TextPosition
 		valueObject.setTextPosition(domainObject.getTextPosition());
 		// ImagePosition
 		valueObject.setImagePosition(domainObject.getImagePosition());
-		// BedSpaceType
+		// Dependency
+		ims.domain.lookups.LookupInstance instance4 = domainObject.getDependency();
+		if ( null != instance4 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance4.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance4.getImage().getImageId(), instance4.getImage().getImagePath());
+			}
+			color = instance4.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.BayDependencyLevel voLookup4 = new ims.core.vo.lookups.BayDependencyLevel(instance4.getId(),instance4.getText(), instance4.isActive(), null, img, color);
+			ims.core.vo.lookups.BayDependencyLevel parentVoLookup4 = voLookup4;
+			ims.domain.lookups.LookupInstance parent4 = instance4.getParent();
+			while (parent4 != null)
+			{
+				if (parent4.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent4.getImage().getImageId(), parent4.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent4.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup4.setParent(new ims.core.vo.lookups.BayDependencyLevel(parent4.getId(),parent4.getText(), parent4.isActive(), null, img, color));
+				parentVoLookup4 = parentVoLookup4.getParent();
+								parent4 = parent4.getParent();
+			}			
+			valueObject.setDependency(voLookup4);
+		}
+				// BedSpaceType
 		ims.domain.lookups.LookupInstance instance5 = domainObject.getBedSpaceType();
 		if ( null != instance5 ) {
 			ims.framework.utils.ImagePath img = null;
@@ -436,7 +479,11 @@ public class BedSpaceVoAssembler
 			}			
 			valueObject.setWardType(voLookup7);
 		}
-		 		return valueObject;
+				// BedNumber
+		valueObject.setBedNumber(domainObject.getBedNumber());
+		// PrivateBed
+		valueObject.setPrivateBed( domainObject.isPrivateBed() );
+ 		return valueObject;
 	 }
 
 
@@ -494,13 +541,6 @@ public class BedSpaceVoAssembler
 		domainObject.setVml(valueObject.getVml());
 		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
 		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
-		if (valueObject.getBedNumber() != null && valueObject.getBedNumber().equals(""))
-		{
-			valueObject.setBedNumber(null);
-		}
-		domainObject.setBedNumber(valueObject.getBedNumber());
-		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
-		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
 		if (valueObject.getTextPosition() != null && valueObject.getTextPosition().equals(""))
 		{
 			valueObject.setTextPosition(null);
@@ -513,6 +553,14 @@ public class BedSpaceVoAssembler
 			valueObject.setImagePosition(null);
 		}
 		domainObject.setImagePosition(valueObject.getImagePosition());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value4 = null;
+		if ( null != valueObject.getDependency() ) 
+		{
+			value4 =
+				domainFactory.getLookupInstance(valueObject.getDependency().getID());
+		}
+		domainObject.setDependency(value4);
 		// create LookupInstance from vo LookupType
 		ims.domain.lookups.LookupInstance value5 = null;
 		if ( null != valueObject.getBedSpaceType() ) 
@@ -536,6 +584,14 @@ public class BedSpaceVoAssembler
 				domainFactory.getLookupInstance(valueObject.getWardType().getID());
 		}
 		domainObject.setWardType(value7);
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getBedNumber() != null && valueObject.getBedNumber().equals(""))
+		{
+			valueObject.setBedNumber(null);
+		}
+		domainObject.setBedNumber(valueObject.getBedNumber());
+		domainObject.setPrivateBed(valueObject.getPrivateBed());
 
 		return domainObject;
 	}

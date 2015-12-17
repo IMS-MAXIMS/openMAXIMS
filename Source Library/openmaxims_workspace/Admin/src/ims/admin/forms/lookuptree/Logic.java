@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -312,7 +317,9 @@ public class Logic extends BaseLogic
 				engine.showMessage("You must specify the External Code for all Lookup Mappings.");
 				return;
 			}
-			vo.addMapping(new LookupMappingVo(row.getExtSystem().getText(), row.getExtCode()));
+				
+			//WDEV-19834 
+			vo.addMapping(new LookupMappingVo(row.getExtSystem().getText(), TaxonomyType.PHARMACY.equals(row.getExtSystem()) ? setExtCode(row.getExtCode()) : row.getExtCode()));
 		}
 
 		LookupTypeVo type = form.getLocalContext().getLookupType();
@@ -322,6 +329,10 @@ public class Logic extends BaseLogic
 			return;
 		}
 
+		//WDEV-19654 
+		if (isLookupInstanceAlreadyAdded(type, vo, false))
+			return;
+		
 		try
 		{
 			domain.saveLookupInstance(type, vo);
@@ -343,6 +354,78 @@ public class Logic extends BaseLogic
 		{
 			enableTypeItemsOnSelection(form.treTypes().getSelectedNode());
 		}
+	}
+
+	private String setExtCode(String extCode)
+	{
+		if (extCode == null || extCode.length() == 0)
+			return "";
+		
+		extCode.replaceAll(" ", "-");
+
+		return extCode.replaceAll("&nbsp;", " ");
+	}
+
+	private boolean isLookupInstanceAlreadyAdded(LookupTypeVo type, LookupInstVo vo, Boolean activateInstance)
+	{
+		if (vo == null || type == null)
+			return false;
+		
+		LookupInstanceCollection instColl = domain.getLookupService().getLookupCollection(type.getId(), ClassHelper.getLookupCollectionClass(type.getId()), ClassHelper.getLookupClass(type.getId()), false, false);
+		
+		if (!Boolean.TRUE.equals(type.isHierarchical()) || (Boolean.TRUE.equals(type.isHierarchical()) && vo.getParentInstance() == null))
+		{
+    		LookupInstVo[] roots = instColl.getRoots();
+        	if (roots != null && roots.length > 0)
+        	{
+        		for (int i = 0; i< roots.length; i++)
+        		{
+        			LookupInstVo inst = roots[i];
+        			
+        			if (Boolean.TRUE.equals(inst.isActive()) && inst.getID() != vo.getID() && inst.getIItemText().equalsIgnoreCase(vo.getText()))
+        			{
+        				engine.showErrors(new String[]{"'" + form.lyr1().Instance().txtInstText().getValue() + "' Instance was already added to the '" + type.getName() + "' Lookup."});
+        				return true; 
+        			}
+        		}
+        	}
+		}
+    	
+    	if (Boolean.TRUE.equals(type.isHierarchical()) && vo.getParentInstance() != null)
+    	{
+    		LookupInstVo parent = Boolean.TRUE.equals(activateInstance) ? getParentInstance(instColl, vo.getParentInstance()) : form.lyr1().Instance().cmbParent().getValue();
+    		if ( Boolean.TRUE.equals(type.isHierarchical()) && vo.getParentInstance() != null && parent != null && parent.hasActiveChildren())
+    		{
+    			ArrayList<LookupInstVo> childs = parent.getChildInstances();
+				
+				if (childs == null || childs.size() == 0)
+					return false;
+				
+				for (int j = 0; j<childs.size(); j++)
+				{
+					LookupInstVo childInstance = childs.get(j);
+					
+					if (childInstance != null && Boolean.TRUE.equals(childInstance.isActive()) && childInstance.getText().equalsIgnoreCase(vo.getText()) && childInstance.getParentInstance() != null && childInstance.getParentInstance().equals(vo.getParentInstance()) && childInstance.getID() != vo.getID())
+					{
+						engine.showErrors(new String[]{"'" + form.lyr1().Instance().txtInstText().getValue() + "' Instance was already added to the '" + type.getName() + "' Lookup - '" + childInstance.getParentInstance().getIItemText() + "' parent."});
+						return true;
+					}
+				}
+    		}
+    			
+    	}
+
+		return false;
+	}
+
+	private LookupInstVo getParentInstance(LookupInstanceCollection instColl, LookupInstVo parentInstance)
+	{
+		if (instColl != null && instColl.size() > 0 && parentInstance != null)
+		{
+				return instColl.getInstanceById(parentInstance.getID());
+		}
+		
+		return null;
 	}
 
 	protected void onGrdMappingsSelectionChanged() throws PresentationLogicException
@@ -698,10 +781,24 @@ public class Logic extends BaseLogic
 			LookupMappingVo valueObject = mapColl.get(i);
 
 			GenForm.lyr1Layer.InstanceContainer.grdMappingsRow row = form.lyr1().Instance().grdMappings().getRows().newRow();
-			row.setExtSystem(getExtSystemInstance(valueObject.getExtSystem()));
-			row.setExtCode(valueObject.getExtCode());
+			
+			//WDEV-19834 
+			TaxonomyType selectedVal = getExtSystemInstance(valueObject.getExtSystem());			
+			row.setExtSystem(selectedVal);
+			row.setExtCode(TaxonomyType.PHARMACY.equals( selectedVal ) ? getExtCode(valueObject.getExtCode()) : valueObject.getExtCode());
+			
 			row.setValue(valueObject);
 		}
+	}
+
+	private String getExtCode(String extCode)
+	{
+		if (extCode == null || extCode.length() == 0)
+			return "";
+		
+		extCode.replaceAll(" ", "-");
+
+		return extCode.replaceAll(" ", "&nbsp;");
 	}
 
 	private TaxonomyType getExtSystemInstance(String extSystem)
@@ -787,7 +884,6 @@ public class Logic extends BaseLogic
 		LookupInstVo val = (LookupInstVo)form.treTypes().getValue();
 		if (val.getId() >= 0)
 		{
-			form.lyr1().Instance().cmbColor().setEnabled(true);
 			form.lyr1().Instance().cmbParent().setEnabled(true);
 			form.lyr1().Instance().qmbImage().setEnabled(true);			
 		}
@@ -806,6 +902,11 @@ public class Logic extends BaseLogic
 			engine.showMessage("Can't find Lookup Type for the instance being changed");
 			return;
 		}
+		
+		//WDEV-19654 
+		if (form.getLocalContext().getLookupInstance() != null && !Boolean.TRUE.equals(form.getLocalContext().getLookupInstance().isActive()) && isLookupInstanceAlreadyAdded(type, form.getLocalContext().getLookupInstance(), true))
+			return;
+
 		try
 		{
 			domain.deactivateInstance(type, form.getLocalContext().getLookupInstance());
@@ -885,7 +986,7 @@ public class Logic extends BaseLogic
 			form.lyr1().Instance().cmbParent().setEnabled(true);
 			form.lyr1().Instance().txtInstText().setEnabled(false);
 
-			form.lyr1().Instance().cmbColor().setEnabled(false);
+			form.lyr1().Instance().cmbColor().setEnabled(true);//WDEV-22730
 			form.lyr1().Instance().cmbParent().setEnabled(false);
 			form.lyr1().Instance().qmbImage().setEnabled(false);
 			
@@ -1001,15 +1102,14 @@ public class Logic extends BaseLogic
 
 		if ( node.getNodes() != null && node.getNodes().size() > 0)
 		{
-			form.getContextMenus().getLookupAdminSortItem().setVisible(!systemType);
-			form.getContextMenus().getLookupAdminSaveItem().setVisible(!systemType);
+			form.getContextMenus().getLookupAdminSortItem().setVisible(true); //WDEV-22643
+			form.getContextMenus().getLookupAdminSaveItem().setVisible(true); //WDEV-22643
 		}
 		else
 		{
 			form.getContextMenus().getLookupAdminSortItem().setVisible(false);
 			form.getContextMenus().getLookupAdminSaveItem().setVisible(false);
 		}
-
 	
 		if(type.getId() < 0)
 			form.lyr1().Type().btnUpdType().setEnabled(form.getMode().equals(FormMode.VIEW));
@@ -1089,7 +1189,6 @@ public class Logic extends BaseLogic
 		setFormMode(FormMode.EDIT);
 		form.lyr1().Instance().txtInstText().setFocus();
 		form.lyr1().Instance().txtInstText().setEnabled(true);
-		form.lyr1().Instance().cmbColor().setEnabled(true);
 		form.lyr1().Instance().cmbParent().setEnabled(true);
 		form.lyr1().Instance().qmbImage().setEnabled(true);			
 	}
@@ -1137,7 +1236,7 @@ public class Logic extends BaseLogic
 		vo.setHierarchical(form.lyr1().Type().chkTypeHier().getValue());
 		vo.setSystemType(false);
 		vo.setActive(true);
-
+		
 		try
 		{
 			domain.saveLookupType(vo);

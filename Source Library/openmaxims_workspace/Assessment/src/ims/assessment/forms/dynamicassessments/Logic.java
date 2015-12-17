@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -70,7 +75,9 @@ import ims.core.vo.lookups.FileType;
 import ims.core.vo.lookups.PatientAssessmentStatusReason;
 import ims.core.vo.lookups.PreActiveActiveInactiveStatus;
 import ims.core.vo.lookups.UserAssessmentCategory;
+import ims.domain.exceptions.DomainRuntimeException;
 import ims.domain.exceptions.StaleObjectException;
+import ims.framework.LayerBridge;
 import ims.framework.enumerations.DialogResult;
 import ims.framework.enumerations.FormMode;
 import ims.framework.enumerations.application.AssessmentRecordingLevel;
@@ -83,8 +90,14 @@ import ims.framework.utils.DateTime;
 import ims.vo.ValueObjectRef;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import com.ims.query.builder.client.QueryBuilderClient;
 import com.ims.query.builder.client.SeedValue;
@@ -93,9 +106,14 @@ import com.ims.query.builder.client.exceptions.QueryBuilderClientException;
 public class Logic extends BaseLogic
 {
 	private static final long serialVersionUID = 1L;
-
+	
+	private static final Integer PATIENT_ASSESSMENT_WITH_LABELS_AUTHORINGINFO_IMSID= new Integer(52);
+	private static final Integer PATIENT_ASSESSMENT_WITH_LABELS_SCORING_IMSID = new Integer(69);
+		
 	protected void onFormOpen(Object[] args) throws ims.framework.exceptions.PresentationLogicException
 	{
+		
+		
 		if(args != null && args.length == 1 && args[0] instanceof UserAssessmentRefVo)
 		{
 			form.getGlobalContext().Assessment.setDynamicAssessment((ValueObjectRef)args[0]);
@@ -134,6 +152,7 @@ public class Logic extends BaseLogic
 		//wdev-14339
 		// If we are here it could be that the SelectedAssessment in the GC is from a different context but if called 
 		// from PatientAssessmentSearch we still want to view it......
+		
 		if (engine.getPreviousNonDialogFormName().equals(form.getForms().Clinical.PatientAssessmentSearch)
 			&& form.getGlobalContext().Clinical.PatientAssessment.getSelectedAssessmentIsNotNull()
 			&& form.getLocalContext().getCurrentPatientAssessmentIsNotNull()
@@ -150,7 +169,7 @@ public class Logic extends BaseLogic
 			updateControlsState();
 			
 			form.getLocalContext().setAllowUpdate(false);
-			refreshReport(form.getGlobalContext().Assessment.getDynamicAssessment());
+			refreshReportTab(form.getGlobalContext().Assessment.getDynamicAssessment());
 			form.setMode(FormMode.VIEW);
 		}
 
@@ -218,7 +237,7 @@ public class Logic extends BaseLogic
 			&& form.lyrAssessments().tabStructuralAssessment().dteAssessmentTo().getValue() != null
 			&& form.lyrAssessments().tabStructuralAssessment().dteAssessmentFrom().getValue().isGreaterThan(form.lyrAssessments().tabStructuralAssessment().dteAssessmentTo().getValue()))
 		{
-				errorsList.add("'From' can not be set after 'To' date.");
+				errorsList.add("'From' date cannot greater than 'To' date."); //WDEV-18762
 		}
 		
 		return errorsList.toArray(new String[errorsList.size()]);
@@ -253,7 +272,7 @@ public class Logic extends BaseLogic
 			 && form.lyrAssessments().tabGraphicalAssessment().dteGraphicalTo().getValue() != null
 					&& form.lyrAssessments().tabGraphicalAssessment().dteGraphicalFrom().getValue().isGreaterThan(form.lyrAssessments().tabGraphicalAssessment().dteGraphicalTo().getValue()))
 		{
-				errorsList.add("'From' can not be set after 'To' date.");
+				errorsList.add("'From' date cannot greater than 'To' date."); //WDEV-18762
 		}
 		
 		return errorsList.toArray(new String[errorsList.size()]);
@@ -328,7 +347,7 @@ public class Logic extends BaseLogic
 					&& (userAssessmentWithReportAndStoredPrintAssessment || graphicAssessmentWithReportAndStoredPrintAssessment)
 					&& Boolean.TRUE.equals(ConfigFlag.UI.SAVE_PATIENTDOCUMENT_ON_ASSESSMENTCOMPLETED.getValue()))
 			{
-				print(false);
+				print(false,false);
 			}
 			
 			if(engine.isDialog())
@@ -345,7 +364,7 @@ public class Logic extends BaseLogic
 	@Override
 	protected void onBtnPrintClick() throws PresentationLogicException
 	{
-		if (print(true))
+		if (print(true,false))
 		{
 			form.setMode(FormMode.VIEW);
 			open(false);
@@ -357,7 +376,7 @@ public class Logic extends BaseLogic
 	 * and that report will generate PDF that will be saved in Patient Documents 
 	 * @throws PresentationLogicException 
 	 */
-	private boolean print(boolean preview) throws PresentationLogicException
+	private boolean print(boolean preview, boolean isFromSaveAsPDFBtn) throws PresentationLogicException //WDEV-19127
 	{
 		StringBuilder path = new StringBuilder();
 		
@@ -372,7 +391,7 @@ public class Logic extends BaseLogic
 			// WDEV-13300
 			// If the report is saved at completion - do not perform this check
 			// Perform a check here for already printed from a different session
-			if (!Boolean.TRUE.equals(ConfigFlag.UI.SAVE_PATIENTDOCUMENT_ON_ASSESSMENTCOMPLETED.getValue()))
+			if (!Boolean.TRUE.equals(ConfigFlag.UI.SAVE_PATIENTDOCUMENT_ON_ASSESSMENTCOMPLETED.getValue()) || isFromSaveAsPDFBtn) //WDEV-19127
 			{
 				if (domain.isSaved(form.getLocalContext().getCurrentPatientAssessment()))
 				{
@@ -387,11 +406,11 @@ public class Logic extends BaseLogic
 			
 			if (form.getLocalContext().getCurrentPatientAssessment().getAssessmentData().getUserAssessmentIsNotNull())
 			{
-				serverDocument = printPatientAssessment(form.getLocalContext().getCurrentPatientAssessment(), form.getLocalContext().getCurrentPatientAssessment().getAssessmentData().getUserAssessment().getAssociatedReport(), null);
+				serverDocument = printPatientAssessment(form.getLocalContext().getCurrentPatientAssessment(), form.getLocalContext().getCurrentPatientAssessment().getAssessmentData().getUserAssessment().getAssociatedReport(), null, isFromSaveAsPDFBtn); //WDEV-19127
 			}
 			else if (form.getLocalContext().getCurrentPatientAssessment().getAssessmentData().getGraphicIsNotNull())
 			{
-				serverDocument = printPatientAssessment(form.getLocalContext().getCurrentPatientAssessment(), form.getLocalContext().getCurrentPatientAssessment().getAssessmentData().getGraphic().getAssociatedReportForPrinting(), null);
+				serverDocument = printPatientAssessment(form.getLocalContext().getCurrentPatientAssessment(), form.getLocalContext().getCurrentPatientAssessment().getAssessmentData().getGraphic().getAssociatedReportForPrinting(), null, false); //WDEV-19127
 			}
 
 			if (serverDocument == null)
@@ -516,16 +535,22 @@ public class Logic extends BaseLogic
 	 * WDEV-13704
 	 * Function used to print a server document for a Patient Assessment
 	 */
-	private ServerDocumentVo printPatientAssessment(PatientAssessmentRefVo patientAssessment, TemplateBoRefVo templateReport, String printerName)
+	private ServerDocumentVo printPatientAssessment(PatientAssessmentRefVo patientAssessment, TemplateBoRefVo template, String printerName, boolean isFromSaveAsPDFBtn)
 	{
 		String urlQueryServer = ConfigFlag.GEN.QUERY_SERVER_URL.getValue();
 		String urlReportServer = ConfigFlag.GEN.REPORT_SERVER_URL.getValue();
-		
-		String obj[] = domain.getReportAndTemplate(templateReport);
-		
+		String[] obj = null;
+		////WDEV-19127 --- start
+		if (template == null && isFromSaveAsPDFBtn) 
+			obj = domain.getReportByImsID(isScoringUsedDefinedAssessment() ? PATIENT_ASSESSMENT_WITH_LABELS_SCORING_IMSID : (isNonScoringUsedDefinedAssessment() ? PATIENT_ASSESSMENT_WITH_LABELS_AUTHORINGINFO_IMSID :  null));
+		else
+		{	
+			obj = domain.getReportAndTemplate(template);
+		} 
+		////WDEV-19127 --- end		
 		if(obj == null)
 		{
-			engine.showMessage("I could not get the report and template linked to this assessment !");
+			engine.showMessage(isFromSaveAsPDFBtn ? "Couldn't get the report and template !" : "I could not get the report and template linked to this assessment !");
 			return null;
 		}
 		
@@ -635,10 +660,10 @@ public class Logic extends BaseLogic
 		form.getGlobalContext().Core.setPatient_AssessmentFull(null);//wdev-15784
 		form.getGlobalContext().Assessment.setPatientAssessment(null);//wdev-15784
 
-		refreshReport(form.getGlobalContext().Assessment.getDynamicAssessment());
+		refreshReportTab(form.getGlobalContext().Assessment.getDynamicAssessment());
 	}
 	
-	private void refreshReport(ValueObjectRef ref)
+	private void refreshReportTab(ValueObjectRef ref)
 	{
 		form.lyrAssessments().tabStructuralAssessment().btnView().setVisible(false);
 		
@@ -653,14 +678,14 @@ public class Logic extends BaseLogic
 		
 		String linkedReportName = (ref != null ? domain.getLinkedReportName(ref) : null);
 		
-		if(linkedReportName != null)
+		/*if(linkedReportName != null)
 		{
 			// WDEV-13300
 			// Pass the current PatientAssessment_id as seed, even for old reports as this function will set all three seeds
 			// PatientAssessment_id for new versions of the PatientAssessment reports
 			// CareContext_id and ClinicalContact_id for the old versions of the PatientAsessment reports
 			form.lyrAssessments().tabStructuralAssessment().lyrDualView().tabPageReport().ccReportBuilder().buildAssessmentReport(form.getLocalContext().getCurrentPatientAssessment());
-		}
+		}*/
 			
 		if(form.lyrAssessments().tabStructuralAssessment().recbrStructuredAssessment().getValue() != null)
 		{
@@ -696,6 +721,7 @@ public class Logic extends BaseLogic
 			}
 		}
 	}
+	
 	protected void onRecbrGraphicalAssessmentValueChanged() throws PresentationLogicException 
 	{
 		Patient_AssessmentVo patientAssessment = domain.getPatientAssessment(form.lyrAssessments().tabGraphicalAssessment().recbrGraphicalAssessment().getValue());
@@ -737,6 +763,7 @@ public class Logic extends BaseLogic
 		form.lyrAssessments().tabStructuralAssessment().setauthStructuredAssessmentCompletedEnabled(false);
 		form.lyrAssessments().tabGraphicalAssessment().setauthGraphicalAssessmentCompletedVisible(false);
 		form.lyrAssessments().tabGraphicalAssessment().setauthGraphicalAssessmentCompletedEnabled(false);
+		form.btnSavePDF().setImage(form.getImages().Core.PDFIcon); //WDEV-19127
 		
 		// WDEV-12954
 		// Check if the search criteria needs to be reseted
@@ -845,7 +872,7 @@ public class Logic extends BaseLogic
 			//WDEV-9134
 			getPreviousLastAssessment();
 			
-			refreshReport(form.getGlobalContext().Assessment.getDynamicAssessment());
+			refreshReportTab(form.getGlobalContext().Assessment.getDynamicAssessment());
 		}
 		else if(graphicalAssessmentRef != null)
 		{
@@ -916,7 +943,7 @@ public class Logic extends BaseLogic
 				recordBrowserValue = form.lyrAssessments().tabStructuralAssessment().recbrStructuredAssessment().getValue();
 			}
 			
-			patientAssessment = domain.getPatientAssessment(recordBrowserValue);				
+			patientAssessment = domain.getPatientAssessment(recordBrowserValue);
 			populateStructuralAssessmentControlsFromData(patientAssessment);
 			form.getLocalContext().setStructuralAssessment(patientAssessment.getAssessmentData().getUserAssessment());
 			if(engine.isDialog())// && isOpenedAsPreviewDialog())
@@ -978,6 +1005,7 @@ public class Logic extends BaseLogic
 				else //WDEV-18146 if the EAS has no records linked to it, clear the screen
 				{
 					form.lyrAssessments().tabGraphicalAssessment().recbrGraphicalAssessment().clear();
+					form.lyrAssessments().tabGraphicalAssessment().recbrGraphicalAssessment().setTooltip(null); //WDEV-18234
 					Graphic_AssessmentVo graphicalAssessment = domain.getGraphicalAssessment(form.getLocalContext().getGraphicalAssessmentRef());
 					
 					if(graphicalAssessment == null)
@@ -989,7 +1017,20 @@ public class Logic extends BaseLogic
 				}
 			}
 
-			patientAssessment = domain.getPatientAssessment(form.lyrAssessments().tabGraphicalAssessment().recbrGraphicalAssessment().getValue());
+			//WDEV-21150 Trap situation where image file is missing
+//			patientAssessment = domain.getPatientAssessment(form.lyrAssessments().tabGraphicalAssessment().recbrGraphicalAssessment().getValue());
+			try
+			{
+				patientAssessment = domain.getPatientAssessment(form.lyrAssessments().tabGraphicalAssessment().recbrGraphicalAssessment().getValue());
+			}
+			catch (CodingRuntimeException e)
+			{
+				engine.showMessage(e.getMessage());
+				form.setMode(FormMode.VIEW);
+				showNoRecordsFoundMessage = false;
+				return;
+			} //WDEV-21150
+
 			form.getLocalContext().setGraphicalAssessment(patientAssessment.getAssessmentData().getGraphic());
 			populateGraphicalAssessmentControlsFromData(patientAssessment);
 		}
@@ -1004,6 +1045,14 @@ public class Logic extends BaseLogic
 		if (form.getGlobalContext().Core.getPatientShort() == null)
 			return false;
 			
+		PreActiveActiveInactiveStatus structuralStatus = form.getLocalContext().getStructuralAssessmentIsNotNull() ? form.getLocalContext().getStructuralAssessment().getActiveStatus() : null;
+		PreActiveActiveInactiveStatus currentStructuralStatus = form.getLocalContext().getCurrentPatientAssessmentIsNotNull() && form.getLocalContext().getCurrentPatientAssessment().getAssessmentDataIsNotNull() && form.getLocalContext().getCurrentPatientAssessment().getAssessmentData().getUserAssessmentIsNotNull() ? form.getLocalContext().getCurrentPatientAssessment().getAssessmentData().getUserAssessment().getActiveStatus() : null; 
+		PreActiveActiveInactiveStatus graphicalStatus = form.getLocalContext().getGraphicalAssessmentIsNotNull() ? form.getLocalContext().getGraphicalAssessment().getActiveStatus() : null;
+		
+		if ((PreActiveActiveInactiveStatus.INACTIVE.equals(structuralStatus) && form.getLocalContext().getStructuralAssessmentIsNotNull()) ||
+			((PreActiveActiveInactiveStatus.INACTIVE.equals(currentStructuralStatus)) && form.getLocalContext().getCurrentPatientAssessmentIsNotNull())	||
+			(PreActiveActiveInactiveStatus.INACTIVE.equals(graphicalStatus) && form.getLocalContext().getGraphicalAssessmentIsNotNull()))
+			return false;
 		
 		//start WDEV-14007
 		Patient_AssessmentListVoCollection allrecords = null;
@@ -1131,7 +1180,7 @@ public class Logic extends BaseLogic
 	{
 		form.getLocalContext().setRIE(patientAssessment);
 		form.getLocalContext().setCurrentPatientAssessment((Patient_AssessmentVo)patientAssessment.clone());
-		
+		form.lyrAssessments().tabStructuralAssessment().recbrStructuredAssessment().setTooltip("Record " + (form.lyrAssessments().tabStructuralAssessment().recbrStructuredAssessment().getSelectedIndex() + 1) + " of " + form.lyrAssessments().tabStructuralAssessment().recbrStructuredAssessment().getValues().size() + ": " + getAssessmentDisplayText(patientAssessment)); //WDEV-18234
 		boolean completed = patientAssessment.getStatus() != null && patientAssessment.getStatus().equals(PatientAssessmentStatusReason.COMPLETED);
 		
 		form.chkComplete().setValue(completed);
@@ -1173,7 +1222,7 @@ public class Logic extends BaseLogic
 	{
 		form.getLocalContext().setRIE(patientAssessment);
 		form.getLocalContext().setCurrentPatientAssessment((Patient_AssessmentVo)patientAssessment.clone());
-		
+		form.lyrAssessments().tabGraphicalAssessment().recbrGraphicalAssessment().setTooltip("Record " + (form.lyrAssessments().tabGraphicalAssessment().recbrGraphicalAssessment().getSelectedIndex() + 1) + " of " + form.lyrAssessments().tabGraphicalAssessment().recbrGraphicalAssessment().getValues().size() + ": " + getAssessmentDisplayText(patientAssessment)); //WDEV-18234
 		boolean completed = patientAssessment.getStatus() != null && patientAssessment.getStatus().equals(PatientAssessmentStatusReason.COMPLETED);
 		
 		form.chkComplete().setValue(completed);
@@ -1290,6 +1339,7 @@ public class Logic extends BaseLogic
 		
 		UserAssessmentRefVo userAssessment = form.getLocalContext().getStructuralAssessmentRef();
 		form.lyrAssessments().tabStructuralAssessment().recbrStructuredAssessment().clear();
+		form.lyrAssessments().tabStructuralAssessment().recbrStructuredAssessment().setTooltip(null); //WDEV-18234
 		
 		//WDEV-11721 - starts here
 		PatientShort patient = form.getGlobalContext().Core.getPatientShort();
@@ -1321,7 +1371,7 @@ public class Logic extends BaseLogic
 			for(int x = 0; x < records.size(); x++)
 			{
 				Patient_AssessmentListVo patientAssessment = records.get(x);
-				String text = "";
+				
 
 				Color color = Color.Default; 
 				if(patientAssessment.getClinicalContact() != null && patientAssessment.getClinicalContact().equals(form.getGlobalContext().Core.getCurrentClinicalContact()))
@@ -1329,16 +1379,7 @@ public class Logic extends BaseLogic
 				if(patientAssessment.getClinicalContact() == null && form.getGlobalContext().Core.getCurrentClinicalContact() == null && patientAssessment.getCareContext() != null && patientAssessment.getCareContext().equals(form.getGlobalContext().Core.getCurrentCareContext()))
 					color = Color.Blue;
 				
-				if(patientAssessment.getAuthoringInformation() != null)
-				{
-					text += patientAssessment.getAuthoringInformation().getAuthoringDateTime() == null ? "<unknown date>" : patientAssessment.getAuthoringInformation().getAuthoringDateTime().toString(); 
-					text += " - ";
-					text += patientAssessment.getAuthoringInformation().getAuthoringHcp() == null ? "<unknown>" : patientAssessment.getAuthoringInformation().getAuthoringHcp().toString(); 
-				}
-				else
-					text = "? - ?";
-				
-				form.lyrAssessments().tabStructuralAssessment().recbrStructuredAssessment().newRow(patientAssessment, text, color);
+				form.lyrAssessments().tabStructuralAssessment().recbrStructuredAssessment().newRow(patientAssessment, getAssessmentListDisplayText(patientAssessment), color); //WDEV-18234
 			}
 		
 			updateStructuredAssessmentSelection();
@@ -1347,6 +1388,39 @@ public class Logic extends BaseLogic
 		}
 		
 		return 0;
+	}
+
+	//WDEV-18234
+	private String getAssessmentListDisplayText(Patient_AssessmentListVo patientAssessment)
+	{
+		String text = "";
+		
+		if(patientAssessment.getAuthoringInformation() != null)
+		{
+			text += patientAssessment.getAuthoringInformation().getAuthoringDateTime() == null ? "<unknown date>" : patientAssessment.getAuthoringInformation().getAuthoringDateTime().toString(); 
+			text += " - ";
+			text += patientAssessment.getAuthoringInformation().getAuthoringHcp() == null ? "<unknown>" : patientAssessment.getAuthoringInformation().getAuthoringHcp().toString(); 
+		}
+		else
+			text = "? - ?";
+		
+		return text;
+	}
+	//WDEV-18234
+	private String getAssessmentDisplayText(Patient_AssessmentVo patientAssessment)
+	{
+		String text = "";
+		
+		if(patientAssessment.getAuthoringInformation() != null)
+		{
+			text += patientAssessment.getAuthoringInformation().getAuthoringDateTime() == null ? "<unknown date>" : patientAssessment.getAuthoringInformation().getAuthoringDateTime().toString(); 
+			text += " - ";
+			text += patientAssessment.getAuthoringInformation().getAuthoringHcp() == null ? "<unknown>" : patientAssessment.getAuthoringInformation().getAuthoringHcp().toString(); 
+		}
+		else
+			text = "? - ?";
+		
+		return text;
 	}
 	
 	private void updateStructuredAssessmentSelection() 
@@ -1364,6 +1438,7 @@ public class Logic extends BaseLogic
 						.equals(((PatientAssessmentRefVo)form.getGlobalContext().Clinical.PatientAssessment.getSelectedAssessment()).getID_PatientAssessment()))
 				{
 					form.lyrAssessments().tabStructuralAssessment().recbrStructuredAssessment().setValue((Patient_AssessmentListVo)form.lyrAssessments().tabStructuralAssessment().recbrStructuredAssessment().getValues().get(i));
+					form.lyrAssessments().tabStructuralAssessment().recbrStructuredAssessment().setTooltip("Record " + (form.lyrAssessments().tabStructuralAssessment().recbrStructuredAssessment().getSelectedIndex() + 1) + " of " + form.lyrAssessments().tabStructuralAssessment().recbrStructuredAssessment().getValues().size() + ": " + getAssessmentListDisplayText((Patient_AssessmentListVo)form.lyrAssessments().tabStructuralAssessment().recbrStructuredAssessment().getValues().get(i))); //WDEV-18234
 					return;
 				}
 			}
@@ -1419,17 +1494,22 @@ public class Logic extends BaseLogic
 			}	
 			
 			if(selectedRecord != null)
+			{	
 				form.lyrAssessments().tabStructuralAssessment().recbrStructuredAssessment().setValue(selectedRecord);
-			//WDEV-11721 - ends here
+				form.lyrAssessments().tabStructuralAssessment().recbrStructuredAssessment().setTooltip("Record " + (form.lyrAssessments().tabStructuralAssessment().recbrStructuredAssessment().getSelectedIndex() + 1) + " of " + form.lyrAssessments().tabStructuralAssessment().recbrStructuredAssessment().getValues().size() + ": " + getAssessmentListDisplayText(selectedRecord)); //WDEV-18234
+			}
+				//WDEV-11721 - ends here
 		}
 		else
 		{
 			form.lyrAssessments().tabStructuralAssessment().recbrStructuredAssessment().setValue(lastSelectedPatientAssessment);
+			form.lyrAssessments().tabStructuralAssessment().recbrStructuredAssessment().setTooltip(form.lyrAssessments().tabStructuralAssessment().recbrStructuredAssessment().getSelectedIndex() != -1 ? "Record " + (form.lyrAssessments().tabStructuralAssessment().recbrStructuredAssessment().getSelectedIndex() + 1) + " of " + form.lyrAssessments().tabStructuralAssessment().recbrStructuredAssessment().getValues().size() + ": " + getAssessmentDisplayText(lastSelectedPatientAssessment) : null); //WDEV-18234
 		}
 	}
 	
 	private void updateGraphicalAssessmentSelection() 
 	{
+		
 		if(form.getLocalContext().getLoadedRecords() == null)
 			return;
 		//WDEV-12960-Start
@@ -1443,6 +1523,7 @@ public class Logic extends BaseLogic
 						.equals(((PatientAssessmentRefVo)form.getGlobalContext().Clinical.PatientAssessment.getSelectedAssessment()).getID_PatientAssessment()))
 				{
 					form.lyrAssessments().tabGraphicalAssessment().recbrGraphicalAssessment().setValue((Patient_AssessmentListVo)form.lyrAssessments().tabGraphicalAssessment().recbrGraphicalAssessment().getValues().get(i));
+					form.lyrAssessments().tabGraphicalAssessment().recbrGraphicalAssessment().setTooltip("Record " + (form.lyrAssessments().tabGraphicalAssessment().recbrGraphicalAssessment().getSelectedIndex() + 1) + " of " + form.lyrAssessments().tabGraphicalAssessment().recbrGraphicalAssessment().getValues().size() + ": " + getAssessmentListDisplayText((Patient_AssessmentListVo)form.lyrAssessments().tabGraphicalAssessment().recbrGraphicalAssessment().getValues().get(i))); //WDEV-18234
 					return;
 				}
 			}
@@ -1500,12 +1581,17 @@ public class Logic extends BaseLogic
 			}
 			
 			if(selectedRecord != null)
+			{	
 				form.lyrAssessments().tabGraphicalAssessment().recbrGraphicalAssessment().setValue(selectedRecord);
+				form.lyrAssessments().tabGraphicalAssessment().recbrGraphicalAssessment().setTooltip("Record " + (form.lyrAssessments().tabGraphicalAssessment().recbrGraphicalAssessment().getSelectedIndex() + 1) + " of " + form.lyrAssessments().tabGraphicalAssessment().recbrGraphicalAssessment().getValues().size() + ": " + getAssessmentListDisplayText(selectedRecord)); //WDEV-18234
+			}	
+				
 			//WDEV-11721 - ends here
 		}
 		else
 		{
 			form.lyrAssessments().tabGraphicalAssessment().recbrGraphicalAssessment().setValue(lastSelectedPatientAssessment);
+			form.lyrAssessments().tabGraphicalAssessment().recbrGraphicalAssessment().setTooltip(form.lyrAssessments().tabGraphicalAssessment().recbrGraphicalAssessment().getSelectedIndex() != -1 ? "Record " + (form.lyrAssessments().tabGraphicalAssessment().recbrGraphicalAssessment().getSelectedIndex() + 1) + " of " + form.lyrAssessments().tabGraphicalAssessment().recbrGraphicalAssessment().getValues().size() + ": " + getAssessmentDisplayText(lastSelectedPatientAssessment) : null); //WDEV-18234
 		}
 	}
 	
@@ -1515,6 +1601,7 @@ public class Logic extends BaseLogic
 		
 		GraphicAssessmentRefVo graphicalAssessment = form.getLocalContext().getGraphicalAssessmentRef();
 		form.lyrAssessments().tabGraphicalAssessment().recbrGraphicalAssessment().clear();
+		form.lyrAssessments().tabGraphicalAssessment().recbrGraphicalAssessment().setTooltip(null); //WDEV-18234
 		
 		//WDEV-11721 - starts here
 		PatientShort patient = form.getGlobalContext().Core.getPatientShort();
@@ -1562,7 +1649,7 @@ public class Logic extends BaseLogic
 					text += patientAssessment.getAuthoringInformation().getAuthoringHcp() == null ? "<unknown>" : patientAssessment.getAuthoringInformation().getAuthoringHcp().toString(); 
 				}
 				else
-					text = "? - ?";
+					text = "? - ?";				
 				
 				form.lyrAssessments().tabGraphicalAssessment().recbrGraphicalAssessment().newRow(patientAssessment, text, color);
 			}
@@ -1595,6 +1682,7 @@ public class Logic extends BaseLogic
 		
 		//WDEV-12501
 		form.lyrAssessments().tabStructuralAssessment().lyrDualView().tabPageReport().ccReportBuilder().clear();
+		
 	}
 	private void displayBlankGraphicalAssessment() 
 	{	
@@ -1611,7 +1699,8 @@ public class Logic extends BaseLogic
 		form.lyrAssessments().tabGraphicalAssessment().authGraphicalAssessment().setValue(null);
 		//form.lyrAssessments().tabGraphicalAssessment().setauthGraphicalAssessmentEnabled(true);
 		form.lyrAssessments().tabGraphicalAssessment().imbGraphicalContextInfo().setTooltip("");
-		form.lyrAssessments().tabGraphicalAssessment().setauthGraphicalAssessmentCompletedVisible(false);
+		form.lyrAssessments().tabGraphicalAssessment().setauthGraphicalAssessmentCompletedVisible(false);		
+		
 	}
 	private void clearInstanceControls() 
 	{
@@ -1620,6 +1709,7 @@ public class Logic extends BaseLogic
 		// Structural Assessment
 		form.lyrAssessments().tabStructuralAssessment().lyrDualView().tabPageAssessment().customStructuredAssessment().clearComponent();
 		form.lyrAssessments().tabStructuralAssessment().recbrStructuredAssessment().clear();
+		form.lyrAssessments().tabStructuralAssessment().recbrStructuredAssessment().setTooltip(null); //WDEV-18234
 		form.lyrAssessments().tabStructuralAssessment().authStructuredAssessment().setValue(null);		
 		form.lyrAssessments().tabStructuralAssessment().imbStructuralContextInfo().setTooltip("");
 		form.lyrAssessments().tabStructuralAssessment().authStructuredAssessmentCompleted().setValue(null);
@@ -1630,6 +1720,7 @@ public class Logic extends BaseLogic
 		// Graphical Assessment
 		form.lyrAssessments().tabGraphicalAssessment().customGraphicalAssessment().clear();
 		form.lyrAssessments().tabGraphicalAssessment().recbrGraphicalAssessment().clear();
+		form.lyrAssessments().tabGraphicalAssessment().recbrGraphicalAssessment().setTooltip(null);
 		form.lyrAssessments().tabGraphicalAssessment().authGraphicalAssessment().setValue(null);
 		form.lyrAssessments().tabGraphicalAssessment().imbGraphicalContextInfo().setTooltip("");
 		form.lyrAssessments().tabGraphicalAssessment().authGraphicalAssessmentCompleted().setValue(null);
@@ -1734,85 +1825,25 @@ public class Logic extends BaseLogic
 		patientAssessment = DynamicAssessmentHelper.populateHCPDataForAnswers(form.getLocalContext().getCurrentPatientAssessment(), patientAssessment, (HcpLiteVo)domain.getHcpLiteUser(), new DateTime());
 		
 		// updating the completing hcp
-		ArrayList<String> completingErrors = new ArrayList<String>();
-		if(completed)
-		{			
-			if(completingInfo == null || completingInfo.getAuthoringHcp() == null || completingInfo.getAuthoringDateTime() == null)
-			{
-				if(completingInfo == null)
-				{
-					completingErrors.add("Completing HCP and Completed Date/Time are mandatory.");  //wdev-15852
-				}
-				else if(completingInfo.getAuthoringHcp() == null)
-				{
-					completingErrors.add("Completing HCP is mandatory.");							//wdev-15852
-				}
-				else if(completingInfo.getAuthoringDateTime() == null)
-				{
-					completingErrors.add("Completed Date/Time is mandatory.");						//wdev-15852
-				}				
-			}
-			else
-			{
-				if(authoringInfo != null //wdev-5914 
-					&& completingInfo != null && authoringInfo.getAuthoringDateTime() != null && completingInfo.getAuthoringDateTime() != null 
-					&& (completingInfo.getAuthoringDateTime().getDate().isLessThan(authoringInfo.getAuthoringDateTime().getDate()) //WDEV-17141
-					|| (completingInfo.getAuthoringDateTime().getDate().equals(authoringInfo.getAuthoringDateTime().getDate()) && 
-						completingInfo.getAuthoringDateTime().getTime().isLessThan(authoringInfo.getAuthoringDateTime().getTime())) ) 
-				   )
-				{
-					completingErrors.add("Completing Date/Time cannot be before Authoring Date/Time");
-				}
-				
+		if (completed)
+		{
+			if (completingInfo != null && isValidCompletionInfo(authoringInfo,completingInfo))
+			{	
 				patientAssessment.setCompletedHCP(completingInfo.getAuthoringHcp());
 				patientAssessment.setCompletedDateTime(completingInfo.getAuthoringDateTime());
 			}
-		}		
-
-		if( !completed && 
-				form.getGlobalContext().Assessment.getForceCompletionIsNotNull() && 
-				form.getGlobalContext().Assessment.getForceCompletion())
-		{
-			completingErrors.add("Assessment needs to be marked as Completed to Save correctly.");
 		}
+		String[] uiErrors = validateUIRules(completed);
 		
-		ArrayList<String> authoringErrors = new ArrayList<String>();
-		if(authoringInfo == null)
+		if (uiErrors.length > 0)
 		{
-			authoringErrors.add("Invalid authoring information");
-		}
-		else
-		{
-			if(authoringInfo.getAuthoringHcp() == null)
-			{
-				authoringErrors.add("Invalid authoring HCP");
-			}
-			if(authoringInfo.getAuthoringDateTime() == null)
-			{
-				authoringErrors.add("Invalid authoring date/time");
-			}
-		}
-		if(authoringErrors.size() > 0 || completingErrors.size() > 0)
-		{
-			String[] extraErrors = new String[authoringErrors.size() + completingErrors.size()];
-			int index = 0;
-			for(int x = 0; x < authoringErrors.size(); x++)
-			{
-				extraErrors[index++] = (String)authoringErrors.get(x);
-			}
-			for(int x = 0; x < completingErrors.size(); x++)
-			{
-				extraErrors[index++] = (String)completingErrors.get(x);
-			}
-			
-			engine.showErrors(extraErrors);
+			engine.showErrors("Validation Errors", uiErrors);
 			return false;
 		}
-		
 		String[] errors = patientAssessment.validate(completed ? componentValidationErrors : null);		
-		if(errors != null && errors.length > 0)
+		if (errors != null && errors.length > 0)
 		{
-			engine.showErrors(errors);
+			engine.showErrors("Validation Errors", errors);
 			return false;
 		}
 		try
@@ -1822,6 +1853,14 @@ public class Logic extends BaseLogic
 			form.getGlobalContext().Assessment.setPatientAssessment(form.getLocalContext().getCurrentPatientAssessment());
 			form.getGlobalContext().EAS.setEasPatientAssessment(form.getLocalContext().getCurrentPatientAssessment());//WDEV-17043
 		}
+		//WDEV-21150 Trap siuation where image file is missing
+		catch (DomainRuntimeException e)
+		{
+			engine.showMessage(e.getMessage());
+			form.setMode(FormMode.VIEW);
+			open(false);
+			return false;
+		} //WDEV-21150
 		catch (StaleObjectException e) 
 		{			
 			engine.showMessage(ims.configuration.gen.ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
@@ -1834,6 +1873,62 @@ public class Logic extends BaseLogic
 		if(form.getGlobalContext().Core.getCurrentClinicalContact() != null)
 			form.getLocalContext().setOneInstancePresent(Boolean.TRUE);
 		
+		return true;
+	}
+	//WDEV-15852
+	private String[] validateUIRules(boolean completed)
+	{
+		ArrayList<String> uIErrors = new ArrayList<String>();
+
+		if (isStructuralAssessment() && form.lyrAssessments().tabStructuralAssessment().authStructuredAssessment().getErrors() != null)
+		{
+			uIErrors.addAll(Arrays.asList(form.lyrAssessments().tabStructuralAssessment().authStructuredAssessment().getErrors()));
+		}
+		if (isGraphicalAssessment() && form.lyrAssessments().tabGraphicalAssessment().authGraphicalAssessment().getErrors() != null)
+		{
+			uIErrors.addAll(Arrays.asList(form.lyrAssessments().tabGraphicalAssessment().authGraphicalAssessmentCompleted().getErrors()));
+		}
+
+		if(completed)
+		{			
+			if (isStructuralAssessment() && form.lyrAssessments().tabStructuralAssessment().authStructuredAssessmentCompleted().getErrors() != null)
+			{
+				uIErrors.addAll(Arrays.asList(form.lyrAssessments().tabStructuralAssessment().authStructuredAssessmentCompleted().getErrors()));
+			}
+			if (isGraphicalAssessment() && form.lyrAssessments().tabGraphicalAssessment().authGraphicalAssessmentCompleted().getErrors() != null)
+			{
+				uIErrors.addAll(Arrays.asList(form.lyrAssessments().tabGraphicalAssessment().authGraphicalAssessmentCompleted().getErrors()));
+			}
+			if ((isStructuralAssessment() && !isValidCompletionInfo(form.lyrAssessments().tabStructuralAssessment().authStructuredAssessment().getValue(), form.lyrAssessments().tabStructuralAssessment().authStructuredAssessmentCompleted().getValue()))
+					|| (isGraphicalAssessment() && !isValidCompletionInfo(form.lyrAssessments().tabGraphicalAssessment().authGraphicalAssessment().getValue(), form.lyrAssessments().tabGraphicalAssessment().authGraphicalAssessmentCompleted().getValue())))
+			{
+				uIErrors.add("Completed Date/Time cannot be earlier than Authoring Date/Time.");
+
+			}
+		}		
+		if	(!completed
+				&& form.getGlobalContext().Assessment.getForceCompletionIsNotNull()
+					&&	form.getGlobalContext().Assessment.getForceCompletion())
+			{
+				uIErrors.add("Assessment needs to be marked as 'Complete' to save correctly.");
+			}	
+
+		return uIErrors.toArray(new String[uIErrors.size()]);
+	}
+
+	//WDEV-15852
+	private boolean isValidCompletionInfo(AuthoringInformationVo authoringInfo, AuthoringInformationVo completingInfo)
+	{
+		if	(authoringInfo != null //wdev-5914 
+				&& completingInfo != null
+					&& authoringInfo.getAuthoringDateTime() != null
+						&& completingInfo.getAuthoringDateTime() != null 
+							&& (completingInfo.getAuthoringDateTime().getDate().isLessThan(authoringInfo.getAuthoringDateTime().getDate()) //WDEV-17141
+									|| (completingInfo.getAuthoringDateTime().getDate().equals(authoringInfo.getAuthoringDateTime().getDate())
+											&&	completingInfo.getAuthoringDateTime().getTime().isLessThan(authoringInfo.getAuthoringDateTime().getTime()))))
+		{
+			return false;
+		}
 		return true;
 	}
 	private void updateControlsState() 
@@ -1961,17 +2056,31 @@ public class Logic extends BaseLogic
 					&& !(form.getGlobalContext().Assessment.getOpenDynamicAssessmentDialogInViewModeIsNotNull() && form.getGlobalContext().Assessment.getOpenDynamicAssessmentDialogInViewMode().booleanValue()));
 			//WDEV-17143
 			form.btnCopyAnswers().setEnabled(!Boolean.TRUE.equals(ConfigFlag.UI.PATIENT_ASSESSMENT_CREATION_REQUIRES_A_CLINICAL_CONTACT_CONTEXT.getValue()) || form.getGlobalContext().Core.getCurrentClinicalContactIsNotNull());
+			form.btnSavePDF().setVisible(!dialogOpenedFromEas() //WDEV-19127
+					&& form.getLocalContext().getCurrentPatientAssessmentIsNotNull() 
+					&& form.getLocalContext().getCurrentPatientAssessment().getAssessmentDataIsNotNull() 
+					&& form.getLocalContext().getCurrentPatientAssessment().getAssessmentData().getUserAssessmentIsNotNull()
+					&& !Boolean.TRUE.equals(form.getLocalContext().getCurrentPatientAssessment().getAssessmentData().getUserAssessment().getStorePrintedAssessment())	
+					&& !Boolean.TRUE.equals(form.getLocalContext().getCurrentPatientAssessment().getIsAssessmentDocumentSaved())					// Keep it like this, do not compare with Boolean.FALSE - to take in consideration the cases where this value is null
+					&& PatientAssessmentStatusReason.COMPLETED.equals(form.getLocalContext().getCurrentPatientAssessment().getStatus())
+					&& Boolean.TRUE.equals(ConfigFlag.GEN.ASSESSMENTS_SAVE_PDF_ENABLED.getValue()));
 
+			form.lblCopyLastStatus().setVisible(isStructuralAssessment() 
+													&& Boolean.TRUE.equals(form.getLocalContext().getStructuralAssessment().getCanCopyLast())
+													&& form.getLocalContext().getCopyAnswersFromPreviousAssessment() == null
+													&& form.lyrAssessments().tabStructuralAssessment().recbrStructuredAssessment().size() > 0);
+			form.lblCopyLastStatus().setValue("Copy Answers from Previous Assessment is not available as the last assessment is not marked as complete.");
 		}
 		else
 		{
+			form.btnSavePDF().setVisible(false);
 			form.btnSave().setVisible(isOpenedAsPreviewDialog() ? false : true);
 			//form.lyrAssessments().tabStructuralAssessment().customStructuredAssessment().setEnabled(Boolean.TRUE);
 			form.lyrAssessments().tabGraphicalAssessment().customGraphicalAssessment().setEnabled(Boolean.TRUE);
 			form.lyrAssessments().tabStructuralAssessment().lyrDualView().tabPageAssessment().customStructuredAssessment().set_ReadOnly(Boolean.FALSE);
 			
 			form.lyrAssessments().tabStructuralAssessment().btnView().setVisible(false);
-		}	
+		}
 	}
 	
 	//WDEV-17043
@@ -2194,20 +2303,113 @@ public class Logic extends BaseLogic
 		{
 		
 			form.chkComplete().setValue(null);
-    		if(isStructuralAssessment())
-    		{
-    			form.lyrAssessments().tabStructuralAssessment().authStructuredAssessmentCompleted().setValue(null);
-    		}
-    		else if(isGraphicalAssessment())
-    		{
-    			form.lyrAssessments().tabGraphicalAssessment().authGraphicalAssessmentCompleted().setValue(null);
-    		}
-    		
-    		onBtnSaveClick();
-    		
+			if(isStructuralAssessment())
+			{    						
+				//WDEV-19127
+				if (ConfigFlag.GEN.ASSESSMENTS_SAVE_PDF_ENABLED.getValue() && form.getLocalContext().getCurrentPatientAssessmentIsNotNull() &&  Boolean.TRUE.equals(form.getLocalContext().getCurrentPatientAssessment().getIsAssessmentDocumentSaved()))
+				{
+					Patient_AssessmentVo patAssessmentVo = domain.getPatientAssessment(form.getLocalContext().getCurrentPatientAssessment());
+					PatientDocumentLiteVo docPatLiteVo = domain.getPatientDocumentLiteVo(patAssessmentVo.getAssociatedDocument());
+
+					if( docPatLiteVo != null)
+					{
+						String comment =  "This PatientDocument record has been marked as RIE due to its associated assessment having completion rollback.";
+						String filePath = docPatLiteVo.getServerDocument().getFileName();
+						try 
+						{
+							domain.markAsRie(docPatLiteVo, engine.getFormName(), form.getGlobalContext().Core.getPatientShort().getID_Patient(),   null, form.getGlobalContext().Core.getCurrentCareContextIsNotNull() ? form.getGlobalContext().Core.getCurrentCareContext().getID_CareContext() : null, comment);
+
+						} 
+						catch (StaleObjectException e) 
+						{					
+							engine.showErrors(new String[] { ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue() });
+							open(false);
+							return;    						
+						}
+						//// try to delete the file on disk to avoid duplicates on re-completion
+						FileLock lock = null;
+						FileChannel chan = null;
+
+						try
+						{
+							try
+							{
+								chan = new RandomAccessFile(getMaximsDocumentStorePath() + filePath, "rw").getChannel();//WDEV-13366
+								lock = chan.tryLock();
+							}
+							catch (FileNotFoundException e)
+							{
+								engine.showErrors(new String[] {"Could not find file in document store"});
+								throw e;
+							}
+							catch (IOException e)
+							{
+								engine.showErrors(new String[] {"A I/O exception occured while deleting this file"});
+								throw e;
+							}
+
+							lock.release();
+
+							if (chan != null)
+							{
+								try
+								{
+									chan.close();
+								}
+								catch (IOException e)
+								{
+									// Nevermind
+								}
+							}
+
+							deleteFile(getMaximsDocumentStorePath() + filePath);
+						}
+						catch (Exception e)
+						{
+							e.printStackTrace();
+						}
+						finally
+						{
+							if (chan != null)
+							try
+							{
+									chan.close();
+							}
+							catch (IOException e)
+							{
+								// Nevermind
+							}
+						}
+						//----------------------------------
+					}    				
+				}
+				
+				form.lyrAssessments().tabStructuralAssessment().authStructuredAssessmentCompleted().setValue(null);
+			}
+			else if(isGraphicalAssessment())
+			{
+				form.lyrAssessments().tabGraphicalAssessment().authGraphicalAssessmentCompleted().setValue(null);
+			}
+
+			onBtnSaveClick();
+
 		}
 	}
-	
+	//WDEV-19127
+	private boolean deleteFile(String fileToDelete)
+	{
+		File file = new File(fileToDelete);
+		if (file.exists())
+		{
+			boolean wasDeleted = file.delete();
+			if (!wasDeleted)
+			{
+				file.deleteOnExit();
+			}
+		}
+		
+		return true;
+	}
 	@Override
 	protected void onBtnCopyAnswersClick() throws PresentationLogicException 
 	{
@@ -2343,6 +2545,16 @@ public class Logic extends BaseLogic
 	{
 		return isStructuralAssessment() && form.getLocalContext().getStructuralAssessment().getCanCopyLastIsNotNull() && form.getLocalContext().getStructuralAssessment().getCanCopyLast() && form.getLocalContext().getCopyAnswersFromPreviousAssessmentIsNotNull();
 	}
+	//WDEV-19127 -----------start
+	private Boolean isScoringUsedDefinedAssessment()
+	{
+		return isStructuralAssessment() && form.getLocalContext().getStructuralAssessment().isScoringUserDefinedAssessment();
+	}
+	private Boolean isNonScoringUsedDefinedAssessment()
+	{
+		return isStructuralAssessment() && form.getLocalContext().getStructuralAssessment().isNonScoringUserDefinedAssessment();
+	}
+	//WDEV-19127 ------end
 	@Override
 	protected void onRIEDialogClosed(DialogResult result) throws PresentationLogicException
 	{
@@ -2431,5 +2643,29 @@ public class Logic extends BaseLogic
 		}
 
 		return str;
+	}
+
+	//WDEV-19127 - saves as PDF any completed assessment (flag based)
+	protected void onBtnSavePDFClick() throws PresentationLogicException
+	{
+		if (print(false,true))
+		{
+			form.setMode(FormMode.VIEW);
+			open(false);
+		}
+	}
+
+	@Override
+	protected void onlyrDualViewTabChanged(LayerBridge tab)
+	{
+		form.lyrAssessments().tabStructuralAssessment().lyrDualView().tabPageReport().ccReportBuilder().clear();
+		
+		if(tab.equals(form.lyrAssessments().tabStructuralAssessment().lyrDualView().tabPageReport()))
+		{
+			if(form.getLocalContext().getCurrentPatientAssessment() != null)
+			{
+				form.lyrAssessments().tabStructuralAssessment().lyrDualView().tabPageReport().ccReportBuilder().buildAssessmentReport(form.getLocalContext().getCurrentPatientAssessment());
+			}
+		}
 	}
 }

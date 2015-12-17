@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -105,7 +110,12 @@ public class Logic extends BaseLogic
 			voTaxonomyMap.setTaxonomyName((TaxonomyType) row.getcolExtCodeType());
 			
 			if (row.getcolCode() != null && row.getcolExtCodeType() != null)
-				voTaxonomyMapCollection.add(voTaxonomyMap);
+			{
+				if(voTaxonomyMapCollection.indexOf(voTaxonomyMap) < 0)
+				{
+					voTaxonomyMapCollection.add(voTaxonomyMap);
+				}
+			}
 			else
 			{
 				StringBuffer sb = new StringBuffer();
@@ -133,10 +143,35 @@ public class Logic extends BaseLogic
 			voTaxonomyMap.setTaxonomyName((TaxonomyType) row.getcolExtCodeType());
 			
 			if (row.getcolCode() != null || row.getcolExtCodeType() != null)
-				voTaxonomyMapCollection.add(voTaxonomyMap);
+			{
+				if(taxonomyIsNotAdded(voTaxonomyMapCollection, voTaxonomyMap))
+				{
+					voTaxonomyMapCollection.add(voTaxonomyMap);
+				}
+			}
 		}
 
 		return voTaxonomyMapCollection;
+	}
+
+	private boolean taxonomyIsNotAdded(NonUniqueTaxonomyMapVoCollection coll, NonUniqueTaxonomyMapVo record)
+	{
+		if(coll == null)
+			return false;
+		
+		if(record == null)
+			return false;
+		
+		for(NonUniqueTaxonomyMapVo item : coll)
+		{
+			if(item == null)
+				continue;
+			
+			if(item.getTaxonomyName().equals(record.getTaxonomyName()) && item.getTaxonomyCode().equals(record.getTaxonomyCode()))
+				return false;
+		}
+		
+		return true;
 	}
 
 	private String[] getValidationErrors()

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -107,7 +112,8 @@ public class OrdersRequiringAuthorisationImpl extends BaseOrdersRequiringAuthori
 		{
 			condStr.append(andStr + " ocsOrder.systemInformation.creationDateTime <= :dateTo");
  			markers.add("dateTo");
-			values.add(dateTo.addDay(1).getDate());
+ 			Date toDate = (Date) dateTo.clone(); //WDEV-19389 
+			values.add(toDate.addDay(1).getDate().clone());
 		}
 		
 		if(clinic != null)
@@ -190,6 +196,21 @@ public class OrdersRequiringAuthorisationImpl extends BaseOrdersRequiringAuthori
 			if(doLocation instanceof Location && doLocation.getType().equals(getDomLookup(LocationType.HOSP)))
 				return doLocation;
 		}
+		
+		return null;
+	}
+
+	public LocationLiteVo getHospital(LocationRefVo hospitalRef) 
+	{
+		if(hospitalRef == null)
+			return null;
+		
+		DomainFactory factory = getDomainFactory();
+		
+		Location currentHospital = getHospital((Location) factory.getDomainObject(Location.class, hospitalRef.getID_Location()));
+		
+		if(currentHospital instanceof Location)
+			return LocationLiteVoAssembler.create((Location) currentHospital);
 		
 		return null;
 	}

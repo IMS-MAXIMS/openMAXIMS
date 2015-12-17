@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.core.vo.domain;
@@ -86,6 +91,8 @@ public class MedicationDoseAssembler
 		valueObjectDest.setStoppedByType(valueObjectSrc.getStoppedByType());
 		// AuthoringInformation
 		valueObjectDest.setAuthoringInformation(valueObjectSrc.getAuthoringInformation());
+		// Comment
+		valueObjectDest.setComment(valueObjectSrc.getComment());
 	 	return valueObjectDest;
 	 }
 
@@ -606,8 +613,8 @@ public class MedicationDoseAssembler
 			if (color != null) 
 				color.getValue();
 
-			ims.core.vo.lookups.MedciationCommencedDiscontinuedType voLookup16 = new ims.core.vo.lookups.MedciationCommencedDiscontinuedType(instance16.getId(),instance16.getText(), instance16.isActive(), null, img, color);
-			ims.core.vo.lookups.MedciationCommencedDiscontinuedType parentVoLookup16 = voLookup16;
+			ims.core.vo.lookups.MedicationCommencedDiscontinuedType voLookup16 = new ims.core.vo.lookups.MedicationCommencedDiscontinuedType(instance16.getId(),instance16.getText(), instance16.isActive(), null, img, color);
+			ims.core.vo.lookups.MedicationCommencedDiscontinuedType parentVoLookup16 = voLookup16;
 			ims.domain.lookups.LookupInstance parent16 = instance16.getParent();
 			while (parent16 != null)
 			{
@@ -622,7 +629,7 @@ public class MedicationDoseAssembler
 				color = parent16.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup16.setParent(new ims.core.vo.lookups.MedciationCommencedDiscontinuedType(parent16.getId(),parent16.getText(), parent16.isActive(), null, img, color));
+								parentVoLookup16.setParent(new ims.core.vo.lookups.MedicationCommencedDiscontinuedType(parent16.getId(),parent16.getText(), parent16.isActive(), null, img, color));
 				parentVoLookup16 = parentVoLookup16.getParent();
 								parent16 = parent16.getParent();
 			}			
@@ -642,8 +649,8 @@ public class MedicationDoseAssembler
 			if (color != null) 
 				color.getValue();
 
-			ims.core.vo.lookups.MedciationCommencedDiscontinuedType voLookup17 = new ims.core.vo.lookups.MedciationCommencedDiscontinuedType(instance17.getId(),instance17.getText(), instance17.isActive(), null, img, color);
-			ims.core.vo.lookups.MedciationCommencedDiscontinuedType parentVoLookup17 = voLookup17;
+			ims.core.vo.lookups.MedicationCommencedDiscontinuedType voLookup17 = new ims.core.vo.lookups.MedicationCommencedDiscontinuedType(instance17.getId(),instance17.getText(), instance17.isActive(), null, img, color);
+			ims.core.vo.lookups.MedicationCommencedDiscontinuedType parentVoLookup17 = voLookup17;
 			ims.domain.lookups.LookupInstance parent17 = instance17.getParent();
 			while (parent17 != null)
 			{
@@ -658,7 +665,7 @@ public class MedicationDoseAssembler
 				color = parent17.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup17.setParent(new ims.core.vo.lookups.MedciationCommencedDiscontinuedType(parent17.getId(),parent17.getText(), parent17.isActive(), null, img, color));
+								parentVoLookup17.setParent(new ims.core.vo.lookups.MedicationCommencedDiscontinuedType(parent17.getId(),parent17.getText(), parent17.isActive(), null, img, color));
 				parentVoLookup17 = parentVoLookup17.getParent();
 								parent17 = parent17.getParent();
 			}			
@@ -666,6 +673,8 @@ public class MedicationDoseAssembler
 		}
 				// AuthoringInformation
 		valueObject.setAuthoringInformation(ims.core.vo.domain.AuthoringInformationVoAssembler.create(map, domainObject.getAuthoringInformation()) );
+		// Comment
+		valueObject.setComment(domainObject.getComment());
  		return valueObject;
 	 }
 
@@ -877,6 +886,13 @@ public class MedicationDoseAssembler
 		}
 		domainObject.setStoppedByType(value17);
 		domainObject.setAuthoringInformation(ims.core.vo.domain.AuthoringInformationVoAssembler.extractAuthoringInformation(domainFactory, valueObject.getAuthoringInformation(), domMap));
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getComment() != null && valueObject.getComment().equals(""))
+		{
+			valueObject.setComment(null);
+		}
+		domainObject.setComment(valueObject.getComment());
 
 		return domainObject;
 	}

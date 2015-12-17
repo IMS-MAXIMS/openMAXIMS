@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:36 -->
+<!-- Generated: 12/10/2015, 13:30 -->
 <hibernate-mapping>
 	<class name="ims.core.patient.domain.objects.PatientMergeHistory" table="core_patientmergehi" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -64,6 +64,25 @@
  				<property name="merged" type="boolean" access="field" update="true">
  					<column name="merged" not-null="false"  unique="false"   />
  				</property>
+ 				<property name="duplicateNHSNum" type="integer" access="field" update="true">
+ 					<column name="duplicaten" not-null="false"  unique="false" unique-key='type_val_idx'  />
+ 				</property>
+ 				<property name="beffdate" type="date" access="field" update="true">
+ 					<column name="beffdate" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="beffdatecnf" type="boolean" access="field" update="true">
+ 					<column name="beffdatecn" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="betdate" type="date" access="field" update="true">
+ 					<column name="betdate" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="betdatecnf" type="boolean" access="field" update="true">
+ 					<column name="betdatecnf" not-null="false"  unique="false"   />
+ 				</property>
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="nhsNumberStatus" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_nhsnumbers" not-null="false" sql-type="numeric(10,0)"  unique="false"   />
+ 				</many-to-one>
  			</composite-element>
  		</list>
 <!-- debug: databaseName -->
@@ -88,6 +107,9 @@
  				</property>
  				<property name="attributeName" type="string" access="field" update="true">
  					<column name="attributen" length="250" not-null="false"  unique="false"    />
+ 				</property>
+ 				<property name="columnName" type="string" access="field" update="true">
+ 					<column name="columnname" length="150" not-null="false"  unique="false"    />
  				</property>
  			</composite-element>
  		</list>

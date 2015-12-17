@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -70,11 +75,11 @@ public class PropertyChecklistImpl extends BasePropertyChecklistImpl
 	
  	public LocShortMappingsVoCollection listWards(String name) 	
 	{
-		java.util.List locations = listLocations(LocationType.WARD,Boolean.TRUE, name);
+		java.util.List locations = listLocations(LocationType.WARD,Boolean.TRUE, name, Boolean.FALSE); //WDEV-19532
 		return  LocShortMappingsVoAssembler.createLocShortMappingsVoCollectionFromLocation(locations).sort();
 	}
 
-	private java.util.List listLocations(LocationType locType, Boolean activeOnly, String recordSearch)
+	private java.util.List listLocations(LocationType locType, Boolean activeOnly, String recordSearch, Boolean isVirtual)
 	{
 		DomainFactory factory = getDomainFactory();
 		
@@ -105,12 +110,19 @@ public class PropertyChecklistImpl extends BasePropertyChecklistImpl
 		
 		if (recordSearch != null)
 		{
-			condStr.append(andStr + " upper(loc.name) like :name");
+			condStr.append(andStr + " loc.upperName like :name"); //WDEV-20219 upper(loc.name)
 			markers.add("name");
 			values.add("%" + recordSearch.toUpperCase() + "%");
 			andStr = " and ";
 		}
-		
+		//WDEV-19532
+		if (isVirtual != null)
+		{
+			condStr.append(andStr + " loc.isVirtual = :isVirtual");
+			markers.add("isVirtual");
+			values.add(isVirtual.booleanValue());
+			andStr = " and ";			
+		}
 		if (andStr.equals(" and "))
 		{
 			hql += " where ";

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -38,6 +43,9 @@ public class Logic extends BaseLogic
 	{
 		if(form.getGlobalContext().Scheduling.getProfileEndTimeIsNotNull())
 			form.lblProfileEndTime().setValue(form.getGlobalContext().Scheduling.getProfileEndTime().toString());
+		//wdev-20074
+		if( form.getGlobalContext().Scheduling.getProfileStartTimeIsNotNull())
+			form.lblProfileStartTime().setValue(form.getGlobalContext().Scheduling.getProfileStartTime().toString());
 	
 		ProfileParentChildSlotVo voSlot = form.getGlobalContext().Scheduling.getProfileParentChildSlot();
 		
@@ -65,7 +73,7 @@ public class Logic extends BaseLogic
 		
 		if(startTime == null || (form.intSlotInterval().getValue() == null || form.intSlotInterval().getValue() == 0))
 		{
-			engine.showErrors(new String[] {"Start Time and Slot Interval need to be provided for calculation"});
+			engine.showErrors(new String[] {"Start Time and Slot Duration need to be provided for calculation"});
 			return;
 		}
 		
@@ -97,7 +105,7 @@ public class Logic extends BaseLogic
 		if(form.timStart().getValue() == null)
 			errors.add("'Start Time' is mandatory");
 		if(form.intSlotInterval().getValue() == null)
-			errors.add("'Slot Interval' is mandatory");
+			errors.add("'Slot Duration' is mandatory");
 		if(form.intNoSlots().getValue() == null)
 			errors.add("'No. of Slots' is mandatory");
 		
@@ -115,7 +123,7 @@ public class Logic extends BaseLogic
 		if(form.timStart().getValue() != null && form.getGlobalContext().Scheduling.getProfileEndTime() != null && form.timStart().getValue().isGreaterThan(form.getGlobalContext().Scheduling.getProfileEndTime()))
 			errors.add("Start Time of Slot ( " + form.timStart().getValue().toString() +  " ) cannot exceed Profile End Time ( " + form.getGlobalContext().Scheduling.getProfileEndTime() + " )");
 		else if(!isSlotEndTimeLessThanProfileEndTime())
-			errors.add("End Time of Slots ( " + calculateEndTime() +  " ) cannot exceed Profile End Time ( " + form.getGlobalContext().Scheduling.getProfileEndTime() + " )");
+			errors.add("End Time of Slot ( " + calculateEndTime() +  " ) cannot exceed Profile End Time ( " + form.getGlobalContext().Scheduling.getProfileEndTime() + " )");
 
 		arrErrors = errors.toArray(new String[0]);
 		if(arrErrors.length > 0)

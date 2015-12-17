@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:37 -->
+<!-- Generated: 12/10/2015, 13:32 -->
 <hibernate-mapping>
 	<class name="ims.RefMan.domain.objects.ReferralCoding" table="care_referralcoding" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -44,6 +44,13 @@
 		<many-to-one name="pasEvent" class="ims.core.admin.pas.domain.objects.PASEvent" unique="true" foreign-key="referralcoding_pasevent_fk" access="field" cascade="save-update">
 			<column name="pasevent" sql-type="numeric(10,0)" not-null="false" unique="false"  index='refcode_pasevent_idx' />
 		</many-to-one>
+<!-- debug: appointment -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="appointment" class="ims.scheduling.domain.objects.Booking_Appointment" unique="true" foreign-key="referralcoding_appointmen_fk" access="field" cascade="save-update">
+			<column name="appointmen" sql-type="numeric(10,0)" not-null="false" unique="false"  index='refcode_appointment_idx' />
+		</many-to-one>
 <!-- debug: codingItems -->
 <!-- debug: field.IsAssociation : true -->
 <!-- debug: IsAggregation : true -->
@@ -65,6 +72,24 @@
 		</many-to-one>
 <!-- debug: authoringDateTime -->
 <!-- debug: comments -->
+<!-- debug: active -->
+<!-- debug: stagingCodeExport -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<list name="stagingCodeExport" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="referralcoding_stagingcod_fk">
+				<column name="care_referralcoding_stagingcod" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.RefMan.domain.objects.StagingCodeExport" />
+		</list>
+<!-- debug: fCE -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="fCE" class="ims.core.admin.pas.domain.objects.ConsultantStay" unique="true" foreign-key="referralcoding_fce_fk" access="field" cascade="save-update">
+			<column name="fce" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="authoringDateTime" type="timestamp" access="field" update="true">
@@ -74,6 +99,11 @@
 <!-- debug: !IsLookup -->
 		<property name="comments" type="string" access="field" update="true" > 
 			<column name="comments" length="1000"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="active" type="boolean" access="field" update="true">
+			<column name="active"  not-null="false" unique="false"  />
 		</property>
 	</class>
 </hibernate-mapping>

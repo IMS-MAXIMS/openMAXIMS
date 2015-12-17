@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.admin.pas.domain.objects;
@@ -61,6 +66,12 @@ public class PendingTransfers extends ims.domain.DomainObject implements ims.dom
 	private ims.domain.lookups.LookupInstance specialty;
 	/** PASSpecialty */
 	private ims.domain.lookups.LookupInstance pASSpecialty;
+	private ims.domain.lookups.LookupInstance transferReason;
+	private String transferComment;
+	/** Patient Status */
+	private ims.domain.lookups.LookupInstance patientStatus;
+	private java.util.Date bedAvailableDateTime;
+	private ims.core.clinical.domain.objects.Service service;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public PendingTransfers (Integer id, int ver)
@@ -144,6 +155,45 @@ public class PendingTransfers extends ims.domain.DomainObject implements ims.dom
 		this.pASSpecialty = pASSpecialty;
 	}
 
+	public ims.domain.lookups.LookupInstance getTransferReason() {
+		return transferReason;
+	}
+	public void setTransferReason(ims.domain.lookups.LookupInstance transferReason) {
+		this.transferReason = transferReason;
+	}
+
+	public String getTransferComment() {
+		return transferComment;
+	}
+	public void setTransferComment(String transferComment) {
+		if ( null != transferComment && transferComment.length() > 250 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for transferComment. Tried to set value: "+
+				transferComment);
+		}
+		this.transferComment = transferComment;
+	}
+
+	public ims.domain.lookups.LookupInstance getPatientStatus() {
+		return patientStatus;
+	}
+	public void setPatientStatus(ims.domain.lookups.LookupInstance patientStatus) {
+		this.patientStatus = patientStatus;
+	}
+
+	public java.util.Date getBedAvailableDateTime() {
+		return bedAvailableDateTime;
+	}
+	public void setBedAvailableDateTime(java.util.Date bedAvailableDateTime) {
+		this.bedAvailableDateTime = bedAvailableDateTime;
+	}
+
+	public ims.core.clinical.domain.objects.Service getService() {
+		return service;
+	}
+	public void setService(ims.core.clinical.domain.objects.Service service) {
+		this.service = service;
+	}
+
 	public ims.domain.SystemInformation getSystemInformation() {
 		if (systemInformation == null) systemInformation = new ims.domain.SystemInformation();
 		return systemInformation;
@@ -223,6 +273,28 @@ public class PendingTransfers extends ims.domain.DomainObject implements ims.dom
 		auditStr.append("\r\n*pASSpecialty* :");
 		if (pASSpecialty != null)
 			auditStr.append(pASSpecialty.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*transferReason* :");
+		if (transferReason != null)
+			auditStr.append(transferReason.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*transferComment* :");
+		auditStr.append(transferComment);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*patientStatus* :");
+		if (patientStatus != null)
+			auditStr.append(patientStatus.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*bedAvailableDateTime* :");
+		auditStr.append(bedAvailableDateTime);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*service* :");
+		if (service != null)
+		{
+			auditStr.append(toShortClassName(service));
+				
+		    auditStr.append(service.getId());
+		}
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -315,6 +387,36 @@ public class PendingTransfers extends ims.domain.DomainObject implements ims.dom
 			sb.append("<pASSpecialty>");
 			sb.append(this.getPASSpecialty().toXMLString()); 
 			sb.append("</pASSpecialty>");		
+		}
+		if (this.getTransferReason() != null)
+		{
+			sb.append("<transferReason>");
+			sb.append(this.getTransferReason().toXMLString()); 
+			sb.append("</transferReason>");		
+		}
+		if (this.getTransferComment() != null)
+		{
+			sb.append("<transferComment>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getTransferComment().toString()));
+			sb.append("</transferComment>");		
+		}
+		if (this.getPatientStatus() != null)
+		{
+			sb.append("<patientStatus>");
+			sb.append(this.getPatientStatus().toXMLString()); 
+			sb.append("</patientStatus>");		
+		}
+		if (this.getBedAvailableDateTime() != null)
+		{
+			sb.append("<bedAvailableDateTime>");
+			sb.append(new ims.framework.utils.DateTime(this.getBedAvailableDateTime()).toString(ims.framework.utils.DateTimeFormat.MILLI));
+			sb.append("</bedAvailableDateTime>");		
+		}
+		if (this.getService() != null)
+		{
+			sb.append("<service>");
+			sb.append(this.getService().toXMLString(domMap)); 	
+			sb.append("</service>");		
 		}
 		return sb.toString();
 	}
@@ -526,6 +628,34 @@ public class PendingTransfers extends ims.domain.DomainObject implements ims.dom
 			fldEl = fldEl.element("lki");
 			obj.setPASSpecialty(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
 		}
+		fldEl = el.element("transferReason");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setTransferReason(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("transferComment");
+		if(fldEl != null)
+		{	
+    		obj.setTransferComment(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("patientStatus");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setPatientStatus(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("bedAvailableDateTime");
+		if(fldEl != null)
+		{	
+    		obj.setBedAvailableDateTime(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
+		}
+		fldEl = el.element("service");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setService(ims.core.clinical.domain.objects.Service.getServicefromXML(fldEl, factory, domMap)); 
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -546,6 +676,11 @@ public class PendingTransfers extends ims.domain.DomainObject implements ims.dom
 		public static final String Consultant = "consultant";
 		public static final String Specialty = "specialty";
 		public static final String PASSpecialty = "pASSpecialty";
+		public static final String TransferReason = "transferReason";
+		public static final String TransferComment = "transferComment";
+		public static final String PatientStatus = "patientStatus";
+		public static final String BedAvailableDateTime = "bedAvailableDateTime";
+		public static final String Service = "service";
 	}
 }
 

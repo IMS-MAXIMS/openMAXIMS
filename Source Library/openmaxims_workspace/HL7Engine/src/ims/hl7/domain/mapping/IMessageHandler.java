@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,15 +15,23 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 package ims.hl7.domain.mapping;
 
+import ims.hl7.domain.EventResponse;
 import ims.ocrr.vo.ProviderSystemVo;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 
 public interface IMessageHandler
 {
-	public abstract Message processEvent(Message msg,ProviderSystemVo providerSystem) throws HL7Exception;
+	//WDEV-20012 
+//	public abstract Message processEvent(Message msg,ProviderSystemVo providerSystem) throws HL7Exception;
+	public abstract EventResponse processEvent(Message msg,ProviderSystemVo providerSystem) throws HL7Exception;
 }

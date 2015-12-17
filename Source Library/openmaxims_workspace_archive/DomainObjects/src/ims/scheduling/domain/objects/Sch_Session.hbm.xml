@@ -1,0 +1,354 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:36 -->
+<hibernate-mapping>
+	<class name="ims.scheduling.domain.objects.Sch_Session" table="schl_sch_session" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: name -->
+<!-- debug: description -->
+<!-- debug: sessionDate -->
+<!-- debug: startTm -->
+<!-- debug: endTm -->
+<!-- debug: service -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="service" class="ims.core.clinical.domain.objects.Service" unique="true" foreign-key="sch_session_service_fk" access="field" cascade="save-update">
+			<column name="service" sql-type="numeric(10,0)" not-null="false" unique="false"  index='session_service_idx1' />
+		</many-to-one>
+<!-- debug: sessionStatus -->
+<!-- debug: statusReason -->
+<!-- debug: remainingSlots -->
+<!-- debug: totalSlots -->
+<!-- debug: isFixed -->
+<!-- debug: pASClinic -->
+<!-- debug: duration -->
+<!-- debug: remainingTime -->
+<!-- debug: sch_Profile -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="sch_Profile" class="ims.scheduling.domain.objects.Sch_Profile" unique="true" foreign-key="sch_session_sch_profil_fk" access="field" cascade="save-update">
+			<column name="sch_profil" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: schLocation -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="schLocation" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="sch_session_schlocatio_fk" access="field" cascade="save-update">
+			<column name="schlocatio" sql-type="numeric(10,0)" not-null="false" unique="false"  index='session_location_idx1' />
+		</many-to-one>
+<!-- debug: sessionType -->
+<!-- debug: minInt -->
+<!-- debug: roundAttTime -->
+<!-- debug: lastAppInterval -->
+<!-- debug: maxNoAppts -->
+<!-- debug: sessionSlots -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- inverse side that is one-to-many -->
+		<set name="sessionSlots" inverse="true"  access="field" cascade="save-update" lazy="true" >
+			<key foreign-key="sess_slot_c_sessi_fk">
+				<column name="c_sessi" sql-type="numeric(10,0)" unique="false"   />
+			</key>
+			
+			<one-to-many class="ims.scheduling.domain.objects.Session_Slot"/>
+		</set>
+<!-- debug: bookingRights -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="bookingRights" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="sch_session_bookingrig_fk">
+				<column name="schl_sch_session_bookingrig" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.scheduling.domain.objects.Session_BookingRight" />
+		</set>
+<!-- debug: directoryofServices -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- many to many -->
+		<set name="directoryofServices" table="schl_sch_session_directoryo" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="sch_session_directoryo_fr_fk">
+				<column name="from_side" sql-type="numeric(10,0)" unique="false"   />
+			</key>
+			
+			<many-to-many class="ims.scheduling.domain.objects.DirectoryofService" foreign-key="sch_session_directoryo_to_fk">
+				<column name="to_side" sql-type="numeric(10,0)" unique="false"   />
+			</many-to-many>
+		</set>
+<!-- debug: listOwners -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="listOwners" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="sch_session_listowners_fk">
+				<column name="schl_sch_session_listowners" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.scheduling.domain.objects.Session_ListOwner" />
+		</set>
+<!-- debug: exclusionTimes -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="exclusionTimes" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="sch_session_exclusiont_fk">
+				<column name="schl_sch_session_exclusiont" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.scheduling.domain.objects.Session_Exc_Time" />
+		</set>
+<!-- debug: isModified -->
+<!-- debug: isAdHocSession -->
+<!-- debug: isActive -->
+<!-- debug: activityPathwayEvents -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="activityPathwayEvents" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="sch_session_activitypa_fk">
+				<column name="schl_sch_session_activitypa" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.scheduling.domain.objects.SessionActivityPathwayEvent" />
+		</set>
+<!-- debug: theatreProceduresRemaining -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="theatreProceduresRemaining" class="ims.scheduling.domain.objects.SessionTheatreProceduresRemanining" unique="true" foreign-key="sch_session_theatrepro_fk" access="field" cascade="save-update">
+			<column name="theatrepro" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: isTheatreSession -->
+<!-- debug: theatreType -->
+<!-- debug: sessionActivities -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="sessionActivities" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="sch_session_sessionact_fk">
+				<column name="schl_sch_session_sessionact" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.scheduling.domain.objects.SessionActivity" />
+		</set>
+<!-- debug: maxContinuousAvailableMins -->
+<!-- debug: theatreSlots -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- inverse side that is one-to-many -->
+		<set name="theatreSlots" inverse="true"  access="field" cascade="save-update" lazy="true" >
+			<key foreign-key="sessiontheatre_c_sessi_fk">
+				<column name="c_sessi" sql-type="numeric(10,0)" unique="false"   />
+			</key>
+			
+			<one-to-many class="ims.scheduling.domain.objects.SessionTheatreTCISlot"/>
+		</set>
+<!-- debug: anaestheticType -->
+<!-- debug: IsCollection : true -->
+		<!-- collection of Lookup instances -->
+		<list name="anaestheticType" table="schl_sch_session_anaestheti" lazy="true" access="field">
+			<key foreign-key="sch_session_anaestheti_ofk">
+				<column name="owner" sql-type="numeric(10,0)"/>
+			</key>
+			<index column="idx"/>
+			<composite-element class="ims.domain.lookups.LookupInstanceRef">
+				<many-to-one name="instance" class="ims.domain.lookups.LookupInstance" access="field">
+					<column name="instance_id" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+				</many-to-one>
+			</composite-element>
+		</list>
+<!-- debug: parentChildSlots -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- inverse side that is one-to-many -->
+		<set name="parentChildSlots" inverse="true"  access="field" cascade="save-update" lazy="true" >
+			<key foreign-key="sessionparentc_c_sessi_fk">
+				<column name="c_sessi" sql-type="numeric(10,0)" unique="false"   />
+			</key>
+			
+			<one-to-many class="ims.scheduling.domain.objects.SessionParentChildSlot"/>
+		</set>
+<!-- debug: slotType -->
+<!-- debug: cancellationReason -->
+<!-- debug: comment -->
+<!-- debug: wasSessionMoved -->
+<!-- debug: consMediaType -->
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="name" type="string" access="field" update="true" > 
+			<column name="name" length="100"  not-null="false" unique="false"  index='session_name_idx1'/>
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="description" type="string" access="field" update="true" > 
+			<column name="descriptio" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="sessionDate" type="date" access="field" update="true">
+			<column name="sessiondat"  not-null="false" unique="false"  index='session_date_idx1'/>
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="startTm" type="string" access="field" update="true">
+			<column name="starttm"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="endTm" type="string" access="field" update="true">
+			<column name="endtm"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="sessionStatus" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_sessionsta" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="statusReason" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_statusreas" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="remainingSlots" type="integer" access="field" update="true">
+			<column name="remainings"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="totalSlots" type="integer" access="field" update="true">
+			<column name="totalslots"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isFixed" type="boolean" access="field" update="true">
+			<column name="isfixed"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="pASClinic" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_pasclinic" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="duration" type="integer" access="field" update="true">
+			<column name="duration"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="remainingTime" type="integer" access="field" update="true">
+			<column name="remainingt"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="sessionType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_sessiontyp" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="minInt" type="integer" access="field" update="true">
+			<column name="minint"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="roundAttTime" type="integer" access="field" update="true">
+			<column name="roundattti"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="lastAppInterval" type="integer" access="field" update="true">
+			<column name="lastappint"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="maxNoAppts" type="integer" access="field" update="true">
+			<column name="maxnoappts"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isModified" type="boolean" access="field" update="true">
+			<column name="ismodified"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isAdHocSession" type="boolean" access="field" update="true">
+			<column name="isadhocses"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isActive" type="boolean" access="field" update="true">
+			<column name="isactive"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isTheatreSession" type="boolean" access="field" update="true">
+			<column name="istheatres"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="theatreType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_theatretyp" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="maxContinuousAvailableMins" type="integer" access="field" update="true">
+			<column name="maxcontinu"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="slotType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_slottype" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="cancellationReason" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_cancellati" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="comment" type="string" access="field" update="true" > 
+			<column name="c_comme" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="wasSessionMoved" type="boolean" access="field" update="true">
+			<column name="wassession"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="consMediaType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_consmediat" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+	</class>
+</hibernate-mapping>

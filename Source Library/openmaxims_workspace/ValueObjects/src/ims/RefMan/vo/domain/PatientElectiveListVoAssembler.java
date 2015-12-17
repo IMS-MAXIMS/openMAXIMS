@@ -1,9 +1,33 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.RefMan.vo.domain;
@@ -41,8 +65,6 @@ public class PatientElectiveListVoAssembler
 		valueObjectDest.setReferral(valueObjectSrc.getReferral());
 		// EpisodeOfCare
 		valueObjectDest.setEpisodeOfCare(valueObjectSrc.getEpisodeOfCare());
-		// Ward
-		valueObjectDest.setWard(valueObjectSrc.getWard());
 		// Consultant
 		valueObjectDest.setConsultant(valueObjectSrc.getConsultant());
 		// DateOnList
@@ -97,8 +119,18 @@ public class PatientElectiveListVoAssembler
 		valueObjectDest.setLanguage(valueObjectSrc.getLanguage());
 		// PatientStatus
 		valueObjectDest.setPatientStatus(valueObjectSrc.getPatientStatus());
-		// RequiresTCIBy
-		valueObjectDest.setRequiresTCIBy(valueObjectSrc.getRequiresTCIBy());
+		// was28DayRuleApplied
+		valueObjectDest.setWas28DayRuleApplied(valueObjectSrc.getWas28DayRuleApplied());
+		// SubjectTo28DayRule
+		valueObjectDest.setSubjectTo28DayRule(valueObjectSrc.getSubjectTo28DayRule());
+		// Rule28DayStatus
+		valueObjectDest.setRule28DayStatus(valueObjectSrc.getRule28DayStatus());
+		// Rule28DayPeriodStart
+		valueObjectDest.setRule28DayPeriodStart(valueObjectSrc.getRule28DayPeriodStart());
+		// PreOperativeOvernightStayRequired
+		valueObjectDest.setPreOperativeOvernightStayRequired(valueObjectSrc.getPreOperativeOvernightStayRequired());
+		// NoOfPreOperativeNights
+		valueObjectDest.setNoOfPreOperativeNights(valueObjectSrc.getNoOfPreOperativeNights());
 	 	return valueObjectDest;
 	 }
 
@@ -435,8 +467,6 @@ public class PatientElectiveListVoAssembler
 				valueObject.setEpisodeOfCare(new ims.core.admin.vo.EpisodeOfCareRefVo(domainObject.getEpisodeOfCare().getId(), domainObject.getEpisodeOfCare().getVersion()));
 			}
 		}
-		// Ward
-		valueObject.setWard(ims.core.vo.domain.LocationLiteVoAssembler.create(map, domainObject.getWard()) );
 		// Consultant
 		valueObject.setConsultant(ims.core.vo.domain.HcpMinVoAssembler.create(map, domainObject.getConsultant()) );
 		// DateOnList
@@ -452,78 +482,78 @@ public class PatientElectiveListVoAssembler
 			valueObject.setOriginalDecisionDate(new ims.framework.utils.Date(OriginalDecisionDate) );
 		}
 		// IntendedManagement
-		ims.domain.lookups.LookupInstance instance10 = domainObject.getIntendedManagement();
-		if ( null != instance10 ) {
+		ims.domain.lookups.LookupInstance instance9 = domainObject.getIntendedManagement();
+		if ( null != instance9 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
 			img = null;
-			if (instance10.getImage() != null) 
+			if (instance9.getImage() != null) 
 			{
-				img = new ims.framework.utils.ImagePath(instance10.getImage().getImageId(), instance10.getImage().getImagePath());
+				img = new ims.framework.utils.ImagePath(instance9.getImage().getImageId(), instance9.getImage().getImagePath());
 			}
-			color = instance10.getColor();
+			color = instance9.getColor();
 			if (color != null) 
 				color.getValue();
 
-			ims.core.vo.lookups.ManagementIntention voLookup10 = new ims.core.vo.lookups.ManagementIntention(instance10.getId(),instance10.getText(), instance10.isActive(), null, img, color);
-			ims.core.vo.lookups.ManagementIntention parentVoLookup10 = voLookup10;
-			ims.domain.lookups.LookupInstance parent10 = instance10.getParent();
-			while (parent10 != null)
+			ims.core.vo.lookups.ManagementIntention voLookup9 = new ims.core.vo.lookups.ManagementIntention(instance9.getId(),instance9.getText(), instance9.isActive(), null, img, color);
+			ims.core.vo.lookups.ManagementIntention parentVoLookup9 = voLookup9;
+			ims.domain.lookups.LookupInstance parent9 = instance9.getParent();
+			while (parent9 != null)
 			{
-				if (parent10.getImage() != null) 
+				if (parent9.getImage() != null) 
 				{
-					img = new ims.framework.utils.ImagePath(parent10.getImage().getImageId(), parent10.getImage().getImagePath() );
+					img = new ims.framework.utils.ImagePath(parent9.getImage().getImageId(), parent9.getImage().getImagePath() );
 				}
 				else 
 				{
 					img = null;
 				}
-				color = parent10.getColor();
+				color = parent9.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup10.setParent(new ims.core.vo.lookups.ManagementIntention(parent10.getId(),parent10.getText(), parent10.isActive(), null, img, color));
-				parentVoLookup10 = parentVoLookup10.getParent();
-								parent10 = parent10.getParent();
+								parentVoLookup9.setParent(new ims.core.vo.lookups.ManagementIntention(parent9.getId(),parent9.getText(), parent9.isActive(), null, img, color));
+				parentVoLookup9 = parentVoLookup9.getParent();
+								parent9 = parent9.getParent();
 			}			
-			valueObject.setIntendedManagement(voLookup10);
+			valueObject.setIntendedManagement(voLookup9);
 		}
 				// AnticipatedStay
 		valueObject.setAnticipatedStay(domainObject.getAnticipatedStay());
 		// Priority
-		ims.domain.lookups.LookupInstance instance12 = domainObject.getPriority();
-		if ( null != instance12 ) {
+		ims.domain.lookups.LookupInstance instance11 = domainObject.getPriority();
+		if ( null != instance11 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
 			img = null;
-			if (instance12.getImage() != null) 
+			if (instance11.getImage() != null) 
 			{
-				img = new ims.framework.utils.ImagePath(instance12.getImage().getImageId(), instance12.getImage().getImagePath());
+				img = new ims.framework.utils.ImagePath(instance11.getImage().getImageId(), instance11.getImage().getImagePath());
 			}
-			color = instance12.getColor();
+			color = instance11.getColor();
 			if (color != null) 
 				color.getValue();
 
-			ims.RefMan.vo.lookups.ReferralUrgency voLookup12 = new ims.RefMan.vo.lookups.ReferralUrgency(instance12.getId(),instance12.getText(), instance12.isActive(), null, img, color);
-			ims.RefMan.vo.lookups.ReferralUrgency parentVoLookup12 = voLookup12;
-			ims.domain.lookups.LookupInstance parent12 = instance12.getParent();
-			while (parent12 != null)
+			ims.RefMan.vo.lookups.ReferralUrgency voLookup11 = new ims.RefMan.vo.lookups.ReferralUrgency(instance11.getId(),instance11.getText(), instance11.isActive(), null, img, color);
+			ims.RefMan.vo.lookups.ReferralUrgency parentVoLookup11 = voLookup11;
+			ims.domain.lookups.LookupInstance parent11 = instance11.getParent();
+			while (parent11 != null)
 			{
-				if (parent12.getImage() != null) 
+				if (parent11.getImage() != null) 
 				{
-					img = new ims.framework.utils.ImagePath(parent12.getImage().getImageId(), parent12.getImage().getImagePath() );
+					img = new ims.framework.utils.ImagePath(parent11.getImage().getImageId(), parent11.getImage().getImagePath() );
 				}
 				else 
 				{
 					img = null;
 				}
-				color = parent12.getColor();
+				color = parent11.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup12.setParent(new ims.RefMan.vo.lookups.ReferralUrgency(parent12.getId(),parent12.getText(), parent12.isActive(), null, img, color));
-				parentVoLookup12 = parentVoLookup12.getParent();
-								parent12 = parent12.getParent();
+								parentVoLookup11.setParent(new ims.RefMan.vo.lookups.ReferralUrgency(parent11.getId(),parent11.getText(), parent11.isActive(), null, img, color));
+				parentVoLookup11 = parentVoLookup11.getParent();
+								parent11 = parent11.getParent();
 			}			
-			valueObject.setPriority(voLookup12);
+			valueObject.setPriority(voLookup11);
 		}
 				// Suspensions
 		valueObject.setSuspensions(ims.RefMan.vo.domain.SuspensionDetailsForPatientElectiveListVoAssembler.createSuspensionDetailsForPatientElectiveListVoCollectionFromSuspensionDetailsForPatientElectiveList(map, domainObject.getSuspensions()) );
@@ -538,78 +568,78 @@ public class PatientElectiveListVoAssembler
 		// InterpretatorRequired
 		valueObject.setInterpretatorRequired( domainObject.isInterpretatorRequired() );
 		// Transport
-		ims.domain.lookups.LookupInstance instance19 = domainObject.getTransport();
-		if ( null != instance19 ) {
+		ims.domain.lookups.LookupInstance instance18 = domainObject.getTransport();
+		if ( null != instance18 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
 			img = null;
-			if (instance19.getImage() != null) 
+			if (instance18.getImage() != null) 
 			{
-				img = new ims.framework.utils.ImagePath(instance19.getImage().getImageId(), instance19.getImage().getImagePath());
+				img = new ims.framework.utils.ImagePath(instance18.getImage().getImageId(), instance18.getImage().getImagePath());
 			}
-			color = instance19.getColor();
+			color = instance18.getColor();
 			if (color != null) 
 				color.getValue();
 
-			ims.scheduling.vo.lookups.ApptTransportType voLookup19 = new ims.scheduling.vo.lookups.ApptTransportType(instance19.getId(),instance19.getText(), instance19.isActive(), null, img, color);
-			ims.scheduling.vo.lookups.ApptTransportType parentVoLookup19 = voLookup19;
-			ims.domain.lookups.LookupInstance parent19 = instance19.getParent();
-			while (parent19 != null)
+			ims.scheduling.vo.lookups.ApptTransportType voLookup18 = new ims.scheduling.vo.lookups.ApptTransportType(instance18.getId(),instance18.getText(), instance18.isActive(), null, img, color);
+			ims.scheduling.vo.lookups.ApptTransportType parentVoLookup18 = voLookup18;
+			ims.domain.lookups.LookupInstance parent18 = instance18.getParent();
+			while (parent18 != null)
 			{
-				if (parent19.getImage() != null) 
+				if (parent18.getImage() != null) 
 				{
-					img = new ims.framework.utils.ImagePath(parent19.getImage().getImageId(), parent19.getImage().getImagePath() );
+					img = new ims.framework.utils.ImagePath(parent18.getImage().getImageId(), parent18.getImage().getImagePath() );
 				}
 				else 
 				{
 					img = null;
 				}
-				color = parent19.getColor();
+				color = parent18.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup19.setParent(new ims.scheduling.vo.lookups.ApptTransportType(parent19.getId(),parent19.getText(), parent19.isActive(), null, img, color));
-				parentVoLookup19 = parentVoLookup19.getParent();
-								parent19 = parent19.getParent();
+								parentVoLookup18.setParent(new ims.scheduling.vo.lookups.ApptTransportType(parent18.getId(),parent18.getText(), parent18.isActive(), null, img, color));
+				parentVoLookup18 = parentVoLookup18.getParent();
+								parent18 = parent18.getParent();
 			}			
-			valueObject.setTransport(voLookup19);
+			valueObject.setTransport(voLookup18);
 		}
 				// Notes
 		valueObject.setNotes(ims.RefMan.vo.domain.PatientElectiveListNotesVoAssembler.createPatientElectiveListNotesVoCollectionFromNotesForPatientElectiveList(map, domainObject.getNotes()) );
 		// ElectiveAdmissionType
-		ims.domain.lookups.LookupInstance instance21 = domainObject.getElectiveAdmissionType();
-		if ( null != instance21 ) {
+		ims.domain.lookups.LookupInstance instance20 = domainObject.getElectiveAdmissionType();
+		if ( null != instance20 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
 			img = null;
-			if (instance21.getImage() != null) 
+			if (instance20.getImage() != null) 
 			{
-				img = new ims.framework.utils.ImagePath(instance21.getImage().getImageId(), instance21.getImage().getImagePath());
+				img = new ims.framework.utils.ImagePath(instance20.getImage().getImageId(), instance20.getImage().getImagePath());
 			}
-			color = instance21.getColor();
+			color = instance20.getColor();
 			if (color != null) 
 				color.getValue();
 
-			ims.RefMan.vo.lookups.ElectiveAdmissionType voLookup21 = new ims.RefMan.vo.lookups.ElectiveAdmissionType(instance21.getId(),instance21.getText(), instance21.isActive(), null, img, color);
-			ims.RefMan.vo.lookups.ElectiveAdmissionType parentVoLookup21 = voLookup21;
-			ims.domain.lookups.LookupInstance parent21 = instance21.getParent();
-			while (parent21 != null)
+			ims.RefMan.vo.lookups.ElectiveAdmissionType voLookup20 = new ims.RefMan.vo.lookups.ElectiveAdmissionType(instance20.getId(),instance20.getText(), instance20.isActive(), null, img, color);
+			ims.RefMan.vo.lookups.ElectiveAdmissionType parentVoLookup20 = voLookup20;
+			ims.domain.lookups.LookupInstance parent20 = instance20.getParent();
+			while (parent20 != null)
 			{
-				if (parent21.getImage() != null) 
+				if (parent20.getImage() != null) 
 				{
-					img = new ims.framework.utils.ImagePath(parent21.getImage().getImageId(), parent21.getImage().getImagePath() );
+					img = new ims.framework.utils.ImagePath(parent20.getImage().getImageId(), parent20.getImage().getImagePath() );
 				}
 				else 
 				{
 					img = null;
 				}
-				color = parent21.getColor();
+				color = parent20.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup21.setParent(new ims.RefMan.vo.lookups.ElectiveAdmissionType(parent21.getId(),parent21.getText(), parent21.isActive(), null, img, color));
-				parentVoLookup21 = parentVoLookup21.getParent();
-								parent21 = parent21.getParent();
+								parentVoLookup20.setParent(new ims.RefMan.vo.lookups.ElectiveAdmissionType(parent20.getId(),parent20.getText(), parent20.isActive(), null, img, color));
+				parentVoLookup20 = parentVoLookup20.getParent();
+								parent20 = parent20.getParent();
 			}			
-			valueObject.setElectiveAdmissionType(voLookup21);
+			valueObject.setElectiveAdmissionType(voLookup20);
 		}
 				// EROD
 		if (domainObject.getEROD() != null)
@@ -630,40 +660,40 @@ public class PatientElectiveListVoAssembler
 		// ElectiveListStatusHistory
 		valueObject.setElectiveListStatusHistory(ims.RefMan.vo.domain.ElectiveListStatusVoAssembler.createElectiveListStatusVoCollectionFromElectiveListStatus(map, domainObject.getElectiveListStatusHistory()) );
 		// ElectiveListReason
-		ims.domain.lookups.LookupInstance instance25 = domainObject.getElectiveListReason();
-		if ( null != instance25 ) {
+		ims.domain.lookups.LookupInstance instance24 = domainObject.getElectiveListReason();
+		if ( null != instance24 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
 			img = null;
-			if (instance25.getImage() != null) 
+			if (instance24.getImage() != null) 
 			{
-				img = new ims.framework.utils.ImagePath(instance25.getImage().getImageId(), instance25.getImage().getImagePath());
+				img = new ims.framework.utils.ImagePath(instance24.getImage().getImageId(), instance24.getImage().getImagePath());
 			}
-			color = instance25.getColor();
+			color = instance24.getColor();
 			if (color != null) 
 				color.getValue();
 
-			ims.emergency.vo.lookups.ElectiveListReason voLookup25 = new ims.emergency.vo.lookups.ElectiveListReason(instance25.getId(),instance25.getText(), instance25.isActive(), null, img, color);
-			ims.emergency.vo.lookups.ElectiveListReason parentVoLookup25 = voLookup25;
-			ims.domain.lookups.LookupInstance parent25 = instance25.getParent();
-			while (parent25 != null)
+			ims.emergency.vo.lookups.ElectiveListReason voLookup24 = new ims.emergency.vo.lookups.ElectiveListReason(instance24.getId(),instance24.getText(), instance24.isActive(), null, img, color);
+			ims.emergency.vo.lookups.ElectiveListReason parentVoLookup24 = voLookup24;
+			ims.domain.lookups.LookupInstance parent24 = instance24.getParent();
+			while (parent24 != null)
 			{
-				if (parent25.getImage() != null) 
+				if (parent24.getImage() != null) 
 				{
-					img = new ims.framework.utils.ImagePath(parent25.getImage().getImageId(), parent25.getImage().getImagePath() );
+					img = new ims.framework.utils.ImagePath(parent24.getImage().getImageId(), parent24.getImage().getImagePath() );
 				}
 				else 
 				{
 					img = null;
 				}
-				color = parent25.getColor();
+				color = parent24.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup25.setParent(new ims.emergency.vo.lookups.ElectiveListReason(parent25.getId(),parent25.getText(), parent25.isActive(), null, img, color));
-				parentVoLookup25 = parentVoLookup25.getParent();
-								parent25 = parent25.getParent();
+								parentVoLookup24.setParent(new ims.emergency.vo.lookups.ElectiveListReason(parent24.getId(),parent24.getText(), parent24.isActive(), null, img, color));
+				parentVoLookup24 = parentVoLookup24.getParent();
+								parent24 = parent24.getParent();
 			}			
-			valueObject.setElectiveListReason(voLookup25);
+			valueObject.setElectiveListReason(voLookup24);
 		}
 				// PathwayClock
 		if (domainObject.getPathwayClock() != null)
@@ -697,7 +727,43 @@ public class PatientElectiveListVoAssembler
 		// ProcedureDescription
 		valueObject.setProcedureDescription(domainObject.getProcedureDescription());
 		// Language
-		ims.domain.lookups.LookupInstance instance32 = domainObject.getLanguage();
+		ims.domain.lookups.LookupInstance instance31 = domainObject.getLanguage();
+		if ( null != instance31 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance31.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance31.getImage().getImageId(), instance31.getImage().getImagePath());
+			}
+			color = instance31.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.Language voLookup31 = new ims.core.vo.lookups.Language(instance31.getId(),instance31.getText(), instance31.isActive(), null, img, color);
+			ims.core.vo.lookups.Language parentVoLookup31 = voLookup31;
+			ims.domain.lookups.LookupInstance parent31 = instance31.getParent();
+			while (parent31 != null)
+			{
+				if (parent31.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent31.getImage().getImageId(), parent31.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent31.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup31.setParent(new ims.core.vo.lookups.Language(parent31.getId(),parent31.getText(), parent31.isActive(), null, img, color));
+				parentVoLookup31 = parentVoLookup31.getParent();
+								parent31 = parent31.getParent();
+			}			
+			valueObject.setLanguage(voLookup31);
+		}
+				// PatientStatus
+		ims.domain.lookups.LookupInstance instance32 = domainObject.getPatientStatus();
 		if ( null != instance32 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
@@ -710,8 +776,8 @@ public class PatientElectiveListVoAssembler
 			if (color != null) 
 				color.getValue();
 
-			ims.core.vo.lookups.Language voLookup32 = new ims.core.vo.lookups.Language(instance32.getId(),instance32.getText(), instance32.isActive(), null, img, color);
-			ims.core.vo.lookups.Language parentVoLookup32 = voLookup32;
+			ims.RefMan.vo.lookups.CatsReferralCategory voLookup32 = new ims.RefMan.vo.lookups.CatsReferralCategory(instance32.getId(),instance32.getText(), instance32.isActive(), null, img, color);
+			ims.RefMan.vo.lookups.CatsReferralCategory parentVoLookup32 = voLookup32;
 			ims.domain.lookups.LookupInstance parent32 = instance32.getParent();
 			while (parent32 != null)
 			{
@@ -726,54 +792,62 @@ public class PatientElectiveListVoAssembler
 				color = parent32.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup32.setParent(new ims.core.vo.lookups.Language(parent32.getId(),parent32.getText(), parent32.isActive(), null, img, color));
+								parentVoLookup32.setParent(new ims.RefMan.vo.lookups.CatsReferralCategory(parent32.getId(),parent32.getText(), parent32.isActive(), null, img, color));
 				parentVoLookup32 = parentVoLookup32.getParent();
 								parent32 = parent32.getParent();
 			}			
-			valueObject.setLanguage(voLookup32);
+			valueObject.setPatientStatus(voLookup32);
 		}
-				// PatientStatus
-		ims.domain.lookups.LookupInstance instance33 = domainObject.getPatientStatus();
-		if ( null != instance33 ) {
+				// was28DayRuleApplied
+		valueObject.setWas28DayRuleApplied( domainObject.isWas28DayRuleApplied() );
+		// SubjectTo28DayRule
+		valueObject.setSubjectTo28DayRule( domainObject.isSubjectTo28DayRule() );
+		// Rule28DayStatus
+		ims.domain.lookups.LookupInstance instance35 = domainObject.getRule28DayStatus();
+		if ( null != instance35 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
 			img = null;
-			if (instance33.getImage() != null) 
+			if (instance35.getImage() != null) 
 			{
-				img = new ims.framework.utils.ImagePath(instance33.getImage().getImageId(), instance33.getImage().getImagePath());
+				img = new ims.framework.utils.ImagePath(instance35.getImage().getImageId(), instance35.getImage().getImagePath());
 			}
-			color = instance33.getColor();
+			color = instance35.getColor();
 			if (color != null) 
 				color.getValue();
 
-			ims.RefMan.vo.lookups.CatsReferralCategory voLookup33 = new ims.RefMan.vo.lookups.CatsReferralCategory(instance33.getId(),instance33.getText(), instance33.isActive(), null, img, color);
-			ims.RefMan.vo.lookups.CatsReferralCategory parentVoLookup33 = voLookup33;
-			ims.domain.lookups.LookupInstance parent33 = instance33.getParent();
-			while (parent33 != null)
+			ims.scheduling.vo.lookups.Rule28DayStatus voLookup35 = new ims.scheduling.vo.lookups.Rule28DayStatus(instance35.getId(),instance35.getText(), instance35.isActive(), null, img, color);
+			ims.scheduling.vo.lookups.Rule28DayStatus parentVoLookup35 = voLookup35;
+			ims.domain.lookups.LookupInstance parent35 = instance35.getParent();
+			while (parent35 != null)
 			{
-				if (parent33.getImage() != null) 
+				if (parent35.getImage() != null) 
 				{
-					img = new ims.framework.utils.ImagePath(parent33.getImage().getImageId(), parent33.getImage().getImagePath() );
+					img = new ims.framework.utils.ImagePath(parent35.getImage().getImageId(), parent35.getImage().getImagePath() );
 				}
 				else 
 				{
 					img = null;
 				}
-				color = parent33.getColor();
+				color = parent35.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup33.setParent(new ims.RefMan.vo.lookups.CatsReferralCategory(parent33.getId(),parent33.getText(), parent33.isActive(), null, img, color));
-				parentVoLookup33 = parentVoLookup33.getParent();
-								parent33 = parent33.getParent();
+								parentVoLookup35.setParent(new ims.scheduling.vo.lookups.Rule28DayStatus(parent35.getId(),parent35.getText(), parent35.isActive(), null, img, color));
+				parentVoLookup35 = parentVoLookup35.getParent();
+								parent35 = parent35.getParent();
 			}			
-			valueObject.setPatientStatus(voLookup33);
+			valueObject.setRule28DayStatus(voLookup35);
 		}
-				// RequiresTCIBy
-		java.util.Date RequiresTCIBy = domainObject.getRequiresTCIBy();
-		if ( null != RequiresTCIBy ) 
+				// Rule28DayPeriodStart
+		java.util.Date Rule28DayPeriodStart = domainObject.getRule28DayPeriodStart();
+		if ( null != Rule28DayPeriodStart ) 
 		{
-			valueObject.setRequiresTCIBy(new ims.framework.utils.Date(RequiresTCIBy) );
+			valueObject.setRule28DayPeriodStart(new ims.framework.utils.Date(Rule28DayPeriodStart) );
 		}
+		// PreOperativeOvernightStayRequired
+		valueObject.setPreOperativeOvernightStayRequired( domainObject.isPreOperativeOvernightStayRequired() );
+		// NoOfPreOperativeNights
+		valueObject.setNoOfPreOperativeNights(domainObject.getNoOfPreOperativeNights());
  		return valueObject;
 	 }
 
@@ -902,109 +976,92 @@ public class PatientElectiveListVoAssembler
 		}
 		domainObject.setEpisodeOfCare(value5);
 	// SaveAsRefVO - treated as a refVo in extract methods
-	ims.core.resource.place.domain.objects.Location value6 = null;
-		if ( null != valueObject.getWard() ) 
-		{
-			if (valueObject.getWard().getBoId() == null)
-			{
-				if (domMap.get(valueObject.getWard()) != null)
-				{
-					value6 = (ims.core.resource.place.domain.objects.Location)domMap.get(valueObject.getWard());
-				}
-			}
-			else
-			{
-				value6 = (ims.core.resource.place.domain.objects.Location)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.Location.class, valueObject.getWard().getBoId());
-			}
-		}
-		domainObject.setWard(value6);
-	// SaveAsRefVO - treated as a refVo in extract methods
-	ims.core.resource.people.domain.objects.Hcp value7 = null;
+	ims.core.resource.people.domain.objects.Hcp value6 = null;
 		if ( null != valueObject.getConsultant() ) 
 		{
 			if (valueObject.getConsultant().getBoId() == null)
 			{
 				if (domMap.get(valueObject.getConsultant()) != null)
 				{
-					value7 = (ims.core.resource.people.domain.objects.Hcp)domMap.get(valueObject.getConsultant());
+					value6 = (ims.core.resource.people.domain.objects.Hcp)domMap.get(valueObject.getConsultant());
 				}
 			}
 			else
 			{
-				value7 = (ims.core.resource.people.domain.objects.Hcp)domainFactory.getDomainObject(ims.core.resource.people.domain.objects.Hcp.class, valueObject.getConsultant().getBoId());
+				value6 = (ims.core.resource.people.domain.objects.Hcp)domainFactory.getDomainObject(ims.core.resource.people.domain.objects.Hcp.class, valueObject.getConsultant().getBoId());
 			}
 		}
-		domainObject.setConsultant(value7);
+		domainObject.setConsultant(value6);
+		java.util.Date value7 = null;
+		ims.framework.utils.Date date7 = valueObject.getDateOnList();		
+		if ( date7 != null ) 
+		{
+			value7 = date7.getDate();
+		}
+		domainObject.setDateOnList(value7);
 		java.util.Date value8 = null;
-		ims.framework.utils.Date date8 = valueObject.getDateOnList();		
+		ims.framework.utils.Date date8 = valueObject.getOriginalDecisionDate();		
 		if ( date8 != null ) 
 		{
 			value8 = date8.getDate();
 		}
-		domainObject.setDateOnList(value8);
-		java.util.Date value9 = null;
-		ims.framework.utils.Date date9 = valueObject.getOriginalDecisionDate();		
-		if ( date9 != null ) 
-		{
-			value9 = date9.getDate();
-		}
-		domainObject.setOriginalDecisionDate(value9);
+		domainObject.setOriginalDecisionDate(value8);
 		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value10 = null;
+		ims.domain.lookups.LookupInstance value9 = null;
 		if ( null != valueObject.getIntendedManagement() ) 
 		{
-			value10 =
+			value9 =
 				domainFactory.getLookupInstance(valueObject.getIntendedManagement().getID());
 		}
-		domainObject.setIntendedManagement(value10);
+		domainObject.setIntendedManagement(value9);
 		domainObject.setAnticipatedStay(valueObject.getAnticipatedStay());
 		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value12 = null;
+		ims.domain.lookups.LookupInstance value11 = null;
 		if ( null != valueObject.getPriority() ) 
 		{
-			value12 =
+			value11 =
 				domainFactory.getLookupInstance(valueObject.getPriority().getID());
 		}
-		domainObject.setPriority(value12);
+		domainObject.setPriority(value11);
 		domainObject.setSuspensions(ims.RefMan.vo.domain.SuspensionDetailsForPatientElectiveListVoAssembler.extractSuspensionDetailsForPatientElectiveListList(domainFactory, valueObject.getSuspensions(), domainObject.getSuspensions(), domMap));		
 		domainObject.setOperativeProcedureStatus(valueObject.getOperativeProcedureStatus());
 	// SaveAsRefVO - treated as a refVo in extract methods
-	ims.core.clinical.domain.objects.Procedure value15 = null;
+	ims.core.clinical.domain.objects.Procedure value14 = null;
 		if ( null != valueObject.getPrimaryProcedure() ) 
 		{
 			if (valueObject.getPrimaryProcedure().getBoId() == null)
 			{
 				if (domMap.get(valueObject.getPrimaryProcedure()) != null)
 				{
-					value15 = (ims.core.clinical.domain.objects.Procedure)domMap.get(valueObject.getPrimaryProcedure());
+					value14 = (ims.core.clinical.domain.objects.Procedure)domMap.get(valueObject.getPrimaryProcedure());
 				}
 			}
 			else
 			{
-				value15 = (ims.core.clinical.domain.objects.Procedure)domainFactory.getDomainObject(ims.core.clinical.domain.objects.Procedure.class, valueObject.getPrimaryProcedure().getBoId());
+				value14 = (ims.core.clinical.domain.objects.Procedure)domainFactory.getDomainObject(ims.core.clinical.domain.objects.Procedure.class, valueObject.getPrimaryProcedure().getBoId());
 			}
 		}
-		domainObject.setPrimaryProcedure(value15);
+		domainObject.setPrimaryProcedure(value14);
 
 		// SaveAsRefVO treated as RefValueObject
-		ims.core.clinical.vo.ProcedureRefVoCollection refCollection16 = new ims.core.clinical.vo.ProcedureRefVoCollection();
+		ims.core.clinical.vo.ProcedureRefVoCollection refCollection15 = new ims.core.clinical.vo.ProcedureRefVoCollection();
 		if (valueObject.getOtherProcedures() != null)
 		{
-			for (int i16=0; i16<valueObject.getOtherProcedures().size(); i16++)
+			for (int i15=0; i15<valueObject.getOtherProcedures().size(); i15++)
 			{
-				ims.core.clinical.vo.ProcedureRefVo ref16 = (ims.core.clinical.vo.ProcedureRefVo)valueObject.getOtherProcedures().get(i16);
-				refCollection16.add(ref16);
+				ims.core.clinical.vo.ProcedureRefVo ref15 = (ims.core.clinical.vo.ProcedureRefVo)valueObject.getOtherProcedures().get(i15);
+				refCollection15.add(ref15);
 			}
 		}
-		int size16 = (null == refCollection16) ? 0 : refCollection16.size();		
-		java.util.List domainOtherProcedures16 = domainObject.getOtherProcedures();
-		if (domainOtherProcedures16 == null)
+		int size15 = (null == refCollection15) ? 0 : refCollection15.size();		
+		java.util.List domainOtherProcedures15 = domainObject.getOtherProcedures();
+		if (domainOtherProcedures15 == null)
 		{
-			domainOtherProcedures16 = new java.util.ArrayList();
+			domainOtherProcedures15 = new java.util.ArrayList();
 		}
-		for(int i=0; i < size16; i++) 
+		for(int i=0; i < size15; i++) 
 		{
-			ims.core.clinical.vo.ProcedureRefVo vo = refCollection16.get(i);			
+			ims.core.clinical.vo.ProcedureRefVo vo = refCollection15.get(i);			
 			ims.core.clinical.domain.objects.Procedure dom = null;
 			if ( null != vo ) 
 			{
@@ -1021,109 +1078,109 @@ public class PatientElectiveListVoAssembler
 				}
 			}
 
-			int domIdx = domainOtherProcedures16.indexOf(dom);
+			int domIdx = domainOtherProcedures15.indexOf(dom);
 			if (domIdx == -1)
 			{
-				domainOtherProcedures16.add(i, dom);
+				domainOtherProcedures15.add(i, dom);
 			}
-			else if (i != domIdx && i < domainOtherProcedures16.size())
+			else if (i != domIdx && i < domainOtherProcedures15.size())
 			{
-				Object tmp = domainOtherProcedures16.get(i);
-				domainOtherProcedures16.set(i, domainOtherProcedures16.get(domIdx));
-				domainOtherProcedures16.set(domIdx, tmp);
+				Object tmp = domainOtherProcedures15.get(i);
+				domainOtherProcedures15.set(i, domainOtherProcedures15.get(domIdx));
+				domainOtherProcedures15.set(domIdx, tmp);
 			}
 		}
 		
 		//Remove all ones in domList where index > voCollection.size() as these should
 		//now represent the ones removed from the VO collection. No longer referenced.
-		int i16 = domainOtherProcedures16.size();
-		while (i16 > size16)
+		int i15 = domainOtherProcedures15.size();
+		while (i15 > size15)
 		{
-			domainOtherProcedures16.remove(i16-1);
-			i16 = domainOtherProcedures16.size();
+			domainOtherProcedures15.remove(i15-1);
+			i15 = domainOtherProcedures15.size();
 		}
 		
-		domainObject.setOtherProcedures(domainOtherProcedures16);		
+		domainObject.setOtherProcedures(domainOtherProcedures15);		
 		domainObject.setTCIHistory(ims.RefMan.vo.domain.PatientElectiveListElectiveTCIVoAssembler.extractTCIForPatientElectiveListList(domainFactory, valueObject.getTCIHistory(), domainObject.getTCIHistory(), domMap));		
 		domainObject.setInterpretatorRequired(valueObject.getInterpretatorRequired());
 		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value19 = null;
+		ims.domain.lookups.LookupInstance value18 = null;
 		if ( null != valueObject.getTransport() ) 
 		{
-			value19 =
+			value18 =
 				domainFactory.getLookupInstance(valueObject.getTransport().getID());
 		}
-		domainObject.setTransport(value19);
+		domainObject.setTransport(value18);
 		domainObject.setNotes(ims.RefMan.vo.domain.PatientElectiveListNotesVoAssembler.extractNotesForPatientElectiveListSet(domainFactory, valueObject.getNotes(), domainObject.getNotes(), domMap));		
 		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value21 = null;
+		ims.domain.lookups.LookupInstance value20 = null;
 		if ( null != valueObject.getElectiveAdmissionType() ) 
 		{
-			value21 =
+			value20 =
 				domainFactory.getLookupInstance(valueObject.getElectiveAdmissionType().getID());
 		}
-		domainObject.setElectiveAdmissionType(value21);
-		ims.RefMan.domain.objects.ReferralEROD value22 = null;
+		domainObject.setElectiveAdmissionType(value20);
+		ims.RefMan.domain.objects.ReferralEROD value21 = null;
 		if ( null != valueObject.getEROD() ) 
 		{
 			if (valueObject.getEROD().getBoId() == null)
 			{
 				if (domMap.get(valueObject.getEROD()) != null)
 				{
-					value22 = (ims.RefMan.domain.objects.ReferralEROD)domMap.get(valueObject.getEROD());
+					value21 = (ims.RefMan.domain.objects.ReferralEROD)domMap.get(valueObject.getEROD());
 				}
 			}
 			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
 			{
-				value22 = domainObject.getEROD();	
+				value21 = domainObject.getEROD();	
 			}
 			else
 			{
-				value22 = (ims.RefMan.domain.objects.ReferralEROD)domainFactory.getDomainObject(ims.RefMan.domain.objects.ReferralEROD.class, valueObject.getEROD().getBoId());
+				value21 = (ims.RefMan.domain.objects.ReferralEROD)domainFactory.getDomainObject(ims.RefMan.domain.objects.ReferralEROD.class, valueObject.getEROD().getBoId());
 			}
 		}
-		domainObject.setEROD(value22);
+		domainObject.setEROD(value21);
 		domainObject.setTCIDetails(ims.RefMan.vo.domain.PatientElectiveListElectiveTCIVoAssembler.extractTCIForPatientElectiveList(domainFactory, valueObject.getTCIDetails(), domMap));
 		domainObject.setElectiveListStatusHistory(ims.RefMan.vo.domain.ElectiveListStatusVoAssembler.extractElectiveListStatusList(domainFactory, valueObject.getElectiveListStatusHistory(), domainObject.getElectiveListStatusHistory(), domMap));		
 		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value25 = null;
+		ims.domain.lookups.LookupInstance value24 = null;
 		if ( null != valueObject.getElectiveListReason() ) 
 		{
-			value25 =
+			value24 =
 				domainFactory.getLookupInstance(valueObject.getElectiveListReason().getID());
 		}
-		domainObject.setElectiveListReason(value25);
-		ims.pathways.domain.objects.PathwayClock value26 = null;
+		domainObject.setElectiveListReason(value24);
+		ims.pathways.domain.objects.PathwayClock value25 = null;
 		if ( null != valueObject.getPathwayClock() ) 
 		{
 			if (valueObject.getPathwayClock().getBoId() == null)
 			{
 				if (domMap.get(valueObject.getPathwayClock()) != null)
 				{
-					value26 = (ims.pathways.domain.objects.PathwayClock)domMap.get(valueObject.getPathwayClock());
+					value25 = (ims.pathways.domain.objects.PathwayClock)domMap.get(valueObject.getPathwayClock());
 				}
 			}
 			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
 			{
-				value26 = domainObject.getPathwayClock();	
+				value25 = domainObject.getPathwayClock();	
 			}
 			else
 			{
-				value26 = (ims.pathways.domain.objects.PathwayClock)domainFactory.getDomainObject(ims.pathways.domain.objects.PathwayClock.class, valueObject.getPathwayClock().getBoId());
+				value25 = (ims.pathways.domain.objects.PathwayClock)domainFactory.getDomainObject(ims.pathways.domain.objects.PathwayClock.class, valueObject.getPathwayClock().getBoId());
 			}
 		}
-		domainObject.setPathwayClock(value26);
+		domainObject.setPathwayClock(value25);
 
-		ims.RefMan.vo.ReferralERODRefVoCollection refCollection27 = valueObject.getERODHistory();
-		int size27 = (null == refCollection27) ? 0 : refCollection27.size();		
-		java.util.List domainERODHistory27 = domainObject.getERODHistory();
-		if (domainERODHistory27 == null)
+		ims.RefMan.vo.ReferralERODRefVoCollection refCollection26 = valueObject.getERODHistory();
+		int size26 = (null == refCollection26) ? 0 : refCollection26.size();		
+		java.util.List domainERODHistory26 = domainObject.getERODHistory();
+		if (domainERODHistory26 == null)
 		{
-			domainERODHistory27 = new java.util.ArrayList();
+			domainERODHistory26 = new java.util.ArrayList();
 		}
-		for(int i=0; i < size27; i++) 
+		for(int i=0; i < size26; i++) 
 		{
-			ims.RefMan.vo.ReferralERODRefVo vo = refCollection27.get(i);			
+			ims.RefMan.vo.ReferralERODRefVo vo = refCollection26.get(i);			
 			ims.RefMan.domain.objects.ReferralEROD dom = null;
 			if ( null != vo ) 
 			{
@@ -1140,29 +1197,29 @@ public class PatientElectiveListVoAssembler
 				}
 			}
 
-			int domIdx = domainERODHistory27.indexOf(dom);
+			int domIdx = domainERODHistory26.indexOf(dom);
 			if (domIdx == -1)
 			{
-				domainERODHistory27.add(i, dom);
+				domainERODHistory26.add(i, dom);
 			}
-			else if (i != domIdx && i < domainERODHistory27.size())
+			else if (i != domIdx && i < domainERODHistory26.size())
 			{
-				Object tmp = domainERODHistory27.get(i);
-				domainERODHistory27.set(i, domainERODHistory27.get(domIdx));
-				domainERODHistory27.set(domIdx, tmp);
+				Object tmp = domainERODHistory26.get(i);
+				domainERODHistory26.set(i, domainERODHistory26.get(domIdx));
+				domainERODHistory26.set(domIdx, tmp);
 			}
 		}
 		
 		//Remove all ones in domList where index > voCollection.size() as these should
 		//now represent the ones removed from the VO collection. No longer referenced.
-		int i27 = domainERODHistory27.size();
-		while (i27 > size27)
+		int i26 = domainERODHistory26.size();
+		while (i26 > size26)
 		{
-			domainERODHistory27.remove(i27-1);
-			i27 = domainERODHistory27.size();
+			domainERODHistory26.remove(i26-1);
+			i26 = domainERODHistory26.size();
 		}
 		
-		domainObject.setERODHistory(domainERODHistory27);		
+		domainObject.setERODHistory(domainERODHistory26);		
 		domainObject.setTCICancelledByProvider(valueObject.getTCICancelledByProvider());
 		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
 		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
@@ -1180,28 +1237,40 @@ public class PatientElectiveListVoAssembler
 		}
 		domainObject.setProcedureDescription(valueObject.getProcedureDescription());
 		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value32 = null;
+		ims.domain.lookups.LookupInstance value31 = null;
 		if ( null != valueObject.getLanguage() ) 
 		{
-			value32 =
+			value31 =
 				domainFactory.getLookupInstance(valueObject.getLanguage().getID());
 		}
-		domainObject.setLanguage(value32);
+		domainObject.setLanguage(value31);
 		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value33 = null;
+		ims.domain.lookups.LookupInstance value32 = null;
 		if ( null != valueObject.getPatientStatus() ) 
 		{
-			value33 =
+			value32 =
 				domainFactory.getLookupInstance(valueObject.getPatientStatus().getID());
 		}
-		domainObject.setPatientStatus(value33);
-		java.util.Date value34 = null;
-		ims.framework.utils.Date date34 = valueObject.getRequiresTCIBy();		
-		if ( date34 != null ) 
+		domainObject.setPatientStatus(value32);
+		domainObject.setWas28DayRuleApplied(valueObject.getWas28DayRuleApplied());
+		domainObject.setSubjectTo28DayRule(valueObject.getSubjectTo28DayRule());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value35 = null;
+		if ( null != valueObject.getRule28DayStatus() ) 
 		{
-			value34 = date34.getDate();
+			value35 =
+				domainFactory.getLookupInstance(valueObject.getRule28DayStatus().getID());
 		}
-		domainObject.setRequiresTCIBy(value34);
+		domainObject.setRule28DayStatus(value35);
+		java.util.Date value36 = null;
+		ims.framework.utils.Date date36 = valueObject.getRule28DayPeriodStart();		
+		if ( date36 != null ) 
+		{
+			value36 = date36.getDate();
+		}
+		domainObject.setRule28DayPeriodStart(value36);
+		domainObject.setPreOperativeOvernightStayRequired(valueObject.getPreOperativeOvernightStayRequired());
+		domainObject.setNoOfPreOperativeNights(valueObject.getNoOfPreOperativeNights());
 
 		return domainObject;
 	}

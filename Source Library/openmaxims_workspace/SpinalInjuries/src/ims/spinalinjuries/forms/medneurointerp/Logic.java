@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -225,12 +230,7 @@ public class Logic extends BaseLogic
 				{
 					populateAsiaScoreMotorAreaFindings(voFindings.getMotorAreaFindings());
 				}
-												
-				
-				
 			}
-			
-						
 		}
 		if (voNeuroSensationExamination!=null && voNeuroSensationExamination.getNeuroSensIsNotNull())
 		{
@@ -257,7 +257,7 @@ public class Logic extends BaseLogic
 			form.getLocalContext().setAdmisNeuroInterpretVo(null);
 			form.getLocalContext().setvoNeuroInterpret(null);
 			clearScreen();
-			form.ccAuthoring().initializeComponent(true); //WDEV-15172
+			form.ccAuthoring().initializeComponent(true,null); //WDEV-15172
 		}
 	}
 
@@ -382,19 +382,20 @@ public class Logic extends BaseLogic
 			form.ccAuthoring().setValue(authoringInfo);
 			return;
 		}
-		
-		if(form.getGlobalContext().Core.getCurrentClinicalContactIsNotNull())
+		//WDEV-18846 - start
+		boolean isLoggedOnUserHCP = domain.getHcpLiteUser() != null;
+		if (isLoggedOnUserHCP)
 		{
-			ClinicalContactShortVo voClinicalContactShort = form.getGlobalContext().Core.getCurrentClinicalContact();
-			
-			if(voClinicalContactShort != null)
+			form.ccAuthoring().initializeComponent(true,null);
+		}
+		else
+		{
+			if (form.getGlobalContext().Core.getCurrentClinicalContact() != null)
 			{
-				if(voClinicalContactShort.getStartDateTimeIsNotNull())
-				{
-					form.ccAuthoring().initializeComponent(false); //WDEV-15172
-				}
+				form.ccAuthoring().initializeComponent(false,true); //WDEV-15172 
 			}
 		}
+		//---------- end WDEV-18846
 	}	
 	
 	private void loadVertebralCombos() 
@@ -690,8 +691,8 @@ public class Logic extends BaseLogic
 			form.recbrInterpret().setEnabled(false);	
 		
 		//WDEV-15172
-		form.ccAuthoring().setEnabledAuthoringHCP(form.getMode().equals(FormMode.EDIT) && form.getLocalContext().getIsMedicalInpatientForm());
-		form.ccAuthoring().setEnabledDateTime(form.getMode().equals(FormMode.EDIT) && form.getLocalContext().getIsMedicalInpatientForm());
+		form.ccAuthoring().setEnabledAuthoringHCP(form.getMode().equals(FormMode.EDIT)); //WDEV-18846
+		form.ccAuthoring().setEnabledDateTime(form.getMode().equals(FormMode.EDIT));	//WDEV-18846
 	}
 
 	private void populateAsiaScoreMotorAreaFindings(NeuroMotorAreaFindingVoCollection motorcol)

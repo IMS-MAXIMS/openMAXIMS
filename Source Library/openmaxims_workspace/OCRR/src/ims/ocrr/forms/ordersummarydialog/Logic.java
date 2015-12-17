@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -125,7 +130,7 @@ public class Logic extends BaseLogic
 		form.btnAuthorise().setVisible(canOrderBeAuthorized);
 		form.btnAuthorise().setEnabled(!isCancelled(form.getLocalContext().getOrderSummary()));
 		form.btnUpdate().setVisible(canOrderBeAuthorized);
-		form.btnUpdate().setEnabled(!isCancelled(form.getLocalContext().getOrderSummary()) && userHasAuthorizeRoles);
+		form.btnUpdate().setEnabled(!isCancelled(form.getLocalContext().getOrderSummary()) && canOrderBeAuthorized); //WDEV-16808 
 	}
 	
 	private boolean isCancelled(OcsOrderSummaryVo orderSummary)
@@ -157,29 +162,37 @@ public class Logic extends BaseLogic
 		
 		// Check order status - not to be cancelled
 		int ordersAwaitingAuthorization = 0;
-		
+		//WDEV-16808 
+		boolean hasPathologyInvestigations= false;
+		boolean hasClinicalImagingInvestigations = false;
+		//-----------
 		for (OrderInvestigationListVo investigation : orderSummary.getInvestigations())
 		{
 			if (investigation.getOrdInvCurrentStatus() != null && OrderInvStatus.AWAITING_AUTHORISATION.equals(investigation.getOrdInvCurrentStatus().getOrdInvStatus()))
 				ordersAwaitingAuthorization++;
 			
+			//WDEV-16808 
 			if (Category.PATHOLOGY.equals(investigation.getInvestigation().getInvestigationIndex().getCategory())
-					&& !engine.hasRight(AppRight.CAN_AUTHORIZE_PATHOLOGY_ORDERS)
+					//&& engine.hasRight(AppRight.CAN_AUTHORIZE_PATHOLOGY_ORDERS) //WDEV-16808 
 					&& investigation.getOrdInvCurrentStatus() != null
 					&& OrderInvStatus.AWAITING_AUTHORISATION.equals(investigation.getOrdInvCurrentStatus().getOrdInvStatus()))
-				return false;
+				hasPathologyInvestigations = true;
 			
+			//WDEV-16808 
 			if (Category.CLINICALIMAGING.equals(investigation.getInvestigation().getInvestigationIndex().getCategory())
-					&& !engine.hasRight(AppRight.CAN_AUTHORIZE_CLINICAL_IMAGING_ORDERS)
+				//	&& engine.hasRight(AppRight.CAN_AUTHORIZE_CLINICAL_IMAGING_ORDERS) 
 					&& investigation.getOrdInvCurrentStatus() != null
 					&& OrderInvStatus.AWAITING_AUTHORISATION.equals(investigation.getOrdInvCurrentStatus().getOrdInvStatus()))
-				return false;
+				hasClinicalImagingInvestigations = true;
 		}
 		
 		if (ordersAwaitingAuthorization == 0)
 			return false;
 		
-		if (engine.hasRight(AppRight.CAN_AUTHORIZE_CLINICAL_IMAGING_ORDERS) && engine.hasRight(AppRight.CAN_AUTHORIZE_PATHOLOGY_ORDERS))
+		//WDEV-16808 
+		if ((hasClinicalImagingInvestigations && !hasPathologyInvestigations && engine.hasRight(AppRight.CAN_AUTHORIZE_CLINICAL_IMAGING_ORDERS)) ||
+			(!hasClinicalImagingInvestigations && hasPathologyInvestigations && engine.hasRight(AppRight.CAN_AUTHORIZE_PATHOLOGY_ORDERS)) ||
+			(hasClinicalImagingInvestigations && hasPathologyInvestigations && engine.hasRight(AppRight.CAN_AUTHORIZE_PATHOLOGY_ORDERS) && engine.hasRight(AppRight.CAN_AUTHORIZE_CLINICAL_IMAGING_ORDERS)))
 			return true;
 
 		return false;

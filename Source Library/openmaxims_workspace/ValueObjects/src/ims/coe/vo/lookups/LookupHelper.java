@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,15 +15,20 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 
 /*
  * This code was generated.
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:38
+ * Generated: 13/10/2015, 13:23
  */
 package ims.coe.vo.lookups;
 
@@ -97,19 +102,6 @@ public final class LookupHelper {
 	public static BowelMedication getBowelMedicationInstance(LookupService lookupService, int id) 
 	{
 		return (BowelMedication)lookupService.getLookupInstance(BowelMedication.class, BowelMedication.TYPE_ID, id);
-	}
-	
-
-	public static InfectionResultCollection getInfectionResult(LookupService lookupService) {
-		InfectionResultCollection collection =
-			(InfectionResultCollection) lookupService.getLookupCollection(InfectionResult.TYPE_ID, 
-				InfectionResultCollection.class, InfectionResult.class);
-		return collection;
-	}
-
-	public static InfectionResult getInfectionResultInstance(LookupService lookupService, int id) 
-	{
-		return (InfectionResult)lookupService.getLookupInstance(InfectionResult.class, InfectionResult.TYPE_ID, id);
 	}
 	
 
@@ -526,6 +518,19 @@ public final class LookupHelper {
 	public static BowelsOpen getBowelsOpenInstance(LookupService lookupService, int id) 
 	{
 		return (BowelsOpen)lookupService.getLookupInstance(BowelsOpen.class, BowelsOpen.TYPE_ID, id);
+	}
+	
+
+	public static InfectionResultCollection getInfectionResult(LookupService lookupService) {
+		InfectionResultCollection collection =
+			(InfectionResultCollection) lookupService.getLookupCollection(InfectionResult.TYPE_ID, 
+				InfectionResultCollection.class, InfectionResult.class);
+		return collection;
+	}
+
+	public static InfectionResult getInfectionResultInstance(LookupService lookupService, int id) 
+	{
+		return (InfectionResult)lookupService.getLookupInstance(InfectionResult.class, InfectionResult.TYPE_ID, id);
 	}
 	
 

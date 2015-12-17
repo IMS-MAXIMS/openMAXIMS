@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.admin.domain.objects;
@@ -144,9 +149,35 @@ public class EmergencyAttendance extends ims.domain.DomainObject implements ims.
 	/** SequenceNumber */
 	private String sequenceNumber;
 	/** Patient Medical Insurance Details */
-	private ims.core.patient.domain.objects.Insurance insurance;
+	private ims.core.patient.domain.objects.NationalHealthCover insurance;
 	/** PatientMedicalInsurance */
 	private ims.core.clinical.domain.objects.PatientMedicalInsurance patientMedicalInsurance;
+	/** UsePrivateHealthInsurance */
+	private Boolean usePrivateHealthInsurance;
+	/** EndOfRegistrationDateTime */
+	private java.util.Date endOfRegistrationDateTime;
+	/** EDClinicDetails */
+	private ims.core.clinical.domain.objects.EDClinicDetails eDClinicDetails;
+	private java.util.Date ambulanceHandoverDateTime;
+	private ims.domain.lookups.LookupInstance ambulanceDelayReason;
+	/** Attendance Outcome Comment */
+	private String attendanceOutcomeComment;
+	/** Attendance Discharge Comment */
+	private String attendanceDischargeComment;
+	/** GPLetterStatus */
+	private ims.domain.lookups.LookupInstance gPLetterStatus;
+	/** YY000000 formatted ID */
+	private String customID;
+	/** AccomodationRequestedType */
+	private ims.domain.lookups.LookupInstance accomodationRequestedType;
+	/** Attendance Supplementary Comment */
+	private String attendanceSupplementaryComment;
+	/** Is a Discharge Letter required */
+	private Boolean isDischargeLetterRequired;
+	/** DischargeLetterStatus */
+	private ims.domain.lookups.LookupInstance dischargeLetterStatus;
+	private String ambulanceDelayReasonComment;
+	private ims.domain.lookups.LookupInstance requiresSignOff;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public EmergencyAttendance (Integer id, int ver)
@@ -550,10 +581,10 @@ public class EmergencyAttendance extends ims.domain.DomainObject implements ims.
 		this.sequenceNumber = sequenceNumber;
 	}
 
-	public ims.core.patient.domain.objects.Insurance getInsurance() {
+	public ims.core.patient.domain.objects.NationalHealthCover getInsurance() {
 		return insurance;
 	}
-	public void setInsurance(ims.core.patient.domain.objects.Insurance insurance) {
+	public void setInsurance(ims.core.patient.domain.objects.NationalHealthCover insurance) {
 		this.insurance = insurance;
 	}
 
@@ -562,6 +593,115 @@ public class EmergencyAttendance extends ims.domain.DomainObject implements ims.
 	}
 	public void setPatientMedicalInsurance(ims.core.clinical.domain.objects.PatientMedicalInsurance patientMedicalInsurance) {
 		this.patientMedicalInsurance = patientMedicalInsurance;
+	}
+
+	public Boolean isUsePrivateHealthInsurance() {
+		return usePrivateHealthInsurance;
+	}
+	public void setUsePrivateHealthInsurance(Boolean usePrivateHealthInsurance) {
+		this.usePrivateHealthInsurance = usePrivateHealthInsurance;
+	}
+
+	public java.util.Date getEndOfRegistrationDateTime() {
+		return endOfRegistrationDateTime;
+	}
+	public void setEndOfRegistrationDateTime(java.util.Date endOfRegistrationDateTime) {
+		this.endOfRegistrationDateTime = endOfRegistrationDateTime;
+	}
+
+	public ims.core.clinical.domain.objects.EDClinicDetails getEDClinicDetails() {
+		return eDClinicDetails;
+	}
+	public void setEDClinicDetails(ims.core.clinical.domain.objects.EDClinicDetails eDClinicDetails) {
+		this.eDClinicDetails = eDClinicDetails;
+	}
+
+	public java.util.Date getAmbulanceHandoverDateTime() {
+		return ambulanceHandoverDateTime;
+	}
+	public void setAmbulanceHandoverDateTime(java.util.Date ambulanceHandoverDateTime) {
+		this.ambulanceHandoverDateTime = ambulanceHandoverDateTime;
+	}
+
+	public ims.domain.lookups.LookupInstance getAmbulanceDelayReason() {
+		return ambulanceDelayReason;
+	}
+	public void setAmbulanceDelayReason(ims.domain.lookups.LookupInstance ambulanceDelayReason) {
+		this.ambulanceDelayReason = ambulanceDelayReason;
+	}
+
+	public String getAttendanceOutcomeComment() {
+		return attendanceOutcomeComment;
+	}
+	public void setAttendanceOutcomeComment(String attendanceOutcomeComment) {
+		this.attendanceOutcomeComment = attendanceOutcomeComment;
+	}
+
+	public String getAttendanceDischargeComment() {
+		return attendanceDischargeComment;
+	}
+	public void setAttendanceDischargeComment(String attendanceDischargeComment) {
+		this.attendanceDischargeComment = attendanceDischargeComment;
+	}
+
+	public ims.domain.lookups.LookupInstance getGPLetterStatus() {
+		return gPLetterStatus;
+	}
+	public void setGPLetterStatus(ims.domain.lookups.LookupInstance gPLetterStatus) {
+		this.gPLetterStatus = gPLetterStatus;
+	}
+
+	public String getCustomID() {
+		return customID;
+	}
+	public void setCustomID(String customID) {
+		if ( null != customID && customID.length() > 20 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for customID. Tried to set value: "+
+				customID);
+		}
+		this.customID = customID;
+	}
+
+	public ims.domain.lookups.LookupInstance getAccomodationRequestedType() {
+		return accomodationRequestedType;
+	}
+	public void setAccomodationRequestedType(ims.domain.lookups.LookupInstance accomodationRequestedType) {
+		this.accomodationRequestedType = accomodationRequestedType;
+	}
+
+	public String getAttendanceSupplementaryComment() {
+		return attendanceSupplementaryComment;
+	}
+	public void setAttendanceSupplementaryComment(String attendanceSupplementaryComment) {
+		this.attendanceSupplementaryComment = attendanceSupplementaryComment;
+	}
+
+	public Boolean isIsDischargeLetterRequired() {
+		return isDischargeLetterRequired;
+	}
+	public void setIsDischargeLetterRequired(Boolean isDischargeLetterRequired) {
+		this.isDischargeLetterRequired = isDischargeLetterRequired;
+	}
+
+	public ims.domain.lookups.LookupInstance getDischargeLetterStatus() {
+		return dischargeLetterStatus;
+	}
+	public void setDischargeLetterStatus(ims.domain.lookups.LookupInstance dischargeLetterStatus) {
+		this.dischargeLetterStatus = dischargeLetterStatus;
+	}
+
+	public String getAmbulanceDelayReasonComment() {
+		return ambulanceDelayReasonComment;
+	}
+	public void setAmbulanceDelayReasonComment(String ambulanceDelayReasonComment) {
+		this.ambulanceDelayReasonComment = ambulanceDelayReasonComment;
+	}
+
+	public ims.domain.lookups.LookupInstance getRequiresSignOff() {
+		return requiresSignOff;
+	}
+	public void setRequiresSignOff(ims.domain.lookups.LookupInstance requiresSignOff) {
+		this.requiresSignOff = requiresSignOff;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -824,6 +964,61 @@ public class EmergencyAttendance extends ims.domain.DomainObject implements ims.
 				
 		    auditStr.append(patientMedicalInsurance.getId());
 		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*usePrivateHealthInsurance* :");
+		auditStr.append(usePrivateHealthInsurance);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*endOfRegistrationDateTime* :");
+		auditStr.append(endOfRegistrationDateTime);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*eDClinicDetails* :");
+		if (eDClinicDetails != null)
+		{
+			auditStr.append(toShortClassName(eDClinicDetails));
+				
+		    auditStr.append(eDClinicDetails.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*ambulanceHandoverDateTime* :");
+		auditStr.append(ambulanceHandoverDateTime);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*ambulanceDelayReason* :");
+		if (ambulanceDelayReason != null)
+			auditStr.append(ambulanceDelayReason.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*attendanceOutcomeComment* :");
+		auditStr.append(attendanceOutcomeComment);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*attendanceDischargeComment* :");
+		auditStr.append(attendanceDischargeComment);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*gPLetterStatus* :");
+		if (gPLetterStatus != null)
+			auditStr.append(gPLetterStatus.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*customID* :");
+		auditStr.append(customID);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*accomodationRequestedType* :");
+		if (accomodationRequestedType != null)
+			auditStr.append(accomodationRequestedType.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*attendanceSupplementaryComment* :");
+		auditStr.append(attendanceSupplementaryComment);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*isDischargeLetterRequired* :");
+		auditStr.append(isDischargeLetterRequired);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*dischargeLetterStatus* :");
+		if (dischargeLetterStatus != null)
+			auditStr.append(dischargeLetterStatus.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*ambulanceDelayReasonComment* :");
+		auditStr.append(ambulanceDelayReasonComment);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*requiresSignOff* :");
+		if (requiresSignOff != null)
+			auditStr.append(requiresSignOff.getText());
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -1174,6 +1369,96 @@ public class EmergencyAttendance extends ims.domain.DomainObject implements ims.
 			sb.append("<patientMedicalInsurance>");
 			sb.append(this.getPatientMedicalInsurance().toXMLString(domMap)); 	
 			sb.append("</patientMedicalInsurance>");		
+		}
+		if (this.isUsePrivateHealthInsurance() != null)
+		{
+			sb.append("<usePrivateHealthInsurance>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isUsePrivateHealthInsurance().toString()));
+			sb.append("</usePrivateHealthInsurance>");		
+		}
+		if (this.getEndOfRegistrationDateTime() != null)
+		{
+			sb.append("<endOfRegistrationDateTime>");
+			sb.append(new ims.framework.utils.DateTime(this.getEndOfRegistrationDateTime()).toString(ims.framework.utils.DateTimeFormat.MILLI));
+			sb.append("</endOfRegistrationDateTime>");		
+		}
+		if (this.getEDClinicDetails() != null)
+		{
+			sb.append("<eDClinicDetails>");
+			sb.append(this.getEDClinicDetails().toXMLString(domMap)); 	
+			sb.append("</eDClinicDetails>");		
+		}
+		if (this.getAmbulanceHandoverDateTime() != null)
+		{
+			sb.append("<ambulanceHandoverDateTime>");
+			sb.append(new ims.framework.utils.DateTime(this.getAmbulanceHandoverDateTime()).toString(ims.framework.utils.DateTimeFormat.MILLI));
+			sb.append("</ambulanceHandoverDateTime>");		
+		}
+		if (this.getAmbulanceDelayReason() != null)
+		{
+			sb.append("<ambulanceDelayReason>");
+			sb.append(this.getAmbulanceDelayReason().toXMLString()); 
+			sb.append("</ambulanceDelayReason>");		
+		}
+		if (this.getAttendanceOutcomeComment() != null)
+		{
+			sb.append("<attendanceOutcomeComment>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getAttendanceOutcomeComment().toString()));
+			sb.append("</attendanceOutcomeComment>");		
+		}
+		if (this.getAttendanceDischargeComment() != null)
+		{
+			sb.append("<attendanceDischargeComment>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getAttendanceDischargeComment().toString()));
+			sb.append("</attendanceDischargeComment>");		
+		}
+		if (this.getGPLetterStatus() != null)
+		{
+			sb.append("<gPLetterStatus>");
+			sb.append(this.getGPLetterStatus().toXMLString()); 
+			sb.append("</gPLetterStatus>");		
+		}
+		if (this.getCustomID() != null)
+		{
+			sb.append("<customID>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getCustomID().toString()));
+			sb.append("</customID>");		
+		}
+		if (this.getAccomodationRequestedType() != null)
+		{
+			sb.append("<accomodationRequestedType>");
+			sb.append(this.getAccomodationRequestedType().toXMLString()); 
+			sb.append("</accomodationRequestedType>");		
+		}
+		if (this.getAttendanceSupplementaryComment() != null)
+		{
+			sb.append("<attendanceSupplementaryComment>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getAttendanceSupplementaryComment().toString()));
+			sb.append("</attendanceSupplementaryComment>");		
+		}
+		if (this.isIsDischargeLetterRequired() != null)
+		{
+			sb.append("<isDischargeLetterRequired>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsDischargeLetterRequired().toString()));
+			sb.append("</isDischargeLetterRequired>");		
+		}
+		if (this.getDischargeLetterStatus() != null)
+		{
+			sb.append("<dischargeLetterStatus>");
+			sb.append(this.getDischargeLetterStatus().toXMLString()); 
+			sb.append("</dischargeLetterStatus>");		
+		}
+		if (this.getAmbulanceDelayReasonComment() != null)
+		{
+			sb.append("<ambulanceDelayReasonComment>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getAmbulanceDelayReasonComment().toString()));
+			sb.append("</ambulanceDelayReasonComment>");		
+		}
+		if (this.getRequiresSignOff() != null)
+		{
+			sb.append("<requiresSignOff>");
+			sb.append(this.getRequiresSignOff().toXMLString()); 
+			sb.append("</requiresSignOff>");		
 		}
 		return sb.toString();
 	}
@@ -1612,13 +1897,94 @@ public class EmergencyAttendance extends ims.domain.DomainObject implements ims.
 		if(fldEl != null)
 		{
 			fldEl = fldEl.element("class");		
-			obj.setInsurance(ims.core.patient.domain.objects.Insurance.getInsurancefromXML(fldEl, factory, domMap)); 
+			obj.setInsurance(ims.core.patient.domain.objects.NationalHealthCover.getNationalHealthCoverfromXML(fldEl, factory, domMap)); 
 		}
 		fldEl = el.element("patientMedicalInsurance");
 		if(fldEl != null)
 		{
 			fldEl = fldEl.element("class");		
 			obj.setPatientMedicalInsurance(ims.core.clinical.domain.objects.PatientMedicalInsurance.getPatientMedicalInsurancefromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("usePrivateHealthInsurance");
+		if(fldEl != null)
+		{	
+    		obj.setUsePrivateHealthInsurance(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("endOfRegistrationDateTime");
+		if(fldEl != null)
+		{	
+    		obj.setEndOfRegistrationDateTime(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
+		}
+		fldEl = el.element("eDClinicDetails");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setEDClinicDetails(ims.core.clinical.domain.objects.EDClinicDetails.getEDClinicDetailsfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("ambulanceHandoverDateTime");
+		if(fldEl != null)
+		{	
+    		obj.setAmbulanceHandoverDateTime(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
+		}
+		fldEl = el.element("ambulanceDelayReason");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setAmbulanceDelayReason(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("attendanceOutcomeComment");
+		if(fldEl != null)
+		{	
+    		obj.setAttendanceOutcomeComment(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("attendanceDischargeComment");
+		if(fldEl != null)
+		{	
+    		obj.setAttendanceDischargeComment(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("gPLetterStatus");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setGPLetterStatus(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("customID");
+		if(fldEl != null)
+		{	
+    		obj.setCustomID(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("accomodationRequestedType");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setAccomodationRequestedType(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("attendanceSupplementaryComment");
+		if(fldEl != null)
+		{	
+    		obj.setAttendanceSupplementaryComment(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("isDischargeLetterRequired");
+		if(fldEl != null)
+		{	
+    		obj.setIsDischargeLetterRequired(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("dischargeLetterStatus");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setDischargeLetterStatus(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("ambulanceDelayReasonComment");
+		if(fldEl != null)
+		{	
+    		obj.setAmbulanceDelayReasonComment(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("requiresSignOff");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setRequiresSignOff(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
 		}
 	}
 
@@ -1683,6 +2049,21 @@ public class EmergencyAttendance extends ims.domain.DomainObject implements ims.
 		public static final String SequenceNumber = "sequenceNumber";
 		public static final String Insurance = "insurance";
 		public static final String PatientMedicalInsurance = "patientMedicalInsurance";
+		public static final String UsePrivateHealthInsurance = "usePrivateHealthInsurance";
+		public static final String EndOfRegistrationDateTime = "endOfRegistrationDateTime";
+		public static final String EDClinicDetails = "eDClinicDetails";
+		public static final String AmbulanceHandoverDateTime = "ambulanceHandoverDateTime";
+		public static final String AmbulanceDelayReason = "ambulanceDelayReason";
+		public static final String AttendanceOutcomeComment = "attendanceOutcomeComment";
+		public static final String AttendanceDischargeComment = "attendanceDischargeComment";
+		public static final String GPLetterStatus = "gPLetterStatus";
+		public static final String CustomID = "customID";
+		public static final String AccomodationRequestedType = "accomodationRequestedType";
+		public static final String AttendanceSupplementaryComment = "attendanceSupplementaryComment";
+		public static final String IsDischargeLetterRequired = "isDischargeLetterRequired";
+		public static final String DischargeLetterStatus = "dischargeLetterStatus";
+		public static final String AmbulanceDelayReasonComment = "ambulanceDelayReasonComment";
+		public static final String RequiresSignOff = "requiresSignOff";
 	}
 }
 

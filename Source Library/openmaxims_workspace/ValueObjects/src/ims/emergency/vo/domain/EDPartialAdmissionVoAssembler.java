@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.emergency.vo.domain;
@@ -68,8 +73,12 @@ public class EDPartialAdmissionVoAssembler
 		valueObjectDest.setAdmissionDateTime(valueObjectSrc.getAdmissionDateTime());
 		// AdmissionWard
 		valueObjectDest.setAdmissionWard(valueObjectSrc.getAdmissionWard());
+		// AuthoringInfo
+		valueObjectDest.setAuthoringInfo(valueObjectSrc.getAuthoringInfo());
 		// AdmittingConsultant
 		valueObjectDest.setAdmittingConsultant(valueObjectSrc.getAdmittingConsultant());
+		// AccomodationRequestedType
+		valueObjectDest.setAccomodationRequestedType(valueObjectSrc.getAccomodationRequestedType());
 	 	return valueObjectDest;
 	 }
 
@@ -492,41 +501,45 @@ public class EDPartialAdmissionVoAssembler
 		}
 		// AdmissionWard
 		valueObject.setAdmissionWard(ims.core.vo.domain.LocationLiteVoAssembler.create(map, domainObject.getAdmissionWard()) );
+		// AuthoringInfo
+		valueObject.setAuthoringInfo(ims.core.vo.domain.AuthoringInformationVoAssembler.create(map, domainObject.getAuthoringInfo()) );
 		// AdmittingConsultant
-		ims.domain.lookups.LookupInstance instance10 = domainObject.getAdmittingConsultant();
-		if ( null != instance10 ) {
+		valueObject.setAdmittingConsultant(ims.core.vo.domain.HcpLiteVoAssembler.create(map, domainObject.getAdmittingConsultant()) );
+		// AccomodationRequestedType
+		ims.domain.lookups.LookupInstance instance12 = domainObject.getAccomodationRequestedType();
+		if ( null != instance12 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
 			img = null;
-			if (instance10.getImage() != null) 
+			if (instance12.getImage() != null) 
 			{
-				img = new ims.framework.utils.ImagePath(instance10.getImage().getImageId(), instance10.getImage().getImagePath());
+				img = new ims.framework.utils.ImagePath(instance12.getImage().getImageId(), instance12.getImage().getImagePath());
 			}
-			color = instance10.getColor();
+			color = instance12.getColor();
 			if (color != null) 
 				color.getValue();
 
-			ims.emergency.vo.lookups.ReferralSpecialtyConsultantOrTeam voLookup10 = new ims.emergency.vo.lookups.ReferralSpecialtyConsultantOrTeam(instance10.getId(),instance10.getText(), instance10.isActive(), null, img, color);
-			ims.emergency.vo.lookups.ReferralSpecialtyConsultantOrTeam parentVoLookup10 = voLookup10;
-			ims.domain.lookups.LookupInstance parent10 = instance10.getParent();
-			while (parent10 != null)
+			ims.core.vo.lookups.AccomodationRequestedType voLookup12 = new ims.core.vo.lookups.AccomodationRequestedType(instance12.getId(),instance12.getText(), instance12.isActive(), null, img, color);
+			ims.core.vo.lookups.AccomodationRequestedType parentVoLookup12 = voLookup12;
+			ims.domain.lookups.LookupInstance parent12 = instance12.getParent();
+			while (parent12 != null)
 			{
-				if (parent10.getImage() != null) 
+				if (parent12.getImage() != null) 
 				{
-					img = new ims.framework.utils.ImagePath(parent10.getImage().getImageId(), parent10.getImage().getImagePath() );
+					img = new ims.framework.utils.ImagePath(parent12.getImage().getImageId(), parent12.getImage().getImagePath() );
 				}
 				else 
 				{
 					img = null;
 				}
-				color = parent10.getColor();
+				color = parent12.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup10.setParent(new ims.emergency.vo.lookups.ReferralSpecialtyConsultantOrTeam(parent10.getId(),parent10.getText(), parent10.isActive(), null, img, color));
-				parentVoLookup10 = parentVoLookup10.getParent();
-								parent10 = parent10.getParent();
+								parentVoLookup12.setParent(new ims.core.vo.lookups.AccomodationRequestedType(parent12.getId(),parent12.getText(), parent12.isActive(), null, img, color));
+				parentVoLookup12 = parentVoLookup12.getParent();
+								parent12 = parent12.getParent();
 			}			
-			valueObject.setAdmittingConsultant(voLookup10);
+			valueObject.setAccomodationRequestedType(voLookup12);
 		}
 		 		return valueObject;
 	 }
@@ -663,14 +676,16 @@ public class EDPartialAdmissionVoAssembler
 			}
 		}
 		domainObject.setAdmissionWard(value9);
+		domainObject.setAuthoringInfo(ims.core.vo.domain.AuthoringInformationVoAssembler.extractAuthoringInformation(domainFactory, valueObject.getAuthoringInfo(), domMap));
+		domainObject.setAdmittingConsultant(ims.core.vo.domain.HcpLiteVoAssembler.extractHcp(domainFactory, valueObject.getAdmittingConsultant(), domMap));
 		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value10 = null;
-		if ( null != valueObject.getAdmittingConsultant() ) 
+		ims.domain.lookups.LookupInstance value12 = null;
+		if ( null != valueObject.getAccomodationRequestedType() ) 
 		{
-			value10 =
-				domainFactory.getLookupInstance(valueObject.getAdmittingConsultant().getID());
+			value12 =
+				domainFactory.getLookupInstance(valueObject.getAccomodationRequestedType().getID());
 		}
-		domainObject.setAdmittingConsultant(value10);
+		domainObject.setAccomodationRequestedType(value12);
 
 		return domainObject;
 	}

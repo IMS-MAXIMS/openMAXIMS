@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -40,60 +45,102 @@ import ims.configuration.gen.ConfigFlag;
 import ims.core.admin.pas.vo.InpatientEpisodeRefVo;
 import ims.core.forms.bedinfodialog.GenForm.lyrDetailLayer.tabAdmissionDetailContainer.CaseFolderYesNoEnumeration;
 import ims.core.forms.bedinfodialog.GenForm.lyrDetailLayer.tabBedMoveContainer.grdPatientsRow;
-import ims.core.forms.bedinfodialog.GenForm.lyrDetailLayer.tabDischargeContainer.grp18RunningEnumeration;
-import ims.core.forms.bedinfodialog.GenForm.lyrDetailLayer.tabDischargeContainer.grp18StoppedEnumeration;
-import ims.core.forms.bedinfodialog.GenForm.lyrDetailLayer.tabDischargeContainer.grpTreatmentPostponedEnumeration;
+import ims.core.forms.bedinfodialog.GenForm.lyrDetailLayer.tabDischargeContainer.grpDeferredEnumeration;
+import ims.core.forms.bedinfodialog.GenForm.lyrDetailLayer.tabDischargeContainer.grpPatientTreatedEnumeration;
 import ims.core.forms.bedinfodialog.GenForm.lyrDetailLayer.tabInfantsContainer.grdInfantsRow;
+import ims.core.forms.bedinfodialog.GenForm.lyrDetailLayer.tabReadyForDischargeContainer.DelayedDischargeEnumeration;
+import ims.core.forms.bedinfodialog.GenForm.lyrDetailLayer.tabReadyForDischargeContainer.DischargeLoungeEnumeration;
+import ims.core.forms.bedinfodialog.GenForm.lyrDetailLayer.tabReadyForDischargeContainer.FitForDischargeEnumeration;
 import ims.core.forms.bedinfodialog.GenForm.lyrDetailLayer.tabTransferContainer.lyrTransferLayer.tabInContainer.TICaseFolderYesNoEnumeration;
 import ims.core.forms.bedinfodialog.GenForm.lyrDetailLayer.tabTransferContainer.lyrTransferLayer.tabInContainer.grdTransferInRow;
+import ims.core.helper.PdsAuthenticationHelper;
+import ims.core.helper.PdsAuthenticationHelper.PdsCheck;
+import ims.core.helper.PdsAuthenticationHelper.PdsRight;
 import ims.core.helper.ResetPIDBarHelper;
 import ims.core.resource.people.vo.MemberOfStaffRefVo;
 import ims.core.resource.place.vo.LocationRefVo;
+import ims.core.vo.AdmissionDetailForADTUpdateAdmissionVo;
 import ims.core.vo.AdmissionDetailVo;
+import ims.core.vo.AdmissionReasonVo;
+import ims.core.vo.BayConfigLiteVo;
 import ims.core.vo.BedSpaceStateLiteVo;
 import ims.core.vo.BedSpaceStateStatusLiteVo;
 import ims.core.vo.BedSpaceStateStatusVo;
 import ims.core.vo.CommChannelVo;
+import ims.core.vo.ConsultantStayMinVo;
 import ims.core.vo.ConsultantStayVo;
 import ims.core.vo.ConsultantStayVoCollection;
 import ims.core.vo.DischargedEpisodeADTVo;
 import ims.core.vo.DischargedEpisodeADTVoCollection;
 import ims.core.vo.GpShortVo;
+import ims.core.vo.HealthyLodgerVo;
 import ims.core.vo.HomeLeaveVo;
 import ims.core.vo.InPatientEpisodeADTVo;
 import ims.core.vo.InpatConsultantTransferVo;
 import ims.core.vo.InpatientEpisodeLiteVo;
 import ims.core.vo.InpatientEpisodeLiteVoCollection;
+import ims.core.vo.InpatientEpisodeTrackingMoveVo;
 import ims.core.vo.LocationLiteVo;
 import ims.core.vo.LocationLiteVoCollection;
+import ims.core.vo.MedicVo;
 import ims.core.vo.MemberOfStaffLiteVo;
 import ims.core.vo.NextOfKin;
+import ims.core.vo.PasEventADTVo;
+import ims.core.vo.PatRelative;
 import ims.core.vo.Patient;
 import ims.core.vo.PatientAlertLiteVo;
+import ims.core.vo.PatientCaseNoteCommentSaveVo;
+import ims.core.vo.PatientCaseNoteTransferVo;
+import ims.core.vo.PatientCaseNoteTransferVoCollection;
+import ims.core.vo.PatientCaseNoteVo;
 import ims.core.vo.PatientId;
+import ims.core.vo.PatientLiteVo;
+import ims.core.vo.PatientLite_IdentifiersVo;
 import ims.core.vo.PatientShort;
+import ims.core.vo.PatientTransportRequirementsVo;
 import ims.core.vo.PendingTransfersLiteVo;
 import ims.core.vo.PendingTransfersLiteVoCollection;
 import ims.core.vo.PersonAddress;
+import ims.core.vo.ReasonForDelayedDischargeVo;
+import ims.core.vo.ReasonForDelayedDischargeVoCollection;
+import ims.core.vo.ServiceLiteVo;
+import ims.core.vo.ServiceLiteVoCollection;
+import ims.core.vo.TrackingMovementVo;
+import ims.core.vo.TrackingMovementVoCollection;
+import ims.core.vo.WardConfigLiteVo;
+import ims.core.vo.WardMixedSexBreachVo;
+import ims.core.vo.WardStayLiteVo;
 import ims.core.vo.WardStayVo;
 import ims.core.vo.WardStayVoCollection;
+import ims.core.vo.enums.BedAdmissionValidationType;
+import ims.core.vo.enums.BedDialogPatientDataTabs;
 import ims.core.vo.enums.BedInfoAction;
 import ims.core.vo.enums.MOSQueryEvent;
 import ims.core.vo.enums.MosType;
 import ims.core.vo.enums.SelectItemType;
+import ims.core.vo.lookups.BedSpaceType;
 import ims.core.vo.lookups.BedStatus;
+import ims.core.vo.lookups.CaseNoteStatus;
 import ims.core.vo.lookups.ChannelType;
+import ims.core.vo.lookups.MethodOfAdmission;
 import ims.core.vo.lookups.MethodOfDischarge;
 import ims.core.vo.lookups.PASSpecialty;
 import ims.core.vo.lookups.PASSpecialtyCollection;
 import ims.core.vo.lookups.PasEventType;
 import ims.core.vo.lookups.PatIdType;
+import ims.core.vo.lookups.PatientStatus;
+import ims.core.vo.lookups.ReasonDelayDischarge;
+import ims.core.vo.lookups.ReasonDelayDischargeCollection;
+import ims.core.vo.lookups.Sex;
+import ims.core.vo.lookups.SourceOfReferral;
 import ims.core.vo.lookups.Specialty;
 import ims.core.vo.lookups.SpecialtyCollection;
 import ims.core.vo.lookups.TaxonomyType;
 import ims.core.vo.lookups.TransferStatus;
 import ims.core.vo.lookups.WaitingListStatus;
+import ims.core.vo.lookups.WardBayStatus;
 import ims.core.vo.lookups.WardType;
+import ims.core.vo.lookups.YesNo;
 import ims.domain.exceptions.DomainInterfaceException;
 import ims.domain.exceptions.ForeignKeyViolationException;
 import ims.domain.exceptions.StaleObjectException;
@@ -101,17 +148,32 @@ import ims.emergency.vo.lookups.ElectiveListReason;
 import ims.framework.FormName;
 import ims.framework.LayerBridge;
 import ims.framework.MessageButtons;
+import ims.framework.MessageIcon;
+import ims.framework.controls.DynamicGridCell;
+import ims.framework.controls.DynamicGridColumn;
+import ims.framework.controls.DynamicGridRow;
+import ims.framework.controls.DynamicGridRowCollection;
 import ims.framework.enumerations.DialogResult;
+import ims.framework.enumerations.DynamicCellType;
 import ims.framework.enumerations.FormMode;
+import ims.framework.enumerations.SortOrder;
 import ims.framework.exceptions.CodingRuntimeException;
 import ims.framework.exceptions.PresentationLogicException;
 import ims.framework.utils.Date;
 import ims.framework.utils.DateTime;
 import ims.framework.utils.Time;
+import ims.scheduling.vo.CancellationTypeReasonVo;
+import ims.scheduling.vo.CancellationTypeReasonVoCollection;
+import ims.scheduling.vo.lookups.Rule28DayStatus;
 import ims.vo.interfaces.IMos;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
+//import ims.pathways.vo.PathwayClockVo;
+//import ims.pathways.vo.PathwayRTTStatusVo;
+//import java.util.Collections;
 
 public class Logic extends BaseLogic
 {
@@ -120,22 +182,52 @@ public class Logic extends BaseLogic
 	private static final String	OUT_CONSULTANT	= "OUT_CONSULTANT";
 	private static final String	INFANT_CONSULTANT	= "INFANT_CONSULTANT";
 		
-	private static final String	ADMIT				= "Admit";
-	private static final String	ALLOCATE_BED		= "Allocate Bed";
-	private static final String	RETURN_FROM_LEAVE	= "Return From Leave";
-	private static final String	PLANNED				= "P";
-	private static final String	BOOKED				= "B";
+	private static final String	ADMIT				= " Admit";
+	private static final String	ALLOCATE_BED		= " Allocate Bed";
+	private static final String	ALLOCATE_CHAIR		= " Allocate Chair";
+	private static final String	ALLOCATE_COT		= " Allocate Cot";
+	private static final String	RETURN_FROM_LEAVE	= " Return From Leave";
+	
+	//private static final String	PLANNED				= "P";
+	//private static final String	BOOKED				= "B";
 	private static final String	DIAGNOSTIC			= "1";
 	private static final String	TREATMENT			= "2";
 	
-	private static final Object	PATIENTDIED	= "4";
+	private static final String	PATIENTDIED	= "4";
 	private static final String	STILLBIRTH	= "5";
+	
+	private static final int COL_DELAY_DATE = 0;
+	private static final int COL_DELAY_END_DATE = 1;
+	private static final int COL_DELAY_REASON = 2;
+	
+	private static final int COL_MAIN_BEDNO = 0;
+	private static final int COL_MAIN_AGE = 6;
+	private static final int COL_MAIN_DOB = 7;
+	
+	private static final int COL_INFANT_AGE = 5;
+	
+	//private static final Integer DEFINITIVE_TREATEMENT_STARTED = 30;
 
+	@SuppressWarnings("unused")
 	private static final long	serialVersionUID	= 1L;
 
+	
+	
 	protected void onFormOpen(Object[] args) throws PresentationLogicException
 	{
-		initialise();
+		//WDEV-22041 
+		onBedInfoDialogFormOpen(args);
+	}
+
+	//WDEV-22041 refactor into separate method 
+	private void onBedInfoDialogFormOpen(Object[] args)
+	{
+		if (!ConfigFlag.DOM.USE_PDS.getValue().equals("None"))
+			form.lyrDetail().tabAdmission().btnAdmit().setPostbackRequirePdsAuthentication(true);
+		
+		initialise(false, false);
+		//WDEV-23052 - chair/bed label
+		setBedTypeLabels(form.getGlobalContext().Core.getSelectedBedSpaceState());
 		//WDEV-9790 - parameter passed from wardview will indicate its readonly state
 		if(args != null && args.length > 0) //WDEV-10421 - null pointer fix
 		{
@@ -147,22 +239,114 @@ public class Logic extends BaseLogic
 					setDialogAsReadOnly();
 				}	
 			}			
+		}		
+		BedDialogPatientDataTabs customTabToOpen = getCustomTabToOpen(args);
+		
+		// Show initial tab when the form is open
+		BedStatus status = form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getCurrentBedStatusIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getCurrentBedStatus().getBedStatusIsNotNull() ? form.getGlobalContext().Core.getSelectedBedSpaceState().getCurrentBedStatus().getBedStatus() : null;
+
+		showInitialTab(status, customTabToOpen);
+		populateInstanceControls(status);
+	}
+
+
+	private void setBedTypeLabels(BedSpaceStateLiteVo selectedBedSpaceState)
+	{
+		String str = getBedSpaceTypeDescriptor(selectedBedSpaceState);
+		
+		form.lblBedNumber().setValue(str + " Number:");
+		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().lblAllocateBedTransf().setValue("Allocate Source\n" + str + " for Cleaning:");
+		form.lyrDetail().tabTransfer().lyrTransfer().tabOut().lblBedReadyTime().setValue(str + " Available Date:");
+		form.lyrDetail().tabDischarge().lblAllocateForCleaning().setValue("Allocate " + str + " For Cleaning:");
+		form.lyrDetail().tabHomeLeave().lblRetainBedHL().setValue("Retain Patient's " + str);
+		form.lyrDetail().tabHomeLeaveReturn().btnUnretain().setText(" Vacate " + str);
+		form.lyrDetail().tabHLeaveReturnCancel().lblCancelHlRetainBed().setValue("Retained Patient's " + str);
+		form.lyrDetail().tabCloseBed().lblBedStatusChangeDte().setValue("Date/Time " + str + " Status Last Changed");
+		form.lyrDetail().tabCloseBed().lblBedStatusChangeUser().setValue(str + " Status Last Changed by User:");
+		form.lyrDetail().tabCloseBed().btnClose().setText(" Close " + str);
+		form.lyrDetail().tabBedMove().btnSwitchBeds().setText(" Swap " + str);
+		form.lyrDetail().tabBedMove().btnInternalTransfer().setText(" Transfer to " + str);
+				
+		
+	}
+
+	private String getBedSpaceTypeDescriptor(BedSpaceStateLiteVo selectedBedSpaceState)
+	{
+		String str = selectedBedSpaceState == null ? "Bed/Chair" : (selectedBedSpaceState.getBedSpace() != null && selectedBedSpaceState.getBedSpace().getBedSpaceTypeIsNotNull() ? selectedBedSpaceState.getBedSpace().getBedSpaceType().getText() : "Bed/Chair");
+		if (str.startsWith("Maternity"))
+			str = "Bed";
+		return str;
+	}
+
+	private BedDialogPatientDataTabs getCustomTabToOpen(Object[] args)
+	{
+		if (args == null)
+			return null;
+		
+		for (int i = 0; i < args.length; i++)
+		{
+			if (args[i] instanceof BedDialogPatientDataTabs)
+				return (BedDialogPatientDataTabs) args[i];
 		}
 		
-		/*
-		//WDEV-10968
-		try 
-		{
-			AppSiteVo site = domain.getSite();
-			if(site.getSite().equals(ApplicationSiteName.CCO))
-				form.lyrDetail().tabPatient().btnEditPatient().setEnabled(false);
-		} 
-		catch (DomainInterfaceException e) 
-		{
-			engine.showMessage(e.getMessage());
-		}
-		*/
+		return null;
 	}
+
+	
+	private String limitlblLength(String parent, Integer maxLenght)//WDEV-22712
+	{
+		if(parent == null || maxLenght == null)
+			return null;
+		
+		if(parent.length()>maxLenght)
+		{
+			parent = parent.substring(0, maxLenght) + "...";
+			return parent;
+		}
+		return parent;
+	}
+	
+	@Override
+	protected void onRadioButtongrpDeferredValueChanged() throws PresentationLogicException
+	{		
+		if (!grpDeferredEnumeration.rdoYesDeferred.equals(form.lyrDetail().tabDischarge().grpDeferred().getValue()))
+			form.lyrDetail().tabDischarge().cmbDeferredReason().setValue(null);
+		//WDEV-21302
+		if (grpDeferredEnumeration.rdoYesDeferred.equals(form.lyrDetail().tabDischarge().grpDeferred().getValue()))
+			form.lyrDetail().tabDischarge().grpPatientTreated().setValue(grpPatientTreatedEnumeration.None);
+		updateControlsState();
+	}	
+	
+	
+	private void updateControlsState()
+	{
+		boolean useElectiveListFunctionality = Boolean.TRUE.equals(ConfigFlag.GEN.USE_ELECTIVE_LIST_FUNCTIONALITY.getValue());
+
+		boolean deferredYES	= grpDeferredEnumeration.rdoYesDeferred.equals(form.lyrDetail().tabDischarge().grpDeferred().getValue());
+		boolean deferredNo	= grpDeferredEnumeration.rdoNoDeferred.equals(form.lyrDetail().tabDischarge().grpDeferred().getValue()); 
+		
+		form.lyrDetail().tabDischarge().lblDereferred().setVisible(useElectiveListFunctionality && (TREATMENT.equals(form.getLocalContext().getRtpStat()) || DIAGNOSTIC.equals(form.getLocalContext().getRtpStat())));
+		form.lyrDetail().tabDischarge().grpDeferred().setVisible(useElectiveListFunctionality && (TREATMENT.equals(form.getLocalContext().getRtpStat()) || DIAGNOSTIC.equals(form.getLocalContext().getRtpStat())));
+		form.lyrDetail().tabDischarge().txtDeferred().setVisible(useElectiveListFunctionality && (TREATMENT.equals(form.getLocalContext().getRtpStat()) || DIAGNOSTIC.equals(form.getLocalContext().getRtpStat())));
+		form.lyrDetail().tabDischarge().txtDeferred().setEnabled(true);
+				
+		form.lyrDetail().tabDischarge().lblDeferredReason().setVisible(deferredYES);
+		form.lyrDetail().tabDischarge().cmbDeferredReason().setVisible(deferredYES);
+		form.lyrDetail().tabDischarge().cmbDeferredReason().setEnabled(deferredYES && form.lyrDetail().tabDischarge().btnDischarge().isEnabled());
+		
+		form.lyrDetail().tabDischarge().lblWasPatientTreated().setVisible(useElectiveListFunctionality && deferredNo && DIAGNOSTIC.equals(form.getLocalContext().getRtpStat()));
+		form.lyrDetail().tabDischarge().grpPatientTreated().setVisible(useElectiveListFunctionality && deferredNo && DIAGNOSTIC.equals(form.getLocalContext().getRtpStat()));
+		form.lyrDetail().tabDischarge().txtPatientTreated().setVisible(useElectiveListFunctionality && deferredNo && DIAGNOSTIC.equals(form.getLocalContext().getRtpStat()));
+		form.lyrDetail().tabDischarge().txtPatientTreated().setEnabled(true);
+		
+		boolean trackingMovement = form.getGlobalContext().Core.getSelectedBedSpaceState() != null && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode() != null
+									&& form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getCurrentTrackingMovement() != null
+									&& form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getCurrentTrackingMovement().getID_TrackingMovement() != null
+									&& !Boolean.TRUE.equals(form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getCurrentTrackingMovement().getPatientReturned());
+		
+		form.lyrDetail().tabTracking().btnPatReturned().setVisible(trackingMovement);
+	}
+
 
 	private void setDialogAsReadOnly()
 	{	
@@ -172,65 +356,117 @@ public class Logic extends BaseLogic
 		form.lyrDetail().tabDischarge().btnDischarge().setEnabled(false);
 		form.lyrDetail().tabDischarge().btnVTERiskAssesssment().setEnabled(false); //wdev-14858
 		form.lyrDetail().tabAdmission().btnAdmit().setEnabled(false);
+		form.lyrDetail().tabAdmission().btnCancelHL().setEnabled(false);
 		form.lyrDetail().tabHomeLeave().btnHome().setEnabled(false);
+		form.lyrDetail().tabHomeLeaveReturn().btnCancelSendHL().setEnabled(false);
+		form.lyrDetail().tabHomeLeaveReturn().btnReturnFromLeave().setEnabled(false);
+		form.lyrDetail().tabHomeLeaveReturn().btnEditHomeLeave().setEnabled(false);
+		form.lyrDetail().tabHomeLeaveReturn().btnUnretain().setEnabled(false);		
+		form.lyrDetail().tabHLeaveReturnCancel().btnCancelReturnHL().setEnabled(false);
 		form.lyrDetail().tabCloseBed().btnAssign().setEnabled(false);
 		form.lyrDetail().tabCloseBed().btnClose().setEnabled(false);
 		form.lyrDetail().tabCloseBed().btnReOpen().setEnabled(false);
-		form.lyrDetail().tabEstimatedDischarge().btnClearEstimate().setEnabled(false);
-		form.lyrDetail().tabEstimatedDischarge().btnSaveEstDischarge().setEnabled(false);
+		form.lyrDetail().tabReadyForDischarge().btnClearEstimate().setEnabled(false);
+		form.lyrDetail().tabReadyForDischarge().btnSaveEstDischarge().setEnabled(false);
+		form.lyrDetail().tabReadyForDischarge().btnSaveEstDisch().setEnabled(false);
+		form.lyrDetail().tabReadyForDischarge().btnConfirmReadyForDischarge().setEnabled(false);
+		form.lyrDetail().tabReadyForDischarge().btnReviseEstDischDate().setEnabled(false);
+		form.lyrDetail().tabReadyForDischarge().btnReadyToLeave().setEnabled(false);
+		form.lyrDetail().tabReadyForDischarge().btnUndoConfirmedDischarged().setEnabled(false);
+		form.lyrDetail().tabReadyForDischarge().btnUndoReadyToLeave().setEnabled(false);
+		form.lyrDetail().tabTracking().btnSaveTracking().setEnabled(false);
+		form.lyrDetail().tabTracking().btnPatReturned().setEnabled(false);
+		form.lyrDetail().tabReadyForDischarge().btnReadyToLeave().setEnabled(false);
 		form.lyrDetail().tabBedMove().btnInternalTransfer().setEnabled(false);
+		form.lyrDetail().tabBedMove().btnSwitchBeds().setEnabled(false);
 		form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().btnInfantDischarge().setEnabled(false);
 		form.lyrDetail().tabInfants().lyrInfants().tabInfantTransfer().btnInfantTransfer().setEnabled(false);
+		form.lyrDetail().tabAdmissionDetail().setEnabled(false);
 	}
 
-	private void initialise()
+	private void initialise(boolean calledFollowingExc, boolean refreshTabData)
 	{
 		initialiseGridColumns();
+		if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+			initialiseReasonForDelayedDischargeGrid();
 		
 		clearPatientDetails();
 
+		form.lyrDetail().tabBedMove().btnInternalTransfer().setVisible(form.getGlobalContext().Core.getPatientShort() == null);
+		form.lyrDetail().tabBedMove().btnSwitchBeds().setVisible(form.getGlobalContext().Core.getPatientShort() != null);
+		
 		form.lyrDetail().tabPatient().btnEditPatient().setImage(form.getImages().Core.Edit);
 		form.lyrDetail().tabTransfer().btnCancelTransfer().setImage(form.getImages().Core.Delete);
 		form.lyrDetail().tabTransfer().btnTransfer().setImage(form.getImages().Core.Transfer);
 		form.lyrDetail().tabDischarge().btnDischarge().setImage(form.getImages().Core.Discharge);
 		form.lyrDetail().tabHomeLeave().btnHome().setImage(form.getImages().Core.HomeLeave);
+		form.lyrDetail().tabHomeLeaveReturn().btnReturnFromLeave().setImage(form.getImages().Core.ReturnFromHome);
 		form.lyrDetail().tabAdmission().btnAdmit().setImage(form.getImages().Core.ClinicalData);
-		form.lyrDetail().tabEstimatedDischarge().btnSaveEstDischarge().setImage(form.getImages().Core.Save);
+		form.lyrDetail().tabReadyForDischarge().btnSaveEstDischarge().setImage(form.getImages().Core.Save);
+		form.lyrDetail().tabReadyForDischarge().setCaption(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") ? "Ready for Discharge" : "Estimated Discharge");
 		form.lyrDetail().tabCloseBed().btnAssign().setImage(form.getImages().Admin.BedReload24);
 		form.lyrDetail().tabCloseBed().btnClose().setImage(form.getImages().Admin.BedClose24);
-		form.lyrDetail().tabCloseBed().btnReOpen().setImage(form.getImages().Admin.BedOpen24);
+		form.lyrDetail().tabCloseBed().btnReOpen().setImage(form.getImages().Admin.BedOK24);
 		form.lyrDetail().tabBedMove().btnInternalTransfer().setImage(form.getImages().Admin.BedNext24);
+		form.lyrDetail().tabBedMove().btnSwitchBeds().setImage(form.getImages().Admin.BedRefresh24);
 		form.lyrDetail().tabInfants().lyrInfants().tabInfantTransfer().btnInfantTransfer().setImage(form.getImages().Admin.BedNext24);
 		form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().btnInfantDischarge().setImage(form.getImages().Core.Discharge);
-		form.lyrDetail().tabEstimatedDischarge().btnClearEstimate().setImage(form.getImages().Core.Delete);	
+		form.lyrDetail().tabReadyForDischarge().btnClearEstimate().setImage(form.getImages().Core.Delete);
+		form.lyrDetail().tabReadyForDischarge().btnCancelEstDisch().setImage(form.getImages().Core.Delete);
+		form.lyrDetail().tabTracking().btnCancelTracking().setImage(form.getImages().Core.Delete);	
+		form.lyrDetail().tabReadyForDischarge().btnSaveEstDisch().setImage(form.getImages().Core.Save);	
+		form.lyrDetail().tabHLeaveReturnCancel().btnCancelReturnHL().setImage(form.getImages().Core.HomeLeaveCancel);	
+		form.lyrDetail().tabHomeLeaveReturn().btnCancelSendHL().setImage(form.getImages().Core.HomeLeaveCancel);	
+		form.lyrDetail().tabAdmission().btnCancelHL().setImage(form.getImages().Core.HomeLeaveCancel);	
+		//WDEV-18531
+		form.lyrDetail().tabTracking().btnSaveTracking().setImage(form.getImages().Core.OK24);
+		form.lyrDetail().tabTracking().btnPatReturned().setImage(form.getImages().Core.Undo24x24);
+		
+		form.lyrDetail().tabHomeLeaveReturn().btnEditHomeLeave().setImage(form.getImages().Core.homeleaveupdate24x24);
+		form.lyrDetail().tabHomeLeaveReturn().btnUnretain().setImage(form.getImages().Core.homeleavenext24x24);
+		
+		form.lyrDetail().tabAdmissionDetail().btnEditAdmission().setImage(form.getImages().Core.ClinicalData);
+		form.lyrDetail().tabAdmissionDetail().btnConsultantStays().setImage(form.getImages().Core.ConsultantStay24);
 		
 		BedStatus status = form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getCurrentBedStatusIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getCurrentBedStatus().getBedStatusIsNotNull() ? form.getGlobalContext().Core.getSelectedBedSpaceState().getCurrentBedStatus().getBedStatus() : null;
 		form.getLocalContext().setBedStatus(status);
-
+		
+		PendingTransfersLiteVo voTransfer = isInpatientEpisodeonTransferOutList(form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisodeIsNotNull() ? form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode() : null);
+		if (form.getGlobalContext().Core.getSelectedWaitingAreaPatient() != null)
+			voTransfer = isInpatientEpisodeonTransferOutList(form.getGlobalContext().Core.getSelectedWaitingAreaPatient());
+		form.getLocalContext().setPendingTransferOut(voTransfer);
+		
 		// if a bed is selected
 		if (status != null)
 		{
 			if (status.equals(BedStatus.AVAILABLE))
 			{
 				form.lyrDetail().tabAdmission().ccAdmit().initialise();
+				engine.clearPatientContextInformation();
 				form.lyrDetail().tabAdmission().btnAdmit().setEnabled(false);
+				form.lyrDetail().tabAdmission().btnCancelHL().setVisible(false);
+				form.lyrDetail().tabAdmission().btnCancelHL().setEnabled(false);
 			}
 			else
 			{
-				displayPatientDetals();
-				loadHospitalsData();
-				displayAdmissionDetails();
+				displayPatientDetails();
+				loadHospitalsData();				
+				displayAdmissionDetails();				
 			}
 		}
 		// no bed selected
 		else
 		{
 			if(form.getGlobalContext().Core.getSelectedWaitingAreaPatient() == null)
+			{	
 				form.lyrDetail().tabAdmission().ccAdmit().initialise();
+				engine.clearPatientContextInformation();
+			}	
 			else
 			{
-				displayPatientDetals();
+				displayPatientDetails();
 				loadHospitalsData();
+				displayAdmissionDetails();				
 			}
 		}
 			
@@ -243,6 +479,9 @@ public class Logic extends BaseLogic
 		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().cmbCCOInSpecialty().setVisible(false);
 		form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbCCOOutSpecialty().setVisible(false);
 		form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().cmbCCOConsultantSpecialty().setVisible(false);
+		form.lyrDetail().tabTransfer().lyrTransfer().tabOut().dtimBedReady().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"));
+		form.lyrDetail().tabTransfer().lyrTransfer().tabOut().dtimBedReady().setEnabled(false);
+		form.lyrDetail().tabTransfer().lyrTransfer().tabOut().lblBedReadyTime().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"));
 		if(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("CCO"))
 		{
 			form.lyrDetail().tabTransfer().lyrTransfer().tabIn().dteDischarge().setRequired(true);
@@ -257,104 +496,468 @@ public class Logic extends BaseLogic
 		}
 		//wdev-14858
 		form.getGlobalContext().Core.setVTERiskAssessmentShortVo(null);
+		form.getGlobalContext().Core.setDischargeEpisodeBedInfo(null); //WDEV-22553
+		form.getGlobalContext().Core.setHealthyLodgerDetails(null); //WDEV-22750
 		form.getLocalContext().setInpatientEpForVTERiskAssessmentVo(null);
 		form.getLocalContext().setVTEShouldCreate(null);
-		form.getLocalContext().setUserHasRight(null);
-		if(	form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull())
+		form.getLocalContext().setbWasConfirmPatientDischPressed(null);
+		form.getLocalContext().setbWasReviseEstDischargeDatePressed(null);		
+		form.getLocalContext().setWardConfig(null);
+		form.getLocalContext().setbHasHomeLeaveReturns(null);
+		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().dteDischarge().setVisible(!ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"));
+		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().dtimEstDischarge().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"));
+				
+		form.lyrDetail().tabAdmissionDetail().btnCancelAdmission().setVisible(engine.hasRight(AppRight.CAN_CANCEL_FROM_ADMISSION_DETAILS));//WDEV-22327
+		form.lyrDetail().tabAdmissionDetail().btnEditAdmission().setVisible(engine.hasRight(AppRight.CAN_EDIT_ADMITTING_DETAILS));
+		form.lyrDetail().tabAdmissionDetail().btnConsultantStays().setVisible(engine.hasRight(AppRight.CAN_VIEW_STAYS_FROM_ADMISSION_DETAILS));
+		
+		if (!ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+			form.lyrDetail().tabTransfer().lyrTransfer().tabIn().lblTransferInEstDischargeDate().setValue("Estimated Discharge Date:");
+		form.getLocalContext().setShowVTERiskAssessmentButton(null);
+		if (form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() || form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull())
 		{
-			InpatientEpisodeForVTERiskAsessmentVo tempVo = domain.getInpatEpisodeForVTERiskAssessment(form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode());
-			if(	tempVo != null && ( VTEAsessmentStatus.REQUIRED.equals(tempVo.getVTEAssessmentStatus()) || VTEAsessmentStatus.INPROGRESS.equals(tempVo.getVTEAssessmentStatus()) ) )	//wdev-14878  //wdev-14858
+			InpatientEpisodeForVTERiskAsessmentVo tempVo = domain.getInpatEpisodeForVTERiskAssessment(form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() ? form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode() : form.getGlobalContext().Core.getSelectedWaitingAreaPatient());
+			if(tempVo != null && (VTEAsessmentStatus.REQUIRED.equals(tempVo.getVTEAssessmentStatus()) || VTEAsessmentStatus.INPROGRESS.equals(tempVo.getVTEAssessmentStatus())))	//wdev-14878  //wdev-14858
 			{
 				form.getLocalContext().setInpatientEpForVTERiskAssessmentVo(tempVo);
-				if( engine.hasRight(AppRight.DISCHARGE_ACCESS_TO_VTE_ASSESSMENT) && ConfigFlag.UI.VTE_RISK_ASSESSMENT_FUNCTIONALITY.getValue() == true)	//wdev-14892,wdev-15062
-					form.getLocalContext().setShowVTERiskAssessmentButton(true);
-				else
-					form.getLocalContext().setShowVTERiskAssessmentButton(false);
+				if (ConfigFlag.UI.VTE_RISK_ASSESSMENT_FUNCTIONALITY.getValue())
+				{
+					boolean hasVTEAppRight = engine.hasRight(AppRight.DISCHARGE_ACCESS_TO_VTE_ASSESSMENT);
+					form.getLocalContext().setShowVTERiskAssessmentButton(hasVTEAppRight);
+					form.getLocalContext().setVTEShouldCreate(hasVTEAppRight);
+				}	
 			}
-			else
-				form.getLocalContext().setShowVTERiskAssessmentButton(false);
-			
-		}
-		else if( form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull())
-		{
-			InpatientEpisodeForVTERiskAsessmentVo tempVo = domain.getInpatEpisodeForVTERiskAssessment(form.getGlobalContext().Core.getSelectedWaitingAreaPatient());//WDEV-14963
-			if(	tempVo != null && ( VTEAsessmentStatus.REQUIRED.equals(tempVo.getVTEAssessmentStatus()) || VTEAsessmentStatus.INPROGRESS.equals(tempVo.getVTEAssessmentStatus()) ) ) //wdev-14778 //wdev-14858
+			//WDEV-22218
+			else if (form.getGlobalContext().Core.getDischargeEpisodeBedInfoIsNotNull() && (VTEAsessmentStatus.REQUIRED.equals(form.getGlobalContext().Core.getDischargeEpisodeBedInfo().getVTEAssessmentStatus()) || VTEAsessmentStatus.INPROGRESS.equals(form.getGlobalContext().Core.getDischargeEpisodeBedInfo().getVTEAssessmentStatus())))
 			{
-				form.getLocalContext().setInpatientEpForVTERiskAssessmentVo(tempVo);
-				if( engine.hasRight(AppRight.DISCHARGE_ACCESS_TO_VTE_ASSESSMENT) && ConfigFlag.UI.VTE_RISK_ASSESSMENT_FUNCTIONALITY.getValue() == true)	//wdev-14892,wdev-15062
-					form.getLocalContext().setShowVTERiskAssessmentButton(true);
-				else
-					form.getLocalContext().setShowVTERiskAssessmentButton(false);
+				if (ConfigFlag.UI.VTE_RISK_ASSESSMENT_FUNCTIONALITY.getValue())
+				{
+					boolean hasVTEAppRight = engine.hasRight(AppRight.DISCHARGE_ACCESS_TO_VTE_ASSESSMENT);
+					form.getLocalContext().setShowVTERiskAssessmentButton(hasVTEAppRight);
+					form.getLocalContext().setVTEShouldCreate(hasVTEAppRight);
+				}				
 			}
-			else
-				form.getLocalContext().setShowVTERiskAssessmentButton(false);
 		}
-		else
-		{
-			form.getLocalContext().setShowVTERiskAssessmentButton(false);
-			
-		}
+		
 		form.getGlobalContext().Core.setCreateVTERiskAssessmentOnDischarge(null);
 		//------------
-
-		updateControlState();
+		form.getLocalContext().setbHasHomeLeaveReturns(domain.hasPatientReturnedFromHomeLeave(form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull()  && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisodeIsNotNull() ? form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode() : form.getGlobalContext().Core.getSelectedWaitingAreaPatient()));
+	
+		updateControlState(calledFollowingExc, refreshTabData);
+				
+		form.getLocalContext().setWardConfig(domain.getWardConfig(form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() ? form.getGlobalContext().Core.getSelectedBedSpaceState().getWard() : form.getGlobalContext().Core.getADTWard()));
+		form.lyrDetail().tabAdmission().ccAdmit().setWardBayConfigRef(form.getLocalContext().getWardConfig());
 		
-		LocationLiteVo currentHospital = domain.getCurrentHospital(engine.getCurrentLocation());//WDEV-18012
-		form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbOutHospital().setValue(currentHospital);//WDEV-18012
-		cmbOutHospitalValueChanged(true);//WDEV-18012
+		if (form.getLocalContext().getPendingTransferOut() == null)
+			cmbOutHospitalValueChanged(true);//WDEV-18012
+		
+		//WDEV-22449
+		form.lyrDetail().tabTransfer().lyrTransfer().tabOut().chkNoLongerBed().setVisible(false); 
+		form.lyrDetail().tabTransfer().lyrTransfer().tabOut().lblNoBed().setVisible(false);
+		form.lyrDetail().tabDischarge().lblDischargeDateTime().setValue("Discharge Date/Time:");
 	}
+
+
+	private void populateInstanceControls(BedStatus status)
+	{
+		if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+		{
+			form.lyrDetail().tabTransfer().lyrTransfer().tabIn().lblAllocateBedTransf().setVisible(false);
+			form.lyrDetail().tabTransfer().lyrTransfer().tabIn().chkAllocateSourceBed().setVisible(false);
+			
+			if (BedStatus.OCCUPIED.equals(status) && form.getGlobalContext().Core.getBedInfoAction() == null)
+			{
+				
+				if (BedDialogPatientDataTabs.TAB_TRANSFER_OUT.equals(form.getLocalContext().getTabFocused()))
+				{
+					if (!form.lyrDetail().tabTransfer().lyrTransfer().tabOut().isInitialized())
+					{	
+						populateTransferOutTabFromData();
+					}
+				}				
+				if (BedDialogPatientDataTabs.TAB_RETURNFROMHOMELEAVE.equals(form.getLocalContext().getTabFocused()))
+				{
+					if (!form.lyrDetail().tabHomeLeaveReturn().isInitialized())
+					{
+						populateHomeLeaveInstanceControls(false);
+					}				
+				}
+				if (BedDialogPatientDataTabs.TAB_TRACKING.equals(form.getLocalContext().getTabFocused()))
+				{					
+					if (!form.lyrDetail().tabTracking().isInitialized())
+					{
+						form.lyrDetail().tabTracking().dtimLeftWard().setValue(new DateTime());
+					}
+
+					if (form.getGlobalContext().Core.getSelectedBedSpaceState() != null && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode() != null)
+					{
+						populateTrackingMovementFromData(form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getCurrentTrackingMovement());
+					}
+					else if (form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull())
+					{
+						populateTrackingMovementFromData(form.getGlobalContext().Core.getSelectedWaitingAreaPatient().getCurrentTrackingMovement());						
+					}
+				}
+				if (BedDialogPatientDataTabs.TAB_EST_DISCHARGE.equals(form.getLocalContext().getTabFocused()))
+				{
+					populateEstimatedDischargeTabFromData();
+					updateReadyForDischargeControlsState(false, form.lyrDetail().tabReadyForDischarge().dtimConfirmedDischargeDate().getValue() != null, DelayedDischargeEnumeration.rdoDelayedDischYes.equals(form.lyrDetail().tabReadyForDischarge().DelayedDischarge().getValue()), form.lyrDetail().tabReadyForDischarge().cmbReasonForExtStay().getValue() != null);
+				}
+			}				
+			if (form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull() || BedStatus.OCCUPIED.equals(status))
+			{				
+				if (BedInfoAction.EDIT_READY_FOR_DISCHARGE.equals(form.getGlobalContext().Core.getBedInfoAction()))
+				{					
+					populateEstimatedDischargeTabFromData();
+					updateReadyForDischargeControlsState(false, form.lyrDetail().tabReadyForDischarge().dtimConfirmedDischargeDate().getValue() != null, DelayedDischargeEnumeration.rdoDelayedDischYes.equals(form.lyrDetail().tabReadyForDischarge().DelayedDischarge().getValue()), form.lyrDetail().tabReadyForDischarge().cmbReasonForExtStay().getValue() != null);
+				}
+				else
+				{	
+					populateTransferOutTabFromData();
+					if (form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().isVisible() && !form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().isInitialized())
+					{
+						populateConsultantTransferTabFromData();
+					}
+				}
+			}
+			if (form.lyrDetail().tabHomeLeaveReturn().isVisible())
+			{
+				if (!form.lyrDetail().tabHomeLeaveReturn().isInitialized())
+				{
+					populateHomeLeaveInstanceControls(BedInfoAction.CANCELHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction()));
+				}
+			}
+		}
+		if (form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull() || (form.getGlobalContext().Core.getSelectedBedSpaceState() != null && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisodeIsNotNull()))
+		{
+			if (BedInfoAction.TRANSFERWAITINGAREAPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction())  || BedInfoAction.TRANSFERWARDPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()))
+			{
+				if (form.lyrDetail().tabTransfer().lyrTransfer().tabOut().isVisible() && !form.lyrDetail().tabTransfer().lyrTransfer().tabOut().isInitialized())
+				{	
+					populateTransferOutTabFromData();
+				}
+				else if (!form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().isInitialized())
+				{
+					populateConsultantTransferTabFromData();
+				}
+			}
+			if (BedInfoAction.TRANSFERHOMELEAVEPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()))
+			{
+				if (!form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().isInitialized())
+				{
+					populateConsultantTransferTabFromData();
+				}
+			}
+			if (form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.CANCELRETURNFROMHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction()))
+			{
+				if (!form.lyrDetail().tabHLeaveReturnCancel().isInitialized())
+				{
+					InPatientEpisodeADTVo voEpisode = domain.getInpatientEpisode(form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisodeIsNotNull() ? form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode() : form.getGlobalContext().Core.getSelectedWaitingAreaPatient());
+					if (voEpisode != null && voEpisode.getPasEventIsNotNull() && !Boolean.TRUE.equals(voEpisode.getIsOnHomeLeave())) 
+					{
+						HomeLeaveVo voHl = getLatestClosedHomeLeaveForEpisode(voEpisode);
+						form.getLocalContext().setHomeLeaveToReOpen(voHl);
+						populateHomeLeaveReturnCancelControlsFromData(voHl);
+					}					
+				}
+			}
+			//WDEV-20806
+			if (BedInfoAction.DISCHARGEWAITINGAREAPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.DISCHARGEWARDPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.DISCHARGEHOMELEAVEPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()) ||  BedInfoAction.DISCHARGEPENDINGPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()))
+			{
+				if (!form.lyrDetail().tabDischarge().isInitialized())
+				{	
+					bindTreatmentDiagnosisDereferredReason(domain.listCancellationTypeReason());
+					populateDischargeTabFromData();
+				}
+			}
+			if (BedInfoAction.CANCELHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.RETURNFROMHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.EDITHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.RETURNFROMHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.VACATEBED.equals(form.getGlobalContext().Core.getBedInfoAction()))
+			{
+				if (!form.lyrDetail().tabHomeLeaveReturn().isInitialized())
+				{	
+					populateHomeLeaveInstanceControls(BedInfoAction.CANCELHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction()));					
+				}
+				if (BedInfoAction.EDITHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction()))
+				{	
+					editHomeLeaveRecord();
+				}
+			}
+			if (BedInfoAction.EDIT_READY_FOR_DISCHARGE.equals(form.getGlobalContext().Core.getBedInfoAction()))
+			{	
+				form.lyrDetail().showtabReadyForDischarge();
+				populateEstimatedDischargeTabFromData();
+				updateReadyForDischargeControlsState(false, form.lyrDetail().tabReadyForDischarge().dtimConfirmedDischargeDate().getValue() != null, DelayedDischargeEnumeration.rdoDelayedDischYes.equals(form.lyrDetail().tabReadyForDischarge().DelayedDischarge().getValue()), form.lyrDetail().tabReadyForDischarge().cmbReasonForExtStay().getValue() != null);
+			}
+		}
+	}
+	//WDEV-22041
+	private void switchToRelevantTab(InpatientEpisodeLiteVo inpatientEpisode)
+	{
+		if (inpatientEpisode == null)
+			return;
+		
+		boolean isOnHomeLeaveInpatient = Boolean.TRUE.equals(inpatientEpisode.getIsOnHomeLeave());
+		boolean isOnTrackingMovement = isPatientOnTrackingMove(inpatientEpisode);
+		boolean isOnTransferList = form.getLocalContext().getPendingTransferOutIsNotNull();
+
+		if (form.getGlobalContext().Core.getBedInfoAction() == null)
+		{	
+			if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("WST"))
+			{	
+				form.lyrDetail().showtabPatient();
+				return;
+			}
+			if (isOnTransferList)
+			{	
+				form.lyrDetail().showtabTransfer();
+				form.lyrDetail().tabTransfer().lyrTransfer().showtabOut();
+				form.getLocalContext().setTabFocused(BedDialogPatientDataTabs.TAB_TRANSFER_OUT);
+				return;
+			}
+			if (isOnHomeLeaveInpatient)
+			{
+				form.lyrDetail().showtabHomeLeaveReturn();
+				form.getLocalContext().setTabFocused(BedDialogPatientDataTabs.TAB_RETURNFROMHOMELEAVE);
+				return;
+			}
+			if (isOnTrackingMovement)
+			{
+				form.lyrDetail().showtabTracking();
+				form.getLocalContext().setTabFocused(BedDialogPatientDataTabs.TAB_TRACKING);
+				return;
+			}			
+		}		
+		if (BedInfoAction.TRANSFERWAITINGAREAPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction())  || BedInfoAction.TRANSFERWARDPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()))
+		{	
+			form.lyrDetail().showtabTransfer();
+			if (!isOnHomeLeaveInpatient || isOnTransferList)
+			{
+				form.lyrDetail().tabTransfer().lyrTransfer().showtabOut();
+				form.getLocalContext().setTabFocused(BedDialogPatientDataTabs.TAB_TRANSFER_OUT);
+			}
+			else
+			{
+				form.lyrDetail().tabTransfer().lyrTransfer().showtabConsultant();
+				form.getLocalContext().setTabFocused(BedDialogPatientDataTabs.TAB_TRANSFER_CONSULTANT);
+			}
+			return;
+		}	
+		if (BedInfoAction.TRANSFERHOMELEAVEPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()))
+		{						
+			form.lyrDetail().tabTransfer().lyrTransfer().tabOut().setVisible(isOnTransferList);
+			form.lyrDetail().tabTransfer().lyrTransfer().tabOut().setHeaderVisible(isOnTransferList);
+			form.lyrDetail().showtabTransfer();
+			if (isOnTransferList)
+			{
+				form.lyrDetail().tabTransfer().lyrTransfer().showtabOut();						
+				form.getLocalContext().setTabFocused(BedDialogPatientDataTabs.TAB_TRANSFER_OUT);
+			}
+			else
+			{	
+				form.lyrDetail().tabTransfer().lyrTransfer().showtabConsultant();						
+				form.getLocalContext().setTabFocused(BedDialogPatientDataTabs.TAB_TRANSFER_CONSULTANT);
+			}
+			return;
+		}
+		if (BedInfoAction.DISCHARGEWAITINGAREAPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.DISCHARGEWARDPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.DISCHARGEHOMELEAVEPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.DISCHARGEPENDINGPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()))
+		{					
+			form.lyrDetail().showtabDischarge();
+			form.getLocalContext().setTabFocused(BedDialogPatientDataTabs.TAB_DISCHARGE);
+			return;
+		}					
+
+		if (BedInfoAction.RETURNFROMHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.CANCELHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.EDITHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.VACATEBED.equals(form.getGlobalContext().Core.getBedInfoAction()))
+		{					
+			form.lyrDetail().showtabHomeLeaveReturn();
+			form.getLocalContext().setTabFocused(BedDialogPatientDataTabs.TAB_RETURNFROMHOMELEAVE);
+			return;
+		}
+		if (BedInfoAction.CANCELRETURNFROMHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction()))
+		{
+			form.lyrDetail().showtabHLeaveReturnCancel();
+			form.getLocalContext().setTabFocused(BedDialogPatientDataTabs.TAB_CANCEL_RETURNFROMHOMELEAVE);
+			return;
+		}
+		if (BedInfoAction.EDIT_READY_FOR_DISCHARGE.equals(form.getGlobalContext().Core.getBedInfoAction()))
+		{
+			form.lyrDetail().showtabReadyForDischarge();
+			form.getLocalContext().setTabFocused(BedDialogPatientDataTabs.TAB_EST_DISCHARGE);
+			return;
+		}	
+	
+		form.lyrDetail().showtabPatient();
+	}
+
+	private boolean isPatientOnTrackingMove(InpatientEpisodeLiteVo inpatientEpisode)
+	{
+		if (inpatientEpisode == null || inpatientEpisode.getCurrentTrackingMovement() == null)
+			return false;
+		
+		if (Boolean.TRUE.equals(inpatientEpisode.getCurrentTrackingMovement().getPatientReturned()))
+			return false;
+		
+		return true;
+	}
+	private void populateHomeLeaveReturnCancelControlsFromData(HomeLeaveVo voHl)
+	{
+		clearHomeLeaveReturnCancelTab();
+		if (voHl == null)
+			return;
+		form.lyrDetail().tabHLeaveReturnCancel().dteOnHomeLeave().setValue(voHl.getDateOnHomeLeave());
+		form.lyrDetail().tabHLeaveReturnCancel().timOnHomeLeave().setValue(voHl.getTimeOnHomeLeave());				
+		form.lyrDetail().tabHLeaveReturnCancel().dteExpHLReturn().setValue(voHl.getExpectedDateOfReturn());
+		form.lyrDetail().tabHLeaveReturnCancel().timExpHLReturn().setValue(voHl.getExpectedTimeOfReturn());
+		form.lyrDetail().tabHLeaveReturnCancel().chkPatientBedRetained().setValue(voHl.getBedRetained());			
+	}
+	private void clearHomeLeaveReturnCancelTab()
+	{
+		form.lyrDetail().tabHLeaveReturnCancel().dteOnHomeLeave().setValue(null);
+		form.lyrDetail().tabHLeaveReturnCancel().timOnHomeLeave().setValue(null);
+		form.lyrDetail().tabHLeaveReturnCancel().dteHLReturn().setValue(null);
+		form.lyrDetail().tabHLeaveReturnCancel().timHLReturn().setValue(null);
+		form.lyrDetail().tabHLeaveReturnCancel().dteExpHLReturn().setValue(null);
+		form.lyrDetail().tabHLeaveReturnCancel().timExpHLReturn().setValue(null);
+		form.lyrDetail().tabHLeaveReturnCancel().chkPatientBedRetained().setValue(false);		
+	}
+
+
+	private HomeLeaveVo getLatestClosedHomeLeaveForEpisode(InPatientEpisodeADTVo voEpisode)
+	{
+		if (voEpisode.getHomeLeaves() == null || voEpisode.getHomeLeaves().size() == 0)
+			return null;
+		for (int i=voEpisode.getHomeLeaves().size()-1;i>=0;i--)
+		{
+			if (voEpisode.getHomeLeaves().get(i).getDateReturnedFromHomeLeave() == null)
+				voEpisode.getHomeLeaves().remove(i);
+		}
+		voEpisode.getHomeLeaves().sort(HomeLeaveVo.getDateOnHomeLeaveComparator(SortOrder.DESCENDING));
+		if (voEpisode.getHomeLeaves().size() > 0 && voEpisode.getHomeLeaves().get(0) != null)
+				return voEpisode.getHomeLeaves().get(0);
+		
+		return null;
+	}
+
+
 	private void initialiseGridColumns() 
 	{
 		PatIdType dispIdType = PatIdType.getNegativeInstance(ConfigFlag.UI.DISPLAY_PATID_TYPE.getValue()); 
 		form.lyrDetail().tabBedMove().grdPatients().setColDisplayIdCaption(dispIdType.getText());
 		form.lyrDetail().tabInfants().grdInfants().setColDisplayIdCaption(dispIdType.getText());
 	}
-	
-	private void displayAdmissionDetails()
+	private void initialiseReasonForDelayedDischargeGrid() 
 	{
-		if(ConfigFlag.UI.ADT_VIEW_ADMISSIONDETAILS_FROM_BED.getValue())
+		form.lyrDetail().tabReadyForDischarge().dyngrdDischReason().clear();
+		
+		form.lyrDetail().tabReadyForDischarge().dyngrdDischReason().setSelectable(true);
+
+		DynamicGridColumn delayDateColumn = form.lyrDetail().tabReadyForDischarge().dyngrdDischReason().getColumns().newColumn("Delayed Date", COL_DELAY_DATE);
+		delayDateColumn.setWidth(150);
+		
+		DynamicGridColumn delayEndDateColumn = form.lyrDetail().tabReadyForDischarge().dyngrdDischReason().getColumns().newColumn("End Date", COL_DELAY_END_DATE);
+		delayEndDateColumn.setWidth(150);
+		
+		DynamicGridColumn delayReason = form.lyrDetail().tabReadyForDischarge().dyngrdDischReason().getColumns().newColumn("Delay Reason", COL_DELAY_REASON);
+		delayReason.setWidth(-1);
+		
+	}
+	private DynamicGridColumn getColumn(Integer identifier)
+	{
+		return form.lyrDetail().tabReadyForDischarge().dyngrdDischReason().getColumns().getByIdentifier(identifier);
+	}
+	private void displayAdmissionDetails()
+	{		
+		clearAdmissionDetailControls();
+		if (ConfigFlag.UI.ADT_VIEW_ADMISSIONDETAILS_FROM_BED.getValue())
 		{
-			if(form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull())
+			if (form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() || (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull()))
 			{
-				if(form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisodeIsNotNull())
+				if ((form.getGlobalContext().Core.getSelectedBedSpaceState() != null && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisodeIsNotNull()) || form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull())
 				{
-					if(form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getPasEventIsNotNull())
+					if ((form.getGlobalContext().Core.getSelectedBedSpaceState() != null && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisodeIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getPasEventIsNotNull()) || (form.getGlobalContext().Core.getSelectedWaitingAreaPatient() != null && form.getGlobalContext().Core.getSelectedWaitingAreaPatient().getPasEventIsNotNull()))
 					{
-						AdmissionDetailVo voAdmission = domain.getAdmissionDetailByPasEvent(form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getPasEvent());
+						AdmissionDetailVo voAdmission = form.getLocalContext().getAdmissionDetails();
 						if(voAdmission != null)
 						{
-							form.lyrDetail().tabAdmissionDetail().cmbWard().newRow(form.getGlobalContext().Core.getADTWard(), form.getGlobalContext().Core.getADTWard().toString());
-							form.lyrDetail().tabAdmissionDetail().cmbWard().setValue(form.getGlobalContext().Core.getADTWard());
-
-							if(voAdmission.getPasEventIsNotNull())
+							//WDEV-22877 
+							if (voAdmission.getAdmissionWardIsNotNull())
 							{
-								form.lyrDetail().tabAdmissionDetail().ccConsultant().setValue(voAdmission.getPasEvent().getConsultant());
-								
-								//WDEV-14465
-								if (voAdmission.getPasEvent().getPASSpecialtyIsNotNull()&& ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("CCO")) //WDEV-14047  //WDEV-14465
-								{
-									form.lyrDetail().tabAdmissionDetail().cmbAdmSpecialty().newRow(voAdmission.getPasEvent().getPASSpecialty().getText(), voAdmission.getPasEvent().getPASSpecialty().getText());
-									form.lyrDetail().tabAdmissionDetail().cmbAdmSpecialty().setValue(voAdmission.getPasEvent().getPASSpecialty().getText());
-								}
-								else if (voAdmission.getPasEvent().getSpecialtyIsNotNull())
-								{
-									form.lyrDetail().tabAdmissionDetail().cmbAdmSpecialty().newRow(voAdmission.getPasEvent().getSpecialty().getText(), voAdmission.getPasEvent().getSpecialty().getText());
-									form.lyrDetail().tabAdmissionDetail().cmbAdmSpecialty().setValue(voAdmission.getPasEvent().getSpecialty().getText());
-								}
-								
-								//form.lyrDetail().tabAdmissionDetail().cmbAdmSpecialty().setValue(voAdmission.getPasEvent().getSpecialty());
+								form.lyrDetail().tabAdmissionDetail().cmbAdmWard().newRow(voAdmission.getAdmissionWard(), voAdmission.getAdmissionWard().getName());								
+								form.lyrDetail().tabAdmissionDetail().cmbAdmWard().setValue(voAdmission.getAdmissionWard());
 							}
+
+							//WDEV-22326
+							boolean isElectiveListAdmission = voAdmission.getPasEventIsNotNull() && PasEventType.TCI.equals(voAdmission.getPasEvent().getEventType());
+
+							LocationLiteVo currentWard = form.getGlobalContext().Core.getADTWard() != null ? form.getGlobalContext().Core.getADTWard() : form.getLocalContext().getAdmissionDetails().getWard();
+							if (currentWard != null)
+							{	
+								form.lyrDetail().tabAdmissionDetail().cmbWard().newRow(currentWard, currentWard.toString());
+								form.lyrDetail().tabAdmissionDetail().cmbWard().setValue(currentWard);
+							}
+
+							if (voAdmission.getWardIsNotNull())
+							{
+								if (!form.lyrDetail().tabAdmissionDetail().cmbWard().getValues().contains(voAdmission.getWard()))
+								{
+									form.lyrDetail().tabAdmissionDetail().cmbWard().newRow(voAdmission.getWard(), voAdmission.getWard().getName());								
+								}
+								form.lyrDetail().tabAdmissionDetail().cmbWard().setValue(voAdmission.getWard());
+							}
+
+							if (voAdmission.getService() != null)
+							{
+								form.lyrDetail().tabAdmissionDetail().cmbService().newRow(voAdmission.getService(), voAdmission.getService().getServiceName());
+								form.lyrDetail().tabAdmissionDetail().cmbService().setValue(voAdmission.getService());
+							}
+							
+							if (voAdmission.getSpecialty() != null)
+							{
+								form.lyrDetail().tabAdmissionDetail().cmbAdmSpecialty().newRow(voAdmission.getSpecialty().getText(), voAdmission.getSpecialty().getText());
+								form.lyrDetail().tabAdmissionDetail().cmbAdmSpecialty().setValue(voAdmission.getSpecialty().getText());
+							}
+							
+							if (voAdmission.getConsultant() != null)
+							{
+								form.lyrDetail().tabAdmissionDetail().ccConsultant().setValue(voAdmission.getConsultant());
+							}
+
+//							if(voAdmission.getPasEventIsNotNull())
+//							{
+//								form.lyrDetail().tabAdmissionDetail().ccConsultant().setValue(voAdmission.getPasEvent().getConsultant());
+//								
+//								//WDEV-14465
+//								if (voAdmission.getPasEvent().getPASSpecialtyIsNotNull()&& ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("CCO")) //WDEV-14047  //WDEV-14465
+//								{
+//									form.lyrDetail().tabAdmissionDetail().cmbAdmSpecialty().newRow(voAdmission.getPasEvent().getPASSpecialty().getText(), voAdmission.getPasEvent().getPASSpecialty().getText());
+//									form.lyrDetail().tabAdmissionDetail().cmbAdmSpecialty().setValue(voAdmission.getPasEvent().getPASSpecialty().getText());
+//								}
+//								else if (voAdmission.getPasEvent().getSpecialtyIsNotNull())
+//								{
+//									form.lyrDetail().tabAdmissionDetail().cmbAdmSpecialty().newRow(voAdmission.getPasEvent().getSpecialty().getText(), voAdmission.getPasEvent().getSpecialty().getText());
+//									form.lyrDetail().tabAdmissionDetail().cmbAdmSpecialty().setValue(voAdmission.getPasEvent().getSpecialty().getText());
+//								}
+//								
+//								//form.lyrDetail().tabAdmissionDetail().cmbAdmSpecialty().setValue(voAdmission.getPasEvent().getSpecialty());
+//							}
 
 							form.lyrDetail().tabAdmissionDetail().cmbAdmWardType().setValue(voAdmission.getWardType()); 
 							form.lyrDetail().tabAdmissionDetail().cmbMethodOfAdmission().setValue(voAdmission.getMethodOfAdmission()); 
 							form.lyrDetail().tabAdmissionDetail().cmbSourceOfAdmission().setValue(voAdmission.getSourceOfAdmission());
 							form.lyrDetail().tabAdmissionDetail().dtimAdmission().setValue(voAdmission.getAdmissionDateTime());
-							form.lyrDetail().tabAdmissionDetail().dteAdmEstDischarge().setValue(voAdmission.getEstDischargeDate());						
+							if (!ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+							{	
+								form.lyrDetail().tabAdmissionDetail().dteAdmEstDischarge().setValue(voAdmission.getEstDischargeDateIsNotNull() ? voAdmission.getEstDischargeDate().getDate() : null);
+							}							
+							
+							if (voAdmission.getSourceOfEmergencyReferral() != null)
+							{
+								form.lyrDetail().tabAdmissionDetail().cmbSourceOfEmergencyReferral().setValue(voAdmission.getSourceOfEmergencyReferral());
+							}
+							
 							form.lyrDetail().tabAdmissionDetail().chkChaplain().setValue(voAdmission.getIsChaplainRequired());
 							form.lyrDetail().tabAdmissionDetail().txtReasonForAdmission().setValue(voAdmission.getReasonForAdmission());
 							form.lyrDetail().tabAdmissionDetail().ccReferringConsultant().setValue(voAdmission.getReferringConsultant());
-							form.lyrDetail().tabAdmissionDetail().cmbPatientStatus().setValue(voAdmission.getPatientStatus());
-							
+							form.lyrDetail().tabAdmissionDetail().cmbPatientCateg().setValue(voAdmission.getPatientStatus());
+
 							if(voAdmission.getPasEventIsNotNull())
 								form.lyrDetail().tabAdmissionDetail().cmbSourceOfReferral().setValue(voAdmission.getPasEvent().getSourceOfReferral());
 							
@@ -365,6 +968,36 @@ public class Logic extends BaseLogic
 
 							form.lyrDetail().tabAdmissionDetail().lblUpdateCasefolder().setVisible(false);
 							form.lyrDetail().tabAdmissionDetail().CaseFolderYesNo().setVisible(false);
+							
+							form.lyrDetail().tabAdmissionDetail().chkSelfAdmitPatient().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"));
+							form.lyrDetail().tabAdmissionDetail().chkSelfAdmitPatient().setEnabled(false);
+							form.lyrDetail().tabAdmissionDetail().lblSelfAdmitPatient().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"));
+							
+							form.lyrDetail().tabAdmissionDetail().chkHealthyLodger().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"));
+							form.lyrDetail().tabAdmissionDetail().chkHealthyLodger().setEnabled(false);
+							form.lyrDetail().tabAdmissionDetail().imbHealthyLodger().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && voAdmission != null && voAdmission.getHealthyLodgerDetailsIsNotNull());
+							form.lyrDetail().tabAdmissionDetail().btnAddHealthyLodger().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && voAdmission != null && voAdmission.getHealthyLodgerDetails() == null);
+							
+							form.lyrDetail().tabAdmissionDetail().dtimAdmEstDischarge().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"));
+							form.lyrDetail().tabAdmissionDetail().dtimAdmEstDischarge().setEnabled(false);
+							form.lyrDetail().tabAdmissionDetail().lblSourceOfEmergRefAdmDetail().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && !isElectiveListAdmission); //WDEV-22326
+							form.lyrDetail().tabAdmissionDetail().cmbSourceOfEmergencyReferral().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && !isElectiveListAdmission); //WDEV-22326
+							form.lyrDetail().tabAdmissionDetail().cmbSourceOfEmergencyReferral().setEnabled(false);
+							
+							form.lyrDetail().tabAdmissionDetail().cmbSourceOfReferral().setVisible((!ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS")) || (voAdmission != null && voAdmission.getPasEventIsNotNull() && voAdmission.getPasEvent().getSourceOfReferralIsNotNull()));
+							form.lyrDetail().tabAdmissionDetail().cmbSourceOfReferral().setEnabled(false);
+							form.lyrDetail().tabAdmissionDetail().lblSourceOfRefAdmDetail().setVisible((!ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS")) || (voAdmission != null && voAdmission.getPasEventIsNotNull() && voAdmission.getPasEvent().getSourceOfReferralIsNotNull()));
+							
+							form.lyrDetail().tabAdmissionDetail().txtReasonForAdmission().setVisible(!ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"));
+							form.lyrDetail().tabAdmissionDetail().txtReasonForAdmission().setEnabled(false);
+							form.lyrDetail().tabAdmissionDetail().lblReasonAdmDetail().setVisible(!ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"));
+							form.lyrDetail().tabAdmissionDetail().lblRefConsultantAdmDetail().setVisible(SourceOfReferral.CONSULTANT.equals(form.lyrDetail().tabAdmissionDetail().cmbSourceOfReferral().getValue()));
+							form.lyrDetail().tabAdmissionDetail().ccReferringConsultant().setVisible(SourceOfReferral.CONSULTANT.equals(form.lyrDetail().tabAdmissionDetail().cmbSourceOfReferral().getValue()));
+							form.lyrDetail().tabAdmissionDetail().ccReferringConsultant().setEnabled(false);
+							form.lyrDetail().tabAdmissionDetail().lblUpdateCasefolder().setVisible(!ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("WST"));
+							form.lyrDetail().tabAdmissionDetail().CaseFolderYesNo().setVisible(!ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("WST"));
+							form.lyrDetail().tabAdmissionDetail().txtCaseComment().setEnabled(false);							
+							form.lyrDetail().tabAdmissionDetail().CaseFolderYesNo().setEnabled(false);
 							
 							if(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("CCO"))
 							{
@@ -380,16 +1013,85 @@ public class Logic extends BaseLogic
 								form.lyrDetail().tabAdmissionDetail().CaseFolderYesNo().setEnabled(false);
 								
 								//populate
-								form.lyrDetail().tabAdmissionDetail().txtCaseComment().setValue(voAdmission.getCaseFolderComments());							
-					
+								form.lyrDetail().tabAdmissionDetail().txtCaseComment().setValue(voAdmission.getCaseFolderComments());				
+								
+							}
+							if (!ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("WST"))
+							{
+								form.lyrDetail().tabAdmissionDetail().CaseFolderYesNo().setValue(CaseFolderYesNoEnumeration.None);
 								if(voAdmission.getUpdateCFLIsNotNull())
 									form.lyrDetail().tabAdmissionDetail().CaseFolderYesNo().setValue(voAdmission.getUpdateCFL() ? CaseFolderYesNoEnumeration.rdoYes : CaseFolderYesNoEnumeration.rdoNo);
+							}
+							if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+							{
+								form.lyrDetail().tabAdmissionDetail().chkSelfAdmitPatient().setValue(voAdmission.getSelfAdmitPatientIsNotNull() ? voAdmission.getSelfAdmitPatient() : false);
+								form.lyrDetail().tabAdmissionDetail().dtimAdmEstDischarge().setValue(voAdmission.getEstDischargeDate());
+								form.lyrDetail().tabAdmissionDetail().chkHealthyLodger().setValue(voAdmission.getHealthyLodgerDetailsIsNotNull());
 							}
 						}
 					}
 				}
 			}
 		}
+	}
+
+	private void clearAdmissionDetailControls()
+	{
+		form.lyrDetail().tabAdmissionDetail().CaseFolderYesNo().setValue(CaseFolderYesNoEnumeration.None);
+		form.lyrDetail().tabAdmissionDetail().cmbWard().setValue(null);
+		form.lyrDetail().tabAdmissionDetail().cmbAdmSpecialty().setValue(null);
+		form.lyrDetail().tabAdmissionDetail().cmbAdmWardType().setValue(null);
+		form.lyrDetail().tabAdmissionDetail().cmbMethodOfAdmission().setValue(null);
+		form.lyrDetail().tabAdmissionDetail().cmbPatientCateg().setValue(null);
+		form.lyrDetail().tabAdmissionDetail().cmbService().setValue(null);
+		form.lyrDetail().tabAdmissionDetail().cmbSourceOfAdmission().setValue(null);
+		form.lyrDetail().tabAdmissionDetail().cmbSourceOfReferral().setValue(null);
+		form.lyrDetail().tabAdmissionDetail().cmbSourceOfEmergencyReferral().setValue(null);
+		form.lyrDetail().tabAdmissionDetail().dteAdmEstDischarge().setValue(null);
+		form.lyrDetail().tabAdmissionDetail().dtimAdmission().setValue(null);
+		form.lyrDetail().tabAdmissionDetail().dtimAdmEstDischarge().setValue(null);
+		form.lyrDetail().tabAdmissionDetail().chkChaplain().setValue(false);
+		form.lyrDetail().tabAdmissionDetail().chkHealthyLodger().setValue(false);
+		form.lyrDetail().tabAdmissionDetail().chkSelfAdmitPatient().setValue(false);
+		form.lyrDetail().tabAdmissionDetail().txtCaseComment().setValue(null);
+		form.lyrDetail().tabAdmissionDetail().txtReasonForAdmission().setValue(null);
+		form.lyrDetail().tabAdmissionDetail().ccConsultant().setValue(null);
+		form.lyrDetail().tabAdmissionDetail().ccReferringConsultant().setValue(null);
+	}
+
+	private AdmissionDetailVo getAdmissionDetail()
+	{
+		AdmissionDetailVo admissionDet = null;
+		if(ConfigFlag.UI.ADT_VIEW_ADMISSIONDETAILS_FROM_BED.getValue() || ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+		{
+			if (form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() || form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull())
+			{
+				PasEventADTVo pasEvent = null;
+				if (form.getGlobalContext().Core.getSelectedBedSpaceState() != null && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisodeIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getPasEventIsNotNull())
+				{	
+					pasEvent =  form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getPasEvent();
+				}
+				else if (form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull())
+				{
+					pasEvent = form.getGlobalContext().Core.getSelectedWaitingAreaPatient().getPasEvent();
+				}
+				else if (form.lyrDetail().tabBedMove().isVisible())
+				{	
+					pasEvent =  form.lyrDetail().tabBedMove().grdPatients().getValue() != null && form.lyrDetail().tabBedMove().grdPatients().getValue().getPasEventIsNotNull() ?  form.lyrDetail().tabBedMove().grdPatients().getValue().getPasEvent() : null;
+				}
+				else if (form.lyrDetail().tabTransfer().lyrTransfer().tabIn().isVisible())
+				{	
+					pasEvent =  form.lyrDetail().tabTransfer().lyrTransfer().tabIn().grdTransferIn().getValue() != null && form.lyrDetail().tabTransfer().lyrTransfer().tabIn().grdTransferIn().getValue().getInpatientEpisodeIsNotNull() && form.lyrDetail().tabTransfer().lyrTransfer().tabIn().grdTransferIn().getValue().getInpatientEpisode().getPasEventIsNotNull() ?  form.lyrDetail().tabTransfer().lyrTransfer().tabIn().grdTransferIn().getValue().getInpatientEpisode().getPasEvent() : null;
+				}
+				
+				if (pasEvent != null)
+				{	
+					admissionDet = domain.getAdmissionDetailByPasEvent(pasEvent);
+				}	
+			}	
+		}
+		
+		return admissionDet;
 	}
 
 	private void loadHospitalsData()
@@ -405,9 +1107,10 @@ public class Logic extends BaseLogic
 		form.lblPatientNameBanner().setValue("");
 		form.lblAddress1Banner().setValue("");
 		form.lblAddress2Banner().setValue("");
+		form.lblBedNumberText().setValue("");
 
 		form.lyrDetail().tabPatient().lblPatientNameInfo().setValue("");
-		form.lyrDetail().tabPatient().lblHospNoInfo().setValue("");
+		form.lyrDetail().tabPatient().lblDisplayIdInfo().setValue("");
 		form.lyrDetail().tabPatient().lblNHSNoInfo().setValue("");
 		form.lyrDetail().tabPatient().lblDOBInfo().setValue("");
 		form.lyrDetail().tabPatient().lblAgeInfo().setValue("");
@@ -444,12 +1147,13 @@ public class Logic extends BaseLogic
 
 	}
 
-	private void displayPatientDetals()
+	private void displayPatientDetails()
 	{
 		BedSpaceStateLiteVo voBedSpaceState = form.getGlobalContext().Core.getSelectedBedSpaceState();
+		form.getGlobalContext().Core.setParentFormMode(form.getMode());
 		if (voBedSpaceState != null)
 		{
-			PatientShort voPatShort = null;
+			PatientLiteVo voPatShort = null;
 			if (voBedSpaceState.getInpatientEpisodeIsNotNull() && voBedSpaceState.getInpatientEpisode().getPasEventIsNotNull())
 			{
 				populateEventControlsFromData(voBedSpaceState);
@@ -480,13 +1184,29 @@ public class Logic extends BaseLogic
 				}
 			}
 		}
+		
 	}
 
 	private void populateEventControlsFromData(InpatientEpisodeLiteVo voInpatientEpisode)
 	{
 		if (voInpatientEpisode.getPasEventIsNotNull())
 		{
-			form.lblConsultantBanner().setValue(voInpatientEpisode.getPasEvent().getConsultantIsNotNull() ? voInpatientEpisode.getPasEvent().getConsultant().toString() : "");
+			//WDEV-23078
+//			form.lblConsultantBanner().setValue(voInpatientEpisode.getPasEvent().getConsultantIsNotNull() ? voInpatientEpisode.getPasEvent().getConsultant().toString() : "");
+			form.lblConsultantBanner().setTooltip("");
+			String consultantName = voInpatientEpisode.getPasEvent().getConsultant().toString();
+			if (consultantName != null)
+			{
+				if (consultantName.length() > 36)
+				{
+					form.lblConsultantBanner().setValue(consultantName.substring(0, 36) + "...");
+				}
+				else
+				{
+					form.lblConsultantBanner().setValue(consultantName != "" ? consultantName : "");
+				}
+				form.lblConsultantBanner().setTooltip(consultantName);
+			} //WDEV-23078
 			
 			//WDEV-14465
 			if(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("CCO"))
@@ -496,7 +1216,9 @@ public class Logic extends BaseLogic
 			else
 				form.lblSpecialtyBanner().setValue(voInpatientEpisode.getPasEvent().getSpecialtyIsNotNull() ? voInpatientEpisode.getPasEvent().getSpecialty().getText() : "");
 		}
-		form.lblEstDsichargeBanner().setValue(voInpatientEpisode.getEstDischargeDateIsNotNull() ? voInpatientEpisode.getEstDischargeDate().toString() : "");
+		form.getLocalContext().setAdmissionDetails(getAdmissionDetail());
+		form.lblEstDsichargeBanner().setValue(voInpatientEpisode.getEstDischargeDateIsNotNull() ? voInpatientEpisode.getEstDischargeDate().toString() : "");		
+		form.lblBedNumberText().setValue(voInpatientEpisode.getBed() == null ? "Awaiting Bed/Chair" : (voInpatientEpisode.getBed().getBedSpace() != null && voInpatientEpisode.getBed().getBedSpace().getBedNumber() != null ? voInpatientEpisode.getBed().getBedSpace().getBedNumber() : ""));
 	}
 
 	private void populateEventControlsFromData(BedSpaceStateLiteVo voBedSpaceState)
@@ -505,15 +1227,23 @@ public class Logic extends BaseLogic
 			return;
 
 		InpatientEpisodeLiteVo voInpatientEpisode = voBedSpaceState.getInpatientEpisode();
+		form.getLocalContext().setAdmissionDetails(getAdmissionDetail());
 		populateEventControlsFromData(voInpatientEpisode);
 	}
 
 	private void populatePatientControlsFromData(Patient voPatient)
 	{
-		form.lblHospitalNoBanner().setValue(voPatient.getHospnum() != null ? voPatient.getHospnum().getValue() : "");
-		form.lblNhsNoBanner().setValue(voPatient.getNhsn() != null ? voPatient.getNhsn().getValue() : "");
-		
+		boolean nHSNotPrimaryId = PatIdType.NHSN.getID() != PatIdType.getNegativeInstance(ConfigFlag.UI.DISPLAY_PATID_TYPE.getValue()).getID();
+		String displayIdInfo = ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && nHSNotPrimaryId ? (voPatient.getDisplayId() != null ?  voPatient.getDisplayId().getValue() : "" ) : (voPatient.getHospnum() != null ? voPatient.getHospnum().getValue() : "");
 		String strPatName = voPatient.getISelectedPatientName();
+		String displayIdBanner = ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && nHSNotPrimaryId ? PatIdType.getNegativeInstance(ConfigFlag.UI.DISPLAY_PATID_TYPE.getValue()).getText() + ".:" : "Hospital No.:";
+		
+		form.lyrDetail().tabPatient().lblDisplayId().setValue(displayIdBanner);
+		form.lblHosp().setValue(displayIdBanner);
+		
+		form.lblHospitalNoBanner().setValue(displayIdInfo);
+		form.lblNhsNoBanner().setValue(voPatient.getNhsn() != null ? voPatient.getNhsn().getValue() : "");
+				
 		if(strPatName.length() > 25)
 		{
 			form.lblPatientNameBanner().setValue(strPatName.substring(0,25) + "...");
@@ -526,7 +1256,8 @@ public class Logic extends BaseLogic
 		form.lblAddress2Banner().setValue(voPatient.getAddressIsNotNull() ? voPatient.getAddress().getLine2() : "");
 
 		form.lyrDetail().tabPatient().lblPatientNameInfo().setValue(voPatient.getName() != null ? voPatient.getName().toShortForm() : "");
-		form.lyrDetail().tabPatient().lblHospNoInfo().setValue(voPatient.getHospnum() != null ? voPatient.getHospnum().getValue() : "");
+		
+		form.lyrDetail().tabPatient().lblDisplayIdInfo().setValue(displayIdInfo);
 		form.lyrDetail().tabPatient().lblNHSNoInfo().setValue(voPatient.getNhsn() != null ? voPatient.getNhsn().getValue() : "");
 		form.lyrDetail().tabPatient().lblDOBInfo().setValue(voPatient.getDobIsNotNull() ? voPatient.getDob().toString() : "");
 		
@@ -538,7 +1269,7 @@ public class Logic extends BaseLogic
 		}
 		else
 		{
-			form.lyrDetail().tabPatient().lblDOD().setValue(voPatient.getDod().toString());
+			form.lyrDetail().tabPatient().lblDOD().setValue(voPatient.getDod().toString() + (voPatient.getTimeOfDeathIsNotNull()  ? " at: " + voPatient.getTimeOfDeath().toString() : ""));
 			form.lyrDetail().tabPatient().lblDOD().setVisible(true);
 			form.lyrDetail().tabPatient().lblDODlabel().setVisible(true);
 		}
@@ -557,13 +1288,14 @@ public class Logic extends BaseLogic
 		
 		if(voPatient.getPatientAlertsIsNotNull())
 		{
-			String alertString = "";
+			StringBuilder alertString = new StringBuilder();
+			
 			for(PatientAlertLiteVo voAlert : voPatient.getPatientAlerts())
 			{
 				if(voAlert.getAlertTypeIsNotNull() && voAlert.getIsCurrentlyActiveAlert())	//wdev-11896
-					alertString += voAlert.getAlertType().getText() + "\n";
+					alertString.append(voAlert.getAlertType().getText()).append("\n");
 			}
-			form.lyrDetail().tabPatient().lblAlerts().setValue(alertString);
+			form.lyrDetail().tabPatient().lblAlerts().setValue(alertString.toString());
 		}
 		
 		
@@ -599,6 +1331,42 @@ public class Logic extends BaseLogic
 			}
 		}
 
+		//WDEV-22382 
+		// NOK details can be stored in PDS relative objects. Need to check for valid data
+		if (voPatient.getPDSrelativesIsNotNull()
+				&& voPatient.getPDSrelatives().size() > 0)
+		{
+			boolean PDSNokRelativeExists = false;
+			for (int i=0; i < voPatient.getPDSrelatives().size(); i++)
+			{ //Try to locate relative marked as NOK first
+				PatRelative patRelative = voPatient.getPDSrelatives().get(i);
+				if (patRelative != null
+						&& patRelative.getName() != null
+						&& (Boolean.TRUE.equals(patRelative.getNokInd())))
+				{
+					renderNOKlabels(patRelative);
+					PDSNokRelativeExists = true;
+					break;
+				}
+			}
+			
+			if (!PDSNokRelativeExists)
+			{ // PDS relative marked as NOK. See if a relative exists with name
+				for (int i=0; i < voPatient.getPDSrelatives().size(); i++)
+				{
+					PatRelative patRelative = voPatient.getPDSrelatives().get(i);
+					if (patRelative != null
+							&& patRelative.getName() != null)
+					{
+						renderNOKlabels(patRelative);
+						break;
+					}
+				}
+			}
+		} 
+
+		else //WDEV-22382 - no PDS relative object exists. Check to see if NOK object exists next
+			
 		if (voPatient.getNokIsNotNull())
 		{
 			NextOfKin voNok = voPatient.getNok();
@@ -627,13 +1395,57 @@ public class Logic extends BaseLogic
 			}
 		}
 	}
+	
+	//WDEV-22382
+	private void renderNOKlabels(PatRelative patRelative)
+	{
+		if (patRelative.getNameIsNotNull())
+		{
+			form.lyrDetail().tabPatient().lblNOKNameInfo().setValue(patRelative.getName().toShortForm());
+			if (patRelative.getAddress() != null)
+			{
+				PersonAddress voNokAddress = patRelative.getAddress();
 
-	private void updateControlState()
+				form.lyrDetail().tabPatient().lblNOKAddress1Info().setValue(voNokAddress.getLine1());
+				form.lyrDetail().tabPatient().lblNOKAddress2Info().setValue(voNokAddress.getLine2());
+				form.lyrDetail().tabPatient().lblNOKAddress3Info().setValue(voNokAddress.getLine3());
+				form.lyrDetail().tabPatient().lblNOKAddress4Info().setValue(voNokAddress.getLine4());
+				form.lyrDetail().tabPatient().lblNOKAddress5Info().setValue(voNokAddress.getLine5());
+				form.lyrDetail().tabPatient().lblNokPostCode().setValue(voNokAddress.getPostCode());
+			}
+
+			if(patRelative.getCommChannels() != null)
+			{
+				for (int x=0; x < patRelative.getCommChannels().size(); x++)
+				{
+					CommChannelVo commChannel = patRelative.getCommChannels().get(x);
+						
+					if (commChannel.getCommValue() != null)
+					{
+						if (ChannelType.WORK_PHONE.equals (commChannel.getChannelType()))
+						{
+							form.lyrDetail().tabPatient().lblNOKWorkPhone().setValue(commChannel.getCommValue());
+						}
+						if (ChannelType.HOME_PHONE.equals (commChannel.getChannelType())
+								|| ChannelType.GEN_PHONE.equals (commChannel.getChannelType())
+								|| ChannelType.MOBILE.equals (commChannel.getChannelType())
+								|| ChannelType.EMERGENCY.equals (commChannel.getChannelType()))
+						{
+							form.lyrDetail().tabPatient().lblNOKPhoneInfo().setValue(commChannel.getCommValue());
+						}
+					}
+				}
+			}
+		}
+	}
+
+	
+	private void updateControlState(boolean calledFollowingExc, boolean refreshTabData)
 	{
 		initialiseAdmissionDetailTab();
 	
 		boolean isMaternityInpatient = form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisodeIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getIsMaternityInpatientIsNotNull() ? form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getIsMaternityInpatient() : false;
-
+		boolean isOnHomeLeaveInpatient = form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisodeIsNotNull() ? Boolean.TRUE.equals(form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getIsOnHomeLeave()) : false; 
 		BedStatus status = form.getLocalContext().getBedStatus();
 		if (status != null)
 		{
@@ -653,13 +1465,13 @@ public class Logic extends BaseLogic
 				form.lyrDetail().tabTransfer().lyrTransfer().tabOut().setVisible(false);
 				form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().setHeaderVisible(false);
 				form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().setVisible(false);
-				form.lyrDetail().tabEstimatedDischarge().setVisible(false);
-				form.lyrDetail().tabEstimatedDischarge().setHeaderVisible(false);
+				form.lyrDetail().tabReadyForDischarge().setVisible(false);
+				form.lyrDetail().tabReadyForDischarge().setHeaderVisible(false);
 
 				form.lyrDetail().tabAdmission().setVisible(true);
 
 				form.lyrDetail().tabTransfer().setVisible(true);
-				form.lyrDetail().tabTransfer().btnTransfer().setText("Accept \n Transfer");
+				form.lyrDetail().tabTransfer().btnTransfer().setText(" Accept Transfer");
 				form.lyrDetail().tabTransfer().lyrTransfer().tabIn().setVisible(true);
 
 				form.lyrDetail().tabCloseBed().setVisible(true);
@@ -668,6 +1480,14 @@ public class Logic extends BaseLogic
 				if (!engine.hasRight(AppRight.ALLOW_BEDMAINTENANCE_ADTWARDVIEW))
 					form.lyrDetail().tabCloseBed().setHeaderVisible(false);
 
+				//WDEV-18531
+				form.lyrDetail().tabTracking().setHeaderVisible(Boolean.FALSE);
+				form.lyrDetail().tabTracking().setVisible(Boolean.FALSE);
+				
+				form.lyrDetail().tabHomeLeaveReturn().setHeaderVisible(Boolean.FALSE);
+				form.lyrDetail().tabHomeLeaveReturn().setVisible(Boolean.FALSE);
+				form.lyrDetail().tabHLeaveReturnCancel().setHeaderVisible(Boolean.FALSE);
+				form.lyrDetail().tabHLeaveReturnCancel().setVisible(Boolean.FALSE);
 				form.lyrDetail().showtabAdmission();
 
 				if (!isMaternityInpatient)
@@ -683,56 +1503,97 @@ public class Logic extends BaseLogic
 				form.lyrDetail().tabAdmission().setVisible(false);
 				form.lyrDetail().tabHomeLeave().setHeaderVisible(false);
 				form.lyrDetail().tabHomeLeave().setVisible(false);
-	
-				if(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("CCO"))
-				{
-					form.lyrDetail().tabHomeLeave().setHeaderVisible(true);
-					form.lyrDetail().tabHomeLeave().setVisible(true);
-				}
-
+				
+				form.lyrDetail().tabHomeLeaveReturn().setHeaderVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && isOnHomeLeaveInpatient);
+				form.lyrDetail().tabHomeLeaveReturn().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && isOnHomeLeaveInpatient);
+				form.lyrDetail().tabHomeLeaveReturn().btnCancelSendHL().setEnabled(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && isOnHomeLeaveInpatient && (form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.CANCELHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction())));
+				form.lyrDetail().tabHomeLeaveReturn().btnReturnFromLeave().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && isOnHomeLeaveInpatient);
+				form.lyrDetail().tabHomeLeaveReturn().btnReturnFromLeave().setEnabled(form.lyrDetail().tabHomeLeaveReturn().btnReturnFromLeave().isVisible() && (form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.RETURNFROMHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction())));
+				form.lyrDetail().tabHomeLeaveReturn().lblHLDateReturn().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && isOnHomeLeaveInpatient && (form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.RETURNFROMHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction())));
+				form.lyrDetail().tabHomeLeaveReturn().dteHLDateReturn().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && isOnHomeLeaveInpatient && (form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.RETURNFROMHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction())));
+				form.lyrDetail().tabHomeLeaveReturn().lblHLTimeReturn().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && isOnHomeLeaveInpatient && (form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.RETURNFROMHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction())));
+				form.lyrDetail().tabHomeLeaveReturn().timHLTimeOfReturn().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && isOnHomeLeaveInpatient && (form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.RETURNFROMHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction())));
+				//WDEV-18531 - removed
+				//boolean isElectiveFuncInUse = ConfigFlag.GEN.USE_ELECTIVE_LIST_FUNCTIONALITY.getValue();
+				form.lyrDetail().tabTracking().setHeaderVisible(false);
+				form.lyrDetail().tabTracking().setVisible(false);
+				
+				form.lyrDetail().tabHomeLeave().setHeaderVisible(!ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("WST") && !isOnHomeLeaveInpatient && form.getGlobalContext().Core.getBedInfoAction() == null);
+				form.lyrDetail().tabHomeLeave().setVisible(!ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("WST") && !isOnHomeLeaveInpatient && form.getGlobalContext().Core.getBedInfoAction() == null);
+				
 				form.lyrDetail().tabTransfer().lyrTransfer().tabIn().setHeaderVisible(false);
 				form.lyrDetail().tabTransfer().lyrTransfer().tabIn().setVisible(false);
 				form.lyrDetail().tabCloseBed().setHeaderVisible(false);
 				form.lyrDetail().tabCloseBed().setVisible(false);
-				form.lyrDetail().tabBedMove().setVisible(false);
-				form.lyrDetail().tabBedMove().setHeaderVisible(false);
-				//WDEV-13247
-				if(ConfigFlag.UI.ADT_VIEW_ADMISSIONDETAILS_FROM_BED.getValue())
-					form.lyrDetail().tabAdmissionDetail().setHeaderVisible(true);
+				form.lyrDetail().tabBedMove().setVisible(true);
+				form.lyrDetail().tabBedMove().setHeaderVisible(true);
+			
+				boolean bShowExtendedLOSReason = form.getLocalContext().getAdmissionDetails() != null && form.getLocalContext().getAdmissionDetails().getEstDischargeDate() != null && form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue() != null && form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue().isGreaterThan(form.getLocalContext().getAdmissionDetails().getEstDischargeDate());
+				updateReadyForDischargeControlsState(form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue() != null || Boolean.TRUE.equals(form.getLocalContext().getbWasReviseEstDischargeDatePressed()), form.lyrDetail().tabReadyForDischarge().dtimConfirmedDischargeDate().getValue() != null || Boolean.TRUE.equals(form.getLocalContext().getbWasConfirmPatientDischPressed()), DelayedDischargeEnumeration.rdoDelayedDischYes.equals(form.lyrDetail().tabReadyForDischarge().DelayedDischarge().getValue()), bShowExtendedLOSReason);
 				
-				if(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("WST"))
-				{
-					form.lyrDetail().tabEstimatedDischarge().lblEstRevisedStay().setVisible(false);
-					form.lyrDetail().tabEstimatedDischarge().intEstRevisedStay().setVisible(false);
-					form.lyrDetail().tabEstimatedDischarge().lblDischargeReadyDate().setVisible(false);
-					form.lyrDetail().tabEstimatedDischarge().dteDischargeReady().setVisible(false);
-				}
-				else if(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("CCO"))
-				{
-					form.lyrDetail().tabEstimatedDischarge().dteEstDischarge().setEnabled(false);
-				}
-				
-				PendingTransfersLiteVo voTransfer = isInpatientEpisodeonTransferOutList(form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisodeIsNotNull() ? form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode() : null);
-				form.getLocalContext().setPendingTransferOut(voTransfer);
 				//WDEV-7972
-				form.lblDestWard().setVisible(voTransfer != null);
-				form.lblWardBanner().setVisible(voTransfer != null);
-				form.lblWardBanner().setValue(voTransfer != null && voTransfer.getDestinationWardIsNotNull() ? voTransfer.getDestinationWard().getName() : "");
+				form.lblDestWard().setVisible(form.getLocalContext().getPendingTransferOutIsNotNull());
+				form.lblWardBanner().setVisible(form.getLocalContext().getPendingTransferOutIsNotNull());
+				form.lblWardBanner().setValue(form.getLocalContext().getPendingTransferOutIsNotNull() && form.getLocalContext().getPendingTransferOut().getDestinationWardIsNotNull() ? form.getLocalContext().getPendingTransferOut().getDestinationWard().getName() : "");
 
-				form.lyrDetail().tabTransfer().lyrTransfer().tabOut().setVisible(true);
+				
+				form.lyrDetail().tabTransfer().lyrTransfer().tabOut().setVisible(!isOnHomeLeaveInpatient || form.getLocalContext().getPendingTransferOutIsNotNull());
+				form.lyrDetail().tabTransfer().lyrTransfer().tabOut().setHeaderVisible(!isOnHomeLeaveInpatient || form.getLocalContext().getPendingTransferOutIsNotNull());
 				form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().setVisible(true);
-
-				form.lyrDetail().showtabTransfer();
-				form.lyrDetail().tabTransfer().lyrTransfer().showtabOut();
-				populateTransferOutTabFromData();
-				form.lyrDetail().tabTransfer().btnCancelTransfer().setVisible(form.getLocalContext().getPendingTransferOutIsNotNull());
-				form.lyrDetail().tabDischarge().cmbReason().setEnabled(form.lyrDetail().tabDischarge().grpTreatmentPostponed().getValue().equals(GenForm.lyrDetailLayer.tabDischargeContainer.grpTreatmentPostponedEnumeration.rdoYesTreat) && form.lyrDetail().tabDischarge().btnDischarge().isEnabled());  //wdev-15025
+				form.lyrDetail().tabTransfer().btnCancelTransfer().setVisible(form.getLocalContext().getPendingTransferOutIsNotNull() && (form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.TRANSFERWAITINGAREAPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction())));
+				
+				//WDEV-22449
+				//form.lyrDetail().tabTransfer().lyrTransfer().tabOut().chkNoLongerBed().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && ((form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() || (form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull() && form.getGlobalContext().Core.getSelectedWaitingAreaPatient().getBedIsNotNull()))) && (form.getGlobalContext().Core.getADTPendingTransfer() == null || (form.getGlobalContext().Core.getADTPendingTransfer().getInpatientEpisodeIsNotNull() && form.getGlobalContext().Core.getADTPendingTransfer().getInpatientEpisode().getBedIsNotNull()))); 
+				//form.lyrDetail().tabTransfer().lyrTransfer().tabOut().lblNoBed().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && ((form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() || (form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull() && form.getGlobalContext().Core.getSelectedWaitingAreaPatient().getBedIsNotNull()))) && (form.getGlobalContext().Core.getADTPendingTransfer() == null || (form.getGlobalContext().Core.getADTPendingTransfer().getInpatientEpisodeIsNotNull() && form.getGlobalContext().Core.getADTPendingTransfer().getInpatientEpisode().getBedIsNotNull())));
+				form.lyrDetail().tabDischarge().chkAllocateForCleaning().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && ((form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() || (form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull() && form.getGlobalContext().Core.getSelectedWaitingAreaPatient().getBedIsNotNull()))) && (form.getGlobalContext().Core.getADTPendingTransfer() == null || (form.getGlobalContext().Core.getADTPendingTransfer().getInpatientEpisodeIsNotNull() && form.getGlobalContext().Core.getADTPendingTransfer().getInpatientEpisode().getBedIsNotNull()))); 
+				form.lyrDetail().tabDischarge().lblAllocateForCleaning().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && ((form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() || (form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull() && form.getGlobalContext().Core.getSelectedWaitingAreaPatient().getBedIsNotNull()))) && (form.getGlobalContext().Core.getADTPendingTransfer() == null || (form.getGlobalContext().Core.getADTPendingTransfer().getInpatientEpisodeIsNotNull() && form.getGlobalContext().Core.getADTPendingTransfer().getInpatientEpisode().getBedIsNotNull())));
 
 				if (!isMaternityInpatient)
 				{
 					form.lyrDetail().tabInfants().setVisible(false);
 					form.lyrDetail().tabInfants().setHeaderVisible(false);
 				}
+				
+				if (calledFollowingExc)
+					setFocusOnLastSelectedTab(form.getLocalContext().getTabFocused(), status, refreshTabData); //WDEV-17662
+				
+				boolean patientDeadOrDODEntered = (form.getGlobalContext().Core.getPatientShort() != null && form.getGlobalContext().Core.getPatientShort().getDod() != null) || (form.getLocalContext().getDeathDetailsOnDischargeIsNotNull() && form.getLocalContext().getDeathDetailsOnDischarge().getPatient().getDodIsNotNull());
+				updateDODButtonText(patientDeadOrDODEntered, isMaternityInpatient);
+				
+				form.lyrDetail().tabTracking().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && form.getGlobalContext().Core.getBedInfoAction() == null); //WDEV-19674
+				form.lyrDetail().tabTracking().setHeaderVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && form.getGlobalContext().Core.getBedInfoAction() == null);//WDEV-19674
+				form.lyrDetail().tabBedMove().setVisible(form.getGlobalContext().Core.getBedInfoAction() == null);
+				form.lyrDetail().tabBedMove().setHeaderVisible(form.getGlobalContext().Core.getBedInfoAction() == null);
+				form.lyrDetail().tabAdmissionDetail().setHeaderVisible(Boolean.TRUE.equals(ConfigFlag.UI.ADT_VIEW_ADMISSIONDETAILS_FROM_BED.getValue()) && !BedInfoAction.DISCHARGEPENDINGPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()) && !BedInfoAction.EDIT_READY_FOR_DISCHARGE.equals(form.getGlobalContext().Core.getBedInfoAction()));
+				form.lyrDetail().tabAdmissionDetail().setVisible(Boolean.TRUE.equals(ConfigFlag.UI.ADT_VIEW_ADMISSIONDETAILS_FROM_BED.getValue()) && !BedInfoAction.DISCHARGEPENDINGPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()) && !BedInfoAction.EDIT_READY_FOR_DISCHARGE.equals(form.getGlobalContext().Core.getBedInfoAction()));				
+				form.lyrDetail().tabReadyForDischarge().setHeaderVisible(form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.EDIT_READY_FOR_DISCHARGE.equals(form.getGlobalContext().Core.getBedInfoAction()));
+				form.lyrDetail().tabReadyForDischarge().setVisible(form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.EDIT_READY_FOR_DISCHARGE.equals(form.getGlobalContext().Core.getBedInfoAction()));
+				form.lyrDetail().tabHomeLeaveReturn().setHeaderVisible((isOnHomeLeaveInpatient && form.getGlobalContext().Core.getBedInfoAction() == null) || BedInfoAction.RETURNFROMHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.CANCELHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.EDITHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.VACATEBED.equals(form.getGlobalContext().Core.getBedInfoAction()));
+				form.lyrDetail().tabHomeLeaveReturn().setVisible((isOnHomeLeaveInpatient && form.getGlobalContext().Core.getBedInfoAction() == null) || BedInfoAction.RETURNFROMHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.CANCELHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.EDITHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.VACATEBED.equals(form.getGlobalContext().Core.getBedInfoAction()));
+				
+				form.lyrDetail().tabHLeaveReturnCancel().setHeaderVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && ((!isOnHomeLeaveInpatient && form.getGlobalContext().Core.getBedInfoAction() == null) || BedInfoAction.CANCELRETURNFROMHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction())) && Boolean.TRUE.equals(form.getLocalContext().getbHasHomeLeaveReturns()));
+				form.lyrDetail().tabHLeaveReturnCancel().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && ((!isOnHomeLeaveInpatient && form.getGlobalContext().Core.getBedInfoAction() == null) || BedInfoAction.CANCELRETURNFROMHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction())) && Boolean.TRUE.equals(form.getLocalContext().getbHasHomeLeaveReturns()));
+				
+				form.lyrDetail().tabDischarge().setVisible(form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.DISCHARGEWARDPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.DISCHARGEHOMELEAVEPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.DISCHARGEPENDINGPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()));
+				form.lyrDetail().tabDischarge().setHeaderVisible(form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.DISCHARGEWARDPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.DISCHARGEHOMELEAVEPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.DISCHARGEPENDINGPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()));
+				form.lyrDetail().tabTransfer().setVisible(form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.TRANSFERWARDPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.TRANSFERHOMELEAVEPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()));
+				form.lyrDetail().tabTransfer().setHeaderVisible(form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.TRANSFERWARDPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.TRANSFERHOMELEAVEPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()));
+				form.lyrDetail().tabTransfer().lyrTransfer().tabIn().setVisible(false);
+				form.lyrDetail().tabTransfer().lyrTransfer().tabIn().setHeaderVisible(false);
+				form.lyrDetail().tabTransfer().lyrTransfer().tabOut().setVisible(form.getGlobalContext().Core.getBedInfoAction() == null  || BedInfoAction.TRANSFERWARDPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.TRANSFERWAITINGAREAPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()) || (form.getLocalContext().getPendingTransferOutIsNotNull() && BedInfoAction.TRANSFERHOMELEAVEPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction())));
+				form.lyrDetail().tabTransfer().lyrTransfer().tabOut().setHeaderVisible(form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.TRANSFERWARDPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.TRANSFERWAITINGAREAPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()) || (form.getLocalContext().getPendingTransferOutIsNotNull() && BedInfoAction.TRANSFERHOMELEAVEPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction())));
+				form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().setVisible(form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.TRANSFERWARDPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.TRANSFERHOMELEAVEPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()));
+				form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().setHeaderVisible(form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.TRANSFERWARDPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.TRANSFERHOMELEAVEPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()));
+				
+				form.lyrDetail().tabTransfer().lyrTransfer().tabOut().qmbOutService().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"));
+				form.lyrDetail().tabTransfer().lyrTransfer().tabIn().qmbInService().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"));
+				form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().qmbConsultantService().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"));
+				form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbOutSpecialty().setEnabled(!ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"));
+				form.lyrDetail().tabTransfer().lyrTransfer().tabIn().cmbInSpecialty().setEnabled(!ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"));
+				form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().cmbConsultantSpecialty().setEnabled(!ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"));
+				form.lyrDetail().tabHomeLeaveReturn().btnEditHomeLeave().setVisible(isOnHomeLeaveInpatient && (form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.EDITHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction())));
+				form.lyrDetail().tabHomeLeaveReturn().btnUnretain().setVisible(isOnHomeLeaveInpatient && (form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.VACATEBED.equals(form.getGlobalContext().Core.getBedInfoAction())));
+				
 			}
 			if (status.equals(BedStatus.FOR_CLEANING))
 			{
@@ -745,23 +1606,38 @@ public class Logic extends BaseLogic
 				form.lyrDetail().tabAdmission().setVisible(false);
 				form.lyrDetail().tabTransfer().setHeaderVisible(false);
 				form.lyrDetail().tabTransfer().setVisible(false);
+				form.lyrDetail().tabTracking().setHeaderVisible(false);
+				form.lyrDetail().tabTracking().setVisible(false);
 				form.lyrDetail().tabDischarge().setHeaderVisible(false);
 				form.lyrDetail().tabDischarge().setVisible(false);
-				form.lyrDetail().tabEstimatedDischarge().setHeaderVisible(false);
-				form.lyrDetail().tabEstimatedDischarge().setVisible(false);
+				form.lyrDetail().tabReadyForDischarge().setHeaderVisible(false);
+				form.lyrDetail().tabReadyForDischarge().setVisible(false);
 				form.lyrDetail().tabHomeLeave().setHeaderVisible(false);
 				form.lyrDetail().tabHomeLeave().setVisible(false);
+				form.lyrDetail().tabHomeLeaveReturn().setHeaderVisible(false);
+				form.lyrDetail().tabHomeLeaveReturn().setVisible(false);
+				form.lyrDetail().tabHLeaveReturnCancel().setHeaderVisible(false);
+				form.lyrDetail().tabHLeaveReturnCancel().setVisible(false);
 				form.lyrDetail().tabCloseBed().btnAssign().setVisible(false);
 				form.lyrDetail().tabBedMove().setVisible(false);
 				form.lyrDetail().tabBedMove().setHeaderVisible(false);
+				form.lyrDetail().tabHomeLeaveReturn().setHeaderVisible(false);
+				form.lyrDetail().tabHomeLeaveReturn().setVisible(false);
 
 				form.lyrDetail().tabCloseBed().setVisible(true);
 
 				if (!engine.hasRight(AppRight.ALLOW_BEDMAINTENANCE_ADTWARDVIEW))
 					form.lyrDetail().tabCloseBed().setHeaderVisible(false);
 				else
+				{	 //WDEV-22423
+					if (form.getLocalContext().getCloseBedStatus() == null)
+					{
+						if (form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getCurrentBedStatusIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getCurrentBedStatus().getID_BedSpaceStateStatusIsNotNull())
+							form.getLocalContext().setCloseBedStatus(domain.getBedSpaceStateStatus(form.getGlobalContext().Core.getSelectedBedSpaceState().getCurrentBedStatus()));
+					}
 					populateCloseBedTabFromData();
-				
+				}	
+				//WDEV-22423 -- ends here
 				if (!isMaternityInpatient)
 				{
 					form.lyrDetail().tabInfants().setVisible(false);
@@ -781,13 +1657,18 @@ public class Logic extends BaseLogic
 				form.lyrDetail().tabTransfer().setVisible(false);
 				form.lyrDetail().tabDischarge().setHeaderVisible(false);
 				form.lyrDetail().tabDischarge().setVisible(false);
-				form.lyrDetail().tabEstimatedDischarge().setHeaderVisible(false);
-				form.lyrDetail().tabEstimatedDischarge().setVisible(false);
+				form.lyrDetail().tabReadyForDischarge().setHeaderVisible(false);
+				form.lyrDetail().tabReadyForDischarge().setVisible(false);
 				form.lyrDetail().tabHomeLeave().setHeaderVisible(false);
 				form.lyrDetail().tabHomeLeave().setVisible(false);
+				form.lyrDetail().tabHomeLeaveReturn().setHeaderVisible(false);
+				form.lyrDetail().tabHomeLeaveReturn().setVisible(false);
 				form.lyrDetail().tabBedMove().setVisible(false);
 				form.lyrDetail().tabBedMove().setHeaderVisible(false);
-
+				form.lyrDetail().tabHomeLeaveReturn().setHeaderVisible(false);
+				form.lyrDetail().tabHomeLeaveReturn().setVisible(false);
+				form.lyrDetail().tabHLeaveReturnCancel().setHeaderVisible(false);
+				form.lyrDetail().tabHLeaveReturnCancel().setVisible(false);
 				form.lyrDetail().tabCloseBed().setVisible(true);
 				form.lyrDetail().tabCloseBed().btnClose().setVisible(false);
 
@@ -795,6 +1676,8 @@ public class Logic extends BaseLogic
 				form.lyrDetail().tabCloseBed().cmbUser().setEnabled(false);
 				form.lyrDetail().tabCloseBed().dtimEstReOpen().setEnabled(false);
 				form.lyrDetail().tabCloseBed().dtimClose().setEnabled(false);
+				form.lyrDetail().tabTracking().setHeaderVisible(false);
+				form.lyrDetail().tabTracking().setVisible(false);
 
 				if (!engine.hasRight(AppRight.ALLOW_BEDMAINTENANCE_ADTWARDVIEW))
 					form.lyrDetail().tabCloseBed().setHeaderVisible(false);
@@ -816,10 +1699,10 @@ public class Logic extends BaseLogic
 				}
 			}
 		}
-		else
+		else 
 		{
-			//check GC and if a waiting area patient is selected allow Discharge/Transfer
-			if(form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull())
+			//check GC and if a waiting area patient is selected allow Discharge/Transfer			
+			if (form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull())
 			{
 				// show Patient,Discharge,Transfer Out,Consultant Transfer
 				form.lblNoPatient().setVisible(false);
@@ -827,24 +1710,60 @@ public class Logic extends BaseLogic
 				form.lyrDetail().tabAdmission().setVisible(false);
 				form.lyrDetail().tabHomeLeave().setHeaderVisible(false);
 				form.lyrDetail().tabHomeLeave().setVisible(false);
+				form.lyrDetail().tabTransfer().setVisible(form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.TRANSFERWAITINGAREAPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction())  || BedInfoAction.TRANSFERWARDPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.TRANSFERHOMELEAVEPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()));
+				form.lyrDetail().tabTransfer().setHeaderVisible(form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.TRANSFERWAITINGAREAPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction())  || BedInfoAction.TRANSFERWARDPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.TRANSFERHOMELEAVEPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()));
 				form.lyrDetail().tabTransfer().lyrTransfer().tabIn().setHeaderVisible(false);
 				form.lyrDetail().tabTransfer().lyrTransfer().tabIn().setVisible(false);
+				form.lyrDetail().tabTracking().setHeaderVisible(false);
+				form.lyrDetail().tabTracking().setVisible(false);
 				form.lyrDetail().tabCloseBed().setHeaderVisible(false);
 				form.lyrDetail().tabCloseBed().setVisible(false);
 				form.lyrDetail().tabBedMove().setVisible(false);
 				form.lyrDetail().tabBedMove().setHeaderVisible(false);
-
-				PendingTransfersLiteVo voTransfer = isInpatientEpisodeonTransferOutList(form.getGlobalContext().Core.getSelectedWaitingAreaPatient());
-				form.getLocalContext().setPendingTransferOut(voTransfer);
-
-				form.lyrDetail().tabTransfer().lyrTransfer().tabOut().setVisible(true);
+				form.lyrDetail().tabHomeLeaveReturn().setHeaderVisible(false);
+				form.lyrDetail().tabHomeLeaveReturn().setVisible(false);
+				form.lyrDetail().tabHLeaveReturnCancel().setHeaderVisible(false);
+				form.lyrDetail().tabHLeaveReturnCancel().setVisible(false);
+				
+				// WDEV-19942
+				boolean patientHasBedAndIpEpisode =	(form.getGlobalContext().Core.getSelectedBedSpaceState() != null 
+													&& form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode() != null)
+													|| form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull();
+				
+				boolean isOnHomeLeave  = Boolean.TRUE.equals(form.getGlobalContext().Core.getSelectedWaitingAreaPatient().getIsOnHomeLeave());
+				
+				form.lyrDetail().tabDischarge().setHeaderVisible(form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.DISCHARGEWAITINGAREAPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction())  || BedInfoAction.DISCHARGEWARDPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.DISCHARGEHOMELEAVEPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.DISCHARGEPENDINGPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()));
+				form.lyrDetail().tabDischarge().setVisible(form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.DISCHARGEWAITINGAREAPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction())  || BedInfoAction.DISCHARGEWARDPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.DISCHARGEHOMELEAVEPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.DISCHARGEPENDINGPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()));
+				form.lyrDetail().tabReadyForDischarge().setHeaderVisible(patientHasBedAndIpEpisode && (form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.EDIT_READY_FOR_DISCHARGE.equals(form.getGlobalContext().Core.getBedInfoAction())));
+				form.lyrDetail().tabReadyForDischarge().setVisible(patientHasBedAndIpEpisode && (form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.EDIT_READY_FOR_DISCHARGE.equals(form.getGlobalContext().Core.getBedInfoAction())));
+				form.lyrDetail().tabAdmissionDetail().setVisible(Boolean.TRUE.equals(ConfigFlag.UI.ADT_VIEW_ADMISSIONDETAILS_FROM_BED.getValue()) && !BedInfoAction.DISCHARGEPENDINGPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()) && !BedInfoAction.EDIT_READY_FOR_DISCHARGE.equals(form.getGlobalContext().Core.getBedInfoAction()));	
+				form.lyrDetail().tabAdmissionDetail().setHeaderVisible(Boolean.TRUE.equals(ConfigFlag.UI.ADT_VIEW_ADMISSIONDETAILS_FROM_BED.getValue()) && !BedInfoAction.DISCHARGEPENDINGPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()) && !BedInfoAction.EDIT_READY_FOR_DISCHARGE.equals(form.getGlobalContext().Core.getBedInfoAction()));	
+								
+				form.lblDestWard().setVisible(form.getLocalContext().getPendingTransferOutIsNotNull());
+				form.lblWardBanner().setVisible(form.getLocalContext().getPendingTransferOutIsNotNull());
+				form.lblWardBanner().setValue(form.getLocalContext().getPendingTransferOutIsNotNull()&& form.getLocalContext().getPendingTransferOut().getDestinationWardIsNotNull() ? form.getLocalContext().getPendingTransferOut().getDestinationWard().getName() : null);
+				if (!(form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.TRANSFERWAITINGAREAPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction())  || BedInfoAction.TRANSFERWARDPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.TRANSFERHOMELEAVEPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction())))
+				{	
+					form.getLocalContext().setPendingTransferOut(null);
+				}	
+				
+				form.lyrDetail().tabTransfer().lyrTransfer().tabOut().setVisible((!isOnHomeLeave  || form.getLocalContext().getPendingTransferOutIsNotNull()) && (form.getGlobalContext().Core.getBedInfoAction() == null  || BedInfoAction.TRANSFERWARDPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.TRANSFERWAITINGAREAPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()) || (form.getLocalContext().getPendingTransferOutIsNotNull() && BedInfoAction.TRANSFERHOMELEAVEPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()))));
+				form.lyrDetail().tabTransfer().lyrTransfer().tabOut().setHeaderVisible((!isOnHomeLeave  || form.getLocalContext().getPendingTransferOutIsNotNull()) && (form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.TRANSFERWARDPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.TRANSFERWAITINGAREAPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()) || (form.getLocalContext().getPendingTransferOutIsNotNull() && BedInfoAction.TRANSFERHOMELEAVEPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()))));
+								
 				form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().setVisible(true);
-
-				form.lyrDetail().tabTransfer().lyrTransfer().showtabOut();
-				populateTransferOutTabFromData();
-				form.lyrDetail().tabTransfer().btnCancelTransfer().setVisible(form.getLocalContext().getPendingTransferOutIsNotNull());
-				form.lyrDetail().tabDischarge().cmbReason().setEnabled(form.lyrDetail().tabDischarge().grpTreatmentPostponed().getValue().equals(GenForm.lyrDetailLayer.tabDischargeContainer.grpTreatmentPostponedEnumeration.rdoYesTreat) && form.lyrDetail().tabDischarge().btnDischarge().isEnabled()); //wdev-15025 
-				form.lblWardBanner().setValue(voTransfer != null && voTransfer.getDestinationWardIsNotNull() ? voTransfer.getDestinationWard().getName() : "");
+				//WDEV-20325  
+				//WDEV-22449 
+				//form.lyrDetail().tabTransfer().lyrTransfer().tabOut().chkNoLongerBed().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && ((form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() || (form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull() && form.getGlobalContext().Core.getSelectedWaitingAreaPatient().getBedIsNotNull()))) && (form.getGlobalContext().Core.getADTPendingTransfer() == null || (form.getGlobalContext().Core.getADTPendingTransfer().getInpatientEpisodeIsNotNull() && form.getGlobalContext().Core.getADTPendingTransfer().getInpatientEpisode().getBedIsNotNull()))); 
+				//form.lyrDetail().tabTransfer().lyrTransfer().tabOut().lblNoBed().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && ((form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() || (form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull() && form.getGlobalContext().Core.getSelectedWaitingAreaPatient().getBedIsNotNull()))) && (form.getGlobalContext().Core.getADTPendingTransfer() == null || (form.getGlobalContext().Core.getADTPendingTransfer().getInpatientEpisodeIsNotNull() && form.getGlobalContext().Core.getADTPendingTransfer().getInpatientEpisode().getBedIsNotNull())));
+				//---------
+				form.lyrDetail().tabTransfer().btnCancelTransfer().setVisible(form.getLocalContext().getPendingTransferOutIsNotNull() &&  (form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.TRANSFERWAITINGAREAPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction())));		
+				
+				
+				//WDEV-20325 
+				form.lyrDetail().tabDischarge().chkAllocateForCleaning().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && ((form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() || (form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull() && form.getGlobalContext().Core.getSelectedWaitingAreaPatient().getBedIsNotNull()))) && (form.getGlobalContext().Core.getADTPendingTransfer() == null || (form.getGlobalContext().Core.getADTPendingTransfer().getInpatientEpisodeIsNotNull() && form.getGlobalContext().Core.getADTPendingTransfer().getInpatientEpisode().getBedIsNotNull()))); 
+				form.lyrDetail().tabDischarge().lblAllocateForCleaning().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && ((form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() || (form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull() && form.getGlobalContext().Core.getSelectedWaitingAreaPatient().getBedIsNotNull()))) && (form.getGlobalContext().Core.getADTPendingTransfer() == null || (form.getGlobalContext().Core.getADTPendingTransfer().getInpatientEpisodeIsNotNull() && form.getGlobalContext().Core.getADTPendingTransfer().getInpatientEpisode().getBedIsNotNull())));
+				//----------
+				form.lblWardBanner().setValue(form.getLocalContext().getPendingTransferOutIsNotNull() && form.getLocalContext().getPendingTransferOut().getDestinationWardIsNotNull() ? form.getLocalContext().getPendingTransferOut().getDestinationWard().getName() : "");
 				
 				if (!isMaternityInpatient)
 				{
@@ -853,21 +1772,44 @@ public class Logic extends BaseLogic
 				}
 				
 				//no bed selected
+				form.lyrDetail().tabDischarge().lblAllocateForCleaning().setVisible(false);
 				form.lyrDetail().tabDischarge().chkAllocateForCleaning().setVisible(false);
+								 
+				
+				form.lyrDetail().tabHomeLeaveReturn().setHeaderVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && isOnHomeLeave && (form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.CANCELHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.EDITHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction())));
+				form.lyrDetail().tabHomeLeaveReturn().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && isOnHomeLeave && (form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.CANCELHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.EDITHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction())));
+				
+				form.lyrDetail().tabHomeLeaveReturn().btnCancelSendHL().setEnabled(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && isOnHomeLeave && (form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.CANCELHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction())));
+				form.lyrDetail().tabHomeLeaveReturn().btnReturnFromLeave().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && isOnHomeLeave);
+				form.lyrDetail().tabHomeLeaveReturn().btnReturnFromLeave().setEnabled(form.lyrDetail().tabHomeLeaveReturn().btnReturnFromLeave().isVisible() && (form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.RETURNFROMHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction())));
+				form.lyrDetail().tabHomeLeaveReturn().lblHLDateReturn().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && isOnHomeLeave && (form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.RETURNFROMHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction())));
+				form.lyrDetail().tabHomeLeaveReturn().dteHLDateReturn().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && isOnHomeLeave && (form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.RETURNFROMHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction())));
+				form.lyrDetail().tabHomeLeaveReturn().lblHLTimeReturn().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && isOnHomeLeave && (form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.RETURNFROMHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.EDITHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.VACATEBED.equals(form.getGlobalContext().Core.getBedInfoAction())));
+				form.lyrDetail().tabHomeLeaveReturn().timHLTimeOfReturn().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && isOnHomeLeave && (form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.RETURNFROMHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.EDITHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.VACATEBED.equals(form.getGlobalContext().Core.getBedInfoAction())));
+				
+				form.lyrDetail().tabHLeaveReturnCancel().setHeaderVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && ((!isOnHomeLeave && form.getGlobalContext().Core.getBedInfoAction() == null) || BedInfoAction.CANCELRETURNFROMHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction())) && Boolean.TRUE.equals(form.getLocalContext().getbHasHomeLeaveReturns()));
+				form.lyrDetail().tabHLeaveReturnCancel().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && ((!isOnHomeLeave && form.getGlobalContext().Core.getBedInfoAction() == null) || BedInfoAction.CANCELRETURNFROMHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction())) && Boolean.TRUE.equals(form.getLocalContext().getbHasHomeLeaveReturns()));
+				
+				form.lyrDetail().tabTransfer().lyrTransfer().tabOut().qmbOutService().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"));
+				form.lyrDetail().tabTransfer().lyrTransfer().tabIn().qmbInService().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"));
+				form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().qmbConsultantService().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"));
+				form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbOutSpecialty().setEnabled(!ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"));
+				form.lyrDetail().tabTransfer().lyrTransfer().tabIn().cmbInSpecialty().setEnabled(!ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"));
+				form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().cmbConsultantSpecialty().setEnabled(!ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"));
+				
+				form.lyrDetail().tabHomeLeaveReturn().btnEditHomeLeave().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && isOnHomeLeave && (form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.EDITHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction())));
+				form.lyrDetail().tabHomeLeaveReturn().btnUnretain().setVisible(false);
 				
 				if(form.getGlobalContext().Core.getBedInfoActionIsNotNull())
-				{
-					if(form.getGlobalContext().Core.getBedInfoAction().equals(BedInfoAction.TRANSFERWAITINGAREAPATIENT))
-						form.lyrDetail().showtabTransfer();
-					else if(form.getGlobalContext().Core.getBedInfoAction().equals(BedInfoAction.DISCHARGEWAITINGAREAPATIENT))
+				{					
+					if (BedInfoAction.DISCHARGEWARDPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.DISCHARGEWAITINGAREAPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()) || BedInfoAction.DISCHARGEHOMELEAVEPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction()))
 					{
-						populateDischargeTabFromData();
-						form.lyrDetail().showtabDischarge();
-					}
-					
+						rttControlsInitialise();
+						updateDischargeDateTimeControls();						
+					}					
 					if(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("CCO")) //WDEV-16266
 					{
-						form.lyrDetail().tabEstimatedDischarge().dteEstDischarge().setEnabled(false);
+						form.lyrDetail().tabReadyForDischarge().dteEstDischarge().setEnabled(false);
 					}
 				}
 			}
@@ -883,10 +1825,14 @@ public class Logic extends BaseLogic
 				form.lyrDetail().tabDischarge().setVisible(false);
 				form.lyrDetail().tabHomeLeave().setHeaderVisible(false);
 				form.lyrDetail().tabHomeLeave().setVisible(false);
+				form.lyrDetail().tabHomeLeaveReturn().setHeaderVisible(false);
+				form.lyrDetail().tabHomeLeaveReturn().setVisible(false);
+				form.lyrDetail().tabHLeaveReturnCancel().setHeaderVisible(false);
+				form.lyrDetail().tabHLeaveReturnCancel().setVisible(false);
 				form.lyrDetail().tabTransfer().setVisible(false);
 				form.lyrDetail().tabTransfer().setHeaderVisible(false);
-				form.lyrDetail().tabEstimatedDischarge().setVisible(false);
-				form.lyrDetail().tabEstimatedDischarge().setHeaderVisible(false);
+				form.lyrDetail().tabReadyForDischarge().setVisible(false);
+				form.lyrDetail().tabReadyForDischarge().setHeaderVisible(false);
 				form.lyrDetail().tabCloseBed().btnReOpen().setVisible(false);
 				form.lyrDetail().tabCloseBed().setHeaderVisible(false);
 				form.lyrDetail().tabAdmission().setVisible(true);
@@ -895,18 +1841,26 @@ public class Logic extends BaseLogic
 				form.lyrDetail().tabInfants().setHeaderVisible(false);
 				form.lyrDetail().tabBedMove().setHeaderVisible(false);
 				form.lyrDetail().tabBedMove().setVisible(false);
+				form.lyrDetail().tabTracking().setVisible(false);
+				form.lyrDetail().tabTracking().setHeaderVisible(false);
 			}
 		}
-		
-		//WDEV-9790 - this overrides all enabling of buttons
-		if(form.getLocalContext().getIsReadOnlyIsNotNull() && form.getLocalContext().getIsReadOnly())
-			setDialogAsReadOnly();
-		
-
+	
 		form.lyrDetail().tabDischarge().btnVTERiskAssesssment().setVisible(Boolean.TRUE.equals(form.getLocalContext().getShowVTERiskAssessmentButton()));  //wdev-14858
 		
 		//WDEV-17935
+		updateControlsState();
 		updateDischBedCleaningControlsState();
+		
+		//WDEV-9790 - this overrides all enabling of buttons
+		if (Boolean.TRUE.equals(form.getLocalContext().getIsReadOnly()))
+			setDialogAsReadOnly();		
+	}
+
+	private void updateDODButtonText(boolean patientDeadOrDODEntered, boolean isMaternityInpatient)
+	{		
+		form.lyrDetail().tabDischarge().btnMarkAsDeceased().setText(patientDeadOrDODEntered ? "Death Details" : "Mark as Deceased");
+		form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().btnMarkInfantDeceased().setText(isMaternityInpatient && patientDeadOrDODEntered ? "Death Details" : "Mark as Deceased");			
 		
 	}
 
@@ -935,8 +1889,12 @@ public class Logic extends BaseLogic
 		form.getLocalContext().setInfants(voCollInpatient);
 	}
 
+
 	private PendingTransfersLiteVo isInpatientEpisodeonTransferOutList(InpatientEpisodeRefVo voInpatEpis)
 	{
+		if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && form.getGlobalContext().Core.getADTPendingTransferIsNotNull())
+			return form.getGlobalContext().Core.getADTPendingTransfer();
+		
 		if (voInpatEpis == null)
 			return null;
 
@@ -974,103 +1932,159 @@ public class Logic extends BaseLogic
 		form.lblEstDsichargeBanner().setVisible(false);
 		form.lblDestWard().setVisible(false);
 		form.lblWardBanner().setVisible(false);
+		
+		form.lblBedNumber().setVisible(false);
+		form.lblBedNumberText().setVisible(false);
 	}
 
 	@Override
 	protected void onBtnDischargeClick() throws PresentationLogicException
 	{
+		//WDEV-22553
+		if (isNotMosUser("Logged-in user is not associated with a Member of Staff. Discharge cannot continue.")) //WDEV-22353
+			return;
+		initiateDischarge();
+	}
+	
+	//WDEV-22553
+	private void initiateDischarge()
+	{
 		InpatientEpisodeLiteVo voInpat = null;
-		if(form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull())
+		AdmissionDetailVo currentAdmissionDetail = form.getLocalContext().getAdmissionDetails();
+		
+		if (form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull())
 		{
 			BedSpaceStateLiteVo voBedSpaceState = (BedSpaceStateLiteVo) form.getGlobalContext().Core.getSelectedBedSpaceState().clone();
 			voInpat = voBedSpaceState.getInpatientEpisode();
 		}
-		else if(form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull())
+		else if (form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull())
 			voInpat = form.getGlobalContext().Core.getSelectedWaitingAreaPatient();
-		else
-			throw new CodingRuntimeException("Check GC population");
+		else throw new CodingRuntimeException("Check GC population");
 
-		PatientElectiveListBedAdmissionVo patientElectiveList = null; 
-		
+		boolean uiValidationForDischarge = getUIValidationForDischarge();
+		if (!uiValidationForDischarge)
+			return;
+
+		PatientElectiveListBedAdmissionVo patientElectiveList = null;
 		if (Boolean.TRUE.equals(ConfigFlag.GEN.USE_ELECTIVE_LIST_FUNCTIONALITY.getValue()))
 		{
 			patientElectiveList = domain.getPatientElectiveListForDischarge(voInpat.getPasEvent());
-			
+
 			if (patientElectiveList != null)
 			{
-				// If there are no other elective list to be cancelled
-				TCIOutcomeForPatientElectiveListVo outcome = new TCIOutcomeForPatientElectiveListVo();
-
-				boolean treatmentDeferred = grpTreatmentPostponedEnumeration.rdoYesTreat.equals(form.lyrDetail().tabDischarge().grpTreatmentPostponed().getValue());
-				
-				if (treatmentDeferred && patientElectiveList.getElectiveListReasonIsNotNull() && patientElectiveList.getElectiveListReason().getId() == ElectiveListReason.TREATMENT.getId()) // WDEV-18617
-					outcome.setOutcome(AdmissionOfferOutcome.PATIENT_ADMITTED_TREATMENT_DEFERRED_5);
-				else
-					outcome.setOutcome(AdmissionOfferOutcome.PATIENT_ADMITTED_COMPLETED_1);
-				
-				
-				outcome.setChangeBy((MemberOfStaffRefVo) domain.getMosUser());
-				outcome.setStatusDateTime(new DateTime());
-				outcome.setOutcomeReason(null);
-				
-				if (patientElectiveList.getTCIDetails() != null)
-				{
-					patientElectiveList.getTCIDetails().setCurrentOutcome(outcome);
-					patientElectiveList.getTCIDetails().getOutcomeHistory().add(outcome);
-				}
-				
-				ElectiveListStatusVo electiveStatus = new ElectiveListStatusVo();
-				electiveStatus.setAuthoringUser((MemberOfStaffLiteVo) domain.getMosUser());
-				electiveStatus.setStatusDateTime(new DateTime());
-				
-				if (treatmentDeferred)
-				{
-					electiveStatus.setElectiveListStatus(WaitingListStatus.REQUIRES_TCI);
-					
-					if (patientElectiveList.getPathwayClock() != null)
-						patientElectiveList.getPathwayClock().setStopDate(null);
-				}
-				else
-				{
-					electiveStatus.setElectiveListStatus(WaitingListStatus.REMOVED);
-					electiveStatus.setRemovalReason(ElectiveListStatusReason.PATIENT_ADMITTED_ELECTIVELY);
-				}
-				
-				patientElectiveList.setElectiveListStatus(electiveStatus);
-				patientElectiveList.getElectiveListStatusHistory().add(electiveStatus);
+				patientElectiveList = populatePatientElectiveListForDischarge(voInpat, patientElectiveList);
 
 				form.getLocalContext().setPatientElectiveListDischarge(patientElectiveList);
-				
-				// Check the Patient Elective List to remove
-				/* WDEV-18454
-				if (Boolean.TRUE.equals(domain.hasCancelledElectiveListsToRemove(patientElectiveList.getPatient(), patientElectiveList, patientElectiveList.getElectiveList().getService())))
-				{
-					form.getLocalContext().setMessageBoxDischarge(engine.showMessage("Patient has cancelled Patient Elective records at admission for the same service. Remove these records?", "Warning", MessageButtons.YESNOCANCEL));
-					return;
-				}*/
 			}
 			
 			//WDEV-18454
-			if (voInpat.getPasEvent() != null && PasEventType.EMERGENCY.equals(voInpat.getPasEvent().getEventType()) && Boolean.TRUE.equals(domain.hasElectiveListsToRemove(form.getGlobalContext().Core.getPatientShort(), patientElectiveList, voInpat.getPasEvent().getSpecialty())))
+			if (voInpat.getPasEvent() != null && (patientElectiveList != null || (currentAdmissionDetail != null && currentAdmissionDetail.getMethodOfAdmission() != null && MethodOfAdmission.EMERGENCY.getID() == currentAdmissionDetail.getMethodOfAdmission().getID())) && Boolean.TRUE.equals(domain.hasElectiveListsToRemove(form.getGlobalContext().Core.getPatientShort(), patientElectiveList, voInpat.getPasEvent().getSpecialty())))
 			{
-				form.getLocalContext().setInpatientEpisodeSpecialty(voInpat.getPasEvent().getSpecialty());
-				form.getLocalContext().setMessageBoxPELCheck(engine.showMessage("This patient has other Elective List / TCI records for this service. Do you want to remove these records?", "Warning", MessageButtons.YESNOCANCEL));
+				//form.getLocalContext().setInpatientEpisodeSpecialty(voInpat.getPasEvent().getSpecialty());
+				form.getLocalContext().setMessageBoxPELCheck(engine.showMessage("The patient has other Elective List/TCI records for this service. Please review these records.", "Info", MessageButtons.OK, MessageIcon.INFORMATION));
 				return;
+			}
+
+		}//WDEV-22448
+		if (dischargePatient(patientElectiveList, null, form.getLocalContext().getbCancelPatientAppointments(), currentAdmissionDetail))
+		{			
+			engine.close(DialogResult.OK);
+		}
+	}
+
+	private PatientElectiveListBedAdmissionVo populatePatientElectiveListForDischarge(InpatientEpisodeLiteVo voInpat, PatientElectiveListBedAdmissionVo patientElectiveList)
+	{
+		if (patientElectiveList == null)
+			return null;
+		
+		boolean isTreatement = ElectiveListReason.TREATMENT.equals(patientElectiveList.getElectiveListReason());
+		boolean isDiagnostic = ElectiveListReason.DIAGNOSTIC.equals(patientElectiveList.getElectiveListReason());
+		
+		boolean treatmentDeferred = isTreatement && grpDeferredEnumeration.rdoYesDeferred.equals(form.lyrDetail().tabDischarge().grpDeferred().getValue());
+		boolean diagnosticDeferred = isDiagnostic && grpDeferredEnumeration.rdoYesDeferred.equals(form.lyrDetail().tabDischarge().grpDeferred().getValue());
+		
+		CancellationTypeReasonVo deferredReason = form.lyrDetail().tabDischarge().cmbDeferredReason().getValue();
+
+		// Prepare Elective List status
+		ElectiveListStatusVo electiveStatus = new ElectiveListStatusVo();
+		electiveStatus.setAuthoringUser((MemberOfStaffLiteVo) domain.getMosUser());
+		electiveStatus.setStatusDateTime(new DateTime());
+		
+		// Prepare TCI outcome
+		TCIOutcomeForPatientElectiveListVo outcome = new TCIOutcomeForPatientElectiveListVo();
+		outcome.setChangeBy((MemberOfStaffRefVo) domain.getMosUser());
+		outcome.setStatusDateTime(new DateTime());
+		outcome.setOutcomeReason(null);
+
+		
+		if ((treatmentDeferred || diagnosticDeferred) && (deferredReason != null && Boolean.TRUE.equals(deferredReason.getIsNonMedicalReason())))
+		{
+			patientElectiveList.setSubjectTo28DayRule(Boolean.TRUE);
+			patientElectiveList.setRule28DayStatus(Rule28DayStatus.ACTIVE);
+			patientElectiveList.setRule28DayPeriodStart(voInpat != null && voInpat.getAdmissionDateTime() != null ? voInpat.getAdmissionDateTime().getDate() : null);
+			
+			patientElectiveList.setWas28DayRuleApplied(Boolean.TRUE);
+			
+			electiveStatus.setElectiveListStatus(WaitingListStatus.REQUIRES_TCI);
+			patientElectiveList.setElectiveListStatus(electiveStatus);
+			patientElectiveList.getElectiveListStatusHistory().add(electiveStatus);
+
+			if (patientElectiveList.getTCIDetails() != null)
+			{
+				patientElectiveList.getTCIDetails().setRule28DayStatus(Rule28DayStatus.ACTIVE);
+				patientElectiveList.getTCIDetails().setRule28DayPeriodStart(voInpat != null && voInpat.getAdmissionDateTime() != null ? voInpat.getAdmissionDateTime().getDate() : null);
+				
+				outcome.setOutcome(AdmissionOfferOutcome.PATIENT_ADMITTED_TREATMENT_DEFERRED_5);
+				outcome.setCancelledForNonMedicalReason(Boolean.TRUE);
+				patientElectiveList.getTCIDetails().setCurrentOutcome(outcome);
+				patientElectiveList.getTCIDetails().getOutcomeHistory().add(outcome);
+			}
+		}
+		else
+		{
+			patientElectiveList.setSubjectTo28DayRule(Boolean.FALSE);
+			patientElectiveList.setRule28DayStatus(null);
+			patientElectiveList.setRule28DayPeriodStart(null);
+			
+			if (treatmentDeferred || diagnosticDeferred)
+			{
+				electiveStatus.setElectiveListStatus(WaitingListStatus.REQUIRES_TCI);
+				
+				patientElectiveList.setRule28DayStatus(Rule28DayStatus.DEFERRED_FOR_CLINICAL_REASON);
+			}
+			else
+			{
+				electiveStatus.setElectiveListStatus(WaitingListStatus.REMOVED);
+				electiveStatus.setRemovalReason(ElectiveListStatusReason.PATIENT_ADMITTED_ELECTIVELY);
+			}
+
+			patientElectiveList.setElectiveListStatus(electiveStatus);
+			patientElectiveList.getElectiveListStatusHistory().add(electiveStatus);
+
+			if (patientElectiveList.getTCIDetails() != null)
+			{
+				patientElectiveList.getTCIDetails().setRule28DayStatus(null);
+				if (treatmentDeferred || diagnosticDeferred)
+				{
+					patientElectiveList.getTCIDetails().setRule28DayStatus(Rule28DayStatus.DEFERRED_FOR_CLINICAL_REASON);
+				}
+				patientElectiveList.getTCIDetails().setRule28DayPeriodStart(null);
+				
+				outcome.setOutcome(AdmissionOfferOutcome.PATIENT_ADMITTED_COMPLETED_1);
+				patientElectiveList.getTCIDetails().setCurrentOutcome(outcome);
+				patientElectiveList.getTCIDetails().getOutcomeHistory().add(outcome);
 			}
 		}
 		
-		if (dischargePatient(patientElectiveList, null))
-			engine.close(DialogResult.OK);
+		return patientElectiveList;
 	}
 
-	private boolean dischargePatient(PatientElectiveListBedAdmissionVo patientElectiveList, PatientElectiveListBedAdmissionVoCollection cancelledPatienElectiveListToRemove)
+	private boolean dischargePatient(PatientElectiveListBedAdmissionVo patientElectiveList, PatientElectiveListBedAdmissionVoCollection cancelledPatienElectiveListToRemove, Boolean cancelPatientAppointments, AdmissionDetailVo currentAdmissionDetail)
 	{
-		if (getUIValidationForDischarge() == false)
-			return false;
-
 		DischargedEpisodeADTVo voDischargedEpisode = new DischargedEpisodeADTVo();
 
-		voDischargedEpisode.setDischargeDateTime(getDischargeDateTime());
+		//WDEV-22553
+		voDischargedEpisode.setDischargeDateTime(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") ? form.lyrDetail().tabDischarge().dtimDischarge().getValue() : getDischargeDateTime());
 		voDischargedEpisode.setDischargeDestination(form.lyrDetail().tabDischarge().cmbDischargeDestination().getValue());
 		voDischargedEpisode.setMethodOfDischarge(form.lyrDetail().tabDischarge().cmbMethodDischarge().getValue());
 
@@ -1087,6 +2101,9 @@ public class Logic extends BaseLogic
 		else
 			throw new CodingRuntimeException("Check GC population");
 		
+		//WDEV-22959
+		LocationRefVo dischargingWard = voBedSpaceState != null ? voBedSpaceState.getWard().toLocationRefVo() : (voInpat.getPasEvent() != null ? voInpat.getPasEvent().getLocation().toLocationRefVo() : null);
+		voDischargedEpisode.setDischargingWard(dischargingWard);
 		
 		boolean isMaternityInpatient = voInpat.getIsMaternityInpatientIsNotNull() ? voInpat.getIsMaternityInpatient() : false;
 	
@@ -1108,17 +2125,13 @@ public class Logic extends BaseLogic
     		voDischargedEpisode.setVTERiskAssessment(inpatientEpisode.getVTERiskAssessment());
 		}
 		
-		//rttStop
-		String rttStop = sendRTTMessage();
-		if(rttStop != null && rttStop.equals(""))
-			voDischargedEpisode.setEighteenWeekClockStopped(null);
-		else if(rttStop != null)
-		{
-			if(rttStop.equals("Y"))
-				voDischargedEpisode.setEighteenWeekClockStopped(true);
-			else if(rttStop.equals("N"))
-				voDischargedEpisode.setEighteenWeekClockStopped(false);
-		}
+//		if (patientElectiveList == null)
+//			voDischargedEpisode.setEighteenWeekClockStopped(null);
+//		else if (ElectiveListReason.DIAGNOSTIC.equals(patientElectiveList.getElectiveListReason()))
+//			voDischargedEpisode.setEighteenWeekClockStopped(grp18RunningEnumeration.rdoNoRunning.equals(form.lyrDetail().tabDischarge().grp18Running().getValue()));
+//		else if (ElectiveListReason.TREATMENT.equals(patientElectiveList.getElectiveListReason()))
+//			voDischargedEpisode.setEighteenWeekClockStopped(grp18StoppedEnumeration.rdoYesStopped.equals(form.lyrDetail().tabDischarge().grp18Stopped().getValue()));
+
 			
 		// move to previous
 		if (voBedSpaceState != null && voBedSpaceState.getCurrentBedStatusIsNotNull())
@@ -1134,21 +2147,26 @@ public class Logic extends BaseLogic
 				voBedSpaceState.getCurrentBedStatus().setReasonForClosure(form.lyrDetail().tabDischarge().cmbDischargeReasonForClosure().getValue());
 				voBedSpaceState.getCurrentBedStatus().setEstReopeningDateTime(form.lyrDetail().tabDischarge().dtimDischargeEstimatedReopening().getValue());
 			}
-			
 		}
 
 		if(voBedSpaceState != null)
 			voBedSpaceState.setInpatientEpisode(null);
+		
+		boolean isTreatment = patientElectiveList != null && ElectiveListReason.TREATMENT.equals(patientElectiveList.getElectiveListReason());
+		boolean isDiagnostic = patientElectiveList != null && ElectiveListReason.DIAGNOSTIC.equals(patientElectiveList.getElectiveListReason());
 
-		voDischargedEpisode.setWasTreatmentDeferred(form.lyrDetail().tabDischarge().grpTreatmentPostponed().getValue().equals(GenForm.lyrDetailLayer.tabDischargeContainer.grpTreatmentPostponedEnumeration.rdoYesTreat));
-		voDischargedEpisode.setTreatmentDeferredReason(form.lyrDetail().tabDischarge().cmbReason().getValue());
+		voDischargedEpisode.setWasTreatmentDeferred(isTreatment && grpDeferredEnumeration.rdoYesDeferred.equals(form.lyrDetail().tabDischarge().grpDeferred().getValue()));
+		voDischargedEpisode.setWasDiagnosticDeferred(isDiagnostic && grpDeferredEnumeration.rdoYesDeferred.equals(form.lyrDetail().tabDischarge().grpDeferred().getValue()));
+		voDischargedEpisode.setWasTreatmentGiven(grpPatientTreatedEnumeration.rdoYesTreated.equals(form.lyrDetail().tabDischarge().grpPatientTreated().getValue()));
+		voDischargedEpisode.setDeferredReason(form.lyrDetail().tabDischarge().cmbDeferredReason().getValue() != null ? form.lyrDetail().tabDischarge().cmbDeferredReason().getValue().getCancellationReason() : null);
+		voDischargedEpisode.setDeferredReasonConfig(form.lyrDetail().tabDischarge().cmbDeferredReason().getValue());
 		voDischargedEpisode.setIsActive(true);
 		
 		
 		//WDEV-12957
 		voDischargedEpisode.setDischargeReadyDate(voInpat.getDischargeReadyDate());
 
-		if (!saveDischarge(voDischargedEpisode, voBedSpaceState, form.getLocalContext().getPendingTransferOut(), patientElectiveList, cancelledPatienElectiveListToRemove))
+		if (!saveDischarge(voDischargedEpisode, voBedSpaceState, form.getLocalContext().getPendingTransferOut(), patientElectiveList, cancelledPatienElectiveListToRemove, cancelPatientAppointments, currentAdmissionDetail))
 			return false;
 		
 		//WDEV-15043
@@ -1167,17 +2185,35 @@ public class Logic extends BaseLogic
 				return false;
 			}
 		}
-		/*if( Boolean.TRUE.equals(form.getLocalContext().getVTEShouldCreate()))	//wdev-14858
+		if (form.getLocalContext().getVTEShouldCreateIsNotNull())	//wdev-14858
 		{
-			form.lyrDetail().tabDischarge().btnDischarge().setEnabled(false);
-			return;
+			if (Boolean.TRUE.equals(form.getLocalContext().getVTEShouldCreate() && engine.hasRight(AppRight.DISCHARGE_ACCESS_TO_VTE_ASSESSMENT)))
+					form.lyrDetail().tabDischarge().btnDischarge().setEnabled(false);
+			return false;
 		}
-		engine.close(DialogResult.OK);*/
-		if( form.getLocalContext().getVTEShouldCreate() == null )	//wdev-14892
-			return true;
 		
-		return false;
+			engine.close(DialogResult.OK);
+			return true;
+		}
+
+	/*
+	private void setRTTStatusToStartOfFirstDefinitiveTreatment(PatientElectiveListBedAdmissionVo patientElectiveList)
+	{
+		if (patientElectiveList == null || patientElectiveList.getPathwayClock() == null)
+			return;
+		
+		PathwayClockVo pathwayClock = patientElectiveList.getPathwayClock();
+		
+		PathwayRTTStatusVo status = new PathwayRTTStatusVo();
+		status.setRTTStatus(domain.getRTTStatusPointByNationalCode(DEFINITIVE_TREATEMENT_STARTED));
+		status.setStatusBy((MemberOfStaffRefVo) domain.getMosUser());
+		status.setStatusDateTime(new DateTime());
+		status.setSetting("");
+		
+		pathwayClock.setCurrentRTTStatus(status);
+		pathwayClock.getRTTStatusHistory().add(status);
 	}
+	*/
 
 	private void resetPIDBarText()
 	{
@@ -1195,24 +2231,26 @@ public class Logic extends BaseLogic
 	{
 		if(form.lyrDetail().tabDischarge().dtimDischarge().isVisible())
 			return form.lyrDetail().tabDischarge().dtimDischarge().getValue();
-		else if(form.lyrDetail().tabDischarge().dtimDod().isVisible())
-			return form.lyrDetail().tabDischarge().dtimDod().getValue();
+		else if(form.lyrDetail().tabDischarge().dteDod().isVisible() && !ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+			return form.lyrDetail().tabDischarge().dteDod().getValue() != null ? (form.lyrDetail().tabDischarge().timTod().getValue() != null ? new DateTime(form.lyrDetail().tabDischarge().dteDod().getValue(), form.lyrDetail().tabDischarge().timTod().getValue()) : new DateTime(form.lyrDetail().tabDischarge().dteDod().getValue(), new Time(0,0))) : new DateTime(); //WDEV-19682
 		
 		return null;
 	}
 
-	private boolean saveDischarge(DischargedEpisodeADTVo voDischargedEpisode, BedSpaceStateLiteVo voBedSpaceState, PendingTransfersLiteVo voTransfer, PatientElectiveListBedAdmissionVo patientElectiveList, PatientElectiveListBedAdmissionVoCollection cancelledPatienElectiveListToRemove)
+	private boolean saveDischarge(DischargedEpisodeADTVo voDischargedEpisode, BedSpaceStateLiteVo voBedSpaceState, 
+			PendingTransfersLiteVo voTransfer, PatientElectiveListBedAdmissionVo patientElectiveList, 
+			PatientElectiveListBedAdmissionVoCollection cancelledPatienElectiveListToRemove, Boolean cancelPatientAppointments, AdmissionDetailVo currentAdmissionDetail)
 	{
 		String[] arrErrors = voDischargedEpisode.validate();
 		if (arrErrors != null)
 		{
-			if(form.lyrDetail().tabDischarge().dtimDod().isVisible())
+			if (form.lyrDetail().tabDischarge().dteDod().isVisible() && form.lyrDetail().tabDischarge().dteDod().getValue() == null)
 			{
 				for(int i=0;i<arrErrors.length; i++)
 				{
 					if(arrErrors[i] == "Discharge Date/Time is mandatory")
 					{
-						arrErrors[i] = "Date/Time of Death is mandatory";
+						arrErrors[i] = "'Date of Death' is mandatory";
 						break;
 					}
 				}
@@ -1220,34 +2258,65 @@ public class Logic extends BaseLogic
 				
 			engine.showErrors(arrErrors);
 			return false;
+			
 		}
 		//wdev-14858
-		
-		form.getLocalContext().setVTEShouldCreate(null);
-		form.getLocalContext().setUserHasRight(null);	//wdev-14892
-		if( ConfigFlag.UI.VTE_RISK_ASSESSMENT_FUNCTIONALITY.getValue() == true) //wdev-15062
+		if (form.getLocalContext().getDeathDetailsOnDischargeIsNotNull())
 		{
-		
-			InpatientEpisodeForVTERiskAsessmentVo tempVo = domain.getInpatEpisodeForVTERiskAssessment(form.getLocalContext().getInpatientEpForVTERiskAssessmentVo());
-			if(	tempVo != null && ( VTEAsessmentStatus.REQUIRED.equals(tempVo.getVTEAssessmentStatus()) || VTEAsessmentStatus.INPROGRESS.equals(tempVo.getVTEAssessmentStatus()) ) )  //wdev-14878, wdev-14858
+			String[] errors = form.getLocalContext().getDeathDetailsOnDischarge().validate();
+			if (errors != null)
 			{
-				
+				engine.showErrors(errors);
+				return false;
+			}
+			//WDEV-22553
+			if (ConfigFlag.GEN.CANCEL_APPOINTMENTS_WHEN_DOD_ENTERED.getValue()
+					&& form.getLocalContext().getbCancelPatientAppointments() == null
+					&& form.getGlobalContext().Core.getPatientShort().getDod() != null					
+					&& form.getLocalContext().getDeathDetailsOnDischarge().getPatient().getDodIsNotNull()
+					&& form.getLocalContext().getDeathDetailsOnDischarge().getID_DeathDetails() == null
+					&& !Boolean.TRUE.equals(form.getLocalContext().getAnsweredYesOnDemographicsCancelFutureAppts()))     //wdev-13521
+			{
+				form.getLocalContext().setCancelAppointmentsMessageID(engine.showMessage("All future appointments will be cancelled for this patient.", "Appointment Cancellation", MessageButtons.OK, MessageIcon.INFORMATION));
+				return false;
+			}
+
+		}
+		form.getLocalContext().setVTEShouldCreate(null);
+		if (ConfigFlag.UI.VTE_RISK_ASSESSMENT_FUNCTIONALITY.getValue()) //wdev-15062
+		{
+			InpatientEpisodeForVTERiskAsessmentVo tempVo = domain.getInpatEpisodeForVTERiskAssessment(form.getLocalContext().getInpatientEpForVTERiskAssessmentVo());
+			if (tempVo != null && (VTEAsessmentStatus.REQUIRED.equals(tempVo.getVTEAssessmentStatus()) || VTEAsessmentStatus.INPROGRESS.equals(tempVo.getVTEAssessmentStatus())))  //wdev-14878, wdev-14858
+			{				
 				form.getLocalContext().setVTEShouldCreate(true);
-				
-				if(	engine.hasRight(AppRight.DISCHARGE_ACCESS_TO_VTE_ASSESSMENT) )	//wdev-14892
-				{
-					form.getLocalContext().setUserHasRight(true);
-					if(	tempVo.getVTERiskAssessmentIsNotNull())		//wdev-14858
-						form.getGlobalContext().Core.setVTERiskAssessmentShortVo(domain.getVTERiskAssessmentShortVoBYId(tempVo.getVTERiskAssessment()));
-				}
-				else
-					form.getLocalContext().setUserHasRight(false);
+				if (Boolean.TRUE.equals(engine.hasRight(AppRight.DISCHARGE_ACCESS_TO_VTE_ASSESSMENT)) && tempVo.getVTERiskAssessmentIsNotNull())		//wdev-14858
+					form.getGlobalContext().Core.setVTERiskAssessmentShortVo(domain.getVTERiskAssessmentShortVoBYId(tempVo.getVTERiskAssessment()));
 			}
 		}
+		//WDEV-20224
+		boolean checkPatientsGender = false;
+		if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+		{
+			if (voBedSpaceState != null && voBedSpaceState.getBayIsNotNull())
+			{
+				BayConfigLiteVo bayCfg = getBayConfig(voBedSpaceState.getBay());
+				boolean maleSpecificBay = bayCfg != null && Boolean.TRUE.equals(bayCfg.getMale());
+				boolean femaleSpecificBay = bayCfg != null && Boolean.TRUE.equals(bayCfg.getFemale());
+				checkPatientsGender = bayCfg != null && bayCfg.getTemporaryBayGenderIsNotNull() && ((!maleSpecificBay && !femaleSpecificBay) || (maleSpecificBay && !femaleSpecificBay) || (femaleSpecificBay && !maleSpecificBay));	
+			}			
+		}
+		//----------------
 		//----------------
 		try
 		{
-			form.getGlobalContext().Core.setDischargeEpisodeBedInfo(domain.saveDischargeElectiveList(voDischargedEpisode, voBedSpaceState, patientElectiveList, cancelledPatienElectiveListToRemove));		//wdev-15414
+			boolean isDiagnostic = patientElectiveList != null && ElectiveListReason.DIAGNOSTIC.equals(patientElectiveList.getElectiveListReason());
+			boolean isTreatment = patientElectiveList != null && ElectiveListReason.TREATMENT.equals(patientElectiveList.getElectiveListReason());
+
+			boolean treatmentDeferred = isTreatment && grpDeferredEnumeration.rdoYesDeferred.equals(form.lyrDetail().tabDischarge().grpDeferred().getValue());
+			boolean diagnosticDeferred = isDiagnostic && grpDeferredEnumeration.rdoYesDeferred.equals(form.lyrDetail().tabDischarge().grpDeferred().getValue());
+			boolean treatmentGiven = grpPatientTreatedEnumeration.rdoYesTreated.equals(form.lyrDetail().tabDischarge().grpPatientTreated().getValue());
+
+			form.getGlobalContext().Core.setDischargeEpisodeBedInfo(domain.saveDischargeElectiveList(voDischargedEpisode, voBedSpaceState, patientElectiveList, currentAdmissionDetail, cancelledPatienElectiveListToRemove, form.getLocalContext().getDeathDetailsOnDischarge(), form.getLocalContext().getbCancelPatientAppointments(), treatmentGiven, treatmentDeferred || diagnosticDeferred, checkPatientsGender));		//wdev-15414 //WDEV-20224
 		}
 		catch (StaleObjectException e)
 		{
@@ -1255,9 +2324,10 @@ public class Logic extends BaseLogic
 
 			//WDEV-15990
 			form.lyrDetail().tabDischarge().btnDischarge().setEnabled(false);
+			form.lyrDetail().tabDischarge().lblAllocateForCleaning().setVisible(false);
 			form.lyrDetail().tabDischarge().chkAllocateForCleaning().setVisible(false);
 			disabletabs();
-			enabledisableDiaschargeTabContrls(false);
+			enableDisableDischargeTabControls(false);
 			
 			form.getGlobalContext().Core.setPatientShort(domain.getPatient(form.getGlobalContext().Core.getPatientShort()));
 			
@@ -1279,7 +2349,7 @@ public class Logic extends BaseLogic
 				updateDischargeDetails(dischargeEpisodeADT);
 			}
 			
-			if (ConfigFlag.UI.VTE_RISK_ASSESSMENT_FUNCTIONALITY.getValue() == true)
+			if (ConfigFlag.UI.VTE_RISK_ASSESSMENT_FUNCTIONALITY.getValue())
 			{
 				form.getGlobalContext().Core.setDischargeEpisodeBedInfo(dischargeEpisodeADT); //WDEV-16200
 				updateBtnVteRiskAssessment();
@@ -1290,34 +2360,39 @@ public class Logic extends BaseLogic
 		catch (DomainInterfaceException e)
 		{
 			engine.showMessage(e.getMessage());
-			initialise();
+			initialise(true, false); //WDEV-17662
 			return false;
 		}
 		catch (ForeignKeyViolationException e)
 		{
 			engine.showMessage(e.getMessage());
-			initialise();
+			initialise(true, false); //WDEV-17662
 			return false;
 		}
-		if( ConfigFlag.UI.VTE_RISK_ASSESSMENT_FUNCTIONALITY.getValue() == true) //wdev-15062
+		if (ConfigFlag.UI.VTE_RISK_ASSESSMENT_FUNCTIONALITY.getValue()) //wdev-15062
 		{
 			//wdev-14858
-			if(	Boolean.TRUE.equals(form.getLocalContext().getVTEShouldCreate()))
-			{
-				if(	Boolean.TRUE.equals(form.getLocalContext().getUserHasRight()))	//wdev-14892
-					
-					engine.showMessage(" Discharge completed successfully. A VTE Assessment has not been completed for the inpatient episode.  Please select the VTE Risk Assessment button to complete the assessment.","Message",MessageButtons.OK);
-				else if(	Boolean.FALSE.equals(form.getLocalContext().getUserHasRight()))
-				{
-					engine.showMessage(" A VTE Assessment has not been completed for the inpatient episode.","Message",MessageButtons.OK);
-					form.getLocalContext().setVTEShouldCreate(false);
-					
+			boolean userHasVTERight = engine.hasRight(AppRight.DISCHARGE_ACCESS_TO_VTE_ASSESSMENT);
+			if (Boolean.TRUE.equals(form.getLocalContext().getVTEShouldCreate()))
+			{			
+				String vteOnDischargeMessageBanner = userHasVTERight ? " Discharge completed successfully. A VTE Assessment has not been completed for the inpatient episode.  Please select VTE Risk Assessment button to complete the VTE Risk Assessment." : " A VTE Risk Assessment has not been completed for the inpatient episode.";
+				form.getLocalContext().setMessageBoxVTENotCompletedOnDischarge(engine.showMessage(vteOnDischargeMessageBanner,"VTE Assessment Not Completed",MessageButtons.OK));				
+				if (!userHasVTERight)
+				{	
+					form.getLocalContext().setShowVTERiskAssessmentButton(false);					
 				}
-				
+				form.getLocalContext().setVTEShouldCreate(userHasVTERight);
+				return false;
 			}
+			
 		}
 		//----------
+		form.lyrDetail().tabDischarge().lblAllocateForCleaning().setVisible(false);
 		form.lyrDetail().tabDischarge().chkAllocateForCleaning().setVisible(false);
+		form.getLocalContext().setDeathDetailsOnDischarge(null);
+		
+		if (form.getLocalContext().getVTEShouldCreate() == null)
+			engine.close(DialogResult.OK);
 		return true;
 	}
 
@@ -1365,44 +2440,19 @@ public class Logic extends BaseLogic
 
 		form.lyrDetail().tabDischarge().cmbDischargeDestination().setValue(dischargeEpisodeADT.getDischargeDestination());
 		form.lyrDetail().tabDischarge().dtimDischarge().setValue(dischargeEpisodeADT.getDischargeDateTime());
-		showHide18WeekClockStopped(false);
 
 		if (Boolean.TRUE.equals(dischargeEpisodeADT.getWasTreatmentDeferred()))
 		{
-			form.lyrDetail().tabDischarge().grpTreatmentPostponed().setValue(grpTreatmentPostponedEnumeration.rdoYesTreat);
+			form.lyrDetail().tabDischarge().grpDeferred().setValue(grpDeferredEnumeration.rdoYesDeferred);
 		}
 		else if (Boolean.FALSE.equals(dischargeEpisodeADT.getWasTreatmentDeferred()))
 		{
-			form.lyrDetail().tabDischarge().grpTreatmentPostponed().setValue(grpTreatmentPostponedEnumeration.rdoNoTreat);
+			form.lyrDetail().tabDischarge().grpDeferred().setValue(grpDeferredEnumeration.rdoNoDeferred);
 			
-			if (form.getLocalContext().getRtpStat() != null && form.getLocalContext().getRtpStat().equals(TREATMENT) && form.lyrDetail().tabDischarge().grpTreatmentPostponed().getValue().equals(GenForm.lyrDetailLayer.tabDischargeContainer.grpTreatmentPostponedEnumeration.rdoNoTreat))
-			{
-				showHide18WeekClockStopped(true);
-			}
 		}
-
-		if (dischargeEpisodeADT.getEighteenWeekClockStopped() == null)
-		{
-			form.lyrDetail().tabDischarge().grp18Stopped().setValue(grp18StoppedEnumeration.rdoYesStopped);
-			form.lyrDetail().tabDischarge().grp18Running().setValue(grp18RunningEnumeration.rdoYesRunning);
-		}
-		else if (Boolean.TRUE.equals(dischargeEpisodeADT.getEighteenWeekClockStopped()))
-		{
-			form.lyrDetail().tabDischarge().grp18Running().setValue(grp18RunningEnumeration.rdoNoRunning);
-		}
-		else if (Boolean.FALSE.equals(dischargeEpisodeADT.getEighteenWeekClockStopped()))
-		{
-			form.lyrDetail().tabDischarge().grp18Stopped().setValue(grp18StoppedEnumeration.rdoNoStopped);
-		}
-
-		form.lyrDetail().tabDischarge().cmbReason().setValue(dischargeEpisodeADT.getTreatmentDeferredReason());
-	}
-
-	private void showHide18WeekClockStopped(boolean isVisible)
-	{
-		form.lyrDetail().tabDischarge().lblStopped().setVisible(isVisible);
-		form.lyrDetail().tabDischarge().grp18Stopped().setVisible(isVisible);
-		form.lyrDetail().tabDischarge().txt18WeekStop().setVisible(isVisible);
+		
+		form.lyrDetail().tabDischarge().cmbDeferredReason().setValue(dischargeEpisodeADT.getDeferredReasonConfig());
+		
 	}
 
 	private SelectItemVoCollection chooseInfantsToDischarge()
@@ -1459,80 +2509,122 @@ public class Logic extends BaseLogic
 	private boolean getUIValidationForDischarge()
 	{
 		List<String> errors = new ArrayList<String>();
-
-		boolean onHeartsFunctionalityTreatementAndDiagnostic = form.getLocalContext().getRtpStat() != null && (form.getLocalContext().getRtpStat().equals(TREATMENT) || form.getLocalContext().getRtpStat().equals(DIAGNOSTIC));
 		
-		if ((onHeartsFunctionalityTreatementAndDiagnostic || Boolean.TRUE.equals(ConfigFlag.GEN.USE_ELECTIVE_LIST_FUNCTIONALITY.getValue()))
-				&& form.lyrDetail().tabDischarge().grpTreatmentPostponed().getValue().equals(GenForm.lyrDetailLayer.tabDischargeContainer.grpTreatmentPostponedEnumeration.None))
-			errors.add("'Was Treatment Deferred?' is mandatory");
+		boolean onHeartsFunctionalityTreatementAndDiagnostic = !ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && form.getLocalContext().getRtpStat() != null && (form.getLocalContext().getRtpStat().equals(TREATMENT) || form.getLocalContext().getRtpStat().equals(DIAGNOSTIC));
+		boolean isRtpStatDiagnostic = DIAGNOSTIC.equals(form.getLocalContext().getRtpStat());
+		//WDEV-21303
+		boolean isRtpStatTreatment = TREATMENT.equals(form.getLocalContext().getRtpStat());
 		
-		if (Boolean.TRUE.equals(ConfigFlag.GEN.USE_ELECTIVE_LIST_FUNCTIONALITY.getValue()) || (form.getLocalContext().getRtpStat() != null && form.getLocalContext().getRtpStat().equals(TREATMENT)))
-			if(form.lyrDetail().tabDischarge().grpTreatmentPostponed().getValue().equals(GenForm.lyrDetailLayer.tabDischargeContainer.grpTreatmentPostponedEnumeration.rdoYesTreat))
-				if(form.lyrDetail().tabDischarge().cmbReason().getValue() == null)
-					errors.add("'Reason' is mandatory");
-			
-		if (form.getLocalContext().getRtpStat() != null && form.getLocalContext().getRtpStat().equals(DIAGNOSTIC))
-			if (form.lyrDetail().tabDischarge().grp18Running().getValue().equals(GenForm.lyrDetailLayer.tabDischargeContainer.grp18RunningEnumeration.None))
-				errors.add("'18 week clock is still running for the patient, is this correct?' is mandatory");
-
-		if (form.getLocalContext().getRtpStat() != null && form.getLocalContext().getRtpStat().equals(TREATMENT))
-			if(form.lyrDetail().tabDischarge().grpTreatmentPostponed().getValue().equals(grpTreatmentPostponedEnumeration.rdoNoTreat))
-				if (form.lyrDetail().tabDischarge().grp18Stopped().getValue().equals(GenForm.lyrDetailLayer.tabDischargeContainer.grp18StoppedEnumeration.None))
-					errors.add("'18 week clock stopped on Admission for the patient, is this correct?' is mandatory");
-
+		boolean isElectiveFunctionalityInUse = Boolean.TRUE.equals(ConfigFlag.GEN.USE_ELECTIVE_LIST_FUNCTIONALITY.getValue());
+		boolean bDiagnosisTreatmentWasNotDeferred = grpDeferredEnumeration.rdoNoDeferred.equals(form.lyrDetail().tabDischarge().grpDeferred().getValue());
+		
+		if (form.lyrDetail().tabDischarge().cmbMethodDischarge().getValue() == null)
+		{
+			errors.add("Method of Discharge is mandatory");
+		}
+		if (form.lyrDetail().tabDischarge().cmbDischargeDestination().getValue() == null)
+		{
+			errors.add("Discharge Destination is mandatory");
+		}		
+		if (form.lyrDetail().tabDischarge().txtDODMandatory().isVisible() && form.lyrDetail().tabDischarge().dteDod().getValue() == null)//WDEV-22923
+		{
+			errors.add("Date of Death is mandatory");
+		}
+		if(form.lyrDetail().tabDischarge().dteDod().getValue() != null)
+		{
+			if (form.lyrDetail().tabDischarge().dteDod().getValue().isGreaterThan(new Date()) || (form.lyrDetail().tabDischarge().timTod().getValue() != null && new DateTime(form.lyrDetail().tabDischarge().dteDod().getValue(), form.lyrDetail().tabDischarge().timTod().getValue()).isGreaterThan(new DateTime())))
+				errors.add("Date/Time of Death cannot be set to a future date/time");
+		}		
+		if (form.lyrDetail().tabDischarge().dtimDischarge().getValue() == null)
+		{
+				errors.add((form.lyrDetail().tabDischarge().dteDod().isVisible() ? "Actual " :"") + "Discharge Date/Time is mandatory");
+		}
 		if(form.lyrDetail().tabDischarge().dtimDischarge().getValue() != null)
 		{
 			if(form.lyrDetail().tabDischarge().dtimDischarge().getValue().isGreaterThan(new DateTime()))
-				errors.add("'Discharge Date/Time' cannot be in the future");
-		}
-		
-		if(form.lyrDetail().tabDischarge().dtimDod().getValue() != null)
+				errors.add((form.lyrDetail().tabDischarge().dteDod().isVisible() ? "Actual " :"") +  "Discharge Date/Time cannot be set to a future date/time");
+			
+			//WDEV-22857
+			if(form.getLocalContext().getAdmissionDetails() != null && form.getLocalContext().getAdmissionDetails().getAdmissionDateTime() != null && form.getLocalContext().getAdmissionDetails().getAdmissionDateTime().isGreaterThan(form.lyrDetail().tabDischarge().dtimDischarge().getValue()))
+				errors.add((form.lyrDetail().tabDischarge().dteDod().isVisible() ? "Actual " :"") +  "Discharge Date/Time cannot be earlier than Admission Date/Time");
+			//WDEV-22857 - ends here
+		}		
+		if (form.lyrDetail().tabDischarge().dteDod().getValue() != null && form.lyrDetail().tabDischarge().dtimDischarge().getValue() != null && (form.lyrDetail().tabDischarge().dtimDischarge().getValue().getDate().isLessThan(form.lyrDetail().tabDischarge().dteDod().getValue()) || (form.lyrDetail().tabDischarge().timTod().getValue() != null && form.lyrDetail().tabDischarge().dtimDischarge().getValue().getDate().equals(form.lyrDetail().tabDischarge().dteDod().getValue()) && form.lyrDetail().tabDischarge().dtimDischarge().getValue().getTime().isLessThan(form.lyrDetail().tabDischarge().timTod().getValue()))))
 		{
-			if(form.lyrDetail().tabDischarge().dtimDod().getValue().isGreaterThan(new DateTime()))
-				errors.add("'Date/Time of Death' cannot be in the future");
-		}
+				errors.add("Actual Discharge Date/Time cannot be earlier than Date/Time of Death");
+		}	
+		if ((onHeartsFunctionalityTreatementAndDiagnostic || (isElectiveFunctionalityInUse && (isRtpStatTreatment || isRtpStatDiagnostic)))
+				&& form.lyrDetail().tabDischarge().grpDeferred().isVisible(grpDeferredEnumeration.rdoYesDeferred)
+				&& form.lyrDetail().tabDischarge().grpDeferred().isVisible(grpDeferredEnumeration.rdoNoDeferred)
+				&& grpDeferredEnumeration.None.equals(form.lyrDetail().tabDischarge().grpDeferred().getValue()))
+			errors.add("'" + form.lyrDetail().tabDischarge().lblDereferred().getValue() + "' is mandatory");
+		
+		if ((isElectiveFunctionalityInUse || (form.getLocalContext().getRtpStat() != null && form.getLocalContext().getRtpStat().equals(TREATMENT))) &&
+			grpDeferredEnumeration.rdoYesDeferred.equals(form.lyrDetail().tabDischarge().grpDeferred().getValue()))
+				if(form.lyrDetail().tabDischarge().cmbDeferredReason().getVisible() && form.lyrDetail().tabDischarge().cmbDeferredReason().isEnabled() && form.lyrDetail().tabDischarge().cmbDeferredReason().getValue() == null)
+					errors.add("Deferred Reason is mandatory");
+		
+		if (isElectiveFunctionalityInUse && isRtpStatDiagnostic	&& bDiagnosisTreatmentWasNotDeferred && grpPatientTreatedEnumeration.None.equals(form.lyrDetail().tabDischarge().grpPatientTreated().getValue()))
+			errors.add("'Was the Patient Treated?' is mandatory");
+		//WDEV-21303 -- end of
 		
 		//WDEV-17935
 		if (form.lyrDetail().tabDischarge().chkAllocateForCleaning().getValue())
 		{
 			if(form.lyrDetail().tabDischarge().cmbDischargeReasonForClosure().getValue() == null)
 			{
-				errors.add("'Reason for Closure' is mandatory");
+				errors.add("Reason for Closure is mandatory");
 			}
 			
 			if(form.lyrDetail().tabDischarge().dtimDischargeEstimatedReopening().getValue() == null)
 			{
-				errors.add("'Estimated Re-opening  Date/Time' is mandatory");
+				errors.add("Estimated Re-opening Date/Time is mandatory");
 			}
 		}
-		if (errors.size() == 0)
-			return true;
-		else
+		if (errors.size() > 0)
+		{	
 			engine.showErrors(errors.toArray(new String[0]));
-
-		return false;
+			return false;
+		} 
+		return true;
 	}
 
 	@Override
 	protected void onBtnHomeClick() throws PresentationLogicException
 	{
-		if (form.getGlobalContext().Core.getSelectedBedSpaceState() == null
-				|| form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode() == null)
-				throw new CodingRuntimeException("Bed State or InpatientEpisode is null.");
-
-		if (form.lyrDetail().tabHomeLeave().dteHLDate().getValue() == null
-			|| form.lyrDetail().tabHomeLeave().timHLTime().getValue() == null)
+		if (form.getGlobalContext().Core.getPatientShort() != null && form.getGlobalContext().Core.getPatientShort().getDod() != null)
 		{
-			engine.showMessage("Please select a Date and Time for Home Leave");
+			form.getLocalContext().setMessageBoxDeceasedHomeLeave(engine.showMessage("Patient is deceased. Do you still want to send the patient on Home Leave?", "", MessageButtons.YESNO));
 			return;
 		}
 		
+		saveHomeLeave();
+	}
+
+	private void saveHomeLeave()
+	{
+		if (form.getGlobalContext().Core.getSelectedBedSpaceState() == null	|| form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode() == null || (form.getGlobalContext().Core.getSelectedBedSpaceState() == null && form.getGlobalContext().Core.getSelectedWaitingAreaPatient() == null))
+			throw new CodingRuntimeException("Bed State or InpatientEpisode is null.");
+
+		if (form.lyrDetail().tabHomeLeave().dteHLDate().getValue() == null	|| form.lyrDetail().tabHomeLeave().timHLTime().getValue() == null)
+		{
+			if (form.lyrDetail().tabHomeLeave().dteHLDate().getValue() == null)
+			{	
+				engine.showMessage("Date on Home Leave is mandatory.");
+				return;
+			}	
+			if ( form.lyrDetail().tabHomeLeave().timHLTime().getValue() == null)
+			{
+				engine.showMessage("Time on Home Leave is mandatory.");
+				return;
+			}					
+		}
 		//WDEV-14585
 		if (form.lyrDetail().tabHomeLeave().dteHLDate().getValue() != null && form.lyrDetail().tabHomeLeave().dteHLReturnDate().getValue() != null)
 		{
 			if (form.lyrDetail().tabHomeLeave().dteHLReturnDate().getValue().isLessThan(form.lyrDetail().tabHomeLeave().dteHLDate().getValue()))
 			{
-				engine.showMessage("The Expected Date of Return cannot be less than the Date on Home Leave.");
+				engine.showMessage("Expected Date of Return cannot be earlier than the Date on Home Leave.");
 				return;
 			}
 			else if (form.lyrDetail().tabHomeLeave().dteHLReturnDate().getValue().equals(form.lyrDetail().tabHomeLeave().dteHLDate().getValue()))
@@ -1541,40 +2633,66 @@ public class Logic extends BaseLogic
 				{
 					if (form.lyrDetail().tabHomeLeave().timHLReturnTime().getValue().isLessThan(form.lyrDetail().tabHomeLeave().timHLTime().getValue()))
 					{
-						engine.showMessage("The Expected Date/Time of Return cannot be less than the Date/Time on Home Leave.");
+						engine.showMessage("Expected Date/Time of Return cannot be earlier than the Date/Time on Home Leave.");
 						return;
 					}
 				}
 			}
 		}
-			
-		InPatientEpisodeADTVo voEpisode = domain.getInpatientEpisode(form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode());
 
-		if (form.lyrDetail().tabHomeLeave().dteHLDate().getValue() != null
-			&& voEpisode.getAdmissionDateTimeIsNotNull()
-			&& form.lyrDetail().tabHomeLeave().dteHLDate().getValue().isLessThan(voEpisode.getAdmissionDateTime().getDate()))
-		{
-			engine.showMessage("The Date on Home Leave cannot be less than Admission Date.");
-			return;
-		}
-			
-		
+		InPatientEpisodeADTVo voEpisode = domain.getInpatientEpisode(form.getGlobalContext().Core.getSelectedBedSpaceState() != null ? form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode() : form.getGlobalContext().Core.getSelectedWaitingAreaPatient());
+		if (voEpisode.getAdmissionDateTimeIsNotNull())
+		{	
+			if (form.lyrDetail().tabHomeLeave().dteHLDate().getValue() != null)
+			{	
+				if (form.lyrDetail().tabHomeLeave().dteHLDate().getValue().isLessThan(voEpisode.getAdmissionDateTime().getDate()))
+				{
+					engine.showMessage("Date on Home Leave cannot be earlier than Admission Date.");
+					return;
+				}
+				if (form.lyrDetail().tabHomeLeave().dteHLDate().getValue().equals(voEpisode.getAdmissionDateTime().getDate()))
+				{
+					if (form.lyrDetail().tabHomeLeave().timHLTime().getValue() != null && form.lyrDetail().tabHomeLeave().timHLTime().getValue().isLessThan(voEpisode.getAdmissionDateTime().getTime()))
+					{	
+						engine.showMessage("Time on Home Leave cannot be earlier than Admission Date.");
+						return;
+					}
+				}
+			}
+			if (form.lyrDetail().tabHomeLeave().dteHLReturnDate().getValue() != null)
+			{		
+				if (form.lyrDetail().tabHomeLeave().dteHLReturnDate().getValue().isLessThan(voEpisode.getAdmissionDateTime().getDate()))
+				{
+					engine.showMessage("Expected Date of Return cannot be earlier than Admission Date.");
+					return;
+				}
+				if (form.lyrDetail().tabHomeLeave().dteHLReturnDate().getValue().equals(voEpisode.getAdmissionDateTime().getDate()))
+				{
+					if (form.lyrDetail().tabHomeLeave().timHLReturnTime().getValue() != null && form.lyrDetail().tabHomeLeave().timHLReturnTime().getValue().isLessThan(voEpisode.getAdmissionDateTime().getTime()))
+					{	
+						engine.showMessage("Expected Time of Return cannot be earlier than Admission Date.");
+						return;
+					}
+				}
+			}
+		}		
 		
 		HomeLeaveVo voHL = new HomeLeaveVo();
 		voHL.setDateOnHomeLeave(form.lyrDetail().tabHomeLeave().dteHLDate().getValue());
 		voHL.setTimeOnHomeLeave(form.lyrDetail().tabHomeLeave().timHLTime().getValue());
 		voHL.setExpectedDateOfReturn(form.lyrDetail().tabHomeLeave().dteHLReturnDate().getValue());
 		voHL.setExpectedTimeOfReturn(form.lyrDetail().tabHomeLeave().timHLReturnTime().getValue());
-		voHL.setVacatedBedNumber(form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getBedSpaceIsNotNull() ?form.getGlobalContext().Core.getSelectedBedSpaceState().getBedSpace().getBedNumber() : "");
+		voHL.setVacatedBedNumber(form.lyrDetail().tabHomeLeave().chkHLRetainBed().getValue() ? null : form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getBedSpaceIsNotNull() ?form.getGlobalContext().Core.getSelectedBedSpaceState().getBedSpace().getBedNumber() : "");
+		voHL.setBedRetained(form.lyrDetail().tabHomeLeave().chkHLRetainBed().getValue());
 		
 		BedSpaceStateLiteVo voBedSpaceStateLite = voEpisode.getBed();
-		if (voBedSpaceStateLite != null)
+		if (voBedSpaceStateLite != null && (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("CCO") || (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && !Boolean.TRUE.equals(voHL.getBedRetained()))))
 		{		
 			if (voBedSpaceStateLite.getCurrentBedStatusIsNotNull())
 			{
 				voBedSpaceStateLite.setPreviousBedStatus((BedSpaceStateStatusLiteVo) voBedSpaceStateLite.getCurrentBedStatus().clone());
 				voBedSpaceStateLite.setCurrentBedStatus(new BedSpaceStateStatusLiteVo());
-				voBedSpaceStateLite.getCurrentBedStatus().setStatusDateTime(new DateTime());
+				voBedSpaceStateLite.getCurrentBedStatus().setStatusDateTime(new DateTime(form.lyrDetail().tabHomeLeave().dteHLDate().getValue(),form.lyrDetail().tabHomeLeave().timHLTime().getValue() != null ? form.lyrDetail().tabHomeLeave().timHLTime().getValue() : new Time(0,0)));
 				voBedSpaceStateLite.getCurrentBedStatus().setBedStatus(BedStatus.AVAILABLE);
 
 				voHL.setVacatedBedNumber(voBedSpaceStateLite.getBedSpaceIsNotNull() ? voBedSpaceStateLite.getBedSpace().getBedNumber() : null);
@@ -1587,9 +2705,12 @@ public class Logic extends BaseLogic
 		voEpisode.setExpectedDateOfReturn(form.lyrDetail().tabHomeLeave().dteHLReturnDate().getValue());
 		voEpisode.setExpectedTimeOfReturn(form.lyrDetail().tabHomeLeave().timHLReturnTime().getValue());
 		voEpisode.setIsOnHomeLeave(Boolean.TRUE);
-		voEpisode.getHomeLeaves().add( voHL);
+		voEpisode.getHomeLeaves().add(voHL);		
 		
-		voEpisode.setBed(null);
+		if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("CCO") || (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && !Boolean.TRUE.equals(voHL.getBedRetained())))
+		{	
+			voEpisode.setBed(null);
+		}	
 
 		String[] arrErrors = voEpisode.validate();
 		if (arrErrors != null)
@@ -1610,14 +2731,13 @@ public class Logic extends BaseLogic
 		catch (StaleObjectException e)
 		{
 			engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
-			initialise();
+			initialise(false,true);
 			return;
-		}
-
+		}		
 		engine.close(DialogResult.OK);
-
 	}
 
+	/*
 	private InPatientEpisodeADTVo populateHomeLeaveInfo(InPatientEpisodeADTVo voEpisode) 
 	{
 		if (voEpisode == null)
@@ -1625,72 +2745,143 @@ public class Logic extends BaseLogic
 
 		return voEpisode;
 	}
+	*/
 
 	@Override
 	protected void onBtnTransferClick() throws PresentationLogicException
 	{
-		// depending on which tab is visible
-		if (form.lyrDetail().tabTransfer().lyrTransfer().tabIn().isVisible())
+		if(!isNotMosUser("Logged-in user is not associated with a Member of Staff. Transfer cannot continue."))
 		{
-			saveTransferIn();
-		}
-		else if (form.lyrDetail().tabTransfer().lyrTransfer().tabOut().isVisible())
-		{
-			PendingTransfersLiteVo voPendingTransfer = form.getLocalContext().getPendingTransferOut();
-			if (voPendingTransfer == null)
-				voPendingTransfer = new PendingTransfersLiteVo();
-
-			voPendingTransfer.setCurrentStatus(TransferStatus.PENDING);
-			voPendingTransfer.setDestinationWard(form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbOutTransfer().getValue());
-
-			BedSpaceStateLiteVo voBedSpaceState = form.getGlobalContext().Core.getSelectedBedSpaceState();
-			if (voBedSpaceState != null && voBedSpaceState.getInpatientEpisodeIsNotNull())
-				voPendingTransfer.setInpatientEpisode(domain.geInpatientEpisodeLiteVoById(voBedSpaceState.getInpatientEpisode()));  //wdev-15042
-			else if(form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull())
-				voPendingTransfer.setInpatientEpisode(domain.geInpatientEpisodeLiteVoById(form.getGlobalContext().Core.getSelectedWaitingAreaPatient())); //wdev-15042
-
-			voPendingTransfer.setWardType(form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbOutWardType().getValue());
-			voPendingTransfer.setTransferRequestDateTime(form.lyrDetail().tabTransfer().lyrTransfer().tabOut().dtimOutTransfer().getValue());
-
-			voPendingTransfer.setConsultant(form.lyrDetail().tabTransfer().lyrTransfer().tabOut().ccOutConsultant().getValue());
-			voPendingTransfer.setSpecialty(form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbOutSpecialty().getValue());
-				
-			if(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("CCO"))
+			// depending on which tab is visible
+			if (form.lyrDetail().tabTransfer().lyrTransfer().tabIn().isVisible())
 			{
-				voPendingTransfer.setSpecialty(domain.getCCOSpecialtyMappingFromPASSpecialty(form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbCCOOutSpecialty().getValue()));
-				voPendingTransfer.setPASSpecialty(form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbCCOOutSpecialty().getValue());
+				saveTransferIn();
 			}
-			if (!saveTransferOut(voPendingTransfer))
-				return;
+			else if (form.lyrDetail().tabTransfer().lyrTransfer().tabOut().isVisible())
+			{
+				//WDEV-20023
+				String[] arrErrors = getUIValidationForTransferOut();
 
-			
-			// if this is a maternity episode check for infants and give the
-			// option to transfer those aswell
-			// WDEV-8740 - Suppress transfer baby dialog
-			// SelectItemVoCollection voCollInfants = chooseInfantsToTransfer();
-			// if (voCollInfants != null)
-			// { 
-			//		form.getGlobalContext().Core.setItems(voCollInfants.size() > 0 ? voCollInfants : null);
-			//		engine.open(form.getForms().Core.SelectItems, "Select Infants to Transfer");
-			//		return;
-			// }
+				if (arrErrors != null)
+				{
+					engine.showErrors(arrErrors);
+					return ;
+				}
 
-			engine.close(DialogResult.OK);
+				if (form.getGlobalContext().Core.getPatientShort() != null && form.getGlobalContext().Core.getPatientShort().getDod() != null)
+				{
+					form.getLocalContext().setMessageBoxDeceasedPatientTransferOut(engine.showMessage("Patient is deceased. Do you need to carry out this transfer?", "", MessageButtons.YESNO));
+					return;
+				}
 
-		}
-		else if (form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().isVisible())
-		{
-			saveConsultantTransfer();
+				//WDEV-22449 transferOut(false, form.lyrDetail().tabTransfer().lyrTransfer().tabOut().chkNoLongerBed().getValue());
+				transferOut(false, false);
+			}
+			else if (form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().isVisible())
+			{
+				if (form.getGlobalContext().Core.getPatientShort() != null && form.getGlobalContext().Core.getPatientShort().getDod() != null) //WDEV-21302
+				{
+					form.getLocalContext().setMessageBoxDeceasedPatientTransferConsultant(engine.showMessage("Patient is deceased. Do you need to cary out this transfer?", "", MessageButtons.YESNO));
+					return;
+				}
+
+				saveConsultantTransfer();
+			}
 		}
 	}
 
+	//WDEV-20023 //WDEV-20291
+	private void transferOut(boolean moveCaseNotes, boolean bNoLongerInBed)
+	{
+		PendingTransfersLiteVo voPendingTransfer = form.getLocalContext().getPendingTransferOut();
+		if (voPendingTransfer == null)
+			voPendingTransfer = new PendingTransfersLiteVo();
+
+		voPendingTransfer.setCurrentStatus(TransferStatus.PENDING);
+		voPendingTransfer.setDestinationWard(form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbOutTransfer().getValue());
+
+		BedSpaceStateLiteVo voBedSpaceState = form.getGlobalContext().Core.getSelectedBedSpaceState();
+		if (voBedSpaceState != null && voBedSpaceState.getInpatientEpisodeIsNotNull())
+			voPendingTransfer.setInpatientEpisode(domain.getInpatientEpisodeLiteVoById(voBedSpaceState.getInpatientEpisode()));  //wdev-15042	
+		else if(form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull())
+			voPendingTransfer.setInpatientEpisode(domain.getInpatientEpisodeLiteVoById(form.getGlobalContext().Core.getSelectedWaitingAreaPatient())); //wdev-15042
+
+		voPendingTransfer.setWardType(form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbOutWardType().getValue());
+		voPendingTransfer.setTransferRequestDateTime(form.lyrDetail().tabTransfer().lyrTransfer().tabOut().dtimOutTransfer().getValue());
+
+		voPendingTransfer.setConsultant(form.lyrDetail().tabTransfer().lyrTransfer().tabOut().ccOutConsultant().getValue());
+		voPendingTransfer.setSpecialty(form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbOutSpecialty().getValue());
+		voPendingTransfer.setService(form.lyrDetail().tabTransfer().lyrTransfer().tabOut().qmbOutService().getValue());
+		
+		if(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("CCO"))
+		{
+			voPendingTransfer.setSpecialty(domain.getCCOSpecialtyMappingFromPASSpecialty(form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbCCOOutSpecialty().getValue()));
+			voPendingTransfer.setPASSpecialty(form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbCCOOutSpecialty().getValue());
+		}
+		
+		voPendingTransfer.setPatientStatus(form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbPatientCategory().getValue());//WDEV-20223
+		voPendingTransfer.setTransferComment(form.lyrDetail().tabTransfer().lyrTransfer().tabOut().txtOutTransfComment().getValue());
+		voPendingTransfer.setTransferReason(form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbOutTransfReason().getValue());
+		voPendingTransfer.setNoLongerInBed(bNoLongerInBed);
+		voPendingTransfer.setBedAvailableDateTime(form.lyrDetail().tabTransfer().lyrTransfer().tabOut().dtimBedReady().getValue());
+		
+		if (!saveTransferOut(voPendingTransfer, moveCaseNotes))
+			return;
+
+		
+		// if this is a maternity episode check for infants and give the
+		// option to transfer those aswell
+		// WDEV-8740 - Suppress transfer baby dialog
+		// SelectItemVoCollection voCollInfants = chooseInfantsToTransfer();
+		// if (voCollInfants != null)
+		// { 
+		//		form.getGlobalContext().Core.setItems(voCollInfants.size() > 0 ? voCollInfants : null);
+		//		engine.open(form.getForms().Core.SelectItems, "Select Infants to Transfer");
+		//		return;
+		// }
+		engine.close(DialogResult.OK);
+	}
+
+	//WDEV-20023
+	private PatientCaseNoteTransferVo populatePatCaseNoteTransferFromScreen(PatientCaseNoteVo patientCaseNoteVo, LocationLiteVo locationLiteVo)
+	{
+		
+		PatientCaseNoteTransferVo transfer =  new PatientCaseNoteTransferVo();
+		
+		transfer.setPatient(patientCaseNoteVo.getPatient());
+		transfer.setCaseNote(patientCaseNoteVo);
+		transfer.setTransferredFromLocation(patientCaseNoteVo.getCurrentLocation());
+		transfer.setTransferredToLocation(locationLiteVo);
+		
+		Object mos = domain.getMosUser();
+		if(mos != null)	
+			transfer.setTransferredBy((MemberOfStaffLiteVo)mos);
+		
+		transfer.setTransferDate(new DateTime());
+		
+		PatientCaseNoteCommentSaveVo comment = new PatientCaseNoteCommentSaveVo();
+			
+		comment.setAuthoredBy((MemberOfStaffLiteVo)mos);
+		comment.setAuthoredDate(new DateTime());
+		comment.setCaseNote(patientCaseNoteVo);
+		
+		comment.setComment("Transfer Comment: Patient Casenotes transferred as part of Patient Transfer" );
+		comment.setPatient(patientCaseNoteVo.getPatient());
+		comment.setCaseNoteFolderLocation(locationLiteVo);
+			
+		transfer.setTansferComment(comment);
+		
+		return transfer;
+	}
+	
+	/*
 	private SelectItemVoCollection chooseInfantsToTransfer()
 	{
 		SelectItemVoCollection voCollItems = new SelectItemVoCollection();
 		boolean isMaternityInpatient = form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisodeIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getIsMaternityInpatientIsNotNull() ? form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getIsMaternityInpatient() : false;
 		if (isMaternityInpatient)
 		{
-			PatientShort voPatient = form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisodeIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getPasEventIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getPasEvent().getPatientIsNotNull() ? form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getPasEvent().getPatient() : null;
+			PatientLiteVo voPatient = form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisodeIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getPasEventIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getPasEvent().getPatientIsNotNull() ? form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getPasEvent().getPatient() : null;
 			if (voPatient != null)
 			{
 				InpatientEpisodeLiteVoCollection voCollInfants = form.getLocalContext().getInfants();
@@ -1731,6 +2922,7 @@ public class Logic extends BaseLogic
 
 		return voPendingTransfer;
 	}
+	*/
 
 	private void saveConsultantTransfer()
 	{
@@ -1746,11 +2938,15 @@ public class Logic extends BaseLogic
 				throw new CodingRuntimeException("Check GC population");
 			
 			voEpisode = domain.getInpatConsultantTransfer(voInpat);
+			
+			boolean consultantOrSpecialtyWasChanged = checkConsultantServiceOrSpecialtyChanged(voEpisode);
+			
 			if (voEpisode != null)
 			{
 				if (voEpisode.getPasEventIsNotNull())
 				{
-					voEpisode.getPasEvent().setConsultant(form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().ccConsultantAccepting().getValue());
+					if (form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().ccConsultantAccepting().getValue() instanceof MedicVo)
+						voEpisode.getPasEvent().setConsultant((MedicVo)form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().ccConsultantAccepting().getValue());
 
 					if(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("CCO"))
 					{
@@ -1760,14 +2956,31 @@ public class Logic extends BaseLogic
 					}
 					else
 						voEpisode.getPasEvent().setSpecialty(form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().cmbConsultantSpecialty().getValue());
+					
+					voEpisode.getPasEvent().setService(form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().qmbConsultantService().getValue());
 				}
-				if (voEpisode.getConsultantStays() == null)
-					voEpisode.setConsultantStays(new ConsultantStayVoCollection());
-
-				ConsultantStayVo voConsStay = new ConsultantStayVo();
-				voConsStay.setConsultant(form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().ccConsultantAccepting().getValue());
-				voConsStay.setTransferDateTime(form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().dtimConsultantTransfer().getValue());
-				voEpisode.getConsultantStays().add(voConsStay);
+				
+				if(consultantOrSpecialtyWasChanged)
+				{
+    				if (voEpisode.getConsultantStays() == null)
+    					voEpisode.setConsultantStays(new ConsultantStayVoCollection());
+    				
+    				ConsultantStayVo oldConsultant = getCurrentConsultantStay(voEpisode.getConsultantStays());
+    				if(oldConsultant != null)
+    				{
+    					oldConsultant.setEndDateTime(form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().dtimConsultantTransfer().getValue());
+    				}
+    				
+    				ConsultantStayVo voConsStay = new ConsultantStayVo();
+    				//WDEV21139
+//    				voConsStay.setConsultant(form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().ccConsultantAccepting().getValue());
+    				voConsStay.setConsultant((MedicVo) form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().ccConsultantAccepting().getValue());
+    				voConsStay.setTransferDateTime(form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().dtimConsultantTransfer().getValue());
+    				voConsStay.setSpecialty(voEpisode.getPasEvent() != null ? voEpisode.getPasEvent().getSpecialty() : null);
+    				voConsStay.setPatientStatus(form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().cmbPatientCategoryConsultant().getValue());//WDEV-20223
+    				voConsStay.setService(form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().qmbConsultantService().getValue());
+    				voEpisode.getConsultantStays().add(voConsStay);
+				}
 			}
 		}
 
@@ -1788,7 +3001,7 @@ public class Logic extends BaseLogic
 			catch (StaleObjectException e)
 			{
 				engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
-				initialise();
+				initialise(true,true); //WDEV-17662
 				return;
 			}
 			catch (DomainInterfaceException e)
@@ -1801,19 +3014,51 @@ public class Logic extends BaseLogic
 		}
 	}
 
+	private boolean checkConsultantServiceOrSpecialtyChanged(InpatConsultantTransferVo voEpisode)
+	{
+		if(voEpisode == null)
+			return false;
+
+		if (voEpisode.getPasEvent() != null)
+		{
+			if (voEpisode.getPasEvent().getConsultant() != null && !voEpisode.getPasEvent().getConsultant().equals(form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().ccConsultantAccepting().getValue()))
+				return true;
+			else if (!ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && voEpisode.getPasEvent().getSpecialty() != null && !voEpisode.getPasEvent().getSpecialty().equals(form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().cmbConsultantSpecialty().getValue()))
+				return true;			
+		}
+		return false;
+	}
+
+	private ConsultantStayVo getCurrentConsultantStay(ConsultantStayVoCollection consultantStays)
+	{
+		if(consultantStays == null)
+			return null;
+		
+		for(ConsultantStayVo cs : consultantStays)
+		{
+			if(cs != null && cs.getEndDateTime() == null)
+				return cs;
+		}
+		
+		return null;
+	}
+
 	private String[] getUIValidationForConsultantTransfer()
 	{
 		List<String> errors = new ArrayList<String>();
 
-		if (form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().ccConsultantAccepting().getValue() == null)
-			errors.add("Accepting Consultant is mandatory");
-		
+		if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS")
+				&& form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().qmbConsultantService().getValue() == null)
+			errors.add("Accepting Service is mandatory");
 		if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("CCO")
 				&& form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().cmbCCOConsultantSpecialty().getValue() == null)
-			errors.add("Specialty is mandatory");
+			errors.add("Accepting Specialty is mandatory");
 		else if ( ! ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("CCO")
 			&& form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().cmbConsultantSpecialty().getValue() == null)
-			errors.add("Specialty is mandatory");
+			errors.add("Accepting Specialty is mandatory");
+		
+		if (form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().ccConsultantAccepting().getValue() == null)
+			errors.add("Accepting Consultant is mandatory");
 		
 		//WDEV-15045
 		if (form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().dtimConsultantTransfer().getValue() == null)
@@ -1823,14 +3068,53 @@ public class Logic extends BaseLogic
 
 		return errors.size() > 0 ? errors.toArray(new String[0]) : null;
 	}
-
-	private boolean saveTransferOut(PendingTransfersLiteVo voPendingTransfer)
-	{		
-		String[] arrErrors = voPendingTransfer.validate();
+	
+	private String[] getUIValidationForTransferOut()
+	{
+		ArrayList<String> errors = new ArrayList<String>();
+		
+		if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && form.lyrDetail().tabTransfer().lyrTransfer().tabOut().qmbOutService().getValue() == null)
+		{
+			errors.add("Service is mandatory.");
+		}
+		if ((BedDialogPatientDataTabs.TAB_TRANSFER_OUT.equals(form.getLocalContext().getTabFocused()) 
+				&& form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbOutTransfReason().getValue() == null) 
+				|| (BedDialogPatientDataTabs.TAB_INFANTS_TRANSFER.equals(form.getLocalContext().getTabFocused())  
+					&& form.lyrDetail().tabInfants().lyrInfants().tabInfantTransfer().cmbInfantTransferReason().getValue() == null))
+		{
+			errors.add("Transfer Reason is mandatory.");
+		} //WDEV-20477
+		//WDEV-20304
+		if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") &&
+					form.lyrDetail().tabTransfer().lyrTransfer().tabOut().dtimOutTransfer().getValue() != null && form.lyrDetail().tabTransfer().lyrTransfer().tabOut().dtimBedReady().getValue() != null &&
+					form.lyrDetail().tabTransfer().lyrTransfer().tabOut().dtimBedReady().getValue().isLessThan(form.lyrDetail().tabTransfer().lyrTransfer().tabOut().dtimOutTransfer().getValue()))
+		{
+			String bedSpaceTypeDescriptor = getBedSpaceTypeDescriptor(form.getGlobalContext().Core.getSelectedBedSpaceState());
+			errors.add(bedSpaceTypeDescriptor + " Available Date/Time cannot be earlier than Transfer Requested Date/Time.");
+		}
+		int noOfErrors = errors.size();
+		if (noOfErrors == 0)
+			return null;
+		
+		return errors.toArray(new String[(noOfErrors)]);
+	}
+	private boolean saveTransferOut(PendingTransfersLiteVo voPendingTransfer, boolean moveCaseNotes) //WDEV-20023
+	{	
+		String[] arrErrors = voPendingTransfer.validate(getUIValidationForTransferOut());
+		
 		if (arrErrors != null)
 		{
 			engine.showErrors(arrErrors);
 			return false;
+		}
+		if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+		{
+			String wardAvailabilityErrors = validateTransferOutWard(form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbOutTransfer().getValue());
+			if(wardAvailabilityErrors != null)
+			{
+				form.getLocalContext().setMessageBoxWardBayAvailability(engine.showMessage(wardAvailabilityErrors,"Not Allowed", MessageButtons.OK, MessageIcon.INFORMATION));
+				return false;
+			}
 		}
 		try
 		{
@@ -1839,7 +3123,7 @@ public class Logic extends BaseLogic
 		catch (StaleObjectException e)
 		{
 			engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
-			initialise();
+			initialise(true, true); //WDEV-17662
 			return false;
 		}
 		catch (DomainInterfaceException e)
@@ -1859,10 +3143,10 @@ public class Logic extends BaseLogic
 			engine.showMessage("Please select a Patient");
 			return;
 		}
-
+		
 		InPatientEpisodeADTVo voEpisode = domain.getInpatientEpisode(form.lyrDetail().tabTransfer().lyrTransfer().tabIn().grdTransferIn().getValue().getInpatientEpisode());
 
-		// get old bed and set it to avaialable first and then new bed will be
+		// get old bed and set it to available first and then new bed will be
 		// set to occupied below
 		BedSpaceStateLiteVo voOldBedSpaceStateLite = voEpisode.getBed();
 		if (voOldBedSpaceStateLite != null)
@@ -1890,9 +3174,35 @@ public class Logic extends BaseLogic
 		}
 
 		voNewBedSpaceState.setInpatientEpisode(form.lyrDetail().tabTransfer().lyrTransfer().tabIn().grdTransferIn().getValue().getInpatientEpisode());
-
+		voNewBedSpaceState.setProvisionalBayGender(voEpisode.getPasEventIsNotNull() && voEpisode.getPasEvent().getPatientIsNotNull() && voEpisode.getPasEvent().getPatient().getSexIsNotNull() && !Sex.UNKNOWN.equals(voEpisode.getPasEvent().getPatient().getSex())? voEpisode.getPasEvent().getPatient().getSex() : null);
 		voEpisode.setBed(voNewBedSpaceState);
 		voEpisode = populateEpisodeDataFromTransferInTab(voEpisode);
+		//wdev-20362 for this Transfer IN, if yes is chosen move the Case NOtes too
+		voEpisode.setUpdateCaseFolder(form.lyrDetail().tabTransfer().lyrTransfer().tabIn().TICaseFolderYesNo().getValue().equals(ims.core.forms.bedinfodialog.GenForm.lyrDetailLayer.tabTransferContainer.lyrTransferLayer.tabInContainer.TICaseFolderYesNoEnumeration.rdoTIYes));
+		PatientCaseNoteTransferVoCollection collPatientCaseNoteTransfer = null;
+		if (Boolean.TRUE.equals(voEpisode.getUpdateCaseFolder()))
+		{
+			BedSpaceStateLiteVo voSelectedBedSpace = form.getGlobalContext().Core.getSelectedBedSpaceState();
+			if (voSelectedBedSpace!=null && voSelectedBedSpace.getInpatientEpisodeIsNotNull() 
+					&& voSelectedBedSpace.getInpatientEpisode().getPasEventIsNotNull()
+					&& voSelectedBedSpace.getInpatientEpisode().getPasEvent().getPatientIsNotNull() 
+					&& voSelectedBedSpace.getWardIsNotNull())
+			{
+				form.getLocalContext().setPatientCaseNotesCollection(domain.getCaseNoteFolders(voSelectedBedSpace.getInpatientEpisode().getPasEvent().getPatient(),null));
+			
+				collPatientCaseNoteTransfer = new PatientCaseNoteTransferVoCollection();
+				for (int i=0; form.getLocalContext().getPatientCaseNotesCollectionIsNotNull() && i<form.getLocalContext().getPatientCaseNotesCollection().size();i++)
+				{
+					PatientCaseNoteVo voCollCaseNotesFolder = form.getLocalContext().getPatientCaseNotesCollection().get(i);
+					if(CaseNoteStatus.ACTIVE.equals(voCollCaseNotesFolder.getStatus())|| CaseNoteStatus.REQUIRES_MERGING.equals(voCollCaseNotesFolder.getStatus())|| CaseNoteStatus.MARKED_AS_FOUND.equals(voCollCaseNotesFolder.getStatus()))//WDEV-22851
+						collPatientCaseNoteTransfer.add(populatePatCaseNoteTransferFromScreen(voCollCaseNotesFolder, voSelectedBedSpace.getWard()));
+				}	
+			}
+		}
+		if (form.lyrDetail().tabTransfer().lyrTransfer().tabIn().TICaseFolderYesNo().getValue().equals(ims.core.forms.bedinfodialog.GenForm.lyrDetailLayer.tabTransferContainer.lyrTransferLayer.tabInContainer.TICaseFolderYesNoEnumeration.rdoTIYes))
+		{
+			voEpisode.setCaseFolderComments(form.lyrDetail().tabTransfer().lyrTransfer().tabIn().txtTICaseComment().getValue());
+		}
 
 		if(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("CCO"))
 		{
@@ -1902,10 +3212,14 @@ public class Logic extends BaseLogic
 				voEpisode.setCaseFolderComments(form.lyrDetail().tabTransfer().lyrTransfer().tabIn().txtTICaseComment().getValue());
 			}
 		}
-
+		WardMixedSexBreachVo breachVo = null;
+		if (form.getGlobalContext().Core.getBedRuleBreachReason() != null && Boolean.TRUE.equals(form.getGlobalContext().Core.getBedRuleBreachReason().getIsMixingGenderBayValidated()))
+		{			
+			breachVo = populateWardMixedSexBreach(form.lyrDetail().tabTransfer().lyrTransfer().tabIn().dtimTransfer().getValue(), form.getGlobalContext().Core.getSelectedBedSpaceState(), form.getGlobalContext().Core.getBedRuleBreachReason(), form.getGlobalContext().Core.getMaleBedAdmissionWardCount(), form.getGlobalContext().Core.getFemaleBedAdmissionWardCount());
+		}	
 		HomeLeaveVo voHL = new HomeLeaveVo();
 
-		if(voEpisode.getIsOnHomeLeaveIsNotNull()
+		if (voEpisode.getIsOnHomeLeaveIsNotNull()
 			&& voEpisode.getIsOnHomeLeave())
 		{
 			voHL.setDateReturnedFromHomeLeave(new Date());
@@ -1914,17 +3228,45 @@ public class Logic extends BaseLogic
 		else
 			voHL = null;
 		
-		String[] arrErrors = voEpisode.validate(getUIValidationForTransferIn());
+		PendingTransfersLiteVo voPendingTransf = populatePendingTransferOnAcceptFromScreen(form.lyrDetail().tabTransfer().lyrTransfer().tabIn().grdTransferIn().getValue());
+		String[] arrErrors = voPendingTransf.validate(voEpisode.validate(getUIValidationForTransferIn()));
+		
+		if (collPatientCaseNoteTransfer != null && collPatientCaseNoteTransfer.size() > 0)
+		{
+			arrErrors = collPatientCaseNoteTransfer.validate(arrErrors);
+		}
 		if (arrErrors != null)
 		{
 			engine.showErrors(arrErrors);
 			return;
 		}
+		if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+		{
+			String wardAvailabilityErrors = validateTransferInWard(form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() ? form.getGlobalContext().Core.getSelectedBedSpaceState().getWard() : form.getGlobalContext().Core.getADTWard());
+			if(wardAvailabilityErrors != null)
+			{
+				form.getLocalContext().setMessageBoxWardBayAvailability(engine.showMessage(wardAvailabilityErrors,"Not Allowed", MessageButtons.OK, MessageIcon.INFORMATION));
+				return;
+			}
+			
+			boolean bValidate = isBedAllocationValidatedByRelevantRule(form.getGlobalContext().Core.getBedRuleBreachReason(), form.getLocalContext().getTabFocused());
+			if (!bValidate)
+			 	return;
+			if (breachVo != null)
+			{			
+				String[] breachRecErrors = breachVo.validate();
 
+				if (breachRecErrors != null)
+				{
+					engine.showErrors(breachRecErrors);
+					return;
+				}
+			}				
+		}
 		try
 		{
 			//WDEV-11438 - updating the CareContext record with the EDD 
-			form.getGlobalContext().Core.setCurrentCareContext(domain.saveTransferIn(voOldBedSpaceStateLite, voEpisode, form.lyrDetail().tabTransfer().lyrTransfer().tabIn().grdTransferIn().getValue(), voHL));
+			form.getGlobalContext().Core.setCurrentCareContext(domain.saveTransferIn(voOldBedSpaceStateLite, voEpisode, voPendingTransf, voHL, form.getGlobalContext().Core.getBedRuleBreachReason(), breachVo,collPatientCaseNoteTransfer ));
 		}
 		catch (DomainInterfaceException e)
 		{
@@ -1941,6 +3283,26 @@ public class Logic extends BaseLogic
 		engine.close(DialogResult.OK);
 	}
 
+	private PendingTransfersLiteVo populatePendingTransferOnAcceptFromScreen(PendingTransfersLiteVo value)
+	{
+		if (value == null)
+			return null;
+		
+		if (value.getPatientStatus() == null )
+			value.setPatientStatus(value.getInpatientEpisode().getPasEvent().getPatient().getPatientCategory() != null ? value.getInpatientEpisode().getPasEvent().getPatient().getPatientCategory() : PatientStatus.NHS);
+		value.setWardType(form.lyrDetail().tabTransfer().lyrTransfer().tabIn().cmbWardType().getValue());
+		value.setService(form.lyrDetail().tabTransfer().lyrTransfer().tabIn().qmbInService().getValue());
+		value.setSpecialty(form.lyrDetail().tabTransfer().lyrTransfer().tabIn().cmbInSpecialty().getValue());
+		value.setTransferRequestDateTime(form.lyrDetail().tabTransfer().lyrTransfer().tabIn().dtimTransfer().getValue());
+		value.setCurrentStatus(TransferStatus.TRANSFERRED);
+		
+		if (form.lyrDetail().tabTransfer().lyrTransfer().tabIn().ccInConsultant().getValue() instanceof MedicVo)
+		{		
+			value.setConsultant((MedicVo)form.lyrDetail().tabTransfer().lyrTransfer().tabIn().ccInConsultant().getValue());
+		}
+		return value;
+	}
+
 	private String[] getUIValidationForTransferIn()
 	{
 		List<String> errors = new ArrayList<String>();
@@ -1948,24 +3310,30 @@ public class Logic extends BaseLogic
 		if (form.lyrDetail().tabTransfer().lyrTransfer().tabIn().dteDischarge().getValue() != null && form.lyrDetail().tabTransfer().lyrTransfer().tabIn().dteDischarge().getValue().isLessThan(new Date()))
 			errors.add("Est. Discharge Date cannot be in the past");
 		
+		if (form.lyrDetail().tabTransfer().lyrTransfer().tabIn().dtimEstDischarge().getValue() != null && form.lyrDetail().tabTransfer().lyrTransfer().tabIn().dtimEstDischarge().getValue().isLessThan(new DateTime()))
+			errors.add("Est. Discharge Date/Time cannot be in the past");
+		
 		//***********************************************************
+		if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS")
+				&& form.lyrDetail().tabTransfer().lyrTransfer().tabIn().qmbInService().getValue() == null)
+			errors.add("Service is mandatory");
 		
-		if(	! ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("CCO")
+		if (!ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("CCO")
 			&& form.lyrDetail().tabTransfer().lyrTransfer().tabIn().cmbInSpecialty().getValue() == null)
-			errors.add("Speciality field is Mandatory");
+			errors.add("Specialty is mandatory");
 		
-		if(	ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("CCO")
+		if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("CCO")
 			&& form.lyrDetail().tabTransfer().lyrTransfer().tabIn().cmbCCOInSpecialty().getValue() == null)
-			errors.add("Speciality field is Mandatory");
-				
-		if(form.lyrDetail().tabTransfer().lyrTransfer().tabIn().dtimTransfer().getValue() == null)
-			errors.add("Transfer Date/Time field is Mandatory");
+			errors.add("Specialty is mandatory");
+		
+		if (form.lyrDetail().tabTransfer().lyrTransfer().tabIn().dtimTransfer().getValue() == null)
+			errors.add("Transfer Date/Time field is mandatory");
 		
 		//WDEV-13130
 		if(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("CCO"))
 		{
 			if(form.lyrDetail().tabTransfer().lyrTransfer().tabIn().dteDischarge().getValue() == null)
-				errors.add("Est. Discharge Date field is Mandatory");
+				errors.add("Est. Discharge Date field is mandatory");
 		}
 		
 		//***********************************************************
@@ -1979,7 +3347,8 @@ public class Logic extends BaseLogic
 
 		if (voEpisode.getPasEventIsNotNull())
 		{
-			voEpisode.getPasEvent().setConsultant(form.lyrDetail().tabTransfer().lyrTransfer().tabIn().ccInConsultant().getValue());
+			if (form.lyrDetail().tabTransfer().lyrTransfer().tabIn().ccInConsultant().getValue() instanceof MedicVo)
+				voEpisode.getPasEvent().setConsultant((MedicVo) form.lyrDetail().tabTransfer().lyrTransfer().tabIn().ccInConsultant().getValue());
 			if(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("CCO"))
 			{
 				voEpisode.getPasEvent().setSpecialty(domain.getCCOSpecialtyMappingFromPASSpecialty(form.lyrDetail().tabTransfer().lyrTransfer().tabIn().cmbCCOInSpecialty().getValue()));
@@ -1989,80 +3358,547 @@ public class Logic extends BaseLogic
 				voEpisode.getPasEvent().setSpecialty(form.lyrDetail().tabTransfer().lyrTransfer().tabIn().cmbInSpecialty().getValue());
 
 			if (form.lyrDetail().tabTransfer().lyrTransfer().tabIn().grdTransferIn().getValue() != null)
+			{	
 				voEpisode.getPasEvent().setLocation(form.lyrDetail().tabTransfer().lyrTransfer().tabIn().grdTransferIn().getValue().getDestinationWard());
+				voEpisode.getPasEvent().setService(form.lyrDetail().tabTransfer().lyrTransfer().tabIn().qmbInService().getValue());
+			}	
 		}
-
+		//WDEV-20134
+		InPatientEpisodeADTVo voEpisodeToSave = addNewWardStayAndUpdateCurrent(voEpisode);
+		
+		voEpisodeToSave.setEstDischargeDate(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") ? form.lyrDetail().tabTransfer().lyrTransfer().tabIn().dtimEstDischarge().getValue() : (form.lyrDetail().tabTransfer().lyrTransfer().tabIn().dteDischarge().getValue() != null ? new DateTime (form.lyrDetail().tabTransfer().lyrTransfer().tabIn().dteDischarge().getValue(), new Time(0,0)) : null));
+		voEpisodeToSave.setWardType(form.lyrDetail().tabTransfer().lyrTransfer().tabIn().cmbWardType().getValue());
+		
+		return voEpisodeToSave; ////WDEV-20134 -- ends here
+	}
+	//WDEV-20134
+	private InPatientEpisodeADTVo addNewWardStayAndUpdateCurrent(InPatientEpisodeADTVo voEpisode)
+	{
+		if (voEpisode == null)
+			return null;
+		//update of Current Ward Stay
+		WardStayVo currentWardStayRecordVo = getCurrentWardStayRecord(voEpisode.getWardStays());
+		PendingTransfersLiteVo gridValue =(PendingTransfersLiteVo)form.lyrDetail().tabTransfer().lyrTransfer().tabIn().grdTransferIn().getValue();
+		if (currentWardStayRecordVo != null)
+		{
+			currentWardStayRecordVo.setTransferOutDateTime(form.lyrDetail().tabTransfer().lyrTransfer().tabIn().dtimTransfer().getValue());
+			voEpisode.getWardStays().set(voEpisode.getWardStays().indexOf(currentWardStayRecordVo), currentWardStayRecordVo);
+		}
+		
+		//new Ward Stay Created on Accepting Transfer
 		WardStayVo voWardStay = new WardStayVo();
 		voWardStay.setTransferDateTime(form.lyrDetail().tabTransfer().lyrTransfer().tabIn().dtimTransfer().getValue());
 		voWardStay.setBedSpace(form.getGlobalContext().Core.getSelectedBedSpaceState().getBedSpace());
+		voWardStay.setPatientStatus(gridValue.getPatientStatus()); //WDEV-20223
 		if (form.lyrDetail().tabTransfer().lyrTransfer().tabIn().grdTransferIn().getValue() != null)
 			voWardStay.setWard(form.lyrDetail().tabTransfer().lyrTransfer().tabIn().grdTransferIn().getValue().getDestinationWard());
 		voWardStay.setWardType(form.lyrDetail().tabTransfer().lyrTransfer().tabIn().cmbWardType().getValue());
+		voWardStay.setBay(form.getGlobalContext().Core.getSelectedBedSpaceState().getBay());
+		voWardStay.setTransferReason(form.lyrDetail().tabTransfer().lyrTransfer().tabIn().cmbTransferReason().getValue());
+		voWardStay.setTransferComment(form.lyrDetail().tabTransfer().lyrTransfer().tabIn().txtTransferComment().getValue());
+		voWardStay.setService(form.lyrDetail().tabTransfer().lyrTransfer().tabIn().qmbInService().getValue());
+		if (form.getGlobalContext().Core.getBedRuleBreachReasonIsNotNull())
+		{					
+			if (Boolean.TRUE.equals(form.getGlobalContext().Core.getBedRuleBreachReason().getIsPrivateBedAllocationValidated()))
+			{	
+				voWardStay.setReasonPrivateBedAllocated(form.getGlobalContext().Core.getBedRuleBreachReason().getReasonForPrivateBedAllocation());
+				voWardStay.setReasonPrivateBedAllocatedComment(form.getGlobalContext().Core.getBedRuleBreachReason().getReasonForPrivateBedAllocationComment());
+			}
+			if (Boolean.TRUE.equals(form.getGlobalContext().Core.getBedRuleBreachReason().getIsOohAllocationValidated()))
+			{	
+				voWardStay.setReasonAdmittingOutsideHours(form.getGlobalContext().Core.getBedRuleBreachReason().getReasonForAdmissionOutOfOpeningHours());
+				voWardStay.setReasonAdmittingOutsideHoursComment(form.getGlobalContext().Core.getBedRuleBreachReason().getReasonForAdmissionOohComment());
+			}
+			if (Boolean.TRUE.equals(form.getGlobalContext().Core.getBedRuleBreachReason().getIsMixingGenderBayValidated()))
+			{	
+				voWardStay.setReasonGenderBreach(form.getGlobalContext().Core.getBedRuleBreachReason().getReasonForMixingBayGender());
+				voWardStay.setReasonGenderBreachComment(form.getGlobalContext().Core.getBedRuleBreachReason().getReasonForMixingBayGenderComment());				
+			}								
+		}
 		if (voEpisode.getWardStays() == null)
 			voEpisode.setWardStays(new WardStayVoCollection());
 
 		voEpisode.getWardStays().add(voWardStay);
-
-		voEpisode.setEstDischargeDate(form.lyrDetail().tabTransfer().lyrTransfer().tabIn().dteDischarge().getValue());
-		voEpisode.setWardType(form.lyrDetail().tabTransfer().lyrTransfer().tabIn().cmbWardType().getValue());
 		
 		return voEpisode;
 	}
+	private WardMixedSexBreachVo populateWardMixedSexBreach(DateTime transferDateTime, BedSpaceStateLiteVo bedSpaceStateLiteVo, AdmissionReasonVo admissionReasonVo, Integer maleCount, Integer femaleCount)
+	{
+		WardMixedSexBreachVo vo = new WardMixedSexBreachVo();
+		
+		vo.setWard(bedSpaceStateLiteVo.getWard());
+		vo.setBay(bedSpaceStateLiteVo.getBay());
+		vo.setFemalePatients(femaleCount);
+		vo.setMalePatients(maleCount);
+		vo.setAdmissionDateTime(transferDateTime);
+		Object mosUser = domain.getMosUser();
+		if (mosUser != null)
+			vo.setMemberOfStaff((MemberOfStaffLiteVo) mosUser);
+		vo.setReasonForGenderBreach(admissionReasonVo.getReasonForMixingBayGender());
+		vo.setReasonForGenderBreachComment(admissionReasonVo.getReasonForMixingBayGenderComment());
+		
+		return vo;
+	}
+	private WardStayVo getCurrentWardStayRecord(WardStayVoCollection wardStays)
+	{
+		if (wardStays == null || wardStays.size() == 0)
+			return null;
+		for (WardStayVo wardStayVo : wardStays)
+		{
+			if (wardStayVo != null && wardStayVo.getTransferOutDateTime() == null)
+				return wardStayVo;
+		}
+		return null;
+	}
+	private boolean isBayClosed(LocationLiteVo bay)
+	{
+		BayConfigLiteVo bayConfig = getBayConfig(bay);
+		
+		return bayConfig != null && WardBayStatus.CLOSED.equals(bayConfig.getBayAvailabilityStatus());
+	}
+	private boolean isBayBlocked(LocationLiteVo bay)
+	{
+		BayConfigLiteVo bayConfig = getBayConfig(bay);
+		
+		return bayConfig != null && WardBayStatus.BLOCKED.equals(bayConfig.getBayAvailabilityStatus());
+	}
+	/*
+	private boolean isBayOutOfOpeningHours(LocationLiteVo selectedBay)
+	{
+		BayConfigLiteVo bayConfig = getBayConfig(selectedBay);
+		
+		Calendar calendar = Calendar.getInstance();
+		Date lastReopenDate = getMostRecentReopenDate(bayConfig);
+		
+		boolean isCurrentDayWeekDay =  (Calendar.SUNDAY != calendar.get(Calendar.DAY_OF_WEEK) && Calendar.SATURDAY != calendar.get(Calendar.DAY_OF_WEEK));
+		boolean isBayOutOfHours = (bayConfig.getOpeningTimeIsNotNull() && new Time().isLessThan(bayConfig.getOpeningTime())) || (bayConfig.getClosingTimeIsNotNull() && new Time().isGreaterThan(bayConfig.getClosingTime()));
+		boolean wasReopenedToday = new Date().equals(lastReopenDate);
+		
+		if (isBayOutOfHours && wasReopenedToday)
+			return false;
+		
+		if (Boolean.TRUE.equals(bayConfig.getWeekdaysOnly()) && !isCurrentDayWeekDay)
+			return true;
+		return isBayOutOfHours;
+	}
+	
+	private Date getMostRecentReopenDate(BayConfigLiteVo tempVo)
+	{
+		if (tempVo.getReOpenOutOfHours() == null)
+			return null;
+		
+		ArrayList<Date> dates = new ArrayList<Date>();
+		for (int i=0;i<tempVo.getReOpenOutOfHours().size();i++)
+		{
+			if (tempVo.getReOpenOutOfHours().get(i) != null && tempVo.getReOpenOutOfHours().get(i).getReopenDateIsNotNull())
+				dates.add(tempVo.getReOpenOutOfHours().get(i).getReopenDate());
+		}
+		return dates.size() > 0 ? Collections.max(dates) : null;
+		
+	}
+	*/
+	//WDEV-20224 --
+	private String validateTransferOutWard(LocationLiteVo ward)
+	{
+		WardConfigLiteVo wardConfig = domain.getWardConfig(ward);
+		if (wardConfig == null)
+			return null;
+		StringBuilder str = new StringBuilder();
+		if (WardBayStatus.BLOCKED.equals(wardConfig.getWardAvailabilityStatus()) || WardBayStatus.CLOSED.equals(wardConfig.getWardAvailabilityStatus()))
+		{	
+			if (WardBayStatus.BLOCKED.equals(wardConfig.getWardAvailabilityStatus()))
+				str.append("Ward " + ward.getName() + " is currently blocked.");
+			else if (WardBayStatus.CLOSED.equals(wardConfig.getWardAvailabilityStatus()))
+				str.append("Ward " + ward.getName() + " is currently closed.");
+			
+			return str.append(" Cannot place transfer request at this time.").toString();
+		}		
+		if (str.length() == 0)
+			return null;
+		return str.append(" Cannot place transfer request at this time.").toString();
+	}
+	private String validateOnAdmission(LocationLiteVo ward, String action)
+	{
+		WardConfigLiteVo wardConfig = form.getLocalContext().getWardConfig();
+		
+		if (wardConfig == null)
+			return null;
+		
+		StringBuilder str = new StringBuilder();
+		String bedStr = getBedSpaceTypeDescriptor(form.getGlobalContext().Core.getSelectedBedSpaceState());
+		String strMessage = action.equals(ADMIT) ? "Cannot admit patient at this time." : (action.equals(ALLOCATE_BED) || action.equals(RETURN_FROM_LEAVE) ? "Cannot allocate " + bedStr + " at this time." : "");
+				
+		if (form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull())
+		{			
+			LocationLiteVo baySelected = form.getGlobalContext().Core.getSelectedBedSpaceState().getBay();
+			if (isBayBlocked(baySelected) && (((action.equals(ALLOCATE_BED) && form.lyrDetail().tabAdmission().ccAdmit().getInWaitingIsVisible())) || (action.equals(RETURN_FROM_LEAVE) && form.lyrDetail().tabAdmission().ccAdmit().getIsReturnFromLeaveVisible())))
+			{
+				str.append(baySelected.getName() + " is currently blocked. " + strMessage);
+			}
+			else if (isBayClosed(baySelected) && (action.equals(ADMIT) || (action.equals(ALLOCATE_BED) && form.lyrDetail().tabAdmission().ccAdmit().getInWaitingIsVisible())))
+			{
+				str.append(baySelected.getName() + " is currently closed. " + strMessage);
+			}			
+		}
+		if (str.length() == 0)
+			return null;
+		return str.toString();
+	}
+	
+	private String validateInternalTransferInWard(LocationLiteVo ward)
+	{
+		WardConfigLiteVo wardConfig = form.getLocalContext().getWardConfig();
+		if (wardConfig == null)
+			return null;
+		StringBuilder str = new StringBuilder();
+		if (form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() && BedDialogPatientDataTabs.TAB_BED_SWAP.equals(form.getLocalContext().getTabFocused()))
+		{
+			String bedStr = getBedSpaceTypeDescriptor(form.getGlobalContext().Core.getSelectedBedSpaceState());
+			if (WardBayStatus.CLOSED.equals(wardConfig.getWardAvailabilityStatus()) || WardBayStatus.BLOCKED.equals(wardConfig.getWardAvailabilityStatus()))
+			{
+				if (WardBayStatus.CLOSED.equals(wardConfig.getWardAvailabilityStatus()))
+				{
+					str.append("Ward is currently closed." );
+				}
+				if (WardBayStatus.BLOCKED.equals(wardConfig.getWardAvailabilityStatus()))
+				{
+					str.append("Ward is currently blocked." );
+				}
+				return str.append(" Cannot allocate " + bedStr.toLowerCase() + " at this time.").toString();
+			}
 
+			LocationLiteVo baySelected = form.getGlobalContext().Core.getSelectedBedSpaceState().getBay();
+			
+			if (isBayClosed(baySelected))
+			{
+				str.append(baySelected.getName() + " is currently closed." );
+			}			
+		}
+		if (str.length() == 0)
+			return null;
+		return str.append(" Cannot allocate bed/chair at this time.").toString();
+	}
+	private String validateTransferInWard(LocationLiteVo ward)
+	{
+		WardConfigLiteVo wardConfig = form.getLocalContext().getWardConfig();
+		if (wardConfig == null)
+			return null;
+		StringBuilder str = new StringBuilder();
+
+		if (form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() && BedDialogPatientDataTabs.TAB_TRANSFER_IN.equals(form.getLocalContext().getTabFocused()))
+		{
+			if (WardBayStatus.CLOSED.equals(wardConfig.getWardAvailabilityStatus()) || WardBayStatus.BLOCKED.equals(wardConfig.getWardAvailabilityStatus()))
+			{
+				if (WardBayStatus.CLOSED.equals(wardConfig.getWardAvailabilityStatus()))
+				{
+					str.append("Ward is currently closed." );
+				}
+				if (WardBayStatus.BLOCKED.equals(wardConfig.getWardAvailabilityStatus()))
+				{
+					str.append("Ward is currently blocked." );
+				}
+				return str.append(" Cannot perform transfer at this time.").toString();
+			}
+			LocationLiteVo baySelected = form.getGlobalContext().Core.getSelectedBedSpaceState().getBay();
+			if (isBayBlocked(baySelected))
+			{
+				str.append(baySelected.getName() + " is currently blocked." );
+			}
+			else if (isBayClosed(baySelected))
+			{
+				str.append(baySelected.getName() + " is currently closed." );
+			}
+			else if (isBayOutOfOpeningHoursAtTransferInTime(baySelected))
+			{
+				str.append(baySelected.getName() + " is out of opening hours at the time of accepting the transfer." );
+				return str.append(" Cannot perform transfer.").toString();
+			}
+		}
+		if (str.length() == 0)
+			return null;
+		return str.append(" Cannot perform transfer at this time.").toString();
+	}
+	private boolean isBayOutOfOpeningHoursAtTransferInTime(LocationLiteVo selectedBay) //WDEV-20598
+	{
+		if (selectedBay == null)
+			return false;
+		
+		BayConfigLiteVo bayConfig = getBayConfig(selectedBay);
+		DateTime transferInDateTime = form.lyrDetail().tabTransfer().lyrTransfer().tabIn().dtimTransfer().getValue() != null ? form.lyrDetail().tabTransfer().lyrTransfer().tabIn().dtimTransfer().getValue() : new DateTime();
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(transferInDateTime.getJavaDate());		
+		
+		boolean isDayWeekDay =  calendar.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY  && calendar.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY;
+		boolean isBayOutOfHours = (bayConfig.getOpeningTimeIsNotNull() && transferInDateTime.getTime().isLessThan(bayConfig.getOpeningTime())) || (bayConfig.getClosingTimeIsNotNull() && transferInDateTime.getTime().isGreaterThan(bayConfig.getClosingTime()));
+		boolean wasReopenedOnAdmissionDay = wasReopenedOnATransferInDate(bayConfig, transferInDateTime.getDate());
+		
+		if (isBayOutOfHours && wasReopenedOnAdmissionDay)
+			return false;
+		
+		if (Boolean.TRUE.equals(bayConfig.getWeekdaysOnly()) && !isDayWeekDay)
+			return true;
+		return isBayOutOfHours;
+	}
+	private boolean wasReopenedOnATransferInDate(BayConfigLiteVo tempVo, Date transferDate)
+	{
+		if (tempVo.getReOpenOutOfHours() == null)
+			return false;
+		
+		ArrayList<Date> dates = new ArrayList<Date>();
+		for (int i=0;i<tempVo.getReOpenOutOfHours().size();i++)
+		{
+			if (tempVo.getReOpenOutOfHours().get(i) != null && tempVo.getReOpenOutOfHours().get(i).getReopenDateIsNotNull())
+				dates.add(tempVo.getReOpenOutOfHours().get(i).getReopenDate());
+		}
+		return dates.size() > 0 && dates.contains(transferDate) ? true : false;
+		
+	}
+	//WDEV-20224 -- ends here
+	private BayConfigLiteVo getBayConfig(LocationLiteVo bay)
+	{
+		WardConfigLiteVo wardConfig = form.getLocalContext().getWardConfig();
+		if (wardConfig != null && wardConfig.getBays() != null)
+		{
+			for (BayConfigLiteVo bayCfg : wardConfig.getBays())
+			{
+				if (bayCfg.getBay().equals(bay))
+					return bayCfg;
+			}
+		}
+		return null;	
+	}
+	
+	//WDEV-22353 //WDEV-22574 
+	private Boolean isNotMosUser(String message)
+	{
+		Object mos = domain.getMosUser();
+		if (mos == null && !Boolean.TRUE.equals(form.lyrDetail().tabAdmission().ccAdmit().getIsReturnFromLeaveVisible()))
+		{
+			engine.showMessage(message, "Not Allowed", MessageButtons.OK, MessageIcon.INFORMATION);
+			return true;
+		}
+		return false;
+	}
+
+	//WDEV-20134 -- ends here
 	@Override
 	protected void onBtnAdmitClick() throws PresentationLogicException
 	{
-		if(form.lyrDetail().tabAdmission().btnAdmit().getText().equals(ALLOCATE_BED))
+		//WDEV-22353
+		if (!isNotMosUser("Logged-in user is not associated with a Member of Staff. Admission cannot continue.")) //WDEV-22353
 		{
+			doBedAdmissionAction();
+		}
+	}
+
+	private void doBedAdmissionAction()
+	{
+		//WDEV-21548
+		String[] bedAdmissionUIErrors = form.lyrDetail().tabAdmission().ccAdmit().getErrors();
+		if (bedAdmissionUIErrors != null)
+		{
+			engine.showErrors(bedAdmissionUIErrors);
+			return;
+		}
+		//WDEV-21548 -end 
+
+		if (form.lyrDetail().tabAdmission().btnAdmit().getText().equals(ALLOCATE_BED) || form.lyrDetail().tabAdmission().btnAdmit().getText().equals(ALLOCATE_CHAIR) || form.lyrDetail().tabAdmission().btnAdmit().getText().equals(ALLOCATE_COT))
+		{
+			if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+			{
+				String wardAvailabilityErrors = validateOnAdmission(form.getGlobalContext().Core.getSelectedBedSpaceState().getWard(), ALLOCATE_BED);
+				if(wardAvailabilityErrors != null)
+				{
+					form.getLocalContext().setMessageBoxWardBayAvailability(engine.showMessage(wardAvailabilityErrors,"Not Allowed", MessageButtons.OK, MessageIcon.INFORMATION));
+					return;
+				}
+				boolean bValidate = isAdmissionValidatedByRelevantRule(form.getGlobalContext().Core.getBedRuleBreachReason());
+				if (!bValidate)
+					return;
+				if (form.getGlobalContext().Core.getSelectedBedSpaceState() != null)
+					form.getGlobalContext().Core.getSelectedBedSpaceState().setProvisionalBayGender(form.lyrDetail().tabAdmission().ccAdmit().getSexForSelectedPatient());
+			}
 			if (form.lyrDetail().tabAdmission().ccAdmit().allocateBed())
 				engine.close(DialogResult.OK);
 		}
 		else if(form.lyrDetail().tabAdmission().btnAdmit().getText().equals(RETURN_FROM_LEAVE))
 		{
-			if (form.lyrDetail().tabAdmission().ccAdmit().returnFromLeave())
-				engine.close(DialogResult.OK);
+			PatientShort patientReturnFromLeave = form.lyrDetail().tabAdmission().ccAdmit().getSelectedPatientReturnFromLeave();
+
+			if (patientReturnFromLeave != null && patientReturnFromLeave.getDod() != null)
+			{
+				form.getLocalContext().setMessageBoxDeceasedReturnFromLeaveAdmit(engine.showMessage("The patient you've selected is deceased. Do you need to return the patient from Home Leave?", "", MessageButtons.YESNO)); //WDEV-21628
+				return;
+			}
+
+			returnFromLeaveAdmit();
 		}
 		else if(form.lyrDetail().tabAdmission().btnAdmit().getText().equals(ADMIT))
-		{
-			if (!form.lyrDetail().tabAdmission().ccAdmit().checkForPatientAlreadyAdmited())
+		{			
+			if (!ConfigFlag.DOM.USE_PDS.getValue().equals("None"))
 			{
-				if (Boolean.TRUE.equals(ConfigFlag.GEN.USE_ELECTIVE_LIST_FUNCTIONALITY.getValue()) && form.lyrDetail().tabAdmission().ccAdmit().isOnTCITab())
+				// PDS AUTHENTICATION
+				PdsAuthenticationHelper pdsAuth = new PdsAuthenticationHelper(engine, domain);
+				if(pdsAuth.hasRightsFor(PdsRight.PDS_SEARCH_FOR_PATIENT, PdsCheck.CHECK_ALL, null))
 				{
-					/* removed in WDEV-18454
-					if (Boolean.TRUE.equals(form.lyrDetail().tabAdmission().ccAdmit().hasPatientElectiveListToCancel()))
-					{
-						form.getLocalContext().setMessageBoxAdmission(engine.showMessage("Patient has other Patient Elective records for the same service. Cancel these records?", "Warning", MessageButtons.YESNOCANCEL));
-						return;
-					}*/ 
-					
-					if (form.lyrDetail().tabAdmission().ccAdmit().saveElectiveListAdmission(false))
-						engine.close(DialogResult.OK);
+					form.getGlobalContext().Core.setSamlXml(engine.getSAMLXmlContent());
+					form.getGlobalContext().Core.setPatientShort(domain.getPatient(form.lyrDetail().tabAdmission().ccAdmit().getSelectedPatient()));
+					//Using PDS touchpoint. call Demographics Form				
+					engine.open(form.getForms().Core.PDSDemographicsDialog, new Object[] {Boolean.FALSE});
 					return;
 				}
-				else if (Boolean.TRUE.equals(ConfigFlag.GEN.USE_ELECTIVE_LIST_FUNCTIONALITY.getValue()) && form.lyrDetail().tabAdmission().ccAdmit().isOnEmergency())
-				{
-					/* removed in WDEV-18454
-					if (Boolean.TRUE.equals(form.lyrDetail().tabAdmission().ccAdmit().hasPatientElectiveListToCancel()))
-					{
-						// TODO Open dialog with Patient Elective List records for the same service. Cancel the records
-						return;
-					}*/
-					
-					if (form.lyrDetail().tabAdmission().ccAdmit().saveElectiveListEmergencyAdmission())
-						engine.close(DialogResult.OK);
-					
-					return;
-				}
+				// END PDS AUTHENTICATION
 
-				
-				if (form.lyrDetail().tabAdmission().ccAdmit().saveAdmission())
-					engine.close(DialogResult.OK);
+				admissionHandler();
 			}
 			else
 			{
-				engine.close(DialogResult.OK);
+				//admissionHandler();
+				engine.open(form.getForms().Core.PDSDemographicsDialog, new Object[] {Boolean.FALSE});
+				return;
 			}
 		}
+	}
+
+	private void returnFromLeaveAdmit()
+	{
+		if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+		{
+			String wardAvailabilityErrors = validateOnAdmission(form.getGlobalContext().Core.getSelectedBedSpaceState().getWard(), RETURN_FROM_LEAVE);
+			if(wardAvailabilityErrors != null)
+			{
+				form.getLocalContext().setMessageBoxWardBayAvailability(engine.showMessage(wardAvailabilityErrors,"Not Allowed", MessageButtons.OK, MessageIcon.INFORMATION));
+				return;
+			}
+			boolean bValidate = isAdmissionValidatedByRelevantRule(form.getGlobalContext().Core.getBedRuleBreachReason());
+			if (!bValidate)
+			 	return;
+			if (form.getGlobalContext().Core.getSelectedBedSpaceState() != null)
+				form.getGlobalContext().Core.getSelectedBedSpaceState().setProvisionalBayGender(form.lyrDetail().tabAdmission().ccAdmit().getSexForSelectedPatient());
+		}
+		if (form.lyrDetail().tabAdmission().ccAdmit().returnFromLeave())
+			engine.close(DialogResult.OK);
+	}
+
+	//WDEV-20224
+	private boolean isAdmissionValidatedByRelevantRule(AdmissionReasonVo admissionReasonVo)
+	{
+		String bedStr = getBedSpaceTypeDescriptor(form.getGlobalContext().Core.getSelectedBedSpaceState());
+		
+		if (admissionReasonVo == null || admissionReasonVo.getIItemText() == null || (!Boolean.TRUE.equals(admissionReasonVo.getIsPrivateBedAllocationValidated()) && !BedAdmissionValidationType.PRIVATE_BED.getIItemText().equals(admissionReasonVo.getIItemText())))
+		{
+			if (form.lyrDetail().tabAdmission().ccAdmit().isPrivateBedAdmission())
+			{	
+				engine.open(form.getForms().Core.AdmissionReason, new Object[] {BedAdmissionValidationType.PRIVATE_BED}, ("Reason for Admission to Private " + bedStr));
+				return false;
+			}
+		}
+		if (admissionReasonVo == null || admissionReasonVo.getIItemText() == null || (!Boolean.TRUE.equals(admissionReasonVo.getIsOohAllocationValidated()) && !BedAdmissionValidationType.OUT_OF_OPENING_HOURS.getIItemText().equals(admissionReasonVo.getIItemText())))
+		{
+			if (form.lyrDetail().tabAdmission().ccAdmit().isOutsideOpeningHoursAdmission())
+			{	
+				engine.open(form.getForms().Core.AdmissionReason, new Object[] {BedAdmissionValidationType.OUT_OF_OPENING_HOURS}, Boolean.TRUE.equals(form.lyrDetail().tabAdmission().ccAdmit().getIsReturnFromLeaveVisible()) ? ("Reason for " + bedStr + " Allocation Outside Opening Hours") : "Reason for Admission Outside Opening Hours");
+				return false;
+			}
+		}
+		if (form.getLocalContext().getMessageBoxBayGenderMismatch() == null && (admissionReasonVo == null || !Boolean.TRUE.equals(admissionReasonVo.getIsGenderSpecificBayValidated())))
+		{	
+			if (form.lyrDetail().tabAdmission().ccAdmit().isBayGenderMismatch())
+			{
+				Sex patientForAdmissionSex = form.lyrDetail().tabAdmission().ccAdmit().getSexForSelectedPatient();
+				BayConfigLiteVo bay = form.getGlobalContext().Core.getSelectedBedSpaceState() != null ? getBayConfig(form.getGlobalContext().Core.getSelectedBedSpaceState().getBay()) : null;
+				boolean isBayNotGenderSpecificDesignated = bay != null && ((!Boolean.TRUE.equals(bay.getMale()) && !Boolean.TRUE.equals(bay.getFemale())) || (Boolean.TRUE.equals(bay.getMale()) && Boolean.TRUE.equals(bay.getFemale())));
+				Sex configuredBayGender = getConfiguredBayGender(bay);
+				
+				if (patientForAdmissionSex != null)
+				{	
+					if (isBayNotGenderSpecificDesignated || (configuredBayGender != null && !configuredBayGender.equals(patientForAdmissionSex)))
+					{	
+						form.getLocalContext().setMessageBoxBayGenderMismatch(engine.showMessage(isBayNotGenderSpecificDesignated ? ("If you carry on with this " + (Boolean.TRUE.equals(form.lyrDetail().tabAdmission().ccAdmit().getIsReturnFromLeaveVisible()) ? (bedStr + " allocation") : "admission" ) + ", this bay will be provisionally set as suitable for " + (patientForAdmissionSex != null ? patientForAdmissionSex.getText().toLowerCase() + " patients. Proceed anyway?" : "")) : ("This bay is suitable for " + (configuredBayGender != null ? configuredBayGender.getText().toLowerCase() + " patients." : " patients of different gender.") + " Proceed with current " + (Boolean.TRUE.equals(form.lyrDetail().tabAdmission().ccAdmit().getIsReturnFromLeaveVisible()) ? (bedStr.toLowerCase() + " allocation") : "admission") + "?"), "Confirmation", MessageButtons.YESNO, MessageIcon.QUESTION));
+						return false;
+					}
+				}
+								
+			}
+		}
+		if (form.getLocalContext().getMessageBoxBayMixedGender() == null && (admissionReasonVo == null || !Boolean.TRUE.equals(admissionReasonVo.getIsMixingGenderBayValidated())))
+		{	
+			Sex patientForAdmissionSex = form.lyrDetail().tabAdmission().ccAdmit().getSexForSelectedPatient();
+			if (patientForAdmissionSex != null && form.lyrDetail().tabAdmission().ccAdmit().hasConflictWithTemporaryBayGender())
+			{				
+				form.getLocalContext().setMessageBoxBayMixedGender(engine.showMessage(form.lyrDetail().tabAdmission().ccAdmit().isGenderAlreadyMixedForBay() ? "The bay has patients of different genders admitted. Proceed with current " + (Boolean.TRUE.equals(form.lyrDetail().tabAdmission().ccAdmit().getIsReturnFromLeaveVisible()) ? (bedStr + " allocation") : "admission" ) +  "? " : "If you carry on with this " + (Boolean.TRUE.equals(form.lyrDetail().tabAdmission().ccAdmit().getIsReturnFromLeaveVisible()) ? (bedStr + " allocation") : "admission") +", the bay will have patients of different genders admitted. Proceed anyway?", "Confirm Mixing Bay Gender", MessageButtons.YESNO, MessageIcon.QUESTION));	
+				return false;					
+			}
+		}
+		return true;
+	}	
+	
+	private boolean isGenderAlreadyMixedForBay()
+	{
+			BayConfigLiteVo bayConfig  = getBayConfig(form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() ? form.getGlobalContext().Core.getSelectedBedSpaceState().getBay() : null);
+			if (bayConfig == null)
+				return false;
+			return bayConfig.getTemporaryBayGenderIsNotNull() && bayConfig.getNumOfBedsIsNotNull() && bayConfig.getNumOfOccupiedBedsIsNotNull() && bayConfig.getNumOfOccupiedBeds() >= 2 && form.getGlobalContext().Core.getMaleBedAdmissionWardCountIsNotNull() &&  form.getGlobalContext().Core.getFemaleBedAdmissionWardCountIsNotNull() && (form.getGlobalContext().Core.getMaleBedAdmissionWardCount() >= 1 && form.getGlobalContext().Core.getFemaleBedAdmissionWardCount() >= 1);
+	
+	}
+	private boolean isBedAllocationValidatedByRelevantRule(AdmissionReasonVo admissionReasonVo, BedDialogPatientDataTabs action)
+	{
+		if (admissionReasonVo == null || admissionReasonVo.getIItemText() == null || (!Boolean.TRUE.equals(admissionReasonVo.getIsPrivateBedAllocationValidated()) && !BedAdmissionValidationType.PRIVATE_BED.getIItemText().equals(admissionReasonVo.getIItemText())))
+		{
+			if (isPrivateBedAllocation())
+			{	
+				engine.open(form.getForms().Core.AdmissionReason, new Object[] {BedAdmissionValidationType.PRIVATE_BED}, "Reason for Allocating Private Bed");
+				return false;
+			}
+		}
+		
+		if (form.getLocalContext().getMessageBoxBayGenderMismatch() == null && (admissionReasonVo == null || !Boolean.TRUE.equals(admissionReasonVo.getIsGenderSpecificBayValidated())))
+		{	
+			if (isBayGenderMismatch())
+			{
+				Sex patientForBedAllocSex = getSelectedPatientSex();
+				BayConfigLiteVo bay = form.getGlobalContext().Core.getSelectedBedSpaceState() != null ? getBayConfig(form.getGlobalContext().Core.getSelectedBedSpaceState().getBay()) : null;
+				boolean isBayNotGenderSpecificDesignated = bay != null && (!Boolean.TRUE.equals(bay.getMale())  && !Boolean.TRUE.equals(bay.getFemale()));
+				Sex configuredBayGender = getConfiguredBayGender(bay);
+				if (patientForBedAllocSex != null)
+				{	
+					if (isBayNotGenderSpecificDesignated || (configuredBayGender != null && !patientForBedAllocSex.equals(configuredBayGender)))
+					{	
+						form.getLocalContext().setMessageBoxBayGenderMismatch(engine.showMessage(isBayNotGenderSpecificDesignated ? ("If you carry on with this transfer, this bay will be provisionally set as suitable for " + (patientForBedAllocSex != null ? patientForBedAllocSex.getText().toLowerCase() + " patients. Proceed with current transfer?" : "")) : ("This bay is suitable for " + (configuredBayGender != null ? configuredBayGender.getText().toLowerCase()  + " patients." : " patients of different gender.") + " Proceed with current transfer?"), "Confirmation", MessageButtons.YESNO, MessageIcon.QUESTION));
+						return false;
+					}
+				}
+
+			}
+		}
+		if (!BedDialogPatientDataTabs.TAB_BED_SWAP.equals(action) && form.getLocalContext().getMessageBoxBayMixedGender() == null && (admissionReasonVo == null || !Boolean.TRUE.equals(admissionReasonVo.getIsMixingGenderBayValidated())))
+		{	
+			Sex patientForBedAllocSex = getSelectedPatientSex();
+			
+			if (patientForBedAllocSex != null && hasConflictWithTemporaryBayGender())
+			{				
+				form.getLocalContext().setMessageBoxBayMixedGender(engine.showMessage(isGenderAlreadyMixedForBay() ? "This bay has patients of different genders admitted. Proceed with current transfer? " : "If you carry on with this transfer, the ward will have patients of different genders admitted. Proceed anyway?", "Confirm Mixing Ward Gender", MessageButtons.YESNO, MessageIcon.QUESTION));					
+				return false;					
+			}
+		}
+		return true;
+	}	
+	private Sex getConfiguredBayGender(BayConfigLiteVo bay)
+	{
+		if (Boolean.TRUE.equals(bay.getMale()) && !Boolean.TRUE.equals(bay.getFemale()))
+			 return Sex.MALE;
+		if (Boolean.TRUE.equals(bay.getFemale()) && !Boolean.TRUE.equals(bay.getMale()))
+			 return Sex.FEMALE;
+		return null;
+	}
+
+	private Sex getSelectedPatientSex()
+	{
+		Sex sex = null;
+		if (BedDialogPatientDataTabs.TAB_TRANSFER_IN.equals(form.getLocalContext().getTabFocused()) && form.lyrDetail().tabTransfer().lyrTransfer().tabIn().isVisible())
+			sex =  form.lyrDetail().tabTransfer().lyrTransfer().tabIn().grdTransferIn().getValue() != null && form.lyrDetail().tabTransfer().lyrTransfer().tabIn().grdTransferIn().getValue().getInpatientEpisodeIsNotNull() && form.lyrDetail().tabTransfer().lyrTransfer().tabIn().grdTransferIn().getValue().getInpatientEpisode().getPasEventIsNotNull() && form.lyrDetail().tabTransfer().lyrTransfer().tabIn().grdTransferIn().getValue().getInpatientEpisode().getPasEvent().getPatientIsNotNull() && form.lyrDetail().tabTransfer().lyrTransfer().tabIn().grdTransferIn().getValue().getInpatientEpisode().getPasEvent().getPatient().getSexIsNotNull() ? form.lyrDetail().tabTransfer().lyrTransfer().tabIn().grdTransferIn().getValue().getInpatientEpisode().getPasEvent().getPatient().getSex() : null;
+		return (sex == null || Sex.UNKNOWN.equals(sex)) ? null : sex;	
 	}
 
 	@Override
@@ -2072,50 +3908,91 @@ public class Logic extends BaseLogic
 		{
 			if (form.lyrDetail().tabTransfer().lyrTransfer().tabIn().isVisible())
 			{
+				form.lyrDetail().tabTransfer().lyrTransfer().tabIn().grdTransferIn().setValue(null);//WDEV-22856				
+				clearTransferInTab();////WDEV-22856
 				if (!form.lyrDetail().tabTransfer().lyrTransfer().tabIn().isInitialized())
 				{
 					populateTransferInListFromData();
 					form.lyrDetail().tabTransfer().lyrTransfer().tabIn().ccInConsultant().initialize(MosType.MEDIC);
 				}
+				else
+					enableTransferInControls(false);//WDEV-22856				
+				if (form.lyrDetail().tabAdmission().isInitialized())
+					form.lyrDetail().tabAdmission().ccAdmit().clearSelectionAndInstanceControls();
+				form.getLocalContext().setIsCaseNoteFolderVisible(null);
+				form.getLocalContext().setTabFocused(BedDialogPatientDataTabs.TAB_TRANSFER_IN); //WDEV-17662
 			}	
-			else if (form.lyrDetail().tabTransfer().lyrTransfer().tabOut().isVisible())
+			if (form.lyrDetail().tabTransfer().lyrTransfer().tabOut().isVisible())
 			{
-				populateTransferOutTabFromData();	
-				form.lyrDetail().tabTransfer().btnCancelTransfer().setVisible(form.getLocalContext().getPendingTransferOutIsNotNull());
+				populateTransferOutTabFromData();
+				form.lyrDetail().tabTransfer().lyrTransfer().showtabOut();					
+				form.lyrDetail().tabTransfer().btnCancelTransfer().setVisible(form.getLocalContext().getPendingTransferOutIsNotNull() && (form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.TRANSFERWAITINGAREAPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction())));
+				form.getLocalContext().setTabFocused(BedDialogPatientDataTabs.TAB_TRANSFER_OUT); //WDEV-17662
 			}
+			else if (form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().isVisible())
+			{
+				if (!form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().isInitialized())
+				{
+					populateConsultantTransferTabFromData();
+				}
+				form.getLocalContext().setTabFocused(BedDialogPatientDataTabs.TAB_TRANSFER_CONSULTANT); //WDEV-17662
+				form.lyrDetail().tabTransfer().btnCancelTransfer().setVisible(false);
+			}
+			updateCaseNoteFolderControl();//WDEV-22851
 		}
 		else if (tab.equals(form.lyrDetail().tabDischarge()))
 		{
-			if (!form.lyrDetail().tabDischarge().isInitialized())
-			{
-				populateDischargeTabFromData();
-			}
+			displayDischargeTab();			
+			
+			form.getLocalContext().setAdmissionDetails(getAdmissionDetail());
+			form.getLocalContext().setTabFocused(BedDialogPatientDataTabs.TAB_DISCHARGE); //WDEV-17662
 		}
 		else if (tab.equals(form.lyrDetail().tabCloseBed()))
-		{
+		{			
 			if (!form.lyrDetail().tabCloseBed().isInitialized())
 			{
 				populateCloseBedTabFromData();
 			}
+			if (form.lyrDetail().tabAdmission().isInitialized())
+				form.lyrDetail().tabAdmission().ccAdmit().clearSelectionAndInstanceControls();
 		}
 		else if (tab.equals(form.lyrDetail().tabHomeLeave()))
 		{
 			if (form.lyrDetail().tabHomeLeave().dteHLDate().getValue() == null)
-				form.lyrDetail().tabHomeLeave().dteHLDate().setValue(new Date());
+			{	
+				setdefaultHomeLeaveValues();
+			}	
+			form.getLocalContext().setTabFocused(BedDialogPatientDataTabs.TAB_HOMELEAVE); //WDEV-17662
 		}
-		else if (tab.equals(form.lyrDetail().tabEstimatedDischarge()))
+		else if (tab.equals(form.lyrDetail().tabHomeLeaveReturn()))
 		{
-			if (!form.lyrDetail().tabEstimatedDischarge().isInitialized())
+			if (!form.lyrDetail().tabHomeLeaveReturn().isInitialized())
+			{
+				populateHomeLeaveInstanceControls(BedInfoAction.CANCELHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction()));
+			}
+			form.getLocalContext().setTabFocused(BedDialogPatientDataTabs.TAB_RETURNFROMHOMELEAVE);
+		}
+		else if (tab.equals(form.lyrDetail().tabReadyForDischarge()))
+		{
+			if (!form.lyrDetail().tabReadyForDischarge().isInitialized())
 			{
 				populateEstimatedDischargeTabFromData();
+				updateReadyForDischargeControlsState(false, form.lyrDetail().tabReadyForDischarge().dtimConfirmedDischargeDate().getValue() != null, DelayedDischargeEnumeration.rdoDelayedDischYes.equals(form.lyrDetail().tabReadyForDischarge().DelayedDischarge().getValue()), form.lyrDetail().tabReadyForDischarge().cmbReasonForExtStay().getValue() != null);
 			}
+			form.getLocalContext().setTabFocused(BedDialogPatientDataTabs.TAB_EST_DISCHARGE); //WDEV-17662
 		}
 		else if (tab.equals(form.lyrDetail().tabBedMove()))
 		{
+			form.lyrDetail().tabBedMove().grdPatients().setValue(null);//WDEV-22856
+			
 			if (!form.lyrDetail().tabBedMove().isInitialized())
 			{
-				populateBedMoveTabFromData();
+				populateBedMoveTabFromData(true);
 			}
+			form.getLocalContext().setTabFocused(BedDialogPatientDataTabs.TAB_BED_SWAP);
+			if (form.lyrDetail().tabAdmission().isInitialized())
+				form.lyrDetail().tabAdmission().ccAdmit().clearSelectionAndInstanceControls();
+			updateBedMoveTabControlsState();//WDEV-22856
 		}
 		else if (tab.equals(form.lyrDetail().tabInfants()))
 		{
@@ -2123,18 +4000,139 @@ public class Logic extends BaseLogic
 			{
 				populateInfantsTabFromData();
 			}
+			if (form.lyrDetail().tabInfants().lyrInfants().tabInfantTransfer().isVisible())
+				form.getLocalContext().setTabFocused(BedDialogPatientDataTabs.TAB_INFANTS_TRANSFER); //WDEV-17662
+			else if (form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().isVisible())
+				form.getLocalContext().setTabFocused(BedDialogPatientDataTabs.TAB_INFANTS_DISCHARGE); //WDEV-17662
 		}
+		//WDEV-18531
+		else if (tab.equals(form.lyrDetail().tabTracking()))
+		{
+			if (!form.lyrDetail().tabTracking().isInitialized())
+			{
+				form.lyrDetail().tabTracking().dtimLeftWard().setValue(new DateTime());
+			}
+
+			if (form.getGlobalContext().Core.getSelectedBedSpaceState() != null && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode() != null)
+			{
+				populateTrackingMovementFromData(form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getCurrentTrackingMovement());
+			}
+			form.getLocalContext().setTabFocused(BedDialogPatientDataTabs.TAB_TRACKING);
+		}
+		else if (tab.equals(form.lyrDetail().tabPatient()))
+		{
+			form.getLocalContext().setTabFocused(BedDialogPatientDataTabs.TAB_DEMOGRAPHICS); //WDEV-17662
+		}		
+		else if (tab.equals(form.lyrDetail().tabHLeaveReturnCancel()))
+		{
+			if (!form.lyrDetail().tabHLeaveReturnCancel().isInitialized())
+			{
+				populateHomeLeaveReturnCancelControlsFromData(form.getLocalContext().getHomeLeaveToReOpen());
+			}			
+			form.getLocalContext().setTabFocused(BedDialogPatientDataTabs.TAB_CANCEL_RETURNFROMHOMELEAVE); 
+		}
+		else if (tab.equals(form.lyrDetail().tabAdmission()))
+		{			
+			form.getLocalContext().setTabFocused(null);	
+			if (form.lyrDetail().tabAdmission().isInitialized())
+				form.lyrDetail().tabAdmission().ccAdmit().clearSelectionAndInstanceControls();//WDEV-22856			
+		}		
+	}
+	//WDEV-21923 //WDEV-22448 
+	private void displayDischargeTab()
+	{
+		//WDEV-22448
+		if (form.getGlobalContext().Core.getPatientShort() != null && form.getGlobalContext().Core.getPatientShort().getDodIsNotNull())
+		{
+			form.getLocalContext().setDeathDetailsOnDischarge(domain.getDeathDetails(form.getGlobalContext().Core.getPatientShort().toPatientRefVo()));
+		}
+		if (!form.lyrDetail().tabDischarge().isInitialized())
+		{
+			bindTreatmentDiagnosisDereferredReason(domain.listCancellationTypeReason());				
+			populateDischargeTabFromData();			
+		}		
+	}
+
+	private void setdefaultHomeLeaveValues()
+	{
+		form.lyrDetail().tabHomeLeave().dteHLDate().setValue(new Date());
+		form.lyrDetail().tabHomeLeave().timHLTime().setValue(new Time());
+		form.lyrDetail().tabHomeLeave().chkHLRetainBed().setValue(true); //WDEV-22071
+		form.lyrDetail().tabHomeLeave().timHLTime().setFocus();
+
+	}
+	
+	private void populateTrackingMovementFromData(TrackingMovementVo trackingMovement)
+	{
+		if (trackingMovement == null)
+			return;
+		
+		form.lyrDetail().tabTracking().cmbMovementType().setValue(trackingMovement.getMovementType());
+		form.lyrDetail().tabTracking().dtimLeftWard().setValue(trackingMovement.getLeftWardTime());
+		form.lyrDetail().tabTracking().dtimExpectedReturn().setValue(trackingMovement.getExpectedReturnTime());
+	}
+	
+	/*
+	private void clearTrackingMovementTab()
+	{
+		form.lyrDetail().tabTracking().cmbMovementType().setValue(null);
+		form.lyrDetail().tabTracking().dtimLeftWard().setValue(null);
+		form.lyrDetail().tabTracking().dtimExpectedReturn().setValue(null);
+	}
+	*/
+
+	private void bindTreatmentDiagnosisDereferredReason(CancellationTypeReasonVoCollection listDereferedReasons)
+	{
+		form.lyrDetail().tabDischarge().cmbDeferredReason().clear();
+		
+		if (listDereferedReasons == null)
+			return;
+		
+		for (CancellationTypeReasonVo reason : listDereferedReasons)
+		{
+			form.lyrDetail().tabDischarge().cmbDeferredReason().newRow(reason, reason.getCancellationReason().getText());
+		}
+	}
+
+	
+	private void populateHomeLeaveInstanceControls(boolean isCancelSelected)
+	{
+		clearHomeLeaveReturnControls();
+		
+		InpatientEpisodeLiteVo voInpatEpis = form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull()  ? form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode() : form.getGlobalContext().Core.getSelectedWaitingAreaPatient();
+		populateHomeLeaveReturnControls(voInpatEpis,isCancelSelected);
+	}
+
+	private void populateHomeLeaveReturnControls(InpatientEpisodeLiteVo voInpatEpis, boolean isCancelSelected)
+	{
+		if (voInpatEpis == null || !Boolean.TRUE.equals(voInpatEpis.getIsOnHomeLeave()))
+			return;
+		form.lyrDetail().tabHomeLeaveReturn().lblHLDate().setValue(voInpatEpis.getDateOnHomeLeaveIsNotNull() ? voInpatEpis.getDateOnHomeLeave().toString() : null);
+		form.lyrDetail().tabHomeLeaveReturn().lblHLTime().setValue(voInpatEpis.getTimeOnHomeLeaveIsNotNull() ? voInpatEpis.getTimeOnHomeLeave().toString() : null);
+		form.lyrDetail().tabHomeLeaveReturn().lblHLReturnDate().setValue(voInpatEpis.getExpectedDateOfReturnIsNotNull() ? voInpatEpis.getExpectedDateOfReturn().toString() : "-");
+		form.lyrDetail().tabHomeLeaveReturn().lblHlReturnTime().setValue(voInpatEpis.getExpectedTimeOfReturnIsNotNull() ? voInpatEpis.getExpectedTimeOfReturn().toString() : null);
+		
+		
+		form.lyrDetail().tabHomeLeaveReturn().dteHLDateReturn().setValue(isCancelSelected ? null : new Date());
+		form.lyrDetail().tabHomeLeaveReturn().timHLTimeOfReturn().setValue(isCancelSelected? null : new Time());
+	}
+
+	private void clearHomeLeaveReturnControls()
+	{
+		form.lyrDetail().tabHomeLeaveReturn().lblHLDate().setValue(null);
+		form.lyrDetail().tabHomeLeaveReturn().lblHLTime().setValue(null);
+		
+		form.lyrDetail().tabHomeLeaveReturn().dteHLDateReturn().setValue(null);
+		form.lyrDetail().tabHomeLeaveReturn().lblHLDate().setValue(null);
+		
 	}
 
 	private void populateInfantsTabFromData()
 	{
 		form.lyrDetail().tabInfants().grdInfants().getRows().clear();
-
-		enableInfantControls(false);
+		enableInfantControls(false);	
 		
-		
-		Object mos = domain.getMosUser();
-		
+		Object mos = domain.getMosUser();		
 		//Mos Label
 		if(mos != null)
 			form.lyrDetail().tabInfants().lyrInfants().tabInfantTransfer().lblInfantMos().setValue(((MemberOfStaffLiteVo)mos).getIMosName());
@@ -2144,6 +4142,16 @@ public class Logic extends BaseLogic
 		
 		InpatientEpisodeLiteVoCollection voCollInpatient = domain.listInfantsForSelectedPatient(form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getPasEvent().getPatient());
 		form.getLocalContext().setInfants(voCollInpatient);
+		populateInfantsToGrid(voCollInpatient);
+		
+		updateInfantDischargeDateTimeControls();
+	}
+
+	private void populateInfantsToGrid(InpatientEpisodeLiteVoCollection voCollInpatient)
+	{
+		form.lyrDetail().tabInfants().grdInfants().getRows().clear();
+		if (voCollInpatient == null)
+			return;
 		if (voCollInpatient != null && voCollInpatient.size() > 0)
 		{
 			for (InpatientEpisodeLiteVo voInpat : voCollInpatient)
@@ -2153,7 +4161,7 @@ public class Logic extends BaseLogic
 				if(voInpat.getPasEventIsNotNull() && voInpat.getPasEvent().getLocationIsNotNull())
 					row.setColLocation(voInpat.getPasEvent().getLocation().getName());
 				
-				PatientShort voPatient = (voInpat.getPasEventIsNotNull() && voInpat.getPasEvent().getPatientIsNotNull()) ? voInpat.getPasEvent().getPatient() : null;
+				PatientLite_IdentifiersVo voPatient = (voInpat.getPasEventIsNotNull() && voInpat.getPasEvent().getPatientIsNotNull()) ? voInpat.getPasEvent().getPatient() : null;
 				if (voPatient != null)
 				{
 					if (voPatient.getNameIsNotNull())
@@ -2170,8 +4178,6 @@ public class Logic extends BaseLogic
 				row.setValue(voInpat);
 			}
 		}
-		
-		updateInfantDischargeDateTimeControls();
 	}
 
 	private void enableInfantControls(boolean bEnable)
@@ -2184,12 +4190,15 @@ public class Logic extends BaseLogic
 		form.lyrDetail().tabInfants().lyrInfants().tabInfantTransfer().ccInfantConsultant().setEnabled(bEnable);
 		form.lyrDetail().tabInfants().lyrInfants().tabInfantTransfer().cmbInfantSpecialty().setEnabled(bEnable);
 		form.lyrDetail().tabInfants().lyrInfants().tabInfantTransfer().dtimInfantTransferRequest().setEnabled(bEnable);
+		form.lyrDetail().tabInfants().lyrInfants().tabInfantTransfer().cmbInfantTransferReason().setEnabled(bEnable);
+		form.lyrDetail().tabInfants().lyrInfants().tabInfantTransfer().txtInfantTransfComment().setEnabled(bEnable);
 		
 		//discharge
 		form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().btnInfantDischarge().setEnabled(bEnable);
 		form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().cmbInfantMethodDischarge().setEnabled(bEnable);
 		form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().cmbInfantDischargeDest().setEnabled(bEnable);
-		form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().dtimInfantDod().setEnabled(bEnable);
+		form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().dteInfantDod().setEnabled(bEnable);
+		form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().timInfantTod().setEnabled(bEnable);
 		form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().dtimInfantDischarge().setEnabled(bEnable);
 		
 		//WDEV-9790
@@ -2200,84 +4209,196 @@ public class Logic extends BaseLogic
 		}
 	}
 
-	private void populateBedMoveTabFromData()
+	private void populateBedMoveTabFromData(boolean bCalledOnInitialise)
 	{
 		if (form.getGlobalContext().Core.getADTWard() == null)
 			throw new CodingRuntimeException("Ward not set in populateBedMoveTabFromData");
 
-		form.lyrDetail().tabBedMove().grdPatients().getRows().clear();
-
-		InpatientEpisodeLiteVoCollection voCollInpatient = domain.listInpatientEpisodeByWard(form.getGlobalContext().Core.getADTWard());
-		if (voCollInpatient != null && voCollInpatient.size() > 0)
+		InpatientEpisodeLiteVoCollection voCollInpatients = domain.listInpatientEpisodeByWard(form.getGlobalContext().Core.getADTWard(), form.getGlobalContext().Core.getPatientShort());
+		
+		if (voCollInpatients != null && voCollInpatients.size() >= 2)
 		{
-			for (InpatientEpisodeLiteVo voInpat : voCollInpatient)
-			{
-				grdPatientsRow row = form.lyrDetail().tabBedMove().grdPatients().getRows().newRow();
-
-				PatientShort voPatient = (voInpat.getPasEventIsNotNull() && voInpat.getPasEvent().getPatientIsNotNull()) ? voInpat.getPasEvent().getPatient() : null;
-				if (voPatient != null)
-				{
-					if (voPatient.getNameIsNotNull())
-					{
-						row.setColForename(voPatient.getName().getForename());
-						row.setColSurname(voPatient.getName().getSurname());
-					}
-
-					//WDEV-14525
-					if(voPatient.getAge() == null)
-						voPatient.calculateAge();
-					
-					PatientId patId = voPatient.getDisplayId();
-					row.setColDisplayId(patId != null ? patId.getValue() : null);
-					row.setColSex(voPatient.getSexIsNotNull() ? voPatient.getSex().toString() : null);
-					row.setColAge(voPatient.getAgeText());
-					row.setColDOB(voPatient.getDobIsNotNull() ? voPatient.getDob().toString() : null);
-				}
-				row.setValue(voInpat);
+			if (bCalledOnInitialise) //WDEV-21014
+			{	
+				form.getLocalContext().setSortOrderBedNo(SortOrder.ASCENDING);
+			}
+			if (form.getLocalContext().getSortOrderBedNoIsNotNull())
+			{	
+				voCollInpatients.sort(InpatientEpisodeLiteVo.getBedNumberComparator(form.getLocalContext().getSortOrderBedNo()));
 			}
 		}
+		populateBedMoveGridFromData(voCollInpatients);
+
 		form.lyrDetail().tabBedMove().btnInternalTransfer().setEnabled(false);
+		form.lyrDetail().tabBedMove().btnSwitchBeds().setEnabled(false);
+	}
+
+
+	private void populateBedMoveGridFromData(InpatientEpisodeLiteVoCollection voCollInpatients)
+	{
+		form.lyrDetail().tabBedMove().grdPatients().getRows().clear();
+		
+		if (voCollInpatients == null || voCollInpatients.size() == 0)
+			return;		
+		
+		for (InpatientEpisodeLiteVo voInpat : voCollInpatients)
+		{
+			grdPatientsRow row = form.lyrDetail().tabBedMove().grdPatients().getRows().newRow();
+
+			PatientLite_IdentifiersVo voPatient = (voInpat.getPasEventIsNotNull() && voInpat.getPasEvent().getPatientIsNotNull()) ? voInpat.getPasEvent().getPatient() : null;
+			
+			if (voInpat.getBed() != null)
+			{	
+				if (voInpat.getBed().getBedSpace() != null && voInpat.getBed().getBedSpace().getBedNumber() != null)
+				{	
+					row.setColBedNumber(voInpat.getBed().getBedSpace().getBedNumber());
+				}
+				if (voInpat.getBed().getBayIsNotNull()) //WDEV-21059
+				{	
+					row.setColBay( voInpat.getBed().getBay().getName());
+					row.setCellColBayTooltip(voInpat.getBed().getBay().getName());
+				}
+			}
+			if (voPatient != null)
+			{
+				if (voPatient.getNameIsNotNull())
+				{
+					row.setColForename(voPatient.getName().getForename());
+					row.setColSurname(voPatient.getName().getSurname());
+				}
+
+				//WDEV-14525
+				if(voPatient.getAge() == null)
+					voPatient.calculateAge();
+				
+				PatientId patId = voPatient.getDisplayId();
+				row.setColDisplayId(patId != null ? patId.getValue() : null);
+				row.setColSex(voPatient.getSexIsNotNull() ? voPatient.getSex().toString() : null);
+				row.setColAge(voPatient.getAgeText());
+				row.setColDOB(voPatient.getDobIsNotNull() ? voPatient.getDob().toString() : null);
+			}
+			row.setValue(voInpat);
+		}
 	}
 
 	private void populateEstimatedDischargeTabFromData()
 	{
 		InpatientEpisodeLiteVo voInpatEpis = null;
-		BedSpaceStateLiteVo voBedSpaceStateLite = form.getGlobalContext().Core.getSelectedBedSpaceState();
+		BedSpaceStateLiteVo voBedSpaceStateLite = form.getGlobalContext().Core.getSelectedBedSpaceState() != null && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode() != null ? domain.getBedSpaceStateByInpatientEpisode(form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode()) : null; // WDEV-17662
 		if (voBedSpaceStateLite != null)
 			voInpatEpis = voBedSpaceStateLite.getInpatientEpisode();
 		else if(form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull())
 			voInpatEpis = form.getGlobalContext().Core.getSelectedWaitingAreaPatient();
-		
+
 		if (voInpatEpis == null)
 			throw new CodingRuntimeException("voInpatEpis is null in method populateEstimatedDischargeTabFromData");
 
-		form.lyrDetail().tabEstimatedDischarge().dteEstDischarge().setValue(voInpatEpis.getEstDischargeDate());
-
-		//WDEV-13324
-		form.lyrDetail().tabEstimatedDischarge().chkConfirm().setVisible(false);
-		if ((voInpatEpis.getEstDischargeDate() != null && voInpatEpis.isDischargeDueWithin24Hrs()) || (voInpatEpis.getIsConfirmedDischargeIsNotNull() && voInpatEpis.getIsConfirmedDischarge()))
-			form.lyrDetail().tabEstimatedDischarge().chkConfirm().setVisible(true);
-		
-		form.lyrDetail().tabEstimatedDischarge().chkConfirm().setValue(voInpatEpis.getIsConfirmedDischarge());
-		
-		//WDEV-12957
-		if(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("CCO"))
+		if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
 		{
-			form.lyrDetail().tabEstimatedDischarge().dteDischargeReady().setValue(voInpatEpis.getDischargeReadyDate());
-			form.lyrDetail().tabEstimatedDischarge().btnClearEstimate().setVisible(false); //WDEV-13130
+			populateExtendedDetailsControlsFromData(voInpatEpis, form.getLocalContext().getAdmissionDetails());
 		}
-		
-		//WDEV-14608
-		if (form.lyrDetail().tabEstimatedDischarge().dteEstDischarge().getValue() != null)
-		{
-			Date newRevisedDate = new Date();
-			newRevisedDate.addDay(1);
+		else
+		{	
+			form.lyrDetail().tabReadyForDischarge().dteEstDischarge().setValue(voInpatEpis.getEstDischargeDateIsNotNull() ? voInpatEpis.getEstDischargeDate().getDate() : null);
 
-			if (!form.lyrDetail().tabEstimatedDischarge().dteEstDischarge().getValue().isLessOrEqualThan(newRevisedDate))
+			//WDEV-13324
+			form.lyrDetail().tabReadyForDischarge().chkConfirm().setVisible(false);
+			if ((voInpatEpis.getEstDischargeDate() != null && voInpatEpis.isDischargeDueWithin24Hrs()) || (voInpatEpis.getIsConfirmedDischargeIsNotNull() && voInpatEpis.getIsConfirmedDischarge()))
+				form.lyrDetail().tabReadyForDischarge().chkConfirm().setVisible(true);
+
+			form.lyrDetail().tabReadyForDischarge().chkConfirm().setValue(voInpatEpis.getIsConfirmedDischarge());
+
+			//WDEV-12957
+			if(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("CCO"))
 			{
-				form.lyrDetail().tabEstimatedDischarge().chkConfirm().setVisible(false);
+				form.lyrDetail().tabReadyForDischarge().dteDischargeReady().setValue(voInpatEpis.getDischargeReadyDate());
+
+			}
+			if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("CCO"))
+			{
+				form.lyrDetail().tabReadyForDischarge().btnClearEstimate().setVisible(false); //WDEV-13130
+			}
+
+			//WDEV-14608
+			if (form.lyrDetail().tabReadyForDischarge().dteEstDischarge().getValue() != null)
+			{
+				Date newRevisedDate = new Date();
+				newRevisedDate.addDay(1);
+
+				if (!form.lyrDetail().tabReadyForDischarge().dteEstDischarge().getValue().isLessOrEqualThan(newRevisedDate))
+				{
+					form.lyrDetail().tabReadyForDischarge().chkConfirm().setVisible(false);
+				}
 			}
 		}
+	}
+
+	private void populateExtendedDetailsControlsFromData(InpatientEpisodeLiteVo voInpatEpis, AdmissionDetailVo admissionDetails)
+	{
+		clearExtendedEstDischargeControls();
+		if (voInpatEpis == null || admissionDetails == null)
+			return;
+
+		if (admissionDetails.getAdmissionDateTimeIsNotNull())
+		{
+			form.lyrDetail().tabReadyForDischarge().lblAdmDateTimeVal().setValue(admissionDetails.getAdmissionDateTime().toString());
+			form.lyrDetail().tabReadyForDischarge().lblCurrentLengthOfStayVal().setValue(String.valueOf(ims.framework.utils.Date.daysBetween(admissionDetails.getAdmissionDateTime().getDate(), new DateTime().getDate())));
+		}
+		
+		if (voInpatEpis.getEstDischargeDate() != null && ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+		{
+			form.lyrDetail().tabReadyForDischarge().lblCurrentEstDischDateVal().setValue(voInpatEpis.getEstDischargeDate().toString());
+		}
+		
+		form.lyrDetail().tabReadyForDischarge().lblEstDischargeDate().setValue(voInpatEpis.getEstDischargeDate() != null ? voInpatEpis.getEstDischargeDate().toString() : "");
+
+		form.lyrDetail().tabReadyForDischarge().cmbReasonForExtStay().setValue(admissionDetails.getExtendedLengthOfStayReason());
+		if (admissionDetails.getReasonDelayedDischargeIsNotNull())
+		form.lyrDetail().tabReadyForDischarge().DelayedDischarge().setValue(admissionDetails.getReasonDelayedDischarge().size() > 0 ? DelayedDischargeEnumeration.rdoDelayedDischYes : DelayedDischargeEnumeration.rdoDelayedDischNo);
+		if (admissionDetails.getMedicallyFitForDischargeIsNotNull())
+			form.lyrDetail().tabReadyForDischarge().FitForDischarge().setValue(YesNo.YES.equals(admissionDetails.getMedicallyFitForDischarge()) ? FitForDischargeEnumeration.rdoFitYes : FitForDischargeEnumeration.rdoFitNo);
+		if (admissionDetails.getAbleToGoDischargeLoungeIsNotNull())	
+			form.lyrDetail().tabReadyForDischarge().DischargeLounge().setValue(Boolean.TRUE.equals(admissionDetails.getAbleToGoDischargeLounge()) ? DischargeLoungeEnumeration.rdoLoungeYes : DischargeLoungeEnumeration.rdoLoungeNo);		
+		form.lyrDetail().tabReadyForDischarge().dtimConfirmedDischargeDate().setValue(voInpatEpis.getConfirmedDischargeDateTime());
+		form.lyrDetail().tabReadyForDischarge().dtimReadyToLeave().setValue(voInpatEpis.getReadyToLeaveDecisionDateTime());
+		
+		form.lyrDetail().tabReadyForDischarge().cmbReasonCannotGoLounge().setValue(admissionDetails.getReasonCannotGoDischargeLounge());
+		
+		if (admissionDetails.getTransportDetails() != null && Boolean.TRUE.equals(admissionDetails.getTransportDetails().getTransportRequired()))
+		{
+			form.lyrDetail().tabReadyForDischarge().cmbTransportDet().setValue(admissionDetails.getTransportDetails().getTransport());
+		}		
+		if (admissionDetails.getReasonDelayedDischargeIsNotNull())
+		{
+			for (int i=0;i<admissionDetails.getReasonDelayedDischarge().size();i++)
+			{
+				if (admissionDetails.getReasonDelayedDischarge().get(i) == null)
+					continue;
+				addNewDelayedDischargeReasonRow(false, (ReasonForDelayedDischargeVo) admissionDetails.getReasonDelayedDischarge().get(i).clone());				
+			}
+		}
+	}
+
+	
+
+	private void clearExtendedEstDischargeControls()
+	{	
+	
+		form.lyrDetail().tabReadyForDischarge().lblAdmDateTimeVal().setValue(null);
+		form.lyrDetail().tabReadyForDischarge().lblCurrentLengthOfStayVal().setValue(null);
+		form.lyrDetail().tabReadyForDischarge().lblCurrentEstDischDateVal().setValue(null);
+		form.lyrDetail().tabReadyForDischarge().dtimConfirmedDischargeDate().setValue(null);
+		form.lyrDetail().tabReadyForDischarge().cmbReasonCannotGoLounge().setValue(null);
+		form.lyrDetail().tabReadyForDischarge().cmbReasonForExtStay().setValue(null);
+		form.lyrDetail().tabReadyForDischarge().DelayedDischarge().setValue(DelayedDischargeEnumeration.None);
+		form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().setValue(null);
+		form.lyrDetail().tabReadyForDischarge().FitForDischarge().setValue(FitForDischargeEnumeration.None);		
+		form.lyrDetail().tabReadyForDischarge().DischargeLounge().setValue(DischargeLoungeEnumeration.None);		
+		form.lyrDetail().tabReadyForDischarge().cmbTransportDet().setValue(null);
+		form.lyrDetail().tabReadyForDischarge().cmbReasonCannotGoLounge().setValue(null);
+		form.lyrDetail().tabReadyForDischarge().dyngrdDischReason().getRows().clear();
+		
+		
 	}
 
 	private void populateCloseBedTabFromData()
@@ -2339,12 +4460,16 @@ public class Logic extends BaseLogic
 
 	private void populateDischargeTabFromData()
 	{
-		//WDEV-10698
 		defaultcmbDischargeDestinationLookupValue();
 		defaultcmbMethodDischargeLookupValue();
 		
 		form.lyrDetail().tabDischarge().dtimDischarge().setValue(new DateTime());
-		
+
+		//WDEV-21923
+		if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && form.getGlobalContext().Core.getPatientShort() != null && form.getGlobalContext().Core.getPatientShort().getDod() != null)
+		{						
+			setDeceasedPatientInfoOnDischarge();			
+		}
 		updateDischargeDateTimeControls();
 
 		rttControlsInitialise();
@@ -2355,49 +4480,81 @@ public class Logic extends BaseLogic
 		if(form.lyrDetail().tabDischarge().cmbMethodDischarge().getValue() == null)
 		{
 			form.lyrDetail().tabDischarge().lblDischargeDod().setVisible(false);
-			form.lyrDetail().tabDischarge().dtimDod().setVisible(false);
-			form.lyrDetail().tabDischarge().dtimDod().setValue(null);
+			form.lyrDetail().tabDischarge().dteDod().setVisible(false);
+			form.lyrDetail().tabDischarge().timTod().setVisible(false);
+			form.lyrDetail().tabDischarge().btnMarkAsDeceased().setVisible(false);
+			form.lyrDetail().tabDischarge().txtDODMandatory().setVisible(false);
+			form.lyrDetail().tabDischarge().dteDod().setValue(null);
+			form.lyrDetail().tabDischarge().timTod().setValue(null);
 			form.lyrDetail().tabDischarge().lblDischargeDateTime().setVisible(true);
 			form.lyrDetail().tabDischarge().dtimDischarge().setVisible(true);
 			form.lyrDetail().tabDischarge().dtimDischarge().setValue(new DateTime());
+			form.getGlobalContext().Core.setDeathDetails(null);
+			form.getLocalContext().setDeathDetailsOnDischarge(null);
 			return;
 		}
 		
 		boolean isDead = false;
+		boolean nonHeartsFunc = ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS");
 		MethodOfDischarge lkpMethodDischarge = form.lyrDetail().tabDischarge().cmbMethodDischarge().getValue();
 		String extCode = domain.getLookupService().getRemoteLookup(lkpMethodDischarge.getID(), "PAS");
 		if(extCode != null && (extCode.equals(PATIENTDIED) || extCode.equals(STILLBIRTH)))
 			isDead = true;
-				
 		if(isDead)
 		{
 			form.lyrDetail().tabDischarge().lblDischargeDod().setVisible(true);
-			form.lyrDetail().tabDischarge().dtimDod().setVisible(true);
-			form.lyrDetail().tabDischarge().dtimDod().setValue(new DateTime());
-			form.lyrDetail().tabDischarge().lblDischargeDateTime().setVisible(false);
-			form.lyrDetail().tabDischarge().dtimDischarge().setVisible(false);
+			form.lyrDetail().tabDischarge().lblDischargeDateTime().setVisible(nonHeartsFunc);
+			form.lyrDetail().tabDischarge().dtimDischarge().setVisible(nonHeartsFunc);
 			form.lyrDetail().tabDischarge().dtimDischarge().setValue(null);
+			form.lyrDetail().tabDischarge().dteDod().setVisible(true);
+			form.lyrDetail().tabDischarge().dteDod().setEnabled(false);
+			form.lyrDetail().tabDischarge().timTod().setVisible(true);
+			form.lyrDetail().tabDischarge().timTod().setEnabled(false);
+			form.lyrDetail().tabDischarge().txtDODMandatory().setVisible(true);
+			form.lyrDetail().tabDischarge().btnMarkAsDeceased().setVisible(engine.hasRight(AppRight.ALLOW_MARK_PATIENT_AS_DECEASED));
+			if (form.getGlobalContext().Core.getPatientShort().getDod() == null) //WDEV-22553
+			{	
+				displayDeathDetails();
+			}	
+			
 		}
 		else
 		{
 			form.lyrDetail().tabDischarge().lblDischargeDod().setVisible(false);
-			form.lyrDetail().tabDischarge().dtimDod().setVisible(false);
-			form.lyrDetail().tabDischarge().dtimDod().setValue(null);
+			form.lyrDetail().tabDischarge().dteDod().setVisible(false);
+			form.lyrDetail().tabDischarge().timTod().setVisible(false);
+			form.lyrDetail().tabDischarge().txtDODMandatory().setVisible(false);
+			form.lyrDetail().tabDischarge().dteDod().setValue(null);
+			form.lyrDetail().tabDischarge().timTod().setValue(null);
 			form.lyrDetail().tabDischarge().lblDischargeDateTime().setVisible(true);
 			form.lyrDetail().tabDischarge().dtimDischarge().setVisible(true);
 			form.lyrDetail().tabDischarge().dtimDischarge().setValue(new DateTime());
-		}	
+			form.lyrDetail().tabDischarge().btnMarkAsDeceased().setVisible(false);
+			form.getLocalContext().setDeathDetailsOnDischarge(null);			
+			if ((form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getPasEvent().getPatient().getDod() == null) || (form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull() && form.getGlobalContext().Core.getSelectedWaitingAreaPatient().getPasEvent().getPatient().getDod() == null))
+			{
+				if (form.getGlobalContext().Core.getPatientShortIsNotNull())
+				{
+					form.getGlobalContext().Core.getPatientShort().setTimeOfDeath(form.lyrDetail().tabDischarge().timTod().getValue());
+					form.getGlobalContext().Core.getPatientShort().setDod(form.lyrDetail().tabDischarge().dteDod().getValue());
+				}
+			}
+			form.getGlobalContext().Core.setDeathDetails(null);
+		}
+		form.lyrDetail().tabDischarge().lblDischargeDateTime().setValue(form.lyrDetail().tabDischarge().dteDod().isVisible() ? "Actual Discharge Date/Time:" : "Discharge Date/Time:");
 	}
 
 	private void rttControlsInitialise()
 	{
 		form.getLocalContext().setRtpStat(null);
 		form.getLocalContext().setPlBlk(null);
+		form.lyrDetail().tabDischarge().grpDeferred().setValue(grpDeferredEnumeration.None);
+		form.lyrDetail().tabDischarge().grpPatientTreated().setValue(grpPatientTreatedEnumeration.None);
 
-		if (form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisodeIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getPasEventIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getPasEvent().getPatientIsNotNull())
+		if ((form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisodeIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getPasEventIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getPasEvent().getPatientIsNotNull()) || (form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull() && form.getGlobalContext().Core.getSelectedWaitingAreaPatient().getPasEventIsNotNull() && form.getGlobalContext().Core.getSelectedWaitingAreaPatient().getPasEvent().getPatientIsNotNull()))
 		{
 			//retrieve 2 values from Inpat
-			String[] arrDtoVals = domain.getRtpStatAndPlBlk(form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getPasEvent().getPatient().getDisplayId());
+			String[] arrDtoVals = domain.getRtpStatAndPlBlk(form.getGlobalContext().Core.getSelectedBedSpaceState() != null ? form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getPasEvent().getPatient().getDisplayId() : form.getGlobalContext().Core.getSelectedWaitingAreaPatient().getPasEvent().getPatient().getDisplayId());
 			if (arrDtoVals != null)
 			{
 				form.getLocalContext().setRtpStat(arrDtoVals[0] == "" ? null : arrDtoVals[0]);
@@ -2405,66 +4562,44 @@ public class Logic extends BaseLogic
 			}
 		}
 		
-		form.lyrDetail().tabDischarge().lblTreatment().setVisible(false);
-		form.lyrDetail().tabDischarge().grpTreatmentPostponed().setVisible(false);
-		form.lyrDetail().tabDischarge().txtTreatDeferr().setVisible(false);				// WDEV-13666
-		form.lyrDetail().tabDischarge().lblReason().setVisible(false);
-		form.lyrDetail().tabDischarge().cmbReason().setVisible(false);
-		
 		if (Boolean.TRUE.equals(ConfigFlag.GEN.USE_ELECTIVE_LIST_FUNCTIONALITY.getValue()) || 
 				(form.getLocalContext().getRtpStatIsNotNull() && (form.getLocalContext().getRtpStat().equals(TREATMENT) || form.getLocalContext().getRtpStat().equals(DIAGNOSTIC))))
 		{
-			form.lyrDetail().tabDischarge().lblTreatment().setVisible(true);
-
 			// WDEV-18617
-			if (Boolean.TRUE.equals(ConfigFlag.GEN.USE_ELECTIVE_LIST_FUNCTIONALITY.getValue()) && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode() != null)
+			if (Boolean.TRUE.equals(ConfigFlag.GEN.USE_ELECTIVE_LIST_FUNCTIONALITY.getValue()) && ((form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode() != null) || form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull()))
 			{
-				PatientElectiveListBedAdmissionVo patEle = domain.getPatientElectiveListForDischarge(form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getPasEvent());
+				PatientElectiveListBedAdmissionVo patEle = domain.getPatientElectiveListForDischarge(form.getGlobalContext().Core.getSelectedBedSpaceState() != null ? form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getPasEvent() : form.getGlobalContext().Core.getSelectedWaitingAreaPatient().getPasEvent());
 				
-				if (patEle != null && patEle.getElectiveListReasonIsNotNull() && patEle.getElectiveListReason().getId() == ElectiveListReason.DIAGNOSTIC.getId())
-				{
-					form.lyrDetail().tabDischarge().lblTreatment().setValue("Was the Patient Treated?");
-				}
-				else
-				{
-					form.lyrDetail().tabDischarge().lblTreatment().setValue("Was Treatment Deferred?");
+				if (patEle != null) //WDEV-21138
+				{	
+					if (patEle.getElectiveListReasonIsNotNull() && patEle.getElectiveListReason().getId() == ElectiveListReason.DIAGNOSTIC.getId())
+					{
+						// Update local context for patient RTP stat if necessary
+						// Fix for what WDEV-16604 broke - the stop to DTO calls
+						if (form.getLocalContext().getRtpStat() == null)
+						{
+							form.getLocalContext().setRtpStat(DIAGNOSTIC);
+						}					
+						form.lyrDetail().tabDischarge().lblDereferred().setValue("Was Diagnostic Deferred?");
+					}
+					else
+					{
+						// Update local context for patient RTP stat if necessary
+						// Fix for what WDEV-16604 broke - the stop to DTO calls
+						if (form.getLocalContext().getRtpStat() == null)
+						{
+							form.getLocalContext().setRtpStat(TREATMENT);
+						}
+
+						form.lyrDetail().tabDischarge().lblDereferred().setValue("Was Treatment Deferred?");
+					}
 				}
 			}
-			
-			form.lyrDetail().tabDischarge().grpTreatmentPostponed().setVisible(true);
-			form.lyrDetail().tabDischarge().txtTreatDeferr().setVisible(true);			// WDEV-13666
-			form.lyrDetail().tabDischarge().lblReason().setVisible(true);
-			form.lyrDetail().tabDischarge().cmbReason().setVisible(true);	
-			form.lyrDetail().tabDischarge().cmbReason().setEnabled(false);
 		}
 		
-		form.lyrDetail().tabDischarge().lblRunning().setVisible(false);
-		form.lyrDetail().tabDischarge().grp18Running().setVisible(false);
-		form.lyrDetail().tabDischarge().txt18WeekRun().setVisible(false);				// WDEV-13666
-		form.lyrDetail().tabDischarge().lblStopped().setVisible(false);
-		form.lyrDetail().tabDischarge().grp18Stopped().setVisible(false);
-		form.lyrDetail().tabDischarge().txt18WeekStop().setVisible(false);				// WDEV-13666
-
-		if (form.getLocalContext().getRtpStat() != null)
-		{
-			if (form.getLocalContext().getRtpStat().equals(DIAGNOSTIC))
-			{
-				form.lyrDetail().tabDischarge().lblRunning().setVisible(true);
-				form.lyrDetail().tabDischarge().grp18Running().setVisible(true);
-				form.lyrDetail().tabDischarge().txt18WeekRun().setVisible(true);			// WDEV-13666
-			}
-		}
+		updateControlsState();
 	}
 
-	private void showStoppedHideRunning()
-	{
-		form.lyrDetail().tabDischarge().lblRunning().setVisible(false);
-		form.lyrDetail().tabDischarge().grp18Running().setVisible(false);
-		form.lyrDetail().tabDischarge().txt18WeekRun().setVisible(false);			// WDEV-13666
-		form.lyrDetail().tabDischarge().lblStopped().setVisible(true);
-		form.lyrDetail().tabDischarge().grp18Stopped().setVisible(true);
-		form.lyrDetail().tabDischarge().txt18WeekStop().setVisible(true);			// WDEV-13666
-	}
 
 	private void populateTransferInListFromData()
 	{	
@@ -2505,9 +4640,11 @@ public class Logic extends BaseLogic
 	private void enableTransferInControls(boolean bEnable)
 	{
 		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().ccInConsultant().setEnabled(bEnable);
-		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().cmbInSpecialty().setEnabled(bEnable);
+		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().qmbInService().setEnabled(bEnable);
+		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().cmbInSpecialty().setEnabled(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") ? false : bEnable);
 		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().dtimTransfer().setEnabled(bEnable);
-		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().dteDischarge().setEnabled(bEnable);	
+		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().dteDischarge().setEnabled(bEnable);
+		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().dtimEstDischarge().setEnabled(bEnable);
 		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().chkAllocateSourceBed().setEnabled(bEnable);
 		form.lyrDetail().tabTransfer().btnTransfer().setEnabled(bEnable);
 		form.lyrDetail().tabTransfer().btnCancelTransfer().setEnabled(bEnable);
@@ -2525,17 +4662,18 @@ public class Logic extends BaseLogic
 		//WDEV-14972
 		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().lblTICaseComment().setVisible(false);
 		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().txtTICaseComment().setVisible(false);
-		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().lblTIUpdateCasefolder().setVisible(false);
-		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().TICaseFolderYesNo().setVisible(false);
+		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().lblTIUpdateCasefolder().setVisible(true);
+		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().TICaseFolderYesNo().setVisible(true);
+		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().TICaseFolderYesNo().setEnabled(bEnable);
 		
 		if(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("CCO"))
 		{
 			form.lyrDetail().tabTransfer().lyrTransfer().tabIn().lblTICaseComment().setVisible(true);
 			form.lyrDetail().tabTransfer().lyrTransfer().tabIn().txtTICaseComment().setVisible(true);
 			form.lyrDetail().tabTransfer().lyrTransfer().tabIn().txtTICaseComment().setEnabled(false);
-			form.lyrDetail().tabTransfer().lyrTransfer().tabIn().lblTIUpdateCasefolder().setVisible(true);
-			form.lyrDetail().tabTransfer().lyrTransfer().tabIn().TICaseFolderYesNo().setVisible(true);
-			form.lyrDetail().tabTransfer().lyrTransfer().tabIn().TICaseFolderYesNo().setEnabled(bEnable);
+			//wdev-20362 form.lyrDetail().tabTransfer().lyrTransfer().tabIn().lblTIUpdateCasefolder().setVisible(true);
+			//wdev-20362 form.lyrDetail().tabTransfer().lyrTransfer().tabIn().TICaseFolderYesNo().setVisible(true);
+			//wdev-20362 form.lyrDetail().tabTransfer().lyrTransfer().tabIn().TICaseFolderYesNo().setEnabled(bEnable);
 
 			form.lyrDetail().tabTransfer().lyrTransfer().tabIn().cmbInSpecialty().setVisible(false);
 			form.lyrDetail().tabTransfer().lyrTransfer().tabIn().cmbCCOInSpecialty().setVisible(true);
@@ -2547,6 +4685,7 @@ public class Logic extends BaseLogic
 	private void populateTransferInTabFromData()
 	{
 		clearTransferInTab();
+		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().ccInConsultant().initialize(MosType.MEDIC);
 
 		PendingTransfersLiteVo voTransfer = form.lyrDetail().tabTransfer().lyrTransfer().tabIn().grdTransferIn().getValue();
 		if (voTransfer == null)
@@ -2579,75 +4718,115 @@ public class Logic extends BaseLogic
 			&& voTransfer.getInpatientEpisode().getPasEvent().getPASSpecialtyIsNotNull())
 			pasSpec = voTransfer.getInpatientEpisode().getPasEvent().getPASSpecialty();
 
-		listSpecialtiesForConsultant(form.lyrDetail().tabTransfer().lyrTransfer().tabIn().ccInConsultant().getValue(), IN_CONSULTANT, spec, pasSpec);
+		//if conspc call did not find specialty (conspc mapping was removed) add it as a value anyway
+		//		if(spec != null)
+		//		{
+		//			if(!form.lyrDetail().tabTransfer().lyrTransfer().tabIn().cmbInSpecialty().getValues().contains(spec))
+		//				form.lyrDetail().tabTransfer().lyrTransfer().tabIn().cmbInSpecialty().newRow(spec, spec.getText());
+		//		}
 		
-		
-//		//if conspc call did not find specialty (conspc mapping was removed) add it as a value anyway
-//		if(spec != null)
-//		{
-//			if(!form.lyrDetail().tabTransfer().lyrTransfer().tabIn().cmbInSpecialty().getValues().contains(spec))
-//				form.lyrDetail().tabTransfer().lyrTransfer().tabIn().cmbInSpecialty().newRow(spec, spec.getText());
-//		}
-		
+		if (voTransfer.getService() != null)
+		{			
+			form.lyrDetail().tabTransfer().lyrTransfer().tabIn().qmbInService().newRow(voTransfer.getService(), voTransfer.getService().getServiceName());
+			form.lyrDetail().tabTransfer().lyrTransfer().tabIn().qmbInService().setValue(voTransfer.getService());
+			if (voTransfer.getService()  == null || !ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+			{	
+				form.lyrDetail().tabTransfer().lyrTransfer().tabIn().ccInConsultant().initialize(MosType.MEDIC);
+			}
+			else if (voTransfer.getService() != null)
+			{
+				form.lyrDetail().tabTransfer().lyrTransfer().tabIn().ccInConsultant().initializeResponsibleHcp(MosType.MEDIC, null, voTransfer.getService(), null);
+			}
+		}
+		if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+		{
+			populateSpecialtyForService(form.lyrDetail().tabTransfer().lyrTransfer().tabIn().qmbInService().getValue());
+		}
+		else
+		{	
+			listSpecialtiesForConsultant(form.lyrDetail().tabTransfer().lyrTransfer().tabIn().ccInConsultant().getValue(), IN_CONSULTANT, spec, pasSpec);
+		}
+	
 		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().cmbInSpecialty().setValue(spec);
-		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().cmbCCOInSpecialty().setValue(pasSpec);
-		
+		if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("CCO"))
+		{	
+			form.lyrDetail().tabTransfer().lyrTransfer().tabIn().cmbCCOInSpecialty().setValue(pasSpec);
+		}
 		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().dtimTransfer().setValue(new DateTime());
 
 		if (voTransfer.getInpatientEpisodeIsNotNull() && voTransfer.getInpatientEpisode().getEstDischargeDateIsNotNull())
-			form.lyrDetail().tabTransfer().lyrTransfer().tabIn().dteDischarge().setValue(voTransfer.getInpatientEpisode().getEstDischargeDate());
+		{	
+			if (!ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+			{	
+				form.lyrDetail().tabTransfer().lyrTransfer().tabIn().dteDischarge().setValue(voTransfer.getInpatientEpisode().getEstDischargeDate().getDate());
+			}
+			else
+			{
+				form.lyrDetail().tabTransfer().lyrTransfer().tabIn().dtimEstDischarge().setValue(voTransfer.getInpatientEpisode().getEstDischargeDate());
+			}
+		}		
+		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().cmbTransferReason().setValue(voTransfer.getTransferReason());
+		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().txtTransferComment().setValue(voTransfer.getTransferComment());
 
 		form.lyrDetail().tabTransfer().btnCancelTransfer().setEnabled(true);
-		
+
 		//WDEV-9790
 		if(form.getLocalContext().getIsReadOnlyIsNotNull() && form.getLocalContext().getIsReadOnly())
 			form.lyrDetail().tabTransfer().btnCancelTransfer().setEnabled(false);
+		//WDEV-21436 
+		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().chkAllocateSourceBed().setValue(form.lyrDetail().tabTransfer().lyrTransfer().tabIn().chkAllocateSourceBed().isVisible());			
 	}
 
 	private void clearTransferInTab()
 	{
 		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().cmbWardType().setValue(null);
 		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().ccInConsultant().setValue(null);
+		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().qmbInService().clear();
 		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().cmbInSpecialty().setValue(null);
 		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().dtimTransfer().setValue(null);
 		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().dteDischarge().setValue(null);
+		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().dtimEstDischarge().setValue(null);
 		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().chkAllocateSourceBed().setValue(false);
 		
 		if(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("CCO"))
 		{
 			form.lyrDetail().tabTransfer().lyrTransfer().tabIn().txtTICaseComment().setValue(null);
-			form.lyrDetail().tabTransfer().lyrTransfer().tabIn().TICaseFolderYesNo().setValue(ims.core.forms.bedinfodialog.GenForm.lyrDetailLayer.tabTransferContainer.lyrTransferLayer.tabInContainer.TICaseFolderYesNoEnumeration.None);
+			form.lyrDetail().tabTransfer().lyrTransfer().tabIn().TICaseFolderYesNo().setValue(TICaseFolderYesNoEnumeration.None);
 
 			form.lyrDetail().tabTransfer().lyrTransfer().tabIn().cmbCCOInSpecialty().setValue(null);
 		}
-
+		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().txtTransferComment().setValue(null);
+		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().cmbTransferReason().setValue(null);
 	}
 
 	@Override
 	protected void onlyrTransferTabChanged(LayerBridge tab)
-	{
+	{		
 		if (tab.equals(form.lyrDetail().tabTransfer().lyrTransfer().tabIn()))
 		{
 			if (!form.lyrDetail().tabTransfer().lyrTransfer().tabIn().isInitialized())
 			{
-				populateTransferInListFromData();
+				populateTransferInListFromData();				
 				form.lyrDetail().tabTransfer().lyrTransfer().tabIn().ccInConsultant().initialize(MosType.MEDIC);
 			}
+			form.getLocalContext().setTabFocused(BedDialogPatientDataTabs.TAB_TRANSFER_IN); //WDEV-17662
 		}
-		else if (tab.equals(form.lyrDetail().tabTransfer().lyrTransfer().tabOut()))
+		if (tab.equals(form.lyrDetail().tabTransfer().lyrTransfer().tabOut()))
 		{
 			if (!form.lyrDetail().tabTransfer().lyrTransfer().tabOut().isInitialized())
-			{
+			{				
 				populateTransferOutTabFromData();
 			}
-			form.lyrDetail().tabTransfer().btnCancelTransfer().setVisible(form.getLocalContext().getPendingTransferOutIsNotNull());
+			form.getLocalContext().setTabFocused(BedDialogPatientDataTabs.TAB_TRANSFER_OUT); //WDEV-17662
+			form.lyrDetail().tabTransfer().btnCancelTransfer().setVisible(form.getLocalContext().getPendingTransferOutIsNotNull() && (form.getGlobalContext().Core.getBedInfoAction() == null || BedInfoAction.TRANSFERWAITINGAREAPATIENT.equals(form.getGlobalContext().Core.getBedInfoAction())));
 		}
 		else if (tab.equals(form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant()))
 		{
 			if (!form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().isInitialized())
-			{
+			{				
 				populateConsultantTransferTabFromData();
 			}
+			form.getLocalContext().setTabFocused(BedDialogPatientDataTabs.TAB_TRANSFER_CONSULTANT); //WDEV-17662
 			form.lyrDetail().tabTransfer().btnCancelTransfer().setVisible(false);
 		}
 	}
@@ -2660,6 +4839,13 @@ public class Logic extends BaseLogic
 		{
 			if(voBedSpaceState.getInpatientEpisodeIsNotNull() && voBedSpaceState.getInpatientEpisode().getPasEventIsNotNull() && voBedSpaceState.getInpatientEpisode().getPasEvent().getConsultantIsNotNull())
 				form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().lblCurrentCons().setValue(voBedSpaceState.getInpatientEpisode().getPasEvent().getConsultant().getIMosName());
+			
+			ConsultantStayMinVo currentConsultantStay = domain.getCurrentConsultantStay(voBedSpaceState.getInpatientEpisode());
+			
+			if (currentConsultantStay != null)
+			{
+				form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().cmbPatientCategoryConsultant().setValue(currentConsultantStay.getPatientStatus());
+			}
 		}
 		else if (form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull())
 		{
@@ -2667,8 +4853,15 @@ public class Logic extends BaseLogic
 			if (voEpisode != null && voEpisode.getPasEventIsNotNull() && voEpisode.getPasEvent().getConsultantIsNotNull()) //WDEV-16004
 				form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().lblCurrentCons().setValue(voEpisode.getPasEvent().getConsultant().getIMosName());
 		}
-		
-		form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().ccConsultantAccepting().initialize(MosType.MEDIC);
+		populateSpecialtyForService(form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().qmbConsultantService().getValue());
+		if (form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().qmbConsultantService().getValue() == null || !ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+		{	
+			form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().ccConsultantAccepting().initialize(MosType.MEDIC);
+		}
+		else if (form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().qmbConsultantService().getValue() != null)
+		{
+			form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().ccConsultantAccepting().initializeResponsibleHcp(MosType.MEDIC, null, form.lyrDetail().tabTransfer().lyrTransfer().tabOut().qmbOutService().getValue(), null);
+		}		
 		form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().ccConsultantAccepting().isRequired(true);
 		form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().dtimConsultantTransfer().setValue(new DateTime());
 	}
@@ -2676,10 +4869,12 @@ public class Logic extends BaseLogic
 	private void populateTransferOutTabFromData()
 	{
 		clearTransferOutTab();
-		loadTransferOutHospital();
-
+		
+		PendingTransfersLiteVo voTransfer = form.getLocalContext().getPendingTransferOut();
 		BedSpaceStateLiteVo voBedSpaceState = form.getGlobalContext().Core.getSelectedBedSpaceState();
-
+		
+		loadTransferOutHospital(voTransfer == null);
+	
 		// Current Hospital Label
 		form.lyrDetail().tabTransfer().lyrTransfer().tabOut().htmHospital().setHTML("");	//	WDEV-12777
 		
@@ -2689,6 +4884,15 @@ public class Logic extends BaseLogic
 			form.lyrDetail().tabTransfer().lyrTransfer().tabOut().htmHospital().setHTML("<b>" + (voHosp != null ? voHosp.getName() : "") + "</b>");	//	WDEV-12777
 			// Current Ward Label
 			form.lyrDetail().tabTransfer().lyrTransfer().tabOut().htmWard().setHTML("<b>" + (voBedSpaceState != null && voBedSpaceState.getWardIsNotNull() ? voBedSpaceState.getWard().getName() : "") + "</b>"); //	WDEV-12777
+			
+			// Get current Ward Stay & current Consultant Stay
+			WardStayLiteVo currentWardStay = domain.getCurrentWardStay(voBedSpaceState.getInpatientEpisode());
+
+			// Default in the Patient Category from latest Ward Stay
+			if (currentWardStay != null)
+			{
+				form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbPatientCategory().setValue(currentWardStay.getPatientStatus());
+			}
 		}
 		else if (form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull()
 				&& form.getGlobalContext().Core.getSelectedWaitingAreaPatient().getPasEventIsNotNull()
@@ -2696,7 +4900,7 @@ public class Logic extends BaseLogic
 		{
 			LocationLiteVo voHosp = domain.getParentLocation(form.getGlobalContext().Core.getSelectedWaitingAreaPatient().getPasEvent().getLocation());
 			if (voHosp != null)
-				form.lyrDetail().tabTransfer().lyrTransfer().tabOut().htmHospital().setHTML("<b>" + (voHosp != null ? voHosp.getName() : "") + "</b>");	//	WDEV-12777
+				form.lyrDetail().tabTransfer().lyrTransfer().tabOut().htmHospital().setHTML("<b>" + voHosp.getName() + "</b>");	//	WDEV-12777
 
 			// Current Ward Label
 			form.lyrDetail().tabTransfer().lyrTransfer().tabOut().htmWard().setHTML("<b>" + (form.getGlobalContext().Core.getSelectedWaitingAreaPatient().getPasEvent().getLocation().getName()) + "</b>"); //	WDEV-12777
@@ -2704,24 +4908,43 @@ public class Logic extends BaseLogic
 
 
 		// Consultant
-		form.lyrDetail().tabTransfer().lyrTransfer().tabOut().ccOutConsultant().initialize(MosType.MEDIC);
+		if (form.lyrDetail().tabTransfer().lyrTransfer().tabOut().qmbOutService().getValue() == null || !ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+		{	
+			form.lyrDetail().tabTransfer().lyrTransfer().tabOut().ccOutConsultant().initialize(MosType.MEDIC);
+		}
+		else if (form.lyrDetail().tabTransfer().lyrTransfer().tabOut().qmbOutService().getValue() != null)
+		{
+			form.lyrDetail().tabTransfer().lyrTransfer().tabOut().ccOutConsultant().initializeResponsibleHcp(MosType.MEDIC, null, form.lyrDetail().tabTransfer().lyrTransfer().tabOut().qmbOutService().getValue(), null);
+		}
 
-		// any existing pendingtransfer - populate screen with
-		PendingTransfersLiteVo voTransfer = form.getLocalContext().getPendingTransferOut();
+		// any existing pendingtransfer - populate screen with		
 		if (voTransfer != null)
 		{
 			if (voTransfer.getDestinationWardIsNotNull())
 			{
 				form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbOutHospital().setValue(domain.getParentLocation(voTransfer.getDestinationWard()));
 				cmbOutHospitalValueChanged(true);
+				if (!form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbOutTransfer().getValues().contains(voTransfer.getDestinationWard()))
+						form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbOutTransfer().newRow(voTransfer.getDestinationWard(),voTransfer.getDestinationWard().getName());
 				form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbOutTransfer().setValue(voTransfer.getDestinationWard());
 			}
 			form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbOutWardType().setValue(voTransfer.getWardType());
+			if (voTransfer.getServiceIsNotNull())
+			{				
+				form.lyrDetail().tabTransfer().lyrTransfer().tabOut().qmbOutService().newRow(voTransfer.getService(), voTransfer.getService().getServiceName());			
+				form.lyrDetail().tabTransfer().lyrTransfer().tabOut().qmbOutService().setValue(voTransfer.getService());
+				form.lyrDetail().tabTransfer().lyrTransfer().tabOut().ccOutConsultant().initializeResponsibleHcp(MosType.MEDIC, null, voTransfer.getService(), null);
+			}			
 			form.lyrDetail().tabTransfer().lyrTransfer().tabOut().dtimOutTransfer().setValue(voTransfer.getTransferRequestDateTime());
 			form.lyrDetail().tabTransfer().lyrTransfer().tabOut().ccOutConsultant().setValue(voTransfer.getConsultant());
-			
-			listSpecialtiesForConsultant(form.lyrDetail().tabTransfer().lyrTransfer().tabOut().ccOutConsultant().getValue(), OUT_CONSULTANT, voTransfer.getSpecialty(), null);
-			
+			if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+			{
+				populateSpecialtyForService(form.lyrDetail().tabTransfer().lyrTransfer().tabOut().qmbOutService().getValue());
+			}
+			else
+			{	
+				listSpecialtiesForConsultant(form.lyrDetail().tabTransfer().lyrTransfer().tabOut().ccOutConsultant().getValue(), OUT_CONSULTANT, voTransfer.getSpecialty(), null);
+			}
 			//if conspc call did not find specialty (conspc mapping was removed) add it as a value anyway
 //			if(voTransfer.getSpecialtyIsNotNull())
 //			{
@@ -2731,6 +4954,11 @@ public class Logic extends BaseLogic
 			
 			form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbOutSpecialty().setValue(voTransfer.getSpecialty());
 			form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbOutSpecialty().setValue(voTransfer.getSpecialty());
+			
+			form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbPatientCategory().setValue(voTransfer.getPatientStatus());//WDEV-20223
+			form.lyrDetail().tabTransfer().lyrTransfer().tabOut().txtOutTransfComment().setValue(voTransfer.getTransferComment());
+			form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbOutTransfReason().setValue(voTransfer.getTransferReason());
+			form.lyrDetail().tabTransfer().lyrTransfer().tabOut().dtimBedReady().setValue(voTransfer.getBedAvailableDateTime());
 		}
 		else
 		{
@@ -2739,21 +4967,34 @@ public class Logic extends BaseLogic
 		}
 		
 		Object mos = domain.getMosUser();
-		if(mos != null)
-			form.lyrDetail().tabTransfer().lyrTransfer().tabOut().lblLoggedInHcp().setValue(((MemberOfStaffLiteVo)mos).getIMosName());
+		if(mos != null)//WDEV-22712
+		{
+			form.lyrDetail().tabTransfer().lyrTransfer().tabOut().lblLoggedInHcp().setTooltip(null);
+			String iMosName = ((MemberOfStaffLiteVo)mos).getIMosName();
+			form.lyrDetail().tabTransfer().lyrTransfer().tabOut().lblLoggedInHcp().setValue(limitlblLength(iMosName,20));
+			form.lyrDetail().tabTransfer().lyrTransfer().tabOut().lblLoggedInHcp().setTooltip(iMosName);
+		}
 	}
 
 	private void clearTransferOutTab()
 	{
-		form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbOutHospital().setValue(null);
-		form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbOutTransfer().setValue(null);
+		form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbOutHospital().clear();
+		form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbOutTransfer().clear();
+		form.lyrDetail().tabTransfer().lyrTransfer().tabOut().qmbOutService().clear();
+		form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbOutSpecialty().clear();
 		form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbOutWardType().setValue(null);
 		form.lyrDetail().tabTransfer().lyrTransfer().tabOut().dtimOutTransfer().setValue(null);
 		form.lyrDetail().tabTransfer().lyrTransfer().tabOut().lblLoggedInHcp().setValue(null);
 		form.lyrDetail().tabTransfer().lyrTransfer().tabOut().ccOutConsultant().clear();
+		form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbOutTransfReason().setValue(null);
+		form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbPatientCategory().setValue(null);//WDEV-20223
+		form.lyrDetail().tabTransfer().lyrTransfer().tabOut().txtOutTransfComment().setValue(null);
+		//WDEV-22449
+		//form.lyrDetail().tabTransfer().lyrTransfer().tabOut().chkNoLongerBed().setValue(false);
+		form.lyrDetail().tabTransfer().lyrTransfer().tabOut().dtimBedReady().setValue(null);
 	}
 
-	private void loadTransferOutHospital()
+	private void loadTransferOutHospital(boolean bDefaultHospital)
 	{
 		form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbOutHospital().clear();
 
@@ -2763,6 +5004,15 @@ public class Logic extends BaseLogic
 
 		for (LocationLiteVo voHosp : voCollHosp)
 			form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbOutHospital().newRow(voHosp, voHosp.getName());
+		if (bDefaultHospital)
+		{
+			LocationLiteVo currentHospital = domain.getCurrentHospital(form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() ? form.getGlobalContext().Core.getSelectedBedSpaceState().getWard() : form.getGlobalContext().Core.getADTWard());//WDEV-18012
+			if (currentHospital != null && form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbOutHospital().getValues().indexOf(currentHospital) != -1)
+			{	
+				form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbOutHospital().setValue(currentHospital);//WDEV-18012
+				cmbOutHospitalValueChanged(bDefaultHospital);
+			}	
+		}
 	}
 
 	@Override
@@ -2780,7 +5030,7 @@ public class Logic extends BaseLogic
 
 		LocationLiteVoCollection voCollWards = domain.listActiveWardsForHospitalLite(form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbOutHospital().getValue());
 		if (voCollWards != null)
-		{
+		{			
 			for (LocationLiteVo voWard : voCollWards)
 			{
 				// exclude current ward
@@ -2788,6 +5038,12 @@ public class Logic extends BaseLogic
 				if (voBedSpaceState != null && voBedSpaceState.getWardIsNotNull())
 				{
 					if (voWard.equals(voBedSpaceState.getWard()))
+						continue;
+				}
+				//WDEV-21208 - exclude Opened for View Ward
+				else if (form.getGlobalContext().Core.getWardViewPatientListWardIsNotNull())
+				{
+					if (voWard.equals(form.getGlobalContext().Core.getWardViewPatientListWard()))
 						continue;
 				}
 
@@ -2836,7 +5092,7 @@ public class Logic extends BaseLogic
 		catch (StaleObjectException e)
 		{
 			engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
-			initialise();
+			initialise(false, false); //WDEV-17662
 			engine.close(DialogResult.OK);
 			return;
 		}
@@ -2854,6 +5110,9 @@ public class Logic extends BaseLogic
 			errors.add("Reason for Closure is mandatory");
 		if (form.lyrDetail().tabCloseBed().dtimClose().getValue() == null)
 			errors.add("Closure Date/Time is mandatory");
+		//WDEV-22423
+		if (form.lyrDetail().tabCloseBed().dtimClose().getValue() != null && form.lyrDetail().tabCloseBed().dtimClose().getValue().getDate().isGreaterThan(new Date())) //WDEV-22423
+			errors.add("Closure Date cannot be set to a future date.");
 		if (form.lyrDetail().tabCloseBed().dtimEstReOpen().getValue() == null)
 			errors.add("Estimated Re-opening Date/Time is mandatory");
 
@@ -2905,7 +5164,7 @@ public class Logic extends BaseLogic
 		{
 			voBedSpaceState.setPreviousBedStatus((BedSpaceStateStatusLiteVo) voBedSpaceState.getCurrentBedStatus().clone());
 			voBedSpaceState.setCurrentBedStatus(new BedSpaceStateStatusLiteVo());
-			voBedSpaceState.getCurrentBedStatus().setStatusDateTime(new DateTime());
+			voBedSpaceState.getCurrentBedStatus().setStatusDateTime(form.lyrDetail().tabCloseBed().dtimClose().getValue()); // WDEV-22423 - take date from screen
 			voBedSpaceState.getCurrentBedStatus().setBedStatus(status);
 			
 			//WDEV-17935
@@ -2930,7 +5189,7 @@ public class Logic extends BaseLogic
 		catch (StaleObjectException e)
 		{
 			engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
-			initialise();
+			initialise(false, false); //WDEV-17662
 			return;
 		}
 
@@ -2951,35 +5210,56 @@ public class Logic extends BaseLogic
 		{
 			voTransfer = form.getLocalContext().getPendingTransferOut();
 		}
-
-		//WDEV-10421
-		LocationRefVo voCancellingfromWard =  form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() ? form.getGlobalContext().Core.getSelectedBedSpaceState().getWard() : null;
-		
-		if (voTransfer != null)
-		{
-			try
-			{
-				domain.cancelTransfer(voTransfer, voCancellingfromWard); //WDEV-10421
-			}
-			catch (StaleObjectException e)
-			{
-				engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
-				initialise();
-				return;
-			}
-			catch (ForeignKeyViolationException e)
-			{
-				engine.showMessage(e.getMessage());
-				engine.close(DialogResult.OK);
-				return;
-			}
+		if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+		{	
+			form.getGlobalContext().Core.setADTPendingTransfer(voTransfer); //WDEV-20326
+			engine.open(form.getForms().Core.TransferCancellation);
 		}
-		engine.close(DialogResult.OK);
+		else
+		{
+			//WDEV-10421
+			LocationRefVo voCancellingfromWard =  form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() ? form.getGlobalContext().Core.getSelectedBedSpaceState().getWard() : null;
+			
+			if (voTransfer != null)
+			{
+				try
+				{
+					domain.cancelTransfer(voTransfer, voCancellingfromWard); //WDEV-10421
+				}
+				catch (StaleObjectException e)
+				{
+					engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
+					form.getGlobalContext().Core.setSelectedBedSpaceState(domain.getBedSpaceState(form.getGlobalContext().Core.getSelectedBedSpaceState()));
+					
+					if (form.getGlobalContext().Core.getSelectedBedSpaceState() == null)
+					{
+						engine.close(DialogResult.OK);
+					}
+					
+					initialise(false, true); //WDEV-17662
+					return;
+				}
+				catch (ForeignKeyViolationException e)
+				{
+					engine.showMessage(e.getMessage());
+					engine.close(DialogResult.OK);
+					return;
+				}
+			}
+			engine.close(DialogResult.OK);
+		}
+		
 	}
 
 	@Override
 	protected void onBtnSaveEstDischargeClick() throws PresentationLogicException
 	{
+		if (form.getGlobalContext().Core.getPatientShort() != null && form.getGlobalContext().Core.getPatientShort().getDod() != null)
+		{
+			form.getLocalContext().setMessageBoxDeceasedReadyForDischarge(engine.showMessage("Patient is deceased. Do you need to record 'Estimated Discharge' details?", "", MessageButtons.YESNO));
+			return;
+		}
+		
 		if (saveEstimatedDischarge(true))
 			engine.close(DialogResult.OK);
 	}
@@ -2999,32 +5279,34 @@ public class Logic extends BaseLogic
 			voInpatEpis = voBedSpaceStateLite.getInpatientEpisode();
 		
 		if (voInpatEpis == null)
-			throw new CodingRuntimeException("voInpatEpis is null in method populateEstimatedDischargeTabFromData");
+			throw new CodingRuntimeException("voInpatEpis is null in method saveEstimatedDischarge()");
 
-		// populate data
-		voInpatEpis.setEstDischargeDate(form.lyrDetail().tabEstimatedDischarge().dteEstDischarge().getValue());
-		voInpatEpis.setIsConfirmedDischarge(form.lyrDetail().tabEstimatedDischarge().chkConfirm().getValue());
-		if (form.lyrDetail().tabEstimatedDischarge().chkConfirm().getValue())
-			voInpatEpis.setConfirmedDischargeDateTime(new DateTime());
-		else
-			voInpatEpis.setConfirmedDischargeDateTime(null);
-		
-		//WDEV-12957
-		if(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("CCO"))
-			voInpatEpis.setDischargeReadyDate(form.lyrDetail().tabEstimatedDischarge().dteDischargeReady().getValue());
-		
-		String[] arrErrors;
+		voInpatEpis = populateEstimatedDischargeDataFromScreen((InpatientEpisodeLiteVo) voInpatEpis.clone());
+		String[] validationErrors = voInpatEpis.validate();
+		List<String> arrErrors = null;
 		if (validateUi)
 		{
-			arrErrors= voInpatEpis.validate(getUIValidationForEstimatedDischarge());
+			String[] uiErrors = getUIValidationForEstimatedDischarge(voInpatEpis);
+			if (validationErrors != null)
+			{	
+				arrErrors = new ArrayList<String>(Arrays.asList(validationErrors));
+				if (uiErrors != null)
+					arrErrors.addAll(Arrays.asList(uiErrors));
+			}
+
+			else if (uiErrors != null)
+			{				
+				arrErrors = new ArrayList<String>(Arrays.asList(uiErrors));
+			}
 		}
 		else
 		{
-			arrErrors = voInpatEpis.validate();
+			if (validationErrors != null)
+				arrErrors = new ArrayList<String>(Arrays.asList(validationErrors));
 		}
-		if (arrErrors != null)
+		if (arrErrors != null && arrErrors.size() > 0)
 		{
-			engine.showErrors(arrErrors);
+			engine.showErrors(arrErrors.toArray(new String[arrErrors.size()]));
 			return false;
 		}
 
@@ -3036,31 +5318,178 @@ public class Logic extends BaseLogic
 		catch (StaleObjectException e)
 		{
 			engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
-			initialise();
+			initialise(true, true); //WDEV-17662
 			return false;
 		}
 		catch (DomainInterfaceException e)
 		{
 			engine.showMessage(e.getMessage());
-			//initialise(); WDEV-16357
+			if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+			{
+				engine.close(DialogResult.OK);
+			}	
 			return false;
 		}
 				
 		return true;
 	}
 
-	private String[] getUIValidationForEstimatedDischarge()
+	private InpatientEpisodeLiteVo populateEstimatedDischargeDataFromScreen(InpatientEpisodeLiteVo voInpatEpis)
+	{
+		if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+		{
+			//WDEV-22988 
+			if ((Boolean.TRUE.equals(form.getLocalContext().getbWasReviseEstDischargeDatePressed()) && form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().isEnabled() && form.getLocalContext().getbWasConfirmPatientDischPressed() == null && form.getLocalContext().getbWasReadyToLeavePressed() == null) || form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue() != null)
+				voInpatEpis.setEstDischargeDate(form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue());
+			voInpatEpis.setConfirmedDischargeDateTime(form.lyrDetail().tabReadyForDischarge().dtimConfirmedDischargeDate().getValue());
+			voInpatEpis.setIsConfirmedDischarge(Boolean.valueOf(form.lyrDetail().tabReadyForDischarge().dtimConfirmedDischargeDate().getValue() != null));
+			voInpatEpis.setExtendedLengthOfStayReason(form.lyrDetail().tabReadyForDischarge().cmbReasonForExtStay().getValue());
+			if (form.lyrDetail().tabReadyForDischarge().FitForDischarge().getValue() != null && !FitForDischargeEnumeration.None.equals(form.lyrDetail().tabReadyForDischarge().FitForDischarge().getValue()))
+				voInpatEpis.setMedicallyFitForDischarge(FitForDischargeEnumeration.rdoFitYes.equals(form.lyrDetail().tabReadyForDischarge().FitForDischarge().getValue()) ? YesNo.YES :  YesNo.NO);
+			voInpatEpis.setPatientRequiresTransport(form.lyrDetail().tabReadyForDischarge().cmbTransportDet().getValue() != null);
+			voInpatEpis.setTransportDetails(form.lyrDetail().tabReadyForDischarge().cmbTransportDet().getValue() != null ? populateTransportDetails(voInpatEpis.getTransportDetails()) : null);
+			if (form.lyrDetail().tabReadyForDischarge().DischargeLounge().getValue() != null && !DischargeLoungeEnumeration.None.equals(form.lyrDetail().tabReadyForDischarge().DischargeLounge().getValue()))
+				voInpatEpis.setAbleToGoDischargeLounge(DischargeLoungeEnumeration.rdoLoungeYes.equals(form.lyrDetail().tabReadyForDischarge().DischargeLounge().getValue()) ? Boolean.TRUE : Boolean.FALSE);
+			voInpatEpis.setReasonCannotGoDischargeLounge(form.lyrDetail().tabReadyForDischarge().cmbReasonCannotGoLounge().getValue());
+			voInpatEpis.setReasonDelayedDischarge(populateReasonsForDelayInDischargeData());
+			voInpatEpis.setIsReadyToLeave(form.lyrDetail().tabReadyForDischarge().dtimReadyToLeave().getValue() != null);
+			voInpatEpis.setReadyToLeaveDecisionDateTime(form.lyrDetail().tabReadyForDischarge().dtimReadyToLeave().getValue());
+		}
+		else
+		{
+			// populate data
+			voInpatEpis.setEstDischargeDate(form.lyrDetail().tabReadyForDischarge().dteEstDischarge().getValue() != null ? new DateTime(form.lyrDetail().tabReadyForDischarge().dteEstDischarge().getValue(), null) : null);
+			voInpatEpis.setIsConfirmedDischarge(form.lyrDetail().tabReadyForDischarge().chkConfirm().getValue());
+			if (form.lyrDetail().tabReadyForDischarge().chkConfirm().getValue())
+				voInpatEpis.setConfirmedDischargeDateTime(new DateTime());
+			else
+				voInpatEpis.setConfirmedDischargeDateTime(null);
+			
+			//WDEV-12957
+			if(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("CCO"))
+				voInpatEpis.setDischargeReadyDate(form.lyrDetail().tabReadyForDischarge().dteDischargeReady().getValue());
+			
+			
+		}
+	
+		return voInpatEpis;
+		
+	}
+
+	
+	private ReasonForDelayedDischargeVoCollection populateReasonsForDelayInDischargeData()
+	{
+		if (form.lyrDetail().tabReadyForDischarge().dyngrdDischReason().getRows().size() == 0)
+			return null;
+				
+		ReasonForDelayedDischargeVoCollection coll = new ReasonForDelayedDischargeVoCollection();
+		
+		for (int i =0;i<form.lyrDetail().tabReadyForDischarge().dyngrdDischReason().getRows().size(); i++)
+		{
+			if (form.lyrDetail().tabReadyForDischarge().dyngrdDischReason().getRows().get(i) == null || !(form.lyrDetail().tabReadyForDischarge().dyngrdDischReason().getRows().get(i).getValue() instanceof ReasonForDelayedDischargeVo))
+				continue;
+			coll.add(populateDelayReasonData(form.lyrDetail().tabReadyForDischarge().dyngrdDischReason().getRows().get(i)));
+		}
+		return coll.size() > 0 ? coll : null;
+	}
+
+	private ReasonForDelayedDischargeVo populateDelayReasonData(DynamicGridRow dynamicGridRow)
+	{
+		ReasonForDelayedDischargeVo vo = ((ReasonForDelayedDischargeVo) dynamicGridRow.getValue());
+		vo.setRecordedDate((DateTime) dynamicGridRow.getCells().get(getColumn(COL_DELAY_DATE)).getValue());
+		vo.setReasonDelayDischarge((ReasonDelayDischarge) dynamicGridRow.getCells().get(getColumn(COL_DELAY_REASON)).getValue());
+		vo.setEndDateTime(dynamicGridRow.getCells().get(getColumn(COL_DELAY_END_DATE)).getValue() != null ? (DateTime) dynamicGridRow.getCells().get(getColumn(COL_DELAY_END_DATE)).getValue(): null);
+		
+		return vo;
+	}
+
+	private PatientTransportRequirementsVo populateTransportDetails(PatientTransportRequirementsVo transportDetails)
+	{
+		if (transportDetails == null)
+			transportDetails = new PatientTransportRequirementsVo();
+		transportDetails.setCareContext(form.getGlobalContext().Core.getCurrentCareContext());
+		transportDetails.setTransport(form.lyrDetail().tabReadyForDischarge().cmbTransportDet().getValue());
+		transportDetails.setTransportRequired(form.lyrDetail().tabReadyForDischarge().cmbTransportDet().getValue() != null);
+			
+		return transportDetails;
+	}
+
+	private String[] getUIValidationForEstimatedDischarge(InpatientEpisodeLiteVo voInpatEpis)
 	{
 		List<String> errors = new ArrayList<String>();
 
-		if (form.lyrDetail().tabEstimatedDischarge().dteEstDischarge().getValue() == null)
-			errors.add("Estimate Discharge Date is mandatory");
-		
+		if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+		{	
+			if (form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue() != null)
+			{	
+				if (form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue().isLessThan(voInpatEpis.getAdmissionDateTime()))
+					errors.add("Estimated Discharge Date/Time cannot be earlier than Admission Date/Time.");				
+			}
+			//WDEV-22612 - TauntonID876
+			if (form.lyrDetail().tabReadyForDischarge().cmbReasonForExtStay().getVisible() && form.lyrDetail().tabReadyForDischarge().cmbReasonForExtStay().isEnabled() && form.lyrDetail().tabReadyForDischarge().cmbReasonForExtStay().getValue() == null)
+			{
+				errors.add("Reason for Extended Length of Stay is mandatory.");
+			}
+			if (form.lyrDetail().tabReadyForDischarge().txtFitRequired().isVisible() && (form.lyrDetail().tabReadyForDischarge().FitForDischarge().getValue() == null || FitForDischargeEnumeration.None.equals(form.lyrDetail().tabReadyForDischarge().FitForDischarge().getValue())))
+			{
+				errors.add("'Is the Patient Medically Fit for Discharge?' is mandatory.");				
+			}
+			if (form.lyrDetail().tabReadyForDischarge().txtDelayedDischargeRequired().isVisible() && (form.lyrDetail().tabReadyForDischarge().DelayedDischarge().getValue() == null || DelayedDischargeEnumeration.None.equals(form.lyrDetail().tabReadyForDischarge().DelayedDischarge().getValue())))
+			{
+				errors.add("'Delayed Discharge?' is mandatory.");				
+			}
+			if (DelayedDischargeEnumeration.rdoDelayedDischYes.equals(form.lyrDetail().tabReadyForDischarge().DelayedDischarge().getValue()) && form.lyrDetail().tabReadyForDischarge().dyngrdDischReason().getRows().size() == 0)
+				errors.add("Reason(s) for delayed discharge are mandatory.");
+			String uiReasonDelayValidationErrors = validateReasonDelayedDischargeAdded();
+			if (DelayedDischargeEnumeration.rdoDelayedDischYes.equals(form.lyrDetail().tabReadyForDischarge().DelayedDischarge().getValue()) && form.lyrDetail().tabReadyForDischarge().dyngrdDischReason().getRows().size()> 0 && uiReasonDelayValidationErrors != null)
+				errors.add(uiReasonDelayValidationErrors);
+			if (form.lyrDetail().tabReadyForDischarge().dtimConfirmedDischargeDate().isVisible() && form.lyrDetail().tabReadyForDischarge().dtimConfirmedDischargeDate().isEnabled() && form.lyrDetail().tabReadyForDischarge().dtimConfirmedDischargeDate().getValue() == null)
+				errors.add("Confirmed Date/Time for Discharge is mandatory.");
+			if (form.lyrDetail().tabReadyForDischarge().dtimConfirmedDischargeDate().getValue() != null && form.lyrDetail().tabReadyForDischarge().dtimConfirmedDischargeDate().getValue().isLessThan(voInpatEpis.getAdmissionDateTime()))
+				errors.add("Confirmed Date/Time for Discharge cannot be earlier than Admission Date/Time.");
+			if (form.lyrDetail().tabReadyForDischarge().dtimReadyToLeave().isVisible() && form.lyrDetail().tabReadyForDischarge().dtimReadyToLeave().isEnabled() && form.lyrDetail().tabReadyForDischarge().dtimReadyToLeave().getValue() == null)
+				errors.add("Ready to Leave Decision Date/Time is mandatory.");			
+			if (form.lyrDetail().tabReadyForDischarge().dtimReadyToLeave().getValue() != null && form.lyrDetail().tabReadyForDischarge().dtimReadyToLeave().getValue().isLessThan(voInpatEpis.getAdmissionDateTime()))
+				errors.add("Ready to Leave Decision Date/Time cannot be earlier than Admission Date/Time.");
+			//WDEV-23129 
+			if (form.lyrDetail().tabReadyForDischarge().dtimReadyToLeave().getValue() != null && form.lyrDetail().tabReadyForDischarge().dtimReadyToLeave().getValue().isGreaterThan(new DateTime()))
+				errors.add("Ready to Leave Decision Date/Time cannot be later than current date/time.");
+			if (form.lyrDetail().tabReadyForDischarge().dtimReadyToLeave().getValue() != null && form.lyrDetail().tabReadyForDischarge().dtimConfirmedDischargeDate().getValue() != null && form.lyrDetail().tabReadyForDischarge().dtimReadyToLeave().getValue().isLessThan(form.lyrDetail().tabReadyForDischarge().dtimConfirmedDischargeDate().getValue()))
+				errors.add("Ready to Leave Decision Date/Time cannot be earlier than Confirmed Date/Time for Discharge.");
+			if (DischargeLoungeEnumeration.rdoLoungeNo.equals(form.lyrDetail().tabReadyForDischarge().DischargeLounge().getValue()) && form.lyrDetail().tabReadyForDischarge().cmbReasonCannotGoLounge().getValue() == null)
+				errors.add("Reason is mandatory.");			
+		}
+		else
+		{
+			if (form.lyrDetail().tabReadyForDischarge().dteEstDischarge().getValue() == null)
+				errors.add("Estimated Discharge Date is mandatory.");
+			if (form.lyrDetail().tabReadyForDischarge().dteEstDischarge().getValue() != null && form.lyrDetail().tabReadyForDischarge().dteEstDischarge().getValue().isLessThan(voInpatEpis.getAdmissionDateTime().getDate()))
+				errors.add("Estimated Discharge Date cannot be earlier than Admission Date.");
+			
+		}
 		return errors.size() > 0 ? errors.toArray(new String[0]) : null;
 	}
-
-
-
+	
+	private String validateReasonDelayedDischargeAdded()
+	{
+		StringBuilder reasonValidationErrors = new StringBuilder();
+		
+		DynamicGridRowCollection delayedReasonsOnScreenRows = form.lyrDetail().tabReadyForDischarge().dyngrdDischReason().getRows();
+		if (delayedReasonsOnScreenRows.size() > 0)
+		{
+			for (int i = 0; i<delayedReasonsOnScreenRows.size();i++)
+			{
+				if (delayedReasonsOnScreenRows.get(i) == null || !(delayedReasonsOnScreenRows.get(i).getValue() instanceof ReasonForDelayedDischargeVo))
+					continue;
+				if (delayedReasonsOnScreenRows.get(i).getCells().get(getColumn(COL_DELAY_DATE)).getValue() != null && new DateTime().isLessThan((DateTime)delayedReasonsOnScreenRows.get(i).getCells().get(getColumn(COL_DELAY_DATE)).getValue()))
+					reasonValidationErrors.append("Delay Date/Time cannot be in the future");
+				if (delayedReasonsOnScreenRows.get(i).getCells().get(getColumn(COL_DELAY_DATE)).getValue() != null && delayedReasonsOnScreenRows.get(i).getCells().get(getColumn(COL_DELAY_END_DATE)).getValue() != null && ((DateTime)delayedReasonsOnScreenRows.get(i).getCells().get(getColumn(COL_DELAY_END_DATE)).getValue()).isLessThan((DateTime) delayedReasonsOnScreenRows.get(i).getCells().get(getColumn(COL_DELAY_DATE)).getValue()))
+					reasonValidationErrors.append("End Date/Time cannot be earlier than Delayed Date/Time for a delay reason.");
+			}
+		}
+		return reasonValidationErrors.length() > 0 ? reasonValidationErrors.toString() : null;
+	}
+		
 	/***
 	 * IF RTTSTAT = 2 for TREAT
      * 	If Treatment postponed - RREA only is required to undo stop clock
@@ -3071,84 +5500,112 @@ public class Logic extends BaseLogic
 	 * 
 	 * @return
 	 */
-	private String sendRTTMessage()
-	{
-		String rttStop = "";
-		if (form.getLocalContext().getRtpStat() == null)
-			return rttStop;
-		
-		boolean wasTreatmentDeferred = form.lyrDetail().tabDischarge().grpTreatmentPostponed().getValue().equals(GenForm.lyrDetailLayer.tabDischargeContainer.grpTreatmentPostponedEnumeration.rdoYesTreat);
-		
-		
-		if (form.getLocalContext().getRtpStat().equals(DIAGNOSTIC))
-		{
-			if (form.lyrDetail().tabDischarge().grp18Running().getValue().equals(GenForm.lyrDetailLayer.tabDischargeContainer.grp18RunningEnumeration.rdoNoRunning))
-				rttStop = "Y";
-		}
-		else if (form.getLocalContext().getRtpStat().equals(TREATMENT))
-		{
-			if(!wasTreatmentDeferred)
-			{
-				if (form.lyrDetail().tabDischarge().grp18Stopped().getValue().equals(GenForm.lyrDetailLayer.tabDischargeContainer.grp18StoppedEnumeration.rdoNoStopped))
-					rttStop = "N";
-			}
-		}
+	// TODO - Check if the method is obsolete
+//	private String sendRTTMessage()
+//	{
+//		String rttStop = "";
+//		if (form.getLocalContext().getRtpStat() == null)
+//			return rttStop;
+//		
+//		boolean wasTreatmentDeferred = grpDeferredEnumeration.rdoYesDeferred.equals(form.lyrDetail().tabDischarge().grpDeferred().getValue());
+//		
+//		
+//		if (form.getLocalContext().getRtpStat().equals(DIAGNOSTIC))
+//		{
+//			if (form.lyrDetail().tabDischarge().grp18Running().getValue().equals(GenForm.lyrDetailLayer.tabDischargeContainer.grp18RunningEnumeration.rdoNoRunning))
+//				rttStop = "Y";
+//		}
+//		else if (form.getLocalContext().getRtpStat().equals(TREATMENT))
+//		{
+//			if(!wasTreatmentDeferred)
+//			{
+//				if (form.lyrDetail().tabDischarge().grp18Stopped().getValue().equals(GenForm.lyrDetailLayer.tabDischargeContainer.grp18StoppedEnumeration.rdoNoStopped))
+//					rttStop = "N";
+//			}
+//		}
+//
+//		return rttStop;
+//	}
 
-		return rttStop;
-	}
 
-	@Override
-	protected void onRadioButtongrpTreatmentPostponedValueChanged() throws PresentationLogicException
-	{
-		if (form.lyrDetail().tabDischarge().grpTreatmentPostponed().getValue().equals(GenForm.lyrDetailLayer.tabDischargeContainer.grpTreatmentPostponedEnumeration.rdoNoTreat))
-			form.lyrDetail().tabDischarge().cmbReason().setValue(null);
-
-		form.lyrDetail().tabDischarge().cmbReason().setEnabled(form.lyrDetail().tabDischarge().grpTreatmentPostponed().getValue().equals(GenForm.lyrDetailLayer.tabDischargeContainer.grpTreatmentPostponedEnumeration.rdoYesTreat));
-
-		if(form.getLocalContext().getRtpStat() != null && form.getLocalContext().getRtpStat().equals(DIAGNOSTIC))
-			return;
-		
-		if (form.getLocalContext().getRtpStat() != null && form.getLocalContext().getRtpStat().equals(TREATMENT) && form.lyrDetail().tabDischarge().grpTreatmentPostponed().getValue().equals(GenForm.lyrDetailLayer.tabDischargeContainer.grpTreatmentPostponedEnumeration.rdoNoTreat))
-		{
-			showStoppedHideRunning();
-		}
-		else if (form.lyrDetail().tabDischarge().grpTreatmentPostponed().getValue().equals(GenForm.lyrDetailLayer.tabDischargeContainer.grpTreatmentPostponedEnumeration.rdoYesTreat))
-		{
-			form.lyrDetail().tabDischarge().lblRunning().setVisible(false);
-			form.lyrDetail().tabDischarge().grp18Running().setVisible(false);
-			form.lyrDetail().tabDischarge().txt18WeekRun().setVisible(false);		// WDEV-13666
-			form.lyrDetail().tabDischarge().lblStopped().setVisible(false);
-			form.lyrDetail().tabDischarge().grp18Stopped().setVisible(false);
-			form.lyrDetail().tabDischarge().txt18WeekStop().setVisible(false);			// WDEV-13666
-		}
-	}
+	// TODO - THIS NEEDS TO BE REVIEWD
+//	protected void onRadioButtongrpTreatmentPostponedValueChanged() throws PresentationLogicException
+//	{
+//		if (form.lyrDetail().tabDischarge().grpTreatmentPostponed().getValue().equals(GenForm.lyrDetailLayer.tabDischargeContainer.grpTreatmentPostponedEnumeration.rdoNoTreat))
+//			form.lyrDetail().tabDischarge().cmbReason().setValue(null);
+//
+//		form.lyrDetail().tabDischarge().cmbReason().setEnabled(form.lyrDetail().tabDischarge().grpTreatmentPostponed().getValue().equals(GenForm.lyrDetailLayer.tabDischargeContainer.grpTreatmentPostponedEnumeration.rdoYesTreat));
+//
+//		if(form.getLocalContext().getRtpStat() != null && form.getLocalContext().getRtpStat().equals(DIAGNOSTIC))
+//			return;
+//		
+//		if (form.getLocalContext().getRtpStat() != null && form.getLocalContext().getRtpStat().equals(TREATMENT) && form.lyrDetail().tabDischarge().grpTreatmentPostponed().getValue().equals(GenForm.lyrDetailLayer.tabDischargeContainer.grpTreatmentPostponedEnumeration.rdoNoTreat))
+//		{
+//			showStoppedHideRunning();
+//		}
+//		else if (form.lyrDetail().tabDischarge().grpTreatmentPostponed().getValue().equals(GenForm.lyrDetailLayer.tabDischargeContainer.grpTreatmentPostponedEnumeration.rdoYesTreat))
+//		{
+//			form.lyrDetail().tabDischarge().lblRunning().setVisible(false);
+//			form.lyrDetail().tabDischarge().grp18Running().setVisible(false);
+//			form.lyrDetail().tabDischarge().txt18WeekRun().setVisible(false);		// WDEV-13666
+//			form.lyrDetail().tabDischarge().lblStopped().setVisible(false);
+//			form.lyrDetail().tabDischarge().grp18Stopped().setVisible(false);
+//			form.lyrDetail().tabDischarge().txt18WeekStop().setVisible(false);			// WDEV-13666
+//		}
+//	}
 
 	@Override
 	protected void onBtnInternalTransferClick() throws PresentationLogicException
 	{
+		String bedStr = getBedSpaceTypeDescriptor(form.getGlobalContext().Core.getSelectedBedSpaceState());
+		
+		if (form.getGlobalContext().Core.getPatientShort() == null && form.lyrDetail().tabBedMove().grdPatients().getValue() != null)
+		{
+			if (form.lyrDetail().tabBedMove().grdPatients().getValue().getPasEventIsNotNull() && form.lyrDetail().tabBedMove().grdPatients().getValue().getPasEvent().getPatientIsNotNull() && form.lyrDetail().tabBedMove().grdPatients().getValue().getPasEvent().getPatient().getDod() != null)
+			{	
+				form.getLocalContext().setMessageBoxDeceasedBedMove(engine.showMessage(("The patient you've selected is deceased. Do you need to transfer the patient to this " + bedStr + "?"), "", MessageButtons.YESNO));
+				return;
+			}
+		}
+		movePatientToBed();
+	}
+
+	private void movePatientToBed()
+	{
 		if (form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() && form.lyrDetail().tabBedMove().grdPatients().getValue() != null)
 		{
+			if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+			{
+				String wardAvailabilityErrors = validateInternalTransferInWard(form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() ? form.getGlobalContext().Core.getSelectedBedSpaceState().getWard() : form.getGlobalContext().Core.getADTWard());
+				if(wardAvailabilityErrors != null)
+				{
+					form.getLocalContext().setMessageBoxWardBayAvailability(engine.showMessage(wardAvailabilityErrors,"Not Allowed", MessageButtons.OK, MessageIcon.INFORMATION));
+					return;
+				}
+				boolean bValidate = isBedAllocationValidatedByRelevantRule(form.getGlobalContext().Core.getBedRuleBreachReason(), form.getLocalContext().getTabFocused());
+				if (!bValidate)
+				 	return;
+			}	
 			//WDEV-16030
 			BedSpaceStateLiteVo domainBedSpaceState = domain.getBedSpaceStateStatusByBedId(form.lyrDetail().tabBedMove().grdPatients().getValue().getBed());
 
 			if (domainBedSpaceState != null && domainBedSpaceState.getCurrentBedStatus() != null && BedStatus.OCCUPIED.equals(domainBedSpaceState.getCurrentBedStatus().getBedStatus()))
 			{
 				BedSpaceStateLiteVo voBedSpaceState = form.getGlobalContext().Core.getSelectedBedSpaceState();
-				voBedSpaceState.setInpatientEpisode(form.lyrDetail().tabBedMove().grdPatients().getValue());
 				
 				try
 				{
-					domain.saveInternalTransfer(form.lyrDetail().tabBedMove().grdPatients().getValue(), voBedSpaceState);
+					domain.saveInternalTransfer(form.lyrDetail().tabBedMove().grdPatients().getValue(), voBedSpaceState, form.getGlobalContext().Core.getBedRuleBreachReason());
 				}
 				catch (StaleObjectException e)
 				{
 					engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
-					populateBedMoveTabFromData();
+					populateBedMoveTabFromData(false);
 				}
 			}
 			else
 			{
-				engine.showMessage("Patient has already been moved to another bed.");
+				engine.showMessage("This patient has been already moved to another bed/chair.");
 			}
 
 			engine.close(DialogResult.OK);
@@ -3158,11 +5615,26 @@ public class Logic extends BaseLogic
 	@Override
 	protected void onGrdPatientsSelectionChanged() throws PresentationLogicException
 	{
-		form.lyrDetail().tabBedMove().btnInternalTransfer().setEnabled(form.lyrDetail().tabBedMove().grdPatients().getValue() != null);
+		updateBedMoveTabControlsState();
 		
+		if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+		{	
+			form.getLocalContext().setAdmissionDetails(getAdmissionDetail());
+			clearBedAllocationValidationContexts();
+		}
+	}
+
+
+	private void updateBedMoveTabControlsState()
+	{
+		form.lyrDetail().tabBedMove().btnInternalTransfer().setEnabled(form.lyrDetail().tabBedMove().grdPatients().getValue() != null);
+		form.lyrDetail().tabBedMove().btnSwitchBeds().setEnabled(form.lyrDetail().tabBedMove().grdPatients().getValue() != null);
 		//WDEV-9790
 		if(form.getLocalContext().getIsReadOnlyIsNotNull() && form.getLocalContext().getIsReadOnly())
+		{
 			form.lyrDetail().tabBedMove().btnInternalTransfer().setEnabled(false);
+			form.lyrDetail().tabBedMove().btnSwitchBeds().setEnabled(false);
+		}		
 	}
 
 	@Override
@@ -3171,11 +5643,11 @@ public class Logic extends BaseLogic
 		if (form.lyrDetail().tabAdmission().ccAdmit().getInWaitingIsVisible())
 		{
 			form.lyrDetail().tabAdmission().btnAdmit().setImage(form.getImages().Admin.BedNext24);
-			form.lyrDetail().tabAdmission().btnAdmit().setText(ALLOCATE_BED);
+			form.lyrDetail().tabAdmission().btnAdmit().setText(getAdmitButtonText());
 		}
 		else if (form.lyrDetail().tabAdmission().ccAdmit().getIsReturnFromLeaveVisible())
 		{
-			form.lyrDetail().tabAdmission().btnAdmit().setImage(form.getImages().Admin.BedNext24);
+			form.lyrDetail().tabAdmission().btnAdmit().setImage(form.getImages().Core.ReturnFromHome);
 			form.lyrDetail().tabAdmission().btnAdmit().setText(RETURN_FROM_LEAVE);
 		}
 		else
@@ -3184,10 +5656,56 @@ public class Logic extends BaseLogic
 			form.lyrDetail().tabAdmission().btnAdmit().setText(ADMIT);
 		}
 		form.lyrDetail().tabAdmission().btnAdmit().setEnabled(form.lyrDetail().tabAdmission().ccAdmit().getIsRecordSelected());
+		form.lyrDetail().tabAdmission().btnCancelHL().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && form.lyrDetail().tabAdmission().ccAdmit().getIsReturnFromLeaveVisible()); 
+		form.lyrDetail().tabAdmission().btnCancelHL().setEnabled(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && form.lyrDetail().tabAdmission().ccAdmit().getIsReturnFromLeaveVisible() && form.lyrDetail().tabAdmission().ccAdmit().getIsRecordSelected());
+		
+		//WDEV-20346
+		if (form.lyrDetail().tabAdmission().ccAdmit().isOnTCITab() && form.lyrDetail().tabAdmission().ccAdmit().isTCIRecordSelectedForView())
+			form.getGlobalContext().Core.setPatientShort(form.lyrDetail().tabAdmission().ccAdmit().getPatientForElectiveListEntry());
+		if (Boolean.TRUE.equals(form.lyrDetail().tabAdmission().ccAdmit().canClearElectiveListContexts()))
+		{
+			form.getGlobalContext().Core.setPatientShort(null);
+			form.lyrDetail().tabAdmission().ccAdmit().clearElectiveListContexts();
+		}
+		//WDEV-20346 -- ends here
 		
 		//WDEV-9790
 		if(form.getLocalContext().getIsReadOnlyIsNotNull() && form.getLocalContext().getIsReadOnly())
+		{	
 			form.lyrDetail().tabAdmission().btnAdmit().setEnabled(false);
+			form.lyrDetail().tabAdmission().btnCancelHL().setEnabled(false);
+		}	
+		
+		if (Boolean.TRUE.equals(form.lyrDetail().tabAdmission().ccAdmit().canCloseBedDialog()))
+			engine.close(DialogResult.OK);
+		
+		clearBedAllocationValidationContexts();	
+	}
+
+	private String getAdmitButtonText()
+	{
+		if (form.getGlobalContext().Core.getSelectedBedSpaceState() == null)
+			return ALLOCATE_BED;
+		if (form.getGlobalContext().Core.getSelectedBedSpaceState().getBedSpaceIsNotNull())
+		{
+			if (BedSpaceType.BED.equals(form.getGlobalContext().Core.getSelectedBedSpaceState().getBedSpace().getBedSpaceType()) || BedSpaceType.MATERNITY_BED.equals(form.getGlobalContext().Core.getSelectedBedSpaceState().getBedSpace().getBedSpaceType()))
+				return ALLOCATE_BED;
+			else if (BedSpaceType.COT.equals(form.getGlobalContext().Core.getSelectedBedSpaceState().getBedSpace().getBedSpaceType()))
+				return ALLOCATE_COT;
+			else if (BedSpaceType.CHAIR.equals(form.getGlobalContext().Core.getSelectedBedSpaceState().getBedSpace().getBedSpaceType()))
+				return ALLOCATE_CHAIR;		
+		}
+		return ALLOCATE_BED;
+	}
+
+	private void clearBedAllocationValidationContexts() //WDEV-20224 
+	{
+		if (!ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+			return;
+		form.getGlobalContext().Core.setBedRuleBreachReason(null);
+		form.getLocalContext().setMessageBoxBayGenderMismatch(null);
+		form.getLocalContext().setMessageBoxBayMixedGender(null);
+		
 	}
 
 	@Override
@@ -3227,6 +5745,18 @@ public class Logic extends BaseLogic
 		}
 
 		voDischargedEpisode.setIsActive(true);
+		Boolean checkPatientsGender = null;
+		if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+		{
+			if (voBedSpaceState != null && voBedSpaceState.getBayIsNotNull())
+			{
+				BayConfigLiteVo bayCfg = getBayConfig(voBedSpaceState.getBay());
+				boolean maleSpecificBay = bayCfg != null && Boolean.TRUE.equals(bayCfg.getMale());
+				boolean femaleSpecificBay = bayCfg != null && Boolean.TRUE.equals(bayCfg.getFemale());
+				checkPatientsGender = bayCfg != null && bayCfg.getTemporaryBayGenderIsNotNull() && (maleSpecificBay || (femaleSpecificBay && !maleSpecificBay));	
+			}			
+		}
+		//----------------
 
 		String[] arrErrors = voDischargedEpisode.validate();
 		if (arrErrors != null)
@@ -3234,30 +5764,38 @@ public class Logic extends BaseLogic
 			engine.showErrors(arrErrors);
 			return;
 		}
-
+		if (form.getLocalContext().getDeathDetailsOnDischargeIsNotNull())
+		{	
+			String[] errors = form.getLocalContext().getDeathDetailsOnDischarge().validate();
+			if (errors != null)
+			{
+				engine.showErrors(errors);
+				return;
+			}
+		}
 		try
 		{
-			domain.saveDischarge(voDischargedEpisode, voBedSpaceState);
+			domain.saveDischarge(voDischargedEpisode, voBedSpaceState,form.getLocalContext().getDeathDetailsOnDischarge(), form.getLocalContext().getbCancelPatientAppointments(), checkPatientsGender); //WDEV-20224
 		}
 		catch (StaleObjectException e)
 		{
 			engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
-			initialise();
+			initialise(true,true);
 			return;
 		}
 		catch (DomainInterfaceException e)
 		{
 			engine.showMessage(e.getMessage());
-			initialise();
+			initialise(true, false);
 			return;
 		}
 		catch (ForeignKeyViolationException e)
 		{
 			engine.showMessage(e.getMessage());
-			initialise();
+			initialise(true, false);
 			return;
 		}
-
+		form.getLocalContext().setDeathDetailsOnDischarge(null);
 		engine.close(DialogResult.OK);
 	}
 
@@ -3265,8 +5803,8 @@ public class Logic extends BaseLogic
 	{
 		if(form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().dtimInfantDischarge().isVisible())
 			return form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().dtimInfantDischarge().getValue();
-		else if(form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().dtimInfantDod().isVisible())
-			return form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().dtimInfantDod().getValue();
+		else if(form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().dteInfantDod().isVisible())
+			return (form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().dteInfantDod().getValue() != null && form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().timInfantTod().getValue() != null) ? new DateTime(form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().dteInfantDod().getValue(),form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().timInfantTod().getValue()) : null; //WDEV-19682
 		
 		return null;
 	}
@@ -3292,8 +5830,11 @@ public class Logic extends BaseLogic
 
 		voPendingTransfer.setConsultant(form.lyrDetail().tabInfants().lyrInfants().tabInfantTransfer().ccInfantConsultant().getValue());
 		voPendingTransfer.setSpecialty(form.lyrDetail().tabInfants().lyrInfants().tabInfantTransfer().cmbInfantSpecialty().getValue());
-
-		if (saveTransferOut(voPendingTransfer))
+		
+		voPendingTransfer.setTransferReason(form.lyrDetail().tabInfants().lyrInfants().tabInfantTransfer().cmbInfantTransferReason().getValue());
+		voPendingTransfer.setTransferComment(form.lyrDetail().tabInfants().lyrInfants().tabInfantTransfer().txtInfantTransfComment().getValue());
+		
+		if (saveTransferOut(voPendingTransfer, false)) //WDEV-20023
 			engine.close(DialogResult.OK);
 	}
 
@@ -3318,7 +5859,7 @@ public class Logic extends BaseLogic
 		}
 
 		// Current Ward Label
-		form.lyrDetail().tabInfants().lyrInfants().tabInfantTransfer().lblInfantCurrentWard().setValue(voInpatEpis.getPasEventIsNotNull() && voInpatEpis.getPasEvent().getLocationIsNotNull() ? voInpatEpis.getPasEvent().getLocation().getName() : "");
+		form.lyrDetail().tabInfants().lyrInfants().tabInfantTransfer().lblInfantCurrentWard().setValue(voInpatEpis != null && voInpatEpis.getPasEventIsNotNull() && voInpatEpis.getPasEvent().getLocationIsNotNull() ? voInpatEpis.getPasEvent().getLocation().getName() : "");
 		
 		//try to get existing PendingTransfer if it exists populate screen 
 		form.getLocalContext().setPendingInfantTransfer(domain.getPendingTransferForInpatient(voInpatEpis));
@@ -3362,6 +5903,9 @@ public class Logic extends BaseLogic
 			}
 		
 			form.lyrDetail().tabInfants().lyrInfants().tabInfantTransfer().cmbInfantSpecialty().setValue(voTransfer.getSpecialty());
+			
+			form.lyrDetail().tabInfants().lyrInfants().tabInfantTransfer().txtInfantTransfComment().setValue(voTransfer.getTransferComment());
+			form.lyrDetail().tabInfants().lyrInfants().tabInfantTransfer().cmbInfantTransferReason().setValue(voTransfer.getTransferReason());
 		}
 		else
 		{
@@ -3430,7 +5974,8 @@ public class Logic extends BaseLogic
 	{
 		form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().cmbInfantMethodDischarge().setValue(null);
 		form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().cmbInfantDischargeDest().setValue(null);
-		form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().dtimInfantDod().setValue(null);
+		form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().dteInfantDod().setValue(null);
+		form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().timInfantTod().setValue(null);
 		form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().dtimInfantDischarge().setValue(null);
 	}
 
@@ -3440,9 +5985,83 @@ public class Logic extends BaseLogic
 		cmbInfantHospitalValueChanged(true);
 	}
 
+	void admissionHandler()
+	{
+		if (form.getGlobalContext().Core.getPatientShort() != null && form.getGlobalContext().Core.getPatientShort().getDod() != null)
+		{
+			engine.showMessage("Deceased patient cannot be admitted.", "Errors", MessageButtons.OK, MessageIcon.ERROR);
+			return;
+		}
+		
+		if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+		{
+			boolean bValidate = isAdmissionValidatedByRelevantRule(form.getGlobalContext().Core.getBedRuleBreachReason());
+			if (!bValidate)
+			 	return;
+		}			
+		if (!form.lyrDetail().tabAdmission().ccAdmit().checkForPatientAlreadyAdmited())
+		{
+			if (Boolean.TRUE.equals(ConfigFlag.GEN.USE_ELECTIVE_LIST_FUNCTIONALITY.getValue()) && form.lyrDetail().tabAdmission().ccAdmit().isOnTCITab())
+			{
+				if (form.lyrDetail().tabAdmission().ccAdmit().saveAdmission())
+					engine.close(DialogResult.OK); 
+				return;
+			}
+			else if (Boolean.TRUE.equals(ConfigFlag.GEN.USE_ELECTIVE_LIST_FUNCTIONALITY.getValue()) && form.lyrDetail().tabAdmission().ccAdmit().isOnEmergency())
+			{
+				//WDEV-19507
+				String strMessage="";
+
+				if (Boolean.TRUE.equals(form.lyrDetail().tabAdmission().ccAdmit().hasTCIWithinNextMonth())) //WDEV-20234
+				{
+					strMessage="This patient has other Elective List / TCI records within the next month.\n"; 
+				}
+				
+				if (Boolean.TRUE.equals(form.lyrDetail().tabAdmission().ccAdmit().hasPatientAppointmentsWithinNextMonth()))
+				{
+					strMessage=strMessage+"Patient has appointments within the next month.";
+				}
+				
+				if (strMessage!=null && strMessage.length()>0)
+					form.getLocalContext().setMessageBoxAdmissionApptsExist(engine.showMessage(strMessage, "Warning", MessageButtons.OK));
+				
+				if (form.lyrDetail().tabAdmission().ccAdmit().saveAdmission())
+					engine.close(DialogResult.OK);
+				
+				return;
+			}
+			//WDEV-19507
+			else if (form.lyrDetail().tabAdmission().ccAdmit().isOnEmergency())
+			{
+				if (Boolean.TRUE.equals(form.lyrDetail().tabAdmission().ccAdmit().hasPatientAppointmentsWithinNextMonth()))
+				{
+					form.getLocalContext().setMessageBoxAdmissionApptsExist(engine.showMessage("Patient has appointments within the next month!", "Warning", MessageButtons.OK));
+				}
+			}
+			
+			if (form.lyrDetail().tabAdmission().ccAdmit().saveAdmission())
+				engine.close(DialogResult.OK);
+		}
+		else
+		{
+			engine.close(DialogResult.OK);
+		}		
+	}
+
 	@Override
 	protected void onFormDialogClosed(FormName formName, DialogResult result) throws PresentationLogicException
 	{
+		if (formName.equals(form.getForms().Core.PDSDemographicsDialog) && form.lyrDetail().tabAdmission().isVisible())
+		{
+			if(form.getGlobalContext().Core.getPatientShortIsNotNull())
+			{
+    			//WDEV-21577 - fix for SOE
+    			form.lyrDetail().tabAdmission().ccAdmit().refreshSelectedPatient();    			
+			}
+			
+			admissionHandler();
+		}
+
 		if (formName.equals(form.getForms().Core.SelectItems))
 		{
 			if (result.equals(DialogResult.OK))
@@ -3479,8 +6098,8 @@ public class Logic extends BaseLogic
 						
 						if(voDischarge.getBedSpaceForInfantIsNotNull())
 							voDischarge.getBedSpaceForInfant().setInpatientEpisode(null);
-						
-						if (saveDischarge(voDischarge, voDischarge.getBedSpaceForInfant(), voTransfer, null, null))
+
+						if (saveDischarge(voDischarge, voDischarge.getBedSpaceForInfant(), voTransfer, null, null,form.getLocalContext().getbCancelPatientAppointments(), form.getLocalContext().getAdmissionDetails()))
 							successfulInfantDischargeCount++;
 
 						if (successfulInfantDischargeCount > 0 && successfulInfantDischargeCount == voCollDischarge.size())
@@ -3507,12 +6126,12 @@ public class Logic extends BaseLogic
 							voExistingTransfer.setTransferRequestDateTime(voTransfer.getTransferRequestDateTime());
 							voExistingTransfer.setSpecialty(voTransfer.getSpecialty());
 							
-							if (saveTransferOut(voExistingTransfer))
+							if (saveTransferOut(voExistingTransfer, false)) //WDEV-20023
 								successfulInfantTransferCount++;
 						}
 						else
 						{
-							if (saveTransferOut(voTransfer))
+							if (saveTransferOut(voTransfer, false)) //WDEV-20023
 								successfulInfantTransferCount++;
 						}
 					}
@@ -3535,48 +6154,58 @@ public class Logic extends BaseLogic
 //				}
 			}
 		}
-		else if(formName.equals(form.getForms().Core.DemographicsDialog))
+		else if (formName.equals(form.getForms().Core.DemographicsDialog) || (formName.equals(form.getForms().Core.PDSDemographicsDialog) && form.lyrDetail().tabPatient().isVisible()))
 		{
 			if(result.equals(DialogResult.OK))
 			{
+				//WDEV-22448
+				form.getLocalContext().setAnsweredYesOnDemographicsCancelFutureAppts(form.getGlobalContext().Core.getPatientShort().getFutureApptsCancelOnMarkDeceasedAnswer());
+				form.getGlobalContext().Core.setPatientShort(form.getGlobalContext().Core.getPatientShort());
+
 //				Patient voPatient = domain.getPatient(form.getGlobalContext().Core.getPatientShort());
 				if(form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisodeIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getPasEventIsNotNull())
-					form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getPasEvent().setPatient(form.getGlobalContext().Core.getPatientShort());
+					form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getPasEvent().setPatient(form.getGlobalContext().Core.getPatientShort().toPatientLite_IdentifiersVo());
 				
-				//wdev-14988
-				if( Boolean.TRUE.equals(form.getLocalContext().getShowVTERiskAssessmentButton() && engine.hasRight(AppRight.DISCHARGE_ACCESS_TO_VTE_ASSESSMENT)))
+				//wdev-14988 //WDEV-21686 NPE fix
+				if (Boolean.TRUE.equals(form.getLocalContext().getShowVTERiskAssessmentButton()) && engine.hasRight(AppRight.DISCHARGE_ACCESS_TO_VTE_ASSESSMENT))
 				{
-					form.getLocalContext().setshowVTERiskButtonAFterEditPatientDetails(true);
 					form.getLocalContext().setVTERiskAssessmentShortVo(form.getGlobalContext().Core.getVTERiskAssessmentShortVo());
 				}
-				else
-					form.getLocalContext().setshowVTERiskButtonAFterEditPatientDetails(false);
+				
 				//--------------
-				initialise();
+				initialise(false, false);
 				
 				//wdev-14988
-				if( Boolean.TRUE.equals(form.getLocalContext().getshowVTERiskButtonAFterEditPatientDetails()))
+				if (ConfigFlag.UI.VTE_RISK_ASSESSMENT_FUNCTIONALITY.getValue() && engine.hasRight(AppRight.DISCHARGE_ACCESS_TO_VTE_ASSESSMENT))
 				{
-					form.getLocalContext().setShowVTERiskAssessmentButton(true);
+					//WDEV-22218
+					form.getLocalContext().setShowVTERiskAssessmentButton((form.getLocalContext().getInpatientEpForVTERiskAssessmentVoIsNotNull() && (VTEAsessmentStatus.REQUIRED.equals(form.getLocalContext().getInpatientEpForVTERiskAssessmentVo().getVTEAssessmentStatus()) || VTEAsessmentStatus.INPROGRESS.equals(form.getLocalContext().getInpatientEpForVTERiskAssessmentVo().getVTEAssessmentStatus()))) 
+																			|| (form.getGlobalContext().Core.getDischargeEpisodeBedInfoIsNotNull() && (VTEAsessmentStatus.REQUIRED.equals(form.getGlobalContext().Core.getDischargeEpisodeBedInfo().getVTEAssessmentStatus()) || VTEAsessmentStatus.INPROGRESS.equals(form.getGlobalContext().Core.getDischargeEpisodeBedInfo().getVTEAssessmentStatus()))));
 					form.getGlobalContext().Core.setVTERiskAssessmentShortVo(form.getLocalContext().getVTERiskAssessmentShortVo());
-					updateControlState();
+					updateControlState(false, false);
+					if (form.getGlobalContext().Core.getDischargeEpisodeBedInfoIsNotNull()) //WDEV-22234
+						enableDisableDischargeTabControls(false);
 				}
-				//--------------
-				//wdev-14998
-				if(form.lyrDetail().tabDischarge().btnDischarge().isVisible() && !form.lyrDetail().tabDischarge().btnDischarge().isEnabled())
-				{
-					form.lyrDetail().showtabPatient();
+				//--------------			
+				//WDEV-21923
+				if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+				{						
+					if (form.getGlobalContext().Core.getPatientShort() != null && form.getGlobalContext().Core.getPatientShort().getDod() != null)
+					{	
+						setDeceasedPatientInfoOnDischarge();						
+						updateDischargeDateTimeControls();
+					}
+					else
+					{
+						clearDeceasedInfoDischargeControls();
+						updateDischargeDateTimeControls();
+					}					
 				}
-				//--------------
-						
-				
-//				if (voPatient != null)
-//				{
-//					// display all (updated) patient details
-//					clearPatientDetails();
-//					populatePatientControlsFromData(voPatient);
-//				}
-			}		
+
+			}
+			form.lyrDetail().showtabPatient();
+			form.getLocalContext().setTabFocused(BedDialogPatientDataTabs.TAB_DEMOGRAPHICS);				
+			//--------------
 		}
 		else if (formName.equals(form.getForms().Clinical.VTERiskAssessmentDialog))   //wdev-14858
 		{
@@ -3587,61 +6216,70 @@ public class Logic extends BaseLogic
 				if(form.getGlobalContext().Core.getInpatientEpisodeForVTERiskAssessmentWorklistVo() instanceof InpatientEpisodeRefVo)// 	WDEV-15414
 				{
 					InpatientEpisodeForVTERiskAsessmentVo tempInpat = domain.getInpatEpisodeForVTERiskAssessment((InpatientEpisodeRefVo) form.getGlobalContext().Core.getInpatientEpisodeForVTERiskAssessmentWorklistVo());// 	WDEV-15414
-					if(	tempInpat != null && ( VTEAsessmentStatus.REQUIRED.equals(tempInpat.getVTEAssessmentStatus()) || VTEAsessmentStatus.INPROGRESS.equals(tempInpat.getVTEAssessmentStatus()) ) )	//wdev-14858
+					if (tempInpat != null && (VTEAsessmentStatus.REQUIRED.equals(tempInpat.getVTEAssessmentStatus()) || VTEAsessmentStatus.INPROGRESS.equals(tempInpat.getVTEAssessmentStatus())))	//wdev-14858
 					{
 						
-						if( engine.hasRight(AppRight.DISCHARGE_ACCESS_TO_VTE_ASSESSMENT))	//wdev-14858
+						if (engine.hasRight(AppRight.DISCHARGE_ACCESS_TO_VTE_ASSESSMENT))	//wdev-14858
 						{
 							form.getLocalContext().setShowVTERiskAssessmentButton(true);
-							updateControlState();
+							updateControlState(false, false);
 						}
 						else
 						{
-							if( form.lyrDetail().tabDischarge().btnDischarge().isEnabled())
+							if (form.lyrDetail().tabDischarge().btnDischarge().isEnabled())
 							{
 								form.getLocalContext().setShowVTERiskAssessmentButton(false);
-								updateControlState();
+								updateControlState(false, false);
 							}
-							else
+							else //WDEV-22234
+							{	
+								form.getGlobalContext().Core.setPatientShort(form.getGlobalContext().Core.getPatientShort());
 								engine.close(DialogResult.OK);
+							}	
 						}
 						
 						
 					}
 					else
 					{
-						if( form.lyrDetail().tabDischarge().btnDischarge().isEnabled())
+						if (form.lyrDetail().tabDischarge().btnDischarge().isEnabled())
 						{
 							form.getLocalContext().setShowVTERiskAssessmentButton(false);
-							updateControlState();
+							updateControlState(false, false);
 						}
-						else
+						else //WDEV-22234
+						{	
+							form.getGlobalContext().Core.setPatientShort(form.getGlobalContext().Core.getPatientShort());
 							engine.close(DialogResult.OK);
+						}	
 					}
 				}
 				else
 				{
 					form.getGlobalContext().Core.setVTERiskAssessmentShortVo(domain.getVTERiskAssessmentShortVoBYId(form.getGlobalContext().Core.getVTERiskAssessmentShortVo()));
-					if( form.getGlobalContext().Core.getVTERiskAssessmentShortVoIsNotNull())
+					if (form.getGlobalContext().Core.getVTERiskAssessmentShortVoIsNotNull())
 					{
 												
-						if(	 form.getGlobalContext().Core.getVTERiskAssessmentShortVo().getVTEAssessmentStatusIsNotNull() && ( VTEAsessmentStatus.REQUIRED.equals(form.getGlobalContext().Core.getVTERiskAssessmentShortVo().getVTEAssessmentStatus()) || VTEAsessmentStatus.INPROGRESS.equals(form.getGlobalContext().Core.getVTERiskAssessmentShortVo().getVTEAssessmentStatus()) ) )	//wdev-14858
+						if (form.getGlobalContext().Core.getVTERiskAssessmentShortVo().getVTEAssessmentStatusIsNotNull() && ( VTEAsessmentStatus.REQUIRED.equals(form.getGlobalContext().Core.getVTERiskAssessmentShortVo().getVTEAssessmentStatus()) || VTEAsessmentStatus.INPROGRESS.equals(form.getGlobalContext().Core.getVTERiskAssessmentShortVo().getVTEAssessmentStatus())))	//wdev-14858
 						{
 							
-							if( engine.hasRight(AppRight.DISCHARGE_ACCESS_TO_VTE_ASSESSMENT))	//wdev-14858
+							if (engine.hasRight(AppRight.DISCHARGE_ACCESS_TO_VTE_ASSESSMENT))	//wdev-14858
 							{
 								form.getLocalContext().setShowVTERiskAssessmentButton(true);
-								updateControlState();
+								updateControlState(false, false);
 							}
 							else
 							{
 								if( form.lyrDetail().tabDischarge().btnDischarge().isEnabled())
 								{
 									form.getLocalContext().setShowVTERiskAssessmentButton(false);
-									updateControlState();
+									updateControlState(false, false);
 								}
-								else
+								else //WDEV-22234
+								{	
+									form.getGlobalContext().Core.setPatientShort(form.getGlobalContext().Core.getPatientShort());
 									engine.close(DialogResult.OK);
+								}	
 							}
 							
 							
@@ -3651,27 +6289,30 @@ public class Logic extends BaseLogic
 							if( form.lyrDetail().tabDischarge().btnDischarge().isEnabled())
 							{
 								form.getLocalContext().setShowVTERiskAssessmentButton(false);
-								updateControlState();
+								updateControlState(false, false);
 							}
 							else
+							{	
+								form.getGlobalContext().Core.setPatientShort(form.getGlobalContext().Core.getPatientShort());
 								engine.close(DialogResult.OK);
+							}	
 						}
 					}
 					else
 					{
-						//engine.close(DialogResult.OK);
 						form.getLocalContext().setShowVTERiskAssessmentButton(true); //wdev-14944
-						updateControlState();
+						updateControlState(false, false);
 					}
 				}
 				form.lyrDetail().showtabDischarge();
+				form.getLocalContext().setTabFocused(BedDialogPatientDataTabs.TAB_DISCHARGE);
 				if(Boolean.TRUE.equals(form.getLocalContext().getShowVTERiskAssessmentButton()) && !form.lyrDetail().tabDischarge().btnDischarge().isEnabled())  //wdev-14988
 				{
 					disabletabs();
 				}
 			}
 		}
-		//WDEV-18454
+		/** WDEV-18454 //WDEV-21204 - change to an information box - code temporary removed
 		else if (formName.equals(form.getForms().RefMan.PatientElectiveListAndTCIForCancellationDialog))
 		{
 			PatientElectiveListBedAdmissionVo patientElectiveList = form.getLocalContext().getPatientElectiveListDischarge();
@@ -3693,12 +6334,272 @@ public class Logic extends BaseLogic
 					electiveList.getElectiveListStatusHistory().add(electiveStatus);
 				}
 
-				if (dischargePatient(form.getLocalContext().getPatientElectiveListDischarge(), patienElectiveListToRemove))
+				if (dischargePatient(form.getLocalContext().getPatientElectiveListDischarge(), patienElectiveListToRemove, form.getLocalContext().getbCancelPatientAppointments()))
 					engine.close(DialogResult.OK);
 			}
-			else if (dischargePatient(patientElectiveList, null))
+			else if (dischargePatient(patientElectiveList, null, form.getLocalContext().getbCancelPatientAppointments()))
 				engine.close(DialogResult.OK);
+		}*/
+		//WDEV-19682
+		else if (formName.equals(form.getForms().Clinical.DeathDetails)) //WDEV-22553
+		{
+			if (DialogResult.OK.equals(result))
+			{
+				form.getLocalContext().setDeathDetailsOnDischarge(form.getGlobalContext().Core.getDeathDetails());
+				boolean isMaternityInpatient = form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() 
+						&& form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisodeIsNotNull()
+						&& Boolean.TRUE.equals(form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getIsMaternityInpatient());
+				boolean patientDeadOrDODEntered = (form.getGlobalContext().Core.getPatientShort() != null && form.getGlobalContext().Core.getPatientShort().getDod() != null) || (form.getLocalContext().getDeathDetailsOnDischargeIsNotNull() && form.getLocalContext().getDeathDetailsOnDischarge().getPatient().getDodIsNotNull());
+
+				ims.framework.controls.DateControl dateOfDeathScreenControl = isMaternityInpatient && form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().isVisible() ? form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().dteInfantDod() : form.lyrDetail().tabDischarge().dteDod();
+				ims.framework.controls.TimeControl timeOfDeathScreenControl = isMaternityInpatient && form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().isVisible() ? form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().timInfantTod() : form.lyrDetail().tabDischarge().timTod();
+				if (form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().isVisible() && isMaternityInpatient)
+				{
+					form.getGlobalContext().Core.setPatientShort(form.getLocalContext().getTempMotherPatient());
+				}
+
+				dateOfDeathScreenControl.setValue(patientDeadOrDODEntered ? form.getLocalContext().getDeathDetailsOnDischargeIsNotNull() ? form.getLocalContext().getDeathDetailsOnDischarge().getPatient().getDod() : form.getGlobalContext().Core.getPatientShort().getDod() : null);
+				timeOfDeathScreenControl.setValue(patientDeadOrDODEntered ? form.getLocalContext().getDeathDetailsOnDischargeIsNotNull() ? form.getLocalContext().getDeathDetailsOnDischarge().getPatient().getTimeOfDeath() : form.getGlobalContext().Core.getPatientShort().getTimeOfDeath() : null);
+				if (patientDeadOrDODEntered) //WDEV-21923
+				{
+					form.lyrDetail().tabDischarge().cmbDischargeDestination().setValue(DischargeDestination.MORTUARY);				
+				}
+				updateDODButtonText(patientDeadOrDODEntered, isMaternityInpatient);
+			}
+			form.getGlobalContext().Core.setParentFormMode(form.getMode());			
 		}
+		else if (formName.equals(form.getForms().Core.TransferCancellation) && DialogResult.OK.equals(result)) //WDEV-20326
+		{
+			PendingTransfersLiteVo voTransfer = form.getGlobalContext().Core.getADTPendingTransfer();
+			//WDEV-10421
+			LocationRefVo voCancellingfromWard =  form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() ? form.getGlobalContext().Core.getSelectedBedSpaceState().getWard() : null;
+			
+			if (voTransfer != null)
+			{
+				try
+				{
+					domain.cancelTransfer(voTransfer, voCancellingfromWard); //WDEV-10421
+				}
+				catch (StaleObjectException e)
+				{
+					engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
+					
+					form.getGlobalContext().Core.setSelectedBedSpaceState(domain.getBedSpaceState(form.getGlobalContext().Core.getSelectedBedSpaceState()));
+					form.getGlobalContext().Core.setADTPendingTransfer(domain.getPendingTransferForInpatient(form.getGlobalContext().Core.getSelectedBedSpaceState() != null ? form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode() : form.getGlobalContext().Core.getSelectedWaitingAreaPatient()));
+					if (form.getGlobalContext().Core.getSelectedBedSpaceState() == null)
+					{
+						engine.close(DialogResult.OK);
+					}
+					
+					initialise(false, true); //WDEV-17662
+					return;
+				}
+				catch (ForeignKeyViolationException e)
+				{
+					engine.showMessage(e.getMessage());
+					engine.close(DialogResult.OK);
+					return;
+				}
+			}
+			form.getGlobalContext().Core.setADTPendingTransfer(null);
+			engine.close(DialogResult.OK);
+		}
+		else if (formName.equals(form.getForms().Core.AdmissionReason))
+		{	
+			handleAdmitBtnAction(form.getForms().Core.AdmissionReason, null, result);			
+		}
+		else if (formName.equals(form.getForms().Core.AdmissionGenderWarningDialog))
+		{
+			handleAdmitBtnAction(form.getForms().Core.AdmissionGenderWarningDialog, null, result);
+		}
+		else if (form.getForms().Core.HealthyLodgerDetails.equals(formName))
+		{
+			if (DialogResult.CANCEL.equals(result))
+			{	
+			form.getGlobalContext().Core.setHealthyLodgerDetails(null);
+			}
+			else
+			{
+				updateAdmissionRecordWithHealthyLodgerDetails(form.getLocalContext().getAdmissionDetails(), form.getGlobalContext().Core.getHealthyLodgerDetails());
+				displayAdmissionDetails();
+			}
+		}
+		else if (form.getForms().Core.HomeLeaveDetailsDialog.equals(formName))
+		{			
+			if (DialogResult.OK.equals(result) && form.getGlobalContext().Core.getHomeLeaveDetailsIsNotNull())
+			{	
+				updateHomeLeave();
+			}
+			if (DialogResult.CANCEL.equals(result) && BedInfoAction.EDITHOMELEAVE.equals(form.getGlobalContext().Core.getBedInfoAction()))
+			{
+				engine.close(DialogResult.OK);
+			}
+		}
+		//WDEV-22326
+		else if (form.getForms().Core.ADTUpdateAdmissionDetail.equals(formName) && DialogResult.OK.equals(result))
+		{
+			if (doUpdateAdmission())
+			{
+				refreshContextsOnUpdateAdmission();
+				displayAdmissionDetails();
+				if (Boolean.TRUE.equals(form.getLocalContext().getShowMessageBoxReviseEstDischargeDate()))
+					engine.showMessage("Please review the Estimated Discharge Date/Time on the Ready for Discharge tab.", "Admission Date/Time Changed", MessageButtons.OK, MessageIcon.INFORMATION);
+			}
+
+		}
+		//WDEV-22325
+		else if (form.getForms().Core.ADTConsultantStaysDialog.equals(formName))
+		{		
+			if (Boolean.TRUE.equals(form.getGlobalContext().Core.getYesNoDialogLaunchedFromSelf()))
+			{	
+				refreshContextsOnUpdateAdmission();
+				displayPatientDetails();
+			}	
+		}
+	}
+	private void refreshContextsOnUpdateAdmission()
+	{
+		form.getLocalContext().setAdmissionDetails(getAdmissionDetail());					
+		if (form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull())
+		{
+			BedSpaceStateLiteVo bedSpaceStateByInpatientEpisode = domain.getBedSpaceStateByInpatientEpisode(form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode());
+			String bedStr = getBedSpaceTypeDescriptor(bedSpaceStateByInpatientEpisode);
+			form.getGlobalContext().Core.setSelectedBedSpaceState(bedSpaceStateByInpatientEpisode);
+			if (bedSpaceStateByInpatientEpisode.getInpatientEpisode() == null)
+			{
+				engine.showMessage("This patient has been discharged/moved from this " + bedStr.toLowerCase() + " by another user.The screen will be refreshed.");
+				engine.close(DialogResult.OK);
+			}
+		} 
+		else if (form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull())
+		{
+			InpatientEpisodeLiteVo inpatientEpisodeLiteVoById = domain.getInpatientEpisodeLiteVoById(form.getGlobalContext().Core.getSelectedWaitingAreaPatient());
+			if (inpatientEpisodeLiteVoById == null)
+			{
+				engine.showMessage("This patient has been discharged/moved by another user.The screen will refresh");
+				engine.close(DialogResult.OK);
+			}
+			form.getGlobalContext().Core.setSelectedWaitingAreaPatient(inpatientEpisodeLiteVoById);
+		}
+	}
+
+	private boolean doUpdateAdmission() //WDEV-22326
+	{
+		AdmissionDetailForADTUpdateAdmissionVo admissionUpdatesVo = form.getGlobalContext().Core.getADTAdmissionDetailUpdate();
+		InpatientEpisodeRefVo inpatRef = form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisodeIsNotNull() ? form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().toInpatientEpisodeRefVo() : form.getGlobalContext().Core.getSelectedWaitingAreaPatient(); 
+		AdmissionDetailVo currentAdmission = form.getLocalContext().getAdmissionDetails();
+		
+		if (currentAdmission == null || admissionUpdatesVo == null || inpatRef == null)
+		{	
+			engine.showMessage("Invalid Inpatient Record");
+			return false;
+		}	
+		try {
+			domain.updateAdmissionDetail(inpatRef, currentAdmission, admissionUpdatesVo); //WDEV-22326
+		}
+		catch (StaleObjectException e)
+		{
+			engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
+			engine.close(DialogResult.OK);
+			return false;		
+		}
+		if (currentAdmission.getAdmissionDateTime() != null && admissionUpdatesVo.getAdmissionDateTimeIsNotNull() && !admissionUpdatesVo.getAdmissionDateTime().getDate().equals(currentAdmission.getAdmissionDateTime().getDate()))
+			form.getLocalContext().setShowMessageBoxReviseEstDischargeDate(true);
+		return true;
+
+	}
+
+	private void clearDeceasedInfoDischargeControls()
+	{
+		MethodOfDischarge methodOfDischargeForPatientDeceased = (MethodOfDischarge) domain.getLookupService().getLocalLookup(MethodOfDischarge.class, MethodOfDischarge.TYPE_ID, "PAS", PATIENTDIED);
+		MethodOfDischarge methodOfDischargeForStillBirth = (MethodOfDischarge) domain.getLookupService().getLocalLookup(MethodOfDischarge.class, MethodOfDischarge.TYPE_ID, "PAS", STILLBIRTH);
+		if (form.lyrDetail().tabDischarge().cmbMethodDischarge().getValue() != null && (form.lyrDetail().tabDischarge().cmbMethodDischarge().getValue().equals(methodOfDischargeForPatientDeceased) || form.lyrDetail().tabDischarge().cmbMethodDischarge().getValue().equals(methodOfDischargeForStillBirth)))
+		{	
+			form.lyrDetail().tabDischarge().cmbMethodDischarge().setValue(null);
+			form.lyrDetail().tabDischarge().cmbDischargeDestination().setValue(null);
+			form.lyrDetail().tabDischarge().dteDod().setValue(null);
+			form.lyrDetail().tabDischarge().timTod().setValue(null);
+		}		
+	}
+	private void setDeceasedPatientInfoOnDischarge()
+	{
+		MethodOfDischarge methodofDischargeForPatientDeceased = (MethodOfDischarge) domain.getLookupService().getLocalLookup(MethodOfDischarge.class, MethodOfDischarge.TYPE_ID, "PAS", PATIENTDIED);
+		form.lyrDetail().tabDischarge().cmbMethodDischarge().setValue(methodofDischargeForPatientDeceased);
+		form.lyrDetail().tabDischarge().cmbDischargeDestination().setValue(DischargeDestination.MORTUARY);
+		
+		form.lyrDetail().tabDischarge().dteDod().setValue(form.getGlobalContext().Core.getPatientShort().getDod());
+		form.lyrDetail().tabDischarge().timTod().setValue(form.getGlobalContext().Core.getPatientShort().getTimeOfDeath());
+	}
+
+	private void updateAdmissionRecordWithHealthyLodgerDetails(AdmissionDetailVo admissionDetails,	HealthyLodgerVo healthyLodgerDetails)
+	{
+		if (admissionDetails == null)
+			return;
+		admissionDetails.setHealthyLodgerDetails(healthyLodgerDetails);
+		
+		String[] errors = admissionDetails.validate();
+		
+		if (errors != null)
+		{
+			engine.showErrors(errors);
+			return;
+		}
+		try {
+			form.getLocalContext().setAdmissionDetails(domain.updateAdmissionDetailWithHealthyLodgerInfo(admissionDetails, healthyLodgerDetails));
+		} 
+		catch (StaleObjectException e)
+		{
+			engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
+			engine.close(DialogResult.OK);
+			return;
+		}		
+	}
+
+	private void updateHomeLeave()
+	{
+		InPatientEpisodeADTVo voEpisode = domain.getInpatientEpisode(form.getGlobalContext().Core.getSelectedBedSpaceState() != null ? form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode() : form.getGlobalContext().Core.getSelectedWaitingAreaPatient());
+		
+		HomeLeaveVo homeleaveToUpdate = form.getGlobalContext().Core.getHomeLeaveDetails() != null ? (HomeLeaveVo) form.getGlobalContext().Core.getHomeLeaveDetails().clone() : null;
+		
+		if (homeleaveToUpdate != null)
+		{			
+			homeleaveToUpdate.setDateOnHomeLeave(form.getGlobalContext().Core.getHomeLeaveDetails().getDateOnHomeLeave());
+			homeleaveToUpdate.setTimeOnHomeLeave(form.getGlobalContext().Core.getHomeLeaveDetails().getTimeOnHomeLeave());
+			homeleaveToUpdate.setExpectedDateOfReturn(form.getGlobalContext().Core.getHomeLeaveDetails().getExpectedDateOfReturn());
+			homeleaveToUpdate.setExpectedTimeOfReturn(form.getGlobalContext().Core.getHomeLeaveDetails().getExpectedTimeOfReturn());
+		
+			voEpisode.setDateOnHomeLeave(form.getGlobalContext().Core.getHomeLeaveDetails().getDateOnHomeLeave());
+			voEpisode.setTimeOnHomeLeave(form.getGlobalContext().Core.getHomeLeaveDetails().getTimeOnHomeLeave());
+			voEpisode.setExpectedDateOfReturn(form.getGlobalContext().Core.getHomeLeaveDetails().getExpectedDateOfReturn());
+			voEpisode.setExpectedTimeOfReturn(form.getGlobalContext().Core.getHomeLeaveDetails().getExpectedTimeOfReturn());
+		}
+		
+		String[] arrErrors = voEpisode.validate();
+		if (arrErrors != null)
+		{
+			engine.showErrors(arrErrors);
+			return;
+		}
+		try
+		{
+			domain.saveHomeLeave(form.getGlobalContext().Core.getSelectedBedSpaceState(), voEpisode, homeleaveToUpdate);
+		}
+		
+		catch (StaleObjectException e)
+		{
+			engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
+			initialise(false,true);
+			return;
+		}
+		catch (DomainInterfaceException e)
+		{
+			engine.showMessage(e.getMessage());
+			engine.close(DialogResult.OK);			
+			e.printStackTrace();
+			return;
+		}
+		
+		engine.close(DialogResult.OK);
 	}
 	
 	private void disabletabs()
@@ -3706,9 +6607,17 @@ public class Logic extends BaseLogic
 		form.lyrDetail().tabAdmission().setHeaderEnabled(false);
 		form.lyrDetail().tabAdmissionDetail().setEnabled(false);
 		form.lyrDetail().tabBedMove().setEnabled(false);
+		form.lyrDetail().tabBedMove().setHeaderEnabled(false);
 		form.lyrDetail().tabCloseBed().setEnabled(false);
-		form.lyrDetail().tabEstimatedDischarge().setHeaderEnabled(false);
-		form.lyrDetail().tabHomeLeave().setEnabled(false);	
+		form.lyrDetail().tabReadyForDischarge().setHeaderEnabled(false);
+		form.lyrDetail().tabHomeLeave().setHeaderEnabled(false);
+		form.lyrDetail().tabHomeLeave().setEnabled(false);
+		form.lyrDetail().tabHomeLeaveReturn().setHeaderEnabled(false);
+		form.lyrDetail().tabHomeLeaveReturn().setEnabled(false);
+		form.lyrDetail().tabHLeaveReturnCancel().setHeaderEnabled(false);
+		form.lyrDetail().tabHLeaveReturnCancel().setEnabled(false);
+		form.lyrDetail().tabTracking().setHeaderEnabled(false);	
+		form.lyrDetail().tabTracking().setEnabled(false);	
 		form.lyrDetail().tabInfants().setEnabled(false);
 		form.lyrDetail().tabTransfer().setHeaderEnabled(false);
 		form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().setEnabled(false);
@@ -3716,31 +6625,34 @@ public class Logic extends BaseLogic
 		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().setEnabled(false);
 		form.lyrDetail().tabTransfer().lyrTransfer().tabOut().setEnabled(false);
 		form.lyrDetail().tabTransfer().btnTransfer().setEnabled(false);
+		form.lyrDetail().tabHomeLeave().btnHome().setEnabled(false);
 	}
 
 	@Override
 	protected void onCcConsultantAcceptingValueChanged() throws PresentationLogicException
 	{
 		MOSQueryEvent event = form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().ccConsultantAccepting().getEventFired();
-		if(event != null)
+
+		if (MOSQueryEvent.VALUE_CHANGED.equals(event))
 		{
-			if(event.equals(MOSQueryEvent.VALUE_CHANGED))
-			{
+			if (!ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+			{	
 				listSpecialtiesForConsultant(form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().ccConsultantAccepting().getValue(), ACCEPTING_CONSULTANT, null, null);
-			}
-		}
+			}		
+		}		
 	}
 
 	@Override
 	protected void onCcInConsultantValueChanged() throws PresentationLogicException
 	{
 		MOSQueryEvent event = form.lyrDetail().tabTransfer().lyrTransfer().tabIn().ccInConsultant().getEventFired();
-		if(event != null)
+
+		if (MOSQueryEvent.VALUE_CHANGED.equals(event))
 		{
-			if(event.equals(MOSQueryEvent.VALUE_CHANGED))
-			{
+			if (!ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+			{	
 				listSpecialtiesForConsultant(form.lyrDetail().tabTransfer().lyrTransfer().tabIn().ccInConsultant().getValue(), IN_CONSULTANT, null, null);
-			}
+			}		
 		}
 	}
 
@@ -3761,12 +6673,13 @@ public class Logic extends BaseLogic
 	protected void onCcOutConsultantValueChanged() throws PresentationLogicException
 	{
 		MOSQueryEvent event = form.lyrDetail().tabTransfer().lyrTransfer().tabOut().ccOutConsultant().getEventFired();
-		if(event != null)
+
+		if (MOSQueryEvent.VALUE_CHANGED.equals(event))
 		{
-			if(event.equals(MOSQueryEvent.VALUE_CHANGED))
+			if (!ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
 			{
 				listSpecialtiesForConsultant(form.lyrDetail().tabTransfer().lyrTransfer().tabOut().ccOutConsultant().getValue(), OUT_CONSULTANT, null, null);
-			}
+			}					
 		}
 	}
 	
@@ -3953,18 +6866,30 @@ public class Logic extends BaseLogic
 
 	@Override
 	protected void onBtnEditPatientClick() throws PresentationLogicException
-	{
+	{		
 		if((form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() 
-			&& form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisodeIsNotNull() 
-			&& form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getPasEventIsNotNull() 
-			&& form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getPasEvent().getPatientIsNotNull())
-			|| (form.getGlobalContext().Core.getPatientShortIsNotNull()) )
+				&& form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisodeIsNotNull() 
+				&& form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getPasEventIsNotNull() 
+				&& form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getPasEvent().getPatientIsNotNull())
+				|| (form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull() 
+						&& form.getGlobalContext().Core.getSelectedWaitingAreaPatient().getPasEventIsNotNull() 
+						&& form.getGlobalContext().Core.getSelectedWaitingAreaPatient().getPasEvent().getPatientIsNotNull())
+						|| (form.getGlobalContext().Core.getPatientShortIsNotNull()))
 		{
-			if (form.getGlobalContext().Core.getPatientShortIsNotNull())
-				engine.open(form.getForms().Core.DemographicsDialog);
+			if (form.getGlobalContext().Core.getPatientShort() != null) //WDEV-21687
+			{	
+				if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+				{	
+					engine.open(form.getForms().Core.PDSDemographicsDialog, new Object[]{false, FormMode.EDIT});
+				}
+				else
+				{
+					engine.open(form.getForms().Core.DemographicsDialog);
+				}
+			}	
 			else
 			{
-				form.getGlobalContext().Core.setPatientShort(form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getPasEvent().getPatient());
+				//form.getGlobalContext().Core.setPatientShort(form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() ? form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getPasEvent().getPatient() : form.getGlobalContext().Core.getSelectedWaitingAreaPatient().getPasEvent().getPatient());
 				engine.open(form.getForms().Core.DemographicsDialog);
 			}
 		}	
@@ -3973,28 +6898,28 @@ public class Logic extends BaseLogic
 	@Override
 	protected void onDteEstDischargeValueChanged() throws PresentationLogicException
 	{
-		form.lyrDetail().tabEstimatedDischarge().chkConfirm().setVisible(false);	
+		form.lyrDetail().tabReadyForDischarge().chkConfirm().setVisible(false);	
 		
-		if(form.lyrDetail().tabEstimatedDischarge().chkConfirm().getValue())
+		if(form.lyrDetail().tabReadyForDischarge().chkConfirm().getValue())
 		{
-			form.lyrDetail().tabEstimatedDischarge().chkConfirm().setVisible(true);
-			if(form.lyrDetail().tabEstimatedDischarge().dteEstDischarge().getValue() != null)
+			form.lyrDetail().tabReadyForDischarge().chkConfirm().setVisible(true);
+			if(form.lyrDetail().tabReadyForDischarge().dteEstDischarge().getValue() != null)
 			{
-				if(!((Date)form.lyrDetail().tabEstimatedDischarge().dteEstDischarge().getValue().clone()).isLessOrEqualThan(new Date().addDay(1)))
+				if(!((Date)form.lyrDetail().tabReadyForDischarge().dteEstDischarge().getValue().clone()).isLessOrEqualThan(new Date().addDay(1)))
 				{
-					form.lyrDetail().tabEstimatedDischarge().chkConfirm().setValue(false);
-					form.lyrDetail().tabEstimatedDischarge().chkConfirm().setVisible(false); //WDEV-14608
+					form.lyrDetail().tabReadyForDischarge().chkConfirm().setValue(false);
+					form.lyrDetail().tabReadyForDischarge().chkConfirm().setVisible(false); //WDEV-14608
 				}
 			}
 		}
 		else
 		{
-			if(form.lyrDetail().tabEstimatedDischarge().dteEstDischarge().getValue() != null)
+			if(form.lyrDetail().tabReadyForDischarge().dteEstDischarge().getValue() != null)
 			{
-				if(((Date)form.lyrDetail().tabEstimatedDischarge().dteEstDischarge().getValue().clone()).isLessOrEqualThan(new Date().addDay(1)))
-					form.lyrDetail().tabEstimatedDischarge().chkConfirm().setVisible(true);
+				if(((Date)form.lyrDetail().tabReadyForDischarge().dteEstDischarge().getValue().clone()).isLessOrEqualThan(new Date().addDay(1)))
+					form.lyrDetail().tabReadyForDischarge().chkConfirm().setVisible(true);
 				else
-					form.lyrDetail().tabEstimatedDischarge().chkConfirm().setValue(false);
+					form.lyrDetail().tabReadyForDischarge().chkConfirm().setValue(false);
 			}
 		}
 		
@@ -4003,7 +6928,31 @@ public class Logic extends BaseLogic
 	@Override
 	protected void onCmbMethodDischargeValueChanged() throws PresentationLogicException
 	{
+		methodOfDischargeValueChanged();
 		updateDischargeDateTimeControls();
+	}
+
+
+	private void methodOfDischargeValueChanged() 
+	{
+		MethodOfDischarge methodOfDischargeForPatientDeceased = (MethodOfDischarge) domain.getLookupService().getLocalLookup(MethodOfDischarge.class, MethodOfDischarge.TYPE_ID, "PAS", PATIENTDIED);
+		MethodOfDischarge methodOfDischargeForStillBirth = (MethodOfDischarge) domain.getLookupService().getLocalLookup(MethodOfDischarge.class, MethodOfDischarge.TYPE_ID, "PAS", STILLBIRTH);
+		if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && ((methodOfDischargeForPatientDeceased != null && methodOfDischargeForPatientDeceased.equals(form.lyrDetail().tabDischarge().cmbMethodDischarge().getValue())) || (methodOfDischargeForStillBirth != null && methodOfDischargeForStillBirth.equals(form.lyrDetail().tabDischarge().cmbMethodDischarge().getValue()))))
+		{
+			form.lyrDetail().tabDischarge().cmbDischargeDestination().setValue(DischargeDestination.MORTUARY);
+			if (form.getGlobalContext().Core.getPatientShort() != null && form.getGlobalContext().Core.getPatientShort().getDodIsNotNull())
+			{
+				form.lyrDetail().tabDischarge().dteDod().setValue(form.getGlobalContext().Core.getPatientShort().getDod());
+				form.lyrDetail().tabDischarge().timTod().setValue(form.getGlobalContext().Core.getPatientShort().getTimeOfDeath());
+			}
+		}
+		else if (form.lyrDetail().tabDischarge().cmbMethodDischarge().getValue() == null || !form.lyrDetail().tabDischarge().cmbMethodDischarge().getValue().equals(methodOfDischargeForStillBirth))
+		{
+			if (DischargeDestination.MORTUARY.equals(form.lyrDetail().tabDischarge().cmbDischargeDestination().getValue()))
+			{
+				form.lyrDetail().tabDischarge().cmbDischargeDestination().setValue(null);
+			}
+		}
 	}
 
 	@Override
@@ -4014,15 +6963,30 @@ public class Logic extends BaseLogic
 
 	private void updateInfantDischargeDateTimeControls()
 	{
-		if(form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().cmbInfantMethodDischarge().getValue() == null)
+		if (form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().cmbInfantMethodDischarge().getValue() == null)
 		{
 			form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().lblInfantDod().setVisible(false);
-			form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().dtimInfantDod().setVisible(false);
-			form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().dtimInfantDod().setValue(null);
+			form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().dteInfantDod().setVisible(false);
+			form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().dteInfantDod().setValue(null);
+			form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().timInfantTod().setVisible(false);
+			form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().timInfantTod().setValue(null);
+			form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().btnMarkInfantDeceased().setVisible(false);
+			form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().txtInfantDODMandatory().setVisible(false);
 			form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().lblInfantDischargeDateTime().setVisible(true);
 			form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().dtimInfantDischarge().setVisible(true);
 			if(form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().dtimInfantDischarge().isEnabled())
 				form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().dtimInfantDischarge().setValue(new DateTime());
+			
+			form.getLocalContext().setDeathDetailsOnDischarge(null);
+			form.getGlobalContext().Core.setDeathDetails(null);
+			if (form.lyrDetail().tabInfants().grdInfants().getValue() != null)
+			{
+				form.getGlobalContext().Core.getPatientShort().setTimeOfDeath(form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().timInfantTod().getValue());
+				form.getGlobalContext().Core.getPatientShort().setDod(form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().dteInfantDod().getValue());
+				if (form.getLocalContext().getTempMotherPatientIsNotNull())
+					form.getGlobalContext().Core.setPatientShort(form.getLocalContext().getTempMotherPatient());
+			}
+			updateDODButtonText(false, true);
 			return;
 		}
 		
@@ -4035,30 +6999,55 @@ public class Logic extends BaseLogic
 		if(isDead)
 		{
 			form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().lblInfantDod().setVisible(true);
-			if(form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().dtimInfantDischarge().isEnabled())
-				form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().dtimInfantDod().setVisible(true);
-			form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().dtimInfantDod().setValue(new DateTime());
 			form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().lblInfantDischargeDateTime().setVisible(false);
 			form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().dtimInfantDischarge().setVisible(false);
 			form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().dtimInfantDischarge().setValue(null);
+			form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().dteInfantDod().setEnabled(false);
+			form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().dteInfantDod().setVisible(true);
+			form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().timInfantTod().setEnabled(false);
+			form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().timInfantTod().setVisible(true);
+			form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().txtInfantDODMandatory().setVisible(true);
+			form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().btnMarkInfantDeceased().setVisible(engine.hasRight(AppRight.ALLOW_MARK_PATIENT_AS_DECEASED));
+			if (form.lyrDetail().tabInfants().isVisible() && form.lyrDetail().tabInfants().grdInfants().getValue() != null)
+			{
+				form.getLocalContext().setTempMotherPatient(form.getGlobalContext().Core.getPatientShort());
+				form.getGlobalContext().Core.setPatientShort(domain.getPatientShort(form.lyrDetail().tabInfants().grdInfants().getValue().getPasEvent().getPatient()));
+				if (form.getGlobalContext().Core.getPatientShort().getDod() == null) //WDEV-22553
+				{	
+					displayDeathDetails();
+				}	
+			}
 		}
 		else
 		{
 			form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().lblInfantDod().setVisible(false);
-			form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().dtimInfantDod().setVisible(false);
-			form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().dtimInfantDod().setValue(null);
+			form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().dteInfantDod().setVisible(false);
+			form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().dteInfantDod().setValue(null);
+			form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().timInfantTod().setVisible(false);
+			form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().timInfantTod().setValue(null);
 			form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().lblInfantDischargeDateTime().setVisible(true);
 			form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().dtimInfantDischarge().setVisible(true);
 			if(form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().dtimInfantDischarge().isEnabled())
 				form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().dtimInfantDischarge().setValue(new DateTime());
+			form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().txtInfantDODMandatory().setVisible(false);
+			form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().btnMarkInfantDeceased().setVisible(false);
+			if (form.lyrDetail().tabInfants().grdInfants().getValue() != null)
+			{
+				form.getGlobalContext().Core.getPatientShort().setTimeOfDeath(form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().timInfantTod().getValue());
+				form.getGlobalContext().Core.getPatientShort().setDod(form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge().dteInfantDod().getValue());
+				if (form.getLocalContext().getTempMotherPatientIsNotNull())
+					form.getGlobalContext().Core.setPatientShort(form.getLocalContext().getTempMotherPatient());
+			}
+			form.getGlobalContext().Core.setDeathDetails(null);
 		}	
+		updateDODButtonText(isDead, true);
 	}
 
 	@Override
 	protected void onBtnClearEstimateClick() throws PresentationLogicException 
 	{
-		form.lyrDetail().tabEstimatedDischarge().dteEstDischarge().setValue(null);
-		form.lyrDetail().tabEstimatedDischarge().chkConfirm().setValue(null);
+		form.lyrDetail().tabReadyForDischarge().dteEstDischarge().setValue(null);
+		form.lyrDetail().tabReadyForDischarge().chkConfirm().setValue(null);
 		if (saveEstimatedDischarge(false))
 			engine.close(DialogResult.OK);
 	}
@@ -4066,17 +7055,17 @@ public class Logic extends BaseLogic
 	@Override
 	protected void onIntEstRevisedStayValueChanged() throws PresentationLogicException
 	{
-		if(form.lyrDetail().tabEstimatedDischarge().intEstRevisedStay().getValue() != null && form.lyrDetail().tabEstimatedDischarge().intEstRevisedStay().getValue() >= 0)
+		if(form.lyrDetail().tabReadyForDischarge().intEstRevisedStay().getValue() != null && form.lyrDetail().tabReadyForDischarge().intEstRevisedStay().getValue() >= 0)
 		{
 			Date newRevisedDate = new Date();
-			newRevisedDate.addDay(form.lyrDetail().tabEstimatedDischarge().intEstRevisedStay().getValue());
-			form.lyrDetail().tabEstimatedDischarge().dteEstDischarge().setValue(newRevisedDate);
+			newRevisedDate.addDay(form.lyrDetail().tabReadyForDischarge().intEstRevisedStay().getValue());
+			form.lyrDetail().tabReadyForDischarge().dteEstDischarge().setValue(newRevisedDate);
 		}	
 		else
 		{	
 			Date newRevisedDate = new Date();		//wdev-13348
 			newRevisedDate.addDay(0);				//wdev-13348
-			form.lyrDetail().tabEstimatedDischarge().dteEstDischarge().setValue(newRevisedDate);	//wdev-13348
+			form.lyrDetail().tabReadyForDischarge().dteEstDischarge().setValue(newRevisedDate);	//wdev-13348
 		}
 		
 		//WDEV-13130
@@ -4101,14 +7090,40 @@ public class Logic extends BaseLogic
 	@Override
 	protected void onGrdTransferInSelEctionChanged() throws PresentationLogicException 
 	{
+		PendingTransfersLiteVo gridValue = form.lyrDetail().tabTransfer().lyrTransfer().tabIn().grdTransferIn().getValue();
+		boolean patientIsNotNull =gridValue!= null && gridValue.getInpatientEpisodeIsNotNull() && gridValue.getInpatientEpisode().getPasEventIsNotNull();
+		
+		if(patientIsNotNull)//WDEV-22851
+			form.getLocalContext().setIsCaseNoteFolderVisible(domain.isCaseNoteFolderLocation(gridValue.getInpatientEpisode().getPasEvent().getPatient()));
+		updateTransferInBedMaintenanceControls();
 		enableTransferInControls(true);
+		clearBedAllocationValidationContexts();
 		populateTransferInTabFromData();
+		updateCaseNoteFolderControl();//WDEV-22851
 	}
 
-	//wdev-14858
+	private void updateTransferInBedMaintenanceControls()
+	{
+		if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+		{
+			PendingTransfersLiteVo transf = form.lyrDetail().tabTransfer().lyrTransfer().tabIn().grdTransferIn().getValue();
+			
+			form.lyrDetail().tabTransfer().lyrTransfer().tabIn().lblAllocateBedTransf().setVisible(transf != null && transf.getInpatientEpisodeIsNotNull() && transf.getInpatientEpisode().getBedIsNotNull());
+			form.lyrDetail().tabTransfer().lyrTransfer().tabIn().chkAllocateSourceBed().setVisible(transf != null && transf.getInpatientEpisodeIsNotNull() && transf.getInpatientEpisode().getBedIsNotNull());			
+		}	
+	}
+
+	private void updateCaseNoteFolderControl() //WDEV-22851
+	{
+		boolean equals = Boolean.TRUE.equals(form.getLocalContext().getIsCaseNoteFolderVisible());
+		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().lblTIUpdateCasefolder().setVisible(equals);
+		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().TICaseFolderYesNo().setVisible(equals);
+	}
+
+	//wdev-14858 //WDEV-22218
 	protected void onBtnVTERiskAssesssmentClick() throws PresentationLogicException 
 	{
-		form.getGlobalContext().Core.setInpatientEpisodeForVTERiskAssessmentWorklistVo(domain.getVTERiskAssessmentWorklistById(form.getLocalContext().getInpatientEpForVTERiskAssessmentVo()));
+		form.getGlobalContext().Core.setInpatientEpisodeForVTERiskAssessmentWorklistVo(domain.getVTEForInpatient(form.getLocalContext().getInpatientEpForVTERiskAssessmentVo()));
 		InpatientEpisodeForVTERiskAsessmentVo tempVo = domain.getInpatEpisodeForVTERiskAssessment(form.getLocalContext().getInpatientEpForVTERiskAssessmentVo()); //wdev-14858
 				
 		form.getGlobalContext().Core.setCreateVTERiskAssessmentOnDischarge(Boolean.TRUE);
@@ -4150,11 +7165,11 @@ public class Logic extends BaseLogic
 				}
 			}
 		}
-		else if(tempVo.getVTERiskAssessment() == null)
+		else if(tempVo.getVTERiskAssessment() == null && VTEAsessmentStatus.REQUIRED.equals(tempVo.getVTEAssessmentStatus())) //WDEV-22218
 		{
 			form.getGlobalContext().Core.setVTERiskAssessmentShortVo(null);
 			form.getGlobalContext().Core.setEditVTERiskAssessmentFromInpatientEpisode(true);
-			engine.open(form.getForms().Clinical.VTERiskAssessmentDialog, new Object[] {FormMode.VIEW});
+			engine.open(form.getForms().Clinical.VTERiskAssessmentDialog, new Object[] {FormMode.EDIT});
 		}
 		else if( tempVo != null && tempVo.getVTERiskAssessmentIsNotNull())
 		{
@@ -4171,24 +7186,202 @@ public class Logic extends BaseLogic
 	//wdev-14892
 	protected void onMessageBoxClosed(int messageBoxId, DialogResult result) throws PresentationLogicException 
 	{
-		if (form.getLocalContext().getMessageBoxAdmission() != null && form.getLocalContext().getMessageBoxAdmission().equals(messageBoxId))
+		if (form.getLocalContext().getMessageBoxDeceasedPatientTransferOut() != null
+				&& form.getLocalContext().getMessageBoxDeceasedPatientTransferOut().equals(messageBoxId))
 		{
-			form.getLocalContext().setMessageBoxAdmission(null);
+			form.getLocalContext().setMessageBoxDeceasedPatientTransferOut(null);
 			
 			if (DialogResult.YES.equals(result))
 			{
-				if (form.lyrDetail().tabAdmission().ccAdmit().saveElectiveListAdmission(true))
+				//WDEV-22449 transferOut(false, form.lyrDetail().tabTransfer().lyrTransfer().tabOut().chkNoLongerBed().getValue());
+				transferOut(false, false);
+				return;
+			}
+		}
+		
+		if(form.getLocalContext().getMessageBoxCancelAdmissionSentIsNotNull()
+				&& form.getLocalContext().getMessageBoxCancelAdmissionSent().equals(messageBoxId))//WDEV-22327
+		{
+			form.getLocalContext().setMessageBoxCancelAdmissionSent(null);
+			if (DialogResult.YES.equals(result) && cancelAdmission())
+			{
+				engine.close(DialogResult.OK);
+				return;
+			}
+		}
+			
+		if (form.getLocalContext().getMessageBoxDeceasedPatientTransferConsultant() != null 
+				&& form.getLocalContext().getMessageBoxDeceasedPatientTransferConsultant().equals(messageBoxId))
+		{
+			form.getLocalContext().setMessageBoxDeceasedPatientTransferConsultant(null);
+
+			if (DialogResult.YES.equals(result))
+			{
+				saveConsultantTransfer();
+				return;
+			}
+		}
+		
+		if (form.getLocalContext().getMessageBoxDeceasedReadyForDischarge() != null
+				&& form.getLocalContext().getMessageBoxDeceasedReadyForDischarge().equals(messageBoxId))
+		{
+			form.getLocalContext().setMessageBoxDeceasedReadyForDischarge(null);
+
+			if (DialogResult.YES.equals(result))
+			{
+				if (saveEstimatedDischarge(true))
 					engine.close(DialogResult.OK);
+				return;
+			}
+		}
+		
+		if (form.getLocalContext().getMessageBoxDeceasedHomeLeave() != null
+				&& form.getLocalContext().getMessageBoxDeceasedHomeLeave().equals(messageBoxId))
+		{
+			form.getLocalContext().setMessageBoxDeceasedHomeLeave(null);
+
+			if (DialogResult.YES.equals(result))
+			{
+				saveHomeLeave();
+				return;
+			}
+		}
+		
+		if (form.getLocalContext().getMessageBoxDeceasedReturnFromLeave() != null
+				&& form.getLocalContext().getMessageBoxDeceasedReturnFromLeave().equals(messageBoxId))
+		{
+			form.getLocalContext().setMessageBoxDeceasedReturnFromLeave(null);
+
+			if (DialogResult.YES.equals(result))
+			{
+				if (returnFromHomeLeave())
+					engine.close(DialogResult.OK);
+
+				return;
+			}
+		}
+		if (form.getLocalContext().getMessageBoxDeceasedReturnFromLeaveAdmit() != null
+				&& form.getLocalContext().getMessageBoxDeceasedReturnFromLeaveAdmit().equals(messageBoxId))
+		{
+			form.getLocalContext().setMessageBoxDeceasedReturnFromLeaveAdmit(null);
+
+			if (DialogResult.YES.equals(result))
+			{
+				returnFromLeaveAdmit();
+				return;
+			}
+		}
+		if (form.getLocalContext().getMessageBoxDeceasedEditHomeLeaveIsNotNull()
+				&& form.getLocalContext().getMessageBoxDeceasedEditHomeLeave().equals(messageBoxId))
+		{
+			form.getLocalContext().setMessageBoxDeceasedEditHomeLeave(null);
+
+			if (DialogResult.YES.equals(result))
+			{
+				engine.open(form.getForms().Core.HomeLeaveDetailsDialog);
+				return;
+			}
+		}
+		
+		if (form.getLocalContext().getMessageBoxDeceasedVacateBedHomeLeaveIsNotNull()
+				&& form.getLocalContext().getMessageBoxDeceasedVacateBedHomeLeave().equals(messageBoxId))
+		{
+			form.getLocalContext().setMessageBoxDeceasedVacateBedHomeLeave(null);
+
+			if (DialogResult.YES.equals(result))
+			{
+				if (vacateBed());
+				engine.close(DialogResult.OK);
+			}
+		}
+
+//WDEV-21628 - start
+		if (form.getLocalContext().getMessageBoxDeceasedBedMove() != null 
+				&& form.getLocalContext().getMessageBoxDeceasedBedMove().equals(messageBoxId))
+		{
+			form.getLocalContext().setMessageBoxDeceasedBedMove(null);
+
+			if (DialogResult.YES.equals(result))
+			{
+				if (form.getGlobalContext().Core.getPatientShort() != null)
+				{	
+					switchBeds();
+				}
+				else if (BedStatus.AVAILABLE.equals(form.getLocalContext().getBedStatus()))
+				{
+					movePatientToBed();
+				}				
+			}
+			return;
+		}
+
+		if (form.getLocalContext().getMessageBoxDeceasedTrackingSend() != null 
+				&& form.getLocalContext().getMessageBoxDeceasedTrackingSend().equals(messageBoxId))
+		{
+			form.getLocalContext().setMessageBoxDeceasedTrackingSend(null);
+
+			if (DialogResult.YES.equals(result))
+			{
+				if (saveTrackingMovement()) 
+				{	
+					engine.close(DialogResult.OK);
+				}	
+			}
+			return;
+		}
+		
+		if (form.getLocalContext().getMessageBoxDeceasedTrackingReturn() != null 
+				&& form.getLocalContext().getMessageBoxDeceasedTrackingReturn().equals(messageBoxId))
+		{
+			form.getLocalContext().setMessageBoxDeceasedTrackingReturn(null);
+
+			if (DialogResult.YES.equals(result))
+			{
+				if (savePatientReturned())
+				{	
+					engine.close(DialogResult.OK);
+				}
+			}
+			return;
+		}
+
+		//WDEV-21628   -- end
+		//WDEV-21842 
+		if (form.getLocalContext().getMessageBoxHomeLeaveTrackingSend() != null 
+				&& form.getLocalContext().getMessageBoxHomeLeaveTrackingSend().equals(messageBoxId))
+		{
+			form.getLocalContext().setMessageBoxHomeLeaveTrackingSend(null);
+
+			if (DialogResult.YES.equals(result))
+			{
+				if (saveTrackingMovement())
+				{	
+					engine.close(DialogResult.OK);
+				}	
+			}
+			return;
+		}
+		//WDEV-21842 -- end
+		if (form.getLocalContext().getMessageBoxAdmission() != null && form.getLocalContext().getMessageBoxAdmission().equals(messageBoxId))
+		{			
+			
+			if (DialogResult.YES.equals(result))
+			{
+				admissionHandler();
+//				if (form.lyrDetail().tabAdmission().ccAdmit().saveElectiveListAdmission(null))
+//					engine.close(DialogResult.OK);
 			}
 			else if (DialogResult.NO.equals(result))
 			{
-				if (form.lyrDetail().tabAdmission().ccAdmit().saveElectiveListAdmission(false))
-					engine.close(DialogResult.OK);
+				admissionHandler();
+//				if (form.lyrDetail().tabAdmission().ccAdmit().saveElectiveListAdmission(null))
+//					engine.close(DialogResult.OK);
 			}
-			
+			form.getLocalContext().setMessageBoxAdmission(null);
 			return;
 		}
-		else if (form.getLocalContext().getMessageBoxDischarge() != null && form.getLocalContext().getMessageBoxDischarge().equals(messageBoxId))
+	
+		if (form.getLocalContext().getMessageBoxDischarge() != null && form.getLocalContext().getMessageBoxDischarge().equals(messageBoxId))
 		{
 			form.getLocalContext().setMessageBoxDischarge(null);
 			PatientElectiveListBedAdmissionVo patientElectiveList = form.getLocalContext().getPatientElectiveListDischarge();
@@ -4208,59 +7401,320 @@ public class Logic extends BaseLogic
 					electiveList.setElectiveListStatus(electiveStatus);
 					electiveList.getElectiveListStatusHistory().add(electiveStatus);
 				}
-				
-				if (dischargePatient(patientElectiveList, cancelledPatienElectiveListToRemove))
+
+				if (dischargePatient(patientElectiveList, cancelledPatienElectiveListToRemove, form.getLocalContext().getbCancelPatientAppointments(), form.getLocalContext().getAdmissionDetails()))
 					engine.close(DialogResult.OK);
 			}
 			else if (DialogResult.NO.equals(result))
 			{
-				if (dischargePatient(patientElectiveList, null))
+				if (dischargePatient(patientElectiveList, null, form.getLocalContext().getbCancelPatientAppointments(), form.getLocalContext().getAdmissionDetails()))
 					engine.close(DialogResult.OK);
 			}
 		}
-		else if (form.getLocalContext().getMessageBoxPELCheck() != null && form.getLocalContext().getMessageBoxPELCheck().equals(messageBoxId))
+		if (form.getLocalContext().getMessageBoxPELCheck() != null && form.getLocalContext().getMessageBoxPELCheck().equals(messageBoxId))
 		{
 			form.getLocalContext().setMessageBoxPELCheck(null);
 			PatientElectiveListBedAdmissionVo patientElectiveList = form.getLocalContext().getPatientElectiveListDischarge();
-			
+
+			/** WDEV-21204 --- changed to information message - code temporary removed
 			if (DialogResult.YES.equals(result))
 			{
 				form.getGlobalContext().RefMan.setPatientElectiveListsForCancellationDialog(domain.getElectiveListsToRemove(form.getGlobalContext().Core.getPatientShort(), patientElectiveList, form.getLocalContext().getInpatientEpisodeSpecialty()));
 				engine.open(form.getForms().RefMan.PatientElectiveListAndTCIForCancellationDialog);
 				return;
-			}
-			else if (DialogResult.NO.equals(result))
+			}*/
+			
+			if (DialogResult.OK.equals(result))
 			{
-				if (dischargePatient(patientElectiveList, null))
+				if (dischargePatient(patientElectiveList, null, form.getLocalContext().getbCancelPatientAppointments(), form.getLocalContext().getAdmissionDetails()))
 					engine.close(DialogResult.OK);
 			}
 		}
-		
-		if (Boolean.TRUE.equals(form.getLocalContext().getVTEShouldCreate()))	//wdev-14858
+		if ((form.getLocalContext().getMessageBoxMoveCaseNotes() != null && form.getLocalContext().getMessageBoxMoveCaseNotes().equals(messageBoxId))) //WDEV-20023
 		{
-			form.lyrDetail().tabDischarge().btnDischarge().setEnabled(false);
-			disabletabs();	//wdev-14988
-			enabledisableDiaschargeTabContrls(false);
+			if (DialogResult.YES.equals(result))
+			{
+				//WDEV-22449 transferOut(true, form.lyrDetail().tabTransfer().lyrTransfer().tabOut().chkNoLongerBed().getValue()); //WDEV-20291
+				transferOut(true, false); //WDEV-20291
+			}
+			else if (DialogResult.NO.equals(result))
+			{			
+				//WDEV-22449 transferOut(false, form.lyrDetail().tabTransfer().lyrTransfer().tabOut().chkNoLongerBed().getValue()); //WDEV-20291
+				transferOut(false, false); //WDEV-20291
+			}
+		}
+		
+		//WDEV-19507
+		if (form.getLocalContext().getMessageBoxAdmissionApptsExist() != null && form.getLocalContext().getMessageBoxAdmissionApptsExist().equals(messageBoxId))
+		{
+			form.getLocalContext().setMessageBoxAdmissionApptsExist(null);
 			return;
 		}
-		engine.close(DialogResult.OK);
+		//WDEV-22448
+		if (form.getLocalContext().getCancelAppointmentsMessageIDIsNotNull()&& form.getLocalContext().getCancelAppointmentsMessageID().equals(messageBoxId))
+		{
+			if (DialogResult.OK.equals(result))
+			{	
+				form.getLocalContext().setbCancelPatientAppointments(true);
+				form.getLocalContext().setCancelAppointmentsMessageID(null);
+				if (dischargePatient(form.getLocalContext().getPatientElectiveListDischarge(), null, form.getLocalContext().getbCancelPatientAppointments(), form.getLocalContext().getAdmissionDetails()))
+					engine.close(DialogResult.OK);
+			}
+		}	
+			
+		//WDEV-20224
+		if (form.getLocalContext().getMessageBoxBayMixedGenderIsNotNull() && form.getLocalContext().getMessageBoxBayMixedGender().equals(messageBoxId))
+		{
+			if (DialogResult.YES.equals(result))
+			{
+				engine.open(form.getForms().Core.AdmissionGenderWarningDialog, new Object[] {BedAdmissionValidationType.MIXED_GENDER}, "Reason for Mixing Gender");
+			}
+			form.getLocalContext().setMessageBoxBayMixedGender(null);
+			return;			
+		}
 		
+		if (form.getLocalContext().getMessageBoxBayGenderMismatchIsNotNull() && form.getLocalContext().getMessageBoxBayGenderMismatch().equals(messageBoxId))
+		{			
+			handleAdmitBtnAction(null, messageBoxId,result);
+			
+			form.getLocalContext().setMessageBoxBayGenderMismatch(null);
+			return;
+
+		}		
+		//  WDEV-21091 		
+		if (form.getLocalContext().getVTEShouldCreate() != null &&  form.getLocalContext().getMessageBoxVTENotCompletedOnDischargeIsNotNull() && form.getLocalContext().getMessageBoxVTENotCompletedOnDischarge().equals(messageBoxId))
+		{
+			form.getLocalContext().setMessageBoxVTENotCompletedOnDischarge(null);
+			if (Boolean.TRUE.equals(form.getLocalContext().getVTEShouldCreate()) && engine.hasRight(AppRight.DISCHARGE_ACCESS_TO_VTE_ASSESSMENT) && Boolean.TRUE.equals(form.getLocalContext().getShowVTERiskAssessmentButton()))	//wdev-14858
+			{
+				form.lyrDetail().tabDischarge().btnDischarge().setEnabled(false);
+				form.getGlobalContext().Core.setParentFormMode(FormMode.VIEW);
+				disabletabs();	//wdev-14988
+				enableDisableDischargeTabControls(false);
+				return;
+			}
+			
+			engine.close(DialogResult.OK);
+							
+		}
+		//WDEV-20984 
+		if (form.getLocalContext().getMessageBoxUndoReadyToLeaveIsNotNull() && form.getLocalContext().getMessageBoxUndoReadyToLeave().equals(messageBoxId))
+		{
+			form.getLocalContext().setMessageBoxUndoReadyToLeave(null);
+			if (DialogResult.YES.equals(result))
+			{	
+				form.lyrDetail().tabReadyForDischarge().dtimReadyToLeave().setValue(null);		
+				if (saveEstimatedDischarge(false))
+					engine.close(DialogResult.OK);
+			}
+			else
+			{
+				form.getLocalContext().setbWasReadyToLeavePressed(null);
+				boolean bShowExtendedLOSReason = form.getLocalContext().getAdmissionDetails() != null && form.getLocalContext().getAdmissionDetails().getEstDischargeDate() != null && form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue() != null && form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue().isGreaterThan(form.getLocalContext().getAdmissionDetails().getEstDischargeDate());
+				updateReadyForDischargeControlsState(form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue() != null || Boolean.TRUE.equals(form.getLocalContext().getbWasReviseEstDischargeDatePressed()), true, DelayedDischargeEnumeration.rdoDelayedDischYes.equals(form.lyrDetail().tabReadyForDischarge().DelayedDischarge().getValue()), bShowExtendedLOSReason);
+				return;
+			}
+		}
+		if (form.getLocalContext().getMessageBoxUndoConfirmedDischargeIsNotNull() && form.getLocalContext().getMessageBoxUndoConfirmedDischarge().equals(messageBoxId))
+		{
+			form.getLocalContext().setMessageBoxUndoConfirmedDischarge(null);
+			if (DialogResult.YES.equals(result))
+			{	
+				form.lyrDetail().tabReadyForDischarge().dtimConfirmedDischargeDate().setValue(null);		
+				if (saveEstimatedDischarge(false))
+					engine.close(DialogResult.OK);
+			}
+			else
+			{
+				form.getLocalContext().setbWasConfirmPatientDischPressed(null);
+				boolean bShowExtendedLOSReason = form.getLocalContext().getAdmissionDetails() != null && form.getLocalContext().getAdmissionDetails().getEstDischargeDate() != null && form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue() != null && form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue().isGreaterThan(form.getLocalContext().getAdmissionDetails().getEstDischargeDate());
+				updateReadyForDischargeControlsState(form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue() != null || Boolean.TRUE.equals(form.getLocalContext().getbWasReviseEstDischargeDatePressed()), true, DelayedDischargeEnumeration.rdoDelayedDischYes.equals(form.lyrDetail().tabReadyForDischarge().DelayedDischarge().getValue()), bShowExtendedLOSReason);
+				return;
+			}
+		}
 	}
+
+	private Boolean cancelAdmission()//WDEV-22327
+	{
+		PatientShort inPatient = form.getGlobalContext().Core.getPatientShort();
+		
+		if(inPatient == null)
+			return false;
+		
+		String[] errors = inPatient.validate();
+		if (errors != null && errors.length > 0)
+		{
+			engine.showErrors(errors);
+			return false;
+		}
+		
+		try
+		{
+			domain.cancelCurrentAdmission(inPatient);
+		}
+		catch (StaleObjectException e)
+		{
+			e.printStackTrace();
+			engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
+			return false;
+		}
+		
+		catch (ForeignKeyViolationException e)
+		{
+			e.printStackTrace();
+			engine.showMessage(e.getMessage());
+			return false;
+		}
+		form.getGlobalContext().Core.setPatientShort(inPatient);
+		return true;
+	}
+	
+	
+	void handleAdmitBtnAction(FormName formName, Integer messageBoxId, DialogResult result)
+	{
+		if ((DialogResult.YES.equals(result) && formName == null) || DialogResult.OK.equals(result))
+		{			
+			if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+			{
+				boolean bValidate = form.lyrDetail().tabAdmission().isVisible() ? isAdmissionValidatedByRelevantRule(form.getGlobalContext().Core.getBedRuleBreachReason()) : isBedAllocationValidatedByRelevantRule(form.getGlobalContext().Core.getBedRuleBreachReason(), form.getLocalContext().getTabFocused());
+				 if (!bValidate)
+				 	return;
+			}
+						
+			form.getGlobalContext().Core.setBedRuleBreachReason(populateReasonForAdmissionOnGenderMismatch(form.getGlobalContext().Core.getBedRuleBreachReason()));
+			if (form.getGlobalContext().Core.getSelectedBedSpaceState() != null)
+				form.getGlobalContext().Core.getSelectedBedSpaceState().setProvisionalBayGender(form.lyrDetail().tabAdmission().ccAdmit().getSexForSelectedPatient());
+
+			if (BedDialogPatientDataTabs.TAB_TRANSFER_IN.equals(form.getLocalContext().getTabFocused()))
+			{
+				saveTransferIn();
+				form.getGlobalContext().Core.setBedRuleBreachReason(null);	
+				return;
+			}
+			if ((form.getForms().Core.AdmissionReason.equals(formName) || form.getForms().Core.AdmissionGenderWarningDialog.equals(formName)) && BedDialogPatientDataTabs.TAB_BED_SWAP.equals(form.getLocalContext().getTabFocused()))
+			{
+				if (form.getGlobalContext().Core.getPatientShort() != null && !form.getForms().Core.AdmissionGenderWarningDialog.equals(formName))
+				{	
+					switchBeds();
+				}
+				else
+				{
+					movePatientToBed();
+				}
+				form.getGlobalContext().Core.setBedRuleBreachReason(null);	
+			}
+			else if (form.lyrDetail().tabAdmission().isVisible())
+			{	
+				if (form.lyrDetail().tabAdmission().ccAdmit().getIsReturnFromLeaveVisible())
+				{
+					if (form.lyrDetail().tabAdmission().ccAdmit().returnFromLeave())
+					{	
+						engine.close(DialogResult.OK);
+						form.getGlobalContext().Core.setBedRuleBreachReason(null);
+					}
+					return;
+				}
+				else if (form.lyrDetail().tabAdmission().ccAdmit().getInWaitingIsVisible())
+				{
+					if (form.lyrDetail().tabAdmission().ccAdmit().allocateBed())
+					{	
+						engine.close(DialogResult.OK);
+						form.getGlobalContext().Core.setBedRuleBreachReason(null);	
+					}
+					return;
+				}	
+				else if (!form.lyrDetail().tabAdmission().ccAdmit().checkForPatientAlreadyAdmited())
+				{
+					admissionHandler();
+					form.getGlobalContext().Core.setBedRuleBreachReason(null);
+//					if (form.lyrDetail().tabAdmission().ccAdmit().isOnEmergency() || form.lyrDetail().tabAdmission().ccAdmit().isOnTCITab())
+//					{	
+//						if (form.lyrDetail().tabAdmission().ccAdmit().isOnEmergency())
+//						{
+//							if (form.lyrDetail().tabAdmission().ccAdmit().saveAdmission())
+//							{	
+//								engine.close(DialogResult.OK);
+//								form.getGlobalContext().Core.setBedRuleBreachReason(null);	
+//							}	
+//						}
+//						if (form.lyrDetail().tabAdmission().ccAdmit().isOnTCITab())
+//						{
+//							if (form.lyrDetail().tabAdmission().ccAdmit().saveElectiveListAdmission(null))
+//							{	
+//								engine.close(DialogResult.OK);
+//								form.getGlobalContext().Core.setBedRuleBreachReason(null);	
+//							}	
+//						}
+//					}						
+//					else 
+//					{
+//						if (form.lyrDetail().tabAdmission().ccAdmit().saveAdmission())
+//						{	
+//							engine.close(DialogResult.OK);
+//							form.getGlobalContext().Core.setBedRuleBreachReason(null);
+//						}
+//					}						
+				}
+				else
+				{
+					engine.close(DialogResult.OK);
+					form.getGlobalContext().Core.setBedRuleBreachReason(null);
+				}
+
+			}
+		}
+		else if ((DialogResult.NO.equals(result) && formName == null) || DialogResult.CANCEL.equals(result))
+		{
+			if (form.getForms().Core.AdmissionReason.equals(formName))
+			{	
+				form.getLocalContext().setMessageBoxBayGenderMismatch(null);
+				form.getGlobalContext().Core.setBedRuleBreachReason(null);	
+				return;
+			}	
+			if (form.getForms().Core.AdmissionGenderWarningDialog.equals(formName))
+			{	
+				form.getLocalContext().setMessageBoxBayMixedGender(null);
+				form.getGlobalContext().Core.setBedRuleBreachReason(null);	
+				return;
+			}
+			if (form.getLocalContext().getMessageBoxBayGenderMismatchIsNotNull() && form.getLocalContext().getMessageBoxBayGenderMismatch().equals(messageBoxId))
+			{
+				form.getLocalContext().setMessageBoxBayGenderMismatch(null);
+				return;
+			}
+		}
+	}
+	private AdmissionReasonVo populateReasonForAdmissionOnGenderMismatch(AdmissionReasonVo admissionReason)
+	{
+		if (admissionReason == null)
+			admissionReason = new AdmissionReasonVo();
+		admissionReason.setValidationType(BedAdmissionValidationType.GENDER_SPECIFIC.getIItemText());
+		admissionReason.setIsGenderSpecificBayValidated(true);
+		return admissionReason;
+	}
+
 	//wdev-14996
-	private void enabledisableDiaschargeTabContrls(Boolean en)
+	private void enableDisableDischargeTabControls(boolean en)
 	{
 		form.lyrDetail().tabDischarge().cmbMethodDischarge().setEnabled(en);
 		form.lyrDetail().tabDischarge().cmbDischargeDestination().setEnabled(en);
-		form.lyrDetail().tabDischarge().dtimDod().setEnabled(en);
+		form.lyrDetail().tabDischarge().dteDod().setEnabled(en);
+		form.lyrDetail().tabDischarge().timTod().setEnabled(en);
 		form.lyrDetail().tabDischarge().dtimDischarge().setEnabled(en);
-		form.lyrDetail().tabDischarge().grpTreatmentPostponed().setEnabled(en);
-		form.lyrDetail().tabDischarge().cmbReason().setEnabled(en);
-		form.lyrDetail().tabDischarge().grp18Running().setEnabled(en);
 		form.lyrDetail().tabDischarge().chkAllocateForCleaning().setEnabled(en);
-		form.lyrDetail().tabDischarge().grp18Stopped().setEnabled(en);
-		form.lyrDetail().tabDischarge().txt18WeekRun().setEnabled(en);
-		form.lyrDetail().tabDischarge().txt18WeekStop().setEnabled(en);
-		form.lyrDetail().tabDischarge().txtTreatDeferr().setEnabled(en);
+		form.lyrDetail().tabDischarge().txtDODMandatory().setVisible(en);
+		form.lyrDetail().tabDischarge().txtDODMandatory().setEnabled(en);
+		form.lyrDetail().tabDischarge().cmbDeferredReason().setEnabled(en);
+		form.lyrDetail().tabDischarge().grpDeferred().setEnabled(en);
+		form.lyrDetail().tabDischarge().grpPatientTreated().setEnabled(en);
+		form.lyrDetail().tabDischarge().cmbDeferredReason().setEnabled(en);
+		form.lyrDetail().tabDischarge().cmbDischargeReasonForClosure().setEnabled(en);
+		form.lyrDetail().tabDischarge().dtimDischargeEstimatedReopening().setEnabled(en);
+		form.lyrDetail().tabDischarge().txtPatientTreated().setVisible(en);
+		form.lyrDetail().tabDischarge().txtPatientTreated().setEnabled(en);
+		form.lyrDetail().tabDischarge().txtDeferred().setVisible(en);
+		form.lyrDetail().tabDischarge().txtDeferred().setEnabled(en);
+		
 		
 	}
 	//---------
@@ -4269,7 +7723,1541 @@ public class Logic extends BaseLogic
 	@Override
 	protected void onChkAllocateForCleaningValueChanged() throws PresentationLogicException 
 	{
+		//WDEV-20987
+		if (!form.lyrDetail().tabDischarge().chkAllocateForCleaning().getValue())
+		{	
+			clearDischBedCleaningControlsState();
+		}	
 		updateDischBedCleaningControlsState();	
 	}
+	
+	private void clearDischBedCleaningControlsState()
+	{
+		form.lyrDetail().tabDischarge().cmbDischargeReasonForClosure().setValue(null);
+		form.lyrDetail().tabDischarge().dtimDischargeEstimatedReopening().setValue(null);		
+	}
 
+
+	@Override
+	protected void onBtnPatReturnedClick() throws PresentationLogicException 
+	{
+		if (form.getGlobalContext().Core.getPatientShort() != null && form.getGlobalContext().Core.getPatientShort().getDod() != null)
+		{
+			form.getLocalContext().setMessageBoxDeceasedTrackingReturn(engine.showMessage("Patient is deceased. Do you need to close this tracking movement?", "", MessageButtons.YESNO));
+			return;
+		}
+		if (savePatientReturned())
+			engine.close(DialogResult.OK);
+	}
+	
+	@Override
+	protected void onBtnSaveTrackingClick() throws PresentationLogicException
+	{
+		recordTrackingMovement();
+	}
+	
+	//WDEV-21628
+	private void recordTrackingMovement()
+	{
+		String[] uiErrors = validateTrackingMoveUIRules();
+		boolean isPatientToBeTrackedOnHomeLeave = (form.getGlobalContext().Core.getSelectedBedSpaceState() != null && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisodeIsNotNull() && Boolean.TRUE.equals(form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getIsOnHomeLeave()) && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getCurrentTrackingMovement() == null) //WDEV-21842 
+				|| (form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull() && Boolean.TRUE.equals(form.getGlobalContext().Core.getSelectedWaitingAreaPatient().getIsOnHomeLeave()) && form.getGlobalContext().Core.getSelectedWaitingAreaPatient().getCurrentTrackingMovement() == null);
+		
+		if (uiErrors != null)
+		{
+			engine.showErrors(uiErrors);
+			return;
+		}		
+		if (form.getGlobalContext().Core.getPatientShort() != null && form.getGlobalContext().Core.getPatientShort().getDod() != null)
+		{
+			form.getLocalContext().setMessageBoxDeceasedTrackingSend(engine.showMessage("Patient is deceased. Do you need to record this tracking movement?", "", MessageButtons.YESNO));
+			return;
+		}
+		if (isPatientToBeTrackedOnHomeLeave) //WDEV-21842
+		{	
+			form.getLocalContext().setMessageBoxHomeLeaveTrackingSend(engine.showMessage("This patient is currently on home leave. Are you sure you want to track the patient to another area ? ", "Confirm Tracking Movement", MessageButtons.YESNO));
+			return;
+		}	
+
+		
+		if (saveTrackingMovement())
+			engine.close(DialogResult.OK);
+	}	
+	//WDEV-21628
+	
+	private boolean savePatientReturned()
+	{
+		try
+		{
+			if (form.getGlobalContext().Core.getSelectedBedSpaceState() == null)
+				return false;
+
+			InpatientEpisodeLiteVo inpatientEpisodeLite = form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode();
+
+			InpatientEpisodeTrackingMoveVo inpatientEpisodeTrackigMove = domain.getInpatientTrackingMove(inpatientEpisodeLite);
+
+			if (inpatientEpisodeTrackigMove == null)
+				throw new CodingRuntimeException("Cannont save null record");
+
+			if (inpatientEpisodeLite.getVersion_InpatientEpisode() < inpatientEpisodeTrackigMove.getVersion_InpatientEpisode())
+			{
+				engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
+				engine.close(DialogResult.OK);
+				return false;
+			}
+
+			TrackingMovementVo trackingMovement = populateTrackingMovementDataFromScreen(inpatientEpisodeTrackigMove.getCurrentTrackingMovement());
+			trackingMovement.setPatientReturned(Boolean.TRUE);
+
+			String[] errors = trackingMovement.validate();
+
+			if (errors != null && errors.length > 0)
+			{
+				engine.showErrors(errors);
+				return false;
+			}
+
+			inpatientEpisodeTrackigMove.setCurrentTrackingMovement(null);
+
+			if (inpatientEpisodeTrackigMove.getTrackingMovementHistory() == null)
+				inpatientEpisodeTrackigMove.setTrackingMovementHistory(new TrackingMovementVoCollection());
+
+			if (inpatientEpisodeTrackigMove.getTrackingMovementHistory().contains(trackingMovement))
+				inpatientEpisodeTrackigMove.getTrackingMovementHistory().remove(trackingMovement);
+
+			inpatientEpisodeTrackigMove.getTrackingMovementHistory().add(trackingMovement);
+			
+			errors = inpatientEpisodeTrackigMove.validate();
+			if (errors != null && errors.length > 0)
+			{
+				engine.showErrors(errors);
+				return false;
+			}
+
+			domain.saveInpatientEpisodeTrackingMovement(inpatientEpisodeTrackigMove);
+
+			return true;
+		}
+		catch (StaleObjectException e)
+		{
+			engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
+			engine.close(DialogResult.OK);
+			return false;
+		}
+	}
+	
+	private boolean saveTrackingMovement()
+	{
+		try
+		{
+			if (form.getGlobalContext().Core.getSelectedBedSpaceState() == null)
+				return false;
+
+			InpatientEpisodeLiteVo inpatientEpisodeLite = form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode();
+
+			InpatientEpisodeTrackingMoveVo inpatientEpisodeTrackigMove = domain.getInpatientTrackingMove(inpatientEpisodeLite);
+
+			if (inpatientEpisodeTrackigMove == null)
+				throw new CodingRuntimeException("Cannont save null record");
+
+			if (inpatientEpisodeLite.getVersion_InpatientEpisode() < inpatientEpisodeTrackigMove.getVersion_InpatientEpisode())
+			{
+				engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
+				engine.close(DialogResult.OK);
+				return false;
+			}
+
+			TrackingMovementVo trackingMovement = populateTrackingMovementDataFromScreen(inpatientEpisodeTrackigMove.getCurrentTrackingMovement());
+
+			String[] errors = trackingMovement.validate();
+
+			if (errors != null && errors.length > 0)
+			{
+				engine.showErrors(errors);
+				return false;
+			}
+
+			inpatientEpisodeTrackigMove.setCurrentTrackingMovement(trackingMovement);
+
+			if (inpatientEpisodeTrackigMove.getTrackingMovementHistory() == null)
+				inpatientEpisodeTrackigMove.setTrackingMovementHistory(new TrackingMovementVoCollection());
+
+			if (inpatientEpisodeTrackigMove.getTrackingMovementHistory().contains(trackingMovement))
+				inpatientEpisodeTrackigMove.getTrackingMovementHistory().remove(trackingMovement);
+
+			inpatientEpisodeTrackigMove.getTrackingMovementHistory().add(trackingMovement);
+			
+			errors = inpatientEpisodeTrackigMove.validate();
+			
+			if (errors != null && errors.length > 0)
+			{
+				engine.showErrors(errors);
+				return false;
+			}
+
+			domain.saveInpatientEpisodeTrackingMovement(inpatientEpisodeTrackigMove);
+
+			return true;
+		}
+		catch (StaleObjectException e)
+		{
+			engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
+			engine.close(DialogResult.OK);
+			return false;
+		}
+	}
+
+
+	private String[] validateTrackingMoveUIRules()
+	{
+		ArrayList<String> errorList = new ArrayList<String>();
+		
+		if (form.lyrDetail().tabTracking().cmbMovementType().getValue() == null)
+		{
+			errorList.add("'Tracking Movement Type' is mandatory.");
+		}
+		
+		if (form.lyrDetail().tabTracking().dtimLeftWard().getValue() != null && form.lyrDetail().tabTracking().dtimLeftWard().getValue().isGreaterThan(new DateTime()))
+		{
+			errorList.add("'Date/Time Patient Left the Ward' cannot be set in the future.");
+		}
+		
+		if (form.lyrDetail().tabTracking().dtimExpectedReturn().getValue() != null && form.lyrDetail().tabTracking().dtimExpectedReturn().getValue().isLessThan(new DateTime()))
+		{
+			errorList.add("'Expected Return Date/Time' cannot be earlier than current date/time.");
+		}
+				
+		return errorList.size() > 0 ?  errorList.toArray(new String[errorList.size()]) : null;
+	}
+
+	
+	private TrackingMovementVo populateTrackingMovementDataFromScreen(TrackingMovementVo trackingMovement)
+	{
+		if (trackingMovement == null)
+			trackingMovement = new TrackingMovementVo();
+		
+		trackingMovement.setMovementType(form.lyrDetail().tabTracking().cmbMovementType().getValue());
+		trackingMovement.setLeftWardTime(form.lyrDetail().tabTracking().dtimLeftWard().getValue());
+		trackingMovement.setExpectedReturnTime(form.lyrDetail().tabTracking().dtimExpectedReturn().getValue());
+		trackingMovement.setPatientReturned(Boolean.FALSE);
+		
+		return trackingMovement;
+	}
+
+
+	////WDEV-17662 -- -start
+	protected void onlyrInfantsTabChanged(LayerBridge tab)
+	{
+	  if (tab.equals(form.lyrDetail().tabInfants().lyrInfants().tabInfantTransfer()))
+		  form.getLocalContext().setTabFocused(BedDialogPatientDataTabs.TAB_INFANTS_TRANSFER);
+	  else if (tab.equals(form.lyrDetail().tabInfants().lyrInfants().tabInfantDischarge()))
+		  form.getLocalContext().setTabFocused(BedDialogPatientDataTabs.TAB_INFANTS_DISCHARGE);	  
+		
+	}
+	
+	private void setFocusOnLastSelectedTab(BedDialogPatientDataTabs tab, BedStatus bedStatus, boolean refreshData)
+	{
+		if (!BedStatus.OCCUPIED.equals(bedStatus))
+			return;
+		
+		if (BedDialogPatientDataTabs.TAB_DEMOGRAPHICS.equals(tab))
+		{
+			form.lyrDetail().showtabPatient();
+			return;
+		}
+		else if (BedDialogPatientDataTabs.TAB_TRANSFER_OUT.equals(tab))
+		{
+			form.lyrDetail().showtabTransfer();
+			form.lyrDetail().tabTransfer().lyrTransfer().showtabOut();
+			if (refreshData)
+			{	
+				form.lyrDetail().tabTransfer().btnCancelTransfer().setVisible(form.getLocalContext().getPendingTransferOutIsNotNull());
+				populateTransferOutTabFromData();
+			}
+			return;
+		}
+		else if (BedDialogPatientDataTabs.TAB_TRANSFER_IN.equals(tab))
+		{
+			form.lyrDetail().showtabTransfer();
+			form.lyrDetail().tabTransfer().lyrTransfer().showtabIn();
+			if (refreshData)
+			{	
+				populateTransferInListFromData();				
+			}	
+			return;
+		}
+		else if (BedDialogPatientDataTabs.TAB_TRANSFER_CONSULTANT.equals(tab))
+		{
+			form.lyrDetail().showtabTransfer();
+			form.lyrDetail().tabTransfer().lyrTransfer().showtabConsultant();
+			return;
+			
+		}
+		else if (BedDialogPatientDataTabs.TAB_DISCHARGE.equals(tab))
+		{
+			form.lyrDetail().showtabDischarge();
+			if (refreshData)
+			{
+				bindTreatmentDiagnosisDereferredReason(domain.listCancellationTypeReason());
+				populateDischargeTabFromData();
+			}	
+			return;
+			
+		}
+		else if (BedDialogPatientDataTabs.TAB_EST_DISCHARGE.equals(tab))
+		{
+			form.lyrDetail().showtabReadyForDischarge();
+			if (refreshData)
+			{	
+				populateEstimatedDischargeTabFromData();
+				boolean bShowExtendedLOSReason = form.getLocalContext().getAdmissionDetails() != null && form.getLocalContext().getAdmissionDetails().getEstDischargeDate() != null && form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue() != null && form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue().isGreaterThan(form.getLocalContext().getAdmissionDetails().getEstDischargeDate());
+				updateReadyForDischargeControlsState(form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue() != null || Boolean.TRUE.equals(form.getLocalContext().getbWasReviseEstDischargeDatePressed()), form.lyrDetail().tabReadyForDischarge().dtimConfirmedDischargeDate().getValue() != null || Boolean.TRUE.equals(form.getLocalContext().getbWasConfirmPatientDischPressed()), DelayedDischargeEnumeration.rdoDelayedDischYes.equals(form.lyrDetail().tabReadyForDischarge().DelayedDischarge().getValue()), bShowExtendedLOSReason);				
+			}	
+			return;
+			
+		}
+		else if (BedDialogPatientDataTabs.TAB_INFANTS_TRANSFER.equals(tab))
+		{
+			form.lyrDetail().showtabInfants();
+			form.lyrDetail().tabInfants().lyrInfants().showtabInfantTransfer();
+			if (refreshData)
+				populateInfantsTabFromData();
+			return;
+			
+		}
+		else if (BedDialogPatientDataTabs.TAB_INFANTS_DISCHARGE.equals(tab))
+		{
+			form.lyrDetail().showtabInfants();
+			form.lyrDetail().tabInfants().lyrInfants().showtabInfantDischarge();
+			if (refreshData)
+				populateInfantsTabFromData();
+			return;
+			
+		}
+		//WDEV-17662 -------end
+	}
+
+	@Override
+	protected void onBtnMarkAsDeceasedClick() throws PresentationLogicException
+	{
+		displayDeathDetails();
+		
+	}
+	//WDEV-22553
+	private void displayDeathDetails()
+	{
+		form.getGlobalContext().Core.setParentFormMode(form.getGlobalContext().Core.getDischargeEpisodeBedInfoIsNotNull() ? FormMode.VIEW :FormMode.EDIT);
+		engine.open(form.getForms().Clinical.DeathDetails);		
+	}
+
+	@Override
+	protected void onBtnMarkInfantDeceasedClick() throws PresentationLogicException
+	{
+		if (form.lyrDetail().tabInfants().isVisible() && form.lyrDetail().tabInfants().grdInfants().getValue() != null)
+		{
+			form.getLocalContext().setTempMotherPatient(form.getGlobalContext().Core.getPatientShort());
+			form.getGlobalContext().Core.setPatientShort(domain.getPatientShort(form.lyrDetail().tabInfants().grdInfants().getValue().getPasEvent().getPatient()));
+		}
+		displayDeathDetails();		
+	}
+
+	@Override
+	protected void onBtnSwitchBedsClick() throws PresentationLogicException
+	{
+		if (form.getGlobalContext().Core.getPatientShort() != null && form.getGlobalContext().Core.getPatientShort().getDod() != null)
+		{
+			form.getLocalContext().setMessageBoxDeceasedBedMove(engine.showMessage("Patient is deceased. Do you want to swap beds?", "", MessageButtons.YESNO));
+			return;
+		}
+		
+		switchBeds();
+	}
+
+	private void switchBeds()
+	{
+		if (form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() && form.lyrDetail().tabBedMove().grdPatients().getValue() != null)
+		{
+			if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+			{				
+				boolean bAllocationValid = isBedAllocationValidatedByRelevantRule(form.getGlobalContext().Core.getBedRuleBreachReason(), form.getLocalContext().getTabFocused());
+				if (!bAllocationValid)
+					return;
+			}	
+			try
+			{
+				domain.swapBeds(form.getGlobalContext().Core.getSelectedBedSpaceState(), form.lyrDetail().tabBedMove().grdPatients().getValue(), form.getGlobalContext().Core.getBedRuleBreachReason());
+			}
+			catch (StaleObjectException e)
+			{
+				engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
+				populateBedMoveTabFromData(false);
+			}
+		}
+		engine.close(DialogResult.OK);
+	}
+
+	@Override
+	protected void onRadioButtonDischargeLoungeValueChanged() throws PresentationLogicException
+	{
+		if (DischargeLoungeEnumeration.rdoLoungeYes.equals(form.lyrDetail().tabReadyForDischarge().DischargeLounge().getValue()))
+			form.lyrDetail().tabReadyForDischarge().cmbReasonCannotGoLounge().setValue(null);
+		boolean bShowExtendedLOSReason = form.getLocalContext().getAdmissionDetails() != null && form.getLocalContext().getAdmissionDetails().getEstDischargeDate() != null && form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue() != null && form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue().isGreaterThan(form.getLocalContext().getAdmissionDetails().getEstDischargeDate());
+		updateReadyForDischargeControlsState(form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue() != null || Boolean.TRUE.equals(form.getLocalContext().getbWasReviseEstDischargeDatePressed()), form.lyrDetail().tabReadyForDischarge().dtimConfirmedDischargeDate().getValue() != null || Boolean.TRUE.equals(form.getLocalContext().getbWasConfirmPatientDischPressed()), DelayedDischargeEnumeration.rdoDelayedDischYes.equals(form.lyrDetail().tabReadyForDischarge().DelayedDischarge().getValue()), bShowExtendedLOSReason);
+		
+	}
+
+	private void updateReadyForDischargeControlsState(boolean wasDateRevised, boolean wasDischConfirmed, boolean isDelayedDisch, boolean showExtendedStayReason)
+	{
+		boolean bShowExtendedControls = ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS");
+				
+		boolean wasConfirmReadyBtnPressed = Boolean.TRUE.equals(form.getLocalContext().getbWasConfirmPatientDischPressed());
+		//boolean wasRevisedDateRemoved = Boolean.TRUE.equals(form.getLocalContext().getbWasReviseEstDischargeDatePressed()) && form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue() == null;
+		boolean isFitforDischarge = FitForDischargeEnumeration.rdoFitYes.equals(form.lyrDetail().tabReadyForDischarge().FitForDischarge().getValue());
+		boolean isConfirmedDateSavedOnRecord  = (form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode() != null && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getConfirmedDischargeDateTimeIsNotNull())  || (form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull() && form.getGlobalContext().Core.getSelectedWaitingAreaPatient().getConfirmedDischargeDateTimeIsNotNull());
+		
+		boolean wasReadyToLeavePressed = Boolean.TRUE.equals(form.getLocalContext().getbWasReadyToLeavePressed());
+		boolean wasUndoReadyToLeavePressed = Boolean.FALSE.equals(form.getLocalContext().getbWasReadyToLeavePressed());
+		boolean wasUndoConfirmDischargedPressed = Boolean.FALSE.equals(form.getLocalContext().getbWasConfirmPatientDischPressed());
+		
+		boolean isReadyToLeaveDateSavedOnRecord  = (form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode() != null && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getReadyToLeaveDecisionDateTimeIsNotNull())  || (form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull() && form.getGlobalContext().Core.getSelectedWaitingAreaPatient().getReadyToLeaveDecisionDateTimeIsNotNull());
+		boolean isNoReasonForDelayedDischargeSaved = isNoReasonForDelayedDischargeSaved();
+		
+		form.lyrDetail().tabReadyForDischarge().lblEstDischargeDate().setVisible(!bShowExtendedControls);
+		form.lyrDetail().tabReadyForDischarge().dteEstDischarge().setVisible(!bShowExtendedControls);
+		
+		form.lyrDetail().tabReadyForDischarge().chkConfirm().setVisible(false);
+		form.lyrDetail().tabReadyForDischarge().btnClearEstimate().setVisible(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("WST"));
+		
+		
+		if(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("WST") || bShowExtendedControls)
+		{
+			form.lyrDetail().tabReadyForDischarge().lblEstRevisedStay().setVisible(false);
+			form.lyrDetail().tabReadyForDischarge().intEstRevisedStay().setVisible(false);
+			form.lyrDetail().tabReadyForDischarge().lblDischargeReadyDate().setVisible(false);
+			form.lyrDetail().tabReadyForDischarge().dteDischargeReady().setVisible(false);
+		}
+		else if(ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("CCO"))
+		{
+			form.lyrDetail().tabReadyForDischarge().dteEstDischarge().setEnabled(false);
+		}
+		form.lyrDetail().tabReadyForDischarge().btnSaveEstDisch().setVisible(bShowExtendedControls);
+		form.lyrDetail().tabReadyForDischarge().btnSaveEstDischarge().setVisible(!bShowExtendedControls);
+		form.lyrDetail().tabReadyForDischarge().btnCancelEstDisch().setVisible(bShowExtendedControls);
+		form.lyrDetail().tabReadyForDischarge().lblDelayedDischarge().setVisible(bShowExtendedControls && ((isFitforDischarge && isNoReasonForDelayedDischargeSaved) || !isNoReasonForDelayedDischargeSaved));
+		form.lyrDetail().tabReadyForDischarge().lblCurrentEstDischDateVal().setVisible(bShowExtendedControls);
+		form.lyrDetail().tabReadyForDischarge().btnReviseEstDischDate().setVisible(bShowExtendedControls);
+		form.lyrDetail().tabReadyForDischarge().DelayedDischarge().setVisible(bShowExtendedControls && ((isFitforDischarge && isNoReasonForDelayedDischargeSaved) || !isNoReasonForDelayedDischargeSaved));
+		form.lyrDetail().tabReadyForDischarge().txtDelayedDischargeRequired().setVisible(bShowExtendedControls && isFitforDischarge && isNoReasonForDelayedDischargeSaved);
+		form.lyrDetail().tabReadyForDischarge().DelayedDischarge().setEnabled(bShowExtendedControls && isFitforDischarge && isNoReasonForDelayedDischargeSaved);
+		form.lyrDetail().tabReadyForDischarge().lblAdmDateTime().setVisible(bShowExtendedControls);
+		form.lyrDetail().tabReadyForDischarge().lblAdmDateTimeVal().setVisible(bShowExtendedControls);
+		form.lyrDetail().tabReadyForDischarge().lblCurrentStay().setVisible(bShowExtendedControls);
+		form.lyrDetail().tabReadyForDischarge().lblCurrentLengthOfStayVal().setVisible(bShowExtendedControls);
+		form.lyrDetail().tabReadyForDischarge().lblCurrentEstDischDate().setVisible(bShowExtendedControls);
+		form.lyrDetail().tabReadyForDischarge().lblCurrentLengthOfStayVal().setVisible(bShowExtendedControls);
+		
+		updateReasonForDelayedDischargeControlsState(isDelayedDisch,bShowExtendedControls, false);
+		
+		form.lyrDetail().tabReadyForDischarge().pnlEstDischargeDetails().setVisible(bShowExtendedControls);
+		
+		
+		form.lyrDetail().tabReadyForDischarge().lblConfirmedDischargeDate().setVisible(bShowExtendedControls && wasDischConfirmed  && !wasUndoConfirmDischargedPressed);
+		form.lyrDetail().tabReadyForDischarge().dtimConfirmedDischargeDate().setVisible(bShowExtendedControls && wasDischConfirmed && !wasUndoConfirmDischargedPressed);
+		form.lyrDetail().tabReadyForDischarge().dtimConfirmedDischargeDate().setEnabled(form.lyrDetail().tabReadyForDischarge().dtimConfirmedDischargeDate().isVisible() && !isConfirmedDateSavedOnRecord);
+		form.lyrDetail().tabReadyForDischarge().btnConfirmReadyForDischarge().setVisible(bShowExtendedControls && !wasConfirmReadyBtnPressed && !isConfirmedDateSavedOnRecord);
+		form.lyrDetail().tabReadyForDischarge().btnUndoConfirmedDischarged().setVisible(bShowExtendedControls && !wasConfirmReadyBtnPressed && isConfirmedDateSavedOnRecord);
+		
+		form.lyrDetail().tabReadyForDischarge().lblReadyToLeaveDate().setVisible(bShowExtendedControls && (wasReadyToLeavePressed || isReadyToLeaveDateSavedOnRecord) && !wasUndoReadyToLeavePressed);
+		form.lyrDetail().tabReadyForDischarge().dtimReadyToLeave().setVisible(bShowExtendedControls && (wasReadyToLeavePressed || isReadyToLeaveDateSavedOnRecord) &&  !wasUndoReadyToLeavePressed);
+		form.lyrDetail().tabReadyForDischarge().dtimReadyToLeave().setEnabled(form.lyrDetail().tabReadyForDischarge().dtimReadyToLeave().isVisible() && !isReadyToLeaveDateSavedOnRecord);
+		form.lyrDetail().tabReadyForDischarge().btnUndoReadyToLeave().setVisible(bShowExtendedControls &&  isReadyToLeaveDateSavedOnRecord);
+		form.lyrDetail().tabReadyForDischarge().btnReadyToLeave().setVisible(bShowExtendedControls && !wasReadyToLeavePressed  && !isReadyToLeaveDateSavedOnRecord);
+		
+		form.lyrDetail().tabReadyForDischarge().lblNewEstDischDate().setVisible(bShowExtendedControls && wasDateRevised);
+		form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().setVisible(bShowExtendedControls && wasDateRevised);
+		
+		form.lyrDetail().tabReadyForDischarge().lblReasonForExtendedLOS().setVisible(bShowExtendedControls && showExtendedStayReason);
+		form.lyrDetail().tabReadyForDischarge().cmbReasonForExtStay().setVisible(bShowExtendedControls && showExtendedStayReason);
+		//WDEV-22612 - TauntonID876
+		form.lyrDetail().tabReadyForDischarge().cmbReasonForExtStay().setRequired(bShowExtendedControls && showExtendedStayReason);
+		form.lyrDetail().tabReadyForDischarge().lblFitForDischarge().setVisible(bShowExtendedControls);
+		form.lyrDetail().tabReadyForDischarge().FitForDischarge().setVisible(bShowExtendedControls);
+		form.lyrDetail().tabReadyForDischarge().txtFitRequired().setVisible(bShowExtendedControls);
+		
+		form.lyrDetail().tabReadyForDischarge().DischargeLounge().setVisible(bShowExtendedControls);
+		form.lyrDetail().tabReadyForDischarge().lblAbleToGotoLounge().setVisible(bShowExtendedControls);
+		form.lyrDetail().tabReadyForDischarge().lblReasonCannotGoLounge().setVisible(bShowExtendedControls && DischargeLoungeEnumeration.rdoLoungeNo.equals(form.lyrDetail().tabReadyForDischarge().DischargeLounge().getValue()));
+		form.lyrDetail().tabReadyForDischarge().cmbReasonCannotGoLounge().setVisible(bShowExtendedControls && DischargeLoungeEnumeration.rdoLoungeNo.equals(form.lyrDetail().tabReadyForDischarge().DischargeLounge().getValue()));
+		
+		form.lyrDetail().tabReadyForDischarge().lblTransportDet().setVisible(bShowExtendedControls);
+		form.lyrDetail().tabReadyForDischarge().cmbTransportDet().setVisible(bShowExtendedControls);
+				
+	}
+
+	private boolean isNoReasonForDelayedDischargeSaved()
+	{
+		if (form.getLocalContext().getAdmissionDetails() == null)
+			return false;
+		AdmissionDetailVo admDetails = form.getLocalContext().getAdmissionDetails();
+		if (admDetails.getReasonDelayedDischargeIsNotNull())
+		{
+			for (int i = 0; i<admDetails.getReasonDelayedDischarge().size();i++)
+			{
+				if (admDetails.getReasonDelayedDischarge().get(i) != null && admDetails.getReasonDelayedDischarge().get(i).getID_ReasonForDelayedDischargeIsNotNull())
+					return false;
+			}
+		}
+		return true;
+	}
+
+	private void updateReasonForDelayedDischargeControlsState(boolean isDelayedDisch,	boolean bShowExtendedControls, boolean wasUpdatePressed)
+	{
+		form.lyrDetail().tabReadyForDischarge().pnlDelayReason().setVisible(bShowExtendedControls && isDelayedDisch);
+		form.lyrDetail().tabReadyForDischarge().dyngrdDischReason().setVisible(bShowExtendedControls && isDelayedDisch);
+		form.lyrDetail().tabReadyForDischarge().txtReasDelayDischRequired().setVisible(bShowExtendedControls && isDelayedDisch);
+		form.lyrDetail().tabReadyForDischarge().imbAddReason().setVisible(bShowExtendedControls && isDelayedDisch);
+		form.lyrDetail().tabReadyForDischarge().imbUpdateReason().setVisible(bShowExtendedControls && isDelayedDisch);
+		form.lyrDetail().tabReadyForDischarge().imbRemoveReason().setVisible(bShowExtendedControls && isDelayedDisch);
+		form.lyrDetail().tabReadyForDischarge().imbUpdateReason().setEnabled(bShowExtendedControls && isDelayedDisch && form.lyrDetail().tabReadyForDischarge().dyngrdDischReason().getValue() != null && form.lyrDetail().tabReadyForDischarge().dyngrdDischReason().getValue() instanceof ReasonForDelayedDischargeVo && ((ReasonForDelayedDischargeVo) form.lyrDetail().tabReadyForDischarge().dyngrdDischReason().getValue()).getID_ReasonForDelayedDischargeIsNotNull() && !wasUpdatePressed);
+		form.lyrDetail().tabReadyForDischarge().imbRemoveReason().setEnabled(bShowExtendedControls && isDelayedDisch && form.lyrDetail().tabReadyForDischarge().dyngrdDischReason().getValue() != null);
+	}
+	//WDEV-20224
+	private boolean isPrivateBedAllocation()
+	{
+		if (form.getGlobalContext().Core.getSelectedBedSpaceState() == null || form.getGlobalContext().Core.getSelectedBedSpaceState().getBedSpace() == null)
+			return false;
+		boolean isOnTransferIn = BedDialogPatientDataTabs.TAB_TRANSFER_IN.equals(form.getLocalContext().getTabFocused()) && form.lyrDetail().tabTransfer().lyrTransfer().tabIn().isVisible();
+		boolean isOnBedSwap = BedDialogPatientDataTabs.TAB_BED_SWAP.equals(form.getLocalContext().getTabFocused()) && form.lyrDetail().tabBedMove().isVisible() && form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() && BedStatus.OCCUPIED.equals(form.getGlobalContext().Core.getSelectedBedSpaceState().getCurrentBedStatus().getBedStatus());
+		boolean isOnBedAllocated = BedDialogPatientDataTabs.TAB_BED_SWAP.equals(form.getLocalContext().getTabFocused()) && form.lyrDetail().tabBedMove().isVisible() && form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() && BedStatus.AVAILABLE.equals(form.getGlobalContext().Core.getSelectedBedSpaceState().getCurrentBedStatus().getBedStatus());
+		
+		if (isOnTransferIn)
+			return Boolean.TRUE.equals(form.getGlobalContext().Core.getSelectedBedSpaceState().getBedSpace().getPrivateBed()) && form.lyrDetail().tabTransfer().lyrTransfer().tabIn().grdTransferIn().getValue() != null && !PatientStatus.PRIVATE.equals(form.lyrDetail().tabTransfer().lyrTransfer().tabIn().grdTransferIn().getValue().getPatientStatus());
+		else if (isOnBedSwap)
+		{
+			AdmissionDetailVo selectedAdmissionDetail = getAdmissionDetail();
+			return  selectedAdmissionDetail != null && form.lyrDetail().tabBedMove().grdPatients().getValue() != null && form.getLocalContext().getAdmissionDetailsIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getBedSpaceIsNotNull() && ((!PatientStatus.PRIVATE.equals(form.getLocalContext().getAdmissionDetails().getPatientStatus()) && Boolean.TRUE.equals(form.getGlobalContext().Core.getSelectedBedSpaceState().getBedSpace().getPrivateBed())) || (!PatientStatus.PRIVATE.equals(selectedAdmissionDetail.getPatientStatus()) && form.lyrDetail().tabBedMove().grdPatients().getValue().getBedIsNotNull() && Boolean.TRUE.equals(form.lyrDetail().tabBedMove().grdPatients().getValue().getBed().getBedSpace().getPrivateBed()))); 
+		}
+		else if (isOnBedAllocated)
+		{
+			AdmissionDetailVo selectedAdmissionDetail = getAdmissionDetail();
+			return  form.lyrDetail().tabBedMove().grdPatients().getValue() != null && form.getLocalContext().getAdmissionDetailsIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getBedSpaceIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode() == null && ((!PatientStatus.PRIVATE.equals(form.getLocalContext().getAdmissionDetails().getPatientStatus()) && Boolean.TRUE.equals(form.getGlobalContext().Core.getSelectedBedSpaceState().getBedSpace().getPrivateBed())) || (!PatientStatus.PRIVATE.equals(selectedAdmissionDetail.getPatientStatus()) && form.lyrDetail().tabBedMove().grdPatients().getValue().getBedIsNotNull() && Boolean.TRUE.equals(form.lyrDetail().tabBedMove().grdPatients().getValue().getBed().getBedSpace().getPrivateBed())));
+		}
+		return false;	
+	}
+	private boolean isBayGenderMismatch()
+	{
+		if (!ConfigFlag.GEN.BED_MANAGEMENT_APPLY_MIXED_SEX_LOGIC.getValue()) //WDEV-22783
+			return false;
+		BayConfigLiteVo currentBayConfig = getBayConfig(form.getGlobalContext().Core.getSelectedBedSpaceState().getBay());
+		if (form.getGlobalContext().Core.getSelectedBedSpaceState() == null || form.getGlobalContext().Core.getSelectedBedSpaceState().getBay() == null || currentBayConfig == null)
+			return false;
+		return isBaySpecificGenderMismatch(currentBayConfig); 
+	}
+	
+	private boolean isBaySpecificGenderMismatch(BayConfigLiteVo bayConfig)
+	{		
+		Sex currentPatientSex = getSelectedPatientSex();  
+		return 	((bayConfig.getNumOfOccupiedBeds() == null || bayConfig.getNumOfOccupiedBeds() == 0 || (bayConfig.getNumOfOccupiedBeds() > 0 && bayConfig.getTemporaryBayGender() == null)) && currentPatientSex != null &&  ((!Boolean.TRUE.equals(bayConfig.getFemale()) && !Boolean.TRUE.equals(bayConfig.getMale())) || ((!Boolean.TRUE.equals(bayConfig.getFemale()) ||(Boolean.TRUE.equals(bayConfig.getFemale()) && !Boolean.TRUE.equals(bayConfig.getMale()))&& Sex.MALE.equals(currentPatientSex))) ||  ((!Boolean.TRUE.equals(bayConfig.getMale()) || (Boolean.TRUE.equals(bayConfig.getMale()) && !Boolean.TRUE.equals(bayConfig.getFemale()))) && Sex.FEMALE.equals(currentPatientSex))));
+				
+	}
+
+	private boolean hasConflictWithTemporaryBayGender()
+	{
+		if (!ConfigFlag.GEN.BED_MANAGEMENT_APPLY_MIXED_SEX_LOGIC.getValue()) //WDEV-21084
+			return false;
+			
+		if (form.getGlobalContext().Core.getSelectedBedSpaceState() == null || form.getGlobalContext().Core.getSelectedBedSpaceState().getBay() == null || !BedDialogPatientDataTabs.TAB_TRANSFER_IN.equals(form.getLocalContext().getTabFocused()))
+			return false;
+		BayConfigLiteVo currentBayConfig = getBayConfig(form.getGlobalContext().Core.getSelectedBedSpaceState().getBay());
+		
+		return isInConflictWithTemporaryBayGender(currentBayConfig); 
+	}
+	//WDEV-20927 - changes to method's return statement
+	private boolean isInConflictWithTemporaryBayGender(BayConfigLiteVo bayConfig)
+	{
+		if (bayConfig == null)
+			return false;
+		Sex currentPatientSex = getSelectedPatientSex();
+		boolean isGenderAlreadyMixed = isGenderAlreadyMixedForBay();
+		return isGenderAlreadyMixed ? true : (bayConfig.getNumOfOccupiedBeds() != null && bayConfig.getNumOfOccupiedBeds() > 0 && bayConfig.getTemporaryBayGenderIsNotNull() &&  (currentPatientSex != null && !currentPatientSex.equals(bayConfig.getTemporaryBayGender()) && ((form.getGlobalContext().Core.getFemaleBedAdmissionWardCount() != null && form.getGlobalContext().Core.getFemaleBedAdmissionWardCount() >= 1) || (form.getGlobalContext().Core.getMaleBedAdmissionWardCount() != null && form.getGlobalContext().Core.getMaleBedAdmissionWardCount() >= 1))));		
+	}
+	//WDEV-20224
+
+	@Override
+	protected void onBtnCancelEstDischClick() throws PresentationLogicException
+	{
+		engine.close(DialogResult.CANCEL);
+		
+	}
+
+	@Override
+	protected void onBtnSaveEstDischClick() throws PresentationLogicException
+	{
+		if (form.getGlobalContext().Core.getPatientShort() != null && form.getGlobalContext().Core.getPatientShort().getDod() != null)
+		{
+			form.getLocalContext().setMessageBoxDeceasedReadyForDischarge(engine.showMessage("Patient is deceased. Do you need to record 'Ready for Discharge' details?", "", MessageButtons.YESNO));
+			return;
+		}
+
+		if (saveEstimatedDischarge(true))
+			engine.close(DialogResult.OK);
+	}
+
+	@Override
+	protected void onBtnReviseEstDischDateClick() throws PresentationLogicException
+	{
+		form.getLocalContext().setbWasReviseEstDischargeDatePressed(true);
+		form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().setValue(null);
+		form.lyrDetail().tabReadyForDischarge().cmbReasonForExtStay().setValue(null);
+		boolean bShowExtendedLOSReason = form.getLocalContext().getAdmissionDetails() != null && form.getLocalContext().getAdmissionDetails().getEstDischargeDate() != null && form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue() != null && form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue().isGreaterThan(form.getLocalContext().getAdmissionDetails().getEstDischargeDate());
+		updateReadyForDischargeControlsState(true, form.lyrDetail().tabReadyForDischarge().dtimConfirmedDischargeDate().getValue() != null || Boolean.TRUE.equals(form.getLocalContext().getbWasConfirmPatientDischPressed()),DelayedDischargeEnumeration.rdoDelayedDischYes.equals(form.lyrDetail().tabReadyForDischarge().DelayedDischarge().getValue()), bShowExtendedLOSReason);		
+	}
+
+	@Override
+	protected void onDyngrdDischReasonRowSelectionChanged(DynamicGridRow row)	throws PresentationLogicException
+	{
+		updateReasonForDelayedDischargeControlsState(true, true, false);
+	}
+
+	@Override
+	protected void onBtnConfirmReadyForDischargeClick()	throws PresentationLogicException
+	{
+		form.lyrDetail().tabReadyForDischarge().dtimConfirmedDischargeDate().setValue(new DateTime());
+		
+		form.getLocalContext().setbWasConfirmPatientDischPressed(true);
+		boolean bShowExtendedLOSReason = form.getLocalContext().getAdmissionDetails() != null && form.getLocalContext().getAdmissionDetails().getEstDischargeDate() != null && form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue() != null && form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue().isGreaterThan(form.getLocalContext().getAdmissionDetails().getEstDischargeDate());
+		updateReadyForDischargeControlsState(form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue() != null || Boolean.TRUE.equals(form.getLocalContext().getbWasReviseEstDischargeDatePressed()), true, DelayedDischargeEnumeration.rdoDelayedDischYes.equals(form.lyrDetail().tabReadyForDischarge().DelayedDischarge().getValue()), bShowExtendedLOSReason);
+		
+	}
+
+	@Override
+	protected void onDtimNewEstDischDateValueChanged()	throws PresentationLogicException 
+	{
+		//WDEV-21711
+		boolean bShowExtendedLOSReason = form.getLocalContext().getAdmissionDetails() != null && form.getLocalContext().getAdmissionDetails().getEstDischargeDate() != null && form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue() != null && form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue().isGreaterThan(form.getLocalContext().getAdmissionDetails().getEstDischargeDate());
+		boolean isConfirmedDischargedSavedOrPressed = Boolean.TRUE.equals(form.getLocalContext().getbWasConfirmPatientDischPressed()) || (form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisodeIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getConfirmedDischargeDateTimeIsNotNull()) || (form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull() && form.getGlobalContext().Core.getSelectedWaitingAreaPatient().getConfirmedDischargeDateTimeIsNotNull());
+
+		if (form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue() == null || (form.getLocalContext().getAdmissionDetails() != null && form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue().isLessOrEqualThan(form.getLocalContext().getAdmissionDetails().getEstDischargeDate())))
+		{	
+			form.lyrDetail().tabReadyForDischarge().cmbReasonForExtStay().setValue(null);
+		}
+		updateReadyForDischargeControlsState(form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue() != null || Boolean.TRUE.equals(form.getLocalContext().getbWasReviseEstDischargeDatePressed()),isConfirmedDischargedSavedOrPressed, DelayedDischargeEnumeration.rdoDelayedDischYes.equals(form.lyrDetail().tabReadyForDischarge().DelayedDischarge().getValue()), bShowExtendedLOSReason);
+	}
+
+	@Override
+	protected void onImbUpdateReasonClick() throws PresentationLogicException
+	{
+		
+		if (form.lyrDetail().tabReadyForDischarge().dyngrdDischReason().getValue() == null)
+			return;
+		updateSelectedRowState(form.lyrDetail().tabReadyForDischarge().dyngrdDischReason().getSelectedRow());
+		updateReasonForDelayedDischargeControlsState(true, true, true);
+	}
+
+	private void updateSelectedRowState(DynamicGridRow selectedRow)
+	{
+		selectedRow.setReadOnly(false);
+		selectedRow.getCells().get(getColumn(COL_DELAY_END_DATE)).setReadOnly(false);
+		selectedRow.getCells().get(getColumn(COL_DELAY_REASON)).setReadOnly(false);
+		
+	}
+
+	@Override
+	protected void onImbRemoveReasonClick() throws PresentationLogicException
+	{
+		if (form.lyrDetail().tabReadyForDischarge().dyngrdDischReason().getValue() == null)
+			return;
+		
+		form.lyrDetail().tabReadyForDischarge().dyngrdDischReason().getRows().remove(form.lyrDetail().tabReadyForDischarge().dyngrdDischReason().getSelectedRow());
+		updateReasonForDelayedDischargeControlsState(true, true, false);
+	}
+
+	@Override
+	protected void onImbAddReasonClick() throws PresentationLogicException
+	{
+		addNewDelayedDischargeReasonRow(true, null);
+		updateReasonForDelayedDischargeControlsState(true, true, false);
+		
+	}
+
+	private void addNewDelayedDischargeReasonRow(boolean bSelectAndEnable, ReasonForDelayedDischargeVo reasonVo)
+	{
+		DynamicGridRow row = form.lyrDetail().tabReadyForDischarge().dyngrdDischReason().getRows().newRow(bSelectAndEnable);
+		row.setReadOnly(!bSelectAndEnable);
+		DynamicGridCell delayDateCell = row.getCells().newCell(getColumn(COL_DELAY_DATE), DynamicCellType.DATETIME);
+		delayDateCell.setReadOnly(!bSelectAndEnable);
+		
+		DynamicGridCell delayEndDateCell = row.getCells().newCell(getColumn(COL_DELAY_END_DATE), DynamicCellType.DATETIME);
+		delayEndDateCell.setReadOnly(!bSelectAndEnable);
+		
+		DynamicGridCell delayReasonCell = row.getCells().newCell(getColumn(COL_DELAY_REASON), DynamicCellType.ENUMERATION);
+		bindReasonForDelayDischargeValues(delayReasonCell);
+		delayReasonCell.setReadOnly(!bSelectAndEnable);
+				
+		if (reasonVo != null)
+		{
+			delayDateCell.setValue(reasonVo.getRecordedDate() != null ? reasonVo.getRecordedDate() : null);
+			delayEndDateCell.setValue(reasonVo.getEndDateTime() != null ? reasonVo.getEndDateTime() : null);
+			if (reasonVo.getReasonDelayDischargeIsNotNull())
+			{
+				if (delayReasonCell.getItems().indexOf(reasonVo.getReasonDelayDischarge()) < 0)	
+					delayReasonCell.getItems().newItem(reasonVo.getReasonDelayDischarge(), reasonVo.getReasonDelayDischarge().getText());
+				delayReasonCell.setValue(reasonVo.getReasonDelayDischarge());
+			}
+		}
+		else
+		{
+			delayDateCell.setValue(new DateTime());
+			if (delayReasonCell.getItems().size() == 1)
+				delayReasonCell.setValue(delayReasonCell.getItems().get(0) != null ? delayReasonCell.getItems().get(0).getValue() : null);
+		}
+		row.setValue(reasonVo == null ? new ReasonForDelayedDischargeVo() :reasonVo);		
+	}
+
+	private void bindReasonForDelayDischargeValues(DynamicGridCell delayReason)
+	{
+		ReasonDelayDischargeCollection instances = ims.core.vo.lookups.LookupHelper.getReasonDelayDischarge(domain.getLookupService());
+		delayReason.getItems().clear();
+		if (instances.size() == 0)
+			return;
+		for (int i=0; i<instances.size();i++)
+		{
+			if (instances.get(i).isActive())
+				delayReason.getItems().newItem(instances.get(i), instances.get(i).getText());
+		}
+	}
+	
+	protected void onBtnReturnFromLeaveClick()	throws PresentationLogicException
+	{
+		if (form.getGlobalContext().Core.getPatientShort() != null && form.getGlobalContext().Core.getPatientShort().getDod() != null)
+		{
+			form.getLocalContext().setMessageBoxDeceasedReturnFromLeave(engine.showMessage("Patient is deceased. Do you need to return the patient from Home Leave?", "", MessageButtons.YESNO));
+			return;
+		}
+		
+		if (returnFromHomeLeave())
+			engine.close(DialogResult.OK);
+	}
+
+	private boolean returnFromHomeLeave()
+	{
+		
+		BedSpaceStateLiteVo voBedSpaceStateLite = form.getGlobalContext().Core.getSelectedBedSpaceState();
+		if (voBedSpaceStateLite == null)
+			return false;
+		
+		InpatientEpisodeLiteVo voInpatEpis = voBedSpaceStateLite.getInpatientEpisode();
+		
+		String[] uiErrors = validateHomeLeaveReturnUiRules(voInpatEpis);
+		
+		if (uiErrors != null)
+		{
+			engine.showErrors(uiErrors);
+			return false;
+		}
+			
+		HomeLeaveVo voHL = new HomeLeaveVo();
+		voHL.setDateReturnedFromHomeLeave(form.lyrDetail().tabHomeLeaveReturn().dteHLDateReturn().getValue());
+		voHL.setTimeReturnedFromHomeLeave(form.lyrDetail().tabHomeLeaveReturn().timHLTimeOfReturn().getValue());
+		
+	
+		try
+		{
+			domain.returnFromHomeLeave(voBedSpaceStateLite, voInpatEpis, voHL, null);
+		}
+		catch (StaleObjectException e) 
+		{
+			engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
+			engine.close(DialogResult.ABORT);
+			return false;
+		} 
+		catch (DomainInterfaceException e) 
+		{
+			engine.showMessage(e.getMessage());
+			engine.close(DialogResult.ABORT);
+			return false;
+		}
+		
+		return true;		
+	}
+
+	private String[] validateHomeLeaveReturnUiRules(InpatientEpisodeLiteVo voInpatEpis)
+	{
+		 ArrayList<String> uiErrors = new ArrayList<String>();
+		if(form.lyrDetail().tabHomeLeaveReturn().dteHLDateReturn().getValue() == null
+			|| form.lyrDetail().tabHomeLeaveReturn().timHLTimeOfReturn().getValue() == null)
+		{
+			uiErrors.add("Return from Home Leave Date and Time are mandatory.");			
+		}				
+			
+		if (voInpatEpis.getDateOnHomeLeaveIsNotNull()
+			&& form.lyrDetail().tabHomeLeaveReturn().dteHLDateReturn().getValue() != null && form.lyrDetail().tabHomeLeaveReturn().dteHLDateReturn().getValue().isLessThan(voInpatEpis.getDateOnHomeLeave()))
+		{
+			uiErrors.add("Date of Return from Home Leave cannot be earlier than the Date on Home Leave.");			
+		}
+		
+		if (voInpatEpis.getDateOnHomeLeaveIsNotNull() && voInpatEpis.getTimeOnHomeLeaveIsNotNull()
+				&& form.lyrDetail().tabHomeLeaveReturn().dteHLDateReturn().getValue() != null && form.lyrDetail().tabHomeLeaveReturn().dteHLDateReturn().getValue().equals(voInpatEpis.getDateOnHomeLeave())
+				&& form.lyrDetail().tabHomeLeaveReturn().timHLTimeOfReturn().getValue() != null && form.lyrDetail().tabHomeLeaveReturn().timHLTimeOfReturn().getValue().isLessThan(voInpatEpis.getTimeOnHomeLeave()))
+			{
+				uiErrors.add("Time of Return from Home Leave cannot be earlier than the Time on Home Leave.");			
+			}
+		
+		return uiErrors.size() > 0 ? uiErrors.toArray(new String[uiErrors.size()]) : null;
+	}
+
+
+	@Override
+	protected void onImbHealthyLodgerClick() throws PresentationLogicException
+	{
+		if (form.getLocalContext().getAdmissionDetailsIsNotNull())
+			form.getGlobalContext().Core.setHealthyLodgerDetails(form.getLocalContext().getAdmissionDetails().getHealthyLodgerDetails());
+		engine.open(form.getForms().Core.HealthyLodgerDetails, new Object[]{FormMode.VIEW});
+	}
+
+	//WDEV-20911
+	@Override
+	protected void onRadioButtonFitForDischargeValueChanged() throws PresentationLogicException
+	{
+		//WDEV-21894
+		if (form.getLocalContext().getAdmissionDetails() != null && (form.getLocalContext().getAdmissionDetails().getReasonDelayedDischarge() == null || form.getLocalContext().getAdmissionDetails().getReasonDelayedDischarge().size() == 0)) 
+		{		
+			clearDelayedDischargeControls();
+		}
+		//WDEV-21646
+		boolean bShowExtendedLOSReason = form.getLocalContext().getAdmissionDetails() != null && form.getLocalContext().getAdmissionDetails().getEstDischargeDate() != null && form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue() != null && form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue().isGreaterThan(form.getLocalContext().getAdmissionDetails().getEstDischargeDate());
+		boolean isConfirmedDischargedSavedOrPressed = Boolean.TRUE.equals(form.getLocalContext().getbWasConfirmPatientDischPressed()) || (form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisodeIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getConfirmedDischargeDateTimeIsNotNull()) || (form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull() && form.getGlobalContext().Core.getSelectedWaitingAreaPatient().getConfirmedDischargeDateTimeIsNotNull());  
+		boolean wasEstDischDateRevised = form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue() != null || Boolean.TRUE.equals(form.getLocalContext().getbWasReviseEstDischargeDatePressed());
+		
+		updateReadyForDischargeControlsState(wasEstDischDateRevised, isConfirmedDischargedSavedOrPressed, DelayedDischargeEnumeration.rdoDelayedDischYes.equals(form.lyrDetail().tabReadyForDischarge().DelayedDischarge().getValue()), bShowExtendedLOSReason);		
+	}
+	private void clearDelayedDischargeControls()
+	{
+		form.lyrDetail().tabReadyForDischarge().DelayedDischarge().setValue(DelayedDischargeEnumeration.None);
+		form.lyrDetail().tabReadyForDischarge().dyngrdDischReason().getRows().clear();		
+	}
+
+
+	@Override
+	protected void onBtnCancelReturnHLClick() throws PresentationLogicException
+	{
+		//WDEV-21235
+		if ((form.getGlobalContext().Core.getSelectedBedSpaceState() == null || form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode() == null) && form.getGlobalContext().Core.getSelectedWaitingAreaPatient() == null)
+				return;
+		cancelHomeLeaveReturn();		
+	}
+
+	private void cancelHomeLeaveReturn()
+	{
+		BedSpaceStateLiteVo voBedSpaceState = form.getGlobalContext().Core.getSelectedBedSpaceState();
+		
+		InpatientEpisodeLiteVo voInp = voBedSpaceState != null ? voBedSpaceState.getInpatientEpisode() : form.getGlobalContext().Core.getSelectedWaitingAreaPatient();
+		
+		HomeLeaveVo voHl = populateHomeLeaveToReOpenDataFromScreen(form.getLocalContext().getHomeLeaveToReOpen(), voBedSpaceState != null);
+		
+		if (voHl == null)
+		{	
+			engine.showMessage("The home leave record has been changed by another user. The screen will be refreshed.");
+			engine.close(DialogResult.OK);
+			return;
+		}
+		
+		String[] validationErrors = voHl.validate();
+		if (validationErrors != null)
+		{
+			engine.showErrors(validationErrors);			
+			return;
+		}		
+		try
+		{
+			domain.cancelHomeLeaveReturn(voInp, voBedSpaceState,voHl);
+		}
+		catch (DomainInterfaceException e)
+		{
+			engine.showMessage(e.getMessage());
+			engine.close(DialogResult.OK);
+			return;
+		}
+		catch (StaleObjectException ex)
+		{
+			engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
+			engine.close(DialogResult.OK);
+			return;
+		}
+		engine.close(DialogResult.OK);	
+	}
+
+
+	private HomeLeaveVo populateHomeLeaveToReOpenDataFromScreen(HomeLeaveVo homeLeaveToReOpen, boolean patientCurrentlyInBed)
+	{
+		if (homeLeaveToReOpen == null)
+			return null;
+		
+		homeLeaveToReOpen.setDateOnHomeLeave(form.lyrDetail().tabHLeaveReturnCancel().dteOnHomeLeave().getValue());
+		homeLeaveToReOpen.setTimeOnHomeLeave(form.lyrDetail().tabHLeaveReturnCancel().timOnHomeLeave().getValue());				
+		homeLeaveToReOpen.setExpectedDateOfReturn(form.lyrDetail().tabHLeaveReturnCancel().dteExpHLReturn().getValue());
+		homeLeaveToReOpen.setExpectedTimeOfReturn(form.lyrDetail().tabHLeaveReturnCancel().timExpHLReturn().getValue());
+		homeLeaveToReOpen.setDateReturnedFromHomeLeave(null);
+		homeLeaveToReOpen.setTimeReturnedFromHomeLeave(null);
+		homeLeaveToReOpen.setBedRetained(patientCurrentlyInBed ? form.lyrDetail().tabHLeaveReturnCancel().chkPatientBedRetained().getValue() : false);
+		
+		return homeLeaveToReOpen;
+	}
+
+
+	@Override
+	protected void onBtnCancelSendHLClick() throws PresentationLogicException
+	{
+		BedSpaceStateLiteVo voBedSpaceState = form.getGlobalContext().Core.getSelectedBedSpaceState();
+
+		InpatientEpisodeLiteVo voEpisode = voBedSpaceState != null ? form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode() : form.getGlobalContext().Core.getSelectedWaitingAreaPatient();
+
+		if (cancelHomeLeave(voBedSpaceState, voEpisode, true))
+		{
+			engine.close(DialogResult.OK);
+		}
+	}
+
+
+	private boolean cancelHomeLeave(BedSpaceStateLiteVo voBedSpaceState, InpatientEpisodeLiteVo voEpisode, boolean bCloseDialog)
+	{		
+		try
+		{
+			domain.cancelHomeLeave(voBedSpaceState, voEpisode);
+		}
+		catch (DomainInterfaceException e)
+		{
+			engine.showMessage(e.getMessage());
+			if (bCloseDialog)
+			{	
+				engine.close(DialogResult.OK);
+			}
+			return false;
+		}
+		catch (StaleObjectException ex)
+		{
+			engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
+			if (bCloseDialog)
+			{	
+				engine.close(DialogResult.OK);
+			}
+			return false;
+		}
+		return true;			
+	}
+
+
+	@Override
+	protected void onBtnCancelHLClick() throws PresentationLogicException 
+	{
+		if (form.lyrDetail().tabAdmission().ccAdmit().cancelHomeLeave())
+			form.lyrDetail().tabAdmission().ccAdmit().refreshHomeLeaves();
+	}
+
+	//WDEV-20937
+	@Override
+	protected void onGrdPatientsGridHeaderClicked(int column) throws PresentationLogicException
+	{
+		if (form.lyrDetail().tabBedMove().grdPatients().getRows().size() < 2)
+			return;
+		
+		InpatientEpisodeLiteVo  selVal =  form.lyrDetail().tabBedMove().grdPatients().getValue();		
+		InpatientEpisodeLiteVoCollection voColl = form.lyrDetail().tabBedMove().grdPatients().getValues();
+		
+		if (COL_MAIN_BEDNO == column)
+		{		
+			form.getLocalContext().setSortOrderBedNo(form.getLocalContext().getSortOrderBedNo() == null ? SortOrder.ASCENDING : (SortOrder.ASCENDING.equals(form.getLocalContext().getSortOrderBedNo()) ? SortOrder.DESCENDING : SortOrder.ASCENDING));
+			form.getLocalContext().setSortOrderBedMoveAge(null);
+			form.getLocalContext().setSortOrderBedMoveDOB(null);
+			voColl.sort(InpatientEpisodeLiteVo.getBedNumberComparator(form.getLocalContext().getSortOrderBedNo()));
+		}
+		else if (COL_MAIN_AGE == column)
+		{
+			form.getLocalContext().setSortOrderBedNo(null);
+			form.getLocalContext().setSortOrderBedMoveAge(form.getLocalContext().getSortOrderBedMoveAge() == null ? SortOrder.ASCENDING : (SortOrder.ASCENDING.equals(form.getLocalContext().getSortOrderBedMoveAge()) ? SortOrder.DESCENDING : SortOrder.ASCENDING));
+			voColl.sort(new ims.core.forms.bedadmissioncomponent.Logic.BedAdmissionAgeComparator(form.getLocalContext().getSortOrderBedMoveAge()));
+		}
+		else if (COL_MAIN_DOB == column)
+		{
+			form.getLocalContext().setSortOrderBedNo(null);
+			form.getLocalContext().setSortOrderBedMoveDOB(form.getLocalContext().getSortOrderBedMoveDOB() == null ? SortOrder.ASCENDING : (SortOrder.ASCENDING.equals(form.getLocalContext().getSortOrderBedMoveDOB()) ? SortOrder.DESCENDING : SortOrder.ASCENDING));
+			voColl.sort(new ims.core.forms.bedadmissioncomponent.Logic.BedAdmissionDOBComparator(form.getLocalContext().getSortOrderBedMoveDOB()));
+		}
+
+		populateBedMoveGridFromData(voColl);
+		
+		if (selVal != null)
+		{	
+			form.lyrDetail().tabBedMove().grdPatients().setValue(selVal);		
+		}
+		
+		form.getLocalContext().setAdmissionDetails(selVal != null ? getAdmissionDetail() : null);
+		clearBedAllocationValidationContexts();
+		
+		updateBedMoveTabControlsState();
+	}
+	
+	private void populateSpecialtyForService(ServiceLiteVo service)
+	{
+		if (form.lyrDetail().tabTransfer().lyrTransfer().tabIn().isVisible())
+		{	
+			form.lyrDetail().tabTransfer().lyrTransfer().tabIn().cmbInSpecialty().clear();
+
+			if (service != null && service.getSpecialty() != null)
+			{
+				form.lyrDetail().tabTransfer().lyrTransfer().tabIn().cmbInSpecialty().newRow(service.getSpecialty(), service.getSpecialty().getText());
+				form.lyrDetail().tabTransfer().lyrTransfer().tabIn().cmbInSpecialty().setValue(service.getSpecialty());
+			}
+		}
+		else if (form.lyrDetail().tabTransfer().lyrTransfer().tabOut().isVisible())
+		{	
+			form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbOutSpecialty().clear();
+
+			if (service != null && service.getSpecialty() != null)
+			{
+				form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbOutSpecialty().newRow(service.getSpecialty(), service.getSpecialty().getText());
+				form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbOutSpecialty().setValue(service.getSpecialty());
+			}
+		}
+		else if (form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().isVisible())
+		{	
+			form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().cmbConsultantSpecialty().clear();
+
+			if (service != null && service.getSpecialty() != null)
+			{
+				form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().cmbConsultantSpecialty().newRow(service.getSpecialty(), service.getSpecialty().getText());
+				form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().cmbConsultantSpecialty().setValue(service.getSpecialty());
+			}
+		}
+
+	}
+
+	private void populateServices(ServiceLiteVoCollection listServices)
+	{
+		if (form.lyrDetail().tabTransfer().lyrTransfer().tabIn().isVisible() || BedDialogPatientDataTabs.TAB_TRANSFER_IN.equals(form.getLocalContext().getTabFocused()))
+		{	
+			form.lyrDetail().tabTransfer().lyrTransfer().tabIn().qmbInService().clear();
+
+			if (listServices == null)
+			{	
+				form.lyrDetail().tabTransfer().lyrTransfer().tabIn().qmbInService().showOpened();
+				return;
+			}	
+
+			for (ServiceLiteVo service : listServices)
+			{
+				form.lyrDetail().tabTransfer().lyrTransfer().tabIn().qmbInService().newRow(service, service.getServiceName());
+			}
+
+			if (listServices.size() == 1)
+			{	
+				form.lyrDetail().tabTransfer().lyrTransfer().tabIn().qmbInService().setValue(listServices.get(0));
+				inTransferServiceChanged();
+			}
+			else
+			{
+				form.lyrDetail().tabTransfer().lyrTransfer().tabIn().qmbInService().showOpened();
+			}
+		}
+		else if (form.lyrDetail().tabTransfer().lyrTransfer().tabOut().isVisible() || BedDialogPatientDataTabs.TAB_TRANSFER_OUT.equals(form.getLocalContext().getTabFocused()))
+		{	
+			form.lyrDetail().tabTransfer().lyrTransfer().tabOut().qmbOutService().clear();
+
+			if (listServices == null)
+			{	
+				form.lyrDetail().tabTransfer().lyrTransfer().tabOut().qmbOutService().showOpened();
+				return;
+			}	
+
+			for (ServiceLiteVo service : listServices)
+			{
+				form.lyrDetail().tabTransfer().lyrTransfer().tabOut().qmbOutService().newRow(service, service.getServiceName());
+			}
+
+			if (listServices.size() == 1)
+			{	
+				form.lyrDetail().tabTransfer().lyrTransfer().tabOut().qmbOutService().setValue(listServices.get(0));
+				outTransferServiceChanged();
+			}
+			else
+			{
+				form.lyrDetail().tabTransfer().lyrTransfer().tabOut().qmbOutService().showOpened();
+			}
+		}
+		else if (form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().isVisible() || BedDialogPatientDataTabs.TAB_TRANSFER_CONSULTANT.equals(form.getLocalContext().getTabFocused()))
+		{	
+			form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().qmbConsultantService().clear();
+
+			if (listServices == null)
+			{	
+				form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().qmbConsultantService().showOpened();
+				return;
+			}	
+			for (ServiceLiteVo service : listServices)
+			{
+				form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().qmbConsultantService().newRow(service, service.getServiceName());
+			}
+
+			if (listServices.size() == 1)
+			{	
+				form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().qmbConsultantService().setValue(listServices.get(0));
+				consultantTransferServiceChanged();
+			}
+			else
+			{
+				form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().qmbConsultantService().showOpened();				
+			}
+		}
+		if (listServices.size() == 1)
+		{
+			populateSpecialtyForService(listServices.get(0));
+		}
+	}
+
+	@Override
+	protected void onBtnUnretainClick() throws PresentationLogicException
+	{
+		String bedStr = getBedSpaceTypeDescriptor(form.getGlobalContext().Core.getSelectedBedSpaceState());
+		if (form.getGlobalContext().Core.getPatientShort() != null && form.getGlobalContext().Core.getPatientShort().getDod() != null)
+		{
+			form.getLocalContext().setMessageBoxDeceasedVacateBedHomeLeave(engine.showMessage(("Patient is deceased. Do you still want to vacate the " + bedStr.toLowerCase() + "?"), "", MessageButtons.YESNO));
+			return;
+		}
+		if (vacateBed());
+			engine.close(DialogResult.OK);
+		
+	}
+
+	private boolean vacateBed()
+	{
+		if (form.getGlobalContext().Core.getSelectedBedSpaceState() == null)
+			return false;
+		
+		InPatientEpisodeADTVo voInpat = domain.getInpatientEpisode(form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode());
+		BedSpaceStateLiteVo bedSpaceStateLiteVo = voInpat.getBed();
+		
+		HomeLeaveVo currentHomeLeave  = getLatestOngoingHomeLeave(voInpat);
+		HomeLeaveVo currentHomeLeaveToUpdate  = null;
+		if (currentHomeLeave != null)
+		{	
+			currentHomeLeaveToUpdate = (HomeLeaveVo) currentHomeLeave.clone();
+			currentHomeLeaveToUpdate.setBedRetained(Boolean.FALSE);
+			voInpat.getHomeLeaves().set(voInpat.getHomeLeaves().indexOf(currentHomeLeaveToUpdate), currentHomeLeaveToUpdate);
+		}		
+
+		if (bedSpaceStateLiteVo != null)
+		{		
+			if (bedSpaceStateLiteVo.getBedSpace() != null)
+			{
+				voInpat.setVacatedBedNumber(bedSpaceStateLiteVo.getBedSpace().getBedNumber());			
+			}
+			if (bedSpaceStateLiteVo.getCurrentBedStatusIsNotNull())
+			{
+				bedSpaceStateLiteVo.setPreviousBedStatus((BedSpaceStateStatusLiteVo) bedSpaceStateLiteVo.getCurrentBedStatus().clone());
+				bedSpaceStateLiteVo.setCurrentBedStatus(new BedSpaceStateStatusLiteVo());
+				bedSpaceStateLiteVo.getCurrentBedStatus().setStatusDateTime(new DateTime());
+				bedSpaceStateLiteVo.getCurrentBedStatus().setBedStatus(BedStatus.AVAILABLE);				
+			}
+			bedSpaceStateLiteVo.setInpatientEpisode(null);
+			
+			voInpat.setBedNo(null);
+			voInpat.setBed(null);	
+		}
+		
+		String[] errors = bedSpaceStateLiteVo.validate(voInpat.validate());
+
+		if (errors != null)
+		{
+			engine.showErrors(errors);
+			return false;			
+		}
+
+		try
+		{
+			domain.vacateBedSpace(voInpat,bedSpaceStateLiteVo,currentHomeLeaveToUpdate);
+		}
+		catch (DomainInterfaceException e)
+		{
+			engine.showMessage(e.getMessage());
+			engine.close(DialogResult.OK);
+			return false;
+
+		}
+		catch (StaleObjectException ex)
+		{
+			engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
+			engine.close(DialogResult.OK);
+			return false;
+		}
+
+		return true;	
+	}
+	private HomeLeaveVo getLatestOngoingHomeLeave(InPatientEpisodeADTVo voEpisode)
+	{
+		if (voEpisode == null || voEpisode.getHomeLeaves() == null)
+			return null;
+		for (int i=voEpisode.getHomeLeaves().size()-1;i>=0;i--)
+		{
+			if (voEpisode.getHomeLeaves().get(i).getDateReturnedFromHomeLeave() != null)
+				voEpisode.getHomeLeaves().remove(i);
+		}
+		voEpisode.getHomeLeaves().sort(HomeLeaveVo.getDateOnHomeLeaveComparator(SortOrder.DESCENDING));
+		if (voEpisode.getHomeLeaves().size() > 0 && voEpisode.getHomeLeaves().get(0) != null)
+			return voEpisode.getHomeLeaves().get(0);
+		return null;
+	}
+	@Override
+	protected void onBtnEditHomeLeaveClick() throws PresentationLogicException
+	{			
+		editHomeLeaveRecord();		
+	}
+
+	private void editHomeLeaveRecord()
+	{
+		if (form.getGlobalContext().Core.getPatientShort() != null && form.getGlobalContext().Core.getPatientShort().getDod() != null)
+		{
+			form.getLocalContext().setMessageBoxDeceasedEditHomeLeave(engine.showMessage("Patient is deceased. Do you still want to update their home leave?", "", MessageButtons.YESNO));
+			return;
+		}
+		engine.open(form.getForms().Core.HomeLeaveDetailsDialog);
+	}
+
+	@Override
+	protected void onRadioButtonDelayedDischargeValueChanged()	throws PresentationLogicException 
+	{
+		boolean bShowExtendedLOSReason = form.getLocalContext().getAdmissionDetails() != null && form.getLocalContext().getAdmissionDetails().getEstDischargeDate() != null && form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue() != null && form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue().isGreaterThan(form.getLocalContext().getAdmissionDetails().getEstDischargeDate());
+		if (!DelayedDischargeEnumeration.rdoDelayedDischYes.equals(form.lyrDetail().tabReadyForDischarge().DelayedDischarge().getValue()))
+			form.lyrDetail().tabReadyForDischarge().dyngrdDischReason().getRows().clear();
+		updateReadyForDischargeControlsState(form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue() != null || Boolean.TRUE.equals(form.getLocalContext().getbWasReviseEstDischargeDatePressed()), form.lyrDetail().tabReadyForDischarge().dtimConfirmedDischargeDate().getValue() != null || Boolean.TRUE.equals(form.getLocalContext().getbWasConfirmPatientDischPressed()), DelayedDischargeEnumeration.rdoDelayedDischYes.equals(form.lyrDetail().tabReadyForDischarge().DelayedDischarge().getValue()), bShowExtendedLOSReason);
+		}
+
+	@Override
+	protected void onBtnReadyToLeaveClick() throws PresentationLogicException
+	{
+		form.lyrDetail().tabReadyForDischarge().dtimReadyToLeave().setValue(new DateTime());
+		//WDEV-21646
+		if (form.lyrDetail().tabReadyForDischarge().dtimConfirmedDischargeDate().isVisible() && form.lyrDetail().tabReadyForDischarge().dtimConfirmedDischargeDate().isEnabled() && form.lyrDetail().tabReadyForDischarge().dtimConfirmedDischargeDate().getValue() == null)
+		{
+			form.lyrDetail().tabReadyForDischarge().dtimConfirmedDischargeDate().setValue(new DateTime());
+		}
+		
+		form.getLocalContext().setbWasReadyToLeavePressed(true);
+		boolean bShowExtendedLOSReason = form.getLocalContext().getAdmissionDetails() != null && form.getLocalContext().getAdmissionDetails().getEstDischargeDate() != null && form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue() != null && form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue().isGreaterThan(form.getLocalContext().getAdmissionDetails().getEstDischargeDate());
+		boolean isConfirmedDischargedSavedOrPressed = Boolean.TRUE.equals(form.getLocalContext().getbWasConfirmPatientDischPressed()) || (form.getGlobalContext().Core.getSelectedBedSpaceStateIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisodeIsNotNull() && form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode().getConfirmedDischargeDateTimeIsNotNull()) || (form.getGlobalContext().Core.getSelectedWaitingAreaPatientIsNotNull() && form.getGlobalContext().Core.getSelectedWaitingAreaPatient().getConfirmedDischargeDateTimeIsNotNull());
+		updateReadyForDischargeControlsState(form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue() != null || Boolean.TRUE.equals(form.getLocalContext().getbWasReviseEstDischargeDatePressed()), isConfirmedDischargedSavedOrPressed, DelayedDischargeEnumeration.rdoDelayedDischYes.equals(form.lyrDetail().tabReadyForDischarge().DelayedDischarge().getValue()), bShowExtendedLOSReason);
+	}
+
+	@Override
+	protected void onBtnUndoConfirmedDischargedClick() throws PresentationLogicException
+	{
+		initiateUndoConfirmedDischarge();
+		return;
+	}
+
+	private void initiateUndoConfirmedDischarge()
+	{
+		//WDEV-22988 
+		if (form.getGlobalContext().Core.getSelectedWaitingAreaPatient() == null && (form.getGlobalContext().Core.getSelectedBedSpaceState() == null || form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode() == null))
+			return;
+		boolean hasPatientDied = form.getGlobalContext().Core.getPatientShort() != null && form.getGlobalContext().Core.getPatientShort().getDod() != null;
+		//boolean bShowExtendedLOSReason = form.getLocalContext().getAdmissionDetails() != null && form.getLocalContext().getAdmissionDetails().getEstDischargeDate() != null && form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue() != null && form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue().isGreaterThan(form.getLocalContext().getAdmissionDetails().getEstDischargeDate());
+		
+		form.getLocalContext().setbWasConfirmPatientDischPressed(false);
+		form.getLocalContext().setMessageBoxUndoConfirmedDischarge(engine.showMessage(((hasPatientDied ? "Patient is deceased." : "") + " Do you need to remove this patient from 'Confirmed for Discharge' list?"), "", MessageButtons.YESNO));
+			
+		//updateReadyForDischargeControlsState(form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue() != null || Boolean.TRUE.equals(form.getLocalContext().getbWasReviseEstDischargeDatePressed()), true, DelayedDischargeEnumeration.rdoDelayedDischYes.equals(form.lyrDetail().tabReadyForDischarge().DelayedDischarge().getValue()), bShowExtendedLOSReason);
+	}
+
+	@Override
+	protected void onBtnUndoReadyToLeaveClick()	throws PresentationLogicException
+	{
+		initiateUndoReadyToLeave();
+		return;		
+	}
+
+	private void initiateUndoReadyToLeave()
+	{
+		//WDEV-22988
+		if (form.getGlobalContext().Core.getSelectedWaitingAreaPatient() == null &&  (form.getGlobalContext().Core.getSelectedBedSpaceState() == null || form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode() == null))
+			return;
+		boolean hasPatientDied = form.getGlobalContext().Core.getPatientShort() != null && form.getGlobalContext().Core.getPatientShort().getDod() != null;
+		//boolean bShowExtendedLOSReason = form.getLocalContext().getAdmissionDetails() != null && form.getLocalContext().getAdmissionDetails().getEstDischargeDate() != null && form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue() != null && form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue().isGreaterThan(form.getLocalContext().getAdmissionDetails().getEstDischargeDate());
+		
+		form.getLocalContext().setbWasReadyToLeavePressed(false);
+		form.getLocalContext().setMessageBoxUndoReadyToLeave(engine.showMessage(((hasPatientDied ? "Patient is deceased." : "") + " Do you need to remove this patient from 'Ready To Leave' list?"), "", MessageButtons.YESNO));
+						
+		//updateReadyForDischargeControlsState(form.lyrDetail().tabReadyForDischarge().dtimNewEstDischDate().getValue() != null || Boolean.TRUE.equals(form.getLocalContext().getbWasReviseEstDischargeDatePressed()), true, DelayedDischargeEnumeration.rdoDelayedDischYes.equals(form.lyrDetail().tabReadyForDischarge().DelayedDischarge().getValue()), bShowExtendedLOSReason);
+	}
+
+	@Override
+	protected void onBtnAddHealthyLodgerClick()	throws PresentationLogicException
+	{
+		addHealthyLodger(); //WDEV-22750 
+	}
+
+	private void addHealthyLodger()
+	{
+		if (form.getLocalContext().getAdmissionDetails() == null || form.getLocalContext().getAdmissionDetails().getHealthyLodgerDetailsIsNotNull())
+			return;
+		form.getGlobalContext().Core.setHealthyLodgerDetails(null);
+		engine.open(form.getForms().Core.HealthyLodgerDetails, new Object[]{FormMode.EDIT});
+	}
+
+	@Override
+	protected void onGrdInfantsGridHeaderClicked(int column) throws PresentationLogicException
+	{
+		InpatientEpisodeLiteVoCollection vals = form.lyrDetail().tabInfants().grdInfants().getValues();
+		if (vals.size() < 2)
+			return;
+		form.getLocalContext().setSortOrderInfantsDOB(SortOrder.ASCENDING.equals(form.getLocalContext().getSortOrderInfantsDOB()) ?  SortOrder.DESCENDING : SortOrder.ASCENDING);
+		InpatientEpisodeLiteVo selVal = form.lyrDetail().tabInfants().grdInfants().getValue();
+		if (COL_INFANT_AGE == column)
+		{
+			vals.sort(new ims.core.forms.bedadmissioncomponent.Logic.BedAdmissionAgeComparator(form.getLocalContext().getSortOrderBedMoveDOB()));
+		}
+		populateInfantsToGrid(vals);
+		if (selVal != null)
+		{
+			form.lyrDetail().tabInfants().grdInfants().setValue(selVal);
+		}
+	}
+
+	@Override
+	protected void onQmbInServiceValueChanged()	throws PresentationLogicException
+	{
+		inTransferServiceChanged();		
+	}
+
+	private void inTransferServiceChanged()
+	{
+		populateSpecialtyForService(form.lyrDetail().tabTransfer().lyrTransfer().tabIn().qmbInService().getValue());
+		
+		// Clear consultants
+		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().ccInConsultant().clear();
+		if (form.lyrDetail().tabTransfer().lyrTransfer().tabIn().qmbInService().getValue() != null)
+			form.lyrDetail().tabTransfer().lyrTransfer().tabIn().ccInConsultant().initializeResponsibleHcp(MosType.MEDIC, null, form.lyrDetail().tabTransfer().lyrTransfer().tabIn().qmbInService().getValue(), null);
+		else
+		{
+			form.lyrDetail().tabTransfer().lyrTransfer().tabIn().ccInConsultant().initialize(MosType.MEDIC);
+		}
+	}
+
+	@Override
+	protected void onQmbInServiceTextSubmited(String value)	throws PresentationLogicException
+	{
+		inTransferServiceSearch(value);		
+	}
+
+	private void inTransferServiceSearch(String value)
+	{
+		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().qmbInService().clear();
+		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().cmbInSpecialty().clear();
+		form.lyrDetail().tabTransfer().lyrTransfer().tabIn().ccInConsultant().clear();
+	
+		if (value == null)
+			return;
+		
+		ServiceLiteVoCollection activeServiceColl = domain.listServices(value);
+		populateServices(activeServiceColl);
+	}
+
+	@Override
+	protected void onQmbOutServiceValueChanged() throws PresentationLogicException
+	{
+		outTransferServiceChanged();		
+	}
+
+	private void outTransferServiceChanged()
+	{
+		populateSpecialtyForService(form.lyrDetail().tabTransfer().lyrTransfer().tabOut().qmbOutService().getValue());
+		
+		// Clear consultants
+		form.lyrDetail().tabTransfer().lyrTransfer().tabOut().ccOutConsultant().clear();		
+		if (form.lyrDetail().tabTransfer().lyrTransfer().tabOut().qmbOutService().getValue() != null)
+		{				
+			form.lyrDetail().tabTransfer().lyrTransfer().tabOut().ccOutConsultant().initializeResponsibleHcp(MosType.MEDIC, null, form.lyrDetail().tabTransfer().lyrTransfer().tabOut().qmbOutService().getValue(), null);
+		}
+		else
+		{
+			form.lyrDetail().tabTransfer().lyrTransfer().tabOut().ccOutConsultant().initialize(MosType.MEDIC);
+		}
+	}
+
+	@Override
+	protected void onQmbOutServiceTextSubmited(String value) throws PresentationLogicException
+	{
+		outTransferServiceSearch(value);		
+	}
+
+	private void outTransferServiceSearch(String value)
+	{
+		form.lyrDetail().tabTransfer().lyrTransfer().tabOut().qmbOutService().clear();
+		form.lyrDetail().tabTransfer().lyrTransfer().tabOut().cmbOutSpecialty().clear();
+		form.lyrDetail().tabTransfer().lyrTransfer().tabOut().ccOutConsultant().clear();
+		
+		if (value == null)
+			return;
+		
+		ServiceLiteVoCollection activeServiceColl = domain.listServices(value);
+		populateServices(activeServiceColl);
+	}
+
+	@Override
+	protected void onQmbConsultantServiceValueChanged()	throws PresentationLogicException
+	{
+		consultantTransferServiceChanged();
+	}
+
+	private void consultantTransferServiceChanged()
+	{
+		populateSpecialtyForService(form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().qmbConsultantService().getValue());
+		
+		// Clear consultants
+		form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().ccConsultantAccepting().clear();
+		if (form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().qmbConsultantService().getValue() != null)
+			form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().ccConsultantAccepting().initializeResponsibleHcp(MosType.MEDIC, null, form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().qmbConsultantService().getValue(), null);
+		else
+		{
+			form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().ccConsultantAccepting().initialize(MosType.MEDIC);
+		}
+	}
+
+	@Override
+	protected void onQmbConsultantServiceTextSubmited(String value)	throws PresentationLogicException
+	{
+		consultantTransferServiceSearch(value);		
+	}
+
+	private void consultantTransferServiceSearch(String value)
+	{
+		form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().qmbConsultantService().clear();
+		//WDEV-22789
+		form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().ccConsultantAccepting().clear();
+		form.lyrDetail().tabTransfer().lyrTransfer().tabConsultant().cmbConsultantSpecialty().clear();
+		
+		if (value == null)
+			return;
+		
+		ServiceLiteVoCollection activeServiceColl = domain.listServices(value);
+		populateServices(activeServiceColl);
+	}
+
+	@Override
+	protected void onBtnCancelTrackingClick() throws PresentationLogicException
+	{
+		engine.close(DialogResult.CANCEL);		
+	}
+
+
+	private void showInitialTab(BedStatus status, BedDialogPatientDataTabs customTabToOpen)
+	{
+		if (customTabToOpen != null)
+		{				
+			if (BedDialogPatientDataTabs.TAB_TRANSFER_OUT.equals(customTabToOpen))
+			{
+				form.lyrDetail().showtabTransfer();
+				form.lyrDetail().tabTransfer().lyrTransfer().showtabOut();
+			}
+			if (BedDialogPatientDataTabs.TAB_TRANSFER_CONSULTANT.equals(customTabToOpen))
+			{
+				form.lyrDetail().showtabTransfer();
+				form.lyrDetail().tabTransfer().lyrTransfer().showtabConsultant();
+			}			
+			else if (BedDialogPatientDataTabs.TAB_DISCHARGE.equals(customTabToOpen))
+			{
+				form.lyrDetail().showtabDischarge();
+			}
+			else if (BedDialogPatientDataTabs.TAB_RETURNFROMHOMELEAVE.equals(customTabToOpen)
+						|| BedDialogPatientDataTabs.TAB_CANCEL_RETURNFROMHOMELEAVE.equals(customTabToOpen))
+			{
+				form.lyrDetail().showtabHomeLeaveReturn();
+			}
+			else if (BedDialogPatientDataTabs.TAB_EST_DISCHARGE.equals(customTabToOpen))
+			{
+				form.lyrDetail().showtabReadyForDischarge();
+				form.getLocalContext().setTabFocused(customTabToOpen);
+			}
+			
+			return;
+		}
+		
+		if (status != null)
+		{
+			if (status.equals(BedStatus.AVAILABLE))
+			{
+				form.lyrDetail().tabAdmission().ccAdmit().initialise();
+				engine.clearPatientContextInformation();
+				form.lyrDetail().tabAdmission().btnAdmit().setEnabled(false);
+				form.lyrDetail().tabAdmission().btnCancelHL().setVisible(false);
+				form.lyrDetail().tabAdmission().btnCancelHL().setEnabled(false);
+			}
+			else if (status.equals(BedStatus.OCCUPIED))
+			{
+				switchToRelevantTab(form.getGlobalContext().Core.getSelectedBedSpaceState().getInpatientEpisode());
+			}
+		}
+		// no bed selected
+		else
+		{
+			if(form.getGlobalContext().Core.getSelectedWaitingAreaPatient() == null)
+			{	
+				form.lyrDetail().tabAdmission().ccAdmit().initialise();
+				engine.clearPatientContextInformation();
+			}	
+			switchToRelevantTab(form.getGlobalContext().Core.getSelectedWaitingAreaPatient());
+		}
+	}
+	
+	@Override
+	protected void onBtnCancelAdmissionClick() throws PresentationLogicException 
+	{
+
+		form.getLocalContext().setMessageBoxCancelAdmissionSent(engine.showMessage("Are you sure you want to cancel the current admission?", "" , MessageButtons.YESNO, MessageIcon.QUESTION));			
+
+	}
+	//WDEV-22325 
+	@Override
+	protected void onBtnConsultantStaysClick() throws PresentationLogicException
+	{
+		form.getGlobalContext().Core.setYesNoDialogLaunchedFromSelf(false); //WDEV-22326
+		engine.open(form.getForms().Core.ADTConsultantStaysDialog);
+		
+	}
+	//WDEV-22326
+	@Override
+	protected void onBtnCloseAdmissionClick() throws PresentationLogicException
+	{
+		engine.close(DialogResult.CANCEL);		
+	}
+	//WDEV-22326
+	@Override
+	protected void onBtnEditAdmissionClick() throws PresentationLogicException
+	{
+		editAdmissionDetail();		
+	}
+
+	private void editAdmissionDetail()
+	{
+		//WDEV-22326
+		boolean isElectiveListAdmission = form.getLocalContext().getAdmissionDetailsIsNotNull() && form.getLocalContext().getAdmissionDetails().getPasEventIsNotNull() && PasEventType.TCI.equals(form.getLocalContext().getAdmissionDetails().getPasEvent().getEventType());
+		
+		form.getLocalContext().setShowMessageBoxReviseEstDischargeDate(null);
+		form.getGlobalContext().Core.setADTAdmissionDetailUpdate(populateAdmissionDetailToUpdate(form.getLocalContext().getAdmissionDetails()));
+		engine.open(form.getForms().Core.ADTUpdateAdmissionDetail, new Object[]{isElectiveListAdmission});
+	}
+
+	private AdmissionDetailForADTUpdateAdmissionVo populateAdmissionDetailToUpdate(AdmissionDetailVo admissionDetails)
+	{
+		if (admissionDetails == null)
+			return null;
+		AdmissionDetailForADTUpdateAdmissionVo admissionToUpdate = new AdmissionDetailForADTUpdateAdmissionVo();
+		
+		admissionToUpdate.setAdmissionDateTime(admissionDetails.getAdmissionDateTime());
+		admissionToUpdate.setPatientCategory(admissionDetails.getPatientStatus());
+		admissionToUpdate.setSourceOfEmergencyReferral(admissionDetails.getSourceOfEmergencyReferral());
+		admissionToUpdate.setRequiresChaplain(admissionDetails.getIsChaplainRequired()); //WDEV-23030 
+		
+		return admissionToUpdate;
+		
+	}
 }

@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 12/10/2015, 13:30 -->
+<hibernate-mapping>
+	<subclass name="ims.choose_book.domain.objects.PDSConv" lazy="true" discriminator-value="PDSC" extends="ims.choose_book.domain.objects.Conversation" >
+<!-- debug: hibernateClassContent -->
+<!-- debug: dummy -->
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="dummy" type="boolean" access="field" update="true">
+			<column name="c_dum"  not-null="false" unique="false"  />
+		</property>
+	</subclass>
+</hibernate-mapping>

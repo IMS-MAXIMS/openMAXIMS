@@ -1,0 +1,390 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 12/10/2015, 13:29 -->
+<hibernate-mapping>
+	<class name="ims.dto_move.domain.objects.Appointment" table="dto_appointment" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="assigned"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: hibernateClassContent -->
+<!-- debug: pkey -->
+<!-- debug: patient -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="patient" class="ims.core.patient.domain.objects.Patient" unique="true" foreign-key="appointment_patient_fk" access="field" cascade="save-update">
+			<column name="patient" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: firstApptId -->
+<!-- debug: lastApptId -->
+<!-- debug: numCancelled -->
+<!-- debug: numDNA -->
+<!-- debug: bookingSysType -->
+<!-- debug: relatedAppointment -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="relatedAppointment" class="ims.dto_move.domain.objects.Appointment" unique="true" foreign-key="appointment_relatedapp_fk" access="field" cascade="save-update">
+			<column name="relatedapp" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: patientLetter -->
+<!-- debug: gpLetter -->
+<!-- debug: comments -->
+<!-- debug: hcpBooking -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="hcpBooking" class="ims.core.resource.people.domain.objects.MemberOfStaff" unique="true" foreign-key="appointment_hcpbooking_fk" access="field" cascade="save-update">
+			<column name="hcpbooking" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: dateBooked -->
+<!-- debug: priorDateOffered -->
+<!-- debug: headStatus -->
+<!-- debug: treatPlanActionId -->
+<!-- debug: transportRequired -->
+<!-- debug: transportComment -->
+<!-- debug: patStat -->
+<!-- debug: episode -->
+<!-- debug: apptDetail -->
+<!-- debug: field.IsAssociation : true -->
+ 		<!-- Component Set -->
+ 		<list name="apptDetail" table="dto_appointment_apptdetail" lazy="true" >
+ 			<key foreign-key="appointment_apptdetail_id_fk">
+ 				<column name="id" sql-type="numeric(10,0)" not-null="true" />
+ 			</key>
+ 			<index column='idx'/>
+ 			<!-- Composite -->
+ 			<composite-element class="ims.dto_move.domain.objects.AppointmentDetail" >
+ 				<property name="apptDate" type="date" access="field" update="true">
+ 					<column name="apptdate" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="pkey" type="integer" access="field" update="true">
+ 					<column name="pkey" not-null="false"  unique="false"   />
+ 				</property>
+ 				<many-to-one name="patient" class="ims.core.patient.domain.objects.Patient" foreign-key="appointment_patient_fk" access="field">
+ 					<column name="patient" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 				</many-to-one>
+ 				<many-to-one name="session" class="ims.dto_move.domain.objects.Session" foreign-key="appointment_c_sessi_fk" access="field">
+ 					<column name="c_sessi" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 				</many-to-one>
+ 				<property name="sessionDetailId" type="integer" access="field" update="true">
+ 					<column name="sessiondet" not-null="false"  unique="false"   />
+ 				</property>
+ 				<many-to-one name="machine" class="ims.dto_move.domain.objects.RadiotherapyMachine" foreign-key="appointment_machine_fk" access="field">
+ 					<column name="machine" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 				</many-to-one>
+ 				<many-to-one name="mos" class="ims.core.resource.people.domain.objects.MemberOfStaff" foreign-key="appointment_mos_fk" access="field">
+ 					<column name="mos" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 				</many-to-one>
+ 				<property name="startTime" type="string" access="field" update="true">
+ 					<column name="starttime" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="endTime" type="string" access="field" update="true">
+ 					<column name="endtime" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="duration" type="integer" access="field" update="true">
+ 					<column name="duration" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="attendTime" type="string" access="field" update="true">
+ 					<column name="attendtime" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="attendStat" type="integer" access="field" update="true">
+ 					<column name="attendstat" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="actualAttendTime" type="string" access="field" update="true">
+ 					<column name="actualatte" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="apptStatus" type="integer" access="field" update="true">
+ 					<column name="apptstatus" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="transportType" type="integer" access="field" update="true">
+ 					<column name="transportt" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="staffId" type="integer" access="field" update="true">
+ 					<column name="staffid" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="modality" type="integer" access="field" update="true">
+ 					<column name="modality" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="comments" type="string" access="field" update="true">
+ 					<column name="comments" length="500" not-null="false"  unique="false"    />
+ 				</property>
+ 				<property name="contractId" type="string" access="field" update="true">
+ 					<column name="contractid" length="15" not-null="false"  unique="false"    />
+ 				</property>
+ 				<property name="priority" type="integer" access="field" update="true">
+ 					<column name="priority" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="timeSeem" type="string" access="field" update="true">
+ 					<column name="timeseem" not-null="false"  unique="false"   />
+ 				</property>
+ 				<many-to-one name="hcpSeen" class="ims.core.resource.people.domain.objects.Hcp" foreign-key="appointment_hcpseen_fk" access="field">
+ 					<column name="hcpseen" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 				</many-to-one>
+ 				<property name="hcpPresent" type="integer" access="field" update="true">
+ 					<column name="hcppresent" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="actualCompleteTime" type="string" access="field" update="true">
+ 					<column name="actualcomp" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="dateChanged" type="date" access="field" update="true">
+ 					<column name="datechange" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="apptStatReason" type="integer" access="field" update="true">
+ 					<column name="apptstatre" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="confirmationStat" type="integer" access="field" update="true">
+ 					<column name="confirmati" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="recipient1" type="string" access="field" update="true">
+ 					<column name="recipient1" length="5" not-null="false"  unique="false"    />
+ 				</property>
+ 				<property name="actionComplete" type="string" access="field" update="true">
+ 					<column name="actioncomp" length="1" not-null="false"  unique="false"    />
+ 				</property>
+ 				<property name="recipient2" type="string" access="field" update="true">
+ 					<column name="recipient2" length="3" not-null="false"  unique="false"    />
+ 				</property>
+ 				<property name="recipient3" type="string" access="field" update="true">
+ 					<column name="recipient3" length="5" not-null="false"  unique="false"    />
+ 				</property>
+ 				<property name="recipient4" type="string" access="field" update="true">
+ 					<column name="recipient4" length="3" not-null="false"  unique="false"    />
+ 				</property>
+ 				<property name="recipient5" type="string" access="field" update="true">
+ 					<column name="recipient5" length="5" not-null="false"  unique="false"    />
+ 				</property>
+ 				<property name="recipient6" type="string" access="field" update="true">
+ 					<column name="recipient6" length="5" not-null="false"  unique="false"    />
+ 				</property>
+ 				<property name="recipient7" type="string" access="field" update="true">
+ 					<column name="recipient7" length="5" not-null="false"  unique="false"    />
+ 				</property>
+ 				<property name="machineModality" type="integer" access="field" update="true">
+ 					<column name="machinemod" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="energy" type="float" access="field" update="true">
+ 					<column name="energy" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="energyUnit" type="integer" access="field" update="true">
+ 					<column name="energyunit" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="isInpatient" type="string" access="field" update="true">
+ 					<column name="isinpatien" length="1" not-null="false"  unique="false"    />
+ 				</property>
+ 				<property name="dispCode" type="integer" access="field" update="true">
+ 					<column name="dispcode" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="activityId" type="integer" access="field" update="true">
+ 					<column name="activityid" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="actualLocAtt" type="integer" access="field" update="true">
+ 					<column name="actualloca" not-null="false"  unique="false"   />
+ 				</property>
+ 			</composite-element>
+ 		</list>
+<!-- debug: apptActions -->
+<!-- debug: field.IsAssociation : true -->
+ 		<!-- Component Set -->
+ 		<list name="apptActions" table="dto_appointment_apptaction" lazy="true" >
+ 			<key foreign-key="appointment_apptaction_id_fk">
+ 				<column name="id" sql-type="numeric(10,0)" not-null="true" />
+ 			</key>
+ 			<index column='idx'/>
+ 			<!-- Composite -->
+ 			<composite-element class="ims.dto_move.domain.objects.AppointmentAction" >
+ 				<many-to-one name="action" class="ims.dto_move.domain.objects.Action" foreign-key="appointment_action_fk" access="field">
+ 					<column name="action" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 				</many-to-one>
+ 				<property name="status" type="integer" access="field" update="true">
+ 					<column name="status" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="apptDetailId" type="integer" access="field" update="true">
+ 					<column name="apptdetail" not-null="false"  unique="false"   />
+ 				</property>
+ 			</composite-element>
+ 		</list>
+<!-- debug: apptHistory -->
+<!-- debug: field.IsAssociation : true -->
+ 		<!-- Component Set -->
+ 		<list name="apptHistory" table="dto_appointment_appthistor" lazy="true" >
+ 			<key foreign-key="appointment_appthistor_id_fk">
+ 				<column name="id" sql-type="numeric(10,0)" not-null="true" />
+ 			</key>
+ 			<index column='idx'/>
+ 			<!-- Composite -->
+ 			<composite-element class="ims.dto_move.domain.objects.AppointmentHistory" >
+ 				<property name="historyDate" type="date" access="field" update="true">
+ 					<column name="historydat" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="historyReason" type="integer" access="field" update="true">
+ 					<column name="historyrea" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="status" type="integer" access="field" update="true">
+ 					<column name="status" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="dateReallocated" type="date" access="field" update="true">
+ 					<column name="datereallo" not-null="false"  unique="false"   />
+ 				</property>
+ 				<many-to-one name="changedBy" class="ims.core.resource.people.domain.objects.MemberOfStaff" foreign-key="appointment_changedby_fk" access="field">
+ 					<column name="changedby" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 				</many-to-one>
+ 				<many-to-one name="origSession" class="ims.dto_move.domain.objects.Session" foreign-key="appointment_origsessio_fk" access="field">
+ 					<column name="origsessio" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 				</many-to-one>
+ 				<many-to-one name="endSession" class="ims.dto_move.domain.objects.Session" foreign-key="appointment_endsession_fk" access="field">
+ 					<column name="endsession" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 				</many-to-one>
+ 				<property name="origSessDetailId" type="integer" access="field" update="true">
+ 					<column name="origsessde" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="histCreationDate" type="date" access="field" update="true">
+ 					<column name="histcreati" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="firstFlag" type="string" access="field" update="true">
+ 					<column name="firstflag" length="1" not-null="false"  unique="false"    />
+ 				</property>
+ 				<property name="apptDetailId" type="integer" access="field" update="true">
+ 					<column name="apptdetail" not-null="false"  unique="false"   />
+ 				</property>
+ 			</composite-element>
+ 		</list>
+<!-- debug: transport -->
+<!-- debug: field.IsAssociation : true -->
+ 		<!-- Component Set -->
+ 		<list name="transport" table="dto_appointment_transport" lazy="true" >
+ 			<key foreign-key="appointment_transport_id_fk">
+ 				<column name="id" sql-type="numeric(10,0)" not-null="true" />
+ 			</key>
+ 			<index column='idx'/>
+ 			<!-- Composite -->
+ 			<composite-element class="ims.dto_move.domain.objects.AppointmentTransport" >
+ 				<property name="inwardref" type="string" access="field" update="true">
+ 					<column name="inwardref" length="15" not-null="false"  unique="false"    />
+ 				</property>
+ 				<property name="outwardref" type="string" access="field" update="true">
+ 					<column name="outwardref" length="15" not-null="false"  unique="false"    />
+ 				</property>
+ 				<property name="apptrefstart" type="date" access="field" update="true">
+ 					<column name="apptrefsta" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="apprefend" type="date" access="field" update="true">
+ 					<column name="apprefend" not-null="false"  unique="false"   />
+ 				</property>
+ 			</composite-element>
+ 		</list>
+<!-- debug: specialRequirements -->
+<!-- debug: field.IsAssociation : true -->
+ 		<!-- Component Set -->
+ 		<list name="specialRequirements" table="dto_appointment_specialreq" lazy="true" >
+ 			<key foreign-key="appointment_specialreq_id_fk">
+ 				<column name="id" sql-type="numeric(10,0)" not-null="true" />
+ 			</key>
+ 			<index column='idx'/>
+ 			<!-- Composite -->
+ 			<composite-element class="ims.dto_move.domain.objects.AppointmentSpecReq" >
+ 				<property name="specialReq" type="integer" access="field" update="true">
+ 					<column name="specialreq" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="activeIndicator" type="string" access="field" update="true">
+ 					<column name="activeindi" length="1" not-null="false"  unique="false"    />
+ 				</property>
+ 			</composite-element>
+ 		</list>
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="pkey" type="integer" access="field" update="true">
+			<column name="pkey"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="firstApptId" type="integer" access="field" update="true">
+			<column name="firstappti"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="lastApptId" type="integer" access="field" update="true">
+			<column name="lastapptid"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="numCancelled" type="integer" access="field" update="true">
+			<column name="numcancell"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="numDNA" type="integer" access="field" update="true">
+			<column name="numdna"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="bookingSysType" type="integer" access="field" update="true">
+			<column name="bookingsys"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="patientLetter" type="string" access="field" update="true" > 
+			<column name="patientlet" length="1"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="gpLetter" type="string" access="field" update="true" > 
+			<column name="gpletter" length="1"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="comments" type="string" access="field" update="true" > 
+			<column name="comments" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dateBooked" type="date" access="field" update="true">
+			<column name="datebooked"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="priorDateOffered" type="date" access="field" update="true">
+			<column name="priordateo"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="headStatus" type="integer" access="field" update="true">
+			<column name="headstatus"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="treatPlanActionId" type="integer" access="field" update="true">
+			<column name="treatplana"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="transportRequired" type="string" access="field" update="true" > 
+			<column name="transportr" length="1"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="transportComment" type="string" access="field" update="true" > 
+			<column name="transportc" length="500"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="patStat" type="integer" access="field" update="true">
+			<column name="patstat"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="episode" type="integer" access="field" update="true">
+			<column name="episode"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

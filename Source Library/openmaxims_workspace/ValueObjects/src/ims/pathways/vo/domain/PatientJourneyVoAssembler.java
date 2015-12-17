@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:23
  *
  */
 package ims.pathways.vo.domain;
@@ -64,8 +69,6 @@ public class PatientJourneyVoAssembler
 		valueObjectDest.setCurrentStatus(valueObjectSrc.getCurrentStatus());
 		// StatusHistory
 		valueObjectDest.setStatusHistory(valueObjectSrc.getStatusHistory());
-		// TargetEndDate
-		valueObjectDest.setTargetEndDate(valueObjectSrc.getTargetEndDate());
 		// EndedOnDate
 		valueObjectDest.setEndedOnDate(valueObjectSrc.getEndedOnDate());
 		// CurrentClock
@@ -78,6 +81,16 @@ public class PatientJourneyVoAssembler
 		valueObjectDest.setPathwayHistory(valueObjectSrc.getPathwayHistory());
 		// ResponsibleConsultant
 		valueObjectDest.setResponsibleConsultant(valueObjectSrc.getResponsibleConsultant());
+		// LinkedComments
+		valueObjectDest.setLinkedComments(valueObjectSrc.getLinkedComments());
+		// LastValidationDate
+		valueObjectDest.setLastValidationDate(valueObjectSrc.getLastValidationDate());
+		// NextValidationDate
+		valueObjectDest.setNextValidationDate(valueObjectSrc.getNextValidationDate());
+		// isCancerPathway
+		valueObjectDest.setIsCancerPathway(valueObjectSrc.getIsCancerPathway());
+		// cancerPathwayDate
+		valueObjectDest.setCancerPathwayDate(valueObjectSrc.getCancerPathwayDate());
 	 	return valueObjectDest;
 	 }
 
@@ -424,12 +437,6 @@ public class PatientJourneyVoAssembler
 				StatusHistory.add(new ims.pathways.vo.PatientJourneyStatusRefVo(tmp.getId(),tmp.getVersion()));
 		}
 		valueObject.setStatusHistory(StatusHistory);
-		// TargetEndDate
-		java.util.Date TargetEndDate = domainObject.getTargetEndDate();
-		if ( null != TargetEndDate ) 
-		{
-			valueObject.setTargetEndDate(new ims.framework.utils.Date(TargetEndDate) );
-		}
 		// EndedOnDate
 		java.util.Date EndedOnDate = domainObject.getEndedOnDate();
 		if ( null != EndedOnDate ) 
@@ -457,6 +464,28 @@ public class PatientJourneyVoAssembler
 			{
 				valueObject.setResponsibleConsultant(new ims.core.resource.people.vo.HcpRefVo(domainObject.getResponsibleConsultant().getId(), domainObject.getResponsibleConsultant().getVersion()));
 			}
+		}
+		// LinkedComments
+		valueObject.setLinkedComments(ims.pathways.vo.domain.PatientJourneyCommentVoAssembler.createPatientJourneyCommentVoCollectionFromPatientJourneyComment(map, domainObject.getLinkedComments()) );
+		// LastValidationDate
+		java.util.Date LastValidationDate = domainObject.getLastValidationDate();
+		if ( null != LastValidationDate ) 
+		{
+			valueObject.setLastValidationDate(new ims.framework.utils.Date(LastValidationDate) );
+		}
+		// NextValidationDate
+		java.util.Date NextValidationDate = domainObject.getNextValidationDate();
+		if ( null != NextValidationDate ) 
+		{
+			valueObject.setNextValidationDate(new ims.framework.utils.Date(NextValidationDate) );
+		}
+		// isCancerPathway
+		valueObject.setIsCancerPathway( domainObject.isIsCancerPathway() );
+		// cancerPathwayDate
+		java.util.Date cancerPathwayDate = domainObject.getCancerPathwayDate();
+		if ( null != cancerPathwayDate ) 
+		{
+			valueObject.setCancerPathwayDate(new ims.framework.utils.Date(cancerPathwayDate) );
 		}
  		return valueObject;
 	 }
@@ -697,19 +726,12 @@ public class PatientJourneyVoAssembler
 		
 		domainObject.setStatusHistory(domainStatusHistory7);		
 		java.util.Date value8 = null;
-		ims.framework.utils.Date date8 = valueObject.getTargetEndDate();		
+		ims.framework.utils.Date date8 = valueObject.getEndedOnDate();		
 		if ( date8 != null ) 
 		{
 			value8 = date8.getDate();
 		}
-		domainObject.setTargetEndDate(value8);
-		java.util.Date value9 = null;
-		ims.framework.utils.Date date9 = valueObject.getEndedOnDate();		
-		if ( date9 != null ) 
-		{
-			value9 = date9.getDate();
-		}
-		domainObject.setEndedOnDate(value9);
+		domainObject.setEndedOnDate(value8);
 		domainObject.setCurrentClock(ims.pathways.vo.domain.PathwayClockVoAssembler.extractPathwayClock(domainFactory, valueObject.getCurrentClock(), domMap));
 		domainObject.setClockHistory(ims.pathways.vo.domain.PathwayClockVoAssembler.extractPathwayClockSet(domainFactory, valueObject.getClockHistory(), domainObject.getClockHistory(), domMap));		
 		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
@@ -720,26 +742,49 @@ public class PatientJourneyVoAssembler
 		}
 		domainObject.setExtReferralKey(valueObject.getExtReferralKey());
 		domainObject.setPathwayHistory(ims.pathways.vo.domain.PathwayHistoryVoAssembler.extractPathwayHistorySet(domainFactory, valueObject.getPathwayHistory(), domainObject.getPathwayHistory(), domMap));		
-		ims.core.resource.people.domain.objects.Hcp value14 = null;
+		ims.core.resource.people.domain.objects.Hcp value13 = null;
 		if ( null != valueObject.getResponsibleConsultant() ) 
 		{
 			if (valueObject.getResponsibleConsultant().getBoId() == null)
 			{
 				if (domMap.get(valueObject.getResponsibleConsultant()) != null)
 				{
-					value14 = (ims.core.resource.people.domain.objects.Hcp)domMap.get(valueObject.getResponsibleConsultant());
+					value13 = (ims.core.resource.people.domain.objects.Hcp)domMap.get(valueObject.getResponsibleConsultant());
 				}
 			}
 			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
 			{
-				value14 = domainObject.getResponsibleConsultant();	
+				value13 = domainObject.getResponsibleConsultant();	
 			}
 			else
 			{
-				value14 = (ims.core.resource.people.domain.objects.Hcp)domainFactory.getDomainObject(ims.core.resource.people.domain.objects.Hcp.class, valueObject.getResponsibleConsultant().getBoId());
+				value13 = (ims.core.resource.people.domain.objects.Hcp)domainFactory.getDomainObject(ims.core.resource.people.domain.objects.Hcp.class, valueObject.getResponsibleConsultant().getBoId());
 			}
 		}
-		domainObject.setResponsibleConsultant(value14);
+		domainObject.setResponsibleConsultant(value13);
+		domainObject.setLinkedComments(ims.pathways.vo.domain.PatientJourneyCommentVoAssembler.extractPatientJourneyCommentList(domainFactory, valueObject.getLinkedComments(), domainObject.getLinkedComments(), domMap));		
+		java.util.Date value15 = null;
+		ims.framework.utils.Date date15 = valueObject.getLastValidationDate();		
+		if ( date15 != null ) 
+		{
+			value15 = date15.getDate();
+		}
+		domainObject.setLastValidationDate(value15);
+		java.util.Date value16 = null;
+		ims.framework.utils.Date date16 = valueObject.getNextValidationDate();		
+		if ( date16 != null ) 
+		{
+			value16 = date16.getDate();
+		}
+		domainObject.setNextValidationDate(value16);
+		domainObject.setIsCancerPathway(valueObject.getIsCancerPathway());
+		java.util.Date value18 = null;
+		ims.framework.utils.Date date18 = valueObject.getCancerPathwayDate();		
+		if ( date18 != null ) 
+		{
+			value18 = date18.getDate();
+		}
+		domainObject.setCancerPathwayDate(value18);
 
 		return domainObject;
 	}

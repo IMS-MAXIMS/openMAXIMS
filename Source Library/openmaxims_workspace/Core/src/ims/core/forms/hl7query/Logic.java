@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -31,9 +36,13 @@ import ims.core.forms.hl7query.GenForm.grdMessagesRow;
 import ims.core.forms.hl7query.GenForm.grpHL7MessagesEnumeration;
 import ims.core.vo.PatientId;
 import ims.framework.Control;
+import ims.framework.MessageButtons;
+import ims.framework.MessageIcon;
 import ims.framework.enumerations.SortOrder;
 import ims.framework.exceptions.PresentationLogicException;
+import ims.framework.utils.Date;
 import ims.framework.utils.DateTime;
+import ims.framework.utils.Time;
 import ims.hl7.vo.HL7InboundVo;
 import ims.hl7.vo.HL7OutboundVo;
 import ims.hl7.vo.lookups.MessageType;
@@ -63,6 +72,9 @@ public class Logic extends BaseLogic
 		form.grpHL7Messages().setValue(grpHL7MessagesEnumeration.rdoAll);
 		form.ccMessageType().initialize(MessageType.TYPE_ID);
 		form.getLocalContext().setSortOrder(SortOrder.DESCENDING);
+		//WDEV-19591 
+		form.dtimStartDate().setValue(new DateTime(new Date(), new Time()).addHours(-1));
+		form.dtimEndDate().setValue(new DateTime(new Date(), new Time()));
 
 		bindCmbProviderSystem();
 	}
@@ -99,7 +111,7 @@ public class Logic extends BaseLogic
 		
 		if(form.dtimStartDate().getValue() != null && form.dtimEndDate().getValue() != null && form.dtimStartDate().getValue().isGreaterThan(form.dtimEndDate().getValue()))
 		{
-			uiErrors.add("End Date can not be set before Start Date.");					
+			uiErrors.add("Start Date cannot be greater than End Date.");	//WDEV-18762				
 		}
 		
 		String[] uiResults = new String[uiErrors.size()];
@@ -242,8 +254,12 @@ public class Logic extends BaseLogic
 	{
 		form.grdMessages().getRows().clear();
 		
+		//WDEV-18844 
 		if(hl7MessageList == null || hl7MessageList.length == 0)
+		{
+			engine.showMessage("No records matching your search criteria were found!", "No results",MessageButtons.OK, MessageIcon.INFORMATION);
 			return;
+		}
 		
 		for(int i=0; i<hl7MessageList.length; i++)
 		{
@@ -290,8 +306,10 @@ public class Logic extends BaseLogic
 	
 	private void clearSearch() 
 	{
-		form.dtimStartDate().setValue(null);
-		form.dtimEndDate().setValue(null);
+		//WDEV-19591 
+		form.dtimStartDate().setValue(new DateTime(new Date(), new Time()).addHours(-1));
+		form.dtimEndDate().setValue(new DateTime(new Date(), new Time()));
+		
 		form.cmbPatId().setValue(null);
 		form.txtOBPatId().setValue(null);
 		form.ccMessageType().setValue(null);

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -30,6 +35,7 @@ import ims.configuration.gen.ConfigFlag;
 import ims.core.admin.pas.domain.objects.PendingElectiveAdmission;
 import ims.core.admin.pas.vo.PendingElectiveAdmissionRefVo;
 import ims.core.domain.Demographics;
+import ims.core.domain.WardView;
 import ims.core.domain.base.impl.BasePendingElectiveAdmissionsListComponentImpl;
 import ims.core.patient.vo.PatientRefVo;
 import ims.core.resource.place.domain.objects.Location;
@@ -52,6 +58,7 @@ import ims.domain.DomainFactory;
 import ims.domain.exceptions.DomainInterfaceException;
 import ims.domain.exceptions.StaleObjectException;
 import ims.framework.exceptions.CodingRuntimeException;
+import ims.framework.interfaces.ILocation;
 import ims.framework.utils.DateTime;
 import ims.framework.utils.Time;
 
@@ -71,6 +78,7 @@ public class STHKPendingElectiveAdmissionsListComponentImpl extends BasePendingE
 
 		ArrayList<String> markers = new ArrayList<String>();
 		ArrayList<Serializable> values = new ArrayList<Serializable>();
+		boolean isCaseSensitivePatIdSearch = ConfigFlag.DOM.CASE_SENSITIVE_PATID.getValue();  //WDEV-18817
 
 		StringBuffer sb = new StringBuffer();
 		String andStr = "";
@@ -86,18 +94,20 @@ public class STHKPendingElectiveAdmissionsListComponentImpl extends BasePendingE
 			
 			String idVal = voFilter.getHospNum().trim();			
 			if (voFilter.getIDType().equals(PatIdType.NHSN))
+			{
 				idVal = voFilter.getHospNum().replace(" ", "");//wdev-7305
-			
-			if(!ConfigFlag.DOM.CASE_SENSITIVE_PATID.getValue())
+			}
+			if (!isCaseSensitivePatIdSearch) //WDEV-18817
+			{	
 				idVal = idVal.toUpperCase();
-
+			}
 			if (voFilter.getIDType().equals(PatIdType.NHSN))
 			{
-				sb.append(andStr + " ids.value like :idnum ");
+				sb.append(andStr + (!isCaseSensitivePatIdSearch ? " UPPER(ids.value)" : " ids.value") + " like :idnum"); //WDEV-18817
 				idVal += "%";
 			}
 			else
-				sb.append(andStr + " ids.value = :idnum");
+				sb.append(andStr + (!isCaseSensitivePatIdSearch ? " UPPER(ids.value)" : " ids.value") + " = :idnum"); //WDEV-18817
 
 			markers.add("idnum");
 			andStr = " and ";
@@ -176,14 +186,6 @@ public class STHKPendingElectiveAdmissionsListComponentImpl extends BasePendingE
 			andStr = " and ";
 		}
 		
-		if (voFilter.getHospitalIsNotNull())
-		{
-			sb.append(andStr + " pea.pasEvent.location.parentLocation.id = :hosp");
-			markers.add("hosp");
-			values.add(voFilter.getHospital().getID_Location());
-			andStr = " and ";
-		}
-		
 		if (voFilter.getWardIsNotNull())
 		{
 			sb.append(andStr + " pea.allocatedWard.id = :ward");
@@ -192,6 +194,20 @@ public class STHKPendingElectiveAdmissionsListComponentImpl extends BasePendingE
 			andStr = " and ";
 		}
 		
+		else if (voFilter.getHospitalIsNotNull())
+		{			
+			LocationLiteVoCollection wards = listWards(voFilter.getHospital().getID_Location(), null);
+			if (wards.size() > 0)
+			{	
+				sb.append(andStr + " (pea.pasEvent.location.id in " + getWardIds(wards));
+				sb.append(" OR ");
+			}
+			
+			sb.append((wards.size() > 0 ? "" : andStr) + " pea.pasEvent.location.parentLocation.id = :hosp" + (wards.size() > 0 ? ")" : ""));
+			markers.add("hosp");
+			values.add(voFilter.getHospital().getID_Location());		
+			andStr = " and ";
+		}		
 		if (voFilter.getTCIIsNotNull())
 		{ 
 			if (voFilter.getTCIDateOnlyIsNotNull()
@@ -237,7 +253,24 @@ public class STHKPendingElectiveAdmissionsListComponentImpl extends BasePendingE
 		hql += sb.toString();
 		return STHKPendingElectiveAdmissionListVoAssembler.createSTHKPendingElectiveAdmissionListVoCollectionFromPendingElectiveAdmission(getDomainFactory().find(hql.toString(), markers, values));
 	}
-
+	//WDEV-20258
+	private String getWardIds(LocationLiteVoCollection wards)
+	{
+		if (wards == null || wards.size() == 0)
+			return "";
+		
+		StringBuilder idList = new StringBuilder();
+		idList.append("(");
+		
+		for (int i=0; i<wards.size();i++)
+		{
+			if (wards.get(i) == null)
+				continue;
+			idList.append(wards.get(i).getID_Location().toString()).append(i == wards.size() - 1 ? ")": ", ");			
+		}
+		
+		return idList.toString();
+	}
 	public ims.core.vo.HcpLiteVoCollection listHCPs(ims.core.vo.HcpFilter filter)
 	{
 		HcpAdmin implHcpAdmin = (HcpAdmin)getDomainImpl(HcpAdminImpl.class);
@@ -330,6 +363,13 @@ public class STHKPendingElectiveAdmissionsListComponentImpl extends BasePendingE
 	{
 		DomainFactory factory = getDomainFactory();
 		return LocMostVoAssembler.create((Location) factory.getDomainObject(Location.class, voLocRef.getID_Location()));
+	}
+	
+	//WDEV-20707
+	public LocationLiteVo getCurrentHospital(ILocation location) 
+	{
+		WardView impl = (WardView)getDomainImpl(WardViewImpl.class);
+		return impl.getCurrentHospital(location);
 	}
 
 }

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.core.vo.domain;
@@ -52,6 +57,8 @@ public class BedSpaceStateBayOnlyVoAssembler
 	    valueObjectDest.setIsRIE(valueObjectSrc.getIsRIE());
 		// Bay
 		valueObjectDest.setBay(valueObjectSrc.getBay());
+		// BedSpace
+		valueObjectDest.setBedSpace(valueObjectSrc.getBedSpace());
 	 	return valueObjectDest;
 	 }
 
@@ -344,6 +351,8 @@ public class BedSpaceStateBayOnlyVoAssembler
 			
 		// Bay
 		valueObject.setBay(ims.core.vo.domain.LocationLiteVoAssembler.create(map, domainObject.getBay()) );
+		// BedSpace
+		valueObject.setBedSpace(ims.core.vo.domain.BedSpaceLiteVoAssembler.create(map, domainObject.getBedSpace()) );
  		return valueObject;
 	 }
 
@@ -410,6 +419,23 @@ public class BedSpaceStateBayOnlyVoAssembler
 			}
 		}
 		domainObject.setBay(value1);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.layout.domain.objects.BedSpace value2 = null;
+		if ( null != valueObject.getBedSpace() ) 
+		{
+			if (valueObject.getBedSpace().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getBedSpace()) != null)
+				{
+					value2 = (ims.core.layout.domain.objects.BedSpace)domMap.get(valueObject.getBedSpace());
+				}
+			}
+			else
+			{
+				value2 = (ims.core.layout.domain.objects.BedSpace)domainFactory.getDomainObject(ims.core.layout.domain.objects.BedSpace.class, valueObject.getBedSpace().getBoId());
+			}
+		}
+		domainObject.setBedSpace(value2);
 
 		return domainObject;
 	}

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.resource.people.domain.objects;
@@ -56,6 +61,12 @@ public class Hcp extends ims.domain.DomainObject implements java.io.Serializable
 	private Boolean isALocalConsultant;
 	/** Is the HCP a responsible for an ED location */
 	private Boolean isAResponsibleEDClinician;
+	/** 
+	  * Collection of ims.core.resource.domain.objects.HCPServiceFunction.
+	  */
+	private java.util.List serviceFunction;
+	/** isHCPaEndoscopist */
+	private Boolean isHCPaEndoscopist;
     public Hcp (Integer id, int ver)
     {
     	super(id, ver);
@@ -116,6 +127,23 @@ public class Hcp extends ims.domain.DomainObject implements java.io.Serializable
 		this.isAResponsibleEDClinician = isAResponsibleEDClinician;
 	}
 
+	public java.util.List getServiceFunction() {
+		if ( null == serviceFunction ) {
+			serviceFunction = new java.util.ArrayList();
+		}
+		return serviceFunction;
+	}
+	public void setServiceFunction(java.util.List paramValue) {
+		this.serviceFunction = paramValue;
+	}
+
+	public Boolean isIsHCPaEndoscopist() {
+		return isHCPaEndoscopist;
+	}
+	public void setIsHCPaEndoscopist(Boolean isHCPaEndoscopist) {
+		this.isHCPaEndoscopist = isHCPaEndoscopist;
+	}
+
 	/**
 	 * isConfigurationObject
 	 * Taken from the Usage property of the business object, this method will return
@@ -170,6 +198,32 @@ public class Hcp extends ims.domain.DomainObject implements java.io.Serializable
 	    auditStr.append("; ");
 		auditStr.append("\r\n*isAResponsibleEDClinician* :");
 		auditStr.append(isAResponsibleEDClinician);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*serviceFunction* :");
+		if (serviceFunction != null)
+		{
+		int i7=0;
+		for (i7=0; i7<serviceFunction.size(); i7++)
+		{
+			if (i7 > 0)
+				auditStr.append(",");
+			ims.core.resource.domain.objects.HCPServiceFunction obj = (ims.core.resource.domain.objects.HCPServiceFunction)serviceFunction.get(i7);
+		    if (obj != null)
+			{
+				if (i7 == 0)
+				{
+				auditStr.append(toShortClassName(obj));
+				auditStr.append("[");
+				}
+		        auditStr.append(obj.getId());
+			}
+		}
+		if (i7 > 0)
+			auditStr.append("] " + i7);
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*isHCPaEndoscopist* :");
+		auditStr.append(isHCPaEndoscopist);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -250,6 +304,21 @@ public class Hcp extends ims.domain.DomainObject implements java.io.Serializable
 			sb.append("<isAResponsibleEDClinician>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsAResponsibleEDClinician().toString()));
 			sb.append("</isAResponsibleEDClinician>");		
+		}
+		if (this.getServiceFunction() != null)
+		{
+			if (this.getServiceFunction().size() > 0 )
+			{
+			sb.append("<serviceFunction>");
+			sb.append(ims.domain.DomainObject.toXMLString(this.getServiceFunction(), domMap));
+			sb.append("</serviceFunction>");		
+			}
+		}
+		if (this.isIsHCPaEndoscopist() != null)
+		{
+			sb.append("<isHCPaEndoscopist>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsHCPaEndoscopist().toString()));
+			sb.append("</isHCPaEndoscopist>");		
 		}
 		return sb.toString();
 	}
@@ -446,11 +515,23 @@ public class Hcp extends ims.domain.DomainObject implements java.io.Serializable
 		{	
     		obj.setIsAResponsibleEDClinician(new Boolean(fldEl.getTextTrim()));	
 		}
+		fldEl = el.element("serviceFunction");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("list");	
+			obj.setServiceFunction(ims.core.resource.domain.objects.HCPServiceFunction.fromListXMLString(fldEl, factory, obj.getServiceFunction(), domMap));
+		}
+		fldEl = el.element("isHCPaEndoscopist");
+		if(fldEl != null)
+		{	
+    		obj.setIsHCPaEndoscopist(new Boolean(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
 	{
 		return new String[]{
+		 "serviceFunction"
 		};
 	}
 
@@ -486,6 +567,8 @@ public String getExtCode(int taxTypeId)
 		public static final String IsHCPaResponsibleHCP = "isHCPaResponsibleHCP";
 		public static final String IsALocalConsultant = "isALocalConsultant";
 		public static final String IsAResponsibleEDClinician = "isAResponsibleEDClinician";
+		public static final String ServiceFunction = "serviceFunction";
+		public static final String IsHCPaEndoscopist = "isHCPaEndoscopist";
 	}
 }
 

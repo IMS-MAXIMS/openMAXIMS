@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.core.vo.domain;
@@ -62,6 +67,20 @@ public class ProcedureLiteVoAssembler
 		valueObjectDest.setTCILagTime(valueObjectSrc.getTCILagTime());
 		// LOS
 		valueObjectDest.setLOS(valueObjectSrc.getLOS());
+		// isLateralityApplicable
+		valueObjectDest.setIsLateralityApplicable(valueObjectSrc.getIsLateralityApplicable());
+		// isBilateralListingApplicable
+		valueObjectDest.setIsBilateralListingApplicable(valueObjectSrc.getIsBilateralListingApplicable());
+		// DefaultAnaestheticType
+		valueObjectDest.setDefaultAnaestheticType(valueObjectSrc.getDefaultAnaestheticType());
+		// GenderSpecific
+		valueObjectDest.setGenderSpecific(valueObjectSrc.getGenderSpecific());
+		// isEndoscopy
+		valueObjectDest.setIsEndoscopy(valueObjectSrc.getIsEndoscopy());
+		// EndoscopyType
+		valueObjectDest.setEndoscopyType(valueObjectSrc.getEndoscopyType());
+		// MedicalWL
+		valueObjectDest.setMedicalWL(valueObjectSrc.getMedicalWL());
 	 	return valueObjectDest;
 	 }
 
@@ -398,6 +417,122 @@ public class ProcedureLiteVoAssembler
 		valueObject.setTCILagTime(domainObject.getTCILagTime());
 		// LOS
 		valueObject.setLOS(domainObject.getLOS());
+		// isLateralityApplicable
+		valueObject.setIsLateralityApplicable( domainObject.isIsLateralityApplicable() );
+		// isBilateralListingApplicable
+		valueObject.setIsBilateralListingApplicable( domainObject.isIsBilateralListingApplicable() );
+		// DefaultAnaestheticType
+		ims.domain.lookups.LookupInstance instance9 = domainObject.getDefaultAnaestheticType();
+		if ( null != instance9 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance9.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance9.getImage().getImageId(), instance9.getImage().getImagePath());
+			}
+			color = instance9.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.clinical.vo.lookups.AnaestheticType voLookup9 = new ims.clinical.vo.lookups.AnaestheticType(instance9.getId(),instance9.getText(), instance9.isActive(), null, img, color);
+			ims.clinical.vo.lookups.AnaestheticType parentVoLookup9 = voLookup9;
+			ims.domain.lookups.LookupInstance parent9 = instance9.getParent();
+			while (parent9 != null)
+			{
+				if (parent9.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent9.getImage().getImageId(), parent9.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent9.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup9.setParent(new ims.clinical.vo.lookups.AnaestheticType(parent9.getId(),parent9.getText(), parent9.isActive(), null, img, color));
+				parentVoLookup9 = parentVoLookup9.getParent();
+								parent9 = parent9.getParent();
+			}			
+			valueObject.setDefaultAnaestheticType(voLookup9);
+		}
+				// GenderSpecific
+		ims.domain.lookups.LookupInstance instance10 = domainObject.getGenderSpecific();
+		if ( null != instance10 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance10.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance10.getImage().getImageId(), instance10.getImage().getImagePath());
+			}
+			color = instance10.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.admin.vo.lookups.GenderSpecific voLookup10 = new ims.admin.vo.lookups.GenderSpecific(instance10.getId(),instance10.getText(), instance10.isActive(), null, img, color);
+			ims.admin.vo.lookups.GenderSpecific parentVoLookup10 = voLookup10;
+			ims.domain.lookups.LookupInstance parent10 = instance10.getParent();
+			while (parent10 != null)
+			{
+				if (parent10.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent10.getImage().getImageId(), parent10.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent10.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup10.setParent(new ims.admin.vo.lookups.GenderSpecific(parent10.getId(),parent10.getText(), parent10.isActive(), null, img, color));
+				parentVoLookup10 = parentVoLookup10.getParent();
+								parent10 = parent10.getParent();
+			}			
+			valueObject.setGenderSpecific(voLookup10);
+		}
+				// isEndoscopy
+		valueObject.setIsEndoscopy( domainObject.isIsEndoscopy() );
+		// EndoscopyType
+		ims.domain.lookups.LookupInstance instance12 = domainObject.getEndoscopyType();
+		if ( null != instance12 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance12.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance12.getImage().getImageId(), instance12.getImage().getImagePath());
+			}
+			color = instance12.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.ProcedureEndoscopyType voLookup12 = new ims.core.vo.lookups.ProcedureEndoscopyType(instance12.getId(),instance12.getText(), instance12.isActive(), null, img, color);
+			ims.core.vo.lookups.ProcedureEndoscopyType parentVoLookup12 = voLookup12;
+			ims.domain.lookups.LookupInstance parent12 = instance12.getParent();
+			while (parent12 != null)
+			{
+				if (parent12.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent12.getImage().getImageId(), parent12.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent12.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup12.setParent(new ims.core.vo.lookups.ProcedureEndoscopyType(parent12.getId(),parent12.getText(), parent12.isActive(), null, img, color));
+				parentVoLookup12 = parentVoLookup12.getParent();
+								parent12 = parent12.getParent();
+			}			
+			valueObject.setEndoscopyType(voLookup12);
+		}
+				// MedicalWL
+		valueObject.setMedicalWL( domainObject.isMedicalWL() );
  		return valueObject;
 	 }
 
@@ -466,6 +601,34 @@ public class ProcedureLiteVoAssembler
 		domainObject.setDurationInMins(valueObject.getDurationInMins());
 		domainObject.setTCILagTime(valueObject.getTCILagTime());
 		domainObject.setLOS(valueObject.getLOS());
+		domainObject.setIsLateralityApplicable(valueObject.getIsLateralityApplicable());
+		domainObject.setIsBilateralListingApplicable(valueObject.getIsBilateralListingApplicable());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value9 = null;
+		if ( null != valueObject.getDefaultAnaestheticType() ) 
+		{
+			value9 =
+				domainFactory.getLookupInstance(valueObject.getDefaultAnaestheticType().getID());
+		}
+		domainObject.setDefaultAnaestheticType(value9);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value10 = null;
+		if ( null != valueObject.getGenderSpecific() ) 
+		{
+			value10 =
+				domainFactory.getLookupInstance(valueObject.getGenderSpecific().getID());
+		}
+		domainObject.setGenderSpecific(value10);
+		domainObject.setIsEndoscopy(valueObject.getIsEndoscopy());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value12 = null;
+		if ( null != valueObject.getEndoscopyType() ) 
+		{
+			value12 =
+				domainFactory.getLookupInstance(valueObject.getEndoscopyType().getID());
+		}
+		domainObject.setEndoscopyType(value12);
+		domainObject.setMedicalWL(valueObject.getMedicalWL());
 
 		return domainObject;
 	}

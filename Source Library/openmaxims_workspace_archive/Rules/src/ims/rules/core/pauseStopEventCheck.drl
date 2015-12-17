@@ -1,0 +1,49 @@
+package ims.rules.userrules;
+
+import ims.pathways.domain.objects.PathwayClock;
+import ims.rules.engine.RulesRuntimeEngine;
+import ims.domain.DomainFactory;
+import java.util.HashMap;
+
+global RulesRuntimeEngine engine;
+global DomainFactory factory;
+global HashMap prevState;
+
+
+
+				 
+function boolean pauseStopEventCheck(ims.rules.engine.RulesRuntimeEngine engine, ims.domain.DomainFactory factory, java.util.HashMap prevState, ims.pathways.domain.objects.PathwayClock entity)
+{
+	  
+		// Don't continue if this is not the pathwayEntity rule we are looking for
+		if (engine.getPathwayEntitySpecificRuleName() == null || !engine.getPathwayEntitySpecificRuleName().equals("pauseStopEventCheck.drl"))
+		{
+			return false;
+		}
+		
+		// Set this as the rule that is executed for checking within the interceptor
+		engine.setLastRuleName("pauseStopEventCheck.drl");
+  
+		// If the pauseStop is not null, but it was previously null - i.e. only set now
+	    if (entity.getId() != null && prevState != null && entity.getCurrentPause() != null && entity.getCurrentPause().getPauseStop() != null)
+	    {
+	     	if (prevState.get("currentPause") == null || ((ims.pathways.domain.objects.PauseDetails)prevState.get("currentPause")).getPauseStop() == null)
+	    	{
+   		    	engine.setLastRuleResult(entity.getId());
+   		    	return true;
+   		    }
+	    }
+
+   	    engine.setLastRuleResult(0);
+	   return false; 
+}
+
+rule "pauseStopEventCheck"
+no-loop true
+salience 0
+when
+	entity : ims.pathways.domain.objects.PathwayClock();
+	eval(pauseStopEventCheck(engine, factory, prevState, entity));
+then
+	engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Rule 'pauseStopEventCheck' Pause Stop created.");
+end

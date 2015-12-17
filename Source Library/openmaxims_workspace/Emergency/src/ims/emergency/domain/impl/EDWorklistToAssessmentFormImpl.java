@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -32,6 +37,7 @@ import ims.core.vo.PatientShort;
 import ims.core.vo.domain.HcpLiteVoAssembler;
 import ims.core.vo.domain.PatientShortAssembler;
 import ims.core.vo.lookups.HcpDisType;
+import ims.core.vo.lookups.PatIdType;
 import ims.core.vo.lookups.PreActiveActiveInactiveStatus;
 import ims.domain.DomainFactory;
 import ims.emergency.configuration.domain.objects.AttendanceKPIConfig;
@@ -49,8 +55,10 @@ import ims.emergency.vo.domain.TrackingAreaShortVoAssembler;
 import ims.emergency.vo.domain.TrackingForClinicianWorklistAndTriageVoAssembler;
 import ims.emergency.vo.domain.TrackingForDisplayClinicianAndTriageWorklistVoAssembler;
 import ims.emergency.vo.lookups.TrackingStatus;
+import ims.emergency.vo.lookups.TriagePriority;
 import ims.framework.exceptions.CodingRuntimeException;
 import ims.framework.interfaces.ILocation;
+import ims.ocrr.vo.lookups.Category;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,11 +67,10 @@ public class EDWorklistToAssessmentFormImpl extends BaseEDWorklistToAssessmentFo
 {
 
 	private static final long serialVersionUID = 1L;
-
+	
 	//WDEV-18001
-	public ims.emergency.vo.TrackingForDisplayClinicianAndTriageWorklistVoCollection listPatientWaitings(ims.emergency.vo.lookups.TrackingStatus status, ILocation edLocation, HcpRefVo allocatedHcp)
+	public ims.emergency.vo.TrackingForDisplayClinicianAndTriageWorklistVoCollection listPatientWaitings(TrackingStatus status, ILocation edLocation, HcpRefVo allocatedHcp, TrackingAreaShortVo trackingArea, TriagePriority triagePriority)
 	{
-
 
 		DomainFactory factory = getDomainFactory();
 		
@@ -94,6 +101,37 @@ public class EDWorklistToAssessmentFormImpl extends BaseEDWorklistToAssessmentFo
 			hqlConditions.append(" s.id = :statusId ");
 			paramNames.add("statusId");
 			paramValues.add(status.getID());
+			and = " and ";
+		}
+		
+		if(triagePriority != null)
+		{
+			hqlJoins.append(" left join tr.triageDetails as triageDet left join triageDet.currentTriagePriority as triagePriority ");
+			
+			hqlConditions.append(and);
+			hqlConditions.append(" triagePriority.id = :priorityId ");
+			paramNames.add("priorityId");
+			paramValues.add(triagePriority.getID());
+			and = " and ";
+		}
+		
+		if(trackingArea != null)
+		{
+			hqlJoins.append(" left join tr.currentArea as ta ");
+			hqlConditions.append(and);
+			
+			if (trackingArea.getIsOverallViewIsNotNull() && trackingArea.getIsOverallView().equals(true))
+			{
+				hqlConditions.append(" ta.id is not null ");
+
+			}
+			else
+			{
+				hqlConditions.append(" ta.id = :TrackingAreaId ");
+				paramNames.add("TrackingAreaId");
+				paramValues.add(trackingArea.getID_TrackingArea());
+			}
+			
 			and = " and ";
 		}
 		
@@ -233,7 +271,7 @@ public class EDWorklistToAssessmentFormImpl extends BaseEDWorklistToAssessmentFo
 
 
 	//wdev-17326  //WDEV-18001
-	public TrackingForDisplayClinicianAndTriageWorklistVoCollection listTrackingPatients( TrackingAreaShortVo trackingarea, TrackingStatus trackingStatus,ILocation edLoc) 
+	public TrackingForDisplayClinicianAndTriageWorklistVoCollection listTrackingPatients(HcpRefVo hcp, TrackingAreaShortVo trackingarea, TrackingStatus trackingStatus, ILocation edLoc)
 	{
 	    DomainFactory factory = getDomainFactory();
 		
@@ -244,16 +282,42 @@ public class EDWorklistToAssessmentFormImpl extends BaseEDWorklistToAssessmentFo
 				"(select count (allergy.id) from PatientAllergy as allergy where ( allergy.isRIE = false or allergy.isRIE is null ) " +
 				"and allergy.isCurrentlyActiveAllergy = true and allergy.patient.id = p.id) " +
 				"from Tracking as tr left join tr.patient as p left join tr.attendance as att left join tr.currentArea as ta");
-		StringBuilder hqlConditions = new StringBuilder(" where ");
+		StringBuilder hqlConditions = new StringBuilder(" WHERE ");
 		
 		ArrayList<String> paramNames = new ArrayList<String>();
 		ArrayList<Object> paramValues = new ArrayList<Object>();
 		
 		//WDEV-18293
 		String and = "";
-
-		if( trackingarea != null )
+		
+		if (hcp != null && hcp.getID_Hcp() != null)
 		{
+			hqlConditions.append(and);
+			
+			HcpLiteVo tempHcpLiteVo = HcpLiteVoAssembler.create((Hcp) factory.getDomainObject(Hcp.class, hcp.getID_Hcp()));
+			
+			if (tempHcpLiteVo!=null && HcpDisType.MEDICAL.equals(tempHcpLiteVo.getHcpType()))
+			{
+				hqlJoins.append(" LEFT JOIN tr.seenBy AS seenByHCP LEFT JOIN seenByHCP.allocatedMedic AS medic ");
+    			hqlConditions.append(" medic.id = :HcpId " );
+    			paramNames.add("HcpId");
+    			paramValues.add(hcp.getID_Hcp());
+			}
+			else if (tempHcpLiteVo!=null && HcpDisType.NURSING.equals(tempHcpLiteVo.getHcpType()))
+			{
+				hqlJoins.append(" LEFT JOIN tr.seenBy AS seenByHCP LEFT JOIN seenByHCP.allocatedNurse AS nurse ");
+    			hqlConditions.append(" nurse.id = :HcpId ");
+    			paramNames.add("HcpId");
+    			paramValues.add(hcp.getID_Hcp());
+			}
+			
+			and = " AND ";
+		}
+
+		if (trackingarea != null )
+		{
+			hqlConditions.append(and);
+			
 			if (trackingarea.getIsOverallViewIsNotNull() && trackingarea.getIsOverallView().equals(true))
 			{
 				hqlConditions.append(" ta.id is not null ");
@@ -437,5 +501,10 @@ public class EDWorklistToAssessmentFormImpl extends BaseEDWorklistToAssessmentFo
 		return AttendanceKPIConfigForClinicianWorklistVoAssembler.create((AttendanceKPIConfig) list.get(0));
 	}*/
 
-	
+	//WDEV-23527
+	public PatIdType getPrimaryIDFromProviderSystem(Category category)
+	{
+		ims.emergency.domain.Tracking impl = (ims.emergency.domain.Tracking )getDomainImpl(TrackingImpl.class);
+		return impl.getPrimaryIDFromProviderSystem(category);
+	}
 }

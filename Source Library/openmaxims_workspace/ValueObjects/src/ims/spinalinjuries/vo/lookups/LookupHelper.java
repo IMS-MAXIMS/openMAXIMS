@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,15 +15,20 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 
 /*
  * This code was generated.
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:38
+ * Generated: 13/10/2015, 13:23
  */
 package ims.spinalinjuries.vo.lookups;
 
@@ -35,6 +40,19 @@ import ims.domain.lookups.LookupService;
  * 
  */
 public final class LookupHelper {
+	public static PowerchairSkillAssessedLevelCollection getPowerchairSkillAssessedLevel(LookupService lookupService) {
+		PowerchairSkillAssessedLevelCollection collection =
+			(PowerchairSkillAssessedLevelCollection) lookupService.getLookupCollection(PowerchairSkillAssessedLevel.TYPE_ID, 
+				PowerchairSkillAssessedLevelCollection.class, PowerchairSkillAssessedLevel.class);
+		return collection;
+	}
+
+	public static PowerchairSkillAssessedLevel getPowerchairSkillAssessedLevelInstance(LookupService lookupService, int id) 
+	{
+		return (PowerchairSkillAssessedLevel)lookupService.getLookupInstance(PowerchairSkillAssessedLevel.class, PowerchairSkillAssessedLevel.TYPE_ID, id);
+	}
+	
+
 	public static UltrasoundFreqCollection getUltrasoundFreq(LookupService lookupService) {
 		UltrasoundFreqCollection collection =
 			(UltrasoundFreqCollection) lookupService.getLookupCollection(UltrasoundFreq.TYPE_ID, 
@@ -204,6 +222,19 @@ public final class LookupHelper {
 	}
 	
 
+	public static RehabTechniqueCollection getRehabTechnique(LookupService lookupService) {
+		RehabTechniqueCollection collection =
+			(RehabTechniqueCollection) lookupService.getLookupCollection(RehabTechnique.TYPE_ID, 
+				RehabTechniqueCollection.class, RehabTechnique.class);
+		return collection;
+	}
+
+	public static RehabTechnique getRehabTechniqueInstance(LookupService lookupService, int id) 
+	{
+		return (RehabTechnique)lookupService.getLookupInstance(RehabTechnique.class, RehabTechnique.TYPE_ID, id);
+	}
+	
+
 	public static HydrotherapyEquipmentCollection getHydrotherapyEquipment(LookupService lookupService) {
 		HydrotherapyEquipmentCollection collection =
 			(HydrotherapyEquipmentCollection) lookupService.getLookupCollection(HydrotherapyEquipment.TYPE_ID, 
@@ -253,19 +284,6 @@ public final class LookupHelper {
 	public static HydrotherapyLevelOfAssistance getHydrotherapyLevelOfAssistanceInstance(LookupService lookupService, int id) 
 	{
 		return (HydrotherapyLevelOfAssistance)lookupService.getLookupInstance(HydrotherapyLevelOfAssistance.class, HydrotherapyLevelOfAssistance.TYPE_ID, id);
-	}
-	
-
-	public static ComplementaryTherapyCollection getComplementaryTherapy(LookupService lookupService) {
-		ComplementaryTherapyCollection collection =
-			(ComplementaryTherapyCollection) lookupService.getLookupCollection(ComplementaryTherapy.TYPE_ID, 
-				ComplementaryTherapyCollection.class, ComplementaryTherapy.class);
-		return collection;
-	}
-
-	public static ComplementaryTherapy getComplementaryTherapyInstance(LookupService lookupService, int id) 
-	{
-		return (ComplementaryTherapy)lookupService.getLookupInstance(ComplementaryTherapy.class, ComplementaryTherapy.TYPE_ID, id);
 	}
 	
 
@@ -1465,19 +1483,6 @@ public final class LookupHelper {
 	}
 	
 
-	public static PowerchairSkillAssessedLevelCollection getPowerchairSkillAssessedLevel(LookupService lookupService) {
-		PowerchairSkillAssessedLevelCollection collection =
-			(PowerchairSkillAssessedLevelCollection) lookupService.getLookupCollection(PowerchairSkillAssessedLevel.TYPE_ID, 
-				PowerchairSkillAssessedLevelCollection.class, PowerchairSkillAssessedLevel.class);
-		return collection;
-	}
-
-	public static PowerchairSkillAssessedLevel getPowerchairSkillAssessedLevelInstance(LookupService lookupService, int id) 
-	{
-		return (PowerchairSkillAssessedLevel)lookupService.getLookupInstance(PowerchairSkillAssessedLevel.class, PowerchairSkillAssessedLevel.TYPE_ID, id);
-	}
-	
-
 	public static PowerchairSkillCollection getPowerchairSkill(LookupService lookupService) {
 		PowerchairSkillCollection collection =
 			(PowerchairSkillCollection) lookupService.getLookupCollection(PowerchairSkill.TYPE_ID, 
@@ -2024,19 +2029,6 @@ public final class LookupHelper {
 	}
 	
 
-	public static RehabTechniqueCollection getRehabTechnique(LookupService lookupService) {
-		RehabTechniqueCollection collection =
-			(RehabTechniqueCollection) lookupService.getLookupCollection(RehabTechnique.TYPE_ID, 
-				RehabTechniqueCollection.class, RehabTechnique.class);
-		return collection;
-	}
-
-	public static RehabTechnique getRehabTechniqueInstance(LookupService lookupService, int id) 
-	{
-		return (RehabTechnique)lookupService.getLookupInstance(RehabTechnique.class, RehabTechnique.TYPE_ID, id);
-	}
-	
-
 	public static RehabEquipmentCollection getRehabEquipment(LookupService lookupService) {
 		RehabEquipmentCollection collection =
 			(RehabEquipmentCollection) lookupService.getLookupCollection(RehabEquipment.TYPE_ID, 
@@ -2073,6 +2065,19 @@ public final class LookupHelper {
 	public static HydrotherapyTransferOut getHydrotherapyTransferOutInstance(LookupService lookupService, int id) 
 	{
 		return (HydrotherapyTransferOut)lookupService.getLookupInstance(HydrotherapyTransferOut.class, HydrotherapyTransferOut.TYPE_ID, id);
+	}
+	
+
+	public static ComplementaryTherapyCollection getComplementaryTherapy(LookupService lookupService) {
+		ComplementaryTherapyCollection collection =
+			(ComplementaryTherapyCollection) lookupService.getLookupCollection(ComplementaryTherapy.TYPE_ID, 
+				ComplementaryTherapyCollection.class, ComplementaryTherapy.class);
+		return collection;
+	}
+
+	public static ComplementaryTherapy getComplementaryTherapyInstance(LookupService lookupService, int id) 
+	{
+		return (ComplementaryTherapy)lookupService.getLookupInstance(ComplementaryTherapy.class, ComplementaryTherapy.TYPE_ID, id);
 	}
 	
 

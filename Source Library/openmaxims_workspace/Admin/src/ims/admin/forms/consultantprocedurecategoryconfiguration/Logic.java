@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -441,6 +446,31 @@ public class Logic extends BaseLogic
 		}
 
 	}
+	
+	//WDEV-20498
+	private int remainingCategory(DynamicGridRow rowCons)
+	{
+		if (rowCons == null || rowCons.getRows() == null)
+			return 0;
+		
+		ProcedureCategoryCollection allProcCat = LookupHelper.getProcedureCategory(domain.getLookupService());
+		
+		if (allProcCat == null || allProcCat.size() == 0)
+			return 0;
+
+		for (int i=0 ; i<rowCons.getRows().size(); i++)
+		{
+			DynamicGridColumn mainCol = form.dyngrdMain().getColumns().getByIdentifier(MAIN_COLUMN);
+			DynamicGridCell dynamicGridCell = rowCons.getRows().get(i).getCells().get(mainCol);
+			
+			if (dynamicGridCell.getValue() instanceof ProcedureCategory)
+			{
+				allProcCat.remove((ProcedureCategory) dynamicGridCell.getValue());
+			}
+		}
+
+		return allProcCat.size();
+	}
 
 	private void rebindAllGridComboBoxes(DynamicGridRow rowCons)
 	{
@@ -540,6 +570,10 @@ public class Logic extends BaseLogic
 			if (!rows.get(i).equals(consultantParent))
 			{
 				setNotSelectable(rows.get(i));
+			}
+			else
+			{
+				rows.get(i).setReadOnly(false); //WDEV-20198
 			}
 
 		}
@@ -709,6 +743,14 @@ public class Logic extends BaseLogic
 		DynamicGridRow parent = form.dyngrdMain().getSelectedRow();
 		if (parent.getValue() instanceof CategoryProceduresVo)
 			parent = parent.getParent();
+		
+		//WDEV-20498
+		if(remainingCategory(parent) == 0)
+		{
+			engine.showMessage("No Categories available.", "Warning", MessageButtons.OK, MessageIcon.WARNING);
+			return;
+		}
+		
 		DynamicGridRow newRow = addCategoryToGrid(parent, null);
 		newRow.setValue(new CategoryProceduresVo());
 		form.dyngrdMain().setSelectedRow(newRow);

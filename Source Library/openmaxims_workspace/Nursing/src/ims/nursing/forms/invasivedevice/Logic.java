@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -44,12 +49,14 @@ import ims.framework.enumerations.DynamicCellType;
 import ims.framework.enumerations.FormMode;
 import ims.framework.exceptions.PresentationLogicException;
 import ims.framework.utils.DateTime;
+import ims.nursing.vo.InvasiveDeviceSearchCriteriaVo;
 import ims.nursing.vo.PatientInvasiveDeviceShortVo;
 import ims.nursing.vo.PatientInvasiveDeviceShortVoCollection;
 import ims.nursing.vo.PatientInvasiveDeviceVipVo;
 import ims.nursing.vo.PatientInvasiveDeviceVipVoCollection;
 import ims.nursing.vo.PatientInvasiveDeviceVo;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeMap;
@@ -71,7 +78,35 @@ public class Logic extends BaseLogic
 	protected void onFormOpen() throws ims.framework.exceptions.PresentationLogicException
 	{
 		initialize();
+		
+		//WDEV-19389 --- start
+		if (!(form.getGlobalContext().Core.getCurrentCareContextIsNotNull() && form.getGlobalContext().Nursing.getInvasiveDeviceSearchCriteriaIsNotNull() && form.getGlobalContext().Nursing.getInvasiveDeviceSearchCriteria().getCareContextIsNotNull() && form.getGlobalContext().Core.getCurrentCareContext().equals(form.getGlobalContext().Nursing.getInvasiveDeviceSearchCriteria().getCareContext())))
+			form.getGlobalContext().Nursing.setInvasiveDeviceSearchCriteria(null);
+		
+		if(form.getGlobalContext().Nursing.getInvasiveDeviceSearchCriteriaIsNotNull())
+		{
+			setSearchCriteria(form.getGlobalContext().Nursing.getInvasiveDeviceSearchCriteria());
+			onCmbFilterValueChanged();
+		}	
+		else
 			open();
+		//WDEV-19389 --- end
+	}
+	
+	private InvasiveDeviceSearchCriteriaVo getSearchCriteria()
+	{
+		InvasiveDeviceSearchCriteriaVo searchCriteria = new InvasiveDeviceSearchCriteriaVo();
+		
+		searchCriteria.setFilter(form.cmbFilter().getValue());
+		searchCriteria.setCareContext(form.getGlobalContext().Core.getCurrentCareContext());
+		
+		return searchCriteria;
+	}
+	
+	
+	private void setSearchCriteria(InvasiveDeviceSearchCriteriaVo invasiveDeviceSearchCriteriaVo)
+	{
+		form.cmbFilter().setValue(invasiveDeviceSearchCriteriaVo.getFilter());	
 	}
 	
 	private void initialize() 
@@ -101,6 +136,16 @@ public class Logic extends BaseLogic
 			{
 				initialiseCurrentDynamicGrid();
 			}
+		}
+		try //WDEV-19962
+		{
+			form.ctnDetail().lyrDetails().tabDevice().dtimTargetRemDate().setMaxValue(new DateTime("290001010000"));
+			form.ctnDetail().lyrDetails().tabDevice().dtimRemDate().setMaxValue(new DateTime("290001010000"));
+		}
+		catch (ParseException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
@@ -438,6 +483,9 @@ public class Logic extends BaseLogic
 		form.getLocalContext().setEditedVipRecord(null);
 		
 		setContextMenuState();
+		
+		form.getGlobalContext().Nursing.setInvasiveDeviceSearchCriteria(getSearchCriteria());//WDEV-19389 
+		
 		open();
 	}
 	
@@ -554,14 +602,20 @@ public class Logic extends BaseLogic
 		}
 		record.setVIPScore(vipCollection);
 		
-		String[] uiErrors = getUiErrors();
-		String[] errors = record.validate(uiErrors);
-		
+		String[] errors = getUiErrors();
 		errors = removeDuplicateErrors(errors);
 		
 		if(errors != null && errors.length > 0)
 		{
 			engine.showErrors(errors);
+			return false;
+		}
+		
+		errors = record.validate(errors);
+		if(errors != null && errors.length > 0)
+		{
+			engine.showErrors(errors);
+			
 			return false;
 		}
 		
@@ -659,9 +713,8 @@ public class Logic extends BaseLogic
 			record.setVIPScore(vipCollection);
 		}	
 				
-		String[] uiErrors = getUiErrors();
-		String[] errors = record.validate(uiErrors);
-	
+		String[] errors = getUiErrors();
+		
 		if(errors != null && errors.length > 0)
 		{
 			if (form.ctnDetail().lyrDetails().tabDevice().isHeaderVisible() == true && 
@@ -693,6 +746,14 @@ public class Logic extends BaseLogic
 			}
 				
 			errors = removeDuplicateErrors(errors);
+			engine.showErrors(errors);
+			
+			return false;
+		}
+		
+		errors = record.validate(errors);
+		if(errors != null && errors.length > 0)
+		{
 			engine.showErrors(errors);
 			
 			return false;
@@ -791,9 +852,41 @@ public class Logic extends BaseLogic
 	private String[] getUiErrors() 
 	{
 		ArrayList errors = new ArrayList();
+		
+		if (form.ctnDetail().lyrDetails().tabDevice().cmbDevice().getValue() == null)
+		{
+			errors.add("Device is mandatory");
+		}
+		
+		String insertHcpCCErrors = form.ctnDetail().lyrDetails().tabDevice().customInsertedHCP().getErrors();
+		
+		if(insertHcpCCErrors != null && insertHcpCCErrors.length() > 0)
+		{
+			errors.add(insertHcpCCErrors);
+		}
+		
+		if (form.ctnDetail().lyrDetails().tabDevice().dtimTargetRemDate().getValue() == null)
+		{
+			errors.add("Target Removal Date is mandatory");
+		}
+		
+		String authoringHcpCCErrors = form.ctnDetail().lyrDetails().tabDevice().customAuthoringHCP().getErrors();
+		
+		if(authoringHcpCCErrors != null && authoringHcpCCErrors.length() > 0)
+		{
+			errors.add(authoringHcpCCErrors);
+		}
+		
 		if (form.ctnDetail().lyrDetails().tabDevice().isHeaderVisible() == true && 
 				form.ctnDetail().lyrDetails().tabVIP().isHeaderVisible() == true)
 		{
+			if (form.ctnDetail().lyrDetails().tabDevice().cmbDevice().getValue().getHasSiteIsNotNull() && 
+					form.ctnDetail().lyrDetails().tabDevice().cmbDevice().getValue().getHasSite().equals(Boolean.TRUE) &&
+					form.ctnDetail().lyrDetails().tabDevice().txtSite().getValue() == null)
+			{
+				errors.add("Site is mandatory");
+			}
+			
 			if(form.ctnDetail().lyrDetails().tabVIP().cmbVipSore().getValue() == null)
 			{
 				errors.add("VIP Score is mandatory");
@@ -820,13 +913,6 @@ public class Logic extends BaseLogic
 				{
 					errors.add("Send for culture is mandatory");
 				}
-			}
-			
-			if (form.ctnDetail().lyrDetails().tabDevice().cmbDevice().getValue().getHasSiteIsNotNull() && 
-					form.ctnDetail().lyrDetails().tabDevice().cmbDevice().getValue().getHasSite().equals(Boolean.TRUE) &&
-					form.ctnDetail().lyrDetails().tabDevice().txtSite().getValue() == null)
-			{
-				errors.add("Site is mandatory");
 			}
 			
 			if (form.ctnDetail().lyrDetails().tabDevice().customAuthoringHCP().getValue() != null)
@@ -1687,33 +1773,37 @@ public class Logic extends BaseLogic
 			else
 			{
 				InvasiveDeviceTypeVo voInvasiveDeviceConfigType = (InvasiveDeviceTypeVo) form.ctnDetail().lyrDetails().tabDevice().cmbType().getValue();
-				Integer duration = voInvasiveDeviceConfigType.getDurationInt();
-				TimeUnitsSecondsToMonths durationUnit = voInvasiveDeviceConfigType.getDurationUnit();
-				if (durationUnit.equals(TimeUnitsSecondsToMonths.DAYS))
+				
+				if(voInvasiveDeviceConfigType != null)
 				{
-					currentDate.addDays(duration.intValue());
+    				Integer duration = voInvasiveDeviceConfigType.getDurationInt();
+    				TimeUnitsSecondsToMonths durationUnit = voInvasiveDeviceConfigType.getDurationUnit();
+    				if (durationUnit.equals(TimeUnitsSecondsToMonths.DAYS))
+    				{
+    					currentDate.addDays(duration.intValue());
+    				}
+    				if (durationUnit.equals(TimeUnitsSecondsToMonths.HOURS))
+    				{
+    					currentDate.addHours(duration.intValue());
+    				}
+    				if (durationUnit.equals(TimeUnitsSecondsToMonths.MINUTES))
+    				{
+    					currentDate.addMinutes(duration.intValue());
+    				}
+    				if (durationUnit.equals(TimeUnitsSecondsToMonths.MONTHS))
+    				{
+    					currentDate.addMonth(duration.intValue());
+    				}
+    				if (durationUnit.equals(TimeUnitsSecondsToMonths.SECONDS))
+    				{
+    					currentDate.addSeconds(duration.intValue());
+    				}
+    				if (durationUnit.equals(TimeUnitsSecondsToMonths.WEEKS))
+    				{
+    					currentDate.addDays(duration.intValue()*7);
+    				}
+    				form.ctnDetail().lyrDetails().tabDevice().dtimTargetRemDate().setValue(currentDate);
 				}
-				if (durationUnit.equals(TimeUnitsSecondsToMonths.HOURS))
-				{
-					currentDate.addHours(duration.intValue());
-				}
-				if (durationUnit.equals(TimeUnitsSecondsToMonths.MINUTES))
-				{
-					currentDate.addMinutes(duration.intValue());
-				}
-				if (durationUnit.equals(TimeUnitsSecondsToMonths.MONTHS))
-				{
-					currentDate.addMonth(duration.intValue());
-				}
-				if (durationUnit.equals(TimeUnitsSecondsToMonths.SECONDS))
-				{
-					currentDate.addSeconds(duration.intValue());
-				}
-				if (durationUnit.equals(TimeUnitsSecondsToMonths.WEEKS))
-				{
-					currentDate.addDays(duration.intValue()*7);
-				}
-				form.ctnDetail().lyrDetails().tabDevice().dtimTargetRemDate().setValue(currentDate);
 			}
 		}
 	}

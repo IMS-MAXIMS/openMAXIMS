@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -31,7 +36,6 @@ import ims.clinical.vo.DementiaVo;
 import ims.clinical.vo.DementiaWorklistSearchCriteriaVo;
 import ims.clinical.vo.DementialManualClassAssemblyVo;
 import ims.clinical.vo.DementialManualClassAssemblyVoCollection;
-import ims.clinical.vo.PatientForDementiaVo;
 import ims.clinical.vo.enums.DementiaWorklistOpenFormModeEnum;
 import ims.configuration.AppRight;
 import ims.configuration.gen.ConfigFlag;
@@ -68,8 +72,13 @@ import ims.framework.utils.Time;
 
 import java.util.Comparator;
 
+import com.ims.query.builder.client.QueryBuilderClient;
+import com.ims.query.builder.client.SeedValue;
+import com.ims.query.builder.client.exceptions.QueryBuilderClientException;
+
 public class Logic extends BaseLogic
 {
+	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 1L;
 
 	private static final int COL_IDENTIFIER = 0;
@@ -479,15 +488,18 @@ public class Logic extends BaseLogic
 			}
 			else
 			{	
-				DementiaColourConfigVoCollection collColourConfig = form.getGlobalContext().Admin.getDementiaConfiguration().getColourConfig();
-				for (int i=0;i<collColourConfig.size();i++)
-				{
-					DementiaColourConfigVo colourConfig = collColourConfig.get(i);
-					if (hoursToBreach>=colourConfig.getFromHours() && hoursToBreach<=colourConfig.getToHours())
+				if (form.getGlobalContext().Admin.getDementiaConfiguration() != null) //WDEV-18945 - null check
+				{	
+					DementiaColourConfigVoCollection collColourConfig = form.getGlobalContext().Admin.getDementiaConfiguration().getColourConfig();
+					for (int i=0;i<collColourConfig.size();i++)
 					{
-						newRow.setBackColor(colourConfig.getWorklistEntryColour());
+						DementiaColourConfigVo colourConfig = collColourConfig.get(i);
+						if (hoursToBreach>=colourConfig.getFromHours() && hoursToBreach<=colourConfig.getToHours())
+						{
+							newRow.setBackColor(colourConfig.getWorklistEntryColour());
+						}
 					}
-				}							
+				}
 			}
 		}
 		
@@ -495,7 +507,7 @@ public class Logic extends BaseLogic
 		{
 			DynamicGridCell cellStatus = newRow.getCells().newCell(getColumnDynGrid(COL_ICON), DynamicCellType.IMAGE);
 			cellStatus.setValue(form.getImages().Clinical.DeleriumNew);
-			cellStatus.setTooltip("Delirium Confirmed");
+			cellStatus.setTooltip("Delirium");//WDEV-21318
 			cellStatus.getColumn().setAlignment(Alignment.LEFT);
 		}
 		else if (dementiaVo.getDementiaConfirmedIsNotNull() && dementiaVo.getDementiaConfirmed())
@@ -505,12 +517,31 @@ public class Logic extends BaseLogic
 			cellStatus.setTooltip("Dementia Confirmed");
 			cellStatus.getColumn().setAlignment(Alignment.LEFT);
 		}
+		//WDEV-21318
+		/*
+		else if(DementiaWorklistStatus.FOR_REFERRAL.equals(dementiaVo.getCurrentStatus()) && form.getGlobalContext().Admin.getDementiaConfiguration() != null
+				&& dementiaVo.getAMTSScore() != null
+				&& form.getGlobalContext().Admin.getDementiaConfiguration().getAMTSThresholdScore() != null
+				&& dementiaVo.getAMTSScore() <= form.getGlobalContext().Admin.getDementiaConfiguration().getAMTSThresholdScore())
+		{
+			DynamicGridCell cellStatus = newRow.getCells().newCell(getColumnDynGrid(COL_ICON), DynamicCellType.IMAGE);
+			cellStatus.setValue(form.getImages().Clinical.SuspectedDementia);
+			cellStatus.setTooltip("Suspected Dementia");
+			cellStatus.getColumn().setAlignment(Alignment.LEFT);
+		}*/
 		
 		if (dementiaVo.getDischargeDateTime()==null && DementiaWorklistStatus.COMPLETED.equals(dementiaVo.getCurrentStatus()) 
 			&& dementiaVo.getDementiaConfirmedIsNotNull() && dementiaVo.getDementiaConfirmed())
 		{
 			newRow.setBackColor(Color.LightGray);
 		}
+		
+		//WDEV-18700
+		if (DementiaWorklistStatus.RECENTLY_COMPLETED.equals(dementiaVo.getCurrentStatus()) || DementiaWorklistStatus.RECENTLY_REFERRED.equals(dementiaVo.getCurrentStatus()))
+		{
+			newRow.setBackColor(form.getGlobalContext().Admin.getDementiaConfiguration().getRecentlyAssessed());
+		}
+
 		newRow.setValue(dementiaVo);
 
 	}
@@ -525,6 +556,7 @@ public class Logic extends BaseLogic
 		return (int)(((toDateInMillis - fromDateInMillis)/1000)/60);
 	}
 	
+	/*
 	private ims.core.vo.PatientId getDisplayID(PatientForDementiaVo patient)
 	{
 		String configFlagIDType = ims.configuration.ConfigFlag.UI.DISPLAY_PATID_TYPE.getValue();
@@ -544,6 +576,7 @@ public class Logic extends BaseLogic
 
 		return null;
 	}
+	*/
 
 	private DynamicGridColumn getColumnDynGrid(Integer identifier)
 	{
@@ -785,7 +818,7 @@ public class Logic extends BaseLogic
 				engine.open(form.getForms().Clinical.DementiaAssessmentFormDialog, new Object[] { form.getLocalContext().getSelectedInstance(), DementiaWorklistOpenFormModeEnum.EDIT });
 				break;	
 			case GenForm.ContextMenus.ClinicalNamespace.DementiaWorklistMenu.RECORD_FOLLOWUP_AMTS:// record Step2
-				engine.open(form.getForms().Clinical.DementiaAssessmentFormDialog, new Object[] { form.getLocalContext().getSelectedInstance(), DementiaWorklistOpenFormModeEnum.FOLLOWUP_AMTS_EDIT });
+				engine.open(form.getForms().Clinical.DementiaAssessmentFormDialog, new Object[] { form.getLocalContext().getSelectedInstance(), DementiaWorklistOpenFormModeEnum.FOLLOWUP_AMTS_NEW });
 				break;
 			case GenForm.ContextMenus.ClinicalNamespace.DementiaWorklistMenu.CORRECT_CCOMPLETION_DATE_STEP1:
 				engine.open(form.getForms().Clinical.DementiaCorrectCompletionDateStep1Dialog, new Object[] { form.getLocalContext().getSelectedInstance() });
@@ -983,6 +1016,7 @@ public class Logic extends BaseLogic
 		//onImbSearchClick();
 	}
 	
+	@SuppressWarnings("rawtypes")
 	public class ConsultantComparator  implements Comparator
 	{
 		private int direction = 1;
@@ -1023,6 +1057,7 @@ public class Logic extends BaseLogic
 
 	}
 	
+	@SuppressWarnings("rawtypes")
 	public class DobComparator implements Comparator
 	{
 		private int direction = 1;
@@ -1062,6 +1097,7 @@ public class Logic extends BaseLogic
 	
 	}
 
+	@SuppressWarnings("rawtypes")
 	public class DischargeDateComparator implements Comparator
 	{
 		private int direction = 1;
@@ -1117,6 +1153,7 @@ public class Logic extends BaseLogic
 	}
 	
 
+	@SuppressWarnings("rawtypes")
 	public class HoursToBreachComparator implements Comparator
 	{
 		private int direction = 1;
@@ -1175,6 +1212,7 @@ public class Logic extends BaseLogic
 	
 	}
 	
+	@SuppressWarnings("rawtypes")
 	public class IconComparator implements Comparator
 	{
 		private int direction = 1;
@@ -1243,6 +1281,94 @@ public class Logic extends BaseLogic
 	protected void onChkDementiaConfirmedValueChanged() throws PresentationLogicException
 	{
 		form.chkDelirum().setValue(null);
+		
+	}
+
+	//wdev-18630
+	protected void onBtnPrintClick() throws PresentationLogicException 
+	{
+		String urlQueryServer = ConfigFlag.GEN.QUERY_SERVER_URL.getValue();
+		String urlReportServer = ConfigFlag.GEN.REPORT_SERVER_URL.getValue();
+
+		//we list all records from the grid
+		int rows = form.dyngrdPatients().getRows().size(); 
+		if(rows == 0)
+		{
+			engine.showMessage("There is no data to print !");
+			return;
+		}
+		/*
+		if( !isAtLeastOneSearchFieldCompleted() )		
+		{
+			engine.showMessage("Complete at least one search field. !");
+			return;
+		}
+		*/
+		
+		//we need a better way to do this
+		Object[] obj = domain.getSystemReportAndTemplate(new Integer(348));
+		
+		if(obj == null || obj.length < 2)
+		{
+			engine.showMessage("I could not get the report and template !");
+			return;
+		}
+		
+		if(obj[0] == null || obj[1] == null)
+		{
+			engine.showMessage("The report has not been deployed !");
+			return;
+		}
+		
+		QueryBuilderClient client = new QueryBuilderClient(urlQueryServer, engine.getSessionId());
+			
+		//we pass down the Dementia ID for each row from the grid
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < rows; i++)
+		{
+			DynamicGridRow row = form.dyngrdPatients().getRows().get(i);
+			DementialManualClassAssemblyVo dementiaVo = (DementialManualClassAssemblyVo) row.getValue();
+			
+			client.addSeed(new SeedValue("DID",  dementiaVo.getDementiaId(), Integer.class));
+			
+			if(i > 0)
+				sb.append(',');
+			
+			sb.append(dementiaVo.getDementiaId());
+		}
+		
+		//this is to keep the sort order like in the grid (in fact the report sorts the records by WARD first then tries to keep the same sort order like in the grid)
+		client.addSeed(new SeedValue("ORD",  sb.toString(), String.class));
+		
+		client.addSeed(new SeedValue("Hospital",  form.cmbHospital().getValue() != null ? form.cmbHospital().getValue().getID_Location().intValue() : null, Integer.class));		
+		client.addSeed(new SeedValue("Ward",  	  form.qmbWard().getValue() != null ? form.qmbWard().getValue().getID_Location().intValue():null, Integer.class));
+		client.addSeed(new SeedValue("Admission_Date_From",  	 form.dteFrom().getValue() != null ? form.dteFrom().getValue().getDate() : null, java.util.Date.class));
+		client.addSeed(new SeedValue("Admission_Date_To",  	  	 form.dteTo().getValue() != null ? form.dteTo().getValue().getDate() : null, java.util.Date.class));
+		client.addSeed(new SeedValue("Consultant",  form.ccConsultant().getValue() != null ? form.ccConsultant().getValue().getIMosId():null, Integer.class));
+		client.addSeed(new SeedValue("Specialty",  form.cmbSpecialty().getValue() != null ? form.cmbSpecialty().getValue().getID():null, Integer.class));
+		client.addSeed(new SeedValue("Worklist_Status",  form.cmbStatus().getValue() != null ? form.cmbStatus().getValue().getID():null, Integer.class));
+		client.addSeed(new SeedValue("Patient_Surname",  form.txtSurname().getValue(), String.class));
+		client.addSeed(new SeedValue("Patient_Forname",  form.txtForename().getValue(), String.class));
+		client.addSeed(new SeedValue("Patient_Type",  form.cmbIDType().getValue() != null ? form.cmbIDType().getValue().getID():null, Integer.class));
+		client.addSeed(new SeedValue("Patient_ID",  form.txtIDValue().getValue(), String.class));
+		client.addSeed(new SeedValue("Date_of_Birth",  	 form.pdtDOB().getValue() != null ? form.pdtDOB().getValue().toInteger():null, Integer.class));
+		client.addSeed(new SeedValue("Inpatients_Only",  	 form.chkInpatientOnly().getValue(), Boolean.class));
+		client.addSeed(new SeedValue("Include_Excluded_Entries",  	 form.chkExclude().getValue(), Boolean.class));
+		client.addSeed(new SeedValue("Dementia_Confirmed",  	 form.chkDementiaConfirmed().getValue(), Boolean.class));
+		client.addSeed(new SeedValue("Delirium_Confirmed",  	 form.chkDelirum().getValue(), Boolean.class));
+		
+		String resultUrl = "";
+		try
+		{
+			resultUrl = client.buildReportAsUrl((String)obj[0], (String)obj[1], urlReportServer, "PDF", "", 1);
+		} 
+		catch (QueryBuilderClientException e1)
+		{
+			engine.showMessage("Error creating report: " + e1.getMessage());
+			return;
+		}
+		
+		engine.openUrl(resultUrl);
 		
 	}
 }

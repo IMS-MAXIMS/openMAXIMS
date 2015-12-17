@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.clinical.vo.domain;
@@ -60,6 +65,12 @@ public class SECSConfigurationVoAssembler
 		valueObjectDest.setOxygenSatsConfig(valueObjectSrc.getOxygenSatsConfig());
 		// isActive
 		valueObjectDest.setIsActive(valueObjectSrc.getIsActive());
+		// EffectiveFrom
+		valueObjectDest.setEffectiveFrom(valueObjectSrc.getEffectiveFrom());
+		// EffectiveTo
+		valueObjectDest.setEffectiveTo(valueObjectSrc.getEffectiveTo());
+		// IsRequiredForScore
+		valueObjectDest.setIsRequiredForScore(valueObjectSrc.getIsRequiredForScore());
 	 	return valueObjectDest;
 	 }
 
@@ -364,8 +375,8 @@ public class SECSConfigurationVoAssembler
 			if (color != null) 
 				color.getValue();
 
-			ims.core.vo.lookups.SECSTypes voLookup1 = new ims.core.vo.lookups.SECSTypes(instance1.getId(),instance1.getText(), instance1.isActive(), null, img, color);
-			ims.core.vo.lookups.SECSTypes parentVoLookup1 = voLookup1;
+			ims.core.vo.lookups.OBSType voLookup1 = new ims.core.vo.lookups.OBSType(instance1.getId(),instance1.getText(), instance1.isActive(), null, img, color);
+			ims.core.vo.lookups.OBSType parentVoLookup1 = voLookup1;
 			ims.domain.lookups.LookupInstance parent1 = instance1.getParent();
 			while (parent1 != null)
 			{
@@ -380,7 +391,7 @@ public class SECSConfigurationVoAssembler
 				color = parent1.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup1.setParent(new ims.core.vo.lookups.SECSTypes(parent1.getId(),parent1.getText(), parent1.isActive(), null, img, color));
+								parentVoLookup1.setParent(new ims.core.vo.lookups.OBSType(parent1.getId(),parent1.getText(), parent1.isActive(), null, img, color));
 				parentVoLookup1 = parentVoLookup1.getParent();
 								parent1 = parent1.getParent();
 			}			
@@ -394,6 +405,20 @@ public class SECSConfigurationVoAssembler
 		valueObject.setOxygenSatsConfig(ims.clinical.vo.domain.SECSOxygenSatsVoAssembler.create(map, domainObject.getOxygenSatsConfig()) );
 		// isActive
 		valueObject.setIsActive( domainObject.isIsActive() );
+		// EffectiveFrom
+		java.util.Date EffectiveFrom = domainObject.getEffectiveFrom();
+		if ( null != EffectiveFrom ) 
+		{
+			valueObject.setEffectiveFrom(new ims.framework.utils.Date(EffectiveFrom) );
+		}
+		// EffectiveTo
+		java.util.Date EffectiveTo = domainObject.getEffectiveTo();
+		if ( null != EffectiveTo ) 
+		{
+			valueObject.setEffectiveTo(new ims.framework.utils.Date(EffectiveTo) );
+		}
+		// IsRequiredForScore
+		valueObject.setIsRequiredForScore( domainObject.isIsRequiredForScore() );
  		return valueObject;
 	 }
 
@@ -455,6 +480,21 @@ public class SECSConfigurationVoAssembler
 		domainObject.setLookupConfig(ims.clinical.vo.domain.SECSLookupConfigVoAssembler.extractSECSLookupConfig(domainFactory, valueObject.getLookupConfig(), domMap));
 		domainObject.setOxygenSatsConfig(ims.clinical.vo.domain.SECSOxygenSatsVoAssembler.extractSECSOxygenSats(domainFactory, valueObject.getOxygenSatsConfig(), domMap));
 		domainObject.setIsActive(valueObject.getIsActive());
+		java.util.Date value6 = null;
+		ims.framework.utils.Date date6 = valueObject.getEffectiveFrom();		
+		if ( date6 != null ) 
+		{
+			value6 = date6.getDate();
+		}
+		domainObject.setEffectiveFrom(value6);
+		java.util.Date value7 = null;
+		ims.framework.utils.Date date7 = valueObject.getEffectiveTo();		
+		if ( date7 != null ) 
+		{
+			value7 = date7.getDate();
+		}
+		domainObject.setEffectiveTo(value7);
+		domainObject.setIsRequiredForScore(valueObject.getIsRequiredForScore());
 
 		return domainObject;
 	}

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.emergency.vo.domain;
@@ -357,19 +362,7 @@ public class EmergencyEpisodeForTriageLiteVoAssembler
 			valueObject.setInjuryDateTime(new ims.framework.utils.DateTime(InjuryDateTime) );
 		}
 		// EpisodeOfCare
-		if (domainObject.getEpisodeOfCare() != null)
-		{
-			if(domainObject.getEpisodeOfCare() instanceof HibernateProxy) // If the proxy is set, there is no need to lazy load, the proxy knows the id already. 
-			{
-				HibernateProxy p = (HibernateProxy) domainObject.getEpisodeOfCare();
-				int id = Integer.parseInt(p.getHibernateLazyInitializer().getIdentifier().toString());				
-				valueObject.setEpisodeOfCare(new ims.core.admin.vo.EpisodeOfCareRefVo(id, -1));				
-			}
-			else
-			{
-				valueObject.setEpisodeOfCare(new ims.core.admin.vo.EpisodeOfCareRefVo(domainObject.getEpisodeOfCare().getId(), domainObject.getEpisodeOfCare().getVersion()));
-			}
-		}
+		valueObject.setEpisodeOfCare(ims.emergency.vo.domain.EpisodeOfcareLiteVoAssembler.create(map, domainObject.getEpisodeOfCare()) );
 		// PresentingComplaint
 		ims.domain.lookups.LookupInstance instance3 = domainObject.getPresentingComplaint();
 		if ( null != instance3 ) {
@@ -500,7 +493,8 @@ public class EmergencyEpisodeForTriageLiteVoAssembler
 			value1 = dateTime1.getJavaDate();
 		}
 		domainObject.setInjuryDateTime(value1);
-		ims.core.admin.domain.objects.EpisodeOfCare value2 = null;
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.admin.domain.objects.EpisodeOfCare value2 = null;
 		if ( null != valueObject.getEpisodeOfCare() ) 
 		{
 			if (valueObject.getEpisodeOfCare().getBoId() == null)
@@ -509,10 +503,6 @@ public class EmergencyEpisodeForTriageLiteVoAssembler
 				{
 					value2 = (ims.core.admin.domain.objects.EpisodeOfCare)domMap.get(valueObject.getEpisodeOfCare());
 				}
-			}
-			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
-			{
-				value2 = domainObject.getEpisodeOfCare();	
 			}
 			else
 			{

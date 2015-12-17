@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.admin.pas.domain.objects;
@@ -69,6 +74,13 @@ public class PendingEmergencyAdmission extends ims.domain.DomainObject implement
 	  * Collection of ims.core.admin.pas.domain.objects.AllocatedWardHistory.
 	  */
 	private java.util.Set allocatedWardHistory;
+	private ims.core.resource.place.domain.objects.Location hospital;
+	private ims.domain.lookups.LookupInstance type;
+	/** Used for Repatriation */
+	private ims.domain.lookups.LookupInstance transferReason;
+	private java.util.Date proposedProposedTransferDate;
+	private ims.core.clinical.domain.objects.Service service;
+	private ims.domain.lookups.LookupInstance specialty;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public PendingEmergencyAdmission (Integer id, int ver)
@@ -175,6 +187,48 @@ public class PendingEmergencyAdmission extends ims.domain.DomainObject implement
 	}
 	public void setAllocatedWardHistory(java.util.Set paramValue) {
 		this.allocatedWardHistory = paramValue;
+	}
+
+	public ims.core.resource.place.domain.objects.Location getHospital() {
+		return hospital;
+	}
+	public void setHospital(ims.core.resource.place.domain.objects.Location hospital) {
+		this.hospital = hospital;
+	}
+
+	public ims.domain.lookups.LookupInstance getType() {
+		return type;
+	}
+	public void setType(ims.domain.lookups.LookupInstance type) {
+		this.type = type;
+	}
+
+	public ims.domain.lookups.LookupInstance getTransferReason() {
+		return transferReason;
+	}
+	public void setTransferReason(ims.domain.lookups.LookupInstance transferReason) {
+		this.transferReason = transferReason;
+	}
+
+	public java.util.Date getProposedProposedTransferDate() {
+		return proposedProposedTransferDate;
+	}
+	public void setProposedProposedTransferDate(java.util.Date proposedProposedTransferDate) {
+		this.proposedProposedTransferDate = proposedProposedTransferDate;
+	}
+
+	public ims.core.clinical.domain.objects.Service getService() {
+		return service;
+	}
+	public void setService(ims.core.clinical.domain.objects.Service service) {
+		this.service = service;
+	}
+
+	public ims.domain.lookups.LookupInstance getSpecialty() {
+		return specialty;
+	}
+	public void setSpecialty(ims.domain.lookups.LookupInstance specialty) {
+		this.specialty = specialty;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -288,6 +342,37 @@ public class PendingEmergencyAdmission extends ims.domain.DomainObject implement
 			auditStr.append("] " + i11);
 		}
 	    auditStr.append("; ");
+		auditStr.append("\r\n*hospital* :");
+		if (hospital != null)
+		{
+			auditStr.append(toShortClassName(hospital));
+				
+		    auditStr.append(hospital.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*type* :");
+		if (type != null)
+			auditStr.append(type.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*transferReason* :");
+		if (transferReason != null)
+			auditStr.append(transferReason.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*proposedProposedTransferDate* :");
+		auditStr.append(proposedProposedTransferDate);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*service* :");
+		if (service != null)
+		{
+			auditStr.append(toShortClassName(service));
+				
+		    auditStr.append(service.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*specialty* :");
+		if (specialty != null)
+			auditStr.append(specialty.getText());
+	    auditStr.append("; ");
 		return auditStr.toString();
 	}
 	
@@ -400,6 +485,42 @@ public class PendingEmergencyAdmission extends ims.domain.DomainObject implement
 			sb.append(ims.domain.DomainObject.toXMLString(this.getAllocatedWardHistory(), domMap));
 			sb.append("</allocatedWardHistory>");		
 			}
+		}
+		if (this.getHospital() != null)
+		{
+			sb.append("<hospital>");
+			sb.append(this.getHospital().toXMLString(domMap)); 	
+			sb.append("</hospital>");		
+		}
+		if (this.getType() != null)
+		{
+			sb.append("<type>");
+			sb.append(this.getType().toXMLString()); 
+			sb.append("</type>");		
+		}
+		if (this.getTransferReason() != null)
+		{
+			sb.append("<transferReason>");
+			sb.append(this.getTransferReason().toXMLString()); 
+			sb.append("</transferReason>");		
+		}
+		if (this.getProposedProposedTransferDate() != null)
+		{
+			sb.append("<proposedProposedTransferDate>");
+			sb.append(new ims.framework.utils.DateTime(this.getProposedProposedTransferDate()).toString(ims.framework.utils.DateTimeFormat.MILLI));
+			sb.append("</proposedProposedTransferDate>");		
+		}
+		if (this.getService() != null)
+		{
+			sb.append("<service>");
+			sb.append(this.getService().toXMLString(domMap)); 	
+			sb.append("</service>");		
+		}
+		if (this.getSpecialty() != null)
+		{
+			sb.append("<specialty>");
+			sb.append(this.getSpecialty().toXMLString()); 
+			sb.append("</specialty>");		
 		}
 		return sb.toString();
 	}
@@ -626,6 +747,41 @@ public class PendingEmergencyAdmission extends ims.domain.DomainObject implement
 			fldEl = fldEl.element("set");	
 			obj.setAllocatedWardHistory(ims.core.admin.pas.domain.objects.AllocatedWardHistory.fromSetXMLString(fldEl, factory, obj.getAllocatedWardHistory(), domMap));
 		}
+		fldEl = el.element("hospital");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setHospital(ims.core.resource.place.domain.objects.Location.getLocationfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("type");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setType(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("transferReason");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setTransferReason(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("proposedProposedTransferDate");
+		if(fldEl != null)
+		{	
+    		obj.setProposedProposedTransferDate(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
+		}
+		fldEl = el.element("service");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setService(ims.core.clinical.domain.objects.Service.getServicefromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("specialty");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setSpecialty(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -650,6 +806,12 @@ public class PendingEmergencyAdmission extends ims.domain.DomainObject implement
 		public static final String ConclusionDate = "conclusionDate";
 		public static final String BedTypeRequested = "bedTypeRequested";
 		public static final String AllocatedWardHistory = "allocatedWardHistory";
+		public static final String Hospital = "hospital";
+		public static final String Type = "type";
+		public static final String TransferReason = "transferReason";
+		public static final String ProposedProposedTransferDate = "proposedProposedTransferDate";
+		public static final String Service = "service";
+		public static final String Specialty = "specialty";
 	}
 }
 

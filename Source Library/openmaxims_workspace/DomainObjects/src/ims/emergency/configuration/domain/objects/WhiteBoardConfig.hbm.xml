@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:35 -->
+<!-- Generated: 12/10/2015, 13:29 -->
 <hibernate-mapping>
 	<class name="ims.emergency.configuration.domain.objects.WhiteBoardConfig" table="emer_whiteboardconf" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -45,11 +45,6 @@
 			<column name="currentare" sql-type="numeric(10,0)" not-null="false" unique="false"  index='tracking_area_idx' />
 		</many-to-one>
 <!-- debug: isActive -->
-<!-- debug: medsGiven -->
-<!-- debug: obsTaken -->
-<!-- debug: eCG -->
-<!-- debug: nPO -->
-<!-- debug: isolation -->
 <!-- debug: assessments -->
 <!-- debug: field.IsAssociation : true -->
 <!-- debug: IsAggregation : true -->
@@ -62,19 +57,20 @@
 			<index column='idx'/>
 			<one-to-many class="ims.emergency.configuration.domain.objects.WhiteBoardAssessmentConfig" />
 		</list>
-<!-- debug: otherQuestions -->
+<!-- debug: selectedActions -->
 <!-- debug: field.IsAssociation : true -->
 <!-- debug: IsAggregation : true -->
 <!-- debug: IsComposition : true -->
 		<!-- one to many -->
-		<list name="otherQuestions" lazy="true" access="field" cascade="all-delete-orphan">
-			<key foreign-key="whiteboardconf_otherquest_fk">
-				<column name="emer_whiteboardconf_otherquest" sql-type="numeric(10,0)" />
+		<list name="selectedActions" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="whiteboardconf_selectedac_fk">
+				<column name="emer_whiteboardconf_selectedac" sql-type="numeric(10,0)" />
 			</key>
 			<index column='idx'/>
-			<one-to-many class="ims.emergency.configuration.domain.objects.WhiteBoardQuestionConfig" />
+			<one-to-many class="ims.emergency.configuration.domain.objects.WhiteBoardOtherActions" />
 		</list>
 <!-- debug: comments -->
+<!-- debug: refreshInterval -->
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="isActive" type="boolean" access="field" update="true">
@@ -82,33 +78,13 @@
 		</property>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
-		<property name="medsGiven" type="boolean" access="field" update="true">
-			<column name="medsgiven"  not-null="true" unique="false"  />
-		</property>
-<!-- debug: !IsAssociation && !IsCollection -->
-<!-- debug: !IsLookup -->
-		<property name="obsTaken" type="boolean" access="field" update="true">
-			<column name="obstaken"  not-null="true" unique="false"  />
-		</property>
-<!-- debug: !IsAssociation && !IsCollection -->
-<!-- debug: !IsLookup -->
-		<property name="eCG" type="boolean" access="field" update="true">
-			<column name="ecg"  not-null="true" unique="false"  />
-		</property>
-<!-- debug: !IsAssociation && !IsCollection -->
-<!-- debug: !IsLookup -->
-		<property name="nPO" type="boolean" access="field" update="true">
-			<column name="npo"  not-null="true" unique="false"  />
-		</property>
-<!-- debug: !IsAssociation && !IsCollection -->
-<!-- debug: !IsLookup -->
-		<property name="isolation" type="boolean" access="field" update="true">
-			<column name="c_isolati"  not-null="true" unique="false"  />
-		</property>
-<!-- debug: !IsAssociation && !IsCollection -->
-<!-- debug: !IsLookup -->
 		<property name="comments" type="boolean" access="field" update="true">
 			<column name="comments"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="refreshInterval" type="integer" access="field" update="true">
+			<column name="refreshint"  not-null="false" unique="false"  />
 		</property>
 	</class>
 </hibernate-mapping>

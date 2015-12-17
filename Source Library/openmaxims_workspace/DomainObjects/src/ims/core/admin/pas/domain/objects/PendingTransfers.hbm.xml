@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:36 -->
+<!-- Generated: 12/10/2015, 13:31 -->
 <hibernate-mapping>
 	<class name="ims.core.admin.pas.domain.objects.PendingTransfers" table="core_pendingtransfe" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -56,6 +56,17 @@
 		</many-to-one>
 <!-- debug: specialty -->
 <!-- debug: pASSpecialty -->
+<!-- debug: transferReason -->
+<!-- debug: transferComment -->
+<!-- debug: patientStatus -->
+<!-- debug: bedAvailableDateTime -->
+<!-- debug: service -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="service" class="ims.core.clinical.domain.objects.Service" unique="true" foreign-key="pendingtransfe_service_fk" access="field" cascade="save-update">
+			<column name="service" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: IsLookup -->
 		<many-to-one name="wardType" class="ims.domain.lookups.LookupInstance" access="field">
@@ -81,5 +92,25 @@
 		<many-to-one name="pASSpecialty" class="ims.domain.lookups.LookupInstance" access="field">
 			<column name="lkp_passpecial" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="transferReason" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_transferr2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="transferComment" type="string" access="field" update="true" > 
+			<column name="transferco" length="250"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="patientStatus" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_patientsta" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="bedAvailableDateTime" type="timestamp" access="field" update="true">
+			<column name="bedavailab"  not-null="false" unique="false"  />
+		</property>
 	</class>
 </hibernate-mapping>

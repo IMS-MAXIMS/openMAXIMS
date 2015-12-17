@@ -1,0 +1,205 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 12/10/2015, 13:32 -->
+<hibernate-mapping>
+	<class name="ims.ntpf.casereferral.domain.objects.DischargeSummary" table="ntpf_dischargesumma" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: dischargeStatus -->
+<!-- debug: admissionDate -->
+<!-- debug: dischargeDate -->
+<!-- debug: isSurveySent -->
+<!-- debug: dateSurveySent -->
+<!-- debug: patientMedication -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="patientMedication" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="dischargesumma_patientmed_fk">
+				<column name="ntpf_dischargesumma_patientmed" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.core.clinical.domain.objects.PatientMedication" />
+		</set>
+<!-- debug: resultsToFollow -->
+<!-- debug: instructionsGiven -->
+<!-- debug: referralTo -->
+<!-- debug: followUpNotes -->
+<!-- debug: invoiceBarcode -->
+<!-- debug: dischargeSummBarCode -->
+<!-- debug: procedures -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<list name="procedures" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="dischargesumma_procedures_fk">
+				<column name="ntpf_dischargesumma_procedures" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.ntpf.casereferral.domain.objects.DischargeSummaryProcedure" />
+		</list>
+<!-- debug: followUpCare -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="followUpCare" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="dischargesumma_followupca_fk">
+				<column name="ntpf_dischargesumma_followupca" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.ntpf.casereferral.domain.objects.FollowUpCare" />
+		</set>
+<!-- debug: dischargeStatusHistory -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="dischargeStatusHistory" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="dischargesumma_discharge3_fk">
+				<column name="ntpf_dischargesumma_discharge3" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.ntpf.casereferral.domain.objects.DischargeSummaryStatus" />
+		</set>
+<!-- debug: assocCase -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- many to one -->
+		<many-to-one name="assocCase" class="ims.ntpf.casereferral.domain.objects.CaseReferral" foreign-key="dischargesumma_assoccase_fk" access="field" cascade="save-update">
+			<column name="assoccase" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: dischargeComments -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="dischargeComments" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="dischargesumma_dischargec_fk">
+				<column name="ntpf_dischargesumma_dischargec" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.ntpf.common.domain.objects.Comment" />
+		</set>
+<!-- debug: isLinkedToCase -->
+<!-- debug: dischargeFlags -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="dischargeFlags" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="dischargesumma_dischargef_fk">
+				<column name="ntpf_dischargesumma_dischargef" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.core.resource.place.domain.objects.Activity" />
+		</set>
+<!-- debug: hasComments -->
+<!-- debug: treatingCons -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="treatingCons" class="ims.core.resource.people.domain.objects.Medic" unique="true" foreign-key="dischargesumma_treatingco_fk" access="field" cascade="save-update">
+			<column name="treatingco" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: treatingHosp -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="treatingHosp" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="dischargesumma_treatingho_fk" access="field" cascade="save-update">
+			<column name="treatingho" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: IsLookup -->
+		<many-to-one name="dischargeStatus" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_discharges" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="admissionDate" type="date" access="field" update="true">
+			<column name="admissiond"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dischargeDate" type="date" access="field" update="true">
+			<column name="discharged"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="isSurveySent" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_issurveyse" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dateSurveySent" type="date" access="field" update="true">
+			<column name="datesurvey"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="resultsToFollow" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_resultstof" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="instructionsGiven" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_instructio" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="referralTo" type="string" access="field" update="true" > 
+			<column name="referralto" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="followUpNotes" type="string" access="field" update="true" > 
+			<column name="followupno" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="invoiceBarcode" type="string" access="field" update="true" > 
+			<column name="invoicebar" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dischargeSummBarCode" type="string" access="field" update="true" > 
+			<column name="discharge2" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isLinkedToCase" type="boolean" access="field" update="true">
+			<column name="islinkedto"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="hasComments" type="boolean" access="field" update="true">
+			<column name="hascomment"  not-null="true" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

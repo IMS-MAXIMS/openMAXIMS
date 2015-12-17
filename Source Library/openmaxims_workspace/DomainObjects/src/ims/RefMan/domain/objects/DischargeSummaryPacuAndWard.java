@@ -1,9 +1,33 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.RefMan.domain.objects;
@@ -30,8 +54,8 @@ public class DischargeSummaryPacuAndWard extends ims.domain.DomainObject impleme
 	private ims.RefMan.domain.objects.CatsReferral catsReferral;
 	/** AuthoringInformation */
 	private ims.core.clinical.domain.objects.AuthoringInformation authoringInformation;
-	/** Discharge Date */
-	private java.util.Date dischargeDate;
+	/** Discharge Date Time */
+	private java.util.Date dischargeDateTime;
 	/** Discharge Type */
 	private ims.domain.lookups.LookupInstance dischargeType;
 	/** Admission Summary */
@@ -112,11 +136,11 @@ public class DischargeSummaryPacuAndWard extends ims.domain.DomainObject impleme
 		this.authoringInformation = authoringInformation;
 	}
 
-	public java.util.Date getDischargeDate() {
-		return dischargeDate;
+	public java.util.Date getDischargeDateTime() {
+		return dischargeDateTime;
 	}
-	public void setDischargeDate(java.util.Date dischargeDate) {
-		this.dischargeDate = dischargeDate;
+	public void setDischargeDateTime(java.util.Date dischargeDateTime) {
+		this.dischargeDateTime = dischargeDateTime;
 	}
 
 	public ims.domain.lookups.LookupInstance getDischargeType() {
@@ -321,8 +345,8 @@ public class DischargeSummaryPacuAndWard extends ims.domain.DomainObject impleme
 		    auditStr.append(authoringInformation.toString());
 		}
 	    auditStr.append("; ");
-		auditStr.append("\r\n*dischargeDate* :");
-		auditStr.append(dischargeDate);
+		auditStr.append("\r\n*dischargeDateTime* :");
+		auditStr.append(dischargeDateTime);
 	    auditStr.append("; ");
 		auditStr.append("\r\n*dischargeType* :");
 		if (dischargeType != null)
@@ -539,11 +563,11 @@ public class DischargeSummaryPacuAndWard extends ims.domain.DomainObject impleme
 			sb.append(this.getAuthoringInformation().toXMLString(domMap)); 	
 			sb.append("</authoringInformation>");		
 		}
-		if (this.getDischargeDate() != null)
+		if (this.getDischargeDateTime() != null)
 		{
-			sb.append("<dischargeDate>");
-			sb.append(new ims.framework.utils.DateTime(this.getDischargeDate()).toString(ims.framework.utils.DateTimeFormat.MILLI));
-			sb.append("</dischargeDate>");		
+			sb.append("<dischargeDateTime>");
+			sb.append(new ims.framework.utils.DateTime(this.getDischargeDateTime()).toString(ims.framework.utils.DateTimeFormat.MILLI));
+			sb.append("</dischargeDateTime>");		
 		}
 		if (this.getDischargeType() != null)
 		{
@@ -846,10 +870,10 @@ public class DischargeSummaryPacuAndWard extends ims.domain.DomainObject impleme
 			fldEl = fldEl.element("class");		
 			obj.setAuthoringInformation(ims.core.clinical.domain.objects.AuthoringInformation.getAuthoringInformationfromXML(fldEl, factory, domMap)); 
 		}
-		fldEl = el.element("dischargeDate");
+		fldEl = el.element("dischargeDateTime");
 		if(fldEl != null)
 		{	
-    		obj.setDischargeDate(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
+    		obj.setDischargeDateTime(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
 		}
 		fldEl = el.element("dischargeType");
 		if(fldEl != null)
@@ -973,7 +997,7 @@ public class DischargeSummaryPacuAndWard extends ims.domain.DomainObject impleme
 	public static final String ID = "id";
 		public static final String CatsReferral = "catsReferral";
 		public static final String AuthoringInformation = "authoringInformation";
-		public static final String DischargeDate = "dischargeDate";
+		public static final String DischargeDateTime = "dischargeDateTime";
 		public static final String DischargeType = "dischargeType";
 		public static final String AdmissionSummary = "admissionSummary";
 		public static final String Diagnosis = "diagnosis";

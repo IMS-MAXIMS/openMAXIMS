@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.clinical.domain.objects;
@@ -59,6 +64,8 @@ public class ClinicalNoteNoteStatus extends ims.domain.DomainObject implements i
 	private Boolean correctionConfirmed;
 	/** CorrectedBy */
 	private ims.core.resource.people.domain.objects.MemberOfStaff correctedBy;
+	/** PreEditClinicalNote */
+	private String preEditClinicalNote;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public ClinicalNoteNoteStatus (Integer id, int ver)
@@ -126,6 +133,13 @@ public class ClinicalNoteNoteStatus extends ims.domain.DomainObject implements i
 	}
 	public void setCorrectedBy(ims.core.resource.people.domain.objects.MemberOfStaff correctedBy) {
 		this.correctedBy = correctedBy;
+	}
+
+	public String getPreEditClinicalNote() {
+		return preEditClinicalNote;
+	}
+	public void setPreEditClinicalNote(String preEditClinicalNote) {
+		this.preEditClinicalNote = preEditClinicalNote;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -196,6 +210,9 @@ public class ClinicalNoteNoteStatus extends ims.domain.DomainObject implements i
 				
 		    auditStr.append(correctedBy.getId());
 		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*preEditClinicalNote* :");
+		auditStr.append(preEditClinicalNote);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -282,6 +299,12 @@ public class ClinicalNoteNoteStatus extends ims.domain.DomainObject implements i
 			sb.append("<correctedBy>");
 			sb.append(this.getCorrectedBy().toXMLString(domMap)); 	
 			sb.append("</correctedBy>");		
+		}
+		if (this.getPreEditClinicalNote() != null)
+		{
+			sb.append("<preEditClinicalNote>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getPreEditClinicalNote().toString()));
+			sb.append("</preEditClinicalNote>");		
 		}
 		return sb.toString();
 	}
@@ -484,6 +507,11 @@ public class ClinicalNoteNoteStatus extends ims.domain.DomainObject implements i
 			fldEl = fldEl.element("class");		
 			obj.setCorrectedBy(ims.core.resource.people.domain.objects.MemberOfStaff.getMemberOfStafffromXML(fldEl, factory, domMap)); 
 		}
+		fldEl = el.element("preEditClinicalNote");
+		if(fldEl != null)
+		{	
+    		obj.setPreEditClinicalNote(new String(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -503,6 +531,7 @@ public class ClinicalNoteNoteStatus extends ims.domain.DomainObject implements i
 		public static final String CorrectionReason = "correctionReason";
 		public static final String CorrectionConfirmed = "correctionConfirmed";
 		public static final String CorrectedBy = "correctedBy";
+		public static final String PreEditClinicalNote = "preEditClinicalNote";
 	}
 }
 

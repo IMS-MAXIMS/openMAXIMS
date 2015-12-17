@@ -1,0 +1,147 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 12/10/2015, 13:32 -->
+<hibernate-mapping>
+	<class name="ims.core.admin.pas.domain.objects.PendingNoEDEmergencyAdmit" table="core_pendingnoedeme" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: type -->
+<!-- debug: category -->
+<!-- debug: sourceOfReferral -->
+<!-- debug: transferReason -->
+<!-- debug: service -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="service" class="ims.core.clinical.domain.objects.Service" unique="true" foreign-key="pendingnoedeme_service_fk" access="field" cascade="save-update">
+			<column name="service" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: hospital -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="hospital" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="pendingnoedeme_hospital_fk" access="field" cascade="save-update">
+			<column name="hospital" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: ward -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="ward" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="pendingnoedeme_ward_fk" access="field" cascade="save-update">
+			<column name="ward" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: referredLocation -->
+<!-- debug: contactDetails -->
+<!-- debug: comments -->
+<!-- debug: proposedTransferDate -->
+<!-- debug: recordedBy -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="recordedBy" class="ims.core.resource.people.domain.objects.MemberOfStaff" unique="true" foreign-key="pendingnoedeme_recordedby_fk" access="field" cascade="save-update">
+			<column name="recordedby" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: recordedDateTime -->
+<!-- debug: currentStatus -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="currentStatus" class="ims.core.admin.pas.domain.objects.PendingAdmissionStatus" unique="true" foreign-key="pendingnoedeme_currentsta_fk" access="field" cascade="save-update">
+			<column name="currentsta" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: statusHistory -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<list name="statusHistory" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="pendingnoedeme_statushist_fk">
+				<column name="core_pendingnoedeme_statushist" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.core.admin.pas.domain.objects.PendingAdmissionStatus" />
+		</list>
+<!-- debug: sourceOfEmergencyReferral -->
+<!-- debug: admissionDetail -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="admissionDetail" class="ims.core.admin.pas.domain.objects.AdmissionDetail" unique="true" foreign-key="pendingnoedeme_admissiond_fk" access="field" cascade="save-update">
+			<column name="admissiond" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: IsLookup -->
+		<many-to-one name="type" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_c_ty" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="category" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_category" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="sourceOfReferral" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_sourceofre" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="transferReason" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_transferre" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="referredLocation" type="string" access="field" update="true" > 
+			<column name="referredlo" length="35"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="contactDetails" type="string" access="field" update="true" > 
+			<column name="contactdet" length="1000"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="comments" type="string" access="field" update="true" > 
+			<column name="comments" length="250"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="proposedTransferDate" type="date" access="field" update="true">
+			<column name="proposedtr"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="recordedDateTime" type="timestamp" access="field" update="true">
+			<column name="recordedda"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="sourceOfEmergencyReferral" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_sourceofem" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+	</class>
+</hibernate-mapping>

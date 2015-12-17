@@ -1,9 +1,33 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.RefMan.domain.objects;
@@ -42,8 +66,8 @@ public class TCIForPatientElectiveList extends ims.domain.DomainObject implement
 	private ims.scheduling.domain.objects.Sch_Session session;
 	/** Comments */
 	private String comments;
-	/** KPIExceededReason */
-	private ims.domain.lookups.LookupInstance kPIExceededReason;
+	/** RTTBreachReason */
+	private ims.domain.lookups.LookupInstance rTTBreachReason;
 	/** PlanningElectiveAttribute */
 	private ims.domain.lookups.LookupInstance planningElective;
 	/** TCIHospital */
@@ -66,6 +90,23 @@ public class TCIForPatientElectiveList extends ims.domain.DomainObject implement
 	private ims.core.admin.pas.domain.objects.AdmissionDetail admissionDetail;
 	/** BedManagerComment */
 	private String bedManagerComment;
+	private ims.domain.lookups.LookupInstance day28BreachReason;
+	private String day28BreachComment;
+	private String rTTBreachComment;
+	private java.util.Date plannedTCIDate;
+	/** A cancel HL7 message for this TCI has been processed */
+	private Boolean cancelMsgProcessed;
+	/** Was Reasonable 28 day Offer Made */
+	private Boolean wasReasonable28dayOfferMade;
+	/** 28 Day TCI Date Offered */
+	private java.util.Date _28DayTCIDateOffered;
+	/** 28 Date of Offer */
+	private java.util.Date _28DateOfOffer;
+	/** 28ReasonDeclined */
+	private ims.domain.lookups.LookupInstance _28ReasonDeclined;
+	private Boolean subjectTo28DayRule;
+	private ims.domain.lookups.LookupInstance rule28DayStatus;
+	private java.util.Date rule28DayPeriodStart;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public TCIForPatientElectiveList (Integer id, int ver)
@@ -146,11 +187,11 @@ public class TCIForPatientElectiveList extends ims.domain.DomainObject implement
 		this.comments = comments;
 	}
 
-	public ims.domain.lookups.LookupInstance getKPIExceededReason() {
-		return kPIExceededReason;
+	public ims.domain.lookups.LookupInstance getRTTBreachReason() {
+		return rTTBreachReason;
 	}
-	public void setKPIExceededReason(ims.domain.lookups.LookupInstance kPIExceededReason) {
-		this.kPIExceededReason = kPIExceededReason;
+	public void setRTTBreachReason(ims.domain.lookups.LookupInstance rTTBreachReason) {
+		this.rTTBreachReason = rTTBreachReason;
 	}
 
 	public ims.domain.lookups.LookupInstance getPlanningElective() {
@@ -234,6 +275,98 @@ public class TCIForPatientElectiveList extends ims.domain.DomainObject implement
 		this.bedManagerComment = bedManagerComment;
 	}
 
+	public ims.domain.lookups.LookupInstance getDay28BreachReason() {
+		return day28BreachReason;
+	}
+	public void setDay28BreachReason(ims.domain.lookups.LookupInstance day28BreachReason) {
+		this.day28BreachReason = day28BreachReason;
+	}
+
+	public String getDay28BreachComment() {
+		return day28BreachComment;
+	}
+	public void setDay28BreachComment(String day28BreachComment) {
+		if ( null != day28BreachComment && day28BreachComment.length() > 255 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for day28BreachComment. Tried to set value: "+
+				day28BreachComment);
+		}
+		this.day28BreachComment = day28BreachComment;
+	}
+
+	public String getRTTBreachComment() {
+		return rTTBreachComment;
+	}
+	public void setRTTBreachComment(String rTTBreachComment) {
+		if ( null != rTTBreachComment && rTTBreachComment.length() > 255 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for rTTBreachComment. Tried to set value: "+
+				rTTBreachComment);
+		}
+		this.rTTBreachComment = rTTBreachComment;
+	}
+
+	public java.util.Date getPlannedTCIDate() {
+		return plannedTCIDate;
+	}
+	public void setPlannedTCIDate(java.util.Date plannedTCIDate) {
+		this.plannedTCIDate = plannedTCIDate;
+	}
+
+	public Boolean isCancelMsgProcessed() {
+		return cancelMsgProcessed;
+	}
+	public void setCancelMsgProcessed(Boolean cancelMsgProcessed) {
+		this.cancelMsgProcessed = cancelMsgProcessed;
+	}
+
+	public Boolean isWasReasonable28dayOfferMade() {
+		return wasReasonable28dayOfferMade;
+	}
+	public void setWasReasonable28dayOfferMade(Boolean wasReasonable28dayOfferMade) {
+		this.wasReasonable28dayOfferMade = wasReasonable28dayOfferMade;
+	}
+
+	public java.util.Date get_28DayTCIDateOffered() {
+		return _28DayTCIDateOffered;
+	}
+	public void set_28DayTCIDateOffered(java.util.Date _28DayTCIDateOffered) {
+		this._28DayTCIDateOffered = _28DayTCIDateOffered;
+	}
+
+	public java.util.Date get_28DateOfOffer() {
+		return _28DateOfOffer;
+	}
+	public void set_28DateOfOffer(java.util.Date _28DateOfOffer) {
+		this._28DateOfOffer = _28DateOfOffer;
+	}
+
+	public ims.domain.lookups.LookupInstance get_28ReasonDeclined() {
+		return _28ReasonDeclined;
+	}
+	public void set_28ReasonDeclined(ims.domain.lookups.LookupInstance _28ReasonDeclined) {
+		this._28ReasonDeclined = _28ReasonDeclined;
+	}
+
+	public Boolean isSubjectTo28DayRule() {
+		return subjectTo28DayRule;
+	}
+	public void setSubjectTo28DayRule(Boolean subjectTo28DayRule) {
+		this.subjectTo28DayRule = subjectTo28DayRule;
+	}
+
+	public ims.domain.lookups.LookupInstance getRule28DayStatus() {
+		return rule28DayStatus;
+	}
+	public void setRule28DayStatus(ims.domain.lookups.LookupInstance rule28DayStatus) {
+		this.rule28DayStatus = rule28DayStatus;
+	}
+
+	public java.util.Date getRule28DayPeriodStart() {
+		return rule28DayPeriodStart;
+	}
+	public void setRule28DayPeriodStart(java.util.Date rule28DayPeriodStart) {
+		this.rule28DayPeriodStart = rule28DayPeriodStart;
+	}
+
 	public ims.domain.SystemInformation getSystemInformation() {
 		if (systemInformation == null) systemInformation = new ims.domain.SystemInformation();
 		return systemInformation;
@@ -306,9 +439,9 @@ public class TCIForPatientElectiveList extends ims.domain.DomainObject implement
 		auditStr.append("\r\n*comments* :");
 		auditStr.append(comments);
 	    auditStr.append("; ");
-		auditStr.append("\r\n*kPIExceededReason* :");
-		if (kPIExceededReason != null)
-			auditStr.append(kPIExceededReason.getText());
+		auditStr.append("\r\n*rTTBreachReason* :");
+		if (rTTBreachReason != null)
+			auditStr.append(rTTBreachReason.getText());
 	    auditStr.append("; ");
 		auditStr.append("\r\n*planningElective* :");
 		if (planningElective != null)
@@ -385,6 +518,45 @@ public class TCIForPatientElectiveList extends ims.domain.DomainObject implement
 	    auditStr.append("; ");
 		auditStr.append("\r\n*bedManagerComment* :");
 		auditStr.append(bedManagerComment);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*day28BreachReason* :");
+		if (day28BreachReason != null)
+			auditStr.append(day28BreachReason.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*day28BreachComment* :");
+		auditStr.append(day28BreachComment);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*rTTBreachComment* :");
+		auditStr.append(rTTBreachComment);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*plannedTCIDate* :");
+		auditStr.append(plannedTCIDate);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*cancelMsgProcessed* :");
+		auditStr.append(cancelMsgProcessed);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*wasReasonable28dayOfferMade* :");
+		auditStr.append(wasReasonable28dayOfferMade);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*_28DayTCIDateOffered* :");
+		auditStr.append(_28DayTCIDateOffered);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*_28DateOfOffer* :");
+		auditStr.append(_28DateOfOffer);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*_28ReasonDeclined* :");
+		if (_28ReasonDeclined != null)
+			auditStr.append(_28ReasonDeclined.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*subjectTo28DayRule* :");
+		auditStr.append(subjectTo28DayRule);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*rule28DayStatus* :");
+		if (rule28DayStatus != null)
+			auditStr.append(rule28DayStatus.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*rule28DayPeriodStart* :");
+		auditStr.append(rule28DayPeriodStart);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -478,11 +650,11 @@ public class TCIForPatientElectiveList extends ims.domain.DomainObject implement
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getComments().toString()));
 			sb.append("</comments>");		
 		}
-		if (this.getKPIExceededReason() != null)
+		if (this.getRTTBreachReason() != null)
 		{
-			sb.append("<kPIExceededReason>");
-			sb.append(this.getKPIExceededReason().toXMLString()); 
-			sb.append("</kPIExceededReason>");		
+			sb.append("<rTTBreachReason>");
+			sb.append(this.getRTTBreachReason().toXMLString()); 
+			sb.append("</rTTBreachReason>");		
 		}
 		if (this.getPlanningElective() != null)
 		{
@@ -546,6 +718,78 @@ public class TCIForPatientElectiveList extends ims.domain.DomainObject implement
 			sb.append("<bedManagerComment>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getBedManagerComment().toString()));
 			sb.append("</bedManagerComment>");		
+		}
+		if (this.getDay28BreachReason() != null)
+		{
+			sb.append("<day28BreachReason>");
+			sb.append(this.getDay28BreachReason().toXMLString()); 
+			sb.append("</day28BreachReason>");		
+		}
+		if (this.getDay28BreachComment() != null)
+		{
+			sb.append("<day28BreachComment>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getDay28BreachComment().toString()));
+			sb.append("</day28BreachComment>");		
+		}
+		if (this.getRTTBreachComment() != null)
+		{
+			sb.append("<rTTBreachComment>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getRTTBreachComment().toString()));
+			sb.append("</rTTBreachComment>");		
+		}
+		if (this.getPlannedTCIDate() != null)
+		{
+			sb.append("<plannedTCIDate>");
+			sb.append(new ims.framework.utils.DateTime(this.getPlannedTCIDate()).toString(ims.framework.utils.DateTimeFormat.MILLI));
+			sb.append("</plannedTCIDate>");		
+		}
+		if (this.isCancelMsgProcessed() != null)
+		{
+			sb.append("<cancelMsgProcessed>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isCancelMsgProcessed().toString()));
+			sb.append("</cancelMsgProcessed>");		
+		}
+		if (this.isWasReasonable28dayOfferMade() != null)
+		{
+			sb.append("<wasReasonable28dayOfferMade>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isWasReasonable28dayOfferMade().toString()));
+			sb.append("</wasReasonable28dayOfferMade>");		
+		}
+		if (this.get_28DayTCIDateOffered() != null)
+		{
+			sb.append("<_28DayTCIDateOffered>");
+			sb.append(new ims.framework.utils.DateTime(this.get_28DayTCIDateOffered()).toString(ims.framework.utils.DateTimeFormat.MILLI));
+			sb.append("</_28DayTCIDateOffered>");		
+		}
+		if (this.get_28DateOfOffer() != null)
+		{
+			sb.append("<_28DateOfOffer>");
+			sb.append(new ims.framework.utils.DateTime(this.get_28DateOfOffer()).toString(ims.framework.utils.DateTimeFormat.MILLI));
+			sb.append("</_28DateOfOffer>");		
+		}
+		if (this.get_28ReasonDeclined() != null)
+		{
+			sb.append("<_28ReasonDeclined>");
+			sb.append(this.get_28ReasonDeclined().toXMLString()); 
+			sb.append("</_28ReasonDeclined>");		
+		}
+		if (this.isSubjectTo28DayRule() != null)
+		{
+			sb.append("<subjectTo28DayRule>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isSubjectTo28DayRule().toString()));
+			sb.append("</subjectTo28DayRule>");		
+		}
+		if (this.getRule28DayStatus() != null)
+		{
+			sb.append("<rule28DayStatus>");
+			sb.append(this.getRule28DayStatus().toXMLString()); 
+			sb.append("</rule28DayStatus>");		
+		}
+		if (this.getRule28DayPeriodStart() != null)
+		{
+			sb.append("<rule28DayPeriodStart>");
+			sb.append(new ims.framework.utils.DateTime(this.getRule28DayPeriodStart()).toString(ims.framework.utils.DateTimeFormat.MILLI));
+			sb.append("</rule28DayPeriodStart>");		
 		}
 		return sb.toString();
 	}
@@ -753,11 +997,11 @@ public class TCIForPatientElectiveList extends ims.domain.DomainObject implement
 		{	
     		obj.setComments(new String(fldEl.getTextTrim()));	
 		}
-		fldEl = el.element("kPIExceededReason");
+		fldEl = el.element("rTTBreachReason");
 		if(fldEl != null)
 		{
 			fldEl = fldEl.element("lki");
-			obj.setKPIExceededReason(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+			obj.setRTTBreachReason(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
 		}
 		fldEl = el.element("planningElective");
 		if(fldEl != null)
@@ -816,6 +1060,69 @@ public class TCIForPatientElectiveList extends ims.domain.DomainObject implement
 		{	
     		obj.setBedManagerComment(new String(fldEl.getTextTrim()));	
 		}
+		fldEl = el.element("day28BreachReason");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setDay28BreachReason(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("day28BreachComment");
+		if(fldEl != null)
+		{	
+    		obj.setDay28BreachComment(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("rTTBreachComment");
+		if(fldEl != null)
+		{	
+    		obj.setRTTBreachComment(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("plannedTCIDate");
+		if(fldEl != null)
+		{	
+    		obj.setPlannedTCIDate(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
+		}
+		fldEl = el.element("cancelMsgProcessed");
+		if(fldEl != null)
+		{	
+    		obj.setCancelMsgProcessed(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("wasReasonable28dayOfferMade");
+		if(fldEl != null)
+		{	
+    		obj.setWasReasonable28dayOfferMade(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("_28DayTCIDateOffered");
+		if(fldEl != null)
+		{	
+    		obj.set_28DayTCIDateOffered(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
+		}
+		fldEl = el.element("_28DateOfOffer");
+		if(fldEl != null)
+		{	
+    		obj.set_28DateOfOffer(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
+		}
+		fldEl = el.element("_28ReasonDeclined");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.set_28ReasonDeclined(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("subjectTo28DayRule");
+		if(fldEl != null)
+		{	
+    		obj.setSubjectTo28DayRule(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("rule28DayStatus");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setRule28DayStatus(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("rule28DayPeriodStart");
+		if(fldEl != null)
+		{	
+    		obj.setRule28DayPeriodStart(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -837,7 +1144,7 @@ public class TCIForPatientElectiveList extends ims.domain.DomainObject implement
 		public static final String Appointment = "appointment";
 		public static final String Session = "session";
 		public static final String Comments = "comments";
-		public static final String KPIExceededReason = "kPIExceededReason";
+		public static final String RTTBreachReason = "rTTBreachReason";
 		public static final String PlanningElective = "planningElective";
 		public static final String TCIHospital = "tCIHospital";
 		public static final String TCIWard = "tCIWard";
@@ -848,6 +1155,18 @@ public class TCIForPatientElectiveList extends ims.domain.DomainObject implement
 		public static final String IsActive = "isActive";
 		public static final String AdmissionDetail = "admissionDetail";
 		public static final String BedManagerComment = "bedManagerComment";
+		public static final String Day28BreachReason = "day28BreachReason";
+		public static final String Day28BreachComment = "day28BreachComment";
+		public static final String RTTBreachComment = "rTTBreachComment";
+		public static final String PlannedTCIDate = "plannedTCIDate";
+		public static final String CancelMsgProcessed = "cancelMsgProcessed";
+		public static final String WasReasonable28dayOfferMade = "wasReasonable28dayOfferMade";
+		public static final String _28DayTCIDateOffered = "_28DayTCIDateOffered";
+		public static final String _28DateOfOffer = "_28DateOfOffer";
+		public static final String _28ReasonDeclined = "_28ReasonDeclined";
+		public static final String SubjectTo28DayRule = "subjectTo28DayRule";
+		public static final String Rule28DayStatus = "rule28DayStatus";
+		public static final String Rule28DayPeriodStart = "rule28DayPeriodStart";
 	}
 }
 

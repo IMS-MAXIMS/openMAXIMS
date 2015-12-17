@@ -1,9 +1,33 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.RefMan.vo.domain;
@@ -61,10 +85,18 @@ public class PatientElectiveListTCIVoAssembler
 		valueObjectDest.setOutcomeHistory(valueObjectSrc.getOutcomeHistory());
 		// IsActive
 		valueObjectDest.setIsActive(valueObjectSrc.getIsActive());
-		// KPIExceededReason
-		valueObjectDest.setKPIExceededReason(valueObjectSrc.getKPIExceededReason());
 		// TCIHospital
 		valueObjectDest.setTCIHospital(valueObjectSrc.getTCIHospital());
+		// RTTBreachComment
+		valueObjectDest.setRTTBreachComment(valueObjectSrc.getRTTBreachComment());
+		// PlannedTCIDate
+		valueObjectDest.setPlannedTCIDate(valueObjectSrc.getPlannedTCIDate());
+		// Day28BreachReason
+		valueObjectDest.setDay28BreachReason(valueObjectSrc.getDay28BreachReason());
+		// Day28BreachComment
+		valueObjectDest.setDay28BreachComment(valueObjectSrc.getDay28BreachComment());
+		// RTTBreachReason
+		valueObjectDest.setRTTBreachReason(valueObjectSrc.getRTTBreachReason());
 	 	return valueObjectDest;
 	 }
 
@@ -481,45 +513,91 @@ public class PatientElectiveListTCIVoAssembler
 		valueObject.setOutcomeHistory(ims.RefMan.vo.domain.TCIOutcomeForPatientElectiveListVoAssembler.createTCIOutcomeForPatientElectiveListVoCollectionFromTCIOutcomeForPatientElectiveList(map, domainObject.getOutcomeHistory()) );
 		// IsActive
 		valueObject.setIsActive( domainObject.isIsActive() );
-		// KPIExceededReason
-		ims.domain.lookups.LookupInstance instance16 = domainObject.getKPIExceededReason();
-		if ( null != instance16 ) {
+		// TCIHospital
+		valueObject.setTCIHospital(ims.core.vo.domain.LocationLiteVoAssembler.create(map, domainObject.getTCIHospital()) );
+		// RTTBreachComment
+		valueObject.setRTTBreachComment(domainObject.getRTTBreachComment());
+		// PlannedTCIDate
+		java.util.Date PlannedTCIDate = domainObject.getPlannedTCIDate();
+		if ( null != PlannedTCIDate ) 
+		{
+			valueObject.setPlannedTCIDate(new ims.framework.utils.Date(PlannedTCIDate) );
+		}
+		// Day28BreachReason
+		ims.domain.lookups.LookupInstance instance19 = domainObject.getDay28BreachReason();
+		if ( null != instance19 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
 			img = null;
-			if (instance16.getImage() != null) 
+			if (instance19.getImage() != null) 
 			{
-				img = new ims.framework.utils.ImagePath(instance16.getImage().getImageId(), instance16.getImage().getImagePath());
+				img = new ims.framework.utils.ImagePath(instance19.getImage().getImageId(), instance19.getImage().getImagePath());
 			}
-			color = instance16.getColor();
+			color = instance19.getColor();
 			if (color != null) 
 				color.getValue();
 
-			ims.RefMan.vo.lookups.KPIExceededReason voLookup16 = new ims.RefMan.vo.lookups.KPIExceededReason(instance16.getId(),instance16.getText(), instance16.isActive(), null, img, color);
-			ims.RefMan.vo.lookups.KPIExceededReason parentVoLookup16 = voLookup16;
-			ims.domain.lookups.LookupInstance parent16 = instance16.getParent();
-			while (parent16 != null)
+			ims.scheduling.vo.lookups.RTTWeekWaitOr28DayRuleBreachReason voLookup19 = new ims.scheduling.vo.lookups.RTTWeekWaitOr28DayRuleBreachReason(instance19.getId(),instance19.getText(), instance19.isActive(), null, img, color);
+			ims.scheduling.vo.lookups.RTTWeekWaitOr28DayRuleBreachReason parentVoLookup19 = voLookup19;
+			ims.domain.lookups.LookupInstance parent19 = instance19.getParent();
+			while (parent19 != null)
 			{
-				if (parent16.getImage() != null) 
+				if (parent19.getImage() != null) 
 				{
-					img = new ims.framework.utils.ImagePath(parent16.getImage().getImageId(), parent16.getImage().getImagePath() );
+					img = new ims.framework.utils.ImagePath(parent19.getImage().getImageId(), parent19.getImage().getImagePath() );
 				}
 				else 
 				{
 					img = null;
 				}
-				color = parent16.getColor();
+				color = parent19.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup16.setParent(new ims.RefMan.vo.lookups.KPIExceededReason(parent16.getId(),parent16.getText(), parent16.isActive(), null, img, color));
-				parentVoLookup16 = parentVoLookup16.getParent();
-								parent16 = parent16.getParent();
+								parentVoLookup19.setParent(new ims.scheduling.vo.lookups.RTTWeekWaitOr28DayRuleBreachReason(parent19.getId(),parent19.getText(), parent19.isActive(), null, img, color));
+				parentVoLookup19 = parentVoLookup19.getParent();
+								parent19 = parent19.getParent();
 			}			
-			valueObject.setKPIExceededReason(voLookup16);
+			valueObject.setDay28BreachReason(voLookup19);
 		}
-				// TCIHospital
-		valueObject.setTCIHospital(ims.core.vo.domain.LocationLiteVoAssembler.create(map, domainObject.getTCIHospital()) );
- 		return valueObject;
+				// Day28BreachComment
+		valueObject.setDay28BreachComment(domainObject.getDay28BreachComment());
+		// RTTBreachReason
+		ims.domain.lookups.LookupInstance instance21 = domainObject.getRTTBreachReason();
+		if ( null != instance21 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance21.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance21.getImage().getImageId(), instance21.getImage().getImagePath());
+			}
+			color = instance21.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.scheduling.vo.lookups.RTTWeekWaitOr28DayRuleBreachReason voLookup21 = new ims.scheduling.vo.lookups.RTTWeekWaitOr28DayRuleBreachReason(instance21.getId(),instance21.getText(), instance21.isActive(), null, img, color);
+			ims.scheduling.vo.lookups.RTTWeekWaitOr28DayRuleBreachReason parentVoLookup21 = voLookup21;
+			ims.domain.lookups.LookupInstance parent21 = instance21.getParent();
+			while (parent21 != null)
+			{
+				if (parent21.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent21.getImage().getImageId(), parent21.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent21.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup21.setParent(new ims.scheduling.vo.lookups.RTTWeekWaitOr28DayRuleBreachReason(parent21.getId(),parent21.getText(), parent21.isActive(), null, img, color));
+				parentVoLookup21 = parentVoLookup21.getParent();
+								parent21 = parent21.getParent();
+			}			
+			valueObject.setRTTBreachReason(voLookup21);
+		}
+		 		return valueObject;
 	 }
 
 
@@ -700,31 +778,60 @@ public class PatientElectiveListTCIVoAssembler
 		domainObject.setCurrentOutcome(ims.RefMan.vo.domain.TCIOutcomeForPatientElectiveListVoAssembler.extractTCIOutcomeForPatientElectiveList(domainFactory, valueObject.getCurrentOutcome(), domMap));
 		domainObject.setOutcomeHistory(ims.RefMan.vo.domain.TCIOutcomeForPatientElectiveListVoAssembler.extractTCIOutcomeForPatientElectiveListList(domainFactory, valueObject.getOutcomeHistory(), domainObject.getOutcomeHistory(), domMap));		
 		domainObject.setIsActive(valueObject.getIsActive());
-		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value16 = null;
-		if ( null != valueObject.getKPIExceededReason() ) 
-		{
-			value16 =
-				domainFactory.getLookupInstance(valueObject.getKPIExceededReason().getID());
-		}
-		domainObject.setKPIExceededReason(value16);
 	// SaveAsRefVO - treated as a refVo in extract methods
-	ims.core.resource.place.domain.objects.Location value17 = null;
+	ims.core.resource.place.domain.objects.Location value16 = null;
 		if ( null != valueObject.getTCIHospital() ) 
 		{
 			if (valueObject.getTCIHospital().getBoId() == null)
 			{
 				if (domMap.get(valueObject.getTCIHospital()) != null)
 				{
-					value17 = (ims.core.resource.place.domain.objects.Location)domMap.get(valueObject.getTCIHospital());
+					value16 = (ims.core.resource.place.domain.objects.Location)domMap.get(valueObject.getTCIHospital());
 				}
 			}
 			else
 			{
-				value17 = (ims.core.resource.place.domain.objects.Location)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.Location.class, valueObject.getTCIHospital().getBoId());
+				value16 = (ims.core.resource.place.domain.objects.Location)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.Location.class, valueObject.getTCIHospital().getBoId());
 			}
 		}
-		domainObject.setTCIHospital(value17);
+		domainObject.setTCIHospital(value16);
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getRTTBreachComment() != null && valueObject.getRTTBreachComment().equals(""))
+		{
+			valueObject.setRTTBreachComment(null);
+		}
+		domainObject.setRTTBreachComment(valueObject.getRTTBreachComment());
+		java.util.Date value18 = null;
+		ims.framework.utils.Date date18 = valueObject.getPlannedTCIDate();		
+		if ( date18 != null ) 
+		{
+			value18 = date18.getDate();
+		}
+		domainObject.setPlannedTCIDate(value18);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value19 = null;
+		if ( null != valueObject.getDay28BreachReason() ) 
+		{
+			value19 =
+				domainFactory.getLookupInstance(valueObject.getDay28BreachReason().getID());
+		}
+		domainObject.setDay28BreachReason(value19);
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getDay28BreachComment() != null && valueObject.getDay28BreachComment().equals(""))
+		{
+			valueObject.setDay28BreachComment(null);
+		}
+		domainObject.setDay28BreachComment(valueObject.getDay28BreachComment());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value21 = null;
+		if ( null != valueObject.getRTTBreachReason() ) 
+		{
+			value21 =
+				domainFactory.getLookupInstance(valueObject.getRTTBreachReason().getID());
+		}
+		domainObject.setRTTBreachReason(value21);
 
 		return domainObject;
 	}

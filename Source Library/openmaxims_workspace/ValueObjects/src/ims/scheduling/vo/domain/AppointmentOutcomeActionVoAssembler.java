@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.scheduling.vo.domain;
@@ -52,10 +57,12 @@ public class AppointmentOutcomeActionVoAssembler
 	    valueObjectDest.setIsRIE(valueObjectSrc.getIsRIE());
 		// AppointmentAction
 		valueObjectDest.setAppointmentAction(valueObjectSrc.getAppointmentAction());
+		// FutureAppointment
+		valueObjectDest.setFutureAppointment(valueObjectSrc.getFutureAppointment());
+		// InterProviderTransfer
+		valueObjectDest.setInterProviderTransfer(valueObjectSrc.getInterProviderTransfer());
 		// OutcomeOfAction
 		valueObjectDest.setOutcomeOfAction(valueObjectSrc.getOutcomeOfAction());
-		// FutureAppointmentDetails
-		valueObjectDest.setFutureAppointmentDetails(valueObjectSrc.getFutureAppointmentDetails());
 	 	return valueObjectDest;
 	 }
 
@@ -382,45 +389,47 @@ public class AppointmentOutcomeActionVoAssembler
 			}			
 			valueObject.setAppointmentAction(voLookup1);
 		}
-				// OutcomeOfAction
-		ims.domain.lookups.LookupInstance instance2 = domainObject.getOutcomeOfAction();
-		if ( null != instance2 ) {
+				// FutureAppointment
+		valueObject.setFutureAppointment(ims.scheduling.vo.domain.FutureAppointmentDetailsVoAssembler.create(map, domainObject.getFutureAppointmentDetail()) );
+		// InterProviderTransfer
+		valueObject.setInterProviderTransfer(ims.RefMan.vo.domain.InterProviderTransferOutVoAssembler.create(map, domainObject.getIPTOUT()) );
+		// OutcomeOfAction
+		ims.domain.lookups.LookupInstance instance4 = domainObject.getOutcomeOfAction();
+		if ( null != instance4 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
 			img = null;
-			if (instance2.getImage() != null) 
+			if (instance4.getImage() != null) 
 			{
-				img = new ims.framework.utils.ImagePath(instance2.getImage().getImageId(), instance2.getImage().getImagePath());
+				img = new ims.framework.utils.ImagePath(instance4.getImage().getImageId(), instance4.getImage().getImagePath());
 			}
-			color = instance2.getColor();
+			color = instance4.getColor();
 			if (color != null) 
 				color.getValue();
 
-			ims.scheduling.vo.lookups.OutcomeAction voLookup2 = new ims.scheduling.vo.lookups.OutcomeAction(instance2.getId(),instance2.getText(), instance2.isActive(), null, img, color);
-			ims.scheduling.vo.lookups.OutcomeAction parentVoLookup2 = voLookup2;
-			ims.domain.lookups.LookupInstance parent2 = instance2.getParent();
-			while (parent2 != null)
+			ims.scheduling.vo.lookups.OutcomeAction voLookup4 = new ims.scheduling.vo.lookups.OutcomeAction(instance4.getId(),instance4.getText(), instance4.isActive(), null, img, color);
+			ims.scheduling.vo.lookups.OutcomeAction parentVoLookup4 = voLookup4;
+			ims.domain.lookups.LookupInstance parent4 = instance4.getParent();
+			while (parent4 != null)
 			{
-				if (parent2.getImage() != null) 
+				if (parent4.getImage() != null) 
 				{
-					img = new ims.framework.utils.ImagePath(parent2.getImage().getImageId(), parent2.getImage().getImagePath() );
+					img = new ims.framework.utils.ImagePath(parent4.getImage().getImageId(), parent4.getImage().getImagePath() );
 				}
 				else 
 				{
 					img = null;
 				}
-				color = parent2.getColor();
+				color = parent4.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup2.setParent(new ims.scheduling.vo.lookups.OutcomeAction(parent2.getId(),parent2.getText(), parent2.isActive(), null, img, color));
-				parentVoLookup2 = parentVoLookup2.getParent();
-								parent2 = parent2.getParent();
+								parentVoLookup4.setParent(new ims.scheduling.vo.lookups.OutcomeAction(parent4.getId(),parent4.getText(), parent4.isActive(), null, img, color));
+				parentVoLookup4 = parentVoLookup4.getParent();
+								parent4 = parent4.getParent();
 			}			
-			valueObject.setOutcomeOfAction(voLookup2);
+			valueObject.setOutcomeOfAction(voLookup4);
 		}
-				// FutureAppointmentDetails
-		valueObject.setFutureAppointmentDetails(ims.scheduling.vo.domain.FutureAppointmentDetailsVoAssembler.create(map, domainObject.getFutureAppointmentDetails()) );
- 		return valueObject;
+		 		return valueObject;
 	 }
 
 
@@ -477,15 +486,16 @@ public class AppointmentOutcomeActionVoAssembler
 				domainFactory.getLookupInstance(valueObject.getAppointmentAction().getID());
 		}
 		domainObject.setAppointmentAction(value1);
+		domainObject.setFutureAppointmentDetail(ims.scheduling.vo.domain.FutureAppointmentDetailsVoAssembler.extractFutureAppointmentDetails(domainFactory, valueObject.getFutureAppointment(), domMap));
+		domainObject.setIPTOUT(ims.RefMan.vo.domain.InterProviderTransferOutVoAssembler.extractInterProviderTransferOut(domainFactory, valueObject.getInterProviderTransfer(), domMap));
 		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value2 = null;
+		ims.domain.lookups.LookupInstance value4 = null;
 		if ( null != valueObject.getOutcomeOfAction() ) 
 		{
-			value2 =
+			value4 =
 				domainFactory.getLookupInstance(valueObject.getOutcomeOfAction().getID());
 		}
-		domainObject.setOutcomeOfAction(value2);
-		domainObject.setFutureAppointmentDetails(ims.scheduling.vo.domain.FutureAppointmentDetailsVoAssembler.extractFutureAppointmentDetails(domainFactory, valueObject.getFutureAppointmentDetails(), domMap));
+		domainObject.setOutcomeOfAction(value4);
 
 		return domainObject;
 	}

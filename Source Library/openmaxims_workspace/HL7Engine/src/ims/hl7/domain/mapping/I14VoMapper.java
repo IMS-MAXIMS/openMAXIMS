@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,6 +15,11 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 package ims.hl7.domain.mapping;
@@ -23,6 +28,7 @@ package ims.hl7.domain.mapping;
 
 import ims.core.vo.HL7ReferralVo;
 import ims.core.vo.Patient;
+import ims.hl7.domain.EventResponse;
 import ims.hl7.utils.HL7Errors;
 import ims.hl7.utils.HL7Utils;
 import ims.ocrr.vo.ProviderSystemVo;
@@ -42,33 +48,49 @@ public class I14VoMapper extends VoMapper {
 	}
 
 	@Override
-	public Message processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception 
+	//WDEV-20112
+//	public Message processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception 
+	public EventResponse processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception 
 	{
+		//WDEV-20112
+		EventResponse response = new EventResponse(); //WDEV-20112
+		
 		try
 		{
 			if (hL7PathwayIf == null)
+			{
 				hL7PathwayIf = (HL7PathwayIf) getDomainImpl("ims.pathways.domain.impl.HL7PathwayIfImpl");
-			processMessage(msg, providerSystem);
+				//WDEV-20112
+//				processMessage(msg, providerSystem);
+				processMessage(msg, providerSystem, response); //WDEV-20112				
+			}
 		}
 		catch (Exception ex)
 		{
-			return HL7Utils.buildRejAck(msg.get("MSH"), ex.getClass().getName() + " occurred. " + ex.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems()));
+			//WDEV-20112
+//			return HL7Utils.buildRejAck(msg.get("MSH"), ex.getClass().getName() + " occurred. " + ex.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems()));
+			response.setMessage(HL7Utils.buildRejAck(msg.get("MSH"), ex.getClass().getName() + " occurred. " + ex.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems())));
+			return response; //WDEV-20112
 		}
 
-		Message ack = HL7Utils.buildPosAck(msg.get("MSH"), toConfigItemArray(providerSystem.getConfigItems()));
-		return ack;	
+		//WDEV-20112
+//		Message ack = HL7Utils.buildPosAck(msg.get("MSH"), toConfigItemArray(providerSystem.getConfigItems()));
+//		return ack;
+		response.setMessage(HL7Utils.buildPosAck(msg.get("MSH"), toConfigItemArray(providerSystem.getConfigItems())));
+		return response; //WDEV-20112
 
 	}
 	
-	
-	private void processMessage(Message msg, ProviderSystemVo providerSystem) throws Exception 
+
+	//WDEV-20112
+//	private void processMessage(Message msg, ProviderSystemVo providerSystem) throws Exception 
+	private EventResponse processMessage(Message msg, ProviderSystemVo providerSystem, EventResponse response) throws Exception //WDEV-20112 
 	{
 		RF1 rf1 = (RF1) msg.get("RF1");
 
 		// Identify the Patient, Register if required
 		Patient patient = savePatient(msg, providerSystem);
-	
-		
+
 		// Get the external referral identifier which is unique per referral
 		String rkey = rf1.getOriginatingReferralIdentifier().getEntityIdentifier().getValue();
 		
@@ -97,7 +119,10 @@ public class I14VoMapper extends VoMapper {
 		hL7PathwayIf.saveReferral(referral);
 		
 		// Message Processed
-		return;
+		//WDEV-20112
+//		return;
+		response.setPatient(referral.getPatient());
+		return response; //WEDEV-20112
 	}
 
 

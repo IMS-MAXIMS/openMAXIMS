@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -88,10 +93,17 @@ public class Logic extends BaseLogic
     		newLine.setcolEvent(pathwayEntityEventMapVo.getEvent().getName());
     		newLine.setCellcolEventTooltip(newLine.getcolEvent());
 		}
+		else
+		{
+    		newLine.setcolEvent(null);
+    		newLine.setCellcolEventTooltip(null);			
+		}
 		newLine.setcolDescription(pathwayEntityEventMapVo.getDescription());
 		newLine.setCellcolDescriptionTooltip(newLine.getcolDescription());
 		newLine.setcolRule(pathwayEntityEventMapVo.getRule());
 		newLine.setCellcolRuleTooltip(newLine.getcolRule());
+		newLine.setcolTargetMethod(pathwayEntityEventMapVo.getTargetMethod());
+		newLine.setCellcolTargetMethodTooltip(newLine.getcolTargetMethod());
 		if (pathwayEntityEventMapVo.getScheduledDateTimeField() != null)
 		{
 			newLine.setColSchDateTime(pathwayEntityEventMapVo.getScheduledDateTimeField().toString());
@@ -205,8 +217,8 @@ public class Logic extends BaseLogic
 		
 		if (form.ctnEntityDetails().qmbEntity().getValue() == null)
 			errors.add("Entity Name is Mandatory");
-		if (form.ctnEntityDetails().qmbEvents().getValue() == null)
-			errors.add("Event is Mandatory");
+//		if (form.ctnEntityDetails().qmbEvents().getValue() == null)
+//			errors.add("Event is Mandatory");
 			
 		if (errors.size() > 0)
 		{
@@ -230,9 +242,15 @@ public class Logic extends BaseLogic
 		recodToSave.setEntity(form.ctnEntityDetails().qmbEntity().getValue());
 		if (form.ctnEntityDetails().qmbEvents().getValue() != null)
 			recodToSave.setEventId(form.ctnEntityDetails().qmbEvents().getValue().getID_Event());
+		else
+		{
+			recodToSave.setEvent(null);
+			recodToSave.setEventId(null);
+		}
 		recodToSave.setRule(form.ctnEntityDetails().txtRule().getValue());
 		recodToSave.setDescription(form.ctnEntityDetails().txtDescription().getValue());
 		recodToSave.setScheduledDateTimeField(form.ctnEntityDetails().txtScheduledDateTime().getValue());
+		recodToSave.setTargetMethod(form.ctnEntityDetails().txtTargetMethod().getValue());
 		
 		return recodToSave;
 	}
@@ -257,10 +275,15 @@ public class Logic extends BaseLogic
         		form.ctnEntityDetails().qmbEvents().newRow(getselectedEntity.getEvent(), getselectedEntity.getEvent().getName());
         		form.ctnEntityDetails().qmbEvents().setValue(getselectedEntity.getEvent());
     		}
+    		else
+    		{
+        		form.ctnEntityDetails().qmbEvents().setValue(getselectedEntity.getEvent());
+    		}	
     		form.ctnEntityDetails().txtScheduledDateTime().setValue(getselectedEntity.getScheduledDateTimeField());
     		form.ctnEntityDetails().txtRule().setValue(getselectedEntity.getRule());
     		form.ctnEntityDetails().txtDescription().setValue(getselectedEntity.getDescription());
     		form.ctnEntityDetails().chkIsActive().setValue(getselectedEntity.getActive());
+    		form.ctnEntityDetails().txtTargetMethod().setValue(getselectedEntity.getTargetMethod());
 		}
 	}
 

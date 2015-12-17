@@ -1,0 +1,131 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:35 -->
+<hibernate-mapping>
+	<class name="ims.core.vitals.domain.objects.VentilationTracheostomy" table="core_ventilationtra" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: breathsSpontaneously -->
+<!-- debug: patientIntubated -->
+<!-- debug: intubationMethod -->
+<!-- debug: patientVentilated -->
+<!-- debug: typeOfVentilator -->
+<!-- debug: modeOfVentilation -->
+<!-- debug: requiresATracheostomy -->
+<!-- debug: tracheostomyType -->
+<!-- debug: tracheostomyAccessories -->
+<!-- debug: sizeCPAPValve -->
+<!-- debug: sizeOfTracheostomy -->
+<!-- debug: dateInserted -->
+<!-- debug: dateLastChange -->
+<!-- debug: dateNextChange -->
+<!-- debug: dateRemoved -->
+<!-- debug: notes -->
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: IsLookup -->
+		<many-to-one name="breathsSpontaneously" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_breathsspo" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="patientIntubated" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_patientint" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="intubationMethod" type="string" access="field" update="true">
+			<column name="intubation"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="patientVentilated" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_patientven" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="typeOfVentilator" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_typeofvent" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="modeOfVentilation" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_modeofvent" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="requiresATracheostomy" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_requiresat" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="tracheostomyType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_tracheosto" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="tracheostomyAccessories" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_tracheost2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="sizeCPAPValve" type="string" access="field" update="true">
+			<column name="sizecpapva"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="sizeOfTracheostomy" type="string" access="field" update="true">
+			<column name="sizeoftrac"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dateInserted" type="date" access="field" update="true">
+			<column name="dateinsert"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dateLastChange" type="date" access="field" update="true">
+			<column name="datelastch"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dateNextChange" type="date" access="field" update="true">
+			<column name="datenextch"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dateRemoved" type="date" access="field" update="true">
+			<column name="dateremove"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="notes" type="string" access="field" update="true" > 
+			<column name="notes" length="500"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

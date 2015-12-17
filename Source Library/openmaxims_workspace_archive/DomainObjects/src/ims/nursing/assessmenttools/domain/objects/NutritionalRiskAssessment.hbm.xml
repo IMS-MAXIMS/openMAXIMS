@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:36 -->
+<hibernate-mapping>
+	<subclass name="ims.nursing.assessmenttools.domain.objects.NutritionalRiskAssessment" lazy="true" discriminator-value="nutr" extends="ims.core.clinical.domain.objects.AssessmentTool" >
+<!-- debug: hibernateClassContent -->
+<!-- debug: assessmentDetails -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="assessmentDetails" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="nutritionalris_assessment_fk">
+				<column name="ns_nutritionalris_assessment" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.nursing.assessmenttools.domain.objects.NutritionalRiskAssessmentDetails" />
+		</set>
+	</subclass>
+</hibernate-mapping>

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -45,7 +50,6 @@ import ims.domain.exceptions.DomainRuntimeException;
 import ims.domain.exceptions.StaleObjectException;
 import ims.domain.exceptions.UniqueKeyViolationException;
 import ims.domain.impl.DomainImpl;
-import ims.framework.enumerations.SortOrder;
 import ims.framework.exceptions.CodingRuntimeException;
 import ims.scheduling.domain.objects.DirectoryofService;
 import ims.scheduling.vo.DirectoryOfServiceVo;
@@ -132,7 +136,7 @@ public class DirectoryOfServiceAdminImpl extends DomainImpl implements ims.sched
 	
 		if (serviceShort.getServiceNameIsNotNull())
 		{
-			condStr.append(andStr + " upper(service.serviceName) like :serviceName" );
+			condStr.append(andStr + " service.upperName like :serviceName" ); //WDEV-20219 upper(service.serviceName)
 			markers.add("serviceName");
 			values.add("%" +  serviceShort.getServiceName().toUpperCase() + "%");		
 			andStr = " and ";
@@ -156,7 +160,7 @@ public class DirectoryOfServiceAdminImpl extends DomainImpl implements ims.sched
 			hql += " where ";
 		
 		hql += condStr.toString();
-		hql += " order by upper(service.serviceName) asc ";//WDEV-15178
+		hql += " order by service.upperName asc ";//WDEV-15178 //WDEV-20219 upper(service.serviceName)
 		List<?> services = factory.find(hql,markers,values);
 		return ServiceShortVoAssembler.createServiceShortVoCollectionFromService(services);
 	}
@@ -196,10 +200,19 @@ public class DirectoryOfServiceAdminImpl extends DomainImpl implements ims.sched
 	 */
 	public ServiceFunctionVoCollection listServiceFunctions(ServiceShortVo serviceShort) 
 	{
-		DomainFactory factory = getDomainFactory();
+		/*DomainFactory factory = getDomainFactory();
 		
 		List<?> funcs = factory.find("from ServiceFunction serviceFunc where serviceFunc.service.id = :serviceId",new String[]{"serviceId"},new Object[]{serviceShort.getID_Service()});
-		return ServiceFunctionVoAssembler.createServiceFunctionVoCollectionFromServiceFunction(funcs);
+		return ServiceFunctionVoAssembler.createServiceFunctionVoCollectionFromServiceFunction(funcs);*/
+		
+		
+		//wdev-20262
+		if(serviceShort == null || serviceShort.getID_Service() == null)
+			throw new CodingRuntimeException("service parameter is null or id not provided in method listServiceFunctionByService");
+		
+		DomainFactory factory = getDomainFactory();
+		List servFuncs = factory.find("from ServiceFunction as servFunc where servFunc.service.id = :idService and servFunc.isActive = 1",new String[]{"idService"}, new Object[]{serviceShort.getID_Service()});
+		return ServiceFunctionVoAssembler.createServiceFunctionVoCollectionFromServiceFunction(servFuncs);
 	}
 
 	/**
@@ -208,7 +221,7 @@ public class DirectoryOfServiceAdminImpl extends DomainImpl implements ims.sched
 	public LocationLiteVoCollection listLocationLiteByName(String name)
 	{	
 		DomainFactory factory = getDomainFactory();
-		String hql = "from Location loc where loc.isActive = :active and loc.type.id not in (:path,:rad,:surgery) ";
+		String hql = "from Location loc where loc.isActive = :active and loc.isVirtual = :virtual and loc.type.id not in (:path,:rad,:surgery, :bay) "; //WDEV-19532 //WDEV-21054
 		if(name != null)
 		{
 			name = name.replaceAll("%","");
@@ -217,7 +230,7 @@ public class DirectoryOfServiceAdminImpl extends DomainImpl implements ims.sched
 		
 		hql += " order by loc.upperName asc";
 		
-		List<?> locs = factory.find(hql, new String[]{"active","path","rad","surgery"}, new Object[]{Boolean.TRUE,LocationType.PATHOLOGYLABORATORY.getID(),LocationType.CLINICALIMAGINGDEPARTMENT.getID(),LocationType.SURGERY.getID()});
+		List<?> locs = factory.find(hql, new String[]{"active", "virtual", "path", "rad", "surgery","bay"}, new Object[]{Boolean.TRUE, Boolean.FALSE, LocationType.PATHOLOGYLABORATORY.getID(), LocationType.CLINICALIMAGINGDEPARTMENT.getID(), LocationType.SURGERY.getID(),LocationType.BAY.getID()}); //WDEV-19532
 		return LocationLiteVoAssembler.createLocationLiteVoCollectionFromLocation(locs);
 	}
 

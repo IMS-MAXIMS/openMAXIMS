@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:37 -->
+<!-- Generated: 12/10/2015, 13:31 -->
 <hibernate-mapping>
 	<class name="ims.scheduling.domain.objects.SessionParentChildSlot" table="schl_sessionparentc" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -75,6 +75,17 @@
 			<column name="parentslot" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
 <!-- debug: duration -->
+<!-- debug: comment -->
+<!-- debug: cancelBlockReason -->
+<!-- debug: cancelBlockComment -->
+<!-- debug: priority -->
+<!-- debug: slotResp -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="slotResp" class="ims.scheduling.domain.objects.Session_ListOwner" unique="true" foreign-key="sessionparentc_slotresp_fk" access="field" cascade="save-update">
+			<column name="slotresp" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
 <!-- debug: !IsAssociation && !IsCollection -->
 
 <!-- debug: !IsLookup -->
@@ -106,5 +117,25 @@
 		<property name="duration" type="integer" access="field" update="true">
 			<column name="duration"  not-null="false" unique="false"  />
 		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="comment" type="string" access="field" update="true" > 
+			<column name="c_comme" length="500"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="cancelBlockReason" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_cancelbloc" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="cancelBlockComment" type="string" access="field" update="true" > 
+			<column name="cancelblo2" length="250"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="priority" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_priority" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
 	</class>
 </hibernate-mapping>

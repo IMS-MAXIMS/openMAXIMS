@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,15 +15,20 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 
 /*
  * This code was generated.
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:38
+ * Generated: 13/10/2015, 13:23
  */
 package ims.scheduling.vo.lookups;
 
@@ -35,6 +40,149 @@ import ims.domain.lookups.LookupService;
  * 
  */
 public final class LookupHelper {
+	public static SafetyBriefDelayReasonCollection getSafetyBriefDelayReason(LookupService lookupService) {
+		SafetyBriefDelayReasonCollection collection =
+			(SafetyBriefDelayReasonCollection) lookupService.getLookupCollection(SafetyBriefDelayReason.TYPE_ID, 
+				SafetyBriefDelayReasonCollection.class, SafetyBriefDelayReason.class);
+		return collection;
+	}
+
+	public static SafetyBriefDelayReason getSafetyBriefDelayReasonInstance(LookupService lookupService, int id) 
+	{
+		return (SafetyBriefDelayReason)lookupService.getLookupInstance(SafetyBriefDelayReason.class, SafetyBriefDelayReason.TYPE_ID, id);
+	}
+	
+
+	public static Rule28DayStatusCollection getRule28DayStatus(LookupService lookupService) {
+		Rule28DayStatusCollection collection =
+			(Rule28DayStatusCollection) lookupService.getLookupCollection(Rule28DayStatus.TYPE_ID, 
+				Rule28DayStatusCollection.class, Rule28DayStatus.class);
+		return collection;
+	}
+
+	public static Rule28DayStatus getRule28DayStatusInstance(LookupService lookupService, int id) 
+	{
+		return (Rule28DayStatus)lookupService.getLookupInstance(Rule28DayStatus.class, Rule28DayStatus.TYPE_ID, id);
+	}
+	
+
+	public static PendingEmergencyTheatreStatusCollection getPendingEmergencyTheatreStatus(LookupService lookupService) {
+		PendingEmergencyTheatreStatusCollection collection =
+			(PendingEmergencyTheatreStatusCollection) lookupService.getLookupCollection(PendingEmergencyTheatreStatus.TYPE_ID, 
+				PendingEmergencyTheatreStatusCollection.class, PendingEmergencyTheatreStatus.class);
+		return collection;
+	}
+
+	public static PendingEmergencyTheatreStatus getPendingEmergencyTheatreStatusInstance(LookupService lookupService, int id) 
+	{
+		return (PendingEmergencyTheatreStatus)lookupService.getLookupInstance(PendingEmergencyTheatreStatus.class, PendingEmergencyTheatreStatus.TYPE_ID, id);
+	}
+	
+
+	public static PendingEmergencyCurrentPatientLocationCollection getPendingEmergencyCurrentPatientLocation(LookupService lookupService) {
+		PendingEmergencyCurrentPatientLocationCollection collection =
+			(PendingEmergencyCurrentPatientLocationCollection) lookupService.getLookupCollection(PendingEmergencyCurrentPatientLocation.TYPE_ID, 
+				PendingEmergencyCurrentPatientLocationCollection.class, PendingEmergencyCurrentPatientLocation.class);
+		return collection;
+	}
+
+	public static PendingEmergencyCurrentPatientLocation getPendingEmergencyCurrentPatientLocationInstance(LookupService lookupService, int id) 
+	{
+		return (PendingEmergencyCurrentPatientLocation)lookupService.getLookupInstance(PendingEmergencyCurrentPatientLocation.class, PendingEmergencyCurrentPatientLocation.TYPE_ID, id);
+	}
+	
+
+	public static PendingTheatreUrgencyCategoryCollection getPendingTheatreUrgencyCategory(LookupService lookupService) {
+		PendingTheatreUrgencyCategoryCollection collection =
+			(PendingTheatreUrgencyCategoryCollection) lookupService.getLookupCollection(PendingTheatreUrgencyCategory.TYPE_ID, 
+				PendingTheatreUrgencyCategoryCollection.class, PendingTheatreUrgencyCategory.class);
+		return collection;
+	}
+
+	public static PendingTheatreUrgencyCategory getPendingTheatreUrgencyCategoryInstance(LookupService lookupService, int id) 
+	{
+		return (PendingTheatreUrgencyCategory)lookupService.getLookupInstance(PendingTheatreUrgencyCategory.class, PendingTheatreUrgencyCategory.TYPE_ID, id);
+	}
+	
+
+	public static RequestToScheduleCollection getRequestToSchedule(LookupService lookupService) {
+		RequestToScheduleCollection collection =
+			(RequestToScheduleCollection) lookupService.getLookupCollection(RequestToSchedule.TYPE_ID, 
+				RequestToScheduleCollection.class, RequestToSchedule.class);
+		return collection;
+	}
+
+	public static RequestToSchedule getRequestToScheduleInstance(LookupService lookupService, int id) 
+	{
+		return (RequestToSchedule)lookupService.getLookupInstance(RequestToSchedule.class, RequestToSchedule.TYPE_ID, id);
+	}
+	
+
+	public static AcuteTheateListBookingStateCollection getAcuteTheateListBookingState(LookupService lookupService) {
+		AcuteTheateListBookingStateCollection collection =
+			(AcuteTheateListBookingStateCollection) lookupService.getLookupCollection(AcuteTheateListBookingState.TYPE_ID, 
+				AcuteTheateListBookingStateCollection.class, AcuteTheateListBookingState.class);
+		return collection;
+	}
+
+	public static AcuteTheateListBookingState getAcuteTheateListBookingStateInstance(LookupService lookupService, int id) 
+	{
+		return (AcuteTheateListBookingState)lookupService.getLookupInstance(AcuteTheateListBookingState.class, AcuteTheateListBookingState.TYPE_ID, id);
+	}
+	
+
+	public static FutureAppointmentSourceCollection getFutureAppointmentSource(LookupService lookupService) {
+		FutureAppointmentSourceCollection collection =
+			(FutureAppointmentSourceCollection) lookupService.getLookupCollection(FutureAppointmentSource.TYPE_ID, 
+				FutureAppointmentSourceCollection.class, FutureAppointmentSource.class);
+		return collection;
+	}
+
+	public static FutureAppointmentSource getFutureAppointmentSourceInstance(LookupService lookupService, int id) 
+	{
+		return (FutureAppointmentSource)lookupService.getLookupInstance(FutureAppointmentSource.class, FutureAppointmentSource.TYPE_ID, id);
+	}
+	
+
+	public static FutureApptRemovalReasonCollection getFutureApptRemovalReason(LookupService lookupService) {
+		FutureApptRemovalReasonCollection collection =
+			(FutureApptRemovalReasonCollection) lookupService.getLookupCollection(FutureApptRemovalReason.TYPE_ID, 
+				FutureApptRemovalReasonCollection.class, FutureApptRemovalReason.class);
+		return collection;
+	}
+
+	public static FutureApptRemovalReason getFutureApptRemovalReasonInstance(LookupService lookupService, int id) 
+	{
+		return (FutureApptRemovalReason)lookupService.getLookupInstance(FutureApptRemovalReason.class, FutureApptRemovalReason.TYPE_ID, id);
+	}
+	
+
+	public static FutureAppointmentStatusCollection getFutureAppointmentStatus(LookupService lookupService) {
+		FutureAppointmentStatusCollection collection =
+			(FutureAppointmentStatusCollection) lookupService.getLookupCollection(FutureAppointmentStatus.TYPE_ID, 
+				FutureAppointmentStatusCollection.class, FutureAppointmentStatus.class);
+		return collection;
+	}
+
+	public static FutureAppointmentStatus getFutureAppointmentStatusInstance(LookupService lookupService, int id) 
+	{
+		return (FutureAppointmentStatus)lookupService.getLookupInstance(FutureAppointmentStatus.class, FutureAppointmentStatus.TYPE_ID, id);
+	}
+	
+
+	public static RTTWeekWaitOr28DayRuleBreachReasonCollection getRTTWeekWaitOr28DayRuleBreachReason(LookupService lookupService) {
+		RTTWeekWaitOr28DayRuleBreachReasonCollection collection =
+			(RTTWeekWaitOr28DayRuleBreachReasonCollection) lookupService.getLookupCollection(RTTWeekWaitOr28DayRuleBreachReason.TYPE_ID, 
+				RTTWeekWaitOr28DayRuleBreachReasonCollection.class, RTTWeekWaitOr28DayRuleBreachReason.class);
+		return collection;
+	}
+
+	public static RTTWeekWaitOr28DayRuleBreachReason getRTTWeekWaitOr28DayRuleBreachReasonInstance(LookupService lookupService, int id) 
+	{
+		return (RTTWeekWaitOr28DayRuleBreachReason)lookupService.getLookupInstance(RTTWeekWaitOr28DayRuleBreachReason.class, RTTWeekWaitOr28DayRuleBreachReason.TYPE_ID, id);
+	}
+	
+
 	public static AppointmentActionCollection getAppointmentAction(LookupService lookupService) {
 		AppointmentActionCollection collection =
 			(AppointmentActionCollection) lookupService.getLookupCollection(AppointmentAction.TYPE_ID, 
@@ -61,6 +209,32 @@ public final class LookupHelper {
 	}
 	
 
+	public static OutcomeActionCollection getOutcomeAction(LookupService lookupService) {
+		OutcomeActionCollection collection =
+			(OutcomeActionCollection) lookupService.getLookupCollection(OutcomeAction.TYPE_ID, 
+				OutcomeActionCollection.class, OutcomeAction.class);
+		return collection;
+	}
+
+	public static OutcomeAction getOutcomeActionInstance(LookupService lookupService, int id) 
+	{
+		return (OutcomeAction)lookupService.getLookupInstance(OutcomeAction.class, OutcomeAction.TYPE_ID, id);
+	}
+	
+
+	public static Sched_Prfile_CatCollection getSched_Prfile_Cat(LookupService lookupService) {
+		Sched_Prfile_CatCollection collection =
+			(Sched_Prfile_CatCollection) lookupService.getLookupCollection(Sched_Prfile_Cat.TYPE_ID, 
+				Sched_Prfile_CatCollection.class, Sched_Prfile_Cat.class);
+		return collection;
+	}
+
+	public static Sched_Prfile_Cat getSched_Prfile_CatInstance(LookupService lookupService, int id) 
+	{
+		return (Sched_Prfile_Cat)lookupService.getLookupInstance(Sched_Prfile_Cat.class, Sched_Prfile_Cat.TYPE_ID, id);
+	}
+	
+
 	public static ExternalSystemEventTypesCollection getExternalSystemEventTypes(LookupService lookupService) {
 		ExternalSystemEventTypesCollection collection =
 			(ExternalSystemEventTypesCollection) lookupService.getLookupCollection(ExternalSystemEventTypes.TYPE_ID, 
@@ -71,6 +245,19 @@ public final class LookupHelper {
 	public static ExternalSystemEventTypes getExternalSystemEventTypesInstance(LookupService lookupService, int id) 
 	{
 		return (ExternalSystemEventTypes)lookupService.getLookupInstance(ExternalSystemEventTypes.class, ExternalSystemEventTypes.TYPE_ID, id);
+	}
+	
+
+	public static ApptConfStatusCollection getApptConfStatus(LookupService lookupService) {
+		ApptConfStatusCollection collection =
+			(ApptConfStatusCollection) lookupService.getLookupCollection(ApptConfStatus.TYPE_ID, 
+				ApptConfStatusCollection.class, ApptConfStatus.class);
+		return collection;
+	}
+
+	public static ApptConfStatus getApptConfStatusInstance(LookupService lookupService, int id) 
+	{
+		return (ApptConfStatus)lookupService.getLookupInstance(ApptConfStatus.class, ApptConfStatus.TYPE_ID, id);
 	}
 	
 
@@ -87,42 +274,42 @@ public final class LookupHelper {
 	}
 	
 
-	public static OutcomeActionCollection getOutcomeAction(LookupService lookupService) {
-		OutcomeActionCollection collection =
-			(OutcomeActionCollection) lookupService.getLookupCollection(OutcomeAction.TYPE_ID, 
-				OutcomeActionCollection.class, OutcomeAction.class);
+	public static PendingEmergencyTheatreRemovalReasonCollection getPendingEmergencyTheatreRemovalReason(LookupService lookupService) {
+		PendingEmergencyTheatreRemovalReasonCollection collection =
+			(PendingEmergencyTheatreRemovalReasonCollection) lookupService.getLookupCollection(PendingEmergencyTheatreRemovalReason.TYPE_ID, 
+				PendingEmergencyTheatreRemovalReasonCollection.class, PendingEmergencyTheatreRemovalReason.class);
 		return collection;
 	}
 
-	public static OutcomeAction getOutcomeActionInstance(LookupService lookupService, int id) 
+	public static PendingEmergencyTheatreRemovalReason getPendingEmergencyTheatreRemovalReasonInstance(LookupService lookupService, int id) 
 	{
-		return (OutcomeAction)lookupService.getLookupInstance(OutcomeAction.class, OutcomeAction.TYPE_ID, id);
+		return (PendingEmergencyTheatreRemovalReason)lookupService.getLookupInstance(PendingEmergencyTheatreRemovalReason.class, PendingEmergencyTheatreRemovalReason.TYPE_ID, id);
 	}
 	
 
-	public static Session_Status_and_ReasonCollection getSession_Status_and_Reason(LookupService lookupService) {
-		Session_Status_and_ReasonCollection collection =
-			(Session_Status_and_ReasonCollection) lookupService.getLookupCollection(Session_Status_and_Reason.TYPE_ID, 
-				Session_Status_and_ReasonCollection.class, Session_Status_and_Reason.class);
+	public static SchProfileTypeCollection getSchProfileType(LookupService lookupService) {
+		SchProfileTypeCollection collection =
+			(SchProfileTypeCollection) lookupService.getLookupCollection(SchProfileType.TYPE_ID, 
+				SchProfileTypeCollection.class, SchProfileType.class);
 		return collection;
 	}
 
-	public static Session_Status_and_Reason getSession_Status_and_ReasonInstance(LookupService lookupService, int id) 
+	public static SchProfileType getSchProfileTypeInstance(LookupService lookupService, int id) 
 	{
-		return (Session_Status_and_Reason)lookupService.getLookupInstance(Session_Status_and_Reason.class, Session_Status_and_Reason.TYPE_ID, id);
+		return (SchProfileType)lookupService.getLookupInstance(SchProfileType.class, SchProfileType.TYPE_ID, id);
 	}
 	
 
-	public static Sched_Prfile_CatCollection getSched_Prfile_Cat(LookupService lookupService) {
-		Sched_Prfile_CatCollection collection =
-			(Sched_Prfile_CatCollection) lookupService.getLookupCollection(Sched_Prfile_Cat.TYPE_ID, 
-				Sched_Prfile_CatCollection.class, Sched_Prfile_Cat.class);
+	public static ProfileListTypeCollection getProfileListType(LookupService lookupService) {
+		ProfileListTypeCollection collection =
+			(ProfileListTypeCollection) lookupService.getLookupCollection(ProfileListType.TYPE_ID, 
+				ProfileListTypeCollection.class, ProfileListType.class);
 		return collection;
 	}
 
-	public static Sched_Prfile_Cat getSched_Prfile_CatInstance(LookupService lookupService, int id) 
+	public static ProfileListType getProfileListTypeInstance(LookupService lookupService, int id) 
 	{
-		return (Sched_Prfile_Cat)lookupService.getLookupInstance(Sched_Prfile_Cat.class, Sched_Prfile_Cat.TYPE_ID, id);
+		return (ProfileListType)lookupService.getLookupInstance(ProfileListType.class, ProfileListType.TYPE_ID, id);
 	}
 	
 
@@ -266,6 +453,19 @@ public final class LookupHelper {
 	public static Status_Reason getStatus_ReasonInstance(LookupService lookupService, int id) 
 	{
 		return (Status_Reason)lookupService.getLookupInstance(Status_Reason.class, Status_Reason.TYPE_ID, id);
+	}
+	
+
+	public static Session_Status_and_ReasonCollection getSession_Status_and_Reason(LookupService lookupService) {
+		Session_Status_and_ReasonCollection collection =
+			(Session_Status_and_ReasonCollection) lookupService.getLookupCollection(Session_Status_and_Reason.TYPE_ID, 
+				Session_Status_and_ReasonCollection.class, Session_Status_and_Reason.class);
+		return collection;
+	}
+
+	public static Session_Status_and_Reason getSession_Status_and_ReasonInstance(LookupService lookupService, int id) 
+	{
+		return (Session_Status_and_Reason)lookupService.getLookupInstance(Session_Status_and_Reason.class, Session_Status_and_Reason.TYPE_ID, id);
 	}
 	
 

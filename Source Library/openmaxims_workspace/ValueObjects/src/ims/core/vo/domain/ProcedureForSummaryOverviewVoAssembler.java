@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.core.vo.domain;
@@ -343,7 +348,7 @@ public class ProcedureForSummaryOverviewVoAssembler
 			return null;
 			
 		// taxonomyMap
-		valueObject.setTaxonomyMap(ims.core.vo.domain.TaxonomyMapAssembler.createTaxonomyMapCollectionFromTaxonomyMap(map, domainObject.getTaxonomyMap()) );
+		valueObject.setTaxonomyMap(ims.core.vo.domain.NonUniqueTaxonomyMapVoAssembler.createNonUniqueTaxonomyMapVoCollectionFromNonUniqueTaxonomyMap(map, domainObject.getTaxonomyMap()) );
  		return valueObject;
 	 }
 
@@ -395,12 +400,12 @@ public class ProcedureForSummaryOverviewVoAssembler
 
 
 		// SaveAsRefVO treated as RefValueObject
-		ims.core.clinical.vo.TaxonomyMapRefVoCollection refCollection1 = new ims.core.clinical.vo.TaxonomyMapRefVoCollection();
+		ims.core.clinical.vo.NonUniqueTaxonomyMapRefVoCollection refCollection1 = new ims.core.clinical.vo.NonUniqueTaxonomyMapRefVoCollection();
 		if (valueObject.getTaxonomyMap() != null)
 		{
 			for (int i1=0; i1<valueObject.getTaxonomyMap().size(); i1++)
 			{
-				ims.core.clinical.vo.TaxonomyMapRefVo ref1 = (ims.core.clinical.vo.TaxonomyMapRefVo)valueObject.getTaxonomyMap().get(i1);
+				ims.core.clinical.vo.NonUniqueTaxonomyMapRefVo ref1 = (ims.core.clinical.vo.NonUniqueTaxonomyMapRefVo)valueObject.getTaxonomyMap().get(i1);
 				refCollection1.add(ref1);
 			}
 		}
@@ -412,20 +417,20 @@ public class ProcedureForSummaryOverviewVoAssembler
 		}
 		for(int i=0; i < size1; i++) 
 		{
-			ims.core.clinical.vo.TaxonomyMapRefVo vo = refCollection1.get(i);			
-			ims.core.clinical.domain.objects.TaxonomyMap dom = null;
+			ims.core.clinical.vo.NonUniqueTaxonomyMapRefVo vo = refCollection1.get(i);			
+			ims.core.clinical.domain.objects.NonUniqueTaxonomyMap dom = null;
 			if ( null != vo ) 
 			{
 				if (vo.getBoId() == null)
 				{
 					if (domMap.get(vo) != null)
 					{
-						dom = (ims.core.clinical.domain.objects.TaxonomyMap)domMap.get(vo);
+						dom = (ims.core.clinical.domain.objects.NonUniqueTaxonomyMap)domMap.get(vo);
 					}
 				}
 				else
 				{
-					dom = (ims.core.clinical.domain.objects.TaxonomyMap)domainFactory.getDomainObject( ims.core.clinical.domain.objects.TaxonomyMap.class, vo.getBoId());
+					dom = (ims.core.clinical.domain.objects.NonUniqueTaxonomyMap)domainFactory.getDomainObject( ims.core.clinical.domain.objects.NonUniqueTaxonomyMap.class, vo.getBoId());
 				}
 			}
 

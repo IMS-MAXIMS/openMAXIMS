@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.emergency.vo.domain;
@@ -68,12 +73,12 @@ public class EmergencyAttendanceBillingVoAssembler
 		valueObjectDest.setPaymentMade(valueObjectSrc.getPaymentMade());
 		// PaymentType
 		valueObjectDest.setPaymentType(valueObjectSrc.getPaymentType());
-		// InvoiceAmount
-		valueObjectDest.setInvoiceAmount(valueObjectSrc.getInvoiceAmount());
 		// ReasonForNonPayment
 		valueObjectDest.setReasonForNonPayment(valueObjectSrc.getReasonForNonPayment());
 		// PaymentRefunded
 		valueObjectDest.setPaymentRefunded(valueObjectSrc.getPaymentRefunded());
+		// InvoiceAmount
+		valueObjectDest.setInvoiceAmount(valueObjectSrc.getInvoiceAmount());
 	 	return valueObjectDest;
 	 }
 
@@ -566,10 +571,44 @@ public class EmergencyAttendanceBillingVoAssembler
 			}			
 			valueObject.setPaymentType(voLookup9);
 		}
-				// InvoiceAmount
-		valueObject.setInvoiceAmount(domainObject.getInvoiceAmount());
-		// ReasonForNonPayment
-		ims.domain.lookups.LookupInstance instance11 = domainObject.getReasonForNonPayment();
+				// ReasonForNonPayment
+		ims.domain.lookups.LookupInstance instance10 = domainObject.getReasonForNonPayment();
+		if ( null != instance10 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance10.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance10.getImage().getImageId(), instance10.getImage().getImagePath());
+			}
+			color = instance10.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.billing.vo.lookups.ReasonForNonPayment voLookup10 = new ims.billing.vo.lookups.ReasonForNonPayment(instance10.getId(),instance10.getText(), instance10.isActive(), null, img, color);
+			ims.billing.vo.lookups.ReasonForNonPayment parentVoLookup10 = voLookup10;
+			ims.domain.lookups.LookupInstance parent10 = instance10.getParent();
+			while (parent10 != null)
+			{
+				if (parent10.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent10.getImage().getImageId(), parent10.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent10.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup10.setParent(new ims.billing.vo.lookups.ReasonForNonPayment(parent10.getId(),parent10.getText(), parent10.isActive(), null, img, color));
+				parentVoLookup10 = parentVoLookup10.getParent();
+								parent10 = parent10.getParent();
+			}			
+			valueObject.setReasonForNonPayment(voLookup10);
+		}
+				// PaymentRefunded
+		ims.domain.lookups.LookupInstance instance11 = domainObject.getPaymentRefunded();
 		if ( null != instance11 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
@@ -582,8 +621,8 @@ public class EmergencyAttendanceBillingVoAssembler
 			if (color != null) 
 				color.getValue();
 
-			ims.billing.vo.lookups.ReasonForNonPayment voLookup11 = new ims.billing.vo.lookups.ReasonForNonPayment(instance11.getId(),instance11.getText(), instance11.isActive(), null, img, color);
-			ims.billing.vo.lookups.ReasonForNonPayment parentVoLookup11 = voLookup11;
+			ims.core.vo.lookups.YesNo voLookup11 = new ims.core.vo.lookups.YesNo(instance11.getId(),instance11.getText(), instance11.isActive(), null, img, color);
+			ims.core.vo.lookups.YesNo parentVoLookup11 = voLookup11;
 			ims.domain.lookups.LookupInstance parent11 = instance11.getParent();
 			while (parent11 != null)
 			{
@@ -598,14 +637,14 @@ public class EmergencyAttendanceBillingVoAssembler
 				color = parent11.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup11.setParent(new ims.billing.vo.lookups.ReasonForNonPayment(parent11.getId(),parent11.getText(), parent11.isActive(), null, img, color));
+								parentVoLookup11.setParent(new ims.core.vo.lookups.YesNo(parent11.getId(),parent11.getText(), parent11.isActive(), null, img, color));
 				parentVoLookup11 = parentVoLookup11.getParent();
 								parent11 = parent11.getParent();
 			}			
-			valueObject.setReasonForNonPayment(voLookup11);
+			valueObject.setPaymentRefunded(voLookup11);
 		}
-				// PaymentRefunded
-		ims.domain.lookups.LookupInstance instance12 = domainObject.getPaymentRefunded();
+				// InvoiceAmount
+		ims.domain.lookups.LookupInstance instance12 = domainObject.getInvoiceAmount();
 		if ( null != instance12 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
@@ -618,8 +657,8 @@ public class EmergencyAttendanceBillingVoAssembler
 			if (color != null) 
 				color.getValue();
 
-			ims.core.vo.lookups.YesNo voLookup12 = new ims.core.vo.lookups.YesNo(instance12.getId(),instance12.getText(), instance12.isActive(), null, img, color);
-			ims.core.vo.lookups.YesNo parentVoLookup12 = voLookup12;
+			ims.emergency.vo.lookups.InvoiceAmount voLookup12 = new ims.emergency.vo.lookups.InvoiceAmount(instance12.getId(),instance12.getText(), instance12.isActive(), null, img, color);
+			ims.emergency.vo.lookups.InvoiceAmount parentVoLookup12 = voLookup12;
 			ims.domain.lookups.LookupInstance parent12 = instance12.getParent();
 			while (parent12 != null)
 			{
@@ -634,11 +673,11 @@ public class EmergencyAttendanceBillingVoAssembler
 				color = parent12.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup12.setParent(new ims.core.vo.lookups.YesNo(parent12.getId(),parent12.getText(), parent12.isActive(), null, img, color));
+								parentVoLookup12.setParent(new ims.emergency.vo.lookups.InvoiceAmount(parent12.getId(),parent12.getText(), parent12.isActive(), null, img, color));
 				parentVoLookup12 = parentVoLookup12.getParent();
 								parent12 = parent12.getParent();
 			}			
-			valueObject.setPaymentRefunded(voLookup12);
+			valueObject.setInvoiceAmount(voLookup12);
 		}
 		 		return valueObject;
 	 }
@@ -808,23 +847,30 @@ public class EmergencyAttendanceBillingVoAssembler
 				domainFactory.getLookupInstance(valueObject.getPaymentType().getID());
 		}
 		domainObject.setPaymentType(value9);
-		domainObject.setInvoiceAmount(valueObject.getInvoiceAmount());
 		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value11 = null;
+		ims.domain.lookups.LookupInstance value10 = null;
 		if ( null != valueObject.getReasonForNonPayment() ) 
 		{
-			value11 =
+			value10 =
 				domainFactory.getLookupInstance(valueObject.getReasonForNonPayment().getID());
 		}
-		domainObject.setReasonForNonPayment(value11);
+		domainObject.setReasonForNonPayment(value10);
 		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value12 = null;
+		ims.domain.lookups.LookupInstance value11 = null;
 		if ( null != valueObject.getPaymentRefunded() ) 
 		{
-			value12 =
+			value11 =
 				domainFactory.getLookupInstance(valueObject.getPaymentRefunded().getID());
 		}
-		domainObject.setPaymentRefunded(value12);
+		domainObject.setPaymentRefunded(value11);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value12 = null;
+		if ( null != valueObject.getInvoiceAmount() ) 
+		{
+			value12 =
+				domainFactory.getLookupInstance(valueObject.getInvoiceAmount().getID());
+		}
+		domainObject.setInvoiceAmount(value12);
 
 		return domainObject;
 	}

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.edischarge.domain.objects;
@@ -70,6 +75,8 @@ public class DischargeSummarySchedule extends ims.domain.DomainObject implements
 	  * Collection of ims.edischarge.domain.objects.FailedEmailsDetails.
 	  */
 	private java.util.List failedEmails;
+	/** Sealed Envelope Patients processed. */
+	private Integer sealedEnvelopePatientsNo;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public DischargeSummarySchedule (Integer id, int ver)
@@ -189,6 +196,13 @@ public class DischargeSummarySchedule extends ims.domain.DomainObject implements
 		this.failedEmails = paramValue;
 	}
 
+	public Integer getSealedEnvelopePatientsNo() {
+		return sealedEnvelopePatientsNo;
+	}
+	public void setSealedEnvelopePatientsNo(Integer sealedEnvelopePatientsNo) {
+		this.sealedEnvelopePatientsNo = sealedEnvelopePatientsNo;
+	}
+
 	public ims.domain.SystemInformation getSystemInformation() {
 		if (systemInformation == null) systemInformation = new ims.domain.SystemInformation();
 		return systemInformation;
@@ -282,6 +296,9 @@ public class DischargeSummarySchedule extends ims.domain.DomainObject implements
 		if (i12 > 0)
 			auditStr.append("] " + i12);
 		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*sealedEnvelopePatientsNo* :");
+		auditStr.append(sealedEnvelopePatientsNo);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -401,6 +418,12 @@ public class DischargeSummarySchedule extends ims.domain.DomainObject implements
 			sb.append(ims.domain.DomainObject.toXMLString(this.getFailedEmails(), domMap));
 			sb.append("</failedEmails>");		
 			}
+		}
+		if (this.getSealedEnvelopePatientsNo() != null)
+		{
+			sb.append("<sealedEnvelopePatientsNo>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getSealedEnvelopePatientsNo().toString()));
+			sb.append("</sealedEnvelopePatientsNo>");		
 		}
 		return sb.toString();
 	}
@@ -627,6 +650,11 @@ public class DischargeSummarySchedule extends ims.domain.DomainObject implements
 			fldEl = fldEl.element("list");	
 			obj.setFailedEmails(ims.edischarge.domain.objects.FailedEmailsDetails.fromListXMLString(fldEl, factory, obj.getFailedEmails(), domMap));
 		}
+		fldEl = el.element("sealedEnvelopePatientsNo");
+		if(fldEl != null)
+		{	
+    		obj.setSealedEnvelopePatientsNo(new Integer(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -652,6 +680,7 @@ public class DischargeSummarySchedule extends ims.domain.DomainObject implements
 		public static final String FailedEmailsNo = "failedEmailsNo";
 		public static final String PrintedLettersNo = "printedLettersNo";
 		public static final String FailedEmails = "failedEmails";
+		public static final String SealedEnvelopePatientsNo = "sealedEnvelopePatientsNo";
 	}
 }
 

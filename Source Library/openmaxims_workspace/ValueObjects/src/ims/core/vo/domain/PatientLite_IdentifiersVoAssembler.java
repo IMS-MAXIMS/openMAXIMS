@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.core.vo.domain;
@@ -50,10 +55,16 @@ public class PatientLite_IdentifiersVoAssembler
 		}
 		valueObjectDest.setID_Patient(valueObjectSrc.getID_Patient());
 	    valueObjectDest.setIsRIE(valueObjectSrc.getIsRIE());
-		// identifiers
-		valueObjectDest.setIdentifiers(valueObjectSrc.getIdentifiers());
-		// dod
-		valueObjectDest.setDod(valueObjectSrc.getDod());
+		// PatientCategory
+		valueObjectDest.setPatientCategory(valueObjectSrc.getPatientCategory());
+		// PatientAlerts
+		valueObjectDest.setPatientAlerts(valueObjectSrc.getPatientAlerts());
+		// associatedPatient
+		valueObjectDest.setAssociatedPatient(valueObjectSrc.getAssociatedPatient());
+		// ward
+		valueObjectDest.setWard(valueObjectSrc.getWard());
+		// TimeOfDeath
+		valueObjectDest.setTimeOfDeath(valueObjectSrc.getTimeOfDeath());
 		// name
 		valueObjectDest.setName(valueObjectSrc.getName());
 		// sex
@@ -64,6 +75,12 @@ public class PatientLite_IdentifiersVoAssembler
 		valueObjectDest.setIsActive(valueObjectSrc.getIsActive());
 		// IsQuickRegistrationPatient
 		valueObjectDest.setIsQuickRegistrationPatient(valueObjectSrc.getIsQuickRegistrationPatient());
+		// primaryIdValueUsed
+		valueObjectDest.setPrimaryIdValueUsed(valueObjectSrc.getPrimaryIdValueUsed());
+		// identifiers
+		valueObjectDest.setIdentifiers(valueObjectSrc.getIdentifiers());
+		// dod
+		valueObjectDest.setDod(valueObjectSrc.getDod());
 	 	return valueObjectDest;
 	 }
 
@@ -354,51 +371,110 @@ public class PatientLite_IdentifiersVoAssembler
 		if ((valueObject.getIsRIE() == null || valueObject.getIsRIE().booleanValue() == false) && domainObject.isIncludeRecord())
 			return null;
 			
-		// identifiers
-		valueObject.setIdentifiers(ims.core.vo.domain.PatientIdAssembler.createPatientIdCollectionFromPatientId(map, domainObject.getIdentifiers()) );
-		// dod
-		java.util.Date dod = domainObject.getDod();
-		if ( null != dod ) 
-		{
-			valueObject.setDod(new ims.framework.utils.Date(dod) );
-		}
-		// name
-		valueObject.setName(ims.core.vo.domain.PersonNameAssembler.create(map, domainObject.getName()) );
-		// sex
-		ims.domain.lookups.LookupInstance instance4 = domainObject.getSex();
-		if ( null != instance4 ) {
+		// PatientCategory
+		ims.domain.lookups.LookupInstance instance1 = domainObject.getPatientCategory();
+		if ( null != instance1 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
 			img = null;
-			if (instance4.getImage() != null) 
+			if (instance1.getImage() != null) 
 			{
-				img = new ims.framework.utils.ImagePath(instance4.getImage().getImageId(), instance4.getImage().getImagePath());
+				img = new ims.framework.utils.ImagePath(instance1.getImage().getImageId(), instance1.getImage().getImagePath());
 			}
-			color = instance4.getColor();
+			color = instance1.getColor();
 			if (color != null) 
 				color.getValue();
 
-			ims.core.vo.lookups.Sex voLookup4 = new ims.core.vo.lookups.Sex(instance4.getId(),instance4.getText(), instance4.isActive(), null, img, color);
-			ims.core.vo.lookups.Sex parentVoLookup4 = voLookup4;
-			ims.domain.lookups.LookupInstance parent4 = instance4.getParent();
-			while (parent4 != null)
+			ims.core.vo.lookups.PatientStatus voLookup1 = new ims.core.vo.lookups.PatientStatus(instance1.getId(),instance1.getText(), instance1.isActive(), null, img, color);
+			ims.core.vo.lookups.PatientStatus parentVoLookup1 = voLookup1;
+			ims.domain.lookups.LookupInstance parent1 = instance1.getParent();
+			while (parent1 != null)
 			{
-				if (parent4.getImage() != null) 
+				if (parent1.getImage() != null) 
 				{
-					img = new ims.framework.utils.ImagePath(parent4.getImage().getImageId(), parent4.getImage().getImagePath() );
+					img = new ims.framework.utils.ImagePath(parent1.getImage().getImageId(), parent1.getImage().getImagePath() );
 				}
 				else 
 				{
 					img = null;
 				}
-				color = parent4.getColor();
+				color = parent1.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup4.setParent(new ims.core.vo.lookups.Sex(parent4.getId(),parent4.getText(), parent4.isActive(), null, img, color));
-				parentVoLookup4 = parentVoLookup4.getParent();
-								parent4 = parent4.getParent();
+								parentVoLookup1.setParent(new ims.core.vo.lookups.PatientStatus(parent1.getId(),parent1.getText(), parent1.isActive(), null, img, color));
+				parentVoLookup1 = parentVoLookup1.getParent();
+								parent1 = parent1.getParent();
 			}			
-			valueObject.setSex(voLookup4);
+			valueObject.setPatientCategory(voLookup1);
+		}
+				// PatientAlerts
+		ims.core.clinical.vo.PatientAlertRefVoCollection PatientAlerts = new ims.core.clinical.vo.PatientAlertRefVoCollection();
+		for(java.util.Iterator iterator = domainObject.getPatientAlerts().iterator(); iterator.hasNext(); ) 
+		{
+			ims.core.clinical.domain.objects.PatientAlert tmp = (ims.core.clinical.domain.objects.PatientAlert)iterator.next();
+			if (tmp != null)
+				PatientAlerts.add(new ims.core.clinical.vo.PatientAlertRefVo(tmp.getId(),tmp.getVersion()));
+		}
+		valueObject.setPatientAlerts(PatientAlerts);
+		// associatedPatient
+		if (domainObject.getAssociatedPatient() != null)
+		{
+			if(domainObject.getAssociatedPatient() instanceof HibernateProxy) // If the proxy is set, there is no need to lazy load, the proxy knows the id already. 
+			{
+				HibernateProxy p = (HibernateProxy) domainObject.getAssociatedPatient();
+				int id = Integer.parseInt(p.getHibernateLazyInitializer().getIdentifier().toString());				
+				valueObject.setAssociatedPatient(new ims.core.patient.vo.PatientRefVo(id, -1));				
+			}
+			else
+			{
+				valueObject.setAssociatedPatient(new ims.core.patient.vo.PatientRefVo(domainObject.getAssociatedPatient().getId(), domainObject.getAssociatedPatient().getVersion()));
+			}
+		}
+		// ward
+		valueObject.setWard(ims.core.vo.domain.LocationLiteVoAssembler.create(map, domainObject.getWard()) );
+		// TimeOfDeath
+		String TimeOfDeath = domainObject.getTimeOfDeath();
+		if ( null != TimeOfDeath ) 
+		{
+			valueObject.setTimeOfDeath(new ims.framework.utils.Time(TimeOfDeath) );
+		}
+		// name
+		valueObject.setName(ims.core.vo.domain.PersonNameAssembler.create(map, domainObject.getName()) );
+		// sex
+		ims.domain.lookups.LookupInstance instance7 = domainObject.getSex();
+		if ( null != instance7 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance7.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance7.getImage().getImageId(), instance7.getImage().getImagePath());
+			}
+			color = instance7.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.Sex voLookup7 = new ims.core.vo.lookups.Sex(instance7.getId(),instance7.getText(), instance7.isActive(), null, img, color);
+			ims.core.vo.lookups.Sex parentVoLookup7 = voLookup7;
+			ims.domain.lookups.LookupInstance parent7 = instance7.getParent();
+			while (parent7 != null)
+			{
+				if (parent7.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent7.getImage().getImageId(), parent7.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent7.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup7.setParent(new ims.core.vo.lookups.Sex(parent7.getId(),parent7.getText(), parent7.isActive(), null, img, color));
+				parentVoLookup7 = parentVoLookup7.getParent();
+								parent7 = parent7.getParent();
+			}			
+			valueObject.setSex(voLookup7);
 		}
 				// dob
 		Integer dob = domainObject.getDob();
@@ -410,6 +486,16 @@ public class PatientLite_IdentifiersVoAssembler
 		valueObject.setIsActive( domainObject.isIsActive() );
 		// IsQuickRegistrationPatient
 		valueObject.setIsQuickRegistrationPatient( domainObject.isIsQuickRegistrationPatient() );
+		// primaryIdValueUsed
+		valueObject.setPrimaryIdValueUsed(domainObject.getPrimaryIdValueUsed());
+		// identifiers
+		valueObject.setIdentifiers(ims.core.vo.domain.PatientIdAssembler.createPatientIdCollectionFromPatientId(map, domainObject.getIdentifiers()) );
+		// dod
+		java.util.Date dod = domainObject.getDod();
+		if ( null != dod ) 
+		{
+			valueObject.setDod(new ims.framework.utils.Date(dod) );
+		}
  		return valueObject;
 	 }
 
@@ -459,90 +545,145 @@ public class PatientLite_IdentifiersVoAssembler
 		}
 		domainObject.setVersion(valueObject.getVersion_Patient());
 
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value1 = null;
+		if ( null != valueObject.getPatientCategory() ) 
+		{
+			value1 =
+				domainFactory.getLookupInstance(valueObject.getPatientCategory().getID());
+		}
+		domainObject.setPatientCategory(value1);
 
-		// SaveAsRefVO treated as RefValueObject
-		ims.core.patient.vo.PatientIdRefVoCollection refCollection1 = new ims.core.patient.vo.PatientIdRefVoCollection();
-		if (valueObject.getIdentifiers() != null)
+		ims.core.clinical.vo.PatientAlertRefVoCollection refCollection2 = valueObject.getPatientAlerts();
+		int size2 = (null == refCollection2) ? 0 : refCollection2.size();		
+		java.util.Set domainPatientAlerts2 = domainObject.getPatientAlerts();
+		if (domainPatientAlerts2 == null)
 		{
-			for (int i1=0; i1<valueObject.getIdentifiers().size(); i1++)
-			{
-				ims.core.patient.vo.PatientIdRefVo ref1 = (ims.core.patient.vo.PatientIdRefVo)valueObject.getIdentifiers().get(i1);
-				refCollection1.add(ref1);
-			}
+			domainPatientAlerts2 = new java.util.HashSet();
 		}
-		int size1 = (null == refCollection1) ? 0 : refCollection1.size();		
-		java.util.List domainIdentifiers1 = domainObject.getIdentifiers();
-		if (domainIdentifiers1 == null)
+		java.util.Set newSet2  = new java.util.HashSet();
+		for(int i=0; i<size2; i++) 
 		{
-			domainIdentifiers1 = new java.util.ArrayList();
-		}
-		for(int i=0; i < size1; i++) 
-		{
-			ims.core.patient.vo.PatientIdRefVo vo = refCollection1.get(i);			
-			ims.core.patient.domain.objects.PatientId dom = null;
+			ims.core.clinical.vo.PatientAlertRefVo vo = refCollection2.get(i);					
+			ims.core.clinical.domain.objects.PatientAlert dom = null;
 			if ( null != vo ) 
 			{
 				if (vo.getBoId() == null)
 				{
 					if (domMap.get(vo) != null)
 					{
-						dom = (ims.core.patient.domain.objects.PatientId)domMap.get(vo);
+						dom = (ims.core.clinical.domain.objects.PatientAlert)domMap.get(vo);
 					}
 				}
 				else
 				{
-					dom = (ims.core.patient.domain.objects.PatientId)domainFactory.getDomainObject( ims.core.patient.domain.objects.PatientId.class, vo.getBoId());
+					dom = (ims.core.clinical.domain.objects.PatientAlert)domainFactory.getDomainObject( ims.core.clinical.domain.objects.PatientAlert.class, vo.getBoId());
 				}
 			}
 
-			int domIdx = domainIdentifiers1.indexOf(dom);
-			if (domIdx == -1)
+			//Trying to avoid the hibernate collection being marked as dirty via its public interface methods. (like add)
+			if (!domainPatientAlerts2.contains(dom))
 			{
-				domainIdentifiers1.add(i, dom);
+				domainPatientAlerts2.add(dom);
 			}
-			else if (i != domIdx && i < domainIdentifiers1.size())
+			newSet2.add(dom);			
+		}
+		java.util.Set removedSet2 = new java.util.HashSet();
+		java.util.Iterator iter2 = domainPatientAlerts2.iterator();
+		//Find out which objects need to be removed
+		while (iter2.hasNext())
+		{
+			ims.domain.DomainObject o = (ims.domain.DomainObject)iter2.next();			
+			if ((o == null || o.getIsRIE() == null || !o.getIsRIE().booleanValue()) && !newSet2.contains(o))
 			{
-				Object tmp = domainIdentifiers1.get(i);
-				domainIdentifiers1.set(i, domainIdentifiers1.get(domIdx));
-				domainIdentifiers1.set(domIdx, tmp);
+				removedSet2.add(o);
 			}
 		}
-		
-		//Remove all ones in domList where index > voCollection.size() as these should
-		//now represent the ones removed from the VO collection. No longer referenced.
-		int i1 = domainIdentifiers1.size();
-		while (i1 > size1)
+		iter2 = removedSet2.iterator();
+		//Remove the unwanted objects
+		while (iter2.hasNext())
 		{
-			domainIdentifiers1.remove(i1-1);
-			i1 = domainIdentifiers1.size();
-		}
+			domainPatientAlerts2.remove(iter2.next());
+		}		
 		
-		domainObject.setIdentifiers(domainIdentifiers1);		
-		java.util.Date value2 = null;
-		ims.framework.utils.Date date2 = valueObject.getDod();		
-		if ( date2 != null ) 
+		domainObject.setPatientAlerts(domainPatientAlerts2);		
+		ims.core.patient.domain.objects.Patient value3 = null;
+		if ( null != valueObject.getAssociatedPatient() ) 
 		{
-			value2 = date2.getDate();
+			if (valueObject.getAssociatedPatient().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getAssociatedPatient()) != null)
+				{
+					value3 = (ims.core.patient.domain.objects.Patient)domMap.get(valueObject.getAssociatedPatient());
+				}
+			}
+			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
+			{
+				value3 = domainObject.getAssociatedPatient();	
+			}
+			else
+			{
+				value3 = (ims.core.patient.domain.objects.Patient)domainFactory.getDomainObject(ims.core.patient.domain.objects.Patient.class, valueObject.getAssociatedPatient().getBoId());
+			}
 		}
-		domainObject.setDod(value2);
+		domainObject.setAssociatedPatient(value3);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.resource.place.domain.objects.Location value4 = null;
+		if ( null != valueObject.getWard() ) 
+		{
+			if (valueObject.getWard().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getWard()) != null)
+				{
+					value4 = (ims.core.resource.place.domain.objects.Location)domMap.get(valueObject.getWard());
+				}
+			}
+			else
+			{
+				value4 = (ims.core.resource.place.domain.objects.Location)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.Location.class, valueObject.getWard().getBoId());
+			}
+		}
+		domainObject.setWard(value4);
+		ims.framework.utils.Time time5 = valueObject.getTimeOfDeath();
+		String value5 = null;
+		if ( time5 != null ) 
+		{
+			value5 = time5.toString();
+		}
+		domainObject.setTimeOfDeath(value5);
 		domainObject.setName(ims.core.vo.domain.PersonNameAssembler.extractPersonName(domainFactory, valueObject.getName(), domMap));
 		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value4 = null;
+		ims.domain.lookups.LookupInstance value7 = null;
 		if ( null != valueObject.getSex() ) 
 		{
-			value4 =
+			value7 =
 				domainFactory.getLookupInstance(valueObject.getSex().getID());
 		}
-		domainObject.setSex(value4);
+		domainObject.setSex(value7);
 		ims.framework.utils.PartialDate dob = valueObject.getDob();
-		Integer value5 = null;
+		Integer value8 = null;
 		if ( null != dob ) 
 		{
-			value5 = dob.toInteger();
+			value8 = dob.toInteger();
 		}
-		domainObject.setDob(value5);
+		domainObject.setDob(value8);
 		domainObject.setIsActive(valueObject.getIsActive());
 		domainObject.setIsQuickRegistrationPatient(valueObject.getIsQuickRegistrationPatient());
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getPrimaryIdValueUsed() != null && valueObject.getPrimaryIdValueUsed().equals(""))
+		{
+			valueObject.setPrimaryIdValueUsed(null);
+		}
+		domainObject.setPrimaryIdValueUsed(valueObject.getPrimaryIdValueUsed());
+		domainObject.setIdentifiers(ims.core.vo.domain.PatientIdAssembler.extractPatientIdList(domainFactory, valueObject.getIdentifiers(), domainObject.getIdentifiers(), domMap));		
+		java.util.Date value13 = null;
+		ims.framework.utils.Date date13 = valueObject.getDod();		
+		if ( date13 != null ) 
+		{
+			value13 = date13.getDate();
+		}
+		domainObject.setDod(value13);
 
 		return domainObject;
 	}

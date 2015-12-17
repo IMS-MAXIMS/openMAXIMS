@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -143,25 +148,25 @@ public class Logic extends BaseLogic
 		}
 	}
 	
-	private boolean validateUILogic() 
+	private boolean validateUILogic() //WDEV-20129
 	{
-		ArrayList <String> errors=new ArrayList<String>();
-		if (form.txtEmailAddress().getValue()==null)
-			errors.add("Email Address is a mandatory field");
-		if (form.txtIncomingServer().getValue()==null)
-			errors.add("Incoming Server is a mandatory field");
-		if (form.txtOutgoingServer().getValue()==null)
-			errors.add("Outgoing Server is a mandatory field");
-		if (form.txtPassword().getValue()==null)
-			errors.add("Password is a mandatory field");
-		if (form.txtUserName().getValue()==null)
-			errors.add("UserName Address is a mandatory field");
-		if (form.intPOPPort().getValue()==null)
-			errors.add("Incoming Port is a mandatory field");
-		if (form.intSMTPPort().getValue()==null)
-			errors.add("Outgoing Port is a mandatory field");
-		if (form.txtEmailAddress().getValue()!=null&&!valideEmail(form.txtEmailAddress().getValue()))
-			errors.add("Email Address is not a valid address");
+		ArrayList <String> errors = new ArrayList<String>();
+		if (form.txtEmailAddress().getValue() == null)
+			errors.add("Email Address is mandatory.");
+		if (form.txtIncomingServer().getValue() == null)
+			errors.add("Incoming POP Server is mandatory.");
+		if (form.txtOutgoingServer().getValue() == null)
+			errors.add("Outgoing SMTP Server is mandatory.");
+		if (form.txtPassword().getValue() == null)
+			errors.add("Password is mandatory.");
+		if (form.txtUserName().getValue() == null)
+			errors.add("Username is mandatory.");
+		if (form.intPOPPort().getValue() == null)
+			errors.add("Incoming POP Port is mandatory.");
+		if (form.intSMTPPort().getValue() == null)
+			errors.add("Outgoing SMTP Port is mandatory.");
+		if (form.txtEmailAddress().getValue() != null &&!valideEmail(form.txtEmailAddress().getValue()))
+			errors.add("Email Address is not a valid email address.");
 		
 		if (errors.size()>0)
 		{

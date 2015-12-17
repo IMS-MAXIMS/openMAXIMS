@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.core.vo.domain;
@@ -58,6 +63,12 @@ public class InpatientEpisodeForPendingDischargesVoAssembler
 		valueObjectDest.setEstDischargeDate(valueObjectSrc.getEstDischargeDate());
 		// isConfirmedDischarge
 		valueObjectDest.setIsConfirmedDischarge(valueObjectSrc.getIsConfirmedDischarge());
+		// ConfirmedDischargeDateTime
+		valueObjectDest.setConfirmedDischargeDateTime(valueObjectSrc.getConfirmedDischargeDateTime());
+		// isOnHomeLeave
+		valueObjectDest.setIsOnHomeLeave(valueObjectSrc.getIsOnHomeLeave());
+		// CurrentTrackingMovement
+		valueObjectDest.setCurrentTrackingMovement(valueObjectSrc.getCurrentTrackingMovement());
 	 	return valueObjectDest;
 	 }
 
@@ -356,10 +367,20 @@ public class InpatientEpisodeForPendingDischargesVoAssembler
 		java.util.Date EstDischargeDate = domainObject.getEstDischargeDate();
 		if ( null != EstDischargeDate ) 
 		{
-			valueObject.setEstDischargeDate(new ims.framework.utils.Date(EstDischargeDate) );
+			valueObject.setEstDischargeDate(new ims.framework.utils.DateTime(EstDischargeDate) );
 		}
 		// isConfirmedDischarge
 		valueObject.setIsConfirmedDischarge( domainObject.isIsConfirmedDischarge() );
+		// ConfirmedDischargeDateTime
+		java.util.Date ConfirmedDischargeDateTime = domainObject.getConfirmedDischargeDateTime();
+		if ( null != ConfirmedDischargeDateTime ) 
+		{
+			valueObject.setConfirmedDischargeDateTime(new ims.framework.utils.DateTime(ConfirmedDischargeDateTime) );
+		}
+		// isOnHomeLeave
+		valueObject.setIsOnHomeLeave( domainObject.isIsOnHomeLeave() );
+		// CurrentTrackingMovement
+		valueObject.setCurrentTrackingMovement(ims.core.vo.domain.TrackingMovementLiteVoAssembler.create(map, domainObject.getCurrentTrackingMovement()) );
  		return valueObject;
 	 }
 
@@ -411,14 +432,39 @@ public class InpatientEpisodeForPendingDischargesVoAssembler
 
 		domainObject.setPasEvent(ims.core.vo.domain.PasEventVoAssembler.extractPASEvent(domainFactory, valueObject.getPasEvent(), domMap));
 		domainObject.setBed(ims.core.vo.domain.BedSpaceStateVoAssembler.extractBedSpaceState(domainFactory, valueObject.getBed(), domMap));
+		ims.framework.utils.DateTime dateTime3 = valueObject.getEstDischargeDate();
 		java.util.Date value3 = null;
-		ims.framework.utils.Date date3 = valueObject.getEstDischargeDate();		
-		if ( date3 != null ) 
+		if ( dateTime3 != null ) 
 		{
-			value3 = date3.getDate();
+			value3 = dateTime3.getJavaDate();
 		}
 		domainObject.setEstDischargeDate(value3);
 		domainObject.setIsConfirmedDischarge(valueObject.getIsConfirmedDischarge());
+		ims.framework.utils.DateTime dateTime5 = valueObject.getConfirmedDischargeDateTime();
+		java.util.Date value5 = null;
+		if ( dateTime5 != null ) 
+		{
+			value5 = dateTime5.getJavaDate();
+		}
+		domainObject.setConfirmedDischargeDateTime(value5);
+		domainObject.setIsOnHomeLeave(valueObject.getIsOnHomeLeave());
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.admin.pas.domain.objects.TrackingMovement value7 = null;
+		if ( null != valueObject.getCurrentTrackingMovement() ) 
+		{
+			if (valueObject.getCurrentTrackingMovement().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getCurrentTrackingMovement()) != null)
+				{
+					value7 = (ims.core.admin.pas.domain.objects.TrackingMovement)domMap.get(valueObject.getCurrentTrackingMovement());
+				}
+			}
+			else
+			{
+				value7 = (ims.core.admin.pas.domain.objects.TrackingMovement)domainFactory.getDomainObject(ims.core.admin.pas.domain.objects.TrackingMovement.class, valueObject.getCurrentTrackingMovement().getBoId());
+			}
+		}
+		domainObject.setCurrentTrackingMovement(value7);
 
 		return domainObject;
 	}

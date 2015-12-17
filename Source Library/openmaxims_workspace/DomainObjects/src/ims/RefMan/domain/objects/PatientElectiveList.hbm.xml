@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:37 -->
+<!-- Generated: 12/10/2015, 13:32 -->
 <hibernate-mapping>
 	<class name="ims.RefMan.domain.objects.PatientElectiveList" table="care_patientwaitin4" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -35,8 +35,9 @@
 		<!-- A one-to-one relationship using a foreign-key is mapping as a
 			many-to-one with a uniqueness contraint -->
 		<many-to-one name="electiveList" class="ims.core.configuration.domain.objects.ElectiveListConfiguration" unique="true" foreign-key="patientwaitin4_electiveli_fk" access="field" cascade="save-update">
-			<column name="electiveli" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+			<column name="electiveli" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
+<!-- debug: electiveAdmissionType -->
 <!-- debug: electiveListStatus -->
 <!-- debug: field.IsAssociation : true -->
 		<!-- A one-to-one relationship using a foreign-key is mapping as a
@@ -55,6 +56,13 @@
 			<index column='idx'/>
 			<one-to-many class="ims.RefMan.domain.objects.ElectiveListStatus" />
 		</list>
+<!-- debug: creatingAppointment -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="creatingAppointment" class="ims.scheduling.domain.objects.Booking_Appointment" unique="true" foreign-key="patientwaitin4_creatingap_fk" access="field" cascade="save-update">
+			<column name="creatingap" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
 <!-- debug: patient -->
 <!-- debug: field.IsAssociation : true -->
 		<!-- A one-to-one relationship using a foreign-key is mapping as a
@@ -76,14 +84,15 @@
 		<many-to-one name="episodeOfCare" class="ims.core.admin.domain.objects.EpisodeOfCare" unique="true" foreign-key="patientwaitin4_episodeofc_fk" access="field" cascade="save-update">
 			<column name="episodeofc" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
-<!-- debug: ward -->
+<!-- debug: hospital -->
 <!-- debug: field.IsAssociation : true -->
 		<!-- A one-to-one relationship using a foreign-key is mapping as a
 			many-to-one with a uniqueness contraint -->
-		<many-to-one name="ward" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="patientwaitin4_ward_fk" access="field" cascade="save-update">
-			<column name="ward" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		<many-to-one name="hospital" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="patientwaitin4_hospital_fk" access="field" cascade="save-update">
+			<column name="hospital" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
 <!-- debug: bed -->
+<!-- debug: patientStatus -->
 <!-- debug: consultant -->
 <!-- debug: field.IsAssociation : true -->
 		<!-- A one-to-one relationship using a foreign-key is mapping as a
@@ -94,45 +103,6 @@
 <!-- debug: dateOnList -->
 <!-- debug: originalDecisionDate -->
 <!-- debug: electiveListReason -->
-<!-- debug: patientStatus -->
-<!-- debug: electiveAdmissionType -->
-<!-- debug: intendedManagement -->
-<!-- debug: anticipatedStay -->
-<!-- debug: availableAtShortNotice -->
-<!-- debug: availableAtShortNoticePeriod -->
-<!-- debug: priority -->
-<!-- debug: suspensions -->
-<!-- debug: field.IsAssociation : true -->
-<!-- debug: IsAggregation : true -->
-		<!-- one to many -->
-		<list name="suspensions" lazy="true" access="field" cascade="save-update">
-			<key foreign-key="patientwaitin4_suspension_fk">
-				<column name="care_patientwaitin4_suspension" sql-type="numeric(10,0)" />
-			</key>
-			<index column='idx'/>
-			<one-to-many class="ims.RefMan.domain.objects.SuspensionDetailsForPatientElectiveList" />
-		</list>
-<!-- debug: currentSuspensionEndDate -->
-<!-- debug: operativeProcedureStatus -->
-<!-- debug: primaryProcedure -->
-<!-- debug: field.IsAssociation : true -->
-		<!-- A one-to-one relationship using a foreign-key is mapping as a
-			many-to-one with a uniqueness contraint -->
-		<many-to-one name="primaryProcedure" class="ims.core.clinical.domain.objects.Procedure" unique="true" foreign-key="patientwaitin4_primarypro_fk" access="field" cascade="save-update">
-			<column name="primarypro" sql-type="numeric(10,0)" not-null="false" unique="false"   />
-		</many-to-one>
-<!-- debug: procedureDescription -->
-<!-- debug: otherProcedures -->
-<!-- debug: field.IsAssociation : true -->
-		<!-- one to many -->
-		<list name="otherProcedures" lazy="true" access="field" cascade="save-update">
-			<key foreign-key="patientwaitin4_otherproce_fk">
-				<column name="care_patientwaitin4_otherproce" sql-type="numeric(10,0)" />
-			</key>
-			<index column='idx'/>
-			<one-to-many class="ims.core.clinical.domain.objects.Procedure" />
-		</list>
-<!-- debug: requiresTCIBy -->
 <!-- debug: tCIDetails -->
 <!-- debug: field.IsAssociation : true -->
 <!-- debug: IsAggregation : true -->
@@ -152,24 +122,20 @@
 			<index column='idx'/>
 			<one-to-many class="ims.RefMan.domain.objects.TCIForPatientElectiveList" />
 		</list>
-<!-- debug: interpretatorRequired -->
-<!-- debug: language -->
-<!-- debug: transportRequired -->
-<!-- debug: transport -->
-<!-- debug: specialRequirements -->
-<!-- debug: specialRequirementsDetails -->
-<!-- debug: preAdmissionRequired -->
-<!-- debug: notes -->
+<!-- debug: tCIGiven -->
+<!-- debug: tCICancelledByProvider -->
+<!-- debug: suspensions -->
 <!-- debug: field.IsAssociation : true -->
 <!-- debug: IsAggregation : true -->
 		<!-- one to many -->
-		<set name="notes" lazy="true" access="field" cascade="save-update">
-			<key foreign-key="patientwaitin4_notes_fk">
-				<column name="care_patientwaitin4_notes" sql-type="numeric(10,0)" />
+		<list name="suspensions" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="patientwaitin4_suspension_fk">
+				<column name="care_patientwaitin4_suspension" sql-type="numeric(10,0)" />
 			</key>
-			
-			<one-to-many class="ims.RefMan.domain.objects.NotesForPatientElectiveList" />
-		</set>
+			<index column='idx'/>
+			<one-to-many class="ims.RefMan.domain.objects.SuspensionDetailsForPatientElectiveList" />
+		</list>
+<!-- debug: currentSuspensionEndDate -->
 <!-- debug: eROD -->
 <!-- debug: field.IsAssociation : true -->
 		<!-- A one-to-one relationship using a foreign-key is mapping as a
@@ -195,7 +161,6 @@
 		<many-to-one name="pathwayClock" class="ims.pathways.domain.objects.PathwayClock" unique="true" foreign-key="patientwaitin4_pathwayclo_fk" access="field" cascade="save-update">
 			<column name="pathwayclo" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
-<!-- debug: tCICancelledByProvider -->
 <!-- debug: reviews -->
 <!-- debug: field.IsAssociation : true -->
 <!-- debug: IsAggregation : true -->
@@ -207,6 +172,17 @@
 			
 			<one-to-many class="ims.RefMan.domain.objects.ReviewPatientElectiveList" />
 		</set>
+<!-- debug: notes -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- one to many -->
+		<set name="notes" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="patientwaitin4_notes_fk">
+				<column name="care_patientwaitin4_notes" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.RefMan.domain.objects.NotesForPatientElectiveList" />
+		</set>
 <!-- debug: admissions -->
 <!-- debug: field.IsAssociation : true -->
 		<!-- one to many -->
@@ -217,11 +193,201 @@
 			<index column='idx'/>
 			<one-to-many class="ims.core.admin.pas.domain.objects.AdmissionDetail" />
 		</list>
+<!-- debug: intendedManagement -->
+<!-- debug: wasPossibleDateGiven -->
+<!-- debug: dateGivenToPatient -->
+<!-- debug: primaryProcedure -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="primaryProcedure" class="ims.core.clinical.domain.objects.Procedure" unique="true" foreign-key="patientwaitin4_primarypro_fk" access="field" cascade="save-update">
+			<column name="primarypro" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: procLaterality -->
+<!-- debug: procedureDescription -->
+<!-- debug: secondaryProcedure -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="secondaryProcedure" class="ims.core.clinical.domain.objects.Procedure" unique="true" foreign-key="patientwaitin4_secondaryp_fk" access="field" cascade="save-update">
+			<column name="secondaryp" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: secondaryProcLaterality -->
+<!-- debug: anticipatedProcedureLength -->
+<!-- debug: priority -->
+<!-- debug: anaestheticType -->
+<!-- debug: wLAnaestheticType -->
+<!-- debug: availableAtShortNotice -->
+<!-- debug: availableAtShortNoticePeriod -->
+<!-- debug: wLAvailableAtShortNotice -->
+<!-- debug: wLAvailableAtShortNoticePeriod -->
+<!-- debug: preOperativeOvernightStayRequired -->
+<!-- debug: wLPreOperativeOvernightStayRequired -->
+<!-- debug: noOfPreOperativeNights -->
+<!-- debug: wLNoOfPreOperativeNights -->
+<!-- debug: anticipatedStay -->
+<!-- debug: wLAnticipatedStay -->
+<!-- debug: requiredTheatreType -->
+<!-- debug: criticalCareBedRequired -->
+<!-- debug: hDUBedRequired -->
+<!-- debug: iTUBedRequired -->
+<!-- debug: anaesthesisRiskAssessmentRequest -->
+<!-- debug: patientReceivingAnticoagulantTherapy -->
+<!-- debug: wLPatientReceivingAnticoagulantTherapy -->
+<!-- debug: followPeriOperativeguidelines -->
+<!-- debug: periOpNoReasonComments -->
+<!-- debug: interpretatorRequired -->
+<!-- debug: language -->
+<!-- debug: transportRequired -->
+<!-- debug: transport -->
+<!-- debug: specialRequirements -->
+<!-- debug: specialRequirementsDetails -->
+<!-- debug: comments -->
+<!-- debug: proceduredToBeCarriedBy -->
+<!-- debug: procedureCarriedOutBy -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="procedureCarriedOutBy" class="ims.core.resource.people.domain.objects.Hcp" unique="true" foreign-key="patientwaitin4_procedurec_fk" access="field" cascade="save-update">
+			<column name="procedurec" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: suspectedGIBleed -->
+<!-- debug: points -->
+<!-- debug: suitableforTraining -->
+<!-- debug: generalAnaesthetic -->
+<!-- debug: canNurseCarryOutProcedure -->
+<!-- debug: detailsForNonGAEndoProcedure -->
+<!-- debug: preAssessmentRequired -->
+<!-- debug: medicationShouldBeStoppedOralBowelPrep -->
+<!-- debug: drugInformation -->
+<!-- debug: hasPacemakerDefib -->
+<!-- debug: renalFunctionAssessment -->
+<!-- debug: areThereKeyTherapeutic -->
+<!-- debug: preAssessmentOutcome -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="preAssessmentOutcome" class="ims.RefMan.domain.objects.PreAssessmentOutcome" unique="true" foreign-key="patientwaitin4_preassess2_fk" access="field" cascade="save-update">
+			<column name="preassess2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: fitForSurgery -->
+<!-- debug: operativeProcedureStatus -->
+<!-- debug: isConsultantPerformingProcedure -->
+<!-- debug: otherProcedures -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<list name="otherProcedures" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="patientwaitin4_otherproce_fk">
+				<column name="care_patientwaitin4_otherproce" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.core.clinical.domain.objects.Procedure" />
+		</list>
+<!-- debug: operateOnAnticoagulantComment -->
+<!-- debug: takesLongerThanStandardTime -->
+<!-- debug: appointmentOutcomeAction -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="appointmentOutcomeAction" class="ims.scheduling.domain.objects.AppointmentOutcomeAction" unique="true" foreign-key="patientwaitin4_appointmen_fk" access="field" cascade="save-update">
+			<column name="appointmen" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: anaesthetistRequiredInTheatre -->
+<!-- debug: careGiven -->
+<!-- debug: admissionType -->
+<!-- debug: admittedIn -->
+<!-- debug: admittedInUnitOfTime -->
+<!-- debug: numberOfProviderTCICancellations -->
+<!-- debug: was28DayRuleApplied -->
+<!-- debug: cognitiveComments -->
+<!-- debug: toBePlannedIn -->
+<!-- debug: toBePlannedInUnit -->
+<!-- debug: plannedDate -->
+<!-- debug: isSuitableForTelephoneAssessment -->
+<!-- debug: preAssessmentAppointment -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="preAssessmentAppointment" class="ims.scheduling.domain.objects.Booking_Appointment" unique="true" foreign-key="patientwaitin4_preassess3_fk" access="field" cascade="save-update">
+			<column name="preassess3" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: subjectTo28DayRule -->
+<!-- debug: rule28DayStatus -->
+<!-- debug: rule28DayPeriodStart -->
+<!-- debug: multiServiceCase -->
+<!-- debug: requiresVetting -->
+<!-- debug: theatreAppointment -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="theatreAppointment" class="ims.scheduling.domain.objects.Booking_Appointment" unique="true" foreign-key="patientwaitin4_theatreapp_fk" access="field" cascade="save-update">
+			<column name="theatreapp" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: ward -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="ward" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="patientwaitin4_ward_fk" access="field" cascade="save-update">
+			<column name="ward" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: vettingDate -->
+<!-- debug: vettingHCP -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="vettingHCP" class="ims.core.resource.people.domain.objects.Hcp" unique="true" foreign-key="patientwaitin4_vettinghcp_fk" access="field" cascade="save-update">
+			<column name="vettinghcp" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: authoringInfo -->
+<!-- debug: field.IsAssociation : true -->
+ 		<!-- Component -->
+ 		<component name="authoringInfo" class="ims.core.clinical.domain.objects.AuthoringInformation" >
+
+ 			<many-to-one name="authoringHcp" class="ims.core.resource.people.domain.objects.Hcp" foreign-key="patientwaitin4_authoringiau_fk" access="field">
+ 				<column name="authoringiauthoringh" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="authoringDateTime" type="timestamp" access="field" update="true">
+ 				<column name="authoringiauthoringd" not-null="false"  unique="false"   />
+ 			</property>
+ 		</component>
+<!-- debug: patientCategory -->
+<!-- debug: recordingUser -->
+<!-- debug: field.IsAssociation : true -->
+ 		<!-- Component -->
+ 		<component name="recordingUser" class="ims.core.clinical.domain.objects.RecordingUserInformation" >
+
+ 			<many-to-one name="recordingUser" class="ims.core.resource.people.domain.objects.MemberOfStaff" foreign-key="patientwaitin4_recordingure_fk" access="field">
+ 				<column name="recordingurecordingu" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="recordingDateTime" type="timestamp" access="field" update="true">
+ 				<column name="recordingurecordingd" not-null="false"  unique="false"   />
+ 			</property>
+ 		</component>
+<!-- debug: preColonoscopyAssessmentRequired -->
+<!-- debug: responsibleHCP -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="responsibleHCP" class="ims.core.resource.people.domain.objects.Hcp" unique="true" foreign-key="patientwaitin4_responsibl_fk" access="field" cascade="save-update">
+			<column name="responsibl" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="electiveAdmissionType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_electivead" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="bed" type="string" access="field" update="true" > 
 			<column name="bed" length="50"  not-null="false" unique="false"  />
 		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="patientStatus" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_patientsta" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="dateOnList" type="date" access="field" update="true">
@@ -238,15 +404,20 @@
 			<column name="lkp_electivel4" sql-type="numeric(10,0)" not-null="true" unique="false"   />
 		</many-to-one>
 <!-- debug: !IsAssociation && !IsCollection -->
-<!-- debug: IsLookup -->
-		<many-to-one name="patientStatus" class="ims.domain.lookups.LookupInstance" access="field">
-			<column name="lkp_patientsta" sql-type="numeric(10,0)" not-null="false" unique="false"   />
-		</many-to-one>
+<!-- debug: !IsLookup -->
+		<property name="tCIGiven" type="boolean" access="field" update="true">
+			<column name="tcigiven"  not-null="false" unique="false"  />
+		</property>
 <!-- debug: !IsAssociation && !IsCollection -->
-<!-- debug: IsLookup -->
-		<many-to-one name="electiveAdmissionType" class="ims.domain.lookups.LookupInstance" access="field">
-			<column name="lkp_electivead" sql-type="numeric(10,0)" not-null="true" unique="false"   />
-		</many-to-one>
+<!-- debug: !IsLookup -->
+		<property name="tCICancelledByProvider" type="boolean" access="field" update="true">
+			<column name="tcicancell"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="currentSuspensionEndDate" type="timestamp" access="field" update="true">
+			<column name="currentsus"  not-null="false" unique="false"  />
+		</property>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: IsLookup -->
 		<many-to-one name="intendedManagement" class="ims.domain.lookups.LookupInstance" access="field">
@@ -254,9 +425,49 @@
 		</many-to-one>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
-		<property name="anticipatedStay" type="integer" access="field" update="true">
+		<property name="wasPossibleDateGiven" type="boolean" access="field" update="true">
+			<column name="waspossibl"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dateGivenToPatient" type="date" access="field" update="true">
+			<column name="dategivent"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="procLaterality" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_proclatera" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="procedureDescription" type="string" access="field" update="true" > 
+			<column name="procedured" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="secondaryProcLaterality" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_secondary2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="anticipatedProcedureLength" type="integer" access="field" update="true">
 			<column name="anticipate"  not-null="false" unique="false"  />
 		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="priority" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_priority" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="anaestheticType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_anaestheti" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="wLAnaestheticType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_wlanaesthe" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="availableAtShortNotice" type="boolean" access="field" update="true">
@@ -268,29 +479,89 @@
 			<column name="available2"  not-null="false" unique="false"  />
 		</property>
 <!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="wLAvailableAtShortNotice" type="boolean" access="field" update="true">
+			<column name="wlavailabl"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="wLAvailableAtShortNoticePeriod" type="integer" access="field" update="true">
+			<column name="wlavailab2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="preOperativeOvernightStayRequired" type="boolean" access="field" update="true">
+			<column name="preoperati"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="wLPreOperativeOvernightStayRequired" type="boolean" access="field" update="true">
+			<column name="wlpreopera"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="noOfPreOperativeNights" type="integer" access="field" update="true">
+			<column name="noofpreope"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="wLNoOfPreOperativeNights" type="integer" access="field" update="true">
+			<column name="wlnoofpreo"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="anticipatedStay" type="integer" access="field" update="true">
+			<column name="anticipat2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="wLAnticipatedStay" type="integer" access="field" update="true">
+			<column name="wlanticipa"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: IsLookup -->
-		<many-to-one name="priority" class="ims.domain.lookups.LookupInstance" access="field">
-			<column name="lkp_priority" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		<many-to-one name="requiredTheatreType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_requiredth" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
-		<property name="currentSuspensionEndDate" type="timestamp" access="field" update="true">
-			<column name="currentsus"  not-null="false" unique="false"  />
+		<property name="criticalCareBedRequired" type="boolean" access="field" update="true">
+			<column name="criticalca"  not-null="false" unique="false"  />
 		</property>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
-		<property name="operativeProcedureStatus" type="boolean" access="field" update="true">
-			<column name="operativep"  not-null="true" unique="false"  />
+		<property name="hDUBedRequired" type="boolean" access="field" update="true">
+			<column name="hdubedrequ"  not-null="false" unique="false"  />
 		</property>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
-		<property name="procedureDescription" type="string" access="field" update="true" > 
-			<column name="procedured" length="255"  not-null="false" unique="false"  />
+		<property name="iTUBedRequired" type="boolean" access="field" update="true">
+			<column name="itubedrequ"  not-null="false" unique="false"  />
 		</property>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
-		<property name="requiresTCIBy" type="date" access="field" update="true">
-			<column name="requirestc"  not-null="false" unique="false"  />
+		<property name="anaesthesisRiskAssessmentRequest" type="boolean" access="field" update="true">
+			<column name="anaesthesi"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="patientReceivingAnticoagulantTherapy" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_patientrec" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="wLPatientReceivingAnticoagulantTherapy" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_wlpatientr" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="followPeriOperativeguidelines" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_followperi" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="periOpNoReasonComments" type="string" access="field" update="true" > 
+			<column name="periopnore" length="500"  not-null="false" unique="false"  />
 		</property>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
@@ -324,13 +595,198 @@
 		</property>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
-		<property name="preAdmissionRequired" type="boolean" access="field" update="true">
-			<column name="preadmissi"  not-null="false" unique="false"  />
+		<property name="comments" type="string" access="field" update="true" > 
+			<column name="comments" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="proceduredToBeCarriedBy" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_procedure2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="suspectedGIBleed" type="boolean" access="field" update="true">
+			<column name="suspectedg"  not-null="false" unique="false"  />
 		</property>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
-		<property name="tCICancelledByProvider" type="boolean" access="field" update="true">
-			<column name="tcicancell"  not-null="false" unique="false"  />
+		<property name="points" type="integer" access="field" update="true">
+			<column name="points"  not-null="false" unique="false"  />
 		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="suitableforTraining" type="boolean" access="field" update="true">
+			<column name="suitablefo"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="generalAnaesthetic" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_generalana" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="canNurseCarryOutProcedure" type="boolean" access="field" update="true">
+			<column name="cannurseca"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="detailsForNonGAEndoProcedure" type="string" access="field" update="true" > 
+			<column name="detailsfor" length="500"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="preAssessmentRequired" type="boolean" access="field" update="true">
+			<column name="preassessm"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="medicationShouldBeStoppedOralBowelPrep" type="boolean" access="field" update="true">
+			<column name="medication"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="drugInformation" type="string" access="field" update="true" > 
+			<column name="druginform" length="1000"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="hasPacemakerDefib" type="boolean" access="field" update="true">
+			<column name="haspacemak"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="renalFunctionAssessment" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_renalfunct" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="areThereKeyTherapeutic" type="boolean" access="field" update="true">
+			<column name="arethereke"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="fitForSurgery" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_fitforsurg" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="operativeProcedureStatus" type="boolean" access="field" update="true">
+			<column name="operativep"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isConsultantPerformingProcedure" type="boolean" access="field" update="true">
+			<column name="isconsulta"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="operateOnAnticoagulantComment" type="string" access="field" update="true" > 
+			<column name="operateona" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="takesLongerThanStandardTime" type="boolean" access="field" update="true">
+			<column name="takeslonge"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="anaesthetistRequiredInTheatre" type="boolean" access="field" update="true">
+			<column name="anaesthet2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="careGiven" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_caregiven" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="admissionType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_admissiont" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="admittedIn" type="integer" access="field" update="true">
+			<column name="admittedin"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="admittedInUnitOfTime" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_admittedi2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="numberOfProviderTCICancellations" type="integer" access="field" update="true">
+			<column name="numberofpr"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="was28DayRuleApplied" type="boolean" access="field" update="true">
+			<column name="was28dayru"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="cognitiveComments" type="string" access="field" update="true" > 
+			<column name="cognitivec" length="500"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="toBePlannedIn" type="integer" access="field" update="true">
+			<column name="tobeplanne"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="toBePlannedInUnit" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_tobeplann2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="plannedDate" type="date" access="field" update="true">
+			<column name="planneddat"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isSuitableForTelephoneAssessment" type="boolean" access="field" update="true">
+			<column name="issuitable"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="subjectTo28DayRule" type="boolean" access="field" update="true">
+			<column name="subjectto2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="rule28DayStatus" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_rule28days" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="rule28DayPeriodStart" type="date" access="field" update="true">
+			<column name="rule28dayp"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="multiServiceCase" type="boolean" access="field" update="true">
+			<column name="multiservi"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="requiresVetting" type="boolean" access="field" update="true">
+			<column name="requiresve"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="vettingDate" type="timestamp" access="field" update="true">
+			<column name="vettingdat"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="patientCategory" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_patientcat" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="preColonoscopyAssessmentRequired" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_precolonos" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
 	</class>
 </hibernate-mapping>

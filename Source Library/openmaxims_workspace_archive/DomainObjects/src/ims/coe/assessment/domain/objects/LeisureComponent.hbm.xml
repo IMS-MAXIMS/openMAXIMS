@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:37 -->
+<hibernate-mapping>
+	<subclass name="ims.coe.assessment.domain.objects.LeisureComponent" lazy="true" discriminator-value="LEIS" extends="ims.nursing.assessment.domain.objects.AssessmentComponent" >
+<!-- debug: hibernateClassContent -->
+<!-- debug: hobbies -->
+<!-- debug: enjoyDoingMost -->
+<!-- debug: preferencesOfTime -->
+<!-- debug: alcoholSocially -->
+<!-- debug: alcoholDetails -->
+<!-- debug: alcoholUnits -->
+<!-- debug: leisureClubs -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="leisureClubs" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="leiscomp_leisureclu_fk">
+				<column name="coe_leiscomp_leisureclu" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.coe.assessment.domain.objects.LeisueClubs" />
+		</set>
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="hobbies" type="string" access="field" update="true">
+			<column name="hobbies"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="enjoyDoingMost" type="string" access="field" update="true">
+			<column name="enjoydoing"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="preferencesOfTime" type="string" access="field" update="true" > 
+			<column name="preference" length="500"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="alcoholSocially" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_alcoholsoc" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="alcoholDetails" type="string" access="field" update="true">
+			<column name="alcoholdet"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="alcoholUnits" type="integer" access="field" update="true">
+			<column name="alcoholuni"  not-null="false" unique="false"  />
+		</property>
+	</subclass>
+</hibernate-mapping>

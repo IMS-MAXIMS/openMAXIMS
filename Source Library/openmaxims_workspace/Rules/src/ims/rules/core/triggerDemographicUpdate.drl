@@ -1,0 +1,668 @@
+package ims.rules.userrules;
+
+import ims.core.patient.domain.objects.Patient;
+import ims.core.patient.domain.objects.Patient.FieldNames;
+import ims.rules.engine.RulesRuntimeEngine;
+import ims.domain.DomainFactory;
+import java.util.HashMap;
+import ims.configuration.gen.ConfigFlag;
+
+global RulesRuntimeEngine engine;
+global DomainFactory factory;
+global HashMap prevState;
+global String targetMethod;
+
+
+function boolean triggerDemographicUpdate(ims.rules.engine.RulesRuntimeEngine engine,ims.domain.DomainFactory factory,java.util.HashMap prevState,ims.core.patient.domain.objects.Patient entity)
+{
+	
+	    boolean checkUpdateTrigger = false;
+
+		if (engine==null)
+		{
+			return false;
+		}		
+		
+		engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Enter : triggerDemographicUpdate.drl");
+		
+	    // Don't continue if this is not the specific rule set in the interceptor we are looking for
+	    if (engine.getPathwayEntitySpecificRuleName() == null || !engine.getPathwayEntitySpecificRuleName().equals("triggerDemographicUpdate.drl"))
+		{
+			engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Not : triggerDemographicUpdate.drl");
+			return false;
+		}
+		
+		// Set this as the rule that is executed for checking within the interceptor
+		engine.setLastRuleName("triggerDemographicUpdate.drl");
+
+		engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Continue : triggerDemographicUpdate.drl");
+
+		if (prevState == null)
+		{
+			engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "prevState : null");
+			return false;
+		}
+		
+		if(entity.getId() != null)
+		{
+			engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Continue : entity.isSaveComplete()");
+			
+			//Name
+			ims.core.generic.domain.objects.PersonName name = (ims.core.generic.domain.objects.PersonName)prevState.get(FieldNames.Name);
+			if (name!=null && !name.equals(entity.getName())) {
+				checkUpdateTrigger = true;
+			}
+			else if (name==null && entity.getName()!=null){
+				checkUpdateTrigger = true;
+			}
+			
+			//NationalHealthCover
+			ims.core.patient.domain.objects.NationalHealthCover natHealthCover = (ims.core.patient.domain.objects.NationalHealthCover)prevState.get(FieldNames.NationalHealthCover);
+			if (natHealthCover!=null && !natHealthCover.equals(entity.getNationalHealthCover())) {
+				checkUpdateTrigger = true;
+			}
+			else if (natHealthCover==null && entity.getNationalHealthCover()!=null){
+				if (entity.getNationalHealthCover().getEHICCountry() != null)
+				{
+					checkUpdateTrigger = true;
+				}
+				
+				if (entity.getNationalHealthCover().getEHICExpiryDate() != null)
+				{
+					checkUpdateTrigger = true;
+				}
+				
+				if (entity.getNationalHealthCover().getEHICInstitution() != null)
+				{
+					checkUpdateTrigger = true;
+				}
+				
+				if (entity.getNationalHealthCover().getEHICNumber() != null)
+				{
+					checkUpdateTrigger = true;
+				}
+				
+				if (entity.getNationalHealthCover().getEligibilityProof() != null)
+				{
+					checkUpdateTrigger = true;
+				}
+				
+				if (entity.getNationalHealthCover().getHealthActCategory() != null)
+				{
+					checkUpdateTrigger = true;
+				}
+				
+				if (entity.getNationalHealthCover().getMedicalCardExpiryDate() != null)
+				{
+					checkUpdateTrigger = true;
+				}
+				
+				if (entity.getNationalHealthCover().getMedicalCardNo() != null)
+				{
+					checkUpdateTrigger = true;
+				}
+				
+				if (entity.getNationalHealthCover().getMedicalCardProved() != null)
+				{
+					checkUpdateTrigger = true;
+				}				
+			}
+			else if (natHealthCover!=null && entity.getNationalHealthCover()!=null){
+				if (entity.getNationalHealthCover().getEHICCountry() != null && !entity.getNationalHealthCover().getEHICCountry().equals(natHealthCover.getEHICCountry()))
+				{
+					checkUpdateTrigger = true;
+				}
+				else if (entity.getNationalHealthCover().getEHICCountry() == null && natHealthCover.getEHICCountry() != null)
+				{
+					checkUpdateTrigger = true;
+				}
+				
+				if (entity.getNationalHealthCover().getEHICExpiryDate() != null && !entity.getNationalHealthCover().getEHICExpiryDate().equals(natHealthCover.getEHICExpiryDate()))
+				{
+					checkUpdateTrigger = true;
+				}
+				else if (entity.getNationalHealthCover().getEHICExpiryDate() == null && natHealthCover.getEHICExpiryDate() != null)
+				{
+					checkUpdateTrigger = true;
+				}
+				
+				if (entity.getNationalHealthCover().getEHICInstitution() != null && !entity.getNationalHealthCover().getEHICInstitution().equals(natHealthCover.getEHICInstitution()))
+				{
+					checkUpdateTrigger = true;
+				}
+				else if (entity.getNationalHealthCover().getEHICInstitution() == null && natHealthCover.getEHICInstitution() != null)
+				{
+					checkUpdateTrigger = true;
+				}
+				
+				if (entity.getNationalHealthCover().getEHICNumber() != null && !entity.getNationalHealthCover().getEHICNumber().equals(natHealthCover.getEHICNumber()))
+				{
+					checkUpdateTrigger = true;
+				}
+				else if (entity.getNationalHealthCover().getEHICNumber() == null && natHealthCover.getEHICNumber() != null)
+				{
+					checkUpdateTrigger = true;
+				}
+				
+				if (entity.getNationalHealthCover().getEligibilityProof() != null && !entity.getNationalHealthCover().getEligibilityProof().equals(natHealthCover.getEligibilityProof()))
+				{
+					checkUpdateTrigger = true;
+				}
+				else if (entity.getNationalHealthCover().getEligibilityProof() == null && natHealthCover.getEligibilityProof() != null)
+				{
+					checkUpdateTrigger = true;
+				}
+				
+				if (entity.getNationalHealthCover().getHealthActCategory() != null && !entity.getNationalHealthCover().getHealthActCategory().equals(natHealthCover.getHealthActCategory()))
+				{
+					checkUpdateTrigger = true;
+				}
+				else if (entity.getNationalHealthCover().getHealthActCategory() == null && natHealthCover.getHealthActCategory() != null)
+				{
+					checkUpdateTrigger = true;
+				}
+				
+				if (entity.getNationalHealthCover().getMedicalCardExpiryDate() != null && !entity.getNationalHealthCover().getMedicalCardExpiryDate().equals(natHealthCover.getMedicalCardExpiryDate()))
+				{
+					checkUpdateTrigger = true;
+				}
+				else if (entity.getNationalHealthCover().getMedicalCardExpiryDate() == null && natHealthCover.getMedicalCardExpiryDate() != null)
+				{
+					checkUpdateTrigger = true;
+				}
+				
+				if (entity.getNationalHealthCover().getMedicalCardNo() != null && !entity.getNationalHealthCover().getMedicalCardNo().equals(natHealthCover.getMedicalCardNo()))
+				{
+					checkUpdateTrigger = true;
+				}
+				else if (entity.getNationalHealthCover().getMedicalCardNo() == null && natHealthCover.getMedicalCardNo() != null)
+				{
+					checkUpdateTrigger = true;
+				}
+				
+				if (entity.getNationalHealthCover().getMedicalCardProved() != null && !entity.getNationalHealthCover().getMedicalCardProved().equals(natHealthCover.getMedicalCardProved()))
+				{
+					checkUpdateTrigger = true;
+				}				
+				else if (entity.getNationalHealthCover().getMedicalCardProved() == null && natHealthCover.getMedicalCardProved() != null)
+				{
+					checkUpdateTrigger = true;
+				}
+				
+			}
+					
+			//Medical Insurance
+			ims.core.clinical.domain.objects.PatientMedicalInsurance medIns = (ims.core.clinical.domain.objects.PatientMedicalInsurance)prevState.get(FieldNames.CurrentMedicalInsurance);
+	    	if(medIns != null && entity.getCurrentMedicalInsurance()!=null)
+	    	{
+				//Medical Insurance -  seperate rule for existing Medical Insurance changes	    		
+	    	}
+	    	else if (medIns == null && entity.getCurrentMedicalInsurance()!=null)
+	    	{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : new Medical Insurance");
+				checkUpdateTrigger = true;				
+	    	}
+	    	else  if (medIns != null && entity.getCurrentMedicalInsurance()==null)
+	    	{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : removed Medical Insurance");
+				checkUpdateTrigger = true;					    		
+	    	}
+						
+			if (!Boolean.TRUE.equals(ConfigFlag.DOM.GP_USE_SURGERIES.getValue()))
+	    	{
+				//GP
+				ims.core.resource.people.domain.objects.Gp gp = (ims.core.resource.people.domain.objects.Gp) prevState.get(ims.core.patient.domain.objects.Patient.FieldNames.Gp);
+				ims.core.resource.place.domain.objects.LocSite gpSurgery = (ims.core.resource.place.domain.objects.LocSite) prevState.get(ims.core.patient.domain.objects.Patient.FieldNames.GpSurgery);
+				
+				if ((gp!=null && !gp.equals(entity.getGp())) && (gpSurgery!=null && !gpSurgery.equals(entity.getGpSurgery())))
+				{
+					engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : Gp or GP Surgery");
+					checkUpdateTrigger = true;
+				}
+				else if (gp!=null && entity.getGp()!=null && entity.getGp().getId()!=null && gp.getId()!=null && !gp.getId().equals(entity.getGp().getId()))
+				{
+					//change of GP, same surgery
+					engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : Gp change");
+					checkUpdateTrigger = true;					
+				}
+				else if (gp==null && entity.getGp()!=null)
+				{
+					engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : Gp or GP Surgery");
+					checkUpdateTrigger = true;				
+				}								
+	    	}
+	    	else
+	    	{
+				//GP Surgery
+				ims.core.resource.place.domain.objects.LocSite gpSurgery = (ims.core.resource.place.domain.objects.LocSite) prevState.get(ims.core.patient.domain.objects.Patient.FieldNames.GpSurgery);
+				if (gpSurgery!=null && !gpSurgery.equals(entity.getGpSurgery()))
+				{
+					engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : GpSurgery");
+					checkUpdateTrigger = true;
+				}
+				else if (gpSurgery==null && entity.getGpSurgery()!=null)
+				{
+					engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : GpSurgery");
+					checkUpdateTrigger = true;				
+				}
+	    	}
+	    
+	    	ims.core.patient.domain.objects.NextOfKin nok = (ims.core.patient.domain.objects.NextOfKin) prevState.get(ims.core.patient.domain.objects.Patient.FieldNames.Nok);
+	    	if(nok != null && entity.getNok()==null)
+	    	{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : removed NOK");
+				checkUpdateTrigger = true;					    			    		
+	    	}
+	    	else if (nok == null && entity.getNok()!=null)
+	    	{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : new NOK");
+				checkUpdateTrigger = true;				
+	    	}
+			
+			//Nlr
+			ims.core.patient.domain.objects.NearestLegalRel nlr = (ims.core.patient.domain.objects.NearestLegalRel)prevState.get(ims.core.patient.domain.objects.Patient.FieldNames.Nlr);
+			if (nlr!=null && !nlr.equals(entity.getNlr()))
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : NearestLegalRel");
+				checkUpdateTrigger = true;
+			}
+			else if (nlr==null && entity.getNlr()!=null)
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : NearestLegalRel");
+				checkUpdateTrigger = true;				
+			}													
+			
+			//lkp_sex
+			ims.domain.lookups.LookupInstance lkpSex = (ims.domain.lookups.LookupInstance) prevState.get(ims.core.patient.domain.objects.Patient.FieldNames.Sex);
+			if (lkpSex!=null && !lkpSex.equals(entity.getSex()))
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : getSex");
+				checkUpdateTrigger = true;
+			}
+			else if (lkpSex==null && entity.getSex()!=null)
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : getSex");
+				checkUpdateTrigger = true;				
+			}																	
+
+			//Dob
+			Integer dob = (Integer)prevState.get(ims.core.patient.domain.objects.Patient.FieldNames.Dob);
+			if (dob!=null && !dob.equals(entity.getDob()))
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : getDob");
+				checkUpdateTrigger = true;
+			}
+			else if (dob==null && entity.getDob()!=null)
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : getDob");
+				checkUpdateTrigger = true;				
+			}																	
+			
+			//Dod
+			java.util.Date dod = (java.util.Date)prevState.get(ims.core.patient.domain.objects.Patient.FieldNames.Dod);				
+			if (dod!=null && !dod.equals(entity.getDod()))
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : getDod");
+				checkUpdateTrigger = true;
+			}
+			else if (dod==null && entity.getDod()!=null)
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : getDod");
+				checkUpdateTrigger = true;				
+			}																					
+
+			//lkp Dod source
+			ims.domain.lookups.LookupInstance lkpdodSource = (ims.domain.lookups.LookupInstance)prevState.get(ims.core.patient.domain.objects.Patient.FieldNames.DodSource);
+			if (lkpdodSource!=null && !lkpdodSource.equals(entity.getDodSource()))
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : getDodSource");
+				checkUpdateTrigger = true;
+			}
+			else if (lkpdodSource==null && entity.getDodSource()!=null)
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : getDodSource");
+				checkUpdateTrigger = true;				
+			}																					
+			
+			//lkp_ethnicorig
+			ims.domain.lookups.LookupInstance lkp_ethnicorig = (ims.domain.lookups.LookupInstance)prevState.get(ims.core.patient.domain.objects.Patient.FieldNames.EthnicOrigin);
+			if (lkp_ethnicorig!=null && !lkp_ethnicorig.equals(entity.getEthnicOrigin()))
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : getEthnicOrigin");
+				checkUpdateTrigger = true;
+			}
+			else if (lkp_ethnicorig==null && entity.getEthnicOrigin()!=null)
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : getEthnicOrigin");
+				checkUpdateTrigger = true;				
+			}																					
+
+			//lkp_religion
+			ims.domain.lookups.LookupInstance lkp_religion = (ims.domain.lookups.LookupInstance)prevState.get(ims.core.patient.domain.objects.Patient.FieldNames.Religion);
+			if (lkp_religion!=null && !lkp_religion.equals(entity.getReligion()))
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : getReligion");
+				checkUpdateTrigger = true;
+			}
+			else if (lkp_religion==null && entity.getReligion()!=null)
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : getReligion");
+				checkUpdateTrigger = true;				
+			}																					
+
+			//lkp_maritalsta
+			ims.domain.lookups.LookupInstance lkp_maritalsta = (ims.domain.lookups.LookupInstance)prevState.get(ims.core.patient.domain.objects.Patient.FieldNames.MaritalStatus);
+			if (lkp_maritalsta!=null && !lkp_maritalsta.equals(entity.getMaritalStatus()))
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : getMaritalStatus");
+				checkUpdateTrigger = true;
+			}
+			else if (lkp_maritalsta==null && entity.getMaritalStatus()!=null)
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : getMaritalStatus");
+				checkUpdateTrigger = true;				
+			}																									
+
+			//lkp_occupation
+			ims.domain.lookups.LookupInstance lkp_occupation = (ims.domain.lookups.LookupInstance)prevState.get(ims.core.patient.domain.objects.Patient.FieldNames.Occupation);
+			if (lkp_occupation!=null && !lkp_occupation.equals(entity.getOccupation()))
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : getOccupation");
+				checkUpdateTrigger = true;
+			}
+			else if (lkp_occupation==null && entity.getOccupation()!=null)
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : getOccupation");
+				checkUpdateTrigger = true;				
+			}																													
+			
+			//lkp_c_langua
+			ims.domain.lookups.LookupInstance lkp_c_langua = (ims.domain.lookups.LookupInstance)prevState.get(ims.core.patient.domain.objects.Patient.FieldNames.Language);
+			if (lkp_c_langua!=null && !lkp_c_langua.equals(entity.getLanguage()))
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : getLanguage");
+				checkUpdateTrigger = true;
+			}
+			else if (lkp_c_langua==null && entity.getLanguage()!=null)
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : getLanguage");
+				checkUpdateTrigger = true;				
+			}																																	
+
+			//lkp_nationalit
+			ims.domain.lookups.LookupInstance lkp_nationalit = (ims.domain.lookups.LookupInstance)prevState.get(ims.core.patient.domain.objects.Patient.FieldNames.Nationality);
+			if (lkp_nationalit!=null && !lkp_nationalit.equals(entity.getNationality()))
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : getNationality");
+				checkUpdateTrigger = true;
+			}
+			else if (lkp_nationalit==null && entity.getNationality()!=null)
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : getNationality");
+				checkUpdateTrigger = true;				
+			}																																					
+
+			//isconfiden
+			ims.domain.lookups.LookupInstance isconfiden = (ims.domain.lookups.LookupInstance)prevState.get(ims.core.patient.domain.objects.Patient.FieldNames.IsConfidential);
+			if (isconfiden!=null && !isconfiden.equals(entity.isIsConfidential()))
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : isIsConfidential");
+				checkUpdateTrigger = true;
+			}
+			else if (isconfiden==null && entity.isIsConfidential()!=null)
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : isIsConfidential");
+				checkUpdateTrigger = true;				
+			}				
+
+			//lkp_confidenti
+			ims.domain.lookups.LookupInstance lkp_confidenti = (ims.domain.lookups.LookupInstance)prevState.get(ims.core.patient.domain.objects.Patient.FieldNames.ConfidentialReason);
+			if (lkp_confidenti!=null && !lkp_confidenti.equals(entity.getConfidentialReason()))
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : getConfidentialReason");
+				checkUpdateTrigger = true;
+			}			
+			else if (lkp_confidenti==null && entity.getConfidentialReason()!=null)
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : getConfidentialReason");
+				checkUpdateTrigger = true;				
+			}				
+
+			//Address
+			ims.core.generic.domain.objects.Address address = (ims.core.generic.domain.objects.Address)prevState.get(ims.core.patient.domain.objects.Patient.FieldNames.Address);				
+			if (address!=null && (!address.equals(entity.getAddress())))
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : getAddress");
+				checkUpdateTrigger = true;
+			}			
+			else if (address==null && entity.getAddress()!=null)
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : getAddress");
+				checkUpdateTrigger = true;				
+			}				
+
+			//Area of residence
+			if (address!=null)
+			{
+				ims.domain.lookups.LookupInstance lkp_areaOfRes = address.getAreaOfResidence();
+				if (lkp_areaOfRes!=null &&  entity.getAddress() != null && !lkp_areaOfRes.equals(entity.getAddress().getAreaOfResidence()))
+				{
+					engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : Area Of residence");
+					checkUpdateTrigger = true;
+				}
+				else if (lkp_areaOfRes==null &&  entity.getAddress() != null && entity.getAddress().getAreaOfResidence()!=null)
+				{
+					engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : getLanguage");
+					checkUpdateTrigger = true;				
+				}																																	
+			}			
+
+			//Other Addresses
+			java.util.List addresses = (java.util.List)prevState.get(ims.core.patient.domain.objects.Patient.FieldNames.Addresses);
+
+			int dirty = addresses.indexOf("dirty");
+			
+			if (addresses!=null && (!addresses.equals(entity.getAddresses())))
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : getAddresses");
+				checkUpdateTrigger = true;
+			}			
+			else if (addresses==null && entity.getAddresses()!=null)
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : getAddresses");
+				checkUpdateTrigger = true;				
+			}				
+			//Correspondence Address
+			ims.core.generic.domain.objects.Address corrAddress = (ims.core.generic.domain.objects.Address)prevState.get(ims.core.patient.domain.objects.Patient.FieldNames.CorrespondenceAddress);
+			if (corrAddress!=null && !corrAddress.equals(entity.getCorrespondenceAddress()))
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : getCorrespondenceAddress");
+				checkUpdateTrigger = true;
+			}			
+			else if (corrAddress==null && entity.getCorrespondenceAddress()!=null)
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : getCorrespondenceAddress");
+				checkUpdateTrigger = true;				
+			}
+			
+			//Aliases
+			java.util.List otherNames = (java.util.List)prevState.get(ims.core.patient.domain.objects.Patient.FieldNames.OtherNames);
+			if (otherNames!=null && !otherNames.equals(entity.getOtherNames()))
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : getOtherNames");
+				checkUpdateTrigger = true;
+			}			
+			else if (otherNames==null && entity.getOtherNames()!=null)
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : getOtherNames");
+				checkUpdateTrigger = true;				
+			}
+			
+			//Communication Channels
+			java.util.List commChannels = (java.util.List)prevState.get(ims.core.patient.domain.objects.Patient.FieldNames.CommChannels);
+			if (commChannels!=null && !commChannels.equals(entity.getCommChannels()))
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : getCommChannels");
+				checkUpdateTrigger = true;
+			}			
+			else if (commChannels==null && entity.getCommChannels()!=null)
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : getCommChannels");
+				checkUpdateTrigger = true;				
+			}					
+				
+			//Identifiers
+			java.util.List identifiers = (java.util.List)prevState.get(ims.core.patient.domain.objects.Patient.FieldNames.Identifiers);				
+			if (identifiers!=null && (!identifiers.equals(entity.getIdentifiers())))
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : getIdentifiers");
+				checkUpdateTrigger = true;
+			}			
+			else if (identifiers==null && entity.getIdentifiers()!=null)
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference : getIdentifiers");
+				checkUpdateTrigger = true;				
+			}				
+				
+			if (checkUpdateTrigger){
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Difference detected");		
+			}
+			else
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "No Difference detected");
+				checkUpdateTrigger=false;
+			}
+		}
+		else
+		{		
+			engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Eval : No PAtient INternal Identifier");
+			checkUpdateTrigger=false;
+		}			
+		
+	engine.setLastRuleResult(1);
+	return checkUpdateTrigger;
+}
+		
+function boolean triggerDemographicUpdateTest(ims.rules.engine.RulesRuntimeEngine engine,ims.domain.DomainFactory factory,java.util.HashMap prevState,ims.core.patient.domain.objects.Patient entity)
+	{
+	    // Don't continue if this is not the specific rule set in the interceptor we are looking for
+	    if (engine.getPathwayEntitySpecificRuleName() == null || !engine.getPathwayEntitySpecificRuleName().equals("triggerDemographicUpdate.drl"))
+		{
+			engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Rule not set : triggerDemographicUpdate.drl");
+			return false;
+		}
+		
+		return true;		
+		
+	}
+		
+function void saveDemographicsTriggerMessageForPatientUpdate(ims.rules.engine.RulesRuntimeEngine engine,ims.domain.DomainFactory factory,java.util.HashMap prevState,ims.core.patient.domain.objects.Patient entity)
+{
+	try {
+		// Lookup IDs
+        final int QueueType_DEMOGRAPHICFEED = -1851;
+        final int MsgEventType_A28 = -1852;
+        final int MsgEventType_A31 = -1853;
+        final int MsgEventType_A40 = -1854;
+        final int MsgEventType_A47 = -2551;
+        final int QueueType_DEMOGRAPHICWITHHL7FORWARD = -2695;
+        
+        final int MRN_PSEUDO = -2539;
+        final int MRN_NONE = -2540;
+
+		java.sql.Connection conn = factory.getJdbcConnection();				
+		String sqlProviderSystems=null;
+		if(entity.getSystemInformation()!=null&&"HL7Inbound".equals(entity.getSystemInformation().getLastUpdateUser()))
+		{
+			//sqlProviderSystems = "select id from core_providersystem_configitem where id in(select id from core_providersystem_configitem	where (propertyna='SendDeomgraphicFeed' and propertyva='TRUE')) and propertyna='forwardHL7DemographicUpdates' and propertyva='TRUE'";
+			sqlProviderSystems = "select id from core_providersystem_configitem where id in("
+					+ "select providersy from core_outboundtrigge as trig left join core_outboundtrigge_queuetype qtyp on qtyp.owner = trig.id"
+					+ " where (qtyp.instance_id=" + QueueType_DEMOGRAPHICWITHHL7FORWARD + "))";
+		}
+		else
+		{
+			//sqlProviderSystems = "select core_providersystem.id from core_providersystem   join core_providersystem_configitem as ci   on core_providersystem.id = ci.id and ci.propertyna='SendDeomgraphicFeed' and propertyva='TRUE'";
+			sqlProviderSystems = "select id from core_providersystem_configitem where id in("
+					+ "select providersy from core_outboundtrigge as trig left join core_outboundtrigge_queuetype qtyp on qtyp.owner = trig.id"
+					+ " where (qtyp.instance_id=" + QueueType_DEMOGRAPHICFEED + "))";					
+		}
+		java.sql.PreparedStatement preStPS = conn.prepareStatement(sqlProviderSystems);
+		java.sql.ResultSet rs = preStPS.executeQuery();
+		while (rs.next())
+		{
+			engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "sqlProviderSystems : found");
+			
+			int providerSystemId=rs.getInt(1);
+			ims.core.admin.domain.objects.ProviderSystem psDom = (ims.core.admin.domain.objects.ProviderSystem)factory.getDomainObject(ims.core.admin.domain.objects.ProviderSystem.class, providerSystemId);
+			
+			long msgCount=0;
+			String sql = "select count(id) from adto_demographicsmq where patient=? and providersy=? and wasprocess is null and wasdiscard is null";
+			java.sql.PreparedStatement preSt = conn.prepareStatement(sql);
+			engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "sql:" + sql.toString());
+			engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "entity.getId():" + entity.getId());
+			engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "providerSystemId:" + providerSystemId);
+			preSt.setInt(1, entity.getId());
+			preSt.setInt(2, providerSystemId);
+			java.sql.ResultSet rs1 = preSt.executeQuery();
+			if (rs1.next())
+			{
+				msgCount = new Long(rs1.getLong(1));
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "msgCount:" + msgCount);
+			}
+			if (msgCount>0) //more than one unprocessed message already there 
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "msgCount>0 : skip to the next provider system");
+				continue; //skip to the next provider system
+			}
+			
+			String oldPatientSql="select count(id) from adto_demographicsmq where patient=? and providersy=? and wasprocess =1";
+			java.sql.PreparedStatement oldPtCount = conn.prepareStatement(oldPatientSql);
+			oldPtCount.setInt(1, entity.getId());
+			oldPtCount.setInt(2, providerSystemId);
+			java.sql.ResultSet rs2 = oldPtCount.executeQuery();
+			long oldMsgCount=0;
+			if (rs2.next())
+			{
+				oldMsgCount = new Long(rs2.getLong(1));
+			}
+			
+			engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "New : DemographicsMessageQueue");					
+			ims.hl7adtout.domain.objects.DemographicsMessageQueue msg= new ims.hl7adtout.domain.objects.DemographicsMessageQueue();
+			msg.setPatient(entity);
+			msg.setProviderSystem(psDom);
+			
+			msg.setQueueType(factory.getLookupInstance(QueueType_DEMOGRAPHICFEED) );// QueueType.DEMOGRAPHICFEED));
+			if (oldMsgCount==0)
+			{
+				msg.setMsgType(factory.getLookupInstance(MsgEventType_A28));
+			}
+			else if(entity.getMRNStatus()!=null&&(entity.getMRNStatus().getId()==MRN_PSEUDO||entity.getMRNStatus().getId()==MRN_NONE))
+			{
+				msg.setMsgType(factory.getLookupInstance(MsgEventType_A47));
+			}
+			else 
+			{
+				msg.setMsgType(factory.getLookupInstance(MsgEventType_A31));
+			}
+			
+			engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Save : DemographicsMessageQueue");
+			factory.setDirtyCheck(false);
+			factory.saveNoFlush(msg);
+		}
+	}catch (Exception e)
+	{
+		throw new RuntimeException (e);
+	}				
+}
+
+rule "triggerDemographicUpdate"
+no-loop true
+salience 0
+when
+	entity : ims.core.patient.domain.objects.Patient();
+	eval(triggerDemographicUpdate(engine, factory, prevState, entity));	
+then
+	saveDemographicsTriggerMessageForPatientUpdate(engine, factory, prevState, entity);
+	engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Rule triggerDemographicUpdate eval true.");
+end
+

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.core.vo.domain;
@@ -54,6 +59,8 @@ public class GpLiteToPracticeLiteVoAssembler
 		valueObjectDest.setGp(valueObjectSrc.getGp());
 		// practice
 		valueObjectDest.setPractice(valueObjectSrc.getPractice());
+		// isPrimaryPractice
+		valueObjectDest.setIsPrimaryPractice(valueObjectSrc.getIsPrimaryPractice());
 	 	return valueObjectDest;
 	 }
 
@@ -348,6 +355,8 @@ public class GpLiteToPracticeLiteVoAssembler
 		valueObject.setGp(ims.core.vo.domain.GpLiteVoAssembler.create(map, domainObject.getGp()) );
 		// practice
 		valueObject.setPractice(ims.core.vo.domain.GpPracticeLiteVoAssembler.create(map, domainObject.getPractice()) );
+		// isPrimaryPractice
+		valueObject.setIsPrimaryPractice( domainObject.isIsPrimaryPractice() );
  		return valueObject;
 	 }
 
@@ -399,6 +408,7 @@ public class GpLiteToPracticeLiteVoAssembler
 
 		domainObject.setGp(ims.core.vo.domain.GpLiteVoAssembler.extractGp(domainFactory, valueObject.getGp(), domMap));
 		domainObject.setPractice(ims.core.vo.domain.GpPracticeLiteVoAssembler.extractOrganisation(domainFactory, valueObject.getPractice(), domMap));
+		domainObject.setIsPrimaryPractice(valueObject.getIsPrimaryPractice());
 
 		return domainObject;
 	}

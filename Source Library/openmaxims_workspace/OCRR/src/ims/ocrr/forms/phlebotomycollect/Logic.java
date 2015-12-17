@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -42,6 +47,7 @@ import ims.framework.utils.DateTime;
 import ims.framework.utils.Time;
 import ims.ocrr.forms.phlebotomycollect.GenForm.GroupFilterEnumeration;
 import ims.ocrr.vo.OrderSpecimenVo;
+import ims.ocrr.vo.PhlebotomyCollectSearchCriteriaVo;
 import ims.ocrr.vo.PhlebotomyRoundShortVo;
 import ims.ocrr.vo.PhlebotomyRoundShortVoCollection;
 import ims.ocrr.vo.SpecimenWorkListItemListVo;
@@ -74,6 +80,11 @@ public class Logic extends BaseLogic
 	private static final Integer	COMMENTS_COLUMN		= new Integer(6);
 	private static final Integer	BUTTON_COLUMN		= new Integer(7);
 	
+	private static final int LIST_ALL					= 1;
+	private static final int LIST_FORCOLLECTION			= 2;
+	private static final int LIST_COLLECTED				= 3;
+	private static final int LIST_COULDNOTCOLLECT		= 4;
+	
 	private static final String		EmptyWard			= "UNASSIGNED WARD for these patient(s)";
 	
 	protected void onFormOpen() throws ims.framework.exceptions.PresentationLogicException
@@ -82,6 +93,13 @@ public class Logic extends BaseLogic
 		createDynamicGridColumns();
 		form.dteSearchDate().setValue(new Date());
 		listRoundsByDate(form.dteSearchDate().getValue());
+		
+		//WDEV-19389 
+		if (form.getGlobalContext().OCRR.getPhlebotomyCollectSearchCriteriaIsNotNull())
+		{
+			setSearchCriteria(form.getGlobalContext().OCRR.getPhlebotomyCollectSearchCriteria());
+			listRound();
+		}
 	}
 	private void createDynamicGridColumns()
 	{
@@ -116,6 +134,7 @@ public class Logic extends BaseLogic
 		
 		form.getLocalContext().setSelectedPatient(null);
 		form.getLocalContext().setSelectedRound(null);
+		form.chkSelectAll().setValue(false);
 		
 		if(date == null)
 			return;
@@ -178,7 +197,25 @@ public class Logic extends BaseLogic
 	{
 		if(saveRowRecord(cell.getRow()))
 		{
-			cell.getRow().setReadOnly(true);
+			
+			DynamicGridCell printCell = cell.getRow().getCells().get(form.dyngrdCollect().getColumns().get(PRINT_COL.intValue()));
+			DynamicGridCell locationCell = cell.getRow().getCells().get(form.dyngrdCollect().getColumns().get(LOCATION_COLUMN.intValue()));
+			DynamicGridCell collectedCell = cell.getRow().getCells().get(form.dyngrdCollect().getColumns().get(COLLECTED_COLUMN.intValue()));
+			DynamicGridCell dateCell = cell.getRow().getCells().get(form.dyngrdCollect().getColumns().get(DATE_COLUMN.intValue()));
+			DynamicGridCell timeCell = cell.getRow().getCells().get(form.dyngrdCollect().getColumns().get(TIME_COLUMN.intValue()));
+			DynamicGridCell phlebotomistCell = cell.getRow().getCells().get(form.dyngrdCollect().getColumns().get(PHLEBOTOMIST_COLUMN.intValue()));
+			DynamicGridCell commentsCell = cell.getRow().getCells().get(form.dyngrdCollect().getColumns().get(COMMENTS_COLUMN.intValue()));
+			DynamicGridCell buttonCell = cell.getRow().getCells().get(form.dyngrdCollect().getColumns().get(BUTTON_COLUMN.intValue()));
+			
+			printCell.setReadOnly(false);
+			locationCell.setReadOnly(true);
+			collectedCell.setReadOnly(true);
+			dateCell.setReadOnly(true);
+			timeCell.setReadOnly(true);
+			phlebotomistCell.setReadOnly(true);
+			commentsCell.setReadOnly(true);
+			buttonCell.setReadOnly(true);
+			
 			cell.getRow().setBackColor(Color.LightGray);
 			removeCellByColumn(cell.getRow(), BUTTON_COLUMN);
 		}
@@ -390,6 +427,7 @@ public class Logic extends BaseLogic
 			{
 				cell.getItems().clear();
 				cell.getItems().newItem(PrintStatus.FORPRINTING);
+				form.chkSelectAll().setValue(false);
 			}
 		}
 	}
@@ -573,6 +611,7 @@ public class Logic extends BaseLogic
 	{
 		form.getLocalContext().setSelectedPatient(null);
 		form.getLocalContext().setSelectedRound(form.cmbRound().getValue());
+		form.chkSelectAll().setValue(false);
 		
 		listRound();
 	}
@@ -580,9 +619,15 @@ public class Logic extends BaseLogic
 	{
 		form.dyngrdCollect().getRows().clear();
 		form.getGlobalContext().Core.setPatientShort(null); //WDEV-16767
+		form.chkSelectAll().setValue(false);
 		
 		if(form.cmbRound().getValue() == null)
+		{
+			form.getGlobalContext().OCRR.setPhlebotomyCollectSearchCriteria(null); //WDEV-19389 
 			return;
+		}
+		
+		form.getGlobalContext().OCRR.setPhlebotomyCollectSearchCriteria(getSearchCriteria());//WDEV-19389 
 		
 		SpecimenCollectionStatus status = null;
 		
@@ -597,6 +642,69 @@ public class Logic extends BaseLogic
 		
 		displayRound(list);
 	}
+	
+	private PhlebotomyCollectSearchCriteriaVo getSearchCriteria()
+	{
+		PhlebotomyCollectSearchCriteriaVo searchCriteria = new PhlebotomyCollectSearchCriteriaVo();
+		
+		searchCriteria.setDate(form.dteSearchDate().getValue());
+		searchCriteria.setSearchType(getSearchType());
+		searchCriteria.setCollectionRound(form.cmbRound().getValue());
+		
+		return searchCriteria;
+	}
+	
+	private void setSearchCriteria(PhlebotomyCollectSearchCriteriaVo phlebotomyCollectSearchCriteriaVo) 
+	{
+		setSearchType(phlebotomyCollectSearchCriteriaVo.getSearchType());		
+		form.dteSearchDate().setValue(phlebotomyCollectSearchCriteriaVo.getDate());
+		listRoundsByDate(phlebotomyCollectSearchCriteriaVo.getDate());
+		form.cmbRound().setValue(phlebotomyCollectSearchCriteriaVo.getCollectionRound());	
+	}
+	
+	private void setSearchType(Integer searchType) 
+	{
+		switch (searchType)
+		{
+		case LIST_ALL:
+			form.GroupFilter().setValue(GroupFilterEnumeration.rdoAll);
+			break;
+		case LIST_FORCOLLECTION:
+			form.GroupFilter().setValue(GroupFilterEnumeration.rdoForCollection);
+			break;
+		case LIST_COLLECTED:
+			form.GroupFilter().setValue(GroupFilterEnumeration.rdoCollected);
+			break;
+		case LIST_COULDNOTCOLLECT:
+			form.GroupFilter().setValue(GroupFilterEnumeration.rdoCouldNotCollect);
+			break;
+		}		
+	}
+
+	private Integer getSearchType() 
+	{
+		GroupFilterEnumeration searchType = form.GroupFilter().getValue();
+		if (GroupFilterEnumeration.rdoAll.equals(searchType))
+		{
+			return LIST_ALL;
+		}
+		if (GroupFilterEnumeration.rdoForCollection.equals(searchType))
+		{
+			return LIST_FORCOLLECTION;
+		}
+		if (GroupFilterEnumeration.rdoCollected.equals(searchType))
+		{
+			return LIST_COLLECTED;
+		}
+		if (GroupFilterEnumeration.rdoCouldNotCollect.equals(searchType))
+		{
+			return LIST_COULDNOTCOLLECT;
+		}
+		return null;
+	}
+
+	
+	
 	private void displayRound(SpecimenWorkListitemCustomVoCollection items)
 	{
 		List<Integer> oldWard =  new ArrayList<Integer>();
@@ -629,6 +737,7 @@ public class Logic extends BaseLogic
 				else
 				{
 					cell.setValue(EmptyWard);
+					lastWardRow.setValue(EmptyWard);
 				}
 				cell.setReadOnly(true);
 				lastWardRow.setCollapsedImage(form.getImages().Admin.Location);
@@ -641,7 +750,10 @@ public class Logic extends BaseLogic
 			if(!oldPatient.contains(item.getPatientId().intValue()))
 			{
 				//create new patient row
-				lastPatientRow = lastWardRow.getRows().newRow();
+				DynamicGridRow patientWard = getWardForPatient(item);	//wdev-21451
+				lastPatientRow = patientWard.getRows().newRow();		//wdev-21451
+				
+				//lastPatientRow = lastWardRow.getRows().newRow();
 				lastPatientRow.setValue(item.getPatientId());
 				
 				DynamicGridCell cell = lastPatientRow.getCells().newCell(form.dyngrdCollect().getColumns().get(LOCATION_COLUMN.intValue()), DynamicCellType.STRING);
@@ -857,6 +969,9 @@ public class Logic extends BaseLogic
 	//WDEV-17829
 	private DynamicGridRow getPatientRow(DynamicGridRow lastWardRow, SpecimenWorkListitemCustomVo item)
 	{
+		if (lastWardRow == null)
+			return null;
+		
 		for (int i = 0; i < lastWardRow.getRows().size(); i++)
 		{
 			if (lastWardRow.getRows().get(i).getValue().equals(item.getPatientId()))
@@ -870,11 +985,19 @@ public class Logic extends BaseLogic
 
 	private DynamicGridRow getWardForPatient(SpecimenWorkListitemCustomVo item)
 	{
+		if (item == null)
+			return null;
+		
 		for (int i = 0; i < form.dyngrdCollect().getRows().size(); i++)
 		{
-			if (form.dyngrdCollect().getRows().get(i).getValue().equals(item.getWardId()))
+			DynamicGridRow row = form.dyngrdCollect().getRows().get(i);
+			
+			if (row.getValue() == null)
+					continue;
+			
+			if (row.getValue().equals(item.getWardId()) || (item.getWardId() == null && row.getValue().equals(EmptyWard)))
 			{
-				return form.dyngrdCollect().getRows().get(i);
+				return row;
 			}
 		}
 
@@ -1036,6 +1159,8 @@ public class Logic extends BaseLogic
 			}
 		}
 		
+		form.chkSelectAll().setValue(false);
+		
 	}
 	private void printSelectedItems()
 	{
@@ -1088,5 +1213,31 @@ public class Logic extends BaseLogic
 				}
 			}
 		}
+	}
+	
+	
+	@Override
+	protected void onChkSelectAllValueChanged() throws PresentationLogicException
+	{
+		for (int i = 0; i < form.dyngrdCollect().getRows().size(); i++)
+		{
+			for (int j = 0; j < form.dyngrdCollect().getRows().get(i).getRows().size(); j++)
+			{
+				for (int k = 0; k < form.dyngrdCollect().getRows().get(i).getRows().get(j).getRows().size(); k++)
+				{
+					DynamicGridCell printCell = form.dyngrdCollect().getRows().get(i).getRows().get(j).getRows().get(k).getCells().get(form.dyngrdCollect().getColumns().get(PRINT_COL.intValue()));
+					
+					if (Boolean.TRUE.equals(form.chkSelectAll().getValue()))
+					{
+						printCell.getItems().clear();
+						printCell.getItems().newItem(PrintStatus.FORPRINTING);
+						printCell.setValue(PrintStatus.FORPRINTING);
+					}
+					else
+							printCell.setValue(null);
+				}
+			}
+		}
+		
 	}
 }

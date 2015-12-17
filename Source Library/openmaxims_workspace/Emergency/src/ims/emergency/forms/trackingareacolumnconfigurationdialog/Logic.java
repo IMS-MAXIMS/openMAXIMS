@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -95,7 +100,7 @@ public class Logic extends BaseLogic
 
 		for (int i = 0; i < lkpAreaCollection.size(); i++)
 		{
-			if (lkpAreaCollection.get(i).getID() == TrackingAreaColumn.PATHOLOGY_RESULTS.getID() || lkpAreaCollection.get(i).getID() == TrackingAreaColumn.CLINICAL_IMAGING_RESULTS.getID() || lkpAreaCollection.get(i).getID() == TrackingAreaColumn.RISKS.getID() || lkpAreaCollection.get(i).getID() == TrackingAreaColumn.OUTSTANDING_ORDERS.getID() || lkpAreaCollection.get(i).getID() == TrackingAreaColumn.PATIENT_PREVIOUS_STATUS.getID() || lkpAreaCollection.get(i).getID() == TrackingAreaColumn.LODGED_TYPE.getID() || lkpAreaCollection.get(i).getID() == TrackingAreaColumn.LODGED_DATE_AND_TIME.getID() || lkpAreaCollection.get(i).getID() == TrackingAreaColumn.ROOM.getID() || lkpAreaCollection.get(i).getID() == TrackingAreaColumn.BED.getID()) //WDEV-17454, wdev-17573
+			if (lkpAreaCollection.get(i).getID() == TrackingAreaColumn.PATHOLOGY_RESULTS.getID() || lkpAreaCollection.get(i).getID() == TrackingAreaColumn.CLINICAL_IMAGING_RESULTS.getID() || lkpAreaCollection.get(i).getID() == TrackingAreaColumn.RISKS.getID() || lkpAreaCollection.get(i).getID() == TrackingAreaColumn.OUTSTANDING_ORDERS.getID() || lkpAreaCollection.get(i).getID() == TrackingAreaColumn.PATIENT_PREVIOUS_STATUS.getID() || lkpAreaCollection.get(i).getID() == TrackingAreaColumn.LODGED_TYPE.getID() || lkpAreaCollection.get(i).getID() == TrackingAreaColumn.LODGED_DATE_AND_TIME.getID() || lkpAreaCollection.get(i).getID() == TrackingAreaColumn.ROOM.getID()) //WDEV-17454, wdev-17573 //WDEV-17661
 				continue;
 			
 			grdTrackingAreaColumRow newAreaColumn = form.grdTrackingAreaColum().getRows().newRow();

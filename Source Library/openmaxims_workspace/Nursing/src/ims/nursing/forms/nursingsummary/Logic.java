@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -29,12 +34,14 @@ import ims.core.admin.vo.CareContextRefVo;
 import ims.core.vo.lookups.UserDefinedAssessmentType;
 import ims.framework.controls.DynamicGridCell;
 import ims.framework.controls.DynamicGridRow;
+import ims.framework.exceptions.PresentationLogicException;
 import ims.framework.utils.DateTime;
 import ims.nursing.forms.nursingsummary.GenForm.grdAssessmentRow;
 import ims.nursing.forms.nursingsummary.GenForm.grdInvasiveRow;
 import ims.nursing.helper.NursingSummaryHelper;
 import ims.nursing.vo.BradenScale;
 import ims.nursing.vo.MUSTVo;
+import ims.nursing.vo.NursingSummarySearchCriteriaVo;
 import ims.nursing.vo.PatientInvasiveDeviceShortVo;
 import ims.nursing.vo.PatientInvasiveDeviceShortVoCollection;
 import ims.nursing.vo.PlanOfCareListVoCollection;
@@ -54,11 +61,49 @@ public class Logic extends BaseLogic
 	protected void onFormOpen() throws ims.framework.exceptions.PresentationLogicException
 	{
 		form.cmbInterval().setValue((PlanOfCareInterval) form.cmbInterval().getValues().get(0));
-		populateActions();
 		populateAssessmentGrid();
 		populateInvasiveDeviceGrid();
 		displayLastDPPScores();
+		
+		//WDEV-19389 
+		if (!(form.getGlobalContext().Core.getCurrentCareContextIsNotNull() && form.getGlobalContext().Nursing.getNursingSummarySearchCriteriaIsNotNull() && form.getGlobalContext().Core.getCurrentCareContext().equals(form.getGlobalContext().Nursing.getNursingSummarySearchCriteria().getCareContext())))
+		{
+			form.getGlobalContext().Nursing.setNursingSummarySearchCriteria(null);
+		}
+		
+		if(form.getGlobalContext().Nursing.getNursingSummarySearchCriteriaIsNotNull())
+		{
+			setSearchCriteria(form.getGlobalContext().Nursing.getNursingSummarySearchCriteria());
+			try
+			{
+				onCmbIntervalValueChanged();
+			}
+			catch (PresentationLogicException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		else
+			populateActions();	
+		//WDEV-19389 - end
+		
 		updateContextMenu();
+	}
+	
+	private NursingSummarySearchCriteriaVo getSearchCriteria()
+	{
+		NursingSummarySearchCriteriaVo searchCriteria = new NursingSummarySearchCriteriaVo();
+		
+		searchCriteria.setAction(form.cmbInterval().getValue());
+		searchCriteria.setCareContext(form.getGlobalContext().Core.getCurrentCareContext());
+		
+		return searchCriteria;
+	}
+	
+	
+	private void setSearchCriteria(NursingSummarySearchCriteriaVo nursingSummarySearchCriteriaVo)
+	{
+		form.cmbInterval().setValue(nursingSummarySearchCriteriaVo.getAction());	
 	}
 	
 	private void displayLastDPPScores()
@@ -110,6 +155,8 @@ public class Logic extends BaseLogic
 	protected void onCmbIntervalValueChanged() throws ims.framework.exceptions.PresentationLogicException
 	{
 		populateActions();
+		updateContextMenu();//WDEV-19389 
+		form.getGlobalContext().Nursing.setNursingSummarySearchCriteria(getSearchCriteria());//WDEV-19389 
 	}
 	protected void onContextMenuItemClick(int menuItemID, ims.framework.Control sender) throws ims.framework.exceptions.PresentationLogicException
 	{

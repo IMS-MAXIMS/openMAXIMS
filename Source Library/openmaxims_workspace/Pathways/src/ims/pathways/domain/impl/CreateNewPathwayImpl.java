@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -126,15 +131,15 @@ public class CreateNewPathwayImpl extends BaseCreateNewPathwayImpl
 		*/ 
 		
 		// Get the current clock
-		int pjtClockId=0;
-		int curClockId = patientJourney.getCurrentClock().getID_PathwayClock();
+		Integer pjtClockId=0;
+		Integer curClockId =patientJourney != null &&  patientJourney.getCurrentClock() != null ? patientJourney.getCurrentClock().getID_PathwayClock() : null;
 		for (int i=0; i<patientJourney.getPatientTargets().size(); i++)
 		{
 			PatientJourneyTarget domPjt = (PatientJourneyTarget) factory.getDomainObject(PatientJourneyTarget.class, patientJourney.getPatientTargets().get(i).getID_PatientJourneyTarget());
 			if (domPjt.getJourneyClock() != null)
 				pjtClockId = domPjt.getJourneyClock().getId();
 			
-			if (pjtClockId != curClockId)
+			if (! pjtClockId.equals(curClockId))
 				continue;
 			
 			JourneyTargetStatus stat = domPjt.getCurrentStatus();

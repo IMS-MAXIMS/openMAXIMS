@@ -1,0 +1,190 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:35 -->
+<hibernate-mapping>
+	<class name="ims.ocrr.configuration.domain.objects.Investigation" table="ocrr_investigation" lazy="true" discriminator-value="null" >
+		<cache usage="nonstrict-read-write" />
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: providerInvCode -->
+<!-- debug: providerService -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="providerService" class="ims.ocrr.configuration.domain.objects.LocSvcProviderSys" unique="true" foreign-key="investigation_providerse_fk" access="field" cascade="save-update">
+			<column name="providerse" sql-type="numeric(10,0)" not-null="false" unique="false"  index='inv_code_idx' />
+		</many-to-one>
+<!-- debug: colour -->
+<!-- debug: pathInvDetails -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="pathInvDetails" class="ims.ocrr.configuration.domain.objects.PathInvDetails" unique="true" foreign-key="investigation_pathinvdet_fk" access="field" cascade="all">
+			<column name="pathinvdet" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: clinImagInvDetails -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="clinImagInvDetails" class="ims.ocrr.configuration.domain.objects.ClinImagInvDetails" unique="true" foreign-key="investigation_clinimagin_fk" access="field" cascade="all">
+			<column name="clinimagin" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: assocQuestions -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<list name="assocQuestions" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="investigation_assocquest_fk">
+				<column name="ocrr_investigation_assocquest" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.ocrr.configuration.domain.objects.InvestigationQuestion" />
+		</list>
+<!-- debug: assocInvestigations -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- many to many -->
+		<set name="assocInvestigations" table="ocrr_investigation_associnves" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="investigation_associnves_fr_fk">
+				<column name="from_side" sql-type="numeric(10,0)" unique="false"   />
+			</key>
+			
+			<many-to-many class="ims.ocrr.configuration.domain.objects.Investigation" foreign-key="investigation_associnves_to_fk">
+				<column name="to_side" sql-type="numeric(10,0)" unique="false"   />
+			</many-to-many>
+		</set>
+<!-- debug: helpText -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<list name="helpText" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="investigation_helptext_fk">
+				<column name="ocrr_investigation_helptext" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.ocrr.configuration.domain.objects.HelpText" />
+		</list>
+<!-- debug: activeStatus -->
+<!-- debug: separateOrder -->
+<!-- debug: investigationIndex -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- many to one -->
+		<many-to-one name="investigationIndex" class="ims.ocrr.configuration.domain.objects.InvestigationIndex" foreign-key="investigation_investigat_fk" access="field" cascade="save-update">
+			<column name="investigat" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: isAddon -->
+<!-- debug: minReorderPeriodVal -->
+<!-- debug: minReorderPeriodUnit -->
+<!-- debug: femaleMinReorderPeriodVal -->
+<!-- debug: femaleMinReorderPeriodUnit -->
+<!-- debug: type -->
+<!-- debug: eventType -->
+<!-- debug: noLabelSets -->
+<!-- debug: turnaroundMeasure -->
+<!-- debug: expectedTurnaround -->
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="providerInvCode" type="string" access="field" update="true" > 
+			<column name="providerin" length="255"  not-null="false" unique="false"  index='inv_code_idx'/>
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<component name="colour" class="ims.framework.utils.Color" >
+			<property name="name" type="string" access="field" update="true">
+				<column name="colour"  not-null="false" unique="false"     />
+			</property>
+		</component>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="activeStatus" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_activestat" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="separateOrder" type="boolean" access="field" update="true">
+			<column name="separateor"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isAddon" type="boolean" access="field" update="true">
+			<column name="isaddon"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="minReorderPeriodVal" type="integer" access="field" update="true">
+			<column name="minreorder"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="minReorderPeriodUnit" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_minreorde2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="femaleMinReorderPeriodVal" type="integer" access="field" update="true">
+			<column name="femaleminr"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="femaleMinReorderPeriodUnit" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_femalemin2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="type" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_c_ty" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="eventType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_eventtype" sql-type="numeric(10,0)" not-null="true" unique="false"  index='eventtype_idx' />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="noLabelSets" type="integer" access="field" update="true">
+			<column name="nolabelset"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="turnaroundMeasure" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_turnaround" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="expectedTurnaround" type="integer" access="field" update="true">
+			<column name="expectedtu"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

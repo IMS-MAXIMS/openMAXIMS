@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -597,7 +602,7 @@ public class Logic extends BaseLogic
 		
 		noteRow.setValue(note);
 		noteRow.setColArea(note.getArea().getText());
-		noteRow.setColNotes(note.getNotes());
+		noteRow.setColNotes(replaceImsRichText(note.getNotes().toString())); //WDEV-19893
 		
 		// Update local context & local context that signals a MDT Note edit
 		form.getLocalContext().setCurrentMDTNote(note);
@@ -822,7 +827,8 @@ public class Logic extends BaseLogic
 			
 			replaceSingleLineBreaks(note);//WDEV-17379
 			
-			noteRow.setColNotes(note.getNotes());
+			if(note.getNotes() != null)
+				noteRow.setColNotes(replaceImsRichText(note.getNotes().toString())); //WDEV-19893
 			
 			noteRow.setValue(note);
 		}
@@ -997,6 +1003,20 @@ public class Logic extends BaseLogic
 		replaceSingleLineBreaks(note);//WDEV-17379
 		
 		form.ctnDetails().richNotes().setValue(note.getNotes());
+
+	}
+	
+	//WDEV-19893
+	private String replaceImsRichText(String note)
+	{
+		String newNote = "";
+		if(note == null)
+			return "";
+		
+		if (note.contains("<!-- _ims_rich_text_control_1234567890_tag_ -->"))
+			newNote = note.replaceAll("<!-- _ims_rich_text_control_1234567890_tag_ -->", "");
+		
+		return newNote;
 	}
 
 	private void replaceSingleLineBreaks(MDTNotesVo note)
@@ -1020,7 +1040,7 @@ public class Logic extends BaseLogic
 		note.setAuthoringCP(form.ctnDetails().qmbRecHCP().getValue());
 		note.setAuthoringDateTime(form.ctnDetails().dtimRecDateTime().getValue());
 		note.setArea(form.ctnDetails().cmbArea().getValue());
-		note.setNotes(form.ctnDetails().richNotes().getValue());
+		note.setNotes(form.ctnDetails().richNotes().getValue()); 
 		
 		return note;
 	}

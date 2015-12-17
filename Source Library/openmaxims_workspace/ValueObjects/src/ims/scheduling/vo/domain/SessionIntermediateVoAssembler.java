@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.scheduling.vo.domain;
@@ -80,6 +85,12 @@ public class SessionIntermediateVoAssembler
 		valueObjectDest.setConsMediaType(valueObjectSrc.getConsMediaType());
 		// SessionStatus
 		valueObjectDest.setSessionStatus(valueObjectSrc.getSessionStatus());
+		// SessionComment
+		valueObjectDest.setSessionComment(valueObjectSrc.getSessionComment());
+		// CaseNoteFolderLocation
+		valueObjectDest.setCaseNoteFolderLocation(valueObjectSrc.getCaseNoteFolderLocation());
+		// ListType
+		valueObjectDest.setListType(valueObjectSrc.getListType());
 	 	return valueObjectDest;
 	 }
 
@@ -514,6 +525,46 @@ public class SessionIntermediateVoAssembler
 			}			
 			valueObject.setSessionStatus(voLookup15);
 		}
+				// SessionComment
+		valueObject.setSessionComment(domainObject.getSessionComment());
+		// CaseNoteFolderLocation
+		valueObject.setCaseNoteFolderLocation(ims.core.vo.domain.LocShortVoAssembler.create(map, domainObject.getCaseNoteFolderLocation()) );
+		// ListType
+		ims.domain.lookups.LookupInstance instance18 = domainObject.getListType();
+		if ( null != instance18 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance18.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance18.getImage().getImageId(), instance18.getImage().getImagePath());
+			}
+			color = instance18.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.scheduling.vo.lookups.ProfileListType voLookup18 = new ims.scheduling.vo.lookups.ProfileListType(instance18.getId(),instance18.getText(), instance18.isActive(), null, img, color);
+			ims.scheduling.vo.lookups.ProfileListType parentVoLookup18 = voLookup18;
+			ims.domain.lookups.LookupInstance parent18 = instance18.getParent();
+			while (parent18 != null)
+			{
+				if (parent18.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent18.getImage().getImageId(), parent18.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent18.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup18.setParent(new ims.scheduling.vo.lookups.ProfileListType(parent18.getId(),parent18.getText(), parent18.isActive(), null, img, color));
+				parentVoLookup18 = parentVoLookup18.getParent();
+								parent18 = parent18.getParent();
+			}			
+			valueObject.setListType(voLookup18);
+		}
 		 		return valueObject;
 	 }
 
@@ -623,6 +674,38 @@ public class SessionIntermediateVoAssembler
 				domainFactory.getLookupInstance(valueObject.getSessionStatus().getID());
 		}
 		domainObject.setSessionStatus(value15);
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getSessionComment() != null && valueObject.getSessionComment().equals(""))
+		{
+			valueObject.setSessionComment(null);
+		}
+		domainObject.setSessionComment(valueObject.getSessionComment());
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.resource.place.domain.objects.Location value17 = null;
+		if ( null != valueObject.getCaseNoteFolderLocation() ) 
+		{
+			if (valueObject.getCaseNoteFolderLocation().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getCaseNoteFolderLocation()) != null)
+				{
+					value17 = (ims.core.resource.place.domain.objects.Location)domMap.get(valueObject.getCaseNoteFolderLocation());
+				}
+			}
+			else
+			{
+				value17 = (ims.core.resource.place.domain.objects.Location)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.Location.class, valueObject.getCaseNoteFolderLocation().getBoId());
+			}
+		}
+		domainObject.setCaseNoteFolderLocation(value17);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value18 = null;
+		if ( null != valueObject.getListType() ) 
+		{
+			value18 =
+				domainFactory.getLookupInstance(valueObject.getListType().getID());
+		}
+		domainObject.setListType(value18);
 
 		return domainObject;
 	}

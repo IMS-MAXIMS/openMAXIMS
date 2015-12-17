@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.configuration.domain.objects;
@@ -62,6 +67,22 @@ public class AppRole extends ims.domain.DomainObject implements ims.domain.Syste
 	  * Collection of ims.core.clinical.domain.objects.TaxonomyMap.
 	  */
 	private java.util.List codeMappings;
+	/** SessionTimeout session (in seconds) */
+	private Integer sessionTimeout;
+	/** Autolock timer (in seconds) */
+	private Integer autolockTimer;
+	/** 
+	  * Collection of ims.core.configuration.domain.objects.AlertAccessRight.
+	  */
+	private java.util.List alertsAccess;
+	/** Requires PDS Access */
+	private Boolean requiresPDS;
+	/** SPINE Role Based Access Role Code */
+	private ims.core.admin.domain.objects.RBACBaselineJobRole spineRbac;
+	/** Names of PDS Rights granted to this Role
+	  * Collection of ims.core.configuration.domain.objects.AppRight.
+	  */
+	private java.util.List pdsRights;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public AppRole (Integer id, int ver)
@@ -153,6 +174,54 @@ public class AppRole extends ims.domain.DomainObject implements ims.domain.Syste
 	}
 	public void setCodeMappings(java.util.List paramValue) {
 		this.codeMappings = paramValue;
+	}
+
+	public Integer getSessionTimeout() {
+		return sessionTimeout;
+	}
+	public void setSessionTimeout(Integer sessionTimeout) {
+		this.sessionTimeout = sessionTimeout;
+	}
+
+	public Integer getAutolockTimer() {
+		return autolockTimer;
+	}
+	public void setAutolockTimer(Integer autolockTimer) {
+		this.autolockTimer = autolockTimer;
+	}
+
+	public java.util.List getAlertsAccess() {
+		if ( null == alertsAccess ) {
+			alertsAccess = new java.util.ArrayList();
+		}
+		return alertsAccess;
+	}
+	public void setAlertsAccess(java.util.List paramValue) {
+		this.alertsAccess = paramValue;
+	}
+
+	public Boolean isRequiresPDS() {
+		return requiresPDS;
+	}
+	public void setRequiresPDS(Boolean requiresPDS) {
+		this.requiresPDS = requiresPDS;
+	}
+
+	public ims.core.admin.domain.objects.RBACBaselineJobRole getSpineRbac() {
+		return spineRbac;
+	}
+	public void setSpineRbac(ims.core.admin.domain.objects.RBACBaselineJobRole spineRbac) {
+		this.spineRbac = spineRbac;
+	}
+
+	public java.util.List getPdsRights() {
+		if ( null == pdsRights ) {
+			pdsRights = new java.util.ArrayList();
+		}
+		return pdsRights;
+	}
+	public void setPdsRights(java.util.List paramValue) {
+		this.pdsRights = paramValue;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -289,6 +358,69 @@ public class AppRole extends ims.domain.DomainObject implements ims.domain.Syste
 			auditStr.append("] " + i8);
 		}
 	    auditStr.append("; ");
+		auditStr.append("\r\n*sessionTimeout* :");
+		auditStr.append(sessionTimeout);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*autolockTimer* :");
+		auditStr.append(autolockTimer);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*alertsAccess* :");
+		if (alertsAccess != null)
+		{
+		int i11=0;
+		for (i11=0; i11<alertsAccess.size(); i11++)
+		{
+			if (i11 > 0)
+				auditStr.append(",");
+			ims.core.configuration.domain.objects.AlertAccessRight obj = (ims.core.configuration.domain.objects.AlertAccessRight)alertsAccess.get(i11);
+		    if (obj != null)
+			{
+				if (i11 == 0)
+				{
+				auditStr.append(toShortClassName(obj));
+				auditStr.append("[");
+				}
+		        auditStr.append(obj.toString());
+			}
+		}
+		if (i11 > 0)
+			auditStr.append("] " + i11);
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*requiresPDS* :");
+		auditStr.append(requiresPDS);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*spineRbac* :");
+		if (spineRbac != null)
+		{
+			auditStr.append(toShortClassName(spineRbac));
+				
+		    auditStr.append(spineRbac.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*pdsRights* :");
+		if (pdsRights != null)
+		{
+		int i14=0;
+		for (i14=0; i14<pdsRights.size(); i14++)
+		{
+			if (i14 > 0)
+				auditStr.append(",");
+			ims.core.configuration.domain.objects.AppRight obj = (ims.core.configuration.domain.objects.AppRight)pdsRights.get(i14);
+		    if (obj != null)
+			{
+				if (i14 == 0)
+				{
+				auditStr.append(toShortClassName(obj));
+				auditStr.append("[");
+				}
+		        auditStr.append(obj.toString());
+			}
+		}
+		if (i14 > 0)
+			auditStr.append("] " + i14);
+		}
+	    auditStr.append("; ");
 		return auditStr.toString();
 	}
 	
@@ -388,6 +520,48 @@ public class AppRole extends ims.domain.DomainObject implements ims.domain.Syste
 			sb.append("<codeMappings>");
 			sb.append(ims.domain.DomainObject.toXMLString(this.getCodeMappings(), domMap));
 			sb.append("</codeMappings>");		
+			}
+		}
+		if (this.getSessionTimeout() != null)
+		{
+			sb.append("<sessionTimeout>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getSessionTimeout().toString()));
+			sb.append("</sessionTimeout>");		
+		}
+		if (this.getAutolockTimer() != null)
+		{
+			sb.append("<autolockTimer>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getAutolockTimer().toString()));
+			sb.append("</autolockTimer>");		
+		}
+		if (this.getAlertsAccess() != null)
+		{
+			if (this.getAlertsAccess().size() > 0 )
+			{
+			sb.append("<alertsAccess>");
+			sb.append(ims.domain.DomainObject.toXMLString(this.getAlertsAccess(), domMap));
+			sb.append("</alertsAccess>");		
+			}
+		}
+		if (this.isRequiresPDS() != null)
+		{
+			sb.append("<requiresPDS>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isRequiresPDS().toString()));
+			sb.append("</requiresPDS>");		
+		}
+		if (this.getSpineRbac() != null)
+		{
+			sb.append("<spineRbac>");
+			sb.append(this.getSpineRbac().toXMLString(domMap)); 	
+			sb.append("</spineRbac>");		
+		}
+		if (this.getPdsRights() != null)
+		{
+			if (this.getPdsRights().size() > 0 )
+			{
+			sb.append("<pdsRights>");
+			sb.append(ims.domain.DomainObject.toXMLString(this.getPdsRights(), domMap));
+			sb.append("</pdsRights>");		
 			}
 		}
 		return sb.toString();
@@ -598,6 +772,39 @@ public class AppRole extends ims.domain.DomainObject implements ims.domain.Syste
 			fldEl = fldEl.element("list");	
 			obj.setCodeMappings(ims.core.clinical.domain.objects.TaxonomyMap.fromListXMLString(fldEl, factory, obj.getCodeMappings(), domMap));
 		}
+		fldEl = el.element("sessionTimeout");
+		if(fldEl != null)
+		{	
+    		obj.setSessionTimeout(new Integer(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("autolockTimer");
+		if(fldEl != null)
+		{	
+    		obj.setAutolockTimer(new Integer(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("alertsAccess");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("list");	
+			obj.setAlertsAccess(ims.core.configuration.domain.objects.AlertAccessRight.fromListXMLString(fldEl, factory, obj.getAlertsAccess(), domMap));
+		}
+		fldEl = el.element("requiresPDS");
+		if(fldEl != null)
+		{	
+    		obj.setRequiresPDS(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("spineRbac");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setSpineRbac(ims.core.admin.domain.objects.RBACBaselineJobRole.getRBACBaselineJobRolefromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("pdsRights");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("list");	
+			obj.setPdsRights(ims.core.configuration.domain.objects.AppRight.fromListXMLString(fldEl, factory, obj.getPdsRights(), domMap));
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -606,6 +813,8 @@ public class AppRole extends ims.domain.DomainObject implements ims.domain.Syste
 		 "appRights"
 		, "formMenuActionsDenied"
 		, "codeMappings"
+		, "alertsAccess"
+		, "pdsRights"
 		};
 	}
 
@@ -621,6 +830,12 @@ public class AppRole extends ims.domain.DomainObject implements ims.domain.Syste
 		public static final String TopButtonConfig = "topButtonConfig";
 		public static final String FormMenuActionsDenied = "formMenuActionsDenied";
 		public static final String CodeMappings = "codeMappings";
+		public static final String SessionTimeout = "sessionTimeout";
+		public static final String AutolockTimer = "autolockTimer";
+		public static final String AlertsAccess = "alertsAccess";
+		public static final String RequiresPDS = "requiresPDS";
+		public static final String SpineRbac = "spineRbac";
+		public static final String PdsRights = "pdsRights";
 	}
 }
 

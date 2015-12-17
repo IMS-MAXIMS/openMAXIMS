@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -35,6 +40,7 @@ import ims.framework.enumerations.DialogResult;
 import ims.framework.enumerations.FormMode;
 import ims.framework.exceptions.PresentationLogicException;
 import ims.framework.utils.DateTime;
+import ims.ocrr.vo.ClinicalResultDetailsLightVo;
 import ims.ocrr.vo.ImportResultsConfigVo;
 import ims.ocrr.vo.OrderedInvestigationStatusVo;
 import ims.ocrr.vo.OrderedInvestigationStatusVoCollection;
@@ -88,6 +94,9 @@ public class Logic extends BaseLogic
 				form.setMode(FormMode.EDIT);
 			}
 		}
+		
+		//WDEV-19794
+		form.getGlobalContext().OCRR.setDisplayExaminDateTime(false);
 	}
 	private boolean attachDocumentToInvestigation() {
 		ReferralAppointmentDetailsOrderInvestigationVo voOrderInv = form.getLocalContext().getReferralAppointmentDetailsOrderInvestigationVo();
@@ -163,6 +172,18 @@ public class Logic extends BaseLogic
 			if (Category.CLINICAL.equals(voOrderInv.getInvestigation().getInvestigationIndex().getCategory()) || Category.CLINICALIMAGING.equals(voOrderInv.getInvestigation().getInvestigationIndex().getCategory()))
 			{
 				voOrderInv.getResultDetails().setType(ResultDetailsType.CLINICAL);
+				
+				//WDEV-19794 
+				if (Category.CLINICALIMAGING.equals(voOrderInv.getInvestigation().getInvestigationIndex().getCategory()) && form.getGlobalContext().OCRR.getClinicalResultDetailsExaminDateTime() != null)
+				{
+					if (voOrderInv.getResultDetails().getClinicalResultDetails() == null)
+						voOrderInv.getResultDetails().setClinicalResultDetails(new ClinicalResultDetailsLightVo());
+					voOrderInv.getResultDetails().getClinicalResultDetails().setExamDateTime(form.getGlobalContext().OCRR.getClinicalResultDetailsExaminDateTime());
+					voOrderInv.getResultDetails().getClinicalResultDetails().setExamTimeSupplied(true);	
+					voOrderInv.getResultDetails().getClinicalResultDetails().setReportText(form.getGlobalContext().Core.getPatientDocumentIsNotNull() ?  form.getGlobalContext().Core.getPatientDocument().getName() : " ");
+				}
+				else if (Category.CLINICALIMAGING.equals(voOrderInv.getInvestigation().getInvestigationIndex().getCategory()) && form.getGlobalContext().OCRR.getClinicalResultDetailsExaminDateTime() == null)
+					voOrderInv.getResultDetails().setClinicalResultDetails(null);
 			}
 			else if (Category.PATHOLOGY.equals(voOrderInv.getInvestigation().getInvestigationIndex().getCategory()))
 			{
@@ -347,9 +368,18 @@ public class Logic extends BaseLogic
 		
 		form.getGlobalContext().Core.setUploadDocumentAction(UploadDocumentAction.IMPORT);
 		form.getGlobalContext().RefMan.setUploadDocumentsDialogDocumentType(DocumentCategory.RESULTREPORT);
+		//WDEV-19794
+		form.getGlobalContext().OCRR.setDisplayExaminDateTime(isRadiologyInvestigation(form.grdInvestigations().getValue()));
 		openDialog();
 	}
 	
+	private Boolean isRadiologyInvestigation(ReferralAppointmentDetailsOrderInvestigationVo inv)
+	{
+		if (inv.getInvestigationIsNotNull() && inv.getInvestigation().getInvestigationIndexIsNotNull() && Category.CLINICALIMAGING.equals(inv.getInvestigation().getInvestigationIndex().getCategory()) )
+			return true;
+		return false;
+	}
+
 	private boolean investigationIsCanceled() 
 	{
 		if(form.grdInvestigations().getValue() instanceof ReferralAppointmentDetailsOrderInvestigationVo)
@@ -366,6 +396,8 @@ public class Logic extends BaseLogic
 	protected void onBtnScanClick() throws ims.framework.exceptions.PresentationLogicException
 	{
 		form.getGlobalContext().Core.setUploadDocumentAction(UploadDocumentAction.SCAN);
+		//WDEV-19794
+		form.getGlobalContext().OCRR.setDisplayExaminDateTime(isRadiologyInvestigation(form.grdInvestigations().getValue()));
 		openDialog();	
 	}
 	
@@ -412,7 +444,7 @@ public class Logic extends BaseLogic
 	}
 	@Override
 	protected void onBtnCloseClick() throws PresentationLogicException {
-		engine.close(DialogResult.OK);		
+		engine.close(DialogResult.OK);	
 	}
 	@Override
 	protected void onBtnCancelClick() throws PresentationLogicException {

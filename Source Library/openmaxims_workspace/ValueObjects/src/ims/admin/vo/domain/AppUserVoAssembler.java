@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.admin.vo.domain;
@@ -64,6 +69,8 @@ public class AppUserVoAssembler
 		valueObjectDest.setNotificationDetails(valueObjectSrc.getNotificationDetails());
 		// SecretKey
 		valueObjectDest.setSecretKey(valueObjectSrc.getSecretKey());
+		// sdsUserId
+		valueObjectDest.setSdsUserId(valueObjectSrc.getSdsUserId());
 		// Username
 		valueObjectDest.setUsername(valueObjectSrc.getUsername());
 		// Password
@@ -86,6 +93,8 @@ public class AppUserVoAssembler
 		valueObjectDest.setLDAPUsername(valueObjectSrc.getLDAPUsername());
 		// LDAPPassword
 		valueObjectDest.setLDAPPassword(valueObjectSrc.getLDAPPassword());
+		// Locked
+		valueObjectDest.setLocked(valueObjectSrc.getLocked());
 	 	return valueObjectDest;
 	 }
 
@@ -390,6 +399,8 @@ public class AppUserVoAssembler
 		valueObject.setNotificationDetails(ims.admin.vo.domain.UserNotificationDetailsVoAssembler.create(map, domainObject.getNotificationDetails()) );
 		// SecretKey
 		valueObject.setSecretKey(domainObject.getSecretKey());
+		// sdsUserId
+		valueObject.setSdsUserId(domainObject.getSdsUserId());
 		// Username
 		valueObject.setUsername(domainObject.getUsername());
 		// Password
@@ -424,6 +435,8 @@ public class AppUserVoAssembler
 		valueObject.setLDAPUsername(domainObject.getLDAPUsername());
 		// LDAPPassword
 		valueObject.setLDAPPassword(domainObject.getLDAPPassword());
+		// Locked
+		valueObject.setLocked( domainObject.isLocked() );
  		return valueObject;
 	 }
 
@@ -488,6 +501,13 @@ public class AppUserVoAssembler
 		domainObject.setSecretKey(valueObject.getSecretKey());
 		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
 		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getSdsUserId() != null && valueObject.getSdsUserId().equals(""))
+		{
+			valueObject.setSdsUserId(null);
+		}
+		domainObject.setSdsUserId(valueObject.getSdsUserId());
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
 		if (valueObject.getUsername() != null && valueObject.getUsername().equals(""))
 		{
 			valueObject.setUsername(null);
@@ -514,27 +534,27 @@ public class AppUserVoAssembler
 			valueObject.setTheme(null);
 		}
 		domainObject.setTheme(valueObject.getTheme());
-		ims.framework.utils.DateTime dateTime12 = valueObject.getPwdExpDate();
-		java.util.Date value12 = null;
-		if ( dateTime12 != null ) 
-		{
-			value12 = dateTime12.getJavaDate();
-		}
-		domainObject.setPwdExpDate(value12);
-		ims.framework.utils.DateTime dateTime13 = valueObject.getEffectiveFrom();
+		ims.framework.utils.DateTime dateTime13 = valueObject.getPwdExpDate();
 		java.util.Date value13 = null;
 		if ( dateTime13 != null ) 
 		{
 			value13 = dateTime13.getJavaDate();
 		}
-		domainObject.setEffectiveFrom(value13);
-		ims.framework.utils.DateTime dateTime14 = valueObject.getEffectiveTo();
+		domainObject.setPwdExpDate(value13);
+		ims.framework.utils.DateTime dateTime14 = valueObject.getEffectiveFrom();
 		java.util.Date value14 = null;
 		if ( dateTime14 != null ) 
 		{
 			value14 = dateTime14.getJavaDate();
 		}
-		domainObject.setEffectiveTo(value14);
+		domainObject.setEffectiveFrom(value14);
+		ims.framework.utils.DateTime dateTime15 = valueObject.getEffectiveTo();
+		java.util.Date value15 = null;
+		if ( dateTime15 != null ) 
+		{
+			value15 = dateTime15.getJavaDate();
+		}
+		domainObject.setEffectiveTo(value15);
 		domainObject.setIsActive(valueObject.getIsActive());
 		domainObject.setDebugMode(valueObject.getDebugMode());
 		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
@@ -551,6 +571,7 @@ public class AppUserVoAssembler
 			valueObject.setLDAPPassword(null);
 		}
 		domainObject.setLDAPPassword(valueObject.getLDAPPassword());
+		domainObject.setLocked(valueObject.getLocked());
 
 		return domainObject;
 	}

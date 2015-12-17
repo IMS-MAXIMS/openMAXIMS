@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -2110,7 +2115,7 @@ public class Logic extends BaseLogic
 	private void editContact()
 	{
 		setCareSpellDialogModeGC(CareSpellDialogMode.EDITCONTACT);
-		engine.open(form.getForms().Core.CareSpellDialog, "Episode of Care");
+		engine.open(form.getForms().Core.CareSpellDialog);//WDEV-20331
 	}
 
 	private void addContact()
@@ -2123,27 +2128,27 @@ public class Logic extends BaseLogic
 		
 		form.getGlobalContext().Clinical.PatientSummary.setClinicalContact(null);
 		setCareSpellDialogModeGC(CareSpellDialogMode.ADDCONTACT);
-		engine.open(form.getForms().Core.CareSpellDialog, "Episode of Care");
+		engine.open(form.getForms().Core.CareSpellDialog);//WDEV-20331
 	}
 
 	private void editEpisodeofCare()
 	{
 		setCareSpellDialogModeGC(CareSpellDialogMode.EDITEPISODEOFCARE);
-		engine.open(form.getForms().Core.CareSpellDialog, "Episode of Care");
+		engine.open(form.getForms().Core.CareSpellDialog);//WDEV-20331
 
 	}
 
 	private void editContactContextDetails()
 	{
 		setCareSpellDialogModeGC(CareSpellDialogMode.EDITCONTACTCONTEXTDETAILS);
-		engine.open(form.getForms().Core.CareSpellDialog, "Episode of Care");
+		engine.open(form.getForms().Core.CareSpellDialog);//WDEV-20331
 
 	}
 
 	private void editCareGroup()
 	{
 		setCareSpellDialogModeGC(CareSpellDialogMode.EDITCAREGROUPING);
-		engine.open(form.getForms().Core.CareSpellDialog, "Episode of Care");
+		engine.open(form.getForms().Core.CareSpellDialog);//WDEV-20331
 
 	}
 
@@ -2151,14 +2156,14 @@ public class Logic extends BaseLogic
 	{
 		form.getGlobalContext().Clinical.PatientSummary.setCareContext(null);
 		setCareSpellDialogModeGC(CareSpellDialogMode.ADDCONTACTCONTEXTDETAILS);
-		engine.open(form.getForms().Core.CareSpellDialog, "Episode of Care");
+		engine.open(form.getForms().Core.CareSpellDialog);//WDEV-20331
 	}
 
 	private void newCareGrouping()
 	{
 		clearPatientSummaryContexts(true);
 		setCareSpellDialogModeGC(CareSpellDialogMode.NEWCAREGROUPING);
-		engine.open(form.getForms().Core.CareSpellDialog, "Episode of Care");
+		engine.open(form.getForms().Core.CareSpellDialog);//WDEV-20331
 	}
 
 	private void clearPatientSummaryContexts(boolean bClearCareSpell)
@@ -2175,7 +2180,7 @@ public class Logic extends BaseLogic
 	{
 		clearPatientSummaryContexts(false);
 		setCareSpellDialogModeGC(CareSpellDialogMode.NEWEPISODEOFCARE);
-		engine.open(form.getForms().Core.CareSpellDialog, "Episode of Care");
+		engine.open(form.getForms().Core.CareSpellDialog);//WDEV-20331
 	}
 
 	private void setCareSpellDialogModeGC(CareSpellDialogMode careSpellDialogMode)

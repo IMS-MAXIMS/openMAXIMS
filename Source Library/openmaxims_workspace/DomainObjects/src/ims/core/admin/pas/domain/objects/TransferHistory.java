@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.admin.pas.domain.objects;
@@ -61,6 +66,10 @@ public class TransferHistory extends ims.domain.DomainObject implements ims.doma
 	private java.util.Date rejectTransferDateTime;
 	/** User who rejected Transfer In */
 	private ims.core.configuration.domain.objects.AppUser rejectTransferUser;
+	private ims.domain.lookups.LookupInstance cancelTransferReason;
+	private String cancelTransferComment;
+	private ims.domain.lookups.LookupInstance transferReason;
+	private String transferComment;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public TransferHistory (Integer id, int ver)
@@ -135,6 +144,42 @@ public class TransferHistory extends ims.domain.DomainObject implements ims.doma
 	}
 	public void setRejectTransferUser(ims.core.configuration.domain.objects.AppUser rejectTransferUser) {
 		this.rejectTransferUser = rejectTransferUser;
+	}
+
+	public ims.domain.lookups.LookupInstance getCancelTransferReason() {
+		return cancelTransferReason;
+	}
+	public void setCancelTransferReason(ims.domain.lookups.LookupInstance cancelTransferReason) {
+		this.cancelTransferReason = cancelTransferReason;
+	}
+
+	public String getCancelTransferComment() {
+		return cancelTransferComment;
+	}
+	public void setCancelTransferComment(String cancelTransferComment) {
+		if ( null != cancelTransferComment && cancelTransferComment.length() > 255 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for cancelTransferComment. Tried to set value: "+
+				cancelTransferComment);
+		}
+		this.cancelTransferComment = cancelTransferComment;
+	}
+
+	public ims.domain.lookups.LookupInstance getTransferReason() {
+		return transferReason;
+	}
+	public void setTransferReason(ims.domain.lookups.LookupInstance transferReason) {
+		this.transferReason = transferReason;
+	}
+
+	public String getTransferComment() {
+		return transferComment;
+	}
+	public void setTransferComment(String transferComment) {
+		if ( null != transferComment && transferComment.length() > 250 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for transferComment. Tried to set value: "+
+				transferComment);
+		}
+		this.transferComment = transferComment;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -222,6 +267,20 @@ public class TransferHistory extends ims.domain.DomainObject implements ims.doma
 				
 		    auditStr.append(rejectTransferUser.getId());
 		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*cancelTransferReason* :");
+		if (cancelTransferReason != null)
+			auditStr.append(cancelTransferReason.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*cancelTransferComment* :");
+		auditStr.append(cancelTransferComment);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*transferReason* :");
+		if (transferReason != null)
+			auditStr.append(transferReason.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*transferComment* :");
+		auditStr.append(transferComment);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -314,6 +373,30 @@ public class TransferHistory extends ims.domain.DomainObject implements ims.doma
 			sb.append("<rejectTransferUser>");
 			sb.append(this.getRejectTransferUser().toXMLString(domMap)); 	
 			sb.append("</rejectTransferUser>");		
+		}
+		if (this.getCancelTransferReason() != null)
+		{
+			sb.append("<cancelTransferReason>");
+			sb.append(this.getCancelTransferReason().toXMLString()); 
+			sb.append("</cancelTransferReason>");		
+		}
+		if (this.getCancelTransferComment() != null)
+		{
+			sb.append("<cancelTransferComment>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getCancelTransferComment().toString()));
+			sb.append("</cancelTransferComment>");		
+		}
+		if (this.getTransferReason() != null)
+		{
+			sb.append("<transferReason>");
+			sb.append(this.getTransferReason().toXMLString()); 
+			sb.append("</transferReason>");		
+		}
+		if (this.getTransferComment() != null)
+		{
+			sb.append("<transferComment>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getTransferComment().toString()));
+			sb.append("</transferComment>");		
 		}
 		return sb.toString();
 	}
@@ -523,6 +606,28 @@ public class TransferHistory extends ims.domain.DomainObject implements ims.doma
 			fldEl = fldEl.element("class");		
 			obj.setRejectTransferUser(ims.core.configuration.domain.objects.AppUser.getAppUserfromXML(fldEl, factory, domMap)); 
 		}
+		fldEl = el.element("cancelTransferReason");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setCancelTransferReason(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("cancelTransferComment");
+		if(fldEl != null)
+		{	
+    		obj.setCancelTransferComment(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("transferReason");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setTransferReason(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("transferComment");
+		if(fldEl != null)
+		{	
+    		obj.setTransferComment(new String(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -543,6 +648,10 @@ public class TransferHistory extends ims.domain.DomainObject implements ims.doma
 		public static final String AcceptingTransferUser = "acceptingTransferUser";
 		public static final String RejectTransferDateTime = "rejectTransferDateTime";
 		public static final String RejectTransferUser = "rejectTransferUser";
+		public static final String CancelTransferReason = "cancelTransferReason";
+		public static final String CancelTransferComment = "cancelTransferComment";
+		public static final String TransferReason = "transferReason";
+		public static final String TransferComment = "transferComment";
 	}
 }
 

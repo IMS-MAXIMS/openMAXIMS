@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.core.vo.domain;
@@ -62,6 +67,8 @@ public class CareContextForPatientDocumentVoAssembler
 		valueObjectDest.setResponsibleHCP(valueObjectSrc.getResponsibleHCP());
 		// CurrentStatus
 		valueObjectDest.setCurrentStatus(valueObjectSrc.getCurrentStatus());
+		// pasEvent
+		valueObjectDest.setPasEvent(valueObjectSrc.getPasEvent());
 	 	return valueObjectDest;
 	 }
 
@@ -418,6 +425,8 @@ public class CareContextForPatientDocumentVoAssembler
 		valueObject.setResponsibleHCP(ims.core.vo.domain.HcpLiteVoAssembler.create(map, domainObject.getResponsibleHCP()) );
 		// CurrentStatus
 		valueObject.setCurrentStatus(ims.core.vo.domain.CareContextStatusHistoryVoAssembler.create(map, domainObject.getCurrentStatus()) );
+		// pasEvent
+		valueObject.setPasEvent(ims.core.vo.domain.CareContextPasEventDetailsVoAssembler.create(map, domainObject.getPasEvent()) );
  		return valueObject;
 	 }
 
@@ -543,6 +552,23 @@ public class CareContextForPatientDocumentVoAssembler
 			}
 		}
 		domainObject.setCurrentStatus(value6);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.admin.pas.domain.objects.PASEvent value7 = null;
+		if ( null != valueObject.getPasEvent() ) 
+		{
+			if (valueObject.getPasEvent().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getPasEvent()) != null)
+				{
+					value7 = (ims.core.admin.pas.domain.objects.PASEvent)domMap.get(valueObject.getPasEvent());
+				}
+			}
+			else
+			{
+				value7 = (ims.core.admin.pas.domain.objects.PASEvent)domainFactory.getDomainObject(ims.core.admin.pas.domain.objects.PASEvent.class, valueObject.getPasEvent().getBoId());
+			}
+		}
+		domainObject.setPasEvent(value7);
 
 		return domainObject;
 	}

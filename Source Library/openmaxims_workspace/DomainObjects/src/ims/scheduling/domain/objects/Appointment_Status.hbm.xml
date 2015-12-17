@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:36 -->
+<!-- Generated: 12/10/2015, 13:31 -->
 <hibernate-mapping>
 	<class name="ims.scheduling.domain.objects.Appointment_Status" table="schl_appt_history_s" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -51,6 +51,18 @@
 <!-- debug: wasOutputtedToMonthlyReport -->
 <!-- debug: earliestOfferedDate -->
 <!-- debug: statusChangeDateTime -->
+<!-- debug: couldnotbeseen -->
+<!-- debug: careProfessionalReadyToSee -->
+<!-- debug: careProfessionalNotReadyToSee -->
+<!-- debug: wasLetterPrinted -->
+<!-- debug: isDisplaced -->
+<!-- debug: session -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="session" class="ims.scheduling.domain.objects.Sch_Session" unique="true" foreign-key="appt_history_s_c_sessi_fk" access="field" cascade="save-update">
+			<column name="c_sessi" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
 <!-- debug: !IsAssociation && !IsCollection -->
 
 <!-- debug: IsLookup -->
@@ -121,6 +133,31 @@
 <!-- debug: !IsLookup -->
 		<property name="statusChangeDateTime" type="timestamp" access="field" update="true">
 			<column name="statuschan"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="couldnotbeseen" type="boolean" access="field" update="true">
+			<column name="couldnotbe"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="careProfessionalReadyToSee" type="boolean" access="field" update="true">
+			<column name="careprofes"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="careProfessionalNotReadyToSee" type="boolean" access="field" update="true">
+			<column name="careprofe2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="wasLetterPrinted" type="boolean" access="field" update="true">
+			<column name="wasletterp"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isDisplaced" type="boolean" access="field" update="true">
+			<column name="isdisplace"  not-null="false" unique="false"  />
 		</property>
 	</class>
 </hibernate-mapping>

@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:37 -->
+<hibernate-mapping>
+	<subclass name="ims.coe.assessment.domain.objects.SleepingComponent" lazy="true" discriminator-value="SLCM" extends="ims.nursing.assessment.domain.objects.AssessmentComponent" >
+<!-- debug: hibernateClassContent -->
+<!-- debug: timePatientGoToBed -->
+<!-- debug: timePatientGetUp -->
+<!-- debug: howManyBlankets -->
+<!-- debug: howManyPillows -->
+<!-- debug: patternOfSleep -->
+<!-- debug: patientHaveDifficultyInSleeping -->
+<!-- debug: sleepingAids -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="sleepingAids" class="ims.coe.assessment.domain.objects.SleepingAids" unique="true" foreign-key="sleepcomp_sleepingai_fk" access="field" cascade="all">
+			<column name="sleepingai" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="timePatientGoToBed" type="string" access="field" update="true">
+			<column name="timepatien"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="timePatientGetUp" type="string" access="field" update="true">
+			<column name="timepatie2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="howManyBlankets" type="integer" access="field" update="true">
+			<column name="howmanybla"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="howManyPillows" type="integer" access="field" update="true">
+			<column name="howmanypil"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="patternOfSleep" type="string" access="field" update="true" > 
+			<column name="patternofs" length="500"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="patientHaveDifficultyInSleeping" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_patienthav" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+	</subclass>
+</hibernate-mapping>

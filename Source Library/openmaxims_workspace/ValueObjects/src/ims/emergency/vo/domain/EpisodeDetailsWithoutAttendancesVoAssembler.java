@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.emergency.vo.domain;
@@ -758,8 +763,8 @@ public class EpisodeDetailsWithoutAttendancesVoAssembler
 			if (color != null) 
 				color.getValue();
 
-			ims.emergency.vo.lookups.TriageCategoryType voLookup16 = new ims.emergency.vo.lookups.TriageCategoryType(instance16.getId(),instance16.getText(), instance16.isActive(), null, img, color);
-			ims.emergency.vo.lookups.TriageCategoryType parentVoLookup16 = voLookup16;
+			ims.emergency.vo.lookups.TriagePatientStatus voLookup16 = new ims.emergency.vo.lookups.TriagePatientStatus(instance16.getId(),instance16.getText(), instance16.isActive(), null, img, color);
+			ims.emergency.vo.lookups.TriagePatientStatus parentVoLookup16 = voLookup16;
 			ims.domain.lookups.LookupInstance parent16 = instance16.getParent();
 			while (parent16 != null)
 			{
@@ -774,7 +779,7 @@ public class EpisodeDetailsWithoutAttendancesVoAssembler
 				color = parent16.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup16.setParent(new ims.emergency.vo.lookups.TriageCategoryType(parent16.getId(),parent16.getText(), parent16.isActive(), null, img, color));
+								parentVoLookup16.setParent(new ims.emergency.vo.lookups.TriagePatientStatus(parent16.getId(),parent16.getText(), parent16.isActive(), null, img, color));
 				parentVoLookup16 = parentVoLookup16.getParent();
 								parent16 = parent16.getParent();
 			}			

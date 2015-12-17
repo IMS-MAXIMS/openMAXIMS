@@ -1,0 +1,269 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:37 -->
+<hibernate-mapping>
+	<class name="ims.emergency.configuration.domain.objects.AttendanceKPIConfig" table="emer_attendancekpic" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: eDLocation -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="eDLocation" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="attendancekpic_edlocation_fk" access="field" cascade="save-update">
+			<column name="edlocation" sql-type="numeric(10,0)" not-null="true" unique="true"   />
+		</many-to-one>
+<!-- debug: awaitingTriageBreachWarningKPI -->
+<!-- debug: awaitingTriageBreachWarningKPITextColour -->
+<!-- debug: awaitingTriageBreachWarningKPIFlashingText -->
+<!-- debug: awaitingTriageBreachWarningKPIFlashingTextColour -->
+<!-- debug: awaitingTriageBreachWarningKPIBackgroundColour -->
+<!-- debug: awaitingTriageBreachedKPI -->
+<!-- debug: awaitingTriageBreachKPITextColour -->
+<!-- debug: awaitingTriageBreachKPIFlashingText -->
+<!-- debug: awaitingTriageBreachKPIFlashingTextColour -->
+<!-- debug: awaitingTriageBreachKPIBackgroundColour -->
+<!-- debug: triagePriorityKPIs -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<list name="triagePriorityKPIs" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="attendancekpic_triageprio_fk">
+				<column name="emer_attendancekpic_triageprio" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.emergency.configuration.domain.objects.TriagePriorityKPConfig" />
+		</list>
+<!-- debug: awaitingClinicianBreachWarningKPI -->
+<!-- debug: awaitingClinicianBreachWarningKPITextColour -->
+<!-- debug: awaitingClinicianBreachWarningKPIFlashingText -->
+<!-- debug: awaitingClinicianBreachWarningKPIFlashingTextColour -->
+<!-- debug: awaitingClinicianBreachWarningKPIBackgroundColour -->
+<!-- debug: awaitingClinicianBreachedKPI -->
+<!-- debug: awaitingClinicianBreachKPITextColour -->
+<!-- debug: awaitingClinicianBreachKPIFlashingText -->
+<!-- debug: awaitingClinicianBreachKPIFlashingTextColour -->
+<!-- debug: awaitingClinicianBreachKPIBackgroundColour -->
+<!-- debug: losBreachWarningKPI -->
+<!-- debug: losBreachWarningKPITextColour -->
+<!-- debug: losBreachWarningKPIFlashingText -->
+<!-- debug: losBreachWarningKPIFlashingTextColour -->
+<!-- debug: losBreachWarningKPIBackgroundColour -->
+<!-- debug: losBreachedKPI -->
+<!-- debug: losBreachKPITextColour -->
+<!-- debug: losBreachedKPIFlashingText -->
+<!-- debug: losBreachedKPIFlashingTextColour -->
+<!-- debug: losBreachedKPIBackgroundColour -->
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="awaitingTriageBreachWarningKPI" type="integer" access="field" update="true">
+			<column name="awaitingtr"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<component name="awaitingTriageBreachWarningKPITextColour" class="ims.framework.utils.Color" >
+			<property name="name" type="string" access="field" update="true">
+				<column name="awaitingt2"  not-null="false" unique="false"     />
+			</property>
+		</component>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="awaitingTriageBreachWarningKPIFlashingText" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_awaitingt3" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<component name="awaitingTriageBreachWarningKPIFlashingTextColour" class="ims.framework.utils.Color" >
+			<property name="name" type="string" access="field" update="true">
+				<column name="awaitingt4"  not-null="false" unique="false"     />
+			</property>
+		</component>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<component name="awaitingTriageBreachWarningKPIBackgroundColour" class="ims.framework.utils.Color" >
+			<property name="name" type="string" access="field" update="true">
+				<column name="awaitingt5"  not-null="false" unique="false"     />
+			</property>
+		</component>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="awaitingTriageBreachedKPI" type="integer" access="field" update="true">
+			<column name="awaitingt6"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<component name="awaitingTriageBreachKPITextColour" class="ims.framework.utils.Color" >
+			<property name="name" type="string" access="field" update="true">
+				<column name="awaitingt7"  not-null="false" unique="false"     />
+			</property>
+		</component>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="awaitingTriageBreachKPIFlashingText" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_awaitingt8" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<component name="awaitingTriageBreachKPIFlashingTextColour" class="ims.framework.utils.Color" >
+			<property name="name" type="string" access="field" update="true">
+				<column name="awaitingt9"  not-null="false" unique="false"     />
+			</property>
+		</component>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<component name="awaitingTriageBreachKPIBackgroundColour" class="ims.framework.utils.Color" >
+			<property name="name" type="string" access="field" update="true">
+				<column name="awaiting10"  not-null="false" unique="false"     />
+			</property>
+		</component>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="awaitingClinicianBreachWarningKPI" type="integer" access="field" update="true">
+			<column name="awaitingcl"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<component name="awaitingClinicianBreachWarningKPITextColour" class="ims.framework.utils.Color" >
+			<property name="name" type="string" access="field" update="true">
+				<column name="awaitingc2"  not-null="false" unique="false"     />
+			</property>
+		</component>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="awaitingClinicianBreachWarningKPIFlashingText" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_awaitingc3" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<component name="awaitingClinicianBreachWarningKPIFlashingTextColour" class="ims.framework.utils.Color" >
+			<property name="name" type="string" access="field" update="true">
+				<column name="awaitingc4"  not-null="false" unique="false"     />
+			</property>
+		</component>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<component name="awaitingClinicianBreachWarningKPIBackgroundColour" class="ims.framework.utils.Color" >
+			<property name="name" type="string" access="field" update="true">
+				<column name="awaitingc5"  not-null="false" unique="false"     />
+			</property>
+		</component>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="awaitingClinicianBreachedKPI" type="integer" access="field" update="true">
+			<column name="awaitingc6"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<component name="awaitingClinicianBreachKPITextColour" class="ims.framework.utils.Color" >
+			<property name="name" type="string" access="field" update="true">
+				<column name="awaitingc7"  not-null="false" unique="false"     />
+			</property>
+		</component>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="awaitingClinicianBreachKPIFlashingText" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_awaitingc8" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<component name="awaitingClinicianBreachKPIFlashingTextColour" class="ims.framework.utils.Color" >
+			<property name="name" type="string" access="field" update="true">
+				<column name="awaitingc9"  not-null="false" unique="false"     />
+			</property>
+		</component>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<component name="awaitingClinicianBreachKPIBackgroundColour" class="ims.framework.utils.Color" >
+			<property name="name" type="string" access="field" update="true">
+				<column name="awaiting11"  not-null="false" unique="false"     />
+			</property>
+		</component>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="losBreachWarningKPI" type="integer" access="field" update="true">
+			<column name="losbreachw"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<component name="losBreachWarningKPITextColour" class="ims.framework.utils.Color" >
+			<property name="name" type="string" access="field" update="true">
+				<column name="losbreach2"  not-null="false" unique="false"     />
+			</property>
+		</component>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="losBreachWarningKPIFlashingText" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_losbreach3" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<component name="losBreachWarningKPIFlashingTextColour" class="ims.framework.utils.Color" >
+			<property name="name" type="string" access="field" update="true">
+				<column name="losbreach4"  not-null="false" unique="false"     />
+			</property>
+		</component>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<component name="losBreachWarningKPIBackgroundColour" class="ims.framework.utils.Color" >
+			<property name="name" type="string" access="field" update="true">
+				<column name="losbreach5"  not-null="false" unique="false"     />
+			</property>
+		</component>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="losBreachedKPI" type="integer" access="field" update="true">
+			<column name="losbreache"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<component name="losBreachKPITextColour" class="ims.framework.utils.Color" >
+			<property name="name" type="string" access="field" update="true">
+				<column name="losbreachk"  not-null="false" unique="false"     />
+			</property>
+		</component>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="losBreachedKPIFlashingText" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_losbreach6" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<component name="losBreachedKPIFlashingTextColour" class="ims.framework.utils.Color" >
+			<property name="name" type="string" access="field" update="true">
+				<column name="losbreach7"  not-null="false" unique="false"     />
+			</property>
+		</component>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<component name="losBreachedKPIBackgroundColour" class="ims.framework.utils.Color" >
+			<property name="name" type="string" access="field" update="true">
+				<column name="losbreach8"  not-null="false" unique="false"     />
+			</property>
+		</component>
+	</class>
+</hibernate-mapping>

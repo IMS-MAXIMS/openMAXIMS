@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.scheduling.domain.objects;
@@ -61,6 +66,8 @@ public class DirectoryofService extends ims.domain.DomainObject implements ims.d
 	private ims.core.resource.place.domain.objects.Location location;
 	/** Contract */
 	private ims.core.configuration.domain.objects.ContractConfig contract;
+	/** RTT Clock Impact */
+	private Boolean rTTClockImpact;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public DirectoryofService (Integer id, int ver)
@@ -139,6 +146,13 @@ public class DirectoryofService extends ims.domain.DomainObject implements ims.d
 	}
 	public void setContract(ims.core.configuration.domain.objects.ContractConfig contract) {
 		this.contract = contract;
+	}
+
+	public Boolean isRTTClockImpact() {
+		return rTTClockImpact;
+	}
+	public void setRTTClockImpact(Boolean rTTClockImpact) {
+		this.rTTClockImpact = rTTClockImpact;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -317,6 +331,9 @@ public class DirectoryofService extends ims.domain.DomainObject implements ims.d
 		    auditStr.append(contract.getId());
 		}
 	    auditStr.append("; ");
+		auditStr.append("\r\n*rTTClockImpact* :");
+		auditStr.append(rTTClockImpact);
+	    auditStr.append("; ");
 		return auditStr.toString();
 	}
 	
@@ -405,6 +422,12 @@ public class DirectoryofService extends ims.domain.DomainObject implements ims.d
 			sb.append("<contract>");
 			sb.append(this.getContract().toXMLString(domMap)); 	
 			sb.append("</contract>");		
+		}
+		if (this.isRTTClockImpact() != null)
+		{
+			sb.append("<rTTClockImpact>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isRTTClockImpact().toString()));
+			sb.append("</rTTClockImpact>");		
 		}
 		return sb.toString();
 	}
@@ -608,6 +631,11 @@ public class DirectoryofService extends ims.domain.DomainObject implements ims.d
 			fldEl = fldEl.element("class");		
 			obj.setContract(ims.core.configuration.domain.objects.ContractConfig.getContractConfigfromXML(fldEl, factory, domMap)); 
 		}
+		fldEl = el.element("rTTClockImpact");
+		if(fldEl != null)
+		{	
+    		obj.setRTTClockImpact(new Boolean(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -628,6 +656,7 @@ public class DirectoryofService extends ims.domain.DomainObject implements ims.d
 		public static final String IsActive = "isActive";
 		public static final String Location = "location";
 		public static final String Contract = "contract";
+		public static final String RTTClockImpact = "rTTClockImpact";
 	}
 }
 

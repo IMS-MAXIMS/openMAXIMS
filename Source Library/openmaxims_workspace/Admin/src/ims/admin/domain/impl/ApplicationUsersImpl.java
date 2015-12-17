@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -131,6 +136,14 @@ public class ApplicationUsersImpl extends DTODomainImplementation implements ims
 		return MemberOfStaffShortVoAssembler.createMemberOfStaffShortVoCollectionFromMemberOfStaff(factory.find(query.toString(), markers, values)).sort();
 	}
 
+	public AppUserVo updateAppUser(AppUserVo appUser) throws StaleObjectException
+	{
+		DomainFactory factory = getDomainFactory();
+		AppUser domUser = AppUserVoAssembler.extractAppUser(factory, appUser);
+		factory.save(domUser);
+		return AppUserVoAssembler.create(domUser);
+	}
+	
 	public AppUserVo saveAppUser(AppUserVo appUserItem, Boolean replicateToDTO, ims.core.vo.MemberOfStaffShortVo memberOfStaffOld) throws StaleObjectException , UniqueKeyViolationException, DTODomainInterfaceException
 	{
 		if (!appUserItem.isValidated())
@@ -376,8 +389,16 @@ public class ApplicationUsersImpl extends DTODomainImplementation implements ims
 			values.add(appUserFilter.getIsActive());		
 			andStr = " and ";
 		}
+		
+		if (appUserFilter.getLockedIsNotNull())
+		{
+			clause.append(andStr + " u.locked = :isLocked" );
+			names.add("isLocked");
+			values.add(appUserFilter.getLocked());		
+			andStr = " and ";
+		}
 				
-		clause.append(andStr).append(" u.username != 'imsadmin'");  // wdev-7907
+		clause.append(andStr).append(" u.username != 'xxxxx'");  // wdev-7907
 		andStr=" and ";
 
 		if (andStr.equals(" and "))

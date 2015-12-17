@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:35 -->
+<!-- Generated: 12/10/2015, 13:30 -->
 <hibernate-mapping>
 	<class name="ims.clinical.configuration.domain.objects.SECSConfiguration" table="shcl_secsconfigurat" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -59,6 +59,9 @@
 			<column name="oxygensats" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
 <!-- debug: isActive -->
+<!-- debug: effectiveFrom -->
+<!-- debug: effectiveTo -->
+<!-- debug: isRequiredForScore -->
 <!-- debug: !IsAssociation && !IsCollection -->
 
 <!-- debug: IsLookup -->
@@ -69,6 +72,21 @@
 <!-- debug: !IsLookup -->
 		<property name="isActive" type="boolean" access="field" update="true">
 			<column name="isactive"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="effectiveFrom" type="date" access="field" update="true">
+			<column name="effectivef"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="effectiveTo" type="date" access="field" update="true">
+			<column name="effectivet"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isRequiredForScore" type="boolean" access="field" update="true">
+			<column name="isrequired"  not-null="false" unique="false"  />
 		</property>
 	</class>
 </hibernate-mapping>

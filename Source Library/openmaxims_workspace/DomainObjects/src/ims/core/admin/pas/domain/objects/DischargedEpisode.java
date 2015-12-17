@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.admin.pas.domain.objects;
@@ -77,6 +82,8 @@ public class DischargedEpisode extends ims.domain.DomainObject implements ims.do
 	private java.util.List homeLeaves;
 	/** VTE Assessment Status */
 	private ims.domain.lookups.LookupInstance vTEAssessmentStatus;
+	/** Used when status set to Completed, but none actually recorded */
+	private ims.domain.lookups.LookupInstance vTEAssessmentStatusReason;
 	/** VTE Risk Assessment */
 	private ims.core.clinical.domain.objects.VTERiskAssessment vTERiskAssessment;
 	/** Details of admission. */
@@ -84,6 +91,15 @@ public class DischargedEpisode extends ims.domain.DomainObject implements ims.do
 	/** ExtendedDetails */
 	private ims.core.admin.pas.domain.objects.ExtendedDischargeDetail extendedDetails;
 	private Boolean isCoded;
+	/** CodingDelay */
+	private ims.core.clinical.domain.objects.CodingDelay codingDelay;
+	/** Reason why a Diagnostic or a Treatment was dereferred. */
+	private ims.domain.lookups.LookupInstance dereferredReason;
+	private Boolean wasDiagnosticDeferred;
+	/** Treatment was given during diagnostic */
+	private Boolean wasTreatmentGiven;
+	/** The ward where the patient was accomodated at the moment of discharge  */
+	private ims.core.resource.place.domain.objects.Location dischargingWard;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public DischargedEpisode (Integer id, int ver)
@@ -218,6 +234,13 @@ public class DischargedEpisode extends ims.domain.DomainObject implements ims.do
 		this.vTEAssessmentStatus = vTEAssessmentStatus;
 	}
 
+	public ims.domain.lookups.LookupInstance getVTEAssessmentStatusReason() {
+		return vTEAssessmentStatusReason;
+	}
+	public void setVTEAssessmentStatusReason(ims.domain.lookups.LookupInstance vTEAssessmentStatusReason) {
+		this.vTEAssessmentStatusReason = vTEAssessmentStatusReason;
+	}
+
 	public ims.core.clinical.domain.objects.VTERiskAssessment getVTERiskAssessment() {
 		return vTERiskAssessment;
 	}
@@ -244,6 +267,41 @@ public class DischargedEpisode extends ims.domain.DomainObject implements ims.do
 	}
 	public void setIsCoded(Boolean isCoded) {
 		this.isCoded = isCoded;
+	}
+
+	public ims.core.clinical.domain.objects.CodingDelay getCodingDelay() {
+		return codingDelay;
+	}
+	public void setCodingDelay(ims.core.clinical.domain.objects.CodingDelay codingDelay) {
+		this.codingDelay = codingDelay;
+	}
+
+	public ims.domain.lookups.LookupInstance getDereferredReason() {
+		return dereferredReason;
+	}
+	public void setDereferredReason(ims.domain.lookups.LookupInstance dereferredReason) {
+		this.dereferredReason = dereferredReason;
+	}
+
+	public Boolean isWasDiagnosticDeferred() {
+		return wasDiagnosticDeferred;
+	}
+	public void setWasDiagnosticDeferred(Boolean wasDiagnosticDeferred) {
+		this.wasDiagnosticDeferred = wasDiagnosticDeferred;
+	}
+
+	public Boolean isWasTreatmentGiven() {
+		return wasTreatmentGiven;
+	}
+	public void setWasTreatmentGiven(Boolean wasTreatmentGiven) {
+		this.wasTreatmentGiven = wasTreatmentGiven;
+	}
+
+	public ims.core.resource.place.domain.objects.Location getDischargingWard() {
+		return dischargingWard;
+	}
+	public void setDischargingWard(ims.core.resource.place.domain.objects.Location dischargingWard) {
+		this.dischargingWard = dischargingWard;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -405,6 +463,10 @@ public class DischargedEpisode extends ims.domain.DomainObject implements ims.do
 		if (vTEAssessmentStatus != null)
 			auditStr.append(vTEAssessmentStatus.getText());
 	    auditStr.append("; ");
+		auditStr.append("\r\n*vTEAssessmentStatusReason* :");
+		if (vTEAssessmentStatusReason != null)
+			auditStr.append(vTEAssessmentStatusReason.getText());
+	    auditStr.append("; ");
 		auditStr.append("\r\n*vTERiskAssessment* :");
 		if (vTERiskAssessment != null)
 		{
@@ -431,6 +493,32 @@ public class DischargedEpisode extends ims.domain.DomainObject implements ims.do
 	    auditStr.append("; ");
 		auditStr.append("\r\n*isCoded* :");
 		auditStr.append(isCoded);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*codingDelay* :");
+		if (codingDelay != null)
+		{
+			auditStr.append(toShortClassName(codingDelay));
+				
+		    auditStr.append(codingDelay.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*dereferredReason* :");
+		if (dereferredReason != null)
+			auditStr.append(dereferredReason.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*wasDiagnosticDeferred* :");
+		auditStr.append(wasDiagnosticDeferred);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*wasTreatmentGiven* :");
+		auditStr.append(wasTreatmentGiven);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*dischargingWard* :");
+		if (dischargingWard != null)
+		{
+			auditStr.append(toShortClassName(dischargingWard));
+				
+		    auditStr.append(dischargingWard.getId());
+		}
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -575,6 +663,12 @@ public class DischargedEpisode extends ims.domain.DomainObject implements ims.do
 			sb.append(this.getVTEAssessmentStatus().toXMLString()); 
 			sb.append("</vTEAssessmentStatus>");		
 		}
+		if (this.getVTEAssessmentStatusReason() != null)
+		{
+			sb.append("<vTEAssessmentStatusReason>");
+			sb.append(this.getVTEAssessmentStatusReason().toXMLString()); 
+			sb.append("</vTEAssessmentStatusReason>");		
+		}
 		if (this.getVTERiskAssessment() != null)
 		{
 			sb.append("<vTERiskAssessment>");
@@ -598,6 +692,36 @@ public class DischargedEpisode extends ims.domain.DomainObject implements ims.do
 			sb.append("<isCoded>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsCoded().toString()));
 			sb.append("</isCoded>");		
+		}
+		if (this.getCodingDelay() != null)
+		{
+			sb.append("<codingDelay>");
+			sb.append(this.getCodingDelay().toXMLString(domMap)); 	
+			sb.append("</codingDelay>");		
+		}
+		if (this.getDereferredReason() != null)
+		{
+			sb.append("<dereferredReason>");
+			sb.append(this.getDereferredReason().toXMLString()); 
+			sb.append("</dereferredReason>");		
+		}
+		if (this.isWasDiagnosticDeferred() != null)
+		{
+			sb.append("<wasDiagnosticDeferred>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isWasDiagnosticDeferred().toString()));
+			sb.append("</wasDiagnosticDeferred>");		
+		}
+		if (this.isWasTreatmentGiven() != null)
+		{
+			sb.append("<wasTreatmentGiven>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isWasTreatmentGiven().toString()));
+			sb.append("</wasTreatmentGiven>");		
+		}
+		if (this.getDischargingWard() != null)
+		{
+			sb.append("<dischargingWard>");
+			sb.append(this.getDischargingWard().toXMLString(domMap)); 	
+			sb.append("</dischargingWard>");		
 		}
 		return sb.toString();
 	}
@@ -847,6 +971,12 @@ public class DischargedEpisode extends ims.domain.DomainObject implements ims.do
 			fldEl = fldEl.element("lki");
 			obj.setVTEAssessmentStatus(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
 		}
+		fldEl = el.element("vTEAssessmentStatusReason");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setVTEAssessmentStatusReason(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
 		fldEl = el.element("vTERiskAssessment");
 		if(fldEl != null)
 		{
@@ -869,6 +999,34 @@ public class DischargedEpisode extends ims.domain.DomainObject implements ims.do
 		if(fldEl != null)
 		{	
     		obj.setIsCoded(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("codingDelay");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setCodingDelay(ims.core.clinical.domain.objects.CodingDelay.getCodingDelayfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("dereferredReason");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setDereferredReason(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("wasDiagnosticDeferred");
+		if(fldEl != null)
+		{	
+    		obj.setWasDiagnosticDeferred(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("wasTreatmentGiven");
+		if(fldEl != null)
+		{	
+    		obj.setWasTreatmentGiven(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("dischargingWard");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setDischargingWard(ims.core.resource.place.domain.objects.Location.getLocationfromXML(fldEl, factory, domMap)); 
 		}
 	}
 
@@ -900,10 +1058,16 @@ public class DischargedEpisode extends ims.domain.DomainObject implements ims.do
 		public static final String DischargeReadyDate = "dischargeReadyDate";
 		public static final String HomeLeaves = "homeLeaves";
 		public static final String VTEAssessmentStatus = "vTEAssessmentStatus";
+		public static final String VTEAssessmentStatusReason = "vTEAssessmentStatusReason";
 		public static final String VTERiskAssessment = "vTERiskAssessment";
 		public static final String AdmissionDetail = "admissionDetail";
 		public static final String ExtendedDetails = "extendedDetails";
 		public static final String IsCoded = "isCoded";
+		public static final String CodingDelay = "codingDelay";
+		public static final String DereferredReason = "dereferredReason";
+		public static final String WasDiagnosticDeferred = "wasDiagnosticDeferred";
+		public static final String WasTreatmentGiven = "wasTreatmentGiven";
+		public static final String DischargingWard = "dischargingWard";
 	}
 }
 

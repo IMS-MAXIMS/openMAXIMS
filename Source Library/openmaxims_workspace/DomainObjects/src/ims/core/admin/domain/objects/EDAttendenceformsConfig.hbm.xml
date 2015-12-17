@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:35 -->
+<!-- Generated: 12/10/2015, 13:29 -->
 <hibernate-mapping>
 	<class name="ims.core.admin.domain.objects.EDAttendenceformsConfig" table="core_edattendencefo" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -43,6 +43,7 @@
 			<index column='idx'/>
 			<one-to-many class="ims.core.admin.domain.objects.EDAttendenceControlsConfig" />
 		</list>
+<!-- debug: displayPrintDialog -->
 <!-- debug: !IsAssociation && !IsCollection -->
 
 <!-- debug: !IsLookup -->
@@ -58,6 +59,11 @@
 <!-- debug: !IsLookup -->
 		<property name="insuranceTabVisible" type="boolean" access="field" update="true">
 			<column name="insurancet"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="displayPrintDialog" type="boolean" access="field" update="true">
+			<column name="displaypri"  not-null="false" unique="false"  />
 		</property>
 	</class>
 </hibernate-mapping>

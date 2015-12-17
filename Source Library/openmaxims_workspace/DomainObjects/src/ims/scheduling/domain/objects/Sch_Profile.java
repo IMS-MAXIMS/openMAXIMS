@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.scheduling.domain.objects;
@@ -141,8 +146,6 @@ public class Sch_Profile extends ims.domain.DomainObject implements ims.domain.S
 	  * Collection of ims.scheduling.domain.objects.TheatreDetail.
 	  */
 	private java.util.Set theatreDetails;
-	/** Is this a Theatre Profile */
-	private Boolean isTheatreProfile;
 	/** Day Case / Inpatient */
 	private ims.domain.lookups.LookupInstance theatreType;
 	/** Profile Activities
@@ -165,6 +168,30 @@ public class Sch_Profile extends ims.domain.DomainObject implements ims.domain.S
 	private java.util.Set parentChildSlots;
 	/** Consultation Media Type */
 	private ims.domain.lookups.LookupInstance consMediaType;
+	/** Profile List Type  */
+	private ims.domain.lookups.LookupInstance listType;
+	/** Overall Responsible HCP */
+	private ims.core.resource.people.domain.objects.Hcp responsibleHCP;
+	/** This is the location at which the case note folders for patients booked into slots created by that profile are required */
+	private ims.core.resource.place.domain.objects.Location caseNoteFolderLocation;
+	private Boolean caseNoteFolderNotRequired;
+	/** Function
+	  * Collection of ims.domain.lookups.LookupInstance.
+	  */
+	private java.util.List function;
+	/** Profile has Choose and Book Activity */
+	private Boolean hasChooseBookActivity;
+	/** Auto Generate Period */
+	private Integer autoGeneratePeriod;
+	/** Profile is ready To Generate */
+	private Boolean readyToGenerate;
+	/** Profile Type (Outpatient, Theatre, Ward Attendance) */
+	private ims.domain.lookups.LookupInstance profileType;
+	private ims.core.resource.place.domain.objects.Location hospital;
+	/** Use a hospital other than Profile hospital for case note folder location */
+	private Boolean isOtherHospital;
+	/** Hospital for case note folder location */
+	private ims.core.resource.place.domain.objects.Location otherHospital;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public Sch_Profile (Integer id, int ver)
@@ -501,13 +528,6 @@ public class Sch_Profile extends ims.domain.DomainObject implements ims.domain.S
 		this.theatreDetails = paramValue;
 	}
 
-	public Boolean isIsTheatreProfile() {
-		return isTheatreProfile;
-	}
-	public void setIsTheatreProfile(Boolean isTheatreProfile) {
-		this.isTheatreProfile = isTheatreProfile;
-	}
-
 	public ims.domain.lookups.LookupInstance getTheatreType() {
 		return theatreType;
 	}
@@ -567,6 +587,93 @@ public class Sch_Profile extends ims.domain.DomainObject implements ims.domain.S
 	}
 	public void setConsMediaType(ims.domain.lookups.LookupInstance consMediaType) {
 		this.consMediaType = consMediaType;
+	}
+
+	public ims.domain.lookups.LookupInstance getListType() {
+		return listType;
+	}
+	public void setListType(ims.domain.lookups.LookupInstance listType) {
+		this.listType = listType;
+	}
+
+	public ims.core.resource.people.domain.objects.Hcp getResponsibleHCP() {
+		return responsibleHCP;
+	}
+	public void setResponsibleHCP(ims.core.resource.people.domain.objects.Hcp responsibleHCP) {
+		this.responsibleHCP = responsibleHCP;
+	}
+
+	public ims.core.resource.place.domain.objects.Location getCaseNoteFolderLocation() {
+		return caseNoteFolderLocation;
+	}
+	public void setCaseNoteFolderLocation(ims.core.resource.place.domain.objects.Location caseNoteFolderLocation) {
+		this.caseNoteFolderLocation = caseNoteFolderLocation;
+	}
+
+	public Boolean isCaseNoteFolderNotRequired() {
+		return caseNoteFolderNotRequired;
+	}
+	public void setCaseNoteFolderNotRequired(Boolean caseNoteFolderNotRequired) {
+		this.caseNoteFolderNotRequired = caseNoteFolderNotRequired;
+	}
+
+	public java.util.List getFunction() {
+		if ( null == function ) {
+			function = new java.util.ArrayList();
+		}
+		return function;
+	}
+	public void setFunction(java.util.List paramValue) {
+		this.function = paramValue;
+	}
+
+	public Boolean isHasChooseBookActivity() {
+		return hasChooseBookActivity;
+	}
+	public void setHasChooseBookActivity(Boolean hasChooseBookActivity) {
+		this.hasChooseBookActivity = hasChooseBookActivity;
+	}
+
+	public Integer getAutoGeneratePeriod() {
+		return autoGeneratePeriod;
+	}
+	public void setAutoGeneratePeriod(Integer autoGeneratePeriod) {
+		this.autoGeneratePeriod = autoGeneratePeriod;
+	}
+
+	public Boolean isReadyToGenerate() {
+		return readyToGenerate;
+	}
+	public void setReadyToGenerate(Boolean readyToGenerate) {
+		this.readyToGenerate = readyToGenerate;
+	}
+
+	public ims.domain.lookups.LookupInstance getProfileType() {
+		return profileType;
+	}
+	public void setProfileType(ims.domain.lookups.LookupInstance profileType) {
+		this.profileType = profileType;
+	}
+
+	public ims.core.resource.place.domain.objects.Location getHospital() {
+		return hospital;
+	}
+	public void setHospital(ims.core.resource.place.domain.objects.Location hospital) {
+		this.hospital = hospital;
+	}
+
+	public Boolean isIsOtherHospital() {
+		return isOtherHospital;
+	}
+	public void setIsOtherHospital(Boolean isOtherHospital) {
+		this.isOtherHospital = isOtherHospital;
+	}
+
+	public ims.core.resource.place.domain.objects.Location getOtherHospital() {
+		return otherHospital;
+	}
+	public void setOtherHospital(ims.core.resource.place.domain.objects.Location otherHospital) {
+		this.otherHospital = otherHospital;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -904,9 +1011,6 @@ public class Sch_Profile extends ims.domain.DomainObject implements ims.domain.S
 			auditStr.append("] " + i41);
 		}
 	    auditStr.append("; ");
-		auditStr.append("\r\n*isTheatreProfile* :");
-		auditStr.append(isTheatreProfile);
-	    auditStr.append("; ");
 		auditStr.append("\r\n*theatreType* :");
 		if (theatreType != null)
 			auditStr.append(theatreType.getText());
@@ -914,13 +1018,39 @@ public class Sch_Profile extends ims.domain.DomainObject implements ims.domain.S
 		auditStr.append("\r\n*profileActivities* :");
 		if (profileActivities != null)
 		{
-			java.util.Iterator it44 = profileActivities.iterator();
+			java.util.Iterator it43 = profileActivities.iterator();
+			int i43=0;
+			while (it43.hasNext())
+			{
+				if (i43 > 0)
+					auditStr.append(",");
+				ims.scheduling.domain.objects.Profile_Activity obj = (ims.scheduling.domain.objects.Profile_Activity)it43.next();
+		if (obj != null)
+		{
+		   if (i43 == 0)
+		   {
+			auditStr.append(toShortClassName(obj));
+			auditStr.append("[");
+		   }
+		
+		   auditStr.append(obj.getId());
+		}
+			i43++;
+		}
+		if (i43 > 0)
+			auditStr.append("] " + i43);
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*profileTheatreSlots* :");
+		if (profileTheatreSlots != null)
+		{
+			java.util.Iterator it44 = profileTheatreSlots.iterator();
 			int i44=0;
 			while (it44.hasNext())
 			{
 				if (i44 > 0)
 					auditStr.append(",");
-				ims.scheduling.domain.objects.Profile_Activity obj = (ims.scheduling.domain.objects.Profile_Activity)it44.next();
+				ims.scheduling.domain.objects.ProfileTheatreTCISlot obj = (ims.scheduling.domain.objects.ProfileTheatreTCISlot)it44.next();
 		if (obj != null)
 		{
 		   if (i44 == 0)
@@ -937,45 +1067,19 @@ public class Sch_Profile extends ims.domain.DomainObject implements ims.domain.S
 			auditStr.append("] " + i44);
 		}
 	    auditStr.append("; ");
-		auditStr.append("\r\n*profileTheatreSlots* :");
-		if (profileTheatreSlots != null)
-		{
-			java.util.Iterator it45 = profileTheatreSlots.iterator();
-			int i45=0;
-			while (it45.hasNext())
-			{
-				if (i45 > 0)
-					auditStr.append(",");
-				ims.scheduling.domain.objects.ProfileTheatreTCISlot obj = (ims.scheduling.domain.objects.ProfileTheatreTCISlot)it45.next();
-		if (obj != null)
-		{
-		   if (i45 == 0)
-		   {
-			auditStr.append(toShortClassName(obj));
-			auditStr.append("[");
-		   }
-		
-		   auditStr.append(obj.getId());
-		}
-			i45++;
-		}
-		if (i45 > 0)
-			auditStr.append("] " + i45);
-		}
-	    auditStr.append("; ");
 		auditStr.append("\r\n*anaestheticType* :");
 		if (anaestheticType != null)
 		{
-		int i46=0;
-		for (i46=0; i46<anaestheticType.size(); i46++)
+		int i45=0;
+		for (i45=0; i45<anaestheticType.size(); i45++)
 		{
-			if (i46 > 0)
+			if (i45 > 0)
 				auditStr.append(",");
-			ims.domain.lookups.LookupInstance obj = (ims.domain.lookups.LookupInstance)anaestheticType.get(i46);
+			ims.domain.lookups.LookupInstance obj = (ims.domain.lookups.LookupInstance)anaestheticType.get(i45);
 			auditStr.append(obj.getText());
 		}
-		if (i46 > 0)
-			auditStr.append("] " + i46);
+		if (i45 > 0)
+			auditStr.append("] " + i45);
 		}
 	    auditStr.append("; ");
 		auditStr.append("\r\n*slotType* :");
@@ -985,16 +1089,16 @@ public class Sch_Profile extends ims.domain.DomainObject implements ims.domain.S
 		auditStr.append("\r\n*parentChildSlots* :");
 		if (parentChildSlots != null)
 		{
-			java.util.Iterator it48 = parentChildSlots.iterator();
-			int i48=0;
-			while (it48.hasNext())
+			java.util.Iterator it47 = parentChildSlots.iterator();
+			int i47=0;
+			while (it47.hasNext())
 			{
-				if (i48 > 0)
+				if (i47 > 0)
 					auditStr.append(",");
-				ims.scheduling.domain.objects.ProfileParentChildSlot obj = (ims.scheduling.domain.objects.ProfileParentChildSlot)it48.next();
+				ims.scheduling.domain.objects.ProfileParentChildSlot obj = (ims.scheduling.domain.objects.ProfileParentChildSlot)it47.next();
 		if (obj != null)
 		{
-		   if (i48 == 0)
+		   if (i47 == 0)
 		   {
 			auditStr.append(toShortClassName(obj));
 			auditStr.append("[");
@@ -1002,15 +1106,87 @@ public class Sch_Profile extends ims.domain.DomainObject implements ims.domain.S
 		
 		   auditStr.append(obj.getId());
 		}
-			i48++;
+			i47++;
 		}
-		if (i48 > 0)
-			auditStr.append("] " + i48);
+		if (i47 > 0)
+			auditStr.append("] " + i47);
 		}
 	    auditStr.append("; ");
 		auditStr.append("\r\n*consMediaType* :");
 		if (consMediaType != null)
 			auditStr.append(consMediaType.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*listType* :");
+		if (listType != null)
+			auditStr.append(listType.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*responsibleHCP* :");
+		if (responsibleHCP != null)
+		{
+			auditStr.append(toShortClassName(responsibleHCP));
+				
+		    auditStr.append(responsibleHCP.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*caseNoteFolderLocation* :");
+		if (caseNoteFolderLocation != null)
+		{
+			auditStr.append(toShortClassName(caseNoteFolderLocation));
+				
+		    auditStr.append(caseNoteFolderLocation.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*caseNoteFolderNotRequired* :");
+		auditStr.append(caseNoteFolderNotRequired);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*function* :");
+		if (function != null)
+		{
+			java.util.Iterator it53 = function.iterator();
+			int i53=0;
+			while (it53.hasNext())
+			{
+				if (i53 > 0)
+					auditStr.append(",");
+				ims.domain.lookups.LookupInstance obj = (ims.domain.lookups.LookupInstance)it53.next();
+			auditStr.append(obj.getText());
+			i53++;
+		}
+		if (i53 > 0)
+			auditStr.append("] " + i53);
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*hasChooseBookActivity* :");
+		auditStr.append(hasChooseBookActivity);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*autoGeneratePeriod* :");
+		auditStr.append(autoGeneratePeriod);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*readyToGenerate* :");
+		auditStr.append(readyToGenerate);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*profileType* :");
+		if (profileType != null)
+			auditStr.append(profileType.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*hospital* :");
+		if (hospital != null)
+		{
+			auditStr.append(toShortClassName(hospital));
+				
+		    auditStr.append(hospital.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*isOtherHospital* :");
+		auditStr.append(isOtherHospital);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*otherHospital* :");
+		if (otherHospital != null)
+		{
+			auditStr.append(toShortClassName(otherHospital));
+				
+		    auditStr.append(otherHospital.getId());
+		}
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -1323,12 +1499,6 @@ public class Sch_Profile extends ims.domain.DomainObject implements ims.domain.S
 			sb.append("</theatreDetails>");		
 			}
 		}
-		if (this.isIsTheatreProfile() != null)
-		{
-			sb.append("<isTheatreProfile>");
-			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsTheatreProfile().toString()));
-			sb.append("</isTheatreProfile>");		
-		}
 		if (this.getTheatreType() != null)
 		{
 			sb.append("<theatreType>");
@@ -1382,6 +1552,81 @@ public class Sch_Profile extends ims.domain.DomainObject implements ims.domain.S
 			sb.append("<consMediaType>");
 			sb.append(this.getConsMediaType().toXMLString()); 
 			sb.append("</consMediaType>");		
+		}
+		if (this.getListType() != null)
+		{
+			sb.append("<listType>");
+			sb.append(this.getListType().toXMLString()); 
+			sb.append("</listType>");		
+		}
+		if (this.getResponsibleHCP() != null)
+		{
+			sb.append("<responsibleHCP>");
+			sb.append(this.getResponsibleHCP().toXMLString(domMap)); 	
+			sb.append("</responsibleHCP>");		
+		}
+		if (this.getCaseNoteFolderLocation() != null)
+		{
+			sb.append("<caseNoteFolderLocation>");
+			sb.append(this.getCaseNoteFolderLocation().toXMLString(domMap)); 	
+			sb.append("</caseNoteFolderLocation>");		
+		}
+		if (this.isCaseNoteFolderNotRequired() != null)
+		{
+			sb.append("<caseNoteFolderNotRequired>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isCaseNoteFolderNotRequired().toString()));
+			sb.append("</caseNoteFolderNotRequired>");		
+		}
+		if (this.getFunction() != null)
+		{
+			if (this.getFunction().size() > 0 )
+			{
+			sb.append("<function>");
+			sb.append(ims.domain.lookups.LookupInstance.toXMLString(this.getFunction())); 
+			sb.append("</function>");		
+			}
+		}
+		if (this.isHasChooseBookActivity() != null)
+		{
+			sb.append("<hasChooseBookActivity>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isHasChooseBookActivity().toString()));
+			sb.append("</hasChooseBookActivity>");		
+		}
+		if (this.getAutoGeneratePeriod() != null)
+		{
+			sb.append("<autoGeneratePeriod>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getAutoGeneratePeriod().toString()));
+			sb.append("</autoGeneratePeriod>");		
+		}
+		if (this.isReadyToGenerate() != null)
+		{
+			sb.append("<readyToGenerate>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isReadyToGenerate().toString()));
+			sb.append("</readyToGenerate>");		
+		}
+		if (this.getProfileType() != null)
+		{
+			sb.append("<profileType>");
+			sb.append(this.getProfileType().toXMLString()); 
+			sb.append("</profileType>");		
+		}
+		if (this.getHospital() != null)
+		{
+			sb.append("<hospital>");
+			sb.append(this.getHospital().toXMLString(domMap)); 	
+			sb.append("</hospital>");		
+		}
+		if (this.isIsOtherHospital() != null)
+		{
+			sb.append("<isOtherHospital>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsOtherHospital().toString()));
+			sb.append("</isOtherHospital>");		
+		}
+		if (this.getOtherHospital() != null)
+		{
+			sb.append("<otherHospital>");
+			sb.append(this.getOtherHospital().toXMLString(domMap)); 	
+			sb.append("</otherHospital>");		
 		}
 		return sb.toString();
 	}
@@ -1764,11 +2009,6 @@ public class Sch_Profile extends ims.domain.DomainObject implements ims.domain.S
 			fldEl = fldEl.element("set");	
 			obj.setTheatreDetails(ims.scheduling.domain.objects.TheatreDetail.fromSetXMLString(fldEl, factory, obj.getTheatreDetails(), domMap));
 		}
-		fldEl = el.element("isTheatreProfile");
-		if(fldEl != null)
-		{	
-    		obj.setIsTheatreProfile(new Boolean(fldEl.getTextTrim()));	
-		}
 		fldEl = el.element("theatreType");
 		if(fldEl != null)
 		{
@@ -1811,6 +2051,73 @@ public class Sch_Profile extends ims.domain.DomainObject implements ims.domain.S
 			fldEl = fldEl.element("lki");
 			obj.setConsMediaType(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
 		}
+		fldEl = el.element("listType");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setListType(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("responsibleHCP");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setResponsibleHCP(ims.core.resource.people.domain.objects.Hcp.getHcpfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("caseNoteFolderLocation");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setCaseNoteFolderLocation(ims.core.resource.place.domain.objects.Location.getLocationfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("caseNoteFolderNotRequired");
+		if(fldEl != null)
+		{	
+    		obj.setCaseNoteFolderNotRequired(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("function");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("list");	
+			obj.setFunction(ims.domain.lookups.LookupInstance.fromListXMLString(fldEl, factory, obj.getFunction())); 
+		}
+		fldEl = el.element("hasChooseBookActivity");
+		if(fldEl != null)
+		{	
+    		obj.setHasChooseBookActivity(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("autoGeneratePeriod");
+		if(fldEl != null)
+		{	
+    		obj.setAutoGeneratePeriod(new Integer(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("readyToGenerate");
+		if(fldEl != null)
+		{	
+    		obj.setReadyToGenerate(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("profileType");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setProfileType(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("hospital");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setHospital(ims.core.resource.place.domain.objects.Location.getLocationfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("isOtherHospital");
+		if(fldEl != null)
+		{	
+    		obj.setIsOtherHospital(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("otherHospital");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setOtherHospital(ims.core.resource.place.domain.objects.Location.getLocationfromXML(fldEl, factory, domMap)); 
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -1827,6 +2134,7 @@ public class Sch_Profile extends ims.domain.DomainObject implements ims.domain.S
 		, "profileTheatreSlots"
 		, "anaestheticType"
 		, "parentChildSlots"
+		, "function"
 		};
 	}
 
@@ -1875,7 +2183,6 @@ public class Sch_Profile extends ims.domain.DomainObject implements ims.domain.S
 		public static final String ExclusionTimes = "exclusionTimes";
 		public static final String DirectoryOfServices = "directoryOfServices";
 		public static final String TheatreDetails = "theatreDetails";
-		public static final String IsTheatreProfile = "isTheatreProfile";
 		public static final String TheatreType = "theatreType";
 		public static final String ProfileActivities = "profileActivities";
 		public static final String ProfileTheatreSlots = "profileTheatreSlots";
@@ -1883,6 +2190,18 @@ public class Sch_Profile extends ims.domain.DomainObject implements ims.domain.S
 		public static final String SlotType = "slotType";
 		public static final String ParentChildSlots = "parentChildSlots";
 		public static final String ConsMediaType = "consMediaType";
+		public static final String ListType = "listType";
+		public static final String ResponsibleHCP = "responsibleHCP";
+		public static final String CaseNoteFolderLocation = "caseNoteFolderLocation";
+		public static final String CaseNoteFolderNotRequired = "caseNoteFolderNotRequired";
+		public static final String Function = "function";
+		public static final String HasChooseBookActivity = "hasChooseBookActivity";
+		public static final String AutoGeneratePeriod = "autoGeneratePeriod";
+		public static final String ReadyToGenerate = "readyToGenerate";
+		public static final String ProfileType = "profileType";
+		public static final String Hospital = "hospital";
+		public static final String IsOtherHospital = "isOtherHospital";
+		public static final String OtherHospital = "otherHospital";
 	}
 }
 

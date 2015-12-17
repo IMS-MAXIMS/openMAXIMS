@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -67,6 +72,7 @@ import ims.framework.utils.DateTime;
 import ims.nursing.forms.dailypatientprogress.GenForm.grdDevicesRow;
 import ims.nursing.forms.dailypatientprogress.GenForm.grdSummaryRow;
 import ims.nursing.vo.BradenScale;
+import ims.nursing.vo.DailyPatientProgressSearchCriteriaVo;
 import ims.nursing.vo.MUSTVo;
 import ims.nursing.vo.PatientInvasiveDeviceShortVo;
 import ims.nursing.vo.PatientInvasiveDeviceShortVoCollection;
@@ -89,7 +95,41 @@ public class Logic extends BaseLogic
 	protected void onFormOpen() throws ims.framework.exceptions.PresentationLogicException
 	{
 		initialize();
-		open();
+		
+		//WDEV-19389 - start
+		if (!(form.getGlobalContext().Core.getCurrentCareContextIsNotNull() && form.getGlobalContext().Nursing.getDailyPatientProgressSearchCriteriaIsNotNull() && form.getGlobalContext().Nursing.getDailyPatientProgressSearchCriteria().getCareContextIsNotNull() && form.getGlobalContext().Core.getCurrentCareContext().equals(form.getGlobalContext().Nursing.getDailyPatientProgressSearchCriteria().getCareContext())))
+			form.getGlobalContext().Nursing.setDailyPatientProgressSearchCriteria(null);
+		
+		if (form.getGlobalContext().Nursing.getDailyPatientProgressSearchCriteriaIsNotNull())
+		{
+			setSearchCriteria(form.getGlobalContext().Nursing.getDailyPatientProgressSearchCriteria());
+			search();
+		}
+		else
+		{
+			prepopulateRecordBrowser();
+			open();
+		}
+		//WDEV-19389 - end
+		
+		//open();
+	}
+	
+	private DailyPatientProgressSearchCriteriaVo getSearchCriteria()
+	{
+		DailyPatientProgressSearchCriteriaVo searchCriteria = new DailyPatientProgressSearchCriteriaVo();
+
+		searchCriteria.setStartDate(form.dteStart().getValue());
+		searchCriteria.setEndDate(form.dteEnd().getValue());
+		searchCriteria.setCareContext(form.getGlobalContext().Core.getCurrentCareContext());
+
+		return searchCriteria;
+	}
+
+	private void setSearchCriteria(DailyPatientProgressSearchCriteriaVo dailyPatientProgressSearchCriteriaVo) 
+	{
+		form.dteStart().setValue(dailyPatientProgressSearchCriteriaVo.getStartDate());
+		form.dteEnd().setValue(dailyPatientProgressSearchCriteriaVo.getEndDate());
 	}
 	
 	protected void onContextMenuItemClick(int menuItemID, Control sender) throws PresentationLogicException 
@@ -325,7 +365,7 @@ public class Logic extends BaseLogic
 		
 		clearAllScreenForRIE();
 		createDynamicGridColumns();
-		prepopulateRecordBrowser();
+		//prepopulateRecordBrowser();
 		populateInvasiveDeviceGrid();
 		populateAssessmentGrid();
 	}
@@ -1055,12 +1095,26 @@ public class Logic extends BaseLogic
 	@Override
 	protected void onImbSearchClick() throws PresentationLogicException 
 	{ 
-		
+		if(search())
+			form.getGlobalContext().Nursing.setDailyPatientProgressSearchCriteria(getSearchCriteria());//WDEV-19389 
+	}
+
+	private boolean search()
+	{
 		if (validateSearchCriteria()) //WDEV-13871
 		{
 			prepopulateRecordBrowser();
-			onRecbrAssessmentValueChanged(); //WDEV-13887 
+			try
+			{
+				onRecbrAssessmentValueChanged();//WDEV-13887 
+			}
+			catch (PresentationLogicException e)
+			{
+				e.printStackTrace();
+			} 
+			return true;
 		}
+		return false;
 	}
 
 	//start WDEV-13871
@@ -1072,7 +1126,7 @@ public class Logic extends BaseLogic
 		
 		if (dateStart != null && dateEnd != null && dateEnd.isLessThan(dateStart))
 		{
-			uiErrors.add("Start Date can not be greater than End Date");
+			uiErrors.add("Start Date cannot be greater than End Date."); //WDEV-18762
 		}
 		
 		if (uiErrors.size() > 0)

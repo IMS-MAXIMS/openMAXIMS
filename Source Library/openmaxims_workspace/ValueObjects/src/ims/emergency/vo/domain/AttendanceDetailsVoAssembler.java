@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.emergency.vo.domain;
@@ -106,6 +111,24 @@ public class AttendanceDetailsVoAssembler
 		valueObjectDest.setIsExpectedArrival(valueObjectSrc.getIsExpectedArrival());
 		// isPrimaryCare
 		valueObjectDest.setIsPrimaryCare(valueObjectSrc.getIsPrimaryCare());
+		// BedTypeRequested
+		valueObjectDest.setBedTypeRequested(valueObjectSrc.getBedTypeRequested());
+		// UsePrivateHealthInsurance
+		valueObjectDest.setUsePrivateHealthInsurance(valueObjectSrc.getUsePrivateHealthInsurance());
+		// EndOfRegistrationDateTime
+		valueObjectDest.setEndOfRegistrationDateTime(valueObjectSrc.getEndOfRegistrationDateTime());
+		// AmbulanceHandoverDateTime
+		valueObjectDest.setAmbulanceHandoverDateTime(valueObjectSrc.getAmbulanceHandoverDateTime());
+		// AmbulanceDelayReason
+		valueObjectDest.setAmbulanceDelayReason(valueObjectSrc.getAmbulanceDelayReason());
+		// customID
+		valueObjectDest.setCustomID(valueObjectSrc.getCustomID());
+		// AccomodationRequestedType
+		valueObjectDest.setAccomodationRequestedType(valueObjectSrc.getAccomodationRequestedType());
+		// AmbulanceDelayReasonComment
+		valueObjectDest.setAmbulanceDelayReasonComment(valueObjectSrc.getAmbulanceDelayReasonComment());
+		// RequiresSignOff
+		valueObjectDest.setRequiresSignOff(valueObjectSrc.getRequiresSignOff());
 	 	return valueObjectDest;
 	 }
 
@@ -890,7 +913,169 @@ public class AttendanceDetailsVoAssembler
 		valueObject.setIsExpectedArrival( domainObject.isIsExpectedArrival() );
 		// isPrimaryCare
 		valueObject.setIsPrimaryCare( domainObject.isIsPrimaryCare() );
- 		return valueObject;
+		// BedTypeRequested
+		ims.domain.lookups.LookupInstance instance29 = domainObject.getBedTypeRequested();
+		if ( null != instance29 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance29.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance29.getImage().getImageId(), instance29.getImage().getImagePath());
+			}
+			color = instance29.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.BedTypeRequested voLookup29 = new ims.core.vo.lookups.BedTypeRequested(instance29.getId(),instance29.getText(), instance29.isActive(), null, img, color);
+			ims.core.vo.lookups.BedTypeRequested parentVoLookup29 = voLookup29;
+			ims.domain.lookups.LookupInstance parent29 = instance29.getParent();
+			while (parent29 != null)
+			{
+				if (parent29.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent29.getImage().getImageId(), parent29.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent29.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup29.setParent(new ims.core.vo.lookups.BedTypeRequested(parent29.getId(),parent29.getText(), parent29.isActive(), null, img, color));
+				parentVoLookup29 = parentVoLookup29.getParent();
+								parent29 = parent29.getParent();
+			}			
+			valueObject.setBedTypeRequested(voLookup29);
+		}
+				// UsePrivateHealthInsurance
+		valueObject.setUsePrivateHealthInsurance( domainObject.isUsePrivateHealthInsurance() );
+		// EndOfRegistrationDateTime
+		java.util.Date EndOfRegistrationDateTime = domainObject.getEndOfRegistrationDateTime();
+		if ( null != EndOfRegistrationDateTime ) 
+		{
+			valueObject.setEndOfRegistrationDateTime(new ims.framework.utils.DateTime(EndOfRegistrationDateTime) );
+		}
+		// AmbulanceHandoverDateTime
+		java.util.Date AmbulanceHandoverDateTime = domainObject.getAmbulanceHandoverDateTime();
+		if ( null != AmbulanceHandoverDateTime ) 
+		{
+			valueObject.setAmbulanceHandoverDateTime(new ims.framework.utils.DateTime(AmbulanceHandoverDateTime) );
+		}
+		// AmbulanceDelayReason
+		ims.domain.lookups.LookupInstance instance33 = domainObject.getAmbulanceDelayReason();
+		if ( null != instance33 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance33.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance33.getImage().getImageId(), instance33.getImage().getImagePath());
+			}
+			color = instance33.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.emergency.vo.lookups.AmbulanceDelayReason voLookup33 = new ims.emergency.vo.lookups.AmbulanceDelayReason(instance33.getId(),instance33.getText(), instance33.isActive(), null, img, color);
+			ims.emergency.vo.lookups.AmbulanceDelayReason parentVoLookup33 = voLookup33;
+			ims.domain.lookups.LookupInstance parent33 = instance33.getParent();
+			while (parent33 != null)
+			{
+				if (parent33.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent33.getImage().getImageId(), parent33.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent33.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup33.setParent(new ims.emergency.vo.lookups.AmbulanceDelayReason(parent33.getId(),parent33.getText(), parent33.isActive(), null, img, color));
+				parentVoLookup33 = parentVoLookup33.getParent();
+								parent33 = parent33.getParent();
+			}			
+			valueObject.setAmbulanceDelayReason(voLookup33);
+		}
+				// customID
+		valueObject.setCustomID(domainObject.getCustomID());
+		// AccomodationRequestedType
+		ims.domain.lookups.LookupInstance instance35 = domainObject.getAccomodationRequestedType();
+		if ( null != instance35 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance35.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance35.getImage().getImageId(), instance35.getImage().getImagePath());
+			}
+			color = instance35.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.AccomodationRequestedType voLookup35 = new ims.core.vo.lookups.AccomodationRequestedType(instance35.getId(),instance35.getText(), instance35.isActive(), null, img, color);
+			ims.core.vo.lookups.AccomodationRequestedType parentVoLookup35 = voLookup35;
+			ims.domain.lookups.LookupInstance parent35 = instance35.getParent();
+			while (parent35 != null)
+			{
+				if (parent35.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent35.getImage().getImageId(), parent35.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent35.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup35.setParent(new ims.core.vo.lookups.AccomodationRequestedType(parent35.getId(),parent35.getText(), parent35.isActive(), null, img, color));
+				parentVoLookup35 = parentVoLookup35.getParent();
+								parent35 = parent35.getParent();
+			}			
+			valueObject.setAccomodationRequestedType(voLookup35);
+		}
+				// AmbulanceDelayReasonComment
+		valueObject.setAmbulanceDelayReasonComment(domainObject.getAmbulanceDelayReasonComment());
+		// RequiresSignOff
+		ims.domain.lookups.LookupInstance instance37 = domainObject.getRequiresSignOff();
+		if ( null != instance37 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance37.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance37.getImage().getImageId(), instance37.getImage().getImagePath());
+			}
+			color = instance37.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.emergency.vo.lookups.RequiresSignOff voLookup37 = new ims.emergency.vo.lookups.RequiresSignOff(instance37.getId(),instance37.getText(), instance37.isActive(), null, img, color);
+			ims.emergency.vo.lookups.RequiresSignOff parentVoLookup37 = voLookup37;
+			ims.domain.lookups.LookupInstance parent37 = instance37.getParent();
+			while (parent37 != null)
+			{
+				if (parent37.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent37.getImage().getImageId(), parent37.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent37.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup37.setParent(new ims.emergency.vo.lookups.RequiresSignOff(parent37.getId(),parent37.getText(), parent37.isActive(), null, img, color));
+				parentVoLookup37 = parentVoLookup37.getParent();
+								parent37 = parent37.getParent();
+			}			
+			valueObject.setRequiresSignOff(voLookup37);
+		}
+		 		return valueObject;
 	 }
 
 
@@ -1194,6 +1379,67 @@ public class AttendanceDetailsVoAssembler
 		domainObject.setDeptType(value26);
 		domainObject.setIsExpectedArrival(valueObject.getIsExpectedArrival());
 		domainObject.setIsPrimaryCare(valueObject.getIsPrimaryCare());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value29 = null;
+		if ( null != valueObject.getBedTypeRequested() ) 
+		{
+			value29 =
+				domainFactory.getLookupInstance(valueObject.getBedTypeRequested().getID());
+		}
+		domainObject.setBedTypeRequested(value29);
+		domainObject.setUsePrivateHealthInsurance(valueObject.getUsePrivateHealthInsurance());
+		ims.framework.utils.DateTime dateTime31 = valueObject.getEndOfRegistrationDateTime();
+		java.util.Date value31 = null;
+		if ( dateTime31 != null ) 
+		{
+			value31 = dateTime31.getJavaDate();
+		}
+		domainObject.setEndOfRegistrationDateTime(value31);
+		ims.framework.utils.DateTime dateTime32 = valueObject.getAmbulanceHandoverDateTime();
+		java.util.Date value32 = null;
+		if ( dateTime32 != null ) 
+		{
+			value32 = dateTime32.getJavaDate();
+		}
+		domainObject.setAmbulanceHandoverDateTime(value32);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value33 = null;
+		if ( null != valueObject.getAmbulanceDelayReason() ) 
+		{
+			value33 =
+				domainFactory.getLookupInstance(valueObject.getAmbulanceDelayReason().getID());
+		}
+		domainObject.setAmbulanceDelayReason(value33);
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getCustomID() != null && valueObject.getCustomID().equals(""))
+		{
+			valueObject.setCustomID(null);
+		}
+		domainObject.setCustomID(valueObject.getCustomID());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value35 = null;
+		if ( null != valueObject.getAccomodationRequestedType() ) 
+		{
+			value35 =
+				domainFactory.getLookupInstance(valueObject.getAccomodationRequestedType().getID());
+		}
+		domainObject.setAccomodationRequestedType(value35);
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getAmbulanceDelayReasonComment() != null && valueObject.getAmbulanceDelayReasonComment().equals(""))
+		{
+			valueObject.setAmbulanceDelayReasonComment(null);
+		}
+		domainObject.setAmbulanceDelayReasonComment(valueObject.getAmbulanceDelayReasonComment());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value37 = null;
+		if ( null != valueObject.getRequiresSignOff() ) 
+		{
+			value37 =
+				domainFactory.getLookupInstance(valueObject.getRequiresSignOff().getID());
+		}
+		domainObject.setRequiresSignOff(value37);
 
 		return domainObject;
 	}

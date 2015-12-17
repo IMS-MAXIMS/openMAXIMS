@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:34 -->
+<!-- Generated: 12/10/2015, 13:28 -->
 <hibernate-mapping>
 	<class name="ims.core.clinical.domain.objects.AnswerOption" table="core_answeroption" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -51,6 +51,12 @@
  				</many-to-one>
  				<property name="taxonomyCode" type="string" access="field" update="true">
  					<column name="taxonomyco" length="30" not-null="true"  unique="false"    />
+ 				</property>
+ 				<property name="effectiveFrom" type="date" access="field" update="true">
+ 					<column name="effectivef" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="effectiveTo" type="date" access="field" update="true">
+ 					<column name="effectivet" not-null="false"  unique="false"   />
  				</property>
  			</composite-element>
  		</list>

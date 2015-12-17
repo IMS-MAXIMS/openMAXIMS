@@ -1,0 +1,193 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 12/10/2015, 13:31 -->
+<hibernate-mapping>
+	<class name="ims.core.clinical.domain.objects.PatientCaseNote" table="core_patientcasenot" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: patient -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="patient" class="ims.core.patient.domain.objects.Patient" unique="true" foreign-key="patientcasenot_patient_fk" access="field" cascade="save-update">
+			<column name="patient" sql-type="numeric(10,0)" not-null="true" unique="false"  index='patient_idx' />
+		</many-to-one>
+<!-- debug: type -->
+<!-- debug: status -->
+<!-- debug: trackingID -->
+<!-- debug: currentLocation -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="currentLocation" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="patientcasenot_currentloc_fk" access="field" cascade="save-update">
+			<column name="currentloc" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: createdBy -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="createdBy" class="ims.core.resource.people.domain.objects.MemberOfStaff" unique="true" foreign-key="patientcasenot_createdby_fk" access="field" cascade="save-update">
+			<column name="createdby" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: creationDate -->
+<!-- debug: currentComment -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="currentComment" class="ims.core.clinical.domain.objects.PatientCaseNoteComment" unique="true" foreign-key="patientcasenot_currentcom_fk" access="field" cascade="save-update">
+			<column name="currentcom" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: openRequests -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- one to many -->
+		<list name="openRequests" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="patientcasenot_openreques_fk">
+				<column name="core_patientcasenot_openreques" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.core.clinical.domain.objects.PatientCaseNoteRequest" />
+		</list>
+<!-- debug: archivedBy -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="archivedBy" class="ims.core.resource.people.domain.objects.MemberOfStaff" unique="true" foreign-key="patientcasenot_archivedby_fk" access="field" cascade="save-update">
+			<column name="archivedby" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: archivedDate -->
+<!-- debug: archivedComment -->
+<!-- debug: destroyedBy -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="destroyedBy" class="ims.core.resource.people.domain.objects.MemberOfStaff" unique="true" foreign-key="patientcasenot_destroyedb_fk" access="field" cascade="save-update">
+			<column name="destroyedb" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: destroyedDate -->
+<!-- debug: destroyedComment -->
+<!-- debug: mergedBy -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="mergedBy" class="ims.core.resource.people.domain.objects.MemberOfStaff" unique="true" foreign-key="patientcasenot_mergedby_fk" access="field" cascade="save-update">
+			<column name="mergedby" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: mergedDate -->
+<!-- debug: mergedFrom -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="mergedFrom" class="ims.core.clinical.domain.objects.PatientCaseNote" unique="true" foreign-key="patientcasenot_mergedfrom_fk" access="field" cascade="save-update">
+			<column name="mergedfrom" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: scannedBy -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="scannedBy" class="ims.core.resource.people.domain.objects.MemberOfStaff" unique="true" foreign-key="patientcasenot_scannedby_fk" access="field" cascade="save-update">
+			<column name="scannedby" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: scannedDate -->
+<!-- debug: scannedComment -->
+<!-- debug: folder -->
+<!-- debug: lastTransferDate -->
+<!-- debug: lastRequestDate -->
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="type" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_c_ty" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="status" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_status" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="trackingID" type="string" access="field" update="true" > 
+			<column name="trackingid" length="20"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="creationDate" type="timestamp" access="field" update="true">
+			<column name="creationda"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="archivedDate" type="timestamp" access="field" update="true">
+			<column name="archivedda"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="archivedComment" type="text" access="field" update="true" > 
+			<column name="archivedco"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="destroyedDate" type="timestamp" access="field" update="true">
+			<column name="destroyedd"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="destroyedComment" type="text" access="field" update="true" > 
+			<column name="destroyedc"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="mergedDate" type="timestamp" access="field" update="true">
+			<column name="mergeddate"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="scannedDate" type="timestamp" access="field" update="true">
+			<column name="scanneddat"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="scannedComment" type="text" access="field" update="true" > 
+			<column name="scannedcom"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="folder" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_folder" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="lastTransferDate" type="timestamp" access="field" update="true">
+			<column name="lasttransf"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="lastRequestDate" type="timestamp" access="field" update="true">
+			<column name="lastreques"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

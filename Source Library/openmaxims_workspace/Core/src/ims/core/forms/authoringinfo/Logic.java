@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -61,6 +66,9 @@ public class Logic extends BaseLogic
 	private static final String	AUTHORING_DATE_TIME	= "Authoring Date/Time:";
 	private static final String	AUTHORING_HCP		= "Authoring HCP:";
 	
+	private static final String	AUTHORISING_DATE_TIME	= "Authorised Date/Time:";
+	private static final String	AUTHORISING_HCP		= "Authorising HCP:";
+	
 	private static final String	COMPLETED_DATE_TIME	= "Completed Date/Time:";
 	private static final String	COMPLETING_HCP		= "Completing HCP:";
 	
@@ -94,17 +102,21 @@ public class Logic extends BaseLogic
 	// ---- Interface Implementation Methods -----
 	public void initializeComponent()
 	{
-		setDefaultValuesToControls(false);//WDEV-11523		
+		setDefaultValuesToControls(false, false);//WDEV-11523		
 	}
-	//WDEV-11523
-	public void initializeComponent(Boolean ignoreClinicalContact)
-	{
-		setDefaultValuesToControls(ignoreClinicalContact!=null?ignoreClinicalContact.booleanValue():false);
+	//WDEV-11523, WDEV-18846
+	public void initializeComponent(Boolean ignoreClinicalContact,	Boolean ignoreClinicalContactDate)
+	{	
+		if (ignoreClinicalContact != null && Boolean.TRUE.equals(ignoreClinicalContact))
+			setDefaultValuesToControls(true, false);
+		else
+			setDefaultValuesToControls(false, ignoreClinicalContactDate != null ? ignoreClinicalContactDate.booleanValue() : false);
+			
 	}
 
 	public void initializeComponent(HcpDisType hcpType)
 	{
-		setDefaultValuesToControls(false);
+		setDefaultValuesToControls(false, false);
 		setHcpDisciplineType(hcpType);
 	}
 
@@ -182,6 +194,11 @@ public class Logic extends BaseLogic
 			{
 				setLabelsText(AUTHORING_HCP, AUTHORING_DATE_TIME);
 			}
+			//WDEV-18622
+			if(labelType.equals(AuthoringLabelType.AUTHORISING))
+			{
+				setLabelsText(AUTHORISING_HCP, AUTHORISING_DATE_TIME);
+			}
 			
 			if(labelType.equals(AuthoringLabelType.CONFIRMED))
 			{
@@ -257,6 +274,8 @@ public class Logic extends BaseLogic
 				setLabelsText(THEATRENURSE_HCP, THEATRENURSE_DATE_TIME);
 			}
 		}
+		else //WDEV-18827
+			setLabelsText("", "");
 	}
 	 
 	public String getErrors()
@@ -268,7 +287,7 @@ public class Logic extends BaseLogic
 			if (form.qmbAuthoringHcp().getValue() == null)
 			{
 				errors.append(getStringNoComa(hcpLabel));
-				errors.append(" is mandatory");
+				errors.append(" is mandatory.");
 			}
 			
 			String dateTimeLabel = form.getLocalContext().getAuthoringDateTimeLabelIsNotNull()?form.getLocalContext().getAuthoringDateTimeLabel():AUTHORING_DATE_TIME;
@@ -277,7 +296,7 @@ public class Logic extends BaseLogic
 				if(errors.length() > 0)
 					errors.append("\n\n");
 				errors.append(getStringNoComa(dateTimeLabel));
-				errors.append(" is mandatory");
+				errors.append(" is mandatory.");
 			}
 				
 			return errors.length() > 0 ? errors.toString() : null;
@@ -346,13 +365,13 @@ public class Logic extends BaseLogic
 	// ------ End Protected Methods ----------
 
 	// ------ Private Methods ----------------
-	private void setDefaultValuesToControls(boolean ignoreClinicalContact)//WDEV-11523
+	private void setDefaultValuesToControls(boolean ignoreClinicalContact, boolean ignoreClinicalContactDate)//WDEV-11523
 	{
 		AuthoringInformationVo voAuthoring = new AuthoringInformationVo();
 		
 		if(!ignoreClinicalContact && form.getGlobalContext().Core.getCurrentClinicalContactIsNotNull())//WDEV-11523
 		{
-			voAuthoring.setAuthoringDateTime(form.getGlobalContext().Core.getCurrentClinicalContact().getStartDateTime() == null ? new DateTime() : form.getGlobalContext().Core.getCurrentClinicalContact().getStartDateTime());
+			voAuthoring.setAuthoringDateTime(Boolean.TRUE.equals(ignoreClinicalContactDate) ? new DateTime() : (form.getGlobalContext().Core.getCurrentClinicalContact().getStartDateTime() != null ?  form.getGlobalContext().Core.getCurrentClinicalContact().getStartDateTime() : new DateTime())); //WDEV-18846
 			voAuthoring.setAuthoringHcp(form.getGlobalContext().Core.getCurrentClinicalContact().getSeenBy());			
 		}
 		else
@@ -431,5 +450,15 @@ public class Logic extends BaseLogic
 	}
 	// ------ End Private Methods ----------------	
 
+		
+	//wdev-22310
+	public void setVisible(Boolean showhide)
+	{
+		form.lblAuthoringHCP().setVisible(showhide);
+		form.lblAuthoringDT().setVisible(showhide);
+		form.qmbAuthoringHcp().setVisible(showhide);
+		form.dtimAuthoring().setVisible(showhide);
+		
+	}
 	
 }

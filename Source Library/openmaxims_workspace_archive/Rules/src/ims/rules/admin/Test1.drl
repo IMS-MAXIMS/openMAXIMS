@@ -1,0 +1,14 @@
+package ims.rules.admin;
+
+import ims.core.clinical.domain.objects.PatientAlert;
+
+global org.hibernate.Session hibernateSession;
+ 
+rule "Patient Alert Crash"
+no-loop true
+	when
+		p : PatientAlert()
+		eval(p.getComments().equals("crash"))
+	then				
+		throw new ims.rules.exceptions.RulesEngineRuntimeException("Crash is not a valid comment.");
+end

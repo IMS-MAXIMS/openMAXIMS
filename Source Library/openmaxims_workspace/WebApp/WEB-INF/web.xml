@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
 <web-app id="WebApp">
-	<display-name>SALES</display-name>
+	<display-name>MAXIMS</display-name>
 	<filter>
 		<filter-name>StaticGzipFilter</filter-name>
 		<filter-class>ims.framework.StaticGzipFilter</filter-class>
@@ -135,6 +135,24 @@
 		<servlet-class>ims.core.helper.PatientMergerServlet</servlet-class>
 		<load-on-startup>11</load-on-startup>
 	</servlet>
+	<servlet>
+		<servlet-name>BatchScheduleSTHKServlet</servlet-name>
+		<display-name>BatchScheduleSTHKServlet</display-name>
+		<servlet-class>ims.admin.helper.BatchScheduleSTHKServlet</servlet-class>
+		<load-on-startup>12</load-on-startup>
+	</servlet>
+	<servlet>
+		<servlet-name>DischargeSummaryScheduler</servlet-name>
+		<display-name>Discharge Summary Scheduler</display-name>
+		<servlet-class>ims.admin.helper.BatchScheduleServlet</servlet-class>
+		<load-on-startup>13</load-on-startup>
+	</servlet>
+	<servlet>
+		<servlet-name>DnaBatchUpdate</servlet-name>
+		<display-name>Dna Batch Update Job</display-name>
+		<servlet-class>ims.RefMan.helper.DnaBatchUpdateServlet</servlet-class>
+		<load-on-startup>14</load-on-startup>
+	</servlet>
 	<servlet-mapping>
 		<servlet-name>CNHost</servlet-name>
 		<url-pattern>/CNHost</url-pattern>
@@ -202,6 +220,14 @@
 	<servlet-mapping>
 		<servlet-name>ImageUpload</servlet-name>
 		<url-pattern>/ImageUpload</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>DischargeSummaryScheduler</servlet-name>
+		<url-pattern>/DischargeSummaryScheduler</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>DnaBatchUpdate</servlet-name>
+		<url-pattern>/DnaBatchUpdateServlet</url-pattern>
 	</servlet-mapping>
 	<session-config>
 		<!-- Session timeout is specified in minutes -->

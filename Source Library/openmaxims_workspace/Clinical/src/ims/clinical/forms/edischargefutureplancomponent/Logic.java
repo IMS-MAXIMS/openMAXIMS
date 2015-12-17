@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -30,6 +35,7 @@ import ims.clinical.vo.DischargeFuturePlanFollowUpVo;
 import ims.clinical.vo.DischargeFuturePlanFollowUpVoCollection;
 import ims.clinical.vo.DischargeFuturePlanVo;
 import ims.clinical.vo.NurseEnabledInstructionsVo;
+import ims.clinical.vo.lookups.FollowUPIn;
 import ims.clinicaladmin.vo.lookups.EDischargeHINT;
 import ims.configuration.gen.ConfigFlag;
 import ims.core.resource.people.vo.HcpRefVo;
@@ -71,17 +77,19 @@ public class Logic extends BaseLogic
 		form.ccSecondCons().initialize(MosType.MEDIC);
 		form.getLocalContext().setisReadonly(false);
 
-		hideControls();
+		// WDEV-18620 
+		//hideControls();
 	}
 
-	private void hideControls()
-	{
-		form.lblExpires().setVisible(false);
-		form.dteExpires().setVisible(false);
-		form.lblRefrain().setVisible(false);
-		form.intDays().setVisible(false);
-		form.cmbTimePeriod().setVisible(false);
-	}
+	// WDEV-18620 
+//	private void hideControls()
+//	{
+//		form.lblExpires().setVisible(false);
+//		form.dteExpires().setVisible(false);
+//		form.lblRefrain().setVisible(false);
+//		form.intDays().setVisible(false);
+//		form.cmbTimePeriod().setVisible(false);
+//	}
 
 	private void manageReadOnly()
 	{
@@ -140,18 +148,20 @@ public class Logic extends BaseLogic
 		form.ccDischCons().setValue(null);
 		form.ccSecondCons().setValue(null);
 		form.cmbDSpecialty().setValue(null);
-		form.dteExpires().setValue(null);
-		form.intDays().setValue(null);
-		form.cmbTimePeriod().setValue(null);
-		// --------------
-		form.txtHospitalPlan().setValue(null);
 		form.txtActions().setValue(null);
 		form.grdResults().setValue(null);
-		form.txtResults().setValue(null);
-		form.chkMedicalCertIssued().setValue(null);
-		form.dteExpires().setValue(null);
-		form.intDays().setValue(null);
-		form.txtComments().setValue(null);
+
+		//WDEV-18620
+//		form.dteExpires().setValue(null); 
+//		form.intDays().setValue(null);
+//		form.cmbTimePeriod().setValue(null);
+//		// --------------
+//		form.txtHospitalPlan().setValue(null);
+//		form.txtResults().setValue(null); 
+//		form.chkMedicalCertIssued().setValue(null); 
+//		form.dteExpires().setValue(null); 
+//		form.intDays().setValue(null); 
+//		form.txtComments().setValue(null); 
 	}
 
 	public boolean save() throws PresentationLogicException
@@ -193,16 +203,16 @@ public class Logic extends BaseLogic
 		return true;
 	}
 
-	//WDEV-16307
+	//WDEV-16307 // //WDEV-18620
 	private String[] validateUIRules()
 	{
 		ArrayList<String> listOfErrors = new ArrayList<String>();
 
-		if ( (form.intDays().getValue() != null && form.cmbTimePeriod().getValue() == null) || (form.intDays().getValue() == null && form.cmbTimePeriod().getValue() != null))
-		{
-			
-			listOfErrors.add("Please complete both Refrain from Work fields.");
-		}
+//		if ( (form.intDays().getValue() != null && form.cmbTimePeriod().getValue() == null) || (form.intDays().getValue() == null && form.cmbTimePeriod().getValue() != null))
+//		{
+//			
+//			listOfErrors.add("Please complete both Refrain from Work fields.");
+//		}
 
 		int errorCount = listOfErrors.size();
 		String[] result = new String[errorCount];
@@ -210,7 +220,7 @@ public class Logic extends BaseLogic
 		for (int x = 0; x < errorCount; x++)
 			result[x] = (String) listOfErrors.get(x);
 
-	return result;
+		return result;
 	}
 
 	private DischargeFuturePlanVo populateDataFromScreen()
@@ -227,7 +237,7 @@ public class Logic extends BaseLogic
 
 		voFuture = populateFollowDetails(voFuture);
 
-		voFuture.setHospitalPlan(form.txtHospitalPlan().getValue());
+		//voFuture.setHospitalPlan(form.txtHospitalPlan().getValue());
 		voFuture.setActionsforGPandCommunity(form.txtActions().getValue());
 
 		OrderInvestigationBookingVoCollection voColl = new OrderInvestigationBookingVoCollection();
@@ -238,22 +248,24 @@ public class Logic extends BaseLogic
 		}
 		voFuture.setResultsAwaited(voColl);
 
-		voFuture.setOtherResultsAwaited(form.txtResults().getValue());
-		voFuture.setMedicalCertificationIssued(form.chkMedicalCertIssued().getValue() ? YesNo.YES : YesNo.NO);
-
-		if (form.chkMedicalCertIssued().getValue())
-		{
-			voFuture.setCertificateExpiresDate(form.dteExpires().getValue());
-			voFuture.setRefrainFromWorkValue(form.intDays().getValue());
-			voFuture.setRefrainFromWorkUnit(form.cmbTimePeriod().getValue());
-		}
-		else
-		{
-			voFuture.setCertificateExpiresDate(null);
-			voFuture.setRefrainFromWorkValue(null);
-			voFuture.setRefrainFromWorkUnit(null);
-		}
-		voFuture.setComments(form.txtComments().getValue());
+		//WDEV-18620
+//		voFuture.setOtherResultsAwaited(form.txtResults().getValue());
+//		voFuture.setMedicalCertificationIssued(form.chkMedicalCertIssued().getValue() ? YesNo.YES : YesNo.NO);
+//
+//		if (form.chkMedicalCertIssued().getValue())
+//		{
+//			voFuture.setCertificateExpiresDate(form.dteExpires().getValue());
+//			voFuture.setRefrainFromWorkValue(form.intDays().getValue());
+//			voFuture.setRefrainFromWorkUnit(form.cmbTimePeriod().getValue());
+//		}
+//		else
+//		{
+//			voFuture.setCertificateExpiresDate(null);
+//			voFuture.setRefrainFromWorkValue(null);
+//			voFuture.setRefrainFromWorkUnit(null);
+//		}
+//		
+//		voFuture.setComments(form.txtComments().getValue());
 
 		voFuture.setWasNurseEnabledDischarge(form.GroupFollowUp().getValue().equals(GroupFollowUpEnumeration.rdoNurseYes) ? true : false);
 		//---------------------
@@ -314,7 +326,7 @@ public class Logic extends BaseLogic
 				voFutureFOllowup = form.grdFuturePlan().getRows().get(i).getValue();
 
 			voFutureFOllowup.setHospitalFollowUp(form.grdFuturePlan().getRows().get(i).getColHospFollowUp());
-			voFutureFOllowup.setFollowUpInValue(form.grdFuturePlan().getRows().get(i).getColIN());
+			voFutureFOllowup.setFollowUpInValue(getFollowUpInValue(form.grdFuturePlan().getRows().get(i).getColIN().getValue()));
 			voFutureFOllowup.setFollowUpInUnit(form.grdFuturePlan().getRows().get(i).getColPeriod());
 			voFutureFOllowup.setFollowUpHCP((HcpLiteVo) form.grdFuturePlan().getRows().get(i).getColHCP().getValue());
 			voFutureFOllowup.setFollowUpSpecialty(form.grdFuturePlan().getRows().get(i).getColSpec());
@@ -397,7 +409,49 @@ public class Logic extends BaseLogic
 
 		updateContextMenus();
 		manageReadOnly();
-		showHideMedicalCert();
+		updateControlState(voFuture);
+		// WDEV-18620 
+		//showHideMedicalCert();
+	}
+
+	private void updateControlState(DischargeFuturePlanVo voFuture) 
+	{
+		form.imbInfo().setVisible(voFuture.getHospitalPlanIsNotNull() || voFuture.getCommentsIsNotNull() || 
+								  voFuture.getMedicalCertificationIssuedIsNotNull() ||
+								  voFuture.getOtherResultsAwaitedIsNotNull());
+		if (form.imbInfo().isVisible())
+		{
+			form.imbInfo().setTooltip(setFormInforTooltip(voFuture));
+			form.imbInfo().setEnabled(false);
+		}
+	}
+
+	private String setFormInforTooltip(DischargeFuturePlanVo voFuture)
+	{
+		String infoTooltip = "Hospital Plan : ";
+		
+		if (voFuture.getHospitalPlanIsNotNull())
+			infoTooltip = infoTooltip + voFuture.getHospitalPlan();
+		
+		infoTooltip = infoTooltip + "<br>Medical Certification: ";
+		Boolean medicalCertification = voFuture.getMedicalCertificationIssuedIsNotNull() ? (voFuture.getMedicalCertificationIssued().equals(YesNo.YES) ? Boolean.TRUE : Boolean.FALSE) : Boolean.FALSE;
+		if (medicalCertification)
+		{
+			String certificateExpiresDate = voFuture.getCertificateExpiresDateIsNotNull() ? ", Expires: " + voFuture.getCertificateExpiresDate().toString() : "";
+			String refrainFromWorkValue = voFuture.getRefrainFromWorkValueIsNotNull() ? ", Refrain From Work: " + voFuture.getRefrainFromWorkValue().toString() : "";
+			String refrainFromWorkUnit = voFuture.getRefrainFromWorkUnitIsNotNull() ? voFuture.getRefrainFromWorkUnit().toString() : "";
+			infoTooltip = infoTooltip + "Issued" + certificateExpiresDate + refrainFromWorkValue + " " + refrainFromWorkUnit;
+		}
+		
+		infoTooltip = infoTooltip + "<br>Comments : ";
+		if (voFuture.getCommentsIsNotNull())
+			infoTooltip = infoTooltip + voFuture.getComments();
+		
+		infoTooltip = infoTooltip + "<br>Other Results Awaited : ";
+		if (voFuture.getOtherResultsAwaitedIsNotNull())
+			infoTooltip = infoTooltip + voFuture.getOtherResultsAwaited();
+		
+		return infoTooltip;
 	}
 
 	private void listAllInvestigations_OrderedAndSentOnly()
@@ -435,9 +489,11 @@ public class Logic extends BaseLogic
 		for (int i = 0; voFuture.getFollowUpDetailsIsNotNull() && i < voFuture.getFollowUpDetails().size(); i++)
 		{
 			grdFuturePlanRow row = form.grdFuturePlan().getRows().newRow();
-
+			bindFollowUpInColumn(row);
+		
 			row.setColHospFollowUp(voFuture.getFollowUpDetails().get(i).getHospitalFollowUpIsNotNull() ? voFuture.getFollowUpDetails().get(i).getHospitalFollowUp() : null);
-			row.setColIN(voFuture.getFollowUpDetails().get(i).getFollowUpInValueIsNotNull() ? voFuture.getFollowUpDetails().get(i).getFollowUpInValue() : null);
+			
+			row.getColIN().setValue(setFollowUpInValue(voFuture.getFollowUpDetails().get(i).getFollowUpInValue(), row));
 			row.setColPeriod(voFuture.getFollowUpDetails().get(i).getFollowUpInUnitIsNotNull() ? voFuture.getFollowUpDetails().get(i).getFollowUpInUnit() : null);
 			row.getColHCP().clear();
 			if (voFuture.getFollowUpDetails().get(i).getFollowUpHCPIsNotNull())
@@ -459,7 +515,6 @@ public class Logic extends BaseLogic
 			enableDisableNonHospFollowUp(row);
 		}
 
-		form.txtHospitalPlan().setValue(voFuture.getHospitalPlanIsNotNull() ? voFuture.getHospitalPlan() : null);
 		form.txtActions().setValue(voFuture.getActionsforGPandCommunityIsNotNull() ? voFuture.getActionsforGPandCommunity() : null);
 
 		for (int i = 0; voFuture.getResultsAwaitedIsNotNull() && i < voFuture.getResultsAwaited().size(); i++)
@@ -470,16 +525,18 @@ public class Logic extends BaseLogic
 			row.setValue(voFuture.getResultsAwaited().get(i));
 		}
 
-		form.txtResults().setValue(voFuture.getOtherResultsAwaitedIsNotNull() ? voFuture.getOtherResultsAwaited() : null);
-
-		form.chkMedicalCertIssued().setValue(voFuture.getMedicalCertificationIssuedIsNotNull() ? (voFuture.getMedicalCertificationIssued().equals(YesNo.YES) ? Boolean.TRUE : Boolean.FALSE) : Boolean.FALSE);
-		showHideMedicalCert();
-
-		form.dteExpires().setValue(voFuture.getCertificateExpiresDateIsNotNull() ? voFuture.getCertificateExpiresDate() : null);
-		form.intDays().setValue(voFuture.getRefrainFromWorkValueIsNotNull() ? voFuture.getRefrainFromWorkValue() : null);
-		form.cmbTimePeriod().setValue(voFuture.getRefrainFromWorkUnitIsNotNull() ? voFuture.getRefrainFromWorkUnit() : null);
-
-		form.txtComments().setValue(voFuture.getCommentsIsNotNull() ? voFuture.getComments() : null);
+		// WDEV-18620 
+//		form.txtHospitalPlan().setValue(voFuture.getHospitalPlanIsNotNull() ? voFuture.getHospitalPlan() : null);
+//		form.txtResults().setValue(voFuture.getOtherResultsAwaitedIsNotNull() ? voFuture.getOtherResultsAwaited() : null);
+//
+//		form.chkMedicalCertIssued().setValue(voFuture.getMedicalCertificationIssuedIsNotNull() ? (voFuture.getMedicalCertificationIssued().equals(YesNo.YES) ? Boolean.TRUE : Boolean.FALSE) : Boolean.FALSE);
+//		showHideMedicalCert();
+//
+//		form.dteExpires().setValue(voFuture.getCertificateExpiresDateIsNotNull() ? voFuture.getCertificateExpiresDate() : null);
+//		form.intDays().setValue(voFuture.getRefrainFromWorkValueIsNotNull() ? voFuture.getRefrainFromWorkValue() : null);
+//		form.cmbTimePeriod().setValue(voFuture.getRefrainFromWorkUnitIsNotNull() ? voFuture.getRefrainFromWorkUnit() : null);
+//
+//		form.txtComments().setValue(voFuture.getCommentsIsNotNull() ? voFuture.getComments() : null);
 
 		form.GroupFollowUp().setValue(voFuture.getWasNurseEnabledDischargeIsNotNull() && voFuture.getWasNurseEnabledDischarge().equals(Boolean.TRUE) ? GroupFollowUpEnumeration.rdoNurseYes : GroupFollowUpEnumeration.rdoNurseNo);
 		//-------------
@@ -504,49 +561,52 @@ public class Logic extends BaseLogic
 	{
 		EDischargeHINT lkpHint = new EDischargeHINT();
 
-		lkpHint.setId(-1711); // Hospital Plan
-		FieldHelpVo voHint = domain.getHintByLookupID(lkpHint);
-		if (voHint != null)
-			form.imbHospitalPlanHINT().setTooltip(voHint.getHelpText());
-
 		lkpHint.setId(-1712); // Actions for GP and Community
-		voHint = domain.getHintByLookupID(lkpHint);
+		FieldHelpVo voHint = domain.getHintByLookupID(lkpHint);
 		if (voHint != null)
 			form.imbActionsHINT().setTooltip(voHint.getHelpText());
 
-		lkpHint.setId(-1713); // Other Result Awaited
-		voHint = domain.getHintByLookupID(lkpHint);
-		if (voHint != null)
-			form.imbResultsHINT().setTooltip(voHint.getHelpText());
-
-		lkpHint.setId(-1714); // Future Plan Comments
-		voHint = domain.getHintByLookupID(lkpHint);
-		if (voHint != null)
-			form.imbCommentsHINT().setTooltip(voHint.getHelpText());
+		// WDEV-18620 
+//		lkpHint.setId(-1711); // Hospital Plan
+//		voHint = domain.getHintByLookupID(lkpHint);
+//		if (voHint != null)
+//			form.imbHospitalPlanHINT().setTooltip(voHint.getHelpText());
+//		
+//		lkpHint.setId(-1713); // Other Result Awaited
+//		voHint = domain.getHintByLookupID(lkpHint);
+//		if (voHint != null)
+//			form.imbResultsHINT().setTooltip(voHint.getHelpText());
+//
+//		lkpHint.setId(-1714); // Future Plan Comments
+//		voHint = domain.getHintByLookupID(lkpHint);
+//		if (voHint != null)
+//			form.imbCommentsHINT().setTooltip(voHint.getHelpText());
 	}
 
-	@Override
-	protected void onChkMedicalCertIssuedValueChanged() throws PresentationLogicException
-	{
-		showHideMedicalCert();
-	}
+	// WDEV-18620 
+//	@Override
+//	protected void onChkMedicalCertIssuedValueChanged() throws PresentationLogicException
+//	{
+//		showHideMedicalCert();
+//	}
 
-	private void showHideMedicalCert()
-	{
-
-		boolean bVisible = false;
-		if (form.chkMedicalCertIssued().getValue())
-			bVisible = true;
-
-		form.lblExpires().setVisible(bVisible);
-		form.dteExpires().setVisible(bVisible);
-		form.dteExpires().setEnabled(form.getMode().equals(FormMode.EDIT));
-		form.lblRefrain().setVisible(bVisible);
-		form.intDays().setVisible(bVisible);
-		form.intDays().setEnabled(form.getMode().equals(FormMode.EDIT));
-		form.cmbTimePeriod().setVisible(bVisible);
-		form.cmbTimePeriod().setEnabled(form.getMode().equals(FormMode.EDIT));
-	}
+	// WDEV-18620 
+//	private void showHideMedicalCert()
+//	{
+//
+//		boolean bVisible = false;
+//		if (form.chkMedicalCertIssued().getValue())
+//			bVisible = true;
+//
+//		form.lblExpires().setVisible(bVisible);
+//		form.dteExpires().setVisible(bVisible);
+//		form.dteExpires().setEnabled(form.getMode().equals(FormMode.EDIT));
+//		form.lblRefrain().setVisible(bVisible);
+//		form.intDays().setVisible(bVisible);
+//		form.intDays().setEnabled(form.getMode().equals(FormMode.EDIT));
+//		form.cmbTimePeriod().setVisible(bVisible);
+//		form.cmbTimePeriod().setEnabled(form.getMode().equals(FormMode.EDIT));
+//	}
 
 	public void initialise()
 	{
@@ -556,8 +616,9 @@ public class Logic extends BaseLogic
 
 			form.getLocalContext().setbInitialised(Boolean.TRUE);
 			
-			open();
+			//open(); // WDEV-18775 
 		}
+		open(); // WDEV-18775 
 	}
 
 	@Override
@@ -586,7 +647,8 @@ public class Logic extends BaseLogic
 
 	private void newFuturePlan()
 	{
-		form.grdFuturePlan().getRows().newRow();
+		grdFuturePlanRow newRow = form.grdFuturePlan().getRows().newRow();
+		bindFollowUpInColumn(newRow);
 	}
 
 	protected void updateContextMenus()
@@ -674,7 +736,7 @@ public class Logic extends BaseLogic
 			row.setColSpecReadOnly(true);
 			row.setColLocReadOnly(true);
 			
-			row.setColIN(null);
+			row.getColIN().setValue(null);
 			row.setColPeriod(null);
 			row.getColHCP().setValue(null);
 			row.setColSpec(null);
@@ -689,4 +751,55 @@ public class Logic extends BaseLogic
 		}
 	}
 
+	
+	private void bindFollowUpInColumn(grdFuturePlanRow row)
+	{
+		FollowUPIn[] instances = FollowUPIn.getNegativeInstances();
+		
+		for (int i = 0; i < instances.length; i++)
+			row.getColIN().newRow(instances[i], instances[i].getText());
+	}
+
+	private Integer getFollowUpInValue(Object value)
+	{
+		if (!(value instanceof FollowUPIn))
+			return null;
+
+		try
+		{
+			return Integer.parseInt(((FollowUPIn)value).getText());
+		}
+		catch (NumberFormatException e)
+		{
+			return null;
+		}
+	}	
+	
+	
+	private FollowUPIn setFollowUpInValue(Integer followUpInValue, grdFuturePlanRow row)
+	{
+		if (followUpInValue == null)
+			return null;
+		
+		switch (followUpInValue)
+		{
+			case 1:		return FollowUPIn.ONE;
+			case 2:		return FollowUPIn.TWO;
+			case 3:		return FollowUPIn.THREE;
+			case 4:		return FollowUPIn.FOUR;
+			case 5:		return FollowUPIn.FIVE;
+			case 6:		return FollowUPIn.SIX;
+			case 7:		return FollowUPIn.SEVEN;
+			case 8:		return FollowUPIn.EIGHT;
+			case 9:		return FollowUPIn.NINE;
+			case 10:	return FollowUPIn.TEN;
+			case 11:	return FollowUPIn.ELEVEN;
+			case 12:	return FollowUPIn.TWELVE;
+			
+			default:
+				FollowUPIn adHocLookup = new FollowUPIn(0, followUpInValue.toString(), true);
+				row.getColIN().newRow(adHocLookup, adHocLookup.getText());
+				return adHocLookup;
+		}
+	}
 }

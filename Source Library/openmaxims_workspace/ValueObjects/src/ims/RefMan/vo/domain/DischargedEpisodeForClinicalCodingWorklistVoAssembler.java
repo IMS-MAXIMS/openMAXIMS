@@ -1,9 +1,33 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.RefMan.vo.domain;
@@ -31,14 +55,10 @@ public class DischargedEpisodeForClinicalCodingWorklistVoAssembler
 		}
 		valueObjectDest.setID_DischargedEpisode(valueObjectSrc.getID_DischargedEpisode());
 	    valueObjectDest.setIsRIE(valueObjectSrc.getIsRIE());
-		// pasEvent
-		valueObjectDest.setPasEvent(valueObjectSrc.getPasEvent());
 		// dischargeDateTime
 		valueObjectDest.setDischargeDateTime(valueObjectSrc.getDischargeDateTime());
-		// DischargeDestination
-		valueObjectDest.setDischargeDestination(valueObjectSrc.getDischargeDestination());
-		// isCoded
-		valueObjectDest.setIsCoded(valueObjectSrc.getIsCoded());
+		// CodingDelay
+		valueObjectDest.setCodingDelay(valueObjectSrc.getCodingDelay());
 	 	return valueObjectDest;
 	 }
 
@@ -329,52 +349,14 @@ public class DischargedEpisodeForClinicalCodingWorklistVoAssembler
 		if ((valueObject.getIsRIE() == null || valueObject.getIsRIE().booleanValue() == false) && domainObject.isIncludeRecord())
 			return null;
 			
-		// pasEvent
-		valueObject.setPasEvent(ims.RefMan.vo.domain.PasEventForClinicalCodingWorklistVoAssembler.create(map, domainObject.getPasEvent()) );
 		// dischargeDateTime
 		java.util.Date dischargeDateTime = domainObject.getDischargeDateTime();
 		if ( null != dischargeDateTime ) 
 		{
 			valueObject.setDischargeDateTime(new ims.framework.utils.DateTime(dischargeDateTime) );
 		}
-		// DischargeDestination
-		ims.domain.lookups.LookupInstance instance3 = domainObject.getDischargeDestination();
-		if ( null != instance3 ) {
-			ims.framework.utils.ImagePath img = null;
-			ims.framework.utils.Color color = null;		
-			img = null;
-			if (instance3.getImage() != null) 
-			{
-				img = new ims.framework.utils.ImagePath(instance3.getImage().getImageId(), instance3.getImage().getImagePath());
-			}
-			color = instance3.getColor();
-			if (color != null) 
-				color.getValue();
-
-			ims.coe.vo.lookups.DischargeDestination voLookup3 = new ims.coe.vo.lookups.DischargeDestination(instance3.getId(),instance3.getText(), instance3.isActive(), null, img, color);
-			ims.coe.vo.lookups.DischargeDestination parentVoLookup3 = voLookup3;
-			ims.domain.lookups.LookupInstance parent3 = instance3.getParent();
-			while (parent3 != null)
-			{
-				if (parent3.getImage() != null) 
-				{
-					img = new ims.framework.utils.ImagePath(parent3.getImage().getImageId(), parent3.getImage().getImagePath() );
-				}
-				else 
-				{
-					img = null;
-				}
-				color = parent3.getColor();
-    			if (color != null) 
-    				color.getValue();
-								parentVoLookup3.setParent(new ims.coe.vo.lookups.DischargeDestination(parent3.getId(),parent3.getText(), parent3.isActive(), null, img, color));
-				parentVoLookup3 = parentVoLookup3.getParent();
-								parent3 = parent3.getParent();
-			}			
-			valueObject.setDischargeDestination(voLookup3);
-		}
-				// isCoded
-		valueObject.setIsCoded( domainObject.isIsCoded() );
+		// CodingDelay
+		valueObject.setCodingDelay(ims.core.vo.domain.CodingDelayVoAssembler.create(map, domainObject.getCodingDelay()) );
  		return valueObject;
 	 }
 
@@ -424,39 +406,14 @@ public class DischargedEpisodeForClinicalCodingWorklistVoAssembler
 		}
 		domainObject.setVersion(valueObject.getVersion_DischargedEpisode());
 
-	// SaveAsRefVO - treated as a refVo in extract methods
-	ims.core.admin.pas.domain.objects.PASEvent value1 = null;
-		if ( null != valueObject.getPasEvent() ) 
+		ims.framework.utils.DateTime dateTime1 = valueObject.getDischargeDateTime();
+		java.util.Date value1 = null;
+		if ( dateTime1 != null ) 
 		{
-			if (valueObject.getPasEvent().getBoId() == null)
-			{
-				if (domMap.get(valueObject.getPasEvent()) != null)
-				{
-					value1 = (ims.core.admin.pas.domain.objects.PASEvent)domMap.get(valueObject.getPasEvent());
-				}
-			}
-			else
-			{
-				value1 = (ims.core.admin.pas.domain.objects.PASEvent)domainFactory.getDomainObject(ims.core.admin.pas.domain.objects.PASEvent.class, valueObject.getPasEvent().getBoId());
-			}
+			value1 = dateTime1.getJavaDate();
 		}
-		domainObject.setPasEvent(value1);
-		ims.framework.utils.DateTime dateTime2 = valueObject.getDischargeDateTime();
-		java.util.Date value2 = null;
-		if ( dateTime2 != null ) 
-		{
-			value2 = dateTime2.getJavaDate();
-		}
-		domainObject.setDischargeDateTime(value2);
-		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value3 = null;
-		if ( null != valueObject.getDischargeDestination() ) 
-		{
-			value3 =
-				domainFactory.getLookupInstance(valueObject.getDischargeDestination().getID());
-		}
-		domainObject.setDischargeDestination(value3);
-		domainObject.setIsCoded(valueObject.getIsCoded());
+		domainObject.setDischargeDateTime(value1);
+		domainObject.setCodingDelay(ims.core.vo.domain.CodingDelayVoAssembler.extractCodingDelay(domainFactory, valueObject.getCodingDelay(), domMap));
 
 		return domainObject;
 	}

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.scheduling.vo.domain;
@@ -62,8 +67,6 @@ public class SessionTheatreVoAssembler
 		valueObjectDest.setRemainingTime(valueObjectSrc.getRemainingTime());
 		// SchLocation
 		valueObjectDest.setSchLocation(valueObjectSrc.getSchLocation());
-		// IsTheatreSession
-		valueObjectDest.setIsTheatreSession(valueObjectSrc.getIsTheatreSession());
 		// ListOwners
 		valueObjectDest.setListOwners(valueObjectSrc.getListOwners());
 		// TheatreType
@@ -72,12 +75,20 @@ public class SessionTheatreVoAssembler
 		valueObjectDest.setTheatreProceduresRemaining(valueObjectSrc.getTheatreProceduresRemaining());
 		// TheatreSlots
 		valueObjectDest.setTheatreSlots(valueObjectSrc.getTheatreSlots());
-		// ParentChildSlots
-		valueObjectDest.setParentChildSlots(valueObjectSrc.getParentChildSlots());
 		// AnaestheticType
 		valueObjectDest.setAnaestheticType(valueObjectSrc.getAnaestheticType());
 		// Service
 		valueObjectDest.setService(valueObjectSrc.getService());
+		// ExclusionTimes
+		valueObjectDest.setExclusionTimes(valueObjectSrc.getExclusionTimes());
+		// SessionComment
+		valueObjectDest.setSessionComment(valueObjectSrc.getSessionComment());
+		// SessionProfileType
+		valueObjectDest.setSessionProfileType(valueObjectSrc.getSessionProfileType());
+		// ListType
+		valueObjectDest.setListType(valueObjectSrc.getListType());
+		// ParentChildSlots
+		valueObjectDest.setParentChildSlots(valueObjectSrc.getParentChildSlots());
 	 	return valueObjectDest;
 	 }
 
@@ -391,53 +402,49 @@ public class SessionTheatreVoAssembler
 		// RemainingTime
 		valueObject.setRemainingTime(domainObject.getRemainingTime());
 		// SchLocation
-		valueObject.setSchLocation(ims.core.vo.domain.LocationLiteVoAssembler.create(map, domainObject.getSchLocation()) );
-		// IsTheatreSession
-		valueObject.setIsTheatreSession( domainObject.isIsTheatreSession() );
+		valueObject.setSchLocation(ims.scheduling.vo.domain.LocationForTheatreSessionVoAssembler.create(map, domainObject.getSchLocation()) );
 		// ListOwners
 		valueObject.setListOwners(ims.scheduling.vo.domain.Session_ListOwnerVoAssembler.createSession_ListOwnerVoCollectionFromSession_ListOwner(map, domainObject.getListOwners()) );
 		// TheatreType
-		ims.domain.lookups.LookupInstance instance9 = domainObject.getTheatreType();
-		if ( null != instance9 ) {
+		ims.domain.lookups.LookupInstance instance8 = domainObject.getTheatreType();
+		if ( null != instance8 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
 			img = null;
-			if (instance9.getImage() != null) 
+			if (instance8.getImage() != null) 
 			{
-				img = new ims.framework.utils.ImagePath(instance9.getImage().getImageId(), instance9.getImage().getImagePath());
+				img = new ims.framework.utils.ImagePath(instance8.getImage().getImageId(), instance8.getImage().getImagePath());
 			}
-			color = instance9.getColor();
+			color = instance8.getColor();
 			if (color != null) 
 				color.getValue();
 
-			ims.scheduling.vo.lookups.TheatreType voLookup9 = new ims.scheduling.vo.lookups.TheatreType(instance9.getId(),instance9.getText(), instance9.isActive(), null, img, color);
-			ims.scheduling.vo.lookups.TheatreType parentVoLookup9 = voLookup9;
-			ims.domain.lookups.LookupInstance parent9 = instance9.getParent();
-			while (parent9 != null)
+			ims.scheduling.vo.lookups.TheatreType voLookup8 = new ims.scheduling.vo.lookups.TheatreType(instance8.getId(),instance8.getText(), instance8.isActive(), null, img, color);
+			ims.scheduling.vo.lookups.TheatreType parentVoLookup8 = voLookup8;
+			ims.domain.lookups.LookupInstance parent8 = instance8.getParent();
+			while (parent8 != null)
 			{
-				if (parent9.getImage() != null) 
+				if (parent8.getImage() != null) 
 				{
-					img = new ims.framework.utils.ImagePath(parent9.getImage().getImageId(), parent9.getImage().getImagePath() );
+					img = new ims.framework.utils.ImagePath(parent8.getImage().getImageId(), parent8.getImage().getImagePath() );
 				}
 				else 
 				{
 					img = null;
 				}
-				color = parent9.getColor();
+				color = parent8.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup9.setParent(new ims.scheduling.vo.lookups.TheatreType(parent9.getId(),parent9.getText(), parent9.isActive(), null, img, color));
-				parentVoLookup9 = parentVoLookup9.getParent();
-								parent9 = parent9.getParent();
+								parentVoLookup8.setParent(new ims.scheduling.vo.lookups.TheatreType(parent8.getId(),parent8.getText(), parent8.isActive(), null, img, color));
+				parentVoLookup8 = parentVoLookup8.getParent();
+								parent8 = parent8.getParent();
 			}			
-			valueObject.setTheatreType(voLookup9);
+			valueObject.setTheatreType(voLookup8);
 		}
 				// TheatreProceduresRemaining
 		valueObject.setTheatreProceduresRemaining(ims.scheduling.vo.domain.SessionTheatreProceduresRemainingVoAssembler.create(map, domainObject.getTheatreProceduresRemaining()) );
 		// TheatreSlots
 		valueObject.setTheatreSlots(ims.scheduling.vo.domain.SessionTheatreTCISlotLiteVoAssembler.createSessionTheatreTCISlotLiteVoCollectionFromSessionTheatreTCISlot(map, domainObject.getTheatreSlots()) );
-		// ParentChildSlots
-		valueObject.setParentChildSlots(ims.scheduling.vo.domain.SessionParentChildSlotVoAssembler.createSessionParentChildSlotVoCollectionFromSessionParentChildSlot(map, domainObject.getParentChildSlots()) );
 		// AnaestheticType
 		java.util.List listAnaestheticType = domainObject.getAnaestheticType();
 		ims.clinical.vo.lookups.AnaestheticTypeCollection AnaestheticType = new ims.clinical.vo.lookups.AnaestheticTypeCollection();
@@ -496,6 +503,84 @@ public class SessionTheatreVoAssembler
 				valueObject.setService(new ims.core.clinical.vo.ServiceRefVo(domainObject.getService().getId(), domainObject.getService().getVersion()));
 			}
 		}
+		// ExclusionTimes
+		valueObject.setExclusionTimes(ims.scheduling.vo.domain.ExclusionTimesVoAssembler.createExclusionTimesVoCollectionFromSession_Exc_Time(map, domainObject.getExclusionTimes()) );
+		// SessionComment
+		valueObject.setSessionComment(domainObject.getSessionComment());
+		// SessionProfileType
+		ims.domain.lookups.LookupInstance instance15 = domainObject.getSessionProfileType();
+		if ( null != instance15 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance15.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance15.getImage().getImageId(), instance15.getImage().getImagePath());
+			}
+			color = instance15.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.scheduling.vo.lookups.SchProfileType voLookup15 = new ims.scheduling.vo.lookups.SchProfileType(instance15.getId(),instance15.getText(), instance15.isActive(), null, img, color);
+			ims.scheduling.vo.lookups.SchProfileType parentVoLookup15 = voLookup15;
+			ims.domain.lookups.LookupInstance parent15 = instance15.getParent();
+			while (parent15 != null)
+			{
+				if (parent15.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent15.getImage().getImageId(), parent15.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent15.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup15.setParent(new ims.scheduling.vo.lookups.SchProfileType(parent15.getId(),parent15.getText(), parent15.isActive(), null, img, color));
+				parentVoLookup15 = parentVoLookup15.getParent();
+								parent15 = parent15.getParent();
+			}			
+			valueObject.setSessionProfileType(voLookup15);
+		}
+				// ListType
+		ims.domain.lookups.LookupInstance instance16 = domainObject.getListType();
+		if ( null != instance16 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance16.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance16.getImage().getImageId(), instance16.getImage().getImagePath());
+			}
+			color = instance16.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.scheduling.vo.lookups.ProfileListType voLookup16 = new ims.scheduling.vo.lookups.ProfileListType(instance16.getId(),instance16.getText(), instance16.isActive(), null, img, color);
+			ims.scheduling.vo.lookups.ProfileListType parentVoLookup16 = voLookup16;
+			ims.domain.lookups.LookupInstance parent16 = instance16.getParent();
+			while (parent16 != null)
+			{
+				if (parent16.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent16.getImage().getImageId(), parent16.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent16.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup16.setParent(new ims.scheduling.vo.lookups.ProfileListType(parent16.getId(),parent16.getText(), parent16.isActive(), null, img, color));
+				parentVoLookup16 = parentVoLookup16.getParent();
+								parent16 = parent16.getParent();
+			}			
+			valueObject.setListType(voLookup16);
+		}
+				// ParentChildSlots
+		valueObject.setParentChildSlots(ims.scheduling.vo.domain.SessionParentChildSlotVoAssembler.createSessionParentChildSlotVoCollectionFromSessionParentChildSlot(map, domainObject.getParentChildSlots()) );
  		return valueObject;
 	 }
 
@@ -591,28 +676,27 @@ public class SessionTheatreVoAssembler
 			}
 		}
 		domainObject.setSchLocation(value6);
-		domainObject.setIsTheatreSession(valueObject.getIsTheatreSession());
 
 		// SaveAsRefVO treated as RefValueObject
-		ims.scheduling.vo.Session_ListOwnerRefVoCollection refCollection8 = new ims.scheduling.vo.Session_ListOwnerRefVoCollection();
+		ims.scheduling.vo.Session_ListOwnerRefVoCollection refCollection7 = new ims.scheduling.vo.Session_ListOwnerRefVoCollection();
 		if (valueObject.getListOwners() != null)
 		{
-			for (int i8=0; i8<valueObject.getListOwners().size(); i8++)
+			for (int i7=0; i7<valueObject.getListOwners().size(); i7++)
 			{
-				ims.scheduling.vo.Session_ListOwnerRefVo ref8 = (ims.scheduling.vo.Session_ListOwnerRefVo)valueObject.getListOwners().get(i8);
-				refCollection8.add(ref8);
+				ims.scheduling.vo.Session_ListOwnerRefVo ref7 = (ims.scheduling.vo.Session_ListOwnerRefVo)valueObject.getListOwners().get(i7);
+				refCollection7.add(ref7);
 			}
 		}
-		int size8 = (null == refCollection8) ? 0 : refCollection8.size();		
-		java.util.Set domainListOwners8 = domainObject.getListOwners();
-		if (domainListOwners8 == null)
+		int size7 = (null == refCollection7) ? 0 : refCollection7.size();		
+		java.util.Set domainListOwners7 = domainObject.getListOwners();
+		if (domainListOwners7 == null)
 		{
-			domainListOwners8 = new java.util.HashSet();
+			domainListOwners7 = new java.util.HashSet();
 		}
-		java.util.Set newSet8  = new java.util.HashSet();
-		for(int i=0; i<size8; i++) 
+		java.util.Set newSet7  = new java.util.HashSet();
+		for(int i=0; i<size7; i++) 
 		{
-			ims.scheduling.vo.Session_ListOwnerRefVo vo = refCollection8.get(i);					
+			ims.scheduling.vo.Session_ListOwnerRefVo vo = refCollection7.get(i);					
 			ims.scheduling.domain.objects.Session_ListOwner dom = null;
 			if ( null != vo ) 
 			{
@@ -630,61 +714,61 @@ public class SessionTheatreVoAssembler
 			}
 
 			//Trying to avoid the hibernate collection being marked as dirty via its public interface methods. (like add)
-			if (!domainListOwners8.contains(dom))
+			if (!domainListOwners7.contains(dom))
 			{
-				domainListOwners8.add(dom);
+				domainListOwners7.add(dom);
 			}
-			newSet8.add(dom);			
+			newSet7.add(dom);			
 		}
-		java.util.Set removedSet8 = new java.util.HashSet();
-		java.util.Iterator iter8 = domainListOwners8.iterator();
+		java.util.Set removedSet7 = new java.util.HashSet();
+		java.util.Iterator iter7 = domainListOwners7.iterator();
 		//Find out which objects need to be removed
-		while (iter8.hasNext())
+		while (iter7.hasNext())
 		{
-			ims.domain.DomainObject o = (ims.domain.DomainObject)iter8.next();			
-			if ((o == null || o.getIsRIE() == null || !o.getIsRIE().booleanValue()) && !newSet8.contains(o))
+			ims.domain.DomainObject o = (ims.domain.DomainObject)iter7.next();			
+			if ((o == null || o.getIsRIE() == null || !o.getIsRIE().booleanValue()) && !newSet7.contains(o))
 			{
-				removedSet8.add(o);
+				removedSet7.add(o);
 			}
 		}
-		iter8 = removedSet8.iterator();
+		iter7 = removedSet7.iterator();
 		//Remove the unwanted objects
-		while (iter8.hasNext())
+		while (iter7.hasNext())
 		{
-			domainListOwners8.remove(iter8.next());
+			domainListOwners7.remove(iter7.next());
 		}		
 		
-		domainObject.setListOwners(domainListOwners8);		
+		domainObject.setListOwners(domainListOwners7);		
 		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value9 = null;
+		ims.domain.lookups.LookupInstance value8 = null;
 		if ( null != valueObject.getTheatreType() ) 
 		{
-			value9 =
+			value8 =
 				domainFactory.getLookupInstance(valueObject.getTheatreType().getID());
 		}
-		domainObject.setTheatreType(value9);
+		domainObject.setTheatreType(value8);
 		domainObject.setTheatreProceduresRemaining(ims.scheduling.vo.domain.SessionTheatreProceduresRemainingVoAssembler.extractSessionTheatreProceduresRemanining(domainFactory, valueObject.getTheatreProceduresRemaining(), domMap));
 
 		// SaveAsRefVO treated as RefValueObject
-		ims.scheduling.vo.SessionTheatreTCISlotRefVoCollection refCollection11 = new ims.scheduling.vo.SessionTheatreTCISlotRefVoCollection();
+		ims.scheduling.vo.SessionTheatreTCISlotRefVoCollection refCollection10 = new ims.scheduling.vo.SessionTheatreTCISlotRefVoCollection();
 		if (valueObject.getTheatreSlots() != null)
 		{
-			for (int i11=0; i11<valueObject.getTheatreSlots().size(); i11++)
+			for (int i10=0; i10<valueObject.getTheatreSlots().size(); i10++)
 			{
-				ims.scheduling.vo.SessionTheatreTCISlotRefVo ref11 = (ims.scheduling.vo.SessionTheatreTCISlotRefVo)valueObject.getTheatreSlots().get(i11);
-				refCollection11.add(ref11);
+				ims.scheduling.vo.SessionTheatreTCISlotRefVo ref10 = (ims.scheduling.vo.SessionTheatreTCISlotRefVo)valueObject.getTheatreSlots().get(i10);
+				refCollection10.add(ref10);
 			}
 		}
-		int size11 = (null == refCollection11) ? 0 : refCollection11.size();		
-		java.util.Set domainTheatreSlots11 = domainObject.getTheatreSlots();
-		if (domainTheatreSlots11 == null)
+		int size10 = (null == refCollection10) ? 0 : refCollection10.size();		
+		java.util.Set domainTheatreSlots10 = domainObject.getTheatreSlots();
+		if (domainTheatreSlots10 == null)
 		{
-			domainTheatreSlots11 = new java.util.HashSet();
+			domainTheatreSlots10 = new java.util.HashSet();
 		}
-		java.util.Set newSet11  = new java.util.HashSet();
-		for(int i=0; i<size11; i++) 
+		java.util.Set newSet10  = new java.util.HashSet();
+		for(int i=0; i<size10; i++) 
 		{
-			ims.scheduling.vo.SessionTheatreTCISlotRefVo vo = refCollection11.get(i);					
+			ims.scheduling.vo.SessionTheatreTCISlotRefVo vo = refCollection10.get(i);					
 			ims.scheduling.domain.objects.SessionTheatreTCISlot dom = null;
 			if ( null != vo ) 
 			{
@@ -702,48 +786,47 @@ public class SessionTheatreVoAssembler
 			}
 
 			//Trying to avoid the hibernate collection being marked as dirty via its public interface methods. (like add)
-			if (!domainTheatreSlots11.contains(dom))
+			if (!domainTheatreSlots10.contains(dom))
 			{
-				domainTheatreSlots11.add(dom);
+				domainTheatreSlots10.add(dom);
 			}
-			newSet11.add(dom);			
+			newSet10.add(dom);			
 		}
-		java.util.Set removedSet11 = new java.util.HashSet();
-		java.util.Iterator iter11 = domainTheatreSlots11.iterator();
+		java.util.Set removedSet10 = new java.util.HashSet();
+		java.util.Iterator iter10 = domainTheatreSlots10.iterator();
 		//Find out which objects need to be removed
-		while (iter11.hasNext())
+		while (iter10.hasNext())
 		{
-			ims.domain.DomainObject o = (ims.domain.DomainObject)iter11.next();			
-			if ((o == null || o.getIsRIE() == null || !o.getIsRIE().booleanValue()) && !newSet11.contains(o))
+			ims.domain.DomainObject o = (ims.domain.DomainObject)iter10.next();			
+			if ((o == null || o.getIsRIE() == null || !o.getIsRIE().booleanValue()) && !newSet10.contains(o))
 			{
-				removedSet11.add(o);
+				removedSet10.add(o);
 			}
 		}
-		iter11 = removedSet11.iterator();
+		iter10 = removedSet10.iterator();
 		//Remove the unwanted objects
-		while (iter11.hasNext())
+		while (iter10.hasNext())
 		{
-			domainTheatreSlots11.remove(iter11.next());
+			domainTheatreSlots10.remove(iter10.next());
 		}		
 		
-		domainObject.setTheatreSlots(domainTheatreSlots11);		
-		domainObject.setParentChildSlots(ims.scheduling.vo.domain.SessionParentChildSlotVoAssembler.extractSessionParentChildSlotSet(domainFactory, valueObject.getParentChildSlots(), domainObject.getParentChildSlots(), domMap));		
-		ims.clinical.vo.lookups.AnaestheticTypeCollection collection13 =
+		domainObject.setTheatreSlots(domainTheatreSlots10);		
+		ims.clinical.vo.lookups.AnaestheticTypeCollection collection11 =
 	valueObject.getAnaestheticType();
 	    java.util.List domainAnaestheticType = domainObject.getAnaestheticType();;			
-	    int collection13Size=0;
-		if (collection13 == null)
+	    int collection11Size=0;
+		if (collection11 == null)
 		{
 			domainAnaestheticType = new java.util.ArrayList(0);
 		}
 		else
 		{
-			collection13Size = collection13.size();
+			collection11Size = collection11.size();
 		}
 		
-		for(int i=0; i<collection13Size; i++) 
+		for(int i=0; i<collection11Size; i++) 
 		{
-			int instanceId = collection13.get(i).getID();
+			int instanceId = collection11.get(i).getID();
 			ims.domain.lookups.LookupInstanceRef dom =new ims.domain.lookups.LookupInstanceRef(domainFactory.getLookupInstance(instanceId));
 			
 			int domIdx = domainAnaestheticType.indexOf(dom);
@@ -761,34 +844,121 @@ public class SessionTheatreVoAssembler
 		
 		//Remove all ones in domList where index > voCollection.size() as these should
 		//now represent the ones removed from the VO collection. No longer referenced.
-		int j13 = domainAnaestheticType.size();
-		while (j13 > collection13Size)
+		int j11 = domainAnaestheticType.size();
+		while (j11 > collection11Size)
 		{
-			domainAnaestheticType.remove(j13-1);
-			j13 = domainAnaestheticType.size();
+			domainAnaestheticType.remove(j11-1);
+			j11 = domainAnaestheticType.size();
 		}
 
 		domainObject.setAnaestheticType(domainAnaestheticType);		
-		ims.core.clinical.domain.objects.Service value14 = null;
+		ims.core.clinical.domain.objects.Service value12 = null;
 		if ( null != valueObject.getService() ) 
 		{
 			if (valueObject.getService().getBoId() == null)
 			{
 				if (domMap.get(valueObject.getService()) != null)
 				{
-					value14 = (ims.core.clinical.domain.objects.Service)domMap.get(valueObject.getService());
+					value12 = (ims.core.clinical.domain.objects.Service)domMap.get(valueObject.getService());
 				}
 			}
 			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
 			{
-				value14 = domainObject.getService();	
+				value12 = domainObject.getService();	
 			}
 			else
 			{
-				value14 = (ims.core.clinical.domain.objects.Service)domainFactory.getDomainObject(ims.core.clinical.domain.objects.Service.class, valueObject.getService().getBoId());
+				value12 = (ims.core.clinical.domain.objects.Service)domainFactory.getDomainObject(ims.core.clinical.domain.objects.Service.class, valueObject.getService().getBoId());
 			}
 		}
-		domainObject.setService(value14);
+		domainObject.setService(value12);
+
+		// SaveAsRefVO treated as RefValueObject
+		ims.scheduling.vo.Session_Exc_TimeRefVoCollection refCollection13 = new ims.scheduling.vo.Session_Exc_TimeRefVoCollection();
+		if (valueObject.getExclusionTimes() != null)
+		{
+			for (int i13=0; i13<valueObject.getExclusionTimes().size(); i13++)
+			{
+				ims.scheduling.vo.Session_Exc_TimeRefVo ref13 = (ims.scheduling.vo.Session_Exc_TimeRefVo)valueObject.getExclusionTimes().get(i13);
+				refCollection13.add(ref13);
+			}
+		}
+		int size13 = (null == refCollection13) ? 0 : refCollection13.size();		
+		java.util.Set domainExclusionTimes13 = domainObject.getExclusionTimes();
+		if (domainExclusionTimes13 == null)
+		{
+			domainExclusionTimes13 = new java.util.HashSet();
+		}
+		java.util.Set newSet13  = new java.util.HashSet();
+		for(int i=0; i<size13; i++) 
+		{
+			ims.scheduling.vo.Session_Exc_TimeRefVo vo = refCollection13.get(i);					
+			ims.scheduling.domain.objects.Session_Exc_Time dom = null;
+			if ( null != vo ) 
+			{
+				if (vo.getBoId() == null)
+				{
+					if (domMap.get(vo) != null)
+					{
+						dom = (ims.scheduling.domain.objects.Session_Exc_Time)domMap.get(vo);
+					}
+				}
+				else
+				{
+					dom = (ims.scheduling.domain.objects.Session_Exc_Time)domainFactory.getDomainObject( ims.scheduling.domain.objects.Session_Exc_Time.class, vo.getBoId());
+				}
+			}
+
+			//Trying to avoid the hibernate collection being marked as dirty via its public interface methods. (like add)
+			if (!domainExclusionTimes13.contains(dom))
+			{
+				domainExclusionTimes13.add(dom);
+			}
+			newSet13.add(dom);			
+		}
+		java.util.Set removedSet13 = new java.util.HashSet();
+		java.util.Iterator iter13 = domainExclusionTimes13.iterator();
+		//Find out which objects need to be removed
+		while (iter13.hasNext())
+		{
+			ims.domain.DomainObject o = (ims.domain.DomainObject)iter13.next();			
+			if ((o == null || o.getIsRIE() == null || !o.getIsRIE().booleanValue()) && !newSet13.contains(o))
+			{
+				removedSet13.add(o);
+			}
+		}
+		iter13 = removedSet13.iterator();
+		//Remove the unwanted objects
+		while (iter13.hasNext())
+		{
+			domainExclusionTimes13.remove(iter13.next());
+		}		
+		
+		domainObject.setExclusionTimes(domainExclusionTimes13);		
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getSessionComment() != null && valueObject.getSessionComment().equals(""))
+		{
+			valueObject.setSessionComment(null);
+		}
+		domainObject.setSessionComment(valueObject.getSessionComment());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value15 = null;
+		if ( null != valueObject.getSessionProfileType() ) 
+		{
+			value15 =
+				domainFactory.getLookupInstance(valueObject.getSessionProfileType().getID());
+		}
+		domainObject.setSessionProfileType(value15);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value16 = null;
+		if ( null != valueObject.getListType() ) 
+		{
+			value16 =
+				domainFactory.getLookupInstance(valueObject.getListType().getID());
+		}
+		domainObject.setListType(value16);
+		domainObject.setParentChildSlots(ims.scheduling.vo.domain.SessionParentChildSlotVoAssembler.extractSessionParentChildSlotSet(domainFactory, valueObject.getParentChildSlots(), domainObject.getParentChildSlots(), domMap));		
 
 		return domainObject;
 	}

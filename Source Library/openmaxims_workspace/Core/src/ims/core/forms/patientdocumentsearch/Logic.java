@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -247,7 +252,7 @@ public class Logic extends BaseLogic
 					fullPath += fileName;
 				}
 				
-				engine.open(form.getForms().Core.PatientDocumentView, new Object[] {fullPath.replace("/", "\\")});
+				engine.open(form.getForms().Core.PatientDocumentView, new Object[] {fullPath.replace("/", "\\")},true,true);//WDEV-18706
 			}
 		}
 	}
@@ -312,7 +317,15 @@ public class Logic extends BaseLogic
 		
 		int inputFileTypesIndex = inputFileName.lastIndexOf(".");
 		String inputFileType = inputFileName.substring(inputFileTypesIndex+1);
-		String inputFilePath = inputFileName.substring(0, inputFileName.lastIndexOf("/"));
+		
+		inputFileTypesIndex = inputFileName.lastIndexOf("/");
+		if(inputFileTypesIndex < 0)
+			inputFileTypesIndex = inputFileName.lastIndexOf("\\");
+		
+		if(inputFileTypesIndex < 0)
+			return null;
+		
+		String inputFilePath = inputFileName.substring(0, inputFileTypesIndex);
 		String pdfFileName = inputFilePath + "/" + generateName() + ".pdf";
 		String pdfPathName = (getPdfStorePath() + pdfFileName).replace("/", "\\");
 		
@@ -494,7 +507,7 @@ public class Logic extends BaseLogic
 		newRow.setSpecialty(patientDocument.getSpecialtyIsNotNull() ? patientDocument.getSpecialty().getText() : null);
 		newRow.setAuthor(patientDocument.getAuthoringHCPIsNotNull() ? patientDocument.getAuthoringHCP().getIMosName() : null);
 		newRow.setDocType(patientDocument.getCategoryIsNotNull() ? patientDocument.getCategory().getText() : null);
-//		newRow.setDocStatus(patientDocument.getCorrespondenceStatusIsNotNull() ? patientDocument.getCorrespondenceStatus().getIItemText() : null);
+		newRow.setDocStatus(patientDocument.getCorrespondenceStatusIsNotNull() ? patientDocument.getCorrespondenceStatus().getIItemText() : null);
 		newRow.setDocSource(patientDocument.getCreationTypeIsNotNull() ? patientDocument.getCreationType().getIItemText() : null);
 	}
 	
@@ -510,6 +523,8 @@ public class Logic extends BaseLogic
 		
 		if (patDocs == null || patDocs.size() == 0)
 		{
+			form.grdDetails().getRows().clear();
+			form.getLocalContext().setSelectedDocument(null);
 			engine.showMessage("No documents matching your search criteria were found !", "No results",MessageButtons.OK, MessageIcon.INFORMATION);
 			return null;
 		}
@@ -628,7 +643,7 @@ public class Logic extends BaseLogic
 		
 		if (dateFrom != null && dateTo != null && dateTo.isLessThan(dateFrom))
 		{
-			uiErrors.add("Date from can not be greater than date to");
+			uiErrors.add("'Document Date From' cannot be greater than 'Document Date To'."); //WDEV-18762
 		}
 		
 		if (uiErrors.size() > 0)
@@ -642,14 +657,16 @@ public class Logic extends BaseLogic
 	}
 	
 	private void updateControlState()
-	{
+	{	
+		form.getContextMenus().Core.hideAllPatientDocumentSearchMenuMenuItems();
 		form.getContextMenus().Core.getPatientDocumentSearchMenuNEWItem().setVisible(true);
-		form.getContextMenus().Core.getPatientDocumentSearchMenuVIEWItem().setVisible(form.getLocalContext().getSelectedDocumentIsNotNull());
-		form.getContextMenus().Core.getPatientDocumentSearchMenuEDITItem().setVisible(form.getLocalContext().getSelectedDocumentIsNotNull() && !DocumentStatus.FINAL.equals(form.getLocalContext().getSelectedDocument().getCorrespondenceStatus()));
+		form.getContextMenus().Core.getPatientDocumentSearchMenuVIEWItem().setVisible(form.grdDetails().getValue() != null); //WDEV-18711 
+		form.getContextMenus().Core.getPatientDocumentSearchMenuEDITItem().setVisible(form.grdDetails().getValue() != null && !DocumentStatus.FINAL.equals(form.getLocalContext().getSelectedDocument().getCorrespondenceStatus())); //WDEV-18711 
 		form.getContextMenus().Core.getPatientDocumentSearchMenuWORDPATHItem().setVisible(true);
-		form.getContextMenus().Core.getPatientDocumentSearchMenuCHANGEItem().setVisible(form.getLocalContext().getSelectedDocumentIsNotNull() && !DocumentStatus.FINAL.equals(form.getLocalContext().getSelectedDocument().getCorrespondenceStatus()));
-		form.getContextMenus().Core.getPatientDocumentSearchMenuPRINTItem().setVisible(form.getLocalContext().getSelectedDocumentIsNotNull());
-		form.getContextMenus().Core.getPatientDocumentSearchMenuPRINTANDLOCKItem().setVisible(form.getLocalContext().getSelectedDocumentIsNotNull() && !DocumentStatus.FINAL.equals(form.getLocalContext().getSelectedDocument().getCorrespondenceStatus()));
+		form.getContextMenus().Core.getPatientDocumentSearchMenuWORDPATHItem().setEnabled(!engine.isRIEMode());//WDEV-17579
+		form.getContextMenus().Core.getPatientDocumentSearchMenuCHANGEItem().setVisible(form.grdDetails().getValue() != null && !DocumentStatus.FINAL.equals(form.getLocalContext().getSelectedDocument().getCorrespondenceStatus()));// WDEV-18711 
+		form.getContextMenus().Core.getPatientDocumentSearchMenuPRINTItem().setVisible(form.grdDetails().getValue() != null);//WDEV-18711
+		form.getContextMenus().Core.getPatientDocumentSearchMenuPRINTANDLOCKItem().setVisible(form.grdDetails().getValue() != null && !DocumentStatus.FINAL.equals(form.getLocalContext().getSelectedDocument().getCorrespondenceStatus())); //WDEV-18711
 	}
 
 	@Override
@@ -842,5 +859,6 @@ public class Logic extends BaseLogic
 		}
 		
 		populatePatientDocumentsGrid(form.getLocalContext().getDocumentsCollection());
+		updateControlState();//WDEV-18711 
 	}	
 }

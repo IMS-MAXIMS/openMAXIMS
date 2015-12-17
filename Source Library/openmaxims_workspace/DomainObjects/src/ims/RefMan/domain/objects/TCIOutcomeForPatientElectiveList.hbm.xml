@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:37 -->
+<!-- Generated: 12/10/2015, 13:32 -->
 <hibernate-mapping>
 	<class name="ims.RefMan.domain.objects.TCIOutcomeForPatientElectiveList" table="care_tcioutcomeforp" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -41,6 +41,8 @@
 <!-- debug: statusDateTime -->
 <!-- debug: outcomeReason -->
 <!-- debug: cancelledForNonMedicalReason -->
+<!-- debug: cancellationReason -->
+<!-- debug: reasonComments -->
 <!-- debug: !IsAssociation && !IsCollection -->
 
 <!-- debug: IsLookup -->
@@ -61,6 +63,16 @@
 <!-- debug: !IsLookup -->
 		<property name="cancelledForNonMedicalReason" type="boolean" access="field" update="true">
 			<column name="cancelledf"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="cancellationReason" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_cancellati" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="reasonComments" type="string" access="field" update="true" > 
+			<column name="reasoncomm" length="255"  not-null="false" unique="false"  />
 		</property>
 	</class>
 </hibernate-mapping>

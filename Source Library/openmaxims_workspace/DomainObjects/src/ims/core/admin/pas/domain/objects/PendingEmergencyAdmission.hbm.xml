@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:36 -->
+<!-- Generated: 12/10/2015, 13:31 -->
 <hibernate-mapping>
 	<class name="ims.core.admin.pas.domain.objects.PendingEmergencyAdmission" table="core_pendingemergen" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -69,6 +69,24 @@
 			
 			<one-to-many class="ims.core.admin.pas.domain.objects.AllocatedWardHistory" />
 		</set>
+<!-- debug: hospital -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="hospital" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="pendingemergen_hospital_fk" access="field" cascade="save-update">
+			<column name="hospital" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: type -->
+<!-- debug: transferReason -->
+<!-- debug: proposedProposedTransferDate -->
+<!-- debug: service -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="service" class="ims.core.clinical.domain.objects.Service" unique="true" foreign-key="pendingemergen_service_fk" access="field" cascade="save-update">
+			<column name="service" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: specialty -->
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: IsLookup -->
 		<many-to-one name="admissionStatus" class="ims.domain.lookups.LookupInstance" access="field">
@@ -103,6 +121,26 @@
 <!-- debug: IsLookup -->
 		<many-to-one name="bedTypeRequested" class="ims.domain.lookups.LookupInstance" access="field">
 			<column name="lkp_bedtypereq" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="type" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_c_ty" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="transferReason" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_transferre" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="proposedProposedTransferDate" type="date" access="field" update="true">
+			<column name="proposedpr"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="specialty" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_specialty" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
 	</class>
 </hibernate-mapping>

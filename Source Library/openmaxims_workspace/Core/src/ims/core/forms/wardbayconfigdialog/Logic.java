@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -29,6 +34,8 @@ import ims.core.vo.BayConfigVo;
 import ims.core.vo.BayConfigVoCollection;
 import ims.core.vo.BedSpaceStateStatusLiteVo;
 import ims.core.vo.BedSpaceVoCollection;
+import ims.core.vo.BedsAllocatedVo;
+import ims.core.vo.BedsAllocatedVoCollection;
 import ims.core.vo.FloorBedSpaceLayoutLiteVo;
 import ims.core.vo.FloorBedSpaceLayoutLiteVoCollection;
 import ims.core.vo.LocationLiteVo;
@@ -54,12 +61,14 @@ import java.util.List;
 public class Logic extends BaseLogic
 {
 	private static final long serialVersionUID = 1L;
-
+	private static final int COL_BAY_ACTIVE = 3;
 	@Override
 	protected void onFormOpen(Object[] args) throws ims.framework.exceptions.PresentationLogicException
 	{
 		initialise();
 		populateScreenFromData();
+		calculateNrOfBeds();
+		updateControlsState();
 	}
 
 	private void initialise()
@@ -67,7 +76,7 @@ public class Logic extends BaseLogic
 		form.grdLayouts().setEnabled(false);
 		form.getContextMenus().Core.getWardBayConfigDialogADDItem().setVisible(false);
 		form.getContextMenus().Core.getWardBayConfigDialogREMOVEItem().setVisible(false);
-		
+		form.getLocalContext().setLCTotalNoOfBeds(0);		
 		prepopulateSpecialties();
 		
 		//available floor layouts
@@ -80,6 +89,20 @@ public class Logic extends BaseLogic
 			for(FloorBedSpaceLayoutLiteVo voItem : form.getLocalContext().getActiveLayouts())
 			{
 				form.cmbTemplates().newRow(voItem, voItem.getName());
+			}
+			if (form.getLocalContext().getActiveLayouts() != null && form.getLocalContext().getActiveLayouts().size() > 0)
+			{
+				if (form.getGlobalContext().STHK.getWardBayConfigVo() != null && form.getGlobalContext().STHK.getWardBayConfigVo().getID_WardBayConfig() == null)
+				{	
+					if (form.getLocalContext().getActiveLayouts().size() == 1)
+					{	
+						form.cmbTemplates().setValue(form.getLocalContext().getActiveLayouts().get(0));
+					}
+					else
+					{
+						form.cmbTemplates().showOpened();
+					}
+				}
 			}
 		}
 	}
@@ -98,6 +121,7 @@ public class Logic extends BaseLogic
 			Specialty specInst = collSpec.get(i);
 			grdSpecialtiesRow row = form.grdSpecialties().getRows().newRow();
 			row.setSpecialty(specInst);
+			row.setColBedsAllocatedReadOnly(true);
 		}
 	}
 
@@ -109,8 +133,9 @@ public class Logic extends BaseLogic
 		
 		form.getLocalContext().setSelectedBay(null);
 		form.getLocalContext().setSelectedBayConfig(null);
+
+//		form.lblWard().setValue(voWardBayConf.getWard() != null ? voWardBayConf.getWard().getName() + (ConfigFlag.GEN.USE_ELECTIVE_LIST_FUNCTIONALITY.getValue() ? numberOfBedSpaces : "")  : "");
 		
-		form.lblWard().setValue(voWardBayConf.getWard() != null ? voWardBayConf.getWard().getName() : "");
 		form.chkWaiting().setValue(voWardBayConf.getIsWaitingArea());
 		if(voWardBayConf.getID_WardBayConfig() == null)
 			form.chkWaiting().setValue(true);
@@ -119,7 +144,7 @@ public class Logic extends BaseLogic
 		ansBoxValueChanged();
 		
 		populateBayConfigsGridFromData(voWardBayConf.getBays());
-		populateSpecialtiesGridFromData(voWardBayConf.getSpecialties(), voWardBayConf.getMainSpecialty());
+		populateSpecialtiesGridFromData(voWardBayConf.getSpecialties(), voWardBayConf.getMainSpecialty(), voWardBayConf.getBedsAllocated());
 		
 		if(form.ansYesNo().getValue() != null)
 		{
@@ -129,6 +154,13 @@ public class Logic extends BaseLogic
 				{
 					form.cmbTemplates().newRow(voWardBayConf.getBays().get(0).getFloorBedSpaceLayout(), voWardBayConf.getBays().get(0).getFloorBedSpaceLayout().getName());
 					form.cmbTemplates().setValue(voWardBayConf.getBays().get(0).getFloorBedSpaceLayout());
+					form.chkFemale().setValue(Boolean.TRUE.equals(voWardBayConf.getBays().get(0).getFemale()) ? true : false);
+					form.chkWeekDays().setValue(Boolean.TRUE.equals(voWardBayConf.getBays().get(0).getWeekdaysOnly()) ? true : false);//WDEV-20390
+					form.chkMale().setValue(Boolean.TRUE.equals(voWardBayConf.getBays().get(0).getMale()) ? true : false);
+					form.chkPaediatric().setValue(Boolean.TRUE.equals(voWardBayConf.getBays().get(0).getPaediatric()) ? true : false);
+					form.cmbDependency().setValue(voWardBayConf.getBays().get(0).getDependencyIsNotNull() ? voWardBayConf.getBays().get(0).getDependency() : null);
+					form.timOpening().setValue(voWardBayConf.getBays().get(0).getOpeningTime());
+					form.timClosing().setValue(voWardBayConf.getBays().get(0).getClosingTime());
 					form.getLocalContext().setSelectedBay(voWardBayConf.getBays().get(0).getBay());
 					form.getLocalContext().setSelectedBayConfig(voWardBayConf.getBays().get(0));
 				}
@@ -136,7 +168,6 @@ public class Logic extends BaseLogic
 			if(voWardBayConf.getID_WardBayConfigIsNotNull())
 			{
 				form.ansYesNo().setEnabled(true);
-				form.cmbTemplates().setEnabled(false);
 			}
 			
 			if(form.grdLayouts().getRows().size() > 1)
@@ -144,7 +175,7 @@ public class Logic extends BaseLogic
 		}
 	}
 
-	private void populateSpecialtiesGridFromData(SpecialtyCollection specialties, Specialty mainSpecialty)
+	private void populateSpecialtiesGridFromData(SpecialtyCollection specialties, Specialty mainSpecialty, BedsAllocatedVoCollection bedsAllocatedVoCollection)
 	{
 		if(specialties == null)
 			return;
@@ -159,7 +190,24 @@ public class Logic extends BaseLogic
 			if(mainSpecialty != null)
 				if(form.grdSpecialties().getRows().get(i).getSpecialty().equals(mainSpecialty))
 					form.grdSpecialties().getRows().get(i).setMain(true);
+			//WDEV-19675 
+			form.grdSpecialties().getRows().get(i).setColBedsAllocated(getNoOfAllocatedBeds(form.grdSpecialties().getRows().get(i).getSpecialty(), bedsAllocatedVoCollection));
+			form.grdSpecialties().getRows().get(i).setColBedsAllocatedReadOnly(!Boolean.TRUE.equals(form.grdSpecialties().getRows().get(i).getSelect()) && !Boolean.TRUE.equals(form.grdSpecialties().getRows().get(i).getMain()));
 		}
+	}
+
+	private Integer getNoOfAllocatedBeds(Specialty specialty, BedsAllocatedVoCollection bedsAllocatedVoCollection)
+	{	
+		if (bedsAllocatedVoCollection == null)
+			return null;
+		
+		for (int i=0; i<bedsAllocatedVoCollection.size(); i++ )
+		{
+			if (bedsAllocatedVoCollection.get(i).getSpecialty().equals(specialty))
+				return  bedsAllocatedVoCollection.get(i).getNumberOfBeds();
+		}
+		
+		return null;		
 	}
 
 	private void populateBayConfigsGridFromData(BayConfigVoCollection voCollBayConf)
@@ -181,12 +229,21 @@ public class Logic extends BaseLogic
 				//WDEV-13964
 				row.setActive(voBayConfig.getBay().getIsActive());
 			}
+			
 			if(voBayConfig.getFloorBedSpaceLayoutIsNotNull())
 			{
 				row.getBayBedSpaceLayout().newRow(voBayConfig.getFloorBedSpaceLayout(), voBayConfig.getFloorBedSpaceLayout().getName());
 				row.getBayBedSpaceLayout().setValue(voBayConfig.getFloorBedSpaceLayout());			
 				row.setBayBedSpaceLayoutReadOnly(true);
+				row.setColFemale(Boolean.TRUE.equals(voBayConfig.getFemale()) ? true : false);
+				row.setColMale(Boolean.TRUE.equals(voBayConfig.getMale()) ? true : false);
+				row.setColPaediatric(Boolean.TRUE.equals(voBayConfig.getPaediatric()) ? true : false);
+				row.setColWeekDay(Boolean.TRUE.equals(voBayConfig.getWeekdaysOnly()) ? true : false);
+				row.setColDependencyLevel(voBayConfig.getDependency());
+				row.setColOpeningTime(voBayConfig.getOpeningTime());
+				row.setColClosingTime(voBayConfig.getClosingTime());
 			}
+			
 			addAvailableFloorLayouts(row);
 			row.setValue(voBayConfig);
 		}
@@ -201,27 +258,47 @@ public class Logic extends BaseLogic
 			if(isChecked)
 			{
 				for(int i=0;i<form.grdSpecialties().getRows().size();i++)
+				{
 					form.grdSpecialties().getRows().get(i).setMain(false);
+				}
 
 				row.setMain(isChecked);
 				row.setSelect(isChecked);
 			}
 		}
+		//WDEV-19675 
+		row.setColBedsAllocatedReadOnly(!Boolean.TRUE.equals(row.getSelect()) && !Boolean.TRUE.equals(row.getMain()));
+		
+		if (!Boolean.TRUE.equals(row.getSelect()) && !Boolean.TRUE.equals(row.getMain()))
+			row.setColBedsAllocated(null);
 	}
-	
+
 	@Override
 	protected void onBtnSaveClick() throws ims.framework.exceptions.PresentationLogicException
 	{
 		WardBayConfigVo voWardBayConfig = form.getGlobalContext().STHK.getWardBayConfigVo();
 		if (voWardBayConfig == null)
 			throw new CodingRuntimeException("voWardBayConfig cannot be null in method onBtnSaveClick");
-				
+		
+		if (hasDuplicateBayNames())
+		{
+			engine.showMessage("Cannot save active bays with duplicate names.");
+			return;
+		}
+		
 		voWardBayConfig = populateDataFromScreen(voWardBayConfig);
 		
 		String[] errors = voWardBayConfig.validate(getUIValidationErrors());
 		if(errors != null)
 		{
 			engine.showErrors(errors);
+			return;
+		}
+		
+		int nrOfBeds = getSumOfBedsForSpecialty();
+		if (nrOfBeds > form.getLocalContext().getLCTotalNoOfBeds())
+		{
+			engine.showMessage("Total Number of Specialty Allocated Beds exceeds ward's Total Number of Bed Spaces: " + form.getLocalContext().getLCTotalNoOfBeds() + ".");
 			return;
 		}
 		
@@ -245,16 +322,58 @@ public class Logic extends BaseLogic
 		engine.close(DialogResult.OK);
 	}
 	
+	private boolean hasDuplicateBayNames()
+	{
+		int rowsSize = form.grdLayouts().getRows().size();
+		
+		if (rowsSize <= 1)
+			return false;
+		
+		for (int i = 0; i < rowsSize - 1; i++)
+		{
+			for (int j = i + 1; j < rowsSize; j++)
+			{
+				if (form.grdLayouts().getRows().get(i).getBay() != null
+						&& form.grdLayouts().getRows().get(j).getBay() != null
+						&& form.grdLayouts().getRows().get(i).getBay().equals(form.grdLayouts().getRows().get(j).getBay())
+						&& Boolean.TRUE.equals(form.grdLayouts().getRows().get(i).getActive())
+						&& Boolean.TRUE.equals(form.grdLayouts().getRows().get(j).getActive()))
+				{
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+
+	private int getSumOfBedsForSpecialty()
+	{
+		int noOfBeds = 0;
+		for (int i = 0; i < form.grdSpecialties().getRows().size(); i++ )
+		{
+			if (form.grdSpecialties().getRows().get(i).getColBedsAllocated() != null)
+				noOfBeds += form.grdSpecialties().getRows().get(i).getColBedsAllocated();
+		}
+		
+		return noOfBeds;
+	}
+
 	private String[] getUIValidationErrors()
 	{
 		List<String> errors = new ArrayList<String>();
 		
 		if(form.ansYesNo().getValue() == null)
-			errors.add("'Multiple Bays' is mandatory");
+			errors.add("'Multiple Bays' is mandatory.");
 		//one specialty selected
 		if(getSelectedSpecialties() == null || getSelectedSpecialties().size() == 0)
-			errors.add("One Specialty is mandatory");
-		
+			errors.add("One Specialty is mandatory.");
+		if (YesNo.NO.equals(form.ansYesNo().getValue()) && form.timOpening().getValue() == null && form.timClosing().getValue() != null)
+			errors.add("Opening Time is mandatory if Closing Time was entered for the bay.");
+		if (YesNo.NO.equals(form.ansYesNo().getValue()) && form.timClosing().getValue()  == null && form.timOpening().getValue() != null)
+			errors.add("Closing Time is mandatory if Opening Time was entered for the bay.");
+		if (YesNo.NO.equals(form.ansYesNo().getValue()) && form.timOpening().getValue() != null && form.timClosing().getValue() != null && form.timClosing().getValue().isLessOrEqualThan(form.timOpening().getValue()))
+			errors.add("Closing Time cannot be earlier than Opening Time.");
 		//each layout row has a location name and floorbedlayout selected
 		for(int i=0;i<form.grdLayouts().getRows().size();i++)
 		{
@@ -263,8 +382,17 @@ public class Logic extends BaseLogic
 			  if(lRow.getBay() == null || lRow.getBay().equals("")) 
 				errors.add("Bay Name is mandatory"); 
 			*/
-			if(lRow.getBayBedSpaceLayout() == null)
-				errors.add("Bed Space Layout is mandatory");
+			if (YesNo.YES.equals(form.ansYesNo().getValue()))
+			{		
+				if(lRow.getBayBedSpaceLayout() == null)
+					errors.add("Bed Space Layout is mandatory.");
+				if (lRow.getColOpeningTime() == null && lRow.getColClosingTime() != null)
+					errors.add("Opening Time is mandatory if Closing Time was entered for the bay.");
+				if (lRow.getColOpeningTime() != null && lRow.getColClosingTime() == null)
+					errors.add("Closing Time is mandatory if Opening Time was entered for the bay.");
+				if (lRow.getColOpeningTime() != null && lRow.getColClosingTime() != null && lRow.getColClosingTime().isLessOrEqualThan(lRow.getColOpeningTime()))
+					errors.add("Closing Time cannot be earlier than Opening Time.");
+			}
 		}
 			
 		return (errors.size() > 0 ? errors.toArray(new String[0]) : null);
@@ -279,8 +407,34 @@ public class Logic extends BaseLogic
 		voWardBayConfig.setSpecialties(getSelectedSpecialties());
 		voWardBayConfig.setMainSpecialty(getMainSpecialty());
 		voWardBayConfig.setBays(getSelectedBays());
+		voWardBayConfig.setBedsAllocated(getNoOfAllocatedBeds());
+		
+		//WDEV-20217
+		voWardBayConfig.setNumOfBeds(form.getLocalContext().getLCTotalNoOfBeds());
 		
 		return voWardBayConfig;
+	}
+
+	private BedsAllocatedVoCollection getNoOfAllocatedBeds()
+	{
+		BedsAllocatedVoCollection allocatedBedsVoCollection = new BedsAllocatedVoCollection();
+		
+		for(int i = 0; i < form.grdSpecialties().getRows().size(); i++)
+		{
+			grdSpecialtiesRow row = form.grdSpecialties().getRows().get(i);
+			
+			if (row.getColBedsAllocated() != null)
+			{
+				BedsAllocatedVo nrOfAllocatedBeds = new BedsAllocatedVo();
+				
+				nrOfAllocatedBeds.setSpecialty(row.getSpecialty());
+				nrOfAllocatedBeds.setNumberOfBeds(row.getColBedsAllocated());
+				
+				allocatedBedsVoCollection.add(nrOfAllocatedBeds);
+			}
+
+		}
+		return allocatedBedsVoCollection;
 	}
 
 	private BayConfigVoCollection getSelectedBays()
@@ -300,8 +454,19 @@ public class Logic extends BaseLogic
 					voBayConfig.setFloorBedSpaceLayout((FloorBedSpaceLayoutLiteVo) row.getBayBedSpaceLayout().getValue());
 					//WDEV-13964
 					voBayConfig.setIsActive(row.getActive());
+					//WDEV-19675
+					voBayConfig.setFemale(Boolean.TRUE.equals(row.getColFemale()) ? true : false);
+					voBayConfig.setMale(Boolean.TRUE.equals(row.getColMale()) ? true : false);
+					voBayConfig.setPaediatric(Boolean.TRUE.equals(row.getColPaediatric()) ? true : false);
+					voBayConfig.setDependency(row.getColDependencyLevel());
+					voBayConfig.setWeekdaysOnly(Boolean.TRUE.equals(row.getColWeekDay()) ? true : false);//WDEV-20390
 					
-					if(!isThisRecordDuplicate(voBayConfig, voCollBayConfig))
+					//WDEV-20217
+					voBayConfig.setOpeningTime(row.getColOpeningTime());
+					voBayConfig.setClosingTime(row.getColClosingTime());
+					voBayConfig.setNumOfBeds(getNrOfBeds((FloorBedSpaceLayoutLiteVo) row.getBayBedSpaceLayout().getValue()));
+					
+					if(voBayConfig != null && !isThisRecordDuplicate(voBayConfig, voCollBayConfig))
 						voCollBayConfig.add(voBayConfig);
 				}
 			}
@@ -310,6 +475,18 @@ public class Logic extends BaseLogic
 				BayConfigVo voBayConfig = getSelectedBayConfig();
 				voBayConfig.setBay(getBay(null));
 				voBayConfig.setFloorBedSpaceLayout(form.cmbTemplates().getValue());
+				//WDEV-19675 
+				voBayConfig.setFemale(Boolean.TRUE.equals(form.chkFemale().getValue()));
+				voBayConfig.setMale(Boolean.TRUE.equals(form.chkMale().getValue()));
+				voBayConfig.setPaediatric(Boolean.TRUE.equals(form.chkPaediatric().getValue()));
+				voBayConfig.setDependency(form.cmbDependency().getValue());
+				voBayConfig.setWeekdaysOnly(Boolean.TRUE.equals(form.chkWeekDays().getValue()));//WDEV-20390
+				
+				//WDEV-20217
+				voBayConfig.setOpeningTime(form.timOpening().getValue());
+				voBayConfig.setClosingTime(form.timClosing().getValue());
+				voBayConfig.setNumOfBeds(getNrOfBeds(form.cmbTemplates().getValue()));
+				
 				//WDEV-13964 Latest Change 02/02/2012
 				voBayConfig.setIsActive(true);
 				voCollBayConfig.add(voBayConfig);
@@ -322,13 +499,13 @@ public class Logic extends BaseLogic
 	private boolean isThisRecordDuplicate(BayConfigVo voBayConfig, BayConfigVoCollection voCollBayConfig)
 	{
 		if (voCollBayConfig == null)
-			throw new CodingRuntimeException("voCollBayConfig cannot be null in method isThisRecordDuplicate");
+			return false;
 		if (voBayConfig == null)
-			throw new CodingRuntimeException("voCollBayConfig cannot be null in method isThisRecordDuplicate");
+			return false;
 		
 		for (BayConfigVo voBayConfiglstItem : voCollBayConfig)
 		{
-			if(voBayConfiglstItem.getBayIsNotNull() &&  voBayConfiglstItem.getBay().getNameIsNotNull() && voBayConfiglstItem.getBayIsNotNull() &&  voBayConfiglstItem.getBayIsNotNull() &&  voBayConfiglstItem.getBay().getNameIsNotNull())
+			if(voBayConfiglstItem.getBayIsNotNull() &&  voBayConfiglstItem.getBay().getNameIsNotNull() && Boolean.TRUE.equals(voBayConfiglstItem.getIsActive()) && Boolean.TRUE.equals(voBayConfig.getIsActive()))
 			{
 				if(voBayConfiglstItem.getBay().getName().equals(voBayConfig.getBay().getName()))
 				{
@@ -425,30 +602,33 @@ public class Logic extends BaseLogic
 
 	private void ansBoxValueChanged()
 	{
-		if(form.ansYesNo().getValue() != null)
-		{
-			if(form.ansYesNo().getValue().equals(YesNo.YES))
-			{
-				form.cmbTemplates().setVisible(false);
-				form.lblLayout().setVisible(false);
-				form.grdLayouts().setEnabled(true);
-				form.grdLayouts().setReadOnly(false);
-				form.grdLayouts().setVisible(true);
-				form.getContextMenus().Core.getWardBayConfigDialogADDItem().setVisible(true);
-			}
-			else if(form.ansYesNo().getValue().equals(YesNo.NO))
-			{
-				form.grdLayouts().setVisible(false);
-				form.cmbTemplates().setVisible(true);
-				form.lblLayout().setVisible(true);
-			}
-		}
-		else
-		{
-			form.grdLayouts().setVisible(false);
-			form.cmbTemplates().setVisible(false);
-			form.lblLayout().setVisible(false);
-		}
+//		if(form.ansYesNo().getValue() != null)
+//		{
+//			if(form.ansYesNo().getValue().equals(YesNo.YES))
+//			{
+//				form.cmbTemplates().setVisible(false);
+//				form.lblLayout().setVisible(false);
+//				form.grdLayouts().setEnabled(true);
+//				form.grdLayouts().setReadOnly(false);
+//				form.grdLayouts().setVisible(true);
+//				form.getContextMenus().Core.getWardBayConfigDialogADDItem().setVisible(true);
+//			}
+//			else if(form.ansYesNo().getValue().equals(YesNo.NO))
+//			{
+//				form.grdLayouts().setVisible(false);
+//				form.cmbTemplates().setVisible(true);
+//				form.lblLayout().setVisible(true);
+//			}
+//		}
+//		else
+//		{
+//			form.grdLayouts().setVisible(false);
+//			form.cmbTemplates().setVisible(false);
+//			form.lblLayout().setVisible(false);
+//		}
+		
+		updateControlsState();
+		calculateNrOfBeds();
 	}
 
 	@Override
@@ -457,7 +637,7 @@ public class Logic extends BaseLogic
 		switch(menuItemID)
 		{
 			case GenForm.ContextMenus.CoreNamespace.WardBayConfigDialog.ADD:
-				grdLayoutsRow row = form.grdLayouts().getRows().newRow();
+				grdLayoutsRow row = form.grdLayouts().getRows().newRow(true);
 				row.setBayValue(new LocationLiteVo());
 				row.setValue(new BayConfigVo());
 				addAvailableFloorLayouts(row);
@@ -470,8 +650,21 @@ public class Logic extends BaseLogic
 					//form.getContextMenus().Core.getWardBayConfigDialogREMOVEItem().setVisible(false);
 				}
 			break;
+			
+			case GenForm.ContextMenus.CoreNamespace.WardBayConfigDialog.CONFIGURE_BED_TIMES:
+				configureBedTimes();
+			break;
 			default:
 		}
+	}
+
+	private void configureBedTimes()
+	{
+		if(!ConfigFlag.GEN.USE_ELECTIVE_LIST_FUNCTIONALITY.getValue() || form.grdLayouts().getValue() == null)
+			return;
+		
+		form.getGlobalContext().Core.setSelectedBay(form.grdLayouts().getValue().getBay());
+		engine.open(form.getForms().Core.BedAvailabilityTimes);
 	}
 
 	private void addAvailableFloorLayouts(grdLayoutsRow row)
@@ -484,6 +677,15 @@ public class Logic extends BaseLogic
 				if(voFloorBedSpace != null)
 					row.getBayBedSpaceLayout().newRow(voFloorBedSpace, voFloorBedSpace.getName());
 			}
+			if (voCollLayout.size() > 0 && row.getValue() != null && row.getValue().getID_BayConfig() == null)
+			{
+				if (voCollLayout.size() == 1)
+					row.getBayBedSpaceLayout().setValue(voCollLayout.get(0));
+				else
+				{
+					row.getBayBedSpaceLayout().showOpened();
+				}
+			}
 		}
 	}
 
@@ -492,14 +694,77 @@ public class Logic extends BaseLogic
 	protected void onGrdLayoutsSelectionChanged() throws PresentationLogicException
 	{
 		//form.getContextMenus().Core.getWardBayConfigDialogREMOVEItem().setVisible(form.grdLayouts().getSelectedRow() != null && form.getMode().equals(FormMode.EDIT)&& domain.getOccupiedBedsForBay(form.grdLayouts().getSelectedRow().getValue().getBay())==0);
+		updateControlsState();
+	}
+
+	private void updateControlsState()
+	{
+		form.getContextMenus().Core.getWardBayConfigDialogCONFIGURE_BED_TIMESItem().setVisible(false);//ConfigFlag.GEN.USE_ELECTIVE_LIST_FUNCTIONALITY.getValue() && form.grdLayouts().getValue() != null);
 		
+		form.grdLayouts().setEnabled(form.ansYesNo().getValue() != null && form.ansYesNo().getValue().equals(YesNo.YES) ? true : false);
+		form.grdLayouts().setReadOnly(form.ansYesNo().getValue() != null && form.ansYesNo().getValue().equals(YesNo.YES) ? false : true);
+		form.grdLayouts().setVisible(form.ansYesNo().getValue() != null && form.ansYesNo().getValue().equals(YesNo.YES) ? true : false);
+		
+		form.lblLayout().setVisible(form.ansYesNo().getValue() != null && form.ansYesNo().getValue().equals(YesNo.NO) ? true : false);
+		
+		WardBayConfigVo voWardBayConf = form.getGlobalContext().STHK.getWardBayConfigVo();
+		form.cmbTemplates().setEnabled(form.ansYesNo().getValue() != null && voWardBayConf.getID_WardBayConfigIsNotNull() ? false : true);
+		form.cmbTemplates().setVisible(form.ansYesNo().getValue() != null && form.ansYesNo().getValue().equals(YesNo.NO) ? true : false);
+		
+		form.getContextMenus().Core.getWardBayConfigDialogADDItem().setVisible(form.ansYesNo().getValue() != null && form.ansYesNo().getValue().equals(YesNo.YES) ? true : false);
+		
+		form.chkFemale().setEnabled(YesNo.NO.equals(form.ansYesNo().getValue()) ? true : false);
+		form.chkFemale().setVisible(form.ansYesNo().getValue() != null && form.ansYesNo().getValue().equals(YesNo.NO) ? true : false);
+		
+		form.chkMale().setEnabled(YesNo.NO.equals(form.ansYesNo().getValue()) ? true : false);
+		form.chkMale().setVisible(form.ansYesNo().getValue() != null && form.ansYesNo().getValue().equals(YesNo.NO) ? true : false);
+		
+		form.chkPaediatric().setEnabled(YesNo.NO.equals(form.ansYesNo().getValue()) ? true : false);
+		form.chkPaediatric().setVisible(form.ansYesNo().getValue() != null && form.ansYesNo().getValue().equals(YesNo.NO) ? true : false);
+		
+		form.chkWeekDays().setEnabled(YesNo.NO.equals(form.ansYesNo().getValue()) ? true : false);//WDEV-20390
+		form.chkWeekDays().setVisible(form.ansYesNo().getValue() != null && form.ansYesNo().getValue().equals(YesNo.NO) ? true : false);//WDEV-20390
+		form.lblWeekdays().setVisible(form.ansYesNo().getValue() != null && form.ansYesNo().getValue().equals(YesNo.NO) ? true : false);
+		
+		form.cmbDependency().setEnabled(YesNo.NO.equals(form.ansYesNo().getValue()) ? true : false);
+		form.cmbDependency().setVisible(form.ansYesNo().getValue() != null && form.ansYesNo().getValue().equals(YesNo.NO) ? true : false);
+		
+		form.lblDependency().setVisible(form.ansYesNo().getValue() != null && form.ansYesNo().getValue().equals(YesNo.NO) ? true : false);
+		
+		form.lblOpeningTime().setVisible(form.ansYesNo().getValue() != null && form.ansYesNo().getValue().equals(YesNo.NO) ? true : false);
+		form.timOpening().setVisible(form.ansYesNo().getValue() != null && form.ansYesNo().getValue().equals(YesNo.NO) ? true : false);
+		
+		form.lblClosingTime().setVisible(form.ansYesNo().getValue() != null && form.ansYesNo().getValue().equals(YesNo.NO) ? true : false);
+		form.timClosing().setVisible(form.ansYesNo().getValue() != null && form.ansYesNo().getValue().equals(YesNo.NO) ? true : false);
+		
+		form.timOpening().setRequired(YesNo.NO.equals(form.ansYesNo().getValue()) && form.timClosing().getValue() != null && form.timOpening().getValue() == null);
+		form.timClosing().setRequired(YesNo.NO.equals(form.ansYesNo().getValue()) && form.timOpening().getValue() != null && form.timClosing().getValue() == null);
 	}
 
 	//WDEV-18064
 	@Override
 	protected void onGrdLayoutsGridCheckBoxClicked(int column, grdLayoutsRow row, boolean isChecked) throws PresentationLogicException
 	{
-		if (Boolean.FALSE.equals(isChecked) && row.getValue().getFloorBedSpaceLayout() != null && row.getValue().getID_BayConfig() != null)
+		//http://jira/browse/WDEV-20449
+//		if (Boolean.FALSE.equals(isChecked) && row.getValue().getFloorBedSpaceLayout() != null && row.getValue().getID_BayConfig() != null)
+//		{
+//			if (row.getValue().getID_BayConfig() != null)
+//			{
+//				BedSpaceVoCollection getBedSpaces = domain.getBedSpacesForLayout(row.getValue().getFloorBedSpaceLayout());
+//				
+//				if (areOccupiedBeds(getBedSpaces))
+//				{
+//					row.setActive(Boolean.TRUE);
+//					//engine.showMessage("Bay cannot be Inactivated as there are occupied beds on the Ward.", "Warning", MessageButtons.OK, MessageIcon.WARNING);
+//				}
+//			}
+//		}
+//		
+//		if (column == 3)
+//			calculateNrOfBeds();
+		
+		// Only perform following if user has ticked/unticked column 3 (Active) in grdLayouts
+		if (column == COL_BAY_ACTIVE)
 		{
 			if (row.getValue().getID_BayConfig() != null)
 			{
@@ -508,11 +773,42 @@ public class Logic extends BaseLogic
 				if (areOccupiedBeds(getBedSpaces))
 				{
 					row.setActive(Boolean.TRUE);
-					engine.showMessage("Bay cannot be Inactivated as there are occupied beds on the Ward.", "Warning", MessageButtons.OK, MessageIcon.WARNING);
+					engine.showMessage("The bay cannot be inactivated as there are patients occupying a bed admitted on it.", "Warning", MessageButtons.OK, MessageIcon.WARNING);
+				}
+			}
+		
+			calculateNrOfBeds();
+			
+		} //WDEV-20449
+		
+	}
+
+	private void calculateNrOfBeds()
+	{
+		int numberOfBeds = 0;
+		WardBayConfigVo voWardBayConf = form.getGlobalContext().STHK.getWardBayConfigVo();
+		if(voWardBayConf == null)
+			return;
+		
+		if (YesNo.YES.equals(form.ansYesNo().getValue()))
+		{
+			for(int i = 0; i < form.grdLayouts().getRows().size(); i++)
+			{
+				if (Boolean.TRUE.equals(form.grdLayouts().getRows().get(i).getActive()) && form.grdLayouts().getRows().get(i).getBayBedSpaceLayout().getValue() != null)
+				{
+					FloorBedSpaceLayoutLiteVo floorBedSpaceLayoutLite = (FloorBedSpaceLayoutLiteVo) form.grdLayouts().getRows().get(i).getBayBedSpaceLayout().getValue();
+					numberOfBeds = numberOfBeds + getNrOfBeds(floorBedSpaceLayoutLite);
 				}
 			}
 		}
+		else if (Boolean.TRUE.equals(form.cmbTemplates().getVisible()) && form.cmbTemplates().getValue() != null)
+		{
+			numberOfBeds =getNrOfBeds( form.cmbTemplates().getValue());
+		}
 		
+		String numberOfBedSpaces = " (Total Number of Bed Spaces: " + numberOfBeds + ")";
+		form.getLocalContext().setLCTotalNoOfBeds(numberOfBeds);
+		form.lblWard().setValue(voWardBayConf.getWard() != null ? voWardBayConf.getWard().getName() + numberOfBedSpaces : "");		
 	}
 
 	private Boolean areOccupiedBeds(BedSpaceVoCollection getBedSpaces)
@@ -529,5 +825,42 @@ public class Logic extends BaseLogic
 		}
 		
 		return false;
+	}
+
+	@Override
+	protected void onCmbTemplatesValueChanged() throws PresentationLogicException
+	{	
+		calculateNrOfBeds();
+	}
+
+	private int getNrOfBeds(FloorBedSpaceLayoutLiteVo floorLayout)
+	{
+		int noOfBeds = 0;
+		
+		if (floorLayout == null || (floorLayout != null && !floorLayout.getBedSpacesIsNotNull()) ) 
+			 return noOfBeds;
+		 
+		return  noOfBeds = floorLayout.getBedSpaces().size();
+	}
+
+	@Override
+	protected void onGrdLayoutsMutableComboBoxSelected(int column, grdLayoutsRow row, Object value) throws PresentationLogicException
+	{
+		if (Boolean.TRUE.equals(row.getActive()))
+			calculateNrOfBeds();		
+	}
+
+	@Override
+	protected void onTimClosingValueChanged() throws PresentationLogicException
+	{
+		updateControlsState();
+		
+	}
+
+	@Override
+	protected void onTimOpeningValueChanged() throws PresentationLogicException
+	{
+		updateControlsState();
+		
 	}
 }

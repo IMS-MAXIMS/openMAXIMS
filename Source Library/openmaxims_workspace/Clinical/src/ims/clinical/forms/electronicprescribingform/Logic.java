@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -29,6 +34,8 @@ import ims.clinical.helper.JACExecutionHelper;
 import ims.core.configuration.vo.AppRoleRefVo;
 import ims.framework.controls.Button;
 import ims.framework.controls.Label;
+import ims.framework.enumerations.SystemLogLevel;
+import ims.framework.enumerations.SystemLogType;
 
 public class Logic extends BaseLogic
 {
@@ -129,17 +136,19 @@ public class Logic extends BaseLogic
 
 	@Override
 	protected void onBtnButton8Click() throws ims.framework.exceptions.PresentationLogicException
-	{
-		JACExecutionHelper JAC = new JACExecutionHelper(engine, form.getGlobalContext().Core.getPatientShort(), findPath(BUTTONEIGHT), findParameter(BUTTONEIGHT) , setClinicCode());
+	{	
+		String param = setClinicCode();
+		JACExecutionHelper JAC = new JACExecutionHelper(engine, form.getGlobalContext().Core.getPatientShort(), findPath(BUTTONEIGHT), findParameter(BUTTONEIGHT) , param);
 		JAC.executeJAC();
+		domain.createSystemLogEntry(SystemLogType.APPLICATION, SystemLogLevel.INFORMATION, param != null && param.length() > 0 ? param : " ");
 	}
 	
 	private String setClinicCode()
 	{
 		if (form.getGlobalContext().Core.getEpisodeofCareShortIsNotNull()
 			&& form.getGlobalContext().Core.getEpisodeofCareShort().getSpecialtyIsNotNull())
-		{
-			String szSpec = form.getGlobalContext().Core.getEpisodeofCareShort().getSpecialty().getText();
+		{		
+			String szSpec = domain.getPHARMACYExternalMappingValue(form.getGlobalContext().Core.getEpisodeofCareShort().getSpecialty().getID());//WDEV-19818 
 			if (szSpec.length() > 15)
 				return szSpec.substring(0, 15).toUpperCase();
 			else
@@ -171,43 +180,57 @@ public class Logic extends BaseLogic
 	@Override
 	protected void onBtnButton7Click() throws ims.framework.exceptions.PresentationLogicException
 	{
-		JACExecutionHelper JAC = new JACExecutionHelper(engine, form.getGlobalContext().Core.getPatientShort(), findPath(BUTTONSEVEN), findParameter(BUTTONSEVEN), setClinicCode());
+		String param = setClinicCode();
+		JACExecutionHelper JAC = new JACExecutionHelper(engine, form.getGlobalContext().Core.getPatientShort(), findPath(BUTTONSEVEN), findParameter(BUTTONSEVEN), param);
 		JAC.executeJAC();
+		domain.createSystemLogEntry(SystemLogType.APPLICATION, SystemLogLevel.INFORMATION, param != null && param.length() > 0 ? param : " ");
 	}
 	@Override
 	protected void onBtnButton6Click() throws ims.framework.exceptions.PresentationLogicException
 	{
-		JACExecutionHelper JAC = new JACExecutionHelper(engine, form.getGlobalContext().Core.getPatientShort(), findPath(BUTTONSIX), findParameter(BUTTONSIX), setClinicCode());
+		String param = setClinicCode();
+		JACExecutionHelper JAC = new JACExecutionHelper(engine, form.getGlobalContext().Core.getPatientShort(), findPath(BUTTONSIX), findParameter(BUTTONSIX), param);
 		JAC.executeJAC();
+		domain.createSystemLogEntry(SystemLogType.APPLICATION, SystemLogLevel.INFORMATION, param != null && param.length() > 0 ? param : " ");
 	}
 	@Override
 	protected void onBtnButton5Click() throws ims.framework.exceptions.PresentationLogicException
 	{
-		JACExecutionHelper JAC = new JACExecutionHelper(engine, form.getGlobalContext().Core.getPatientShort(), findPath(BUTTONFIVE), findParameter(BUTTONFIVE), setClinicCode());
+		String param = setClinicCode();
+		JACExecutionHelper JAC = new JACExecutionHelper(engine, form.getGlobalContext().Core.getPatientShort(), findPath(BUTTONFIVE), findParameter(BUTTONFIVE), param);
 		JAC.executeJAC();
+		domain.createSystemLogEntry(SystemLogType.APPLICATION, SystemLogLevel.INFORMATION, param != null && param.length() > 0 ? param : " ");
 	}
 	@Override
 	protected void onBtnButton4Click() throws ims.framework.exceptions.PresentationLogicException
 	{
-		JACExecutionHelper JAC = new JACExecutionHelper(engine, form.getGlobalContext().Core.getPatientShort(), findPath(BUTTONFOUR), findParameter(BUTTONFOUR), setClinicCode());
+		String param = setClinicCode();
+		JACExecutionHelper JAC = new JACExecutionHelper(engine, form.getGlobalContext().Core.getPatientShort(), findPath(BUTTONFOUR), findParameter(BUTTONFOUR), param);
 		JAC.executeJAC();
+		domain.createSystemLogEntry(SystemLogType.APPLICATION, SystemLogLevel.INFORMATION, param != null && param.length() > 0 ? param : " ");
 	}
 	@Override
 	protected void onBtnButton3Click() throws ims.framework.exceptions.PresentationLogicException
 	{
-		JACExecutionHelper JAC = new JACExecutionHelper(engine, form.getGlobalContext().Core.getPatientShort(), findPath(BUTTONTHREE), findParameter(BUTTONTHREE), setClinicCode());
+		String param = setClinicCode();
+		JACExecutionHelper JAC = new JACExecutionHelper(engine, form.getGlobalContext().Core.getPatientShort(), findPath(BUTTONTHREE), findParameter(BUTTONTHREE), param);
 		JAC.executeJAC();
+		domain.createSystemLogEntry(SystemLogType.APPLICATION, SystemLogLevel.INFORMATION, param != null && param.length() > 0 ? param : " ");
 	}
 	@Override
 	protected void onBtnButton2Click() throws ims.framework.exceptions.PresentationLogicException
 	{
-		JACExecutionHelper JAC = new JACExecutionHelper(engine, form.getGlobalContext().Core.getPatientShort(), findPath(BUTTONTWO), findParameter(BUTTONTWO), setClinicCode());
+		String param = setClinicCode();
+		JACExecutionHelper JAC = new JACExecutionHelper(engine, form.getGlobalContext().Core.getPatientShort(), findPath(BUTTONTWO), findParameter(BUTTONTWO), param);
 		JAC.executeJAC();
+		domain.createSystemLogEntry(SystemLogType.APPLICATION, SystemLogLevel.INFORMATION, param != null && param.length() > 0 ? param : " ");
 	}
 	@Override
 	protected void onBtnButton1Click() throws ims.framework.exceptions.PresentationLogicException
 	{
-		JACExecutionHelper JAC = new JACExecutionHelper(engine, form.getGlobalContext().Core.getPatientShort(), findPath(BUTTONONE), findParameter(BUTTONONE), setClinicCode());
+		String param = setClinicCode();
+		JACExecutionHelper JAC = new JACExecutionHelper(engine, form.getGlobalContext().Core.getPatientShort(), findPath(BUTTONONE), findParameter(BUTTONONE), param);
 		JAC.executeJAC();
+		domain.createSystemLogEntry(SystemLogType.APPLICATION, SystemLogLevel.INFORMATION, param != null && param.length() > 0 ? param : " ");
 	}
 }

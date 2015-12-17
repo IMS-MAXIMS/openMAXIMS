@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.emergency.vo.domain;
@@ -68,6 +73,8 @@ public class AdviceLeafletsForSelectAndPrinterVoAssembler
 		valueObjectDest.setAuthoringHCP(valueObjectSrc.getAuthoringHCP());
 		// AuthoringDateTime
 		valueObjectDest.setAuthoringDateTime(valueObjectSrc.getAuthoringDateTime());
+		// AdviceLeafletName
+		valueObjectDest.setAdviceLeafletName(valueObjectSrc.getAdviceLeafletName());
 	 	return valueObjectDest;
 	 }
 
@@ -476,6 +483,8 @@ public class AdviceLeafletsForSelectAndPrinterVoAssembler
 		{
 			valueObject.setAuthoringDateTime(new ims.framework.utils.DateTime(AuthoringDateTime) );
 		}
+		// AdviceLeafletName
+		valueObject.setAdviceLeafletName(domainObject.getAdviceLeafletName());
  		return valueObject;
 	 }
 
@@ -626,6 +635,13 @@ public class AdviceLeafletsForSelectAndPrinterVoAssembler
 			value9 = dateTime9.getJavaDate();
 		}
 		domainObject.setAuthoringDateTime(value9);
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getAdviceLeafletName() != null && valueObject.getAdviceLeafletName().equals(""))
+		{
+			valueObject.setAdviceLeafletName(null);
+		}
+		domainObject.setAdviceLeafletName(valueObject.getAdviceLeafletName());
 
 		return domainObject;
 	}

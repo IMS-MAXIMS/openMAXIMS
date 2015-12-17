@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -41,12 +46,16 @@ public class Logic extends BaseLogic
 	protected void onBtnCancelClick() throws ims.framework.exceptions.PresentationLogicException
 	{
 		form.setMode(FormMode.VIEW);
-		populateScreen(form.grdReadjustments().getSelectedRow() != null ? form.grdReadjustments().getSelectedRow().getValue() : null);		
+		populateScreen(form.grdReadjustments().getSelectedRow() != null ? form.grdReadjustments().getSelectedRow().getValue() : null);
+		// WDEV-18410 
+		form.getLocalContext().setEditedRecord(form.grdReadjustments().getSelectedRow() != null ? form.grdReadjustments().getSelectedRow().getValue() : null);
 	}
 	@Override
 	protected void onBtnSaveClick() throws ims.framework.exceptions.PresentationLogicException
 	{
-		TargetReadjustmentVo vo = populateDataFromScreen(form.getLocalContext().getEditedRecord());
+		// WDEV-18410 
+		TargetReadjustmentVo vo = populateDataFromScreen((TargetReadjustmentVo) (form.getLocalContext().getEditedRecordIsNotNull() ? form.getLocalContext().getEditedRecord().clone() : null));
+		
 		SystemInformation sysInfo = new SystemInformation();
 		sysInfo.setCreationDateTime(form.ctnDetails().dtimDate().getValue());
 		sysInfo.setCreationUser(form.ctnDetails().lblUserEdit().getValue());
@@ -60,12 +69,27 @@ public class Logic extends BaseLogic
 		}
 		
 		TargetReadjustmentVoCollection targetReadjustmentsCollection = form.getGlobalContext().Pathways.getTargetReadjustments();
+		
 		if (targetReadjustmentsCollection == null)
 		{
 			targetReadjustmentsCollection = new TargetReadjustmentVoCollection();
 		}
 		
-		targetReadjustmentsCollection.add(vo);
+		//WDEV-18410 
+		if (vo.getID_TargetReadjustmentIsNotNull())
+		{
+			for(int i = 0; i < targetReadjustmentsCollection.size(); i++)
+			{
+				if (targetReadjustmentsCollection.get(i).getID_TargetReadjustment().equals(vo.getID_TargetReadjustment()))
+				{
+					targetReadjustmentsCollection.remove(i);
+					targetReadjustmentsCollection.add(vo);
+				}
+			}
+		}
+		else
+			targetReadjustmentsCollection.add(vo);
+		
 		form.getGlobalContext().Pathways.setTargetReadjustments(targetReadjustmentsCollection);
 		engine.close(DialogResult.OK);
 	}

@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:37 -->
+<!-- Generated: 12/10/2015, 13:32 -->
 <hibernate-mapping>
 	<class name="ims.RefMan.domain.objects.ElectiveListStatus" table="care_electivelistst" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -42,6 +42,7 @@
 <!-- debug: statusComment -->
 <!-- debug: removalReason -->
 <!-- debug: removalOtherReason -->
+<!-- debug: undoRemovalReason -->
 <!-- debug: !IsAssociation && !IsCollection -->
 
 <!-- debug: IsLookup -->
@@ -67,6 +68,11 @@
 <!-- debug: IsLookup -->
 		<many-to-one name="removalOtherReason" class="ims.domain.lookups.LookupInstance" access="field">
 			<column name="lkp_removaloth" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="undoRemovalReason" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_undoremova" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
 	</class>
 </hibernate-mapping>

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.resource.people.domain.objects;
@@ -34,7 +39,7 @@ package ims.core.resource.people.domain.objects;
  */
 
 
-public class Gp extends ims.domain.DomainObject implements java.io.Serializable {
+public class Gp extends ims.domain.DomainObject implements ims.domain.SystemInformationRetainer, java.io.Serializable {
 	public static final int CLASSID = 1006100001;
 	private static final long serialVersionUID = 1006100001L;
 	public static final String CLASSVERSION = "${ClassVersion}";
@@ -59,6 +64,9 @@ public class Gp extends ims.domain.DomainObject implements java.io.Serializable 
 	  * Collection of ims.core.clinical.domain.objects.TaxonomyMap.
 	  */
 	private java.util.List codeMappings;
+	private ims.core.generic.domain.objects.Address address;
+	/** SystemInformation */
+	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public Gp (Integer id, int ver)
     {
     	super(id, ver);
@@ -120,6 +128,19 @@ public class Gp extends ims.domain.DomainObject implements java.io.Serializable 
 	public void setCodeMappings(java.util.List paramValue) {
 		this.codeMappings = paramValue;
 	}
+
+	public ims.core.generic.domain.objects.Address getAddress() {
+		return address;
+	}
+	public void setAddress(ims.core.generic.domain.objects.Address address) {
+		this.address = address;
+	}
+
+	public ims.domain.SystemInformation getSystemInformation() {
+		if (systemInformation == null) systemInformation = new ims.domain.SystemInformation();
+		return systemInformation;
+	}
+
 
 	/**
 	 * isConfigurationObject
@@ -236,6 +257,14 @@ public class Gp extends ims.domain.DomainObject implements java.io.Serializable 
 			auditStr.append("] " + i5);
 		}
 	    auditStr.append("; ");
+		auditStr.append("\r\n*address* :");
+		if (address != null)
+		{
+			auditStr.append(toShortClassName(address));
+				
+		    auditStr.append(address.toString());
+		}
+	    auditStr.append("; ");
 		return auditStr.toString();
 	}
 	
@@ -318,6 +347,12 @@ public class Gp extends ims.domain.DomainObject implements java.io.Serializable 
 			sb.append(ims.domain.DomainObject.toXMLString(this.getCodeMappings(), domMap));
 			sb.append("</codeMappings>");		
 			}
+		}
+		if (this.getAddress() != null)
+		{
+			sb.append("<address>");
+			sb.append(this.getAddress().toXMLString(domMap)); 	
+			sb.append("</address>");		
 		}
 		return sb.toString();
 	}
@@ -512,6 +547,12 @@ public class Gp extends ims.domain.DomainObject implements java.io.Serializable 
 			fldEl = fldEl.element("list");	
 			obj.setCodeMappings(ims.core.clinical.domain.objects.TaxonomyMap.fromListXMLString(fldEl, factory, obj.getCodeMappings(), domMap));
 		}
+		fldEl = el.element("address");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setAddress(ims.core.generic.domain.objects.Address.getAddressfromXML(fldEl, factory, domMap)); 
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -532,6 +573,7 @@ public class Gp extends ims.domain.DomainObject implements java.io.Serializable 
 		public static final String Practices = "practices";
 		public static final String CommChannels = "commChannels";
 		public static final String CodeMappings = "codeMappings";
+		public static final String Address = "address";
 	}
 }
 

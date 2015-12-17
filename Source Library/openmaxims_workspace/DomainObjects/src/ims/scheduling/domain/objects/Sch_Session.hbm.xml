@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:36 -->
+<!-- Generated: 12/10/2015, 13:31 -->
 <hibernate-mapping>
 	<class name="ims.scheduling.domain.objects.Sch_Session" table="schl_sch_session" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -79,18 +79,6 @@
 			
 			<one-to-many class="ims.scheduling.domain.objects.Session_Slot"/>
 		</set>
-<!-- debug: bookingRights -->
-<!-- debug: field.IsAssociation : true -->
-<!-- debug: IsAggregation : true -->
-<!-- debug: IsComposition : true -->
-		<!-- one to many -->
-		<set name="bookingRights" lazy="true" access="field" cascade="all-delete-orphan">
-			<key foreign-key="sch_session_bookingrig_fk">
-				<column name="schl_sch_session_bookingrig" sql-type="numeric(10,0)" />
-			</key>
-			
-			<one-to-many class="ims.scheduling.domain.objects.Session_BookingRight" />
-		</set>
 <!-- debug: directoryofServices -->
 <!-- debug: field.IsAssociation : true -->
 <!-- debug: IsAggregation : true -->
@@ -150,7 +138,6 @@
 		<many-to-one name="theatreProceduresRemaining" class="ims.scheduling.domain.objects.SessionTheatreProceduresRemanining" unique="true" foreign-key="sch_session_theatrepro_fk" access="field" cascade="save-update">
 			<column name="theatrepro" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
-<!-- debug: isTheatreSession -->
 <!-- debug: theatreType -->
 <!-- debug: sessionActivities -->
 <!-- debug: field.IsAssociation : true -->
@@ -204,6 +191,51 @@
 <!-- debug: comment -->
 <!-- debug: wasSessionMoved -->
 <!-- debug: consMediaType -->
+<!-- debug: sessionComment -->
+<!-- debug: listType -->
+<!-- debug: responsibleHCP -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="responsibleHCP" class="ims.core.resource.people.domain.objects.Hcp" unique="true" foreign-key="sch_session_responsibl_fk" access="field" cascade="save-update">
+			<column name="responsibl" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: locationMovedDateTime -->
+<!-- debug: caseNoteFolderLocation -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="caseNoteFolderLocation" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="sch_session_casenotefo_fk" access="field" cascade="save-update">
+			<column name="casenotefo" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: caseNoteFolderNotRequired -->
+<!-- debug: sessionProfileType -->
+<!-- debug: safetyBriefDelayMins -->
+<!-- debug: safetyBriefDelayReasonDetails -->
+<!-- debug: debriefDateTimes -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<list name="debriefDateTimes" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="sch_session_debriefdat_fk">
+				<column name="schl_sch_session_debriefdat" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.clinical.domain.objects.SessionDebriefDetail" />
+		</list>
+<!-- debug: safetyBriefDelayReason -->
+<!-- debug: letterRequired -->
+<!-- debug: sessionMove -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<list name="sessionMove" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="sch_session_sessionmov_fk">
+				<column name="schl_sch_session_sessionmov" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.scheduling.domain.objects.SessionMove" />
+		</list>
 <!-- debug: !IsAssociation && !IsCollection -->
 
 <!-- debug: !IsLookup -->
@@ -311,11 +343,6 @@
 			<column name="isactive"  not-null="false" unique="false"  />
 		</property>
 <!-- debug: !IsAssociation && !IsCollection -->
-<!-- debug: !IsLookup -->
-		<property name="isTheatreSession" type="boolean" access="field" update="true">
-			<column name="istheatres"  not-null="false" unique="false"  />
-		</property>
-<!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: IsLookup -->
 		<many-to-one name="theatreType" class="ims.domain.lookups.LookupInstance" access="field">
 			<column name="lkp_theatretyp" sql-type="numeric(10,0)" not-null="false" unique="false"   />
@@ -350,5 +377,50 @@
 		<many-to-one name="consMediaType" class="ims.domain.lookups.LookupInstance" access="field">
 			<column name="lkp_consmediat" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="sessionComment" type="string" access="field" update="true" > 
+			<column name="sessioncom" length="500"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="listType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_listtype" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="locationMovedDateTime" type="timestamp" access="field" update="true">
+			<column name="locationmo"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="caseNoteFolderNotRequired" type="boolean" access="field" update="true">
+			<column name="casenotef2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="sessionProfileType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_sessionpro" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="safetyBriefDelayMins" type="integer" access="field" update="true">
+			<column name="safetybrie"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="safetyBriefDelayReasonDetails" type="string" access="field" update="true" > 
+			<column name="safetybri2" length="2000"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="safetyBriefDelayReason" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_safetybri3" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="letterRequired" type="boolean" access="field" update="true">
+			<column name="letterrequ"  not-null="false" unique="false"  />
+		</property>
 	</class>
 </hibernate-mapping>

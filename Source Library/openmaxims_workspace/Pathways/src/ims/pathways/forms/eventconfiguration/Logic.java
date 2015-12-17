@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -77,6 +82,7 @@ import ims.pathways.vo.TargetShortVo;
 import ims.pathways.vo.lookups.EventCreationType;
 import ims.pathways.vo.lookups.PatientTargetStatus;
 import ims.pathways.vo.lookups.PatientTargetStatusCollection;
+import ims.scheduling.vo.lookups.Status_Reason;
 
 public class Logic extends BaseLogic
 {
@@ -105,6 +111,8 @@ public class Logic extends BaseLogic
 	
 	private void initialize(FormMode mode) 
 	{
+		bindCancellationType();
+		
 		if (mode != null)
 		{
 			if(mode.equals(FormMode.EDIT))
@@ -156,6 +164,14 @@ public class Logic extends BaseLogic
 		}
 		
 		updateContextMenuState();
+	}
+	
+	private void bindCancellationType()
+	{
+		form.cmbType().clear();
+		
+		form.cmbType().newRow(Status_Reason.PATIENTCANCELLED, Status_Reason.PATIENTCANCELLED.getText());
+		form.cmbType().newRow(Status_Reason.HOSPITALCANCELLED, Status_Reason.HOSPITALCANCELLED.getText());
 	}
 
 	private void updateChkScheduleControlState()
@@ -209,7 +225,9 @@ public class Logic extends BaseLogic
 			form.chkDisplayInPatientDiary().setValue(editedRecord.getPatientDiaryImpactIsNotNull() ? editedRecord.getPatientDiaryImpact() : false);
 			form.chkStartsClock().setValue(editedRecord.getStartsClockIsNotNull() ? editedRecord.getStartsClock() : false);
 			form.chkStopClocks().setValue(editedRecord.getStopsClockIsNotNull() ? editedRecord.getStopsClock() : false);
-			form.chkEndsPathway().setValue(editedRecord.getEndsPathwayIsNotNull() ? editedRecord.getEndsPathway() : false);			
+			form.chkEndsPathway().setValue(editedRecord.getEndsPathwayIsNotNull() ? editedRecord.getEndsPathway() : false);		
+			form.cmbType().setValue(editedRecord.getCancellationType());
+			form.cmbReason().setValue(editedRecord.getCancellationReason());
 			form.chkScheduleEvent().setValue(editedRecord.getIsManualScheduledEventIsNotNull() ? editedRecord.getIsManualScheduledEvent() : false);	
 		}
 
@@ -299,6 +317,8 @@ public class Logic extends BaseLogic
 		form.chkStartsClock().setValue(false);
 		form.chkStopClocks().setValue(false);
 		form.chkEndsPathway().setValue(false);
+		form.cmbType().setValue(null);
+		form.cmbReason().setValue(null);
 		form.chkScheduleEvent().setValue(false);
 		form.lyrTargets().tabExternalMappings().grdExternalEventMappings().getRows().clear();
 		form.lyrTargets().tabRTT().grdRTT().getRows().clear();
@@ -493,6 +513,18 @@ public class Logic extends BaseLogic
 			errors.add("Status is mandatory!");
 		}*/
 		
+		if(form.chkEndsPathway().getValue())
+		{
+			if(form.cmbType().getValue() == null)
+			{
+				errors.add("Cancellation Type is mandatory");
+			}
+			if(form.cmbReason().getValue() == null)
+			{
+				errors.add("Cancellation Reason is mandatory");
+			}
+		}
+		
 		//GridExternal - check all rows to have an External System, Name, PAS Code and National Code
 		int sizeExternal = form.lyrTargets().tabExternalMappings().grdExternalEventMappings().getRows().size();
 		if (sizeExternal > 0)
@@ -591,6 +623,12 @@ public class Logic extends BaseLogic
 		record.setTaxonomyMaps(form.customControlMappings().getValue());
 		form.getLocalContext().setEventRTTEventCollection(populateRTTEventFromRTTGrid());
 		record.setActioningRoles(populateRolesFromRolesGrid());
+		
+		if(form.chkEndsPathway().getValue())
+		{
+			record.setCancellationType(form.cmbType().getValue());
+			record.setCancellationReason(form.cmbReason().getValue());
+		}
 		
 		return record;
 	}
@@ -1275,6 +1313,8 @@ public class Logic extends BaseLogic
 		
 		form.chkScheduleEvent().setEnabled(form.getMode().equals(FormMode.EDIT));
 		updateContextMenuState();
+		
+		updateCancellationControls();
 	}
 
 	protected void onGrdExternalEventMappingsSelectionChanged()
@@ -1734,5 +1774,33 @@ public class Logic extends BaseLogic
 					cellJourneyTarg.setValue(PatientTargetStatus.INSCOPE);	
 			}
 		}
+	}
+
+	@Override
+	protected void onChkEndsPathwayValueChanged() throws PresentationLogicException
+	{
+		if(!form.chkEndsPathway().getValue())
+		{
+			form.cmbType().setValue(null);
+			form.cmbReason().setValue(null);
+		}
+		
+		updateCancellationControls();
+	}
+
+	private void updateCancellationControls()
+	{
+		form.cmbType().setVisible(form.chkEndsPathway().getValue());
+		form.cmbType().setEnabled(FormMode.EDIT.equals(form.getMode()));
+		form.cmbReason().setVisible(form.chkEndsPathway().getValue());
+		form.cmbReason().setEnabled(FormMode.EDIT.equals(form.getMode()));
+		form.lblCancellationType().setVisible(form.chkEndsPathway().getValue());
+		form.lblCancellationReason().setVisible(form.chkEndsPathway().getValue());
+	}
+
+	@Override
+	protected void onCmbTypeValueChanged() throws PresentationLogicException
+	{
+		form.cmbReason().setValue(null);
 	}
 }

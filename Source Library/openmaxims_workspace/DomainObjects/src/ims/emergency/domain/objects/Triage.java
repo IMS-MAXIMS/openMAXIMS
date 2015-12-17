@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.emergency.domain.objects;
@@ -67,6 +72,12 @@ public class Triage extends ims.domain.DomainObject implements ims.domain.System
 	private java.util.Date triageCompletionTime;
 	/** Medic Intervention StartDate Time */
 	private java.util.Date medicInterventionStartDateTime;
+	private ims.emergency.domain.objects.TriageProtocolAssessment initialTriageAssessment;
+	private ims.domain.lookups.LookupInstance triagePriorityChange;
+	private Integer oBSScore;
+	private java.util.Date vitalsTakenDateTime;
+	/** PAWS Score */
+	private Integer pAWSScore;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public Triage (Integer id, int ver)
@@ -162,6 +173,41 @@ public class Triage extends ims.domain.DomainObject implements ims.domain.System
 	}
 	public void setMedicInterventionStartDateTime(java.util.Date medicInterventionStartDateTime) {
 		this.medicInterventionStartDateTime = medicInterventionStartDateTime;
+	}
+
+	public ims.emergency.domain.objects.TriageProtocolAssessment getInitialTriageAssessment() {
+		return initialTriageAssessment;
+	}
+	public void setInitialTriageAssessment(ims.emergency.domain.objects.TriageProtocolAssessment initialTriageAssessment) {
+		this.initialTriageAssessment = initialTriageAssessment;
+	}
+
+	public ims.domain.lookups.LookupInstance getTriagePriorityChange() {
+		return triagePriorityChange;
+	}
+	public void setTriagePriorityChange(ims.domain.lookups.LookupInstance triagePriorityChange) {
+		this.triagePriorityChange = triagePriorityChange;
+	}
+
+	public Integer getOBSScore() {
+		return oBSScore;
+	}
+	public void setOBSScore(Integer oBSScore) {
+		this.oBSScore = oBSScore;
+	}
+
+	public java.util.Date getVitalsTakenDateTime() {
+		return vitalsTakenDateTime;
+	}
+	public void setVitalsTakenDateTime(java.util.Date vitalsTakenDateTime) {
+		this.vitalsTakenDateTime = vitalsTakenDateTime;
+	}
+
+	public Integer getPAWSScore() {
+		return pAWSScore;
+	}
+	public void setPAWSScore(Integer pAWSScore) {
+		this.pAWSScore = pAWSScore;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -269,6 +315,27 @@ public class Triage extends ims.domain.DomainObject implements ims.domain.System
 	    auditStr.append("; ");
 		auditStr.append("\r\n*medicInterventionStartDateTime* :");
 		auditStr.append(medicInterventionStartDateTime);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*initialTriageAssessment* :");
+		if (initialTriageAssessment != null)
+		{
+			auditStr.append(toShortClassName(initialTriageAssessment));
+				
+		    auditStr.append(initialTriageAssessment.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*triagePriorityChange* :");
+		if (triagePriorityChange != null)
+			auditStr.append(triagePriorityChange.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*oBSScore* :");
+		auditStr.append(oBSScore);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*vitalsTakenDateTime* :");
+		auditStr.append(vitalsTakenDateTime);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*pAWSScore* :");
+		auditStr.append(pAWSScore);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -379,6 +446,36 @@ public class Triage extends ims.domain.DomainObject implements ims.domain.System
 			sb.append("<medicInterventionStartDateTime>");
 			sb.append(new ims.framework.utils.DateTime(this.getMedicInterventionStartDateTime()).toString(ims.framework.utils.DateTimeFormat.MILLI));
 			sb.append("</medicInterventionStartDateTime>");		
+		}
+		if (this.getInitialTriageAssessment() != null)
+		{
+			sb.append("<initialTriageAssessment>");
+			sb.append(this.getInitialTriageAssessment().toXMLString(domMap)); 	
+			sb.append("</initialTriageAssessment>");		
+		}
+		if (this.getTriagePriorityChange() != null)
+		{
+			sb.append("<triagePriorityChange>");
+			sb.append(this.getTriagePriorityChange().toXMLString()); 
+			sb.append("</triagePriorityChange>");		
+		}
+		if (this.getOBSScore() != null)
+		{
+			sb.append("<oBSScore>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getOBSScore().toString()));
+			sb.append("</oBSScore>");		
+		}
+		if (this.getVitalsTakenDateTime() != null)
+		{
+			sb.append("<vitalsTakenDateTime>");
+			sb.append(new ims.framework.utils.DateTime(this.getVitalsTakenDateTime()).toString(ims.framework.utils.DateTimeFormat.MILLI));
+			sb.append("</vitalsTakenDateTime>");		
+		}
+		if (this.getPAWSScore() != null)
+		{
+			sb.append("<pAWSScore>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getPAWSScore().toString()));
+			sb.append("</pAWSScore>");		
 		}
 		return sb.toString();
 	}
@@ -606,6 +703,33 @@ public class Triage extends ims.domain.DomainObject implements ims.domain.System
 		{	
     		obj.setMedicInterventionStartDateTime(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
 		}
+		fldEl = el.element("initialTriageAssessment");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setInitialTriageAssessment(ims.emergency.domain.objects.TriageProtocolAssessment.getTriageProtocolAssessmentfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("triagePriorityChange");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setTriagePriorityChange(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("oBSScore");
+		if(fldEl != null)
+		{	
+    		obj.setOBSScore(new Integer(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("vitalsTakenDateTime");
+		if(fldEl != null)
+		{	
+    		obj.setVitalsTakenDateTime(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
+		}
+		fldEl = el.element("pAWSScore");
+		if(fldEl != null)
+		{	
+    		obj.setPAWSScore(new Integer(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -629,6 +753,11 @@ public class Triage extends ims.domain.DomainObject implements ims.domain.System
 		public static final String MainPresentingProblem = "mainPresentingProblem";
 		public static final String TriageCompletionTime = "triageCompletionTime";
 		public static final String MedicInterventionStartDateTime = "medicInterventionStartDateTime";
+		public static final String InitialTriageAssessment = "initialTriageAssessment";
+		public static final String TriagePriorityChange = "triagePriorityChange";
+		public static final String OBSScore = "oBSScore";
+		public static final String VitalsTakenDateTime = "vitalsTakenDateTime";
+		public static final String PAWSScore = "pAWSScore";
 	}
 }
 

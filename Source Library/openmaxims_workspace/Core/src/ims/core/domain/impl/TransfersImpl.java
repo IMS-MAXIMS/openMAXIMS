@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -30,12 +35,15 @@ import ims.configuration.gen.ConfigFlag;
 import ims.core.admin.pas.domain.objects.InpatientEpisode;
 import ims.core.admin.pas.domain.objects.PendingTransfers;
 import ims.core.admin.pas.vo.InpatientEpisodeRefVo;
+import ims.core.admin.pas.vo.PASEventRefVo;
 import ims.core.admin.pas.vo.PendingTransfersRefVo;
 import ims.core.domain.Demographics;
+import ims.core.domain.WardView;
 import ims.core.domain.base.impl.BaseTransfersImpl;
 import ims.core.patient.vo.PatientRefVo;
 import ims.core.resource.place.domain.objects.Location;
 import ims.core.resource.place.vo.LocationRefVo;
+import ims.core.vo.CareContextShortVo;
 import ims.core.vo.HcpFilter;
 import ims.core.vo.HcpLiteVo;
 import ims.core.vo.HcpLiteVoCollection;
@@ -60,13 +68,16 @@ import ims.core.vo.lookups.PatIdType;
 import ims.domain.DomainFactory;
 import ims.domain.exceptions.DomainInterfaceException;
 import ims.domain.exceptions.StaleObjectException;
+import ims.domain.lookups.LookupInstance;
 import ims.framework.exceptions.CodingRuntimeException;
+import ims.framework.interfaces.ILocation;
 import ims.framework.utils.Date;
 import ims.framework.utils.DateTime;
 import ims.framework.utils.Time;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 public class TransfersImpl extends BaseTransfersImpl
 {
@@ -83,8 +94,9 @@ public class TransfersImpl extends BaseTransfersImpl
 
 		StringBuffer sb = new StringBuffer();
 		String andStr = "";
+		boolean isCaseSensitivePatIdSearch = ConfigFlag.DOM.CASE_SENSITIVE_PATID.getValue(); //WDEV-18817
 
-		String hql = "select trans from PendingTransfers as trans "; 
+		String hql = ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") ?  "select trans, (select wcfg.wardStatus from WardBayConfig wcfg WHERE wcfg.ward.id = trans.inpatientEpisode.pasEvent.location.id) from PendingTransfers as trans" : "select trans from PendingTransfers as trans "; 
 
 		String strSearchSurname = "";
 		String strSearchForename = "";
@@ -97,17 +109,17 @@ public class TransfersImpl extends BaseTransfersImpl
 			String idVal = filter.getPatientHospNumber().trim();			
 			if (filter.getIDType().equals(PatIdType.NHSN))
 				idVal = filter.getPatientHospNumber().replace(" ", "");//wdev-7305
-			
-			if(!ConfigFlag.DOM.CASE_SENSITIVE_PATID.getValue())
-				idVal = idVal.toUpperCase();
-
+			if (!isCaseSensitivePatIdSearch)
+			{	
+				idVal = idVal.toUpperCase(); //WDEV-18817
+			}
 			if (filter.getIDType().equals(PatIdType.NHSN))
 			{
-				sb.append(andStr + " ids.value like :idnum ");
+				sb.append(andStr + (!isCaseSensitivePatIdSearch ? " UPPER(ids.value)" : " ids.value") + " like :idnum "); //WDEV-18817 
 				idVal += "%";
 			}
 			else
-				sb.append(andStr + " ids.value = :idnum");
+				sb.append(andStr + (!isCaseSensitivePatIdSearch ? " UPPER(ids.value)" : " ids.value") + " = :idnum");//WDEV-18817
 
 			markers.add("idnum");
 			andStr = " and ";
@@ -172,14 +184,7 @@ public class TransfersImpl extends BaseTransfersImpl
 			andStr = " and ";
 		}
 		
-		if (filter.getCurrentHospitalIsNotNull())
-		{
-			sb.append(andStr + " trans.inpatientEpisode.pasEvent.location.parentLocation.id = :hosp");
-			markers.add("hosp");
-			values.add(filter.getCurrentHospital().getID_Location());
-			andStr = " and ";
-		}
-		
+		//WDEV-20258
 		if (filter.getCurrentWardIsNotNull())
 		{
 			sb.append(andStr + " trans.inpatientEpisode.pasEvent.location.id = :ward");
@@ -187,12 +192,18 @@ public class TransfersImpl extends BaseTransfersImpl
 			values.add(filter.getCurrentWard().getID_Location());
 			andStr = " and ";
 		}
-		
-		if (filter.getDestHospitalIsNotNull())
+		else if (filter.getCurrentHospitalIsNotNull())
 		{
-			sb.append(andStr + " trans.destinationWard.parentLocation.id = :dhosp");
-			markers.add("dhosp");
-			values.add(filter.getDestHospital().getID_Location());
+			LocationLiteVoCollection wards = listWards(filter.getCurrentHospital().getID_Location(), null);
+			if (wards != null && wards.size() > 0)
+			{	
+					sb.append(andStr + " (trans.inpatientEpisode.pasEvent.location.id in " + getWardIds(wards));
+					sb.append(" OR ");
+				}
+						
+			sb.append((wards != null && wards.size() > 0 ? "" : andStr) + " trans.inpatientEpisode.pasEvent.location.parentLocation.id = :hosp" + (wards != null && wards.size() > 0 ? ")" : ""));
+			markers.add("hosp");
+			values.add(filter.getCurrentHospital().getID_Location());			
 			andStr = " and ";
 		}
 
@@ -203,7 +214,22 @@ public class TransfersImpl extends BaseTransfersImpl
 			values.add(filter.getDestinationWard().getID_Location());
 			andStr = " and ";
 		}
-
+		
+		else if (filter.getDestHospitalIsNotNull())
+		{
+			LocationLiteVoCollection dwards = listWards(filter.getDestHospital().getID_Location(), null);
+			if (dwards != null && dwards.size() > 0)
+			{	
+				sb.append(andStr + " (trans.destinationWard.id in " + getWardIds(dwards));
+				sb.append(" OR ");
+			}
+			
+			sb.append((dwards != null && dwards.size() > 0 ? "" : andStr)  + " trans.destinationWard.parentLocation.id = :dhosp" + (dwards != null && dwards.size() > 0 ? ")" : ""));
+			markers.add("dhosp");
+			values.add(filter.getDestHospital().getID_Location());			
+			andStr = " and ";
+		}		
+		//WDEV-20258 --- end of
 		if (filter.getAlertIsNotNull())
 		{
 			hql += " join trans.inpatientEpisode.pasEvent.patient.patientAlerts as patAlerts ";
@@ -218,10 +244,62 @@ public class TransfersImpl extends BaseTransfersImpl
 			hql += " where ";
 			hql += sb.toString();
 		}
-		
+		if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS")) //WDEV-20328
+		{
+			List<?> results = getDomainFactory().find(hql.toString(), markers, values);
+			
+			if (results == null || results.isEmpty())
+				return null;
+			PendingTransfersVoCollection collResults = new PendingTransfersVoCollection();
+
+			for (int i = 0; i<results.size();i++)
+			{
+				if (results.get(i) instanceof Object[])
+				{
+					Object[] ret = (Object[]) results.get(i);
+					PendingTransfersVo vo = new PendingTransfersVo();
+					if (ret[0] instanceof PendingTransfers)
+					{	
+						//WDEV-22567
+						PendingTransfers doPendingTransf = (PendingTransfers) ret[0];
+						if (doPendingTransf != null && doPendingTransf.getInpatientEpisode() != null && doPendingTransf.getInpatientEpisode().getPasEvent() != null && doPendingTransf.getInpatientEpisode().getPasEvent().getPatient() != null && doPendingTransf.getInpatientEpisode().getPasEvent().getPatient().getAssociatedPatient() != null)
+						{
+							ims.core.patient.domain.objects.Patient mergedToPatient = doPendingTransf.getInpatientEpisode().getPasEvent().getPatient().getAssociatedPatient();
+							doPendingTransf.getInpatientEpisode().getPasEvent().setPatient(mergedToPatient);
+						}
+						vo = PendingTransfersVoAssembler.create(doPendingTransf);
+					}
+					if (ret[1] instanceof LookupInstance)
+					{	
+						vo.setWardStatus(ims.core.vo.lookups.LookupHelper.getWardBayStatusInstance(getLookupService(), ((LookupInstance) ret[1]).getId()));
+					}
+					collResults.add(vo);					
+				}					
+			}
+			return collResults;
+		}
+		//WDEV-20328 -- ends here
 		return PendingTransfersVoAssembler.createPendingTransfersVoCollectionFromPendingTransfers(getDomainFactory().find(hql.toString(), markers, values));
 	}
-
+	
+	//WDEV-20258
+	private String getWardIds(LocationLiteVoCollection wards)
+	{
+		if (wards == null || wards.size() == 0)
+			return "";
+		
+		StringBuilder idList = new StringBuilder();
+		idList.append("(");
+		
+		for (int i=0; i<wards.size();i++)
+		{
+			if (wards.get(i) == null)
+				continue;
+			idList.append(wards.get(i).getID_Location().toString()).append(i == wards.size() - 1 ? ")": ", ");			
+		}
+		
+		return idList.toString();
+	}
 	public InpatientEpisodeVoCollection listRecentTransfers(PendingTransfersFilterVo filter)
 	{
 		if (filter == null)
@@ -229,22 +307,22 @@ public class TransfersImpl extends BaseTransfersImpl
 
 		ArrayList<String> markers = new ArrayList<String>();
 		ArrayList<Serializable> values = new ArrayList<Serializable>();
+		boolean isCaseSensitivePatIdSearch = ConfigFlag.DOM.CASE_SENSITIVE_PATID.getValue(); //WDEV-18817
 
 		StringBuffer sb = new StringBuffer();
 		String andStr = "";
 
-		String hql = "select inpat from InpatientEpisode as inpat"; 
+		String hql = ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") ?  "select inpat, (select wcfg.wardStatus from WardBayConfig wcfg WHERE wcfg.ward.id = inpat.pasEvent.location.id), ws.transferReason, ws.transferComment from InpatientEpisode as inpat left join inpat.wardStays as ws" : "select inpat from InpatientEpisode as inpat"; 
 
 		String strSearchSurname = "";
 		String strSearchForename = "";
 
-		sb.append(andStr + " inpat.wardStays.transferDateTime between :fromDate and :toDate");
+		sb.append(andStr + " inpat.wardStays.transferDateTime between :fromDate and :toDate and inpat.wardStays.transferDateTime <> inpat.admissionDateTime");
 		markers.add("fromDate");
 		values.add(new DateTime(new Date().addDay(-1), new Time()).getJavaDate() );
 		markers.add("toDate");
 		values.add(new DateTime(new Date(), new Time()).getJavaDate() );
 		andStr = " and ";
-
 
 		if (filter.getPatientHospNumberIsNotNull())
 		{
@@ -254,16 +332,17 @@ public class TransfersImpl extends BaseTransfersImpl
 			if (filter.getIDType().equals(PatIdType.NHSN))
 				idVal = filter.getPatientHospNumber().replace(" ", "");//wdev-7305
 			
-			if(!ConfigFlag.DOM.CASE_SENSITIVE_PATID.getValue())
+			if (!isCaseSensitivePatIdSearch) //WDEV-18817
+			{	
 				idVal = idVal.toUpperCase();
-
+			}
 			if (filter.getIDType().equals(PatIdType.NHSN))
 			{
-				sb.append(andStr + " ids.value like :idnum ");
+				sb.append(andStr + (!isCaseSensitivePatIdSearch ? " UPPER(ids.value)" : " ids.value") + " like :idnum");//WDEV-18817
 				idVal += "%";
 			}
 			else
-				sb.append(andStr + " ids.value = :idnum");
+				sb.append(andStr + (!isCaseSensitivePatIdSearch ? " UPPER(ids.value)" : " ids.value") + " = :idnum");//WDEV-18817
 
 			markers.add("idnum");
 			andStr = " and ";
@@ -327,15 +406,7 @@ public class TransfersImpl extends BaseTransfersImpl
 			values.add(filter.getConsultant().getID_Hcp());
 			andStr = " and ";
 		}
-		
-		if (filter.getCurrentHospitalIsNotNull())
-		{
-			sb.append(andStr + " inpat.pasEvent.location.parentLocation.id = :dhosp");
-			markers.add("dhosp");
-			values.add(filter.getCurrentHospital().getID_Location());
-			andStr = " and ";
-		}
-
+		//WDEV-20258
 		if (filter.getCurrentWardIsNotNull())
 		{
 			sb.append(andStr + " inpat.pasEvent.location.id = :currward");
@@ -343,19 +414,27 @@ public class TransfersImpl extends BaseTransfersImpl
 			values.add(filter.getCurrentWard().getID_Location());
 			andStr = " and ";
 		}
-
+		else if (filter.getCurrentHospitalIsNotNull())
+		{
+			LocationLiteVoCollection wards = listWards(filter.getCurrentHospital().getID_Location(), null);
+			if (wards != null && wards.size() > 0)
+			{	
+				sb.append(andStr + " (inpat.pasEvent.location.id in " + getWardIds(wards));
+				sb.append(" OR ");
+			}
+			
+			sb.append((wards != null && wards.size() > 0 ? "" : andStr) + " inpat.pasEvent.location.parentLocation.id = :dhosp" + (wards != null && wards.size() > 0 ? ")" : ""));
+			markers.add("dhosp");
+			values.add(filter.getCurrentHospital().getID_Location());
+			andStr = " and ";
+		}
+		//WDEV-20258   --- end of
+		//WDEV-20328
+	
 		if (filter.getDestinationWardIsNotNull() 
 			|| filter.getDestHospitalIsNotNull())
 			hql += " join inpat.wardStays as stays ";
-
-		if (filter.getDestHospitalIsNotNull())
-		{
-			sb.append(andStr + " stays.ward.parentLocation.id = :dhosp");
-			markers.add("dhosp");
-			values.add(filter.getDestHospital().getID_Location());
-			andStr = " and ";
-		}
-
+		//WDEV-20258 
 		if (filter.getDestinationWardIsNotNull())
 		{
 			sb.append(andStr + " stays.ward.id = :ward");
@@ -363,9 +442,97 @@ public class TransfersImpl extends BaseTransfersImpl
 			values.add(filter.getDestinationWard().getID_Location());
 			andStr = " and ";
 		}
-		
+		else if (filter.getDestHospitalIsNotNull())
+		{
+			LocationLiteVoCollection dwards = listWards(filter.getDestHospital().getID_Location(), null);
+			if (dwards != null && dwards.size() > 0)
+			{	
+				sb.append(andStr + " (stays.ward.id in " + getWardIds(dwards));
+				sb.append(" OR ");
+			}
+			
+			sb.append((dwards != null && dwards.size() > 0 ? "" : andStr)  + " stays.ward.parentLocation.id = :dhosp" + (dwards != null && dwards.size() > 0 ? ")" : ""));
+			markers.add("dhosp");
+			values.add(filter.getDestHospital().getID_Location());
+			andStr = " and ";
+		}
+		//WDEV-20258 -- ends here
 		hql += " where ";
 		hql += sb.toString();
+		
+		if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS")) //WDEV-20328
+		{
+			List<?> results = getDomainFactory().find(hql.toString(), markers, values);
+
+			if (results == null || results.isEmpty())
+				return null;
+			InpatientEpisodeVoCollection collResults = new InpatientEpisodeVoCollection();
+
+			for (int i = 0; i<results.size();i++)
+			{
+				if (results.get(i) instanceof Object[])
+				{
+					Object[] ret = (Object[]) results.get(i);
+					InpatientEpisodeVo vo = new InpatientEpisodeVo();
+					if (ret[0] instanceof InpatientEpisode)
+					{	
+						//WDEV-22567
+						InpatientEpisode doInpat = (InpatientEpisode) ret[0];
+						if (doInpat != null && doInpat.getPasEvent() != null && doInpat.getPasEvent().getPatient() != null && doInpat.getPasEvent().getPatient().getAssociatedPatient() != null)
+						{
+							ims.core.patient.domain.objects.Patient mergedToPatient = doInpat.getPasEvent().getPatient().getAssociatedPatient();
+							doInpat.getPasEvent().setPatient(mergedToPatient);
+						}
+						vo = InpatientEpisodeVoAssembler.create(doInpat);
+					}
+					if (ret[1] instanceof LookupInstance)
+					{	
+						vo.setWardStatus(ims.core.vo.lookups.LookupHelper.getWardBayStatusInstance(getLookupService(), ((LookupInstance) ret[1]).getId()));
+					}
+					if (ret[2] instanceof LookupInstance)
+					{	
+						vo.setTransferReason(ims.core.vo.lookups.LookupHelper.getTransferReasonInstance(getLookupService(), ((LookupInstance) ret[2]).getId()));
+					}
+					if (ret[3] instanceof String)
+					{	
+						vo.setTransferComment((String)ret[3]);
+					}
+					
+					collResults.add(vo);					
+				}					
+			}
+			
+			if (filter.getDestinationWardIsNotNull())
+			{
+				InpatientEpisodeVoCollection voReturnColl = new InpatientEpisodeVoCollection();
+				if (collResults.size() > 0)
+				{
+					for (int i = 0 ; i < collResults.size() ; i++)
+					{
+						if (collResults.get(i).getWardStaysIsNotNull()
+							&& collResults.get(i).getWardStays().size() > 1)
+						{
+							collResults.get(i).getWardStays().sort(WardStayVo.getWardStayVoIdComparator());
+							
+							WardStayVo voPreviousWardStay = collResults.get(i).getWardStays().get(1);
+							if (voPreviousWardStay.getWardIsNotNull()
+								&& voPreviousWardStay.getWard().equals(filter.getDestinationWard()))
+							{
+								collResults.get(i).setTransferReason(voPreviousWardStay.getTransferReason());
+								collResults.get(i).setTransferComment(voPreviousWardStay.getTransferComment());
+								voReturnColl.add(collResults.get(i));
+							}
+						}
+					}
+					return voReturnColl;
+				}
+			}
+			else
+			{	
+				return collResults;
+			}	
+		}
+		//WDEV-20328 -- ends here
 		
 		if (filter.getDestinationWardIsNotNull())
 		{
@@ -454,11 +621,11 @@ public class TransfersImpl extends BaseTransfersImpl
 
 	public PendingTransfersVo saveTransfer(PendingTransfersVo voTransfer) throws DomainInterfaceException, StaleObjectException 
 	{
-		if (!voTransfer.isValidated())
-			throw new CodingRuntimeException("Transfer Record has not been validated");
 		if(voTransfer == null)
 			throw new CodingRuntimeException("Cannot save null PendingTransfersVo");
-		
+		if (!voTransfer.isValidated())
+			throw new CodingRuntimeException("Transfer Record has not been validated");
+				
 		DomainFactory factory = getDomainFactory();
 		
 		PendingTransfers doTrans = PendingTransfersVoAssembler.extractPendingTransfers(factory, voTransfer);
@@ -481,10 +648,10 @@ public class TransfersImpl extends BaseTransfersImpl
 
 	public InpatientEpisodeForTransfersVo saveTransfer(InpatientEpisodeForTransfersVo voTransfer) throws DomainInterfaceException, StaleObjectException 
 	{
-		if (!voTransfer.isValidated())
-			throw new CodingRuntimeException("Transfer Record has not been validated");
 		if(voTransfer == null)
 			throw new CodingRuntimeException("Cannot save null InpatientEpisodeForTransfersVo");
+		if (!voTransfer.isValidated())
+			throw new CodingRuntimeException("Transfer Record has not been validated");
 		
 		DomainFactory factory = getDomainFactory();
 		
@@ -503,5 +670,18 @@ public class TransfersImpl extends BaseTransfersImpl
 
 		DomainFactory factory = getDomainFactory();
 		factory.save(InpatientEpisodeVoAssembler.extractInpatientEpisode(factory, inpatEpis));
+	}
+	
+	//WDEV-20707
+	public LocationLiteVo getCurrentHospital(ILocation location) 
+	{
+		WardView impl = (WardView)getDomainImpl(WardViewImpl.class);
+		return impl.getCurrentHospital(location);
+	}
+
+	public CareContextShortVo getCurrentCareContext(PASEventRefVo pasEventRef)
+	{
+		WardView impl = (WardView) getDomainImpl(WardViewImpl.class);
+		return impl.getCareContextForPasEvent(pasEventRef);
 	}
 }

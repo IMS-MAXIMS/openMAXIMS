@@ -1,10 +1,34 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 
 /*
  * This code was generated.
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:38
+ * Generated: 13/10/2015, 13:23
  */
 package ims.RefMan.vo.lookups;
 
@@ -16,6 +40,266 @@ import ims.domain.lookups.LookupService;
  * 
  */
 public final class LookupHelper {
+	public static WeekInTheMonthCollection getWeekInTheMonth(LookupService lookupService) {
+		WeekInTheMonthCollection collection =
+			(WeekInTheMonthCollection) lookupService.getLookupCollection(WeekInTheMonth.TYPE_ID, 
+				WeekInTheMonthCollection.class, WeekInTheMonth.class);
+		return collection;
+	}
+
+	public static WeekInTheMonth getWeekInTheMonthInstance(LookupService lookupService, int id) 
+	{
+		return (WeekInTheMonth)lookupService.getLookupInstance(WeekInTheMonth.class, WeekInTheMonth.TYPE_ID, id);
+	}
+	
+
+	public static RecurringCollection getRecurring(LookupService lookupService) {
+		RecurringCollection collection =
+			(RecurringCollection) lookupService.getLookupCollection(Recurring.TYPE_ID, 
+				RecurringCollection.class, Recurring.class);
+		return collection;
+	}
+
+	public static Recurring getRecurringInstance(LookupService lookupService, int id) 
+	{
+		return (Recurring)lookupService.getLookupInstance(Recurring.class, Recurring.TYPE_ID, id);
+	}
+	
+
+	public static DefaultTriageActionForCABReferralCollection getDefaultTriageActionForCABReferral(LookupService lookupService) {
+		DefaultTriageActionForCABReferralCollection collection =
+			(DefaultTriageActionForCABReferralCollection) lookupService.getLookupCollection(DefaultTriageActionForCABReferral.TYPE_ID, 
+				DefaultTriageActionForCABReferralCollection.class, DefaultTriageActionForCABReferral.class);
+		return collection;
+	}
+
+	public static DefaultTriageActionForCABReferral getDefaultTriageActionForCABReferralInstance(LookupService lookupService, int id) 
+	{
+		return (DefaultTriageActionForCABReferral)lookupService.getLookupInstance(DefaultTriageActionForCABReferral.class, DefaultTriageActionForCABReferral.TYPE_ID, id);
+	}
+	
+
+	public static DefaultTriageActionForManualReferralCollection getDefaultTriageActionForManualReferral(LookupService lookupService) {
+		DefaultTriageActionForManualReferralCollection collection =
+			(DefaultTriageActionForManualReferralCollection) lookupService.getLookupCollection(DefaultTriageActionForManualReferral.TYPE_ID, 
+				DefaultTriageActionForManualReferralCollection.class, DefaultTriageActionForManualReferral.class);
+		return collection;
+	}
+
+	public static DefaultTriageActionForManualReferral getDefaultTriageActionForManualReferralInstance(LookupService lookupService, int id) 
+	{
+		return (DefaultTriageActionForManualReferral)lookupService.getLookupInstance(DefaultTriageActionForManualReferral.class, DefaultTriageActionForManualReferral.TYPE_ID, id);
+	}
+	
+
+	public static ReasonDeclined28DayOfferCollection getReasonDeclined28DayOffer(LookupService lookupService) {
+		ReasonDeclined28DayOfferCollection collection =
+			(ReasonDeclined28DayOfferCollection) lookupService.getLookupCollection(ReasonDeclined28DayOffer.TYPE_ID, 
+				ReasonDeclined28DayOfferCollection.class, ReasonDeclined28DayOffer.class);
+		return collection;
+	}
+
+	public static ReasonDeclined28DayOffer getReasonDeclined28DayOfferInstance(LookupService lookupService, int id) 
+	{
+		return (ReasonDeclined28DayOffer)lookupService.getLookupInstance(ReasonDeclined28DayOffer.class, ReasonDeclined28DayOffer.TYPE_ID, id);
+	}
+	
+
+	public static ReasonForChangeUrgencyCollection getReasonForChangeUrgency(LookupService lookupService) {
+		ReasonForChangeUrgencyCollection collection =
+			(ReasonForChangeUrgencyCollection) lookupService.getLookupCollection(ReasonForChangeUrgency.TYPE_ID, 
+				ReasonForChangeUrgencyCollection.class, ReasonForChangeUrgency.class);
+		return collection;
+	}
+
+	public static ReasonForChangeUrgency getReasonForChangeUrgencyInstance(LookupService lookupService, int id) 
+	{
+		return (ReasonForChangeUrgency)lookupService.getLookupInstance(ReasonForChangeUrgency.class, ReasonForChangeUrgency.TYPE_ID, id);
+	}
+	
+
+	public static RedirectReasonCollection getRedirectReason(LookupService lookupService) {
+		RedirectReasonCollection collection =
+			(RedirectReasonCollection) lookupService.getLookupCollection(RedirectReason.TYPE_ID, 
+				RedirectReasonCollection.class, RedirectReason.class);
+		return collection;
+	}
+
+	public static RedirectReason getRedirectReasonInstance(LookupService lookupService, int id) 
+	{
+		return (RedirectReason)lookupService.getLookupInstance(RedirectReason.class, RedirectReason.TYPE_ID, id);
+	}
+	
+
+	public static TriageOutcomeAppointmentDayCollection getTriageOutcomeAppointmentDay(LookupService lookupService) {
+		TriageOutcomeAppointmentDayCollection collection =
+			(TriageOutcomeAppointmentDayCollection) lookupService.getLookupCollection(TriageOutcomeAppointmentDay.TYPE_ID, 
+				TriageOutcomeAppointmentDayCollection.class, TriageOutcomeAppointmentDay.class);
+		return collection;
+	}
+
+	public static TriageOutcomeAppointmentDay getTriageOutcomeAppointmentDayInstance(LookupService lookupService, int id) 
+	{
+		return (TriageOutcomeAppointmentDay)lookupService.getLookupInstance(TriageOutcomeAppointmentDay.class, TriageOutcomeAppointmentDay.TYPE_ID, id);
+	}
+	
+
+	public static AcceptedActionsRequiredCollection getAcceptedActionsRequired(LookupService lookupService) {
+		AcceptedActionsRequiredCollection collection =
+			(AcceptedActionsRequiredCollection) lookupService.getLookupCollection(AcceptedActionsRequired.TYPE_ID, 
+				AcceptedActionsRequiredCollection.class, AcceptedActionsRequired.class);
+		return collection;
+	}
+
+	public static AcceptedActionsRequired getAcceptedActionsRequiredInstance(LookupService lookupService, int id) 
+	{
+		return (AcceptedActionsRequired)lookupService.getLookupInstance(AcceptedActionsRequired.class, AcceptedActionsRequired.TYPE_ID, id);
+	}
+	
+
+	public static TriageOutcomeStatusCollection getTriageOutcomeStatus(LookupService lookupService) {
+		TriageOutcomeStatusCollection collection =
+			(TriageOutcomeStatusCollection) lookupService.getLookupCollection(TriageOutcomeStatus.TYPE_ID, 
+				TriageOutcomeStatusCollection.class, TriageOutcomeStatus.class);
+		return collection;
+	}
+
+	public static TriageOutcomeStatus getTriageOutcomeStatusInstance(LookupService lookupService, int id) 
+	{
+		return (TriageOutcomeStatus)lookupService.getLookupInstance(TriageOutcomeStatus.class, TriageOutcomeStatus.TYPE_ID, id);
+	}
+	
+
+	public static ReferralInitiatedFromCollection getReferralInitiatedFrom(LookupService lookupService) {
+		ReferralInitiatedFromCollection collection =
+			(ReferralInitiatedFromCollection) lookupService.getLookupCollection(ReferralInitiatedFrom.TYPE_ID, 
+				ReferralInitiatedFromCollection.class, ReferralInitiatedFrom.class);
+		return collection;
+	}
+
+	public static ReferralInitiatedFrom getReferralInitiatedFromInstance(LookupService lookupService, int id) 
+	{
+		return (ReferralInitiatedFrom)lookupService.getLookupInstance(ReferralInitiatedFrom.class, ReferralInitiatedFrom.TYPE_ID, id);
+	}
+	
+
+	public static ReferralRelationTypeCollection getReferralRelationType(LookupService lookupService) {
+		ReferralRelationTypeCollection collection =
+			(ReferralRelationTypeCollection) lookupService.getLookupCollection(ReferralRelationType.TYPE_ID, 
+				ReferralRelationTypeCollection.class, ReferralRelationType.class);
+		return collection;
+	}
+
+	public static ReferralRelationType getReferralRelationTypeInstance(LookupService lookupService, int id) 
+	{
+		return (ReferralRelationType)lookupService.getLookupInstance(ReferralRelationType.class, ReferralRelationType.TYPE_ID, id);
+	}
+	
+
+	public static WaitingCardAdmissionTypeCollection getWaitingCardAdmissionType(LookupService lookupService) {
+		WaitingCardAdmissionTypeCollection collection =
+			(WaitingCardAdmissionTypeCollection) lookupService.getLookupCollection(WaitingCardAdmissionType.TYPE_ID, 
+				WaitingCardAdmissionTypeCollection.class, WaitingCardAdmissionType.class);
+		return collection;
+	}
+
+	public static WaitingCardAdmissionType getWaitingCardAdmissionTypeInstance(LookupService lookupService, int id) 
+	{
+		return (WaitingCardAdmissionType)lookupService.getLookupInstance(WaitingCardAdmissionType.class, WaitingCardAdmissionType.TYPE_ID, id);
+	}
+	
+
+	public static AddmitedInTimeUnitCollection getAddmitedInTimeUnit(LookupService lookupService) {
+		AddmitedInTimeUnitCollection collection =
+			(AddmitedInTimeUnitCollection) lookupService.getLookupCollection(AddmitedInTimeUnit.TYPE_ID, 
+				AddmitedInTimeUnitCollection.class, AddmitedInTimeUnit.class);
+		return collection;
+	}
+
+	public static AddmitedInTimeUnit getAddmitedInTimeUnitInstance(LookupService lookupService, int id) 
+	{
+		return (AddmitedInTimeUnit)lookupService.getLookupInstance(AddmitedInTimeUnit.class, AddmitedInTimeUnit.TYPE_ID, id);
+	}
+	
+
+	public static CancerTypeCollection getCancerType(LookupService lookupService) {
+		CancerTypeCollection collection =
+			(CancerTypeCollection) lookupService.getLookupCollection(CancerType.TYPE_ID, 
+				CancerTypeCollection.class, CancerType.class);
+		return collection;
+	}
+
+	public static CancerType getCancerTypeInstance(LookupService lookupService, int id) 
+	{
+		return (CancerType)lookupService.getLookupInstance(CancerType.class, CancerType.TYPE_ID, id);
+	}
+	
+
+	public static PreOpPostOpCareCollection getPreOpPostOpCare(LookupService lookupService) {
+		PreOpPostOpCareCollection collection =
+			(PreOpPostOpCareCollection) lookupService.getLookupCollection(PreOpPostOpCare.TYPE_ID, 
+				PreOpPostOpCareCollection.class, PreOpPostOpCare.class);
+		return collection;
+	}
+
+	public static PreOpPostOpCare getPreOpPostOpCareInstance(LookupService lookupService, int id) 
+	{
+		return (PreOpPostOpCare)lookupService.getLookupInstance(PreOpPostOpCare.class, PreOpPostOpCare.TYPE_ID, id);
+	}
+	
+
+	public static ProcedureExecutantCollection getProcedureExecutant(LookupService lookupService) {
+		ProcedureExecutantCollection collection =
+			(ProcedureExecutantCollection) lookupService.getLookupCollection(ProcedureExecutant.TYPE_ID, 
+				ProcedureExecutantCollection.class, ProcedureExecutant.class);
+		return collection;
+	}
+
+	public static ProcedureExecutant getProcedureExecutantInstance(LookupService lookupService, int id) 
+	{
+		return (ProcedureExecutant)lookupService.getLookupInstance(ProcedureExecutant.class, ProcedureExecutant.TYPE_ID, id);
+	}
+	
+
+	public static OtherProvidersCollection getOtherProviders(LookupService lookupService) {
+		OtherProvidersCollection collection =
+			(OtherProvidersCollection) lookupService.getLookupCollection(OtherProviders.TYPE_ID, 
+				OtherProvidersCollection.class, OtherProviders.class);
+		return collection;
+	}
+
+	public static OtherProviders getOtherProvidersInstance(LookupService lookupService, int id) 
+	{
+		return (OtherProviders)lookupService.getLookupInstance(OtherProviders.class, OtherProviders.TYPE_ID, id);
+	}
+	
+
+	public static ERODReasonCollection getERODReason(LookupService lookupService) {
+		ERODReasonCollection collection =
+			(ERODReasonCollection) lookupService.getLookupCollection(ERODReason.TYPE_ID, 
+				ERODReasonCollection.class, ERODReason.class);
+		return collection;
+	}
+
+	public static ERODReason getERODReasonInstance(LookupService lookupService, int id) 
+	{
+		return (ERODReason)lookupService.getLookupInstance(ERODReason.class, ERODReason.TYPE_ID, id);
+	}
+	
+
+	public static ElectiveListUndoReasonCollection getElectiveListUndoReason(LookupService lookupService) {
+		ElectiveListUndoReasonCollection collection =
+			(ElectiveListUndoReasonCollection) lookupService.getLookupCollection(ElectiveListUndoReason.TYPE_ID, 
+				ElectiveListUndoReasonCollection.class, ElectiveListUndoReason.class);
+		return collection;
+	}
+
+	public static ElectiveListUndoReason getElectiveListUndoReasonInstance(LookupService lookupService, int id) 
+	{
+		return (ElectiveListUndoReason)lookupService.getLookupInstance(ElectiveListUndoReason.class, ElectiveListUndoReason.TYPE_ID, id);
+	}
+	
+
 	public static ElectiveListReviewTypeCollection getElectiveListReviewType(LookupService lookupService) {
 		ElectiveListReviewTypeCollection collection =
 			(ElectiveListReviewTypeCollection) lookupService.getLookupCollection(ElectiveListReviewType.TYPE_ID, 
@@ -26,19 +310,6 @@ public final class LookupHelper {
 	public static ElectiveListReviewType getElectiveListReviewTypeInstance(LookupService lookupService, int id) 
 	{
 		return (ElectiveListReviewType)lookupService.getLookupInstance(ElectiveListReviewType.class, ElectiveListReviewType.TYPE_ID, id);
-	}
-	
-
-	public static KPIExceededReasonCollection getKPIExceededReason(LookupService lookupService) {
-		KPIExceededReasonCollection collection =
-			(KPIExceededReasonCollection) lookupService.getLookupCollection(KPIExceededReason.TYPE_ID, 
-				KPIExceededReasonCollection.class, KPIExceededReason.class);
-		return collection;
-	}
-
-	public static KPIExceededReason getKPIExceededReasonInstance(LookupService lookupService, int id) 
-	{
-		return (KPIExceededReason)lookupService.getLookupInstance(KPIExceededReason.class, KPIExceededReason.TYPE_ID, id);
 	}
 	
 
@@ -458,19 +729,6 @@ public final class LookupHelper {
 	}
 	
 
-	public static OnwardReferralRejectedByCollection getOnwardReferralRejectedBy(LookupService lookupService) {
-		OnwardReferralRejectedByCollection collection =
-			(OnwardReferralRejectedByCollection) lookupService.getLookupCollection(OnwardReferralRejectedBy.TYPE_ID, 
-				OnwardReferralRejectedByCollection.class, OnwardReferralRejectedBy.class);
-		return collection;
-	}
-
-	public static OnwardReferralRejectedBy getOnwardReferralRejectedByInstance(LookupService lookupService, int id) 
-	{
-		return (OnwardReferralRejectedBy)lookupService.getLookupInstance(OnwardReferralRejectedBy.class, OnwardReferralRejectedBy.TYPE_ID, id);
-	}
-	
-
 	public static ProviderCancellationReasonCollection getProviderCancellationReason(LookupService lookupService) {
 		ProviderCancellationReasonCollection collection =
 			(ProviderCancellationReasonCollection) lookupService.getLookupCollection(ProviderCancellationReason.TYPE_ID, 
@@ -598,6 +856,19 @@ public final class LookupHelper {
 	public static ReferralApptStatus getReferralApptStatusInstance(LookupService lookupService, int id) 
 	{
 		return (ReferralApptStatus)lookupService.getLookupInstance(ReferralApptStatus.class, ReferralApptStatus.TYPE_ID, id);
+	}
+	
+
+	public static OnwardReferralRejectedByCollection getOnwardReferralRejectedBy(LookupService lookupService) {
+		OnwardReferralRejectedByCollection collection =
+			(OnwardReferralRejectedByCollection) lookupService.getLookupCollection(OnwardReferralRejectedBy.TYPE_ID, 
+				OnwardReferralRejectedByCollection.class, OnwardReferralRejectedBy.class);
+		return collection;
+	}
+
+	public static OnwardReferralRejectedBy getOnwardReferralRejectedByInstance(LookupService lookupService, int id) 
+	{
+		return (OnwardReferralRejectedBy)lookupService.getLookupInstance(OnwardReferralRejectedBy.class, OnwardReferralRejectedBy.TYPE_ID, id);
 	}
 	
 

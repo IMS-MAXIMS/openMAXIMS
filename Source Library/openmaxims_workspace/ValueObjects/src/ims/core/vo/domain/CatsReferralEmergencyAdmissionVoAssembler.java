@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.core.vo.domain;
@@ -68,6 +73,14 @@ public class CatsReferralEmergencyAdmissionVoAssembler
 		valueObjectDest.setContract(valueObjectSrc.getContract());
 		// hasAppointments
 		valueObjectDest.setHasAppointments(valueObjectSrc.getHasAppointments());
+		// IsEmergencyReferral
+		valueObjectDest.setIsEmergencyReferral(valueObjectSrc.getIsEmergencyReferral());
+		// RTTClockImpact
+		valueObjectDest.setRTTClockImpact(valueObjectSrc.getRTTClockImpact());
+		// EpisodeOfCare
+		valueObjectDest.setEpisodeOfCare(valueObjectSrc.getEpisodeOfCare());
+		// Urgency
+		valueObjectDest.setUrgency(valueObjectSrc.getUrgency());
 	 	return valueObjectDest;
 	 }
 
@@ -359,7 +372,7 @@ public class CatsReferralEmergencyAdmissionVoAssembler
 			return null;
 			
 		// Patient
-		valueObject.setPatient(ims.core.vo.domain.PatientShortAssembler.create(map, domainObject.getPatient()) );
+		valueObject.setPatient(ims.core.vo.domain.PatientLite_IdentifiersVoAssembler.create(map, domainObject.getPatient()) );
 		// CareContext
 		if (domainObject.getCareContext() != null)
 		{
@@ -419,7 +432,61 @@ public class CatsReferralEmergencyAdmissionVoAssembler
 		}
 		// hasAppointments
 		valueObject.setHasAppointments( domainObject.isHasAppointments() );
- 		return valueObject;
+		// IsEmergencyReferral
+		valueObject.setIsEmergencyReferral( domainObject.isIsEmergencyReferral() );
+		// RTTClockImpact
+		valueObject.setRTTClockImpact( domainObject.isRTTClockImpact() );
+		// EpisodeOfCare
+		if (domainObject.getEpisodeOfCare() != null)
+		{
+			if(domainObject.getEpisodeOfCare() instanceof HibernateProxy) // If the proxy is set, there is no need to lazy load, the proxy knows the id already. 
+			{
+				HibernateProxy p = (HibernateProxy) domainObject.getEpisodeOfCare();
+				int id = Integer.parseInt(p.getHibernateLazyInitializer().getIdentifier().toString());				
+				valueObject.setEpisodeOfCare(new ims.core.admin.vo.EpisodeOfCareRefVo(id, -1));				
+			}
+			else
+			{
+				valueObject.setEpisodeOfCare(new ims.core.admin.vo.EpisodeOfCareRefVo(domainObject.getEpisodeOfCare().getId(), domainObject.getEpisodeOfCare().getVersion()));
+			}
+		}
+		// Urgency
+		ims.domain.lookups.LookupInstance instance13 = domainObject.getUrgency();
+		if ( null != instance13 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance13.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance13.getImage().getImageId(), instance13.getImage().getImagePath());
+			}
+			color = instance13.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.RefMan.vo.lookups.ReferralUrgency voLookup13 = new ims.RefMan.vo.lookups.ReferralUrgency(instance13.getId(),instance13.getText(), instance13.isActive(), null, img, color);
+			ims.RefMan.vo.lookups.ReferralUrgency parentVoLookup13 = voLookup13;
+			ims.domain.lookups.LookupInstance parent13 = instance13.getParent();
+			while (parent13 != null)
+			{
+				if (parent13.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent13.getImage().getImageId(), parent13.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent13.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup13.setParent(new ims.RefMan.vo.lookups.ReferralUrgency(parent13.getId(),parent13.getText(), parent13.isActive(), null, img, color));
+				parentVoLookup13 = parentVoLookup13.getParent();
+								parent13 = parent13.getParent();
+			}			
+			valueObject.setUrgency(voLookup13);
+		}
+		 		return valueObject;
 	 }
 
 
@@ -468,7 +535,7 @@ public class CatsReferralEmergencyAdmissionVoAssembler
 		}
 		domainObject.setVersion(valueObject.getVersion_CatsReferral());
 
-		domainObject.setPatient(ims.core.vo.domain.PatientShortAssembler.extractPatient(domainFactory, valueObject.getPatient(), domMap));
+		domainObject.setPatient(ims.core.vo.domain.PatientLite_IdentifiersVoAssembler.extractPatient(domainFactory, valueObject.getPatient(), domMap));
 		ims.core.admin.domain.objects.CareContext value2 = null;
 		if ( null != valueObject.getCareContext() ) 
 		{
@@ -587,6 +654,36 @@ public class CatsReferralEmergencyAdmissionVoAssembler
 		}
 		domainObject.setContract(value8);
 		domainObject.setHasAppointments(valueObject.getHasAppointments());
+		domainObject.setIsEmergencyReferral(valueObject.getIsEmergencyReferral());
+		domainObject.setRTTClockImpact(valueObject.getRTTClockImpact());
+		ims.core.admin.domain.objects.EpisodeOfCare value12 = null;
+		if ( null != valueObject.getEpisodeOfCare() ) 
+		{
+			if (valueObject.getEpisodeOfCare().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getEpisodeOfCare()) != null)
+				{
+					value12 = (ims.core.admin.domain.objects.EpisodeOfCare)domMap.get(valueObject.getEpisodeOfCare());
+				}
+			}
+			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
+			{
+				value12 = domainObject.getEpisodeOfCare();	
+			}
+			else
+			{
+				value12 = (ims.core.admin.domain.objects.EpisodeOfCare)domainFactory.getDomainObject(ims.core.admin.domain.objects.EpisodeOfCare.class, valueObject.getEpisodeOfCare().getBoId());
+			}
+		}
+		domainObject.setEpisodeOfCare(value12);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value13 = null;
+		if ( null != valueObject.getUrgency() ) 
+		{
+			value13 =
+				domainFactory.getLookupInstance(valueObject.getUrgency().getID());
+		}
+		domainObject.setUrgency(value13);
 
 		return domainObject;
 	}

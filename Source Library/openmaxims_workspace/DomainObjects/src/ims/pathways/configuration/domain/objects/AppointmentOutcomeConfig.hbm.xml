@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:35 -->
+<!-- Generated: 12/10/2015, 13:29 -->
 <hibernate-mapping>
 	<class name="ims.pathways.configuration.domain.objects.AppointmentOutcomeConfig" table="pthw_apptoutcomecfg" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -52,11 +52,14 @@
 			<column name="firstdefin" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
 <!-- debug: canAddtoWaitingList -->
-<!-- debug: canAddtoBookedList -->
 <!-- debug: canAddtoPlannedList -->
 <!-- debug: canMakeAppointment -->
-<!-- debug: canMakeOnwardReferral -->
 <!-- debug: canTransfer -->
+<!-- debug: usedForSeen -->
+<!-- debug: usedForNotSeen -->
+<!-- debug: usedForDNA -->
+<!-- debug: canAddRequestForService -->
+<!-- debug: canTransferOfCare -->
 <!-- debug: !IsAssociation && !IsCollection -->
 
 <!-- debug: IsLookup -->
@@ -75,11 +78,6 @@
 		</property>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
-		<property name="canAddtoBookedList" type="boolean" access="field" update="true">
-			<column name="canaddtobo"  not-null="true" unique="false"  />
-		</property>
-<!-- debug: !IsAssociation && !IsCollection -->
-<!-- debug: !IsLookup -->
 		<property name="canAddtoPlannedList" type="boolean" access="field" update="true">
 			<column name="canaddtopl"  not-null="true" unique="false"  />
 		</property>
@@ -90,13 +88,33 @@
 		</property>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
-		<property name="canMakeOnwardReferral" type="boolean" access="field" update="true">
-			<column name="canmakeonw"  not-null="true" unique="false"  />
+		<property name="canTransfer" type="boolean" access="field" update="true">
+			<column name="cantransfe"  not-null="true" unique="false"  />
 		</property>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
-		<property name="canTransfer" type="boolean" access="field" update="true">
-			<column name="cantransfe"  not-null="true" unique="false"  />
+		<property name="usedForSeen" type="boolean" access="field" update="true">
+			<column name="usedforsee"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="usedForNotSeen" type="boolean" access="field" update="true">
+			<column name="usedfornot"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="usedForDNA" type="boolean" access="field" update="true">
+			<column name="usedfordna"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="canAddRequestForService" type="boolean" access="field" update="true">
+			<column name="canaddrequ"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="canTransferOfCare" type="boolean" access="field" update="true">
+			<column name="cantransf2"  not-null="true" unique="false"  />
 		</property>
 	</class>
 </hibernate-mapping>

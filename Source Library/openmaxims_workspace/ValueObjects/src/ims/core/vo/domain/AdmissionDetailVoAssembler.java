@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.core.vo.domain;
@@ -90,6 +95,30 @@ public class AdmissionDetailVoAssembler
 		valueObjectDest.setExtendedDetails(valueObjectSrc.getExtendedDetails());
 		// TransferHistory
 		valueObjectDest.setTransferHistory(valueObjectSrc.getTransferHistory());
+		// Service
+		valueObjectDest.setService(valueObjectSrc.getService());
+		// ExtendedLengthOfStayReason
+		valueObjectDest.setExtendedLengthOfStayReason(valueObjectSrc.getExtendedLengthOfStayReason());
+		// MedicallyFitForDischarge
+		valueObjectDest.setMedicallyFitForDischarge(valueObjectSrc.getMedicallyFitForDischarge());
+		// ReasonDelayedDischarge
+		valueObjectDest.setReasonDelayedDischarge(valueObjectSrc.getReasonDelayedDischarge());
+		// PatientRequiresTransport
+		valueObjectDest.setPatientRequiresTransport(valueObjectSrc.getPatientRequiresTransport());
+		// TransportDetails
+		valueObjectDest.setTransportDetails(valueObjectSrc.getTransportDetails());
+		// AbleToGoDischargeLounge
+		valueObjectDest.setAbleToGoDischargeLounge(valueObjectSrc.getAbleToGoDischargeLounge());
+		// ReasonCannotGoDischargeLounge
+		valueObjectDest.setReasonCannotGoDischargeLounge(valueObjectSrc.getReasonCannotGoDischargeLounge());
+		// SelfAdmitPatient
+		valueObjectDest.setSelfAdmitPatient(valueObjectSrc.getSelfAdmitPatient());
+		// SourceOfEmergencyReferral
+		valueObjectDest.setSourceOfEmergencyReferral(valueObjectSrc.getSourceOfEmergencyReferral());
+		// HealthyLodgerDetails
+		valueObjectDest.setHealthyLodgerDetails(valueObjectSrc.getHealthyLodgerDetails());
+		// AdmissionWard
+		valueObjectDest.setAdmissionWard(valueObjectSrc.getAdmissionWard());
 	 	return valueObjectDest;
 	 }
 
@@ -405,7 +434,7 @@ public class AdmissionDetailVoAssembler
 			}
 		}
 		// Consultant
-		valueObject.setConsultant((ims.core.vo.MedicVo)ims.core.vo.domain.MedicVoAssembler.create(map, domainObject.getConsultant()) );
+		valueObject.setConsultant(ims.core.vo.domain.MedicVoAssembler.create(map, domainObject.getConsultant()) );
 		// Specialty
 		ims.domain.lookups.LookupInstance instance6 = domainObject.getSpecialty();
 		if ( null != instance6 ) {
@@ -556,12 +585,12 @@ public class AdmissionDetailVoAssembler
 		java.util.Date EstDischargeDate = domainObject.getEstDischargeDate();
 		if ( null != EstDischargeDate ) 
 		{
-			valueObject.setEstDischargeDate(new ims.framework.utils.Date(EstDischargeDate) );
+			valueObject.setEstDischargeDate(new ims.framework.utils.DateTime(EstDischargeDate) );
 		}
 		// isChaplainRequired
 		valueObject.setIsChaplainRequired( domainObject.isIsChaplainRequired() );
 		// ReferringConsultant
-		valueObject.setReferringConsultant((ims.core.vo.MedicVo)ims.core.vo.domain.MedicVoAssembler.create(map, domainObject.getReferringConsultant()) );
+		valueObject.setReferringConsultant(ims.core.vo.domain.MedicVoAssembler.create(map, domainObject.getReferringConsultant()) );
 		// PatientStatus
 		ims.domain.lookups.LookupInstance instance14 = domainObject.getPatientStatus();
 		if ( null != instance14 ) {
@@ -610,6 +639,166 @@ public class AdmissionDetailVoAssembler
 		valueObject.setExtendedDetails(ims.core.vo.domain.ExtendedAdmissionDetailVoAssembler.create(map, domainObject.getExtendedDetails()) );
 		// TransferHistory
 		valueObject.setTransferHistory(ims.core.vo.domain.TransferHistoryVoAssembler.createTransferHistoryVoCollectionFromTransferHistory(map, domainObject.getTransferHistory()) );
+		// Service
+		valueObject.setService(ims.core.vo.domain.ServiceLiteVoAssembler.create(map, domainObject.getService()) );
+		// ExtendedLengthOfStayReason
+		ims.domain.lookups.LookupInstance instance22 = domainObject.getExtendedLengthOfStayReason();
+		if ( null != instance22 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance22.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance22.getImage().getImageId(), instance22.getImage().getImagePath());
+			}
+			color = instance22.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.ExtendedLengthOfStayReason voLookup22 = new ims.core.vo.lookups.ExtendedLengthOfStayReason(instance22.getId(),instance22.getText(), instance22.isActive(), null, img, color);
+			ims.core.vo.lookups.ExtendedLengthOfStayReason parentVoLookup22 = voLookup22;
+			ims.domain.lookups.LookupInstance parent22 = instance22.getParent();
+			while (parent22 != null)
+			{
+				if (parent22.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent22.getImage().getImageId(), parent22.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent22.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup22.setParent(new ims.core.vo.lookups.ExtendedLengthOfStayReason(parent22.getId(),parent22.getText(), parent22.isActive(), null, img, color));
+				parentVoLookup22 = parentVoLookup22.getParent();
+								parent22 = parent22.getParent();
+			}			
+			valueObject.setExtendedLengthOfStayReason(voLookup22);
+		}
+				// MedicallyFitForDischarge
+		ims.domain.lookups.LookupInstance instance23 = domainObject.getMedicallyFitForDischarge();
+		if ( null != instance23 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance23.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance23.getImage().getImageId(), instance23.getImage().getImagePath());
+			}
+			color = instance23.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.YesNo voLookup23 = new ims.core.vo.lookups.YesNo(instance23.getId(),instance23.getText(), instance23.isActive(), null, img, color);
+			ims.core.vo.lookups.YesNo parentVoLookup23 = voLookup23;
+			ims.domain.lookups.LookupInstance parent23 = instance23.getParent();
+			while (parent23 != null)
+			{
+				if (parent23.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent23.getImage().getImageId(), parent23.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent23.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup23.setParent(new ims.core.vo.lookups.YesNo(parent23.getId(),parent23.getText(), parent23.isActive(), null, img, color));
+				parentVoLookup23 = parentVoLookup23.getParent();
+								parent23 = parent23.getParent();
+			}			
+			valueObject.setMedicallyFitForDischarge(voLookup23);
+		}
+				// ReasonDelayedDischarge
+		valueObject.setReasonDelayedDischarge(ims.core.vo.domain.ReasonForDelayedDischargeVoAssembler.createReasonForDelayedDischargeVoCollectionFromReasonForDelayedDischarge(map, domainObject.getReasonDelayedDischarge()) );
+		// PatientRequiresTransport
+		valueObject.setPatientRequiresTransport( domainObject.isPatientRequiresTransport() );
+		// TransportDetails
+		valueObject.setTransportDetails(ims.core.vo.domain.PatientTransportRequirementsVoAssembler.create(map, domainObject.getTransportDetails()) );
+		// AbleToGoDischargeLounge
+		valueObject.setAbleToGoDischargeLounge( domainObject.isAbleToGoDischargeLounge() );
+		// ReasonCannotGoDischargeLounge
+		ims.domain.lookups.LookupInstance instance28 = domainObject.getReasonCannotGoDischargeLounge();
+		if ( null != instance28 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance28.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance28.getImage().getImageId(), instance28.getImage().getImagePath());
+			}
+			color = instance28.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.ReasonCannotGoDischargeLounge voLookup28 = new ims.core.vo.lookups.ReasonCannotGoDischargeLounge(instance28.getId(),instance28.getText(), instance28.isActive(), null, img, color);
+			ims.core.vo.lookups.ReasonCannotGoDischargeLounge parentVoLookup28 = voLookup28;
+			ims.domain.lookups.LookupInstance parent28 = instance28.getParent();
+			while (parent28 != null)
+			{
+				if (parent28.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent28.getImage().getImageId(), parent28.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent28.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup28.setParent(new ims.core.vo.lookups.ReasonCannotGoDischargeLounge(parent28.getId(),parent28.getText(), parent28.isActive(), null, img, color));
+				parentVoLookup28 = parentVoLookup28.getParent();
+								parent28 = parent28.getParent();
+			}			
+			valueObject.setReasonCannotGoDischargeLounge(voLookup28);
+		}
+				// SelfAdmitPatient
+		valueObject.setSelfAdmitPatient( domainObject.isSelfAdmitPatient() );
+		// SourceOfEmergencyReferral
+		ims.domain.lookups.LookupInstance instance30 = domainObject.getSourceOfEmergencyReferral();
+		if ( null != instance30 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance30.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance30.getImage().getImageId(), instance30.getImage().getImagePath());
+			}
+			color = instance30.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.SourceOfEmergencyReferral voLookup30 = new ims.core.vo.lookups.SourceOfEmergencyReferral(instance30.getId(),instance30.getText(), instance30.isActive(), null, img, color);
+			ims.core.vo.lookups.SourceOfEmergencyReferral parentVoLookup30 = voLookup30;
+			ims.domain.lookups.LookupInstance parent30 = instance30.getParent();
+			while (parent30 != null)
+			{
+				if (parent30.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent30.getImage().getImageId(), parent30.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent30.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup30.setParent(new ims.core.vo.lookups.SourceOfEmergencyReferral(parent30.getId(),parent30.getText(), parent30.isActive(), null, img, color));
+				parentVoLookup30 = parentVoLookup30.getParent();
+								parent30 = parent30.getParent();
+			}			
+			valueObject.setSourceOfEmergencyReferral(voLookup30);
+		}
+				// HealthyLodgerDetails
+		valueObject.setHealthyLodgerDetails(ims.core.vo.domain.HealthyLodgerVoAssembler.create(map, domainObject.getHealthyLodger()) );
+		// AdmissionWard
+		valueObject.setAdmissionWard(ims.core.vo.domain.LocationLiteVoAssembler.create(map, domainObject.getAdmissionWard()) );
  		return valueObject;
 	 }
 
@@ -667,7 +856,23 @@ public class AdmissionDetailVoAssembler
 			value2 = dateTime2.getJavaDate();
 		}
 		domainObject.setAdmissionDateTime(value2);
-		domainObject.setWard(ims.core.vo.domain.LocationLiteVoAssembler.extractLocation(domainFactory, valueObject.getWard(), domMap));
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.resource.place.domain.objects.Location value3 = null;
+		if ( null != valueObject.getWard() ) 
+		{
+			if (valueObject.getWard().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getWard()) != null)
+				{
+					value3 = (ims.core.resource.place.domain.objects.Location)domMap.get(valueObject.getWard());
+				}
+			}
+			else
+			{
+				value3 = (ims.core.resource.place.domain.objects.Location)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.Location.class, valueObject.getWard().getBoId());
+			}
+		}
+		domainObject.setWard(value3);
 		ims.core.layout.domain.objects.BedSpace value4 = null;
 		if ( null != valueObject.getBed() ) 
 		{
@@ -688,7 +893,23 @@ public class AdmissionDetailVoAssembler
 			}
 		}
 		domainObject.setBed(value4);
-		domainObject.setConsultant(ims.core.vo.domain.MedicVoAssembler.extractMedic(domainFactory, (ims.core.vo.MedicVo)valueObject.getConsultant(), domMap));
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.resource.people.domain.objects.Medic value5 = null;
+		if ( null != valueObject.getConsultant() ) 
+		{
+			if (valueObject.getConsultant().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getConsultant()) != null)
+				{
+					value5 = (ims.core.resource.people.domain.objects.Medic)domMap.get(valueObject.getConsultant());
+				}
+			}
+			else
+			{
+				value5 = (ims.core.resource.people.domain.objects.Medic)domainFactory.getDomainObject(ims.core.resource.people.domain.objects.Medic.class, valueObject.getConsultant().getBoId());
+			}
+		}
+		domainObject.setConsultant(value5);
 		// create LookupInstance from vo LookupType
 		ims.domain.lookups.LookupInstance value6 = null;
 		if ( null != valueObject.getSpecialty() ) 
@@ -728,15 +949,31 @@ public class AdmissionDetailVoAssembler
 			valueObject.setReasonForAdmission(null);
 		}
 		domainObject.setReasonForAdmission(valueObject.getReasonForAdmission());
+		ims.framework.utils.DateTime dateTime11 = valueObject.getEstDischargeDate();
 		java.util.Date value11 = null;
-		ims.framework.utils.Date date11 = valueObject.getEstDischargeDate();		
-		if ( date11 != null ) 
+		if ( dateTime11 != null ) 
 		{
-			value11 = date11.getDate();
+			value11 = dateTime11.getJavaDate();
 		}
 		domainObject.setEstDischargeDate(value11);
 		domainObject.setIsChaplainRequired(valueObject.getIsChaplainRequired());
-		domainObject.setReferringConsultant(ims.core.vo.domain.MedicVoAssembler.extractMedic(domainFactory, (ims.core.vo.MedicVo)valueObject.getReferringConsultant(), domMap));
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.resource.people.domain.objects.Medic value13 = null;
+		if ( null != valueObject.getReferringConsultant() ) 
+		{
+			if (valueObject.getReferringConsultant().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getReferringConsultant()) != null)
+				{
+					value13 = (ims.core.resource.people.domain.objects.Medic)domMap.get(valueObject.getReferringConsultant());
+				}
+			}
+			else
+			{
+				value13 = (ims.core.resource.people.domain.objects.Medic)domainFactory.getDomainObject(ims.core.resource.people.domain.objects.Medic.class, valueObject.getReferringConsultant().getBoId());
+			}
+		}
+		domainObject.setReferringConsultant(value13);
 		// create LookupInstance from vo LookupType
 		ims.domain.lookups.LookupInstance value14 = null;
 		if ( null != valueObject.getPatientStatus() ) 
@@ -831,6 +1068,152 @@ public class AdmissionDetailVoAssembler
 		}
 		
 		domainObject.setTransferHistory(domainTransferHistory20);		
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.clinical.domain.objects.Service value21 = null;
+		if ( null != valueObject.getService() ) 
+		{
+			if (valueObject.getService().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getService()) != null)
+				{
+					value21 = (ims.core.clinical.domain.objects.Service)domMap.get(valueObject.getService());
+				}
+			}
+			else
+			{
+				value21 = (ims.core.clinical.domain.objects.Service)domainFactory.getDomainObject(ims.core.clinical.domain.objects.Service.class, valueObject.getService().getBoId());
+			}
+		}
+		domainObject.setService(value21);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value22 = null;
+		if ( null != valueObject.getExtendedLengthOfStayReason() ) 
+		{
+			value22 =
+				domainFactory.getLookupInstance(valueObject.getExtendedLengthOfStayReason().getID());
+		}
+		domainObject.setExtendedLengthOfStayReason(value22);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value23 = null;
+		if ( null != valueObject.getMedicallyFitForDischarge() ) 
+		{
+			value23 =
+				domainFactory.getLookupInstance(valueObject.getMedicallyFitForDischarge().getID());
+		}
+		domainObject.setMedicallyFitForDischarge(value23);
+
+		// SaveAsRefVO treated as RefValueObject
+		ims.core.admin.pas.vo.ReasonForDelayedDischargeRefVoCollection refCollection24 = new ims.core.admin.pas.vo.ReasonForDelayedDischargeRefVoCollection();
+		if (valueObject.getReasonDelayedDischarge() != null)
+		{
+			for (int i24=0; i24<valueObject.getReasonDelayedDischarge().size(); i24++)
+			{
+				ims.core.admin.pas.vo.ReasonForDelayedDischargeRefVo ref24 = (ims.core.admin.pas.vo.ReasonForDelayedDischargeRefVo)valueObject.getReasonDelayedDischarge().get(i24);
+				refCollection24.add(ref24);
+			}
+		}
+		int size24 = (null == refCollection24) ? 0 : refCollection24.size();		
+		java.util.List domainReasonDelayedDischarge24 = domainObject.getReasonDelayedDischarge();
+		if (domainReasonDelayedDischarge24 == null)
+		{
+			domainReasonDelayedDischarge24 = new java.util.ArrayList();
+		}
+		for(int i=0; i < size24; i++) 
+		{
+			ims.core.admin.pas.vo.ReasonForDelayedDischargeRefVo vo = refCollection24.get(i);			
+			ims.core.admin.pas.domain.objects.ReasonForDelayedDischarge dom = null;
+			if ( null != vo ) 
+			{
+				if (vo.getBoId() == null)
+				{
+					if (domMap.get(vo) != null)
+					{
+						dom = (ims.core.admin.pas.domain.objects.ReasonForDelayedDischarge)domMap.get(vo);
+					}
+				}
+				else
+				{
+					dom = (ims.core.admin.pas.domain.objects.ReasonForDelayedDischarge)domainFactory.getDomainObject( ims.core.admin.pas.domain.objects.ReasonForDelayedDischarge.class, vo.getBoId());
+				}
+			}
+
+			int domIdx = domainReasonDelayedDischarge24.indexOf(dom);
+			if (domIdx == -1)
+			{
+				domainReasonDelayedDischarge24.add(i, dom);
+			}
+			else if (i != domIdx && i < domainReasonDelayedDischarge24.size())
+			{
+				Object tmp = domainReasonDelayedDischarge24.get(i);
+				domainReasonDelayedDischarge24.set(i, domainReasonDelayedDischarge24.get(domIdx));
+				domainReasonDelayedDischarge24.set(domIdx, tmp);
+			}
+		}
+		
+		//Remove all ones in domList where index > voCollection.size() as these should
+		//now represent the ones removed from the VO collection. No longer referenced.
+		int i24 = domainReasonDelayedDischarge24.size();
+		while (i24 > size24)
+		{
+			domainReasonDelayedDischarge24.remove(i24-1);
+			i24 = domainReasonDelayedDischarge24.size();
+		}
+		
+		domainObject.setReasonDelayedDischarge(domainReasonDelayedDischarge24);		
+		domainObject.setPatientRequiresTransport(valueObject.getPatientRequiresTransport());
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.domain.objects.PatientTransportRequirements value26 = null;
+		if ( null != valueObject.getTransportDetails() ) 
+		{
+			if (valueObject.getTransportDetails().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getTransportDetails()) != null)
+				{
+					value26 = (ims.core.domain.objects.PatientTransportRequirements)domMap.get(valueObject.getTransportDetails());
+				}
+			}
+			else
+			{
+				value26 = (ims.core.domain.objects.PatientTransportRequirements)domainFactory.getDomainObject(ims.core.domain.objects.PatientTransportRequirements.class, valueObject.getTransportDetails().getBoId());
+			}
+		}
+		domainObject.setTransportDetails(value26);
+		domainObject.setAbleToGoDischargeLounge(valueObject.getAbleToGoDischargeLounge());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value28 = null;
+		if ( null != valueObject.getReasonCannotGoDischargeLounge() ) 
+		{
+			value28 =
+				domainFactory.getLookupInstance(valueObject.getReasonCannotGoDischargeLounge().getID());
+		}
+		domainObject.setReasonCannotGoDischargeLounge(value28);
+		domainObject.setSelfAdmitPatient(valueObject.getSelfAdmitPatient());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value30 = null;
+		if ( null != valueObject.getSourceOfEmergencyReferral() ) 
+		{
+			value30 =
+				domainFactory.getLookupInstance(valueObject.getSourceOfEmergencyReferral().getID());
+		}
+		domainObject.setSourceOfEmergencyReferral(value30);
+		domainObject.setHealthyLodger(ims.core.vo.domain.HealthyLodgerVoAssembler.extractHealthyLodger(domainFactory, valueObject.getHealthyLodgerDetails(), domMap));
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.resource.place.domain.objects.Location value32 = null;
+		if ( null != valueObject.getAdmissionWard() ) 
+		{
+			if (valueObject.getAdmissionWard().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getAdmissionWard()) != null)
+				{
+					value32 = (ims.core.resource.place.domain.objects.Location)domMap.get(valueObject.getAdmissionWard());
+				}
+			}
+			else
+			{
+				value32 = (ims.core.resource.place.domain.objects.Location)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.Location.class, valueObject.getAdmissionWard().getBoId());
+			}
+		}
+		domainObject.setAdmissionWard(value32);
 
 		return domainObject;
 	}

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -51,14 +56,19 @@ import ims.core.vo.VitalSignsVoCollection;
 import ims.core.vo.lookups.CBGType;
 import ims.core.vo.lookups.ConsciousLevel;
 import ims.core.vo.lookups.LookupHelper;
+import ims.core.vo.lookups.OBSProtocolType;
+import ims.core.vo.lookups.OBSType;
+import ims.core.vo.lookups.OBSTypeCollection;
 import ims.core.vo.lookups.PatientCausingConcern;
-import ims.core.vo.lookups.SECSTypes;
+import ims.core.vo.lookups.Sex;
 import ims.core.vo.lookups.UrineOutput;
 import ims.core.vo.lookups.VSSnellen;
 import ims.core.vo.lookups.VSSnellenCollection;
 import ims.core.vo.lookups.VSType;
 import ims.core.vo.lookups.VSTypeCollection;
+import ims.core.vo.lookups.YesNo;
 import ims.domain.exceptions.StaleObjectException;
+import ims.emergency.vo.TriageForClinicianWorklistVo;
 import ims.emergency.vo.enums.EdAssessment_CustomControlsEvents;
 import ims.framework.MessageButtons;
 import ims.framework.MessageIcon;
@@ -97,7 +107,8 @@ public class Logic extends BaseLogic
 			return;
 
 		form.getLocalContext().setSecsRecord(voSecs);
-
+		form.getLocalContext().setCollVitalSignsRequiredForScore(getVitalSignsRequiredForScore(voSecs.getConfiguration())); //WDEV-20668
+		
 		SECSConfigurationVoCollection voCollConfig = voSecs.getConfiguration();
 
 		for (int i = 0; i < voCollConfig.size(); i++)
@@ -105,7 +116,7 @@ public class Logic extends BaseLogic
 			SECSConfigurationVo voConfig = voCollConfig.get(i);
 			if (voConfig.getTypeIsNotNull())
 			{
-				if (voConfig.getType().equals(SECSTypes.PATIENT_CONCERN))
+				if (voConfig.getType().equals(OBSType.PATIENT_CONCERN)) //WDEV-20237
 				{
 					SECSLookupConfigVo voLookupConfig = voConfig.getLookupConfig();
 					if (voLookupConfig != null && voLookupConfig.getLookupScores() != null)
@@ -114,7 +125,7 @@ public class Logic extends BaseLogic
 							form.cmbPatientConcern().newRow(new PatientCausingConcern(voLookupConfig.getLookupScores().get(p).getLookupInstance().getId(), voLookupConfig.getLookupScores().get(p).getLookupInstance().getText(), voLookupConfig.getLookupScores().get(p).getLookupInstance().isActive(), null, null, null), voLookupConfig.getLookupScores().get(p).getLookupInstance().getText());
 					}
 				}
-				else if (voConfig.getType().equals(SECSTypes.CONSCIOUS_LEVEL))
+				else if (voConfig.getType().equals(OBSType.CONSCIOUS_LEVEL))
 				{
 					SECSLookupConfigVo voLookupConfig = voConfig.getLookupConfig();
 					if (voLookupConfig != null && voLookupConfig.getLookupScores() != null)
@@ -123,7 +134,7 @@ public class Logic extends BaseLogic
 							form.cmbConscious().newRow(new ConsciousLevel(voLookupConfig.getLookupScores().get(p).getLookupInstance().getId(), voLookupConfig.getLookupScores().get(p).getLookupInstance().getText(), voLookupConfig.getLookupScores().get(p).getLookupInstance().isActive(), null, null, null), voLookupConfig.getLookupScores().get(p).getLookupInstance().getText());
 					}
 				}
-				else if (voConfig.getType().equals(SECSTypes.URINE_OUTPUT))
+				else if (voConfig.getType().equals(OBSType.URINE_OUTPUT))
 				{
 					SECSLookupConfigVo voLookupConfig = voConfig.getLookupConfig();
 					if (voLookupConfig != null && voLookupConfig.getLookupScores() != null)
@@ -136,6 +147,25 @@ public class Logic extends BaseLogic
 		}
 	}
 
+	//WDEV-20668
+	private OBSTypeCollection getVitalSignsRequiredForScore(SECSConfigurationVoCollection voCollConfig) 
+	{
+		if (voCollConfig==null  || voCollConfig.size()==0)
+			return null;
+
+		OBSTypeCollection collObsType=new OBSTypeCollection();
+		
+		for (int i = 0; i < voCollConfig.size(); i++)
+		{
+			if (voCollConfig.get(i)!=null && Boolean.TRUE.equals(voCollConfig.get(i).getIsRequiredForScore()))
+			{
+				collObsType.add(voCollConfig.get(i).getType());
+			}
+		}
+		
+		return collObsType;
+	}
+		
 	private void enableBloodSugarControls(boolean bEnable)
 	{
 		form.lyrVSigns().tabSection2().cmbTimePeriod().setEnabled(bEnable);
@@ -158,6 +188,8 @@ public class Logic extends BaseLogic
 	protected void onBtnNewClick() throws PresentationLogicException
 	{
 		clearScreen();
+		
+		form.getLocalContext().setselectedTriage(form.getLocalContext().getselectedTriageIsNotNull() ? domain.getTriage(form.getLocalContext().getselectedTriage()) : null); //WDEV-20311 
 		
 		//WDEV-15996  // Don't allow to create new Vital Signs when "Logged in User is not a Hcp
 		if (isLoggedInUser() == false)
@@ -231,6 +263,12 @@ public class Logic extends BaseLogic
 
 	protected void onBtnSaveClick() throws PresentationLogicException
 	{
+		doSave(true);
+
+	}
+
+	private void doSave(boolean validateNEWS) throws PresentationLogicException
+	{
 		//WDEV-17337
 		form.getLocalContext().setSelectedEvent(EdAssessment_CustomControlsEvents.SAVE);
 		form.fireCustomControlValueChanged();
@@ -239,7 +277,7 @@ public class Logic extends BaseLogic
 		{
 			if (form.dteTaken().getValue().isGreaterThan(new Date()))
 			{
-				engine.showMessage("'Date/Time taken' can not be in the future.");
+				engine.showMessage("'Date/Time Taken' cannot be set in the future."); //WDEV-18762
 				return;
 			}
 		}
@@ -476,7 +514,7 @@ public class Logic extends BaseLogic
 		{
 			if ((form.lyrVSigns().tabSection2().decHeight().getValue() != null && form.lyrVSigns().tabSection2().decHeight().getValue() < 1) || (form.lyrVSigns().tabSection2().decWeight().getValue() != null && form.lyrVSigns().tabSection2().decWeight().getValue() < 1))
 			{
-				screenErrors.add("Height and Weight values can not be less than 1.");
+				screenErrors.add("Height and Weight values cannot be less than 1."); //WDEV-18762
 			}
 			else
 			{
@@ -526,13 +564,48 @@ public class Logic extends BaseLogic
 		voVitalSign.setClinicalContact(form.getGlobalContext().Core.getCurrentClinicalContact());
 		voVitalSign.setCareContext(form.getGlobalContext().Core.getCurrentCareContext());
 
-		String[] arrErrors = voVitalSign.validate();
+		if (form.getGlobalContext().Core.getUnrecordedObservationsReason() != null)
+			voVitalSign.setUnrecordedObservationsReason(form.getGlobalContext().Core.getUnrecordedObservationsReason().getReason());
+		
+		//WDEV-20426
+		
+		boolean requiresEscalation = requiresEscalation(voVitalSign);
+		TriageForClinicianWorklistVo triageToSave = null;
+		String[] triageVoErrors = null;
+		
+		if (form.getLocalContext().getselectedTriage()!=null && dt1!=null && ((form.getLocalContext().getselectedTriage().getVitalsTakenDateTime()!=null && dt1.isGreaterThan(form.getLocalContext().getselectedTriage().getVitalsTakenDateTime())) || form.getLocalContext().getselectedTriage().getVitalsTakenDateTime()==null))
+		{
+			triageToSave = (TriageForClinicianWorklistVo) form.getLocalContext().getselectedTriage().clone();
+			triageToSave.setOBSScore(form.getGlobalContext().Core.getVitalSignsEscalationScore()!=null ? Integer.valueOf(form.getGlobalContext().Core.getVitalSignsEscalationScore()): null);
+			
+			triageToSave.setVitalsTakenDateTime(dt1);
+			triageVoErrors = triageToSave.validate();
+		}
+		
+		String[] arrErrors = voVitalSign.validate(triageVoErrors);  //WDEV-20426
 		String[] arrScreenAndVoErrors = addScreenErrorsToVOErrors(screenErrors, arrErrors);
+		
 		if (arrScreenAndVoErrors.length == 0)
 		{
+			boolean isNEWSProtocol = form.getLocalContext().getSecsRecord() != null && OBSProtocolType.NEWS.equals(form.getLocalContext().getSecsRecord().getOBSProtocolType());
+			
+			if (validateNEWS && isNEWSProtocol && ConfigFlag.UI.USE_EARLY_WARNING_SYSTEM.getValue() && !allRequiredForScoreVitalSignsHaveValues(voVitalSign))
+			{
+				if (form.getLocalContext().getCollVitalSignsRequiredForScore() != null && form.getLocalContext().getCollVitalSignsRequiredForScore().size() > 0)
+				{
+					
+					if (Integer.valueOf(form.getGlobalContext().Core.getVitalSignsEscalationScore()) <=2)
+						form.getLocalContext().setNEWSMessageId(engine.showMessage("You have not completed all "+ form.getLocalContext().getCollVitalSignsRequiredForScore().size() +" observations which are required to generate a NEWS score. Would you like to complete these?", "Warning", MessageButtons.YESNO, MessageIcon.WARNING));
+					else 
+						form.getLocalContext().setNEWSMessageId(engine.showMessage("Your patient has been given a score of "+ form.getGlobalContext().Core.getVitalSignsEscalationScore() +" or more. Due to this scoring, and/or if you have clinical concerns regarding your patient, it is recommended a full set of observations are completed. Would you like to complete these?", "Warning", MessageButtons.YESNO, MessageIcon.WARNING));
+					
+					return;
+				}
+			}
+			
 			try
 			{
-				domain.saveVitalSign(voVitalSign);
+				domain.saveVitalSign(voVitalSign, triageToSave); //WDEV-20426
 			}
 			catch (StaleObjectException e)
 			{
@@ -559,21 +632,79 @@ public class Logic extends BaseLogic
 		//----------
 		
 
-		if(ConfigFlag.UI.USE_EARLY_WARNING_SYSTEM.getValue())
+		if(ConfigFlag.UI.USE_EARLY_WARNING_SYSTEM.getValue()&& allRequiredForScoreVitalSignsHaveValues(voVitalSign)) //WDEV-20668
 		{
-			if (requiresEscalation(voVitalSign))
+			if (requiresEscalation) //WDEV-20426
 			{
+				
+				String strObsProtocolType = form.getLocalContext().getOBSProtocolTypeText()!=null ? form.getLocalContext().getOBSProtocolTypeText(): "";//WDEV-20311
 				if (form.getLocalContext().getSecsRecordIsNotNull() && form.getLocalContext().getSecsRecord().getEWSProtocolIsNotNull())
 				{
-					form.getLocalContext().setEWSMessageId(engine.showMessage("EWS score is : " + form.getGlobalContext().Core.getVitalSignsEscalationScore(), "Score", MessageButtons.OK, MessageIcon.INFORMATION));
+					form.getLocalContext().setEWSMessageId(engine.showMessage(strObsProtocolType+" score is : " + form.getGlobalContext().Core.getVitalSignsEscalationScore(),strObsProtocolType+ " Score", MessageButtons.OK, MessageIcon.INFORMATION));//WDEV-20311
 				}
 				else
-					engine.open(form.getForms().Nursing.SECS);
+					engine.open(form.getForms().Nursing.SECS,strObsProtocolType+ " Escalation");//WDEV-20311
 			}
 		}
-
 	}
 
+	//WDEV-20668
+	private boolean allRequiredForScoreVitalSignsHaveValues(VitalSignsVo voVitalSign)
+	{
+		OBSTypeCollection collVitalSignsRequiredForScore = form.getLocalContext().getCollVitalSignsRequiredForScore();
+		
+		if (collVitalSignsRequiredForScore == null || collVitalSignsRequiredForScore.size()==0)
+			return false;
+
+		if (collVitalSignsRequiredForScore.contains(OBSType.TEMPERATURE) &&  voVitalSign.getTemperature()==null)
+		{
+			return false;
+		}
+
+		if (collVitalSignsRequiredForScore.contains(OBSType.SYSTOLICBP) &&  (voVitalSign.getBloodPressure()==null || (voVitalSign.getBloodPressure().getBPSittingSys()==null && voVitalSign.getBloodPressure().getBPLyingSys()==null && voVitalSign.getBloodPressure().getBPStandingSys()==null )))
+		{
+			return false;
+		}
+
+		if (collVitalSignsRequiredForScore.contains(OBSType.RESPIRATORYRATE) &&  voVitalSign.getRespiratory()==null)
+		{
+			return false;
+		}
+
+		if (collVitalSignsRequiredForScore.contains(OBSType.PULSE) &&  voVitalSign.getPulse()==null)
+		{
+			return false;
+		}
+
+		if (collVitalSignsRequiredForScore.contains(OBSType.OXYGENSATS) &&  (voVitalSign.getOxygenSaturation()==null || voVitalSign.getOxygenSaturation().getOxygenSaturationLevel()==null ))
+		{
+			return false;
+		}
+		
+		if (collVitalSignsRequiredForScore.contains(OBSType.FILTEREDO2) &&  (voVitalSign.getOxygenSaturation()==null || voVitalSign.getOxygenSaturation().getFractionRate()==null ))
+		{
+			return false;
+		}
+		
+		if (collVitalSignsRequiredForScore.contains(OBSType.PATIENT_CONCERN) &&  voVitalSign.getPatientCausingConcern()==null)
+		{
+			return false;
+		}
+
+		if (collVitalSignsRequiredForScore.contains(OBSType.CONSCIOUS_LEVEL) &&  voVitalSign.getPatientConscious()==null)
+		{
+			return false;
+		}
+		
+		if (collVitalSignsRequiredForScore.contains(OBSType.URINE_OUTPUT) &&  voVitalSign.getUrine2mlkgkhr()==null)
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+		
 	private void populateEwsDataFromControls(VitalSignsVo voVitalSign) 
 	{
 		if(!ConfigFlag.UI.USE_EARLY_WARNING_SYSTEM.getValue())
@@ -627,7 +758,7 @@ public class Logic extends BaseLogic
 		if (voVitalSign.getTemperatureIsNotNull() && voVitalSign.getTemperature().getTemperatureIsNotNull())
 		{
 			String scoreText = null;
-			scoreText = getEscalationScoreText(-1, SECSTypes.TEMPERATURE, voCollConfig, -1, voVitalSign.getTemperature().getTemperature().floatValue());
+			scoreText = getEscalationScoreText(-1, OBSType.TEMPERATURE, voCollConfig, -1, voVitalSign.getTemperature().getTemperature().floatValue());
 			if (!scoreText.equals(""))
 			{
 				originsOfScore.append("Temperature  ");
@@ -638,7 +769,7 @@ public class Logic extends BaseLogic
 		if (voVitalSign.getBloodPressureIsNotNull() && voVitalSign.getBloodPressure().getBPSittingSysIsNotNull())
 		{
 			String scoreText = null;
-			scoreText = getEscalationScoreText(voVitalSign.getBloodPressure().getBPSittingSys().intValue(), SECSTypes.SYSTOLICBP, voCollConfig, -1, -1);
+			scoreText = getEscalationScoreText(voVitalSign.getBloodPressure().getBPSittingSys().intValue(), OBSType.SYSTOLICBP, voCollConfig, -1, -1);
 			if (!scoreText.equals(""))
 			{
 				if (!originsOfScore.equals(""))
@@ -651,7 +782,7 @@ public class Logic extends BaseLogic
 		if (voVitalSign.getBloodPressureIsNotNull() && voVitalSign.getBloodPressure().getBPLyingSysIsNotNull())
 		{
 			String scoreText = null;
-			scoreText = getEscalationScoreText(voVitalSign.getBloodPressure().getBPLyingSys().intValue(), SECSTypes.SYSTOLICBP, voCollConfig, -1, -1);
+			scoreText = getEscalationScoreText(voVitalSign.getBloodPressure().getBPLyingSys().intValue(), OBSType.SYSTOLICBP, voCollConfig, -1, -1);
 			if (!scoreText.equals(""))
 			{
 				if (!originsOfScore.equals(""))
@@ -661,10 +792,23 @@ public class Logic extends BaseLogic
 			}
 		}
 
+		if (voVitalSign.getBloodPressureIsNotNull() && voVitalSign.getBloodPressure().getBPStandingSysIsNotNull()) //WDEV-20311
+		{
+			String scoreText = null;
+			scoreText = getEscalationScoreText(voVitalSign.getBloodPressure().getBPStandingSys().intValue(), OBSType.SYSTOLICBP, voCollConfig, -1, -1);
+			if (!scoreText.equals(""))
+			{
+				if (!originsOfScore.equals(""))
+					originsOfScore.append("\n");
+				originsOfScore.append("Systolic Blood Pressure  ");
+				originsOfScore.append(scoreText);
+			}
+		}
+		
 		if (voVitalSign.getRespiratoryIsNotNull() && voVitalSign.getRespiratory().getRespRateIsNotNull())
 		{
 			String scoreText = null;
-			scoreText = getEscalationScoreText(voVitalSign.getRespiratory().getRespRate().intValue(), SECSTypes.RESPIRATORYRATE, voCollConfig, -1, -1);
+			scoreText = getEscalationScoreText(voVitalSign.getRespiratory().getRespRate().intValue(), OBSType.RESPIRATORYRATE, voCollConfig, -1, -1);
 			if (!scoreText.equals(""))
 			{
 				if (!originsOfScore.equals(""))
@@ -677,7 +821,7 @@ public class Logic extends BaseLogic
 		if (voVitalSign.getPulseIsNotNull() && voVitalSign.getPulse().getPulseRateRadialIsNotNull())
 		{
 			String scoreText = null;
-			scoreText = getEscalationScoreText(voVitalSign.getPulse().getPulseRateRadial().intValue(), SECSTypes.PULSE, voCollConfig, -1, -1);
+			scoreText = getEscalationScoreText(voVitalSign.getPulse().getPulseRateRadial().intValue(), OBSType.PULSE, voCollConfig, -1, -1);
 			if (!scoreText.equals(""))
 			{
 				if (!originsOfScore.equals(""))
@@ -690,7 +834,7 @@ public class Logic extends BaseLogic
 		if (voVitalSign.getOxygenSaturationIsNotNull() && voVitalSign.getOxygenSaturation().getOxygenSaturationLevelIsNotNull())//	WDEV-12769
 		{
 			String scoreText = null;
-			scoreText = getEscalationScoreText(voVitalSign.getOxygenSaturation().getOxygenSaturationLevel(), SECSTypes.OXYGENSATS, voCollConfig, -1, -1);//	WDEV-12769
+			scoreText = getEscalationScoreText(voVitalSign.getOxygenSaturation().getOxygenSaturationLevel(), OBSType.OXYGENSATS, voCollConfig, -1, -1);//	WDEV-12769
 			if (!scoreText.equals(""))
 			{
 				if (!originsOfScore.equals(""))
@@ -701,11 +845,41 @@ public class Logic extends BaseLogic
 				//bOXYTriggered = true;	WDEV-12769
 			}
 		}
+		
+		//WDEV-23043
+		if (form.getLocalContext().getSecsRecord() != null && OBSProtocolType.NEWS.equals(form.getLocalContext().getSecsRecord().getOBSProtocolType()))
+		{
+			String scoreText = null;
+			
+			scoreText = getEscalationScoreText(voVitalSign.getOxygenSaturation() != null && Boolean.TRUE.equals(voVitalSign.getOxygenSaturation().getIsOnFiO2()) ? YesNo.YES.getID() : YesNo.NO.getID(), OBSType.ONSUPPLEMENTALOXYGEN, voCollConfig, -1, -1);
+			
+			if (!scoreText.equals(""))
+			{
+				if (!originsOfScore.equals(""))
+					originsOfScore.append("\n");
+				originsOfScore.append("On Supplemental Oxygen             ");
+				originsOfScore.append(scoreText);
+			}
+		}
 
+		if (voVitalSign.getOxygenSaturationIsNotNull() && voVitalSign.getOxygenSaturation().getFractionRateIsNotNull()) //WDEV-20311
+		{
+			String scoreText = null;
+			scoreText = getEscalationScoreText(voVitalSign.getOxygenSaturation().getFractionRate(), OBSType.FILTEREDO2, voCollConfig, -1, -1);
+			if (!scoreText.equals(""))
+			{
+				if (!originsOfScore.equals(""))
+					originsOfScore.append("\n");
+				originsOfScore.append("Filtered O2             ");
+				originsOfScore.append(scoreText);
+			}
+		}
+
+		
 		if (voVitalSign.getPatientCausingConcernIsNotNull())
 		{
 			String scoreText = null;
-			scoreText = getEscalationScoreText(voVitalSign.getPatientCausingConcern().getID(), SECSTypes.PATIENT_CONCERN, voCollConfig, -1, -1);
+			scoreText = getEscalationScoreText(voVitalSign.getPatientCausingConcern().getID(), OBSType.PATIENT_CONCERN, voCollConfig, -1, -1);
 			if (!scoreText.equals(""))
 			{
 				if (!originsOfScore.equals(""))
@@ -718,7 +892,7 @@ public class Logic extends BaseLogic
 		if (voVitalSign.getPatientConsciousIsNotNull())
 		{
 			String scoreText = null;
-			scoreText = getEscalationScoreText(voVitalSign.getPatientConscious().getID(), SECSTypes.CONSCIOUS_LEVEL, voCollConfig, -1, -1);
+			scoreText = getEscalationScoreText(voVitalSign.getPatientConscious().getID(), OBSType.CONSCIOUS_LEVEL, voCollConfig, -1, -1);
 			if (!scoreText.equals(""))
 			{
 				if (!originsOfScore.equals(""))
@@ -731,7 +905,7 @@ public class Logic extends BaseLogic
 		if (voVitalSign.getUrine2mlkgkhrIsNotNull())
 		{
 			String scoreText = null;
-			scoreText = getEscalationScoreText(voVitalSign.getUrine2mlkgkhr().getID(), SECSTypes.URINE_OUTPUT, voCollConfig, -1, -1);
+			scoreText = getEscalationScoreText(voVitalSign.getUrine2mlkgkhr().getID(), OBSType.URINE_OUTPUT, voCollConfig, -1, -1);
 			if (!scoreText.equals(""))
 			{
 				if (!originsOfScore.equals(""))
@@ -772,7 +946,7 @@ public class Logic extends BaseLogic
 	 * @param fractionRate
 	 * @return scoreText
 	 */
-	private String getEscalationScoreText(int value, SECSTypes type, SECSConfigurationVoCollection voCollConfig, int fractionRate, float tempValue)
+	private String getEscalationScoreText(int value, OBSType type, SECSConfigurationVoCollection voCollConfig, int fractionRate, float tempValue)
 	{
 		StringBuffer scoreText = new StringBuffer();
 
@@ -795,39 +969,47 @@ public class Logic extends BaseLogic
 						{
 							SECSRangeScoreVo voRangeScore = voCollConfig.get(i).getRangeConfig().getRangeScores().get(p);
 						
-							if(type.equals(SECSTypes.TEMPERATURE))
+							if(type.equals(OBSType.TEMPERATURE))
 							{
-								//temperature
+								//temperature //WDEV-20737 edges equality
 								if (voRangeScore.getGreaterThanDecValueIsNotNull())
 								{
 									if(voRangeScore.getLessThanDecValueIsNotNull())
 									{
-										if (tempValue > voRangeScore.getGreaterThanDecValue().floatValue() && tempValue < voRangeScore.getLessThanDecValue().floatValue())
+										if (tempValue >= voRangeScore.getGreaterThanDecValue().floatValue() && tempValue <= voRangeScore.getLessThanDecValue().floatValue())
 										{
 											iScore += voRangeScore.getScore();
-											scoreText.append(" > " + voRangeScore.getGreaterThanDecValue() + " < " + voRangeScore.getLessThanDecValue());
+											//http://jira/browse/WDEV-22399
+//											scoreText.append(" > " + voRangeScore.getGreaterThanDecValue() + " < " + voRangeScore.getLessThanDecValue()); 
+											scoreText.append(" >= " + voRangeScore.getGreaterThanDecValue() + " <= " + voRangeScore.getLessThanDecValue()); //WDEV-22399
 										}
 									}
-									else if (tempValue > voRangeScore.getGreaterThanDecValue().floatValue())
+									else if (tempValue >= voRangeScore.getGreaterThanDecValue().floatValue())
 									{
 										iScore += voRangeScore.getScore();
-										scoreText.append(" > " + voRangeScore.getGreaterThanDecValue());
+										//http://jira/browse/WDEV-22399
+//										scoreText.append(" > " + voRangeScore.getGreaterThanDecValue());
+										scoreText.append(" >= " + voRangeScore.getGreaterThanDecValue()); //WDEV-22399
 									}
 								}
 								else if (voRangeScore.getLessThanDecValueIsNotNull())
 								{
 									if(voRangeScore.getGreaterThanDecValueIsNotNull())
 									{
-										if (tempValue < voRangeScore.getLessThanDecValue().floatValue() && tempValue > voRangeScore.getGreaterThanDecValue().floatValue())
+										if (tempValue <= voRangeScore.getLessThanDecValue().floatValue() && tempValue >= voRangeScore.getGreaterThanDecValue().floatValue())
 										{
 											iScore += voRangeScore.getScore();
-											scoreText.append(" < " + voRangeScore.getLessThanDecValue() + " > " + voRangeScore.getGreaterThanDecValue());
+											//http://jira/browse/WDEV-22399
+//											scoreText.append(" < " + voRangeScore.getLessThanDecValue() + " > " + voRangeScore.getGreaterThanDecValue());
+											scoreText.append(" <= " + voRangeScore.getLessThanDecValue() + " >= " + voRangeScore.getGreaterThanDecValue()); //WDEV-22399
 										}
 									}
-									else if (tempValue < voRangeScore.getLessThanDecValue().floatValue())
+									else if (tempValue <= voRangeScore.getLessThanDecValue().floatValue())
 									{
 										iScore += voRangeScore.getScore();
-										scoreText.append(" < " + voRangeScore.getLessThanDecValue());
+										//http://jira/browse/WDEV-22399
+//										scoreText.append(" < " + voRangeScore.getLessThanDecValue());
+										scoreText.append(" <= " + voRangeScore.getLessThanDecValue()); //WDEV-22399
 									}
 								}
 							}
@@ -835,16 +1017,20 @@ public class Logic extends BaseLogic
 							{
 								if(voRangeScore.getLessThanIntValueIsNotNull())
 								{
-									if (value > voRangeScore.getGreaterThanIntValue().intValue() && value < voRangeScore.getLessThanIntValue().intValue())
+									if (value >= voRangeScore.getGreaterThanIntValue().intValue() && value <= voRangeScore.getLessThanIntValue().intValue())
 									{
 										iScore += voRangeScore.getScore();
-										scoreText.append(" > " + voRangeScore.getGreaterThanIntValue() + " < " + voRangeScore.getLessThanIntValue());
+										//http://jira/browse/WDEV-22399
+//										scoreText.append(" > " + voRangeScore.getGreaterThanIntValue() + " < " + voRangeScore.getLessThanIntValue());
+										scoreText.append(" >= " + voRangeScore.getGreaterThanIntValue() + " <= " + voRangeScore.getLessThanIntValue()); //WDEV-22399
 									}
 								}
-								else if (value > voRangeScore.getGreaterThanIntValue().intValue())
+								else if (value >= voRangeScore.getGreaterThanIntValue().intValue())
 								{
 									iScore += voRangeScore.getScore();
-									scoreText.append(" > " + voRangeScore.getGreaterThanIntValue());
+									//http://jira/browse/WDEV-22399
+//									scoreText.append(" > " + voRangeScore.getGreaterThanIntValue());
+									scoreText.append(" >= " + voRangeScore.getGreaterThanIntValue()); //WDEV-22399
 								}
 							}
 							
@@ -852,16 +1038,19 @@ public class Logic extends BaseLogic
 							{
 								if(voRangeScore.getGreaterThanIntValueIsNotNull())
 								{
-									if (value < voRangeScore.getLessThanIntValue().intValue() && value > voRangeScore.getGreaterThanIntValue().intValue())
+									if (value <= voRangeScore.getLessThanIntValue().intValue() && value >= voRangeScore.getGreaterThanIntValue().intValue())
 									{
 										iScore += voRangeScore.getScore();
-										scoreText.append(" < " + voRangeScore.getLessThanIntValue() + " > " + voRangeScore.getGreaterThanIntValue());
+//										scoreText.append(" < " + voRangeScore.getLessThanIntValue() + " > " + voRangeScore.getGreaterThanIntValue()); //WDEV-22399
+										scoreText.append(" <= " + voRangeScore.getLessThanIntValue() + " >= " + voRangeScore.getGreaterThanIntValue()); //WDEV-22399
 									}
 								}
-								else if (value < voRangeScore.getLessThanIntValue().intValue())
+								else if (value <= voRangeScore.getLessThanIntValue().intValue())
 								{
 									iScore += voRangeScore.getScore();
-									scoreText.append(" < " + voRangeScore.getLessThanIntValue());
+									//http://jira/browse/WDEV-22399
+//									scoreText.append(" < " + voRangeScore.getLessThanIntValue());
+									scoreText.append(" <= " + voRangeScore.getLessThanIntValue()); //WDEV-22399
 								}
 							}
 						}
@@ -918,14 +1107,14 @@ public class Logic extends BaseLogic
 		return scoreText.toString();
 	}
 
-	private boolean isRange(SECSTypes value)
+	private boolean isRange(OBSType value)
 	{
-		return value != null && (value.equals(SECSTypes.PULSE) || value.equals(SECSTypes.RESPIRATORYRATE) || value.equals(SECSTypes.SYSTOLICBP) || value.equals(SECSTypes.TEMPERATURE) || value.equals(SECSTypes.OXYGENSATS));//	WDEV-12769
+		return value != null && (value.equals(OBSType.PULSE) || value.equals(OBSType.RESPIRATORYRATE) || value.equals(OBSType.SYSTOLICBP) || value.equals(OBSType.TEMPERATURE) || value.equals(OBSType.OXYGENSATS) || value.equals(OBSType.FILTEREDO2));//	WDEV-12769 //WDEV-20311
 	}
 
-	private boolean isScore(SECSTypes value)
+	private boolean isScore(OBSType value)
 	{
-		return value != null && (value.equals(SECSTypes.PATIENT_CONCERN) || value.equals(SECSTypes.URINE_OUTPUT) || value.equals(SECSTypes.CONSCIOUS_LEVEL));
+		return value != null && (value.equals(OBSType.PATIENT_CONCERN) || value.equals(OBSType.URINE_OUTPUT) || value.equals(OBSType.CONSCIOUS_LEVEL) || value.equals(OBSType.ONSUPPLEMENTALOXYGEN));
 	}
 
 	protected void onBtnCancelClick() throws PresentationLogicException
@@ -995,17 +1184,26 @@ public class Logic extends BaseLogic
 		form.timTaken().setValue(voVitalSign.getVitalsTakenDateTime() != null ? voVitalSign.getVitalsTakenDateTime().getTime() : null);
 
 		form.lblEWSScore().setVisible(false);
-		if(ConfigFlag.UI.USE_EARLY_WARNING_SYSTEM.getValue())
+		
+		if (ConfigFlag.UI.USE_EARLY_WARNING_SYSTEM.getValue()) // WDEV-20668
 		{
 			form.cmbConscious().setValue(voVitalSign.getPatientConscious());
 			form.cmbUrine().setValue(voVitalSign.getUrine2mlkgkhr());
 			form.cmbPatientConcern().setValue(voVitalSign.getPatientCausingConcern());
 			
-			requiresEscalation(voVitalSign);
+			if (allRequiredForScoreVitalSignsHaveValues(voVitalSign))
+			{
+				requiresEscalation(voVitalSign);
 
-			form.lblEWSScore().setVisible(true);
-			if (form.getGlobalContext().Core.getVitalSignsEscalationScoreIsNotNull())
-				form.lblEWSScore().setValue("EWS Score is : " + form.getGlobalContext().Core.getVitalSignsEscalationScore());
+				form.lblEWSScore().setVisible(true);
+				if (form.getGlobalContext().Core.getVitalSignsEscalationScoreIsNotNull())
+					form.lblEWSScore().setValue(form.getLocalContext().getOBSProtocolTypeText() != null ? form.getLocalContext().getOBSProtocolTypeText() + " Score is : " + form.getGlobalContext().Core.getVitalSignsEscalationScore() : "");// WDEV-20311
+			}
+			else if (voVitalSign.getUnrecordedObservationsReason() != null)
+			{
+				form.lblEWSScore().setVisible(true);
+				form.lblEWSScore().setValue("Reason for Not recording full set of Observations: " + voVitalSign.getUnrecordedObservationsReason().getText());
+			}
 		}
 
 		if (voVitalSign.getTemperature() != null)
@@ -1117,6 +1315,10 @@ public class Logic extends BaseLogic
 		{
 			form.lyrVSigns().tabSection2().decHeight().setValue(voVitalSign.getMetrics().getHeightValue());
 			form.lyrVSigns().tabSection2().decWeight().setValue(voVitalSign.getMetrics().getWeightValue());
+			
+			if (voVitalSign.getMetrics().getBMIIsNotNull()) //WDEV-20327
+				form.lyrVSigns().tabSection2().decBMI().setValue(voVitalSign.getMetrics().getBMI());
+			
 			vsTypesList.add(VSType.METRICS);
 		}
 
@@ -1220,6 +1422,11 @@ public class Logic extends BaseLogic
 		form.lyrVSigns().tabSection1().txtComment().setValue(null);	//wdev-12900
 		form.dtimRecordingDateTime().setValue(null);//WDEV-12901 
 		form.cmbRecordingHCP().setValue(null);//WDEV-12901
+		
+		//WDEV-20327
+		form.lyrVSigns().tabSection2().decBMI().setValue(null); 
+		form.lyrVSigns().tabSection2().decUlna().setValue(new Float(0));
+		form.lyrVSigns().tabSection2().decUlna().setValue(null);
 		
 	}
 
@@ -1670,6 +1877,20 @@ public class Logic extends BaseLogic
 		
 		form.lyrVSigns().tabSection2().lnkVisualAcuity().setEnabled(false);
 		form.lyrVSigns().tabSection2().lnkVisualAcuity().setVisible(false);
+		
+		//WDEV-20327
+		form.lyrVSigns().tabSection2().btnBMI().setEnabled(form.getMode().equals(FormMode.EDIT)); 
+		
+		form.lyrVSigns().tabSection2().lblUlnaUnit().setVisible(FormMode.EDIT.equals(form.getMode()) && ims.configuration.gen.ConfigFlag.DOM.USE_ULNA_TO_ESTIMATE_PATIENT_HEIGHT.getValue());
+		form.lyrVSigns().tabSection2().lblUlna().setVisible(FormMode.EDIT.equals(form.getMode()) && ims.configuration.gen.ConfigFlag.DOM.USE_ULNA_TO_ESTIMATE_PATIENT_HEIGHT.getValue());
+		form.lyrVSigns().tabSection2().decUlna().setVisible(FormMode.EDIT.equals(form.getMode()) && ims.configuration.gen.ConfigFlag.DOM.USE_ULNA_TO_ESTIMATE_PATIENT_HEIGHT.getValue());
+		form.lyrVSigns().tabSection2().btnCalculateHeight().setVisible(FormMode.EDIT.equals(form.getMode()) && ims.configuration.gen.ConfigFlag.DOM.USE_ULNA_TO_ESTIMATE_PATIENT_HEIGHT.getValue());
+		
+		Integer patAge = form.getGlobalContext().Core.getPatientShort().calculateAge();
+		Sex patSex = form.getGlobalContext().Core.getPatientShort().getSex();
+	
+		form.lyrVSigns().tabSection2().decUlna().setEnabled(patAge != null && patSex != null && (patSex.equals(ims.core.vo.lookups.Sex.MALE) || patSex.equals(ims.core.vo.lookups.Sex.FEMALE)));
+		form.lyrVSigns().tabSection2().btnCalculateHeight().setEnabled(patAge != null && patSex != null && (patSex.equals(ims.core.vo.lookups.Sex.MALE) || patSex.equals(ims.core.vo.lookups.Sex.FEMALE)));
 	}
 
 	protected void onChkonFiO2ValueChanged() throws PresentationLogicException
@@ -1688,9 +1909,13 @@ public class Logic extends BaseLogic
 				if(result != null && result.equals(DialogResult.OK))
 					saveEWS();
 			}
+			else if (formName.equals(form.getForms().Core.UnrecordedObservationsReason) && DialogResult.OK.equals(result))
+			{
+				doSave(false);
+			}
 		}
 		
-		initialize();
+		initialize(form.getLocalContext().getselectedTriage()); //WDEV-20426
 	}
 
 	private void saveEWS()
@@ -1719,6 +1944,10 @@ public class Logic extends BaseLogic
 		
 			engine.open(form.getForms().Assessment.DynamicAssessmentsDialog, new Object[]{form.getLocalContext().getSecsRecord().getEWSProtocol()}, "EWS Assessment", false);
 		}
+		else if(form.getLocalContext().getNEWSMessageId() != null && form.getLocalContext().getNEWSMessageId().equals(messageBoxId) && DialogResult.NO.equals(result))
+		{
+    		engine.open(form.getForms().Core.UnrecordedObservationsReason);
+		}
 	}
 	//wdev-12905
 	private void enableDisableLinkControls(Boolean enabledisable)
@@ -1740,27 +1969,40 @@ public class Logic extends BaseLogic
 	}
 	//------------
 
-	public void initialize() 
+	public void initialize(TriageForClinicianWorklistVo currentTriage) //WDEV-20426 
 	{
+		form.getLocalContext().setselectedTriage(currentTriage);
+		
 		StringBuffer tooltip = new StringBuffer();
-		tooltip.append("<b>Eyes open</b>");
-		tooltip.append("<br>Spontaneously&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4");
-		tooltip.append("<br>To speech&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3");
-		tooltip.append("<br>To pain&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2");
-		tooltip.append("<br>None&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1");
-		tooltip.append("<br><br><b>Verbal response</b>");
-		tooltip.append("<br>Orientated&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5");
-		tooltip.append("<br>Confused&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4");
-		tooltip.append("<br>Inappropriate words&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3");
-		tooltip.append("<br>Incomprehensible sound&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2");
-		tooltip.append("<br>None&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1");
-		tooltip.append("<br><br><b>Motor response</b>");
-		tooltip.append("<br>Obey commands;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 6");
-		tooltip.append("<br>Localises pain&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5");
-		tooltip.append("<br>Normal flexion (Withdraws)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4");
-		tooltip.append("<br>Abnormal flexion (Decorticate)&nbsp; 3");
-		tooltip.append("<br>Extension Decerebrate&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2");
-		tooltip.append("<br>None (Flaccid)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1");
+		
+		//WDEV-20481
+		tooltip.append("<table>");
+		tooltip.append(addTableRow("<b>Eyes open</b>", ""));
+		tooltip.append(addTableRow("Spontaneously", "4"));
+		tooltip.append(addTableRow("To speech", "3"));
+		tooltip.append(addTableRow("To pain", "2"));
+		tooltip.append(addTableRow("None", "1"));
+		
+		tooltip.append(addTableRow("", ""));
+		
+		tooltip.append(addTableRow("<b>Verbal response</b>", ""));
+		tooltip.append(addTableRow("Orientated", "5"));
+		tooltip.append(addTableRow("Confused", "4"));
+		tooltip.append(addTableRow("Inappropriate words", "3"));
+		tooltip.append(addTableRow("Incomprehensible sound", "2"));
+		tooltip.append(addTableRow("None", "1"));
+		
+		tooltip.append(addTableRow("", ""));
+		
+		tooltip.append(addTableRow("<b>Motor response</b>", ""));
+		tooltip.append(addTableRow("Obey commands", "6"));
+		tooltip.append(addTableRow("Localises pain", "5"));
+		tooltip.append(addTableRow("Normal flexion (Withdraws)", "4"));
+		tooltip.append(addTableRow("Abnormal flexion (Decorticate)", "3"));
+		tooltip.append(addTableRow("Extension Decerebrate", "2"));
+		tooltip.append(addTableRow("None (Flaccid)", "1"));
+		tooltip.append("</table>");
+		
 		form.lyrVSigns().tabSection2().lnkGCS().setTooltip(tooltip.toString());
 
 		clearScreen();
@@ -1774,7 +2016,11 @@ public class Logic extends BaseLogic
 		loadPupilsCombos();
 		
 		if(ConfigFlag.UI.USE_EARLY_WARNING_SYSTEM.getValue())
+		{
 			loadEWSCombos();
+			form.getLocalContext().setOBSProtocolTypeText(form.getLocalContext().getSecsRecord()!=null && form.getLocalContext().getSecsRecord().getOBSProtocolType()!=null ? form.getLocalContext().getSecsRecord().getOBSProtocolType().getText() : null);
+			form.lblEWSScore().setValue(form.getLocalContext().getOBSProtocolTypeText()!=null? form.getLocalContext().getOBSProtocolTypeText()+ " Score" : "");//WDEV-20311
+		}
 		else
 		{
 			hideEWSControls();
@@ -1813,6 +2059,12 @@ public class Logic extends BaseLogic
 		form.setMode(FormMode.VIEW);
 	}
 
+	//WDEV-20481
+	private String addTableRow(String textColl1, String textColl2 )
+	{
+		return "<td>" + textColl1 + "</td>" +"<td> &nbsp;&nbsp;&nbsp;&nbsp </td>" +"<td>" + textColl2 + "</td></tr>";
+	}
+
 	public void setEnabled(Boolean value) 
 	{
 		form.getLocalContext().setIsEnabled(value);
@@ -1841,5 +2093,67 @@ public class Logic extends BaseLogic
 	public void resetSelectedEvent()
 	{
 		form.getLocalContext().setSelectedEvent(null);
+	}
+
+	//WDEV-20327
+	@Override
+	protected void onBtnBMIClick() throws PresentationLogicException
+	{
+		if (form.lyrVSigns().tabSection2().decHeight().getValue() == null || form.lyrVSigns().tabSection2().decWeight().getValue() == null) 
+		{
+			engine.showMessage("Please enter both Height and Weight for Metrics", "Error calculate BMI", MessageButtons.OK);
+			return;
+		}
+		else
+		{
+			if ((form.lyrVSigns().tabSection2().decHeight().getValue() == 0 || form.lyrVSigns().tabSection2().decHeight().getValue() < 1) ||
+					(form.lyrVSigns().tabSection2().decWeight().getValue() == 0 || form.lyrVSigns().tabSection2().decWeight().getValue() < 0))
+			{
+				engine.showMessage("A non-zero and greather than 1 value needs to be specified for Height and Weight", "Error calculate BMI", MessageButtons.OK);
+				return;
+			}
+		}
+					
+		form.lyrVSigns().tabSection2().decBMI().setValue(bodyMassIndex(form.lyrVSigns().tabSection2().decHeight().getValue().floatValue(), form.lyrVSigns().tabSection2().decWeight().getValue().floatValue()));		
+		
+	}
+
+	//WDEV-20327
+	@Override
+	protected void onBtnCalculateHeightClick() throws PresentationLogicException
+	{
+		if (form.lyrVSigns().tabSection2().decHeight().getValue()!=null)
+		{
+			engine.showMessage("A value for Height already exist.\nHeight field should be empty to be able to calculate it using ULNA radius.");
+			form.lyrVSigns().tabSection2().decUlna().setValue(null);
+			return;
+		}
+		
+		if (form.lyrVSigns().tabSection2().decUlna().getValue() == null)
+		{
+			engine.showMessage("Please enter the value for ULNA to calculate the Height");
+			return;
+		}
+
+		Integer patAge = form.getGlobalContext().Core.getPatientShort().getAge();
+		Sex patSex = form.getGlobalContext().Core.getPatientShort().getSex();
+
+		if (patAge != null && patSex != null && (patSex.equals(ims.core.vo.lookups.Sex.MALE) || patSex.equals(ims.core.vo.lookups.Sex.FEMALE)))
+		{
+			Float heights = domain.getHeight(form.lyrVSigns().tabSection2().decUlna().getValue().toString(), patAge, patSex);
+
+			if (heights == null)
+			{
+				engine.showMessage("Please enter a valid value for ULNA");
+				return;
+			}
+
+			form.lyrVSigns().tabSection2().decHeight().setValue(heights);
+
+		}
+		else
+		{
+			engine.showMessage("When calculating the Height using ULNA radius the patient age and sex are mandatory!");
+		}
 	}
 }

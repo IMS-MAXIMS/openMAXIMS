@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -45,11 +50,12 @@ import ims.assessment.vo.GraphicAssessmentShortVo;
 import ims.assessment.vo.GraphicAssessmentShortVoCollection;
 import ims.assessment.vo.UserAssessmentLiteVo;
 import ims.assessment.vo.UserAssessmentLiteVoCollection;
-import ims.configuration.gen.ConfigFlag;
 import ims.configuration.Configuration;
 import ims.configuration.InitConfig;
+import ims.configuration.gen.ConfigFlag;
 import ims.core.vo.GenericIdentifierVo;
 import ims.core.vo.GenericIdentifierVoCollection;
+import ims.domain.GenericIdentifierFactory;
 import ims.domain.exceptions.StaleObjectException;
 import ims.domain.exceptions.UniqueKeyViolationException;
 import ims.domain.exceptions.UnqViolationUncheckedException;
@@ -69,6 +75,7 @@ import ims.framework.interfaces.IAppForm;
 import ims.framework.interfaces.INavForm;
 import ims.framework.utils.Color;
 import ims.framework.utils.Image;
+import ims.vo.ValueObject;
 import ims.vo.ValueObjectRef;
 import ims.vo.interfaces.INavigationNode;
 
@@ -103,7 +110,8 @@ public class Logic extends BaseLogic
 	protected void onGrdListSelectionChanged() throws ims.framework.exceptions.PresentationLogicException
 	{
 		form.getLocalContext().setSelectedNav(domain.getNavigation(form.grdList().getSelectedRow().getValue()));
-
+		form.getLocalContext().setNavigationHasAssociatedRole(Boolean.TRUE.equals(domain.navigationHasAssociatedRole(form.getLocalContext().getSelectedNav()))); //WDEV-22749
+		
 		populateScreenFromData(form.getLocalContext().getSelectedNav());
 		updateControlsState();
 
@@ -115,6 +123,7 @@ public class Logic extends BaseLogic
 		form.getLocalContext().setSelectedForms(null);
 		form.getLocalContext().setSelectedReports(null);
 		form.getLocalContext().setAllForms(null);
+		form.getLocalContext().setIsReplicatedNavigation(false); //WDEV-22749
 		form.lyrAdds().tabForms().grdNavForms().getRows().clear();
 		form.lyrAdds().tabAssesments().grdNavAssesments().getRows().clear();
 		form.lyrAdds().tabReports().grdNavReports().getRows().clear();
@@ -215,8 +224,7 @@ public class Logic extends BaseLogic
 
 	@Override
 	protected void onBtnUpdateClick() throws ims.framework.exceptions.PresentationLogicException
-	{
-		
+	{		
 		updateInstance();
 	}
 
@@ -250,7 +258,12 @@ public class Logic extends BaseLogic
 			selForms.remove(row.getValue());
 		}
 		form.getLocalContext().setSelectedForms(selForms);
+	//	updateControlsState();
+		
+		//wdev-19656
+		addFormsToTree();
 		updateControlsState();
+		//----------
 
 	}
 
@@ -303,16 +316,21 @@ public class Logic extends BaseLogic
 			selReports.remove(row.getValue());
 		}
 		form.getLocalContext().setSelectedReports(selReports);
+		//updateControlsState();	//wdev-19656
+		
+		//wdev-19656
+		addReportsToTree();
 		updateControlsState();
+		//------------
 	}
 
-	@Override
+	/*@Override
 	protected void onBtnAddAssesmentsClick() throws PresentationLogicException
 	{
 		addAssesmentsToTree();
 		updateControlsState();
 
-	}
+	}*/
 
 	@Override
 	protected void onGrdNavAssesmentsGridCheckBoxClicked(int column, grdNavAssesmentsRow row, boolean isChecked) throws PresentationLogicException
@@ -339,15 +357,20 @@ public class Logic extends BaseLogic
 			selAssesments.remove(row.getValue());
 		}
 		form.getLocalContext().setSelectedAssesments(selAssesments);
+		//updateControlsState(); //wdev-19656
+		//wdev-19656
+		addAssesmentsToTree();
 		updateControlsState();
+		//----------
+		
 	}
 
-	@Override
+	/*@Override
 	protected void onBtnAddFormsClick() throws PresentationLogicException
 	{
 		addFormsToTree();
 		updateControlsState();
-	}
+	}*/
 
 	@Override
 	protected void onMessageBoxClosed(int messageBoxId, DialogResult result) throws PresentationLogicException
@@ -533,6 +556,7 @@ public class Logic extends BaseLogic
 				updateInstance();
 				break;
 			case GenForm.ContextMenus.GenericGrid.Replace:
+				form.getLocalContext().setIsReplicatedNavigation(true);//WDEV-22749
 				AppNavigationVo appNav = getClone(domain.getNavigation(form.grdList().getSelectedRow().getValue()));
 				form.getLocalContext().setSelectedNav(appNav);
 				populateScreenFromData(form.getLocalContext().getSelectedNav());
@@ -655,10 +679,9 @@ public class Logic extends BaseLogic
 
 	}
 
-	private void addNewRootGroup()
+	private void addNewRootGroup()//WDEV-19366
 	{
 		String rootText = "New Top Group " + (form.treNav().getNodes().size() + 1);
-		form.chkShowImages().setValue(Boolean.TRUE);
 		AppNavRootGroupVo rootGrp = new AppNavRootGroupVo();
 
 		rootGrp.setGroupName(rootText);
@@ -671,11 +694,9 @@ public class Logic extends BaseLogic
 
 	}
 
-	private void addNewSecondGroup()
+	private void addNewSecondGroup()//WDEV-19366
 	{
-
 		TreeNode rootNode = form.treNav().getSelectedNode();
-		form.chkShowImages().setValue(Boolean.TRUE);
 		String secText = "New Second Group " + String.valueOf(rootNode.getNodes().size() + 1);
 		AppNavSecondGroupVo secGrp = new AppNavSecondGroupVo();
 		secGrp.setTextNode(secText);
@@ -883,7 +904,8 @@ public class Logic extends BaseLogic
 	{
 		super.initialize();
 		form.chkActiveOnly().setValue(true);
-		form.chkShowImages().setValue(true);
+		form.chkShowImages().setValue(false);//WDEV-19366
+		form.getLocalContext().setIsReplicatedNavigation(false); //WDEV-22749
 		form.getContextMenus().getGenericGridAddItem().setText("Create new Navigation Tree");
 		form.getContextMenus().getGenericGridUpdateItem().setText("Edit selected Navigation Tree");
 		form.getContextMenus().getGenericGridReplaceItem().setText("Replicate selected Navigation Tree");
@@ -902,6 +924,8 @@ public class Logic extends BaseLogic
 		form.getLocalContext().setAllForms(null);
 		form.cmbStyle().setValue(NavigationStyle.IMAGE);
 		form.getLocalContext().setSelectedNav(null);
+		form.getLocalContext().setNavigationHasAssociatedRole(false); //WDEV-22749
+		form.chkIsActive().setValue(false); //WDEV-22792
 		form.setMode(FormMode.EDIT);
 
 	}
@@ -951,6 +975,7 @@ public class Logic extends BaseLogic
 		form.getLocalContext().setSelectedForms(null);
 		form.getLocalContext().setSelectedReports(null);
 		form.getLocalContext().setAllForms(null);
+		form.getLocalContext().setIsReplicatedNavigation(false);//WDEV-22749
 		form.lyrAdds().tabForms().grdNavForms().getRows().clear();
 		form.lyrAdds().tabAssesments().grdNavAssesments().getRows().clear();
 		form.lyrAdds().tabReports().grdNavReports().getRows().clear();
@@ -960,12 +985,12 @@ public class Logic extends BaseLogic
 
 	private String areItemsSelected()
 	{
-		String message = "You have ";
-		String postMessage = " selected to add to the tree.\nSaving will clear your selection.\nDo you want to continue?";
+		String message = "You have selected ";
+		String postMessage = "  to be added in navigation.\nSaving will clear your selection.\nDo you want to continue?";
 		if (form.getLocalContext().getSelectedAssesmentsIsNotNull() && form.getLocalContext().getSelectedAssesments().size() > 0)
 		{
 			form.lyrAdds().showtabAssesments();
-			return message + "assesments" + postMessage;
+			return message + "assessments" + postMessage;
 		}
 		if (form.getLocalContext().getSelectedFormsIsNotNull() && form.getLocalContext().getSelectedForms().size() > 0)
 		{
@@ -1003,7 +1028,7 @@ public class Logic extends BaseLogic
 			form.btnUpdate().setEnabled(true);
 			
 			//WDEV-14561
-			form.lyrAdds().tabAssesments().btnAddAssesments().setEnabled(false);
+			//form.lyrAdds().tabAssesments().btnAddAssesments().setEnabled(false);
 			form.lyrAdds().tabForms().btnSearchForms().setEnabled(false);
 			form.lyrAdds().tabForms().txtForms().setEnabled(false);
 			form.lyrAdds().tabForms().grdNavForms().setReadOnly(true);
@@ -1022,14 +1047,18 @@ public class Logic extends BaseLogic
 		}
 		else
 		{
-			form.lyrAdds().tabForms().btnAddForms().setEnabled(form.getLocalContext().getSelectedFormsIsNotNull() && form.getLocalContext().getSelectedForms().size() > 0);
-			form.lyrAdds().tabAssesments().btnAddAssesments().setEnabled(form.getLocalContext().getSelectedAssesmentsIsNotNull() && form.getLocalContext().getSelectedAssesments().size() > 0);
-			form.lyrAdds().tabForms().btnAddForms().setVisible(true);
-			form.lyrAdds().tabAssesments().btnAddAssesments().setVisible(true);
-			form.lyrAdds().tabReports().btnAddReports().setVisible(true);
-			form.lyrAdds().tabReports().btnAddReports().setEnabled(form.getLocalContext().getSelectedReportsIsNotNull() && form.getLocalContext().getSelectedReports().size() > 0);
-			
-			
+			//form.lyrAdds().tabForms().btnAddForms().setEnabled(form.getLocalContext().getSelectedFormsIsNotNull() && form.getLocalContext().getSelectedForms().size() > 0);
+			//form.lyrAdds().tabAssesments().btnAddAssesments().setEnabled(form.getLocalContext().getSelectedAssesmentsIsNotNull() && form.getLocalContext().getSelectedAssesments().size() > 0);
+			//form.lyrAdds().tabForms().btnAddForms().setVisible(true);
+			//form.lyrAdds().tabAssesments().btnAddAssesments().setVisible(true);
+			//form.lyrAdds().tabReports().btnAddReports().setVisible(true);
+			//form.lyrAdds().tabReports().btnAddReports().setEnabled(form.getLocalContext().getSelectedReportsIsNotNull() && form.getLocalContext().getSelectedReports().size() > 0);
+			//WDEV-22749
+			if (form.getLocalContext().getIsReplicatedNavigation())
+				form.chkIsActive().setEnabled(true);
+			else
+				form.chkIsActive().setEnabled(!form.getLocalContext().getNavigationHasAssociatedRole()); 
+			//WDEV-22749 - ends here
 			//wdev-13287
 			form.lyrAdds().tabForms().btnSearchForms().setEnabled(form.treNav().getSelectedNode() != null);
 			form.lyrAdds().tabForms().txtForms().setEnabled(form.treNav().getSelectedNode() != null);
@@ -1283,7 +1312,8 @@ public class Logic extends BaseLogic
 
 				grdNavFormsRow row = form.lyrAdds().tabForms().grdNavForms().getRows().newRow();
 				IAppForm formVo = collectionForm.get(i);
-				row.setName("<p><b>" + (formVo.isAlias() ? formVo.getAliasName() : formVo.getName()) + "</b></p>" + "<br />" + formVo.getDescription());
+				
+				row.setName("<p><b>" + (formVo.isAlias() ? formVo.getAliasName() : formVo.getName()) + "</b></p>"+  (formVo.isAlias() == false ? formVo.getCaption():"" )+ "<br />" + formVo.getDescription());	//wdev-19656
 				if (formVo.getImage() != null)
 				{
 					row.setTypeIcon(formVo.getImage());
@@ -1405,10 +1435,11 @@ public class Logic extends BaseLogic
 			currNavForm.setAccessForEpisEnd(FormReadWrite.WRITE);
 			currNavForm.setAccessForRip(FormReadWrite.WRITE);
 			currNavForm.setIsReadOnly(false);
-			currNavForm.setNodeText(currForm.isAlias() ? currForm.getAliasName() : currForm.getName());
+			//currNavForm.setNodeText(currForm.isAlias() ? currForm.getAliasName() : currForm.getName());
+			currNavForm.setNodeText(currForm.isAlias() ? currForm.getAliasName() : currForm.getCaption());
 			currNavForm.setPosIndex(toNode.getNodes().size());
 			TreeNode node = toNode.getNodes().add(currNavForm, currNavForm.getNodeText(), FORM_NODE, new int[] { SECOND_NODE, ROOT_NODE }, true);
-			node.setCollapsedImage(form.chkShowImages().getValue() ? getImageForForm(currForm) : null);
+			node.setCollapsedImage(form.chkShowImages().getValue() ? getImageForForm(currForm) : form.getImages().Core.View); //WDEV-19366
 			coll.add(currNavForm);
 
 			
@@ -1467,7 +1498,7 @@ public class Logic extends BaseLogic
 			AppNavFormVo newForm = createFormForAssessment(selAssesments.get(i), assesmentForm);
 			TreeNode node = toNode.getNodes().add(newForm, newForm.getNodeText(), FORM_NODE, new int[] { SECOND_NODE, ROOT_NODE }, true);
 			Image nodeImg = newForm.getImageNode();
-			node.setCollapsedImage(form.chkShowImages().getValue() ? nodeImg : null);
+			node.setCollapsedImage(form.chkShowImages().getValue() ? nodeImg : form.getImages().Core.PasteEnabled); //WDEV-19366
 			colle.add(newForm);
 
 			grdNavAssesmentsRow rowByValue = form.lyrAdds().tabAssesments().grdNavAssesments().getRowByValue(selAssesments.get(i));
@@ -1541,7 +1572,7 @@ public class Logic extends BaseLogic
 
 			TreeNode node = toNode.getNodes().add(newForm, newForm.getNodeText(), FORM_NODE, new int[] { SECOND_NODE, ROOT_NODE }, true);
 			Image nodeImg = newForm.getImageNode();
-			node.setCollapsedImage(form.chkShowImages().getValue() ? nodeImg : null);
+			node.setCollapsedImage(form.chkShowImages().getValue() ? nodeImg : form.getImages().Core.ReportDesigner); //WDEV-19366
 
 			grdNavReportsRow selRow = form.lyrAdds().tabReports().grdNavReports().getRowByValue(rep);
 			selRow.setBackColor(Color.Default);
@@ -1936,6 +1967,8 @@ public class Logic extends BaseLogic
 	{
 		TreeNode newNode = null;
 		Image nodeImage = node.getImageNode();
+		Image nodeImageSmall = form.getImages().Core.View;
+		
 		if (NavigationNodeType.ROOTGROUP.equals(node.getTypeNode()))
 		{
 			newNode = form.treNav().getNodes().add(node, node.getTextNode(), true, ROOT_NODE, new int[] {}, true);
@@ -1949,11 +1982,18 @@ public class Logic extends BaseLogic
 			if (nav.getRootGroups() == null)
 				nav.setRootGroups(new AppNavRootGroupVoCollection());
 			form.getLocalContext().getSelectedNav().getRootGroups().add((AppNavRootGroupVo) node);
+				
 			if (nodeImage == null)
 			{
 				nodeImage = form.getImages().Admin.NavGrpDefault48;
 			}
 
+			//WDEV-19366
+			if (!form.chkShowImages().getValue())
+			{
+				nodeImageSmall=form.getImages().Core.CareContext;
+			}
+			
 		}
 		else
 		{
@@ -1969,6 +2009,12 @@ public class Logic extends BaseLogic
 					nodeImage = form.getImages().Admin.NavGrpDefault48;
 				}
 
+				//WDEV-19366
+				if (!form.chkShowImages().getValue())
+				{
+					nodeImageSmall=form.getImages().Core.CareSpell;
+				}
+				
 			}
 			else
 			{
@@ -1988,20 +2034,90 @@ public class Logic extends BaseLogic
 
 					AppNavAccessRightsVo access = node.getAccessRightsNode();
 					if (access != null)
-					{
+					{	
 						newNode.setTooltip("<b>Form:</b> " + (theForm.isAlias() ? theForm.getAliasName() : theForm.getName()) + (theForm.getNamespaceIsNotNull() && theForm.getNamespace().getNameIsNotNull() ? "<br /><b>Namespace:</b> " + theForm.getNamespace().getName() : "") + "<br /><b>RIP:</b> " + access.getAccessForRIP().getText() + "<br /><b>EPIS:</b> " + access.getAccessForEPISE().getText());
+						
 						if (access.getReadOnlyIsNotNull() && access.getReadOnly())
 
 						{
 							nodeImage = form.getImages().Admin.FormReadOnly48;
 						}
 
+						//WDEV-19366
+						if (!form.chkShowImages().getValue() && access.getReadOnlyIsNotNull() && access.getReadOnly())
+						{
+							nodeImageSmall=form.getImages().Core.ViewDisabled;
+						}
+						
 					}
+					
 					if (nodeImage == null)
 					{
 						nodeImage = form.getImages().Admin.Form48;
 					}
 
+					//WDEV-19366
+					if (!form.chkShowImages().getValue())
+					{
+						AppNavigationVo nav = form.getLocalContext().getSelectedNav();
+    					AppNavFormVo appNavForm=(AppNavFormVo) node;
+    					if (theForm.equals(nav.getStartForm()))
+    					{
+    						if (appNavForm.isReadOnly())
+    						{
+    							nodeImageSmall=(form.getImages().Core.HomeDisabled);
+    											
+    						}
+    						else
+    						{
+    							nodeImageSmall=(form.getImages().Core.Home);
+    									
+    						}
+    					}
+    					else if (theForm.equals(nav.getPatientSearchForm()))
+    					{
+    						if (appNavForm.isReadOnly())
+    						{
+    							nodeImageSmall=form.getImages().Core.FindDisabled16;
+    										
+    						}
+    						else
+    						{
+    							nodeImageSmall=form.getImages().Core.FindEnabled16;		
+    						}
+    					}
+    					else if (theForm.equals(getAssessmentForm()))
+    					{			
+    						if (appNavForm.isReadOnly() || appNavForm.getLinkedClasses() == null || appNavForm.getLinkedClasses().size() == 0)
+    						{
+    							nodeImageSmall=form.getImages().Core.PasteDisabled;			
+    						}
+    						else
+    						{
+    							GenericIdentifierVo genId = appNavForm.getLinkedClasses().get(0);
+    						
+    							ValueObjectRef voRef = (ValueObjectRef)GenericIdentifierFactory.instantiate(genId);
+    							ValueObject assess = domain.getAssessment(voRef);
+    							
+    							if (assess instanceof UserAssessmentLiteVo)
+    							{
+    								nodeImageSmall=form.getImages().Core.PasteEnabled;									
+    							}
+    							else if (assess instanceof GraphicAssessmentShortVo)
+    							{
+    								nodeImageSmall=form.getImages().Admin.Color;			
+    							}
+    							else
+    							{
+    								nodeImageSmall=form.getImages().Core.help1;													
+    							}
+    						}			
+    					}
+    					else if (appNavForm.getForm().equals(getReportViewerForm()))
+    					{
+    						nodeImageSmall=form.getImages().Core.ReportDesigner;
+    					}
+					}
 				}
 
 			}
@@ -2009,10 +2125,35 @@ public class Logic extends BaseLogic
 		if (form.chkShowImages().getValue())
 
 			newNode.setCollapsedImage(nodeImage);
+		else
+			newNode.setCollapsedImage(nodeImageSmall);
+		
 		newNode.setText(node.getTextNode());
 		return newNode;
 	}
 
+	//WDEV-19366
+	private AppFormVo getAssessmentForm()
+	{
+		if (form.getLocalContext().getAssessmentForm() == null)
+		{
+			AppFormVo formVo = domain.getAppForm(InitConfig.getAssessmentContainerFormId());
+			form.getLocalContext().setAssessmentForm(formVo);
+		}
+		return form.getLocalContext().getAssessmentForm();
+	}
+
+	//WDEV-19366
+	private AppFormVo getReportViewerForm()
+	{
+		if (form.getLocalContext().getReportViewerForm() == null)
+		{
+			AppFormVo formVo = domain.getAppForm(InitConfig.getReportViewerFormId());
+			form.getLocalContext().setReportViewerForm(formVo);
+		}
+		return form.getLocalContext().getReportViewerForm();
+	}
+	
 	private void createTree(INavigationNode element, TreeNode parent)
 	{
 		TreeNode newNode = createNewTreeNode(element, parent);

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -53,11 +58,13 @@ public class Logic extends BaseLogic
 	private static final String	INPATIENT_REPORT_TYPE	= "INPATIENT_REPORT";
 	private static final String	OUTPATIENT_REPORT_TYPE	= "OUTPATIENT_REPORT";
 	private static final String	HRG_REPORT_TYPE	= "HRG_REPORT";
+	private static final String	ELECTIVELIST_REPORT_TYPE = "ELECTIVELIST_REPORT"; //WDEV-18912
 	
 	private static final long	serialVersionUID		= 1L;
 	private static final int	INPATIENT_REPORT_ID		= 215;
 	private static final int	OUTPATIENT_REPORT_ID	= 216;
 	private static final int	HRG_GROUPER_REPORT_ID	= 246;
+	private static final int	ELECTIVELIST_REPORT_ID	= 217; //WDEV-18912
 
 	private static JobDetail jd;
 	Properties properties=null;
@@ -89,6 +96,8 @@ public class Logic extends BaseLogic
 		if (createScheduledJob("INPATIENT") == 0)
 			engine.showMessage("Inpatient CDS Data Generation Job has been Scheduled");
 	}
+	
+	
 	
 	protected int createScheduledJob(String reportType)
 	{
@@ -129,6 +138,7 @@ public class Logic extends BaseLogic
 				mp.put("DATE_FROM", form.dteFrom().getValue());
 				mp.put("DATE_TO", form.dteTo().getValue());
 				
+//				if(HRG_REPORT_TYPE.equals(reportType) || INPATIENT_REPORT_TYPE.equals(reportType) || OUTPATIENT_REPORT_TYPE.equals(reportType))
 				if(HRG_REPORT_TYPE.equals(reportType) || INPATIENT_REPORT_TYPE.equals(reportType) || OUTPATIENT_REPORT_TYPE.equals(reportType))
 				{
 					String nlc;
@@ -511,5 +521,52 @@ public class Logic extends BaseLogic
 	{
 		if (createScheduledJob(INPATIENT_REPORT_TYPE) == 0)
 			engine.showMessage("Inpatient CDS Report Job has been Scheduled");
+	}
+	
+	//WDEV-18912
+	@Override
+	protected void onBtnScheduleElectiveListReport() throws PresentationLogicException
+	{
+		if (createScheduledJob(ELECTIVELIST_REPORT_TYPE) == 0)
+			engine.showMessage("Elective List CDS Report Job has been Scheduled");
+	}
+	
+	@Override
+	protected void onBtnElectiveListClick() throws PresentationLogicException
+	{
+		buildReport(ELECTIVELIST_REPORT_ID);
+	}
+	
+	@Override
+	protected void onBtnGenElectiveListClick() throws PresentationLogicException
+	{
+		try 
+		{
+			if(checkDateInterval() == false)
+				return;
+			Integer noGenerated = domain.generateElectiveListCDSData(form.dteFrom().getValue(), form.dteTo().getValue());
+			engine.showMessage("Generation Complete - " + noGenerated + " records inserted");
+		}
+		catch (DomainInterfaceException e) 
+		{
+			engine.showMessage(e.getMessage());		
+		}
+		catch (StaleObjectException e) 
+		{
+			engine.showMessage(e.getMessage());
+		}	
+	}
+
+	@Override
+	protected void onBtnCheckElectiveLIstClick() throws PresentationLogicException
+	{
+		checkForJobs("ELECTIVELIST");	
+	}
+	
+	@Override
+	protected void onBtnElectiveListDataClick() throws PresentationLogicException
+	{
+		if (createScheduledJob("ELECTIVELIST") == 0)
+			engine.showMessage("Elective List CDS Data Generation Job has been Scheduled");
 	}
 }

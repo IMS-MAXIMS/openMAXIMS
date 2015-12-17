@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.core.vo.domain;
@@ -66,6 +71,8 @@ public class DischargedEpisodeVoAssembler
 		valueObjectDest.setAdmissionDetail(valueObjectSrc.getAdmissionDetail());
 		// ExtendedDetails
 		valueObjectDest.setExtendedDetails(valueObjectSrc.getExtendedDetails());
+		// DischargingWard
+		valueObjectDest.setDischargingWard(valueObjectSrc.getDischargingWard());
 	 	return valueObjectDest;
 	 }
 
@@ -490,6 +497,8 @@ public class DischargedEpisodeVoAssembler
 		}
 		// ExtendedDetails
 		valueObject.setExtendedDetails(ims.core.vo.domain.ExtendedDischargeDetailVoAssembler.create(map, domainObject.getExtendedDetails()) );
+		// DischargingWard
+		valueObject.setDischargingWard(ims.core.vo.domain.LocationLiteVoAssembler.create(map, domainObject.getDischargingWard()) );
  		return valueObject;
 	 }
 
@@ -593,6 +602,23 @@ public class DischargedEpisodeVoAssembler
 		}
 		domainObject.setAdmissionDetail(value7);
 		domainObject.setExtendedDetails(ims.core.vo.domain.ExtendedDischargeDetailVoAssembler.extractExtendedDischargeDetail(domainFactory, valueObject.getExtendedDetails(), domMap));
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.resource.place.domain.objects.Location value9 = null;
+		if ( null != valueObject.getDischargingWard() ) 
+		{
+			if (valueObject.getDischargingWard().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getDischargingWard()) != null)
+				{
+					value9 = (ims.core.resource.place.domain.objects.Location)domMap.get(valueObject.getDischargingWard());
+				}
+			}
+			else
+			{
+				value9 = (ims.core.resource.place.domain.objects.Location)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.Location.class, valueObject.getDischargingWard().getBoId());
+			}
+		}
+		domainObject.setDischargingWard(value9);
 
 		return domainObject;
 	}

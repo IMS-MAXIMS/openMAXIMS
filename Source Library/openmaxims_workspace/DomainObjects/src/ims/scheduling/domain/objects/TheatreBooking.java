@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.scheduling.domain.objects;
@@ -55,6 +60,14 @@ public class TheatreBooking extends ims.domain.DomainObject implements ims.domai
 	private String suitableForSurgeryProcedure;
 	/** Anaesthetic Type  */
 	private ims.domain.lookups.LookupInstance anaestheticType;
+	/** ProcLaterality */
+	private ims.domain.lookups.LookupInstance procLaterality;
+	/** State of Booking with Colour */
+	private ims.domain.lookups.LookupInstance state;
+	/** Procedure */
+	private ims.core.clinical.domain.objects.Procedure secondaryProcedure;
+	/** ProcLaterality */
+	private ims.domain.lookups.LookupInstance secondaryProcLaterality;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public TheatreBooking (Integer id, int ver)
@@ -112,6 +125,34 @@ public class TheatreBooking extends ims.domain.DomainObject implements ims.domai
 	}
 	public void setAnaestheticType(ims.domain.lookups.LookupInstance anaestheticType) {
 		this.anaestheticType = anaestheticType;
+	}
+
+	public ims.domain.lookups.LookupInstance getProcLaterality() {
+		return procLaterality;
+	}
+	public void setProcLaterality(ims.domain.lookups.LookupInstance procLaterality) {
+		this.procLaterality = procLaterality;
+	}
+
+	public ims.domain.lookups.LookupInstance getState() {
+		return state;
+	}
+	public void setState(ims.domain.lookups.LookupInstance state) {
+		this.state = state;
+	}
+
+	public ims.core.clinical.domain.objects.Procedure getSecondaryProcedure() {
+		return secondaryProcedure;
+	}
+	public void setSecondaryProcedure(ims.core.clinical.domain.objects.Procedure secondaryProcedure) {
+		this.secondaryProcedure = secondaryProcedure;
+	}
+
+	public ims.domain.lookups.LookupInstance getSecondaryProcLaterality() {
+		return secondaryProcLaterality;
+	}
+	public void setSecondaryProcLaterality(ims.domain.lookups.LookupInstance secondaryProcLaterality) {
+		this.secondaryProcLaterality = secondaryProcLaterality;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -177,6 +218,26 @@ public class TheatreBooking extends ims.domain.DomainObject implements ims.domai
 		auditStr.append("\r\n*anaestheticType* :");
 		if (anaestheticType != null)
 			auditStr.append(anaestheticType.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*procLaterality* :");
+		if (procLaterality != null)
+			auditStr.append(procLaterality.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*state* :");
+		if (state != null)
+			auditStr.append(state.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*secondaryProcedure* :");
+		if (secondaryProcedure != null)
+		{
+			auditStr.append(toShortClassName(secondaryProcedure));
+				
+		    auditStr.append(secondaryProcedure.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*secondaryProcLaterality* :");
+		if (secondaryProcLaterality != null)
+			auditStr.append(secondaryProcLaterality.getText());
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -251,6 +312,30 @@ public class TheatreBooking extends ims.domain.DomainObject implements ims.domai
 			sb.append("<anaestheticType>");
 			sb.append(this.getAnaestheticType().toXMLString()); 
 			sb.append("</anaestheticType>");		
+		}
+		if (this.getProcLaterality() != null)
+		{
+			sb.append("<procLaterality>");
+			sb.append(this.getProcLaterality().toXMLString()); 
+			sb.append("</procLaterality>");		
+		}
+		if (this.getState() != null)
+		{
+			sb.append("<state>");
+			sb.append(this.getState().toXMLString()); 
+			sb.append("</state>");		
+		}
+		if (this.getSecondaryProcedure() != null)
+		{
+			sb.append("<secondaryProcedure>");
+			sb.append(this.getSecondaryProcedure().toXMLString(domMap)); 	
+			sb.append("</secondaryProcedure>");		
+		}
+		if (this.getSecondaryProcLaterality() != null)
+		{
+			sb.append("<secondaryProcLaterality>");
+			sb.append(this.getSecondaryProcLaterality().toXMLString()); 
+			sb.append("</secondaryProcLaterality>");		
 		}
 		return sb.toString();
 	}
@@ -444,6 +529,30 @@ public class TheatreBooking extends ims.domain.DomainObject implements ims.domai
 			fldEl = fldEl.element("lki");
 			obj.setAnaestheticType(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
 		}
+		fldEl = el.element("procLaterality");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setProcLaterality(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("state");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setState(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("secondaryProcedure");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setSecondaryProcedure(ims.core.clinical.domain.objects.Procedure.getProcedurefromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("secondaryProcLaterality");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setSecondaryProcLaterality(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -461,6 +570,10 @@ public class TheatreBooking extends ims.domain.DomainObject implements ims.domai
 		public static final String TCITime = "tCITime";
 		public static final String SuitableForSurgeryProcedure = "suitableForSurgeryProcedure";
 		public static final String AnaestheticType = "anaestheticType";
+		public static final String ProcLaterality = "procLaterality";
+		public static final String State = "state";
+		public static final String SecondaryProcedure = "secondaryProcedure";
+		public static final String SecondaryProcLaterality = "secondaryProcLaterality";
 	}
 }
 

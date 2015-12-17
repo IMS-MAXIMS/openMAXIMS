@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:23
  *
  */
 package ims.core.vo.domain;
@@ -56,6 +61,16 @@ public class PendingEmergencyAdmissionAdmitVoAssembler
 		valueObjectDest.setAllocatedWard(valueObjectSrc.getAllocatedWard());
 		// AdmissionStatus
 		valueObjectDest.setAdmissionStatus(valueObjectSrc.getAdmissionStatus());
+		// Service
+		valueObjectDest.setService(valueObjectSrc.getService());
+		// Specialty
+		valueObjectDest.setSpecialty(valueObjectSrc.getSpecialty());
+		// DTADateTime
+		valueObjectDest.setDTADateTime(valueObjectSrc.getDTADateTime());
+		// Hospital
+		valueObjectDest.setHospital(valueObjectSrc.getHospital());
+		// BedTypeRequested
+		valueObjectDest.setBedTypeRequested(valueObjectSrc.getBedTypeRequested());
 	 	return valueObjectDest;
 	 }
 
@@ -386,6 +401,88 @@ public class PendingEmergencyAdmissionAdmitVoAssembler
 			}			
 			valueObject.setAdmissionStatus(voLookup3);
 		}
+				// Service
+		valueObject.setService(ims.core.vo.domain.ServiceLiteVoAssembler.create(map, domainObject.getService()) );
+		// Specialty
+		ims.domain.lookups.LookupInstance instance5 = domainObject.getSpecialty();
+		if ( null != instance5 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance5.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance5.getImage().getImageId(), instance5.getImage().getImagePath());
+			}
+			color = instance5.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.Specialty voLookup5 = new ims.core.vo.lookups.Specialty(instance5.getId(),instance5.getText(), instance5.isActive(), null, img, color);
+			ims.core.vo.lookups.Specialty parentVoLookup5 = voLookup5;
+			ims.domain.lookups.LookupInstance parent5 = instance5.getParent();
+			while (parent5 != null)
+			{
+				if (parent5.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent5.getImage().getImageId(), parent5.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent5.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup5.setParent(new ims.core.vo.lookups.Specialty(parent5.getId(),parent5.getText(), parent5.isActive(), null, img, color));
+				parentVoLookup5 = parentVoLookup5.getParent();
+								parent5 = parent5.getParent();
+			}			
+			valueObject.setSpecialty(voLookup5);
+		}
+				// DTADateTime
+		java.util.Date DTADateTime = domainObject.getDTADateTime();
+		if ( null != DTADateTime ) 
+		{
+			valueObject.setDTADateTime(new ims.framework.utils.DateTime(DTADateTime) );
+		}
+		// Hospital
+		valueObject.setHospital(ims.core.vo.domain.LocationLiteVoAssembler.create(map, domainObject.getHospital()) );
+		// BedTypeRequested
+		ims.domain.lookups.LookupInstance instance8 = domainObject.getBedTypeRequested();
+		if ( null != instance8 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance8.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance8.getImage().getImageId(), instance8.getImage().getImagePath());
+			}
+			color = instance8.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.BedTypeRequested voLookup8 = new ims.core.vo.lookups.BedTypeRequested(instance8.getId(),instance8.getText(), instance8.isActive(), null, img, color);
+			ims.core.vo.lookups.BedTypeRequested parentVoLookup8 = voLookup8;
+			ims.domain.lookups.LookupInstance parent8 = instance8.getParent();
+			while (parent8 != null)
+			{
+				if (parent8.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent8.getImage().getImageId(), parent8.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent8.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup8.setParent(new ims.core.vo.lookups.BedTypeRequested(parent8.getId(),parent8.getText(), parent8.isActive(), null, img, color));
+				parentVoLookup8 = parentVoLookup8.getParent();
+								parent8 = parent8.getParent();
+			}			
+			valueObject.setBedTypeRequested(voLookup8);
+		}
 		 		return valueObject;
 	 }
 
@@ -461,6 +558,63 @@ public class PendingEmergencyAdmissionAdmitVoAssembler
 				domainFactory.getLookupInstance(valueObject.getAdmissionStatus().getID());
 		}
 		domainObject.setAdmissionStatus(value3);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.clinical.domain.objects.Service value4 = null;
+		if ( null != valueObject.getService() ) 
+		{
+			if (valueObject.getService().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getService()) != null)
+				{
+					value4 = (ims.core.clinical.domain.objects.Service)domMap.get(valueObject.getService());
+				}
+			}
+			else
+			{
+				value4 = (ims.core.clinical.domain.objects.Service)domainFactory.getDomainObject(ims.core.clinical.domain.objects.Service.class, valueObject.getService().getBoId());
+			}
+		}
+		domainObject.setService(value4);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value5 = null;
+		if ( null != valueObject.getSpecialty() ) 
+		{
+			value5 =
+				domainFactory.getLookupInstance(valueObject.getSpecialty().getID());
+		}
+		domainObject.setSpecialty(value5);
+		ims.framework.utils.DateTime dateTime6 = valueObject.getDTADateTime();
+		java.util.Date value6 = null;
+		if ( dateTime6 != null ) 
+		{
+			value6 = dateTime6.getJavaDate();
+		}
+		domainObject.setDTADateTime(value6);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.resource.place.domain.objects.Location value7 = null;
+		if ( null != valueObject.getHospital() ) 
+		{
+			if (valueObject.getHospital().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getHospital()) != null)
+				{
+					value7 = (ims.core.resource.place.domain.objects.Location)domMap.get(valueObject.getHospital());
+				}
+			}
+			else
+			{
+				value7 = (ims.core.resource.place.domain.objects.Location)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.Location.class, valueObject.getHospital().getBoId());
+			}
+		}
+		domainObject.setHospital(value7);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value8 = null;
+		if ( null != valueObject.getBedTypeRequested() ) 
+		{
+			value8 =
+				domainFactory.getLookupInstance(valueObject.getBedTypeRequested().getID());
+		}
+		domainObject.setBedTypeRequested(value8);
 
 		return domainObject;
 	}

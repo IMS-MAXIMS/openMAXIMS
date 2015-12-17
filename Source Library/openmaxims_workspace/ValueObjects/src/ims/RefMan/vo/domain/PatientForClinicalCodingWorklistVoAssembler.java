@@ -1,9 +1,33 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.RefMan.vo.domain;
@@ -37,6 +61,16 @@ public class PatientForClinicalCodingWorklistVoAssembler
 		valueObjectDest.setSex(valueObjectSrc.getSex());
 		// identifiers
 		valueObjectDest.setIdentifiers(valueObjectSrc.getIdentifiers());
+		// dob
+		valueObjectDest.setDob(valueObjectSrc.getDob());
+		// dod
+		valueObjectDest.setDod(valueObjectSrc.getDod());
+		// ward
+		valueObjectDest.setWard(valueObjectSrc.getWard());
+		// CurrentCaseNoteLocation
+		valueObjectDest.setCurrentCaseNoteLocation(valueObjectSrc.getCurrentCaseNoteLocation());
+		// CaseNoteLastTransferDate
+		valueObjectDest.setCaseNoteLastTransferDate(valueObjectSrc.getCaseNoteLastTransferDate());
 	 	return valueObjectDest;
 	 }
 
@@ -367,6 +401,28 @@ public class PatientForClinicalCodingWorklistVoAssembler
 		}
 				// identifiers
 		valueObject.setIdentifiers(ims.core.vo.domain.PatientIdAssembler.createPatientIdCollectionFromPatientId(map, domainObject.getIdentifiers()) );
+		// dob
+		Integer dob = domainObject.getDob();
+		if ( null != dob ) 
+		{
+			valueObject.setDob(new ims.framework.utils.PartialDate(dob) );
+		}
+		// dod
+		java.util.Date dod = domainObject.getDod();
+		if ( null != dod ) 
+		{
+			valueObject.setDod(new ims.framework.utils.Date(dod) );
+		}
+		// ward
+		valueObject.setWard(ims.core.vo.domain.LocationLiteVoAssembler.create(map, domainObject.getWard()) );
+		// CurrentCaseNoteLocation
+		valueObject.setCurrentCaseNoteLocation(ims.core.vo.domain.LocationLiteVoAssembler.create(map, domainObject.getCurrentCaseNoteLocation()) );
+		// CaseNoteLastTransferDate
+		java.util.Date CaseNoteLastTransferDate = domainObject.getCaseNoteLastTransferDate();
+		if ( null != CaseNoteLastTransferDate ) 
+		{
+			valueObject.setCaseNoteLastTransferDate(new ims.framework.utils.DateTime(CaseNoteLastTransferDate) );
+		}
  		return valueObject;
 	 }
 
@@ -500,6 +556,61 @@ public class PatientForClinicalCodingWorklistVoAssembler
 		}
 		
 		domainObject.setIdentifiers(domainIdentifiers3);		
+		ims.framework.utils.PartialDate dob = valueObject.getDob();
+		Integer value4 = null;
+		if ( null != dob ) 
+		{
+			value4 = dob.toInteger();
+		}
+		domainObject.setDob(value4);
+		java.util.Date value5 = null;
+		ims.framework.utils.Date date5 = valueObject.getDod();		
+		if ( date5 != null ) 
+		{
+			value5 = date5.getDate();
+		}
+		domainObject.setDod(value5);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.resource.place.domain.objects.Location value6 = null;
+		if ( null != valueObject.getWard() ) 
+		{
+			if (valueObject.getWard().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getWard()) != null)
+				{
+					value6 = (ims.core.resource.place.domain.objects.Location)domMap.get(valueObject.getWard());
+				}
+			}
+			else
+			{
+				value6 = (ims.core.resource.place.domain.objects.Location)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.Location.class, valueObject.getWard().getBoId());
+			}
+		}
+		domainObject.setWard(value6);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.resource.place.domain.objects.Location value7 = null;
+		if ( null != valueObject.getCurrentCaseNoteLocation() ) 
+		{
+			if (valueObject.getCurrentCaseNoteLocation().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getCurrentCaseNoteLocation()) != null)
+				{
+					value7 = (ims.core.resource.place.domain.objects.Location)domMap.get(valueObject.getCurrentCaseNoteLocation());
+				}
+			}
+			else
+			{
+				value7 = (ims.core.resource.place.domain.objects.Location)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.Location.class, valueObject.getCurrentCaseNoteLocation().getBoId());
+			}
+		}
+		domainObject.setCurrentCaseNoteLocation(value7);
+		ims.framework.utils.DateTime dateTime8 = valueObject.getCaseNoteLastTransferDate();
+		java.util.Date value8 = null;
+		if ( dateTime8 != null ) 
+		{
+			value8 = dateTime8.getJavaDate();
+		}
+		domainObject.setCaseNoteLastTransferDate(value8);
 
 		return domainObject;
 	}

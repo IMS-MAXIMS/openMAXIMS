@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:36 -->
+<!-- Generated: 12/10/2015, 13:30 -->
 <hibernate-mapping>
 	<class name="ims.emergency.domain.objects.ReferralToSpecTeam" table="emer_referraltospec" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -83,6 +83,8 @@
 			<one-to-many class="ims.emergency.domain.objects.AttendanceClinicalNotes" />
 		</list>
 <!-- debug: notAccepted -->
+<!-- debug: isSafeguardingConcern -->
+<!-- debug: safeguardingComments -->
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: IsLookup -->
 		<many-to-one name="teamConsultant" class="ims.domain.lookups.LookupInstance" access="field">
@@ -112,6 +114,16 @@
 <!-- debug: !IsLookup -->
 		<property name="notAccepted" type="boolean" access="field" update="true">
 			<column name="notaccepte"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isSafeguardingConcern" type="boolean" access="field" update="true">
+			<column name="issafeguar"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="safeguardingComments" type="string" access="field" update="true" > 
+			<column name="safeguardi" length="500"  not-null="false" unique="false"  />
 		</property>
 	</class>
 </hibernate-mapping>

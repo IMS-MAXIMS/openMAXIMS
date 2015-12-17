@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:37 -->
+<!-- Generated: 12/10/2015, 13:32 -->
 <hibernate-mapping>
 	<class name="ims.RefMan.domain.objects.ProviderCancellation" table="care_providercancel" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -38,6 +38,13 @@
 <!-- debug: uniqueLineRefNo -->
 <!-- debug: wasOutputtedToWeeklyReport -->
 <!-- debug: wasOutputtedToMonthlyReport -->
+<!-- debug: rTTClockImpact -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="rTTClockImpact" class="ims.pathways.domain.objects.PathwaysRTTClockImpact" unique="true" foreign-key="providercancel_rttclockim_fk" access="field" cascade="save-update">
+			<column name="rttclockim" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
 <!-- debug: !IsAssociation && !IsCollection -->
 
 <!-- debug: IsLookup -->

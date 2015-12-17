@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.scheduling.domain.objects;
@@ -75,6 +80,18 @@ public class Appointment_Status extends ims.domain.DomainObject implements ims.d
 	private java.util.Date earliestOfferedDate;
 	/** Status Change Date Time */
 	private java.util.Date statusChangeDateTime;
+	/** Could not be seen */
+	private Boolean couldnotbeseen;
+	/** Care Professional ready to see */
+	private Boolean careProfessionalReadyToSee;
+	/** Care Professional Not ready to see */
+	private Boolean careProfessionalNotReadyToSee;
+	/** was Letter Printed */
+	private Boolean wasLetterPrinted;
+	/** Indicates that this appointment was cancelled as part of profile maintenance */
+	private Boolean isDisplaced;
+	/** Session for appointment for this status - used for reporting */
+	private ims.scheduling.domain.objects.Sch_Session session;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public Appointment_Status (Integer id, int ver)
@@ -208,6 +225,48 @@ public class Appointment_Status extends ims.domain.DomainObject implements ims.d
 		this.statusChangeDateTime = statusChangeDateTime;
 	}
 
+	public Boolean isCouldnotbeseen() {
+		return couldnotbeseen;
+	}
+	public void setCouldnotbeseen(Boolean couldnotbeseen) {
+		this.couldnotbeseen = couldnotbeseen;
+	}
+
+	public Boolean isCareProfessionalReadyToSee() {
+		return careProfessionalReadyToSee;
+	}
+	public void setCareProfessionalReadyToSee(Boolean careProfessionalReadyToSee) {
+		this.careProfessionalReadyToSee = careProfessionalReadyToSee;
+	}
+
+	public Boolean isCareProfessionalNotReadyToSee() {
+		return careProfessionalNotReadyToSee;
+	}
+	public void setCareProfessionalNotReadyToSee(Boolean careProfessionalNotReadyToSee) {
+		this.careProfessionalNotReadyToSee = careProfessionalNotReadyToSee;
+	}
+
+	public Boolean isWasLetterPrinted() {
+		return wasLetterPrinted;
+	}
+	public void setWasLetterPrinted(Boolean wasLetterPrinted) {
+		this.wasLetterPrinted = wasLetterPrinted;
+	}
+
+	public Boolean isIsDisplaced() {
+		return isDisplaced;
+	}
+	public void setIsDisplaced(Boolean isDisplaced) {
+		this.isDisplaced = isDisplaced;
+	}
+
+	public ims.scheduling.domain.objects.Sch_Session getSession() {
+		return session;
+	}
+	public void setSession(ims.scheduling.domain.objects.Sch_Session session) {
+		this.session = session;
+	}
+
 	public ims.domain.SystemInformation getSystemInformation() {
 		if (systemInformation == null) systemInformation = new ims.domain.SystemInformation();
 		return systemInformation;
@@ -299,6 +358,29 @@ public class Appointment_Status extends ims.domain.DomainObject implements ims.d
 	    auditStr.append("; ");
 		auditStr.append("\r\n*statusChangeDateTime* :");
 		auditStr.append(statusChangeDateTime);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*couldnotbeseen* :");
+		auditStr.append(couldnotbeseen);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*careProfessionalReadyToSee* :");
+		auditStr.append(careProfessionalReadyToSee);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*careProfessionalNotReadyToSee* :");
+		auditStr.append(careProfessionalNotReadyToSee);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*wasLetterPrinted* :");
+		auditStr.append(wasLetterPrinted);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*isDisplaced* :");
+		auditStr.append(isDisplaced);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*session* :");
+		if (session != null)
+		{
+			auditStr.append(toShortClassName(session));
+				
+		    auditStr.append(session.getId());
+		}
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -433,6 +515,42 @@ public class Appointment_Status extends ims.domain.DomainObject implements ims.d
 			sb.append("<statusChangeDateTime>");
 			sb.append(new ims.framework.utils.DateTime(this.getStatusChangeDateTime()).toString(ims.framework.utils.DateTimeFormat.MILLI));
 			sb.append("</statusChangeDateTime>");		
+		}
+		if (this.isCouldnotbeseen() != null)
+		{
+			sb.append("<couldnotbeseen>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isCouldnotbeseen().toString()));
+			sb.append("</couldnotbeseen>");		
+		}
+		if (this.isCareProfessionalReadyToSee() != null)
+		{
+			sb.append("<careProfessionalReadyToSee>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isCareProfessionalReadyToSee().toString()));
+			sb.append("</careProfessionalReadyToSee>");		
+		}
+		if (this.isCareProfessionalNotReadyToSee() != null)
+		{
+			sb.append("<careProfessionalNotReadyToSee>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isCareProfessionalNotReadyToSee().toString()));
+			sb.append("</careProfessionalNotReadyToSee>");		
+		}
+		if (this.isWasLetterPrinted() != null)
+		{
+			sb.append("<wasLetterPrinted>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isWasLetterPrinted().toString()));
+			sb.append("</wasLetterPrinted>");		
+		}
+		if (this.isIsDisplaced() != null)
+		{
+			sb.append("<isDisplaced>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsDisplaced().toString()));
+			sb.append("</isDisplaced>");		
+		}
+		if (this.getSession() != null)
+		{
+			sb.append("<session>");
+			sb.append(this.getSession().toXMLString(domMap)); 	
+			sb.append("</session>");		
 		}
 		return sb.toString();
 	}
@@ -678,6 +796,37 @@ public class Appointment_Status extends ims.domain.DomainObject implements ims.d
 		{	
     		obj.setStatusChangeDateTime(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
 		}
+		fldEl = el.element("couldnotbeseen");
+		if(fldEl != null)
+		{	
+    		obj.setCouldnotbeseen(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("careProfessionalReadyToSee");
+		if(fldEl != null)
+		{	
+    		obj.setCareProfessionalReadyToSee(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("careProfessionalNotReadyToSee");
+		if(fldEl != null)
+		{	
+    		obj.setCareProfessionalNotReadyToSee(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("wasLetterPrinted");
+		if(fldEl != null)
+		{	
+    		obj.setWasLetterPrinted(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("isDisplaced");
+		if(fldEl != null)
+		{	
+    		obj.setIsDisplaced(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("session");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setSession(ims.scheduling.domain.objects.Sch_Session.getSch_SessionfromXML(fldEl, factory, domMap)); 
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -705,6 +854,12 @@ public class Appointment_Status extends ims.domain.DomainObject implements ims.d
 		public static final String WasOutputtedToMonthlyReport = "wasOutputtedToMonthlyReport";
 		public static final String EarliestOfferedDate = "earliestOfferedDate";
 		public static final String StatusChangeDateTime = "statusChangeDateTime";
+		public static final String Couldnotbeseen = "couldnotbeseen";
+		public static final String CareProfessionalReadyToSee = "careProfessionalReadyToSee";
+		public static final String CareProfessionalNotReadyToSee = "careProfessionalNotReadyToSee";
+		public static final String WasLetterPrinted = "wasLetterPrinted";
+		public static final String IsDisplaced = "isDisplaced";
+		public static final String Session = "session";
 	}
 }
 

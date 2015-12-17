@@ -1,9 +1,33 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.RefMan.vo.domain;
@@ -35,6 +59,12 @@ public class PathwayClockForReferralERODVoAssembler
 		valueObjectDest.setPauseDetails(valueObjectSrc.getPauseDetails());
 		// CurrentPause
 		valueObjectDest.setCurrentPause(valueObjectSrc.getCurrentPause());
+		// StopDate
+		valueObjectDest.setStopDate(valueObjectSrc.getStopDate());
+		// CurrentRTTStatus
+		valueObjectDest.setCurrentRTTStatus(valueObjectSrc.getCurrentRTTStatus());
+		// RTTStatusHistory
+		valueObjectDest.setRTTStatusHistory(valueObjectSrc.getRTTStatusHistory());
 	 	return valueObjectDest;
 	 }
 
@@ -348,6 +378,16 @@ public class PathwayClockForReferralERODVoAssembler
 				valueObject.setCurrentPause(new ims.pathways.vo.PauseDetailsRefVo(domainObject.getCurrentPause().getId(), domainObject.getCurrentPause().getVersion()));
 			}
 		}
+		// StopDate
+		java.util.Date StopDate = domainObject.getStopDate();
+		if ( null != StopDate ) 
+		{
+			valueObject.setStopDate(new ims.framework.utils.Date(StopDate) );
+		}
+		// CurrentRTTStatus
+		valueObject.setCurrentRTTStatus(ims.pathways.vo.domain.PathwayRTTStatusLiteVoAssembler.create(map, domainObject.getCurrentRTTStatus()) );
+		// RTTStatusHistory
+		valueObject.setRTTStatusHistory(ims.pathways.vo.domain.PathwayRTTStatusLiteVoAssembler.createPathwayRTTStatusLiteVoCollectionFromPathwayRTTStatus(map, domainObject.getRTTStatusHistory()) );
  		return valueObject;
 	 }
 
@@ -467,6 +507,89 @@ public class PathwayClockForReferralERODVoAssembler
 			}
 		}
 		domainObject.setCurrentPause(value2);
+		java.util.Date value3 = null;
+		ims.framework.utils.Date date3 = valueObject.getStopDate();		
+		if ( date3 != null ) 
+		{
+			value3 = date3.getDate();
+		}
+		domainObject.setStopDate(value3);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.pathways.domain.objects.PathwayRTTStatus value4 = null;
+		if ( null != valueObject.getCurrentRTTStatus() ) 
+		{
+			if (valueObject.getCurrentRTTStatus().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getCurrentRTTStatus()) != null)
+				{
+					value4 = (ims.pathways.domain.objects.PathwayRTTStatus)domMap.get(valueObject.getCurrentRTTStatus());
+				}
+			}
+			else
+			{
+				value4 = (ims.pathways.domain.objects.PathwayRTTStatus)domainFactory.getDomainObject(ims.pathways.domain.objects.PathwayRTTStatus.class, valueObject.getCurrentRTTStatus().getBoId());
+			}
+		}
+		domainObject.setCurrentRTTStatus(value4);
+
+		// SaveAsRefVO treated as RefValueObject
+		ims.pathways.vo.PathwayRTTStatusRefVoCollection refCollection5 = new ims.pathways.vo.PathwayRTTStatusRefVoCollection();
+		if (valueObject.getRTTStatusHistory() != null)
+		{
+			for (int i5=0; i5<valueObject.getRTTStatusHistory().size(); i5++)
+			{
+				ims.pathways.vo.PathwayRTTStatusRefVo ref5 = (ims.pathways.vo.PathwayRTTStatusRefVo)valueObject.getRTTStatusHistory().get(i5);
+				refCollection5.add(ref5);
+			}
+		}
+		int size5 = (null == refCollection5) ? 0 : refCollection5.size();		
+		java.util.List domainRTTStatusHistory5 = domainObject.getRTTStatusHistory();
+		if (domainRTTStatusHistory5 == null)
+		{
+			domainRTTStatusHistory5 = new java.util.ArrayList();
+		}
+		for(int i=0; i < size5; i++) 
+		{
+			ims.pathways.vo.PathwayRTTStatusRefVo vo = refCollection5.get(i);			
+			ims.pathways.domain.objects.PathwayRTTStatus dom = null;
+			if ( null != vo ) 
+			{
+				if (vo.getBoId() == null)
+				{
+					if (domMap.get(vo) != null)
+					{
+						dom = (ims.pathways.domain.objects.PathwayRTTStatus)domMap.get(vo);
+					}
+				}
+				else
+				{
+					dom = (ims.pathways.domain.objects.PathwayRTTStatus)domainFactory.getDomainObject( ims.pathways.domain.objects.PathwayRTTStatus.class, vo.getBoId());
+				}
+			}
+
+			int domIdx = domainRTTStatusHistory5.indexOf(dom);
+			if (domIdx == -1)
+			{
+				domainRTTStatusHistory5.add(i, dom);
+			}
+			else if (i != domIdx && i < domainRTTStatusHistory5.size())
+			{
+				Object tmp = domainRTTStatusHistory5.get(i);
+				domainRTTStatusHistory5.set(i, domainRTTStatusHistory5.get(domIdx));
+				domainRTTStatusHistory5.set(domIdx, tmp);
+			}
+		}
+		
+		//Remove all ones in domList where index > voCollection.size() as these should
+		//now represent the ones removed from the VO collection. No longer referenced.
+		int i5 = domainRTTStatusHistory5.size();
+		while (i5 > size5)
+		{
+			domainRTTStatusHistory5.remove(i5-1);
+			i5 = domainRTTStatusHistory5.size();
+		}
+		
+		domainObject.setRTTStatusHistory(domainRTTStatusHistory5);		
 
 		return domainObject;
 	}

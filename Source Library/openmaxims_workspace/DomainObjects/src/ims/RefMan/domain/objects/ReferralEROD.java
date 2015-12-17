@@ -1,9 +1,33 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.RefMan.domain.objects;
@@ -45,6 +69,13 @@ public class ReferralEROD extends ims.domain.DomainObject implements ims.domain.
 	private ims.pathways.domain.objects.PathwayClock pathWayClock;
 	/** ErodStatus */
 	private ims.domain.lookups.LookupInstance erodStatus;
+	/** ERODReason */
+	private ims.domain.lookups.LookupInstance eRODReason;
+	/** ERODReason comment */
+	private String eRODReasonComment;
+	/** Extended Delay */
+	private Boolean isExtendedDelay;
+	private java.util.Date dateOfOffer;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public ReferralEROD (Integer id, int ver)
@@ -135,6 +166,38 @@ public class ReferralEROD extends ims.domain.DomainObject implements ims.domain.
 		this.erodStatus = erodStatus;
 	}
 
+	public ims.domain.lookups.LookupInstance getERODReason() {
+		return eRODReason;
+	}
+	public void setERODReason(ims.domain.lookups.LookupInstance eRODReason) {
+		this.eRODReason = eRODReason;
+	}
+
+	public String getERODReasonComment() {
+		return eRODReasonComment;
+	}
+	public void setERODReasonComment(String eRODReasonComment) {
+		if ( null != eRODReasonComment && eRODReasonComment.length() > 1500 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for eRODReasonComment. Tried to set value: "+
+				eRODReasonComment);
+		}
+		this.eRODReasonComment = eRODReasonComment;
+	}
+
+	public Boolean isIsExtendedDelay() {
+		return isExtendedDelay;
+	}
+	public void setIsExtendedDelay(Boolean isExtendedDelay) {
+		this.isExtendedDelay = isExtendedDelay;
+	}
+
+	public java.util.Date getDateOfOffer() {
+		return dateOfOffer;
+	}
+	public void setDateOfOffer(java.util.Date dateOfOffer) {
+		this.dateOfOffer = dateOfOffer;
+	}
+
 	public ims.domain.SystemInformation getSystemInformation() {
 		if (systemInformation == null) systemInformation = new ims.domain.SystemInformation();
 		return systemInformation;
@@ -213,6 +276,19 @@ public class ReferralEROD extends ims.domain.DomainObject implements ims.domain.
 		auditStr.append("\r\n*erodStatus* :");
 		if (erodStatus != null)
 			auditStr.append(erodStatus.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*eRODReason* :");
+		if (eRODReason != null)
+			auditStr.append(eRODReason.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*eRODReasonComment* :");
+		auditStr.append(eRODReasonComment);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*isExtendedDelay* :");
+		auditStr.append(isExtendedDelay);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*dateOfOffer* :");
+		auditStr.append(dateOfOffer);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -317,6 +393,30 @@ public class ReferralEROD extends ims.domain.DomainObject implements ims.domain.
 			sb.append("<erodStatus>");
 			sb.append(this.getErodStatus().toXMLString()); 
 			sb.append("</erodStatus>");		
+		}
+		if (this.getERODReason() != null)
+		{
+			sb.append("<eRODReason>");
+			sb.append(this.getERODReason().toXMLString()); 
+			sb.append("</eRODReason>");		
+		}
+		if (this.getERODReasonComment() != null)
+		{
+			sb.append("<eRODReasonComment>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getERODReasonComment().toString()));
+			sb.append("</eRODReasonComment>");		
+		}
+		if (this.isIsExtendedDelay() != null)
+		{
+			sb.append("<isExtendedDelay>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsExtendedDelay().toString()));
+			sb.append("</isExtendedDelay>");		
+		}
+		if (this.getDateOfOffer() != null)
+		{
+			sb.append("<dateOfOffer>");
+			sb.append(new ims.framework.utils.DateTime(this.getDateOfOffer()).toString(ims.framework.utils.DateTimeFormat.MILLI));
+			sb.append("</dateOfOffer>");		
 		}
 		return sb.toString();
 	}
@@ -535,6 +635,27 @@ public class ReferralEROD extends ims.domain.DomainObject implements ims.domain.
 			fldEl = fldEl.element("lki");
 			obj.setErodStatus(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
 		}
+		fldEl = el.element("eRODReason");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setERODReason(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("eRODReasonComment");
+		if(fldEl != null)
+		{	
+    		obj.setERODReasonComment(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("isExtendedDelay");
+		if(fldEl != null)
+		{	
+    		obj.setIsExtendedDelay(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("dateOfOffer");
+		if(fldEl != null)
+		{	
+    		obj.setDateOfOffer(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -557,6 +678,10 @@ public class ReferralEROD extends ims.domain.DomainObject implements ims.domain.
 		public static final String IsActive = "isActive";
 		public static final String PathWayClock = "pathWayClock";
 		public static final String ErodStatus = "erodStatus";
+		public static final String ERODReason = "eRODReason";
+		public static final String ERODReasonComment = "eRODReasonComment";
+		public static final String IsExtendedDelay = "isExtendedDelay";
+		public static final String DateOfOffer = "dateOfOffer";
 	}
 }
 

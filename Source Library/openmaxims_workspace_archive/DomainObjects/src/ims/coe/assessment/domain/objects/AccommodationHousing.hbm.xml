@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:35 -->
+<hibernate-mapping>
+	<class name="ims.coe.assessment.domain.objects.AccommodationHousing" table="coe_accomhous" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: hibernateClassContent -->
+<!-- debug: currentLivingArrangements -->
+<!-- debug: currentLivingArrangementsNotes -->
+<!-- debug: accommodation -->
+<!-- debug: accommodationNotes -->
+<!-- debug: assisstanceToOthers -->
+<!-- debug: assistanceToOthersNotes -->
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: IsLookup -->
+		<many-to-one name="currentLivingArrangements" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_currentliv" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="currentLivingArrangementsNotes" type="string" access="field" update="true">
+			<column name="currentli2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="accommodation" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_accommodat" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="accommodationNotes" type="string" access="field" update="true">
+			<column name="accommoda2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="assisstanceToOthers" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_assisstanc" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="assistanceToOthersNotes" type="string" access="field" update="true">
+			<column name="assistance"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

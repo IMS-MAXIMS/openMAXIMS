@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.resource.domain.objects;
@@ -47,6 +52,10 @@ public class HcpLocationService extends ims.domain.DomainObject implements java.
 
 	/** Service */
 	private ims.core.clinical.domain.objects.Service service;
+	/** Function
+	  * Collection of ims.domain.lookups.LookupInstance.
+	  */
+	private java.util.List function;
     public HcpLocationService (Integer id, int ver)
     {
     	super(id, ver);
@@ -70,6 +79,16 @@ public class HcpLocationService extends ims.domain.DomainObject implements java.
 	}
 	public void setService(ims.core.clinical.domain.objects.Service service) {
 		this.service = service;
+	}
+
+	public java.util.List getFunction() {
+		if ( null == function ) {
+			function = new java.util.ArrayList();
+		}
+		return function;
+	}
+	public void setFunction(java.util.List paramValue) {
+		this.function = paramValue;
 	}
 
 	/**
@@ -109,6 +128,23 @@ public class HcpLocationService extends ims.domain.DomainObject implements java.
 			auditStr.append(toShortClassName(service));
 				
 		    auditStr.append(service.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*function* :");
+		if (function != null)
+		{
+			java.util.Iterator it2 = function.iterator();
+			int i2=0;
+			while (it2.hasNext())
+			{
+				if (i2 > 0)
+					auditStr.append(",");
+				ims.domain.lookups.LookupInstance obj = (ims.domain.lookups.LookupInstance)it2.next();
+			auditStr.append(obj.getText());
+			i2++;
+		}
+		if (i2 > 0)
+			auditStr.append("] " + i2);
 		}
 	    auditStr.append("; ");
 		return auditStr.toString();
@@ -160,6 +196,15 @@ public class HcpLocationService extends ims.domain.DomainObject implements java.
 			sb.append("<service>");
 			sb.append(this.getService().toXMLString(domMap)); 	
 			sb.append("</service>");		
+		}
+		if (this.getFunction() != null)
+		{
+			if (this.getFunction().size() > 0 )
+			{
+			sb.append("<function>");
+			sb.append(ims.domain.lookups.LookupInstance.toXMLString(this.getFunction())); 
+			sb.append("</function>");		
+			}
 		}
 		return sb.toString();
 	}
@@ -330,11 +375,18 @@ public class HcpLocationService extends ims.domain.DomainObject implements java.
 			fldEl = fldEl.element("class");		
 			obj.setService(ims.core.clinical.domain.objects.Service.getServicefromXML(fldEl, factory, domMap)); 
 		}
+		fldEl = el.element("function");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("list");	
+			obj.setFunction(ims.domain.lookups.LookupInstance.fromListXMLString(fldEl, factory, obj.getFunction())); 
+		}
 	}
 
 	public static String[] getCollectionFields()
 	{
 		return new String[]{
+		 "function"
 		};
 	}
 
@@ -343,6 +395,7 @@ public class HcpLocationService extends ims.domain.DomainObject implements java.
 	{
 	public static final String ID = "id";
 		public static final String Service = "service";
+		public static final String Function = "function";
 	}
 }
 

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,6 +15,11 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 package ims.hl7.domain.mapping;
@@ -26,11 +31,18 @@ import java.net.URL;
 
 import org.apache.log4j.Logger;
 
+import ims.configuration.ConfigItems;
 import ims.configuration.gen.ConfigFlag;
 import ims.core.vo.IfPatientDocumentMessageVo;
 import ims.core.vo.IfPatientDocumentVo;
 import ims.core.vo.MemberOfStaffShortVo;
+import ims.core.vo.Patient;
+import ims.domain.exceptions.StaleObjectException;
 import ims.framework.utils.DateTime;
+import ims.framework.utils.DateTimeFormat;
+import ims.hl7.domain.EventResponse;
+import ims.hl7.utils.HL7Errors;
+import ims.hl7.utils.HL7Utils;
 import ims.ocrr.vo.ProviderSystemVo;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
@@ -38,6 +50,7 @@ import ca.uhn.hl7v2.model.Varies;
 import ca.uhn.hl7v2.model.v24.datatype.ST;
 import ca.uhn.hl7v2.model.v24.message.MDM_T02;
 import ca.uhn.hl7v2.model.v24.segment.OBX;
+import ca.uhn.hl7v2.model.v24.segment.PID;
 import ca.uhn.hl7v2.model.v24.segment.PV1;
 import ca.uhn.hl7v2.model.v24.segment.TXA;
 
@@ -51,14 +64,37 @@ public class T02VoMapper extends VoMapper {
 	}
 
 	@Override
-	public Message processEvent(Message msg, ProviderSystemVo providerSystem)
-			throws HL7Exception {
-		return null;
+	//WDEV-20112
+//	public Message processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception 
+	public EventResponse processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception 
+	{
+		EventResponse response = new EventResponse();
+		
+		PID pid = null;
+		pid = (PID) msg.get("PID");
+		Patient patVo = getPrimaryIdFromPid(pid, providerSystem);
+		try
+		{
+			Patient patVo2 = getDemog().getPatient(patVo);
+			response.setPatient(patVo2);
+		}
+		catch (StaleObjectException e)
+		{
+			response.setMessage(HL7Utils.buildRejAck(msg.get("MSH"), "Exception: " + e.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems())));
+			return response;
+		}
+		response.setMessage(HL7Utils.buildRejAck(msg.get("MSH"), "Exception: Inbound T02 message types not currently processed by application!", HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems())));
+		return response; //WDEV-20112	
 	}
 
 	public Message populateMDM_T02Message(IfPatientDocumentMessageVo event) throws Exception
 	{
 		LOG.debug("T02VoMapper populateMDM_T02Message: entry");
+		
+		//http://jira/browse/WDEV-19913
+		String useISO_SECSStr = HL7Utils.getConfigItem(toConfigItemArray(event.getProviderSystem().getConfigItems()), ConfigItems.RenderTSAsISO_SECS);
+		boolean useISO_SECS = useISO_SECSStr != null && (useISO_SECSStr.equalsIgnoreCase("TRUE") || useISO_SECSStr.equalsIgnoreCase("YES"))?true:false;
+		
 		 MDM_T02 message = new MDM_T02();
 		
 
@@ -127,7 +163,15 @@ public class T02VoMapper extends VoMapper {
 		 
 		 
 		//populate the message
-		populateMSH( event.getProviderSystem(),  message.getMSH(),Long.toString( new java.util.Date().getTime()),"MDM","T02");
+		//WDEV-19913
+		 if(useISO_SECS)
+		 {
+			 populateMSH( event.getProviderSystem(),  message.getMSH(),Long.toString( new java.util.Date().getTime()),"MDM","T02",DateTimeFormat.ISO_SECS);
+		 }
+		 else
+		 {
+			 populateMSH( event.getProviderSystem(),  message.getMSH(),Long.toString( new java.util.Date().getTime()),"MDM","T02");
+		 }
 		
 		if(event.getPatientDocument()==null||!event.getID_PatientDocumentMessageQueueIsNotNull())
 		{
@@ -161,23 +205,48 @@ public class T02VoMapper extends VoMapper {
 		
 		
 		//TXA-4
+		//http://jira/browse/WDEV-19913
 		DateTime authoringdt = patientDocument.getAuthoringDateTime();
-		renderDateTimeVoToTS(authoringdt, txa.getActivityDateTime());
+		if(useISO_SECS)
+		{
+			renderDateTimeVoToTS(authoringdt, txa.getActivityDateTime(),DateTimeFormat.ISO_SECS);
+		}
+		else
+		{
+			renderDateTimeVoToTS(authoringdt, txa.getActivityDateTime());
+		}
 		
 		
 		//TXA-5
 		if (patientDocument.getResponsibleHCPIsNotNull())
 		{
 			MemberOfStaffShortVo mos =  patientDocument.getResponsibleHCP().getMos();
-			renderMemberOfStaffShortVoToXCNNatCode(mos, txa.getPrimaryActivityProviderCodeName(0), event.getProviderSystem());
+			//WDEV-21000
+//			renderMemberOfStaffShortVoToXCNNatCode(mos, txa.getPrimaryActivityProviderCodeName(0), event.getProviderSystem());
+			if (ConfigFlag.HL7.USE_CONFIGURED_TAXONOMYTYPES_FOR_XCN.getValue())
+			{
+				renderMemberOfStaffShortVoToPrimaryActivityProviderCodeName(mos, txa, event.getProviderSystem());
+			}
+			else
+			{
+				renderMemberOfStaffShortVoToXCNNatCode(mos, txa.getPrimaryActivityProviderCodeName(0), event.getProviderSystem());
+			}
 		}
 		
 		//TXA-6
 		//Not used
 		
 		//TXA-7
+		//http://jira/browse/WDEV-19913
 		DateTime transcribedt = patientDocument.getRecordingDateTime();
-		renderDateTimeVoToTS(transcribedt, txa.getTranscriptionDateTime());
+		if(useISO_SECS)
+		{
+			renderDateTimeVoToTS(transcribedt, txa.getTranscriptionDateTime(),DateTimeFormat.ISO_SECS);
+		}
+		else
+		{
+			renderDateTimeVoToTS(transcribedt, txa.getTranscriptionDateTime());
+		}
 		
 		
 		//TXA-8
@@ -187,7 +256,16 @@ public class T02VoMapper extends VoMapper {
 		if (patientDocument.getAuthoringHCPIsNotNull())
 		{
 			MemberOfStaffShortVo mos =  patientDocument.getAuthoringHCP().getMos();
-			renderMemberOfStaffShortVoToXCNNatCode(mos, txa.getOriginatorCodeName(0), event.getProviderSystem());
+			//WDEV-21000
+//			renderMemberOfStaffShortVoToXCNNatCode(mos, txa.getOriginatorCodeName(0), event.getProviderSystem());
+			if (ConfigFlag.HL7.USE_CONFIGURED_TAXONOMYTYPES_FOR_XCN.getValue())
+			{
+				renderMemberOfStaffShortVoToOriginatorCodeName(mos, txa, event.getProviderSystem());
+			}
+			else
+			{
+				renderMemberOfStaffShortVoToXCNNatCode(mos, txa.getOriginatorCodeName(0), event.getProviderSystem());
+			}
 		}
 
 		//TXA-10
@@ -197,7 +275,16 @@ public class T02VoMapper extends VoMapper {
 		if (patientDocument.getRecordingUserIsNotNull())
 		{
 			MemberOfStaffShortVo mos =  patientDocument.getRecordingUser();
-			renderMemberOfStaffShortVoToXCN(mos, txa.getTranscriptionistCodeName(0), event.getProviderSystem());
+			//WDEV-21000
+//			renderMemberOfStaffShortVoToXCN(mos, txa.getTranscriptionistCodeName(0), event.getProviderSystem());
+			if (ConfigFlag.HL7.USE_CONFIGURED_TAXONOMYTYPES_FOR_XCN.getValue())
+			{
+				renderMemberOfStaffShortVoToTranscriptionistCodeName(mos, txa, event.getProviderSystem());
+			}
+			else
+			{
+				renderMemberOfStaffShortVoToXCN(mos, txa.getTranscriptionistCodeName(0), event.getProviderSystem());
+			}
 		}
 		
 		//TXA-12

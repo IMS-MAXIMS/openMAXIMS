@@ -1,0 +1,117 @@
+package ims.rules.userrules;
+
+import ims.rules.engine.RulesRuntimeEngine;
+import ims.domain.DomainFactory;
+import ims.scheduling.domain.objects.Booking_Appointment;
+
+global RulesRuntimeEngine engine;
+global DomainFactory factory;
+
+function void linkICPWithActiveAppointment(ims.domain.DomainFactory factory, ims.rules.engine.RulesRuntimeEngine engine, Booking_Appointment entity)
+{	
+	try 
+	{
+		//Find the new appointment that needs to be linked to the ICP - For patient and same service.
+		java.util.ArrayList markers = new java.util.ArrayList();
+		java.util.ArrayList values = new java.util.ArrayList();
+		StringBuffer condStr = new StringBuffer();
+		String hql = " from Booking_Appointment as booking "; 
+		String andStr = " ";
+	
+		condStr.append(andStr + " booking.apptStatus.id = -1469" );
+		andStr = " and ";
+	
+		condStr.append(andStr + " booking.isCABBooking = 1" );
+		andStr = " and ";
+	
+		condStr.append(andStr + " booking.patient.id = :pat" );
+		markers.add("pat");
+		values.add(entity.getPatient().getId());              
+		andStr = " and ";
+	
+		condStr.append(andStr + " booking.session.service.id = :serv" );
+		markers.add("serv");
+		values.add(entity.getSession().getService().getId());                  
+		andStr = " and ";
+	
+		condStr.append(andStr + " booking.id != :thisID" );
+		markers.add("thisID");
+		values.add(entity.getId());             
+		andStr = " and ";
+	
+		if(andStr.equals(" and "))
+			hql += " where ";
+                        
+        hql += condStr.toString();
+        java.util.List pList = factory.find(hql,markers,values);
+
+        if (pList.size() == 0)
+        {
+                    engine.println("RulesEngine - linkICPWithActiveAppointment - No associated Booking found for CAB cancellation.");
+                    return;
+        }
+        if (pList.size() > 1)
+        {
+                    engine.println("RulesEngine - linkICPWithActiveAppointment - More then one Booking found for CAB cancellation.");
+                    return;
+        }
+                        
+    	Booking_Appointment boNewBooking = (Booking_Appointment) pList.get(0);
+    
+	    //Check to see if there is a Patient ICP to link too - will be already linked to the old appointment
+	    markers.clear();
+	    values.clear();
+	    hql = " from PatientICP as picp where picp.appointments.id = :thisAppt";
+	    markers.add("thisAppt");
+	    values.add(entity.getId());             
+
+	    pList = factory.find(hql,markers,values);
+	
+	    if (pList.size() == 0)
+	    {
+	                engine.println("RulesEngine - linkICPWithActiveAppointment - No PatientICP found for CAB cancellation.");
+	                return;
+	    }
+	    if (pList.size() > 1)
+	    {
+	                engine.println("RulesEngine - linkICPWithActiveAppointment - More then one Patient ICP found for CAB cancellation.");
+	                return;
+	    }
+	    
+	    ims.icps.instantiation.domain.objects.PatientICP pICP = (ims.icps.instantiation.domain.objects.PatientICP) pList.get(0); 
+	    
+	    //Update the appt collection in the Patient ICP
+	    pICP.getAppointments().add(boNewBooking);
+
+    	factory.save(pICP);
+    } 
+    catch (ims.domain.exceptions.StaleObjectException e) 
+    {
+        e.printStackTrace();
+        engine.println("RulesEngine - linkICPWithActiveAppointment - " + e.getMessage());
+        engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.ERROR, "Rule 'CABAppointmentCancellationICPLinking' failed: " + e.toString());
+    }                       
+}
+
+function boolean isCABAppointmentCancelled(ims.scheduling.domain.objects.Booking_Appointment entity)
+{
+	if(entity.getId() != null 
+		&& entity.isIsCABBooking() != null 
+		&& entity.isIsCABBooking() == true 
+		&& entity.getApptStatus() != null 
+		&& entity.getApptStatus().getId() == -568)
+		return true;
+
+	return false;
+}
+
+rule "CABAppointmentCancellationICPLinking"
+no-loop true
+salience 0
+when
+	entity : ims.scheduling.domain.objects.Booking_Appointment();
+	eval(isCABAppointmentCancelled(entity));
+then		
+	engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Rule 'CABAppointmentCancellationICPLinking' was fired.");	
+	linkICPWithActiveAppointment(factory, engine, entity);	
+end

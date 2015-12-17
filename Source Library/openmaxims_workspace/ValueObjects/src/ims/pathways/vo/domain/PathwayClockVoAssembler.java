@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:23
  *
  */
 package ims.pathways.vo.domain;
@@ -50,6 +55,14 @@ public class PathwayClockVoAssembler
 		}
 		valueObjectDest.setID_PathwayClock(valueObjectSrc.getID_PathwayClock());
 	    valueObjectDest.setIsRIE(valueObjectSrc.getIsRIE());
+		// PauseDetails
+		valueObjectDest.setPauseDetails(valueObjectSrc.getPauseDetails());
+		// CurrentRTTStatus
+		valueObjectDest.setCurrentRTTStatus(valueObjectSrc.getCurrentRTTStatus());
+		// RTTStatusHistory
+		valueObjectDest.setRTTStatusHistory(valueObjectSrc.getRTTStatusHistory());
+		// CurrentPause
+		valueObjectDest.setCurrentPause(valueObjectSrc.getCurrentPause());
 		// ExtClockId
 		valueObjectDest.setExtClockId(valueObjectSrc.getExtClockId());
 		// ExtClockName
@@ -58,8 +71,8 @@ public class PathwayClockVoAssembler
 		valueObjectDest.setStartDate(valueObjectSrc.getStartDate());
 		// StopDate
 		valueObjectDest.setStopDate(valueObjectSrc.getStopDate());
-		// PauseDetails
-		valueObjectDest.setPauseDetails(valueObjectSrc.getPauseDetails());
+		// TargetClockEnd
+		valueObjectDest.setTargetClockEnd(valueObjectSrc.getTargetClockEnd());
 	 	return valueObjectDest;
 	 }
 
@@ -350,6 +363,21 @@ public class PathwayClockVoAssembler
 		if ((valueObject.getIsRIE() == null || valueObject.getIsRIE().booleanValue() == false) && domainObject.isIncludeRecord())
 			return null;
 			
+		// PauseDetails
+		valueObject.setPauseDetails(ims.pathways.vo.domain.PauseDetailsVoAssembler.createPauseDetailsVoCollectionFromPauseDetails(map, domainObject.getPauseDetails()) );
+		// CurrentRTTStatus
+		valueObject.setCurrentRTTStatus(ims.pathways.vo.domain.PathwayRTTStatusVoAssembler.create(map, domainObject.getCurrentRTTStatus()) );
+		// RTTStatusHistory
+		ims.pathways.vo.PathwayRTTStatusRefVoCollection RTTStatusHistory = new ims.pathways.vo.PathwayRTTStatusRefVoCollection();
+		for(java.util.Iterator iterator = domainObject.getRTTStatusHistory().iterator(); iterator.hasNext(); ) 
+		{
+			ims.pathways.domain.objects.PathwayRTTStatus tmp = (ims.pathways.domain.objects.PathwayRTTStatus)iterator.next();
+			if (tmp != null)
+				RTTStatusHistory.add(new ims.pathways.vo.PathwayRTTStatusRefVo(tmp.getId(),tmp.getVersion()));
+		}
+		valueObject.setRTTStatusHistory(RTTStatusHistory);
+		// CurrentPause
+		valueObject.setCurrentPause(ims.pathways.vo.domain.PauseDetailsVoAssembler.create(map, domainObject.getCurrentPause()) );
 		// ExtClockId
 		valueObject.setExtClockId(domainObject.getExtClockId());
 		// ExtClockName
@@ -366,8 +394,12 @@ public class PathwayClockVoAssembler
 		{
 			valueObject.setStopDate(new ims.framework.utils.Date(StopDate) );
 		}
-		// PauseDetails
-		valueObject.setPauseDetails(ims.pathways.vo.domain.PauseDetailsVoAssembler.createPauseDetailsVoCollectionFromPauseDetails(map, domainObject.getPauseDetails()) );
+		// TargetClockEnd
+		java.util.Date TargetClockEnd = domainObject.getTargetClockEnd();
+		if ( null != TargetClockEnd ) 
+		{
+			valueObject.setTargetClockEnd(new ims.framework.utils.Date(TargetClockEnd) );
+		}
  		return valueObject;
 	 }
 
@@ -417,6 +449,59 @@ public class PathwayClockVoAssembler
 		}
 		domainObject.setVersion(valueObject.getVersion_PathwayClock());
 
+		domainObject.setPauseDetails(ims.pathways.vo.domain.PauseDetailsVoAssembler.extractPauseDetailsList(domainFactory, valueObject.getPauseDetails(), domainObject.getPauseDetails(), domMap));		
+		domainObject.setCurrentRTTStatus(ims.pathways.vo.domain.PathwayRTTStatusVoAssembler.extractPathwayRTTStatus(domainFactory, valueObject.getCurrentRTTStatus(), domMap));
+
+		ims.pathways.vo.PathwayRTTStatusRefVoCollection refCollection3 = valueObject.getRTTStatusHistory();
+		int size3 = (null == refCollection3) ? 0 : refCollection3.size();		
+		java.util.List domainRTTStatusHistory3 = domainObject.getRTTStatusHistory();
+		if (domainRTTStatusHistory3 == null)
+		{
+			domainRTTStatusHistory3 = new java.util.ArrayList();
+		}
+		for(int i=0; i < size3; i++) 
+		{
+			ims.pathways.vo.PathwayRTTStatusRefVo vo = refCollection3.get(i);			
+			ims.pathways.domain.objects.PathwayRTTStatus dom = null;
+			if ( null != vo ) 
+			{
+				if (vo.getBoId() == null)
+				{
+					if (domMap.get(vo) != null)
+					{
+						dom = (ims.pathways.domain.objects.PathwayRTTStatus)domMap.get(vo);
+					}
+				}
+				else
+				{
+					dom = (ims.pathways.domain.objects.PathwayRTTStatus)domainFactory.getDomainObject( ims.pathways.domain.objects.PathwayRTTStatus.class, vo.getBoId());
+				}
+			}
+
+			int domIdx = domainRTTStatusHistory3.indexOf(dom);
+			if (domIdx == -1)
+			{
+				domainRTTStatusHistory3.add(i, dom);
+			}
+			else if (i != domIdx && i < domainRTTStatusHistory3.size())
+			{
+				Object tmp = domainRTTStatusHistory3.get(i);
+				domainRTTStatusHistory3.set(i, domainRTTStatusHistory3.get(domIdx));
+				domainRTTStatusHistory3.set(domIdx, tmp);
+			}
+		}
+		
+		//Remove all ones in domList where index > voCollection.size() as these should
+		//now represent the ones removed from the VO collection. No longer referenced.
+		int i3 = domainRTTStatusHistory3.size();
+		while (i3 > size3)
+		{
+			domainRTTStatusHistory3.remove(i3-1);
+			i3 = domainRTTStatusHistory3.size();
+		}
+		
+		domainObject.setRTTStatusHistory(domainRTTStatusHistory3);		
+		domainObject.setCurrentPause(ims.pathways.vo.domain.PauseDetailsVoAssembler.extractPauseDetails(domainFactory, valueObject.getCurrentPause(), domMap));
 		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
 		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
 		if (valueObject.getExtClockId() != null && valueObject.getExtClockId().equals(""))
@@ -431,21 +516,27 @@ public class PathwayClockVoAssembler
 			valueObject.setExtClockName(null);
 		}
 		domainObject.setExtClockName(valueObject.getExtClockName());
-		java.util.Date value3 = null;
-		ims.framework.utils.Date date3 = valueObject.getStartDate();		
-		if ( date3 != null ) 
+		java.util.Date value7 = null;
+		ims.framework.utils.Date date7 = valueObject.getStartDate();		
+		if ( date7 != null ) 
 		{
-			value3 = date3.getDate();
+			value7 = date7.getDate();
 		}
-		domainObject.setStartDate(value3);
-		java.util.Date value4 = null;
-		ims.framework.utils.Date date4 = valueObject.getStopDate();		
-		if ( date4 != null ) 
+		domainObject.setStartDate(value7);
+		java.util.Date value8 = null;
+		ims.framework.utils.Date date8 = valueObject.getStopDate();		
+		if ( date8 != null ) 
 		{
-			value4 = date4.getDate();
+			value8 = date8.getDate();
 		}
-		domainObject.setStopDate(value4);
-		domainObject.setPauseDetails(ims.pathways.vo.domain.PauseDetailsVoAssembler.extractPauseDetailsList(domainFactory, valueObject.getPauseDetails(), domainObject.getPauseDetails(), domMap));		
+		domainObject.setStopDate(value8);
+		java.util.Date value9 = null;
+		ims.framework.utils.Date date9 = valueObject.getTargetClockEnd();		
+		if ( date9 != null ) 
+		{
+			value9 = date9.getDate();
+		}
+		domainObject.setTargetClockEnd(value9);
 
 		return domainObject;
 	}

@@ -1,0 +1,373 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 12/10/2015, 13:32 -->
+<hibernate-mapping>
+	<class name="ims.eas.configuration.domain.objects.Protocol" table="eas_protocol" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: primaryTumour -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="primaryTumour" class="ims.eas.configuration.domain.objects.PrimaryTumour" unique="true" foreign-key="protocol_primarytum_fk" access="field" cascade="save-update">
+			<column name="primarytum" sql-type="numeric(10,0)" not-null="true" unique="false"  index='protocolPTIdx' />
+		</many-to-one>
+<!-- debug: treatmentSite -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="treatmentSite" class="ims.eas.configuration.domain.objects.TreatmentSites" unique="true" foreign-key="protocol_treatments_fk" access="field" cascade="save-update">
+			<column name="treatments" sql-type="numeric(10,0)" not-null="true" unique="false"  index='protocolPTIdx' />
+		</many-to-one>
+<!-- debug: protocolName -->
+<!-- debug: status -->
+<!-- debug: recordingMOS -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="recordingMOS" class="ims.core.resource.people.domain.objects.MemberOfStaff" unique="true" foreign-key="protocol_recordingm_fk" access="field" cascade="save-update">
+			<column name="recordingm" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: recordingDateTime -->
+<!-- debug: clinTrialProtocol -->
+<!-- debug: clinicalTrial -->
+<!-- debug: consSessRequired -->
+<!-- debug: consSessDefault -->
+<!-- debug: planCTRequired -->
+<!-- debug: planCTDefault -->
+<!-- debug: appropCCCL -->
+<!-- debug: mRICoRegRequired -->
+<!-- debug: mRIDefault -->
+<!-- debug: dentistRequired -->
+<!-- debug: dentistDefault -->
+<!-- debug: pegRequired -->
+<!-- debug: pEGDefault -->
+<!-- debug: petCTDefault -->
+<!-- debug: simlRequired -->
+<!-- debug: simulationDefault -->
+<!-- debug: petCTRequired -->
+<!-- debug: iVContrastRequired -->
+<!-- debug: iVContrastList -->
+<!-- debug: IsCollection : true -->
+		<!-- collection of Lookup instances -->
+		<list name="iVContrastList" table="eas_protocol_ivcontras2" lazy="true" access="field">
+			<key foreign-key="protocol_ivcontras2_ofk">
+				<column name="owner" sql-type="numeric(10,0)"/>
+			</key>
+			<index column="idx"/>
+			<composite-element class="ims.domain.lookups.LookupInstanceRef">
+				<many-to-one name="instance" class="ims.domain.lookups.LookupInstance" access="field">
+					<column name="instance_id" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+				</many-to-one>
+			</composite-element>
+		</list>
+<!-- debug: iVContrastDefault -->
+<!-- debug: oralContrastRequired -->
+<!-- debug: oralContrastList -->
+<!-- debug: IsCollection : true -->
+		<!-- collection of Lookup instances -->
+		<list name="oralContrastList" table="eas_protocol_oralcontr2" lazy="true" access="field">
+			<key foreign-key="protocol_oralcontr2_ofk">
+				<column name="owner" sql-type="numeric(10,0)"/>
+			</key>
+			<index column="idx"/>
+			<composite-element class="ims.domain.lookups.LookupInstanceRef">
+				<many-to-one name="instance" class="ims.domain.lookups.LookupInstance" access="field">
+					<column name="instance_id" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+				</many-to-one>
+			</composite-element>
+		</list>
+<!-- debug: oralContrastDefault -->
+<!-- debug: gatingOptsRequired -->
+<!-- debug: gatingOptsList -->
+<!-- debug: IsCollection : true -->
+		<!-- collection of Lookup instances -->
+		<list name="gatingOptsList" table="eas_protocol_gatingopt2" lazy="true" access="field">
+			<key foreign-key="protocol_gatingopt2_ofk">
+				<column name="owner" sql-type="numeric(10,0)"/>
+			</key>
+			<index column="idx"/>
+			<composite-element class="ims.domain.lookups.LookupInstanceRef">
+				<many-to-one name="instance" class="ims.domain.lookups.LookupInstance" access="field">
+					<column name="instance_id" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+				</many-to-one>
+			</composite-element>
+		</list>
+<!-- debug: gatingOptsDefault -->
+<!-- debug: iMRTRequired -->
+<!-- debug: iMRTList -->
+<!-- debug: IsCollection : true -->
+		<!-- collection of Lookup instances -->
+		<list name="iMRTList" table="eas_protocol_imrtlist" lazy="true" access="field">
+			<key foreign-key="protocol_imrtlist_ofk">
+				<column name="owner" sql-type="numeric(10,0)"/>
+			</key>
+			<index column="idx"/>
+			<composite-element class="ims.domain.lookups.LookupInstanceRef">
+				<many-to-one name="instance" class="ims.domain.lookups.LookupInstance" access="field">
+					<column name="instance_id" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+				</many-to-one>
+			</composite-element>
+		</list>
+<!-- debug: iMRTDefault -->
+<!-- debug: immobTypeRequired -->
+<!-- debug: immobTypeList -->
+<!-- debug: IsCollection : true -->
+		<!-- collection of Lookup instances -->
+		<list name="immobTypeList" table="eas_protocol_immobtypel" lazy="true" access="field">
+			<key foreign-key="protocol_immobtypel_ofk">
+				<column name="owner" sql-type="numeric(10,0)"/>
+			</key>
+			<index column="idx"/>
+			<composite-element class="ims.domain.lookups.LookupInstanceRef">
+				<many-to-one name="instance" class="ims.domain.lookups.LookupInstance" access="field">
+					<column name="instance_id" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+				</many-to-one>
+			</composite-element>
+		</list>
+<!-- debug: immobTypeDefault -->
+<!-- debug: mouldRoomRequired -->
+<!-- debug: mouldRoomList -->
+<!-- debug: IsCollection : true -->
+		<!-- collection of Lookup instances -->
+		<list name="mouldRoomList" table="eas_protocol_mouldrooml" lazy="true" access="field">
+			<key foreign-key="protocol_mouldrooml_ofk">
+				<column name="owner" sql-type="numeric(10,0)"/>
+			</key>
+			<index column="idx"/>
+			<composite-element class="ims.domain.lookups.LookupInstanceRef">
+				<many-to-one name="instance" class="ims.domain.lookups.LookupInstance" access="field">
+					<column name="instance_id" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+				</many-to-one>
+			</composite-element>
+		</list>
+<!-- debug: mouldRoomDefault -->
+<!-- debug: phases -->
+<!-- debug: field.IsAssociation : true -->
+ 		<!-- Component Set -->
+ 		<list name="phases" table="eas_protocol_phases" lazy="true" >
+ 			<key foreign-key="protocol_phases_id_fk">
+ 				<column name="id" sql-type="numeric(10,0)" not-null="true" />
+ 			</key>
+ 			<index column='idx'/>
+ 			<!-- Composite -->
+ 			<composite-element class="ims.eas.configuration.domain.objects.ProtocolPhase" >
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="phaseName" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_phasename" not-null="true" sql-type="numeric(10,0)"  unique="false"   />
+ 				</many-to-one>
+ 				<property name="dose" type="float" access="field" update="true">
+ 					<column name="dose" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="fractions" type="integer" access="field" update="true">
+ 					<column name="fractions" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="days" type="integer" access="field" update="true">
+ 					<column name="days" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="energy" type="float" access="field" update="true">
+ 					<column name="energy" not-null="false"  unique="false"   />
+ 				</property>
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="units" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_units" not-null="false" sql-type="numeric(10,0)"  unique="false"   />
+ 				</many-to-one>
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="modality" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_modality" not-null="false" sql-type="numeric(10,0)"  unique="false"   />
+ 				</many-to-one>
+ 				<property name="preferred" type="boolean" access="field" update="true">
+ 					<column name="preferred" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="active" type="boolean" access="field" update="true">
+ 					<column name="active" not-null="false"  unique="false"   />
+ 				</property>
+ 			</composite-element>
+ 		</list>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="protocolName" type="string" access="field" update="true" > 
+			<column name="protocolna" length="70"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="status" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_status" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="recordingDateTime" type="timestamp" access="field" update="true">
+			<column name="recordingd"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="clinTrialProtocol" type="boolean" access="field" update="true">
+			<column name="clintrialp"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="clinicalTrial" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_clinicaltr" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="consSessRequired" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_conssessre" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="consSessDefault" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_conssessde" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="planCTRequired" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_planctrequ" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="planCTDefault" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_planctdefa" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="appropCCCL" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_appropcccl" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="mRICoRegRequired" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_mricoregre" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="mRIDefault" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_mridefault" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="dentistRequired" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_dentistreq" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="dentistDefault" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_dentistdef" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="pegRequired" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_pegrequire" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="pEGDefault" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_pegdefault" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="petCTDefault" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_petctdefau" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="simlRequired" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_simlrequir" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="simulationDefault" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_simulation" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="petCTRequired" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_petctrequi" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="iVContrastRequired" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_ivcontrast" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="iVContrastDefault" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_ivcontras3" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="oralContrastRequired" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_oralcontra" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="oralContrastDefault" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_oralcontr3" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="gatingOptsRequired" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_gatingopts" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="gatingOptsDefault" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_gatingopt3" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="iMRTRequired" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_imrtrequir" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="iMRTDefault" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_imrtdefaul" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="immobTypeRequired" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_immobtyper" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="immobTypeDefault" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_immobtyped" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="mouldRoomRequired" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_mouldroomr" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="mouldRoomDefault" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_mouldroomd" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+	</class>
+</hibernate-mapping>

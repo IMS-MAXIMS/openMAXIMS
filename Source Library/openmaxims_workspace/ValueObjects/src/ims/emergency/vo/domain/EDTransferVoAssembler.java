@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.emergency.vo.domain;
@@ -64,6 +69,16 @@ public class EDTransferVoAssembler
 		valueObjectDest.setTransferEscort(valueObjectSrc.getTransferEscort());
 		// Comment
 		valueObjectDest.setComment(valueObjectSrc.getComment());
+		// ReferredBy
+		valueObjectDest.setReferredBy(valueObjectSrc.getReferredBy());
+		// NotAccepted
+		valueObjectDest.setNotAccepted(valueObjectSrc.getNotAccepted());
+		// Patient
+		valueObjectDest.setPatient(valueObjectSrc.getPatient());
+		// Episode
+		valueObjectDest.setEpisode(valueObjectSrc.getEpisode());
+		// Attendance
+		valueObjectDest.setAttendance(valueObjectSrc.getAttendance());
 	 	return valueObjectDest;
 	 }
 
@@ -478,6 +493,52 @@ public class EDTransferVoAssembler
 		}
 				// Comment
 		valueObject.setComment(domainObject.getComment());
+		// ReferredBy
+		valueObject.setReferredBy(ims.core.vo.domain.HcpLiteVoAssembler.create(map, domainObject.getReferredBy()) );
+		// NotAccepted
+		valueObject.setNotAccepted( domainObject.isNotAccepted() );
+		// Patient
+		if (domainObject.getPatient() != null)
+		{
+			if(domainObject.getPatient() instanceof HibernateProxy) // If the proxy is set, there is no need to lazy load, the proxy knows the id already. 
+			{
+				HibernateProxy p = (HibernateProxy) domainObject.getPatient();
+				int id = Integer.parseInt(p.getHibernateLazyInitializer().getIdentifier().toString());				
+				valueObject.setPatient(new ims.core.patient.vo.PatientRefVo(id, -1));				
+			}
+			else
+			{
+				valueObject.setPatient(new ims.core.patient.vo.PatientRefVo(domainObject.getPatient().getId(), domainObject.getPatient().getVersion()));
+			}
+		}
+		// Episode
+		if (domainObject.getEpisode() != null)
+		{
+			if(domainObject.getEpisode() instanceof HibernateProxy) // If the proxy is set, there is no need to lazy load, the proxy knows the id already. 
+			{
+				HibernateProxy p = (HibernateProxy) domainObject.getEpisode();
+				int id = Integer.parseInt(p.getHibernateLazyInitializer().getIdentifier().toString());				
+				valueObject.setEpisode(new ims.core.admin.vo.EpisodeOfCareRefVo(id, -1));				
+			}
+			else
+			{
+				valueObject.setEpisode(new ims.core.admin.vo.EpisodeOfCareRefVo(domainObject.getEpisode().getId(), domainObject.getEpisode().getVersion()));
+			}
+		}
+		// Attendance
+		if (domainObject.getAttendance() != null)
+		{
+			if(domainObject.getAttendance() instanceof HibernateProxy) // If the proxy is set, there is no need to lazy load, the proxy knows the id already. 
+			{
+				HibernateProxy p = (HibernateProxy) domainObject.getAttendance();
+				int id = Integer.parseInt(p.getHibernateLazyInitializer().getIdentifier().toString());				
+				valueObject.setAttendance(new ims.core.admin.vo.CareContextRefVo(id, -1));				
+			}
+			else
+			{
+				valueObject.setAttendance(new ims.core.admin.vo.CareContextRefVo(domainObject.getAttendance().getId(), domainObject.getAttendance().getVersion()));
+			}
+		}
  		return valueObject;
 	 }
 
@@ -579,6 +640,68 @@ public class EDTransferVoAssembler
 			valueObject.setComment(null);
 		}
 		domainObject.setComment(valueObject.getComment());
+		domainObject.setReferredBy(ims.core.vo.domain.HcpLiteVoAssembler.extractHcp(domainFactory, valueObject.getReferredBy(), domMap));
+		domainObject.setNotAccepted(valueObject.getNotAccepted());
+		ims.core.patient.domain.objects.Patient value10 = null;
+		if ( null != valueObject.getPatient() ) 
+		{
+			if (valueObject.getPatient().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getPatient()) != null)
+				{
+					value10 = (ims.core.patient.domain.objects.Patient)domMap.get(valueObject.getPatient());
+				}
+			}
+			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
+			{
+				value10 = domainObject.getPatient();	
+			}
+			else
+			{
+				value10 = (ims.core.patient.domain.objects.Patient)domainFactory.getDomainObject(ims.core.patient.domain.objects.Patient.class, valueObject.getPatient().getBoId());
+			}
+		}
+		domainObject.setPatient(value10);
+		ims.core.admin.domain.objects.EpisodeOfCare value11 = null;
+		if ( null != valueObject.getEpisode() ) 
+		{
+			if (valueObject.getEpisode().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getEpisode()) != null)
+				{
+					value11 = (ims.core.admin.domain.objects.EpisodeOfCare)domMap.get(valueObject.getEpisode());
+				}
+			}
+			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
+			{
+				value11 = domainObject.getEpisode();	
+			}
+			else
+			{
+				value11 = (ims.core.admin.domain.objects.EpisodeOfCare)domainFactory.getDomainObject(ims.core.admin.domain.objects.EpisodeOfCare.class, valueObject.getEpisode().getBoId());
+			}
+		}
+		domainObject.setEpisode(value11);
+		ims.core.admin.domain.objects.CareContext value12 = null;
+		if ( null != valueObject.getAttendance() ) 
+		{
+			if (valueObject.getAttendance().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getAttendance()) != null)
+				{
+					value12 = (ims.core.admin.domain.objects.CareContext)domMap.get(valueObject.getAttendance());
+				}
+			}
+			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
+			{
+				value12 = domainObject.getAttendance();	
+			}
+			else
+			{
+				value12 = (ims.core.admin.domain.objects.CareContext)domainFactory.getDomainObject(ims.core.admin.domain.objects.CareContext.class, valueObject.getAttendance().getBoId());
+			}
+		}
+		domainObject.setAttendance(value12);
 
 		return domainObject;
 	}

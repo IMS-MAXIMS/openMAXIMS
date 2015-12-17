@@ -1,0 +1,261 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 12/10/2015, 13:30 -->
+<hibernate-mapping>
+	<subclass name="ims.core.patient.domain.objects.PDSAdvancedSearchRequest" lazy="true" discriminator-value="pdsa" extends="ims.core.patient.domain.objects.PDSAsyncRequest" >
+<!-- debug: hibernateClassContent -->
+<!-- debug: searchStatus -->
+<!-- debug: searchType -->
+<!-- debug: historicDataFlag -->
+<!-- debug: ignoreHistoryIndicator -->
+<!-- debug: nHSNumber -->
+<!-- debug: surname -->
+<!-- debug: forename -->
+<!-- debug: gender -->
+<!-- debug: fromDateOfBirth -->
+<!-- debug: toDateOfBirth -->
+<!-- debug: fromDateOfDeath -->
+<!-- debug: toDateOfDeath -->
+<!-- debug: searchResult -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<list name="searchResult" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="pdsadvancedsea_searchresu_fk">
+				<column name="core_pdsadvancedsea_searchresu" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.core.patient.domain.objects.PDSAdvancedSearchResult" />
+		</list>
+<!-- debug: address -->
+<!-- debug: field.IsAssociation : true -->
+ 		<!-- Component -->
+ 		<component name="address" class="ims.core.generic.domain.objects.Address" >
+
+ 			<property name="line1" type="string" access="field" update="true">
+ 				<column name="addressline1" length="40" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="line2" type="string" access="field" update="true">
+ 				<column name="addressline2" length="40" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="line3" type="string" access="field" update="true">
+ 				<column name="addressline3" length="40" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="line4" type="string" access="field" update="true">
+ 				<column name="addressline4" length="40" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="line5" type="string" access="field" update="true">
+ 				<column name="addressline5" length="40" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="postCode" type="string" access="field" update="true">
+ 				<column name="addresspostcode" length="10" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="phone" type="string" access="field" update="true">
+ 				<column name="addressphone" length="30" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<!-- debug: IsLookup -->
+ 			<many-to-one name="county" class="ims.domain.lookups.LookupInstance" access="field">
+ 				<column name="lkp_addresscounty" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="fax" type="string" access="field" update="true">
+ 				<column name="addressfax" length="30" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="updateDate" type="timestamp" access="field" update="true">
+ 				<column name="addressupdatedate" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="notificationDate" type="date" access="field" update="true">
+ 				<column name="addressnotificati" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<!-- debug: IsLookup -->
+ 			<many-to-one name="addressType" class="ims.domain.lookups.LookupInstance" access="field">
+ 				<column name="lkp_addressaddresstyp" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="pCT" type="string" access="field" update="true">
+ 				<column name="addresspct" length="15" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="otherphone" type="string" access="field" update="true">
+ 				<column name="addressotherphone" length="30" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<!-- debug: IsLookup -->
+ 			<many-to-one name="areaOfResidence" class="ims.domain.lookups.LookupInstance" access="field">
+ 				<column name="lkp_addressareaofresi" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="pafkey" type="string" access="field" update="true">
+ 				<column name="addresspafkey" length="8" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="description" type="string" access="field" update="true">
+ 				<column name="addressdescriptio" length="100" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="objectidentifier" type="string" access="field" update="true">
+ 				<column name="addressobjectiden" length="14" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="beffdate" type="date" access="field" update="true">
+ 				<column name="addressbeffdate" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="beffdatecnf" type="boolean" access="field" update="true">
+ 				<column name="addressbeffdatecn" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="betdate" type="date" access="field" update="true">
+ 				<column name="addressbetdate" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="betdatecnf" type="boolean" access="field" update="true">
+ 				<column name="addressbetdatecnf" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<!-- debug: IsLookup -->
+ 			<many-to-one name="pdsUpdateMode" class="ims.domain.lookups.LookupInstance" access="field">
+ 				<column name="lkp_addresspdsupdatem" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<!-- debug: IsLookup -->
+ 			<many-to-one name="country" class="ims.domain.lookups.LookupInstance" access="field">
+ 				<column name="lkp_addresscountry" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+ 			</many-to-one>
+
+ 			<property name="noFixedAbode" type="boolean" access="field" update="true">
+ 				<column name="addressnofixedabo" not-null="false"  unique="false"   />
+ 			</property>
+
+ 			<property name="careHome" type="boolean" access="field" update="true">
+ 				<column name="addresscarehome" not-null="false"  unique="false"   />
+ 			</property>
+ 		</component>
+<!-- debug: gpPracticeCode -->
+<!-- debug: postcode -->
+<!-- debug: middleName -->
+<!-- debug: dOBRangeUnit -->
+<!-- debug: dODRangeUnit -->
+<!-- debug: dOBRangeValue -->
+<!-- debug: dODRangeValue -->
+<!-- debug: dOBPartialSearchBy -->
+<!-- debug: dODPartialSearchBy -->
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: IsLookup -->
+		<many-to-one name="searchStatus" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_searchstat" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="searchType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_searchtype" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="historicDataFlag" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_historicda" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="ignoreHistoryIndicator" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_ignorehist" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="nHSNumber" type="string" access="field" update="true" > 
+			<column name="nhsnumber" length="12"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="surname" type="string" access="field" update="true" > 
+			<column name="surname" length="40"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="forename" type="string" access="field" update="true" > 
+			<column name="forename" length="40"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="gender" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_gender" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="fromDateOfBirth" type="date" access="field" update="true">
+			<column name="fromdateof"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="toDateOfBirth" type="date" access="field" update="true">
+			<column name="todateofbi"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="fromDateOfDeath" type="date" access="field" update="true">
+			<column name="fromdateo2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="toDateOfDeath" type="date" access="field" update="true">
+			<column name="todateofde"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="gpPracticeCode" type="string" access="field" update="true" > 
+			<column name="gppractice" length="25"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="postcode" type="string" access="field" update="true" > 
+			<column name="postcode" length="10"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="middleName" type="string" access="field" update="true" > 
+			<column name="middlename" length="40"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="dOBRangeUnit" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_dobrangeun" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="dODRangeUnit" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_dodrangeun" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dOBRangeValue" type="integer" access="field" update="true">
+			<column name="dobrangeva"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="dODRangeValue" type="integer" access="field" update="true">
+			<column name="dodrangeva"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="dOBPartialSearchBy" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_dobpartial" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="dODPartialSearchBy" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_dodpartial" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+	</subclass>
+</hibernate-mapping>

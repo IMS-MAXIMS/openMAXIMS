@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.emergency.configuration.domain.objects;
@@ -70,6 +75,8 @@ public class TrackingArea extends ims.domain.DomainObject implements ims.domain.
 	  */
 	private java.util.List sendToAreas;
 	private ims.domain.lookups.LookupInstance areaType;
+	private ims.emergency.configuration.domain.objects.TrackingWorkflowConfig workflowConfig;
+	private Boolean associatedWorkflowMandatory;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public TrackingArea (Integer id, int ver)
@@ -179,6 +186,20 @@ public class TrackingArea extends ims.domain.DomainObject implements ims.domain.
 	}
 	public void setAreaType(ims.domain.lookups.LookupInstance areaType) {
 		this.areaType = areaType;
+	}
+
+	public ims.emergency.configuration.domain.objects.TrackingWorkflowConfig getWorkflowConfig() {
+		return workflowConfig;
+	}
+	public void setWorkflowConfig(ims.emergency.configuration.domain.objects.TrackingWorkflowConfig workflowConfig) {
+		this.workflowConfig = workflowConfig;
+	}
+
+	public Boolean isAssociatedWorkflowMandatory() {
+		return associatedWorkflowMandatory;
+	}
+	public void setAssociatedWorkflowMandatory(Boolean associatedWorkflowMandatory) {
+		this.associatedWorkflowMandatory = associatedWorkflowMandatory;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -298,6 +319,17 @@ public class TrackingArea extends ims.domain.DomainObject implements ims.domain.
 		if (areaType != null)
 			auditStr.append(areaType.getText());
 	    auditStr.append("; ");
+		auditStr.append("\r\n*workflowConfig* :");
+		if (workflowConfig != null)
+		{
+			auditStr.append(toShortClassName(workflowConfig));
+				
+		    auditStr.append(workflowConfig.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*associatedWorkflowMandatory* :");
+		auditStr.append(associatedWorkflowMandatory);
+	    auditStr.append("; ");
 		return auditStr.toString();
 	}
 	
@@ -413,6 +445,18 @@ public class TrackingArea extends ims.domain.DomainObject implements ims.domain.
 			sb.append("<areaType>");
 			sb.append(this.getAreaType().toXMLString()); 
 			sb.append("</areaType>");		
+		}
+		if (this.getWorkflowConfig() != null)
+		{
+			sb.append("<workflowConfig>");
+			sb.append(this.getWorkflowConfig().toXMLString(domMap)); 	
+			sb.append("</workflowConfig>");		
+		}
+		if (this.isAssociatedWorkflowMandatory() != null)
+		{
+			sb.append("<associatedWorkflowMandatory>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isAssociatedWorkflowMandatory().toString()));
+			sb.append("</associatedWorkflowMandatory>");		
 		}
 		return sb.toString();
 	}
@@ -637,6 +681,17 @@ public class TrackingArea extends ims.domain.DomainObject implements ims.domain.
 			fldEl = fldEl.element("lki");
 			obj.setAreaType(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
 		}
+		fldEl = el.element("workflowConfig");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setWorkflowConfig(ims.emergency.configuration.domain.objects.TrackingWorkflowConfig.getTrackingWorkflowConfigfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("associatedWorkflowMandatory");
+		if(fldEl != null)
+		{	
+    		obj.setAssociatedWorkflowMandatory(new Boolean(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -662,6 +717,8 @@ public class TrackingArea extends ims.domain.DomainObject implements ims.domain.
 		public static final String Columns = "columns";
 		public static final String SendToAreas = "sendToAreas";
 		public static final String AreaType = "areaType";
+		public static final String WorkflowConfig = "workflowConfig";
+		public static final String AssociatedWorkflowMandatory = "associatedWorkflowMandatory";
 	}
 }
 

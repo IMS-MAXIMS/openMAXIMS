@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -30,20 +35,16 @@ import ims.ccosched.vo.PatTreatPlanActionLiteVo;
 import ims.core.admin.vo.EpisodeOfCareRefVo;
 import ims.core.patient.vo.PatientRefVo;
 import ims.core.resource.people.vo.HcpRefVo;
-import ims.core.resource.place.domain.objects.LocSite;
 import ims.core.vo.LocSiteLiteVoCollection;
 import ims.core.vo.MedicVo;
 import ims.core.vo.MedicVoCollection;
 import ims.core.vo.MemberOfStaffShortVo;
 import ims.core.vo.MemberOfStaffShortVoCollection;
-import ims.core.vo.domain.LocSiteLiteVoAssembler;
 import ims.core.vo.domain.MedicVoAssembler;
-import ims.core.vo.lookups.LocationType;
 import ims.domain.DomainFactory;
 import ims.domain.exceptions.DomainInterfaceException;
 import ims.domain.exceptions.DomainRuntimeException;
 import ims.domain.exceptions.StaleObjectException;
-import ims.domain.hibernate3.IMSCriteria;
 import ims.domain.lookups.LookupInstance;
 import ims.framework.exceptions.CodingRuntimeException;
 import ims.oncology.domain.PatientsTreatmentPlanActionsDialog;
@@ -124,17 +125,12 @@ public class RadioTherapyDetailsImpl extends BaseRadioTherapyDetailsImpl
 		return locSite.listLocSite(locationName);
 	}
 
+	//WDEV-19532
 	public LocSiteLiteVoCollection listHospitals(String locationName)
 	{
-		DomainFactory factory = getDomainFactory();
-		IMSCriteria imsc = new IMSCriteria(LocSite.class, factory);
-		imsc.equal("type", getDomLookup(LocationType.HOSP));
-		imsc.like("name", locationName + "%");
-		List<?> locations = imsc.find();
-		if (locations != null)
-			return LocSiteLiteVoAssembler.createLocSiteLiteVoCollectionFromLocSite(locations);
-		else
-			return null;
+		OrganisationAndLocation impl = (OrganisationAndLocation) getDomainImpl(OrganisationAndLocationImpl.class);
+
+		return impl.listLocSite(locationName);
 	}
 
 	public DiseaseStatusCollection listDiseaseStatus() 

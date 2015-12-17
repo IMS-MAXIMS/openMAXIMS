@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -38,6 +43,8 @@ import ims.admin.vo.ServiceForElectiveListConfigVoCollection;
 import ims.core.resource.people.vo.HcpRefVo;
 import ims.core.vo.HcpLiteVo;
 import ims.core.vo.HcpLiteVoCollection;
+import ims.core.vo.LocSiteLiteVo;
+import ims.core.vo.LocSiteLiteVoCollection;
 import ims.core.vo.LocationLiteVo;
 import ims.core.vo.LocationLiteVoCollection;
 import ims.domain.exceptions.StaleObjectException;
@@ -53,6 +60,10 @@ public class Logic extends BaseLogic
 {
 	private static final long serialVersionUID = 1L;
 
+	//WDEV-20064
+	private static final int COLUMN_LOCATION  = 0;
+	private static final int COLUMN_CASE_NOTE = 1;
+	
 	@Override
 	protected void onFormModeChanged()
 	{
@@ -187,6 +198,7 @@ public class Logic extends BaseLogic
 		boolean editMode = FormMode.EDIT.equals(form.getMode());
 		boolean viewMode = FormMode.VIEW.equals(form.getMode());
 		boolean waitingListGridValueSelected = form.grdWaitingList().getValue()!=null;
+		boolean editItem = form.getLocalContext().getSelectedRecordIsNotNull(); // WDEV-18476 
 		
 		form.txtWaitingListNameSearch().setEnabled(viewMode);
 		form.qmbServiceSearch().setEnabled(viewMode);
@@ -207,7 +219,7 @@ public class Logic extends BaseLogic
 		form.ctnDetails().dteStart().setEnabled(editMode);
 		form.ctnDetails().dteEnd().setEnabled(editMode);
 		form.ctnDetails().txtCode().setEnabled(editMode);
-		form.ctnDetails().chkActive().setEnabled(editMode);
+		form.ctnDetails().chkActive().setEnabled(editMode && editItem); // WDEV-18476 - Active check box will be enabled only when an Elective List gets edited
 		
 		form.getContextMenus().Admin.hideAllWaitingListConfigConsultantsMenuMenuItems();
 		form.getContextMenus().Admin.getWaitingListConfigConsultantsMenuADDItem().setVisible(editMode);
@@ -290,8 +302,9 @@ public class Logic extends BaseLogic
 	protected void onQmbHospitalTextSubmited(String value) throws ims.framework.exceptions.PresentationLogicException
 	{
 		form.qmbHospital().clear();
-
-		LocationLiteVoCollection voCollHosp = domain.listHospitals(value);
+		
+		//WDEV-20064
+		LocSiteLiteVoCollection voCollHosp = domain.listHospitals(value); 
 		if (voCollHosp==null || voCollHosp.size() == 0)
 		{
 			return;
@@ -336,6 +349,7 @@ public class Logic extends BaseLogic
 	protected void onImbClearClick() throws ims.framework.exceptions.PresentationLogicException
 	{
 		clearScreen();
+		updateControlsState(); // WDEV-18476 
 	}
 	@Override
 	protected void onImbSearchClick() throws ims.framework.exceptions.PresentationLogicException
@@ -473,7 +487,7 @@ public class Logic extends BaseLogic
 		{
 			if (form.ctnDetails().grdConsultants().getRows().get(i).getColDefault() && domain.isConsultantMarkedAsDefaultForSameServiceForOtherConfiguration((HcpRefVo) form.ctnDetails().grdConsultants().getRows().get(i).getColConsultants().getValue(),form.ctnDetails().qmbService().getValue(),configToSave,form.ctnDetails().dteStart().getValue(),form.ctnDetails().dteEnd().getValue()))
     		{
-    			errors.add("Your chosen default List Owner is already marked as default for another configuration with the same Specialty from selected Service or same Service in the same time interval.");
+    			errors.add("Your chosen default List Owner is already marked as default for another configuration with the same Service in the same time interval.");//WDEV-21153
     		}
 		}
 		
@@ -553,8 +567,8 @@ public class Logic extends BaseLogic
 				continue;
 			
 			ElectiveListHospitalConfigurationVo hosp = new ElectiveListHospitalConfigurationVo();
-			hosp.setListLocation((LocationLiteVo)form.ctnDetails().grdHospitals().getRows().get(i).getColHospitals().getValue());
-			
+			hosp.setListLocation((LocSiteLiteVo)form.ctnDetails().grdHospitals().getRows().get(i).getColHospitals().getValue());//WDEV-20064
+			hosp.setCaseNoteFolderLocation((LocationLiteVo)form.ctnDetails().grdHospitals().getRows().get(i).getColCaseNote().getValue());//WDEV-20064
 			collHosp.add(hosp);
 		}
 		
@@ -620,6 +634,7 @@ public class Logic extends BaseLogic
 		{
 			form.ctnDetails().qmbService().newRow(selectedRecord.getService(), selectedRecord.getService().getServiceName());
 			form.ctnDetails().qmbService().setValue(selectedRecord.getService());
+			populateSpecialtyFromDetailsContainer(form.ctnDetails().qmbService().getValue());//WDEV-20064
 		}
 		
 		form.ctnDetails().dteStart().setValue(selectedRecord.getStartDate());
@@ -641,6 +656,13 @@ public class Logic extends BaseLogic
 			grdHospitalsRow row = form.ctnDetails().grdHospitals().getRows().newRow();
 			row.getColHospitals().newRow(hospitals.get(i).getListLocation(), hospitals.get(i).getListLocation().getName());
 			row.getColHospitals().setValue(hospitals.get(i).getListLocation());
+			
+			//WDEV-20064
+			if (hospitals.get(i).getCaseNoteFolderLocation()!=null)
+			{
+				row.getColCaseNote().newRow(hospitals.get(i).getCaseNoteFolderLocation(), hospitals.get(i).getCaseNoteFolderLocation().getName());
+				row.getColCaseNote().setValue(hospitals.get(i).getCaseNoteFolderLocation());
+			}
 		}
 	}
 	
@@ -706,45 +728,75 @@ public class Logic extends BaseLogic
 		return collCons;
 	}
 	@Override
-	protected void onGrdHospitalsGridQueryComboBoxTextSubmited(int column, grdHospitalsRow row, String text) throws PresentationLogicException
-	{
-		row.getColHospitals().clear();
-
-		LocationLiteVoCollection voCollHosp = domain.listHospitals(text);
-		if (voCollHosp==null || voCollHosp.size() == 0)
+	protected void onGrdHospitalsGridQueryComboBoxTextSubmited(int column, grdHospitalsRow row, String text) throws PresentationLogicException 
+	{	
+		//WDEV-20064
+		if (column==COLUMN_LOCATION)
 		{
-			return;
-		}
-		
-		LocationLiteVoCollection collHospitals=getExistentHospitalsFromGrid();
-		
-		for (int i = 0; i < voCollHosp.size(); i++)
-		{
-			if (collHospitals.contains(voCollHosp.get(i)))
-				continue;
+			row.getColHospitals().clear();
+			row.getColCaseNote().clear();
+			row.getColCaseNote().setEditedText(null);
 			
-			row.getColHospitals().newRow(voCollHosp.get(i), voCollHosp.get(i).getName().toString());
+    		
+    		LocSiteLiteVoCollection voCollHosp = domain.listHospitals(text);
+    		if (voCollHosp==null || voCollHosp.size() == 0)
+    		{
+    			row.getColHospitals().setEditedText(null);
+    			return;
+    		}
+    		
+    		LocSiteLiteVoCollection collHospitals=getExistentHospitalsFromGrid();
+    		
+    		for (int i = 0; i < voCollHosp.size(); i++)
+    		{
+    			if (collHospitals.contains(voCollHosp.get(i)))
+    				continue;
+    			
+    			row.getColHospitals().newRow(voCollHosp.get(i), voCollHosp.get(i).getName().toString());
+    		}
+    
+    		if (voCollHosp.size() == 1)
+    			row.getColHospitals().setValue(voCollHosp.get(0));
+    		else
+    			row.getColHospitals().showOpened();
 		}
-
-		if (voCollHosp.size() == 1)
-			row.getColHospitals().setValue(voCollHosp.get(0));
-		else
-			row.getColHospitals().showOpened();
+		else if (column==COLUMN_CASE_NOTE)
+		{
+			row.getColCaseNote().clear();
+    
+    		LocationLiteVoCollection voCollCaseNote = domain.listCaseNoteLocationByParentLocation((LocSiteLiteVo)row.getColHospitals().getValue(), text);
+    		if (voCollCaseNote==null || voCollCaseNote.size() == 0)
+    		{
+    			row.getColCaseNote().setEditedText(null);
+    			return;
+    		}
+    		
+    		for (int i = 0; i < voCollCaseNote.size(); i++)
+    		{
+    			row.getColCaseNote().newRow(voCollCaseNote.get(i), voCollCaseNote.get(i).getName().toString());
+    		}
+    
+    		if (voCollCaseNote.size() == 1)
+    			row.getColCaseNote().setValue(voCollCaseNote.get(0));
+    		else
+    			row.getColCaseNote().showOpened();
+		}
+	
 	}
 	
-	private LocationLiteVoCollection getExistentHospitalsFromGrid()
+	private LocSiteLiteVoCollection getExistentHospitalsFromGrid() //WDEV-20064
 	{
 		if (form.ctnDetails().grdHospitals().getRows().size()==0)
 			return null;
 		
-		LocationLiteVoCollection collHosp = new LocationLiteVoCollection();
+		LocSiteLiteVoCollection collHosp = new LocSiteLiteVoCollection();
 		
 		for (int i=0;i<form.ctnDetails().grdHospitals().getRows().size();i++)
 		{
 			if (form.ctnDetails().grdHospitals().getRows().get(i).getColHospitals().getValue()==null)
 				continue;
 			
-			collHosp.add((LocationLiteVo) form.ctnDetails().grdHospitals().getRows().get(i).getColHospitals().getValue());
+			collHosp.add((LocSiteLiteVo) form.ctnDetails().grdHospitals().getRows().get(i).getColHospitals().getValue());
 		}
 		
 		return collHosp;
@@ -755,26 +807,35 @@ public class Logic extends BaseLogic
 		if (!isChecked)
 			return;
 		
+		
+		ArrayList<String> errors = new ArrayList<String>();
+		Boolean stop = false;
+		
 		if (form.ctnDetails().qmbService().getValue()==null )
 		{
-			engine.showMessage("Please select a Service before choosing a default List Owner!");
+			errors.add("Please select a Service before choosing a default List Owner!");
+			stop=true;
+		}
+		if (form.ctnDetails().dteStart().getValue()!=null & form.ctnDetails().dteEnd().getValue()!=null && form.ctnDetails().dteStart().getValue().isGreaterThan(form.ctnDetails().dteEnd().getValue()))
+		{
+			errors.add("'End Date' should be greater than 'Start Date'!");
+			stop = true;
+		}
+		if (!stop && form.ctnDetails().qmbService().getValue()!=null && form.ctnDetails().dteStart().getValue()!=null &&  form.ctnDetails().chkActive().getValue() && domain.isConsultantMarkedAsDefaultForSameServiceForOtherConfiguration((HcpRefVo) row.getColConsultants().getValue(),form.ctnDetails().qmbService().getValue(),form.getLocalContext().getSelectedRecord(),form.ctnDetails().dteStart().getValue(),form.ctnDetails().dteEnd().getValue()))
+		{
+			errors.add("Your chosen default List Owner is already marked as default for another configuration with the same Service in the same time interval.");//WDEV-21153
+			row.setColDefault(false);
+		}
+		
+		if(errors.size()>0)
+		{
+			engine.showErrors(errors.toArray(new String[errors.size()]));
 			row.setColDefault(false);
 			return;
 		}
 		
-		for (int i=0;i<form.ctnDetails().grdConsultants().getRows().size() ;i++)
-		{
-			if (row.getColConsultants().getValue().equals(form.ctnDetails().grdConsultants().getRows().get(i).getColConsultants().getValue()))
-				continue;
-			
-			form.ctnDetails().grdConsultants().getRows().get(i).setColDefault(false);
-		}
 		
-		if (form.ctnDetails().qmbService().getValue()!=null && form.ctnDetails().dteStart().getValue()!=null &&  form.ctnDetails().chkActive().getValue() && domain.isConsultantMarkedAsDefaultForSameServiceForOtherConfiguration((HcpRefVo) row.getColConsultants().getValue(),form.ctnDetails().qmbService().getValue(),form.getLocalContext().getSelectedRecord(),form.ctnDetails().dteStart().getValue(),form.ctnDetails().dteEnd().getValue()))
-		{
-			engine.showMessage("Your chosen default List Owner is already marked as default for another configuration with the same Specialty from selected Service or same Service in the same time interval.");
-			row.setColDefault(false);
-		}
+		
 	}
 	@Override
 	protected void onQmbServiceSearchTextSubmited(String value) throws PresentationLogicException

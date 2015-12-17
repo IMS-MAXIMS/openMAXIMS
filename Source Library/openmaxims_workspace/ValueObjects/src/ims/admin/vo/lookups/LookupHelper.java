@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,15 +15,20 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 
 /*
  * This code was generated.
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:38
+ * Generated: 13/10/2015, 13:23
  */
 package ims.admin.vo.lookups;
 
@@ -35,6 +40,110 @@ import ims.domain.lookups.LookupService;
  * 
  */
 public final class LookupHelper {
+	public static WardDeptCategoryCollection getWardDeptCategory(LookupService lookupService) {
+		WardDeptCategoryCollection collection =
+			(WardDeptCategoryCollection) lookupService.getLookupCollection(WardDeptCategory.TYPE_ID, 
+				WardDeptCategoryCollection.class, WardDeptCategory.class);
+		return collection;
+	}
+
+	public static WardDeptCategory getWardDeptCategoryInstance(LookupService lookupService, int id) 
+	{
+		return (WardDeptCategory)lookupService.getLookupInstance(WardDeptCategory.class, WardDeptCategory.TYPE_ID, id);
+	}
+	
+
+	public static PDSPatientCareProvisionTypeCollection getPDSPatientCareProvisionType(LookupService lookupService) {
+		PDSPatientCareProvisionTypeCollection collection =
+			(PDSPatientCareProvisionTypeCollection) lookupService.getLookupCollection(PDSPatientCareProvisionType.TYPE_ID, 
+				PDSPatientCareProvisionTypeCollection.class, PDSPatientCareProvisionType.class);
+		return collection;
+	}
+
+	public static PDSPatientCareProvisionType getPDSPatientCareProvisionTypeInstance(LookupService lookupService, int id) 
+	{
+		return (PDSPatientCareProvisionType)lookupService.getLookupInstance(PDSPatientCareProvisionType.class, PDSPatientCareProvisionType.TYPE_ID, id);
+	}
+	
+
+	public static PDSMultipleRegIndicaorCollection getPDSMultipleRegIndicaor(LookupService lookupService) {
+		PDSMultipleRegIndicaorCollection collection =
+			(PDSMultipleRegIndicaorCollection) lookupService.getLookupCollection(PDSMultipleRegIndicaor.TYPE_ID, 
+				PDSMultipleRegIndicaorCollection.class, PDSMultipleRegIndicaor.class);
+		return collection;
+	}
+
+	public static PDSMultipleRegIndicaor getPDSMultipleRegIndicaorInstance(LookupService lookupService, int id) 
+	{
+		return (PDSMultipleRegIndicaor)lookupService.getLookupInstance(PDSMultipleRegIndicaor.class, PDSMultipleRegIndicaor.TYPE_ID, id);
+	}
+	
+
+	public static PDSInformationSensitivityIndicatorCollection getPDSInformationSensitivityIndicator(LookupService lookupService) {
+		PDSInformationSensitivityIndicatorCollection collection =
+			(PDSInformationSensitivityIndicatorCollection) lookupService.getLookupCollection(PDSInformationSensitivityIndicator.TYPE_ID, 
+				PDSInformationSensitivityIndicatorCollection.class, PDSInformationSensitivityIndicator.class);
+		return collection;
+	}
+
+	public static PDSInformationSensitivityIndicator getPDSInformationSensitivityIndicatorInstance(LookupService lookupService, int id) 
+	{
+		return (PDSInformationSensitivityIndicator)lookupService.getLookupInstance(PDSInformationSensitivityIndicator.class, PDSInformationSensitivityIndicator.TYPE_ID, id);
+	}
+	
+
+	public static PDSDemographicNotificationTypeCollection getPDSDemographicNotificationType(LookupService lookupService) {
+		PDSDemographicNotificationTypeCollection collection =
+			(PDSDemographicNotificationTypeCollection) lookupService.getLookupCollection(PDSDemographicNotificationType.TYPE_ID, 
+				PDSDemographicNotificationTypeCollection.class, PDSDemographicNotificationType.class);
+		return collection;
+	}
+
+	public static PDSDemographicNotificationType getPDSDemographicNotificationTypeInstance(LookupService lookupService, int id) 
+	{
+		return (PDSDemographicNotificationType)lookupService.getLookupInstance(PDSDemographicNotificationType.class, PDSDemographicNotificationType.TYPE_ID, id);
+	}
+	
+
+	public static PDSDeathNotificationStatusCollection getPDSDeathNotificationStatus(LookupService lookupService) {
+		PDSDeathNotificationStatusCollection collection =
+			(PDSDeathNotificationStatusCollection) lookupService.getLookupCollection(PDSDeathNotificationStatus.TYPE_ID, 
+				PDSDeathNotificationStatusCollection.class, PDSDeathNotificationStatus.class);
+		return collection;
+	}
+
+	public static PDSDeathNotificationStatus getPDSDeathNotificationStatusInstance(LookupService lookupService, int id) 
+	{
+		return (PDSDeathNotificationStatus)lookupService.getLookupInstance(PDSDeathNotificationStatus.class, PDSDeathNotificationStatus.TYPE_ID, id);
+	}
+	
+
+	public static PDSDataQualityTypeCollection getPDSDataQualityType(LookupService lookupService) {
+		PDSDataQualityTypeCollection collection =
+			(PDSDataQualityTypeCollection) lookupService.getLookupCollection(PDSDataQualityType.TYPE_ID, 
+				PDSDataQualityTypeCollection.class, PDSDataQualityType.class);
+		return collection;
+	}
+
+	public static PDSDataQualityType getPDSDataQualityTypeInstance(LookupService lookupService, int id) 
+	{
+		return (PDSDataQualityType)lookupService.getLookupInstance(PDSDataQualityType.class, PDSDataQualityType.TYPE_ID, id);
+	}
+	
+
+	public static PDSDataQualityReasonCollection getPDSDataQualityReason(LookupService lookupService) {
+		PDSDataQualityReasonCollection collection =
+			(PDSDataQualityReasonCollection) lookupService.getLookupCollection(PDSDataQualityReason.TYPE_ID, 
+				PDSDataQualityReasonCollection.class, PDSDataQualityReason.class);
+		return collection;
+	}
+
+	public static PDSDataQualityReason getPDSDataQualityReasonInstance(LookupService lookupService, int id) 
+	{
+		return (PDSDataQualityReason)lookupService.getLookupInstance(PDSDataQualityReason.class, PDSDataQualityReason.TYPE_ID, id);
+	}
+	
+
 	public static AppointmentOutcomeReasonCollection getAppointmentOutcomeReason(LookupService lookupService) {
 		AppointmentOutcomeReasonCollection collection =
 			(AppointmentOutcomeReasonCollection) lookupService.getLookupCollection(AppointmentOutcomeReason.TYPE_ID, 
@@ -71,6 +180,19 @@ public final class LookupHelper {
 	public static NotificationPriority getNotificationPriorityInstance(LookupService lookupService, int id) 
 	{
 		return (NotificationPriority)lookupService.getLookupInstance(NotificationPriority.class, NotificationPriority.TYPE_ID, id);
+	}
+	
+
+	public static NavigationStyleCollection getNavigationStyle(LookupService lookupService) {
+		NavigationStyleCollection collection =
+			(NavigationStyleCollection) lookupService.getLookupCollection(NavigationStyle.TYPE_ID, 
+				NavigationStyleCollection.class, NavigationStyle.class);
+		return collection;
+	}
+
+	public static NavigationStyle getNavigationStyleInstance(LookupService lookupService, int id) 
+	{
+		return (NavigationStyle)lookupService.getLookupInstance(NavigationStyle.class, NavigationStyle.TYPE_ID, id);
 	}
 	
 
@@ -230,6 +352,19 @@ public final class LookupHelper {
 	}
 	
 
+	public static HardCodedEventsCollection getHardCodedEvents(LookupService lookupService) {
+		HardCodedEventsCollection collection =
+			(HardCodedEventsCollection) lookupService.getLookupCollection(HardCodedEvents.TYPE_ID, 
+				HardCodedEventsCollection.class, HardCodedEvents.class);
+		return collection;
+	}
+
+	public static HardCodedEvents getHardCodedEventsInstance(LookupService lookupService, int id) 
+	{
+		return (HardCodedEvents)lookupService.getLookupInstance(HardCodedEvents.class, HardCodedEvents.TYPE_ID, id);
+	}
+	
+
 	public static ClearSpanEventLevelCollection getClearSpanEventLevel(LookupService lookupService) {
 		ClearSpanEventLevelCollection collection =
 			(ClearSpanEventLevelCollection) lookupService.getLookupCollection(ClearSpanEventLevel.TYPE_ID, 
@@ -240,19 +375,6 @@ public final class LookupHelper {
 	public static ClearSpanEventLevel getClearSpanEventLevelInstance(LookupService lookupService, int id) 
 	{
 		return (ClearSpanEventLevel)lookupService.getLookupInstance(ClearSpanEventLevel.class, ClearSpanEventLevel.TYPE_ID, id);
-	}
-	
-
-	public static NavigationStyleCollection getNavigationStyle(LookupService lookupService) {
-		NavigationStyleCollection collection =
-			(NavigationStyleCollection) lookupService.getLookupCollection(NavigationStyle.TYPE_ID, 
-				NavigationStyleCollection.class, NavigationStyle.class);
-		return collection;
-	}
-
-	public static NavigationStyle getNavigationStyleInstance(LookupService lookupService, int id) 
-	{
-		return (NavigationStyle)lookupService.getLookupInstance(NavigationStyle.class, NavigationStyle.TYPE_ID, id);
 	}
 	
 
@@ -292,19 +414,6 @@ public final class LookupHelper {
 	public static HTTPServletDebug getHTTPServletDebugInstance(LookupService lookupService, int id) 
 	{
 		return (HTTPServletDebug)lookupService.getLookupInstance(HTTPServletDebug.class, HTTPServletDebug.TYPE_ID, id);
-	}
-	
-
-	public static EDAttendenceControlTypeCollection getEDAttendenceControlType(LookupService lookupService) {
-		EDAttendenceControlTypeCollection collection =
-			(EDAttendenceControlTypeCollection) lookupService.getLookupCollection(EDAttendenceControlType.TYPE_ID, 
-				EDAttendenceControlTypeCollection.class, EDAttendenceControlType.class);
-		return collection;
-	}
-
-	public static EDAttendenceControlType getEDAttendenceControlTypeInstance(LookupService lookupService, int id) 
-	{
-		return (EDAttendenceControlType)lookupService.getLookupInstance(EDAttendenceControlType.class, EDAttendenceControlType.TYPE_ID, id);
 	}
 	
 
@@ -357,6 +466,32 @@ public final class LookupHelper {
 	public static RuleConditionType getRuleConditionTypeInstance(LookupService lookupService, int id) 
 	{
 		return (RuleConditionType)lookupService.getLookupInstance(RuleConditionType.class, RuleConditionType.TYPE_ID, id);
+	}
+	
+
+	public static DiagnosticCollection getDiagnostic(LookupService lookupService) {
+		DiagnosticCollection collection =
+			(DiagnosticCollection) lookupService.getLookupCollection(Diagnostic.TYPE_ID, 
+				DiagnosticCollection.class, Diagnostic.class);
+		return collection;
+	}
+
+	public static Diagnostic getDiagnosticInstance(LookupService lookupService, int id) 
+	{
+		return (Diagnostic)lookupService.getLookupInstance(Diagnostic.class, Diagnostic.TYPE_ID, id);
+	}
+	
+
+	public static EDAttendenceControlTypeCollection getEDAttendenceControlType(LookupService lookupService) {
+		EDAttendenceControlTypeCollection collection =
+			(EDAttendenceControlTypeCollection) lookupService.getLookupCollection(EDAttendenceControlType.TYPE_ID, 
+				EDAttendenceControlTypeCollection.class, EDAttendenceControlType.class);
+		return collection;
+	}
+
+	public static EDAttendenceControlType getEDAttendenceControlTypeInstance(LookupService lookupService, int id) 
+	{
+		return (EDAttendenceControlType)lookupService.getLookupInstance(EDAttendenceControlType.class, EDAttendenceControlType.TYPE_ID, id);
 	}
 	
 }

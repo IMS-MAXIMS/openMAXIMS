@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.layout.domain.objects;
@@ -54,6 +59,8 @@ public class BedSpace extends ims.domain.DomainObject implements ims.domain.Syst
 	private String bedNumber;
 	private String textPosition;
 	private String imagePosition;
+	private Boolean privateBed;
+	private ims.domain.lookups.LookupInstance dependency;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public BedSpace (Integer id, int ver)
@@ -143,6 +150,20 @@ public class BedSpace extends ims.domain.DomainObject implements ims.domain.Syst
 		this.imagePosition = imagePosition;
 	}
 
+	public Boolean isPrivateBed() {
+		return privateBed;
+	}
+	public void setPrivateBed(Boolean privateBed) {
+		this.privateBed = privateBed;
+	}
+
+	public ims.domain.lookups.LookupInstance getDependency() {
+		return dependency;
+	}
+	public void setDependency(ims.domain.lookups.LookupInstance dependency) {
+		this.dependency = dependency;
+	}
+
 	public ims.domain.SystemInformation getSystemInformation() {
 		if (systemInformation == null) systemInformation = new ims.domain.SystemInformation();
 		return systemInformation;
@@ -202,6 +223,13 @@ public class BedSpace extends ims.domain.DomainObject implements ims.domain.Syst
 	    auditStr.append("; ");
 		auditStr.append("\r\n*imagePosition* :");
 		auditStr.append(imagePosition);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*privateBed* :");
+		auditStr.append(privateBed);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*dependency* :");
+		if (dependency != null)
+			auditStr.append(dependency.getText());
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -288,6 +316,18 @@ public class BedSpace extends ims.domain.DomainObject implements ims.domain.Syst
 			sb.append("<imagePosition>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getImagePosition().toString()));
 			sb.append("</imagePosition>");		
+		}
+		if (this.isPrivateBed() != null)
+		{
+			sb.append("<privateBed>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isPrivateBed().toString()));
+			sb.append("</privateBed>");		
+		}
+		if (this.getDependency() != null)
+		{
+			sb.append("<dependency>");
+			sb.append(this.getDependency().toXMLString()); 
+			sb.append("</dependency>");		
 		}
 		return sb.toString();
 	}
@@ -489,6 +529,17 @@ public class BedSpace extends ims.domain.DomainObject implements ims.domain.Syst
 		{	
     		obj.setImagePosition(new String(fldEl.getTextTrim()));	
 		}
+		fldEl = el.element("privateBed");
+		if(fldEl != null)
+		{	
+    		obj.setPrivateBed(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("dependency");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setDependency(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -508,6 +559,8 @@ public class BedSpace extends ims.domain.DomainObject implements ims.domain.Syst
 		public static final String BedNumber = "bedNumber";
 		public static final String TextPosition = "textPosition";
 		public static final String ImagePosition = "imagePosition";
+		public static final String PrivateBed = "privateBed";
+		public static final String Dependency = "dependency";
 	}
 }
 

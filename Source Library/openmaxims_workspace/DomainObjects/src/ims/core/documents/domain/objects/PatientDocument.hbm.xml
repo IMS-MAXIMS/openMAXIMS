@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:35 -->
+<!-- Generated: 12/10/2015, 13:29 -->
 <hibernate-mapping>
 	<class name="ims.core.documents.domain.objects.PatientDocument" table="core_patientdocumen" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -156,6 +156,7 @@
 <!-- debug: emailStatus -->
 <!-- debug: wasTriggered -->
 <!-- debug: copyPatientOnCorrespondence -->
+<!-- debug: hasEnclosure -->
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="name" type="string" access="field" update="true" > 
@@ -245,6 +246,11 @@
 <!-- debug: !IsLookup -->
 		<property name="copyPatientOnCorrespondence" type="boolean" access="field" update="true">
 			<column name="copypatien"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="hasEnclosure" type="boolean" access="field" update="true">
+			<column name="hasenclosu"  not-null="false" unique="false"  />
 		</property>
 	</class>
 </hibernate-mapping>

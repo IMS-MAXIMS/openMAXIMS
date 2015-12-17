@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.clinical.vo.domain;
@@ -58,6 +63,28 @@ public class InpatientEpisodeForVTERiskAsessmentVoAssembler
 		valueObjectDest.setVTEAssessmentStatus(valueObjectSrc.getVTEAssessmentStatus());
 		// VTERiskAssessment
 		valueObjectDest.setVTERiskAssessment(valueObjectSrc.getVTERiskAssessment());
+		// VTEAssessmentStatusReason
+		valueObjectDest.setVTEAssessmentStatusReason(valueObjectSrc.getVTEAssessmentStatusReason());
+		// EstDischargeDate
+		valueObjectDest.setEstDischargeDate(valueObjectSrc.getEstDischargeDate());
+		// ConfirmedDischargeDateTime
+		valueObjectDest.setConfirmedDischargeDateTime(valueObjectSrc.getConfirmedDischargeDateTime());
+		// isOnHomeLeave
+		valueObjectDest.setIsOnHomeLeave(valueObjectSrc.getIsOnHomeLeave());
+		// DateOnHomeLeave
+		valueObjectDest.setDateOnHomeLeave(valueObjectSrc.getDateOnHomeLeave());
+		// TimeOnHomeLeave
+		valueObjectDest.setTimeOnHomeLeave(valueObjectSrc.getTimeOnHomeLeave());
+		// ExpectedDateOfReturn
+		valueObjectDest.setExpectedDateOfReturn(valueObjectSrc.getExpectedDateOfReturn());
+		// ExpectedTimeOfReturn
+		valueObjectDest.setExpectedTimeOfReturn(valueObjectSrc.getExpectedTimeOfReturn());
+		// LatestSECSScore
+		valueObjectDest.setLatestSECSScore(valueObjectSrc.getLatestSECSScore());
+		// isConfirmedDischarge
+		valueObjectDest.setIsConfirmedDischarge(valueObjectSrc.getIsConfirmedDischarge());
+		// CurrentTrackingMovement
+		valueObjectDest.setCurrentTrackingMovement(valueObjectSrc.getCurrentTrackingMovement());
 	 	return valueObjectDest;
 	 }
 
@@ -418,6 +445,86 @@ public class InpatientEpisodeForVTERiskAsessmentVoAssembler
 				valueObject.setVTERiskAssessment(new ims.core.clinical.vo.VTERiskAssessmentRefVo(domainObject.getVTERiskAssessment().getId(), domainObject.getVTERiskAssessment().getVersion()));
 			}
 		}
+		// VTEAssessmentStatusReason
+		ims.domain.lookups.LookupInstance instance5 = domainObject.getVTEAssessmentStatusReason();
+		if ( null != instance5 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance5.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance5.getImage().getImageId(), instance5.getImage().getImagePath());
+			}
+			color = instance5.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.clinical.vo.lookups.VTEAssessmentStatusReason voLookup5 = new ims.clinical.vo.lookups.VTEAssessmentStatusReason(instance5.getId(),instance5.getText(), instance5.isActive(), null, img, color);
+			ims.clinical.vo.lookups.VTEAssessmentStatusReason parentVoLookup5 = voLookup5;
+			ims.domain.lookups.LookupInstance parent5 = instance5.getParent();
+			while (parent5 != null)
+			{
+				if (parent5.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent5.getImage().getImageId(), parent5.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent5.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup5.setParent(new ims.clinical.vo.lookups.VTEAssessmentStatusReason(parent5.getId(),parent5.getText(), parent5.isActive(), null, img, color));
+				parentVoLookup5 = parentVoLookup5.getParent();
+								parent5 = parent5.getParent();
+			}			
+			valueObject.setVTEAssessmentStatusReason(voLookup5);
+		}
+				// EstDischargeDate
+		java.util.Date EstDischargeDate = domainObject.getEstDischargeDate();
+		if ( null != EstDischargeDate ) 
+		{
+			valueObject.setEstDischargeDate(new ims.framework.utils.DateTime(EstDischargeDate) );
+		}
+		// ConfirmedDischargeDateTime
+		java.util.Date ConfirmedDischargeDateTime = domainObject.getConfirmedDischargeDateTime();
+		if ( null != ConfirmedDischargeDateTime ) 
+		{
+			valueObject.setConfirmedDischargeDateTime(new ims.framework.utils.DateTime(ConfirmedDischargeDateTime) );
+		}
+		// isOnHomeLeave
+		valueObject.setIsOnHomeLeave( domainObject.isIsOnHomeLeave() );
+		// DateOnHomeLeave
+		java.util.Date DateOnHomeLeave = domainObject.getDateOnHomeLeave();
+		if ( null != DateOnHomeLeave ) 
+		{
+			valueObject.setDateOnHomeLeave(new ims.framework.utils.Date(DateOnHomeLeave) );
+		}
+		// TimeOnHomeLeave
+		String TimeOnHomeLeave = domainObject.getTimeOnHomeLeave();
+		if ( null != TimeOnHomeLeave ) 
+		{
+			valueObject.setTimeOnHomeLeave(new ims.framework.utils.Time(TimeOnHomeLeave) );
+		}
+		// ExpectedDateOfReturn
+		java.util.Date ExpectedDateOfReturn = domainObject.getExpectedDateOfReturn();
+		if ( null != ExpectedDateOfReturn ) 
+		{
+			valueObject.setExpectedDateOfReturn(new ims.framework.utils.Date(ExpectedDateOfReturn) );
+		}
+		// ExpectedTimeOfReturn
+		String ExpectedTimeOfReturn = domainObject.getExpectedTimeOfReturn();
+		if ( null != ExpectedTimeOfReturn ) 
+		{
+			valueObject.setExpectedTimeOfReturn(new ims.framework.utils.Time(ExpectedTimeOfReturn) );
+		}
+		// LatestSECSScore
+		valueObject.setLatestSECSScore(ims.clinical.vo.domain.PatientSECSLiteVoAssembler.create(map, domainObject.getLatestSECSScore()) );
+		// isConfirmedDischarge
+		valueObject.setIsConfirmedDischarge( domainObject.isIsConfirmedDischarge() );
+		// CurrentTrackingMovement
+		valueObject.setCurrentTrackingMovement(ims.core.vo.domain.TrackingMovementVoAssembler.create(map, domainObject.getCurrentTrackingMovement()) );
  		return valueObject;
 	 }
 
@@ -522,6 +629,92 @@ public class InpatientEpisodeForVTERiskAsessmentVoAssembler
 			}
 		}
 		domainObject.setVTERiskAssessment(value4);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value5 = null;
+		if ( null != valueObject.getVTEAssessmentStatusReason() ) 
+		{
+			value5 =
+				domainFactory.getLookupInstance(valueObject.getVTEAssessmentStatusReason().getID());
+		}
+		domainObject.setVTEAssessmentStatusReason(value5);
+		ims.framework.utils.DateTime dateTime6 = valueObject.getEstDischargeDate();
+		java.util.Date value6 = null;
+		if ( dateTime6 != null ) 
+		{
+			value6 = dateTime6.getJavaDate();
+		}
+		domainObject.setEstDischargeDate(value6);
+		ims.framework.utils.DateTime dateTime7 = valueObject.getConfirmedDischargeDateTime();
+		java.util.Date value7 = null;
+		if ( dateTime7 != null ) 
+		{
+			value7 = dateTime7.getJavaDate();
+		}
+		domainObject.setConfirmedDischargeDateTime(value7);
+		domainObject.setIsOnHomeLeave(valueObject.getIsOnHomeLeave());
+		java.util.Date value9 = null;
+		ims.framework.utils.Date date9 = valueObject.getDateOnHomeLeave();		
+		if ( date9 != null ) 
+		{
+			value9 = date9.getDate();
+		}
+		domainObject.setDateOnHomeLeave(value9);
+		ims.framework.utils.Time time10 = valueObject.getTimeOnHomeLeave();
+		String value10 = null;
+		if ( time10 != null ) 
+		{
+			value10 = time10.toString();
+		}
+		domainObject.setTimeOnHomeLeave(value10);
+		java.util.Date value11 = null;
+		ims.framework.utils.Date date11 = valueObject.getExpectedDateOfReturn();		
+		if ( date11 != null ) 
+		{
+			value11 = date11.getDate();
+		}
+		domainObject.setExpectedDateOfReturn(value11);
+		ims.framework.utils.Time time12 = valueObject.getExpectedTimeOfReturn();
+		String value12 = null;
+		if ( time12 != null ) 
+		{
+			value12 = time12.toString();
+		}
+		domainObject.setExpectedTimeOfReturn(value12);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.clinical.domain.objects.PatientSECS value13 = null;
+		if ( null != valueObject.getLatestSECSScore() ) 
+		{
+			if (valueObject.getLatestSECSScore().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getLatestSECSScore()) != null)
+				{
+					value13 = (ims.clinical.domain.objects.PatientSECS)domMap.get(valueObject.getLatestSECSScore());
+				}
+			}
+			else
+			{
+				value13 = (ims.clinical.domain.objects.PatientSECS)domainFactory.getDomainObject(ims.clinical.domain.objects.PatientSECS.class, valueObject.getLatestSECSScore().getBoId());
+			}
+		}
+		domainObject.setLatestSECSScore(value13);
+		domainObject.setIsConfirmedDischarge(valueObject.getIsConfirmedDischarge());
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.admin.pas.domain.objects.TrackingMovement value15 = null;
+		if ( null != valueObject.getCurrentTrackingMovement() ) 
+		{
+			if (valueObject.getCurrentTrackingMovement().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getCurrentTrackingMovement()) != null)
+				{
+					value15 = (ims.core.admin.pas.domain.objects.TrackingMovement)domMap.get(valueObject.getCurrentTrackingMovement());
+				}
+			}
+			else
+			{
+				value15 = (ims.core.admin.pas.domain.objects.TrackingMovement)domainFactory.getDomainObject(ims.core.admin.pas.domain.objects.TrackingMovement.class, valueObject.getCurrentTrackingMovement().getBoId());
+			}
+		}
+		domainObject.setCurrentTrackingMovement(value15);
 
 		return domainObject;
 	}

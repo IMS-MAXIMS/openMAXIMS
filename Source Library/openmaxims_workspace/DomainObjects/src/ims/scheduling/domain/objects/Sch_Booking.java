@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.scheduling.domain.objects;
@@ -79,6 +84,8 @@ public class Sch_Booking extends ims.domain.DomainObject implements ims.domain.S
 	private String referrerSdsRoleId;
 	/** Spine Data Services Referral Organisation Id e.g. Practice */
 	private String referrerSdsOrgId;
+	/** external ID added to support data migration */
+	private String externalID;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public Sch_Booking (Integer id, int ver)
@@ -110,7 +117,7 @@ public class Sch_Booking extends ims.domain.DomainObject implements ims.domain.S
 		return bookingComments;
 	}
 	public void setBookingComments(String bookingComments) {
-		if ( null != bookingComments && bookingComments.length() > 255 ) {
+		if ( null != bookingComments && bookingComments.length() > 500 ) {
 			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for bookingComments. Tried to set value: "+
 				bookingComments);
 		}
@@ -243,6 +250,17 @@ public class Sch_Booking extends ims.domain.DomainObject implements ims.domain.S
 		this.referrerSdsOrgId = referrerSdsOrgId;
 	}
 
+	public String getExternalID() {
+		return externalID;
+	}
+	public void setExternalID(String externalID) {
+		if ( null != externalID && externalID.length() > 30 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for externalID. Tried to set value: "+
+				externalID);
+		}
+		this.externalID = externalID;
+	}
+
 	public ims.domain.SystemInformation getSystemInformation() {
 		if (systemInformation == null) systemInformation = new ims.domain.SystemInformation();
 		return systemInformation;
@@ -373,6 +391,9 @@ public class Sch_Booking extends ims.domain.DomainObject implements ims.domain.S
 	    auditStr.append("; ");
 		auditStr.append("\r\n*referrerSdsOrgId* :");
 		auditStr.append(referrerSdsOrgId);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*externalID* :");
+		auditStr.append(externalID);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -516,6 +537,12 @@ public class Sch_Booking extends ims.domain.DomainObject implements ims.domain.S
 			sb.append("<referrerSdsOrgId>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getReferrerSdsOrgId().toString()));
 			sb.append("</referrerSdsOrgId>");		
+		}
+		if (this.getExternalID() != null)
+		{
+			sb.append("<externalID>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getExternalID().toString()));
+			sb.append("</externalID>");		
 		}
 		return sb.toString();
 	}
@@ -768,6 +795,11 @@ public class Sch_Booking extends ims.domain.DomainObject implements ims.domain.S
 		{	
     		obj.setReferrerSdsOrgId(new String(fldEl.getTextTrim()));	
 		}
+		fldEl = el.element("externalID");
+		if(fldEl != null)
+		{	
+    		obj.setExternalID(new String(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -797,6 +829,7 @@ public class Sch_Booking extends ims.domain.DomainObject implements ims.domain.S
 		public static final String ReferrerSdsId = "referrerSdsId";
 		public static final String ReferrerSdsRoleId = "referrerSdsRoleId";
 		public static final String ReferrerSdsOrgId = "referrerSdsOrgId";
+		public static final String ExternalID = "externalID";
 	}
 }
 

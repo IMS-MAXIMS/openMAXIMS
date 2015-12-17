@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.emergency.domain.objects;
@@ -55,6 +60,8 @@ public class InterventionTreatmentDetail extends ims.domain.DomainObject impleme
 	private Boolean addedDuringCoding;
 	/** Coding Sequence set on Coding Form */
 	private Integer codingSequence;
+	/** InterventionTreatmentComplete */
+	private ims.domain.lookups.LookupInstance interventionTreatmentComplete;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public InterventionTreatmentDetail (Integer id, int ver)
@@ -112,6 +119,13 @@ public class InterventionTreatmentDetail extends ims.domain.DomainObject impleme
 	}
 	public void setCodingSequence(Integer codingSequence) {
 		this.codingSequence = codingSequence;
+	}
+
+	public ims.domain.lookups.LookupInstance getInterventionTreatmentComplete() {
+		return interventionTreatmentComplete;
+	}
+	public void setInterventionTreatmentComplete(ims.domain.lookups.LookupInstance interventionTreatmentComplete) {
+		this.interventionTreatmentComplete = interventionTreatmentComplete;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -175,6 +189,10 @@ public class InterventionTreatmentDetail extends ims.domain.DomainObject impleme
 	    auditStr.append("; ");
 		auditStr.append("\r\n*codingSequence* :");
 		auditStr.append(codingSequence);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*interventionTreatmentComplete* :");
+		if (interventionTreatmentComplete != null)
+			auditStr.append(interventionTreatmentComplete.getText());
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -249,6 +267,12 @@ public class InterventionTreatmentDetail extends ims.domain.DomainObject impleme
 			sb.append("<codingSequence>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getCodingSequence().toString()));
 			sb.append("</codingSequence>");		
+		}
+		if (this.getInterventionTreatmentComplete() != null)
+		{
+			sb.append("<interventionTreatmentComplete>");
+			sb.append(this.getInterventionTreatmentComplete().toXMLString()); 
+			sb.append("</interventionTreatmentComplete>");		
 		}
 		return sb.toString();
 	}
@@ -440,6 +464,12 @@ public class InterventionTreatmentDetail extends ims.domain.DomainObject impleme
 		{	
     		obj.setCodingSequence(new Integer(fldEl.getTextTrim()));	
 		}
+		fldEl = el.element("interventionTreatmentComplete");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setInterventionTreatmentComplete(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -457,6 +487,7 @@ public class InterventionTreatmentDetail extends ims.domain.DomainObject impleme
 		public static final String TreatmentInterventionDescription = "treatmentInterventionDescription";
 		public static final String AddedDuringCoding = "addedDuringCoding";
 		public static final String CodingSequence = "codingSequence";
+		public static final String InterventionTreatmentComplete = "interventionTreatmentComplete";
 	}
 }
 

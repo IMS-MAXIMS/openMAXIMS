@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,11 +15,17 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 package ims.hl7.domain.mapping;
 
 import ims.core.patient.vo.PatientRefVo;
+import ims.hl7.domain.EventResponse;
 import ims.hl7.domain.HL7EngineApplication;
 import ims.hl7.utils.EvnCodes;
 import ims.ocrr.vo.ProviderSystemVo;
@@ -32,12 +38,14 @@ public class A31VoMapper extends VoMapper
 {
 	private A28VoMapper a28mapper;
 
-	public Message processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception
+	//WDEV-20112
+//	public Message processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception
+	public EventResponse processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception //WDEV-20112
 	{
 		a28mapper = (A28VoMapper) HL7EngineApplication.getVoMapper(EvnCodes.A28);
 		if (a28mapper == null)
 		{
-			throw new HL7Exception("A31 mapper requires A28 mapper. A28 mapper not found in list of registerd mappers.");			
+			throw new HL7Exception("A31 mapper requires A28 mapper. A28 mapper not found in list of registered mappers.");			
 		}
 		return(a28mapper.processPatientUpdate(msg, providerSystem));
 	}
@@ -45,8 +53,7 @@ public class A31VoMapper extends VoMapper
 	public Message populateMessage()
 	{
 		// Not required for inbound messages
-		return null;
-		
+		return null;		
 	}
 	
 	public Message populateMessage(PatientRefVo patient, String hl7Application,ProviderSystemVo providerSystem) throws Exception

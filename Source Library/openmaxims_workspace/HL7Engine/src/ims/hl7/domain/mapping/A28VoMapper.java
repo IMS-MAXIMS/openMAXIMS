@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,10 +15,34 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 package ims.hl7.domain.mapping;
 
+
+import ims.admin.vo.ConfigPropertyVo;
+import ims.configuration.ConfigItems;
+import ims.configuration.gen.ConfigFlag;
+import ims.core.patient.vo.PatientRefVo;
+import ims.core.vo.CareSpellVo;
+import ims.core.vo.NationalHealthCoverVo;
+import ims.core.vo.PasEventVo;
+import ims.core.vo.PatRelative;
+import ims.core.vo.Patient;
+import ims.core.vo.PatientMedicalInsuranceVo;
+import ims.core.vo.lookups.PrivateInsurancePolicyType;
+import ims.domain.exceptions.StaleObjectException;
+import ims.framework.utils.DateFormat;
+import ims.framework.utils.DateTime;
+import ims.hl7.domain.EventResponse;
+import ims.hl7.utils.HL7Errors;
+import ims.hl7.utils.HL7Utils;
+import ims.ocrr.vo.ProviderSystemVo;
 
 import org.apache.log4j.Logger;
 
@@ -32,28 +56,14 @@ import ca.uhn.hl7v2.model.v24.segment.NK1;
 import ca.uhn.hl7v2.model.v24.segment.PD1;
 import ca.uhn.hl7v2.model.v24.segment.PID;
 import ca.uhn.hl7v2.model.v24.segment.PV1;
-import ims.admin.vo.ConfigPropertyVo;
-import ims.configuration.gen.ConfigFlag;
-import ims.configuration.ConfigItems;
-import ims.core.patient.vo.PatientRefVo;
-import ims.core.vo.CareSpellVo;
-import ims.core.vo.InsuranceVo;
-import ims.core.vo.PasEventVo;
-import ims.core.vo.Patient;
-import ims.core.vo.PatientMedicalInsuranceVo;
-import ims.domain.exceptions.StaleObjectException;
-import ims.framework.utils.DateFormat;
-import ims.framework.utils.DateTime;
-import ims.hl7.utils.HL7Errors;
-import ims.hl7.utils.HL7Utils;
-import ims.ocrr.vo.ProviderSystemVo;
 
 public class A28VoMapper extends VoMapper
 {
 	private static final Logger			LOG		= Logger.getLogger(A28VoMapper.class);
 	
-	
-	public Message processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception
+	//WDEV-20112
+//	public Message processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception
+	public EventResponse processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception //WDEV-20112
 	{
 		return (processPatientUpdate(msg, providerSystem));
 	}
@@ -73,32 +83,86 @@ public class A28VoMapper extends VoMapper
 		ADT_A05 a28Msg = new ADT_A05();
 		PID pid = a28Msg.getPID();
 		renderPatientVoToPID(fullPatient, pid, getProviderSystem(hl7Application));
+		if(fullPatient!=null  //http://jira/browse/WDEV-18571
+				&&fullPatient.getSCN()!=null)
+			pid.getIdentityReliabilityCode(0).setValue(fullPatient.getSCN().toString());
 		PV1 pv = a28Msg.getPV1();
 		pv.getPatientClass().setValue("U");  // Unknown - only mandatory item
 		
-		NK1 nk1 = a28Msg.getNK1();
-		renderNextOfKinVoToNK1(fullPatient.getNok(), nk1,providerSystem);
+		
+		//WDEV-22006 Comment out following code and replace by calling a single method
+		
+//		NK1 nk1 = a28Msg.getNK1();
+//		//WDEV-20335
+//		Boolean isConfidential = fullPatient.getIsConfidential();
+//		
+//		//WDEV-20336 Populate NK1 from PDSRelative object first. If object is Null then use Next of Kin VO
+//		int NK1Iteration = 0;
+//		
+//		if(fullPatient.getPDSrelatives() != null
+//				&& fullPatient.getPDSrelatives().size() > 0)
+//		{
+//			for (int i=0; i < fullPatient.getPDSrelatives().size(); i++)
+//			{
+//				PatRelative patRelative = fullPatient.getPDSrelatives().get(i);
+//				renderPatRelativeVoToNK1(patRelative, nk1, providerSystem, isConfidential);
+//				NK1Iteration ++;
+//			}
+//		}
+//		else
+//		{
+//			renderNextOfKinVoToNK1(fullPatient.getNok(), nk1, providerSystem, isConfidential);
+//			NK1Iteration ++;
+//		}//WDEV-20336
+//		
+//		// WDEV-19988
+//		// If config flag HL7_INCLUDE_FAMILY_SUPPORT  is true and 
+//		// any support family network contact details exist, then add these as NK1 segments (within a loop)
+//		if(fullPatient.getSupportNetworkFamilyIsNotNull() 
+//				&& ConfigFlag.HL7.HL7_INCLUDE_FAMILY_SUPPORT.getValue())
+//		{
+//			
+//			for (int i=0; i<fullPatient.getSupportNetworkFamily().size(); i++)
+//			{
+//				NK1 sfn = a28Msg.getNK1(NK1Iteration);
+//				if(fullPatient.getSupportNetworkFamily().get(i).getInactivatingDateTime()==null)
+//				{
+//					//WDEV-20335
+//					renderSupportNetworkFamilyVoToNK1(fullPatient.getSupportNetworkFamily().get(i), sfn, providerSystem, isConfidential); //WDEV-20335
+//					NK1Iteration++;
+//				}
+//			}
+//		}
+
+		renderPatientVoToNK1(fullPatient, a28Msg, providerSystem);
+		//WDEV-22006
+		
+		//
 		PD1 pd1=a28Msg.getPD1();
 		
 		//GP
-		renderGPDetailsToPD1(fullPatient,pd1);
+		//WDEV-20993
+//		renderGPDetailsToPD1(fullPatient,pd1);
+		renderGPDetailsToPD1(fullPatient, pd1, providerSystem);
 		
 		IN1 in1 = a28Msg.getADT_A05_IN1IN2IN3ROL().getIN1();
 		IN1 in1EHIC= a28Msg.getADT_A05_IN1IN2IN3ROL(1).getIN1();
 		
-		if(fullPatient.getInsuranceIsNotNull())
+		if(fullPatient.getNationalHealthCoverIsNotNull())
 		{
-			renderInsuranceToIN1(fullPatient.getInsurance(),in1,getProviderSystem(hl7Application));
+			renderInsuranceToIN1(fullPatient.getNationalHealthCover(),in1,getProviderSystem(hl7Application));
 		}
 		if(fullPatient.getCurrentMedicalInsuranceIsNotNull())
 		{
 			renderPatientMedicalInsuranceToIN1(fullPatient.getCurrentMedicalInsurance(),in1,getProviderSystem(hl7Application));
 		}
-		if(fullPatient.getInsuranceIsNotNull())
+		if(fullPatient.getNationalHealthCoverIsNotNull())
 		{
-			renderEHICToIN1(fullPatient.getInsurance(),in1EHIC,getProviderSystem(hl7Application));
+			renderEHICToIN1(fullPatient.getNationalHealthCover(),in1EHIC,getProviderSystem(hl7Application));
 		}
 
+		//WDEV-22624
+		renderPatientDetailsToPD1(fullPatient, pd1, providerSystem); //WDEV-22624
 		
 		
 //		String gpCode=null;
@@ -135,10 +199,13 @@ public class A28VoMapper extends VoMapper
 //		renderCommChannelVoCollectionToXTN(org.getCommChannels(), rol.getPhone(0));
 		
 		populateMSH(a28Msg, getProviderSystem(hl7Application));
-		populateEVN(a28Msg);
+		//WDEV-22918
+//		populateEVN(a28Msg);
+		populateEVN(a28Msg, fullPatient); //WDEV-22918
 		return a28Msg;
 	}
 	
+	//WDEV-22750 - Moved code to VoMapper
 	protected void renderPatientMedicalInsuranceToIN1(PatientMedicalInsuranceVo medicalInsurance,IN1 in1,ProviderSystemVo providerSystem) throws HL7Exception
 	{
 		if(medicalInsurance==null||in1==null||providerSystem==null)
@@ -157,9 +224,13 @@ public class A28VoMapper extends VoMapper
 			in1.getPolicyNumber().setValue(medicalInsurance.getPolicyNumber());
 		}
 		//IN1-2
-		if(medicalInsurance.getPolicyTypeIsNotNull())
+		if(medicalInsurance.getPolicyTypeIsNotNull()&&!(medicalInsurance.getPolicyType().getID()==(PrivateInsurancePolicyType.OTHER.getID())))
 		{
 			in1.getInsurancePlanID().getIdentifier().setValue(svc.getRemoteLookup(medicalInsurance.getPolicyType().getID(), providerSystem.getCodeSystem().getText()));
+		}
+		else if(medicalInsurance.getPlanOrUnitsIsNotNull())
+		{
+			in1.getInsurancePlanID().getIdentifier().setValue(medicalInsurance.getPlanOrUnits());
 		}
 		//IN1-13
 		if(medicalInsurance.getExpiryDateIsNotNull())
@@ -169,19 +240,32 @@ public class A28VoMapper extends VoMapper
 		
 	}
 	
-	
-	protected void renderInsuranceToIN1(InsuranceVo insurance,IN1 in1,ProviderSystemVo providerSystem) throws HL7Exception
+	//WDEV-22750 - Moved code to VoMapper
+	protected void renderInsuranceToIN1(NationalHealthCoverVo insurance,IN1 in1,ProviderSystemVo providerSystem) throws HL7Exception
 	{
-		if(insurance!=null||in1==null||providerSystem==null)
+		if (insurance != null || in1 == null || providerSystem == null)
 		{
 		// Medical Card / Insurance	
 		
 		//IN1-28
 			in1.getSetIDIN1().setValue("1");
-			if(insurance.getHealthActCategoryIsNotNull())
+
+			//WDEV-23272
+//			if (insurance.getHealthActCategoryIsNotNull())
+//			{
+//				
+//				in1.getPreAdmitCert().setValue(svc.getRemoteLookup(insurance.getHealthActCategory().getID(), providerSystem.getCodeSystem().getText()));
+//			}
+			//WDEV-23272
+			if (insurance.getEligibilityIsNotNull())
 			{
-				in1.getPreAdmitCert().setValue(svc.getRemoteLookup(insurance.getHealthActCategory().getID(), providerSystem.getCodeSystem().getText()));
+				in1.getPreAdmitCert().setValue(svc.getRemoteLookup(insurance.getEligibility().getID(), providerSystem.getCodeSystem().getText()));
 			}
+			if(insurance.getMedicalCardExpiryDateIsNotNull())
+			{
+				in1.getVerificationDateTime().getTimeOfAnEvent().setValue(insurance.getMedicalCardExpiryDate().toString(DateFormat.ISO));
+			} //WDEV-23272
+			
 		//IN1-35
 		//IN1-31
 			if(insurance.getMedicalCardProvedIsNotNull())
@@ -203,8 +287,8 @@ public class A28VoMapper extends VoMapper
 	}
 	
 	
-	
-	protected void renderEHICToIN1(InsuranceVo insurance, IN1 in1,ProviderSystemVo providerSystem) throws HL7Exception {
+	//WDEV-22750 - Moved code to VoMapper
+	protected void renderEHICToIN1(NationalHealthCoverVo insurance, IN1 in1,ProviderSystemVo providerSystem) throws HL7Exception {
 		if (insurance != null || in1 == null || providerSystem == null)
 		{
 			in1.getSetIDIN1().setValue("2");
@@ -228,22 +312,41 @@ public class A28VoMapper extends VoMapper
 			{
 				in1.getInsuranceCompanyAddress(0).getCountry().setValue(svc.getRemoteLookup(insurance.getEHICCountry().getID(),providerSystem.getCodeSystem().getText()));
 			}
-			// IN1-4
-			if (insurance.getEHICInstitutionIsNotNull())
+			//WDEV-22621
+//			// IN1-4
+//			if (insurance.getEHICInstitutionIsNotNull())
+//			{
+//				in1.getInsuranceCompanyName(0).getOrganizationName().setValue(insurance.getEHICInstitution());
+//			}
+			if (insurance.getEHICInstitutionCodeIsNotNull())
 			{
-				in1.getInsuranceCompanyName(0).getOrganizationName().setValue(insurance.getEHICInstitution());
-			}
+				in1.getInsuranceCompanyName(0).getOrganizationName().setValue(svc.getRemoteLookup(insurance.getEHICInstitutionCode().getID(),providerSystem.getCodeSystem().getText()));
+			} //WDEV-22621
+			
 		}
 	}
 	
 	
-	
-	private void populateEVN(ADT_A05 msg) throws Exception
+	//WDEV-22918
+//	private void populateEVN(ADT_A05 msg) throws Exception
+	private void populateEVN(ADT_A05 msg, Patient fullPatient) throws Exception //WDEV-22918
 	{
 		EVN evn = msg.getEVN();
 		
 		evn.getEventTypeCode().setValue("A28");
-		renderDateTimeVoToTS(new DateTime(), evn.getRecordedDateTime());
+		//WDEV-22918
+//		renderDateTimeVoToTS(new DateTime(), evn.getRecordedDateTime());
+		if (fullPatient.getSysInfo() != null)
+		{
+			if (fullPatient.getSysInfo().getLastupdateDateTime() != null)
+			{
+				renderDateTimeVoToTS(fullPatient.getSysInfo().getLastupdateDateTime(), evn.getRecordedDateTime());
+			}
+			else if (fullPatient.getSysInfo().getCreationDateTime() != null)
+			{
+				renderDateTimeVoToTS(fullPatient.getSysInfo().getCreationDateTime(), evn.getRecordedDateTime());
+			}
+		} //WDEV-22918
 	}
 
 	private void populateMSH(ADT_A05 msg, ProviderSystemVo providerSystem) throws DataTypeException, Exception
@@ -283,17 +386,27 @@ public class A28VoMapper extends VoMapper
 		
 	}
 	
-	
-	protected Message processPatientUpdate(Message msg, ProviderSystemVo providerSystem) throws HL7Exception
+	//WDEV-20112
+//	protected Message processPatientUpdate(Message msg, ProviderSystemVo providerSystem) throws HL7Exception
+	protected EventResponse processPatientUpdate(Message msg, ProviderSystemVo providerSystem) throws HL7Exception //WDEV-20112
 	{
 		return this.processPatientUpdate(msg, providerSystem, true);
 	}
 	
-	protected Message processPatientUpdate(Message msg, ProviderSystemVo providerSystem, boolean includeNok) throws HL7Exception
+	//WDEV-20112
+//	protected Message processPatientUpdate(Message msg, ProviderSystemVo providerSystem, boolean includeNok) throws HL7Exception
+	protected EventResponse processPatientUpdate(Message msg, ProviderSystemVo providerSystem, boolean includeNok) throws HL7Exception //WDEV-20112
 	{
+		//WDEV-20112
+		EventResponse response = new EventResponse(); //WDEV-20112
+		
 		try
 		{
 			Patient patVo = savePatient(msg, providerSystem, includeNok);
+			
+			//WDEV-20112
+			response.setPatient(patVo); //WDEV-20112
+			
 			PV1 pv1 = (PV1) msg.get("PV1");
 			if (ConfigFlag.HL7.INSTANTIATE_EPISODE_FROM_ADT.getValue())
 			{
@@ -303,12 +416,17 @@ public class A28VoMapper extends VoMapper
 		catch (Exception ex)
 		{
 			ex.printStackTrace();
-			return HL7Utils.buildRejAck( msg.get("MSH"), "Exception. " + ex.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems()));
+			//WDEV-20112
+//			return HL7Utils.buildRejAck( msg.get("MSH"), "Exception. " + ex.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems()));
+			response.setMessage(HL7Utils.buildRejAck(msg.get("MSH"), "Exception: " + ex.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems())));
+			return response; //WDEV-20112
 		}
 		
-
-		Message ack = HL7Utils.buildPosAck( msg.get("MSH"), toConfigItemArray(providerSystem.getConfigItems()));
-		return ack;
+		//WDEV-20112
+//		Message ack = HL7Utils.buildPosAck( msg.get("MSH"), toConfigItemArray(providerSystem.getConfigItems()));
+//		return ack;
+		response.setMessage(HL7Utils.buildPosAck( msg.get("MSH"), toConfigItemArray(providerSystem.getConfigItems())));
+		return response; //WDEV-20112
 	}
 
 	private void createCareSpell(Patient patVo, PV1 pv1,ProviderSystemVo providerSystem) throws HL7Exception 
@@ -332,8 +450,9 @@ public class A28VoMapper extends VoMapper
 					throw new HL7Exception(e.getMessage(), e);
 				}
 				
-				
-				CareSpellVo careSpell=createCareSpellVo(pas,pv1);
+				//WDEV-20278
+//				CareSpellVo careSpell=createCareSpellVo(pas,pv1);
+				CareSpellVo careSpell = createCareSpellVo(pas, pv1, providerSystem); //WDEV-20278
 				try 
 				{
 					pas = saveCareSpell(careSpell);

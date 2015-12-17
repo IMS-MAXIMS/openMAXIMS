@@ -1,6 +1,13 @@
 openMAXIMS source code project is located in the 'Source Library' folder
 
 -----------------------------------------------------------------------------------------------------------------------------------
+17th December 2015 - Major new updated (release 10.5)
+
+This is the version of openMAXIMS that is live at the Taunton and Somerset NHS Trust.
+
+Because there have been many hundreds of enhancements, bug fixes and other changes, the original source code has been archived and a completely new release of the source code is has been uploaded.
+
+-----------------------------------------------------------------------------------------------------------------------------------
 1st August 2014 - Updated Release
 
 The openMAXIMS database creation scripts have been uploaded, together with scripts for the creation of the initial reference data.

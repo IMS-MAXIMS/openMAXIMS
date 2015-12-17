@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.core.vo.domain;
@@ -66,6 +71,10 @@ public class PatientDocumentSearchListVoAssembler
 		valueObjectDest.setCurrentDocumentStatus(valueObjectSrc.getCurrentDocumentStatus());
 		// ResponsibleHCP
 		valueObjectDest.setResponsibleHCP(valueObjectSrc.getResponsibleHCP());
+		// CorrespondenceStatus
+		valueObjectDest.setCorrespondenceStatus(valueObjectSrc.getCorrespondenceStatus());
+		// Name
+		valueObjectDest.setName(valueObjectSrc.getName());
 	 	return valueObjectDest;
 	 }
 
@@ -482,6 +491,44 @@ public class PatientDocumentSearchListVoAssembler
 		valueObject.setCurrentDocumentStatus(ims.core.vo.domain.PatientDocumentStatusVoAssembler.create(map, domainObject.getCurrentDocumentStatus()) );
 		// ResponsibleHCP
 		valueObject.setResponsibleHCP(ims.core.vo.domain.HcpLiteVoAssembler.create(map, domainObject.getResponsibleHCP()) );
+		// CorrespondenceStatus
+		ims.domain.lookups.LookupInstance instance9 = domainObject.getCorrespondenceStatus();
+		if ( null != instance9 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance9.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance9.getImage().getImageId(), instance9.getImage().getImagePath());
+			}
+			color = instance9.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.DocumentStatus voLookup9 = new ims.core.vo.lookups.DocumentStatus(instance9.getId(),instance9.getText(), instance9.isActive(), null, img, color);
+			ims.core.vo.lookups.DocumentStatus parentVoLookup9 = voLookup9;
+			ims.domain.lookups.LookupInstance parent9 = instance9.getParent();
+			while (parent9 != null)
+			{
+				if (parent9.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent9.getImage().getImageId(), parent9.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent9.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup9.setParent(new ims.core.vo.lookups.DocumentStatus(parent9.getId(),parent9.getText(), parent9.isActive(), null, img, color));
+				parentVoLookup9 = parentVoLookup9.getParent();
+								parent9 = parent9.getParent();
+			}			
+			valueObject.setCorrespondenceStatus(voLookup9);
+		}
+				// Name
+		valueObject.setName(domainObject.getName());
  		return valueObject;
 	 }
 
@@ -620,6 +667,21 @@ public class PatientDocumentSearchListVoAssembler
 			}
 		}
 		domainObject.setResponsibleHCP(value8);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value9 = null;
+		if ( null != valueObject.getCorrespondenceStatus() ) 
+		{
+			value9 =
+				domainFactory.getLookupInstance(valueObject.getCorrespondenceStatus().getID());
+		}
+		domainObject.setCorrespondenceStatus(value9);
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getName() != null && valueObject.getName().equals(""))
+		{
+			valueObject.setName(null);
+		}
+		domainObject.setName(valueObject.getName());
 
 		return domainObject;
 	}

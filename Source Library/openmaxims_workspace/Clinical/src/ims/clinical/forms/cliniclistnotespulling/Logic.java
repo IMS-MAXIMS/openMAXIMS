@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -308,11 +313,12 @@ public class Logic extends BaseLogic
 
 			DynamicGridCell cellId = row.getCells().newCell(getColumnById(COLUMN_IDENTIFIER), DynamicCellType.STRING);
 
+			cellId.setReadOnly(true);
+			
 			if (outpatientEpisode.getPatient().getDisplayId() != null)
 			{
 				cellId.setValue(outpatientEpisode.getPatient().getDisplayId().getValue());
 				cellId.setTooltip(outpatientEpisode.getPatient().getDisplayId().getValue());
-				cellId.setReadOnly(true);
 			}
 
 			DynamicGridCell cellSurname = row.getCells().newCell(getColumnById(COLUMN_SURNAME), DynamicCellType.STRING);
@@ -340,11 +346,12 @@ public class Logic extends BaseLogic
 
 			DynamicGridCell cellConsultant = row.getCells().newCell(getColumnById(COLUMN_CONSULTANT), DynamicCellType.STRING);
 
+			cellConsultant.setReadOnly(true);
+			
 			if (outpatientEpisode.getSessionIsNotNull() && outpatientEpisode.getSession().getListOwnersIsNotNull() && outpatientEpisode.getSession().getListOwners().size() > 0 && outpatientEpisode.getSession().getListOwners().get(0).getHcpIsNotNull() && outpatientEpisode.getSession().getListOwners().get(0).getHcp().getName() != null)
 			{
 				cellConsultant.setValue(outpatientEpisode.getSession().getListOwners().get(0).getHcp().getName().toString());
 				cellConsultant.setTooltip(outpatientEpisode.getSession().getListOwners().get(0).getHcp().getName().toString());
-				cellConsultant.setReadOnly(true);
 			}
 
 			DynamicGridCell cellActivityType = row.getCells().newCell(getColumnById(COLUMN_ACTIVITY_TYPE), DynamicCellType.STRING);

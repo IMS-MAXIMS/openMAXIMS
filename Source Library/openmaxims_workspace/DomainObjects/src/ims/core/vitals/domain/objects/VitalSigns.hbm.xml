@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:35 -->
+<!-- Generated: 12/10/2015, 13:29 -->
 <hibernate-mapping>
 	<class name="ims.core.vitals.domain.objects.VitalSigns" table="core_vitalsigns" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -373,6 +373,7 @@
  				<column name="recordingirecordingd" not-null="false"  unique="false"   />
  			</property>
  		</component>
+<!-- debug: unrecordedObservationsReason -->
 <!-- debug: !IsAssociation && !IsCollection -->
 
 <!-- debug: !IsLookup -->
@@ -398,6 +399,11 @@
 <!-- debug: IsLookup -->
 		<many-to-one name="patientCausingConcern" class="ims.domain.lookups.LookupInstance" access="field">
 			<column name="lkp_patientcau" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="unrecordedObservationsReason" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_unrecorded" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
 	</class>
 </hibernate-mapping>

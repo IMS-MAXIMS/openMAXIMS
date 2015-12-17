@@ -51,5 +51,5 @@
 	<rulesProviderClassName>ims.rules.UserRulesProvider</rulesProviderClassName>
 	<configFlagsProviderClassName>ims.core.helper.ConfigFlagsDBProvider</configFlagsProviderClassName>
 	<assessmentRecordingLevel>3</assessmentRecordingLevel>
-	<defaultTheme>1</defaultTheme>
+	<defaultTheme>2</defaultTheme>
 </init_config>

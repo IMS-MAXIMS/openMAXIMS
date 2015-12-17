@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:35 -->
+<hibernate-mapping>
+	<class name="ims.therapies.treatment.domain.objects.RemedialActivity" table="ther_remedialactivi" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: hibernateClassContent -->
+<!-- debug: activity -->
+<!-- debug: patientPosition -->
+<!-- debug: activityPosition -->
+<!-- debug: sequence -->
+<!-- debug: duration -->
+<!-- debug: activityHeight -->
+<!-- debug: numberPauses -->
+<!-- debug: restPeriod -->
+<!-- debug: averagePause -->
+<!-- debug: independence -->
+<!-- debug: subjectiveObs -->
+<!-- debug: technique -->
+<!-- debug: IsCollection : true -->
+		<!-- collection of Lookup instances -->
+		<list name="technique" table="ther_remedialactivi_technique" lazy="true" access="field">
+			<key foreign-key="remedialactivi_technique_ofk">
+				<column name="owner" sql-type="numeric(10,0)"/>
+			</key>
+			<index column="idx"/>
+			<composite-element class="ims.domain.lookups.LookupInstanceRef">
+				<many-to-one name="instance" class="ims.domain.lookups.LookupInstance" access="field">
+					<column name="instance_id" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+				</many-to-one>
+			</composite-element>
+		</list>
+<!-- debug: material -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="material" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="remedialactivi_material_fk">
+				<column name="ther_remedialactivi_material" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.therapies.treatment.domain.objects.RemedialMaterial" />
+		</set>
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: IsLookup -->
+		<many-to-one name="activity" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_activity" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="patientPosition" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_patientpos" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="activityPosition" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_activitypo" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="sequence" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_c_sequen" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="duration" type="integer" access="field" update="true">
+			<column name="duration"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="activityHeight" type="integer" access="field" update="true">
+			<column name="activityhe"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="numberPauses" type="string" access="field" update="true" > 
+			<column name="numberpaus" length="30"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="restPeriod" type="integer" access="field" update="true">
+			<column name="restperiod"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="averagePause" type="integer" access="field" update="true">
+			<column name="averagepau"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="independence" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_independen" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="subjectiveObs" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_subjective" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+	</class>
+</hibernate-mapping>

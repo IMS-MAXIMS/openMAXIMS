@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.core.vo.domain;
@@ -78,6 +83,30 @@ public class PersonAddressAssembler
 		valueObjectDest.setPCT(valueObjectSrc.getPCT());
 		// Otherphone
 		valueObjectDest.setOtherphone(valueObjectSrc.getOtherphone());
+		// AreaOfResidence
+		valueObjectDest.setAreaOfResidence(valueObjectSrc.getAreaOfResidence());
+		// pafkey
+		valueObjectDest.setPafkey(valueObjectSrc.getPafkey());
+		// description
+		valueObjectDest.setDescription(valueObjectSrc.getDescription());
+		// objectidentifier
+		valueObjectDest.setObjectidentifier(valueObjectSrc.getObjectidentifier());
+		// beffdate
+		valueObjectDest.setBeffdate(valueObjectSrc.getBeffdate());
+		// beffdatecnf
+		valueObjectDest.setBeffdatecnf(valueObjectSrc.getBeffdatecnf());
+		// betdate
+		valueObjectDest.setBetdate(valueObjectSrc.getBetdate());
+		// betdatecnf
+		valueObjectDest.setBetdatecnf(valueObjectSrc.getBetdatecnf());
+		// pdsUpdateMode
+		valueObjectDest.setPdsUpdateMode(valueObjectSrc.getPdsUpdateMode());
+		// Country
+		valueObjectDest.setCountry(valueObjectSrc.getCountry());
+		// NoFixedAbode
+		valueObjectDest.setNoFixedAbode(valueObjectSrc.getNoFixedAbode());
+		// CareHome
+		valueObjectDest.setCareHome(valueObjectSrc.getCareHome());
 	 	return valueObjectDest;
 	 }
 
@@ -472,6 +501,140 @@ public class PersonAddressAssembler
 		valueObject.setPCT(domainObject.getPCT());
 		// Otherphone
 		valueObject.setOtherphone(domainObject.getOtherphone());
+		// AreaOfResidence
+		ims.domain.lookups.LookupInstance instance15 = domainObject.getAreaOfResidence();
+		if ( null != instance15 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance15.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance15.getImage().getImageId(), instance15.getImage().getImagePath());
+			}
+			color = instance15.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.ntpf_ptr.vo.lookups.AreaOfResidence voLookup15 = new ims.ntpf_ptr.vo.lookups.AreaOfResidence(instance15.getId(),instance15.getText(), instance15.isActive(), null, img, color);
+			ims.ntpf_ptr.vo.lookups.AreaOfResidence parentVoLookup15 = voLookup15;
+			ims.domain.lookups.LookupInstance parent15 = instance15.getParent();
+			while (parent15 != null)
+			{
+				if (parent15.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent15.getImage().getImageId(), parent15.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent15.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup15.setParent(new ims.ntpf_ptr.vo.lookups.AreaOfResidence(parent15.getId(),parent15.getText(), parent15.isActive(), null, img, color));
+				parentVoLookup15 = parentVoLookup15.getParent();
+								parent15 = parent15.getParent();
+			}			
+			valueObject.setAreaOfResidence(voLookup15);
+		}
+				// pafkey
+		valueObject.setPafkey(domainObject.getPafkey());
+		// description
+		valueObject.setDescription(domainObject.getDescription());
+		// objectidentifier
+		valueObject.setObjectidentifier(domainObject.getObjectidentifier());
+		// beffdate
+		java.util.Date beffdate = domainObject.getBeffdate();
+		if ( null != beffdate ) 
+		{
+			valueObject.setBeffdate(new ims.framework.utils.Date(beffdate) );
+		}
+		// beffdatecnf
+		valueObject.setBeffdatecnf( domainObject.isBeffdatecnf() );
+		// betdate
+		java.util.Date betdate = domainObject.getBetdate();
+		if ( null != betdate ) 
+		{
+			valueObject.setBetdate(new ims.framework.utils.Date(betdate) );
+		}
+		// betdatecnf
+		valueObject.setBetdatecnf( domainObject.isBetdatecnf() );
+		// pdsUpdateMode
+		ims.domain.lookups.LookupInstance instance23 = domainObject.getPdsUpdateMode();
+		if ( null != instance23 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance23.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance23.getImage().getImageId(), instance23.getImage().getImagePath());
+			}
+			color = instance23.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.PDSUpdateMode voLookup23 = new ims.core.vo.lookups.PDSUpdateMode(instance23.getId(),instance23.getText(), instance23.isActive(), null, img, color);
+			ims.core.vo.lookups.PDSUpdateMode parentVoLookup23 = voLookup23;
+			ims.domain.lookups.LookupInstance parent23 = instance23.getParent();
+			while (parent23 != null)
+			{
+				if (parent23.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent23.getImage().getImageId(), parent23.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent23.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup23.setParent(new ims.core.vo.lookups.PDSUpdateMode(parent23.getId(),parent23.getText(), parent23.isActive(), null, img, color));
+				parentVoLookup23 = parentVoLookup23.getParent();
+								parent23 = parent23.getParent();
+			}			
+			valueObject.setPdsUpdateMode(voLookup23);
+		}
+				// Country
+		ims.domain.lookups.LookupInstance instance24 = domainObject.getCountry();
+		if ( null != instance24 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance24.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance24.getImage().getImageId(), instance24.getImage().getImagePath());
+			}
+			color = instance24.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.Country voLookup24 = new ims.core.vo.lookups.Country(instance24.getId(),instance24.getText(), instance24.isActive(), null, img, color);
+			ims.core.vo.lookups.Country parentVoLookup24 = voLookup24;
+			ims.domain.lookups.LookupInstance parent24 = instance24.getParent();
+			while (parent24 != null)
+			{
+				if (parent24.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent24.getImage().getImageId(), parent24.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent24.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup24.setParent(new ims.core.vo.lookups.Country(parent24.getId(),parent24.getText(), parent24.isActive(), null, img, color));
+				parentVoLookup24 = parentVoLookup24.getParent();
+								parent24 = parent24.getParent();
+			}			
+			valueObject.setCountry(voLookup24);
+		}
+				// NoFixedAbode
+		valueObject.setNoFixedAbode( domainObject.isNoFixedAbode() );
+		// CareHome
+		valueObject.setCareHome( domainObject.isCareHome() );
  		return valueObject;
 	 }
 
@@ -621,6 +784,69 @@ public class PersonAddressAssembler
 			valueObject.setOtherphone(null);
 		}
 		domainObject.setOtherphone(valueObject.getOtherphone());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value15 = null;
+		if ( null != valueObject.getAreaOfResidence() ) 
+		{
+			value15 =
+				domainFactory.getLookupInstance(valueObject.getAreaOfResidence().getID());
+		}
+		domainObject.setAreaOfResidence(value15);
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getPafkey() != null && valueObject.getPafkey().equals(""))
+		{
+			valueObject.setPafkey(null);
+		}
+		domainObject.setPafkey(valueObject.getPafkey());
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getDescription() != null && valueObject.getDescription().equals(""))
+		{
+			valueObject.setDescription(null);
+		}
+		domainObject.setDescription(valueObject.getDescription());
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getObjectidentifier() != null && valueObject.getObjectidentifier().equals(""))
+		{
+			valueObject.setObjectidentifier(null);
+		}
+		domainObject.setObjectidentifier(valueObject.getObjectidentifier());
+		java.util.Date value19 = null;
+		ims.framework.utils.Date date19 = valueObject.getBeffdate();		
+		if ( date19 != null ) 
+		{
+			value19 = date19.getDate();
+		}
+		domainObject.setBeffdate(value19);
+		domainObject.setBeffdatecnf(valueObject.getBeffdatecnf());
+		java.util.Date value21 = null;
+		ims.framework.utils.Date date21 = valueObject.getBetdate();		
+		if ( date21 != null ) 
+		{
+			value21 = date21.getDate();
+		}
+		domainObject.setBetdate(value21);
+		domainObject.setBetdatecnf(valueObject.getBetdatecnf());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value23 = null;
+		if ( null != valueObject.getPdsUpdateMode() ) 
+		{
+			value23 =
+				domainFactory.getLookupInstance(valueObject.getPdsUpdateMode().getID());
+		}
+		domainObject.setPdsUpdateMode(value23);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value24 = null;
+		if ( null != valueObject.getCountry() ) 
+		{
+			value24 =
+				domainFactory.getLookupInstance(valueObject.getCountry().getID());
+		}
+		domainObject.setCountry(value24);
+		domainObject.setNoFixedAbode(valueObject.getNoFixedAbode());
+		domainObject.setCareHome(valueObject.getCareHome());
 
 		return domainObject;
 	}

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -34,6 +39,7 @@ import ims.nursing.vo.WaterlowAssessmentDetailsVo;
 import ims.nursing.vo.WaterlowAssessmentDetailsVoCollection;
 import ims.nursing.vo.WaterlowAssessmentVo;
 import ims.nursing.vo.WaterlowAssessmentVoCollection;
+import ims.nursing.vo.WaterlowViewSearchCriteriaVo;
 
 public class Logic extends BaseLogic
 {
@@ -60,7 +66,23 @@ public class Logic extends BaseLogic
 		form.cmbFilter().newRow(ALL,"All");
 		
 		form.cmbFilter().setValue(LAST_SIX_MONTHS);
-		filterValueChanged();
+		
+		//WDEV-19389 
+		if (!(form.getGlobalContext().Core.getCurrentCareContextIsNotNull() && form.getGlobalContext().Nursing.getWaterlowViewSearchCriteriaIsNotNull() && form.getGlobalContext().Core.getCurrentCareContext().equals(form.getGlobalContext().Nursing.getWaterlowViewSearchCriteria().getCareContext())))
+			form.getGlobalContext().Nursing.setWaterlowViewSearchCriteria(null);
+		
+		if(form.getGlobalContext().Nursing.getWaterlowViewSearchCriteriaIsNotNull())
+		{
+			setSearchCriteria(form.getGlobalContext().Nursing.getWaterlowViewSearchCriteria());
+			try
+			{
+				onCmbFilterValueChanged();
+			}catch (PresentationLogicException e){e.printStackTrace();}
+		}
+		else
+			filterValueChanged();
+		//WDEV-19389 - end
+
 	
 		if(form.cmbRecordToUpdate().getValue() ==null)
 		{
@@ -70,6 +92,60 @@ public class Logic extends BaseLogic
 		else
 			form.getLocalContext().setWaterlowAssessmentVo(form.cmbRecordToUpdate().getValue());
 	}
+	
+	
+	private WaterlowViewSearchCriteriaVo getSearchCriteria()
+	{
+		WaterlowViewSearchCriteriaVo searchCriteria = new WaterlowViewSearchCriteriaVo();
+		
+		searchCriteria.setFilter(form.cmbFilter().getValue());
+		searchCriteria.setCareContext(form.getGlobalContext().Core.getCurrentCareContext());
+		
+		return searchCriteria;
+	}
+		
+	private void setSearchCriteria(WaterlowViewSearchCriteriaVo waterlowViewSearchCriteriaVo)
+	{
+		form.cmbFilter().setValue(waterlowViewSearchCriteriaVo.getFilter());		
+	}
+
+//	private void setViewType(Integer searchType)
+//	{
+//		if (searchType == null)
+//			return;
+//		
+//		switch (searchType)
+//		{
+//		case LIST_ALL:
+//			form.Group1().setValue(Group1Enumeration.rdoAll);
+//			break;
+//		case LIST_ACTIVE:
+//			form.Group1().setValue(Group1Enumeration.rdoCurrent);
+//			break;
+//		}				
+//	}
+//
+//	private String getViewType()
+//	{
+//		if (LAST_SIX_MONTHS.equals(form.cmbFilter().getValue()))
+//		{
+//			return LAST_SIX_MONTHS;
+//		}
+//		if (LAST_MONTH.equals(form.cmbFilter().getValue()))
+//		{
+//			return LAST_MONTH;
+//		}
+//		if (LAST_YEAR.equals(form.cmbFilter().getValue()))
+//		{
+//			return LAST_YEAR;
+//		}
+//		if (ALL.equals(form.cmbFilter().getValue()))
+//		{
+//			return ALL;
+//		}
+//		
+//		return null;
+//	}
 	
 	private void filterValueChanged()
 	{
@@ -176,7 +252,7 @@ public class Logic extends BaseLogic
 	{
 		form.getLocalContext().setGroupIndex(new Integer(0));
 		loadAssessmentRecords();
-		
+		form.getGlobalContext().Nursing.setWaterlowViewSearchCriteria(getSearchCriteria()); // WDEV-19389 
 		updateControlsState();
 	}
 	protected void updateControlsState()

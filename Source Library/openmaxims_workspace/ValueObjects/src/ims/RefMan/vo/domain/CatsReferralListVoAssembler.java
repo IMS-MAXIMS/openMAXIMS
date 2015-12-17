@@ -1,9 +1,33 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.RefMan.vo.domain;
@@ -75,10 +99,6 @@ public class CatsReferralListVoAssembler
 		valueObjectDest.setIsFitForSurgery(valueObjectSrc.getIsFitForSurgery());
 		// hasTheatreAppt
 		valueObjectDest.setHasTheatreAppt(valueObjectSrc.getHasTheatreAppt());
-		// hasDNAApptsForReview
-		valueObjectDest.setHasDNAApptsForReview(valueObjectSrc.getHasDNAApptsForReview());
-		// hasCancelledApptsForReview
-		valueObjectDest.setHasCancelledApptsForReview(valueObjectSrc.getHasCancelledApptsForReview());
 		// isCurrentlyAllocated
 		valueObjectDest.setIsCurrentlyAllocated(valueObjectSrc.getIsCurrentlyAllocated());
 		// isAwaitingClinicalInfo
@@ -97,6 +117,18 @@ public class CatsReferralListVoAssembler
 		valueObjectDest.setAdminEvent(valueObjectSrc.getAdminEvent());
 		// PathwayID
 		valueObjectDest.setPathwayID(valueObjectSrc.getPathwayID());
+		// numProviderCancelledAppts
+		valueObjectDest.setNumProviderCancelledAppts(valueObjectSrc.getNumProviderCancelledAppts());
+		// numPatientCancelledAppts
+		valueObjectDest.setNumPatientCancelledAppts(valueObjectSrc.getNumPatientCancelledAppts());
+		// ConsultationActivityRequired
+		valueObjectDest.setConsultationActivityRequired(valueObjectSrc.getConsultationActivityRequired());
+		// PatientCategory
+		valueObjectDest.setPatientCategory(valueObjectSrc.getPatientCategory());
+		// IsEmergencyReferral
+		valueObjectDest.setIsEmergencyReferral(valueObjectSrc.getIsEmergencyReferral());
+		// ICABReferral
+		valueObjectDest.setICABReferral(valueObjectSrc.getICABReferral());
 	 	return valueObjectDest;
 	 }
 
@@ -527,10 +559,6 @@ public class CatsReferralListVoAssembler
 		valueObject.setIsFitForSurgery( domainObject.isIsFitForSurgery() );
 		// hasTheatreAppt
 		valueObject.setHasTheatreAppt( domainObject.isHasTheatreAppt() );
-		// hasDNAApptsForReview
-		valueObject.setHasDNAApptsForReview( domainObject.isHasDNAApptsForReview() );
-		// hasCancelledApptsForReview
-		valueObject.setHasCancelledApptsForReview( domainObject.isHasCancelledApptsForReview() );
 		// isCurrentlyAllocated
 		valueObject.setIsCurrentlyAllocated( domainObject.isIsCurrentlyAllocated() );
 		// isAwaitingClinicalInfo
@@ -576,6 +604,52 @@ public class CatsReferralListVoAssembler
 		valueObject.setAdminEvent(AdminEvent);
 		// PathwayID
 		valueObject.setPathwayID(domainObject.getPathwayID());
+		// numProviderCancelledAppts
+		valueObject.setNumProviderCancelledAppts(domainObject.getNumProviderCancelledAppts());
+		// numPatientCancelledAppts
+		valueObject.setNumPatientCancelledAppts(domainObject.getNumPatientCancelledAppts());
+		// ConsultationActivityRequired
+		valueObject.setConsultationActivityRequired( domainObject.isConsultationActivityRequired() );
+		// PatientCategory
+		ims.domain.lookups.LookupInstance instance35 = domainObject.getPatientCategory();
+		if ( null != instance35 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance35.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance35.getImage().getImageId(), instance35.getImage().getImagePath());
+			}
+			color = instance35.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.PatientStatus voLookup35 = new ims.core.vo.lookups.PatientStatus(instance35.getId(),instance35.getText(), instance35.isActive(), null, img, color);
+			ims.core.vo.lookups.PatientStatus parentVoLookup35 = voLookup35;
+			ims.domain.lookups.LookupInstance parent35 = instance35.getParent();
+			while (parent35 != null)
+			{
+				if (parent35.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent35.getImage().getImageId(), parent35.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent35.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup35.setParent(new ims.core.vo.lookups.PatientStatus(parent35.getId(),parent35.getText(), parent35.isActive(), null, img, color));
+				parentVoLookup35 = parentVoLookup35.getParent();
+								parent35 = parent35.getParent();
+			}			
+			valueObject.setPatientCategory(voLookup35);
+		}
+				// IsEmergencyReferral
+		valueObject.setIsEmergencyReferral( domainObject.isIsEmergencyReferral() );
+		// ICABReferral
+		valueObject.setICABReferral(ims.admin.vo.domain.ICABReferralLiteVoAssembler.create(map, domainObject.getICABReferral()) );
  		return valueObject;
 	 }
 
@@ -753,73 +827,71 @@ public class CatsReferralListVoAssembler
 		domainObject.setIsSuitableForSurgery(valueObject.getIsSuitableForSurgery());
 		domainObject.setIsFitForSurgery(valueObject.getIsFitForSurgery());
 		domainObject.setHasTheatreAppt(valueObject.getHasTheatreAppt());
-		domainObject.setHasDNAApptsForReview(valueObject.getHasDNAApptsForReview());
-		domainObject.setHasCancelledApptsForReview(valueObject.getHasCancelledApptsForReview());
 		domainObject.setIsCurrentlyAllocated(valueObject.getIsCurrentlyAllocated());
 		domainObject.setIsAwaitingClinicalInfo(valueObject.getIsAwaitingClinicalInfo());
 	// SaveAsRefVO - treated as a refVo in extract methods
-	ims.RefMan.domain.objects.AwaitingClinicalInfo value27 = null;
+	ims.RefMan.domain.objects.AwaitingClinicalInfo value25 = null;
 		if ( null != valueObject.getAwaitingClinicalInfo() ) 
 		{
 			if (valueObject.getAwaitingClinicalInfo().getBoId() == null)
 			{
 				if (domMap.get(valueObject.getAwaitingClinicalInfo()) != null)
 				{
-					value27 = (ims.RefMan.domain.objects.AwaitingClinicalInfo)domMap.get(valueObject.getAwaitingClinicalInfo());
+					value25 = (ims.RefMan.domain.objects.AwaitingClinicalInfo)domMap.get(valueObject.getAwaitingClinicalInfo());
 				}
 			}
 			else
 			{
-				value27 = (ims.RefMan.domain.objects.AwaitingClinicalInfo)domainFactory.getDomainObject(ims.RefMan.domain.objects.AwaitingClinicalInfo.class, valueObject.getAwaitingClinicalInfo().getBoId());
+				value25 = (ims.RefMan.domain.objects.AwaitingClinicalInfo)domainFactory.getDomainObject(ims.RefMan.domain.objects.AwaitingClinicalInfo.class, valueObject.getAwaitingClinicalInfo().getBoId());
 			}
 		}
-		domainObject.setAwaitingClinicalInfo(value27);
-		ims.core.resource.place.domain.objects.Location value28 = null;
+		domainObject.setAwaitingClinicalInfo(value25);
+		ims.core.resource.place.domain.objects.Location value26 = null;
 		if ( null != valueObject.getOPDLocation() ) 
 		{
 			if (valueObject.getOPDLocation().getBoId() == null)
 			{
 				if (domMap.get(valueObject.getOPDLocation()) != null)
 				{
-					value28 = (ims.core.resource.place.domain.objects.Location)domMap.get(valueObject.getOPDLocation());
+					value26 = (ims.core.resource.place.domain.objects.Location)domMap.get(valueObject.getOPDLocation());
 				}
 			}
 			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
 			{
-				value28 = domainObject.getOPDLocation();	
+				value26 = domainObject.getOPDLocation();	
 			}
 			else
 			{
-				value28 = (ims.core.resource.place.domain.objects.Location)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.Location.class, valueObject.getOPDLocation().getBoId());
+				value26 = (ims.core.resource.place.domain.objects.Location)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.Location.class, valueObject.getOPDLocation().getBoId());
 			}
 		}
-		domainObject.setOPDLocation(value28);
-		java.util.Date value29 = null;
-		ims.framework.utils.Date date29 = valueObject.getSuitableForSurgeryDate();		
-		if ( date29 != null ) 
+		domainObject.setOPDLocation(value26);
+		java.util.Date value27 = null;
+		ims.framework.utils.Date date27 = valueObject.getSuitableForSurgeryDate();		
+		if ( date27 != null ) 
 		{
-			value29 = date29.getDate();
+			value27 = date27.getDate();
 		}
-		domainObject.setSuitableForSurgeryDate(value29);
-		java.util.Date value30 = null;
-		ims.framework.utils.Date date30 = valueObject.getEndOfCareDate();		
-		if ( date30 != null ) 
+		domainObject.setSuitableForSurgeryDate(value27);
+		java.util.Date value28 = null;
+		ims.framework.utils.Date date28 = valueObject.getEndOfCareDate();		
+		if ( date28 != null ) 
 		{
-			value30 = date30.getDate();
+			value28 = date28.getDate();
 		}
-		domainObject.setEndOfCareDate(value30);
+		domainObject.setEndOfCareDate(value28);
 		domainObject.setContract(ims.RefMan.vo.domain.ContractConfigShortVoAssembler.extractContractConfig(domainFactory, valueObject.getContract(), domMap));
 
-		ims.pathways.vo.AdminEventRefVoCollection refCollection32 = valueObject.getAdminEvent();
-		int size32 = (null == refCollection32) ? 0 : refCollection32.size();		
-		java.util.List domainAdminEvent32 = domainObject.getAdminEvent();
-		if (domainAdminEvent32 == null)
+		ims.pathways.vo.AdminEventRefVoCollection refCollection30 = valueObject.getAdminEvent();
+		int size30 = (null == refCollection30) ? 0 : refCollection30.size();		
+		java.util.List domainAdminEvent30 = domainObject.getAdminEvent();
+		if (domainAdminEvent30 == null)
 		{
-			domainAdminEvent32 = new java.util.ArrayList();
+			domainAdminEvent30 = new java.util.ArrayList();
 		}
-		for(int i=0; i < size32; i++) 
+		for(int i=0; i < size30; i++) 
 		{
-			ims.pathways.vo.AdminEventRefVo vo = refCollection32.get(i);			
+			ims.pathways.vo.AdminEventRefVo vo = refCollection30.get(i);			
 			ims.pathways.domain.objects.AdminEvent dom = null;
 			if ( null != vo ) 
 			{
@@ -836,29 +908,29 @@ public class CatsReferralListVoAssembler
 				}
 			}
 
-			int domIdx = domainAdminEvent32.indexOf(dom);
+			int domIdx = domainAdminEvent30.indexOf(dom);
 			if (domIdx == -1)
 			{
-				domainAdminEvent32.add(i, dom);
+				domainAdminEvent30.add(i, dom);
 			}
-			else if (i != domIdx && i < domainAdminEvent32.size())
+			else if (i != domIdx && i < domainAdminEvent30.size())
 			{
-				Object tmp = domainAdminEvent32.get(i);
-				domainAdminEvent32.set(i, domainAdminEvent32.get(domIdx));
-				domainAdminEvent32.set(domIdx, tmp);
+				Object tmp = domainAdminEvent30.get(i);
+				domainAdminEvent30.set(i, domainAdminEvent30.get(domIdx));
+				domainAdminEvent30.set(domIdx, tmp);
 			}
 		}
 		
 		//Remove all ones in domList where index > voCollection.size() as these should
 		//now represent the ones removed from the VO collection. No longer referenced.
-		int i32 = domainAdminEvent32.size();
-		while (i32 > size32)
+		int i30 = domainAdminEvent30.size();
+		while (i30 > size30)
 		{
-			domainAdminEvent32.remove(i32-1);
-			i32 = domainAdminEvent32.size();
+			domainAdminEvent30.remove(i30-1);
+			i30 = domainAdminEvent30.size();
 		}
 		
-		domainObject.setAdminEvent(domainAdminEvent32);		
+		domainObject.setAdminEvent(domainAdminEvent30);		
 		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
 		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
 		if (valueObject.getPathwayID() != null && valueObject.getPathwayID().equals(""))
@@ -866,6 +938,19 @@ public class CatsReferralListVoAssembler
 			valueObject.setPathwayID(null);
 		}
 		domainObject.setPathwayID(valueObject.getPathwayID());
+		domainObject.setNumProviderCancelledAppts(valueObject.getNumProviderCancelledAppts());
+		domainObject.setNumPatientCancelledAppts(valueObject.getNumPatientCancelledAppts());
+		domainObject.setConsultationActivityRequired(valueObject.getConsultationActivityRequired());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value35 = null;
+		if ( null != valueObject.getPatientCategory() ) 
+		{
+			value35 =
+				domainFactory.getLookupInstance(valueObject.getPatientCategory().getID());
+		}
+		domainObject.setPatientCategory(value35);
+		domainObject.setIsEmergencyReferral(valueObject.getIsEmergencyReferral());
+		domainObject.setICABReferral(ims.admin.vo.domain.ICABReferralLiteVoAssembler.extractICABReferral(domainFactory, valueObject.getICABReferral(), domMap));
 
 		return domainObject;
 	}

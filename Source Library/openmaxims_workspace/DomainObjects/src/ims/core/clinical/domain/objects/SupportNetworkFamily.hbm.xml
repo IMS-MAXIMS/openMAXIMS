@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:34 -->
+<!-- Generated: 12/10/2015, 13:28 -->
 <hibernate-mapping>
 	<class name="ims.core.clinical.domain.objects.SupportNetworkFamily" table="core_supportnetwor2" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -43,9 +43,8 @@
 <!-- debug: discussProgress -->
 <!-- debug: patient -->
 <!-- debug: field.IsAssociation : true -->
-		<!-- A one-to-one relationship using a foreign-key is mapping as a
-			many-to-one with a uniqueness contraint -->
-		<many-to-one name="patient" class="ims.core.patient.domain.objects.Patient" unique="true" foreign-key="supportnetwor2_patient_fk" access="field" cascade="save-update">
+		<!-- many to one -->
+		<many-to-one name="patient" class="ims.core.patient.domain.objects.Patient" foreign-key="supportnetwor2_patient_fk" access="field" cascade="save-update">
 			<column name="patient" sql-type="numeric(10,0)" not-null="true" unique="false"  index='pat_fam_idx' />
 		</many-to-one>
 <!-- debug: authoringInfo -->

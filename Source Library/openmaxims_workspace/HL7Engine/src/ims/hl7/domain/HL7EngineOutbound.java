@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -38,6 +43,7 @@ import ims.admin.domain.OrganisationAndLocation;
 import ims.admin.vo.ConfigPropertyVo;
 import ims.admin.vo.DemographicFeedVo;
 import ims.admin.vo.EDAttendanceFeedVo;
+import ims.admin.vo.InPatientADTFeedVo;
 import ims.configuration.BuildInfo;
 import ims.configuration.gen.ConfigFlag;
 import ims.configuration.ConfigItems;
@@ -60,31 +66,64 @@ import ims.domain.exceptions.DomainRuntimeException;
 import ims.domain.exceptions.StaleObjectException;
 import ims.domain.impl.DomainImplFlyweightFactory;
 import ims.domain.lookups.LookupService;
+import ims.dtomove.vo.RadioTherapySchedQueueVo;
 import ims.framework.cn.Notifier;
 import ims.framework.enumerations.SystemLogLevel;
 import ims.framework.enumerations.SystemLogType;
 import ims.framework.utils.DateTime;
 import ims.hl7.HL7Config;
 import ims.hl7.domain.mapping.A01VoMapper;
+import ims.hl7.domain.mapping.A02VoMapper;
 import ims.hl7.domain.mapping.A03VoMapper;
+import ims.hl7.domain.mapping.A05VoMapper;
 import ims.hl7.domain.mapping.A08VoMapper;
 import ims.hl7.domain.mapping.A10VoMapper;
 import ims.hl7.domain.mapping.A11VoMapper;
+import ims.hl7.domain.mapping.A12VoMapper;
 import ims.hl7.domain.mapping.A13VoMapper;
+import ims.hl7.domain.mapping.A15VoMapper; //WDEV-19974
+import ims.hl7.domain.mapping.A16VoMapper;
+import ims.hl7.domain.mapping.A21VoMapper;
+import ims.hl7.domain.mapping.A22VoMapper;
+import ims.hl7.domain.mapping.A25VoMapper;
+import ims.hl7.domain.mapping.A26VoMapper; //WDEV-19974
 import ims.hl7.domain.mapping.A28VoMapper;
+import ims.hl7.domain.mapping.A29VoMapper;
 import ims.hl7.domain.mapping.A31VoMapper;
+import ims.hl7.domain.mapping.A38VoMapper;
 import ims.hl7.domain.mapping.A40VoMapper;
 import ims.hl7.domain.mapping.A47VoMapper;
+import ims.hl7.domain.mapping.A52VoMapper;
+import ims.hl7.domain.mapping.A53VoMapper;
+import ims.hl7.domain.mapping.M02VoMapper;
+//import ims.hl7.domain.mapping.M04VoMapper;
+import ims.hl7.domain.mapping.M05VoMapper;
 import ims.hl7.domain.mapping.O01VoMapper;
 import ims.hl7.domain.mapping.O02VoMapper;
 import ims.hl7.domain.mapping.O19VoMapper;
 import ims.hl7.domain.mapping.O20VoMapper;
+//import ims.hl7.domain.mapping.P01VoMapper;
+//import ims.hl7.domain.mapping.P02VoMapper;
+//import ims.hl7.domain.mapping.P03VoMapper;
+//import ims.hl7.domain.mapping.P05VoMapper;
+import ims.hl7.domain.mapping.S12VoMapper;
+import ims.hl7.domain.mapping.S13VoMapper;
+import ims.hl7.domain.mapping.S14VoMapper;
+import ims.hl7.domain.mapping.S15VoMapper;
+import ims.hl7.domain.mapping.S26VoMapper;
 import ims.hl7.domain.mapping.T02VoMapper;
 import ims.hl7.domain.mapping.VoMapper;
 import ims.hl7.interfaces.IHL7InterfaceComponent;
 import ims.hl7.utils.EvnCodes;
 import ims.hl7.utils.HL7Utils;
+import ims.hl7.vo.ChargeDescMessQueueVo;
+import ims.hl7.vo.ElectiveListMessageQueueVo;
+import ims.hl7.vo.FinTransMessQueueVo;
+import ims.hl7.vo.GPMessageQueueVo;
+import ims.hl7.vo.GPPracticeMessageQueueVo;
 import ims.hl7.vo.HL7OutboundSaveVo;
+import ims.hl7.vo.MOSMessageQueueVo;
+import ims.hl7.vo.WardMessageQueueVo;
 import ims.hl7.vo.lookups.MessageType;
 import ims.ocrr.orderingresults.vo.OcsOrderSessionRefVo;
 import ims.ocrr.vo.ProviderSystemVo;
@@ -106,8 +145,10 @@ import ims.ocs_if.vo.IfOrderMessageVoCollection;
 import ims.ocs_if.vo.IfOrderSpecimenVo;
 import ims.ocs_if.vo.IfOrderSpecimenVoCollection;
 import ims.ocs_if.vo.IfOutOcsOrderVo;
+import ims.ocs_if.vo.InpatientEpisodeQueueVo;
 import ims.ocs_if.vo.OrderChangeResponseVo;
 import ims.ocs_if.vo.QueuedEventVo;
+import ims.scheduling.vo.AppointmentMessageQueueVo;
 import ims.scheduling.vo.ExternalEventVo;
 import ims.scheduling.vo.lookups.ExternalSystemEventTypes;
 import ims.vo.interfaces.IHL7OutboundMessageHandler;
@@ -159,6 +200,39 @@ public class HL7EngineOutbound extends Thread implements IHL7InterfaceComponent
 	private A03VoMapper a03mapper;
 	private A11VoMapper a11mapper;
 	private A13VoMapper a13mapper;
+	private S12VoMapper s12mapper;
+	private S13VoMapper s13mapper; //WDEV-19160
+	private S14VoMapper s14mapper; //WDEV-19160
+	private S15VoMapper s15mapper;
+	private S26VoMapper s26mapper;
+	
+	private A02VoMapper a02mapper; //WDEV-19481
+	private A12VoMapper a12mapper; //WDEV-19481
+	private A21VoMapper a21mapper; //WDEV-19481
+	private A22VoMapper a22mapper; //WDEV-19481
+	private A52VoMapper a52mapper; //WDEV-19481
+	private A53VoMapper a53mapper; //WDEV-19481
+	
+	private M02VoMapper m02mapper; //WDEV-19576
+	private M05VoMapper m05mapper; //WDEV-19576
+
+	private A05VoMapper a05mapper; //WDEV-19704
+	private A38VoMapper a38mapper; //WDEV-19704
+
+	private A15VoMapper a15mapper; //WDEV-19974
+	private A26VoMapper a26mapper; //WDEV-19974
+
+	private A16VoMapper a16mapper; //WDEV-20445
+	private A25VoMapper a25mapper; //WDEV-20445
+	
+	private A29VoMapper a29mapper; //WDEV-20593
+	
+//	private P01VoMapper p01mapper; //WDEV-22725
+//	private P02VoMapper p02mapper; //WDEV-22725	
+//	private P03VoMapper p03mapper; //WDEV-22725
+//	private P05VoMapper p05mapper; //WDEV-22725
+//	private M04VoMapper m04mapper; //WDEV-22725
+
 	private HL7MessageParser parser;
 	private DateTime startTime;
 
@@ -263,7 +337,150 @@ public class HL7EngineOutbound extends Thread implements IHL7InterfaceComponent
 		{
 			throw new Exception("No VoMapper found for A13");
 		}
+		s12mapper=(S12VoMapper) voMappers.get(EvnCodes.S12);
+		if(s12mapper==null)
+		{
+			throw new Exception("No VoMapper found for S12");
+		}
 
+		//WDEV-19160
+		s13mapper=(S13VoMapper) voMappers.get(EvnCodes.S13);
+		if(s13mapper==null)
+		{
+			throw new Exception("No VoMapper found for S13");
+		}
+		s14mapper=(S14VoMapper) voMappers.get(EvnCodes.S14);
+		if(s14mapper==null)
+		{
+			throw new Exception("No VoMapper found for S14");
+		}
+		s15mapper=(S15VoMapper) voMappers.get(EvnCodes.S15);
+		if(s15mapper==null)
+		{
+			throw new Exception("No VoMapper found for S15");
+		}
+		s26mapper=(S26VoMapper) voMappers.get(EvnCodes.S26);
+		if(s26mapper==null)
+		{
+			throw new Exception("No VoMapper found for S26");
+		}
+
+		//WDEV-19481
+		a02mapper=(A02VoMapper) voMappers.get(EvnCodes.A02);
+		if(a02mapper==null)
+		{
+			throw new Exception("No VoMapper found for A02");
+		}
+		a12mapper=(A12VoMapper) voMappers.get(EvnCodes.A12);
+		if(a12mapper==null)
+		{
+			throw new Exception("No VoMapper found for A12");
+		}
+		a21mapper=(A21VoMapper) voMappers.get(EvnCodes.A21);
+		if(a21mapper==null)
+		{
+			throw new Exception("No VoMapper found for A21");
+		}
+		a22mapper=(A22VoMapper) voMappers.get(EvnCodes.A22);
+		if(a22mapper==null)
+		{
+			throw new Exception("No VoMapper found for A22");
+		}
+		a52mapper=(A52VoMapper) voMappers.get(EvnCodes.A52);
+		if(a52mapper==null)
+		{
+			throw new Exception("No VoMapper found for A52");
+		}
+		a53mapper=(A53VoMapper) voMappers.get(EvnCodes.A53);
+		if(a53mapper==null)
+		{
+			throw new Exception("No VoMapper found for A53");
+		}
+
+		//WDEV-19576
+		m02mapper=(M02VoMapper) voMappers.get(EvnCodes.M02);
+		if(m02mapper==null)
+		{
+			throw new Exception("No VoMapper found for M02");
+		}
+		m05mapper=(M05VoMapper) voMappers.get(EvnCodes.M05);
+		if(m05mapper==null)
+		{
+			throw new Exception("No VoMapper found for M05");
+		}
+
+		//WDEV-19704
+		a05mapper=(A05VoMapper) voMappers.get(EvnCodes.A05);
+		if(a05mapper==null)
+		{
+			throw new Exception("No VoMapper found for A05");
+		}
+		a38mapper=(A38VoMapper) voMappers.get(EvnCodes.A38);
+		if(a38mapper==null)
+		{
+			throw new Exception("No VoMapper found for A38");
+		}
+
+		//WDEV-19974
+		a15mapper=(A15VoMapper) voMappers.get(EvnCodes.A15);
+		if(a15mapper==null)
+		{
+			throw new Exception("No VoMapper found for A15");
+		}
+		a26mapper=(A26VoMapper) voMappers.get(EvnCodes.A26);
+		if(a26mapper==null)
+		{
+			throw new Exception("No VoMapper found for A26");
+		}
+
+		//WDEV-20445
+		a16mapper=(A16VoMapper) voMappers.get(EvnCodes.A16);
+		if(a16mapper==null)
+		{
+			throw new Exception("No VoMapper found for A16");
+		}
+
+		//WDEV-20593
+		a29mapper=(A29VoMapper) voMappers.get(EvnCodes.A29);
+		if(a29mapper==null)
+		{
+			throw new Exception("No VoMapper found for A29");
+		}
+		
+//		//WDEV-22725
+//		p01mapper = (P01VoMapper) voMappers.get(EvnCodes.P01);
+//		if (p01mapper == null)
+//		{
+//			throw new Exception("No VoMapper found for P01");
+//		}
+//		
+//		//WDEV-22725
+//		p02mapper = (P02VoMapper) voMappers.get(EvnCodes.P02);
+//		if (p02mapper == null)
+//		{
+//			throw new Exception("No VoMapper found for P02");
+//		}
+//
+//		//WDEV-22725
+//		p03mapper=(P03VoMapper) voMappers.get(EvnCodes.P03);
+//		if(p03mapper == null)
+//		{
+//			throw new Exception("No VoMapper found for P03");
+//		}
+//
+//		//WDEV-22725
+//		p05mapper = (P05VoMapper) voMappers.get(EvnCodes.P05);
+//		if (p05mapper == null)
+//		{
+//			throw new Exception("No VoMapper found for P05");
+//		}
+//		
+//		//WDEV-22725
+//		m04mapper = (M04VoMapper) voMappers.get(EvnCodes.M04);
+//		if (m04mapper == null)
+//		{
+//			throw new Exception("No VoMapper found for M04");
+//		}
 		
 		login();
 		isRunning = true;
@@ -287,7 +504,40 @@ public class HL7EngineOutbound extends Thread implements IHL7InterfaceComponent
 		loadMapper(EvnCodes.A08);
 		loadMapper(EvnCodes.A11);
 		loadMapper(EvnCodes.A13);
-	}
+		loadMapper(EvnCodes.S12);
+		
+		loadMapper(EvnCodes.S13); //WDEV-19160
+		loadMapper(EvnCodes.S14); //WDEV-19160
+		loadMapper(EvnCodes.S15); //WDEV-19160
+		loadMapper(EvnCodes.S26); //WDEV-19160
+		
+		loadMapper(EvnCodes.A02); //WDEV-19481
+		loadMapper(EvnCodes.A12); //WDEV-19481
+		loadMapper(EvnCodes.A21); //WDEV-19481
+		loadMapper(EvnCodes.A22); //WDEV-19481
+		loadMapper(EvnCodes.A52); //WDEV-19481
+		loadMapper(EvnCodes.A53); //WDEV-19481
+		
+		loadMapper(EvnCodes.M02); //WDEV-19576
+		loadMapper(EvnCodes.M05); //WDEV-19576
+
+		loadMapper(EvnCodes.A05); //WDEV-19704
+		loadMapper(EvnCodes.A38); //WDEV-19704
+		
+		loadMapper(EvnCodes.A15); //WDEV-19974
+		loadMapper(EvnCodes.A26); //WDEV-19974
+
+		loadMapper(EvnCodes.A16); //WDEV-20445
+		loadMapper(EvnCodes.A25); //WDEV-20445
+		
+		loadMapper(EvnCodes.A29); //WDEV-20593
+		
+		loadMapper(EvnCodes.P01); //WDEV-22725
+		loadMapper(EvnCodes.P02); //WDEV-22725
+		loadMapper(EvnCodes.P03); //WDEV-22725
+		loadMapper(EvnCodes.P05); //WDEV-22725
+		loadMapper(EvnCodes.M04); //WDEV-22725
+}
 
 	private void loadMapper(String eventCode)
 	{
@@ -386,6 +636,9 @@ public class HL7EngineOutbound extends Thread implements IHL7InterfaceComponent
 						String msgText = null;
 						String msgCategory = null;
 						PatientRefVo patient = null;
+						//WDEV-19704 For creating A05 message for 'first' appointment
+						String adtMsgText = null;
+						String adtMsgCategory = null;
 						
 						try
 						{
@@ -417,6 +670,12 @@ public class HL7EngineOutbound extends Thread implements IHL7InterfaceComponent
 										msgText = generateA40Message(feedVo.getPatient(), feedVo.getPriorPatient(), feedVo.getMergeHistory().getPatientIds(), feedVo.getProviderSystem().getHl7Application(), feedVo.getProviderSystem());
 									else
 										msgText = generateA40Message(feedVo.getPatient(), feedVo.getPriorPatient(), null, feedVo.getProviderSystem().getHl7Application(), feedVo.getProviderSystem());
+								}
+
+								//WDEV-20593
+								else if (MsgEventType.A29.equals(feedVo.getMsgType()))
+								{
+									msgText = generateA29Message(feedVo.getPatient(), feedVo.getProviderSystem().getHl7Application(), feedVo.getProviderSystem());
 								}
 								
 								msgCategory = feedVo.getMsgType() != null ? feedVo.getMsgType().getText() : null;
@@ -474,25 +733,331 @@ public class HL7EngineOutbound extends Thread implements IHL7InterfaceComponent
 								{
 									msgText=generateADT_A13Message(feedVo);
 								}
+								//http://jira/browse/WDEV-19082
+								msgCategory = feedVo.getMsgType() != null ? feedVo.getMsgType().getText() : null;
+								if(feedVo.getAttendanceIsNotNull())
+								{
+									patient=feedVo.getAttendance().getPatient();
+								}
 							}
-//							else if (QueueType.INPATIENTADT.equals(lastQueuedEvent.getQueueType()))
+							else if (QueueType.APPOINTMENT.equals(lastQueuedEvent.getQueueType()))
+							{
+								event = externalEvents.getEvent(lastQueuedEvent);
+								AppointmentMessageQueueVo feedVo = (AppointmentMessageQueueVo)event;
+								if(MsgEventType.S12.equals(feedVo.getMsgType()))
+								{
+									msgText=generateSIU_S12Message(feedVo);
+									
+									//WDEV-19704 Generate an ADT^A05 message if appointment is a 'first' appointment
+									if(feedVo.getProviderSystem().getConfigurationProperty("PreAdmitADTOnFirstAppointment") != null
+											&& feedVo.getProviderSystem().getConfigurationProperty("PreAdmitADTOnFirstAppointment").getPropertyValue() != null
+											&& feedVo.getProviderSystem().getConfigurationProperty("PreAdmitADTOnFirstAppointment").getPropertyValue().equalsIgnoreCase("TRUE"))
+									{
+										adtMsgText = generateADT_A05For1stApptMessage(feedVo);
+										adtMsgCategory = "A05";
+									}
+									
+								}
+								if(MsgEventType.S13.equals(feedVo.getMsgType()))
+								{
+									msgText=generateSIU_S13Message(feedVo);
+								}
+								if(MsgEventType.S14.equals(feedVo.getMsgType())||MsgEventType.S14UNARRIVE.equals(feedVo.getMsgType())) //WDEV-19563
+								{
+									msgText=generateSIU_S14Message(feedVo);
+								}
+								if(MsgEventType.S15.equals(feedVo.getMsgType()))
+								{
+									msgText=generateSIU_S15Message(feedVo);
+
+									//WDEV-19704 Generate an ADT^A08 message if appointment is a 'first' appointment
+									if(feedVo.getProviderSystem().getConfigurationProperty("PreAdmitADTOnFirstAppointment") != null
+											&& feedVo.getProviderSystem().getConfigurationProperty("PreAdmitADTOnFirstAppointment").getPropertyValue() != null
+											&& feedVo.getProviderSystem().getConfigurationProperty("PreAdmitADTOnFirstAppointment").getPropertyValue().equalsIgnoreCase("TRUE"))
+
+									{
+										adtMsgText = generateADT_A08For1stApptMessage(feedVo);
+										adtMsgCategory = "A08";
+									}
+									
+								}
+								if(MsgEventType.S26.equals(feedVo.getMsgType()))
+								{
+									msgText=generateSIU_S26Message(feedVo);
+								}
+								msgCategory = feedVo.getMsgType() != null ? feedVo.getMsgType().getText() : null;
+								if(feedVo.getAppointment()!=null)
+								{
+									patient=feedVo.getAppointment().getPatient();
+								}
+								msgCategory = feedVo.getMsgType() != null ? feedVo.getMsgType().getText() : null;
+								if(MsgEventType.S14UNARRIVE.getText().equals( msgCategory))
+								{
+									msgCategory=MsgEventType.S14.getText();
+								}
+							}
+
+							//WDEV-19160 - Appointment Scheduling events
+							else if (QueueType.RADIOTHERAPYSCHEDULING.equals(lastQueuedEvent.getQueueType()))
+							{
+								event = externalEvents.getEvent(lastQueuedEvent);
+								RadioTherapySchedQueueVo feedVo = (RadioTherapySchedQueueVo)event;
+								if(MsgEventType.S12.equals(feedVo.getMsgType()))
+								{
+									msgText=generateSIU_S12Message(feedVo);
+								}
+								if(MsgEventType.S13.equals(feedVo.getMsgType()))
+								{
+									msgText=generateSIU_S13Message(feedVo);
+								}
+								if(MsgEventType.S14.equals(feedVo.getMsgType()))
+								{
+									msgText=generateSIU_S14Message(feedVo);
+								}
+								if(MsgEventType.S15.equals(feedVo.getMsgType()))
+								{
+									msgText=generateSIU_S15Message(feedVo);
+								}
+								if(MsgEventType.S26.equals(feedVo.getMsgType()))
+								{
+									msgText=generateSIU_S26Message(feedVo);
+								}
+								msgCategory = feedVo.getMsgType() != null ? feedVo.getMsgType().getText() : null;
+								if(feedVo.getAppointment()!=null)
+								{
+									patient=feedVo.getPatient();
+								}
+								msgCategory = feedVo.getMsgType() != null ? feedVo.getMsgType().getText() : null;
+							}
+
+							//WDEV-19481 - Inpatient Episode events
+							else if (QueueType.INPATIENTEPISODE.equals(lastQueuedEvent.getQueueType()))
+							{
+								event = externalEvents.getEvent(lastQueuedEvent);
+								InpatientEpisodeQueueVo feedVo = (InpatientEpisodeQueueVo)event;
+								if(MsgEventType.A01.equals(feedVo.getMsgType()))
+								{
+									msgText=generateADT_A01Message(feedVo);
+								}
+								if(MsgEventType.A02.equals(feedVo.getMsgType()))
+								{
+									msgText=generateADT_A02Message(feedVo);
+								}
+								if(MsgEventType.A03.equals(feedVo.getMsgType()))
+								{
+									msgText=generateADT_A03Message(feedVo);
+								}
+								if(MsgEventType.A08.equals(feedVo.getMsgType()))
+								{
+									msgText=generateADT_A08Message(feedVo);
+								}
+								if(MsgEventType.A11.equals(feedVo.getMsgType()))
+								{
+									msgText=generateADT_A11Message(feedVo);
+								}
+								if(MsgEventType.A12.equals(feedVo.getMsgType()))
+								{
+									msgText=generateADT_A12Message(feedVo);
+								}
+								if(MsgEventType.A13.equals(feedVo.getMsgType()))
+								{
+									msgText=generateADT_A13Message(feedVo);
+								}
+								
+								//WDEV-19974
+								if(MsgEventType.A15.equals(feedVo.getMsgType()))
+								{
+									msgText=generateADT_A15Message(feedVo);
+								}
+								
+								if(MsgEventType.A21.equals(feedVo.getMsgType()))
+								{
+									msgText=generateADT_A21Message(feedVo);
+								}
+								if(MsgEventType.A22.equals(feedVo.getMsgType()))
+								{
+									msgText=generateADT_A22Message(feedVo);
+								}
+
+								//WDEV-19974
+								if(MsgEventType.A26.equals(feedVo.getMsgType()))
+								{
+									msgText=generateADT_A26Message(feedVo);
+								}
+								
+								//WDEV-20445
+								if(MsgEventType.A16.equals(feedVo.getMsgType()))
+								{
+									msgText=generateADT_A16Message(feedVo);
+								}
+// A25 message generation temporarily commented out (see WDEV-20506)
+//								if(MsgEventType.A25.equals(feedVo.getMsgType()))
+//								{
+//									msgText=generateADT_A25Message(feedVo);
+//								}
+
+								if(MsgEventType.A52.equals(feedVo.getMsgType()))
+								{
+									msgText=generateADT_A52Message(feedVo);
+								}
+								if(MsgEventType.A53.equals(feedVo.getMsgType()))
+								{
+									msgText=generateADT_A53Message(feedVo);
+								}
+								
+								msgCategory = feedVo.getMsgType() != null ? feedVo.getMsgType().getText() : null;
+								if(feedVo.getPatient()!=null)
+								{
+									patient=feedVo.getPatient();
+								}
+								msgCategory = feedVo.getMsgType() != null ? feedVo.getMsgType().getText() : null;
+							}
+
+							//WDEV-19576 - Ward Master File events
+							else if (QueueType.WARDMASTERFILE.equals(lastQueuedEvent.getQueueType()))
+							{
+								event = externalEvents.getEvent(lastQueuedEvent);
+								WardMessageQueueVo feedVo = (WardMessageQueueVo)event;
+								if(MsgEventType.M05.equals(feedVo.getMsgType()))
+								{
+									msgText = generateMFN_M05MessageForWard(feedVo);
+								}
+								msgCategory = feedVo.getMsgType() != null ? feedVo.getMsgType().getText() : null;
+							}
+							
+							//WDEV-19576 - GP Practice Master File events
+							else if (QueueType.GPPRACTICEMASTERFILE.equals(lastQueuedEvent.getQueueType()))
+							{
+								event = externalEvents.getEvent(lastQueuedEvent);
+								GPPracticeMessageQueueVo feedVo = (GPPracticeMessageQueueVo)event;
+								if(MsgEventType.M05.equals(feedVo.getMsgType()))
+								{
+									msgText = generateMFN_M05MessageForGpPractice(feedVo);
+								}
+								msgCategory = feedVo.getMsgType() != null ? feedVo.getMsgType().getText() : null;
+							}
+
+							//WDEV-19576 - MOS Master File events
+							else if (QueueType.MOSMASTERFILE.equals(lastQueuedEvent.getQueueType()))
+							{
+								event = externalEvents.getEvent(lastQueuedEvent);
+								MOSMessageQueueVo feedVo = (MOSMessageQueueVo)event;
+								if(MsgEventType.M02.equals(feedVo.getMsgType()))
+								{
+									msgText = generateMFN_M02MessageForMOS(feedVo);
+								}
+								msgCategory = feedVo.getMsgType() != null ? feedVo.getMsgType().getText() : null;
+							}
+
+							//WDEV-19576 - GP Master File events
+							else if (QueueType.GPMASTERFILE.equals(lastQueuedEvent.getQueueType()))
+							{
+								event = externalEvents.getEvent(lastQueuedEvent);
+								GPMessageQueueVo feedVo = (GPMessageQueueVo)event;
+								if(MsgEventType.M02.equals(feedVo.getMsgType()))
+								{
+									msgText = generateMFN_M02MessageForGP(feedVo);
+								}
+								msgCategory = feedVo.getMsgType() != null ? feedVo.getMsgType().getText() : null;
+							}
+
+							
+							//WDEV-19704 - Patient Elective List events
+							else if (QueueType.ELECTIVELIST.equals(lastQueuedEvent.getQueueType()))
+							{
+								event = externalEvents.getEvent(lastQueuedEvent);
+								ElectiveListMessageQueueVo feedVo = (ElectiveListMessageQueueVo)event;
+								if(MsgEventType.A05.equals(feedVo.getMsgType()))
+								{
+									msgText=generateADT_A05Message(feedVo);
+								}
+								if(MsgEventType.A08.equals(feedVo.getMsgType()))
+								{
+									msgText=generateADT_A08Message(feedVo);
+								}
+								if(MsgEventType.A38.equals(feedVo.getMsgType()))
+								{
+									msgText=generateADT_A38Message(feedVo);
+								}
+								if(feedVo.getPatient() != null)
+								{
+									patient=feedVo.getPatient();
+								}
+								msgCategory = feedVo.getMsgType() != null ? feedVo.getMsgType().getText() : null;
+							}
+
+							
+							
+							else if (QueueType.INPATIENTADT.equals(lastQueuedEvent.getQueueType()))
+							{
+								event = externalEvents.getEvent(lastQueuedEvent);
+								InPatientADTFeedVo feedVo = (InPatientADTFeedVo)event;
+								if(MsgEventType.A01.equals(feedVo.getMsgType()))
+								{
+									msgText=generateADT_A01Message(feedVo);
+								}
+								if(MsgEventType.A11.equals(feedVo.getMsgType()))
+								{
+									msgText=generateADT_A11Message(feedVo);
+								}
+								msgCategory = feedVo.getMsgType() != null ? feedVo.getMsgType().getText() : null;
+								if(feedVo.getAttendanceIsNotNull())
+								{
+									patient=feedVo.getAttendance().getPatient();
+								}
+							}
+
+//							//WDEV-22725
+//							else if (QueueType.FINANCIALTRANSACTION.equals(lastQueuedEvent.getQueueType()))
 //							{
 //								event = externalEvents.getEvent(lastQueuedEvent);
-//								IfPatientDocumentMessageVo patientDocumentMessage = (IfPatientDocumentMessageVo)event;
-//								msgText=generateMDM_T02Message(patientDocumentMessage);
-//								if(patientDocumentMessage!=null&&patientDocumentMessage.getPatientDocumentIsNotNull())
+//								
+//								FinTransMessQueueVo feedVo = (FinTransMessQueueVo)event;
+//								
+//								if (MsgEventType.P01.equals(feedVo.getMsgType()))
 //								{
-//									msgCategory = patientDocumentMessage.getMsgType() != null ? patientDocumentMessage.getMsgType().getText() : null;
-//									patient=patientDocumentMessage.getPatientDocument().getPatient();
+//									msgText = generateBAR_P01Message(feedVo, feedVo.getProviderSystem().getHl7Application(), feedVo.getProviderSystem());
+//								}
+//
+//								if (MsgEventType.P02.equals(feedVo.getMsgType()))
+//								{
+//									msgText = generateBAR_P02Message(feedVo, feedVo.getProviderSystem().getHl7Application(), feedVo.getProviderSystem());
+//								}
+//
+//								if (MsgEventType.P03.equals(feedVo.getMsgType()))
+//								{
+//									msgText = generateDFT_P03Message(feedVo, feedVo.getProviderSystem().getHl7Application(), feedVo.getProviderSystem());
+//								}
+//
+//								if (MsgEventType.P05.equals(feedVo.getMsgType()))
+//								{
+//									msgText = generateBAR_P05Message(feedVo, feedVo.getProviderSystem().getHl7Application(), feedVo.getProviderSystem());
+//								}
+//							} //WDEV-22725
+							
+//							//WDEV-22725
+//							else if (QueueType.CHARGEDESCRIPTIONMASTERFILE.equals(lastQueuedEvent.getQueueType()))
+//							{
+//								event = externalEvents.getEvent(lastQueuedEvent);
+//								
+//								ChargeDescMessQueueVo feedVo = (ChargeDescMessQueueVo)event;
+//								
+//								if (MsgEventType.M04.equals(feedVo.getMsgType()))
+//								{
+//									msgText = generateMFN_M04Message(feedVo, feedVo.getProviderSystem().getHl7Application(), feedVo.getProviderSystem());
 //								}
 //							}
-
+//							//WDEV-22725
+							
 							else
 							{
 								throw new HL7Exception("HL7Exception occured trying to send event for unknown/null event type.");
-							}
+							} //WDEV-22725
 
-							String resp = sendMsg(event.getProviderSystem(), null, msgText, null);
+							// WDEV-19704 - Send text in adtMsgText as well (if not NULL)
+							//String resp = sendMsg(event.getProviderSystem(), null, msgText, null);
+							String resp = sendMsg(event.getProviderSystem(), null, msgText, adtMsgText);
+
 							event.setFailureMsg(null);
 							event.setMessageStatus(OrderMessageStatus.SENT);
 							event.setMsgText(msgText);
@@ -500,16 +1065,24 @@ public class HL7EngineOutbound extends Thread implements IHL7InterfaceComponent
 							event.setWasProcessed(true);
 							
 							saveOutboundMessage(msgText, null, msgCategory, event.getProviderSystem(), patient);
+							
+							//WDEV-19704
+							if(adtMsgText != null
+									&& adtMsgCategory != null)
+							{
+								saveOutboundMessage(adtMsgText, null, adtMsgCategory, event.getProviderSystem(), patient);
+							}
 
 						}
 						catch (IOException e)
 						{
 							LOG.error("IOException occurred sending message - " + e.getMessage(), e);
 							event.setMessageStatus(OrderMessageStatus.FAILED);
-							
 							String failureMessage = "IOException sending message to IP:" + event.getProviderSystem().getIPAddress() + " PORT:" + event.getProviderSystem().getIPPort() + " - " + e.getMessage();
 							event.setFailureMsg(failureMessage);
 							saveOutboundMessage(msgText, failureMessage, msgCategory, event.getProviderSystem(), patient);
+							//WDEV-4634 - Update error information
+							updateHL7Errors(msgCategory, msgText);
 						}
 						catch (LLPException e)
 						{
@@ -519,6 +1092,8 @@ public class HL7EngineOutbound extends Thread implements IHL7InterfaceComponent
 							String failureMessage = "LLPException sending message to IP:" + event.getProviderSystem().getIPAddress() + " PORT:" + event.getProviderSystem().getIPPort() + " - " + e.getMessage();
 							event.setFailureMsg(failureMessage);
 							saveOutboundMessage(msgText, failureMessage, msgCategory, event.getProviderSystem(), patient);
+							//WDEV-4634 - Update error information
+							updateHL7Errors(msgCategory, msgText);
 						}
 						catch (HL7Exception e)
 						{
@@ -526,9 +1101,11 @@ public class HL7EngineOutbound extends Thread implements IHL7InterfaceComponent
 							event.setMessageStatus(OrderMessageStatus.FAILED);
 							event.setWasProcessed(true);
 							
-							String failureMessage = "HL7Exception generating ADT message - " + e.getMessage();
+							String failureMessage = "HL7Exception generating message - " + e.getMessage();
 							event.setFailureMsg(failureMessage);
 							saveOutboundMessage(msgText, failureMessage, msgCategory, event.getProviderSystem(), patient);
+							//WDEV-4634 - Update error information
+							updateHL7Errors(msgCategory, msgText);
 						}
 						finally
 						{
@@ -546,6 +1123,8 @@ public class HL7EngineOutbound extends Thread implements IHL7InterfaceComponent
 							{
 								// TODO What to do here??
 								LOG.error("Order has been updated by another user", e);
+								//WDEV-4634 - Update error information
+								updateHL7Errors(msgCategory, msgText);
 							}
 
 							// if
@@ -780,6 +1359,8 @@ public class HL7EngineOutbound extends Thread implements IHL7InterfaceComponent
 								String failureMessage = "IOException sending message to IP:" + msgVo.getProviderSystem().getIPAddress() + " PORT:" + msgVo.getProviderSystem().getIPPort() + " - " + e.getMessage();
 								msgVo.setFailureMessage(failureMessage);
 								saveOutboundMessage(msgVo.getHL7Message(), failureMessage, messageCategory, msgVo.getProviderSystem(), patient);
+								//WDEV-4634 - Update error information
+								updateHL7Errors(messageCategory, msgVo.getHL7Message());
 							}
 							catch (LLPException e)
 							{
@@ -789,6 +1370,8 @@ public class HL7EngineOutbound extends Thread implements IHL7InterfaceComponent
 								String failureMessage = "LLPException sending message to IP:" + msgVo.getProviderSystem().getIPAddress() + " PORT:" + msgVo.getProviderSystem().getIPPort() + " - " + e.getMessage();
 								msgVo.setFailureMessage(failureMessage);
 								saveOutboundMessage(msgVo.getHL7Message(), failureMessage, messageCategory, msgVo.getProviderSystem(), patient);
+								//WDEV-4634 - Update error information
+								updateHL7Errors(messageCategory, msgVo.getHL7Message());
 							}
 							catch (HL7Exception e)
 							{
@@ -804,6 +1387,8 @@ public class HL7EngineOutbound extends Thread implements IHL7InterfaceComponent
 								String failureMessage = "HL7Exception sending message - " + e.getMessage();
 								msgVo.setFailureMessage(failureMessage);
 								saveOutboundMessage(msgVo.getHL7Message(), failureMessage, messageCategory, msgVo.getProviderSystem(), patient);
+								//WDEV-4634 - Update error information
+								updateHL7Errors(messageCategory, msgVo.getHL7Message());
 							}
 							finally
 							{
@@ -837,6 +1422,8 @@ public class HL7EngineOutbound extends Thread implements IHL7InterfaceComponent
 								{
 									// TODO What to do here??
 									LOG.error("Order has been updated by another user", e);
+									//WDEV-4634 - Update error information
+									updateHL7Errors(messageCategory, msgVo.getHL7Message());
 								}
 								ConfigPropertyVo prop = msgVo.getProviderSystem().getConfigurationProperty(ConfigItems.SendOMG);
 
@@ -922,9 +1509,16 @@ public class HL7EngineOutbound extends Thread implements IHL7InterfaceComponent
 						}
 					}
 				}
-				LOG.debug("No outstanding Orders to process - Sleeping");
-				sleep(cfg.getOutboundSleepInterval() * 1000);
+				
+				//WDEV-19411 Only sleep if there are no queued events to process
+				if (lastOrder == null && lastQueuedEvent == null)
+				{
+					LOG.debug("No outstanding events to process - Sleeping");
+					sleep(cfg.getOutboundSleepInterval() * 1000);
+				}
+
 				checkRegistration();
+
 			}
 			catch (InterruptedException e)
 			{
@@ -972,6 +1566,344 @@ public class HL7EngineOutbound extends Thread implements IHL7InterfaceComponent
 		}
 	}
 
+
+
+
+
+//	//WDEV-22725
+//	private String generateMFN_M04Message(IHL7OutboundMessageHandler event, String hl7Application, ProviderSystemVo providerSystem) throws HL7Exception
+//	{
+//		m04mapper.processedCount++;
+//		try
+//		{
+//			Message msg = m04mapper.populateMessage(event, hl7Application, providerSystem);
+//			if (msg != null)
+//			{
+//				String ret = parser.encode(msg);
+//				m04mapper.successCount++;
+//				m04mapper.lastSuccessDateTime = new DateTime();
+//				m04mapper.lastSuccessMessage = ret;
+//
+//				return ret;
+//			}
+//		}
+//		catch (Exception e)
+//		{
+//			m04mapper.errorCount++;
+//			m04mapper.lastFailedDateTime = new DateTime();
+//			throw new HL7Exception("Exception occurred generating M04 Message for HL7App - " + event.getProviderSystem().getHl7Application() + " - " + e.getMessage(), e);
+//		}
+//		m04mapper.errorCount++;
+//		m04mapper.lastFailedDateTime = new DateTime();
+//		throw new HL7Exception("A null message cannot be parsed!");
+//	} //WDEV-22725
+//	
+//
+//	//WDEV-22725
+//	private String generateBAR_P01Message(IHL7OutboundMessageHandler event, String hl7Application, ProviderSystemVo providerSystem) throws HL7Exception
+//	{
+//		p01mapper.processedCount++;
+//		try
+//		{
+//			Message msg = p01mapper.populateMessage(event, hl7Application, providerSystem);
+//			if (msg != null)
+//			{
+//				String ret = parser.encode(msg);
+//				p01mapper.successCount++;
+//				p01mapper.lastSuccessDateTime = new DateTime();
+//				p01mapper.lastSuccessMessage = ret;
+//
+//				return ret;
+//			}
+//		}
+//		catch (Exception e)
+//		{
+//			p01mapper.errorCount++;
+//			p01mapper.lastFailedDateTime = new DateTime();
+//			throw new HL7Exception("Exception occurred generating P03 Message for HL7App - " + event.getProviderSystem().getHl7Application() + " - " + e.getMessage(), e);
+//		}
+//		p01mapper.errorCount++;
+//		p01mapper.lastFailedDateTime = new DateTime();
+//		throw new HL7Exception("A null message cannot be parsed!");
+//	} //WDEV-22725
+//	
+//	//WDEV-22725
+//	private String generateBAR_P02Message(IHL7OutboundMessageHandler event, String hl7Application, ProviderSystemVo providerSystem) throws HL7Exception
+//	{
+//		p02mapper.processedCount++;
+//		try
+//		{
+//			Message msg = p02mapper.populateMessage(event, hl7Application, providerSystem);
+//			if (msg != null)
+//			{
+//				String ret = parser.encode(msg);
+//				p02mapper.successCount++;
+//				p02mapper.lastSuccessDateTime = new DateTime();
+//				p02mapper.lastSuccessMessage = ret;
+//
+//				return ret;
+//			}
+//		}
+//		catch (Exception e)
+//		{
+//			p02mapper.errorCount++;
+//			p02mapper.lastFailedDateTime = new DateTime();
+//			throw new HL7Exception("Exception occurred generating P03 Message for HL7App - " + event.getProviderSystem().getHl7Application() + " - " + e.getMessage(), e);
+//		}
+//		p02mapper.errorCount++;
+//		p02mapper.lastFailedDateTime = new DateTime();
+//		throw new HL7Exception("A null message cannot be parsed!");
+//	} //WDEV-22725
+//	
+//	//WDEV-22725
+//	private String generateDFT_P03Message(IHL7OutboundMessageHandler event, String hl7Application, ProviderSystemVo providerSystem) throws HL7Exception
+//	{
+//		p03mapper.processedCount++;
+//		try
+//		{
+//			Message msg = p03mapper.populateMessage(event, hl7Application, providerSystem);
+//			if (msg != null)
+//			{
+//				String ret = parser.encode(msg);
+//				p03mapper.successCount++;
+//				p03mapper.lastSuccessDateTime = new DateTime();
+//				p03mapper.lastSuccessMessage = ret;
+//
+//				return ret;
+//			}
+//		}
+//		catch (Exception e)
+//		{
+//			p03mapper.errorCount++;
+//			p03mapper.lastFailedDateTime = new DateTime();
+//			throw new HL7Exception("Exception occurred generating P03 Message for HL7App - " + event.getProviderSystem().getHl7Application() + " - " + e.getMessage(), e);
+//		}
+//		p03mapper.errorCount++;
+//		p03mapper.lastFailedDateTime = new DateTime();
+//		throw new HL7Exception("A null message cannot be parsed!");
+//	} //WDEV-22725
+//
+//	//WDEV-22725
+//	private String generateBAR_P05Message(IHL7OutboundMessageHandler event, String hl7Application, ProviderSystemVo providerSystem) throws HL7Exception
+//	{
+//		p05mapper.processedCount++;
+//		try
+//		{
+//			Message msg = p05mapper.populateMessage(event, hl7Application, providerSystem);
+//			if (msg != null)
+//			{
+//				String ret = parser.encode(msg);
+//				p05mapper.successCount++;
+//				p05mapper.lastSuccessDateTime = new DateTime();
+//				p05mapper.lastSuccessMessage = ret;
+//
+//				return ret;
+//			}
+//		}
+//		catch (Exception e)
+//		{
+//			p05mapper.errorCount++;
+//			p05mapper.lastFailedDateTime = new DateTime();
+//			throw new HL7Exception("Exception occurred generating P03 Message for HL7App - " + event.getProviderSystem().getHl7Application() + " - " + e.getMessage(), e);
+//		}
+//		p05mapper.errorCount++;
+//		p05mapper.lastFailedDateTime = new DateTime();
+//		throw new HL7Exception("A null message cannot be parsed!");
+//	} //WDEV-22725
+
+	//WDEV-19704
+	private String generateADT_A05For1stApptMessage(IHL7OutboundMessageHandler event) throws HL7Exception
+	{
+		a05mapper.processedCount++;
+		try
+		{
+			Message msg =a05mapper.populateADT_A05For1stApptMessage(event);
+			if (msg != null)
+			{
+				String ret = parser.encode(msg);
+				a05mapper.successCount++;
+				a05mapper.lastSuccessDateTime = new DateTime();
+				a05mapper.lastSuccessMessage = ret;
+
+				return ret;
+			}
+			else
+			{
+				return null;
+			}
+		}
+		catch (Exception e)
+		{
+			a05mapper.errorCount++;
+			a05mapper.lastFailedDateTime = new DateTime();
+			throw new HL7Exception("Exception occurred generating A05 Message for HL7App - " + event.getProviderSystem().getHl7Application() + " - " + e.getMessage(), e);
+		}
+	}
+
+	//WDEV-19704
+	private String generateADT_A08For1stApptMessage(IHL7OutboundMessageHandler event) throws HL7Exception
+	{
+		a08mapper.processedCount++;
+		try
+		{
+			Message msg =a08mapper.populateADT_A08For1stApptMessage(event);
+			if (msg != null)
+			{
+				String ret = parser.encode(msg);
+				a08mapper.successCount++;
+				a08mapper.lastSuccessDateTime = new DateTime();
+				a08mapper.lastSuccessMessage = ret;
+
+				return ret;
+			}
+			else
+			{
+				return null;
+			}
+		}
+		catch (Exception e)
+		{
+			a08mapper.errorCount++;
+			a08mapper.lastFailedDateTime = new DateTime();
+			throw new HL7Exception("Exception occurred generating A08 Message for HL7App - " + event.getProviderSystem().getHl7Application() + " - " + e.getMessage(), e);
+		}
+	}
+
+	
+	
+	
+	//WDEV-19576
+	private String generateMFN_M02MessageForGP(IHL7OutboundMessageHandler event) throws HL7Exception
+	{
+		m02mapper.processedCount++;
+		try
+		{
+			Message msg = m02mapper.populateMessage(event);
+			if (msg != null)
+			{
+				String ret = parser.encode(msg);
+				m02mapper.successCount++;
+				m02mapper.lastSuccessDateTime = new DateTime();
+				m02mapper.lastSuccessMessage = ret;
+
+				return ret;
+			}
+		}
+		catch (Exception e)
+		{
+			m02mapper.errorCount++;
+			m02mapper.lastFailedDateTime = new DateTime();
+			throw new HL7Exception("Exception occurred generating M02 Message for HL7App - " + event.getProviderSystem().getHl7Application() + " - " + e.getMessage(), e);
+		}
+		m02mapper.errorCount++;
+		m02mapper.lastFailedDateTime = new DateTime();
+		throw new HL7Exception("A null message cannot be parsed!");
+	}
+
+	//WDEV-19576
+	private String generateMFN_M02MessageForMOS(IHL7OutboundMessageHandler event) throws HL7Exception
+	{
+		m02mapper.processedCount++;
+		try
+		{
+			Message msg = m02mapper.populateMessage(event);
+			if (msg != null)
+			{
+				String ret = parser.encode(msg);
+				m02mapper.successCount++;
+				m02mapper.lastSuccessDateTime = new DateTime();
+				m02mapper.lastSuccessMessage = ret;
+
+				return ret;
+			}
+		}
+		catch (Exception e)
+		{
+			m02mapper.errorCount++;
+			m02mapper.lastFailedDateTime = new DateTime();
+			throw new HL7Exception("Exception occurred generating M02 Message for HL7App - " + event.getProviderSystem().getHl7Application() + " - " + e.getMessage(), e);
+		}
+		m02mapper.errorCount++;
+		m02mapper.lastFailedDateTime = new DateTime();
+		throw new HL7Exception("A null message cannot be parsed!");
+	}
+
+	//WDEV-19576
+	private String generateMFN_M05MessageForGpPractice(IHL7OutboundMessageHandler event) throws HL7Exception
+	{
+		m05mapper.processedCount++;
+		try
+		{
+			Message msg = m05mapper.populateMessage(event);
+			if (msg != null)
+			{
+				String ret = parser.encode(msg);
+				m05mapper.successCount++;
+				m05mapper.lastSuccessDateTime = new DateTime();
+				m05mapper.lastSuccessMessage = ret;
+
+				return ret;
+			}
+		}
+		catch (Exception e)
+		{
+			m05mapper.errorCount++;
+			m05mapper.lastFailedDateTime = new DateTime();
+			throw new HL7Exception("Exception occurred generating M05 Message for HL7App - " + event.getProviderSystem().getHl7Application() + " - " + e.getMessage(), e);
+		}
+		m05mapper.errorCount++;
+		m05mapper.lastFailedDateTime = new DateTime();
+		throw new HL7Exception("A null message cannot be parsed!");
+	}
+
+	//WDEV-19576
+	private String generateMFN_M05MessageForWard(IHL7OutboundMessageHandler event) throws HL7Exception 
+	{
+		m05mapper.processedCount++;
+		try
+		{
+			Message msg = m05mapper.populateMessage(event);
+			if (msg != null)
+			{
+				String ret = parser.encode(msg);
+				m05mapper.successCount++;
+				m05mapper.lastSuccessDateTime = new DateTime();
+				m05mapper.lastSuccessMessage = ret;
+
+				return ret;
+			}
+		}
+		catch (Exception e)
+		{
+			m05mapper.errorCount++;
+			m05mapper.lastFailedDateTime = new DateTime();
+			throw new HL7Exception("Exception occurred generating M05 Message for HL7App - " + event.getProviderSystem().getHl7Application() + " - " + e.getMessage(), e);
+		}
+		m05mapper.errorCount++;
+		m05mapper.lastFailedDateTime = new DateTime();
+		throw new HL7Exception("A null message cannot be parsed!");
+	}
+
+	//WDEV-4634 Update HL7 message counters and error displays
+	private void updateHL7Errors(String msgCategory, String msgText)
+	{
+		VoMapper mapper=null;
+		mapper = (VoMapper)voMappers.get(msgCategory);
+		if (mapper!=null)
+		{
+			if(mapper.successCount>=1)
+			{
+			mapper.successCount--;
+			}
+			mapper.errorCount++;
+			mapper.lastFailedMessage=msgText;
+			mapper.lastFailedDateTime = new DateTime();
+			mapper.lastSuccessMessage = null;
+			mapper.lastSuccessDateTime = null;
+		}
+	}
+
+	
 	private IfOrderSpecimenVoCollection removeProcessed(
 			IfOrderSpecimenVoCollection specs) {
 		
@@ -1027,9 +1959,147 @@ public class HL7EngineOutbound extends Thread implements IHL7InterfaceComponent
 		throw new HL7Exception("A null message cannot be parsed!");
 	}
 	
+	private String generateSIU_S12Message(IHL7OutboundMessageHandler event) throws HL7Exception 
+	{
+		s12mapper.processedCount++;
+		try
+		{
+			Message msg = s12mapper.populateMessage(event);
+			if (msg != null)
+			{
+				String ret = parser.encode(msg);
+				s12mapper.successCount++;
+				s12mapper.lastSuccessDateTime = new DateTime();
+				s12mapper.lastSuccessMessage = ret;
+
+				return ret;
+			}
+		}
+		catch (Exception e)
+		{
+			s12mapper.errorCount++;
+			s12mapper.lastFailedDateTime = new DateTime();
+			throw new HL7Exception("Exception occurred generating S12 Message for HL7App - " + event.getProviderSystem().getHl7Application() + " - " + e.getMessage(), e);
+		}
+		s12mapper.errorCount++;
+		s12mapper.lastFailedDateTime = new DateTime();
+		throw new HL7Exception("A null message cannot be parsed!");
+	}
+
+	//WDEV-19160
+	private String generateSIU_S13Message(IHL7OutboundMessageHandler event) throws HL7Exception 
+	{
+		s13mapper.processedCount++;
+		try
+		{
+			Message msg = s13mapper.populateMessage(event);
+			if (msg != null)
+			{
+				String ret = parser.encode(msg);
+				s13mapper.successCount++;
+				s13mapper.lastSuccessDateTime = new DateTime();
+				s13mapper.lastSuccessMessage = ret;
+
+				return ret;
+			}
+		}
+		catch (Exception e)
+		{
+			s13mapper.errorCount++;
+			s13mapper.lastFailedDateTime = new DateTime();
+			throw new HL7Exception("Exception occurred generating S13 Message for HL7App - " + event.getProviderSystem().getHl7Application() + " - " + e.getMessage(), e);
+		}
+		s13mapper.errorCount++;
+		s13mapper.lastFailedDateTime = new DateTime();
+		throw new HL7Exception("A null message cannot be parsed!");
+	}
+	
+	//WDEV-19160
+	private String generateSIU_S14Message(IHL7OutboundMessageHandler event) throws HL7Exception 
+	{
+		s14mapper.processedCount++;
+		try
+		{
+			Message msg = s14mapper.populateMessage(event);
+			if (msg != null)
+			{
+				String ret = parser.encode(msg);
+				s14mapper.successCount++;
+				s14mapper.lastSuccessDateTime = new DateTime();
+				s14mapper.lastSuccessMessage = ret;
+
+				return ret;
+			}
+		}
+		catch (Exception e)
+		{
+			s14mapper.errorCount++;
+			s14mapper.lastFailedDateTime = new DateTime();
+			throw new HL7Exception("Exception occurred generating S14 Message for HL7App - " + event.getProviderSystem().getHl7Application() + " - " + e.getMessage(), e);
+		}
+		s14mapper.errorCount++;
+		s14mapper.lastFailedDateTime = new DateTime();
+		throw new HL7Exception("A null message cannot be parsed!");
+	}
+	
+	
+	private String generateSIU_S15Message(IHL7OutboundMessageHandler event) throws HL7Exception 
+	{
+		s15mapper.processedCount++;
+		try
+		{
+			Message msg = s15mapper.populateMessage(event);
+			if (msg != null)
+			{
+				String ret = parser.encode(msg);
+				s15mapper.successCount++;
+				s15mapper.lastSuccessDateTime = new DateTime();
+				s15mapper.lastSuccessMessage = ret;
+
+				return ret;
+			}
+		}
+		catch (Exception e)
+		{
+			s15mapper.errorCount++;
+			s15mapper.lastFailedDateTime = new DateTime();
+			throw new HL7Exception("Exception occurred generating S15 Message for HL7App - " + event.getProviderSystem().getHl7Application() + " - " + e.getMessage(), e);
+		}
+		s15mapper.errorCount++;
+		s15mapper.lastFailedDateTime = new DateTime();
+		throw new HL7Exception("A null message cannot be parsed!");
+	}
+
+	private String generateSIU_S26Message(IHL7OutboundMessageHandler event) throws HL7Exception 
+	{
+		s26mapper.processedCount++;
+		try
+		{
+			Message msg = s26mapper.populateMessage(event);
+			if (msg != null)
+			{
+				String ret = parser.encode(msg);
+				s26mapper.successCount++;
+				s26mapper.lastSuccessDateTime = new DateTime();
+				s26mapper.lastSuccessMessage = ret;
+
+				return ret;
+			}
+		}
+		catch (Exception e)
+		{
+			s26mapper.errorCount++;
+			s26mapper.lastFailedDateTime = new DateTime();
+			throw new HL7Exception("Exception occurred generating S26 Message for HL7App - " + event.getProviderSystem().getHl7Application() + " - " + e.getMessage(), e);
+		}
+		s26mapper.errorCount++;
+		s26mapper.lastFailedDateTime = new DateTime();
+		throw new HL7Exception("A null message cannot be parsed!");
+	}
 
 	
-	private String generateADT_A01Message(EDAttendanceFeedVo event) throws HL7Exception 
+	
+	private String generateADT_A01Message(IHL7OutboundMessageHandler event) throws HL7Exception 
 	{
 		a01mapper.processedCount++;
 		try
@@ -1056,9 +2126,37 @@ public class HL7EngineOutbound extends Thread implements IHL7InterfaceComponent
 		throw new HL7Exception("A null message cannot be parsed!");
 	}
 
-
 	
-	private String generateADT_A03Message(EDAttendanceFeedVo event) throws HL7Exception 
+	//WDEV-19481
+	private String generateADT_A02Message(IHL7OutboundMessageHandler event) throws HL7Exception 
+	{
+		a02mapper.processedCount++;
+		try
+		{
+			Message msg = a02mapper.populateMessage(event);
+			if (msg != null)
+			{
+				String ret = parser.encode(msg);
+				a02mapper.successCount++;
+				a02mapper.lastSuccessDateTime = new DateTime();
+				a02mapper.lastSuccessMessage = ret;
+
+				return ret;
+			}
+		}
+		catch (Exception e)
+		{
+			a02mapper.errorCount++;
+			a02mapper.lastFailedDateTime = new DateTime();
+			throw new HL7Exception("Exception occurred generating A02 Message for HL7App - " + event.getProviderSystem().getHl7Application() + " - " + e.getMessage(), e);
+		}
+		a02mapper.errorCount++;
+		a02mapper.lastFailedDateTime = new DateTime();
+		throw new HL7Exception("A null message cannot be parsed!");
+	}
+	
+	
+	private String generateADT_A03Message(IHL7OutboundMessageHandler event) throws HL7Exception 
 	{
 		a03mapper.processedCount++;
 		try
@@ -1085,13 +2183,41 @@ public class HL7EngineOutbound extends Thread implements IHL7InterfaceComponent
 		throw new HL7Exception("A null message cannot be parsed!");
 	}
 
-	private String generateADT_A08Message(EDAttendanceFeedVo event) throws HL7Exception 
+	//WDEV-19704
+	private String generateADT_A05Message(IHL7OutboundMessageHandler event) throws HL7Exception 
+	{
+		a05mapper.processedCount++;
+		try
+		{
+			Message msg =a05mapper.populateMessage(event);
+			if (msg != null)
+			{
+				String ret = parser.encode(msg);
+				a05mapper.successCount++;
+				a05mapper.lastSuccessDateTime = new DateTime();
+				a05mapper.lastSuccessMessage = ret;
+
+				return ret;
+			}
+		}
+		catch (Exception e)
+		{
+			a05mapper.errorCount++;
+			a05mapper.lastFailedDateTime = new DateTime();
+			throw new HL7Exception("Exception occurred generating A05 Message for HL7App - " + event.getProviderSystem().getHl7Application() + " - " + e.getMessage(), e);
+		}
+		a05mapper.errorCount++;
+		a05mapper.lastFailedDateTime = new DateTime();
+		throw new HL7Exception("A null message cannot be parsed!");
+	}
+	
+
+	private String generateADT_A08Message(IHL7OutboundMessageHandler event) throws HL7Exception 
 	{
 		a08mapper.processedCount++;
 		try
 		{
-			// IfOutOcsOrderVo orderVo= ocsIf.getOrder(order);
-			Message msg = null;//a08mapper.populateMessage(event);
+			Message msg = a08mapper.populateMessage(event);
 			if (msg != null)
 			{
 				String ret = parser.encode(msg);
@@ -1113,35 +2239,8 @@ public class HL7EngineOutbound extends Thread implements IHL7InterfaceComponent
 		throw new HL7Exception("A null message cannot be parsed!");
 	}
 
-	private String generateADT_A13Message(EDAttendanceFeedVo event) throws HL7Exception 
-	{
-		a13mapper.processedCount++;
-		try
-		{
-			Message msg = a13mapper.populateMessage(event);
-			if (msg != null)
-			{
-				String ret = parser.encode(msg);
-				a13mapper.successCount++;
-				a13mapper.lastSuccessDateTime = new DateTime();
-				a13mapper.lastSuccessMessage = ret;
-
-				return ret;
-			}
-		}
-		catch (Exception e)
-		{
-			a13mapper.errorCount++;
-			a13mapper.lastFailedDateTime = new DateTime();
-			throw new HL7Exception("Exception occurred generating A13 Message for HL7App - " + event.getProviderSystem().getHl7Application() + " - " + e.getMessage(), e);
-		}
-		a13mapper.errorCount++;
-		a13mapper.lastFailedDateTime = new DateTime();
-		throw new HL7Exception("A null message cannot be parsed!");
-	}
-
 	
-	private String generateADT_A11Message(EDAttendanceFeedVo event) throws HL7Exception 
+	private String generateADT_A11Message(IHL7OutboundMessageHandler event) throws HL7Exception 
 	{
 		a11mapper.processedCount++;
 		try
@@ -1170,6 +2269,323 @@ public class HL7EngineOutbound extends Thread implements IHL7InterfaceComponent
 	}
 	
 
+	//WDEV-19481
+	private String generateADT_A12Message(IHL7OutboundMessageHandler event) throws HL7Exception 
+	{
+		a12mapper.processedCount++;
+		try
+		{
+			Message msg = a12mapper.populateMessage(event);
+			if (msg != null)
+			{
+				String ret = parser.encode(msg);
+				a12mapper.successCount++;
+				a12mapper.lastSuccessDateTime = new DateTime();
+				a12mapper.lastSuccessMessage = ret;
+
+				return ret;
+			}
+		}
+		catch (Exception e)
+		{
+			a12mapper.errorCount++;
+			a12mapper.lastFailedDateTime = new DateTime();
+			throw new HL7Exception("Exception occurred generating A12 Message for HL7App - " + event.getProviderSystem().getHl7Application() + " - " + e.getMessage(), e);
+		}
+		a12mapper.errorCount++;
+		a12mapper.lastFailedDateTime = new DateTime();
+		throw new HL7Exception("A null message cannot be parsed!");
+	}
+	
+
+	private String generateADT_A13Message(IHL7OutboundMessageHandler event) throws HL7Exception 
+	{
+		a13mapper.processedCount++;
+		try
+		{
+			Message msg = a13mapper.populateMessage(event);
+			if (msg != null)
+			{
+				String ret = parser.encode(msg);
+				a13mapper.successCount++;
+				a13mapper.lastSuccessDateTime = new DateTime();
+				a13mapper.lastSuccessMessage = ret;
+
+				return ret;
+			}
+		}
+		catch (Exception e)
+		{
+			a13mapper.errorCount++;
+			a13mapper.lastFailedDateTime = new DateTime();
+			throw new HL7Exception("Exception occurred generating A13 Message for HL7App - " + event.getProviderSystem().getHl7Application() + " - " + e.getMessage(), e);
+		}
+		a13mapper.errorCount++;
+		a13mapper.lastFailedDateTime = new DateTime();
+		throw new HL7Exception("A null message cannot be parsed!");
+	}
+
+
+	//WDEV-19974
+	private String generateADT_A15Message(IHL7OutboundMessageHandler event) throws HL7Exception 
+	{
+		a15mapper.processedCount++;
+		try
+		{
+			Message msg = a15mapper.populateMessage(event);
+			if (msg != null)
+			{
+				String ret = parser.encode(msg);
+				a15mapper.successCount++;
+				a15mapper.lastSuccessDateTime = new DateTime();
+				a15mapper.lastSuccessMessage = ret;
+
+				return ret;
+			}
+		}
+		catch (Exception e)
+		{
+			a15mapper.errorCount++;
+			a15mapper.lastFailedDateTime = new DateTime();
+			throw new HL7Exception("Exception occurred generating A15 Message for HL7App - " + event.getProviderSystem().getHl7Application() + " - " + e.getMessage(), e);
+		}
+		a15mapper.errorCount++;
+		a15mapper.lastFailedDateTime = new DateTime();
+		throw new HL7Exception("A null message cannot be parsed!");
+	}
+
+
+	//WDEV-20445
+	private String generateADT_A16Message(IHL7OutboundMessageHandler event) throws HL7Exception 
+	{
+		a16mapper.processedCount++;
+		try
+		{
+			Message msg = a16mapper.populateMessage(event);
+			if (msg != null)
+			{
+				String ret = parser.encode(msg);
+				a16mapper.successCount++;
+				a16mapper.lastSuccessDateTime = new DateTime();
+				a16mapper.lastSuccessMessage = ret;
+
+				return ret;
+			}
+		}
+		catch (Exception e)
+		{
+			a16mapper.errorCount++;
+			a16mapper.lastFailedDateTime = new DateTime();
+			throw new HL7Exception("Exception occurred generating A16 Message for HL7App - " + event.getProviderSystem().getHl7Application() + " - " + e.getMessage(), e);
+		}
+		a16mapper.errorCount++;
+		a16mapper.lastFailedDateTime = new DateTime();
+		throw new HL7Exception("A null message cannot be parsed!");
+	}
+
+	//WDEV-19481
+	private String generateADT_A21Message(IHL7OutboundMessageHandler event) throws HL7Exception 
+	{
+		a21mapper.processedCount++;
+		try
+		{
+			Message msg = a21mapper.populateMessage(event);
+			if (msg != null)
+			{
+				String ret = parser.encode(msg);
+				a21mapper.successCount++;
+				a21mapper.lastSuccessDateTime = new DateTime();
+				a21mapper.lastSuccessMessage = ret;
+
+				return ret;
+			}
+		}
+		catch (Exception e)
+		{
+			a21mapper.errorCount++;
+			a21mapper.lastFailedDateTime = new DateTime();
+			throw new HL7Exception("Exception occurred generating A21 Message for HL7App - " + event.getProviderSystem().getHl7Application() + " - " + e.getMessage(), e);
+		}
+		a21mapper.errorCount++;
+		a21mapper.lastFailedDateTime = new DateTime();
+		throw new HL7Exception("A null message cannot be parsed!");
+	}
+	
+
+	//WDEV-19481
+	private String generateADT_A22Message(IHL7OutboundMessageHandler event) throws HL7Exception 
+	{
+		a22mapper.processedCount++;
+		try
+		{
+			Message msg = a22mapper.populateMessage(event);
+			if (msg != null)
+			{
+				String ret = parser.encode(msg);
+				a22mapper.successCount++;
+				a22mapper.lastSuccessDateTime = new DateTime();
+				a22mapper.lastSuccessMessage = ret;
+
+				return ret;
+			}
+		}
+		catch (Exception e)
+		{
+			a22mapper.errorCount++;
+			a22mapper.lastFailedDateTime = new DateTime();
+			throw new HL7Exception("Exception occurred generating A22 Message for HL7App - " + event.getProviderSystem().getHl7Application() + " - " + e.getMessage(), e);
+		}
+		a22mapper.errorCount++;
+		a22mapper.lastFailedDateTime = new DateTime();
+		throw new HL7Exception("A null message cannot be parsed!");
+	}
+
+
+	//WDEV-20445
+	private String generateADT_A25Message(IHL7OutboundMessageHandler event) throws HL7Exception 
+	{
+		a25mapper.processedCount++;
+		try
+		{
+			Message msg = a25mapper.populateMessage(event);
+			if (msg != null)
+			{
+				String ret = parser.encode(msg);
+				a25mapper.successCount++;
+				a25mapper.lastSuccessDateTime = new DateTime();
+				a25mapper.lastSuccessMessage = ret;
+
+				return ret;
+			}
+		}
+		catch (Exception e)
+		{
+			a25mapper.errorCount++;
+			a25mapper.lastFailedDateTime = new DateTime();
+			throw new HL7Exception("Exception occurred generating A25 Message for HL7App - " + event.getProviderSystem().getHl7Application() + " - " + e.getMessage(), e);
+		}
+		a25mapper.errorCount++;
+		a25mapper.lastFailedDateTime = new DateTime();
+		throw new HL7Exception("A null message cannot be parsed!");
+	}
+
+	
+	//WDEV-19974
+	private String generateADT_A26Message(IHL7OutboundMessageHandler event) throws HL7Exception 
+	{
+		a26mapper.processedCount++;
+		try
+		{
+			Message msg = a26mapper.populateMessage(event);
+			if (msg != null)
+			{
+				String ret = parser.encode(msg);
+				a26mapper.successCount++;
+				a26mapper.lastSuccessDateTime = new DateTime();
+				a26mapper.lastSuccessMessage = ret;
+
+				return ret;
+			}
+		}
+		catch (Exception e)
+		{
+			a26mapper.errorCount++;
+			a26mapper.lastFailedDateTime = new DateTime();
+			throw new HL7Exception("Exception occurred generating A26 Message for HL7App - " + event.getProviderSystem().getHl7Application() + " - " + e.getMessage(), e);
+		}
+		a26mapper.errorCount++;
+		a26mapper.lastFailedDateTime = new DateTime();
+		throw new HL7Exception("A null message cannot be parsed!");
+	}
+
+	
+	//WDEV-19704
+	private String generateADT_A38Message(IHL7OutboundMessageHandler event) throws HL7Exception 
+	{
+		a38mapper.processedCount++;
+		try
+		{
+			Message msg =a38mapper.populateMessage(event);
+			if (msg != null)
+			{
+				String ret = parser.encode(msg);
+				a38mapper.successCount++;
+				a38mapper.lastSuccessDateTime = new DateTime();
+				a38mapper.lastSuccessMessage = ret;
+
+				return ret;
+			}
+		}
+		catch (Exception e)
+		{
+			a38mapper.errorCount++;
+			a38mapper.lastFailedDateTime = new DateTime();
+			throw new HL7Exception("Exception occurred generating A38 Message for HL7App - " + event.getProviderSystem().getHl7Application() + " - " + e.getMessage(), e);
+		}
+		a38mapper.errorCount++;
+		a38mapper.lastFailedDateTime = new DateTime();
+		throw new HL7Exception("A null message cannot be parsed!");
+	}
+
+	
+	//WDEV-19481
+	private String generateADT_A52Message(IHL7OutboundMessageHandler event) throws HL7Exception 
+	{
+		a52mapper.processedCount++;
+		try
+		{
+			Message msg = a52mapper.populateMessage(event);
+			if (msg != null)
+			{
+				String ret = parser.encode(msg);
+				a52mapper.successCount++;
+				a52mapper.lastSuccessDateTime = new DateTime();
+				a52mapper.lastSuccessMessage = ret;
+
+				return ret;
+			}
+		}
+		catch (Exception e)
+		{
+			a52mapper.errorCount++;
+			a52mapper.lastFailedDateTime = new DateTime();
+			throw new HL7Exception("Exception occurred generating A52 Message for HL7App - " + event.getProviderSystem().getHl7Application() + " - " + e.getMessage(), e);
+		}
+		a52mapper.errorCount++;
+		a52mapper.lastFailedDateTime = new DateTime();
+		throw new HL7Exception("A null message cannot be parsed!");
+	}
+	
+
+	//WDEV-19481
+	private String generateADT_A53Message(IHL7OutboundMessageHandler event) throws HL7Exception 
+	{
+		a53mapper.processedCount++;
+		try
+		{
+			Message msg = a53mapper.populateMessage(event);
+			if (msg != null)
+			{
+				String ret = parser.encode(msg);
+				a53mapper.successCount++;
+				a53mapper.lastSuccessDateTime = new DateTime();
+				a53mapper.lastSuccessMessage = ret;
+
+				return ret;
+			}
+		}
+		catch (Exception e)
+		{
+			a53mapper.errorCount++;
+			a53mapper.lastFailedDateTime = new DateTime();
+			throw new HL7Exception("Exception occurred generating A53 Message for HL7App - " + event.getProviderSystem().getHl7Application() + " - " + e.getMessage(), e);
+		}
+		a53mapper.errorCount++;
+		a53mapper.lastFailedDateTime = new DateTime();
+		throw new HL7Exception("A null message cannot be parsed!");
+	}
+	
+	
 	private String getMessageCategory(String hl7Message)
 	{
 		if(hl7Message == null)
@@ -1338,7 +2754,7 @@ public class HL7EngineOutbound extends Thread implements IHL7InterfaceComponent
 					}
 					else
 						respText = "NA";
-					if (!respCode.equals("AA"))
+					if (!(respCode.equals("AA")||respCode.equals("CA"))) // http://jira/browse/WDEV-17793
 					{
 						// WDEV-6541
 						if (!ConfigFlag.HL7.PERSISTENT_HL7_OUTBOUND_CONNECTION.getValue() == true)
@@ -1399,7 +2815,7 @@ public class HL7EngineOutbound extends Thread implements IHL7InterfaceComponent
 				}
 				else
 					respText = "NA";
-				if (!respCode.equals("AA"))
+				if (!(respCode.equals("AA")||respCode.equals("CA"))) //http://jira/browse/WDEV-17793
 				{
 					// WDEV-6541
 					if (!ConfigFlag.HL7.PERSISTENT_HL7_OUTBOUND_CONNECTION.getValue() == true)
@@ -1509,37 +2925,6 @@ public class HL7EngineOutbound extends Thread implements IHL7InterfaceComponent
 		}
 		return resp;
 	}
-
-	// private void processResponse(Message resp_msg) throws HL7Exception
-	// {
-	// if (ConfigFlag.HL7.HL7_OUTBOUND_READ_RESP.getValue())
-	// {
-	// if (!(resp_msg instanceof ACK))
-	// {
-	// throw new
-	// HL7Exception("Invalid HL7 response message received. Was not an ACK message");
-	// }
-	// ACK ack = (ACK)resp_msg;
-	// String respText = "";
-	// String respCode = ack.getMSA().getAcknowledgementCode().getValue();
-	// respText = ack.getMSA().getTextMessage().getValue();
-	//
-	// //WDEV-5927
-	// //ClearSpan sends messages that mess up xml display.... so get rid.
-	// if (respText != null)
-	// {
-	// respText = respText.replace("<","");
-	// respText = respText.replace(">","");
-	// }
-	// else
-	// respText = "NA";
-	// if (!respCode.equals("AA"))
-	// {
-	// throw new HL7Exception("Response code was " + respCode + ", " +
-	// respText);
-	// }
-	// }
-	// }
 
 	private void deregister() throws Exception
 	{
@@ -1664,7 +3049,9 @@ public class HL7EngineOutbound extends Thread implements IHL7InterfaceComponent
 		a10mapper.processedCount++;
 		try
 		{
-			message = a10mapper.populateMessage(newEvent);
+			//WDEV-20112
+//			message = a10mapper.populateMessage(newEvent);
+			message = (Message) a10mapper.populateMessage(newEvent); //WDEV-20112
 			if (message != null)
 			{
 				String ret = parser.encode(message);
@@ -1799,7 +3186,7 @@ public class HL7EngineOutbound extends Thread implements IHL7InterfaceComponent
 		{
 			a28mapper.errorCount++;
 			a28mapper.lastFailedDateTime = new DateTime();
-			throw new HL7Exception("Exception occurred generating ADT Message for HL7App - " + hl7Application + " - " + e.getMessage(), e);
+			throw new HL7Exception("Exception occurred generating Message for HL7App - " + hl7Application + " - " + e.getMessage(), e);
 		}
 
 		a28mapper.errorCount++;
@@ -1807,6 +3194,35 @@ public class HL7EngineOutbound extends Thread implements IHL7InterfaceComponent
 		throw new HL7Exception("generateA28Message: A null message cannot be parsed!");
 	}
 
+	//WDEV-20593
+	private String generateA29Message(PatientRefVo patient, String hl7Application, ProviderSystemVo providerSystem) throws HL7Exception
+	{
+		Message msg;
+		a29mapper.processedCount++;
+		try
+		{
+			msg = a29mapper.populateMessage(patient, hl7Application, providerSystem);
+			if (msg != null)
+			{
+				String ret = parser.encode(msg);
+				a29mapper.successCount++;
+				a29mapper.lastSuccessDateTime = new DateTime();
+				a29mapper.lastSuccessMessage = ret;
+				return ret;
+			}
+		}
+		catch (Exception e)
+		{
+			a29mapper.errorCount++;
+			a29mapper.lastFailedDateTime = new DateTime();
+			throw new HL7Exception("Exception occurred generating Message for HL7App - " + hl7Application + " - " + e.getMessage(), e);
+		}
+		a29mapper.errorCount++;
+		a29mapper.lastFailedDateTime = new DateTime();
+		throw new HL7Exception("generateA29Message: A null message cannot be parsed!");
+	}
+
+		
 	private String generateA31Message(PatientRefVo patient, String hl7Application, ProviderSystemVo providerSystem) throws HL7Exception
 	{
 		Message msg;
@@ -1827,7 +3243,7 @@ public class HL7EngineOutbound extends Thread implements IHL7InterfaceComponent
 		{
 			a31mapper.errorCount++;
 			a31mapper.lastFailedDateTime = new DateTime();
-			throw new HL7Exception("Exception occurred generating ADT Message for HL7App - " + hl7Application + " - " + e.getMessage(), e);
+			throw new HL7Exception("Exception occurred generating Message for HL7App - " + hl7Application + " - " + e.getMessage(), e);
 		}
 
 		a31mapper.errorCount++;
@@ -1855,7 +3271,7 @@ public class HL7EngineOutbound extends Thread implements IHL7InterfaceComponent
 		{
 			a47mapper.errorCount++;
 			a47mapper.lastFailedDateTime = new DateTime();
-			throw new HL7Exception("Exception occurred generating ADT Message for HL7App - " + hl7Application + " - " + e.getMessage(), e);
+			throw new HL7Exception("Exception occurred generating Message for HL7App - " + hl7Application + " - " + e.getMessage(), e);
 		}
 
 		a47mapper.errorCount++;
@@ -1886,7 +3302,7 @@ public class HL7EngineOutbound extends Thread implements IHL7InterfaceComponent
 		{
 			a40mapper.errorCount++;
 			a40mapper.lastFailedDateTime = new DateTime();
-			throw new HL7Exception("Exception occurred generating ADT Message for HL7App - " + hl7Application + " - " + e.getMessage(), e);
+			throw new HL7Exception("Exception occurred generating Message for HL7App - " + hl7Application + " - " + e.getMessage(), e);
 		}
 
 		a40mapper.errorCount++;
@@ -2035,7 +3451,55 @@ public class HL7EngineOutbound extends Thread implements IHL7InterfaceComponent
 
 	public String[] getEventCodesHandled()
 	{
-		return new String[] { EvnCodes.A10, EvnCodes.A28, EvnCodes.A31,EvnCodes.A47, EvnCodes.A40, EvnCodes.O01, EvnCodes.O02, EvnCodes.O19, EvnCodes.O20,EvnCodes.T02 };
+		//WDEV-19160 - Add S13, S14, S15
+		//WDEV-19481 - Add A02, A12, A21, A22, A52, A53
+		//WDEV-19576 - Add M02, M05
+		//WDEV-19704 - Add A05, A38
+		//WDEV-19974 - Add A15, A26
+		//WDEV-20445 - Add A15, A25
+		//WDEV-20593 - Add A29
+		//WDEV-22725 - Add P01, P02, P03, P05, M04
+		return new String[] {EvnCodes.A01,
+				EvnCodes.A03,
+				EvnCodes.A08, 
+				EvnCodes.A10, 
+				EvnCodes.A11,
+				EvnCodes.A13,
+				EvnCodes.A28, 
+				EvnCodes.A31,
+				EvnCodes.A47, 
+				EvnCodes.A40, 
+				EvnCodes.O01, 
+				EvnCodes.O02, 
+				EvnCodes.O19, 
+				EvnCodes.O20,
+				EvnCodes.S12,
+				EvnCodes.S13,
+				EvnCodes.S14,
+				EvnCodes.S15,
+				EvnCodes.S26,
+				EvnCodes.T02,
+				EvnCodes.A02,
+				EvnCodes.A12,
+				EvnCodes.A21,
+				EvnCodes.A22,
+				EvnCodes.A52,
+				EvnCodes.A53,
+				EvnCodes.M02,
+				EvnCodes.M05,
+				EvnCodes.A05,
+				EvnCodes.A38,
+				EvnCodes.A15,
+				EvnCodes.A26,
+				EvnCodes.A16,
+				EvnCodes.A25,
+				EvnCodes.A29,
+				EvnCodes.P01,
+				EvnCodes.P02,
+				EvnCodes.P03,
+				EvnCodes.P05,
+				EvnCodes.M04
+				};
 	}
 
 	public int getSuccessfulCount(String evn)
@@ -2120,11 +3584,11 @@ public class HL7EngineOutbound extends Thread implements IHL7InterfaceComponent
 		} 
 		catch (DomainInterfaceException e1) 
 		{
-			LOG.error("DomainInterfaceException while trying to save HL7Inbound message.", e1);
+			LOG.error("DomainInterfaceException while trying to save HL7Outbound message.", e1);
 		}
 		catch (StaleObjectException e1) 
 		{
-			LOG.error("StaleObjectException while trying to save HL7Inbound message.", e1);
+			LOG.error("StaleObjectException while trying to save HL7Outbound message.", e1);
 		}
 	}
 	

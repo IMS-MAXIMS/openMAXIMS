@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,15 +15,20 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 
 /*
  * This code was generated.
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:38
+ * Generated: 13/10/2015, 13:23
  */
 package ims.vo.lookups;
 
@@ -34,14 +39,80 @@ public class ClassHelper
 	{
 		switch (typeId)
 		{
+			case 3438:
+				return ims.dtomove.vo.lookups.LocationCharacteristics.class;
+			case 1401016:
+				return ims.dtomove.vo.lookups.ActionPriority.class;
+			case 3411:
+				return ims.dtomove.vo.lookups.ActionReason.class;
+			case 3421:
+				return ims.dtomove.vo.lookups.ContractLocation.class;
+			case 3434:
+				return ims.dtomove.vo.lookups.SpecialtyCode.class;
+			case 3444:
+				return ims.dtomove.vo.lookups.ApptCancelledReason.class;
+			case 3431:
+				return ims.dtomove.vo.lookups.IntervalType.class;
+			case 3433:
+				return ims.dtomove.vo.lookups.SchedulingType.class;
+			case 3423:
+				return ims.dtomove.vo.lookups.MachineTypes.class;
+			case 3432:
+				return ims.dtomove.vo.lookups.SchedulingCategory.class;
 			case 1361000:
 				return ims.racpc.vo.lookups.PainExperienced.class;
+			case 1351001:
+				return ims.naes.vo.lookups.NaesActionStatus.class;
 			case 1351004:
 				return ims.naes.vo.lookups.NAESReferredBy.class;
+			case 1351003:
+				return ims.naes.vo.lookups.ImplantType.class;
+			case 1351002:
+				return ims.naes.vo.lookups.UnderlyingReason.class;
+			case 1351000:
+				return ims.naes.vo.lookups.Action.class;
+			case 1341070:
+				return ims.RefMan.vo.lookups.WeekInTheMonth.class;
+			case 1341069:
+				return ims.RefMan.vo.lookups.Recurring.class;
+			case 1341068:
+				return ims.RefMan.vo.lookups.DefaultTriageActionForCABReferral.class;
+			case 1341067:
+				return ims.RefMan.vo.lookups.DefaultTriageActionForManualReferral.class;
+			case 1341066:
+				return ims.RefMan.vo.lookups.ReasonDeclined28DayOffer.class;
+			case 1341064:
+				return ims.RefMan.vo.lookups.ReasonForChangeUrgency.class;
+			case 1341063:
+				return ims.RefMan.vo.lookups.RedirectReason.class;
+			case 1341061:
+				return ims.RefMan.vo.lookups.TriageOutcomeAppointmentDay.class;
+			case 1341060:
+				return ims.RefMan.vo.lookups.AcceptedActionsRequired.class;
+			case 1341059:
+				return ims.RefMan.vo.lookups.TriageOutcomeStatus.class;
+			case 1341058:
+				return ims.RefMan.vo.lookups.ReferralInitiatedFrom.class;
+			case 1341057:
+				return ims.RefMan.vo.lookups.ReferralRelationType.class;
+			case 1341056:
+				return ims.RefMan.vo.lookups.WaitingCardAdmissionType.class;
+			case 1341055:
+				return ims.RefMan.vo.lookups.AddmitedInTimeUnit.class;
+			case 1341054:
+				return ims.RefMan.vo.lookups.CancerType.class;
+			case 1341053:
+				return ims.RefMan.vo.lookups.PreOpPostOpCare.class;
+			case 1341052:
+				return ims.RefMan.vo.lookups.ProcedureExecutant.class;
+			case 1341051:
+				return ims.RefMan.vo.lookups.OtherProviders.class;
+			case 1341050:
+				return ims.RefMan.vo.lookups.ERODReason.class;
+			case 1341049:
+				return ims.RefMan.vo.lookups.ElectiveListUndoReason.class;
 			case 1341048:
 				return ims.RefMan.vo.lookups.ElectiveListReviewType.class;
-			case 1341047:
-				return ims.RefMan.vo.lookups.KPIExceededReason.class;
 			case 1341046:
 				return ims.RefMan.vo.lookups.RemovalOtherReason.class;
 			case 1341045:
@@ -106,8 +177,6 @@ public class ClassHelper
 				return ims.RefMan.vo.lookups.ReviewType.class;
 			case 1341013:
 				return ims.RefMan.vo.lookups.FollowupManagementType.class;
-			case 1341012:
-				return ims.RefMan.vo.lookups.OnwardReferralRejectedBy.class;
 			case 1341011:
 				return ims.RefMan.vo.lookups.ProviderCancellationReason.class;
 			case 1341009:
@@ -128,12 +197,46 @@ public class ClassHelper
 				return ims.RefMan.vo.lookups.RejectionReason.class;
 			case 1341000:
 				return ims.RefMan.vo.lookups.ReferralApptStatus.class;
+			case 1341012:
+				return ims.RefMan.vo.lookups.OnwardReferralRejectedBy.class;
 			case 1341010:
 				return ims.RefMan.vo.lookups.MedicallyIncomplete.class;
 			case 1331003:
 				return ims.pci.vo.lookups.BreastFeedingStatus.class;
+			case 1331016:
+				return ims.pci.vo.lookups.VaccineCancellationReason.class;
+			case 1331014:
+				return ims.pci.vo.lookups.ScheduleType.class;
 			case 1331010:
 				return ims.pci.vo.lookups.PaymentType.class;
+			case 1331007:
+				return ims.pci.vo.lookups.UserDefinedType3.class;
+			case 1331006:
+				return ims.pci.vo.lookups.UserDefinedType2.class;
+			case 1331005:
+				return ims.pci.vo.lookups.UserDefinedType1.class;
+			case 1331004:
+				return ims.pci.vo.lookups.Stage.class;
+			case 1331002:
+				return ims.pci.vo.lookups.MaritalStatusAtBirth.class;
+			case 1331001:
+				return ims.pci.vo.lookups.DeliveryMethodBirth.class;
+			case 1331000:
+				return ims.pci.vo.lookups.PlaceOfBirth.class;
+			case 1331015:
+				return ims.pci.vo.lookups.GMSPaymentType.class;
+			case 1331013:
+				return ims.pci.vo.lookups.VaccineStatus.class;
+			case 1331012:
+				return ims.pci.vo.lookups.TerminationReason.class;
+			case 1331011:
+				return ims.pci.vo.lookups.TerminatedBy.class;
+			case 1331009:
+				return ims.pci.vo.lookups.UserDefinedType5.class;
+			case 1331008:
+				return ims.pci.vo.lookups.UserDefinedType4.class;
+			case 1321019:
+				return ims.pathways.vo.lookups.NoValidationReason.class;
 			case 1321015:
 				return ims.pathways.vo.lookups.AdminEventOutcome.class;
 			case 1321013:
@@ -150,18 +253,42 @@ public class ClassHelper
 				return ims.pathways.vo.lookups.EventStatus.class;
 			case 1321005:
 				return ims.pathways.vo.lookups.JourneyStatus.class;
-			case 1321003:
-				return ims.pathways.vo.lookups.RTTAction.class;
 			case 1321002:
 				return ims.pathways.vo.lookups.EventLinkType.class;
 			case 1321001:
 				return ims.pathways.vo.lookups.PathwaysDetail.class;
 			case 1321004:
 				return ims.pathways.vo.lookups.PatientTargetStatus.class;
+			case 1321003:
+				return ims.pathways.vo.lookups.RTTAction.class;
+			case 1321022:
+				return ims.pathways.vo.lookups.RTTStatusUpdateReason.class;
+			case 1321018:
+				return ims.pathways.vo.lookups.PatientJourneyBreachReason.class;
+			case 1321016:
+				return ims.pathways.vo.lookups.CommentLevel.class;
+			case 1321017:
+				return ims.pathways.vo.lookups.RTTClockImpactSource.class;
 			case 1321000:
 				return ims.pathways.vo.lookups.PathwaysGroup.class;
+			case 1321021:
+				return ims.pathways.vo.lookups.RTTClockState.class;
+			case 1321020:
+				return ims.pathways.vo.lookups.AdminEventOutcomeReason.class;
 			case 1321014:
 				return ims.pathways.vo.lookups.EventEncounterType.class;
+			case 1291071:
+				return ims.emergency.vo.lookups.RequiresSignOff.class;
+			case 1291067:
+				return ims.emergency.vo.lookups.GPLetterStatus.class;
+			case 1291065:
+				return ims.emergency.vo.lookups.NoKnownInvestigationReason.class;
+			case 1291064:
+				return ims.emergency.vo.lookups.NoKnownInterTreatReason.class;
+			case 1291059:
+				return ims.emergency.vo.lookups.WhiteboardOtherActionType.class;
+			case 1291058:
+				return ims.emergency.vo.lookups.TriagePriorityChange.class;
 			case 1291057:
 				return ims.emergency.vo.lookups.ElectiveListReason.class;
 			case 1291054:
@@ -174,8 +301,6 @@ public class ClassHelper
 				return ims.emergency.vo.lookups.TransferToHospital.class;
 			case 1291040:
 				return ims.emergency.vo.lookups.HCGResults.class;
-			case 1291038:
-				return ims.emergency.vo.lookups.DrugToxicologyType.class;
 			case 1291036:
 				return ims.emergency.vo.lookups.DepartmentType.class;
 			case 1291035:
@@ -212,6 +337,22 @@ public class ClassHelper
 				return ims.emergency.vo.lookups.ConsumedOrPurchasedAlcoholFrom.class;
 			case 1291003:
 				return ims.emergency.vo.lookups.PresentingComplaint.class;
+			case 1291072:
+				return ims.emergency.vo.lookups.InvoiceAmount.class;
+			case 1291070:
+				return ims.emergency.vo.lookups.WhiteBoardActionStatus.class;
+			case 1291069:
+				return ims.emergency.vo.lookups.AttendanceTreatmentsStatus.class;
+			case 1291068:
+				return ims.emergency.vo.lookups.AttendanceInvestigationStatus.class;
+			case 1291063:
+				return ims.emergency.vo.lookups.TriageTabs.class;
+			case 1291062:
+				return ims.emergency.vo.lookups.LetterReviewStatus.class;
+			case 1291061:
+				return ims.emergency.vo.lookups.ReasonForContact.class;
+			case 1291060:
+				return ims.emergency.vo.lookups.PersonContacted.class;
 			case 1291055:
 				return ims.emergency.vo.lookups.DTAAdmissionType.class;
 			case 1291051:
@@ -234,6 +375,8 @@ public class ClassHelper
 				return ims.emergency.vo.lookups.EDVisitType.class;
 			case 1291039:
 				return ims.emergency.vo.lookups.DrugToxicologyResult.class;
+			case 1291038:
+				return ims.emergency.vo.lookups.DrugToxicologyType.class;
 			case 1291037:
 				return ims.emergency.vo.lookups.QuickRegistrationType.class;
 			case 1291033:
@@ -245,7 +388,7 @@ public class ClassHelper
 			case 1291025:
 				return ims.emergency.vo.lookups.AttackerHadConsumedAlcohol.class;
 			case 1291022:
-				return ims.emergency.vo.lookups.TriageCategoryType.class;
+				return ims.emergency.vo.lookups.TriagePatientStatus.class;
 			case 1291021:
 				return ims.emergency.vo.lookups.ReferralSpecialtyConsultantOrTeam.class;
 			case 1291019:
@@ -270,6 +413,8 @@ public class ClassHelper
 				return ims.emergency.vo.lookups.IncidentLocation.class;
 			case 1291000:
 				return ims.emergency.vo.lookups.ReferredBy.class;
+			case 1291066:
+				return ims.emergency.vo.lookups.AmbulanceDelayReason.class;
 			case 1281026:
 				return ims.ccosched.vo.lookups.ActionStatusReason.class;
 			case 3245:
@@ -278,8 +423,20 @@ public class ClassHelper
 				return ims.ccosched.vo.lookups.Unit.class;
 			case 3415:
 				return ims.ccosched.vo.lookups.Techniques.class;
+			case 3196:
+				return ims.ccosched.vo.lookups.SeenAt.class;
+			case 3406:
+				return ims.ccosched.vo.lookups.Requirements.class;
+			case 3486:
+				return ims.ccosched.vo.lookups.ReasonDNA.class;
 			case 3201:
 				return ims.ccosched.vo.lookups.Priority.class;
+			case 3205:
+				return ims.ccosched.vo.lookups.PlannedRegime.class;
+			case 3501:
+				return ims.ccosched.vo.lookups.Period.class;
+			case 1281004:
+				return ims.ccosched.vo.lookups.DoctorsWorkListItem.class;
 			case 3204:
 				return ims.ccosched.vo.lookups.AttendingAs.class;
 			case 3449:
@@ -288,8 +445,16 @@ public class ClassHelper
 				return ims.ccosched.vo.lookups.Anaesthetic.class;
 			case 3199:
 				return ims.ccosched.vo.lookups.TreatmentIntent.class;
+			case 3487:
+				return ims.ccosched.vo.lookups.ReasonIncomplete.class;
 			case 3422:
 				return ims.ccosched.vo.lookups.Modality.class;
+			case 3485:
+				return ims.ccosched.vo.lookups.Location.class;
+			case 3498:
+				return ims.ccosched.vo.lookups.ConfirmationStatus.class;
+			case 3448:
+				return ims.ccosched.vo.lookups.BookingSystemType.class;
 			case 3202:
 				return ims.ccosched.vo.lookups.Transport.class;
 			case 3197:
@@ -302,8 +467,30 @@ public class ClassHelper
 				return ims.assessment.vo.lookups.DPPType.class;
 			case 1271000:
 				return ims.assessment.vo.lookups.AnswerStatus.class;
+			case 1251027:
+				return ims.oncology.vo.lookups.RegimenAcronym.class;
+			case 1251010:
+				return ims.oncology.vo.lookups.FUMorbidityCombination.class;
+			case 1251009:
+				return ims.oncology.vo.lookups.FUMorbidityRadiotx.class;
+			case 1251006:
+				return ims.oncology.vo.lookups.FUTreatmentType.class;
+			case 1251005:
+				return ims.oncology.vo.lookups.FUPatientFollowUpStatus.class;
+			case 1251004:
+				return ims.oncology.vo.lookups.WHOPerformanceStatus.class;
+			case 1251003:
+				return ims.oncology.vo.lookups.FUMarkerResponseStatus.class;
+			case 1251001:
+				return ims.oncology.vo.lookups.FUNodalStatus.class;
+			case 1251002:
+				return ims.oncology.vo.lookups.FUMetastaticStatus.class;
+			case 1251109:
+				return ims.oncology.vo.lookups.FUDyspneaScore.class;
 			case 1251108:
 				return ims.oncology.vo.lookups.TreatmentGroupSite.class;
+			case 1251107:
+				return ims.oncology.vo.lookups.ClinicalTrialName.class;
 			case 1251106:
 				return ims.oncology.vo.lookups.ChemoProviderOrg.class;
 			case 1251105:
@@ -326,6 +513,8 @@ public class ClassHelper
 				return ims.oncology.vo.lookups.TreatmentHospital.class;
 			case 1251095:
 				return ims.oncology.vo.lookups.PrognosticGroup.class;
+			case 1251094:
+				return ims.oncology.vo.lookups.SurgeryRequired.class;
 			case 1251093:
 				return ims.oncology.vo.lookups.InternalReferralSource.class;
 			case 1251092:
@@ -334,6 +523,8 @@ public class ClassHelper
 				return ims.oncology.vo.lookups.ReferralReason.class;
 			case 1251090:
 				return ims.oncology.vo.lookups.ReferralOutcome.class;
+			case 1251089:
+				return ims.oncology.vo.lookups.EASImageType.class;
 			case 1251088:
 				return ims.oncology.vo.lookups.StagingInvestigationResult.class;
 			case 1251087:
@@ -376,6 +567,8 @@ public class ClassHelper
 				return ims.oncology.vo.lookups.HistologySource.class;
 			case 1251060:
 				return ims.oncology.vo.lookups.NoOfFields.class;
+			case 1251059:
+				return ims.oncology.vo.lookups.OncBeamEnergy.class;
 			case 1251058:
 				return ims.oncology.vo.lookups.OncCarePlanStatus.class;
 			case 1251057:
@@ -410,6 +603,8 @@ public class ClassHelper
 				return ims.oncology.vo.lookups.VascularLymphInvasion.class;
 			case 1251038:
 				return ims.oncology.vo.lookups.SynchronousTumourIndicator.class;
+			case 1251037:
+				return ims.oncology.vo.lookups.LateralityOncologySpecific.class;
 			case 1251036:
 				return ims.oncology.vo.lookups.InvestigationType.class;
 			case 1251035:
@@ -418,14 +613,14 @@ public class ClassHelper
 				return ims.oncology.vo.lookups.TNMType.class;
 			case 1251032:
 				return ims.oncology.vo.lookups.GradeofDifferentation.class;
+			case 1251031:
+				return ims.oncology.vo.lookups.BasicOfDiagnosis.class;
 			case 1251030:
 				return ims.oncology.vo.lookups.ChemoTherapyHRG.class;
 			case 1251029:
 				return ims.oncology.vo.lookups.ChemoTxChangeReason.class;
 			case 1251028:
 				return ims.oncology.vo.lookups.DrugProgramResponse.class;
-			case 1251027:
-				return ims.oncology.vo.lookups.RegimenAcronym.class;
 			case 1251026:
 				return ims.oncology.vo.lookups.DrugTherapyType.class;
 			case 1251025:
@@ -456,18 +651,54 @@ public class ClassHelper
 				return ims.oncology.vo.lookups.ImageAnatomicalSite.class;
 			case 1251012:
 				return ims.oncology.vo.lookups.ImagingModality.class;
+			case 1251008:
+				return ims.oncology.vo.lookups.FUMorbidityChemoTx.class;
+			case 1251007:
+				return ims.oncology.vo.lookups.FUMorbiditySurgery.class;
+			case 1251000:
+				return ims.oncology.vo.lookups.FUPrimaryTumourStatus.class;
+			case 1251067:
+				return ims.oncology.vo.lookups.ChemoTherapyToxicityType.class;
+			case 1251066:
+				return ims.oncology.vo.lookups.RadioTherapyToxicityType.class;
+			case 1251063:
+				return ims.oncology.vo.lookups.SymptomType.class;
+			case 1231173:
+				return ims.clinical.vo.lookups.PeriOpStage.class;
+			case 1231170:
+				return ims.clinical.vo.lookups.FinalCountMissingItem.class;
+			case 1231168:
+				return ims.clinical.vo.lookups.HandoverCountTypeIntraOp.class;
+			case 1231165:
+				return ims.clinical.vo.lookups.AntiCoagTherapyAction.class;
+			case 1231162:
+				return ims.clinical.vo.lookups.CatheterDrainsTube.class;
+			case 1231155:
+				return ims.clinical.vo.lookups.BodyPositionIntraOp.class;
+			case 1231156:
+				return ims.clinical.vo.lookups.LeftRightArmPositionIntraOp.class;
+			case 1231145:
+				return ims.clinical.vo.lookups.StructuredCodingComment.class;
+			case 1231144:
+				return ims.clinical.vo.lookups.VTEAssessmentStatusReason.class;
+			case 1231143:
+				return ims.clinical.vo.lookups.VTEAssessmentContextType.class;
+			case 1231142:
+				return ims.clinical.vo.lookups.FollowUPIn.class;
+			case 1231140:
+				return ims.clinical.vo.lookups.InternalReferralConditionalReferralToGP.class;
 			case 1231134:
 				return ims.clinical.vo.lookups.TreatmentInterventionType.class;
 			case 1231122:
 				return ims.clinical.vo.lookups.AnaestheticUsed.class;
-			case 1231117:
-				return ims.clinical.vo.lookups.ClinicalOutcomeCategory.class;
 			case 1231114:
 				return ims.clinical.vo.lookups.EDischargeSummarySection.class;
 			case 1231113:
 				return ims.clinical.vo.lookups.AdditonalClinicalInformation.class;
 			case 1231112:
 				return ims.clinical.vo.lookups.MedicationDuration.class;
+			case 1231111:
+				return ims.clinical.vo.lookups.TTAStatus.class;
 			case 1231110:
 				return ims.clinical.vo.lookups.AdviceApplicatiableForUnit.class;
 			case 1231109:
@@ -624,8 +855,40 @@ public class ClassHelper
 				return ims.clinical.vo.lookups.ChecklistItem.class;
 			case 1231001:
 				return ims.clinical.vo.lookups.Symptoms.class;
-			case 1231133:
-				return ims.clinical.vo.lookups.BodySystem.class;
+			case 1231169:
+				return ims.clinical.vo.lookups.HandoverCountStatusIntraOp.class;
+			case 1231164:
+				return ims.clinical.vo.lookups.PacemakerDefibrillatorType.class;
+			case 1231166:
+				return ims.clinical.vo.lookups.PreAssessmentInformationRequired.class;
+			case 1231167:
+				return ims.clinical.vo.lookups.TourniquetSite.class;
+			case 1231159:
+				return ims.clinical.vo.lookups.SurgicalSitePreparationIntraOp.class;
+			case 1231163:
+				return ims.clinical.vo.lookups.SpecimenDestinationIntraOp.class;
+			case 1231154:
+				return ims.clinical.vo.lookups.TransferToFromOperatingTableIntraOp.class;
+			case 1231171:
+				return ims.clinical.vo.lookups.FinalCountActionsTaken.class;
+			case 1231148:
+				return ims.clinical.vo.lookups.HistologyStatus.class;
+			case 1231174:
+				return ims.clinical.vo.lookups.HandoverIncorrectCountStatus.class;
+			case 1231139:
+				return ims.clinical.vo.lookups.InternalReferralStatusChangeReason.class;
+			case 1231138:
+				return ims.clinical.vo.lookups.ClinicalReferralNoteType.class;
+			case 1231151:
+				return ims.clinical.vo.lookups.ChartableOccuranceType.class;
+			case 1231136:
+				return ims.clinical.vo.lookups.ClinicalReferralType.class;
+			case 1231135:
+				return ims.clinical.vo.lookups.ElectronicPrescribingParameters.class;
+			case 1231147:
+				return ims.clinical.vo.lookups.CodingCommentType.class;
+			case 1231160:
+				return ims.clinical.vo.lookups.DiathermySerialNumber.class;
 			case 1231132:
 				return ims.clinical.vo.lookups.SurgicalCheckListNotPerformedReason.class;
 			case 1231131:
@@ -636,40 +899,64 @@ public class ClassHelper
 				return ims.clinical.vo.lookups.HandoverFromRecoveryNurse.class;
 			case 1231128:
 				return ims.clinical.vo.lookups.SurgicalPack.class;
+			case 1231161:
+				return ims.clinical.vo.lookups.DiathermyMode.class;
 			case 1231126:
 				return ims.clinical.vo.lookups.SiteMarkedActionTaken.class;
 			case 1231125:
 				return ims.clinical.vo.lookups.VTEAsessmentStatus.class;
-			case 1231123:
-				return ims.clinical.vo.lookups.VTERiskGroup.class;
+			case 1231158:
+				return ims.clinical.vo.lookups.PositioningDevicesIntraOp.class;
+			case 1231157:
+				return ims.clinical.vo.lookups.LeftRightLegPositionIntraOp.class;
+			case 1231149:
+				return ims.clinical.vo.lookups.LAAnaestheticBlockType.class;
 			case 1231121:
 				return ims.clinical.vo.lookups.HospitalAtNightPatientStatus.class;
 			case 1231120:
 				return ims.clinical.vo.lookups.HospitalAtNightClinicalTask.class;
 			case 1231119:
 				return ims.clinical.vo.lookups.HospitalAtNightRequestType.class;
-			case 1231111:
-				return ims.clinical.vo.lookups.TTAStatus.class;
+			case 1231117:
+				return ims.clinical.vo.lookups.ClinicalOutcomeCategory.class;
+			case 1231123:
+				return ims.clinical.vo.lookups.VTERiskGroup.class;
+			case 1231153:
+				return ims.clinical.vo.lookups.PatientPreparationIntraOp.class;
+			case 1231152:
+				return ims.clinical.vo.lookups.CirculatorScrubNurseRole.class;
 			case 1231118:
 				return ims.clinical.vo.lookups.MEWS.class;
 			case 1231107:
 				return ims.clinical.vo.lookups.ClinicalNoteClassification.class;
-			case 1231115:
-				return ims.clinical.vo.lookups.EDischargeSummarySectionStatus.class;
 			case 1231105:
 				return ims.clinical.vo.lookups.DischargeSummaryJobType.class;
-			case 1231104:
-				return ims.clinical.vo.lookups.DischargeSupplementaryLetterStatus.class;
 			case 1231099:
 				return ims.clinical.vo.lookups.CataractDressings.class;
+			case 1231115:
+				return ims.clinical.vo.lookups.EDischargeSummarySectionStatus.class;
+			case 1231146:
+				return ims.clinical.vo.lookups.CodingCommentStatus.class;
+			case 1231104:
+				return ims.clinical.vo.lookups.DischargeSupplementaryLetterStatus.class;
+			case 1231083:
+				return ims.clinical.vo.lookups.RACPExerciseECGFindings.class;
+			case 1231150:
+				return ims.clinical.vo.lookups.LeftAndRightSideCheckedAndCorrectSideMarked.class;
+			case 1231116:
+				return ims.clinical.vo.lookups.TheatreTrackingStatus.class;
 			case 1231124:
 				return ims.clinical.vo.lookups.ProphylaxisOffered.class;
 			case 1231090:
 				return ims.clinical.vo.lookups.SkinClosure.class;
-			case 1231083:
-				return ims.clinical.vo.lookups.RACPExerciseECGFindings.class;
-			case 1231116:
-				return ims.clinical.vo.lookups.TheatreTrackingStatus.class;
+			case 1231100:
+				return ims.clinical.vo.lookups.SkinClosureType.class;
+			case 1231141:
+				return ims.clinical.vo.lookups.InternalReferralsGridColumn.class;
+			case 1231133:
+				return ims.clinical.vo.lookups.BodySystem.class;
+			case 1231065:
+				return ims.clinical.vo.lookups.VaccineManufacturer.class;
 			case 1231058:
 				return ims.clinical.vo.lookups.ReferralCategory.class;
 			case 1231046:
@@ -688,6 +975,8 @@ public class ClassHelper
 				return ims.chooseandbook.vo.lookups.ActionRequestType.class;
 			case 1211002:
 				return ims.chooseandbook.vo.lookups.SendPendingRequest.class;
+			case 1191006:
+				return ims.ntpf_ptr.vo.lookups.AreaOfResidence.class;
 			case 1181012:
 				return ims.icp.vo.lookups.ICPStageStatus.class;
 			case 1181009:
@@ -706,26 +995,24 @@ public class ClassHelper
 				return ims.icp.vo.lookups.ICPPhaseStatus.class;
 			case 1161058:
 				return ims.ocrr.vo.lookups.ResultDetailsType.class;
+			case 1161055:
+				return ims.ocrr.vo.lookups.InvType.class;
+			case 1161032:
+				return ims.ocrr.vo.lookups.ResultValueType.class;
+			case 1161031:
+				return ims.ocrr.vo.lookups.ResultCommentType.class;
 			case 1161057:
 				return ims.ocrr.vo.lookups.SpecimenContainerType.class;
 			case 1161056:
 				return ims.ocrr.vo.lookups.InvEventType.class;
-			case 1161055:
-				return ims.ocrr.vo.lookups.InvType.class;
 			case 1161054:
 				return ims.ocrr.vo.lookups.PatientClericalTaskStatus.class;
 			case 1161041:
 				return ims.ocrr.vo.lookups.SpecimenCollectionTime.class;
 			case 1161038:
 				return ims.ocrr.vo.lookups.ResultStatus.class;
-			case 1161037:
-				return ims.ocrr.vo.lookups.NormalcyStatus.class;
 			case 1161036:
 				return ims.ocrr.vo.lookups.ResultUnitOfMeasure.class;
-			case 1161032:
-				return ims.ocrr.vo.lookups.ResultValueType.class;
-			case 1161031:
-				return ims.ocrr.vo.lookups.ResultCommentType.class;
 			case 1161027:
 				return ims.ocrr.vo.lookups.OrderInvStatus.class;
 			case 1161025:
@@ -766,12 +1053,20 @@ public class ClassHelper
 				return ims.ocrr.vo.lookups.ItemSelectionType.class;
 			case 1161000:
 				return ims.ocrr.vo.lookups.Category.class;
+			case 1161042:
+				return ims.ocrr.vo.lookups.DayOfWeek.class;
+			case 1161049:
+				return ims.ocrr.vo.lookups.ReportToType.class;
+			case 1161037:
+				return ims.ocrr.vo.lookups.NormalcyStatus.class;
+			case 1161034:
+				return ims.ocrr.vo.lookups.SelectAndOrderComponentType.class;
+			case 1161019:
+				return ims.ocrr.vo.lookups.TemplateDividerType.class;
 			case 1161053:
 				return ims.ocrr.vo.lookups.ResultEDSubtype.class;
 			case 1161051:
 				return ims.ocrr.vo.lookups.PrintingLocationType.class;
-			case 1161049:
-				return ims.ocrr.vo.lookups.ReportToType.class;
 			case 1161048:
 				return ims.ocrr.vo.lookups.AuthorisationOrderStatus.class;
 			case 1161047:
@@ -782,40 +1077,62 @@ public class ClassHelper
 				return ims.ocrr.vo.lookups.SpecimenCollectionStatus.class;
 			case 1161043:
 				return ims.ocrr.vo.lookups.SpecimenCollectionType.class;
-			case 1161042:
-				return ims.ocrr.vo.lookups.DayOfWeek.class;
 			case 1161040:
 				return ims.ocrr.vo.lookups.OcsDisplayFlag.class;
 			case 1161039:
 				return ims.ocrr.vo.lookups.OrderMessageStatus.class;
 			case 1161035:
 				return ims.ocrr.vo.lookups.OrderCategory.class;
-			case 1161034:
-				return ims.ocrr.vo.lookups.SelectAndOrderComponentType.class;
 			case 1161021:
 				return ims.ocrr.vo.lookups.TemplateCategories.class;
 			case 1161020:
 				return ims.ocrr.vo.lookups.SpecimenCollectionMethod.class;
-			case 1161019:
-				return ims.ocrr.vo.lookups.TemplateDividerType.class;
 			case 1161018:
 				return ims.ocrr.vo.lookups.TestHelpTitles.class;
 			case 1161005:
 				return ims.ocrr.vo.lookups.HelpTextCategory.class;
+			case 1141042:
+				return ims.scheduling.vo.lookups.SafetyBriefDelayReason.class;
+			case 1141041:
+				return ims.scheduling.vo.lookups.Rule28DayStatus.class;
+			case 1141039:
+				return ims.scheduling.vo.lookups.PendingEmergencyTheatreStatus.class;
+			case 1141038:
+				return ims.scheduling.vo.lookups.PendingEmergencyCurrentPatientLocation.class;
+			case 1141037:
+				return ims.scheduling.vo.lookups.PendingTheatreUrgencyCategory.class;
+			case 1141036:
+				return ims.scheduling.vo.lookups.RequestToSchedule.class;
+			case 1141035:
+				return ims.scheduling.vo.lookups.AcuteTheateListBookingState.class;
+			case 1141034:
+				return ims.scheduling.vo.lookups.FutureAppointmentSource.class;
+			case 1141033:
+				return ims.scheduling.vo.lookups.FutureApptRemovalReason.class;
+			case 1141032:
+				return ims.scheduling.vo.lookups.FutureAppointmentStatus.class;
+			case 1141029:
+				return ims.scheduling.vo.lookups.RTTWeekWaitOr28DayRuleBreachReason.class;
 			case 1141027:
 				return ims.scheduling.vo.lookups.AppointmentAction.class;
 			case 1141023:
 				return ims.scheduling.vo.lookups.AppointmentTrackingStatus.class;
-			case 1141017:
-				return ims.scheduling.vo.lookups.ExternalSystemEventTypes.class;
-			case 1141011:
-				return ims.scheduling.vo.lookups.ApptAttStatus.class;
 			case 1141026:
 				return ims.scheduling.vo.lookups.OutcomeAction.class;
-			case 1141004:
-				return ims.scheduling.vo.lookups.Session_Status_and_Reason.class;
 			case 1141001:
 				return ims.scheduling.vo.lookups.Sched_Prfile_Cat.class;
+			case 1141017:
+				return ims.scheduling.vo.lookups.ExternalSystemEventTypes.class;
+			case 1141012:
+				return ims.scheduling.vo.lookups.ApptConfStatus.class;
+			case 1141011:
+				return ims.scheduling.vo.lookups.ApptAttStatus.class;
+			case 1141040:
+				return ims.scheduling.vo.lookups.PendingEmergencyTheatreRemovalReason.class;
+			case 1141030:
+				return ims.scheduling.vo.lookups.SchProfileType.class;
+			case 1141028:
+				return ims.scheduling.vo.lookups.ProfileListType.class;
 			case 1141025:
 				return ims.scheduling.vo.lookups.ConsultationMediaType.class;
 			case 1141024:
@@ -838,12 +1155,20 @@ public class ClassHelper
 				return ims.scheduling.vo.lookups.SchedulingPriority.class;
 			case 1141007:
 				return ims.scheduling.vo.lookups.Status_Reason.class;
+			case 1141004:
+				return ims.scheduling.vo.lookups.Session_Status_and_Reason.class;
 			case 1141003:
 				return ims.scheduling.vo.lookups.CancelAppointmentReason.class;
 			case 1141002:
 				return ims.scheduling.vo.lookups.Profile_Interval_Type.class;
 			case 1141000:
 				return ims.scheduling.vo.lookups.Sched_Profile_Type.class;
+			case 1121019:
+				return ims.therapies.vo.lookups.TherapiesContactType.class;
+			case 1121018:
+				return ims.therapies.vo.lookups.ConsentReason.class;
+			case 1121017:
+				return ims.therapies.vo.lookups.Caseload.class;
 			case 1121016:
 				return ims.therapies.vo.lookups.DominantHand.class;
 			case 1121015:
@@ -868,8 +1193,6 @@ public class ClassHelper
 				return ims.therapies.vo.lookups.CarerEducation.class;
 			case 1121000:
 				return ims.therapies.vo.lookups.JaymarLevel.class;
-			case 1111011:
-				return ims.correspondence.vo.lookups.RecipientType.class;
 			case 1111009:
 				return ims.correspondence.vo.lookups.AssociationSpecifier.class;
 			case 1111008:
@@ -886,16 +1209,14 @@ public class ClassHelper
 				return ims.correspondence.vo.lookups.GlossaryCategory.class;
 			case 1111001:
 				return ims.correspondence.vo.lookups.Header.class;
+			case 1111011:
+				return ims.correspondence.vo.lookups.RecipientType.class;
 			case 1111010:
 				return ims.correspondence.vo.lookups.GlossarySpecifier.class;
-			case 1101053:
-				return ims.ntpf.vo.lookups.BatchStatus.class;
-			case 1101052:
-				return ims.ntpf.vo.lookups.AccountingType.class;
 			case 1101049:
 				return ims.ntpf.vo.lookups.CallType.class;
-			case 1101048:
-				return ims.ntpf.vo.lookups.InsuranceType.class;
+			case 1101007:
+				return ims.ntpf.vo.lookups.PatientType.class;
 			case 1101047:
 				return ims.ntpf.vo.lookups.JobType.class;
 			case 1101040:
@@ -904,16 +1225,20 @@ public class ClassHelper
 				return ims.ntpf.vo.lookups.WaitingListLengthQualifier.class;
 			case 1101036:
 				return ims.ntpf.vo.lookups.CommentContextType.class;
-			case 1101023:
-				return ims.ntpf.vo.lookups.PatientCheckList.class;
 			case 1101022:
 				return ims.ntpf.vo.lookups.County.class;
 			case 1101008:
 				return ims.ntpf.vo.lookups.CaseType.class;
 			case 1101002:
 				return ims.ntpf.vo.lookups.LoCallStatus.class;
-			case 1101007:
-				return ims.ntpf.vo.lookups.PatientType.class;
+			case 1101053:
+				return ims.ntpf.vo.lookups.BatchStatus.class;
+			case 1101052:
+				return ims.ntpf.vo.lookups.AccountingType.class;
+			case 1101048:
+				return ims.ntpf.vo.lookups.InsuranceType.class;
+			case 1101023:
+				return ims.ntpf.vo.lookups.PatientCheckList.class;
 			case 1101001:
 				return ims.ntpf.vo.lookups.WhereHeard.class;
 			case 1101000:
@@ -926,6 +1251,8 @@ public class ClassHelper
 				return ims.medicaloncology.vo.lookups.PrimaryTumourStatus.class;
 			case 2936:
 				return ims.medicaloncology.vo.lookups.PerformanceStatus.class;
+			case 1051066:
+				return ims.spinalinjuries.vo.lookups.PowerchairSkillAssessedLevel.class;
 			case 1051043:
 				return ims.spinalinjuries.vo.lookups.UltrasoundFreq.class;
 			case 904:
@@ -952,6 +1279,8 @@ public class ClassHelper
 				return ims.spinalinjuries.vo.lookups.RehabIndependenceLevel.class;
 			case 1051010:
 				return ims.spinalinjuries.vo.lookups.RehabEnvAdaptation.class;
+			case 1051009:
+				return ims.spinalinjuries.vo.lookups.RehabTechnique.class;
 			case 1051006:
 				return ims.spinalinjuries.vo.lookups.HydrotherapyEquipment.class;
 			case 1051005:
@@ -960,8 +1289,6 @@ public class ClassHelper
 				return ims.spinalinjuries.vo.lookups.HydrotherapyTransferIn.class;
 			case 1051002:
 				return ims.spinalinjuries.vo.lookups.HydrotherapyLevelOfAssistance.class;
-			case 1051001:
-				return ims.spinalinjuries.vo.lookups.ComplementaryTherapy.class;
 			case 1051179:
 				return ims.spinalinjuries.vo.lookups.EnvironmentVisitRoomType.class;
 			case 1051178:
@@ -1146,8 +1473,6 @@ public class ClassHelper
 				return ims.spinalinjuries.vo.lookups.WheelchairSkillAssessedLevel.class;
 			case 1051067:
 				return ims.spinalinjuries.vo.lookups.WheelchairSkill.class;
-			case 1051066:
-				return ims.spinalinjuries.vo.lookups.PowerchairSkillAssessedLevel.class;
 			case 1051065:
 				return ims.spinalinjuries.vo.lookups.PowerchairSkill.class;
 			case 1051064:
@@ -1232,14 +1557,14 @@ public class ClassHelper
 				return ims.spinalinjuries.vo.lookups.RehabLocation.class;
 			case 1026:
 				return ims.spinalinjuries.vo.lookups.RehabActivity.class;
-			case 1051009:
-				return ims.spinalinjuries.vo.lookups.RehabTechnique.class;
 			case 1051008:
 				return ims.spinalinjuries.vo.lookups.RehabEquipment.class;
 			case 1051007:
 				return ims.spinalinjuries.vo.lookups.MobilisationsTreatment.class;
 			case 1051004:
 				return ims.spinalinjuries.vo.lookups.HydrotherapyTransferOut.class;
+			case 1051001:
+				return ims.spinalinjuries.vo.lookups.ComplementaryTherapy.class;
 			case 1051000:
 				return ims.spinalinjuries.vo.lookups.GaitReEducationGaitAspect.class;
 			case 1041003:
@@ -1250,12 +1575,30 @@ public class ClassHelper
 				return ims.clinicaladmin.vo.lookups.EDischargeHINT.class;
 			case 1041000:
 				return ims.clinicaladmin.vo.lookups.HotListFormType.class;
+			case 1031041:
+				return ims.admin.vo.lookups.WardDeptCategory.class;
+			case 1031040:
+				return ims.admin.vo.lookups.PDSPatientCareProvisionType.class;
+			case 1031039:
+				return ims.admin.vo.lookups.PDSMultipleRegIndicaor.class;
+			case 1031038:
+				return ims.admin.vo.lookups.PDSInformationSensitivityIndicator.class;
+			case 1031037:
+				return ims.admin.vo.lookups.PDSDemographicNotificationType.class;
+			case 1031036:
+				return ims.admin.vo.lookups.PDSDeathNotificationStatus.class;
+			case 1031035:
+				return ims.admin.vo.lookups.PDSDataQualityType.class;
+			case 1031034:
+				return ims.admin.vo.lookups.PDSDataQualityReason.class;
 			case 1031030:
 				return ims.admin.vo.lookups.AppointmentOutcomeReason.class;
 			case 1031028:
 				return ims.admin.vo.lookups.ReasonChartNotRequested.class;
 			case 1031020:
 				return ims.admin.vo.lookups.NotificationPriority.class;
+			case 1031017:
+				return ims.admin.vo.lookups.NavigationStyle.class;
 			case 1031014:
 				return ims.admin.vo.lookups.FileFormatType.class;
 			case 1031013:
@@ -1280,18 +1623,16 @@ public class ClassHelper
 				return ims.admin.vo.lookups.GenderSpecific.class;
 			case 1031001:
 				return ims.admin.vo.lookups.TopButtonAction.class;
+			case 1031032:
+				return ims.admin.vo.lookups.HardCodedEvents.class;
 			case 1031022:
 				return ims.admin.vo.lookups.ClearSpanEventLevel.class;
-			case 1031017:
-				return ims.admin.vo.lookups.NavigationStyle.class;
 			case 1031015:
 				return ims.admin.vo.lookups.BusinessRuleCategory.class;
 			case 1031000:
 				return ims.admin.vo.lookups.FormReadWrite.class;
 			case 1031024:
 				return ims.admin.vo.lookups.HTTPServletDebug.class;
-			case 1031027:
-				return ims.admin.vo.lookups.EDAttendenceControlType.class;
 			case 1031021:
 				return ims.admin.vo.lookups.ClearSpanEvents.class;
 			case 1031019:
@@ -1300,6 +1641,160 @@ public class ClassHelper
 				return ims.admin.vo.lookups.ImageType.class;
 			case 1031016:
 				return ims.admin.vo.lookups.RuleConditionType.class;
+			case 1031033:
+				return ims.admin.vo.lookups.Diagnostic.class;
+			case 1031027:
+				return ims.admin.vo.lookups.EDAttendenceControlType.class;
+			case 1021395:
+				return ims.core.vo.lookups.UnrecordedObservationsReason.class;
+			case 1021380:
+				return ims.core.vo.lookups.PendingEmergencyAdmissionType.class;
+			case 1021391:
+				return ims.core.vo.lookups.MsgUpdateType.class;
+			case 1021383:
+				return ims.core.vo.lookups.SourceOfEmergencyReferral.class;
+			case 1021378:
+				return ims.core.vo.lookups.Institution.class;
+			case 1021377:
+				return ims.core.vo.lookups.YesNoNotApplicable.class;
+			case 1021376:
+				return ims.core.vo.lookups.YesNotApplicable.class;
+			case 1021375:
+				return ims.core.vo.lookups.YesUnable.class;
+			case 1021371:
+				return ims.core.vo.lookups.PDSProvisionType.class;
+			case 1021370:
+				return ims.core.vo.lookups.OtherHCP.class;
+			case 1021368:
+				return ims.core.vo.lookups.ReasonForAdmissionToGenderSpecificBay.class;
+			case 1021367:
+				return ims.core.vo.lookups.PDSUpdateMode.class;
+			case 1021366:
+				return ims.core.vo.lookups.PDSUpdateType.class;
+			case 1021364:
+				return ims.core.vo.lookups.PDSAsyncRequestType.class;
+			case 1021363:
+				return ims.core.vo.lookups.ReasonCannotGoDischargeLounge.class;
+			case 1021362:
+				return ims.core.vo.lookups.ReasonDelayDischarge.class;
+			case 1021361:
+				return ims.core.vo.lookups.ExtendedLengthOfStayReason.class;
+			case 1021360:
+				return ims.core.vo.lookups.PDSAckDetailType.class;
+			case 1021359:
+				return ims.core.vo.lookups.PDSRequestAckStatus.class;
+			case 1021358:
+				return ims.core.vo.lookups.PDSNhsNumberStatus.class;
+			case 1021357:
+				return ims.core.vo.lookups.PDSIgnoreHistoryIndicator.class;
+			case 1021356:
+				return ims.core.vo.lookups.PDSHistoryDataFlag.class;
+			case 1021355:
+				return ims.core.vo.lookups.PDSBackOfficeOutcome.class;
+			case 1021352:
+				return ims.core.vo.lookups.WardBayBlockingReason.class;
+			case 1021351:
+				return ims.core.vo.lookups.WardBayClosingReason.class;
+			case 1021350:
+				return ims.core.vo.lookups.WardBayStatus.class;
+			case 1021348:
+				return ims.core.vo.lookups.PDSResidentialStatus.class;
+			case 1021347:
+				return ims.core.vo.lookups.PDSRelatedPersonRole.class;
+			case 1021346:
+				return ims.core.vo.lookups.PDSRegisteringAuthorityType.class;
+			case 1021345:
+				return ims.core.vo.lookups.PDSPreviousNHSContactIndicator.class;
+			case 1021344:
+				return ims.core.vo.lookups.PreferredWrittenCommunication.class;
+			case 1021343:
+				return ims.core.vo.lookups.PDSConsent.class;
+			case 1021342:
+				return ims.core.vo.lookups.PDSBackOfficeWorkPriority.class;
+			case 1021341:
+				return ims.core.vo.lookups.PDSBackOfficeWorkStatus.class;
+			case 1021340:
+				return ims.core.vo.lookups.PDSBackOfficeType.class;
+			case 1021339:
+				return ims.core.vo.lookups.PDSSearchType.class;
+			case 1021338:
+				return ims.core.vo.lookups.ProcedureEndoscopyType.class;
+			case 1021337:
+				return ims.core.vo.lookups.OBSProtocolType.class;
+			case 1021335:
+				return ims.core.vo.lookups.ChartableOccurrenceType.class;
+			case 1021334:
+				return ims.core.vo.lookups.ActionsTaken.class;
+			case 1021332:
+				return ims.core.vo.lookups.ProcedureWoundClass.class;
+			case 1021330:
+				return ims.core.vo.lookups.SpecimenDestination.class;
+			case 1021329:
+				return ims.core.vo.lookups.IrrigantSolution.class;
+			case 1021328:
+				return ims.core.vo.lookups.LaserPatientSafetyMeasures.class;
+			case 1021327:
+				return ims.core.vo.lookups.LaserMode.class;
+			case 1021326:
+				return ims.core.vo.lookups.LaserDeviceSerialNumber.class;
+			case 1021325:
+				return ims.core.vo.lookups.LaserDeviceName.class;
+			case 1021324:
+				return ims.core.vo.lookups.DiathermyPadSite.class;
+			case 1021323:
+				return ims.core.vo.lookups.DiathermyDeviceSerialNumber.class;
+			case 1021321:
+				return ims.core.vo.lookups.CodingStatus.class;
+			case 1021319:
+				return ims.core.vo.lookups.TransferReason.class;
+			case 1021318:
+				return ims.core.vo.lookups.UncodedReason.class;
+			case 1021317:
+				return ims.core.vo.lookups.FolderCaseNote.class;
+			case 1021316:
+				return ims.core.vo.lookups.CaseNoteRequestCancellationReason.class;
+			case 1021315:
+				return ims.core.vo.lookups.CaseNoteReasonForTransfer.class;
+			case 1021314:
+				return ims.core.vo.lookups.CaseNoteRequestStatus.class;
+			case 1021313:
+				return ims.core.vo.lookups.CaseNoteReasonForRequest.class;
+			case 1021312:
+				return ims.core.vo.lookups.CaseNoteStatus.class;
+			case 1021311:
+				return ims.core.vo.lookups.CaseNoteType.class;
+			case 1021310:
+				return ims.core.vo.lookups.UndoDODFileds.class;
+			case 1021309:
+				return ims.core.vo.lookups.ReasonForBreachingFirstApptKPI.class;
+			case 1021308:
+				return ims.core.vo.lookups.PDSSynchronisationRelevantDatasetFields.class;
+			case 1021307:
+				return ims.core.vo.lookups.AccomodationRequestedType.class;
+			case 1021306:
+				return ims.core.vo.lookups.HealthBoard.class;
+			case 1021305:
+				return ims.core.vo.lookups.PreferredContactTime.class;
+			case 1021304:
+				return ims.core.vo.lookups.ContactMethod.class;
+			case 1021303:
+				return ims.core.vo.lookups.InternalReferralStatus.class;
+			case 1021302:
+				return ims.core.vo.lookups.ISOUnit.class;
+			case 1021301:
+				return ims.core.vo.lookups.DiagnosisDivisions.class;
+			case 1021300:
+				return ims.core.vo.lookups.PatientDiagnosisStatus.class;
+			case 1021298:
+				return ims.core.vo.lookups.BayDependencyLevel.class;
+			case 1021297:
+				return ims.core.vo.lookups.GenderAdmissionReason.class;
+			case 1021296:
+				return ims.core.vo.lookups.TrackingMovementType.class;
+			case 1021294:
+				return ims.core.vo.lookups.ReasonForAdmissionOutOfOpeningHours.class;
+			case 1021293:
+				return ims.core.vo.lookups.ReasonforPrivateBedAllocation.class;
 			case 1021292:
 				return ims.core.vo.lookups.Initator.class;
 			case 1021291:
@@ -1321,7 +1816,7 @@ public class ClassHelper
 			case 1021281:
 				return ims.core.vo.lookups.DementiaWorklistStatus.class;
 			case 1021280:
-				return ims.core.vo.lookups.PreferredCommunicationLanguage.class;
+				return ims.core.vo.lookups.PDSPreferredCommunicationLanguage.class;
 			case 1021279:
 				return ims.core.vo.lookups.CDSReportType.class;
 			case 1021278:
@@ -1334,8 +1829,8 @@ public class ClassHelper
 				return ims.core.vo.lookups.ProblemGroupStatus.class;
 			case 1021274:
 				return ims.core.vo.lookups.ProcedureIncompleteReason.class;
-			case 1021272:
-				return ims.core.vo.lookups.PrivateInsuranceStatus.class;
+			case 1021273:
+				return ims.core.vo.lookups.MediaType.class;
 			case 1021271:
 				return ims.core.vo.lookups.PrivateInsurancePolicyType.class;
 			case 1021270:
@@ -1362,12 +1857,14 @@ public class ClassHelper
 				return ims.core.vo.lookups.QueueType.class;
 			case 1021258:
 				return ims.core.vo.lookups.FollowUpType.class;
+			case 1021257:
+				return ims.core.vo.lookups.ReadmissionType.class;
 			case 1021256:
 				return ims.core.vo.lookups.BedTypeRequested.class;
 			case 1021254:
 				return ims.core.vo.lookups.CustomListType.class;
-			case 1021253:
-				return ims.core.vo.lookups.DischargeReason.class;
+			case 1021251:
+				return ims.core.vo.lookups.OverallImpression.class;
 			case 1021250:
 				return ims.core.vo.lookups.PlanOfAction.class;
 			case 1021249:
@@ -1396,6 +1893,8 @@ public class ClassHelper
 				return ims.core.vo.lookups.ApplicationSiteName.class;
 			case 1021237:
 				return ims.core.vo.lookups.TCIType.class;
+			case 1021236:
+				return ims.core.vo.lookups.Alphabet.class;
 			case 1021235:
 				return ims.core.vo.lookups.BedSpaceType.class;
 			case 1021234:
@@ -1430,10 +1929,16 @@ public class ClassHelper
 				return ims.core.vo.lookups.FileType.class;
 			case 1021217:
 				return ims.core.vo.lookups.SpecialNeed.class;
+			case 1021214:
+				return ims.core.vo.lookups.ConfidentialReason.class;
 			case 1021213:
 				return ims.core.vo.lookups.WorklistContactType.class;
 			case 1021212:
 				return ims.core.vo.lookups.RegistrationSourceOfInfo.class;
+			case 1021211:
+				return ims.core.vo.lookups.DodSource.class;
+			case 1021210:
+				return ims.core.vo.lookups.Nationality.class;
 			case 1021208:
 				return ims.core.vo.lookups.PatientAlertStatus.class;
 			case 1021207:
@@ -1444,8 +1949,6 @@ public class ClassHelper
 				return ims.core.vo.lookups.UrineOutput.class;
 			case 1021204:
 				return ims.core.vo.lookups.ConsciousLevel.class;
-			case 1021203:
-				return ims.core.vo.lookups.CauseofDeath.class;
 			case 1021202:
 				return ims.core.vo.lookups.SurgeryASAGrade.class;
 			case 1021201:
@@ -1472,34 +1975,20 @@ public class ClassHelper
 				return ims.core.vo.lookups.DeathCodeDiscrepency.class;
 			case 1021186:
 				return ims.core.vo.lookups.PasEventType.class;
-			case 1021185:
-				return ims.core.vo.lookups.SourceOfNote.class;
 			case 1021184:
-				return ims.core.vo.lookups.MedciationCommencedDiscontinuedType.class;
+				return ims.core.vo.lookups.MedicationCommencedDiscontinuedType.class;
 			case 1021183:
 				return ims.core.vo.lookups.MedOverviewCorrectness.class;
-			case 1021182:
-				return ims.core.vo.lookups.LineTypeStatus.class;
 			case 1021181:
 				return ims.core.vo.lookups.ClinicalTeamType.class;
 			case 1021180:
 				return ims.core.vo.lookups.DailyTimePeriods.class;
-			case 1021179:
-				return ims.core.vo.lookups.CBGType.class;
 			case 1021178:
-				return ims.core.vo.lookups.SECSTypes.class;
+				return ims.core.vo.lookups.OBSType.class;
 			case 1021177:
 				return ims.core.vo.lookups.VitalSignsMonitoringDuration.class;
 			case 1021176:
 				return ims.core.vo.lookups.VitalSignsMonitoringFrequency.class;
-			case 1021175:
-				return ims.core.vo.lookups.LineColourPointIcon.class;
-			case 1021174:
-				return ims.core.vo.lookups.LineType.class;
-			case 1021173:
-				return ims.core.vo.lookups.DataSetCategory.class;
-			case 1021172:
-				return ims.core.vo.lookups.ResuscitationStatus.class;
 			case 1021171:
 				return ims.core.vo.lookups.DailyPatternType.class;
 			case 1021169:
@@ -1542,12 +2031,12 @@ public class ClassHelper
 				return ims.core.vo.lookups.ChannelType.class;
 			case 1021148:
 				return ims.core.vo.lookups.CoreReferralStatus.class;
+			case 1021147:
+				return ims.core.vo.lookups.UnitsPerWeek.class;
 			case 1021146:
 				return ims.core.vo.lookups.PulseOximetryValues.class;
 			case 1021145:
 				return ims.core.vo.lookups.YesNo.class;
-			case 1021141:
-				return ims.core.vo.lookups.TimeWeeksMonthsYears.class;
 			case 1021137:
 				return ims.core.vo.lookups.UserDefinedAssessmentType.class;
 			case 1021135:
@@ -1624,24 +2113,78 @@ public class ClassHelper
 				return ims.core.vo.lookups.PatIdType.class;
 			case 632:
 				return ims.core.vo.lookups.Sex.class;
+			case 1021392:
+				return ims.core.vo.lookups.Eligibility.class;
+			case 1021389:
+				return ims.core.vo.lookups.TransferReasonForPendingEmergencyAdmissionRequest.class;
+			case 1021387:
+				return ims.core.vo.lookups.PDSLetterRunType.class;
+			case 1021386:
+				return ims.core.vo.lookups.PDSConsentType.class;
+			case 1021384:
+				return ims.core.vo.lookups.PendingAdmissionStatus.class;
+			case 1021381:
+				return ims.core.vo.lookups.PDSContactMethod.class;
+			case 1021379:
+				return ims.core.vo.lookups.OverseasVisitorStatusCassification.class;
+			case 1021374:
+				return ims.core.vo.lookups.PDSChannelUsage.class;
+			case 1021373:
+				return ims.core.vo.lookups.WardAttendanceOutcome.class;
+			case 1021372:
+				return ims.core.vo.lookups.PDSPersonRole.class;
+			case 1021369:
+				return ims.core.vo.lookups.CaseNoteCommentType.class;
+			case 1021354:
+				return ims.core.vo.lookups.PDSSearchStatus.class;
+			case 1021353:
+				return ims.core.vo.lookups.WardBayReopenReason.class;
+			case 1021349:
+				return ims.core.vo.lookups.TransferCancellationReason.class;
+			case 1021336:
+				return ims.core.vo.lookups.ReferralTypeForTriageAction.class;
+			case 1021333:
+				return ims.core.vo.lookups.MissingItems.class;
+			case 1021331:
+				return ims.core.vo.lookups.WoundPackingType.class;
+			case 1021322:
+				return ims.core.vo.lookups.PatientPreparation.class;
+			case 1021320:
+				return ims.core.vo.lookups.AlertAccessRights.class;
 			case 1021152:
 				return ims.core.vo.lookups.KeyDateType.class;
-			case 1021262:
-				return ims.core.vo.lookups.CareContextStatus.class;
+			case 1021272:
+				return ims.core.vo.lookups.PrivateInsuranceStatus.class;
+			case 1021144:
+				return ims.core.vo.lookups.CorrectedReason.class;
 			case 1021143:
 				return ims.core.vo.lookups.ClinicalNotesStatus.class;
-			case 1021257:
-				return ims.core.vo.lookups.ReadmissionType.class;
+			case 1021141:
+				return ims.core.vo.lookups.TimeWeeksMonthsYears.class;
 			case 1021255:
 				return ims.core.vo.lookups.ManagementIntention.class;
-			case 1021251:
-				return ims.core.vo.lookups.OverallImpression.class;
+			case 1021253:
+				return ims.core.vo.lookups.DischargeReason.class;
 			case 1021209:
 				return ims.core.vo.lookups.PatientSupportNetworkStatus.class;
+			case 1021203:
+				return ims.core.vo.lookups.CauseofDeath.class;
+			case 1021185:
+				return ims.core.vo.lookups.SourceOfNote.class;
+			case 1021182:
+				return ims.core.vo.lookups.LineTypeStatus.class;
+			case 1021179:
+				return ims.core.vo.lookups.CBGType.class;
+			case 1021175:
+				return ims.core.vo.lookups.LineColourPointIcon.class;
+			case 1021174:
+				return ims.core.vo.lookups.LineType.class;
+			case 1021173:
+				return ims.core.vo.lookups.DataSetCategory.class;
+			case 1021172:
+				return ims.core.vo.lookups.ResuscitationStatus.class;
 			case 1021164:
 				return ims.core.vo.lookups.AreaOfNeed.class;
-			case 1021147:
-				return ims.core.vo.lookups.UnitsPerWeek.class;
 			case 1021140:
 				return ims.core.vo.lookups.AutonomicDysreflexia.class;
 			case 1021138:
@@ -1670,12 +2213,12 @@ public class ClassHelper
 				return ims.core.vo.lookups.ErectDysTreatScore.class;
 			case 1021083:
 				return ims.core.vo.lookups.EquipmentAdaptationSupplier.class;
-			case 1021081:
-				return ims.core.vo.lookups.ReferralType.class;
 			case 1021073:
 				return ims.core.vo.lookups.TracheostomyType.class;
 			case 1021072:
 				return ims.core.vo.lookups.NameType.class;
+			case 1021070:
+				return ims.core.vo.lookups.PolicyType.class;
 			case 1021069:
 				return ims.core.vo.lookups.LocationType.class;
 			case 1021068:
@@ -1706,8 +2249,6 @@ public class ClassHelper
 				return ims.core.vo.lookups.VSBPPositionofPatient.class;
 			case 1021053:
 				return ims.core.vo.lookups.VSBPSite.class;
-			case 1021052:
-				return ims.core.vo.lookups.VSPulseRhythm.class;
 			case 1021051:
 				return ims.core.vo.lookups.VSTempInstrument.class;
 			case 1021048:
@@ -1744,8 +2285,14 @@ public class ClassHelper
 				return ims.core.vo.lookups.AlertType.class;
 			case 780:
 				return ims.core.vo.lookups.Religion.class;
-			case 1021144:
-				return ims.core.vo.lookups.CorrectedReason.class;
+			case 1021390:
+				return ims.core.vo.lookups.TimeUnitsSecondsToYears.class;
+			case 1021388:
+				return ims.core.vo.lookups.PublicCareNeed.class;
+			case 1021382:
+				return ims.core.vo.lookups.CancelPendingAdmissionReason.class;
+			case 1021262:
+				return ims.core.vo.lookups.CareContextStatus.class;
 			case 1021128:
 				return ims.core.vo.lookups.ArrivalMode.class;
 			case 1021127:
@@ -1788,6 +2335,8 @@ public class ClassHelper
 				return ims.core.vo.lookups.EquipmentAdaptationSuppliedFor.class;
 			case 1021082:
 				return ims.core.vo.lookups.EquipmentType.class;
+			case 1021081:
+				return ims.core.vo.lookups.ReferralType.class;
 			case 1021079:
 				return ims.core.vo.lookups.PatientConcernStatus.class;
 			case 1021078:
@@ -1800,6 +2349,8 @@ public class ClassHelper
 				return ims.core.vo.lookups.TracheostomyAccessories.class;
 			case 791:
 				return ims.core.vo.lookups.PersonHealthActCategory.class;
+			case 1021052:
+				return ims.core.vo.lookups.VSPulseRhythm.class;
 			case 1011055:
 				return ims.coe.vo.lookups.DescribeAppetite.class;
 			case 1011052:
@@ -1810,8 +2361,6 @@ public class ClassHelper
 				return ims.coe.vo.lookups.SputumAmount.class;
 			case 1011012:
 				return ims.coe.vo.lookups.BowelMedication.class;
-			case 1011010:
-				return ims.coe.vo.lookups.InfectionResult.class;
 			case 1011002:
 				return ims.coe.vo.lookups.HomeFacilities.class;
 			case 1011001:
@@ -1876,6 +2425,8 @@ public class ClassHelper
 				return ims.coe.vo.lookups.DiarrhoeaAmount.class;
 			case 1011011:
 				return ims.coe.vo.lookups.BowelsOpen.class;
+			case 1011010:
+				return ims.coe.vo.lookups.InfectionResult.class;
 			case 1011009:
 				return ims.coe.vo.lookups.InfectionControlType.class;
 			case 1011008:
@@ -1894,8 +2445,16 @@ public class ClassHelper
 				return ims.coe.vo.lookups.AccommodationLivingArrangements.class;
 			case 1001062:
 				return ims.nursing.vo.lookups.BladderManagementAids.class;
+			case 1001060:
+				return ims.nursing.vo.lookups.BowelConstipationDiarrhoea.class;
 			case 1001059:
 				return ims.nursing.vo.lookups.BowelRoutinePerformedBy.class;
+			case 1001050:
+				return ims.nursing.vo.lookups.MobilityStatus.class;
+			case 1001040:
+				return ims.nursing.vo.lookups.CarePlanTemplateStatus.class;
+			case 1001048:
+				return ims.nursing.vo.lookups.TurnType.class;
 			case 1001045:
 				return ims.nursing.vo.lookups.SafetyLevel.class;
 			case 1001044:
@@ -1904,8 +2463,6 @@ public class ClassHelper
 				return ims.nursing.vo.lookups.CushionType.class;
 			case 1001041:
 				return ims.nursing.vo.lookups.CarePlanInterventionStatus.class;
-			case 1001040:
-				return ims.nursing.vo.lookups.CarePlanTemplateStatus.class;
 			case 1001038:
 				return ims.nursing.vo.lookups.SkinWoundType.class;
 			case 1001036:
@@ -1920,6 +2477,8 @@ public class ClassHelper
 				return ims.nursing.vo.lookups.SkinWoundBed.class;
 			case 1001027:
 				return ims.nursing.vo.lookups.PainHypersensitivity.class;
+			case 1001024:
+				return ims.nursing.vo.lookups.PainOnset.class;
 			case 1001023:
 				return ims.nursing.vo.lookups.PainSeverity.class;
 			case 1001022:
@@ -1974,8 +2533,6 @@ public class ClassHelper
 				return ims.nursing.vo.lookups.NutritionalMethodSite.class;
 			case 1001061:
 				return ims.nursing.vo.lookups.BladderType.class;
-			case 1001060:
-				return ims.nursing.vo.lookups.BowelConstipationDiarrhoea.class;
 			case 1001058:
 				return ims.nursing.vo.lookups.BowelRoutineLocation.class;
 			case 1001057:
@@ -1992,12 +2549,8 @@ public class ClassHelper
 				return ims.nursing.vo.lookups.Transfers.class;
 			case 1001051:
 				return ims.nursing.vo.lookups.MobilityAids.class;
-			case 1001050:
-				return ims.nursing.vo.lookups.MobilityStatus.class;
 			case 1001049:
 				return ims.nursing.vo.lookups.TurnsDuration.class;
-			case 1001048:
-				return ims.nursing.vo.lookups.TurnType.class;
 			case 1001047:
 				return ims.nursing.vo.lookups.BreathingTreatment.class;
 			case 1001046:
@@ -2020,8 +2573,6 @@ public class ClassHelper
 				return ims.nursing.vo.lookups.PainDepth.class;
 			case 1001025:
 				return ims.nursing.vo.lookups.PainProgression.class;
-			case 1001024:
-				return ims.nursing.vo.lookups.PainOnset.class;
 			case 1001021:
 				return ims.nursing.vo.lookups.TurnsPerformedBy.class;
 			case 1001019:
@@ -2064,6 +2615,36 @@ public class ClassHelper
 				return ims.nursing.vo.lookups.ContinenceDayNight.class;
 			case 1211020:
 				return ims.nursing.vo.lookups.Ability.class;
+			case 1451014:
+				return ims.eas.vo.lookups.RemovalReason.class;
+			case 1451013:
+				return ims.eas.vo.lookups.ProtocolActions.class;
+			case 1451012:
+				return ims.eas.vo.lookups.EASStatus.class;
+			case 1451011:
+				return ims.eas.vo.lookups.PhaseNames.class;
+			case 1451010:
+				return ims.eas.vo.lookups.MouldRoomActivity.class;
+			case 1451009:
+				return ims.eas.vo.lookups.ImmobilisationType.class;
+			case 1451008:
+				return ims.eas.vo.lookups.IMRT.class;
+			case 1451007:
+				return ims.eas.vo.lookups.GatingOptions.class;
+			case 1451006:
+				return ims.eas.vo.lookups.OralContrast.class;
+			case 1451005:
+				return ims.eas.vo.lookups.IVContrast.class;
+			case 1451004:
+				return ims.eas.vo.lookups.ScanLimits.class;
+			case 1451003:
+				return ims.eas.vo.lookups.Agents.class;
+			case 1451002:
+				return ims.eas.vo.lookups.TreatmentSites.class;
+			case 1451001:
+				return ims.eas.vo.lookups.PrimaryTumour.class;
+			case 1451000:
+				return ims.eas.vo.lookups.OptionsRequired.class;
 			case 1431010:
 				return ims.billing.vo.lookups.ReasonForNonPayment.class;
 			case 1411000:
@@ -2077,14 +2658,80 @@ public class ClassHelper
 	{
 		switch (typeId)
 		{
+			case 3438:
+				return ims.dtomove.vo.lookups.LocationCharacteristicsCollection.class;
+			case 1401016:
+				return ims.dtomove.vo.lookups.ActionPriorityCollection.class;
+			case 3411:
+				return ims.dtomove.vo.lookups.ActionReasonCollection.class;
+			case 3421:
+				return ims.dtomove.vo.lookups.ContractLocationCollection.class;
+			case 3434:
+				return ims.dtomove.vo.lookups.SpecialtyCodeCollection.class;
+			case 3444:
+				return ims.dtomove.vo.lookups.ApptCancelledReasonCollection.class;
+			case 3431:
+				return ims.dtomove.vo.lookups.IntervalTypeCollection.class;
+			case 3433:
+				return ims.dtomove.vo.lookups.SchedulingTypeCollection.class;
+			case 3423:
+				return ims.dtomove.vo.lookups.MachineTypesCollection.class;
+			case 3432:
+				return ims.dtomove.vo.lookups.SchedulingCategoryCollection.class;
 			case 1361000:
 				return ims.racpc.vo.lookups.PainExperiencedCollection.class;
+			case 1351001:
+				return ims.naes.vo.lookups.NaesActionStatusCollection.class;
 			case 1351004:
 				return ims.naes.vo.lookups.NAESReferredByCollection.class;
+			case 1351003:
+				return ims.naes.vo.lookups.ImplantTypeCollection.class;
+			case 1351002:
+				return ims.naes.vo.lookups.UnderlyingReasonCollection.class;
+			case 1351000:
+				return ims.naes.vo.lookups.ActionCollection.class;
+			case 1341070:
+				return ims.RefMan.vo.lookups.WeekInTheMonthCollection.class;
+			case 1341069:
+				return ims.RefMan.vo.lookups.RecurringCollection.class;
+			case 1341068:
+				return ims.RefMan.vo.lookups.DefaultTriageActionForCABReferralCollection.class;
+			case 1341067:
+				return ims.RefMan.vo.lookups.DefaultTriageActionForManualReferralCollection.class;
+			case 1341066:
+				return ims.RefMan.vo.lookups.ReasonDeclined28DayOfferCollection.class;
+			case 1341064:
+				return ims.RefMan.vo.lookups.ReasonForChangeUrgencyCollection.class;
+			case 1341063:
+				return ims.RefMan.vo.lookups.RedirectReasonCollection.class;
+			case 1341061:
+				return ims.RefMan.vo.lookups.TriageOutcomeAppointmentDayCollection.class;
+			case 1341060:
+				return ims.RefMan.vo.lookups.AcceptedActionsRequiredCollection.class;
+			case 1341059:
+				return ims.RefMan.vo.lookups.TriageOutcomeStatusCollection.class;
+			case 1341058:
+				return ims.RefMan.vo.lookups.ReferralInitiatedFromCollection.class;
+			case 1341057:
+				return ims.RefMan.vo.lookups.ReferralRelationTypeCollection.class;
+			case 1341056:
+				return ims.RefMan.vo.lookups.WaitingCardAdmissionTypeCollection.class;
+			case 1341055:
+				return ims.RefMan.vo.lookups.AddmitedInTimeUnitCollection.class;
+			case 1341054:
+				return ims.RefMan.vo.lookups.CancerTypeCollection.class;
+			case 1341053:
+				return ims.RefMan.vo.lookups.PreOpPostOpCareCollection.class;
+			case 1341052:
+				return ims.RefMan.vo.lookups.ProcedureExecutantCollection.class;
+			case 1341051:
+				return ims.RefMan.vo.lookups.OtherProvidersCollection.class;
+			case 1341050:
+				return ims.RefMan.vo.lookups.ERODReasonCollection.class;
+			case 1341049:
+				return ims.RefMan.vo.lookups.ElectiveListUndoReasonCollection.class;
 			case 1341048:
 				return ims.RefMan.vo.lookups.ElectiveListReviewTypeCollection.class;
-			case 1341047:
-				return ims.RefMan.vo.lookups.KPIExceededReasonCollection.class;
 			case 1341046:
 				return ims.RefMan.vo.lookups.RemovalOtherReasonCollection.class;
 			case 1341045:
@@ -2149,8 +2796,6 @@ public class ClassHelper
 				return ims.RefMan.vo.lookups.ReviewTypeCollection.class;
 			case 1341013:
 				return ims.RefMan.vo.lookups.FollowupManagementTypeCollection.class;
-			case 1341012:
-				return ims.RefMan.vo.lookups.OnwardReferralRejectedByCollection.class;
 			case 1341011:
 				return ims.RefMan.vo.lookups.ProviderCancellationReasonCollection.class;
 			case 1341009:
@@ -2171,12 +2816,46 @@ public class ClassHelper
 				return ims.RefMan.vo.lookups.RejectionReasonCollection.class;
 			case 1341000:
 				return ims.RefMan.vo.lookups.ReferralApptStatusCollection.class;
+			case 1341012:
+				return ims.RefMan.vo.lookups.OnwardReferralRejectedByCollection.class;
 			case 1341010:
 				return ims.RefMan.vo.lookups.MedicallyIncompleteCollection.class;
 			case 1331003:
 				return ims.pci.vo.lookups.BreastFeedingStatusCollection.class;
+			case 1331016:
+				return ims.pci.vo.lookups.VaccineCancellationReasonCollection.class;
+			case 1331014:
+				return ims.pci.vo.lookups.ScheduleTypeCollection.class;
 			case 1331010:
 				return ims.pci.vo.lookups.PaymentTypeCollection.class;
+			case 1331007:
+				return ims.pci.vo.lookups.UserDefinedType3Collection.class;
+			case 1331006:
+				return ims.pci.vo.lookups.UserDefinedType2Collection.class;
+			case 1331005:
+				return ims.pci.vo.lookups.UserDefinedType1Collection.class;
+			case 1331004:
+				return ims.pci.vo.lookups.StageCollection.class;
+			case 1331002:
+				return ims.pci.vo.lookups.MaritalStatusAtBirthCollection.class;
+			case 1331001:
+				return ims.pci.vo.lookups.DeliveryMethodBirthCollection.class;
+			case 1331000:
+				return ims.pci.vo.lookups.PlaceOfBirthCollection.class;
+			case 1331015:
+				return ims.pci.vo.lookups.GMSPaymentTypeCollection.class;
+			case 1331013:
+				return ims.pci.vo.lookups.VaccineStatusCollection.class;
+			case 1331012:
+				return ims.pci.vo.lookups.TerminationReasonCollection.class;
+			case 1331011:
+				return ims.pci.vo.lookups.TerminatedByCollection.class;
+			case 1331009:
+				return ims.pci.vo.lookups.UserDefinedType5Collection.class;
+			case 1331008:
+				return ims.pci.vo.lookups.UserDefinedType4Collection.class;
+			case 1321019:
+				return ims.pathways.vo.lookups.NoValidationReasonCollection.class;
 			case 1321015:
 				return ims.pathways.vo.lookups.AdminEventOutcomeCollection.class;
 			case 1321013:
@@ -2193,18 +2872,42 @@ public class ClassHelper
 				return ims.pathways.vo.lookups.EventStatusCollection.class;
 			case 1321005:
 				return ims.pathways.vo.lookups.JourneyStatusCollection.class;
-			case 1321003:
-				return ims.pathways.vo.lookups.RTTActionCollection.class;
 			case 1321002:
 				return ims.pathways.vo.lookups.EventLinkTypeCollection.class;
 			case 1321001:
 				return ims.pathways.vo.lookups.PathwaysDetailCollection.class;
 			case 1321004:
 				return ims.pathways.vo.lookups.PatientTargetStatusCollection.class;
+			case 1321003:
+				return ims.pathways.vo.lookups.RTTActionCollection.class;
+			case 1321022:
+				return ims.pathways.vo.lookups.RTTStatusUpdateReasonCollection.class;
+			case 1321018:
+				return ims.pathways.vo.lookups.PatientJourneyBreachReasonCollection.class;
+			case 1321016:
+				return ims.pathways.vo.lookups.CommentLevelCollection.class;
+			case 1321017:
+				return ims.pathways.vo.lookups.RTTClockImpactSourceCollection.class;
 			case 1321000:
 				return ims.pathways.vo.lookups.PathwaysGroupCollection.class;
+			case 1321021:
+				return ims.pathways.vo.lookups.RTTClockStateCollection.class;
+			case 1321020:
+				return ims.pathways.vo.lookups.AdminEventOutcomeReasonCollection.class;
 			case 1321014:
 				return ims.pathways.vo.lookups.EventEncounterTypeCollection.class;
+			case 1291071:
+				return ims.emergency.vo.lookups.RequiresSignOffCollection.class;
+			case 1291067:
+				return ims.emergency.vo.lookups.GPLetterStatusCollection.class;
+			case 1291065:
+				return ims.emergency.vo.lookups.NoKnownInvestigationReasonCollection.class;
+			case 1291064:
+				return ims.emergency.vo.lookups.NoKnownInterTreatReasonCollection.class;
+			case 1291059:
+				return ims.emergency.vo.lookups.WhiteboardOtherActionTypeCollection.class;
+			case 1291058:
+				return ims.emergency.vo.lookups.TriagePriorityChangeCollection.class;
 			case 1291057:
 				return ims.emergency.vo.lookups.ElectiveListReasonCollection.class;
 			case 1291054:
@@ -2217,8 +2920,6 @@ public class ClassHelper
 				return ims.emergency.vo.lookups.TransferToHospitalCollection.class;
 			case 1291040:
 				return ims.emergency.vo.lookups.HCGResultsCollection.class;
-			case 1291038:
-				return ims.emergency.vo.lookups.DrugToxicologyTypeCollection.class;
 			case 1291036:
 				return ims.emergency.vo.lookups.DepartmentTypeCollection.class;
 			case 1291035:
@@ -2255,6 +2956,22 @@ public class ClassHelper
 				return ims.emergency.vo.lookups.ConsumedOrPurchasedAlcoholFromCollection.class;
 			case 1291003:
 				return ims.emergency.vo.lookups.PresentingComplaintCollection.class;
+			case 1291072:
+				return ims.emergency.vo.lookups.InvoiceAmountCollection.class;
+			case 1291070:
+				return ims.emergency.vo.lookups.WhiteBoardActionStatusCollection.class;
+			case 1291069:
+				return ims.emergency.vo.lookups.AttendanceTreatmentsStatusCollection.class;
+			case 1291068:
+				return ims.emergency.vo.lookups.AttendanceInvestigationStatusCollection.class;
+			case 1291063:
+				return ims.emergency.vo.lookups.TriageTabsCollection.class;
+			case 1291062:
+				return ims.emergency.vo.lookups.LetterReviewStatusCollection.class;
+			case 1291061:
+				return ims.emergency.vo.lookups.ReasonForContactCollection.class;
+			case 1291060:
+				return ims.emergency.vo.lookups.PersonContactedCollection.class;
 			case 1291055:
 				return ims.emergency.vo.lookups.DTAAdmissionTypeCollection.class;
 			case 1291051:
@@ -2277,6 +2994,8 @@ public class ClassHelper
 				return ims.emergency.vo.lookups.EDVisitTypeCollection.class;
 			case 1291039:
 				return ims.emergency.vo.lookups.DrugToxicologyResultCollection.class;
+			case 1291038:
+				return ims.emergency.vo.lookups.DrugToxicologyTypeCollection.class;
 			case 1291037:
 				return ims.emergency.vo.lookups.QuickRegistrationTypeCollection.class;
 			case 1291033:
@@ -2288,7 +3007,7 @@ public class ClassHelper
 			case 1291025:
 				return ims.emergency.vo.lookups.AttackerHadConsumedAlcoholCollection.class;
 			case 1291022:
-				return ims.emergency.vo.lookups.TriageCategoryTypeCollection.class;
+				return ims.emergency.vo.lookups.TriagePatientStatusCollection.class;
 			case 1291021:
 				return ims.emergency.vo.lookups.ReferralSpecialtyConsultantOrTeamCollection.class;
 			case 1291019:
@@ -2313,6 +3032,8 @@ public class ClassHelper
 				return ims.emergency.vo.lookups.IncidentLocationCollection.class;
 			case 1291000:
 				return ims.emergency.vo.lookups.ReferredByCollection.class;
+			case 1291066:
+				return ims.emergency.vo.lookups.AmbulanceDelayReasonCollection.class;
 			case 1281026:
 				return ims.ccosched.vo.lookups.ActionStatusReasonCollection.class;
 			case 3245:
@@ -2321,8 +3042,20 @@ public class ClassHelper
 				return ims.ccosched.vo.lookups.UnitCollection.class;
 			case 3415:
 				return ims.ccosched.vo.lookups.TechniquesCollection.class;
+			case 3196:
+				return ims.ccosched.vo.lookups.SeenAtCollection.class;
+			case 3406:
+				return ims.ccosched.vo.lookups.RequirementsCollection.class;
+			case 3486:
+				return ims.ccosched.vo.lookups.ReasonDNACollection.class;
 			case 3201:
 				return ims.ccosched.vo.lookups.PriorityCollection.class;
+			case 3205:
+				return ims.ccosched.vo.lookups.PlannedRegimeCollection.class;
+			case 3501:
+				return ims.ccosched.vo.lookups.PeriodCollection.class;
+			case 1281004:
+				return ims.ccosched.vo.lookups.DoctorsWorkListItemCollection.class;
 			case 3204:
 				return ims.ccosched.vo.lookups.AttendingAsCollection.class;
 			case 3449:
@@ -2331,8 +3064,16 @@ public class ClassHelper
 				return ims.ccosched.vo.lookups.AnaestheticCollection.class;
 			case 3199:
 				return ims.ccosched.vo.lookups.TreatmentIntentCollection.class;
+			case 3487:
+				return ims.ccosched.vo.lookups.ReasonIncompleteCollection.class;
 			case 3422:
 				return ims.ccosched.vo.lookups.ModalityCollection.class;
+			case 3485:
+				return ims.ccosched.vo.lookups.LocationCollection.class;
+			case 3498:
+				return ims.ccosched.vo.lookups.ConfirmationStatusCollection.class;
+			case 3448:
+				return ims.ccosched.vo.lookups.BookingSystemTypeCollection.class;
 			case 3202:
 				return ims.ccosched.vo.lookups.TransportCollection.class;
 			case 3197:
@@ -2345,8 +3086,30 @@ public class ClassHelper
 				return ims.assessment.vo.lookups.DPPTypeCollection.class;
 			case 1271000:
 				return ims.assessment.vo.lookups.AnswerStatusCollection.class;
+			case 1251027:
+				return ims.oncology.vo.lookups.RegimenAcronymCollection.class;
+			case 1251010:
+				return ims.oncology.vo.lookups.FUMorbidityCombinationCollection.class;
+			case 1251009:
+				return ims.oncology.vo.lookups.FUMorbidityRadiotxCollection.class;
+			case 1251006:
+				return ims.oncology.vo.lookups.FUTreatmentTypeCollection.class;
+			case 1251005:
+				return ims.oncology.vo.lookups.FUPatientFollowUpStatusCollection.class;
+			case 1251004:
+				return ims.oncology.vo.lookups.WHOPerformanceStatusCollection.class;
+			case 1251003:
+				return ims.oncology.vo.lookups.FUMarkerResponseStatusCollection.class;
+			case 1251001:
+				return ims.oncology.vo.lookups.FUNodalStatusCollection.class;
+			case 1251002:
+				return ims.oncology.vo.lookups.FUMetastaticStatusCollection.class;
+			case 1251109:
+				return ims.oncology.vo.lookups.FUDyspneaScoreCollection.class;
 			case 1251108:
 				return ims.oncology.vo.lookups.TreatmentGroupSiteCollection.class;
+			case 1251107:
+				return ims.oncology.vo.lookups.ClinicalTrialNameCollection.class;
 			case 1251106:
 				return ims.oncology.vo.lookups.ChemoProviderOrgCollection.class;
 			case 1251105:
@@ -2369,6 +3132,8 @@ public class ClassHelper
 				return ims.oncology.vo.lookups.TreatmentHospitalCollection.class;
 			case 1251095:
 				return ims.oncology.vo.lookups.PrognosticGroupCollection.class;
+			case 1251094:
+				return ims.oncology.vo.lookups.SurgeryRequiredCollection.class;
 			case 1251093:
 				return ims.oncology.vo.lookups.InternalReferralSourceCollection.class;
 			case 1251092:
@@ -2377,6 +3142,8 @@ public class ClassHelper
 				return ims.oncology.vo.lookups.ReferralReasonCollection.class;
 			case 1251090:
 				return ims.oncology.vo.lookups.ReferralOutcomeCollection.class;
+			case 1251089:
+				return ims.oncology.vo.lookups.EASImageTypeCollection.class;
 			case 1251088:
 				return ims.oncology.vo.lookups.StagingInvestigationResultCollection.class;
 			case 1251087:
@@ -2419,6 +3186,8 @@ public class ClassHelper
 				return ims.oncology.vo.lookups.HistologySourceCollection.class;
 			case 1251060:
 				return ims.oncology.vo.lookups.NoOfFieldsCollection.class;
+			case 1251059:
+				return ims.oncology.vo.lookups.OncBeamEnergyCollection.class;
 			case 1251058:
 				return ims.oncology.vo.lookups.OncCarePlanStatusCollection.class;
 			case 1251057:
@@ -2453,6 +3222,8 @@ public class ClassHelper
 				return ims.oncology.vo.lookups.VascularLymphInvasionCollection.class;
 			case 1251038:
 				return ims.oncology.vo.lookups.SynchronousTumourIndicatorCollection.class;
+			case 1251037:
+				return ims.oncology.vo.lookups.LateralityOncologySpecificCollection.class;
 			case 1251036:
 				return ims.oncology.vo.lookups.InvestigationTypeCollection.class;
 			case 1251035:
@@ -2461,14 +3232,14 @@ public class ClassHelper
 				return ims.oncology.vo.lookups.TNMTypeCollection.class;
 			case 1251032:
 				return ims.oncology.vo.lookups.GradeofDifferentationCollection.class;
+			case 1251031:
+				return ims.oncology.vo.lookups.BasicOfDiagnosisCollection.class;
 			case 1251030:
 				return ims.oncology.vo.lookups.ChemoTherapyHRGCollection.class;
 			case 1251029:
 				return ims.oncology.vo.lookups.ChemoTxChangeReasonCollection.class;
 			case 1251028:
 				return ims.oncology.vo.lookups.DrugProgramResponseCollection.class;
-			case 1251027:
-				return ims.oncology.vo.lookups.RegimenAcronymCollection.class;
 			case 1251026:
 				return ims.oncology.vo.lookups.DrugTherapyTypeCollection.class;
 			case 1251025:
@@ -2499,18 +3270,54 @@ public class ClassHelper
 				return ims.oncology.vo.lookups.ImageAnatomicalSiteCollection.class;
 			case 1251012:
 				return ims.oncology.vo.lookups.ImagingModalityCollection.class;
+			case 1251008:
+				return ims.oncology.vo.lookups.FUMorbidityChemoTxCollection.class;
+			case 1251007:
+				return ims.oncology.vo.lookups.FUMorbiditySurgeryCollection.class;
+			case 1251000:
+				return ims.oncology.vo.lookups.FUPrimaryTumourStatusCollection.class;
+			case 1251067:
+				return ims.oncology.vo.lookups.ChemoTherapyToxicityTypeCollection.class;
+			case 1251066:
+				return ims.oncology.vo.lookups.RadioTherapyToxicityTypeCollection.class;
+			case 1251063:
+				return ims.oncology.vo.lookups.SymptomTypeCollection.class;
+			case 1231173:
+				return ims.clinical.vo.lookups.PeriOpStageCollection.class;
+			case 1231170:
+				return ims.clinical.vo.lookups.FinalCountMissingItemCollection.class;
+			case 1231168:
+				return ims.clinical.vo.lookups.HandoverCountTypeIntraOpCollection.class;
+			case 1231165:
+				return ims.clinical.vo.lookups.AntiCoagTherapyActionCollection.class;
+			case 1231162:
+				return ims.clinical.vo.lookups.CatheterDrainsTubeCollection.class;
+			case 1231155:
+				return ims.clinical.vo.lookups.BodyPositionIntraOpCollection.class;
+			case 1231156:
+				return ims.clinical.vo.lookups.LeftRightArmPositionIntraOpCollection.class;
+			case 1231145:
+				return ims.clinical.vo.lookups.StructuredCodingCommentCollection.class;
+			case 1231144:
+				return ims.clinical.vo.lookups.VTEAssessmentStatusReasonCollection.class;
+			case 1231143:
+				return ims.clinical.vo.lookups.VTEAssessmentContextTypeCollection.class;
+			case 1231142:
+				return ims.clinical.vo.lookups.FollowUPInCollection.class;
+			case 1231140:
+				return ims.clinical.vo.lookups.InternalReferralConditionalReferralToGPCollection.class;
 			case 1231134:
 				return ims.clinical.vo.lookups.TreatmentInterventionTypeCollection.class;
 			case 1231122:
 				return ims.clinical.vo.lookups.AnaestheticUsedCollection.class;
-			case 1231117:
-				return ims.clinical.vo.lookups.ClinicalOutcomeCategoryCollection.class;
 			case 1231114:
 				return ims.clinical.vo.lookups.EDischargeSummarySectionCollection.class;
 			case 1231113:
 				return ims.clinical.vo.lookups.AdditonalClinicalInformationCollection.class;
 			case 1231112:
 				return ims.clinical.vo.lookups.MedicationDurationCollection.class;
+			case 1231111:
+				return ims.clinical.vo.lookups.TTAStatusCollection.class;
 			case 1231110:
 				return ims.clinical.vo.lookups.AdviceApplicatiableForUnitCollection.class;
 			case 1231109:
@@ -2667,8 +3474,40 @@ public class ClassHelper
 				return ims.clinical.vo.lookups.ChecklistItemCollection.class;
 			case 1231001:
 				return ims.clinical.vo.lookups.SymptomsCollection.class;
-			case 1231133:
-				return ims.clinical.vo.lookups.BodySystemCollection.class;
+			case 1231169:
+				return ims.clinical.vo.lookups.HandoverCountStatusIntraOpCollection.class;
+			case 1231164:
+				return ims.clinical.vo.lookups.PacemakerDefibrillatorTypeCollection.class;
+			case 1231166:
+				return ims.clinical.vo.lookups.PreAssessmentInformationRequiredCollection.class;
+			case 1231167:
+				return ims.clinical.vo.lookups.TourniquetSiteCollection.class;
+			case 1231159:
+				return ims.clinical.vo.lookups.SurgicalSitePreparationIntraOpCollection.class;
+			case 1231163:
+				return ims.clinical.vo.lookups.SpecimenDestinationIntraOpCollection.class;
+			case 1231154:
+				return ims.clinical.vo.lookups.TransferToFromOperatingTableIntraOpCollection.class;
+			case 1231171:
+				return ims.clinical.vo.lookups.FinalCountActionsTakenCollection.class;
+			case 1231148:
+				return ims.clinical.vo.lookups.HistologyStatusCollection.class;
+			case 1231174:
+				return ims.clinical.vo.lookups.HandoverIncorrectCountStatusCollection.class;
+			case 1231139:
+				return ims.clinical.vo.lookups.InternalReferralStatusChangeReasonCollection.class;
+			case 1231138:
+				return ims.clinical.vo.lookups.ClinicalReferralNoteTypeCollection.class;
+			case 1231151:
+				return ims.clinical.vo.lookups.ChartableOccuranceTypeCollection.class;
+			case 1231136:
+				return ims.clinical.vo.lookups.ClinicalReferralTypeCollection.class;
+			case 1231135:
+				return ims.clinical.vo.lookups.ElectronicPrescribingParametersCollection.class;
+			case 1231147:
+				return ims.clinical.vo.lookups.CodingCommentTypeCollection.class;
+			case 1231160:
+				return ims.clinical.vo.lookups.DiathermySerialNumberCollection.class;
 			case 1231132:
 				return ims.clinical.vo.lookups.SurgicalCheckListNotPerformedReasonCollection.class;
 			case 1231131:
@@ -2679,40 +3518,64 @@ public class ClassHelper
 				return ims.clinical.vo.lookups.HandoverFromRecoveryNurseCollection.class;
 			case 1231128:
 				return ims.clinical.vo.lookups.SurgicalPackCollection.class;
+			case 1231161:
+				return ims.clinical.vo.lookups.DiathermyModeCollection.class;
 			case 1231126:
 				return ims.clinical.vo.lookups.SiteMarkedActionTakenCollection.class;
 			case 1231125:
 				return ims.clinical.vo.lookups.VTEAsessmentStatusCollection.class;
-			case 1231123:
-				return ims.clinical.vo.lookups.VTERiskGroupCollection.class;
+			case 1231158:
+				return ims.clinical.vo.lookups.PositioningDevicesIntraOpCollection.class;
+			case 1231157:
+				return ims.clinical.vo.lookups.LeftRightLegPositionIntraOpCollection.class;
+			case 1231149:
+				return ims.clinical.vo.lookups.LAAnaestheticBlockTypeCollection.class;
 			case 1231121:
 				return ims.clinical.vo.lookups.HospitalAtNightPatientStatusCollection.class;
 			case 1231120:
 				return ims.clinical.vo.lookups.HospitalAtNightClinicalTaskCollection.class;
 			case 1231119:
 				return ims.clinical.vo.lookups.HospitalAtNightRequestTypeCollection.class;
-			case 1231111:
-				return ims.clinical.vo.lookups.TTAStatusCollection.class;
+			case 1231117:
+				return ims.clinical.vo.lookups.ClinicalOutcomeCategoryCollection.class;
+			case 1231123:
+				return ims.clinical.vo.lookups.VTERiskGroupCollection.class;
+			case 1231153:
+				return ims.clinical.vo.lookups.PatientPreparationIntraOpCollection.class;
+			case 1231152:
+				return ims.clinical.vo.lookups.CirculatorScrubNurseRoleCollection.class;
 			case 1231118:
 				return ims.clinical.vo.lookups.MEWSCollection.class;
 			case 1231107:
 				return ims.clinical.vo.lookups.ClinicalNoteClassificationCollection.class;
-			case 1231115:
-				return ims.clinical.vo.lookups.EDischargeSummarySectionStatusCollection.class;
 			case 1231105:
 				return ims.clinical.vo.lookups.DischargeSummaryJobTypeCollection.class;
-			case 1231104:
-				return ims.clinical.vo.lookups.DischargeSupplementaryLetterStatusCollection.class;
 			case 1231099:
 				return ims.clinical.vo.lookups.CataractDressingsCollection.class;
+			case 1231115:
+				return ims.clinical.vo.lookups.EDischargeSummarySectionStatusCollection.class;
+			case 1231146:
+				return ims.clinical.vo.lookups.CodingCommentStatusCollection.class;
+			case 1231104:
+				return ims.clinical.vo.lookups.DischargeSupplementaryLetterStatusCollection.class;
+			case 1231083:
+				return ims.clinical.vo.lookups.RACPExerciseECGFindingsCollection.class;
+			case 1231150:
+				return ims.clinical.vo.lookups.LeftAndRightSideCheckedAndCorrectSideMarkedCollection.class;
+			case 1231116:
+				return ims.clinical.vo.lookups.TheatreTrackingStatusCollection.class;
 			case 1231124:
 				return ims.clinical.vo.lookups.ProphylaxisOfferedCollection.class;
 			case 1231090:
 				return ims.clinical.vo.lookups.SkinClosureCollection.class;
-			case 1231083:
-				return ims.clinical.vo.lookups.RACPExerciseECGFindingsCollection.class;
-			case 1231116:
-				return ims.clinical.vo.lookups.TheatreTrackingStatusCollection.class;
+			case 1231100:
+				return ims.clinical.vo.lookups.SkinClosureTypeCollection.class;
+			case 1231141:
+				return ims.clinical.vo.lookups.InternalReferralsGridColumnCollection.class;
+			case 1231133:
+				return ims.clinical.vo.lookups.BodySystemCollection.class;
+			case 1231065:
+				return ims.clinical.vo.lookups.VaccineManufacturerCollection.class;
 			case 1231058:
 				return ims.clinical.vo.lookups.ReferralCategoryCollection.class;
 			case 1231046:
@@ -2731,6 +3594,8 @@ public class ClassHelper
 				return ims.chooseandbook.vo.lookups.ActionRequestTypeCollection.class;
 			case 1211002:
 				return ims.chooseandbook.vo.lookups.SendPendingRequestCollection.class;
+			case 1191006:
+				return ims.ntpf_ptr.vo.lookups.AreaOfResidenceCollection.class;
 			case 1181012:
 				return ims.icp.vo.lookups.ICPStageStatusCollection.class;
 			case 1181009:
@@ -2749,26 +3614,24 @@ public class ClassHelper
 				return ims.icp.vo.lookups.ICPPhaseStatusCollection.class;
 			case 1161058:
 				return ims.ocrr.vo.lookups.ResultDetailsTypeCollection.class;
+			case 1161055:
+				return ims.ocrr.vo.lookups.InvTypeCollection.class;
+			case 1161032:
+				return ims.ocrr.vo.lookups.ResultValueTypeCollection.class;
+			case 1161031:
+				return ims.ocrr.vo.lookups.ResultCommentTypeCollection.class;
 			case 1161057:
 				return ims.ocrr.vo.lookups.SpecimenContainerTypeCollection.class;
 			case 1161056:
 				return ims.ocrr.vo.lookups.InvEventTypeCollection.class;
-			case 1161055:
-				return ims.ocrr.vo.lookups.InvTypeCollection.class;
 			case 1161054:
 				return ims.ocrr.vo.lookups.PatientClericalTaskStatusCollection.class;
 			case 1161041:
 				return ims.ocrr.vo.lookups.SpecimenCollectionTimeCollection.class;
 			case 1161038:
 				return ims.ocrr.vo.lookups.ResultStatusCollection.class;
-			case 1161037:
-				return ims.ocrr.vo.lookups.NormalcyStatusCollection.class;
 			case 1161036:
 				return ims.ocrr.vo.lookups.ResultUnitOfMeasureCollection.class;
-			case 1161032:
-				return ims.ocrr.vo.lookups.ResultValueTypeCollection.class;
-			case 1161031:
-				return ims.ocrr.vo.lookups.ResultCommentTypeCollection.class;
 			case 1161027:
 				return ims.ocrr.vo.lookups.OrderInvStatusCollection.class;
 			case 1161025:
@@ -2809,12 +3672,20 @@ public class ClassHelper
 				return ims.ocrr.vo.lookups.ItemSelectionTypeCollection.class;
 			case 1161000:
 				return ims.ocrr.vo.lookups.CategoryCollection.class;
+			case 1161042:
+				return ims.ocrr.vo.lookups.DayOfWeekCollection.class;
+			case 1161049:
+				return ims.ocrr.vo.lookups.ReportToTypeCollection.class;
+			case 1161037:
+				return ims.ocrr.vo.lookups.NormalcyStatusCollection.class;
+			case 1161034:
+				return ims.ocrr.vo.lookups.SelectAndOrderComponentTypeCollection.class;
+			case 1161019:
+				return ims.ocrr.vo.lookups.TemplateDividerTypeCollection.class;
 			case 1161053:
 				return ims.ocrr.vo.lookups.ResultEDSubtypeCollection.class;
 			case 1161051:
 				return ims.ocrr.vo.lookups.PrintingLocationTypeCollection.class;
-			case 1161049:
-				return ims.ocrr.vo.lookups.ReportToTypeCollection.class;
 			case 1161048:
 				return ims.ocrr.vo.lookups.AuthorisationOrderStatusCollection.class;
 			case 1161047:
@@ -2825,40 +3696,62 @@ public class ClassHelper
 				return ims.ocrr.vo.lookups.SpecimenCollectionStatusCollection.class;
 			case 1161043:
 				return ims.ocrr.vo.lookups.SpecimenCollectionTypeCollection.class;
-			case 1161042:
-				return ims.ocrr.vo.lookups.DayOfWeekCollection.class;
 			case 1161040:
 				return ims.ocrr.vo.lookups.OcsDisplayFlagCollection.class;
 			case 1161039:
 				return ims.ocrr.vo.lookups.OrderMessageStatusCollection.class;
 			case 1161035:
 				return ims.ocrr.vo.lookups.OrderCategoryCollection.class;
-			case 1161034:
-				return ims.ocrr.vo.lookups.SelectAndOrderComponentTypeCollection.class;
 			case 1161021:
 				return ims.ocrr.vo.lookups.TemplateCategoriesCollection.class;
 			case 1161020:
 				return ims.ocrr.vo.lookups.SpecimenCollectionMethodCollection.class;
-			case 1161019:
-				return ims.ocrr.vo.lookups.TemplateDividerTypeCollection.class;
 			case 1161018:
 				return ims.ocrr.vo.lookups.TestHelpTitlesCollection.class;
 			case 1161005:
 				return ims.ocrr.vo.lookups.HelpTextCategoryCollection.class;
+			case 1141042:
+				return ims.scheduling.vo.lookups.SafetyBriefDelayReasonCollection.class;
+			case 1141041:
+				return ims.scheduling.vo.lookups.Rule28DayStatusCollection.class;
+			case 1141039:
+				return ims.scheduling.vo.lookups.PendingEmergencyTheatreStatusCollection.class;
+			case 1141038:
+				return ims.scheduling.vo.lookups.PendingEmergencyCurrentPatientLocationCollection.class;
+			case 1141037:
+				return ims.scheduling.vo.lookups.PendingTheatreUrgencyCategoryCollection.class;
+			case 1141036:
+				return ims.scheduling.vo.lookups.RequestToScheduleCollection.class;
+			case 1141035:
+				return ims.scheduling.vo.lookups.AcuteTheateListBookingStateCollection.class;
+			case 1141034:
+				return ims.scheduling.vo.lookups.FutureAppointmentSourceCollection.class;
+			case 1141033:
+				return ims.scheduling.vo.lookups.FutureApptRemovalReasonCollection.class;
+			case 1141032:
+				return ims.scheduling.vo.lookups.FutureAppointmentStatusCollection.class;
+			case 1141029:
+				return ims.scheduling.vo.lookups.RTTWeekWaitOr28DayRuleBreachReasonCollection.class;
 			case 1141027:
 				return ims.scheduling.vo.lookups.AppointmentActionCollection.class;
 			case 1141023:
 				return ims.scheduling.vo.lookups.AppointmentTrackingStatusCollection.class;
-			case 1141017:
-				return ims.scheduling.vo.lookups.ExternalSystemEventTypesCollection.class;
-			case 1141011:
-				return ims.scheduling.vo.lookups.ApptAttStatusCollection.class;
 			case 1141026:
 				return ims.scheduling.vo.lookups.OutcomeActionCollection.class;
-			case 1141004:
-				return ims.scheduling.vo.lookups.Session_Status_and_ReasonCollection.class;
 			case 1141001:
 				return ims.scheduling.vo.lookups.Sched_Prfile_CatCollection.class;
+			case 1141017:
+				return ims.scheduling.vo.lookups.ExternalSystemEventTypesCollection.class;
+			case 1141012:
+				return ims.scheduling.vo.lookups.ApptConfStatusCollection.class;
+			case 1141011:
+				return ims.scheduling.vo.lookups.ApptAttStatusCollection.class;
+			case 1141040:
+				return ims.scheduling.vo.lookups.PendingEmergencyTheatreRemovalReasonCollection.class;
+			case 1141030:
+				return ims.scheduling.vo.lookups.SchProfileTypeCollection.class;
+			case 1141028:
+				return ims.scheduling.vo.lookups.ProfileListTypeCollection.class;
 			case 1141025:
 				return ims.scheduling.vo.lookups.ConsultationMediaTypeCollection.class;
 			case 1141024:
@@ -2881,12 +3774,20 @@ public class ClassHelper
 				return ims.scheduling.vo.lookups.SchedulingPriorityCollection.class;
 			case 1141007:
 				return ims.scheduling.vo.lookups.Status_ReasonCollection.class;
+			case 1141004:
+				return ims.scheduling.vo.lookups.Session_Status_and_ReasonCollection.class;
 			case 1141003:
 				return ims.scheduling.vo.lookups.CancelAppointmentReasonCollection.class;
 			case 1141002:
 				return ims.scheduling.vo.lookups.Profile_Interval_TypeCollection.class;
 			case 1141000:
 				return ims.scheduling.vo.lookups.Sched_Profile_TypeCollection.class;
+			case 1121019:
+				return ims.therapies.vo.lookups.TherapiesContactTypeCollection.class;
+			case 1121018:
+				return ims.therapies.vo.lookups.ConsentReasonCollection.class;
+			case 1121017:
+				return ims.therapies.vo.lookups.CaseloadCollection.class;
 			case 1121016:
 				return ims.therapies.vo.lookups.DominantHandCollection.class;
 			case 1121015:
@@ -2911,8 +3812,6 @@ public class ClassHelper
 				return ims.therapies.vo.lookups.CarerEducationCollection.class;
 			case 1121000:
 				return ims.therapies.vo.lookups.JaymarLevelCollection.class;
-			case 1111011:
-				return ims.correspondence.vo.lookups.RecipientTypeCollection.class;
 			case 1111009:
 				return ims.correspondence.vo.lookups.AssociationSpecifierCollection.class;
 			case 1111008:
@@ -2929,16 +3828,14 @@ public class ClassHelper
 				return ims.correspondence.vo.lookups.GlossaryCategoryCollection.class;
 			case 1111001:
 				return ims.correspondence.vo.lookups.HeaderCollection.class;
+			case 1111011:
+				return ims.correspondence.vo.lookups.RecipientTypeCollection.class;
 			case 1111010:
 				return ims.correspondence.vo.lookups.GlossarySpecifierCollection.class;
-			case 1101053:
-				return ims.ntpf.vo.lookups.BatchStatusCollection.class;
-			case 1101052:
-				return ims.ntpf.vo.lookups.AccountingTypeCollection.class;
 			case 1101049:
 				return ims.ntpf.vo.lookups.CallTypeCollection.class;
-			case 1101048:
-				return ims.ntpf.vo.lookups.InsuranceTypeCollection.class;
+			case 1101007:
+				return ims.ntpf.vo.lookups.PatientTypeCollection.class;
 			case 1101047:
 				return ims.ntpf.vo.lookups.JobTypeCollection.class;
 			case 1101040:
@@ -2947,16 +3844,20 @@ public class ClassHelper
 				return ims.ntpf.vo.lookups.WaitingListLengthQualifierCollection.class;
 			case 1101036:
 				return ims.ntpf.vo.lookups.CommentContextTypeCollection.class;
-			case 1101023:
-				return ims.ntpf.vo.lookups.PatientCheckListCollection.class;
 			case 1101022:
 				return ims.ntpf.vo.lookups.CountyCollection.class;
 			case 1101008:
 				return ims.ntpf.vo.lookups.CaseTypeCollection.class;
 			case 1101002:
 				return ims.ntpf.vo.lookups.LoCallStatusCollection.class;
-			case 1101007:
-				return ims.ntpf.vo.lookups.PatientTypeCollection.class;
+			case 1101053:
+				return ims.ntpf.vo.lookups.BatchStatusCollection.class;
+			case 1101052:
+				return ims.ntpf.vo.lookups.AccountingTypeCollection.class;
+			case 1101048:
+				return ims.ntpf.vo.lookups.InsuranceTypeCollection.class;
+			case 1101023:
+				return ims.ntpf.vo.lookups.PatientCheckListCollection.class;
 			case 1101001:
 				return ims.ntpf.vo.lookups.WhereHeardCollection.class;
 			case 1101000:
@@ -2969,6 +3870,8 @@ public class ClassHelper
 				return ims.medicaloncology.vo.lookups.PrimaryTumourStatusCollection.class;
 			case 2936:
 				return ims.medicaloncology.vo.lookups.PerformanceStatusCollection.class;
+			case 1051066:
+				return ims.spinalinjuries.vo.lookups.PowerchairSkillAssessedLevelCollection.class;
 			case 1051043:
 				return ims.spinalinjuries.vo.lookups.UltrasoundFreqCollection.class;
 			case 904:
@@ -2995,6 +3898,8 @@ public class ClassHelper
 				return ims.spinalinjuries.vo.lookups.RehabIndependenceLevelCollection.class;
 			case 1051010:
 				return ims.spinalinjuries.vo.lookups.RehabEnvAdaptationCollection.class;
+			case 1051009:
+				return ims.spinalinjuries.vo.lookups.RehabTechniqueCollection.class;
 			case 1051006:
 				return ims.spinalinjuries.vo.lookups.HydrotherapyEquipmentCollection.class;
 			case 1051005:
@@ -3003,8 +3908,6 @@ public class ClassHelper
 				return ims.spinalinjuries.vo.lookups.HydrotherapyTransferInCollection.class;
 			case 1051002:
 				return ims.spinalinjuries.vo.lookups.HydrotherapyLevelOfAssistanceCollection.class;
-			case 1051001:
-				return ims.spinalinjuries.vo.lookups.ComplementaryTherapyCollection.class;
 			case 1051179:
 				return ims.spinalinjuries.vo.lookups.EnvironmentVisitRoomTypeCollection.class;
 			case 1051178:
@@ -3189,8 +4092,6 @@ public class ClassHelper
 				return ims.spinalinjuries.vo.lookups.WheelchairSkillAssessedLevelCollection.class;
 			case 1051067:
 				return ims.spinalinjuries.vo.lookups.WheelchairSkillCollection.class;
-			case 1051066:
-				return ims.spinalinjuries.vo.lookups.PowerchairSkillAssessedLevelCollection.class;
 			case 1051065:
 				return ims.spinalinjuries.vo.lookups.PowerchairSkillCollection.class;
 			case 1051064:
@@ -3275,14 +4176,14 @@ public class ClassHelper
 				return ims.spinalinjuries.vo.lookups.RehabLocationCollection.class;
 			case 1026:
 				return ims.spinalinjuries.vo.lookups.RehabActivityCollection.class;
-			case 1051009:
-				return ims.spinalinjuries.vo.lookups.RehabTechniqueCollection.class;
 			case 1051008:
 				return ims.spinalinjuries.vo.lookups.RehabEquipmentCollection.class;
 			case 1051007:
 				return ims.spinalinjuries.vo.lookups.MobilisationsTreatmentCollection.class;
 			case 1051004:
 				return ims.spinalinjuries.vo.lookups.HydrotherapyTransferOutCollection.class;
+			case 1051001:
+				return ims.spinalinjuries.vo.lookups.ComplementaryTherapyCollection.class;
 			case 1051000:
 				return ims.spinalinjuries.vo.lookups.GaitReEducationGaitAspectCollection.class;
 			case 1041003:
@@ -3293,12 +4194,30 @@ public class ClassHelper
 				return ims.clinicaladmin.vo.lookups.EDischargeHINTCollection.class;
 			case 1041000:
 				return ims.clinicaladmin.vo.lookups.HotListFormTypeCollection.class;
+			case 1031041:
+				return ims.admin.vo.lookups.WardDeptCategoryCollection.class;
+			case 1031040:
+				return ims.admin.vo.lookups.PDSPatientCareProvisionTypeCollection.class;
+			case 1031039:
+				return ims.admin.vo.lookups.PDSMultipleRegIndicaorCollection.class;
+			case 1031038:
+				return ims.admin.vo.lookups.PDSInformationSensitivityIndicatorCollection.class;
+			case 1031037:
+				return ims.admin.vo.lookups.PDSDemographicNotificationTypeCollection.class;
+			case 1031036:
+				return ims.admin.vo.lookups.PDSDeathNotificationStatusCollection.class;
+			case 1031035:
+				return ims.admin.vo.lookups.PDSDataQualityTypeCollection.class;
+			case 1031034:
+				return ims.admin.vo.lookups.PDSDataQualityReasonCollection.class;
 			case 1031030:
 				return ims.admin.vo.lookups.AppointmentOutcomeReasonCollection.class;
 			case 1031028:
 				return ims.admin.vo.lookups.ReasonChartNotRequestedCollection.class;
 			case 1031020:
 				return ims.admin.vo.lookups.NotificationPriorityCollection.class;
+			case 1031017:
+				return ims.admin.vo.lookups.NavigationStyleCollection.class;
 			case 1031014:
 				return ims.admin.vo.lookups.FileFormatTypeCollection.class;
 			case 1031013:
@@ -3323,18 +4242,16 @@ public class ClassHelper
 				return ims.admin.vo.lookups.GenderSpecificCollection.class;
 			case 1031001:
 				return ims.admin.vo.lookups.TopButtonActionCollection.class;
+			case 1031032:
+				return ims.admin.vo.lookups.HardCodedEventsCollection.class;
 			case 1031022:
 				return ims.admin.vo.lookups.ClearSpanEventLevelCollection.class;
-			case 1031017:
-				return ims.admin.vo.lookups.NavigationStyleCollection.class;
 			case 1031015:
 				return ims.admin.vo.lookups.BusinessRuleCategoryCollection.class;
 			case 1031000:
 				return ims.admin.vo.lookups.FormReadWriteCollection.class;
 			case 1031024:
 				return ims.admin.vo.lookups.HTTPServletDebugCollection.class;
-			case 1031027:
-				return ims.admin.vo.lookups.EDAttendenceControlTypeCollection.class;
 			case 1031021:
 				return ims.admin.vo.lookups.ClearSpanEventsCollection.class;
 			case 1031019:
@@ -3343,6 +4260,160 @@ public class ClassHelper
 				return ims.admin.vo.lookups.ImageTypeCollection.class;
 			case 1031016:
 				return ims.admin.vo.lookups.RuleConditionTypeCollection.class;
+			case 1031033:
+				return ims.admin.vo.lookups.DiagnosticCollection.class;
+			case 1031027:
+				return ims.admin.vo.lookups.EDAttendenceControlTypeCollection.class;
+			case 1021395:
+				return ims.core.vo.lookups.UnrecordedObservationsReasonCollection.class;
+			case 1021380:
+				return ims.core.vo.lookups.PendingEmergencyAdmissionTypeCollection.class;
+			case 1021391:
+				return ims.core.vo.lookups.MsgUpdateTypeCollection.class;
+			case 1021383:
+				return ims.core.vo.lookups.SourceOfEmergencyReferralCollection.class;
+			case 1021378:
+				return ims.core.vo.lookups.InstitutionCollection.class;
+			case 1021377:
+				return ims.core.vo.lookups.YesNoNotApplicableCollection.class;
+			case 1021376:
+				return ims.core.vo.lookups.YesNotApplicableCollection.class;
+			case 1021375:
+				return ims.core.vo.lookups.YesUnableCollection.class;
+			case 1021371:
+				return ims.core.vo.lookups.PDSProvisionTypeCollection.class;
+			case 1021370:
+				return ims.core.vo.lookups.OtherHCPCollection.class;
+			case 1021368:
+				return ims.core.vo.lookups.ReasonForAdmissionToGenderSpecificBayCollection.class;
+			case 1021367:
+				return ims.core.vo.lookups.PDSUpdateModeCollection.class;
+			case 1021366:
+				return ims.core.vo.lookups.PDSUpdateTypeCollection.class;
+			case 1021364:
+				return ims.core.vo.lookups.PDSAsyncRequestTypeCollection.class;
+			case 1021363:
+				return ims.core.vo.lookups.ReasonCannotGoDischargeLoungeCollection.class;
+			case 1021362:
+				return ims.core.vo.lookups.ReasonDelayDischargeCollection.class;
+			case 1021361:
+				return ims.core.vo.lookups.ExtendedLengthOfStayReasonCollection.class;
+			case 1021360:
+				return ims.core.vo.lookups.PDSAckDetailTypeCollection.class;
+			case 1021359:
+				return ims.core.vo.lookups.PDSRequestAckStatusCollection.class;
+			case 1021358:
+				return ims.core.vo.lookups.PDSNhsNumberStatusCollection.class;
+			case 1021357:
+				return ims.core.vo.lookups.PDSIgnoreHistoryIndicatorCollection.class;
+			case 1021356:
+				return ims.core.vo.lookups.PDSHistoryDataFlagCollection.class;
+			case 1021355:
+				return ims.core.vo.lookups.PDSBackOfficeOutcomeCollection.class;
+			case 1021352:
+				return ims.core.vo.lookups.WardBayBlockingReasonCollection.class;
+			case 1021351:
+				return ims.core.vo.lookups.WardBayClosingReasonCollection.class;
+			case 1021350:
+				return ims.core.vo.lookups.WardBayStatusCollection.class;
+			case 1021348:
+				return ims.core.vo.lookups.PDSResidentialStatusCollection.class;
+			case 1021347:
+				return ims.core.vo.lookups.PDSRelatedPersonRoleCollection.class;
+			case 1021346:
+				return ims.core.vo.lookups.PDSRegisteringAuthorityTypeCollection.class;
+			case 1021345:
+				return ims.core.vo.lookups.PDSPreviousNHSContactIndicatorCollection.class;
+			case 1021344:
+				return ims.core.vo.lookups.PreferredWrittenCommunicationCollection.class;
+			case 1021343:
+				return ims.core.vo.lookups.PDSConsentCollection.class;
+			case 1021342:
+				return ims.core.vo.lookups.PDSBackOfficeWorkPriorityCollection.class;
+			case 1021341:
+				return ims.core.vo.lookups.PDSBackOfficeWorkStatusCollection.class;
+			case 1021340:
+				return ims.core.vo.lookups.PDSBackOfficeTypeCollection.class;
+			case 1021339:
+				return ims.core.vo.lookups.PDSSearchTypeCollection.class;
+			case 1021338:
+				return ims.core.vo.lookups.ProcedureEndoscopyTypeCollection.class;
+			case 1021337:
+				return ims.core.vo.lookups.OBSProtocolTypeCollection.class;
+			case 1021335:
+				return ims.core.vo.lookups.ChartableOccurrenceTypeCollection.class;
+			case 1021334:
+				return ims.core.vo.lookups.ActionsTakenCollection.class;
+			case 1021332:
+				return ims.core.vo.lookups.ProcedureWoundClassCollection.class;
+			case 1021330:
+				return ims.core.vo.lookups.SpecimenDestinationCollection.class;
+			case 1021329:
+				return ims.core.vo.lookups.IrrigantSolutionCollection.class;
+			case 1021328:
+				return ims.core.vo.lookups.LaserPatientSafetyMeasuresCollection.class;
+			case 1021327:
+				return ims.core.vo.lookups.LaserModeCollection.class;
+			case 1021326:
+				return ims.core.vo.lookups.LaserDeviceSerialNumberCollection.class;
+			case 1021325:
+				return ims.core.vo.lookups.LaserDeviceNameCollection.class;
+			case 1021324:
+				return ims.core.vo.lookups.DiathermyPadSiteCollection.class;
+			case 1021323:
+				return ims.core.vo.lookups.DiathermyDeviceSerialNumberCollection.class;
+			case 1021321:
+				return ims.core.vo.lookups.CodingStatusCollection.class;
+			case 1021319:
+				return ims.core.vo.lookups.TransferReasonCollection.class;
+			case 1021318:
+				return ims.core.vo.lookups.UncodedReasonCollection.class;
+			case 1021317:
+				return ims.core.vo.lookups.FolderCaseNoteCollection.class;
+			case 1021316:
+				return ims.core.vo.lookups.CaseNoteRequestCancellationReasonCollection.class;
+			case 1021315:
+				return ims.core.vo.lookups.CaseNoteReasonForTransferCollection.class;
+			case 1021314:
+				return ims.core.vo.lookups.CaseNoteRequestStatusCollection.class;
+			case 1021313:
+				return ims.core.vo.lookups.CaseNoteReasonForRequestCollection.class;
+			case 1021312:
+				return ims.core.vo.lookups.CaseNoteStatusCollection.class;
+			case 1021311:
+				return ims.core.vo.lookups.CaseNoteTypeCollection.class;
+			case 1021310:
+				return ims.core.vo.lookups.UndoDODFiledsCollection.class;
+			case 1021309:
+				return ims.core.vo.lookups.ReasonForBreachingFirstApptKPICollection.class;
+			case 1021308:
+				return ims.core.vo.lookups.PDSSynchronisationRelevantDatasetFieldsCollection.class;
+			case 1021307:
+				return ims.core.vo.lookups.AccomodationRequestedTypeCollection.class;
+			case 1021306:
+				return ims.core.vo.lookups.HealthBoardCollection.class;
+			case 1021305:
+				return ims.core.vo.lookups.PreferredContactTimeCollection.class;
+			case 1021304:
+				return ims.core.vo.lookups.ContactMethodCollection.class;
+			case 1021303:
+				return ims.core.vo.lookups.InternalReferralStatusCollection.class;
+			case 1021302:
+				return ims.core.vo.lookups.ISOUnitCollection.class;
+			case 1021301:
+				return ims.core.vo.lookups.DiagnosisDivisionsCollection.class;
+			case 1021300:
+				return ims.core.vo.lookups.PatientDiagnosisStatusCollection.class;
+			case 1021298:
+				return ims.core.vo.lookups.BayDependencyLevelCollection.class;
+			case 1021297:
+				return ims.core.vo.lookups.GenderAdmissionReasonCollection.class;
+			case 1021296:
+				return ims.core.vo.lookups.TrackingMovementTypeCollection.class;
+			case 1021294:
+				return ims.core.vo.lookups.ReasonForAdmissionOutOfOpeningHoursCollection.class;
+			case 1021293:
+				return ims.core.vo.lookups.ReasonforPrivateBedAllocationCollection.class;
 			case 1021292:
 				return ims.core.vo.lookups.InitatorCollection.class;
 			case 1021291:
@@ -3364,7 +4435,7 @@ public class ClassHelper
 			case 1021281:
 				return ims.core.vo.lookups.DementiaWorklistStatusCollection.class;
 			case 1021280:
-				return ims.core.vo.lookups.PreferredCommunicationLanguageCollection.class;
+				return ims.core.vo.lookups.PDSPreferredCommunicationLanguageCollection.class;
 			case 1021279:
 				return ims.core.vo.lookups.CDSReportTypeCollection.class;
 			case 1021278:
@@ -3377,8 +4448,8 @@ public class ClassHelper
 				return ims.core.vo.lookups.ProblemGroupStatusCollection.class;
 			case 1021274:
 				return ims.core.vo.lookups.ProcedureIncompleteReasonCollection.class;
-			case 1021272:
-				return ims.core.vo.lookups.PrivateInsuranceStatusCollection.class;
+			case 1021273:
+				return ims.core.vo.lookups.MediaTypeCollection.class;
 			case 1021271:
 				return ims.core.vo.lookups.PrivateInsurancePolicyTypeCollection.class;
 			case 1021270:
@@ -3405,12 +4476,14 @@ public class ClassHelper
 				return ims.core.vo.lookups.QueueTypeCollection.class;
 			case 1021258:
 				return ims.core.vo.lookups.FollowUpTypeCollection.class;
+			case 1021257:
+				return ims.core.vo.lookups.ReadmissionTypeCollection.class;
 			case 1021256:
 				return ims.core.vo.lookups.BedTypeRequestedCollection.class;
 			case 1021254:
 				return ims.core.vo.lookups.CustomListTypeCollection.class;
-			case 1021253:
-				return ims.core.vo.lookups.DischargeReasonCollection.class;
+			case 1021251:
+				return ims.core.vo.lookups.OverallImpressionCollection.class;
 			case 1021250:
 				return ims.core.vo.lookups.PlanOfActionCollection.class;
 			case 1021249:
@@ -3439,6 +4512,8 @@ public class ClassHelper
 				return ims.core.vo.lookups.ApplicationSiteNameCollection.class;
 			case 1021237:
 				return ims.core.vo.lookups.TCITypeCollection.class;
+			case 1021236:
+				return ims.core.vo.lookups.AlphabetCollection.class;
 			case 1021235:
 				return ims.core.vo.lookups.BedSpaceTypeCollection.class;
 			case 1021234:
@@ -3473,10 +4548,16 @@ public class ClassHelper
 				return ims.core.vo.lookups.FileTypeCollection.class;
 			case 1021217:
 				return ims.core.vo.lookups.SpecialNeedCollection.class;
+			case 1021214:
+				return ims.core.vo.lookups.ConfidentialReasonCollection.class;
 			case 1021213:
 				return ims.core.vo.lookups.WorklistContactTypeCollection.class;
 			case 1021212:
 				return ims.core.vo.lookups.RegistrationSourceOfInfoCollection.class;
+			case 1021211:
+				return ims.core.vo.lookups.DodSourceCollection.class;
+			case 1021210:
+				return ims.core.vo.lookups.NationalityCollection.class;
 			case 1021208:
 				return ims.core.vo.lookups.PatientAlertStatusCollection.class;
 			case 1021207:
@@ -3487,8 +4568,6 @@ public class ClassHelper
 				return ims.core.vo.lookups.UrineOutputCollection.class;
 			case 1021204:
 				return ims.core.vo.lookups.ConsciousLevelCollection.class;
-			case 1021203:
-				return ims.core.vo.lookups.CauseofDeathCollection.class;
 			case 1021202:
 				return ims.core.vo.lookups.SurgeryASAGradeCollection.class;
 			case 1021201:
@@ -3515,34 +4594,20 @@ public class ClassHelper
 				return ims.core.vo.lookups.DeathCodeDiscrepencyCollection.class;
 			case 1021186:
 				return ims.core.vo.lookups.PasEventTypeCollection.class;
-			case 1021185:
-				return ims.core.vo.lookups.SourceOfNoteCollection.class;
 			case 1021184:
-				return ims.core.vo.lookups.MedciationCommencedDiscontinuedTypeCollection.class;
+				return ims.core.vo.lookups.MedicationCommencedDiscontinuedTypeCollection.class;
 			case 1021183:
 				return ims.core.vo.lookups.MedOverviewCorrectnessCollection.class;
-			case 1021182:
-				return ims.core.vo.lookups.LineTypeStatusCollection.class;
 			case 1021181:
 				return ims.core.vo.lookups.ClinicalTeamTypeCollection.class;
 			case 1021180:
 				return ims.core.vo.lookups.DailyTimePeriodsCollection.class;
-			case 1021179:
-				return ims.core.vo.lookups.CBGTypeCollection.class;
 			case 1021178:
-				return ims.core.vo.lookups.SECSTypesCollection.class;
+				return ims.core.vo.lookups.OBSTypeCollection.class;
 			case 1021177:
 				return ims.core.vo.lookups.VitalSignsMonitoringDurationCollection.class;
 			case 1021176:
 				return ims.core.vo.lookups.VitalSignsMonitoringFrequencyCollection.class;
-			case 1021175:
-				return ims.core.vo.lookups.LineColourPointIconCollection.class;
-			case 1021174:
-				return ims.core.vo.lookups.LineTypeCollection.class;
-			case 1021173:
-				return ims.core.vo.lookups.DataSetCategoryCollection.class;
-			case 1021172:
-				return ims.core.vo.lookups.ResuscitationStatusCollection.class;
 			case 1021171:
 				return ims.core.vo.lookups.DailyPatternTypeCollection.class;
 			case 1021169:
@@ -3585,12 +4650,12 @@ public class ClassHelper
 				return ims.core.vo.lookups.ChannelTypeCollection.class;
 			case 1021148:
 				return ims.core.vo.lookups.CoreReferralStatusCollection.class;
+			case 1021147:
+				return ims.core.vo.lookups.UnitsPerWeekCollection.class;
 			case 1021146:
 				return ims.core.vo.lookups.PulseOximetryValuesCollection.class;
 			case 1021145:
 				return ims.core.vo.lookups.YesNoCollection.class;
-			case 1021141:
-				return ims.core.vo.lookups.TimeWeeksMonthsYearsCollection.class;
 			case 1021137:
 				return ims.core.vo.lookups.UserDefinedAssessmentTypeCollection.class;
 			case 1021135:
@@ -3667,24 +4732,78 @@ public class ClassHelper
 				return ims.core.vo.lookups.PatIdTypeCollection.class;
 			case 632:
 				return ims.core.vo.lookups.SexCollection.class;
+			case 1021392:
+				return ims.core.vo.lookups.EligibilityCollection.class;
+			case 1021389:
+				return ims.core.vo.lookups.TransferReasonForPendingEmergencyAdmissionRequestCollection.class;
+			case 1021387:
+				return ims.core.vo.lookups.PDSLetterRunTypeCollection.class;
+			case 1021386:
+				return ims.core.vo.lookups.PDSConsentTypeCollection.class;
+			case 1021384:
+				return ims.core.vo.lookups.PendingAdmissionStatusCollection.class;
+			case 1021381:
+				return ims.core.vo.lookups.PDSContactMethodCollection.class;
+			case 1021379:
+				return ims.core.vo.lookups.OverseasVisitorStatusCassificationCollection.class;
+			case 1021374:
+				return ims.core.vo.lookups.PDSChannelUsageCollection.class;
+			case 1021373:
+				return ims.core.vo.lookups.WardAttendanceOutcomeCollection.class;
+			case 1021372:
+				return ims.core.vo.lookups.PDSPersonRoleCollection.class;
+			case 1021369:
+				return ims.core.vo.lookups.CaseNoteCommentTypeCollection.class;
+			case 1021354:
+				return ims.core.vo.lookups.PDSSearchStatusCollection.class;
+			case 1021353:
+				return ims.core.vo.lookups.WardBayReopenReasonCollection.class;
+			case 1021349:
+				return ims.core.vo.lookups.TransferCancellationReasonCollection.class;
+			case 1021336:
+				return ims.core.vo.lookups.ReferralTypeForTriageActionCollection.class;
+			case 1021333:
+				return ims.core.vo.lookups.MissingItemsCollection.class;
+			case 1021331:
+				return ims.core.vo.lookups.WoundPackingTypeCollection.class;
+			case 1021322:
+				return ims.core.vo.lookups.PatientPreparationCollection.class;
+			case 1021320:
+				return ims.core.vo.lookups.AlertAccessRightsCollection.class;
 			case 1021152:
 				return ims.core.vo.lookups.KeyDateTypeCollection.class;
-			case 1021262:
-				return ims.core.vo.lookups.CareContextStatusCollection.class;
+			case 1021272:
+				return ims.core.vo.lookups.PrivateInsuranceStatusCollection.class;
+			case 1021144:
+				return ims.core.vo.lookups.CorrectedReasonCollection.class;
 			case 1021143:
 				return ims.core.vo.lookups.ClinicalNotesStatusCollection.class;
-			case 1021257:
-				return ims.core.vo.lookups.ReadmissionTypeCollection.class;
+			case 1021141:
+				return ims.core.vo.lookups.TimeWeeksMonthsYearsCollection.class;
 			case 1021255:
 				return ims.core.vo.lookups.ManagementIntentionCollection.class;
-			case 1021251:
-				return ims.core.vo.lookups.OverallImpressionCollection.class;
+			case 1021253:
+				return ims.core.vo.lookups.DischargeReasonCollection.class;
 			case 1021209:
 				return ims.core.vo.lookups.PatientSupportNetworkStatusCollection.class;
+			case 1021203:
+				return ims.core.vo.lookups.CauseofDeathCollection.class;
+			case 1021185:
+				return ims.core.vo.lookups.SourceOfNoteCollection.class;
+			case 1021182:
+				return ims.core.vo.lookups.LineTypeStatusCollection.class;
+			case 1021179:
+				return ims.core.vo.lookups.CBGTypeCollection.class;
+			case 1021175:
+				return ims.core.vo.lookups.LineColourPointIconCollection.class;
+			case 1021174:
+				return ims.core.vo.lookups.LineTypeCollection.class;
+			case 1021173:
+				return ims.core.vo.lookups.DataSetCategoryCollection.class;
+			case 1021172:
+				return ims.core.vo.lookups.ResuscitationStatusCollection.class;
 			case 1021164:
 				return ims.core.vo.lookups.AreaOfNeedCollection.class;
-			case 1021147:
-				return ims.core.vo.lookups.UnitsPerWeekCollection.class;
 			case 1021140:
 				return ims.core.vo.lookups.AutonomicDysreflexiaCollection.class;
 			case 1021138:
@@ -3713,12 +4832,12 @@ public class ClassHelper
 				return ims.core.vo.lookups.ErectDysTreatScoreCollection.class;
 			case 1021083:
 				return ims.core.vo.lookups.EquipmentAdaptationSupplierCollection.class;
-			case 1021081:
-				return ims.core.vo.lookups.ReferralTypeCollection.class;
 			case 1021073:
 				return ims.core.vo.lookups.TracheostomyTypeCollection.class;
 			case 1021072:
 				return ims.core.vo.lookups.NameTypeCollection.class;
+			case 1021070:
+				return ims.core.vo.lookups.PolicyTypeCollection.class;
 			case 1021069:
 				return ims.core.vo.lookups.LocationTypeCollection.class;
 			case 1021068:
@@ -3749,8 +4868,6 @@ public class ClassHelper
 				return ims.core.vo.lookups.VSBPPositionofPatientCollection.class;
 			case 1021053:
 				return ims.core.vo.lookups.VSBPSiteCollection.class;
-			case 1021052:
-				return ims.core.vo.lookups.VSPulseRhythmCollection.class;
 			case 1021051:
 				return ims.core.vo.lookups.VSTempInstrumentCollection.class;
 			case 1021048:
@@ -3787,8 +4904,14 @@ public class ClassHelper
 				return ims.core.vo.lookups.AlertTypeCollection.class;
 			case 780:
 				return ims.core.vo.lookups.ReligionCollection.class;
-			case 1021144:
-				return ims.core.vo.lookups.CorrectedReasonCollection.class;
+			case 1021390:
+				return ims.core.vo.lookups.TimeUnitsSecondsToYearsCollection.class;
+			case 1021388:
+				return ims.core.vo.lookups.PublicCareNeedCollection.class;
+			case 1021382:
+				return ims.core.vo.lookups.CancelPendingAdmissionReasonCollection.class;
+			case 1021262:
+				return ims.core.vo.lookups.CareContextStatusCollection.class;
 			case 1021128:
 				return ims.core.vo.lookups.ArrivalModeCollection.class;
 			case 1021127:
@@ -3831,6 +4954,8 @@ public class ClassHelper
 				return ims.core.vo.lookups.EquipmentAdaptationSuppliedForCollection.class;
 			case 1021082:
 				return ims.core.vo.lookups.EquipmentTypeCollection.class;
+			case 1021081:
+				return ims.core.vo.lookups.ReferralTypeCollection.class;
 			case 1021079:
 				return ims.core.vo.lookups.PatientConcernStatusCollection.class;
 			case 1021078:
@@ -3843,6 +4968,8 @@ public class ClassHelper
 				return ims.core.vo.lookups.TracheostomyAccessoriesCollection.class;
 			case 791:
 				return ims.core.vo.lookups.PersonHealthActCategoryCollection.class;
+			case 1021052:
+				return ims.core.vo.lookups.VSPulseRhythmCollection.class;
 			case 1011055:
 				return ims.coe.vo.lookups.DescribeAppetiteCollection.class;
 			case 1011052:
@@ -3853,8 +4980,6 @@ public class ClassHelper
 				return ims.coe.vo.lookups.SputumAmountCollection.class;
 			case 1011012:
 				return ims.coe.vo.lookups.BowelMedicationCollection.class;
-			case 1011010:
-				return ims.coe.vo.lookups.InfectionResultCollection.class;
 			case 1011002:
 				return ims.coe.vo.lookups.HomeFacilitiesCollection.class;
 			case 1011001:
@@ -3919,6 +5044,8 @@ public class ClassHelper
 				return ims.coe.vo.lookups.DiarrhoeaAmountCollection.class;
 			case 1011011:
 				return ims.coe.vo.lookups.BowelsOpenCollection.class;
+			case 1011010:
+				return ims.coe.vo.lookups.InfectionResultCollection.class;
 			case 1011009:
 				return ims.coe.vo.lookups.InfectionControlTypeCollection.class;
 			case 1011008:
@@ -3937,8 +5064,16 @@ public class ClassHelper
 				return ims.coe.vo.lookups.AccommodationLivingArrangementsCollection.class;
 			case 1001062:
 				return ims.nursing.vo.lookups.BladderManagementAidsCollection.class;
+			case 1001060:
+				return ims.nursing.vo.lookups.BowelConstipationDiarrhoeaCollection.class;
 			case 1001059:
 				return ims.nursing.vo.lookups.BowelRoutinePerformedByCollection.class;
+			case 1001050:
+				return ims.nursing.vo.lookups.MobilityStatusCollection.class;
+			case 1001040:
+				return ims.nursing.vo.lookups.CarePlanTemplateStatusCollection.class;
+			case 1001048:
+				return ims.nursing.vo.lookups.TurnTypeCollection.class;
 			case 1001045:
 				return ims.nursing.vo.lookups.SafetyLevelCollection.class;
 			case 1001044:
@@ -3947,8 +5082,6 @@ public class ClassHelper
 				return ims.nursing.vo.lookups.CushionTypeCollection.class;
 			case 1001041:
 				return ims.nursing.vo.lookups.CarePlanInterventionStatusCollection.class;
-			case 1001040:
-				return ims.nursing.vo.lookups.CarePlanTemplateStatusCollection.class;
 			case 1001038:
 				return ims.nursing.vo.lookups.SkinWoundTypeCollection.class;
 			case 1001036:
@@ -3963,6 +5096,8 @@ public class ClassHelper
 				return ims.nursing.vo.lookups.SkinWoundBedCollection.class;
 			case 1001027:
 				return ims.nursing.vo.lookups.PainHypersensitivityCollection.class;
+			case 1001024:
+				return ims.nursing.vo.lookups.PainOnsetCollection.class;
 			case 1001023:
 				return ims.nursing.vo.lookups.PainSeverityCollection.class;
 			case 1001022:
@@ -4017,8 +5152,6 @@ public class ClassHelper
 				return ims.nursing.vo.lookups.NutritionalMethodSiteCollection.class;
 			case 1001061:
 				return ims.nursing.vo.lookups.BladderTypeCollection.class;
-			case 1001060:
-				return ims.nursing.vo.lookups.BowelConstipationDiarrhoeaCollection.class;
 			case 1001058:
 				return ims.nursing.vo.lookups.BowelRoutineLocationCollection.class;
 			case 1001057:
@@ -4035,12 +5168,8 @@ public class ClassHelper
 				return ims.nursing.vo.lookups.TransfersCollection.class;
 			case 1001051:
 				return ims.nursing.vo.lookups.MobilityAidsCollection.class;
-			case 1001050:
-				return ims.nursing.vo.lookups.MobilityStatusCollection.class;
 			case 1001049:
 				return ims.nursing.vo.lookups.TurnsDurationCollection.class;
-			case 1001048:
-				return ims.nursing.vo.lookups.TurnTypeCollection.class;
 			case 1001047:
 				return ims.nursing.vo.lookups.BreathingTreatmentCollection.class;
 			case 1001046:
@@ -4063,8 +5192,6 @@ public class ClassHelper
 				return ims.nursing.vo.lookups.PainDepthCollection.class;
 			case 1001025:
 				return ims.nursing.vo.lookups.PainProgressionCollection.class;
-			case 1001024:
-				return ims.nursing.vo.lookups.PainOnsetCollection.class;
 			case 1001021:
 				return ims.nursing.vo.lookups.TurnsPerformedByCollection.class;
 			case 1001019:
@@ -4107,6 +5234,36 @@ public class ClassHelper
 				return ims.nursing.vo.lookups.ContinenceDayNightCollection.class;
 			case 1211020:
 				return ims.nursing.vo.lookups.AbilityCollection.class;
+			case 1451014:
+				return ims.eas.vo.lookups.RemovalReasonCollection.class;
+			case 1451013:
+				return ims.eas.vo.lookups.ProtocolActionsCollection.class;
+			case 1451012:
+				return ims.eas.vo.lookups.EASStatusCollection.class;
+			case 1451011:
+				return ims.eas.vo.lookups.PhaseNamesCollection.class;
+			case 1451010:
+				return ims.eas.vo.lookups.MouldRoomActivityCollection.class;
+			case 1451009:
+				return ims.eas.vo.lookups.ImmobilisationTypeCollection.class;
+			case 1451008:
+				return ims.eas.vo.lookups.IMRTCollection.class;
+			case 1451007:
+				return ims.eas.vo.lookups.GatingOptionsCollection.class;
+			case 1451006:
+				return ims.eas.vo.lookups.OralContrastCollection.class;
+			case 1451005:
+				return ims.eas.vo.lookups.IVContrastCollection.class;
+			case 1451004:
+				return ims.eas.vo.lookups.ScanLimitsCollection.class;
+			case 1451003:
+				return ims.eas.vo.lookups.AgentsCollection.class;
+			case 1451002:
+				return ims.eas.vo.lookups.TreatmentSitesCollection.class;
+			case 1451001:
+				return ims.eas.vo.lookups.PrimaryTumourCollection.class;
+			case 1451000:
+				return ims.eas.vo.lookups.OptionsRequiredCollection.class;
 			case 1431010:
 				return ims.billing.vo.lookups.ReasonForNonPaymentCollection.class;
 			case 1411000:

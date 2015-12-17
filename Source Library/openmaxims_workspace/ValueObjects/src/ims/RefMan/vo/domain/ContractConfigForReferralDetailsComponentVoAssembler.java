@@ -1,9 +1,33 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.RefMan.vo.domain;
@@ -31,6 +55,10 @@ public class ContractConfigForReferralDetailsComponentVoAssembler
 		}
 		valueObjectDest.setID_ContractConfig(valueObjectSrc.getID_ContractConfig());
 	    valueObjectDest.setIsRIE(valueObjectSrc.getIsRIE());
+		// CCGsForContract
+		valueObjectDest.setCCGsForContract(valueObjectSrc.getCCGsForContract());
+		// ServiceLocations
+		valueObjectDest.setServiceLocations(valueObjectSrc.getServiceLocations());
 		// ContractOrganisation
 		valueObjectDest.setContractOrganisation(valueObjectSrc.getContractOrganisation());
 		// DaysToRTTBreachDate
@@ -333,85 +361,89 @@ public class ContractConfigForReferralDetailsComponentVoAssembler
 		if ((valueObject.getIsRIE() == null || valueObject.getIsRIE().booleanValue() == false) && domainObject.isIncludeRecord())
 			return null;
 			
+		// CCGsForContract
+		valueObject.setCCGsForContract(ims.RefMan.vo.domain.CCGToContractConfigForReferralDetailsComponentVoAssembler.createCCGToContractConfigForReferralDetailsComponentVoCollectionFromCCGToContractConfig(map, domainObject.getCCGsForContract()) );
+		// ServiceLocations
+		valueObject.setServiceLocations(ims.RefMan.vo.domain.ContractServiceLocationsConfigVoAssembler.createContractServiceLocationsConfigVoCollectionFromContractServiceLocationsConfig(map, domainObject.getServiceLocations()) );
 		// ContractOrganisation
 		valueObject.setContractOrganisation(ims.core.vo.domain.OrganisationLiteVoAssembler.create(map, domainObject.getContractOrganisation()) );
 		// DaysToRTTBreachDate
 		valueObject.setDaysToRTTBreachDate(domainObject.getDaysToRTTBreachDate());
 		// ContractType
-		ims.domain.lookups.LookupInstance instance3 = domainObject.getContractType();
-		if ( null != instance3 ) {
+		ims.domain.lookups.LookupInstance instance5 = domainObject.getContractType();
+		if ( null != instance5 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
 			img = null;
-			if (instance3.getImage() != null) 
+			if (instance5.getImage() != null) 
 			{
-				img = new ims.framework.utils.ImagePath(instance3.getImage().getImageId(), instance3.getImage().getImagePath());
+				img = new ims.framework.utils.ImagePath(instance5.getImage().getImageId(), instance5.getImage().getImagePath());
 			}
-			color = instance3.getColor();
+			color = instance5.getColor();
 			if (color != null) 
 				color.getValue();
 
-			ims.core.vo.lookups.ReferralManagementContractType voLookup3 = new ims.core.vo.lookups.ReferralManagementContractType(instance3.getId(),instance3.getText(), instance3.isActive(), null, img, color);
-			ims.core.vo.lookups.ReferralManagementContractType parentVoLookup3 = voLookup3;
-			ims.domain.lookups.LookupInstance parent3 = instance3.getParent();
-			while (parent3 != null)
+			ims.core.vo.lookups.ReferralManagementContractType voLookup5 = new ims.core.vo.lookups.ReferralManagementContractType(instance5.getId(),instance5.getText(), instance5.isActive(), null, img, color);
+			ims.core.vo.lookups.ReferralManagementContractType parentVoLookup5 = voLookup5;
+			ims.domain.lookups.LookupInstance parent5 = instance5.getParent();
+			while (parent5 != null)
 			{
-				if (parent3.getImage() != null) 
+				if (parent5.getImage() != null) 
 				{
-					img = new ims.framework.utils.ImagePath(parent3.getImage().getImageId(), parent3.getImage().getImagePath() );
+					img = new ims.framework.utils.ImagePath(parent5.getImage().getImageId(), parent5.getImage().getImagePath() );
 				}
 				else 
 				{
 					img = null;
 				}
-				color = parent3.getColor();
+				color = parent5.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup3.setParent(new ims.core.vo.lookups.ReferralManagementContractType(parent3.getId(),parent3.getText(), parent3.isActive(), null, img, color));
-				parentVoLookup3 = parentVoLookup3.getParent();
-								parent3 = parent3.getParent();
+								parentVoLookup5.setParent(new ims.core.vo.lookups.ReferralManagementContractType(parent5.getId(),parent5.getText(), parent5.isActive(), null, img, color));
+				parentVoLookup5 = parentVoLookup5.getParent();
+								parent5 = parent5.getParent();
 			}			
-			valueObject.setContractType(voLookup3);
+			valueObject.setContractType(voLookup5);
 		}
 				// ContractId
 		valueObject.setContractId(domainObject.getContractId());
 		// ContractName
 		valueObject.setContractName(domainObject.getContractName());
 		// Status
-		ims.domain.lookups.LookupInstance instance6 = domainObject.getStatus();
-		if ( null != instance6 ) {
+		ims.domain.lookups.LookupInstance instance8 = domainObject.getStatus();
+		if ( null != instance8 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
 			img = null;
-			if (instance6.getImage() != null) 
+			if (instance8.getImage() != null) 
 			{
-				img = new ims.framework.utils.ImagePath(instance6.getImage().getImageId(), instance6.getImage().getImagePath());
+				img = new ims.framework.utils.ImagePath(instance8.getImage().getImageId(), instance8.getImage().getImagePath());
 			}
-			color = instance6.getColor();
+			color = instance8.getColor();
 			if (color != null) 
 				color.getValue();
 
-			ims.core.vo.lookups.PreActiveActiveInactiveStatus voLookup6 = new ims.core.vo.lookups.PreActiveActiveInactiveStatus(instance6.getId(),instance6.getText(), instance6.isActive(), null, img, color);
-			ims.core.vo.lookups.PreActiveActiveInactiveStatus parentVoLookup6 = voLookup6;
-			ims.domain.lookups.LookupInstance parent6 = instance6.getParent();
-			while (parent6 != null)
+			ims.core.vo.lookups.PreActiveActiveInactiveStatus voLookup8 = new ims.core.vo.lookups.PreActiveActiveInactiveStatus(instance8.getId(),instance8.getText(), instance8.isActive(), null, img, color);
+			ims.core.vo.lookups.PreActiveActiveInactiveStatus parentVoLookup8 = voLookup8;
+			ims.domain.lookups.LookupInstance parent8 = instance8.getParent();
+			while (parent8 != null)
 			{
-				if (parent6.getImage() != null) 
+				if (parent8.getImage() != null) 
 				{
-					img = new ims.framework.utils.ImagePath(parent6.getImage().getImageId(), parent6.getImage().getImagePath() );
+					img = new ims.framework.utils.ImagePath(parent8.getImage().getImageId(), parent8.getImage().getImagePath() );
 				}
 				else 
 				{
 					img = null;
 				}
-				color = parent6.getColor();
+				color = parent8.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup6.setParent(new ims.core.vo.lookups.PreActiveActiveInactiveStatus(parent6.getId(),parent6.getText(), parent6.isActive(), null, img, color));
-				parentVoLookup6 = parentVoLookup6.getParent();
-								parent6 = parent6.getParent();
+								parentVoLookup8.setParent(new ims.core.vo.lookups.PreActiveActiveInactiveStatus(parent8.getId(),parent8.getText(), parent8.isActive(), null, img, color));
+				parentVoLookup8 = parentVoLookup8.getParent();
+								parent8 = parent8.getParent();
 			}			
-			valueObject.setStatus(voLookup6);
+			valueObject.setStatus(voLookup8);
 		}
 		 		return valueObject;
 	 }
@@ -462,32 +494,150 @@ public class ContractConfigForReferralDetailsComponentVoAssembler
 		}
 		domainObject.setVersion(valueObject.getVersion_ContractConfig());
 
+
+		// SaveAsRefVO treated as RefValueObject
+		ims.core.configuration.vo.CCGToContractConfigRefVoCollection refCollection1 = new ims.core.configuration.vo.CCGToContractConfigRefVoCollection();
+		if (valueObject.getCCGsForContract() != null)
+		{
+			for (int i1=0; i1<valueObject.getCCGsForContract().size(); i1++)
+			{
+				ims.core.configuration.vo.CCGToContractConfigRefVo ref1 = (ims.core.configuration.vo.CCGToContractConfigRefVo)valueObject.getCCGsForContract().get(i1);
+				refCollection1.add(ref1);
+			}
+		}
+		int size1 = (null == refCollection1) ? 0 : refCollection1.size();		
+		java.util.List domainCCGsForContract1 = domainObject.getCCGsForContract();
+		if (domainCCGsForContract1 == null)
+		{
+			domainCCGsForContract1 = new java.util.ArrayList();
+		}
+		for(int i=0; i < size1; i++) 
+		{
+			ims.core.configuration.vo.CCGToContractConfigRefVo vo = refCollection1.get(i);			
+			ims.core.configuration.domain.objects.CCGToContractConfig dom = null;
+			if ( null != vo ) 
+			{
+				if (vo.getBoId() == null)
+				{
+					if (domMap.get(vo) != null)
+					{
+						dom = (ims.core.configuration.domain.objects.CCGToContractConfig)domMap.get(vo);
+					}
+				}
+				else
+				{
+					dom = (ims.core.configuration.domain.objects.CCGToContractConfig)domainFactory.getDomainObject( ims.core.configuration.domain.objects.CCGToContractConfig.class, vo.getBoId());
+				}
+			}
+
+			int domIdx = domainCCGsForContract1.indexOf(dom);
+			if (domIdx == -1)
+			{
+				domainCCGsForContract1.add(i, dom);
+			}
+			else if (i != domIdx && i < domainCCGsForContract1.size())
+			{
+				Object tmp = domainCCGsForContract1.get(i);
+				domainCCGsForContract1.set(i, domainCCGsForContract1.get(domIdx));
+				domainCCGsForContract1.set(domIdx, tmp);
+			}
+		}
+		
+		//Remove all ones in domList where index > voCollection.size() as these should
+		//now represent the ones removed from the VO collection. No longer referenced.
+		int i1 = domainCCGsForContract1.size();
+		while (i1 > size1)
+		{
+			domainCCGsForContract1.remove(i1-1);
+			i1 = domainCCGsForContract1.size();
+		}
+		
+		domainObject.setCCGsForContract(domainCCGsForContract1);		
+
+		// SaveAsRefVO treated as RefValueObject
+		ims.core.configuration.vo.ContractServiceLocationsConfigRefVoCollection refCollection2 = new ims.core.configuration.vo.ContractServiceLocationsConfigRefVoCollection();
+		if (valueObject.getServiceLocations() != null)
+		{
+			for (int i2=0; i2<valueObject.getServiceLocations().size(); i2++)
+			{
+				ims.core.configuration.vo.ContractServiceLocationsConfigRefVo ref2 = (ims.core.configuration.vo.ContractServiceLocationsConfigRefVo)valueObject.getServiceLocations().get(i2);
+				refCollection2.add(ref2);
+			}
+		}
+		int size2 = (null == refCollection2) ? 0 : refCollection2.size();		
+		java.util.List domainServiceLocations2 = domainObject.getServiceLocations();
+		if (domainServiceLocations2 == null)
+		{
+			domainServiceLocations2 = new java.util.ArrayList();
+		}
+		for(int i=0; i < size2; i++) 
+		{
+			ims.core.configuration.vo.ContractServiceLocationsConfigRefVo vo = refCollection2.get(i);			
+			ims.core.configuration.domain.objects.ContractServiceLocationsConfig dom = null;
+			if ( null != vo ) 
+			{
+				if (vo.getBoId() == null)
+				{
+					if (domMap.get(vo) != null)
+					{
+						dom = (ims.core.configuration.domain.objects.ContractServiceLocationsConfig)domMap.get(vo);
+					}
+				}
+				else
+				{
+					dom = (ims.core.configuration.domain.objects.ContractServiceLocationsConfig)domainFactory.getDomainObject( ims.core.configuration.domain.objects.ContractServiceLocationsConfig.class, vo.getBoId());
+				}
+			}
+
+			int domIdx = domainServiceLocations2.indexOf(dom);
+			if (domIdx == -1)
+			{
+				domainServiceLocations2.add(i, dom);
+			}
+			else if (i != domIdx && i < domainServiceLocations2.size())
+			{
+				Object tmp = domainServiceLocations2.get(i);
+				domainServiceLocations2.set(i, domainServiceLocations2.get(domIdx));
+				domainServiceLocations2.set(domIdx, tmp);
+			}
+		}
+		
+		//Remove all ones in domList where index > voCollection.size() as these should
+		//now represent the ones removed from the VO collection. No longer referenced.
+		int i2 = domainServiceLocations2.size();
+		while (i2 > size2)
+		{
+			domainServiceLocations2.remove(i2-1);
+			i2 = domainServiceLocations2.size();
+		}
+		
+		domainObject.setServiceLocations(domainServiceLocations2);		
 	// SaveAsRefVO - treated as a refVo in extract methods
-	ims.core.resource.place.domain.objects.Organisation value1 = null;
+	ims.core.resource.place.domain.objects.Organisation value3 = null;
 		if ( null != valueObject.getContractOrganisation() ) 
 		{
 			if (valueObject.getContractOrganisation().getBoId() == null)
 			{
 				if (domMap.get(valueObject.getContractOrganisation()) != null)
 				{
-					value1 = (ims.core.resource.place.domain.objects.Organisation)domMap.get(valueObject.getContractOrganisation());
+					value3 = (ims.core.resource.place.domain.objects.Organisation)domMap.get(valueObject.getContractOrganisation());
 				}
 			}
 			else
 			{
-				value1 = (ims.core.resource.place.domain.objects.Organisation)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.Organisation.class, valueObject.getContractOrganisation().getBoId());
+				value3 = (ims.core.resource.place.domain.objects.Organisation)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.Organisation.class, valueObject.getContractOrganisation().getBoId());
 			}
 		}
-		domainObject.setContractOrganisation(value1);
+		domainObject.setContractOrganisation(value3);
 		domainObject.setDaysToRTTBreachDate(valueObject.getDaysToRTTBreachDate());
 		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value3 = null;
+		ims.domain.lookups.LookupInstance value5 = null;
 		if ( null != valueObject.getContractType() ) 
 		{
-			value3 =
+			value5 =
 				domainFactory.getLookupInstance(valueObject.getContractType().getID());
 		}
-		domainObject.setContractType(value3);
+		domainObject.setContractType(value5);
 		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
 		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
 		if (valueObject.getContractId() != null && valueObject.getContractId().equals(""))
@@ -503,13 +653,13 @@ public class ContractConfigForReferralDetailsComponentVoAssembler
 		}
 		domainObject.setContractName(valueObject.getContractName());
 		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value6 = null;
+		ims.domain.lookups.LookupInstance value8 = null;
 		if ( null != valueObject.getStatus() ) 
 		{
-			value6 =
+			value8 =
 				domainFactory.getLookupInstance(valueObject.getStatus().getID());
 		}
-		domainObject.setStatus(value6);
+		domainObject.setStatus(value8);
 
 		return domainObject;
 	}

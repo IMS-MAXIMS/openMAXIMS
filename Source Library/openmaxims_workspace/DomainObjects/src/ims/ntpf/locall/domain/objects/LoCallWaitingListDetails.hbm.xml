@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 12/10/2015, 13:31 -->
+<hibernate-mapping>
+	<class name="ims.ntpf.locall.domain.objects.LoCallWaitingListDetails" table="ntpf_waitlistdetail" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: hibernateClassContent -->
+<!-- debug: speciality -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="speciality" class="ims.core.clinical.domain.objects.Service" unique="true" foreign-key="waitlistdetail_speciality_fk" access="field" cascade="save-update">
+			<column name="speciality" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: procedure -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="procedure" class="ims.core.resource.place.domain.objects.Activity" unique="true" foreign-key="waitlistdetail_c_procedu_fk" access="field" cascade="save-update">
+			<column name="c_procedu" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: procedureText -->
+<!-- debug: referringHospital -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="referringHospital" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="waitlistdetail_referringh_fk" access="field" cascade="save-update">
+			<column name="referringh" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: referringConsultant -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="referringConsultant" class="ims.core.resource.people.domain.objects.Medic" unique="true" foreign-key="waitlistdetail_referringc_fk" access="field" cascade="save-update">
+			<column name="referringc" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: referringConsultantText -->
+<!-- debug: category -->
+<!-- debug: waitingListType -->
+<!-- debug: waitingListDate -->
+<!-- debug: waitingListMonthInterval -->
+<!-- debug: waitingListLengthQualifier -->
+<!-- debug: faxTo -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="faxTo" class="ims.core.resource.people.domain.objects.MemberOfStaff" unique="true" foreign-key="waitlistdetail_faxto_fk" access="field" cascade="save-update">
+			<column name="faxto" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: faxDate -->
+<!-- debug: liaisonQuery -->
+<!-- debug: statusHistory -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="statusHistory" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="waitlistdetail_statushist_fk">
+				<column name="ntpf_waitlistdetail_statushist" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.ntpf.locall.domain.objects.LoCallStatus" />
+		</set>
+<!-- debug: currentStatus -->
+<!-- debug: currentStatusReason -->
+<!-- debug: isLinkedtoCase -->
+<!-- debug: assocCase -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- Inverse of one-to-one relationship -->
+		<one-to-one name="assocCase" foreign-key="waitlistdetail_assoccase_fk" class="ims.ntpf.casereferral.domain.objects.CaseReferral"
+				property-ref="creatingLoCallWLDetail"/>
+<!-- debug: assocLocall -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- many to one -->
+		<many-to-one name="assocLocall" class="ims.ntpf.locall.domain.objects.LoCall" foreign-key="waitlistdetail_assoclocal_fk" access="field" cascade="save-update">
+			<column name="assoclocal" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: hospital -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="hospital" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="waitlistdetail_hospital_fk" access="field" cascade="save-update">
+			<column name="hospital" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: mrn -->
+<!-- debug: episodeNumber -->
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="procedureText" type="string" access="field" update="true" > 
+			<column name="proceduret" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="referringConsultantText" type="string" access="field" update="true" > 
+			<column name="referring2" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="category" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_category" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="waitingListType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_waitinglis" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="waitingListDate" type="date" access="field" update="true">
+			<column name="waitingli2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="waitingListMonthInterval" type="integer" access="field" update="true">
+			<column name="waitingli3"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="waitingListLengthQualifier" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_waitingli4" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="faxDate" type="date" access="field" update="true">
+			<column name="faxdate"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="liaisonQuery" type="string" access="field" update="true" > 
+			<column name="liaisonque" length="255"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="currentStatus" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_currentsta" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="currentStatusReason" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_currentst2" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="isLinkedtoCase" type="boolean" access="field" update="true">
+			<column name="islinkedto"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="mrn" type="string" access="field" update="true" > 
+			<column name="mrn" length="50"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="episodeNumber" type="string" access="field" update="true" > 
+			<column name="episodenum" length="50"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -164,7 +169,7 @@ public class Keywords
 
 		ret = ret.replaceAll("!", "");
 		ret = ret.replaceAll("\"", "");
-		ret = ret.replaceAll("£", "");
+		ret = ret.replaceAll("Â£", "");
 		ret = ret.replaceAll("\\$", "");
 		ret = ret.replaceAll("%", "");
 		ret = ret.replaceAll("\\^", "");
@@ -293,7 +298,14 @@ public class Keywords
 		return ret;
 	}
 
+	
 	public static List searchByKeywords(DomainFactory factory, String filter, String hql, ArrayList names, ArrayList values) throws DomainInterfaceException
+	{
+		return searchByKeywords(factory, filter, hql, names, values, true);//WDEV-21039
+	}
+	
+	//WDEV-21039
+	public static List searchByKeywords(DomainFactory factory, String filter, String hql, ArrayList names, ArrayList values, Boolean includeExcludedKeywords) throws DomainInterfaceException
 	{
 		List retList;
 		
@@ -310,13 +322,13 @@ public class Keywords
 		}
 		
 		String val = Keywords.fixKeyword(st.nextToken());		
-		while ((val == null || val.length() == 0 || Keywords.isExcluded(val)) && st.hasMoreTokens())
+		while ((val == null || val.length() == 0 || (includeExcludedKeywords && Keywords.isExcluded(val))) && st.hasMoreTokens()) //WDEV-21039
 		{
 			val = Keywords.fixKeyword(st.nextToken());
 		}
 		
 		//wdev-1412 Search against an excluded word.
-		if (Keywords.isExcluded(val))
+		if (Keywords.isExcluded(val) && includeExcludedKeywords) //WDEV-21039
 			throw new DomainInterfaceException(val + " is an excluded keyword term.");
 		
 		if (val == null || val.length() == 0) 

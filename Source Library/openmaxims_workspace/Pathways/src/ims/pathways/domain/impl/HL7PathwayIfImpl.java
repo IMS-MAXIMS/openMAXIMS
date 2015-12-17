@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,13 +15,26 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 // Copyright (C) 1995-2007 IMS MAXIMS plc. All rights reserved.
 
 package ims.pathways.domain.impl;
 
+import ims.RefMan.domain.objects.CatsReferral;
+import ims.RefMan.vo.CatsReferralRefVo;
+import ims.RefMan.vo.ContractServiceLocationsConfigVo;
+import ims.RefMan.vo.domain.ContractServiceLocationsConfigVoAssembler;
 import ims.core.admin.domain.objects.Referral;
+import ims.core.clinical.domain.objects.TaxonomyMap;
+import ims.core.clinical.vo.ServiceRefVo;
+import ims.core.configuration.domain.objects.ContractServiceLocationsConfig;
+import ims.core.configuration.vo.ContractConfigRefVo;
 import ims.core.patient.vo.PatientRefVo;
 import ims.core.resource.people.vo.HcpRefVo;
 import ims.core.vo.HL7ReferralVo;
@@ -37,6 +50,8 @@ import ims.domain.exceptions.StaleObjectException;
 import ims.domain.hibernate3.IMSCriteria;
 import ims.domain.lookups.Lookup;
 import ims.domain.lookups.LookupInstance;
+import ims.framework.enumerations.SystemLogLevel;
+import ims.framework.enumerations.SystemLogType;
 import ims.framework.exceptions.CodingRuntimeException;
 import ims.framework.utils.DateTime;
 import ims.framework.utils.Time;
@@ -61,6 +76,7 @@ import ims.pathways.vo.EventVo;
 import ims.pathways.vo.ExternalEventMappingVo;
 import ims.pathways.vo.PathwayLiteVo;
 import ims.pathways.vo.PatientEventVo;
+import ims.pathways.vo.PatientJourneyTargetRefVo;
 import ims.pathways.vo.PatientJourneyVo;
 import ims.pathways.vo.PatientPathwayJourneyRefVo;
 import ims.pathways.vo.RTTEventVo;
@@ -86,6 +102,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
+
 
 public class HL7PathwayIfImpl extends BaseHL7PathwayIfImpl implements ims.core.helper.IPathwayPatientEventHelper
 {
@@ -287,6 +305,8 @@ public class HL7PathwayIfImpl extends BaseHL7PathwayIfImpl implements ims.core.h
 			else
 			{
 				domPth = findDefaultPathway(factory, specialty, consultant);
+				if (domPth == null && !Specialty.EMERGENCY.equals(specialty)) // WDEV-18703 
+					domPth = findDefaultPathway(factory, Specialty.EMERGENCY, consultant);
 			}
 			if (domPth == null)
 				throw new DomainInterfaceException("Default Pathway not found - cannot create Patient Journey");
@@ -299,11 +319,13 @@ public class HL7PathwayIfImpl extends BaseHL7PathwayIfImpl implements ims.core.h
 		domJourney.setCurrentStatus(stat);
 		domJourney.getStatusHistory().add(stat);
 		
+		/*
 		// If journey target end date is null, we need to calculate it from the pathway value of weeks
 		if (domJourney.getTargetEndDate() == null)
 		{
 			domJourney.setTargetEndDate(addValueToDate(domJourney.getStartDate(), domPth.getNumWeeksDays(), domPth.getJourneyCountType(), domJourney.getCurrentClock()));
 		}
+		*/
 		
 		// We need to figure out which Patient Targets to instantiate
 		List lst = factory.find(" from PathwayTarget pt where pt.pathway = :pathway and pt.status.id = :status", new String[]{"pathway", "status"}, new Object[]{domPth, PreActiveActiveInactiveStatus.ACTIVE.getId()});
@@ -318,7 +340,7 @@ public class HL7PathwayIfImpl extends BaseHL7PathwayIfImpl implements ims.core.h
 				// wdev-8754 - If this target is already set in the journey for the current clock
 				// do not re-create.  This could happen when changing pathway types
 				// Only do this on change of pathway type i.e not a completely new domJourney record
-				if (domJourney.getId() != null && isTargetForCurrentClock(factory, domJourney, domPt.getTarget(), domJourney.getCurrentClock().getId()))
+				if (domJourney.getId() != null && domJourney.getCurrentClock() != null && isTargetForCurrentClock(factory, domJourney, domPt.getTarget(), domJourney.getCurrentClock().getId()))
 					continue;
 
 				
@@ -529,7 +551,37 @@ public class HL7PathwayIfImpl extends BaseHL7PathwayIfImpl implements ims.core.h
 		return null;
 	}
 
-	public PatientEventVo instantiatePatientEvent(PatientEventVo patientEvent) throws StaleObjectException, DomainInterfaceException 
+	/**
+	 * WDEV-23784 - Pass the referral into the main method when available to prevent unnecessary queries
+	 * @param patientEvent
+	 * @param referral
+	 * @return
+	 * @throws StaleObjectException
+	 * @throws DomainInterfaceException
+	 */
+	public PatientEventVo instantiatePatientEvent(PatientEventVo patientEvent, CatsReferralRefVo catsReferral) throws StaleObjectException, DomainInterfaceException
+	{
+		return instantiatePatientEvent(patientEvent, null, null, catsReferral);//WDEV-19700
+	}
+
+	public PatientEventVo instantiatePatientEvent(PatientEventVo patientEvent) throws StaleObjectException, DomainInterfaceException
+	{
+		return instantiatePatientEvent(patientEvent, null, null);//WDEV-19700
+	}
+
+	//WDEV-19700
+	public PatientEventVo instantiatePatientEvent(PatientEventVo patientEvent, String eventTargetPASMappingValue) throws DomainInterfaceException, StaleObjectException //WDEV-19700
+	{
+		return instantiatePatientEvent(patientEvent, null, null, null);
+	}
+	
+	// WDEV-20947 - We only start clock if the associated referral is subject to RTTClock
+	public PatientEventVo instantiatePatientEvent(PatientEventVo patientEvent, String eventTargetPASMappingValue, Boolean rttClockImpact) throws DomainInterfaceException, StaleObjectException //WDEV-19700
+	{
+		return instantiatePatientEvent(patientEvent, eventTargetPASMappingValue, rttClockImpact, null);	
+	}
+	
+	public PatientEventVo instantiatePatientEvent(PatientEventVo patientEvent, String eventTargetPASMappingValue, Boolean rttClockImpact, CatsReferralRefVo catsReferral) throws DomainInterfaceException, StaleObjectException //WDEV-19700
 	{
 		DomainFactory factory = getDomainFactory();
 		
@@ -579,12 +631,13 @@ public class HL7PathwayIfImpl extends BaseHL7PathwayIfImpl implements ims.core.h
 			domPatientEvent.setScheduledDate(null);
 		}
 			
-		
+		/*
 		//	wdev-3833 If journey target end date is null, we need to calculate it from the pathway value of weeks
 		if (domPatientEvent.getJourney() != null && domPatientEvent.getJourney().getTargetEndDate() == null)
 		{
 			domPatientEvent.getJourney().setTargetEndDate(addValueToDate(domPatientEvent.getJourney().getStartDate(), domPatientEvent.getJourney().getPathway().getNumWeeksDays(), domPatientEvent.getJourney().getPathway().getJourneyCountType(), domPatientEvent.getJourney().getCurrentClock()));
 		}
+		*/
 		
 		// wdev-4087 - This logic was moved up so that when the undo stop clock occurs, other targets
 		// will be updated if required
@@ -628,10 +681,50 @@ public class HL7PathwayIfImpl extends BaseHL7PathwayIfImpl implements ims.core.h
 		{
 			domPatientEvent.getJourney().getReferral().setReferralReceivedDate(domPatientEvent.getEventDateTime());
 		}
+	
+		
+		// Create a new clock if so required
+		if(domPatientEvent != null && domPatientEvent.getEvent() != null && Boolean.TRUE.equals(domPatientEvent.getEvent().isStartsClock()))
+		{
+			// WDEV-20947 Only create a new clock if journey subject to RTT
+			if(domPatientEvent.getJourney() != null && (rttClockImpact == null || rttClockImpact.booleanValue() == true) && (domPatientEvent.getJourney().getCurrentClock() == null || (domPatientEvent.getJourney().getCurrentClock() != null && domPatientEvent.getJourney().getCurrentClock().getStopDate() != null)))
+			{
+				PathwayClock newClock = createNewClock(domPatientEvent);
+				
+				domPatientEvent.getJourney().setCurrentClock(newClock);
+				
+				if(domPatientEvent.getJourney().getClockHistory() == null)
+					domPatientEvent.getJourney().setClockHistory(new java.util.HashSet());
+				
+				domPatientEvent.getJourney().getClockHistory().add(newClock);
+				
+//				if(domPatientEvent.getPatientTarget() != null)
+//				{
+//					domPatientEvent.getPatientTarget().setJourneyClock(newClock);
+//				}
+			}
+		}
 		
 		// wdev-4059 We are only interested updating targets if there is a current clock i.e. not stopped
-		if (domPatientEvent.getJourney() != null && domPatientEvent.getJourney().getCurrentClock() != null && domPatientEvent.getJourney().getCurrentClock().getStopDate() == null)
+		// WDEV-20947 we want to update targets if referral not subject to RTT regardless of whether a clock exists or not
+		if (domPatientEvent.getJourney() != null && ((rttClockImpact != null && rttClockImpact.booleanValue() == false) || (domPatientEvent.getJourney().getCurrentClock() != null && domPatientEvent.getJourney().getCurrentClock().getStopDate() == null)))
 		{
+			CatsReferral domReferral=null;
+			// WDEV-23784
+			// If the catsReferral is passed into this method, use it, otherwise query for it.
+			if (catsReferral != null)
+			{
+				domReferral = (CatsReferral) factory.getDomainObject(CatsReferral.class, catsReferral.getID_CatsReferral());
+			}
+			else  // WDEV-23784 end
+			{
+				//WDEV-21693
+				domReferral = getCatsReferralForJourney(domPatientEvent.getJourney());
+			}
+			
+			if (domReferral != null && domReferral.getJourney() != null && domReferral.getJourney().getCurrentClock() != null && domReferral.getJourney().getCurrentClock().getId() != null)// WDEV-22277 - add domReferral.getJourney().getCurrentClock().getId() != null
+				getDomainFactory().refresh(domReferral.getJourney().getCurrentClock());
+			
 			// Set the PatientJourneyTarget and get the EventTarget so that
 			// we will know what to do with the Journey or Target status
 			Set domEventTargList = getEventTarget(factory, domPatientEvent);
@@ -671,6 +764,12 @@ public class HL7PathwayIfImpl extends BaseHL7PathwayIfImpl implements ims.core.h
 							// WDEV-15589
 							if (pjtPathwayTarget != null)
 								domPjt = pjtPathwayTarget;
+							
+							//WDEV-19700
+							if (eventTargetPASMappingValue!=null && !targetHasSamePASMapping(domPjt,eventTargetPASMappingValue))
+							{
+								break;
+							}
 							
 							if (domPjt.getPathwayTarget().getTarget().getId() == domEventTarg.getTarget().getId())
 							{
@@ -721,7 +820,7 @@ public class HL7PathwayIfImpl extends BaseHL7PathwayIfImpl implements ims.core.h
 									
 									domPatientEvent.setPatientTarget(domPjt);
 									// wdev-4091 - Calculate targetDate and set clock if bringing into scope
-									if (domPjt.getJourneyClock() == null)  // wdev-6919, do not recalculate targetDates
+									if (domPjt.getJourneyClock() == null && (rttClockImpact == null || rttClockImpact.booleanValue() == true)) // WDEV-20947  // wdev-6919, do not recalculate targetDates
 									{
 										// wdev-6508 - check if this target should be calculated from startPathway or eventInstantiation
 										if (domPjt.getPathwayTarget().getTarget().getTargetDateCalculation() != null && domPjt.getPathwayTarget().getTarget().getTargetDateCalculation().getId() == TargetDateCalculation.INSTANTIATING_EVENT.getId())
@@ -799,6 +898,33 @@ public class HL7PathwayIfImpl extends BaseHL7PathwayIfImpl implements ims.core.h
 										domPjt.setAchievedDate(null);
 										domPjt.setAchievedVariance(null);
 										domPjt.setJourneyClock(null);
+										
+										// WDEV-20416 - If taking a target out of scope check if 31 or 62 day as may need to reset values in CatsReferral
+										updateCatsReferralTargetDates(factory, domPatientEvent.getJourney(), domPjt, false);
+									}
+									else
+									{
+										//WDEV-23399
+										Date eventDateTime = domPatientEvent.getEventDateTime();
+										PatientPathwayJourney domJourney = domPjt.getPathwayJourney();
+										if (domPjt.getPathwayTarget().getTarget().getTargetDateCalculation() != null && domPjt.getPathwayTarget().getTarget().getTargetDateCalculation().getId() == TargetDateCalculation.INSTANTIATING_EVENT.getId())
+						    			{
+						    				// Recalculate the target date from the event date	
+											if (domJourney.getCurrentClock() != null)//WDEV-23831
+												domPjt.setTargetDate(addValueToDate(domJourney.getCurrentClock().getStartDate(), domPjt.getPathwayTarget().getTargetPeriod().intValue(), domPjt.getPathwayTarget().getPathway().getJourneyCountType(), domJourney.getCurrentClock(), null, eventDateTime));
+											
+						    				domPjt.setTargetCalFromDate(domPatientEvent.getEventDateTime());
+						    			}
+						    			else
+						    			{
+						    				// Recalculate the target date from the start date of the current clock
+						    				domPjt.setTargetDate(addValueToDate(domJourney.getCurrentClock().getStartDate(), domPjt.getPathwayTarget().getTargetPeriod(), domPjt.getPathwayTarget().getPathway().getJourneyCountType(), domJourney.getCurrentClock()));
+						    				domPjt.setTargetCalFromDate(domJourney.getCurrentClock().getStartDate());
+						    			}
+										
+										// WDEV-20416
+										// If this is a 31 or 62 day target we need to update the CatsReferral details
+										updateCatsReferralTargetDates(factory, domPatientEvent.getJourney(), domPjt, true);
 									}
 									
 									domPjt.setCurrentStatus(newStat);
@@ -830,7 +956,7 @@ public class HL7PathwayIfImpl extends BaseHL7PathwayIfImpl implements ims.core.h
 									}
 									
 									
-									// wdev-3911 - only bring targets into scopy if updating the target status itself
+									// wdev-3911 - only bring targets into scope if updating the target status itself
 									// See if we need to bring some more targets into scope
 									if (domEventTarg != null && domEventTarg.getActivateTargets() != null)
 									{
@@ -856,11 +982,13 @@ public class HL7PathwayIfImpl extends BaseHL7PathwayIfImpl implements ims.core.h
 		// If the configured event associated with this event is an RTT event, we
 		// check the action code.  If the action code has a value of 4 - stop clock
 		// of if the event is marked as stopping a clock we set the stop date on the current clock
-		if ((domPatientEvent.getJourney().getCurrentClock() != null)
-			&& ((domPatientEvent.getRttExternalEvent() != null && domPatientEvent.getRttExternalEvent().getAction().getId() == RTTAction.FOUR.getId()) ||
-				domPatientEvent.getEvent().isStopsClock() != null && domPatientEvent.getEvent().isStopsClock().booleanValue()) ) // wdev-3752
+		if (domPatientEvent.getJourney() != null && (domPatientEvent.getJourney().getCurrentClock() != null)
+				&& ((domPatientEvent.getRttExternalEvent() != null && domPatientEvent.getRttExternalEvent().getAction() != null && domPatientEvent.getRttExternalEvent().getAction().getId() == RTTAction.FOUR.getId()) ||
+					(domPatientEvent.getEvent() != null && domPatientEvent.getEvent().isStopsClock() != null && domPatientEvent.getEvent().isStopsClock().booleanValue())) ) // wdev-3752
 		{
-			domPatientEvent.getJourney().getCurrentClock().setStopDate(domPatientEvent.getEventDateTime());
+			if (domPatientEvent.getJourney().getCurrentClock().getStopDate() == null) //WDEV-18446
+				domPatientEvent.getJourney().getCurrentClock().setStopDate(domPatientEvent.getEventDateTime());
+			
 			// When stopping a clock, we update all non achieved,cancelled PatientJourneyTargets to CLOCK_STOPPED
 			Iterator it = domPatientEvent.getJourney().getPatientTargets().iterator();
 			while (it.hasNext())
@@ -979,7 +1107,7 @@ public class HL7PathwayIfImpl extends BaseHL7PathwayIfImpl implements ims.core.h
 					curClock.getPauseDetails().add(currentPause);
 					
 					// Recalculate target dates
-					recalculateTargetDates(domPatientEvent.getJourney());
+					recalculateTargetDates(null, domPatientEvent.getJourney(), null);
 				}
 			}
 		}
@@ -992,9 +1120,12 @@ public class HL7PathwayIfImpl extends BaseHL7PathwayIfImpl implements ims.core.h
 		}
 		
 		// This event may end a Pathway, if so, we want to set the status to ended and set endedon date (wdev-3752)
-		if (domPatientEvent.getEvent().isEndsPathway() != null && domPatientEvent.getEvent().isEndsPathway().booleanValue())
+		if (domPatientEvent.getEvent() != null && domPatientEvent.getEvent().isEndsPathway() != null && domPatientEvent.getEvent().isEndsPathway().booleanValue() && domPatientEvent.getJourney() != null)
 		{
-			domPatientEvent.getJourney().getCurrentClock().setStopDate(domPatientEvent.getEventDateTime()); // Stop the current clock too
+			//WDEV-18788 WDEV-18446
+			if (domPatientEvent.getJourney().getCurrentClock() != null && domPatientEvent.getJourney().getCurrentClock().getStopDate() == null)
+				domPatientEvent.getJourney().getCurrentClock().setStopDate(domPatientEvent.getEventDateTime()); // Stop the current clock too
+			
 			domPatientEvent.getJourney().setEndedOnDate(domPatientEvent.getEventDateTime());
 			PatientJourneyStatus stat = createPatientJourneyStatus(getDomLookup(JourneyStatus.ENDPATHWAYJOURNEY));
 			domPatientEvent.getJourney().setCurrentStatus(stat);
@@ -1009,10 +1140,123 @@ public class HL7PathwayIfImpl extends BaseHL7PathwayIfImpl implements ims.core.h
 		}
 		
 		factory.save(domPatientEvent);
+		
+		if (domPatientEvent.getJourney() != null && domPatientEvent.getJourney().getCurrentClock() != null)
+		{
+			factory.refresh(domPatientEvent.getJourney().getCurrentClock());
+		}
+		
 		return PatientEventVoAssembler.create(domPatientEvent);
 	}
 
+
+
+	private PathwayClock createNewClock(PatientEvent domPatientEvent)
+	{
+		int X = getNumberOfClocks(domPatientEvent.getJourney().getClockHistory());
+
+		PathwayClock newClock = new PathwayClock();
+		newClock.setExtClockId("MAXIMS_" + X);
+		newClock.setExtClockName("MaximsClock_" + X);
+		newClock.setStartDate(domPatientEvent.getEventDateTime()); // WDEV-23949
+		newClock.setTargetClockEnd(getTargetClockEnd(newClock.getStartDate(), getCatsReferralForJourney(domPatientEvent.getJourney())));
+		return newClock;
+	}
 	
+	private CatsReferral getCatsReferralForJourney(PatientPathwayJourney journey)
+	{
+		if (journey == null)
+			return null;
+		
+		String sql="select referral from CatsReferral as referral left join referral.journey as journey where journey.id = :journeyID" ;
+		
+		List <?>  referrals = getDomainFactory().find(sql,new String[]{"journeyID"}, new Object[]{journey.getId()}) ;
+		
+		if (referrals != null && referrals.size() > 0 && referrals.get(0) instanceof CatsReferral)
+			return (CatsReferral) referrals.get(0);
+		
+		return null;
+	}
+
+
+
+	private Date getTargetClockEnd(Date date, CatsReferral referral)
+	{
+		ims.framework.utils.Date startDate = new ims.framework.utils.Date(date);
+
+		int daysToRttBreachDate = 0;
+
+		if (referral != null && referral.getReferralDetails() != null)
+		{
+			ContractConfigRefVo contractRefVo = referral.getContract() != null ? new ContractConfigRefVo(referral.getContract().getId(), referral.getContract().getVersion()) : null;
+			ServiceRefVo serviceRefVo = referral.getReferralDetails().getService() != null ? new ServiceRefVo(referral.getReferralDetails().getService().getId(), referral.getReferralDetails().getService().getVersion()) : null;
+			
+			ContractServiceLocationsConfigVo contrServiceLocationConf = getContractServiceLocConf(contractRefVo, serviceRefVo);
+
+			if (contrServiceLocationConf != null && contrServiceLocationConf.getDaysToRTTBreachDate() != null)
+			{
+				daysToRttBreachDate = contrServiceLocationConf.getDaysToRTTBreachDate();
+			}
+			else if (referral.getContract() != null)
+			{
+				daysToRttBreachDate = referral.getContract().getDaysToRTTBreachDate();
+			}
+		}
+		
+		return startDate.addDay(daysToRttBreachDate).getDate();
+	}
+	
+	private ContractServiceLocationsConfigVo getContractServiceLocConf(ContractConfigRefVo contractRef, ServiceRefVo serviceRef)
+	{
+		if (contractRef == null || serviceRef == null)
+		{
+			return null;
+		}
+		
+		String sql="select serviceLoc from ContractConfig as contractConf left join contractConf.serviceLocations as serviceLoc where contractConf.id = :ContractID and serviceLoc.service.id = :ServiceID" ;
+		
+		List <?>  listServiceLoc=getDomainFactory().find(sql,new String[]{"ContractID", "ServiceID"}, new Object[]{contractRef.getID_ContractConfig(), serviceRef.getID_Service()}) ;
+		
+		if (listServiceLoc != null && listServiceLoc.size() > 0)
+			return ContractServiceLocationsConfigVoAssembler.create((ContractServiceLocationsConfig)listServiceLoc.get(0));
+		
+		return null;
+	}
+	
+	private int getNumberOfClocks(Set clockHistory)
+	{
+		int X = 0;
+
+		if(clockHistory == null || clockHistory.size() == 0)
+			return ++X;
+
+		Iterator iterator = clockHistory.iterator();
+		while(iterator.hasNext()) 
+		{
+			X++;
+			iterator.next();
+		}
+
+		return ++X;
+	}
+
+	//WDEV-19700
+	private boolean targetHasSamePASMapping(PatientJourneyTarget domPjt, String eventTargetPASMappingValue)
+	{
+		for (int i=0;domPjt.getPathwayTarget()!=null && domPjt.getPathwayTarget().getTarget()!=null && domPjt.getPathwayTarget().getTarget().getTaxonomyMaps()!=null && i<domPjt.getPathwayTarget().getTarget().getTaxonomyMaps().size(); i++)
+		{
+			TaxonomyMap taxMap = (TaxonomyMap)domPjt.getPathwayTarget().getTarget().getTaxonomyMaps().get(i);
+			if (taxMap!=null && TaxonomyType.PAS.getID()==taxMap.getTaxonomyName().getId() && taxMap.getTaxonomyCode().equals(eventTargetPASMappingValue.toString()))
+			{
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
+
+
 	/**
 	 * wdev-7244
 	 * createPJTForClock
@@ -1144,7 +1388,8 @@ public class HL7PathwayIfImpl extends BaseHL7PathwayIfImpl implements ims.core.h
 		}
 		
 		// Recalculate the TargetEndDate of the Journey
-		domPatientEvent.getJourney().setTargetEndDate(addValueToDate(domPatientEvent.getJourney().getStartDate(), domPatientEvent.getJourney().getPathway().getNumWeeksDays(), domPatientEvent.getJourney().getPathway().getJourneyCountType(), domPatientEvent.getJourney().getCurrentClock()));
+		domPatientEvent.getJourney().getCurrentClock().setTargetClockEnd(getTargetClockEnd(domPatientEvent.getJourney().getCurrentClock().getStartDate(), getCatsReferralForJourney(domPatientEvent.getJourney())));
+		//domPatientEvent.getJourney().setTargetEndDate(addValueToDate(domPatientEvent.getJourney().getStartDate(), domPatientEvent.getJourney().getPathway().getNumWeeksDays(), domPatientEvent.getJourney().getPathway().getJourneyCountType(), domPatientEvent.getJourney().getCurrentClock()));
 	}
 
 	/**
@@ -1154,20 +1399,121 @@ public class HL7PathwayIfImpl extends BaseHL7PathwayIfImpl implements ims.core.h
 	 * to recalculate the target dates based on the difference between the paused
 	 * and unpaused dates
 	 * @param journey
+	 * @param originalReferralReceivedDate 
 	 */
-	private void recalculateTargetDates(PatientPathwayJourney journey) 
+	private void recalculateTargetDates(DomainFactory factory, PatientPathwayJourney journey, ims.framework.utils.Date originalReferralReceivedDate) 
 	{
 		// Get all current in-scope targets
 		Iterator it = journey.getPatientTargets().iterator();
 		while (it.hasNext())
 		{
 			PatientJourneyTarget domPjt = (PatientJourneyTarget) it.next();
-			domPjt.setTargetDate(addValueToDate(journey.getCurrentClock().getStartDate(), domPjt.getPathwayTarget().getTargetPeriod(), domPjt.getPathwayTarget().getPathway().getJourneyCountType(), journey.getCurrentClock(), domPjt.getTargetDate(), domPjt.getTargetCalFromDate()));
-			if (domPjt.getTargetCalFromDate() == null)
+
+			// WDEV-21128 If target calculated from is equal to the originalReferralReceivedDate, update it too
+			if (domPjt.getTargetCalFromDate() != null && originalReferralReceivedDate != null &&  domPjt.getTargetCalFromDate().equals(originalReferralReceivedDate.getDate()))
+				domPjt.setTargetCalFromDate(journey.getStartDate());
+			
+			domPjt.setTargetDate(addValueToDate(journey.getStartDate(), domPjt.getPathwayTarget().getTargetPeriod(), domPjt.getPathwayTarget().getPathway().getJourneyCountType(), journey.getCurrentClock(), domPjt.getTargetDate(), domPjt.getTargetCalFromDate()));
+
+			if (domPjt.getTargetCalFromDate() == null && journey.getCurrentClock() != null)
 				domPjt.setTargetCalFromDate(journey.getCurrentClock().getStartDate());
+			else if (domPjt.getTargetCalFromDate() == null)
+				domPjt.setTargetCalFromDate(journey.getStartDate());
+			
+			
+			if (factory != null)
+			{
+				try {
+					factory.save(domPjt);
+				} catch (StaleObjectException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+			
+			// WDEV-22995
+			/*
+			 * Update the CatsReferral target date (either 31 or 62 day target)
+			 */
+			try
+			{
+				updateCatsReferralTargetDate(factory, journey, domPjt);
+			}
+			catch (StaleObjectException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} //WDEV-22995
 		}
 	}
 
+	/**
+	 * WDEV-21128
+	 * When the Referral Received Date on a CatsReferral is updated, we need to recalculate the clock start, target end date and all targets' target achieved dates 
+	 * @throws StaleObjectException 
+	 */
+	public void updateJourneyFromReferralDateChange(PatientPathwayJourneyRefVo journey, ims.framework.utils.Date originalReferralReceivedDate, ims.framework.utils.Date newReferralReceivedDate) throws StaleObjectException 
+	{
+		if (journey == null)
+			return;
+		
+		if (newReferralReceivedDate.compareTo(originalReferralReceivedDate) == 0) //WDEV-23202 
+			return;
+		
+		DomainFactory factory = getDomainFactory();
+		
+		PatientPathwayJourney domJourney = (PatientPathwayJourney)factory.getDomainObject(PatientPathwayJourney.class, journey.getID_PatientPathwayJourney());
+		if (domJourney != null)
+		{
+			// Reset the start date of the journey
+			domJourney.setStartDate(newReferralReceivedDate.getDate());
+			
+			boolean clockFound=false;
+			// Find the clock that matches the original referral received date
+			if (domJourney.getCurrentClock() != null)
+			{
+				PathwayClock domClock = domJourney.getCurrentClock();
+				//WDEV-23202 
+				if (!Boolean.TRUE.equals(domClock.getIsRIE()) & originalReferralReceivedDate.getDate().equals(domClock.getStartDate())) //WDEV-23202 
+				{
+					domClock.setStartDate(newReferralReceivedDate.getDate());
+					domClock.setTargetClockEnd(getTargetClockEnd(newReferralReceivedDate.getDate(), getCatsReferralForJourney(domJourney)));
+					factory.save(domClock);
+					clockFound=true;
+				}
+			}
+			
+			if (!clockFound)
+			{
+				// Check the history of clocks
+				if (domJourney.getClockHistory() != null)
+				{
+					Iterator it = domJourney.getClockHistory().iterator();
+					while (it.hasNext())
+					{
+						PathwayClock domClock = (PathwayClock) it.next();
+						
+						if (Boolean.TRUE.equals(domClock.getIsRIE())) //WDEV-23202
+							continue;
+						
+						if (originalReferralReceivedDate.getDate().equals(domClock.getStartDate())) //WDEV-23202 
+						{
+							domClock.setStartDate(newReferralReceivedDate.getDate());
+							domClock.setTargetClockEnd(getTargetClockEnd(newReferralReceivedDate.getDate(), getCatsReferralForJourney(domJourney)));
+							factory.save(domClock);
+							break;
+						}
+					}
+				}
+			}
+			
+			// Targets now need to be updated based on this date
+			recalculateTargetDates(factory, domJourney, originalReferralReceivedDate);
+
+		}
+	}
+	
 	/**
 	 * bringTargetIntoScope
 	 * This method will update the status of the PatientJourneyTarget to in-scope 
@@ -1217,10 +1563,235 @@ public class HL7PathwayIfImpl extends BaseHL7PathwayIfImpl implements ims.core.h
 				domPjt.setTargetCalFromDate(domPatientEvent.getJourney().getCurrentClock().getStartDate());
 			}
 			
-			domPjt.setJourneyClock(domPatientEvent.getJourney().getCurrentClock());
 			
+			domPjt.setJourneyClock(domPatientEvent.getJourney().getCurrentClock());
 			factory.save(domPjt);
+			
+			// WDEV-20416
+			// If this is a 31 or 62 day target we need to update the CatsReferral details
+			updateCatsReferralTargetDates(factory, domPatientEvent.getJourney(), domPjt, true);
 		}
+	}
+	
+
+	/**
+	 * WDEV-20416
+	 * This method will update the CatsReferral with 31 and 62 day target information if these are targets of that type.
+	 * @param factory - DomainFactory
+	 * @param journey - Patient Journey currently being updated
+	 * @param domPjt - Patient Journey Target being instantiated
+	 * @param setInscope - indicator whether this target is being set to inscope or out of scope.
+	 * @throws StaleObjectException 
+	 */
+	private void updateCatsReferralTargetDates(DomainFactory factory, PatientPathwayJourney journey, PatientJourneyTarget domPjt, boolean setInscope) throws StaleObjectException 
+	{
+		// First check if this is of type 31 or 62 day target
+		boolean target31Day =false;
+		boolean target62Day = false;
+		
+		if (domPjt == null || domPjt.getPathwayTarget() == null)
+			return;
+		
+		Target domTarget = domPjt.getPathwayTarget().getTarget();
+		if (domTarget != null)
+		{
+			Iterator<TaxonomyMap> it = domTarget.getTaxonomyMaps().iterator();
+			while (it.hasNext())
+			{
+				TaxonomyMap domMap = it.next();
+				if (domMap != null && domMap.getTaxonomyCode() != null && domMap.getTaxonomyCode().equals("31D") 
+						&& domMap.getTaxonomyName() != null && domMap.getTaxonomyName().getId() == TaxonomyType.PAS.getId())
+				{
+					target31Day=true;
+				}
+				else if (domMap != null && domMap.getTaxonomyCode() != null && domMap.getTaxonomyCode().equals("62D") 
+						&& domMap.getTaxonomyName() != null && domMap.getTaxonomyName().getId() == TaxonomyType.PAS.getId())
+				{
+					target62Day=true;
+				}
+				
+			}
+		}
+		
+		if (target31Day || target62Day)
+		{
+			// Get the CatsReferral for this journey
+			StringBuffer hql = new StringBuffer(" select ref from CatsReferral ref where ref.journey = :journey");
+			
+			ArrayList<String> labels = new ArrayList<String>();
+			ArrayList<Object> values = new ArrayList<Object>();
+			labels.add("journey");
+			values.add(journey);
+						
+			List lst = factory.find(hql.toString(), labels, values);
+			if (lst != null && lst.size() > 0)
+			{
+				CatsReferral domRef = (CatsReferral) lst.get(0);
+				if (domRef != null && target31Day)
+				{
+					if (setInscope)
+						domRef.setCurrent31TargetDate(domPjt.getTargetDate());
+					else
+						domRef.setCurrent31TargetDate(null);
+					
+					factory.save(domRef);
+				}
+				else if (domRef != null && target62Day)
+				{
+					if (setInscope)
+						domRef.setCurrent62TargetDate(domPjt.getTargetDate());
+					else
+						domRef.setCurrent62TargetDate(null);
+					
+					factory.save(domRef);
+				}
+			}
+		}
+	}
+
+	
+	
+	
+	public Boolean bringTargetIntoScopeWithoutEvent(PatientPathwayJourney journey, PathwayTarget pathwayTarget, Target target, DateTime eventDateTime, Integer targetPeriod) throws DomainInterfaceException, StaleObjectException
+	{
+		// If the journey is null - then there is logical error in implementation
+		if (journey == null)
+			throw new CodingRuntimeException("Cannot bring into scope a target to a null journey.");
+		
+		if (journey.getId() != null)
+		{
+			TargetRefVo activateTarget = new TargetRefVo(target.getId(), target.getVersion());
+			PatientPathwayJourneyRefVo journeyRef = new PatientPathwayJourneyRefVo(journey.getId(), journey.getVersion());
+
+			Boolean result = bringTargetIntoScopeWithoutEvent(activateTarget, journeyRef, eventDateTime.getDate());
+
+			if (Boolean.TRUE.equals(result))
+				return true;
+		}
+		
+		if (pathwayTarget == null)
+		{
+			PathwayTarget configuredTarget = getConfiguredTarget(journey, target);
+			
+			pathwayTarget = configuredTarget;
+			
+//			if (configuredTarget != null)
+//			{
+//				pathwayTarget = new PathwayTarget();
+//				
+//				pathwayTarget.setPathway(configuredTarget.getPathway());
+//				pathwayTarget.setTarget(configuredTarget.getTarget());
+//				pathwayTarget.setTargetPeriod(configuredTarget.getTargetPeriod());
+//				pathwayTarget.setStatus(configuredTarget.getStatus());
+//				pathwayTarget.setActivateTarget(configuredTarget.isActivateTarget());
+//				pathwayTarget.setWarningIndicatorPeriod(configuredTarget.getWarningIndicatorPeriod());
+//			}
+		}
+		
+		
+		if (targetExistsForClock(target, journey.getCurrentClock()))
+		{
+			// Journey target already present for the current clock - do not create a new one
+			return true;
+		}
+
+		
+		PatientJourneyTarget domPatientJourneyTarget = createNewPatientJourneyTarget(pathwayTarget, target, journey, journey.getCurrentClock(), targetPeriod);
+		journey.getPatientTargets().add(domPatientJourneyTarget);
+		
+		getDomainFactory().save(journey);
+		
+		updateCatsReferralTargetDates(getDomainFactory(), journey, domPatientJourneyTarget, true);
+		
+		return true;
+	}
+	
+	
+
+	
+	private boolean targetExistsForClock(Target target, PathwayClock clock)
+	{
+		if (clock == null)
+			return false;
+		
+		StringBuilder query = new StringBuilder("SELECT COUNT (patientTarget) ");
+		query.append(" FROM PatientJourneyTarget AS patientTarget LEFT JOIN patientTarget.pathwayTarget AS pathwayTarget ");
+		query.append(" LEFT JOIN pathwayTarget.target AS target ");
+		query.append(" LEFT JOIN patientTarget.journeyClock AS clock ");
+		query.append(" WHERE ");
+		query.append(" clock.id = :CLOCK AND target.id = :TARGET ");
+		
+		long existingTargets = getDomainFactory().countWithHQL(query.toString(), new String[] {"CLOCK", "TARGET"}, new Object[] {clock.getId(), target.getId()});
+		
+		return existingTargets > 0;
+	}
+
+
+
+	private PathwayTarget getConfiguredTarget(PatientPathwayJourney journey, Target target) throws DomainInterfaceException
+	{
+		if (journey == null || journey.getId() == null)
+			return null;
+		
+		if (target == null || target.getId() == null)
+			return null;
+		
+		
+				
+		// Get a Pathway Target (configured for this Pathway Journey) if one exists
+		StringBuilder query = new StringBuilder("SELECT DISTINCT(pathwayTarget) ");
+		query.append(" FROM PathwayTarget AS pathwayTarget LEFT JOIN pathwayTarget.target AS target ");
+		query.append(" LEFT JOIN pathwayTarget.pathway AS pathway ");
+		query.append(" WHERE ");
+		query.append(" pathway.id = :PATHWAY AND target.id = :TARGET ");
+
+		ArrayList<String> paramNames = new ArrayList<String>();
+		ArrayList<Object> paramValues = new ArrayList<Object>();
+		
+		
+		paramNames.add("PATHWAY");		paramValues.add(journey.getPathway().getId());
+		paramNames.add("TARGET");		paramValues.add(target.getId());
+		
+		
+		List<?> configuredTargets = getDomainFactory().find(query.toString(), paramNames, paramValues);
+		
+		if (configuredTargets != null && configuredTargets.size() > 1)
+		{
+			throw new DomainInterfaceException("More than one PatientJourneyTarget found for PatientEvent and Target - cannot bring Target into scope");
+		}
+		
+		if (configuredTargets == null || configuredTargets.size() == 0)
+			return null;
+		
+		return (PathwayTarget) configuredTargets.get(0);
+	}
+
+
+
+	private PatientJourneyTarget createNewPatientJourneyTarget(PathwayTarget pathwayTarget, Target target, PatientPathwayJourney journey, PathwayClock clock, Integer targetPeriod) throws DomainInterfaceException
+	{
+		Date eventDateTime = clock != null ? clock.getStartDate() : new Date();
+		
+		PatientJourneyTarget patientJourneyTarget = new PatientJourneyTarget();
+		
+		if (pathwayTarget == null)
+			pathwayTarget = createPathwayTarget(target, journey.getPathway(), targetPeriod);
+		
+		patientJourneyTarget.setPathwayTarget(pathwayTarget);
+		patientJourneyTarget.setWeekNumber(calculateWeekNum(pathwayTarget.getTargetPeriod(), pathwayTarget.getPathway().getJourneyCountType()));
+		
+		patientJourneyTarget.setTargetDate(addValueToDate(eventDateTime, pathwayTarget.getTargetPeriod(), pathwayTarget.getPathway().getJourneyCountType(), clock));
+		patientJourneyTarget.setTargetCalFromDate(eventDateTime);
+		
+		JourneyTargetStatus inScopeStatus = createJourneyTargetStatus(getDomLookup(PatientTargetStatus.INSCOPE));
+		patientJourneyTarget.setCurrentStatus(inScopeStatus);
+		patientJourneyTarget.getStatusHistory().add(inScopeStatus);
+		
+		patientJourneyTarget.setJourneyClock(clock);
+		
+		patientJourneyTarget.setPathwayJourney(journey);
+		
+		return patientJourneyTarget;
 	}
 	
 
@@ -1234,12 +1805,12 @@ public class HL7PathwayIfImpl extends BaseHL7PathwayIfImpl implements ims.core.h
 	 * @throws DomainInterfaceException 
 	 * @throws StaleObjectException 
 	 */
-	public void bringTargetIntoScopeWithoutEvent(TargetRefVo activateTarget, PatientPathwayJourneyRefVo journey, ims.framework.utils.Date eventDateTime) throws DomainInterfaceException, StaleObjectException
+	public Boolean bringTargetIntoScopeWithoutEvent(TargetRefVo activateTarget, PatientPathwayJourneyRefVo journey, ims.framework.utils.Date eventDateTime) throws DomainInterfaceException, StaleObjectException
 	{
 		DomainFactory factory = getDomainFactory();
 		
 		StringBuffer hql = new StringBuffer();
-		hql.append(" select pjt from PatientJourneyTarget pjt join pjt.pathwayJourney jour where jour.id = :patientJourney and pjt.pathwayTarget.target.id = :target");
+		hql.append(" SELECT pjt FROM PatientJourneyTarget pjt JOIN pjt.pathwayJourney jour WHERE jour.id = :patientJourney AND pjt.pathwayTarget.target.id = :target AND pjt.journeyClock is null ");
 		ArrayList<String> labels = new ArrayList<String>();
 		ArrayList<Object> values = new ArrayList<Object>();
 		
@@ -1261,25 +1832,119 @@ public class HL7PathwayIfImpl extends BaseHL7PathwayIfImpl implements ims.core.h
 			
 			PatientPathwayJourney domJourney = (PatientPathwayJourney)factory.getDomainObject(PatientPathwayJourney.class, journey.getID_PatientPathwayJourney());
 			// wdev-6508 - If the target is configured to calculate target date from instantiated event, we need to pass that into calculation
-			if (domPjt.getPathwayTarget().getTarget().getTargetDateCalculation() != null && domPjt.getPathwayTarget().getTarget().getTargetDateCalculation().getId() == TargetDateCalculation.INSTANTIATING_EVENT.getId())
+			if (domJourney.getCurrentClock()!=null) //WDEV-19976
 			{
-				// Recalculate the target date from the start date of the current clock
-				domPjt.setTargetDate(addValueToDate(domJourney.getCurrentClock().getStartDate(), domPjt.getPathwayTarget().getTargetPeriod().intValue(), domPjt.getPathwayTarget().getPathway().getJourneyCountType(), domJourney.getCurrentClock(), null, eventDateTime.getDate()));
-				domPjt.setTargetCalFromDate(eventDateTime.getDate());
+				if (domPjt.getPathwayTarget().getTarget().getTargetDateCalculation() != null && domPjt.getPathwayTarget().getTarget().getTargetDateCalculation().getId() == TargetDateCalculation.INSTANTIATING_EVENT.getId())
+    			{
+    				// Recalculate the target date from the start date of the current clock
+    				domPjt.setTargetDate(addValueToDate(domJourney.getCurrentClock().getStartDate(), domPjt.getPathwayTarget().getTargetPeriod().intValue(), domPjt.getPathwayTarget().getPathway().getJourneyCountType(), domJourney.getCurrentClock(), null, eventDateTime.getDate()));
+    				domPjt.setTargetCalFromDate(eventDateTime.getDate());
+    			}
+    			else
+    			{
+    				// Recalculate the target date from the start date of the current clock
+    				domPjt.setTargetDate(addValueToDate(domJourney.getCurrentClock().getStartDate(), domPjt.getPathwayTarget().getTargetPeriod(), domPjt.getPathwayTarget().getPathway().getJourneyCountType(), domJourney.getCurrentClock()));
+    				domPjt.setTargetCalFromDate(domJourney.getCurrentClock().getStartDate());
+    			}
+    			
+				domPjt.setJourneyClock(domJourney.getCurrentClock());
 			}
-			else
-			{
-				// Recalculate the target date from the start date of the current clock
-				domPjt.setTargetDate(addValueToDate(domJourney.getCurrentClock().getStartDate(), domPjt.getPathwayTarget().getTargetPeriod(), domPjt.getPathwayTarget().getPathway().getJourneyCountType(), domJourney.getCurrentClock()));
-				domPjt.setTargetCalFromDate(domJourney.getCurrentClock().getStartDate());
-			}
-			
-			domPjt.setJourneyClock(domJourney.getCurrentClock());
-			
 			factory.save(domPjt);
+
+			// WDEV-20416
+			// If this is a 31 or 62 day target we need to update the CatsReferral details
+			updateCatsReferralTargetDates(factory, domJourney, domPjt, true);
+			
+			return true;
 		}
+		
+		return false;
 	}
 
+
+
+	private PathwayTarget createPathwayTarget(Target target, Pathway pathway, Integer targetPeriod) throws DomainInterfaceException
+	{
+		if (target == null)
+			throw new DomainInterfaceException("Cannot create Pathway Target based with no Target specified.");
+		
+		if (pathway == null)
+			throw new DomainInterfaceException("Cannot create Pathway Target with no Pathway specified.");
+		
+		if (targetPeriod == null)
+			throw new DomainInterfaceException("Cannot create Pathway Target with no Target Period specified.");
+		
+		PathwayTarget pathwayTarget = new PathwayTarget();
+		
+		pathwayTarget.setPathway(pathway);
+		pathwayTarget.setTarget(target);
+		pathwayTarget.setTargetPeriod(targetPeriod);
+		pathwayTarget.setStatus(getDomLookup(PreActiveActiveInactiveStatus.ACTIVE));
+		pathwayTarget.setActivateTarget(Boolean.FALSE);
+		
+		return pathwayTarget;
+	}
+
+
+
+	/**
+	 * WDEV-20416
+	 * takeTargetOutOfScopeWithoutEvent
+	 * This method will update the status of the PatientJourneyTarget to not in-scope 
+	 * @param activateTarget
+	 * @param domJourney
+	 * @param eventDateTime
+	 * @throws DomainInterfaceException 
+	 * @throws StaleObjectException 
+	 */
+	public void takeTargetOutOfScopeWithoutEvent(TargetRefVo activateTarget, PatientPathwayJourneyRefVo journey) throws DomainInterfaceException, StaleObjectException
+	{
+		DomainFactory factory = getDomainFactory();
+		
+		StringBuffer hql = new StringBuffer();
+		hql.append(" select pjt from PatientJourneyTarget pjt join pjt.pathwayJourney jour where jour.id = :patientJourney and pjt.pathwayTarget.target.id = :target");
+		ArrayList<String> labels = new ArrayList<String>();
+		ArrayList<Object> values = new ArrayList<Object>();
+		
+		labels.add("patientJourney");
+		values.add(journey.getID_PatientPathwayJourney());
+		labels.add("target");
+		values.add(activateTarget.getID_Target());
+		List lst = factory.find(hql.toString(), labels, values);
+		if (lst != null && lst.size() > 1)
+		{
+			throw new DomainInterfaceException("More than one PatientJourneyTarget found for PatientEvent and Target - cannot take Target out of scope");
+		}
+		else if (lst != null && lst.size() == 1)
+		{
+			PatientJourneyTarget domPjt = (PatientJourneyTarget) lst.get(0);
+			
+			takeTargetOutOfScopeWithoutEvent(new PatientJourneyTargetRefVo(domPjt.getId(), domPjt.getVersion()), journey);
+		}
+	}
+	
+	
+	public void takeTargetOutOfScopeWithoutEvent(PatientJourneyTargetRefVo target, PatientPathwayJourneyRefVo journey) throws DomainInterfaceException, StaleObjectException
+	{
+		DomainFactory factory = getDomainFactory();
+		
+		PatientJourneyTarget domPjt = (PatientJourneyTarget) factory.getDomainObject(PatientJourneyTarget.class, target.getID_PatientJourneyTarget());
+		JourneyTargetStatus tStat = createJourneyTargetStatus(getDomLookup(PatientTargetStatus.NOTINSCOPE));
+		domPjt.setCurrentStatus(tStat);
+		domPjt.getStatusHistory().add(tStat);
+		
+		// WDEV-20636
+		factory.save(domPjt);
+		super.createSystemLogEntry(SystemLogType.APPLICATION, SystemLogLevel.INFORMATION, "Target " + domPjt.getPathwayTarget().getTarget().getName() + " (" + domPjt.getId() + ") set to not-in-scope");
+		
+		PatientPathwayJourney domJourney = (PatientPathwayJourney)factory.getDomainObject(PatientPathwayJourney.class, journey.getID_PatientPathwayJourney());
+
+		// WDEV-20416
+		// If this is a 31 or 62 day target we need to update the CatsReferral details
+		updateCatsReferralTargetDates(factory, domJourney, domPjt, false);
+	}
+
+	
 	/**
 	 * getEventTarget
 	 * This method will set the PatientJourneyTarget value for the PatientEvent
@@ -1405,6 +2070,7 @@ public class HL7PathwayIfImpl extends BaseHL7PathwayIfImpl implements ims.core.h
 
 	private Set getInternalEventTargets(PatientEvent domPatientEvent)
 	{				
+		
 		List lst = getDomainFactory().find(" from EventTarget evt where evt.event = :event and evt.status = :status " +
 				" and evt.target in (select pt.target from PathwayTarget pt where pt.pathway = :pathway and pt.status = :status) ",
 				new String[]{"event", "status", "pathway"}, new Object[]{domPatientEvent.getEvent(), getDomLookup(PreActiveActiveInactiveStatus.ACTIVE), domPatientEvent.getJourney().getPathway()});
@@ -1714,5 +2380,85 @@ public class HL7PathwayIfImpl extends BaseHL7PathwayIfImpl implements ims.core.h
 		return HL7ReferralVoAssembler.create(refBo);
 		
 	}
-
+	
+	
+	/**
+	 * WDEV-22995
+	 * This method will update the CatsReferral with either 31 or 62 day target information if these patient journey target is of that type and a target dat exists.
+	 * @param factory 					- DomainFactory
+	 * @param patientPathwayJourney 	- Patient Journey currently being updated
+	 * @param patientJourneyTarget 		- Patient Journey Target being updated
+	 * @throws StaleObjectException 
+	 */
+	private void updateCatsReferralTargetDate(DomainFactory factory, PatientPathwayJourney patientPathwayJourney, PatientJourneyTarget patientJourneyTarget) throws StaleObjectException 
+	{
+		// First check if this is of type 31 or 62 day target
+		boolean target31Day = false;
+		boolean target62Day = false;
+		
+		if (patientJourneyTarget == null || patientJourneyTarget.getPathwayTarget() == null)
+			return;
+		
+		Target domTarget = patientJourneyTarget.getPathwayTarget().getTarget();
+		if (domTarget != null)
+		{
+			Iterator<TaxonomyMap> it = domTarget.getTaxonomyMaps().iterator();
+			while (it.hasNext())
+			{
+				TaxonomyMap domMap = it.next();
+				// Determine if this Patient Pathway Journey has a 31 day or 62 day Pathway Target type
+				if (domMap != null 
+						&& domMap.getTaxonomyCode() != null
+						&& domMap.getTaxonomyCode().equals("31D") 
+						&& domMap.getTaxonomyName() != null 
+						&& domMap.getTaxonomyName().getId() == TaxonomyType.PAS.getId())
+				{
+					target31Day=true;
+				}
+				else if (domMap != null 
+						&& domMap.getTaxonomyCode() != null 
+						&& domMap.getTaxonomyCode().equals("62D") 
+						&& domMap.getTaxonomyName() != null 
+						&& domMap.getTaxonomyName().getId() == TaxonomyType.PAS.getId())
+				{
+					target62Day=true;
+				}
+			}
+		}
+		
+		if (target31Day || target62Day)
+		{
+			// Get the CatsReferral for this Patient Pathway Journey
+			StringBuffer hql = new StringBuffer(" select ref from CatsReferral ref where ref.journey = :journey");
+						
+			ArrayList<String> labels = new ArrayList<String>();
+			ArrayList<Object> values = new ArrayList<Object>();
+			labels.add("journey");
+			values.add(patientPathwayJourney);
+									
+			List catsReferralList = factory.find(hql.toString(), labels, values);
+			if (catsReferralList != null 
+					&& catsReferralList.size() > 0)
+			{
+				CatsReferral catsReferral = (CatsReferral) catsReferralList.get(0);
+				
+				if (target31Day 
+						&& catsReferral != null 
+						&& catsReferral.getCurrent31TargetDate() != null)
+				{
+					catsReferral.setCurrent31TargetDate(patientJourneyTarget.getTargetDate());
+					factory.save(catsReferral);
+				}
+				
+				if (target62Day 
+						&& catsReferral != null 
+						&& catsReferral.getCurrent62TargetDate() != null)
+				{
+					catsReferral.setCurrent62TargetDate(patientJourneyTarget.getTargetDate());
+					factory.save(catsReferral);
+				}
+			}
+		}
+	} //WDEV-22995
+	
 }

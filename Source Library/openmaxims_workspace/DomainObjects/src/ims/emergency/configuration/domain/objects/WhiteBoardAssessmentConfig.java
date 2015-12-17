@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.emergency.configuration.domain.objects;
@@ -49,8 +54,8 @@ public class WhiteBoardAssessmentConfig extends ims.domain.DomainObject implemen
 	private String name;
 	/** Icon */
 	private ims.core.configuration.domain.objects.AppImage icon;
-	/** MAXIMSMappingValue */
-	private String mAXIMSMappingValue;
+	/** AssociatedAssessment */
+	private ims.assessment.configuration.domain.objects.UserAssessment associatedAssessment;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public WhiteBoardAssessmentConfig (Integer id, int ver)
@@ -89,15 +94,11 @@ public class WhiteBoardAssessmentConfig extends ims.domain.DomainObject implemen
 		this.icon = icon;
 	}
 
-	public String getMAXIMSMappingValue() {
-		return mAXIMSMappingValue;
+	public ims.assessment.configuration.domain.objects.UserAssessment getAssociatedAssessment() {
+		return associatedAssessment;
 	}
-	public void setMAXIMSMappingValue(String mAXIMSMappingValue) {
-		if ( null != mAXIMSMappingValue && mAXIMSMappingValue.length() > 30 ) {
-			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for mAXIMSMappingValue. Tried to set value: "+
-				mAXIMSMappingValue);
-		}
-		this.mAXIMSMappingValue = mAXIMSMappingValue;
+	public void setAssociatedAssessment(ims.assessment.configuration.domain.objects.UserAssessment associatedAssessment) {
+		this.associatedAssessment = associatedAssessment;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -148,8 +149,13 @@ public class WhiteBoardAssessmentConfig extends ims.domain.DomainObject implemen
 		    auditStr.append(icon.getId());
 		}
 	    auditStr.append("; ");
-		auditStr.append("\r\n*mAXIMSMappingValue* :");
-		auditStr.append(mAXIMSMappingValue);
+		auditStr.append("\r\n*associatedAssessment* :");
+		if (associatedAssessment != null)
+		{
+			auditStr.append(toShortClassName(associatedAssessment));
+				
+		    auditStr.append(associatedAssessment.getId());
+		}
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -207,11 +213,11 @@ public class WhiteBoardAssessmentConfig extends ims.domain.DomainObject implemen
 			sb.append(this.getIcon().toXMLString(domMap)); 	
 			sb.append("</icon>");		
 		}
-		if (this.getMAXIMSMappingValue() != null)
+		if (this.getAssociatedAssessment() != null)
 		{
-			sb.append("<mAXIMSMappingValue>");
-			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getMAXIMSMappingValue().toString()));
-			sb.append("</mAXIMSMappingValue>");		
+			sb.append("<associatedAssessment>");
+			sb.append(this.getAssociatedAssessment().toXMLString(domMap)); 	
+			sb.append("</associatedAssessment>");		
 		}
 		return sb.toString();
 	}
@@ -387,10 +393,11 @@ public class WhiteBoardAssessmentConfig extends ims.domain.DomainObject implemen
 			fldEl = fldEl.element("class");		
 			obj.setIcon(ims.core.configuration.domain.objects.AppImage.getAppImagefromXML(fldEl, factory, domMap)); 
 		}
-		fldEl = el.element("mAXIMSMappingValue");
+		fldEl = el.element("associatedAssessment");
 		if(fldEl != null)
-		{	
-    		obj.setMAXIMSMappingValue(new String(fldEl.getTextTrim()));	
+		{
+			fldEl = fldEl.element("class");		
+			obj.setAssociatedAssessment(ims.assessment.configuration.domain.objects.UserAssessment.getUserAssessmentfromXML(fldEl, factory, domMap)); 
 		}
 	}
 
@@ -406,7 +413,7 @@ public class WhiteBoardAssessmentConfig extends ims.domain.DomainObject implemen
 	public static final String ID = "id";
 		public static final String Name = "name";
 		public static final String Icon = "icon";
-		public static final String MAXIMSMappingValue = "mAXIMSMappingValue";
+		public static final String AssociatedAssessment = "associatedAssessment";
 	}
 }
 

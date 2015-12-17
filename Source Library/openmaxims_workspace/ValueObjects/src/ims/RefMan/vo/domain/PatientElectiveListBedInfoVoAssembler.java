@@ -1,9 +1,33 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:32
+ * Generated on 12/10/2015, 13:25
  *
  */
 package ims.RefMan.vo.domain;
@@ -33,6 +57,14 @@ public class PatientElectiveListBedInfoVoAssembler
 	    valueObjectDest.setIsRIE(valueObjectSrc.getIsRIE());
 		// Patient
 		valueObjectDest.setPatient(valueObjectSrc.getPatient());
+		// TCIDetails
+		valueObjectDest.setTCIDetails(valueObjectSrc.getTCIDetails());
+		// Referral
+		valueObjectDest.setReferral(valueObjectSrc.getReferral());
+		// Comments
+		valueObjectDest.setComments(valueObjectSrc.getComments());
+		// PreAssessmentOutcome
+		valueObjectDest.setPreAssessmentOutcome(valueObjectSrc.getPreAssessmentOutcome());
 	 	return valueObjectDest;
 	 }
 
@@ -325,6 +357,26 @@ public class PatientElectiveListBedInfoVoAssembler
 			
 		// Patient
 		valueObject.setPatient(ims.core.vo.domain.PatientLite_IdentifiersVoAssembler.create(map, domainObject.getPatient()) );
+		// TCIDetails
+		valueObject.setTCIDetails(ims.RefMan.vo.domain.TCIForBedInfoVoAssembler.create(map, domainObject.getTCIDetails()) );
+		// Referral
+		if (domainObject.getReferral() != null)
+		{
+			if(domainObject.getReferral() instanceof HibernateProxy) // If the proxy is set, there is no need to lazy load, the proxy knows the id already. 
+			{
+				HibernateProxy p = (HibernateProxy) domainObject.getReferral();
+				int id = Integer.parseInt(p.getHibernateLazyInitializer().getIdentifier().toString());				
+				valueObject.setReferral(new ims.RefMan.vo.CatsReferralRefVo(id, -1));				
+			}
+			else
+			{
+				valueObject.setReferral(new ims.RefMan.vo.CatsReferralRefVo(domainObject.getReferral().getId(), domainObject.getReferral().getVersion()));
+			}
+		}
+		// Comments
+		valueObject.setComments(domainObject.getComments());
+		// PreAssessmentOutcome
+		valueObject.setPreAssessmentOutcome(ims.RefMan.vo.domain.PreAssessmentOutcomeCommentsForPatElListVoAssembler.create(map, domainObject.getPreAssessmentOutcome()) );
  		return valueObject;
 	 }
 
@@ -391,6 +443,67 @@ public class PatientElectiveListBedInfoVoAssembler
 			}
 		}
 		domainObject.setPatient(value1);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.RefMan.domain.objects.TCIForPatientElectiveList value2 = null;
+		if ( null != valueObject.getTCIDetails() ) 
+		{
+			if (valueObject.getTCIDetails().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getTCIDetails()) != null)
+				{
+					value2 = (ims.RefMan.domain.objects.TCIForPatientElectiveList)domMap.get(valueObject.getTCIDetails());
+				}
+			}
+			else
+			{
+				value2 = (ims.RefMan.domain.objects.TCIForPatientElectiveList)domainFactory.getDomainObject(ims.RefMan.domain.objects.TCIForPatientElectiveList.class, valueObject.getTCIDetails().getBoId());
+			}
+		}
+		domainObject.setTCIDetails(value2);
+		ims.RefMan.domain.objects.CatsReferral value3 = null;
+		if ( null != valueObject.getReferral() ) 
+		{
+			if (valueObject.getReferral().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getReferral()) != null)
+				{
+					value3 = (ims.RefMan.domain.objects.CatsReferral)domMap.get(valueObject.getReferral());
+				}
+			}
+			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
+			{
+				value3 = domainObject.getReferral();	
+			}
+			else
+			{
+				value3 = (ims.RefMan.domain.objects.CatsReferral)domainFactory.getDomainObject(ims.RefMan.domain.objects.CatsReferral.class, valueObject.getReferral().getBoId());
+			}
+		}
+		domainObject.setReferral(value3);
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getComments() != null && valueObject.getComments().equals(""))
+		{
+			valueObject.setComments(null);
+		}
+		domainObject.setComments(valueObject.getComments());
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.RefMan.domain.objects.PreAssessmentOutcome value5 = null;
+		if ( null != valueObject.getPreAssessmentOutcome() ) 
+		{
+			if (valueObject.getPreAssessmentOutcome().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getPreAssessmentOutcome()) != null)
+				{
+					value5 = (ims.RefMan.domain.objects.PreAssessmentOutcome)domMap.get(valueObject.getPreAssessmentOutcome());
+				}
+			}
+			else
+			{
+				value5 = (ims.RefMan.domain.objects.PreAssessmentOutcome)domainFactory.getDomainObject(ims.RefMan.domain.objects.PreAssessmentOutcome.class, valueObject.getPreAssessmentOutcome().getBoId());
+			}
+		}
+		domainObject.setPreAssessmentOutcome(value5);
 
 		return domainObject;
 	}

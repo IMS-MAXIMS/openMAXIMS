@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.patient.domain.objects;
@@ -56,7 +61,7 @@ public class MergedPatient extends ims.domain.DomainObject implements ims.domain
 	/** Patient Address */
 	private ims.core.generic.domain.objects.Address address;
 	/** Identifier's associated with Patient
-	  * Collection of ims.core.patient.domain.objects.PatientId.
+	  * Collection of ims.core.patient.domain.objects.NonUniquePatientId.
 	  */
 	private java.util.List identifiers;
 	/** Patient's GP */
@@ -80,7 +85,7 @@ public class MergedPatient extends ims.domain.DomainObject implements ims.domain
 	  */
 	private java.util.List commChannels;
 	/** Patient Medical Insurance Details */
-	private ims.core.patient.domain.objects.Insurance insurance;
+	private ims.core.patient.domain.objects.NationalHealthCover insurance;
 	/** Collection of Patient Addresses
 	  * Collection of ims.core.generic.domain.objects.Address.
 	  */
@@ -218,10 +223,10 @@ public class MergedPatient extends ims.domain.DomainObject implements ims.domain
 		this.commChannels = paramValue;
 	}
 
-	public ims.core.patient.domain.objects.Insurance getInsurance() {
+	public ims.core.patient.domain.objects.NationalHealthCover getInsurance() {
 		return insurance;
 	}
-	public void setInsurance(ims.core.patient.domain.objects.Insurance insurance) {
+	public void setInsurance(ims.core.patient.domain.objects.NationalHealthCover insurance) {
 		this.insurance = insurance;
 	}
 
@@ -313,7 +318,7 @@ public class MergedPatient extends ims.domain.DomainObject implements ims.domain
 		{
 			if (i6 > 0)
 				auditStr.append(",");
-			ims.core.patient.domain.objects.PatientId obj = (ims.core.patient.domain.objects.PatientId)identifiers.get(i6);
+			ims.core.patient.domain.objects.NonUniquePatientId obj = (ims.core.patient.domain.objects.NonUniquePatientId)identifiers.get(i6);
 		    if (obj != null)
 			{
 				if (i6 == 0)
@@ -790,7 +795,7 @@ public class MergedPatient extends ims.domain.DomainObject implements ims.domain
 		if(fldEl != null)
 		{
 			fldEl = fldEl.element("list");	
-			obj.setIdentifiers(ims.core.patient.domain.objects.PatientId.fromListXMLString(fldEl, factory, obj.getIdentifiers(), domMap));
+			obj.setIdentifiers(ims.core.patient.domain.objects.NonUniquePatientId.fromListXMLString(fldEl, factory, obj.getIdentifiers(), domMap));
 		}
 		fldEl = el.element("gp");
 		if(fldEl != null)
@@ -850,7 +855,7 @@ public class MergedPatient extends ims.domain.DomainObject implements ims.domain
 		if(fldEl != null)
 		{
 			fldEl = fldEl.element("class");		
-			obj.setInsurance(ims.core.patient.domain.objects.Insurance.getInsurancefromXML(fldEl, factory, domMap)); 
+			obj.setInsurance(ims.core.patient.domain.objects.NationalHealthCover.getNationalHealthCoverfromXML(fldEl, factory, domMap)); 
 		}
 		fldEl = el.element("addresses");
 		if(fldEl != null)

@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:37 -->
+<hibernate-mapping>
+	<subclass name="ims.coe.assessmenttools.domain.objects.PatientMovementHandling" lazy="true" discriminator-value="PTMV" extends="ims.core.clinical.domain.objects.Assessment" >
+<!-- debug: hibernateClassContent -->
+<!-- debug: patientMovementDetails -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="patientMovementDetails" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="toolptmv_patientmov_fk">
+				<column name="coe_toolptmv_patientmov" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.coe.assessmenttools.domain.objects.PatientMovementHandlingDetails" />
+		</set>
+<!-- debug: tempField -->
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="tempField" type="string" access="field" update="true">
+			<column name="tempfield"  not-null="false" unique="false"  />
+		</property>
+	</subclass>
+</hibernate-mapping>

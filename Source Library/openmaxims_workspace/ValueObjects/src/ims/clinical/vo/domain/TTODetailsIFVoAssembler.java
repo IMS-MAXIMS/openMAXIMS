@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.clinical.vo.domain;
@@ -66,6 +71,10 @@ public class TTODetailsIFVoAssembler
 		valueObjectDest.setGpToContinue(valueObjectSrc.getGpToContinue());
 		// Route
 		valueObjectDest.setRoute(valueObjectSrc.getRoute());
+		// MedComments
+		valueObjectDest.setMedComments(valueObjectSrc.getMedComments());
+		// SortOrder
+		valueObjectDest.setSortOrder(valueObjectSrc.getSortOrder());
 	 	return valueObjectDest;
 	 }
 
@@ -478,7 +487,11 @@ public class TTODetailsIFVoAssembler
 			}			
 			valueObject.setRoute(voLookup8);
 		}
-		 		return valueObject;
+				// MedComments
+		valueObject.setMedComments(ims.clinical.vo.domain.TTANoteVoAssembler.createTTANoteVoCollectionFromTTANote(map, domainObject.getMedComments()) );
+		// SortOrder
+		valueObject.setSortOrder(domainObject.getSortOrder());
+ 		return valueObject;
 	 }
 
 
@@ -574,6 +587,8 @@ public class TTODetailsIFVoAssembler
 				domainFactory.getLookupInstance(valueObject.getRoute().getID());
 		}
 		domainObject.setRoute(value8);
+		domainObject.setMedComments(ims.clinical.vo.domain.TTANoteVoAssembler.extractTTANoteList(domainFactory, valueObject.getMedComments(), domainObject.getMedComments(), domMap));		
+		domainObject.setSortOrder(valueObject.getSortOrder());
 
 		return domainObject;
 	}

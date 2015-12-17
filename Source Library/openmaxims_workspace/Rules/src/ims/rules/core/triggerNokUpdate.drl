@@ -1,0 +1,221 @@
+package ims.rules.userrules;
+
+
+import ims.core.patient.domain.objects.NextOfKin;
+import ims.core.patient.domain.objects.Patient;
+import ims.rules.engine.RulesRuntimeEngine;
+import ims.domain.DomainFactory;
+import java.util.HashMap;
+import ims.configuration.gen.ConfigFlag;
+
+global RulesRuntimeEngine engine;
+global DomainFactory factory;
+global HashMap prevState;
+global String targetMethod;
+
+
+function boolean triggerNokUpdate(ims.rules.engine.RulesRuntimeEngine engine,ims.domain.DomainFactory factory,java.util.HashMap prevState,ims.core.patient.domain.objects.NextOfKin entity)
+{
+	
+    boolean checkUpdateTrigger = false;
+
+	if (engine==null)
+	{
+		return false;
+	}		
+	
+	engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Enter : triggerNokUpdate.drl");
+	
+    // Don't continue if this is not the specific rule set in the interceptor we are looking for
+    if (engine.getPathwayEntitySpecificRuleName() == null || !engine.getPathwayEntitySpecificRuleName().equals("triggerNokUpdate.drl"))
+	{
+		engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Not : triggerNokUpdate.drl");
+		return false;
+	}
+	
+	// Set this as the rule that is executed for checking within the interceptor
+	engine.setLastRuleName("triggerNokUpdate.drl");
+
+	engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Continue : triggerNokUpdate.drl");
+
+	if (prevState == null)
+	{
+		engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "prevState : null");
+		return false;
+	}
+	
+	if (null==entity.getId())
+	{
+		engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "new NOK");
+		return false;
+	}
+	
+	//Nok name
+	ims.core.generic.domain.objects.PersonName nokname = (ims.core.generic.domain.objects.PersonName)prevState.get(ims.core.patient.domain.objects.Relative.FieldNames.Name);
+	if (nokname!=null && !nokname.equals(entity.getName())) {
+		checkUpdateTrigger = true;
+	}
+	else if (nokname==null && entity!=null && entity.getName()!=null){
+		checkUpdateTrigger = true;
+	}			
+
+	//Nok address
+	ims.core.generic.domain.objects.Address nokaddress = (ims.core.generic.domain.objects.Address)prevState.get(ims.core.patient.domain.objects.Relative.FieldNames.Address);
+	if (nokaddress!=null && !nokaddress.equals(entity.getAddress())) {
+		checkUpdateTrigger = true;
+	}
+	else if (nokaddress==null && entity!=null && entity.getAddress()!=null){
+		checkUpdateTrigger = true;
+	}			
+
+	//Nok relationship
+	ims.domain.lookups.LookupInstance nokrel = (ims.domain.lookups.LookupInstance)prevState.get(ims.core.patient.domain.objects.Relative.FieldNames.Relationship);
+	if (nokrel!=null && !nokrel.equals(entity.getRelationship())) {
+		checkUpdateTrigger = true;
+	}
+	else if (nokrel==null && entity!=null && entity.getRelationship()!=null){
+		checkUpdateTrigger = true;
+	}			
+
+	//Nok communication channels
+	java.util.List nokComchannel = (java.util.List)prevState.get(ims.core.patient.domain.objects.Relative.FieldNames.CommChannels);
+	if (nokComchannel!=null && !nokComchannel.equals(entity.getCommChannels())) {
+		checkUpdateTrigger = true;
+	}
+	else if (nokComchannel==null && entity!=null && entity.getCommChannels()!=null){
+		checkUpdateTrigger = true;
+	}			
+			
+		
+	engine.setLastRuleResult(1);
+	return checkUpdateTrigger;
+}
+		
+function void saveDemographicsTriggerMessageForNOKUpdate(ims.rules.engine.RulesRuntimeEngine engine,ims.domain.DomainFactory factory,java.util.HashMap prevState,ims.core.patient.domain.objects.NextOfKin entityNok)
+	{
+		try {
+			// Lookup IDs
+	        final int QueueType_DEMOGRAPHICFEED = -1851;
+	        final int MsgEventType_A28 = -1852;
+	        final int MsgEventType_A31 = -1853;
+	        final int MsgEventType_A40 = -1854;
+	        final int MsgEventType_A47 = -2551;
+	        final int QueueType_DEMOGRAPHICWITHHL7FORWARD = -2695;
+	        
+	        final int MRN_PSEUDO = -2539;
+	        final int MRN_NONE = -2540;
+
+			java.sql.Connection conn = factory.getJdbcConnection();				
+			String sqlProviderSystems=null;
+			if(entityNok.getSystemInformation()!=null&&"HL7Inbound".equals(entityNok.getSystemInformation().getLastUpdateUser()))
+			{				
+				//sqlProviderSystems = "select id from core_providersystem_configitem where id in(select id from core_providersystem_configitem	where (propertyna='SendDeomgraphicFeed' and propertyva='TRUE')) and propertyna='forwardHL7DemographicUpdates' and propertyva='TRUE'";
+				sqlProviderSystems = "select id from core_providersystem_configitem where id in("
+						+ "select providersy from core_outboundtrigge as trig left join core_outboundtrigge_queuetype qtyp on qtyp.owner = trig.id"
+						+ " where (qtyp.instance_id=" + QueueType_DEMOGRAPHICWITHHL7FORWARD + "))";
+			}
+			else
+			{
+				//sqlProviderSystems = "select core_providersystem.id from core_providersystem   join core_providersystem_configitem as ci   on core_providersystem.id = ci.id and ci.propertyna='SendDeomgraphicFeed' and propertyva='TRUE'";
+				sqlProviderSystems = "select id from core_providersystem_configitem where id in("
+						+ "select providersy from core_outboundtrigge as trig left join core_outboundtrigge_queuetype qtyp on qtyp.owner = trig.id"
+						+ " where (qtyp.instance_id=" + QueueType_DEMOGRAPHICFEED + "))";					
+			}
+			java.sql.PreparedStatement preStPS = conn.prepareStatement(sqlProviderSystems);
+			java.sql.ResultSet rs = preStPS.executeQuery();
+			
+			//get patient object
+			String sqlPatient = "select id from core_patient where nok=?";
+			java.sql.PreparedStatement preStPatient = conn.prepareStatement(sqlPatient);
+			preStPatient.setInt(1, entityNok.getId());
+			java.sql.ResultSet rsPatient1 = preStPatient.executeQuery();
+			int msgPatientId=0;
+			if (rsPatient1.next())
+			{
+				msgPatientId = rsPatient1.getInt(1);				
+			}
+			else
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Patient not found for NOK:" + entityNok.toString());
+			}						
+			
+			ims.core.patient.domain.objects.Patient domPat = (Patient)factory.getDomainObject(Patient.class, msgPatientId);
+			
+			while (rs.next())
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "sqlProviderSystems : found");
+				
+				int providerSystemId=rs.getInt(1);
+				ims.core.admin.domain.objects.ProviderSystem psDom = (ims.core.admin.domain.objects.ProviderSystem)factory.getDomainObject(ims.core.admin.domain.objects.ProviderSystem.class, providerSystemId);
+				
+				long msgCount=0;
+				String sql = "select count(id) from adto_demographicsmq where patient=? and providersy=? and wasprocess is null and wasdiscard is null";
+				java.sql.PreparedStatement preSt = conn.prepareStatement(sql);				
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "sql:" + sql.toString());
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "entity.getId():" + msgPatientId);
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "providerSystemId:" + providerSystemId);
+				preSt.setInt(1, msgPatientId);
+				preSt.setInt(2, providerSystemId);
+				java.sql.ResultSet rs1 = preSt.executeQuery();
+				if (rs1.next())
+				{
+					msgCount = new Long(rs1.getLong(1));
+					engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "msgCount:" + msgCount);
+				}
+				if (msgCount>0) //more than one unprocessed message already there 
+				{
+					engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "msgCount>0 : skip to the next provider system");
+					continue; //skip to the next provider system
+				}
+				
+				String oldPatientSql="select count(id) from adto_demographicsmq where patient=? and providersy=? and wasprocess =1";
+				java.sql.PreparedStatement oldPtCount = conn.prepareStatement(oldPatientSql);
+				oldPtCount.setInt(1, msgPatientId);
+				oldPtCount.setInt(2, providerSystemId);
+				java.sql.ResultSet rs2 = oldPtCount.executeQuery();
+				long oldMsgCount=0;
+				if (rs2.next())
+				{
+					oldMsgCount = new Long(rs2.getLong(1));
+				}
+				
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "New : DemographicsMessageQueue");					
+				ims.hl7adtout.domain.objects.DemographicsMessageQueue msg= new ims.hl7adtout.domain.objects.DemographicsMessageQueue();				
+				msg.setPatient(domPat);
+				msg.setProviderSystem(psDom);
+				
+				msg.setQueueType(factory.getLookupInstance(QueueType_DEMOGRAPHICFEED) );// QueueType.DEMOGRAPHICFEED));
+				if (oldMsgCount==0)
+				{
+					msg.setMsgType(factory.getLookupInstance(MsgEventType_A28));
+				}
+				else if(domPat.getMRNStatus()!=null&&(domPat.getMRNStatus().getId()==MRN_PSEUDO||domPat.getMRNStatus().getId()==MRN_NONE))
+				{
+					msg.setMsgType(factory.getLookupInstance(MsgEventType_A47));
+				}
+				else 
+				{
+					msg.setMsgType(factory.getLookupInstance(MsgEventType_A31));
+				}
+				
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Save : DemographicsMessageQueue");
+				factory.setDirtyCheck(false);
+				factory.saveNoFlush(msg);
+			}
+		}catch (Exception e)
+		{
+			throw new RuntimeException (e);
+		}				
+	}
+
+rule "triggerNokUpdate"
+no-loop true
+salience 0
+when
+	entity : ims.core.patient.domain.objects.NextOfKin();
+	eval(triggerNokUpdate(engine, factory, prevState, entity));
+then
+	saveDemographicsTriggerMessageForNOKUpdate(engine, factory, prevState, entity);
+	engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Rule triggerNokUpdate eval true.");
+end
+

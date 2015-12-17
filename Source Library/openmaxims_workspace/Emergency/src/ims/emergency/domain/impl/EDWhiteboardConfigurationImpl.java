@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -29,9 +34,11 @@ import ims.domain.DomainFactory;
 import ims.domain.exceptions.StaleObjectException;
 import ims.emergency.configuration.domain.objects.WhiteBoardConfig;
 import ims.emergency.configuration.vo.TrackingAreaRefVo;
+import ims.emergency.configuration.vo.WhiteBoardOtherActionsRefVo;
 import ims.emergency.domain.base.impl.BaseEDWhiteboardConfigurationImpl;
 import ims.emergency.vo.TrackingAreaLiteVoCollection;
 import ims.emergency.vo.WhiteBoardConfigVo;
+import ims.emergency.vo.WhiteBoardConfigVoCollection;
 import ims.emergency.vo.domain.TrackingAreaLiteVoAssembler;
 import ims.emergency.vo.domain.WhiteBoardConfigVoAssembler;
 import ims.framework.exceptions.CodingRuntimeException;
@@ -107,6 +114,36 @@ public class EDWhiteboardConfigurationImpl extends BaseEDWhiteboardConfiguration
 		trackingAreas = factory.find(hsql, new String[] {"idLocation"}, new Object[] {locationRef.getID_Location()});
 		
 		return TrackingAreaLiteVoAssembler.createTrackingAreaLiteVoCollectionFromTrackingArea(trackingAreas);
+	}
+
+	public WhiteBoardConfigVoCollection getAllWhiteboardConfigurations()
+	{
+		StringBuffer hql = new StringBuffer();
+		hql.append("select whiteBoardCfg from WhiteBoardConfig as whiteBoardCfg where whiteBoardCfg.currentArea is not null ");
+		
+		DomainFactory factory = getDomainFactory();
+		List<?> list = factory.find(hql.toString());
+		
+		return WhiteBoardConfigVoAssembler.createWhiteBoardConfigVoCollectionFromWhiteBoardConfig(list);
+	}
+
+	public Boolean isActionUsed(WhiteBoardOtherActionsRefVo whiteBoardActionRef)
+	{
+		if(whiteBoardActionRef == null )
+			throw new CodingRuntimeException("Can not get PatientWhiteBoardOtherActions value on null whiteBoardActionRef.");
+		
+		StringBuffer hql = new StringBuffer();
+		hql.append("select patWhiteBoardAction from PatientWhiteboardActions as patWhiteBoardAction left join patWhiteBoardAction.actionType as actionType where actionType.id = :actionID  ");
+		
+		DomainFactory factory = getDomainFactory();
+		List<?> list = factory.find(hql.toString(), new String[] {"actionID"}, new Object[] {whiteBoardActionRef.getID_WhiteBoardOtherActions()});
+		
+		if (list!=null && list.size()>0)
+		{
+			return true;
+		}
+		
+		return false;
 	}
 
 }

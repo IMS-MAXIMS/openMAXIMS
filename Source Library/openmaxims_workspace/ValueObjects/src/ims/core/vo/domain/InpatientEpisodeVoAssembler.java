@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.core.vo.domain;
@@ -78,6 +83,10 @@ public class InpatientEpisodeVoAssembler
 		valueObjectDest.setDischargeReadyDate(valueObjectSrc.getDischargeReadyDate());
 		// HomeLeaves
 		valueObjectDest.setHomeLeaves(valueObjectSrc.getHomeLeaves());
+		// Bed
+		valueObjectDest.setBed(valueObjectSrc.getBed());
+		// consultantStays
+		valueObjectDest.setConsultantStays(valueObjectSrc.getConsultantStays());
 	 	return valueObjectDest;
 	 }
 
@@ -386,7 +395,7 @@ public class InpatientEpisodeVoAssembler
 		java.util.Date EstDischargeDate = domainObject.getEstDischargeDate();
 		if ( null != EstDischargeDate ) 
 		{
-			valueObject.setEstDischargeDate(new ims.framework.utils.Date(EstDischargeDate) );
+			valueObject.setEstDischargeDate(new ims.framework.utils.DateTime(EstDischargeDate) );
 		}
 		// BedNo
 		valueObject.setBedNo(domainObject.getBedNo());
@@ -510,6 +519,10 @@ public class InpatientEpisodeVoAssembler
 		}
 		// HomeLeaves
 		valueObject.setHomeLeaves(ims.core.vo.domain.HomeLeaveVoAssembler.createHomeLeaveVoCollectionFromHomeLeave(map, domainObject.getHomeLeaves()) );
+		// Bed
+		valueObject.setBed(ims.core.vo.domain.BedSpaceStateLiteVoAssembler.create(map, domainObject.getBed()) );
+		// consultantStays
+		valueObject.setConsultantStays(ims.core.vo.domain.ConsultantStayVoAssembler.createConsultantStayVoCollectionFromConsultantStay(map, domainObject.getConsultantStays()) );
  		return valueObject;
 	 }
 
@@ -576,11 +589,11 @@ public class InpatientEpisodeVoAssembler
 			value5 = dateTime5.getJavaDate();
 		}
 		domainObject.setAdmissionDateTime(value5);
+		ims.framework.utils.DateTime dateTime6 = valueObject.getEstDischargeDate();
 		java.util.Date value6 = null;
-		ims.framework.utils.Date date6 = valueObject.getEstDischargeDate();		
-		if ( date6 != null ) 
+		if ( dateTime6 != null ) 
 		{
-			value6 = date6.getDate();
+			value6 = dateTime6.getJavaDate();
 		}
 		domainObject.setEstDischargeDate(value6);
 		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
@@ -688,6 +701,24 @@ public class InpatientEpisodeVoAssembler
 		}
 		
 		domainObject.setHomeLeaves(domainHomeLeaves14);		
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.admin.pas.domain.objects.BedSpaceState value15 = null;
+		if ( null != valueObject.getBed() ) 
+		{
+			if (valueObject.getBed().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getBed()) != null)
+				{
+					value15 = (ims.core.admin.pas.domain.objects.BedSpaceState)domMap.get(valueObject.getBed());
+				}
+			}
+			else
+			{
+				value15 = (ims.core.admin.pas.domain.objects.BedSpaceState)domainFactory.getDomainObject(ims.core.admin.pas.domain.objects.BedSpaceState.class, valueObject.getBed().getBoId());
+			}
+		}
+		domainObject.setBed(value15);
+		domainObject.setConsultantStays(ims.core.vo.domain.ConsultantStayVoAssembler.extractConsultantStaySet(domainFactory, valueObject.getConsultantStays(), domainObject.getConsultantStays(), domMap));		
 
 		return domainObject;
 	}

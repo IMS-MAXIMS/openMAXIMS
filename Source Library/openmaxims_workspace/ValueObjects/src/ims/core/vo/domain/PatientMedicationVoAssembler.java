@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.core.vo.domain;
@@ -90,6 +95,8 @@ public class PatientMedicationVoAssembler
 		valueObjectDest.setSelfMedicating(valueObjectSrc.getSelfMedicating());
 		// RecordingInformation
 		valueObjectDest.setRecordingInformation(valueObjectSrc.getRecordingInformation());
+		// Comment
+		valueObjectDest.setComment(valueObjectSrc.getComment());
 		// Medication
 		valueObjectDest.setMedication(valueObjectSrc.getMedication());
 		// OtherMedicationText
@@ -531,8 +538,8 @@ public class PatientMedicationVoAssembler
 			if (color != null) 
 				color.getValue();
 
-			ims.core.vo.lookups.MedciationCommencedDiscontinuedType voLookup16 = new ims.core.vo.lookups.MedciationCommencedDiscontinuedType(instance16.getId(),instance16.getText(), instance16.isActive(), null, img, color);
-			ims.core.vo.lookups.MedciationCommencedDiscontinuedType parentVoLookup16 = voLookup16;
+			ims.core.vo.lookups.MedicationCommencedDiscontinuedType voLookup16 = new ims.core.vo.lookups.MedicationCommencedDiscontinuedType(instance16.getId(),instance16.getText(), instance16.isActive(), null, img, color);
+			ims.core.vo.lookups.MedicationCommencedDiscontinuedType parentVoLookup16 = voLookup16;
 			ims.domain.lookups.LookupInstance parent16 = instance16.getParent();
 			while (parent16 != null)
 			{
@@ -547,7 +554,7 @@ public class PatientMedicationVoAssembler
 				color = parent16.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup16.setParent(new ims.core.vo.lookups.MedciationCommencedDiscontinuedType(parent16.getId(),parent16.getText(), parent16.isActive(), null, img, color));
+								parentVoLookup16.setParent(new ims.core.vo.lookups.MedicationCommencedDiscontinuedType(parent16.getId(),parent16.getText(), parent16.isActive(), null, img, color));
 				parentVoLookup16 = parentVoLookup16.getParent();
 								parent16 = parent16.getParent();
 			}			
@@ -567,8 +574,8 @@ public class PatientMedicationVoAssembler
 			if (color != null) 
 				color.getValue();
 
-			ims.core.vo.lookups.MedciationCommencedDiscontinuedType voLookup17 = new ims.core.vo.lookups.MedciationCommencedDiscontinuedType(instance17.getId(),instance17.getText(), instance17.isActive(), null, img, color);
-			ims.core.vo.lookups.MedciationCommencedDiscontinuedType parentVoLookup17 = voLookup17;
+			ims.core.vo.lookups.MedicationCommencedDiscontinuedType voLookup17 = new ims.core.vo.lookups.MedicationCommencedDiscontinuedType(instance17.getId(),instance17.getText(), instance17.isActive(), null, img, color);
+			ims.core.vo.lookups.MedicationCommencedDiscontinuedType parentVoLookup17 = voLookup17;
 			ims.domain.lookups.LookupInstance parent17 = instance17.getParent();
 			while (parent17 != null)
 			{
@@ -583,7 +590,7 @@ public class PatientMedicationVoAssembler
 				color = parent17.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup17.setParent(new ims.core.vo.lookups.MedciationCommencedDiscontinuedType(parent17.getId(),parent17.getText(), parent17.isActive(), null, img, color));
+								parentVoLookup17.setParent(new ims.core.vo.lookups.MedicationCommencedDiscontinuedType(parent17.getId(),parent17.getText(), parent17.isActive(), null, img, color));
 				parentVoLookup17 = parentVoLookup17.getParent();
 								parent17 = parent17.getParent();
 			}			
@@ -595,6 +602,8 @@ public class PatientMedicationVoAssembler
 		valueObject.setSelfMedicating( domainObject.isSelfMedicating() );
 		// RecordingInformation
 		valueObject.setRecordingInformation(ims.core.vo.domain.RecordingUserInformationVoAssembler.create(map, domainObject.getRecordingInformation()) );
+		// Comment
+		valueObject.setComment(domainObject.getComment());
 		// Medication
 		valueObject.setMedication(ims.core.vo.domain.MedicationLiteVoAssembler.create(map, domainObject.getMedication()) );
 		// OtherMedicationText
@@ -616,43 +625,7 @@ public class PatientMedicationVoAssembler
 			}
 		}
 		// Frequency
-		ims.domain.lookups.LookupInstance instance25 = domainObject.getFrequency();
-		if ( null != instance25 ) {
-			ims.framework.utils.ImagePath img = null;
-			ims.framework.utils.Color color = null;		
-			img = null;
-			if (instance25.getImage() != null) 
-			{
-				img = new ims.framework.utils.ImagePath(instance25.getImage().getImageId(), instance25.getImage().getImagePath());
-			}
-			color = instance25.getColor();
-			if (color != null) 
-				color.getValue();
-
-			ims.core.vo.lookups.MedicationFrequency voLookup25 = new ims.core.vo.lookups.MedicationFrequency(instance25.getId(),instance25.getText(), instance25.isActive(), null, img, color);
-			ims.core.vo.lookups.MedicationFrequency parentVoLookup25 = voLookup25;
-			ims.domain.lookups.LookupInstance parent25 = instance25.getParent();
-			while (parent25 != null)
-			{
-				if (parent25.getImage() != null) 
-				{
-					img = new ims.framework.utils.ImagePath(parent25.getImage().getImageId(), parent25.getImage().getImagePath() );
-				}
-				else 
-				{
-					img = null;
-				}
-				color = parent25.getColor();
-    			if (color != null) 
-    				color.getValue();
-								parentVoLookup25.setParent(new ims.core.vo.lookups.MedicationFrequency(parent25.getId(),parent25.getText(), parent25.isActive(), null, img, color));
-				parentVoLookup25 = parentVoLookup25.getParent();
-								parent25 = parent25.getParent();
-			}			
-			valueObject.setFrequency(voLookup25);
-		}
-				// SourceofInformation
-		ims.domain.lookups.LookupInstance instance26 = domainObject.getSourceofInformation();
+		ims.domain.lookups.LookupInstance instance26 = domainObject.getFrequency();
 		if ( null != instance26 ) {
 			ims.framework.utils.ImagePath img = null;
 			ims.framework.utils.Color color = null;		
@@ -665,8 +638,8 @@ public class PatientMedicationVoAssembler
 			if (color != null) 
 				color.getValue();
 
-			ims.core.vo.lookups.SourceofInformation voLookup26 = new ims.core.vo.lookups.SourceofInformation(instance26.getId(),instance26.getText(), instance26.isActive(), null, img, color);
-			ims.core.vo.lookups.SourceofInformation parentVoLookup26 = voLookup26;
+			ims.core.vo.lookups.MedicationFrequency voLookup26 = new ims.core.vo.lookups.MedicationFrequency(instance26.getId(),instance26.getText(), instance26.isActive(), null, img, color);
+			ims.core.vo.lookups.MedicationFrequency parentVoLookup26 = voLookup26;
 			ims.domain.lookups.LookupInstance parent26 = instance26.getParent();
 			while (parent26 != null)
 			{
@@ -681,11 +654,47 @@ public class PatientMedicationVoAssembler
 				color = parent26.getColor();
     			if (color != null) 
     				color.getValue();
-								parentVoLookup26.setParent(new ims.core.vo.lookups.SourceofInformation(parent26.getId(),parent26.getText(), parent26.isActive(), null, img, color));
+								parentVoLookup26.setParent(new ims.core.vo.lookups.MedicationFrequency(parent26.getId(),parent26.getText(), parent26.isActive(), null, img, color));
 				parentVoLookup26 = parentVoLookup26.getParent();
 								parent26 = parent26.getParent();
 			}			
-			valueObject.setSourceofInformation(voLookup26);
+			valueObject.setFrequency(voLookup26);
+		}
+				// SourceofInformation
+		ims.domain.lookups.LookupInstance instance27 = domainObject.getSourceofInformation();
+		if ( null != instance27 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance27.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance27.getImage().getImageId(), instance27.getImage().getImagePath());
+			}
+			color = instance27.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.SourceofInformation voLookup27 = new ims.core.vo.lookups.SourceofInformation(instance27.getId(),instance27.getText(), instance27.isActive(), null, img, color);
+			ims.core.vo.lookups.SourceofInformation parentVoLookup27 = voLookup27;
+			ims.domain.lookups.LookupInstance parent27 = instance27.getParent();
+			while (parent27 != null)
+			{
+				if (parent27.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent27.getImage().getImageId(), parent27.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent27.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup27.setParent(new ims.core.vo.lookups.SourceofInformation(parent27.getId(),parent27.getText(), parent27.isActive(), null, img, color));
+				parentVoLookup27 = parentVoLookup27.getParent();
+								parent27 = parent27.getParent();
+			}			
+			valueObject.setSourceofInformation(voLookup27);
 		}
 				// CommencedDate
 		java.util.Date CommencedDate = domainObject.getCommencedDate();
@@ -886,23 +895,30 @@ public class PatientMedicationVoAssembler
 		domainObject.setAuthoringInformation(ims.core.vo.domain.AuthoringInformationVoAssembler.extractAuthoringInformation(domainFactory, valueObject.getAuthoringInformation(), domMap));
 		domainObject.setSelfMedicating(valueObject.getSelfMedicating());
 		domainObject.setRecordingInformation(ims.core.vo.domain.RecordingUserInformationVoAssembler.extractRecordingUserInformation(domainFactory, valueObject.getRecordingInformation(), domMap));
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getComment() != null && valueObject.getComment().equals(""))
+		{
+			valueObject.setComment(null);
+		}
+		domainObject.setComment(valueObject.getComment());
 	// SaveAsRefVO - treated as a refVo in extract methods
-	ims.core.clinical.domain.objects.Medication value21 = null;
+	ims.core.clinical.domain.objects.Medication value22 = null;
 		if ( null != valueObject.getMedication() ) 
 		{
 			if (valueObject.getMedication().getBoId() == null)
 			{
 				if (domMap.get(valueObject.getMedication()) != null)
 				{
-					value21 = (ims.core.clinical.domain.objects.Medication)domMap.get(valueObject.getMedication());
+					value22 = (ims.core.clinical.domain.objects.Medication)domMap.get(valueObject.getMedication());
 				}
 			}
 			else
 			{
-				value21 = (ims.core.clinical.domain.objects.Medication)domainFactory.getDomainObject(ims.core.clinical.domain.objects.Medication.class, valueObject.getMedication().getBoId());
+				value22 = (ims.core.clinical.domain.objects.Medication)domainFactory.getDomainObject(ims.core.clinical.domain.objects.Medication.class, valueObject.getMedication().getBoId());
 			}
 		}
-		domainObject.setMedication(value21);
+		domainObject.setMedication(value22);
 		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
 		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
 		if (valueObject.getOtherMedicationText() != null && valueObject.getOtherMedicationText().equals(""))
@@ -911,49 +927,49 @@ public class PatientMedicationVoAssembler
 		}
 		domainObject.setOtherMedicationText(valueObject.getOtherMedicationText());
 		domainObject.setPrescribedDoses(ims.core.vo.domain.MedicationDoseAssembler.extractPatientMedicationDoseList(domainFactory, valueObject.getPrescribedDoses(), domainObject.getPrescribedDoses(), domMap));		
-		ims.core.patient.domain.objects.Patient value24 = null;
+		ims.core.patient.domain.objects.Patient value25 = null;
 		if ( null != valueObject.getPatient() ) 
 		{
 			if (valueObject.getPatient().getBoId() == null)
 			{
 				if (domMap.get(valueObject.getPatient()) != null)
 				{
-					value24 = (ims.core.patient.domain.objects.Patient)domMap.get(valueObject.getPatient());
+					value25 = (ims.core.patient.domain.objects.Patient)domMap.get(valueObject.getPatient());
 				}
 			}
 			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
 			{
-				value24 = domainObject.getPatient();	
+				value25 = domainObject.getPatient();	
 			}
 			else
 			{
-				value24 = (ims.core.patient.domain.objects.Patient)domainFactory.getDomainObject(ims.core.patient.domain.objects.Patient.class, valueObject.getPatient().getBoId());
+				value25 = (ims.core.patient.domain.objects.Patient)domainFactory.getDomainObject(ims.core.patient.domain.objects.Patient.class, valueObject.getPatient().getBoId());
 			}
 		}
-		domainObject.setPatient(value24);
-		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value25 = null;
-		if ( null != valueObject.getFrequency() ) 
-		{
-			value25 =
-				domainFactory.getLookupInstance(valueObject.getFrequency().getID());
-		}
-		domainObject.setFrequency(value25);
+		domainObject.setPatient(value25);
 		// create LookupInstance from vo LookupType
 		ims.domain.lookups.LookupInstance value26 = null;
-		if ( null != valueObject.getSourceofInformation() ) 
+		if ( null != valueObject.getFrequency() ) 
 		{
 			value26 =
+				domainFactory.getLookupInstance(valueObject.getFrequency().getID());
+		}
+		domainObject.setFrequency(value26);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value27 = null;
+		if ( null != valueObject.getSourceofInformation() ) 
+		{
+			value27 =
 				domainFactory.getLookupInstance(valueObject.getSourceofInformation().getID());
 		}
-		domainObject.setSourceofInformation(value26);
-		java.util.Date value27 = null;
-		ims.framework.utils.Date date27 = valueObject.getCommencedDate();		
-		if ( date27 != null ) 
+		domainObject.setSourceofInformation(value27);
+		java.util.Date value28 = null;
+		ims.framework.utils.Date date28 = valueObject.getCommencedDate();		
+		if ( date28 != null ) 
 		{
-			value27 = date27.getDate();
+			value28 = date28.getDate();
 		}
-		domainObject.setCommencedDate(value27);
+		domainObject.setCommencedDate(value28);
 		domainObject.setNoDaysSupply(valueObject.getNoDaysSupply());
 		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
 		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
@@ -962,13 +978,13 @@ public class PatientMedicationVoAssembler
 			valueObject.setBatchNo(null);
 		}
 		domainObject.setBatchNo(valueObject.getBatchNo());
-		java.util.Date value30 = null;
-		ims.framework.utils.Date date30 = valueObject.getExpiryDate();		
-		if ( date30 != null ) 
+		java.util.Date value31 = null;
+		ims.framework.utils.Date date31 = valueObject.getExpiryDate();		
+		if ( date31 != null ) 
 		{
-			value30 = date30.getDate();
+			value31 = date31.getDate();
 		}
-		domainObject.setExpiryDate(value30);
+		domainObject.setExpiryDate(value31);
 		domainObject.setIsDiscontinued(valueObject.getIsDiscontinued());
 
 		return domainObject;

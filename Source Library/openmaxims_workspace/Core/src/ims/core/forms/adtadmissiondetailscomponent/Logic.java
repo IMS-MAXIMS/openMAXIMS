@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -448,7 +453,8 @@ public class Logic extends BaseLogic
 		voPasEvent.setPatient(form.getGlobalContext().Core.getPatientShort());
 		voPasEvent.setSpecialty(form.cmbSpecialty().getValue());
 		voPasEvent.setPasEventId(createPasEventID());
-
+		voPasEvent.setService(voAdmissionDetail != null && voAdmissionDetail.getServiceIsNotNull() ? voAdmissionDetail.getService() : null);
+		
 		voInpatientEpis.setAdmissionDateTime(form.dtimAdmissionDateTime().getValue());
 		voInpatientEpis.setAdmissionType(form.cmbAdmissionType().getValue());
 		voInpatientEpis.setPasEvent(voPasEvent);
@@ -813,7 +819,7 @@ public class Logic extends BaseLogic
 	{
 		clearReferredFromAdr();
 		//WDEV-16689
-		if (form.getLocalContext().getCurrentAdmissionDetail() == null && ExternalResourceType.ERT_HOSPITAL.equals(form.cmbAdmittedFrom().getValue()) && form.getGlobalContext().Core.getExternalResourceSelected().getID_ExternalResource().equals(form.getLocalContext().getSelectedExternalResourceForReferredFrom().getID_ExternalResource()))
+		if (form.getLocalContext().getCurrentAdmissionDetail() == null && ExternalResourceType.ERT_HOSPITAL.equals(form.cmbAdmittedFrom().getValue()) && form.getGlobalContext().Core.getExternalResourceSelectedIsNotNull() && form.getLocalContext().getSelectedExternalResourceForReferredFromIsNotNull() && form.getGlobalContext().Core.getExternalResourceSelected().getID_ExternalResource().equals(form.getLocalContext().getSelectedExternalResourceForReferredFrom().getID_ExternalResource())) //wdev-19991
 		{	
 		form.cmbAdmittedFrom().setValue(null);
 		clearAdmittedFromAdr();

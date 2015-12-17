@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -32,6 +37,7 @@ import ims.assessment.vo.Patient_GraphicAssessmentFindingVo;
 import ims.assessment.vo.Patient_GraphicAssessmentVo;
 import ims.configuration.gen.ConfigFlag;
 import ims.core.vo.DrawingGraphicFindingVo;
+import ims.domain.exceptions.DomainRuntimeException;
 import ims.framework.utils.Image;
 import ims.framework.utils.ImagePath;
 
@@ -43,6 +49,7 @@ import java.util.TreeMap;
 
 public class DrawingControlReportHelper
 {
+
 	public DrawingControlReportHelper()
 	{
 	}
@@ -383,20 +390,37 @@ public class DrawingControlReportHelper
 		//include images as Base64
 		for (int i = 0; i < images.size(); i++)
 		{
-			Image img = (Image) imageMap.get(images.get(i));
-			
-			mht.append("\r\n" + 
-					"------=_NextPart_000_0000_01C733E6.BCFF96B0\r\n" + 
-					"Content-Type: " + img.getImageInfo().getMimeType() + "\r\n" + 
-					"Content-Transfer-Encoding: base64\r\n" + 
-					"Content-Location: file:///" +
-					images.get(i) +
-					"\r\n" + 
-					"\r\n" + 
-					"");
-			
-			mht.append(ims.utils.Base64Coder.encode(getImageContent((Image) imageMap.get(images.get(i)))));
-			mht.append("\r\n");
+			//WDEV-21150 Trap siurtation where image is missing
+			if (images.get(i) != null)
+			{
+				Image img = (Image) imageMap.get(images.get(i));
+				
+				if (img != null
+						&& img.getImageInfo() != null
+						&& img.getImageInfo().getMimeType() != null)
+				{
+					mht.append("\r\n" + 
+							"------=_NextPart_000_0000_01C733E6.BCFF96B0\r\n" + 
+							"Content-Type: " + img.getImageInfo().getMimeType() + "\r\n" + 
+							"Content-Transfer-Encoding: base64\r\n" + 
+							"Content-Location: file:///" +
+							images.get(i) +
+							"\r\n" + 
+							"\r\n" + 
+							"");
+					
+					mht.append(ims.utils.Base64Coder.encode(getImageContent((Image) imageMap.get(images.get(i)))));
+					mht.append("\r\n");
+				}
+				else
+				{
+					throw new DomainRuntimeException("Graphical Assessment image not found. Contact the system administrator");
+				}
+			}
+			else
+			{
+				throw new DomainRuntimeException("Graphical Assessment image not found. Contact the system administrator");
+			}
 		}
 		
 		mht.append("\r\n" + 

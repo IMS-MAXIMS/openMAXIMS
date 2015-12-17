@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,15 +15,20 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 
 /*
  * This code was generated.
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:38
+ * Generated: 13/10/2015, 13:23
  */
 package ims.nursing.vo.lookups;
 
@@ -48,6 +53,19 @@ public final class LookupHelper {
 	}
 	
 
+	public static BowelConstipationDiarrhoeaCollection getBowelConstipationDiarrhoea(LookupService lookupService) {
+		BowelConstipationDiarrhoeaCollection collection =
+			(BowelConstipationDiarrhoeaCollection) lookupService.getLookupCollection(BowelConstipationDiarrhoea.TYPE_ID, 
+				BowelConstipationDiarrhoeaCollection.class, BowelConstipationDiarrhoea.class);
+		return collection;
+	}
+
+	public static BowelConstipationDiarrhoea getBowelConstipationDiarrhoeaInstance(LookupService lookupService, int id) 
+	{
+		return (BowelConstipationDiarrhoea)lookupService.getLookupInstance(BowelConstipationDiarrhoea.class, BowelConstipationDiarrhoea.TYPE_ID, id);
+	}
+	
+
 	public static BowelRoutinePerformedByCollection getBowelRoutinePerformedBy(LookupService lookupService) {
 		BowelRoutinePerformedByCollection collection =
 			(BowelRoutinePerformedByCollection) lookupService.getLookupCollection(BowelRoutinePerformedBy.TYPE_ID, 
@@ -58,6 +76,45 @@ public final class LookupHelper {
 	public static BowelRoutinePerformedBy getBowelRoutinePerformedByInstance(LookupService lookupService, int id) 
 	{
 		return (BowelRoutinePerformedBy)lookupService.getLookupInstance(BowelRoutinePerformedBy.class, BowelRoutinePerformedBy.TYPE_ID, id);
+	}
+	
+
+	public static MobilityStatusCollection getMobilityStatus(LookupService lookupService) {
+		MobilityStatusCollection collection =
+			(MobilityStatusCollection) lookupService.getLookupCollection(MobilityStatus.TYPE_ID, 
+				MobilityStatusCollection.class, MobilityStatus.class);
+		return collection;
+	}
+
+	public static MobilityStatus getMobilityStatusInstance(LookupService lookupService, int id) 
+	{
+		return (MobilityStatus)lookupService.getLookupInstance(MobilityStatus.class, MobilityStatus.TYPE_ID, id);
+	}
+	
+
+	public static CarePlanTemplateStatusCollection getCarePlanTemplateStatus(LookupService lookupService) {
+		CarePlanTemplateStatusCollection collection =
+			(CarePlanTemplateStatusCollection) lookupService.getLookupCollection(CarePlanTemplateStatus.TYPE_ID, 
+				CarePlanTemplateStatusCollection.class, CarePlanTemplateStatus.class);
+		return collection;
+	}
+
+	public static CarePlanTemplateStatus getCarePlanTemplateStatusInstance(LookupService lookupService, int id) 
+	{
+		return (CarePlanTemplateStatus)lookupService.getLookupInstance(CarePlanTemplateStatus.class, CarePlanTemplateStatus.TYPE_ID, id);
+	}
+	
+
+	public static TurnTypeCollection getTurnType(LookupService lookupService) {
+		TurnTypeCollection collection =
+			(TurnTypeCollection) lookupService.getLookupCollection(TurnType.TYPE_ID, 
+				TurnTypeCollection.class, TurnType.class);
+		return collection;
+	}
+
+	public static TurnType getTurnTypeInstance(LookupService lookupService, int id) 
+	{
+		return (TurnType)lookupService.getLookupInstance(TurnType.class, TurnType.TYPE_ID, id);
 	}
 	
 
@@ -110,19 +167,6 @@ public final class LookupHelper {
 	public static CarePlanInterventionStatus getCarePlanInterventionStatusInstance(LookupService lookupService, int id) 
 	{
 		return (CarePlanInterventionStatus)lookupService.getLookupInstance(CarePlanInterventionStatus.class, CarePlanInterventionStatus.TYPE_ID, id);
-	}
-	
-
-	public static CarePlanTemplateStatusCollection getCarePlanTemplateStatus(LookupService lookupService) {
-		CarePlanTemplateStatusCollection collection =
-			(CarePlanTemplateStatusCollection) lookupService.getLookupCollection(CarePlanTemplateStatus.TYPE_ID, 
-				CarePlanTemplateStatusCollection.class, CarePlanTemplateStatus.class);
-		return collection;
-	}
-
-	public static CarePlanTemplateStatus getCarePlanTemplateStatusInstance(LookupService lookupService, int id) 
-	{
-		return (CarePlanTemplateStatus)lookupService.getLookupInstance(CarePlanTemplateStatus.class, CarePlanTemplateStatus.TYPE_ID, id);
 	}
 	
 
@@ -214,6 +258,19 @@ public final class LookupHelper {
 	public static PainHypersensitivity getPainHypersensitivityInstance(LookupService lookupService, int id) 
 	{
 		return (PainHypersensitivity)lookupService.getLookupInstance(PainHypersensitivity.class, PainHypersensitivity.TYPE_ID, id);
+	}
+	
+
+	public static PainOnsetCollection getPainOnset(LookupService lookupService) {
+		PainOnsetCollection collection =
+			(PainOnsetCollection) lookupService.getLookupCollection(PainOnset.TYPE_ID, 
+				PainOnsetCollection.class, PainOnset.class);
+		return collection;
+	}
+
+	public static PainOnset getPainOnsetInstance(LookupService lookupService, int id) 
+	{
+		return (PainOnset)lookupService.getLookupInstance(PainOnset.class, PainOnset.TYPE_ID, id);
 	}
 	
 
@@ -568,19 +625,6 @@ public final class LookupHelper {
 	}
 	
 
-	public static BowelConstipationDiarrhoeaCollection getBowelConstipationDiarrhoea(LookupService lookupService) {
-		BowelConstipationDiarrhoeaCollection collection =
-			(BowelConstipationDiarrhoeaCollection) lookupService.getLookupCollection(BowelConstipationDiarrhoea.TYPE_ID, 
-				BowelConstipationDiarrhoeaCollection.class, BowelConstipationDiarrhoea.class);
-		return collection;
-	}
-
-	public static BowelConstipationDiarrhoea getBowelConstipationDiarrhoeaInstance(LookupService lookupService, int id) 
-	{
-		return (BowelConstipationDiarrhoea)lookupService.getLookupInstance(BowelConstipationDiarrhoea.class, BowelConstipationDiarrhoea.TYPE_ID, id);
-	}
-	
-
 	public static BowelRoutineLocationCollection getBowelRoutineLocation(LookupService lookupService) {
 		BowelRoutineLocationCollection collection =
 			(BowelRoutineLocationCollection) lookupService.getLookupCollection(BowelRoutineLocation.TYPE_ID, 
@@ -685,19 +729,6 @@ public final class LookupHelper {
 	}
 	
 
-	public static MobilityStatusCollection getMobilityStatus(LookupService lookupService) {
-		MobilityStatusCollection collection =
-			(MobilityStatusCollection) lookupService.getLookupCollection(MobilityStatus.TYPE_ID, 
-				MobilityStatusCollection.class, MobilityStatus.class);
-		return collection;
-	}
-
-	public static MobilityStatus getMobilityStatusInstance(LookupService lookupService, int id) 
-	{
-		return (MobilityStatus)lookupService.getLookupInstance(MobilityStatus.class, MobilityStatus.TYPE_ID, id);
-	}
-	
-
 	public static TurnsDurationCollection getTurnsDuration(LookupService lookupService) {
 		TurnsDurationCollection collection =
 			(TurnsDurationCollection) lookupService.getLookupCollection(TurnsDuration.TYPE_ID, 
@@ -708,19 +739,6 @@ public final class LookupHelper {
 	public static TurnsDuration getTurnsDurationInstance(LookupService lookupService, int id) 
 	{
 		return (TurnsDuration)lookupService.getLookupInstance(TurnsDuration.class, TurnsDuration.TYPE_ID, id);
-	}
-	
-
-	public static TurnTypeCollection getTurnType(LookupService lookupService) {
-		TurnTypeCollection collection =
-			(TurnTypeCollection) lookupService.getLookupCollection(TurnType.TYPE_ID, 
-				TurnTypeCollection.class, TurnType.class);
-		return collection;
-	}
-
-	public static TurnType getTurnTypeInstance(LookupService lookupService, int id) 
-	{
-		return (TurnType)lookupService.getLookupInstance(TurnType.class, TurnType.TYPE_ID, id);
 	}
 	
 
@@ -864,19 +882,6 @@ public final class LookupHelper {
 	public static PainProgression getPainProgressionInstance(LookupService lookupService, int id) 
 	{
 		return (PainProgression)lookupService.getLookupInstance(PainProgression.class, PainProgression.TYPE_ID, id);
-	}
-	
-
-	public static PainOnsetCollection getPainOnset(LookupService lookupService) {
-		PainOnsetCollection collection =
-			(PainOnsetCollection) lookupService.getLookupCollection(PainOnset.TYPE_ID, 
-				PainOnsetCollection.class, PainOnset.class);
-		return collection;
-	}
-
-	public static PainOnset getPainOnsetInstance(LookupService lookupService, int id) 
-	{
-		return (PainOnset)lookupService.getLookupInstance(PainOnset.class, PainOnset.TYPE_ID, id);
 	}
 	
 

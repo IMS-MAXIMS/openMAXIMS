@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:34 -->
+<hibernate-mapping>
+	<subclass name="ims.core.clinical.domain.objects.AssessmentTool" lazy="true" discriminator-value="asst" extends="ims.core.clinical.domain.objects.Assessment" >
+<!-- debug: hibernateClassContent -->
+	</subclass>
+</hibernate-mapping>

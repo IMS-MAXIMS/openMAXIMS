@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -29,12 +34,18 @@ import ims.core.vo.DischargedEpisodeVo;
 import ims.core.vo.PasEventVo;
 import ims.core.vo.Patient;
 import ims.core.vo.PendingEmergencyAdmissionVo;
+import ims.core.vo.ifInpatientEpisodeVo;
 import ims.core.vo.lookups.EmergencyAdmissionStatus;
 import ims.emergency.vo.ifEDAttendanceVo;
 import ims.framework.utils.DateTime;
+import ims.framework.utils.DateTimeFormat;
+import ims.hl7.domain.EventResponse;
+import ims.hl7.domain.HL7EngineApplication;
+import ims.hl7.utils.EvnCodes;
 import ims.hl7.utils.HL7Errors;
 import ims.hl7.utils.HL7Utils;
 import ims.ocrr.vo.ProviderSystemVo;
+import ims.ocs_if.vo.InpatientEpisodeQueueVo;
 import ims.vo.interfaces.IHL7OutboundMessageHandler;
 
 import java.util.ArrayList;
@@ -53,10 +64,17 @@ import ca.uhn.hl7v2.model.v24.segment.PV2;
 public class A03VoMapper extends VoMapper
 {
 	private static final Logger			LOG		= Logger.getLogger(A03VoMapper.class);
+	private A01VoMapper a01Vomapper; //WDEV-19481
 
-	public Message processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception
+	//WDEV-20112
+//	public Message processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception
+	public EventResponse processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception //WDEV-20112
 	{
-		return(processPatientDischarge(msg, providerSystem));
+		//WDEV-20112
+//		return(processPatientDischarge(msg, providerSystem));
+		EventResponse response = new EventResponse();
+		response = processPatientDischarge(msg, providerSystem, response);
+		return response; //WDEV-20112		
 	}
 
 	public Message populateMessage()
@@ -67,82 +85,188 @@ public class A03VoMapper extends VoMapper
 	
 	public Message populateMessage(IHL7OutboundMessageHandler event)  throws Exception
 	{
+		//WDEV-22703
+		a01Vomapper = (A01VoMapper)HL7EngineApplication.getVoMapper(EvnCodes.A01);
+		if(a01Vomapper==null)
+		{
+			throw new HL7Exception("A03 mapper requires A01 mapper. A01 mapper not found in list of registered mappers.");			
+		}
+		
 		LOG.debug("A03VoMapper populateMessage: entry");
 		ADT_A03 message = new ADT_A03();
-		EDAttendanceFeedVo edAttendance = null;
-		Patient patient=null;
-		PV1 pv = message.getPV1();
+		Patient patient = null;
+		
+		PV1 pv1 = message.getPV1();
+		PV2 pv2 = message.getPV2();
+		PD1 pd1 = message.getPD1();
 
-		if(event instanceof EDAttendanceFeedVo)
+		//WDEV-22703 Duplicate code
+//		message = new ADT_A03();
+//		PV1 pv1 = message.getPV1();
+		
+
+		if (event instanceof EDAttendanceFeedVo)
 		{
-			edAttendance = (EDAttendanceFeedVo)event;
-			ifEDAttendanceVo attendenceDetails= adt.getEDAttendanceDetails(edAttendance.getAttendance());
-			patient=attendenceDetails.getPatient();
-			//PV1-3
-			renderPatientLocationToPV1(attendenceDetails.getRegistrationLocation(), null, null, pv, event.getProviderSystem());
+			ifEDAttendanceVo attendenceDetails= adt.getEDAttendanceDetails(event);
+			patient = attendenceDetails.getPatient();
+
+			//PV1-2 Patient class (IS)
+			pv1.getPatientClass().setValue("E");  // only mandatory item
+
+			//PV1-3 Assigned patient location (PL)
+			renderPatientLocationToPV1(attendenceDetails.getRegistrationLocation(), null, null, pv1, event.getProviderSystem());
+						
+			//PV1-10 Hospital service (IS)
+			pv1.getHospitalService().setValue("E");
 			
-			//PV1-2
-			pv.getPatientClass().setValue("E");  // only mandatory item
-			
-			//PV1-10
-			pv.getHospitalService().setValue("E");
-			
-			//PV1-19
-			if(attendenceDetails.getBoId()!=null)
+			//PV1-19 Visit number (CX)
+			if (ConfigFlag.GEN.ED_USE_CUSTOM_ATTENDANCE_ID.getValue()
+					&& attendenceDetails.getCustomIDIsNotNull())
 			{
-				pv.getVisitNumber().getID().setValue(attendenceDetails.getBoId().toString());
+				pv1.getVisitNumber().getID().setValue(attendenceDetails.getCustomID());
 			}
-			//PV1-13
-			if(attendenceDetails.getAttendanceTypeIsNotNull())
+			else if (attendenceDetails.getBoId()!=null)
 			{
-				pv.getReAdmissionIndicator().setValue(svc.getRemoteLookup(attendenceDetails.getAttendanceType().getID(), event.getProviderSystem().getCodeSystem().getText()));
+				pv1.getVisitNumber().getID().setValue(attendenceDetails.getBoId().toString());
 			}
-			//PV1-44 EVN-2
-			if(attendenceDetails.getRegistrationDateTimeIsNotNull())
+			
+			//PV1-13 Re-admission indicator (IS)
+			if (attendenceDetails.getAttendanceTypeIsNotNull())
 			{
-				renderDateTimeVoToTS(attendenceDetails.getRegistrationDateTime(), pv.getAdmitDateTime());
+				pv1.getReAdmissionIndicator().setValue(svc.getRemoteLookup(attendenceDetails.getAttendanceType().getID(), event.getProviderSystem().getCodeSystem().getText()));
+			}
+			
+			//PV1-44 Admit date/time (TS) 
+			//EVN-2 
+			if (attendenceDetails.getRegistrationDateTimeIsNotNull())
+			{
+				renderDateTimeVoToTS(attendenceDetails.getRegistrationDateTime(), pv1.getAdmitDateTime());
 				renderDateTimeVoToTS(attendenceDetails.getRegistrationDateTime(), message.getEVN().getRecordedDateTime());
 			}
 			
-			//PV1-45
-			if(attendenceDetails.getDischargeDateTimeIsNotNull())
+			//PV1-45 Discharge date/time (TS)
+			if (attendenceDetails.getDischargeDateTimeIsNotNull())
 			{
-				renderDateTimeVoToTS(attendenceDetails.getDischargeDateTime(), pv.getDischargeDateTime(0));
+				renderDateTimeVoToTS(attendenceDetails.getDischargeDateTime(), pv1.getDischargeDateTime(0));
 			}
-			//PV2-3
-			PV2 pv2=message.getPV2();
-			if(attendenceDetails.getEmergencyEpisodeIsNotNull()&&attendenceDetails.getEmergencyEpisode().getPresentingComplaintIsNotNull())
+			
+			//PV2-3 Admit reason (CE)
+//			PV2 pv2=message.getPV2(); //WDEV-22703 Moved code to top of method
+			if (attendenceDetails.getEmergencyEpisodeIsNotNull()&&attendenceDetails.getEmergencyEpisode().getPresentingComplaintIsNotNull())
 			{
-				pv2.getAdmitReason().getIdentifier().setValue(svc.getRemoteLookup(
-						attendenceDetails.getEmergencyEpisode().getPresentingComplaint().getID(),event.getProviderSystem().getCodeSystem().getText()));
+				pv2.getAdmitReason().getIdentifier().setValue(svc.getRemoteLookup(attendenceDetails.getEmergencyEpisode().getPresentingComplaint().getID(), event.getProviderSystem().getCodeSystem().getText()));
 			}
-		}
-		else //Other event types
-		{
+			
+			//WDEV-22703
+			populateMSH(event.getProviderSystem(), message.getMSH(), Long.toString( new java.util.Date().getTime()), "ADT", "A03");
+			message.getEVN().getEventTypeCode().setValue("A03");
+			renderPatientVoToPID(patient, message.getPID(), event.getProviderSystem());
+			renderGPDetailsToPD1(patient,pd1);
+			renderPatientDetailsToPD1(patient, pd1, event.getProviderSystem()); //WDEV-22624
 			
 		}
-		
-		populateMSH( event.getProviderSystem(),  message.getMSH(),Long.toString( new java.util.Date().getTime()),"ADT","A03");
-		renderPatientVoToPID(patient,message.getPID(),event.getProviderSystem());
-		PD1 pd1=message.getPD1();
-		renderGPDetailsToPD1(patient,pd1);
-		populateEVN(message.getEVN(),"A03");
+
+		//WDEV-19481
+		else if(event instanceof InpatientEpisodeQueueVo)
+		{
+
+			//WDEV-22703 Moved code to top of method
+//			a01Vomapper = (A01VoMapper)HL7EngineApplication.getVoMapper(EvnCodes.A01);
+//			if(a01Vomapper==null)
+//			{
+//				throw new HL7Exception("A03 mapper requires A01 mapper. A01 mapper not found in list of registered mappers.");			
+//			}
+//
+//			message = new ADT_A03();
+//			PV1 pv1 = message.getPV1();
+//			PV2 pv2 = message.getPV2();
+
+			if(event instanceof InpatientEpisodeQueueVo)
+			{
+				
+				InpatientEpisodeQueueVo feedVo = (InpatientEpisodeQueueVo)event;
+				ifInpatientEpisodeVo inpatientEpisode = adt.getInpatientEpisodeDetails(feedVo);
+				patient = inpatientEpisode.getPatient();
+
+				a01Vomapper.populateBasicEpisodeData(event, inpatientEpisode, pv1, pv2);
+				
+				// PV1-36 Discharge disposition (IS)
+				//WDEV-22260
+//				if(inpatientEpisode.getDischargeDisposition() != null)
+//				{
+//					pv1.getDischargeDisposition().setValue(svc.getRemoteLookup(inpatientEpisode.getDischargeDestination().getID(), event.getProviderSystem().getCodeSystem().getText()));
+//				}
+				if (inpatientEpisode.getMethodOfDischarge() != null)
+				{
+					pv1.getDischargeDisposition().setValue(svc.getRemoteLookup(inpatientEpisode.getMethodOfDischarge().getID(), event.getProviderSystem().getCodeSystem().getText()));
+				} //WDEV-22260
+	
+				// PV1-37 Discharged to location (CM)
+				//WDEV-22260
+//				if(inpatientEpisode.getDischargeDestination() !=null 
+//						&& inpatientEpisode.getDischargeDestination().getText().length() > 0)
+//				{
+//					pv1.getDischargedToLocation().getDischargeLocation().setValue(inpatientEpisode.getDischargeDestination().toString());
+//					//WDEV-22260
+//					pv1.getDischargedToLocation().getDischargeLocation().setValue(svc.getRemoteLookup(inpatientEpisode.getDischargeDestination().getID(), event.getProviderSystem().getCodeSystem().getText()));
+//				}
+				if(inpatientEpisode.getDischargeDestination() !=null)
+				{
+					pv1.getDischargedToLocation().getDischargeLocation().setValue(svc.getRemoteLookup(inpatientEpisode.getDischargeDestination().getID(), event.getProviderSystem().getCodeSystem().getText()));
+				} // WDEV-22260
+
+				// PV1-45 Discharge date/time (TS)
+				if(inpatientEpisode.getDischargeDateTime() != null)
+				{
+					renderDateTimeVoToTS(inpatientEpisode.getDischargeDateTime(), pv1.getDischargeDateTime(0));
+				}
+
+				renderPatientVoToPID(patient, message.getPID(), event.getProviderSystem());
+//				PD1 pd1 = message.getPD1(); //WDEV-22703 Moved to top of method
+				//WDEV-20993
+//				renderGPDetailsToPD1(patient, pd1);				
+				renderGPDetailsToPD1(patient, pd1, event.getProviderSystem());
+				renderPatientDetailsToPD1(patient, pd1, event.getProviderSystem()); //WDEV-22624
+				
+				//WDEV-22918
+				// EVN-2 Recorded Date/Time (TS)
+				if (inpatientEpisode.getDischargeEventDateTime() != null)
+				{
+					message.getEVN().getRecordedDateTime().getTimeOfAnEvent().setValue(inpatientEpisode.getDischargeEventDateTime().toString(DateTimeFormat.ISO));
+				} //WDEV-22918
+
+			}
+
+
+			populateMSH(event.getProviderSystem(), message.getMSH(), Long.toString( new java.util.Date().getTime()), "ADT", "A03");
+			message.getEVN().getEventTypeCode().setValue("A03");
+	
+		}
+
 		return message;
+
 	}
 
-
-	private Message processPatientDischarge(Message msg, ProviderSystemVo providerSystem) throws HL7Exception
+	
+	//WDEV-20112
+//	private Message processPatientDischarge(Message msg, ProviderSystemVo providerSystem) throws HL7Exception
+	private EventResponse processPatientDischarge(Message msg, ProviderSystemVo providerSystem, EventResponse response) throws HL7Exception //WDEV-20112
 	{
 		Patient patVo;
-		
 		try
 		{
 			patVo = savePatient(msg,providerSystem, false);
+			//WDEV-20112
+			response.setPatient(patVo); //WDEV-20112
 		}
 		catch (Exception ex)
 		{
-			return HL7Utils.buildRejAck( msg.get("MSH"), "Exception: " + ex.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems()));
+			//WDEV-20112
+//			return HL7Utils.buildRejAck( msg.get("MSH"), "Exception: " + ex.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems()));
+			response.setMessage(HL7Utils.buildRejAck(msg.get("MSH"), "Exception: " + ex.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems())));
+			return response; //WDEV-20112
 		}
+
 		DischargedEpisodeVo dischargeVo = null;
 		try
 		{
@@ -157,7 +281,6 @@ public class A03VoMapper extends VoMapper
 				PendingEmergencyAdmissionVo peaVo = getADT().getPendingEmergencyAdmission(pasEventVo);
 				if(peaVo==null)
 				{
-					
 					AneAttendanceVo attVo = getADT().getAnEAttendance(pasEventVo);
 					if (attVo == null)
 						attVo = new AneAttendanceVo();
@@ -276,11 +399,17 @@ public class A03VoMapper extends VoMapper
 		catch (Exception ex)
 		{
 			ex.printStackTrace();
-			return HL7Utils.buildRejAck( msg.get("MSH"), "Exception: " + ex.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems()));
+			//WDEV-20112
+//			return HL7Utils.buildRejAck( msg.get("MSH"), "Exception: " + ex.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems()));
+			response.setMessage(HL7Utils.buildRejAck(msg.get("MSH"), "Exception: " + ex.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems())));
+			return response; //WDEV-20112
 		}
 
-		Message ack = HL7Utils.buildPosAck( msg.get("MSH"), toConfigItemArray(providerSystem.getConfigItems()));
-		return ack;
+		//WDEV-20112
+//		Message ack = HL7Utils.buildPosAck( msg.get("MSH"), toConfigItemArray(providerSystem.getConfigItems()));
+//		return ack;
+		response.setMessage(HL7Utils.buildPosAck( msg.get("MSH"), toConfigItemArray(providerSystem.getConfigItems())));
+		return response; //WDEV-20112
 	}
 	
 	public CareContextRefVo getCareContextFromPV1(PV1 pv) throws DataTypeException

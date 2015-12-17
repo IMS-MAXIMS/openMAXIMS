@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -546,7 +551,7 @@ public class SupportServicesImpl extends BaseSupportServicesImpl
 	public LocShortVoCollection listLocationsForMemberOfStaff(MemberOfStaffRefVo mos) 
 	{
 		MosAdmin impl = (MosAdmin) getDomainImpl(MosAdminImpl.class);
-		return impl.listLocationsForMemberOfStaff(mos);
+		return impl.listLocationsForMemberOfStaff(mos, Boolean.TRUE); //WDEV-19532
 	}
 
 	public GpShortVo getGPDetails(PatientRefVo patientRef)
@@ -588,7 +593,7 @@ public class SupportServicesImpl extends BaseSupportServicesImpl
 			}
 		}
 		//WDEV-18210
-		hql.append(" order by UPPER(s.serviceName) asc");
+		hql.append(" order by s.upperName asc"); //WDEV-20219 UPPER(s.serviceName)
 
 		java.util.List services = factory.find(hql.toString(), paramNames, paramValues);
 

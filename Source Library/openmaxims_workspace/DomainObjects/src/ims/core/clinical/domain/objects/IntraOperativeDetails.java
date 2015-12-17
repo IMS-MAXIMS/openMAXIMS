@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.clinical.domain.objects;
@@ -109,6 +114,20 @@ public class IntraOperativeDetails extends ims.domain.DomainObject implements im
 	  * Collection of ims.core.clinical.domain.objects.TableDevice.
 	  */
 	private java.util.List tableDevices;
+	private ims.domain.lookups.LookupInstance patientPreparation;
+	private ims.domain.lookups.LookupInstance diathermyDeviceSerialNumber;
+	private ims.domain.lookups.LookupInstance diathermyPadSite;
+	private ims.domain.lookups.LookupInstance laserDeviceName;
+	private ims.domain.lookups.LookupInstance laserDeviceSerialNumber;
+	private ims.domain.lookups.LookupInstance laserMode;
+	private ims.domain.lookups.LookupInstance laserPatientSafetyMeasures;
+	private ims.domain.lookups.LookupInstance irrigantSolution;
+	private ims.domain.lookups.LookupInstance specimenDestination;
+	private ims.domain.lookups.LookupInstance woundPackingType;
+	private ims.domain.lookups.LookupInstance procedureWoundClass;
+	private ims.domain.lookups.LookupInstance missingItems;
+	private ims.domain.lookups.LookupInstance actionsTaken;
+	private ims.domain.lookups.LookupInstance chartableOccurrenceType;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public IntraOperativeDetails (Integer id, int ver)
@@ -343,6 +362,104 @@ public class IntraOperativeDetails extends ims.domain.DomainObject implements im
 	}
 	public void setTableDevices(java.util.List paramValue) {
 		this.tableDevices = paramValue;
+	}
+
+	public ims.domain.lookups.LookupInstance getPatientPreparation() {
+		return patientPreparation;
+	}
+	public void setPatientPreparation(ims.domain.lookups.LookupInstance patientPreparation) {
+		this.patientPreparation = patientPreparation;
+	}
+
+	public ims.domain.lookups.LookupInstance getDiathermyDeviceSerialNumber() {
+		return diathermyDeviceSerialNumber;
+	}
+	public void setDiathermyDeviceSerialNumber(ims.domain.lookups.LookupInstance diathermyDeviceSerialNumber) {
+		this.diathermyDeviceSerialNumber = diathermyDeviceSerialNumber;
+	}
+
+	public ims.domain.lookups.LookupInstance getDiathermyPadSite() {
+		return diathermyPadSite;
+	}
+	public void setDiathermyPadSite(ims.domain.lookups.LookupInstance diathermyPadSite) {
+		this.diathermyPadSite = diathermyPadSite;
+	}
+
+	public ims.domain.lookups.LookupInstance getLaserDeviceName() {
+		return laserDeviceName;
+	}
+	public void setLaserDeviceName(ims.domain.lookups.LookupInstance laserDeviceName) {
+		this.laserDeviceName = laserDeviceName;
+	}
+
+	public ims.domain.lookups.LookupInstance getLaserDeviceSerialNumber() {
+		return laserDeviceSerialNumber;
+	}
+	public void setLaserDeviceSerialNumber(ims.domain.lookups.LookupInstance laserDeviceSerialNumber) {
+		this.laserDeviceSerialNumber = laserDeviceSerialNumber;
+	}
+
+	public ims.domain.lookups.LookupInstance getLaserMode() {
+		return laserMode;
+	}
+	public void setLaserMode(ims.domain.lookups.LookupInstance laserMode) {
+		this.laserMode = laserMode;
+	}
+
+	public ims.domain.lookups.LookupInstance getLaserPatientSafetyMeasures() {
+		return laserPatientSafetyMeasures;
+	}
+	public void setLaserPatientSafetyMeasures(ims.domain.lookups.LookupInstance laserPatientSafetyMeasures) {
+		this.laserPatientSafetyMeasures = laserPatientSafetyMeasures;
+	}
+
+	public ims.domain.lookups.LookupInstance getIrrigantSolution() {
+		return irrigantSolution;
+	}
+	public void setIrrigantSolution(ims.domain.lookups.LookupInstance irrigantSolution) {
+		this.irrigantSolution = irrigantSolution;
+	}
+
+	public ims.domain.lookups.LookupInstance getSpecimenDestination() {
+		return specimenDestination;
+	}
+	public void setSpecimenDestination(ims.domain.lookups.LookupInstance specimenDestination) {
+		this.specimenDestination = specimenDestination;
+	}
+
+	public ims.domain.lookups.LookupInstance getWoundPackingType() {
+		return woundPackingType;
+	}
+	public void setWoundPackingType(ims.domain.lookups.LookupInstance woundPackingType) {
+		this.woundPackingType = woundPackingType;
+	}
+
+	public ims.domain.lookups.LookupInstance getProcedureWoundClass() {
+		return procedureWoundClass;
+	}
+	public void setProcedureWoundClass(ims.domain.lookups.LookupInstance procedureWoundClass) {
+		this.procedureWoundClass = procedureWoundClass;
+	}
+
+	public ims.domain.lookups.LookupInstance getMissingItems() {
+		return missingItems;
+	}
+	public void setMissingItems(ims.domain.lookups.LookupInstance missingItems) {
+		this.missingItems = missingItems;
+	}
+
+	public ims.domain.lookups.LookupInstance getActionsTaken() {
+		return actionsTaken;
+	}
+	public void setActionsTaken(ims.domain.lookups.LookupInstance actionsTaken) {
+		this.actionsTaken = actionsTaken;
+	}
+
+	public ims.domain.lookups.LookupInstance getChartableOccurrenceType() {
+		return chartableOccurrenceType;
+	}
+	public void setChartableOccurrenceType(ims.domain.lookups.LookupInstance chartableOccurrenceType) {
+		this.chartableOccurrenceType = chartableOccurrenceType;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -595,6 +712,62 @@ public class IntraOperativeDetails extends ims.domain.DomainObject implements im
 			auditStr.append("] " + i27);
 		}
 	    auditStr.append("; ");
+		auditStr.append("\r\n*patientPreparation* :");
+		if (patientPreparation != null)
+			auditStr.append(patientPreparation.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*diathermyDeviceSerialNumber* :");
+		if (diathermyDeviceSerialNumber != null)
+			auditStr.append(diathermyDeviceSerialNumber.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*diathermyPadSite* :");
+		if (diathermyPadSite != null)
+			auditStr.append(diathermyPadSite.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*laserDeviceName* :");
+		if (laserDeviceName != null)
+			auditStr.append(laserDeviceName.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*laserDeviceSerialNumber* :");
+		if (laserDeviceSerialNumber != null)
+			auditStr.append(laserDeviceSerialNumber.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*laserMode* :");
+		if (laserMode != null)
+			auditStr.append(laserMode.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*laserPatientSafetyMeasures* :");
+		if (laserPatientSafetyMeasures != null)
+			auditStr.append(laserPatientSafetyMeasures.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*irrigantSolution* :");
+		if (irrigantSolution != null)
+			auditStr.append(irrigantSolution.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*specimenDestination* :");
+		if (specimenDestination != null)
+			auditStr.append(specimenDestination.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*woundPackingType* :");
+		if (woundPackingType != null)
+			auditStr.append(woundPackingType.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*procedureWoundClass* :");
+		if (procedureWoundClass != null)
+			auditStr.append(procedureWoundClass.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*missingItems* :");
+		if (missingItems != null)
+			auditStr.append(missingItems.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*actionsTaken* :");
+		if (actionsTaken != null)
+			auditStr.append(actionsTaken.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*chartableOccurrenceType* :");
+		if (chartableOccurrenceType != null)
+			auditStr.append(chartableOccurrenceType.getText());
+	    auditStr.append("; ");
 		return auditStr.toString();
 	}
 	
@@ -815,6 +988,90 @@ public class IntraOperativeDetails extends ims.domain.DomainObject implements im
 			sb.append(ims.domain.DomainObject.toXMLString(this.getTableDevices(), domMap));
 			sb.append("</tableDevices>");		
 			}
+		}
+		if (this.getPatientPreparation() != null)
+		{
+			sb.append("<patientPreparation>");
+			sb.append(this.getPatientPreparation().toXMLString()); 
+			sb.append("</patientPreparation>");		
+		}
+		if (this.getDiathermyDeviceSerialNumber() != null)
+		{
+			sb.append("<diathermyDeviceSerialNumber>");
+			sb.append(this.getDiathermyDeviceSerialNumber().toXMLString()); 
+			sb.append("</diathermyDeviceSerialNumber>");		
+		}
+		if (this.getDiathermyPadSite() != null)
+		{
+			sb.append("<diathermyPadSite>");
+			sb.append(this.getDiathermyPadSite().toXMLString()); 
+			sb.append("</diathermyPadSite>");		
+		}
+		if (this.getLaserDeviceName() != null)
+		{
+			sb.append("<laserDeviceName>");
+			sb.append(this.getLaserDeviceName().toXMLString()); 
+			sb.append("</laserDeviceName>");		
+		}
+		if (this.getLaserDeviceSerialNumber() != null)
+		{
+			sb.append("<laserDeviceSerialNumber>");
+			sb.append(this.getLaserDeviceSerialNumber().toXMLString()); 
+			sb.append("</laserDeviceSerialNumber>");		
+		}
+		if (this.getLaserMode() != null)
+		{
+			sb.append("<laserMode>");
+			sb.append(this.getLaserMode().toXMLString()); 
+			sb.append("</laserMode>");		
+		}
+		if (this.getLaserPatientSafetyMeasures() != null)
+		{
+			sb.append("<laserPatientSafetyMeasures>");
+			sb.append(this.getLaserPatientSafetyMeasures().toXMLString()); 
+			sb.append("</laserPatientSafetyMeasures>");		
+		}
+		if (this.getIrrigantSolution() != null)
+		{
+			sb.append("<irrigantSolution>");
+			sb.append(this.getIrrigantSolution().toXMLString()); 
+			sb.append("</irrigantSolution>");		
+		}
+		if (this.getSpecimenDestination() != null)
+		{
+			sb.append("<specimenDestination>");
+			sb.append(this.getSpecimenDestination().toXMLString()); 
+			sb.append("</specimenDestination>");		
+		}
+		if (this.getWoundPackingType() != null)
+		{
+			sb.append("<woundPackingType>");
+			sb.append(this.getWoundPackingType().toXMLString()); 
+			sb.append("</woundPackingType>");		
+		}
+		if (this.getProcedureWoundClass() != null)
+		{
+			sb.append("<procedureWoundClass>");
+			sb.append(this.getProcedureWoundClass().toXMLString()); 
+			sb.append("</procedureWoundClass>");		
+		}
+		if (this.getMissingItems() != null)
+		{
+			sb.append("<missingItems>");
+			sb.append(this.getMissingItems().toXMLString()); 
+			sb.append("</missingItems>");		
+		}
+		if (this.getActionsTaken() != null)
+		{
+			sb.append("<actionsTaken>");
+			sb.append(this.getActionsTaken().toXMLString()); 
+			sb.append("</actionsTaken>");		
+		}
+		if (this.getChartableOccurrenceType() != null)
+		{
+			sb.append("<chartableOccurrenceType>");
+			sb.append(this.getChartableOccurrenceType().toXMLString()); 
+			sb.append("</chartableOccurrenceType>");		
 		}
 		return sb.toString();
 	}
@@ -1133,6 +1390,90 @@ public class IntraOperativeDetails extends ims.domain.DomainObject implements im
 			fldEl = fldEl.element("list");	
 			obj.setTableDevices(ims.core.clinical.domain.objects.TableDevice.fromListXMLString(fldEl, factory, obj.getTableDevices(), domMap));
 		}
+		fldEl = el.element("patientPreparation");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setPatientPreparation(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("diathermyDeviceSerialNumber");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setDiathermyDeviceSerialNumber(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("diathermyPadSite");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setDiathermyPadSite(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("laserDeviceName");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setLaserDeviceName(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("laserDeviceSerialNumber");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setLaserDeviceSerialNumber(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("laserMode");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setLaserMode(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("laserPatientSafetyMeasures");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setLaserPatientSafetyMeasures(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("irrigantSolution");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setIrrigantSolution(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("specimenDestination");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setSpecimenDestination(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("woundPackingType");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setWoundPackingType(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("procedureWoundClass");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setProcedureWoundClass(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("missingItems");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setMissingItems(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("actionsTaken");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setActionsTaken(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("chartableOccurrenceType");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setChartableOccurrenceType(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -1177,6 +1518,20 @@ public class IntraOperativeDetails extends ims.domain.DomainObject implements im
 		public static final String CirculatingNurse = "circulatingNurse";
 		public static final String CountComments = "countComments";
 		public static final String TableDevices = "tableDevices";
+		public static final String PatientPreparation = "patientPreparation";
+		public static final String DiathermyDeviceSerialNumber = "diathermyDeviceSerialNumber";
+		public static final String DiathermyPadSite = "diathermyPadSite";
+		public static final String LaserDeviceName = "laserDeviceName";
+		public static final String LaserDeviceSerialNumber = "laserDeviceSerialNumber";
+		public static final String LaserMode = "laserMode";
+		public static final String LaserPatientSafetyMeasures = "laserPatientSafetyMeasures";
+		public static final String IrrigantSolution = "irrigantSolution";
+		public static final String SpecimenDestination = "specimenDestination";
+		public static final String WoundPackingType = "woundPackingType";
+		public static final String ProcedureWoundClass = "procedureWoundClass";
+		public static final String MissingItems = "missingItems";
+		public static final String ActionsTaken = "actionsTaken";
+		public static final String ChartableOccurrenceType = "chartableOccurrenceType";
 	}
 }
 

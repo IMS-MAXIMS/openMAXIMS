@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -87,14 +92,12 @@ import ims.assessment.vo.Patient_GraphicalAssessmentStageVoCollection;
 import ims.assessment.vo.Question_AnswerTypeVo;
 import ims.assessment.vo.Question_AnswerTypeVoCollection;
 import ims.assessment.vo.Question_InformationVo;
-import ims.assessment.vo.UserAssessmentVo;
 import ims.assessment.vo.UserAssessmentWithServiceCollVo;
 import ims.assessment.vo.User_AssessmentVo;
 import ims.assessment.vo.domain.AssessmentQuestionRoleVoAssembler;
 import ims.assessment.vo.domain.AssessmentRoleVoAssembler;
 import ims.assessment.vo.domain.Patient_AssessmentListVoAssembler;
 import ims.assessment.vo.domain.Patient_AssessmentVoAssembler;
-import ims.assessment.vo.domain.UserAssessmentVoAssembler;
 import ims.assessment.vo.domain.UserAssessmentWithServiceCollVoAssembler;
 import ims.core.admin.domain.objects.CareContext;
 import ims.core.admin.domain.objects.ClinicalContact;
@@ -134,6 +137,7 @@ import ims.core.vo.domain.PatientDocumentVoAssembler;
 import ims.core.vo.domain.PatientShortAssembler;
 import ims.core.vo.domain.TemplateBoLiteVoAssembler;
 import ims.core.vo.lookups.LookupHelper;
+import ims.core.vo.lookups.PatientAssessmentStatusReason;
 import ims.core.vo.lookups.UserDefinedAssessmentType;
 import ims.domain.DomainFactory;
 import ims.domain.DomainObject;
@@ -196,7 +200,7 @@ public class DynamicAssessmentsImpl extends BaseDynamicAssessmentsImpl
 			query += " where ";
 		query += hql.toString();	
 		
-		List result = factory.find(query, markers, values);
+		List<?> result = factory.find(query, markers, values);
 		if(result == null || result.size() > 1)
 			throw new RuntimeException("More than one patient assessment found");
 		else if (result.size() == 0)
@@ -232,7 +236,7 @@ public class DynamicAssessmentsImpl extends BaseDynamicAssessmentsImpl
 			query += " where ";
 		query += hql.toString();	
 		
-		List result = factory.find(query, markers, values);
+		List<?> result = factory.find(query, markers, values);
 		if(result == null || result.size() > 1)
 			throw new RuntimeException("More than one patient assessment found");
 		else if (result.size() == 0)
@@ -367,10 +371,7 @@ public class DynamicAssessmentsImpl extends BaseDynamicAssessmentsImpl
 			
 			values.add(fromDate.getDate());
 			
-			java.util.Date toDateJavaUtil = toDate.getDate();
-			toDateJavaUtil.setHours(23);
-			toDateJavaUtil.setMinutes(59);
-			toDateJavaUtil.setSeconds(59);
+			java.util.Date toDateJavaUtil = new DateTime(toDate, new Time(23, 59, 59)).getJavaDate();
 			values.add(toDateJavaUtil);
 		}
 		else if (toDate != null)
@@ -380,11 +381,7 @@ public class DynamicAssessmentsImpl extends BaseDynamicAssessmentsImpl
 			
 			markers.add("TO_DATE");
 			
-			java.util.Date toDateJava = toDate.getDate();
-			
-			toDateJava.setHours(23);
-			toDateJava.setMinutes(59);
-			toDateJava.setSeconds(59);
+			java.util.Date toDateJava = new DateTime(toDate, new Time(23, 59, 59)).getJavaDate();
 			
 			values.add(toDateJava);
 		}
@@ -492,10 +489,7 @@ public class DynamicAssessmentsImpl extends BaseDynamicAssessmentsImpl
 			
 			values.add(fromDate.getDate());
 			
-			java.util.Date toDateJavaUtil = toDate.getDate();
-			toDateJavaUtil.setHours(23);
-			toDateJavaUtil.setMinutes(59);
-			toDateJavaUtil.setSeconds(59);
+			java.util.Date toDateJavaUtil = new DateTime(toDate, new Time(23, 59, 59)).getJavaDate();
 			values.add(toDateJavaUtil);
 			
 			andStr = " and ";
@@ -507,13 +501,8 @@ public class DynamicAssessmentsImpl extends BaseDynamicAssessmentsImpl
 			
 			markers.add("TO_DATE");
 			
-			java.util.Date toDateJava = toDate.getDate();
-			
-			toDateJava.setHours(23);
-			toDateJava.setMinutes(59);
-			toDateJava.setSeconds(59);
-			
-			values.add(toDateJava);
+			java.util.Date toDateJavaUtil = new DateTime(toDate, new Time(23, 59, 59)).getJavaDate();			
+			values.add(toDateJavaUtil);
 			
 			andStr = " and ";
 		}
@@ -571,6 +560,20 @@ public class DynamicAssessmentsImpl extends BaseDynamicAssessmentsImpl
 		PatientAssessment doPatientAssessment = (PatientAssessment) getDomainFactory().getDomainObject(PatientAssessment.class, patientAssessment.getID_PatientAssessment());
 		
 		Patient_AssessmentVo patAssessment = assemblePatientAssessment(doPatientAssessment);
+		
+		//WDEV-21640
+		if (patAssessment == null || patAssessment.getAssessmentData() == null || patAssessment.getAssessmentData().getGraphic() == null || patAssessment.getAssessmentData().getGraphic().getImages() == null)
+			return patAssessment;
+		
+		//WDEV-21150 Trap situation where image file is missing
+		for (int x=0; x < patAssessment.getAssessmentData().getGraphic().getImages().size(); x++)
+		{
+			if (patAssessment.getAssessmentData().getGraphic().getImages().get(x).getImage() != null
+					&& patAssessment.getAssessmentData().getGraphic().getImages().get(x).getImage().getImageInfo() == null)
+			{
+				throw new CodingRuntimeException("Graphical Assessment image " + patAssessment.getAssessmentData().getGraphic().getImages().get(x).getImage().getImagePath() + " not found. Contact the system administrator");
+			}			
+		} //WDEV-21150
 		
 		return patAssessment;
 	}
@@ -635,7 +638,7 @@ public class DynamicAssessmentsImpl extends BaseDynamicAssessmentsImpl
 
 		if(refVo instanceof UserAssessmentRefVo)
 		{
-			List list = getDomainFactory().find("select u1_1.associatedReport.name from UserAssessment as u1_1 where (u1_1.id = :ID)", new String[] {"ID"}, new Object[] {new Integer(refVo.getBoId())});
+			List<?> list = getDomainFactory().find("select u1_1.associatedReport.name from UserAssessment as u1_1 where (u1_1.id = :ID)", new String[] {"ID"}, new Object[] {new Integer(refVo.getBoId())});
 			
 			if(list != null && list.size() > 0)
 			{
@@ -711,12 +714,12 @@ public class DynamicAssessmentsImpl extends BaseDynamicAssessmentsImpl
 		else
 			throw new CodingRuntimeException("Invalid context type");
 		
-		query += " and a.isRIE is null and a.completedDateTime is not null order by a.completedDateTime desc";
+		query += " and a.isRIE is null or a.isRIE = 0 order by a.authoringInformation.authoringDateTime desc"; //WDEV-19078
 		
 		DomainObject previousAssessment = factory.findFirst(query, markers, values);
 		
-		if(previousAssessment instanceof PatientAssessment)
-			return new PatientAssessmentRefVo(previousAssessment.getId(), previousAssessment.getVersion());
+		if(previousAssessment instanceof PatientAssessment && getDomLookup(PatientAssessmentStatusReason.COMPLETED).equals(((PatientAssessment) previousAssessment).getStatus())) //WDEV-19078
+				return new PatientAssessmentRefVo(previousAssessment.getId(), previousAssessment.getVersion());
 			
 		return null;
 	}
@@ -847,7 +850,7 @@ public class DynamicAssessmentsImpl extends BaseDynamicAssessmentsImpl
 		
 		String query = "select ass.isAssessmentDocumentSaved from PatientAssessment as ass where ass.id = " + patientAssessment.getID_PatientAssessment().toString();
 		
-		List result = getDomainFactory().find(query);
+		List<?> result = getDomainFactory().find(query);
 		
 		if (result.iterator().hasNext())
 		{
@@ -1246,7 +1249,7 @@ public class DynamicAssessmentsImpl extends BaseDynamicAssessmentsImpl
 		}
 		
 		userAssessment.setAssessmentRoles(AssessmentRoleVoAssembler.createAssessmentRoleVoCollectionFromAssessmentRole(doUserAssessment.getAssessmentRoles())); //WDEV-3709
-		
+		userAssessment.setActiveStatus(doUserAssessment.getActiveStatus() != null ? LookupHelper.getPreActiveActiveInactiveStatusInstance(getLookupService(), doUserAssessment.getActiveStatus().getId()) : null); //WDEV-19667
 		return userAssessment;
 	}
 	
@@ -1539,21 +1542,26 @@ public class DynamicAssessmentsImpl extends BaseDynamicAssessmentsImpl
 	 * WDEV-13704
 	 * Function used to retrieve Report and Template
 	 */
-	public String[] getReportAndTemplate(TemplateBoRefVo template)
+	//WDEV-19127
+	public String[] getReportAndTemplateFromConfigOrImsID(Integer templateID, Boolean getByIMSId)
 	{
-		String[] result = null;
-
-		if (template == null || !template.getID_TemplateBoIsNotNull())
+		if (templateID == null)
 			return null;
-
-		@SuppressWarnings("rawtypes")
-		List list = getDomainFactory().find("select rep.reportXml, tmpl.templateXml from TemplateBo as tmpl left join tmpl.report as rep where tmpl.id = :ID", "ID", template.getID_TemplateBo());
+		
+		String[] result = null;		
+		DomainFactory factory = getDomainFactory();
+		
+		String hql = "select rep.reportXml, tmpl.templateXml from TemplateBo as tmpl left join tmpl.report as rep where tmpl.id = :ID";
+		if (getByIMSId)
+			hql = "select r.reportXml, t.templateXml from ReportBo as r left join r.templates as t where (r.imsId= :ID) order by t.name";
+		
+		List<?> list = factory.find(hql, "ID", templateID);
 
 		if (list.iterator().hasNext())
 		{
 			Object[] obj = (Object[]) list.iterator().next();
 
-			result = new String[] { (String) obj[0], (String) obj[1] };
+			result = new String[] {(String) obj[0], (String) obj[1]};
 		}
 
 		return result;
@@ -1577,5 +1585,47 @@ public class DynamicAssessmentsImpl extends BaseDynamicAssessmentsImpl
 		return PatientDocumentLiteVoAssembler.create(doPatientDocument);
 		
 	}
+	//WDEV-19127
+	public String[] getReportByImsID(Integer imsID)
+	{
+		if (imsID == null)
+			return null;
+		
+		String[] result = null;		
+		DomainFactory factory = getDomainFactory();
+		
+		List<?> lst = factory.find("select r.reportXml, t.templateXml from ReportBo as r left join r.templates as t where (r.imsId= :imsid) order by t.name", new String[] {"imsid"}, new Object[] {imsID});
+		
+		if(lst.iterator().hasNext())
+		{
+			Object[] obj = (Object[])lst.iterator().next();
+			result = new String[] {(String)obj[0], (String)obj[1]};
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * WDEV-13704
+	 * Function used to retrieve Report and Template
+	 */
+	public String[] getReportAndTemplate(TemplateBoRefVo template)
+	{
+		String[] result = null;
 
+		if (template == null || !template.getID_TemplateBoIsNotNull())
+			return null;
+
+		@SuppressWarnings("rawtypes")
+		List list = getDomainFactory().find("select rep.reportXml, tmpl.templateXml from TemplateBo as tmpl left join tmpl.report as rep where tmpl.id = :ID", "ID", template.getID_TemplateBo());
+
+		if (list.iterator().hasNext())
+		{
+			Object[] obj = (Object[]) list.iterator().next();
+
+			result = new String[] { (String) obj[0], (String) obj[1] };
+		}
+
+		return result;
+	}
 }

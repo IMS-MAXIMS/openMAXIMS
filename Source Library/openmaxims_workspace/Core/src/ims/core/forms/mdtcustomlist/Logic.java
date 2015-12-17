@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -31,6 +36,7 @@ import ims.core.vo.ClinicalContactShortVoCollection;
 import ims.core.vo.CustomListVo;
 import ims.core.vo.CustomListVoCollection;
 import ims.core.vo.EpisodeofCareVoCollection;
+import ims.core.vo.MDTCustomListSearchCriteriaVo;
 import ims.core.vo.MDTPatientCustomListVo;
 import ims.core.vo.PatientShort;
 import ims.core.vo.PatientShortCollection;
@@ -49,6 +55,13 @@ public class Logic extends BaseLogic
 	protected void onFormOpen() throws ims.framework.exceptions.PresentationLogicException
 	{
 		initialize();
+		//WDEV-19389 
+		if (form.getGlobalContext().Core.getMDTCustomListSearchCriteriaIsNotNull())
+		{
+			setSearchCriteria(form.getGlobalContext().Core.getMDTCustomListSearchCriteria());
+			if(search())
+				form.getGlobalContext().Core.setMDTCustomListSearchCriteria(getSearchCriteria());
+		}
 	}
 	private void initialize() {
 		form.getContextMenus().Core.hideAllMDTCustomListsMenuItems();
@@ -62,6 +75,34 @@ public class Logic extends BaseLogic
 				form.cmbCustomLists().newRow(voCustomList, voCustomList.getListName());
 			}
 	}
+	
+	private MDTCustomListSearchCriteriaVo getSearchCriteria()
+	{
+		MDTCustomListSearchCriteriaVo searchCriteria = new MDTCustomListSearchCriteriaVo();
+		
+		searchCriteria.setSpecialty(form.cmbSpecialty().getValue());
+		searchCriteria.setListName(form.cmbCustomLists().getValue());
+		searchCriteria.setDate(form.dteDate().getValue());
+		
+		return searchCriteria;
+	}
+	
+	private void setSearchCriteria(MDTCustomListSearchCriteriaVo mdtCustomListSearchCriteriaVo) 
+	{
+		form.cmbSpecialty().setValue(mdtCustomListSearchCriteriaVo.getSpecialty());
+		form.dteDate().setValue(mdtCustomListSearchCriteriaVo.getDate());
+
+		if (form.cmbSpecialty().getValue() != null && form.dteDate().getValue() != null)
+		{
+			CustomListVo voCustomList = new CustomListVo();
+			voCustomList.setDate(form.dteDate().getValue());
+			voCustomList.setSpecialty(form.cmbSpecialty().getValue());
+			loadListCombo(domain.listCustomListTypes(voCustomList));
+		}
+		
+		form.cmbCustomLists().setValue(mdtCustomListSearchCriteriaVo.getListName());
+	}
+	
 	@Override
 	protected void onImbResetClick() throws ims.framework.exceptions.PresentationLogicException
 	{
@@ -71,17 +112,27 @@ public class Logic extends BaseLogic
 		form.cmbCustomLists().clear();
 		form.grdPatients().getRows().clear();
 		form.getContextMenus().Core.hideAllMDTCustomListsMenuItems();
+		form.getGlobalContext().Core.setMDTCustomListSearchCriteria(null);//WDEV-19389 
 	}
 	@Override
 	protected void onImbSearchClick() throws ims.framework.exceptions.PresentationLogicException
 	{
+		//WDEV-19389 
+		if (search())
+			form.getGlobalContext().Core.setMDTCustomListSearchCriteria(getSearchCriteria());//WDEV-19389 
+		
+		form.getContextMenus().Core.hideAllMDTCustomListsMenuItems();
+	}
+	
+	private boolean search()
+	{
 		if(form.cmbSpecialty().getValue()==null){
 			engine.showMessage("Please select a Specialty for search");
-			return;
+			return false;
 		}
 		if(form.dteDate().getValue()==null){
 			engine.showMessage("Please select a Date for search");
-			return;
+			return false;
 		}
 		CustomListVo voCustomList = form.cmbCustomLists().getValue();
 		if(voCustomList!=null){
@@ -92,9 +143,10 @@ public class Logic extends BaseLogic
 		else{
 			form.grdPatients().getRows().clear();
 			engine.showMessage("Please select a List Name for search");
+			return false;
 		}
 		
-		form.getContextMenus().Core.hideAllMDTCustomListsMenuItems();
+		return true;
 	}
 	private void populatePatientsGrid(MDTPatientCustomListVo voPatientCustomList) {
 		if(voPatientCustomList!=null && voPatientCustomList.getPatientsIsNotNull()){

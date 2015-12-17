@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -347,7 +352,6 @@ public class Logic extends BaseLogic
 		{
 			if(voSensExam.getNeuroSens() == null)
 			{
-				populateContactInfo(null);
 				form.btnNew().setVisible((form.getLocalContext().getIsClinicalContactType().booleanValue()==true && form.getLocalContext().getIsMedicalInpatientForm().booleanValue()==false ) || form.getLocalContext().getIsMedicalInpatientForm().booleanValue()==true); //WDEV-15048 
 				form.btnNew().setEnabled((form.getLocalContext().getIsClinicalContactType().booleanValue()==true && form.getLocalContext().getIsMedicalInpatientForm().booleanValue()==false ) || form.getLocalContext().getIsMedicalInpatientForm().booleanValue()==true); //WDEV-15048 
 				form.btnUpdate().setVisible(false);
@@ -555,6 +559,7 @@ public class Logic extends BaseLogic
 		form.lyr1().tabDetails().cmbFrankelGrade().setValue(null);
 		form.lyr1().tabDetails().cmbLeftSensLevel().setValue(null);
 		form.lyr1().tabDetails().cmbRightSensLevel().setValue(null);
+		form.lyr1().tabDetails().chkProblem().setValue(null); //WDEV-18857
 	}
 
 	private void populateContactInfo(NeuroSenastionFindingsVo voNeuroSenastionFindings) 
@@ -569,19 +574,20 @@ public class Logic extends BaseLogic
 			
 			return;
 		}
-		
-		if(form.getGlobalContext().Core.getCurrentClinicalContactIsNotNull())
+		//WDEV-18846 - start
+		boolean isLoggedOnUserHCP = domain.getHcpLiteUser() != null;
+		if (isLoggedOnUserHCP)
 		{
-			ClinicalContactShortVo voClinicalContactShort = form.getGlobalContext().Core.getCurrentClinicalContact();
-			
-			if(voClinicalContactShort != null)
+			form.ccAuthoring().initializeComponent(true,null);
+		}
+		else
+		{
+			if (form.getGlobalContext().Core.getCurrentClinicalContact() != null)
 			{
-				if(voClinicalContactShort.getStartDateTimeIsNotNull())
-				{
-					form.ccAuthoring().initializeComponent(false); //WDEV-15172 
-				}
+				form.ccAuthoring().initializeComponent(false,true); //WDEV-15172 
 			}
 		}
+		//---------- end WDEV-18846
 	}
 
 	private void loadVertebralCombos() 
@@ -601,6 +607,7 @@ public class Logic extends BaseLogic
 	{
 		form.setMode(FormMode.EDIT);
 		form.lblBrowseStatus().setValue("Creating new record");
+		populateContactInfo(null); //WDEV-18857
 		
 		NeuroSensationExaminationVo voNeuroSensation = new NeuroSensationExaminationVo();
 		NeuroSenastionFindingsVo voNeuroFindings = new NeuroSenastionFindingsVo();
@@ -621,7 +628,7 @@ public class Logic extends BaseLogic
 			clearScreen();
 			loadFindingsGrids();
 			
-			form.ccAuthoring().initializeComponent(true); //WDEV-15172
+			form.ccAuthoring().initializeComponent(true, null); //WDEV-15172 //WDEV-18846
 		}
 	}
 	
@@ -1053,9 +1060,10 @@ public class Logic extends BaseLogic
 		else
 			form.recbrSensation().setEnabled(false);
 		
+		form.lyr1().tabDetails().chkProblem().setEnabled(FormMode.EDIT.equals(form.getMode())); //WDEV-18855
 		//WDEV-15172
-		form.ccAuthoring().setEnabledAuthoringHCP(form.getMode().equals(FormMode.EDIT) && form.getLocalContext().getIsMedicalInpatientForm());
-		form.ccAuthoring().setEnabledDateTime(form.getMode().equals(FormMode.EDIT) && form.getLocalContext().getIsMedicalInpatientForm());
+		form.ccAuthoring().setEnabledAuthoringHCP(form.getMode().equals(FormMode.EDIT)); //WDEV-18846
+		form.ccAuthoring().setEnabledDateTime(form.getMode().equals(FormMode.EDIT)); 	//WDEV-18846
 	}
 
 

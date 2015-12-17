@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.clinical.domain.objects;
@@ -79,6 +84,7 @@ public class PatientMedicationDose extends ims.domain.DomainObject implements ja
 	private Boolean isCopied;
 	/** AuthoringInformation */
 	private ims.core.clinical.domain.objects.AuthoringInformation authoringInformation;
+	private String comment;
     public PatientMedicationDose (Integer id, int ver)
     {
     	super(id, ver);
@@ -238,6 +244,17 @@ public class PatientMedicationDose extends ims.domain.DomainObject implements ja
 		this.authoringInformation = authoringInformation;
 	}
 
+	public String getComment() {
+		return comment;
+	}
+	public void setComment(String comment) {
+		if ( null != comment && comment.length() > 255 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for comment. Tried to set value: "+
+				comment);
+		}
+		this.comment = comment;
+	}
+
 	/**
 	 * isConfigurationObject
 	 * Taken from the Usage property of the business object, this method will return
@@ -357,6 +374,9 @@ public class PatientMedicationDose extends ims.domain.DomainObject implements ja
 				
 		    auditStr.append(authoringInformation.toString());
 		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*comment* :");
+		auditStr.append(comment);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -512,6 +532,12 @@ public class PatientMedicationDose extends ims.domain.DomainObject implements ja
 			sb.append("<authoringInformation>");
 			sb.append(this.getAuthoringInformation().toXMLString(domMap)); 	
 			sb.append("</authoringInformation>");		
+		}
+		if (this.getComment() != null)
+		{
+			sb.append("<comment>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getComment().toString()));
+			sb.append("</comment>");		
 		}
 		return sb.toString();
 	}
@@ -776,6 +802,11 @@ public class PatientMedicationDose extends ims.domain.DomainObject implements ja
 			fldEl = fldEl.element("class");		
 			obj.setAuthoringInformation(ims.core.clinical.domain.objects.AuthoringInformation.getAuthoringInformationfromXML(fldEl, factory, domMap)); 
 		}
+		fldEl = el.element("comment");
+		if(fldEl != null)
+		{	
+    		obj.setComment(new String(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -807,6 +838,7 @@ public class PatientMedicationDose extends ims.domain.DomainObject implements ja
 		public static final String CommencedByType = "commencedByType";
 		public static final String IsCopied = "isCopied";
 		public static final String AuthoringInformation = "authoringInformation";
+		public static final String Comment = "comment";
 	}
 }
 

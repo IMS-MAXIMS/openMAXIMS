@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 12/10/2015, 13:31 -->
+<hibernate-mapping>
+	<class name="ims.clinical.domain.objects.DiathermyDetailIntraOp" table="shcl_diathermydetai" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: theatreAppointment -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="theatreAppointment" class="ims.scheduling.domain.objects.Booking_Appointment" unique="true" foreign-key="diathermydetai_theatreapp_fk" access="field" cascade="save-update">
+			<column name="theatreapp" sql-type="numeric(10,0)" not-null="true" unique="false"  index='skin_prep_idx1' />
+		</many-to-one>
+<!-- debug: diathermyMode -->
+<!-- debug: coagSetting -->
+<!-- debug: cutSetting -->
+<!-- debug: blendSetting -->
+<!-- debug: serialNumber -->
+<!-- debug: padSite -->
+<!-- debug: appliedBy -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="appliedBy" class="ims.core.resource.people.domain.objects.Hcp" unique="true" foreign-key="diathermydetai_appliedby_fk" access="field" cascade="save-update">
+			<column name="appliedby" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: removedBy -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="removedBy" class="ims.core.resource.people.domain.objects.Hcp" unique="true" foreign-key="diathermydetai_removedby_fk" access="field" cascade="save-update">
+			<column name="removedby" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="diathermyMode" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_diathermym" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="coagSetting" type="string" access="field" update="true" > 
+			<column name="coagsettin" length="100"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="cutSetting" type="string" access="field" update="true" > 
+			<column name="cutsetting" length="100"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="blendSetting" type="string" access="field" update="true" > 
+			<column name="blendsetti" length="100"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="serialNumber" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_serialnumb" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="padSite" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_padsite" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+	</class>
+</hibernate-mapping>

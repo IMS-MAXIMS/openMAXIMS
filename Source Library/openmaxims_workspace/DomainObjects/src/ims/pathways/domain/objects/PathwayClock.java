@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.pathways.domain.objects;
@@ -65,6 +70,8 @@ public class PathwayClock extends ims.domain.DomainObject implements ims.domain.
 	  * Collection of ims.pathways.domain.objects.PathwayRTTStatus.
 	  */
 	private java.util.List rTTStatusHistory;
+	/** Target End Date */
+	private java.util.Date targetClockEnd;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public PathwayClock (Integer id, int ver)
@@ -153,6 +160,13 @@ public class PathwayClock extends ims.domain.DomainObject implements ims.domain.
 	}
 	public void setRTTStatusHistory(java.util.List paramValue) {
 		this.rTTStatusHistory = paramValue;
+	}
+
+	public java.util.Date getTargetClockEnd() {
+		return targetClockEnd;
+	}
+	public void setTargetClockEnd(java.util.Date targetClockEnd) {
+		this.targetClockEnd = targetClockEnd;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -266,6 +280,9 @@ public class PathwayClock extends ims.domain.DomainObject implements ims.domain.
 			auditStr.append("] " + i8);
 		}
 	    auditStr.append("; ");
+		auditStr.append("\r\n*targetClockEnd* :");
+		auditStr.append(targetClockEnd);
+	    auditStr.append("; ");
 		return auditStr.toString();
 	}
 	
@@ -363,6 +380,12 @@ public class PathwayClock extends ims.domain.DomainObject implements ims.domain.
 			sb.append(ims.domain.DomainObject.toXMLString(this.getRTTStatusHistory(), domMap));
 			sb.append("</rTTStatusHistory>");		
 			}
+		}
+		if (this.getTargetClockEnd() != null)
+		{
+			sb.append("<targetClockEnd>");
+			sb.append(new ims.framework.utils.DateTime(this.getTargetClockEnd()).toString(ims.framework.utils.DateTimeFormat.MILLI));
+			sb.append("</targetClockEnd>");		
 		}
 		return sb.toString();
 	}
@@ -571,6 +594,11 @@ public class PathwayClock extends ims.domain.DomainObject implements ims.domain.
 			fldEl = fldEl.element("list");	
 			obj.setRTTStatusHistory(ims.pathways.domain.objects.PathwayRTTStatus.fromListXMLString(fldEl, factory, obj.getRTTStatusHistory(), domMap));
 		}
+		fldEl = el.element("targetClockEnd");
+		if(fldEl != null)
+		{	
+    		obj.setTargetClockEnd(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -593,6 +621,7 @@ public class PathwayClock extends ims.domain.DomainObject implements ims.domain.
 		public static final String CurrentPause = "currentPause";
 		public static final String CurrentRTTStatus = "currentRTTStatus";
 		public static final String RTTStatusHistory = "rTTStatusHistory";
+		public static final String TargetClockEnd = "targetClockEnd";
 	}
 }
 

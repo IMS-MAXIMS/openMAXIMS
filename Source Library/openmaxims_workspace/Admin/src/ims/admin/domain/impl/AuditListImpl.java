@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -31,6 +36,7 @@ import ims.admin.domain.OrganisationAndLocation;
 import ims.admin.vo.RecordedInErrorVo;
 import ims.admin.vo.AppUserShortVoCollection;
 import ims.admin.vo.domain.AppUserShortVoAssembler;
+import ims.core.configuration.domain.objects.AppRole;
 import ims.core.vo.AuditListFilterVo;
 import ims.core.vo.AuditVo;
 import ims.core.vo.AuditVoCollection;
@@ -158,6 +164,8 @@ public class AuditListImpl extends DomainImpl implements ims.admin.domain.AuditL
 				names.add("classId");
 			}
 		}
+		
+
 		if (andStr.equals(" and "))
 		{
 			hql += " where ";
@@ -179,6 +187,13 @@ public class AuditListImpl extends DomainImpl implements ims.admin.domain.AuditL
 			{
 				vo.setAuditDateTime(new ims.framework.utils.DateTime(dateTime));
 			}
+			
+			//WDEV-16478
+			if (inf.getAuditRoleId() != null)
+			{
+				AppRole domRole =  (AppRole)factory.getDomainObject(AppRole.class, inf.getAuditRoleId());
+				vo.setAuditUserRole(domRole.getName());
+			}
 
 			vo.setAuditUser(inf.getAuditUser());
 			vo.setClassIdentifier(inf.getClassIdentifier());
@@ -197,7 +212,7 @@ public class AuditListImpl extends DomainImpl implements ims.admin.domain.AuditL
 	public AppUserShortVoCollection listAppUsers(java.lang.String name)
 	{
 		StringBuilder query = new StringBuilder();
-		query.append("from AppUser as user where user.username != 'imsadmin' ");
+		query.append("from AppUser as user where user.username != 'xxxxx' ");
 		
 		if (name != null)
 		{

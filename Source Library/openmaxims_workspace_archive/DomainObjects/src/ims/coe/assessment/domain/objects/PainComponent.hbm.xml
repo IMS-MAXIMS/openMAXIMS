@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:35 -->
+<hibernate-mapping>
+	<subclass name="ims.coe.assessment.domain.objects.PainComponent" lazy="true" discriminator-value="PAIN" extends="ims.nursing.assessment.domain.objects.AssessmentComponent" >
+<!-- debug: hibernateClassContent -->
+<!-- debug: optionalPainAssessment -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="optionalPainAssessment" class="ims.nursing.assessmenttools.domain.objects.PainAssessment" unique="true" foreign-key="paincomp_optionalpa_fk" access="field" cascade="save-update">
+			<column name="optionalpa" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: patientExperiencePainAnyTime -->
+<!-- debug: patientTakePainMeds -->
+<!-- debug: painMedication -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="painMedication" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="paincomp_painmedica_fk">
+				<column name="coe_paincomp_painmedica" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.coe.assessment.domain.objects.PainMedication" />
+		</set>
+<!-- debug: otherMethods -->
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="patientExperiencePainAnyTime" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_patientexp" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="patientTakePainMeds" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_patienttak" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="otherMethods" type="string" access="field" update="true" > 
+			<column name="othermetho" length="500"  not-null="false" unique="false"  />
+		</property>
+	</subclass>
+</hibernate-mapping>

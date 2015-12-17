@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.pathways.vo.domain;
@@ -58,6 +63,14 @@ public class AdminEventVoAssembler
 		valueObjectDest.setOutcome(valueObjectSrc.getOutcome());
 		// EventMethod
 		valueObjectDest.setEventMethod(valueObjectSrc.getEventMethod());
+		// RTTClockImpact
+		valueObjectDest.setRTTClockImpact(valueObjectSrc.getRTTClockImpact());
+		// OutcomeReason
+		valueObjectDest.setOutcomeReason(valueObjectSrc.getOutcomeReason());
+		// EcadDate
+		valueObjectDest.setEcadDate(valueObjectSrc.getEcadDate());
+		// AdmittedStop
+		valueObjectDest.setAdmittedStop(valueObjectSrc.getAdmittedStop());
 	 	return valueObjectDest;
 	 }
 
@@ -424,7 +437,65 @@ public class AdminEventVoAssembler
 			}			
 			valueObject.setEventMethod(voLookup4);
 		}
-		 		return valueObject;
+				// RTTClockImpact
+		if (domainObject.getRTTClockImpact() != null)
+		{
+			if(domainObject.getRTTClockImpact() instanceof HibernateProxy) // If the proxy is set, there is no need to lazy load, the proxy knows the id already. 
+			{
+				HibernateProxy p = (HibernateProxy) domainObject.getRTTClockImpact();
+				int id = Integer.parseInt(p.getHibernateLazyInitializer().getIdentifier().toString());				
+				valueObject.setRTTClockImpact(new ims.pathways.vo.PathwaysRTTClockImpactRefVo(id, -1));				
+			}
+			else
+			{
+				valueObject.setRTTClockImpact(new ims.pathways.vo.PathwaysRTTClockImpactRefVo(domainObject.getRTTClockImpact().getId(), domainObject.getRTTClockImpact().getVersion()));
+			}
+		}
+		// OutcomeReason
+		ims.domain.lookups.LookupInstance instance6 = domainObject.getOutcomeReason();
+		if ( null != instance6 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance6.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance6.getImage().getImageId(), instance6.getImage().getImagePath());
+			}
+			color = instance6.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.pathways.vo.lookups.AdminEventOutcomeReason voLookup6 = new ims.pathways.vo.lookups.AdminEventOutcomeReason(instance6.getId(),instance6.getText(), instance6.isActive(), null, img, color);
+			ims.pathways.vo.lookups.AdminEventOutcomeReason parentVoLookup6 = voLookup6;
+			ims.domain.lookups.LookupInstance parent6 = instance6.getParent();
+			while (parent6 != null)
+			{
+				if (parent6.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent6.getImage().getImageId(), parent6.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent6.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup6.setParent(new ims.pathways.vo.lookups.AdminEventOutcomeReason(parent6.getId(),parent6.getText(), parent6.isActive(), null, img, color));
+				parentVoLookup6 = parentVoLookup6.getParent();
+								parent6 = parent6.getParent();
+			}			
+			valueObject.setOutcomeReason(voLookup6);
+		}
+				// EcadDate
+		java.util.Date EcadDate = domainObject.getEcadDate();
+		if ( null != EcadDate ) 
+		{
+			valueObject.setEcadDate(new ims.framework.utils.Date(EcadDate) );
+		}
+		// AdmittedStop
+		valueObject.setAdmittedStop( domainObject.isAdmittedStop() );
+ 		return valueObject;
 	 }
 
 
@@ -497,6 +568,42 @@ public class AdminEventVoAssembler
 				domainFactory.getLookupInstance(valueObject.getEventMethod().getID());
 		}
 		domainObject.setEventMethod(value4);
+		ims.pathways.domain.objects.PathwaysRTTClockImpact value5 = null;
+		if ( null != valueObject.getRTTClockImpact() ) 
+		{
+			if (valueObject.getRTTClockImpact().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getRTTClockImpact()) != null)
+				{
+					value5 = (ims.pathways.domain.objects.PathwaysRTTClockImpact)domMap.get(valueObject.getRTTClockImpact());
+				}
+			}
+			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
+			{
+				value5 = domainObject.getRTTClockImpact();	
+			}
+			else
+			{
+				value5 = (ims.pathways.domain.objects.PathwaysRTTClockImpact)domainFactory.getDomainObject(ims.pathways.domain.objects.PathwaysRTTClockImpact.class, valueObject.getRTTClockImpact().getBoId());
+			}
+		}
+		domainObject.setRTTClockImpact(value5);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value6 = null;
+		if ( null != valueObject.getOutcomeReason() ) 
+		{
+			value6 =
+				domainFactory.getLookupInstance(valueObject.getOutcomeReason().getID());
+		}
+		domainObject.setOutcomeReason(value6);
+		java.util.Date value7 = null;
+		ims.framework.utils.Date date7 = valueObject.getEcadDate();		
+		if ( date7 != null ) 
+		{
+			value7 = date7.getDate();
+		}
+		domainObject.setEcadDate(value7);
+		domainObject.setAdmittedStop(valueObject.getAdmittedStop());
 
 		return domainObject;
 	}

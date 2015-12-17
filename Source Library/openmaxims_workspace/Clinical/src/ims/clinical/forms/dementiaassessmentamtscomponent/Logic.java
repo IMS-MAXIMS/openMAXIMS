@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -50,30 +55,66 @@ public class Logic extends BaseLogic
 	private static final long serialVersionUID = 1L;
 
 	
+
+	//-------------------------------------------------------------------------------------------------------------------------------------------------------------
+	//	Component interface functions
+	//-------------------------------------------------------------------------------------------------------------------------------------------------------------
+	
+
+	public void initialize(Boolean followUpMode) 
+	{
+		form.getLocalContext().setinFollowUpMode(followUpMode);
+		
+		populateQuestions();
+	}
+
+	
+	public void setValue(DementiaVo dementia, DementiaAssessAndInvestigateVo assessment)
+	{
+		form.getLocalContext().setSelectedRecord(dementia);
+		form.getLocalContext().setSelectedAMTSRecord(assessment);
+		
+		// Populate screen with Dementia record and Follow Up Assessment
+		populateScreenFromData(dementia, assessment);
+	}
+
+
+	//-------------------------------------------------------------------------------------------------------------------------------------------------------------
+	//	Event handlers
+	//-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+	
+	@Override
+	protected void onBtnNewFollowUpClick() throws PresentationLogicException
+	{
+		form.getLocalContext().setSelectedEvent(DementiaEventEnumeration.NEW);
+		form.fireCustomControlValueChanged();
+
+//		form.setMode(FormMode.EDIT);
+//		form.getLocalContext().setSelectedAMTSRecord(null);
+//		clearControls();
+//		hideShowBottomQuestionsBasedOnThreshold(false);
+//		initializeAuthoringControls(null);
+//		updateControlState();
+	}
+
+	@Override
+	protected void onBtnEditFollowUpClick() throws PresentationLogicException
+	{
+		edit();
+	}
+
+
 	protected void onBtnEditClick() throws ims.framework.exceptions.PresentationLogicException
 	{
 		edit();
 	}
 	
-	private void edit()
-	{
-		form.getLocalContext().setSelectedEvent(DementiaEventEnumeration.EDIT);
-		form.fireCustomControlValueChanged();
-
-		form.setMode(FormMode.EDIT);
-		
-		open();
-		updateControlState();
-	}
-
 	protected void onBtnSaveClick() throws ims.framework.exceptions.PresentationLogicException
 	{
 		if (save())
 		{
-			open();
-
-			if (form.getLocalContext().getinFollowUpModeIsNotNull()
-				&& form.getLocalContext().getinFollowUpMode())
+			if (Boolean.TRUE.equals(form.getLocalContext().getinFollowUpMode()))
 				form.getLocalContext().setSelectedEvent(DementiaEventEnumeration.RELOAD_AMTS_BROWSER);
 			else
 				form.getLocalContext().setSelectedEvent(DementiaEventEnumeration.SAVE);
@@ -81,15 +122,328 @@ public class Logic extends BaseLogic
 			form.fireCustomControlValueChanged();
 		}
 	}
-	private void open()
+	
+
+	//-------------------------------------------------------------------------------------------------------------------------------------------------------------
+	//	Event handlers for answering questions
+	//-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+	@Override
+	protected void onChkAgeYesValueChanged() throws PresentationLogicException
 	{
-		populateScreenFromData();
+		form.chkAgeNo().setValue(false);
+		calculateAndDisplayScore();
 		
+		updateControlState();
+	}
+	
+	@Override
+	protected void onChkAgeNoValueChanged() throws PresentationLogicException
+	{
+		form.chkAgeYes().setValue(false);
+		calculateAndDisplayScore();
+		
+		updateControlState();
 	}
 
+	@Override
+	protected void onChkCurrentTimeYesValueChanged() throws PresentationLogicException
+	{
+		form.chkCurrentTimeNo().setValue(false);
+		calculateAndDisplayScore();
+		
+		updateControlState();
+	}
+
+	@Override
+	protected void onChkCurrentTimeNoValueChanged() throws PresentationLogicException
+	{
+		form.chkCurrentTimeYes().setValue(false);
+		calculateAndDisplayScore();
+		
+		updateControlState();
+	}
+	
+	@Override
+	protected void onChkCurrentYearYesValueChanged() throws PresentationLogicException
+	{
+		form.chkCurrentYearNo().setValue(false);
+		calculateAndDisplayScore();
+		
+		updateControlState();
+	}
+
+	@Override
+	protected void onChkCurrentYearNoValueChanged() throws PresentationLogicException
+	{
+		form.chkCurrentYearYes().setValue(false);
+		calculateAndDisplayScore();
+		
+		updateControlState();
+	}
+	
+	@Override
+	protected void onChkNameHospitalYesValueChanged() throws PresentationLogicException
+	{
+		form.chkNameHospitalNo().setValue(false);
+		calculateAndDisplayScore();
+		
+		updateControlState();
+	}
+
+	@Override
+	protected void onChkNameHospitalNoValueChanged() throws PresentationLogicException
+	{
+		form.chkNameHospitalYes().setValue(false);
+		calculateAndDisplayScore();
+		
+		updateControlState();
+	}
+
+	@Override
+	protected void onChkRecogniseYesValueChanged() throws PresentationLogicException
+	{
+		form.chkRecogniseNo().setValue(false);
+		calculateAndDisplayScore();
+		
+		updateControlState();
+	}
+
+	@Override
+	protected void onChkRecogniseNoValueChanged() throws PresentationLogicException
+	{
+		form.chkRecogniseYes().setValue(false);
+		calculateAndDisplayScore();
+		
+		updateControlState();
+	}
+
+	@Override
+	protected void onChkDBYesValueChanged() throws PresentationLogicException
+	{
+		form.chkDBNo().setValue(false);
+		calculateAndDisplayScore();
+		
+		updateControlState();
+	}
+	
+	@Override
+	protected void onChkDBNoValueChanged() throws PresentationLogicException
+	{
+		form.chkDBYes().setValue(false);
+		calculateAndDisplayScore();
+		
+		updateControlState();
+	}
+
+	@Override
+	protected void onChkYearWW2YesValueChanged() throws PresentationLogicException
+	{
+		form.chkYearWW2No().setValue(false);
+		calculateAndDisplayScore();
+		
+		updateControlState();
+	}
+
+	@Override
+	protected void onChkYearWW2NoValueChanged() throws PresentationLogicException
+	{
+		form.chkYearWW2Yes().setValue(false);
+		calculateAndDisplayScore();
+		
+		updateControlState();
+	}
+
+	@Override
+	protected void onChkMonarchYesValueChanged() throws PresentationLogicException
+	{
+		form.chkMonarchNo().setValue(false);
+		calculateAndDisplayScore();
+		
+		updateControlState();
+	}
+
+	@Override
+	protected void onChkMonarchNoValueChanged() throws PresentationLogicException
+	{
+		form.chkMonarchYes().setValue(false);
+		calculateAndDisplayScore();
+		
+		updateControlState();
+	}
+
+	@Override
+	protected void onChkCountYesValueChanged() throws PresentationLogicException
+	{
+		form.chkCountNo().setValue(false);
+		calculateAndDisplayScore();
+		
+		updateControlState();
+	}
+
+	@Override
+	protected void onChkCountNoValueChanged() throws PresentationLogicException
+	{
+		form.chkCountYes().setValue(false);
+		calculateAndDisplayScore();
+		
+		updateControlState();
+	}
+	
+	@Override
+	protected void onChkRecallYesValueChanged() throws PresentationLogicException
+	{
+		form.chkRecallNo().setValue(false);
+		calculateAndDisplayScore();
+		
+		updateControlState();
+	}
+
+	@Override
+	protected void onChkRecallNoValueChanged() throws PresentationLogicException
+	{
+		form.chkRecallYes().setValue(false);
+		calculateAndDisplayScore();
+		
+		updateControlState();
+	}
+
+	
+	//-------------------------------------------------------------------------------------------------------------------------------------------------------------
+	//	Form presentation functions
+	//-------------------------------------------------------------------------------------------------------------------------------------------------------------
+	
+
+	private void updateControlState()
+	{
+		// Hcp User
+		HcpLiteVo hcpUser = (HcpLiteVo) domain.getHcpLiteUser();
+
+		
+		form.btnNewFollowUp().setEnabled(true);
+		form.btnNewFollowUp().setVisible(FormMode.VIEW.equals(form.getMode()) 
+											&& form.getLocalContext().getSelectedRecord() != null
+											&& Boolean.TRUE.equals(form.getLocalContext().getinFollowUpMode())
+											&& hcpUser != null
+											&& ( engine.hasRight(AppRight.CAN_EDIT_AND_RIE_DEMENTIA) 
+													|| (form.getLocalContext().getSelectedAMTSRecord() != null
+															&& form.getLocalContext().getSelectedAMTSRecord().getAuthoringInformation().getAuthoringHcp() != null
+															&& form.getLocalContext().getSelectedAMTSRecord().getAuthoringInformation().getAuthoringHcp().equals(hcpUser))));
+		
+		form.btnEditFollowUp().setEnabled(true);
+		form.btnEditFollowUp().setVisible(FormMode.VIEW.equals(form.getMode())
+											&& form.getLocalContext().getSelectedRecord() != null
+											&& Boolean.TRUE.equals(form.getLocalContext().getinFollowUpMode())
+											&& hcpUser != null);
+		
+		form.btnEdit().setEnabled(true);
+		form.btnEdit().setVisible(FormMode.VIEW.equals(form.getMode())
+											&& form.getLocalContext().getSelectedRecord() != null
+											&& !Boolean.TRUE.equals(form.getLocalContext().getinFollowUpMode())
+											&& ((form.getLocalContext().getSelectedRecord().getStepTwoAssess() != null
+														&& form.getLocalContext().getSelectedRecord().getStepTwoAssess().getAuthoringInformation().getAuthoringHcp() != null
+														&& form.getLocalContext().getSelectedRecord().getStepTwoAssess().getAuthoringInformation().getAuthoringHcp().equals(hcpUser))
+													|| engine.hasRight(AppRight.CAN_EDIT_AND_RIE_DEMENTIA)));
+
+		form.btnRIE().setVisible(form.getMode().equals(FormMode.VIEW) 
+									&& form.getLocalContext().getSelectedRecord() != null 
+									&& form.getLocalContext().getSelectedRecord().getStepTwoAssess() != null
+									&& !Boolean.TRUE.equals(form.getLocalContext().getinFollowUpMode())
+									&& engine.hasRight(AppRight.CAN_EDIT_AND_RIE_DEMENTIA));
+		
+		
+		if (form.getLocalContext().getinFollowUpModeIsNotNull()
+			&& form.getLocalContext().getinFollowUpMode())
+		{
+			form.txtComment().setVisible(false);
+		}
+		else
+			form.txtComment().setEnabled(form.getMode().equals(FormMode.EDIT));
+
+		if (FormMode.EDIT.equals(form.getMode()))
+		{
+			form.btnSave().setVisible(form.getMode().equals(FormMode.EDIT));
+			form.btnSave().setEnabled(form.getMode().equals(FormMode.EDIT) && validateData(false));
+		}
+		
+		hideShowBottomQuestionsBasedOnThreshold(false);
+	}
+	
+	
+	private void hideShowBottomQuestionsBasedOnThreshold(Boolean hideshow)
+	{
+		int nThreshold = 8;//Default as per specification
+		boolean bThresholdExceeded = false;
+		boolean bDelerium = false;
+		boolean bAllCompleted = false;
+		if (form.getGlobalContext().Admin.getDementiaConfigurationIsNotNull()
+			&& form.getGlobalContext().Admin.getDementiaConfiguration().getAMTSThresholdScoreIsNotNull())
+			nThreshold = form.getGlobalContext().Admin.getDementiaConfiguration().getAMTSThresholdScore();
+
+		if (form.txtTotalScore().getValue() != "" 
+			&& form.txtTotalScore().getValue() != null)
+			bAllCompleted = true;
+		
+		if (form.txtTotalScore().getValue() != "" 
+			&& form.txtTotalScore().getValue() != null ? new Integer(form.txtTotalScore().getValue()) <= nThreshold : false)
+		{
+			hideshow = true;
+			bThresholdExceeded = true;
+		}
+		else
+			hideshow = false;
+
+		if (form.getLocalContext().getSelectedRecordIsNotNull()
+			&& form.getLocalContext().getSelectedRecord().getDeliriumConfirmedIsNotNull()
+			&& form.getLocalContext().getSelectedRecord().getDeliriumConfirmed())
+		{
+			hideshow = true;
+		    bDelerium = true;
+		}
+		
+		if (form.getLocalContext().getinFollowUpModeIsNotNull()
+			&& form.getLocalContext().getinFollowUpMode())
+		{
+			form.txtComment().setVisible(false);
+			form.lblComment().setVisible(false);
+			form.lblComment1().setVisible(false);			//wdev-16421
+			hideshow = false;
+		}
+		else
+		{
+			form.txtComment().setVisible(true);				//wdev-18781
+			form.lblComment().setVisible(true);
+			form.lblComment1().setVisible(true);					
+		}
+			
+		form.imbConfirmTrustProtocol().setVisible(hideshow);
+		if (hideshow)
+			form.imbConfirmTrustProtocol().setEnabled(false);
+		form.lblConfirmTrust().setVisible(hideshow);
+		form.GroupPRotocol().setVisible(hideshow);
+		form.GroupPRotocol().setEnabled(form.getMode().equals(FormMode.EDIT) && (bThresholdExceeded || (bAllCompleted && bDelerium)) );
+		
+		form.imbConfirmMedication().setVisible(hideshow);
+		if (hideshow)
+			form.imbConfirmMedication().setEnabled(false);
+		form.lblConfirmMedication().setVisible(hideshow);
+		form.GroupMedication().setVisible(hideshow);
+		form.GroupMedication().setEnabled(form.getMode().equals(FormMode.EDIT) && (bThresholdExceeded || (bAllCompleted && bDelerium)) );		
+		form.hzl34().setVisible(hideshow);
+		form.hzl35().setVisible(hideshow);		
+	}
+
+	
+	private void edit()
+	{
+		form.getLocalContext().setSelectedEvent(DementiaEventEnumeration.EDIT);
+		form.fireCustomControlValueChanged();
+	}
+
+	
 	private boolean save()
 	{
-		if ( ! validateData(true))
+		if (!validateData(true))
 			return false;
 		
 		int nThreshold = 8;//Default as per specification
@@ -102,6 +456,7 @@ public class Logic extends BaseLogic
 			&& form.getLocalContext().getinFollowUpMode())
 		{
 			DementiaAssessAndInvestigateVo voAMTSFollowUp = populateDataFromScreen();
+			form.getLocalContext().setSelectedAMTSRecord(voAMTSFollowUp);
 			if (voAMTSFollowUp.getID_DementiaAssessAndInvestigateIsNotNull())
 			{
 				form.getLocalContext().getSelectedRecord().getFollowUpAssessments().set(form.getLocalContext().getSelectedRecord().getFollowUpAssessments().indexOf(voAMTSFollowUp), voAMTSFollowUp);
@@ -116,7 +471,9 @@ public class Logic extends BaseLogic
 		}
 		else
 		{
-			form.getLocalContext().getSelectedRecord().setStepTwoAssess(populateDataFromScreen());
+			DementiaAssessAndInvestigateVo assessmentAMTS = populateDataFromScreen();
+			form.getLocalContext().setSelectedAMTSRecord(assessmentAMTS);
+			form.getLocalContext().getSelectedRecord().setStepTwoAssess(assessmentAMTS);
 			form.getLocalContext().getSelectedRecord().setAMTSScore(form.txtTotalScore().getValue() != null ? new Integer(form.txtTotalScore().getValue()) : null);
 		}
 		
@@ -136,11 +493,35 @@ public class Logic extends BaseLogic
 			voStat.setAuthoringInformation(voAuthor);
 
 			if ((new Integer(form.txtTotalScore().getValue()) > nThreshold))
+			{
 				voStat.setStatus(DementiaWorklistStatus.COMPLETED);
+				//wdev-18784
+				if( form.getLocalContext().getSelectedRecord().getPatientIsNotNull() )
+				{
+					form.getLocalContext().getSelectedRecord().getPatient().setDementiaBreachDateTime(null);
+					form.getLocalContext().getSelectedRecord().getPatient().setDementiaWorklistStatus(null);
+				}
+			}
 			else if ((new Integer(form.txtTotalScore().getValue()) == nThreshold))
+			{
 				voStat.setStatus(DementiaWorklistStatus.FOR_REFERRAL);
+				//wdev-18784
+				if( form.getLocalContext().getSelectedRecord().getPatientIsNotNull() )
+				{
+					form.getLocalContext().getSelectedRecord().getPatient().setDementiaBreachDateTime(null);
+					form.getLocalContext().getSelectedRecord().getPatient().setDementiaWorklistStatus(null);
+				}
+			}
 			else if ((new Integer(form.txtTotalScore().getValue()) < nThreshold))
+			{
 				voStat.setStatus(DementiaWorklistStatus.FOR_REFERRAL);
+				//wdev-18784
+				if( form.getLocalContext().getSelectedRecord().getPatientIsNotNull() )
+				{
+					form.getLocalContext().getSelectedRecord().getPatient().setDementiaBreachDateTime(null);
+					form.getLocalContext().getSelectedRecord().getPatient().setDementiaWorklistStatus(null);
+				}
+			}
 			
 			form.getLocalContext().getSelectedRecord().setCurrentWorklistStatus(voStat);
 			form.getLocalContext().getSelectedRecord().getHistoricalWorklistStatus().add(voStat);
@@ -161,7 +542,7 @@ public class Logic extends BaseLogic
 			engine.showMessage(e.getMessage());
 			
 			form.getLocalContext().setSelectedRecord(domain.getDementia(form.getLocalContext().getSelectedRecord()));
-			open();
+//			populateScreenFromData(form.getLocalContext().getSelectedRecord(), form.getLocalContext().getSelectedAMTSRecord());
 			if (form.getLocalContext().getinFollowUpModeIsNotNull()
 				&& form.getLocalContext().getinFollowUpMode())
 				form.getLocalContext().setSelectedEvent(DementiaEventEnumeration.RELOAD_AMTS_BROWSER);
@@ -169,7 +550,7 @@ public class Logic extends BaseLogic
 				form.getLocalContext().setSelectedEvent(DementiaEventEnumeration.SAVE);
 			form.fireCustomControlValueChanged();
 
-			form.setMode(FormMode.VIEW);			
+//			form.setMode(FormMode.VIEW);			
 			return false;
 		} 
 		catch (StaleObjectException e) 
@@ -177,7 +558,7 @@ public class Logic extends BaseLogic
 			engine.showMessage(ConfigFlag.UI.STALE_OBJECT_MESSAGE.getValue());
 
 			form.getLocalContext().setSelectedRecord(domain.getDementia(form.getLocalContext().getSelectedRecord()));
-			open();
+//			populateScreenFromData(form.getLocalContext().getSelectedRecord(), form.getLocalContext().getSelectedAMTSRecord());
 			if (form.getLocalContext().getinFollowUpModeIsNotNull()
 				&& form.getLocalContext().getinFollowUpMode())
 				form.getLocalContext().setSelectedEvent(DementiaEventEnumeration.SOE); //wdev-16368
@@ -185,9 +566,9 @@ public class Logic extends BaseLogic
 				form.getLocalContext().setSelectedEvent(DementiaEventEnumeration.SOE);
 			
 			form.fireCustomControlValueChanged();
-			form.setMode(FormMode.VIEW);
+//			form.setMode(FormMode.VIEW);
 			return false;
-		} 
+		}
 		
 		form.setMode(FormMode.VIEW);			
 		
@@ -230,72 +611,9 @@ public class Logic extends BaseLogic
 		return true;
 	}
 
-	private void updateControlState()
-	{
-		form.btnEdit().setVisible(false);
-		form.btnNewFollowUp().setVisible(false);
-		form.btnEditFollowUp().setVisible(false);
-
-		if (form.getMode().equals(FormMode.VIEW))
-		{
-			if( form.getLocalContext().getSelectedRecordIsNotNull() 
-				&& form.getLocalContext().getSelectedRecord().getStepTwoAssessIsNotNull()
-				&& form.getLocalContext().getSelectedRecord().getStepTwoAssess().getID_DementiaAssessAndInvestigateIsNotNull()
-				&& form.getLocalContext().getSelectedRecord().getStepTwoAssess().getAuthoringInformationIsNotNull()
-				&& form.getLocalContext().getSelectedRecord().getStepTwoAssess().getAuthoringInformation().getAuthoringHcpIsNotNull()
-				&& domain.getHcpLiteUser() != null)
-			{
-				if ( ((HcpLiteVo) domain.getHcpLiteUser()).equals(form.getLocalContext().getSelectedRecord().getStepTwoAssess().getAuthoringInformation().getAuthoringHcp())
-					|| (engine.hasRight(AppRight.CAN_EDIT_AND_RIE_DEMENTIA)) )
-					form.btnEdit().setVisible(true);
-			}
-			else if (domain.getHcpLiteUser() != null)
-				form.btnEdit().setVisible(true);
-		}
-		if (form.getMode().equals(FormMode.VIEW)
-			&& form.getLocalContext().getinFollowUpModeIsNotNull()
-			&& form.getLocalContext().getinFollowUpMode())
-		{
-			if( form.getLocalContext().getSelectedAMTSRecordIsNotNull() 
-				&& form.getLocalContext().getSelectedAMTSRecord().getID_DementiaAssessAndInvestigateIsNotNull()
-				&& domain.getHcpLiteUser() != null)
-			{
-				if( ((HcpLiteVo) domain.getHcpLiteUser()).equals(form.getLocalContext().getSelectedAMTSRecord().getAuthoringInformation().getAuthoringHcp())
-					|| ( domain.getHcpLiteUser() != null && engine.hasRight(AppRight.CAN_EDIT_AND_RIE_DEMENTIA)) )
-					form.btnEditFollowUp().setVisible(true);
-
-				if (domain.getHcpLiteUser() != null)
-					form.btnNewFollowUp().setVisible(true);
-			} 
-			else if (domain.getHcpLiteUser() != null)
-				form.btnNewFollowUp().setVisible(true);
-		}
-
-		form.btnRIE().setVisible(form.getMode().equals(FormMode.VIEW) 
-			&& form.getLocalContext().getSelectedRecord() != null 
-			&& form.getLocalContext().getSelectedRecord().getStepTwoAssess() !=null
-			&& ! form.getLocalContext().getinFollowUpMode()
-			&& engine.hasRight(AppRight.CAN_EDIT_AND_RIE_DEMENTIA)	);
-		
-		if (form.getLocalContext().getinFollowUpModeIsNotNull()
-			&& form.getLocalContext().getinFollowUpMode())
-		{
-			form.txtComment().setVisible(false);
-		
-			form.btnEdit().setVisible(false);
-		}
-		else
-			form.txtComment().setEnabled(form.getMode().equals(FormMode.EDIT));
-
-		form.btnSave().setEnabled(false);
-		if ( validateData(false))
-			form.btnSave().setEnabled(form.getMode().equals(FormMode.EDIT));
-		
-		form.btnSave().setVisible(form.getMode().equals(FormMode.EDIT));
-		form.btnCancel().setVisible(form.getMode().equals(FormMode.EDIT));
-		
-		hideShowBottomQuestionsBasedOnThreshold(false);
-	}
+	
+	
+	
 	private void populateQuestions()
 	{
 		DementiaTermConfig lkpHint = new DementiaTermConfig();
@@ -402,9 +720,6 @@ public class Logic extends BaseLogic
 		
 	}
 
-	public void initialize() 
-	{
-	}
 	private void clearTenQuestions()
 	{
 		form.chkAgeYes().setValue(null);
@@ -434,14 +749,6 @@ public class Logic extends BaseLogic
 		form.GroupPRotocol().setValue(GroupPRotocolEnumeration.None);
 	}
 
-	private void clearAllControls()
-	{
-		clearTenQuestions();
-		form.txtTotalScore().setValue(null);
-		form.txtComment().setValue(null);
-		clearLastTwoQuestions();
-	}
-
 	protected void onFormModeChanged() 
 	{
 		updateControlState();
@@ -457,7 +764,7 @@ public class Logic extends BaseLogic
 	{
 		hideShowBottomQuestionsBasedOnThreshold(false);
 
-		open();
+//		open();
 		form.setMode(FormMode.VIEW);			
 
 		if (form.getLocalContext().getinFollowUpModeIsNotNull()
@@ -468,70 +775,6 @@ public class Logic extends BaseLogic
 		form.fireCustomControlValueChanged();
 	}
 
-	@Override
-	protected void onChkRecallYesValueChanged() throws PresentationLogicException
-	{
-		form.chkRecallNo().setValue(false);
-		calculateAndDisplayScore();
-	}
-
-	private void hideShowBottomQuestionsBasedOnThreshold(Boolean hideshow)
-	{
-		int nThreshold = 8;//Default as per specification
-		boolean bThresholdExceeded = false;
-		boolean bDelerium = false;
-		boolean bAllCompleted = false;
-		if (form.getGlobalContext().Admin.getDementiaConfigurationIsNotNull()
-			&& form.getGlobalContext().Admin.getDementiaConfiguration().getAMTSThresholdScoreIsNotNull())
-			nThreshold = form.getGlobalContext().Admin.getDementiaConfiguration().getAMTSThresholdScore();
-
-		if (form.txtTotalScore().getValue() != "" 
-			&& form.txtTotalScore().getValue() != null)
-			bAllCompleted = true;
-		
-		if (form.txtTotalScore().getValue() != "" 
-			&& form.txtTotalScore().getValue() != null ? new Integer(form.txtTotalScore().getValue()) <= nThreshold : false)
-		{
-			hideshow = true;
-			bThresholdExceeded = true;
-		}
-		else
-			hideshow = false;
-
-		if (form.getLocalContext().getSelectedRecordIsNotNull()
-			&& form.getLocalContext().getSelectedRecord().getDeliriumConfirmedIsNotNull()
-			&& form.getLocalContext().getSelectedRecord().getDeliriumConfirmed())
-		{
-			hideshow = true;
-		    bDelerium = true;
-		}
-		
-		if (form.getLocalContext().getinFollowUpModeIsNotNull()
-			&& form.getLocalContext().getinFollowUpMode())
-		{
-			form.txtComment().setVisible(false);
-			form.lblComment().setVisible(false);
-			form.lblComment1().setVisible(false);			//wdev-16421
-			hideshow = false;
-		}
-			
-		form.imbConfirmTrustProtocol().setVisible(hideshow);
-		if (hideshow)
-			form.imbConfirmTrustProtocol().setEnabled(false);
-		form.lblConfirmTrust().setVisible(hideshow);
-		form.GroupPRotocol().setVisible(hideshow);
-		form.GroupPRotocol().setEnabled(form.getMode().equals(FormMode.EDIT) && (bThresholdExceeded || (bAllCompleted && bDelerium)) );
-		
-		form.imbConfirmMedication().setVisible(hideshow);
-		if (hideshow)
-			form.imbConfirmMedication().setEnabled(false);
-		form.lblConfirmMedication().setVisible(hideshow);
-		form.GroupMedication().setVisible(hideshow);
-		form.GroupMedication().setEnabled(form.getMode().equals(FormMode.EDIT) && (bThresholdExceeded || (bAllCompleted && bDelerium)) );		
-		form.hzl34().setVisible(hideshow);
-		form.hzl35().setVisible(hideshow);
-		
-	}
 
 	private void calculateAndDisplayScore()
 	{
@@ -568,7 +811,6 @@ public class Logic extends BaseLogic
 		if (form.chkRecallYes().getValue())
 			nScore++;
 
-		form.btnSave().setEnabled(false);
 		
 		if (	(form.chkAgeYes().getValue() || form.chkAgeNo().getValue())
 			&&	(form.chkDBYes().getValue() || form.chkDBNo().getValue())
@@ -584,163 +826,12 @@ public class Logic extends BaseLogic
 		{	
 			form.txtTotalScore().setValue( new Integer(nScore).toString());
 			hideShowBottomQuestionsBasedOnThreshold(true);
-			if ( validateData(false))
-				form.btnSave().setEnabled(form.getMode().equals(FormMode.EDIT));
 		}
 	}
 
-	@Override
-	protected void onChkCountYesValueChanged() throws PresentationLogicException
-	{
-		form.chkCountNo().setValue(false);
-		calculateAndDisplayScore();
-	}
 
-	@Override
-	protected void onChkMonarchYesValueChanged() throws PresentationLogicException
-	{
-		form.chkMonarchNo().setValue(false);
-		calculateAndDisplayScore();
-	}
 
-	@Override
-	protected void onChkYearWW2YesValueChanged() throws PresentationLogicException
-	{
-		form.chkYearWW2No().setValue(false);
-		calculateAndDisplayScore();
-	}
 
-	@Override
-	protected void onChkRecogniseYesValueChanged() throws PresentationLogicException
-	{
-		form.chkRecogniseNo().setValue(false);
-		calculateAndDisplayScore();
-	}
-
-	@Override
-	protected void onChkNameHospitalYesValueChanged() throws PresentationLogicException
-	{
-		form.chkNameHospitalNo().setValue(false);
-		calculateAndDisplayScore();
-	}
-
-	@Override
-	protected void onChkCurrentTimeYesValueChanged() throws PresentationLogicException
-	{
-		form.chkCurrentTimeNo().setValue(false);
-		calculateAndDisplayScore();
-	}
-
-	@Override
-	protected void onChkCurrentYearYesValueChanged() throws PresentationLogicException
-	{
-		form.chkCurrentYearNo().setValue(false);
-		calculateAndDisplayScore();
-	}
-
-	@Override
-	protected void onChkDBYesValueChanged() throws PresentationLogicException
-	{
-		form.chkDBNo().setValue(false);
-		calculateAndDisplayScore();
-	}
-
-	@Override
-	protected void onChkAgeYesValueChanged() throws PresentationLogicException
-	{
-		form.chkAgeNo().setValue(false);
-		calculateAndDisplayScore();
-	}
-
-	@Override
-	protected void onChkRecallNoValueChanged() throws PresentationLogicException
-	{
-		form.chkRecallYes().setValue(false);
-		calculateAndDisplayScore();
-	}
-
-	@Override
-	protected void onChkCountNoValueChanged() throws PresentationLogicException
-	{
-		form.chkCountYes().setValue(false);
-		calculateAndDisplayScore();
-	}
-
-	@Override
-	protected void onChkMonarchNoValueChanged() throws PresentationLogicException
-	{
-		form.chkMonarchYes().setValue(false);
-		calculateAndDisplayScore();
-	}
-
-	@Override
-	protected void onChkYearWW2NoValueChanged() throws PresentationLogicException
-	{
-		form.chkYearWW2Yes().setValue(false);
-		calculateAndDisplayScore();
-	}
-
-	@Override
-	protected void onChkRecogniseNoValueChanged() throws PresentationLogicException
-	{
-		form.chkRecogniseYes().setValue(false);
-		calculateAndDisplayScore();
-	}
-
-	@Override
-	protected void onChkNameHospitalNoValueChanged() throws PresentationLogicException
-	{
-		form.chkNameHospitalYes().setValue(false);
-		calculateAndDisplayScore();
-	}
-
-	@Override
-	protected void onChkCurrentTimeNoValueChanged() throws PresentationLogicException
-	{
-		form.chkCurrentTimeYes().setValue(false);
-		calculateAndDisplayScore();
-	}
-
-	@Override
-	protected void onChkCurrentYearNoValueChanged() throws PresentationLogicException
-	{
-		form.chkCurrentYearYes().setValue(false);
-		calculateAndDisplayScore();
-	}
-
-	@Override
-	protected void onChkDBNoValueChanged() throws PresentationLogicException
-	{
-		form.chkDBYes().setValue(false);
-		calculateAndDisplayScore();
-	}
-
-	@Override
-	protected void onChkAgeNoValueChanged() throws PresentationLogicException
-	{
-		form.chkAgeYes().setValue(false);
-		calculateAndDisplayScore();
-	}
-
-	public void initialize(DementiaVo voDementia, FormMode formMode, DementiaAssessAndInvestigateVo voAMTS)
-	{
-		form.getLocalContext().setSelectedRecord(voDementia);
-		form.getLocalContext().setinFollowUpMode(false);
-		form.getLocalContext().setSelectedAMTSRecord(null);
-		if (voAMTS != null)
-		{
-			form.getLocalContext().setSelectedAMTSRecord(voAMTS);
-			form.getLocalContext().setinFollowUpMode(true);
-		}
-
-		populateQuestions();
-		hideShowBottomQuestionsBasedOnThreshold(false);
-		initializeAuthoringControls(null);
-
-		form.setMode(formMode);
-		
-		open();
-	}
 
 	private void initializeAuthoringControls(AuthoringInformationVo voAuthoring)
 	{
@@ -765,99 +856,87 @@ public class Logic extends BaseLogic
 		
 	}
 
-	private void populateScreenFromData()
+	private void populateScreenFromData(DementiaVo dementia, DementiaAssessAndInvestigateVo assessmentAMTS)
 	{
-		clearAllControls();
-		
-		DementiaAssessAndInvestigateVo voAMTS = null;
-		if (form.getLocalContext().getinFollowUpModeIsNotNull()
-			&& form.getLocalContext().getinFollowUpMode()
-			&& form.getLocalContext().getSelectedAMTSRecordIsNotNull())
-			voAMTS = form.getLocalContext().getSelectedAMTSRecord();
-		else if (form.getLocalContext().getSelectedRecordIsNotNull())
-			voAMTS = form.getLocalContext().getSelectedRecord().getStepTwoAssess();
+		clearControls();
 
-		if (voAMTS == null || voAMTS.getID_DementiaAssessAndInvestigate() == null)
+		if (dementia == null || assessmentAMTS == null)
 			return;
-
-		if (voAMTS != null)
-		{
-			initializeAuthoringControls(voAMTS.getAuthoringInformation());
-			
-			//Age
-			if (voAMTS.getQ1Age().equals(YesNo.YES))
-				form.chkAgeYes().setValue(true);
-			else
-				form.chkAgeNo().setValue(true);
-			
-			//DOB
-			if (voAMTS.getQ2DOB().equals(YesNo.YES))
-				form.chkDBYes().setValue(true);
-			else
-				form.chkDBNo().setValue(true);
-
-			//Current Year
-			if(voAMTS.getQ3CurrentYear().equals(YesNo.YES))
-				form.chkCurrentYearYes().setValue(true);
-			else
-				form.chkCurrentYearNo().setValue(true);
-
-			//Current Time
-			if (voAMTS.getQ4CurrentTime().equals(YesNo.YES))
-				form.chkCurrentTimeYes().setValue(true);
-			else
-				form.chkCurrentTimeNo().setValue(true);
-
-			//name of hospital
-			if (voAMTS.getQ5NameOfHospital().equals(YesNo.YES))
-				form.chkNameHospitalYes().setValue(true);
-			else
-				form.chkNameHospitalNo().setValue(true);
-
-			//recognise
-			if (voAMTS.getQ6RecognisePeople().equals(YesNo.YES))
-				form.chkRecogniseYes().setValue(true);
-			else
-				form.chkRecogniseNo().setValue(true);
-
-			//ww2
-			if (voAMTS.getQ7YearWW2Ended().equals(YesNo.YES))
-				form.chkYearWW2Yes().setValue(true);
-			else
-				form.chkYearWW2No().setValue(true);
-
-			//Monach
-			if (voAMTS.getQ8Monarch().equals(YesNo.YES))
-				form.chkMonarchYes().setValue(true);
-			else
-				form.chkMonarchNo().setValue(true);
-
-			//Backwards from 20
-			if (voAMTS.getQ9CountBackwards().equals(YesNo.YES))
-				form.chkCountYes().setValue(true);
-			else
-				form.chkCountNo().setValue(true);
-
-			//Recall
-			if (voAMTS.getQ10Recall().equals(YesNo.YES))
-				form.chkRecallYes().setValue(true);
-			else
-				form.chkRecallNo().setValue(true);
-
-			calculateAndDisplayScore();
-			
-			if(voAMTS.getConfirmMedicationReviewIsNotNull())
-				form.GroupMedication().setValue(voAMTS.getConfirmMedicationReview().equals(YesNo.YES) ? GroupMedicationEnumeration.rdoMedicationYES : GroupMedicationEnumeration.rdoMedicationNO);
-
-			if(voAMTS.getConfirmTrustsProtocolIsNotNull())
-				form.GroupPRotocol().setValue(voAMTS.getConfirmTrustsProtocol().equals(YesNo.YES) ? GroupPRotocolEnumeration.rdoTrustProtocolYES : GroupPRotocolEnumeration.rdoTrustProtocolNO);
-
-			form.txtComment().setValue(voAMTS.getStepTwoAssessNoteIsNotNull() ? voAMTS.getStepTwoAssessNote().getNote() : "");
-			
-			if ( validateData(false))
-				form.btnSave().setEnabled(form.getMode().equals(FormMode.EDIT));
-		}
 		
+		initializeAuthoringControls(assessmentAMTS.getAuthoringInformation());
+		
+		// Age
+		if (assessmentAMTS.getQ1Age().equals(YesNo.YES))
+			form.chkAgeYes().setValue(true);
+		else
+			form.chkAgeNo().setValue(true);
+		
+		// DOB
+		if (assessmentAMTS.getQ2DOB().equals(YesNo.YES))
+			form.chkDBYes().setValue(true);
+		else
+			form.chkDBNo().setValue(true);
+
+		// Current Year
+		if(assessmentAMTS.getQ3CurrentYear().equals(YesNo.YES))
+			form.chkCurrentYearYes().setValue(true);
+		else
+			form.chkCurrentYearNo().setValue(true);
+
+		// Current Time
+		if (assessmentAMTS.getQ4CurrentTime().equals(YesNo.YES))
+			form.chkCurrentTimeYes().setValue(true);
+		else
+			form.chkCurrentTimeNo().setValue(true);
+
+		// Name of hospital
+		if (assessmentAMTS.getQ5NameOfHospital().equals(YesNo.YES))
+			form.chkNameHospitalYes().setValue(true);
+		else
+			form.chkNameHospitalNo().setValue(true);
+
+		// Recognise
+		if (assessmentAMTS.getQ6RecognisePeople().equals(YesNo.YES))
+			form.chkRecogniseYes().setValue(true);
+		else
+			form.chkRecogniseNo().setValue(true);
+
+		// WW2
+		if (assessmentAMTS.getQ7YearWW2Ended().equals(YesNo.YES))
+			form.chkYearWW2Yes().setValue(true);
+		else
+			form.chkYearWW2No().setValue(true);
+
+		// Monarch
+		if (assessmentAMTS.getQ8Monarch().equals(YesNo.YES))
+			form.chkMonarchYes().setValue(true);
+		else
+			form.chkMonarchNo().setValue(true);
+
+		// Backwards from 20
+		if (assessmentAMTS.getQ9CountBackwards().equals(YesNo.YES))
+			form.chkCountYes().setValue(true);
+		else
+			form.chkCountNo().setValue(true);
+
+		// Recall
+		if (assessmentAMTS.getQ10Recall().equals(YesNo.YES))
+			form.chkRecallYes().setValue(true);
+		else
+			form.chkRecallNo().setValue(true);
+
+		calculateAndDisplayScore();
+		
+		if(assessmentAMTS.getConfirmMedicationReviewIsNotNull())
+			form.GroupMedication().setValue(assessmentAMTS.getConfirmMedicationReview().equals(YesNo.YES) ? GroupMedicationEnumeration.rdoMedicationYES : GroupMedicationEnumeration.rdoMedicationNO);
+
+		if(assessmentAMTS.getConfirmTrustsProtocolIsNotNull())
+			form.GroupPRotocol().setValue(assessmentAMTS.getConfirmTrustsProtocol().equals(YesNo.YES) ? GroupPRotocolEnumeration.rdoTrustProtocolYES : GroupPRotocolEnumeration.rdoTrustProtocolNO);
+
+		form.txtComment().setValue(assessmentAMTS.getStepTwoAssessNoteIsNotNull() ? assessmentAMTS.getStepTwoAssessNote().getNote() : "");
+		
+//		if (validateData(false))
+//			form.btnSave().setEnabled(form.getMode().equals(FormMode.EDIT));
 	}
 	
 	private DementiaAssessAndInvestigateVo populateDataFromScreen()
@@ -1001,31 +1080,11 @@ public class Logic extends BaseLogic
 		{
 			form.getLocalContext().setSelectedEvent(DementiaEventEnumeration.MARK_RIE);
 			form.fireCustomControlValueChanged();
-			open();
+//			open();
 		}
 		 
 	}
 	
-
-	@Override
-	protected void onBtnEditFollowUpClick() throws PresentationLogicException
-	{
-		edit();
-	}
-
-	@Override
-	protected void onBtnNewFollowUpClick() throws PresentationLogicException
-	{
-		form.getLocalContext().setSelectedEvent(DementiaEventEnumeration.EDIT);
-		form.fireCustomControlValueChanged();
-
-		form.setMode(FormMode.EDIT);
-		form.getLocalContext().setSelectedAMTSRecord(null);
-		clearAllControls();
-		hideShowBottomQuestionsBasedOnThreshold(false);
-		initializeAuthoringControls(null);
-		updateControlState();
-	}
 
 	@Override
 	protected void onRadioButtonGroupMedicationValueChanged() throws PresentationLogicException
@@ -1041,4 +1100,25 @@ public class Logic extends BaseLogic
 			form.btnSave().setEnabled(form.getMode().equals(FormMode.EDIT));
 	}
 
+	//wdev-18781
+	public void hideNewEditAndRieButtons() 
+	{
+		form.btnEdit().setVisible(false);
+		form.btnEditFollowUp().setVisible(false);
+		form.btnNewFollowUp().setVisible(false);
+		form.btnRIE().setVisible(false);
+		
+	}
+	//wdev-18781
+	public void clearControls() 
+	{
+		form.lblAuthoringHCP().setValue(null);
+		form.lblAuthoringDateTime().setValue(null);
+		
+		clearTenQuestions();
+		form.txtTotalScore().setValue(null);
+		form.txtComment().setValue(null);
+		clearLastTwoQuestions();
+		
+	}
 }

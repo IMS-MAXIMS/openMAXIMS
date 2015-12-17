@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:36 -->
+<!-- Generated: 12/10/2015, 13:31 -->
 <hibernate-mapping>
 	<class name="ims.pathways.domain.objects.RTTStatusEventMap" table="pthw_rttstatusevent" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -54,6 +54,14 @@
 		</many-to-one>
 <!-- debug: encounterType -->
 <!-- debug: encounterInstance -->
+<!-- debug: undoEvent -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="undoEvent" class="ims.pathways.configuration.domain.objects.Event" unique="true" foreign-key="rttstatusevent_undoevent_fk" access="field" cascade="save-update">
+			<column name="undoevent" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: displayUndoEvent -->
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="active" type="boolean" access="field" update="true">
@@ -69,5 +77,10 @@
 		<many-to-one name="encounterInstance" class="ims.domain.lookups.LookupInstance" access="field">
 			<column name="lkp_encounteri" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="displayUndoEvent" type="boolean" access="field" update="true">
+			<column name="displayund"  not-null="false" unique="false"  />
+		</property>
 	</class>
 </hibernate-mapping>

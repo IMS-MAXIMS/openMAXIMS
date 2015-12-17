@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.admin.pas.domain.objects;
@@ -59,6 +64,7 @@ public class HomeLeave extends ims.domain.DomainObject implements ims.domain.Sys
 	private String timeReturnedFromHomeLeave;
 	/** VacatedBedNumber */
 	private String vacatedBedNumber;
+	private Boolean bedRetained;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public HomeLeave (Integer id, int ver)
@@ -132,6 +138,13 @@ public class HomeLeave extends ims.domain.DomainObject implements ims.domain.Sys
 		this.vacatedBedNumber = vacatedBedNumber;
 	}
 
+	public Boolean isBedRetained() {
+		return bedRetained;
+	}
+	public void setBedRetained(Boolean bedRetained) {
+		this.bedRetained = bedRetained;
+	}
+
 	public ims.domain.SystemInformation getSystemInformation() {
 		if (systemInformation == null) systemInformation = new ims.domain.SystemInformation();
 		return systemInformation;
@@ -189,6 +202,9 @@ public class HomeLeave extends ims.domain.DomainObject implements ims.domain.Sys
 	    auditStr.append("; ");
 		auditStr.append("\r\n*vacatedBedNumber* :");
 		auditStr.append(vacatedBedNumber);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*bedRetained* :");
+		auditStr.append(bedRetained);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -275,6 +291,12 @@ public class HomeLeave extends ims.domain.DomainObject implements ims.domain.Sys
 			sb.append("<vacatedBedNumber>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getVacatedBedNumber().toString()));
 			sb.append("</vacatedBedNumber>");		
+		}
+		if (this.isBedRetained() != null)
+		{
+			sb.append("<bedRetained>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isBedRetained().toString()));
+			sb.append("</bedRetained>");		
 		}
 		return sb.toString();
 	}
@@ -474,6 +496,11 @@ public class HomeLeave extends ims.domain.DomainObject implements ims.domain.Sys
 		{	
     		obj.setVacatedBedNumber(new String(fldEl.getTextTrim()));	
 		}
+		fldEl = el.element("bedRetained");
+		if(fldEl != null)
+		{	
+    		obj.setBedRetained(new Boolean(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -493,6 +520,7 @@ public class HomeLeave extends ims.domain.DomainObject implements ims.domain.Sys
 		public static final String DateReturnedFromHomeLeave = "dateReturnedFromHomeLeave";
 		public static final String TimeReturnedFromHomeLeave = "timeReturnedFromHomeLeave";
 		public static final String VacatedBedNumber = "vacatedBedNumber";
+		public static final String BedRetained = "bedRetained";
 	}
 }
 

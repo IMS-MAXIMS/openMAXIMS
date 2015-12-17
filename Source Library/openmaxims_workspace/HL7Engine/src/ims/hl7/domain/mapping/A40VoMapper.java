@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -30,6 +35,8 @@ import ims.core.vo.Patient;
 import ims.core.vo.PatientId;
 import ims.core.vo.PatientIdCollection;
 import ims.core.vo.lookups.PatIdType;
+import ims.framework.utils.DateTimeFormat;
+import ims.hl7.domain.EventResponse;
 import ims.hl7.domain.HL7EngineApplication;
 import ims.hl7.utils.EvnCodes;
 import ims.ocrr.vo.ProviderSystemVo;
@@ -48,8 +55,9 @@ public class A40VoMapper extends VoMapper
 	private static final String eventType="A40";
 	private static final Logger	LOG	= Logger.getLogger(A40VoMapper.class);
 
-	
-	public Message processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception
+	//WDEV-20112
+//	public Message processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception
+	public EventResponse processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception //WDEV-20112
 	{
 		a34mapper = (A34VoMapper) HL7EngineApplication.getVoMapper(EvnCodes.A34);
 		if (a34mapper == null)
@@ -75,31 +83,55 @@ public class A40VoMapper extends VoMapper
 		populateMSH(providerSystem, msh, Long.toString( new java.util.Date().getTime()), "ADT", "A40");
 		EVN evn = a40.getEVN();
 		populateEVN(evn, eventType) ;
-		
-		
+				
 		//remove the priorPatIds before rendering the PID
 		List <PatientId> patIdsToRemove = new ArrayList<PatientId>(); 
-		for (PatientId priorPatientId : priorPatsIDs)
+		if(priorPatsIDs!=null) //http://jira/browse/WDEV-22545 
 		{
-			 for (PatientId patientId : fullPatient.getIdentifiers())
+			for (PatientId priorPatientId : priorPatsIDs)
 			{
-				if(comparePatIds(patientId,priorPatientId))
+				 for (PatientId patientId : fullPatient.getIdentifiers())
 				{
-					patIdsToRemove.add(patientId);
-					continue;
+					if(comparePatIds(patientId,priorPatientId))
+					{
+						patIdsToRemove.add(patientId);
+						continue;
+					}
+						
 				}
-					
 			}
 		}
+		
 		for (PatientId patientId : patIdsToRemove)
 		{
 			fullPatient.getIdentifiers().remove(patientId);
+		}
+		
+		if (priorPatsIDs==null||priorPatsIDs.size()==0) //http://jira/browse/WDEV-22545 
+		{
+			//Get the ids from the prior patient record
+			priorPatsIDs = demog.getPatientIdentifiers(priorPatient);
 		}
 		
 		PID pid = a40.getADT_A39_PIDPD1MRGPV1().getPID();
 		renderPatientVoToPID(fullPatient, pid, providerSystem);
 		MRG mrg = a40.getADT_A39_PIDPD1MRGPV1().getMRG();
 		renderPatidCollectionToMrg(priorPatsIDs,mrg,providerSystem);
+		
+		//WDEV-22918
+		if (fullPatient != null
+				&& fullPatient.getSysInfo() != null)
+		{
+			if (fullPatient.getSysInfo().getLastupdateDateTime() != null)
+			{
+				evn.getRecordedDateTime().getTimeOfAnEvent().setValue(fullPatient.getSysInfo().getLastupdateDateTime().toString(DateTimeFormat.ISO));
+			}
+			else if (fullPatient.getSysInfo().getCreationDateTime() != null)
+			{
+				evn.getRecordedDateTime().getTimeOfAnEvent().setValue(fullPatient.getSysInfo().getCreationDateTime().toString(DateTimeFormat.ISO));
+			}
+		} //WDEV-22918
+
 		return a40;
 	}
 	

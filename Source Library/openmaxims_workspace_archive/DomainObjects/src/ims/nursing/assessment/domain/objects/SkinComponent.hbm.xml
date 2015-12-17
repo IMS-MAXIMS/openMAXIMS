@@ -1,0 +1,120 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:35 -->
+<hibernate-mapping>
+	<subclass name="ims.nursing.assessment.domain.objects.SkinComponent" lazy="true" discriminator-value="SKIN" extends="ims.nursing.assessment.domain.objects.AssessmentComponent" >
+<!-- debug: hibernateClassContent -->
+<!-- debug: skinCondition -->
+<!-- debug: IsCollection : true -->
+		<!-- collection of Lookup instances -->
+		<list name="skinCondition" table="ns_skincomp_skincondit" lazy="true" access="field">
+			<key foreign-key="skincomp_skincondit_ofk">
+				<column name="owner" sql-type="numeric(10,0)"/>
+			</key>
+			<index column="idx"/>
+			<composite-element class="ims.domain.lookups.LookupInstanceRef">
+				<many-to-one name="instance" class="ims.domain.lookups.LookupInstance" access="field">
+					<column name="instance_id" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+				</many-to-one>
+			</composite-element>
+		</list>
+<!-- debug: bedType -->
+<!-- debug: mattressType -->
+<!-- debug: chairType -->
+<!-- debug: cushionType -->
+<!-- debug: frequencyOfTurns -->
+<!-- debug: turnsPerformedBy -->
+<!-- debug: turnType -->
+<!-- debug: turns -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="turns" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="skincomp_turns_fk">
+				<column name="ns_skincomp_turns" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.nursing.assessment.domain.objects.PatientTurns" />
+		</set>
+<!-- debug: notes -->
+<!-- debug: skinAssessment -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="skinAssessment" class="ims.nursing.assessmenttools.domain.objects.SkinAssessment" unique="true" foreign-key="skincomp_skinassess_fk" access="field" cascade="save-update">
+			<column name="skinassess" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: bradenScale -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="bradenScale" class="ims.nursing.assessmenttools.domain.objects.BradenScale" unique="true" foreign-key="skincomp_bradenscal_fk" access="field" cascade="save-update">
+			<column name="bradenscal" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: bradenScaleScore -->
+<!-- debug: waterlow -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="waterlow" class="ims.nursing.assessmenttools.domain.objects.Waterlow" unique="true" foreign-key="skincomp_waterlow_fk" access="field" cascade="save-update">
+			<column name="waterlow" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: waterlowScore -->
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="bedType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_bedtype" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="mattressType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_mattressty" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="chairType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_chairtype" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="cushionType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_cushiontyp" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="frequencyOfTurns" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_frequencyo" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="turnsPerformedBy" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_turnsperfo" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="turnType" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_turntype" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="notes" type="string" access="field" update="true" > 
+			<column name="notes" length="500"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="bradenScaleScore" type="integer" access="field" update="true">
+			<column name="bradensca2"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="waterlowScore" type="integer" access="field" update="true">
+			<column name="waterlowsc"  not-null="false" unique="false"  />
+		</property>
+	</subclass>
+</hibernate-mapping>

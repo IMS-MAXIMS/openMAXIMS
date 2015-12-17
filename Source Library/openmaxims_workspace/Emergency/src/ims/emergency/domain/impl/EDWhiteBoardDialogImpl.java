@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -70,25 +75,29 @@ public class EDWhiteBoardDialogImpl extends BaseEDWhiteBoardDialogImpl
 		DomainFactory factory = getDomainFactory();
 		
 		StringBuilder hqlJoins = new StringBuilder("select tr from Tracking as tr left join tr.patient as p left join tr.attendance as att left join tr.currentArea as ta");
-		StringBuilder hqlConditions = new StringBuilder(" where ");
+		StringBuilder hqlConditions = new StringBuilder();
 		
 		ArrayList<String> paramNames = new ArrayList<String>();
 		ArrayList<Object> paramValues = new ArrayList<Object>();
 		
-		String and = " and ";
+		String and = "";
 		
 		if( trackingArea != null )
 		{
 			if (trackingArea.getIsOverallViewIsNotNull() && trackingArea.getIsOverallView().equals(true))
     		{
-    			hqlConditions.append(" ta.id is not null ");
+				hqlConditions.append(and);
+				hqlConditions.append(" ta.id is not null ");
+				and = " and ";
     			
     		}
     		else
     		{
+    			hqlConditions.append(and);
     			hqlConditions.append(" ta.id = :TrackingAreaId ");
     			paramNames.add("TrackingAreaId");
     			paramValues.add(trackingArea.getID_TrackingArea());
+    			and = " and ";
     		}
 		}
 		
@@ -128,9 +137,12 @@ public class EDWhiteBoardDialogImpl extends BaseEDWhiteBoardDialogImpl
 			and = " and ";
 		}
 		
+		if (hqlConditions.length()>0)
+		{
+			hqlConditions.insert(0, " where ");
+		}
 		
-		
-		List<?> patients = factory.find(hqlJoins.append(hqlConditions.toString()).toString(), paramNames, paramValues);
+		List<?> patients = factory.find((hqlJoins.append( hqlConditions)).toString(), paramNames, paramValues);
 		
 		if( patients != null && patients.size() > 0 )
 		{

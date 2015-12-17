@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 12/10/2015, 13:29 -->
+<hibernate-mapping>
+	<class name="ims.dto_move.domain.objects.InternalLocation" table="dto_internalloc" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="assigned"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: hibernateClassContent -->
+<!-- debug: name -->
+<!-- debug: parent -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="parent" class="ims.dto_move.domain.objects.InternalLocation" unique="true" foreign-key="internalloc_parent_fk" access="field" cascade="save-update">
+			<column name="parent" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: active -->
+<!-- debug: characteristics -->
+<!-- debug: field.IsAssociation : true -->
+ 		<!-- Component Set -->
+ 		<list name="characteristics" table="dto_internalloc_characteri" lazy="true" >
+ 			<key foreign-key="internalloc_characteri_id_fk">
+ 				<column name="id" sql-type="numeric(10,0)" not-null="true" />
+ 			</key>
+ 			<index column='idx'/>
+ 			<!-- Composite -->
+ 			<composite-element class="ims.dto_move.domain.objects.Dummy" >
+ 				<property name="active" type="string" access="field" update="true">
+ 					<column name="active" length="1" not-null="false"  unique="false"    />
+ 				</property>
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="priority" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_priority" not-null="false" sql-type="numeric(10,0)"  unique="false"   />
+ 				</many-to-one>
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="specialtyCode" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_specialtyc" not-null="false" sql-type="numeric(10,0)"  unique="false"   />
+ 				</many-to-one>
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="serviceType" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_servicetyp" not-null="false" sql-type="numeric(10,0)"  unique="false"   />
+ 				</many-to-one>
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="contractLocation" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_contractlo" not-null="false" sql-type="numeric(10,0)"  unique="false"   />
+ 				</many-to-one>
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="cancelReason" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_cancelreas" not-null="false" sql-type="numeric(10,0)"  unique="false"   />
+ 				</many-to-one>
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="apptStatus" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_apptstatus" not-null="false" sql-type="numeric(10,0)"  unique="false"   />
+ 				</many-to-one>
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="treatmentCategory" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_treatmentc" not-null="false" sql-type="numeric(10,0)"  unique="false"   />
+ 				</many-to-one>
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="dNAReason" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_dnareason" not-null="false" sql-type="numeric(10,0)"  unique="false"   />
+ 				</many-to-one>
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="machineType" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_machinetyp" not-null="false" sql-type="numeric(10,0)"  unique="false"   />
+ 				</many-to-one>
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="scheduleCategory" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_scheduleca" not-null="false" sql-type="numeric(10,0)"  unique="false"   />
+ 				</many-to-one>
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="scheduleType" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_schedulety" not-null="false" sql-type="numeric(10,0)"  unique="false"   />
+ 				</many-to-one>
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="intervalType" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_intervalty" not-null="false" sql-type="numeric(10,0)"  unique="false"   />
+ 				</many-to-one>
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="locationChar" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_locationch" not-null="false" sql-type="numeric(10,0)"  unique="false"   />
+ 				</many-to-one>
+ 			</composite-element>
+ 		</list>
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="name" type="string" access="field" update="true" > 
+			<column name="name" length="30"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="active" type="string" access="field" update="true" > 
+			<column name="active" length="1"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

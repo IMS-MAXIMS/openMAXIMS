@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -70,6 +75,8 @@ import ca.uhn.hl7v2.app.Application;
 import ca.uhn.hl7v2.app.ApplicationException;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v24.message.ACK;
+import ca.uhn.hl7v2.model.v24.segment.MSA;
+import ims.hl7.domain.EventResponse;
 
 public class HL7EngineApplication implements Application
 {
@@ -119,8 +126,12 @@ public class HL7EngineApplication implements Application
 		loadMapper(EvnCodes.A11);
 		loadMapper(EvnCodes.A12);
 		loadMapper(EvnCodes.A13);
+		loadMapper(EvnCodes.A15); //WDEV-19974
+		loadMapper(EvnCodes.A16); //WDEV-20445
 		loadMapper(EvnCodes.A21);
 		loadMapper(EvnCodes.A22);
+		loadMapper(EvnCodes.A25); //WDEV-20445
+		loadMapper(EvnCodes.A26); //WDEV-19974
 		loadMapper(EvnCodes.A29);
 		loadMapper(EvnCodes.A34);
 		loadMapper(EvnCodes.A38);
@@ -142,7 +153,15 @@ public class HL7EngineApplication implements Application
 		loadMapper(EvnCodes.I12);
 		loadMapper(EvnCodes.I13);
 		loadMapper(EvnCodes.I14);
-		
+		loadMapper(EvnCodes.S12);
+		loadMapper(EvnCodes.S14);
+		loadMapper(EvnCodes.S15);
+		loadMapper(EvnCodes.S26);
+//		loadMapper(EvnCodes.P01); //WDEV-22725
+//		loadMapper(EvnCodes.P02); //WDEV-22725
+//		loadMapper(EvnCodes.P03); //WDEV-22725
+//		loadMapper(EvnCodes.P05); //WDEV-22725
+//		loadMapper(EvnCodes.M04); //WDEV-22725		
 		
 		parser = new HL7MessageParser();
 		login();
@@ -209,6 +228,9 @@ public class HL7EngineApplication implements Application
 	public synchronized Message processMessage(Message msg) throws ApplicationException
 	{
 		LOG.debug("Start Processing Message. " + msg.getName());
+		
+		EventResponse response = null;
+		
 		Message ack = null;
 		VoMapper mapper=null;
 		String ackStr = "";
@@ -226,9 +248,21 @@ public class HL7EngineApplication implements Application
 				ack = HL7Utils.buildRejAck(msg.get("MSH"), "Version " + HL7Utils.getVersion(msg) + " is not supported. ", HL7Errors.UNSUPP_VERSION);
 				ackStr = parser.encode(ack);
 				msgStr = parser.encode(msg);
-				warn("Message Rejected: " + msg.getName() +": \n" + msgStr +  "\nwith ACK: \n" + ackStr);
 				
-//				saveInboundMessage(msgStr, "Message Rejected: " + msg.getName() +": \n" + msgStr +  "\nwith ACK: \n" + ackStr, null, null, null, null);
+				//WDEV-21766
+				//warn("Message Rejected: " + msg.getName() +": \n" + msgStr +  "\nwith ACK: \n" + ackStr);
+				String msaTextMessage = ((ACK) ack).getMSA().getTextMessage().toString();
+				if (msaTextMessage.equals("Exception. Non result message for resulted Investigation"))
+				{
+					info("Message Rejected: " + msg.getName() +": \n" + msgStr +  "\nwith ACK: \n" + ackStr);
+				}
+				else
+				{
+					warn("Message Rejected: " + msg.getName() +": \n" + msgStr +  "\nwith ACK: \n" + ackStr);
+				} //WDEV-21766
+				
+				//WDEV-20035 Uncomment following line
+				saveInboundMessage(msgStr, "Message Rejected: " + msg.getName() +": \n" + msgStr +  "\nwith ACK: \n" + ackStr, null, null, null, null);
 				return ack;
 			}
 
@@ -239,9 +273,21 @@ public class HL7EngineApplication implements Application
 				ack = HL7Utils.buildRejAck(msg.get(SegName.MSH), "No Event Handler Class found for event code " + evnCode, HL7Errors.UNSUPP_EVN_CODE);
 				ackStr = parser.encode(ack);
 				msgStr = parser.encode(msg);
-				warn("Message Rejected: " + msg.getName() +": \n" + msgStr + "\nwith ACK: \n" + ackStr);
 				
-//				saveInboundMessage(msgStr, "Message Rejected: " + msg.getName() +": \n" + msgStr + "\nwith ACK: \n" + ackStr, evnCode, null, null, null);
+				//WDEV-21766
+				//warn("Message Rejected: " + msg.getName() +": \n" + msgStr +  "\nwith ACK: \n" + ackStr);
+				String msaTextMessage = ((ACK) ack).getMSA().getTextMessage().toString();
+				if (msaTextMessage.equals("Exception. Non result message for resulted Investigation"))
+				{
+					info("Message Rejected: " + msg.getName() +": \n" + msgStr +  "\nwith ACK: \n" + ackStr);
+				}
+				else
+				{
+					warn("Message Rejected: " + msg.getName() +": \n" + msgStr +  "\nwith ACK: \n" + ackStr);
+				} //WDEV-21766
+				
+				//WDEV-20035 Uncomment following line
+				saveInboundMessage(msgStr, "Message Rejected: " + msg.getName() +": \n" + msgStr + "\nwith ACK: \n" + ackStr, evnCode, null, null, null);
 				return ack;
 			}
 			
@@ -252,10 +298,29 @@ public class HL7EngineApplication implements Application
 			mapper.processedCount++;
 			
 			IMessageHandler myObject = (IMessageHandler) MonProxyFactory.monitor(mapper);
-			
-			ack=myObject.processEvent(msg, providerSystem);	
-			ackStr = parser.encode(ack);
+
+			//WDEV-20112
+//			ack=myObject.processEvent(msg, providerSystem);	
+//			ackStr = parser.encode(ack);
+//			//WDEV-20035 Uncomment following line
 //			saveInboundMessage(parser.encode(msg), null, evnCode, providerSystem, mapper.getPatient(msg, providerSystem), null);
+			response = (EventResponse) myObject.processEvent(msg, providerSystem);
+			ack = response.getMessage();
+			ackStr = parser.encode(ack);
+			MSA msa = (MSA) ack.get("MSA");
+			
+			if (msa.getAcknowledgementCode().getValue().equals("AA")||msa.getAcknowledgementCode().getValue().equals("CA"))
+			//ACK
+			{
+				saveInboundMessage(parser.encode(msg), null, evnCode, providerSystem, response.getPatient(), null);
+			}
+			else
+			//NACK
+			//Ensure that error text message (MSA-3) is saved
+			{
+				saveInboundMessage(parser.encode(msg), msa.getTextMessage().toString(), evnCode, providerSystem, response.getPatient(), null);
+			}
+			//WDEV-20112
 			
 		}
 		catch (HL7Exception hex)
@@ -268,9 +333,22 @@ public class HL7EngineApplication implements Application
 				ack = HL7Utils.buildRejAck(msg.get("MSH"), "HL7Exception : " + hex.getMessage(), HL7Errors.APP_INT_ERROR);
 				ackStr = parser.encode(ack);
 				msgStr = parser.encode(msg);
-				warn("Message Rejected: " + msg.getName() +": \n" + msgStr + "\nwith ACK: \n" + ackStr);
+
+				//WDEV-21766
+				//warn("Message Rejected: " + msg.getName() +": \n" + msgStr +  "\nwith ACK: \n" + ackStr);
+				String msaTextMessage = ((ACK) ack).getMSA().getTextMessage().toString();
+				if (msaTextMessage.equals("Exception. Non result message for resulted Investigation")
+					||msaTextMessage.equals("Exception in A08: null")) //http://jira/browse/WDEV-22946
+				{
+					info("Message Rejected: " + msg.getName() +": \n" + msgStr +  "\nwith ACK: \n" + ackStr);
+				}
+				else
+				{
+					warn("Message Rejected: " + msg.getName() +": \n" + msgStr +  "\nwith ACK: \n" + ackStr);
+				} //WDEV-21766
 				
-//				saveInboundMessage(msgStr, "Message Rejected: " + msg.getName() +": \n" + msgStr + "\nwith ACK: \n" + ackStr, null, null, null, isFailedByProviderSystem);
+				//WDEV-20035 Uncomment following line
+				saveInboundMessage(msgStr, "Message Rejected: " + msg.getName() +": \n" + msgStr + "\nwith ACK: \n" + ackStr, null, null, null, isFailedByProviderSystem);
 			}
 			catch (HL7Exception e)
 			{
@@ -291,9 +369,22 @@ public class HL7EngineApplication implements Application
 					ack = HL7Utils.buildRejAck(msg.get("MSH"), "HL7Exception : " + ex.getMessage(), HL7Errors.APP_INT_ERROR);
 				ackStr = parser.encode(ack);
 				msgStr = parser.encode(msg);
-				warn("Message Rejected: " + msg.getName() +": \n" + msgStr + "\nwith ACK: \n" + ackStr);
+
+				//WDEV-21766
+				//warn("Message Rejected: " + msg.getName() +": \n" + msgStr +  "\nwith ACK: \n" + ackStr);
+				String msaTextMessage = ((ACK) ack).getMSA().getTextMessage().toString();
+				if (msaTextMessage.equals("Exception. Non result message for resulted Investigation")
+					||msaTextMessage.equals("Exception in A08: null")) //http://jira/browse/WDEV-22946
+				{
+					info("Message Rejected: " + msg.getName() +": \n" + msgStr +  "\nwith ACK: \n" + ackStr);
+				}
+				else
+				{
+					warn("Message Rejected: " + msg.getName() +": \n" + msgStr +  "\nwith ACK: \n" + ackStr);
+				} //WDEV-21766
 				
-//				saveInboundMessage(msgStr, "Message Rejected: " + msg.getName() +": \n" + msgStr + "\nwith ACK: \n" + ackStr, null, null, null, null);
+				//WDEV-20035 Uncomment following line
+				saveInboundMessage(msgStr, "Message Rejected: " + msg.getName() +": \n" + msgStr + "\nwith ACK: \n" + ackStr, null, null, null, null);
 			}
 			catch (HL7Exception e)
 			{
@@ -347,7 +438,18 @@ public class HL7EngineApplication implements Application
 					}
 				}
 				
-				warn("Message Rejected: " + msg.getName() +": \n" + msgStr + "\nwith ACK: \n" + ackStr);
+				//WDEV-21766
+				//warn("Message Rejected: " + msg.getName() +": \n" + msgStr +  "\nwith ACK: \n" + ackStr);
+				String msaTextMessage = ((ACK) ack).getMSA().getTextMessage().toString();
+				if (msaTextMessage.equals("Exception. Non result message for resulted Investigation")
+					||msaTextMessage.equals("Exception in A08: null")) //http://jira/browse/WDEV-22946
+				{
+					info("Message Rejected: " + msg.getName() +": \n" + msgStr +  "\nwith ACK: \n" + ackStr);
+				}
+				else
+				{
+					warn("Message Rejected: " + msg.getName() +": \n" + msgStr +  "\nwith ACK: \n" + ackStr);
+				} //WDEV-21766
 			}
 		}		
 			
@@ -603,5 +705,12 @@ public class HL7EngineApplication implements Application
 		LOG.warn(warning);
 		adt.createSystemLogEntry(SystemLogType.HL7, SystemLogLevel.WARNING, warning);
 	}
+	
+	//WDEV-21766
+	void info(String info)
+	{
+		LOG.warn(info);
+		adt.createSystemLogEntry(SystemLogType.HL7, SystemLogLevel.INFORMATION, info);
+	} //WDEV-21766
 
 }

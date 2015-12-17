@@ -1,9 +1,33 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.RefMan.vo.domain;
@@ -61,10 +85,28 @@ public class PatientElectiveListElectiveTCIVoAssembler
 		valueObjectDest.setOutcomeHistory(valueObjectSrc.getOutcomeHistory());
 		// IsActive
 		valueObjectDest.setIsActive(valueObjectSrc.getIsActive());
-		// KPIExceededReason
-		valueObjectDest.setKPIExceededReason(valueObjectSrc.getKPIExceededReason());
 		// TCIHospital
 		valueObjectDest.setTCIHospital(valueObjectSrc.getTCIHospital());
+		// RTTBreachReason
+		valueObjectDest.setRTTBreachReason(valueObjectSrc.getRTTBreachReason());
+		// RTTBreachComment
+		valueObjectDest.setRTTBreachComment(valueObjectSrc.getRTTBreachComment());
+		// ReasonDeclined28
+		valueObjectDest.setReasonDeclined28(valueObjectSrc.getReasonDeclined28());
+		// wasReasonable28dayOfferMade
+		valueObjectDest.setWasReasonable28dayOfferMade(valueObjectSrc.getWasReasonable28dayOfferMade());
+		// DayTCIDate28Offered
+		valueObjectDest.setDayTCIDate28Offered(valueObjectSrc.getDayTCIDate28Offered());
+		// Date28OfOffer
+		valueObjectDest.setDate28OfOffer(valueObjectSrc.getDate28OfOffer());
+		// SubjectTo28DayRule
+		valueObjectDest.setSubjectTo28DayRule(valueObjectSrc.getSubjectTo28DayRule());
+		// Rule28DayPeriodStart
+		valueObjectDest.setRule28DayPeriodStart(valueObjectSrc.getRule28DayPeriodStart());
+		// Rule28DayStatus
+		valueObjectDest.setRule28DayStatus(valueObjectSrc.getRule28DayStatus());
+		// SystemInformation
+		valueObjectDest.setSystemInformation(valueObjectSrc.getSystemInformation());
 	 	return valueObjectDest;
 	 }
 
@@ -470,19 +512,7 @@ public class PatientElectiveListElectiveTCIVoAssembler
 			valueObject.setPlanningElective(voLookup9);
 		}
 				// TCIWard
-		if (domainObject.getTCIWard() != null)
-		{
-			if(domainObject.getTCIWard() instanceof HibernateProxy) // If the proxy is set, there is no need to lazy load, the proxy knows the id already. 
-			{
-				HibernateProxy p = (HibernateProxy) domainObject.getTCIWard();
-				int id = Integer.parseInt(p.getHibernateLazyInitializer().getIdentifier().toString());				
-				valueObject.setTCIWard(new ims.core.resource.place.vo.LocationRefVo(id, -1));				
-			}
-			else
-			{
-				valueObject.setTCIWard(new ims.core.resource.place.vo.LocationRefVo(domainObject.getTCIWard().getId(), domainObject.getTCIWard().getVersion()));
-			}
-		}
+		valueObject.setTCIWard(ims.core.vo.domain.LocationLiteVoAssembler.create(map, domainObject.getTCIWard()) );
 		// TCIBed
 		valueObject.setTCIBed(domainObject.getTCIBed());
 		// TCIConsultant
@@ -505,43 +535,7 @@ public class PatientElectiveListElectiveTCIVoAssembler
 		valueObject.setOutcomeHistory(ims.RefMan.vo.domain.TCIOutcomeForPatientElectiveListVoAssembler.createTCIOutcomeForPatientElectiveListVoCollectionFromTCIOutcomeForPatientElectiveList(map, domainObject.getOutcomeHistory()) );
 		// IsActive
 		valueObject.setIsActive( domainObject.isIsActive() );
-		// KPIExceededReason
-		ims.domain.lookups.LookupInstance instance16 = domainObject.getKPIExceededReason();
-		if ( null != instance16 ) {
-			ims.framework.utils.ImagePath img = null;
-			ims.framework.utils.Color color = null;		
-			img = null;
-			if (instance16.getImage() != null) 
-			{
-				img = new ims.framework.utils.ImagePath(instance16.getImage().getImageId(), instance16.getImage().getImagePath());
-			}
-			color = instance16.getColor();
-			if (color != null) 
-				color.getValue();
-
-			ims.RefMan.vo.lookups.KPIExceededReason voLookup16 = new ims.RefMan.vo.lookups.KPIExceededReason(instance16.getId(),instance16.getText(), instance16.isActive(), null, img, color);
-			ims.RefMan.vo.lookups.KPIExceededReason parentVoLookup16 = voLookup16;
-			ims.domain.lookups.LookupInstance parent16 = instance16.getParent();
-			while (parent16 != null)
-			{
-				if (parent16.getImage() != null) 
-				{
-					img = new ims.framework.utils.ImagePath(parent16.getImage().getImageId(), parent16.getImage().getImagePath() );
-				}
-				else 
-				{
-					img = null;
-				}
-				color = parent16.getColor();
-    			if (color != null) 
-    				color.getValue();
-								parentVoLookup16.setParent(new ims.RefMan.vo.lookups.KPIExceededReason(parent16.getId(),parent16.getText(), parent16.isActive(), null, img, color));
-				parentVoLookup16 = parentVoLookup16.getParent();
-								parent16 = parent16.getParent();
-			}			
-			valueObject.setKPIExceededReason(voLookup16);
-		}
-				// TCIHospital
+		// TCIHospital
 		if (domainObject.getTCIHospital() != null)
 		{
 			if(domainObject.getTCIHospital() instanceof HibernateProxy) // If the proxy is set, there is no need to lazy load, the proxy knows the id already. 
@@ -555,6 +549,141 @@ public class PatientElectiveListElectiveTCIVoAssembler
 				valueObject.setTCIHospital(new ims.core.resource.place.vo.LocationRefVo(domainObject.getTCIHospital().getId(), domainObject.getTCIHospital().getVersion()));
 			}
 		}
+		// RTTBreachReason
+		ims.domain.lookups.LookupInstance instance17 = domainObject.getRTTBreachReason();
+		if ( null != instance17 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance17.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance17.getImage().getImageId(), instance17.getImage().getImagePath());
+			}
+			color = instance17.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.scheduling.vo.lookups.RTTWeekWaitOr28DayRuleBreachReason voLookup17 = new ims.scheduling.vo.lookups.RTTWeekWaitOr28DayRuleBreachReason(instance17.getId(),instance17.getText(), instance17.isActive(), null, img, color);
+			ims.scheduling.vo.lookups.RTTWeekWaitOr28DayRuleBreachReason parentVoLookup17 = voLookup17;
+			ims.domain.lookups.LookupInstance parent17 = instance17.getParent();
+			while (parent17 != null)
+			{
+				if (parent17.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent17.getImage().getImageId(), parent17.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent17.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup17.setParent(new ims.scheduling.vo.lookups.RTTWeekWaitOr28DayRuleBreachReason(parent17.getId(),parent17.getText(), parent17.isActive(), null, img, color));
+				parentVoLookup17 = parentVoLookup17.getParent();
+								parent17 = parent17.getParent();
+			}			
+			valueObject.setRTTBreachReason(voLookup17);
+		}
+				// RTTBreachComment
+		valueObject.setRTTBreachComment(domainObject.getRTTBreachComment());
+		// ReasonDeclined28
+		ims.domain.lookups.LookupInstance instance19 = domainObject.get_28ReasonDeclined();
+		if ( null != instance19 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance19.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance19.getImage().getImageId(), instance19.getImage().getImagePath());
+			}
+			color = instance19.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.RefMan.vo.lookups.ReasonDeclined28DayOffer voLookup19 = new ims.RefMan.vo.lookups.ReasonDeclined28DayOffer(instance19.getId(),instance19.getText(), instance19.isActive(), null, img, color);
+			ims.RefMan.vo.lookups.ReasonDeclined28DayOffer parentVoLookup19 = voLookup19;
+			ims.domain.lookups.LookupInstance parent19 = instance19.getParent();
+			while (parent19 != null)
+			{
+				if (parent19.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent19.getImage().getImageId(), parent19.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent19.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup19.setParent(new ims.RefMan.vo.lookups.ReasonDeclined28DayOffer(parent19.getId(),parent19.getText(), parent19.isActive(), null, img, color));
+				parentVoLookup19 = parentVoLookup19.getParent();
+								parent19 = parent19.getParent();
+			}			
+			valueObject.setReasonDeclined28(voLookup19);
+		}
+				// wasReasonable28dayOfferMade
+		valueObject.setWasReasonable28dayOfferMade( domainObject.isWasReasonable28dayOfferMade() );
+		// DayTCIDate28Offered
+		java.util.Date DayTCIDate28Offered = domainObject.get_28DayTCIDateOffered();
+		if ( null != DayTCIDate28Offered ) 
+		{
+			valueObject.setDayTCIDate28Offered(new ims.framework.utils.Date(DayTCIDate28Offered) );
+		}
+		// Date28OfOffer
+		java.util.Date Date28OfOffer = domainObject.get_28DateOfOffer();
+		if ( null != Date28OfOffer ) 
+		{
+			valueObject.setDate28OfOffer(new ims.framework.utils.Date(Date28OfOffer) );
+		}
+		// SubjectTo28DayRule
+		valueObject.setSubjectTo28DayRule( domainObject.isSubjectTo28DayRule() );
+		// Rule28DayPeriodStart
+		java.util.Date Rule28DayPeriodStart = domainObject.getRule28DayPeriodStart();
+		if ( null != Rule28DayPeriodStart ) 
+		{
+			valueObject.setRule28DayPeriodStart(new ims.framework.utils.Date(Rule28DayPeriodStart) );
+		}
+		// Rule28DayStatus
+		ims.domain.lookups.LookupInstance instance25 = domainObject.getRule28DayStatus();
+		if ( null != instance25 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance25.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance25.getImage().getImageId(), instance25.getImage().getImagePath());
+			}
+			color = instance25.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.scheduling.vo.lookups.Rule28DayStatus voLookup25 = new ims.scheduling.vo.lookups.Rule28DayStatus(instance25.getId(),instance25.getText(), instance25.isActive(), null, img, color);
+			ims.scheduling.vo.lookups.Rule28DayStatus parentVoLookup25 = voLookup25;
+			ims.domain.lookups.LookupInstance parent25 = instance25.getParent();
+			while (parent25 != null)
+			{
+				if (parent25.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent25.getImage().getImageId(), parent25.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent25.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup25.setParent(new ims.scheduling.vo.lookups.Rule28DayStatus(parent25.getId(),parent25.getText(), parent25.isActive(), null, img, color));
+				parentVoLookup25 = parentVoLookup25.getParent();
+								parent25 = parent25.getParent();
+			}			
+			valueObject.setRule28DayStatus(voLookup25);
+		}
+				// SystemInformation
+		// set system information
+		valueObject.setSystemInformation(ims.vo.domain.SystemInformationAssembler.create(domainObject.getSystemInformation()));
  		return valueObject;
 	 }
 
@@ -692,7 +821,8 @@ public class PatientElectiveListElectiveTCIVoAssembler
 				domainFactory.getLookupInstance(valueObject.getPlanningElective().getID());
 		}
 		domainObject.setPlanningElective(value9);
-		ims.core.resource.place.domain.objects.Location value10 = null;
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.resource.place.domain.objects.Location value10 = null;
 		if ( null != valueObject.getTCIWard() ) 
 		{
 			if (valueObject.getTCIWard().getBoId() == null)
@@ -701,10 +831,6 @@ public class PatientElectiveListElectiveTCIVoAssembler
 				{
 					value10 = (ims.core.resource.place.domain.objects.Location)domMap.get(valueObject.getTCIWard());
 				}
-			}
-			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
-			{
-				value10 = domainObject.getTCIWard();	
 			}
 			else
 			{
@@ -742,34 +868,80 @@ public class PatientElectiveListElectiveTCIVoAssembler
 		domainObject.setCurrentOutcome(ims.RefMan.vo.domain.TCIOutcomeForPatientElectiveListVoAssembler.extractTCIOutcomeForPatientElectiveList(domainFactory, valueObject.getCurrentOutcome(), domMap));
 		domainObject.setOutcomeHistory(ims.RefMan.vo.domain.TCIOutcomeForPatientElectiveListVoAssembler.extractTCIOutcomeForPatientElectiveListList(domainFactory, valueObject.getOutcomeHistory(), domainObject.getOutcomeHistory(), domMap));		
 		domainObject.setIsActive(valueObject.getIsActive());
-		// create LookupInstance from vo LookupType
-		ims.domain.lookups.LookupInstance value16 = null;
-		if ( null != valueObject.getKPIExceededReason() ) 
-		{
-			value16 =
-				domainFactory.getLookupInstance(valueObject.getKPIExceededReason().getID());
-		}
-		domainObject.setKPIExceededReason(value16);
-		ims.core.resource.place.domain.objects.Location value17 = null;
+		ims.core.resource.place.domain.objects.Location value16 = null;
 		if ( null != valueObject.getTCIHospital() ) 
 		{
 			if (valueObject.getTCIHospital().getBoId() == null)
 			{
 				if (domMap.get(valueObject.getTCIHospital()) != null)
 				{
-					value17 = (ims.core.resource.place.domain.objects.Location)domMap.get(valueObject.getTCIHospital());
+					value16 = (ims.core.resource.place.domain.objects.Location)domMap.get(valueObject.getTCIHospital());
 				}
 			}
 			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
 			{
-				value17 = domainObject.getTCIHospital();	
+				value16 = domainObject.getTCIHospital();	
 			}
 			else
 			{
-				value17 = (ims.core.resource.place.domain.objects.Location)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.Location.class, valueObject.getTCIHospital().getBoId());
+				value16 = (ims.core.resource.place.domain.objects.Location)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.Location.class, valueObject.getTCIHospital().getBoId());
 			}
 		}
-		domainObject.setTCIHospital(value17);
+		domainObject.setTCIHospital(value16);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value17 = null;
+		if ( null != valueObject.getRTTBreachReason() ) 
+		{
+			value17 =
+				domainFactory.getLookupInstance(valueObject.getRTTBreachReason().getID());
+		}
+		domainObject.setRTTBreachReason(value17);
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getRTTBreachComment() != null && valueObject.getRTTBreachComment().equals(""))
+		{
+			valueObject.setRTTBreachComment(null);
+		}
+		domainObject.setRTTBreachComment(valueObject.getRTTBreachComment());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value19 = null;
+		if ( null != valueObject.getReasonDeclined28() ) 
+		{
+			value19 =
+				domainFactory.getLookupInstance(valueObject.getReasonDeclined28().getID());
+		}
+		domainObject.set_28ReasonDeclined(value19);
+		domainObject.setWasReasonable28dayOfferMade(valueObject.getWasReasonable28dayOfferMade());
+		java.util.Date value21 = null;
+		ims.framework.utils.Date date21 = valueObject.getDayTCIDate28Offered();		
+		if ( date21 != null ) 
+		{
+			value21 = date21.getDate();
+		}
+		domainObject.set_28DayTCIDateOffered(value21);
+		java.util.Date value22 = null;
+		ims.framework.utils.Date date22 = valueObject.getDate28OfOffer();		
+		if ( date22 != null ) 
+		{
+			value22 = date22.getDate();
+		}
+		domainObject.set_28DateOfOffer(value22);
+		domainObject.setSubjectTo28DayRule(valueObject.getSubjectTo28DayRule());
+		java.util.Date value24 = null;
+		ims.framework.utils.Date date24 = valueObject.getRule28DayPeriodStart();		
+		if ( date24 != null ) 
+		{
+			value24 = date24.getDate();
+		}
+		domainObject.setRule28DayPeriodStart(value24);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value25 = null;
+		if ( null != valueObject.getRule28DayStatus() ) 
+		{
+			value25 =
+				domainFactory.getLookupInstance(valueObject.getRule28DayStatus().getID());
+		}
+		domainObject.setRule28DayStatus(value25);
 
 		return domainObject;
 	}

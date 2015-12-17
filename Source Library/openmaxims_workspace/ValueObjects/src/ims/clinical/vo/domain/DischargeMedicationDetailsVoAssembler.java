@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.clinical.vo.domain;
@@ -60,6 +65,10 @@ public class DischargeMedicationDetailsVoAssembler
 		valueObjectDest.setTTAs(valueObjectSrc.getTTAs());
 		// AdmissionMedicationChanges
 		valueObjectDest.setAdmissionMedicationChanges(valueObjectSrc.getAdmissionMedicationChanges());
+		// TTAComments
+		valueObjectDest.setTTAComments(valueObjectSrc.getTTAComments());
+		// TTAReceived
+		valueObjectDest.setTTAReceived(valueObjectSrc.getTTAReceived());
 	 	return valueObjectDest;
 	 }
 
@@ -406,6 +415,17 @@ public class DischargeMedicationDetailsVoAssembler
 		valueObject.setTTAs(ims.clinical.vo.domain.TTAMedicationVoAssembler.createTTAMedicationVoCollectionFromTTAMedication(map, domainObject.getTTAs()) );
 		// AdmissionMedicationChanges
 		valueObject.setAdmissionMedicationChanges(ims.clinical.vo.domain.AdmissionMedicationChangesVoAssembler.createAdmissionMedicationChangesVoCollectionFromAdmissionMedicationChanges(map, domainObject.getAdmissionMedicationChanges()) );
+		// TTAComments
+		ims.edischarge.vo.TTANoteRefVoCollection TTAComments = new ims.edischarge.vo.TTANoteRefVoCollection();
+		for(java.util.Iterator iterator = domainObject.getTTAComments().iterator(); iterator.hasNext(); ) 
+		{
+			ims.edischarge.domain.objects.TTANote tmp = (ims.edischarge.domain.objects.TTANote)iterator.next();
+			if (tmp != null)
+				TTAComments.add(new ims.edischarge.vo.TTANoteRefVo(tmp.getId(),tmp.getVersion()));
+		}
+		valueObject.setTTAComments(TTAComments);
+		// TTAReceived
+		valueObject.setTTAReceived( domainObject.isTTAReceived() );
  		return valueObject;
 	 }
 
@@ -616,6 +636,61 @@ public class DischargeMedicationDetailsVoAssembler
 		}		
 		
 		domainObject.setAdmissionMedicationChanges(domainAdmissionMedicationChanges5);		
+
+		ims.edischarge.vo.TTANoteRefVoCollection refCollection6 = valueObject.getTTAComments();
+		int size6 = (null == refCollection6) ? 0 : refCollection6.size();		
+		java.util.Set domainTTAComments6 = domainObject.getTTAComments();
+		if (domainTTAComments6 == null)
+		{
+			domainTTAComments6 = new java.util.HashSet();
+		}
+		java.util.Set newSet6  = new java.util.HashSet();
+		for(int i=0; i<size6; i++) 
+		{
+			ims.edischarge.vo.TTANoteRefVo vo = refCollection6.get(i);					
+			ims.edischarge.domain.objects.TTANote dom = null;
+			if ( null != vo ) 
+			{
+				if (vo.getBoId() == null)
+				{
+					if (domMap.get(vo) != null)
+					{
+						dom = (ims.edischarge.domain.objects.TTANote)domMap.get(vo);
+					}
+				}
+				else
+				{
+					dom = (ims.edischarge.domain.objects.TTANote)domainFactory.getDomainObject( ims.edischarge.domain.objects.TTANote.class, vo.getBoId());
+				}
+			}
+
+			//Trying to avoid the hibernate collection being marked as dirty via its public interface methods. (like add)
+			if (!domainTTAComments6.contains(dom))
+			{
+				domainTTAComments6.add(dom);
+			}
+			newSet6.add(dom);			
+		}
+		java.util.Set removedSet6 = new java.util.HashSet();
+		java.util.Iterator iter6 = domainTTAComments6.iterator();
+		//Find out which objects need to be removed
+		while (iter6.hasNext())
+		{
+			ims.domain.DomainObject o = (ims.domain.DomainObject)iter6.next();			
+			if ((o == null || o.getIsRIE() == null || !o.getIsRIE().booleanValue()) && !newSet6.contains(o))
+			{
+				removedSet6.add(o);
+			}
+		}
+		iter6 = removedSet6.iterator();
+		//Remove the unwanted objects
+		while (iter6.hasNext())
+		{
+			domainTTAComments6.remove(iter6.next());
+		}		
+		
+		domainObject.setTTAComments(domainTTAComments6);		
+		domainObject.setTTAReceived(valueObject.getTTAReceived());
 
 		return domainObject;
 	}

@@ -1,0 +1,112 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 12/10/2015, 13:31 -->
+<hibernate-mapping>
+	<class name="ims.pathways.domain.objects.PathwaysRTTClockImpact" table="pthw_pathwaysrttclo" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: initialClock -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="initialClock" class="ims.pathways.domain.objects.PathwayClock" unique="true" foreign-key="pathwaysrttclo_initialclo_fk" access="field" cascade="save-update">
+			<column name="initialclo" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: finalClock -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="finalClock" class="ims.pathways.domain.objects.PathwayClock" unique="true" foreign-key="pathwaysrttclo_finalclock_fk" access="field" cascade="save-update">
+			<column name="finalclock" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: initialRTTStatus -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="initialRTTStatus" class="ims.pathways.domain.objects.PathwayRTTStatus" unique="true" foreign-key="pathwaysrttclo_initialrtt_fk" access="field" cascade="save-update">
+			<column name="initialrtt" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: finalRTTStatus -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="finalRTTStatus" class="ims.pathways.domain.objects.PathwayRTTStatus" unique="true" foreign-key="pathwaysrttclo_finalrttst_fk" access="field" cascade="save-update">
+			<column name="finalrttst" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: clockStarted -->
+<!-- debug: clockStopped -->
+<!-- debug: outcomeEvent -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="outcomeEvent" class="ims.pathways.domain.objects.RTTStatusEventMap" unique="true" foreign-key="pathwaysrttclo_outcomeeve_fk" access="field" cascade="save-update">
+			<column name="outcomeeve" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: journey -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="journey" class="ims.pathways.domain.objects.PatientPathwayJourney" unique="true" foreign-key="pathwaysrttclo_journey_fk" access="field" cascade="save-update">
+			<column name="journey" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: source -->
+<!-- debug: initialClockState -->
+<!-- debug: finalClockState -->
+<!-- debug: outcomeDescription -->
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="clockStarted" type="boolean" access="field" update="true">
+			<column name="clockstart"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="clockStopped" type="boolean" access="field" update="true">
+			<column name="clockstopp"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="source" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_source" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="initialClockState" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_initialcl2" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="finalClockState" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_finalcloc2" sql-type="numeric(10,0)" not-null="true" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="outcomeDescription" type="string" access="field" update="true" > 
+			<column name="outcomedes" length="255"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

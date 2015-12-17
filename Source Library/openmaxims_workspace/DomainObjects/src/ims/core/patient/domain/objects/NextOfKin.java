@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.patient.domain.objects;
@@ -34,7 +39,7 @@ package ims.core.patient.domain.objects;
  */
 
 
-public class NextOfKin extends ims.core.patient.domain.objects.Relative implements java.io.Serializable {
+public class NextOfKin extends ims.core.patient.domain.objects.Relative implements ims.domain.SystemInformationRetainer, java.io.Serializable {
 	public static final int CLASSID = 1001100001;
 	private static final long serialVersionUID = 1001100001L;
 	public static final String CLASSVERSION = "${ClassVersion}";
@@ -46,6 +51,8 @@ public class NextOfKin extends ims.core.patient.domain.objects.Relative implemen
 	}
 
 	private String tempField;
+	/** SystemInformation */
+	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public NextOfKin (Integer id, int ver)
     {
     	super(id, ver);
@@ -74,6 +81,12 @@ public class NextOfKin extends ims.core.patient.domain.objects.Relative implemen
 		}
 		this.tempField = tempField;
 	}
+
+	public ims.domain.SystemInformation getSystemInformation() {
+		if (systemInformation == null) systemInformation = new ims.domain.SystemInformation();
+		return systemInformation;
+	}
+
 
 	/**
 	 * isConfigurationObject

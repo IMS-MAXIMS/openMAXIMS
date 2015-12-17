@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:37 -->
+<hibernate-mapping>
+	<subclass name="ims.nursing.domain.objects.NursingClinicalNotes" lazy="true" discriminator-value="NURS" extends="ims.core.clinical.domain.objects.ClinicalNotes" >
+<!-- debug: hibernateClassContent -->
+<!-- debug: carePlans -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- many to many -->
+		<set name="carePlans" table="ns_nursingclinica_careplans" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="nursingclinica_careplans_fr_fk">
+				<column name="from_side" sql-type="numeric(10,0)" unique="false"   />
+			</key>
+			
+			<many-to-many class="ims.nursing.careplans.domain.objects.CarePlan" foreign-key="nursingclinica_careplans_to_fk">
+				<column name="to_side" sql-type="numeric(10,0)" unique="false"   />
+			</many-to-many>
+		</set>
+	</subclass>
+</hibernate-mapping>

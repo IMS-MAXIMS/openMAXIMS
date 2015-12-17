@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -33,6 +38,7 @@ import ims.core.resource.people.domain.objects.Hcp;
 import ims.core.resource.people.domain.objects.MemberOfStaff;
 import ims.core.resource.people.vo.HcpRefVo;
 import ims.core.vo.HcpLiteVo;
+import ims.core.vo.MemberOfStaffLiteVo;
 import ims.core.vo.PatientClericalTaskVo;
 import ims.core.vo.domain.HcpLiteVoAssembler;
 import ims.core.vo.domain.MemberOfStaffLiteVoAssembler;
@@ -42,6 +48,8 @@ import ims.domain.DomainFactory;
 import ims.domain.exceptions.DomainInterfaceException;
 import ims.domain.exceptions.DomainRuntimeException;
 import ims.domain.exceptions.StaleObjectException;
+import ims.domain.exceptions.UniqueKeyViolationException;
+import ims.domain.exceptions.UnqViolationUncheckedException;
 import ims.domain.lookups.LookupInstance;
 import ims.framework.exceptions.CodingRuntimeException;
 import ims.ocrr.domain.RadiologyOrders;
@@ -91,7 +99,7 @@ public class PathologyDialogImpl extends BaseResultDialogImpl
 	 * Rewritten in WDEV-13321
 	 */
 	@SuppressWarnings("unchecked")
-	public OrderInvestigationVo updatePathologyResultStatus(OrderInvestigationRefVo ordInvRef, LookupInstVo newStatus, HcpRefVo hcp)  throws StaleObjectException
+	public OrderInvestigationVo updatePathologyResultStatus(OrderInvestigationRefVo ordInvRef, LookupInstVo newStatus, HcpRefVo hcp)  throws StaleObjectException , UniqueKeyViolationException
 	{
 		if(ordInvRef == null)
 			throw new DomainRuntimeException("Specimen must be specified to update status.");
@@ -115,17 +123,16 @@ public class PathologyDialogImpl extends BaseResultDialogImpl
 			domHcp = (Hcp) factory.getDomainObject(Hcp.class, hcp.getID_Hcp());
 		}
 
-		MemberOfStaff mos = null;
-		
 		HcpLiteVo hcpUser = (HcpLiteVo) getHcpLiteUser();
-		
 		Hcp domHcpUser = HcpLiteVoAssembler.extractHcp(factory, hcpUser);
 		
-		// WDEV-14196
+		// WDEV-14196 //WDEV-18780
+		MemberOfStaff mos = null;
+		
 		if (domHcpUser != null)
-		{
 			mos = MemberOfStaffLiteVoAssembler.extractMemberOfStaff(factory, hcpUser.getMos());
-		}
+		else if (getMosUser() instanceof MemberOfStaffLiteVo) 
+			mos = MemberOfStaffLiteVoAssembler.extractMemberOfStaff(factory, (MemberOfStaffLiteVo) getMosUser());
 			
 		@SuppressWarnings("rawtypes")
 		Iterator iter = domSpec.getInvestigations().iterator();
@@ -144,7 +151,7 @@ public class PathologyDialogImpl extends BaseResultDialogImpl
 				if (mos != null && mos.getName() != null)
 					domOrdInv.setReviewRequestedBy(mos.getName().toString().length() > 50 ? mos.getName().toString().substring(0, 50) : mos.getName().toString());
 				else
-					domOrdInv.setReviewRequestedBy(null);
+					domOrdInv.setReviewRequestedBy(getLoggedInUser() != null ? getLoggedInUser().getUsername() : null); //WDEV-18780
 
 				
 				// Create an history entry
@@ -205,7 +212,16 @@ public class PathologyDialogImpl extends BaseResultDialogImpl
 	    			
 	    			notification.incrementSeenResults();
 	    			
-	    			factory.save(patient);
+	    			//WDEV-18771
+	    			try 
+	    			{
+	    				factory.save(patient);
+					} 
+	    			catch (UnqViolationUncheckedException e) 
+					{
+						throw new UniqueKeyViolationException();
+					}
+	    			
 				}
 
 				ordInv.getOrdInvStatusHistory().add(currStatus);
@@ -216,9 +232,17 @@ public class PathologyDialogImpl extends BaseResultDialogImpl
 				currStatus.setStatusReason("Status changed by user.");
 			}
 		}		
-
-		factory.save(domSpec);
-
+		
+		//WDEV-18771
+		try 
+		{
+			factory.save(domSpec);
+		} 
+		catch (UnqViolationUncheckedException e) 
+		{
+			throw new UniqueKeyViolationException();
+		}
+		
 		return OrderInvestigationVoAssembler.create(domOrdInv); //wdev-11555
 	}
 
@@ -308,32 +332,27 @@ public class PathologyDialogImpl extends BaseResultDialogImpl
 			domHcp = (Hcp) factory.getDomainObject(Hcp.class, hcp.getID_Hcp());
 		}
 
-		MemberOfStaff mos = null;
 		HcpLiteVo hcpUser = (HcpLiteVo) getHcpLiteUser();
-		
 		Hcp domHcpUser = HcpLiteVoAssembler.extractHcp(factory, hcpUser);
 		
-		if (domHcpUser != null)
-		{
-			mos = MemberOfStaffLiteVoAssembler.extractMemberOfStaff(factory, hcpUser.getMos());
-		}
-		else
-		{
-			mos = (MemberOfStaff) getMosUser();
-		}
-		
-
 		if (OrderInvStatus.REVIEW.equals(newStatus))
 		{
+			MemberOfStaff mos = null;
+			if (domHcpUser != null)
+				mos = MemberOfStaffLiteVoAssembler.extractMemberOfStaff(factory, hcpUser.getMos());
+			else if (getMosUser() instanceof MemberOfStaffLiteVo) 
+				mos = MemberOfStaffLiteVoAssembler.extractMemberOfStaff(factory, (MemberOfStaffLiteVo) getMosUser());
+
 			// Set Allocated HCP for Review field
 			domOrdInv.setAllocatedHCPforReview(domHcp);
 			domOrdInv.setAllocatedDateForReview(new java.util.Date());
 			domOrdInv.setResultSortDate(new java.util.Date()); //http://jira/browse/WDEV-18025
 			domOrdInv.setForReview(Boolean.TRUE);
+
 			if (mos != null && mos.getName() != null)
 				domOrdInv.setReviewRequestedBy(mos.getName().toString().length() > 50 ? mos.getName().toString().substring(0, 50) : mos.getName().toString());
 			else
-				domOrdInv.setReviewRequestedBy(null);
+				domOrdInv.setReviewRequestedBy(getLoggedInUser() != null ? getLoggedInUser().getUsername() : null); //WDEV-18780
 			
 			// Create an history entry
 			AllocatedResultReviewDetail historyAllocatedRecord = new AllocatedResultReviewDetail();
@@ -365,9 +384,9 @@ public class PathologyDialogImpl extends BaseResultDialogImpl
 		// Update the status if it is the case
 		if (!(isPreResultStatus(currStatus.getOrdInvStatus()) && isViewingStatus(getDomLookup(newStatus))))
 		{
-			if (!getDomLookup(OrderInvStatus.REVIEW).equals(currStatus.getOrdInvStatus())
-					&& !getDomLookup(OrderInvStatus.CHECKED).equals(currStatus.getOrdInvStatus())
-					&& !getDomLookup(OrderInvStatus.SEEN).equals(currStatus.getOrdInvStatus()))
+			if (!(getDomLookup(OrderInvStatus.REVIEW).getId() == currStatus.getOrdInvStatus().getId())
+					&& !(getDomLookup(OrderInvStatus.CHECKED).getId() == currStatus.getOrdInvStatus().getId())
+					&& !(getDomLookup(OrderInvStatus.SEEN).getId() == currStatus.getOrdInvStatus().getId()))
 			{
     			// Get Patient OCS Notification
 				Patient patient = (Patient) factory.getDomainObject(Patient.class, domOrdInv.getOrderDetails().getPatient().getId());

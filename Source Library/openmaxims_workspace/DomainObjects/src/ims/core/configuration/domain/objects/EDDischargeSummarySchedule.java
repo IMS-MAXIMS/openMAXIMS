@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.core.configuration.domain.objects;
@@ -57,6 +62,8 @@ public class EDDischargeSummarySchedule extends ims.domain.DomainObject implemen
 	private Integer failedEmailsNo;
 	/** Number of Letters Printed */
 	private Integer printedLettersNo;
+	/** Print Letters Only (No emails) */
+	private Boolean printLettersOnly;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public EDDischargeSummarySchedule (Integer id, int ver)
@@ -130,6 +137,13 @@ public class EDDischargeSummarySchedule extends ims.domain.DomainObject implemen
 		this.printedLettersNo = printedLettersNo;
 	}
 
+	public Boolean isPrintLettersOnly() {
+		return printLettersOnly;
+	}
+	public void setPrintLettersOnly(Boolean printLettersOnly) {
+		this.printLettersOnly = printLettersOnly;
+	}
+
 	public ims.domain.SystemInformation getSystemInformation() {
 		if (systemInformation == null) systemInformation = new ims.domain.SystemInformation();
 		return systemInformation;
@@ -189,6 +203,9 @@ public class EDDischargeSummarySchedule extends ims.domain.DomainObject implemen
 	    auditStr.append("; ");
 		auditStr.append("\r\n*printedLettersNo* :");
 		auditStr.append(printedLettersNo);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*printLettersOnly* :");
+		auditStr.append(printLettersOnly);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -269,6 +286,12 @@ public class EDDischargeSummarySchedule extends ims.domain.DomainObject implemen
 			sb.append("<printedLettersNo>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getPrintedLettersNo().toString()));
 			sb.append("</printedLettersNo>");		
+		}
+		if (this.isPrintLettersOnly() != null)
+		{
+			sb.append("<printLettersOnly>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isPrintLettersOnly().toString()));
+			sb.append("</printLettersOnly>");		
 		}
 		return sb.toString();
 	}
@@ -464,6 +487,11 @@ public class EDDischargeSummarySchedule extends ims.domain.DomainObject implemen
 		{	
     		obj.setPrintedLettersNo(new Integer(fldEl.getTextTrim()));	
 		}
+		fldEl = el.element("printLettersOnly");
+		if(fldEl != null)
+		{	
+    		obj.setPrintLettersOnly(new Boolean(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -482,6 +510,7 @@ public class EDDischargeSummarySchedule extends ims.domain.DomainObject implemen
 		public static final String SuccessfulEmailsNo = "successfulEmailsNo";
 		public static final String FailedEmailsNo = "failedEmailsNo";
 		public static final String PrintedLettersNo = "printedLettersNo";
+		public static final String PrintLettersOnly = "printLettersOnly";
 	}
 }
 

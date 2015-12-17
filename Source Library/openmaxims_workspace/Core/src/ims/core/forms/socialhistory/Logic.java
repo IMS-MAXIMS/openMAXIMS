@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -49,7 +54,6 @@ import ims.framework.enumerations.FormMode;
 import ims.framework.exceptions.PresentationLogicException;
 import ims.framework.utils.Date;
 import ims.framework.utils.DateTime;
-import ims.framework.utils.PartialDate;
 
 import java.util.ArrayList;
 
@@ -70,6 +74,7 @@ public class Logic extends BaseLogic
 		
 		form.btnNew().setVisible(true);
 		form.btnUpdate().setVisible(false);
+		form.cmbOccupationStatus().setRequired(false);			//wdev-19111
 		updateContextMenus();
 	}
 	
@@ -124,6 +129,10 @@ public class Logic extends BaseLogic
 		form.getLocalContext().setvoSocialHistory(null);
 		form.setMode(FormMode.EDIT);
 		form.customControlAuth().setIsRequiredPropertyToControls(true);
+		//wdev-19111
+		form.customControlAuth().setEnabledAuthoringHCP(true);
+		form.customControlAuth().setEnabledDateTime(true);
+		//---------
 		updateControlsState();
 		updateContextMenus();
 	}
@@ -695,6 +704,7 @@ public class Logic extends BaseLogic
 						return;
 					}
 					form.grdSmokingDetails().getRows().remove(form.grdSmokingDetails().getSelectedRowIndex());
+					updateContextMenus(); //WDEV-19110
 				break;
 			}
 		}

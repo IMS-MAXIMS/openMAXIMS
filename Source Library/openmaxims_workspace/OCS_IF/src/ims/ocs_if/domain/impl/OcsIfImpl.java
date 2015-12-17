@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -35,6 +40,8 @@ import org.apache.log4j.Logger;
 
 
 
+
+
 import ims.admin.vo.DemographicFeedVo;
 import ims.admin.vo.EDAttendanceFeedVo;
 import ims.admin.vo.InPatientADTFeedVo;
@@ -43,15 +50,23 @@ import ims.admin.vo.domain.EDAttendanceFeedVoAssembler;
 import ims.admin.vo.domain.InPatientADTFeedVoAssembler;
 import ims.configuration.gen.ConfigFlag;
 import ims.core.admin.domain.objects.ProviderSystem;
+import ims.core.clinical.domain.objects.NonUniqueTaxonomyMap;
 import ims.core.clinical.domain.objects.Service;
 import ims.core.clinical.domain.objects.TaxonomyMap;
 import ims.core.clinical.vo.ServiceRefVo;
+import ims.core.patient.vo.PatientRefVo;
+import ims.core.resource.people.vo.GpRefVo;
+import ims.core.resource.people.vo.MemberOfStaffRefVo;
+import ims.core.resource.place.vo.LocationRefVo;
+import ims.core.resource.place.vo.OrganisationRefVo;
 import ims.core.vo.GeneralQuestionAnswerVo;
 import ims.core.vo.GeneralQuestionAnswerVoCollection;
 import ims.core.vo.IfPatientDocumentMessageVo;
+import ims.core.vo.Patient;
 import ims.core.vo.ServiceShortVo;
 import ims.core.vo.domain.GeneralQuestionAnswerVoAssembler;
 import ims.core.vo.domain.IfPatientDocumentMessageVoAssembler;
+import ims.core.vo.domain.PatientAssembler;
 import ims.core.vo.domain.ServiceShortVoAssembler;
 import ims.core.vo.lookups.QueueType;
 import ims.domain.DomainFactory;
@@ -60,12 +75,32 @@ import ims.domain.exceptions.DomainRuntimeException;
 import ims.domain.exceptions.ForeignKeyViolationException;
 import ims.domain.exceptions.StaleObjectException;
 import ims.domain.lookups.LookupInstance;
+import ims.dtomove.vo.RadioTherapySchedQueueVo;
+import ims.dtomove.vo.domain.RadioTherapySchedQueueVoAssembler;
+import ims.emergency.vo.ifEDAttendanceVo;
 import ims.framework.exceptions.CodingRuntimeException;
-import ims.framework.interfaces.IPrintersProvider;
+import ims.hl7.vo.ElectiveListMessageQueueVo;
+import ims.hl7.vo.GPMessageQueueVo;
+import ims.hl7.vo.GPPracticeMessageQueueVo;
+import ims.hl7.vo.MOSMessageQueueVo;
+import ims.hl7.vo.WardMessageQueueVo;
+import ims.hl7.vo.domain.ElectiveListMessageQueueVoAssembler;
+import ims.hl7.vo.domain.GPMessageQueueVoAssembler;
+import ims.hl7.vo.domain.GPPracticeMessageQueueVoAssembler;
+import ims.hl7.vo.domain.MOSMessageQueueVoAssembler;
+import ims.hl7.vo.domain.WardMessageQueueVoAssembler;
+import ims.hl7adtout.domain.objects.AppointmentMessageQueue;
 import ims.hl7adtout.domain.objects.DemographicsMessageQueue;
 import ims.hl7adtout.domain.objects.EdAttendanceMessageQueue;
+import ims.hl7adtout.domain.objects.ElectiveListMessageQueue;
+import ims.hl7adtout.domain.objects.GPMessageQueue;
+import ims.hl7adtout.domain.objects.GPPracticeMessageQueue;
 import ims.hl7adtout.domain.objects.InPatientADTMessageQueue;
+import ims.hl7adtout.domain.objects.MOSMessageQueue;
 import ims.hl7adtout.domain.objects.PatientDocumentMessageQueue;
+import ims.hl7adtout.domain.objects.RadioTherapySchedQueue;
+import ims.hl7adtout.domain.objects.InpatientEpisodeQueue;
+import ims.hl7adtout.domain.objects.WardMessageQueue;
 import ims.ocrr.configuration.domain.objects.Investigation;
 import ims.ocrr.configuration.vo.InvestigationRefVo;
 import ims.core.hl7interface.domain.objects.Hl7OutboundRegister;
@@ -95,6 +130,7 @@ import ims.ocs_if.vo.IfOrderInvestigationVo;
 import ims.ocs_if.vo.IfOrderMessageVo;
 import ims.ocs_if.vo.IfOrderMessageVoCollection;
 import ims.ocs_if.vo.IfOutOcsOrderVo;
+import ims.ocs_if.vo.InpatientEpisodeQueueVo;
 import ims.ocs_if.vo.OrderChangeResponseVo;
 import ims.ocs_if.vo.QueuedEventVo;
 import ims.ocs_if.vo.domain.Hl7OutboundRegVoAssembler;
@@ -102,7 +138,10 @@ import ims.ocs_if.vo.domain.IfOrderInvCurrentStatusVoAssembler;
 import ims.ocs_if.vo.domain.IfOrderInvestigationVoAssembler;
 import ims.ocs_if.vo.domain.IfOrderMessageVoAssembler;
 import ims.ocs_if.vo.domain.IfOutOcsOrderVoAssembler;
+import ims.ocs_if.vo.domain.InpatientEpisodeQueueVoAssembler;
 import ims.ocs_if.vo.domain.OrderChangeResponseVoAssembler;
+import ims.scheduling.vo.AppointmentMessageQueueVo;
+import ims.scheduling.vo.domain.AppointmentMessageQueueVoAssembler;
 import ims.vo.LookupInstVo;
 import ims.vo.interfaces.IHL7OutboundMessageHandler;
 
@@ -341,54 +380,59 @@ public class OcsIfImpl extends BaseOcsIfImpl implements IQueueHandler
 		// so once a message has been processed for the investigation
 		// in question, this will be set to true.  We will omit these from
 		// the query
+
 		String sql=null;
-		//http://jira/browse/WDEV-12682 Changed frag from PukkaJ to ICAB so only do the link to patient in ICAB systems
+		
+		//http://jira/browse/WDEV-12682 Changed flag from PukkaJ to ICAB so only do the link to patient in ICAB systems
 		if(ConfigFlag.GEN.ICAB_ENABLED.getValue())
 		{
+			//WDEV-19317 Lower case table names and column names, ensure identifiers match definition
+			//           Done so that SQL will work for case sensitive DBs
 			sql = "select distinct (id) from ocrr_ocsorder where id in (" +
-			" select ORDERDETAI from OCRR_ORDERINVESTIGA oi, ocrr_ocsorder ord, OCRR_INVESTIGATION inv, OCRR_INVESTIGATIONI invidx, CORE_PATIENT patient " +
-			" where oi.ORDERDETAI = ord.ID " +
-			" and oi.INVESTIGAT = inv.ID " +
-			" and ord.PATIENT = patient.ID " +
-			" and patient.NAMEUPPERSURNA <> 'DUMMYICABSURNAME' " +
+			" select orderdetai from ocrr_orderinvestiga oi, ocrr_ocsorder ord, ocrr_investigation inv, ocrr_investigationi invidx, core_patient patient " +
+			" where oi.orderdetai = ord.id " +
+			" and oi.investigat = inv.id " +
+			" and ord.patient = patient.id " +
+			" and patient.nameuppersurna <> 'DummyICABSurname' " +
 			" and oi.lkp_ordinvcurrordinvstat =? " +
-			" and inv.INVESTIGAT = invidx.ID " +
-			" and ord.WASPROCESS = 0 " +
-			" and (ord.WASDISCARD is null or ord.WASDISCARD = 0) " +
+			" and inv.investigat = invidx.id " +
+			" and ord.wasprocess = 0 " +
+			" and (ord.wasdiscard is null or ord.wasdiscard = 0) " +
 			" and ord.lkp_authorisat=? " +
-			" and (invidx.LKP_CATEGORY=? or (invidx.LKP_CATEGORY=? and inv.lkp_eventtype=?))" +
-			" and (oi.WASPROCESS = 0 or oi.WASPROCESS is null) " +
+			" and (invidx.lkp_category=? or (invidx.lkp_category=? and inv.lkp_eventtype=?))" +
+			" and (oi.wasprocess = 0 or oi.wasprocess is null) " +
 			" union " +
-			" select C_ORD from OCRR_ORDERSPECIMEN os, ocrr_ocsorder ord" +
-			" where os.C_ORD = ord.ID " +
-			" and ord.WASPROCESS = 0 " +
-			" and (os.WASPROCESS is null or os.WASPROCESS = 0)" +
-			" and (ord.WASDISCARD is null or ord.WASDISCARD = 0) " +
-			" and (os.COLLDATETI is not null or os.ispatientc=1 or ord.sendnumber=1) " +
+			" select c_ord from ocrr_orderspecimen os, ocrr_ocsorder ord" +
+			" where os.c_ord = ord.id " +
+			" and ord.wasprocess = 0 " +
+			" and (os.wasprocess is null or os.wasprocess = 0)" +
+			" and (ord.wasdiscard is null or ord.wasdiscard = 0) " +
+			" and (os.colldateti is not null or os.ispatientc=1 or ord.sendnumber=1) " +
 			" and ord.lkp_authorisat=? ) order by id ";
 		}
 		else
 		{
 		sql = "select distinct (id) from ocrr_ocsorder where id in (" +
-			" select ORDERDETAI from OCRR_ORDERINVESTIGA oi, ocrr_ocsorder ord, OCRR_INVESTIGATION inv, OCRR_INVESTIGATIONI invidx " +
-			" where oi.ORDERDETAI = ord.ID " +
-			" and oi.INVESTIGAT = inv.ID " +
-			" and oi.lkp_ordinvcurrordinvstat =? " +
-			" and inv.INVESTIGAT = invidx.ID " +
-			" and ord.WASPROCESS = 0 " +
-			" and (ord.WASDISCARD is null or ord.WASDISCARD = 0) " +
-			" and ord.lkp_authorisat=? " +
-			" and (invidx.LKP_CATEGORY=? or (invidx.LKP_CATEGORY=? and inv.lkp_eventtype=?))" +
-			" and (oi.WASPROCESS = 0 or oi.WASPROCESS is null) " +
-			" union " +
-			" select C_ORD from OCRR_ORDERSPECIMEN os, ocrr_ocsorder ord" +
-			" where os.C_ORD = ord.ID " +
-			" and ord.WASPROCESS = 0 " +
-			" and (os.WASPROCESS is null or os.WASPROCESS = 0)" +
-			" and (ord.WASDISCARD is null or ord.WASDISCARD = 0) " +
-			" and (os.COLLDATETI is not null or os.ispatientc=1 or ord.sendnumber=1) " +
-			" and ord.lkp_authorisat=? ) order by id ";
+				" select orderdetai from ocrr_orderinvestiga oi, ocrr_ocsorder ord, ocrr_investigation inv, ocrr_investigationi invidx " +
+				" where oi.orderdetai = ord.id " +
+				" and oi.investigat = inv.id " +
+				" and oi.lkp_ordinvcurrordinvstat =? " +
+				" and inv.investigat = invidx.id " +
+				" and ord.wasprocess = 0 " +
+				" and (ord.wasdiscard is null or ord.wasdiscard = 0) " +
+				" and ord.lkp_authorisat=? " +
+				" and (invidx.lkp_category=? or (invidx.lkp_category=? and inv.lkp_eventtype=?))" +
+				" and (oi.wasprocess = 0 or oi.wasprocess is null) " +
+				" union " +
+				" select c_ord from ocrr_orderspecimen os, ocrr_ocsorder ord" +
+				" where os.c_ord = ord.id " +
+				" and ord.wasprocess = 0 " +
+				" and (os.wasprocess is null or os.wasprocess = 0)" +
+				" and (ord.wasdiscard is null or ord.wasdiscard = 0) " +
+				" and (os.colldateti is not null or os.ispatientc=1 or ord.sendnumber=1) " +
+				" and ord.lkp_authorisat=? ) order by id ";
 		}
+		
 		//List l = factory.find(" select ord from OcsOrder ord left join ord.specimens as sp where ord.wasProcessed = false and (ord.wasDiscarded = false or ord.wasDiscarded is null) and ord.authorisationOrderStatus.id = :authorised and ((sp.collDateTimePlacer is not null or sp.isPatientCollect = true) or sp is null ) order by ord.id", new String[]{"authorised"}, new Object[]{new Integer(AuthorisationOrderStatus.AUTHORISED.getId())}, 1);
 		//List l = factory.find(" select ord from OcsOrder ord left join ord.specimens as sp where ord.wasProcessed = false and ord.authorisationOrderStatus = :authorised and ((sp.collDateTimePlacer is not null or sp.isPatientCollect = true) or sp is null ) order by ord.id", new String[]{"authorised"}, new Object[]{getDomLookup(AuthorisationOrderStatus.AUTHORISED)}, 1);		
 //		if (l.size() == 0) 
@@ -608,7 +652,9 @@ public class OcsIfImpl extends BaseOcsIfImpl implements IQueueHandler
 		
 		for (int i = 0; i < domSvc.getTaxonomyMap().size(); i++)
 		{
-			TaxonomyMap map = (TaxonomyMap)domSvc.getTaxonomyMap().get(i);
+			//WDEV-21146
+//			TaxonomyMap map = (TaxonomyMap)domSvc.getTaxonomyMap().get(i);
+			NonUniqueTaxonomyMap map = (NonUniqueTaxonomyMap)domSvc.getTaxonomyMap().get(i); //WDEV-21146
 			if (map.getTaxonomyName().equals(domTax))
 				return map.getTaxonomyCode();
 		}
@@ -643,13 +689,131 @@ public class OcsIfImpl extends BaseOcsIfImpl implements IQueueHandler
 			}
 			else if(event.getQueueTypeIsNotNull()&&event.getQueueType().equals(QueueType.EDATTENDANCE))
 			{
-				return  EDAttendanceFeedVoAssembler.create((EdAttendanceMessageQueue)factory.getDomainObject(EdAttendanceMessageQueue.class, event.getID()));
+				EdAttendanceMessageQueue queue = (EdAttendanceMessageQueue)factory.getDomainObject(EdAttendanceMessageQueue.class, event.getID());
+				if (queue!=null&&queue.getIsRIE()!=null&&queue.getIsRIE())
+				{
+					queue.setIncludeRecord(true);
+				}
+				EDAttendanceFeedVo feedVo=  EDAttendanceFeedVoAssembler.create((queue));
+				if(feedVo.getAttendance()==null&&queue.getAttendance()!=null)
+				{
+					feedVo.setAttendance(new ifEDAttendanceVo());
+				}
+				if(feedVo.getAttendance().getPatient()==null)
+				{
+					Patient pat =  PatientAssembler.create( queue.getAttendance().getPatient());
+					feedVo.getAttendance().setPatient(pat);
+				}
+				return  feedVo;
 			}
 			else if(event.getQueueTypeIsNotNull()&&event.getQueueType().equals(QueueType.INPATIENTADT))
 			{
 				return  InPatientADTFeedVoAssembler.create((InPatientADTMessageQueue)factory.getDomainObject(InPatientADTMessageQueue.class, event.getID()));
 			}
-
+			else if(event.getQueueTypeIsNotNull()&&event.getQueueType().equals(QueueType.APPOINTMENT))
+			{
+				return  AppointmentMessageQueueVoAssembler.create((AppointmentMessageQueue)factory.getDomainObject(AppointmentMessageQueue.class, event.getID()));
+			}
+			//WDEC-19160
+			else if(event.getQueueTypeIsNotNull()&&event.getQueueType().equals(QueueType.RADIOTHERAPYSCHEDULING))
+			{
+				PatientRefVo patRefVo = null;
+				RadioTherapySchedQueue queueDom = (RadioTherapySchedQueue)factory.getDomainObject(RadioTherapySchedQueue.class, event.getID());	
+				if(queueDom!=null
+						&&queueDom.getAppointment()!=null
+						&&queueDom.getAppointment().getPatient()!=null)
+				{
+						patRefVo = new PatientRefVo(queueDom.getAppointment().getPatient().getId(), queueDom.getAppointment().getPatient().getVersion());
+				}
+				RadioTherapySchedQueueVo radioTherapySched = RadioTherapySchedQueueVoAssembler.create(queueDom);
+				radioTherapySched.setPatient(patRefVo);
+				return radioTherapySched;
+			}
+			
+			
+			//WDEV-19481
+			else if(event.getQueueTypeIsNotNull()&&event.getQueueType().equals(QueueType.INPATIENTEPISODE))
+			{
+				PatientRefVo patRefVo = null;
+				InpatientEpisodeQueue queueDom = (InpatientEpisodeQueue)factory.getDomainObject(InpatientEpisodeQueue.class, event.getID());	
+				if(queueDom!=null
+						&&queueDom.getPasEvent()!=null
+						&&queueDom.getPasEvent().getPatient()!=null)
+				{
+						patRefVo = new PatientRefVo(queueDom.getPasEvent().getPatient().getId(), queueDom.getPasEvent().getPatient().getVersion());
+				}
+				InpatientEpisodeQueueVo inpatientEpisodeQueueVo = InpatientEpisodeQueueVoAssembler.create(queueDom);
+				inpatientEpisodeQueueVo.setPatient(patRefVo);
+				return inpatientEpisodeQueueVo;				
+			}
+			
+			//WDEV-19704 Patient Elective List events
+			else if(event.getQueueTypeIsNotNull() && event.getQueueType().equals(QueueType.ELECTIVELIST))
+			{
+				PatientRefVo patRefVo = null;
+				ElectiveListMessageQueue queueDom = (ElectiveListMessageQueue)factory.getDomainObject(ElectiveListMessageQueue.class, event.getID());	
+				ElectiveListMessageQueueVo electiveListMessageQueueVo = ElectiveListMessageQueueVoAssembler.create(queueDom);
+				if(queueDom != null
+						&& queueDom.getPatientElectiveList() != null
+						&& queueDom.getPatientElectiveList().getPatient() != null)
+				{
+						patRefVo = new PatientRefVo(queueDom.getPatientElectiveList().getPatient().getId(), queueDom.getPatientElectiveList().getPatient().getVersion());
+				}
+				electiveListMessageQueueVo.setPatient(patRefVo);				
+				return electiveListMessageQueueVo;				
+			}
+			
+			
+			//WDEV-19576 Master File events
+			else if(event.getQueueTypeIsNotNull() && event.getQueueType().equals(QueueType.WARDMASTERFILE))
+			{
+				LocationRefVo locRefVo = null;
+				WardMessageQueue queueDom = (WardMessageQueue)factory.getDomainObject(WardMessageQueue.class, event.getID());
+				if(queueDom!=null && queueDom.getWard()!=null)
+				{
+					locRefVo = new LocationRefVo(queueDom.getWard().getId(), queueDom.getWard().getVersion());
+				}
+				WardMessageQueueVo wardMessageQueueVo = WardMessageQueueVoAssembler.create(queueDom);
+				wardMessageQueueVo.setWard(locRefVo);
+				return wardMessageQueueVo;				
+			}
+			else if(event.getQueueTypeIsNotNull() && event.getQueueType().equals(QueueType.GPPRACTICEMASTERFILE))
+			{
+				OrganisationRefVo orgRefVo = null;
+				GPPracticeMessageQueue queueDom = (GPPracticeMessageQueue)factory.getDomainObject(GPPracticeMessageQueue.class, event.getID());
+				if(queueDom!=null && queueDom.getPractice()!=null)
+				{
+					orgRefVo = new OrganisationRefVo(queueDom.getPractice().getId(), queueDom.getPractice().getVersion());
+				}
+				GPPracticeMessageQueueVo gpPracticeMessageQueueVo = GPPracticeMessageQueueVoAssembler.create(queueDom);
+				gpPracticeMessageQueueVo.setPractice(orgRefVo);
+				return gpPracticeMessageQueueVo;				
+			}
+			else if(event.getQueueTypeIsNotNull() && event.getQueueType().equals(QueueType.MOSMASTERFILE))
+			{
+				MemberOfStaffRefVo mosRefVo = null;
+				MOSMessageQueue queueDom = (MOSMessageQueue)factory.getDomainObject(MOSMessageQueue.class, event.getID());
+				if(queueDom!=null && queueDom.getMOS()!=null)
+				{
+					mosRefVo = new MemberOfStaffRefVo(queueDom.getMOS().getId(), queueDom.getMOS().getVersion());
+				}
+				MOSMessageQueueVo mosMessageQueueVo = MOSMessageQueueVoAssembler.create(queueDom);
+				mosMessageQueueVo.setMOS(mosRefVo);
+				return mosMessageQueueVo;				
+			}
+			else if(event.getQueueTypeIsNotNull() && event.getQueueType().equals(QueueType.GPMASTERFILE))
+			{
+				GpRefVo gpRefVo = null;
+				GPMessageQueue queueDom = (GPMessageQueue)factory.getDomainObject(GPMessageQueue.class, event.getID());
+				if(queueDom!=null && queueDom.getGP()!=null)
+				{
+					gpRefVo = new GpRefVo(queueDom.getGP().getId(), queueDom.getGP().getVersion());
+				}
+				GPMessageQueueVo gpMessageQueueVo = GPMessageQueueVoAssembler.create(queueDom);
+				gpMessageQueueVo.setGP(gpRefVo);
+				return gpMessageQueueVo;				
+			}
+			
 		}
 		return null;
 	}
@@ -663,13 +827,35 @@ public class OcsIfImpl extends BaseOcsIfImpl implements IQueueHandler
 
 			StringBuffer query = new StringBuffer();
 			List <?> triggers = factory.find("select distinct l2_1.id from OutboundTriggers as o1_1 left join o1_1.queueType as l1_1 left join l1_1.instance as l2_1");
-			
+		
+			//WDEV-21635
+			if(triggers!=null
+				&&triggers.isEmpty()
+				&&"Configured".equals(ConfigFlag.HL7.EXTENDED_HL7_PROCESSING.getValue()))
+			{
+				return null;
+			}
 			//http://jira/browse/WDEV-13985 change conditions
 			if(triggers!=null&&!triggers.isEmpty())
 			{
 				if (triggers.contains(QueueType.DEMOGRAPHICFEED.getID()))
 				{
-					query.append("select id,lkp_queuetype,sys_creation_datetime as DT from adto_demographicsmq where (WASPROCESS is null or WASPROCESS=0) and (WASDISCARD is null or WASDISCARD=0)");
+					if(ConfigFlag.GEN.ICAB_ENABLED.getValue()) //WDEV-18949
+					{
+						//WDEV-19317 Lower case table and column names
+						//           Done so that SQL will work for case sensitive DBs
+						query.append("select adto_demographicsmq.id,lkp_queuetype,adto_demographicsmq.sys_creation_datetime as DT "+
+									"from adto_demographicsmq "+
+									"left join core_patient on adto_demographicsmq.patient=core_patient.id "+
+									"where core_patient.nameuppersurna <> 'DummyICABSurname' "+ 
+									"and (wasprocess is null or wasprocess=0) and (wasdiscard is null or wasdiscard=0)");
+
+					}
+					else
+					{
+						query.append("select id,lkp_queuetype,sys_creation_datetime as DT "+
+									"from adto_demographicsmq where (wasprocess is null or wasprocess=0) and (wasdiscard is null or wasdiscard=0)");
+					}
 				}
 				if (triggers.contains(QueueType.ORDERCHANGERESPONSE.getID()))
 				{
@@ -677,7 +863,10 @@ public class OcsIfImpl extends BaseOcsIfImpl implements IQueueHandler
 					{
 						query.append(" union ");
 					}
-					query.append("select id,lkp_queuetype,sys_creation_datetime as DT from ocrr_orderchangeres where (WASPROCESS is null or WASPROCESS=0) and (WASDISCARD is null or WASDISCARD=0)");
+					//WDEV-19317 Lower case table and column names
+					//           Done so that SQL will work for case sensitive DBs
+					query.append("select id,lkp_queuetype,sys_creation_datetime as DT "+
+								"from ocrr_orderchangeres where (wasprocess is null or wasprocess=0) and (wasdiscard is null or wasdiscard=0)");
 				}
 				if(triggers.contains(QueueType.PATIENTDOCUMENT.getID()))
 				{
@@ -685,7 +874,10 @@ public class OcsIfImpl extends BaseOcsIfImpl implements IQueueHandler
 					{
 						query.append(" union ");
 					}
-					query.append("select id,lkp_queuetype,sys_creation_datetime as DT from adto_patientdocumen where (WASPROCESS is null or WASPROCESS=0) and (WASDISCARD is null or WASDISCARD=0)");
+					//WDEV-19317 Lower case table and column names
+					//           Done so that SQL will work for case sensitive DBs
+					query.append("select id,lkp_queuetype,sys_creation_datetime as DT "+
+								"from adto_patientdocumen where (wasprocess is null or wasprocess=0) and (wasdiscard is null or wasdiscard=0)");
 				}	
 				if(triggers.contains(QueueType.EDATTENDANCE.getID()))
 				{
@@ -693,7 +885,10 @@ public class OcsIfImpl extends BaseOcsIfImpl implements IQueueHandler
 					{
 						query.append(" union ");
 					}
-					query.append("select id,lkp_queuetype,sys_creation_datetime as DT from adto_edattendanceme where (WASPROCESS is null or WASPROCESS=0) and (WASDISCARD is null or WASDISCARD=0)");
+					//WDEV-19317 Lower case table and column names
+					//           Done so that SQL will work for case sensitive DBs
+					query.append("select id,lkp_queuetype,sys_creation_datetime as DT "+
+								"from adto_edattendanceme where (wasprocess is null or wasprocess=0) and (wasdiscard is null or wasdiscard=0)");
 				}
 				if(triggers.contains(QueueType.INPATIENTADT.getID()))
 				{
@@ -701,7 +896,35 @@ public class OcsIfImpl extends BaseOcsIfImpl implements IQueueHandler
 					{
 						query.append(" union ");
 					}
-					query.append("select id,lkp_queuetype,sys_creation_datetime as DT from adto_inpatientadtme where (WASPROCESS is null or WASPROCESS=0) and (WASDISCARD is null or WASDISCARD=0)");
+					//WDEV-1317 Lower case table and column names
+					//           Done so that SQL will work for case sensitive DBs
+					query.append("select id,lkp_queuetype,sys_creation_datetime as DT "+
+								"from adto_inpatientadtme where (wasprocess is null or wasprocess=0) and (wasdiscard is null or wasdiscard=0)");
+				}	
+				if(triggers.contains(QueueType.APPOINTMENT.getID()))
+				{
+					if (query.length()!=0)
+					{
+						query.append(" union ");
+					}
+					if(ConfigFlag.GEN.ICAB_ENABLED.getValue())
+					{
+						//WDEV-19317 Lower case column and table names, ensure identifiers match definition
+						//           Done so that SQL will work for case sensitive DBs
+						query.append("select adto_appointmentmes.id,lkp_queuetype,adto_appointmentmes.sys_creation_datetime as DT "+
+									"from adto_appointmentmes "+
+									"left join schl_sch_booking  on adto_appointmentmes.appointmen=schl_sch_booking.id "+
+									"left join core_patient on schl_sch_booking.patient=core_patient.id "+
+									"where core_patient.nameuppersurna <> 'DummyICABSurname' "+ 
+									"and (wasprocess is null or wasprocess=0) and (wasdiscard is null or wasdiscard=0)");
+					}
+					else
+					{
+						query.append("select id,lkp_queuetype,sys_creation_datetime as DT "+
+									"from adto_appointmentmes where (wasprocess is null or wasprocess=0) and (wasdiscard is null or wasdiscard=0)");
+
+					}
+					
 				}	
 
 			}	
@@ -714,20 +937,110 @@ public class OcsIfImpl extends BaseOcsIfImpl implements IQueueHandler
 				if (ConfigFlag.GEN.ICAB_ENABLED.getValue())
 					{
 //					ExternalSystemEventTypes.NEWORDER.getId() -1518
+					//WDEV-19317 Lower case column and table names
+					//           Done so that SQL will work for case sensitive DBs
 					query.append("select ext.id,null,ext.sys_creation_datetime as DT from schl_externalsy as ext ");
 					query.append("left join ocrr_orderinvestiga inv on ext.investigat=inv.id ");
 					query.append("left join ocrr_ocsorder orde on inv.orderdetai=orde.id ");
 					query.append("left join core_patient pat on orde.patient=pat.id ");
-					query.append("where   pat.nameuppersurna<> 'DUMMYICABSURNAME' and pat.nameuppersurna is not null and "); 
-					query.append("ext.WASPROCESS is null or ext.WASPROCESS=0 and ext.lkp_eventtype <>-1518");
+					query.append("where   pat.nameuppersurna<> 'DummyICABSurname' and pat.nameuppersurna is not null and "); 
+					query.append("ext.wasprocess is null or ext.wasprocess=0 and ext.lkp_eventtype <>-1518");
 				}
 				else
 				{
-					query.append("select id,null,sys_creation_datetime as DT from schl_externalsy where (WASPROCESS is null or WASPROCESS=0) and lkp_eventtype <>-1518");
+					query.append("select id,null,sys_creation_datetime as DT "+
+								"from schl_externalsy where (wasprocess is null or wasprocess=0) and lkp_eventtype <>-1518");
 				}
 			}
 			
-			//http://jira/browse/WDEV-13985 change order by
+			//WDEV-19160 RadioTherapy messages (VARIAN)
+			if (triggers.contains(QueueType.RADIOTHERAPYSCHEDULING.getID()))
+			{
+				if (query.length()!=0)
+				{
+					query.append(" union ");
+				}
+				query.append("select id,lkp_queuetype,sys_creation_datetime as DT " +
+						"from adto_radiotherapysc " +
+						"where (wasprocess is null or wasprocess=0) and (wasdiscard is null or wasdiscard=0)");
+			}
+			
+			//WDEV-19481 Inpatient Episode messages
+			if (triggers.contains(QueueType.INPATIENTEPISODE.getID()))
+			{
+				if (query.length()!=0)
+				{
+					query.append(" union ");
+				}
+				query.append("select id,lkp_queuetype,sys_creation_datetime as DT " +
+						"from adto_inpatientepiso " +
+						"where (wasprocess is null or wasprocess=0) and (wasdiscard is null or wasdiscard=0)");
+			}
+
+			//WDEV-19576 Ward Master File messages
+			if (triggers.contains(QueueType.WARDMASTERFILE.getID()))
+			{
+				if (query.length()!=0)
+				{
+					query.append(" union ");
+				}
+				query.append("select id,lkp_queuetype,sys_creation_datetime as DT " +
+						"from adto_wardmessageque " +
+						"where (wasprocess is null or wasprocess=0) and (wasdiscard is null or wasdiscard=0)");
+			}
+
+			//WDEV-19576 GP Practice Master File messages
+			if (triggers.contains(QueueType.GPPRACTICEMASTERFILE.getID()))
+			{
+				if (query.length()!=0)
+				{
+					query.append(" union ");
+				}
+				query.append("select id,lkp_queuetype,sys_creation_datetime as DT " +
+						"from adto_gppracticemess " +
+						"where (wasprocess is null or wasprocess=0) and (wasdiscard is null or wasdiscard=0)");
+			}
+
+			//WDEV-19576 MOS (Consultant) Master File messages
+			if (triggers.contains(QueueType.MOSMASTERFILE.getID()))
+			{
+				if (query.length()!=0)
+				{
+					query.append(" union ");
+				}
+				query.append("select id,lkp_queuetype,sys_creation_datetime as DT " +
+						"from adto_mosmessagequeu " +
+						"where (wasprocess is null or wasprocess=0) and (wasdiscard is null or wasdiscard=0)");
+			}
+
+			//WDEV-19576 GP Master File messages
+			if (triggers.contains(QueueType.GPMASTERFILE.getID()))
+			{
+				if (query.length()!=0)
+				{
+					query.append(" union ");
+				}
+				query.append("select id,lkp_queuetype,sys_creation_datetime as DT " +
+						"from adto_gpmessagequeue " +
+						"where (wasprocess is null or wasprocess=0) and (wasdiscard is null or wasdiscard=0)");
+			}
+
+			//WDEV-19704 Patient Elective List (TCI) messages
+			if (triggers.contains(QueueType.ELECTIVELIST.getID()))
+			{
+				if (query.length()!=0)
+				{
+					query.append(" union ");
+				}
+				query.append("select id,lkp_queuetype,sys_creation_datetime as DT " +
+						"from adto_electivelistme " +
+						"where (wasprocess is null or wasprocess=0) and (wasdiscard is null or wasdiscard=0)");
+			}
+
+
+
+			
+			//WDEV-13985 change order by
 			query.append(" order by DT");	
 
 			Connection conn = factory.getJdbcConnection();
@@ -825,6 +1138,108 @@ public class OcsIfImpl extends BaseOcsIfImpl implements IQueueHandler
 			factory.save(domEvent);
 			return InPatientADTFeedVoAssembler.create(domEvent);
 		}
+		else if(iEvent instanceof AppointmentMessageQueueVo)
+		{
+			AppointmentMessageQueueVo event = (AppointmentMessageQueueVo)iEvent;
+			String[] errors = event.validate();
+			if (errors != null)
+				throw new RuntimeException("Validation errors - " + errors);
+			if (!event.isValidated())
+				throw new CodingRuntimeException("Event has not been validated!");
+			AppointmentMessageQueue  domEvent=AppointmentMessageQueueVoAssembler.extractAppointmentMessageQueue(factory, event);
+			factory.save(domEvent);
+			return AppointmentMessageQueueVoAssembler.create(domEvent);
+		}
+		// WDEV-19160
+		else if(iEvent instanceof RadioTherapySchedQueueVo)
+		{
+			RadioTherapySchedQueueVo event = (RadioTherapySchedQueueVo)iEvent;
+			String[] errors = event.validate();
+			if (errors != null)
+				throw new RuntimeException("Validation errors - " + errors);
+			if (!event.isValidated())
+				throw new CodingRuntimeException("Event has not been validated!");
+			RadioTherapySchedQueue  domEvent=RadioTherapySchedQueueVoAssembler.extractRadioTherapySchedQueue(factory, event);
+			factory.save(domEvent);
+			return RadioTherapySchedQueueVoAssembler.create(domEvent);
+		}
+		// WDEV-19481
+		else if(iEvent instanceof InpatientEpisodeQueueVo)
+		{
+			InpatientEpisodeQueueVo event = (InpatientEpisodeQueueVo)iEvent;
+			String[] errors = event.validate();
+			if (errors != null)
+				throw new RuntimeException("Validation errors - " + errors);
+			if (!event.isValidated())
+				throw new CodingRuntimeException("Event has not been validated!");
+			InpatientEpisodeQueue  domEvent=InpatientEpisodeQueueVoAssembler.extractInpatientEpisodeQueue(factory, event);
+			factory.save(domEvent);
+			return InpatientEpisodeQueueVoAssembler.create(domEvent);
+		}
+		// WDEV-19576 Master File events
+		else if(iEvent instanceof WardMessageQueueVo)
+		{
+			WardMessageQueueVo event = (WardMessageQueueVo)iEvent;
+			String[] errors = event.validate();
+			if (errors != null)
+				throw new RuntimeException("Validation errors - " + errors);
+			if (!event.isValidated())
+				throw new CodingRuntimeException("Event has not been validated!");
+			WardMessageQueue domEvent = WardMessageQueueVoAssembler.extractWardMessageQueue(factory, event);
+			factory.save(domEvent);
+			return WardMessageQueueVoAssembler.create(domEvent);
+		}
+		else if(iEvent instanceof GPPracticeMessageQueueVo)
+		{
+			GPPracticeMessageQueueVo event = (GPPracticeMessageQueueVo)iEvent;
+			String[] errors = event.validate();
+			if (errors != null)
+				throw new RuntimeException("Validation errors - " + errors);
+			if (!event.isValidated())
+				throw new CodingRuntimeException("Event has not been validated!");
+			GPPracticeMessageQueue domEvent = GPPracticeMessageQueueVoAssembler.extractGPPracticeMessageQueue(factory, event);
+			factory.save(domEvent);
+			return GPPracticeMessageQueueVoAssembler.create(domEvent);
+		}
+		else if(iEvent instanceof MOSMessageQueueVo)
+		{
+			MOSMessageQueueVo event = (MOSMessageQueueVo)iEvent;
+			String[] errors = event.validate();
+			if (errors != null)
+				throw new RuntimeException("Validation errors - " + errors);
+			if (!event.isValidated())
+				throw new CodingRuntimeException("Event has not been validated!");
+			MOSMessageQueue domEvent = MOSMessageQueueVoAssembler.extractMOSMessageQueue(factory, event);
+			factory.save(domEvent);
+			return MOSMessageQueueVoAssembler.create(domEvent);
+		}
+		else if(iEvent instanceof GPMessageQueueVo)
+		{
+			GPMessageQueueVo event = (GPMessageQueueVo)iEvent;
+			String[] errors = event.validate();
+			if (errors != null)
+				throw new RuntimeException("Validation errors - " + errors);
+			if (!event.isValidated())
+				throw new CodingRuntimeException("Event has not been validated!");
+			GPMessageQueue domEvent = GPMessageQueueVoAssembler.extractGPMessageQueue(factory, event);
+			factory.save(domEvent);
+			return GPMessageQueueVoAssembler.create(domEvent);
+		}
+		// WDEV-19704
+		else if(iEvent instanceof ElectiveListMessageQueueVo)
+		{
+			ElectiveListMessageQueueVo event = (ElectiveListMessageQueueVo)iEvent;
+			String[] errors = event.validate();
+			if (errors != null)
+				throw new RuntimeException("Validation errors - " + errors);
+			if (!event.isValidated())
+				throw new CodingRuntimeException("Event has not been validated!");
+			ElectiveListMessageQueue  domEvent = ElectiveListMessageQueueVoAssembler.extractElectiveListMessageQueue(factory, event);
+			factory.save(domEvent);
+			return ElectiveListMessageQueueVoAssembler.create(domEvent);
+		}
+		
+		
 		else 
 		{
 			throw new RuntimeException("Cannot determine event type for saving");

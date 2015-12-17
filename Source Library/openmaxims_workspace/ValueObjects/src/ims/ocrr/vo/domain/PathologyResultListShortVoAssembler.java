@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.ocrr.vo.domain;
@@ -78,6 +83,10 @@ public class PathologyResultListShortVoAssembler
 		valueObjectDest.setPlacerOrdNum(valueObjectSrc.getPlacerOrdNum());
 		// AllocatedHCPforReview
 		valueObjectDest.setAllocatedHCPforReview(valueObjectSrc.getAllocatedHCPforReview());
+		// PatientClinic
+		valueObjectDest.setPatientClinic(valueObjectSrc.getPatientClinic());
+		// PatientLocation
+		valueObjectDest.setPatientLocation(valueObjectSrc.getPatientLocation());
 	 	return valueObjectDest;
 	 }
 
@@ -506,6 +515,22 @@ public class PathologyResultListShortVoAssembler
 		valueObject.setPlacerOrdNum(domainObject.getPlacerOrdNum());
 		// AllocatedHCPforReview
 		valueObject.setAllocatedHCPforReview(ims.core.vo.domain.HcpLiteVoAssembler.create(map, domainObject.getAllocatedHCPforReview()) );
+		// PatientClinic
+		if (domainObject.getPatientClinic() != null)
+		{
+			if(domainObject.getPatientClinic() instanceof HibernateProxy) // If the proxy is set, there is no need to lazy load, the proxy knows the id already. 
+			{
+				HibernateProxy p = (HibernateProxy) domainObject.getPatientClinic();
+				int id = Integer.parseInt(p.getHibernateLazyInitializer().getIdentifier().toString());				
+				valueObject.setPatientClinic(new ims.core.resource.place.vo.ClinicRefVo(id, -1));				
+			}
+			else
+			{
+				valueObject.setPatientClinic(new ims.core.resource.place.vo.ClinicRefVo(domainObject.getPatientClinic().getId(), domainObject.getPatientClinic().getVersion()));
+			}
+		}
+		// PatientLocation
+		valueObject.setPatientLocation(ims.core.vo.domain.LocationLiteVoAssembler.create(map, domainObject.getPatientLocation()) );
  		return valueObject;
 	 }
 
@@ -624,6 +649,43 @@ public class PathologyResultListShortVoAssembler
 			}
 		}
 		domainObject.setAllocatedHCPforReview(value14);
+		ims.core.resource.place.domain.objects.Clinic value15 = null;
+		if ( null != valueObject.getPatientClinic() ) 
+		{
+			if (valueObject.getPatientClinic().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getPatientClinic()) != null)
+				{
+					value15 = (ims.core.resource.place.domain.objects.Clinic)domMap.get(valueObject.getPatientClinic());
+				}
+			}
+			else if (valueObject.getBoVersion() == -1) // RefVo was not modified since obtained from the Assembler, no need to update the BO field
+			{
+				value15 = domainObject.getPatientClinic();	
+			}
+			else
+			{
+				value15 = (ims.core.resource.place.domain.objects.Clinic)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.Clinic.class, valueObject.getPatientClinic().getBoId());
+			}
+		}
+		domainObject.setPatientClinic(value15);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.resource.place.domain.objects.Location value16 = null;
+		if ( null != valueObject.getPatientLocation() ) 
+		{
+			if (valueObject.getPatientLocation().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getPatientLocation()) != null)
+				{
+					value16 = (ims.core.resource.place.domain.objects.Location)domMap.get(valueObject.getPatientLocation());
+				}
+			}
+			else
+			{
+				value16 = (ims.core.resource.place.domain.objects.Location)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.Location.class, valueObject.getPatientLocation().getBoId());
+			}
+		}
+		domainObject.setPatientLocation(value16);
 
 		return domainObject;
 	}

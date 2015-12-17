@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -57,6 +62,11 @@ public class Logic extends BaseLogic
 
 	protected void onFormOpen(Object[] args) throws ims.framework.exceptions.PresentationLogicException
 	{
+		open();
+	}
+	//wdev-18154
+	private void open()
+	{
 		form.getGlobalContext().Clinical.seteDischargeDisableTabs(false);
 		form.getLocalContext().setisReadOnly(false);
 		
@@ -85,7 +95,11 @@ public class Logic extends BaseLogic
 		
 		form.lyrDetails().tabPageDiagnosis().setHeaderEnabled(bEnable);
 		form.lyrDetails().tabPageOpsProcs().setHeaderEnabled(bEnable);
-		form.lyrDetails().tabPageAlerts().setHeaderEnabled(bEnable);
+		//form.lyrDetails().tabPageAlerts().setHeaderEnabled(bEnable);
+		
+		Boolean hasAssessment = domain.hasAssessmentSavedOrOneConfiguredForSpecialty(form.getGlobalContext().Core.getCurrentCareContext(), form.getGlobalContext().Core.getEpisodeofCareShort().getSpecialty());
+		form.lyrDetails().tabPageAssessment().setHeaderVisible(Boolean.TRUE.equals(hasAssessment));
+		
 		form.lyrDetails().tabPageAssessment().setHeaderEnabled(bEnable);
 		form.lyrDetails().tabPageClinicalInfo().setHeaderEnabled(bEnable);
 		form.lyrDetails().tabPageFuturePlan().setHeaderEnabled(bEnable);
@@ -103,7 +117,6 @@ public class Logic extends BaseLogic
 				&& form.getLocalContext().getisReadOnly())
 				|| ( form.isReadOnly()))
 				form.lyrDetails().tabPageDiagnosis().ccDiagnosis().setReadOnly();
-		
 	}
 
 	private void SetGlobalContextClinicalComplete()
@@ -140,7 +153,7 @@ public class Logic extends BaseLogic
 		if (form.lyrDetails().tabPageDiagnosis().ccDiagnosis().getbStartEDischarge())
 		{
 			form.lyrDetails().tabPageOpsProcs().setHeaderEnabled(true);
-			form.lyrDetails().tabPageAlerts().setHeaderEnabled(true);
+			//form.lyrDetails().tabPageAlerts().setHeaderEnabled(true);
 			form.lyrDetails().tabPageAssessment().setHeaderEnabled(true);
 			form.lyrDetails().tabPageClinicalInfo().setHeaderEnabled(true);
 			form.lyrDetails().tabPageFuturePlan().setHeaderEnabled(true);
@@ -153,6 +166,8 @@ public class Logic extends BaseLogic
 
 	protected void onlyrDetailsTabChanged(LayerBridge tab) 
 	{
+		SetGlobalContextClinicalComplete();
+		
 		if(form.getMode().equals(FormMode.VIEW))
 		if (tab.equals(form.lyrDetails().tabPageDiagnosis())){
 			form.lyrDetails().tabPageDiagnosis().ccDiagnosis().initialise();
@@ -169,13 +184,13 @@ public class Logic extends BaseLogic
 				form.lyrDetails().tabPageOpsProcs().ccOpsProcs().setReadOnly();
 		}
 		
-		if (tab.equals(form.lyrDetails().tabPageAlerts()))
+		/*if (tab.equals(form.lyrDetails().tabPageAlerts()))
 		{
 			form.lyrDetails().tabPageAlerts().ccAllergies().initialise();
 
 			if (form.getLocalContext().getisReadOnly())
 				form.lyrDetails().tabPageAlerts().ccAllergies().setReadOnly();
-		}
+		}*/
 		
 		if (tab.equals(form.lyrDetails().tabPageAssessment()))
 		{
@@ -248,6 +263,15 @@ public class Logic extends BaseLogic
 			engine.showMessage("The logged in user is not a HCP and so cannot Start this eDischarge","Warning", MessageButtons.OK, MessageIcon.WARNING);
 			return;
 		}
+		//wdev-18154
+		DischargeDetailsVo tempVo = domain.getDischargeDetails(form.getGlobalContext().Core.getCurrentCareContext());
+		if( tempVo != null )
+		{
+			engine.showMessage(" Another user has already created an eDischarge for this patient. The screen will be refreshed to display this record. ");
+			open();			
+			return;
+		}
+		//-----------
 		
 		String[] str = voDD.validate();
 		if (str != null && str.length > 0)
@@ -277,7 +301,7 @@ public class Logic extends BaseLogic
 		
 		form.lyrDetails().tabPageDiagnosis().setHeaderEnabled(true);
 		form.lyrDetails().tabPageOpsProcs().setHeaderEnabled(true);
-		form.lyrDetails().tabPageAlerts().setHeaderEnabled(true);
+		//form.lyrDetails().tabPageAlerts().setHeaderEnabled(true);
 		form.lyrDetails().tabPageAssessment().setHeaderEnabled(true);
 		form.lyrDetails().tabPageClinicalInfo().setHeaderEnabled(true);
 		form.lyrDetails().tabPageFuturePlan().setHeaderEnabled(true);
@@ -457,7 +481,7 @@ public class Logic extends BaseLogic
 
 		form.lyrDetails().tabPageDiagnosis().ccDiagnosis().setReadOnly();
 		form.lyrDetails().tabPageOpsProcs().ccOpsProcs().setReadOnly();
-		form.lyrDetails().tabPageAlerts().ccAllergies().setReadOnly();
+		//form.lyrDetails().tabPageAlerts().ccAllergies().setReadOnly();
 		form.lyrDetails().tabPageAssessment().cc1().setReadOnly();
 		form.lyrDetails().tabPageClinicalInfo().ccClinicalInfo().setReadOnly();
 		form.lyrDetails().tabPageFuturePlan().ccFuturePlan().setReadOnly();
@@ -472,7 +496,7 @@ public class Logic extends BaseLogic
 	{
 		form.lyrDetails().tabPageDiagnosis().setHeaderEnabled( tab_diag2 == TAB_DIAG ? true : ! form.getGlobalContext().Clinical.geteDischargeDisableTabs());
 		form.lyrDetails().tabPageOpsProcs().setHeaderEnabled( tab_diag2 == TAB_OPS ? true : ! form.getGlobalContext().Clinical.geteDischargeDisableTabs());
-		form.lyrDetails().tabPageAlerts().setHeaderEnabled( tab_diag2 == TAB_ALERT ? true : ! form.getGlobalContext().Clinical.geteDischargeDisableTabs());
+		//form.lyrDetails().tabPageAlerts().setHeaderEnabled( tab_diag2 == TAB_ALERT ? true : ! form.getGlobalContext().Clinical.geteDischargeDisableTabs());
 		form.lyrDetails().tabPageAssessment().setHeaderEnabled( tab_diag2 == TAB_ASSESS ? true : ! form.getGlobalContext().Clinical.geteDischargeDisableTabs());
 		form.lyrDetails().tabPageClinicalInfo().setHeaderEnabled( tab_diag2 == TAB_CLINICAL ? true : ! form.getGlobalContext().Clinical.geteDischargeDisableTabs());
 		form.lyrDetails().tabPageFuturePlan().setHeaderEnabled( tab_diag2 == TAB_FUTURE ? true : ! form.getGlobalContext().Clinical.geteDischargeDisableTabs());
@@ -495,14 +519,14 @@ public class Logic extends BaseLogic
 				enableDisableTabs(NONE);
 	}
 
-	@Override
+	/*@Override
 	protected void onCcAllergiesValueChanged() throws PresentationLogicException 
 	{
 		if (form.getGlobalContext().Clinical.geteDischargeDisableTabs())
 			enableDisableTabs(TAB_ALERT);
 		else
 			enableDisableTabs(NONE);
-	}
+	}*/
 
 	@Override
 	protected void onCc1ValueChanged() throws PresentationLogicException 
@@ -555,7 +579,7 @@ public class Logic extends BaseLogic
 		//--------------------------------------------------------------
 		form.lyrDetails().tabPageDiagnosis().ccDiagnosis().setReadOnly();
 		form.lyrDetails().tabPageOpsProcs().ccOpsProcs().setReadOnly();
-		form.lyrDetails().tabPageAlerts().ccAllergies().setReadOnly();
+		//form.lyrDetails().tabPageAlerts().ccAllergies().setReadOnly();
 		form.lyrDetails().tabPageAssessment().cc1().setReadOnly();
 		form.lyrDetails().tabPageClinicalInfo().ccClinicalInfo().setReadOnly();
 		form.lyrDetails().tabPageFuturePlan().ccFuturePlan().setReadOnly();

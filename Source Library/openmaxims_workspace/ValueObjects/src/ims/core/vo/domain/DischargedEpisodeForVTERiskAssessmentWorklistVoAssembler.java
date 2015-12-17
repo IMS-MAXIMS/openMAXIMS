@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.core.vo.domain;
@@ -60,6 +65,8 @@ public class DischargedEpisodeForVTERiskAssessmentWorklistVoAssembler
 		valueObjectDest.setAdmissionDetail(valueObjectSrc.getAdmissionDetail());
 		// VTERiskAssessment
 		valueObjectDest.setVTERiskAssessment(valueObjectSrc.getVTERiskAssessment());
+		// VTEAssessmentStatusReason
+		valueObjectDest.setVTEAssessmentStatusReason(valueObjectSrc.getVTEAssessmentStatusReason());
 	 	return valueObjectDest;
 	 }
 
@@ -406,7 +413,43 @@ public class DischargedEpisodeForVTERiskAssessmentWorklistVoAssembler
 				valueObject.setVTERiskAssessment(new ims.core.clinical.vo.VTERiskAssessmentRefVo(domainObject.getVTERiskAssessment().getId(), domainObject.getVTERiskAssessment().getVersion()));
 			}
 		}
- 		return valueObject;
+		// VTEAssessmentStatusReason
+		ims.domain.lookups.LookupInstance instance6 = domainObject.getVTEAssessmentStatusReason();
+		if ( null != instance6 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance6.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance6.getImage().getImageId(), instance6.getImage().getImagePath());
+			}
+			color = instance6.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.clinical.vo.lookups.VTEAssessmentStatusReason voLookup6 = new ims.clinical.vo.lookups.VTEAssessmentStatusReason(instance6.getId(),instance6.getText(), instance6.isActive(), null, img, color);
+			ims.clinical.vo.lookups.VTEAssessmentStatusReason parentVoLookup6 = voLookup6;
+			ims.domain.lookups.LookupInstance parent6 = instance6.getParent();
+			while (parent6 != null)
+			{
+				if (parent6.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent6.getImage().getImageId(), parent6.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent6.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup6.setParent(new ims.clinical.vo.lookups.VTEAssessmentStatusReason(parent6.getId(),parent6.getText(), parent6.isActive(), null, img, color));
+				parentVoLookup6 = parentVoLookup6.getParent();
+								parent6 = parent6.getParent();
+			}			
+			valueObject.setVTEAssessmentStatusReason(voLookup6);
+		}
+		 		return valueObject;
 	 }
 
 
@@ -580,6 +623,14 @@ public class DischargedEpisodeForVTERiskAssessmentWorklistVoAssembler
 			}
 		}
 		domainObject.setVTERiskAssessment(value5);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value6 = null;
+		if ( null != valueObject.getVTEAssessmentStatusReason() ) 
+		{
+			value6 =
+				domainFactory.getLookupInstance(valueObject.getVTEAssessmentStatusReason().getID());
+		}
+		domainObject.setVTEAssessmentStatusReason(value6);
 
 		return domainObject;
 	}

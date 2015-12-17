@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:37 -->
+<!-- Generated: 12/10/2015, 13:32 -->
 <hibernate-mapping>
 	<class name="ims.core.clinical.domain.objects.ReferralLetterDetails" table="core_referralletter" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -123,6 +123,76 @@
 		</many-to-one>
 <!-- debug: refererAddress -->
 <!-- debug: transferedBY -->
+<!-- debug: otherCommChannels -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+ 		<!-- Component Set -->
+ 		<list name="otherCommChannels" table="core_referralletter_othercommc" lazy="true" >
+ 			<key foreign-key="referralletter_othercommc_i_fk">
+ 				<column name="id" sql-type="numeric(10,0)" not-null="true" />
+ 			</key>
+ 			<index column='idx'/>
+ 			<!-- Composite -->
+ 			<composite-element class="ims.core.generic.domain.objects.CommunicationChannel" >
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="channelType" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_channeltyp" not-null="true" sql-type="numeric(10,0)"  unique="false"   />
+ 				</many-to-one>
+ 				<property name="commValue" type="string" access="field" update="true">
+ 					<column name="commvalue" length="50" not-null="true"  unique="false"    />
+ 				</property>
+ 				<property name="objectidentifier" type="string" access="field" update="true">
+ 					<column name="objectiden" length="14" not-null="false"  unique="false"    />
+ 				</property>
+ 				<property name="beffdate" type="date" access="field" update="true">
+ 					<column name="beffdate" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="beffdatecnf" type="boolean" access="field" update="true">
+ 					<column name="beffdatecn" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="betdate" type="date" access="field" update="true">
+ 					<column name="betdate" not-null="false"  unique="false"   />
+ 				</property>
+ 				<property name="betdatecnf" type="boolean" access="field" update="true">
+ 					<column name="betdatecnf" not-null="false"  unique="false"   />
+ 				</property>
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="pdsUpdateMode" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_pdsupdatem" not-null="false" sql-type="numeric(10,0)"  unique="false"   />
+ 				</many-to-one>
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="channelUsage" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_channelusa" not-null="false" sql-type="numeric(10,0)"  unique="false"   />
+ 				</many-to-one>
+ 			</composite-element>
+ 		</list>
+<!-- debug: initiatedFrom -->
+<!-- debug: otherLocation -->
+<!-- debug: originalService -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="originalService" class="ims.core.clinical.domain.objects.Service" unique="true" foreign-key="referralletter_originalse_fk" access="field" cascade="save-update">
+			<column name="originalse" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: serviceUpdateHistory -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- one to many -->
+		<list name="serviceUpdateHistory" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="referralletter_serviceupd_fk">
+				<column name="core_referralletter_serviceupd" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.RefMan.domain.objects.ReferralServiceUpdates" />
+		</list>
+<!-- debug: originalConsultant -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="originalConsultant" class="ims.core.resource.people.domain.objects.Hcp" unique="true" foreign-key="referralletter_originalco_fk" access="field" cascade="save-update">
+			<column name="originalco" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: IsLookup -->
 		<many-to-one name="referrerType" class="ims.domain.lookups.LookupInstance" access="field">
@@ -171,7 +241,7 @@
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="end18WW" type="date" access="field" update="true">
-			<column name="end18ww"  not-null="true" unique="false"  />
+			<column name="end18ww"  not-null="false" unique="false"  />
 		</property>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: IsLookup -->
@@ -201,7 +271,7 @@
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="pCT" type="string" access="field" update="true" > 
-			<column name="pct" length="25"  not-null="true" unique="false"  />
+			<column name="pct" length="25"  not-null="false" unique="false"  />
 		</property>
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
@@ -237,6 +307,16 @@
 <!-- debug: !IsLookup -->
 		<property name="transferedBY" type="string" access="field" update="true" > 
 			<column name="transfered" length="100"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="initiatedFrom" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_initiatedf" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="otherLocation" type="string" access="field" update="true" > 
+			<column name="otherlocat" length="500"  not-null="false" unique="false"  />
 		</property>
 	</class>
 </hibernate-mapping>

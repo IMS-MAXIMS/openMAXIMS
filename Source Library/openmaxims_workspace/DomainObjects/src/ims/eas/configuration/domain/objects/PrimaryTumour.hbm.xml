@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 12/10/2015, 13:29 -->
+<hibernate-mapping>
+	<class name="ims.eas.configuration.domain.objects.PrimaryTumour" table="eas_primarytumour" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: primaryTumour -->
+<!-- debug: status -->
+<!-- debug: treatmentSites -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- many to many -->
+		<list name="treatmentSites" table="eas_primarytumour_treatments" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="primarytumour_treatments_fr_fk">
+				<column name="from_side" sql-type="numeric(10,0)" unique="false"   />
+			</key>
+			<index column='idx'/>
+			<many-to-many class="ims.eas.configuration.domain.objects.TreatmentSites" foreign-key="primarytumour_treatments_to_fk">
+				<column name="to_side" sql-type="numeric(10,0)" unique="false"   />
+			</many-to-many>
+		</list>
+<!-- debug: clinicalTrials -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+ 		<!-- Component Set -->
+ 		<list name="clinicalTrials" table="eas_primarytumour_clinicaltr" lazy="true" >
+ 			<key foreign-key="primarytumour_clinicaltr_id_fk">
+ 				<column name="id" sql-type="numeric(10,0)" not-null="true" />
+ 			</key>
+ 			<index column='idx'/>
+ 			<!-- Composite -->
+ 			<composite-element class="ims.eas.configuration.domain.objects.ClinicalTrialsLink" >
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="treatmentSite" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_treatments" not-null="false" sql-type="numeric(10,0)"  unique="false"   />
+ 				</many-to-one>
+ 				<!-- debug: IsLookup -->
+ 				<many-to-one name="clinicalTrial" class="ims.domain.lookups.LookupInstance" access="field">
+ 					<column name="lkp_clinicaltr" not-null="true" sql-type="numeric(10,0)"  unique="false"   />
+ 				</many-to-one>
+ 			</composite-element>
+ 		</list>
+<!-- debug: agents -->
+<!-- debug: IsCollection : true -->
+		<!-- collection of Lookup instances -->
+		<list name="agents" table="eas_primarytumour_agents" lazy="true" access="field">
+			<key foreign-key="primarytumour_agents_ofk">
+				<column name="owner" sql-type="numeric(10,0)"/>
+			</key>
+			<index column="idx"/>
+			<composite-element class="ims.domain.lookups.LookupInstanceRef">
+				<many-to-one name="instance" class="ims.domain.lookups.LookupInstance" access="field">
+					<column name="instance_id" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+				</many-to-one>
+			</composite-element>
+		</list>
+<!-- debug: defaultAgent -->
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: IsLookup -->
+		<many-to-one name="primaryTumour" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_primarytum" sql-type="numeric(10,0)" not-null="true" unique="false"  index='PrimaryTumourIdx' />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="status" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_status" sql-type="numeric(10,0)" not-null="true" unique="false"  index='PrimaryTumourIdx' />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="defaultAgent" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_defaultage" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+	</class>
+</hibernate-mapping>

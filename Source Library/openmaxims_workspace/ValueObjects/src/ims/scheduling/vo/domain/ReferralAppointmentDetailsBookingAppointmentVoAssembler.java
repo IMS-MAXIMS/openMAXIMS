@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.scheduling.vo.domain;
@@ -68,6 +73,30 @@ public class ReferralAppointmentDetailsBookingAppointmentVoAssembler
 		valueObjectDest.setTheatreBooking(valueObjectSrc.getTheatreBooking());
 		// TheatreSlot
 		valueObjectDest.setTheatreSlot(valueObjectSrc.getTheatreSlot());
+		// wasPrinted
+		valueObjectDest.setWasPrinted(valueObjectSrc.getWasPrinted());
+		// BookingLetter
+		valueObjectDest.setBookingLetter(valueObjectSrc.getBookingLetter());
+		// numProviderCancellations
+		valueObjectDest.setNumProviderCancellations(valueObjectSrc.getNumProviderCancellations());
+		// numPatientCancellations
+		valueObjectDest.setNumPatientCancellations(valueObjectSrc.getNumPatientCancellations());
+		// LinkedAppointments
+		valueObjectDest.setLinkedAppointments(valueObjectSrc.getLinkedAppointments());
+		// isFlexibleAppointment
+		valueObjectDest.setIsFlexibleAppointment(valueObjectSrc.getIsFlexibleAppointment());
+		// isWardAttendance
+		valueObjectDest.setIsWardAttendance(valueObjectSrc.getIsWardAttendance());
+		// Activity
+		valueObjectDest.setActivity(valueObjectSrc.getActivity());
+		// ReasonForBreachingFirstApptKPI
+		valueObjectDest.setReasonForBreachingFirstApptKPI(valueObjectSrc.getReasonForBreachingFirstApptKPI());
+		// CurrentStatusRecord
+		valueObjectDest.setCurrentStatusRecord(valueObjectSrc.getCurrentStatusRecord());
+		// Outcome
+		valueObjectDest.setOutcome(valueObjectSrc.getOutcome());
+		// Comments
+		valueObjectDest.setComments(valueObjectSrc.getComments());
 	 	return valueObjectDest;
 	 }
 
@@ -401,7 +430,7 @@ public class ReferralAppointmentDetailsBookingAppointmentVoAssembler
 			valueObject.setApptStatus(voLookup2);
 		}
 				// Session
-		valueObject.setSession(ims.scheduling.vo.domain.SessionLiteVoAssembler.create(map, domainObject.getSession()) );
+		valueObject.setSession(ims.scheduling.vo.domain.SessionForReferralAppointmentVoAssembler.create(map, domainObject.getSession()) );
 		// ApptStartTime
 		String ApptStartTime = domainObject.getApptStartTime();
 		if ( null != ApptStartTime ) 
@@ -418,6 +447,98 @@ public class ReferralAppointmentDetailsBookingAppointmentVoAssembler
 		valueObject.setTheatreBooking(ims.scheduling.vo.domain.TheatreBookingBaseVoAssembler.create(map, domainObject.getTheatreBooking()) );
 		// TheatreSlot
 		valueObject.setTheatreSlot(ims.scheduling.vo.domain.ToCameInTimeFromTheatreSlotVoAssembler.create(map, domainObject.getTheatreSlot()) );
+		// wasPrinted
+		valueObject.setWasPrinted( domainObject.isWasPrinted() );
+		// BookingLetter
+		valueObject.setBookingLetter(ims.core.vo.domain.PatientDocumentLiteVoAssembler.create(map, domainObject.getBookingLetter()) );
+		// numProviderCancellations
+		valueObject.setNumProviderCancellations(domainObject.getNumProviderCancellations());
+		// numPatientCancellations
+		valueObject.setNumPatientCancellations(domainObject.getNumPatientCancellations());
+		// LinkedAppointments
+		valueObject.setLinkedAppointments(ims.RefMan.vo.domain.LinkedAppointmentForReferralAppointmentComponentVoAssembler.createLinkedAppointmentForReferralAppointmentComponentVoCollectionFromBooking_Appointment(map, domainObject.getLinkedAppointments()) );
+		// isFlexibleAppointment
+		valueObject.setIsFlexibleAppointment( domainObject.isIsFlexibleAppointment() );
+		// isWardAttendance
+		valueObject.setIsWardAttendance( domainObject.isIsWardAttendance() );
+		// Activity
+		valueObject.setActivity(ims.core.vo.domain.ActivityLiteVoAssembler.create(map, domainObject.getActivity()) );
+		// ReasonForBreachingFirstApptKPI
+		ims.domain.lookups.LookupInstance instance18 = domainObject.getReasonForBreachingFirstApptKPI();
+		if ( null != instance18 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance18.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance18.getImage().getImageId(), instance18.getImage().getImagePath());
+			}
+			color = instance18.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.core.vo.lookups.ReasonForBreachingFirstApptKPI voLookup18 = new ims.core.vo.lookups.ReasonForBreachingFirstApptKPI(instance18.getId(),instance18.getText(), instance18.isActive(), null, img, color);
+			ims.core.vo.lookups.ReasonForBreachingFirstApptKPI parentVoLookup18 = voLookup18;
+			ims.domain.lookups.LookupInstance parent18 = instance18.getParent();
+			while (parent18 != null)
+			{
+				if (parent18.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent18.getImage().getImageId(), parent18.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent18.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup18.setParent(new ims.core.vo.lookups.ReasonForBreachingFirstApptKPI(parent18.getId(),parent18.getText(), parent18.isActive(), null, img, color));
+				parentVoLookup18 = parentVoLookup18.getParent();
+								parent18 = parent18.getParent();
+			}			
+			valueObject.setReasonForBreachingFirstApptKPI(voLookup18);
+		}
+				// CurrentStatusRecord
+		valueObject.setCurrentStatusRecord(ims.RefMan.vo.domain.AppointmentStatusForElectiveListDetailsVoAssembler.create(map, domainObject.getCurrentStatusRecord()) );
+		// Outcome
+		ims.domain.lookups.LookupInstance instance20 = domainObject.getOutcome();
+		if ( null != instance20 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance20.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance20.getImage().getImageId(), instance20.getImage().getImagePath());
+			}
+			color = instance20.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.scheduling.vo.lookups.ApptOutcome voLookup20 = new ims.scheduling.vo.lookups.ApptOutcome(instance20.getId(),instance20.getText(), instance20.isActive(), null, img, color);
+			ims.scheduling.vo.lookups.ApptOutcome parentVoLookup20 = voLookup20;
+			ims.domain.lookups.LookupInstance parent20 = instance20.getParent();
+			while (parent20 != null)
+			{
+				if (parent20.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent20.getImage().getImageId(), parent20.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent20.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup20.setParent(new ims.scheduling.vo.lookups.ApptOutcome(parent20.getId(),parent20.getText(), parent20.isActive(), null, img, color));
+				parentVoLookup20 = parentVoLookup20.getParent();
+								parent20 = parent20.getParent();
+			}			
+			valueObject.setOutcome(voLookup20);
+		}
+				// Comments
+		valueObject.setComments(domainObject.getComments());
  		return valueObject;
 	 }
 
@@ -482,7 +603,7 @@ public class ReferralAppointmentDetailsBookingAppointmentVoAssembler
 				domainFactory.getLookupInstance(valueObject.getApptStatus().getID());
 		}
 		domainObject.setApptStatus(value2);
-		domainObject.setSession(ims.scheduling.vo.domain.SessionLiteVoAssembler.extractSch_Session(domainFactory, valueObject.getSession(), domMap));
+		domainObject.setSession(ims.scheduling.vo.domain.SessionForReferralAppointmentVoAssembler.extractSch_Session(domainFactory, valueObject.getSession(), domMap));
 		ims.framework.utils.Time time4 = valueObject.getApptStartTime();
 		String value4 = null;
 		if ( time4 != null ) 
@@ -527,6 +648,148 @@ public class ReferralAppointmentDetailsBookingAppointmentVoAssembler
 			}
 		}
 		domainObject.setTheatreSlot(value9);
+		domainObject.setWasPrinted(valueObject.getWasPrinted());
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.documents.domain.objects.PatientDocument value11 = null;
+		if ( null != valueObject.getBookingLetter() ) 
+		{
+			if (valueObject.getBookingLetter().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getBookingLetter()) != null)
+				{
+					value11 = (ims.core.documents.domain.objects.PatientDocument)domMap.get(valueObject.getBookingLetter());
+				}
+			}
+			else
+			{
+				value11 = (ims.core.documents.domain.objects.PatientDocument)domainFactory.getDomainObject(ims.core.documents.domain.objects.PatientDocument.class, valueObject.getBookingLetter().getBoId());
+			}
+		}
+		domainObject.setBookingLetter(value11);
+		domainObject.setNumProviderCancellations(valueObject.getNumProviderCancellations());
+		domainObject.setNumPatientCancellations(valueObject.getNumPatientCancellations());
+
+		// SaveAsRefVO treated as RefValueObject
+		ims.scheduling.vo.Booking_AppointmentRefVoCollection refCollection14 = new ims.scheduling.vo.Booking_AppointmentRefVoCollection();
+		if (valueObject.getLinkedAppointments() != null)
+		{
+			for (int i14=0; i14<valueObject.getLinkedAppointments().size(); i14++)
+			{
+				ims.scheduling.vo.Booking_AppointmentRefVo ref14 = (ims.scheduling.vo.Booking_AppointmentRefVo)valueObject.getLinkedAppointments().get(i14);
+				refCollection14.add(ref14);
+			}
+		}
+		int size14 = (null == refCollection14) ? 0 : refCollection14.size();		
+		java.util.Set domainLinkedAppointments14 = domainObject.getLinkedAppointments();
+		if (domainLinkedAppointments14 == null)
+		{
+			domainLinkedAppointments14 = new java.util.HashSet();
+		}
+		java.util.Set newSet14  = new java.util.HashSet();
+		for(int i=0; i<size14; i++) 
+		{
+			ims.scheduling.vo.Booking_AppointmentRefVo vo = refCollection14.get(i);					
+			ims.scheduling.domain.objects.Booking_Appointment dom = null;
+			if ( null != vo ) 
+			{
+				if (vo.getBoId() == null)
+				{
+					if (domMap.get(vo) != null)
+					{
+						dom = (ims.scheduling.domain.objects.Booking_Appointment)domMap.get(vo);
+					}
+				}
+				else
+				{
+					dom = (ims.scheduling.domain.objects.Booking_Appointment)domainFactory.getDomainObject( ims.scheduling.domain.objects.Booking_Appointment.class, vo.getBoId());
+				}
+			}
+
+			//Trying to avoid the hibernate collection being marked as dirty via its public interface methods. (like add)
+			if (!domainLinkedAppointments14.contains(dom))
+			{
+				domainLinkedAppointments14.add(dom);
+			}
+			newSet14.add(dom);			
+		}
+		java.util.Set removedSet14 = new java.util.HashSet();
+		java.util.Iterator iter14 = domainLinkedAppointments14.iterator();
+		//Find out which objects need to be removed
+		while (iter14.hasNext())
+		{
+			ims.domain.DomainObject o = (ims.domain.DomainObject)iter14.next();			
+			if ((o == null || o.getIsRIE() == null || !o.getIsRIE().booleanValue()) && !newSet14.contains(o))
+			{
+				removedSet14.add(o);
+			}
+		}
+		iter14 = removedSet14.iterator();
+		//Remove the unwanted objects
+		while (iter14.hasNext())
+		{
+			domainLinkedAppointments14.remove(iter14.next());
+		}		
+		
+		domainObject.setLinkedAppointments(domainLinkedAppointments14);		
+		domainObject.setIsFlexibleAppointment(valueObject.getIsFlexibleAppointment());
+		domainObject.setIsWardAttendance(valueObject.getIsWardAttendance());
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.core.resource.place.domain.objects.Activity value17 = null;
+		if ( null != valueObject.getActivity() ) 
+		{
+			if (valueObject.getActivity().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getActivity()) != null)
+				{
+					value17 = (ims.core.resource.place.domain.objects.Activity)domMap.get(valueObject.getActivity());
+				}
+			}
+			else
+			{
+				value17 = (ims.core.resource.place.domain.objects.Activity)domainFactory.getDomainObject(ims.core.resource.place.domain.objects.Activity.class, valueObject.getActivity().getBoId());
+			}
+		}
+		domainObject.setActivity(value17);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value18 = null;
+		if ( null != valueObject.getReasonForBreachingFirstApptKPI() ) 
+		{
+			value18 =
+				domainFactory.getLookupInstance(valueObject.getReasonForBreachingFirstApptKPI().getID());
+		}
+		domainObject.setReasonForBreachingFirstApptKPI(value18);
+	// SaveAsRefVO - treated as a refVo in extract methods
+	ims.scheduling.domain.objects.Appointment_Status value19 = null;
+		if ( null != valueObject.getCurrentStatusRecord() ) 
+		{
+			if (valueObject.getCurrentStatusRecord().getBoId() == null)
+			{
+				if (domMap.get(valueObject.getCurrentStatusRecord()) != null)
+				{
+					value19 = (ims.scheduling.domain.objects.Appointment_Status)domMap.get(valueObject.getCurrentStatusRecord());
+				}
+			}
+			else
+			{
+				value19 = (ims.scheduling.domain.objects.Appointment_Status)domainFactory.getDomainObject(ims.scheduling.domain.objects.Appointment_Status.class, valueObject.getCurrentStatusRecord().getBoId());
+			}
+		}
+		domainObject.setCurrentStatusRecord(value19);
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value20 = null;
+		if ( null != valueObject.getOutcome() ) 
+		{
+			value20 =
+				domainFactory.getLookupInstance(valueObject.getOutcome().getID());
+		}
+		domainObject.setOutcome(value20);
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getComments() != null && valueObject.getComments().equals(""))
+		{
+			valueObject.setComments(null);
+		}
+		domainObject.setComments(valueObject.getComments());
 
 		return domainObject;
 	}

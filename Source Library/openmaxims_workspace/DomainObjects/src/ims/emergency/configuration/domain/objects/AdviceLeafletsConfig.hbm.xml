@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:35 -->
+<!-- Generated: 12/10/2015, 13:29 -->
 <hibernate-mapping>
 	<class name="ims.emergency.configuration.domain.objects.AdviceLeafletsConfig" table="emer_adviceleaflets" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -35,7 +35,7 @@
 		<!-- A one-to-one relationship using a foreign-key is mapping as a
 			many-to-one with a uniqueness contraint -->
 		<many-to-one name="template" class="ims.core.admin.domain.objects.TemplateBo" unique="true" foreign-key="adviceleaflets_template_fk" access="field" cascade="save-update">
-			<column name="template" sql-type="numeric(10,0)" not-null="true" unique="true"   />
+			<column name="template" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
 <!-- debug: problems -->
 <!-- debug: field.IsAssociation : true -->
@@ -50,10 +50,16 @@
 			</many-to-many>
 		</set>
 <!-- debug: isGenericAdviceLeaflet -->
+<!-- debug: adviceLeafletName -->
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="isGenericAdviceLeaflet" type="boolean" access="field" update="true">
 			<column name="isgenerica"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="adviceLeafletName" type="string" access="field" update="true" > 
+			<column name="adviceleaf" length="100"  not-null="false" unique="false"  />
 		</property>
 	</class>
 </hibernate-mapping>

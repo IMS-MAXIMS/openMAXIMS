@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -53,7 +58,6 @@ import ims.generalmedical.vo.NeuroMotorFindingsShortVoCollection;
 import ims.generalmedical.vo.NeuroMotorFindingsVo;
 import ims.generalmedical.vo.NeuroMotorRootValueVo;
 import ims.generalmedical.vo.NeuroMotorRootValueVoCollection;
-import ims.medical.vo.NeuExamMotorRefVo;
 
 import java.util.Comparator;
 
@@ -329,13 +333,19 @@ public class Logic extends BaseLogic
 		clearInstanceControls();
 
 		// Initialize authoring information
-		if (form.getLocalContext().getIsMedicalInpatientForm())
+		//WDEV-18846 - start
+		boolean isLoggedOnUserHCP = domain.getHcpLiteUser() != null;
+		if (form.getLocalContext().getIsMedicalInpatientForm() || (!form.getLocalContext().getIsMedicalInpatientForm() && isLoggedOnUserHCP))
 		{
-			form.ccAuthoring().initializeComponent(true);
+			form.ccAuthoring().initializeComponent(true, null);
 		}
 		else
-		{
-			form.ccAuthoring().initializeComponent(false);
+		{	
+			if (form.getGlobalContext().Core.getCurrentClinicalContact() != null)
+			{
+			form.ccAuthoring().initializeComponent(false,true); //WDEV-15172 
+			}
+		//---------- end WDEV-18846
 		}
 
 		// Populate dynamic grid with motor area findings

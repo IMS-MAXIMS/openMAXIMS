@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!-- be careful when you edit this file, the id attribute must be unique -->
+<risk_factors>
+	<url name="http://www.imsmaxims.com" />
+	<risk_factor name="Sensory Perception" multiple="N" description="Ability to respond meaningfully to pressure-related discomfort">
+		<description id="1" name="Completely limited" score="1" description="Unresponsive (does not moan, flinch, or grasp) to painful stimuli,due to diminished level of consciousness or sedation OR limited ability to feel pain over most of body surface." />
+		<description id="2" name="Very limited" score="2" description="Responds only to painful stimuli.Cannot communicate discomfort except by moaning or restlessness OR has a sensory impairment which limits the ability to feel pain or discomfort over 1/2 of body." />
+		<description id="3" name="Slightly limited" score="3" description="Responds to verbal commands but cannot always communicate discomfort or need to be turned OR has some sensory impairment which limits ability to feel pain or discomfort in 1 or 2 extremities." />
+		<description id="4" name="No impairment" score="4" description="Responds to verbal commands.Has no sensory deficit which would limit ability to feel or voice pain or discomfort." />
+	</risk_factor>
+	<risk_factor name="Moisture" multiple="N" description="Degree to which skin is exposed to moisture.">
+		<description id="5" name="Constantly moist" score="1" description="Skin is kept moist almost constantly by perspiration, urine, etc. Dampness is detected every time patient is moved or turned." />
+		<description id="6" name="Often moist" score="2" description="Skin is often but not always moist. Linen must be changed at least once a shift." />
+		<description id="7" name="Occasionally moist" score="3" description="Skin is occasionally moist, requiring an extra linen change approximately once a day." />
+		<description id="8" name="Rarely moist" score="4" description="Skin is usually dry; linen only requires changing at routine intervals." />
+	</risk_factor>
+	<risk_factor name="Activity" multiple="N" description="Degree of physical activity">
+		<description id="9" name="Bedfast" score="1" description="Confined to bed." />
+		<description id="10" name="Chairfast" score="2" description="Ability to walk severely limited or nonexistent. Cannot bear own weight and/or must be assisted into chair or wheelchair." />
+		<description id="11" name="Walks occasionally" score="3" description="Walks occasionally during day but for very short distances, with or without assistance. Spends majority of each shift in bed or chair." />
+		<description id="12" name="Walks frequently" score="4" description="Walks outside the room at least twice a day and inside room at least once every 2 hours during waking hours." />
+	</risk_factor>
+	<risk_factor name="Mobility" multiple="N" description="Ability to change and control body position.">
+		<description id="13" name="Completely immobile" score="1" description="Does not make even slight changes in body or extremity position without assistance." />
+		<description id="14" name="Very limited" score="2" description="Makes occasional slight changes in body or extremity position but unable to make frequent or significant changes independently." />
+		<description id="15" name="Slightly limited" score="3" description="Makes frequent though slight changes in body or extremity position independently." />
+		<description id="16" name="No limitations" score="4" description="Makes major and frequent changes in position without assistance." />
+	</risk_factor>
+	<risk_factor name="Nutrition" multiple="N" description="Usual food intake pattern.">
+		<description id="17" name="Very poor" score="1" description="Never eats a complete meal. Rarely eats more than 1/3 of any food offered. Eats 2 servings or less of protein (meat or dairy products) per day. Takes fluids poorly. Does not take a liquid dietary supplement OR is NPO and/or maintained on clear liquids or IV for more than 5 days." />
+		<description id="18" name="Probably inadequate" score="2" description="Rarely eats a complete meal and generally eats only about 1/2 of any food offered. Protein intake includes only 3 servings of meat or dairy products per day. Occasionally will take a dietary supplement OR receives less than optimum amount of liquid diet or tube feeding." />
+		<description id="19" name="Adequate" score="3" description="Eats over half of most meals. Eats a total of 4 servings of protein (meat, dairy products) each day. Occasionally will refuse a meal, but will usually take a supplement if offered OR is on a tube feeding or TPN regimen, which probably meets most of nutritional needs." />
+		<description id="20" name="Excellent" score="4" description="Eats most of every meal. Never refuses a meal. Usually eats a total of 4 or more servings of meat and dairy products. Occasionally eats between meals. Does not require supplementation." />
+	</risk_factor>
+	<risk_factor name="Friction And Shear" multiple="N" description="">
+		<description id="21" name="Problem" score="1" description="Requires moderate to maximum assistance in moving. Complete lifting without sliding against sheets is impossible. Frequently slides down in bed or chair, requiring frequent repositioning with maximum assistance. Spasticity contractures, or agitation leads to almost constant friction." />
+		<description id="22" name="Potential problem" score="2" description="Moves feebly or requires minimum assistance. During a move, skin probably slides to some extent against sheets, chair, restraints, or other devices. Maintains relatively good position in chair or bed most of the time but occasionally slides down." />
+		<description id="23" name="No apparent problem" score="3" description="Moves in bed and in chair independently and has sufficient muscle strength to lift up completely during move. Maintains good position in bed or chair at all times." />
+	</risk_factor>
+</risk_factors>

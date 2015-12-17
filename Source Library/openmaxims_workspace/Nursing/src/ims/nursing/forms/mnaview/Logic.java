@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -33,6 +38,7 @@ import ims.framework.enumerations.DialogResult;
 import ims.framework.exceptions.PresentationLogicException;
 import ims.framework.utils.Color;
 import ims.framework.utils.Date;
+import ims.nursing.vo.MNAViewSearchCriteriaVo;
 import ims.nursing.vo.MiniNutritionalAssessment;
 import ims.nursing.vo.MiniNutritionalAssessmentCollection;
 import ims.nursing.vo.MiniNutritionalAssessmentDetails;
@@ -65,8 +71,35 @@ public class Logic extends BaseLogic
 		form.cmbFilter().newRow(ALL, "All");
 
 		form.cmbFilter().setValue(LAST_WEEK);
+		
+		//WDEV-19389 --- start
+		if (!(form.getGlobalContext().Core.getCurrentCareContextIsNotNull() && form.getGlobalContext().Nursing.getMNAViewSearchCriteriaIsNotNull() && form.getGlobalContext().Nursing.getMNAViewSearchCriteria().getCareContextIsNotNull() && form.getGlobalContext().Core.getCurrentCareContext().equals(form.getGlobalContext().Nursing.getMNAViewSearchCriteria().getCareContext())))
+			form.getGlobalContext().Nursing.setMNAViewSearchCriteria(null);
+		
+		if(form.getGlobalContext().Nursing.getMNAViewSearchCriteriaIsNotNull())
+		{
+			setSearchCriteria(form.getGlobalContext().Nursing.getMNAViewSearchCriteria());
+		}	
+		//WDEV-19389 --- end
+		
 		filterValueChanged();
 
+	}
+	
+	private MNAViewSearchCriteriaVo getSearchCriteria()
+	{
+		MNAViewSearchCriteriaVo searchCriteria = new MNAViewSearchCriteriaVo();
+		
+		searchCriteria.setFilter(form.cmbFilter().getValue());
+		searchCriteria.setCareContext(form.getGlobalContext().Core.getCurrentCareContext());
+		
+		return searchCriteria;
+	}
+	
+	
+	private void setSearchCriteria(MNAViewSearchCriteriaVo mnaViewSearchCriteriaVo)
+	{
+		form.cmbFilter().setValue(mnaViewSearchCriteriaVo.getFilter());	
 	}
 
 	private void filterValueChanged()
@@ -642,6 +675,7 @@ public class Logic extends BaseLogic
 	protected void onCmbFilterValueChanged() throws ims.framework.exceptions.PresentationLogicException
 	{
 		filterValueChanged();
+		form.getGlobalContext().Nursing.setMNAViewSearchCriteria(getSearchCriteria());//WDEV-19389 
 	}
 
 	protected void onBtnUpdateClick() throws ims.framework.exceptions.PresentationLogicException

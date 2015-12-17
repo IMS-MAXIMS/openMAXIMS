@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -56,6 +61,7 @@ public class Logic extends BaseLogic
 	protected void onImbClearClick() throws ims.framework.exceptions.PresentationLogicException
 	{
 		clearInstanceControls();
+		form.getGlobalContext().Core.setOutPatientSearchCriteria(null); //WDEV-19389 
 	}
 
 	private void clearInstanceControls()
@@ -66,6 +72,9 @@ public class Logic extends BaseLogic
 		clearConsultantCombo();
 		clearOutPatientList();
 		form.cmbSpecialty().setValue(null);
+		form.cmbStatusOfLetter().setValue(null);
+		form.dteApptDateFrom().setValue(null);
+		form.dteApptDateTo().setValue(null);
 	}
 
 	private void clearOutPatientList()
@@ -226,6 +235,16 @@ public class Logic extends BaseLogic
 		}
 		voOutPatSearch.setLocation(form.cmbLocation().getValue());
 		voOutPatSearch.setSpecialty(form.cmbSpecialty().getValue());
+		
+		if(form.getLocalContext().getUserAccessVoIsNotNull())
+			voOutPatSearch.setConsultant(form.qmbConsultant().getValue());
+		else
+			voOutPatSearch.setConsultant(form.qmbConsultant().getValue());
+		voOutPatSearch.setDictatedBy(form.qmbDictatedBy().getValue());
+		voOutPatSearch.setDocumentStatus(form.cmbStatusOfLetter().getValue());
+		voOutPatSearch.setDateFrom(form.dteApptDateFrom().getValue());
+		voOutPatSearch.setDateTo(form.dteApptDateTo().getValue());
+		
 		form.getGlobalContext().Core.setOutPatientSearchCriteria(voOutPatSearch);
 
 	}
@@ -250,14 +269,33 @@ public class Logic extends BaseLogic
 	private void displaySearchCriteria()
 	{
 		if (form.getGlobalContext().Core.getOutPatientSearchCriteria().getConsultantIsNotNull())
+		{
 			form.qmbConsultant().newRow(form.getGlobalContext().Core.getOutPatientSearchCriteria().getConsultant(), form.getGlobalContext().Core.getOutPatientSearchCriteria().getConsultant().toString());
-
+			form.qmbConsultant().setValue(form.getGlobalContext().Core.getOutPatientSearchCriteria().getConsultant());
+		}
+		else
+			form.qmbConsultant().clear();
+		
 		form.cmbLocation().setValue(form.getGlobalContext().Core.getOutPatientSearchCriteria().getLocation());
 		form.cmbSpecialty().setValue(form.getGlobalContext().Core.getOutPatientSearchCriteria().getSpecialty());
 		if (form.cmbLocation().getValue() != null && form.getGlobalContext().Core.getOutPatientSearchCriteria().getClinicIsNotNull())
 		{
 			form.qmbClinic().newRow(form.getGlobalContext().Core.getOutPatientSearchCriteria().getClinic(), form.getGlobalContext().Core.getOutPatientSearchCriteria().getClinic().getClinicName());
 			form.qmbClinic().setValue(form.getGlobalContext().Core.getOutPatientSearchCriteria().getClinic());
+		}
+		
+		form.cmbStatusOfLetter().setValue(form.getGlobalContext().Core.getOutPatientSearchCriteria().getDocumentStatus());
+		form.dteApptDateFrom().setValue(form.getGlobalContext().Core.getOutPatientSearchCriteria().getDateFrom());
+		form.dteApptDateTo().setValue(form.getGlobalContext().Core.getOutPatientSearchCriteria().getDateTo());
+		
+		if (form.getGlobalContext().Core.getOutPatientSearchCriteria().getDictatedByIsNotNull())
+		{
+			MemberOfStaffShortVo mos = domain.getMOS(form.getGlobalContext().Core.getOutPatientSearchCriteria().getDictatedBy());
+			if (mos != null )
+			{
+				form.qmbDictatedBy().newRow(mos, mos.getName().toString());
+				form.qmbDictatedBy().setValue(mos);
+			}
 		}
 	}
 

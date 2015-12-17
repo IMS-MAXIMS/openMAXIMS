@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -29,10 +34,14 @@ import ims.framework.FormName;
 import ims.framework.enumerations.DialogResult;
 import ims.framework.enumerations.FormMode;
 import ims.framework.exceptions.PresentationLogicException;
+import ims.pathways.forms.rttstatuspointsconfig.GenForm.grdAppointmentOutcomeRow;
 import ims.pathways.forms.rttstatuspointsconfig.GenForm.grdChildRTTsRow;
 import ims.pathways.forms.rttstatuspointsconfig.GenForm.grdRTTStatusPointsRow;
 import ims.pathways.vo.RTTStatusPointVo;
 import ims.pathways.vo.RTTStatusPointVoCollection;
+import ims.scheduling.vo.lookups.ApptOutcome;
+import ims.scheduling.vo.lookups.ApptOutcomeCollection;
+import ims.scheduling.vo.lookups.LookupHelper;
 
 public class Logic extends BaseLogic
 {
@@ -66,6 +75,46 @@ public class Logic extends BaseLogic
 		form.grdRTTStatusPoints().getRows().clear();
 		clearInstanceControls();
 	}
+	
+	private void populateAppointmentOutcomeGrid(RTTStatusPointVo rttStatusPoint)
+	{
+		form.grdAppointmentOutcome().getRows().clear();
+		
+		ApptOutcomeCollection lkpApptOutcomeCollection = LookupHelper.getApptOutcome(domain.getLookupService());
+
+		if (lkpApptOutcomeCollection == null)
+			return;
+
+		for (int i = 0; i < lkpApptOutcomeCollection.size(); i++)
+		{
+			boolean markAsChecked = false;
+			
+			grdAppointmentOutcomeRow newRow = form.grdAppointmentOutcome().getRows().newRow();
+			
+			if (lkpApptOutcomeCollection.get(i) == null)
+				continue;
+			
+			if (rttStatusPoint != null && rttStatusPoint.getAppointmentOutcomes() != null && rttStatusPoint.getAppointmentOutcomes().size() > 0)
+			{
+				for (int j = 0; j < rttStatusPoint.getAppointmentOutcomes().size(); j++)
+				{
+					
+					ApptOutcome apptOutcome = rttStatusPoint.getAppointmentOutcomes().get(j);
+					
+					if (apptOutcome != null && apptOutcome.getID() == lkpApptOutcomeCollection.get(i).getID())
+					{
+						markAsChecked = true;
+					}
+				}
+			}
+			
+			newRow.setColSelect(markAsChecked);
+			newRow.setColApptOutcome(lkpApptOutcomeCollection.get(i).getText());
+			newRow.setValue(lkpApptOutcomeCollection.get(i));
+		}
+		
+	}
+	
 	private void open()
 	{
 		populateRTTStatusPointsGrid();
@@ -101,9 +150,8 @@ public class Logic extends BaseLogic
 			row.setcolLocalCode(statPointVo.getLocalCodeIsNotNull() ? statPointVo.getLocalCode().toString() : "");
 			row.setValue(statPointVo);
 		}
-
-
 	}
+	
 	@Override
 	protected void onBtnCancelClick() throws ims.framework.exceptions.PresentationLogicException
 	{
@@ -152,12 +200,32 @@ public class Logic extends BaseLogic
 		selectedRecord = form.getLocalContext().getselectedRecord();
 		selectedRecord.setLocalCode(form.txtLocalCode().getValue());
 
+		selectedRecord.setAppointmentOutcomes(getAppointmentOutcomes());
+		
 		RTTStatusPointVoCollection childRTTcoll = populateChildRTTs();
 		selectedRecord.setChildren(childRTTcoll);
 
 		return selectedRecord;
 	}
 
+	private ApptOutcomeCollection getAppointmentOutcomes()
+	{
+		ApptOutcomeCollection selectedAppointmentOutcomes = new ApptOutcomeCollection();
+		
+		for (int i = 0; i < form.grdAppointmentOutcome().getRows().size(); i++)
+		{
+			
+			grdAppointmentOutcomeRow row = form.grdAppointmentOutcome().getRows().get(i);
+			
+			if (Boolean.TRUE.equals(row.getColSelect()))
+			{
+				selectedAppointmentOutcomes.add(row.getValue());
+			}
+		}
+		
+		return selectedAppointmentOutcomes;
+	}
+	
 	private RTTStatusPointVoCollection populateChildRTTs()
 	{
 		RTTStatusPointVoCollection childRTTStatusPoints = new RTTStatusPointVoCollection();
@@ -221,8 +289,9 @@ public class Logic extends BaseLogic
 		{
 			populateChildRTTsControls(selectedRecord.getChildren());
 		}
+		
+		populateAppointmentOutcomeGrid(selectedRecord);
 	}	
-
 
 	private void clearInstanceControls()
 	{
@@ -232,6 +301,7 @@ public class Logic extends BaseLogic
 		form.grdChildRTTs().getRows().clear();
 
 	}
+	
 	@Override
 	protected void onContextMenuItemClick(int menuItemID, Control sender)throws PresentationLogicException
 	{

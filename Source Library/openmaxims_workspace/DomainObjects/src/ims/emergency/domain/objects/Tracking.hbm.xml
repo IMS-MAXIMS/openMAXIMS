@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:36 -->
+<!-- Generated: 12/10/2015, 13:30 -->
 <hibernate-mapping>
 	<class name="ims.emergency.domain.objects.Tracking" table="emer_tracking" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -142,6 +142,17 @@
 		<many-to-one name="currentPartialAdmission" class="ims.emergency.domain.objects.EDPartialAdmission" unique="true" foreign-key="tracking_currentpar_fk" access="field" cascade="save-update">
 			<column name="currentpar" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
+<!-- debug: displayInED -->
+<!-- debug: reasonForBreachComments -->
+<!-- debug: seenByNurse -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="seenByNurse" class="ims.emergency.domain.objects.SeenByHCP" unique="true" foreign-key="tracking_seenbynurs_fk" access="field" cascade="save-update">
+			<column name="seenbynurs" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: requiringDischargeDocumentationReview -->
+<!-- debug: supplementaryLetterStatus -->
 <!-- debug: !IsAssociation && !IsCollection -->
 <!-- debug: !IsLookup -->
 		<property name="isUnknownPatient" type="boolean" access="field" update="true">
@@ -176,6 +187,26 @@
 <!-- debug: IsLookup -->
 		<many-to-one name="reasonForBreach" class="ims.domain.lookups.LookupInstance" access="field">
 			<column name="lkp_reasonforb" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="displayInED" type="boolean" access="field" update="true">
+			<column name="displayine"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="reasonForBreachComments" type="string" access="field" update="true" > 
+			<column name="reasonfor2" length="1500"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="requiringDischargeDocumentationReview" type="boolean" access="field" update="true">
+			<column name="requiringd"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="supplementaryLetterStatus" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_supplement" sql-type="numeric(10,0)" not-null="false" unique="false"   />
 		</many-to-one>
 	</class>
 </hibernate-mapping>

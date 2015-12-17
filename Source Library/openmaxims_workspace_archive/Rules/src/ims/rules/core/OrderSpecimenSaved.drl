@@ -1,0 +1,28 @@
+package ims.rules.userrules;
+
+import ims.ocrr.orderingresults.domain.objects.OrderSpecimen;
+import ims.rules.engine.RulesRuntimeEngine;
+import ims.domain.DomainFactory;
+
+global RulesRuntimeEngine engine;
+global DomainFactory factory;
+
+function boolean isOrderSpecimenSaved(ims.ocrr.orderingresults.domain.objects.OrderSpecimen entity)
+{
+	if((entity.getOrder() != null) && entity.isSaveComplete() != null && entity.isSaveComplete())
+		return true;
+	return false;
+}
+
+rule "OrderSpecimenSaved"
+no-loop true
+salience 0
+when
+	entity : ims.ocrr.orderingresults.domain.objects.OrderSpecimen();
+	eval(isOrderSpecimenSaved(entity));
+then	
+	engine.println("Rule 'OrderSpecimenSaved' was fired.");
+	engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Rule 'OrderSpecimenSaved' was fired.");
+	entity.getOrder().setHasNewOrUpdatedResults(entity.hasNewOrUpdatedResults());
+	engine.fireAllRules(entity.getOrder());
+end

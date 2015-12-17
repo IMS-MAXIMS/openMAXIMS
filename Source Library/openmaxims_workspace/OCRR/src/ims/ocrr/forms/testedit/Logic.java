@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -35,6 +40,7 @@ import ims.core.vo.TaxonomyMapCollection;
 import ims.core.vo.lookups.ActivityType;
 import ims.core.vo.lookups.PreActiveActiveInactiveStatus;
 import ims.core.vo.lookups.PreActiveActiveInactiveStatusCollection;
+import ims.core.vo.lookups.TaxonomyType;
 import ims.domain.exceptions.DomainInterfaceException;
 import ims.domain.exceptions.StaleObjectException;
 import ims.domain.exceptions.UniqueKeyViolationException;
@@ -50,6 +56,7 @@ import ims.framework.exceptions.CodingRuntimeException;
 import ims.framework.exceptions.PresentationLogicException;
 import ims.framework.utils.Color;
 import ims.framework.utils.Image;
+import ims.ocrr.configuration.vo.InvestigationIndexRefVo;
 import ims.ocrr.forms.testedit.GenForm.GroupEventTypeEnumeration;
 import ims.ocrr.forms.testedit.GenForm.GroupTypeEnumeration;
 import ims.ocrr.forms.testedit.GenForm.lyrInvestigationsLayer.tabHelpTextsContainer.grdTestHelpRow;
@@ -208,10 +215,21 @@ public class Logic extends BaseLogic
 					TaxonomyMap tax = form.getGlobalContext().Core.getTaxonomyMap();
 					// WDEV-4338 07/04/08 code below Checks for duplicate
 					// taxonomies used by investigations
-					if (domain.checkDuplicateTaxonomyMapping(tax))
-						addTaxonomyRow(tax);
-					else
-						engine.showMessage("The " + tax.getTaxonomyName() + " taxonomy " + tax.getDescription() + " is already in use by another investigation");
+
+					//WDEV-19728
+					GenForm.lyrSelectionLayer.tabTaxContainer.grdTaxonomyRow row = addTaxonomyRow(tax);
+					InvestigationIndexVo voInvIndex = null;
+					if (form.getGlobalContext().OCRR.getSelectedTestIsNotNull())
+						voInvIndex = (InvestigationIndexVo) form.getGlobalContext().OCRR.getSelectedTest();
+
+					if (!domain.checkDuplicateTaxonomyMapping(tax, voInvIndex))
+					{
+						engine.showMessage("The " + tax.getTaxonomyName() + " taxonomy " + tax.getDescription() + " is already in use by another investigation.Please update the code"+ tax.getTaxonomyCode());
+						row.setReadOnly(false);
+						row.setcolTaxonomyReadOnly(false);
+					}
+					//WDEV-19728
+						
 				}
 			}
 			else if (formName.equals(form.getForms().Core.SelectLookupInstances))
@@ -348,7 +366,8 @@ public class Logic extends BaseLogic
 		return -1;
 	}
 
-	private void addTaxonomyRow(TaxonomyMap tax)
+	//WDEV-19728
+	private GenForm.lyrSelectionLayer.tabTaxContainer.grdTaxonomyRow addTaxonomyRow(TaxonomyMap tax)
 	{
 		GenForm.lyrSelectionLayer.tabTaxContainer.grdTaxonomyRow row = form.lyrSelection().tabTax().grdTaxonomy().getRows().newRow();
 		if (tax.getTaxonomyNameIsNotNull())
@@ -360,7 +379,12 @@ public class Logic extends BaseLogic
 		}
 		row.setcolCode(tax.getTaxonomyCode());
 		row.setValue(tax);
+		// WDEV-19728 - should be allowed to modify this value
+		//row.setReadOnly(true);
+		
+		return row;
 	}
+	//WDEV-19728
 
 	/**
 	 * @param voCollQuestion
@@ -558,12 +582,33 @@ public class Logic extends BaseLogic
 
 	protected void onBtnSaveClick() throws ims.framework.exceptions.PresentationLogicException
 	{
+		
 		InvestigationIndexVo voInvIndex = null;
 		if (form.getGlobalContext().OCRR.getSelectedTestIsNotNull())
 			voInvIndex = (InvestigationIndexVo) form.getGlobalContext().OCRR.getSelectedTest().clone();
 
 		if (voInvIndex == null)
 			voInvIndex = new InvestigationIndexVo();
+
+		
+		//WDEV-19728
+		//check taxonomy mappings
+		for (int i = 0; i < form.lyrSelection().tabTax().grdTaxonomy().getRows().size(); i++)
+		{
+			TaxonomyMap taxonomyMap = (TaxonomyMap) form.lyrSelection().tabTax().grdTaxonomy().getRows().get(i).getValue().clone();
+			taxonomyMap.setTaxonomyCode(form.lyrSelection().tabTax().grdTaxonomy().getRows().get(i).getcolCode());
+			if (taxonomyMap!=null) 
+			{
+				// WDEV-19728 Need to ensure the duplicate isn't this record itself!
+				if (!domain.checkDuplicateTaxonomyMapping(taxonomyMap, new InvestigationIndexRefVo(voInvIndex.getID_InvestigationIndex(), voInvIndex.getVersion_InvestigationIndex())))
+				{
+					engine.showMessage("Record not updated. The " + taxonomyMap.getTaxonomyName() + " taxonomy " + (taxonomyMap.getDescriptionIsNotNull()?taxonomyMap.getDescription():"") + " is already in use by another investigation.Please update the code "+ taxonomyMap.getTaxonomyCode() + "\n\nPlease extend the code text to make unique.");
+					form.lyrSelection().tabTax().grdTaxonomy().getRows().get(i).setcolTaxonomyReadOnly(false);
+					return;
+				}
+			}			
+		}
+		
 
 		saveRecord(voInvIndex);
 		
@@ -1176,7 +1221,9 @@ public class Logic extends BaseLogic
 
 	private void addTaxonomy()
 	{
-		form.getGlobalContext().Core.setTaxonomyMap(null);
+		TaxonomyMap map = new TaxonomyMap();
+		map.setTaxonomyName(TaxonomyType.OPCS4);
+		form.getGlobalContext().Core.setTaxonomyMap(map);
 		engine.open(form.getForms().Core.TaxonomySearch);
 	}
 
@@ -1646,7 +1693,9 @@ public class Logic extends BaseLogic
 
 		for (int i = 0; i < form.lyrSelection().tabTax().grdTaxonomy().getRows().size(); i++)
 		{
-			taxColl.add(form.lyrSelection().tabTax().grdTaxonomy().getRows().get(i).getValue());
+			TaxonomyMap map =form.lyrSelection().tabTax().grdTaxonomy().getRows().get(i).getValue();
+			map.setTaxonomyCode(form.lyrSelection().tabTax().grdTaxonomy().getRows().get(i).getcolCode());
+			taxColl.add(map);
 		}
 		voInvIndex.setTaxonomyMap(taxColl);
 

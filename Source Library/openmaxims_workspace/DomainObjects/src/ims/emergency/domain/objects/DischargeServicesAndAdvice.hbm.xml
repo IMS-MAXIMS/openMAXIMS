@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping
 	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated: 16/04/2014, 12:36 -->
+<!-- Generated: 12/10/2015, 13:29 -->
 <hibernate-mapping>
 	<class name="ims.emergency.domain.objects.DischargeServicesAndAdvice" table="emer_dischargeservi" lazy="true" discriminator-value="null" >
 		<id name="id" access="field" type="integer" unsaved-value="null">
@@ -125,6 +125,18 @@
 			</key>
 			<index column='idx'/>
 			<many-to-many class="ims.core.clinical.domain.objects.AdviceLeaflets" foreign-key="dischargeservi_advicelea_to_fk">
+				<column name="to_side" sql-type="numeric(10,0)" unique="false"   />
+			</many-to-many>
+		</list>
+<!-- debug: prePrintedAdviceLeafletsGiven -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- many to many -->
+		<list name="prePrintedAdviceLeafletsGiven" table="emer_dischargeservi_preprinted" lazy="true" access="field" cascade="save-update">
+			<key foreign-key="dischargeservi_preprinte_fr_fk">
+				<column name="from_side" sql-type="numeric(10,0)" unique="false"   />
+			</key>
+			<index column='idx'/>
+			<many-to-many class="ims.core.clinical.domain.objects.AdviceLeaflets" foreign-key="dischargeservi_preprinte_to_fk">
 				<column name="to_side" sql-type="numeric(10,0)" unique="false"   />
 			</many-to-many>
 		</list>

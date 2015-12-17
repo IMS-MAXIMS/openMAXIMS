@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.scheduling.vo.domain;
@@ -72,6 +77,16 @@ public class SessionParentChildSlotVoAssembler
 		valueObjectDest.setParentSlot(valueObjectSrc.getParentSlot());
 		// Duration
 		valueObjectDest.setDuration(valueObjectSrc.getDuration());
+		// CancelBlockReason
+		valueObjectDest.setCancelBlockReason(valueObjectSrc.getCancelBlockReason());
+		// CancelBlockComment
+		valueObjectDest.setCancelBlockComment(valueObjectSrc.getCancelBlockComment());
+		// Priority
+		valueObjectDest.setPriority(valueObjectSrc.getPriority());
+		// SlotResp
+		valueObjectDest.setSlotResp(valueObjectSrc.getSlotResp());
+		// Comment
+		valueObjectDest.setComment(valueObjectSrc.getComment());
 	 	return valueObjectDest;
 	 }
 
@@ -465,14 +480,7 @@ public class SessionParentChildSlotVoAssembler
 			valueObject.setStatusReason(voLookup7);
 		}
 				// StatusReasonHistory
-		ims.scheduling.vo.SessionSlotStatusRefVoCollection StatusReasonHistory = new ims.scheduling.vo.SessionSlotStatusRefVoCollection();
-		for(java.util.Iterator iterator = domainObject.getStatusReasonHistory().iterator(); iterator.hasNext(); ) 
-		{
-			ims.scheduling.domain.objects.SessionSlotStatus tmp = (ims.scheduling.domain.objects.SessionSlotStatus)iterator.next();
-			if (tmp != null)
-				StatusReasonHistory.add(new ims.scheduling.vo.SessionSlotStatusRefVo(tmp.getId(),tmp.getVersion()));
-		}
-		valueObject.setStatusReasonHistory(StatusReasonHistory);
+		valueObject.setStatusReasonHistory(ims.scheduling.vo.domain.SessionSlotStatusVoAssembler.createSessionSlotStatusVoCollectionFromSessionSlotStatus(map, domainObject.getStatusReasonHistory()) );
 		// Session
 		if (domainObject.getSession() != null)
 		{
@@ -503,6 +511,84 @@ public class SessionParentChildSlotVoAssembler
 		}
 		// Duration
 		valueObject.setDuration(domainObject.getDuration());
+		// CancelBlockReason
+		ims.domain.lookups.LookupInstance instance12 = domainObject.getCancelBlockReason();
+		if ( null != instance12 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance12.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance12.getImage().getImageId(), instance12.getImage().getImagePath());
+			}
+			color = instance12.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.scheduling.vo.lookups.CancelAppointmentReason voLookup12 = new ims.scheduling.vo.lookups.CancelAppointmentReason(instance12.getId(),instance12.getText(), instance12.isActive(), null, img, color);
+			ims.scheduling.vo.lookups.CancelAppointmentReason parentVoLookup12 = voLookup12;
+			ims.domain.lookups.LookupInstance parent12 = instance12.getParent();
+			while (parent12 != null)
+			{
+				if (parent12.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent12.getImage().getImageId(), parent12.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent12.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup12.setParent(new ims.scheduling.vo.lookups.CancelAppointmentReason(parent12.getId(),parent12.getText(), parent12.isActive(), null, img, color));
+				parentVoLookup12 = parentVoLookup12.getParent();
+								parent12 = parent12.getParent();
+			}			
+			valueObject.setCancelBlockReason(voLookup12);
+		}
+				// CancelBlockComment
+		valueObject.setCancelBlockComment(domainObject.getCancelBlockComment());
+		// Priority
+		ims.domain.lookups.LookupInstance instance14 = domainObject.getPriority();
+		if ( null != instance14 ) {
+			ims.framework.utils.ImagePath img = null;
+			ims.framework.utils.Color color = null;		
+			img = null;
+			if (instance14.getImage() != null) 
+			{
+				img = new ims.framework.utils.ImagePath(instance14.getImage().getImageId(), instance14.getImage().getImagePath());
+			}
+			color = instance14.getColor();
+			if (color != null) 
+				color.getValue();
+
+			ims.scheduling.vo.lookups.SchedulingPriority voLookup14 = new ims.scheduling.vo.lookups.SchedulingPriority(instance14.getId(),instance14.getText(), instance14.isActive(), null, img, color);
+			ims.scheduling.vo.lookups.SchedulingPriority parentVoLookup14 = voLookup14;
+			ims.domain.lookups.LookupInstance parent14 = instance14.getParent();
+			while (parent14 != null)
+			{
+				if (parent14.getImage() != null) 
+				{
+					img = new ims.framework.utils.ImagePath(parent14.getImage().getImageId(), parent14.getImage().getImagePath() );
+				}
+				else 
+				{
+					img = null;
+				}
+				color = parent14.getColor();
+    			if (color != null) 
+    				color.getValue();
+								parentVoLookup14.setParent(new ims.scheduling.vo.lookups.SchedulingPriority(parent14.getId(),parent14.getText(), parent14.isActive(), null, img, color));
+				parentVoLookup14 = parentVoLookup14.getParent();
+								parent14 = parent14.getParent();
+			}			
+			valueObject.setPriority(voLookup14);
+		}
+				// SlotResp
+		valueObject.setSlotResp(ims.scheduling.vo.domain.Session_ListOwnerVoAssembler.create(map, domainObject.getSlotResp()) );
+		// Comment
+		valueObject.setComment(domainObject.getComment());
  		return valueObject;
 	 }
 
@@ -620,60 +706,7 @@ public class SessionParentChildSlotVoAssembler
 				domainFactory.getLookupInstance(valueObject.getStatusReason().getID());
 		}
 		domainObject.setStatusReason(value7);
-
-		ims.scheduling.vo.SessionSlotStatusRefVoCollection refCollection8 = valueObject.getStatusReasonHistory();
-		int size8 = (null == refCollection8) ? 0 : refCollection8.size();		
-		java.util.Set domainStatusReasonHistory8 = domainObject.getStatusReasonHistory();
-		if (domainStatusReasonHistory8 == null)
-		{
-			domainStatusReasonHistory8 = new java.util.HashSet();
-		}
-		java.util.Set newSet8  = new java.util.HashSet();
-		for(int i=0; i<size8; i++) 
-		{
-			ims.scheduling.vo.SessionSlotStatusRefVo vo = refCollection8.get(i);					
-			ims.scheduling.domain.objects.SessionSlotStatus dom = null;
-			if ( null != vo ) 
-			{
-				if (vo.getBoId() == null)
-				{
-					if (domMap.get(vo) != null)
-					{
-						dom = (ims.scheduling.domain.objects.SessionSlotStatus)domMap.get(vo);
-					}
-				}
-				else
-				{
-					dom = (ims.scheduling.domain.objects.SessionSlotStatus)domainFactory.getDomainObject( ims.scheduling.domain.objects.SessionSlotStatus.class, vo.getBoId());
-				}
-			}
-
-			//Trying to avoid the hibernate collection being marked as dirty via its public interface methods. (like add)
-			if (!domainStatusReasonHistory8.contains(dom))
-			{
-				domainStatusReasonHistory8.add(dom);
-			}
-			newSet8.add(dom);			
-		}
-		java.util.Set removedSet8 = new java.util.HashSet();
-		java.util.Iterator iter8 = domainStatusReasonHistory8.iterator();
-		//Find out which objects need to be removed
-		while (iter8.hasNext())
-		{
-			ims.domain.DomainObject o = (ims.domain.DomainObject)iter8.next();			
-			if ((o == null || o.getIsRIE() == null || !o.getIsRIE().booleanValue()) && !newSet8.contains(o))
-			{
-				removedSet8.add(o);
-			}
-		}
-		iter8 = removedSet8.iterator();
-		//Remove the unwanted objects
-		while (iter8.hasNext())
-		{
-			domainStatusReasonHistory8.remove(iter8.next());
-		}		
-		
-		domainObject.setStatusReasonHistory(domainStatusReasonHistory8);		
+		domainObject.setStatusReasonHistory(ims.scheduling.vo.domain.SessionSlotStatusVoAssembler.extractSessionSlotStatusSet(domainFactory, valueObject.getStatusReasonHistory(), domainObject.getStatusReasonHistory(), domMap));		
 		ims.scheduling.domain.objects.Sch_Session value9 = null;
 		if ( null != valueObject.getSession() ) 
 		{
@@ -715,6 +748,37 @@ public class SessionParentChildSlotVoAssembler
 		}
 		domainObject.setParentSlot(value10);
 		domainObject.setDuration(valueObject.getDuration());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value12 = null;
+		if ( null != valueObject.getCancelBlockReason() ) 
+		{
+			value12 =
+				domainFactory.getLookupInstance(valueObject.getCancelBlockReason().getID());
+		}
+		domainObject.setCancelBlockReason(value12);
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getCancelBlockComment() != null && valueObject.getCancelBlockComment().equals(""))
+		{
+			valueObject.setCancelBlockComment(null);
+		}
+		domainObject.setCancelBlockComment(valueObject.getCancelBlockComment());
+		// create LookupInstance from vo LookupType
+		ims.domain.lookups.LookupInstance value14 = null;
+		if ( null != valueObject.getPriority() ) 
+		{
+			value14 =
+				domainFactory.getLookupInstance(valueObject.getPriority().getID());
+		}
+		domainObject.setPriority(value14);
+		domainObject.setSlotResp(ims.scheduling.vo.domain.Session_ListOwnerVoAssembler.extractSession_ListOwner(domainFactory, valueObject.getSlotResp(), domMap));
+		//This is to overcome a bug in both Sybase and Oracle which prevents them from storing an empty string correctly
+		//Sybase stores it as a single space, Oracle stores it as NULL. This fix will make them consistent at least.
+		if (valueObject.getComment() != null && valueObject.getComment().equals(""))
+		{
+			valueObject.setComment(null);
+		}
+		domainObject.setComment(valueObject.getComment());
 
 		return domainObject;
 	}

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,6 +15,11 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 package ims.hl7.domain.mapping;
@@ -23,10 +28,12 @@ import java.text.DecimalFormat;
 
 import org.apache.log4j.Logger;
 
+import ims.configuration.gen.ConfigFlag;
 import ims.core.patient.vo.PatientRefVo;
 import ims.core.vo.PatientShort;
 import ims.core.vo.ServiceShortVo;
 import ims.framework.utils.DateTime;
+import ims.hl7.domain.EventResponse;
 import ims.hl7.domain.HL7EngineApplication;
 import ims.hl7.utils.EvnCodes;
 import ims.ocrr.orderingresults.vo.OcsOrderSessionRefVo;
@@ -47,7 +54,9 @@ public class O02VoMapper extends VoMapper
 {
 	private static final Logger			LOG		= Logger.getLogger(O02VoMapper.class);
 
-	public Message processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception 
+	//WDEV-20112
+//	public Message processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception 
+	public EventResponse processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception  //WDEV-20112
 	{
 		R01VoMapper r01mapper = (R01VoMapper) HL7EngineApplication.getVoMapper(EvnCodes.R01);
 		if (r01mapper == null)
@@ -65,6 +74,7 @@ public class O02VoMapper extends VoMapper
 
 	public Message populateOrderResponseMessage(OrderChangeResponseVo responseVo)throws Exception
 	{
+		
 		LOG.debug("O02VoMapper populateOrderResponseMessage: entry");
 		IfOutOcsOrderVo orderVo=ocsIfInbound.getOrderFromInv(responseVo.getInvestigation());
 		PatientRefVo patient= orderVo.getPatient();
@@ -138,9 +148,18 @@ public class O02VoMapper extends VoMapper
 		if (orderVo.getOrderedByIsNotNull())
 		{
 			// ORC-10   Entered by   (XCN)   00224
-			renderMemberOfStaffShortVoToXCN(orderVo.getOrderedBy(), commonOrder.getEnteredBy(0),responseVo.getProviderSystem());
+			//WDEV-21000
+//			renderMemberOfStaffShortVoToXCN(orderVo.getOrderedBy(), commonOrder.getEnteredBy(0),responseVo.getProviderSystem());
+			if (ConfigFlag.HL7.USE_CONFIGURED_TAXONOMYTYPES_FOR_XCN.getValue())
+			{
+				renderMemberOfStaffShortVoToEnteredBy(orderVo.getOrderedBy(), commonOrder, responseVo.getProviderSystem());
+			}
+			else
+			{
+				renderMemberOfStaffShortVoToXCN(orderVo.getOrderedBy(), commonOrder.getEnteredBy(0), responseVo.getProviderSystem());
+			}
 
-			// ORC-13   Enterer’s location   (PL)   00227 
+			// ORC-13   Entererâ€™s location   (PL)   00227 
 			if (orderVo.getOrderedBy().getPrimaryLocationIsNotNull())
 			{
 				commonOrder.getEntererSLocation().getLocationDescription().setValue(orderVo.getOrderedBy().getPrimaryLocation().getName());
@@ -156,7 +175,16 @@ public class O02VoMapper extends VoMapper
 		// ORC-12   Ordering provider   (XCN)   00226
 		if (orderVo.getResponsibleClinicianIsNotNull())
 		{
-			renderMemberOfStaffShortVoToXCN(orderVo.getResponsibleClinician().getMos(), commonOrder.getOrderingProvider(0),responseVo.getProviderSystem());
+			//WDEV-21000
+//			renderMemberOfStaffShortVoToXCN(orderVo.getResponsibleClinician().getMos(), commonOrder.getOrderingProvider(0),responseVo.getProviderSystem());
+			if (ConfigFlag.HL7.USE_CONFIGURED_TAXONOMYTYPES_FOR_XCN.getValue())
+			{
+				renderMemberOfStaffShortVoToOrderingProvider(orderVo.getResponsibleClinician().getMos(), commonOrder, responseVo.getProviderSystem());
+			}
+			else
+			{
+				renderMemberOfStaffShortVoToXCN(orderVo.getResponsibleClinician().getMos(), commonOrder.getOrderingProvider(0), responseVo.getProviderSystem());
+			}
 		}
 		
 		
@@ -177,14 +205,16 @@ public class O02VoMapper extends VoMapper
 		
 		LOG.debug("O02VoMapper populateOrderResponseMessage: exit");
 		// TODO Auto-generated method stub
+
 		return order;
+
 	}
 	
 	
-	
+
 	public Message populateOrderResponseMessage(ExternalEventVo event) throws Exception
-	
 	{
+		
 		LOG.debug("O02VoMapper populateOrderResponseMessage: entry");
 		
 		PatientRefVo patient= RefMandomain.getPatientFromAppointment(event.getAppointment());
@@ -263,9 +293,18 @@ public class O02VoMapper extends VoMapper
 		if (orderVo.getOrderedByIsNotNull())
 		{
 			// ORC-10   Entered by   (XCN)   00224
-			renderMemberOfStaffShortVoToXCN(orderVo.getOrderedBy(), commonOrder.getEnteredBy(0),event.getProviderSystem());
+			//WDEV-21000
+//			renderMemberOfStaffShortVoToXCN(orderVo.getOrderedBy(), commonOrder.getEnteredBy(0),event.getProviderSystem());
+			if (ConfigFlag.HL7.USE_CONFIGURED_TAXONOMYTYPES_FOR_XCN.getValue())
+			{
+				renderMemberOfStaffShortVoToEnteredBy(orderVo.getOrderedBy(), commonOrder, event.getProviderSystem());
+			}
+			else
+			{
+				renderMemberOfStaffShortVoToXCN(orderVo.getOrderedBy(), commonOrder.getEnteredBy(0), event.getProviderSystem());
+			}
 
-			// ORC-13   Enterer’s location   (PL)   00227 
+			// ORC-13   Entererâ€™s location   (PL)   00227 
 			if (orderVo.getOrderedBy().getPrimaryLocationIsNotNull())
 			{
 				commonOrder.getEntererSLocation().getLocationDescription().setValue(orderVo.getOrderedBy().getPrimaryLocation().getName());
@@ -281,7 +320,16 @@ public class O02VoMapper extends VoMapper
 		// ORC-12   Ordering provider   (XCN)   00226
 		if (orderVo.getResponsibleClinicianIsNotNull())
 		{
-			renderMemberOfStaffShortVoToXCN(orderVo.getResponsibleClinician().getMos(), commonOrder.getOrderingProvider(0),event.getProviderSystem());
+			//WDEV-21000
+//			renderMemberOfStaffShortVoToXCN(orderVo.getResponsibleClinician().getMos(), commonOrder.getOrderingProvider(0),event.getProviderSystem());
+			if (ConfigFlag.HL7.USE_CONFIGURED_TAXONOMYTYPES_FOR_XCN.getValue())
+			{
+				renderMemberOfStaffShortVoToOrderingProvider(orderVo.getResponsibleClinician().getMos(), commonOrder, event.getProviderSystem());
+			}
+			else
+			{
+				renderMemberOfStaffShortVoToXCN(orderVo.getResponsibleClinician().getMos(), commonOrder.getOrderingProvider(0), event.getProviderSystem());
+			}
 		}
 		
 		
@@ -299,7 +347,9 @@ public class O02VoMapper extends VoMapper
 		
 		LOG.debug("O02VoMapper populateOrderResponseMessage: exit");
 		// TODO Auto-generated method stub
+		
 		return order;
+
 	}
 
 	

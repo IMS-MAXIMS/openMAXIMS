@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,12 +15,17 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 package ims.core.helper;
 
-import java.util.ArrayList;
-
+import ims.admin.domain.AlertPIDBarConfiguration;
+import ims.admin.domain.impl.AlertPIDBarConfigurationImpl;
 import ims.alerts.NewResults;
 import ims.alerts.PatientAlert;
 import ims.alerts.PatientAllergy;
@@ -31,7 +36,10 @@ import ims.core.domain.impl.DemographicsImpl;
 import ims.core.patient.vo.PatientRefVo;
 import ims.domain.SessionData;
 import ims.domain.exceptions.DomainRuntimeException;
+import ims.framework.enumerations.AlertCategory;
 import ims.vo.ValueObjectRef;
+
+import java.util.ArrayList;
 
 /*
  * This ContextEvalProvider is to be used by ALL projects that have the OCS Module.
@@ -87,11 +95,29 @@ public class OcrrContextEvalProvider extends ContextEvalProvider
 				sessData.patientInfoTextColor.set(ConfigFlag.UI.RIP_INFO_COLOUR.getValue().toString());
 			}
 
-			// Replaced code removede in version 12 of this file with code in Version 11 - WDEV-3595
+			// Replaced code removed in version 12 of this file with code in Version 11 - WDEV-3595
 			sessData.addAlert(new PatientInfo(voPat.getPatientInfoButtonText()));
+										
+			AlertPIDBarConfiguration demog = (AlertPIDBarConfiguration)getDomainImpl(AlertPIDBarConfigurationImpl.class);
+			ims.admin.vo.AlertPIDBarConfigVo alertPIDBarConfigVo = demog.getAlertPIDBarConfig();
 			
-			if (voPat.getHasAlerts() != null && voPat.getHasAlerts().booleanValue())
-				sessData.addAlert(new PatientAlert("The patient has alerts."));
+			if (voPat.getHasAlertCategory1IsNotNull() && voPat.getHasAlertCategory1().booleanValue() && super.hasAlertsForViewOrEdit(voPat))
+				sessData.addAlert(new PatientAlert("The patient has alerts of type " + //WDEV-22647  NPE fix
+						(alertPIDBarConfigVo != null && alertPIDBarConfigVo.getAlertCategoryPosition1IsNotNull() ? alertPIDBarConfigVo.getAlertCategoryPosition1().getText() : "1"), AlertCategory.ONE)); 						
+			if (voPat.getHasAlertCategory2IsNotNull() && voPat.getHasAlertCategory2().booleanValue() && super.hasAlertsForViewOrEdit(voPat))
+				sessData.addAlert(new PatientAlert("The patient has alerts of type " +//WDEV-22647  NPE fix
+						(alertPIDBarConfigVo != null && alertPIDBarConfigVo.getAlertCategoryPosition2IsNotNull() ? alertPIDBarConfigVo.getAlertCategoryPosition2().getText() : "2"), AlertCategory.TWO)); 						
+			if (voPat.getHasAlertCategory3IsNotNull() && voPat.getHasAlertCategory3().booleanValue() && super.hasAlertsForViewOrEdit(voPat))
+				sessData.addAlert(new PatientAlert("The patient has alerts of type " +//WDEV-22647  NPE fix
+						(alertPIDBarConfigVo != null && alertPIDBarConfigVo.getAlertCategoryPosition3IsNotNull() ? alertPIDBarConfigVo.getAlertCategoryPosition3().getText() : "3"), AlertCategory.THREE));			
+			if (voPat.getHasAlertCategory4IsNotNull() && voPat.getHasAlertCategory4().booleanValue() && super.hasAlertsForViewOrEdit(voPat))
+				sessData.addAlert(new PatientAlert("The patient has alerts of type " + //WDEV-22647  NPE fix
+						(alertPIDBarConfigVo != null && alertPIDBarConfigVo.getAlertCategoryPosition4IsNotNull() ? alertPIDBarConfigVo.getAlertCategoryPosition4().getText() : "4"), AlertCategory.FOUR));
+			if (((voPat.getHasAlertCategoryOtherIsNotNull() && voPat.getHasAlertCategoryOther().booleanValue())) && super.hasAlertsForViewOrEdit(voPat))
+				sessData.addAlert(new PatientAlert("The patient has alerts of type Other", AlertCategory.OTHER));
+				
+			//if (voPat.getHasAlerts() != null && voPat.getHasAlerts().booleanValue() && super.hasAlertsForViewOrEdit(voPat))
+			//	sessData.addAlert(new PatientAlert("The patient has alerts."));
 			if (voPat.getHasAllergies() != null && voPat.getHasAllergies().booleanValue())
 				sessData.addAlert(new PatientAllergy("The patient has allergies."));
 			if (voPat.hasPatientNotification())
@@ -117,7 +143,7 @@ public class OcrrContextEvalProvider extends ContextEvalProvider
 			voPat = demog.getPatient((PatientRefVo)refVo);			
 		}
 		
-		if (refVo == null || (sessData.patientId.get() != null && (voPat.getID_Patient() !=  sessData.patientId.get())))
+		if (refVo == null || voPat == null || (sessData.patientId.get() != null && (voPat.getID_Patient() !=  sessData.patientId.get())))
 		{		
 			ArrayList<Integer> urlsID = sessData.urlToClose.get();		
 		    if(urlsID == null)

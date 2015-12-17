@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated on 16/04/2014, 12:31
+ * Generated on 12/10/2015, 13:24
  *
  */
 package ims.core.vo.domain;
@@ -56,8 +61,6 @@ public class PatientElectiveListForWardViewVoAssembler
 		valueObjectDest.setBed(valueObjectSrc.getBed());
 		// Referral
 		valueObjectDest.setReferral(valueObjectSrc.getReferral());
-		// Ward
-		valueObjectDest.setWard(valueObjectSrc.getWard());
 		// TCIDetails
 		valueObjectDest.setTCIDetails(valueObjectSrc.getTCIDetails());
 	 	return valueObjectDest;
@@ -356,8 +359,6 @@ public class PatientElectiveListForWardViewVoAssembler
 		valueObject.setBed(domainObject.getBed());
 		// Referral
 		valueObject.setReferral(ims.core.vo.domain.CatsRefPatElectListWardViewLiteVoAssembler.create(map, domainObject.getReferral()) );
-		// Ward
-		valueObject.setWard(ims.core.vo.domain.LocationLiteVoAssembler.create(map, domainObject.getWard()) );
 		// TCIDetails
 		valueObject.setTCIDetails(ims.core.vo.domain.TCIForPatElectListForWardLiteVoAssembler.create(map, domainObject.getTCIDetails()) );
  		return valueObject;
@@ -450,7 +451,6 @@ public class PatientElectiveListForWardViewVoAssembler
 			}
 		}
 		domainObject.setReferral(value3);
-		domainObject.setWard(ims.core.vo.domain.LocationLiteVoAssembler.extractLocation(domainFactory, valueObject.getWard(), domMap));
 		domainObject.setTCIDetails(ims.core.vo.domain.TCIForPatElectListForWardLiteVoAssembler.extractTCIForPatientElectiveList(domainFactory, valueObject.getTCIDetails(), domMap));
 
 		return domainObject;

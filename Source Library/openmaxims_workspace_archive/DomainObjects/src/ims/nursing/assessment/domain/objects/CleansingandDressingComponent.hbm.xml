@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:36 -->
+<hibernate-mapping>
+	<subclass name="ims.nursing.assessment.domain.objects.CleansingandDressingComponent" lazy="true" discriminator-value="clea" extends="ims.nursing.assessment.domain.objects.AssessmentComponent" >
+<!-- debug: hibernateClassContent -->
+<!-- debug: hygieneActivities -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="hygieneActivities" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="cleansinganddr_hygieneact_fk">
+				<column name="ns_cleansinganddr_hygieneact" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.nursing.assessment.domain.objects.PersonalHygieneActivities" />
+		</set>
+<!-- debug: dressingAndGrooming -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="dressingAndGrooming" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="cleansinganddr_dressingan_fk">
+				<column name="ns_cleansinganddr_dressingan" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.nursing.assessment.domain.objects.DressingandGroomingActivities" />
+		</set>
+<!-- debug: bathingPattern -->
+<!-- debug: frequency -->
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="bathingPattern" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_bathingpat" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="frequency" type="string" access="field" update="true">
+			<column name="frequency"  not-null="false" unique="false"  />
+		</property>
+	</subclass>
+</hibernate-mapping>

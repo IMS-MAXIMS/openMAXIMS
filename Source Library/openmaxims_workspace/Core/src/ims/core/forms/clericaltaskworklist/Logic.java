@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -46,6 +51,7 @@ public class Logic extends BaseLogic
 	protected void onFormOpen(Object[] args) throws ims.framework.exceptions.PresentationLogicException
 	{
 		open();
+		Boolean test = 	form.isReadOnly();
 	}
 	private void open() 
 	{
@@ -203,7 +209,7 @@ public class Logic extends BaseLogic
 		
 		if (dateFrom != null && dateTo != null && dateTo.isLessThan(dateFrom))
 		{
-			uiErrors.add("'Date From' can not be greater than 'Date To'");
+			uiErrors.add("'From Date' cannot be greater than 'To Date'."); //WDEV-18762
 		}
 		
 		if (uiErrors.size() > 0)
@@ -228,6 +234,7 @@ public class Logic extends BaseLogic
 		if (form.grdClericalTask().getValue() instanceof PatientClericalTaskVo)
 		{
 			form.getGlobalContext().Core.setPatientClericalTask(form.grdClericalTask().getValue());
+			form.getGlobalContext().Core.setOpenPatientClericalTaskAsReadOnly(form.isReadOnly()); //WDEV-17124
 			
 			//WDEV-14080	
 			PatientShort patientShort = new PatientShort(form.getGlobalContext().Core.getPatientClericalTask().getPatient().getID_Patient(), form.getGlobalContext().Core.getPatientClericalTask().getPatient().getVersion_Patient());

@@ -1,0 +1,89 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 12/10/2015, 13:29 -->
+<hibernate-mapping>
+	<class name="ims.core.admin.domain.objects.VTEAssessmentConfig" table="core_vteassesscfg" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: preOpAssessmentValidPeriod -->
+<!-- debug: excludedWards -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<list name="excludedWards" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="vteassesscfg_excludedwa_fk">
+				<column name="core_vteassesscfg_excludedwa" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.core.admin.domain.objects.VTEAssessmentExclusions" />
+		</list>
+<!-- debug: excludedSpecialties -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<list name="excludedSpecialties" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="vteassesscfg_excludedsp_fk">
+				<column name="core_vteassesscfg_excludedsp" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.core.admin.domain.objects.VTEAssessmentExclusions" />
+		</list>
+<!-- debug: excludedCombination -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<list name="excludedCombination" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="vteassesscfg_excludedco_fk">
+				<column name="core_vteassesscfg_excludedco" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.core.admin.domain.objects.VTEAssessmentExclusions" />
+		</list>
+<!-- debug: colourConfiguration -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<list name="colourConfiguration" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="vteassesscfg_colourconf_fk">
+				<column name="core_vteassesscfg_colourconf" sql-type="numeric(10,0)" />
+			</key>
+			<index column='idx'/>
+			<one-to-many class="ims.core.admin.domain.objects.VTEAssessmentColourConfig" />
+		</list>
+<!-- debug: !IsAssociation && !IsCollection -->
+
+<!-- debug: !IsLookup -->
+		<property name="preOpAssessmentValidPeriod" type="integer" access="field" update="true">
+			<column name="preopasses"  not-null="false" unique="false"  />
+		</property>
+	</class>
+</hibernate-mapping>

@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -29,9 +34,11 @@ import ims.RefMan.domain.objects.PatientElectiveList;
 import ims.RefMan.domain.objects.ReferralEROD;
 import ims.RefMan.domain.objects.TCIForPatientElectiveList;
 import ims.RefMan.domain.objects.TCIOutcomeForPatientElectiveList;
+import ims.RefMan.vo.CATSReferral_ClockImpactVo;
 import ims.RefMan.vo.PatientElectiveListBedAdmissionVo;
 import ims.RefMan.vo.PatientElectiveListBedAdmissionVoCollection;
 import ims.RefMan.vo.PatientElectiveListRefVo;
+import ims.RefMan.vo.domain.CATSReferral_ClockImpactVoAssembler;
 import ims.RefMan.vo.domain.PatientElectiveListBedAdmissionVoAssembler;
 import ims.RefMan.vo.lookups.AdmissionOfferOutcome;
 import ims.chooseandbook.vo.lookups.ActionRequestType;
@@ -54,82 +61,137 @@ import ims.core.admin.pas.domain.objects.InpatientEpisode;
 import ims.core.admin.pas.domain.objects.PASEvent;
 import ims.core.admin.pas.domain.objects.PendingTransfers;
 import ims.core.admin.pas.domain.objects.TransferHistory;
+import ims.core.admin.pas.domain.objects.WardBayConfig;
+import ims.core.admin.pas.domain.objects.WardMixedSexBreach;
 import ims.core.admin.pas.domain.objects.WardStay;
 import ims.core.admin.pas.vo.BedSpaceStateRefVo;
 import ims.core.admin.pas.vo.BedSpaceStateStatusRefVo;
 import ims.core.admin.pas.vo.DischargedEpisodeRefVo;
 import ims.core.admin.pas.vo.InpatientEpisodeRefVo;
 import ims.core.admin.pas.vo.PASEventRefVo;
-import ims.core.admin.pas.vo.PendingTransfersRefVo;
 import ims.core.admin.vo.CareContextRefVo;
 import ims.core.admin.vo.EpisodeOfCareRefVo;
+import ims.core.clinical.domain.objects.Service;
 import ims.core.clinical.domain.objects.TaxonomyMap;
 import ims.core.clinical.domain.objects.VTERiskAssessment;
 import ims.core.clinical.vo.ServiceRefVo;
 import ims.core.clinical.vo.VTERiskAssessmentRefVo;
 import ims.core.configuration.domain.objects.AppUser;
 import ims.core.configuration.vo.AppUserRefVo;
+import ims.core.domain.ADT;
+import ims.core.domain.AdmitToWard;
 import ims.core.domain.Alerts;
 import ims.core.domain.BedAdmissionComponent;
 import ims.core.domain.BedInfoDialog;
+import ims.core.domain.CaseNoteTransfer;
+import ims.core.domain.Demographics;
+import ims.core.domain.InpatientEpisodeMaintenance;
+import ims.core.domain.PDSDemographics;
+import ims.core.domain.PatientCaseNotes;
+import ims.core.domain.WardDataView;
 import ims.core.domain.WardView;
+import ims.core.domain.objects.PatientTransportRequirements;
 import ims.core.helper.DTOHelper;
 import ims.core.helper.IPathwayPatientEventHelper;
+import ims.core.layout.domain.objects.BayConfig;
 import ims.core.patient.domain.objects.Patient;
 import ims.core.patient.domain.objects.PatientId;
 import ims.core.patient.vo.PatientRefVo;
 import ims.core.resource.people.domain.objects.Medic;
 import ims.core.resource.people.domain.objects.MemberOfStaff;
+import ims.core.resource.people.vo.MemberOfStaffRefVo;
 import ims.core.resource.place.domain.objects.Location;
 import ims.core.resource.place.vo.LocationRefVo;
+import ims.core.vo.AdmissionDetailForADTUpdateAdmissionVo;
 import ims.core.vo.AdmissionDetailVo;
+import ims.core.vo.AdmissionReasonVo;
+import ims.core.vo.BayConfigLiteVo;
+import ims.core.vo.BayTimesAdmissionBreachedVo;
 import ims.core.vo.BedSpaceStateLiteVo;
+import ims.core.vo.BedSpaceStateStatusLiteVo;
 import ims.core.vo.BedSpaceStateStatusVo;
 import ims.core.vo.CareContextShortVo;
+import ims.core.vo.ConsultantStayMinVo;
+import ims.core.vo.DeathDetailsVo;
 import ims.core.vo.DischargedEpisodeADTVo;
 import ims.core.vo.DischargedEpisodeADTVoCollection;
 import ims.core.vo.DischargedEpisodeForVTERiskAssessmentWorklistVo;
+import ims.core.vo.DischargedEpisodeVo;
+import ims.core.vo.HcpLiteVo;
+import ims.core.vo.HealthyLodgerVo;
 import ims.core.vo.HomeLeaveVo;
 import ims.core.vo.InPatientEpisodeADTVo;
 import ims.core.vo.InpatConsultantTransferVo;
 import ims.core.vo.InpatientEpisodeLiteVo;
 import ims.core.vo.InpatientEpisodeLiteVoCollection;
+import ims.core.vo.InpatientEpisodeTrackingMoveVo;
+import ims.core.vo.InpatientEpisodeVo;
 import ims.core.vo.LocationLiteVo;
 import ims.core.vo.LocationLiteVoCollection;
 import ims.core.vo.MemberOfStaffLiteVo;
 import ims.core.vo.MemberOfStaffShortVo;
+import ims.core.vo.PasEventADTVo;
+import ims.core.vo.PatientCaseNoteRequestLiteVoCollection;
+import ims.core.vo.PatientCaseNoteTransferVoCollection;
+import ims.core.vo.PatientCaseNoteVoCollection;
+import ims.core.vo.PatientLite_IdentifiersVo;
+import ims.core.vo.PatientShort;
 import ims.core.vo.PatientShortCollection;
+import ims.core.vo.PatientTransportRequirementsVo;
 import ims.core.vo.PendingTransfersLiteVo;
-import ims.core.vo.VTERiskAssessmentWorklistVo;
+import ims.core.vo.ServiceLiteVoCollection;
+import ims.core.vo.TransferCancellationReasonDetailsVo;
+import ims.core.vo.WardConfigLiteVo;
+import ims.core.vo.WardMixedSexBreachVo;
+import ims.core.vo.WardStayLiteVo;
+import ims.core.vo.WardStayVo;
+import ims.core.vo.WardStayVoCollection;
+import ims.core.vo.domain.AdmissionDetailVoAssembler;
+import ims.core.vo.domain.BayConfigLiteVoAssembler;
+import ims.core.vo.domain.BedSpaceStateBayOnlyVoAssembler;
 import ims.core.vo.domain.BedSpaceStateLiteVoAssembler;
 import ims.core.vo.domain.BedSpaceStateStatusVoAssembler;
 import ims.core.vo.domain.CareContextShortVoAssembler;
+import ims.core.vo.domain.ConsultantStayMinVoAssembler;
 import ims.core.vo.domain.DischargedEpisodeADTVoAssembler;
 import ims.core.vo.domain.DischargedEpisodeForVTERiskAssessmentWorklistVoAssembler;
+import ims.core.vo.domain.DischargedEpisodeVoAssembler;
 import ims.core.vo.domain.HomeLeaveVoAssembler;
 import ims.core.vo.domain.InPatientEpisodeADTVoAssembler;
 import ims.core.vo.domain.InpatConsultantTransferVoAssembler;
 import ims.core.vo.domain.InpatientEpisodeLiteVoAssembler;
+import ims.core.vo.domain.InpatientEpisodeTrackingMoveVoAssembler;
+import ims.core.vo.domain.InpatientEpisodeVoAssembler;
 import ims.core.vo.domain.LocationLiteVoAssembler;
 import ims.core.vo.domain.MemberOfStaffLiteVoAssembler;
 import ims.core.vo.domain.MemberOfStaffShortVoAssembler;
 import ims.core.vo.domain.PatientAssembler;
+import ims.core.vo.domain.PatientCaseNoteRequestLiteVoAssembler;
 import ims.core.vo.domain.PatientListVoAssembler;
 import ims.core.vo.domain.PatientShortAssembler;
+import ims.core.vo.domain.PatientTransportRequirementsVoAssembler;
 import ims.core.vo.domain.PendingTransfersLiteVoAssembler;
-import ims.core.vo.domain.VTERiskAssessmentWorklistVoAssembler;
+import ims.core.vo.domain.ReasonForDelayedDischargeVoAssembler;
+import ims.core.vo.domain.WardConfigLiteVoAssembler;
+import ims.core.vo.domain.WardMixedSexBreachVoAssembler;
+import ims.core.vo.domain.WardStayLiteVoAssembler;
 import ims.core.vo.lookups.BedStatus;
 import ims.core.vo.lookups.CareContextStatus;
+import ims.core.vo.lookups.CaseNoteRequestCancellationReason;
+import ims.core.vo.lookups.CaseNoteRequestStatus;
 import ims.core.vo.lookups.ContextType;
 import ims.core.vo.lookups.LocationType;
+import ims.core.vo.lookups.MsgUpdateType;
 import ims.core.vo.lookups.PASSpecialty;
 import ims.core.vo.lookups.PASSpecialtyCollection;
 import ims.core.vo.lookups.PatIdType;
+import ims.core.vo.lookups.PatientStatus;
 import ims.core.vo.lookups.ReasonForBedClosure;
 import ims.core.vo.lookups.Sex;
 import ims.core.vo.lookups.Specialty;
 import ims.core.vo.lookups.SpecialtyCollection;
 import ims.core.vo.lookups.TaxonomyType;
+import ims.core.vo.lookups.TransferStatus;
 import ims.core.vo.lookups.WaitingListStatus;
 import ims.domain.DomainFactory;
 import ims.domain.exceptions.DTODomainInterfaceException;
@@ -137,43 +199,72 @@ import ims.domain.exceptions.DomainInterfaceException;
 import ims.domain.exceptions.DomainRuntimeException;
 import ims.domain.exceptions.ForeignKeyViolationException;
 import ims.domain.exceptions.StaleObjectException;
+import ims.domain.lookups.LookupInstance;
 import ims.dto.DTODomainImplementation;
 import ims.dto.Result;
 import ims.dto.ResultException;
 import ims.dto.client.Homeleave;
-import ims.dto.client.Inpat;
 import ims.dto.client.Homeleave.HomeleaveRecord;
+import ims.dto.client.Inpat;
 import ims.dto.client.Inpat.InpatRecord;
 import ims.emergency.vo.lookups.ElectiveListReason;
+import ims.framework.enumerations.SortOrder;
 import ims.framework.enumerations.SystemLogLevel;
 import ims.framework.enumerations.SystemLogType;
 import ims.framework.exceptions.CodingRuntimeException;
 import ims.framework.interfaces.ILocation;
 import ims.framework.utils.DateTime;
 import ims.framework.utils.DateTimeFormat;
+import ims.framework.utils.Time;
 import ims.framework.utils.TimeFormat;
 import ims.pathways.configuration.domain.objects.RTTStatusPoint;
+import ims.pathways.domain.objects.PathwayClock;
 import ims.pathways.domain.objects.PathwayRTTStatus;
+import ims.pathways.domain.objects.PathwaysRTTClockImpact;
+import ims.pathways.domain.objects.PatientPathwayJourney;
+import ims.pathways.domain.objects.PauseDetails;
 import ims.pathways.domain.objects.RTTStatusEventMap;
+import ims.pathways.vo.PathwayClockVo;
+import ims.pathways.vo.PathwayRTTClockImpactVo;
+import ims.pathways.vo.PathwayRTTClockImpactVoCollection;
+import ims.pathways.vo.PathwayRTTStatusRefVo;
+import ims.pathways.vo.PathwayRTTStatusRefVoCollection;
+import ims.pathways.vo.PathwayRTTStatusVo;
 import ims.pathways.vo.PatientEventVo;
+import ims.pathways.vo.PatientJourneyVo;
+import ims.pathways.vo.RTTStatusEventMapRefVo;
 import ims.pathways.vo.RTTStatusEventMapVo;
+import ims.pathways.vo.RTTStatusPointLiteVo;
+import ims.pathways.vo.domain.PathwayRTTClockImpactVoAssembler;
+import ims.pathways.vo.domain.PathwayRTTStatusVoAssembler;
 import ims.pathways.vo.domain.PatientJourneyVoAssembler;
 import ims.pathways.vo.domain.RTTStatusEventMapVoAssembler;
+import ims.pathways.vo.domain.RTTStatusPointLiteVoAssembler;
 import ims.pathways.vo.lookups.EventStatus;
+import ims.pathways.vo.lookups.RTTClockImpactSource;
+import ims.pathways.vo.lookups.RTTClockState;
 import ims.scheduling.domain.objects.Appointment_Status;
 import ims.scheduling.domain.objects.Booking_Appointment;
+import ims.scheduling.domain.objects.CancellationTypeReason;
 import ims.scheduling.vo.Booking_AppointmentVo;
+import ims.scheduling.vo.CancellationTypeReasonVo;
+import ims.scheduling.vo.CancellationTypeReasonVoCollection;
 import ims.scheduling.vo.domain.Booking_AppointmentVoAssembler;
+import ims.scheduling.vo.domain.CancellationTypeReasonVoAssembler;
+import ims.scheduling.vo.lookups.CancelAppointmentReason;
 import ims.scheduling.vo.lookups.Status_Reason;
 import ims.vo.interfaces.IMos;
+import ims.vo.interfaces.IVTERiskAssessment;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -190,10 +281,19 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 	
 	private static final Logger LOG	= Logger.getLogger(BedInfoDialogImpl.class);
 	private static final long serialVersionUID = 1L;
-
 	public boolean dtoOnly()
 	{
 		return InitConfig.getConfigType().equals("DTO");
+	}
+
+	public RTTStatusPointLiteVo getRTTStatusPointByNationalCode(Integer nationalCode)
+	{
+		if (nationalCode == null)
+			return null;
+		
+		String query = "SELECT rttStatus FROM RTTStatusPoint AS rttStatus WHERE rttStatus.national = :NAT_CODE";
+		
+		return RTTStatusPointLiteVoAssembler.create((RTTStatusPoint) getDomainFactory().findFirst(query, "NAT_CODE", nationalCode));
 	}
 
 	public Class getLookupServiceClass()
@@ -217,7 +317,7 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 	 * 3)save InpatientEpisode record with new ward stay record and referncing new bed & status
 	 * 4)delete PendingTransfer record
 	 */
-	public CareContextShortVo saveTransferIn(BedSpaceStateLiteVo voOldBedSpaceStateLite, InPatientEpisodeADTVo inpatientEpisode, PendingTransfersLiteVo voTransfer, HomeLeaveVo voHL) throws DomainInterfaceException, StaleObjectException 
+	public CareContextShortVo saveTransferIn(BedSpaceStateLiteVo voOldBedSpaceStateLite, InPatientEpisodeADTVo inpatientEpisode, PendingTransfersLiteVo voTransfer, HomeLeaveVo voHL, AdmissionReasonVo admissionReasonVo, WardMixedSexBreachVo wardMixSexBreachedVo,PatientCaseNoteTransferVoCollection collPatientCaseNoteTransfer) throws DomainInterfaceException, StaleObjectException 
 	{
 		if(inpatientEpisode == null)
 			throw new CodingRuntimeException("inpatientEpisode is null in method saveTransfer");
@@ -230,18 +330,26 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 		
 		DomainFactory factory = getDomainFactory();
 		
+		// WDEV-19481 - Trigger creation of A02 Transfer HL7 message //WDEV-22454
+		if(inpatientEpisode.getPasEvent()!=null)
+		{
+	    	ADT adtimpl = (ADT) getDomainImpl(ADTImpl.class);
+			adtimpl.triggerTransferEvent(inpatientEpisode.getPasEvent());
+		}
+				
 		//1)
 		Inpat inpatRec = null;
 		Result res = null;
-		if (Boolean.FALSE.equals(ConfigFlag.GEN.USE_ELECTIVE_LIST_FUNCTIONALITY.getValue()))
+		if (!ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
 		{
 			inpatRec = (Inpat)getDTOInstance(Inpat.class);
 			inpatRec.DataCollection.add();
 		}
 		
 		//WDEV-8164 - Consultant Transfers - if the consultant has changed
-		InpatientEpisode doInpat = addConsultantStayIfNeeded(inpatientEpisode);
+		InpatientEpisode doInpat = addConsultantStayIfNeeded(inpatientEpisode,voTransfer.getPatientStatus());
 		
+		Sex tempBayGender = inpatientEpisode.getBed() != null ? inpatientEpisode.getBed().getProvisionalBayGender() : null;
 		//WDEV-8403 update the patient's ward
 		if(doInpat.getPasEvent() != null && doInpat.getPasEvent().getPatient() != null)
 		{
@@ -251,7 +359,7 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 		}
 		
 
-		if (Boolean.FALSE.equals(ConfigFlag.GEN.USE_ELECTIVE_LIST_FUNCTIONALITY.getValue()))
+		if (!ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
 		{
 			if (inpatientEpisode.getUpdateCaseFolderIsNotNull()
 					&& inpatientEpisode.getUpdateCaseFolder())
@@ -277,7 +385,7 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 		doInpat.setExpectedDateOfReturn(null);
 		doInpat.setExpectedTimeOfReturn(null);
 		doInpat.setVacatedBedNumber(null);
-		
+				
 		//3)
 		factory.save(doInpat);
 
@@ -288,10 +396,10 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 			PendingTransfers doPending = (PendingTransfers) factory.getDomainObject(voTransfer);	
 			
 			if (doPending != null)
-			{
+			{				
 				//WDEV-10421 - get the admission detail record and update its history for transfers
-				doAdmissionDetail = populateTransferHistory(doPending, TRANSFERIN, null);
-				
+				doAdmissionDetail = populateTransferHistory(doPending, TRANSFERIN, null, null);
+
 				destWard = doPending.getDestinationWard();
 				//4
 				factory.delete(doPending);
@@ -304,9 +412,19 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 			throw new DomainInterfaceException("Data Constraint : PendingTransfers record could not be deleted", e);
 		}
 		
+		//wdev-20362 - Update any active PatientCaseNotes to new location
+		if (collPatientCaseNoteTransfer!=null)
+		{
+			CaseNoteTransfer implCaseNoteTransfer=(CaseNoteTransfer) getDomainImpl(CaseNoteTransferImpl.class);
+			for (int i=0;i<collPatientCaseNoteTransfer.size();i++)
+			{
+				implCaseNoteTransfer.saveTransfer(collPatientCaseNoteTransfer.get(i), null, null);
+			}
+		}
+		
 		//wdev-13509
 		if (voHL != null
-			&& Boolean.FALSE.equals(ConfigFlag.GEN.USE_ELECTIVE_LIST_FUNCTIONALITY.getValue()))
+			&& ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("CCO"))
 		{
 			//UPDATE PAS THAT NO LONGER ON HOME LEAVE 
 			Homeleave hlRec = (Homeleave)getDTOInstance(Homeleave.class);
@@ -331,15 +449,112 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 				doAdmissionDetail.setWard(destWard);
 			if(doInpat.getBed() != null)
 				doAdmissionDetail.setBed(doInpat.getBed().getBedSpace());
+			doAdmissionDetail.setEstDischargeDate(doInpat.getEstDischargeDate());
 			factory.save(doAdmissionDetail);
 		}
 		
-		//WDEV-11438 - update the CareContext with the EDD
-		WardView impl = (WardView) getDomainImpl(WardViewImpl.class);
-		CareContextShortVo voCareContext = impl.getCareContextForPasEvent(inpatientEpisode.getPasEvent());
+		//WDEV-20217
+		if (voOldBedSpaceStateLite != null)
+			updateOccupiedBedsForWardAndBay(voOldBedSpaceStateLite.getWard(), voOldBedSpaceStateLite.getBay(), null);
+		
+		if (inpatientEpisode.getBed() != null)
+			updateOccupiedBedsForWardAndBay(inpatientEpisode.getBed().getWard(), inpatientEpisode.getBed().getBay(), null);
+		
+		//WDEV-20224
+		if (admissionReasonVo != null) 
+		{
+			if (Boolean.TRUE.equals(admissionReasonVo.getIsGenderSpecificBayValidated()))
+			{
+				if (inpatientEpisode.getBedIsNotNull() && inpatientEpisode.getBed().getWard() != null)
+				{	
+					BayConfigLiteVo bayConfig = getBayConfig(inpatientEpisode.getBed().getBay(), getWardConfig(inpatientEpisode.getBed().getWard()));
+					if (bayConfig != null)
+					{		
+						bayConfig.setTemporaryBayGender(tempBayGender);
+
+						BayConfig bayConfigDO = BayConfigLiteVoAssembler.extractBayConfig(factory, bayConfig);
+						factory.save(bayConfigDO);
+					}				
+				}								
+			}
+			else if (Boolean.TRUE.equals(admissionReasonVo.getIsMixingGenderBayValidated()))
+			{				
+				if (wardMixSexBreachedVo != null)
+				{	
+					WardMixedSexBreach wardMixedAdmissionDO = WardMixedSexBreachVoAssembler.extractWardMixedSexBreach(factory, wardMixSexBreachedVo);
+
+					if (Sex.MALE.equals(inpatientEpisode.getPasEvent().getPatient().getSex()))
+						wardMixedAdmissionDO.setMalePatients(wardMixSexBreachedVo.getMalePatientsIsNotNull() ? new Integer(wardMixSexBreachedVo.getMalePatients().intValue() + 1) : 1);
+					if (Sex.FEMALE.equals(inpatientEpisode.getPasEvent().getPatient().getSex()))
+						wardMixedAdmissionDO.setFemalePatients(wardMixSexBreachedVo.getFemalePatientsIsNotNull() ? new Integer(wardMixSexBreachedVo.getFemalePatients().intValue() + 1) : 1);
+
+					factory.save(wardMixedAdmissionDO);
+				}
+				if (inpatientEpisode.getBedIsNotNull())
+				{	
+					BayConfigLiteVo bayConfig = getBayConfigForBay(inpatientEpisode.getBed().getBay());
+					if (bayConfig != null && bayConfig.getTemporaryBayGenderIsNotNull())
+					{		
+						if (!bayConfig.getTemporaryBayGender().equals(inpatientEpisode.getBed().getProvisionalBayGender()) && !Sex.UNKNOWN.equals(inpatientEpisode.getBed().getProvisionalBayGender()))
+						{
+							bayConfig.setTemporaryBayGender(inpatientEpisode.getBed().getProvisionalBayGender());
+
+							BayConfig bayConfigDO = BayConfigLiteVoAssembler.extractBayConfig(factory, bayConfig);
+
+							factory.save(bayConfigDO);
+						}				
+					}
+				}
+			}
+		}
+		//WDEV-20927 - should update the temporary gender on previous bay config
+		if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+		{
+			Sex genderToSet = inpatientEpisode.getPasEvent() != null && inpatientEpisode.getPasEvent().getPatient() != null && inpatientEpisode.getPasEvent().getPatient().getSexIsNotNull() && !Sex.UNKNOWN.equals(inpatientEpisode.getPasEvent().getPatient().getSex()) ? inpatientEpisode.getPasEvent().getPatient().getSex() : null;
+			if (genderToSet != null)
+			{	
+				if (voOldBedSpaceStateLite != null)
+				{
+					voOldBedSpaceStateLite = BedSpaceStateLiteVoAssembler.create((BedSpaceState)factory.getDomainObject(BedSpaceState.class, voOldBedSpaceStateLite.getID_BedSpaceState()));
+					checkAndUpdatePreviousBayConfig(factory, voOldBedSpaceStateLite, genderToSet);
+				}	
+				else
+				{
+					WardStayVo prevWardStay = getLastClosedWardStay(inpatientEpisode);
+
+					if (prevWardStay != null && prevWardStay.getBay() != null)
+					{
+						WardConfigLiteVo wardConfigLiteVo = getWardConfig(prevWardStay.getWard());
+						BayConfigLiteVo bayConfig = getBayConfigForBay(prevWardStay.getBay());		
+						boolean wasConfigChanged = false;
+						if (bayConfig != null && bayConfig.getTemporaryBayGenderIsNotNull())
+						{
+							if (bayConfig.getNumOfOccupiedBeds() == null || bayConfig.getNumOfOccupiedBeds() == 0)
+							{	
+								bayConfig.setTemporaryBayGender(null);
+								wasConfigChanged = true;
+							}	
+							Sex tempGender = getTempGenderToInstateForPreviousBay(wardConfigLiteVo, bayConfig);
+							if (tempGender == null || (tempGender != null && tempGender.equals(bayConfig.getTemporaryBayGender())))
+							{	
+								bayConfig.setTemporaryBayGender(tempGender);
+								wasConfigChanged = true;
+							}
+							if (wasConfigChanged)
+							{	
+								BayConfig bayConfigDO = BayConfigLiteVoAssembler.extractBayConfig(factory, bayConfig);				
+								factory.save(bayConfigDO);
+							}
+						}					
+					}				
+				}
+			}
+		}
+		//WDEV-11438 - update the CareContext with the EDD (need to get the Inpatient CC) //WDEV-22503		
+		CareContextShortVo voCareContext = getCareContextForPasEvent(inpatientEpisode.getPasEvent());
 		if(voCareContext != null)
 		{
-			voCareContext.setEstimatedDischargeDate(inpatientEpisode.getEstDischargeDate());
+			voCareContext.setEstimatedDischargeDate(inpatientEpisode.getEstDischargeDateIsNotNull() ? inpatientEpisode.getEstDischargeDate().getDate() : null);
 			CareContext doCareContext = CareContextShortVoAssembler.extractCareContext(factory, voCareContext);
 			//WDEV-11479
 			if(doInpat != null && doInpat.getPasEvent() != null && doCareContext.getEpisodeOfCare() != null) 
@@ -358,41 +573,145 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 		
 		return null;
 	}
+	//WDEV-22503 
+	private CareContextShortVo getCareContextForPasEvent(PasEventADTVo pasEvent)
+	{
+		if (pasEvent == null || pasEvent.getID_PASEvent() == null)
+			return null;
 
+		List<?> ccList = getDomainFactory().find(" select cc from CareContext as cc left join cc.context as ccontext where cc.pasEvent.id = :PASEVENT_ID and ccontext.id = :INPATIENT_TYPE", new String[]{"PASEVENT_ID", "INPATIENT_TYPE"}, new Object[]{pasEvent.getID_PASEvent(), ContextType.INPATIENT.getID()});		
+		if (ccList != null && !ccList.isEmpty())
+		{
+			return CareContextShortVoAssembler.create((CareContext) ccList.get(0));
+		}
+		
+		return null;
+	}
+
+	private BayConfigLiteVo getBayConfigForBay(LocationLiteVo bay)
+	{
+		DomainFactory factory = getDomainFactory();
+		
+		BayConfig bayConfigDO = (BayConfig) factory.findFirst("from BayConfig bayc where bayc.bay.id = :BAY", "BAY", bay.getID());
+		
+		return BayConfigLiteVoAssembler.create(bayConfigDO);
+	}
+
+	private WardStayVo getLastClosedWardStay(InPatientEpisodeADTVo inpatientEpisode)
+	{
+		if (inpatientEpisode == null || inpatientEpisode.getWardStays() == null || inpatientEpisode.getWardStays().size() ==0)
+		return null;
+		WardStayVoCollection wardStaysColl = inpatientEpisode.getWardStays();
+		for (int i=wardStaysColl.size()-1;i>=0;i--)
+		{
+			if (wardStaysColl.get(i) != null && wardStaysColl.get(i).getTransferOutDateTime() == null)
+			{	
+			wardStaysColl.remove(i);
+			}
+		}
+		if (wardStaysColl.size() > 0)
+		{
+			wardStaysColl.sort(WardStayVo.getWardStayVoIdComparator(SortOrder.DESCENDING));
+			return wardStaysColl.get(0);
+		}
+		return null;
+	}
+
+	private BayTimesAdmissionBreachedVo populateBayTimesBreachedRecord(PendingTransfersLiteVo voTransfer, BedSpaceStateLiteVo voBedSpaceStateLite, AdmissionReasonVo admissionReasonVo)
+	{
+		BayTimesAdmissionBreachedVo voBreach = new BayTimesAdmissionBreachedVo();
+		
+		voBreach.setAdmissionDateTime(voTransfer.getTransferRequestDateTime());
+		voBreach.setWard(voTransfer.getDestinationWard());
+		if (voBedSpaceStateLite != null)
+			voBreach.setBay(voBedSpaceStateLite.getBay());
+		Object mosUser = getHcpLiteUser();
+		if (mosUser != null)
+			voBreach.setMemberOfStaff(((HcpLiteVo) mosUser).getMos());
+		voBreach.setReasonForAdmissionOutOfOpeningHours(admissionReasonVo.getReasonForAdmissionOutOfOpeningHours());
+		voBreach.setReasonForAdmissionOutOfOpeningHoursComment(admissionReasonVo.getReasonForAdmissionOohComment());
+		
+		return voBreach;
+	}
 	/**
+	 * @param patientStatus 
 	 * @method addConsultantStayIfNeeded
 	 * @comment does InpatientAssembler call also - MUST BE CALLED
 	 * 
 	 */
-	private InpatientEpisode addConsultantStayIfNeeded(InPatientEpisodeADTVo inpatientEpisode)
+	private InpatientEpisode addConsultantStayIfNeeded(InPatientEpisodeADTVo inpatientEpisode, PatientStatus patientStatus)
 	{
 		if(inpatientEpisode == null)
 			throw new CodingRuntimeException("inpatientEpisode is null in method addConsultantStayIfNeeded"); 
 			
 		DomainFactory factory = getDomainFactory();
 		Medic doExistingCons = null;
-		if(inpatientEpisode.getPasEventIsNotNull() && inpatientEpisode.getPasEvent().getBoId() != null)
+		LookupInstance doExistingSpecialty = null;
+		Service doExistingService = null;
+		if (inpatientEpisode.getPasEventIsNotNull() && inpatientEpisode.getPasEvent().getBoId() != null)
 		{
 			PASEvent doExistingPe = (PASEvent)factory.getDomainObject(PASEvent.class, inpatientEpisode.getPasEvent().getBoId());
 			doExistingCons = doExistingPe != null ? doExistingPe.getConsultant() : null;
+			doExistingService =  doExistingPe != null ? doExistingPe.getService() : null;
+			doExistingSpecialty = doExistingPe != null ? doExistingPe.getSpecialty() : null;
 		}
 		
 		InpatientEpisode doInpat = InPatientEpisodeADTVoAssembler.extractInpatientEpisode(factory, inpatientEpisode);
-		
-		if(inpatientEpisode.getPasEventIsNotNull() && inpatientEpisode.getPasEvent().getConsultantIsNotNull())
-		{
-			if(doExistingCons != null)
+		//WDEV-22892
+		if (inpatientEpisode.getPasEventIsNotNull())
+		{			
+			boolean consultantHasChanged = inpatientEpisode.getPasEvent().getConsultantIsNotNull() && doExistingCons != null && !doInpat.getPasEvent().getConsultant().equals(doExistingCons);
+			boolean serviceChanged = inpatientEpisode.getPasEvent().getService() != null && !inpatientEpisode.getPasEvent().getService().equals(doExistingService);
+			boolean specialtyChanged = inpatientEpisode.getPasEvent().getSpecialty() != null && !inpatientEpisode.getPasEvent().getSpecialty().equals(doExistingSpecialty);
+			
+			if (consultantHasChanged || (serviceChanged && consultantHasChanged) || (specialtyChanged && consultantHasChanged))
 			{
-				if(!doInpat.getPasEvent().getConsultant().equals(doExistingCons))
-				{
-					ConsultantStay doConsStay = new ConsultantStay();
-					doConsStay.setConsultant(doInpat.getPasEvent().getConsultant());
-					doConsStay.setTransferDateTime(getMostRecentWardStayTransferDate(doInpat));
-					doInpat.getConsultantStays().add(doConsStay);
-				}
-			}	
+				addConsultantStay(doInpat,patientStatus);
+			}							
 		}
+		
 		return doInpat;
+	}
+
+	private void addConsultantStay(InpatientEpisode doInpat, PatientStatus patientCategory)
+	{
+		Date transferDate = getMostRecentWardStayTransferDate(doInpat);
+		LookupInstance patientCategoryForStay  = patientCategory != null ? getDomLookup(patientCategory) : doInpat.getPasEvent().getPatient().getPatientCategory();
+		ConsultantStay oldCS = updateCurrentConsultantStay(doInpat.getConsultantStays());
+		if(oldCS != null)
+		{
+			oldCS.setEndDateTime(transferDate);
+		}
+			
+		ConsultantStay doConsStay = new ConsultantStay();
+		doConsStay.setConsultant(doInpat.getPasEvent().getConsultant());
+		doConsStay.setTransferDateTime(transferDate);
+		doConsStay.setSpecialty(doInpat.getPasEvent().getSpecialty());
+		doConsStay.setService(doInpat.getPasEvent().getService());
+		doConsStay.setPatientStatus(patientCategoryForStay);
+		
+		doInpat.getConsultantStays().add(doConsStay);
+	}
+	
+	private ConsultantStay updateCurrentConsultantStay(Set consultantStays)
+	{
+		if(consultantStays == null)
+			return null;
+		
+		Iterator it = consultantStays.iterator();
+		
+		while(it.hasNext())
+		{
+			Object cs = it.next();
+			
+			if(cs instanceof ConsultantStay)
+			{
+				if(((ConsultantStay) cs).getEndDateTime() == null)
+					return (ConsultantStay) cs;
+			}
+		}
+		
+		return null;
 	}
 
 	private void copyInpatEpisodeToDtoForTransfer(Inpat inpatRec, InpatientEpisode inpatientEpisode, boolean isConsultantTransfer, boolean isUpdateFolder, String szCaseFolderComment)
@@ -662,13 +981,14 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 		return impl.listActiveWardsForHospitalLite(hospital);
 	}
 
-	public void saveTransferOut(PendingTransfersLiteVo pendingTransfer) throws StaleObjectException, DomainInterfaceException
+	public void saveTransferOut(PendingTransfersLiteVo pendingTransfer) throws StaleObjectException, DomainInterfaceException  //WDEV-20023
 	{
 		if(pendingTransfer == null)
 			throw new CodingRuntimeException("pendingTransfer is null in method saveTransferOut");
 		if(!pendingTransfer.isValidated())
 			throw new CodingRuntimeException("pendingTransfer has not been validated in method saveTransferOut");
 		
+		DomainFactory domainFactory = getDomainFactory();
 		//WDEV-9192
 		if(pendingTransfer.getInpatientEpisodeIsNotNull())
 		{
@@ -684,13 +1004,52 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 		//WDEV-10421
 		PendingTransfers doTransfer = PendingTransfersLiteVoAssembler.extractPendingTransfers(getDomainFactory(), pendingTransfer);
 		//get the admission detail record and update its history for transfers
-		AdmissionDetail doAdmissionDetail = populateTransferHistory(doTransfer, TRANSFEROUT, null);
-			
+		AdmissionDetail doAdmissionDetail = populateTransferHistory(doTransfer, TRANSFEROUT, null, null);
+		//WDEV-20291 - starts here
+		BedSpaceStateLiteVo bedSpaceVo = null;
+		if (Boolean.TRUE.equals(pendingTransfer.getNoLongerInBed())) 
+		{
+			InpatientEpisode doInpatEp = doTransfer.getInpatientEpisode();
+			if (doInpatEp != null && doInpatEp.getBed() != null)
+			{
+				bedSpaceVo = BedSpaceStateLiteVoAssembler.create(doInpatEp.getBed());
+		
+				if (bedSpaceVo.getCurrentBedStatusIsNotNull())
+				{
+					bedSpaceVo.setPreviousBedStatus((BedSpaceStateStatusLiteVo) bedSpaceVo.getCurrentBedStatus().clone());
+					BedSpaceStateStatusLiteVo bedStatusVo = new BedSpaceStateStatusLiteVo();
+					bedStatusVo.setBedStatus(BedStatus.AVAILABLE);
+					bedStatusVo.setStatusDateTime(pendingTransfer.getTransferRequestDateTime());
+					
+					bedSpaceVo.setCurrentBedStatus(bedStatusVo);				
+					
+				}
+				bedSpaceVo.setInpatientEpisode(null);	
+				updateOccupiedBedsForWardAndBay(LocationLiteVoAssembler.create(doInpatEp.getBed().getWard()), LocationLiteVoAssembler.create(doInpatEp.getBed().getBay()), null);
+			}
+			doInpatEp.setBedNo(null); //WDEV-20291
+		}
 		try
 		{
-			getDomainFactory().save(doTransfer);	
+			if (bedSpaceVo != null && Boolean.TRUE.equals(pendingTransfer.getNoLongerInBed()))
+			{	
+				BedSpaceState bedDO = BedSpaceStateLiteVoAssembler.extractBedSpaceState(domainFactory, bedSpaceVo);
+				domainFactory.save(bedDO);			
+			}
+			domainFactory.save(doTransfer);
+			
+			// WDEV-19774 - Trigger creation of A15 Pending Transfer HL7 message
+			InpatientEpisodeVo inpatEpisodeVo = InpatientEpisodeVoAssembler.create(doTransfer.getInpatientEpisode());
+			
+			if(inpatEpisodeVo.getPasEvent()!=null)
+			{
+		    	ADT adtimpl = (ADT) getDomainImpl(ADTImpl.class);
+				adtimpl.triggerPendingTransferEvent(inpatEpisodeVo.getPasEvent());
+			} //WDEV-19974
+						
 			if(doAdmissionDetail != null)
 				getDomainFactory().save(doAdmissionDetail);	
+			
 		}
 		catch (IllegalArgumentException e)
 		{
@@ -698,8 +1057,8 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 			throw new DomainInterfaceException("Patient's transfer has already been processed, the screen will be refreshed");
 		}
 	}
-
-	public AdmissionDetail populateTransferHistory(PendingTransfers doTransfer, int transferType, LocationRefVo voCancellingfromWard)
+	//WDEV-20326 new argument needed as we send some details from screen on cancellation
+	public AdmissionDetail populateTransferHistory(PendingTransfers doTransfer, int transferType, LocationRefVo voCancellingfromWard, TransferCancellationReasonDetailsVo cancellationDetails)
 	{
 		AdmissionDetail doAdmissionDetail = null;
 		if (doTransfer != null && doTransfer.getInpatientEpisode() != null && doTransfer.getInpatientEpisode().getPasEvent() != null)
@@ -746,6 +1105,9 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 						doTransferHistory.setMarkedForTransferOutDateTime(new DateTime().getJavaDate()); //WDEV-10593
 						if(getLoggedInUser() != null)
 							doTransferHistory.setTransferOutUser((AppUser) getDomainFactory().getDomainObject((AppUserRefVo) getLoggedInUser()));
+						//WDEV-19761
+						doTransferHistory.setTransferReason(doTransfer.getTransferReason());
+						doTransferHistory.setTransferComment(doTransfer.getTransferComment());
 						
 						doAdmissionDetail.getTransferHistory().add(doTransferHistory);
 					}
@@ -767,6 +1129,11 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 						doTransferHistory.setRejectTransferDateTime(new Date());
 						if(getLoggedInUser() != null)
 							doTransferHistory.setRejectTransferUser((AppUser) getDomainFactory().getDomainObject((AppUserRefVo) getLoggedInUser()));
+						if (cancellationDetails != null) //WDEV-20326
+						{
+							doTransferHistory.setCancelTransferComment(cancellationDetails.getCancellationComments());
+							doTransferHistory.setCancelTransferReason(getDomLookup(cancellationDetails.getCancellationReason()));							
+						}
 					}
 				}
 			}
@@ -774,38 +1141,87 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 		return doAdmissionDetail;
 	}
 
-	public ims.core.vo.DischargedEpisodeADTVo saveDischarge(DischargedEpisodeADTVo dischargedEpisode, BedSpaceStateLiteVo voBedSpacState) throws StaleObjectException, DomainInterfaceException, ForeignKeyViolationException
+	public ims.core.vo.DischargedEpisodeADTVo saveDischarge(DischargedEpisodeADTVo dischargedEpisode, BedSpaceStateLiteVo voBedSpacState, DeathDetailsVo deathDetailsVo, Boolean cancelApptsForDeceasedPatient, Boolean checkPatientsGender) throws StaleObjectException, DomainInterfaceException, ForeignKeyViolationException
 	{	
 		if(dischargedEpisode.getPasEventIsNotNull() && dischargedEpisode.getPasEvent().getPatientIsNotNull())
-			return dischargePatient(dischargedEpisode.getPasEvent().getPatient(), dischargedEpisode, voBedSpacState, false, null);
+			return dischargePatient(dischargedEpisode.getPasEvent().getPatient(), dischargedEpisode, voBedSpacState, false, null, deathDetailsVo, cancelApptsForDeceasedPatient, checkPatientsGender);
 		
 		return null;
 	}
 	
-	public DischargedEpisodeADTVo saveDischargeElectiveList(DischargedEpisodeADTVo dischargedEpisode, BedSpaceStateLiteVo voBedSpacState, PatientElectiveListBedAdmissionVo electiveList, PatientElectiveListBedAdmissionVoCollection cancelledElectiveListToBeRemoved) throws DomainInterfaceException, StaleObjectException, ForeignKeyViolationException
+	@SuppressWarnings("unchecked")
+	public DischargedEpisodeADTVo saveDischargeElectiveList(DischargedEpisodeADTVo dischargedEpisode, BedSpaceStateLiteVo voBedSpacState, 
+															PatientElectiveListBedAdmissionVo electiveList, AdmissionDetailVo currentAdmissionDetails, PatientElectiveListBedAdmissionVoCollection cancelledElectiveListToBeRemoved,
+															DeathDetailsVo deathDetailsVo, Boolean cancelApptsForDeceasedPatient,
+															Boolean treatmentGiven, Boolean treatmentDereferred, Boolean checkPatientsGender) throws DomainInterfaceException, StaleObjectException, ForeignKeyViolationException
 	{
 		Boolean hasElectiveList = false;
-		PatientElectiveList domElectiveList=null;
+		PatientElectiveList domElectiveList = null;
+		TCIForPatientElectiveList domTci = null; //WDEV-22655
+		CancellationTypeReasonVo deferredReason = dischargedEpisode.getDeferredReasonConfig();
+		boolean deferredForNonMedicalReason = deferredReason != null && Boolean.TRUE.equals(deferredReason.getIsNonMedicalReason());
+
 		
+		@SuppressWarnings("rawtypes")
 		HashMap domMap = new HashMap();
-		
-		
+				
 		if (electiveList != null)
 		{
-			domElectiveList = PatientElectiveListBedAdmissionVoAssembler.extractPatientElectiveList(getDomainFactory(), electiveList, domMap);
-			
-			if (WaitingListStatus.REQUIRES_TCI.equals(electiveList.getElectiveListStatus().getElectiveListStatus()))
+			PathwayRTTClockImpactVo admissionClockImpact = null;
+			// Get Clock impact of the admission
+			if (electiveList.getTCIDetails() != null && electiveList.getTCIDetails().getAdmissionDetail() != null)
 			{
-				TCIForPatientElectiveList tci = domElectiveList.getTCIDetails();
-				domElectiveList.getTCIHistory().add(tci);
+				StringBuilder query = new StringBuilder("SELECT admissionImpact FROM AdmissionDetail AS admission LEFT JOIN admission.admissionRTTOutcome AS admissionImpact ");
+				query.append(" WHERE ");
+				query.append(" admission.id = :ADMISSION_ID ");
+				
+				admissionClockImpact = PathwayRTTClockImpactVoAssembler.create((PathwaysRTTClockImpact) getDomainFactory().findFirst(query.toString(), "ADMISSION_ID", electiveList.getTCIDetails().getAdmissionDetail().getID_AdmissionDetail()));
+			}
+			
+			
+			// Step 1 - Update Patient Elective List status
+			// Check if the status was updated
+			domElectiveList = PatientElectiveListBedAdmissionVoAssembler.extractPatientElectiveList(getDomainFactory(), electiveList, domMap);
+			domTci = domElectiveList.getTCIDetails(); //WDEV-22655
+			if (WaitingListStatus.REQUIRES_TCI.equals(electiveList.getElectiveListStatus().getElectiveListStatus()))
+			{				
+				domElectiveList.getTCIHistory().add(domTci);
 				domElectiveList.setTCIDetails(null);
 				
 				ReferralEROD erod = domElectiveList.getEROD();
 				domElectiveList.getERODHistory().add(erod);
 				domElectiveList.setEROD(null);
 			}
-			
+
 			getDomainFactory().save(domElectiveList);
+			electiveList = PatientElectiveListBedAdmissionVoAssembler.create(domElectiveList);
+
+			if (treatmentGiven)
+			{
+				// WDEV-23646 - Ensure the correct event Date Time is used when creating a new RTT Status
+				// When discharging a Patient Elective List Admission use the discharge date time
+				Date eventDateTime = dischargedEpisode.getDischargeDateTime().getJavaDate();
+				electiveList = setFirstDefinitiveTreatement(electiveList, currentAdmissionDetails, eventDateTime);
+			}
+			else if (treatmentDereferred)
+			{
+				if (ElectiveListReason.TREATMENT.equals(electiveList.getElectiveListReason()))
+				{
+					electiveList = setJourneyClockBackToStarted(electiveList, admissionClockImpact,deferredForNonMedicalReason);
+				}
+				
+				// Flag the elective list as 28 day rule if it is for Non - Medical reasons
+				if (deferredForNonMedicalReason)
+				{
+					//electiveList.setRequiresTCIBy(new ims.framework.utils.Date().addDay(28));
+					electiveList.setWas28DayRuleApplied(Boolean.TRUE);
+				}
+			}
+			
+			domElectiveList = PatientElectiveListBedAdmissionVoAssembler.extractPatientElectiveList(getDomainFactory(), electiveList);
+			getDomainFactory().save(domElectiveList);
+			electiveList = PatientElectiveListBedAdmissionVoAssembler.create(domElectiveList);
+
 			hasElectiveList = true;
 		}
 		
@@ -856,6 +1272,11 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 						appStatus.setStatus(getDomLookup(Status_Reason.CANCELLED));
 						appStatus.setStatusReason(getDomLookup(Status_Reason.SLOTOPENED));
 						appStatus.setStatusChangeDateTime(new Date());
+						//WDEV-23185
+						if (doBookAppt.getSession() != null)
+						{
+							appStatus.setSession(doBookAppt.getSession());
+						} //WDEV-23185
 
 						doBookAppt.setCurrentStatusRecord(appStatus);
 
@@ -863,13 +1284,15 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 							doBookAppt.setApptStatusHistory(new HashSet());
 
 						doBookAppt.getApptStatusHistory().add(appStatus);
+						
 
-						if (doBookAppt.getSessionSlot() != null)
-						{
-							doBookAppt.getSessionSlot().setStatus(getDomLookup(Status_Reason.SLOTOPENED));
-						}
-
+						//WDEV-18940
 						Booking_AppointmentVo bookingApptVo = Booking_AppointmentVoAssembler.create(doBookAppt);
+						
+						if (bookingApptVo.getSessionSlot() != null)
+						{
+							bookingApptVo.getSessionSlot().setStatus(bookingApptVo.getSession().getAppropiateSessionSlotStatus());
+						}						
 
 						try
 						{
@@ -890,20 +1313,367 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 				if (domPatientElectiveListToCancel.getPathwayClock() != null &&domPatientElectiveListToCancel.getPathwayClock().getStopDate() == null )
 				{
 					domPatientElectiveListToCancel.getPathwayClock().setStopDate(new Date());
-					updateRTTStatus(domPatientElectiveListToCancel.getReferral());
+					// WDEV-23646 - Ensure the correct event Date Time is used when creating a new RTT Status
+					// When discharging a Patient Elective List Admission use the discharge date time
+					Date eventDateTime = dischargedEpisode.getDischargeDateTime().getJavaDate();
+					updateRTTStatus(domPatientElectiveListToCancel.getReferral(), eventDateTime);
 				}
 
 				getDomainFactory().save(domPatientElectiveListToCancel);
+				
+				if (domPatientElectiveListToCancel.getTCIDetails() != null)
+					cancelCaseNoteRequests(domPatientElectiveListToCancel.getTCIDetails().getId());
 			}
 		}
 		
+		//WDEV-18754
+		DomainFactory factory = getDomainFactory();
+		//WDEV-22655
+		if (electiveList != null && domTci != null && domTci.getAdmissionDetail() != null  && domTci.getAdmissionDetail().getPasEvent() != null && domTci.getAdmissionDetail().getPasEvent().getPasEventId() != null)
+			markAssociatedAppoinmentAsDischarged(factory, new Integer(domTci.getAdmissionDetail().getPasEvent().getId()), dischargedEpisode.getDischargeDateTime());//wdev-18155
+		
+		
 		if(dischargedEpisode.getPasEventIsNotNull() && dischargedEpisode.getPasEvent().getPatientIsNotNull())
-			return dischargePatient(dischargedEpisode.getPasEvent().getPatient(), dischargedEpisode, voBedSpacState, hasElectiveList, domElectiveList);
+			return dischargePatient(dischargedEpisode.getPasEvent().getPatient(), dischargedEpisode, voBedSpacState, hasElectiveList, domElectiveList, deathDetailsVo, cancelApptsForDeceasedPatient, checkPatientsGender);
 		
 		return null;
 	}
 	
-	private RTTStatusPoint updateRTTStatus(CatsReferral doCats) throws DomainInterfaceException, StaleObjectException
+	private PatientElectiveListBedAdmissionVo setJourneyClockBackToStarted(PatientElectiveListBedAdmissionVo electiveList, PathwayRTTClockImpactVo admissionClockImpact, boolean deferredForNonMedicalReason) throws StaleObjectException
+	{
+		if (electiveList == null)
+			return electiveList;
+		
+		if (electiveList.getReferral() == null || electiveList.getReferral().getID_CatsReferral() == null)
+			return electiveList;
+		
+		CATSReferral_ClockImpactVo referral = CATSReferral_ClockImpactVoAssembler.create((CatsReferral) getDomainFactory().getDomainObject(CatsReferral.class, electiveList.getReferral().getID_CatsReferral()));
+
+		// For Treatment Admission discharge where treatment was deferred - REVERT clock stop and set RTT status to previous status
+			
+		// Check if the referral has a journey and a current clock
+		if (referral.getJourney() != null && referral.getJourney().getCurrentClock() != null)
+		{
+			// REVERT clock stop
+			referral.getJourney().getCurrentClock().setStopDate(null);
+			
+			// REVERT RTT Status
+			// 1 - first attempt to revert by admission clock impact record (this record might not be created)
+			if (admissionClockImpact != null && Boolean.TRUE.equals(ConfigFlag.DOM.RTT_STATUS_POINT_FUNCTIONALITY.getValue())) 
+			{
+				// Initial & final clocks for the admissions
+				PathwayRTTStatusRefVo admissionInitialStatus = admissionClockImpact.getInitialRTTStatus();
+				PathwayRTTStatusRefVo admissionFinalStatus = admissionClockImpact.getFinalRTTStatus();
+				// Current RTT Status for the Journey
+				PathwayRTTStatusVo currentRTTStatus = referral.getJourney().getCurrentClock().getCurrentRTTStatus();
+
+				if (referral.getJourney().getCurrentClock().getRTTStatusHistory() != null)
+					referral.getJourney().getCurrentClock().getRTTStatusHistory().remove(admissionFinalStatus);
+				
+				// If the current RTT Status is a match for the current clock - then remove it and set a new status 
+				if (admissionFinalStatus != null && currentRTTStatus != null
+						&& admissionFinalStatus.getID_PathwayRTTStatus().equals(currentRTTStatus.getID_PathwayRTTStatus()))
+				{
+					referral.getJourney().getCurrentClock().getRTTStatusHistory().sort(SortOrder.DESCENDING);
+
+					PathwayRTTStatusVo initialAdmissionStatusFull = PathwayRTTStatusVoAssembler.create((PathwayRTTStatus) getDomainFactory().getDomainObject(PathwayRTTStatus.class, admissionInitialStatus.getID_PathwayRTTStatus()));
+					referral.getJourney().getCurrentClock().setCurrentRTTStatus(initialAdmissionStatusFull);
+					referral.setCurrentRTTStatus(initialAdmissionStatusFull);
+					
+					if (referral.getJourney().getCurrentClock().getRTTStatusHistory() == null)
+						referral.getJourney().getCurrentClock().setRTTStatusHistory(new PathwayRTTStatusRefVoCollection());
+					
+					if (!referral.getJourney().getCurrentClock().getRTTStatusHistory().contains(admissionInitialStatus))
+						referral.getJourney().getCurrentClock().getRTTStatusHistory().add(initialAdmissionStatusFull);
+				}
+			}
+		
+			@SuppressWarnings("rawtypes")
+			HashMap map = new HashMap();
+			CatsReferral catsReferral = CATSReferral_ClockImpactVoAssembler.extractCatsReferral(getDomainFactory(), referral, map);
+			
+			//Cancel Any Pause associated with the clock - at domain object lever
+			//WDEV-21811
+			if (deferredForNonMedicalReason)
+			{	
+				catsReferral = cancelAssociatedClockPausesForReferral(catsReferral);
+			}
+			//WDEV-21811
+			
+			getDomainFactory().save(catsReferral);
+			
+		}
+		
+		return PatientElectiveListBedAdmissionVoAssembler.create((PatientElectiveList) getDomainFactory().getDomainObject(PatientElectiveList.class, electiveList.getID_PatientElectiveList()));
+	}
+	//WDEV-21811
+	@SuppressWarnings("unchecked")
+	private CatsReferral cancelAssociatedClockPausesForReferral(CatsReferral catsReferral)
+	{
+		if (catsReferral == null || catsReferral.getJourney() == null && catsReferral.getJourney().getCurrentClock() == null)
+			return null;
+
+		List<PauseDetails> clockPauses = catsReferral.getJourney().getCurrentClock().getPauseDetails();
+
+		if (clockPauses != null)
+		{
+			for (PauseDetails pause : clockPauses)
+			{
+				if (pause != null && Boolean.TRUE.equals(pause.isActive()))
+				{	
+					pause.setActive(Boolean.FALSE);
+				}
+			}
+			catsReferral.getJourney().getCurrentClock().setPauseDetails(clockPauses);
+		}
+		PauseDetails currentPause = catsReferral.getJourney().getCurrentClock().getCurrentPause();
+		if (currentPause != null && Boolean.TRUE.equals(currentPause.isActive()))
+		{	
+			currentPause.setActive(Boolean.FALSE);
+			catsReferral.getJourney().getCurrentClock().setCurrentPause(currentPause);
+		}	
+		
+		return catsReferral;
+	}
+
+	// WDEV-23646 - Ensure the correct event Date Time is used when creating a new RTT Status
+	private PatientElectiveListBedAdmissionVo setFirstDefinitiveTreatement(PatientElectiveListBedAdmissionVo electiveList, AdmissionDetailVo currentAdmissionDetails, Date eventDateTime) throws StaleObjectException
+	{
+		if (electiveList == null || currentAdmissionDetails == null)
+			return electiveList;
+		
+		if (electiveList.getReferral() == null || electiveList.getReferral().getID_CatsReferral() == null)
+			return electiveList;
+		
+		@SuppressWarnings("rawtypes")
+		HashMap map = new HashMap();
+		
+		AdmissionDetail domAdmissionDetails = (AdmissionDetail) getDomainFactory().getDomainObject(AdmissionDetail.class, currentAdmissionDetails.getID_AdmissionDetail());
+		CatsReferral domCatsReferral = (CatsReferral) getDomainFactory().getDomainObject(CatsReferral.class, electiveList.getReferral().getID_CatsReferral());
+		
+		// For Diagnostic Admission discharge where treatment was given - set the status to 30 (Start Of First Definitive Treatment) and stop the clock
+		// Also record the RTT Clock Impact as a diagnostic 
+		PathwaysRTTClockImpact domClockImpact = null;
+			
+		// Create the RTT Status
+		PathwayRTTStatus newRTTStatus = new PathwayRTTStatus();
+		newRTTStatus.setRTTStatus(getRTTStatusPoint(START_OF_FIRST_DEFINITIVE_TREATMENT));
+		Object mos = getMosUser();
+		if (mos instanceof MemberOfStaffLiteVo)
+		{
+			newRTTStatus.setStatusBy((MemberOfStaff) getDomainFactory().getDomainObject(MemberOfStaff.class, ((MemberOfStaffLiteVo) mos).getID_MemberOfStaff()));
+		}
+		newRTTStatus.setStatusDateTime(eventDateTime);
+		newRTTStatus.setSetting("I");
+		
+		// Check if the referral has a journey and a current clock
+		if (domCatsReferral.getJourney() != null && domCatsReferral.getJourney().getCurrentClock() != null)
+		{
+			// Get initial clock and initial  
+			PathwayClock initialClock = domCatsReferral.getJourney().getCurrentClock();
+			PathwayRTTStatus initialStatus = domCatsReferral.getJourney().getCurrentClock().getCurrentRTTStatus();
+			RTTClockState initialClockState = getClockState(initialClock);
+			
+			
+			// Stop the clock if not already stopped
+			if (domCatsReferral.getJourney().getCurrentClock().getStopDate() == null)
+			{
+				domCatsReferral.getJourney().getCurrentClock().setStopDate(new java.util.Date());
+			}
+			
+			// Update current clock status
+			if (domCatsReferral.getJourney().getCurrentClock().getRTTStatusHistory() == null)
+				domCatsReferral.getJourney().getCurrentClock().setRTTStatusHistory(new ArrayList());
+			
+			domCatsReferral.getJourney().getCurrentClock().setCurrentRTTStatus(newRTTStatus);
+			domCatsReferral.getJourney().getCurrentClock().getRTTStatusHistory().add(newRTTStatus);
+			
+			PathwayClock finalClock = domCatsReferral.getJourney().getCurrentClock();
+			PathwayRTTStatus finalStatus = newRTTStatus;
+			RTTClockState finalClockState = getClockState(finalClock);
+
+			domClockImpact = createRTTClockImpactRecord(initialClock, finalClock, initialStatus, finalStatus, initialClockState, finalClockState, null, domCatsReferral.getJourney(), RTTClockImpactSource.DIAGNOSTIC_DISCHARGE);
+
+			if (domCatsReferral.getRTTClockImpacts() == null)
+				domCatsReferral.setRTTClockImpacts(new ArrayList());
+			domCatsReferral.getRTTClockImpacts().add(domClockImpact);
+			domAdmissionDetails.setDischargeRTTOutcome(domClockImpact);
+		}
+		
+		domCatsReferral.setCurrentRTTStatus(newRTTStatus);
+
+		getDomainFactory().save(domCatsReferral);
+		getDomainFactory().save(domAdmissionDetails);
+		
+		return PatientElectiveListBedAdmissionVoAssembler.create((PatientElectiveList) getDomainFactory().getDomainObject(PatientElectiveList.class, electiveList.getID_PatientElectiveList()));
+	}
+
+
+	private PathwaysRTTClockImpact createRTTClockImpactRecord(PathwayClock initialClock, PathwayClock finalClock,
+															  PathwayRTTStatus initialStatus, PathwayRTTStatus finalStatus,
+															  RTTClockState initialClockState, RTTClockState finalClockState,
+															  RTTStatusEventMap eventMap, PatientPathwayJourney journey,
+															  RTTClockImpactSource source)
+	{
+		PathwaysRTTClockImpact clockImpact = new PathwaysRTTClockImpact();
+		
+		clockImpact.setInitialClock(initialClock);
+		clockImpact.setFinalClock(finalClock);
+		clockImpact.setInitialRTTStatus(initialStatus);
+		clockImpact.setFinalRTTStatus(finalStatus);
+		
+		clockImpact.setOutcomeEvent(eventMap);
+		clockImpact.setJourney(journey);
+		clockImpact.setSource(getDomLookup(source));
+		
+		clockImpact.setInitialClockState(getDomLookup(initialClockState));
+		clockImpact.setFinalClockState(getDomLookup(finalClockState));
+		
+		
+		clockImpact.setClockStarted(Boolean.FALSE);
+		clockImpact.setClockStopped(Boolean.FALSE);
+		
+		//  Case 1 - If there was not clock initially and one clock was created
+		if (initialClock == null && finalClock != null)
+		{
+			// New clock has a start date - mark the Clock Impact
+			if (finalClock.getStartDate() != null)
+				clockImpact.setClockStarted(Boolean.TRUE);
+			
+			if (finalClock.getStopDate() != null)
+				clockImpact.setClockStopped(Boolean.TRUE);
+		}
+		
+		// Case 2 - If there was a clock initially and there is no clock now
+		if (initialClock != null && finalClock == null)
+		{
+			clockImpact.setClockStopped(Boolean.TRUE);
+		}
+		
+		// Case 3 - If there was an initial clock and a clock is present now
+		if (initialClock != null && finalClock != null)
+		{
+			// Case 3.1 - Initial and current clock are the same one
+			if (initialClock.getId() == finalClock.getId())
+			{
+				if (initialClock.getStopDate() == null && finalClock.getStopDate() != null)
+					clockImpact.setClockStopped(Boolean.TRUE);
+				
+				if (initialClock.getStopDate() != null && finalClock.getStopDate() == null)
+					clockImpact.setClockStarted(Boolean.TRUE);
+				
+				if (initialClock.getStartDate() == null && finalClock.getStartDate() != null)
+					clockImpact.setClockStarted(Boolean.TRUE);
+			}
+			
+			// Case 3.2 - Initial and current clock are not the same one
+			if (initialClock.getId() != finalClock.getId())
+			{
+				if (initialClock.getStopDate() == null)
+					clockImpact.setClockStopped(Boolean.TRUE);
+				
+				if (finalClock.getStartDate() != null)
+					clockImpact.setClockStarted(Boolean.TRUE);
+				
+				if (finalClock.getStopDate() != null)
+					clockImpact.setClockStopped(Boolean.TRUE);
+			}
+			
+		}
+
+		return clockImpact;
+	}
+
+	private RTTClockState getClockState(PathwayClock clock)
+	{
+		if (clock == null)
+			return RTTClockState.NOT_PRESENT;
+		
+		if (clock.getStopDate() != null)
+			return RTTClockState.STOPPED;
+		
+		return RTTClockState.STARTED;
+	}
+	
+
+	private void cancelCaseNoteRequests(Integer tciId) throws StaleObjectException
+	{
+		PatientCaseNoteRequestLiteVoCollection requestsForCancellation = getLinkedCaseNoteOpenRequests(tciId);
+		
+		if (requestsForCancellation == null || requestsForCancellation.size() == 0)
+			return;
+		
+		Object mos = getMosUser();
+		
+		PatientCaseNotes impl = (PatientCaseNotes) getDomainImpl(PatientCaseNotesImpl.class);
+		
+		for (int i = 0; i < requestsForCancellation.size(); i++)
+		{
+			impl.cancelRequest(requestsForCancellation.get(i), (MemberOfStaffRefVo) mos, CaseNoteRequestCancellationReason.TCI_CANCELLED); //WDEV-20989
+		}
+		
+	}
+	
+	private PatientCaseNoteRequestLiteVoCollection getLinkedCaseNoteOpenRequests(Integer tciId)
+	{
+		if(tciId == null)
+			   return null;
+		
+		List<?> list = getDomainFactory().find("select req from PatientCaseNoteRequest as req left join req.tCIDetail as tci left join req.requestStatus as status " +
+				"where (tci.id = :tciID and status.id = :requestStatusID)", new String[] {"tciID", "requestStatusID"}, new Object[] {tciId, CaseNoteRequestStatus.OPEN.getID()});
+		
+		return PatientCaseNoteRequestLiteVoAssembler.createPatientCaseNoteRequestLiteVoCollectionFromPatientCaseNoteRequest(list);
+	}
+
+	//WDEV-18754 //WDEV-22685 //WDEV-22794 no longer update WardAttender
+	private void markAssociatedAppoinmentAsDischarged(DomainFactory factory, Integer pasEventID, DateTime dischargeDateTime) throws StaleObjectException
+	{
+
+		String hql = "from Booking_Appointment ba " + 
+				"where ba.pASEvent.id = :eventId " +
+				"and ba.currentStatusRecord.status = :statID " +
+ 				"and (ba.isWardAttendance is null OR ba.isWardAttendance = 0) " + 
+				"and (ba.isRIE is null OR ba.isRIE = 0)";
+
+		ArrayList<String> labels = new ArrayList<String>();
+		labels.add("eventId");
+		labels.add("statID");
+
+		ArrayList<Object> values = new ArrayList<Object>();
+		values.add(pasEventID);
+		values.add(getDomLookup(Status_Reason.ADMITTED));
+
+		List<?> apptList = getDomainFactory().find(hql.toString(), labels, values);
+
+		if (apptList == null || apptList.isEmpty())
+			return;	
+		for (int i = 0 ; i < apptList.size(); i++)
+		{				
+			Booking_Appointment doAppt = (Booking_Appointment) apptList.get(i);
+
+			doAppt.getApptStatusHistory().add(doAppt.getCurrentStatusRecord());
+
+			Appointment_Status doApptStat = new Appointment_Status();
+			doApptStat.setStatus(getDomLookup(Status_Reason.DISCHARGED));
+			////WDEV-22655
+			doApptStat.setStatusChangeDateTime(dischargeDateTime != null ? dischargeDateTime.getJavaDate() : new DateTime().getJavaDate());
+			doApptStat.setApptDate(doAppt.getAppointmentDate());
+			doApptStat.setApptTime(doAppt.getApptStartTime());
+			//WDEV-23185
+			if (doAppt.getSession() != null)
+			{
+				doApptStat.setSession(doAppt.getSession()); 				
+			} //WDEV-23185
+
+			doAppt.setCurrentStatusRecord(doApptStat);
+			doAppt.setApptStatus(getDomLookup(Status_Reason.DISCHARGED));
+
+			factory.save(doAppt);
+		}		
+	}
+	
+	// WDEV-23646 - Ensure the correct event Date Time is used when creating a new RTT Status
+	private RTTStatusPoint updateRTTStatus(CatsReferral doCats, Date eventDateTime) throws DomainInterfaceException, StaleObjectException
 	{
 		if(!ConfigFlag.DOM.RTT_STATUS_POINT_FUNCTIONALITY.getValue())
 			return null;
@@ -914,7 +1684,7 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 		if(doCats.isRTTClockImpact() == null || Boolean.FALSE.equals(doCats.isRTTClockImpact()))
 			return null;
 		
-		PathwayRTTStatus rttStatus = createPathwayRTTStatus(doCats);
+		PathwayRTTStatus rttStatus = createPathwayRTTStatus(doCats, eventDateTime);
 		
 		doCats.setCurrentRTTStatus(rttStatus);
 		
@@ -950,7 +1720,7 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 		if(rttStatusPoint == null)
 			return null;
 		
-		String query = "select rttMap from RTTStatusEventMap as rttMap left join rttMap.currentRTTStatus as rtt where rtt.id = :RTTStatusPoint and rttMap.event is not null and rttMap.active = 1";
+		String query = "select rttMap from RTTStatusEventMap as rttMap left join rttMap.currentRTTStatus as rtt where rtt.id = :RTTStatusPoint and rttMap.event is not null and rttMap.active = 1 and rttMap.encounterType is null ";
 		List<?> listRTTMap = getDomainFactory().find(query, new String[] {"RTTStatusPoint"}, new Object[] {rttStatusPoint.getId()});
 		
 		if(listRTTMap != null && listRTTMap.size() > 0 && listRTTMap.get(0) instanceof RTTStatusEventMap)
@@ -961,7 +1731,8 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 		return null;
 	}
 
-	private PathwayRTTStatus createPathwayRTTStatus(CatsReferral doCats)
+	// WDEV-23646 - Ensure the correct event Date Time is used when creating a new RTT Status
+	private PathwayRTTStatus createPathwayRTTStatus(CatsReferral doCats, Date eventDateTime)
 	{
 		if(doCats == null)
 			return null;
@@ -978,7 +1749,8 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 		PathwayRTTStatus pathwayRTTStatus = new PathwayRTTStatus();
 		pathwayRTTStatus.setRTTStatus(rttStatusPoint);
 		pathwayRTTStatus.setStatusBy(doMos);
-		pathwayRTTStatus.setStatusDateTime(new java.util.Date());
+		pathwayRTTStatus.setStatusDateTime(eventDateTime);
+		pathwayRTTStatus.setSetting("I");//WDEV-23292
 		
 		if(doCats.getJourney() != null && doCats.getJourney().getCurrentClock() != null)
     	{
@@ -1007,26 +1779,40 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 		return null;
 	}
 	
-	private ims.core.vo.DischargedEpisodeADTVo dischargePatient(ims.core.vo.PatientShort voPatient, ims.core.vo.DischargedEpisodeADTVo voDischEpis, BedSpaceStateLiteVo voBedSpacState, Boolean hasElectiveList, PatientElectiveList domElectiveList) throws ForeignKeyViolationException, DomainInterfaceException, ims.domain.exceptions.StaleObjectException
+	private ims.core.vo.DischargedEpisodeADTVo dischargePatient(PatientLite_IdentifiersVo patient, ims.core.vo.DischargedEpisodeADTVo voDischEpis, BedSpaceStateLiteVo voBedSpacState, Boolean hasElectiveList, PatientElectiveList domElectiveList, DeathDetailsVo deathDetailsVo, Boolean cancelApptsForDeceasedPatient, Boolean checkPatientsGender) throws ForeignKeyViolationException, DomainInterfaceException, ims.domain.exceptions.StaleObjectException
 	{
 		if(voDischEpis == null)
 			throw new CodingRuntimeException("dischargedEpisode is null in method dischargePatient");
 		if (!voDischEpis.isValidated())
 			throw new CodingRuntimeException("voDischEpis has not been validated!");
-		if(voPatient == null)
+		if(patient == null)
 			throw new CodingRuntimeException("voPatient is null in method dischargePatient");
 		
 		DomainFactory factory = getDomainFactory();		
-		ims.core.patient.domain.objects.Patient domPatient = (ims.core.patient.domain.objects.Patient)factory.getDomainObject(ims.core.patient.domain.objects.Patient.class, voPatient.getID_Patient().intValue());
+		ims.core.patient.domain.objects.Patient domPatient = (ims.core.patient.domain.objects.Patient)factory.getDomainObject(ims.core.patient.domain.objects.Patient.class, patient.getID_Patient().intValue());
 		DischargedEpisode disDo = DischargedEpisodeADTVoAssembler.extractDischargedEpisode(factory, voDischEpis);
 	
+		ConsultantStay oldCs = getCurrentConsultantStay(disDo.getConsultantStays());
+		if(oldCs != null)
+		{
+			oldCs.setEndDateTime(disDo.getDischargeDateTime());
+		}
+		
+		//WDEV-20134  --- start
+		WardStay oldWs = getCurrentWardStay(disDo.getWardStays());
+		if (oldWs != null)
+		{
+			oldWs.setTransferOutDateTime(disDo.getDischargeDateTime());
+		}
+		//WDEV-20134 --- ends here
+		
 		BedSpaceState doBed = null;
 		if(voBedSpacState != null)
-			doBed = BedSpaceStateLiteVoAssembler.extractBedSpaceState(factory, voBedSpacState); 
+			doBed = BedSpaceStateLiteVoAssembler.extractBedSpaceState(factory, voBedSpacState);
 	
 		PASEvent peDo = disDo.getPasEvent();
 		
-		InpatientEpisode ipDo = getCurrentAdmission(factory, voPatient);
+		InpatientEpisode ipDo = getCurrentAdmission(factory, patient);
 		
 		// Patient was discharged already
 		if (ipDo == null)
@@ -1063,8 +1849,14 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 				String mapping = getLookupService().getRemoteLookup(disDo.getMethodOfDischarge().getId(), TaxonomyType.PAS.getIItemText());
 				if(mapping != null && (mapping.equals(PATIENTDIED) || mapping.equals(STILLBIRTH)))
 				{
-					Date dischDT = disDo.getDischargeDateTime();
-					domPatient.setDod(dischDT);
+//					Date dischDT = disDo.getDischargeDateTime();
+//					//WDEV-22439
+//					SimpleDateFormat sdfDate = new SimpleDateFormat("HH:mm:ss");
+//					String strTime = sdfDate.format(dischDT);
+					
+					//WDEV-22923 the patient DOD should not be populated with Discharge Date/Time
+					domPatient.setDod(deathDetailsVo != null && deathDetailsVo.getPatient().getDodIsNotNull() ? deathDetailsVo.getPatient().getDod().getDate() :null);
+					domPatient.setTimeOfDeath(deathDetailsVo != null && deathDetailsVo.getPatient().getTimeOfDeathIsNotNull() ? deathDetailsVo.getPatient().getTimeOfDeath().toString() : null);//WDEV-22439
 				}	
 			}
 
@@ -1083,7 +1875,7 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 			}
 			 
 			//WDEV-18450 
-			if (Boolean.TRUE.equals(ConfigFlag.DOM.RTT_STATUS_POINT_FUNCTIONALITY.getValue()) && Boolean.TRUE.equals(voDischEpis.getWasTreatmentDeferred()))  
+			if (Boolean.TRUE.equals(ConfigFlag.DOM.RTT_STATUS_POINT_FUNCTIONALITY.getValue()) && Boolean.TRUE.equals(voDischEpis.getWasTreatmentGiven()))  
 			{
 				// WDEV-18617
 				if (domElectiveList != null && domElectiveList.getElectiveListReason().getId() == ElectiveListReason.DIAGNOSTIC.getId())
@@ -1099,30 +1891,28 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 				{
 					List catsList = factory.find("from CatsReferral cats where cats.careContext.pasEvent.id = " + peDo.getId());
 					if (catsList != null && catsList.size() > 0)
-				{
-					CatsReferral doCatsDetails = (CatsReferral) catsList.get(0);
-					
-					if (doCatsDetails != null && Boolean.TRUE.equals(doCatsDetails.isRTTClockImpact()) && doCatsDetails.getJourney() != null && 
-						doCatsDetails.getJourney().getCurrentClock() != null && 
-						(doCatsDetails.getJourney().getCurrentClock().getStopDate() != null || Boolean.TRUE.equals(hasElectiveList))&& 
-						doCatsDetails.getJourney().getCurrentClock().getRTTStatusHistory() != null)
 					{
-						PathwayRTTStatus doPreviousCurrentPathwayRttStatus = getStatusPreviousTheClockStop(doCatsDetails.getJourney().getCurrentClock().getRTTStatusHistory());
-						PathwayRTTStatus doNewPathwayRttStatus = createNewStausBasedOnThePreviousStatus(doPreviousCurrentPathwayRttStatus);
-						if (doNewPathwayRttStatus != null)
+						CatsReferral doCatsDetails = (CatsReferral) catsList.get(0);
+
+						if (doCatsDetails != null && Boolean.TRUE.equals(doCatsDetails.isRTTClockImpact()) && doCatsDetails.getJourney() != null && 
+								doCatsDetails.getJourney().getCurrentClock() != null && 
+								(doCatsDetails.getJourney().getCurrentClock().getStopDate() != null || Boolean.TRUE.equals(hasElectiveList))&& 
+								doCatsDetails.getJourney().getCurrentClock().getRTTStatusHistory() != null)
 						{
-							doCatsDetails.setCurrentRTTStatus(doNewPathwayRttStatus);
-							doCatsDetails.getJourney().getCurrentClock().setCurrentRTTStatus(doNewPathwayRttStatus);
-							doCatsDetails.getJourney().getCurrentClock().setStopDate(null);
-							doCatsDetails.getJourney().getCurrentClock().getRTTStatusHistory().add(doNewPathwayRttStatus);
-							factory.save(doCatsDetails);
+							PathwayRTTStatus doPreviousCurrentPathwayRttStatus = getStatusPreviousTheClockStop(doCatsDetails.getJourney().getCurrentClock().getRTTStatusHistory());
+							PathwayRTTStatus doNewPathwayRttStatus = createNewStausBasedOnThePreviousStatus(doPreviousCurrentPathwayRttStatus);
+							if (doNewPathwayRttStatus != null)
+							{
+								doCatsDetails.setCurrentRTTStatus(doNewPathwayRttStatus);
+								doCatsDetails.getJourney().getCurrentClock().setCurrentRTTStatus(doNewPathwayRttStatus);
+								doCatsDetails.getJourney().getCurrentClock().setStopDate(null);
+								doCatsDetails.getJourney().getCurrentClock().getRTTStatusHistory().add(doNewPathwayRttStatus);
+								factory.save(doCatsDetails);
+							}
 						}
 					}
 				}
-				}
-			}
-			
-				
+			}				
 			
 			//WDEV-8403
 			if(peDo.getPatient() != null)
@@ -1144,6 +1934,27 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 				PendingTransfers doTransfer = PendingTransfers.getPendingTransfersFromInpatientEpisode(factory, ipDo.getId());
 				if(doTransfer != null)
 					getDomainFactory().delete(doTransfer);
+				
+				if (Boolean.TRUE.equals(ipDo.isIsOnHomeLeave())) //WDEV-21086
+				{
+					HomeLeaveVo lastOngoingHomeLeave = getLatestOngoingHomeLeave(InPatientEpisodeADTVoAssembler.create(ipDo));
+					
+					if (lastOngoingHomeLeave != null)
+					{
+						lastOngoingHomeLeave.setDateReturnedFromHomeLeave(new ims.framework.utils.Date(disDo.getDischargeDateTime()));
+						lastOngoingHomeLeave.setTimeReturnedFromHomeLeave(new Time(disDo.getDischargeDateTime()));
+						
+						HomeLeave doHl = HomeLeaveVoAssembler.extractHomeLeave(factory, lastOngoingHomeLeave);
+						
+						ipDo.getHomeLeaves().set(ipDo.getHomeLeaves().indexOf(doHl), doHl);
+					}
+					ipDo.setIsOnHomeLeave(Boolean.FALSE);
+					ipDo.setDateOnHomeLeave(null);
+					ipDo.setTimeOnHomeLeave(null);
+					ipDo.setExpectedDateOfReturn(null);
+					ipDo.setExpectedTimeOfReturn(null);
+					ipDo.setVacatedBedNumber(null);					
+				}
 			}
 				
 			//copy over home Leaves
@@ -1156,8 +1967,14 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 				
 				ipDo.getHomeLeaves().remove(i);
 			}
+			
+			//WDEV-19680
+			ADT adtImpl = (ADT) getDomainImpl(ADTImpl.class);
+			adtImpl.vteOnDischarge(domPatient, disDo, ipDo);
+			
 			factory.delete(ipDo);
 		}
+		
 		factory.save(peDo);
 		factory.save(disDo);
 		
@@ -1167,18 +1984,30 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 		domPatient.setCurrentResponsibleConsultant(null);
 		
 		factory.save(domPatient);
-		
+		boolean wasPatientAlreadySavedAsDeceased = domPatient.getDod() != null && patient.getDod() == null && domPatient.getVersion() > patient.getVersion_Patient();
+				
 		//WDEV-12732 - have set other fields other than issue has requested - same as what happens in ADTImpl
 		if(ConfigFlag.HL7.INSTANTIATE_EPISODE_FROM_ADT.getValue()
 			|| ConfigFlag.HL7.INPATIENT_EPISODE_MANAGEMENT_FROM_PAS.getValue()
 			|| ConfigFlag.DOM.ADT_LINK_ADMISSION_TO_EPISODE.getValue())//wdev-14358
 		{
-			CareContext doCareContext = (CareContext) getDomainFactory().findFirst("from CareContext cc where cc.pasEvent.id = " + peDo.getId());
+			StringBuilder queryContext = new StringBuilder("SELECT context FROM CareContext AS context LEFT JOIN context.pasEvent AS pas ");
+			queryContext.append(" LEFT JOIN context.context AS contextType ");
+			queryContext.append(" LEFT JOIN context.currentStatus AS contextStatus LEFT JOIN contextStatus.status AS status ");
+			queryContext.append(" WHERE contextType.id = :INPATIENT_TYPE AND context.endDateTime is null ");
+			queryContext.append(" AND pas.id = :PAS_ID ");
+			
+			ArrayList<String> paramNames = new ArrayList<String>();
+			ArrayList<Object> paramValues = new ArrayList<Object>();
+			
+			paramNames.add("INPATIENT_TYPE");	paramValues.add(ContextType.INPATIENT.getId());
+			paramNames.add("PAS_ID");			paramValues.add(peDo.getId());
+			
+			CareContext doCareContext = (CareContext) getDomainFactory().findFirst(queryContext.toString(), paramNames, paramValues);
 			//WDEV-13121
 			if(doCareContext != null)
 			{
 				doCareContext.setBedNumber(null);
-				doCareContext.setContext(getDomLookup(ContextType.INPATIENT));
 				doCareContext.setCurrentStatus(new CareContextStatusHistory());
 				doCareContext.getCurrentStatus().setStatusDateTime(new Date());
 				if (doCareContext.getEndDateTime() == null && disDo != null)
@@ -1189,9 +2018,253 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 			}
 		}
 		
+		// WDEV-18742
+		updateDementiaRecordForDischarge(factory,(domElectiveList!=null && domElectiveList.getTCIDetails()!=null ? domElectiveList.getTCIDetails().getAdmissionDetail() : null), disDo );
+		
+		// WDEV-19481 Assemble VO before triggerDischargeEvent for creation of HL7 message
+		DischargedEpisodeVo disVo = DischargedEpisodeVoAssembler.create(disDo);
+		if(disVo.getPasEvent()!=null)
+		{
+	    	ADT adtimpl = (ADT) getDomainImpl(ADTImpl.class);
+			adtimpl.triggerDischargeEvent(disVo.getPasEvent());
+		}
+		//WDEV-19682
+		if (deathDetailsVo != null)
+		{
+			Demographics patientDemographicsImpl = (Demographics) getDomainImpl(DemographicsImpl.class);
+			patientDemographicsImpl.updatePatientDeceasedData(PatientAssembler.create(domPatient), deathDetailsVo, cancelApptsForDeceasedPatient, wasPatientAlreadySavedAsDeceased);
+		}
+		
+		//WDEV-20217
+		if (voBedSpacState != null)
+			updateOccupiedBedsForWardAndBay(voBedSpacState.getWard(), voBedSpacState.getBay(), null);
+		
+		//WDEV-20224 
+		if (voBedSpacState != null && Boolean.TRUE.equals(checkPatientsGender))
+		{
+			Sex patGender = patient.getSex() != null && !Sex.UNKNOWN.equals(patient.getSex()) ? patient.getSex() : null;
+			checkAndUpdateBayConfig(factory, voBedSpacState,patGender);
+		}
+		//WDEV-22685
+		if (disVo.getPasEventIsNotNull() && !Boolean.TRUE.equals(hasElectiveList))
+			markAssociatedAppoinmentAsDischarged(factory, new Integer(disVo.getPasEvent().getID_PASEvent()), disVo.getDischargeDateTime());
+		
 		return DischargedEpisodeADTVoAssembler.create(disDo);
 	}
+	//WDEV-20927
+	private void checkAndUpdateBayConfig(DomainFactory factory, BedSpaceStateLiteVo voBedSpacState, Sex tempGenderToSet) throws StaleObjectException
+	{
+		if (voBedSpacState.getBay() == null || voBedSpacState.getWard() == null)
+			return;
+
+		WardConfigLiteVo wardConfigLiteVo = getWardConfig(voBedSpacState.getWard());
+		BayConfigLiteVo bayConfig = getBayConfig(voBedSpacState.getBay(), wardConfigLiteVo);	
+
+		if (bayConfig != null && bayConfig.getTemporaryBayGenderIsNotNull())
+		{
+			Integer intMales = countMalePatientsOnTheWard(wardConfigLiteVo.getWard(), bayConfig.getBay());
+			Integer intFemales = countFemalePatientsOnTheWard(wardConfigLiteVo.getWard(), bayConfig.getBay());
+			boolean cfgChanged = false;
+			
+			if (tempGenderToSet != null)
+			{	
+				if (bayConfig.getNumOfOccupiedBeds() == null || bayConfig.getNumOfOccupiedBeds() == 0 || (intFemales == 0 && intMales == 0))
+				{	
+					bayConfig.setTemporaryBayGender(null);
+					cfgChanged = true;
+				}
+				else if (allPatientsGenderMatchBayGender(bayConfig) || (intFemales == 0 &&  intMales != 0)  || (intMales == 0 && intFemales != 0))
+				{				
+					if (intMales != null && intMales >0 && !Sex.MALE.equals(bayConfig.getTemporaryBayGender()))
+					{
+						bayConfig.setTemporaryBayGender(Sex.MALE);
+						cfgChanged = true;
+					}
+					if (intFemales != null && intFemales >0 && !Sex.FEMALE.equals(bayConfig.getTemporaryBayGender()))
+					{
+						bayConfig.setTemporaryBayGender(Sex.FEMALE);
+						cfgChanged = true;
+					}			
+				}
+			}
+			if (cfgChanged)
+			{	
+				String[] err = bayConfig.validate();
+				if (err == null)
+				{	
+					BayConfig bayConfigDO = BayConfigLiteVoAssembler.extractBayConfig(factory, bayConfig);				
+					factory.save(bayConfigDO);
+				}
+			}	
+
+		}
+	}
+	private void checkAndUpdatePreviousBayConfig(DomainFactory factory, BedSpaceStateLiteVo voBedSpacState, Sex tempGenderToSet) throws StaleObjectException
+	{
+		if (voBedSpacState.getBay() == null || voBedSpacState.getWard() == null)
+			return;
+
+		WardConfigLiteVo wardConfigLiteVo = getWardConfig(voBedSpacState.getWard());
+		BayConfigLiteVo bayConfig = getBayConfig(voBedSpacState.getBay(), wardConfigLiteVo);		
+		boolean wasConfigChanged = false;
+
+		if (bayConfig != null && bayConfig.getTemporaryBayGenderIsNotNull())
+		{
+			if (bayConfig.getNumOfOccupiedBeds() == null || bayConfig.getNumOfOccupiedBeds() == 0)
+			{	
+				bayConfig.setTemporaryBayGender(null);
+				wasConfigChanged = true;
+			}	
+			if (tempGenderToSet != null)
+			{	
+				Sex tempGender = getTempGenderToInstateForPreviousBay(wardConfigLiteVo, bayConfig);
+				if (tempGender != null)
+				{	
+					bayConfig.setTemporaryBayGender(tempGender);
+					wasConfigChanged = true;
+					if (wasConfigChanged)
+					{	
+						BayConfig bayConfigDO = BayConfigLiteVoAssembler.extractBayConfig(factory, bayConfig);
+						factory.save(bayConfigDO);
+					}
+				}
+			}
+		}
+	}
+	private Sex getTempGenderToInstateForPreviousBay(WardConfigLiteVo wardConfigLiteVo,BayConfigLiteVo bayConfig)
+	{
+		if (wardConfigLiteVo == null || bayConfig == null)
+			return null;
+		
+		Integer intMales = countMalePatientsOnTheWard(wardConfigLiteVo.getWard(), bayConfig.getBay());
+		Integer intFemales = countFemalePatientsOnTheWard(wardConfigLiteVo.getWard(), bayConfig.getBay());
+		
+		if (bayConfig != null && bayConfig.getNumOfOccupiedBedsIsNotNull() &&  bayConfig.getNumOfOccupiedBeds() > 0)
+		{
+			if ((intFemales == null || intFemales == 0) && (intMales != null && intMales >= 0 && !Sex.MALE.equals(bayConfig.getTemporaryBayGender())))
+				return Sex.MALE;
+			if ((intMales == null || intMales == 0) && intFemales != null && intFemales >= 0 && !Sex.FEMALE.equals(bayConfig.getTemporaryBayGender()))
+				return Sex.FEMALE;
+		}
+		return null;			
+	}
+
+	public Integer countMalePatientsOnTheWard(LocationRefVo ward, LocationRefVo bay)
+	{
+		if (ward == null || ward.getID_Location() == null)
+			return 0;
+		
+		StringBuilder query = new StringBuilder("SELECT COUNT (inpat.id) ");
+		query.append(" FROM BedSpaceState as bs LEFT JOIN bs.inpatientEpisode as inpat LEFT JOIN inpat.bed AS bed ");
+		query.append(" LEFT JOIN inpat.pasEvent AS pas LEFT JOIN pas.patient AS patient ");
+		query.append(" WHERE ");
+		query.append(" bs.ward.id = :WARD_ID AND bs.bay.id = :BAY_ID AND bed is not null AND patient.sex.id = :MALE_SEX ");
+		
+		String[] paramNames = new String[] {"WARD_ID", "BAY_ID", "MALE_SEX" };
+		Object[] paramValues = new Object[] {ward.getID_Location(),bay.getID_Location(), Sex.MALE.getID()}; 
+
+		return (int) getDomainFactory().countWithHQL(query.toString(), paramNames, paramValues);
+	}
+
+
+	public Integer countFemalePatientsOnTheWard(LocationRefVo ward, LocationRefVo bay)
+	{
+		if (ward == null || ward.getID_Location() == null)
+			return 0;
+		
+		StringBuilder query = new StringBuilder("SELECT COUNT (inpat.id) ");
+		query.append(" FROM BedSpaceState as bs LEFT JOIN bs.inpatientEpisode as inpat LEFT JOIN inpat.bed AS bed ");
+		query.append(" LEFT JOIN inpat.pasEvent AS pas LEFT JOIN pas.patient AS patient ");
+		query.append(" WHERE ");
+		query.append(" bs.ward.id = :WARD_ID AND bs.bay.id = :BAY_ID AND bed is not null AND patient.sex.id = :FEMALE_SEX ");
+				
+		String[] paramNames = new String[] {"WARD_ID", "BAY_ID", "FEMALE_SEX" };
+		Object[] paramValues = new Object[] {ward.getID_Location(), bay.getID_Location(), Sex.FEMALE.getID()}; 
+
+		return (int) getDomainFactory().countWithHQL(query.toString(), paramNames, paramValues);
+	}
+
+	private boolean allPatientsGenderMatchBayGender(BayConfigLiteVo bayConfig)
+	{
+		Sex genderToCheck = bayConfig.getTemporaryBayGender();
+		
+		if (genderToCheck != null)
+		{		
+			String hql = "select count(bedspacest.id) from BedSpaceState as bedspacest left join bedspacest.inpatientEpisode as inpat left join inpat.pasEvent as pasEv left join pasEv.patient as pat where bedspacest.bay.id = :BAY and pat.sex.id = :GENDER";
+				
+			long count = getDomainFactory().countWithHQL(hql, new String[]{"BAY", "GENDER"}, new Object[] {bayConfig.getBay().getID_Location(), genderToCheck.getID()});
+				
+			return (bayConfig.getNumOfOccupiedBedsIsNotNull() && new Integer((int)count).equals(bayConfig.getNumOfOccupiedBeds()));			
+		}
+		return false;
+	}
+	//WDEV-20927 -- end
+	private BayConfigLiteVo getBayConfig(LocationLiteVo bay, WardConfigLiteVo wardConfigLiteVo)
+	{
+		if (wardConfigLiteVo != null && wardConfigLiteVo.getBays() != null)
+		{
+			Iterator<BayConfigLiteVo> bayIterator = wardConfigLiteVo.getBays().iterator();
+			
+			while (bayIterator.hasNext())
+			{
+				BayConfigLiteVo bayVo = bayIterator.next();
+				if (bay != null && bayVo != null && bayVo.getBay().getID_Location().equals(bay.getID()))
+						return bayVo;
+					
+			}
+		}
+		return null;
+	}
+	private WardStay getCurrentWardStay(Set wardStays)
+	{
+		if (wardStays == null)
+			return null;
+		
+		Iterator<?> it = wardStays.iterator();
+		
+		while (it.hasNext())
+		{
+			Object ws = it.next();
+			
+			if(ws instanceof WardStay)
+			{
+				if(((WardStay) ws).getTransferOutDateTime() == null)
+					return (WardStay) ws;
+			}
+		}
+		return null;	
+	}
+
+	private ConsultantStay getCurrentConsultantStay(Set consultantStays)
+	{
+		if(consultantStays == null)
+			return null;
+		
+		Iterator it = consultantStays.iterator();
+		
+		while(it.hasNext())
+		{
+			Object cs = it.next();
+			
+			if(cs instanceof ConsultantStay)
+			{
+				if(((ConsultantStay) cs).getEndDateTime() == null)
+					return (ConsultantStay) cs;
+			}
+		}
+		
+		return null;
+	}
 	
+	
+	
+	// WDEV-18742
+    private void updateDementiaRecordForDischarge(DomainFactory factory, AdmissionDetail admissionDetail, DischargedEpisode disDo) throws StaleObjectException, ForeignKeyViolationException
+	{
+    	ADT impl = (ADT) getDomainImpl(ADTImpl.class);
+    	impl.updateDementiaRecordForDischarge(factory, admissionDetail, disDo);
+	}
+
 	private PathwayRTTStatus createNewStausBasedOnThePreviousStatus(PathwayRTTStatus doPreviousCurrentPathwayRttStatus)
 	{
 		if(doPreviousCurrentPathwayRttStatus != null)
@@ -1209,7 +2282,8 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
     		}
     		
     		rttStatusDO.setStatusBy(doMos);
-    		rttStatusDO.setStatusDateTime(new java.util.Date());
+    		// WDEV-23646 - Ensure the correct event Date Time is used when creating a new RTT Status
+    		rttStatusDO.setStatusDateTime(doPreviousCurrentPathwayRttStatus.getStatusDateTime());
     		rttStatusDO.setSetting("I");
     		
     		return rttStatusDO;
@@ -1280,7 +2354,7 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 			throw new CodingRuntimeException("inpatConsTransfer has not been validated in method saveInpatConsultantTransfer");
 
 		Inpat inpatRec = null;
-		if (Boolean.FALSE.equals(ConfigFlag.GEN.USE_ELECTIVE_LIST_FUNCTIONALITY.getValue()))
+		if (!ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
 		{
 			inpatRec = (Inpat)getDTOInstance(Inpat.class);
 			inpatRec.DataCollection.add();
@@ -1295,8 +2369,20 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 			if (res != null && res.getId() != 0)
 				throw new DTODomainInterfaceException(res.getId(), "Error occurred Transferring Patient on PAS " + res.getMessage());
 		}
-		
+		//WDEV-20675 currentResponsibleConsultant should be the same in Patient record and in the Pas Event that corresponds to current admission
+		if (doInpat.getPasEvent() != null && doInpat.getPasEvent().getPatient() != null)
+		{				
+			doInpat.getPasEvent().getPatient().setCurrentResponsibleConsultant(doInpat.getPasEvent().getConsultant());			
+		}
 		getDomainFactory().save(doInpat);
+		
+		// WDEV-19481 - Trigger creation of A08 Update Admission HL7 message
+		InpatientEpisodeVo inpatEpisodeVo = InpatientEpisodeVoAssembler.create(doInpat);
+		if(inpatEpisodeVo.getPasEvent()!=null)
+		{
+	    	ADT adtimpl = (ADT) getDomainImpl(ADTImpl.class);
+			adtimpl.triggerUpdateAdmissionEvent(inpatEpisodeVo.getPasEvent(),MsgUpdateType.CONSULTANT);//http://jira/browse/WDEV-22831
+		}
 		
 		//WDEV-11479 - update the CareContext with the ResponsibleHcp
 		WardView impl = (WardView) getDomainImpl(WardViewImpl.class);
@@ -1325,9 +2411,17 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 	{
 		if(childLoc == null || childLoc.getID_Location() == null )
 			throw new CodingRuntimeException("childLoc is null or id not provided in method getParentLocation");
-		
-		Location doLocation = (Location) getDomainFactory().getDomainObject(childLoc);
-		return LocationLiteVoAssembler.create(doLocation.getParentLocation());
+
+		if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+		{	
+			OrganisationAndLocation impl = (OrganisationAndLocation) getDomainImpl(OrganisationAndLocationImpl.class);
+			return impl.getHospitalLiteForLocation((ILocation)childLoc);
+		}
+		else
+		{	
+			Location doLocation = (Location) getDomainFactory().getDomainObject(childLoc);
+			return LocationLiteVoAssembler.create(doLocation.getParentLocation());
+		}
 	}
 
 	public BedSpaceStateLiteVo saveCloseBed(BedSpaceStateLiteVo bedSpaceState, String user, ReasonForBedClosure reason, DateTime estReOpen) throws StaleObjectException
@@ -1363,14 +2457,26 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 		getDomainFactory().save(BedSpaceStateLiteVoAssembler.extractBedSpaceState(getDomainFactory(), bedSpaceState));	
 	}
 
-	public void cancelTransfer(PendingTransfersRefVo voTransfer, LocationRefVo voCancellingFromWard) throws StaleObjectException, ForeignKeyViolationException
+	public void cancelTransfer(PendingTransfersLiteVo voTransfer, LocationRefVo voCancellingFromWard) throws StaleObjectException, ForeignKeyViolationException
 	{		
 		if (voTransfer == null || voTransfer.getID_PendingTransfers() == null)
 			throw new CodingRuntimeException("voTransfer is null or id not provided in method cancelTransfer");
 		
 		//WDEV-10421 - get the admission detail record and update its history for transfers
 		PendingTransfers doPending = (PendingTransfers) getDomainFactory().getDomainObject(voTransfer);
-		AdmissionDetail doAdmissionDetail = populateTransferHistory(doPending, TRANSFERCANCEL, voCancellingFromWard);
+		
+		if (doPending == null || doPending.getVersion() > voTransfer.getVersion_PendingTransfers()) //WDEV-20326
+			throw new StaleObjectException(doPending, "This transfer has been processed by another user");
+		
+		AdmissionDetail doAdmissionDetail = populateTransferHistory(doPending, TRANSFERCANCEL, voCancellingFromWard, voTransfer.getCancellationReasonDetails());
+		
+		// WDEV-19774 - Trigger creation of A26 Cancel Pending Transfer HL7 message
+		InpatientEpisodeVo inpatEpisodeVo = InpatientEpisodeVoAssembler.create(doPending.getInpatientEpisode());
+		if(inpatEpisodeVo.getPasEvent()!=null)
+		{
+	    	ADT adtimpl = (ADT) getDomainImpl(ADTImpl.class);
+			adtimpl.triggerCancelPendingTransferEvent(inpatEpisodeVo.getPasEvent());
+		} //WDEV-19974
 	
 		getDomainFactory().delete("from PendingTransfers p where p.id = '" + voTransfer.getID_PendingTransfers() + "'");
 		
@@ -1429,11 +2535,12 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 				{
 					inpatRec.EditFilter.IncludeStay = true;
 					inpatRec.EditFilter.IncludeDrdt = true;
+					inpatRecord.Drdt = null; //WDEV-17662
 					if(inpatRec.DataCollection.get(0).Addt != null && inpatEpisode.getEstDischargeDateIsNotNull())
 					{
 						try
 						{
-							inpatRecord.Stay = String.valueOf(ims.framework.utils.Date.daysBetween( new ims.framework.utils.DateTime(inpatRec.DataCollection.get(0).Addt).getDate(), inpatEpisode.getEstDischargeDate()));
+							inpatRecord.Stay = String.valueOf(ims.framework.utils.Date.daysBetween( new ims.framework.utils.DateTime(inpatRec.DataCollection.get(0).Addt).getDate(), inpatEpisode.getEstDischargeDate().getDate()));
 						}
 						catch (ParseException e)
 						{
@@ -1444,7 +2551,7 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 						inpatRecord.Drdt = DTOHelper.convertToDtoDate(inpatEpisode.getDischargeReadyDate().getDate());
 				}
 				
-				inpatRecord.Eddt = DTOHelper.convertToDtoDate(inpatEpisode.getEstDischargeDate().getDate());
+				inpatRecord.Eddt = DTOHelper.convertToDtoDate(inpatEpisode.getEstDischargeDate().getDate().getDate());
 				result = inpatRec.update();
 				
 				if(result != null && result.getId() < 0)
@@ -1453,26 +2560,176 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 
 			}
 		}	
-		getDomainFactory().save(InpatientEpisodeLiteVoAssembler.extractInpatientEpisode(getDomainFactory(), inpatEpisode));
 		
+		// WDEV-20018 - Trigger creation of A08 HL7 message
+		// WDEV-20445 - Focus trigger of A08 message creation so that only occurs if Confirmed Date of Discharge IS null
+		if(inpatEpisode.getPasEvent() != null
+				&& inpatEpisode.getEstDischargeDate() != null
+				&& inpatEpisode.getConfirmedDischargeDateTime() == null)
+		{
+	    	ADT adtimpl = (ADT) getDomainImpl(ADTImpl.class);
+			adtimpl.triggerUpdateAdmissionEvent(inpatEpisode.getPasEvent(),MsgUpdateType.ADMISSION);//http://jira/browse/WDEV-22831
+		} //WDEV-20018
+		
+		//WDEV-20445 - Trigger creation of A16 (Pending Discharge) HL7 message
+		if(inpatEpisode.getPasEvent() != null
+				&& inpatEpisode.getConfirmedDischargeDateTimeIsNotNull())
+		{
+	    	ADT adtimpl = (ADT) getDomainImpl(ADTImpl.class);
+			adtimpl.triggerPendingDischargeEvent(inpatEpisode.getPasEvent());			
+		} //WDEV-20445
+		
+		//WDEV-20445 - Trigger creation of A25 (Cancel Pending Discharge) HL7 message
+		// Generation of A25 message temporarily commented out. See WDEV-20506
+//		if(inpatEpisode.getPasEvent() != null
+//				&& inpatEpisode.getConfirmedDischargeDateTime() == null)
+//		{
+//			// User has cleared Confirmed date of discharge value
+//	    	ADT adtimpl = (ADT) getDomainImpl(ADTImpl.class);
+//			adtimpl.triggerCancelPendingDischargeEvent(inpatEpisode.getPasEvent());			
+//		}
+		//WDEV-20984 -- start 
+		boolean updateBed = false;
+		BedSpaceStateLiteVo bedSpaceStateLiteVo = null;
+		if (Boolean.TRUE.equals(inpatEpisode.getIsReadyToLeave()) && inpatEpisode.getBedIsNotNull())
+		{
+			bedSpaceStateLiteVo = getBedSpaceStateByInpatientEpisode(inpatEpisode);
+
+			if (bedSpaceStateLiteVo != null && (bedSpaceStateLiteVo.getInpatientEpisode() == null || bedSpaceStateLiteVo.getInpatientEpisode().getVersion_InpatientEpisode() > inpatEpisode.getVersion_InpatientEpisode() || !BedStatus.OCCUPIED.equals(bedSpaceStateLiteVo.getCurrentBedStatus().getBedStatus())))
+			{
+				throw new DomainInterfaceException(" The inpatient record has been updated by another user. The screen will be refreshed.");
+			}
+
+			if (bedSpaceStateLiteVo != null && bedSpaceStateLiteVo.getCurrentBedStatusIsNotNull() && BedStatus.OCCUPIED.equals(bedSpaceStateLiteVo.getCurrentBedStatus().getBedStatus()))
+			{
+				bedSpaceStateLiteVo.setPreviousBedStatus((BedSpaceStateStatusLiteVo) bedSpaceStateLiteVo.getCurrentBedStatus().clone());
+				bedSpaceStateLiteVo.setCurrentBedStatus(new BedSpaceStateStatusLiteVo());
+				bedSpaceStateLiteVo.getCurrentBedStatus().setStatusDateTime(inpatEpisode.getReadyToLeaveDecisionDateTimeIsNotNull() ? inpatEpisode.getReadyToLeaveDecisionDateTime() : new DateTime());
+				bedSpaceStateLiteVo.getCurrentBedStatus().setBedStatus(BedStatus.AVAILABLE);
+
+				if (bedSpaceStateLiteVo.getBedSpaceIsNotNull())
+				{	
+					inpatEpisode.setVacatedBedNumber(bedSpaceStateLiteVo.getBedSpace().getBedNumber());
+				}
+			}
+			updateBed = true;
+		}
+		//WDEV-20984 -- end 1
+				
+		DomainFactory domainFactory = getDomainFactory();
+				
 		//WDEV-11438 - update the CareContext with the EDD
 		WardView impl = (WardView) getDomainImpl(WardViewImpl.class);
 		CareContextShortVo voCareContext = impl.getCareContextForPasEvent(inpatEpisode.getPasEvent());
+
+		if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+		{
+			AdmissionDetailVo admissionDetailsVo = getAdmissionDetailByPasEvent(inpatEpisode.getPasEvent());
+			if (admissionDetailsVo != null)
+			{	
+				AdmissionDetail admissionDetailsDO = updateExtendedDetails(admissionDetailsVo, domainFactory, inpatEpisode,voCareContext);
+				domainFactory.save(admissionDetailsDO);
+			}
+		}
+		InpatientEpisode inpatDO = InpatientEpisodeLiteVoAssembler.extractInpatientEpisode(domainFactory, inpatEpisode);
+		if (updateBed)
+		{
+			inpatDO.setBed(null);
+			inpatDO.setBedNo(null);
+		}
+		domainFactory.save(inpatDO);
+		
+		if (updateBed)
+		{
+			BedSpaceState doBed = BedSpaceStateLiteVoAssembler.extractBedSpaceState(domainFactory, bedSpaceStateLiteVo);
+			doBed.setInpatientEpisode(null);
+		
+			domainFactory.save(doBed);
+		}
+		InpatientEpisodeLiteVo savedInpat = InpatientEpisodeLiteVoAssembler.create(inpatDO);
+		//voCareContext = impl.getCareContextForPasEvent(inpatEpisode.getPasEvent());
+		
 		if(voCareContext != null)
 		{
-			voCareContext.setEstimatedDischargeDate(inpatEpisode.getEstDischargeDate());
-			CareContext doCareContext = CareContextShortVoAssembler.extractCareContext(getDomainFactory(), voCareContext);			
-			getDomainFactory().save(doCareContext);	
+			voCareContext.setEstimatedDischargeDate(savedInpat.getEstDischargeDateIsNotNull() ? savedInpat.getEstDischargeDate().getDate() : null);
+			CareContext doCareContext = CareContextShortVoAssembler.extractCareContext(domainFactory, voCareContext);			
+			domainFactory.save(doCareContext);	
 			return CareContextShortVoAssembler.create(doCareContext);
 		}
-
+		
+		
+		
 		return null;
+	}
+
+	
+	private PatientTransportRequirementsVo getPatientTransportRequirements(CareContextRefVo careContext)
+	{
+		if (careContext == null)
+			return null;
+		
+		String hqlQuery = "SELECT patTranReq FROM PatientTransportRequirements AS patTranReq WHERE patTranReq.careContext.id = :Context_ID AND (patTranReq.isRIE is null OR patTranReq.isRIE = 0)";
+		
+		return PatientTransportRequirementsVoAssembler.create((PatientTransportRequirements) getDomainFactory().findFirst(hqlQuery, "Context_ID", careContext.getID_CareContext()));
+	}
+	//WDEV-20367
+	private AdmissionDetail updateExtendedDetails(AdmissionDetailVo admissionDetailsVo, DomainFactory factory, InpatientEpisodeLiteVo inpatEpisode,CareContextRefVo voCareContext)
+	{
+		AdmissionDetail admissionDO = AdmissionDetailVoAssembler.extractAdmissionDetail(factory, admissionDetailsVo);
+		PatientTransportRequirementsVo transportDetails = null;
+		if (admissionDO.getTransportDetails() == null)
+		{	 
+			transportDetails = getPatientTransportRequirements(voCareContext);
+
+			if (transportDetails != null)
+			{
+				if (inpatEpisode.getTransportDetailsIsNotNull())
+				{
+					transportDetails.setCareContext(inpatEpisode.getTransportDetails().getCareContext());
+					transportDetails.setTransport(inpatEpisode.getTransportDetails().getTransport());
+					transportDetails.setTransportRequired(inpatEpisode.getTransportDetails().getTransportRequired());
+				}	
+			}
+			else
+			{
+				transportDetails = inpatEpisode.getTransportDetails();
+			}
+				
+		 }
+		else
+		{
+			transportDetails = admissionDetailsVo.getTransportDetails();
+			if (inpatEpisode.getTransportDetailsIsNotNull())
+			{
+				transportDetails.setCareContext(inpatEpisode.getTransportDetails().getCareContext());
+				transportDetails.setTransport(inpatEpisode.getTransportDetails().getTransport());
+				transportDetails.setTransportRequired(inpatEpisode.getTransportDetails().getTransportRequired());
+			}
+		}
+		admissionDO.setEstDischargeDate(inpatEpisode.getEstDischargeDateIsNotNull() ? inpatEpisode.getEstDischargeDate().getJavaDate() : null);
+		admissionDO.setExtendedLengthOfStayReason(getDomLookup(inpatEpisode.getExtendedLengthOfStayReason()));
+		admissionDO.setPatientRequiresTransport(inpatEpisode.getPatientRequiresTransport());
+		admissionDO.setTransportDetails( transportDetails != null ? PatientTransportRequirementsVoAssembler.extractPatientTransportRequirements(factory,transportDetails) : null);
+		
+		admissionDO.setAbleToGoDischargeLounge(inpatEpisode.getAbleToGoDischargeLoungeIsNotNull() ? inpatEpisode.getAbleToGoDischargeLounge() : null);
+		admissionDO.setReasonCannotGoDischargeLounge(getDomLookup(inpatEpisode.getReasonCannotGoDischargeLounge()));
+		
+		admissionDO.setReasonDelayedDischarge(inpatEpisode.getReasonDelayedDischargeIsNotNull() ? ReasonForDelayedDischargeVoAssembler.extractReasonForDelayedDischargeList(factory, inpatEpisode.getReasonDelayedDischarge()) : null);	
+	
+		admissionDO.setMedicallyFitForDischarge(inpatEpisode.getMedicallyFitForDischargeIsNotNull()  ? getDomLookup(inpatEpisode.getMedicallyFitForDischarge()) : null);
+			
+		return admissionDO;
 	}
 
 	public String[] getRtpStatAndPlBlk(ims.core.vo.PatientId intfId)
 	{
-		if (Boolean.TRUE.equals(ConfigFlag.GEN.USE_ELECTIVE_LIST_FUNCTIONALITY.getValue()))
+		// This condition and return was inserted in WDEV-18604 - as temporary fix for a demo to remove all DTO calls by Rory Fitzpatrik
+		// Not sure if this would need to be removed, but this function should return the values from Inpatient Episode not a null,
+		// else a local context will not get initialized
+		if (Boolean.TRUE.equals(ConfigFlag.GEN.USE_ELECTIVE_LIST_FUNCTIONALITY.getValue()) || ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS"))
+		{
 			return null;
+		}
 		
 		Inpat inpatRec = (Inpat) getDTOInstance(Inpat.class);
 		inpatRec.Filter.clear();
@@ -1504,13 +2761,13 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 		return null;
 	}
 
-	public InpatientEpisodeLiteVoCollection listInpatientEpisodeByWard(LocationRefVo ward)
+	public InpatientEpisodeLiteVoCollection listInpatientEpisodeByWard(LocationRefVo ward, PatientRefVo patient)
 	{
 		WardView impl = (WardView) getDomainImpl(WardViewImpl.class);
-		return impl.listInpatientEpisodeByWard(ward);
+		return impl.listInpatientEpisodeByWard(ward, patient);
 	}
 
-	public void saveInternalTransfer(InpatientEpisodeLiteVo inpatEpis, BedSpaceStateLiteVo bedSpaceState) throws StaleObjectException
+	public void saveInternalTransfer(InpatientEpisodeLiteVo inpatEpis, BedSpaceStateLiteVo bedSpaceState, AdmissionReasonVo admissionReasonVo) throws StaleObjectException
 	{
 		if (bedSpaceState == null)
 			throw new CodingRuntimeException("bedSpaceState is null in method saveInternalTransfer");
@@ -1518,16 +2775,44 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 			throw new CodingRuntimeException("inpatEpis is null in method saveInternalTransfer");
 		
 		BedSpaceState doBedSpaceState = BedSpaceStateLiteVoAssembler.extractBedSpaceState(getDomainFactory(), bedSpaceState);
+		
+		BedSpaceState domBed = BedSpaceStateBayOnlyVoAssembler.extractBedSpaceState(getDomainFactory(), inpatEpis.getBed());
+		
+		domBed.getCurrentBedStatus().setBedStatus(getDomLookup(BedStatus.AVAILABLE));
+		domBed.setInpatientEpisode(null);
+		getDomainFactory().save(domBed);
+		
 		InpatientEpisode doInpatEpis = InpatientEpisodeLiteVoAssembler.extractInpatientEpisode(getDomainFactory(), inpatEpis);
-		doInpatEpis.getBed().getCurrentBedStatus().setBedStatus(getDomLookup(BedStatus.AVAILABLE));
-		doInpatEpis.getBed().setInpatientEpisode(null);
-		getDomainFactory().save(doInpatEpis);
 		
 		doBedSpaceState.setInpatientEpisode(doInpatEpis);
 		doBedSpaceState.getCurrentBedStatus().setBedStatus(getDomLookup(BedStatus.OCCUPIED));
 		doInpatEpis.setBed(doBedSpaceState);
 		
+		// WDEV-19481 - Trigger creation of A08 Bed Move HL7 message
+		if(inpatEpis.getPasEvent() !=null
+				&& doBedSpaceState != null
+				&& doBedSpaceState.getBedSpace() != null
+				&& doBedSpaceState.getBedSpace().getBedNumber() != null)
+		{
+	    	ADT adtimpl = (ADT) getDomainImpl(ADTImpl.class);
+			adtimpl.triggerUpdateAdmissionEvent(inpatEpis.getPasEvent(),MsgUpdateType.ADMISSION);//http://jira/browse/WDEV-22831
+		} //WDEV-19481
+		
+		//WDEV-20224
+		if (admissionReasonVo != null && Boolean.TRUE.equals(admissionReasonVo.getIsPrivateBedAllocationValidated()) && Boolean.TRUE.equals(doBedSpaceState.getBedSpace().isPrivateBed()))
+		{
+			WardStay cws = getCurrentWardStay(doInpatEpis.getWardStays());
+			
+			if (cws != null)
+			{
+				cws.setReasonPrivateBedAllocated(admissionReasonVo.getReasonForPrivateBedAllocation() != null ? getDomLookup(admissionReasonVo.getReasonForPrivateBedAllocation()) : null);
+				cws.setReasonPrivateBedAllocatedComment(admissionReasonVo.getReasonForPrivateBedAllocationComment());
+			}
+		}
 		getDomainFactory().save(doInpatEpis);
+		
+		//WDEV-20217
+		updateOccupiedBedsForWardAndBay(bedSpaceState.getWard(), bedSpaceState.getBay(), inpatEpis.getBed() != null ? inpatEpis.getBed().getBay() : null);
 	}
 
 	public InpatientEpisodeLiteVoCollection listInfantsForSelectedPatient(PatientRefVo patient)
@@ -1571,9 +2856,9 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 	public PendingTransfersLiteVo getPendingTransferForInpatient(InpatientEpisodeRefVo inpatEpis)
 	{
 		if (inpatEpis == null || inpatEpis.getID_InpatientEpisode() == null)
-			throw new CodingRuntimeException("inpatEpis is null or id not provided in method getPendingTransferForInpatient");
+			return null;
 
-		List transfers = getDomainFactory().find("from PendingTransfers pTrans where pTrans.inpatientEpisode.id = " + inpatEpis.getID_InpatientEpisode());
+		List<?> transfers = getDomainFactory().find("from PendingTransfers pTrans WHERE pTrans.inpatientEpisode.id = " + inpatEpis.getID_InpatientEpisode() + " AND pTrans.currentStatus.id = " + TransferStatus.PENDING.getId());
 		if(transfers != null && transfers.size() == 1)
 			return PendingTransfersLiteVoAssembler.create((PendingTransfers) transfers.get(0));
 			
@@ -1648,7 +2933,7 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 	
 		DomainFactory factory = getDomainFactory();
 		
-		if (Boolean.FALSE.equals(ConfigFlag.GEN.USE_ELECTIVE_LIST_FUNCTIONALITY.getValue()))
+		if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("CCO")) //WDEV-20326
 		{
 			Homeleave hlRec = (Homeleave)getDTOInstance(Homeleave.class);
 			hlRec.DataCollection.add();
@@ -1668,24 +2953,70 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 		//Save MAXIMS HomeLeave
 		HomeLeave doHL = HomeLeaveVoAssembler.extractHomeLeave(factory, homeLeaveVo);
 		
+		if (homeLeaveVo.getID_HomeLeave() != null)
+		{	
+			HomeLeave savedHomeLeave = (HomeLeave) factory.getDomainObject(HomeLeave.class, homeLeaveVo.getID_HomeLeave());
+			if (savedHomeLeave == null || Boolean.TRUE.equals(savedHomeLeave.getIsRIE()) ||  savedHomeLeave.getVersion() > homeLeaveVo.getVersion_HomeLeave())
+			{
+				if (savedHomeLeave == null || Boolean.TRUE.equals(savedHomeLeave.getIsRIE())) 
+					throw new DomainInterfaceException("The Home Leave record has been cancelled by another user. The screen will be refreshed.");
+				if (savedHomeLeave.getVersion() > homeLeaveVo.getVersion_HomeLeave())
+					throw new DomainInterfaceException("The Home Leave record has been modified by another user. The screen will be refreshed.");
+			}		
+		}		
+				
 		//Save IP details
 		InpatientEpisode doInpatEpis = InPatientEpisodeADTVoAssembler.extractInpatientEpisode(getDomainFactory(), inpatientEpisode);
-		doInpatEpis.getHomeLeaves().add(doHL);
-		
-		doInpatEpis.setIsOnHomeLeave(true);
+		if (homeLeaveVo.getID_HomeLeave() == null)
+		{	
+			if (doInpatEpis.getHomeLeaves() == null)
+				doInpatEpis.setHomeLeaves(new java.util.ArrayList());
+			doInpatEpis.getHomeLeaves().add(doHL);
+
+			doInpatEpis.setIsOnHomeLeave(true);
+			doInpatEpis.setVacatedBedNumber(homeLeaveVo.getVacatedBedNumberIsNotNull() ? homeLeaveVo.getVacatedBedNumber() : "");
+			if (!Boolean.TRUE.equals(homeLeaveVo.getBedRetained()))
+			{	
+				doInpatEpis.setBedNo(null);
+			}	
+		}
+		if (homeLeaveVo.getID_HomeLeave() != null)
+		{
+			doInpatEpis.getHomeLeaves().set(doInpatEpis.getHomeLeaves().indexOf(doHL), doHL);
+		}
 		doInpatEpis.setDateOnHomeLeave(homeLeaveVo.getDateOnHomeLeaveIsNotNull() ? homeLeaveVo.getDateOnHomeLeave().getDate() : null);
 		doInpatEpis.setTimeOnHomeLeave(homeLeaveVo.getTimeOnHomeLeaveIsNotNull() ? homeLeaveVo.getTimeOnHomeLeave().toString() : null);
 		doInpatEpis.setExpectedDateOfReturn(homeLeaveVo.getExpectedDateOfReturnIsNotNull() ? homeLeaveVo.getExpectedDateOfReturn().getDate() : null);
 		doInpatEpis.setExpectedTimeOfReturn(homeLeaveVo.getExpectedTimeOfReturnIsNotNull() ? homeLeaveVo.getExpectedTimeOfReturn().toString() : null);
-		doInpatEpis.setVacatedBedNumber(homeLeaveVo.getVacatedBedNumberIsNotNull() ? homeLeaveVo.getVacatedBedNumber() : "");
-		
+				
+		//WDEV-20405 - Trigger creation of A21 PATIENT GOES ON A LEAVE OF ABSENCE HL7 message
+		//		InpatientEpisodeVo inpatEpisodeVo = InpatientEpisodeVoAssembler.create(doInpat);
+		//		if(inpatEpisodeVo.getPasEvent() != null)
+		if(inpatientEpisode.getPasEvent() != null && homeLeaveVo.getID_HomeLeave() == null)
+		{
+			ADT adtimpl = (ADT) getDomainImpl(ADTImpl.class);
+			//			adtimpl.triggerTransferEvent(inpatEpisodeVo.getPasEvent());
+			adtimpl.triggerLeaveOfAbsenceEvent(inpatientEpisode.getPasEvent());
+		} //WDEV-20405
+
 		factory.save(doInpatEpis);
 
 		//Vacate the bed.
-		if(voBedSpaceStateLite != null)
-		{
-			BedSpaceState doBed = BedSpaceStateLiteVoAssembler.extractBedSpaceState(factory, voBedSpaceStateLite);
-			factory.save(doBed);
+		if (homeLeaveVo.getID_HomeLeave() == null)
+		{	
+			if(voBedSpaceStateLite != null && !Boolean.TRUE.equals(homeLeaveVo.getBedRetained()))
+			{
+				BedSpaceState doBed = BedSpaceStateLiteVoAssembler.extractBedSpaceState(factory, voBedSpaceStateLite);
+				factory.save(doBed);
+			}
+			if (voBedSpaceStateLite != null && !Boolean.TRUE.equals(homeLeaveVo.getBedRetained()))
+				updateOccupiedBedsForWardAndBay(voBedSpaceStateLite.getWard(), voBedSpaceStateLite.getBay(), null);
+
+			if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && voBedSpaceStateLite != null && !Boolean.TRUE.equals(homeLeaveVo.getBedRetained()))
+			{
+				Sex tempGender = inpatientEpisode.getPasEvent() != null && inpatientEpisode.getPasEvent().getPatientIsNotNull() && inpatientEpisode.getPasEvent().getPatient().getSexIsNotNull() && !Sex.UNKNOWN.equals(inpatientEpisode.getPasEvent().getPatient().getSex())  ? inpatientEpisode.getPasEvent().getPatient().getSex() : null;
+				checkAndUpdateBayConfig(factory, voBedSpaceStateLite,tempGender);
+			}
 		}
 		return null;
 	}
@@ -1812,15 +3143,13 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 		return null;
 	}
 
-	//wdev-14858
-	public VTERiskAssessmentWorklistVo getVTERiskAssessmentWorklistById(InpatientEpisodeRefVo inpatEpRef) 
+	//wdev-14858 //WDEV-22218
+	public IVTERiskAssessment getVTEForInpatient(InpatientEpisodeRefVo inpatEpRef) 
 	{
-		if(	inpatEpRef == null )
+		if (inpatEpRef == null)
 			return null;
-		
-		DomainFactory factory = getDomainFactory();
-		InpatientEpisode doInpatientEpisode  =(InpatientEpisode) factory.getDomainObject(InpatientEpisode.class, inpatEpRef.getID_InpatientEpisode());
-		return VTERiskAssessmentWorklistVoAssembler.create(doInpatientEpisode);
+		WardDataView impl = (WardDataView) getDomainImpl(WardDataViewImpl.class);
+		return impl.getInpatientEpisodeForVTE(inpatEpRef);
 	}
 
 	//wdev-14858
@@ -1848,13 +3177,13 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 		
 	}
 	//wdev-15042
-	public InpatientEpisodeLiteVo geInpatientEpisodeLiteVoById(	InpatientEpisodeRefVo inparEpRef) 
+	public InpatientEpisodeLiteVo getInpatientEpisodeLiteVoById(InpatientEpisodeRefVo inpatEpRef) 
 	{
-		if( inparEpRef == null || inparEpRef.getID_InpatientEpisode() == null)
+		if (inpatEpRef == null || inpatEpRef.getID_InpatientEpisode() == null)
 			return null;
 		
 		DomainFactory factory = getDomainFactory();
-		InpatientEpisode doInpatientEpisode = (InpatientEpisode) factory.getDomainObject(InpatientEpisode.class, inparEpRef.getID_InpatientEpisode());
+		InpatientEpisode doInpatientEpisode = (InpatientEpisode) factory.getDomainObject(InpatientEpisode.class, inpatEpRef.getID_InpatientEpisode());
 				
 		return InpatientEpisodeLiteVoAssembler.create(doInpatientEpisode);
 	}
@@ -1904,6 +3233,10 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 		
 		if (dischargeEpisode != null && dischargeEpisode.size() > 0)
 		{
+			if (dischargeEpisode.get(0) != null && dischargeEpisode.get(0).getDeferredReasonIsNotNull())
+			{	
+				dischargeEpisode.get(0).setDeferredReasonConfig(getDeferredReason(dischargeEpisode.get(0).getDeferredReason()));
+			}
 			return dischargeEpisode.get(0);
 		}
 		
@@ -2007,11 +3340,15 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 		
 		AdmissionDetail domAdmission = (AdmissionDetail) getDomainFactory().findFirst(query.toString(), paramNames, paramValues);
 		
+		if (domAdmission == null) //WDEV-19872
+			return null;
+		
 		// WDEV-18617  - Get the ELE for this pas event - not the first one for the Referral!!!
 		query = new StringBuilder("SELECT pel FROM PatientElectiveList AS pel LEFT JOIN pel.tCIDetails AS tci LEFT JOIN tci.admissionDetail AS adm ");
+		query.append(" LEFT JOIN pel.admissions AS admission ");
 		
 		//StringBuilder query = new StringBuilder("SELECT pel FROM PatientElectiveList AS pel LEFT JOIN pel.referral AS cats LEFT JOIN cats.careContext AS context LEFT JOIN context.pasEvent AS pas ");
-		query.append(" WHERE adm.id = :ADM_ID");
+		query.append(" WHERE adm.id = :ADM_ID OR admission.id = :ADM_ID ");
 		
 		
 		paramNames = new ArrayList<String>();
@@ -2132,4 +3469,549 @@ public class BedInfoDialogImpl extends DTODomainImplementation implements BedInf
 		return PatientShortAssembler.createPatientShortCollectionFromPatient(getDomainFactory().find(query.toString(), paramNames, paramValues));
 	}
 
-}
+	public void swapBeds(BedSpaceStateLiteVo bedStateSource, InpatientEpisodeLiteVo inpatientEpisodeDestination, AdmissionReasonVo admissionReasonVo) throws StaleObjectException
+	{
+		DomainFactory factory = getDomainFactory();
+		
+		InpatientEpisodeLiteVo inpatientEpisodeSource = bedStateSource.getInpatientEpisode();
+		
+		BedSpaceStateLiteVo bedStateDestination = getBedSpaceStateStatusByBedId(inpatientEpisodeDestination.getBed());
+						
+		BedSpaceState doBedStateDestination = BedSpaceStateLiteVoAssembler.extractBedSpaceState(factory, bedStateDestination);
+		//WDEV-20224
+		InpatientEpisode doInpatEpisSource = InpatientEpisodeLiteVoAssembler.extractInpatientEpisode(factory, inpatientEpisodeSource);
+		if (admissionReasonVo != null && Boolean.TRUE.equals(admissionReasonVo.getIsPrivateBedAllocationValidated()))
+		{
+			if (Boolean.TRUE.equals(doBedStateDestination.getBedSpace().isPrivateBed()))
+			{
+				WardStay cws = getCurrentWardStay(doInpatEpisSource.getWardStays());
+				if (cws != null)
+				{
+					cws.setReasonPrivateBedAllocated(admissionReasonVo.getReasonForPrivateBedAllocation() != null ? getDomLookup(admissionReasonVo.getReasonForPrivateBedAllocation()) : null);
+					cws.setReasonPrivateBedAllocatedComment(admissionReasonVo.getReasonForPrivateBedAllocationComment());
+				}
+			}			
+		}
+		doBedStateDestination.setInpatientEpisode(doInpatEpisSource);
+		
+		// WDEV-19481 - Trigger creation of A08 HL7 message (only if an actual bed number exists!)
+		if(inpatientEpisodeDestination.getPasEvent() !=null
+				&& doBedStateDestination.getBedSpace() != null
+				&& doBedStateDestination.getBedSpace().getBedNumber() != null)
+		{
+	    	ADT adtimpl = (ADT) getDomainImpl(ADTImpl.class);
+			adtimpl.triggerUpdateAdmissionEvent(inpatientEpisodeDestination.getPasEvent(),MsgUpdateType.ADMISSION);//http://jira/browse/WDEV-22831
+		} //WDEV-19481
+		
+		factory.save(doBedStateDestination);
+		
+		BedSpaceState doBedStateSource = BedSpaceStateLiteVoAssembler.extractBedSpaceState(factory, bedStateSource);
+		InpatientEpisode doInpatEpisDest = InpatientEpisodeLiteVoAssembler.extractInpatientEpisode(factory, inpatientEpisodeDestination);
+				
+		if (admissionReasonVo != null && Boolean.TRUE.equals(admissionReasonVo.getIsPrivateBedAllocationValidated()))
+		{
+			if (Boolean.TRUE.equals(doBedStateSource.getBedSpace().isPrivateBed()))
+			{
+				WardStay cws = getCurrentWardStay(doInpatEpisDest.getWardStays());
+
+				if (cws != null)
+				{
+					cws.setReasonPrivateBedAllocated(admissionReasonVo.getReasonForPrivateBedAllocation() != null ? getDomLookup(admissionReasonVo.getReasonForPrivateBedAllocation()) : null);
+					cws.setReasonPrivateBedAllocatedComment(admissionReasonVo.getReasonForPrivateBedAllocationComment());
+				}
+			}
+
+		}
+		doBedStateSource.setInpatientEpisode(doInpatEpisDest);
+		// WDEV-19481 - Trigger creation of A08 HL7 message (only if an actual bed number exists!)
+		if(inpatientEpisodeSource.getPasEvent() !=null
+				&& doBedStateSource.getBedSpace() != null
+				&& doBedStateSource.getBedSpace().getBedNumber() != null)
+		{
+	    	ADT adtimpl = (ADT) getDomainImpl(ADTImpl.class);
+			adtimpl.triggerUpdateAdmissionEvent(inpatientEpisodeSource.getPasEvent(),MsgUpdateType.ADMISSION);//http://jira/browse/WDEV-22831
+		} //WDEV-19481
+		
+		factory.save(doBedStateSource);
+	}
+
+	//WDEV-20023
+	public PatientCaseNoteVoCollection getCaseNoteFolders(PatientRefVo patientRef, LocationRefVo locationRef)
+	{
+		PatientCaseNotes impl = (PatientCaseNotes) getDomainImpl(PatientCaseNotesImpl.class);
+		return impl.getCaseNoteFolders(patientRef, locationRef);
+	}
+
+	public void updateOccupiedBedsForWardAndBay(LocationRefVo ward, LocationRefVo bayOne, LocationRefVo bayTwo) throws StaleObjectException
+	{
+		WardView implWardView = (WardView) getDomainImpl(WardViewImpl.class);
+		implWardView.updateOccupiedBedsForWardAndBay(ward, bayOne, bayTwo);
+		
+	}
+	//WDEV-20328
+	public WardConfigLiteVo getWardConfig(LocationRefVo locRefVo)
+	{
+		if (locRefVo == null || locRefVo.getID_Location() == null)
+			return null;
+		
+		DomainFactory factory = getDomainFactory();
+		List<?> lstWbc = factory.find("from WardBayConfig wbc where wbc.ward.id = '" + locRefVo.getID_Location() + "'");
+		if(lstWbc != null && lstWbc.size() == 1)
+			return WardConfigLiteVoAssembler.create((WardBayConfig) lstWbc.get(0));
+		
+		return null;
+	}
+
+	public BedSpaceStateLiteVo getBedSpaceState(BedSpaceStateRefVo bedSpaceState)
+	{
+		if (bedSpaceState == null || bedSpaceState.getID_BedSpaceState() == null)
+			return null;
+		
+		return BedSpaceStateLiteVoAssembler.create((BedSpaceState) getDomainFactory().getDomainObject(BedSpaceState.class, bedSpaceState.getID_BedSpaceState()));
+	}
+
+	
+	public void returnFromHomeLeave(BedSpaceStateLiteVo voBedSpaceStateLite, InpatientEpisodeLiteVo voInpatEpis, HomeLeaveVo voHl,	AdmissionReasonVo admissionReasonVo) throws DomainInterfaceException, StaleObjectException 
+	{
+		DomainFactory factory = getDomainFactory();
+		
+		BedSpaceState savedBedSpaceStateDO = (BedSpaceState) factory.getDomainObject(BedSpaceState.class, voBedSpaceStateLite.getID_BedSpaceState());
+		
+		if (savedBedSpaceStateDO != null && (savedBedSpaceStateDO.getInpatientEpisode() == null ||  savedBedSpaceStateDO.getInpatientEpisode().getVersion() > voInpatEpis.getVersion_InpatientEpisode()))
+		{
+			if (savedBedSpaceStateDO.getInpatientEpisode() == null)
+				throw new DomainInterfaceException(" This patient has been discharged or moved by another user. The screen will be refreshed.");
+			if (savedBedSpaceStateDO.getInpatientEpisode().getVersion() > voInpatEpis.getVersion_InpatientEpisode() && !Boolean.TRUE.equals(savedBedSpaceStateDO.getInpatientEpisode().isIsOnHomeLeave()))
+				throw new DomainInterfaceException(" The home leave for this patient has been processed by another user. The screen will be refreshed.");
+		}		
+		InpatientEpisode doInpatEpis = InpatientEpisodeLiteVoAssembler.extractInpatientEpisode(getDomainFactory(), voInpatEpis);
+		if(voHl != null)
+		{
+			doInpatEpis = closeCurrentHomeLeaveAndUpdateEpisode(doInpatEpis, voHl);
+			doInpatEpis.setIsOnHomeLeave(false);
+			doInpatEpis.setDateOnHomeLeave(null);
+			doInpatEpis.setTimeOnHomeLeave(null);
+			doInpatEpis.setExpectedDateOfReturn(null);
+			doInpatEpis.setExpectedTimeOfReturn(null);
+			doInpatEpis.setVacatedBedNumber(null);			
+		}
+		
+		savedBedSpaceStateDO.setInpatientEpisode(doInpatEpis);
+		
+		//WDEV-20405 - Trigger creation of A21 PATIENT GOES ON A LEAVE OF ABSENCE HL7 message
+		InpatientEpisodeVo inpatEpisodeVo = InpatientEpisodeVoAssembler.create(doInpatEpis);
+		if(inpatEpisodeVo != null
+				&& inpatEpisodeVo.getPasEvent() != null)
+		{
+	    	ADT adtimpl = (ADT) getDomainImpl(ADTImpl.class);
+			adtimpl.triggerReturnFromLeaveOfAbsenceEvent(inpatEpisodeVo.getPasEvent());
+		} //WDEV-20405
+
+		if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && voBedSpaceStateLite != null && !Boolean.TRUE.equals(voHl.getBedRetained()))
+		{
+			Sex tempGender = voInpatEpis.getPasEvent() != null && voInpatEpis.getPasEvent().getPatientIsNotNull() ? voInpatEpis.getPasEvent().getPatient().getSex() : null;
+			checkAndUpdateBayConfig(factory, voBedSpaceStateLite, tempGender);
+		}		
+		factory.save(savedBedSpaceStateDO);		
+		
+	}
+
+	private InpatientEpisode closeCurrentHomeLeaveAndUpdateEpisode(InpatientEpisode doInpatEpis, HomeLeaveVo voHl)
+	{
+		HomeLeave currentHomeLeaveDO = null;
+		if (doInpatEpis == null || !Boolean.TRUE.equals(doInpatEpis.isIsOnHomeLeave()) ||  doInpatEpis.getHomeLeaves() == null)
+			return null;
+		
+		for(int i = 0 ; doInpatEpis.getHomeLeaves().size() > 0 && i < doInpatEpis.getHomeLeaves().size() ; i++)
+		{
+			HomeLeave doHL = (HomeLeave)doInpatEpis.getHomeLeaves().get(i);
+			 if (doHL != null && doHL.getDateReturnedFromHomeLeave() == null && doHL.getDateOnHomeLeave().equals(doInpatEpis.getDateOnHomeLeave()))
+			 {
+				 currentHomeLeaveDO = doHL;
+				 break;
+			 }			 
+		}
+
+		if (currentHomeLeaveDO != null)
+		{	
+			currentHomeLeaveDO.setDateReturnedFromHomeLeave(voHl.getDateReturnedFromHomeLeaveIsNotNull() ? voHl.getDateReturnedFromHomeLeave().getDate() : null);
+			currentHomeLeaveDO.setTimeReturnedFromHomeLeave(voHl.getTimeReturnedFromHomeLeaveIsNotNull() ? voHl.getTimeReturnedFromHomeLeave().toString() : null);
+
+			doInpatEpis.getHomeLeaves().set(doInpatEpis.getHomeLeaves().indexOf(currentHomeLeaveDO), currentHomeLeaveDO);	 
+		} 
+		
+		return doInpatEpis;
+	}
+	//WDEV-21282 only list Provider cancellations, not marked as only outpatient
+	public CancellationTypeReasonVoCollection listCancellationTypeReason()
+	{
+		String query = "SELECT reasonConfig FROM CancellationTypeReason AS reasonConfig left join reasonConfig.cancellationType as ctype where ctype.id = :PROVIDER_CANCELLATION and (reasonConfig.tCITheatre = 1  OR reasonConfig.outpatients  <> 1)";
+		
+		return CancellationTypeReasonVoAssembler.createCancellationTypeReasonVoCollectionFromCancellationTypeReason(getDomainFactory().find(query,new String[]{"PROVIDER_CANCELLATION"},new Object[] {Status_Reason.HOSPITALCANCELLED.getID()}));
+	}
+	//WDEV-20669 -- start
+	public void cancelHomeLeave(BedSpaceStateLiteVo voBedSpaceState,InpatientEpisodeLiteVo voInpat)	throws StaleObjectException, DomainInterfaceException
+	{
+		if (voInpat == null)
+			throw new CodingRuntimeException("InpatientEpisodeLiteVo argument cannot be null in method cancelHomeLeave()");
+		DomainFactory factory = getDomainFactory();
+		WardView impl = (WardView) getDomainImpl(WardViewImpl.class);
+		CareContextShortVo voCareContext = impl.getCareContextForPasEvent(voInpat.getPasEvent());
+		InPatientEpisodeADTVo voInpatADTVo = getInpatientEpisode(voInpat);
+		if (voInpatADTVo == null)
+			throw new DomainInterfaceException("This patient is no longer an inpatient. The screen will be refreshed.");
+		if (voInpatADTVo != null && voInpatADTVo.getVersion_InpatientEpisode() > voInpat.getVersion_InpatientEpisode() &&  !Boolean.TRUE.equals(voInpatADTVo.getIsOnHomeLeave()))
+			throw new DomainInterfaceException("This inpatient is no longer on home leave. The screen will be refreshed.");
+		
+		HomeLeaveVo homeLeaveToCancel = getLatestOngoingHomeLeave(voInpatADTVo);
+					
+		if (homeLeaveToCancel != null)
+		{
+			factory.markAsRie(HomeLeave.class, homeLeaveToCancel.getID_HomeLeave(), null, voInpat.getPasEvent() != null && voInpat.getPasEvent().getPatientIsNotNull() ?  voInpat.getPasEvent().getPatient().getID_Patient() : null, null, voCareContext != null ? voCareContext.getID_CareContext() : null, "Cancellation of Sending on Home Leave");
+			
+			InpatientEpisode doInpatientEpisode = InPatientEpisodeADTVoAssembler.extractInpatientEpisode(factory, voInpatADTVo);
+			
+			doInpatientEpisode.setIsOnHomeLeave(false);
+			doInpatientEpisode.setDateOnHomeLeave(null);
+			doInpatientEpisode.setTimeOnHomeLeave(null);
+			doInpatientEpisode.setExpectedDateOfReturn(null);
+			doInpatientEpisode.setExpectedTimeOfReturn(null);
+			
+			if (doInpatientEpisode.getPasEvent() != null)
+			{
+				ADT adtimpl = (ADT) getDomainImpl(ADTImpl.class);
+				adtimpl.triggerCancelLeaveOfAbsenceEvent(new PASEventRefVo(doInpatientEpisode.getPasEvent().getId(), doInpatientEpisode.getPasEvent().getVersion()));
+			}
+			factory.save(doInpatientEpisode);
+			if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && voBedSpaceState != null && !Boolean.TRUE.equals(homeLeaveToCancel.getBedRetained()))
+			{
+				Sex tempGender = voInpat.getPasEvent() != null && voInpat.getPasEvent().getPatientIsNotNull() ? voInpat.getPasEvent().getPatient().getSex() : null;
+				checkAndUpdateBayConfig(factory, voBedSpaceState,tempGender);
+			}
+		}
+		
+	}
+	private HomeLeaveVo getLatestOngoingHomeLeave(InPatientEpisodeADTVo voEpisode)
+	{
+		if (voEpisode == null || voEpisode.getHomeLeaves() == null)
+			return null;
+		for (int i=voEpisode.getHomeLeaves().size()-1;i>=0;i--)
+		{
+			if (voEpisode.getHomeLeaves().get(i).getDateReturnedFromHomeLeave() != null)
+				voEpisode.getHomeLeaves().remove(i);
+		}
+		voEpisode.getHomeLeaves().sort(HomeLeaveVo.getDateOnHomeLeaveComparator(SortOrder.DESCENDING));
+		if (voEpisode.getHomeLeaves().size() > 0 && voEpisode.getHomeLeaves().get(0) != null)
+				return voEpisode.getHomeLeaves().get(0);
+		return null;
+	}
+
+	public Boolean hasPatientReturnedFromHomeLeave(InpatientEpisodeLiteVo voInpat)
+	{
+		if (voInpat == null || Boolean.TRUE.equals(voInpat.getIsOnHomeLeave()))
+			return false;
+		
+		String hql = " select count(hl.id) from InpatientEpisode inp left join inp.homeLeaves as hl WHERE hl.dateReturnedFromHomeLeave is not null AND (hl.isRIE is null OR hl.isRIE = 0) and inp.id = :INPAT_ID";
+		
+		DomainFactory fact = getDomainFactory();
+		
+		long count = fact.countWithHQL(hql, new String[]{"INPAT_ID"}, new Object[]{voInpat.getID_InpatientEpisode()});
+		
+		return count > 0;		
+	}
+	
+	public void cancelHomeLeaveReturn(InpatientEpisodeLiteVo voInpat,BedSpaceStateLiteVo voBedSpaceState, HomeLeaveVo voHlToReOpen) throws DomainInterfaceException,StaleObjectException
+	{
+		if (voInpat == null)
+			throw new CodingRuntimeException("The InpatientEpisodeLiteVo argument cannot be null in method cancelHomeLeaveReturn()");
+		if (voHlToReOpen == null)
+			throw new CodingRuntimeException("The HomeLeaveVo argument cannot be null in method cancelHomeLeaveReturn()");
+		if (!voHlToReOpen.isValidated())
+			throw new CodingRuntimeException("The HomeLeaveVo is not validated in method cancelHomeLeaveReturn()");
+		DomainFactory factory = getDomainFactory();
+
+		InpatientEpisode inpatEpisodeDO = (InpatientEpisode) factory.getDomainObject(InpatientEpisode.class, voInpat.getID_InpatientEpisode());
+		
+		if (inpatEpisodeDO == null)
+			throw new DomainInterfaceException("This patient is no longer an inpatient. The screen will be refreshed.");
+		if (inpatEpisodeDO != null && inpatEpisodeDO.getVersion() > voInpat.getVersion_InpatientEpisode() &&  Boolean.TRUE.equals(inpatEpisodeDO.isIsOnHomeLeave()))
+			throw new DomainInterfaceException("This inpatient has been sent on home leave or their home leave return was cancelled by another user. The screen will be refreshed.");
+		
+		if (inpatEpisodeDO.getHomeLeaves() != null && !inpatEpisodeDO.getHomeLeaves().isEmpty())
+		{	
+			HomeLeave homeLeaveDO = HomeLeaveVoAssembler.extractHomeLeave(factory, voHlToReOpen);
+			
+			if (homeLeaveDO != null)
+			{
+				if (inpatEpisodeDO.getHomeLeaves().contains(homeLeaveDO))
+					inpatEpisodeDO.getHomeLeaves().set(inpatEpisodeDO.getHomeLeaves().indexOf(homeLeaveDO), homeLeaveDO);
+				
+				inpatEpisodeDO.setIsOnHomeLeave(true);
+				inpatEpisodeDO.setDateOnHomeLeave(homeLeaveDO.getDateOnHomeLeave() != null ? homeLeaveDO.getDateOnHomeLeave() : null);
+				inpatEpisodeDO.setTimeOnHomeLeave(homeLeaveDO.getTimeOnHomeLeave() != null ? homeLeaveDO.getTimeOnHomeLeave() : null);
+				inpatEpisodeDO.setExpectedDateOfReturn(homeLeaveDO.getExpectedDateOfReturn() != null ? homeLeaveDO.getExpectedDateOfReturn() : null);
+				inpatEpisodeDO.setExpectedTimeOfReturn(homeLeaveDO.getExpectedTimeOfReturn() != null ? homeLeaveDO.getExpectedTimeOfReturn()  : null);
+				inpatEpisodeDO.setVacatedBedNumber(homeLeaveDO.getVacatedBedNumber() != null ? homeLeaveDO.getVacatedBedNumber() : null);
+
+				if (voBedSpaceState != null && !Boolean.TRUE.equals(homeLeaveDO.isBedRetained()))
+				{
+					if (voBedSpaceState.getCurrentBedStatusIsNotNull())
+					{
+						voBedSpaceState.setPreviousBedStatus((BedSpaceStateStatusLiteVo) voBedSpaceState.getCurrentBedStatus().clone());
+						voBedSpaceState.setCurrentBedStatus(new BedSpaceStateStatusLiteVo());
+						voBedSpaceState.getCurrentBedStatus().setStatusDateTime(new DateTime());
+						voBedSpaceState.getCurrentBedStatus().setBedStatus(BedStatus.AVAILABLE);						
+					}
+								
+					voBedSpaceState.setInpatientEpisode(null);
+					
+					inpatEpisodeDO.setBed(null);
+				}
+			}
+			if (inpatEpisodeDO.getPasEvent() != null)
+			{
+				ADT adtimpl = (ADT) getDomainImpl(ADTImpl.class);
+				adtimpl.triggerCancelReturnFromLeaveOfAbsenceEvent(new PASEventRefVo(inpatEpisodeDO.getPasEvent().getId(), inpatEpisodeDO.getPasEvent().getVersion()));
+			}
+			factory.save(inpatEpisodeDO);
+
+			if (voBedSpaceState != null)
+			{
+				BedSpaceState doBed = BedSpaceStateLiteVoAssembler.extractBedSpaceState(factory, voBedSpaceState);
+				factory.save(doBed);				
+			}
+
+			if (voBedSpaceState != null && !Boolean.TRUE.equals(voHlToReOpen.getBedRetained()))
+				updateOccupiedBedsForWardAndBay(voBedSpaceState.getWard(), voBedSpaceState.getBay(), null);
+			
+			if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && voBedSpaceState != null && !Boolean.TRUE.equals(voHlToReOpen.getBedRetained()))
+			{
+				Sex tempGender = voInpat.getPasEvent() != null && voInpat.getPasEvent().getPatientIsNotNull() && voInpat.getPasEvent().getPatient().getSexIsNotNull() && !Sex.UNKNOWN.equals(voInpat.getPasEvent().getPatient().getSex())? voInpat.getPasEvent().getPatient().getSex() : null;
+				checkAndUpdateBayConfig(factory, voBedSpaceState,tempGender);
+			}
+		}		
+	}
+	//WDEV-20669 --- end
+	
+	public ServiceLiteVoCollection listServices(String value)
+	{
+		BedAdmissionComponent impl = (BedAdmissionComponent) getDomainImpl(BedAdmissionComponentImpl.class);
+		return impl.listServices(value);
+	}
+
+	public InpatientEpisodeTrackingMoveVo getInpatientTrackingMove(InpatientEpisodeRefVo inpatientEpisode)
+	{
+		if (inpatientEpisode == null || inpatientEpisode.getID_InpatientEpisode() == null)
+			return null;
+		
+		return InpatientEpisodeTrackingMoveVoAssembler.create((InpatientEpisode) getDomainFactory().getDomainObject(InpatientEpisode.class, inpatientEpisode.getID_InpatientEpisode()));
+	}
+
+
+	public InpatientEpisodeTrackingMoveVo saveInpatientEpisodeTrackingMovement(InpatientEpisodeTrackingMoveVo inpatientEpisodeTrackingMove) throws StaleObjectException
+	{
+		if (inpatientEpisodeTrackingMove == null)
+			throw new CodingRuntimeException("Cannot save null record");
+		
+		if (!inpatientEpisodeTrackingMove.isValidated())
+			throw new CodingRuntimeException("Cannot save records not validated");
+		
+		@SuppressWarnings("rawtypes")
+		HashMap map =  new HashMap();
+		InpatientEpisode domInpatientEpisode = InpatientEpisodeTrackingMoveVoAssembler.extractInpatientEpisode(getDomainFactory(), inpatientEpisodeTrackingMove, map);
+		
+		getDomainFactory().save(domInpatientEpisode);
+
+		return InpatientEpisodeTrackingMoveVoAssembler.create(domInpatientEpisode);
+	}
+
+	public void vacateBedSpace(InPatientEpisodeADTVo voInpat, BedSpaceStateLiteVo voBedSpaceStateLite, HomeLeaveVo voCurrentHomeLeave) throws DomainInterfaceException, StaleObjectException
+	{
+		if (voInpat == null)
+			throw new CodingRuntimeException("InPatientEpisodeADTVo argument cannot be null in method vacateBedSpace()");
+
+		if (voCurrentHomeLeave == null)
+			throw new CodingRuntimeException("HomeLeaveVo argument cannot be null in method vacateBedSpace()");
+
+		DomainFactory domainFactory = getDomainFactory();
+
+		InpatientEpisode inpatientEpisodeDO = (InpatientEpisode) domainFactory.getDomainObject(InpatientEpisode.class, voInpat.getID_InpatientEpisode());
+
+		if (inpatientEpisodeDO == null || inpatientEpisodeDO.getVersion() > voInpat.getVersion_InpatientEpisode())
+			throw new DomainInterfaceException("The patient record was updated by another user. The screen will refresh.");
+		if (inpatientEpisodeDO.getBed() == null)
+			throw new DomainInterfaceException("The bed was vacated by another user. The screen will refresh.");
+
+		InpatientEpisode doInpat = InPatientEpisodeADTVoAssembler.extractInpatientEpisode(domainFactory, voInpat);
+		HomeLeave doHomeLeave = HomeLeaveVoAssembler.extractHomeLeave(domainFactory, voCurrentHomeLeave);
+		
+		int currentHomeLeaveIndex = -1;
+		if (doHomeLeave != null)
+		{	
+			currentHomeLeaveIndex = doInpat.getHomeLeaves().indexOf(doHomeLeave);
+			if (currentHomeLeaveIndex != -1)
+			{
+				HomeLeave doHLForUpdate = (HomeLeave) doInpat.getHomeLeaves().get(currentHomeLeaveIndex);
+				if (doHLForUpdate != null)
+				{	
+					doHLForUpdate.setBedRetained(doHomeLeave.isBedRetained());
+				}	
+			}
+		}
+		else
+		{
+			throw new DomainInterfaceException("The home leave was cancelled by another user. The screen will refresh.");
+		}
+		
+		domainFactory.save(doInpat);
+
+		if (voBedSpaceStateLite != null)
+		{	
+			BedSpaceState doBedSpaceState = BedSpaceStateLiteVoAssembler.extractBedSpaceState(domainFactory,voBedSpaceStateLite);
+			domainFactory.save(doBedSpaceState);
+		}
+		updateOccupiedBedsForWardAndBay(voBedSpaceStateLite.getWard(), voBedSpaceStateLite.getBay(), null);			
+
+		if (ConfigFlag.UI.BED_INFO_UI_TYPE.getValue().equals("MAXIMS") && voBedSpaceStateLite != null )
+		{
+			Sex tempGender = voInpat.getPasEvent() != null && voInpat.getPasEvent().getPatientIsNotNull() && voInpat.getPasEvent().getPatient().getSexIsNotNull() && !Sex.UNKNOWN.equals(voInpat.getPasEvent().getPatient().getSex())  ? voInpat.getPasEvent().getPatient().getSex() : null;
+			checkAndUpdateBayConfig(domainFactory, voBedSpaceStateLite,tempGender);
+		}
+	}
+	//WDEV-21156
+	public AdmissionDetailVo updateAdmissionDetailWithHealthyLodgerInfo(AdmissionDetailVo admissionDetailToSave, HealthyLodgerVo healthyLodgerDetails) throws StaleObjectException
+	{
+		if (admissionDetailToSave == null)
+			throw new CodingRuntimeException("admissionDetailToSave argument cannot be null in method updateAdmissionDetailsWithHealthyLodgerInfo");
+		
+		DomainFactory factory = getDomainFactory();
+		
+		AdmissionDetail admissionDO = AdmissionDetailVoAssembler.extractAdmissionDetail(factory, admissionDetailToSave);
+		
+		factory.save(admissionDO);
+		
+		return AdmissionDetailVoAssembler.create(admissionDO);
+	}
+
+
+	public PatientShort getPatientShort(PatientRefVo patient)
+	{
+		if (patient == null || patient.getID_Patient() == null)
+			return null;
+		
+		return PatientShortAssembler.create((Patient) getDomainFactory().getDomainObject(Patient.class, patient.getID_Patient()));
+	}
+
+	
+	private CancellationTypeReasonVo getDeferredReason(CancelAppointmentReason reason)
+	{
+		String query = "SELECT reasonConfig FROM CancellationTypeReason AS reasonConfig left join reasonConfig.cancellationType as ctype where ctype.id = :PROVIDER_CANCELLATION and (reasonConfig.tCITheatre = 1  OR reasonConfig.outpatients  <> 1) and reasonConfig.cancellationReason.id = :REASON";
+		
+		List<?> results = getDomainFactory().find(query,new String[]{"PROVIDER_CANCELLATION", "REASON"},new Object[] {Status_Reason.HOSPITALCANCELLED.getID(),reason.getID()});
+		if (results == null || results.isEmpty())
+			return null;
+		
+		return CancellationTypeReasonVoAssembler.create((CancellationTypeReason) results.get(0));
+	}
+
+	public void cancelCurrentAdmission(PatientShort patientShort)throws StaleObjectException, ForeignKeyViolationException//WDEV-22327
+	{
+	if(patientShort == null)
+		throw new CodingRuntimeException("patientShort is null in method cancelCurrentAdmission");
+	
+	InpatientEpisodeMaintenance implIEM = (InpatientEpisodeMaintenance)getDomainImpl(InpatientEpisodeMaintenanceImpl.class);
+	implIEM.cancelCurrentAdmission(patientShort);		
+	}
+	
+	//WDEV-22326
+	public void updateAdmissionDetail(InpatientEpisodeRefVo inpatEpisodeRef, AdmissionDetailVo currentAdmission, AdmissionDetailForADTUpdateAdmissionVo admissionUpdatesVo) throws StaleObjectException
+	{		
+		if (currentAdmission == null)
+			throw new CodingRuntimeException("AdmissionDetailVo argument cannot be null in method updateAdmissionDetail()");
+		if (admissionUpdatesVo == null)
+			throw new CodingRuntimeException("AdmissionDetailForADTUpdateAdmissionVo argument cannot be null in method updateAdmissionDetail()");
+		if (inpatEpisodeRef == null)
+			throw new CodingRuntimeException("InpatientEpisodeRefVo argument cannot be null in method updateAdmissionDetail()");
+		
+		ADT impl = (ADT) getDomainImpl(ADTImpl.class);
+		DomainFactory dfact = getDomainFactory();
+		InpatientEpisode domainObjectInpat = (InpatientEpisode)dfact.getDomainObject(InpatientEpisode.class, inpatEpisodeRef.getID_InpatientEpisode());
+		
+		if (domainObjectInpat == null)
+			throw new StaleObjectException(domainObjectInpat);
+		
+		InpatientEpisodeVo inpatientRecord = InpatientEpisodeVoAssembler.create(domainObjectInpat);
+		if (inpatientRecord != null)
+		{	
+			inpatientRecord = updateInpatientRecord(inpatientRecord,currentAdmission,admissionUpdatesVo);
+			String[] err = inpatientRecord.validate();
+			if (err != null)
+			{
+				throw new CodingRuntimeException("InpatientEpisodeVo object has validation errors in method updateAdmissionDetail()");
+			}
+
+			impl.updateInpatient(inpatientRecord, null, false);
+
+			if (inpatientRecord.getPasEvent()!= null)
+			{
+				PASEvent domainObjectPASEvent = (PASEvent)dfact.getDomainObject(PASEvent.class, inpatientRecord.getPasEvent().getID_PASEvent());   
+				impl.triggerUpdateAdmissionEvent(new PASEventRefVo(domainObjectPASEvent.getId(), domainObjectPASEvent.getVersion()),MsgUpdateType.ADMISSION);//http://jira/browse/WDEV-22831
+			}
+		}
+				
+	}
+
+	private InpatientEpisodeVo updateInpatientRecord(InpatientEpisodeVo inpatientRecord, AdmissionDetailVo currentAdmission, AdmissionDetailForADTUpdateAdmissionVo admissionUpdatesVo)
+	{
+		inpatientRecord.setAdmissionDetailUpdates(admissionUpdatesVo);
+		inpatientRecord.setMethodOfAdmission(currentAdmission.getMethodOfAdmission());
+		inpatientRecord.setSourceOfAdmission(currentAdmission.getSourceOfAdmission());
+		inpatientRecord.setPatientStatus(currentAdmission.getPatientStatus());
+		inpatientRecord.setIsChaplainRequired(currentAdmission.getIsChaplainRequired());
+		inpatientRecord.setAdmissionDetails(currentAdmission.toAdmissionDetailRefVo());
+		
+		return inpatientRecord;
+	}
+	//WDEV-22326 -- end	
+
+	//WDEV-22448
+	public DeathDetailsVo getDeathDetails(PatientRefVo voPat)
+	{
+		if (voPat == null)
+			return null;
+		PDSDemographics demographicsImpl = (PDSDemographics) getDomainImpl(PDSDemographicsImpl.class);
+		return demographicsImpl.getDeathDetails(voPat);
+	}
+
+	@Override
+	public Boolean isCaseNoteFolderLocation(PatientRefVo patientRef)//WDEV-22851
+	{
+		if(patientRef== null)
+			return false;
+		
+		AdmitToWard	 impl =(AdmitToWard)getDomainImpl(AdmitToWardImpl.class);
+		return impl.isCaseNoteFolderLocation(patientRef);	
+	}
+	
+
+	public WardStayLiteVo getCurrentWardStay(InpatientEpisodeRefVo inpatientEpisode)
+	{
+		if (inpatientEpisode == null || inpatientEpisode.getID_InpatientEpisode() == null)
+			return null;
+		
+		String query = "SELECT wardStay FROM InpatientEpisode AS inpatEp LEFT JOIN inpatEp.wardStays AS wardStay WHERE inpatEp.id = :INPATIENT_EPISODE AND (wardStay.isRIE is null OR wardStay.isRIE = 0) ORDER BY wardStay.transferDateTime DESC";
+		
+		return WardStayLiteVoAssembler.create((WardStay) getDomainFactory().findFirst(query, "INPATIENT_EPISODE", inpatientEpisode.getID_InpatientEpisode()));
+	}
+
+
+	public ConsultantStayMinVo getCurrentConsultantStay(InpatientEpisodeRefVo inpatientEpisode)
+	{
+		if (inpatientEpisode == null || inpatientEpisode.getID_InpatientEpisode() == null)
+			return null;
+		
+		String query = "SELECT consStay FROM InpatientEpisode AS inpatEp LEFT JOIN inpatEp.consultantStays AS consStay WHERE inpatEp.id = :INPATIENT_EPISODE AND (consStay.isRIE is null OR consStay.isRIE = 0) ORDER BY consStay.transferDateTime DESC";
+		
+		return ConsultantStayMinVoAssembler.create((ConsultantStay) getDomainFactory().findFirst(query, "INPATIENT_EPISODE", inpatientEpisode.getID_InpatientEpisode()));
+	}
+}	

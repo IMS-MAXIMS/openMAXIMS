@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -61,12 +66,18 @@ import ims.domain.DomainFactory;
 import ims.framework.exceptions.CodingRuntimeException;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class EDischargeListImpl extends BaseEDischargeListImpl
 {
 
 	private static final long serialVersionUID = 1L;
+	
+	//Define the values for date interval Search 
+	private static final Integer DISCHARGE_DATE	= -1;
+	private static final Integer COMPLETED_DATE	= -2;
+	private static final Integer INITIATED_DAE	= -3;
 		
 	private LocationRefVo getHospital(ims.core.resource.place.vo.LocationRefVo voRef)
 	{
@@ -174,17 +185,18 @@ public class EDischargeListImpl extends BaseEDischargeListImpl
 			paramValues.add(searchCriteria.getStatus().getID());
 			andStr = " and ";
 		}
-		
-		if (searchCriteria.getFromDateIsNotNull()&& searchCriteria.getToDateIsNotNull())
+		//WDEV-18634 
+		if (Boolean.TRUE.equals(searchCriteria.getExcludeDischarged()))
 		{
 			conditions.append(andStr);
-			conditions.append("(dd.systemInformation.creationDateTime >= :fromDate and dd.systemInformation.creationDateTime < :toDate)");
-			paramNames.add("fromDate");
-			paramNames.add("toDate");
-			paramValues.add(searchCriteria.getFromDate().getDate());
-			paramValues.add(searchCriteria.getToDate().addDay(1).getDate());	
+			conditions.append("(dd.dateOfDischarge is null or dd.dateOfDischarge < :yesterday) ");
+			paramNames.add("yesterday");
+			long DAY_IN_MS = 1000 * 60 * 60 * 24;			
+			Date yesterday = new Date(System.currentTimeMillis() - (DAY_IN_MS));
+			paramValues.add(yesterday);	
 			andStr = " and ";
 		}
+		
 		boolean eocAdded = false;
 		if (searchCriteria.getResponsibleHCPIsNotNull())
 		{
@@ -205,6 +217,19 @@ public class EDischargeListImpl extends BaseEDischargeListImpl
 			conditions.append("eoc.specialty.id  = :Speciality_id");
 			paramNames.add("Speciality_id");
 			paramValues.add(searchCriteria.getSpecialty().getID());
+			andStr = " and ";
+		}
+		//WDEV-18634 
+		if (searchCriteria.getCurrentWardIsNotNull())
+		{
+			if (!eocAdded)
+				queryJoin.append("left join dd.careContext as cc left join cc.episodeOfCare as eoc " );
+			
+			queryJoin.append("left join eoc.careSpell as cs left join cs.patient as p ");
+			conditions.append(andStr);
+			conditions.append("p.ward.id = :CurrentWard_id");
+			paramNames.add("CurrentWard_id");
+			paramValues.add(searchCriteria.getCurrentWard().getID_Location());
 			andStr = " and ";
 		}
 		boolean drdAdded = false;
@@ -249,6 +274,37 @@ public class EDischargeListImpl extends BaseEDischargeListImpl
 			paramValues.add(getDomLookup(ChannelType.EMAIL));
 			andStr = " and ";			
 		}
+		//WDEV-18634 
+		if (searchCriteria.getFromDateIsNotNull()&& searchCriteria.getToDateIsNotNull())
+		{
+			conditions.append(andStr);
+			if (DISCHARGE_DATE.equals(searchCriteria.getSearchType()))
+			{
+				conditions.append("(dd.dateOfDischarge >= :fromDate and dd.dateOfDischarge < :toDate)");
+			}
+			
+			else if (COMPLETED_DATE.equals(searchCriteria.getSearchType()))
+			{
+				if (!drdAdded)
+				{
+					drdAdded = true;
+					queryJoin.append(" , DischargeReportDetail as drd ");
+				}
+				conditions.append("(drd.dateOfCompletion >= :fromDate and drd.dateOfCompletion < :toDate and drd.careContext = dd.careContext)");
+			}
+			
+			else if (INITIATED_DAE.equals(searchCriteria.getSearchType()))
+			{
+				conditions.append("(dd.systemInformation.creationDateTime >= :fromDate and dd.systemInformation.creationDateTime < :toDate)");
+			}
+				
+			paramNames.add("fromDate");
+			paramNames.add("toDate");
+			paramValues.add(searchCriteria.getFromDate().getDate());
+			paramValues.add(((ims.framework.utils.Date) searchCriteria.getToDate().clone()).addDay(1).getDate());	// WDEV-18634 
+			andStr = " and ";
+		}
+		
 		boolean mdAdded = false;
 		if (searchCriteria.getTTAIsNotNull())
 		{	

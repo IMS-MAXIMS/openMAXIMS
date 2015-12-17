@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -29,36 +34,58 @@ import ims.RefMan.domain.objects.PatientElectiveList;
 import ims.RefMan.domain.objects.TCIForPatientElectiveList;
 import ims.RefMan.domain.objects.TCIOutcomeForPatientElectiveList;
 import ims.RefMan.vo.CatsReferralRefVo;
+import ims.RefMan.vo.ContractServiceLocationsConfigVo;
 import ims.RefMan.vo.lookups.AdmissionOfferOutcome;
+import ims.RefMan.vo.lookups.ElectiveAdmissionType;
+import ims.RefMan.vo.lookups.ElectiveListStatusReason;
 import ims.RefMan.vo.lookups.ReferralApptStatus;
+import ims.RefMan.vo.lookups.ReferralUrgency;
 import ims.RefMan.vo.lookups.TCIStatusChangeReason;
 import ims.chooseandbook.vo.lookups.ActionRequestType;
 import ims.configuration.gen.ConfigFlag;
+import ims.core.clinical.domain.objects.Service;
+import ims.core.clinical.vo.ServiceRefVo;
+import ims.core.configuration.domain.objects.ContractConfig;
+import ims.core.configuration.vo.ContractConfigRefVo;
+import ims.core.helper.IEndOfCareCatsReferralHelper;
 import ims.core.resource.people.domain.objects.MemberOfStaff;
 import ims.core.resource.people.vo.MemberOfStaffRefVo;
 import ims.core.vo.MemberOfStaffShortVo;
 import ims.core.vo.domain.MemberOfStaffShortVoAssembler;
 import ims.core.vo.domain.PatientShortListVoAssembler;
+import ims.core.vo.lookups.SourceOfReferral;
+import ims.core.vo.lookups.TaxonomyType;
 import ims.core.vo.lookups.WaitingListStatus;
 import ims.domain.DomainFactory;
 import ims.domain.exceptions.DomainInterfaceException;
 import ims.domain.exceptions.StaleObjectException;
+import ims.domain.lookups.LookupInstance;
+import ims.framework.enumerations.SystemLogLevel;
+import ims.framework.enumerations.SystemLogType;
 import ims.framework.exceptions.CodingRuntimeException;
-import ims.framework.utils.Date;
 import ims.framework.utils.DateTime;
 import ims.pathways.configuration.domain.objects.RTTStatusPoint;
+import ims.pathways.configuration.domain.objects.Target;
+import ims.pathways.configuration.vo.TargetRefVo;
+import ims.pathways.domain.EncounterOutcomeConfiguration;
 import ims.pathways.domain.HL7PathwayIf;
 import ims.pathways.domain.base.impl.BaseAdminEventImpl;
 import ims.pathways.domain.objects.AdminEvent;
+import ims.pathways.domain.objects.PathwayClock;
 import ims.pathways.domain.objects.PathwayRTTStatus;
+import ims.pathways.domain.objects.PathwaysRTTClockImpact;
 import ims.pathways.domain.objects.PatientJourneyStatus;
 import ims.pathways.domain.objects.PatientPathwayJourney;
 import ims.pathways.domain.objects.RTTStatusEventMap;
+import ims.pathways.helper.IContractConfigurationHelper;
 import ims.pathways.helper.ISchedulingCancelAppt;
 import ims.pathways.vo.AdminEventVo;
+import ims.pathways.vo.EventLiteVo;
 import ims.pathways.vo.PathwayRTTStatusVo;
 import ims.pathways.vo.PatientEventVo;
+import ims.pathways.vo.RTTStatusEventMapRefVo;
 import ims.pathways.vo.RTTStatusEventMapVo;
+import ims.pathways.vo.RTTStatusEventMapVoCollection;
 import ims.pathways.vo.domain.AdminEventVoAssembler;
 import ims.pathways.vo.domain.PathwayRTTStatusVoAssembler;
 import ims.pathways.vo.domain.PatientJourneyVoAssembler;
@@ -67,18 +94,26 @@ import ims.pathways.vo.lookups.AdminEventOutcome;
 import ims.pathways.vo.lookups.EventEncounterType;
 import ims.pathways.vo.lookups.EventStatus;
 import ims.pathways.vo.lookups.JourneyStatus;
+import ims.pathways.vo.lookups.RTTClockImpactSource;
+import ims.pathways.vo.lookups.RTTClockState;
 import ims.scheduling.domain.objects.Appointment_Status;
 import ims.scheduling.domain.objects.Booking_Appointment;
+import ims.scheduling.domain.objects.FutureAppointmentDetails;
+import ims.scheduling.domain.objects.PendingEmergencyTheatre;
 import ims.scheduling.vo.Booking_AppointmentVo;
 import ims.scheduling.vo.domain.Booking_AppointmentVoAssembler;
+import ims.scheduling.vo.lookups.FutureAppointmentStatus;
+import ims.scheduling.vo.lookups.PendingEmergencyTheatreStatus;
 import ims.scheduling.vo.lookups.Status_Reason;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-public class AdminEventImpl extends BaseAdminEventImpl
+public class AdminEventImpl extends BaseAdminEventImpl implements IEndOfCareCatsReferralHelper
 {
 
 	private static final long serialVersionUID = 1L;
@@ -88,14 +123,13 @@ public class AdminEventImpl extends BaseAdminEventImpl
 		if (referralRef == null)
 			throw new CodingRuntimeException("Cannot get AdminEvents on null referralRef");
 
-		List list = getDomainFactory().find("select admEv from CatsReferral as cats left join cats.adminEvent as admEv where cats.id =:referralID", new String[] { "referralID" }, new Object[] { referralRef.getID_CatsReferral() });
+		List<?> list = getDomainFactory().find("select admEv from CatsReferral as cats left join cats.adminEvent as admEv where cats.id =:referralID", new String[] { "referralID" }, new Object[] { referralRef.getID_CatsReferral() });
 
 		return AdminEventVoAssembler.createAdminEventVoCollectionFromAdminEvent(list);
 	}
 
-	public AdminEventVo saveAdminEvent(AdminEventVo adminEventToSave, CatsReferralRefVo referralRef) throws DomainInterfaceException, StaleObjectException
+	public AdminEventVo saveAdminEvent(AdminEventVo adminEventToSave, CatsReferralRefVo referralRef) throws StaleObjectException, DomainInterfaceException
 	{
-		
 		if (adminEventToSave == null)
 			throw new CodingRuntimeException("Cannot save null Admin Event");
 
@@ -103,119 +137,97 @@ public class AdminEventImpl extends BaseAdminEventImpl
 
 		AdminEvent domainAdminEvent = AdminEventVoAssembler.extractAdminEvent(factory, adminEventToSave);
 		CatsReferral domReferral = (CatsReferral) factory.getDomainObject(CatsReferral.class, referralRef.getID_CatsReferral());
-
+		
+		PathwaysRTTClockImpact clockImpact = null;
+		PathwayClock initialClock = null;
+		PathwayRTTStatus initialRTTStatus = null;
+		boolean wasClockStarted = false;
+		boolean wasClockStopped = false;
+		LookupInstance initialClockState = getDomLookup(RTTClockState.NOT_PRESENT);
+		
+		if(Boolean.TRUE.equals(domReferral.isRTTClockImpact()))
+		{
+			//WDEV-23274
+//			initialClock = domReferral.getJourney().getCurrentClock();
+			initialClock = (domReferral != null && domReferral.getJourney() != null && domReferral.getJourney().getCurrentClock() != null) ? domReferral.getJourney().getCurrentClock() : null; //WDEV-23274
+			wasClockStarted = initialClock != null && initialClock.getStartDate() != null;
+			wasClockStopped = initialClock != null && initialClock.getStopDate() != null;
+			initialRTTStatus = domReferral.getCurrentRTTStatus();
+			initialClockState = getClockState(initialClock);
+		}
+		
 		if (domReferral.getAdminEvent() == null)
 		{
 			domReferral.setAdminEvent(new java.util.ArrayList());
 		}
 
 		domReferral.getAdminEvent().add(domainAdminEvent);
-
-		if (ConfigFlag.DOM.RTT_STATUS_POINT_FUNCTIONALITY.getValue() && Boolean.TRUE.equals(domReferral.isRTTClockImpact()))
+		
+		RTTStatusEventMapVo rttMap = null;
+		EventLiteVo endsPathwaysEvent = null;
+		
+		if (ConfigFlag.DOM.RTT_STATUS_POINT_FUNCTIONALITY.getValue())
 		{
-			RTTStatusEventMapVo rttMap = getRecordWithEncounterTypeAndInstance(domainAdminEvent);
-
+			rttMap = getRecordWithEncounterTypeAndInstance(domainAdminEvent);
+			
 			if (rttMap != null)
 			{
-				updateAndCreateRecords(factory, domReferral, rttMap);
-			}
-			else if (domReferral.getJourney() != null && domReferral.getJourney().getCurrentClock() != null && domReferral.getJourney().getCurrentClock().getCurrentRTTStatus() != null)
-			{
-
-				rttMap = getRTTStatusEventMap(domReferral.getJourney().getCurrentClock().getCurrentRTTStatus().getRTTStatus());
-
-				if (rttMap != null)
+				if(rttMap.getEvent() != null && Boolean.TRUE.equals(rttMap.getEvent().getEndsPathway()))
 				{
-					updateAndCreateRecords(factory, domReferral, rttMap);
+					endsPathwaysEvent = rttMap.getEvent();
+				}
+			}
+		}
+
+		if (ConfigFlag.DOM.RTT_STATUS_POINT_FUNCTIONALITY.getValue() && domReferral.getJourney() != null)
+		{
+			if (rttMap != null)
+			{
+				// WDEV-20636  If Decision to Treat and ecadDate is populated, this is to be the eventDateTime
+    			DateTime eventDateTime = new DateTime(domainAdminEvent.getRecordingDetails().getRecordingDateTime());
+    			
+    			if (domainAdminEvent.getEcadDate() != null)
+    				eventDateTime = new DateTime(domainAdminEvent.getEcadDate());
+    				
+    			updateAndCreateRecords(factory, domainAdminEvent, domReferral, rttMap, eventDateTime, endsPathwaysEvent);
+			}
+			
+			
+			if(Boolean.TRUE.equals(domReferral.isRTTClockImpact()))
+			{
+    			LookupInstance finalClockState = getClockState(domReferral.getJourney().getCurrentClock());
+    			// Determine the RTT Clock Impact of the Admin Event
+    			clockImpact = createRTTClockImpactRecord(initialClock, domReferral.getJourney().getCurrentClock(), initialRTTStatus, domReferral.getCurrentRTTStatus(), rttMap, domReferral.getJourney(), RTTClockImpactSource.ADMIN_EVENT, wasClockStarted, wasClockStopped, initialClockState, finalClockState, adminEventToSave.getOutcome().getText());
+
+			
+				RTTStatusEventMapRefVo map = null;
+				if (clockImpact != null && clockImpact.getOutcomeEvent() != null)
+				{
+					map = new RTTStatusEventMapRefVo(clockImpact.getOutcomeEvent().getId(), clockImpact.getOutcomeEvent().getVersion());
 				}
 			}
 		}
 		
+
+		
 		//WDEV-18359
 		if ((getDomLookup(AdminEventOutcome.PATIENT_REFUSES_TREATMENT)).equals(domainAdminEvent.getOutcome())
-			|| (getDomLookup(AdminEventOutcome.DECISION_NOT_TO_TREAT)).equals(domainAdminEvent.getOutcome()))//wdev-18467
+			|| (getDomLookup(AdminEventOutcome.DECISION_NOT_TO_TREAT)).equals(domainAdminEvent.getOutcome()) 
+			|| endsPathwaysEvent != null)//wdev-18467
 		{
 			
-			CATSReferralStatus currentReferralStatus = domReferral.getCurrentStatus();
-
-			if (currentReferralStatus == null || (currentReferralStatus != null && currentReferralStatus.getReferralStatus() != null && !currentReferralStatus.getReferralStatus().equals(getDomLookup(ReferralApptStatus.END_OF_CARE))))
-				currentReferralStatus = new CATSReferralStatus();
-
-			// set Referral Status
+			java.util.Date currentDate = (new ims.framework.utils.Date()).getDate();
 			MemberOfStaff domainMOS = null;
 			Object mosUser = getMosUser();
 
 			if (mosUser instanceof MemberOfStaffShortVo)
 			{
 				domainMOS = MemberOfStaffShortVoAssembler.extractMemberOfStaff(factory, ((MemberOfStaffShortVo) getMosUser()));
-			}
-
-			currentReferralStatus.setAuthoringUser(domainMOS);
-			currentReferralStatus.setReferralStatus(getDomLookup(ReferralApptStatus.END_OF_CARE));
-			currentReferralStatus.setStatusDateTime(new java.util.Date());
-
-			domReferral.setCurrentStatus(currentReferralStatus);
+			}		
 			
-			//update the Referral Status history
-			if (domReferral.getStatusHistory() == null)
-				domReferral.setStatusHistory(new HashSet());
-
-			domReferral.getStatusHistory().add(currentReferralStatus);
-
-			//setReferral EndOfCareDate to now 
-			domReferral.setEndOfCareDate(new java.util.Date());
-
-			Date currentDate = new Date();
-			
-			//update ConsultationAppt from CatsReferral
-			if (domReferral.getConsultationAppt() != null && getDomLookup(Status_Reason.BOOKED).equals(domReferral.getConsultationAppt().getApptStatus()) && currentDate.getDate().compareTo(domReferral.getConsultationAppt().getAppointmentDate()) <= 0)
-			{
+			//update Cats Referral Status to End Of Care and Updates Consultation Appointment
+			domReferral = endOfCareReferralAndUpdateConsultationAppointment(factory, endsPathwaysEvent, domReferral, currentDate, domainMOS);
 				
-				Booking_Appointment appt = domReferral.getConsultationAppt();
-				
-				appt.setApptStatus(getDomLookup(Status_Reason.CANCELLED));
-				appt.setApptStatusReas(getDomLookup(Status_Reason.PATIENTCANCELLED));
-
-				if (appt.getCurrentStatusRecord() != null)
-				{
-					Appointment_Status newStatus = new Appointment_Status();
-
-					newStatus = appt.getCurrentStatusRecord();
-
-					//populate old status fields to this new status
-					populateOldFields(appt, newStatus);
-					
-					newStatus.setStatus(getDomLookup(Status_Reason.CANCELLED));
-					newStatus.setStatusChangeDateTime(new java.util.Date());
-
-					// add this to Appointment Status History
-					if (appt.getApptStatusHistory() == null)
-						appt.setApptStatusHistory(new HashSet());
-
-					appt.setCurrentStatusRecord(newStatus);
-					appt.getApptStatusHistory().add(newStatus);
-				}
-
-				if (appt.getSessionSlot() != null)
-				{
-					appt.getSessionSlot().setStatus(getDomLookup(Status_Reason.SLOTOPENED));
-				}
-
-				Booking_AppointmentVo bookingApptVo = Booking_AppointmentVoAssembler.create(appt);
-				
-				try
-				{
-					Class<?> implClass = Class.forName("ims.scheduling.domain.impl.SessionAdminImpl");
-					ISchedulingCancelAppt sessionAdminImpl = (ISchedulingCancelAppt) getDomainImpl(implClass);
-					sessionAdminImpl.cancelAppt(bookingApptVo, ActionRequestType.NOTIFY_APPT_CANCEL, "Cancel Appt requested from Admin Event - Patient Refuses Treatment");
-				}
-				catch (ClassNotFoundException e)
-				{
-					//Log the exception in system, should be fine
-					e.printStackTrace();
-				}
-			}
-			
 			//update Appointments from CatsReferral
 			if (domReferral.getAppointments() != null)
 			{
@@ -225,47 +237,9 @@ public class AdminEventImpl extends BaseAdminEventImpl
 				{
 					Booking_Appointment doBookAppt = (Booking_Appointment) it.next();
 
-					if (doBookAppt != null && getDomLookup(Status_Reason.BOOKED).equals(doBookAppt.getApptStatus()) && currentDate.getDate().compareTo(doBookAppt.getAppointmentDate()) <= 0)
+					if (doBookAppt != null && getDomLookup(Status_Reason.BOOKED).equals(doBookAppt.getApptStatus()) && currentDate.compareTo(doBookAppt.getAppointmentDate()) <= 0)
 					{
-						doBookAppt.setApptStatus(getDomLookup(Status_Reason.CANCELLED));
-
-						if (doBookAppt.getCurrentStatusRecord() != null)
-						{
-							Appointment_Status newStatus = new Appointment_Status();
-
-							// populate old status fields to this new status
-							populateOldFields(doBookAppt, newStatus);
-
-							// populate the new values
-							newStatus.setStatus(getDomLookup(Status_Reason.CANCELLED));
-							newStatus.setStatusChangeDateTime(new java.util.Date());
-
-							// add this to Appointment Status History
-							if (doBookAppt.getApptStatusHistory() == null)
-								doBookAppt.setApptStatusHistory(new HashSet());
-
-							doBookAppt.setCurrentStatusRecord(newStatus);
-							doBookAppt.getApptStatusHistory().add(newStatus);
-						}
-
-						if (doBookAppt.getSessionSlot() != null)
-						{
-							doBookAppt.getSessionSlot().setStatus(getDomLookup(Status_Reason.SLOTOPENED));
-						}
-
-						Booking_AppointmentVo bookingApptVo = Booking_AppointmentVoAssembler.create(doBookAppt);
-
-						try
-						{
-							Class<?> implClass = Class.forName("ims.scheduling.domain.impl.SessionAdminImpl");
-							ISchedulingCancelAppt sessionAdminImpl = (ISchedulingCancelAppt) getDomainImpl(implClass);
-							sessionAdminImpl.cancelAppt(bookingApptVo, ActionRequestType.NOTIFY_APPT_CANCEL, "Cancel Appt requested from Admin Event - Patient Refuses Treatment");
-						}
-						catch (ClassNotFoundException e)
-						{
-							//Log the exception in system, should be fine
-							e.printStackTrace();
-						}
+						cancelAppointment(doBookAppt, endsPathwaysEvent);
 					}
 				}
 			}
@@ -287,6 +261,7 @@ public class AdminEventImpl extends BaseAdminEventImpl
 	        			//create new Elective List Status
 	        			ElectiveListStatus status = new ElectiveListStatus();
 	        			status.setElectiveListStatus(getDomLookup(WaitingListStatus.REMOVED));
+	        			status.setRemovalReason(getDomLookup(ElectiveListStatusReason.PATIENT_REMOVED_FOR_OTHER_REASONS));//WDEV-21994
 	        			status.setAuthoringUser(domainMOS);
 	        			status.setStatusDateTime(new java.util.Date());
 	        			
@@ -301,15 +276,39 @@ public class AdminEventImpl extends BaseAdminEventImpl
 	        			//update the future TCIs
 	        			TCIForPatientElectiveList doTCIDetails = doPatientElectiveList.getTCIDetails();
 	        			
-	        			if(doTCIDetails != null && doTCIDetails.isIsActive() &&  doTCIDetails.getTCIDate() != null && currentDate.getDate().compareTo(doTCIDetails.getTCIDate()) <= 0)
+	        			if(doTCIDetails != null && doTCIDetails.isIsActive() &&  doTCIDetails.getTCIDate() != null && currentDate.compareTo(doTCIDetails.getTCIDate()) <= 0)
 	        			{		
+	        				doPatientElectiveList.setTCIDetails(null);
 	        				//create a new Outcome
 	        				TCIOutcomeForPatientElectiveList newOutcome = new TCIOutcomeForPatientElectiveList();
-	        				newOutcome.setOutcome(getDomLookup(AdmissionOfferOutcome.ADMISSION_CANCELLED_BY_PATIENT_2));
+	        				
+	        				if(endsPathwaysEvent != null)
+	    					{
+	        					if(Status_Reason.HOSPITALCANCELLED.equals(endsPathwaysEvent.getCancellationType()))
+	        					{
+	            					if(currentDate.compareTo(doTCIDetails.getTCIDate()) < 0)
+	            					{
+	            						newOutcome.setOutcome(getDomLookup(AdmissionOfferOutcome.ADMISSION_CANCELLED_BY_HOSPITAL_BEFORE_6));
+	            					}
+	            					else if(currentDate.compareTo(doTCIDetails.getTCIDate()) == 0)
+	            					{
+	            						newOutcome.setOutcome(getDomLookup(AdmissionOfferOutcome.ADMISSION_CANCELLED_BY_HOSPITAL_ON_DAY_7));
+	            					}
+	        					}
+	        					else if(Status_Reason.PATIENTCANCELLED.equals(endsPathwaysEvent.getCancellationType()))
+	        					{
+	        						newOutcome.setOutcome(getDomLookup(AdmissionOfferOutcome.ADMISSION_CANCELLED_BY_PATIENT_2));
+	        					}
+	    					}
+	        				else
+	        				{
+	        					newOutcome.setOutcome(getDomLookup(AdmissionOfferOutcome.NOT_APPLICABLE_OR_REMOVED_ETC_9));
+	        				}
 	        				
 	        				newOutcome.setChangeBy(domainMOS);
 	        				newOutcome.setStatusDateTime(new java.util.Date());
 	        				newOutcome.setOutcomeReason(getDomLookup(TCIStatusChangeReason.CANCELLEDBYREMOVALOFELECTIVELISTRECORD));
+	        				newOutcome.setCancellationReason(endsPathwaysEvent != null ? getDomLookup(endsPathwaysEvent.getCancellationReason()) : null);
 	        			
 	        				doTCIDetails.setCurrentOutcome(newOutcome);
 	        				doTCIDetails.setIsActive(false);
@@ -320,6 +319,10 @@ public class AdminEventImpl extends BaseAdminEventImpl
 	        				
 	        				doTCIDetails.getOutcomeHistory().add(newOutcome);
 	        				
+	        				if(doPatientElectiveList.getTCIHistory() == null)
+	    						doPatientElectiveList.setTCIHistory(new ArrayList());
+	    					
+	    					doPatientElectiveList.getTCIHistory().add(doTCIDetails);
 	        			}
 	        			
 	        			factory.save(doPatientElectiveList);
@@ -327,12 +330,14 @@ public class AdminEventImpl extends BaseAdminEventImpl
 				}
 			}
 			
-			//Stop the current clock
+			markAsRemovedFutureAppointments(domReferral);
+			markAsRemovedPendingEmergencyTheatre(domReferral);
+			
+			// Stop the current clock
 			PatientPathwayJourney doJourney = domReferral.getJourney();
 			
 			if (doJourney != null)
 			{
-				
 				PatientJourneyStatus journeyStatus = new PatientJourneyStatus();
 				journeyStatus.setDateTime(new java.util.Date());
 				journeyStatus.setStatus(getDomLookup(JourneyStatus.ENDPATHWAYJOURNEY));
@@ -344,13 +349,47 @@ public class AdminEventImpl extends BaseAdminEventImpl
 				
 				if (doJourney.getCurrentClock() != null)
 				{
-					doJourney.getCurrentClock().setStopDate(new java.util.Date());
+					// WDEV-20636  If Decision to Treat and ecadDate is populated, this is to be the eventDateTime
+	    			DateTime eventDateTime = new DateTime(domainAdminEvent.getRecordingDetails().getRecordingDateTime());
+	    			if (domainAdminEvent.getEcadDate() != null)
+	    				eventDateTime = new DateTime(domainAdminEvent.getEcadDate());
+
+	    			doJourney.getCurrentClock().setStopDate(eventDateTime.getJavaDate());
 				}
 				
 				doJourney.setEndedOnDate(new java.util.Date());
 				doJourney.setCurrentStatus(journeyStatus);
 				doJourney.getStatusHistory().add(journeyStatus);
+				
+				RTTStatusEventMapRefVo map = null;
+				if (clockImpact != null && clockImpact.getOutcomeEvent() != null)
+				{
+					map = new RTTStatusEventMapRefVo(clockImpact.getOutcomeEvent().getId(), clockImpact.getOutcomeEvent().getVersion());
+				}
+				
+				if (clockImpact!=null)//WDEV-20034
+				{
+					LookupInstance finalClockState = getClockState(doJourney.getCurrentClock());
+					clockImpact = createRTTClockImpactRecord(initialClock, doJourney.getCurrentClock(), initialRTTStatus, clockImpact.getFinalRTTStatus(), map, doJourney, RTTClockImpactSource.ADMIN_EVENT, wasClockStarted, wasClockStopped, initialClockState, finalClockState, adminEventToSave.getOutcome().getText());
+				}
 			}
+		}
+		
+		
+		// After all the process is complete, if the ClockImpact is not null
+		// Recorded against CatsReferral and Clock records
+		if (clockImpact != null)
+		{
+			if (domReferral.getRTTClockImpacts() == null)
+				domReferral.setRTTClockImpacts(new ArrayList<PathwaysRTTClockImpact>());
+			
+			domReferral.getRTTClockImpacts().add(clockImpact);
+			domainAdminEvent.setRTTClockImpact(clockImpact);
+		}
+		
+		if (Boolean.TRUE.equals(domReferral.isRTTClockImpact()) && domReferral.getJourney() != null && domReferral.getJourney().getCurrentClock() != null)
+		{
+			domReferral.getReferralDetails().setEnd18WW(domReferral.getJourney().getCurrentClock().getTargetClockEnd());
 		}
 		
 		factory.save(domReferral);
@@ -358,11 +397,95 @@ public class AdminEventImpl extends BaseAdminEventImpl
 		return AdminEventVoAssembler.create(domainAdminEvent);
 	}
 	
+	private void markAsRemovedPendingEmergencyTheatre(CatsReferral catsReferral) throws StaleObjectException
+	{
+		if(catsReferral == null || catsReferral.getId() == null)
+			return;
+		
+		DomainFactory factory = getDomainFactory();
+		String query = "select pet from PendingEmergencyTheatre as pet left join pet.catsReferral as cats left join pet.currentStatus as cs where cats.id = :CatsId and cs.id = :StatusId ";
+		
+		List pendingEmergencyTheatreList = factory.find(query, new String[] {"CatsId", "StatusId"}, new Object[] {catsReferral.getId(), PendingEmergencyTheatreStatus.THEATRE_SLOT_TO_BE_BOOKED.getID()});
+		
+		if(pendingEmergencyTheatreList == null)
+			return;
+		
+		for(int i=0; i<pendingEmergencyTheatreList.size(); i++)
+		{
+			if(pendingEmergencyTheatreList.get(i) == null)
+				continue;
+			
+			PendingEmergencyTheatre record = (PendingEmergencyTheatre) pendingEmergencyTheatreList.get(i);
+			
+			record.setCurrentStatus(getDomLookup(PendingEmergencyTheatreStatus.REMOVED));
+			
+			factory.save(record);
+		}
+	}
+	
+	private void markAsRemovedFutureAppointments(CatsReferral catsReferral) throws StaleObjectException
+	{
+		if(catsReferral == null)
+			return;
+		
+		String query = "select fda from FutureAppointmentDetails as fda left join fda.referral as cats left join fda.currentStatus as fdacs left join fdacs.pendingStatus as ps where cats.id = :CatsId and ps.id = :StatusId";
+		DomainFactory factory = getDomainFactory();
+		
+		List futureAppts = factory.find(query, new String[] {"CatsId", "StatusId"}, new Object[] {catsReferral.getId(), FutureAppointmentStatus.OPEN.getID()});
+	
+		if(futureAppts == null || futureAppts.size() == 0)
+			return;
+		
+		Object mos = getMosUser();
+		MemberOfStaffShortVo mosUser = null;
+		
+		if(mos instanceof MemberOfStaffShortVo)
+		{
+			mosUser  = (MemberOfStaffShortVo) mos;
+		}
+		
+		for(int i = 0; i<futureAppts.size(); i++)
+		{
+			if(futureAppts.get(i) == null)
+				continue;
+			
+			FutureAppointmentDetails futureAppt = (FutureAppointmentDetails) futureAppts.get(i);
+			
+			ims.scheduling.domain.objects.FutureAppointmentStatus status = new ims.scheduling.domain.objects.FutureAppointmentStatus();
+			status.setPendingStatus(getDomLookup(FutureAppointmentStatus.REMOVED));
+			status.setStatusDateTime(new java.util.Date());
+			status.setAuthoringUser(MemberOfStaffShortVoAssembler.extractMemberOfStaff(factory, (MemberOfStaffShortVo) mosUser));
+			
+			futureAppt.setCurrentStatus(status);
+			
+			if(futureAppt.getStatusHistory() == null)
+			{
+				futureAppt.setStatusHistory(new ArrayList());
+			}
+			
+			futureAppt.getStatusHistory().add(status);
+			
+			factory.save(futureAppt);
+		}
+	}
+	
+	private LookupInstance getClockState(PathwayClock initialClock)
+	{
+		if (initialClock == null)
+			return getDomLookup(RTTClockState.NOT_PRESENT);
+
+		if (initialClock.getStopDate() != null)
+			return getDomLookup(RTTClockState.STOPPED);
+		
+		return getDomLookup(RTTClockState.STARTED);
+	}
+
 	private void populateOldFields(Booking_Appointment doBookAppt, Appointment_Status newStatus)
 	{
 		newStatus.setStatusReason(doBookAppt.getCurrentStatusRecord().getStatusReason());
 		newStatus.setApptDate(doBookAppt.getCurrentStatusRecord().getApptDate());
 		newStatus.setApptTime(doBookAppt.getCurrentStatusRecord().getApptTime());
+		newStatus.setStatusChangeDateTime(new Date());
 		newStatus.setPASClinic(doBookAppt.getCurrentStatusRecord().getPASClinic());
 		newStatus.setDoS(doBookAppt.getCurrentStatusRecord().getDoS());
 		newStatus.setPriority(doBookAppt.getCurrentStatusRecord().getPriority());
@@ -373,48 +496,182 @@ public class AdminEventImpl extends BaseAdminEventImpl
 		newStatus.setWasOutputtedToWeeklyReport(doBookAppt.getCurrentStatusRecord().isWasOutputtedToWeeklyReport());
 		newStatus.setWasOutputtedToMonthlyReport(doBookAppt.getCurrentStatusRecord().isWasOutputtedToMonthlyReport());
 		newStatus.setEarliestOfferedDate(doBookAppt.getCurrentStatusRecord().getEarliestOfferedDate());
+		//WDEV-23185
+		if (doBookAppt.getCurrentStatusRecord().getSession() != null)
+		{
+			newStatus.setSession(doBookAppt.getCurrentStatusRecord().getSession());
+		} //WDEV-23185
 	}
 
-	private void updateAndCreateRecords(DomainFactory factory, CatsReferral domReferral, RTTStatusEventMapVo rttMap) throws StaleObjectException, DomainInterfaceException
+	private void updateAndCreateRecords(DomainFactory factory, AdminEvent domainAdminEvent, CatsReferral domReferral, RTTStatusEventMapVo rttMap, DateTime eventDateTime, EventLiteVo endsPathwaysEvent) throws StaleObjectException, DomainInterfaceException
 	{
-		if (ConfigFlag.DOM.RTT_STATUS_POINT_FUNCTIONALITY.getValue() && Boolean.TRUE.equals(domReferral.isRTTClockImpact()) && rttMap.getTargetRTTStatusIsNotNull())
+		if (ConfigFlag.DOM.RTT_STATUS_POINT_FUNCTIONALITY.getValue() && rttMap.getTargetRTTStatusIsNotNull())
 		{
-			PathwayRTTStatusVo pathwayRTTStatus = new PathwayRTTStatusVo();
-			pathwayRTTStatus.setRTTStatus(rttMap.getTargetRTTStatus());
-			pathwayRTTStatus.setStatusBy((MemberOfStaffRefVo) getMosUser());
-			pathwayRTTStatus.setStatusDateTime(new DateTime());
+    		if (rttMap.getEvent() != null)
+    		{
+    			PatientEventVo patEvent = new PatientEventVo();
+    			patEvent.setPatient(PatientShortListVoAssembler.create(domReferral.getPatient()));
+    			patEvent.setEvent(rttMap.getEvent());
+    			patEvent.setEventDateTime(eventDateTime);
+    			patEvent.setEventStatus(EventStatus.ACTIVE);
+    			patEvent.setJourney(PatientJourneyVoAssembler.create(domReferral.getJourney()));
+    
+    			HL7PathwayIf impl = (HL7PathwayIf) getDomainImpl(HL7PathwayIfImpl.class);
+    			PatientEventVo patientEvent = impl.instantiatePatientEvent(patEvent);
+    			
+    			// Refresh Patient Journey after instantiating the Patient Event
+    			domReferral.setJourney(PatientJourneyVoAssembler.extractPatientPathwayJourney(factory, patientEvent.getJourney()));
+    		}
 
-			PathwayRTTStatus domainRttStatus = PathwayRTTStatusVoAssembler.extractPathwayRTTStatus(factory, pathwayRTTStatus);
+    		
+    		// WDEV-20636 - If Decision to Treat, and this is a cancer referral, we want to instantiate the 31 day decision to treat target
+    		// regardless of cancer referral, we may need to start a new clock
+    		if (domainAdminEvent.getOutcome().getId() == AdminEventOutcome.DECISION_TO_TREAT.getID() ||
+    				domainAdminEvent.getOutcome().getId() == AdminEventOutcome.DECISION_TO_TREAT_ACTIVE_MONITORING.getID())
+    		{
+    			// Check to see if a new clock is required - Decision to treat should start a new clock
+    			PathwayClock finalClock = domReferral.getJourney().getCurrentClock();
+    			if ((finalClock == null || finalClock.getStopDate() != null) && domReferral.isRTTClockImpact() != null && domReferral.isRTTClockImpact().booleanValue() == true)
+    			{
+    				finalClock = new PathwayClock();
 
-			if (domReferral.getJourney() != null && domReferral.getJourney().getCurrentClock() != null)
+    				//WDEV-23949 - finalClock.setStartDate(domainAdminEvent.getEcadDate() != null ? domainAdminEvent.getEcadDate():domainAdminEvent.getSystemInformation().getCreationDateTime());
+    				finalClock.setStartDate(eventDateTime.getJavaDate());
+    				
+    				finalClock.setStopDate(null);
+    				finalClock.setTargetClockEnd(getTargetClockEnd(finalClock.getStartDate(), domReferral));
+    				
+    				domReferral.getReferralDetails().setEnd18WW(finalClock.getTargetClockEnd());
+
+    				int nextClockId=0;
+    				if (domReferral.getRTTClockImpacts() != null && domReferral.getRTTClockImpacts().size() > 0)
+    					nextClockId=domReferral.getRTTClockImpacts().size();
+    				finalClock.setExtClockId("MAXIMS_" + (nextClockId + 1));
+    				finalClock.setExtClockName("MaximsClock_" + (nextClockId + 1));
+
+    				if (domReferral.getJourney().getClockHistory() == null)
+    					domReferral.getJourney().setClockHistory(new HashSet());
+
+    				domReferral.getJourney().setCurrentClock(finalClock);
+    				domReferral.getJourney().getClockHistory().add(finalClock);
+    				
+    			}
+
+    			if (domainAdminEvent.getEcadDate() != null)  // ie its a cancer Referral as this is only populated for these referrals
+    			{
+    				// It's possible that this target is already there due to an event being instantiated from configuration
+    				// Find the Target 31Day
+    				HL7PathwayIf hl7Impl = (HL7PathwayIf) getDomainImpl(HL7PathwayIfImpl.class);
+    				try 
+    				{
+    					TargetRefVo target = hl7Impl.getTargetByTaxonomyMap(TaxonomyType.PAS, "DTT31");  // WDEV-20636 new target to be instantiated on Decision to Treat
+    					if (target != null)
+    					{
+    						//WDEV-21367
+//    						if (domReferral.getJourney().getCurrentClock() != null)
+//    							factory.refresh(domReferral.getJourney().getCurrentClock());
+
+    						// WDEV-23949
+    						hl7Impl.bringTargetIntoScopeWithoutEvent(domReferral.getJourney(), null, (Target) getDomainFactory().getDomainObject(Target.class, target.getID_Target()), eventDateTime, 31);
+//    						hl7Impl.bringTargetIntoScopeWithoutEvent(target, new PatientPathwayJourneyRefVo(domReferral.getJourney().getId(), domReferral.getJourney().getVersion()), new ims.framework.utils.Date(domainAdminEvent.getEcadDate()));
+    					}
+    					
+    				}
+    				catch (DomainInterfaceException e) 
+    				{
+    					super.createSystemLogEntry(SystemLogType.APPLICATION, SystemLogLevel.WARNING, e.getMessage());
+    				}
+    			}
+    		}
+    		
+    		if(Boolean.TRUE.equals(domReferral.isRTTClockImpact()))
 			{
-				domReferral.getJourney().getCurrentClock().setCurrentRTTStatus(domainRttStatus);
-
-				if (domReferral.getJourney().getCurrentClock().getRTTStatusHistory() == null)
-				{
-					domReferral.getJourney().getCurrentClock().setRTTStatusHistory(new java.util.ArrayList());
-				}
-
-				domReferral.getJourney().getCurrentClock().getRTTStatusHistory().add(domainRttStatus);
-			}
-			
-			domReferral.setCurrentRTTStatus(domainRttStatus);
-
-			if (rttMap.getEvent() != null)
-			{
-				PatientEventVo patEvent = new PatientEventVo();
-				patEvent.setPatient(PatientShortListVoAssembler.create(domReferral.getPatient()));
-				patEvent.setEvent(rttMap.getEvent());
-				patEvent.setEventDateTime(new DateTime());
-				patEvent.setEventStatus(EventStatus.ACTIVE);
-				patEvent.setJourney(PatientJourneyVoAssembler.create(domReferral.getJourney()));
-
-				HL7PathwayIf impl = (HL7PathwayIf) getDomainImpl(HL7PathwayIfImpl.class);
-				impl.instantiatePatientEvent(patEvent);
+    			PathwayRTTStatusVo pathwayRTTStatus = new PathwayRTTStatusVo();
+    			pathwayRTTStatus.setRTTStatus(rttMap.getTargetRTTStatus());
+    			pathwayRTTStatus.setStatusBy((MemberOfStaffRefVo) getMosUser());
+    			pathwayRTTStatus.setStatusDateTime(eventDateTime != null ? eventDateTime : new DateTime());
+    			pathwayRTTStatus.setSetting(getSettingValue(domainAdminEvent, endsPathwaysEvent));
+    
+    			PathwayRTTStatus domainRttStatus = PathwayRTTStatusVoAssembler.extractPathwayRTTStatus(factory, pathwayRTTStatus);
+    
+    			if (domReferral.getJourney() != null && domReferral.getJourney().getCurrentClock() != null)
+    			{
+    				factory.save(domainRttStatus);
+    				domReferral.getJourney().getCurrentClock().setCurrentRTTStatus(domainRttStatus);
+    
+    				if (domReferral.getJourney().getCurrentClock().getRTTStatusHistory() == null)
+    				{
+    					domReferral.getJourney().getCurrentClock().setRTTStatusHistory(new java.util.ArrayList());
+    				}
+    
+    				domReferral.getJourney().getCurrentClock().getRTTStatusHistory().add(domainRttStatus);
+    			}
+    			
+    			domReferral.setCurrentRTTStatus(domainRttStatus);
 			}
 		}
 	}
 
+	
+	private String getSettingValue(AdminEvent domainAdminEvent, EventLiteVo endsPathwaysEvent)
+	{
+		if(domainAdminEvent == null)
+			return null;
+		
+		if(Boolean.TRUE.equals(domainAdminEvent.isAdmittedStop()))
+			return "I";
+		
+		return "O";
+	}
+
+	private Date getTargetClockEnd(Date date, CatsReferral domReferral)
+	{
+		Date startDate = date != null ? date : new Date();
+
+		int daysToRttBreachDate = 0;
+
+		if (domReferral != null && domReferral.getReferralDetails() != null)
+		{
+			ContractServiceLocationsConfigVo contrServiceLocationConf = getContractServiceLocConf(domReferral.getContract(), domReferral.getReferralDetails().getService());
+
+			if (contrServiceLocationConf != null && contrServiceLocationConf.getDaysToRTTBreachDate() != null)
+			{
+				daysToRttBreachDate = contrServiceLocationConf.getDaysToRTTBreachDate();
+			}
+			else if (domReferral.getContract() != null)
+			{
+				daysToRttBreachDate = domReferral.getContract().getDaysToRTTBreachDate();
+			}
+		}
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(startDate);
+		calendar.add(Calendar.DATE, daysToRttBreachDate);
+		
+		return calendar.getTime();
+	}
+
+	
+	private ContractServiceLocationsConfigVo getContractServiceLocConf(ContractConfig contract, Service service)
+	{
+		try
+		{
+			Class<?> contractImpl = Class.forName("ims.RefMan.domain.impl.ContractConfigurationImpl");
+			IContractConfigurationHelper contractConfigImpl = (IContractConfigurationHelper) getDomainImpl(contractImpl);
+			
+			ContractConfigRefVo contractConfig = contract != null ? new ContractConfigRefVo(contract.getId(), contract.getVersion()) : null;
+			ServiceRefVo serviceConfig = service != null ? new ServiceRefVo(service.getId(), service.getVersion()) : null;
+			
+			return contractConfigImpl.getContractServiceLocConfByContractService(contractConfig, serviceConfig);
+		}
+		catch (ClassNotFoundException exception)
+		{
+			createSystemLogEntry(SystemLogType.APPLICATION, SystemLogLevel.INFORMATION, "Class 'ContractConfigurationImpl' was not found when attempting to record RTT Clock Impact of the AppointmentOutcome. This functionality might not be available in the application.");
+			return null;
+		}
+	}
+
+	
 	private RTTStatusEventMapVo getRTTStatusEventMap(RTTStatusPoint rttStatusPoint)
 	{
 		if (rttStatusPoint == null)
@@ -447,5 +704,239 @@ public class AdminEventImpl extends BaseAdminEventImpl
 
 		return null;
 	}
+
+	//WDEV-18468
+	public Boolean areFutureTCIsForReferral(CatsReferralRefVo referralRef)
+	{
+		if (referralRef == null)
+			throw new CodingRuntimeException("Cannot get PatientElectiveList on null referralRef");
+		
+		DomainFactory factory = getDomainFactory();
+		
+		String patientElectiveListQuery = "select count(electiveList.id) from PatientElectiveList as electiveList left join electiveList.referral as cats left join electiveList.tCIDetails as tciDet left join electiveList.electiveAdmissionType as admType where cats.id = :CatsId and tciDet.isActive = 1 and tciDet.tCIDate > :Date and (admType.id = :WaitingListId or admType.id = :BookedListId) ";
+		List<?> electiveList = factory.find(patientElectiveListQuery, new String[] {"CatsId", "Date", "WaitingListId", "BookedListId"}, new Object[] {referralRef.getID_CatsReferral(), new java.util.Date(), ElectiveAdmissionType.ELECTIVE_TYPE11.getID(), ElectiveAdmissionType.BOOKED_TYPE12.getID()});
+		
+
+		if(electiveList != null && electiveList.size() > 0)
+			 if (((Long) electiveList.get(0)).intValue() > 0) 
+			 return true;
+		
+		return false;
+	}
+	
+	
+	public PathwaysRTTClockImpact createRTTClockImpactRecord(PathwayClock initialClock,
+                                                    			PathwayClock pathwayClock, 
+                                                    			PathwayRTTStatus initialRTTStatus, 
+                                                    			PathwayRTTStatus pathwayRTTStatus, 
+                                                    			RTTStatusEventMapRefVo eventMapRefVo,
+                                                    			PatientPathwayJourney patientPathwayJourney,
+                                                    			RTTClockImpactSource source, boolean wasClockStarted, boolean wasClockStopped,
+                                                    			LookupInstance initialClockState, LookupInstance finalClockState, String outcomeDescription)
+	{
+		PathwaysRTTClockImpact clockImpact = new PathwaysRTTClockImpact();
+		clockImpact.setInitialClock(initialClock);
+		clockImpact.setFinalClock(pathwayClock);
+		clockImpact.setInitialRTTStatus(initialRTTStatus);
+		clockImpact.setFinalRTTStatus(pathwayRTTStatus);
+		clockImpact.setInitialClockState(initialClockState);
+		clockImpact.setFinalClockState(finalClockState);
+		clockImpact.setOutcomeDescription(outcomeDescription);
+		
+		
+		if (eventMapRefVo != null && eventMapRefVo.getID_RTTStatusEventMap() != null)
+		{
+			clockImpact.setOutcomeEvent((RTTStatusEventMap) getDomainFactory().getDomainObject(RTTStatusEventMap.class, eventMapRefVo.getID_RTTStatusEventMap()));
+		}
+		else
+		{
+			clockImpact.setOutcomeEvent(null);
+		}
+		
+		clockImpact.setJourney(patientPathwayJourney);
+		clockImpact.setSource(getDomLookup(source));
+
+		clockImpact.setClockStarted(Boolean.FALSE);
+		clockImpact.setClockStopped(Boolean.FALSE);
+
+
+		// Case 1 - If there was no clock initially and one clock was created
+		if (initialClock == null && pathwayClock != null)
+		{
+			// New clock has a start date - mark the ClockImpact
+			if (pathwayClock.getStartDate() != null)
+				clockImpact.setClockStarted(Boolean.TRUE);
+
+			if (pathwayClock.getStopDate() != null)
+				clockImpact.setClockStopped(Boolean.TRUE);
+		}
+
+
+		// Case 2 - If there was a clock initially and there is no clock now
+		if (initialClock != null && pathwayClock == null)
+		{
+			if (wasClockStopped == false)
+				clockImpact.setClockStopped(Boolean.TRUE);
+		}
+
+
+		// Case 3 - If there was an initial clock and a clock is present now
+		if (initialClock != null && pathwayClock != null)
+		{
+			// Case 3.1 - Initial and current clock are the same one
+			if (initialClock.getId() == pathwayClock.getId())
+			{
+				if (!wasClockStopped && pathwayClock.getStopDate() != null)
+					clockImpact.setClockStopped(Boolean.TRUE);
+
+				if (wasClockStopped && pathwayClock.getStopDate() == null)
+					clockImpact.setClockStarted(Boolean.TRUE);
+
+				if (!wasClockStarted && pathwayClock.getStartDate() != null)
+					clockImpact.setClockStarted(Boolean.TRUE);
+			}
+
+			// Case 3.2 - Initial and current clock are not the same one
+			if (initialClock.getId() != pathwayClock.getId())
+			{
+				if (!wasClockStopped)
+					clockImpact.setClockStopped(Boolean.TRUE);
+
+				if (pathwayClock.getStartDate() != null)
+					clockImpact.setClockStarted(Boolean.TRUE);
+
+				if (pathwayClock.getStopDate() != null)
+					clockImpact.setClockStopped(Boolean.TRUE);
+			}
+		}
+
+		return clockImpact;
+	}
+	//WDEV-20060
+	
+	public CatsReferral endOfCareReferralAndUpdateConsultationAppointment(DomainFactory factory, CatsReferral catsDOToUpdate, java.util.Date currentDate, MemberOfStaff domainMOS) throws StaleObjectException, DomainInterfaceException
+	{
+		return endOfCareReferralAndUpdateConsultationAppointment(factory, null, catsDOToUpdate, currentDate, domainMOS);
+	}
+	
+	private CatsReferral endOfCareReferralAndUpdateConsultationAppointment(DomainFactory factory, EventLiteVo endsPathwaysEvent, CatsReferral catsDOToUpdate, java.util.Date currentDate, MemberOfStaff domainMOS) throws StaleObjectException, DomainInterfaceException
+	{		
+		if (catsDOToUpdate == null)
+			return null;
+
+		CATSReferralStatus currentReferralStatus = catsDOToUpdate.getCurrentStatus();
+
+		if (currentReferralStatus == null || (currentReferralStatus != null && currentReferralStatus.getReferralStatus() != null && !currentReferralStatus.getReferralStatus().equals(getDomLookup(ReferralApptStatus.END_OF_CARE))))
+			currentReferralStatus = new CATSReferralStatus();
+
+		// set Referral Status
+		
+		currentReferralStatus.setAuthoringUser(domainMOS);
+		currentReferralStatus.setReferralStatus(getDomLookup(ReferralApptStatus.END_OF_CARE));
+		currentReferralStatus.setStatusDateTime(new java.util.Date());
+
+		catsDOToUpdate.setCurrentStatus(currentReferralStatus);
+
+		//update the Referral Status history
+		if (catsDOToUpdate.getStatusHistory() == null)
+			catsDOToUpdate.setStatusHistory(new HashSet());
+
+		catsDOToUpdate.getStatusHistory().add(currentReferralStatus);
+
+		//setReferral EndOfCareDate to now 
+		catsDOToUpdate.setEndOfCareDate(new java.util.Date());
+
+		//update ConsultationAppt from CatsReferral
+		if (catsDOToUpdate.getConsultationAppt() != null && getDomLookup(Status_Reason.BOOKED).equals(catsDOToUpdate.getConsultationAppt().getApptStatus()) && currentDate.compareTo(catsDOToUpdate.getConsultationAppt().getAppointmentDate()) <= 0)
+		{
+
+			Booking_Appointment appt = catsDOToUpdate.getConsultationAppt();
+
+			cancelAppointment(appt, endsPathwaysEvent);
+		}
+
+		return catsDOToUpdate;
+	}
+
+	private void cancelAppointment(Booking_Appointment appt, EventLiteVo endsPathwaysEvent) throws DomainInterfaceException, StaleObjectException
+	{
+		if(appt == null)
+			return;
+		
+		appt.setApptStatus(getDomLookup(Status_Reason.CANCELLED));
+		appt.setApptStatusReas(endsPathwaysEvent != null ? getDomLookup(endsPathwaysEvent.getCancellationType()) : null);
+
+		if (appt.getCurrentStatusRecord() != null)
+		{
+			Appointment_Status newStatus = new Appointment_Status();
+
+			newStatus = appt.getCurrentStatusRecord();
+
+			//populate old status fields to this new status
+			populateOldFields(appt, newStatus);
+
+			newStatus.setStatus(getDomLookup(Status_Reason.CANCELLED));
+			newStatus.setCancellationReason(endsPathwaysEvent != null ? getDomLookup(endsPathwaysEvent.getCancellationReason()) : null);
+			newStatus.setStatusReason(endsPathwaysEvent != null ? getDomLookup(endsPathwaysEvent.getCancellationType()) : null);
+			newStatus.setStatusChangeDateTime(new java.util.Date());
+
+			// add this to Appointment Status History
+			if (appt.getApptStatusHistory() == null)
+				appt.setApptStatusHistory(new HashSet());
+
+			appt.setCurrentStatusRecord(newStatus);
+			appt.getApptStatusHistory().add(newStatus);
+		}
+
+		Booking_AppointmentVo bookingApptVo = Booking_AppointmentVoAssembler.create(appt);
+
+		if (bookingApptVo.getSessionSlot() != null)
+		{
+			bookingApptVo.getSessionSlot().setStatus(bookingApptVo.getSession().getAppropiateSessionSlotStatus()); //WDEV-18940
+		}
+
+		try
+		{
+			Class<?> implClass = Class.forName("ims.scheduling.domain.impl.SessionAdminImpl");
+			ISchedulingCancelAppt sessionAdminImpl = (ISchedulingCancelAppt) getDomainImpl(implClass);
+			sessionAdminImpl.cancelAppt(bookingApptVo, ActionRequestType.NOTIFY_APPT_CANCEL, "Cancel Appt requested from Admin Event - Patient Refuses Treatment");
+		}
+		catch (ClassNotFoundException e)
+		{
+			//Log the exception in system, should be fine
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * WDEV-20636
+	 * isCancerReferral method will return true if urgency is 2WW or Consultant Upgrade
+	 * or if source of referral is National Screening for Cancer
+	 */
+	public Boolean isCancerReferral(CatsReferralRefVo referral) 
+	{
+		DomainFactory factory = getDomainFactory();
+		
+		CatsReferral domRef = (CatsReferral)factory.getDomainObject(CatsReferral.class, referral.getID_CatsReferral());
+		
+		if (domRef != null && (domRef.getUrgency() != null  && domRef.getUrgency().getId() == ReferralUrgency.TWO_WEEK_WAIT.getID())
+						||  (domRef.getUrgency() != null  && domRef.getUrgency().getId() == ReferralUrgency.CONSULTANT_UPGRADE.getID())
+						||	(domRef.getReferralDetails()  != null && domRef.getReferralDetails().getReferrerType() != null 
+						&& domRef.getReferralDetails().getReferrerType().getId() == SourceOfReferral.NATIONAL_SCREENING.getID()))
+		{
+			return true;
+		}
+					
+		return false;
+	}
+
+	//WDEV-22517
+	public RTTStatusEventMapVoCollection getAdminEventOutcomeCollConfigured()
+	{
+		EncounterOutcomeConfiguration impl = (EncounterOutcomeConfiguration)getDomainImpl(EncounterOutcomeConfigurationImpl.class);
+		return impl.listRTTEventsMapped(EventEncounterType.ADMIN_EVENT, null, null, true, null);
+	}
+
+	
 
 }

@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping
+	PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated: 16/04/2014, 12:34 -->
+<hibernate-mapping>
+	<class name="ims.oncology.domain.objects.CancerMDTMeeting" table="onco_cancermdtmeeti" lazy="true" discriminator-value="null" >
+		<id name="id" access="field" type="integer" unsaved-value="null">
+			<!-- workaround for DDL creation (works for Sybase only) -->
+			<column name="id" sql-type="numeric(10,0)"/>
+			<generator class="native"/>
+		</id>
+		<discriminator not-null="false" length="4"/>
+		<version name="version" column="vstp" access="field"/>
+		<property name="isRIE" type="boolean" access="field" update="true">
+			<column name="rie"  not-null="false" unique="false"  />
+		</property>
+		<component name="systemInformation" class="ims.domain.SystemInformation"  access="field" >
+			<property name="creationDateTime" type="timestamp" access="field">
+				<column name="sys_creation_datetime" />
+			</property>
+			<property name="lastUpdateDateTime" type="timestamp" access="field">
+				<column name="sys_lastupdate_datetime" />
+			</property>
+			<property name="creationUser" type="string" access="field">
+				<column name="sys_creation_user" length="30" />
+			</property>
+			<property name="lastUpdateUser" type="string" access="field">
+				<column name="sys_lastupdate_user" length="30" />
+			</property>
+		</component>
+<!-- debug: hibernateClassContent -->
+<!-- debug: careContext -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="careContext" class="ims.core.admin.domain.objects.CareContext" unique="true" foreign-key="cancermdtmeeti_carecontex_fk" access="field" cascade="save-update">
+			<column name="carecontex" sql-type="numeric(10,0)" not-null="false" unique="false"  index='ctx_idx' />
+		</many-to-one>
+<!-- debug: clinicalContact -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="clinicalContact" class="ims.core.admin.domain.objects.ClinicalContact" unique="true" foreign-key="cancermdtmeeti_clinicalco_fk" access="field" cascade="save-update">
+			<column name="clinicalco" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: date -->
+<!-- debug: coMorbidityAssessment -->
+<!-- debug: notes -->
+<!-- debug: patientPerformanceStatus -->
+<!-- debug: mDTLocation -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="mDTLocation" class="ims.core.resource.place.domain.objects.Location" unique="true" foreign-key="cancermdtmeeti_mdtlocatio_fk" access="field" cascade="save-update">
+			<column name="mdtlocatio" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: associatedCarePlan -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="associatedCarePlan" class="ims.oncology.domain.objects.CancerCarePlan" unique="true" foreign-key="cancermdtmeeti_associated_fk" access="field" cascade="save-update">
+			<column name="associated" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: invitedHCP -->
+<!-- debug: field.IsAssociation : true -->
+<!-- debug: IsAggregation : true -->
+<!-- debug: IsComposition : true -->
+		<!-- one to many -->
+		<set name="invitedHCP" lazy="true" access="field" cascade="all-delete-orphan">
+			<key foreign-key="cancermdtmeeti_invitedhcp_fk">
+				<column name="onco_cancermdtmeeti_invitedhcp" sql-type="numeric(10,0)" />
+			</key>
+			
+			<one-to-many class="ims.oncology.domain.objects.InvitedHCP" />
+		</set>
+<!-- debug: othersPresent -->
+<!-- debug: IsCollection : true -->
+		<list name="othersPresent" table="onco_cancermdtmeeti_otherspres" lazy="true" access="field" >
+			<key foreign-key="cancermdtmeeti_otherspres_ofk">
+				<column name="owner" sql-type="numeric(10,0)" />
+			</key>
+			<index column="idx"/>
+			<element column="value" type="string"/>
+		</list>
+<!-- debug: episodeOfCare -->
+<!-- debug: field.IsAssociation : true -->
+		<!-- A one-to-one relationship using a foreign-key is mapping as a
+			many-to-one with a uniqueness contraint -->
+		<many-to-one name="episodeOfCare" class="ims.core.admin.domain.objects.EpisodeOfCare" unique="true" foreign-key="cancermdtmeeti_episodeofc_fk" access="field" cascade="save-update">
+			<column name="episodeofc" sql-type="numeric(10,0)" not-null="true" unique="false"  index='epi_idx' />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="date" type="date" access="field" update="true">
+			<column name="c_da"  not-null="true" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="coMorbidityAssessment" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_comorbidit" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: !IsLookup -->
+		<property name="notes" type="string" access="field" update="true" > 
+			<column name="notes" length="1000"  not-null="false" unique="false"  />
+		</property>
+<!-- debug: !IsAssociation && !IsCollection -->
+<!-- debug: IsLookup -->
+		<many-to-one name="patientPerformanceStatus" class="ims.domain.lookups.LookupInstance" access="field">
+			<column name="lkp_patientper" sql-type="numeric(10,0)" not-null="false" unique="false"   />
+		</many-to-one>
+	</class>
+</hibernate-mapping>

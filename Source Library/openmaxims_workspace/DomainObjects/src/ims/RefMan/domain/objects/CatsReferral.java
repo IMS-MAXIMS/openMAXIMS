@@ -1,9 +1,33 @@
+//#############################################################################
+//#                                                                           #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
+//#                                                                           #
+//#  This program is free software: you can redistribute it and/or modify     #
+//#  it under the terms of the GNU Affero General Public License as           #
+//#  published by the Free Software Foundation, either version 3 of the       #
+//#  License, or (at your option) any later version.                          # 
+//#                                                                           #
+//#  This program is distributed in the hope that it will be useful,          #
+//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+//#  GNU Affero General Public License for more details.                      #
+//#                                                                           #
+//#  You should have received a copy of the GNU Affero General Public License #
+//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
+//#############################################################################
+//#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.RefMan.domain.objects;
@@ -68,6 +92,8 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 	  * Collection of ims.RefMan.domain.objects.AppointmentCallAttempts.
 	  */
 	private java.util.Set callAttempts;
+	/** WDEV-20263 Episode of Care */
+	private ims.core.admin.domain.objects.EpisodeOfCare episodeOfCare;
 	/** Care Context */
 	private ims.core.admin.domain.objects.CareContext careContext;
 	/** C&B Referral */
@@ -124,10 +150,6 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 	private Boolean wasPatientProviderCancellationLetterSent;
 	/** Requires Discharge Report */
 	private Boolean requiresDischargeRep;
-	/** There are DNA appointments requiring revioew */
-	private Boolean hasDNAApptsForReview;
-	/** There are Cancelled appointments requiring revioew */
-	private Boolean hasCancelledApptsForReview;
 	/** is Secondary Report Required */
 	private ims.domain.lookups.LookupInstance isSecondaryReportRequired;
 	/** Was the Further Management Details Reviewed */
@@ -170,7 +192,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 	private Boolean isOnwardReferralTriage;
 	/** Nearest Treatment Centre Location */
 	private ims.core.resource.place.domain.objects.Location nearestTreatmentCentre;
-	/** Is there an OP Procedure awaiting appointment’ */
+	/** Is there an OP Procedure awaiting appointmentâ€™ */
 	private Boolean hasOPProcAwaitingAppt;
 	/** Urgency */
 	private ims.domain.lookups.LookupInstance urgency;
@@ -206,6 +228,39 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 	private ims.RefMan.domain.objects.ReferralTransfer referralTransfer;
 	/** ConsultantUpgradeDate */
 	private java.util.Date consUpgradeDate;
+	private Integer numProviderCancelledAppts;
+	private Integer numPatientCancelledAppts;
+	private ims.domain.lookups.LookupInstance cancerType;
+	/** 
+	  * Collection of ims.pathways.domain.objects.PathwaysRTTClockImpact.
+	  */
+	private java.util.List rTTClockImpacts;
+	/** 
+	  * Collection of ims.RefMan.domain.objects.LinkedCatsReferral.
+	  */
+	private java.util.List linkedReferrals;
+	/** The Appointment who's outcome caused the creation of this CATS Referral record */
+	private ims.scheduling.domain.objects.Booking_Appointment creatingAppointment;
+	private ims.RefMan.domain.objects.TriageOutcome triageOutcome;
+	/** Date of the 31 day target from Patient Journey */
+	private java.util.Date current31TargetDate;
+	/** Date of the 62 day target from Patient Journey */
+	private java.util.Date current62TargetDate;
+	private ims.core.admin.pas.domain.objects.PendingNoEDEmergencyAdmit repatriationRequest;
+	private Boolean consultationActivityRequired;
+	private ims.domain.lookups.LookupInstance patientCategory;
+	/** Collection of referral urgency modifications
+	  * Collection of ims.RefMan.domain.objects.ReferralUrgencyUpdates.
+	  */
+	private java.util.List urgencyUpdateHistory;
+	private Boolean isEmergencyReferral;
+	private Boolean manuallyMarkedAsNotRTTImpact;
+	private Boolean hasDNAorNotSeenActivity;
+	private Boolean hasRebookingSubsequentActivity;
+	private Boolean changeCBAppointment;
+	private Boolean redirectCAB;
+	private Boolean changeCABOPAandDirectToList;
+	private Boolean cABOPAandDirectToList;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public CatsReferral (Integer id, int ver)
@@ -352,6 +407,13 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 	}
 	public void setCallAttempts(java.util.Set paramValue) {
 		this.callAttempts = paramValue;
+	}
+
+	public ims.core.admin.domain.objects.EpisodeOfCare getEpisodeOfCare() {
+		return episodeOfCare;
+	}
+	public void setEpisodeOfCare(ims.core.admin.domain.objects.EpisodeOfCare episodeOfCare) {
+		this.episodeOfCare = episodeOfCare;
 	}
 
 	public ims.core.admin.domain.objects.CareContext getCareContext() {
@@ -544,20 +606,6 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 	}
 	public void setRequiresDischargeRep(Boolean requiresDischargeRep) {
 		this.requiresDischargeRep = requiresDischargeRep;
-	}
-
-	public Boolean isHasDNAApptsForReview() {
-		return hasDNAApptsForReview;
-	}
-	public void setHasDNAApptsForReview(Boolean hasDNAApptsForReview) {
-		this.hasDNAApptsForReview = hasDNAApptsForReview;
-	}
-
-	public Boolean isHasCancelledApptsForReview() {
-		return hasCancelledApptsForReview;
-	}
-	public void setHasCancelledApptsForReview(Boolean hasCancelledApptsForReview) {
-		this.hasCancelledApptsForReview = hasCancelledApptsForReview;
 	}
 
 	public ims.domain.lookups.LookupInstance getIsSecondaryReportRequired() {
@@ -813,6 +861,162 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 		this.consUpgradeDate = consUpgradeDate;
 	}
 
+	public Integer getNumProviderCancelledAppts() {
+		return numProviderCancelledAppts;
+	}
+	public void setNumProviderCancelledAppts(Integer numProviderCancelledAppts) {
+		this.numProviderCancelledAppts = numProviderCancelledAppts;
+	}
+
+	public Integer getNumPatientCancelledAppts() {
+		return numPatientCancelledAppts;
+	}
+	public void setNumPatientCancelledAppts(Integer numPatientCancelledAppts) {
+		this.numPatientCancelledAppts = numPatientCancelledAppts;
+	}
+
+	public ims.domain.lookups.LookupInstance getCancerType() {
+		return cancerType;
+	}
+	public void setCancerType(ims.domain.lookups.LookupInstance cancerType) {
+		this.cancerType = cancerType;
+	}
+
+	public java.util.List getRTTClockImpacts() {
+		if ( null == rTTClockImpacts ) {
+			rTTClockImpacts = new java.util.ArrayList();
+		}
+		return rTTClockImpacts;
+	}
+	public void setRTTClockImpacts(java.util.List paramValue) {
+		this.rTTClockImpacts = paramValue;
+	}
+
+	public java.util.List getLinkedReferrals() {
+		if ( null == linkedReferrals ) {
+			linkedReferrals = new java.util.ArrayList();
+		}
+		return linkedReferrals;
+	}
+	public void setLinkedReferrals(java.util.List paramValue) {
+		this.linkedReferrals = paramValue;
+	}
+
+	public ims.scheduling.domain.objects.Booking_Appointment getCreatingAppointment() {
+		return creatingAppointment;
+	}
+	public void setCreatingAppointment(ims.scheduling.domain.objects.Booking_Appointment creatingAppointment) {
+		this.creatingAppointment = creatingAppointment;
+	}
+
+	public ims.RefMan.domain.objects.TriageOutcome getTriageOutcome() {
+		return triageOutcome;
+	}
+	public void setTriageOutcome(ims.RefMan.domain.objects.TriageOutcome triageOutcome) {
+		this.triageOutcome = triageOutcome;
+	}
+
+	public java.util.Date getCurrent31TargetDate() {
+		return current31TargetDate;
+	}
+	public void setCurrent31TargetDate(java.util.Date current31TargetDate) {
+		this.current31TargetDate = current31TargetDate;
+	}
+
+	public java.util.Date getCurrent62TargetDate() {
+		return current62TargetDate;
+	}
+	public void setCurrent62TargetDate(java.util.Date current62TargetDate) {
+		this.current62TargetDate = current62TargetDate;
+	}
+
+	public ims.core.admin.pas.domain.objects.PendingNoEDEmergencyAdmit getRepatriationRequest() {
+		return repatriationRequest;
+	}
+	public void setRepatriationRequest(ims.core.admin.pas.domain.objects.PendingNoEDEmergencyAdmit repatriationRequest) {
+		this.repatriationRequest = repatriationRequest;
+	}
+
+	public Boolean isConsultationActivityRequired() {
+		return consultationActivityRequired;
+	}
+	public void setConsultationActivityRequired(Boolean consultationActivityRequired) {
+		this.consultationActivityRequired = consultationActivityRequired;
+	}
+
+	public ims.domain.lookups.LookupInstance getPatientCategory() {
+		return patientCategory;
+	}
+	public void setPatientCategory(ims.domain.lookups.LookupInstance patientCategory) {
+		this.patientCategory = patientCategory;
+	}
+
+	public java.util.List getUrgencyUpdateHistory() {
+		if ( null == urgencyUpdateHistory ) {
+			urgencyUpdateHistory = new java.util.ArrayList();
+		}
+		return urgencyUpdateHistory;
+	}
+	public void setUrgencyUpdateHistory(java.util.List paramValue) {
+		this.urgencyUpdateHistory = paramValue;
+	}
+
+	public Boolean isIsEmergencyReferral() {
+		return isEmergencyReferral;
+	}
+	public void setIsEmergencyReferral(Boolean isEmergencyReferral) {
+		this.isEmergencyReferral = isEmergencyReferral;
+	}
+
+	public Boolean isManuallyMarkedAsNotRTTImpact() {
+		return manuallyMarkedAsNotRTTImpact;
+	}
+	public void setManuallyMarkedAsNotRTTImpact(Boolean manuallyMarkedAsNotRTTImpact) {
+		this.manuallyMarkedAsNotRTTImpact = manuallyMarkedAsNotRTTImpact;
+	}
+
+	public Boolean isHasDNAorNotSeenActivity() {
+		return hasDNAorNotSeenActivity;
+	}
+	public void setHasDNAorNotSeenActivity(Boolean hasDNAorNotSeenActivity) {
+		this.hasDNAorNotSeenActivity = hasDNAorNotSeenActivity;
+	}
+
+	public Boolean isHasRebookingSubsequentActivity() {
+		return hasRebookingSubsequentActivity;
+	}
+	public void setHasRebookingSubsequentActivity(Boolean hasRebookingSubsequentActivity) {
+		this.hasRebookingSubsequentActivity = hasRebookingSubsequentActivity;
+	}
+
+	public Boolean isChangeCBAppointment() {
+		return changeCBAppointment;
+	}
+	public void setChangeCBAppointment(Boolean changeCBAppointment) {
+		this.changeCBAppointment = changeCBAppointment;
+	}
+
+	public Boolean isRedirectCAB() {
+		return redirectCAB;
+	}
+	public void setRedirectCAB(Boolean redirectCAB) {
+		this.redirectCAB = redirectCAB;
+	}
+
+	public Boolean isChangeCABOPAandDirectToList() {
+		return changeCABOPAandDirectToList;
+	}
+	public void setChangeCABOPAandDirectToList(Boolean changeCABOPAandDirectToList) {
+		this.changeCABOPAandDirectToList = changeCABOPAandDirectToList;
+	}
+
+	public Boolean isCABOPAandDirectToList() {
+		return cABOPAandDirectToList;
+	}
+	public void setCABOPAandDirectToList(Boolean cABOPAandDirectToList) {
+		this.cABOPAandDirectToList = cABOPAandDirectToList;
+	}
+
 	public ims.domain.SystemInformation getSystemInformation() {
 		if (systemInformation == null) systemInformation = new ims.domain.SystemInformation();
 		return systemInformation;
@@ -1058,6 +1262,14 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 			auditStr.append("] " + i15);
 		}
 	    auditStr.append("; ");
+		auditStr.append("\r\n*episodeOfCare* :");
+		if (episodeOfCare != null)
+		{
+			auditStr.append(toShortClassName(episodeOfCare));
+				
+		    auditStr.append(episodeOfCare.getId());
+		}
+	    auditStr.append("; ");
 		auditStr.append("\r\n*careContext* :");
 		if (careContext != null)
 		{
@@ -1106,33 +1318,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 		auditStr.append("\r\n*currentReviewDetail* :");
 		if (currentReviewDetail != null)
 		{
-			java.util.Iterator it24 = currentReviewDetail.iterator();
-			int i24=0;
-			while (it24.hasNext())
-			{
-				if (i24 > 0)
-					auditStr.append(",");
-				ims.RefMan.domain.objects.ReviewReferralDetail obj = (ims.RefMan.domain.objects.ReviewReferralDetail)it24.next();
-		if (obj != null)
-		{
-		   if (i24 == 0)
-		   {
-			auditStr.append(toShortClassName(obj));
-			auditStr.append("[");
-		   }
-		
-		   auditStr.append(obj.getId());
-		}
-			i24++;
-		}
-		if (i24 > 0)
-			auditStr.append("] " + i24);
-		}
-	    auditStr.append("; ");
-		auditStr.append("\r\n*reviewHistory* :");
-		if (reviewHistory != null)
-		{
-			java.util.Iterator it25 = reviewHistory.iterator();
+			java.util.Iterator it25 = currentReviewDetail.iterator();
 			int i25=0;
 			while (it25.hasNext())
 			{
@@ -1153,6 +1339,32 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 		}
 		if (i25 > 0)
 			auditStr.append("] " + i25);
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*reviewHistory* :");
+		if (reviewHistory != null)
+		{
+			java.util.Iterator it26 = reviewHistory.iterator();
+			int i26=0;
+			while (it26.hasNext())
+			{
+				if (i26 > 0)
+					auditStr.append(",");
+				ims.RefMan.domain.objects.ReviewReferralDetail obj = (ims.RefMan.domain.objects.ReviewReferralDetail)it26.next();
+		if (obj != null)
+		{
+		   if (i26 == 0)
+		   {
+			auditStr.append(toShortClassName(obj));
+			auditStr.append("[");
+		   }
+		
+		   auditStr.append(obj.getId());
+		}
+			i26++;
+		}
+		if (i26 > 0)
+			auditStr.append("] " + i26);
 		}
 	    auditStr.append("; ");
 		auditStr.append("\r\n*onwardReferralStatus* :");
@@ -1205,12 +1417,6 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 		auditStr.append("\r\n*requiresDischargeRep* :");
 		auditStr.append(requiresDischargeRep);
 	    auditStr.append("; ");
-		auditStr.append("\r\n*hasDNAApptsForReview* :");
-		auditStr.append(hasDNAApptsForReview);
-	    auditStr.append("; ");
-		auditStr.append("\r\n*hasCancelledApptsForReview* :");
-		auditStr.append(hasCancelledApptsForReview);
-	    auditStr.append("; ");
 		auditStr.append("\r\n*isSecondaryReportRequired* :");
 		if (isSecondaryReportRequired != null)
 			auditStr.append(isSecondaryReportRequired.getText());
@@ -1234,16 +1440,16 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 		auditStr.append("\r\n*reportsRequired* :");
 		if (reportsRequired != null)
 		{
-			java.util.Iterator it50 = reportsRequired.iterator();
-			int i50=0;
-			while (it50.hasNext())
+			java.util.Iterator it49 = reportsRequired.iterator();
+			int i49=0;
+			while (it49.hasNext())
 			{
-				if (i50 > 0)
+				if (i49 > 0)
 					auditStr.append(",");
-				ims.RefMan.domain.objects.ReportsRequiredForPrinting obj = (ims.RefMan.domain.objects.ReportsRequiredForPrinting)it50.next();
+				ims.RefMan.domain.objects.ReportsRequiredForPrinting obj = (ims.RefMan.domain.objects.ReportsRequiredForPrinting)it49.next();
 		if (obj != null)
 		{
-		   if (i50 == 0)
+		   if (i49 == 0)
 		   {
 			auditStr.append(toShortClassName(obj));
 			auditStr.append("[");
@@ -1251,10 +1457,10 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 		
 		   auditStr.append(obj.getId());
 		}
-			i50++;
+			i49++;
 		}
-		if (i50 > 0)
-			auditStr.append("] " + i50);
+		if (i49 > 0)
+			auditStr.append("] " + i49);
 		}
 	    auditStr.append("; ");
 		auditStr.append("\r\n*dischargeToGPDetailsReviewStatus* :");
@@ -1347,12 +1553,35 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 		auditStr.append("\r\n*electiveEROD* :");
 		if (electiveEROD != null)
 		{
+		int i68=0;
+		for (i68=0; i68<electiveEROD.size(); i68++)
+		{
+			if (i68 > 0)
+				auditStr.append(",");
+			ims.RefMan.domain.objects.ReferralEROD obj = (ims.RefMan.domain.objects.ReferralEROD)electiveEROD.get(i68);
+		    if (obj != null)
+			{
+				if (i68 == 0)
+				{
+				auditStr.append(toShortClassName(obj));
+				auditStr.append("[");
+				}
+		        auditStr.append(obj.getId());
+			}
+		}
+		if (i68 > 0)
+			auditStr.append("] " + i68);
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*electiveERODHistory* :");
+		if (electiveERODHistory != null)
+		{
 		int i69=0;
-		for (i69=0; i69<electiveEROD.size(); i69++)
+		for (i69=0; i69<electiveERODHistory.size(); i69++)
 		{
 			if (i69 > 0)
 				auditStr.append(",");
-			ims.RefMan.domain.objects.ReferralEROD obj = (ims.RefMan.domain.objects.ReferralEROD)electiveEROD.get(i69);
+			ims.RefMan.domain.objects.ReferralEROD obj = (ims.RefMan.domain.objects.ReferralEROD)electiveERODHistory.get(i69);
 		    if (obj != null)
 			{
 				if (i69 == 0)
@@ -1367,15 +1596,15 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 			auditStr.append("] " + i69);
 		}
 	    auditStr.append("; ");
-		auditStr.append("\r\n*electiveERODHistory* :");
-		if (electiveERODHistory != null)
+		auditStr.append("\r\n*outpatientEROD* :");
+		if (outpatientEROD != null)
 		{
 		int i70=0;
-		for (i70=0; i70<electiveERODHistory.size(); i70++)
+		for (i70=0; i70<outpatientEROD.size(); i70++)
 		{
 			if (i70 > 0)
 				auditStr.append(",");
-			ims.RefMan.domain.objects.ReferralEROD obj = (ims.RefMan.domain.objects.ReferralEROD)electiveERODHistory.get(i70);
+			ims.RefMan.domain.objects.ReferralEROD obj = (ims.RefMan.domain.objects.ReferralEROD)outpatientEROD.get(i70);
 		    if (obj != null)
 			{
 				if (i70 == 0)
@@ -1390,29 +1619,6 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 			auditStr.append("] " + i70);
 		}
 	    auditStr.append("; ");
-		auditStr.append("\r\n*outpatientEROD* :");
-		if (outpatientEROD != null)
-		{
-		int i71=0;
-		for (i71=0; i71<outpatientEROD.size(); i71++)
-		{
-			if (i71 > 0)
-				auditStr.append(",");
-			ims.RefMan.domain.objects.ReferralEROD obj = (ims.RefMan.domain.objects.ReferralEROD)outpatientEROD.get(i71);
-		    if (obj != null)
-			{
-				if (i71 == 0)
-				{
-				auditStr.append(toShortClassName(obj));
-				auditStr.append("[");
-				}
-		        auditStr.append(obj.getId());
-			}
-		}
-		if (i71 > 0)
-			auditStr.append("] " + i71);
-		}
-	    auditStr.append("; ");
 		auditStr.append("\r\n*currentRTTStatus* :");
 		if (currentRTTStatus != null)
 		{
@@ -1424,12 +1630,35 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 		auditStr.append("\r\n*adminEvent* :");
 		if (adminEvent != null)
 		{
+		int i72=0;
+		for (i72=0; i72<adminEvent.size(); i72++)
+		{
+			if (i72 > 0)
+				auditStr.append(",");
+			ims.pathways.domain.objects.AdminEvent obj = (ims.pathways.domain.objects.AdminEvent)adminEvent.get(i72);
+		    if (obj != null)
+			{
+				if (i72 == 0)
+				{
+				auditStr.append(toShortClassName(obj));
+				auditStr.append("[");
+				}
+		        auditStr.append(obj.getId());
+			}
+		}
+		if (i72 > 0)
+			auditStr.append("] " + i72);
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*admissions* :");
+		if (admissions != null)
+		{
 		int i73=0;
-		for (i73=0; i73<adminEvent.size(); i73++)
+		for (i73=0; i73<admissions.size(); i73++)
 		{
 			if (i73 > 0)
 				auditStr.append(",");
-			ims.pathways.domain.objects.AdminEvent obj = (ims.pathways.domain.objects.AdminEvent)adminEvent.get(i73);
+			ims.core.admin.pas.domain.objects.AdmissionDetail obj = (ims.core.admin.pas.domain.objects.AdmissionDetail)admissions.get(i73);
 		    if (obj != null)
 			{
 				if (i73 == 0)
@@ -1444,29 +1673,6 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 			auditStr.append("] " + i73);
 		}
 	    auditStr.append("; ");
-		auditStr.append("\r\n*admissions* :");
-		if (admissions != null)
-		{
-		int i74=0;
-		for (i74=0; i74<admissions.size(); i74++)
-		{
-			if (i74 > 0)
-				auditStr.append(",");
-			ims.core.admin.pas.domain.objects.AdmissionDetail obj = (ims.core.admin.pas.domain.objects.AdmissionDetail)admissions.get(i74);
-		    if (obj != null)
-			{
-				if (i74 == 0)
-				{
-				auditStr.append(toShortClassName(obj));
-				auditStr.append("[");
-				}
-		        auditStr.append(obj.getId());
-			}
-		}
-		if (i74 > 0)
-			auditStr.append("] " + i74);
-		}
-	    auditStr.append("; ");
 		auditStr.append("\r\n*referralTransfer* :");
 		if (referralTransfer != null)
 		{
@@ -1477,6 +1683,146 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 	    auditStr.append("; ");
 		auditStr.append("\r\n*consUpgradeDate* :");
 		auditStr.append(consUpgradeDate);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*numProviderCancelledAppts* :");
+		auditStr.append(numProviderCancelledAppts);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*numPatientCancelledAppts* :");
+		auditStr.append(numPatientCancelledAppts);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*cancerType* :");
+		if (cancerType != null)
+			auditStr.append(cancerType.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*rTTClockImpacts* :");
+		if (rTTClockImpacts != null)
+		{
+		int i79=0;
+		for (i79=0; i79<rTTClockImpacts.size(); i79++)
+		{
+			if (i79 > 0)
+				auditStr.append(",");
+			ims.pathways.domain.objects.PathwaysRTTClockImpact obj = (ims.pathways.domain.objects.PathwaysRTTClockImpact)rTTClockImpacts.get(i79);
+		    if (obj != null)
+			{
+				if (i79 == 0)
+				{
+				auditStr.append(toShortClassName(obj));
+				auditStr.append("[");
+				}
+		        auditStr.append(obj.getId());
+			}
+		}
+		if (i79 > 0)
+			auditStr.append("] " + i79);
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*linkedReferrals* :");
+		if (linkedReferrals != null)
+		{
+		int i80=0;
+		for (i80=0; i80<linkedReferrals.size(); i80++)
+		{
+			if (i80 > 0)
+				auditStr.append(",");
+			ims.RefMan.domain.objects.LinkedCatsReferral obj = (ims.RefMan.domain.objects.LinkedCatsReferral)linkedReferrals.get(i80);
+		    if (obj != null)
+			{
+				if (i80 == 0)
+				{
+				auditStr.append(toShortClassName(obj));
+				auditStr.append("[");
+				}
+		        auditStr.append(obj.getId());
+			}
+		}
+		if (i80 > 0)
+			auditStr.append("] " + i80);
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*creatingAppointment* :");
+		if (creatingAppointment != null)
+		{
+			auditStr.append(toShortClassName(creatingAppointment));
+				
+		    auditStr.append(creatingAppointment.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*triageOutcome* :");
+		if (triageOutcome != null)
+		{
+			auditStr.append(toShortClassName(triageOutcome));
+				
+		    auditStr.append(triageOutcome.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*current31TargetDate* :");
+		auditStr.append(current31TargetDate);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*current62TargetDate* :");
+		auditStr.append(current62TargetDate);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*repatriationRequest* :");
+		if (repatriationRequest != null)
+		{
+			auditStr.append(toShortClassName(repatriationRequest));
+				
+		    auditStr.append(repatriationRequest.getId());
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*consultationActivityRequired* :");
+		auditStr.append(consultationActivityRequired);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*patientCategory* :");
+		if (patientCategory != null)
+			auditStr.append(patientCategory.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*urgencyUpdateHistory* :");
+		if (urgencyUpdateHistory != null)
+		{
+		int i88=0;
+		for (i88=0; i88<urgencyUpdateHistory.size(); i88++)
+		{
+			if (i88 > 0)
+				auditStr.append(",");
+			ims.RefMan.domain.objects.ReferralUrgencyUpdates obj = (ims.RefMan.domain.objects.ReferralUrgencyUpdates)urgencyUpdateHistory.get(i88);
+		    if (obj != null)
+			{
+				if (i88 == 0)
+				{
+				auditStr.append(toShortClassName(obj));
+				auditStr.append("[");
+				}
+		        auditStr.append(obj.getId());
+			}
+		}
+		if (i88 > 0)
+			auditStr.append("] " + i88);
+		}
+	    auditStr.append("; ");
+		auditStr.append("\r\n*isEmergencyReferral* :");
+		auditStr.append(isEmergencyReferral);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*manuallyMarkedAsNotRTTImpact* :");
+		auditStr.append(manuallyMarkedAsNotRTTImpact);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*hasDNAorNotSeenActivity* :");
+		auditStr.append(hasDNAorNotSeenActivity);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*hasRebookingSubsequentActivity* :");
+		auditStr.append(hasRebookingSubsequentActivity);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*changeCBAppointment* :");
+		auditStr.append(changeCBAppointment);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*redirectCAB* :");
+		auditStr.append(redirectCAB);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*changeCABOPAandDirectToList* :");
+		auditStr.append(changeCABOPAandDirectToList);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*cABOPAandDirectToList* :");
+		auditStr.append(cABOPAandDirectToList);
 	    auditStr.append("; ");
 		return auditStr.toString();
 	}
@@ -1629,6 +1975,12 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 			sb.append(ims.domain.DomainObject.toXMLString(this.getCallAttempts(), domMap));
 			sb.append("</callAttempts>");		
 			}
+		}
+		if (this.getEpisodeOfCare() != null)
+		{
+			sb.append("<episodeOfCare>");
+			sb.append(this.getEpisodeOfCare().toXMLString(domMap)); 	
+			sb.append("</episodeOfCare>");		
 		}
 		if (this.getCareContext() != null)
 		{
@@ -1791,18 +2143,6 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 			sb.append("<requiresDischargeRep>");
 			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isRequiresDischargeRep().toString()));
 			sb.append("</requiresDischargeRep>");		
-		}
-		if (this.isHasDNAApptsForReview() != null)
-		{
-			sb.append("<hasDNAApptsForReview>");
-			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isHasDNAApptsForReview().toString()));
-			sb.append("</hasDNAApptsForReview>");		
-		}
-		if (this.isHasCancelledApptsForReview() != null)
-		{
-			sb.append("<hasCancelledApptsForReview>");
-			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isHasCancelledApptsForReview().toString()));
-			sb.append("</hasCancelledApptsForReview>");		
 		}
 		if (this.getIsSecondaryReportRequired() != null)
 		{
@@ -2019,6 +2359,141 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 			sb.append("<consUpgradeDate>");
 			sb.append(new ims.framework.utils.DateTime(this.getConsUpgradeDate()).toString(ims.framework.utils.DateTimeFormat.MILLI));
 			sb.append("</consUpgradeDate>");		
+		}
+		if (this.getNumProviderCancelledAppts() != null)
+		{
+			sb.append("<numProviderCancelledAppts>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getNumProviderCancelledAppts().toString()));
+			sb.append("</numProviderCancelledAppts>");		
+		}
+		if (this.getNumPatientCancelledAppts() != null)
+		{
+			sb.append("<numPatientCancelledAppts>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getNumPatientCancelledAppts().toString()));
+			sb.append("</numPatientCancelledAppts>");		
+		}
+		if (this.getCancerType() != null)
+		{
+			sb.append("<cancerType>");
+			sb.append(this.getCancerType().toXMLString()); 
+			sb.append("</cancerType>");		
+		}
+		if (this.getRTTClockImpacts() != null)
+		{
+			if (this.getRTTClockImpacts().size() > 0 )
+			{
+			sb.append("<rTTClockImpacts>");
+			sb.append(ims.domain.DomainObject.toXMLString(this.getRTTClockImpacts(), domMap));
+			sb.append("</rTTClockImpacts>");		
+			}
+		}
+		if (this.getLinkedReferrals() != null)
+		{
+			if (this.getLinkedReferrals().size() > 0 )
+			{
+			sb.append("<linkedReferrals>");
+			sb.append(ims.domain.DomainObject.toXMLString(this.getLinkedReferrals(), domMap));
+			sb.append("</linkedReferrals>");		
+			}
+		}
+		if (this.getCreatingAppointment() != null)
+		{
+			sb.append("<creatingAppointment>");
+			sb.append(this.getCreatingAppointment().toXMLString(domMap)); 	
+			sb.append("</creatingAppointment>");		
+		}
+		if (this.getTriageOutcome() != null)
+		{
+			sb.append("<triageOutcome>");
+			sb.append(this.getTriageOutcome().toXMLString(domMap)); 	
+			sb.append("</triageOutcome>");		
+		}
+		if (this.getCurrent31TargetDate() != null)
+		{
+			sb.append("<current31TargetDate>");
+			sb.append(new ims.framework.utils.DateTime(this.getCurrent31TargetDate()).toString(ims.framework.utils.DateTimeFormat.MILLI));
+			sb.append("</current31TargetDate>");		
+		}
+		if (this.getCurrent62TargetDate() != null)
+		{
+			sb.append("<current62TargetDate>");
+			sb.append(new ims.framework.utils.DateTime(this.getCurrent62TargetDate()).toString(ims.framework.utils.DateTimeFormat.MILLI));
+			sb.append("</current62TargetDate>");		
+		}
+		if (this.getRepatriationRequest() != null)
+		{
+			sb.append("<repatriationRequest>");
+			sb.append(this.getRepatriationRequest().toXMLString(domMap)); 	
+			sb.append("</repatriationRequest>");		
+		}
+		if (this.isConsultationActivityRequired() != null)
+		{
+			sb.append("<consultationActivityRequired>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isConsultationActivityRequired().toString()));
+			sb.append("</consultationActivityRequired>");		
+		}
+		if (this.getPatientCategory() != null)
+		{
+			sb.append("<patientCategory>");
+			sb.append(this.getPatientCategory().toXMLString()); 
+			sb.append("</patientCategory>");		
+		}
+		if (this.getUrgencyUpdateHistory() != null)
+		{
+			if (this.getUrgencyUpdateHistory().size() > 0 )
+			{
+			sb.append("<urgencyUpdateHistory>");
+			sb.append(ims.domain.DomainObject.toXMLString(this.getUrgencyUpdateHistory(), domMap));
+			sb.append("</urgencyUpdateHistory>");		
+			}
+		}
+		if (this.isIsEmergencyReferral() != null)
+		{
+			sb.append("<isEmergencyReferral>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isIsEmergencyReferral().toString()));
+			sb.append("</isEmergencyReferral>");		
+		}
+		if (this.isManuallyMarkedAsNotRTTImpact() != null)
+		{
+			sb.append("<manuallyMarkedAsNotRTTImpact>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isManuallyMarkedAsNotRTTImpact().toString()));
+			sb.append("</manuallyMarkedAsNotRTTImpact>");		
+		}
+		if (this.isHasDNAorNotSeenActivity() != null)
+		{
+			sb.append("<hasDNAorNotSeenActivity>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isHasDNAorNotSeenActivity().toString()));
+			sb.append("</hasDNAorNotSeenActivity>");		
+		}
+		if (this.isHasRebookingSubsequentActivity() != null)
+		{
+			sb.append("<hasRebookingSubsequentActivity>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isHasRebookingSubsequentActivity().toString()));
+			sb.append("</hasRebookingSubsequentActivity>");		
+		}
+		if (this.isChangeCBAppointment() != null)
+		{
+			sb.append("<changeCBAppointment>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isChangeCBAppointment().toString()));
+			sb.append("</changeCBAppointment>");		
+		}
+		if (this.isRedirectCAB() != null)
+		{
+			sb.append("<redirectCAB>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isRedirectCAB().toString()));
+			sb.append("</redirectCAB>");		
+		}
+		if (this.isChangeCABOPAandDirectToList() != null)
+		{
+			sb.append("<changeCABOPAandDirectToList>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isChangeCABOPAandDirectToList().toString()));
+			sb.append("</changeCABOPAandDirectToList>");		
+		}
+		if (this.isCABOPAandDirectToList() != null)
+		{
+			sb.append("<cABOPAandDirectToList>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isCABOPAandDirectToList().toString()));
+			sb.append("</cABOPAandDirectToList>");		
 		}
 		return sb.toString();
 	}
@@ -2269,6 +2744,12 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 			fldEl = fldEl.element("set");	
 			obj.setCallAttempts(ims.RefMan.domain.objects.AppointmentCallAttempts.fromSetXMLString(fldEl, factory, obj.getCallAttempts(), domMap));
 		}
+		fldEl = el.element("episodeOfCare");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setEpisodeOfCare(ims.core.admin.domain.objects.EpisodeOfCare.getEpisodeOfCarefromXML(fldEl, factory, domMap)); 
+		}
 		fldEl = el.element("careContext");
 		if(fldEl != null)
 		{
@@ -2407,16 +2888,6 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 		if(fldEl != null)
 		{	
     		obj.setRequiresDischargeRep(new Boolean(fldEl.getTextTrim()));	
-		}
-		fldEl = el.element("hasDNAApptsForReview");
-		if(fldEl != null)
-		{	
-    		obj.setHasDNAApptsForReview(new Boolean(fldEl.getTextTrim()));	
-		}
-		fldEl = el.element("hasCancelledApptsForReview");
-		if(fldEl != null)
-		{	
-    		obj.setHasCancelledApptsForReview(new Boolean(fldEl.getTextTrim()));	
 		}
 		fldEl = el.element("isSecondaryReportRequired");
 		if(fldEl != null)
@@ -2602,6 +3073,119 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 		{	
     		obj.setConsUpgradeDate(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
 		}
+		fldEl = el.element("numProviderCancelledAppts");
+		if(fldEl != null)
+		{	
+    		obj.setNumProviderCancelledAppts(new Integer(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("numPatientCancelledAppts");
+		if(fldEl != null)
+		{	
+    		obj.setNumPatientCancelledAppts(new Integer(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("cancerType");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setCancerType(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("rTTClockImpacts");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("list");	
+			obj.setRTTClockImpacts(ims.pathways.domain.objects.PathwaysRTTClockImpact.fromListXMLString(fldEl, factory, obj.getRTTClockImpacts(), domMap));
+		}
+		fldEl = el.element("linkedReferrals");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("list");	
+			obj.setLinkedReferrals(ims.RefMan.domain.objects.LinkedCatsReferral.fromListXMLString(fldEl, factory, obj.getLinkedReferrals(), domMap));
+		}
+		fldEl = el.element("creatingAppointment");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setCreatingAppointment(ims.scheduling.domain.objects.Booking_Appointment.getBooking_AppointmentfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("triageOutcome");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setTriageOutcome(ims.RefMan.domain.objects.TriageOutcome.getTriageOutcomefromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("current31TargetDate");
+		if(fldEl != null)
+		{	
+    		obj.setCurrent31TargetDate(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
+		}
+		fldEl = el.element("current62TargetDate");
+		if(fldEl != null)
+		{	
+    		obj.setCurrent62TargetDate(new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").parse(fldEl.getTextTrim()));
+		}
+		fldEl = el.element("repatriationRequest");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("class");		
+			obj.setRepatriationRequest(ims.core.admin.pas.domain.objects.PendingNoEDEmergencyAdmit.getPendingNoEDEmergencyAdmitfromXML(fldEl, factory, domMap)); 
+		}
+		fldEl = el.element("consultationActivityRequired");
+		if(fldEl != null)
+		{	
+    		obj.setConsultationActivityRequired(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("patientCategory");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setPatientCategory(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("urgencyUpdateHistory");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("list");	
+			obj.setUrgencyUpdateHistory(ims.RefMan.domain.objects.ReferralUrgencyUpdates.fromListXMLString(fldEl, factory, obj.getUrgencyUpdateHistory(), domMap));
+		}
+		fldEl = el.element("isEmergencyReferral");
+		if(fldEl != null)
+		{	
+    		obj.setIsEmergencyReferral(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("manuallyMarkedAsNotRTTImpact");
+		if(fldEl != null)
+		{	
+    		obj.setManuallyMarkedAsNotRTTImpact(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("hasDNAorNotSeenActivity");
+		if(fldEl != null)
+		{	
+    		obj.setHasDNAorNotSeenActivity(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("hasRebookingSubsequentActivity");
+		if(fldEl != null)
+		{	
+    		obj.setHasRebookingSubsequentActivity(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("changeCBAppointment");
+		if(fldEl != null)
+		{	
+    		obj.setChangeCBAppointment(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("redirectCAB");
+		if(fldEl != null)
+		{	
+    		obj.setRedirectCAB(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("changeCABOPAandDirectToList");
+		if(fldEl != null)
+		{	
+    		obj.setChangeCABOPAandDirectToList(new Boolean(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("cABOPAandDirectToList");
+		if(fldEl != null)
+		{	
+    		obj.setCABOPAandDirectToList(new Boolean(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -2621,6 +3205,9 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 		, "outpatientEROD"
 		, "adminEvent"
 		, "admissions"
+		, "rTTClockImpacts"
+		, "linkedReferrals"
+		, "urgencyUpdateHistory"
 		};
 	}
 
@@ -2643,6 +3230,7 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 		public static final String StatusHistory = "statusHistory";
 		public static final String OrderInvAppts = "orderInvAppts";
 		public static final String CallAttempts = "callAttempts";
+		public static final String EpisodeOfCare = "episodeOfCare";
 		public static final String CareContext = "careContext";
 		public static final String IsCAB = "isCAB";
 		public static final String ConsultationAppt = "consultationAppt";
@@ -2669,8 +3257,6 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 		public static final String WasPatientRejectionLetterSent = "wasPatientRejectionLetterSent";
 		public static final String WasPatientProviderCancellationLetterSent = "wasPatientProviderCancellationLetterSent";
 		public static final String RequiresDischargeRep = "requiresDischargeRep";
-		public static final String HasDNAApptsForReview = "hasDNAApptsForReview";
-		public static final String HasCancelledApptsForReview = "hasCancelledApptsForReview";
 		public static final String IsSecondaryReportRequired = "isSecondaryReportRequired";
 		public static final String WasFurtherManagementDetailsReviewed = "wasFurtherManagementDetailsReviewed";
 		public static final String IsCurrentlyAllocated = "isCurrentlyAllocated";
@@ -2704,6 +3290,27 @@ public class CatsReferral extends ims.domain.DomainObject implements ims.domain.
 		public static final String Admissions = "admissions";
 		public static final String ReferralTransfer = "referralTransfer";
 		public static final String ConsUpgradeDate = "consUpgradeDate";
+		public static final String NumProviderCancelledAppts = "numProviderCancelledAppts";
+		public static final String NumPatientCancelledAppts = "numPatientCancelledAppts";
+		public static final String CancerType = "cancerType";
+		public static final String RTTClockImpacts = "rTTClockImpacts";
+		public static final String LinkedReferrals = "linkedReferrals";
+		public static final String CreatingAppointment = "creatingAppointment";
+		public static final String TriageOutcome = "triageOutcome";
+		public static final String Current31TargetDate = "current31TargetDate";
+		public static final String Current62TargetDate = "current62TargetDate";
+		public static final String RepatriationRequest = "repatriationRequest";
+		public static final String ConsultationActivityRequired = "consultationActivityRequired";
+		public static final String PatientCategory = "patientCategory";
+		public static final String UrgencyUpdateHistory = "urgencyUpdateHistory";
+		public static final String IsEmergencyReferral = "isEmergencyReferral";
+		public static final String ManuallyMarkedAsNotRTTImpact = "manuallyMarkedAsNotRTTImpact";
+		public static final String HasDNAorNotSeenActivity = "hasDNAorNotSeenActivity";
+		public static final String HasRebookingSubsequentActivity = "hasRebookingSubsequentActivity";
+		public static final String ChangeCBAppointment = "changeCBAppointment";
+		public static final String RedirectCAB = "redirectCAB";
+		public static final String ChangeCABOPAandDirectToList = "changeCABOPAandDirectToList";
+		public static final String CABOPAandDirectToList = "cABOPAandDirectToList";
 	}
 }
 

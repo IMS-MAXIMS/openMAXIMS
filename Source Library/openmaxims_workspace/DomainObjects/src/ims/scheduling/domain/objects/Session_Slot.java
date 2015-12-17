@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,14 +15,19 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 /*
  * This code was generated
  * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5007.25751)
+ * IMS Development Environment (version 1.80 build 5589.25814)
  * WARNING: DO NOT MODIFY the content of this file
- * Generated: 16/04/2014, 12:34
+ * Generated: 12/10/2015, 13:28
  *
  */
 package ims.scheduling.domain.objects;
@@ -42,7 +47,7 @@ public class Session_Slot extends ims.domain.DomainObject implements ims.domain.
 	@Override
 	public boolean shouldCapQuery()
 	{
-		return true;
+		return false;
 	}
 
 	/** Activity */
@@ -88,6 +93,10 @@ public class Session_Slot extends ims.domain.DomainObject implements ims.domain.
 	  * Collection of ims.core.clinical.domain.objects.ServiceFunction.
 	  */
 	private java.util.Set functions;
+	private ims.domain.lookups.LookupInstance cancelBlockReason;
+	private String cancelBlockComment;
+	private String comment;
+	private Boolean wasBlockedCABSlot;
 	/** SystemInformation */
 	private ims.domain.SystemInformation systemInformation = new ims.domain.SystemInformation();
     public Session_Slot (Integer id, int ver)
@@ -248,6 +257,42 @@ public class Session_Slot extends ims.domain.DomainObject implements ims.domain.
 	}
 	public void setFunctions(java.util.Set paramValue) {
 		this.functions = paramValue;
+	}
+
+	public ims.domain.lookups.LookupInstance getCancelBlockReason() {
+		return cancelBlockReason;
+	}
+	public void setCancelBlockReason(ims.domain.lookups.LookupInstance cancelBlockReason) {
+		this.cancelBlockReason = cancelBlockReason;
+	}
+
+	public String getCancelBlockComment() {
+		return cancelBlockComment;
+	}
+	public void setCancelBlockComment(String cancelBlockComment) {
+		if ( null != cancelBlockComment && cancelBlockComment.length() > 250 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for cancelBlockComment. Tried to set value: "+
+				cancelBlockComment);
+		}
+		this.cancelBlockComment = cancelBlockComment;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+	public void setComment(String comment) {
+		if ( null != comment && comment.length() > 500 ) {
+			throw new ims.domain.exceptions.DomainRuntimeException("MaxLength ($MaxLength) exceeded for comment. Tried to set value: "+
+				comment);
+		}
+		this.comment = comment;
+	}
+
+	public Boolean isWasBlockedCABSlot() {
+		return wasBlockedCABSlot;
+	}
+	public void setWasBlockedCABSlot(Boolean wasBlockedCABSlot) {
+		this.wasBlockedCABSlot = wasBlockedCABSlot;
 	}
 
 	public ims.domain.SystemInformation getSystemInformation() {
@@ -443,6 +488,19 @@ public class Session_Slot extends ims.domain.DomainObject implements ims.domain.
 			auditStr.append("] " + i19);
 		}
 	    auditStr.append("; ");
+		auditStr.append("\r\n*cancelBlockReason* :");
+		if (cancelBlockReason != null)
+			auditStr.append(cancelBlockReason.getText());
+	    auditStr.append("; ");
+		auditStr.append("\r\n*cancelBlockComment* :");
+		auditStr.append(cancelBlockComment);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*comment* :");
+		auditStr.append(comment);
+	    auditStr.append("; ");
+		auditStr.append("\r\n*wasBlockedCABSlot* :");
+		auditStr.append(wasBlockedCABSlot);
+	    auditStr.append("; ");
 		return auditStr.toString();
 	}
 	
@@ -609,6 +667,30 @@ public class Session_Slot extends ims.domain.DomainObject implements ims.domain.
 			sb.append(ims.domain.DomainObject.toXMLString(this.getFunctions(), domMap));
 			sb.append("</functions>");		
 			}
+		}
+		if (this.getCancelBlockReason() != null)
+		{
+			sb.append("<cancelBlockReason>");
+			sb.append(this.getCancelBlockReason().toXMLString()); 
+			sb.append("</cancelBlockReason>");		
+		}
+		if (this.getCancelBlockComment() != null)
+		{
+			sb.append("<cancelBlockComment>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getCancelBlockComment().toString()));
+			sb.append("</cancelBlockComment>");		
+		}
+		if (this.getComment() != null)
+		{
+			sb.append("<comment>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.getComment().toString()));
+			sb.append("</comment>");		
+		}
+		if (this.isWasBlockedCABSlot() != null)
+		{
+			sb.append("<wasBlockedCABSlot>");
+			sb.append(ims.framework.utils.StringUtils.encodeXML(this.isWasBlockedCABSlot().toString()));
+			sb.append("</wasBlockedCABSlot>");		
 		}
 		return sb.toString();
 	}
@@ -881,6 +963,27 @@ public class Session_Slot extends ims.domain.DomainObject implements ims.domain.
 			fldEl = fldEl.element("set");	
 			obj.setFunctions(ims.core.clinical.domain.objects.ServiceFunction.fromSetXMLString(fldEl, factory, obj.getFunctions(), domMap));
 		}
+		fldEl = el.element("cancelBlockReason");
+		if(fldEl != null)
+		{
+			fldEl = fldEl.element("lki");
+			obj.setCancelBlockReason(ims.domain.lookups.LookupInstance.fromXMLString(fldEl, factory)); 	
+		}
+		fldEl = el.element("cancelBlockComment");
+		if(fldEl != null)
+		{	
+    		obj.setCancelBlockComment(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("comment");
+		if(fldEl != null)
+		{	
+    		obj.setComment(new String(fldEl.getTextTrim()));	
+		}
+		fldEl = el.element("wasBlockedCABSlot");
+		if(fldEl != null)
+		{	
+    		obj.setWasBlockedCABSlot(new Boolean(fldEl.getTextTrim()));	
+		}
 	}
 
 	public static String[] getCollectionFields()
@@ -1015,6 +1118,10 @@ public ims.scheduling.domain.objects.DirectoryofService getDOSfromUBRN(String ub
 		public static final String SlotResp = "slotResp";
 		public static final String Session = "session";
 		public static final String Functions = "functions";
+		public static final String CancelBlockReason = "cancelBlockReason";
+		public static final String CancelBlockComment = "cancelBlockComment";
+		public static final String Comment = "comment";
+		public static final String WasBlockedCABSlot = "wasBlockedCABSlot";
 	}
 }
 

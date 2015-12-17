@@ -1,0 +1,250 @@
+package ims.rules.userrules;
+
+import ims.core.clinical.domain.objects.PatientMedicalInsurance;
+import ims.rules.engine.RulesRuntimeEngine;
+import ims.domain.DomainFactory;
+import java.util.HashMap;
+import ims.configuration.gen.ConfigFlag;
+
+global RulesRuntimeEngine engine;
+global DomainFactory factory;
+global HashMap prevState;
+global String targetMethod;
+
+
+function boolean triggerMedInsUpdate(ims.rules.engine.RulesRuntimeEngine engine,ims.domain.DomainFactory factory,java.util.HashMap prevState,PatientMedicalInsurance entity)
+{
+	
+		    boolean checkUpdateTrigger = false;
+
+			if (engine==null)
+			{
+				return false;
+			}		
+			
+			engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Enter : triggerMedicalInsuranceUpdate.drl");
+			
+		    // Don't continue if this is not the specific rule set in the interceptor we are looking for
+		    if (engine.getPathwayEntitySpecificRuleName() == null || !engine.getPathwayEntitySpecificRuleName().equals("triggerMedicalInsuranceUpdate.drl"))
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Not : triggerMedicalInsuranceUpdate.drl");
+				return false;
+			}
+			
+			// Set this as the rule that is executed for checking within the interceptor
+			engine.setLastRuleName("triggerMedicalInsuranceUpdate.drl");
+
+			engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Continue : triggerMedicalInsuranceUpdate.drl");
+
+			if (prevState == null)
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "prevState : null");
+				return false;
+			}
+			
+			if (null==entity.getId())
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "new Medical Insurance");
+				return false;
+			}
+			
+
+			ims.core.configuration.domain.objects.PrivateInsuranceCompany medInsCompany = (ims.core.configuration.domain.objects.PrivateInsuranceCompany)prevState.get(ims.core.clinical.domain.objects.PatientMedicalInsurance.FieldNames.Company);
+			if (entity.getCompany()==null && medInsCompany!=null)
+			{
+				checkUpdateTrigger = true;
+			}		
+			else if (entity.getCompany()!=null && !entity.getCompany().equals(medInsCompany))
+			{
+					checkUpdateTrigger = true;
+			}
+
+			ims.domain.lookups.LookupInstance currentStatus = (ims.domain.lookups.LookupInstance)prevState.get(ims.core.clinical.domain.objects.PatientMedicalInsurance.FieldNames.CurrentStatus);
+			if (entity.getCurrentStatus()==null && currentStatus!=null) 		
+			{
+					checkUpdateTrigger = true;
+			}
+			else if (entity.getCurrentStatus()!= null && !entity.getCurrentStatus().equals(currentStatus))
+			{
+				checkUpdateTrigger = true;
+			}
+			
+			java.util.Date expDate = (java.util.Date)prevState.get(ims.core.clinical.domain.objects.PatientMedicalInsurance.FieldNames.ExpiryDate);
+			if (entity.getExpiryDate()==null && expDate!=null) 		
+			{
+					checkUpdateTrigger = true;
+			}
+			else if (entity.getExpiryDate()!=null && !entity.getExpiryDate().equals(expDate))
+			{
+				checkUpdateTrigger = true;
+			}
+
+			ims.core.patient.domain.objects.Patient medPatient = (ims.core.patient.domain.objects.Patient)prevState.get(ims.core.clinical.domain.objects.PatientMedicalInsurance.FieldNames.Patient);
+			if (entity.getPatient()==null && medPatient!=null) 		
+			{
+					checkUpdateTrigger = true;
+			}
+			else if (entity.getPatient()!=null && !entity.getPatient().equals(medPatient))
+			{
+				checkUpdateTrigger = true;
+			}
+			
+			String planOrUnits = (String)prevState.get(ims.core.clinical.domain.objects.PatientMedicalInsurance.FieldNames.PlanOrUnits);
+			
+			if (entity.getPlanOrUnits()==null && planOrUnits!=null)
+			{
+					checkUpdateTrigger = true;
+			}
+			else if (entity.getPlanOrUnits()!=null && !entity.getPlanOrUnits().equals(planOrUnits))
+			{
+				checkUpdateTrigger = true;
+			}
+
+			String policyNum = (String)prevState.get(ims.core.clinical.domain.objects.PatientMedicalInsurance.FieldNames.PolicyNumber);		
+			if (entity.getPolicyNumber()==null && policyNum!=null)
+			{
+					checkUpdateTrigger = true;
+			}
+			else if (entity.getPolicyNumber()!=null && !entity.getPolicyNumber().equals(policyNum))
+			{
+				checkUpdateTrigger = true;
+			}
+			
+			ims.domain.lookups.LookupInstance policyType = (ims.domain.lookups.LookupInstance)prevState.get(ims.core.clinical.domain.objects.PatientMedicalInsurance.FieldNames.PolicyType);		
+			if (entity.getPolicyType()==null && policyType!=null)
+			{
+					checkUpdateTrigger = true;
+			}
+			else if (entity.getPolicyType()!=null && !entity.getPolicyType().equals(policyType))
+			{
+				checkUpdateTrigger = true;
+			}
+
+			engine.setLastRuleResult(1);
+			return checkUpdateTrigger;
+}
+		
+function void saveDemographicsTriggerMessageForMedInsUpdate(ims.rules.engine.RulesRuntimeEngine engine,ims.domain.DomainFactory factory,java.util.HashMap prevState,ims.core.clinical.domain.objects.PatientMedicalInsurance entitymedIns)
+	{
+		try {
+			// Lookup IDs
+	        final int QueueType_DEMOGRAPHICFEED = -1851;
+	        final int MsgEventType_A28 = -1852;
+	        final int MsgEventType_A31 = -1853;
+	        final int MsgEventType_A40 = -1854;
+	        final int MsgEventType_A47 = -2551;
+	        final int QueueType_DEMOGRAPHICWITHHL7FORWARD = -2695;
+	        
+	        final int MRN_PSEUDO = -2539;
+	        final int MRN_NONE = -2540;
+
+			java.sql.Connection conn = factory.getJdbcConnection();				
+			String sqlProviderSystems=null;
+			if(entitymedIns.getSystemInformation()!=null&&"HL7Inbound".equals(entitymedIns.getSystemInformation().getLastUpdateUser()))
+			{				
+				//sqlProviderSystems = "select id from core_providersystem_configitem where id in(select id from core_providersystem_configitem	where (propertyna='SendDeomgraphicFeed' and propertyva='TRUE')) and propertyna='forwardHL7DemographicUpdates' and propertyva='TRUE'";
+				sqlProviderSystems = "select id from core_providersystem_configitem where id in("
+						+ "select providersy from core_outboundtrigge as trig left join core_outboundtrigge_queuetype qtyp on qtyp.owner = trig.id"
+						+ " where (qtyp.instance_id=" + QueueType_DEMOGRAPHICWITHHL7FORWARD + "))";
+			}
+			else
+			{
+				//sqlProviderSystems = "select core_providersystem.id from core_providersystem   join core_providersystem_configitem as ci   on core_providersystem.id = ci.id and ci.propertyna='SendDeomgraphicFeed' and propertyva='TRUE'";
+				sqlProviderSystems = "select id from core_providersystem_configitem where id in("
+						+ "select providersy from core_outboundtrigge as trig left join core_outboundtrigge_queuetype qtyp on qtyp.owner = trig.id"
+						+ " where (qtyp.instance_id=" + QueueType_DEMOGRAPHICFEED + "))";					
+			}
+			java.sql.PreparedStatement preStPS = conn.prepareStatement(sqlProviderSystems);
+			java.sql.ResultSet rs = preStPS.executeQuery();
+						
+			while (rs.next())
+			{
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "sqlProviderSystems : found");
+				
+				int providerSystemId=rs.getInt(1);
+				ims.core.admin.domain.objects.ProviderSystem psDom = (ims.core.admin.domain.objects.ProviderSystem)factory.getDomainObject(ims.core.admin.domain.objects.ProviderSystem.class, providerSystemId);
+				
+				long msgCount=0;
+				String sql = "select count(id) from adto_demographicsmq where patient=? and providersy=? and wasprocess is null and wasdiscard is null";
+				java.sql.PreparedStatement preSt = conn.prepareStatement(sql);				
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "sql:" + sql.toString());
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "entity.getId():" + entitymedIns.getPatient().getId());
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "providerSystemId:" + providerSystemId);
+				preSt.setInt(1, entitymedIns.getPatient().getId());
+				preSt.setInt(2, providerSystemId);
+				java.sql.ResultSet rs1 = preSt.executeQuery();
+				if (rs1.next())
+				{
+					msgCount = new Long(rs1.getLong(1));
+					engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "msgCount:" + msgCount);
+				}
+				if (msgCount>0) //more than one unprocessed message already there 
+				{
+					engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "msgCount>0 : skip to the next provider system");
+					continue; //skip to the next provider system
+				}
+				
+				String oldPatientSql="select count(id) from adto_demographicsmq where patient=? and providersy=? and wasprocess =1";
+				java.sql.PreparedStatement oldPtCount = conn.prepareStatement(oldPatientSql);
+				oldPtCount.setInt(1, entitymedIns.getPatient().getId());
+				oldPtCount.setInt(2, providerSystemId);
+				java.sql.ResultSet rs2 = oldPtCount.executeQuery();
+				long oldMsgCount=0;
+				if (rs2.next())
+				{
+					oldMsgCount = new Long(rs2.getLong(1));
+				}
+				
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "New : DemographicsMessageQueue");					
+				ims.hl7adtout.domain.objects.DemographicsMessageQueue msg= new ims.hl7adtout.domain.objects.DemographicsMessageQueue();				
+				msg.setPatient(entitymedIns.getPatient());
+				msg.setProviderSystem(psDom);
+				
+				msg.setQueueType(factory.getLookupInstance(QueueType_DEMOGRAPHICFEED) );// QueueType.DEMOGRAPHICFEED));
+				if (oldMsgCount==0)
+				{
+					msg.setMsgType(factory.getLookupInstance(MsgEventType_A28));
+				}
+				else if(entitymedIns.getPatient().getMRNStatus()!=null&&(entitymedIns.getPatient().getMRNStatus().getId()==MRN_PSEUDO||entitymedIns.getPatient().getMRNStatus().getId()==MRN_NONE))
+				{
+					msg.setMsgType(factory.getLookupInstance(MsgEventType_A47));
+				}
+				else 
+				{
+					msg.setMsgType(factory.getLookupInstance(MsgEventType_A31));
+				}
+				
+				engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Save : DemographicsMessageQueue");
+				factory.setDirtyCheck(false);
+				factory.saveNoFlush(msg);
+			}
+		}catch (Exception e)
+		{
+			throw new RuntimeException (e);
+		}				
+	}
+
+function boolean triggerMedInsUpdateTest(ims.rules.engine.RulesRuntimeEngine engine,ims.domain.DomainFactory factory,java.util.HashMap prevState,ims.core.clinical.domain.objects.PatientMedicalInsurance entity)
+{
+    // Don't continue if this is not the specific rule set in the interceptor we are looking for
+    if (engine.getPathwayEntitySpecificRuleName() == null || !engine.getPathwayEntitySpecificRuleName().equals("triggerMedicalInsuranceUpdate.drl"))
+	{
+		engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Rule not set : triggerMedicalInsuranceUpdate.drl");
+		return false;
+	}
+	
+	return true;		
+	
+}
+	
+rule "triggerMedicalInsuranceUpdate"
+no-loop true
+salience 0
+when
+	entity : ims.core.clinical.domain.objects.PatientMedicalInsurance();
+	eval(triggerMedInsUpdate(engine, factory, prevState, entity));
+then
+	saveDemographicsTriggerMessageForMedInsUpdate(engine, factory, prevState, entity);
+	engine.createSystemLogEntry(ims.framework.enumerations.SystemLogLevel.INFORMATION, "Rule triggerMedicalInsuranceUpdate eval true.");
+end
+

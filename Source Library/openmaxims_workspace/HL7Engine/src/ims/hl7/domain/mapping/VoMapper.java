@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -14,6 +14,11 @@
 //#                                                                           #
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+//#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
 //#                                                                           #
 //#############################################################################
 //#EOH
@@ -43,6 +48,7 @@ import ims.core.patient.vo.PatientRefVo;
 import ims.core.resource.people.vo.HcpRefVo;
 import ims.core.resource.people.vo.MedicRefVo;
 import ims.core.resource.place.vo.LocSiteRefVo;
+import ims.core.vo.AddressVo;
 import ims.core.vo.AneAttendanceVo;
 import ims.core.vo.CareContextHistoryVo;
 import ims.core.vo.CareContextHistoryVoCollection;
@@ -70,7 +76,6 @@ import ims.core.vo.HcpMinVo;
 import ims.core.vo.IfPatientAllergyVo;
 import ims.core.vo.IfPatientAllergyVoCollection;
 import ims.core.vo.InpatientEpisodeVo;
-import ims.core.vo.InsuranceVo;
 import ims.core.vo.LocShortMappingsVo;
 import ims.core.vo.LocShortVo;
 import ims.core.vo.LocSiteShortVo;
@@ -79,9 +84,11 @@ import ims.core.vo.MedicVo;
 import ims.core.vo.MedicWithMappingsLiteVo;
 import ims.core.vo.MemberOfStaffLiteVo;
 import ims.core.vo.MemberOfStaffShortVo;
+import ims.core.vo.NationalHealthCoverVo;
 import ims.core.vo.NextOfKin;
 import ims.core.vo.OutPatientAttendanceVo;
 import ims.core.vo.PasEventVo;
+import ims.core.vo.PatRelative;
 import ims.core.vo.Patient;
 import ims.core.vo.PatientAlert;
 import ims.core.vo.PatientAlertLiteVo;
@@ -95,6 +102,7 @@ import ims.core.vo.PersonAddressCollection;
 import ims.core.vo.PersonName;
 import ims.core.vo.PersonNameCollection;
 import ims.core.vo.PrivateInsuranceCompanyVo;
+import ims.core.vo.SupportNetworkFamily;
 import ims.core.vo.TaxonomyMap;
 import ims.core.vo.lookups.AddressType;
 import ims.core.vo.lookups.AdmissionType;
@@ -106,6 +114,7 @@ import ims.core.vo.lookups.CareSpelltoEpisodeRelationship;
 import ims.core.vo.lookups.ChannelType;
 import ims.core.vo.lookups.ContextType;
 import ims.core.vo.lookups.Country;
+import ims.core.vo.lookups.Eligibility;
 import ims.core.vo.lookups.EthnicOrigin;
 import ims.core.vo.lookups.LocationType;
 import ims.core.vo.lookups.MRNStatus;
@@ -113,7 +122,9 @@ import ims.core.vo.lookups.ManagementIntention;
 import ims.core.vo.lookups.MaritalStatus;
 import ims.core.vo.lookups.MethodOfAdmission;
 import ims.core.vo.lookups.NameType;
+import ims.core.vo.lookups.Occupation;
 import ims.core.vo.lookups.PASSpecialty;
+import ims.core.vo.lookups.PDSChannelUsage;
 import ims.core.vo.lookups.PasEventType;
 import ims.core.vo.lookups.PatIdType;
 import ims.core.vo.lookups.PatientStatus;
@@ -146,9 +157,12 @@ import ims.framework.utils.DateFormat;
 import ims.framework.utils.DateTime;
 import ims.framework.utils.DateTimeFormat;
 import ims.framework.utils.PartialDate;
+import ims.framework.utils.TimeFormat;
 import ims.hl7.HL7Config;
+import ims.hl7.domain.EventResponse;
 import ims.hl7.utils.HL7Utils;
 import ims.ntpf.vo.lookups.County;
+import ims.ntpf_ptr.vo.lookups.AreaOfResidence;
 import ims.ocrr.orderingresults.vo.OrderInvestigationRefVo;
 import ims.ocrr.vo.ProviderSystemVo;
 import ims.ocrr.vo.lookups.Category;
@@ -160,6 +174,7 @@ import ims.ocs_if.vo.IfOcsOrderVo;
 import ims.ocs_if.vo.IfOrderInvestigationVo;
 import ims.ocs_if.vo.IfOrderInvestigationVoCollection;
 import ims.ocs_if.vo.IfOutOcsOrderVo;
+import ims.scheduling.vo.ifSessionListOwnerVoCollection;
 import ims.vo.LookupInstVo;
 import ims.vo.LookupInstanceCollection;
 import ims.vo.LookupMappingVo;
@@ -167,11 +182,16 @@ import ims.vo.LookupTypeVo;
 
 import java.text.ParseException;
 import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
+import com.sun.org.apache.bcel.internal.generic.INSTANCEOF;
+
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.DataTypeException;
+import ca.uhn.hl7v2.model.Group;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Structure;
 import ca.uhn.hl7v2.model.v24.datatype.CX;
@@ -183,10 +203,13 @@ import ca.uhn.hl7v2.model.v24.datatype.XCN;
 import ca.uhn.hl7v2.model.v24.datatype.XPN;
 import ca.uhn.hl7v2.model.v24.datatype.XTN;
 import ca.uhn.hl7v2.model.v24.group.ADT_A05_IN1IN2IN3ROL;
+import ca.uhn.hl7v2.model.v24.message.ADT_A01;
 import ca.uhn.hl7v2.model.v24.message.ADT_A05;
 import ca.uhn.hl7v2.model.v24.message.ADT_A30;
 import ca.uhn.hl7v2.model.v24.message.ADT_A39;
 import ca.uhn.hl7v2.model.v24.message.ADT_A52;
+import ca.uhn.hl7v2.model.v24.message.MFN_M02;
+import ca.uhn.hl7v2.model.v24.message.MFN_M05;
 import ca.uhn.hl7v2.model.v24.message.OMG_O19;
 import ca.uhn.hl7v2.model.v24.message.ORG_O20;
 import ca.uhn.hl7v2.model.v24.message.ORM_O01;
@@ -194,16 +217,22 @@ import ca.uhn.hl7v2.model.v24.message.ORR_O02;
 import ca.uhn.hl7v2.model.v24.message.ORU_R01;
 import ca.uhn.hl7v2.model.v24.message.PPG_PCG;
 import ca.uhn.hl7v2.model.v24.message.REF_I12;
+import ca.uhn.hl7v2.model.v24.segment.AIP;
+import ca.uhn.hl7v2.model.v24.segment.AL1;
 import ca.uhn.hl7v2.model.v24.segment.EVN;
 import ca.uhn.hl7v2.model.v24.segment.IN1;
 import ca.uhn.hl7v2.model.v24.segment.MRG;
 import ca.uhn.hl7v2.model.v24.segment.MSH;
 import ca.uhn.hl7v2.model.v24.segment.NK1;
+import ca.uhn.hl7v2.model.v24.segment.OBR;
 import ca.uhn.hl7v2.model.v24.segment.OBX;
+import ca.uhn.hl7v2.model.v24.segment.ORC;
 import ca.uhn.hl7v2.model.v24.segment.PD1;
 import ca.uhn.hl7v2.model.v24.segment.PID;
 import ca.uhn.hl7v2.model.v24.segment.PV1;
 import ca.uhn.hl7v2.model.v24.segment.PV2;
+import ca.uhn.hl7v2.model.v24.segment.SCH;
+import ca.uhn.hl7v2.model.v24.segment.TXA;
 
 public abstract class VoMapper  implements IMessageHandler 
 {
@@ -269,7 +298,9 @@ public abstract class VoMapper  implements IMessageHandler
 	public String lastFailedMessage;
 		
 
-	public abstract Message processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception;
+	//WDEV-20112
+//	public abstract Message processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception;
+	public abstract EventResponse processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception; //WDEV-20112
 
 
 	protected Object getDomainImpl(String className) throws Exception
@@ -390,7 +421,13 @@ public abstract class VoMapper  implements IMessageHandler
 	public PatientRefVo getPatient(Message msg, ProviderSystemVo providerSystem) throws Exception
 	{
 		PID pid=null;
-		
+
+		//WDEV-20035 Don't cause an exception when no PID segment exists in inbound message
+		if (msg instanceof MFN_M02 || msg instanceof MFN_M05)
+		{
+			return null;
+		} //WDEV-20035
+
 		if (msg instanceof ORM_O01)
 		{
 			pid=((ORM_O01)msg).getORM_O01_PIDPD1NTEPV1PV2IN1IN2IN3GT1AL1().getPID();
@@ -605,13 +642,15 @@ public abstract class VoMapper  implements IMessageHandler
 			PatIdType idLookup =PatIdType.getNegativeInstance(providerSystem.getConfigurationProperty("SecondaryID").getPropertyValue());
 			if(idLookup!=null)
 			{
-			PatientIdCollection ids=getIdentifiersFromPid(pid,providerSystem,idLookup);
-			if(ids==null||ids.size()==0)
-				throw new HL7Exception("No Identifier of type"+idLookup.getText());
-			patVo.setIdentifiers(ids);
-			patVo2 = getDemog().getPatient(patVo);
-			if(patVo2!=null)
-				doDemographicCheck=true;
+				PatientIdCollection ids=getIdentifiersFromPid(pid,providerSystem,idLookup);
+				if(ids!=null&&ids.size()>0)
+				{
+	//				throw new HL7Exception("No Identifier of type"+idLookup.getText());
+					patVo.setIdentifiers(ids);
+					patVo2 = getDemog().getPatient(patVo);
+					if(patVo2!=null)
+						doDemographicCheck=true;
+				}
 			}
 		}
 		if (patVo2 != null)
@@ -623,7 +662,10 @@ public abstract class VoMapper  implements IMessageHandler
 		populatePatientFromPID(patVo, pid, providerSystem);
 		if (pd1 != null)
 		{
-			populatePatientGPDetailsFromPD1(patVo, pd1);			
+			//WDEV-20278
+//			populatePatientGPDetailsFromPD1(patVo, pd1);			
+			populatePatientGPDetailsFromPD1(patVo, pd1, providerSystem); //WDEV-20278
+			populatePatientOccupationFromPD1(patVo, pd1, providerSystem); //WDEV-22969
 		}
 		if (includeNok && nk1 != null)
 		{
@@ -767,12 +809,12 @@ public abstract class VoMapper  implements IMessageHandler
 
 	private void populateInsuranceDetails(Patient patVo,IN1 in1,ProviderSystemVo providerSystem) throws HL7Exception
 	{
-		InsuranceVo insurance = null;
+		NationalHealthCoverVo insurance = null;
 		PatientMedicalInsuranceVo medInsurance = null;
-		if(patVo.getInsurance()==null)
-			insurance = new InsuranceVo();
+		if(patVo.getNationalHealthCover() == null)
+			insurance = new NationalHealthCoverVo();
 		else
-			insurance=patVo.getInsurance();
+			insurance=patVo.getNationalHealthCover();
 		
 		if(patVo.getCurrentMedicalInsurance()==null)
 		{
@@ -809,9 +851,25 @@ public abstract class VoMapper  implements IMessageHandler
 		if (insurancePlan != null)
 		{
 			if (insurancePlan.equals(Hl7Null))
+			{
 				medInsurance.setPolicyType(null);
+				medInsurance.setPlanOrUnits(null);
+			}
 			else
-				medInsurance.setPolicyType((PrivateInsurancePolicyType) svc.getLocalLookup(PrivateInsurancePolicyType.class, PrivateInsurancePolicyType.TYPE_ID, providerSystem.getCodeSystem().getText(),insurancePlan));
+			{
+				PrivateInsurancePolicyType policy = (PrivateInsurancePolicyType)svc.getLocalLookup(PrivateInsurancePolicyType.class, PrivateInsurancePolicyType.TYPE_ID, providerSystem.getCodeSystem().getText(),insurancePlan);
+				if(policy!=null)
+				{
+					medInsurance.setPolicyType(policy);
+					medInsurance.setPlanOrUnits(null);
+					
+				}
+				else
+				{
+					medInsurance.setPolicyType(PrivateInsurancePolicyType.OTHER);
+					medInsurance.setPlanOrUnits(insurancePlan);
+				}
+			}
 		}
 
 		//IN1-13
@@ -826,9 +884,14 @@ public abstract class VoMapper  implements IMessageHandler
 		if (eligibility != null)
 		{
 			if (eligibility.equals(Hl7Null))
-				insurance.setHealthActCategory(null);
+				//WDEV-23272
+//				insurance.setHealthActCategory(null);
+				insurance.setEligibility(null); //WDEV-23272
+
 			else
-				insurance.setHealthActCategory((PersonHealthActCategory) svc.getLocalLookup(PersonHealthActCategory.class, PersonHealthActCategory.TYPE_ID, providerSystem.getCodeSystem().getText(),eligibility));
+				//WDEV-23727
+//				insurance.setHealthActCategory((PersonHealthActCategory) svc.getLocalLookup(PersonHealthActCategory.class, PersonHealthActCategory.TYPE_ID, providerSystem.getCodeSystem().getText(),eligibility));
+				insurance.setEligibility((Eligibility) svc.getLocalLookup(Eligibility.class, Eligibility.TYPE_ID, providerSystem.getCodeSystem().getText(),eligibility)); //WDEV-23727
 		}
 		
 		//IN1-35
@@ -878,8 +941,8 @@ public abstract class VoMapper  implements IMessageHandler
 		if(patVo.getCurrentMedicalInsurance()==null)
 			patVo.setCurrentMedicalInsurance(medInsurance);
 			
-		if(patVo.getInsurance()==null)	
-			patVo.setInsurance(insurance);
+		if(patVo.getNationalHealthCover() == null)	
+			patVo.setNationalHealthCover(insurance);
 	}
 	
 	private boolean isEHIC(IN1 in1) throws HL7Exception
@@ -901,11 +964,11 @@ public abstract class VoMapper  implements IMessageHandler
 		if (!isEHIC(in1))
 			return;
 		
-		InsuranceVo insurance = null;
-		if(patVo.getInsurance()==null)
-			insurance = new InsuranceVo();
+		NationalHealthCoverVo insurance = null;
+		if(patVo.getNationalHealthCover() == null)
+			insurance = new NationalHealthCoverVo();
 		else
-			insurance=patVo.getInsurance();
+			insurance=patVo.getNationalHealthCover();
 
 		//IN1-36
 		String insuranceRegNumber = in1.getPolicyNumber().getValue();
@@ -944,14 +1007,15 @@ public abstract class VoMapper  implements IMessageHandler
 				insurance.setEHICInstitution(institution);
 		}
 		
-		if(patVo.getInsurance()==null)	
-			patVo.setInsurance(insurance);
+		if(patVo.getNationalHealthCover() == null)	
+			patVo.setNationalHealthCover(insurance);
 	}
 	
 	
 	
-		
-	private void populatePatientGPDetailsFromPD1(Patient patVo, PD1 pd1) throws HL7Exception
+	//WDEV-20278	
+//	private void populatePatientGPDetailsFromPD1(Patient patVo, PD1 pd1) throws HL7Exception
+	private void populatePatientGPDetailsFromPD1(Patient patVo, PD1 pd1, ProviderSystemVo providerSystem) throws HL7Exception //WDEV-20278
 	{
 		// As there was an inconsistency between chapter 2 and 3 of the HL7 Specification for
 		// PD1 and XON, we have to look for the practice code in the organisation name
@@ -972,20 +1036,49 @@ public abstract class VoMapper  implements IMessageHandler
 		{
 			if(ConfigFlag.HL7.HEARTS_GP_MODEL.getValue()&&gpCode!=null&&gpCode!=Hl7Null) //
 			{
-				LocSiteShortVo surgery=orgLoc.getLocSiteShortByTaxonomyType(pracCode + "_" + gpCode+"_"+surgeryCode, TaxonomyType.PAS);
+				//WDEV-20278
+//				LocSiteShortVo surgery=orgLoc.getLocSiteShortByTaxonomyType(pracCode + "_" + gpCode+"_"+surgeryCode, TaxonomyType.PAS);
+				LocSiteShortVo surgery=orgLoc.getLocSiteShortByTaxonomyType(pracCode + "_" + gpCode+"_"+surgeryCode, providerSystem.getCodeSystem()); //WDEV-20278
 				if(surgery==null)
 				{
-					surgery=orgLoc.getLocSiteShortByTaxonomyType(pracCode + "_" + surgeryCode, TaxonomyType.PAS);
+					//WDEV-20278
+//					surgery=orgLoc.getLocSiteShortByTaxonomyType(pracCode + "_" + surgeryCode, TaxonomyType.PAS);
+					surgery=orgLoc.getLocSiteShortByTaxonomyType(pracCode + "_" + surgeryCode, providerSystem.getCodeSystem()); //WDEV-20278
 				}
 				patVo.setGpSurgery(surgery);
 			}
 			else
 			{
-			patVo.setGpSurgery(orgLoc.getLocSiteShortByTaxonomyType(pracCode + "_" + surgeryCode, TaxonomyType.PAS));
+				//WDEV-20278
+//				patVo.setGpSurgery(orgLoc.getLocSiteShortByTaxonomyType(pracCode + "_" + surgeryCode, TaxonomyType.PAS));
+				patVo.setGpSurgery(orgLoc.getLocSiteShortByTaxonomyType(pracCode + "_" + surgeryCode, providerSystem.getCodeSystem())); //WDEV-20278
 			}
 		}
 		
 	}
+	
+	//WDEV-22969
+	private void populatePatientOccupationFromPD1(Patient patVo, PD1 pd1, ProviderSystemVo providerSystem) throws HL7Exception 
+	{
+		// PD1-2 (Living Arrangement) contains patient's occupation (NON-STANDARD)
+
+		String occupation = pd1.getLivingArrangement().getValue();
+		
+		if (occupation != null)
+		{
+			if (ConfigFlag.UI.DEMOGRAPHICS_TYPE.getValue().equals("IRISH"))
+			{
+				patVo.setTxtOccupation(occupation);
+			}
+			else
+			{
+				if (occupation.equals(Hl7Null))
+					patVo.setOccupation(null);
+				else
+					patVo.setOccupation((Occupation) svc.getLocalLookup(Occupation.class, Occupation.TYPE_ID, providerSystem.getCodeSystem().getText(), occupation));
+			}
+		}
+	} //WDEV-22969	
 
 	protected Patient getPrimaryIdFromMrg(Message msg, ProviderSystemVo providerSystem) throws HL7Exception
 	{
@@ -1259,36 +1352,680 @@ public abstract class VoMapper  implements IMessageHandler
 			return nok;
 	}
 
-	protected final void renderNextOfKinVoToNK1(NextOfKin nok, NK1 nk1,ProviderSystemVo providerSystem) throws Exception
+
+	//WDEV-20335
+//	protected final void renderNextOfKinVoToNK1(NextOfKin nok, NK1 nk1,ProviderSystemVo providerSystem) throws Exception
+	protected final void renderNextOfKinVoToNK1(NextOfKin nok, NK1 nk1,ProviderSystemVo providerSystem, Boolean isConfidential) throws Exception //WDEV-20335
 	{
 		LOG.debug("VoMapper renderNextOfKinVoToNK1: entry");
 		if (nok == null)
 			return;
 
 		renderNameVoToXPN(nok.getName(), nk1.getNKName(0),providerSystem);
-		renderAddressVoToXAD(nok.getAddress(), nk1.getAddress(0),providerSystem);
-
-		CommChannelVo voWork = nok.getCommunicationChannel(ChannelType.WORK_PHONE);
-		if (voWork != null)
-			nk1.getBusinessPhoneNumber(0).getAnyText().setValue(voWork.getCommValue());
-		CommChannelVo vo = nok.getCommunicationChannel(ChannelType.HOME_PHONE);
-		if (vo != null)
+		
+		//WDEV-20335
+		if((isConfidential == null) || (!isConfidential))
 		{
-			nk1.getPhoneNumber(0).getAnyText().setValue(vo.getCommValue());
-		}
-		else
-		{
-			// wdev-3087 Check if home phone is set at address level
-			if (nok.getAddressIsNotNull() && nok.getAddress().getPhoneIsNotNull())
-				nk1.getPhoneNumber(0).getAnyText().setValue(nok.getAddress().getPhone());
-		}
+			renderAddressVoToXAD(nok.getAddress(), nk1.getAddress(0), providerSystem);
+		}//WDEV-20335
+		
+		//WDEV-22006
+//		CommChannelVo voWork = nok.getCommunicationChannel(ChannelType.WORK_PHONE);
+//		if (voWork != null)
+//			nk1.getBusinessPhoneNumber(0).getAnyText().setValue(voWork.getCommValue());
+//		CommChannelVo vo = nok.getCommunicationChannel(ChannelType.HOME_PHONE);
+//		if (vo != null)
+//		{
+//			nk1.getPhoneNumber(0).getAnyText().setValue(vo.getCommValue());
+//		}
+//		else
+//		{
+//			// wdev-3087 Check if home phone is set at address level
+//			
+//			if (nok.getAddressIsNotNull() && nok.getAddress().getPhoneIsNotNull())
+//				nk1.getPhoneNumber(0).getAnyText().setValue(nok.getAddress().getPhone());
+//		}
 
+		//WDEV-22006
+		if (nok.getCommChannels() != null)
+		{
+			renderCommChannelVoCollToNK1(nok.getCommChannels(), nk1, providerSystem);
+		} 
+		else if (nok.getAddress() != null 
+				&& nok.getAddress().getPhone() != null)
+		{
+			nk1.getBusinessPhoneNumber(0).getTelecommunicationUseCode().setValue("WPN");
+			nk1.getBusinessPhoneNumber(0).getTelecommunicationEquipmentType().setValue("PH");
+			nk1.getBusinessPhoneNumber(0).getAnyText().setValue(nok.getAddress().getPhone());
+		} //WDEV-22006
+
+		
 		if (nok.getRelationshipIsNotNull())
-			nk1.getRelationship().getIdentifier().setValue(svc.getRemoteLookup(nok.getRelationship().getID(), providerSystem.getCodeSystem().getText()));
+		{
+			nk1.getRelationship().getIdentifier().setValue(svc.getRemoteLookup(nok.getRelationship().getID(), providerSystem.getCodeSystem().getText()));				
+		}
+		
+		//WDEV-20336 
+		//NK1-7 Contact role (CE)
+		if (nok.getRoleIsNotNull())
+		{
+			nk1.getContactRole().getIdentifier().setValue(svc.getRemoteLookup(nok.getRole().getID(), providerSystem.getCodeSystem().getText()));
+		}
+			
+		//NK1-16 Date/time of birth (TS)
+		if (nok.getDobIsNotNull())
+		{
+			nk1.getDateTimeOfBirth().getTimeOfAnEvent().setValue(nok.getDob().toString(DateFormat.ISO));
+		} //WDEV-20336
+		
 
 		LOG.debug("VoMapper renderNextOfKinVoToNK1: exit (" + nk1.toString() + ")");
 	}
 
+	//WDEV-20336
+	protected final void renderPatRelativeVoToNK1(PatRelative nok, NK1 nk1, ProviderSystemVo providerSystem, Boolean isConfidential) throws Exception
+	{
+		LOG.debug("VoMapper renderPatRelativeVoToNK1: entry");
+		if (nok == null)
+			return;
+
+		//NK1-2 Name (XPN)
+		renderNameVoToXPN(nok.getName(), nk1.getNKName(0),providerSystem);
+
+		//NK1-3 Relationship (CE)
+		if (nok.getRelationshipIsNotNull())
+		{
+			nk1.getRelationship().getIdentifier().setValue(svc.getRemoteLookup(nok.getRelationship().getID(), providerSystem.getCodeSystem().getText()));
+		}
+
+		//NK1-4 Address (XAD)
+		if((isConfidential == null) || (!isConfidential))
+		{
+			renderAddressVoToXAD(nok.getAddress(), nk1.getAddress(0), providerSystem);
+		}
+
+		//NK1-5 Phone number (XTN)
+		//NK1-6 Business phone number (XTN)
+		if(nok.getCommChannelsIsNotNull())
+		{
+			
+			//http://jira/browse/WDEV-22006
+//			CommChannelVoCollection comChannelVoCollection = nok.getCommChannels();
+//			
+//			int phNum = 0;
+//			int workPhNum = 0;
+//			
+//			for (int i = 0; i < comChannelVoCollection.size(); i++)
+//			{
+//				CommChannelVo commChannel = comChannelVoCollection.get(i);
+//				
+//				if((ChannelType.WORK_PHONE).equals(commChannel.getChannelType()))
+//				{channeltopid
+			
+//					nk1.getBusinessPhoneNumber(workPhNum).getTelecommunicationUseCode().setValue("WPN");
+//					nk1.getBusinessPhoneNumber(workPhNum).getAnyText().setValue(commChannel.getCommValue());
+//					workPhNum ++;
+//				}
+//				if((ChannelType.HOME_PHONE).equals(commChannel.getChannelType()))
+//				{
+//					if(phNum > 0)
+//					{
+//						nk1.getPhoneNumber(phNum).getTelecommunicationUseCode().setValue("ORN");
+//					}
+//					else
+//					{
+//						nk1.getPhoneNumber(phNum).getTelecommunicationUseCode().setValue("PRN");
+//					}
+//					nk1.getPhoneNumber(phNum).getAnyText().setValue(commChannel.getCommValue());
+//					phNum ++;	
+//				}
+//			}
+			renderCommChannelVoCollToNK1(nok.getCommChannels(), nk1, providerSystem); //WDEV-22006
+
+		}
+
+		//NK1-7 Contact role (CE)
+		if(nok.getRoleIsNotNull())
+		{
+			nk1.getContactRole().getIdentifier().setValue(svc.getRemoteLookup(nok.getRole().getID(), providerSystem.getCodeSystem().getText()));
+		}
+
+		//http://jira/browse/WDEV-22006
+		//NK1-8 Start date (DT)
+		if (nok.getBeffdateIsNotNull())
+		{
+			nk1.getStartDate().setValue(nok.getBeffdate().toString(DateFormat.ISO));
+		} //WDEV-22006
+		
+		//http://jira/browse/WDEV-22006
+		//NK1-9 End date (DT)
+		if (nok.getBetdateIsNotNull())
+		{
+			nk1.getEndDate().setValue(nok.getBetdate().toString(DateFormat.ISO));
+		} //WDEV-22006
+		
+		//NK1-16 Date/time of birth (TS)
+		if (nok.getDobIsNotNull())
+		{
+			nk1.getDateTimeOfBirth().getTimeOfAnEvent().setValue(nok.getDob().toString(DateFormat.ISO));
+		}
+
+		
+		LOG.debug("VoMapper renderPatRelativeVoToNK1: exit (" + nk1.toString() + ")");
+	} //WDEV-20336
+	
+	
+	//http://jira/browse/WDEV-22006
+	protected final void renderCommChannelVoCollToNK1(CommChannelVoCollection comChannelVoCollection, NK1 nk1, ProviderSystemVo providerSystem) throws Exception
+	{
+		/*
+		  Components:  [NNN] [(999)]999-9999 [X99999] [B99999] [C any text] ^ <telecommunication use code (ID)> ^ <tele-communication equipment type (ID)> 
+		               ^ <email address (ST)> ^ <country code (NM)> ^ <area/city code (NM)> ^ <phone number (NM)> ^ <extension (NM)> ^ <any text (ST)>
+		               
+		   Lookup PDSChannelUsage:
+			H = Home Contact
+			HP = Home
+			HV = Home Vacation
+			MC = Mobile
+			PG = Pager
+			WP = Office Address
+			AS = Answering Machine
+			EC = Emergency Contact
+			
+			Lookup ChannelType:
+			GEN_PHONE
+			HOME_PHONE
+			WORK_PHONE
+			MOBILE
+			EMAIL
+			WEB
+			FAX
+			BEEP
+			EMERGENCY
+		 */
+
+		int xtnHomePhoneIter = 0;
+		int xtnBusinessPhoneIter = 0;
+
+		Boolean isPrimaryResidenceNumberAssigned = Boolean.FALSE;
+				
+		for (int i = 0; i < comChannelVoCollection.size(); i++)
+		{
+			CommChannelVo commChannel = comChannelVoCollection.get(i);
+			
+			Boolean isWorkAddressChannelUsage = Boolean.FALSE;
+			Boolean isValidCommChannel = Boolean.TRUE;
+			
+			if (ChannelType.WORK_PHONE.equals (commChannel.getChannelType()))
+			{
+				if (commChannel.getCommValue() != null 
+						&& isEmail(commChannel.getCommValue()))
+				{
+					/*
+					 * commChannel.getCommValue() is actually an email address
+					 * and configuration flag INCLUDE_EMAIL_FORMATTED_WORK_NUMBERS is FALSE
+					 * Skip the processing of the Comm Channel
+					 */	
+					isValidCommChannel = Boolean.FALSE;
+				}
+			}
+
+			if (commChannel.getCommValue() != null
+					&& isValidCommChannel)
+			{
+				//----------------------------------------------
+				// XTN.0 [(999)] 999-9999 [X99999] [C any text]
+				
+				//----------------------------------------------
+				// XTN.1 telecommunication use code (ID)
+	
+				/*
+				 *  Has a PDSChannelUsage value been assigned to this Comm Channel?
+				 */
+				if (commChannel.getChannelUsage() != null
+						&& !(commChannel.getChannelUsage().getID() == 0))
+				{
+					/*
+					 *  Is there a provider system external value mapping defined for this PDSChannelUsage lookup?
+					 */
+					String extCodeForChannelUsage = svc.getRemoteLookup(commChannel.getChannelUsage().getID(), providerSystem.getCodeSystem().getText());
+					if (extCodeForChannelUsage != null)
+					{
+						if (PDSChannelUsage.WP.equals(commChannel.getChannelUsage()))
+						{
+							nk1.getBusinessPhoneNumber(xtnBusinessPhoneIter).getTelecommunicationUseCode().setValue(extCodeForChannelUsage);
+							isWorkAddressChannelUsage = Boolean.TRUE;
+						}
+						else
+						{
+							nk1.getPhoneNumber(xtnHomePhoneIter).getTelecommunicationUseCode().setValue(extCodeForChannelUsage);
+						}
+					}
+					else
+					{
+						/*
+						 * No provider system external value mapping defined for PDSChannelUsage lookup - use the lookup text values
+						 */
+						if (PDSChannelUsage.WP.equals(commChannel.getChannelUsage()))
+						{
+							nk1.getBusinessPhoneNumber(xtnBusinessPhoneIter).getTelecommunicationUseCode().setValue(commChannel.getChannelUsage().getText());
+							isWorkAddressChannelUsage = Boolean.TRUE;
+						}
+						else
+						{
+							nk1.getPhoneNumber(xtnHomePhoneIter).getTelecommunicationUseCode().setValue(commChannel.getChannelUsage().getText());
+						}
+					}
+				}
+				
+				/*
+				 *  No PDSChannelUsage value defined - use HL7 standard values based on ChannelType lookup
+				 */
+				else if (ChannelType.GEN_PHONE.equals(commChannel.getChannelType())
+							|| ChannelType.HOME_PHONE.equals(commChannel.getChannelType())
+							|| ChannelType.MOBILE.equals(commChannel.getChannelType()))
+				{
+					if (isPrimaryResidenceNumberAssigned)
+					{
+						nk1.getPhoneNumber(xtnHomePhoneIter).getTelecommunicationUseCode().setValue("ORN");					
+					}
+					else
+					{
+						nk1.getPhoneNumber(xtnHomePhoneIter).getTelecommunicationUseCode().setValue("PRN");
+						isPrimaryResidenceNumberAssigned = Boolean.TRUE;
+					}
+				} 
+	
+				else if (ChannelType.WORK_PHONE.equals(commChannel.getChannelType()))
+				{
+					nk1.getBusinessPhoneNumber(xtnBusinessPhoneIter).getTelecommunicationUseCode().setValue("WPN");
+					isWorkAddressChannelUsage = Boolean.TRUE;
+				}
+	
+				else if (ChannelType.EMERGENCY.equals(commChannel.getChannelType()))
+				{
+					nk1.getPhoneNumber(xtnHomePhoneIter).getTelecommunicationUseCode().setValue("EMR");
+				}
+	
+				else if (ChannelType.BLEEP.equals(commChannel.getChannelType()))
+				{
+					if (isWorkAddressChannelUsage)
+					{
+						nk1.getBusinessPhoneNumber(xtnBusinessPhoneIter).getTelecommunicationUseCode().setValue("BPN");
+					}
+					else
+					{
+						nk1.getPhoneNumber(xtnHomePhoneIter).getTelecommunicationUseCode().setValue("BPN");
+					}
+				}
+				
+				else if (ChannelType.EMAIL.equals(commChannel.getChannelType()) 
+						|| ChannelType.WEB.equals(commChannel.getChannelType()))
+				{
+					if (isWorkAddressChannelUsage)
+					{
+						nk1.getBusinessPhoneNumber(xtnBusinessPhoneIter).getTelecommunicationUseCode().setValue("NET");
+					}
+					else
+					{
+						nk1.getPhoneNumber(xtnHomePhoneIter).getTelecommunicationUseCode().setValue("NET");
+					}
+				}
+	
+	
+				//----------------------------------------------
+				// XTN.2 tele-communication equipment type (ID)
+				if (commChannel.getChannelType() != null
+						&& !(commChannel.getChannelType().getID() == 0))
+				{
+					/*
+					 *  Is there a provider system mapping defined for ChannelType lookup?
+					 */
+					String channelType = svc.getRemoteLookup(commChannel.getChannelType().getID(), providerSystem.getCodeSystem().getText());
+					if (channelType != null)
+					{
+						if (ChannelType.WORK_PHONE.equals(commChannel.getChannelType())
+								|| isWorkAddressChannelUsage)
+						{
+							nk1.getBusinessPhoneNumber(xtnBusinessPhoneIter).getTelecommunicationEquipmentType().setValue(channelType);
+						}
+						else
+						{
+							nk1.getPhoneNumber(xtnHomePhoneIter).getTelecommunicationEquipmentType().setValue(channelType);
+						}
+					}
+	
+					/*
+					 *  No provider system mapping found for assigned ChannelType lookup - use HL7 standard values			
+					 */
+					else if (ChannelType.EMERGENCY.equals  (commChannel.getChannelType())
+							|| ChannelType.GEN_PHONE.equals  (commChannel.getChannelType()) 
+							|| ChannelType.HOME_PHONE.equals (commChannel.getChannelType()))
+					{
+						if (isWorkAddressChannelUsage)
+						{
+							nk1.getBusinessPhoneNumber(xtnBusinessPhoneIter).getTelecommunicationEquipmentType().setValue("PH");
+						}
+						else
+						{
+							nk1.getPhoneNumber(xtnHomePhoneIter).getTelecommunicationEquipmentType().setValue("PH");
+						}
+					}
+		
+					else if (ChannelType.WORK_PHONE.equals (commChannel.getChannelType()))
+					{
+						nk1.getBusinessPhoneNumber(xtnBusinessPhoneIter).getTelecommunicationEquipmentType().setValue("PH");
+					}
+		
+					else if (ChannelType.FAX.equals(commChannel.getChannelType())) 
+					{
+						if (isWorkAddressChannelUsage)
+						{
+							nk1.getBusinessPhoneNumber(xtnBusinessPhoneIter).getTelecommunicationEquipmentType().setValue("FX");
+						}
+						else
+						{
+							nk1.getPhoneNumber(xtnHomePhoneIter).getTelecommunicationEquipmentType().setValue("FX");
+						}
+					}
+		
+					else if (ChannelType.MOBILE.equals(commChannel.getChannelType()))
+					{
+						if (isWorkAddressChannelUsage)
+						{
+							nk1.getBusinessPhoneNumber(xtnBusinessPhoneIter).getTelecommunicationEquipmentType().setValue("CP");
+						}
+						else
+						{
+							nk1.getPhoneNumber(xtnHomePhoneIter).getTelecommunicationEquipmentType().setValue("CP");
+						}
+					}
+		
+					else if (ChannelType.EMAIL.equals(commChannel.getChannelType())
+							|| ChannelType.WEB.equals(commChannel.getChannelType()))
+					{
+						if (isWorkAddressChannelUsage)
+						{
+							nk1.getBusinessPhoneNumber(xtnBusinessPhoneIter).getTelecommunicationEquipmentType().setValue("Internet");
+						}
+						else
+						{
+							nk1.getPhoneNumber(xtnHomePhoneIter).getTelecommunicationEquipmentType().setValue("Internet");
+						}
+					}
+		
+		
+					else if (ChannelType.BLEEP.equals(commChannel.getChannelType()))
+					{
+						if (isWorkAddressChannelUsage)
+						{
+							nk1.getBusinessPhoneNumber(xtnBusinessPhoneIter).getTelecommunicationEquipmentType().setValue("BP");
+						}
+						else
+						{
+							nk1.getPhoneNumber(xtnHomePhoneIter).getTelecommunicationEquipmentType().setValue("BP");
+						}
+					}
+				}
+	
+				
+				//----------------------------------------------
+				// XTN.3 email address (ST)
+				if (ChannelType.EMAIL.equals(commChannel.getChannelType()))
+				{
+					if (isWorkAddressChannelUsage)
+					{
+						nk1.getBusinessPhoneNumber(xtnBusinessPhoneIter).getEmailAddress().setValue(commChannel.getCommValue());
+					}
+					else
+					{
+						nk1.getPhoneNumber(xtnHomePhoneIter).getEmailAddress().setValue(commChannel.getCommValue());
+					}
+				}
+	
+				//----------------------------------------------
+				// XTN.4 country code (NM)
+				// XTN.5 area/city code (NM)
+				// XTN.6 phone number (NM)
+				// XTN.7 extension (NM)
+				
+				//----------------------------------------------
+				// XTN.8 any text (ST)
+				if (commChannel.getCommValue() != null && !ChannelType.EMAIL.equals(commChannel.getChannelType()))
+				{
+					if (ChannelType.WORK_PHONE.equals(commChannel.getChannelType())
+							|| isWorkAddressChannelUsage)
+					{
+						nk1.getBusinessPhoneNumber(xtnBusinessPhoneIter).getAnyText().setValue(commChannel.getCommValue());
+					}
+					else
+					{
+						nk1.getPhoneNumber(xtnHomePhoneIter).getAnyText().setValue(commChannel.getCommValue());
+					}
+				}
+	
+				/*
+				 * Update correct XTN iteration
+				 */
+				if (ChannelType.WORK_PHONE.equals(commChannel.getChannelType())
+						|| isWorkAddressChannelUsage)
+				{
+					xtnBusinessPhoneIter ++;
+				}
+				else
+				{
+					xtnHomePhoneIter ++;
+				}
+
+			}
+			
+		}
+		
+	}
+	
+
+	//WDEV-19555
+	//WDEV-20335
+//	protected final void renderSupportNetworkFamilyVoToNK1(SupportNetworkFamily snfVo, NK1 nk1,ProviderSystemVo providerSystem) throws Exception
+	protected final void renderSupportNetworkFamilyVoToNK1(SupportNetworkFamily snfVo, NK1 nk1,ProviderSystemVo providerSystem, Boolean isConfidential) throws Exception //WDEV-20335
+	{
+		
+		//NOTE: Vo is actually called SupportNetwork Family. It must have been created before
+		//      the suffix Vo became mandatory
+		
+		LOG.debug("VoMapper renderSupportNetworkFamilyVoToNK1: entry");
+		if (snfVo == null)
+			return;
+
+		//WDEV-22006
+		Boolean isValidCommChannel = Boolean.TRUE;
+		
+		//NK1-6 Business phone number (XTN) 
+		if(snfVo.getCarerWorkPhoneIsNotNull())
+		{
+			//WDEV-22006 Check to see if value is an email address
+			if (snfVo.getCarerWorkPhone() != null 
+					&& isEmail(snfVo.getCarerWorkPhone()))
+			{
+				/*
+				 * snfVo.getCarerWorkPhone() is actually an email address
+				 * and configuration flag INCLUDE_EMAIL_FORMATTED_WORK_NUMBERS is FALSE
+				 * Skip the processing of the Comm Channel
+				 */	
+				isValidCommChannel = Boolean.FALSE;
+			}
+		
+			if (isValidCommChannel)
+			{
+				nk1.getBusinessPhoneNumber(0).getAnyText().setValue(snfVo.getCarerWorkPhone());
+				nk1.getBusinessPhoneNumber(0).getTelecommunicationUseCode().setValue("WPN");
+				nk1.getBusinessPhoneNumber(0).getTelecommunicationEquipmentType().setValue("PH");
+		        //WDEV-22006
+	//	         nk1.getBusinessPhoneNumber(0).getTelecommunicationEquipmentType().setValue("PH");
+				 /*
+				 *  Is there a provider system mapping defined for ChannelType lookup?
+				 */
+				String channelType = svc.getRemoteLookup(ChannelType.WORK_PHONE.getID(), providerSystem.getCodeSystem().getText());
+				if (channelType != null)
+				{
+					nk1.getBusinessPhoneNumber(0).getTelecommunicationEquipmentType().setValue(channelType);
+				}
+				else
+				{
+					nk1.getBusinessPhoneNumber(0).getTelecommunicationEquipmentType().setValue("PH");
+				} 
+			}//WDEV-22006
+		}
+		
+		//NK1-7 Contact role (CE)
+		if(snfVo.getEmergencyContactOrderIsNotNull() && snfVo.getCarerRelationshipIsNotNull())
+		{
+			nk1.getContactRole().getIdentifier().setValue(svc.getRemoteLookup(snfVo.getEmergencyContactOrder().getID(), providerSystem.getCodeSystem().getText()));
+			nk1.getContactRole().getText().setValue(svc.getRemoteLookup(snfVo.getCarerRelationship().getID(), providerSystem.getCodeSystem().getText()));
+			if(snfVo.getIsMainCarerIsNotNull() && snfVo.getIsMainCarer().toString().equalsIgnoreCase("TRUE"))
+			{				
+				nk1.getContactRole().getAlternateText().setValue("Y");
+			}
+		}
+		
+		//NK1-9 End date (DT)
+		if(snfVo.getInactivatingDateTimeIsNotNull())
+		{
+			nk1.getEndDate().setValue(snfVo.getInactivatingDateTime().toString());
+		}
+		
+		//NK1-23 Protection indicator (ID)
+		if(snfVo.getDiscussProgressIsNotNull() && snfVo.getDiscussProgress().toString().equalsIgnoreCase("TRUE"))
+		{
+			nk1.getProtectionIndicator().setValue("Y");
+		}
+		
+		//NK1-30 Contact person’s name (XPN)
+		if(snfVo.getCarerNameIsNotNull())
+		{
+			nk1.getContactPersonSName(0).getGivenName().setValue(snfVo.getCarerName());
+		}
+		
+		//http://jira/browse/WDEV-20141
+		
+//		//NK1-31 Contact person’s telephone number (XTN) 
+//		if(snfVo.getCarerHomePhoneIsNotNull())
+//		{
+//			nk1.getContactPersonSTelephoneNumber(0).getAnyText().setValue(snfVo.getCarerHomePhone());
+//			nk1.getContactPersonSTelephoneNumber(0).getTelecommunicationUseCode().setValue("PRN");
+//			nk1.getContactPersonSTelephoneNumber(0).getTelecommunicationEquipmentType().setValue("PH");
+//		}
+//		
+//		//NK1-31 Contact person’s telephone number (XTN) 
+//		if(snfVo.getCarerMobilePhoneIsNotNull())
+//		{
+//			nk1.getContactPersonSTelephoneNumber(1).getAnyText().setValue(snfVo.getCarerMobilePhone());
+//			nk1.getContactPersonSTelephoneNumber(1).getTelecommunicationUseCode().setValue("ORN");
+//			nk1.getContactPersonSTelephoneNumber(1).getTelecommunicationEquipmentType().setValue("CP");
+//		}
+
+		//http://jira/browse/WDEV-20141
+		int repitition=0;
+        //NK1-31 Contact person’s telephone number (XTN)
+        //Home phone
+        if(snfVo.getCarerHomePhoneIsNotNull())
+        {
+           nk1.getContactPersonSTelephoneNumber(repitition).getAnyText().setValue(snfVo.getCarerHomePhone());
+           nk1.getContactPersonSTelephoneNumber(repitition).getTelecommunicationUseCode().setValue("PRN");
+           //WDEV-22006
+//         nk1.getContactPersonSTelephoneNumber(repitition).getTelecommunicationEquipmentType().setValue("PH");
+			/*
+			 *  Is there a provider system mapping defined for ChannelType lookup?
+			 */
+			String channelType = svc.getRemoteLookup(ChannelType.GEN_PHONE.getID(), providerSystem.getCodeSystem().getText());
+			if (channelType != null)
+			{
+				nk1.getContactPersonSTelephoneNumber(repitition).getTelecommunicationEquipmentType().setValue(channelType);
+			}
+			else
+			{
+				nk1.getContactPersonSTelephoneNumber(repitition).getTelecommunicationEquipmentType().setValue("PH");
+			} //WDEV-22006
+           repitition ++;
+        }
+        
+        //Mobile phone
+        if(snfVo.getCarerMobilePhoneIsNotNull())
+        {
+           nk1.getContactPersonSTelephoneNumber(repitition).getAnyText().setValue(snfVo.getCarerMobilePhone());
+           //WDEV-22006
+//           nk1.getContactPersonSTelephoneNumber(repitition).getTelecommunicationEquipmentType().setValue("CP");
+			/*
+			 *  Is there a provider system mapping defined for ChannelType lookup?
+			 */
+			String channelType = svc.getRemoteLookup(ChannelType.MOBILE.getID(), providerSystem.getCodeSystem().getText());
+			if (channelType != null)
+			{
+				nk1.getContactPersonSTelephoneNumber(repitition).getTelecommunicationEquipmentType().setValue(channelType);
+			}
+			else
+			{
+				nk1.getContactPersonSTelephoneNumber(repitition).getTelecommunicationEquipmentType().setValue("CP");		
+			}
+
+           if(repitition == 0)
+           {
+        	   nk1.getContactPersonSTelephoneNumber(repitition).getTelecommunicationUseCode().setValue("PRN");
+           }
+           else
+           {
+               nk1.getContactPersonSTelephoneNumber(repitition).getTelecommunicationUseCode().setValue("ORN");
+           }
+           repitition ++;
+        }
+
+        //WDEV-22006 Bug!!
+        //Work phone
+//        if(snfVo.getCarerWorkPhoneIsNotNull())
+//        {
+//           nk1.getContactPersonSTelephoneNumber(repitition).getAnyText().setValue(snfVo.getCarerWorkPhone());
+//           nk1.getContactPersonSTelephoneNumber(repitition).getTelecommunicationUseCode().setValue("WPN");                           
+//           nk1.getContactPersonSTelephoneNumber(repitition).getTelecommunicationEquipmentType().setValue("PH");                           
+//           repitition ++;
+//        }
+        
+        //Email address
+        if(snfVo.getCarerEmail() != null
+                     && snfVo.getCarerEmail().length() > 0)
+        {                    
+           nk1.getContactPersonSTelephoneNumber(repitition).getEmailAddress().setValue(snfVo.getCarerEmail());
+           nk1.getContactPersonSTelephoneNumber(repitition).getTelecommunicationUseCode().setValue("NET");
+           //WDEV-22006
+//           nk1.getContactPersonSTelephoneNumber(repitition).getTelecommunicationEquipmentType().setValue("internet");
+			/*
+			 *  Is there a provider system mapping defined for ChannelType lookup?
+			 */
+			String channelType = svc.getRemoteLookup(ChannelType.EMAIL.getID(), providerSystem.getCodeSystem().getText());
+			if (channelType != null)
+			{
+				nk1.getContactPersonSTelephoneNumber(repitition).getTelecommunicationEquipmentType().setValue(channelType);
+			}
+				else
+			{
+	           nk1.getContactPersonSTelephoneNumber(repitition).getTelecommunicationEquipmentType().setValue("Internet");				
+			} //WDEV-22006
+
+        }
+
+		// END http://jira/browse/WDEV-20141
+		
+		//NK1-32 Contact person’s address (XAD)
+        //WDEV-20335
+        if((isConfidential == null) || (!isConfidential))
+        {
+        	nk1.getContactPersonSAddress(0).getStreetAddress().getStreetOrMailingAddress().setValue(HL7Utils.toHL7Text(snfVo.getCarerAddress()));
+        } //WDEV-20335
+
+		LOG.debug("VoMapper rendeSupportNetworkFamilyVoVoToNK1: exit (" + nk1.toString() + ")");
+	}
+
+	
+	
 	public Patient populatePatientFromPID(PID pid, ProviderSystemVo providerSystem) throws HL7Exception
 	{
 		return populatePatientFromPID(new Patient(), pid, providerSystem);
@@ -1489,7 +2226,15 @@ public abstract class VoMapper  implements IMessageHandler
 						else
 							patVo.getAddress().setPhone(pid.getPhoneNumberHome(i).getAnyText().getValue());
 					}
-					coll = populateCommChannel(coll, ChannelType.HOME_PHONE, pid.getPhoneNumberHome(i).getAnyText().getValue());
+					//http://jira/browse/WDEV-23396
+					if(svc.getLocalLookup(ChannelType.class, ChannelType.TYPE_ID, providerSystem.getCodeSystem().getText(), equipType)!=null)
+					{
+						coll = populateCommChannel(coll,(ChannelType) svc.getLocalLookup(ChannelType.class, ChannelType.TYPE_ID, providerSystem.getCodeSystem().getText(), equipType), pid.getPhoneNumberHome(i).getAnyText().getValue());
+					}
+					else
+					{
+						coll = populateCommChannel(coll, ChannelType.HOME_PHONE, pid.getPhoneNumberHome(i).getAnyText().getValue());
+					}
 				}
 				else if (commsUse != null && commsUse.equals("ORN")&&(!Hl7Null.equals(pid.getPhoneNumberHome(i).getAnyText().getValue())))
 				{
@@ -1514,7 +2259,15 @@ public abstract class VoMapper  implements IMessageHandler
 					}
 					else
 					{
-						coll = populateCommChannel(coll, ChannelType.GEN_PHONE, pid.getPhoneNumberHome(i).getAnyText().getValue());
+						//http://jira/browse/WDEV-23396
+						if(svc.getLocalLookup(ChannelType.class, ChannelType.TYPE_ID, providerSystem.getCodeSystem().getText(), equipType)!=null)
+						{
+							coll = populateCommChannel(coll,(ChannelType) svc.getLocalLookup(ChannelType.class, ChannelType.TYPE_ID, providerSystem.getCodeSystem().getText(), equipType), pid.getPhoneNumberHome(i).getAnyText().getValue());
+						}
+						else
+						{
+							coll = populateCommChannel(coll, ChannelType.GEN_PHONE, pid.getPhoneNumberHome(i).getAnyText().getValue());
+						}
 					}
 				}
 			}
@@ -1566,7 +2319,14 @@ public abstract class VoMapper  implements IMessageHandler
 					}
 					else
 					{
-						coll = populateCommChannel(coll, ChannelType.GEN_PHONE, pid.getPhoneNumberBusiness(i).getAnyText().getValue());
+						if(svc.getLocalLookup(ChannelType.class, ChannelType.TYPE_ID, providerSystem.getCodeSystem().getText(), equipType)!=null)
+						{
+							coll = populateCommChannel(coll,(ChannelType) svc.getLocalLookup(ChannelType.class, ChannelType.TYPE_ID, providerSystem.getCodeSystem().getText(), equipType), pid.getPhoneNumberBusiness(i).getAnyText().getValue());
+						}
+						else
+						{
+							coll = populateCommChannel(coll, ChannelType.GEN_PHONE, pid.getPhoneNumberBusiness(i).getAnyText().getValue());
+						}
 					}
 				}
 			}
@@ -1637,13 +2397,17 @@ public abstract class VoMapper  implements IMessageHandler
 			renderNameVoToXPN(patVo.getOtherNames().get(i), pid.getPatientName(i+1),providerSystem);
 		}
 
-		for (int i = 0; i < patVo.getAddresses().size(); i++)
+		//http://jira/browse/WDEV-20335
+		if((patVo.getIsConfidential() == null) || (patVo.getIsConfidentialIsNotNull() && !patVo.getIsConfidential()))
 		{
-			if (!patVo.getAddressIsNotNull()) // First instance will not have been populated if permanent address was null
-				renderAddressVoToXAD(patVo.getAddresses().get(i), pid.getPatientAddress(i),providerSystem);
-			else
-				renderAddressVoToXAD(patVo.getAddresses().get(i), pid.getPatientAddress(i+1),providerSystem);
-		}
+			for (int i = 0; i < patVo.getAddresses().size(); i++)
+			{
+				if (!patVo.getAddressIsNotNull()) // First instance will not have been populated if permanent address was null
+					renderAddressVoToXAD(patVo.getAddresses().get(i), pid.getPatientAddress(i),providerSystem);
+				else
+					renderAddressVoToXAD(patVo.getAddresses().get(i), pid.getPatientAddress(i+1),providerSystem);
+			}			
+		} //WDEV-20335
 
 		if (patVo.getMaritalStatusIsNotNull())
 			pid.getMaritalStatus().getIdentifier().setValue(svc.getRemoteLookup(patVo.getMaritalStatus().getID(), providerSystem.getCodeSystem().getText()));
@@ -1673,69 +2437,189 @@ public abstract class VoMapper  implements IMessageHandler
 		if (patVo.getSexIsNotNull())
 			pid.getAdministrativeSex().setValue(svc.getRemoteLookup(patVo.getSex().getID(), providerSystem.getCodeSystem().getText()));
 
+		// WDEV-20334		
+//		if (patVo.getDobIsNotNull())
+//			pid.getDateTimeOfBirth().getTimeOfAnEvent().setValue(patVo.getDob().toString(DateFormat.ISO));
+
 		if (patVo.getDobIsNotNull())
-			pid.getDateTimeOfBirth().getTimeOfAnEvent().setValue(patVo.getDob().toString(DateFormat.ISO));
+		{
+			if (patVo.getDob().getMonth() != null && patVo.getDob().getDay() != null) // Don't process time of birth if DOB is a partial date
+			{
+				ConfigItems[] providerSystemConfigItems = toConfigItemArray(providerSystem.getConfigItems());
+				String timeOfBirthInPID = HL7Utils.getConfigItem(providerSystemConfigItems, ConfigItems.TimeOfBirthInPID);
+		
+				if (timeOfBirthInPID != null
+						&& (timeOfBirthInPID.equalsIgnoreCase("TRUE") || timeOfBirthInPID.equalsIgnoreCase("YES")))
+				{
+		
+					String dateOfBirth = null;
+					String timeOfBirth = null;
+					String datetimeOfBirth = null;
+	
+					// Populate string to hold date of birth
+					dateOfBirth = patVo.getDob().toString(DateFormat.ISO);
+			
+					// Check if time of birth is defined, append this time to string value of date of birth
+					if(patVo.getTimeOfBirth() != null)
+						timeOfBirth = patVo.getTimeOfBirth().toString(TimeFormat.FLAT4);
+			
+					if (dateOfBirth != null)
+						datetimeOfBirth = dateOfBirth;
+			
+					if(timeOfBirth != null)
+						datetimeOfBirth += timeOfBirth;
+			
+					if(datetimeOfBirth != null)
+					{
+						pid.getDateTimeOfBirth().getTimeOfAnEvent().setValue(datetimeOfBirth);
+					} 
+				}
+				else
+				{
+					pid.getDateTimeOfBirth().getTimeOfAnEvent().setValue(patVo.getDob().toString(DateFormat.ISO));
+				}
+			}
+			else
+			{
+				pid.getDateTimeOfBirth().getTimeOfAnEvent().setValue(patVo.getDob().toString(DateFormat.ISO));
+			}
+		} //WDEV-20334
+
+		//WDEV-20664
+//		if (patVo.getDodIsNotNull())
+//		{
+//			pid.getPatientDeathDateAndTime().getTimeOfAnEvent().setValue(patVo.getDod().toString(DateFormat.ISO));
+//			pid.getPatientDeathIndicator().setValue("Y");  // Patient Death Indicator
+//		}
+		
+		//WDEV-20664 If DOD time has been defined, transmit this time as well as date (if flag TimeOfDeathInPID is true)
 		if (patVo.getDodIsNotNull())
 		{
-			pid.getPatientDeathDateAndTime().getTimeOfAnEvent().setValue(patVo.getDod().toString(DateFormat.ISO));
-			pid.getPatientDeathIndicator().setValue("Y");  // Patient Death Indicator
-		}
-
-		renderAddressVoToXAD(patVo.getAddress(), pid.getPatientAddress(0),providerSystem);
-
-		int phoneNumberCount = 0;
-		CommChannelVo commVo = patVo.getCommunicationChannel(ChannelType.EMAIL);
-		if (commVo != null)
-		{
-			pid.getPhoneNumberHome(phoneNumberCount).getTelecommunicationUseCode().setValue("NET");
-			pid.getPhoneNumberHome(phoneNumberCount).getTelecommunicationEquipmentType().setValue("internet");
-			pid.getPhoneNumberHome(phoneNumberCount).getEmailAddress().setValue(commVo.getCommValue());
-			phoneNumberCount++;
-		}
-
-		commVo = patVo.getCommunicationChannel(ChannelType.MOBILE);
-		if (commVo != null)
-		{
-			pid.getPhoneNumberHome(phoneNumberCount).getAnyText().setValue(commVo.getCommValue());
-			pid.getPhoneNumberHome(phoneNumberCount).getTelecommunicationEquipmentType().setValue("CP");
-			phoneNumberCount++;
-		}
-		commVo = patVo.getCommunicationChannel(ChannelType.HOME_PHONE);
-		if (commVo != null)
-		{
-			pid.getPhoneNumberHome(phoneNumberCount).getAnyText().setValue(commVo.getCommValue());
-			pid.getPhoneNumberHome(phoneNumberCount).getTelecommunicationEquipmentType().setValue(Phone);  // wdev-11609
-			phoneNumberCount++;
-		}
-
-		if (patVo.getAddressIsNotNull() && patVo.getAddress().getFaxIsNotNull())
-		{
-			pid.getPhoneNumberHome(phoneNumberCount).getAnyText().setValue(patVo.getAddress().getFax());
-			pid.getPhoneNumberHome(phoneNumberCount).getTelecommunicationEquipmentType().setValue("FX");
-			phoneNumberCount++;
-		}
-		else
-		{
-			// wdev-5442
-			// Check for Fax as a comms channel type and output if set
-			commVo = patVo.getCommunicationChannel(ChannelType.FAX);
-			if (commVo != null)
+			ConfigItems[] providerSystemConfigItems = toConfigItemArray(providerSystem.getConfigItems());
+			String timeOfDeathInPID = HL7Utils.getConfigItem(providerSystemConfigItems, ConfigItems.TimeOfDeathInPID);
+	
+			if (timeOfDeathInPID != null
+					&& (timeOfDeathInPID.equalsIgnoreCase("TRUE") || timeOfDeathInPID.equalsIgnoreCase("YES")))
 			{
-				pid.getPhoneNumberHome(phoneNumberCount).getAnyText().setValue(commVo.getCommValue());
-				pid.getPhoneNumberHome(phoneNumberCount).getTelecommunicationEquipmentType().setValue("FX");
-				phoneNumberCount++;
+	
+				String dateOfDeath = null;
+				String timeOfDeath = null;
+				String datetimeOfDeath = null;
+
+				// Populate string to hold date of death
+				dateOfDeath = patVo.getDod().toString(DateFormat.ISO);
+		
+				// Check if time of death is defined, append this time to string value of date of death
+				if(patVo.getTimeOfDeath() != null)
+					timeOfDeath = patVo.getTimeOfDeath().toString(TimeFormat.FLAT4);
+		
+				if (dateOfDeath != null)
+					datetimeOfDeath = dateOfDeath;
+		
+				if(timeOfDeath != null)
+					datetimeOfDeath += timeOfDeath;
+		
+				if(datetimeOfDeath != null)
+				{
+					pid.getPatientDeathDateAndTime().getTimeOfAnEvent().setValue(datetimeOfDeath);
+				} 
 			}
-		}
+			else
+			{
+				pid.getPatientDeathDateAndTime().getTimeOfAnEvent().setValue(patVo.getDod().toString(DateFormat.ISO));
+			}
+			pid.getPatientDeathIndicator().setValue("Y");  // Patient Death Indicator
+		} //WDEV-20664
 
-		// TODO - Not sure whether we can differentiate between home and work email etc..??
-		phoneNumberCount = 0;
-		commVo = patVo.getCommunicationChannel(ChannelType.WORK_PHONE);
-		if (commVo != null)
+		// http://jira/browse/WDEV-20335
+		if((patVo.getIsConfidential() == null) || (patVo.getIsConfidentialIsNotNull() && !patVo.getIsConfidential()))
 		{
-			pid.getPhoneNumberBusiness(phoneNumberCount).getAnyText().setValue(commVo.getCommValue());
-			phoneNumberCount++;
+			renderAddressVoToXAD(patVo.getAddress(), pid.getPatientAddress(0),providerSystem);
 		}
 
+		// http://jira/browse/WDEV-22237 Replace following code by a call to a single method
+//		int phoneNumberCount = 0;
+//		CommChannelVo commVo = patVo.getCommunicationChannel(ChannelType.EMAIL);
+//		if (commVo != null)
+//		{
+//			pid.getPhoneNumberHome(phoneNumberCount).getTelecommunicationUseCode().setValue("NET");
+//			pid.getPhoneNumberHome(phoneNumberCount).getTelecommunicationEquipmentType().setValue("internet");
+//			pid.getPhoneNumberHome(phoneNumberCount).getEmailAddress().setValue(commVo.getCommValue());
+//			phoneNumberCount++;
+//		}
+//
+//		commVo = patVo.getCommunicationChannel(ChannelType.MOBILE);
+//		if (commVo != null)
+//		{
+//			pid.getPhoneNumberHome(phoneNumberCount).getAnyText().setValue(commVo.getCommValue());
+//			pid.getPhoneNumberHome(phoneNumberCount).getTelecommunicationEquipmentType().setValue("CP");
+//			phoneNumberCount++;
+//		}
+//		commVo = patVo.getCommunicationChannel(ChannelType.HOME_PHONE);
+//		if (commVo != null)
+//		{
+//			pid.getPhoneNumberHome(phoneNumberCount).getAnyText().setValue(commVo.getCommValue());
+//			pid.getPhoneNumberHome(phoneNumberCount).getTelecommunicationEquipmentType().setValue(Phone);  // wdev-11609
+//			phoneNumberCount++;
+//		}
+//
+//		if (patVo.getAddressIsNotNull() && patVo.getAddress().getFaxIsNotNull())
+//		{
+//			pid.getPhoneNumberHome(phoneNumberCount).getAnyText().setValue(patVo.getAddress().getFax());
+//			pid.getPhoneNumberHome(phoneNumberCount).getTelecommunicationEquipmentType().setValue("FX");
+//			phoneNumberCount++;
+//		}
+//		else
+//		{
+//			// wdev-5442
+//			// Check for Fax as a comms channel type and output if set
+//			commVo = patVo.getCommunicationChannel(ChannelType.FAX);
+//			if (commVo != null)
+//			{
+//				pid.getPhoneNumberHome(phoneNumberCount).getAnyText().setValue(commVo.getCommValue());
+//				pid.getPhoneNumberHome(phoneNumberCount).getTelecommunicationEquipmentType().setValue("FX");
+//				phoneNumberCount++;
+//			}
+//		}
+//
+//		// TODO - Not sure whether we can differentiate between home and work email etc..??
+//		
+//		//http://jira/browse/WDEV-18953 //WDEV-18951
+//		phoneNumberCount = 0;
+//		CommChannelVoCollection commChannels = patVo.getCommChannels();
+//		if (commChannels!=null)
+//		{
+//			for (CommChannelVo commChannelVo : commChannels)
+//			{
+//				if(commChannelVo.getChannelType()!=null
+//					&&ChannelType.WORK_PHONE.equals(commChannelVo.getChannelType()))
+//					{
+//					String value = commChannelVo.getCommValue();
+//					if (value!=null &&!isEmail(value))
+//					{
+//						pid.getPhoneNumberBusiness(phoneNumberCount).getAnyText().setValue(value);
+//						phoneNumberCount++;
+//					}
+//				}
+//			}
+//		}
+//
+//		
+//		
+//		commVo = patVo.getCommunicationChannel(ChannelType.WORK_PHONE);
+//		if (commVo != null)
+//		{
+//			String value = commVo.getCommValue();
+//			if (value!=null &&!isEmail(value))
+//			{
+//				pid.getPhoneNumberBusiness(phoneNumberCount).getAnyText().setValue(value);
+//				phoneNumberCount++;
+//			}
+//		}
+
+		renderCommChannelVoCollToPID(patVo.getCommChannels(), pid, providerSystem);
+		// WDEV-22237
+		
 		if (patVo.getReligionIsNotNull())
 			pid.getReligion().getIdentifier().setValue(svc.getRemoteLookup(patVo.getReligion().getID(), providerSystem.getCodeSystem().getText()));
 		
@@ -1746,6 +2630,22 @@ public abstract class VoMapper  implements IMessageHandler
 			pid.getEthnicGroup(0).getIdentifier().setValue(svc.getRemoteLookup(patVo.getEthnicOrigin().getID(), providerSystem.getCodeSystem().getText()));
 
 		LOG.debug("VoMapper renderPatientShortVoToPID: exit (" + pid.toString() + ")");
+	}
+	
+	public static final Pattern VALID_EMAIL_ADDRESS_REGEX = 
+	    Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+
+	public static boolean isEmail(String emailStr)
+	{
+		if(ConfigFlag.HL7.INCLUDE_EMAIL_FORMATTED_WORK_NUMBERS.getValue())
+		{
+			return false;
+		}
+		else
+		{
+	        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX .matcher(emailStr);
+	        return matcher.find();
+		}
 	}
 
 	public InpatientEpisodeVo fillEpisFromMsg(Message msg, OrganisationAndLocation orgLoc, HcpAdmin hcpAdmin,ProviderSystemVo providerSystem) throws Exception
@@ -1821,7 +2721,7 @@ public abstract class VoMapper  implements IMessageHandler
 			if(null!=stay&&episVo.getPasEventIsNotNull()&&episVo.getPasEvent().getEventDateTimeIsNotNull())
 			{
 				//WDEV-8310 clone the date before adding to it 
-				episVo.setEstDischargeDate(((DateTime)episVo.getPasEvent().getEventDateTime().clone()).addDays(stay).getDate());
+				episVo.setEstDischargeDate(((DateTime)episVo.getPasEvent().getEventDateTime().clone()).addDays(stay));
 			}
 			//WDEV-13288
 			if("RD".equals(pv2.getPatientStatusCode().getValue())
@@ -1946,7 +2846,9 @@ public abstract class VoMapper  implements IMessageHandler
 		return patientStatus;
 	}
 	
-	protected MedicRefVo getReferringConsultant(PV1 pv1)
+	//WDEV-20278
+	//	protected MedicRefVo getReferringConsultant(PV1 pv1)
+	protected MedicRefVo getReferringConsultant(PV1 pv1, ProviderSystemVo providerSystem) //WDEV-20278
 	{
 		MedicRefVo hcp=null;
 		XCN[] xcns = pv1.getReferringDoctor();
@@ -1956,12 +2858,16 @@ public abstract class VoMapper  implements IMessageHandler
 		}
 		if(hcp==null&&xcns.length>1&&xcns[1]!=null)
 		{
-			hcp=populateMedicRefFromXCN(xcns[1],TaxonomyType.PAS);
+			//WDEV-20278
+//			hcp=populateMedicRefFromXCN(xcns[1],TaxonomyType.PAS);
+			hcp = populateMedicRefFromXCN(xcns[1], providerSystem.getCodeSystem()); //WDEV-20278
 		}
 		return hcp;
 	}
 	
-	protected HcpMinVo getAttendingDoctor(PV1 pv1)
+	//WDEV-20278
+//	protected HcpMinVo getAttendingDoctor(PV1 pv1)
+	protected HcpMinVo getAttendingDoctor(PV1 pv1, ProviderSystemVo providerSystem) //WDEV-20278
 	{
 		HcpMinVo hcp=null;
 		XCN[] xcns = pv1.getAttendingDoctor();
@@ -1971,7 +2877,9 @@ public abstract class VoMapper  implements IMessageHandler
 		}
 		if(hcp==null&&xcns.length>1&&xcns[1]!=null)
 		{
-			hcp=populateHcpMinFromXCN(xcns[1],TaxonomyType.PAS);
+			//WDEV-20278
+//			hcp=populateHcpMinFromXCN(xcns[1],TaxonomyType.PAS);
+			hcp = populateHcpMinFromXCN(xcns[1], providerSystem.getCodeSystem()); //WDEV-20278
 		}
 		return hcp;
 	}
@@ -2119,7 +3027,9 @@ public abstract class VoMapper  implements IMessageHandler
 		attVo.setBedTypeRequested(getBedTypeRequested(pv1));
 		LocShortVo currentLoc=null;
 		if(pv1.getAssignedPatientLocation().getFacility().getNamespaceID().getValue()!=Hl7Null)
-			currentLoc = orgLoc.getLocationByTaxonomyType(pv1.getAssignedPatientLocation().getFacility().getNamespaceID().getValue(),  TaxonomyType.PAS);
+			//WDEV-20278
+//			currentLoc = orgLoc.getLocationByTaxonomyType(pv1.getAssignedPatientLocation().getFacility().getNamespaceID().getValue(),  TaxonomyType.PAS);
+			currentLoc = orgLoc.getLocationByTaxonomyType(pv1.getAssignedPatientLocation().getFacility().getNamespaceID().getValue(), providerSystem.getCodeSystem()); //WDEV-20278
 		attVo.setCurrentLocation(currentLoc);
 		return attVo;
 	}
@@ -2144,7 +3054,9 @@ public abstract class VoMapper  implements IMessageHandler
 
 		if (patClass.equals(INPATIENT_APP))
 		{
-			loc = orgLoc.getLocationByTaxonomyType(pv1.getAssignedPatientLocation().getPointOfCare().getValue(), TaxonomyType.PAS);
+			//WDEV-20278
+//			loc = orgLoc.getLocationByTaxonomyType(pv1.getAssignedPatientLocation().getPointOfCare().getValue(), TaxonomyType.PAS);
+			loc = orgLoc.getLocationByTaxonomyType(pv1.getAssignedPatientLocation().getPointOfCare().getValue(), providerSystem.getCodeSystem()); //WDEV-20278
 			pe.setEventType(PasEventType.INPATIENT);
 			//loc = orgLoc.getLocationByLocalCode(pv1.getAssignedPatientLocation().getPointOfCare().getValue(), LocationType.WARD);
 		}
@@ -2201,14 +3113,18 @@ public abstract class VoMapper  implements IMessageHandler
 		}
 		
 		// PV1-7 Attending doctor
-		pe.setAttendingHCP(getAttendingDoctor(pv1));
+		//WDEV-20278
+//		pe.setAttendingHCP(getAttendingDoctor(pv1));
+		pe.setAttendingHCP(getAttendingDoctor(pv1, providerSystem)); //WDEV-20278
 				
 		//	PV1-8   Referring doctor   
 		if (pv1.getReferringDoctor(0) != null)	
 		{
 			GpLiteVo gp = gpAdmin.getGPByTaxonomyType(pv1.getReferringDoctor(0).getIDNumber().getValue(), TaxonomyType.NAT_GP_CODE);
 			if (gp == null && pv1.getReferringDoctor(1).getIDNumber().getValue() != null) // See if second repetition has been supplied and try to get by PAS code
-				gp = gpAdmin.getGPByTaxonomyType(pv1.getReferringDoctor(1).getIDNumber().getValue(), TaxonomyType.PAS);
+				//WDEV-20278
+				//gp = gpAdmin.getGPByTaxonomyType(pv1.getReferringDoctor(1).getIDNumber().getValue(), TaxonomyType.PAS);
+				gp = gpAdmin.getGPByTaxonomyType(pv1.getReferringDoctor(1).getIDNumber().getValue(), providerSystem.getCodeSystem()); //WDEV-20278
 			pe.setReferringGP(gp);
 		}
 		
@@ -2410,6 +3326,31 @@ public abstract class VoMapper  implements IMessageHandler
 		LOG.debug("VoMapper renderNameVoToXPN: exit (" + xpn.toString() + ")");
 	}
 
+	
+	//WDEV-19576
+//	protected final void renderPersonNameShortVoToXPN(PersonNameShortVo name, XPN xpn, ProviderSystemVo providerSystem) throws Exception
+//	{
+//		LOG.debug("VoMapper renderPersonNameShortVoToXPN: entry");
+//		
+//		if (name == null)
+//			return;
+//
+//		if(name.getSurname() != null && name.getSurname().length() > 0)
+//		{
+//			xpn.getFamilyName().getSurname().setValue(name.getSurname());
+//		}
+//
+//		if (name.getTitle() != null && name.getTitle().getID() > 0)
+//		{
+//			xpn.getPrefixEgDR().setValue(svc.getRemoteLookup(name.getTitle().getID(), providerSystem.getCodeSystem().getText()));
+//		}
+//
+//		xpn.getNameTypeCode().setValue(svc.getRemoteLookup(NameType.LEGAL.getID(), providerSystem.getCodeSystem().getText()));
+//		
+//		LOG.debug("VoMapper renderPersonNameShortVoToXPN: exit (" + xpn.toString() + ")");
+//	}
+	
+		
 	protected final void populateLocationVoFromPL(PL pl, IfOcsOrderVo order, ProviderSystemVo providerSystem) throws HL7Exception
 	{
 		LOG.debug("VoMapper populateLocationVoFromPL: entry");
@@ -2550,10 +3491,20 @@ public abstract class VoMapper  implements IMessageHandler
 				LOG.warn("Failed to parse notification date "+e.getMessage());
 			}
 		}
+		String aor=xad.getCensusTract().getValue(); //http://jira/browse/WDEV-19177
+		if(aor!=null&&aor.equals(Hl7Null))
+		{
+			pa.setAreaOfResidence(null);
+		}
+		else if(aor!=null)
+		{
+			pa.setAreaOfResidence((AreaOfResidence)svc.getLocalLookup(AreaOfResidence.class, AreaOfResidence.TYPE_ID, providerSystem.getCodeSystem().getText(), aor));
+		}
 		
 		LOG.debug("VoMapper populateAddressVoFromXAD: exit (" + pa.toDisplayString() + ")");
 
-		if (pa.getLine1() == null && pa.getLine2() == null && pa.getLine3() == null && pa.getLine4() == null && pa.getLine5() == null && pa.getPostCode() == null && pa.getCounty() == null)
+		if (pa.getLine1() == null && pa.getLine2() == null && pa.getLine3() == null && pa.getLine4() == null && pa.getLine5() == null && pa.getPostCode() == null && pa.getCounty() == null
+				&&pa.getAreaOfResidence()==null)
 		{
 			return null;
 		}
@@ -2585,10 +3536,65 @@ public abstract class VoMapper  implements IMessageHandler
 		{
 			xad.getAddressType().setValue(svc.getRemoteLookup(AddressType.PERMANENT.getID(), providerSystem.getCodeSystem().getText()));
 		}
+		if(pa.getAreaOfResidenceIsNotNull()) //http://jira/browse/WDEV-19177
+		{
+			xad.getCensusTract().setValue(svc.getRemoteLookup(pa.getAreaOfResidence().getID(), providerSystem.getCodeSystem().getText()));
+		}
 
 		LOG.debug("VoMapper renderAddressVoToXAD: exit (" + xad.toString() + ")");
 	}
 
+	
+	//WDEV-19576
+	protected final void renderOrgAddressVoToXAD(AddressVo addressVo, XAD xad, ProviderSystemVo providerSystem) throws Exception
+	{
+		LOG.debug("VoMapper renderOrgAddressVoToXAD: entry");
+		
+		if (addressVo == null)
+			return;
+
+		//XAD.1.1 Street or mailing address (ST)
+		if(addressVo.getLine1() != null && addressVo.getLine1().length() > 0)
+		{
+			xad.getStreetAddress().getStreetOrMailingAddress().setValue(addressVo.getLine1());
+		}
+		//XAD.2 Other designation (ST)
+		if(addressVo.getLine2() != null && addressVo.getLine2().length() > 0)
+		{
+			xad.getOtherDesignation().setValue(addressVo.getLine2());
+		}
+		//XAD.3 City (ST)
+		if(addressVo.getLine3() != null && addressVo.getLine3().length() > 0)
+		{
+			xad.getCity().setValue(addressVo.getLine3());
+		}
+		//XAD.4 Stae or province *ST)
+		if(addressVo.getLine4() != null && addressVo.getLine4().length() > 0)
+		{
+			xad.getStateOrProvince().setValue(addressVo.getLine4());
+		}
+		//XAD.5 Zip or postal code (ST)
+		if(addressVo.getPostCode() != null && addressVo.getPostCode().length() > 0)
+		{
+			xad.getZipOrPostalCode().setValue(addressVo.getPostCode());
+		}
+		//WDEV-22597
+		//XAD.8 Address type (ID)
+		if (addressVo.getAddressType() != null)
+		{
+			xad.getAddressType().setValue(svc.getRemoteLookup(addressVo.getAddressType().getID(), providerSystem.getCodeSystem().getText()));			
+		} //WDEV-22597
+		//XAD.8 Other geographic designation (ST)
+		if(addressVo.getLine5() != null && addressVo.getLine5().length() > 0)
+		{
+			xad.getOtherGeographicDesignation().setValue(addressVo.getLine5());
+		}
+	
+		LOG.debug("VoMapper renderOrgAddressVoToXAD: exit (" + xad.toString() + ")");
+	}
+	
+	
+	
 	/**
 	 * populateDateVoFromTS
 	 * <p>
@@ -2688,6 +3694,19 @@ public abstract class VoMapper  implements IMessageHandler
 		LOG.debug("VoMapper renderDateTimeVoToTS: exit (" + ts.toString() + ")");
 	}
 
+	//http://jira/browse/WDEV-19913
+	protected final void renderDateTimeVoToTS(DateTime dt, TS ts,DateTimeFormat format) throws Exception
+	{
+		LOG.debug("VoMapper renderDateTimeVoToTS: entry");
+		if (dt == null)
+			return;
+
+		ts.getTimeOfAnEvent().setValue(dt.toString(format));
+
+		LOG.debug("VoMapper renderDateTimeVoToTS: exit (" + ts.toString() + ")");
+	}
+
+	
 	protected final void renderDateVoToTS(Date dt, TS ts) throws Exception
 	{
 		LOG.debug("VoMapper renderDateVoToTS: entry");
@@ -2916,6 +3935,7 @@ public abstract class VoMapper  implements IMessageHandler
 		LOG.debug("VoMapper renderCommChannelVoToXTN: entry");
 		
 		xtn.getAnyText().setValue(vo.getCommValue());
+		
 		if (vo.getChannelType().equals(ChannelType.BLEEP))
 		{
 			xtn.getTelecommunicationEquipmentType().setValue("BP"); 
@@ -2933,7 +3953,6 @@ public abstract class VoMapper  implements IMessageHandler
 		else if (vo.getChannelType().equals(ChannelType.MOBILE) || vo.getChannelType().equals(ChannelType.HOME_PHONE) ||
 				vo.getChannelType().equals(ChannelType.WORK_PHONE))
 		{
-			//xtn.getPhoneNumber().setValue(vo.getCommValue()); 
 			xtn.getTelecommunicationEquipmentType().setValue("PH");
 		}
 				
@@ -3102,45 +4121,97 @@ public abstract class VoMapper  implements IMessageHandler
 	{
 		LOG.debug("VoMapper renderMemberOfStaffShortVoToXCN: entry");
 
-		xcn.getGivenName().setValue(mos.getName().getForename());
-		xcn.getFamilyName().getSurname().setValue(mos.getName().getSurname());
-		TaxonomyMap mapping = mos.getExternalCode(providerSystem.getCodeSystem());
-		if (mapping != null)
+
+		//WDEV-20083
+//			if(mos!=null&&mos.getNameIsNotNull()&&mos.getName().getForenameIsNotNull())
+//				xcn.getGivenName().setValue(mos.getName().getForename());
+//			if(mos!=null&&mos.getNameIsNotNull()&&mos.getName().getSurnameIsNotNull())
+//				xcn.getFamilyName().getSurname().setValue(mos.getName().getSurname());
+		if(mos.getNameIsNotNull())
 		{
-			xcn.getIDNumber().setValue(mapping.getTaxonomyCode());			
+			if(mos.getName().getForenameIsNotNull())
+			{
+				xcn.getGivenName().setValue(mos.getName().getForename());
+			}
+			if(mos.getName().getSurnameIsNotNull())
+			{
+				xcn.getFamilyName().getSurname().setValue(mos.getName().getSurname());
+			}
+			if(mos.getName().getTitleIsNotNull()
+				&& mos.getName().getTitle().getID() > 0)
+			{
+				xcn.getPrefixEgDR().setValue(svc.getRemoteLookup(mos.getName().getTitle().getID(), providerSystem.getCodeSystem().getText()));
+			}
 		}
-		LOG.debug("VoMapper renderMemberOfStaffShortVoToXCN: exit");
-
-	}
-
-	protected final void renderMemberOfStaffShortVoToXCNNatCode(MemberOfStaffShortVo mos, XCN xcn,ProviderSystemVo providerSystem) throws DataTypeException
-	{
-		LOG.debug("VoMapper renderMemberOfStaffShortVoToXCNNatCode: entry");
-
-		if(mos!=null&&mos.getNameIsNotNull()&&mos.getName().getForenameIsNotNull())
-			xcn.getGivenName().setValue(mos.getName().getForename());
-		if(mos!=null&&mos.getNameIsNotNull()&&mos.getName().getSurnameIsNotNull())
-			xcn.getFamilyName().getSurname().setValue(mos.getName().getSurname());
-		if(mos!=null&&mos.getNationalConsCode()!=null)
+		//WDEV-20083
+			
+		if(mos != null 
+			&& mos.getNationalConsCode() != null)
 		{
 			xcn.getIDNumber().setValue(mos.getNationalConsCode());
 		}
-		else if(mos!=null)
+		else if(mos != null)
 		{
 			TaxonomyMap mapping = mos.getExternalCode(providerSystem.getCodeSystem());
 			if (mapping != null)
 			{
-				xcn.getIDNumber().setValue(mapping.getTaxonomyCode());			
+				xcn.getIDNumber().setValue(mapping.getTaxonomyCode());
 			}
 		}
-		LOG.debug("VoMapper renderMemberOfStaffShortVoToXCNNatCode: exit");
 
+		LOG.debug("VoMapper renderMemberOfStaffShortVoToXCN: exit");
+	}
+	
+
+	protected final void renderMemberOfStaffShortVoToXCNNatCode(MemberOfStaffShortVo mos, XCN xcn, ProviderSystemVo providerSystem) throws DataTypeException
+	{
+		LOG.debug("VoMapper renderMemberOfStaffShortVoToXCNNatCode: entry");
+
+		//		//WDEV-20083
+//		if(mos!=null&&mos.getNameIsNotNull()&&mos.getName().getForenameIsNotNull())
+//			xcn.getGivenName().setValue(mos.getName().getForename());
+//		if(mos!=null&&mos.getNameIsNotNull()&&mos.getName().getSurnameIsNotNull())
+//			xcn.getFamilyName().getSurname().setValue(mos.getName().getSurname());
+		if(mos.getNameIsNotNull())
+		{
+			if(mos.getName().getForenameIsNotNull())
+			{
+				xcn.getGivenName().setValue(mos.getName().getForename());
+			}
+			if(mos.getName().getSurnameIsNotNull())
+			{
+				xcn.getFamilyName().getSurname().setValue(mos.getName().getSurname());
+			}
+			if(mos.getName().getTitleIsNotNull()
+				&& mos.getName().getTitle().getID() > 0)
+			{
+				xcn.getPrefixEgDR().setValue(svc.getRemoteLookup(mos.getName().getTitle().getID(), providerSystem.getCodeSystem().getText()));
+			}
+		}
+		//WDEV-20083
+		
+		if(mos != null 
+			&& mos.getNationalConsCode() != null)
+		{
+			xcn.getIDNumber().setValue(mos.getNationalConsCode());
+		}
+		else if(mos != null)
+		{
+			TaxonomyMap mapping = mos.getExternalCode(providerSystem.getCodeSystem());
+			if (mapping != null)
+			{
+				xcn.getIDNumber().setValue(mapping.getTaxonomyCode());
+			}
+		}
+		
+		LOG.debug("VoMapper renderMemberOfStaffShortVoToXCNNatCode: exit");
 	}
 
 	
-	protected final void renderGpShortVoToXCN(GpShortVo gp,XCN xcn,ProviderSystemVo providerSystem) throws DataTypeException
+	protected final void renderGpShortVoToXCN(GpShortVo gp, XCN xcn, ProviderSystemVo providerSystem) throws DataTypeException
 	{
 		LOG.debug("VoMapper renderGpShortVoToXCN: entry");
+		
 		if(gp!=null&&gp.getNameIsNotNull()&&gp.getName().getForenameIsNotNull())
 			xcn.getGivenName().setValue(gp.getName().getForename());
 		if(gp!=null&&gp.getNameIsNotNull()&&gp.getName().getSurnameIsNotNull())
@@ -3154,13 +4225,165 @@ public abstract class VoMapper  implements IMessageHandler
 		}
 		if(gp!=null&&gp.getNameIsNotNull()&&gp.getName().getTitleIsNotNull())
 			xcn.getPrefixEgDR().setValue(svc.getRemoteLookup(gp.getName().getTitle().getID(), providerSystem.getCodeSystem().getText()));
+
 		LOG.debug("VoMapper renderGpShortVoToXCN: exit");
 	}
 
-//	public String getCurrentProviderExternalCode()
-//	{
-//		return currentProviderExternalCode;
-//	}
+	
+	//WDEV-19481
+	protected final void renderGpLiteVoToXCN(GpLiteVo gp, XCN xcn, ProviderSystemVo providerSystem) throws DataTypeException
+	{
+		LOG.debug("VoMapper renderGpLiteVoToXCN: entry");
+
+		if(gp != null)
+		{
+			//XCN.0 ID number (ST)
+			TaxonomyMap mapping = null;
+			mapping = gp.getExternalCode(TaxonomyType.NAT_GP_CODE);
+			if(mapping != null 
+					&& mapping.getTaxonomyCode() != null)
+			{
+				xcn.getIDNumber().setValue(mapping.getTaxonomyCode());
+			}			
+			//XCN.1 Family Name (FN)
+			if(gp.getNameIsNotNull() 
+				&& gp.getName().getSurnameIsNotNull() 
+				&& gp.getName().getSurname().length() > 0)
+			{
+				xcn.getFamilyName().getSurname().setValue(gp.getName().getSurname());
+			}
+			//XCN.2 Given name (ST)
+			if(gp.getNameIsNotNull() 
+				&& gp.getName().getForenameIsNotNull() 
+				&& gp.getName().getForename().length() > 0)
+			{
+				xcn.getGivenName().setValue(gp.getName().getForename());
+			}
+			//XCN.5 Suffix (ST)
+			if(gp.getNameIsNotNull() 
+				&& gp.getName().getTitleIsNotNull() 
+				&& gp.getName().getTitle().getId() > 0)
+			{
+				xcn.getPrefixEgDR().setValue(svc.getRemoteLookup(gp.getName().getTitle().getID(), providerSystem.getCodeSystem().getText()));
+			}
+			
+//			//WDEV-2100
+//			//XCN.9 Assigning authority (HD)
+//			if (mapping != null
+//					&& mapping.getTaxonomyName() != null)
+//			{
+//				xcn.getAssigningAuthority().getNamespaceID().setValue(mapping.getTaxonomyName().toString());
+//
+//				TaxonomyType taxonomyType = mapping.getTaxonomyName();
+//				if (taxonomyType != null)
+//				{
+//					String taxTypeText = svc.getRemoteLookup(taxonomyType.getID(), providerSystem.getCodeSystem().getText());
+//					if (taxTypeText != null)
+//					{
+//						//XCN.10 Name type code (ID)
+//						xcn.getNameTypeCode().setValue(taxTypeText);
+//					}
+//				}
+//			}
+		}
+			
+		LOG.debug("VoMapper renderGpLiteVoToXCN: exit");
+	}
+	
+	
+	//WDEV-19481
+	protected final void renderMedicWithMappingsLiteVoToXCN(MedicWithMappingsLiteVo medic, XCN xcn, ProviderSystemVo providerSystem) throws DataTypeException
+	{
+		LOG.debug("VoMapper renderMedicWithMappingsLiteVoToXCN: entry");
+
+		if (medic != null)
+		{
+			//WDEV-2100
+			TaxonomyMap natConsCodeMapping = medic.getMos().getExternalCode(TaxonomyType.NAT_CONS_CODE);
+					
+			// XCN.1 ID number (ST)
+			if (natConsCodeMapping != null
+					&& natConsCodeMapping.getTaxonomyCode() != null)
+			{
+				xcn.getIDNumber().setValue(natConsCodeMapping.getTaxonomyCode());
+			}
+			
+			//XCN.2 Family Name (FN)
+			if (medic.getMos().getNameIsNotNull() 
+					&& medic.getName().getSurnameIsNotNull() 
+					&& medic.getName().getSurname().length() > 0)
+			{
+				xcn.getFamilyName().getSurname().setValue(medic.getName().getSurname());
+			}
+			
+			//XCN.3 Given name (ST)
+			if (medic.getName().getSurnameIsNotNull() 
+					&& medic.getName().getForenameIsNotNull() 
+					&& medic.getName().getForename().length() > 0)
+			{
+				xcn.getGivenName().setValue(medic.getName().getForename());
+			}
+			
+			//XCN.5 Prefix (ST)
+			if (medic.getMos().getNameIsNotNull() 
+					&& medic.getName().getTitleIsNotNull() 
+					&& medic.getName().getTitle().getID() > 0)
+			{
+				xcn.getPrefixEgDR().setValue(svc.getRemoteLookup(medic.getName().getTitle().getID(), providerSystem.getCodeSystem().getText()));
+			}
+			
+		}
+
+		LOG.debug("VoMapper renderMedicWithMappingsLiteVoToXCN: exit");
+	}
+
+
+	//WDEV-19704
+	protected final void renderHcpToXCN(ims.core.vo.Hcp hcp, XCN xcn, ProviderSystemVo providerSystem) throws DataTypeException
+	{
+		LOG.debug("VoMapper renderHcpToXCN: entry");
+
+		if (hcp != null && hcp.getMos() != null)
+		{
+			//WDEV-2100
+			TaxonomyMap natConsCodeMapping = hcp.getMos().getExternalCode(TaxonomyType.NAT_CONS_CODE);
+
+			// XCN.0 ID number (ST)
+			if (natConsCodeMapping != null
+					&& natConsCodeMapping.getTaxonomyCode() != null)
+			{
+				xcn.getIDNumber().setValue(natConsCodeMapping.getTaxonomyCode().toString());
+			} 
+			
+			//XCN.1 Family Name (FN)
+			if (hcp.getMos().getNameIsNotNull() 
+					&& hcp.getName().getSurnameIsNotNull() 
+					&& hcp.getName().getSurname().length() > 0)
+			{
+				xcn.getFamilyName().getSurname().setValue(hcp.getName().getSurname());
+			}
+			
+			//XCN.2 Given name (ST)
+			if (hcp.getName().getSurnameIsNotNull() 
+					&& hcp.getName().getForenameIsNotNull() 
+					&& hcp.getName().getForename().length() > 0)
+			{
+				xcn.getGivenName().setValue(hcp.getName().getForename());
+			}
+			
+			//XCN.5 Prefix (ST)
+			if (hcp.getMos().getNameIsNotNull() 
+					&& hcp.getName().getTitleIsNotNull() 
+					&& hcp.getName().getTitle().getID() > 0)
+			{
+				xcn.getPrefixEgDR().setValue(svc.getRemoteLookup(hcp.getName().getTitle().getID(), providerSystem.getCodeSystem().getText()));
+			}
+			
+		}
+
+		LOG.debug("VoMapper renderHcpToXCN: exit");
+	}
+
 
 	public static String toDisplayString(String[] arr)
 	{
@@ -3280,7 +4503,11 @@ public abstract class VoMapper  implements IMessageHandler
 		}
 		return items;
 	}
-	public CareSpellVo createCareSpellVo(PasEventVo pas, PV1 pv)throws HL7Exception
+	
+	
+	//WDEV-20278
+//	public CareSpellVo createCareSpellVo(PasEventVo pas, PV1 pv)throws HL7Exception
+	public CareSpellVo createCareSpellVo(PasEventVo pas, PV1 pv, ProviderSystemVo providerSystem)throws HL7Exception //WDEV-20278
 	{
 		CareSpellVo careSpell=new CareSpellVo();
 		if(pas!=null && pas.getEventDateTime()!=null)
@@ -3335,8 +4562,10 @@ public abstract class VoMapper  implements IMessageHandler
 		careContext.setCurrentStatus(new CareContextStatusHistoryVo());
 		careContext.getCurrentStatus().setStatus(CareContextStatus.OPEN);
 		careContext.getCurrentStatus().setStatusDateTime(pas.getEventDateTime());
-		
-		LocSiteShortVo loc = orgLoc.getLocSiteShortByTaxonomyType(pv.getAssignedPatientLocation().getBuilding().getValue(), TaxonomyType.PAS);
+	
+		//WDEV-20278
+//		LocSiteShortVo loc = orgLoc.getLocSiteShortByTaxonomyType(pv.getAssignedPatientLocation().getBuilding().getValue(), TaxonomyType.PAS);
+		LocSiteShortVo loc = orgLoc.getLocSiteShortByTaxonomyType(pv.getAssignedPatientLocation().getBuilding().getValue(), providerSystem.getCodeSystem()); //WDEV-20278
 		LocSiteRefVo orderingHospRef = new LocSiteRefVo();
 		if (loc!=null)
 		{
@@ -3352,7 +4581,6 @@ public abstract class VoMapper  implements IMessageHandler
 		
 		return careSpell;
 		
-	
 	}
 	
 	public PasEventVo saveCareSpell(CareSpellVo careSpell) throws StaleObjectException, HL7Exception
@@ -3453,7 +4681,9 @@ public abstract class VoMapper  implements IMessageHandler
 		careContext.getCurrentStatus().setStatus(CareContextStatus.OPEN);
 		careContext.getCurrentStatus().setStatusDateTime(pas.getEventDateTime());
 		
-		LocSiteShortVo loc = orgLoc.getLocSiteShortByTaxonomyType(pv.getAssignedPatientLocation().getBuilding().getValue(), TaxonomyType.PAS);
+		//WDEV-20278
+//		LocSiteShortVo loc = orgLoc.getLocSiteShortByTaxonomyType(pv.getAssignedPatientLocation().getBuilding().getValue(), TaxonomyType.PAS);
+		LocSiteShortVo loc = orgLoc.getLocSiteShortByTaxonomyType(pv.getAssignedPatientLocation().getBuilding().getValue(), providerSystem.getCodeSystem()); //WDEV-20278
 		LocSiteRefVo orderingHospRef = new LocSiteRefVo();
 		if (loc!=null)
 		{
@@ -3485,7 +4715,9 @@ public abstract class VoMapper  implements IMessageHandler
 		else
 		{
 			// wdev-7705 - create the carespell at this stage if required
-			CareSpellVo careSpell=createCareSpellVo(pas,pv);
+			//WDEV-20278
+//			CareSpellVo careSpell=createCareSpellVo(pas,pv);
+			CareSpellVo careSpell = createCareSpellVo(pas, pv, providerSystem); //WDEV-20278
 			String [] errors = careSpell.validate();
 			if (errors != null)
 			{
@@ -3524,11 +4756,19 @@ public abstract class VoMapper  implements IMessageHandler
 		this.hl7tto=hl7tto;
 	}
 
-
+	//WDEV-19913
 	protected void populateMSH(ProviderSystemVo proVo, MSH msh, String messageControlID,
-			String messageType, String triggerEvent) throws DataTypeException, Exception {
+			String messageType, String triggerEvent) throws DataTypeException, Exception
+	{
+		populateMSH(proVo,  msh,  messageControlID,messageType,  triggerEvent,DateTimeFormat.MILLI);
+	}
+
+	//WDEV-19913
+	protected void populateMSH(ProviderSystemVo proVo, MSH msh, String messageControlID,
+			String messageType, String triggerEvent,DateTimeFormat format) throws DataTypeException, Exception 
+	{
 		LOG.debug("VoMapper populateMSH: entry");
-		renderDateTimeVoToTS(new DateTime(), msh.getDateTimeOfMessage());
+		renderDateTimeVoToTS(new DateTime(), msh.getDateTimeOfMessage(),format);//WDEV-19913
 
 		String receivingFacility=null;
 		ConfigPropertyVo prop = proVo.getConfigurationProperty(ConfigItems.Hl7Facility);
@@ -3718,6 +4958,8 @@ public abstract class VoMapper  implements IMessageHandler
 		
 		return careContext;
 	}
+	
+	
 	protected void renderPatientLocationToPV1(LocShortMappingsVo loc, ClinicLiteVo clinic,LocShortMappingsVo opd ,PV1 pv, ProviderSystemVo providerSystem) throws DataTypeException
 	{
 		LOG.debug("O01VoMapper renderPatientLocationToPV1: entry");
@@ -3791,7 +5033,7 @@ public abstract class VoMapper  implements IMessageHandler
 	}
 
 	
-	protected void renderGPDetailsToPD1(Patient patient,PD1 pd1) throws Exception
+	protected void renderGPDetailsToPD1(Patient patient, PD1 pd1) throws Exception
 	{
 		String gpCode=null;
 		if(patient.getGpIsNotNull()&&patient.getGp().getCodeMappingsIsNotNull())
@@ -3808,14 +5050,107 @@ public abstract class VoMapper  implements IMessageHandler
 			pd1.getPatientPrimaryCareProviderNameIDNo(0).getGivenName().setValue(patient.getGp().getName().getForename());
 		}
 		
+		//WDEV-20243
+		//PD1-3 Patient primary facility (XON)
+	//		if(patient.getGpSurgeryIsNotNull())
+	//		{
+	//			String practiceCode = orgLoc.getPracticeNationalCodeForSurgery(patient.getGpSurgery());
+	//			if(practiceCode != null)
+	//			{
+	//				pd1.getPatientPrimaryFacility(0).getOrganizationName().setValue(practiceCode);
+	//			}
+	//		}
+		
+		
 		if(patient.getGpSurgeryIsNotNull())
 		{
 			String practiceCode = orgLoc.getPracticeNationalCodeForSurgery(patient.getGpSurgery());
-			pd1.getPatientPrimaryFacility(0).getOrganizationName().setValue(practiceCode);
+			if(practiceCode != null)
+			{
+				pd1.getPatientPrimaryFacility(0).getOrganizationName().setValue(practiceCode);
+			}
 		}
+		else if(patient.getPractice() != null
+				&& patient.getPractice().getNationalLocCode() != null)
+		{
+			pd1.getPatientPrimaryFacility(0).getOrganizationName().setValue(patient.getPractice().getNationalLocCode());
+		} //WDEV-20243
+	
+		//WDEV-19704 (CCG Code)
+		if(patient.getPractice() != null
+				&& patient.getPractice().getPctCode() != null)
+		{
+			pd1.getPatientPrimaryFacility(0).getAssigningAuthority().getNamespaceID().setValue(patient.getPractice().getPctCode());
+		}
+			
 	}
 
+
+	//WDEV-20993
+	protected void renderGPDetailsToPD1(Patient patient, PD1 pd1, ProviderSystemVo providerSystem) throws Exception
+	{
+		if (patient.getGpIsNotNull())
+		{
+			//WDEV-21000
+			if (ConfigFlag.HL7.USE_CONFIGURED_TAXONOMYTYPES_FOR_XCN.getValue())
+			{
+				renderGpShortVoToPatientPrimaryCareProviderIDNo(patient.getGp(), pd1, providerSystem);
+			}
+			else
+			{
+				renderGpShortVoToXCN(patient.getGp(), pd1.getPatientPrimaryCareProviderNameIDNo(0), providerSystem);
+			}
+		}
+
+		
+		//PD1-3 Patient Primary Facilty (XON)
+		if (patient.getGpSurgeryIsNotNull())
+		{
+			String practiceCode = orgLoc.getPracticeNationalCodeForSurgery(patient.getGpSurgery());
+			if (practiceCode != null)
+			{
+				//PD1-3-1 Organization name (ST)
+				pd1.getPatientPrimaryFacility(0).getOrganizationName().setValue(practiceCode);
+			}
+		}
+		else if (patient.getPractice() != null
+				&& patient.getPractice().getNationalLocCode() != null)
+		{
+			//PD1-3-1 Organization name (ST)
+			pd1.getPatientPrimaryFacility(0).getOrganizationName().setValue(patient.getPractice().getNationalLocCode());
+		}
 	
+		if (patient.getPractice() != null
+				&& patient.getPractice().getPctCode() != null)
+		{
+			//PD1-3-6 Assiging Authority (HD)
+			pd1.getPatientPrimaryFacility(0).getAssigningAuthority().getNamespaceID().setValue(patient.getPractice().getPctCode());
+		}
+		
+		//WDEV-20993
+		ConfigItems[] providerSystemConfigItems = toConfigItemArray(providerSystem.getConfigItems());
+		String practiceNameInPD1 = HL7Utils.getConfigItem(providerSystemConfigItems, ConfigItems.PracticeNameInPD1);
+		if (practiceNameInPD1 != null 
+				&& (practiceNameInPD1.equalsIgnoreCase("TRUE") || practiceNameInPD1.equalsIgnoreCase("YES")))
+		{
+			if (patient.getPracticeIsNotNull())
+			{
+				if (patient.getPractice().getNameIsNotNull())
+				{
+					//PD1-3-1 Organization name (ST)
+					pd1.getPatientPrimaryFacility(0).getOrganizationName().setValue(patient.getPractice().getName());					
+				}
+				
+				if (patient.getPractice().getNationalLocCode() != null)
+				{
+					// PD1-3-9 Name representation code (ID)
+					pd1.getPatientPrimaryFacility(0).getNameRepresentationCode().setValue(patient.getPractice().getNationalLocCode());
+				}
+			}
+		}
+
+	}
+
 	
 	private void demographicCheck(Patient patVo,PID pid,ProviderSystemVo providerSystem) throws HL7Exception
 	{
@@ -3874,6 +5209,2339 @@ public abstract class VoMapper  implements IMessageHandler
 				throw new HL7Exception("Demographics Mismatch on Patient gender");
 		}
 	}
+	
+	
+	
+	//WDEV-21000
+	protected final void renderMemberOfStaffShortVoToAttendingDoctor(MemberOfStaffShortVo mos, PV1 pv1, ProviderSystemVo providerSystem) throws HL7Exception
+	{
+		LOG.debug("VoMapper renderMemberOfStaffShortVoToAttendingDoctor: entry");
+
+		int xcnCount = 0;
+		
+		if (mos != null)
+		{
+
+			if (mos.getCodeMappings() != null)
+			{
+				for (int i = 0; i < mos.getCodeMappings().size(); i++)
+				{
+					ims.core.vo.TaxonomyMap map = mos.getCodeMappings().get(i);
+	
+					/* 
+					 * First check to see if the code is defined as a  valid Taxonomy Type for provider system
+					 * If it isn't, then skip this code mapping 
+					 */
+	
+					TaxonomyType taxonomyType = map.getTaxonomyName();
+					if (taxonomyType != null)
+					{
+						String taxTypeText = svc.getRemoteLookup(taxonomyType.getID(), providerSystem.getCodeSystem().getText());
+						if (taxTypeText != null)
+						{
+							/* 
+							 * This code mapping has a valid taxonomy type defined for the provider system
+							 */
+							
+							//XCN.0 ID Number (ST)
+							pv1.getAttendingDoctor(xcnCount).getIDNumber().setValue(map.getTaxonomyCode());
+							if (mos.getNameIsNotNull())
+							{
+								//XCN.1 Family name (ST)
+								if (mos.getName().getSurnameIsNotNull())
+									pv1.getAttendingDoctor(xcnCount).getFamilyName().getSurname().setValue(mos.getName().getSurname().toString());
+								//XCN.2 Given name (ST)
+								if (mos.getName().getForenameIsNotNull())
+									pv1.getAttendingDoctor(xcnCount).getGivenName().setValue(mos.getName().getForename().toString());
+								//XCN.3 Second and further names (ST)
+								if (mos.getName().getMiddleNameIsNotNull())
+									pv1.getAttendingDoctor(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(mos.getName().getMiddleName().toString());
+								//XCN.5 Prefix (ST)
+								if (mos.getName().getTitleIsNotNull())
+									pv1.getAttendingDoctor(xcnCount).getPrefixEgDR().setValue(mos.getName().getTitle().toString());
+							}
+							//XCN.9 Assigning authority (HD)
+							pv1.getAttendingDoctor(xcnCount).getAssigningAuthority().getNamespaceID().setValue(map.getTaxonomyName().toString());
+							//XCN.10 Name type code (ID)
+							pv1.getAttendingDoctor(xcnCount).getNameTypeCode().setValue(taxTypeText);
+							
+							xcnCount ++;
+						}
+					}
+				}
+				
+				if (xcnCount == 0)
+				{
+					if (mos.getNameIsNotNull())
+					{
+						//XCN.1 Family name (ST)
+						if (mos.getName().getSurnameIsNotNull())
+							pv1.getAttendingDoctor(xcnCount).getFamilyName().getSurname().setValue(mos.getName().getSurname().toString());
+						//XCN.2 Given name (ST)
+						if (mos.getName().getForenameIsNotNull())
+							pv1.getAttendingDoctor(xcnCount).getGivenName().setValue(mos.getName().getForename().toString());
+						//XCN.3 Second and further names (ST)
+						if (mos.getName().getMiddleNameIsNotNull())
+							pv1.getAttendingDoctor(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(mos.getName().getMiddleName().toString());
+						//XCN.5 Prefix (ST)
+						if (mos.getName().getTitleIsNotNull())
+							pv1.getAttendingDoctor(xcnCount).getPrefixEgDR().setValue(mos.getName().getTitle().toString());
+					}
+				}
+	
+			}
+		}
+		
+		LOG.debug("VoMapper renderMemberOfStaffShortVoToAttendingDoctor: exit");
+	}
+
+
+	//WDEV-21000
+	protected final void renderMemberOfStaffShortVoToReferringDoctor(MemberOfStaffShortVo mos, PV1 pv1, ProviderSystemVo providerSystem) throws HL7Exception
+	{
+		LOG.debug("VoMapper renderMemberOfStaffShortVoToReferringDoctor: entry");
+
+		int xcnCount = 0;
+		
+		if (mos != null)
+		{
+			
+			if (mos.getCodeMappings() != null)
+			{
+				for (int i = 0; i < mos.getCodeMappings().size(); i++)
+				{
+					ims.core.vo.TaxonomyMap map = mos.getCodeMappings().get(i);
+	
+					/* 
+					 * First check to see if the code is defined as a  valid Taxonomy Type for provider system
+					 * If it isn't, then skip this code mapping 
+					 */
+	
+					TaxonomyType taxonomyType = map.getTaxonomyName();
+					if (taxonomyType != null)
+					{
+						String taxTypeText = svc.getRemoteLookup(taxonomyType.getID(), providerSystem.getCodeSystem().getText());
+						if (taxTypeText != null)
+						{
+							/* 
+							 * This code mapping has a valid taxonomy type defined for the provider system
+							 */
+							
+							//XCN.0 ID Number (ST)
+							pv1.getReferringDoctor(xcnCount).getIDNumber().setValue(map.getTaxonomyCode());
+							if (mos.getNameIsNotNull())
+							{
+								//XCN.1 Family name (ST)
+								if (mos.getName().getSurnameIsNotNull())
+									pv1.getReferringDoctor(xcnCount).getFamilyName().getSurname().setValue(mos.getName().getSurname().toString());
+								//XCN.2 Given name (ST)
+								if (mos.getName().getForenameIsNotNull())
+									pv1.getReferringDoctor(xcnCount).getGivenName().setValue(mos.getName().getForename().toString());
+								//XCN.3 Second and further names (ST)
+								if (mos.getName().getMiddleNameIsNotNull())
+									pv1.getReferringDoctor(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(mos.getName().getMiddleName().toString());
+								//XCN.5 Prefix (ST)
+								if (mos.getName().getTitleIsNotNull())
+									pv1.getReferringDoctor(xcnCount).getPrefixEgDR().setValue(mos.getName().getTitle().toString());
+							}
+							//XCN.9 Assigning authority (HD)
+							pv1.getReferringDoctor(xcnCount).getAssigningAuthority().getNamespaceID().setValue(map.getTaxonomyName().toString());
+							//XCN.10 Name type code (ID)
+							pv1.getReferringDoctor(xcnCount).getNameTypeCode().setValue(taxTypeText);
+							
+							xcnCount ++;
+						}
+					}
+				}
+			}
+				
+			if (xcnCount == 0)
+			{
+				if (mos.getNameIsNotNull())
+				{
+					//XCN.1 Family name (ST)
+					if (mos.getName().getSurnameIsNotNull())
+						pv1.getReferringDoctor(xcnCount).getFamilyName().getSurname().setValue(mos.getName().getSurname().toString());
+					//XCN.2 Given name (ST)
+					if (mos.getName().getForenameIsNotNull())
+						pv1.getReferringDoctor(xcnCount).getGivenName().setValue(mos.getName().getForename().toString());
+					//XCN.3 Second and further names (ST)
+					if (mos.getName().getMiddleNameIsNotNull())
+						pv1.getReferringDoctor(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(mos.getName().getMiddleName().toString());
+					//XCN.5 Prefix (ST)
+					if (mos.getName().getTitleIsNotNull())
+						pv1.getReferringDoctor(xcnCount).getPrefixEgDR().setValue(mos.getName().getTitle().toString());
+				}
+			}
+
+		}
+		
+		LOG.debug("VoMapper renderMemberOfStaffShortVoToReferringDoctor: exit");
+	}
+
+
+	//WDEV-21000
+	protected final void renderMemberOfStaffShortVoToConsultingDoctor(MemberOfStaffShortVo mos, PV1 pv1, ProviderSystemVo providerSystem) throws HL7Exception
+	{
+		LOG.debug("VoMapper renderMemberOfStaffShortVoToConsultingDoctor: entry");
+
+		int xcnCount = 0;
+		
+		if (mos != null)
+		{
+			if (mos.getCodeMappings() != null)
+			{
+				for (int i = 0; i < mos.getCodeMappings().size(); i++)
+				{
+					ims.core.vo.TaxonomyMap map = mos.getCodeMappings().get(i);
+	
+					/* 
+					 * First check to see if the code is defined as a  valid Taxonomy Type for provider system
+					 * If it isn't, then skip this code mapping 
+					 */
+	
+					TaxonomyType taxonomyType = map.getTaxonomyName();
+					if (taxonomyType != null)
+					{
+						String taxTypeText = svc.getRemoteLookup(taxonomyType.getID(), providerSystem.getCodeSystem().getText());
+						if (taxTypeText != null)
+						{
+							/* 
+							 * This code mapping has a valid taxonomy type defined for the provider system
+							 */
+							
+							//XCN.0 ID Number (ST)
+							pv1.getConsultingDoctor(xcnCount).getIDNumber().setValue(map.getTaxonomyCode());
+							if (mos.getNameIsNotNull())
+							{
+								//XCN.1 Family name (ST)
+								if (mos.getName().getSurnameIsNotNull())
+									pv1.getConsultingDoctor(xcnCount).getFamilyName().getSurname().setValue(mos.getName().getSurname().toString());
+								//XCN.2 Given name (ST)
+								if (mos.getName().getForenameIsNotNull())
+									pv1.getConsultingDoctor(xcnCount).getGivenName().setValue(mos.getName().getForename().toString());
+								//XCN.3 Second and further names (ST)
+								if (mos.getName().getMiddleNameIsNotNull())
+									pv1.getConsultingDoctor(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(mos.getName().getMiddleName().toString());
+								//XCN.5 Prefix (ST)
+								if (mos.getName().getTitleIsNotNull())
+									pv1.getConsultingDoctor(xcnCount).getPrefixEgDR().setValue(mos.getName().getTitle().toString());
+							}
+							//XCN.9 Assigning authority (HD)
+							pv1.getConsultingDoctor(xcnCount).getAssigningAuthority().getNamespaceID().setValue(map.getTaxonomyName().toString());
+							//XCN.10 Name type code (ID)
+							pv1.getConsultingDoctor(xcnCount).getNameTypeCode().setValue(taxTypeText);
+							
+							xcnCount ++;
+						}
+					}
+				}
+			}
+			
+			if (xcnCount == 0)
+			{
+				if (mos.getNameIsNotNull())
+				{
+					//XCN.1 Family name (ST)
+					if (mos.getName().getSurnameIsNotNull())
+						pv1.getConsultingDoctor(xcnCount).getFamilyName().getSurname().setValue(mos.getName().getSurname().toString());
+					//XCN.2 Given name (ST)
+					if (mos.getName().getForenameIsNotNull())
+						pv1.getConsultingDoctor(xcnCount).getGivenName().setValue(mos.getName().getForename().toString());
+					//XCN.3 Second and further names (ST)
+					if (mos.getName().getMiddleNameIsNotNull())
+						pv1.getConsultingDoctor(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(mos.getName().getMiddleName().toString());
+					//XCN.5 Prefix (ST)
+					if (mos.getName().getTitleIsNotNull())
+						pv1.getConsultingDoctor(xcnCount).getPrefixEgDR().setValue(mos.getName().getTitle().toString());
+				}
+			}
+
+		}
+
+		LOG.debug("VoMapper renderMemberOfStaffShortVoToConsultingDoctor: exit");
+	}
+
+	
+	//WDEV-21000
+	protected final void renderGpLiteVoToAttendingDoctor(GpLiteVo gp, PV1 pv1, ProviderSystemVo providerSystem) throws HL7Exception
+	{
+		LOG.debug("VoMapper renderGpLiteVoToAttendingDoctor: entry");
+
+		int xcnCount = 0;
+		
+		if (gp != null)
+		{
+			if (gp.getCodeMappings() != null)
+			{
+				for (int i = 0; i < gp.getCodeMappings().size(); i++)
+				{
+					ims.core.vo.TaxonomyMap map = gp.getCodeMappings().get(i);
+	
+					/* 
+					 * First check to see if the code is defined as a  valid Taxonomy Type for provider system
+					 * If it isn't, then skip this code mapping 
+					 */
+	
+					TaxonomyType taxonomyType = map.getTaxonomyName();
+					if (taxonomyType != null)
+					{
+						String taxTypeText = svc.getRemoteLookup(taxonomyType.getID(), providerSystem.getCodeSystem().getText());
+						if (taxTypeText != null)
+						{
+							/* 
+							 * This code mapping has a valid taxonomy type defined for the provider system
+							 */
+							
+							//XCN.0 ID Number (ST)
+							pv1.getAttendingDoctor(xcnCount).getIDNumber().setValue(map.getTaxonomyCode());
+							if (gp.getNameIsNotNull())
+							{
+								//XCN.1 Family name (ST)
+								if (gp.getName().getSurnameIsNotNull())
+									pv1.getAttendingDoctor(xcnCount).getFamilyName().getSurname().setValue(gp.getName().getSurname().toString());
+								//XCN.2 Given name (ST)
+								if (gp.getName().getForenameIsNotNull())
+									pv1.getAttendingDoctor(xcnCount).getGivenName().setValue(gp.getName().getForename().toString());
+								//XCN.3 Second and further names (ST)
+								if (gp.getName().getMiddleNameIsNotNull())
+									pv1.getAttendingDoctor(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(gp.getName().getMiddleName().toString());
+								//XCN.5 Prefix (ST)
+								if (gp.getName().getTitleIsNotNull())
+									pv1.getAttendingDoctor(xcnCount).getPrefixEgDR().setValue(gp.getName().getTitle().toString());
+							}
+							//XCN.9 Assigning authority (HD)
+							pv1.getAttendingDoctor(xcnCount).getAssigningAuthority().getNamespaceID().setValue(map.getTaxonomyName().toString());
+							//XCN.10 Name type code (ID)
+							pv1.getAttendingDoctor(xcnCount).getNameTypeCode().setValue(taxTypeText);
+							
+							xcnCount ++;
+						}
+					}
+				}
+			}
+				
+			if (xcnCount == 0)
+			{
+				if (gp.getNameIsNotNull())
+				{
+					//XCN.1 Family name (ST)
+					if (gp.getName().getSurnameIsNotNull())
+						pv1.getAttendingDoctor(xcnCount).getFamilyName().getSurname().setValue(gp.getName().getSurname().toString());
+					//XCN.2 Given name (ST)
+					if (gp.getName().getForenameIsNotNull())
+						pv1.getAttendingDoctor(xcnCount).getGivenName().setValue(gp.getName().getForename().toString());
+					//XCN.3 Second and further names (ST)
+					if (gp.getName().getMiddleNameIsNotNull())
+						pv1.getAttendingDoctor(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(gp.getName().getMiddleName().toString());
+					//XCN.5 Prefix (ST)
+					if (gp.getName().getTitleIsNotNull())
+						pv1.getAttendingDoctor(xcnCount).getPrefixEgDR().setValue(gp.getName().getTitle().toString());
+				}
+			}
+
+		}
+		
+		LOG.debug("VoMapper renderGpLiteVoToAttendingDoctor: exit");
+	}
+	
+	
+	//WDEV-21000
+	protected final void renderGpLiteVoToReferringDoctor(GpLiteVo gp, PV1 pv1, ProviderSystemVo providerSystem) throws HL7Exception
+	{
+		LOG.debug("VoMapper renderGpLiteVoToReferringDoctor: entry");
+
+		int xcnCount = 0;
+		
+		if (gp != null)
+		{
+		
+			if (gp.getCodeMappings() != null)
+			{
+				for (int i = 0; i < gp.getCodeMappings().size(); i++)
+				{
+					ims.core.vo.TaxonomyMap map = gp.getCodeMappings().get(i);
+	
+					/* 
+					 * First check to see if the code is defined as a  valid Taxonomy Type for provider system
+					 * If it isn't, then skip this code mapping 
+					 */
+	
+					TaxonomyType taxonomyType = map.getTaxonomyName();
+					if (taxonomyType != null)
+					{
+						String taxTypeText = svc.getRemoteLookup(taxonomyType.getID(), providerSystem.getCodeSystem().getText());
+						if (taxTypeText != null)
+						{
+							/* 
+							 * This code mapping has a valid taxonomy type defined for the provider system
+							 */
+							
+							//XCN.0 ID Number (ST)
+							pv1.getReferringDoctor(xcnCount).getIDNumber().setValue(map.getTaxonomyCode());
+							if (gp.getNameIsNotNull())
+							{
+								//XCN.1 Family name (ST)
+								if (gp.getName().getSurnameIsNotNull())
+									pv1.getReferringDoctor(xcnCount).getFamilyName().getSurname().setValue(gp.getName().getSurname().toString());
+								//XCN.2 Given name (ST)
+								if (gp.getName().getForenameIsNotNull())
+									pv1.getReferringDoctor(xcnCount).getGivenName().setValue(gp.getName().getForename().toString());
+								//XCN.3 Second and further names (ST)
+								if (gp.getName().getMiddleNameIsNotNull())
+									pv1.getReferringDoctor(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(gp.getName().getMiddleName().toString());
+								//XCN.5 Prefix (ST)
+								if (gp.getName().getTitleIsNotNull())
+									pv1.getReferringDoctor(xcnCount).getPrefixEgDR().setValue(gp.getName().getTitle().toString());
+							}
+							//XCN.9 Assigning authority (HD)
+							pv1.getReferringDoctor(xcnCount).getAssigningAuthority().getNamespaceID().setValue(map.getTaxonomyName().toString());
+							//XCN.10 Name type code (ID)
+							pv1.getReferringDoctor(xcnCount).getNameTypeCode().setValue(taxTypeText);
+							
+							xcnCount ++;
+						}
+					}
+				}
+			}
+			
+			if (xcnCount == 0)
+			{
+				if (gp.getNameIsNotNull())
+				{
+					//XCN.1 Family name (ST)
+					if (gp.getName().getSurnameIsNotNull())
+						pv1.getReferringDoctor(xcnCount).getFamilyName().getSurname().setValue(gp.getName().getSurname().toString());
+					//XCN.2 Given name (ST)
+					if (gp.getName().getForenameIsNotNull())
+						pv1.getReferringDoctor(xcnCount).getGivenName().setValue(gp.getName().getForename().toString());
+					//XCN.3 Second and further names (ST)
+					if (gp.getName().getMiddleNameIsNotNull())
+						pv1.getReferringDoctor(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(gp.getName().getMiddleName().toString());
+					//XCN.5 Prefix (ST)
+					if (gp.getName().getTitleIsNotNull())
+						pv1.getReferringDoctor(xcnCount).getPrefixEgDR().setValue(gp.getName().getTitle().toString());
+				}
+			}
+
+		}
+
+		LOG.debug("VoMapper renderGpLiteVoToReferringDoctor: exit");
+	}
+
+
+	//WDEV-21000
+	protected final void renderMedicWithMappingsLiteVoToConsultingDoctor(MedicWithMappingsLiteVo medic, PV1 pv1, ProviderSystemVo providerSystem) throws HL7Exception
+	{
+		LOG.debug("VoMapper renderGpLiteVoToReferringDoctor: entry");
+
+		int xcnCount = 0;
+		
+		if (medic != null)
+		{
+			
+			if (medic.getMos() != null)
+			{
+				if (medic.getMos().getCodeMappings() != null)
+				{
+					for (int i = 0; i < medic.getMos().getCodeMappings().size(); i++)
+					{
+						ims.core.vo.TaxonomyMap map = medic.getMos().getCodeMappings().get(i);
+		
+						/* 
+						 * First check to see if the code is defined as a  valid Taxonomy Type for provider system
+						 * If it isn't, then skip this code mapping 
+						 */
+		
+						TaxonomyType taxonomyType = map.getTaxonomyName();
+						if (taxonomyType != null)
+						{
+							String taxTypeText = svc.getRemoteLookup(taxonomyType.getID(), providerSystem.getCodeSystem().getText());
+							if (taxTypeText != null)
+							{
+								/* 
+								 * This code mapping has a valid taxonomy type defined for the provider system
+								 */
+								
+								//XCN.0 ID Number (ST)
+								pv1.getConsultingDoctor(xcnCount).getIDNumber().setValue(map.getTaxonomyCode());
+								if (medic.getMos().getNameIsNotNull())
+								{
+									//XCN.1 Family name (ST)
+									if (medic.getMos().getName().getSurnameIsNotNull())
+										pv1.getConsultingDoctor(xcnCount).getFamilyName().getSurname().setValue(medic.getMos().getName().getSurname().toString());
+									//XCN.2 Given name (ST)
+									if (medic.getMos().getName().getForenameIsNotNull())
+										pv1.getConsultingDoctor(xcnCount).getGivenName().setValue(medic.getMos().getName().getForename().toString());
+									//XCN.3 Second and further names (ST)
+									if (medic.getMos().getName().getMiddleNameIsNotNull())
+										pv1.getAttendingDoctor(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(medic.getMos().getName().getMiddleName().toString());
+									//XCN.5 Prefix (ST)
+									if (medic.getMos().getName().getTitleIsNotNull())
+										pv1.getConsultingDoctor(xcnCount).getPrefixEgDR().setValue(medic.getMos().getName().getTitle().toString());
+								}
+								//XCN.9 Assigning authority (HD)
+								pv1.getConsultingDoctor(xcnCount).getAssigningAuthority().getNamespaceID().setValue(map.getTaxonomyName().toString());
+								//XCN.10 Name type code (ID)
+								pv1.getConsultingDoctor(xcnCount).getNameTypeCode().setValue(taxTypeText);
+								
+								xcnCount ++;
+							}
+						}
+					}
+				}
+				
+				if (xcnCount == 0)
+				{
+					if (medic.getMos().getNameIsNotNull())
+					{
+						//XCN.1 Family name (ST)
+						if (medic.getMos().getName().getSurnameIsNotNull())
+							pv1.getConsultingDoctor(xcnCount).getFamilyName().getSurname().setValue(medic.getMos().getName().getSurname().toString());
+						//XCN.2 Given name (ST)
+						if (medic.getMos().getName().getForenameIsNotNull())
+							pv1.getConsultingDoctor(xcnCount).getGivenName().setValue(medic.getMos().getName().getForename().toString());
+						//XCN.3 Second and further names (ST)
+						if (medic.getMos().getName().getMiddleNameIsNotNull())
+							pv1.getConsultingDoctor(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(medic.getMos().getName().getMiddleName().toString());
+						//XCN.5 Prefix (ST)
+						if (medic.getMos().getName().getTitleIsNotNull())
+							pv1.getConsultingDoctor(xcnCount).getPrefixEgDR().setValue(medic.getMos().getName().getTitle().toString());
+					}
+				}
+
+			}
+		
+		}
+
+		LOG.debug("VoMapper renderMedicWithMappingsLiteVoToConsultingDoctor: exit");
+	}
+
+	//WDEV-21000
+	protected final void renderHcpToReferringDoctor(ims.core.vo.Hcp hcp, PV1 pv1, ProviderSystemVo providerSystem) throws HL7Exception
+	{
+		LOG.debug("VoMapper renderHcpToReferringDoctor: entry");
+
+		int xcnCount = 0;
+		
+		if (hcp != null)
+		{
+			
+			if (hcp.getMos() != null)
+			{
+				if (hcp.getMos().getCodeMappings() != null)
+				{
+					for (int i = 0; i < hcp.getMos().getCodeMappings().size(); i++)
+					{
+						ims.core.vo.TaxonomyMap map = hcp.getMos().getCodeMappings().get(i);
+		
+						/* 
+						 * First check to see if the code is defined as a  valid Taxonomy Type for provider system
+						 * If it isn't, then skip this code mapping 
+						 */
+	
+						TaxonomyType taxonomyType = map.getTaxonomyName();
+						if (taxonomyType != null)
+						{
+							String taxTypeText = svc.getRemoteLookup(taxonomyType.getID(), providerSystem.getCodeSystem().getText());
+							if (taxTypeText != null)
+							{
+								/* 
+								 * This code mapping has a valid taxonomy type defined for the provider system
+								 */
+								
+								//XCN.0 ID Number (ST)
+								pv1.getReferringDoctor(xcnCount).getIDNumber().setValue(map.getTaxonomyCode());
+								if (hcp.getMos().getNameIsNotNull())
+								{
+									//XCN.1 Family name (ST)
+									if (hcp.getMos().getName().getSurnameIsNotNull())
+										pv1.getReferringDoctor(xcnCount).getFamilyName().getSurname().setValue(hcp.getMos().getName().getSurname().toString());
+									//XCN.2 Given name (ST)
+									if (hcp.getMos().getName().getForenameIsNotNull())
+										pv1.getReferringDoctor(xcnCount).getGivenName().setValue(hcp.getMos().getName().getForename().toString());
+									//XCN.3 Second and further names (ST)
+									if (hcp.getMos().getName().getMiddleNameIsNotNull())
+										pv1.getReferringDoctor(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(hcp.getMos().getName().getMiddleName().toString());
+									//XCN.5 Prefix (ST)
+									if (hcp.getMos().getName().getTitleIsNotNull())
+										pv1.getReferringDoctor(xcnCount).getPrefixEgDR().setValue(hcp.getMos().getName().getTitle().toString());
+								}
+								//XCN.9 Assigning authority (HD)
+								pv1.getReferringDoctor(xcnCount).getAssigningAuthority().getNamespaceID().setValue(map.getTaxonomyName().toString());
+								//XCN.10 Name type code (ID)
+								pv1.getReferringDoctor(xcnCount).getNameTypeCode().setValue(taxTypeText);
+								
+								xcnCount ++;
+							}
+						}
+					}
+				}
+				
+				if (xcnCount == 0)
+				{
+					if (hcp.getMos().getNameIsNotNull())
+					{
+						//XCN.1 Family name (ST)
+						if (hcp.getMos().getName().getSurnameIsNotNull())
+							pv1.getReferringDoctor(xcnCount).getFamilyName().getSurname().setValue(hcp.getMos().getName().getSurname().toString());
+						//XCN.2 Given name (ST)
+						if (hcp.getMos().getName().getForenameIsNotNull())
+							pv1.getReferringDoctor(xcnCount).getGivenName().setValue(hcp.getMos().getName().getForename().toString());
+						//XCN.3 Second and further names (ST)
+						if (hcp.getMos().getName().getMiddleNameIsNotNull())
+							pv1.getReferringDoctor(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(hcp.getMos().getName().getMiddleName().toString());
+						//XCN.5 Prefix (ST)
+						if (hcp.getMos().getName().getTitleIsNotNull())
+							pv1.getReferringDoctor(xcnCount).getPrefixEgDR().setValue(hcp.getMos().getName().getTitle().toString());
+					}
+				}
+			}
+
+		}
+
+		LOG.debug("VoMapper renderHcpToReferringDoctor: exit");
+	}
+
+	
+
+	//WDEV-21000
+	protected final void renderGpShortVoToReferringDoctor(GpShortVo gp, PV1 pv1, ProviderSystemVo providerSystem) throws HL7Exception
+	{
+		LOG.debug("VoMapper renderGpShortVoToReferringDoctor: entry");
+
+		int xcnCount = 0;
+		
+		if (gp != null)
+		{
+			if (gp.getCodeMappings() != null)
+			{
+				for (int i = 0; i < gp.getCodeMappings().size(); i++)
+				{
+					ims.core.vo.TaxonomyMap map = gp.getCodeMappings().get(i);
+	
+					/* 
+					 * First check to see if the code is defined as a  valid Taxonomy Type for provider system
+					 * If it isn't, then skip this code mapping 
+					 */
+
+					TaxonomyType taxonomyType = map.getTaxonomyName();
+					if (taxonomyType != null)
+					{
+						String taxTypeText = svc.getRemoteLookup(taxonomyType.getID(), providerSystem.getCodeSystem().getText());
+						if (taxTypeText != null)
+						{
+							/* 
+							 * This code mapping has a valid taxonomy type defined for the provider system
+							 */
+							
+							//XCN.0 ID Number (ST)
+							pv1.getReferringDoctor(xcnCount).getIDNumber().setValue(map.getTaxonomyCode());
+							if (gp.getNameIsNotNull())
+							{
+								//XCN.1 Family name (ST)
+								if (gp.getName().getSurnameIsNotNull())
+									pv1.getReferringDoctor(xcnCount).getFamilyName().getSurname().setValue(gp.getName().getSurname().toString());
+								//XCN.2 Given name (ST)
+								if (gp.getName().getForenameIsNotNull())
+									pv1.getReferringDoctor(xcnCount).getGivenName().setValue(gp.getName().getForename().toString());
+								//XCN.3 Second and further names (ST)
+								if (gp.getName().getMiddleNameIsNotNull())
+									pv1.getReferringDoctor(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(gp.getName().getMiddleName().toString());
+								//XCN.5 Prefix (ST)
+								if (gp.getName().getTitleIsNotNull())
+									pv1.getReferringDoctor(xcnCount).getPrefixEgDR().setValue(gp.getName().getTitle().toString());
+							}
+							//XCN.9 Assigning authority (HD)
+							pv1.getReferringDoctor(xcnCount).getAssigningAuthority().getNamespaceID().setValue(map.getTaxonomyName().toString());
+							//XCN.10 Name type code (ID)
+							pv1.getReferringDoctor(xcnCount).getNameTypeCode().setValue(taxTypeText);
+							
+							xcnCount ++;
+						}
+					}
+				}
+			}
+			
+			if (xcnCount == 0)
+			{
+				if (gp.getNameIsNotNull())
+				{
+					//XCN.1 Family name (ST)
+					if (gp.getName().getSurnameIsNotNull())
+						pv1.getReferringDoctor(xcnCount).getFamilyName().getSurname().setValue(gp.getName().getSurname().toString());
+					//XCN.2 Given name (ST)
+					if (gp.getName().getForenameIsNotNull())
+						pv1.getReferringDoctor(xcnCount).getGivenName().setValue(gp.getName().getForename().toString());
+					//XCN.3 Second and further names (ST)
+					if (gp.getName().getMiddleNameIsNotNull())
+						pv1.getReferringDoctor(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(gp.getName().getMiddleName().toString());
+					//XCN.5 Prefix (ST)
+					if (gp.getName().getTitleIsNotNull())
+						pv1.getReferringDoctor(xcnCount).getPrefixEgDR().setValue(gp.getName().getTitle().toString());
+				}
+			}
+
+		}
+
+		LOG.debug("VoMapper renderGpShortVoToReferringDoctor: exit");
+	}
+
+	
+	//WDEV-21000
+	protected final void renderMemberOfStaffShortVoToEnteredBy(MemberOfStaffShortVo mos, ORC commonOrder, ProviderSystemVo providerSystem) throws HL7Exception
+	{
+		LOG.debug("VoMapper renderMemberOfStaffShortVoToEnteredBy: entry");
+
+		int xcnCount = 0;
+		
+		if (mos != null)
+		{
+			
+			if (mos.getCodeMappings() != null)
+			{
+				for (int i = 0; i < mos.getCodeMappings().size(); i++)
+				{
+					ims.core.vo.TaxonomyMap map = mos.getCodeMappings().get(i);
+	
+					/* 
+					 * First check to see if the code is defined as a  valid Taxonomy Type for provider system
+					 * If it isn't, then skip this code mapping 
+					 */
+
+					TaxonomyType taxonomyType = map.getTaxonomyName();
+					if (taxonomyType != null)
+					{
+						String taxTypeText = svc.getRemoteLookup(taxonomyType.getID(), providerSystem.getCodeSystem().getText());
+						if (taxTypeText != null)
+						{
+							/* 
+							 * This code mapping has a valid taxonomy type defined for the provider system
+							 */
+							
+							//XCN.0 ID Number (ST)
+							commonOrder.getEnteredBy(xcnCount).getIDNumber().setValue(map.getTaxonomyCode());
+							if (mos.getNameIsNotNull())
+							{
+								//XCN.1 Family name (ST)
+								if (mos.getName().getSurnameIsNotNull())
+									commonOrder.getEnteredBy(xcnCount).getFamilyName().getSurname().setValue(mos.getName().getSurname().toString());
+								//XCN.2 Given name (ST)
+								if (mos.getName().getForenameIsNotNull())
+									commonOrder.getEnteredBy(xcnCount).getGivenName().setValue(mos.getName().getForename().toString());
+								//XCN.3 Second and further names (ST)
+								if (mos.getName().getMiddleNameIsNotNull())
+									commonOrder.getEnteredBy(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(mos.getName().getMiddleName().toString());
+								//XCN.5 Prefix (ST)
+								if (mos.getName().getTitleIsNotNull())
+									commonOrder.getEnteredBy(xcnCount).getPrefixEgDR().setValue(mos.getName().getTitle().toString());
+							}
+							//XCN.9 Assigning authority (HD)
+							commonOrder.getEnteredBy(xcnCount).getAssigningAuthority().getNamespaceID().setValue(map.getTaxonomyName().toString());
+							//XCN.10 Name type code (ID)
+							commonOrder.getEnteredBy(xcnCount).getNameTypeCode().setValue(taxTypeText);
+							
+							xcnCount ++;
+						}
+					}
+				}
+			}
+			
+			if (xcnCount == 0)
+			{
+				if (mos.getNameIsNotNull())
+				{
+					//XCN.1 Family name (ST)
+					if (mos.getName().getSurnameIsNotNull())
+						commonOrder.getEnteredBy(xcnCount).getFamilyName().getSurname().setValue(mos.getName().getSurname().toString());
+					//XCN.2 Given name (ST)
+					if (mos.getName().getForenameIsNotNull())
+						commonOrder.getEnteredBy(xcnCount).getGivenName().setValue(mos.getName().getForename().toString());
+					//XCN.3 Second and further names (ST)
+					if (mos.getName().getMiddleNameIsNotNull())
+						commonOrder.getEnteredBy(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(mos.getName().getMiddleName().toString());
+					//XCN.5 Prefix (ST)
+					if (mos.getName().getTitleIsNotNull())
+						commonOrder.getEnteredBy(xcnCount).getPrefixEgDR().setValue(mos.getName().getTitle().toString());
+				}
+			}
+
+		}
+
+		LOG.debug("VoMapper renderMemberOfStaffShortVoToEnteredBy: exit");
+	}
+
+
+	//WDEV-21000
+	protected final void renderGpShortVoToOrderingProvider(GpShortVo gp, ORC orc, ProviderSystemVo providerSystem) throws HL7Exception
+	{
+		LOG.debug("VoMapper renderGpShortVoToOrderingProvider: entry");
+
+		int xcnCount = 0;
+		
+		if (gp != null)
+		{
+			
+			if (gp.getCodeMappings() != null)
+			{
+				for (int i = 0; i < gp.getCodeMappings().size(); i++)
+				{
+					ims.core.vo.TaxonomyMap map = gp.getCodeMappings().get(i);
+	
+					/* 
+					 * First check to see if the code is defined as a  valid Taxonomy Type for provider system
+					 * If it isn't, then skip this code mapping 
+					 */
+
+					TaxonomyType taxonomyType = map.getTaxonomyName();
+					if (taxonomyType != null)
+					{
+						String taxTypeText = svc.getRemoteLookup(taxonomyType.getID(), providerSystem.getCodeSystem().getText());
+						if (taxTypeText != null)
+						{
+							/* 
+							 * This code mapping has a valid taxonomy type defined for the provider system
+							 */
+							
+							//XCN.0 ID Number (ST)
+							orc.getOrderingProvider(xcnCount).getIDNumber().setValue(map.getTaxonomyCode());
+							if (gp.getNameIsNotNull())
+							{
+								//XCN.1 Family name (ST)
+								if (gp.getName().getSurnameIsNotNull())
+									orc.getOrderingProvider(xcnCount).getFamilyName().getSurname().setValue(gp.getName().getSurname().toString());
+								//XCN.2 Given name (ST)
+								if (gp.getName().getForenameIsNotNull())
+									orc.getOrderingProvider(xcnCount).getGivenName().setValue(gp.getName().getForename().toString());
+								//XCN.3 Second and further names (ST)
+								if (gp.getName().getMiddleNameIsNotNull())
+									orc.getOrderingProvider(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(gp.getName().getMiddleName().toString());
+								//XCN.5 Prefix (ST)
+								if (gp.getName().getTitleIsNotNull())
+									orc.getOrderingProvider(xcnCount).getPrefixEgDR().setValue(gp.getName().getTitle().toString());
+							}
+							//XCN.9 Assigning authority (HD)
+							orc.getOrderingProvider(xcnCount).getAssigningAuthority().getNamespaceID().setValue(map.getTaxonomyName().toString());
+							//XCN.10 Name type code (ID)
+							orc.getOrderingProvider(xcnCount).getNameTypeCode().setValue(taxTypeText);
+							
+							xcnCount ++;
+						}
+					}
+				}
+			}
+			
+			if (xcnCount == 0)
+			{
+				if (gp.getNameIsNotNull())
+				{
+					//XCN.1 Family name (ST)
+					if (gp.getName().getSurnameIsNotNull())
+						orc.getOrderingProvider(xcnCount).getFamilyName().getSurname().setValue(gp.getName().getSurname().toString());
+					//XCN.2 Given name (ST)
+					if (gp.getName().getForenameIsNotNull())
+						orc.getOrderingProvider(xcnCount).getGivenName().setValue(gp.getName().getForename().toString());
+					//XCN.3 Second and further names (ST)
+					if (gp.getName().getMiddleNameIsNotNull())
+						orc.getOrderingProvider(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(gp.getName().getMiddleName().toString());
+					//XCN.5 Prefix (ST)
+					if (gp.getName().getTitleIsNotNull())
+						orc.getOrderingProvider(xcnCount).getPrefixEgDR().setValue(gp.getName().getTitle().toString());
+				}
+			}
+
+		}
+
+
+		LOG.debug("VoMapper renderGpShortVoToOrderingProvider: exit");
+	}
+
+	
+	//WDEV-21000
+	protected final void renderGpShortVoToOrderingProvider(GpShortVo gp, OBR obr, ProviderSystemVo providerSystem) throws HL7Exception
+	{
+		LOG.debug("VoMapper renderGpShortVoToOrderingProvider: entry");
+
+		int xcnCount = 0;
+		
+		if (gp != null)
+		{
+			if (gp.getCodeMappings() != null)
+			{
+				for (int i = 0; i < gp.getCodeMappings().size(); i++)
+				{
+					ims.core.vo.TaxonomyMap map = gp.getCodeMappings().get(i);
+	
+					/* 
+					 * First check to see if the code is defined as a  valid Taxonomy Type for provider system
+					 * If it isn't, then skip this code mapping 
+					 */
+
+					TaxonomyType taxonomyType = map.getTaxonomyName();
+					if (taxonomyType != null)
+					{
+						String taxTypeText = svc.getRemoteLookup(taxonomyType.getID(), providerSystem.getCodeSystem().getText());
+						if (taxTypeText != null)
+						{
+							/* 
+							 * This code mapping has a valid taxonomy type defined for the provider system
+							 */
+							
+							//XCN.0 ID Number (ST)
+							obr.getOrderingProvider(xcnCount).getIDNumber().setValue(map.getTaxonomyCode());
+							if (gp.getNameIsNotNull())
+							{
+								//XCN.1 Family name (ST)
+								if (gp.getName().getSurnameIsNotNull())
+									obr.getOrderingProvider(xcnCount).getFamilyName().getSurname().setValue(gp.getName().getSurname().toString());
+								//XCN.2 Given name (ST)
+								if (gp.getName().getForenameIsNotNull())
+									obr.getOrderingProvider(xcnCount).getGivenName().setValue(gp.getName().getForename().toString());
+								//XCN.3 Second and further names (ST)
+								if (gp.getName().getMiddleNameIsNotNull())
+									obr.getOrderingProvider(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(gp.getName().getMiddleName().toString());
+								//XCN.5 Prefix (ST)
+								if (gp.getName().getTitleIsNotNull())
+									obr.getOrderingProvider(xcnCount).getPrefixEgDR().setValue(gp.getName().getTitle().toString());
+							}
+							//XCN.9 Assigning authority (HD)
+							obr.getOrderingProvider(xcnCount).getAssigningAuthority().getNamespaceID().setValue(map.getTaxonomyName().toString());
+							//XCN.10 Name type code (ID)
+							obr.getOrderingProvider(xcnCount).getNameTypeCode().setValue(taxTypeText);
+							
+							xcnCount ++;
+						}
+					}
+				}
+			}
+			
+			if (xcnCount == 0)
+			{
+				if (gp.getNameIsNotNull())
+				{
+					//XCN.1 Family name (ST)
+					if (gp.getName().getSurnameIsNotNull())
+						obr.getOrderingProvider(xcnCount).getFamilyName().getSurname().setValue(gp.getName().getSurname().toString());
+					//XCN.2 Given name (ST)
+					if (gp.getName().getForenameIsNotNull())
+						obr.getOrderingProvider(xcnCount).getGivenName().setValue(gp.getName().getForename().toString());
+					//XCN.3 Second and further names (ST)
+					if (gp.getName().getMiddleNameIsNotNull())
+						obr.getOrderingProvider(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(gp.getName().getMiddleName().toString());
+					//XCN.5 Prefix (ST)
+					if (gp.getName().getTitleIsNotNull())
+						obr.getOrderingProvider(xcnCount).getPrefixEgDR().setValue(gp.getName().getTitle().toString());
+				}
+			}
+
+		}
+
+		LOG.debug("VoMapper renderGpShortVoToOrderingProvider: exit");
+	}
+
+
+	//WDEV-21000
+	protected final void renderGpShortVoToPatientPrimaryCareProviderIDNo(GpShortVo gp, PD1 pd1, ProviderSystemVo providerSystem) throws HL7Exception
+	{
+		LOG.debug("VoMapper renderGpShortVoToPatientPrimaryCareProviderIDNo: entry");
+
+		int xcnCount = 0;
+		
+		if (gp != null)
+		{
+			
+			if (gp.getCodeMappings() != null)
+			{
+				for (int i = 0; i < gp.getCodeMappings().size(); i++)
+				{
+					ims.core.vo.TaxonomyMap map = gp.getCodeMappings().get(i);
+	
+					/* 
+					 * First check to see if the code is defined as a  valid Taxonomy Type for provider system
+					 * If it isn't, then skip this code mapping 
+					 */
+
+					TaxonomyType taxonomyType = map.getTaxonomyName();
+					if (taxonomyType != null)
+					{
+						String taxTypeText = svc.getRemoteLookup(taxonomyType.getID(), providerSystem.getCodeSystem().getText());
+						if (taxTypeText != null)
+						{
+							/* 
+							 * This code mapping has a valid taxonomy type defined for the provider system
+							 */
+							
+							//XCN.0 ID Number (ST)
+							pd1.getPatientPrimaryCareProviderNameIDNo(xcnCount).getIDNumber().setValue(map.getTaxonomyCode());
+							if (gp.getNameIsNotNull())
+							{
+								//XCN.1 Family name (ST)
+								if (gp.getName().getSurnameIsNotNull())
+									pd1.getPatientPrimaryCareProviderNameIDNo(xcnCount).getFamilyName().getSurname().setValue(gp.getName().getSurname().toString());
+								//XCN.2 Given name (ST)
+								if (gp.getName().getForenameIsNotNull())
+									pd1.getPatientPrimaryCareProviderNameIDNo(xcnCount).getGivenName().setValue(gp.getName().getForename().toString());
+								//XCN.3 Second and further names (ST)
+								if (gp.getName().getMiddleNameIsNotNull())
+									pd1.getPatientPrimaryCareProviderNameIDNo(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(gp.getName().getMiddleName().toString());
+								//XCN.5 Prefix (ST)
+								if (gp.getName().getTitleIsNotNull())
+									pd1.getPatientPrimaryCareProviderNameIDNo(xcnCount).getPrefixEgDR().setValue(gp.getName().getTitle().toString());
+							}
+							//XCN.9 Assigning authority (HD)
+							pd1.getPatientPrimaryCareProviderNameIDNo(xcnCount).getAssigningAuthority().getNamespaceID().setValue(map.getTaxonomyName().toString());
+							//XCN.10 Name type code (ID)
+							pd1.getPatientPrimaryCareProviderNameIDNo(xcnCount).getNameTypeCode().setValue(taxTypeText);
+							
+							xcnCount ++;
+						}
+					}
+				}
+			}
+			
+			if (xcnCount == 0)
+			{
+				if (gp.getNameIsNotNull())
+				{
+					//XCN.1 Family name (ST)
+					if (gp.getName().getSurnameIsNotNull())
+						pd1.getPatientPrimaryCareProviderNameIDNo(xcnCount).getFamilyName().getSurname().setValue(gp.getName().getSurname().toString());
+					//XCN.2 Given name (ST)
+					if (gp.getName().getForenameIsNotNull())
+						pd1.getPatientPrimaryCareProviderNameIDNo(xcnCount).getGivenName().setValue(gp.getName().getForename().toString());
+					//XCN.3 Second and further names (ST)
+					if (gp.getName().getMiddleNameIsNotNull())
+						pd1.getPatientPrimaryCareProviderNameIDNo(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(gp.getName().getMiddleName().toString());
+					//XCN.5 Prefix (ST)
+					if (gp.getName().getTitleIsNotNull())
+						pd1.getPatientPrimaryCareProviderNameIDNo(xcnCount).getPrefixEgDR().setValue(gp.getName().getTitle().toString());
+				}
+			}
+
+		}
+
+		LOG.debug("VoMapper renderGpShortVoToPatientPrimaryCareProviderIDNo: exit");
+	}
+	
+
+	//WDEV-21000
+	protected final void renderMemberOfStaffShortVoToOrderingProvider(MemberOfStaffShortVo mos, ORC orc, ProviderSystemVo providerSystem) throws HL7Exception
+	{
+		LOG.debug("VoMapper renderMemberOfStaffShortVoToOrderingProvider: entry");
+
+		int xcnCount = 0;
+		
+		if (mos != null)
+		{
+			
+			if (mos.getCodeMappings() != null)
+			{
+				for (int i = 0; i < mos.getCodeMappings().size(); i++)
+				{
+					ims.core.vo.TaxonomyMap map = mos.getCodeMappings().get(i);
+	
+					/* 
+					 * First check to see if the code is defined as a  valid Taxonomy Type for provider system
+					 * If it isn't, then skip this code mapping 
+					 */
+
+					TaxonomyType taxonomyType = map.getTaxonomyName();
+					if (taxonomyType != null)
+					{
+						String taxTypeText = svc.getRemoteLookup(taxonomyType.getID(), providerSystem.getCodeSystem().getText());
+						if (taxTypeText != null)
+						{
+							/* 
+							 * This code mapping has a valid taxonomy type defined for the provider system
+							 */
+							
+							//XCN.0 ID Number (ST)
+							orc.getOrderingProvider(xcnCount).getIDNumber().setValue(map.getTaxonomyCode());
+							if (mos.getNameIsNotNull())
+							{
+								//XCN.1 Family name (ST)
+								if (mos.getName().getSurnameIsNotNull())
+									orc.getOrderingProvider(xcnCount).getFamilyName().getSurname().setValue(mos.getName().getSurname().toString());
+								//XCN.2 Given name (ST)
+								if (mos.getName().getForenameIsNotNull())
+									orc.getOrderingProvider(xcnCount).getGivenName().setValue(mos.getName().getForename().toString());
+								//XCN.3 Second and further names (ST)
+								if (mos.getName().getMiddleNameIsNotNull())
+									orc.getOrderingProvider(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(mos.getName().getMiddleName().toString());
+								//XCN.5 Prefix (ST)
+								if (mos.getName().getTitleIsNotNull())
+									orc.getOrderingProvider(xcnCount).getPrefixEgDR().setValue(mos.getName().getTitle().toString());
+							}
+							//XCN.9 Assigning authority (HD)
+							orc.getOrderingProvider(xcnCount).getAssigningAuthority().getNamespaceID().setValue(map.getTaxonomyName().toString());
+							//XCN.10 Name type code (ID)
+							orc.getOrderingProvider(xcnCount).getNameTypeCode().setValue(taxTypeText);
+							
+							xcnCount ++;
+						}
+					}
+				}
+			}
+			
+			if (xcnCount == 0)
+			{
+				if (mos.getNameIsNotNull())
+				{
+					//XCN.1 Family name (ST)
+					if (mos.getName().getSurnameIsNotNull())
+						orc.getOrderingProvider(xcnCount).getFamilyName().getSurname().setValue(mos.getName().getSurname().toString());
+					//XCN.2 Given name (ST)
+					if (mos.getName().getForenameIsNotNull())
+						orc.getOrderingProvider(xcnCount).getGivenName().setValue(mos.getName().getForename().toString());
+					//XCN.3 Second and further names (ST)
+					if (mos.getName().getMiddleNameIsNotNull())
+						orc.getOrderingProvider(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(mos.getName().getMiddleName().toString());
+					//XCN.5 Prefix (ST)
+					if (mos.getName().getTitleIsNotNull())
+						orc.getOrderingProvider(xcnCount).getPrefixEgDR().setValue(mos.getName().getTitle().toString());
+				}
+			}
+
+		}
+
+		LOG.debug("VoMapper renderMemberOfStaffShortVoToOrderingProvider: exit");
+	}
+
+	
+	//WDEV-21000
+	protected final void renderMemberOfStaffShortVoToOrderingProvider(MemberOfStaffShortVo mos, OBR obr, ProviderSystemVo providerSystem) throws HL7Exception
+	{
+		LOG.debug("VoMapper renderMemberOfStaffShortVoToOrderingProvider: entry");
+
+		int xcnCount = 0;
+		
+		if (mos != null)
+		{
+			
+			if (mos.getCodeMappings() != null)
+			{
+				for (int i = 0; i < mos.getCodeMappings().size(); i++)
+				{
+					ims.core.vo.TaxonomyMap map = mos.getCodeMappings().get(i);
+	
+					/* 
+					 * First check to see if the code is defined as a  valid Taxonomy Type for provider system
+					 * If it isn't, then skip this code mapping 
+					 */
+
+					TaxonomyType taxonomyType = map.getTaxonomyName();
+					if (taxonomyType != null)
+					{
+						String taxTypeText = svc.getRemoteLookup(taxonomyType.getID(), providerSystem.getCodeSystem().getText());
+						if (taxTypeText != null)
+						{
+							/* 
+							 * This code mapping has a valid taxonomy type defined for the provider system
+							 */
+							
+							//XCN.0 ID Number (ST)
+							obr.getOrderingProvider(xcnCount).getIDNumber().setValue(map.getTaxonomyCode());
+							if (mos.getNameIsNotNull())
+							{
+								//XCN.1 Family name (ST)
+								if (mos.getName().getSurnameIsNotNull())
+									obr.getOrderingProvider(xcnCount).getFamilyName().getSurname().setValue(mos.getName().getSurname().toString());
+								//XCN.2 Given name (ST)
+								if (mos.getName().getForenameIsNotNull())
+									obr.getOrderingProvider(xcnCount).getGivenName().setValue(mos.getName().getForename().toString());
+								//XCN.3 Second and further names (ST)
+								if (mos.getName().getMiddleNameIsNotNull())
+									obr.getOrderingProvider(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(mos.getName().getMiddleName().toString());
+								//XCN.5 Prefix (ST)
+								if (mos.getName().getTitleIsNotNull())
+									obr.getOrderingProvider(xcnCount).getPrefixEgDR().setValue(mos.getName().getTitle().toString());
+							}
+							//XCN.9 Assigning authority (HD)
+							obr.getOrderingProvider(xcnCount).getAssigningAuthority().getNamespaceID().setValue(map.getTaxonomyName().toString());
+							//XCN.10 Name type code (ID)
+							obr.getOrderingProvider(xcnCount).getNameTypeCode().setValue(taxTypeText);
+							
+							xcnCount ++;
+						}
+					}
+				}
+			}
+			
+			if (xcnCount == 0)
+			{
+				if (mos.getNameIsNotNull())
+				{
+					//XCN.1 Family name (ST)
+					if (mos.getName().getSurnameIsNotNull())
+						obr.getOrderingProvider(xcnCount).getFamilyName().getSurname().setValue(mos.getName().getSurname().toString());
+					//XCN.2 Given name (ST)
+					if (mos.getName().getForenameIsNotNull())
+						obr.getOrderingProvider(xcnCount).getGivenName().setValue(mos.getName().getForename().toString());
+					//XCN.3 Second and further names (ST)
+					if (mos.getName().getMiddleNameIsNotNull())
+						obr.getOrderingProvider(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(mos.getName().getMiddleName().toString());
+					//XCN.5 Prefix (ST)
+					if (mos.getName().getTitleIsNotNull())
+						obr.getOrderingProvider(xcnCount).getPrefixEgDR().setValue(mos.getName().getTitle().toString());
+				}
+			}
+			
+		}
+
+		LOG.debug("VoMapper renderMemberOfStaffShortVoToOrderingProvider: exit");
+	}
+
+	
+	//WDEV-21000
+	protected final void renderMemberOfStaffShortVoToPrimaryActivityProviderCodeName(MemberOfStaffShortVo mos, TXA txa, ProviderSystemVo providerSystem) throws HL7Exception
+	{
+		LOG.debug("VoMapper renderMemberOfStaffShortVoToPrimaryActivityProviderCodeName: entry");
+
+		int xcnCount = 0;
+		
+		if (mos != null)
+		{
+			
+			if (mos.getCodeMappings() != null)
+			{
+				for (int i = 0; i < mos.getCodeMappings().size(); i++)
+				{
+					ims.core.vo.TaxonomyMap map = mos.getCodeMappings().get(i);
+	
+					/* 
+					 * First check to see if the code is defined as a  valid Taxonomy Type for provider system
+					 * If it isn't, then skip this code mapping 
+					 */
+
+					TaxonomyType taxonomyType = map.getTaxonomyName();
+					if (taxonomyType != null)
+					{
+						String taxTypeText = svc.getRemoteLookup(taxonomyType.getID(), providerSystem.getCodeSystem().getText());
+						if (taxTypeText != null)
+						{
+							/* 
+							 * This code mapping has a valid taxonomy type defined for the provider system
+							 */
+							
+							//XCN.0 ID Number (ST)
+							txa.getPrimaryActivityProviderCodeName(xcnCount).getIDNumber().setValue(map.getTaxonomyCode());
+							if (mos.getNameIsNotNull())
+							{
+								//XCN.1 Family name (ST)
+								if (mos.getName().getSurnameIsNotNull())
+									txa.getPrimaryActivityProviderCodeName(xcnCount).getFamilyName().getSurname().setValue(mos.getName().getSurname().toString());
+								//XCN.2 Given name (ST)
+								if (mos.getName().getForenameIsNotNull())
+									txa.getPrimaryActivityProviderCodeName(xcnCount).getGivenName().setValue(mos.getName().getForename().toString());
+								//XCN.3 Middle Initial or name (ST)
+								if (mos.getName().getMiddleNameIsNotNull())
+									txa.getPrimaryActivityProviderCodeName(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(mos.getName().getMiddleName().toString());
+								//XCN.5 Prefix (ST)
+								if (mos.getName().getTitleIsNotNull())
+									txa.getPrimaryActivityProviderCodeName(xcnCount).getPrefixEgDR().setValue(mos.getName().getTitle().toString());
+							}
+							//XCN.9 Assigning authority (HD)
+							txa.getPrimaryActivityProviderCodeName(xcnCount).getAssigningAuthority().getNamespaceID().setValue(map.getTaxonomyName().toString());
+							//XCN.10 Name type code (ID)
+							txa.getPrimaryActivityProviderCodeName(xcnCount).getNameTypeCode().setValue(taxTypeText);
+							
+							xcnCount ++;
+						}
+					}
+				}
+			}
+			
+			if (xcnCount == 0)
+			{
+				if (mos.getNameIsNotNull())
+				{
+					//XCN.1 Family name (ST)
+					if (mos.getNameIsNotNull())
+					{
+						//XCN.1 Family name (ST)
+						if (mos.getName().getSurnameIsNotNull())
+							txa.getPrimaryActivityProviderCodeName(xcnCount).getFamilyName().getSurname().setValue(mos.getName().getSurname().toString());
+						//XCN.2 Given name (ST)
+						if (mos.getName().getForenameIsNotNull())
+							txa.getPrimaryActivityProviderCodeName(xcnCount).getGivenName().setValue(mos.getName().getForename().toString());
+						//XCN.3 Middle Initial or name (ST)
+						if (mos.getName().getMiddleNameIsNotNull())
+							txa.getPrimaryActivityProviderCodeName(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(mos.getName().getMiddleName().toString());
+						//XCN.5 Prefix (ST)
+						if (mos.getName().getTitleIsNotNull())
+							txa.getPrimaryActivityProviderCodeName(xcnCount).getPrefixEgDR().setValue(mos.getName().getTitle().toString());
+					}
+				}
+			}
+
+		}
+
+
+		LOG.debug("VoMapper renderMemberOfStaffShortVoToPrimaryActivityProviderCodeName: exit");
+	}
+
+	
+	//WDEV-21000
+	protected final void renderMemberOfStaffShortVoToOriginatorCodeName(MemberOfStaffShortVo mos, TXA txa, ProviderSystemVo providerSystem) throws HL7Exception
+	{
+		LOG.debug("VoMapper renderMemberOfStaffShortVoToOriginatorCodeName: entry");
+
+		int xcnCount = 0;
+		
+		if (mos != null)
+		{
+			
+			if (mos.getCodeMappings() != null)
+			{
+				for (int i = 0; i < mos.getCodeMappings().size(); i++)
+				{
+					ims.core.vo.TaxonomyMap map = mos.getCodeMappings().get(i);
+	
+					/* 
+					 * First check to see if the code is defined as a  valid Taxonomy Type for provider system
+					 * If it isn't, then skip this code mapping 
+					 */
+
+					TaxonomyType taxonomyType = map.getTaxonomyName();
+					if (taxonomyType != null)
+					{
+						String taxTypeText = svc.getRemoteLookup(taxonomyType.getID(), providerSystem.getCodeSystem().getText());
+						if (taxTypeText != null)
+						{
+							/* 
+							 * This code mapping has a valid taxonomy type defined for the provider system
+							 */
+							
+							//XCN.0 ID Number (ST)
+							txa.getOriginatorCodeName(xcnCount).getIDNumber().setValue(map.getTaxonomyCode());
+							if (mos.getNameIsNotNull())
+							{
+								//XCN.1 Family name (ST)
+								if (mos.getName().getSurnameIsNotNull())
+									txa.getOriginatorCodeName(xcnCount).getFamilyName().getSurname().setValue(mos.getName().getSurname().toString());
+								//XCN.2 Given name (ST)
+								if (mos.getName().getForenameIsNotNull())
+									txa.getOriginatorCodeName(xcnCount).getGivenName().setValue(mos.getName().getForename().toString());
+								//XCN.3 Middle Initial or name (ST)
+								if (mos.getName().getMiddleNameIsNotNull())
+									txa.getOriginatorCodeName(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(mos.getName().getMiddleName().toString());
+								//XCN.5 Prefix (ST)
+								if (mos.getName().getTitleIsNotNull())
+									txa.getOriginatorCodeName(xcnCount).getPrefixEgDR().setValue(mos.getName().getTitle().toString());
+							}
+							//XCN.9 Assigning authority (HD)
+							txa.getOriginatorCodeName(xcnCount).getAssigningAuthority().getNamespaceID().setValue(map.getTaxonomyName().toString());
+							//XCN.10 Name type code (ID)
+							txa.getOriginatorCodeName(xcnCount).getNameTypeCode().setValue(taxTypeText);
+							
+							xcnCount ++;
+						}
+					}
+				}
+			}
+			
+			if (xcnCount == 0)
+			{
+				if (mos.getNameIsNotNull())
+				{
+					//XCN.1 Family name (ST)
+					if (mos.getName().getSurnameIsNotNull())
+						txa.getOriginatorCodeName(xcnCount).getFamilyName().getSurname().setValue(mos.getName().getSurname().toString());
+					//XCN.2 Given name (ST)
+					if (mos.getName().getForenameIsNotNull())
+						txa.getOriginatorCodeName(xcnCount).getGivenName().setValue(mos.getName().getForename().toString());
+					//XCN.3 Middle Initial or name (ST)
+					if (mos.getName().getMiddleNameIsNotNull())
+						txa.getOriginatorCodeName(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(mos.getName().getMiddleName().toString());
+					//XCN.5 Prefix (ST)
+					if (mos.getName().getTitleIsNotNull())
+						txa.getOriginatorCodeName(xcnCount).getPrefixEgDR().setValue(mos.getName().getTitle().toString());
+				}
+			}
+
+		}
+
+		LOG.debug("VoMapper renderMemberOfStaffShortVoToOriginatorCodeName: exit");
+	}
+
+	
+	//WDEV-21000
+	protected final void renderMemberOfStaffShortVoToTranscriptionistCodeName(MemberOfStaffShortVo mos, TXA txa, ProviderSystemVo providerSystem) throws HL7Exception
+	{
+		LOG.debug("VoMapper renderMemberOfStaffShortVoToTranscriptionistCodeName: entry");
+
+		int xcnCount = 0;
+		
+		if (mos != null)
+		{
+			
+			if (mos.getCodeMappings() != null)
+			{
+				for (int i = 0; i < mos.getCodeMappings().size(); i++)
+				{
+					ims.core.vo.TaxonomyMap map = mos.getCodeMappings().get(i);
+	
+					/* 
+					 * First check to see if the code is defined as a  valid Taxonomy Type for provider system
+					 * If it isn't, then skip this code mapping 
+					 *
+					 */
+	
+					TaxonomyType taxonomyType = map.getTaxonomyName();
+					if (taxonomyType != null)
+					{
+						String taxTypeText = svc.getRemoteLookup(taxonomyType.getID(), providerSystem.getCodeSystem().getText());
+						if (taxTypeText != null)
+						{
+							/* 
+							 * This code mapping has a valid taxonomy type defined for the provider system
+							 */
+							
+							//XCN.0 ID Number (ST)
+							txa.getTranscriptionistCodeName(xcnCount).getIDNumber().setValue(map.getTaxonomyCode());
+							if (mos.getNameIsNotNull())
+							{
+								//XCN.1 Family name (ST)
+								if (mos.getName().getSurnameIsNotNull())
+									txa.getTranscriptionistCodeName(xcnCount).getFamilyName().getSurname().setValue(mos.getName().getSurname().toString());
+								//XCN.2 Given name (ST)
+								if (mos.getName().getForenameIsNotNull())
+									txa.getTranscriptionistCodeName(xcnCount).getGivenName().setValue(mos.getName().getForename().toString());
+								//XCN.3 Middle Initial or name (ST)
+								if (mos.getName().getMiddleNameIsNotNull())
+									txa.getTranscriptionistCodeName(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(mos.getName().getMiddleName().toString());
+								//XCN.5 Prefix (ST)
+								if (mos.getName().getTitleIsNotNull())
+									txa.getTranscriptionistCodeName(xcnCount).getPrefixEgDR().setValue(mos.getName().getTitle().toString());
+							}
+							//XCN.9 Assigning authority (HD)
+							txa.getTranscriptionistCodeName(xcnCount).getAssigningAuthority().getNamespaceID().setValue(map.getTaxonomyName().toString());
+							//XCN.10 Name type code (ID)
+							txa.getTranscriptionistCodeName(xcnCount).getNameTypeCode().setValue(taxTypeText);
+							
+							xcnCount ++;
+						}
+					}
+				}
+			}
+			
+			if (xcnCount == 0)
+			{
+				if (mos.getNameIsNotNull())
+				{
+					//XCN.1 Family name (ST)
+					if (mos.getName().getSurnameIsNotNull())
+						txa.getTranscriptionistCodeName(xcnCount).getFamilyName().getSurname().setValue(mos.getName().getSurname().toString());
+					//XCN.2 Given name (ST)
+					if (mos.getName().getForenameIsNotNull())
+						txa.getTranscriptionistCodeName(xcnCount).getGivenName().setValue(mos.getName().getForename().toString());
+					//XCN.3 Middle Initial or name (ST)
+					if (mos.getName().getMiddleNameIsNotNull())
+						txa.getTranscriptionistCodeName(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(mos.getName().getMiddleName().toString());
+					//XCN.5 Prefix (ST)
+					if (mos.getName().getTitleIsNotNull())
+						txa.getTranscriptionistCodeName(xcnCount).getPrefixEgDR().setValue(mos.getName().getTitle().toString());
+				}
+			}
+
+		}
+
+
+		LOG.debug("VoMapper renderMemberOfStaffShortVoToTranscriptionistCodeName: exit");
+	}
+
+	
+	//WDEV-21000
+	protected final void renderGpShortVoToPlacerContactPerson(GpShortVo gp, SCH sch, ProviderSystemVo providerSystem) throws HL7Exception
+	{
+		LOG.debug("VoMapper renderGpShortVoToPlacerContactPerson: entry");
+
+		int xcnCount = 0;
+		
+		if (gp != null)
+		{
+			
+			if (gp.getCodeMappings() != null)
+			{
+				for (int i = 0; i < gp.getCodeMappings().size(); i++)
+				{
+					ims.core.vo.TaxonomyMap map = gp.getCodeMappings().get(i);
+	
+					/* 
+					 * First check to see if the code is defined as a  valid Taxonomy Type for provider system
+					 * If it isn't, then skip this code mapping 
+					 *
+					 */
+
+					TaxonomyType taxonomyType = map.getTaxonomyName();
+					if (taxonomyType != null)
+					{
+						String taxTypeText = svc.getRemoteLookup(taxonomyType.getID(), providerSystem.getCodeSystem().getText());
+						if (taxTypeText != null)
+						{
+							/* 
+							 * This code mapping has a valid taxonomy type defined for the provider system
+							 */
+							
+							//XCN.0 ID Number (ST)
+							sch.getPlacerContactPerson(xcnCount).getIDNumber().setValue(map.getTaxonomyCode());
+							if (gp.getNameIsNotNull())
+							{
+								//XCN.1 Family name (ST)
+								if (gp.getName().getSurnameIsNotNull())
+									sch.getPlacerContactPerson(xcnCount).getFamilyName().getSurname().setValue(gp.getName().getSurname().toString());
+								//XCN.2 Given name (ST)
+								if (gp.getName().getForenameIsNotNull())
+									sch.getPlacerContactPerson(xcnCount).getGivenName().setValue(gp.getName().getForename().toString());
+								//XCN.3 Middle Initial or name (ST)
+								if (gp.getName().getMiddleNameIsNotNull())
+									sch.getPlacerContactPerson(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(gp.getName().getMiddleName().toString());
+								//XCN.5 Prefix (ST)
+								if (gp.getName().getTitleIsNotNull())
+									sch.getPlacerContactPerson(xcnCount).getPrefixEgDR().setValue(gp.getName().getTitle().toString());
+							}
+							//XCN.9 Assigning authority (HD)
+							sch.getPlacerContactPerson(xcnCount).getAssigningAuthority().getNamespaceID().setValue(map.getTaxonomyName().toString());
+							//XCN.10 Name type code (ID)
+							sch.getPlacerContactPerson(xcnCount).getNameTypeCode().setValue(taxTypeText);
+							
+							xcnCount ++;
+						}
+					}
+				}
+			}
+
+			if (xcnCount == 0)
+			{
+				if (gp.getNameIsNotNull())
+				{
+					//XCN.1 Family name (ST)
+					if (gp.getName().getSurnameIsNotNull())
+						sch.getPlacerContactPerson(xcnCount).getFamilyName().getSurname().setValue(gp.getName().getSurname().toString());
+					//XCN.2 Given name (ST)
+					if (gp.getName().getForenameIsNotNull())
+						sch.getPlacerContactPerson(xcnCount).getGivenName().setValue(gp.getName().getForename().toString());
+					//XCN.3 Middle Initial or name (ST)
+					if (gp.getName().getMiddleNameIsNotNull())
+						sch.getPlacerContactPerson(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(gp.getName().getMiddleName().toString());
+					//XCN.5 Prefix (ST)
+					if (gp.getName().getTitleIsNotNull())
+						sch.getPlacerContactPerson(xcnCount).getPrefixEgDR().setValue(gp.getName().getTitle().toString());
+				}
+			}
+
+		}
+
+
+		LOG.debug("VoMapper renderGpShortVoToPlacerContactPerson: exit");
+	}
+
+	
+	//WDEV-21000
+	protected final void renderMemberOfStaffShortVoToPersonnelResourceID(MemberOfStaffShortVo mos, AIP aip, ProviderSystemVo providerSystem) throws HL7Exception
+	{
+		LOG.debug("VoMapper renderMemberOfStaffShortVoToPersonnelResourceID: entry");
+
+		int xcnCount = 0;
+		
+		if (mos != null)
+		{
+			
+			if (mos.getCodeMappings() != null)
+			{
+				for (int i = 0; i < mos.getCodeMappings().size(); i++)
+				{
+					ims.core.vo.TaxonomyMap map = mos.getCodeMappings().get(i);
+	
+					/* 
+					 * First check to see if the code is defined as a  valid Taxonomy Type for provider system
+					 * If it isn't, then skip this code mapping 
+					 * 
+					 */
+	
+					TaxonomyType taxonomyType = map.getTaxonomyName();
+					if (taxonomyType != null)
+					{
+						String taxTypeText = svc.getRemoteLookup(taxonomyType.getID(), providerSystem.getCodeSystem().getText());
+						if (taxTypeText != null)
+						{
+							/* 
+							 * This code mapping has a valid taxonomy type defined for the provider system
+							 */
+							
+							//XCN.0 ID Number (ST)
+							aip.getPersonnelResourceID(xcnCount).getIDNumber().setValue(map.getTaxonomyCode());
+							if (mos.getNameIsNotNull())
+							{
+								//XCN.1 Family name (ST)
+								if (mos.getName().getSurnameIsNotNull())
+									aip.getPersonnelResourceID(xcnCount).getFamilyName().getSurname().setValue(mos.getName().getSurname().toString());
+								//XCN.2 Given name (ST)
+								if (mos.getName().getForenameIsNotNull())
+									aip.getPersonnelResourceID(xcnCount).getGivenName().setValue(mos.getName().getForename().toString());
+								//XCN.3 Second and further names (ST)
+								if (mos.getName().getMiddleNameIsNotNull())
+									aip.getPersonnelResourceID(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(mos.getName().getMiddleName().toString());
+								//XCN.5 Prefix (ST)
+								if (mos.getName().getTitleIsNotNull())
+									aip.getPersonnelResourceID(xcnCount).getPrefixEgDR().setValue(mos.getName().getTitle().toString());
+							}
+							//XCN.9 Assigning authority (HD)
+							aip.getPersonnelResourceID(xcnCount).getAssigningAuthority().getNamespaceID().setValue(map.getTaxonomyName().toString());
+							//XCN.10 Name type code (ID)
+							aip.getPersonnelResourceID(xcnCount).getNameTypeCode().setValue(taxTypeText);
+							
+							xcnCount ++;
+						}
+					}
+				}
+			}
+	
+			if (xcnCount == 0)
+			{
+				if (mos.getNameIsNotNull())
+				{
+					//XCN.1 Family name (ST)
+					if (mos.getName().getSurnameIsNotNull())
+						aip.getPersonnelResourceID(xcnCount).getFamilyName().getSurname().setValue(mos.getName().getSurname().toString());
+					//XCN.2 Given name (ST)
+					if (mos.getName().getForenameIsNotNull())
+						aip.getPersonnelResourceID(xcnCount).getGivenName().setValue(mos.getName().getForename().toString());
+					//XCN.3 Second and further names (ST)
+					if (mos.getName().getMiddleNameIsNotNull())
+						aip.getPersonnelResourceID(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(mos.getName().getMiddleName().toString());
+					//XCN.5 Prefix (ST)
+					if (mos.getName().getTitleIsNotNull())
+						aip.getPersonnelResourceID(xcnCount).getPrefixEgDR().setValue(mos.getName().getTitle().toString());
+				}
+			}
+		}
+		
+		LOG.debug("VoMapper renderMemberOfStaffShortVoToPersonnelResourceID: exit");
+	}
+
+	
+	//WDEV-21244
+	protected final void renderSessionListOwnerVoCollToAttendingDoctor(ifSessionListOwnerVoCollection listOwners, PV1 pv1, ProviderSystemVo providerSystem, Boolean isAttendingClinician) throws HL7Exception
+	{
+		LOG.debug("VoMapper renderSessionListOwnerVoCollToAttendingDoctor: entry");
+
+		int xcnCount = 0;
+		
+		if (listOwners != null
+				&& listOwners.size() > 0)
+		{
+			
+			for (int i=0; i < listOwners.size(); i++)
+			{
+				if (listOwners.get(i) != null
+						&& listOwners.get(i).getHcp() != null
+						&& listOwners.get(i).getHcp().getMos() != null
+						&& listOwners.get(i).getAttendingClinician() != null
+						&& isAttendingClinician != null
+						&& (isAttendingClinician.equals(listOwners.get(i).getAttendingClinician())))
+				{
+					
+					MemberOfStaffShortVo mos = listOwners.get(i).getHcp().getMos();
+					
+					if (mos.getCodeMappings() != null
+							&& mos.getCodeMappings().size() > 0)
+					{
+						
+						for (int j = 0; j < mos.getCodeMappings().size(); j++)
+						{
+							ims.core.vo.TaxonomyMap map = mos.getCodeMappings().get(j);
+							
+							TaxonomyType taxonomyType = map.getTaxonomyName();
+							if (taxonomyType != null)
+							{
+								String taxTypeText = svc.getRemoteLookup(taxonomyType.getID(), providerSystem.getCodeSystem().getText());
+								if (taxTypeText != null)
+								{
+									/* 
+									 * This code mapping has a valid taxonomy type defined for the provider system
+									 */
+
+									//XCN.0 ID Number (ST)
+									if (map.getTaxonomyCode() != null)
+										pv1.getAttendingDoctor(xcnCount).getIDNumber().setValue(map.getTaxonomyCode());
+									
+									if (mos.getNameIsNotNull())
+									{
+										//XCN.1 Family name (ST)
+										if (mos.getName().getSurnameIsNotNull())
+											pv1.getAttendingDoctor(xcnCount).getFamilyName().getSurname().setValue(mos.getName().getSurname().toString());
+										//XCN.2 Given name (ST)
+										if (mos.getName().getForenameIsNotNull())
+											pv1.getAttendingDoctor(xcnCount).getGivenName().setValue(mos.getName().getForename().toString());
+										//XCN.3 Second and further names (ST)
+										if (mos.getName().getMiddleNameIsNotNull())
+											pv1.getAttendingDoctor(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(mos.getName().getMiddleName().toString());
+										//XCN.5 Prefix (ST)
+										if (mos.getName().getTitleIsNotNull())
+											pv1.getAttendingDoctor(xcnCount).getPrefixEgDR().setValue(mos.getName().getTitle().toString());
+									}
+									if (map.getTaxonomyName() != null)
+									{
+										//XCN.9 Assigning authority (HD)
+										pv1.getAttendingDoctor(xcnCount).getAssigningAuthority().getNamespaceID().setValue(map.getTaxonomyName().toString());
+										//XCN.10 Name type code (ID)
+										pv1.getAttendingDoctor(xcnCount).getNameTypeCode().setValue(taxTypeText);
+									}
+
+									xcnCount ++;
+
+								}
+							}
+						}
+					}
+					else
+					{ // No taxononmy mapping for Member of Staff - render only name details
+						if (mos.getNameIsNotNull())
+						{
+							//XCN.1 Family name (ST)
+							if (mos.getName().getSurnameIsNotNull())
+								pv1.getAttendingDoctor(xcnCount).getFamilyName().getSurname().setValue(mos.getName().getSurname().toString());
+							//XCN.2 Given name (ST)
+							if (mos.getName().getForenameIsNotNull())
+								pv1.getAttendingDoctor(xcnCount).getGivenName().setValue(mos.getName().getForename().toString());
+							//XCN.3 Second and further names (ST)
+							if (mos.getName().getMiddleNameIsNotNull())
+								pv1.getAttendingDoctor(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(mos.getName().getMiddleName().toString());
+							//XCN.5 Prefix (ST)
+							if (mos.getName().getTitleIsNotNull())
+								pv1.getAttendingDoctor(xcnCount).getPrefixEgDR().setValue(mos.getName().getTitle().toString());
+							
+							xcnCount ++;	
+						}						
+					}
+				}
+			}
+		}
+		
+		LOG.debug("VoMapper renderSessionListOwnerVoCollToAttendingDoctor: exit");
+	}
+
+	
+	//WDEV-21244
+	protected final void renderSessionListOwnerVoCollToConsultingDoctor(ifSessionListOwnerVoCollection listOwners, PV1 pv1, ProviderSystemVo providerSystem, Boolean isListOwner) throws HL7Exception
+	{
+		LOG.debug("VoMapper renderSessionListOwnerVoCollToConsultingDoctor: entry");
+
+		int xcnCount = 0;
+		
+		if (listOwners != null
+				&& listOwners.size() > 0)
+		{
+			
+			for (int i=0; i < listOwners.size(); i++)
+			{
+				if (listOwners.get(i) != null
+						&& listOwners.get(i).getHcp() != null
+						&& listOwners.get(i).getHcp().getMos() != null
+						&& listOwners.get(i).getListOwner() != null
+						&& isListOwner != null
+						&& (isListOwner.equals(listOwners.get(i).getListOwner())))
+				{
+					
+					MemberOfStaffShortVo mos = listOwners.get(i).getHcp().getMos();
+					
+					if (mos.getCodeMappings() != null
+							&& mos.getCodeMappings().size() > 0)
+					{
+						
+						for (int j = 0; j < mos.getCodeMappings().size(); j++)
+						{
+							
+							ims.core.vo.TaxonomyMap map = mos.getCodeMappings().get(j);
+
+							TaxonomyType taxonomyType = map.getTaxonomyName();
+							if (taxonomyType != null)
+							{
+								String taxTypeText = svc.getRemoteLookup(taxonomyType.getID(), providerSystem.getCodeSystem().getText());
+								if (taxTypeText != null)
+								{
+									/* 
+									 * This code mapping has a valid taxonomy type defined for the provider system
+									 */
+
+									//XCN.0 ID Number (ST)
+									if (map.getTaxonomyCode() != null)
+										pv1.getConsultingDoctor(xcnCount).getIDNumber().setValue(map.getTaxonomyCode());
+									
+									if (mos.getNameIsNotNull())
+									{
+										//XCN.1 Family name (ST)
+										if (mos.getName().getSurnameIsNotNull())
+											pv1.getConsultingDoctor(xcnCount).getFamilyName().getSurname().setValue(mos.getName().getSurname().toString());
+										//XCN.2 Given name (ST)
+										if (mos.getName().getForenameIsNotNull())
+											pv1.getConsultingDoctor(xcnCount).getGivenName().setValue(mos.getName().getForename().toString());
+										//XCN.3 Second and further names (ST)
+										if (mos.getName().getMiddleNameIsNotNull())
+											pv1.getConsultingDoctor(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(mos.getName().getMiddleName().toString());
+										//XCN.5 Prefix (ST)
+										if (mos.getName().getTitleIsNotNull())
+											pv1.getConsultingDoctor(xcnCount).getPrefixEgDR().setValue(mos.getName().getTitle().toString());
+									}
+									
+									if (map.getTaxonomyNameIsNotNull())
+									{
+										//XCN.9 Assigning authority (HD)
+										pv1.getConsultingDoctor(xcnCount).getAssigningAuthority().getNamespaceID().setValue(map.getTaxonomyName().toString());
+										//XCN.10 Name type code (ID)
+										pv1.getConsultingDoctor(xcnCount).getNameTypeCode().setValue(taxTypeText);
+									}
+									
+									xcnCount ++;
+									
+								}
+							}							
+						}
+					}
+					
+					else
+						
+					{ // No taxononmy mapping for Member of Staff - render only name details
+						if (mos.getNameIsNotNull())
+						{
+							//XCN.1 Family name (ST)
+							if (mos.getName().getSurnameIsNotNull())
+								pv1.getConsultingDoctor(xcnCount).getFamilyName().getSurname().setValue(mos.getName().getSurname().toString());
+							//XCN.2 Given name (ST)
+							if (mos.getName().getForenameIsNotNull())
+								pv1.getConsultingDoctor(xcnCount).getGivenName().setValue(mos.getName().getForename().toString());
+							//XCN.3 Second and further names (ST)
+							if (mos.getName().getMiddleNameIsNotNull())
+								pv1.getConsultingDoctor(xcnCount).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(mos.getName().getMiddleName().toString());
+							//XCN.5 Prefix (ST)
+							if (mos.getName().getTitleIsNotNull())
+								pv1.getConsultingDoctor(xcnCount).getPrefixEgDR().setValue(mos.getName().getTitle().toString());
+							
+							xcnCount ++;
+							
+						}
+					}
+				}
+			}
+		}
+		
+		LOG.debug("VoMapper renderSessionListOwnerVoCollToConsultingDoctor: exit");
+	}
+	
+	
+	// http://jira/browse/WDEV-22006
+	protected final void renderPatientVoToNK1(Patient patient, Message message, ProviderSystemVo provider) throws Exception
+	{
+		Boolean isConfidential = patient.getIsConfidential();
+
+		int NK1Iteration = 0;
+		NK1 nk1;
+		
+		if (patient.getPDSrelativesIsNotNull()
+				&& patient.getPDSrelatives().size() > 0)
+		{
+			for (int i=0; i < patient.getPDSrelatives().size(); i++)
+			{
+				PatRelative patRelative = patient.getPDSrelatives().get(i);
+				if (message instanceof ADT_A01)
+					nk1 = ((ADT_A01) message).getNK1(NK1Iteration);
+				else
+					nk1 = ((ADT_A05) message).getNK1(NK1Iteration);
+				Integer setId = Integer.valueOf(NK1Iteration) + 1;
+				if (message instanceof ADT_A01)
+					((ADT_A01) message).getNK1(NK1Iteration).getSetIDNK1().setValue(setId.toString());
+				else
+					((ADT_A05) message).getNK1(NK1Iteration).getSetIDNK1().setValue(setId.toString());
+				renderPatRelativeVoToNK1(patRelative, nk1, provider, isConfidential);
+				NK1Iteration ++;
+			}
+		} 
+		else
+		{
+			if (patient.getNok() != null)
+			{
+				if (message instanceof ADT_A01)
+					nk1 = ((ADT_A01) message).getNK1(NK1Iteration);
+				else
+					nk1 = ((ADT_A05) message).getNK1(NK1Iteration);
+				Integer setId = Integer.valueOf(NK1Iteration) + 1;
+				if (message instanceof ADT_A01)
+					((ADT_A01) message).getNK1(NK1Iteration).getSetIDNK1().setValue(setId.toString());
+				else
+					((ADT_A05) message).getNK1(NK1Iteration).getSetIDNK1().setValue(setId.toString());
+				renderNextOfKinVoToNK1(patient.getNok(), nk1, provider, isConfidential);
+				NK1Iteration ++;
+			}
+		}
+		
+		if (patient.getSupportNetworkFamilyIsNotNull() && ConfigFlag.HL7.HL7_INCLUDE_FAMILY_SUPPORT.getValue())
+		{
+			for (int i=0; i < patient.getSupportNetworkFamily().size(); i++)
+			{
+				if(patient.getSupportNetworkFamily().get(i).getInactivatingDateTime() == null)
+				{
+					if (message instanceof ADT_A01)
+						nk1 = ((ADT_A01) message).getNK1(NK1Iteration);
+					else
+						nk1 = ((ADT_A05) message).getNK1(NK1Iteration);
+					Integer setId = Integer.valueOf(NK1Iteration) + 1;
+					if (message instanceof ADT_A01)
+						((ADT_A01) message).getNK1(NK1Iteration).getSetIDNK1().setValue(setId.toString());
+					else
+						((ADT_A05) message).getNK1(NK1Iteration).getSetIDNK1().setValue(setId.toString());
+					renderSupportNetworkFamilyVoToNK1(patient.getSupportNetworkFamily().get(i), nk1, provider, isConfidential);
+					NK1Iteration++;
+				}
+			}
+		} 
+	}
+
+	
+	// http://jira/browse/WDEV-22237
+	protected final void renderCommChannelVoCollToPID(CommChannelVoCollection comChannelVoCollection, PID pid, ProviderSystemVo providerSystem) throws Exception
+	{
+		/*
+		  Components:  [NNN] [(999)]999-9999 [X99999] [B99999] [C any text] ^ <telecommunication use code (ID)> ^ <tele-communication equipment type (ID)> 
+		               ^ <email address (ST)> ^ <country code (NM)> ^ <area/city code (NM)> ^ <phone number (NM)> ^ <extension (NM)> ^ <any text (ST)>
+		               
+		   Lookup PDSChannelUsage:
+			H = Home Contact
+			HP = Home
+			HV = Home Vacation
+			MC = Mobile
+			PG = Pager
+			WP = Office Address
+			AS = Answering Machine
+			EC = Emergency Contact
+			
+			Lookup ChannelType:
+			GEN_PHONE
+			HOME_PHONE
+			WORK_PHONE
+			MOBILE
+			EMAIL
+			WEB
+			FAX
+			BEEP
+			EMERGENCY
+		 */
+
+		int xtnHomePhoneIter = 0;
+		int xtnBusinessPhoneIter = 0;
+
+		Boolean isPrimaryResidenceNumberAssigned = Boolean.FALSE;
+				
+		for (int i = 0; i < comChannelVoCollection.size(); i++)
+		{
+			CommChannelVo commChannel = comChannelVoCollection.get(i);
+			
+			Boolean isWorkAddressChannelUsage = Boolean.FALSE;
+			Boolean isValidCommChannel = Boolean.TRUE;
+			
+			if (ChannelType.WORK_PHONE.equals (commChannel.getChannelType()))
+			{
+				if (commChannel.getCommValue() != null 
+						&& isEmail(commChannel.getCommValue()))
+				{
+					/*
+					 * commChannel.getCommValue() is actually an email address
+					 * and configuration flag INCLUDE_EMAIL_FORMATTED_WORK_NUMBERS is FALSE
+					 * Skip the processing of the Comm Channel
+					 */	
+					isValidCommChannel = Boolean.FALSE;
+				}
+			}
+
+			if (commChannel.getCommValue() != null
+					&& isValidCommChannel)
+			{
+				//----------------------------------------------
+				// XTN.0 [(999)] 999-9999 [X99999] [C any text]
+				
+				//----------------------------------------------
+				// XTN.1 telecommunication use code (ID)
+	
+				/*
+				 *  Has a PDSChannelUsage value been assigned to this Comm Channel?
+				 */
+				if (commChannel.getChannelUsage() != null
+						&& !(commChannel.getChannelUsage().getID() == 0))
+				{
+					/*
+					 *  Is there a provider system external value mapping defined for this PDSChannelUsage lookup?
+					 */
+					String extCodeForChannelUsage = svc.getRemoteLookup(commChannel.getChannelUsage().getID(), providerSystem.getCodeSystem().getText());
+					if (extCodeForChannelUsage != null)
+					{
+						if (PDSChannelUsage.WP.equals(commChannel.getChannelUsage()))
+						{
+							pid.getPhoneNumberBusiness(xtnBusinessPhoneIter).getTelecommunicationUseCode().setValue(extCodeForChannelUsage);
+							isWorkAddressChannelUsage = Boolean.TRUE;
+						}
+						else
+						{
+							pid.getPhoneNumberHome(xtnHomePhoneIter).getTelecommunicationUseCode().setValue(extCodeForChannelUsage);
+						}
+					}
+					else
+					{
+						/*
+						 * No provider system external value mapping defined for PDSChannelUsage lookup - use the lookup text values
+						 */
+						if (PDSChannelUsage.WP.equals(commChannel.getChannelUsage()))
+						{
+							pid.getPhoneNumberBusiness(xtnBusinessPhoneIter).getTelecommunicationUseCode().setValue(commChannel.getChannelUsage().getText());
+							isWorkAddressChannelUsage = Boolean.TRUE;
+						}
+						else
+						{
+							pid.getPhoneNumberHome(xtnHomePhoneIter).getTelecommunicationUseCode().setValue(commChannel.getChannelUsage().getText());
+						}
+					}
+				}
+				
+				/*
+				 *  No PDSChannelUsage value defined - use HL7 standard values based on ChannelType lookup
+				 */
+				else if (ChannelType.GEN_PHONE.equals(commChannel.getChannelType())
+							|| ChannelType.HOME_PHONE.equals(commChannel.getChannelType())
+							|| ChannelType.MOBILE.equals(commChannel.getChannelType()))
+				{
+					if (isPrimaryResidenceNumberAssigned)
+					{
+						pid.getPhoneNumberHome(xtnHomePhoneIter).getTelecommunicationUseCode().setValue("ORN");					
+					}
+					else
+					{
+						pid.getPhoneNumberHome(xtnHomePhoneIter).getTelecommunicationUseCode().setValue("PRN");
+						isPrimaryResidenceNumberAssigned = Boolean.TRUE;
+					}
+				} 
+	
+				else if (ChannelType.WORK_PHONE.equals(commChannel.getChannelType()))
+				{
+					pid.getPhoneNumberBusiness(xtnBusinessPhoneIter).getTelecommunicationUseCode().setValue("WPN");
+					isWorkAddressChannelUsage = Boolean.TRUE;
+				}
+	
+				else if (ChannelType.EMERGENCY.equals(commChannel.getChannelType()))
+				{
+					pid.getPhoneNumberHome(xtnHomePhoneIter).getTelecommunicationUseCode().setValue("EMR");
+				}
+	
+				else if (ChannelType.BLEEP.equals(commChannel.getChannelType()))
+				{
+					if (isWorkAddressChannelUsage)
+					{
+						pid.getPhoneNumberBusiness(xtnBusinessPhoneIter).getTelecommunicationUseCode().setValue("BPN");
+					}
+					else
+					{
+						pid.getPhoneNumberHome(xtnHomePhoneIter).getTelecommunicationUseCode().setValue("BPN");
+					}
+				}
+				
+				else if (ChannelType.EMAIL.equals(commChannel.getChannelType()) 
+						|| ChannelType.WEB.equals(commChannel.getChannelType()))
+				{
+					if (isWorkAddressChannelUsage)
+					{
+						pid.getPhoneNumberBusiness(xtnBusinessPhoneIter).getTelecommunicationUseCode().setValue("NET");
+					}
+					else
+					{
+						pid.getPhoneNumberHome(xtnHomePhoneIter).getTelecommunicationUseCode().setValue("NET");
+					}
+				}
+	
+	
+				//----------------------------------------------
+				// XTN.2 tele-communication equipment type (ID)
+				if (commChannel.getChannelType() != null
+						&& !(commChannel.getChannelType().getID() == 0))
+				{
+					/*
+					 *  Is there a provider system mapping defined for ChannelType lookup?
+					 */
+					String channelType = svc.getRemoteLookup(commChannel.getChannelType().getID(), providerSystem.getCodeSystem().getText());
+					if (channelType != null)
+					{
+						if (ChannelType.WORK_PHONE.equals(commChannel.getChannelType())
+								|| isWorkAddressChannelUsage)
+						{
+							pid.getPhoneNumberBusiness(xtnBusinessPhoneIter).getTelecommunicationEquipmentType().setValue(channelType);
+						}
+						else
+						{
+							pid.getPhoneNumberHome(xtnHomePhoneIter).getTelecommunicationEquipmentType().setValue(channelType);
+						}
+					}
+	
+					/*
+					 *  No provider system mapping found for assigned ChannelType lookup - use HL7 standard values			
+					 */
+					else if (ChannelType.EMERGENCY.equals  (commChannel.getChannelType())
+							|| ChannelType.GEN_PHONE.equals  (commChannel.getChannelType()) 
+							|| ChannelType.HOME_PHONE.equals (commChannel.getChannelType()))
+					{
+						if (isWorkAddressChannelUsage)
+						{
+							pid.getPhoneNumberBusiness(xtnBusinessPhoneIter).getTelecommunicationEquipmentType().setValue("PH");
+						}
+						else
+						{
+							pid.getPhoneNumberHome(xtnHomePhoneIter).getTelecommunicationEquipmentType().setValue("PH");
+						}
+					}
+		
+					else if (ChannelType.WORK_PHONE.equals (commChannel.getChannelType()))
+					{
+						pid.getPhoneNumberBusiness(xtnBusinessPhoneIter).getTelecommunicationEquipmentType().setValue("PH");
+					}
+		
+					else if (ChannelType.FAX.equals(commChannel.getChannelType())) 
+					{
+						if (isWorkAddressChannelUsage)
+						{
+							pid.getPhoneNumberBusiness(xtnBusinessPhoneIter).getTelecommunicationEquipmentType().setValue("FX");
+						}
+						else
+						{
+							pid.getPhoneNumberHome(xtnHomePhoneIter).getTelecommunicationEquipmentType().setValue("FX");
+						}
+					}
+		
+					else if (ChannelType.MOBILE.equals(commChannel.getChannelType()))
+					{
+						if (isWorkAddressChannelUsage)
+						{
+							pid.getPhoneNumberBusiness(xtnBusinessPhoneIter).getTelecommunicationEquipmentType().setValue("CP");
+						}
+						else
+						{
+							pid.getPhoneNumberHome(xtnHomePhoneIter).getTelecommunicationEquipmentType().setValue("CP");
+						}
+					}
+		
+					else if (ChannelType.EMAIL.equals(commChannel.getChannelType())
+							|| ChannelType.WEB.equals(commChannel.getChannelType()))
+					{
+						if (isWorkAddressChannelUsage)
+						{
+							pid.getPhoneNumberBusiness(xtnBusinessPhoneIter).getTelecommunicationEquipmentType().setValue("Internet");
+						}
+						else
+						{
+							pid.getPhoneNumberHome(xtnHomePhoneIter).getTelecommunicationEquipmentType().setValue("Internet");
+						}
+					}
+		
+		
+					else if (ChannelType.BLEEP.equals(commChannel.getChannelType()))
+					{
+						if (isWorkAddressChannelUsage)
+						{
+							pid.getPhoneNumberBusiness(xtnBusinessPhoneIter).getTelecommunicationEquipmentType().setValue("BP");
+						}
+						else
+						{
+							pid.getPhoneNumberHome(xtnHomePhoneIter).getTelecommunicationEquipmentType().setValue("BP");
+						}
+					}
+				}
+	
+				
+				//----------------------------------------------
+				// XTN.3 email address (ST)
+				if (ChannelType.EMAIL.equals(commChannel.getChannelType()))
+				{
+					if (isWorkAddressChannelUsage)
+					{
+						pid.getPhoneNumberBusiness(xtnBusinessPhoneIter).getEmailAddress().setValue(commChannel.getCommValue());
+					}
+					else
+					{
+						pid.getPhoneNumberHome(xtnHomePhoneIter).getEmailAddress().setValue(commChannel.getCommValue());
+					}
+				}
+	
+				//----------------------------------------------
+				// XTN.4 country code (NM)
+				// XTN.5 area/city code (NM)
+				// XTN.6 phone number (NM)
+				// XTN.7 extension (NM)
+				
+				//----------------------------------------------
+				// XTN.8 any text (ST)
+				if (commChannel.getCommValue() != null && !ChannelType.EMAIL.equals(commChannel.getChannelType()))
+				{
+					if (ChannelType.WORK_PHONE.equals(commChannel.getChannelType())
+							|| isWorkAddressChannelUsage)
+					{
+						pid.getPhoneNumberBusiness(xtnBusinessPhoneIter).getAnyText().setValue(commChannel.getCommValue());
+					}
+					else
+					{
+						pid.getPhoneNumberHome(xtnHomePhoneIter).getAnyText().setValue(commChannel.getCommValue());
+					}
+				}
+	
+				/*
+				 * Update correct XTN iteration
+				 */
+				if (ChannelType.WORK_PHONE.equals(commChannel.getChannelType())
+						|| isWorkAddressChannelUsage)
+				{
+					xtnBusinessPhoneIter ++;
+				}
+				else
+				{
+					xtnHomePhoneIter ++;
+				}
+
+			}
+			
+		}
+		
+	}
+
+	//WDEV-22624
+	protected final void renderPatientDetailsToPD1(Patient fullPatient, PD1 pd1, ProviderSystemVo providerSystem) throws Exception
+	{
+		// PD1-2 Living arrangment (IS)
+		// Note: Non-standard use of this field. It is being populated with the patient's occupation
+		if (fullPatient != null
+				&& fullPatient.getOccupationIsNotNull())
+		{
+			pd1.getLivingArrangement().setValue(svc.getRemoteLookup(fullPatient.getOccupation().getID(),providerSystem.getCodeSystem().getText()));
+		}
+		else if(fullPatient!=null 
+			&&fullPatient.getTxtOccupationIsNotNull()&&!fullPatient.getTxtOccupation().isEmpty()) //http://jira/browse/WDEV-22888
+		{
+			pd1.getLivingArrangement().setValue(fullPatient.getTxtOccupation());
+		}
+		
+	} 
+	
+	
+	
+//	//WDEV-22750
+//	protected final void renderPatientMedicalInsuranceToIN1(PatientMedicalInsuranceVo medicalInsurance, IN1 in1, ProviderSystemVo providerSystem) throws HL7Exception
+//	{
+//		if (medicalInsurance == null || in1 == null || providerSystem == null)
+//		{
+//			return;
+//		}
+//		
+//		//IN1-2 Insurance Plan.Identifier (ST)
+//		if (medicalInsurance.getPolicyTypeIsNotNull()&&!(medicalInsurance.getPolicyType().getID()==(PrivateInsurancePolicyType.OTHER.getID())))
+//		{
+//			in1.getInsurancePlanID().getIdentifier().setValue(svc.getRemoteLookup(medicalInsurance.getPolicyType().getID(), providerSystem.getCodeSystem().getText()));
+//		}
+//		else if (medicalInsurance.getPlanOrUnitsIsNotNull())
+//		{
+//			in1.getInsurancePlanID().getIdentifier().setValue(medicalInsurance.getPlanOrUnits());
+//		}
+//		
+//		//IN1-3 Insurance Company ID.ID (ST)
+//		if (medicalInsurance.getCompanyIsNotNull() 
+//				&& medicalInsurance.getCompany().getCodeMappingsIsNotNull())
+//		{
+//			String companyName  = medicalInsurance.getCompany().getCodeMappings().getMappingValue(providerSystem.getCodeSystem());
+//			in1.getInsuranceCompanyID(0).getID().setValue(companyName);
+//		}
+//		
+//		//IN1-13 Expiration Date (DT)
+//		if (medicalInsurance.getExpiryDateIsNotNull())
+//		{
+//			in1.getPlanExpirationDate().setValue(medicalInsurance.getExpiryDate().toString(DateFormat.ISO));
+//		}
+//
+//		//IN1-36 Policy Number (ST)
+//		if (medicalInsurance.getPolicyNumberIsNotNull())
+//		{
+//			in1.getPolicyNumber().setValue(medicalInsurance.getPolicyNumber());
+//		}
+//	}
+//	
+//	protected final void renderInsuranceToIN1(NationalHealthCoverVo insurance, IN1 in1, ProviderSystemVo providerSystem) throws HL7Exception
+//	{
+//		if (insurance!=null || in1==null || providerSystem==null)
+//		{
+//		// Medical Card / Insurance	
+//		
+//			in1.getSetIDIN1().setValue("1");
+//			
+//			//IN1-14-3 Authorization Information.Source (ST)
+//			if (insurance.getEligibilityProofIsNotNull())
+//			{
+//				in1.getAuthorizationInformation().getSource().setValue(insurance.getEligibilityProof());
+//			}
+//			
+//			//IN1-28 Pre-Admit Cert (PAC) (ST)
+//			if (insurance.getHealthActCategoryIsNotNull())
+//			{
+//				in1.getPreAdmitCert().setValue(svc.getRemoteLookup(insurance.getHealthActCategory().getID(), providerSystem.getCodeSystem().getText()));
+//			}
+//			
+//			//IN1-29-1 Verification Date/Time.Time of an event (ST)
+//			if (insurance.getMedicalCardExpiryDateIsNotNull())
+//			{
+//				in1.getVerificationDateTime().getTimeOfAnEvent().setValue(insurance.getMedicalCardExpiryDate().toString(DateFormat.ISO));
+//			}
+//
+//			//IN1-32 Billing Status (IS)
+//			if (insurance.getMedicalCardProvedIsNotNull())
+//			{
+//				in1.getBillingStatus().setValue(svc.getRemoteLookup(insurance.getMedicalCardProved().getID(), providerSystem.getCodeSystem().getText()));
+//			}
+//
+//			//IN1-35 Company Plan Code (IS)
+//			if (insurance.getMedicalCardNoIsNotNull())
+//			{
+//				in1.getCompanyPlanCode().setValue(insurance.getMedicalCardNo());
+//			}	
+//		}
+//	}
+//	
+//	protected final void renderEHICToIN1(NationalHealthCoverVo insurance, IN1 in1,ProviderSystemVo providerSystem) throws HL7Exception 
+//	{
+//		if (insurance != null || in1 == null || providerSystem == null)
+//		{
+//			in1.getSetIDIN1().setValue("2");
+//			
+//			//IN1-2 Insurance Plan.Identifier (ST)
+//			in1.getInsurancePlanID().getIdentifier().setValue("EHIC");
+//			
+//			//IN1-3 Insurance Company ID.ID (ST)
+//			in1.getInsuranceCompanyID(0).getID().setValue("EHIC");
+//						
+//			//IN1-4-1 Insurance Company Name.Organization Name (ST)
+//			if (insurance.getEHICInstitutionCodeIsNotNull())
+//			{
+//				in1.getInsuranceCompanyName(0).getOrganizationName().setValue(svc.getRemoteLookup(insurance.getEHICInstitutionCode().getID(),providerSystem.getCodeSystem().getText()));
+//			}
+//
+//			//IN1-5-6 Insurance Company Address.Country (ID)
+//			if (insurance.getEHICCountryIsNotNull())
+//			{
+//				in1.getInsuranceCompanyAddress(0).getCountry().setValue(svc.getRemoteLookup(insurance.getEHICCountry().getID(),providerSystem.getCodeSystem().getText()));
+//			}
+//
+//			//IN1-13 Expiration Date (DT)
+//			if (insurance.getEHICExpiryDateIsNotNull())
+//			{
+//				in1.getPlanExpirationDate().setValue(insurance.getEHICExpiryDate().toString(DateFormat.ISO));
+//			}
+//
+//			//IN1-36 Policy Number (ST)
+//			if (insurance.getEHICNumberIsNotNull())
+//			{
+//				in1.getPolicyNumber().setValue(insurance.getEHICNumber());
+//			}	
+//		}	
+//	} //WDEV-22750
 	
 	
 	

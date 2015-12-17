@@ -1,6 +1,6 @@
 //#############################################################################
 //#                                                                           #
-//#  Copyright (C) <2014>  <IMS MAXIMS>                                       #
+//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
 //#                                                                           #
 //#  This program is free software: you can redistribute it and/or modify     #
 //#  it under the terms of the GNU Affero General Public License as           #
@@ -15,6 +15,11 @@
 //#  You should have received a copy of the GNU Affero General Public License #
 //#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 //#                                                                           #
+//#  IMS MAXIMS provides absolutely NO GUARANTEE OF THE CLINICAL SAFTEY of    #
+//#  this program.  Users of this software do so entirely at their own risk.  #
+//#  IMS MAXIMS only ensures the Clinical Safety of unaltered run-time        #
+//#  software that it builds, deploys and maintains.                          #
+//#                                                                           #
 //#############################################################################
 //#EOH
 package ims.hl7.domain.mapping;
@@ -25,6 +30,7 @@ import ims.core.vo.MergeRequestVo;
 import ims.core.vo.Patient;
 import ims.domain.exceptions.DomainRuntimeException;
 import ims.domain.exceptions.StaleObjectException;
+import ims.hl7.domain.EventResponse;
 import ims.hl7.utils.HL7Errors;
 import ims.hl7.utils.HL7Utils;
 import ims.ocrr.vo.ProviderSystemVo;
@@ -33,7 +39,9 @@ import ca.uhn.hl7v2.model.Message;
 
 public class A34VoMapper extends VoMapper
 {
-	public Message processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception
+	//WDEV-20112
+//	public Message processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception
+	public EventResponse processEvent(Message msg, ProviderSystemVo providerSystem) throws HL7Exception //WDEV-20112
 	{
 		return(processPatientMerge(msg, providerSystem));
 
@@ -53,9 +61,18 @@ public class A34VoMapper extends VoMapper
 	 * @return
 	 * @throws HL7Exception
 	 */
-	protected Message processPatientMerge(Message msg, ProviderSystemVo providerSystem) throws HL7Exception
+	//WDEV-20112
+//	protected Message processPatientMerge(Message msg, ProviderSystemVo providerSystem) throws HL7Exception
+	protected EventResponse processPatientMerge(Message msg, ProviderSystemVo providerSystem) throws HL7Exception //WDEV-20112
 	{
+		//WDEV-20112
+		EventResponse response = new EventResponse(); //WDEV-20112
+		
 		Patient masterPat = getPrimaryIdFromPid(msg, providerSystem);
+
+		//WDEV-20112
+		response.setPatient(masterPat); //WDEV-20112
+		
 		Patient mp2 = null;
 		try
 		{
@@ -67,7 +84,11 @@ public class A34VoMapper extends VoMapper
 			throw new DomainRuntimeException("Error replicating patient", e1);
 		}
 		if (mp2 != null)
+		{
 			masterPat = mp2;
+			//WDEV-20112
+			response.setPatient(mp2); //WDEV-20112
+		}
 		else
 		{
 			// If we don't have the master patient on the PMI, store it in the
@@ -78,7 +99,10 @@ public class A34VoMapper extends VoMapper
 			}
 			catch (Exception e)
 			{
-				return HL7Utils.buildRejAck(msg.get("MSH"), "Exception: " + e.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems()));
+				//WDEV-20112
+//				return HL7Utils.buildRejAck(msg.get("MSH"), "Exception: " + e.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems()));
+				response.setMessage(HL7Utils.buildRejAck(msg.get("MSH"), "Exception: " + e.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems())));
+				return response; //WDEV-20112
 			}
 		}
 
@@ -90,12 +114,20 @@ public class A34VoMapper extends VoMapper
 		else
 		{
 			// If we don't have the slave patient, can we simply return quietly?
-			return HL7Utils.buildPosAck(msg.get("MSH"), toConfigItemArray(providerSystem.getConfigItems()));
+			//WDEV-20112
+//			return HL7Utils.buildPosAck(msg.get("MSH"), toConfigItemArray(providerSystem.getConfigItems()));
+			response.setMessage(HL7Utils.buildPosAck( msg.get("MSH"), toConfigItemArray(providerSystem.getConfigItems())));
+			return response; //WDEV-20112
 		}
 
 		// wdev-9968
 		if (slavePat.getID_Patient().equals(masterPat.getID_Patient()))
-			return HL7Utils.buildRejAck(msg.get("MSH"), "Exception: Source and Destination Internal Identifiers are the same, has this merge already occurred? (" + masterPat.getID_Patient() + ")", HL7Errors.DUP_KEY_ID, toConfigItemArray(providerSystem.getConfigItems()));
+			//WDEV-20112
+//			return HL7Utils.buildRejAck(msg.get("MSH"), "Exception: Source and Destination Internal Identifiers are the same, has this merge already occurred? (" + masterPat.getID_Patient() + ")", HL7Errors.DUP_KEY_ID, toConfigItemArray(providerSystem.getConfigItems()));
+		{
+			response.setMessage(HL7Utils.buildRejAck(msg.get("MSH"), "Exception: Source and Destination Internal Identifiers are the same, has this merge already occurred? (" + masterPat.getID_Patient() + ")", HL7Errors.DUP_KEY_ID, toConfigItemArray(providerSystem.getConfigItems())));
+			return response; //WDEV-20112
+		}
 		
 		
 		slavePat.setIsActive(Boolean.FALSE);
@@ -117,11 +149,17 @@ public class A34VoMapper extends VoMapper
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			return HL7Utils.buildRejAck( msg.get("MSH"), "Exception: " + e.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems()));
+			//WDEV-20112
+//			return HL7Utils.buildRejAck( msg.get("MSH"), "Exception: " + e.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems()));
+			response.setMessage(HL7Utils.buildRejAck( msg.get("MSH"), "Exception: " + e.getMessage(), HL7Errors.APP_INT_ERROR, toConfigItemArray(providerSystem.getConfigItems())));
+			return response; //WDEV-20112
 		}
 
-		Message ack = HL7Utils.buildPosAck( msg.get("MSH"), toConfigItemArray(providerSystem.getConfigItems()));
-		return ack;
+		//WDEV-20112
+//		Message ack = HL7Utils.buildPosAck( msg.get("MSH"), toConfigItemArray(providerSystem.getConfigItems()));
+//		return ack;
+		response.setMessage(HL7Utils.buildPosAck( msg.get("MSH"), toConfigItemArray(providerSystem.getConfigItems())));
+		return response; //WDEV-20112
 	}
 	
 }
