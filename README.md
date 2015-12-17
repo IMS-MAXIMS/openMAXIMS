@@ -7,7 +7,7 @@ The latest generation of our full MAXIMS suite has become openMAXIMS, our first 
 
 A full Patient Administration System designed for the NHS, including support for:
 
-*  Choose and Book v3 (Full rollout approval from HSCIC)
+*  NHS e-Referral Service (Full rollout approval from HSCIC)
 *  Commissioning Data Sets
 *  Referral To Treatment management (RTT)
 *  Graphical Bed Management
@@ -27,6 +27,19 @@ An Electronic Patient Record including:
 
 
 HL7 interfaces (bi-directional) and open APIs for comprehensive integration with third-party systems
+
+#openMAXIMS release 10.5
+
+This is the version that is live at Taunton and Somerset NHS Trust.  It adds a number of new features including:
+
+*  Clinical Triage of Referrals - Patients directed to the appropriate service and care according to clinical priority
+*  Elective List Management - Inpatient Waiting List and TCI management integrate with e-Referral Service, RTT management and enterprise-wide scheduling
+*  Theatres - Pre-Operative Assessment – ensuring patients are fit and suitable for surgery
+*  Appointment Outcome - Workflows and actions based on appointment status and RTT
+*  Clinical Coding - Worklists based on various coding status points – In-Progress, For Review, Coded, Uncoded, etc
+
+...as well as many other enhancements to Casenote Tracking, Waiting Lists, Scheduling, Inpatients, TCI, Auto-cancellation, SOAP, Discharge, Theatres, Therapies, Ward View, Deceased, Demographics, Worlists, Emergency Department, Outpatients, Medical worklist, Contracts, RTT, Elective lists, Bed Management, Configuration, Pre-assessments, Dementia, HL7 messaging, Ward transfers, Referrals, Secure LDAP, Observations, Ambulance Handover, etc.
+
 
 Our wide-range of products are fully integrated and have been built from the ground up in partnership with our NHS customers. This means that healthcare providers can now access years of expertise and investment at no cost. IMS MAXIMS strongly encourage the end-user organisation to take up our support contract, there is no one better placed to support, implement, train, develop, deliver change management, project management and programme management services for the openMAXIMS product suite.
 
