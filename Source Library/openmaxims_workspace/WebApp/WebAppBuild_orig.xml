@@ -10,11 +10,11 @@
 	<!-- ***************************************** -->
 	<!-- Only these 5 properties need to be changed -->
 
-	<property name="dbHost" value="dub-mssql1" />
+	<property name="dbHost" value="xxxxx" />
 	<property name="dbPort" value="1433" />
-	<property name="dbName" value="maxims_dev" />
-	<property name="userid" value="maxims_dba"  />
-	<property name="password" value="maxims_dba" />
+	<property name="dbName" value="xxxxx" />
+	<property name="userid" value="xxxxx"  />
+	<property name="password" value="xxxxx" />
 	<!-- ***************************************** -->
 
 	<import file="build_common.xml"/>
