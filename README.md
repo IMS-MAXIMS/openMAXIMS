@@ -1,6 +1,12 @@
 openMAXIMS - Home of the openMAXIMS PAS and EPR
 ===============================================
 
+#Clinical Safety
+
+IMS MAXIMS provides absolutely no guarantee of the Clinical Safety of this software program.  Users of this software do so entirely at their own risk. IMS MAXIMS only ensures the Clinical Safety of unaltered run-time software that it builds, deploys and maintains.
+
+If any Clinical Safety issue is discovered IMS MAXIMS will issue a Clinical Safety Notification.  It is therefore a requirement of your use of this source code that you send your contact details to openmaxims-user@imsmaxims.com so that you may be contacted.
+
 #openMAXIMS functionality
 
 The latest generation of our full MAXIMS suite has become openMAXIMS, our first open source software product. It has the same rich functionality and currently includes:
