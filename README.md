@@ -1,4 +1,4 @@
-openMAXIMS - Home of the openMAXIMS PAS / EPR
+openMAXIMS - Home of the openMAXIMS PAS/EPR
 =============================================
 
 ---
