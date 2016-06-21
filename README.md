@@ -47,7 +47,7 @@ This is the version that is live at Taunton and Somerset NHS Trust.  It adds a n
 *  Appointment Outcome - Workflows and actions based on appointment status and RTT
 *  Clinical Coding - Worklists based on various coding status points – In-Progress, For Review, Coded, Uncoded, etc
 
-...as well as many other enhancements to Casenote Tracking, Waiting Lists, Scheduling, Inpatients, TCI, Auto-cancellation, SOAP, Discharge, Theatres, Therapies, Ward View, Deceased, Demographics, Worlists, Emergency Department, Outpatients, Medical worklist, Contracts, RTT, Elective lists, Bed Management, Configuration, Pre-assessments, Dementia, HL7 messaging, Ward transfers, Referrals, Secure LDAP, Observations, Ambulance Handover, etc.
+...as well as many other enhancements to Casenote Tracking, Waiting Lists, Scheduling, Inpatients, TCI, Auto-cancellation, SOAP, Discharge, Theatres, Therapies, Ward View, Deceased, Demographics, Worklists, Emergency Department, Outpatients, Medical worklist, Contracts, RTT, Elective lists, Bed Management, Configuration, Pre-assessments, Dementia, HL7 messaging, Ward transfers, Referrals, Secure LDAP, Observations, Ambulance Handover, etc.
 
 
 Our wide-range of products are fully integrated and have been built from the ground up in partnership with our NHS customers. This means that healthcare providers can now access years of expertise and investment at no cost. IMS MAXIMS strongly encourage the end-user organisation to take up our support contract, there is no one better placed to support, implement, train, develop, deliver change management, project management and programme management services for the openMAXIMS product suite.
