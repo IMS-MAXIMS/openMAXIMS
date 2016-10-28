@@ -32,16 +32,18 @@ CNFormManager.strings = {
 
        'copyright': '&copy; IMS MAXIMS',
        'loginCaption': 'MAXIMS Clinical',
-       'loginLogo': 'g/login-ims-logo.png'
+       'loginLogo': 'g/new-login-ims-logo.png'
        
 };
 
-CN_grid.fullRowSelect = false;
-CN_logincontrol_pre.loginImage = CN_logincontrol_vista.loginImage = false;
+CNFormManager.defaultThemeName = "new-blue"; 
+CN_grid.fullRowSelect = true;
+CN_logincontrol.loginImage = false;
 
 window.attachEvent("onload", function()
 {
 	formManager.loadForm();
+	formManager = null;
 });
 /*
 -------------------------
@@ -70,4 +72,4 @@ this._formContent.attachEvent("onresize", function()
 	}
 });
 }
-*/
+*/	
