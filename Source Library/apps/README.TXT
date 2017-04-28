@@ -18,4 +18,11 @@ http://www.oracle.com/technetwork/java/javaee/jta/index.html
 SQL Server JDBC driver:
 http://www.microsoft.com/en-ie/download/details.aspx?id=21599
 
+c3p0:JDBC DataSources/Resource Pools
+https://sourceforge.net/projects/c3p0/
 
+Apache Tomcat 7.0.68
+https://archive.apache.org/dist/tomcat/tomcat-7/v7.0.68/bin/
+
+JDK 6u45 for Windows i586
+http://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-javase6-419409.html#jdk-6u45-oth-JPR
