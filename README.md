@@ -2,7 +2,7 @@ openMAXIMS - home of the openMAXIMS PAS/EPR
 ===========================================
 
 ---
-##Clinical Safety
+## Clinical Safety
 
 IMS MAXIMS provides absolutely no guarantee of the Clinical Safety of this software program.  Users of this software do so entirely at their own risk. IMS MAXIMS only ensures the Clinical Safety of unaltered run-time software that it builds, deploys and maintains.
 
@@ -10,7 +10,7 @@ If any Clinical Safety issue is discovered IMS MAXIMS will issue a Clinical Safe
 
 ---
 
-##openMAXIMS functionality
+## openMAXIMS functionality
 
 The latest generation of our full MAXIMS suite has become openMAXIMS, our first open source software product. It has the same rich functionality and currently includes:
 
@@ -37,7 +37,7 @@ An Electronic Patient Record including:
 
 HL7 interfaces (bi-directional) and open APIs for comprehensive integration with third-party systems
 
-##openMAXIMS release 10.5
+## openMAXIMS release 10.5
 
 This is the version that is live at Taunton and Somerset NHS Trust.  It adds a number of new features including:
 
