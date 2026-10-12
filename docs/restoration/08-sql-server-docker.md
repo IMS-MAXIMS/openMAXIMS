@@ -161,7 +161,7 @@ The original DDL grants table DML permissions to `ims_dml`; do not replace
 this role with an invented application privilege model while reproducing the
 historical setup.
 
-## Load the historical schema
+## Prepare and load the historical schema
 
 The repository contains the original SQL Server schema here:
 
@@ -169,9 +169,30 @@ The repository contains the original SQL Server schema here:
 Source Library/database/DDL-scripts-ref147-openMAXIMS.sql
 ```
 
-Execute that file against the `openMAXIMS` database as an administrative
-account.  It is a SQL Server batch script and includes `GO` separators.  Do
-not use the Oracle reference-data script for this database.
+The unchanged file cannot be applied directly to modern SQL Server.  The
+first restoration attempt exposed two historical generator assumptions:
+
+- the very wide `core_patient` table must be assembled with one column at a
+  time;
+- generated constraint and index names are repeated across mappings, whereas
+  SQL Server requires those names to be unique within the schema.
+
+Generate a separate compatibility script with the repository tool:
+
+```bash
+python3 restoration-tests/sqlserver/prepare-ddl.py \
+  --input "Source Library/database/DDL-scripts-ref147-openMAXIMS.sql" \
+  --output "$HOME/openmaxims-workspace/DDL-scripts-ref147-openMAXIMS-mssql.sql"
+```
+
+The tool makes only those mechanical changes.  It does not edit the original
+DDL, change table or column types, or invent application tables.  Execute the
+generated file against the `openMAXIMS` database as an administrative account.
+It remains a SQL Server batch script and includes `GO` separators.  Do not use
+the Oracle reference-data script for this database.
+
+The initial modern SQL Server run produced 1,675 tables and 3,489 foreign-key
+constraints from the prepared script.  Record the counts from your own run.
 
 The script is historical and large.  Record the SQL client name/version,
 execution duration, errors, and final table count.  Do not silently ignore
@@ -191,6 +212,22 @@ Execute it against `openMAXIMS` after the schema.  Use a SQL Server-aware
 script executor and record all errors and row counts.  Keep the original file
 unchanged; any compatibility transformation must be a separate, reviewable
 restoration script.
+
+The historical file begins with a UTF-8 BOM and contains three exact duplicate
+single-line inserts into `core_appform_menuaction`.  Prepare it without
+modifying the source:
+
+```bash
+python3 restoration-tests/sqlserver/prepare-reference-data.py \
+  --input "Source Library/openmaxims_workspace/WebApp/MAXIMS_RefDataMSQ05.sql" \
+  --output "$HOME/openmaxims-workspace/MAXIMS_RefDataMSQ05-mssql.sql"
+```
+
+Execute the generated file as an administrative account.  This preparation
+does not deduplicate different rows or alter multi-line statements.  It also
+renames the second placeholder default username from `xxxxx` to `xxxxx2`,
+because the SQL Server schema's unique username index rejects the duplicate
+while preserving both historical user IDs and role rows.
 
 ## Values for the application runtime
 
@@ -273,12 +310,17 @@ Silicon restoration machine:
 - host port `1433` mapped to container port `1433`;
 - database `openMAXIMS` with `SQL_Latin1_General_CP1_CI_AS`;
 - login/user `openMAXIMS` and database role `ims_dml`;
-- application user confirmed able to connect and is a member of `ims_dml`.
+- application user confirmed able to connect and is a member of `ims_dml`;
+- prepared DDL applied successfully: 1,675 tables and 3,489 foreign keys.
+- prepared reference data applied successfully: 1,780 forms, 150 navigation
+  forms, 20 navigation groups, 1,305 lookup types, and 2,874 lookup
+  instances.
 
-The schema and reference-data scripts have not yet been loaded, and the
-openMAXIMS application has not yet been configured or smoke-tested against
-this instance.  Those results must be recorded before claiming that the SQL
-Server path is restored.
+The SQL Server schema has now been loaded from the generated compatibility
+script, followed by the prepared reference-data script.  The openMAXIMS
+application has not yet been configured or smoke-tested against this instance.
+Those results must be recorded before claiming that the SQL Server path is
+restored.
 
 The first unchanged schema-load attempt against SQL Server 2022 CU27 failed
 with:
@@ -290,6 +332,9 @@ Incorrect syntax near 'varchar'.
 
 Batch isolation showed that the failure occurs while creating
 `core_patient`, at the `timeofdeat varchar(255)` portion of that historical
-DDL statement.  The source DDL has not been edited.  The database was reset
-to the empty state described above after this failed attempt.  This is now a
-tracked SQL Server compatibility investigation, not a successful schema load.
+DDL statement.  The source DDL has not been edited.  The first reference-data
+attempt then exposed the source file's UTF-8 BOM and three exact duplicate
+`core_appform_menuaction` inserts.  A subsequent run also exposed the
+duplicate `xxxxx` default username; the preparation tool handles these issues
+without modifying the source files.  The prepared schema and reference data
+now load successfully with the recorded counts above.
