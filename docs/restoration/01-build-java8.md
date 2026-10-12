@@ -1,0 +1,111 @@
+# Java 8 build restoration
+
+**Branch:** `restoration/01-build-java8`  
+**Starting commit:** `f59654c5fb733ea0c4f9e84edc7573fd08e4271c`  
+**Result:** Java 8 compilation and WAR packaging succeed from a clean detached
+checkout.
+
+## Changes
+
+The branch contains four deliberately separate build commits:
+
+1. `70c522504` — `build: fix Java 8 source compatibility defects`
+   - Renames four `EmergencyEpisodeLite` Java files to match their public
+     PascalCase class names.
+   - Removes the unused, invalid `sun.misc.Sort` import.
+2. `aaf731ee9` — `build: fix case-sensitive paths and WAR packaging`
+   - Changes build references from `Racpc` to the actual `RACPC` directory in
+     both Ant build files.
+   - Enables `zip64Mode="always"` for both WAR targets, because the full WAR
+     exceeds the classic ZIP entry-count limit.
+3. `cb34e9c84` — `build: add Java 8 Unix build entrypoint`
+   - Adds `build-java8.sh`, preserving the existing Windows batch workflow.
+   - Allows the workspace location to be overridden with
+     `OPENMAXIMS_WORKSPACE`.
+4. `98b7ba778` — `build: enforce Java 8 in Unix entrypoint`
+   - Prevents accidentally running this historical target with a newer JDK.
+
+No JavaScript source was reconstructed or replaced by this branch. No source
+files were bulk-converted between character encodings.
+
+## Reproducible build environment
+
+The clean build was run on:
+
+- **OS:** macOS on Apple Silicon
+- **JDK:** Eclipse Temurin `1.8.0_504` x86_64, executed through Rosetta 2
+- **Ant:** `1.10.18`
+- **Tomcat support libraries:** Apache Tomcat `6.0.53`; only its servlet/JSP
+  libraries were used for compilation, not a running Tomcat server
+- **Database:** not required for compilation or packaging
+
+Tomcat 6 was used as the available compatible servlet/JSP API provider. The
+original documentation specifies Tomcat 5.5.9; this substitution is recorded
+and is not a claim that the deployed application has been validated on Tomcat
+6.
+
+The legacy Ant build expects both the old `TOMCAT_HOME/common/lib` layout and
+the newer `TOMCAT_HOME/lib` layout. For this test environment,
+`common/lib` pointed to Tomcat 6's `lib` directory. This is environment setup,
+not a repository change.
+
+## Command
+
+From the repository root:
+
+```bash
+export JAVA_HOME=/path/to/jdk8
+export TOMCAT_HOME=/path/to/tomcat-support
+./build-java8.sh
+```
+
+The script invokes the existing Ant build with the workspace path supplied as
+an absolute property. It does not require manually editing
+`WebAppBuild.xml`.
+
+## Clean-checkout result
+
+A detached clean worktree at commit `98b7ba778` was built successfully:
+
+```text
+BUILD SUCCESSFUL
+Total time: 2 minutes 15 seconds
+exit status: 0
+```
+
+Generated artifact:
+
+```text
+Source Library/openmaxims_workspace/WebApp/openMAXIMS.war
+```
+
+Artifact size:
+
+```text
+233930644 bytes
+```
+
+SHA-256 from the clean-worktree build:
+
+```text
+b40bd7cf51344bafac949a3a5688a7a19aa20547aa3596a1a90a7cfc137b0975
+```
+
+The WAR hash is a build artifact identifier for this run; generated build
+metadata and timestamps may make subsequent WAR hashes differ.
+
+## Warnings and limits
+
+The build succeeds with warnings, including:
+
+- Ant's `includeantruntime` warning for existing `<javac>` tasks.
+- Deprecated and unchecked API warnings.
+- Existing use of internal `sun.*` and `com.sun.*` APIs.
+- Existing unreachable-catch warnings in parts of the source tree.
+
+These warnings are intentionally not addressed by this Java 8 restoration.
+They are candidates for a later compatibility or code-quality workstream.
+
+This result proves compilation and packaging only. It does not prove that the
+WAR starts under Tomcat, connects to SQL Server, initializes reference data,
+or supports a real login. Those are separate runtime/database milestones.
