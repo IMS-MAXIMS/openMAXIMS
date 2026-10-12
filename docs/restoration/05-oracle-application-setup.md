@@ -228,6 +228,18 @@ Use a local, untracked file containing a JNDI resource equivalent to:
               maxActive="100"
               maxIdle="30"
               maxWait="30000"/>
+
+    <!-- Required by the historical Quartz scheduler. Keep these values in
+         this local, untracked context file alongside the datasource. -->
+    <Environment name="QuartzDbDriver" type="java.lang.String"
+                 value="oracle.jdbc.driver.OracleDriver" override="false"/>
+    <Environment name="QuartzDbUrl" type="java.lang.String"
+                 value="jdbc:oracle:thin:@//<DATABASE_HOST>:<DATABASE_PORT>/<DATABASE_SERVICE>"
+                 override="false"/>
+    <Environment name="QuartzDbUsername" type="java.lang.String"
+                 value="<DATABASE_USER>" override="false"/>
+    <Environment name="QuartzDbPassword" type="java.lang.String"
+                 value="<DATABASE_PASSWORD>" override="false"/>
 </Context>
 ```
 

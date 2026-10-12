@@ -73,7 +73,17 @@ public class DnaBatchUpdateServlet extends HttpServlet
 	//This method will retrieve the information of the job from the database and create the scheduler again
 	private void scheduleJob() throws ClassNotFoundException 
 	{
-		Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+		// This legacy job reads a SQL Server-specific table and cannot run against
+		// the Oracle runtime configuration. Do not fail application startup when
+		// the application is otherwise correctly configured for another database.
+		String configuredDriver = EnvironmentConfig.getQuartzDbDriver();
+		if (!"com.microsoft.sqlserver.jdbc.SQLServerDriver".equals(configuredDriver))
+		{
+			System.out.println("DNA batch update disabled: configured database is not SQL Server.");
+			return;
+		}
+
+		Class.forName(configuredDriver);
 		
 		try 
 		{	

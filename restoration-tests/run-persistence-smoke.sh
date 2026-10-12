@@ -9,6 +9,7 @@ set -euo pipefail
 : "${TOMCAT_HOME:?Set TOMCAT_HOME to the Tomcat installation}"
 : "${JAVA_HOME:?Set JAVA_HOME to a Java 8 JDK}"
 : "${OPENMAXIMS_APP_DIR:=$CATALINA_BASE/webapps/openMAXIMS}"
+context_descriptor="$CATALINA_BASE/conf/Catalina/localhost/openMAXIMS.xml"
 
 if [[ ! -x "$JAVA_HOME/bin/javac" ]]; then
     echo "javac not found under JAVA_HOME: $JAVA_HOME" >&2
@@ -26,6 +27,9 @@ cleanup() {
     fi
     if [[ -f "$test_class" ]]; then
         rm -f "$test_class"
+    fi
+    if [[ -f "$context_descriptor" ]]; then
+        touch "$context_descriptor"
     fi
     rm -rf "$work_dir"
 }
@@ -68,13 +72,29 @@ addition = """
 path.write_text(text.replace(marker, addition + marker), encoding="utf-8")
 PY
 
+# Tomcat 6 watches the context descriptor reliably, whereas web.xml changes
+# alone are not consistently noticed by an already-running instance.
+touch "$context_descriptor"
+
 url="${OPENMAXIMS_BASE_URL:-http://127.0.0.1:8080}/${context_name}/restoration/persistence"
 for _ in $(seq 1 60); do
-    if result=$(curl --silent --show-error --fail --max-time 10 "$url" 2>/dev/null); then
-        printf '%s\n' "$result"
-        exit 0
-    fi
-    sleep 1
+    response_file="$work_dir/response.txt"
+    http_code=$(curl --silent --show-error --output "$response_file" \
+        --write-out '%{http_code}' --max-time 10 "$url" 2>/dev/null || true)
+    case "$http_code" in
+        200)
+            cat "$response_file"
+            exit 0
+            ;;
+        404|000)
+            sleep 1
+            ;;
+        *)
+            cat "$response_file" >&2
+            echo "Persistence smoke test returned HTTP $http_code" >&2
+            exit 1
+            ;;
+    esac
 done
 
 echo "Timed out waiting for $url" >&2

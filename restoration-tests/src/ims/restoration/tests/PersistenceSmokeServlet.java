@@ -27,7 +27,7 @@ public final class PersistenceSmokeServlet extends HttpServlet {
         response.setStatus(HttpServletResponse.SC_OK);
         PrintWriter out = response.getWriter();
         try {
-            String marker = "RESTORATION_TEST_" + UUID.randomUUID().toString().replace('-', '_');
+            String marker = "REST_TEST_" + UUID.randomUUID().toString().substring(0, 8);
             int patientId = createPatient(marker);
             verifyPatient(patientId, marker);
             String updatedMarker = marker + "_UPDATED";
@@ -112,9 +112,15 @@ public final class PersistenceSmokeServlet extends HttpServlet {
     }
 
     private DomainFactory factory() {
-        DomainSession session = new DomainSession();
-        DomainFactory factory = new DomainFactory();
-        factory.setDomainSession(session);
-        return factory;
+        try {
+            // Use the framework's normal session bootstrap so the audit
+            // interceptor receives the required SessionData attribute.
+            DomainSession session = DomainSession.getSession();
+            DomainFactory factory = new DomainFactory();
+            factory.setDomainSession(session);
+            return factory;
+        } catch (Exception failure) {
+            throw new IllegalStateException("Unable to initialise application domain session", failure);
+        }
     }
 }
