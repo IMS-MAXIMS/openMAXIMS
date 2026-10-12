@@ -256,9 +256,36 @@ The application build includes the historical driver asset:
 Source Library/apps/SQLServerJdbc.jar
 ```
 
-The built WAR may require this driver in the shared Tomcat library directory,
-as described in the application setup documentation.  Keep credentials and
-Tomcat context configuration outside Git.
+That historical driver is part of the original application dependency set,
+but it cannot negotiate with the tested SQL Server 2022 image.  The first
+Tomcat start failed during the JDBC pre-login exchange with:
+
+```text
+The server version is not supported. The target server must be SQL Server 2000 or later.
+```
+
+This is a driver/server-generation incompatibility, not a schema or login
+failure.  For a modern SQL Server development run, download a Microsoft
+`mssql-jdbc` release that still provides a Java 8 jar (for example, the
+`12.10.1.jre8` artifact) and place it in the **runtime Tomcat base** `lib`
+directory.  Do not replace the historical jar in the Git checkout or add the
+downloaded vendor jar to the repository without a separate licensing and
+compatibility review.  Do not leave both jars active: they contain the same
+JDBC driver classes and the older one may be selected first.
+
+Example, using Maven Central only as a download source:
+
+```bash
+mkdir -p "$CATALINA_BASE/lib"
+curl -fL -o "$CATALINA_BASE/lib/mssql-jdbc-12.10.1.jre8.jar" \
+  https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/12.10.1.jre8/mssql-jdbc-12.10.1.jre8.jar
+mv "$CATALINA_BASE/lib/SQLServerJdbc.jar" \
+   "$CATALINA_BASE/lib/SQLServerJdbc.jar.historical" 2>/dev/null || true
+```
+
+The exact driver version, download URL, checksum, Java compatibility, and
+licence should be recorded for a reproducible local run.  Keep credentials,
+the downloaded driver, and Tomcat context configuration outside Git.
 
 ## Verify before changing application code
 
@@ -315,12 +342,24 @@ Silicon restoration machine:
 - prepared reference data applied successfully: 1,780 forms, 150 navigation
   forms, 20 navigation groups, 1,305 lookup types, and 2,874 lookup
   instances.
+- historical `SQLServerJdbc.jar` rejected SQL Server 2022 during pre-login;
+  Microsoft `mssql-jdbc-12.10.1.jre8.jar` succeeded in the Java 8 runtime.
+- the WAR built successfully with Java 8, Ant 1.10.18, and Tomcat 6.0.53
+  libraries; the isolated runtime served `/openMAXIMS/` with HTTP 200.
+- `restoration-tests/run-persistence-smoke.sh` passed against the SQL Server
+  datasource: create, reload, update, reload, and delete.
 
 The SQL Server schema has now been loaded from the generated compatibility
-script, followed by the prepared reference-data script.  The openMAXIMS
-application has not yet been configured or smoke-tested against this instance.
-Those results must be recorded before claiming that the SQL Server path is
-restored.
+script, followed by the prepared reference-data script.  The application was
+then built with Java 8 and deployed to an isolated Tomcat 6.0.53 base using
+the Java-8-compatible Microsoft JDBC driver described above.  `GET
+/openMAXIMS/` returned HTTP 200 and the repository persistence smoke test
+passed, including create, reload, update, reload, and delete of a synthetic
+patient.
+
+This demonstrates the restored SQL Server persistence path for the tested
+versions.  It does not certify every module, scheduled job, report, or
+clinical workflow.
 
 The first unchanged schema-load attempt against SQL Server 2022 CU27 failed
 with:
