@@ -15,6 +15,14 @@ if [[ ! -x "$JAVA_HOME/bin/javac" ]]; then
     echo "JAVA_HOME does not contain javac: $JAVA_HOME" >&2
     exit 2
 fi
+java_version=$("$JAVA_HOME/bin/java" -version 2>&1 | sed -n 's/.*version "\([^"]*\)".*/\1/p' | head -n 1)
+case "$java_version" in
+    1.8*|8*) ;;
+    *)
+        echo "This entrypoint requires Java 8; found ${java_version:-unknown} in $JAVA_HOME" >&2
+        exit 2
+        ;;
+esac
 if [[ ! -d "$TOMCAT_HOME" ]]; then
     echo "TOMCAT_HOME does not exist: $TOMCAT_HOME" >&2
     exit 2
