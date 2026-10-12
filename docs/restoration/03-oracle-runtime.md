@@ -36,6 +36,22 @@ This establishes a working Oracle-backed application path beyond static WAR
 deployment. It does not certify all modules, scheduled jobs, reports, or
 clinical workflows.
 
+## Standard local administrator
+
+Restoration builds use the same disposable administrator account regardless of
+database vendor:
+
+```text
+Username: admin
+Password: password1
+Role:     Admin
+```
+
+This is a deliberately documented development credential for local restoration
+only. Change or remove it before any non-disposable deployment. The account is
+defined in the packaged `configuration.xml`; the database reference-data
+seed also gives the primary `core_appuser` row the `admin` username.
+
 ## Required local configuration
 
 The application discovers a datasource below the Tomcat JNDI namespace

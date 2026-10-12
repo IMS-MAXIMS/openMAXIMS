@@ -224,10 +224,11 @@ python3 restoration-tests/sqlserver/prepare-reference-data.py \
 ```
 
 Execute the generated file as an administrative account.  This preparation
-does not deduplicate different rows or alter multi-line statements.  It also
-renames the second placeholder default username from `xxxxx` to `xxxxx2`,
-because the SQL Server schema's unique username index rejects the duplicate
-while preserving both historical user IDs and role rows.
+does not deduplicate different rows or alter multi-line statements.  It seeds
+the primary default user as `admin` with password `password1`, and renames the
+second placeholder default username to `admin2`, because the SQL Server
+schema's unique username index rejects duplicate usernames while preserving
+both historical user IDs and role rows.
 
 ## Values for the application runtime
 
@@ -249,6 +250,17 @@ JDBC driver:       com.microsoft.sqlserver.jdbc.SQLServerDriver
 JDBC URL:          jdbc:sqlserver://localhost:1433;databaseName=openMAXIMS
 Hibernate dialect: org.hibernate.dialect.SQLServerDialect
 ```
+
+The application login is separate from the SQL Server database login. Every
+restoration database uses this disposable application administrator:
+
+```text
+Username: admin
+Password: password1
+Role:     Admin
+```
+
+Do not use these credentials for a real deployment.
 
 The application build includes the historical driver asset:
 

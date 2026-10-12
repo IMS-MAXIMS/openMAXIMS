@@ -5,9 +5,11 @@ The source file is retained unchanged. This preparation removes its UTF-8
 BOM, which old SQL Server tooling treated as SQL text, and removes only exact
 duplicate single-line INSERT statements. The latter are redundant duplicate
 rows in the historical reference-data file and otherwise violate the modern
-SQL Server primary key on ``core_appform_menuaction``. The historical default
-user block also gives two users the same placeholder username; the second is
-made distinct because the SQL Server schema has a unique username index.
+SQL Server primary key on ``core_appform_menuaction``. The historical default user block contains redacted placeholder credentials.
+The restoration seed makes the first user the standard local administrator
+(`admin` / `password1`) and gives the second historical row a distinct
+username. The same credentials are also present in the packaged XML login
+configuration.
 """
 
 from __future__ import annotations
@@ -17,17 +19,21 @@ import re
 from pathlib import Path
 
 
-def prepare(source: Path, destination: Path) -> tuple[int, int]:
+def prepare(source: Path, destination: Path) -> tuple[int, int, int]:
     lines = source.read_text(encoding="utf-8-sig").splitlines()
     seen: set[str] = set()
     output: list[str] = []
     removed = 0
     renamed_default_user = 0
+    seeded_admin_user = 0
 
     for line in lines:
         normalized = re.sub(r"\s+", " ", line.strip().lower())
-        if normalized == "values(2,0,0, 'xxxxx','xxxxx', 'xxxxx', 'blue', 1)":
-            line = line.replace("'xxxxx','xxxxx', 'xxxxx'", "'xxxxx2','xxxxx', 'xxxxx'")
+        if normalized == "values(1,0,0, 'xxxxx','xxxxx', 'xxxxx', 'blue', 1)":
+            line = line.replace("'xxxxx','xxxxx', 'xxxxx'", "'admin','password1', 'password1'")
+            seeded_admin_user += 1
+        elif normalized == "values(2,0,0, 'xxxxx','xxxxx', 'xxxxx', 'blue', 1)":
+            line = line.replace("'xxxxx','xxxxx', 'xxxxx'", "'admin2','password1', 'password1'")
             renamed_default_user += 1
         if normalized.startswith("insert into ") and " values " in normalized:
             if normalized in seen:
@@ -38,7 +44,7 @@ def prepare(source: Path, destination: Path) -> tuple[int, int]:
 
     destination.parent.mkdir(parents=True, exist_ok=True)
     destination.write_text("\n".join(output) + "\n", encoding="utf-8")
-    return removed, renamed_default_user
+    return removed, renamed_default_user, seeded_admin_user
 
 
 def main() -> int:
@@ -47,9 +53,10 @@ def main() -> int:
     parser.add_argument("--output", required=True, type=Path)
     args = parser.parse_args()
 
-    removed, renamed_default_user = prepare(args.input, args.output)
+    removed, renamed_default_user, seeded_admin_user = prepare(args.input, args.output)
     print(f"removed exact duplicate single-line INSERTs: {removed}")
     print(f"renamed duplicate default username: {renamed_default_user}")
+    print(f"seeded standard admin user: {seeded_admin_user}")
     print(f"wrote: {args.output}")
     return 0
 
