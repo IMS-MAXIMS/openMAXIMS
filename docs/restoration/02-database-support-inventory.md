@@ -23,7 +23,7 @@ supporting investigation material in `openMaxims-tools` and
 | Direct JDBC | Roughly 19 non-generated Java files use direct JDBC calls outside Hibernate SQL generation. | Portability exceptions identified; statement-level audit required |
 | Reports/procedures | Vendor-specific report and SQL assets have not yet been fully classified or executed. | Unknown |
 | Provisioning scripts | Build targets expect `DomainObjects/scripts/${dbtype}/` directories, which are absent from this checkout. | Significant reproducibility gap |
-| Oracle deployment | A working Oracle 19 deployment has been achieved independently. | Execution verified for the exercised deployment, not all workflows |
+| Oracle deployment | A working Oracle 19 deployment has been achieved independently. | Execution verified for login, navigation, and Patient Search; not all workflows |
 | SQL Server deployment | No equivalent clean provisioning and workflow result has yet been recorded. | Unverified |
 | MySQL/MariaDB | No active MySQL build branch, dialect, reference-data script, or deployment evidence was found. | Not currently supported; feasibility remains an investigation question |
 
