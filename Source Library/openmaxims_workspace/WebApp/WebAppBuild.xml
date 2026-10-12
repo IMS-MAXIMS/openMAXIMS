@@ -290,15 +290,15 @@
 
 	<!-- Compile Racpc -->
 	<target name="Racpc" depends="Core, Clinical,Admin" >
-		<mkdir dir="${workspace}Racpc/bin" />
+		<mkdir dir="${workspace}RACPC/bin" />
 		<delete includeEmptyDirs="true" quiet="true">
-			<fileset dir="${workspace}Racpc/bin">
+			<fileset dir="${workspace}RACPC/bin">
 				<patternset>
 					<include name="**/*.class"/>
 				</patternset>
 			</fileset>
 		</delete>		
-		<javac debug="on" classpath="${ant_classpath};${workspace}Admin/bin/;${workspace}Alerts/bin/;${workspace}Core/bin/;${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;${workspace}Clinical/bin/;" destdir="${workspace}Racpc/bin/" srcdir="${workspace}Racpc/src/"  includes="**/*.java" />
+		<javac debug="on" classpath="${ant_classpath};${workspace}Admin/bin/;${workspace}Alerts/bin/;${workspace}Core/bin/;${workspace}DomainObjects/bin/;${workspace}ValueObjects/bin/;${workspace}Clinical/bin/;" destdir="${workspace}RACPC/bin/" srcdir="${workspace}RACPC/src/"  includes="**/*.java" />
 	</target>
 
 
@@ -312,7 +312,7 @@
 ims.warfile.version=${project.name}_${build.number}
 ims.warfile.timestamp=${timestamp}
 		</echo>
-		<war destfile="${workspace}WebApp/${project.name}.war" webxml="${workspace}WebApp/WEB-INF/web.xml">
+		<war destfile="${workspace}WebApp/${project.name}.war" webxml="${workspace}WebApp/WEB-INF/web.xml" zip64Mode="always">
 			<fileset refid="WebApp.static.content" />
 			<lib refid="WebApp.lib.content" />
 			<lib dir="${libdir}">
@@ -367,7 +367,7 @@ ims.warfile.timestamp=${timestamp}
 			<classes dir="${workspace}COE/bin" />
             	<classes dir="${workspace}Pathways/bin" />
 			<classes dir="${workspace}Scheduling/bin" />
-			<classes dir="${workspace}Racpc/bin" />
+			<classes dir="${workspace}RACPC/bin" />
             	<classes dir="${workspace}Correspondence/bin" />
    	            <classes dir="${workspace}Emergency/bin" />
    	            <classes dir="${workspace}Billing/bin" />
