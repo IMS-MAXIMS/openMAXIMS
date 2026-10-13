@@ -35,7 +35,7 @@ Ant, and a Java 8 JDK. On a Mac with Homebrew, the tool installation is:
 
 ```bash
 brew install git ant
-brew install --cask temurin8
+brew install --cask temurin@8
 ```
 
 Confirm Java 8 is selected:
@@ -50,6 +50,8 @@ uname -m
 ```
 
 The Java version must be 8. Do not use a modern JDK for this historical build.
+On macOS, the cask installer may request administrator approval through
+`sudo`; approve that prompt in a normal Terminal session.
 The SQL Server container is an x86-64 image and must use Docker emulation on
 Apple Silicon.
 
