@@ -28,6 +28,20 @@ The branch contains four deliberately separate build commits:
 No JavaScript source was reconstructed or replaced by this branch. No source
 files were bulk-converted between character encodings.
 
+## Java 8 runtime compiler compatibility
+
+The original dependency set includes Eclipse JDT 3.4.4, which is too old for
+Drools 5.5 rule compilation when the application runs on Java 8. It fails while
+reading Java 8 platform classes with `ClassFormatException` / `wrong class
+format`. The active workspace therefore uses Eclipse compiler (ECJ) 4.4.2
+instead. `WebApp/build_common.xml` explicitly packages `ecj-4.4.2.jar` and no
+longer packages the old JDT jar.
+
+This is a bounded Java 8 compatibility change. It does not claim support for
+later Java releases, and it does not replace Drools or alter the application
+rule model. The rebuilt WAR starts under Tomcat 6 and the reconstructed
+JavaScript runtime has been exercised in an isolated SQL Server deployment.
+
 ## Reproducible build environment
 
 The clean build was run on:
