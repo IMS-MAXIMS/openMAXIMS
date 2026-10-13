@@ -83,14 +83,15 @@ driver is present in the workspace as:
 $WORKSPACE/WebApp/WEB-INF/lib/OracleJdbc.jar
 ```
 
-It must be installed in the Tomcat instance's shared library directory before
-the application starts. With a separate `CATALINA_BASE`, use its `lib`
-directory; otherwise use the Tomcat installation's `lib` directory:
+It must be installed in the Tomcat installation's shared library directory
+before the application starts. For the tested Tomcat 6 layout, use
+`CATALINA_HOME/lib`; a separate `CATALINA_BASE/lib` is not reliably searched by
+this historical Tomcat classloader:
 
 ```bash
 export CATALINA_BASE='<path to the Tomcat instance>'
 cp -p "$WORKSPACE/WebApp/WEB-INF/lib/OracleJdbc.jar" \
-      "$CATALINA_BASE/lib/"
+      "$CATALINA_HOME/lib/"
 ```
 
 Restart Tomcat after adding or changing a shared JDBC driver. Keep the driver
