@@ -53,7 +53,8 @@ The Java version must be 8. Do not use a modern JDK for this historical build.
 On macOS, the cask installer may request administrator approval through
 `sudo`; approve that prompt in a normal Terminal session.
 The SQL Server container is an x86-64 image and must use Docker emulation on
-Apple Silicon.
+Apple Silicon. SQL Server rejects passwords that resemble the login name, so
+choose an application password that is unrelated to `openMAXIMS`.
 
 Download and unpack Apache Tomcat 6.0.53 from the Apache archive. Keep it in a
 persistent location rather than `/tmp`:
@@ -102,7 +103,7 @@ shell only; do not put it in Git:
 
 ```bash
 export MSSQL_SA_PASSWORD='Choose-A-Strong-Password1!'
-export MSSQL_APP_PASSWORD='Choose-Another-Strong-Password1!'
+export MSSQL_APP_PASSWORD='Raven!42Quartz#'
 ```
 
 Create the emulated SQL Server container:
@@ -124,9 +125,9 @@ Wait until SQL Server accepts connections. The image's `sqlcmd` path is
 usually `/opt/mssql-tools18/bin/sqlcmd`:
 
 ```bash
-until docker exec openmaxims-mssql /bin/bash -lc \
-  '/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa \
-   -P "$MSSQL_SA_PASSWORD" -Q "SELECT 1"' >/dev/null 2>&1; do
+until docker exec openmaxims-mssql /opt/mssql-tools18/bin/sqlcmd \
+  -C -S localhost -U sa -P "$MSSQL_SA_PASSWORD" \
+  -Q "SELECT 1" >/dev/null 2>&1; do
   sleep 2
 done
 ```
@@ -135,9 +136,8 @@ Create the application database and SQL login. This is the **database** login,
 not the openMAXIMS application login:
 
 ```bash
-docker exec -i openmaxims-mssql /bin/bash -lc \
-  '/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa \
-   -P "$MSSQL_SA_PASSWORD"' <<SQL
+docker exec -i openmaxims-mssql /opt/mssql-tools18/bin/sqlcmd \
+  -C -S localhost -U sa -P "$MSSQL_SA_PASSWORD" <<SQL
 CREATE DATABASE openMAXIMS COLLATE SQL_Latin1_General_CP1_CI_AS;
 GO
 USE openMAXIMS;
@@ -176,22 +176,22 @@ docker cp "$OPENMAXIMS_WORKSPACE/sqlserver/DDL-mssql.sql" \
 docker cp "$OPENMAXIMS_WORKSPACE/sqlserver/ReferenceData-mssql.sql" \
   openmaxims-mssql:/tmp/ReferenceData-mssql.sql
 
-docker exec openmaxims-mssql /bin/bash -lc \
-  '/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U openMAXIMS \
-   -P "$MSSQL_APP_PASSWORD" -d openMAXIMS -i /tmp/DDL-mssql.sql'
-docker exec openmaxims-mssql /bin/bash -lc \
-  '/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U openMAXIMS \
-   -P "$MSSQL_APP_PASSWORD" -d openMAXIMS -i /tmp/ReferenceData-mssql.sql'
+docker exec openmaxims-mssql /opt/mssql-tools18/bin/sqlcmd \
+  -C -S localhost -U openMAXIMS -P "$MSSQL_APP_PASSWORD" \
+  -d openMAXIMS -i /tmp/DDL-mssql.sql
+docker exec openmaxims-mssql /opt/mssql-tools18/bin/sqlcmd \
+  -C -S localhost -U openMAXIMS -P "$MSSQL_APP_PASSWORD" \
+  -d openMAXIMS -i /tmp/ReferenceData-mssql.sql
 ```
 
 The prepared reference data creates the application users `user` and `user2`.
 Verify the primary row before continuing:
 
 ```bash
-docker exec openmaxims-mssql /bin/bash -lc \
-  '/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa \
-   -P "$MSSQL_SA_PASSWORD" -d openMAXIMS -W -s "|" \
-   -Q "SET NOCOUNT ON; SELECT id, username, c_passwo, encodedpas FROM core_appuser ORDER BY id;"'
+docker exec openmaxims-mssql /opt/mssql-tools18/bin/sqlcmd \
+  -C -S localhost -U sa -P "$MSSQL_SA_PASSWORD" \
+  -d openMAXIMS -W -s "|" \
+  -Q "SET NOCOUNT ON; SELECT id, username, c_passwo, encodedpas FROM core_appuser ORDER BY id;"
 ```
 
 The first row must show `user`, the SHA-1/base64 value for `pass`, and `pass`.
@@ -305,7 +305,12 @@ curl --connect-timeout 5 --max-time 20 -I \
   http://192.168.128.1:8080/openMAXIMS/
 ```
 
-Both should return HTTP `200`. From the XP VM, open:
+Both should return HTTP `200`. A successful clean-room run on 13 October
+2026 produced a 221 MB WAR, loaded 1,676 SQL Server tables, and logged
+`CNHost servlet started` followed by `Server startup`. The build emitted the
+historical Ant/Javac warnings described above but exited successfully.
+
+From the XP VM, open:
 
 ```text
 http://192.168.128.1:8080/openMAXIMS/
