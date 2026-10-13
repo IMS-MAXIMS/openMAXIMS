@@ -230,6 +230,13 @@ second placeholder default username to `user2`, because the SQL Server
 schema's unique username index rejects duplicate usernames while preserving
 both historical user IDs and role rows.
 
+A persistent Docker volume retains the existing `core_appuser` rows when the
+container is stopped or restarted. Changing the repository seed script or the
+packaged XML configuration does not migrate an already-seeded database. If an
+existing restoration database contains older local credentials, rebuild or
+reseed that database before testing, and verify the resulting application
+user rows.
+
 ## Values for the application runtime
 
 The historical Ant build selects the SQL Server path with:
