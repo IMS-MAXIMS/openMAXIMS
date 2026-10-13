@@ -225,8 +225,8 @@ python3 restoration-tests/sqlserver/prepare-reference-data.py \
 
 Execute the generated file as an administrative account.  This preparation
 does not deduplicate different rows or alter multi-line statements.  It seeds
-the primary default user as `admin` with password `password1`, and renames the
-second placeholder default username to `admin2`, because the SQL Server
+the primary default user as `user` with password `pass`, and renames the
+second placeholder default username to `user2`, because the SQL Server
 schema's unique username index rejects duplicate usernames while preserving
 both historical user IDs and role rows.
 
@@ -255,8 +255,8 @@ The application login is separate from the SQL Server database login. Every
 restoration database uses this disposable application administrator:
 
 ```text
-Username: admin
-Password: password1
+Username: user
+Password: pass
 Role:     Admin
 ```
 

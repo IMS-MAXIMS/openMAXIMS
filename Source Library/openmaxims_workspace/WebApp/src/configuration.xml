@@ -5737,9 +5737,9 @@
 		<accessibleForm role="Admin" form="114175"  />
 	</accessibleForms>
 	<users>
-		<user user_id="1" login="admin" password="password1" hash="44rSFJQ9qtHWTBAvrsKd5K/p2j0=" realName="Administrator" theme="newblue"/>
+		<user user_id="1" login="user" password="pass" hash="nU4eI71bcnBGqeO0t9tXvY1u5oQ=" realName="Administrator" theme="newblue"/>
 	</users>
 	<userRoles>
-		<userRole user="admin" role="Admin" />
+		<userRole user="user" role="Admin" />
 	</userRoles>
 </configuration>

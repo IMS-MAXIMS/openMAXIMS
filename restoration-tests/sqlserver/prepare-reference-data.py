@@ -7,9 +7,8 @@ duplicate single-line INSERT statements. The latter are redundant duplicate
 rows in the historical reference-data file and otherwise violate the modern
 SQL Server primary key on ``core_appform_menuaction``. The historical default user block contains redacted placeholder credentials.
 The restoration seed makes the first user the standard local administrator
-(`admin` / `password1`) and gives the second historical row a distinct
-username. The same credentials are also present in the packaged XML login
-configuration.
+(`user` / `pass`) and gives the second historical row a distinct username.
+The same credentials are also present in the packaged XML login configuration.
 """
 
 from __future__ import annotations
@@ -30,10 +29,10 @@ def prepare(source: Path, destination: Path) -> tuple[int, int, int]:
     for line in lines:
         normalized = re.sub(r"\s+", " ", line.strip().lower())
         if normalized == "values(1,0,0, 'xxxxx','xxxxx', 'xxxxx', 'blue', 1)":
-            line = line.replace("'xxxxx','xxxxx', 'xxxxx'", "'admin','password1', 'password1'")
+            line = line.replace("'xxxxx','xxxxx', 'xxxxx'", "'user','pass', 'pass'")
             seeded_admin_user += 1
         elif normalized == "values(2,0,0, 'xxxxx','xxxxx', 'xxxxx', 'blue', 1)":
-            line = line.replace("'xxxxx','xxxxx', 'xxxxx'", "'admin2','password1', 'password1'")
+            line = line.replace("'xxxxx','xxxxx', 'xxxxx'", "'user2','pass', 'pass'")
             renamed_default_user += 1
         if normalized.startswith("insert into ") and " values " in normalized:
             if normalized in seen:
@@ -56,7 +55,7 @@ def main() -> int:
     removed, renamed_default_user, seeded_admin_user = prepare(args.input, args.output)
     print(f"removed exact duplicate single-line INSERTs: {removed}")
     print(f"renamed duplicate default username: {renamed_default_user}")
-    print(f"seeded standard admin user: {seeded_admin_user}")
+    print(f"seeded standard local user: {seeded_admin_user}")
     print(f"wrote: {args.output}")
     return 0
 
