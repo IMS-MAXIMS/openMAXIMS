@@ -28,7 +28,7 @@ After this commit, the reconstruction inventory is:
 
 - 71 recovered modules from the historical public fork;
 - 15 bundle-derived reconstructed modules (8 direct-boundary and 7 named-anchor);
-- 12 additional candidate regions still under review;
+- 4 unresolved modules still require reconstruction;
 - 4 unresolved modules: `designgrid.js`, `focusmanager.js`,
   `forminit-single.js`, and `minitest.js`.
 
