@@ -27,8 +27,7 @@ private extraction metadata remain outside this repository.
 After this commit, the reconstruction inventory is:
 
 - 71 recovered modules from the historical public fork;
-- 15 bundle-derived reconstructed modules (8 direct-boundary and 7 named-anchor);
-- 4 unresolved modules still require reconstruction;
+- 27 bundle-derived reconstructed modules (8 direct-boundary, 7 named-anchor, and 12 structural-responsibility);
 - 4 unresolved modules: `designgrid.js`, `focusmanager.js`,
   `forminit-single.js`, and `minitest.js`.
 
