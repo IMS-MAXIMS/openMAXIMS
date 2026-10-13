@@ -29,10 +29,10 @@ def prepare(source: Path, destination: Path) -> tuple[int, int, int]:
     for line in lines:
         normalized = re.sub(r"\s+", " ", line.strip().lower())
         if normalized == "values(1,0,0, 'xxxxx','xxxxx', 'xxxxx', 'blue', 1)":
-            line = line.replace("'xxxxx','xxxxx', 'xxxxx'", "'user','pass', 'pass'")
+            line = line.replace("'xxxxx','xxxxx', 'xxxxx'", "'user','nU4eI71bcnBGqeO0t9tXvY1u5oQ=', 'pass'")
             seeded_admin_user += 1
         elif normalized == "values(2,0,0, 'xxxxx','xxxxx', 'xxxxx', 'blue', 1)":
-            line = line.replace("'xxxxx','xxxxx', 'xxxxx'", "'user2','pass', 'pass'")
+            line = line.replace("'xxxxx','xxxxx', 'xxxxx'", "'user2','nU4eI71bcnBGqeO0t9tXvY1u5oQ=', 'pass'")
             renamed_default_user += 1
         if normalized.startswith("insert into ") and " values " in normalized:
             if normalized in seen:
