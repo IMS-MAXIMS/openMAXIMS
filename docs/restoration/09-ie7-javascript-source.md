@@ -13,10 +13,12 @@ historical source reference:
 - one recovered navigation mixin copied to the historical filename
   `navigation-collapse-mixin.js`.
 
-Twenty-eight additional modules have since been reconstructed from the
-historical packed bundle. They are documented separately as bundle-derived
-reconstructions, not recovered source. Four unresolved filenames still require
-reconstruction. The packed `jscn.js` and compressed output are unchanged.
+Eight additional modules have since been reconstructed from direct regions of
+the historical packed bundle. They are documented separately as
+bundle-derived reconstructions, not recovered source. The 27 bundle-derived candidate regions have since been promoted in
+separately documented reconstruction commits. Four unresolved filenames still
+require reconstruction. The
+packed `jscn.js` and compressed output are unchanged.
 
 The recovered source is intended to restore the original source layout and
 make provenance explicit. It is not a claim that every missing module or
