@@ -206,6 +206,10 @@ export TOMCAT_HOME="$HOME/openmaxims-tools/apache-tomcat-6.0.53"
 ./build-java8.sh openMAXIMSwarfile
 ```
 
+This command first rebuilds the active Standards Port JavaScript bundle from
+`WebApp/jsCN/source/build/files/`, then builds the Java WAR. It does not alter
+the preserved Legacy Bundle under `WebApp/packed-legacy/`.
+
 The WAR is written to:
 
 ```text

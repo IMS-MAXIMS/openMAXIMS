@@ -33,8 +33,12 @@ if ! command -v ant >/dev/null 2>&1; then
 fi
 
 # The source predates Maven/Gradle and uses TOMCAT_HOME from the environment.
-# Keep the workspace override outside the XML so the checkout remains portable.
+# Build the active Standards Port bundle before Ant packages WebApp/packed/**.
+# The Legacy Bundle under WebApp/packed-legacy/ is deliberately not touched.
 export PATH="$JAVA_HOME/bin:$PATH"
+OPENMAXIMS_WORKSPACE="$WORKSPACE_DIR" "$ROOT_DIR/build-javascript.sh"
+
+# Keep the workspace override outside the XML so the checkout remains portable.
 exec ant -f "$WORKSPACE_DIR/WebApp/WebAppBuild.xml" \
     -Dworkspace="$WORKSPACE_DIR/" \
     "$@"

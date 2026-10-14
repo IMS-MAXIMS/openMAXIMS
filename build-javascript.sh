@@ -4,7 +4,8 @@ set -eu
 # Build the active Standards Port bundle. The historical Legacy Bundle is
 # preserved separately under WebApp/packed-legacy/ and is never touched.
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
-WEBAPP="$ROOT/Source Library/openmaxims_workspace/WebApp"
+WORKSPACE="${OPENMAXIMS_WORKSPACE:-$ROOT/Source Library/openmaxims_workspace}"
+WEBAPP="$WORKSPACE/WebApp"
 BUILD="$WEBAPP/jsCN/source/build"
 ORDER="$BUILD/bin/standards-build-order.json"
 OUT="$WEBAPP/packed/jscn.js.gz"

@@ -15,16 +15,25 @@ WebApp/themes/new-blue/
     standalone New Blue Standards theme
 ```
 
-Rebuild the active JavaScript bundle with:
+Rebuild the active JavaScript bundle directly with:
 
 ```sh
 ./build-javascript.sh
 ```
 
-This concatenates the recorded Standards Port modules and writes only
-`WebApp/packed/jscn.js.gz`. The Java/Ant WAR build copies the existing active
-`WebApp/packed/` tree; it does not rebuild JavaScript and does not touch the
-legacy artifacts.
+The supported full build is:
+
+```sh
+./build-java8.sh openMAXIMSwarfile
+```
+
+`build-java8.sh` runs the JavaScript build first, then invokes Ant. This keeps
+the WAR's active bundle synchronized with the Standards Port source. It also
+honours `OPENMAXIMS_WORKSPACE` when building an external workspace.
+
+The JavaScript build concatenates the recorded Standards Port modules and
+writes only `WebApp/packed/jscn.js.gz`. It never writes
+`WebApp/packed-legacy/`.
 
 ## Preservation path
 
