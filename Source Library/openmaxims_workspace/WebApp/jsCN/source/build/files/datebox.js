@@ -49,7 +49,7 @@ proto.onchange = function(ev)
 	}
 	
 	
-	if(event.keyCode != 9) return;
+	if(Event.keyValue(Event.current()) != 9) return;
 	var jso = CNUtil.dispatchObject();
 	CNUtil.cancelEvent();
 //	CNFormManager._trace("jso._timeBox.select();");
@@ -58,7 +58,7 @@ proto.onchange = function(ev)
 
 proto.createElement = function(node, parentElement)
 {
-	var l = document.createElement("<table cellpadding=0 cellspacing=0>");
+	var l = Util.createElementFromHTML("<table cellpadding=0 cellspacing=0>");
 	if(parentElement) parentElement.appendChild(l);
 	
 	this.element = l;
@@ -78,23 +78,23 @@ proto.createElement = function(node, parentElement)
 	if(this._doTime) this._timeCell = tr.insertCell();
 	var td2 = tr.insertCell();	
 	
-	this._textBox = document.createElement("<input type=text>");	
+	this._textBox = Util.createElementFromHTML("<input type=text>");	
 	this._textBox.style.verticalAlign = "middle";
 	this._textBox.maxLength = this._doTime ? 16 : 10;	
 	//this._dateBox.appendChild(this._textBox);
 	
 	//Day	
-	this._dayBox = document.createElement("<input type=text maxlength=2 style='width: 15px; padding-left: 1px; '>");
+	this._dayBox = Util.createElementFromHTML("<input type=text maxlength=2 style='width: 15px; padding-left: 1px; '>");
 	this._dateBox.appendChild(this._dayBox);
 	this._dateBox.appendChild(document.createTextNode("/"));
 	
 	//Month
-	this._monthBox = document.createElement("<input type=text maxlength=2 style='width: 14px; '>");
+	this._monthBox = Util.createElementFromHTML("<input type=text maxlength=2 style='width: 14px; '>");
 	this._dateBox.appendChild(this._monthBox);
 	this._dateBox.appendChild(document.createTextNode("/"));
 	
 	//Year
-	this._yearBox = document.createElement("<input type=text maxlength=4 style='width: 28px; '>");
+	this._yearBox = Util.createElementFromHTML("<input type=text maxlength=4 style='width: 28px; '>");
 	this._dateBox.appendChild(this._yearBox);
 		
 	//this._dayBox._maxValue = 31;
@@ -111,7 +111,7 @@ proto.createElement = function(node, parentElement)
 		//this._dateBox.style.borderRight = "1px";	
 		//this._dateBox.style.borderRightStyle = "solid"
 		
-		this._textBox.attachEvent("onkeydown", this._textBox_onkeypress);
+		Event.add(this._textBox, "keydown", this, this._textBox_onkeypress);
 		
 		//this._timeCell.style.width = "38px";
 		
@@ -129,7 +129,7 @@ proto.createElement = function(node, parentElement)
 
 		this._timeBox.createElement(timeNode, this._timeCell);
 		this._timeBox.element.style.width = "100%";
-		this._timeBox.element.style.height = this._textBox.offsetHeight;
+		this._timeBox.element.style.height = this._textBox.offsetHeight + "px";
 		
 		//this._textBox.style.borderRight = "0px";				
 		
@@ -138,11 +138,11 @@ proto.createElement = function(node, parentElement)
 		
 		this._timeBox.onchange = this._timeBox_onchange;
 		
-//		this.element.attachEvent("ondeactivate", this._element_ondeactivate);
+//		Event.add(this.element, "blur", this, this._element_ondeactivate);
 	}
 
-	this.element.attachEvent("ondeactivate", this._element_ondeactivate);
-	this.element.attachEvent("onbeforedeactivate", this._element_onbeforedeactivate);
+	Event.add(this.element, "blur", this, this._element_ondeactivate);
+	Event.add(this.element, "focusout", this, this._element_onfocusout);
 	
 	var button;
 	
@@ -154,8 +154,8 @@ proto.createElement = function(node, parentElement)
 	}
 	else
 	{
-		button = document.createElement("<button>");
-		var img = document.createElement("<img>");
+		button = Util.createElementFromHTML("<button>");
+		var img = Util.createElementFromHTML("<img>");
 		img.src = CNFormManager.themeImagesPath + "calendar-2.gif";
 		button.appendChild(img);
 	}
@@ -166,37 +166,37 @@ proto.createElement = function(node, parentElement)
 	//button.tabIndex = -1;
 	this._button = button;
 	
-	button.attachEvent("onmouseenter", _CN_button_onmouseenter);
-	button.attachEvent("onmouseleave", _CN_button_onmouseleave);
-	button.attachEvent("onclick", this._button_onclick);
+	Event.add(button, "mouseenter", this, _CN_button_onmouseenter);
+	Event.add(button, "mouseleave", this, _CN_button_onmouseleave);
+	Event.add(button, "click", this, this._button_onclick);
 
-	this._textBox.attachEvent("onchange", this._textbox_onchange);
-	this._textBox.attachEvent("onbeforedeactivate", this._textbox_onbeforedeactivate);
-	this._textBox.attachEvent("onactivate", this._textbox_onactivate);
+	Event.add(this._textBox, "change", this, this._textbox_onchange);
+	Event.add(this._textBox, "focusout", this, this._textbox_onfocusout);
+	Event.add(this._textBox, "focus", this, this._textbox_onactivate);
 	
 	
-	this._dayBox.attachEvent("onkeydown", this._box_onkeyup);
-	this._monthBox.attachEvent("onkeydown", this._box_onkeyup);
-	this._yearBox.attachEvent("onkeydown", this._box_onkeyup);	
+	Event.add(this._dayBox, "keydown", this, this._box_onkeyup);
+	Event.add(this._monthBox, "keydown", this, this._box_onkeyup);
+	Event.add(this._yearBox, "keydown", this, this._box_onkeyup);	
 	
-	this._dayBox.attachEvent("onkeyup", this._box_onkeyup);
-	this._monthBox.attachEvent("onkeyup", this._box_onkeyup);
-	this._yearBox.attachEvent("onkeyup", this._box_onkeyup);
+	Event.add(this._dayBox, "keyup", this, this._box_onkeyup);
+	Event.add(this._monthBox, "keyup", this, this._box_onkeyup);
+	Event.add(this._yearBox, "keyup", this, this._box_onkeyup);
 	
-	this._dayBox.attachEvent("onchange", this._textbox_onchange);
-	this._dayBox.attachEvent("onbeforedeactivate", this._textbox_onbeforedeactivate);
-	this._dayBox.attachEvent("onactivate", this._textbox_onactivate);
-	this._dayBox.attachEvent("onfocus", this._box_onfocus);
+	Event.add(this._dayBox, "change", this, this._textbox_onchange);
+	Event.add(this._dayBox, "focusout", this, this._textbox_onfocusout);
+	Event.add(this._dayBox, "focus", this, this._textbox_onactivate);
+	Event.add(this._dayBox, "focus", this, this._box_onfocus);
 	
-	this._monthBox.attachEvent("onchange", this._textbox_onchange);
-	this._monthBox.attachEvent("onbeforedeactivate", this._textbox_onbeforedeactivate);
-	this._monthBox.attachEvent("onactivate", this._textbox_onactivate);
-	this._monthBox.attachEvent("onfocus", this._box_onfocus);
+	Event.add(this._monthBox, "change", this, this._textbox_onchange);
+	Event.add(this._monthBox, "focusout", this, this._textbox_onfocusout);
+	Event.add(this._monthBox, "focus", this, this._textbox_onactivate);
+	Event.add(this._monthBox, "focus", this, this._box_onfocus);
 	
-	this._yearBox.attachEvent("onchange", this._textbox_onchange);
-	this._yearBox.attachEvent("onbeforedeactivate", this._textbox_onbeforedeactivate);
-	this._yearBox.attachEvent("onactivate", this._textbox_onactivate);
-	this._yearBox.attachEvent("onfocus", this._box_onfocus);
+	Event.add(this._yearBox, "change", this, this._textbox_onchange);
+	Event.add(this._yearBox, "focusout", this, this._textbox_onfocusout);
+	Event.add(this._yearBox, "focus", this, this._textbox_onactivate);
+	Event.add(this._yearBox, "focus", this, this._box_onfocus);
 	
 	var attr = node.getAttribute("canBeEmpty");
 	if(attr == "true") this._canBeEmpty = true;
@@ -204,7 +204,7 @@ proto.createElement = function(node, parentElement)
 	attr = node.getAttribute("validationString");
 	if(attr) this._dateValidationString = this._timeValidationString = this.validationString = String(attr);
 
-	l.attachEvent("onkeypress", this._element_onkeypress);
+	Event.add(l, "keypress", this, this._element_onkeypress);
 
 	this.isBuilt = true;
 	
@@ -215,7 +215,7 @@ proto._element_onkeypress = function()
 {
 	var jso = Util.dispatchObject();
 	if(jso._disabled) return;
-	var code = event.keyCode;
+	var code = Event.keyValue(Event.current());
 	var charx = String.fromCharCode(code).toLowerCase();
 	if(charx == "t")
 	{
@@ -260,7 +260,7 @@ proto._element_onkeypress = function()
 // Private methods. =================================
 proto._tryNextField = function(box)
 {
-	if(box.value.length == box.maxLength && !box.createTextRange().isEqual(document.selection.createRange()))
+	if(box.value.length == box.maxLength && box.selectionStart == box.selectionEnd && box.selectionEnd == box.value.length)
 	{
 		this._moveToNextField(box);
 	} 
@@ -268,25 +268,24 @@ proto._tryNextField = function(box)
 
 proto._moveToNextField = function(box)
 {
-	var boxes = this.element.all.tags("input");
+	var boxes = this.element.getElementsByTagName("input");
 	if(box == boxes[0]) boxes[1].focus();
 	else if(box == boxes[1]) boxes[2].focus();
 }
 
 proto._moveToPreviousField = function(box)
 {
-	var boxes = this.element.all.tags("input");
+	var boxes = this.element.getElementsByTagName("input");
 	if(box == boxes[2]) boxes[1].focus();
 	else if(box == boxes[1]) boxes[0].focus();
 }
 
 proto._checkLeftRight = function(box, code)
 {
-	var selRange = document.selection.createRange();
-	var range = box.createTextRange();
+	
 	if(code == 37) // Left
 	{
-		if(range.compareEndPoints("StartToStart", selRange) == 0) 
+		if(box.selectionStart == 0 && box.selectionEnd == 0) 
 		{
 			this._moveToPreviousField(box);		
 			return true;
@@ -294,7 +293,7 @@ proto._checkLeftRight = function(box, code)
 	}
 	else if(code == 39) // Right
 	{
-		if(range.compareEndPoints("EndToEnd", selRange) == 0) 
+		if(box.selectionStart == box.value.length && box.selectionEnd == box.value.length) 
 		{
 			this._moveToNextField(box);
 			return true;
@@ -305,7 +304,7 @@ proto._checkLeftRight = function(box, code)
 
 proto._box_onfocus = function()
 {
-	var box = event.srcElement;
+	var box = CNUtil.eventTarget();
 	box.select();
 }
 
@@ -316,11 +315,11 @@ proto._box_onkeyup = function()
 proto.box_onkeyup = function()
 {
 	if(this._disabled) return;
-	var box = event.srcElement;
+	var box = CNUtil.eventTarget();
 	
-	var code = event.keyCode;
+	var code = Event.keyValue(Event.current());
 
-	if(event.type == "keydown")
+	if(Event.current().type == "keydown")
 	{
 		if(this._checkLeftRight(box, code)) return;
 		var value = parseInt(box.value, 10);
@@ -340,7 +339,7 @@ proto.box_onkeyup = function()
 		
 		if(code == 9 && this._inGrid) {
 			//	else if(box == boxes[1]) boxes[2].focus();		
-			var boxes = this.element.all.tags("input");
+			var boxes = this.element.getElementsByTagName("input");
 			if(box == boxes[2]) {
 				CN_grid.proxyTabKeyDown();
 				return;
@@ -361,14 +360,14 @@ proto.box_onkeyup = function()
 		return;
 	} 
 
-	if(event.type == "keydown") this._tryNextField(box);
+	if(Event.current().type == "keydown") this._tryNextField(box);
 }
 
 
 // Works in +time mode only.
 proto._textBox_onkeypress = function()
 {
-	if(event.keyCode != 9) return;
+	if(Event.keyValue(Event.current()) != 9) return;
 	var jso = CNUtil.dispatchObject();
 	CNUtil.cancelEvent();
 //	CNFormManager._trace("jso._timeBox.select();");
@@ -380,29 +379,29 @@ proto._element_ondeactivate = function()
 	var jso = CNUtil.dispatchObject();
 	if(jso instanceof CN_timebox) jso = jso._dateBox;
 	var calendar = CNPopupCalendar.defaultInstance;
-	if(calendar.element.contains(event.toElement)) { // FWUI-994 
-		Util.cancelEvent(event);
+	if(calendar.element.contains(Event.current().relatedTarget)) { // FWUI-994 
+		Util.cancelEvent(Event.current());
 		return;
 	}
-	if(jso.element.contains(event.toElement)) {
+	if(jso.element.contains(Event.current().relatedTarget)) {
 		return;
 	}
 	if(jso._isDirty) jso._fireChangedEvent();
-//	if(jso.onbeforedeactivate) jso.onbeforedeactivate();
+//	if(jso.onfocusout) jso.onfocusout();
 }
 
-proto._element_onbeforedeactivate = function() {
+proto._element_onfocusout = function() {
 	var jso = CNUtil.dispatchObject();
 	if(jso instanceof CN_timebox) jso = jso._dateBox;
 	var calendar = CNPopupCalendar.defaultInstance;
-	if(calendar.element.contains(event.toElement)) { // FWUI-994 
-		Util.cancelEvent(event);
+	if(calendar.element.contains(Event.current().relatedTarget)) { // FWUI-994 
+		Util.cancelEvent(Event.current());
 		return;
 	}
-	if(jso.element.contains(event.toElement)) {
+	if(jso.element.contains(Event.current().relatedTarget)) {
 		return;
 	}
-	if(jso.onbeforedeactivate) jso.onbeforedeactivate();
+	if(jso.onfocusout) jso.onfocusout();
 }
 
 proto._timeBox_onchange = function()
@@ -426,8 +425,8 @@ proto._timeBox_isValid = function()
 	if(!this._isValid(true))
 	{
 		jso._dateBox._timeCell.className = "timeCellError";	
-		//this._dateBox._textBox.runtimeStyle.borderColor = "red";
-		//this.element.runtimeStyle.borderColor = "red";
+		//this._dateBox._textBox.style.borderColor = "red";
+		//this.element.style.borderColor = "red";
 		return false;
 	}
 	
@@ -437,7 +436,7 @@ proto._timeBox_isValid = function()
 
 proto._fireChangedEvent = function()
 {
-	var ev = {srcElement: this.element};
+	var ev = {target: this.element};
 	if(this.onchange) this.onchange(ev);
 }
 
@@ -572,7 +571,7 @@ proto.storeData = function(xmldoc)
 
 proto._button_onclick = function()
 {
-	CNUtil.findJSObject(event.srcElement).button_onclick();
+	CNUtil.findJSObject(CNUtil.eventTarget()).button_onclick();
 }
 proto.button_onclick = function()
 {
@@ -581,10 +580,10 @@ proto.button_onclick = function()
 	calendar.__activeCN_datebox = this;
 	calendar.onxlresult = this._calendar_onxlresult;
 
-	var xy = CNUtil.findAbsolutePos(event.srcElement);
+	var xy = CNUtil.findAbsolutePos(CNUtil.eventTarget());
 	
 	var x = xy.x;
-	var y = xy.y + event.srcElement.offsetHeight;
+	var y = xy.y + CNUtil.eventTarget().offsetHeight;
 	if(this.isValid(true) && 
 		this._dayBox.value.replace(/\s+/, "") != "" && 
 			this._monthBox.value.replace(/\s+/, "") != "" && 
@@ -601,7 +600,7 @@ proto.button_onclick = function()
 	}
 	else calendar.show(null, null, x, y);
 	
-	event.cancelBubble = true;
+	CNUtil.cancelBubble();
 }
 
 proto._calendar_onxlresult = function()
@@ -618,13 +617,13 @@ proto.calendar_onxlresult = function(calendar)
 		this._monthBox.value = date[2];
 		this._yearBox.value = date[3];
 		
-		this._dayBox.runtimeStyle.borderColor = "";
-		this._monthBox.runtimeStyle.borderColor = "";
-		this._yearBox.runtimeStyle.borderColor = "";
+		this._dayBox.style.borderColor = "";
+		this._monthBox.style.borderColor = "";
+		this._yearBox.style.borderColor = "";
 	}
 
 	if(this._doTime) 
-		this._timeBox.element.runtimeStyle.borderColor = "";
+		this._timeBox.element.style.borderColor = "";
 	
 	this._isDirty = true;
 	this._valid = true;
@@ -638,7 +637,7 @@ proto.calendar_onxlresult = function(calendar)
 
 proto._textbox_onchange = function()
 {
-	var jsObject = CNUtil.findJSObject(event.srcElement)
+	var jsObject = CNUtil.findJSObject(CNUtil.eventTarget())
 	if(jsObject instanceof CN_timebox) jsObject = jsObject._dateBox;
 	jsObject._isDirty = true;
 	if(jsObject._focusInside) 
@@ -651,15 +650,15 @@ proto._textbox_onchange = function()
 //	}
 }
 
-proto._textbox_onbeforedeactivate = function()
+proto._textbox_onfocusout = function()
 {
-	CNUtil.findJSObject(event.srcElement).textbox_onbeforedeactivate();	
+	CNUtil.findJSObject(CNUtil.eventTarget()).textbox_onfocusout();	
 }
-proto.textbox_onbeforedeactivate = function()
+proto.textbox_onfocusout = function()
 {
 	if(this._doTime)
 	{
-		this._focusInside = event.toElement != null && this.element.contains(event.toElement);
+		this._focusInside = Event.current().relatedTarget != null && this.element.contains(Event.current().relatedTarget);
 	}
 	
 	if(this._disabled) return;
@@ -675,7 +674,7 @@ proto._textbox_onactivate = function()
 		return;
 	}
 
-	//Reset runtimeStyle style to default
+	// Reset the date box style to default
 	jsObject._dateBox.className = "dateBox";
 	if(jsObject._doTime)
 	{	
@@ -872,20 +871,20 @@ proto._set_disabled = function()
 	}
 	else
 	{		
-		this._dayBox.runtimeStyle.borderColor = this._disabled ? this.element.currentStyle["xl--disabled-border-color"] : "";
-		this._dayBox.runtimeStyle.backgroundColor = this._disabled ? this.element.currentStyle["xl--disabled-background"] : ""		
-		this._monthBox.runtimeStyle.borderColor = this._disabled ? this.element.currentStyle["xl--disabled-border-color"] : "";
-		this._monthBox.runtimeStyle.backgroundColor = this._disabled ? this.element.currentStyle["xl--disabled-background"] : ""		
-		this._yearBox.runtimeStyle.borderColor = this._disabled ? this.element.currentStyle["xl--disabled-border-color"] : "";
-		this._yearBox.runtimeStyle.backgroundColor = this._disabled ? this.element.currentStyle["xl--disabled-background"] : ""				
-		this._dateBox.runtimeStyle.borderColor = this._disabled ? this.element.currentStyle["xl--disabled-border-color"] : "";
-		this._dateBox.runtimeStyle.backgroundColor = this._disabled ? this.element.currentStyle["xl--disabled-background"] : ""		
+		this._dayBox.style.borderColor = this._disabled ? Util.getStyle(this.element, "xl--disabled-border-color") : "";
+		this._dayBox.style.backgroundColor = this._disabled ? Util.getStyle(this.element, "xl--disabled-background") : ""		
+		this._monthBox.style.borderColor = this._disabled ? Util.getStyle(this.element, "xl--disabled-border-color") : "";
+		this._monthBox.style.backgroundColor = this._disabled ? Util.getStyle(this.element, "xl--disabled-background") : ""		
+		this._yearBox.style.borderColor = this._disabled ? Util.getStyle(this.element, "xl--disabled-border-color") : "";
+		this._yearBox.style.backgroundColor = this._disabled ? Util.getStyle(this.element, "xl--disabled-background") : ""				
+		this._dateBox.style.borderColor = this._disabled ? Util.getStyle(this.element, "xl--disabled-border-color") : "";
+		this._dateBox.style.backgroundColor = this._disabled ? Util.getStyle(this.element, "xl--disabled-background") : ""		
 		if(this._doTime)
 		{
-			this._timeCell.runtimeStyle.borderColor = this._disabled ? this.element.currentStyle["xl--disabled-border-color"] : "";
-			this._timeCell.runtimeStyle.backgroundColor = this._disabled ? this.element.currentStyle["xl--disabled-background"] : ""		
+			this._timeCell.style.borderColor = this._disabled ? Util.getStyle(this.element, "xl--disabled-border-color") : "";
+			this._timeCell.style.backgroundColor = this._disabled ? Util.getStyle(this.element, "xl--disabled-background") : ""		
 			this._timeBox.set_disabled(this._disabled);
-			this._timeBox.element.runtimeStyle.border = "0px";			
+			this._timeBox.element.style.border = "0px";			
 		}
 	}
 	if(this._disabled) {
@@ -966,6 +965,6 @@ proto.focus = function()
 	this._dayBox.focus();
 	//var textBox = this._textBox;
 }
-proto.onbeforedeactivate = function(){}
+proto.onfocusout = function(){}
 proto.onkeypress = function(){}
 

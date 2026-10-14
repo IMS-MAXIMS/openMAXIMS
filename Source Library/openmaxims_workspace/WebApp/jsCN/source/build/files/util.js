@@ -2,16 +2,42 @@
 	v. 2.0.1
 	+ handleEvent based event handlers replacement for addEl.
 */
-var $ = document.getElementById;
+var $ = function(id) { return document.getElementById(id); };
 
 var Util =  
 {
-	isIE: true,
 	_classRE: [],
 	writeAssertsToDebugLog: false,
 		
 	nop: function(){},
+
+	_unsupportedFeatures: [],
+	reportUnsupported: function(moduleName, feature, detail) {
+		var item = {module: String(moduleName), feature: String(feature), detail: detail ? String(detail) : ""};
+		for(var i = 0; i < this._unsupportedFeatures.length; i++) {
+			var prior = this._unsupportedFeatures[i];
+			if(prior.module == item.module && prior.feature == item.feature) return item;
+		}
+		this._unsupportedFeatures.push(item);
+		if(typeof console != "undefined" && console.warn) console.warn("Client Framework unsupported feature: " + item.module + " / " + item.feature + (item.detail ? " - " + item.detail : ""));
+		return item;
+	},
 	
+	parseBoolean: function(value) {
+		if(typeof value == "boolean") return value;
+		if(value === null || value === undefined) return false;
+		if(typeof value == "number") return value != 0;
+		var normalized = String(value).replace(/^\s+|\s+$/g, "").toLowerCase();
+		if(normalized == "true" || normalized == "1") return true;
+		if(normalized == "false" || normalized == "0" || normalized == "") return false;
+		return Boolean(value);
+	},
+
+	resolveGlobal: function(name) {
+		if(typeof window == "undefined" || !window) return null;
+		return window[String(name)];
+	},
+
 	assert: function(funcOrStr, context) {
 		if(typeof funcOrStr == "string") {
 			var msg = "ASSERT: " + funcOrStr;
@@ -32,7 +58,7 @@ var Util =
 
 	findElement: function(l)
 	{
-		while(l != null && !l.jsObject) l = l.parentElement;
+		while(l != null && !l.jsObject) l = l.parentElement || l.parentNode;
 		return l;
 	},
 	
@@ -46,26 +72,47 @@ var Util =
 	handleEvent: function(l, evName, prefix)
 	{
 		var handler = Util.dispatcher((prefix ? prefix : "") + evName);
-		l.attachEvent(evName, handler);
-		return handler;
+		var eventName = evName.indexOf("on") == 0 ? evName.substr(2) : evName;
+		var listener = function(ev) {
+			var previousEvent = Event._currentEvent;
+			Event._currentEvent = Event.normalize(ev);
+			try {
+				return handler.call(l, ev);
+			} finally {
+				Event._currentEvent = previousEvent;
+			}
+		};
+		Event.nativeAdd(l, eventName, listener);
+		return listener;
 	},
 		
 	dispatcher: function(evName)
 	{
-		return function()
+		return function(nativeEvent)
 		{
-			var jso = Util.dispatchObject();
-			if(jso) 
+			var jso = Util.dispatchObject(nativeEvent);
+			if(jso)
 			{
-				var ev = jso[evName];
-				if(ev) ev.apply(jso);
+				var handler = jso[evName];
+				if(handler) return handler.call(jso, nativeEvent);
 			}
-		}
+		};
 	},
 	
-	dispatchObject: function()
+	dispatchObject: function(nativeEvent)
 	{
-		return Util.findJSObject(event.srcElement);
+		var ev = nativeEvent;
+		if(!ev && typeof Event != "undefined" && Event.current) ev = Event.current();
+		if(!ev) return null;
+		var target = ev.target;
+		return Util.findJSObject(target);
+	},
+
+	eventTarget: function(nativeEvent)
+	{
+		var ev = nativeEvent;
+		if(!ev && typeof Event != "undefined" && Event.current) ev = Event.current();
+		return ev ? (ev.target) : null;
 	},
 
 	dispatchByClass: function(clazz)
@@ -74,7 +121,7 @@ var Util =
 		while(js && js.constructor != clazz)
 		{
 			// Try to seek deeper.
-			js = Util.findJSObject(js.element.parentElement)
+			js = Util.findJSObject(js.element.parentElement || js.element.parentNode)
 		}
 		if(js && js.constructor == clazz) return js;
 		return null;
@@ -83,7 +130,7 @@ var Util =
 	// TODO: rename to findByTag.
 	findTag: function(l, tag)
 	{
-		while(l != null && l.tagName != tag) l = l.parentElement;
+		while(l != null && l.tagName != tag) l = l.parentElement || l.parentNode;
 		return l;
 	},
 	
@@ -125,6 +172,28 @@ var Util =
 	toggleClass: function(l, className, toggle) {
 		toggle ? this.addClass(l, className) : this.removeClass(l, className);
 	},
+
+	// Controls in the server-provided dark header need the theme's light
+	// foreground colour.  Use viewport geometry rather than offsetParent
+	// chains: controls may be nested in containers and standards browsers do
+	// not reproduce IE's offsetParent quirks.
+	isInDarkHeader: function(element, formManager) {
+		if(!element || !formManager || !formManager._darkHeight ||
+			!formManager._formPlaceholder || !element.getBoundingClientRect ||
+			!formManager._formPlaceholder.getBoundingClientRect) return false;
+
+		// The theme owns the foreground colour; server darkHeight remains the
+		// boundary for the partial dark filter surface.
+		var formRect = formManager._formPlaceholder.getBoundingClientRect();
+		var elementRect = element.getBoundingClientRect();
+		return elementRect.top < formRect.top + formManager._darkHeight;
+	},
+
+	setDarkHeaderControlClass: function(element, formManager) {
+		if(!element) return;
+		this.toggleClass(element, "control_on_darkHeader",
+			this.isInDarkHeader(element, formManager));
+	},
 	
 	findAbsolutePos: function(el, offsetEl, checkRelative, checkScroll)
 	{
@@ -138,7 +207,10 @@ var Util =
 		
 		while(el != null && el != offsetEl)
 		{
-			if(checkRelative && el.currentStyle.position != "static") break;
+			if(checkRelative) {
+				var computed = this.getComputedStyle(el);
+				if(computed && computed.position != "static") break;
+			}
 			x += el.offsetLeft + el.clientLeft; 
 			y += el.offsetTop + el.clientTop; 
 			el = el.offsetParent;	
@@ -154,8 +226,10 @@ var Util =
 	calcElementOffset: function(l)
 	{
 		var xy = Util.findAbsolutePos(l, null, false);
-		xy.x -= top.document.body.scrollLeft;
-		xy.y -= top.document.body.scrollTop;
+		var ownerWindow = (l.ownerDocument && l.ownerDocument.defaultView) || window;
+		var body = ownerWindow.document.body;
+		xy.x -= body.scrollLeft || 0;
+		xy.y -= body.scrollTop || 0;
 		return xy;
 	},
 	
@@ -180,20 +254,27 @@ var Util =
 		if(width) l.style.width = width; 
 		if(height) l.style.height = height;
 	},
+
+	getStyle: function(element, property)
+	{
+		if(!element) return "";
+		if(element.style && element.style[property]) return element.style[property];
+		var computed = this.getComputedStyle(element);
+		return (typeof computed.getPropertyValue == "function" ? computed.getPropertyValue(property) : computed[property]) || computed[property] || "";
+	},
 	
 	cancelEvent: function(ev)
 	{
-		if(!ev) ev = event;
-		ev.cancelBubble = true;
-		ev.returnValue = false;
-
-//		CNFormManager._trace("event " + event.type + " canceled by " + Util.cancelEvent.caller);
+		return Event.cancel(ev);
 	},
 	
 	cancelBubble: function(ev)
 	{
-		if(!ev) ev = event;
-		ev.cancelBubble = true;
+		var current = Event.normalize(ev) || Event.current();
+		if(current) {
+			if(current.stopPropagation) current.stopPropagation();
+			if(current.stopPropagation) current.stopPropagation();
+		}
 	},
 
 	// TODO: Move to objectmodel.js
@@ -228,12 +309,111 @@ var Util =
 		}
 	},
 
+	findById: function(root, id)
+	{
+		if(!root) return null;
+
+		// Tab buttons and their content containers deliberately share an id in
+		// the historical runtime. A standards querySelector returns the first
+		// match, which is the tab button, and then applies container visibility
+		// to the wrong element. Prefer the semantic runtime element.
+		var first = root.id == id ? root : null;
+		if(first && (first.isContainer || first.isControl)) return first;
+		var nodes = root.getElementsByTagName ? root.getElementsByTagName("*") : [];
+		for(var i = 0; i < nodes.length; i++)
+		{
+			if(nodes[i].id == id && (nodes[i].isContainer || nodes[i].isControl)) return nodes[i];
+			if(!first && nodes[i].id == id) first = nodes[i];
+		}
+		if(first) return first;
+
+		var children = root.children || root.childNodes || [];
+		for(var j = 0; j < children.length; j++)
+		{
+			var found = this.findById(children[j], id);
+			if(found) return found;
+		}
+		return null;
+	},
+
+	getComputedStyle: function(element)
+	{
+		if(!element) return {};
+		if(typeof window == "undefined" || typeof window.getComputedStyle != "function") throw new Error("Util: standard getComputedStyle is required");
+		return window.getComputedStyle(element, null);
+	},
+
+	removeElement: function(element)
+	{
+		if(!element) return;
+		if(element.remove) { element.remove(); return; }
+		if(element.parentNode) element.parentNode.removeChild(element);
+	},
+
+	createElementFromHTML: function(markup, ownerDocument)
+	{
+		var source = String(markup);
+		var match = /^\s*<([A-Za-z0-9]+)/.exec(source);
+		if(!match) throw new Error("Invalid HTML element markup");
+		var tagName = match[1].toLowerCase();
+		var wrapperTag = (tagName == "tr" || tagName == "td" || tagName == "th" || tagName == "tbody" || tagName == "thead" || tagName == "tfoot") ? "table" : "div";
+		var targetDocument = ownerDocument || document;
+		var wrapper = targetDocument.createElement(wrapperTag);
+		if(tagName == "td" || tagName == "th") wrapper.innerHTML = "<tbody><tr>" + source + "</tr></tbody>";
+		else if(tagName == "tr") wrapper.innerHTML = "<tbody>" + source + "</tbody>";
+		else wrapper.innerHTML = source;
+		var matches = wrapper.getElementsByTagName ? wrapper.getElementsByTagName(tagName) : [];
+		return matches.length ? matches[0] : (wrapper.firstElementChild || wrapper.firstChild);
+	},
+
+	createElement: function(tagName, className, attributes)
+	{
+		var element = document.createElement(tagName);
+		if(className) element.className = className;
+		if(attributes)
+		{
+			for(var name in attributes)
+			{
+				if(!attributes.hasOwnProperty(name)) continue;
+				var value = attributes[name];
+				try { element[name] = value; } catch(ignore) {}
+				if(element.setAttribute) element.setAttribute(name, value);
+			}
+		}
+		return element;
+	},
+
+	appendHTML: function(parent, markup, ownerDocument)
+	{
+		if(!parent) return null;
+		var source = String(markup);
+		var targetDocument = ownerDocument || parent.ownerDocument || document;
+		var match = /^\s*<([A-Za-z0-9]+)/.exec(source);
+		if(!match) throw new Error("Invalid HTML element markup");
+		var tagName = match[1].toLowerCase();
+		var wrapperTag = (tagName == "tr" || tagName == "td" || tagName == "th" || tagName == "tbody" || tagName == "thead" || tagName == "tfoot") ? "table" : "div";
+		var wrapper = targetDocument.createElement(wrapperTag);
+		if(tagName == "td" || tagName == "th") wrapper.innerHTML = "<tbody><tr>" + source + "</tr></tbody>";
+		else if(tagName == "tr") wrapper.innerHTML = "<tbody>" + source + "</tbody>";
+		else wrapper.innerHTML = source;
+
+		var first = null;
+		while(wrapper.firstChild)
+		{
+			var child = wrapper.firstChild;
+			if(!first && child.nodeType == 1) first = child;
+			parent.appendChild(child);
+		}
+		return first;
+	},
+
 	// Toolbar stuff.
 	// TODO: mocv
 	createToolbar: function(parentElement)
 	{
-		var toolbar = document.createElement("<div class=cnToolbar>");
-		toolbar.unselectable = "on";
+		var toolbar = document.createElement("div");
+		toolbar.className = "cnToolbar";
+		toolbar.style.userSelect = "none";
 		parentElement.appendChild(toolbar);
 		return toolbar;
 	},
@@ -242,7 +422,7 @@ var Util =
 	{
 		var b = document.createElement("span");
 		parentElement.appendChild(b);
-		b.unselectable = "on";
+		b.style.userSelect = "none";
 			
 		b.isButton = true;
 		b.className = "button_normal";
@@ -251,28 +431,28 @@ var Util =
 		b.title = caption;	
 		b.param = param;
 		b.state = "normal";
-		b.attachEvent("onmouseenter", Util._button_onmouseenter);
-		b.attachEvent("onmouseleave", Util._button_onmouseleave);
-		b.attachEvent("onmousedown", Util._button_onmousedown);
-		b.attachEvent("ondblclick", Util._button_onmouseup);
-		b.attachEvent("onmouseup", Util._button_onmouseup);
-		b.attachEvent("ondragstart", Util.cancelEvent);
-		b.attachEvent("onselectstart", Util.cancelEvent);
+		Event.add(b, "mouseenter", this, this._button_onmouseenter);
+		Event.add(b, "mouseleave", this, this._button_onmouseleave);
+		Event.add(b, "mousedown", this, this._button_onmousedown);
+		Event.add(b, "dblclick", this, this._button_onmouseup);
+		Event.add(b, "mouseup", this, this._button_onmouseup);
+		Event.add(b, "dragstart", this, this.cancelEvent);
 		b.lastClickTime = 0;
 		
 		
 		var img = document.createElement("img");
 		b.appendChild(img);
 		img.src = imgSrc;		
-		img.unselectable = "on";
+		img.style.userSelect = "none";
 	
 		return b;
 	},
 	
 	addSeparator: function(parentElement)
 	{
-		var span = document.createElement("<span class=cnToolbarSeparator>");
-		span.unselectable = "on";
+		var span = document.createElement("span");
+		span.className = "cnToolbarSeparator";
+		span.style.userSelect = "none";
 		parentElement.appendChild(span);
 		return span;
 	},
@@ -285,9 +465,9 @@ var Util =
 		}, 0);
 	},
 	
-	_button_onmouseenter:  function()
+	_button_onmouseenter:  function(ev)
 	{
-		var b = event.srcElement;
+		var b = ev && (ev.target);
 		
 		if(b._disabled || b.parentElement._disabled) return;
 	
@@ -295,9 +475,9 @@ var Util =
 		else if(b.state == "pushed") Util.setButtonState(b, "pushedHover");
 	},
 
-	_button_onmouseleave: function()
+	_button_onmouseleave: function(ev)
 	{
-		var b = event.srcElement;
+		var b = ev && (ev.target);
 
 		if(b._disabled || b.parentElement._disabled) return;
 		
@@ -305,9 +485,9 @@ var Util =
 		else if(b.state == "pushedHover" || b.state == "pushedDown") Util.setButtonState(b, "pushed");
 	},
 
-	_button_onmousedown: function()
+	_button_onmousedown: function(ev)
 	{
-		var b = event.srcElement;	
+		var b = ev && (ev.target);	
 		while(b && !b.isButton) b = b.parentElement;
 		
 		if(b._disabled || b.parentElement._disabled) return;
@@ -323,9 +503,9 @@ var Util =
 		}
 	},
 	
-	_button_onmouseup: function()
+	_button_onmouseup: function(ev)
 	{
-		var b = event.srcElement;
+		var b = ev && (ev.target);
 		while(b && !b.isButton) b = b.parentElement;
 		if(!b) return;
 		
@@ -339,7 +519,7 @@ var Util =
 			return;
 		}
 		
-		var jsObject = Util.findJSObject(event.srcElement);
+		var jsObject = Util.findJSObject(ev && (ev.target));
 
 		if(b._group && jsObject._groupButtons)
 		{
@@ -375,7 +555,8 @@ var Util =
 		var count = children.length;
 		for(var i = count - 1; i >= 0; i--)
 		{
-			children[i].removeNode(true);
+			if(typeof cont.removeChild != "function") throw new Error("Util: standard removeChild is required");
+			cont.removeChild(children[i]);
 		}
 	},
 
@@ -402,11 +583,12 @@ var Util =
 		var b = xy.y + popup.offsetHeight;
 		var r = xy.x + popup.offsetWidth;
 
-		if(r > popup.document.body.clientWidth) 
-			popup.style.pixelLeft = popup.offsetLeft - r + popup.document.body.clientWidth - 4; // 4 = shadowWidth
+		var body = (popup.ownerDocument || document).body;
+		if(r > body.clientWidth)
+			popup.style.left = (popup.offsetLeft - r + body.clientWidth - 4) + "px"; // 4 = shadowWidth
 
-		if(b > popup.document.body.clientHeight)
-			popup.style.pixelTop = popup.offsetTop - b + popup.document.body.clientHeight - 4;
+		if(b > body.clientHeight)
+			popup.style.top = (popup.offsetTop - b + body.clientHeight - 4) + "px";
 	},
 	
 	wrapIntoNode: function(ar)
@@ -429,36 +611,6 @@ var Util =
 	{
 		this[name] = value;
 	},
-	replacePNG: function(root)
-	{
-		var imgs = root.getElementsByTagName("img");
-		var count = imgs.length;
-		for(var i = count - 1; i >= 0 ; i--)
-		{
-			var img = imgs[i];
-			if(img.src.indexOf(".png") != -1 && img.getAttribute("replacePNG") != "no")
-			{
-				if(!img.currentStyle.filter) {
-					this.replacePNGImage(img);
-				}
-			}
-		}
-
-
-	},
-
-	replacePNGImage: function(img, width, height) {
-		var span = document.createElement("span");
-		span.className = img.className;
-		var style = span.style;
-		style.cssText = img.style.cssText;
-		style.width = width || img.currentStyle.width;
-		style.height = height || img.currentStyle.height;
-		style.overflow = "hidden";
-		style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale, src='" + img.src + "')";
-		img.parentNode.replaceChild(span, img);
-	},
-	
 	getCaller: function(obj, caller)
 	{
 		for(var i in obj)
@@ -505,6 +657,123 @@ var Util =
 			json.push(this.xmlNodeToJson(node));
 		}
 		return json;
+	},
+
+	createXMLHttpRequest: function()
+	{
+		if(typeof XMLHttpRequest != "undefined") return new XMLHttpRequest();
+		if(typeof window != "undefined" && window.XMLHttpRequest) return new window.XMLHttpRequest();
+		throw new Error("Util: standard XMLHttpRequest is required");
+	},
+
+	createXMLDocument: function()
+	{
+				if(typeof document != "undefined" && document.implementation && document.implementation.createDocument)
+		{
+			return document.implementation.createDocument("", "", null);
+		}
+		throw new Error("Util: standard DOMImplementation.createDocument is required");
+	},
+
+	parseXML: function(xml)
+	{
+				if(typeof DOMParser != "undefined") return new DOMParser().parseFromString(String(xml), "text/xml");
+		if(typeof window != "undefined" && window.DOMParser) return new window.DOMParser().parseFromString(String(xml), "text/xml");
+		throw new Error("Util: standard DOMParser is required");
+	},
+
+	xmlText: function(node)
+	{
+		return node == null || node.textContent == null ? "" : String(node.textContent);
+	},
+
+	xmlInnerString: function(node)
+	{
+		if(node == null) return "";
+		var result = "";
+		for(var i = 0; i < node.childNodes.length; i++)
+		{
+			result += this.xmlString(node.childNodes[i]);
+		}
+		return result;
+	},
+
+	xmlString: function(node)
+	{
+		if(node == null) return "";
+		if(typeof XMLSerializer != "undefined") return new XMLSerializer().serializeToString(node);
+		if(typeof window != "undefined" && window.XMLSerializer) return new window.XMLSerializer().serializeToString(node);
+		throw new Error("Util: standard XMLSerializer is required");
+	},
+
+	xmlSelectNodes: function(node, path)
+	{
+		if(!node) return [];
+		var doc = node.nodeType == 9 ? node : node.ownerDocument;
+		var w = typeof window != "undefined" ? window : null;
+		var XPathResultType = (w && w.XPathResult) || (typeof XPathResult != "undefined" ? XPathResult : null);
+		// XPath implementations reject DocumentFragment as a context node in
+		// standards browsers. Use the standards DOM traversal below for
+		// fragments instead of relying on a browser-specific XML extension.
+		if(node.nodeType != 11 && doc && doc.evaluate && XPathResultType)
+		{
+			try
+			{
+				var result = doc.evaluate(path, node, null, XPathResultType.ORDERED_NODE_SNAPSHOT_TYPE, null);
+				var nodes = [];
+				for(var i = 0; i < result.snapshotLength; i++) nodes.push(result.snapshotItem(i));
+				return nodes;
+			}
+			catch(ignore)
+			{
+				// Fall through to the standards DOM traversal for unsupported
+				// XPath context nodes or expressions.
+			}
+		}
+		// DOM traversal supports simple child paths when XPath is unavailable.
+		var current = [node];
+		var parts = String(path).replace(/^\.\//, "").split("/");
+		for(var p = 0; p < parts.length; p++)
+		{
+			var part = parts[p];
+			if(!part || part == ".") continue;
+			var match = /^([^\[]+)(?:\[@([^=]+)=(["'])(.*?)\3\])?$/.exec(part);
+			if(!match) return [];
+			var tag = match[1], attr = match[2], value = match[4], next = [];
+			for(var c = 0; c < current.length; c++)
+			{
+				var children = current[c].children || current[c].childNodes || [];
+				for(var j = 0; j < children.length; j++)
+				{
+					var child = children[j];
+					if(child.nodeType != 1 || (tag != "*" && child.tagName != tag)) continue;
+					if(attr && child.getAttribute(attr) != value) continue;
+					next.push(child);
+				}
+			}
+			current = next;
+		}
+		return current;
+	},
+
+	xmlSelectSingleNode: function(node, path)
+	{
+		var nodes = this.xmlSelectNodes(node, path);
+		return nodes.length ? nodes[0] : null;
+	},
+
+
+	xmlChildElements: function(node, tagName)
+	{
+		var children = node && (node.children || node.childNodes);
+		var result = [];
+		if(!children) return result;
+		for(var i = 0; i < children.length; i++)
+		{
+			var child = children[i];
+			if(child.nodeType == 1 && (!tagName || child.tagName == tagName)) result.push(child);
+		}
+		return result;
 	},
 
 	xmlAttributesToJson: function(node) {
@@ -746,15 +1015,5 @@ var Util =
 Util.chop = Util.trim;
 Util.clone = Util.cloneObject;
 
-Util.IE6 = navigator.appVersion.indexOf("MSIE 6") >= 0;
-Util.IE7 = navigator.appVersion.indexOf("MSIE 7") >= 0;
-Util.IE8 = navigator.appVersion.indexOf("MSIE 8") >= 0;
-
-if(!Util.IE6) {
-	Util.replacePNGImage = Util.nop;
-	Util.replacePNG = Util.nop;
-}
-
 var CNUtil = Util;
 Util.getXY = Util.findAbsolutePos;
-

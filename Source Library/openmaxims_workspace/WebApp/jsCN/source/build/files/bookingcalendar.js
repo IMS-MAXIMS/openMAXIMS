@@ -85,6 +85,7 @@ proto.unload = function()
 	this._combobox.element.jsObject = null;
 	this._combobox.element = null;
 	this._combobox = null;
+	this._controls = null;
 }
 
 proto.loadData = function(node)
@@ -136,7 +137,7 @@ proto.loadData = function(node)
 	if(attr) this.noSlotsDaysAr = this.parseToHash(attr);
 	else if(attr === "") this.noSlotsDaysAr = [];
 
-	var all = this.element.all;	
+	var all = this._controls;
 	all.yearSelect.value = this._selectedYear;
 
 	var combobox = all.monthTD.children[0].jsObject;
@@ -149,7 +150,7 @@ proto.loadData = function(node)
 		Util.removeClass(this.table, "checksDisabled");
 	}
 	
-	this._loadDays(node.selectNodes("day"));
+	this._loadDays(Util.xmlSelectNodes(node, "day"));
 
 	this.fillDays(this._selectedMonth, this._selectedYear);
 
@@ -177,22 +178,24 @@ proto.buildElement = function(node)
 	
 	this.template = this.createTemplate();
 
-	var html = "<table unselectable=on width=100% height=100% border=0 cellpadding=0 cellspacing=0>\
+	var html = "<table width=100% height=100% border=0 cellpadding=0 cellspacing=0>\
 					<tr id=topControls><td width=1%><button id=prevMonthButton class=arrows10>3</button></td>\
 					<td width=32%>&nbsp;</td>\
 					<td align=right width=100 nowrap id=monthTD></td>\
 					<td width=5%>&nbsp;</td>\
 					<td width=100 align=right><input type=text readonly=true maxlength=4 id=yearSelect></td>\
 					<td><table border=0 cellpadding=0 cellspacing=0>\
-					<tr><td unselectable=on><button unselectable=on id=yearUpButton class=arrows7>5</button></td></tr>\
-					<tr><td><button unselectable=on id=yearDownButton class=arrows7>6</button></td></tr></table></td>\
+					<tr><td><button id=yearUpButton class=arrows7>5</button></td></tr>\
+					<tr><td><button id=yearDownButton class=arrows7>6</button></td></tr></table></td>\
 					<td width=35%>&nbsp;</td>\
 					</td><td width=1% align=right><button id=nextMonthButton class=arrows10>4</button></td></tr>\
 					<tr><td colspan=8 height=100% id=contentTD></td></tr>\
 					</table>";
 	
-	this.element.insertAdjacentHTML("beforeEnd", html);
-	var all = this.element.all;
+	Util.appendHTML(this.element, html);
+	var all = this._controls = {};
+	var ids = ["yearSelect", "monthTD", "prevMonthButton", "nextMonthButton", "yearUpButton", "yearDownButton", "contentTD"];
+	for(var idIx = 0; idIx < ids.length; idIx++) all[ids[idIx]] = this.element.querySelector("#" + ids[idIx]);
 
 	var combobox = this._combobox = new CN_combobox();
 	var options = [];
@@ -207,47 +210,47 @@ proto.buildElement = function(node)
 
 	combobox.onchange = this._monthSelect_onchange;
 	
-	all.prevMonthButton.onclick = 
-	all.prevMonthButton.ondblclick = this._prevMonthButton_onclick;
+	Event.add(all.prevMonthButton, "click", this, this._prevMonthButton_onclick);
+	Event.add(all.prevMonthButton, "dblclick", this, this._prevMonthButton_onclick);
 
-	all.nextMonthButton.onclick = 
-	all.nextMonthButton.ondblclick = this._nextMonthButton_onclick;
+	Event.add(all.nextMonthButton, "click", this, this._nextMonthButton_onclick);
+	Event.add(all.nextMonthButton, "dblclick", this, this._nextMonthButton_onclick);
 
-	all.yearUpButton.onclick = 
-	all.yearUpButton.ondblclick = this._yearUpButton_onclick;
+	Event.add(all.yearUpButton, "click", this, this._yearUpButton_onclick);
+	Event.add(all.yearUpButton, "dblclick", this, this._yearUpButton_onclick);
 	
-	all.yearDownButton.onclick = 
-	all.yearDownButton.ondblclick = this._yearDownButton_onclick;
+	Event.add(all.yearDownButton, "click", this, this._yearDownButton_onclick);
+	Event.add(all.yearDownButton, "dblclick", this, this._yearDownButton_onclick);
 	
 	if(CNFormManager.vista) VistaSupport.attachToTextBox(all.yearSelect);	
 
-	this.table = document.createElement("<table width=100% height=100% unselectable=on id=daysTable border=1 frame=void cellpadding=0 cellspacing=0>");
+	this.table = Util.createElementFromHTML("<table width=100% height=100% id=daysTable border=1 frame=void cellpadding=0 cellspacing=0></table>");
 	this.header = this.table.insertRow();
 	this.header.id = "header";
 
 	for(var td = 0; td < 7; td++)
 	{
 		var cell = this.header.insertCell();
-		cell.unselectable = true;
-		var span = document.createElement("<span unselectable=on>");
+		cell.style.userSelect = "none";
+		var span = Util.createElementFromHTML("<span></span>");
 		cell.appendChild(span);
-		span.innerText = this.days[td];
+		span.textContent = this.days[td];
 	}
 	
 	for(var tr = 0; tr < 6; tr++)
 	{
 		var row = this.table.insertRow();
-		row.unselectable = true;
+		row.style.userSelect = "none";
 		for(var td = 0; td < 7; td++)
 		{
 			var cell = row.insertCell();
-			cell.unselectable = true;
-			cell.innerText = " ";
+			cell.style.userSelect = "none";
+			cell.textContent = " ";
 		}
 	}
 	all.contentTD.appendChild(this.table);
 	
-	this._disabler = document.createElement('<div style="position: absolute; background: white; z-index: 1000; filter: alpha(opacity=50); width: 100%; height: 100%; top: 0px; left: 0px; visibility: hidden; ">');
+	this._disabler = Util.createElementFromHTML('<div style="position: absolute; background: white; z-index: 1000; opacity: .5; width: 100%; height: 100%; top: 0px; left: 0px; visibility: hidden; ">');
 	this.element.appendChild(this._disabler);	
 
 	this._set_disabled();
@@ -257,31 +260,27 @@ proto.buildElement = function(node)
 
 proto.createTemplate = function()
 {
-	var contDiv = document.createElement("<div>");
+	var contDiv = Util.createElementFromHTML("<div>");
 	
-	var dayButton = document.createElement("<button class=dayButton>");
+	var dayButton = Util.createElementFromHTML("<button class=dayButton>");
 	contDiv.appendChild(dayButton); // 0
 	
-	dayButton.attachEvent("onclick", this._dayButton_onclick);
-	dayButton.attachEvent("ondblclick", this._dayButton_onclick);
 	
-	var bookedCheckbox = document.createElement("<span class=bookedCheckbox unselectable=on>");
+	
+	var bookedCheckbox = Util.createElementFromHTML("<span class=bookedCheckbox>");
 	contDiv.appendChild(bookedCheckbox); // 1
 	bookedCheckbox.innerHTML = "&#111";
-	bookedCheckbox.attachEvent("onclick", this._bookedCheckbox_onclick);
-	bookedCheckbox.attachEvent("ondblclick", this._bookedCheckbox_onclick);
-	bookedCheckbox.attachEvent("onmouseenter", this._bookedCheckbox_onmouseenter);
-	bookedCheckbox.attachEvent("onmouseleave", this._bookedCheckbox_onmouseleave);
+	
 
-	var gauge = document.createElement("<div class=gauge>");
+	var gauge = Util.createElementFromHTML("<div class=gauge>");
 	contDiv.appendChild(gauge); // 2
 	
-	var gaugeBar = document.createElement("<div class=gaugeBar>")
+	var gaugeBar = Util.createElementFromHTML("<div class=gaugeBar>")
 	gauge.appendChild(gaugeBar);
 	
 	if(this._rebooking)
 	{
-		var rebookedCheckbox = document.createElement("<span class=rebookedCheckbox unselectable=on>");
+		var rebookedCheckbox = Util.createElementFromHTML("<span class=rebookedCheckbox>");
 		contDiv.appendChild(rebookedCheckbox);	 // 3
 		rebookedCheckbox.innerHTML = "&#111";
 	}
@@ -299,16 +298,16 @@ proto.fillDays = function(month, year)
 	var lastDayCell;
 	for(var tr = 0; tr < 6; tr++)
 	{
-		var row = this.table.rows(tr + 1);
+		var row = this.table.rows[tr + 1];
 		date.setDate(dayCount);
 		var firstOnWeek = this.usWeekToEu[date.getDay()];
 		for(var td = 0; td < 7; td++)
 		{
-			var cell = row.cells(td);
+			var cell = row.cells[td];
 			date.setDate(dayCount);
 			if(td < firstOnWeek || date.getMonth() != month || dayCount > 31)  
 			{
-				cell.innerText = " ";
+				cell.textContent = " ";
 				cell.className = "empty";
 				cell.style.backgroundColor = "";
 			}
@@ -325,12 +324,18 @@ proto.fillDays = function(month, year)
 
 proto.renderDayCell = function(cell, date)
 {
-	cell.innerText = " ";
+	cell.textContent = " ";
 
 	var div = this.template.cloneNode(true);
+	Event.add(div.children[0], "click", this, this._dayButton_onclick);
+	Event.add(div.children[0], "dblclick", this, this._dayButton_onclick);
+	Event.add(div.children[1], "click", this, this._bookedCheckbox_onclick);
+	Event.add(div.children[1], "dblclick", this, this._bookedCheckbox_onclick);
+	Event.add(div.children[1], "mouseenter", this, this._bookedCheckbox_onmouseenter);
+	Event.add(div.children[1], "mouseleave", this, this._bookedCheckbox_onmouseleave);
 
 	var dateDay = date.getDate();
-	div.children[0].innerText = dateDay;
+	div.children[0].textContent = String(dateDay);
 
 	var todayValue = this._today.valueOf();
 	var dateValue = date.valueOf();
@@ -362,12 +367,12 @@ proto.renderDayCell = function(cell, date)
 
 	if(this.disabledDaysAr[date.getDay()] || this.noSessionDaysAr[dateDay])
 	{
-		var dayDisabled = document.createElement("<div class=dayDisabled>");
-		div.children[0].replaceNode(dayDisabled);
-		dayDisabled.innerText = dateDay;
+		var dayDisabled = Util.createElementFromHTML("<div class=dayDisabled>");
+		div.replaceChild(dayDisabled, div.children[0]);
+		dayDisabled.textContent = dateDay;
 		
 		// Remove booking button.
-		div.children[1].removeNode(true);
+		Util.removeElement(div.children[1]);
 	}
 	if(this.conflictDaysAr[dateDay]) div.children[0].className = "conflictDay";
 	if(this.noSlotsDaysAr[dateDay]) div.children[0].className = "noSlotsDay";
@@ -423,7 +428,7 @@ proto.commitChange = function(value)
 // Event handlers. ==============================
 proto._bookedCheckbox_onclick = function()
 {
-	var l = event.srcElement;
+	var l = Util.eventTarget();
 
 	var jsObject = CNUtil.findJSObject(l);
 	
@@ -431,7 +436,7 @@ proto._bookedCheckbox_onclick = function()
 	l.checked = !l.checked;
 	l.innerHTML = l.checked ? "&#254" : "&#111";
 
-	jsObject.commitChange((l.checked ? 1000 : 2000) + parseInt(l.parentElement.children[0].innerText));
+	jsObject.commitChange((l.checked ? 1000 : 2000) + parseInt(l.parentElement.children[0].textContent, 10));
 }
 
 proto._bookedCheckbox_onmouseenter = function()
@@ -439,8 +444,8 @@ proto._bookedCheckbox_onmouseenter = function()
 	var jso = Util.dispatchObject();
 	if(jso._checksDisabled) return;
 
-	var l = event.srcElement;
-	l.runtimeStyle.color = l.currentStyle["xl--hover-color"];
+	var l = Util.eventTarget();
+	l.style.color = Util.getStyle(l, "xl--hover-color");
 }
 
 proto._bookedCheckbox_onmouseleave = function()
@@ -448,22 +453,22 @@ proto._bookedCheckbox_onmouseleave = function()
 	var jso = Util.dispatchObject();
 	if(jso._checksDisabled) return;
 
-	var l = event.srcElement;
-	l.runtimeStyle.color = "";
+	var l = Util.eventTarget();
+	l.style.color = "";
 }
 
 proto._dayButton_onclick = function()
 {
-	var l = event.srcElement;
+	var l = Util.eventTarget();
 	var jsObject = CNUtil.findJSObject(l);
 	
 	if(jsObject._disabled) return;
-	jsObject.commitChange(l.innerText);
+	jsObject.commitChange(l.textContent);
 }
 
 proto._prevMonthButton_onclick = function()
 {
-	var jsObject = CNUtil.findJSObject(event.srcElement);
+	var jsObject = CNUtil.findJSObject(Util.eventTarget());
 	
 	if(jsObject._disabled) return;
 	jsObject.commitChange(-1);
@@ -471,7 +476,7 @@ proto._prevMonthButton_onclick = function()
 
 proto._nextMonthButton_onclick = function()
 {
-	var jsObject = CNUtil.findJSObject(event.srcElement);
+	var jsObject = CNUtil.findJSObject(Util.eventTarget());
 	
 	if(jsObject._disabled) return;
 	jsObject.commitChange(-2);
@@ -479,7 +484,7 @@ proto._nextMonthButton_onclick = function()
 
 proto._yearUpButton_onclick = function()
 {
-	var jsObject = CNUtil.findJSObject(event.srcElement);
+	var jsObject = CNUtil.findJSObject(Util.eventTarget());
 	
 	if(jsObject._disabled) return;
 	jsObject.commitChange(-3);
@@ -487,7 +492,7 @@ proto._yearUpButton_onclick = function()
 	
 proto._yearDownButton_onclick = function()
 {
-	var jsObject = CNUtil.findJSObject(event.srcElement);
+	var jsObject = CNUtil.findJSObject(Util.eventTarget());
 	
 	if(jsObject._disabled) return;
 	jsObject.commitChange(-4);
@@ -506,7 +511,7 @@ proto._monthSelect_onchange = function()
 // Properties. ===============================
 proto.set_disabled = function(value)
 {
-	value = eval(value);
+	value = Util.parseBoolean(value);
 	if(this._disabled == value) return;
 	this._disabled = value;
 

@@ -15,12 +15,12 @@ function CN_checkedlistbox()
 var proto = CN_checkedlistbox.prototype;
 proto.createElement = function(node, parentElement)
 {
-	var l = document.createElement("<div>");
+	var l = document.createElement("div");
 	parentElement.appendChild(l);
 	this.element = l;
 	l.jsObject = this;
 	l.className = "cn_checkedlistbox";
-	l.unselectable = true;
+	l.style.userSelect = "none";
 	
 	this._autoPostBack = node.getAttribute("autoPostBack") == "true";
 	this.element.style.whiteSpace = node.getAttribute("wrap") == "true" ? "normal" : "nowrap";
@@ -35,13 +35,13 @@ proto.oncheckreadonly = function(){ return false; }
 
 proto.loadData = function(node)
 {
-	var itemsNode = node.selectSingleNode("items");
+	var itemsNode = Util.xmlSelectSingleNode(node, "items");
 	if(itemsNode != null)
 	{
 		this._deleteItems();
 		this._itemsChecked = 0;
 		
-		var items = itemsNode.selectNodes("item");
+		var items = Util.xmlSelectNodes(itemsNode, "item");
 		for(var i = 0; i < items.length; i++)
 		{
 			this._createItem(items[i], i);
@@ -97,9 +97,10 @@ proto._deleteItems = function()
 
 proto._createItem = function(node, ix)
 {
-	var itemDiv = document.createElement("<div class='itemDiv'>");
+	var itemDiv = document.createElement("div");
+	itemDiv.className = 'itemDiv';
 	this.element.appendChild(itemDiv);
-	itemDiv.unselectable = true;
+	itemDiv.style.userSelect = "none";
 	
 	itemDiv._index = ix;
 	
@@ -108,17 +109,20 @@ proto._createItem = function(node, ix)
 	var attr = node.getAttribute("tooltip");
 	if(attr) Tooltip.attach(itemDiv, String(attr));
 
-	var checkBoxSpan = document.createElement("<span class='checkBoxSpan'>"); // 1 
+	var checkBoxSpan = document.createElement("span");
+	checkBoxSpan.className = 'checkBoxSpan'; // 1 
 	itemDiv.appendChild(checkBoxSpan);
-	checkBoxSpan.attachEvent("onclick", this._checkBoxSpan_onclick);
-	checkBoxSpan.attachEvent("ondblclick", this._checkBoxSpan_onclick);	
-	checkBoxSpan.attachEvent("onmouseenter", this._icon_textSpan_onmouseenter);
-	checkBoxSpan.attachEvent("onmouseleave", this._icon_textSpan_onmouseleave);	
-	checkBoxSpan.unselectable = true;
+	Event.add(checkBoxSpan, "click", this, this._checkBoxSpan_onclick);
+	Event.add(checkBoxSpan, "dblclick", this, this._checkBoxSpan_onclick);	
+	Event.add(checkBoxSpan, "mouseenter", this, this._icon_textSpan_onmouseenter);
+	Event.add(checkBoxSpan, "mouseleave", this, this._icon_textSpan_onmouseleave);	
+	checkBoxSpan.style.userSelect = "none";
 	
-	var checkElement = document.createElement("<img width=13 height=13>");
+	var checkElement = document.createElement("img");
+	checkElement.width = 13;
+	checkElement.height = 13;
 	checkBoxSpan.appendChild(checkElement);
-	checkElement.unselectable = "on";
+	checkElement.style.userSelect = "none";
 
 	var attr = node.getAttribute("markerColor");
 	if(attr) checkBoxSpan.style.backgroundColor = String(attr);
@@ -126,28 +130,31 @@ proto._createItem = function(node, ix)
 	var imgAttr = node.getAttribute("img");
 	if(imgAttr != null)
 	{
-		var icon = document.createElement("<img align=absmiddle class='iconImg'>"); // 2 
+		var icon = document.createElement("img");
+	icon.align = 'absmiddle';
+	icon.className = 'iconImg'; // 2 
 		itemDiv.appendChild(icon);
 		icon.src = String(imgAttr);
 		
-		icon.attachEvent("onmousedown", this._icon_textSpan_onclick);
-		icon.attachEvent("ondblclick", this._icon_textSpan_ondblclick);
-		icon.attachEvent("onmouseenter", this._icon_textSpan_onmouseenter);
-		icon.attachEvent("onmouseleave", this._icon_textSpan_onmouseleave);
-		icon.unselectable = true;
+		Event.add(icon, "mousedown", this, this._icon_textSpan_onclick);
+		Event.add(icon, "dblclick", this, this._icon_textSpan_ondblclick);
+		Event.add(icon, "mouseenter", this, this._icon_textSpan_onmouseenter);
+		Event.add(icon, "mouseleave", this, this._icon_textSpan_onmouseleave);
+		icon.style.userSelect = "none";
 	}
 		
-	var text = document.createElement("<span class='textSpan'>"); // 3
+	var text = document.createElement("span");
+	text.className = 'textSpan'; // 3
 	itemDiv.appendChild(text);
 
-	text.attachEvent("onmousedown", this._icon_textSpan_onclick);
-	text.attachEvent("ondblclick", this._icon_textSpan_ondblclick);
-	text.attachEvent("onmouseenter", this._icon_textSpan_onmouseenter);
-	text.attachEvent("onmouseleave", this._icon_textSpan_onmouseleave);
-	text.unselectable = true;
+	Event.add(text, "mousedown", this, this._icon_textSpan_onclick);
+	Event.add(text, "dblclick", this, this._icon_textSpan_ondblclick);
+	Event.add(text, "mouseenter", this, this._icon_textSpan_onmouseenter);
+	Event.add(text, "mouseleave", this, this._icon_textSpan_onmouseleave);
+	text.style.userSelect = "none";
 	
 	var textAttr = node.getAttribute("text");
-	if(text) text.innerText = String(textAttr);
+	if(textAttr != null) text.textContent = String(textAttr);
 	
 	var attr = node.getAttribute("textColor");
 	if(attr) text.style.color = String(attr);
@@ -174,13 +181,13 @@ proto.setMaxVisibleLines = function(mvl)
 
 proto.set_disabled = function(value)
 {
-	value = eval(value);
+	value = Util.parseBoolean(value);
 	if(this._disabled == value) return;
 	this._disabled = value;
 
-	this.element.runtimeStyle.backgroundColor = 
-		this._disabled ? this.element.currentStyle["xl--disabled-background"] : "";
-	this.element.runtimeStyle.filter = this._disabled ? "alpha(opacity=50)" : "";
+	this.element.style.backgroundColor = 
+		this._disabled ? Util.getStyle(this.element, "xl--disabled-background") : "";
+	this.element.style.opacity = this._disabled ? "0.5" : "";
 }
 
 proto._setChecked = function(itemDiv, checked, userClick)
@@ -211,7 +218,7 @@ proto._setChecked = function(itemDiv, checked, userClick)
 	{
 		if(this.onitemchecked != null)
 		{
-			var ev = {srcElement: this, itemDiv: itemDiv, checked: checked, index: itemDiv._index, 
+			var ev = {target: this, itemDiv: itemDiv, checked: checked, index: itemDiv._index, 
 						originalChecked: itemDiv._originalChecked, autoUncheck: autoUncheck};
 			this.onitemchecked(ev);
 		}
@@ -257,7 +264,7 @@ proto._selectItemDiv = function(l, userClick)
 	{
 		if(this.onitemselected != null)
 		{
-			var ev = {srcElement: this, index: l._index};
+			var ev = {target: this, index: l._index};
 			this.onitemselected(ev);
 		}
 	}
@@ -311,7 +318,7 @@ proto.checkBoxSpan_onclick = function()
 {
 	if(this._disabled || this.oncheckreadonly()) return;
 	
-	var l = event.srcElement;
+	var l = Util.eventTarget();
 	var itemDiv = CNUtil.findTag(l, "DIV");
 
 	if(itemDiv.disabled) return;
@@ -321,20 +328,20 @@ proto.checkBoxSpan_onclick = function()
 
 /*proto._checkBoxSpan_onmouseenter = function()
 {
-	var l = event.srcElement;
+	var l = Util.eventTarget();
 	var jsObject = CNUtil.findJSObject(l);
 
 	if(jsObject._disabled || jsObject.oncheckreadonly()) return; 
-	l.runtimeStyle.color = l.currentStyle["xl--hover-color"];
+	l.style.color = Util.getStyle(l, "xl--hover-color");
 }*/
 
 /*proto._checkBoxSpan_onmouseleave = function()
 {
-	var l = event.srcElement;
+	var l = Util.eventTarget();
 	var jsObject = CNUtil.findJSObject(l);
 
 	if(jsObject._disabled || jsObject.oncheckreadonly()) return;
-	l.runtimeStyle.color = "";
+	l.style.color = "";
 }
 */
 
@@ -344,7 +351,7 @@ proto._icon_textSpan_onclick = function()
 }
 proto.icon_textSpan_onclick = function()
 {
-	var l = event.srcElement;
+	var l = Util.eventTarget();
 	if(this._disabled || this.oncheckreadonly()) return;
 	var itemDiv = CNUtil.findTag(l, "DIV");
 	if(itemDiv.disabled) return;
@@ -361,7 +368,7 @@ proto._icon_textSpan_ondblclick = function()
 /*
 proto.icon_textSpan_ondblclick = function()
 {
-	var l = event.srcElement;
+	var l = Util.eventTarget();
 	if(this._disabled || this.oncheckreadonly()) return;
 	var itemDiv = CNUtil.findTag(l, "DIV");
 	if(itemDiv.disabled) return;
@@ -376,7 +383,7 @@ proto._icon_textSpan_onmouseenter = function()
 }
 proto.icon_textSpan_onmouseenter = function()
 {
-	var l = event.srcElement;	
+	var l = Util.eventTarget();	
 	if(this._disabled || this.oncheckreadonly()) return;
 	var itemDiv = CNUtil.findTag(l, "DIV");
 	if(itemDiv.disabled) return;
@@ -391,7 +398,7 @@ proto._icon_textSpan_onmouseleave = function()
 proto.icon_textSpan_onmouseleave = function()
 {
 	if(this._disabled || this.oncheckreadonly()) return;
-	var l = event.srcElement;
+	var l = Util.eventTarget();
 	var itemDiv = CNUtil.findTag(l, "DIV");
 	if(itemDiv.disabled) return;
 
@@ -416,7 +423,7 @@ wp.isValid = function(){ return true; }
 wp._oncheckreadonly = function()
 {
 	// Executed in combobox context.
-	var cell = CN_grid.findCell(event.srcElement);
+	var cell = CN_grid.findCell(Util.eventTarget());
 	var jsObject = CNUtil.findJSObject(cell);
 	var ro = jsObject.getCascadedReadOnly(cell);
 	return ro;
@@ -443,14 +450,14 @@ wp._onitemchecked = function(ev)
 	var node = grid._getChangedNode(row, cell);
 	var itemsNode = node;
 
-	var itemNode = itemsNode.selectSingleNode('item[@index=' + ev.index + ']');
+	var itemNode = Util.xmlSelectSingleNode(itemsNode, 'item[@index="' + ev.index + '"]');
 
 	if(!cell.colTag.autoPostBack && itemNode)
 	{
 		// Node already exists - just remove it.
 		if(itemNode) itemsNode.removeChild(itemNode);
 		// Check if our node is empty - contains only row, cell, id
-		if(node.getAttribute("selectedIndex") == null && node.selectNodes("item").length == 0) node.parentNode.removeChild(node);
+		if(node.getAttribute("selectedIndex") == null && Util.xmlSelectNodes(node, "item").length == 0) node.parentNode.removeChild(node);
 	}
 	else
 	{

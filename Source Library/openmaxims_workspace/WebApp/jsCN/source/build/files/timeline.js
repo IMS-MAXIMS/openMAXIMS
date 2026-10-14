@@ -20,7 +20,7 @@ CN_timeline.monthes = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "
 // ICNControl implementation. ===============================
 proto.createElement = function(node, parentElement)
 {
-	var l = document.createElement("<div class=cn_timeline>");
+	var l = Util.createElementFromHTML("<div class=cn_timeline>");
 	parentElement.appendChild(l);
 
 	this.element = l;
@@ -28,19 +28,23 @@ proto.createElement = function(node, parentElement)
 	
 	this._buildElement(node);
 	
-	l.attachEvent("onresize", this._element_onresize);
+	Event.add(window, "resize", this, this._element_onresize);
+	if(typeof ResizeObserver != "undefined") {
+		this._resizeObserver = new ResizeObserver(this.element_onresize.bind(this));
+		this._resizeObserver.observe(l);
+	}
 
 	return l;
 }
 
 proto.loadData = function(node)
 {
-	var lines = node.selectNodes("line");
+	var lines = Util.xmlSelectNodes(node, "line");
 	var count = lines.length;
 	for(var i = 0; i < count; i++)
 	{
 		var line = lines[i];
-		var dates = line.selectNodes("date");
+		var dates = Util.xmlSelectNodes(line, "date");
 		var dateCount = dates.length;
 		for(var j = 0; j < dateCount; j++)
 		{
@@ -51,15 +55,15 @@ proto.loadData = function(node)
 			var year = date.getFullYear();
 			
 			var offset = (year - this._fromDate.getFullYear()) * 12 + (month - this._fromDate.getMonth());
-			var tr = this._lineTable.rows(i);
-			var td = tr.cells(offset);
+			var tr = this._lineTable.rows[i];
+			var td = tr.cells[offset];
 			if(!td)
 			{
 				alert("ASSERT: can't find line with date: " + date);
 				return;
 			}
 
-			var icon = document.createElement("<img class=timelineIcon>");
+			var icon = Util.createElementFromHTML("<img class=timelineIcon>");
 			td.appendChild(icon);
 
 			var src;
@@ -73,7 +77,7 @@ proto.loadData = function(node)
 			var attr = dateNode.getAttribute("tooltip");
 			if(attr) Tooltip.attach(icon, String(attr));
 			
-			icon.attachEvent("onclick", this._icon_onclick);
+			Event.add(icon, "click", this, this._icon_onclick);
 			icon._date = dateStr;
 		}
 	}
@@ -93,24 +97,26 @@ proto.unload = function()
 {
 	this._legendDiv = null;
 	this._tableDiv = null;
+	if(this._resizeObserver) this._resizeObserver.disconnect();
+	Event.del(window, "resize", this, this._element_onresize);
 }
 
 proto.validateLoading = function()
 {
-	this._tableDiv.style.height = this._legendDiv.style.height = this.element.clientHeight;	
-	this._tableDiv.style.width = this.element.clientWidth - this._legendDiv.offsetWidth 
-									- this._toolbarDiv.offsetWidth;
-	this._toolbarDiv.style.left = this.element.clientWidth - this._toolbarDiv.offsetWidth;
-	this._toolbarDiv.style.height = this.element.clientHeight;
+	this._tableDiv.style.height = this._legendDiv.style.height = this.element.clientHeight + "px";	
+	this._tableDiv.style.width = (this.element.clientWidth - this._legendDiv.offsetWidth 
+									- this._toolbarDiv.offsetWidth) + "px";
+	this._toolbarDiv.style.left = (this.element.clientWidth - this._toolbarDiv.offsetWidth) + "px";
+	this._toolbarDiv.style.height = this.element.clientHeight + "px";
 	
 	if(!this._nowDiv)
 	{
-		this._nowDiv = document.createElement("<div class=nowMarkDiv>");
+		this._nowDiv = Util.createElementFromHTML("<div class=nowMarkDiv>");
 		this._tableDiv.appendChild(this._nowDiv);
 		
-		//this._nowLabel = document.createElement("<div class=nowLabelDiv>");
+		//this._nowLabel = Util.createElementFromHTML("<div class=nowLabelDiv>");
 		//this._tableDiv.appendChild(this._nowLabel);
-		//this._nowLabel.innerText = "Now";
+		//this._nowLabel.textContent = "Now";
 	}		
 	this._updateNowDiv();
 }
@@ -122,9 +128,9 @@ proto._updateNowDiv = function()
 		alert("ASSERT: can't find now cell for now mark.")
 		return;
 	}
-	this._nowDiv.style.height = this._lineCount * 20 + 6;
+	this._nowDiv.style.height = (this._lineCount * 20 + 6) + "px";
 	var x = this._nowTD.offsetLeft + this._getDayX(this._nowTD, this._nowDate);
-	this._nowDiv.style.left = x;
+	this._nowDiv.style.left = x + "px";
 	
 	//this._nowLabel.style.top = (this._lineTable.rows.length - 2) * 20 + 9;
 	//this._nowLabel.style.left = x;
@@ -144,7 +150,7 @@ proto._buildElement = function(node)
 	this._toDate = this._getPartialDate(String(node.getAttribute("to")));	
 	this._nowDate = this._getDate(String(node.getAttribute("now")));
 	
-	var lines = node.selectNodes("line");
+	var lines = Util.xmlSelectNodes(node, "line");
 	this._lineCount = lines.length;
 
 	this._buildToolbar();
@@ -153,7 +159,7 @@ proto._buildElement = function(node)
 	
 	this._lineTable.width = this._getMinTableWidth();
 
-	this.disabler = document.createElement('<div style="position: absolute; background: white; z-index: 1000; filter: alpha(opacity=50); width: 100%; height: 100%; visibility: hidden; top: 0px; left: 0px; ">');
+	this.disabler = Util.createElementFromHTML('<div style="position: absolute; background: white; z-index: 1000; opacity: .5; width: 100%; height: 100%; visibility: hidden; top: 0px; left: 0px; ">');
 	this.element.appendChild(this.disabler);
 } 
 
@@ -171,21 +177,21 @@ proto._getDate = function(str)
 
 proto._buildLegend = function(node, lines)
 {
-	this._legendDiv = document.createElement("<div class=timelineLegendDiv>");
+	this._legendDiv = Util.createElementFromHTML("<div class=timelineLegendDiv>");
 	this.element.appendChild(this._legendDiv);
 	
 	for(var i = 0; i < this._lineCount; i++)
 	{
 		var line = lines[i];
-		var div = document.createElement("<div class=timelineCaptionDiv>");
+		var div = Util.createElementFromHTML("<div class=timelineCaptionDiv>");
 		this._legendDiv.appendChild(div);
 		div.style.left = "5px";
 		div.style.top = (3 + i * 20) + "px";
 		
-		var img = document.createElement("<img align=absmiddle width=16 height=16>");
+		var img = Util.createElementFromHTML("<img align=absmiddle width=16 height=16>");
 		div.appendChild(img);
 		img.src = String(line.getAttribute("before"));
-		img.style.marginRight = 4;
+		img.style.marginRight = "4px";
 		
 		div.appendChild(document.createTextNode(line.getAttribute("caption")));
 	}
@@ -193,10 +199,10 @@ proto._buildLegend = function(node, lines)
 
 proto._buildLines = function(node, lines)
 {
-	this._tableDiv = document.createElement("<div class=timelineTableDiv>");
+	this._tableDiv = Util.createElementFromHTML("<div class=timelineTableDiv>");
 	this.element.appendChild(this._tableDiv);
 
-	this._lineTable = document.createElement("<table class=timelineTable frame=void rules=rows cellpadding=3 cellspacing=0 border=0 bordercolor=B3B6CE>");
+	this._lineTable = Util.createElementFromHTML("<table class=timelineTable frame=void rules=rows cellpadding=3 cellspacing=0 border=0 bordercolor=B3B6CE>");
 	this._tableDiv.appendChild(this._lineTable);
 	
 	this._lineTable.width = 4000;
@@ -208,7 +214,7 @@ proto._buildLines = function(node, lines)
 	{
 		var line = lines[i];
 		
-		var tr = document.createElement("<tr>");
+		var tr = Util.createElementFromHTML("<tr>");
 		tbody.appendChild(tr);
 		
 		tr._isLineTR = true;
@@ -219,10 +225,10 @@ proto._buildLines = function(node, lines)
 		var dt = new Date(this._fromDate);
 		while(dt.getTime() <= this._toDate.getTime())
 		{
-			var td = document.createElement("<td nowrap>");
+			var td = Util.createElementFromHTML("<td nowrap>");
 			tr.appendChild(td);
 			
-			td.innerText = " ";
+			td.textContent = " ";
 			dt.setMonth(dt.getMonth() + 1);
 		}
 	}
@@ -232,16 +238,16 @@ proto._buildLines = function(node, lines)
 
 proto._buildLowerLine = function(tbody)
 {
-	var tr = document.createElement("<tr class=lowerMonthes1 valign=top>");
+	var tr = Util.createElementFromHTML("<tr class=lowerMonthes1 valign=top>");
 	tbody.appendChild(tr);
 	
 	var dt = new Date(this._fromDate);
 	while(dt.getTime() <= this._toDate.getTime())
 	{
-		var td = document.createElement("<td nowrap>");
+		var td = Util.createElementFromHTML("<td nowrap>");
 		tr.appendChild(td);
 		
-		var div = document.createElement("<div class=lowerMonthesMark>");
+		var div = Util.createElementFromHTML("<div class=lowerMonthesMark>");
 		td.appendChild(div);
 
 		td.style.background = dt.getMonth() % 2 ? "#eeeeee" : "white";
@@ -249,16 +255,16 @@ proto._buildLowerLine = function(tbody)
 		dt.setMonth(dt.getMonth() + 1);
 	}
 
-	var tr = document.createElement("<tr class=lowerMonthes2>");
+	var tr = Util.createElementFromHTML("<tr class=lowerMonthes2>");
 	tbody.appendChild(tr);
 	
 	var dt = new Date(this._fromDate);
 	while(dt.getTime() <= this._toDate.getTime())
 	{
-		var td = document.createElement("<td nowrap>");
+		var td = Util.createElementFromHTML("<td nowrap>");
 		tr.appendChild(td);
 		
-		td.innerText = CN_timeline.monthes[dt.getMonth()];
+		td.textContent = CN_timeline.monthes[dt.getMonth()];
 		td.align = "center"
 
 		if(dt.getMonth() == this._nowDate.getMonth() && dt.getFullYear() == this._nowDate.getFullYear())
@@ -297,12 +303,12 @@ proto._buildToolbar = function()
 
 proto._getMinTableWidth = function()
 {
-	return this._lineTable.rows(0).cells.length * this._minTDWidth;
+	return this._lineTable.rows[0].cells.length * this._minTDWidth;
 }
 
 proto.zoomIn = function()
 {
-	var maxWidth = this._lineTable.rows(0).cells.length * (this._tableDiv.offsetWidth) * 1.05;
+	var maxWidth = this._lineTable.rows[0].cells.length * (this._tableDiv.offsetWidth) * 1.05;
 	var zoomWidth = Math.round(this._lineTable.offsetWidth * (1 + this._zoomStep));
 	if(zoomWidth > maxWidth) zoomWidth = maxWidth;
 	this._lineTable.width = zoomWidth;
@@ -326,8 +332,8 @@ proto._icon_onclick = function()
 
 proto.icon_onclick = function()
 {
-	var tr = CNUtil.findTag(event.srcElement, "TR");
-	this._clickedDate = event.srcElement._date;
+	var tr = CNUtil.findTag(Util.eventTarget(), "TR");
+	this._clickedDate = Util.eventTarget()._date;
 	this._clickedLineID = tr._lineID;
 	this._wasClicked = true;
 	this.formManager.postData(this.element);
@@ -346,25 +352,25 @@ proto._set_disabled = function()
 
 proto._element_onresize = function()
 {
-	CNUtil.dispatchObject().element_onresize();
+	this.element_onresize();
 }
 proto.element_onresize = function()
 {
 	if(this.element.clientWidth == 0) return;
-	this._tableDiv.style.height = this._legendDiv.style.height = this.element.clientHeight;	
-	this._tableDiv.style.width = this.element.clientWidth - this._legendDiv.offsetWidth 
-									- this._toolbarDiv.offsetWidth;
-	this._toolbarDiv.style.left = this.element.clientWidth - this._toolbarDiv.offsetWidth;
-	this._toolbarDiv.style.height = this.element.clientHeight;
+	this._tableDiv.style.height = this._legendDiv.style.height = this.element.clientHeight + "px";	
+	this._tableDiv.style.width = (this.element.clientWidth - this._legendDiv.offsetWidth 
+									- this._toolbarDiv.offsetWidth) + "px";
+	this._toolbarDiv.style.left = (this.element.clientWidth - this._toolbarDiv.offsetWidth) + "px";
+	this._toolbarDiv.style.height = this.element.clientHeight + "px";
 	
 	if(!this._nowDiv)
 	{
-		this._nowDiv = document.createElement("<div class=nowMarkDiv>");
+		this._nowDiv = Util.createElementFromHTML("<div class=nowMarkDiv>");
 		this._tableDiv.appendChild(this._nowDiv);
 		
-		//this._nowLabel = document.createElement("<div class=nowLabelDiv>");
+		//this._nowLabel = Util.createElementFromHTML("<div class=nowLabelDiv>");
 		//this._tableDiv.appendChild(this._nowLabel);
-		//this._nowLabel.innerText = "Now";
+		//this._nowLabel.textContent = "Now";
 	}		
 	this._updateNowDiv();
 }

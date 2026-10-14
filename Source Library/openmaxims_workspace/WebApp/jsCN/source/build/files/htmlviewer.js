@@ -30,7 +30,7 @@ proto.createElement = function(node, parentElement)
 	var content = document.createElement("div");
 	l.appendChild(content);
 	
-	this._disabler = document.createElement('<div style="position: absolute; background: white; z-index: 1000; filter: alpha(opacity=50); width: 100%; height: 100%; visibility: hidden; top: 0px; left: 0px; ">');
+	this._disabler = Util.createElement("div", "", {style: "position: absolute; background: white; z-index: 1000; opacity: 0.5; width: 100%; height: 100%; visibility: hidden; top: 0px; left: 0px;"});
 	l.appendChild(this._disabler);
 	
 	this._isReady = true;
@@ -39,14 +39,14 @@ proto.createElement = function(node, parentElement)
 	
 	if(node.getAttribute("border") == "false") this.element.style.border = "none";
 	
-	l.attachEvent("onclick", CN_htmlviewer._handle_onclick);
+	Event.nativeAdd(l, "click", CN_htmlviewer._handle_onclick);
 
 	return l;
 } 
 
 proto.loadData = function(node)
 {
-    var valueNode = node.selectSingleNode("value");
+    var valueNode = Util.xmlSelectSingleNode(node, "value");
 	if(valueNode) 
 	{
 		var embeddedObject = node.getAttribute("embeddedObject") == "true";
@@ -62,19 +62,20 @@ proto.loadData = function(node)
 				
 			this.element.appendChild(iframe);			
 			
-			iframe.contentWindow.document.open();
-			iframe.contentWindow.document.write(valueNode.text);
-			iframe.contentWindow.document.close();
+			var frameDocument = iframe.contentDocument;
+			var parsedDocument = new DOMParser().parseFromString(String(Util.xmlText(valueNode)), "text/html");
+			var parsedRoot = frameDocument.importNode(parsedDocument.documentElement, true);
+			frameDocument.replaceChild(parsedRoot, frameDocument.documentElement);
 		}
 		else
 		{
 			try
 			{
-				this.element.children[0].innerHTML = "<span>" + valueNode.text + "</span>";
+				this.element.children[0].innerHTML = "<span>" + Util.xmlText(valueNode) + "</span>";
 			}
 			catch(e)
 			{
-				alert("ASSERT: can't set HTML: " + valueNode.text)
+				alert("ASSERT: can't set HTML: " + Util.xmlText(valueNode))
 			}
 		}
 	}
@@ -94,7 +95,7 @@ proto._processHookForm = function() {
 	}
 }
 proto._form_onsubmit = function() {
-	this._formSubmitted = event.srcElement;
+	this._formSubmitted = Event.current().target;
 	Util.cancelEvent();
 	this.formManager.postData(this.element);
 }
@@ -155,7 +156,7 @@ proto._saveForm = function(form, xmldoc, parentNode) {
 
 CN_htmlviewer._handle_onclick = function()
 {
-	var a = CNUtil.findTag(event.srcElement, "A");
+	var a = CNUtil.findTag(Event.current().target, "A");
 	if(!a || !a.href) return;
 	CNUtil.cancelEvent();
 
@@ -164,12 +165,12 @@ CN_htmlviewer._handle_onclick = function()
 
 function HTMLViewerClick(param)
 {
-	var jsObject = CNUtil.findJSObject(event.srcElement);
+	var jsObject = CNUtil.findJSObject(Event.current().target);
 	if(jsObject._disabled) return;
 	
 	jsObject._clicked = true;
 	jsObject._param = param;
-	event.returnValue = false;
+	Util.cancelEvent(Event.current());
 	jsObject.formManager.postData(jsObject.element);
 }
 
@@ -177,7 +178,7 @@ function HTMLViewerClick(param)
 // Properties. ===================================
 proto.set_disabled = function(value)
 {
-	value = eval(value);
+	value = Util.parseBoolean(value);
 	if(this._disabled == value) return;
 	this._disabled = value;
 
@@ -202,16 +203,15 @@ wp.isValid = function(cell){ return true; }
 wp.prerender = function(cell, colTag)
 {
 	cell.style.paddingTop = 1;
-	cell.insertAdjacentHTML("beforeEnd", "<table border=0 class=HTMLTable cellspacing=0 "
-		+ "cellpadding=0 border=0><tr valign=middle><td><div></div></td></tr></table>");
-	var div = cell.children[0].cells[0].children[0];
+	Util.appendHTML(cell, "<table border=0 class=HTMLTable cellspacing=0 cellpadding=0><tr valign=middle><td><div></div></td></tr></table>");
+	var div = cell.children[0].rows[0].cells[0].children[0];
 	div._isCellDiv = true;
-	cell.attachEvent("onclick", CN_htmlviewer._handle_onclick);
+	Event.nativeAdd(cell, "click", CN_htmlviewer._handle_onclick);
 }
 wp.render = function(cell, node)
 {
 	var table = cell.children[0];
-	table.rows[0].cells[0].children[0].innerHTML = String(node.text);
-	var color = cell.parentElement.currentStyle.backgroundColor;
+	table.rows[0].cells[0].children[0].innerHTML = String(Util.xmlText(node));
+	var color = Util.getStyle(cell.parentElement, "backgroundColor");
 	if(color != "transparent") table.style.borderColor = color;
 }

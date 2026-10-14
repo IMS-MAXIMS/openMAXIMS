@@ -28,6 +28,12 @@ CN_navigation.deltaY = 80;
 
 var proto = CN_navigation.prototype;
 
+// Standards DOM nodes expose parentNode; IE exposed parentElement.
+function navigationParent(element)
+{
+	return element && element.parentNode;
+}
+
 proto.onnodeselected = function(ev)
 {
 	this.formManager.postData(this.element);
@@ -35,14 +41,14 @@ proto.onnodeselected = function(ev)
 
 proto.createElement = function(node, parentElement)
 {
-	var l = document.createElement("<div>");
+	var l = Util.createElement("div");
 	parentElement.appendChild(l);
 	
 	this.element = l;
 	l.jsObject = this;
 
 	l.className = "cn_navigation";
-	l.attachEvent("onresize", this._element_onresize);
+	Event.add(l, "resize", this, this._element_onresize);
 	
 	this._init(node);
 	
@@ -63,7 +69,7 @@ proto.unload = function()
 	this._structure = null;
 	this._deleted = true;
 	this.panels = null;
-	this.element.detachEvent("onresize", this._element_onresize);
+	Event.del(this.element, "resize", this, this._element_onresize);
 }
 
 proto.loadData = function(node) {
@@ -86,7 +92,7 @@ proto.loadData = function(node) {
 
 proto._walkDataNode = function(node, parentElement)
 {
-	var childNodes = node.selectNodes("node");
+	var childNodes = Util.xmlChildElements(node, "node");
 	var childCount = childNodes.length;
 	for(var i = 0; i < childCount; i++)
 	{
@@ -127,11 +133,11 @@ proto._walkDataNode = function(node, parentElement)
 					if(enabledAttr == "true" && item.disabled) 
 					{
 						item.disabled = false;
-						item.children[0].children[1].runtimeStyle.cursor = "";
+						item.children[0].children[1].style.cursor = "";
 					}
 					else if(enabledAttr == "false" && !item.disabled) 
 					{
-						item.children[0].children[1].runtimeStyle.cursor = "default";
+						item.children[0].children[1].style.cursor = "default";
 						item.disabled = true;
 					}
 				}
@@ -193,14 +199,14 @@ proto.selectFormNode = function(id)
 		return;
 	}
 	// NOTE: Initially id is numeric.
-	var item = this._structure[id]; //this.element.all(id);
+	var item = this._structure[id]; 
 	if(item) this.selectItemDiv(item.firstChild);
 }
 
 // Properties. ========================================================
 proto.set_disabled = function(value)
 {
-	value = eval(value);
+	value = Util.parseBoolean(value);
 	if(this._disabled == value) return;
 	this._disabled = value;
 
@@ -221,7 +227,7 @@ proto._set_disabled = function()
 // Element functions. ===================================================
 proto._init = function(node)
 {
-	this.element.unselectable = true;
+	this.element.style.userSelect = "none";
 
 	this._canExpandCollapse = node.getAttribute("canExpandCollapse") != "false";
 
@@ -232,12 +238,13 @@ proto._init = function(node)
 
 proto.buildElements = function(node)
 {
-	this.disabler = document.createElement("<div style=\"position: absolute; background: white; z-index: 1000; filter: alpha(opacity=50); width: 100%; height: 100%; visibility: hidden; \">");
+	this.disabler = Util.createElement("div");
+	this.disabler.style.cssText = "position: absolute; background: white; z-index: 1000; opacity: 0.5; width: 100%; height: 100%; visibility: hidden;";
 
 	//this.panels = this.element.children;
 	this.panels = [];
 
-	var nodes = node.selectNodes("node");
+	var nodes = Util.xmlChildElements(node, "node");
 
 	var count = nodes.length;
 	for(var i = 0; i < count; i++) this.buildElement(nodes[i], i)
@@ -270,39 +277,41 @@ proto._setFinishBuildTO = function(time)
 
 proto.buildElement = function(node, ix)
 {
-	var panel = document.createElement("<div class=cn_navigation_panel unselectable=on>");
+	var panel = Util.createElement("div", "cn_navigation_panel", null);
 	this.element.appendChild(panel);
 	this.panels.push(panel);
 	
 	var attr = node.getAttribute("id");
 	if(attr) this._structure[String(attr)] = panel; //panel.id = "n" + String(attr);
 
-	var content = document.createElement("<div class=contentDiv id=contentDiv unselectable=on>");
+	var content = Util.createElement("div", "contentDiv", {id: "contentDiv"});
 	panel.appendChild(content);
+	panel.contentDiv = content;
 	
-	var but = document.createElement("<div id=panelButton class=panelButton unselectable=on>");
+	var but = Util.createElement("div", "panelButton", {id: "panelButton"});
 	panel.insertBefore(but, panel.firstChild);
+	panel.panelButton = but;
 	
 	var text = String(node.getAttribute("caption"));
 	
-	var table = document.createElement('<table width=100% border=0 cellpadding=0 cellspacing=0>');
+	var table = Util.createElement("table", null, {width: "100%", border: 0, cellpadding: 0, cellspacing: 0});
 	but.appendChild(table);
-	var tbody = document.createElement('tbody');
+	var tbody = Util.createElement("tbody");
 	table.appendChild(tbody);
-	var tr = document.createElement('tr');
+	var tr = Util.createElement("tr");
 	tbody.appendChild(tr);
-	var td1 = document.createElement('td');
+	var td1 = Util.createElement("td");
 	tr.appendChild(td1);
-	var img1 = document.createElement('<img width=12 height=28>');
+	var img1 = Util.createElement("img", null, {width: 12, height: 28});
 	td1.appendChild(img1);
-	var td2 = document.createElement('<td width=100% class=panelContentTD>');
+	var td2 = Util.createElement("td", "panelContentTD", {width: "100%"});
 	tr.appendChild(td2);
-	var td3 = document.createElement('td');
+	var td3 = Util.createElement("td");
 	tr.appendChild(td3);
-	var img2 = document.createElement('<img width=12 height=28>');
+	var img2 = Util.createElement("img", null, {width: 12, height: 28});
 	td3.appendChild(img2);
 	
-	td2.innerText = text;
+	td2.textContent = text;
 
 	if(CNFormManager.currentThemeName == "silver")
 	{
@@ -325,14 +334,14 @@ proto.buildElement = function(node, ix)
 		td2.style.background = "url('" + CNFormManager.themeImagesPath + 'win-header-2-' + colorPart + "_02.gif')";
 	}
 	
-	but.attachEvent("onclick", this._panelButton_onclick);
-	but.attachEvent("ondblclick", this._panelButton_onclick);	
-	but.attachEvent("onmouseenter", this._panelButton_onmouseenter);
-	but.attachEvent("onmouseleave", this._panelButton_onmouseleave);
+	Event.add(but, "click", this, this._panelButton_onclick);
+	Event.add(but, "dblclick", this, this._panelButton_onclick);
+	Event.add(but, "mouseenter", this, this._panelButton_onmouseenter);
+	Event.add(but, "mouseleave", this, this._panelButton_onmouseleave);
 
 	this.panelCount++;
 	
-	var subNodes = node.selectNodes("node");
+	var subNodes = Util.xmlChildElements(node, "node");
 	if(subNodes.length > 0) this.buildNodes(subNodes, 0, content);
 }
 
@@ -347,12 +356,11 @@ proto.buildNodes = function(nodes, level, parentElement)
 
 proto.buildNode = function(node, level, index, parentElement)
 {
-	var nodeDiv = document.createElement("<div>");
+	var nodeDiv = Util.createElement("div");
 	parentElement.appendChild(nodeDiv);
-	nodeDiv.attachEvent("onselectstart", CNUtil.cancelEvent);
-	nodeDiv.attachEvent("onselect", CNUtil.cancelEvent);
+	Event.add(nodeDiv, "select", this, CNUtil.cancelEvent);
 
-	var itemDiv = document.createElement("<div isItemDiv=true class=itemDiv>");
+	var itemDiv = Util.createElement("div", "itemDiv", {isItemDiv: true});
 	if(level == 0) itemDiv.style.fontWeight = "bold"
 	
 	var attr = node.getAttribute("id");
@@ -372,13 +380,13 @@ proto.buildNode = function(node, level, index, parentElement)
 	itemDiv.className += " clickable";
 	nodeDiv._clickable = true;	
 
-	var img = document.createElement("<img class=itemImage>");
+	var img = Util.createElement("img", "itemImage");
 	itemDiv.appendChild(img);
 	
 	img.width = 9;
 	img.height = 12;
 
-	var subNodes = node.selectNodes("node");
+	var subNodes = Util.xmlChildElements(node, "node");
 	if(subNodes.length > 0)
 	{
 		var expanded = node.getAttribute("expanded") == "true";
@@ -386,11 +394,11 @@ proto.buildNode = function(node, level, index, parentElement)
 		if(!expanded && this.expandLevel >= level) expanded = true;
 		nodeDiv.expanded = expanded;
 		img.src = CNFormManager.themeImagesPath + "simple-" + (expanded ? "minus" : "plus") + ".gif";
-		img.attachEvent("onclick", this._itemImage_onclick);
-		img.attachEvent("ondblclick", this._itemImage_onclick);	
+		Event.add(img, "click", this, this._itemImage_onclick);
+		Event.add(img, "dblclick", this, this._itemImage_onclick);
 		if(CNFormManager.vista) {
-			img.attachEvent("onmouseenter", this._itemImage_onmouseenter);
-			img.attachEvent("onmouseleave", this._itemImage_onmouseleave);
+			Event.add(img, "mouseenter", this, this._itemImage_onmouseenter);
+			Event.add(img, "mouseleave", this, this._itemImage_onmouseleave);
 		}
 	}
 	else
@@ -398,16 +406,16 @@ proto.buildNode = function(node, level, index, parentElement)
 		img.src = CNFormManager.themeImagesPath + "tree-arrow.gif";
 	}
 
-	var text = document.createElement("<span class=textSpan>");
+	var text = Util.createElement("span", "textSpan");
 	
-	text.attachEvent("onclick", this._itemDiv_onclick);
-	text.attachEvent("ondblclick", this._itemDiv_onclick);
-	text.attachEvent("onmouseover", this._itemDiv_onmouseover);
-	text.attachEvent("onmouseleave", this._itemDiv_onmouseleave);	
+	Event.add(text, "click", this, this._itemDiv_onclick);
+	Event.add(text, "dblclick", this, this._itemDiv_onclick);
+	Event.add(text, "mouseover", this, this._itemDiv_onmouseover);
+	Event.add(text, "mouseleave", this, this._itemDiv_onmouseleave);
 
 	itemDiv.appendChild(text);
 
-	text.innerText = String(node.getAttribute("caption"));
+	text.textContent = String(node.getAttribute("caption"));
 	nodeDiv.style.marginLeft = level > 0 ? this.indent : 0;
 	
 	if(node.getAttribute("selected") == "true") this.selectItemDiv(itemDiv);
@@ -427,7 +435,7 @@ proto.selectItemDiv = function(itemDiv, anim)
 	var selectedItem = this.get_selectedItem();
 	//if(selectedItem == itemDiv) return;
 
-	if(selectedItem && selectedItem.runtimeStyle) 
+	if(selectedItem && selectedItem.style) 
 	{
 		if(CNFormManager.vista)
 		{
@@ -435,19 +443,19 @@ proto.selectItemDiv = function(itemDiv, anim)
 		}
 		else
 		{
-			selectedItem.children[selectedItem.children.length - 1].runtimeStyle.filter = "";
-			selectedItem.children[selectedItem.children.length - 1].runtimeStyle.background = "";
-			selectedItem.runtimeStyle.color = "";
-			//selectedItem.children[1].runtimeStyle.cursor = "pointer";
+
+			selectedItem.children[selectedItem.children.length - 1].style.background = "";
+			selectedItem.style.color = "";
+			//selectedItem.children[1].style.cursor = "pointer";
 			CNUtil.removeClass(selectedItem, "selectedItemDiv");
 		}
 	}
 	// May be null to deselect node.
-	if(itemDiv && itemDiv.runtimeStyle) 
+	if(itemDiv && itemDiv.style) 
 	{
 		// Try to find and show panel.
 		var panel = itemDiv;
-		while(panel != null && panel.className != "cn_navigation_panel") panel = panel.parentElement;
+		while(panel != null && panel.className != "cn_navigation_panel") panel = navigationParent(panel);
 		//if(this.activePanel != panel) 
 		this.showPanel(panel, anim);
 
@@ -465,9 +473,8 @@ proto.selectItemDiv = function(itemDiv, anim)
 		}
 		else
 		{
-			itemDiv.runtimeStyle.color = itemDiv.currentStyle["xl--selected-color"];
-			itemDiv.children[itemDiv.children.length - 1].runtimeStyle.filter = itemDiv.currentStyle["xl--selected-filter"]
-			itemDiv.className += " selectedItemDiv";
+			itemDiv.style.color = Util.getStyle(itemDiv, "xl--selected-color");
+
 		}		
 	}
 	this.set_selectedItem(itemDiv);	
@@ -486,7 +493,7 @@ proto.get_selectedItem = function()
 proto.showPanel = function(l, slide)
 {
 	if(!l || !this.element.contains(l) || l.className != "cn_navigation_panel") return;
-	if(l.currentStyle.display == "none") return;
+	if(Util.getStyle(l, "display") == "none") return;
 	
 	var prevPanelTop = 0;
 	var prevPanelBottom = 0;
@@ -497,12 +504,12 @@ proto.showPanel = function(l, slide)
 	{
 		var panel = this.panels[j];
 		if(panel == l) break;
-		if(panel.currentStyle.display == "none") continue
+		if(Util.getStyle(panel, "display") == "none") continue
 
 		if(slide) Animator.start(new AnimMove(panel, 0, prevPanelTop));
 		else panel.style.top = prevPanelTop;
 		
-		var h = panel.children["panelButton"].offsetHeight - 1;
+		var h = panel.panelButton.offsetHeight - 1;
 		prevPanelTop += h;
 		activePanelHeight -= h;
 	}
@@ -511,20 +518,20 @@ proto.showPanel = function(l, slide)
 	{
 		var panel = this.panels[j];
 		if(panel == l) break;
-		if(panel.currentStyle.display == "none") continue;
+		if(Util.getStyle(panel, "display") == "none") continue;
 		
-		var y = this.element.clientHeight - prevPanelBottom - panel.children["panelButton"].offsetHeight;
+		var y = this.element.clientHeight - prevPanelBottom - panel.panelButton.offsetHeight;
 
 		if(slide) Animator.start(new AnimMove(panel, 0, y));
 		else panel.style.top = y;
 		
-		var h = panel.children["panelButton"].offsetHeight - 2;
+		var h = panel.panelButton.offsetHeight - 2;
 		prevPanelBottom += h;
 		activePanelHeight -= h;
 	}
 
-	var h = l.children["panelButton"].offsetHeight - 1;
-	l.children.contentDiv.style.height = Math.max(activePanelHeight - h - 3, 0);
+	var h = l.panelButton.offsetHeight - 1;
+	l.contentDiv.style.height = Math.max(activePanelHeight - h - 3, 0);
 	
 	if(slide) Animator.start(new AnimMove(l, 0, prevPanelTop));
 	else l.style.top = prevPanelTop;
@@ -533,21 +540,21 @@ proto.showPanel = function(l, slide)
 	{
 		if(this.activePanel)
 		{
-			var button = this.activePanel.children.panelButton		
+			var button = this.activePanel.panelButton		
 			button.className = "panelButton";
-			button.children[0].runtimeStyle.color = "";
+			button.children[0].style.color = "";
 		}
 		this.activePanel = l;
-		var button = this.activePanel.children.panelButton
+		var button = this.activePanel.panelButton
 		button.className = "panelButton panelButtonSelected";
-		button.children[0].runtimeStyle.color = button.currentStyle["xl--selected-color"];		
+		button.children[0].style.color = Util.getStyle(button, "xl--selected-color");		
 	}
 }
 
 proto.showPanel2 = function(l)
 {
 	if(!l || !this.element.contains(l) || l.className != "cn_navigation_panel"
-	|| l.currentStyle.display != "block" || this.panels.length == 0) return;
+	|| Util.getStyle(l, "display") != "block" || this.panels.length == 0) return;
 
 	if(this.panels.length == 1) this.showPanel(this.panels[0], true);
 	else if(l != this.activePanel) 
@@ -575,7 +582,7 @@ proto._findNextVisibleSibling = function(l)
 	{
 		l = l.nextSibling;
 	}
-	while(l && l.currentStyle.display != "block");
+	while(l && Util.getStyle(l, "display") != "block");
 	return l;
 }
 
@@ -585,7 +592,7 @@ proto._findPreviousVisibleSibling = function(l)
 	{
 		l = l.previousSibling;
 	}
-	while(l && l.currentStyle.display != "block");
+	while(l && Util.getStyle(l, "display") != "block");
 	return l;
 }
 
@@ -598,7 +605,7 @@ proto.showActivePanel = function()
 proto.getClickableItemDiv = function(l)
 {
 	var itemDiv = this.getItemDiv(l);
-	var node = itemDiv.parentElement;
+	var node = navigationParent(itemDiv);
 	if(node._clickable !== true) return null;
 	return itemDiv;
 }
@@ -606,7 +613,7 @@ proto.getClickableItemDiv = function(l)
 proto.getItemDiv = function(l)
 {
 	var itemDiv = l;
-	while(itemDiv && !itemDiv.isItemDiv) itemDiv = itemDiv.parentElement;
+	while(itemDiv && !itemDiv.isItemDiv) itemDiv = navigationParent(itemDiv);
 	return itemDiv;
 }
 
@@ -614,20 +621,20 @@ proto.getItemDiv = function(l)
 // Event handlers. =========================================
 proto._panelButton_onmouseenter = function()
 {
-	var panel = CNUtil.findByClassName(event.srcElement, "panelButton");
+	var panel = CNUtil.findByClassName(Util.eventTarget(Event.current()), "panelButton");
 	if(panel) panel.className += " panelButtonHover";
 }
 
 proto._panelButton_onmouseleave = function()
 {
-	var panel = CNUtil.findByClassName(event.srcElement, "panelButton");
+	var panel = CNUtil.findByClassName(Util.eventTarget(Event.current()), "panelButton");
 	if(panel) CNUtil.removeClass(panel, "panelButtonHover");
 }
 
 proto._panelButton_onclick = function()
 {
-	var l = event.srcElement;
-	while(l && l.className != "cn_navigation_panel") l = l.parentElement;
+	var l = Util.eventTarget(Event.current());
+	while(l && l.className != "cn_navigation_panel") l = navigationParent(l);
 
 	CNUtil.findJSObject(l).showPanel2(l);
 }
@@ -635,7 +642,7 @@ proto._panelButton_onclick = function()
 proto._element_onresize = function()
 {
 	if(CNFormManager.changingTheme || this.formManager._loading) return;
-	CNUtil.findJSObject(event.srcElement).element_onresize();
+	CNUtil.findJSObject(Util.eventTarget(Event.current())).element_onresize();
 }
 proto.element_onresize = function()
 {
@@ -652,12 +659,12 @@ proto.element_onresize = function()
 
 proto._itemDiv_onmouseover = function()
 {
-	CNUtil.findJSObject(event.srcElement).itemDiv_onmouseover();
+	CNUtil.findJSObject(Util.eventTarget(Event.current())).itemDiv_onmouseover();
 }
 proto.itemDiv_onmouseover = function()
 {
-	var itemDiv = this.getClickableItemDiv(event.srcElement);
-	if(itemDiv == null || itemDiv.parentElement.disabled) return;
+	var itemDiv = this.getClickableItemDiv(Util.eventTarget(Event.current()));
+	if(itemDiv == null || navigationParent(itemDiv).disabled) return;
 	
 	if(CNFormManager.vista)
 	{
@@ -672,8 +679,8 @@ proto.itemDiv_onmouseover = function()
 	else
 	{
 		var textDiv = itemDiv.children[itemDiv.children.length - 1];
-		itemDiv.runtimeStyle.color = itemDiv.currentStyle["xl--hover-color"];
-		textDiv.runtimeStyle.background = itemDiv.currentStyle["xl--hover-background"]
+		itemDiv.style.color = Util.getStyle(itemDiv, "xl--hover-color");
+		textDiv.style.background = Util.getStyle(itemDiv, "xl--hover-background")
 		itemDiv.className += " hoveredItemDiv";
 	}
 }
@@ -681,22 +688,22 @@ proto.itemDiv_onmouseover = function()
 proto._syncHoverPos = function(itemDiv, hover)
 {
 	var textDiv = itemDiv.children[1];
-	var p = itemDiv.parentElement.parentElement;
+	var p = navigationParent(navigationParent(itemDiv));
 	hover.style.top = itemDiv.offsetTop;
 	hover.style.left = textDiv.offsetLeft - 1;
 	hover.style.width = textDiv.offsetWidth + 2;
 	hover.style.height = textDiv.offsetHeight;
-	if(hover.parentElement != p) p.appendChild(hover);
+	if(navigationParent(hover) != p) p.appendChild(hover);
 }
 
 proto._itemDiv_onmouseleave = function()
 {
-	CNUtil.findJSObject(event.srcElement).itemDiv_onmouseleave();
+	CNUtil.findJSObject(Util.eventTarget(Event.current())).itemDiv_onmouseleave();
 }
 proto.itemDiv_onmouseleave = function()
 {
-	var itemDiv = this.getClickableItemDiv(event.srcElement);
-	if(itemDiv == null || itemDiv.parentElement.disabled) return;
+	var itemDiv = this.getClickableItemDiv(Util.eventTarget(Event.current()));
+	if(itemDiv == null || navigationParent(itemDiv).disabled) return;
 
 	if(CNFormManager.vista)
 	{
@@ -709,8 +716,8 @@ proto.itemDiv_onmouseleave = function()
 	}
 	else
 	{
-		itemDiv.runtimeStyle.color = "";
-		itemDiv.children[itemDiv.children.length - 1].runtimeStyle.background = "";
+		itemDiv.style.color = "";
+		itemDiv.children[itemDiv.children.length - 1].style.background = "";
 		CNUtil.removeClass(itemDiv, "hoveredItemDiv");
 	}
 }
@@ -718,34 +725,34 @@ proto.itemDiv_onmouseleave = function()
 proto._itemImage_onmouseenter = function()
 {
 	var jso = Util.dispatchObject();
-	var itemDiv = jso.getClickableItemDiv(event.srcElement);
-	if(itemDiv == null || itemDiv.parentElement.disabled) return;
-	var img = event.srcElement;
+	var itemDiv = jso.getClickableItemDiv(Util.eventTarget(Event.current()));
+	if(itemDiv == null || navigationParent(itemDiv).disabled) return;
+	var img = Util.eventTarget(Event.current());
 	img.src = "themes/vista/g/hover-" + (itemDiv.parentNode.expanded ? "minus" : "plus") + ".gif";
 }
 
 proto._itemImage_onmouseleave = function()
 {
 	var jso = Util.dispatchObject();
-	var itemDiv = jso.getClickableItemDiv(event.srcElement);
-	if(itemDiv == null || itemDiv.parentElement.disabled) return;
-	var img = event.srcElement;
+	var itemDiv = jso.getClickableItemDiv(Util.eventTarget(Event.current()));
+	if(itemDiv == null || navigationParent(itemDiv).disabled) return;
+	var img = Util.eventTarget(Event.current());
 	img.src = "themes/vista/g/simple-" + (itemDiv.parentNode.expanded ? "minus" : "plus") + ".gif";
 }
 
 proto._itemImage_onclick = function()
 {
-	CNUtil.findJSObject(event.srcElement).itemImage_onclick();
+	CNUtil.findJSObject(Util.eventTarget(Event.current())).itemImage_onclick();
 }
 
 proto.itemImage_onclick = function()
 {
-	var itemDiv = this.getItemDiv(event.srcElement);
+	var itemDiv = this.getItemDiv(Util.eventTarget(Event.current()));
 	this._toggleExpand(itemDiv, true);
 }
 proto._toggleExpand = function(itemDiv, userAction)
 {
-	var node = itemDiv.parentElement;
+	var node = navigationParent(itemDiv);
 	
 	var expanded = node.expanded = !node.expanded;
 	//this.changeChildrenDisplay(node, node.expanded);
@@ -765,7 +772,7 @@ proto._toggleExpand = function(itemDiv, userAction)
 			anim.onend = function()
 			{
 				contDiv.style.height = "auto";
-				contDiv.runtimeStyle.overflow = "";
+				contDiv.style.overflow = "";
 			}
 		}
 		else
@@ -776,7 +783,7 @@ proto._toggleExpand = function(itemDiv, userAction)
 			anim.onend = function()
 			{
 				contDiv.style.height = "auto";
-				contDiv.runtimeStyle.overflow = "";
+				contDiv.style.overflow = "";
 				contDiv.style.display = "none";					
 			}
 		}
@@ -795,12 +802,12 @@ proto._toggleExpand = function(itemDiv, userAction)
 
 proto._itemDiv_onclick = function()
 {
-	CNUtil.findJSObject(event.srcElement).itemDiv_onclick();
+	CNUtil.findJSObject(Util.eventTarget(Event.current())).itemDiv_onclick();
 }
 proto.itemDiv_onclick = function()
 {
-	var itemDiv = this.getClickableItemDiv(event.srcElement);
-	if(itemDiv == null || itemDiv.parentElement.disabled || this.formManager._loading
+	var itemDiv = this.getClickableItemDiv(Util.eventTarget(Event.current()));
+	if(itemDiv == null || navigationParent(itemDiv).disabled || this.formManager._loading
 	|| this.formManager.isNavigationDisabled()) return;
 
 	if(itemDiv._isFolder)
@@ -812,7 +819,7 @@ proto.itemDiv_onclick = function()
 		this.selectItemDiv(itemDiv);
 		
 		var selectedForm;
-		var id = itemDiv.parentElement._id;
+		var id = navigationParent(itemDiv)._id;
 		if(!id || itemDiv == this.selectedItem && id == this.formManager._currentFormID) return;
 		this.selectedForm = id;
 		this._formSelected = true;

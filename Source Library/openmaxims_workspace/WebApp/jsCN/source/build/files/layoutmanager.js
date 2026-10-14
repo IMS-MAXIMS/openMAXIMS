@@ -21,6 +21,7 @@ function LayoutManager(container, initialWidth, initialHeight)
 
 	this._collapsedHeight = 27;	
 	this._resizesHandled = false;
+	this._resizeObserver = null;
 	this._collapsedContainers = [];
 }
 LayoutManager.TOP = 0x1;    // 1
@@ -43,12 +44,27 @@ proto.setHandleResizes = function(handle)
 	{
 		if(!this._resizesHandled) 
 		{
-			this._container.attachEvent("onresize", this._formContent_onresize);
+			if(typeof ResizeObserver != "function")
+			{
+				if(typeof Util != "undefined" && Util.reportUnsupported)
+					Util.reportUnsupported("LayoutManager", "element resize observation", "ResizeObserver is required by the standards-browser client");
+				return;
+			}
+			var lm = this;
+			this._resizeObserver = new ResizeObserver(function()
+			{
+				lm._formContent_onresize({currentTarget: lm._container});
+			});
+			this._resizeObserver.observe(this._container);
 		}
 	}
 	else 
 	{
-		if(this._resizesHandled) this._container.detachEvent("onresize", this._formContent_onresize);
+		if(this._resizeObserver)
+		{
+			this._resizeObserver.disconnect();
+			this._resizeObserver = null;
+		}
 	}
 	this._resizesHandled = handle;
 }
@@ -332,7 +348,10 @@ proto._setRecalculatedSize = function(l, contentDeltaWidth, contentDeltaHeight)
 	}
 	else if((jso._anchorSide & LayoutManager.BOTTOM) == LayoutManager.BOTTOM) 
 	{
-		l.style.pixelTop = jso._anchorTop + contentDeltaHeight;
+		// `pixelTop` is an IE-only CSSOM property.  It is silently ignored by
+		// Safari/Chrome, leaving bottom-anchored controls at their design-time
+		// position when the form grows.
+		l.style.top = (jso._anchorTop + contentDeltaHeight) + "px";
 	}
 
 	if(jso.layout) jso.layout();
@@ -343,7 +362,8 @@ proto._setRecalculatedSize = function(l, contentDeltaWidth, contentDeltaHeight)
 
 proto._formContent_onresize = function()
 {
-	var src = event.srcElement;
+	var ev = Event.normalize(arguments[0]);
+	var src = ev && (ev.currentTarget || ev.target || ev.target);
 	if(!src) src = window;
 	var lm = src._layoutManager;
 	if(!lm) return;
@@ -488,7 +508,7 @@ proto._collapseDown = function(l)
 
 proto._changeTAVisibility = function(l, visible)
 {
-	var tas = l.all.tags("TEXTAREA");
+	var tas = l.getElementsByTagName ? l.getElementsByTagName("TEXTAREA") : [];
 	for(var i = 0; i < tas.length; i++)
 	{
 		var ta = tas[i];
@@ -504,7 +524,12 @@ proto._changeTAVisibility = function(l, visible)
 		}
 		else
 		{
-			if(!ta._lm_tempHidden) ta._lm_currentVisibility = ta.currentStyle.visibility;
+			if(!ta._lm_tempHidden)
+			{
+				var computed = window.getComputedStyle(ta, null);
+				ta._lm_currentVisibility = computed && (computed.visibility ||
+					(computed.getPropertyValue && computed.getPropertyValue("visibility"))) || "visible";
+			}
 			ta._lm_tempHidden = true;
 			ta.style.visibility = "hidden";
 		}
@@ -620,7 +645,16 @@ proto._updateContainer = function(l)
 	// NOTE: doesn't support scrollable = false.
 	l.containerElement.style.overflow = collapsed ? "hidden" : "auto";
 
-	var button = CNFormManager.vista ? l.lastChild : l.children[0].rows(0).cells(1).all.tags("div")[0];
+	var button = CNFormManager.vista ? l.lastChild : null;
+	if(!button)
+	{
+		var table = l.children && l.children[0];
+		var row = table && table.rows && table.rows[0];
+		var cell = row && row.cells && row.cells[1];
+		var divs = cell && cell.getElementsByTagName ? cell.getElementsByTagName("div") : [];
+		button = divs[0] || (cell && cell.firstElementChild) || (cell && cell.firstChild);
+	}
+	if(!button) return;
 	Tooltip.set(button, collapsed ? "Expand" : "Collapse");
 	var upper = l._collapseDirection != "down";
 
@@ -642,7 +676,7 @@ proto._updateContainer = function(l)
 	}
 	else 
 	{
-		if(l._collapsed) button.innerText = upper ? "6" : "5";
-		else button.innerText = upper ? "5" : "6";
+		if(l._collapsed) button.textContent = upper ? "6" : "5";
+		else button.textContent = upper ? "5" : "6";
 	}
 }

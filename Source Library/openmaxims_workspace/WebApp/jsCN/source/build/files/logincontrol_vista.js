@@ -12,9 +12,38 @@ var proto = CN_logincontrol_vista.prototype;
 
 CN_logincontrol_vista.loginImage = false;
 
+proto._createActionImage = function(black)
+{
+	var img;
+	if(black)
+	{
+		img = document.createElement("span");
+		img.style.display = "inline-block";
+		img.style.width = "22px";
+		img.style.height = "22px";
+		img.style.backgroundImage = "url(" + CNFormManager.themeImagesPath + "square-button-set.gif)";
+		img.style.backgroundRepeat = "no-repeat";
+		img.style.backgroundPosition = "0px 0px";
+		Event.nativeAdd(img, "mouseenter", function() { if(!img.disabled) img.style.backgroundPosition = "-22px 0px"; });
+		Event.nativeAdd(img, "mouseleave", function() { img.style.backgroundPosition = "0px 0px"; });
+		Event.nativeAdd(img, "mousedown", function() { if(!img.disabled) img.style.backgroundPosition = "-44px 0px"; });
+		Event.nativeAdd(img, "mouseup", function() { if(!img.disabled) img.style.backgroundPosition = "-22px 0px"; });
+	}
+	else
+	{
+		img = document.createElement("img");
+		img.src = CNFormManager.themeImagesPath + "round-button.gif";
+		Event.nativeAdd(img, "mouseenter", function() { if(!img.disabled) img.src = CNFormManager.themeImagesPath + "hover-round-button.gif"; });
+		Event.nativeAdd(img, "mouseleave", function() { img.src = CNFormManager.themeImagesPath + "round-button.gif"; });
+		Event.nativeAdd(img, "mousedown", function() { if(!img.disabled) img.src = CNFormManager.themeImagesPath + "down-round-button.gif"; });
+		Event.nativeAdd(img, "mouseup", function() { if(!img.disabled) img.src = CNFormManager.themeImagesPath + "hover-round-button.gif"; });
+	}
+	return img;
+}
+
 proto.createElement = function(node, parentElement)
 {
-	var l = document.createElement('<div class="cn_logincontrol">');
+	var l = (function(){ var el = document.createElement("div"); el.className = 'cn_logincontrol'; return el; })();
 	parentElement.appendChild(l);
 	
 	this.element = l;
@@ -36,78 +65,81 @@ proto._buildContent = function()
 	var img = $("__loginImage");
 	if(img) img.style.display = CN_logincontrol_vista.loginImage ? "block" : "none";
 	
-	var outerDiv = document.createElement("<div class=outerDiv>"); // Anchor div.
+	var outerDiv = (function(){ var el = document.createElement("div"); el.className = 'outerDiv'; return el; })(); // Anchor div.
 	this.element.appendChild(outerDiv);
 	
-	var frameCont = document.createElement("<div class=frameCont>");
+	var frameCont = (function(){ var el = document.createElement("div"); el.className = 'frameCont'; return el; })();
 	outerDiv.appendChild(frameCont);
 	
 	frameCont.innerHTML = $("__plainBG").innerHTML;
-	var frame = frameCont.firstChild;
+	var frame = frameCont.firstElementChild;
 	frame.style.visibility = "hidden";	
-	frame.style.filter = "progid:DXImageTransform.Microsoft.Fade()";
+	frame.style.opacity = "0";
 
-	this._contentDiv = document.createElement("<div class=contentDiv>");
+	this._contentDiv = (function(){ var el = document.createElement("div"); el.className = 'contentDiv'; return el; })();
 	frameCont.appendChild(this._contentDiv);
 	this._contentDiv.style.visibility = "hidden";
 
-	var loginContentDiv = document.createElement("<div class=loginContentDiv>");
+	var loginContentDiv = (function(){ var el = document.createElement("div"); el.className = 'loginContentDiv'; return el; })();
 	this._contentDiv.appendChild(loginContentDiv);
 
-	var focusDiv = document.createElement("<span tabIndex=1 style='width: 1px; overflow: hidden; '>");
+	var focusDiv = (function(){ var el = document.createElement("span"); el.tabIndex = '1'; el.style.width = '1px'; el.style.overflow = 'hidden'; return el; })();
 	loginContentDiv.appendChild(focusDiv);	
 	
 	this._focusDiv = focusDiv;
 	
-	this._lockDiv = document.createElement("<div class=lockDiv>");
+	this._lockDiv = (function(){ var el = document.createElement("div"); el.className = 'lockDiv'; return el; })();
 	loginContentDiv.appendChild(this._lockDiv);
 	
-	this._userBox = document.createElement("<input type=text class='loginBox untouched' tabIndex=2>");
+	this._userBox = (function(){ var el = document.createElement("input"); el.type = 'text'; el.className = 'loginBox untouched'; el.tabIndex = '2'; return el; })();
 	this._userBox._isEmpty = true;
 	this._userBox.value = "User";
 	loginContentDiv.appendChild(this._userBox);
 	VistaSupport.attachToTextBox(this._userBox);
-	this._userBox.attachEvent("onfocus", this._userBox_onfocus);
-	this._userBox.attachEvent("onblur", this._userBox_onblur);
-	this._userBox.attachEvent("onkeypress", this._userBox_onkeypress);
+	Event.add(this._userBox, "focus", this, this._userBox_onfocus);
+	Event.add(this._userBox, "blur", this, this._userBox_onblur);
+	Event.add(this._userBox, "keypress", this, this._userBox_onkeypress);
 	
-	this._fakePasswordBox = document.createElement("<input type=text class='passwordBox untouched' tabIndex='3'>");
+	this._fakePasswordBox = (function(){ var el = document.createElement("input"); el.type = 'text'; el.className = 'passwordBox untouched'; el.tabIndex = '3'; return el; })();
 	this._fakePasswordBox.value = "Password";
 	loginContentDiv.appendChild(this._fakePasswordBox);
 	VistaSupport.attachToTextBox(this._fakePasswordBox);
-	this._fakePasswordBox.attachEvent("onfocus", this._fakePasswordBox_onfocus);
+	Event.add(this._fakePasswordBox, "focus", this, this._fakePasswordBox_onfocus);
 	
-	this._passwordBox = document.createElement("<input type=password class='passwordBox' tabIndex='3'>");
+	this._passwordBox = (function(){ var el = document.createElement("input"); el.type = 'password'; el.className = 'passwordBox'; el.tabIndex = '3'; return el; })();
 	this._passwordBox.style.display = "none";
 	loginContentDiv.appendChild(this._passwordBox);
 	VistaSupport.attachToTextBox(this._passwordBox);
-	this._passwordBox.attachEvent("onblur", this._passwordBox_onblur);
+	Event.add(this._passwordBox, "blur", this, this._passwordBox_onblur);
 
 	var img;
 	if(CNFormManager.subTheme == "black") {
-		img = VistaSupport.createImageSetButton("square-button-set.gif", 22, 22);
+		img = this._createActionImage(true);
 
 		var siteLogo = document.getElementById("__siteLogo");
 		siteLogo.style.width = "1px";
-		siteLogo.filters[0].sizingMethod = "image"; // Reset logo back to image size.
+		siteLogo.style.backgroundSize = "contain";
+		siteLogo.style.objectFit = "contain"; // Reset logo back to image size.
 	} else {
-		img = VistaSupport.createImageButton("round-button.gif");
+		img = this._createActionImage(false);
 	}
 	
 	img.tabIndex = 4; // After locations combo.
 	img.className = "imgButton";
 	loginContentDiv.appendChild(img);
-	img.onclick = this._img_onclick;
+	Event.add(img, "click", this, this._img_onclick);
 	this._imgButton = img;
 	
 	if(CNFormManager.strings['loginCaption']) {
 		$('__loginLabel').innerHTML = $('__loginLabelShade').innerHTML = CNFormManager.strings['loginCaption'];
 	}
 	if(CNFormManager.strings['loginLogo']) {
-		$('__loginLogoIMG').filters[0].src = CNFormManager.strings['loginLogo'];
+		var loginLogo = $('__loginLogoIMG');
+		if(loginLogo.tagName == "IMG") loginLogo.src = CNFormManager.strings['loginLogo'];
+		else loginLogo.style.backgroundImage = "url(" + CNFormManager.strings['loginLogo'] + ")";
 	}
 	
-	this.element.attachEvent("onkeypress", this._element_onkeypress);	
+	Event.add(this.element, "keypress", this, this._element_onkeypress);	
 }
 
 proto.set_disabled = function(value)
@@ -131,8 +163,8 @@ proto._showLoginScreen = function()
 		var stored = false;
 		try 
 		{
-			document.body.load("storedLocations");
-			var storedNodes = document.body.XMLDocument.selectNodes("storedLocations/location");
+			var storedRoot = this.formManager._getStoredLocationsXML();
+			var storedNodes = Util.xmlSelectNodes(storedRoot, "location");
 			if(storedNodes.length > 0) 
 			{							  
 				this._showLocationCombo(storedNodes);
@@ -148,17 +180,18 @@ proto._showLoginScreen = function()
 // Actually shows and animates control.
 proto.validateLoading = function()
 {
-	var frameCont = this.element.firstChild.firstChild;
+	var frameCont = this.element.firstElementChild.firstElementChild;
 	var self = this;
 	//this._contentDiv
 	setTimeout(function()
 	{
 		self._contentDiv.style.visibility = "inherit";
 		
-		var frame = frameCont.firstChild;
-		frame.filters[0].Apply();
+		var frame = frameCont.firstElementChild;
+		frame.style.opacity = "0";
 		frame.style.visibility = "inherit";
-		frame.filters[0].Play(.5);	
+		frame.style.transition = "opacity .5s";
+		frame.style.opacity = "1";	
 		self._focusDiv.focus();
 		AnimVistaFadeResize(frameCont, 60, 10);	
 		
@@ -170,7 +203,8 @@ proto.validateLoading = function()
 						h = siteLogo.offsetHeight;
 					siteLogo.style.width = w + "px";
 					siteLogo.style.height = h + "px";
-					siteLogo.filters[0].sizingMethod = "scale";
+					siteLogo.style.backgroundSize = "100% 100%";
+					siteLogo.style.objectFit = "fill";
 					
 					Animator.start(new AnimResize(siteLogo, w / 2.5, h / 2.5));
 				}
@@ -199,7 +233,7 @@ proto._fillSelectLocationCombo = function(storedNodes)
 	var options = [];
 	for(var i = 0; i < storedNodes.length; i++)
 	{
-		var option = {text: storedNodes[i].text};
+		var option = {text: Util.xmlText(storedNodes[i])};
 		options.push(option);
 	}
 	
@@ -211,11 +245,11 @@ proto._fillSelectLocationCombo = function(storedNodes)
 
 proto._img_onclick = function()
 {
-	Util.dispatchObject().loginButtonClick();
+	this.loginButtonClick();
 }
-proto._userBox_onfocus = function()
+proto._userBox_onfocus = function(ev)
 {
-	var box = event.srcElement;
+	var box = Util.eventTarget(ev);
 	var jso = Util.dispatchObject();
 	if(jso._disabled || !box._isEmpty) return;
 	box._emptyValue = box.value;
@@ -223,20 +257,20 @@ proto._userBox_onfocus = function()
 	box.select();
 	Util.removeClass(box, "untouched");
 }
-proto._userBox_onkeypress = function()
+proto._userBox_onkeypress = function(ev)
 {
 	var jso = Util.dispatchObject();
 	if(jso._disabled) return;
 	
-	var box = event.srcElement;	
+	var box = Util.eventTarget(ev);	
 	box._isEmpty = false;
 }
-proto._userBox_onblur = function()
+proto._userBox_onblur = function(ev)
 {
 	var jso = Util.dispatchObject();
 	if(jso._disabled) return;
 
-	var box = event.srcElement;
+	var box = Util.eventTarget(ev);
 	if(box.value == "") 
 	{	
 		box.value = box._emptyValue;
@@ -245,23 +279,23 @@ proto._userBox_onblur = function()
 	}
 	else box._isEmpty = false;
 }
-proto._fakePasswordBox_onfocus = function()
+proto._fakePasswordBox_onfocus = function(ev)
 {
 	var jso = Util.dispatchObject();
 	if(jso._disabled) return;
 	
-	var box = event.srcElement;
+	var box = Util.eventTarget(ev);
 	jso._passwordBox.style.display = "inline";
 	jso._passwordBox.focus();
 	jso._passwordBox.select();
 	box.style.display = "none";
 }
-proto._passwordBox_onblur = function()
+proto._passwordBox_onblur = function(ev)
 {
 	var jso = Util.dispatchObject();
 	if(jso._disabled) return;
 	
-	var box = event.srcElement;
+	var box = Util.eventTarget(ev);
 	if(box.value == "")
 	{
 		jso._fakePasswordBox.style.display = "inline";
@@ -273,7 +307,7 @@ proto.loadData = function(node)
 {
 	this._salt = node.getAttribute("salt");
 
-	var message = node.selectSingleNode("message");
+	var message = Util.xmlSelectSingleNode(node, "message");
 	if(message) {
 		this._showMessage(message);
 	}
@@ -282,13 +316,13 @@ proto.loadData = function(node)
 proto._showMessage = function(node) {
 	//redHeader
 	var redHeader = this._redHeader = $(CNFormManager.subTheme == "black" ? '__vistaFormRedHeaderBG' : '__si_formRedHeaderBG').cloneNode(true);
-	this.element.firstChild.appendChild(redHeader);
+	this.element.firstElementChild.appendChild(redHeader);
 	redHeader.className = "messageRedHeader";
 
 	var div = document.createElement("div");
-	this.element.firstChild.appendChild(div);
+	this.element.firstElementChild.appendChild(div);
 	div.className = "messageDiv";
-	div.innerHTML = node.xml;
+	div.innerHTML = Util.xmlInnerString(node);
 
 	var obj = this;
 	setTimeout(function() {
@@ -324,7 +358,7 @@ proto.storeData = function(xmldoc)
 	{
 		if(this._selectLocationCombo) 
 		{
-			var storedNodes = rootEl.selectNodes("location");
+			var storedNodes = Util.xmlSelectNodes(rootEl, "location");
 			
 			var ix = this._selectLocationCombo.get_selectedIndex();
 			
@@ -350,15 +384,14 @@ proto.unload = function()
 }
 
 
-proto._element_onkeypress = function()
+proto._element_onkeypress = function(ev)
 {
-	var jso = CNUtil.dispatchObject();
-	if(jso && jso.element_onkeypress) jso.element_onkeypress();
+	this.element_onkeypress(ev);
 }
-proto.element_onkeypress = function()
+proto.element_onkeypress = function(ev)
 {
-	if(event.keyCode != 13) return;
-	CNUtil.cancelEvent();
+	if(Event.keyValue(ev) != 13) return;
+	CNUtil.cancelEvent(ev);
 	this.loginButtonClick();
 }
 
@@ -367,11 +400,10 @@ proto.loginButtonClick = function()
 	if(this._disabled) return;
 	if(!this._userBox.value || this._userBox._isEmpty)
 	{
-		this._userBox.runtimeStyle.borderColor = "red";
+		this._userBox.style.borderColor = "red";
 		return;
 	}
-	this._userBox.runtimeStyle.borderColor = "";
+	this._userBox.style.borderColor = "";
 	this.formManager.postData(this.element);
 }
 proto = null;
-

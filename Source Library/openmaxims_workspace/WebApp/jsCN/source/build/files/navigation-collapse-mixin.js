@@ -43,14 +43,14 @@ proto._updateCollapseElements = function() {
 			= this._collapseBorder.style.display = "";
 		if(this._collapsedTab) {
 			this._collapsedTab.style.cursor = "";
-			this._collapsedTab.style.filter = "";
+
 		}
 	} else {
 		this._pinButton.style.display
 			= this._collapseBorder.style.display = "none";
 		if(this._collapsedTab) {
 			this._collapsedTab.style.cursor = "default";
-			this._collapsedTab.style.filter = "alpha(opacity=50)";
+
 		}
 	}
 }
@@ -321,7 +321,7 @@ proto._quickExpand_document_mouseup = function() {
 
 	var navScreenItem = $("__si_navigation");
 	var navBGScreenItem = $("__si_navigationBG");
-	if(!navScreenItem.contains(event.srcElement) && !navBGScreenItem.contains(event.srcElement)) {
+	if(!navScreenItem.contains(Event.current().target) && !navBGScreenItem.contains(Event.current().target)) {
 		this.collapse();
 	}
 }

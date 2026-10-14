@@ -5,62 +5,65 @@ function CNDialogManager(){}
 
 CNDialogManager._dialog_closeButton_onmouseenter = function()
 {
-	var l = event.srcElement;
-	l.runtimeStyle.border = "1px solid white";
-	l.runtimeStyle.padding = "0px";
+	var l = Util.eventTarget(Event.current());
+	l.style.border = "1px solid white";
+	l.style.padding = "0px";
 }
 
 CNDialogManager._dialog_closeButton_onmouseleave = function()
 {
-	var l = event.srcElement;
-	l.runtimeStyle.border = "0px";
-	l.runtimeStyle.padding = "1px";
+	var l = Util.eventTarget(Event.current());
+	l.style.border = "0px";
+	l.style.padding = "1px";
 }
 
 CNDialogManager._findDialogDiv = function(l)
 {
-	while(l && !l._isDialogDiv) l = l.parentElement;
+	while(l && !l._isDialogDiv) l = l.parentNode || l.parentElement;
 	return l;
 }
 
 // Blue only.
 CNDialogManager._popupDiv_onmousedown = function()
 {
-	var l = CNDialogManager._findDialogDiv(event.srcElement);
-	if(l.currentStyle.zIndex != top.__ontopZ) l.style.zIndex = top.__ontopZ++;
+	var l = CNDialogManager._findDialogDiv(Util.eventTarget(Event.current()));
+	if(Util.getStyle(l, "zIndex") != top.__ontopZ) l.style.zIndex = top.__ontopZ++;
 	Util.cancelEvent();
 }
 
 CNDialogManager._captionDiv_onmousedown = function()
 {
-	var l = CNDialogManager._findDialogDiv(event.srcElement);	
-	if(l.currentStyle.zIndex != top.__ontopZ) l.style.zIndex = top.__ontopZ++;
+	var l = CNDialogManager._findDialogDiv(Util.eventTarget(Event.current()));	
+	if(Util.getStyle(l, "zIndex") != top.__ontopZ) l.style.zIndex = top.__ontopZ++;
 	if(CNFormManager.vista && 
-		!event.srcElement.className.match(/dialogContOuter|dialogCaption/)) return;
+		!Util.eventTarget(Event.current()).className.match(/dialogContOuter|dialogCaption/)) return;
 	
 	if(l._maximized) return;
 	
-	l.attachEvent("onmousemove", CNDialogManager._captionDiv_doDrag);
-	l.attachEvent("onmouseup", CNDialogManager._captionDiv_finishDrag);
-	l.attachEvent("onlosecapture", CNDialogManager._captionDiv_finishDrag);
-	l.setCapture();
 	CNDialogManager._dragged = l;
+	CNDialogManager._dragStarted = false;
+	CNDialogManager._dragTarget = document;
+	Event.add(CNDialogManager._dragTarget, "mousemove", CNDialogManager, CNDialogManager._captionDiv_doDrag);
+	Event.add(CNDialogManager._dragTarget, "mouseup", CNDialogManager, CNDialogManager._captionDiv_finishDrag);
 }
 CNDialogManager._captionDiv_doDrag = function()
 {
 	var l = CNDialogManager._dragged;
+	if(!l) return;
 	
 	if(!CNDialogManager._dragStarted)
 	{
 		CNDialogManager._startLeft = l.offsetLeft;
 		CNDialogManager._startTop = l.offsetTop;
-		CNDialogManager._x = event.screenX;
-		CNDialogManager._y = event.screenY;
+		var startEvent = Event.current() || {};
+		CNDialogManager._x = startEvent.screenX;
+		CNDialogManager._y = startEvent.screenY;
 		CNDialogManager._dragStarted = true;
 	}
 
-	l.style.pixelLeft = CNDialogManager._startLeft + event.screenX - CNDialogManager._x;
-	l.style.pixelTop = CNDialogManager._startTop + event.screenY - CNDialogManager._y;
+	var currentEvent = Event.current() || {};
+	l.style.left = (CNDialogManager._startLeft + currentEvent.screenX - CNDialogManager._x) + "px";
+	l.style.top = (CNDialogManager._startTop + currentEvent.screenY - CNDialogManager._y) + "px";
 	
 	if(l.shadow) l.shadow.syncPosition();
 }
@@ -68,12 +71,13 @@ CNDialogManager._captionDiv_doDrag = function()
 CNDialogManager._captionDiv_finishDrag = function()
 {
 	var l = CNDialogManager._dragged;
-	l.detachEvent("onmousemove", CNDialogManager._captionDiv_doDrag);
-	l.detachEvent("onmouseup", CNDialogManager._captionDiv_finishDrag);
-	l.detachEvent("onlosecapture", CNDialogManager._captionDiv_finishDrag);
-	l.releaseCapture();
+	if(!l) return;
+	var target = CNDialogManager._dragTarget;
+	Event.del(target, "mousemove", CNDialogManager, CNDialogManager._captionDiv_doDrag);
+	Event.del(target, "mouseup", CNDialogManager, CNDialogManager._captionDiv_finishDrag);
 	CNDialogManager._dragStarted = false;
 	CNDialogManager._dragged = null;
+	CNDialogManager._dragTarget = null;
 }
 
 CNDialogManager._popup_cancel = function()
@@ -87,13 +91,20 @@ CNDialogManager._popup_commit = function()
 
 CNDialogManager._maximize_onclick = function()
 {
-	var dialog = CNDialogManager._findDialogDiv(event.srcElement);
+	var dialog = CNDialogManager._findDialogDiv(Util.eventTarget(Event.current()));
 	if(dialog) CNDialogManager.toggleDialogMaximize(dialog);
 }
 
 CNDialogManager.toggleDialogMaximize = function(dialog)
 {
 	dialog._maximized ? CNDialogManager.restoreDialog(dialog) : CNDialogManager.maximizeDialog(dialog);
+}
+
+CNDialogManager._setTopButtonImage = function(button, image)
+{
+	var element = button.firstChild;
+	var source = CNFormManager.themeImagesPath + image;
+	element.src = source;
 }
 
 CNDialogManager.maximizeDialog = function(dialog)
@@ -109,7 +120,7 @@ CNDialogManager.maximizeDialog = function(dialog)
 	
 	var max = CNDialogManager.getMaxButton(dialog);
 	max._img = "restore.png";
-	max.firstChild.filters[0].src = CNFormManager.themeImagesPath + "restore.png";
+	CNDialogManager._setTopButtonImage(max, "restore.png");
 	
 	if(dialog._maxDelegate) dialog._maxDelegate[0][dialog._maxDelegate[1]](dialog, true);
 }
@@ -120,14 +131,14 @@ CNDialogManager.restoreDialog = function(dialog)
 	dialog._maximized = false;
 	dialog.className = "popupDialog";
 	var b = dialog._storedBounds;
-	dialog.style.left = b.x;
-	dialog.style.top = b.y;
-	dialog.style.width = b.w;
-	dialog.style.height = b.h;
+	dialog.style.left = b.x + "px";
+	dialog.style.top = b.y + "px";
+	dialog.style.width = b.w + "px";
+	dialog.style.height = b.h + "px";
 	
 	var max = CNDialogManager.getMaxButton(dialog);
 	max._img = "maximize.png";
-	max.firstChild.filters[0].src = CNFormManager.themeImagesPath + "maximize.png";
+	CNDialogManager._setTopButtonImage(max, "maximize.png");
 	
 	if(dialog._maxDelegate) dialog._maxDelegate[0][dialog._maxDelegate[1]](dialog, false);
 }
@@ -135,7 +146,7 @@ CNDialogManager.restoreDialog = function(dialog)
 
 CNDialogManager.hidePopup = function(dialog, commit, doNotCallback)
 {
-	if(dialog == null && event) dialog = CNDialogManager._findDialogDiv(event.srcElement);
+	if(dialog == null && Event.current()) dialog = CNDialogManager._findDialogDiv(Util.eventTarget(Event.current()));
 	if(!dialog) return;
 	
 	var closeIt = true;
@@ -150,26 +161,15 @@ CNDialogManager.hidePopup = function(dialog, commit, doNotCallback)
 	
 	if(closeIt)
 	{
-		if(CNFormManager.vista && Util.IE7)
-		{
-			var f = dialog.filters['progid:DXImageTransform.Microsoft.Fade'];
-			if(f) f.Apply();
-			dialog.style.visibility = "hidden";
-			if(f) f.Play(.25);
-		}
-		else 
-		{
-			if(dialog.shadow) dialog.shadow.hide();
-			dialog.style.visibility = "hidden";
-		}
-	
+		if(dialog.shadow) dialog.shadow.hide();
+		dialog.style.visibility = "hidden";
 		dialog._finishDelegate = null;
 	}
 	if(CNDialogManager._activePopup == dialog) 
 	{
 		CNDialogManager._activePopup = null;
-		document.detachEvent("onmousedown", CNDialogManager._document_onmousedown);
-		document.detachEvent("onkeypress", CNDialogManager._document_onkeypress);
+		Event.del(document, "mousedown", CNDialogManager, CNDialogManager._document_onmousedown);
+		Event.del(document, "keypress", CNDialogManager, CNDialogManager._document_onkeypress);
 	}
 }
 
@@ -185,7 +185,7 @@ CNDialogManager.destroyDialog = function(dialog)
 	}
 
 	if(dialog.shadow) dialog.shadow.destroy();
-	dialog.removeNode(true);	
+	Util.removeElement(dialog);	
 }
 
 CNDialogManager._destroyButtonsIn = function(cont)
@@ -211,39 +211,39 @@ CNDialogManager._destroyButtonsIn = function(cont)
 // Content elements start from ix = 2.
 CNDialogManager.createDialog = function(title)
 {
-	var popupDiv = document.createElement("<div class=cnPopupDialogDiv>");
+	var popupDiv = Util.createElement("div", "cnPopupDialogDiv");
 	popupDiv._isDialogDiv = true;
 	popupDiv.style.display = "none";
 	
 	document.body.appendChild(popupDiv);
 			
-	var captionDiv = document.createElement("<div class=cnPopupDialogCaption>"); // 0
+	var captionDiv = Util.createElement("div", "cnPopupDialogCaption"); // 0
 	popupDiv.appendChild(captionDiv);
-	captionDiv.innerText = title;
+	captionDiv.textContent = title;
 
-	var closeButton = document.createElement("<div class=cnDialogCloseButton unselectable=on>"); // 1
+	var closeButton = Util.createElement("div", "cnDialogCloseButton", null); // 1
 	popupDiv.appendChild(closeButton);
-	var span = document.createElement('<span unselectable=on>');
+	var span = Util.createElement("span", null, null);
 	closeButton.appendChild(span);
-	span.innerText = 'r';
+	span.textContent = 'r';
 	
-	var dialogContOuter = document.createElement("<div class=dialogContOuter>"); // 2
+	var dialogContOuter = Util.createElement("div", "dialogContOuter"); // 2
 	popupDiv.appendChild(dialogContOuter);
 
-	var contentsDiv = document.createElement("<div class=dialogContents>");
+	var contentsDiv = Util.createElement("div", "dialogContents");
 	dialogContOuter.appendChild(contentsDiv);
 	
-	var bottomDiv = document.createElement("<div class=dialogBottom>")
+	var bottomDiv = Util.createElement("div", "dialogBottom")
 	contentsDiv.appendChild(bottomDiv);
 
-	closeButton.attachEvent("onmouseenter", CNDialogManager._dialog_closeButton_onmouseenter);
-	closeButton.attachEvent("onmouseleave", CNDialogManager._dialog_closeButton_onmouseleave);
-	closeButton.attachEvent("onclick", CNDialogManager._popup_cancel);
+	Event.add(closeButton, "mouseenter", CNDialogManager, CNDialogManager._dialog_closeButton_onmouseenter);
+	Event.add(closeButton, "mouseleave", CNDialogManager, CNDialogManager._dialog_closeButton_onmouseleave);
+	Event.add(closeButton, "click", CNDialogManager, CNDialogManager._popup_cancel);
 
 	new Shadow(popupDiv, false, false);
 
-	popupDiv.attachEvent("onmousedown", CNDialogManager._popupDiv_onmousedown);
-	captionDiv.attachEvent("onmousedown", CNDialogManager._captionDiv_onmousedown);
+	Event.add(popupDiv, "mousedown", CNDialogManager, CNDialogManager._popupDiv_onmousedown);
+	Event.add(captionDiv, "mousedown", CNDialogManager, CNDialogManager._captionDiv_onmousedown);
 	
 	return popupDiv;
 }
@@ -255,21 +255,19 @@ CNDialogManager.createVistaDialog = function(title, resizable)
 	dialog.removeAttribute("id");
 	dialog._isDialogDiv = true;
 	dialog._isResizable = resizable;
-	//document.body.insertAdjacentElement("afterbegin", dialog);
+	
 	document.body.appendChild(dialog);
 	var tr = dialog.firstChild.rows[0];
-	dialog.children[4].attachEvent("onmousedown", CNDialogManager._captionDiv_onmousedown);	
-	dialog.children[3].attachEvent("onmousedown", CNDialogManager._captionDiv_onmousedown);	
+	Event.add(dialog.children[4], "mousedown", CNDialogManager, CNDialogManager._captionDiv_onmousedown);	
+	Event.add(dialog.children[3], "mousedown", CNDialogManager, CNDialogManager._captionDiv_onmousedown);	
 	
 	var close = dialog.firstChild.nextSibling;
 	close._img = resizable ? "close-2.png" : "close.png";
-	close.attachEvent("onmouseenter", CNDialogManager._topButton_onmouseenter);
-	close.attachEvent("onmouseleave", CNDialogManager._topButton_onmouseleave);
-	close.attachEvent("onmousedown", CNDialogManager._topButton_onmousedown);
-	close.attachEvent("onmouseup", CNDialogManager._topButton_onmouseup);
-	close.attachEvent("onclick", CNDialogManager._topButton_onclick);
-	close.attachEvent("onselectstart", Util.cancelEvent);
-
+	Event.add(close, "mouseenter", CNDialogManager, CNDialogManager._topButton_onmouseenter);
+	Event.add(close, "mouseleave", CNDialogManager, CNDialogManager._topButton_onmouseleave);
+	Event.add(close, "mousedown", CNDialogManager, CNDialogManager._topButton_onmousedown);
+	Event.add(close, "mouseup", CNDialogManager, CNDialogManager._topButton_onmouseup);
+	Event.add(close, "click", CNDialogManager, CNDialogManager._topButton_onclick);
 	if(title != null) CNDialogManager.setCaption(dialog, title);
 	
 	if(resizable)
@@ -278,12 +276,11 @@ CNDialogManager.createVistaDialog = function(title, resizable)
 		max.style.visibility = "visible";
 		close.firstChild.className = "withMaximize";
 		max._img = "maximize.png";
-		max.attachEvent("onmouseenter", CNDialogManager._topButton_onmouseenter);
-		max.attachEvent("onmouseleave", CNDialogManager._topButton_onmouseleave);
-		max.attachEvent("onmousedown", CNDialogManager._topButton_onmousedown);
-		max.attachEvent("onmouseup", CNDialogManager._topButton_onmouseup);
-		max.attachEvent("onclick", CNDialogManager._maximize_onclick);
-		max.attachEvent("onselectstart", Util.cancelEvent);
+		Event.add(max, "mouseenter", CNDialogManager, CNDialogManager._topButton_onmouseenter);
+		Event.add(max, "mouseleave", CNDialogManager, CNDialogManager._topButton_onmouseleave);
+		Event.add(max, "mousedown", CNDialogManager, CNDialogManager._topButton_onmousedown);
+		Event.add(max, "mouseup", CNDialogManager, CNDialogManager._topButton_onmouseup);
+		Event.add(max, "click", CNDialogManager, CNDialogManager._maximize_onclick);
 	}
 
 	return dialog;
@@ -304,14 +301,14 @@ CNDialogManager.setCaption = function(dialog, caption)
 	if(CNFormManager.vista) 
 	{
 		var captionDiv = dialog.children[3].lastChild;
-		captionDiv.innerText = caption;
+		captionDiv.textContent = caption;
 		captionDiv.style.position = "relative"; // Workaround.
 		dialog.children[3].firstChild.style.width = captionDiv.offsetWidth + 12 + "px";
 		captionDiv.style.position = "absolute";
 	}
 	else
 	{
-		dialog.firstChild.innerText = caption;
+		dialog.firstChild.textContent = caption;
 	}
 }
 CNDialogManager.getCloseButton = function(dialog)
@@ -338,14 +335,14 @@ CNDialogManager.createDialogButton = function(dialog, caption, commit)
 	}
 	else
 	{
-		b = document.createElement("<button class=cnDialogButton>");
-		b.innerText = caption;
-		b.attachEvent("onmouseenter", _CN_button_onmouseenter);
-		b.attachEvent("onmouseleave", _CN_button_onmouseleave);
+		b = Util.createElement("button", "cnDialogButton");
+		b.textContent = caption;
+		Event.add(b, "mouseenter", CNDialogManager, _CN_button_onmouseenter);
+		Event.add(b, "mouseleave", CNDialogManager, _CN_button_onmouseleave);
 		dialog.appendChild(b);
 	}
-	if(commit === true) b.attachEvent("onclick", CNDialogManager._popup_commit);
-	else if(commit === false) b.attachEvent("onclick", CNDialogManager._popup_cancel);
+	if(commit === true) Event.add(b, "click", CNDialogManager, CNDialogManager._popup_commit);
+	else if(commit === false) Event.add(b, "click", CNDialogManager, CNDialogManager._popup_cancel);
 	return b;
 }
 
@@ -372,22 +369,8 @@ CNDialogManager.showDialog = function(dialogElement, onFinishDelegate, centered,
 
 	if(onFinishDelegate) dialogElement._finishDelegate = onFinishDelegate;
 	if(onMaximizeDelegate) dialogElement._maxDelegate = onMaximizeDelegate;
-	if(CNFormManager.vista)
-	{
-		if(animate && ThemeNonCSSStyles.animateDialogs)
-		{
-			dialogElement.style.filter = "progid:DXImageTransform.Microsoft.Fade()";
-			dialogElement.filters[0].Apply();
-			dialogElement.style.visibility = "visible";
-			dialogElement.filters[0].Play(.3);
-		}
-		else dialogElement.style.visibility = "visible";
-	}
-	else 
-	{
-		dialogElement.style.visibility = "visible";
-		if(dialogElement.shadow) dialogElement.shadow.show();
-	}
+	dialogElement.style.visibility = "visible";
+	if(dialogElement.shadow) dialogElement.shadow.show();
 }
 
 CNDialogManager.showPopupDialog = function(dialogElement, onFinishDelegate)
@@ -398,8 +381,8 @@ CNDialogManager.showPopupDialog = function(dialogElement, onFinishDelegate)
 	}
 	else
 	{
-		document.attachEvent("onmousedown", CNDialogManager._document_onmousedown);
-		document.attachEvent("onkeypress", CNDialogManager._document_onkeypress);
+		Event.add(document, "mousedown", CNDialogManager, CNDialogManager._document_onmousedown);
+		Event.add(document, "keypress", CNDialogManager, CNDialogManager._document_onkeypress);
 	}
 	CNDialogManager._activePopup = dialogElement;
 
@@ -413,17 +396,17 @@ CNDialogManager.hideDialog = function(dialogElement)
 
 CNDialogManager._document_onmousedown = function()
 {
-	document.detachEvent("onmousedown", CNDialogManager._document_onmousedown);
-	if(!CNDialogManager._activePopup.contains(event.srcElement)) 
+	Event.del(document, "mousedown", CNDialogManager, CNDialogManager._document_onmousedown);
+	if(!CNDialogManager._activePopup.contains(Util.eventTarget(Event.current()))) 
 	{
 		CNDialogManager.hidePopup(CNDialogManager._activePopup, false);
 	}
 }
 
-CNDialogManager._document_onkeypress = function()
+CNDialogManager._document_onkeypress = function(ev)
 {
-	document.detachEvent("onkeypress", CNDialogManager._document_onkeypress);
-	if(event.keyCode == 27)
+	Event.del(document, "keypress", CNDialogManager, CNDialogManager._document_onkeypress);
+	if(Event.keyValue(Event.normalize(ev)) == 27)
 	{
 		CNDialogManager.hidePopup(CNDialogManager._activePopup, false);
 	}
@@ -431,46 +414,33 @@ CNDialogManager._document_onkeypress = function()
 
 CNDialogManager._topButton_onmouseenter = function()
 {
-	var l = event.srcElement;
+	var l = Util.eventTarget(Event.current());
 	if(l._disabled) return;
-	if(ThemeNonCSSStyles.animateButtons) {
-		if(!l.filters.length) l.style.filter = "progid:DXImageTransform.Microsoft.Fade";
-		l.filters[0].Apply();
-	}
 	l.style.zIndex = 2;
-	l.firstChild.filters[0].src = CNFormManager.themeImagesPath + "hover-" + l._img;
-	if(ThemeNonCSSStyles.animateButtons) {
-		l.filters[0].Play(.05);
-	}
+	CNDialogManager._setTopButtonImage(l, "hover-" + l._img);
 }
 CNDialogManager._topButton_onmouseleave = function()
 {
-	var l = event.srcElement;
+	var l = Util.eventTarget(Event.current());
 	if(l._disabled) return;
-	if(ThemeNonCSSStyles.animateButtons) {
-		l.filters[0].Apply();
-	}
-	l.firstChild.filters[0].src = CNFormManager.themeImagesPath + l._img;
-	if(ThemeNonCSSStyles.animateButtons) {
-		l.filters[0].Play(.2);	
-	}
+	CNDialogManager._setTopButtonImage(l, l._img);
 	l.style.zIndex = 1;
 }
 CNDialogManager._topButton_onmousedown = function()
 {
-	var l = Util.findByClassName(event.srcElement, "dialogTopButton");
+	var l = Util.findByClassName(Util.eventTarget(Event.current()), "dialogTopButton");
 	if(l._disabled) return;
-	l.firstChild.filters[0].src = CNFormManager.themeImagesPath + "down-" + l._img;
+	CNDialogManager._setTopButtonImage(l, "down-" + l._img);
 }
 CNDialogManager._topButton_onmouseup = function()
 {
-	var l = Util.findByClassName(event.srcElement, "dialogTopButton");
+	var l = Util.findByClassName(Util.eventTarget(Event.current()), "dialogTopButton");
 	if(l._disabled) return;
-	l.firstChild.filters[0].src = CNFormManager.themeImagesPath + "hover-" + l._img;
+	CNDialogManager._setTopButtonImage(l, "hover-" + l._img);
 }
 CNDialogManager._topButton_onclick = function()
 {
-	var l = Util.findByClassName(event.srcElement, "dialogTopButton");
+	var l = Util.findByClassName(Util.eventTarget(Event.current()), "dialogTopButton");
 	if(l._disabled) return;
 	CNDialogManager.hidePopup(null, false);
 }

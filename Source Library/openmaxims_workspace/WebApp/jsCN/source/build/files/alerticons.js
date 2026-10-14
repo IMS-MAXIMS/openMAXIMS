@@ -1,62 +1,62 @@
 /*
-	v. 2.0
-	+ vista
-*/
+ * Alert notification strip.
+ *
+ * The historical client creates the alert chrome here; it is not supplied by
+ * the theme HTML.  Keep that boundary explicit so the standards client works
+ * with both the historical placeholder and newer theme shells.
+ */
 function AlertIcons(element, isCloned)
 {
-	this.element = element;
-	element.jsObject = this;
-	
-	if(!isCloned) {
-		this._cloned = [];
-	}
-	
-	this._isCloned = isCloned;
-	
-	this._container = element.children[1];
-	this._span = this._container.children[0];
-	this._leftButton = element.children[0];
-	this._rightButton = element.children[2];
-	
-	this._leftButton.src = CNFormManager.themeImagesPath  + "alert-ar-left-1.gif";
-	this._rightButton.src = CNFormManager.themeImagesPath  + "alert-ar-right-1.gif";
+	this.element = Util.createElement("div", "cn_alert_icons");
+	element.appendChild(this.element);
+	this.element.innerHTML = "<span class=alertsContainer><span class=alertsSpan></span></span>";
+	this.element.jsObject = this;
+
+	this._container = this.element.firstChild || this.element.children[0];
+	this._span = this._container.firstChild || this._container.children[0];
+
+	this._leftButton = VistaSupport.createImageSetButton(null, 18, 18, 0);
+	this._leftButton.style.display = "";
+	this._leftButton.className = "leftAlertsButton";
+	this.element.insertBefore(this._leftButton, this.element.firstChild);
+
+	this._rightButton = VistaSupport.createImageSetButton(null, 18, 18, 18);
+	this._rightButton.style.display = "";
+	this._rightButton.className = "rightAlertsButton";
+	this.element.appendChild(this._rightButton);
 
 	this._leftButton._isLeftButton = true;
-	this._leftButton.attachEvent("onmousedown", this._button_onmousedown)
-	this._leftButton.attachEvent("ondblclick", this._button_onmousedown)
-	this._leftButton.attachEvent("onmouseup", this._button_onmouseup)
-	this._leftButton.attachEvent("onmouseleave", this._button_onmouseup)
-	this._leftButton.attachEvent("ondragstart", CNUtil.cancelEvent);
-	this._leftButton.attachEvent("onmouseover", this._button_onmouseover);
+	this._rightButton._isRightButton = true;
+	Event.add(this._leftButton, "mousedown", this, this._button_onmousedown);
+	Event.add(this._leftButton, "mouseup", this, this._button_onmouseup);
+	Event.add(this._leftButton, "mouseleave", this, this._button_onmouseup);
+	Event.add(this._rightButton, "mousedown", this, this._button_onmousedown);
+	Event.add(this._rightButton, "mouseup", this, this._button_onmouseup);
+	Event.add(this._rightButton, "mouseleave", this, this._button_onmouseup);
 
-	this._rightButton.attachEvent("onmousedown", this._button_onmousedown)
-	this._rightButton.attachEvent("ondblclick", this._button_onmousedown)
-	this._rightButton.attachEvent("onmouseup", this._button_onmouseup)
-	this._rightButton.attachEvent("onmouseleave", this._button_onmouseup)
-	this._rightButton.attachEvent("ondragstart", CNUtil.cancelEvent);
-	this._rightButton.attachEvent("onmouseover", this._button_onmouseover);
-	
+	if(!isCloned) this._cloned = [];
+	this._isCloned = isCloned;
 	this._icons = [];
-	
 	this._timer = null;
 	this._idClicked = -1;
-	this._scrollStep = 2;
+	this._scrollStep = 3;
 }
 var proto = AlertIcons.prototype;
 
 proto.unload = function()
 {
 	this.clean(true);
+	Event.purge(this);
 }
 
 proto.clean = function(doNotUpdate)
 {
 	for(var i in this._icons)
 	{
-		this._icons[i].removeNode(true);
+		Util.removeElement(this._icons[i]);
 	}
 	this._icons = [];
-	
+
 	if(!doNotUpdate) this._updatePlaceholder();
 }
 
@@ -65,20 +65,19 @@ proto.loadData = function(node)
 	this._lastIcon = null;
 	this._idClicked = -1;
 
-	var removeall = node.selectSingleNode("removeall");
-	if(removeall) {
-		this._removeAll();
-	}
-	
-	var removealerts = node.selectNodes("removealert");
+	var removeall = Util.xmlSelectSingleNode(node, "removeall");
+	if(removeall) this._removeAll();
+
+	var removealerts = Util.xmlSelectNodes(node, "removealert");
 	for(var i = 0; i < removealerts.length; i++)
 	{
 		var id = removealerts[i].getAttribute("id");
 		if(!id) continue;
 		this._removeAlert(String(id));
 	}
+	if(removeall || removealerts.length > 0) this._setSpanLeft(0);
 
-	var newalerts = node.selectNodes("newalert");
+	var newalerts = Util.xmlSelectNodes(node, "newalert");
 	for(var i = 0; i < newalerts.length; i++)
 	{
 		this._addAlert(newalerts[i]);
@@ -86,7 +85,7 @@ proto.loadData = function(node)
 
 	var self = this;
 	setTimeout(function(){ self._updatePlaceholder(); });
-	
+
 	this._sort();
 
 	if(newalerts.length > 0 && !this._isCloned)
@@ -94,14 +93,24 @@ proto.loadData = function(node)
 		var attr = node.getAttribute("sound");
 		if(attr)
 		{
-			var bgSound = document.getElementsByTagName("bgsound")[0];
-			if(!bgSound) bgSound = document.createElement("bgsound");
-			bgSound.src = String(attr);
-			document.body.insertBefore(bgSound, document.body.firstChild);
+			var alertSound = document.getElementById("__si_alert_sound");
+			if(!alertSound)
+			{
+				alertSound = document.createElement("audio");
+				alertSound.id = "__si_alert_sound";
+				alertSound.preload = "auto";
+				alertSound.setAttribute("aria-hidden", "true");
+				alertSound.style.display = "none";
+				document.body.insertBefore(alertSound, document.body.firstChild);
+			}
+			alertSound.src = String(attr);
+			alertSound.currentTime = 0;
+			var playResult = alertSound.play();
+			if(playResult && playResult["catch"]) playResult["catch"](function() {});
 		}
 	}
 
-	if(!this._isCloned) 
+	if(!this._isCloned)
 	{
 		for(var i = 0; i < this._cloned.length; i++) {
 			this._cloned[i].loadData(node);
@@ -112,14 +121,8 @@ proto.loadData = function(node)
 proto._removeAll = function()
 {
 	var list = [];
-	for(var id in this._icons)
-	{
-		list.push(id);
-	}
-	for(var i = 0; i < list.length; i++)
-	{
-		this._removeAlert(list[i]);	
-	}
+	for(var id in this._icons) list.push(id);
+	for(var i = 0; i < list.length; i++) this._removeAlert(list[i]);
 	this._icons = [];
 }
 
@@ -136,22 +139,16 @@ proto.storeData = function(xmldoc)
 proto._sort = function()
 {
 	var list = [];
-	for(var id in this._icons)
-	{
-		list.push(this._icons[id]);
-	}
-	
+	for(var id in this._icons) list.push(this._icons[id]);
+
 	list.sort(function(a, b)
-	{ 
-		if(a._sortIX < b._sortIX) return -1; 
+	{
+		if(a._sortIX < b._sortIX) return -1;
 		if(a._sortIX == b._sortIX) return 0;
 		return 1;
 	});
-	
-	for(var i = 0; i < list.length; i++)
-	{
-		this._span.appendChild(list[i]);
-	}
+
+	for(var i = 0; i < list.length; i++) this._span.appendChild(list[i]);
 }
 
 proto._addAlert = function(node)
@@ -161,30 +158,31 @@ proto._addAlert = function(node)
 	if(!id || !icon) return;
 	id = String(id);
 	icon = String(icon);
-	
+
 	var sortIX = 0;
 	var attr = node.getAttribute("sortIndex");
 	if(attr) sortIX = parseInt(attr, 10);
-	
+
 	var img = this._icons[id];
 	if(!img)
 	{
-		img = document.createElement("<img width=16 height=16>");
+		img = Util.createElement("img", null, {width: 16, height: 16});
 		img.style.marginRight = "2px";
-		this._icons[id] = img;		
+		this._icons[id] = img;
 		img._id = id;
-		img.attachEvent("onclick", this._img_onclick);
+		Event.add(img, "click", this, this._img_onclick);
 	}
 	img.src = icon;
 	img._sortIX = sortIX;
-	// Always move icon to the begin.
-	if(!this._lastIcon) this._span.insertAdjacentElement("afterbegin", img);
-	else this._lastIcon.insertAdjacentElement("afterend", img);
+
+	// Always move the icon to the beginning of the alert strip.
+	if(!this._lastIcon) this._span.insertBefore(img, this._span.firstChild);
+	else this._lastIcon.parentNode.insertBefore(img, this._lastIcon.nextSibling);
 	this._lastIcon = img;
-	
+
 	var tooltip = node.getAttribute("tooltip");
 	if(tooltip) Tooltip.attach(img, String(tooltip));
-	
+
 	if(node.getAttribute("alwaysEnabled") == "true")
 	{
 		img._alwaysEnabled = true;
@@ -197,63 +195,66 @@ proto._removeAlert = function(id)
 	var icon = this._icons[String(id)];
 	if(icon)
 	{
-		icon.removeNode(true);
+		Util.removeElement(icon);
 		delete this._icons[id];
 	}
+}
+
+proto._getSpanLeft = function()
+{
+	var value = parseInt(Util.getStyle(this._span, "left"), 10);
+	if(isNaN(value)) value = this._span.offsetLeft || 0;
+	return value;
+}
+
+proto._setSpanLeft = function(value)
+{
+	this._span.style.left = String(value) + "px";
 }
 
 proto._updatePlaceholder = function()
 {
 	if(this._container.clientWidth == 0) return;
 
+	var spanLeft = this._getSpanLeft();
 	if(this._span.offsetWidth > this._container.clientWidth)
 	{
-		this._rightButton.style.visibility =  this._span.offsetLeft + this._span.offsetWidth > this._container.clientWidth 
-												? "visible" : "hidden";
-		this._leftButton.style.visibility = this._span.offsetLeft < 0 ? 'visible' : 'hidden';
-		this._container.style.left = -8;
+		Util.toggleClass(this.element, "cn_alert_icons_w_right",
+			spanLeft + this._span.offsetWidth > this._container.clientWidth);
+		Util.toggleClass(this.element, "cn_alert_icons_w_left", spanLeft < 0);
+		this._rightButton.style.visibility =
+			spanLeft + this._span.offsetWidth > this._container.clientWidth ? "visible" : "hidden";
+		this._leftButton.style.visibility = spanLeft < 0 ? "visible" : "hidden";
 	}
 	else
 	{
-		this._leftButton.style.visibility =
-			this._rightButton.style.visibility = "hidden";
-		this._container.style.left = -20;
+		Util.removeClass(this.element, "cn_alert_icons_w_right");
+		Util.removeClass(this.element, "cn_alert_icons_w_left");
+		this._leftButton.style.visibility = this._rightButton.style.visibility = "hidden";
 	}
 }
 
-proto._button_onmouseover = function()
+proto._button_onmousedown = function(nativeEvent)
 {
-	var l = event.srcElement;
-	if(l._isLeftButton) l.src = CNFormManager.themeImagesPath  + "alert-ar-left-2.gif";
-	else l.src = CNFormManager.themeImagesPath  + "alert-ar-right-2.gif";
+	var jso = CNUtil.dispatchObject(nativeEvent);
+	if(jso && jso.button_onmousedown) jso.button_onmousedown(nativeEvent);
+	Util.cancelEvent(nativeEvent);
 }
-
-proto._button_onmousedown = function()
+proto.button_onmousedown = function(nativeEvent)
 {
-	var jso = CNUtil.dispatchObject();
-	if(jso && jso.button_onmousedown) jso.button_onmousedown();
-	Util.cancelEvent();
-}
-proto.button_onmousedown = function()
-{
-	if(event.srcElement._isLeftButton) this.scrollRight();
+	var target = Util.eventTarget(nativeEvent);
+	if(target && target._isLeftButton) this.scrollRight();
 	else this.scrollLeft();
 }
 
-proto._button_onmouseup = function()
+proto._button_onmouseup = function(nativeEvent)
 {
-	var jso = CNUtil.dispatchObject();
-	if(jso && jso.button_onmouseup) jso.button_onmouseup();
+	var jso = CNUtil.dispatchObject(nativeEvent);
+	if(jso && jso.button_onmouseup) jso.button_onmouseup(nativeEvent);
 }
-proto.button_onmouseup = function()
+proto.button_onmouseup = function(nativeEvent)
 {
-	if(event.type == "mouseleave")
-	{
-		var l = event.srcElement;
-		if(l._isLeftButton) l.src = CNFormManager.themeImagesPath  + "alert-ar-left-1.gif";
-		else l.src = CNFormManager.themeImagesPath  + "alert-ar-right-1.gif";
-	}
-
+	this._updatePlaceholder();
 	if(!this._timer) return;
 	clearTimeout(this._timer);
 	this._timer = null;
@@ -261,43 +262,49 @@ proto.button_onmouseup = function()
 
 proto.scrollLeft = function()
 {
-	this._span.style.pixelLeft -= this._scrollStep;
-	if(this._span.offsetLeft + this._span.offsetWidth <= this._container.clientWidth)
+	var left = this._getSpanLeft() - this._scrollStep;
+	if(left + this._span.offsetWidth <= this._container.clientWidth)
 	{
-		this._span.style.pixelLeft = this._container.clientWidth - this._span.offsetWidth;
+		left = this._container.clientWidth - this._span.offsetWidth;
+		this._setSpanLeft(left);
+		this._updatePlaceholder();
 	}
 	else
 	{
+		this._setSpanLeft(left);
 		var obj = this;
 		this._timer = setTimeout(function(){ obj.scrollLeft(); }, 20);
 	}
-	this._updatePlaceholder();
 }
 
 proto.scrollRight = function()
 {
-	this._span.style.pixelLeft += this._scrollStep;
-	if(this._span.offsetLeft >= 0) 
+	var left = this._getSpanLeft() + this._scrollStep;
+	if(left >= 0)
 	{
-		this._span.style.pixelLeft = 0;
+		this._setSpanLeft(0);
+		this._updatePlaceholder();
 	}
 	else
 	{
+		this._setSpanLeft(left);
 		var obj = this;
 		this._timer = setTimeout(function(){ obj.scrollRight(); }, 20);
 	}
-	this._updatePlaceholder();
 }
 
-proto._img_onclick = function()
+proto._img_onclick = function(nativeEvent)
 {
-	CNUtil.dispatchObject().img_onclick();
+	var jso = CNUtil.dispatchObject(nativeEvent);
+	if(jso && jso.img_onclick) jso.img_onclick(nativeEvent);
 }
-proto.img_onclick = function()
+proto.img_onclick = function(nativeEvent)
 {
-	if(this._disabled && !event.srcElement._alwaysEnabled) return;
+	var target = Util.eventTarget(nativeEvent);
+	if(!target) return;
+	if(this._disabled && !target._alwaysEnabled) return;
 
-	this._idClicked = event.srcElement._id;
+	this._idClicked = target._id;
 	this.formManager.postData(this.element);
 }
 
@@ -307,29 +314,21 @@ proto.set_disabled = function(val)
 	this._span.className = this._disabled ? "alertsSpan alertsSpan_disabled" : "alertsSpan";
 }
 
-proto.cloneImagesFrom = function(otherAlerts) 
+proto.cloneImagesFrom = function(otherAlerts)
 {
 	var cloned = otherAlerts._span.cloneNode(true);
 	this._container.replaceChild(cloned, this._span);
 	this._span = cloned;
 
 	var imgs = this._span.getElementsByTagName("img");
-	for(var i = 0; i < imgs.length; i++) {
-		this._icons[imgs[i]._id] = imgs[i];		
-	}
-
+	for(var i = 0; i < imgs.length; i++) this._icons[imgs[i]._id] = imgs[i];
 	this._updatePlaceholder();
 }
 
-proto.cloneToDialogHeader = function(header, node) 
-{	
-	var cloned = this.element.cloneNode(true);	
-	Util.addClass(cloned, "dialogAlertsDiv");
-	header.appendChild(cloned);		
-
-	var clonedObj = new AlertIcons(cloned, true);
-	clonedObj.cloneImagesFrom(this, node);
-
-	this._cloned.push(clonedObj);
-	return clonedObj;
+proto.cloneToDialogHeader = function(header)
+{
+	var cloned = new AlertIcons(header, true);
+	cloned.cloneImagesFrom(this);
+	this._cloned.push(cloned);
+	return cloned;
 }

@@ -22,11 +22,11 @@ proto.createElement = function(node, parentElement)
 	
 	if(node.getAttribute("multiLine") == "true") 
 	{
-		l = document.createElement("<textarea>");
-		l.attachEvent("onkeypress", Util.cancelBubble);
+		l = document.createElement("textarea");
+		Event.add(l, "keypress", this, Util.cancelBubble);
 		multiLine = true;
 	}
-	else l = document.createElement("<input type=text>");
+	else l = (function() { var el = document.createElement("input"); el.type = 'text'; return el; })();
 	
 	var attr = node.getAttribute("maxLength");
 	if(attr) 
@@ -34,7 +34,7 @@ proto.createElement = function(node, parentElement)
 		if(multiLine)
 		{
 			this._maxLength = parseInt(attr, 10);
-			l.attachEvent("onpaste", this._element_onpaste);
+			Event.add(l, "paste", this, this._element_onpaste);
 		}
 		else
 		{
@@ -42,8 +42,8 @@ proto.createElement = function(node, parentElement)
 		}
 	}
 
-	l.attachEvent("onkeypress", this._element_onkeypress);
-	l.attachEvent("onselect", this._element_onselect);
+	Event.add(l, "keypress", this, this._element_onkeypress);
+	Event.add(l, "select", this, this._element_onselect);
 
 	if(node.getAttribute("hasBorder") == "false") { 
 		l.style.borderWidth = 0;
@@ -77,7 +77,7 @@ proto.createElement = function(node, parentElement)
 	l.jsObject = this;
 
 	l.className = "cn_textbox";
-	l.attachEvent("onchange", this._input_onchange);
+	Event.add(l, "change", this, this._input_onchange);
 	
 	attr = node.getAttribute("canBeEmpty");
 	if(attr) this._canBeEmpty = attr == "true";
@@ -96,8 +96,8 @@ proto.createElement = function(node, parentElement)
 proto._setMask = function(mask) {
 	this._maskRE = new RegExp('^' + mask.replace(/#/g, '[a-z]').replace(/9/g, '\\d').replace(/\./g, '\\.') + '$', "i");	
 
-	this.element.attachEvent("onbeforedeactivate", this._box_onbeforedeactivate);
-	this.element.attachEvent("onactivate", this._box_onactivate);	
+	Event.add(this.element, "focusout", this, this._box_onfocusout);
+	Event.add(this.element, "focusin", this, this._box_onactivate);	
 }
 
 proto.isValid = function() {
@@ -106,14 +106,14 @@ proto.isValid = function() {
 
 	var valid = this._maskRE.test(value);
 
-	if(!valid) this.element.runtimeStyle.borderColor = "red";
+	if(!valid) this.element.style.borderColor = "red";
 
 	return valid;
 }
 
 proto._input_onchange = function()
 {
-	event.srcElement.jsObject._isDirty = true;
+	Util.eventTarget().jsObject._isDirty = true;
 }
 
 proto.loadData = function(node)
@@ -153,15 +153,15 @@ proto.loadData = function(node)
 	this._isDirty = false;
 	
 	attr = node.getAttribute("textColor");
-	if(attr !== null) this.element.runtimeStyle.color = String(attr);
+	if(attr !== null) this.element.style.color = String(attr);
 }
 
 proto.storeData = function(xmldoc)
 {
 	if(!this._isDirty || !this.isValid()) return null;
 	
-	var tr = document.selection.createRange();
-	var hasSelection = this.element == tr.parentElement();
+	var hasSelection = document.activeElement == this.element;
+	var selectedText = hasSelection ? this.element.value.slice(this.element.selectionStart, this.element.selectionEnd) : "";
 
 	if(!this.element.id) 
 	{
@@ -179,8 +179,8 @@ proto.storeData = function(xmldoc)
 		if(this._casing == "lower") value = value.toLowerCase();
 		else if(this._casing == "upper") value = value.toUpperCase();
 	}
-	node.text = value;
-	if(hasSelection && tr.text.length > 0) node.setAttribute("selectedText", tr.text);
+	node.textContent = value;
+	if(selectedText.length > 0) node.setAttribute("selectedText", selectedText);
 	
 	return node;
 }
@@ -201,7 +201,7 @@ proto.set_disabled = function(val)
 	CNFormManager._trace("set_disabled : " + val);
 	this.element.readOnly = val;
 	if(CNFormManager.vista) this.element.className = val ? "cn_textbox cn_textbox_disabled" : "cn_textbox";
-	else this.element.runtimeStyle.backgroundColor = val ? this.element.currentStyle["xl--disabled-background"] : ""
+	else this.element.style.backgroundColor = val ? Util.getStyle(this.element, "xl--disabled-background") : ""
 }
 
 proto._element_onkeypress = function()
@@ -212,7 +212,7 @@ proto.element_onkeypress = function()
 {
 	if(this._disabled) return;
 	this._isDirty = true;
-	if(this._maxLength > 0 && this.element.value.length >= this._maxLength)
+	if(this._maxLength > 0 && this.element.value.length - (this.element.selectionEnd - this.element.selectionStart) >= this._maxLength)
 	{
 		CNUtil.cancelEvent();
 	}
@@ -224,16 +224,19 @@ proto._element_onpaste = function()
 }
 proto.element_onpaste = function()
 {
-	var text = window.clipboardData.getData("Text");
-	if(this.element.value.length + text.length >= this._maxLength)
+	var ev = Event.current();
+	var text = ev.clipboardData && ev.clipboardData.getData("text");
+	if(text == null) return;
+	this._isDirty = true;
+	var box = this.element;
+	var start = box.selectionStart;
+	var end = box.selectionEnd;
+	var available = this._maxLength - (box.value.length - (end - start));
+	if(text.length > available)
 	{
-		CNUtil.cancelEvent();
-		var textLength = this._maxLength - this.element.value.length;
-		if(textLength > 0) 
-		{
-			var range = document.selection.createRange();
-			range.text = text.substr(0, textLength);
-		}
+		CNUtil.cancelEvent(ev);
+		box.setRangeText(text.substr(0, Math.max(0, available)), start, end, "end");
+		this._isDirty = true;
 	}
 }
 
@@ -244,13 +247,13 @@ proto._element_onselect = function()
 	jso._isDirty = true;
 }
 
-proto._box_onbeforedeactivate = function()
+proto._box_onfocusout = function()
 {
-	var jsObject = event.srcElement.jsObject;
+	var jsObject = Util.eventTarget().jsObject;
 	jsObject.isValid();
 }
 
 proto._box_onactivate = function()
 {
-	event.srcElement.runtimeStyle.borderColor = "";
+	Util.eventTarget().style.borderColor = "";
 }

@@ -9,7 +9,7 @@ var proto = CN_selectrolecontrol.prototype;
 
 proto.createElement = function(node, parentElement)
 {
-	var l = document.createElement('<div class="cn_selectrolecontrol">');
+	var l = (function(){ var el = document.createElement("div"); el.className = 'cn_selectrolecontrol'; return el; })();
 	parentElement.appendChild(l);
 	
 	this.element = l;
@@ -28,7 +28,7 @@ proto._buildContent = function()
 <table width=100% border=0 cellpadding=0 cellspacing=0>\
 <tr>\
 <td rowspan=3 nowrap=true style="width: 93px; background: url(\'' + CNFormManager.themeImagesPath + 'login-2_01.gif\'); ">\
-<div style="display: inline-block; margin-left: 18px; width: 47px; height: 75px; filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src=\'' + CNFormManager.strings['loginLogo'] + '\', sizingMethod=\'scale\'); "></div>\
+<div style="display: inline-block; margin-left: 18px; width: 47px; height: 75px; background: url(\'' + CNFormManager.strings['loginLogo'] + '\') center / 100% 100% no-repeat; "></div>\
 </td>\
 <td background="' + CNFormManager.themeImagesPath + 'login-2_02.gif" width=100% height=11></td>\
 <td><img src="' + CNFormManager.themeImagesPath + 'login-2_03.gif" width=14 height=11></td>\
@@ -143,17 +143,17 @@ proto._showSelectRoleScreen = function(selectRoleNode)
 proto._showSelectScreen = function(selectScreenNode, title, nodeName, buttonWidth)
 {
 	document.title = title;
-	this.element.all.selectScreenTitle_.innerText = title;
+	this.element.querySelector("#selectScreenTitle_").textContent = title;
 	
-	var div = this.element.all.rolesDiv;
+	var div = this.element.querySelector("#rolesDiv");
 	var template = div.children[0];
 	
-	div.style.width = buttonWidth;
+	div.style.width = buttonWidth + "px";
 	
-	var messageNode = selectScreenNode.selectSingleNode("message");
+	var messageNode = Util.xmlSelectSingleNode(selectScreenNode, "message");
 	if(messageNode)
 	{
-		alert(messageNode.text);
+		alert(Util.xmlText(messageNode));
 	}
 	else
 	{
@@ -161,10 +161,10 @@ proto._showSelectScreen = function(selectScreenNode, title, nodeName, buttonWidt
 		var count = children.length - 1;
 		for(var i = 0; i < count; i++)
 		{
-			children[children.length - 1].removeNode(true);
+			children[children.length - 1].remove();
 		}
 
-		var roleNodes = selectScreenNode.selectNodes(nodeName);
+		var roleNodes = Util.xmlSelectNodes(selectScreenNode, nodeName);
 		var count = roleNodes.length;
 		for(var i = 0; i < count; i++)
 		{
@@ -173,29 +173,29 @@ proto._showSelectScreen = function(selectScreenNode, title, nodeName, buttonWidt
 			var table = template.cloneNode(true);
 			div.appendChild(table);
 			var textDiv = table.getElementsByTagName("div")[0];
-			textDiv.innerText = String(roleNode.text);
+			textDiv.textContent = String(Util.xmlText(roleNode));
 			table._id = String(roleNode.getAttribute("id"));
 			table.style.display = "block";
-			table.onmouseenter = this._table_onmouseenter;
-			table.onmouseleave = this._table_onmouseleave;
-			table.onclick = this._table_onclick;
+			Event.add(table, "mouseenter", this, this._table_onmouseenter);
+			Event.add(table, "mouseleave", this, this._table_onmouseleave);
+			Event.add(table, "click", this, this._table_onclick);
 		}
 	}
 }
 
-proto._table_onmouseenter = function()
+proto._table_onmouseenter = function(ev)
 {
-	this.style.filter = 'alpha(opacity=70)';
+	Util.eventTarget(ev).style.opacity = "0.7";
 }
 
-proto._table_onmouseleave = function()
+proto._table_onmouseleave = function(ev)
 {
-	this.style.filter = '';
+	Util.eventTarget(ev).style.opacity = "";
 }
 
-proto._table_onclick = function()
+proto._table_onclick = function(ev)
 {
-	CNUtil.dispatchObject().roleTableClick();
+	this.roleTableClick(ev);
 }
 
 /*
@@ -207,9 +207,9 @@ proto._showSelectLocationScreen = function(selectLocationNode)
 }
 */
 
-proto.roleTableClick = function()
+proto.roleTableClick = function(ev)
 {
-	var table = CNUtil.findTag(event.srcElement, "TABLE");
+	var table = CNUtil.findTag(Util.eventTarget(ev), "TABLE");
 	this._selectScreenID = table._id;
 	this.formManager.postData(this.element);
 }

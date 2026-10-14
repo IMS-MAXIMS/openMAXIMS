@@ -121,44 +121,6 @@ AnimVistaFadeoutBase.toHexArray = function(strAr) {
 	return ar;
 }
 
-/*function AnimVistaImgTrans(l, toSrc)
-{
-	this.l = l;
-	var xy = Util.findAbsolutePos(l, false, true);
-	this.img = l.cloneNode(true);
-	this.img.src = toSrc;
-	this.img.style.position = "absolute";
-	this.img.style.top = xy.y + "px";
-	this.img.style.left = xy.x + "px";
-	this.img.style.filter = "alpha(opacity=5)";
-	l.parentElement.appendChild(this.img);
-}
-AnimVistaImgTrans.prototype =  
-{
-	progress: 0.1,
-	step: 0.05,
-	onend: function()
-	{
-		this.l.src = this.img.src;
-		this.img.removeNode(true);
-		this.img = null;
-		this.l = null;
-	},
-	tick: function()
-	{
-		this.progress += this.step;
-		if(this.progress >= 1) 
-		{
-			return false;
-		}
-		else
-		{
-			this.img.filters[0].opacity = this.progress * 100;
-			return true;
-		}
-	}
-}*/
-
 function AnimVistaBoxFadeout(l)
 {
 	this.l = l;
@@ -170,13 +132,13 @@ AnimVistaBoxFadeout.prototype.apply = function(ar)
 {
 	if(ar[0] == this._to[0])
 	{
-		this.l.runtimeStyle.borderColor = "";
-		this.l.runtimeStyle.borderTopColor = "";
+		this.l.style.borderColor = "";
+		this.l.style.borderTopColor = "";
 	}
 	else
 	{
-		this.l.runtimeStyle.borderColor = "#" + ar[0].toString(16);
-		this.l.runtimeStyle.borderTopColor = "#" + ar[1].toString(16);
+		this.l.style.borderColor = "#" + ar[0].toString(16);
+		this.l.style.borderTopColor = "#" + ar[1].toString(16);
 	}
 }
 

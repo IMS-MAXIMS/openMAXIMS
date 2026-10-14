@@ -40,7 +40,7 @@ CN_uploadbox.ensurePostIframeCreated = function()
 	if(CN_uploadbox._uploadPostFrame == null)
 	{
 		// Theme independent permanent iframe.
-		var iframe = CN_uploadbox._uploadPostFrame = document.createElement('<iframe name="uploadPostFrame">');
+		var iframe = CN_uploadbox._uploadPostFrame = (function(){ var el = document.createElement("iframe"); el.name = 'uploadPostFrame'; return el; })();
 		iframe.className = "cn_uploadbox_hiddenIframe";
 		document.body.appendChild(iframe);
 	}
@@ -79,8 +79,8 @@ CN_uploadbox.handleUpload = function(fm, xmldata, callback)
 	var iframe = CN_uploadbox._uploadPostFrame;
 	if(fm._uploadDebug)
 	{
-		iframe.style.width = 600;
-		iframe.style.height = 80;
+		iframe.style.width = "600px";
+		iframe.style.height = "80px";
 		iframe.style.display = "block";
 	}
 	else
@@ -90,13 +90,13 @@ CN_uploadbox.handleUpload = function(fm, xmldata, callback)
 	
 	form.action = fm._uploadURL;
 
-	CN_uploadbox._uploadPostFrame.attachEvent("onload", CN_uploadbox._postIframe_onload);
+	Event.nativeAdd(CN_uploadbox._uploadPostFrame, "load", CN_uploadbox._postIframe_onload);
 
 	form.submit();
 }
 CN_uploadbox._postIframe_onload = function()
 {
-	CN_uploadbox._uploadPostFrame.detachEvent("onload", CN_uploadbox._postIframe_onload);
+	Event.nativeDel(CN_uploadbox._uploadPostFrame, "load", CN_uploadbox._postIframe_onload);
 
 	var fm = CNFormManager.getActiveFormManager();
 	var form = fm._uploadFormIframe.contentWindow.document.body.firstChild;
@@ -111,7 +111,7 @@ CN_uploadbox._postIframe_onload = function()
 CN_uploadbox.deleteForm = function(fm)
 {
 	if(!fm._uploadFormIframe) return;
-	fm._uploadFormIframe.removeNode(true);
+	fm._uploadFormIframe.remove();
 	fm._uploadFormIframe = null;
 }
 
@@ -150,7 +150,7 @@ proto._initializeForm = function()
 		if(!win._eventAttached) 
 		{
 			win._eventAttached = true;
-			win.attachEvent("onload", CN_uploadbox._uploadFormIframe_onload);
+			Event.nativeAdd(win, "load", CN_uploadbox._uploadFormIframe_onload);
 		}
 	}
 }
@@ -163,7 +163,7 @@ CN_uploadbox._uploadFormIframe_onload = function()
 	var form = doc.body.firstChild;
 	if(!form)
 	{
-		form = doc.createElement('<form method="post" target="uploadPostFrame" encType="multipart/form-data">');
+		form = (function(){ var el = doc.createElement("form"); el.method = 'post'; el.target = 'uploadPostFrame'; el.enctype = 'multipart/form-data'; return el; })();
 		doc.body.appendChild(form);
 	}
 
@@ -171,15 +171,15 @@ CN_uploadbox._uploadFormIframe_onload = function()
 	{
 		fm._uploadBoxes[i]._formCreatedCallback(form);
 	}
-	fm._uploadBoxes == [];
+	fm._uploadBoxes = [];
 
-	win.detachEvent("onload", CN_uploadbox._uploadFormIframe_onload);
+	Event.nativeDel(win, "load", CN_uploadbox._uploadFormIframe_onload);
 }
 
 
 proto.createElement = function(node, parentElement)
 {
-	var l = document.createElement('<div class="cn_uploadbox">');
+	var l = (function(){ var el = document.createElement("div"); el.className = 'cn_uploadbox'; return el; })();
 	parentElement.appendChild(l);
 	
 	this.element = l;
@@ -203,8 +203,8 @@ proto._buildContent = function()
 
 	this._box = document.createElement("input");
 	this._box.type = "text";
-	this._box.attachEvent("onfocus", this._box_onfocus);
-	this._box.attachEvent("onkeydown", this._box_onkeydown);
+	Event.add(this._box, "focus", this, this._box_onfocus);
+	Event.add(this._box, "keydown", this, this._box_onkeydown);
 	this.element.appendChild(this._box);
 
 	if(CNFormManager.vista) VistaSupport.attachToTextBox(this._box);
@@ -229,18 +229,18 @@ proto._buildContent = function()
 }
 proto._formCreatedCallback = function(form)
 {
-	this._input = form.document.createElement('<input type="file">');
-	this._input.attachEvent("onchange", this._input_onchange);
+	this._input = (function(){ var el = form.ownerDocument.createElement("input"); el.type = 'file'; return el; })();
+	Event.add(this._input, "change", this, this._input_onchange);
 	this._input._cn_uploadbox_id = this.elementID;
 	form.appendChild(this._input);
 	
-	this._input1 = document.createElement("input");
+	this._input1 = form.ownerDocument.createElement("input");
 	this._input1.type = "hidden";
 	this._input1.name = "uniqueID";
 	this._input1.value = CNFormManager.getBaseFormManager()._uniqueID;
 	form.appendChild(this._input1);
 	
-	this._input2 = document.createElement("input");
+	this._input2 = form.ownerDocument.createElement("input");
 	this._input2.type = "hidden";
 	this._input2.name = "overwrite";
 	this._input2.value = CN_uploadbox._overwriteOnUpload;
@@ -248,11 +248,11 @@ proto._formCreatedCallback = function(form)
 }
 proto.layout = function()
 {
-	if(this._button.element.currentStyle.width == "auto") return;
-	var realW = this.element.offsetWidth == 0 ? parseInt(this.element.currentStyle.width, 10) : this.element.offsetWidth;
-	var bW = parseInt(this._button.element.currentStyle.width, 10)
+	if(Util.getStyle(this._button.element, "width") == "auto") return;
+	var realW = this.element.offsetWidth == 0 ? parseInt(Util.getStyle(this.element, "width"), 10) : this.element.offsetWidth;
+	var bW = parseInt(Util.getStyle(this._button.element, "width"), 10)
 	var w = realW - bW - 6;
-	this._box.style.width = Math.max(10, w);
+	this._box.style.width = Math.max(10, w) + "px";
 }
 
 proto.loadData = function(node)
@@ -270,7 +270,7 @@ proto.loadData = function(node)
 	attr = node.getAttribute("textColor");
 	if(attr !== null) 
 	{
-		this._box.runtimeStyle.color = String(attr);
+		this._box.style.color = String(attr);
 	}
 	
 	attr = node.getAttribute("overwriteOnUpload");
@@ -335,7 +335,7 @@ proto.storeData = function(xmldoc)
 	{
 		this._img = document.createElement("img");
 		this._img.className = "progressIMG";
-		this._img.style.width = this._box.offsetWidth;
+		this._img.style.width = this._box.offsetWidth + "px";
 		this._img.style.height = "16px";
 		this._img.src = "g/und-progress-bar-1.gif";
 		this.element.appendChild(this._img);
@@ -354,28 +354,28 @@ proto.set_disabled = function(val)
 	this._button.set_disabled(val);
 
 	if(CNFormManager.vista)	this.element.className = val ? "cn_uploadbox cn_uploadbox_disabled" : "cn_uploadbox";
-	else this._box.runtimeStyle.backgroundColor = val ? this.element.currentStyle["xl--disabled-background"] : ""
+	else this._box.style.backgroundColor = val ? Util.getStyle(this.element, "xl--disabled-background") : ""
 }
 
-proto._b_onclick = function()
+proto._b_onclick = function(ev)
 {
-	var jso = Util.findByClassName(event.srcElement, "cn_uploadbox").jsObject;
+	var jso = Util.findByClassName(Util.eventTarget(ev), "cn_uploadbox").jsObject;
 	if(jso._disabled) return;
 	CN_uploadbox._activeUploadBox = jso;
 	jso._input.click();
 }
 
-proto._checkBox_onclick = function()
+proto._checkBox_onclick = function(ev)
 {
-	var jso = Util.findByClassName(event.srcElement, "cn_uploadbox").jsObject;
+	var jso = Util.findByClassName(Util.eventTarget(ev), "cn_uploadbox").jsObject;
 	if(jso._disabled) return;
 	CN_uploadbox._activeUploadBox = jso;
 	CN_uploadbox._overwriteOnUpload = jso._checkBox.get_checked();
 }
 
-proto._input_onchange = function()
+proto._input_onchange = function(ev)
 {
-	var jso = CN_uploadbox._activeUploadBox;
+	var jso = this;
 	CN_uploadbox._activeUploadBox = null;
 	jso._isDirty = true;
 	jso._isDirty_filePosted = true;
@@ -386,20 +386,21 @@ proto._input_onchange = function()
 	if(jso._autoPostBack) jso.formManager.postData(jso.element);
 }
 
-proto._box_onfocus = function()
+proto._box_onfocus = function(ev)
 {
-	event.srcElement.select();
+	Util.eventTarget(ev).select();
 }
 
-proto._box_onkeydown = function()
+proto._box_onkeydown = function(ev)
 {
 	var jso = Util.dispatchObject();
-	if(event.keyCode == 8 || event.keyCode == 46)
+	if(Event.keyValue(ev) == 8 || Event.keyValue(ev) == 46)
 	{
 		jso._box.value = "";
 		var newInput = jso._input.cloneNode(true);
 		jso._input.parentNode.replaceChild(newInput, jso._input);
 		jso._input = newInput;
+		Event.add(newInput, "change", jso, jso._input_onchange);
 	}
-	Util.cancelEvent();
+	Util.cancelEvent(ev);
 }

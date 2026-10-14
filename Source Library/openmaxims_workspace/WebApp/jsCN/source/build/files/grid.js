@@ -148,6 +148,60 @@ CN_grid.SORT_MANUAL = 2;
 
 CN_grid.CellTypes = [];
 
+
+// Standards-browser boundary for the historical grid control.
+// The grid still exposes its old handler names, but all native registration,
+// event lookup, element creation, and selection behavior pass through here.
+CN_grid.currentEvent = function() {
+	return (typeof Event != "undefined" && Event.current) ? Event.current() : null;
+}
+CN_grid.relatedTarget = function() {
+	var ev = CN_grid.currentEvent();
+	return ev ? (ev.relatedTarget || null) : null;
+}
+CN_grid.addEvent = function(element, eventName, handler, context) {
+	if(!element || !handler) return null;
+	if(eventName == "transitionend") return null;
+	return Event.add(element, eventName, context || element, handler);
+}
+CN_grid.removeEvent = function(element, eventName, handler, context) {
+	if(!element || !handler) return false;
+	if(eventName == "transitionend") return false;
+	return Event.del(element, eventName, context || element, handler);
+}
+CN_grid.descendants = function(root) {
+	if(!root) return [];
+	if(root.getElementsByTagName) return root.getElementsByTagName("*");
+	return root.children || root.childNodes || [];
+}
+CN_grid.readClipboardText = function() {
+	var ev = CN_grid.currentEvent();
+	var clipboard = ev && ev.clipboardData;
+	if(clipboard && clipboard.getData) return clipboard.getData("text/plain") || clipboard.getData("Text") || "";
+	return "";
+}
+CN_grid.insertTextAtSelection = function(text) {
+	if(typeof window == "undefined" || typeof window.getSelection != "function") return false;
+	var selection = window.getSelection();
+	if(!selection || selection.rangeCount == 0) return false;
+	var range = selection.getRangeAt(0);
+	range.deleteContents();
+	var node = document.createTextNode(String(text));
+	range.insertNode(node);
+	range.setStartAfter(node);
+	range.collapse(true);
+	selection.removeAllRanges();
+	selection.addRange(range);
+	return true;
+}
+CN_grid.dispatchEvent = function(element, eventName) {
+	if(!element || !element.dispatchEvent || typeof document == "undefined") return false;
+	var ev = document.createEvent ? document.createEvent("Event") : null;
+	if(!ev) return false;
+	ev.initEvent(eventName, true, true);
+	return element.dispatchEvent(ev);
+}
+
 CN_grid.fullRowSelect = false;
 CN_grid._pendingCombo = null;
 CN_grid._openPendingCombo = function()
@@ -182,16 +236,16 @@ CN_grid.findCell = function(cell)
 
 CN_grid.cancelBackspace = function()
 {
-	if(event.keyCode == 8) CNUtil.cancelEvent();
+	if(Event.keyValue(CN_grid.currentEvent()) == 8) CNUtil.cancelEvent();
 }
 
 CN_grid.proxyTabKeyDown = function() {
-	if(event.keyCode == 9) { // TBD - do not leave box if it is invalid.
-		var cell = CN_grid.findCell(event.srcElement); // 1036-2 - js error.
+	if(Event.keyValue(CN_grid.currentEvent()) == 9) { // TBD - do not leave box if it is invalid.
+		var cell = CN_grid.findCell(Util.eventTarget()); // 1036-2 - js error.
 		if(!cell) return;
 		var typeObject = cell.colTag.typeObject;
 		if(!typeObject.box || EditorBoxManager.canBlurBox(typeObject.box, typeObject)) {
-			var gridEl = Util.findByClassName(event.srcElement, "cn_grid");
+			var gridEl = Util.findByClassName(Util.eventTarget(), "cn_grid");
 			gridEl.jsObject.element_onkeydown();
 		} else {
 			Util.cancelEvent();
@@ -215,9 +269,9 @@ proto.onpostback = function(ev)
 
 proto.onrowselected = function(ev)
 {
-	if(event && (event.type == "mousedown" || event.type == "click")) 
+	if(CN_grid.currentEvent() && (CN_grid.currentEvent().type == "mousedown" || CN_grid.currentEvent().type == "click")) 
 	{
-		this._selectionPostback = {button: event.button};
+		this._selectionPostback = {button: CN_grid.currentEvent().button};
 		this.formManager.postData(this.element);
 	}
 }
@@ -247,7 +301,7 @@ proto.loadData = function(node)
 	this._resetScrollPosition = node.getAttribute("resetScrollPosition") == "true";
 	if(this._resetScrollPosition) this.rowsDiv.scrollTop = 0;
 	
-	var rows = node.selectSingleNode("rows");
+	var rows = Util.xmlSelectSingleNode(node, "rows");
 	if(rows) 
 	{
 		this.cleanTable();
@@ -291,7 +345,7 @@ proto.storeData = function(xmldoc)
 	var gridData = null;
 	var selectionData = null;
 	
-	var nodes = this.changedFragment.selectNodes("*")
+	var nodes = Util.xmlSelectNodes(this.changedFragment, "*")
 	if(nodes.length > 0)
 	{
 		gridData = this.changedFragment.cloneNode(true);
@@ -300,7 +354,7 @@ proto.storeData = function(xmldoc)
 		{
 			// Now, get posting cell and move it to end.
 			var query = '*[@row="' + this._postingCellXY.row + '" and @column="' + this._postingCellXY.column + '"]';
-			var posterNode = gridData.selectSingleNode(query);
+			var posterNode = Util.xmlSelectSingleNode(gridData, query);
 		
 			// Just append to end.
 			if(gridData.lastChild != posterNode) gridData.appendChild(posterNode);
@@ -335,6 +389,17 @@ proto._filterSelectionData = function(selectionData)
 proto.createElement = function(node, parentElement)
 {
 	this.totalTime = new Date().getTime();
+
+	// A grid is always a child of a form/container element. Do not silently
+	// create a detached grid: that would hide a broken form lifecycle and
+	// produce later layout failures. Report the control and form context.
+	if(!parentElement)
+	{
+		var controlID = node && node.getAttribute ? node.getAttribute("id") : "";
+		var controlTag = node && node.tagName ? node.tagName : "";
+		var placeholderID = this.formManager && this.formManager._formPlaceholder ? this.formManager._formPlaceholder.id : "";
+		throw new Error("CN_grid.createElement: missing parent for " + controlTag + "#" + controlID + " (form=" + placeholderID + ")");
+	}
 	
 	var l = document.createElement("div");
 	parentElement.appendChild(l);
@@ -345,11 +410,11 @@ proto.createElement = function(node, parentElement)
 	l.className = "cn_grid";
 	this._buildElement();
 	
-	l.attachEvent("onfocus", this._element_onfocus);
+	CN_grid.addEvent(l, "focus", this._element_onfocus, this);
 	
-	l.attachEvent("onkeydown", this._element_onkeydown);
-	//l.attachEvent("onkeyup", this._element_onkeyup);
-	//l.attachEvent("onkeypress", this._element_onkeyup);
+	CN_grid.addEvent(l, "keydown", this._element_onkeydown, this);
+	//Event.add(l, "keyup", this, this._element_onkeyup);
+	//Event.add(l, "keypress", this, this._element_onkeyup);
 	
 	// NOTE: width is needed before initialization.	
 	var attr = node.getAttribute("width");
@@ -430,12 +495,12 @@ proto.unload = function()
 
 proto._loadFooter = function(node)
 {
-	var footerNode = node.selectSingleNode("footer");
+	var footerNode = Util.xmlSelectSingleNode(node, "footer");
 	if(!footerNode) return;
 	
 	var footerDiv = this._getFooter();
 
-	var text = this._filterHtmlForIE(footerNode.text);
+	var text = this._filterHtml(Util.xmlText(footerNode));
 	footerDiv.innerHTML = text;
 
 	if(text == "")
@@ -453,19 +518,19 @@ proto._loadFooter = function(node)
 		this._maxFooterHeight = parseInt(attr, 10);
 		if(this._maxFooterHeight == -1) this._maxFooterHeight = Number.MAX_VALUE;
 	}
-	this.footerTR.firstChild.style.height = Math.min(this._maxFooterHeight, footerDiv.scrollHeight + 1);
+	this.footerTR.firstElementChild.style.height = Math.min(this._maxFooterHeight, footerDiv.scrollHeight + 1);
 }
 proto._getFooter = function()
 {
-	var div = this.footerTR.firstChild.firstChild;
+	var div = this.footerTR.firstElementChild.firstElementChild;
 	return div;
 }
 proto._loadHeader = function(node) {
-	var headerNode = node.selectSingleNode("header");
+	var headerNode = Util.xmlSelectSingleNode(node, "header");
 	if(!headerNode) return;
 
-	var div = this._headerTR.firstChild.firstChild;
-	var text = this._filterHtmlForIE(headerNode.text);
+	var div = this._headerTR.firstElementChild.firstElementChild;
+	var text = this._filterHtml(Util.xmlText(headerNode));
 	div.innerHTML = text;
 
 	this._headerTR.style.display = text == "" ? "none" : "block";
@@ -474,10 +539,10 @@ proto._loadHeader = function(node) {
 		this._maxFooterHeight = parseInt(attr, 10);
 		if(this._maxFooterHeight == -1) this._maxFooterHeight = Number.MAX_VALUE;
 	}
-	this._headerTR.firstChild.style.height = Math.min(this._maxFooterHeight, div.scrollHeight + 1);
+	this._headerTR.firstElementChild.style.height = Math.min(this._maxFooterHeight, div.scrollHeight + 1);
 }
-proto._filterHtmlForIE = function(text) {
-	return String(text).replace(/<hr.*?>/ig, '<div class="hr"></div>'); // IE fails on <p><hr></p>.
+proto._filterHtml = function(text) {
+	return String(text).replace(/<hr.*?>/ig, '<div class="hr"></div>'); // Normalize legacy paragraph/hr markup before inserting into the grid.
 }
 
 proto.set_tabIndex = function(ti)
@@ -547,7 +612,7 @@ proto._findChildByClassName = function(p, className)
 
 //proto._element_onkeyup = function()
 //{
-//	if(event.keyCode == 9) CNUtil.cancelEvent();
+//	if(Event.keyValue(CN_grid.currentEvent()) == 9) CNUtil.cancelEvent();
 //}
 
 proto._element_onkeydown = function()
@@ -559,14 +624,14 @@ proto._element_onkeydown = function()
 }
 proto.element_onkeydown = function()
 {
-	if(event.keyCode == 9) // Tab.
+	if(Event.keyValue(CN_grid.currentEvent()) == 9) // Tab.
 	{
 		this.processTab();
 	}
 }
 proto.processTab = function() {
 	CNFormManager._trace("grid.processTab");
-	var cell = CN_grid.findCell(event.srcElement);
+	var cell = CN_grid.findCell(Util.eventTarget());
 	if(!cell) 
 	{
 		//this._skipNextFocus = true;
@@ -574,7 +639,7 @@ proto.processTab = function() {
 	}
 	CNUtil.cancelEvent();
 
-	var backward = event.shiftKey;
+	var backward = CN_grid.currentEvent().shiftKey;
 	var nextCell = backward ? this._findPrevFocusableCell(cell) : this._findNextFocusableCell(cell);
 	if(!nextCell) 
 	{
@@ -586,7 +651,7 @@ proto.processTab = function() {
 		{
 			try
 			{ 
-				//el.attachEvent("onbeforedeactivate", CN_grid._interceptNextDeactivate);
+				//Event.add(el, "focusout", this, CN_grid._interceptNextDeactivate);
 				el.focus(); // Focus stealed.
 				//setTimeout(function(){ el.focus(); }, 100);
 			} 
@@ -605,7 +670,7 @@ proto._findNextTabbableElement = function()
 {
 //	CNFormManager._trace("_findNextTabbableElement")
 	var ar = [];
-	var all = this.formManager._formPlaceholder.all;//this.element.parentElement.all;
+	var all = CN_grid.descendants(this.formManager._formPlaceholder);
 	var count = all.length;
 	var ti = this.element.tabIndex;
 	var lowestTabIndexEl = null;
@@ -613,8 +678,8 @@ proto._findNextTabbableElement = function()
 	{
 		var l = all[i];
 		if(l.jsObject // Only jsCN components.
-		&& l.currentStyle.visibility != "hidden" 
-		&& l.currentStyle.display != "none" 
+		&& Util.getStyle(l, "visibility") != "hidden" 
+		&& Util.getStyle(l, "display") != "none" 
 		&& l.offsetWidth != 0
 		&& !l.disabled
 		&& !this.element.contains(l)
@@ -649,7 +714,7 @@ proto._findNextTabbableElement = function()
 CN_grid._interceptNextDeactivate = function()
 {
 	CNUtil.cancelEvent();
-	event.srcElement.detachEvent("onbeforedeactivate", CN_grid._interceptNextDeactivate);
+	CN_grid.removeEvent(Util.eventTarget(), "focusout", CN_grid._interceptNextDeactivate, null);
 }
 
 proto._focusCell = function(cell)
@@ -867,20 +932,23 @@ proto._buildElement = function()
 		<tr id=footerTR style="display: none; "><td><div class="gridFooterDiv"></div></td></tr>\
 		</table>';
 		
-	var all = this.element.all;
+	var all = CN_grid.descendants(this.element);
 	//this.disabler = all["disabler"];
-	this.headerTD = all["headerTD"];
-	this.headerRow = all["headerRow"];
-	this.rowsDiv = all["rowsDiv"];
-	this.leftBorder = all["leftBorder"];
-	this.rightBorder = all["rightBorder"];
-	this.topBorder = all["topBorder"];
-	this.bottomBorder = all["bottomBorder"];
-	this.footerTR = all["footerTR"];
-	this.footerTR.onselectstart = CNUtil.cancelEvent;
-	this._headerTR = this.element.firstChild.rows[1];
+	this.headerTD = Util.findById(this.element, "headerTD");
+	this.headerRow = Util.findById(this.element, "headerRow");
+	this.rowsDiv = Util.findById(this.element, "rowsDiv");
+	this.leftBorder = Util.findById(this.element, "leftBorder");
+	this.rightBorder = Util.findById(this.element, "rightBorder");
+	this.topBorder = Util.findById(this.element, "topBorder");
+	this.bottomBorder = Util.findById(this.element, "bottomBorder");
+	this.footerTR = Util.findById(this.element, "footerTR");
+	// Standards DOM preserves the whitespace around the template table as text
+	// nodes.  Do not assume firstChild is the table (that was only reliable in
+	// the old IE HTML parser).
+	var gridTable = this.element.firstElementChild;
+	this._headerTR = gridTable.rows[1];
 
-	this.disabler = document.createElement('<div style="position: absolute; background: white; z-index: 1000; filter: alpha(opacity=50); width: 100%; height: 100%; visibility: hidden; top: 0; left: 0; ">');
+	this.disabler = Util.createElementFromHTML('<div style="position: absolute; background: white; z-index: 1000; opacity: 0.5; width: 100%; height: 100%; visibility: hidden; top: 0; left: 0; ">');
 	//this.element.appendChild(this.disabler);
 	
 	var obj = this;
@@ -906,9 +974,9 @@ proto._init = function(node)
 	this.prebuildTable(node);
 	
 	// Header auto-scroll.
-	this.rowsDiv.attachEvent("onscroll", this._rowsDiv_onscroll);
-	//this.rowsDiv.attachEvent("onresize", this._rowsDiv_onresize);
-	this.element.attachEvent("onresize", this._rowsDiv_onresize);
+	CN_grid.addEvent(this.rowsDiv, "scroll", this._rowsDiv_onscroll, this);
+	//Event.add(this.rowsDiv, "resize", this, this._rowsDiv_onresize);
+	CN_grid.addEvent(this.element, "resize", this._rowsDiv_onresize, this);
 	
 	if(CN_grid.fullRowSelect) {
 		Event.add(this.rowsDiv, "click", this, this.rowsDiv_click)
@@ -920,12 +988,12 @@ proto._init = function(node)
 	//this._set_readOnly();	
 }
 proto.rowsDiv_click = function(event) {
-	if(this._allowClearSelection && event.srcElement == this.rowsDiv)  {
+	if(this._allowClearSelection && Util.eventTarget() == this.rowsDiv)  {
 		this.deselectRow(true);
 	}
 }
 proto.row_mouseenter = function(event) {
-	var row = Util.findByClassName(event.srcElement, "rowDiv");
+	var row = Util.findByClassName(Util.eventTarget(), "rowDiv");
 	if(row) {
 		Util.addClass(row, "rowDivHover");
 		this._hoveredRow = row;
@@ -937,7 +1005,7 @@ proto.row_mouseenter = function(event) {
 	this._hover.style.height = row.offsetHeight - 1;*/
 }
 proto.row_mouseleave = function(event) {
-	var row = Util.findByClassName(event.srcElement, "rowDiv");
+	var row = Util.findByClassName(Util.eventTarget(), "rowDiv");
 	this._hideHover();
 }
 proto._hideHover = function() {
@@ -956,7 +1024,7 @@ proto.preloadImages = function()
 
 proto.initChangedDOM = function()
 {
-	this.changedDoc = new ActiveXObject("Microsoft.XMLDOM");
+	this.changedDoc = Util.createXMLDocument();
 	this.changedFragment = this.changedDoc.createDocumentFragment();
 }
 
@@ -968,14 +1036,14 @@ proto.prebuildTable = function(node)
 	else this.headerTD.style.display = "none";
 	
 	// Selection col.
-	var cell = document.createElement("<span class=selectionSpan>");
+	var cell = Util.createElementFromHTML("<span class=selectionSpan>");
 	cell.title = '';	
 	this.templateRow.appendChild(cell);
 	
-	cell.attachEvent("onmousedown", this._selectioncell_onmousedown);
+	CN_grid.addEvent(cell, "mousedown", this._selectioncell_onmousedown, this);
 	
 	if(CN_grid.fullRowSelect) {
-		//this.templateRow.attachEvent("onmousedown", this._row_onmousedown);
+		//Event.add(this.templateRow, "mousedown", this, this._row_onmousedown);
 		Event.add(this.templateRow, "mousedown", this, this._row_onmousedown);
 	}
 
@@ -986,7 +1054,7 @@ proto.prebuildTable = function(node)
 	}
 	else
 	{
-		var img = document.createElement("<img width=16 height=16>");
+		var img = Util.createElementFromHTML("<img width=16 height=16>");
 		cell.appendChild(img);
 		img.src = CNFormManager.themeImagesPath + "normalRow.gif";
 	}
@@ -998,7 +1066,7 @@ proto.prebuildTable = function(node)
 	cell = document.createElement("span");
 	this.headerRow.appendChild(cell);
 	
-	cell.innerText = " ";
+	cell.textContent = " ";
 	cell.style.width = 20;
 
 	//this._lastWidth = this._elementWidth - (this._selectorVisible ? 20 : 0);
@@ -1021,7 +1089,7 @@ proto.prebuildTable = function(node)
 	
 	this._x = offset;
 		
-	var cols = node.selectNodes("col");
+	var cols = Util.xmlSelectNodes(node, "col");
 	
 	var colsCount = cols.length;
 	this.colTags = new Array(colsCount);
@@ -1031,7 +1099,7 @@ proto.prebuildTable = function(node)
 		this._processColTag(node, colNode, i, colsCount);
 	}
 	
-	this.templateRow.removeNode(true);
+	Util.removeElement(this.templateRow);
 
 	if(!this._selectorVisible)
 	{
@@ -1095,13 +1163,13 @@ proto._processColTag = function(node, colNode, i, colsCount)
 
 	var caption = this._getAttribute(colNode, "caption");
 	//hcell.title = caption
-	hcell.innerText = caption;
+	hcell.textContent = caption;
 
 	var captionImage = this._getAttribute(colNode, "captionImage");
 	if(captionImage)
 		hcell.innerHTML = '<img style=\"width:24px;height:24px;vertical-align:middle\" src=' + captionImage + ' class=captionImage>' + caption;
 	
-	var cell = document.createElement("<span class=cellSpan isCell=true>");
+	var cell = Util.createElementFromHTML("<span class=cellSpan isCell=true>");
 	this.templateRow.appendChild(cell);
 	
 	if(this._realWidth < 1) this._realWidth = this._elementWidth;
@@ -1181,12 +1249,12 @@ proto._processColTag = function(node, colNode, i, colsCount)
 	{
 		hcell.colTag = col;
 		
-		hcell.attachEvent("onmouseenter", this._hcell_onmouseenter);
-		hcell.attachEvent("onmouseleave", this._hcell_onmouseleave);
-		hcell.attachEvent("onclick", this._hcell_onclick);
+		CN_grid.addEvent(hcell, "mouseenter", this._hcell_onmouseenter, this);
+		CN_grid.addEvent(hcell, "mouseleave", this._hcell_onmouseleave, this);
+		CN_grid.addEvent(hcell, "click", this._hcell_onclick, this);
 		hcell.style.cursor = "default";
 		
-		var sortArrow = document.createElement("<img width=7 height=7 class=gridSortArrow>");
+		var sortArrow = Util.createElementFromHTML("<img width=7 height=7 class=gridSortArrow>");
 		hcell.appendChild(sortArrow);
 		sortArrow.src = this._vista ? 'themes/vista/g/sortundefined.gif' :
 			CNFormManager.neutralImagesPath + "sortundefined.gif";
@@ -1197,7 +1265,7 @@ proto._processColTag = function(node, colNode, i, colsCount)
 
 proto._loadColumnsData = function(node)
 {
-	var colNodes = node.selectNodes('col');
+	var colNodes = Util.xmlSelectNodes(node, 'col');
 	var count = colNodes.length;
 	for(var i = 0; i < count; i++)
 	{
@@ -1209,7 +1277,7 @@ proto._loadColumnsData = function(node)
 		{
 			var fc = headerSpan.firstChild;
 			if(fc && fc.tagName != 'IMG') headerSpan.replaceChild(document.createTextNode(caption), fc);
-			else headerSpan.innerText = caption;
+			else headerSpan.textContent = caption;
 			headerSpan.title = caption;
 		}
 	}
@@ -1217,7 +1285,7 @@ proto._loadColumnsData = function(node)
 
 proto._hcell_onmouseenter = function()
 {
-	var l = event.srcElement;
+	var l = Util.eventTarget();
 	if(this._vista)
 	{
 		var span = Util.findTag(l, "SPAN");
@@ -1225,13 +1293,13 @@ proto._hcell_onmouseenter = function()
 	}
 	else
 	{
-		l.runtimeStyle.textDecoration = "underline";
+		l.style.textDecoration = "underline";
 	}
 }
 
 proto._hcell_onmouseleave = function()
 {
-	var l = event.srcElement;
+	var l = Util.eventTarget();
 	if(this._vista)
 	{
 		var span = Util.findTag(l, "SPAN");
@@ -1239,7 +1307,7 @@ proto._hcell_onmouseleave = function()
 	}
 	else
 	{
-		l.runtimeStyle.textDecoration = "";
+		l.style.textDecoration = "";
 	}
 }
 
@@ -1268,7 +1336,7 @@ proto.hcell_onclick = function()
 		return;
 	}
 
-	var hcell = CNUtil.findTag(event.srcElement, "SPAN");
+	var hcell = CNUtil.findTag(Util.eventTarget(), "SPAN");
 	
 	this._hideSorting();
 	this._currentSort_hcell = hcell;
@@ -1321,7 +1389,7 @@ proto._sortGrid = function(colTag, isDesc)
 	while(row && row.rowIndex !== undefined)
 	{
 		var cell = row.children[cellIndex];
-		rowAr[i] = [String(cell.innerText).toLowerCase(), row, cell];
+		rowAr[i] = [String(cell.textContent).toLowerCase(), row, cell];
 		row = row.nextSibling;
 		i++;
 	}
@@ -1355,7 +1423,7 @@ proto._sortGrid = function(colTag, isDesc)
 	for(var j = startIX; j < rowAr.length; j++)
 	{
 		var row = rowAr[j][1];
-		prev.insertAdjacentElement("afterend", row);
+		prev.parentNode.insertBefore(row, prev.nextSibling);
 		prev = row;
 	}
 	this.reselectRow();
@@ -1394,7 +1462,7 @@ proto.cleanTable = function()
 		var row = rows[i];
 		if(row.rowIndex !== undefined || row.isNodeContainer)
 		{
-			row.removeNode(true);
+			Util.removeElement(row);
 		}
 	}
 }
@@ -1486,7 +1554,7 @@ proto._setLoadStateTO = function()
 
 proto.appendAnyRow = function(row, parent, parentRowIndex, tree_level, tree_index, tree_type)
 {
-	var childRows = row.selectSingleNode("childRows");
+	var childRows = Util.xmlSelectSingleNode(row, "childRows");
 	if(childRows) this.appendFolderRow(row, childRows, parent, parentRowIndex, tree_level, tree_index, tree_type);
 	else this.appendRow(row, parent, parentRowIndex, tree_level, tree_index, tree_type);
 }
@@ -1563,7 +1631,7 @@ proto.appendFolderRow = function(rowNode, childRows, parent, parentRowIndex, tre
 		if(type) childNodeType = type;
 	}
 
-	//var chilsRows = rowNode.selectSingleNode("childRows");
+	//var chilsRows = Util.xmlSelectSingleNode(rowNode, "childRows");
 	if(childRows != null) rowNode.setAttribute("expandable", "true");
 
 	var expanded = false;
@@ -1659,8 +1727,8 @@ proto.setCommonRowProperties = function(row, rowNode, parentRowIndex)
 		var cell = row.children[0];
 		var img = cell.children[0];
 		cell.style.cursor = "default";
-		cell.detachEvent("onmousedown", this._selectioncell_onmousedown);
-		//img.src = CNFormManager.themeImagesPath + "unselectableRow.gif";
+		CN_grid.removeEvent(cell, "mousedown", this._selectioncell_onmousedown, this);
+		//img.src = CNFormManager.themeImagesPath + "non-selectableRow.gif";
 		//img.width = img.height = 16;
 		img.style.visibility = "hidden";
 	}
@@ -1682,64 +1750,68 @@ proto.setCommonRowProperties = function(row, rowNode, parentRowIndex)
 	row.xmlNode = rowNode;
 }
 
+proto._stateKey = function()
+{
+	return "cn_gridstate_" + String(this.element && this.element.id || "");
+}
+proto._readState = function()
+{
+	var key = this._stateKey();
+	try
+	{
+		if(typeof sessionStorage != "undefined")
+		{
+			var raw = sessionStorage.getItem(key);
+			return raw ? JSON.parse(raw) : null;
+		}
+	}
+	catch(ignore) {}
+	return CN_grid._memoryState ? CN_grid._memoryState[key] || null : null;
+}
+proto._writeState = function(state)
+{
+	var key = this._stateKey();
+	try
+	{
+		if(typeof sessionStorage != "undefined")
+		{
+			sessionStorage.setItem(key, JSON.stringify(state));
+			return;
+		}
+	}
+	catch(ignore) {}
+	if(!CN_grid._memoryState) CN_grid._memoryState = {};
+	CN_grid._memoryState[key] = state;
+}
 proto.loadState = function()
 {
 	if(!this.element || !this.element.id || this._resetScrollPosition) return;
-	// NOTE: could conflict here.
-	try
-	{
-		document.body.load("xlgridstore");
-	}
-	catch(ex){}
-	var gridTag = this.getStoredGridTag();
-	var scrollTop = gridTag.getAttribute("rowsDiv_scrollTop");
-	if(scrollTop)
-	{
-		this.rowsDiv.scrollTop = scrollTop * 1;
-		this.rowsDiv.scrollLeft = gridTag.getAttribute("rowsDiv_scrollLeft") * 1;
-	}
-	gridTag.removeAttribute("rowsDiv_scrollTop");
-	gridTag.removeAttribute("rowsDiv_scrollLeft");
-	try
-	{
-		document.body.save("xlgridstore");
-	}
-	catch(ex){}
+	var state = this._readState();
+	if(!state) return;
+	if(state.rowsDiv_scrollTop != null) this.rowsDiv.scrollTop = state.rowsDiv_scrollTop * 1;
+	if(state.rowsDiv_scrollLeft != null) this.rowsDiv.scrollLeft = state.rowsDiv_scrollLeft * 1;
 }
 
 proto.saveState = function()
 {
-	if(!this.element.id) return;
-	// NOTE: always load store before change, as another grid probably changed it.
-	try
-	{
-		document.body.load("xlgridstore");
-	}
-	catch(ex){}
-	if(this.storeScrollState)
-	{
-		var gridTag = this.getStoredGridTag();
-		gridTag.setAttribute("rowsDiv_scrollTop", this.rowsDiv.scrollTop);
-		gridTag.setAttribute("rowsDiv_scrollLeft", this.rowsDiv.scrollLeft);	
-	}
-	try
-	{
-		document.body.save("xlgridstore");
-	}
-	catch(ex){}
+	if(!this.element || !this.element.id || !this.storeScrollState) return;
+	this._writeState({
+		rowsDiv_scrollTop: this.rowsDiv.scrollTop,
+		rowsDiv_scrollLeft: this.rowsDiv.scrollLeft
+	});
 }
 
+// Kept as a small compatibility-shaped accessor for callers from reconstructed
+// extensions. It no longer exposes MSXML/userData; attributes are backed by a
+// plain object and persisted by saveState().
 proto.getStoredGridTag = function()
 {
-	var xmldoc = document.body.XMLDocument;
-	var gridTag = xmldoc.documentElement.selectSingleNode("grid[@id='" + this.element.id + "']");
-	if(!gridTag)
-	{
-		gridTag = xmldoc.createElement("grid");
-		gridTag.setAttribute("id", this.element.id);
-		xmldoc.documentElement.appendChild(gridTag);
-	}
-	return gridTag;
+	var state = this._readState() || {};
+	return {
+		getAttribute: function(name) { return state[name] == null ? null : state[name]; },
+		setAttribute: function(name, value) { state[name] = value; },
+		removeAttribute: function(name) { delete state[name]; }
+	};
 }
 
 
@@ -1765,8 +1837,6 @@ proto.selectRow = function(l, doNotFireEvent)
 
 //	if(this._vista || CN_grid.fullRowSelect)
 		Util.addClass(l, "selectedRow");
-//		l.style.filter = "filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr=" + ThemeNonCSSStyles.grid_hoverColors[0] + 
-//			", endColorStr=" + ThemeNonCSSStyles.grid_hoverColors[1] + ")";
 
 	this.rowBorder_select(l);
 
@@ -1794,7 +1864,6 @@ proto.deselectRow = function(generateEvent)
 	var l = this.selectedTR;
 
 	//if(this._vista || CN_grid.fullRowSelect) 
-	Util.removeClass(l, "selectedRow"); //l.style.filter = "";
 
 	var img = l.children[0].children[0];
 	img._src = "normalRow.gif";
@@ -1823,7 +1892,7 @@ proto.reselectRow = function()
 
 proto._rowsDiv_onresize = function()
 {
-	CNUtil.findJSObject(event.srcElement).rowsDiv_onresize();
+	CNUtil.findJSObject(Util.eventTarget()).rowsDiv_onresize();
 }
 proto.rowsDiv_onresize = function()
 {
@@ -1838,7 +1907,7 @@ proto.rowsDiv_onresize = function()
 	var obj = this;
 	this._resizeTO = setTimeout(function(){ obj._resizeColumns(); }, 55);
 	
-	var table = this.element.firstChild;
+	var table = this.element.firstElementChild;
 	table.width = this.element.clientWidth;
 	table.height = this.element.clientHeight;
 
@@ -1973,7 +2042,7 @@ proto._resizeRows = function(rowsDiv, colWidth, ix, rowsDivWidth, firstRowIndex)
 proto._getFirstRowIndex = function()
 {
 	var index = 0;
-	var l = this.rowsDiv.firstChild;
+	var l = this.rowsDiv.firstElementChild;
 	
 	//If first row is selected class name will be "rowDiv selectedRow" not "rowDiv"
 	if (l && l.className == "rowDiv selectedRow")
@@ -1992,7 +2061,7 @@ proto._getFirstRowIndex = function()
 
 proto._rowsDiv_onscroll = function()
 {
-	CNUtil.findJSObject(event.srcElement).rowsDiv_onscroll();
+	CNUtil.findJSObject(Util.eventTarget()).rowsDiv_onscroll();
 }
 proto.rowsDiv_onscroll = function()
 {
@@ -2012,17 +2081,17 @@ proto.normHeaderRow = function()
 
 proto._selectioncell_onmousedown = function()
 {
-	//if(event.button != 1) return;
-	CNUtil.findJSObject(event.srcElement).selectioncell_onmousedown();
+	//if(CN_grid.currentEvent().button != 1) return;
+	CNUtil.findJSObject(Util.eventTarget()).selectioncell_onmousedown();
 }
 proto.selectioncell_onmousedown = function()
 {
 	if(this._disabled) return;
-	var l = CN_grid.findTag(event.srcElement, "DIV");
+	var l = CN_grid.findTag(Util.eventTarget(), "DIV");
 
 	if(l == this.selectedTR && this._allowClearSelection) 
 	{
-		if(event.button == 1) this.deselectRow(true);
+		if(CN_grid.currentEvent().button == 1) this.deselectRow(true);
 		return;
 	}
 
@@ -2030,14 +2099,14 @@ proto.selectioncell_onmousedown = function()
 }
 proto._row_onmousedown = function(event) {
 	if(this._disabled || !this._selectorVisible && !CN_grid.fullRowSelect) return;
-	var selSpan = Util.findByClassName(event.srcElement, "selectionSpan");
+	var selSpan = Util.findByClassName(Util.eventTarget(), "selectionSpan");
 	if(selSpan) return;
 
-	var l = Util.findByClassName(event.srcElement, "rowDiv");
+	var l = Util.findByClassName(Util.eventTarget(), "rowDiv");
 
 	if(l == this.selectedTR && this._allowClearSelection && this._readOnly) 
 	{
-		if(event.button == 1) this.deselectRow(true);
+		if(CN_grid.currentEvent().button == 1) this.deselectRow(true);
 		return;
 	}
 
@@ -2146,7 +2215,7 @@ proto._getChangedNode = function(row, cell)
 	// NOTE: id is set by FormManager.
 	var elementName = this._tagPrefix + tagName;
 	var query = elementName	+ '[@row="' + rowIndex + '" and @column="' + cellIndex + '"]';
-	var node = this.changedFragment.selectSingleNode(query);
+	var node = Util.xmlSelectSingleNode(this.changedFragment, query);
 	if(!node)
 	{
 		node = this.changedDoc.createElement(elementName);
@@ -2276,7 +2345,7 @@ proto.tree_init = function(node)
 	
 proto.tree_initializeNodeTypes = function(node)
 {
-	var types = node.selectNodes("nodetype");
+	var types = Util.xmlSelectNodes(node, "nodetype");
 	var count = types.length;
 	for(var i = 0; i < count; i++)
 	{
@@ -2316,37 +2385,36 @@ proto.tree_getOverridenTypeObject = function(typeObj, l)
 
 proto.tree_buildNodeTemplate = function(parentElement)
 {
-	var nodeDiv = document.createElement("<div class=tree_nodeDiv>");
+	var nodeDiv = Util.createElementFromHTML("<div class=tree_nodeDiv>");
 	parentElement.appendChild(nodeDiv);
 	
 	nodeDiv.isNodeDiv = true;
 	
-	var lineSpan = document.createElement("<span class=tree_lineSpan>"); // 0 
+	var lineSpan = Util.createElementFromHTML("<span class=tree_lineSpan>"); // 0 
 	nodeDiv.appendChild(lineSpan);
 	
-	var pmSpan = document.createElement("<span class=tree_plusMinusSpan>") // 1 
+	var pmSpan = Util.createElementFromHTML("<span class=tree_plusMinusSpan>") // 1 
 	nodeDiv.appendChild(pmSpan);
 	
-	var checkBoxSpan = document.createElement("<span class=tree_checkBoxSpan>"); // 2 
-	checkBoxSpan.attachEvent("onclick", this._tree_checkBoxSpan_onclick);
-	checkBoxSpan.attachEvent("ondblclick", this._tree_checkBoxSpan_onclick);	
-	checkBoxSpan.attachEvent("onselectstart", CNUtil.cancelEvent);
+	var checkBoxSpan = Util.createElementFromHTML("<span class=tree_checkBoxSpan>"); // 2 
+	CN_grid.addEvent(checkBoxSpan, "click", this._tree_checkBoxSpan_onclick, this);
+	CN_grid.addEvent(checkBoxSpan, "dblclick", this._tree_checkBoxSpan_onclick, this);	
 	if(this._vista)
 	{
-		checkBoxSpan.attachEvent("onmouseenter", this._tree_checkBoxSpan_onmouseenter);
-		checkBoxSpan.attachEvent("onmouseleave", this._tree_checkBoxSpan_onmouseleave);	
+		CN_grid.addEvent(checkBoxSpan, "mouseenter", this._tree_checkBoxSpan_onmouseenter, this);
+		CN_grid.addEvent(checkBoxSpan, "mouseleave", this._tree_checkBoxSpan_onmouseleave, this);	
 	}
 
 	nodeDiv.appendChild(checkBoxSpan);
 
-	var icon = document.createElement("<img width=16 height=16 align=absmiddle class='tree_iconImg'>"); // 3 
-	icon.attachEvent("onmousedown", this._tree_icon_textSpan_onclick);
-	icon.attachEvent("ondblclick", this._tree_icon_textSpan_ondblclick);
+	var icon = Util.createElementFromHTML("<img width=16 height=16 align=absmiddle class='tree_iconImg'>"); // 3 
+	CN_grid.addEvent(icon, "mousedown", this._tree_icon_textSpan_onclick, this);
+	CN_grid.addEvent(icon, "dblclick", this._tree_icon_textSpan_ondblclick, this);
 	nodeDiv.appendChild(icon);
 	
-	var text = document.createElement("<span class=tree_textSpan>"); // 4
-	text.attachEvent("onmousedown", this._tree_icon_textSpan_onclick);
-	text.attachEvent("ondblclick", this._tree_icon_textSpan_ondblclick);
+	var text = Util.createElementFromHTML("<span class=tree_textSpan>"); // 4
+	CN_grid.addEvent(text, "mousedown", this._tree_icon_textSpan_onclick, this);
+	CN_grid.addEvent(text, "dblclick", this._tree_icon_textSpan_ondblclick, this);
 	nodeDiv.appendChild(text);
 	
 	return nodeDiv;
@@ -2361,7 +2429,7 @@ proto.tree_buildLine = function(nodeDiv, node, lineSpan, level)
 {
 	if(node.parentNode.parentNode.tagName == "rows") return;
 
-	var lineImg = document.createElement("<img align=absmiddle width=" + this.lineImg_Width + " height=" + this.lineImg_Height + ">");
+	var lineImg = Util.createElementFromHTML("<img align=absmiddle width=" + this.lineImg_Width + " height=" + this.lineImg_Height + ">");
 
 	if(this._showLines)
 	{
@@ -2369,7 +2437,7 @@ proto.tree_buildLine = function(nodeDiv, node, lineSpan, level)
 		while(row && (parseInt(row.getAttribute("nodeLevel")) != 0 || this._showRootLines))
 		{
 			var img = lineImg.cloneNode();
-			lineSpan.insertAdjacentElement("afterbegin", img);
+			lineSpan.insertBefore(img, lineSpan.firstChild);
 			
 			if(this.tree_isNode(row.nextSibling)) img.src = CNFormManager.themeImagesPath + "grid-i.gif";
 			else img.src = CNFormManager.themeImagesPath + "white.gif";
@@ -2381,7 +2449,7 @@ proto.tree_buildLine = function(nodeDiv, node, lineSpan, level)
 	}
 	else
 	{
-		lineSpan.insertAdjacentElement("afterbegin", lineImg);
+		lineSpan.insertBefore(lineImg, lineSpan.firstChild);
 		lineImg.width = this.lineImg_Width * level;
 		lineImg.src = CNFormManager.themeImagesPath + "white.gif";
 	}
@@ -2414,7 +2482,7 @@ proto.tree_getParentNode = function(node)
 
 proto.tree_buildPM = function(node, pmSpan, level)
 {
-	var pmImg = document.createElement("<img align=absmiddle width=" + this.lineImg_Width + " height=" + this.lineImg_Height + ">");
+	var pmImg = Util.createElementFromHTML("<img align=absmiddle width=" + this.lineImg_Width + " height=" + this.lineImg_Height + ">");
 	pmSpan.appendChild(pmImg);
 
 	var img = pmSpan.basePMImg = "";
@@ -2448,9 +2516,9 @@ proto.tree_buildPM = function(node, pmSpan, level)
 			else img += "plus";
 			
 			if(this._vista) img.height = 20;
-			pmSpan.attachEvent("onmousedown", this._tree_pmImg_onmousedown);
-			pmSpan.attachEvent("ondblclick", this._tree_pmImg_onmousedown);		
-			if(this._vista)	pmSpan.attachEvent("onmouseenter", this._tree_pmImg_onmouseenter);
+			CN_grid.addEvent(pmSpan, "mousedown", this._tree_pmImg_onmousedown, this);
+			CN_grid.addEvent(pmSpan, "dblclick", this._tree_pmImg_onmousedown, this);		
+			if(this._vista)	CN_grid.addEvent(pmSpan, "mouseenter", this._tree_pmImg_onmouseenter, this);
 		}
 		else
 		{
@@ -2468,7 +2536,7 @@ proto.tree_buildPM = function(node, pmSpan, level)
 
 proto._tree_pmImg_onmouseenter = function()
 {
-	var div = Util.findTag(event.srcElement, "DIV");
+	var div = Util.findTag(Util.eventTarget(), "DIV");
 	var jso = Util.findJSObject(div);
 	
 	var span = div.children[jso.ix_plusMinusSpan];
@@ -2482,15 +2550,15 @@ proto._tree_pmImg_onmouseenter = function()
 	hoverIMG.style.left = "5px";
 	hoverIMG.style.top = "5px";
 	span.appendChild(hoverIMG);
-	span.attachEvent("onmouseleave", jso._tree_pmImg_onmouseleave);
+	CN_grid.addEvent(span, "mouseleave", jso._tree_pmImg_onmouseleave, jso);
 }
 proto._tree_pmImg_onmouseleave = function()
 {
-	var span = event.srcElement;
+	var span = Util.eventTarget();
 	var jso = Util.findJSObject(span);
-	span.detachEvent("onmouseleave", jso._tree_pmImg_onmouseleave);
+	CN_grid.removeEvent(span, "mouseleave", jso._tree_pmImg_onmouseleave, jso);
 	span.style.position = "static";
-	if(span.lastChild && span.lastChild._hover) span.lastChild.removeNode(true);
+	if(span.lastChild && span.lastChild._hover) Util.removeElement(span.lastChild);
 }
 
 proto.tree_updateImageToState = function(nodeDiv, state)
@@ -2555,7 +2623,7 @@ proto.tree_buildNode = function(nodeDiv, cell, node, level, index, nodeType)
 	this.tree_buildLine(nodeDiv, node, children[this.ix_lineSpan], level);
 	this.tree_buildPM(node, children[this.ix_plusMinusSpan], level);
 
-	children[this.ix_textSpan].innerText = String(node.text);
+	children[this.ix_textSpan].textContent = String(Util.xmlText(node));
 	
 	var expanded = this.tree_isExpanded(node);
 	this.tree_updateImageToState(nodeDiv, expanded ? this.state_expanded : this.state_default);
@@ -2611,7 +2679,7 @@ proto._set_checked = function(l, disabled, checked, hover, userAction, checkedCh
 
 proto._tree_checkBoxSpan_onmouseenter = function()
 {
-	var l = event.srcElement;
+	var l = Util.eventTarget();
 	var jsObject = Util.findJSObject(l);
 
 	if(!jsObject._vista || jsObject._readOnly || jsObject._disabled) return;
@@ -2626,7 +2694,7 @@ proto._tree_checkBoxSpan_onmouseenter = function()
 
 proto._tree_checkBoxSpan_onmouseleave = function()
 {
-	var l = event.srcElement;
+	var l = Util.eventTarget();
 	var jsObject = Util.findJSObject(l);
 
 	if(!jsObject._vista || jsObject._readOnly || jsObject._disabled) return;
@@ -2646,7 +2714,7 @@ proto.tree_checkBoxSpan_onclick = function()
 {
 	if(this._readOnly || this._disabled) return;
 
-	var l = event.srcElement;
+	var l = Util.eventTarget();
 	var nodeDiv = CN_grid.findTag(l, "DIV");
 	if(nodeDiv.node.getAttribute("disable") == "true") return;
 
@@ -2664,15 +2732,15 @@ proto.tree_checkBoxSpan_onclick = function()
 
 proto._tree_icon_textSpan_onclick = function()
 {
-	CNUtil.findJSObject(event.srcElement).tree_icon_textSpan_onclick();
+	CNUtil.findJSObject(Util.eventTarget()).tree_icon_textSpan_onclick();
 }
 proto._tree_icon_textSpan_ondblclick = function()
 {
-	CNUtil.findJSObject(event.srcElement).tree_icon_textSpan_onclick();
+	CNUtil.findJSObject(Util.eventTarget()).tree_icon_textSpan_onclick();
 }
 proto.tree_icon_textSpan_onclick = function()
 {
-	var l = event.srcElement;
+	var l = Util.eventTarget();
 	var nodeDiv = CN_grid.findTag(l, "DIV");
 	if(nodeDiv.node.getAttribute("disable") == "true") return;
 	
@@ -2681,11 +2749,11 @@ proto.tree_icon_textSpan_onclick = function()
 
 proto._tree_icon_textSpan_onmouseenter = function()
 {
-	CNUtil.findJSObject(event.srcElement).tree_icon_textSpan_onmouseenter();
+	CNUtil.findJSObject(Util.eventTarget()).tree_icon_textSpan_onmouseenter();
 }
 proto.tree_icon_textSpan_onmouseenter = function()
 {
-	var l = event.srcElement;	
+	var l = Util.eventTarget();	
 	var nodeDiv = CN_grid.findTag(l, "DIV");
 	if(nodeDiv.node.getAttribute("disable") == "true") return;
 
@@ -2694,11 +2762,11 @@ proto.tree_icon_textSpan_onmouseenter = function()
 
 proto._tree_icon_textSpan_onmouseleave = function()
 {
-	CNUtil.findJSObject(event.srcElement).tree_icon_textSpan_onmouseleave();
+	CNUtil.findJSObject(Util.eventTarget()).tree_icon_textSpan_onmouseleave();
 }
 proto.tree_icon_textSpan_onmouseleave = function()
 {
-	var l = event.srcElement;
+	var l = Util.eventTarget();
 	var nodeDiv = CN_grid.findTag(l, "DIV");
 	if(nodeDiv.node.getAttribute("disable") == "true") return;
 
@@ -2707,14 +2775,14 @@ proto.tree_icon_textSpan_onmouseleave = function()
 
 proto._tree_pmImg_onmousedown = function()
 {
-	CNUtil.findJSObject(event.srcElement).tree_pmImg_onmousedown();
+	CNUtil.findJSObject(Util.eventTarget()).tree_pmImg_onmousedown();
 }
 proto.tree_pmImg_onmousedown = function()
 {
 	if(this.formManager._loading)
 		return;
 
-	var l = event.srcElement;
+	var l = Util.eventTarget();
 	var div = CN_grid.findTag(l, "DIV");
 	this.tree_toggleExpand(div, true);
 
@@ -2756,7 +2824,7 @@ proto.tree_updateImage = function(nodeDiv)
 
 proto.tree_storeChangedNode = function(row, rowIndex, key, value, noStoreValue)
 {
-	var node = this.changedFragment.selectSingleNode(this._tagPrefix + 'node[@row="' + rowIndex + '"]');
+	var node = Util.xmlSelectSingleNode(this.changedFragment, this._tagPrefix + 'node[@row="' + rowIndex + '"]');
 	var store = true;
 	if(!node)
 	{
@@ -2885,7 +2953,7 @@ proto.tree_expandCollapse = function(nodeDiv, expand, userClick)
 // Properties. ============================================
 proto.set_readOnly = function(value)
 {
-	this._readOnly = eval(value);
+	this._readOnly = Util.parseBoolean(value);
 	if(!this.isReady) return;
 	this._set_readOnly();
 }
@@ -2954,13 +3022,13 @@ proto.set_disabled = function(value)
 		//this.element.appendChild(this.disabler);
 		this.disabler.style.width = this.element.clientWidth;
 		this.disabler.style.visibility = "inherit";
-		this.element.runtimeStyle.backgroundColor = this.element.currentStyle["xl--disabled-background"];
+		this.element.style.backgroundColor = Util.getStyle(this.element, "xl--disabled-background");
 		this.element.className = "cn_grid cn_grid_disabled";
 	}
 	else
 	{
-		this.element.runtimeStyle.backgroundColor = "";
-		this.disabler.removeNode(true);
+		this.element.style.backgroundColor = "";
+		Util.removeElement(this.disabler);
 		this.element.className = "cn_grid";
 	}
 }
@@ -2981,7 +3049,7 @@ proto._set_selectedRow = function()
 	if(this._selectedRow == -1) this.deselectRow();
 	else if(this._selectedRow >= 0)
 	{
-		var divs = this.rowsDiv.all;
+		var divs = CN_grid.descendants(this.rowsDiv);
 		var divCount = divs.length;
 		for(var i = 0; i < divCount; i++)
 		{
@@ -3060,7 +3128,7 @@ wp.prerender = function(cell, col){}
 wp.isValid = function(cell){ return true; }
 wp.render = function(cell, node)
 {
-	cell.innerText = "UNKNOWN TYPE: " + node.text;
+	cell.textContent = "UNKNOWN TYPE: " + Util.xmlText(node);
 }
 
 
@@ -3068,7 +3136,7 @@ wp.render = function(cell, node)
 	Support for in-place activated editor box.
 	For jsObject boxes:
 		- directlyAssignEvents object field should be set to true.
-		- onbeforedeactivate, onkeypress events used.
+		- focusout and keypress events used.
 		- doNotCheckValidChars object field can be optionally set.
 		- get_readOnly, set_readOnly, get_value, set_value, blur, focus, select
 		  methods should be implemented.
@@ -3090,27 +3158,27 @@ var EditorBoxManager =
 		
 		if(l.jsObject && l.jsObject.directlyAssignEvents)
 		{
-			l.jsObject.ondeactivate = this.box_onblur;
+			l.jsObject.onblur = this.box_onblur;
 			l.jsObject.onkeypress = this.box_onkeypress;
 			l.jsObject.onpaste = this.box_onpaste;
 		}
 		else
 		{
-			l.attachEvent("ondeactivate", this.box_onblur);
-			l.attachEvent("onkeypress", this.box_onkeypress);
-			l.attachEvent("onpaste", this.box_onpaste);
+			CN_grid.addEvent(l, "blur", this.box_onblur, this);
+			CN_grid.addEvent(l, "keypress", this.box_onkeypress, this);
+			CN_grid.addEvent(l, "paste", this.box_onpaste, this);
 		}
 	},
 	attachCellEvents: function(cell)
 	{
-		cell.attachEvent("onmousedown", this.cell_onmousedown);
-		cell.attachEvent("onmouseenter", this._cell_onmouseenter);
-		cell.attachEvent("onmouseleave", this._cell_onmouseleave);
+		CN_grid.addEvent(cell, "mousedown", this.cell_onmousedown, this);
+		CN_grid.addEvent(cell, "mouseenter", this._cell_onmouseenter, this);
+		CN_grid.addEvent(cell, "mouseleave", this._cell_onmouseleave, this);
 	},
 
 	_cell_onmouseenter: function()
 	{
-		var cell = CN_grid.findCell(event.srcElement);
+		var cell = CN_grid.findCell(Util.eventTarget());
 
 		if(!cell || (EditorBoxManager.activeBox == cell || EditorBoxManager.activeBox && cell.contains(EditorBoxManager.activeBox))) { // #975
 			return;
@@ -3126,7 +3194,7 @@ var EditorBoxManager =
 		var l = EditorBoxManager._hoverBorder;
 		if(!l)
 		{
-			l = document.createElement("<div class=cellHoverBorderDiv>");
+			l = Util.createElementFromHTML("<div class=cellHoverBorderDiv>");
 			//document.body.appendChild(l);
 			EditorBoxManager._hoverBorder = l;
 		}
@@ -3143,24 +3211,24 @@ var EditorBoxManager =
 	_setHoverBorderStyle: function(l, cell)
 	{
 		l.style.visibility = "inherit";
-		var paddingLeft = parseInt(cell.currentStyle.paddingLeft, 10);
+		var paddingLeft = parseInt(Util.getStyle(cell, "paddingLeft"), 10);
 		l.style.width = cell.clientWidth - paddingLeft + 2;		
 		l.style.left = paddingLeft - 2;
-		l.style.top = parseInt(cell.currentStyle.paddingTop, 10) - 2; // !!!
+		l.style.top = parseInt(Util.getStyle(cell, "paddingTop"), 10) - 2; // !!!
 	},
 	
 	_cell_onmouseleave: function()
 	{
-		var cell = CN_grid.findCell(event.srcElement);
+		var cell = CN_grid.findCell(Util.eventTarget());
 		if(!cell) return;
 		
 		var grid = CNUtil.dispatchObject();
 		if(grid._readOnly) return;
 
-		//if(event.toElement == EditorBoxManager._hoverBorder) return;
+		//if(CN_grid.relatedTarget() == EditorBoxManager._hoverBorder) return;
 		if(EditorBoxManager.activeBox && cell.contains(EditorBoxManager.activeBox)) return;
 		if(cell._isEmpty || cell._showEditorRectangle) return;
-		if(cell.contains(event.toElement)) 
+		if(cell.contains(CN_grid.relatedTarget())) 
 		{
 			return;
 		}
@@ -3172,27 +3240,17 @@ var EditorBoxManager =
 		if(!l) return;
 		if(CNFormManager.vista)
 		{
-			if(ThemeNonCSSStyles.animateBoxes) {
-				if(l.filters.length == 0) l.style.filter = "progid:DXImageTransform.Microsoft.Fade()";
-				l.filters[0].Apply();
-			}
 			l.style.visibility = "hidden";
 			EditorBoxManager._hoverBorder = null;
-		
-			if(ThemeNonCSSStyles.animateBoxes) {
-				l.attachEvent("onfilterchange", EditorBoxManager._hover_onfilterchange);
-				l.filters[0].Play(.1);
-			} else {
-				l.removeNode(true);
-			}
+			Util.removeElement(l);
 		}
 		else l.style.visibility = "hidden";
 	},
-	_hover_onfilterchange: function()
+	_hover_ontransitionend: function()
 	{
-		var l = event.srcElement;
-		l.removeNode(true);
-		l.detachEvent("onfilterchange", EditorBoxManager._hover_onfilterchange);
+		var l = Util.eventTarget();
+		Util.removeElement(l);
+		CN_grid.removeEvent(l, "transitionend", EditorBoxManager._hover_ontransitionend, EditorBoxManager);
 	},
 	
 	isCurrentBoxValid: function()
@@ -3267,7 +3325,7 @@ var EditorBoxManager =
 		{
 			EditorBoxManager.ignoreNextBlur = false;
 			var grid = CNUtil.dispatchObject();
-			if(event.toElement && grid.element.contains(event.toElement) || event.toElement == document.body)
+			if(CN_grid.relatedTarget() && grid.element.contains(CN_grid.relatedTarget()) || CN_grid.relatedTarget() == document.body)
 			{
 				return;
 			}
@@ -3279,9 +3337,9 @@ var EditorBoxManager =
 			 return;
 		}
 		
-		//CNFormManager._trace("BoxManager.box_onblur by " + event.srcElement.outerHTML);
+		//CNFormManager._trace("BoxManager.box_onblur by " + Util.eventTarget().outerHTML);
 
-		var box = EditorBoxManager._findBox(event.srcElement);
+		var box = EditorBoxManager._findBox(Util.eventTarget());
 
 		var cell = CN_grid.findCell(box);
 		var typeObject = cell.colTag.typeObject;
@@ -3300,7 +3358,7 @@ var EditorBoxManager =
 		}
 		else 
 		{
-			event.returnValue = false;
+			Event.cancel(CN_grid.currentEvent());
 		}
 
 		if(doCommit) typeObject.commitChange(EditorBoxManager._get_box_value(box), cell, cell.parentElement, cell.colTag);
@@ -3353,13 +3411,13 @@ var EditorBoxManager =
 		if(readOnly) 
 		{
 			// Attach to cell, as box doesn't fire events in readOnly mode.
-			cell.onkeydown = CN_grid.cancelBackspace;
+			Event.add(cell, "keydown", cell, CN_grid.cancelBackspace);
 		}
 		
 		EditorBoxManager.cancelingChange = false;
-		var paddingLeft = parseInt(cell.currentStyle.paddingLeft, 10);
+		var paddingLeft = parseInt(Util.getStyle(cell, "paddingLeft"), 10);
 		box.style.left = paddingLeft - 2;
-		box.style.top = parseInt(cell.currentStyle.paddingTop) - 2; /// !!!
+		box.style.top = parseInt(Util.getStyle(cell, "paddingTop")) - 2; /// !!!
 		box.style.width = cell.clientWidth - paddingLeft + 2;
 
 		EditorBoxManager._set_box_value(box, typeObject.getCellValue(cell));
@@ -3391,15 +3449,15 @@ var EditorBoxManager =
 	},
 	box_onkeypress: function()
 	{
-		var box = EditorBoxManager._findBox(event.srcElement);
+		var box = EditorBoxManager._findBox(Util.eventTarget());
 
-		var code = event.keyCode;
+		var code = Event.keyValue(CN_grid.currentEvent());
 		if(code == 0) return;
 
 		if(code == 13) 
 		{
 			//alert("box manager enter")
-			Util.cancelEvent(event);
+			Util.cancelEvent(CN_grid.currentEvent());
 			EditorBoxManager.endActiveEdit();
 //			try{ EditorBoxManager._box_blur(box); } catch(e){}
 		}
@@ -3411,7 +3469,7 @@ var EditorBoxManager =
 		else if(!box.doNotCheckValidChars)
 		{
 			// Validate char.
-			var l = event.srcElement;
+			var l = Util.eventTarget();
 			var cell = CN_grid.findCell(l);
 			var validCharsRegex = cell.colTag.typeObject.validCharsRegex;
 			if(!validCharsRegex) return true;
@@ -3422,7 +3480,7 @@ var EditorBoxManager =
 	},
 	cell_onmousedown: function()
 	{
-		var catchedCell = CN_grid.findCell(event.srcElement);
+		var catchedCell = CN_grid.findCell(Util.eventTarget());
 		if(catchedCell._isEmpty) return;
 		EditorBoxManager.beginEdit(catchedCell);
 	},
@@ -3442,11 +3500,11 @@ var EditorBoxManager =
 	},
 	box_onpaste: function(box, typeObject)
 	{
-		var box = EditorBoxManager._findBox(event.srcElement);
+		var box = EditorBoxManager._findBox(Util.eventTarget());
 		var cell = CN_grid.findCell(box);
 		var typeObject = cell.colTag.typeObject;
 		
-		if(!typeObject.validateValue(window.clipboardData.getData("Text"), cell))
+		if(!typeObject.validateValue(CN_grid.readClipboardText(), cell))
 		{			
 			var cellIndex = cell.cellIndex;			
 			
@@ -3461,7 +3519,7 @@ var EditorBoxManager =
 		if(typeObject.setErrorBorder) { // Used for dateboxtime.
 			typeObject.setErrorBorder(error);
 		} else {
-			box.runtimeStyle.borderColor = error ? "red" : "";
+			box.style.borderColor = error ? "red" : "";
 		}
 	}	
 }
@@ -3475,7 +3533,7 @@ var StringTypeCell = CN_grid.CellTypes["String"] = function(colTag)
 StringTypeCell.cn_tagName = "textbox";
 StringTypeCell.createBox = function()
 {
-	var l = document.createElement("<input class=textbox type=text>");
+	var l = Util.createElementFromHTML("<input class=textbox type=text>");
 	EditorBoxManager.attachBoxEvents(l);
 	return l;
 }
@@ -3483,7 +3541,7 @@ var wp = StringTypeCell.prototype;
 
 wp.getCellValue = function(cell)
 {
-	return cell.firstChild.innerText;
+	return cell.firstChild.textContent;
 }
 wp.setCellValue = function(cell, value)
 {
@@ -3491,7 +3549,7 @@ wp.setCellValue = function(cell, value)
 	if(cell._showEditorRectangle) 
 	{
 		border = cell.lastChild;
-		border.removeNode(true);
+		Util.removeElement(border);
 	}
 	cell.innerHTML = "<span>" + value + "</span>";
 	if(border) cell.appendChild(border);
@@ -3562,7 +3620,7 @@ wp.prerender = function(cell, colTag)
 }
 wp.render = function(cell, node)
 {
-	cell.innerHTML = "<span>" + node.text + "</span>";
+	cell.innerHTML = "<span>" + Util.xmlText(node) + "</span>";
 }
 
 
@@ -3610,8 +3668,8 @@ wp.descSortFunction = function(a, b)
 // Event handlers.
 wp.box_onmousedown = function()
 {
-	if(event.button != 1) return;
-	var box = event.srcElement;
+	if(CN_grid.currentEvent().button != 1) return;
+	var box = Util.eventTarget();
 	var jsObject = CNUtil.findJSObject(box);
 	if(jsObject.getCascadedReadOnly(box)) return;
 
@@ -3619,7 +3677,7 @@ wp.box_onmousedown = function()
 }
 wp.box_onmouseenter = function()
 {
-	var l = event.srcElement;
+	var l = Util.eventTarget();
 	var jsObject = CNUtil.findJSObject(l);
 	if(jsObject.getCascadedReadOnly(l)) return;
 
@@ -3629,7 +3687,7 @@ wp.box_onmouseenter = function()
 }
 wp.box_onmouseleave = function()
 {
-	var l = event.srcElement;
+	var l = Util.eventTarget();
 	var jsObject = CNUtil.findJSObject(l);
 	if(jsObject.getCascadedReadOnly(l)) return;
 	src = CNFormManager.themeImagesPath + (l.checked ? "checkedCheckbox.gif" : "uncheckedCheckbox.gif");
@@ -3638,8 +3696,8 @@ wp.box_onmouseleave = function()
 }
 wp._cell_onkeydown = function()
 {
-	if(event.keyCode != 32) return;
-	var box = event.srcElement.children[0];
+	if(Event.keyValue(CN_grid.currentEvent()) != 32) return;
+	var box = Util.eventTarget().children[0];
 	var jsObject = CNUtil.findJSObject(box);
 	if(jsObject.getCascadedReadOnly(box)) return;
 
@@ -3647,8 +3705,8 @@ wp._cell_onkeydown = function()
 }
 wp._cell_beforedeactivate = function()
 {
-	if(event.toElement == document.body) CNUtil.cancelEvent();
-	else event.srcElement.tabIndex = -1;
+	if(CN_grid.relatedTarget() == document.body) CNUtil.cancelEvent();
+	else Util.eventTarget().tabIndex = -1;
 }
 wp.isValid = function(cell){ return true; }
 wp.prerender = function(cell, colTag)
@@ -3656,16 +3714,16 @@ wp.prerender = function(cell, colTag)
 }
 wp.render = function(cell, node)
 {
-	var l = document.createElement("<img width=13 height=13 class=xlcheckboximg>")
+	var l = Util.createElementFromHTML("<img width=13 height=13 class=xlcheckboximg>")
 	cell.appendChild(l);
 	
-	l.attachEvent("onmousedown",  this.box_onmousedown);
-	l.attachEvent("onmouseenter", this.box_onmouseenter);
-	l.attachEvent("onmouseleave", this.box_onmouseleave);
-	cell.attachEvent("onkeydown", this._cell_onkeydown);
-	cell.attachEvent("onbeforedeactivate", this._cell_beforedeactivate);
+	CN_grid.addEvent(l, "mousedown", this.box_onmousedown, this);
+	CN_grid.addEvent(l, "mouseenter", this.box_onmouseenter, this);
+	CN_grid.addEvent(l, "mouseleave", this.box_onmouseleave, this);
+	CN_grid.addEvent(cell, "keydown", this._cell_onkeydown, this);
+	CN_grid.addEvent(cell, "focusout", this._cell_beforedeactivate, this);
 	
-	if(node.text == "false") 
+	if(Util.xmlText(node) == "false") 
 	{
 		l.src = CNFormManager.themeImagesPath + "uncheckedCheckbox.gif";
 		l.checked = false;
@@ -3681,7 +3739,7 @@ wp.render = function(cell, node)
 var IntTypeCell = CN_grid.CellTypes["Int"] = function(colTag)
 {
 	this.box = StringTypeCell.createBox();
-	this.box.attachEvent("onkeypress", IntTypeCell._box_onkeypress);	
+	CN_grid.addEvent(this.box, "keypress", IntTypeCell._box_onkeypress, null);	
 	
 	this.box.maxLength = 9;
 	
@@ -3701,11 +3759,11 @@ var IntTypeCell = CN_grid.CellTypes["Int"] = function(colTag)
 //IntTypeCell onkeypress event
 IntTypeCell._box_onkeypress = function() 
 {
-	var cell = CN_grid.findCell(event.srcElement);
+	var cell = CN_grid.findCell(Util.eventTarget());
 	var jsObject = cell.colTag.typeObject;
 	
-	if(jsObject.box.innerText.length > 0 && 
-			cell.innerText.length >= jsObject.box.maxLength)	
+	if(jsObject.box.textContent.length > 0 && 
+			cell.textContent.length >= jsObject.box.maxLength)	
 	{
 		CNUtil.cancelEvent();
 	}
@@ -3751,7 +3809,7 @@ wp.commitChange = function(value, cell, row, colTag)
 	if(!this.validateValue(value, cell)) return;
 	var doChange = false;
 
-	var v1 = cell.firstChild.innerText.replace(/\s+/, "");
+	var v1 = cell.firstChild.textContent.replace(/\s+/, "");
 	var v2 = value.replace(/\s+/, "");
 	if(v1 != v2)
 	{
@@ -3762,7 +3820,7 @@ wp.commitChange = function(value, cell, row, colTag)
 			this.setCellValue(cell, value);
 			doChange = true;
 		}
-		else if(v1 == "" || cell.firstChild.innerText * 1 != value * 1)
+		else if(v1 == "" || cell.firstChild.textContent * 1 != value * 1)
 		{
 			value = value * 1;
 			this.setCellValue(cell, value);
@@ -3903,24 +3961,24 @@ wp.descSortFunction = function(a, b)
 	return -1;
 }
 
-wp.getCellValue = function(cell){ return cell.children[0].innerText; }
-wp.setCellValue = function(cell, value){ cell.children[0].innerText = value; }
+wp.getCellValue = function(cell){ return cell.children[0].textContent; }
+wp.setCellValue = function(cell, value){ cell.children[0].textContent = value; }
 wp.button_onclick = function()
 {
-	var cell = CN_grid.findCell(event.srcElement);
+	var cell = CN_grid.findCell(Util.eventTarget());
 	var jsObject = CNUtil.findJSObject(cell);
 	
 	if(jsObject.getCascadedReadOnly(cell)) return;
 
-	var x = event.screenX - window.screenLeft;
-	var y = event.screenY - window.screenTop;
+	var x = CN_grid.currentEvent().screenX - window.screenLeft;
+	var y = CN_grid.currentEvent().screenY - window.screenTop;
 
 	var calendar = CNPopupCalendar.defaultInstance;
 	calendar._activeCell = cell;
 	calendar.onxlresult = DateTypeCell.calendar_onxlresult;
-	calendar.show(cell.children[0].innerText, null, x, y);
+	calendar.show(cell.children[0].textContent, null, x, y);
 
-	//event.cancelBubble = true;
+	//Event.cancel(CN_grid.currentEvent());
 }
 wp.isValid = StringTypeCell.prototype.isValid;
 wp.validateValue = function(value, cell)
@@ -3948,11 +4006,11 @@ wp.validateValue = function(value, cell)
 wp.commitChange = function(value, cell, row, colTag)
 {
 	if(!this.validateValue(value, cell)) return;
-	if(cell.children[0].innerText != value)
+	if(cell.children[0].textContent != value)
 	{
 		// NOTE: always leave some space to click on.
-		if(value.replace(/\s+/, "") == "") cell.children[0].innerText = "   ";
-		else cell.children[0].innerText = value;
+		if(value.replace(/\s+/, "") == "") cell.children[0].textContent = "   ";
+		else cell.children[0].textContent = value;
 
 		var jsObject = CNUtil.findJSObject(cell);
 		jsObject.setChangedValue(row, cell, value);
@@ -3983,17 +4041,17 @@ wp.prerender = function(cell, colTag)
 	}
 	else
 	{
-		button = document.createElement("<button class=xllookupbutton>");
-		button.attachEvent("onmouseenter", _CN_button_onmouseenter);
-		button.attachEvent("onmouseleave", _CN_button_onmouseleave);
+		button = Util.createElementFromHTML("<button class=xllookupbutton>");
+		CN_grid.addEvent(button, "mouseenter", _CN_button_onmouseenter, null);
+		CN_grid.addEvent(button, "mouseleave", _CN_button_onmouseleave, null);
 		button.tabIndex = -1;
 		button.style["float"] = "right"; // float => rhino reserved
-		text.style.width = "100%"//Math.max(cell.clientWidth - button.offsetWidth - 8 - parseInt(cell.currentStyle.paddingLeft), 1); /* !!! */
+		text.style.width = "100%"//Math.max(cell.clientWidth - button.offsetWidth - 8 - parseInt(Util.getStyle(cell, "paddingLeft")), 1); /* !!! */
 		button.style.top = "5px";
 	}
 
-	button.attachEvent("onclick", this.button_onclick);
-	button.attachEvent("onmousedown", CNUtil.cancelEvent);
+	CN_grid.addEvent(button, "click", this.button_onclick, this);
+	CN_grid.addEvent(button, "mousedown", CNUtil.cancelEvent, null);
 	
 	button.style.position = "absolute";
 	button.style.right = "0px";
@@ -4003,12 +4061,12 @@ wp.render = function(cell, node)
 {
 	if(!CNFormManager.vista)
 	{
-		var img = document.createElement("<img width=8 height=8>");
+		var img = Util.createElementFromHTML("<img width=8 height=8>");
 		cell.children[1].appendChild(img);
 		img.src = CNFormManager.themeImagesPath + "calendar8x8.gif";
 	}
 
-	cell.children[0].innerText = node.text;
+	cell.children[0].textContent = Util.xmlText(node);
 	
 	if(cell.parentElement.readOnly || cell.colTag.readOnly) cell.children[1].style.display = "none";
 }
@@ -4030,7 +4088,7 @@ DateTimeTypeCell.createBox = function()
 	var l = box.createElement(Util.wrapIntoNode({time: "true"}));
 	box._timeBox.dontCancelBlur = true; // FWUI-1036 - allow focus to go out of invalid timebox, so grid validation can take place.
 
-	box.element.attachEvent("onkeydown", DateTimeTypeCell._box_onkeydown);
+	CN_grid.addEvent(box.element, "keydown", DateTimeTypeCell._box_onkeydown, null);
 	
 	// Wrap date-time table with the div, as table produces unwanted padding to the cell (even absolute pos'ed table!).
 	var div = document.createElement("div");
@@ -4047,7 +4105,7 @@ DateTimeTypeCell._box_onkeydown = function() { // FWUI-1036 - proxy tab keys to 
 
 var wp = DateTimeTypeCell.prototype;
 wp.setErrorBorder = function(error) {
-	this.box.firstChild.runtimeStyle.borderColor = error ? "red" : "";
+	this.box.firstChild.style.borderColor = error ? "red" : "";
 }
 wp.getCellValue = function(cell)
 {
@@ -4056,7 +4114,7 @@ wp.getCellValue = function(cell)
 wp.setCellValue = function(cell, value)
 {
 	var dt = this.box.firstChild.jsObject.getReadableDateTime(value)
-	cell.children[0].innerText = dt[0] + " " + dt[1];
+	cell.children[0].textContent = dt[0] + " " + dt[1];
 	cell._raw = String(value);
 }
 wp.validateValue = function(value, cell)
@@ -4112,7 +4170,7 @@ wp.prerender = function(cell, colTag)
 }
 wp.render = function(cell, node)
 {
-	this.setCellValue(cell, node.text);
+	this.setCellValue(cell, Util.xmlText(node));
 }
 
 
@@ -4158,10 +4216,10 @@ wp.validateValue = function(value, cell)
 wp.commitChange = function(value, cell, row, colTag)
 {
 	if(!this.validateValue(value, cell)) return;
-	if(cell.children[0].innerText != value)
+	if(cell.children[0].textContent != value)
 	{
-		if(value.replace(/\s+/g, "") == ":") cell.children[0].innerText = " ";
-		else cell.children[0].innerText = value;
+		if(value.replace(/\s+/g, "") == ":") cell.children[0].textContent = " ";
+		else cell.children[0].textContent = value;
 		
 		var jsObject = CNUtil.findJSObject(cell);
 		jsObject.setChangedValue(row, cell, value);
@@ -4179,7 +4237,7 @@ wp.prerender = function(cell, colTag)
 }
 wp.render = function(cell, node)
 {
-	cell.children[0].innerText = node.text;
+	cell.children[0].textContent = Util.xmlText(node);
 }
 
 
@@ -4192,7 +4250,7 @@ wp.isFocusable = true;
 // Event handlers.
 wp.box_onclick = function()
 {
-	var cell = CN_grid.findCell(event.srcElement);
+	var cell = CN_grid.findCell(Util.eventTarget());
 	var jsObject = CNUtil.findJSObject(cell);
 	if(jsObject._disabled) return;
 	var row = cell.parentElement;
@@ -4204,43 +4262,43 @@ wp.box_onclick = function()
 }
 wp._cell_onkeydown = function()
 {
-	if(event.srcElement.className != "cellSpan") return;
-	if(event.keyCode == 13)
+	if(Util.eventTarget().className != "cellSpan") return;
+	if(Event.keyValue(CN_grid.currentEvent()) == 13)
 	{
 		CNUtil.cancelEvent();
-		var cell = event.srcElement;
+		var cell = Util.eventTarget();
 		cell.children[cell.children.length - 1].click();
 	}
 }
 wp._button_onmouseenter = function()
 {
-	VistaSupport.imageTrans(event.srcElement.firstChild, "themes/vista/g/hover-grid-button.gif");
+	VistaSupport.imageTrans(Util.eventTarget().firstChild, "themes/vista/g/hover-grid-button.gif");
 }
 wp._button_onmouseleave = function()
 {
-	VistaSupport.imageTrans(event.srcElement.firstChild, "themes/vista/g/grid-button.gif");
+	VistaSupport.imageTrans(Util.eventTarget().firstChild, "themes/vista/g/grid-button.gif");
 }
 wp._button_onmouseup = function()
 {
-	var img = Util.findByClassName(event.srcElement, "gridButtonSpan").firstChild;
+	var img = Util.findByClassName(Util.eventTarget(), "gridButtonSpan").firstChild;
 	VistaSupport.imageTrans(img, "themes/vista/g/hover-grid-button.gif");
 }
 wp._button_onmousedown = function()
 {
-	var img = Util.findByClassName(event.srcElement, "gridButtonSpan").firstChild;
+	var img = Util.findByClassName(Util.eventTarget(), "gridButtonSpan").firstChild;
 	VistaSupport.imageTrans(img, "themes/vista/g/down-grid-button.gif", true);
 }
 wp._createSpanButton = function()
 {
-	var button = document.createElement("<span class='gridButtonSpan'>");
+	var button = Util.createElementFromHTML("<span class='gridButtonSpan'>");
 	var img = document.createElement("img");
 	img.src = "themes/vista/g/grid-button.gif";
 	img.width = img.height = 16;
 	button.appendChild(img);
-	button.attachEvent("onmouseenter", this._button_onmouseenter);
-	button.attachEvent("onmouseleave", this._button_onmouseleave);
-	button.attachEvent("onmousedown", this._button_onmousedown);
-	button.attachEvent("onmouseup", this._button_onmouseup);
+	CN_grid.addEvent(button, "mouseenter", this._button_onmouseenter, this);
+	CN_grid.addEvent(button, "mouseleave", this._button_onmouseleave, this);
+	CN_grid.addEvent(button, "mousedown", this._button_onmousedown, this);
+	CN_grid.addEvent(button, "mouseup", this._button_onmouseup, this);
 	return button;
 }
 wp.prerender = function(cell, colTag)
@@ -4258,15 +4316,15 @@ wp.prerender = function(cell, colTag)
 	}
 	else
 	{
-		button = document.createElement("<button class=xllookupbutton>")
+		button = Util.createElementFromHTML("<button class=xllookupbutton>")
 		cell.appendChild(button);
 		
 		button.tabIndex = -1;
-		button.attachEvent("onmouseenter", _CN_button_onmouseenter);
-		button.attachEvent("onmouseleave", _CN_button_onmouseleave);
+		CN_grid.addEvent(button, "mouseenter", _CN_button_onmouseenter, null);
+		CN_grid.addEvent(button, "mouseleave", _CN_button_onmouseleave, null);
 	}
-	button.attachEvent("onclick",  this.box_onclick);
-	cell.attachEvent("onkeydown", this._cell_onkeydown);
+	CN_grid.addEvent(button, "click", this.box_onclick, this);
+	CN_grid.addEvent(cell, "keydown", this._cell_onkeydown, this);
 
 	this._img_src = CNFormManager.themeImagesPath + "lookup.gif";
 	//this._img_width = 8;
@@ -4306,7 +4364,7 @@ wp.render = function(cell, node)
 			else
 				b.appendChild(textSpan);
 			
-			cell.children[0].innerText = node.text;
+			cell.children[0].textContent = Util.xmlText(node);
 			
 			return;
 		}
@@ -4364,9 +4422,9 @@ wp.render = function(cell, node)
 		b.appendChild(img);
 	}
 	
-	//img.unselectable = "on";
+	//img.style.userSelect = "none";
 
-	cell.children[0].innerText = node.text;
+	cell.children[0].textContent = Util.xmlText(node);
 }
 
 
@@ -4378,7 +4436,7 @@ wp.isValid = function(cell){ return true; }
 // Event handlers.
 wp.box_onclick = function()
 {
-	var box = event.srcElement;
+	var box = Util.eventTarget();
 	var jsObject = CNUtil.findJSObject(box);
 	
 	var cell = CN_grid.findCell(box);
@@ -4411,12 +4469,12 @@ wp.render = function(cell, node)
 	if(this._img_width) img.width = this._img_width;
 	if(this._img_height) img.height = this._img_height;
 
-	img.unselectable = "on";
-	img.attachEvent("onclick", this.box_onclick);
+	img.style.userSelect = "none";
+	CN_grid.addEvent(img, "click", this.box_onclick, this);
 
-	var text = node.text;
+	var text = Util.xmlText(node);
 	if(text == "") img.style.display = "none";
-	else img.src = node.text;
+	else img.src = Util.xmlText(node);
 }
 
 // ImageButton. =====================================
@@ -4484,12 +4542,12 @@ wp.render = function(cell, node)
 		else button.style.height = h;
 	}
 
-	button.unselectable = "on";
-	button.attachEvent("onclick", this.box_onclick);
+	button.style.userSelect = "none";
+	CN_grid.addEvent(button, "click", this.box_onclick, this);
 
-	var text = node.text;
+	var text = Util.xmlText(node);
 	if(text == "") img.style.display = "none";
-	else img.src = node.text;
+	else img.src = Util.xmlText(node);
 }
 
 
@@ -4513,7 +4571,7 @@ CommentTypeCell.ondialogresult = function(dialog, cancel)
 	if(cancel) return;
 	var box = CNDialogManager.getContents(dialog).lastChild;
 	var jso = CommentTypeCell._currentCell.colTag.typeObject;
-	jso.commitChange(CommentTypeCell._currentCell, box.innerText);
+	jso.commitChange(CommentTypeCell._currentCell, box.textContent);
 	CommentTypeCell.activePopup = null;
 	CommentTypeCell._currentCell = null;
 }
@@ -4534,15 +4592,14 @@ CommentTypeCell._textarea_onpaste = function()
 	if(jso._maxLength != -1)
 	{
 		var box = CNDialogManager.getContents(dialog).lastChild;
-		var text = window.clipboardData.getData("Text");
+		var text = CN_grid.readClipboardText();
 		if(box.value.length + text.length >= jso._maxLength)
 		{
 			CNUtil.cancelEvent();
 			var textLength = jso._maxLength - box.value.length;
 			if(textLength > 0) 
 			{
-				var range = document.selection.createRange();
-				range.text = text.substr(0, textLength);
+				CN_grid.insertTextAtSelection(text.substr(0, textLength));
 			}
 		}
 	}
@@ -4554,7 +4611,7 @@ wp.isValid = function(cell){ return true; }
 // Event handlers.
 wp._box_onclick = function()
 {
-	var cell = CN_grid.findCell(event.srcElement);
+	var cell = CN_grid.findCell(Util.eventTarget());
 
 	var row = cell.parentElement;
 	var jsObject = CNUtil.findJSObject(row);
@@ -4592,7 +4649,7 @@ wp._showDialog = function(cell, grid)
 	var contents = CNDialogManager.getContents(dialog);
 												
 	// Textarea.
-	contents.lastChild.innerText = cell._value;
+	contents.lastChild.textContent = cell._value;
 	contents.lastChild.readOnly = readOnly;
 
 	// Save button.
@@ -4601,7 +4658,7 @@ wp._showDialog = function(cell, grid)
 	// Close button.
 	var closeText = readOnly ? "Close" : "Cancel";
 	if(CNFormManager.vista) bottom.lastChild.jsObject.loadData(Util.wrapIntoNode({value: closeText}));
-	else bottom.lastChild.innerText = closeText;
+	else bottom.lastChild.textContent = closeText;
 
 	CommentTypeCell.showPopup(dialog, cell);
 }
@@ -4609,10 +4666,10 @@ wp._showDialog = function(cell, grid)
 wp._createDialogContents = function(dialog)
 {
 	var parent = CNDialogManager.getContents(dialog);
-	var textArea = document.createElement("<textarea class=commentBoxTextArea>");
+	var textArea = Util.createElementFromHTML("<textarea class=commentBoxTextArea>");
 	parent.appendChild(textArea);
-	textArea.attachEvent("onkeypress", CommentTypeCell._textarea_onkeypress);
-	textArea.attachEvent("onpaste", CommentTypeCell._textarea_onpaste);
+	CN_grid.addEvent(textArea, "keypress", CommentTypeCell._textarea_onkeypress, null);
+	CN_grid.addEvent(textArea, "paste", CommentTypeCell._textarea_onpaste, null);
 
 	var saveButton = CNDialogManager.createBottomButton(dialog, "Save", true);
 	saveButton.style.width = "80px";
@@ -4638,7 +4695,7 @@ wp.commitChange = function(cell, val)
 	}
 	else
 	{
-		if(cell.children[0].children.length > 0) cell.children[0].children[0].removeNode();
+		if(cell.children[0].children.length > 0) Util.removeElement(cell.children[0].children[0]);
 	}
 
 	if(cell.colTag.autoPostBack) 
@@ -4669,10 +4726,10 @@ wp.prerender = function(cell, colTag)
 	}
 	else
 	{
-		button = document.createElement("<button class=xllookupbutton>")
+		button = Util.createElementFromHTML("<button class=xllookupbutton>")
 		cell.appendChild(button);
-		button.attachEvent("onmouseenter", _CN_button_onmouseenter);
-		button.attachEvent("onmouseleave", _CN_button_onmouseleave);
+		CN_grid.addEvent(button, "mouseenter", _CN_button_onmouseenter, null);
+		CN_grid.addEvent(button, "mouseleave", _CN_button_onmouseleave, null);
 	}
 	
 	var imgSrc = colTag.node.getAttribute("imgSrc");
@@ -4682,14 +4739,14 @@ wp.prerender = function(cell, colTag)
 	var attr = colTag.node.getAttribute("maxLength");
 	if(attr) this._maxLength = parseInt(attr, 10);
 
-	button.attachEvent("onclick",  this._box_onclick);
+	CN_grid.addEvent(button, "click", this._box_onclick, this);
 }
 wp._attachImage = function(cell)
 {
 	var img = document.createElement("img")
 	cell.children[0].appendChild(img);
 	
-	img.unselectable = "on";
+	img.style.userSelect = "none";
 	img.src = this._img_src;
 	img.width = 8;
 	img.height = 8;
@@ -4703,7 +4760,7 @@ wp._attachImage = function(cell)
 
 wp.render = function(cell, node)
 {
-	var value = String(node.text);
+	var value = String(Util.xmlText(node));
 	cell._value = value;
 	
 	if(value.length > 0) this._attachImage(cell);
@@ -4730,10 +4787,10 @@ wp.focusCell = function(cell) { // #1036-3
 
 wp._cell_beforedeactivate = function()
 {
-	if(!event.toElement || event.toElement == document.body) CNUtil.cancelEvent();
+	if(!CN_grid.relatedTarget() || CN_grid.relatedTarget() == document.body) CNUtil.cancelEvent();
 	else 
 	{
-		event.srcElement.tabIndex = -1;
+		Util.eventTarget().tabIndex = -1;
 	}
 }
 wp.isValid = function(cell){ return true; }
@@ -4758,24 +4815,24 @@ wp.prerender = function(cell, colTag)
 	combobox.onchange = this._combobox_onchange;
 	combobox.oncheckreadonly = this._combobox_oncheckreadonly;
 		
-	cell.attachEvent("onkeydown", this._cell_onkeydown);
-	cell.attachEvent("onbeforedeactivate", this._cell_beforedeactivate);
+	CN_grid.addEvent(cell, "keydown", this._cell_onkeydown, this);
+	CN_grid.addEvent(cell, "focusout", this._cell_beforedeactivate, this);
 
-	//var w = parseInt(cell.currentStyle.width) - parseInt(cell.currentStyle.paddingLeft) - parseInt(cell.currentStyle.paddingLeft);
+	//var w = parseInt(Util.getStyle(cell, "width")) - parseInt(Util.getStyle(cell, "paddingLeft")) - parseInt(Util.getStyle(cell, "paddingLeft"));
 	//l.style.width = w - 3; // ?
 	l.style.width = "100%";
 }
 wp._cell_onkeydown = function()
 {
-	if(event.srcElement.className != 'cellSpan') return;
-	var cell = CN_grid.findCell(event.srcElement);
-	if(cell.contains(event.srcElement) && event.srcElement != cell) return;
-	if(event.keyCode != 9) CNUtil.cancelEvent();
+	if(Util.eventTarget().className != 'cellSpan') return;
+	var cell = CN_grid.findCell(Util.eventTarget());
+	if(cell.contains(Util.eventTarget()) && Util.eventTarget() != cell) return;
+	if(Event.keyValue(CN_grid.currentEvent()) != 9) CNUtil.cancelEvent();
 	
 	var typeObject = cell.colTag.typeObject;
 	CN_combobox.currentCombobox = typeObject._combobox;
 	typeObject._combobox.element = cell.firstChild;
-	//cell.children[0].fireEvent("onkeydown", event);
+	//CN_grid.dispatchEvent(cell.children[0], "keydown");
 	CN_combobox.currentCombobox.element_onkeydown();
 }
 wp._combobox_onchange = function(ev)
@@ -4805,7 +4862,7 @@ wp._combobox_onchange = function(ev)
 wp._combobox_oncheckreadonly = function()
 {
 	// Executed in combobox context.
-	var cell = CN_grid.findCell(event.srcElement);
+	var cell = CN_grid.findCell(Util.eventTarget());
 	var jsObject = CNUtil.findJSObject(cell);
 	var ro = jsObject.getCascadedReadOnly(cell);
 	return ro;
@@ -4841,7 +4898,7 @@ wp.render = function(cell, node, tree_level, tree_index, tree_type, cellReadOnly
 
 	if(!valueSet)
 	{
-		var ix = parseInt(node.text, 10);
+		var ix = parseInt(Util.xmlText(node), 10);
 
 		this._combobox.element._selectedIndex = ix;
 		this._combobox._set_selectedIndex(true);
@@ -4883,24 +4940,24 @@ wp._combobox_oncheckreadonly = ComboBoxCell.prototype._combobox_oncheckreadonly;
 wp.set_readOnly = ComboBoxCell.prototype.set_readOnly;
 wp._cell_onkeydown = function()
 {
-	if(event.srcElement.className != 'cellSpan') return;
+	if(Util.eventTarget().className != 'cellSpan') return;
 
-	var cell = CN_grid.findCell(event.srcElement);
-	if(cell.contains(event.srcElement) && event.srcElement != cell) return;
-	if(event.keyCode != 9) CNUtil.cancelEvent();
-	cell.children[0].fireEvent("onkeydown", event);
+	var cell = CN_grid.findCell(Util.eventTarget());
+	if(cell.contains(Util.eventTarget()) && Util.eventTarget() != cell) return;
+	if(Event.keyValue(CN_grid.currentEvent()) != 9) CNUtil.cancelEvent();
+	CN_grid.dispatchEvent(cell.children[0], "keydown");
 }
 wp._cell_beforedeactivate = function()
 {
-	if(event.toElement == document.body) CNUtil.cancelEvent();
-	else event.srcElement.tabIndex = -1;
+	if(CN_grid.relatedTarget() == document.body) CNUtil.cancelEvent();
+	else Util.eventTarget().tabIndex = -1;
 }
 wp.prerender = function(cell, colTag)
 {
 	cell.style.paddingTop = CNFormManager.vista ? 1 : 2; // !!!
 	cell.style.paddingRight = 2;
-	cell.attachEvent("onbeforedeactivate", this._cell_beforedeactivate);
-	cell.attachEvent("onkeydown", this._cell_onkeydown);
+	CN_grid.addEvent(cell, "focusout", this._cell_beforedeactivate, this);
+	CN_grid.addEvent(cell, "keydown", this._cell_onkeydown, this);
 }
 wp.render = function(cell, node, tree_level, tree_index, tree_type, cellReadOnly)
 {
@@ -4933,7 +4990,7 @@ wp.render = function(cell, node, tree_level, tree_index, tree_type, cellReadOnly
 	combobox.onchange = this._combobox_onchange;
 	combobox.oncheckreadonly = this._combobox_oncheckreadonly;
 
-	//var w = parseInt(cell.currentStyle.width) - parseInt(cell.currentStyle.paddingLeft) - parseInt(cell.currentStyle.paddingRight);
+	//var w = parseInt(Util.getStyle(cell, "width")) - parseInt(Util.getStyle(cell, "paddingLeft")) - parseInt(Util.getStyle(cell, "paddingRight"));
 	//l.style.width = w - 3; // ?
 	l.style.width = "100%";
 
@@ -4982,14 +5039,14 @@ WrapTextCell._toEditMode = function(cell)
 {
 	cell._isEdited = true;
 	var table = cell.children[0];
-	table._borderColor = table.currentStyle.borderColor;
-	table.runtimeStyle.borderColor = table.currentStyle["xl--edit-border-color"];
-	var div = table.cells[0].children[0];
+	table._borderColor = Util.getStyle(table, "borderColor");
+	table.style.borderColor = Util.getStyle(table, "xl--edit-border-color");
+	var div = table.rows[0].cells[0].children[0];
 	
-	div.attachEvent("ondeactivate", WrapTextCell._div_onblur);
-	div.attachEvent("onkeydown", WrapTextCell._div_onkeydown);
-	div.attachEvent("onkeypress", WrapTextCell._div_onkeypress);
-	div.attachEvent("onresize", WrapTextCell._div_onresize);
+	CN_grid.addEvent(div, "blur", WrapTextCell._div_onblur, WrapTextCell);
+	CN_grid.addEvent(div, "keydown", WrapTextCell._div_onkeydown, WrapTextCell);
+	CN_grid.addEvent(div, "keypress", WrapTextCell._div_onkeypress, WrapTextCell);
+	CN_grid.addEvent(div, "resize", WrapTextCell._div_onresize, WrapTextCell);
 
 	div.focus();
 	div.contentEditable = true;
@@ -5000,29 +5057,29 @@ WrapTextCell._toDefaultMode = function(cell)
 {
 	cell._isEdited = false;
 	var table = cell.children[0];
-	table.runtimeStyle.borderColor = table._borderColor;
-	var div = table.cells[0].children[0];
+	table.style.borderColor = table._borderColor;
+	var div = table.rows[0].cells[0].children[0];
 
 	div.contentEditable = false;
 
-	div.detachEvent("ondeactivate", WrapTextCell._div_onblur);	
-	div.detachEvent("onkeydown", WrapTextCell._div_onkeydown);
-	div.detachEvent("onkeypress", WrapTextCell._div_onkeypress);
-	div.detachEvent("onresize", WrapTextCell._div_onresize);
+	CN_grid.removeEvent(div, "blur", WrapTextCell._div_onblur, WrapTextCell);
+	CN_grid.removeEvent(div, "keydown", WrapTextCell._div_onkeydown, WrapTextCell);
+	CN_grid.removeEvent(div, "keypress", WrapTextCell._div_onkeypress, WrapTextCell);
+	CN_grid.removeEvent(div, "resize", WrapTextCell._div_onresize, WrapTextCell);
 	
 	// Remove html;)
-	div.innerText = div.innerText;
+	div.textContent = div.textContent;
 
 	var row = cell.parentElement;
 
-	var text = div.innerText;
+	var text = div.textContent;
 	
 	var jsObject = CNUtil.findJSObject(cell);
 	var node = jsObject._getChangedNode(row, cell);
 	if(node)
 	{
         // Clean up node.
-        node.text = "";
+        node.textContent = "";
         // Server expects CData.
 		node.appendChild(jsObject.changedDoc.createCDATASection(text));
 	}
@@ -5032,9 +5089,9 @@ WrapTextCell._toDefaultMode = function(cell)
 
 WrapTextCell._div_onresize = function()
 {
-	var cell = CN_grid.findCell(event.srcElement);
+	var cell = CN_grid.findCell(Util.eventTarget());
 	var table = cell.children[0];
-	var div = table.cells[0].children[0];
+	var div = table.rows[0].cells[0].children[0];
 	cell.style.height = table.offsetHeight + 1;
 
 	var grid = CNUtil.findJSObject(table);
@@ -5046,37 +5103,36 @@ WrapTextCell._div_onresize = function()
 
 WrapTextCell._div_onkeypress = function()
 {
-	var cell = CN_grid.findCell(event.srcElement);
+	var cell = CN_grid.findCell(Util.eventTarget());
 	var jsObject = cell.colTag.typeObject;
 		
-	if(jsObject._maxLength != -1 && event.srcElement.innerText.length >= jsObject._maxLength)
+	if(jsObject._maxLength != -1 && Util.eventTarget().textContent.length >= jsObject._maxLength)
 	{
 		CNUtil.cancelEvent();
 	}
 
-	if(event.keyCode ==  13) // Enter
+	if(Event.keyValue(CN_grid.currentEvent()) ==  13) // Enter
 	{
-		event.cancelBubble = true;
+		Event.cancel(CN_grid.currentEvent());
 		return;
 	}
 }
 
 WrapTextCell._div_onpaste = function()
 {
-	var cell = CN_grid.findCell(event.srcElement);
+	var cell = CN_grid.findCell(Util.eventTarget());
 	var jsObject = cell.colTag.typeObject;
 
 	if(jsObject._maxLength == -1) return; // No limit.
-	var text = window.clipboardData.getData("Text");
+	var text = CN_grid.readClipboardText();
 
-	if(event.srcElement.innerText.length + text.length >= jsObject._maxLength)
+	if(Util.eventTarget().textContent.length + text.length >= jsObject._maxLength)
 	{
 		CNUtil.cancelEvent();
-		var textLength = jsObject._maxLength - event.srcElement.innerText.length;
+		var textLength = jsObject._maxLength - Util.eventTarget().textContent.length;
 		if(textLength > 0)
 		{
-			var range = document.selection.createRange();
-			range.text = text.substr(0, textLength);
+			CN_grid.insertTextAtSelection(text.substr(0, textLength));
 		}
 	}
 }
@@ -5084,16 +5140,16 @@ WrapTextCell._div_onpaste = function()
 
 WrapTextCell._div_onkeydown = function()
 {
-	if(event.keyCode ==  13) // Enter
+	if(Event.keyValue(CN_grid.currentEvent()) ==  13) // Enter
 	{
-		event.cancelBubble = true;
+		Event.cancel(CN_grid.currentEvent());
 		return;
 	}
 
 	// Disallow any WYSIWYG commands.
-	if(!event.ctrlKey) return;
+	if(!CN_grid.currentEvent().ctrlKey) return;
 
-	switch(event.keyCode)
+	switch(Event.keyValue(CN_grid.currentEvent()))
 	{
 		case 86: // V paste
 		case 67: // C copy
@@ -5115,7 +5171,7 @@ WrapTextCell._div_onkeydown = function()
 
 WrapTextCell._div_onmousedown = function()
 {
-	var cell = CN_grid.findCell(event.srcElement);
+	var cell = CN_grid.findCell(Util.eventTarget());
 	if(cell._isEdited) return;
 
 	var jsObject = CNUtil.findJSObject(cell);
@@ -5126,7 +5182,7 @@ WrapTextCell._div_onmousedown = function()
 
 WrapTextCell._div_onblur = function()
 {
-	var cell = CN_grid.findCell(event.srcElement);
+	var cell = CN_grid.findCell(Util.eventTarget());
 	WrapTextCell._toDefaultMode(cell);
 }
 
@@ -5142,13 +5198,19 @@ wp.focusCell = function(cell)
 wp.prerender = function(cell, colTag)
 {
 	cell.style.paddingTop = cell.style.paddingBottom = 0; // Left padding is used for tree node leveling.
-	cell.insertAdjacentHTML("beforeEnd", "<table border=0 class=wrapTextTable cellspacing=0 "
-		+ "cellpadding=0 border=0><tr valign=middle><td><div></div></td></tr></table>");
+	var wrap = document.createElement("table");
+	wrap.className = "wrapTextTable";
+	wrap.border = 0;
+	wrap.cellSpacing = wrap.cellPadding = 0;
+	var row = wrap.insertRow(-1);
+	row.vAlign = "middle";
+	row.insertCell(-1).appendChild(document.createElement("div"));
+	cell.appendChild(wrap);
 	var table = cell.children[0];
-	var div = table.cells[0].children[0];
+	var div = table.rows[0].cells[0].children[0];
 	div._isCellDiv = true;
-	div.attachEvent("onmousedown", WrapTextCell._div_onmousedown);
-	div.attachEvent("onpaste", WrapTextCell._div_onpaste);
+	CN_grid.addEvent(div, "mousedown", WrapTextCell._div_onmousedown, WrapTextCell);
+	CN_grid.addEvent(div, "paste", WrapTextCell._div_onpaste, WrapTextCell);
 
 	if(colTag.fixedFont) div.style.fontFamily = "Courier New";
 	if(colTag.bold) div.style.fontWeight = "bold";
@@ -5161,17 +5223,17 @@ wp.prerender = function(cell, colTag)
 
 	if(cell._showEditorRectangle) // Dynamicgrid2
 	{
-		table.runtimeStyle.borderColor = table.currentStyle["xl--edit-border-color"];
+		table.style.borderColor = Util.getStyle(table, "xl--edit-border-color");
 	}
 }
 wp.render = function(cell, node)
 {
 	var table = cell.children[0];
 	
-	var value = String(node.text).replace(/\t/g,"    ");
-	table.rows[0].cells[0].children[0].innerText = value;
+	var value = String(Util.xmlText(node)).replace(/\t/g,"    ");
+	table.rows[0].cells[0].children[0].textContent = value;
 	
-	var color = cell.parentElement.currentStyle.backgroundColor;
+	var color = cell.Util.getStyle(parentElement, "backgroundColor");
 	if(color != "transparent") table.style.borderColor = color;
 }
 

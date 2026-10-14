@@ -10,7 +10,9 @@ var proto = CN_link.prototype;
 
 proto.createElement = function(node, parentElement)
 {
-	var l = document.createElement('<a class="cn_link" href="#">');
+	var l = document.createElement("a");
+	l.className = "cn_link";
+	l.href = "#";
 	parentElement.appendChild(l);
 	
 	var img = document.createElement("img");
@@ -27,9 +29,9 @@ proto.createElement = function(node, parentElement)
 	l.jsObject = this;
 
 	var attr = node.getAttribute("value");
-	if(attr) text.innerText = String(attr);
-	l.attachEvent("onclick", CNUtil.cancelEvent);
-	l.attachEvent("onclick", _CN_button_onclick);
+	if(attr) text.textContent = String(attr);
+	Event.add(l, "click", this, CNUtil.cancelEvent);
+	Event.add(l, "click", this, _CN_button_onclick);
 	
 	return l;
 }

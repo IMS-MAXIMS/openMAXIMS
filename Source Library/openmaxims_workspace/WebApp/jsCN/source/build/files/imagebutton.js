@@ -39,10 +39,10 @@ proto.createElement = function(node, parentElement)
 
 	img.className = "cn_imagebutton";
 
-	l.attachEvent("onclick", _CN_button_onclick);
-	l.attachEvent("onmouseenter", _CN_button_onmouseenter);
-	l.attachEvent("onmouseleave", _CN_button_onmouseleave);
-	l.attachEvent("onkeypress", CNUtil.cancelBubble);
+	Event.add(l, "click", this, _CN_button_onclick);
+	Event.add(l, "mouseenter", this, _CN_button_onmouseenter);
+	Event.add(l, "mouseleave", this, _CN_button_onmouseleave);
+	Event.add(l, "keypress", this, CNUtil.cancelBubble);
 
 	if(node.getAttribute("validator") == "false") this.validator = false;
 	
@@ -88,7 +88,7 @@ proto.validateLoading = vproto.validateLoading = function()
 
 	if(this.formManager.defaultButton == this
 		&& this.formManager.changeFocus
-		&& this.element.currentStyle.visibility != "hidden")
+		&& Util.getStyle(this.element, "visibility") != "hidden")
 	{
 		try
 		{

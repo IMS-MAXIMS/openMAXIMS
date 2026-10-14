@@ -29,8 +29,8 @@ proto.createElement = function(node, parentElement) {
 
 proto.loadData = function(node) {
 	if(this._box == document.activeElement) {
-		var list = node.selectSingleNode("list");
-		var items = node.selectNodes("list/i");
+		var list = Util.xmlSelectSingleNode(node, "list");
+		var items = Util.xmlSelectNodes(node, "list/i");
 		this._loadListItems(items);
 	}
 }
@@ -91,9 +91,9 @@ proto._box_blur = function(ev) {
 
 proto._box_keydown = function(ev) {
 	if(this._keyTimeout) clearTimeout(this._keyTimeout);
-	if(ev.keyCode == 13) {
+	if(ev.key == "Enter") {
 		this._submit();
-	} else if(ev.keyCode != 40 && ev.keyCode != 38) {
+	} else if(ev.key != "ArrowDown" && ev.key != "ArrowUp") {
 		var obj = this;
 		if(this._box.value != this._lastValue) {
 			this._lastValue = this._box.value;
@@ -141,7 +141,7 @@ proto._loadListItems = function(items) {
 		var length = items.length;
 		for(var i = 0; i < length && i < maxItems; i++) {
 			var itemNode = items[i];
-			this._createOption(itemNode.getAttribute("id"), itemNode.getAttribute("title"), itemNode.text, itemNode.getAttribute("img"));
+			this._createOption(itemNode.getAttribute("id"), itemNode.getAttribute("title"), Util.xmlText(itemNode), itemNode.getAttribute("img"));
 		}
 
 		// Show/resize popup.
@@ -172,7 +172,7 @@ proto._showPopup = function() {
 	Event.add(document.body, "mousedown", this, this._popupVisible_document_mousedown);
 }
 proto._popupVisible_box_keydown = function(ev) {
-	if(ev.keyCode == 38) { // Up
+	if(ev.key == "ArrowUp") { // Up
 		if(this._selectedOptionIx == -1) this._selectedOptionIx = this.popup.childNodes.length - 1;
 		else if(--this._selectedOptionIx < 0) {
 			this._selectedOptionIx = -1;
@@ -181,7 +181,7 @@ proto._popupVisible_box_keydown = function(ev) {
 			return;
 		}
 		this._hoverOptionByKey();
-	} else if(ev.keyCode == 40) { // Down
+	} else if(ev.key == "ArrowDown") { // Down
 		if(this._selectedOptionIx == -1) this._selectedOptionIx = 0;
 		else if(++this._selectedOptionIx >= this.popup.childNodes.length) {
 			this._selectedOptionIx = -1;
@@ -190,7 +190,7 @@ proto._popupVisible_box_keydown = function(ev) {
 			return;
 		}
 		this._hoverOptionByKey();
-	} else if(ev.keyCode == 27) { // Esc
+	} else if(ev.key == "Escape") { // Esc
 		this._hidePopup();
 		Util.cancelEvent(ev);
 	}
@@ -198,11 +198,11 @@ proto._popupVisible_box_keydown = function(ev) {
 proto._hoverOptionByKey = function() {
 	var option = this.popup.childNodes[this._selectedOptionIx];
 	this._hoverOption(option);
-	//this._box.value = option.children[1].innerText;
+	//this._box.value = option.children[1].textContent;
 }
 
 proto._popupVisible_document_mousedown = function(ev) {
-	if(!this.popup.contains(ev.srcElement)) this._hidePopup();
+	if(!this.popup.contains(ev.target)) this._hidePopup();
 }
 proto._hidePopup = function() {
 	if(!this.popup) return;
@@ -215,7 +215,7 @@ proto._hidePopup = function() {
 
 proto._createPopup = function() {
 	var popup = this.popup = document.createElement("div");
-	popup.unselectable = true;
+	popup.style.userSelect = "none";
 	popup.className = "cn_comboboxPopup cn_search_popup";
 	document.body.appendChild(this.popup);
 
@@ -227,23 +227,23 @@ proto._createPopup = function() {
 }
 
 proto._createOption = function(id, title, text, imgUrl) {
-	var option = document.createElement("<div class='xlcombooption'>");
-	option.unselectable = true;
+	var option = Util.createElement("div", "xlcombooption");
+	option.style.userSelect = "none";
 	if(id) option._id = String(id);
 
 	var imgDiv = document.createElement("div");
-	imgDiv.unselectable = true;
+	imgDiv.style.userSelect = "none";
 	imgDiv.className = "imgDiv";
 	option.appendChild(imgDiv);
 
 	var titleDiv = document.createElement("div");
 	titleDiv.className = "titleDiv";
-	titleDiv.unselectable = true;
+	titleDiv.style.userSelect = "none";
 	option.appendChild(titleDiv);
 
 	var descriptionDiv = document.createElement("div");
 	descriptionDiv.className = "descriptionDiv";
-	descriptionDiv.unselectable = true;
+	descriptionDiv.style.userSelect = "none";
 	option.appendChild(descriptionDiv);
 
 	if(!title) {
@@ -254,9 +254,9 @@ proto._createOption = function(id, title, text, imgUrl) {
 	}
 
 	if(imgUrl) {
-		var img = document.createElement("<img class='img'>");
+		var img = Util.createElement("img", "img");
 		img.src = String(imgUrl);
-		img.unselectable = true;
+		img.style.userSelect = "none";
 		imgDiv.appendChild(img);
 	} //else {
 	//	imgDiv.style.display = "none";
@@ -278,17 +278,17 @@ proto._unhoverOption = function() {
 }
 
 proto._popup_mouseover = function(ev) {
-	if(ev.srcElement.className == "xlcombooption") {
-		this._hoverOption(ev.srcElement);
+	if(ev.target.className == "xlcombooption") {
+		this._hoverOption(ev.target);
 	}
 }
 proto._popup_mouseout = function(ev) {
-	if(ev.srcElement.className == "xlcombooption" && !ev.srcElement.contains(ev.toElement)) {
+	if(ev.target.className == "xlcombooption" && !ev.target.contains(ev.relatedTarget)) {
 		this._unhoverOption();
 	}
 }
 proto._popup_click = function(ev) {
-	var option = Util.findByClassName(ev.srcElement, "xlcombooption");
+	var option = Util.findByClassName(ev.target, "xlcombooption");
 	if(!option) return;
 	this._activeOption = option;
 

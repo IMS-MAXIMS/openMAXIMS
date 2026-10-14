@@ -33,7 +33,7 @@
 	IXMLDataAware
 	{
 		loadData(dataNode : XMLElement) : void  - optional.
-		storeData(xmldoc : XMLDocument) : XMLElement or XMLDocumentFragment or null  - optional.
+		storeData(xmldoc : XML document) : XMLElement or XML document fragment or null  - optional.
 	}
 	
 	ICNControl extends IXMLDataAware
@@ -189,25 +189,24 @@ function CNFormManager(isTabbed, mode, parentFormManager)
 		this._aboutDialogLoaded = false;
 		
 		if(!top.__ontopZ) top.__ontopZ = 1000;
-		window.attachEvent("onunload", this._window_onunload);
-		document.body.addBehavior("#default#userData");		
-		
+		Event.add(window, "unload", this, this._window_onunload);
 		this._uniqueID = this._fetchUniqueID();
 		
-		if(CNFormManager.disableContextMenu) document.attachEvent("oncontextmenu", this._document_oncontextmenu);
+		if(CNFormManager.disableContextMenu) Event.add(document, "contextmenu", this, this._document_oncontextmenu);
 		
 		this._parseQueryString();
 
-		this._globalPlaceholder = document.body.children["cn_globalPlaceholder"];
+		this._globalPlaceholder = document.getElementById("cn_globalPlaceholder") || Util.findById(document.body, "cn_globalPlaceholder");
 		
-		document.attachEvent("onhelp", this._document_onhelp);
-		window.attachEvent("onresize", this._window_onresize);
+		Event.add(document, "help", this, this._document_onhelp);
+		Event.add(window, "resize", this, this._window_onresize);
 		
 		this._attachedFormManagers = {};
 		this._controls = {};
 	}
 
-	this._disabler = document.createElement('<div style="position: absolute; background: #000; z-index: 1000; filter: alpha(opacity=0); visibility: hidden; width: 100%; height: 100%; top: 0px; left: 0px; ">');
+	this._disabler = Util.createElement("div");
+	this._disabler.style.cssText = "position: absolute; background: #000; z-index: 1000; opacity: 0; visibility: hidden; width: 100%; height: 100%; top: 0px; left: 0px;";
 	if(this.isMain)
 	{
 		document.body.appendChild(this._disabler);
@@ -228,6 +227,10 @@ CNFormManager.neutralImagesPath = "g/";
 CNFormManager.neutralIconsPath = "g/icons/";
 CNFormManager.disableContextMenu = true;
 CNFormManager.scrollBarSize = 20; // Some safe fail-back value.
+// Optional embedding-host origin for external event notifications.  The
+// standalone client uses its own origin; cross-origin hosts must configure
+// this explicitly rather than receiving messages sent to "*".
+CNFormManager.externalEventTargetOrigin = null;
 
 CNFormManager.themeJSObjects = []; // Array of jso, which will be destroyed on theme unload.
 
@@ -285,20 +288,28 @@ CNFormManager._trace = function(title, str, force)
 		if(!CNFormManager._debugWindow) 
 		{
 			CNFormManager._debugWindow = window.open("", "cn_debug", "width=450, height=550, scrollbars=yes");
-			CNFormManager._debugWindow.document.write("<style>body{ margin: 2px; } *{ font-family: tahoma; font-size: 11px; }</style><body></body>");
+			var debugDocument = CNFormManager._debugWindow.document;
+			var debugStyle = debugDocument.createElement("style");
+			debugStyle.textContent = "body{ margin: 2px; } *{ font-family: tahoma; font-size: 11px; }";
+			(debugDocument.head || debugDocument.documentElement).appendChild(debugStyle);
+			if(!debugDocument.body)
+			{
+				var debugBody = debugDocument.createElement("body");
+				debugDocument.documentElement.appendChild(debugBody);
+			}
 			window.focus();
 		}
 	
 		var body = CNFormManager._debugWindow.document.body;
-		if(!str) body.insertAdjacentText("beforeEnd", title);
+		if(!str) body.appendChild(body.ownerDocument.createTextNode(title));
 		else
 		{
-			var div = CNFormManager._debugWindow.document.createElement("<div style='background: gray; color: white; font-weight: bold; padding: 5px; '>");
+			var div = Util.createElementFromHTML("<div style='background: gray; color: white; font-weight: bold; padding: 5px; '>", CNFormManager._debugWindow.document);
 			body.appendChild(div);
-			div.insertAdjacentText("beforeEnd", title);
-			body.insertAdjacentText("beforeEnd", str);
+			div.appendChild(body.ownerDocument.createTextNode(title));
+			body.appendChild(body.ownerDocument.createTextNode(str));
 		}
-		body.insertAdjacentHTML("beforeEnd", "<hr>");
+		Util.appendHTML(body, "<hr>");
 		body.scrollTop = body.scrollHeight;
 	}
 	catch(e)
@@ -330,20 +341,22 @@ CNFormManager.destroyJSObject = function(jsObject)
 	{
 		var id = el.id;
 		el.jsObject = null;
-		el.removeNode(true);
+		Util.removeElement(el);
 		jsObject.element = null;
 	}
 }
 
 CNFormManager._measureScrollbars = function()
 {
-	var div = document.createElement("<div style='position: absolute; top: 0; left: 0; width: 100px; height: 100px; overflow: auto; visibility: hidden; '>");
+	var div = Util.createElement("div");
+	div.style.cssText = "position: absolute; top: 0; left: 0; width: 100px; height: 100px; overflow: auto; visibility: hidden;";
 	document.body.appendChild(div);
-	var subDiv = document.createElement("<div style='width: 200px; height: 200px; '>");
+	var subDiv = Util.createElement("div");
+	subDiv.style.cssText = "width: 200px; height: 200px;";
 	div.appendChild(subDiv);
 	
 	CNFormManager.scrollBarSize = div.offsetWidth - div.clientWidth;
-	div.removeNode(true);
+	Util.removeElement(div);
 }
 
 var proto = CNFormManager.prototype;
@@ -418,7 +431,7 @@ proto._window_onresize = function()
 
 proto._formPlaceholder_onkeypress = function()
 {
-	if(event.keyCode == 13 && CNFormManager.getActiveFormManager().defaultButton != null) 
+	if(Event.keyValue(Event.current()) == 13 && CNFormManager.getActiveFormManager().defaultButton != null) 
 	{
 		var fm = CNFormManager.getActiveFormManager();
 		var b = fm.defaultButton;		
@@ -430,31 +443,31 @@ proto._formPlaceholder_onkeypress = function()
 	}
 }
 	
-proto._dialog_formPlaceholder_onbeforedeactivate = function()
+proto._dialog_formPlaceholder_onfocusout = function()
 {
 	// Disabled due to #1161. IE crash when TAB-navigating in grid inside dialog (cancelEvent crashes).
 	/*
 	try {
-		if(event.toElement && event.toElement._isPopup) return; // Allow popups to take focus.
+		if((Event.current() || {}).relatedTarget && (Event.current() || {}).relatedTarget._isPopup) return; // Allow popups to take focus.
 	} catch(e) {} 
 
 	var fm = CNFormManager.getActiveFormManager();
 	if(!fm || !fm._dialogDiv) return;
 	
-	//CNFormManager._trace("_dialog_formPlaceholder_onbeforedeactivate 1");
+	//CNFormManager._trace("_dialog_formPlaceholder_onfocusout 1");
 
-	if(!event.toElement || event.toElement && !fm._dialogDiv.contains(event.toElement))
+	if(!(Event.current() || {}).relatedTarget || (Event.current() || {}).relatedTarget && !fm._dialogDiv.contains((Event.current() || {}).relatedTarget))
 	{
-		//CNFormManager._trace("_dialog_formPlaceholder_onbeforedeactivate - processing TAB out of dialog, from element.className" + event.className 
-		//	+ " to element " + (event.toElement ? Util.definitionTag(event.toElement.outerHTML) : "null"));
+		//CNFormManager._trace("_dialog_formPlaceholder_onfocusout - processing TAB out of dialog, from element.className" + event.className 
+		//	+ " to element " + ((Event.current() || {}).relatedTarget ? Util.definitionTag((Event.current() || {}).relatedTarget.outerHTML) : "null"));
 
 		var currentTI = 0;
-		if(event.srcElement && event.srcElement.tabIndex) 
+		if(Util.eventTarget(Event.current()) && Util.eventTarget(Event.current()).tabIndex) 
 		{
-			currentTI = event.srcElement.tabIndex;
+			currentTI = Util.eventTarget(Event.current()).tabIndex;
 		}
 		
-		//CNFormManager._trace("_dialog_formPlaceholder_onbeforedeactivate 2");
+		//CNFormManager._trace("_dialog_formPlaceholder_onfocusout 2");
 
 		if(!fm._focusFirstFocusableControl(currentTI))
 		{
@@ -464,11 +477,11 @@ proto._dialog_formPlaceholder_onbeforedeactivate = function()
 		CNUtil.cancelEvent(event);		
 	}
 
-//	CNFormManager._trace("toElement.className" + event.toElement.className 
-//		+ " to element " + (event.toElement ? Util.definitionTag(event.toElement.outerHTML) : "null"));
+//	CNFormManager._trace("toElement.className" + (Event.current() || {}).relatedTarget.className 
+//		+ " to element " + ((Event.current() || {}).relatedTarget ? Util.definitionTag((Event.current() || {}).relatedTarget.outerHTML) : "null"));
 
-	if(event.toElement 
-		&& (event.toElement.tagName == "BODY" || !fm._formPlaceholder.contains(event.toElement)))
+	if((Event.current() || {}).relatedTarget 
+		&& ((Event.current() || {}).relatedTarget.tagName == "BODY" || !fm._formPlaceholder.contains((Event.current() || {}).relatedTarget)))
 	{
 		CNUtil.cancelEvent();
 	}
@@ -510,7 +523,7 @@ proto._checkIfVisible = function(l)
 {
 	do
 	{
-		var lcs = l.currentStyle;
+		var lcs = Util.getComputedStyle(l);
 		if(lcs.visibility == "hidden" || lcs.display == "none") return false;
 		if(lcs.visibility == "visible") return true;
 		l = l.parentElement;
@@ -536,12 +549,12 @@ proto._findNextTabIndexControl = function(tabIndex, offset)
 
 proto._findFirstTabIndexControlInternal = function(element, params)
 {
-	var all = element.all;
+	var all = element.getElementsByTagName("*");
 	var allCount = all.length;
 	for(var i = 0/*params.offset*/; i < allCount; i++)
 	{
 		var l = all[i];		
-		if(l.currentStyle.display != 'none' && l.currentStyle.visibility != 'hidden' 
+		if(Util.getStyle(l, "display") != 'none' && Util.getStyle(l, "visibility") != 'hidden' 
 		&& l.tabIndex < params.minTab && l.tabIndex > params.lowerTab) 
 		{
 			params.minTab = l.tabIndex;
@@ -680,9 +693,9 @@ proto._logout = function(reload)
 	} else {
 		var data = '<events><logout source="IE"/>' + uniqueID + '</events>';
 		CNFormManager._trace("Sending xml", data);
-		var xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
-		xmlhttp.Open("POST", this.sourceUrl, true);
-		xmlhttp.Send(data);		
+		var xmlhttp = Util.createXMLHttpRequest();
+		xmlhttp.open("POST", this.sourceUrl, true);
+		xmlhttp.send(data);		
 	}
 }
 
@@ -702,7 +715,7 @@ proto._isLoading = function() {
     if(this._loading) {
         var debugXML = "[failed]";
         try {
-            debugXML = dataXml ? (typeof dataXml == "string" ? dataXml : dataXml.xml) : 'empty';
+            debugXML = this._dataXml ? (typeof this._dataXml == "string" ? this._dataXml : Util.xmlString(this._dataXml)) : 'empty';
         } catch(e) {}
         Util.assert("can't load form - still loading, attempted: " + debugXML);
         return true;
@@ -726,7 +739,7 @@ proto._roundTrip = function(xmldoc)
 		
 		var xml;
 		if(typeof(xmldoc) == "string") xml = xmldoc;
-		else xml = xmldoc.xml;
+		else xml = Util.xmlString(xmldoc);
 		
 		CNFormManager._trace("Sending xml", xml);
 	} else {
@@ -736,17 +749,19 @@ proto._roundTrip = function(xmldoc)
 
 	this._startTiming("loadTime");
 
-	this._xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
-	this._xmlhttp.onreadystatechange = this._xmlhttp_onreadystatechange;
-	this._xmlhttp.Open(method, this.sourceUrl, true);
-    this._xmlhttp.Send(xmldoc);
+	this._xmlhttp = Util.createXMLHttpRequest();
+	var formManager = this;
+	this._xmlhttp.onreadystatechange = function() {
+		formManager._xmlhttp_onreadystatechange();
+	};
+	this._xmlhttp.open(method, this.sourceUrl, true);
+    this._xmlhttp.send(xmldoc);
 }
 
 proto._xmlhttp_onreadystatechange = function()
 {
-	var formManager = CNFormManager.getActiveFormManager();
-	if(formManager._xmlhttp.readyState != 4) return;
-	formManager._xmlhttpIsReady();
+	if(!this._xmlhttp || this._xmlhttp.readyState != 4) return;
+	this._xmlhttpIsReady();
 }
 
 proto._noop = function() {}
@@ -766,16 +781,16 @@ proto._checkXmlHttp = function(xmlhttp)
 												+ xmlhttp.responseText;
 		}
 
-		status = "Failed to load, status: " + xmlhttp.status;
+		this._finishLoadFailure("HTTP " + xmlhttp.status, xmlhttp.responseText);
 		return false;
 	}
 	else
 	{
-		if(!xmlhttp.responseXML.documentElement)
+		if(!xmlhttp.responseXML || !xmlhttp.responseXML.documentElement)
 		{
 			var errorStr = "";
-			var parseError = xmlhttp.responseXML.parseError;
-			if(parseError.errorCode != 0)
+			var parseError = xmlhttp.responseXML && xmlhttp.responseXML.parseError;
+			if(parseError && parseError.errorCode != 0)
 			{
 				errorStr = parseError.reason + "Line: " + parseError.line + ", pos: " + parseError.linepos; 
 			}
@@ -789,15 +804,43 @@ proto._checkXmlHttp = function(xmlhttp)
 			}
 			else
 			{
-				CNFormManager.getBaseFormManager()._globalPlaceholder.innerText = message + "\n"
+				CNFormManager.getBaseFormManager()._globalPlaceholder.textContent = message + "\n"
 													+ errorStr
 													+ "\n\n" 
-													+ xmlhttp.responseText;
+									+ xmlhttp.responseText;
 			}
+			this._finishLoadFailure(message, errorStr || xmlhttp.responseText);
 			return false;
 		}
 	}
 	return true;
+}
+
+/*
+	A terminal transport/response failure must release the same state that a
+	successful _continueLoadForm2/_finishPostData path releases.  The historical
+	client relied on IE's response/error behaviour and could leave the modal
+	disabler in place forever when a standards-browser response was malformed or
+	response processing threw.  Do not emulate the IE behaviour: report the
+	failure, restore the UI boundary, and leave the original exception visible in
+	console diagnostics.
+*/
+proto._finishLoadFailure = function(reason, detail)
+{
+	this._loading = false;
+	this._isPostingBack = false;
+	this._postbackElement = null;
+	this._onreadyFunc = null;
+	this._endProgress();
+	this._setNonInteractive(false);
+	this._navigationDisabled = false;
+
+	var message = String(reason || "Client Framework response failed");
+	if(detail) message += ": " + String(detail);
+	if(typeof console != "undefined" && console.error) {
+		console.error("Client Framework response failure: " + message);
+	}
+	return message;
 }
 
 proto._xmlhttpIsReady = function()
@@ -807,13 +850,21 @@ proto._xmlhttpIsReady = function()
 		CNFormManager._trace("Error Response from url: " + this.sourceUrl, this._xmlhttp.responseText);
 		return null;
 	}
-	CNFormManager._trace("Response from url: " + this.sourceUrl, this._xmlhttp.responseXML.xml);
+	CNFormManager._trace("Response from url: " + this.sourceUrl, Util.xmlString(this._xmlhttp.responseXML));
 
 	/*var start = new Date().getTime();
 	xml_to_json(this._xmlhttp.responseXML.documentElement);
 	CNFormManager._trace("xml_to_json: " + (new Date().getTime() - start) + "ms\n" + xml_to_json_nodes);*/
 
-	this._continueLoadForm(this._xmlhttp.responseXML);
+	try
+	{
+		this._continueLoadForm(this._xmlhttp.responseXML);
+	}
+	catch(e)
+	{
+		this._finishLoadFailure("response processing", e && e.message ? e.message : e);
+		throw e;
+	}
 }
 
 proto._removeBlink = function(divsColl)
@@ -872,48 +923,64 @@ proto._enableTextAndBackgroundBlink = function(divsColl)
 
 proto._startAlerts = function()
 {
-	setTimeout("CNFormManager.getBaseFormManager()._doAlerts()", this.alertTimeout * 1000);
+	var base = CNFormManager.getBaseFormManager();
+	if(base) setTimeout(function(){ base._doAlerts(); }, this.alertTimeout * 1000);
 }
 
 proto._doAlerts = function()
 {
 	if(!this.alertSourceUrl) return;
 	
-	if(this._formPlaceholder.currentStyle.display == 'none')
+	if(Util.getStyle(this._formPlaceholder, "display") == 'none')
 	{
 		// We are at login or select role page.
-		setTimeout("CNFormManager.getBaseFormManager()._doAlerts()", this.alertTimeout * 1000);
+		var base = CNFormManager.getBaseFormManager();
+		if(base) setTimeout(function(){ base._doAlerts(); }, this.alertTimeout * 1000);
 		return;
 	}
 	
-	this._alert_xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
-	this._alert_xmlhttp.onreadystatechange = this._alert_xmlhttp_onreadystatechange;
-	this._alert_xmlhttp.Open("GET", this.alertSourceUrl, true);
-    this._alert_xmlhttp.Send();
+	this._alert_xmlhttp = Util.createXMLHttpRequest();
+	var formManager = this;
+	this._alert_xmlhttp.onreadystatechange = function() {
+		formManager._alert_xmlhttp_onreadystatechange();
+	};
+	this._alert_xmlhttp.open("GET", this.alertSourceUrl, true);
+    this._alert_xmlhttp.send();
 }
 
 proto._alert_xmlhttp_onreadystatechange = function()
 {
-	var formManager = CNFormManager.getActiveFormManager();
-	if(formManager._alert_xmlhttp.readyState != 4) return;
-	formManager._alert_xmlhttpIsReady();
+	if(!this._alert_xmlhttp || this._alert_xmlhttp.readyState != 4) return;
+	this._alert_xmlhttpIsReady();
 }
 
 proto._alert_xmlhttpIsReady = function()
 {
-	if(!this._checkXmlHttp(this._xmlhttp)) return null;
-	CNFormManager._trace("Alert: Response from url: " + this.alertSourceUrl, this._alert_xmlhttp.responseXML.xml);
+	if(this._alert_xmlhttp.status != 200)
+	{
+		if(typeof console != "undefined" && console.error)
+			console.error("Client Framework alert request failed: HTTP " + this._alert_xmlhttp.status);
+		return null;
+	}
+	if(!this._alert_xmlhttp.responseXML || !this._alert_xmlhttp.responseXML.documentElement)
+	{
+		if(typeof console != "undefined" && console.error)
+			console.error("Client Framework alert request failed: response is not XML");
+		return null;
+	}
+	CNFormManager._trace("Alert: Response from url: " + this.alertSourceUrl, Util.xmlString(this._alert_xmlhttp.responseXML));
 
 	if(this._alertIcons) 
 	{
 		var xmlDoc = this._alert_xmlhttp.responseXML;
 		var rootNode = xmlDoc.documentElement;
-		var alertsNode = rootNode.selectSingleNode("alerts");
+		var alertsNode = Util.xmlSelectSingleNode(rootNode, "alerts");
 	
 		if(alertsNode) this._alertIcons.loadData(alertsNode);
 	}
 
-	setTimeout("CNFormManager.getBaseFormManager()._doAlerts()", this.alertTimeout * 1000);
+	var base = CNFormManager.getBaseFormManager();
+	if(base) setTimeout(function(){ base._doAlerts(); }, this.alertTimeout * 1000);
 }
 
 
@@ -923,7 +990,7 @@ proto._executeClose_Error_Theme = function()
 
 	if(this._formErrorShown) this._deleteFormError();
 	
-	var closeNode = this._ideaNode.selectSingleNode("close");
+	var closeNode = Util.xmlSelectSingleNode(this._ideaNode, "close");
 	if(this.isDialog && closeNode)
 	{
 		this._setDialogResult(true);		
@@ -942,7 +1009,7 @@ proto._executeClose_Error_Theme = function()
 		return false;
 	}
 
-	var errorNode = this._ideaNode.selectSingleNode("error");
+	var errorNode = Util.xmlSelectSingleNode(this._ideaNode, "error");
 	if(errorNode)
 	{
 		return this._processServerError(errorNode);
@@ -965,18 +1032,18 @@ proto._executeClose_Error_Theme = function()
 
 proto._executeIdeaNode = function()
 {
-	var showProgressNode = this._ideaNode.selectSingleNode("showProgress");
+	var showProgressNode = Util.xmlSelectSingleNode(this._ideaNode, "showProgress");
 	if(showProgressNode != null) {
 		this._showProgress(showProgressNode);
 	}
 
 	if(this.isMain) {
-		var node = this._ideaNode.selectSingleNode("debugWindow");
+		var node = Util.xmlSelectSingleNode(this._ideaNode, "debugWindow");
 		if(node) this.debug = true;
 	}
 
 	if(this.isMain || this.isDialog) { // It's important to always process <screen>, event if sent to dialog FM.
-		var screenNode = this._ideaNode.selectSingleNode("screen");
+		var screenNode = Util.xmlSelectSingleNode(this._ideaNode, "screen");
 		if(screenNode) {
 			var baseFM = CNFormManager.getBaseFormManager();
 			baseFM._processScreen(screenNode);
@@ -985,10 +1052,10 @@ proto._executeIdeaNode = function()
 
 	if(this.isMain) {
 		this._startTiming("navigationCreationTime");
-		var navigationNode = this._ideaNode.selectSingleNode("navigation");
+		var navigationNode = Util.xmlSelectSingleNode(this._ideaNode, "navigation");
 		if(navigationNode)
 		{
-			var navCreateNode = navigationNode.selectSingleNode("create");
+			var navCreateNode = Util.xmlSelectSingleNode(navigationNode, "create");
 			if(navCreateNode)
 			{
 				this._deleteNavigation();
@@ -996,7 +1063,7 @@ proto._executeIdeaNode = function()
 			}
 			if(this._navigation)
 			{
-				var navModifyNode = navigationNode.selectSingleNode("modify");
+				var navModifyNode = Util.xmlSelectSingleNode(navigationNode, "modify");
 				if(navModifyNode) this._navigation.loadData(navModifyNode);
 			}
 		}
@@ -1004,17 +1071,17 @@ proto._executeIdeaNode = function()
 
 		if(this._topButtons) 
 		{
-			var topButtonsNode = this._ideaNode.selectSingleNode("topbuttons");
+			var topButtonsNode = Util.xmlSelectSingleNode(this._ideaNode, "topbuttons");
 			if(topButtonsNode) this._topButtons.loadData(topButtonsNode);
 		}
 	} 
 	if(this.isMain || this.isDialog) {
-		var patientNode = this._ideaNode.selectSingleNode("patient");
+		var patientNode = Util.xmlSelectSingleNode(this._ideaNode, "patient");
 		if(patientNode) {
 			var textColor = null;
 			var textColorAttr = patientNode.getAttribute("textColor");
 			if(textColorAttr != null) textColor = String(textColorAttr);
-			this._setPatient(String(patientNode.text), textColor);
+			this._setPatient(String(Util.xmlText(patientNode)), textColor);
 		}
 	}
 	if(this.isDialog && this._dialogNotShownYet) {
@@ -1030,7 +1097,7 @@ proto._executeIdeaNode = function()
 
 
 	this._startTiming("formCreationTime");
-	var formNode = this._ideaNode.selectSingleNode("form");
+	var formNode = Util.xmlSelectSingleNode(this._ideaNode, "form");
 	if(formNode) 
 	{
 		this._stats = [];
@@ -1097,7 +1164,7 @@ proto._executeIdeaNode = function()
 	}
 	else
 	{
-		var formErrorNode = this._ideaNode.selectSingleNode("formError");
+		var formErrorNode = Util.xmlSelectSingleNode(this._ideaNode, "formError");
 		if(formErrorNode) 
 		{
 			this._processFormError(formErrorNode);
@@ -1143,7 +1210,7 @@ proto._executeIdeaNode = function()
 		this._loadAutoLockTimer(this._ideaNode);	
 		
 		// Allow loading to finish.
-		var node = this._ideaNode.selectSingleNode("dialog");
+		var node = Util.xmlSelectSingleNode(this._ideaNode, "dialog");
 		if(node)
 		{
 			this._dialogWillBeLoaded = true;
@@ -1176,7 +1243,7 @@ proto._notifyScanningServlet = function()
 
 proto._loadAttachedFMs = function() {
 	for(var tag in this._attachedFormManagers) {
-		var tagNode = this._ideaNode.selectSingleNode(tag);
+		var tagNode = Util.xmlSelectSingleNode(this._ideaNode, tag);
 		if(tagNode != null) {
 			var fm = this._attachedFormManagers[tag];
 			fm._ideaNode = tagNode;
@@ -1185,177 +1252,23 @@ proto._loadAttachedFMs = function() {
 	}
 }
 
-proto._unsafe_runExternalApplication = function(applicationPath, autoRunEditor, allowMultipleInstance, msgForRunningApplication, checkForRunningApplicationPerUserSession) 
-{	
-	if (applicationPath == "")	return;	
-	var autoRun = (autoRunEditor === 'true');
-	if (autoRun)
-	{		
-		try 
-		{
-			var word = new ActiveXObject("Word.Application");
-			if(word)
-			{	
-				word.Visible = true;
-				word.Documents.Open(applicationPath);
-			}			
-		}
-		catch(e) { }			
-		finally {return;}
-	}	
-	
-	if (allowMultipleInstance == "") allowMultipleInstance = false;
-
-	var isRunning = false;
-
-	//Extract application name
-	var slash = '/';
-	if (applicationPath.match(/\\/)) {
-		slash = '\\';
-	}
-		
-	var fullPath = applicationPath.substring(applicationPath.lastIndexOf(".exe"), -1) + ".exe";
-	var appName = fullPath.substring(fullPath.lastIndexOf(slash) + 1);
-	
-	//Check if application exist	
-	var fso = new ActiveXObject("Scripting.FileSystemObject");
-	if (fso.FileExists(fullPath) == false) {
-		alert("Aplication not found: " + fullPath);
-		return;
-	}
-	
-	//Get current username and domain if checkForUniqueInstanceByUser is true
-	var currentUsername, currentDomain;
-	if (checkForRunningApplicationPerUserSession)
-	{
-		try 
-		{
-			var wshnetwork=new ActiveXObject("wscript.network");		
-			currentUsername = wshnetwork.username;
-			currentDomain = wshnetwork.userdomain;
-		}	
-		catch(e) { }			
-    }
-	
-	//Check for running application
-	var objWMIService = GetObject("winmgmts:{impersonationLevel=impersonate}//./root/cimv2"); 
-    var colItems = objWMIService.ExecQuery("SELECT * FROM Win32_Process WHERE Name = \"" + 
-        appName + "\""); 
- 
-	for(var e = new Enumerator(colItems); !e.atEnd(); e.moveNext()) 
-	{
-		var p = e.item();	
-	
-		//Get PID username and domain		
-		var processUsername = null;
-		var processDomain = null;
-		
-		if (checkForRunningApplicationPerUserSession)
-		{
-			var outProcess = p.ExecMethod_("GetOwner");
-			if (outProcess.ReturnValue == 0)
-			{
-				processUsername = outProcess.User;
-				processDomain = outProcess.Domain;
-			}
-			
-			if(processUsername == null || processDomain == null)
-				continue;
-		}
-		
-		if (p.Name.toLowerCase() == appName.toLowerCase() &&
-				allowMultipleInstance == false)
-		{
-			if (checkForRunningApplicationPerUserSession)
-			{
-				if (processUsername == currentUsername &&
-					processDomain == currentDomain)
-				{
-					if (msgForRunningApplication == "") {
-						msgForRunningApplication = "Application " + appName + " already running with PID: " + p.Handle + " (Process Username:  " + processUsername + "/" + processDomain + ") for user: " + currentDomain + "/" + currentUsername;
-					}
-					
-					alert(msgForRunningApplication);
-					isRunning = true;
-					break;
-				}	
-				else
-					continue;
-			}
-			else
-			{
-				if (msgForRunningApplication == "") {
-					msgForRunningApplication = "Application " + appName + " already running with PID: " + p.Handle;
-				}
-				
-				alert(msgForRunningApplication);
-				isRunning = true;
-				break;
-			}
-		}
-	}
-	
-	if (!isRunning)
-	{
-		var startedSuccesful = false;
-		//Start application		
-		var shell = new ActiveXObject("WScript.Shell");
-		shell.Exec(applicationPath);
-		
-		//Check if application was started and get PID
-		var e = new Enumerator(GetObject("winmgmts:").InstancesOf("Win32_process"));
-		for (; !e.atEnd(); e.moveNext())
-		{
-			var p = e.item();			
-			if (p.Name.toLowerCase() == appName.toLowerCase())
-			{				
-				startedSuccesful = true;				
-				break;
-			}
-		}
-		if (!startedSuccesful)
-		{
-			alert("Application " + appName + " was not started succesful!");
-		}
-	}
+proto._unsafe_runExternalApplication = function(applicationPath)
+{
+	CNFormManager._trace("Unsupported feature: launching local applications is unavailable in standards browsers.", null, true);
+	return false;
 }
-proto._runExternalApplication = function() {
-	var nodes = this._ideaNode.selectNodes("runFiles/file");
-	if(nodes.length == 0) return;
-	try {
-		var shell = new ActiveXObject("WScript.Shell");
-		if(shell) {
-			for(var i = 0; i < nodes.length; i++) {
-				var node = nodes[i];
-				var path = Util.base64_decode(node.text.replace(/[\n|\r]/g, ""));
-				try {
-					this._unsafe_runExternalApplication(path, node.getAttribute("autoRunEditor"), node.getAttribute("allowMultipleInstances") != "false", node.getAttribute("msgForRunningApplication"), node.getAttribute("checkForRunningApplicationPerUserSession"));
-				}
-				catch (e){
-					alert(e.description);                
-				}
-			}
-		}
-	} catch(e) { }
+proto._runExternalApplication = function()
+{
+	var nodes = this._ideaNode && Util.xmlSelectNodes(this._ideaNode, "runFiles/file");
+	if(nodes && nodes.length) CNFormManager._trace("Unsupported feature: runFiles requires a native application launcher.", null, true);
+	return false;
 }
-proto._processDeleteFiles = function() {
-	var nodes = this._ideaNode.selectNodes("deleteFiles/file");
-	if(nodes.length == 0) return;
-
-	try {
-		var fs = new ActiveXObject("Scripting.FileSystemObject"); 
-	
-		for(var i = 0; i < nodes.length; i++) {
-			var path = nodes[i].text;
-			try {
-				if(fs.FileExists(path)) {
-					fs.DeleteFile(path);
-				}
-			} catch (e) {}
-		}
-	} catch (e) {}
+proto._processDeleteFiles = function()
+{
+	var nodes = this._ideaNode && Util.xmlSelectNodes(this._ideaNode, "deleteFiles/file");
+	if(nodes && nodes.length) CNFormManager._trace("Unsupported feature: server-requested local file deletion is unavailable in standards browsers.", null, true);
+	return false;
 }
-
 proto._report = function()
 {
 	if(this.reportTimings || this.reportStats)
@@ -1382,13 +1295,21 @@ proto._report = function()
 }
 
 proto._processExternalEvents = function() {
-	var events = this._ideaNode.selectNodes("externalEvents/event");
-	if(events.length > 0 && window.external) {
-	    try {
-			for(var i = 0; i < events.length; i++) {
-				window.external.receiveNotificationFromBrowser(String(events[i].getAttribute("id")));
-			}
-		} catch(e) {}
+	var events = Util.xmlSelectNodes(this._ideaNode, "externalEvents/event");
+	if(events.length > 0 && window.parent && window.parent != window && window.parent.postMessage) {
+		var targetOrigin = CNFormManager.externalEventTargetOrigin;
+		if(!targetOrigin && window.location && window.location.origin) targetOrigin = window.location.origin;
+		if(!targetOrigin) {
+			Util.reportUnsupported("CNFormManager", "cross-origin external event notifications", "Configure CNFormManager.externalEventTargetOrigin");
+			return;
+		}
+		for(var i = 0; i < events.length; i++) {
+			window.parent.postMessage({
+				source: "openMAXIMS",
+				type: "externalEvent",
+				id: String(events[i].getAttribute("id"))
+			}, targetOrigin);
+		}
 	}
 }
 
@@ -1431,7 +1352,7 @@ CNFormManager.closeAllDialogs = function() {
 
 proto._processScreen = function(screenNode)
 {
-	document.body.setActive();
+	if(document.body.focus) document.body.focus();
 
 	this._safelyClosePopups();
 	CNFormManager.closeAllDialogs();
@@ -1457,7 +1378,7 @@ proto._processScreen = function(screenNode)
 
 	//if(animate) this._globalPlaceholder.style.visibility = "hidden";
 
-	var items = screenNode.selectNodes("item");
+	var items = Util.xmlSelectNodes(screenNode, "item");
 	var count = items.length;
 	for(var i = 0; i < count; i++)
 	{
@@ -1470,18 +1391,7 @@ proto._processScreen = function(screenNode)
 	}
 	
 
-	/*if(animate)
-	{
-		if(this._globalPlaceholder.filters.length == 0)
-			this._globalPlaceholder.style.filter = "progid:DXImageTransform.Microsoft.Fade()";
-		else 
-			this._globalPlaceholder.filters[0].Stop();
-		this._globalPlaceholder.filters[0].Apply();
-		this._globalPlaceholder.style.overflow = "hidden";
-		this._globalPlaceholder.style.visibility = "visible";
-		this._globalPlaceholder.filters[0].Play(.5);	
-		this._globalPlaceholder.attachEvent("onfilterchange", CNFormManager._globalPlaceholder_onfilterchange);
-	}*/
+
 }
 proto._resetScreen = function() {
 	this._deleteScreenControls();
@@ -1492,14 +1402,6 @@ proto._resetScreen = function() {
 proto._deleteScreenControls = function() {
 	CNFormManager.destroyJSObjectsMap(this._controls);
 	this._controls = {};
-}
-
-CNFormManager._globalPlaceholder_onfilterchange = function()
-{
-	var l = event.srcElement;
-	l.style.overflow = "visible";
-	l.style.filter = "";
-	l.detachEvent("onfilterchange", CNFormManager._globalPlaceholder_onfilterchange);
 }
 
 proto._resetScreenItems = function()
@@ -1522,7 +1424,7 @@ proto._processScreenItem = function(itemNode)
 	var id = itemNode.getAttribute("id");
 	if(!id) 
 	{
-		CNUtil.assert("_processScreenItem: no id for item " + itemNode.xml);
+		CNUtil.assert("_processScreenItem: no id for item " + Util.xmlString(itemNode));
 		return;
 	}
 	id = String(id);
@@ -1531,7 +1433,7 @@ proto._processScreenItem = function(itemNode)
 	var item = document.getElementById(htmlID);
 	if(!item) 
 	{
-		//CNUtil.assert("_processScreenItem: no element found for item " + itemNode.xml);
+		//CNUtil.assert("_processScreenItem: no element found for item " + Util.xmlString(itemNode));
 		//return;
 		item = document.createElement("div");
 		item.id = htmlID;
@@ -1555,7 +1457,7 @@ proto._processScreenItem = function(itemNode)
 		
 		if(isNaN(x) || isNaN(y) || isNaN(w) || isNaN(h))
 		{
-			CNUtil.assert("Valid x, y, width and height attributes required for item " + itemNode.xml);
+			CNUtil.assert("Valid x, y, width and height attributes required for item " + Util.xmlString(itemNode));
 			return;
 		}
 		
@@ -1625,7 +1527,7 @@ proto._showMessagesTO = function()
 {
 	if(!this._ideaNode || this._messagesShown) return;
 
-	var messagesNode = this._ideaNode.selectSingleNode("messages");
+	var messagesNode = Util.xmlSelectSingleNode(this._ideaNode, "messages");
 
 	if(messagesNode) {
 		this._messagesPending = true;
@@ -1639,7 +1541,7 @@ proto._processFormError = function(formErrorNode)
 {
     this._shutDownTimers();	
 	
-	var msgNode = formErrorNode.selectSingleNode("msg");
+	var msgNode = Util.xmlSelectSingleNode(formErrorNode, "msg");
 	var captionAttr = formErrorNode.getAttribute("caption")
 	var titleAttr = formErrorNode.getAttribute("title");
 	var browserTitleAttr = formErrorNode.getAttribute("browserTitle");
@@ -1649,7 +1551,7 @@ proto._processFormError = function(formErrorNode)
 	var browserTitle = null;
 
 	if(captionAttr) caption = String(captionAttr);
-	if(msgNode) msg = String(msgNode.text);
+	if(msgNode) msg = String(Util.xmlText(msgNode));
 	if(titleAttr) title = String(titleAttr);
 	if(browserTitleAttr) browserTitle = String(browserTitleAttr);
 	this._processFormError2(caption, browserTitle, formErrorNode.getAttribute("suspend") == "true", title, msg);
@@ -1661,12 +1563,15 @@ proto._setFormCaptionText = function(caption, imgUrl)
 	if(this.isMain) 
 	{
 		document.title = caption;
-		formCaption = document.all["__si_formCaption"];
+		formCaption = Util.findById(document, "__si_formCaption");
 		if(formCaption) {
-			formCaption.innerText = caption;
-			if(imgUrl) {
-				this._createFormCaptionImg(formCaption, imgUrl);
-			}
+			var oldImage = formCaption.querySelector ? formCaption.querySelector(".captionImg") : null;
+			formCaption.textContent = "";
+			if(imgUrl) this._createFormCaptionImg(formCaption, imgUrl);
+			else if(oldImage) formCaption.appendChild(oldImage);
+			var captionText = Util.createElement("span", "formCaptionText");
+			captionText.textContent = caption;
+			formCaption.appendChild(captionText);
 		}
 	}
 	else if(this.isDialog && this._dialogDiv._hasBackground)
@@ -1674,8 +1579,8 @@ proto._setFormCaptionText = function(caption, imgUrl)
 		if(CNFormManager.vista) CNDialogManager.setCaption(this._dialogDiv, caption);
 		else
 		{
-			formCaption = this._dialogDiv.all["formCaption1"];
-			if(formCaption) formCaption.innerText = caption;
+			formCaption = Util.findById(this._dialogDiv, "formCaption1");
+			if(formCaption) formCaption.textContent = caption;
 			if(imgUrl) {
 				this._createFormCaptionImg(formCaption, imgUrl);
 			}
@@ -1687,12 +1592,8 @@ proto._setFormCaptionText = function(caption, imgUrl)
 proto._createFormCaptionImg = function(formCaption, imgUrl) {
 	var img = document.createElement("img");
 	img.className = "captionImg";
-	img.replacePNG = "no";
 	img.src = String(imgUrl);
 	formCaption.insertBefore(img, formCaption.firstChild);
-	if(Util.IE6) {
-		Util.replacePNGImage(img);
-	}
 }
 
 proto._processFormError2 = function(caption, browserTitle, suspend, title, msg)
@@ -1719,40 +1620,40 @@ proto._processFormError2 = function(caption, browserTitle, suspend, title, msg)
 
 proto._createFormError = function(title, msg)
 {
-	var container = document.createElement("<div id='formErrorDiv' style='position: absolute; top: 0px; left: 0px; width: 800px; height: 600px; overflow: auto; '>");
+	var container = Util.createElementFromHTML("<div id='formErrorDiv' style='position: absolute; top: 0px; left: 0px; width: 800px; height: 600px; overflow: auto; '>");
 	this._formPlaceholder.appendChild(container);
 	container.onmousedown = Util.cancelBubble;
 	container.onmouseup = Util.cancelBubble;
 	container.onclick = Util.cancelBubble;
 	
-	var img = document.createElement("<img width=48 height=48 style='position: absolute; top: 16px; left: 24px; '>");
+	var img = Util.createElementFromHTML("<img width=48 height=48 style='position: absolute; top: 16px; left: 24px; '>");
 	container.appendChild(img);
 	img.src = CNFormManager.neutralImagesPath + "exl-4.gif";
 
-	var div1 = document.createElement("<div style='position: absolute; top: 28px; left: 90px; font-size: 18px; font-weight: bold; '>")
+	var div1 = Util.createElementFromHTML("<div style='position: absolute; top: 28px; left: 90px; font-size: 18px; font-weight: bold; '>")
 	container.appendChild(div1);
 
-	div1.innerText = title ? title : "Form Error";
+	div1.textContent = title ? title : "Form Error";
 	
-	var div2 = document.createElement("<div style='position: absolute; top: 68px; left: 90px; width: 700px; '>");
+	var div2 = Util.createElementFromHTML("<div style='position: absolute; top: 68px; left: 90px; width: 700px; '>");
 	container.appendChild(div2);	
 	
-	if(msg) div2.innerText = msg;
+	if(msg) div2.textContent = msg;
 	
 	this._formErrorShown = true;
 }
 
 proto._deleteFormError = function()
 {
-	var l = this._formPlaceholder.children["formErrorDiv"];
-	if(l) l.removeNode(true);
+	var l = Util.findById(this._formPlaceholder, "formErrorDiv");
+	if(l) Util.removeElement(l);
 	this._formErrorShown = false;
 }
 
 proto._checkforCloseURL = function()
 {
 	if(!this._ideaNode) return;
-	var urlNodes = this._ideaNode.selectNodes("closeUrl");
+	var urlNodes = Util.xmlSelectNodes(this._ideaNode, "closeUrl");
 	var obj = this;
 	setTimeout(function()
 	{
@@ -1766,7 +1667,7 @@ proto._checkforCloseURL = function()
 proto._checkForURL = function()
 {
 	if(!this._ideaNode) return;
-	var urlNodes = this._ideaNode.selectNodes("openUrl");
+	var urlNodes = Util.xmlSelectNodes(this._ideaNode, "openUrl");
 	var obj = this;
 	setTimeout(function()
 	{
@@ -1775,14 +1676,14 @@ proto._checkForURL = function()
 			obj._openURL(urlNodes[i]);
 		}
 	}, 250);
-	var openEmail = this._ideaNode.selectSingleNode("openEmail");
+	var openEmail = Util.xmlSelectSingleNode(this._ideaNode, "openEmail");
 	if(openEmail != null) document.location = "mailto:" + openEmail.getAttribute("address");
 }
 
 proto._checkForCustomURL = function()
 {
 	if(!this._ideaNode) return;
-	var urlNodes = this._ideaNode.selectNodes("openCustomUrl");
+	var urlNodes = Util.xmlSelectNodes(this._ideaNode, "openCustomUrl");
 	var obj = this;
 	setTimeout(function()
 	{
@@ -1870,7 +1771,7 @@ proto._openCustomUrl = function(node)
 {	
 	var id = String(node.getAttribute("id"));
 	var url = String(node.getAttribute("value"));	
-	var windowParam = node.selectNodes("windowParam");
+	var windowParam = Util.xmlSelectNodes(node, "windowParam");
 	var handleWindowEvents = node.getAttribute("handleWindowEvents");
 		
 	var toolbar = "toolbar=no, ", status = "status=no, ", menubar ="menubar=no, ", location = "location=no, ", resizable ="resizable=no, ", fullscreen = "fullscreen=false", height = 0, width = 0;
@@ -1916,7 +1817,7 @@ proto._openCustomUrl = function(node)
 proto._openURL = function(node) 
 {	
 	var url = String(node.getAttribute("value"));
-	var params = node.selectNodes("param");
+	var params = Util.xmlSelectNodes(node, "param");
 	var windowName = node.getAttribute("window");
 	windowName = windowName ? String(windowName) : ""
 	var w;
@@ -1945,33 +1846,32 @@ proto._checkStoredLocations = function()
 {
 	if(!this._ideaNode) return;
 
-	var locations = this._ideaNode.selectSingleNode("storedLocations");
+	var locations = Util.xmlSelectSingleNode(this._ideaNode, "storedLocations");
 	if(locations)
 	{
-		try{ document.body.load("storedLocations");	} catch(e){}
-		var storedXML = document.body.XMLDocument;
-		if(storedXML.documentElement) storedXML.removeChild(storedXML.documentElement);
-		storedXML.appendChild(locations);
-		try{ document.body.save("storedLocations"); } catch(ex){}
+		var xml = Util.xmlString(locations);
+		CNFormManager._storedLocationsXML = xml;
+		try { if(window.localStorage) window.localStorage.setItem("storedLocations", xml); } catch(ignore) {}
 	}
 }
 
 proto._loadAlertIcons = function()
 {
 	if(!this._ideaNode) return;
-	var alertsNode = this._ideaNode.selectSingleNode("alerts");
+	var alertsNode = Util.xmlSelectSingleNode(this._ideaNode, "alerts");
 	if(alertsNode) CNFormManager.getBaseFormManager()._alertIcons.loadData(alertsNode);
 }
 
 proto._showPasswordDialogTO = function()
 {
-	setTimeout("CNFormManager.getBaseFormManager()._showPasswordDialog()", 0);
+	var base = CNFormManager.getBaseFormManager();
+	if(base) setTimeout(function(){ base._showPasswordDialog(); }, 0);
 }
 
 proto._showPasswordDialog = function()
 {
 	if(!this._ideaNode) return;
-	var node = this._ideaNode.selectSingleNode("passwordDialog");
+	var node = Util.xmlSelectSingleNode(this._ideaNode, "passwordDialog");
 	if(!node) return;
 
 	this._shutDownTimers();	
@@ -1996,7 +1896,7 @@ proto._showPasswordDialog = function()
 			this._passwordDialog.style.height = 116;
 		}
 		var contents = CNDialogManager.getContents(this._passwordDialog);
-		var img = document.createElement("<img width=48 height=48 class=dialogIcon>");
+		var img = Util.createElementFromHTML("<img width=48 height=48 class=dialogIcon>");
 		contents.appendChild(img)
 		img.src = CNFormManager.neutralImagesPath + "yesno-question-1.gif";
 
@@ -2005,7 +1905,7 @@ proto._showPasswordDialog = function()
 			+ " overflow: auto; '><div id='messageText'></div>"
 			+ "<div style='margin-top: 2px; padding: 6px; '><b>Password:</b> "
 			+ "<input type='password' style='width: 160px; '/><span style='visibility: hidden; color: red; margin-left: 10px; '><b>Invalid password</b></span></div></div>";
-		contents.insertAdjacentHTML("beforeend", html);
+		Util.appendHTML(contents, html);
 		
 		if(CNFormManager.vista) VistaSupport.attachToTextBox(contents.getElementsByTagName("input")[0]);
 		
@@ -2015,7 +1915,7 @@ proto._showPasswordDialog = function()
 		b1.style.width = buttonWidth;
 		var b2 = CNDialogManager.createBottomButton(this._passwordDialog, "Cancel", false);
 		b2.style.width = buttonWidth;
-		this._passwordDialog.attachEvent("onkeydown", CNUtil.cancelBubble); // Bypass disabler key block.		
+		Event.add(this._passwordDialog, "keydown", this, CNUtil.cancelBubble); // Bypass disabler key block.		
 	}
 	else
 	{
@@ -2024,19 +1924,19 @@ proto._showPasswordDialog = function()
 	}
 	var box = this._passwordDialog.getElementsByTagName("input")[0];
 	box.value = "";
-	box.onkeydown = this._passwordDialog_box_onkeydown;
-	this._passwordDialog.all['messageText'].innerText = text;
+	Event.add(box, "keydown", this, this._passwordDialog_box_onkeydown);
+	Util.findById(this._passwordDialog, "messageText").textContent = text;
 
 	this._showDisabler(true, false, false);
 
 	CNDialogManager.showDialog(this._passwordDialog, [this, "_passwordDialogCallback"], true);
-	this._passwordDialog.attachEvent("onbeforedeactivate", this._passwordDialog_onbeforedeactivate);
+	Event.add(this._passwordDialog, "focusout", this, this._passwordDialog_onfocusout);
 	box.focus();
 }
 
 proto._passwordDialog_box_onkeydown = function()
 {
-	if(event.keyCode != 13) return;
+	if(Event.keyValue(Event.current()) != 13) return;
 	var fm = CNFormManager.getBaseFormManager();
 	setTimeout(function(){ 
 		if(fm._passwordDialogCallback(fm._passwordDialog, false))
@@ -2047,17 +1947,17 @@ proto._passwordDialog_box_onkeydown = function()
 	}, 0);
 }
 
-proto._passwordDialog_onbeforedeactivate = function()
+proto._passwordDialog_onfocusout = function()
 {
 	var fm = CNFormManager.getBaseFormManager();
-	if(!fm._passwordDialog.contains(event.toElement)) CNUtil.cancelEvent();
+	if(!fm._passwordDialog.contains((Event.current() || {}).relatedTarget)) CNUtil.cancelEvent();
 }
 
 proto._passwordDialogCallback = function(dialog, cancel)
 {
 	if(cancel)
 	{
-		dialog.detachEvent("onbeforedeactivate", this._passwordDialog_onbeforedeactivate);
+	Event.del(dialog, "focusout", this, this._passwordDialog_onfocusout);
 		this._hideDisabler();
 		this.loadForm("<events><passwordDialog canceled=\"true\"/></events>");
 	}
@@ -2072,7 +1972,7 @@ proto._passwordDialogCallback = function(dialog, cancel)
 		}
 		else
 		{
-			dialog.detachEvent("onbeforedeactivate", this._passwordDialog_onbeforedeactivate);
+			Event.del(dialog, "focusout", this, this._passwordDialog_onfocusout);
 			this._hideDisabler();
 			this.loadForm("<events><passwordDialog canceled=\"false\"/></events>");
 		}
@@ -2084,7 +1984,7 @@ proto._startTimers = function()
 {
 	if(!this._ideaNode) return;	
 	
-	var timersNode = this._ideaNode.selectSingleNode("timers");
+	var timersNode = Util.xmlSelectSingleNode(this._ideaNode, "timers");
 	if(!timersNode) return;
 	
 	if(timersNode.getAttribute("reset") == "true") 
@@ -2093,7 +1993,7 @@ proto._startTimers = function()
 		//return;
 	}
 	
-	var timerNodes = timersNode.selectNodes("timer");
+	var timerNodes = Util.xmlSelectNodes(timersNode, "timer");
 	var count = timerNodes.length;
 	for(var i = 0; i < count; i++)
 	{
@@ -2210,22 +2110,22 @@ proto._showMessages = function() {
 	if (this._timers.length > 0  && this._timerIsStoped)
 		this._resumeTimers();
 	
-	var messages = this._ideaNode.selectNodes("messages/message");
+	var messages = Util.xmlSelectNodes(this._ideaNode, "messages/message");
 	if(messages) 
 	{
 		for(var i = 0; i < messages.length; i++) 
 		{
-			alert(messages[i].text);
+			alert(Util.xmlText(messages[i]));
 		}
 	}
 	
-	if(this._ideaNode.selectSingleNode("messages/clear"))
+	if(Util.xmlSelectSingleNode(this._ideaNode, "messages/clear"))
 	{
 		this._deleteMessageBoxes();
 	}
 
 	var hasMessageBoxes = false;
-	var mboxes = this._ideaNode.selectNodes("messages/messagebox");
+	var mboxes = Util.xmlSelectNodes(this._ideaNode, "messages/messagebox");
 	if(mboxes)
 	{
 		var animate = mboxes.length == 1;
@@ -2266,16 +2166,16 @@ proto._createMessageBoxDialog = function()
 		+ "position: relative; padding: 4px; margin: 5px; top: 6px; padding-left: 58px; "
 		+ " overflow: auto; '><div id='messageText'></div>"
 		+ "</div>";
-	contents.insertAdjacentHTML("beforeend", html);
+	Util.appendHTML(contents, html);
 	
-	dialog.attachEvent("onkeydown", this._messageBox_onkeydown);
+	Event.add(dialog, "keydown", this, this._messageBox_onkeydown);
 	
 	return dialog;
 }
 
 proto._messageBox_onkeydown = function()
 {
-	if(event.keyCode == 13)
+	if(Event.keyValue(Event.current()) == 13)
 	{
 		if(CNFormManager.vista)
 		{
@@ -2284,7 +2184,7 @@ proto._messageBox_onkeydown = function()
 		}
 		else
 		{
-			var button = Util.findTag(event.srcElement, "BUTTON");
+			var button = Util.findTag(Util.eventTarget(Event.current()), "BUTTON");
 			button.click();
 		}
 	}
@@ -2296,7 +2196,7 @@ proto._showMessageBoxDialog = function(node, animate)
 	this._showDisabler(true, true, false);
 	
 	var caption = String(node.getAttribute("caption"));
-	var text = String(node.text);
+	var text = String(Util.xmlText(node));
 	var imgAttr = node.getAttribute("img");
 	var buttonAttr = node.getAttribute("buttons");
 	var idAttr = node.getAttribute("id");
@@ -2314,11 +2214,11 @@ proto._showMessageBoxDialog = function(node, animate)
 
 	var div = contents.lastChild;
 	var messageDiv = div.firstChild;
-	messageDiv.innerText = text;
+	messageDiv.textContent = text;
 	
 	if(imgAttr)
 	{
-		var img = document.createElement("<img class=dialogIcon>");
+		var img = Util.createElementFromHTML("<img class=dialogIcon>");
 		img.src = String(imgAttr);
 		contents.appendChild(img)
 	}
@@ -2405,8 +2305,8 @@ proto._messageBoxCallback = function(dialog, cancel)
 	if(dialog._id)
 	{
 		var b;
-		if(CNFormManager.vista) b = Util.findByClassName(event.srcElement, "cn_button");
-		else b = Util.findTag(event.srcElement, "BUTTON");
+		if(CNFormManager.vista) b = Util.findByClassName(Util.eventTarget(Event.current()), "cn_button");
+		else b = Util.findTag(Util.eventTarget(Event.current()), "BUTTON");
 		if(b) {
 			this.postData("<messagebox id=\"" + dialog._id + "\" button=\"" + b._result + "\"/>");
 			posted = true;
@@ -2437,14 +2337,14 @@ proto._tryToProcessServerErrors = function()
 {
 	if(!this._ideaNode) return;
 	
-	var errorsNode = this._ideaNode.selectSingleNode("errors");
+	var errorsNode = Util.xmlSelectSingleNode(this._ideaNode, "errors");
 	if(errorsNode) 
 	{
 		this._processServerErrors(errorsNode);
 		return;
 	}
 	
-	var fatalErrorNode = this._ideaNode.selectSingleNode("fatalerror");
+	var fatalErrorNode = Util.xmlSelectSingleNode(this._ideaNode, "fatalerror");
 	if(fatalErrorNode)
 	{
 		this._processFatalServerError(fatalErrorNode);
@@ -2454,12 +2354,12 @@ proto._tryToProcessServerErrors = function()
 proto._setPatient = function(text, color)
 {
 	var spi;
-	if(this.isMain) spi = document.all["__si_shortPatientInfo"];
+	if(this.isMain) spi = Util.findById(document, "__si_shortPatientInfo");
 	else if(this.isDialog) spi = this._dialogFormHeaderTextCont;	
 
 	if(spi) {
-		spi.innerText = text;
-		if(color !== null) spi.runtimeStyle.color = color;
+		spi.textContent = text;
+		if(color !== null) spi.style.color = color;
 	}
 }
 
@@ -2481,7 +2381,7 @@ proto._createNavigation = function(navigationNode)
 	
 	id = "__si_" + id;
 	
-	var parent = this._globalPlaceholder.children[id];
+	var parent = Util.findById(this._globalPlaceholder, id);
 	if(!parent)
 	{
 		Util.assert("no " + id + " element found");
@@ -2491,7 +2391,7 @@ proto._createNavigation = function(navigationNode)
 	var clazz = null;
 	try
 	{
-		clazz = eval(type);
+		clazz = Util.resolveGlobal(type);
 	}
 	catch(ex)
 	{
@@ -2530,7 +2430,7 @@ proto._deleteControls = function()
 	{
 		var group = this._tabbedGroups[groupID];
 		group.containers = null;
-		group.tabTable.removeNode(true);
+		Util.removeElement(group.tabTable);
 	}
 	
 	this._tabbedGroups = [];
@@ -2559,7 +2459,7 @@ proto._deleteRequiredIcons = function()
 {
 	for(var i in this._requiredIcons)
 	{
-		this._requiredIcons[i].removeNode(true);
+		Util.removeElement(this._requiredIcons[i]);
 		i++;
 	}
 	this._requiredIcons = [];
@@ -2578,7 +2478,7 @@ proto._deleteControlsInternal = function(element)
 
 		if(l.isControl) {
 			CNFormManager.destroyJSObject(l.jsObject);
-			l.removeNode(true);
+			Util.removeElement(l);
 		}
 		else if(l.isContainer) {
 			var jso = l.jsObject;
@@ -2601,16 +2501,16 @@ proto._deleteControlsInternal = function(element)
 			l.containerElement = null;
 			l.disabler = null;
 			l.jsObject = null;
-			l.removeNode(true);
+			Util.removeElement(l);
 		}
 		/*else if(l._isTabbedContainer) { // Note: now cleaned by if(l._tabGroupID) {
 			// Remove also tabbed containers (needed to clean-up sub-forms properly).
 			CNFormManager.destroyJSObject(l.jsObject);
 			l.jsObject = null;
-			l.removeNode(true);
+			Util.removeElement(l);
 		}*/
 	}
-	for(var i = 0; i < toDelete.length; i++) toDelete[i].removeNode(true);
+	for(var i = 0; i < toDelete.length; i++) Util.removeElement(toDelete[i]);
 }
 
 proto._executeXMLForm = function(formNode)
@@ -2628,6 +2528,10 @@ proto._executeXMLForm = function(formNode)
 		var darkHeight = parseInt(formNode.getAttribute("darkHeight"));
 		if(!isNaN(darkHeight) && parseInt(darkHeight) > 0) 
 		{
+			// The surface class is applied after controls exist so login chrome,
+			// which has its own full-page artwork, is not covered by the form
+			// background layer.
+
 			this._darkHeader.style.height = this._darkHeight = Math.max(1, darkHeight + (CNFormManager.vista ? 5 : 21));
 			this._darkHeader.style.visibility = "inherit";
 			if(!CNFormManager.vista && this.isDialog) {
@@ -2645,6 +2549,29 @@ proto._executeXMLForm = function(formNode)
 	}
 			
 	this._executeXMLControls(formNode.childNodes, this._formPlaceholder, true);
+
+	// New Blue uses the server-provided darkHeight as the visible filter
+	// surface.  Do not paint the rest of the form: grids and totals belong to
+	// the light form surface.  Login has separate full-page artwork.
+	if(this._formPlaceholder && this._darkHeader && this._darkHeight > 0 &&
+		Util.hasClass(this._formPlaceholder, "theme_supportsDarkFormSurface"))
+	{
+		var isLoginForm = this._formPlaceholder.querySelector &&
+			this._formPlaceholder.querySelector(".cn_logincontrol_newblue, .cn_logincontrol");
+		var formNodeDarkHeight = parseInt(formNode.getAttribute("darkHeight"), 10);
+		if(!isLoginForm && !isNaN(formNodeDarkHeight) && formNodeDarkHeight > 0)
+		{
+			this._darkHeader.style.height = this._darkHeight = formNodeDarkHeight;
+			if(this._formPlaceholder.querySelectorAll)
+			{
+				var darkControls = this._formPlaceholder.querySelectorAll(
+					".cn_label, .cn_label_bold, .cn_checkbox, .cn_radiobox, .radioItem");
+				for(var darkIndex = 0; darkIndex < darkControls.length; darkIndex++)
+					Util.setDarkHeaderControlClass(darkControls[darkIndex], this);
+			}
+		}
+	}
+
 }
 
 proto._executeXMLControls = function(childNodes, parentElement, topLevel, forceCreation)
@@ -2752,6 +2679,7 @@ proto._executeXMLContainer = function(node, parentElement, processChildren, isDe
 proto._buildTabContainer = function(node, parentElement, anchor, groupIDAttr, isDelayedTopLevel, captionAttr, layoutManager)
 {
 	l = document.createElement("div");
+	l.className = "tabbedContainerContent";
 	parentElement.appendChild(l);
 	l.jsObject = {};
 
@@ -2773,7 +2701,7 @@ proto._buildTabContainer = function(node, parentElement, anchor, groupIDAttr, is
 		else CNUtil.setBounds(tabbedGroup.tabTable, node, parentElement);
 	}
 
-	var tabsTD = tabbedGroup.tabTable.rows(0).cells(0);
+	var tabsTD = tabbedGroup.tabTable.rows[0].cells[0];
 	var tabTable = this._buildContainerTab(tabsTD);
 	tabTable.id = String(node.getAttribute("id"));
 	tabTable._autoPostBack = node.getAttribute("autoPostBack") == "true";
@@ -2794,8 +2722,8 @@ proto._buildTabContainer = function(node, parentElement, anchor, groupIDAttr, is
 		CNUtil.setBounds(l, node);
 
 		// Move down as header (with tab buttons) takes it size.
-		l.style.top = parseInt(l.currentStyle.top, 10) + 22;
-		l.style.height = parseInt(l.currentStyle.height, 10) - 22;
+		l.style.top = parseInt(Util.getStyle(l, "top"), 10) + 22;
+		l.style.height = parseInt(Util.getStyle(l, "height"), 10) - 22;
 	}
 	return l;
 }
@@ -2812,7 +2740,7 @@ proto._buildContainerWithHeader = function(node, parentElement, captionAttr, anc
 	}
 	else
 	{
-		var td = l.all["contentTD"];
+		var td = Util.findById(l, "contentTD");
 		containerElement = document.createElement("div");
 		td.appendChild(containerElement);
 		
@@ -2821,7 +2749,7 @@ proto._buildContainerWithHeader = function(node, parentElement, captionAttr, anc
 		containerElement.style.height = "100%";
 	}
 	containerElement._isContainerPanel = true;
-	if(captionAttr) l.all["__panel_text"].innerText = String(captionAttr);
+	if(captionAttr) Util.findById(l, "__panel_text").textContent = String(captionAttr);
 	
 	l.containerElement = containerElement;
 
@@ -2878,40 +2806,40 @@ proto._addCollapseButton = function(parentElement, up)
 	}
 	else
 	{
-		var pt = parentElement.all["__panel_text"];
+		var pt = Util.findById(parentElement, "__panel_text");
 		var td = pt.parentElement;
 	
-		var l = document.createElement("<div class=cnCollapseButton unselectable=on>");
+		var l = Util.createElement("div", "cnCollapseButton", null);
 		td.appendChild(l);
-		var span = document.createElement('<span unselectable=on>');
+		var span = Util.createElement("span", null, null);
 		l.appendChild(span);
-		span.innerText = up ? '5' : '6';
+		span.textContent = up ? '5' : '6';
 		
-		l.attachEvent("onmouseenter", this._collapseButton_onmouseenter);
-		l.attachEvent("onmouseleave", this._collapseButton_onmouseleave);
+		Event.add(l, "mouseenter", this, this._collapseButton_onmouseenter);
+		Event.add(l, "mouseleave", this, this._collapseButton_onmouseleave);
 	}
 	//l.title = "Collapse";		
 	Tooltip.set(l, "Collapse");
-	l.attachEvent("onclick", this._collapseButton_onclick);	
+	Event.add(l, "click", this, this._collapseButton_onclick);	
 }
 
 proto._collapseButton_onmouseenter = function()
 {
-	var l = event.srcElement;
-	l.runtimeStyle.borderWidth = "1px";
-	l.runtimeStyle.padding = "0px";
+	var l = Util.eventTarget(Event.current());
+	l.style.borderWidth = "1px";
+	l.style.padding = "0px";
 }
 
 proto._collapseButton_onmouseleave = function()
 {
-	CNFormManager.getActiveFormManager()._unliteCollapseButton(event.srcElement);
+	CNFormManager.getActiveFormManager()._unliteCollapseButton(Util.eventTarget(Event.current()));
 }
 
 proto._unliteCollapseButton = function(l)
 {
 	if(CNFormManager.vista) return;
-	l.runtimeStyle.borderWidth = "0px";
-	l.runtimeStyle.padding = "1px";
+	l.style.borderWidth = "0px";
+	l.style.padding = "1px";
 }
 
 proto._collapseButton_onclick = function()
@@ -2920,7 +2848,7 @@ proto._collapseButton_onclick = function()
 }
 proto.collapseButton_onclick = function()
 {
-	var button = CNUtil.findByClassName(event.srcElement, "cnCollapseButton");
+	var button = CNUtil.findByClassName(Util.eventTarget(Event.current()), "cnCollapseButton");
 	
 	var l = CNUtil.findElement(button);
 	if(!l.isContainer)
@@ -2944,8 +2872,9 @@ proto.collapseButton_onclick = function()
 
 proto._buildTabbedContainer = function(parentElement)
 {
-	var table = document.createElement("<table width=100% height=100% border=0 cellpadding=0 cellspacing=0>")
+	var table = Util.createElement("table", null, {width: "100%", height: "100%", border: 0, cellpadding: 0, cellspacing: 0});
 	table._isTabbedContainer = true;
+	table.className = "standardsTabContainer";
 	parentElement.appendChild(table);
 	table.style.position = "absolute";
 	table.style.zIndex = -1;
@@ -2956,7 +2885,7 @@ proto._buildTabbedContainer = function(parentElement)
 	var contentTD = table.insertRow().insertCell();
 	contentTD.height = "100%";
 	contentTD.className = "tabbedContainerTD"
-	contentTD.innerText = " ";
+	contentTD.textContent = " ";
 	
 	return table;
 }
@@ -2966,74 +2895,80 @@ proto._buildContainerTab = function(parentElement)
 	var l;
 	if(CNFormManager.vista)
 	{
-		l = document.createElement("<div class='tabbedContainerButton'>")
+		l = Util.createElement("div", "tabbedContainerButton");
 		var div = document.createElement("div");
 		l.appendChild(div);
 		parentElement.appendChild(l);
-		l.attachEvent("onmouseenter", this._tabTable2_onmouseenter);
-		l.attachEvent("onmouseleave", this._tabTable2_onmouseleave);
+		Event.add(l, "mouseenter", this, this._tabTable2_onmouseenter);
+		Event.add(l, "mouseleave", this, this._tabTable2_onmouseleave);
 	}
 	else
 	{
-		var table = l = document.createElement("<table border=0 cellpadding=0 cellspacing=0>");
+		// Standards tabs use one semantic table and CSS for the complete
+		// surface. Do not recreate the historical three-slice image tabs.
+		var table = l = Util.createElement("table", "tabbedContainerButton", {border: 0, cellpadding: 0, cellspacing: 0});
+		table._standardsCssTab = true;
 		parentElement.appendChild(table);
-		
 		table.style.zIndex = 1;
-		table.style.display = "inline";
-		table.style.marginRight = 1;
+		table.style.display = "inline-table";
 		table.style.position = "relative";
-		table.style.cursor = "hand";
-		
+		table.style.cursor = "pointer";
+
 		var tr = table.insertRow();
-		tr.height = 22;
-	
+		tr.height = 28;
+
 		var td1 = tr.insertCell();
-		td1.width = 12;
-		
-		var img1 = document.createElement("<img width=12 height=22>");
-		td1.appendChild(img1);
-		
-		td2 = tr.insertCell();
-		td2.unselectable = true;
-	
+		td1.className = "tabbedContainerButton_edge";
+
+		var td2 = tr.insertCell();
+		td2.className = "tabbedContainerButton_text";
+		td2.style.userSelect = "none";
+
 		var td3 = tr.insertCell();
-		td3.width = 12;
-		
-		var img2 = document.createElement("<img width=12 height=22>");
-		td3.appendChild(img2);
+		td3.className = "tabbedContainerButton_edge";
 		this._setSelectedTab(table, false);
-		l.attachEvent("onmouseenter", this._tabTable_onmouseenter);
-		l.attachEvent("onmouseleave", this._tabTable_onmouseleave);
+		Event.add(l, "mouseenter", this, this._tabTable_onmouseenter);
+		Event.add(l, "mouseleave", this, this._tabTable_onmouseleave);
+		Event.add(l, "click", this, this._standardsTabClick);
 	}
-	l.attachEvent("onmousedown", this._tabTable_onmousedown);
+	Event.add(l, "mousedown", this, this._tabTable_onmousedown);
 	return l;	
+}
+
+// Standards browsers should not depend solely on the historical table
+// mousedown boundary. The click path is idempotent because the selected flag
+// prevents a second selection/postback when mousedown already handled it.
+proto._standardsTabClick = function(nativeEvent)
+{
+	var event = nativeEvent || (typeof Event != "undefined" && Event.current ? Event.current() : null);
+	var target = event && event.target;
+	var tab = target;
+	while(tab && tab.tagName != "TABLE") tab = tab.parentElement || tab.parentNode;
+	if(!tab || !tab._standardsCssTab || tab._disabled || tab._selected) return;
+	this._selectTab(tab, true);
+	if(tab._autoPostBack) this.postData("tabchanged");
 }
 
 proto._tabTable2_onmouseenter = function()
 {
-	var tab = event.srcElement;
+	var tab = Util.eventTarget(Event.current());
 	if(tab._disabled || tab.className.match(/tabbedContainerButton_selected/)) return;
-	//if(tab.filters.length == 0) tab.style.filter = "progid:DXImageTransform.Microsoft.Fade()";
-	//tab.filters[0].Apply();
 	tab.className = "tabbedContainerButton tabbedContainerButton_hover";
-	//tab.filters[0].Play(.2);
 }
 proto._tabTable2_onmouseleave = function()
 {
-	var tab = event.srcElement;
+	var tab = Util.eventTarget(Event.current());
 	if(tab._disabled || tab.className.match(/tabbedContainerButton_selected/)) return;
-	//tab.filters[0].Apply();
-	tab.className = "tabbedContainerButton";
-	//tab.filters[0].Play(.3);	
+	tab.className = "tabbedContainerButton";	
 }
 
 proto._tabTable_onmouseenter = function()
 {
-	event.srcElement.runtimeStyle.textDecoration = "underline";
+	Util.eventTarget(Event.current()).style.textDecoration = "underline";
 }
 proto._tabTable_onmouseleave = function()
 {
-	event.srcElement.runtimeStyle.textDecoration = "";
+	Util.eventTarget(Event.current()).style.textDecoration = "";
 }
 
 proto._tabTable_onmousedown = function()
@@ -3046,13 +2981,12 @@ proto._tabTable_onmousedown = function()
 	var tab;	
 	if(CNFormManager.vista)
 	{
-		tab = CNUtil.findByClassName(event.srcElement, "tabbedContainerButton");
+		tab = CNUtil.findByClassName(Util.eventTarget(Event.current()), "tabbedContainerButton");
 		if(tab._disabled) return;
-		if(tab.filters.length > 0) tab.filters[0].Stop();
 	}
 	else
 	{
-		tab = CNUtil.findTag(event.srcElement, "TABLE");
+		tab = CNUtil.findTag(Util.eventTarget(Event.current()), "TABLE");
 		try{ tab.focus(); } catch(e){}
 	}	
 	formManager._selectTab(tab, true);
@@ -3109,9 +3043,9 @@ proto._selectTab = function(tabTable, userClick)
 
 proto._getContainerForTab = function(tabTable)
 {
-	var tabContainerTable = CNUtil.findTag(tabTable.parentElement, "TABLE");
-	var parentElement = tabContainerTable.parentElement;
-	var container = parentElement.children[tabTable.id];
+	var tabContainerTable = CNUtil.findTag(tabTable.parentNode || tabTable.parentElement, "TABLE");
+	var parentElement = tabContainerTable.parentNode || tabContainerTable.parentElement;
+	var container = Util.findById(parentElement, tabTable.id);
 	return container;
 }
 
@@ -3126,7 +3060,7 @@ proto._setSelectedTab = function(tabTable, selected, force)
 		if(selected)
 		{
 			tabTable.className = "tabbedContainerButton tabbedContainerButton_selected";
-			if(tabTable.previousSibling && tabTable.previousSibling.currentStyle.display != "none")
+			if(tabTable.previousSibling && Util.getStyle(tabTable.previousSibling, "display") != "none")
 			{
 				tabTable.style.left = "-2px";
 				tabTable.style.marginRight = "-4px";
@@ -3148,27 +3082,16 @@ proto._setSelectedTab = function(tabTable, selected, force)
 	}
 	else
 	{
-		var tr = tabTable.rows(0);
-		var cells = tr.cells;
-		var imageNumber;
-		var td2 = cells[1];
-		if(selected) 
+		if(tabTable._standardsCssTab)
 		{
-			tabTable.style.top = 1;
-			imageNumber = "1"
-			td2.style.paddingTop = "1px";
-			td2.style.fontWeight = "bold";
+			tabTable.className = selected ? "tabbedContainerButton tabbedContainerButton_selected" : "tabbedContainerButton";
+			tabTable.style.top = "0px";
+			tabTable.setAttribute("aria-selected", selected ? "true" : "false");
+			return;
 		}
-		else
-		{
-			tabTable.style.top = 0;
-			imageNumber = "2"
-			td2.style.paddingTop = "3px";
-			td2.style.fontWeight = "bold";
-		}
-		cells[0].children[0].src = CNFormManager.themeImagesPath + "container-tab-" + imageNumber + "_01.gif";
-		td2.background = CNFormManager.themeImagesPath + "container-tab-" + imageNumber + "_02.gif";
-		cells[2].children[0].src = CNFormManager.themeImagesPath + "container-tab-" + imageNumber + "_03.gif";
+		// Standards builds must not depend on the historical sliced tab images.
+		// Any legacy table reaching this branch is intentionally unsupported.
+		Util.reportUnsupported("formmanager", "legacy image-sliced tabs");
 	}
 }
 
@@ -3177,7 +3100,7 @@ proto._executeXMLControl = function(node, parentElement, isDelayedTopLevel, isDe
 {
 	var controlType = node.tagName;
 	
-	var type = eval("CN_" + controlType);
+	var type = Util.resolveGlobal("CN_" + controlType);
 	if(!type)
 	{
 		Util.assert("Can't create control: " + controlType);
@@ -3229,7 +3152,7 @@ proto._executeXMLControl = function(node, parentElement, isDelayedTopLevel, isDe
 	if(menuID != null)
 	{
 		l._menuID = String(menuID);
-		l.attachEvent("onmousedown", this._control_oncontextmenu);
+		Event.add(l, "mousedown", this, this._control_oncontextmenu);
 	}
 
 	if(jsl.supportsRequired && node.getAttribute("required") == "true")
@@ -3267,9 +3190,9 @@ CNFormManager._wrap_getAttribute = function(name)
 
 proto._putRequiredMark = function(l, parentElement, anchor)
 {
-	var icon = document.createElement("<span class='cnRequiredIconSpan'>");
+	var icon = Util.createElementFromHTML("<span class='cnRequiredIconSpan'>");
 	parentElement.appendChild(icon);
-	icon.innerText = "*";
+	icon.textContent = "*";
 	icon._isRequiredIcon = true;
 	icon._attachedToID = l.id;
 	//icon.title = "Required";
@@ -3280,11 +3203,9 @@ proto._putRequiredMark = function(l, parentElement, anchor)
 	
 	var y, x;
 	if(l.jsObject._anchorTop) y = l.jsObject._anchorTop;
-	else if(l.style.pixelTop) y = l.style.pixelTop;
-	else y = l.offsetTop;
+	else y = parseInt(l.style.top, 10) || l.offsetTop;
 	if(l.jsObject._anchorLeft) x = l.jsObject._anchorLeft;
-	else if(l.style.pixelLeft) x = l.style.pixelLeft;
-	else x = l.offsetLeft;
+	else x = parseInt(l.style.left, 10) || l.offsetLeft;
 	
 	var markAnchor = anchor;
 	if((anchor & LayoutManager.LEFTRIGHT) == LayoutManager.LEFTRIGHT) 
@@ -3316,7 +3237,7 @@ proto._putRequiredMark = function(l, parentElement, anchor)
 	}
 	else
 	{
-		var w = l.offsetWidth ? l.offsetWidth : l.style.pixelWidth;
+		var w = l.offsetWidth || parseInt(l.style.width, 10) || 0;
 		x += w + 2;
 		icon.style.left = x;
 		icon.style.top = y;
@@ -3348,7 +3269,7 @@ proto._setVistaColor1 = function(color)
 
 proto._executeXMLData = function(dataNode)
 {
-	var dataNode = this._ideaNode.selectSingleNode("data");
+	var dataNode = Util.xmlSelectSingleNode(this._ideaNode, "data");
 	if(!dataNode) 
 	{
 		if(this.delayedControlsCreation) this._processDelayedControlsWithoutData();
@@ -3386,7 +3307,7 @@ proto._executeXMLData = function(dataNode)
 	attr = dataNode.getAttribute("errorMode");
 	if(attr) this._setErrorMode(attr == "true");
 
-	var childNodes = dataNode.selectNodes("*");
+	var childNodes = Util.xmlSelectNodes(dataNode, "*");
 	this._executeXMLData2(childNodes, this._formPlaceholder, true);
 	
 	this._executeControlsData(dataNode);
@@ -3396,7 +3317,7 @@ proto._executeXMLData = function(dataNode)
 	attr = dataNode.getAttribute("defaultButton");
 	if(attr) 
 	{
-		var b = this._formPlaceholder.all[String(attr)];
+		var b = Util.findById(this._formPlaceholder, String(attr));
 		if(b && b.jsObject) this.defaultButton = b.jsObject;
 	}
 
@@ -3406,7 +3327,7 @@ proto._executeXMLData = function(dataNode)
 	if(attr)
 	{
 		var focusedID = String(attr);
-		var el = this._formPlaceholder.all[focusedID];
+		var el = Util.findById(this._formPlaceholder, focusedID);
 		if(el) this._setFocusTO(el);
 		else Util.assert('no ' + focusedID + ' control found to focus');
 	}
@@ -3418,7 +3339,7 @@ proto._executeXMLData = function(dataNode)
 proto._executeControlsData = function(dataNode) {
 	for(var i in this._controls) {
 		var jso = this._controls[i];
-		var node = dataNode.selectSingleNode(i + "[@id=\"" + jso.elementID + "\"]");
+		var node = Util.xmlSelectSingleNode(dataNode, i + "[@id=\"" + jso.elementID + "\"]");
 		if(node && jso.loadData) jso.loadData(node);
 	}
 }
@@ -3665,14 +3586,14 @@ proto._executeDelayedContainer = function(id, ar, container, tabGroupID, topLeve
 
 proto._loadDataIntoContainer = function(id, container, node)
 {
-	var formNode = node.selectSingleNode("form");
+	var formNode = Util.xmlSelectSingleNode(node, "form");
 	if(formNode != null) this._loadContainerSubForm(container, formNode, node);
 
-	var oldVisibility = container.currentStyle.visibility;
+	var oldVisibility = Util.getStyle(container, "visibility");
 	this._setCommonProperties(container, node, true);
 	
 	if(this._layoutManager && oldVisibility == "hidden" 
-	&& oldVisibility != container.currentStyle.visibility)
+	&& oldVisibility != Util.getStyle(container, "visibility"))
 	{
 		this._layoutManager.forceContainerLayout(container);
 	}
@@ -3701,9 +3622,9 @@ proto._loadDataIntoContainer = function(id, container, node)
 }
 proto._setContainerCaption = function(container, caption) {
 	if(CNFormManager.vista) {
-		container.children[1].innerText = caption;
+		container.children[1].textContent = caption;
 	} else {
-		container.rows[0].cells[1].firstChild.innerText = caption;
+		container.rows[0].cells[1].firstChild.textContent = caption;
 	}		
 }
 
@@ -3769,7 +3690,7 @@ proto._subFromDeleteControls = function(container, contElement) {
 	for(var i = 0; i < toDelete.length; i++) {
 		var icon = toDelete[i];
 		delete this._requiredIcons[icon._attachedToID];
-		icon.removeNode(true);
+		Util.removeElement(icon);
 	}
 }
 
@@ -3869,15 +3790,20 @@ proto._processTabbedContainer = function(id, node, tgID)
 	var group = this._tabbedGroups[tgID];
 	if(!group) return;
 	
-	var tabButtonsTD = group.tabTable.rows(0).cells(0);
-	var tab = tabButtonsTD.children[id];
+	var tabButtonsTD = group.tabTable.rows[0].cells[0];
+	var tab = Util.findById(tabButtonsTD, id);
 
 	var captionAttr = node.getAttribute("caption");
 	var tabDisabledAttr = node.getAttribute("headerEnabled");
+	if(!tab)
+	{
+		CNFormManager._trace("Tabbed container button not found: " + id + " in group " + tgID);
+		return;
+	}
 		
 	if(CNFormManager.vista)
 	{
-		if(captionAttr) tab.firstChild.innerText = String(captionAttr);
+		if(captionAttr) tab.firstChild.textContent = String(captionAttr);
 
 		if(tabDisabledAttr) 
 		{
@@ -3887,7 +3813,9 @@ proto._processTabbedContainer = function(id, node, tgID)
 	}
 	else
 	{
-		if(captionAttr) tab.cells(1).innerText = String(captionAttr);		
+		var tabRow = tab.rows && tab.rows[0];
+		var captionCell = tabRow && tabRow.cells && tabRow.cells[1];
+		if(captionAttr && captionCell) captionCell.textContent = String(captionAttr);
 		if(tabDisabledAttr) tab.disabled = tabDisabledAttr == "false";
 	}
 
@@ -3940,7 +3868,7 @@ proto._areAllTabsHidden = function(group)
 {
 	for(var i = 0; i < group.containers.length; i++)
 	{
-		if(group.containers[i].currentStyle.visibility != 'hidden')
+		if(Util.getStyle(group.containers[i], "visibility") != 'hidden')
 		{
 			 return false;
 		}
@@ -3991,7 +3919,7 @@ proto._loadMenu = function(node)
 
 proto._fillMenu = function(node, menu, menuID)
 {
-	var itemNodes = node.selectNodes("items/*");
+	var itemNodes = Util.xmlSelectNodes(node, "items/*");
 	for(var i = 0; i < itemNodes.length; i++)
 	{
 		var itemNode = itemNodes[i];
@@ -4009,9 +3937,9 @@ proto._fillMenu = function(node, menu, menuID)
 			var l;
 			if(itemNode.hasChildNodes())
 			{
-				var returnValue = menu.createSubmenuEx(text, img);
-				this._fillMenu(itemNode, returnValue.submenu, menuID)
-				l = returnValue.item;
+				var submenuResult = menu.createSubmenuEx(text, img);
+				this._fillMenu(itemNode, submenuResult.submenu, menuID)
+				l = submenuResult.item;
 			}
 			else
 			{
@@ -4021,7 +3949,7 @@ proto._fillMenu = function(node, menu, menuID)
 				l._parentMenuID = menuID;
 				if(img && !isEnabled)
 				{
-					l.children[0].children[0].style.filter = "alpha(opacity=30)";
+
 				}
 				
 				var attr = itemNode.getAttribute("wrap");
@@ -4056,7 +3984,7 @@ proto._getElement = function(parentElement, id)
 {
 	if (parentElement == null || parentElement.children == null) return;	
 	
-	var l = parentElement.children[id];
+	var l = Util.findById(parentElement, id);
 	if(!l) 
 	{
 		//alert("Can't get element " + id + " to bind data to.");
@@ -4156,8 +4084,8 @@ proto._setControlsDisabledState = function(disabled, accountModalFocus, doNotSet
 	{
 		// Try to restore active element.
 		if(this._storedActiveElement && this._storedActiveElement.parentElement
-		&& this._storedActiveElement.currentStyle.display != 'none'
-		&& this._storedActiveElement.currentStyle.visibility != 'hidden'
+		&& Util.getStyle(this._storedActiveElement, "display") != 'none'
+		&& Util.getStyle(this._storedActiveElement, "visibility") != 'hidden'
 		&& !this._storedActiveElement.disabled
 		&& !this._storedActiveElement.readOnly)  
 		{
@@ -4204,7 +4132,7 @@ proto._setControlDisabled = function(l, disabled, accountModalFocus)
 	var requiredIcon = this._requiredIcons[l.id];
 	if(requiredIcon) 
 	{
-		requiredIcon.style.visibility = value || l.currentStyle.visibility == 'hidden' ? "hidden" : "inherit";
+		requiredIcon.style.visibility = value || Util.getStyle(l, "visibility") == 'hidden' ? "hidden" : "inherit";
 	}
 }
 
@@ -4256,7 +4184,7 @@ proto.fail = function(str)
 
 proto._createDisabler = function()
 {
-	return document.createElement('<div style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; background: white; z-index: 10000; filter: alpha(opacity=50); ">');
+	return Util.createElementFromHTML('<div style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; background: white; z-index: 10000; opacity: 0.5; ">');
 }
 
 proto._handleLoadFailed = function()
@@ -4393,8 +4321,7 @@ proto.lightPostData = function(xmlStr) {
 	if(this._isPostingBack || this._waitingForButtonPostback) return false;
 	this._isPostingBack = true;
 	
-	var xmldoc = new ActiveXObject("Microsoft.XMLDOM");
-	xmldoc.loadXML(xmlStr);
+	var xmldoc = Util.parseXML(xmlStr);
 	var pi = xmldoc.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"" + this.xmlEncoding + "\"");
 	xmldoc.insertBefore(pi, xmldoc.documentElement);
 	var ev = xmldoc.createElement("events");
@@ -4407,7 +4334,7 @@ proto.lightPostData = function(xmlStr) {
 
 proto._continuePostData = function()
 {
-	var xmldoc = new ActiveXObject("Microsoft.XMLDOM");	
+	var xmldoc = Util.createXMLDocument();
 	var pi = xmldoc.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"" + this.xmlEncoding + "\"");
 	xmldoc.appendChild(pi);
 
@@ -4452,8 +4379,7 @@ proto._continuePostData = function()
 		if(this._postbackElement.length > 0 && this._postbackElement.charAt(0) == '<' && !isEmptyHeartBeat)
 		{
 			// Raw xml.
-			var tempdoc = new ActiveXObject("Microsoft.XMLDOM");
-			tempdoc.loadXML(this._postbackElement);
+			var tempdoc = Util.parseXML(this._postbackElement);
 			dataNode.appendChild(tempdoc.documentElement);
 		}
 		// Predefined events.
@@ -4497,8 +4423,7 @@ proto._continuePostData = function()
 	//If postbak was called by heartbeat  -> don't reset heartBeatCounter		
 	if(isEmptyHeartBeat)
 	{
-		var tempdoc = new ActiveXObject("Microsoft.XMLDOM");
-		tempdoc.loadXML(this._postbackElement);
+		var tempdoc = Util.parseXML(this._postbackElement);
 		dataNode.appendChild(tempdoc.documentElement);
 	}
 	// Postback was called by other controls not heartbeat -> reset heartBeatCounter
@@ -4516,7 +4441,7 @@ proto._continuePostData = function()
 	
 	if(this.isAttach) {
 		dataNode.setAttribute("forAttachedForm", this._attachAsFormToTag);
-		this._parentFormManager.postData(dataNode.xml);
+		this._parentFormManager.postData(Util.xmlString(dataNode));
 	} else {
 		this.loadForm(xmldoc, "_finishPostData"); // Called immediately.
 	}
@@ -4631,7 +4556,7 @@ proto._storeData = function(l, xmldoc, dataNode)
 			// XMLDocumentFragment.
 			else if(node.nodeType == 11)
 			{
-				var nodes = node.selectNodes("*");
+				var nodes = Util.xmlSelectNodes(node, "*");
 				var nodeCount = nodes.length;
 				for(var i = 0; i < nodeCount; i++) nodes[i].setAttribute("id", id);
 			}
@@ -4642,7 +4567,7 @@ proto._storeData = function(l, xmldoc, dataNode)
 
 proto._testForXMLDialog = function()
 {
-	if(this._ideaNode.selectSingleNode("dialog")) this._dialogPending = true;
+	if(Util.xmlSelectSingleNode(this._ideaNode, "dialog")) this._dialogPending = true;
 }
 
 proto._processServerError = function(errorNode)
@@ -4682,7 +4607,7 @@ proto._processServerError = function(errorNode)
 				break;				
 		}
 	}
-	if(errorNode.text) alert(errorNode.text);
+	if(Util.xmlText(errorNode)) alert(Util.xmlText(errorNode));
 	return result;
 }
 
@@ -4691,7 +4616,7 @@ proto._processServerErrors = function(errorsNode)
 	this._shutDownTimers();	
 	
 	var title = String(errorsNode.getAttribute("title"));
-	var errors = errorsNode.selectNodes("error");
+	var errors = Util.xmlSelectNodes(errorsNode, "error");
 
 	if(CNFormManager.themeLoaded)
 	{
@@ -4722,12 +4647,12 @@ proto._processFatalServerError = function(errorNode)
 		this._halt = true;
 	}
 
-	var msgNode = errorNode.selectSingleNode("msg");
-	if(msgNode) msg = msgNode.text;
-	var buildInfoNode = errorNode.selectSingleNode("buildinfo");
-	if(buildInfoNode) buildInfo = buildInfoNode.text;
-	var stackTraceNode = errorNode.selectSingleNode("stacktrace");
-	if(stackTraceNode) stackTrace = stackTraceNode.text;
+	var msgNode = Util.xmlSelectSingleNode(errorNode, "msg");
+	if(msgNode) msg = Util.xmlText(msgNode);
+	var buildInfoNode = Util.xmlSelectSingleNode(errorNode, "buildinfo");
+	if(buildInfoNode) buildInfo = Util.xmlText(buildInfoNode);
+	var stackTraceNode = Util.xmlSelectSingleNode(errorNode, "stacktrace");
+	if(stackTraceNode) stackTrace = Util.xmlText(stackTraceNode);
 	
 	if(CNFormManager.themeLoaded)
 	{
@@ -4811,7 +4736,7 @@ proto._initFromNode = function(node, resizable)
 		}
 		else if(!CNFormManager.vista)
 		{
-			var but = this._dialogDiv.all["__dialogMaxButton"];	
+			var but = Util.findById(this._dialogDiv, "__dialogMaxButton");	
 			but.style.display = "none";
 		}
 	}
@@ -4820,14 +4745,14 @@ proto._initFromNode = function(node, resizable)
 	{
 		var but;
 		if(CNFormManager.vista) but = CNDialogManager.getCloseButton(this._dialogDiv);
-		else but = this._dialogDiv.all["__dialogCloseButton"];
+		else but = Util.findById(this._dialogDiv, "__dialogCloseButton");
 
 		if(but) 
 		{
 			if(createBG && resizable)
 			{
 				but._disabled = true;
-				but.style.filter = "alpha(opacity=50)";
+
 			}
 			else
 			{
@@ -4879,7 +4804,7 @@ proto._createDialogWindow = function(createBG, dialogWidth, dialogHeight, resiza
 			var formHeaderHeight = formHeader ? 34 : 0;
 			// + 11 = dialog caption img.
 			this._dialogDiv = this._createAndShowDialogDiv(dialogWidth + 30, dialogHeight + 63 + 11 + formHeaderHeight, resizable, formHeader);
-			this._formPlaceholder = this._dialogDiv.all["formPlaceholder1"];
+			this._formPlaceholder = Util.findById(this._dialogDiv, "formPlaceholder1");
 		}
 		this._dialogDiv._hasBackground = true;
 	}
@@ -4890,8 +4815,8 @@ proto._createDialogWindow = function(createBG, dialogWidth, dialogHeight, resiza
 	}
 		
 	this._dialogNotShownYet = true;
-	this._formPlaceholder.attachEvent("onkeypress", this._formPlaceholder_onkeypress); // Default button.
-	this._dialogDiv.attachEvent("onbeforedeactivate", this._dialog_formPlaceholder_onbeforedeactivate);	
+	Event.add(this._formPlaceholder, "keypress", this, this._formPlaceholder_onkeypress); // Default button.
+	Event.add(this._dialogDiv, "focusout", this, this._dialog_formPlaceholder_onfocusout);	
 
 	this._dialogDiv.appendChild(this._disabler);
 }
@@ -4935,31 +4860,17 @@ proto._closeDialog = function(doNotSendEvent)
 proto.destroyDialog = function()
 {
 	if(!this._dialogDiv) Util.assert("destroyDialog() - !this._dialogDiv");
-	this._formPlaceholder.detachEvent("onkeypress", this._formPlaceholder_onkeypress);
-	this._dialogDiv.detachEvent("onbeforedeactivate", this._dialog_formPlaceholder_onbeforedeactivate);	
+	Event.del(this._formPlaceholder, "keypress", this, this._formPlaceholder_onkeypress);
+	Event.del(this._dialogDiv, "focusout", this, this._dialog_formPlaceholder_onfocusout);
 	CNDialogManager.hidePopup(this._dialogDiv, null, true);
 
 
 	this.destroy();
 
-	//if(this._dialogDiv.shadow) this._dialogDiv.shadow.destroy();
-	/*if(CNFormManager.vista && Util.IE7 && this._dialogDiv.filters.length > 0)
-	{
-		var f = this._dialogDiv.filters['progid:DXImageTransform.Microsoft.Fade'];
-		if(f) this._dialogDiv.attachEvent("onfilterchange", this._dialogDiv_onfilterchange);
-		return;
-	}
 
-	this._dialogDiv.removeNode(true);*/
 	if(this._dialogDiv._hasBackground) CNDialogManager.destroyDialog(this._dialogDiv);
 	else this._dialogDiv.parentNode.removeChild(this._dialogDiv);
 	this._dialogDiv = null;
-}
-
-proto._dialogDiv_onfilterchange = function()
-{
-	var dialogDiv = event.srcElement;
-	dialogDiv.removeNode(true);
 }
 
 proto.proceedChildDialogClosed = function(childFM, doNotSendEvent)
@@ -5009,7 +4920,7 @@ proto._finishXMLDialog = function()
 
 proto._createAndShowSimpleDialogDiv = function(width, height)
 {
-	var formPlaceholder1 = document.createElement('<div style="position: absolute; overflow: auto; ">');
+	var formPlaceholder1 = Util.createElementFromHTML('<div style="position: absolute; overflow: auto; ">');
 	formPlaceholder1.style.height = height;
 	formPlaceholder1.style.width = width;
 	document.body.appendChild(formPlaceholder1);
@@ -5021,7 +4932,7 @@ proto._createAndShowSimpleDialogDiv = function(width, height)
 
 proto._createAndShowDialogDiv = function(width, height, resizable, formHeader)
 {
-	var div = document.createElement("<div class=cnFormDialogDiv style='border: 1px solid #8F929E; visibility: hidden; '>");
+	var div = Util.createElementFromHTML("<div class=cnFormDialogDiv style='border: 1px solid #8F929E; visibility: hidden; '>");
 	document.body.appendChild(div);
 
 	div.style.position = "absolute";
@@ -5031,68 +4942,68 @@ proto._createAndShowDialogDiv = function(width, height, resizable, formHeader)
 	div.style.top = (document.body.clientHeight - div.offsetHeight) / 2;
 	div.style.left = (document.body.clientWidth - div.offsetWidth) / 2;
 
-	var table = document.createElement('<table width=100% height=100% border=0 cellpadding=0 cellspacing=0>');
+	var table = Util.createElementFromHTML('<table width=100% height=100% border=0 cellpadding=0 cellspacing=0>');
 	div.appendChild(table);
 	var tbody = document.createElement('tbody');
 	table.appendChild(tbody);
-	var tr = document.createElement('<tr>');
+	var tr = Util.createElementFromHTML('<tr>');
 	tbody.appendChild(tr);
-	var td = document.createElement('<td height=42>');
+	var td = Util.createElementFromHTML('<td height=42>');
 	tr.appendChild(td);
 
-	var table2 = document.createElement('<table width=100% border=0 cellpadding=3 cellspacing=0>');
+	var table2 = Util.createElementFromHTML('<table width=100% border=0 cellpadding=3 cellspacing=0>');
 	td.appendChild(table2);
 	var tbody2 = document.createElement('tbody');
 	table2.appendChild(tbody2);
 	var tr2 = document.createElement('tr');
 	tbody2.appendChild(tr2);
-	var td2 = document.createElement('<td width=2>');
+	var td2 = Util.createElementFromHTML('<td width=2>');
 	tr2.appendChild(td2);
-	var captionTD = document.createElement('<td height=42 style="cursor: default; ">');
+	var captionTD = Util.createElementFromHTML('<td height=42 style="cursor: default; ">');
 	tr2.appendChild(captionTD);
-	var formCaption1 = document.createElement('<h1 id=formCaption1>');
+	var formCaption1 = Util.createElementFromHTML('<h1 id=formCaption1>');
 	captionTD.appendChild(formCaption1);
-	var td3 = document.createElement("<td width=16 unselectable=on style='position: relative; '>");
+	var td3 = Util.createElementFromHTML("<td width=16 style='position: relative; '>");
 	tr2.appendChild(td3);
 
-	var dialogCloseButton = document.createElement("<span id=__dialogCloseButton class='dialogTopButton dialogCloseButton' unselectable=on>");
+	var dialogCloseButton = Util.createElementFromHTML("<span id=__dialogCloseButton class='dialogTopButton dialogCloseButton'>");
 	td3.appendChild(dialogCloseButton);
-	var span = document.createElement('<span unselectable=on>');
+	var span = Util.createElementFromHTML('<span>');
 	dialogCloseButton.appendChild(span);
-	span.innerText = 'r';
+	span.textContent = 'r';
 	
-	var maxButton = document.createElement("<span id=__dialogMaxButton class='dialogTopButton dialogMaxButton' unselectable=on>");
+	var maxButton = Util.createElementFromHTML("<span id=__dialogMaxButton class='dialogTopButton dialogMaxButton'>");
 	td3.appendChild(maxButton);
-	var span = document.createElement('<span unselectable=on>');
+	var span = Util.createElementFromHTML('<span>');
 	maxButton.appendChild(span);
-	span.innerText = '1';
+	span.textContent = '1';
 
 	var tr12 = document.createElement('tr');
 	tbody.appendChild(tr12);
-	var td3 = document.createElement('<td valign=top height=100% style="padding: 0px; padding-top: 0px; ">');
+	var td3 = Util.createElementFromHTML('<td valign=top height=100% style="padding: 0px; padding-top: 0px; ">');
 	tr12.appendChild(td3);
 	
-	var table3 = document.createElement('<table width=100% height=100% border=0 cellpadding=0 cellspacing=0>');
+	var table3 = Util.createElementFromHTML('<table width=100% height=100% border=0 cellpadding=0 cellspacing=0>');
 	td3.appendChild(table3);
 	var tbody3 = document.createElement('tbody');
 	table3.appendChild(tbody3);
 	var tr31 = document.createElement('tr');
 	tbody3.appendChild(tr31);
-	var td4 = document.createElement('<td width=12>');
+	var td4 = Util.createElementFromHTML('<td width=12>');
 	tr31.appendChild(td4);
-	var _img1 = document.createElement('<img width=12 height=12>');
+	var _img1 = Util.createElementFromHTML('<img width=12 height=12>');
 	td4.appendChild(_img1);
-	var _td1 = document.createElement('<td width=100%>');
+	var _td1 = Util.createElementFromHTML('<td width=100%>');
 	tr31.appendChild(_td1);
-	var td5 = document.createElement('<td width=12>');
+	var td5 = Util.createElementFromHTML('<td width=12>');
 	tr31.appendChild(td5);
-	var _img2 = document.createElement('<img width=12 height=12>');
+	var _img2 = Util.createElementFromHTML('<img width=12 height=12>');
 	td5.appendChild(_img2);
 	var tr32 = document.createElement('tr');
 	tbody3.appendChild(tr32);
 	var _td2 = document.createElement('td');
 	tr32.appendChild(_td2);
-	var td6 = document.createElement('<td bgcolor=white valign=top height=100% width=100% style="position: relative; ">');
+	var td6 = Util.createElementFromHTML('<td bgcolor=white valign=top height=100% width=100% style="position: relative; ">');
 	tr32.appendChild(td6);
 	
 	if(formHeader) {
@@ -5114,7 +5025,7 @@ proto._createAndShowDialogDiv = function(width, height, resizable, formHeader)
 		td6.appendChild(formHeaderDiv);
 	}
 	
-	var darkHeader1 = document.createElement('<div style="position: absolute; left: -9px; top: -11px; padding-right: 0px;\
+	var darkHeader1 = Util.createElementFromHTML('<div style="position: absolute; left: -9px; top: -11px; padding-right: 0px;\
 		right: -9px; height: 200px; visibility: inherit; padding-bottom: 2px; ">');
 	td6.appendChild(darkHeader1);
 	this._darkHeader = darkHeader1;
@@ -5122,47 +5033,47 @@ proto._createAndShowDialogDiv = function(width, height, resizable, formHeader)
 	var FORM_HEADER_HEIGHT = 22;
 	if(formHeader) darkHeader1.style.top = -9 + FORM_HEADER_HEIGHT + "px"; // 22 - blue dialog formHeader extra height.
 	
-	var table4 = document.createElement('<table width=100% height=100% border="0" cellpadding="0" cellspacing="0">');
+	var table4 = Util.createElementFromHTML('<table width=100% height=100% border="0" cellpadding="0" cellspacing="0">');
 	darkHeader1.appendChild(table4);
 	var tbody4 = document.createElement('tbody');
 	table4.appendChild(tbody4);
 
 	var tr41 = document.createElement('tr');
 	tbody4.appendChild(tr41);
-	var td411 = document.createElement('<td>');
+	var td411 = Util.createElementFromHTML('<td>');
 	tr41.appendChild(td411);
-	var _img3 = document.createElement('<img width="12" height="14">');
+	var _img3 = Util.createElementFromHTML('<img width="12" height="14">');
 	td411.appendChild(_img3);
-	var _td3 = document.createElement('<td width="100%" height="14">');
+	var _td3 = Util.createElementFromHTML('<td width="100%" height="14">');
 	tr41.appendChild(_td3);
-	var td412 = document.createElement('<td>');
+	var td412 = Util.createElementFromHTML('<td>');
 	tr41.appendChild(td412);
-	var _img4 = document.createElement('<img width="12" height="14">');
+	var _img4 = Util.createElementFromHTML('<img width="12" height="14">');
 	td412.appendChild(_img4);
 	
 	var tr42 = document.createElement('tr');
 	tbody4.appendChild(tr42);
-	var _td4 = document.createElement('<td width="12" height="100%">');
+	var _td4 = Util.createElementFromHTML('<td width="12" height="100%">');
 	tr42.appendChild(_td4);
-	var _td5 = document.createElement('<td width="100%" height="100%">');
+	var _td5 = Util.createElementFromHTML('<td width="100%" height="100%">');
 	tr42.appendChild(_td5);
-	var _td6 = document.createElement('<td width="12" height="100%">');
+	var _td6 = Util.createElementFromHTML('<td width="12" height="100%">');
 	tr42.appendChild(_td6);
 	
 	var tr43 = document.createElement('tr');
 	tbody4.appendChild(tr43);
 	var td431 = document.createElement('td');
 	tr43.appendChild(td431);
-	var _img5 = document.createElement('<img width="12" height="13">');
+	var _img5 = Util.createElementFromHTML('<img width="12" height="13">');
 	td431.appendChild(_img5);
-	var _td7 = document.createElement('<td width="100%" height="13">');
+	var _td7 = Util.createElementFromHTML('<td width="100%" height="13">');
 	tr43.appendChild(_td7);
 	var td432 = document.createElement('td');
 	tr43.appendChild(td432);
-	var _img6 = document.createElement('<img width="12" height="13">');
+	var _img6 = Util.createElementFromHTML('<img width="12" height="13">');
 	td432.appendChild(_img6);
 
-	var formPlaceholder1 = document.createElement('<div id="formPlaceholder1" style="position: relative; overflow: auto; ">');
+	var formPlaceholder1 = Util.createElementFromHTML('<div id="formPlaceholder1" style="position: relative; overflow: auto; ">');
 	td6.className = "dialogContentTD";
 	td6.appendChild(formPlaceholder1);	
 	//formPlaceholder1.style.height = height - 70;
@@ -5180,13 +5091,13 @@ proto._createAndShowDialogDiv = function(width, height, resizable, formHeader)
 	tbody3.appendChild(tr33);
 	var td331 = document.createElement('td');
 	tr33.appendChild(td331);
-	var _img7 = document.createElement('<img width=12 height=14>');
+	var _img7 = Util.createElementFromHTML('<img width=12 height=14>');
 	td331.appendChild(_img7);
 	var _td9 = document.createElement('td');
 	tr33.appendChild(_td9);
 	var td332 = document.createElement('td');
 	tr33.appendChild(td332);
-	var _img8 = document.createElement('<img width=12 height=14>');
+	var _img8 = Util.createElementFromHTML('<img width=12 height=14>');
 	td332.appendChild(_img8);
 
 	new Shadow(div, false, false);
@@ -5210,37 +5121,36 @@ proto._createAndShowDialogDiv = function(width, height, resizable, formHeader)
 	_td9.style.background = "url(" +CNFormManager.themeImagesPath + "bg-1-2r_08.gif)";
 	
 	var closeButton = dialogCloseButton;
-	closeButton.attachEvent("onmouseenter", this._dialog_closeButton_onmouseenter);
-	closeButton.attachEvent("onmouseleave", this._dialog_closeButton_onmouseleave);
-	closeButton.attachEvent("onclick", this._dialog_closeButton_onclick);
+	Event.add(closeButton, "mouseenter", this, this._dialog_closeButton_onmouseenter);
+	Event.add(closeButton, "mouseleave", this, this._dialog_closeButton_onmouseleave);
+	Event.add(closeButton, "click", this, this._dialog_closeButton_onclick);
 	
-	maxButton.attachEvent("onmouseenter", this._dialog_closeButton_onmouseenter);
-	maxButton.attachEvent("onmouseleave", this._dialog_closeButton_onmouseleave);
-	maxButton.attachEvent("onclick", this._dialog_maxButton_onclick);
+	Event.add(maxButton, "mouseenter", this, this._dialog_closeButton_onmouseenter);
+	Event.add(maxButton, "mouseleave", this, this._dialog_closeButton_onmouseleave);
+	Event.add(maxButton, "click", this, this._dialog_maxButton_onclick);
 
-	captionTD.attachEvent("onmousedown", this._dialog_captionTD_onmousedown)
-	captionTD.attachEvent("onselectstart", CNUtil.cancelEvent);
-	captionTD.attachEvent("onselect", CNUtil.cancelEvent);
-	captionTD.attachEvent("dragstart", CNUtil.cancelEvent);
+	Event.add(captionTD, "mousedown", this, this._dialog_captionTD_onmousedown)
+	Event.add(captionTD, "select", this, CNUtil.cancelEvent);
+	Event.add(captionTD, "dragstart", this, CNUtil.cancelEvent);
 	
 	return div;
 }
 
 proto._dialog_closeButton_onmouseenter = function()
 {
-	var l = event.srcElement;
+	var l = Util.eventTarget(Event.current());
 	if(l._disabled) return;
 	l.className += " dialogTopButtonHover";
 }
 proto._dialog_closeButton_onmouseleave = function()
 {
-	var l = event.srcElement;
+	var l = Util.eventTarget(Event.current());
 	if(l._disabled) return;
 	Util.removeClass(l, "dialogTopButtonHover");
 }
 proto._dialog_closeButton_onclick = function()
 {
-	var l = Util.findByClassName(event.srcElement, "dialogTopButton");
+	var l = Util.findByClassName(Util.eventTarget(Event.current()), "dialogTopButton");
 	if(l._disabled) return;
 	CNFormManager.getActiveFormManager().dialog_closeButton_onclick();
 }
@@ -5262,8 +5172,8 @@ proto.toggleDialogMaximize = function()
 }
 proto.maximizeDialog = function()
 {
-	var maxButton = this._dialogDiv.all["__dialogMaxButton"];
-	maxButton.firstChild.innerText = "2";
+	var maxButton = Util.findById(this._dialogDiv, "__dialogMaxButton");
+	maxButton.firstChild.textContent = "2";
 	var dialog = this._dialogDiv;
 	dialog._maximized = true;
 	dialog._storedBounds = {x: dialog.offsetLeft, y: dialog.offsetTop, w: dialog.offsetWidth, h: dialog.offsetHeight };
@@ -5276,8 +5186,8 @@ proto.maximizeDialog = function()
 }
 proto.restoreDialog = function()
 {
-	var maxButton = this._dialogDiv.all["__dialogMaxButton"];
-	maxButton.firstChild.innerText = "1";
+	var maxButton = Util.findById(this._dialogDiv, "__dialogMaxButton");
+	maxButton.firstChild.textContent = "1";
 	var dialog = this._dialogDiv;
 	dialog._maximized = false;
 	var b = dialog._storedBounds;
@@ -5291,56 +5201,59 @@ proto.restoreDialog = function()
 
 proto._dialog_captionTD_onmousedown = function()
 {
-	var td = CNUtil.findTag(event.srcElement, "TD");
+	var td = CNUtil.findTag(Util.eventTarget(Event.current()), "TD");
 	if(!td) return;
 	var cnDialogDiv = CNUtil.findByClassName(td, "cnFormDialogDiv");
 	if(cnDialogDiv._maximized) return;
 	
 	var formManager = CNFormManager.getActiveFormManager();
 
-	td.attachEvent("onmousemove", formManager._dialog_captionTD_onmousemove);
-	td.attachEvent("onmouseup", formManager._dialog_captionTD_onmouseup);
-	td.attachEvent("onlosecapture", formManager._dialog_captionTD_onlosecapture);
+	var captureTarget = document;
+	Event.add(captureTarget, "mousemove", formManager, formManager._dialog_captionTD_onmousemove);
+	Event.add(captureTarget, "mouseup", formManager, formManager._dialog_captionTD_onmouseup);
 	
-	CNFormManager._draggedDialog = {dialog: cnDialogDiv, td: td};
+	CNFormManager._draggedDialog = {dialog: cnDialogDiv, td: td, captureTarget: captureTarget, formManager: formManager};
 	
-	CNFormManager._startX = cnDialogDiv.offsetLeft - event.screenX;
-	CNFormManager._startY = cnDialogDiv.offsetTop - event.screenY;
-	td.setCapture();
+	CNFormManager._startX = cnDialogDiv.offsetLeft - (Event.current() || {}).screenX;
+	CNFormManager._startY = cnDialogDiv.offsetTop - (Event.current() || {}).screenY;
 }
 
 proto._dialog_captionTD_onmousemove = function()
 {
 	var cnDialogDiv = CNFormManager._draggedDialog.dialog;
 	
-	cnDialogDiv.style.pixelLeft = CNFormManager._startX + event.screenX;
-	cnDialogDiv.style.pixelTop = CNFormManager._startY + event.screenY;
+	cnDialogDiv.style.left = (CNFormManager._startX + (Event.current() || {}).screenX) + "px";
+	cnDialogDiv.style.top = (CNFormManager._startY + (Event.current() || {}).screenY) + "px";
 	
 	cnDialogDiv.shadow.syncPosition();
 }
 
 proto._dialog_captionTD_onmouseup = function()
 {
-	if(CNFormManager._draggedDialog) CNFormManager._draggedDialog.td.releaseCapture();
+	if(!CNFormManager._draggedDialog) return;
+	var td = CNFormManager._draggedDialog.td;
+	this._dialog_captionTD_onlosecapture();
 }
 
 proto._dialog_captionTD_onlosecapture = function()
 {
 	if(!CNFormManager._draggedDialog) return;
-	var td = CNFormManager._draggedDialog.td;
-	var formManager = CNFormManager.getActiveFormManager();	
+	var drag = CNFormManager._draggedDialog;
+	var td = drag.td;
+	var formManager = drag.formManager;
 
-	td.detachEvent("onmousemove", formManager._dialog_captionTD_onmousemove);
-	td.detachEvent("onmouseup", formManager._dialog_captionTD_onmouseup);
-	td.detachEvent("onlosecapture", formManager._dialog_captionTD_onlosecapture);
+	Event.del(drag.captureTarget, "mousemove", formManager, formManager._dialog_captionTD_onmousemove);
+	Event.del(drag.captureTarget, "mouseup", formManager, formManager._dialog_captionTD_onmouseup);
 
 	var cnDialogDiv = CNFormManager._draggedDialog.dialog;
 	
-	if(cnDialogDiv.style.pixelLeft < 0) cnDialogDiv.style.pixelLeft = 0;
-	if(cnDialogDiv.style.pixelTop < 0) cnDialogDiv.style.pixelTop = 0;	
+	var left = parseInt(Util.getStyle(cnDialogDiv, "left"), 10) || 0;
+	var top = parseInt(Util.getStyle(cnDialogDiv, "top"), 10) || 0;
+	if(left < 0) cnDialogDiv.style.left = "0px";
+	if(top < 0) cnDialogDiv.style.top = "0px";	
 
 
-	CNFormManager._draggedDialogDiv = null;
+	CNFormManager._draggedDialog = null;
 }
 
 proto._showDisabler = function(doBlock, hidden, waitCursor)
@@ -5348,7 +5261,7 @@ proto._showDisabler = function(doBlock, hidden, waitCursor)
 	if(!this._disabler) return;
 	if(this.isDialog) {
 		if(!this._dialogDiv) return;
-		this._disabler.style.zIndex = this._dialogDiv.currentStyle.zIndex + 1;
+		this._disabler.style.zIndex = Util.getStyle(this._dialogDiv, "zIndex") + 1;
 	}
 	this._disabler.style.cursor = waitCursor ? "wait" : "default";
 	this._disabler.style.visibility = "inherit";
@@ -5358,11 +5271,11 @@ proto._showDisabler = function(doBlock, hidden, waitCursor)
 	if(doBlock)
 	{
 		// Block everything.
-		if(!baseFM._doBlock) document.body.attachEvent("onkeydown", CNUtil.cancelEvent);
+		if(!baseFM._doBlock) Event.add(document.body, "keydown", baseFM, CNUtil.cancelEvent);
 	}
 	else
 	{
-		if(baseFM._doBlock) document.body.detachEvent("onkeydown", CNUtil.cancelEvent);
+		if(baseFM._doBlock) Event.del(document.body, "keydown", baseFM, CNUtil.cancelEvent);
 	}
 	baseFM._doBlock = doBlock;
 }
@@ -5372,7 +5285,7 @@ proto._hideDisabler = function()
 	var baseFM = CNFormManager.getBaseFormManager();
 	if(baseFM._doBlock) 
 	{
-		document.body.detachEvent("onkeydown", CNUtil.cancelEvent);
+		Event.del(document.body, "keydown", baseFM, CNUtil.cancelEvent);
 		baseFM._doBlock = false;
 	}
 	this._disabler.style.cursor = "default";
@@ -5413,7 +5326,8 @@ proto.topButtonClick = function(id, action, alwaysEnabled)
 {
 	if(this.isNavigationDisabled() && !alwaysEnabled || this._loading) return;
 	
-	if(event) CNUtil.cancelEvent();
+	var currentEvent = Event.current();
+	if(currentEvent) CNUtil.cancelEvent(currentEvent);
 	
 	this._topButtonID = id;
 	this._topButtonAction = action;
@@ -5432,13 +5346,10 @@ proto._filterAttribute = function(str)
 
 proto._getStoredLocationsXML = function()
 {
-	try{ document.body.load("storedLocations"); } catch(e){}
-
-	var xmldoc = document.body.XMLDocument;
-
-	var rootEl = xmldoc.selectSingleNode("storedLocations");
-	if(rootEl) rootEl = rootEl.cloneNode(true);
-	return rootEl;
+	var xml = CNFormManager._storedLocationsXML;
+	try { if(window.localStorage) xml = window.localStorage.getItem("storedLocations") || xml; } catch(ignore) {}
+	if(!xml) return null;
+	try { return Util.xmlSelectSingleNode(Util.parseXML(xml), "storedLocations"); } catch(ignore) { return null; }
 }
 
 proto._getStoredLocationsXMLString = function()
@@ -5446,7 +5357,7 @@ proto._getStoredLocationsXMLString = function()
 	var rootEl = this._getStoredLocationsXML();
 	if(rootEl) 
 	{
-		var xml = String(rootEl.xml);
+		var xml = Util.xmlString(rootEl);
 		return xml;
 	}
 	return "";
@@ -5457,18 +5368,7 @@ proto._finishHideDisabler = function()
 	this._hideDisabler();
 }
 
-/*proto.specialIMSClick = function(l)
-{
-	if(!l.tipText) Tooltip.attach(l, 'By clicking on this logo you will be redirected to the IMS Maxims home page.');
-	l.fireEvent("onmouseenter");
-	l.onmouseout = formManager._imsLogo_onmouseout;
-}
 
-proto._imsLogo_onmouseout = function()
-{
-	Tooltip.detach(event.srcElement);
-	event.srcElement.onmouseout = null;
-}*/
 
 proto.logoutButtonClick = function(alwaysEnabled)
 {
@@ -5480,18 +5380,18 @@ proto._loadAboutDialog = function()
 {
 	if(this._aboutDialogLoaded) return;
 	
-	var node = this._ideaNode.selectSingleNode("aboutDialog");
+	var node = Util.xmlSelectSingleNode(this._ideaNode, "aboutDialog");
 	if(!node) return;
 	
 	if(node)
 	{
 		this._aboutDialogLoaded = true;
 		this._aboutDialogTitle = String(node.getAttribute("title"));
-		var mainHTMLNode = node.selectSingleNode("mainHTML");
-		if(mainHTMLNode) this._aboutDialogMainHTML = String(mainHTMLNode.text);
+		var mainHTMLNode = Util.xmlSelectSingleNode(node, "mainHTML");
+		if(mainHTMLNode) this._aboutDialogMainHTML = String(Util.xmlText(mainHTMLNode));
 
-		var secondHTMLNode = node.selectSingleNode("secondHTML");
-		if(secondHTMLNode) this._aboutDialogSecondHTML = String(secondHTMLNode.text);
+		var secondHTMLNode = Util.xmlSelectSingleNode(node, "secondHTML");
+		if(secondHTMLNode) this._aboutDialogSecondHTML = String(Util.xmlText(secondHTMLNode));
 	}
 }
 
@@ -5521,27 +5421,27 @@ proto._buildAboutDialog = function()
 	
 
 	var contents = CNDialogManager.getContents(l);
-	var siteLogo1 = document.createElement("<img class='aboutDialogSiteLogo1'>");
+	var siteLogo1 = Util.createElementFromHTML("<img class='aboutDialogSiteLogo1'>");
 	contents.appendChild(siteLogo1);
 	siteLogo1.src = CNFormManager.strings['loginLogo'];
 
-//	var siteLogo2 = document.createElement("<img class='aboutDialogSiteLogo2'>");
+//	var siteLogo2 = Util.createElementFromHTML("<img class='aboutDialogSiteLogo2'>");
 //	contents.appendChild(siteLogo2);
 //	siteLogo2.src = CNFormManager.neutralImagesPath + "logo-part-2.gif";
 
 	var b2 = CNDialogManager.createBottomButton(l, "OK", true);
 	b2.style.width = 80;
 	
-	var div1 = document.createElement("<div class='aboutDialogDiv1'>");
+	var div1 = Util.createElementFromHTML("<div class='aboutDialogDiv1'>");
 	contents.appendChild(div1);
 	if(this._aboutDialogMainHTML) div1.innerHTML = this._aboutDialogMainHTML;
 
 	if(this._aboutDialogSecondHTML)
 	{
-		var sep = document.createElement("<div class='aboutDialogSeparator'>");
+		var sep = Util.createElementFromHTML("<div class='aboutDialogSeparator'>");
 		contents.appendChild(sep);
 		
-		var div2 = document.createElement("<div class='aboutDialogDiv2'>");
+		var div2 = Util.createElementFromHTML("<div class='aboutDialogDiv2'>");
 		contents.appendChild(div2);
 		div2.innerHTML = this._aboutDialogSecondHTML;
 	}
@@ -5555,7 +5455,7 @@ proto._buildAboutDialog = function()
 
 proto._document_oncontextmenu = function()
 {
-	var l = event.srcElement;
+	var l = Util.eventTarget(Event.current());
 	if(l) CNUtil.cancelEvent();
 }
 
@@ -5599,11 +5499,11 @@ proto._showYesNoDialog = function(title, message, delegate)
 			this._yesNoDialog.style.height = 100;
 		}
 		var contents = CNDialogManager.getContents(this._yesNoDialog);
-		var img = document.createElement("<img width=48 height=48 class='dialogIcon'>");
+		var img = Util.createElementFromHTML("<img width=48 height=48 class='dialogIcon'>");
 		contents.appendChild(img)
 		img.src = CNFormManager.neutralImagesPath + "yesno-question-1.gif";
 		var html = "<div style='padding: 8px; margin-left: 48px; '>" + message + "</div>";
-		contents.insertAdjacentHTML("beforeend", html);
+		Util.appendHTML(contents, html);
 		var buttonWidth = 80;
 		var b2 = CNDialogManager.createBottomButton(this._yesNoDialog, "Yes", true);
 		b2.style.width = buttonWidth;
@@ -5630,11 +5530,11 @@ proto._showOKDialog = function(title, message, delegate)
 			this._okDialog.style.height = 100;
 		}
 		var contents = CNDialogManager.getContents(this._okDialog);
-		var img = document.createElement("<img width=48 height=48 class='dialogIcon'>");
+		var img = Util.createElementFromHTML("<img width=48 height=48 class='dialogIcon'>");
 		contents.appendChild(img)
 		img.src = CNFormManager.neutralImagesPath + "yesno-question-1.gif";
 		var html = "<div style='padding: 8px; margin-left: 48px; '>" + message + "</div>";
-		contents.insertAdjacentHTML("beforeend", html);
+		Util.appendHTML(contents, html);
 		var buttonWidth = 80;
 		var b2 = CNDialogManager.createBottomButton(this._okDialog, "OK", true);
 		b2.style.width = buttonWidth;
@@ -5661,12 +5561,12 @@ proto._showErrorsDialog = function(title, errorNodeList, delegate)
 		
 		var contents = CNDialogManager.getContents(this._errorsDialog);
 
-		var img = document.createElement("<img width=48 height=48 class='dialogIcon'>");
+		var img = Util.createElementFromHTML("<img width=48 height=48 class='dialogIcon'>");
 		contents.appendChild(img)
 		img.src = CNFormManager.neutralImagesPath + "error-1.gif";
 
 		var html = "<div id='messageDiv' style='height: 160px; width: 435px; position: relative; padding: 4px; margin: 5px; top: 5px; margin-left: 58px; overflow: auto; '></div>";
-		contents.insertAdjacentHTML("beforeend", html);
+		Util.appendHTML(contents, html);
 		var buttonWidth = 80;
 		var b2 = CNDialogManager.createBottomButton(this._errorsDialog, "Close", true);
 		b2.style.width = buttonWidth;
@@ -5674,9 +5574,9 @@ proto._showErrorsDialog = function(title, errorNodeList, delegate)
 	var str = '';
 	for(var i = 0; i < errorNodeList.length; i++)
 	{
-		str += errorNodeList[i].text + "\n\n";
+		str += Util.xmlText(errorNodeList[i]) + "\n\n";
 	}
-	this._errorsDialog.all['messageDiv'].innerText = str;
+	Util.findById(this._errorsDialog, "messageDiv").textContent = str;
 	CNDialogManager.showDialog(this._errorsDialog, delegate, true);
 }
 
@@ -5699,38 +5599,38 @@ proto._showFatalErrorDialog = function(title, msg, buildInfo, stackTrace, delega
 		this._fatalErrorsDialog.style.overflow = "hidden";
 		var contents = CNDialogManager.getContents(this._fatalErrorsDialog);
 				
-		var img = document.createElement("<img width=48 height=48 class='dialogIcon'>");
+		var img = Util.createElementFromHTML("<img width=48 height=48 class='dialogIcon'>");
 		contents.appendChild(img)
 		img.src = CNFormManager.neutralImagesPath + "error-2.gif";
 
 		var html = "<div id='messageDiv' class='fatalErrorDialogMessageDiv1'></div>";
-		contents.insertAdjacentHTML("beforeend", html);
+		Util.appendHTML(contents, html);
 		var buttonWidth = 80;
 
 		var b1 = CNDialogManager.createBottomButton(this._fatalErrorsDialog, "Details");
 		b1.style.width = buttonWidth;
-		b1.attachEvent("onclick", this._fatalErrorDetailsClick);
+		Event.add(b1, "click", this, this._fatalErrorDetailsClick);
 		var b2 = CNDialogManager.createBottomButton(this._fatalErrorsDialog, "Close", true);
 		b2.style.width = buttonWidth;
 		
-		var span = document.createElement("<span class='fatalErrorDialogSpan1'>");
+		var span = Util.createElementFromHTML("<span class='fatalErrorDialogSpan1'>");
 		contents.appendChild(span);
-		span.innerText = "Stack Trace:";
+		span.textContent = "Stack Trace:";
 		
-		var div = document.createElement("<div id=message2Div class='fatalErrorDialogMessageDiv2'>");
+		var div = Util.createElementFromHTML("<div id=message2Div class='fatalErrorDialogMessageDiv2'>");
 		contents.appendChild(div);
 
-		var span = document.createElement("<span class='fatalErrorDialogSpan2'>");
+		var span = Util.createElementFromHTML("<span class='fatalErrorDialogSpan2'>");
 		contents.appendChild(span);
-		span.innerText = "Build Information:";
+		span.textContent = "Build Information:";
 
-		var div = document.createElement("<div id=message3Div class='fatalErrorDialogMessageDiv3'>");
+		var div = Util.createElementFromHTML("<div id=message3Div class='fatalErrorDialogMessageDiv3'>");
 		contents.appendChild(div);
 	}
 
-	this._fatalErrorsDialog.all['messageDiv'].innerText = msg;
-	this._fatalErrorsDialog.all['message2Div'].innerText = stackTrace;
-	this._fatalErrorsDialog.all['message3Div'].innerText = buildInfo;
+	Util.findById(this._fatalErrorsDialog, "messageDiv").textContent = msg;
+	Util.findById(this._fatalErrorsDialog, "message2Div").textContent = stackTrace;
+	Util.findById(this._fatalErrorsDialog, "message3Div").textContent = buildInfo;
 	this._fatalErrorsDialog._collapsed = true;
 
 	CNDialogManager.showDialog(this._fatalErrorsDialog, delegate, true);
@@ -5738,7 +5638,7 @@ proto._showFatalErrorDialog = function(title, msg, buildInfo, stackTrace, delega
 
 proto._fatalErrorDetailsClick = function()
 {
-	var dialog = CNDialogManager._findDialogDiv(event.srcElement);
+	var dialog = CNDialogManager._findDialogDiv(Util.eventTarget(Event.current()));
 	var contents = CNDialogManager.getContents(dialog);
 	var display;
 	if(dialog._collapsed)
@@ -5782,7 +5682,7 @@ proto._filterEventsXMLForTheme = function(xml)
 	else 
 	{
 		// DOM.
-		var events = xml.documentElement.selectSingleNode("events");
+		var events = Util.xmlSelectSingleNode(xml.documentElement, "events");
 		var element = xml.createElement(tagName);
 		element.setAttribute("theme", CNFormManager.currentThemeName);
 		events.appendChild(element);
@@ -5799,7 +5699,7 @@ proto._filterEventsXMLForResized = function(xml)
 {
 	if(!this._formPlaceholder) return;
 	var rehide = false;
-	if(this._formPlaceholder.currentStyle.display == "none")
+	if(Util.getStyle(this._formPlaceholder, "display") == "none")
 	{
 		//this._formPlaceholder.style.display = "block";
 		rehide = true;
@@ -5833,7 +5733,7 @@ proto._filterEventsXMLForResized = function(xml)
 	else 
 	{
 		// DOM.
-		var events = xml.selectSingleNode("events");
+		var events = Util.xmlSelectSingleNode(xml, "events");
 		var element = xml.createElement("formSizeChanged");
 		element.setAttribute("width", w);
 		element.setAttribute("height", h);
@@ -5850,7 +5750,7 @@ proto._deleteLoadingBar = function() {
 // NOTE: return true -> breaks xml processing flow.
 proto._processTheme = function()
 {
-	var htmlNode = this._ideaNode.selectSingleNode("html");
+	var htmlNode = Util.xmlSelectSingleNode(this._ideaNode, "html");
 	if(!htmlNode)
 	{
 		if(!CNFormManager.themeLoaded)
@@ -5875,7 +5775,7 @@ proto._processTheme = function()
 
 	this._deleteLoadingBar();
 
-	this._themeHtml = String(htmlNode.text);
+	this._themeHtml = String(Util.xmlText(htmlNode));
 
 	CNFormManager.currentThemeName = themeName;
 	CNFormManager.themeImagesPath = "themes/" + CNFormManager.currentThemeName + "/g/";
@@ -5888,7 +5788,7 @@ proto._processTheme = function()
 	}
 	
 	// Deactivate old stylesheet.
-	var cn_globalStyleLink = document.all["cn_globalStyleLink"];
+	var cn_globalStyleLink = document.getElementById("cn_globalStyleLink");
 
 	this._detachHTMLLayout();
 
@@ -5903,12 +5803,10 @@ proto._processTheme = function()
 	
 	if(!cn_globalStyleLink || href.toLowerCase() != cn_globalStyleLink.href.toLowerCase())
 	{
-		var link = document.createElement("<link rel=stylesheet>");
-		if(cn_globalStyleLink)
+		var link = Util.createElement("link", null, {rel: "stylesheet", id: "cn_globalStyleLink"});
+		if(cn_globalStyleLink && cn_globalStyleLink.parentNode)
 		{
-			cn_globalStyleLink.onreadystatechange = null;
-			cn_globalStyleLink.styleSheet.cssText = "";
-			cn_globalStyleLink.parentElement.replaceChild(link, cn_globalStyleLink);
+			cn_globalStyleLink.parentNode.replaceChild(link, cn_globalStyleLink);
 		}
 		else
 		{
@@ -5916,9 +5814,8 @@ proto._processTheme = function()
 		}
 
 		cn_globalStyleLink = link;
-		cn_globalStyleLink.id = "cn_globalStyleLink";
-		cn_globalStyleLink.onreadystatechange = this._globalStyleLink_onload;
 		cn_globalStyleLink._load = true;
+		Event.add(cn_globalStyleLink, "load", this, this._globalStyleLink_onload);
 		cn_globalStyleLink.href = href;
 		return true; // Break flow.
 	}
@@ -5931,9 +5828,8 @@ proto._processTheme = function()
 
 proto._globalStyleLink_onload = function()
 {
-	var cn_globalStyleLink = document.all["cn_globalStyleLink"];
-	if(cn_globalStyleLink.readyState != "complete") return;
-	if(!cn_globalStyleLink._load) return;
+	var cn_globalStyleLink = document.getElementById("cn_globalStyleLink");
+	if(!cn_globalStyleLink || !cn_globalStyleLink._load) return;
 	cn_globalStyleLink._load = false;
 	var formManager = CNFormManager.getBaseFormManager();
 	formManager._processTheme2(true);
@@ -5941,6 +5837,14 @@ proto._globalStyleLink_onload = function()
 
 proto._processTheme2 = function(doContinue)
 {
+	// The server may return a cached legacy New Blue layout containing the
+	// dark-header PNGs. Strip those tags before innerHTML parses them, so the
+	// browser never requests obsolete artwork; the standards theme supplies
+	// the surface with CSS instead.
+	if(typeof this._themeHtml == "string")
+	{
+		this._themeHtml = this._themeHtml.replace(/<img\b[^>]*(?:darkHeader_img[12]|dark-header-bg_0[12]\.png)[^>]*>/gi, "");
+	}
 	this._globalPlaceholder.innerHTML = this._themeHtml;
 	this._themeHtml = null;
 
@@ -5988,17 +5892,17 @@ proto._detachHTMLLayout = function()
 
 
 		// Delete dialogs.
-		if(this._passwordDialog) this._passwordDialog.removeNode(true);
-		if(this._aboutDialog) this._aboutDialog.removeNode(true);
-		if(this._errorsDialog) this._errorsDialog.removeNode(true);
-		if(this._fatalErrorsDialog) this._fatalErrorsDialog.removeNode(true);
+		if(this._passwordDialog) Util.removeElement(this._passwordDialog);
+		if(this._aboutDialog) Util.removeElement(this._aboutDialog);
+		if(this._errorsDialog) Util.removeElement(this._errorsDialog);
+		if(this._fatalErrorsDialog) Util.removeElement(this._fatalErrorsDialog);
 		
 		this._deleteControls();
 		this._deleteNavigation();
 	
-		this._formPlaceholder.detachEvent("onkeypress", this._formPlaceholder_onkeypress);
+		Event.del(this._formPlaceholder, "keypress", this, this._formPlaceholder_onkeypress);
 		
-		this._formPlaceholder.removeNode(true);
+		Util.removeElement(this._formPlaceholder);
 	}
 
 	this._formPlaceholder = null;
@@ -6016,27 +5920,31 @@ proto._initHTMLLayout = function()
 	CN_logincontrol = CNFormManager.vista ? CN_logincontrol_vista : CN_logincontrol_pre;
 	CNPopupCalendar.createDefaultCalendar();
 
-	var children = this._globalPlaceholder.children;	
-	var all = this._globalPlaceholder.all;
+	var children = this._globalPlaceholder.children;
 	
-	this._formPlaceholder = all["__si_form"];
+	this._formPlaceholder = Util.findById(this._globalPlaceholder, "__si_form");
 	
-	this._darkHeader = all['__si_darkHeader'];
+	this._darkHeader = Util.findById(this._globalPlaceholder, "__si_darkHeader");
 
-	this._formPlaceholder.attachEvent("onkeypress", this._formPlaceholder_onkeypress);
+	Event.add(this._formPlaceholder, "keypress", this, this._formPlaceholder_onkeypress);
 	
 	this._setThemeStrings();
 	
-	var aiPlaceholder = document.all["__si_alertIcons"];
+	var aiPlaceholder = Util.findById(this._globalPlaceholder, "__si_alertIcons");
 	if(aiPlaceholder) 
 	{	
 		this._alertIcons = new AlertIcons(aiPlaceholder);
 		this._alertIcons.formManager = this;
 	}
 	
-	this._topRightControls = document.all["__si_topRightControls"];
+	this._topRightControls = Util.findById(this._globalPlaceholder, "__si_topRightControls");
 	if(this._topRightControls)
 	{
+		// The historical theme layout supplies these elements as screen items.
+		// Some standards-browser layout paths retain only topRightControls,
+		// leaving the header background above the toolbar in the stacking order.
+		Util.addClass(this._topRightControls, "screenItem");
+		Util.addClass(this._topRightControls, "si_topRightControls");
 		this._topButtons = new TopButtons(this._topRightControls);
 		this._topButtons.formManager = this;
 	}
@@ -6051,8 +5959,6 @@ proto._initHTMLLayout = function()
 	
 	if(!CNFormManager.vista)
 	{
-		var obj = this;
-		setTimeout(function(){ obj._replacePNG(); }, 100);
 	}
 
 	Tooltip.buildElement();
@@ -6077,7 +5983,7 @@ proto._setThemeStrings = function() {
 	    newScript.type = "text/javascript"; 
 	    
 	    if(old.src) newScript.src = old.src
-	    else newScript.text = old.text;
+	    else newScript.textContent = old.textContent;
 
 		l.appendChild(newScript); 
 
@@ -6109,26 +6015,23 @@ proto._screenLayoutManager_onResized = function()
 	fm._layoutManager.doLayout();
 }
 
-proto._replacePNG = function()
-{
-	Util.replacePNG(document);
-}
 
 proto.isNavigationDisabled = function()
 {
 	return this._modalFocused || this._navigationDisabled || this._editMode;
 } 
 
-proto._control_oncontextmenu = function()
+proto._control_oncontextmenu = function(ev)
 {
-	if(event.button != 2) return;
+	var currentEvent = Event.normalize(ev) || Event.current() || {};
+	if(currentEvent.button != 2) return;
 
 	var fm = CNFormManager.getActiveFormManager();
 
-	var jsObject = CNUtil.findJSObject(event.srcElement);
+	var jsObject = CNUtil.findJSObject(Util.eventTarget(Event.current()));
 	var l = jsObject.element;
-	var x = event.clientX;
-	var y = event.clientY;
+	var x = currentEvent.clientX;
+	var y = currentEvent.clientY;
 
 	var menuData;
 
@@ -6169,9 +6072,10 @@ proto._showContextMenu = function(menuData)
 proto._menuItem_onmenuclick = function(ev)
 {
 	var fm = CNFormManager.getActiveFormManager();
-	var id = ev.srcElement._parentMenuID;
+	var target = ev && (ev.target || ev.target);
+	var id = target._parentMenuID;
 	fm._currentMenuID = id;
-	fm._currentMenuItemID = ev.srcElement._id;
+	fm._currentMenuItemID = target._id;
 	fm.postData("menu");
 }
 
@@ -6194,22 +6098,18 @@ proto._beginProgress = function() {
 }
 
 proto._beginProgressTO = function() {
-	//if(this._globalProgressbar.currentStyle.visibility != "hidden") return;
+	//if(Util.getStyle(this._globalProgressbar, "visibility") != "hidden") return;
 	var l = this._globalProgressbar;
-	this._globalProgressbar.filters[0].apply();
 	this._globalProgressbar.style.visibility = "visible";
 	if(this._globalProgressbar.shadow) this._globalProgressbar.shadow.show();
-	this._globalProgressbar.filters[0].play();
 	this._progressStarted = true;
 }
 
 proto._endProgress = function() {
 	if(!this._progressStarted) return;
 	if(this._globalProgressbarTO != null) clearTimeout(this._globalProgressbarTO);
-	this._globalProgressbar.filters[0].apply();
 	if(this._globalProgressbar.shadow) this._globalProgressbar.shadow.hide();
 	this._globalProgressbar.style.visibility = "hidden";
-	this._globalProgressbar.filters[0].play();
 	this._progressStarted = false;
 }
 
@@ -6225,8 +6125,8 @@ proto._showProgress = function(showProgressNode) {
 	if(!this._globalProgressbar) this._createProgressBar();
 	var labelAttr = showProgressNode.getAttribute("label");
 	var textDiv = this._globalProgressbar.firstChild;
-	if(labelAttr) textDiv.innerText = String(labelAttr);
-	else textDiv.innerText = "";
+	if(labelAttr) textDiv.textContent = String(labelAttr);
+	else textDiv.textContent = "";
 
 	var self = this;
 	setTimeout(function() {

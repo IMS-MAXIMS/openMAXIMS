@@ -1,14 +1,4 @@
-/*
- * BUNDLE-DERIVED openMAXIMS IE7 RECONSTRUCTION
- * Module: logincontrol_newblue.js
- * Evidence: direct candidate region
- * Confidence: medium
- *
- * This is formatted output from a packed historical bundle region. It is
- * not a byte-for-byte recovery of the original source archive. Original
- * comments, local names, and module boundaries may have been lost through
- * bundling. Preserve observed protocol, event, DOM, and error semantics.
- */
+/* PRIVATE INTERVAL RECONSTRUCTION; not original source. Module: logincontrol_newblue.js; official bundle offsets 285071-297198. */
 function CN_logincontrol_newblue() {
   this._newPasswordCanceled = false;
   this._lockMode = false;
@@ -20,8 +10,19 @@ CN_logincontrol_newblue.createLoginChrome = function() {
   if ($("__loginChrome")) {
     return
   }
-  $("cn_globalPlaceholder").insertAdjacentHTML("afterbegin", '<div id="__loginChrome" class="loginChrome">			<div class="loginCenter" id="__loginCenter">				<div id="__loginCenterLeft" class="loginCenterLeft">					<img src="themes/new-blue/g/siteLogo.png" class="loginCenterLeftImage"/>				</div>				<div id="__loginCenterLeftSeparator" class="loginCenterLeftSeparator">					<img src="themes/new-blue/g/separator.png" class="loginCenterSeparatorImage"/>				</div>			</div>			<img src="themes/new-blue/g/logo-bottom.png" class="loginImsLogo"/>		</div>');
-  Util.replacePNG($("__loginChrome"));
+  var placeholder = $("cn_globalPlaceholder");
+  var chrome = Util.createElement("div", "loginChrome", {id: "__loginChrome"});
+  var center = Util.createElement("div", "loginCenter", {id: "__loginCenter"});
+  var left = Util.createElement("div", "loginCenterLeft", {id: "__loginCenterLeft"});
+  var separator = Util.createElement("div", "loginCenterLeftSeparator", {id: "__loginCenterLeftSeparator"});
+  var separatorImage = Util.createElement("img", "loginCenterSeparatorImage", {src: "themes/new-blue/g/separator.png"});
+  var bottomLogo = Util.createElement("img", "loginImsLogo", {src: "themes/new-blue/g/logo-bottom.png"});
+  separator.appendChild(separatorImage);
+  center.appendChild(left);
+  center.appendChild(separator);
+  chrome.appendChild(center);
+  chrome.appendChild(bottomLogo);
+  placeholder.insertBefore(chrome, placeholder.firstChild);
   CN_logincontrol_newblue.layoutChrome();
   Event.nativeAdd(window, "resize", CN_logincontrol_newblue.layoutChrome);
   $("__si_form").style.overflow = "hidden"
@@ -30,7 +31,7 @@ CN_logincontrol_newblue.destroyLoginChrome = function() {
   var a = $("__loginChrome");
   if (a) {
     Event.nativeDel(window, "resize", CN_logincontrol_newblue.layoutChrome);
-    a.removeNode(true);
+    Util.removeElement(a);
     $("__si_form").style.overflow = ""
   }
 };
@@ -41,7 +42,7 @@ CN_logincontrol_newblue.layoutChrome = function() {
 };
 var proto = CN_logincontrol_newblue.prototype;
 proto.createElement = function(c, b) {
-  var a = document.createElement('<div class="cn_logincontrol_newblue">');
+  var a = Util.createElement("div", "cn_logincontrol_newblue");
   b.appendChild(a);
   this.element = a;
   a.jsObject = this;
@@ -52,10 +53,16 @@ proto.createElement = function(c, b) {
 };
 proto._createInputBox = function(c, a, e, d) {
   var b = {};
-  b.cont = document.createElement("<div class='loginInputBox'>");
-  e = e ? ' id=" ' + e + '" ' : "";
-  b.cont.innerHTML = '<img src="themes/new-blue/g/login-login-bg.png" class="loginBoxBG"/><div class="loginBoxHint">' + c + '</div><input type="' + a + '" ' + e + ' class="loginBox' + (d ? " withButton" : "") + '"/>';
-  b.input = b.cont.lastChild;
+  b.cont = Util.createElement("div", "loginInputBox");
+  var background = Util.createElement("img", "loginBoxBG", {src: "themes/new-blue/g/login-login-bg.png"});
+  var hint = Util.createElement("div", "loginBoxHint");
+  hint.textContent = c;
+  b.input = Util.createElement("input", "loginBox" + (d ? " withButton" : ""));
+  b.input.type = a;
+  if (e) b.input.id = e;
+  b.cont.appendChild(background);
+  b.cont.appendChild(hint);
+  b.cont.appendChild(b.input);
   if (d) {
     b.button = VistaSupport.createImageSetButton("login-password-arrow-set.png", 25, 25, 0);
     b.button.className = "loginButton";
@@ -68,8 +75,9 @@ proto._createInputBox = function(c, a, e, d) {
   return b
 };
 proto.inputBox_mousedown = function(c) {
+  c = Event.normalize(c) || Event.current();
   Util.cancelEvent(c);
-  var b = Util.findByClassName(c.srcElement, "loginInputBox");
+  var b = Util.findByClassName(c && c.target, "loginInputBox");
   if (!b || Util.hasClass(b, "disabled")) {
     return
   }
@@ -78,7 +86,8 @@ proto.inputBox_mousedown = function(c) {
   a.focus()
 };
 proto.inputBox_handlekey = function(c) {
-  var b = c.srcElement;
+  c = Event.normalize(c) || Event.current();
+  var b = c && c.target;
   var a = Util.findByClassName(b, "loginInputBox");
   if (Util.hasClass(a, "disabled")) {
     return
@@ -91,7 +100,13 @@ proto._buildContent = function() {
   }
   CN_logincontrol_newblue.createLoginChrome();
   CN_logincontrol_newblue.loginImage ? this.displaySiteLogo(true) : this.displaySiteLogo(false);
-  this.element.innerHTML = '<div class="container">		<div class="loginArea">			<div class="label" id="__loginLabel">MAXIMS</div>		</div></div>';
+  var container = Util.createElement("div", "container");
+  var loginArea = Util.createElement("div", "loginArea");
+  var label = Util.createElement("div", "label", {id: "__loginLabel"});
+  label.textContent = "MAXIMS";
+  loginArea.appendChild(label);
+  container.appendChild(loginArea);
+  this.element.appendChild(container);
   var a = this._cont = this.element.lastChild;
   var f = this._loginArea = a.firstChild;
   var b = this._login = this._createInputBox("Login", "text");
@@ -105,10 +120,10 @@ proto._buildContent = function() {
   var c = $("__loginLabel");
   Event.add(d.button, "mouseup", this, this.login_button_click);
   Event.add(d.input, "keypress", this, this.password_keypress);
-  Util.replacePNG(this.element);
   if (this._lockMode) {
-    var e = this._unlockLabel = document.createElement("<div class='loginLockedLabel'/>");
-    e.innerHTML = "<img src='themes/new-blue/g/login-lock.png'/> Application is Locked ";
+    var e = this._unlockLabel = Util.createElement("div", "loginLockedLabel");
+    e.appendChild(Util.createElement("img", null, {src: "themes/new-blue/g/login-lock.png"}));
+    e.appendChild(document.createTextNode(" Application is Locked "));
     $("__loginCenter").appendChild(e);
     this._layoutLockMode();
     Event.add(window, "resize", this, this._layoutLockMode)
@@ -118,7 +133,7 @@ proto._layoutLockMode = function(a) {
   this._cont.style.top = $("__loginCenter").offsetTop + "px"
 };
 proto.password_keypress = function(a) {
-  if (a.keyCode == 13) {
+  if (Event.keyValue(a) == 13) {
     this.login_button_click()
   }
 };
@@ -144,13 +159,7 @@ proto.set_disabled = function(a) {
 };
 proto.displaySiteLogo = function(c) {
   var a = $("__loginCenterLeft");
-  if (a) {
-    var b = a.children[0];
-    b.onerror = function() {
-      this.style.display = "none"
-    };
-    a.style.display = c ? "block" : "none"
-  }
+  if (a) a.style.display = "none";
 };
 proto.login_button_click = function(b) {
   if (b) {
@@ -168,7 +177,7 @@ proto.login_button_click = function(b) {
 };
 proto.loadData = function(b) {
   this._salt = b.getAttribute("salt");
-  var a = b.selectSingleNode("message");
+  var a = Util.xmlSelectSingleNode(b, "message");
   if (a) {
     this.displaySiteLogo(true);
     this._showMessage(a)
@@ -189,7 +198,7 @@ proto._tryToShowLocationCombo = function() {
   var b = this.formManager._getStoredLocationsXML(true),
     a;
   if (b) {
-    a = b.selectNodes("location")
+    a = Util.xmlSelectNodes(b, "location")
   }
   if (b && a.length > 0) {
     this._showLocationCombo(a)
@@ -201,20 +210,28 @@ proto._createChangePassword = function() {
   if (this._changeCont) {
     return
   }
-  var a = '<div class="changePasswordContainer"><div>Change Password</div><img src="themes/new-blue/g/login-vert-line.png"/><div class="changeNote"></div><div class="changeArea"></div></div>';
-  this._cont.insertAdjacentHTML("beforeend", a);
-  var c = this._changeCont = this._cont.lastChild;
+  var c = this._changeCont = Util.createElement("div", "changePasswordContainer");
+  var title = Util.createElement("div");
+  title.textContent = "Change Password";
+  c.appendChild(title);
+  c.appendChild(Util.createElement("img", null, {src: "themes/new-blue/g/login-vert-line.png"}));
+  c.appendChild(Util.createElement("div", "changeNote"));
+  c.appendChild(Util.createElement("div", "changeArea"));
+  this._cont.appendChild(c);
   var b = c.lastChild;
-  b.appendChild(document.createElement("<div class='changeLabel'></div>")).innerText = "Password";
+  var label1 = Util.createElement("div", "changeLabel");
+  label1.textContent = "Password";
+  b.appendChild(label1);
   this._changePass1 = this._createInputBox("", "password");
   b.appendChild(this._changePass1.cont);
-  b.appendChild(document.createElement("<br/>"));
-  b.appendChild(document.createElement("<div class='changeLabel'></div>")).innerText = "Re-Enter Password";
+  b.appendChild(Util.createElement("br"));
+  var label2 = Util.createElement("div", "changeLabel");
+  label2.textContent = "Re-Enter Password";
+  b.appendChild(label2);
   this._changePass2 = this._createInputBox("", "password", false, true);
   b.appendChild(this._changePass2.cont);
   Event.add(this._changePass2.button, "mouseup", this, this._changePass_button_click);
   Event.add(this._changePass2.input, "keypress", this, this._changePass_input_keypress);
-  Util.replacePNG(this._cont);
   if (this._disabled) {
     this.set_disabled(this._disabled)
   }
@@ -303,7 +320,7 @@ proto._changePass_button_click = function(a) {
   this.formManager.postData(this.element)
 };
 proto._changePass_input_keypress = function(a) {
-  if (a.keyCode == 13) {
+  if (Event.keyValue(a) == 13) {
     this._changePass_button_click()
   }
 };
@@ -318,23 +335,24 @@ proto._showLocationCombo = function(a) {
   this._fillSelectLocationCombo(a)
 };
 proto._createSelectLocationCombo = function() {
-  var a = this._selectLocationCont = document.createElement("<div class='location'/>");
+  var a = this._selectLocationCont = Util.createElement("div", "location");
   this._loginArea.appendChild(a);
-  a.innerHTML = "<div class='locationLabel'>Location</div>";
-  var d = document.createElement("<div class='loginInputBox'/>");
-  d.innerHTML = '<img src="themes/new-blue/g/login-login-bg.png" class="loginBoxBG"/>';
+  var locationLabel = Util.createElement("div", "locationLabel");
+  locationLabel.textContent = "Location";
+  a.appendChild(locationLabel);
+  var d = Util.createElement("div", "loginInputBox");
+  d.appendChild(Util.createElement("img", "loginBoxBG", {src: "themes/new-blue/g/login-login-bg.png"}));
   a.appendChild(d);
   this._selectLocationCombo = new CN_combobox();
   var b = [];
   var c = this._selectLocationCombo.createElement(b, d);
   this._selectLocationCombo.set_tabIndex(3);
-  Util.replacePNG(d)
 };
 proto._fillSelectLocationCombo = function(c) {
   var a = [];
   for (var b = 0; b < c.length; b++) {
     var d = {
-      text: c[b].text
+      text: Util.xmlText(c[b])
     };
     a.push(d)
   }
@@ -350,14 +368,15 @@ proto._hideLocationCombo = function() {
       CNFormManager.destroyJSObject(this._selectLocationCombo)
     }
     this._selectLocationCombo = null;
-    this._selectLocationCont.removeNode(true)
+    Util.removeElement(this._selectLocationCont);
+    this._selectLocationCont = null
   }
 };
 proto._showMessage = function(a) {
-  var b = typeof a == "object" ? a.text : a;
+  var b = typeof a == "object" ? Util.xmlText(a) : a;
   if (b) {
     if (!this._errorContainer) {
-      this._errorContainer = document.createElement("<div class='errorContainer'></div>");
+      this._errorContainer = Util.createElement("div", "errorContainer");
       $("__loginCenter").appendChild(this._errorContainer)
     }
     this._errorContainer.innerHTML = b;
@@ -396,7 +415,7 @@ proto.storeData = function(a) {
         var e = this.formManager._getStoredLocationsXML(true);
         if (e) {
           if (this._selectLocationCombo) {
-            var d = e.selectNodes("location");
+            var d = Util.xmlSelectNodes(e, "location");
             var b = this._selectLocationCombo.get_selectedIndex();
             if (b >= d.length) {
               b = -1
@@ -421,10 +440,12 @@ proto.unload = function() {
     CNFormManager.destroyJSObject(this._selectLocationCombo)
   }
   if (this._unlockLabel) {
-    this._unlockLabel.removeNode(true)
+    Util.removeElement(this._unlockLabel);
+    this._unlockLabel = null
   }
   if (this._errorContainer) {
-    this._errorContainer.removeNode(true)
+    Util.removeElement(this._errorContainer);
+    this._errorContainer = null
   }
   CN_logincontrol_newblue.destroyLoginChrome();
   this.formManager.deforceDialog();

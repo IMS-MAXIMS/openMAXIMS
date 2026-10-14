@@ -23,8 +23,8 @@ proto.destroy = function()
 {
 	if(this.hshadow)
 	{
-		this.hshadow.removeNode(true);
-		this.vshadow.removeNode(true);
+		Util.removeElement(this.hshadow);
+		Util.removeElement(this.vshadow);
 		this.vshadow = null;
 		this.hshadow = null;
 	}
@@ -36,19 +36,21 @@ proto.createShadow = function()
 {
 	if(this.created) return;
 
+	var shadowOpacity = "0.3";
+	var pixelRadius = "2";
 	this.hshadow = document.createElement("div");
 	this.vshadow = document.createElement("div");
 
 	if(this.element)
 	{
-		var shadowOpacity = this.element.currentStyle["xl--shadow-opacity"];
+		shadowOpacity = Util.getStyle(this.element, "xl--shadow-opacity");
 		if(!shadowOpacity) shadowOpacity = "0.3";
 	
-		var pixelRadius = this.element.currentStyle["xl--shadow-pixel-radius"];
+		pixelRadius = Util.getStyle(this.element, "xl--shadow-pixel-radius");
 		if(!pixelRadius) pixelRadius = "2";
 
-		this.element.insertAdjacentElement("beforebegin", this.hshadow); // Added to the same parent.
-		this.element.insertAdjacentElement("beforebegin", this.vshadow); // Added to the same parent.	
+		this.element.parentNode.insertBefore(this.hshadow, this.element); // Added to the same parent.
+		this.element.parentNode.insertBefore(this.vshadow, this.element); // Added to the same parent.	
 	}
 	else
 	{
@@ -59,55 +61,44 @@ proto.createShadow = function()
 	this.hshadow.style.position = "absolute";
 	this.vshadow.style.position = "absolute";
 
-	this.hshadow.style.height = 3;
+	this.hshadow.style.height = "3px";
 	this.hshadow.style.overflow = "hidden";
 
 	if(this.element && this.shadowautoshow) 
 	{
-		this.hshadow.style.setExpression("top", this.element.uniqueID + ".offsetHeight + " + this.element.uniqueID + ".offsetTop - 3")
-		this.hshadow.style.setExpression("left", this.element.uniqueID + ".offsetLeft + 2")
-
-		this.hshadow.style.setExpression("width", this.element.uniqueID + ".offsetWidth-2")
-		this.hshadow.style.setExpression("display", this.element.uniqueID + ".currentStyle.display")	
+		this.syncPosition();	
 	}
 	else 
 	{
 		this.hshadow.style.visibility = "hidden";
 		// Avoid scrolling.
-		this.hshadow.style.width = 1;
-		this.hshadow.style.top = 0; 
-		this.hshadow.style.left = 0;
+		this.hshadow.style.width = "1px";
+		this.hshadow.style.top = "0px"; 
+		this.hshadow.style.left = "0px";
 	}
 
-	this.hshadow.style.background = "black";
+	this.hshadow.style.background = "rgba(0, 0, 0, " + shadowOpacity + ")";
 
-	this.hshadow.style.filter = "progid:DXImageTransform.Microsoft.Blur(pixelRadius=" + pixelRadius + ",makeshadow=true,shadowopacity=" + shadowOpacity + ")";
-
-	this.vshadow.style.width = 3;
+	this.vshadow.style.width = "3px";
 	this.vshadow.style.overflow = "hidden";
 	if(this.element && this.shadowautoshow) 
 	{
-		this.vshadow.style.setExpression("top", this.element.uniqueID + ".offsetTop+2");
-		this.vshadow.style.setExpression("left", this.element.uniqueID + ".offsetLeft+"+this.element.uniqueID+".offsetWidth-3");
-
-		this.vshadow.style.setExpression("height", this.element.uniqueID + ".offsetHeight-5");
-		this.vshadow.style.setExpression("display", this.element.uniqueID + ".currentStyle.display");
+		this.syncPosition();
 	}
 	else 
 	{
 		this.vshadow.style.visibility = "hidden";
 		// Avoid scrolling.
-		this.vshadow.style.height = 1;
-		this.vshadow.style.top = 0;
-		this.vshadow.style.left = 0;
+		this.vshadow.style.height = "1px";
+		this.vshadow.style.top = "0px";
+		this.vshadow.style.left = "0px";
 	}
 	
 	if(this.element && !this.shadowautoshow) this.syncPosition();
 	
-	this.vshadow.style.background = "black";
-	this.vshadow.style.filter = "progid:DXImageTransform.Microsoft.Blur(pixelRadius=" + pixelRadius + ",makeshadow=true,shadowopacity=" + shadowOpacity + ")"
+	this.vshadow.style.background = "rgba(0, 0, 0, " + shadowOpacity + ")";
 
-	this.hshadow.unselectable = this.vshadow.unselectable = true;
+	this.hshadow.style.userSelect = "none";
 
 	this.created = true;
 }
@@ -116,11 +107,11 @@ proto.show = function()
 {
 	if(!this.created) this.createShadow();
 
-	this.syncPosition();
+	if(this.element) this.syncPosition();
 	this.hshadow.style.visibility = "visible";
 	this.vshadow.style.visibility = "visible";
 	this.hshadow.style.display = this.vshadow.style.display = "block";
-	this.hshadow.style.zIndex = this.vshadow.style.zIndex = this.element.currentStyle.zIndex;
+	this.hshadow.style.zIndex = this.vshadow.style.zIndex = this.element ? Util.getComputedStyle(this.element).zIndex : "";
 }
 
 proto.attach = function(l)
@@ -140,20 +131,20 @@ proto.detach = function()
 
 proto.syncPosition = function()
 {
-	if(this.element.currentStyle.display == "none" 
-	|| this.element.currentStyle.visibility == "hidden"
+	if(Util.getComputedStyle(this.element).display == "none" 
+	|| Util.getComputedStyle(this.element).visibility == "hidden"
 	|| !this.element.offsetWidth) return;
 
-	var off = this.element.currentStyle["xl--shadow-offset"];
+	var off = Util.getStyle(this.element, "xl--shadow-offset");
 	if(!off && off !== 0) off = 2;
 	else off = parseInt(off, 10);
 
-	this.hshadow.style.top =  this.element.offsetHeight + this.element.offsetTop - 5 + off;
-	this.hshadow.style.left = this.element.offsetLeft + 2;
-	this.hshadow.style.width = this.element.offsetWidth - 5 + off;
+	this.hshadow.style.top = (this.element.offsetHeight + this.element.offsetTop - 5 + off) + "px";
+	this.hshadow.style.left = (this.element.offsetLeft + 2) + "px";
+	this.hshadow.style.width = Math.max(1, this.element.offsetWidth - 5 + off) + "px";
 
-	this.vshadow.style.top = this.element.offsetTop + 2;
-	this.vshadow.style.left = this.element.offsetLeft + this.element.offsetWidth - 5 + off;
+	this.vshadow.style.top = (this.element.offsetTop + 2) + "px";
+	this.vshadow.style.left = (this.element.offsetLeft + this.element.offsetWidth - 5 + off) + "px";
 	var h = this.element.offsetHeight - 5 + off;
 	this.vshadow.style.height = (h > 0 ? h : 1) + "px";
 }

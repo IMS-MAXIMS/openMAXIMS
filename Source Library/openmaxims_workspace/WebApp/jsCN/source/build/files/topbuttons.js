@@ -28,13 +28,13 @@ var proto = TopButtons.prototype;
 
 proto._buildHover = function()
 {
-	var div = this._hoverDiv = document.createElement("<div class='topButtonHover'>");
+	var div = this._hoverDiv = Util.createElementFromHTML("<div class='topButtonHover'>");
 	document.body.appendChild(div);
-	var div1 = document.createElement("<div class='topButtonHover1'>");
+	var div1 = Util.createElementFromHTML("<div class='topButtonHover1'>");
 	div.appendChild(div1);
-	var div2 = document.createElement("<div class='topButtonHover2'>");
+	var div2 = Util.createElementFromHTML("<div class='topButtonHover2'>");
 	div.appendChild(div2);
-	var div3 = document.createElement("<div class='topButtonHover3'>");
+	var div3 = Util.createElementFromHTML("<div class='topButtonHover3'>");
 	div.appendChild(div3);
 }
 
@@ -59,12 +59,12 @@ proto.unload = function()
 
 proto.loadData = function(node)
 {
-	var createNode = node.selectSingleNode("create");
+	var createNode = Util.xmlSelectSingleNode(node, "create");
 	if(createNode) 
 	{
 		this._clean();
 
-		var linkNodes = createNode.selectNodes("link");
+		var linkNodes = Util.xmlSelectNodes(createNode, "link");
 		var count = linkNodes.length;
 		this._createButtons(this._topSpan, linkNodes, count, true);
 		//this._modifyButtonsByNodes(linkNodes, count);	 // No need, as modifyButton is called for every button in _createButton.
@@ -72,10 +72,10 @@ proto.loadData = function(node)
 		this._createMoreSections(createNode);
 	}
 
-	var modifyNode = node.selectSingleNode("modify");
+	var modifyNode = Util.xmlSelectSingleNode(node, "modify");
 	if(modifyNode)
 	{
-		var linkNodes = modifyNode.selectNodes("link");
+		var linkNodes = Util.xmlSelectNodes(modifyNode, "link");
 		var count = linkNodes.length;
 		this._modifyButtonsByNodes(linkNodes, count);	
 
@@ -86,17 +86,17 @@ proto.loadData = function(node)
 proto.set_disabled = function(disabled)
 {
 	this._disabled = disabled;
-	this.element.className = disabled ? "topRightControls topRightControls_disabled" : "topRightControls" ;
+	Util.toggleClass(this.element, "topRightControls_disabled", disabled);
 }
 
 proto._createMoreSections = function(node)
 {
-	var moreNode = node.selectSingleNode("more");
+	var moreNode = Util.xmlSelectSingleNode(node, "more");
 	if(!moreNode) return;
 	
 	this._modifyMore(moreNode);
 	
-	var sections = moreNode.selectNodes("section");
+	var sections = Util.xmlSelectNodes(moreNode, "section");
 	for(var i = 0; i < sections.length; i++)
 	{
 		this._createSection(sections[i]);
@@ -106,7 +106,7 @@ proto._createMoreSections = function(node)
 proto._modifyMore = function(node)
 {
 	var attr = node.getAttribute("visible");
-	this._moreLink.style.display = attr != "false" ? "inline-block" : "none";
+	this._moreLink.style.display = attr != "false" ? "inline-flex" : "none";
 	
 	var doResize = false;
 	attr = node.getAttribute("colWidth");
@@ -165,7 +165,7 @@ proto._createSection = function(node)
 
 	this._createSectionCaption(div);
 	
-	var linkNodes = node.selectNodes("link");
+	var linkNodes = Util.xmlSelectNodes(node, "link");
 	var count = linkNodes.length;
 	this._createButtons(div, linkNodes, count, false);
 	this._modifyButtonsByNodes(linkNodes, count);	
@@ -178,17 +178,17 @@ proto._createSection = function(node)
 
 proto._modifyMoreSections = function(node)
 {
-	var moreNode = node.selectSingleNode("more");
+	var moreNode = Util.xmlSelectSingleNode(node, "more");
 	this._modifyMore(moreNode);
 
-	var sections = moreNode.selectNodes("section");
+	var sections = Util.xmlSelectNodes(moreNode, "section");
 	count = sections.length;
 	for(var i = 0; i < count; i++)
 	{
 		var sectionNode = sections[i];
 		this._modifySectionByNode(sectionNode);
 		
-		var linkNodes = sectionNode.selectNodes("link");
+		var linkNodes = Util.xmlSelectNodes(sectionNode, "link");
 		var count = linkNodes.length;
 		if(count > 0) this._modifyButtonsByNodes(linkNodes, count);			
 	}
@@ -218,12 +218,12 @@ proto._modifySection = function(section, node)
 		var captionDiv = section.firstChild;
 		if(caption == "")
 		{
-			captionDiv.lastChild.innerText = "";
+			captionDiv.lastChild.textContent = "";
 			captionDiv.style.display = "none";
 		}
 		else
 		{
-			captionDiv.lastChild.innerText = caption;
+			captionDiv.lastChild.textContent = caption;
 			captionDiv.style.display = "block";
 		}
 		this._resizeSectionLine(captionDiv.firstChild);
@@ -277,13 +277,13 @@ proto._modifyButton = function(link, linkNode)
 	{
 		if(attr == "")
 		{
-			link.lastChild.innerText = "";
+			link.lastChild.textContent = "";
 			link.lastChild.style.display = "none";
 		}
 		else
 		{
 			link.lastChild.style.display = "inline";
-			link.lastChild.innerText = String(attr);
+			link.lastChild.textContent = String(attr);
 		}
 	}
 
@@ -299,30 +299,20 @@ proto._modifyButton = function(link, linkNode)
 			}
 			else
 			{
-				imgSpan.style.display = "inline";
-				try
-				{
-					imgSpan.filters[0].src = CNFormManager.themeImagesPath + attr;
-					imgSpan.filters[0].enabled = true;
-				}
-				catch(e){}
+				imgSpan.style.display = "inline-block";
+					imgSpan.style.backgroundImage = "url('" + CNFormManager.themeImagesPath + attr + "')";
 			}
 		}
 		else
 		{
-			link.firstChild.style.display = "inline";
+			link.firstChild.style.display = "inline-block";
 			if(attr == "")
 			{
-				imgSpan.filters[0].enabled = false;
+					imgSpan.style.backgroundImage = "";
 			}
 			else
 			{
-				try
-				{
-					imgSpan.filters[0].src = CNFormManager.themeImagesPath + attr;
-					imgSpan.filters[0].enabled = true;
-				}
-				catch(e){}
+					imgSpan.style.backgroundImage = "url('" + CNFormManager.themeImagesPath + attr + "')";
 			}
 		}
 	}
@@ -352,16 +342,23 @@ proto._modifyButton = function(link, linkNode)
 
 proto._createMore = function()
 {
-	var link = document.createElement("<a href='#' class='moreButton hoverable' tabIndex='-1'>");
+	var link = Util.createElementFromHTML("<a href='#' class='moreButton hoverable' tabIndex='-1'>");
 	link.style.display = "none";
-	link.innerText = "More ";
+
+	var moreText = document.createElement("span");
+	moreText.className = "moreText";
+	moreText.textContent = "More";
+	link.appendChild(moreText);
 
 	this.element.appendChild(document.createTextNode("  "));
 	this.element.appendChild(link);
-	var downAr = document.createElement("<img src='" + CNFormManager.themeImagesPath + "/down-ar-1.gif'>");
-	link.appendChild(downAr);
-	link.attachEvent("onmouseover", this._more_onmouseover);
-	link.attachEvent("onmouseout", this._more_onmouseout);
+	var moreIcon = document.createElement("span");
+	moreIcon.className = "moreIcon";
+	var downAr = Util.createElementFromHTML("<img src='" + CNFormManager.themeImagesPath + "/down-ar-1.gif'>");
+	moreIcon.appendChild(downAr);
+	link.appendChild(moreIcon);
+	Event.add(link, "mouseover", this, this._more_onmouseover);
+	Event.add(link, "mouseout", this, this._more_onmouseout);
 	
 	var div = document.createElement('div');
 	div.className = "topButtonsMoreDiv"
@@ -371,8 +368,8 @@ proto._createMore = function()
 	this._moreLink = link;
 	new Shadow(div, false, true);
 	
-	div.attachEvent("onmouseover", this._moreDiv_onmouseover);
-	div.attachEvent("onmouseout", this._moreDiv_onmouseout);
+	Event.add(div, "mouseover", this, this._moreDiv_onmouseover);
+	Event.add(div, "mouseout", this, this._moreDiv_onmouseout);
 		
 	this._moreDiv.jsObject = this;
 
@@ -387,7 +384,7 @@ proto._more_onmouseout = function()
 }
 proto.more_onmouseout = function()
 {
-	if(this._moreDiv.contains(event.toElement)) return;
+	if(this._moreDiv.contains((Event.current() || {}).relatedTarget)) return;
 	this._hideMore();
 }
 
@@ -403,24 +400,24 @@ proto.more_onmouseover = function()
 		this._hideMoreTO = null;
 	}
 	
-	if(this._moreDiv.currentStyle.visibility == "inherit") return;
+	if(Util.getStyle(this._moreDiv, "visibility") == "inherit") return;
 
 	if(CNFormManager.vista) this._showHover(this._moreLink);
 	
-	var l = CNUtil.findTag(event.srcElement, "A");
+	var l = CNUtil.findTag(Util.eventTarget(Event.current()), "A");
 	var xy = CNUtil.findAbsolutePos(l);
 	//this._moreDiv.style.display = "block";
 	this._moreDiv.style.visibility = "inherit";
 	this._moreDiv.style.width = "10px";
 	this._moreDiv.style.height = "10px";
 
-	this._moreDiv.style.backgroundColor = document.body.currentStyle.backgroundColor;
+	this._moreDiv.style.backgroundColor = Util.getStyle(document.body, "backgroundColor");
 	
 	var offset = CNFormManager.vista ? 4 : 0;
 	this._moreDiv.style.left = xy.x - this._moreDiv.offsetWidth + l.offsetWidth + offset + "px";
 	this._moreDiv.style.top = xy.y + l.offsetHeight - 6 + "px";
 	
-	l.filters[0].opacity = 100;
+	l.style.opacity = "1";
 	
 	var w = this._moreSubDiv.offsetWidth + 2;
 	this._moreInAnim = new AnimResize(this._moreDiv, w, this._moreSubDiv.offsetHeight + 2, w, 0);	
@@ -437,7 +434,7 @@ proto._moreDiv_onmouseout = function()
 }
 proto.moreDiv_onmouseout = function()
 {
-	if(this._moreDiv == event.toElement || this._moreDiv.contains(event.toElement)) return;
+	if(this._moreDiv == (Event.current() || {}).relatedTarget || this._moreDiv.contains((Event.current() || {}).relatedTarget)) return;
 	this._hideMore();
 }
 
@@ -478,7 +475,7 @@ proto._hideMore2 = function()
 		this.l.style.visibility = "hidden";
 	}
 	Animator.start(anim);
-	this._moreLink.filters[0].opacity = 75;
+	this._moreLink.style.opacity = "0.75";
 }
 
 
@@ -495,12 +492,12 @@ proto._button_setDisabled = function(button, disabled)
 		button.style.cursor = "";
 	}
 	button._disabled = disabled;
-	if(button.filters.length > 0) button.filters[0].opacity = disabled ? 25 : 75;
+	button.style.opacity = disabled ? "0.25" : "0.75";
 }
 
 proto._button_setVisible = function(button, visible)
 {
-	button.style.display = visible ? 'inline-block' : 'none';
+	button.style.display = visible ? (button._top ? 'inline-flex' : 'inline-block') : 'none';
 }
 
 proto._createButtons = function(parent, linkNodes, count, isTop)
@@ -516,17 +513,17 @@ proto._createButtons = function(parent, linkNodes, count, isTop)
 
 proto._createButtonIn = function(parent, linkNode, isTop)
 {
-	var link = document.createElement("<a href=# class='topButton hoverable' tabIndex=-1>");
+	var link = Util.createElementFromHTML("<a href=# class='topButton hoverable' tabIndex=-1>");
 	parent.appendChild(link);
 
 	var img = document.createElement("span");
 	img.className = "imgSpan"
 	if(isTop) link._top = true;
-	else img.style.display = "inline"; // Show image placeholder for more link alignment.
+	else img.style.display = "inline-block"; // Show image placeholder for more link alignment.
 	link.appendChild(img);
-	link.attachEvent("onmouseenter", this._link_onmouseenter);
-	link.attachEvent("onmouseleave", this._link_onmouseleave);
-	link.attachEvent("onclick", this._link_onclick);
+	Event.add(link, "mouseenter", this, this._link_onmouseenter);
+	Event.add(link, "mouseleave", this, this._link_onmouseleave);
+	Event.add(link, "click", this, this._link_onclick);
 
 	var span = document.createElement("span");
 	link.appendChild(span);
@@ -545,10 +542,10 @@ proto._createButtonIn = function(parent, linkNode, isTop)
 
 proto._link_onmouseenter = function()
 {
-	var l = event.srcElement;
+	var l = Util.eventTarget(Event.current());
 	if(l._disabled || this.formManager.isNavigationDisabled() && !l._alwaysEnabled) 
 	{
-		l.runtimeStyle.cursor = "no-drop";
+		l.style.cursor = "no-drop";
 		return;
 	}
 	if(CNFormManager.vista) 
@@ -556,34 +553,31 @@ proto._link_onmouseenter = function()
 		var jso = Util.dispatchObject();
 		if(!jso._moreDiv.contains(l)) jso._showHover(l);
 	}
-	if(l.filters.length > 0) l.filters[0].opacity = 100;
+	l.style.opacity = "1";
 }
 
 proto._showHover = function(l)
 {
 	var hoverDiv = this._hoverDiv;
-	var xy = Util.findAbsolutePos(l, hoverDiv.parentElement);
+	var xy = Util.findAbsolutePos(l, hoverDiv.parentNode || hoverDiv.parentElement);
 	hoverDiv.children[1].style.width = l.offsetWidth + 4;
 	hoverDiv.style.left = xy.x - 5;
 	hoverDiv.style.top = xy.y - 2;
-//	if(!hoverDiv.filters.length) hoverDiv.style.filter = "progid:DXImageTransform.Microsoft.Fade()";
-	hoverDiv.filters[0].Apply();
 	hoverDiv.style.visibility = "inherit";		
-	hoverDiv.filters[0].Play(.3);
 }
 
 proto._link_onmouseleave = function()
 {
-	var l = event.srcElement;
+	var l = Util.eventTarget(Event.current());
 	if(l._disabled) return;
-	l.runtimeStyle.cursor = "";
+	l.style.cursor = "";
 	
 	if(CNFormManager.vista)
 	{
 		var jso = Util.dispatchObject();
 		if(!jso._moreDiv.contains(l)) jso._hoverDiv.style.visibility = "hidden";
 	}
-	if(l.filters.length > 0) l.filters[0].opacity = 75;
+	l.style.opacity = "0.75";
 }
 
 proto._clean = function()
@@ -594,13 +588,13 @@ proto._clean = function()
 	{
 		this._buttons[id].className = ""; // 929 - topbuttons recreation moves focus from combo.
 		this._buttons[id].style.cssText = "";
-		this._buttons[id].removeNode(true);
+		Util.removeElement(this._buttons[id]);
 	}
 	this._buttons = [];
 
 	for(var id in this._sections)
 	{
-		this._sections[id].removeNode(true);
+		Util.removeElement(this._sections[id]);
 	}
 	this._sections = [];
 }
@@ -612,7 +606,7 @@ proto._link_onclick = function()
 proto.link_onclick = function()
 {
 	CNUtil.cancelEvent();
-	var link = CNUtil.findTag(event.srcElement, 'A');
+	var link = CNUtil.findTag(Util.eventTarget(Event.current()), 'A');
 	if(link._disabled) return;	
 
 	this._hideMore2();

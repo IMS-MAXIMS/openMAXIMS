@@ -24,19 +24,17 @@ proto.createElement = function(node, parentElement)
 		else if(attr == "large") l.style.fontSize = "14.25pt";
 	}
 	
-	if(CNFormManager.subTheme == "black") this.layout = this._layoutForBlack;
-
 	return l;
 }
 
 proto.loadData = function(node)
 {
 	var attr = node.getAttribute("text");
-	if(attr != null) this.element.innerText = String(attr);
+	if(attr != null) this.element.textContent = String(attr);
 	
 	attr = node.getAttribute("textColor");
 	if(attr != null) {
-		this.element.runtimeStyle.color = String(attr);
+		this.element.style.color = String(attr);
 		this._textColorSet = true;
 	} else if(attr == "") {
 		this._textColorSet = false;
@@ -59,8 +57,12 @@ proto.set_disabled = function(val)
 	// Ignore.
 }
 
-proto._layoutForBlack = function() {
-	if(this.element.offsetTop < this.formManager._darkHeight && !this._textColorSet) {
-		this.element.runtimeStyle.color = "white";
-	}
+proto.layout = function() {
+	// The dark-header class is a theme concern, not an IE-only
+	// runtime-style operation.  Inline textColor still wins over the class.
+	Util.setDarkHeaderControlClass(this.element, this.formManager);
 }
+
+// Keep the historical method name for callers that explicitly selected the
+// black sub-theme, but make it standards-based as well.
+proto._layoutForBlack = proto.layout;

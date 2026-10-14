@@ -37,13 +37,14 @@ proto.isValid = function()
 	var value = this.element.value;
 	if(value.replace(/\s+/, "") == "" && this._canBeEmpty) return true;
 	var valid = value.match(this.regex) != null;
-	if(!valid) this.element.runtimeStyle.borderColor = "red";
+	if(!valid) this.element.style.borderColor = "red";
 	return valid;
 }
 
 proto.createElement = function(node, parentElement)
 {
-	var l = document.createElement("<input type=text>");
+	var l = document.createElement("input");
+	l.type = 'text';
 	parentElement.appendChild(l);
 
 	this.element = l;

@@ -17,7 +17,7 @@ var proto = CN_logincontrol_pre.prototype;
 
 proto.createElement = function(node, parentElement)
 {
-	var l = document.createElement('<div class="cn_logincontrol">');
+	var l = (function(){ var el = document.createElement("div"); el.className = 'cn_logincontrol'; return el; })();
 	parentElement.appendChild(l);
 	
 	this.element = l;
@@ -34,6 +34,14 @@ proto.createElement = function(node, parentElement)
 	
 	return l;
 } 
+
+proto._elements = function(root)
+{
+	var result = {};
+	var nodes = root.querySelectorAll("[id]");
+	for(var i = 0; i < nodes.length; i++) result[nodes[i].id] = nodes[i];
+	return result;
+}
 
 proto._buildContent = function()
 {
@@ -55,14 +63,10 @@ proto._buildContent = function()
 		<td align=right>\
 			<input \
 				type=submit id="okChangeButton__" class="button" value="OK"\
-				onmouseenter=_CN_button_onmouseenter()\
-				onmouseleave=_CN_button_onmouseleave()\
-				onclick=CNUtil.dispatchObject().changePasswordButtonClick()>\
+				>\
 			<input \
 				type=submit id="cancelChangeButton__" class="button" value="Cancel"\
-				onmouseenter=_CN_button_onmouseenter()\
-				onmouseleave=_CN_button_onmouseleave()\
-				onclick=CNUtil.dispatchObject().cancelPasswordButtonClick()>\
+				>\
 		</td>\
 		</tr>\
 		</table>\
@@ -82,9 +86,7 @@ proto._buildContent = function()
 		<td>\
 			<input \
 				type=submit id="loginButton__" tabIndex="4" class="button" \
-				onmouseenter=_CN_button_onmouseenter()\
-				onmouseleave=_CN_button_onmouseleave()\
-				onclick=CNUtil.dispatchObject().loginButtonClick()>\
+				>\
 		</td></tr>\
 		<tr id="locationTR__">\
 			<td><b>Location</b></td><td colspan="4" id="locationTD__"></td></tr>\
@@ -92,20 +94,24 @@ proto._buildContent = function()
 	</div>\
 	<div class="div3">\
 		<div style="background: url(\'' + CNFormManager.themeImagesPath + 'login-3-2.gif\'); " class="div4">\
-			<div id="lockImg__" style="filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src=' + CNFormManager.themeImagesPath + 'lock-1.png); "></div>\
+			<div id="lockImg__" style="background: url(' + CNFormManager.themeImagesPath + 'lock-1.png) center / contain no-repeat; "></div>\
 			<div class="div5">' + CNFormManager.strings['loginCaption'] + '</div>\
 		</div>\
 	</div>\
-	<div id="loginLogoAnimDiv__" style="filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src=' + CNFormManager.themeImagesPath + 'login-3-1.png);">\
+	<div id="loginLogoAnimDiv__" style="background: url(' + CNFormManager.themeImagesPath + 'login-3-1.png) center / 100% 100% no-repeat;">\
 		<div class="div6">\
-			<div style="display: inline-block; width: 90px; height: 145px; filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src=\'' + CNFormManager.strings['loginLogo'] + '\', sizingMethod=\'resize\'); "></div>\
+			<div style="display: inline-block; width: 90px; height: 145px; background: url(\'' + CNFormManager.strings['loginLogo'] + '\') center / 100% 100% no-repeat; "></div>\
 		</div>\
 	</div>\
-	<div id="div7" class="div7" style="filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src=' + CNFormManager.themeImagesPath + 'login-right-panel-1.png); ">\
+	<div id="div7" class="div7" style="background: url(' + CNFormManager.themeImagesPath + 'login-right-panel-1.png) center / 100% 100% no-repeat; ">\
 			<img src="g/siteLogo.gif" class="img1" onload="this.style.visibility=\'inherit\'; ">\
 	</div>\
 </div>';
 	this.element.innerHTML = html;
+	var controls = this._elements(this.element);
+	Event.add(controls.okChangeButton__, "click", this, this.changePasswordButtonClick);
+	Event.add(controls.cancelChangeButton__, "click", this, this.cancelPasswordButtonClick);
+	Event.add(controls.loginButton__, "click", this, this.loginButtonClick);
 
 	this._showLoginScreen();
 }
@@ -115,7 +121,7 @@ proto.loadData = function(node)
 	if(node.getAttribute("passwordExpireDays")) this._processPasswordExpiry(node);
 	this._salt = node.getAttribute("salt");
 	
-	var message = node.selectSingleNode("message");
+	var message = Util.xmlSelectSingleNode(node, "message");
 	if(message) {
 		this._showMessage(message);
 	}
@@ -126,13 +132,13 @@ proto._showMessage = function(node) {
 	redHeader.style.left = "-2px";
 	redHeader.style.width = "620px";
 
-	this.element.firstChild.appendChild(redHeader);
+	this.element.firstElementChild.appendChild(redHeader);
 	redHeader.className = "messageRedHeader";
 
 	var div = document.createElement("div");
-	this.element.firstChild.appendChild(div);
+	this.element.firstElementChild.appendChild(div);
 	div.className = "messageDiv";
-	div.innerHTML = node.xml;
+	div.innerHTML = Util.xmlInnerString(node);
 
 	redHeader.style.height = div.offsetHeight + 40 + "px";
 
@@ -190,7 +196,7 @@ proto.storeData = function(xmldoc)
 		{
 			if(this._selectLocationCombo) 
 			{
-				var storedNodes = rootEl.selectNodes("location");
+				var storedNodes = Util.xmlSelectNodes(rootEl, "location");
 				
 				var ix = this._selectLocationCombo.get_selectedIndex();
 				
@@ -232,7 +238,7 @@ proto.unload = function()
 
 proto._showLoginScreen = function()
 {
-	var all = this.element.all;
+	var all = this._elements(this.element);
 	
 	all.userTextBox__.tabIndex = 1;
 	all.passwordTextBox__.tabIndex = 2;
@@ -250,8 +256,8 @@ proto._showLoginScreen = function()
 	
 	try 
 	{
-		document.body.load("storedLocations");
-		var storedNodes = document.body.XMLDocument.selectNodes("storedLocations/location");;
+		var storedRoot = this.formManager._getStoredLocationsXML();
+		var storedNodes = Util.xmlSelectNodes(storedRoot, "location");
 		if(storedNodes.length > 0) 
 		{							  
 			this._showLocationCombo(storedNodes);
@@ -261,23 +267,22 @@ proto._showLoginScreen = function()
 	{}
 
 
-	this.element.attachEvent("onkeypress", this._element_onkeypress);
+	Event.add(this.element, "keypress", this, this._element_onkeypress);
 
 	Animator.start(new AnimMove(all.loginLogoAnimDiv__, 0, 0),
 					new AnimMove(all.div7, 524, 0),
 					new AnimMove(all.topLoginBottomDiv, all.topLoginBottomDiv.offsetLeft, 62));
 }
 
-proto._element_onkeypress = function()
+proto._element_onkeypress = function(ev)
 {
-	var jso = CNUtil.dispatchObject();
-	if(jso && jso.element_onkeypress) jso.element_onkeypress();
+	this.element_onkeypress(ev);
 }
-proto.element_onkeypress = function()
+proto.element_onkeypress = function(ev)
 {
-	if(event.keyCode == 13 && !this._processingPE)
+	if(Event.keyValue(ev) == 13 && !this._processingPE)
 	{
-		CNUtil.cancelEvent();
+		CNUtil.cancelEvent(ev);
 		this.loginButtonClick();
 	}
 }
@@ -297,13 +302,13 @@ proto._createSelectLocationCombo = function(all)
 
 proto._showLocationCombo = function(storedNodes)
 {
-	var all = this.element.all;
+	var all = this._elements(this.element);
 	var table = all.topLoginBottomDiv.children[0];
-	if(!this._selectLocationCombo) this._createSelectLocationCombo(table.all);	
+	if(!this._selectLocationCombo) this._createSelectLocationCombo(this._elements(table));	
 	
-	table.runtimeStyle.top = table.currentStyle['xl--with-location-top'];
-	table.runtimeStyle.left = table.currentStyle['xl--with-location-left'];
-	table.all.locationTR__.style.display = "block";
+	table.style.top = Util.getStyle(table, "xl--with-location-top");
+	table.style.left = Util.getStyle(table, "xl--with-location-left");
+	this._elements(table).locationTR__.style.display = "block";
 
 	this._fillSelectLocationCombo(storedNodes);
 }
@@ -313,7 +318,7 @@ proto._fillSelectLocationCombo = function(storedNodes)
 	var options = [];
 	for(var i = 0; i < storedNodes.length; i++)
 	{
-		var option = {text: storedNodes[i].text};
+		var option = {text: Util.xmlText(storedNodes[i])};
 		options.push(option);
 	}
 	
@@ -325,22 +330,22 @@ proto._fillSelectLocationCombo = function(storedNodes)
 
 proto._hideLocationCombo = function()
 {
-	var all = this._topLoginElement.all;
+	var all = this._elements(this.element);
 	var table = all.topLoginBottomDiv.children[0];
-	table.runtimeStyle.top = null;
-	table.runtimeStyle.left = null;
-	table.all.locationTR__.style.display = "none";
+	table.style.top = null;
+	table.style.left = null;
+	this._elements(table).locationTR__.style.display = "none";
 }
 
 proto.loginButtonClick = function()
 {
-	var all = this.element.all;
+	var all = this._elements(this.element);
 	if(!all.userTextBox__.value)
 	{
-		all.userTextBox__.runtimeStyle.borderColor = "red";
+		all.userTextBox__.style.borderColor = "red";
 		return;
 	}
-	all.userTextBox__.runtimeStyle.borderColor = "";
+	all.userTextBox__.style.borderColor = "";
 
 	this._loginUnlock(all.userTextBox__.value, all.passwordTextBox__.value);
 }
@@ -357,7 +362,7 @@ proto._processPasswordExpiry = function(passwordExpiryNode)
 	this._processingPE = true;
 	var days = passwordExpiryNode.getAttribute("passwordExpireDays");
 
-	document.body.focus();
+	if(document.activeElement && document.activeElement.blur) document.activeElement.blur();
 
 	if(days > 0) {
 		this._forcePasswordExpire = false;
@@ -375,7 +380,7 @@ proto._processPasswordExpiry2 = function(dialog, cancel)
 {
 	if(!cancel || this._forcePasswordExpire) // Yes.
 	{
-		var all = this.element.all;
+		var all = this._elements(this.element);
 		all.newPassword__.value = all.reenterPassword__.value = "";
 
 		all.userTextBox__.disabled = all.passwordTextBox__.disabled 
@@ -396,19 +401,19 @@ proto._processPasswordExpiry2 = function(dialog, cancel)
 
 proto.changePasswordButtonClick = function()
 {
-	var all = this.element.all;
+	var all = this._elements(this.element);
 	if(!all.newPassword__.value)
 	{
-		all.newPassword__.runtimeStyle.borderColor = "red";
+		all.newPassword__.style.borderColor = "red";
 		return;
 	}
 	else if(!all.reenterPassword__.value)
 	{
-		all.reenterPassword__.runtimeStyle.borderColor = "red";
+		all.reenterPassword__.style.borderColor = "red";
 		return;
 	}
-	all.newPassword__.runtimeStyle.borderColor = "";
-	all.reenterPassword__.runtimeStyle.borderColor = "";
+	all.newPassword__.style.borderColor = "";
+	all.reenterPassword__.style.borderColor = "";
 	if(all.newPassword__.value != all.reenterPassword__.value)
 	{
 		alert("Your password entries didn't match.");
@@ -427,7 +432,7 @@ proto.cancelPasswordButtonClick = function()
 
 proto._lockScreen = function(loginNode, message)
 {
-	var all = this.element.all;
+	var all = this._elements(this.element);
 	
 	all.userTextBox__.tabIndex = 1;
 	all.passwordTextBox__.tabIndex = 2;
@@ -437,12 +442,12 @@ proto._lockScreen = function(loginNode, message)
 	all.loginButton__.tabIndex = 4;
 	all.lockImg__.style.display = 'block';
 
-	all.loginButton__.innerText = "Unlock";
+	all.loginButton__.value = "Unlock";
 	
 	all.bottomLoginBottomDiv2.style.display = "none";
 	
 	var table = all.topLoginBottomDiv.children[0];
-	table.all.locationTR__.style.display = "none";
+	this._elements(table).locationTR__.style.display = "none";
 	
 	try{ all.userTextBox__.focus(); } catch(e){}
 	

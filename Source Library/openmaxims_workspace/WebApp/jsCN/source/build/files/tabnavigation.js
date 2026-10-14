@@ -15,7 +15,7 @@ var proto = CN_tabnavigation.prototype;
 
 proto.createElement = function(node, parentElement)
 {
-	var l = document.createElement("<div>");
+	var l = document.createElement("div");
 	parentElement.appendChild(l);
 
 	var id2 = node.getAttribute("screenItemID2");
@@ -39,7 +39,7 @@ proto.createElement = function(node, parentElement)
 	l.jsObject = this;
 
 	l.className = "cn_tabnavigation";
-	l.unselectable = "on";
+	l.style.userSelect = "none";
 	
 	this._buildElements(node);
 	return l;
@@ -75,7 +75,7 @@ proto.unload = function()
 
 proto._loadDataWalkNodes = function(parentNode, level)
 {
-	var subNodes = parentNode.selectNodes("node");
+	var subNodes = Util.xmlSelectNodes(parentNode, "node");
 	var count = subNodes.length;
 	for(var i = 0; i < count; i++)
 	{
@@ -88,8 +88,8 @@ proto._loadDataWalkNodes = function(parentNode, level)
 		}
 		var id = String(attr);
 		var tab;
-		if(level == 0) tab = this.element.all["navigationTab_" + id];
-		else if(level == 1) tab = this._level2ParentElement.all["navigationTab_" + id];
+		if(level == 0) tab = this.element.querySelector("#" + "navigationTab_" + id);
+		else if(level == 1) tab = this._level2ParentElement.querySelector("#" + "navigationTab_" + id);
 		else
 		{
 			alert("ASSERT: only two levels are supported for tabnavigation.");
@@ -117,7 +117,7 @@ proto._loadDataWalkNodes = function(parentNode, level)
 
 proto._buildElements = function(node)
 {
-	var nodes = node.selectNodes("node");
+	var nodes = Util.xmlSelectNodes(node, "node");
 	var count = nodes.length;
 	for(var i = 0; i < count; i++)
 	{
@@ -125,10 +125,10 @@ proto._buildElements = function(node)
 
 		var tab = this._appendTab(node, this.element, 0);
 
-		var subNodes = node.selectNodes("node");
+		var subNodes = Util.xmlSelectNodes(node, "node");
 		if(subNodes.length > 0)
 		{
-			var subTabsDiv = document.createElement("<div class=subTabsDiv>");
+			var subTabsDiv = (function(){ var el = document.createElement("div"); el.className = 'subTabsDiv'; return el; })();
 			this._level2ParentElement.appendChild(subTabsDiv);
 			this._buildSubNodes(subNodes, subTabsDiv);
 			subTabsDiv._parentNodeId = tab._nodeId;
@@ -150,7 +150,7 @@ proto._buildSubNodes = function(nodes, parentElement)
 
 proto._appendTab = function(node, parentElement, level)
 {
-	var table = document.createElement("<table align=bottom border=0 cellpadding=0 cellspacing=0 class=topTab>");
+	var table = (function(){ var el = document.createElement("table"); el.align = 'bottom'; el.border = '0'; el.cellPadding = '0'; el.cellSpacing = '0'; el.className = 'topTab'; return el; })();
 	parentElement.appendChild(table);
 	var tbody = document.createElement('tbody');
 	table.appendChild(tbody);
@@ -158,18 +158,18 @@ proto._appendTab = function(node, parentElement, level)
 	tbody.appendChild(tr);
 	var td1 = document.createElement("td");
 	tr.appendChild(td1);
-	var img1 = document.createElement("<img width=12 height=26>");
+	var img1 = (function(){ var el = document.createElement("img"); el.width = '12'; el.height = '26'; return el; })();
 	td1.appendChild(img1);
-	var td2 = document.createElement("<td valign=top class=topTabTextTD	nowrap unselectable=on>");
+	var td2 = (function(){ var el = document.createElement("td"); el.valign = 'top'; el.className = 'topTabTextTD'; el.nowrap = 'on'; el.style.userSelect = "none"; return el; })();
 	tr.appendChild(td2)
 	var td3 = document.createElement("td");
 	tr.appendChild(td3);
-	var img3 = document.createElement("<img width=11 height=26>");
+	var img3 = (function(){ var el = document.createElement("img"); el.width = '11'; el.height = '26'; return el; })();
 	td3.appendChild(img3);
 	
 	table._level = level;
 
-	td2.innerText = String(node.getAttribute("caption"));
+	td2.textContent = String(node.getAttribute("caption"));
 
 	var attr = node.getAttribute("id");
 	if(!attr) alert("ASSERT: no id for navigation node: " + node.getAttribute("caption"));
@@ -180,9 +180,9 @@ proto._appendTab = function(node, parentElement, level)
 
 	this.unselectTab(table);
 	
-	table.attachEvent("onmouseenter", this._tab_onmouseenter);
-	table.attachEvent("onmouseleave", this._tab_onmouseleave);	
-	table.attachEvent("onclick", this._tab_onclick);
+	Event.add(table, "mouseenter", this, this._tab_onmouseenter);
+	Event.add(table, "mouseleave", this, this._tab_onmouseleave);	
+	Event.add(table, "click", this, this._tab_onclick);
 	
 	return table;
 }
@@ -207,7 +207,7 @@ proto.selectFormNode = function(nodeId)
 	var id = "navigationTab_" + nodeId;
 	
 	// 1. Try to find top tab.
-	var tab = this.element.all[id];
+	var tab = this.element.querySelector("#" + id);
 	if(tab) 
 	{
 		if(tab.length > 0) tab = tab[0];
@@ -216,7 +216,7 @@ proto.selectFormNode = function(nodeId)
 	}
 	
 	// 2. Try to find sub tab.
-	tab = this._level2ParentElement.all[id];
+	tab = this._level2ParentElement.querySelector("#" + id);
 	if(tab) 
 	{
 		if(tab.length > 0) tab = tab[0];
@@ -225,7 +225,7 @@ proto.selectFormNode = function(nodeId)
 		
 		var tabDiv = tab.parentElement;
 		tabDiv.style.visibility = "inherit";
-		var topTab = this.element.all[tabDiv._parentTabId];
+		var topTab = this.element.querySelector("#" + tabDiv._parentTabId);
 		this.selectTab(topTab);
 		
 		return;
@@ -235,7 +235,7 @@ proto.selectFormNode = function(nodeId)
 
 proto.showSecondLevel = function(formId)
 {
-	var tab = this._level2ParentElement.all["navigationTab_" + formId];
+	var tab = this._level2ParentElement.querySelector("#" + "navigationTab_" + formId);
 	if(!tab)
 	{
 		alert("ASSERT: can't find tab: " + formId);
@@ -254,7 +254,7 @@ proto.showSecondLevel = function(formId)
 	
 	this._level2ParentElement.style.display = "block";
 	
-	var topTab = this.element.all[tabsDiv._parentTabId];
+	var topTab = this.element.querySelector("#" + tabsDiv._parentTabId);
 	this.selectTab(topTab);
 }
 
@@ -263,7 +263,7 @@ proto.hideSecondLevel = function()
 	this._level2ParentElement.style.display = "none";
 	if(!this._currentTabsDiv) return;
 	
-	var tabsDiv = this._level2ParentElement.children[this._currentTabsDiv];
+	var tabsDiv = this._level2ParentElement.querySelector("#" + this._currentTabsDiv);
 	if(!tabsDiv)
 	{
 		alert("ASSERT: can't find tabsDiv " + this._currentTabsDiv)
@@ -289,9 +289,9 @@ proto.selectTab = function(tab)
 	if(tab._level > 0 && CNFormManager.currentThemeName == "blue") suffix = "-2";
 
 	tab.className = "topTabSelected";
-	tab.cells(0).children[0].src = CNFormManager.themeImagesPath + "tab-header-2" + suffix + "_01.gif";
-	tab.cells(1).style.background = "url(" + CNFormManager.themeImagesPath + "tab-header-2_02.gif)";
-	tab.cells(2).children[0].src = CNFormManager.themeImagesPath + "tab-header-2" + suffix + "_03.gif";	
+	tab.rows[0].cells[0].children[0].src = CNFormManager.themeImagesPath + "tab-header-2" + suffix + "_01.gif";
+	tab.rows[0].cells[1].style.background = "url(" + CNFormManager.themeImagesPath + "tab-header-2_02.gif)";
+	tab.rows[0].cells[2].children[0].src = CNFormManager.themeImagesPath + "tab-header-2" + suffix + "_03.gif";	
 	tab._isSelected = true;
 	
 	this._selectedLevels[tab._level] = tab;
@@ -303,54 +303,56 @@ proto.unselectTab = function(tab)
 	if(tab._level > 0 && CNFormManager.currentThemeName == "blue") suffix = "-2";
 
 	tab.className = "topTab";
-	tab.cells(0).children[0].src = CNFormManager.themeImagesPath + "tab-header-1" + suffix + "_01.gif";
-	tab.cells(1).style.background = "url(" + CNFormManager.themeImagesPath + "tab-header-1_02.gif)";
-	tab.cells(2).children[0].src = CNFormManager.themeImagesPath + "tab-header-1" + suffix + "_03.gif";	
+	tab.rows[0].cells[0].children[0].src = CNFormManager.themeImagesPath + "tab-header-1" + suffix + "_01.gif";
+	tab.rows[0].cells[1].style.background = "url(" + CNFormManager.themeImagesPath + "tab-header-1_02.gif)";
+	tab.rows[0].cells[2].children[0].src = CNFormManager.themeImagesPath + "tab-header-1" + suffix + "_03.gif";	
 	tab._isSelected = false;
 }
 
 proto._unhoverTab = function(tab)
 {
-	tab.runtimeStyle.textDecoration = "";
-	tab.cells(1).runtimeStyle.color = "";
+	tab.style.textDecoration = "";
+	tab.rows[0].cells[1].style.color = "";
 }
 
 
 // Event handlers. ==========================================
-proto._tab_onmouseenter = function()
+proto._tab_onmouseenter = function(ev)
 {
 	if(this.formManager._loading || this.formManager.isNavigationDisabled()) return;
 	
-	var tab = event.srcElement;
-	if(tab.tagName != "TABLE") return;
+	var tab = Util.eventTarget(ev);
+	tab = CNUtil.findTag(tab, "TABLE");
+	if(!tab) return;
 	if(tab._isSelected) return;
-	tab.runtimeStyle.textDecoration = "underline";
-	tab.cells(1).runtimeStyle.color = "#5555aa";
+	tab.style.textDecoration = "underline";
+	tab.rows[0].cells[1].style.color = "#5555aa";
 }
 
-proto._tab_onmouseleave = function()
+proto._tab_onmouseleave = function(ev)
 {
-	CNUtil.dispatchObject().tab_onmouseleave();
+	this.tab_onmouseleave(ev);
 } 
-proto.tab_onmouseleave = function()
+proto.tab_onmouseleave = function(ev)
 {
 	if(this.formManager._loading || this.formManager.isNavigationDisabled()) return;
 	
-	var tab = event.srcElement;
-	if(tab.tagName != "TABLE") return;
+	var tab = Util.eventTarget(ev);
+	tab = CNUtil.findTag(tab, "TABLE");
+	if(!tab) return;
 	if(tab._isSelected) return;
 	this._unhoverTab(tab);
 } 
 
-proto._tab_onclick = function()
+proto._tab_onclick = function(ev)
 {
-	CNUtil.dispatchObject().tab_onclick();
+	this.tab_onclick(ev);
 }
-proto.tab_onclick = function()
+proto.tab_onclick = function(ev)
 {
 	if(this.formManager._loading || this.formManager.isNavigationDisabled()) return;
 
-	var tab = CNUtil.findTag(event.srcElement, "TABLE");
+	var tab = CNUtil.findTag(Util.eventTarget(ev), "TABLE");
 	if(tab._isSelected) return;
 	this._unhoverTab(tab);
 	this.selectTab(tab);
@@ -363,7 +365,7 @@ proto.tab_onclick = function()
 	else
 	{
 		// Try to find first second level node.
-		var tabsDiv = this._level2ParentElement.all["navigationTabsDiv_" + tab._nodeId];
+		var tabsDiv = this._level2ParentElement.querySelector("#" + "navigationTabsDiv_" + tab._nodeId);
 		if(tabsDiv)
 		{
 			var tab = tabsDiv.children[0];

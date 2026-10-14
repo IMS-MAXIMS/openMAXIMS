@@ -43,7 +43,7 @@ proto.onchange = function()
 	}	
 }
 
-proto.onbeforedeactivate = function(){}
+proto.onfocusout = function(){}
 proto.onkeypress = function(){}
 
 proto.createElement = function(node, parentElement)
@@ -57,32 +57,39 @@ proto.createElement = function(node, parentElement)
 	
 	l.className = "cn_timebox";
 
-	l.attachEvent("onmousedown", this._element_onmousedown);
-	l.attachEvent("onkeydown", this._element_onkeydown);
-	l.attachEvent("onkeyup", this._element_onkeyup);
-	l.attachEvent("onbeforedeactivate", this._element_onbeforedeactivate);
+	Event.add(l, "mousedown", this, this._element_onmousedown);
+	Event.add(l, "keydown", this, this._element_onkeydown);
+	Event.add(l, "keyup", this, this._element_onkeyup);
+	Event.add(l, "focusout", this, this._element_onfocusout);
 
-	this.hours = document.createElement("<input type=text maxlength=2 style=\"text-align: right; padding-right: 1px; \">");
+	this.hours = document.createElement("input");
+	this.hours.type = "text";
+	this.hours.maxLength = 2;
+	this.hours.style.textAlign = "right";
+	this.hours.style.paddingRight = "1px";
 
-	this.hours.attachEvent("onfocus", this._input_onfocus);
-	this.hours.attachEvent("onbeforedeactivate", this._input_onblur);
-	this.hours.attachEvent("onactivate", this._input_onactivate);	
-	this.hours.attachEvent("onmousedown", this._input_onmousedown);
-	this.hours.attachEvent("onchange", this._textbox_onchange);
+	Event.add(this.hours, "focus", this, this._input_onfocus);
+	Event.add(this.hours, "focusout", this, this._input_onblur);
+	Event.add(this.hours, "focusin", this, this._input_onactivate);	
+	Event.add(this.hours, "mousedown", this, this._input_onmousedown);
+	Event.add(this.hours, "change", this, this._textbox_onchange);
 	
 	this.element.appendChild(this.hours);
 
-	var divider = document.createElement("<span class=divider>");
-	divider.innerText = ":";
+	var divider = document.createElement("span");
+	divider.className = 'divider';
+	divider.textContent = ":";
 	this.element.appendChild(divider);
 
-	this.minutes = document.createElement("<input type=text maxlength=2>");
+	this.minutes = document.createElement("input");
+	this.minutes.type = 'text';
+	this.minutes.maxLength = 2;
 
-	this.minutes.attachEvent("onfocus", this._input_onfocus);
-	this.minutes.attachEvent("onbeforedeactivate", this._input_onblur);	
-	this.minutes.attachEvent("onactivate", this._input_onactivate);	
-	this.minutes.attachEvent("onmousedown", this._input_onmousedown);
-	this.minutes.attachEvent("onchange", this._textbox_onchange);
+	Event.add(this.minutes, "focus", this, this._input_onfocus);
+	Event.add(this.minutes, "focusout", this, this._input_onblur);	
+	Event.add(this.minutes, "focusin", this, this._input_onactivate);	
+	Event.add(this.minutes, "mousedown", this, this._input_onmousedown);
+	Event.add(this.minutes, "change", this, this._textbox_onchange);
 	
 	this.element.appendChild(this.minutes);
 	this.isBuilt = true;
@@ -148,7 +155,7 @@ proto.isValid = function(doNotHilite)
 	var valid = this.validateValue(this.get_value(), this._canBeEmpty);
 	if(!valid && !doNotHilite)
 	{
-		this.element.runtimeStyle.borderColor = "red";
+		this.element.style.borderColor = "red";
 	}
 	return valid;
 }
@@ -174,10 +181,10 @@ proto._set_disabled = function()
 	}
 	else
 	{
-		this.element.runtimeStyle.borderColor = val ? this.element.currentStyle["xl--disabled-border-color"] : "";
-		this.element.runtimeStyle.backgroundColor =
-		this.hours.runtimeStyle.backgroundColor = 
-			this.minutes.runtimeStyle.backgroundColor = val ? this.element.currentStyle["xl--disabled-background"] : "";
+		this.element.style.borderColor = val ? Util.getStyle(this.element, "xl--disabled-border-color") : "";
+		this.element.style.backgroundColor =
+		this.hours.style.backgroundColor = 
+			this.minutes.style.backgroundColor = val ? Util.getStyle(this.element, "xl--disabled-background") : "";
 	}
 }
 
@@ -211,15 +218,15 @@ proto.get_value = function()
 
 proto.set_readOnly = function(value)
 {
-	this._readOnly = eval(value);
+	this._readOnly = Util.parseBoolean(value);
 	if(!this.isBuilt) return;
 	this._set_readOnly();
 }
 proto._set_readOnly = function()
 {
 	this.hours.readOnly = this.minutes.readOnly = this._readOnly || this._disabled;
-	this.hours.runtimeStyle.backgroundColor = 
-		this.minutes.runtimeStyle.backgroundColor = this._disabled || this._readOnly ? this.element.currentStyle["xl--disabled-background"] : "";
+	this.hours.style.backgroundColor = 
+		this.minutes.style.backgroundColor = this._disabled || this._readOnly ? Util.getStyle(this.element, "xl--disabled-background") : "";
 }
 proto.get_readOnly = function()
 {
@@ -228,22 +235,22 @@ proto.get_readOnly = function()
 
 proto.set_canBeEmpty = function(val)
 {
-	this._canBeEmpty = eval(val);
+	this._canBeEmpty = Util.parseBoolean(val);
 }
 
 proto._input_onactivate = function()
 {
-	var element = CNUtil.findElement(event.srcElement);
+	var element = CNUtil.findElement(Util.eventTarget());
 	if(element.jsObject._disabled) return;
-	element.runtimeStyle.borderColor = "";
+	element.style.borderColor = "";
 }
 
 proto._input_onfocus = function()
 {
-	var jsObject = CNUtil.findJSObject(event.srcElement);
+	var jsObject = CNUtil.findJSObject(Util.eventTarget());
 	if(jsObject._disabled || jsObject._readOnly) return;
 
-	event.cancelBubble = true;
+	Util.cancelBubble(Event.current());
 	
 	if(jsObject.focusIn)
 	{
@@ -251,7 +258,7 @@ proto._input_onfocus = function()
 		return;
 	}
 
-	jsObject.activeInput = event.srcElement;
+	jsObject.activeInput = Util.eventTarget();
 	if(!jsObject._readOnly) 
 	{
 //		CNFormManager._trace("timebox _input_onfocus select()");
@@ -261,7 +268,7 @@ proto._input_onfocus = function()
 
 proto._input_onblur = function()
 {
-	var jsObject = CNUtil.findJSObject(event.srcElement);
+	var jsObject = CNUtil.findJSObject(Util.eventTarget());
 	jsObject.input_onblur();
 }
 
@@ -272,7 +279,7 @@ proto.input_onblur = function()
 	if(this.focusIn)
 	{
 		this.focusIn = false;
-		event.cancelBubble = true;
+		Util.cancelBubble(Event.current());
 		return;
 	}
 	if(this.canceling)
@@ -297,7 +304,7 @@ proto.input_onblur = function()
 
 proto._fireChangeEvent = function()
 {
-	var ev = {srcElement: this.element};
+	var ev = {target: this.element};
 	if(this.onchange) this.onchange(ev);
 }
 
@@ -309,10 +316,10 @@ proto.element_onblur = function()
 
 proto._input_onmousedown = function()
 {
-	var jsObject = CNUtil.findJSObject(event.srcElement);
+	var jsObject = CNUtil.findJSObject(Util.eventTarget());
 	if(jsObject._disabled) return;
 	
-	if(jsObject.activeInput != null && jsObject.activeInput != event.srcElement) 
+	if(jsObject.activeInput != null && jsObject.activeInput != Util.eventTarget()) 
 	{	
 		jsObject.focusIn = true;
 	}
@@ -339,12 +346,12 @@ proto.blur = function()
 
 proto._element_onmousedown = function()
 {
-	event.cancelBubble = true;
+	Util.cancelBubble(Event.current());
 }
 
 proto._element_onkeydown = function()
 {
-	var jsObject = CNUtil.findJSObject(event.srcElement);
+	var jsObject = CNUtil.findJSObject(Util.eventTarget());
 	jsObject.element_onkeydown();
 }
 
@@ -352,17 +359,17 @@ proto.element_onkeydown = function()
 {
 	if(this._disabled) return;
 	
-	var code = event.keyCode;
+	var code = (Event.keyValue(Event.current()));
 
 	if(code == 9) // Tab.
 	{
-		if(!event.shiftKey && this.activeInput == this.hours) 
+		if(!Event.current().shiftKey && this.activeInput == this.hours) 
 		{
 			this.focusIn = true;
 			this.minutes.focus();
 			CNUtil.cancelEvent();
 		}
-		else if(!event.shiftKey && !this.isValid())
+		else if(!Event.current().shiftKey && !this.isValid())
 		{
 			if(!this.dontCancelBlur) CNUtil.cancelEvent();
 			return;
@@ -376,7 +383,7 @@ proto.element_onkeydown = function()
 	}
 	else if(code == 8) // Backspace
 	{
-		if(this.activeInput == this.minutes && event.srcElement.value.length == 0)
+		if(this.activeInput == this.minutes && Util.eventTarget().value.length == 0)
 		{
 			this.focusIn = true;
 //			CNFormManager._trace("timebox hours.focus()");
@@ -400,7 +407,7 @@ proto.element_onkeydown = function()
 	{
 		CNUtil.cancelEvent();
 
-		if(!this._readOnly && String.fromCharCode(event.keyCode).toLowerCase() == "n")
+		if(!this._readOnly && String.fromCharCode((Event.keyValue(Event.current()))).toLowerCase() == "n")
 		{
 			var now = new Date();
 			this.hours.value = this._zeroPad(now.getHours());
@@ -417,7 +424,7 @@ proto.element_onkeydown = function()
 
 proto._element_onkeyup = function()
 {
-	var jsObject = CNUtil.findJSObject(event.srcElement);
+	var jsObject = CNUtil.findJSObject(Util.eventTarget());
 	jsObject.element_onkeyup();
 }
 
@@ -425,7 +432,7 @@ proto.element_onkeyup = function()
 {
 	if(this._disabled || !this.activeInput) return;
 	
-	var code = event.keyCode;
+	var code = (Event.keyValue(Event.current()));
 	if(code != 9 && code != 8 && this.activeInput == this.hours && this.activeInput.value.length >= 2)
 	{
 		this.focusIn = true;
@@ -434,7 +441,7 @@ proto.element_onkeyup = function()
 	}
 	if(code == 8) // Backspace.
 	{
-		if(this.activeInput == this.minutes && event.srcElement.value.length == 0)
+		if(this.activeInput == this.minutes && Util.eventTarget().value.length == 0)
 		{
 			this.focusIn = true;
 //			CNFormManager._trace("timebox hours.focus()");
@@ -449,16 +456,16 @@ proto.element_onkeyup = function()
 
 proto._textbox_onchange = function()
 {
-	var jsObject = CNUtil.findJSObject(event.srcElement);
+	var jsObject = CNUtil.findJSObject(Util.eventTarget());
 	if(jsObject._disabled) return;
 	jsObject._isDirty = true;
 }
 
-proto._element_onbeforedeactivate = function()
+proto._element_onfocusout = function()
 {
-	var jsObject = CNUtil.findJSObject(event.srcElement);
+	var jsObject = CNUtil.findJSObject(Util.eventTarget());
 	if(jsObject._disabled) return;
-	jsObject.onbeforedeactivate();
+	jsObject.onfocusout();
 }
 
 proto.validateValue = function(value, canBeEmpty)

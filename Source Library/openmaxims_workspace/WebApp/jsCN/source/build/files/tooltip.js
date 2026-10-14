@@ -17,36 +17,20 @@ var Tooltip =
 
 	buildElement: function()
 	{
-		if(CNFormManager.vista)
-		{
-			var h = document.createElement("<v:roundrect class='tooltipPopup'>");
-			h.arcsize = .1;
-			h.strokecolor = "#777777";
-			var fill = document.createElement("v:fill");
-			//fill.type = 'frame';
-			//fill.src = 'themes/vista/g/tooltip-bg.gif';
-			fill.type = "gradient";
-			fill.colors = "0% #E5E6F0, 100% white";
-			h.appendChild(fill);
-			var tb = document.createElement("span");
-			h.appendChild(tb);
-			this.popup = h;
-			this._shadow = new Shadow(h, false, false); // As shadow property is used by vml.
+		this.popup = Util.createElement("div", "tooltipPopup");
+		if(CNFormManager.vista) {
+			this.popup.appendChild(document.createElement("span"));
+			this.popup.style.boxShadow = "2px 2px 4px rgba(0,0,0,.3)";
 		}
-		else this.popup = document.createElement("<div class='tooltipPopup'>")
 		document.body.appendChild(this.popup);
 	},
 	destroy: function()
 	{
-		this.element = null;
-		if(this.popup) 
-		{
-			if(this._shadow) this._shadow.destroy();
-			this.popup.removeNode(true);
-		}
+		this.hide();
+		Util.removeElement(this.popup);
 		this.popup = null;
 	},
-	
+
 	set: function(l, tipText)
 	{
 		if(tipText && !l.tipText) Tooltip.attach(l, tipText);
@@ -61,52 +45,40 @@ var Tooltip =
 
 	attach: function(l, tipText)
 	{
-		if(l.tagName == "AREA")
-		{
-			l.attachEvent("onmouseover", this._element_onmouseenter);
-			l.attachEvent("onmouseout", this._element_onmouseleave);
-		}
-		else
-		{
-			l.attachEvent("onmouseenter", this._element_onmouseenter);
-			l.attachEvent("onmouseleave", this._element_onmouseleave);
-		}
+		var enter = l.tagName == "AREA" ? "mouseover" : "mouseenter";
+		var leave = l.tagName == "AREA" ? "mouseout" : "mouseleave";
+		Event.add(l, enter, this, this._element_onmouseenter);
+		Event.add(l, leave, this, this._element_onmouseleave);
 		if(tipText) l.tipText = tipText;
 	},
-
 	detach: function(l)
 	{
 		this.hide();
-		if(l.tagName == "AREA")
-		{
-			l.detachEvent("onmouseover", this._element_onmouseenter);
-			l.detachEvent("onmouseout", this._element_onmouseleave);
-		}
-		else
-		{
-			l.detachEvent("onmouseenter", this._element_onmouseenter);
-			l.detachEvent("onmouseleave", this._element_onmouseleave);
-		}
+		var enter = l.tagName == "AREA" ? "mouseover" : "mouseenter";
+		var leave = l.tagName == "AREA" ? "mouseout" : "mouseleave";
+		Event.del(l, enter, this, this._element_onmouseenter);
+		Event.del(l, leave, this, this._element_onmouseleave);
 		l.tipText = null;
 	},
 
 	_element_onmouseenter: function()
 	{
-		var l = event.srcElement;
+		var l = Util.eventTarget();
 		Tooltip.forceOnElement(l, true);
 	},
 
 	forceOnElement: function(l, useEvent)
 	{
 		if(!this.popup || !l.tipText) return;
-		var timeout = parseInt(l.currentStyle["xl--tooltip-delay"]);
+		if(this.element) this.hide();
+		var timeout = parseInt(Util.getStyle(l, "xl--tooltip-delay"), 10);
 		if(useEvent && !timeout) timeout = 500; // Default.
 
 		Tooltip.element = l;
 		if(useEvent)
 		{
-			Tooltip.x = event.screenX - window.screenLeft + Tooltip.popupXOffset + document.body.scrollLeft;
-			Tooltip.y = event.screenY - window.screenTop + Tooltip.popupYOffset + document.body.scrollTop;
+			Tooltip.x = Event.current().clientX + window.pageXOffset + Tooltip.popupXOffset;
+			Tooltip.y = Event.current().clientY + window.pageYOffset + Tooltip.popupYOffset;
 		}
 		else
 		{
@@ -115,9 +87,9 @@ var Tooltip =
 			Tooltip.y = xy.y + l.offsetHeight;
 		}
 		
-		l.attachEvent("onmousemove", Tooltip._element_onmousemove);		
+		Event.add(l, "mousemove", this, this._element_onmousemove);		
 
-		if(timeout > 0) Tooltip.showTimeout = setTimeout("Tooltip.show()", timeout);
+		if(timeout > 0) Tooltip.showTimeout = setTimeout(function(){ Tooltip.show(); }, timeout);
 		else Tooltip.show();
 	},
 
@@ -128,14 +100,14 @@ var Tooltip =
 	
 	_element_onmousemove: function()
 	{
-		Tooltip.x = event.screenX - window.screenLeft + Tooltip.popupXOffset + document.body.scrollLeft;
-		Tooltip.y = event.screenY - window.screenTop + Tooltip.popupYOffset + document.body.scrollTop;
+		Tooltip.x = Event.current().clientX + window.pageXOffset + Tooltip.popupXOffset;
+		Tooltip.y = Event.current().clientY + window.pageYOffset + Tooltip.popupYOffset;
 		if(Tooltip.popupMoving)
 		{
 			var xy = Tooltip.correctXY(Tooltip.popup, Tooltip.x, Tooltip.y);
-			Tooltip.popup.style.left = xy.x;
-			Tooltip.popup.style.top = xy.y;
-			if(Tooltip._shadow) Tooltip._shadow.syncPosition();
+			Tooltip.popup.style.left = xy.x + "px";
+			Tooltip.popup.style.top = xy.y + "px";
+			
 		}
 	},
 
@@ -143,7 +115,7 @@ var Tooltip =
 	{
 		if(!this.popup || !this.element) return;
 		if(this.element.offsetWidth == 0 && this.element.offsetHeight == 0) { // FWUI-1025
-			this.element = null;
+			this.hide();
 			return;
 		}
 		
@@ -163,46 +135,32 @@ var Tooltip =
 		{
 			popup.style.width = popup.lastChild.offsetWidth + 10 + "px";
 			popup.style.height = popup.lastChild.offsetHeight + 5 + "px";
-			// Reinset vml elements.
-			var h = popup.offsetHeight;
-			popup.removeNode(true);
-			var fill = popup.firstChild;
-			fill.removeNode(true);
-			popup.insertAdjacentElement("afterbegin", fill);
-			popup.arcsize = (20 / h) * 0.1;
-			document.body.appendChild(this.popup);
-			this.popup.style.filter = "progid:dximagetransform.microsoft.fade";
 		}
-		
+
 		var xy = this.correctXY(popup, this.x, this.y);
-		popup.style.left = xy.x;
-		popup.style.top = xy.y;
+		popup.style.left = xy.x + "px";
+		popup.style.top = xy.y + "px";
 		
 		popup.style.zIndex = top.__ontopZ++;
 	
-		if(this.element.currentStyle["xl--tooltip-position"] != "still") this.popupMoving = true;
-
-		if(popup.filters[0]) 
-		{
-		    var duration = this.element.currentStyle["xl--blend-duration"];
-		    if(!duration) duration = 300;
-			popup.filters[0].duration = duration / 1000;
-			popup.filters[0].Apply();
-		}	
+		this.popupMoving = Util.getStyle(this.element, "xl--tooltip-position") != "still";
+		var duration = parseInt(Util.getStyle(this.element, "xl--blend-duration"), 10);
+		if(!duration) duration = 300;
+		popup.style.transition = "opacity " + duration + "ms";
+		popup.style.opacity = "0";
 		popup.style.visibility = "visible";
-		if(this._shadow) this._shadow.show();
-		if(popup.filters[0] && duration > 0) popup.filters[0].Play();
+		var shownPopup = popup;
+		setTimeout(function(){ shownPopup.style.opacity = "1"; }, 0);
+
 	},
 
 	correctXY: function(popup, x, y)
 	{
-		var doc = document;
-		
-		var b = y + popup.offsetHeight + 4 - doc.body.scrollTop; // 4 == shadow
-		var r = x + popup.offsetWidth + 4 - doc.body.scrollLeft; 
+		var b = y + popup.offsetHeight + 4 - window.pageYOffset; // 4 == shadow
+		var r = x + popup.offsetWidth + 4 - window.pageXOffset; 
 	
-		if(r > doc.body.clientWidth) x = x - r + doc.body.clientWidth;
-		if(b > doc.body.clientHeight) y = y - b + doc.body.clientHeight;
+		if(r > window.innerWidth) x = x - r + window.innerWidth;
+		if(b > window.innerHeight) y = y - b + window.innerHeight;
 	
 		if(x < 0) x = 0;
 		if(y < 0) y = 0;
@@ -221,10 +179,10 @@ var Tooltip =
 		}
 		
 		this.popup.style.visibility = "hidden";
-		if(this._shadow) this._shadow.hide();
+		
 		if(this.popupMoving) this.popupMoving = false;
-		if(this.elenent) {
-			this.element.detachEvent("onmousemove", this._element_onmousemove);
+		if(this.element) {
+			Event.del(this.element, "mousemove", this, this._element_onmousemove);
 			this.element = null;
 		}
 	}

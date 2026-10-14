@@ -57,7 +57,11 @@ proto.createElement = function(node, parentElement)
 	tr.insertCell();
 	tr.insertCell();
 
-	Util.handleEvent(this._table, "onresize", "table_");
+	if(typeof ResizeObserver != "undefined") {
+		var journey = this;
+		this._tableResizeObserver = new ResizeObserver(function() { journey.table_onresize(); });
+		this._tableResizeObserver.observe(this._table);
+	}
 
 	this._dragDiv = document.createElement("div");
 	this._dragDiv.className = "dragDiv";
@@ -84,6 +88,7 @@ proto.createElement = function(node, parentElement)
 
 proto.unload = function()
 {
+	if(this._tableResizeObserver) this._tableResizeObserver.disconnect();
 	this._clocksLines = null;
 }
 
@@ -93,7 +98,7 @@ proto.loadData = function(node)
 
 	this._isDirty = false;
 
-	var cols = node.selectNodes("cols/col");
+	var cols = Util.xmlSelectNodes(node, "cols/col");
 	if(cols.length > 0) this._processCol(0, cols[0]);
 	if(cols.length > 2) this._processCol(1, cols[2]);
 	
@@ -105,19 +110,19 @@ proto.loadData = function(node)
 	var trToSelect = null;
 	this._pending_trToScrollTo = null;
 
-	var rowsNode = node.selectSingleNode("rows");
+	var rowsNode = Util.xmlSelectSingleNode(node, "rows");
 	if(rowsNode)
 	{
 		this._clear();
 		this._select.style.visibility = "hidden";
 		this._rowsJustAdded = true;
-		var rows = rowsNode.selectNodes("r");
+		var rows = Util.xmlSelectNodes(rowsNode, "r");
 		var count = rows.length;
 		for(var i = 0; i < count; i++)
 		{
 			var tr = this._table.insertRow();
 			var rNode = rows[i];
-			var cNodes = rNode.selectNodes("c");
+			var cNodes = Util.xmlSelectNodes(rNode, "c");
 			
 			var week = rNode.getAttribute("week");
 			var attr = rNode.getAttribute("id");
@@ -133,7 +138,7 @@ proto.loadData = function(node)
 				var div = document.createElement("div");
 				div.className = "separatorDiv";
 				td.appendChild(div);
-				div.innerText = cNodes[0].getAttribute("text");
+				div.textContent = cNodes[0].getAttribute("text");
 			}
 			else
 			{
@@ -148,7 +153,7 @@ proto.loadData = function(node)
 				{
 					var cNode = cNodes[0];
 					var td = tr.insertCell();
-					td.style.paddingLeft = 15;
+					td.style.paddingLeft = "15px";
 					this._buildCell(cNode, td, id, week);
 				}
 				if(cNodes.length > 1) clocksTD = tr.insertCell();
@@ -156,7 +161,7 @@ proto.loadData = function(node)
 				{
 					var cNode = cNodes[2];
 					var td = tr.insertCell();
-					td.style.paddingLeft = 15;
+					td.style.paddingLeft = "15px";
 					this._buildCell(cNode, td, id, week);
 				}
 				if(cNodes.length > 1) // Build clocks line at the end, as loaded base columns are required.
@@ -173,7 +178,7 @@ proto.loadData = function(node)
 					if(j == 1) this._buildClockLine(cNode, td, id, week);
 					if(j != 1) this._buildCell(cNode, td, id, week); // Skip processing for clocks td.
 
-					if(j == 0) td.style.paddingLeft = 15;
+					if(j == 0) td.style.paddingLeft = "15px";
 				}*/
 				
 				if(rNode.getAttribute("selectable") != "false")
@@ -202,18 +207,18 @@ proto.loadData = function(node)
 }
 proto.tr_onmouseenter = function()
 {
-	var tr = event.srcElement;
+	var tr = Util.findTag(Util.eventTarget(), "TR");
 	this._syncHover(tr, this._hover);
 	this._hover.style.visibility = "inherit";
 }
 proto.tr_onmouseleave = function()
 {
-	var tr = event.srcElement;
+	var tr = Util.findTag(Util.eventTarget(), "TR");
 	this._hover.style.visibility = "hidden";
 }
 proto.tr_onmousedown = function()
 {
-	var tr = Util.findTag(event.srcElement, "TR");
+	var tr = Util.findTag(Util.eventTarget(), "TR");
 	this._syncHover(tr, this._select);
 	this._select.style.visibility = "inherit";
 	
@@ -226,10 +231,10 @@ proto.tr_onmousedown = function()
 proto._syncHover = function(tr, hover)
 {
 	var xy = Util.findAbsolutePos(tr, this._scrollDiv);
-	hover.style.left = xy.x + 1;
-	hover.style.top = xy.y;
-	hover.style.width = tr.offsetWidth - 3;
-	hover.style.height = tr.offsetHeight - 1;
+	hover.style.left = (xy.x + 1) + "px";
+	hover.style.top = xy.y + "px";
+	hover.style.width = (tr.offsetWidth - 3) + "px";
+	hover.style.height = (tr.offsetHeight - 1) + "px";
 }
 
 proto._processCol = function(ix, colNode)
@@ -244,8 +249,8 @@ proto._clear = function()
 	var count = this._table.rows.length;
 	for(var i = count - 1; i >= 1; i--)
 	{
-		var row = this._table.rows(i);
-		row.removeNode(true);
+		var row = this._table.rows[i];
+		Util.removeElement(row);
 	}
 	this._clocksCount = 0;
 }
@@ -271,7 +276,7 @@ proto._buildClockLine = function(node, td, rowID, week)
 		var div = document.createElement("div");
 		div.className =  alt ? "clockStopperDiv" : "clockStopperDiv clockStopperAltDiv";
 		td.appendChild(div);
-		div.style.top = 0;
+		div.style.top = "0px";
 
 		var attr = node.getAttribute("tooltip");
 		if(attr) this._clocksTooltip = String(attr);
@@ -297,7 +302,7 @@ proto._buildClockLine = function(node, td, rowID, week)
 			var div = document.createElement("div");
 			div.className = alt ? "clockStopperDiv" : "clockStopperDiv clockStopperAltDiv";
 			td.appendChild(div);
-			div.style.top = td.offsetHeight - div.offsetHeight;
+			div.style.top = (td.offsetHeight - div.offsetHeight) + "px";
 		}
 		this._clocksCount++;
 	}
@@ -309,7 +314,7 @@ proto._buildClockLine = function(node, td, rowID, week)
 		idSpan.className = "clocksWeekSpan";
 		td.appendChild(idSpan);
 	
-		idSpan.innerText = "[" + attr + "]";
+		idSpan.textContent = "[" + attr + "]";
 	}
 
 /*	if(node.getAttribute("start") == "true")
@@ -360,7 +365,7 @@ proto._buildClockLine = function(node, td, rowID, week)
 			heightOffset += sdiv.offsetHeight;
 		}
 
-		div.style.height = div.offsetHeight - heightOffset;
+		div.style.height = (div.offsetHeight - heightOffset) + "px";
 		
 		if(!this._clocksStarted) this._clocksCount++;
 	}
@@ -372,7 +377,7 @@ proto._buildClockLine = function(node, td, rowID, week)
 		idSpan.className = "clocksWeekSpan";
 		td.appendChild(idSpan);
 	
-		idSpan.innerText = "[" + attr + "]";
+		idSpan.textContent = "[" + attr + "]";
 	}*/
 }
 
@@ -410,7 +415,7 @@ proto._buildCell = function(node, td, rowID, week)
 		if(attr) weekText = String(attr);
 		else if(week) weekText = week;
 
-		if(weekText) idSpan.innerText = "[" + weekText + "]";
+		if(weekText) idSpan.textContent = "[" + weekText + "]";
 	}
 	
 	var textSpan = document.createElement("span");
@@ -447,17 +452,17 @@ proto.storeData = function(xmldoc)
 
 proto.layout = function()
 {
-	this._scrollDiv.style.height = this.element.clientHeight - this._headerDiv.offsetHeight;
+	this._scrollDiv.style.height = (this.element.clientHeight - this._headerDiv.offsetHeight) + "px";
 
 	if(this._w1 == -1)
 	{
 		// First run.
 		var w = Math.floor(this.element.clientWidth / 2) - this._clocksWidth;
-		this._headerDiv.childNodes[0].style.width = w + this._clocksWidth + 5; // 5 == left padding of 2nd header.
-		this._headerDiv.childNodes[1].style.width = w;
-		this._headerDiv.childNodes[2].style.left = w + 21; // clocks img.
-		this._dragDiv.style.left = w - 1;
-		this._dragDiv2.style.left = w + this._clocksWidth;
+		this._headerDiv.childNodes[0].style.width = (w + this._clocksWidth + 5) + "px"; // 5 == left padding of 2nd header.
+		this._headerDiv.childNodes[1].style.width = w + "px";
+		this._headerDiv.childNodes[2].style.left = (w + 21) + "px"; // clocks img.
+		this._dragDiv.style.left = (w - 1) + "px";
+		this._dragDiv2.style.left = (w + this._clocksWidth) + "px";
 
 		this._w1 = w;
 	}
@@ -484,38 +489,42 @@ proto.dragDiv_onmousedown = function()
 {
 	if(this._splitDragging) return;
 	
-	this._dragHandler1 = Util.handleEvent(this.element, "onlosecapture", "element_");
-	this._dragHandler2 = Util.handleEvent(this.element, "onmouseup", "element_");
-	this._dragHandler3 = Util.handleEvent(this.element, "onmousemove", "element_");
+	var self = this;
+	this._dragHandler1 = function(ev) { self.element_onlosecapture(ev); };
+	Event.nativeAdd(this.element, "pointercancel", this._dragHandler1);
+	this._dragHandler2 = function(ev) { self.element_onmouseup(ev); };
+	this._dragHandler3 = function(ev) { self.element_onmousemove(ev); };
+	Event.nativeAdd(document, "mouseup", this._dragHandler2);
+	Event.nativeAdd(document, "mousemove", this._dragHandler3);
 
-	this._draggingDiv = event.srcElement == this._dragDiv ? this._dragDiv : this._dragDiv2;
+	this._draggingDiv = Util.eventTarget() == this._dragDiv ? this._dragDiv : this._dragDiv2;
 	
-	this._startX = this._draggingDiv.offsetLeft - event.screenX;
-	this.element.setCapture();
+	this._startX = this._draggingDiv.offsetLeft - Event.current().screenX;
+	
 	this._splitDragging = true;
 }
-proto.element_onmousemove = function()
+proto.element_onmousemove = function(ev)
 {
-	var x = this._startX + event.screenX;
+	var x = this._startX + ev.screenX;
 	if(x <= 4 || x >= this.element.clientWidth - 4) 
 	{
-		this.element.releaseCapture();
+		this.element_onlosecapture();
 		return;
 	}
 	if(x < this._dragMargin) x = this._dragMargin;
 	else if(x > this.element.clientWidth - this._dragMargin) x = this.element.clientWidth - this._dragMargin;
 
-	this._draggingDiv.style.pixelLeft = x;
+	this._draggingDiv.style.left = x + "px";
 }
 proto.element_onmouseup = function()
 {
-	this.element.releaseCapture();
+	this.element_onlosecapture();
 }
 proto.element_onlosecapture = function()
 {
-	this.element.detachEvent("onlosecapture", this._dragHandler1);
-	this.element.detachEvent("onmouseup", this._dragHandler2);
-	this.element.detachEvent("onmousemove", this._dragHandler3);
+	Event.nativeDel(this.element, "pointercancel", this._dragHandler1);
+	Event.nativeDel(document, "mouseup", this._dragHandler2);
+	Event.nativeDel(document, "mousemove", this._dragHandler3);
 	this._dragHandler1 = this._dragHandler2 = this._dragHandler3 = null;
 	this._splitDragging = false;
 	
@@ -524,17 +533,17 @@ proto.element_onlosecapture = function()
 	{
 		w1 = this._dragDiv.offsetLeft + 1;
 		w2 = this.element.clientWidth - w1 - this._clocksWidth;
-		this._dragDiv2.style.left = w1 + this._clocksWidth;
+		this._dragDiv2.style.left = (w1 + this._clocksWidth) + "px";
 	}
 	else
 	{
 		w1 = this._dragDiv2.offsetLeft + 1 - this._clocksWidth;
 		w2 = this.element.clientWidth - w1;
-		this._dragDiv.style.left = w1;
+		this._dragDiv.style.left = w1 + "px";
 	}
-	this._headerDiv.childNodes[0].style.width = w1 + this._clocksWidth + 4 + "px";
+	this._headerDiv.childNodes[0].style.width = (w1 + this._clocksWidth + 4) + "px";
 	this._headerDiv.childNodes[1].style.width = w2 + "px";
-	this._headerDiv.childNodes[2].style.left = w1 + 21; // clocks img.	
+	this._headerDiv.childNodes[2].style.left = (w1 + 21) + "px"; // clocks img.	
 	this._w1 = w1;
 	this._set_colWidths(w1);
 
@@ -561,7 +570,7 @@ proto._set_colWidths = function(w)
 	for(var i = 0; i < this._clocksLines.length; i++)
 	{
 		var cl = this._clocksLines[i];
-		cl.div.style.height = cl.lastTD.offsetTop + cl.lastTD.offsetHeight - cl.div.parentNode.offsetTop;
+		if(cl.lastTD) cl.div.style.height = (cl.lastTD.offsetTop + cl.lastTD.offsetHeight - cl.div.parentNode.offsetTop) + "px";
 	}	
 }
 

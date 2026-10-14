@@ -24,13 +24,16 @@ CN_rangebox.INT_TYPE = 0;
 var proto = CN_rangebox.prototype; 
 
 // Events. =========================
-proto.onbeforedeactivate = function(){}
+proto.onfocusout = function(){}
 proto.onkeypress = function(){}
 
 // Public methods. ================================
 proto.createElement = function(node, parentElement)
 {
-	var l = document.createElement("<table cellpadding=0 cellspacing=0 border=0>");
+	var l = document.createElement("table");
+	l.cellPadding = 0;
+	l.cellSpacing = 0;
+	l.border = 0;
 	// Grid support.
 	if(parentElement) parentElement.appendChild(l);
 
@@ -78,9 +81,9 @@ proto.createElement = function(node, parentElement)
 	this._box1.onchange = this._box_onchange;
 	this._box2.onchange = this._box_onchange;
 
-	this.element.attachEvent("ondeactivate", this._element_ondeactivate);
-	this.element.attachEvent("onactivate", this._element_onactivate);
-	this.element.attachEvent("onbeforedeactivate", this._element_onbeforedeactivate);
+	Event.add(this.element, "focusout", this, this._element_onfocusout);
+	Event.add(this.element, "focusout", this, this._element_ondeactivate);
+	Event.add(this.element, "focusin", this, this._element_onactivate);
 	
 	if(CNFormManager.vista && parentElement) this.attachToTextBox(this.element);
 	
@@ -89,16 +92,16 @@ proto.createElement = function(node, parentElement)
 			  
 proto.attachToTextBox = function(l)
 {
-	this.element.attachEvent("onmouseenter", this._textbox_onmouseenter);
-	this.element.attachEvent("onmouseleave", this._textbox_onmouseleave);
-	this._box1.element.attachEvent("onactivate", this._textbox_onmouseenter);
-	this._box1.element.attachEvent("ondeactivate", this._textbox_onmouseleave);	
-	this._box2.element.attachEvent("onactivate", this._textbox_onmouseenter);
-	this._box2.element.attachEvent("ondeactivate", this._textbox_onmouseleave);	
+	Event.add(this.element, "mouseenter", this, this._textbox_onmouseenter);
+	Event.add(this.element, "mouseleave", this, this._textbox_onmouseleave);
+	Event.add(this._box1.element, "focusin", this, this._textbox_onmouseenter);
+	Event.add(this._box1.element, "focusout", this, this._textbox_onmouseleave);	
+	Event.add(this._box2.element, "focusin", this, this._textbox_onmouseenter);
+	Event.add(this._box2.element, "focusout", this, this._textbox_onmouseleave);	
 }
 proto._textbox_onmouseenter = function()
 {
-	var l = Util.findByClassName(event.srcElement, "cn_rangebox");
+	var l = Util.findByClassName(Util.eventTarget(), "cn_rangebox");
 	var jso = l.jsObject;
 	if(jso._disabled || jso._readOnly) return;
 	if(jso._anim) Animator.stop(jso._anim);
@@ -107,7 +110,7 @@ proto._textbox_onmouseenter = function()
 }
 proto._textbox_onmouseleave = function()
 {
-	var l = Util.findByClassName(event.srcElement, "cn_rangebox");
+	var l = Util.findByClassName(Util.eventTarget(), "cn_rangebox");
 	var jso = l.jsObject;
 	if(jso._disabled || jso._readOnly || jso.element.contains(document.activeElement)) return;
 	Animator.start(jso._anim = new AnimVistaBoxFadeout(jso.element));
@@ -162,12 +165,12 @@ proto.isValid = function()
 		|| !this._box1.isValid()
 		|| !this._box2.isValid())
 		{
-			this.element.runtimeStyle.borderColor = "red";
+			this.element.style.borderColor = "red";
 			return false;
 		}
 	}
 
-	if(this.element.runtimeStyle.borderColor == "red") this.element.runtimeStyle.borderColor = "";
+	if(this.element.style.borderColor == "red") this.element.style.borderColor = "";
 	return true;
 }
 
@@ -176,13 +179,13 @@ proto._tryNextField = CN_partialdatebox.prototype._tryNextField;
 
 proto._moveToNextField = function(box)
 {
-	var boxes = this.element.all.tags("input");
+	var boxes = this.element.getElementsByTagName("input");
 	if(box == boxes[0]) boxes[1].focus();
 }
 
 proto._moveToPreviousField = function(box)
 {
-	var boxes = this.element.all.tags("input");
+	var boxes = this.element.getElementsByTagName("input");
 	if(box == boxes[1]) boxes[0].focus();
 }
 
@@ -215,8 +218,8 @@ proto.set_value = function(val)
 // Used by grid BoxManager.
 proto.set_readOnly = function(value)
 {
-	this._readOnly = eval(value);
-	var boxes = this.element.all.tags("input");	
+	this._readOnly = Util.parseBoolean(value);
+	var boxes = this.element.getElementsByTagName("input");	
 	var val = this._readOnly || this._disabled;
 
 	this._box1._readOnly = this._box2._readOnly = this._readOnly;
@@ -226,7 +229,7 @@ proto.set_readOnly = function(value)
 	if(CNFormManager.vista)
 		this.element.className = val ? "cn_rangebox cn_rangebox_disabled" : "cn_rangebox";
 	else 
-		this.element.runtimeStyle.backgroundColor = val ? this.element.currentStyle["xl--disabled-background"] : "";
+		this.element.style.backgroundColor = val ? Util.getStyle(this.element, "xl--disabled-background") : "";
 }
 
 // Used by grid BoxManager.
@@ -245,17 +248,17 @@ proto.set_disabled = function(val)
 	if(CNFormManager.vista)
 		this.element.className = val ? "cn_rangebox cn_rangebox_disabled" : "cn_rangebox";
 	else
-		this.element.runtimeStyle.backgroundColor =
-			this._box1.element.runtimeStyle.borderColor = 
-			this._box2.element.runtimeStyle.borderColor = 
-				val ? this.element.currentStyle["xl--disabled-background"] : "";
+		this.element.style.backgroundColor =
+			this._box1.element.style.borderColor = 
+			this._box2.element.style.borderColor = 
+				val ? Util.getStyle(this.element, "xl--disabled-background") : "";
 }
 
 
 // Event handlers. =========================
 proto._box_onchange = function(ev)
 {
-	var jsObject = CNUtil.findJSObject(ev.srcElement.parentElement);
+	var jsObject = CNUtil.findJSObject(Util.eventTarget(ev).parentElement);
 	// Grid support.
 	if(jsObject) jsObject.box_onchange();
 }
@@ -266,37 +269,33 @@ proto.box_onchange = function()
 
 proto._element_ondeactivate = function()
 {
-	var jsObject = CNUtil.findJSObject(event.srcElement.parentElement);
-	jsObject.element_ondeactivate();
+	this.element_ondeactivate();
 }
 proto.element_ondeactivate = function()
 {
-	if(this.element.contains(event.toElement)) return;
+	if(this.element.contains(Event.current().relatedTarget)) return;
 	this.isValid();
 }
 
 proto._element_onactivate = function()
 {
-	var jsObject = CNUtil.findJSObject(event.srcElement.parentElement);
-	jsObject.element_onactivate();
+	this.element_onactivate();
 }
 proto.element_onactivate = function()
 {
-	if(this.element.contains(event.fromElement)) return;
-	if(this.element.runtimeStyle.borderColor == "red") this.element.runtimeStyle.borderColor = "";
+	if(this.element.contains(Event.current().relatedTarget)) return;
+	if(this.element.style.borderColor == "red") this.element.style.borderColor = "";
 }
 
-proto._element_onbeforedeactivate = function()
+proto._element_onfocusout = function()
 {
-	var l = event.srcElement;
-	if(l.tagName == "INPUT") l = l.parentElement;
-	CNUtil.findJSObject(l).element_onbeforedeactivate();
+	this.element_onfocusout();
 }
-proto.element_onbeforedeactivate = function()
+proto.element_onfocusout = function()
 {
 	if(this.element.disabled) return;
-	if(this.element.contains(event.toElement)) return;
-	if(this.onbeforedeactivate) this.onbeforedeactivate();
+	if(this.element.contains(Event.current().relatedTarget)) return;
+	if(this.onfocusout) this.onfocusout();
 }
 
 proto.set_tabIndex = function(ti)
@@ -345,10 +344,10 @@ wp.validateValue = function(value, cell)
 // Used by BoxManager.
 wp.commitChange = function(value, cell, row, colTag)
 {
-	if(cell.innerText != value)
+	if(cell.textContent != value)
 	{
-		if(value.replace(/\s+/g, "") == "///") cell.innerText = " ";
-		else cell.innerText = value;
+		if(value.replace(/\s+/g, "") == "///") cell.textContent = " ";
+		else cell.textContent = value;
 		
 		var grid = CNUtil.findJSObject(cell);
 		grid.setChangedValue(row, cell, value);

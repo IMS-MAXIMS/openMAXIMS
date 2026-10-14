@@ -68,7 +68,7 @@ proto.loadData = function(node) {
 }
 
 proto._loadModify = function(node, parentElement) {
-	var childNodes = node.selectNodes("node");
+	var childNodes = Util.xmlSelectNodes(node, "node");
 	var childCount = childNodes.length;
 	for(var i = 0; i < childCount; i++) {
 		var subNode = childNodes[i];
@@ -138,7 +138,7 @@ proto._selectItemById = function(id) {
 
 // Properties. ========================================================
 proto.set_disabled = function(value) {
-	value = eval(value);
+	value = Util.parseBoolean(value);
 	if(this._disabled == value) return;
 	this._disabled = value;
 
@@ -150,7 +150,7 @@ proto._set_disabled = function() {
 
 // Element functions. ===================================================
 proto._init = function(node) {
-	this.element.unselectable = true;
+	this.element.style.userSelect = "none";
 
 	this._canExpandCollapse = node.getAttribute("canExpandCollapse") != "false";
 
@@ -158,12 +158,13 @@ proto._init = function(node) {
 }
 
 proto.buildElements = function(node) {
-	this.disabler = document.createElement("<div style=\"position: absolute; background: white; z-index: 1000; filter: alpha(opacity=50); width: 100%; height: 100%; visibility: hidden; \">");
+	this.disabler = Util.createElement("div");
+	this.disabler.style.cssText = "position: absolute; background: white; z-index: 1000; opacity: 0.5; width: 100%; height: 100%; visibility: hidden; ";
 
-	this._container = document.createElement("<div class='container'>")
+	this._container = Util.createElement("div", "container");
 	this.element.appendChild(this._container);
 
-	var nodes = node.selectNodes("node");
+	var nodes = Util.xmlSelectNodes(node, "node");
 
 	var count = nodes.length;
 	for(var i = 0; i < count; i++) this._buildTopItem(nodes[i], i)
@@ -189,33 +190,37 @@ proto._buildItem = function(node, level) {
 		}
 	}
 
-	var div = document.createElement("<div class=cn_iconnavigation_item unselectable=on>");
+	var div = Util.createElement("div", "cn_iconnavigation_item");
+	div.style.userSelect = "none";
 	div._level = level;
-	var imgDiv = document.createElement("<div class=icon_div>");
+	var imgDiv = Util.createElement("div", "icon_div");
 
-	var img = document.createElement("<img replacePNG=no>");
+	var img = Util.createElement("img");
 	imgDiv.appendChild(img);
 	div.appendChild(imgDiv);
 
-	var textDiv = document.createElement("<div class=text_div>");
+	var textDiv = Util.createElement("div", "text_div");
 	div.appendChild(textDiv)
 
 	var attr = node.attributes["img"];
 	if(attr) {
 		img.src = attr;
-		Util.replacePNGImage(img);
 	}
 	else img.style.display = "none";
 
-	textDiv.innerText = String(node.attributes["caption"]);
+	textDiv.textContent = String(node.attributes["caption"]);
 
 	Event.add(div, "mouseenter", this, this._item_mouseenter);
 	Event.add(div, "mouseleave", this, this._item_mouseleave);
 	Event.add(div, "click", this, this._item_click);
 
-    var subNodes = node.children;
+	var subNodes = node.children;
 	if(subNodes.length > 0) {
-		var plusMinus = document.createElement("<img class='cn_iconnavigation_plusMinus'>");
+		// The historical stylesheet draws the folder affordance on this class.
+		// IE's old inline/zoom layout happened to expose it inconsistently;
+		// standards browsers need the semantic folder class explicitly.
+		Util.addClass(div, "cn_iconnavigation_folder");
+		var plusMinus = Util.createElement("img", "cn_iconnavigation_plusMinus");
 		plusMinus.src =	CNFormManager.themeImagesPath + "nav-plus.gif";
 		div.appendChild(plusMinus);
 
@@ -238,32 +243,41 @@ proto._buildItem = function(node, level) {
 	return div;
 }
 
-proto._item_mouseenter = function() {
+proto._item_mouseenter = function(event) {
 	if(this._animating) return; // True only when collapsing is animated.
-	Util.addClass(event.srcElement, "cn_iconnavigation_item_hover");
+	event = Event.normalize(event) || Event.current();
+	var target = event && event.target;
+	var div = Util.findByClassName(target, "cn_iconnavigation_item");
+	if(!div) return;
+	Util.addClass(div, "cn_iconnavigation_item_hover");
 	if(this._showTO) clearTimeout(this._showTO);
 	if(this._popupsTO) clearTimeout(this._popupsTO);
-	var self = this,
-		div = event.srcElement;
+	var self = this;
 	if(Util.arrayIndexOf(this._activeItems, div) == -1) {
 		this._hidePopups(div._level);
-	} else if(this._popups[div._level] && this._popups[div._level].currentStyle.display != "none") {
+	} else if(this._popups[div._level] && Util.getStyle(this._popups[div._level], "display") != "none") {
 		return;
 	}
 	if(div._subNodesJson) {
 		this._showTO = setTimeout(function(){ self._showPopup(div); }, Animator.animating() ? 250 : 0); // no _animating is set while quick expanding.
 	}
 }
-proto._item_mouseleave = function() {
-	var div = event.srcElement,
-		popup = Util.findByClassName(event.toElement, 'cn_iconnavigation_popup');
+proto._item_mouseleave = function(event) {
+	event = Event.normalize(event) || Event.current();
+	var target = event && event.target;
+	var relatedTarget = event && (event.relatedTarget || Event.current().relatedTarget);
+	var div = Util.findByClassName(target, "cn_iconnavigation_item"),
+		popup = Util.findByClassName(relatedTarget, 'cn_iconnavigation_popup');
+	if(!div) return;
 
 	if(popup != null && popup._level >= div._level) return;
 	this._unhoverItem(div);
 	this._hidePopups(div._level);
 }
-proto._item_click = function() {
-	var item = Util.findByClassName(event.srcElement, "cn_iconnavigation_item");
+proto._item_click = function(event) {
+	event = Event.normalize(event) || Event.current();
+	var target = event && event.target;
+	var item = Util.findByClassName(target, "cn_iconnavigation_item");
 	if(item == null || this._disabled || item.disabled || this.formManager._loading || this.formManager.isNavigationDisabled()) return;
 
 	if(item._subNodesJson && !item._clickable) return;
@@ -304,11 +318,11 @@ proto._hidePopups = function(toLevel) {
 
 proto._popupVisible = function() {
 	// Return true if first level is visible.
-	return this._popups[0] && this._popups[0].currentStyle.display != "none";
+	return this._popups[0] && Util.getStyle(this._popups[0], "display") != "none";
 }
 proto._visibleLevel = function() {
 	for(var i = this._popups.length - 1; i >= 0; i--) {
-		if(this._popups[i].currentStyle.display != "none") return i;
+		if(Util.getStyle(this._popups[i], "display") != "none") return i;
 	}
 	return -1;
 }
@@ -331,14 +345,15 @@ proto._showPopup = function(div) {
 
 	this._activeItems[div._level] = div;
 }
-proto._body_keydown = function() {
-	if(event.keyCode == 27) {
+proto._body_keydown = function(event) {
+	event = Event.normalize(event) || Event.current();
+	if(event && event.key == "Escape") {
 		this._hidePopups(this._visibleLevel());
 	}
 }
 proto._createPopup = function(level) {
 	Util.assert(function(){ return !this._popups[level]; }, this);
-	var popup = this._popups[level] = document.createElement("<div class='cn_iconnavigation_popup'>");
+	var popup = this._popups[level] = Util.createElement("div", "cn_iconnavigation_popup");
 	popup._level = level;
 	this._createPopupBG(popup);
 	document.body.appendChild(popup);
@@ -348,14 +363,16 @@ proto._createPopup = function(level) {
 	return popup;
 }
 proto._popup_mouseenter = function() {
-	var popup = event.srcElement;
 	if(this._popupsTO) clearTimeout(this._popupsTO);
 	if(this._quickExpandLeaveTO) clearTimeout(this._quickExpandLeaveTO);
 }
-proto._popup_mouseleave = function() {
-	var popup = event.srcElement,
-		toPopup = Util.findByClassName(event.toElement, 'cn_iconnavigation_popup');
-	if(toPopup) return;
+proto._popup_mouseleave = function(event) {
+	event = Event.normalize(event) || Event.current();
+	var target = event && event.target,
+		relatedTarget = event && event.relatedTarget,
+		popup = Util.findByClassName(target, 'cn_iconnavigation_popup'),
+		toPopup = Util.findByClassName(relatedTarget, 'cn_iconnavigation_popup');
+	if(!popup || toPopup) return;
 
 	var self = this;
 	this._popupsTO = setTimeout(function() {
@@ -368,33 +385,67 @@ proto._popup_mouseleave = function() {
 
 proto._createPopupBG = function(popup) {
 	var tip = CNFormManager.themeImagesPath;
+	// Render the historical nine-slice frame with ordinary CSS backgrounds.
+	var table = Util.createElement("table", "popupBG");
+	table.cellSpacing = 0;
+	table.cellPadding = 0;
+	table.style.border = "0";
+	table.style.width = "100%";
+	table.style.height = "100%";
 
-	// TODO: theme dependent via src/layout.html?
-	popup.innerHTML =
-	'<table class="popupBG" cellspacing="0" cellpadding="0" style="border: 0; width: 100%; height: 100%; filter: alpha(opacity=100); ">' +
-		'<tr><td nowrap style="width: 15px; height: 14px; filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale, src=\'' + tip + 'nav-popup-bg_02.png\'); "></td>' +
-			'<td nowrap style="width: 100%; filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale, src=\'' + tip + 'nav-popup-bg_03.png\'); "></td>' +
-			'<td nowrap style="width: 16px; height: 14px; filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale, src=\'' + tip + 'nav-popup-bg_05.png\'); "></td></tr>' +
-			'<tr><td style="height: 100%; filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale, src=\'' + tip + 'nav-popup-bg_07.png\'); "></td>' +
-				'<td class="popupContentArea"></td>' +
-				'<td style="filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale, src=\'' + tip + 'nav-popup-bg_09.png\'); "></td></tr>' +
-		'<tr><td style="width: 15px; height: 18px; filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale, src=\'' + tip + 'nav-popup-bg_19.png\'); "></td>' +
-			'<td style="filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale, src=\'' + tip + 'nav-popup-bg_20.png\')"></td>' +
-			'<td style="widht: 16px; height: 18px; filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale, src=\'' + tip + 'nav-popup-bg_22.png\')"></td></tr>' +
-	'</table>' +
-	'<img style="width: 12px; height: 19px; position: absolute; top: 0; left: -9px; " src=\'' + tip + 'nav-popup-bg_12.png\'/>' +
-	'<img style="width: 14px; height: 21px; position: absolute; top: 0; left: -9px; " src=\'' + tip + 'nav-popup-bg_15.png\'/>';
-//	'<span style="width: 12px; height: 19px; position: absolute; top: 0; left: -9px; filter: alpha(opacity=50) progid:DXImageTransform.Microsoft.AlphaImageLoader(src=\'' + tip + 'nav-popup-bg_12.png\'); "></span>' +
-//	'<span style="width: 14px; height: 21px; position: absolute; top: 0; left: -9px; filter: alpha(opacity=100) progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale, src=\'' + tip + 'nav-popup-bg_15.png\'); "></span>';
+	var tbody = Util.createElement("tbody");
+	table.appendChild(tbody);
+
+	var makeCell = function(row, column, image, repeat, width, height, className) {
+		var cell = Util.createElement("td", className || null);
+		if(image) {
+			cell.style.backgroundImage = "url('" + tip + image + "')";
+			cell.style.backgroundRepeat = repeat || "no-repeat";
+		}
+		if(width) cell.style.width = width;
+		if(height) cell.style.height = height;
+		row.appendChild(cell);
+		return cell;
+	};
+
+	var row = Util.createElement("tr");
+	makeCell(row, 0, "nav-popup-bg_02.png", "no-repeat", "15px", "14px");
+	makeCell(row, 1, "nav-popup-bg_03.png", "repeat-x", "100%");
+	makeCell(row, 2, "nav-popup-bg_05.png", "no-repeat", "16px", "14px");
+	tbody.appendChild(row);
+
+	row = Util.createElement("tr");
+	makeCell(row, 0, "nav-popup-bg_07.png", "repeat-y", null, "100%");
+	makeCell(row, 1, null, null, null, null, "popupContentArea");
+	makeCell(row, 2, "nav-popup-bg_09.png", "repeat-y");
+	tbody.appendChild(row);
+
+	row = Util.createElement("tr");
+	makeCell(row, 0, "nav-popup-bg_19.png", "no-repeat", "15px", "18px");
+	makeCell(row, 1, "nav-popup-bg_20.png", "repeat-x");
+	makeCell(row, 2, "nav-popup-bg_22.png", "no-repeat", "16px", "18px");
+	tbody.appendChild(row);
+
+	popup.appendChild(table);
+
+	var arrow = Util.createElement("img");
+	arrow.style.cssText = "width: 12px; height: 19px; position: absolute; top: 0; left: -9px;";
+	arrow.src = tip + "nav-popup-bg_12.png";
+	popup.appendChild(arrow);
+
+	arrow = Util.createElement("img");
+	arrow.style.cssText = "width: 14px; height: 21px; position: absolute; top: 0; left: -9px;";
+	arrow.src = tip + "nav-popup-bg_15.png";
+	popup.appendChild(arrow);
 }
 proto._createPopupItems = function(popup, subNodesJson, level) {
 	if(popup.lastChild.className == "cn_iconnavigation_popup_items") {
 		popup.removeChild(popup.lastChild);
 	}
-	var div = document.createElement("<div class='cn_iconnavigation_popup_items'>");
+	var div = Util.createElement("div", "cn_iconnavigation_popup_items");
 	popup.appendChild(div);
 
-	var inner = document.createElement("<div class='cn_iconnavigation_popup_inner'>");
+	var inner = Util.createElement("div", "cn_iconnavigation_popup_inner");
 	div.appendChild(inner);
 
 	inner.style.width = this._iconWidth * this._iconsInRow + "px"; // Some max value.
@@ -436,7 +487,7 @@ proto._layoutPopupTo = function(popup, div) {
 		y,
 		cont = popup.lastChild,
 		inner = cont.firstChild,
-		cs = cont.currentStyle,
+		cs = Util.getComputedStyle(cont),
 		paddingW = parseInt(cs.paddingLeft) + parseInt(cs.paddingRight),
 		paddingH = parseInt(cs.paddingTop) + parseInt(cs.paddingBottom);
 
@@ -455,16 +506,20 @@ proto._layoutPopupTo = function(popup, div) {
 	popup.style.display = "block";
 
 	if(inner.childNodes.length < this._iconsInRow) {
-		popup.style.width = inner.offsetWidth + paddingW + "px"; 
-		inner.style.display = "inline";
-		inner.style.width = "auto";
-		inner.style.width = inner.offsetWidth + 5 + "px";
+		// IE used `display:inline` + `zoom:1` to make this container shrink
+		// around its children. Standards browsers need an explicit width or
+		// the inline-block items wrap into a single column.
+		var columns = Math.max(1, inner.childNodes.length);
+		inner.style.display = "block";
+		inner.style.width = this._iconWidth * columns + "px";
 	}
 
 	var w = inner.scrollWidth + paddingW;
 	var h = inner.scrollHeight + paddingH;
 	var paddingRight = 5;
-	var right;
+	var right,
+		applyScrolling = false,
+		topDown = true;
 	// Put it on left or on right?
 	if(document.body.clientWidth - (xy.x + div.offsetWidth) > document.body.clientWidth / 2) {
 		// Right.
@@ -486,8 +541,6 @@ proto._layoutPopupTo = function(popup, div) {
 		right = false;
 	}
 
-	var applyScrolling = false,
-		topDown = true;
 	if(y + h >= document.body.clientHeight) { // Can't fit down.
 		// Put it on bottom or on top?
 		if(document.body.clientHeight - (xy.y + offsetY) > document.body.clientHeight / 2) {
@@ -560,5 +613,3 @@ Util.mixin(proto, NavigationCollapseMixin);
 
 
 proto = null;
-
-

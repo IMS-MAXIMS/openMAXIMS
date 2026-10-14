@@ -63,13 +63,13 @@ proto._process3mData = function(node)
 	}
 
 	var attr = node.getAttribute("title");
-	if(attr) this._textSpan.innerText = String(attr);
+	if(attr) this._textSpan.textContent = String(attr);
 
 	var oldSelectedEventID = this._selectedEventID;
 	var selectedEventIDAttr = node.getAttribute("selectedEventID");
 	if(selectedEventIDAttr) this._selectedEventID = String(selectedEventIDAttr);
 
-	var events = node.selectSingleNode("events");
+	var events = Util.xmlSelectSingleNode(node, "events");
 	if(events)
 	{
 		if(!justCreated) this._clear3mView();
@@ -111,18 +111,18 @@ proto._clear3mView = function()
 	this._selectedEventID = null;
 	this._selectedEventDiv = null;
 
-	if(this._hover.parentNode) this._hover.removeNode(true);
-	if(this._select.parentNode) this._select.removeNode(true);	
+	if(this._hover.parentNode) Util.removeElement(this._hover);
+	if(this._select.parentNode) Util.removeElement(this._select);	
 	
 	var rows = this._table.rows;
 	var count = rows.length;
 	for(var i = count - 1; i >= 0; i--)
 	{
-		rows[i].removeNode(true);
+		Util.removeElement(rows[i]);
 	}
-	this._td2.innerText = "";
-	this._td3.innerText = "";
-	this._td4.innerText = "";
+	this._td2.textContent = "";
+	this._td3.textContent = "";
+	this._td4.textContent = "";
 }
 
 proto._create3mView = function()
@@ -162,7 +162,7 @@ proto._create3mView = function()
 	var textSpan = document.createElement("span");
 	textSpan.className = "textSpan";
 	header.appendChild(textSpan);
-	textSpan.innerText = "";
+	textSpan.textContent = "";
 	this._textSpan = textSpan;
 	
 	var dataHeader = document.createElement("table");
@@ -173,7 +173,7 @@ proto._create3mView = function()
 	var td1 = tr.insertCell();
 	td1.noWrap = "nowrap";
 	td1.style.width = "50px";
-	td1.innerText = "Day";
+	td1.textContent = "Day";
 	td1.style.textAlign = "center";
 	
 	var td2 = tr.insertCell();
@@ -190,7 +190,7 @@ proto._create3mView = function()
 
 	var td5 = tr.insertCell();
 	td5.width = CNFormManager.scrollBarSize;
-	td5.innerText = " ";
+	td5.textContent = " ";
 
 	var scrollArea = document.createElement("div");
 	scrollArea.className = "scrollArea3mView";
@@ -227,9 +227,9 @@ proto._load3mView = function(node, eventsNode)
 	workDate2.setMonth(workDate.getMonth() + 1);
 	workDate3.setMonth(workDate.getMonth() + 2);
 
-	this._td2.innerText = CNPopupCalendar.months[fromDate.getMonth()] + " " + fromDate.getYear();
-	this._td3.innerText = CNPopupCalendar.months[workDate2.getMonth()] + " " + workDate2.getYear();
-	this._td4.innerText = CNPopupCalendar.months[workDate3.getMonth()] + " " + workDate3.getYear();
+	this._td2.textContent = CNPopupCalendar.months[fromDate.getMonth()] + " " + fromDate.getYear();
+	this._td3.textContent = CNPopupCalendar.months[workDate2.getMonth()] + " " + workDate2.getYear();
+	this._td4.textContent = CNPopupCalendar.months[workDate3.getMonth()] + " " + workDate3.getYear();
 	
 	var eventsInRow = 2;	
 	var attr = node.getAttribute("eventsInRow");
@@ -237,7 +237,7 @@ proto._load3mView = function(node, eventsNode)
 	
 	var rowHeight = this._3mEventHeight * eventsInRow; // Last event div has no bottom border.
 
-	var rows = eventsNode.selectNodes("r");
+	var rows = Util.xmlSelectNodes(eventsNode, "r");
 	
 	for(var i = 1; i <= 31; i++)
 	{
@@ -246,14 +246,14 @@ proto._load3mView = function(node, eventsNode)
 		if(rows.length >= i) 
 		{
 			r = rows[i - 1];
-			cs = r.selectNodes("c");
+			cs = Util.xmlSelectNodes(r, "c");
 		}
 
 		var tr = this._table.insertRow();
 		tr.style.height = rowHeight + "px";
 		
 		var td1 = tr.insertCell();
-		td1.innerText = i;
+		td1.textContent = i;
 		td1.style.width = "50px";
 		td1.style.textAlign = "center";
 		td1.noWrap = "nowrap";
@@ -295,11 +295,11 @@ proto._createCellContents = function(td, cs, ix, date, dayIx)
 	date.setDate(dayIx);
 	if(date.getMonth() == m)
 	{
-		daySpan.innerText = this._days[date.getDay()];
+		daySpan.textContent = this._days[date.getDay()];
 	
 		if(c)
 		{
-			var events = c.selectNodes("e");
+			var events = Util.xmlSelectNodes(c, "e");
 			var count = events.length;
 			for(var i = 0; i < count; i++)
 			{
@@ -307,7 +307,7 @@ proto._createCellContents = function(td, cs, ix, date, dayIx)
 				
 				var div2 = document.createElement("div");
 				div.appendChild(div2);
-				div2.innerText = ev.text;
+				div2.textContent = Util.xmlText(ev);
 	
 				if(i + 1 != count) div2.className = "eventDiv eventDivWithBorder";
 				else div2.className = "eventDiv";
@@ -372,7 +372,7 @@ proto._layout3mView = function()
 {
 	if(!this._scrollArea) return;
 	this._scrollArea.style.height = Math.max(1, parseInt(this.element.style.height, 10)
-										 - this._header.offsetHeight - 2);
+										 - this._header.offsetHeight - 2) + "px";
 	if(this._selectedEventDiv) this._syncHover(this._selectedEventDiv, this._select);
 }
 
@@ -392,33 +392,33 @@ proto.b2_onclick = proto.b2_ondblclick = function()
 
 proto._syncHover = function(l, hover)
 {
-	hover.style.left = -2;
-	hover.style.top = 0;
+	hover.style.left = "-2px";
+	hover.style.top = "0px";
 	l.style.position = "relative";
 	hover.style.visibility = "inherit";
 	
 	l.appendChild(hover);
 
-	hover.style.width = l.offsetWidth - 2;
-	hover.style.height = l.offsetHeight - 1;
+	hover.style.width = (l.offsetWidth - 2) + "px";
+	hover.style.height = (l.offsetHeight - 1) + "px";
 }
 
 
 proto.div2_onmouseenter = function()
 {
-	var l = event.srcElement;
+	var l = Util.eventTarget();
 	this._syncHover(l, this._hover);
 	this._hover.style.visibility = "inherit";
 }
 proto.div2_onmouseleave = function()
 {
-	var l = event.srcElement;
+	var l = Util.eventTarget();
 	this._hover.style.visibility = "hidden";
 	if(this._selectedEventDiv != l) l.style.position = "static";
 }
 proto.div2_onmousedown = function()
 {
-	var l = Util.findTag(event.srcElement, "DIV");
+	var l = Util.findTag(Util.eventTarget(), "DIV");
 	this._syncHover(l, this._select);
 	this._select.style.visibility = "inherit";
 	

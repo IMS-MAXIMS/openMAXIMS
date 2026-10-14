@@ -92,9 +92,9 @@ proto.oncheckreadonly = function(){ return false; }
 proto._ingrid_getContextMenuData = function()
 {
 	// this == combobox
-	if(event && event.srcElement)
+	if(CNUtil.eventTarget())
 	{
-		var comboEl = CNUtil.findElement(event.srcElement);
+		var comboEl = CNUtil.findElement(CNUtil.eventTarget());
 		var gridEl = CNUtil.findElement(comboEl.parentNode);
 		//var gridJSO = gridEl.jsObject;
 		
@@ -181,13 +181,13 @@ proto.createElementOnly = function(node, inGrid, assignElement)
 {
 	this._preinit(node, inGrid);
 
-	var l = document.createElement("<table cellpadding=0 cellspacing=0 border=0>");
+	var l = Util.createElementFromHTML("<table cellpadding=0 cellspacing=0 border=0>");
 	var tr = l.insertRow();
 	tr.vAlign = "middle";
 	var td0 = tr.insertCell();
-	td0.style.paddingLeft = 1;
+	td0.style.paddingLeft = "1px";
 	td0.style.display = "none";
-	td0.style.width = 16;
+	td0.style.width = "16px";
 
 	var td1 = tr.insertCell();
 	td1.className = "xlcomboTD1";
@@ -209,11 +209,12 @@ proto.createElementOnly = function(node, inGrid, assignElement)
 	l._isComboBox = true;
 	
 	l.jsObject = this;
+	if(!this._searchable && !this.doNotFocus) l.tabIndex = -1;
 	
 	if(this.doNotFocus) 
 	{
-		l.unselectable = true;
-		td1.unselectable = true;
+		l.style.userSelect = "none";
+		td1.style.userSelect = "none";
 	}
 
 	var isNotArray = !(node instanceof Array) && !(node instanceof Object);
@@ -221,8 +222,8 @@ proto.createElementOnly = function(node, inGrid, assignElement)
 
 	if(this._searchable)
 	{
-		var inputElement = document.createElement("<input type='text' value='' class=xlcomboinput>");
-		l.cells[1].appendChild(inputElement);
+		var inputElement = Util.createElementFromHTML("<input type='text' value='' class=xlcomboinput>");
+		l.rows[0].cells[1].appendChild(inputElement);
 		
 		this._setTextInputEvents(inputElement);
 		
@@ -236,44 +237,44 @@ proto.createElementOnly = function(node, inGrid, assignElement)
 		
 		this._td15.style.cursor = "hand";
 		
-		img.attachEvent("onclick", this._img_onclick);
+		Event.add(img, "click", this, this._img_onclick);
 		
 		if (this._livesearch)
 			this._standBy();
 	}
 	else
 	{
-		var textSpan = document.createElement("<div style='overflow: hidden; '>");
-		textSpan.unselectable = "on";
-		l.cells[1].appendChild(textSpan);
+		var textSpan = Util.createElementFromHTML("<div style='overflow: hidden; '>");
+		textSpan.style.userSelect = "none";
+		l.rows[0].cells[1].appendChild(textSpan);
 	}
 
 	var td2 = this._td2;
-	td2.innerText = "6";
-	td2.unselectable = "on";
+	td2.textContent = "6";
+	td2.style.userSelect = "none";
 
-	l.attachEvent("onmouseenter", this._element_onmouseenter);
-	l.attachEvent("onmouseleave", this._element_onmouseleave);
+	Event.add(l, "mouseenter", this, this._element_onmouseenter);
+	Event.add(l, "mouseleave", this, this._element_onmouseleave);
 	//if(this._searchable) // <- forced because of 918 and 927 conflict
-	l.attachEvent("onresize", this._element_onresize);
-	l.attachEvent("onkeydown", this._element_onkeydown);
+	Event.add(l, "resize", this, this._element_onresize);
+	Event.add(l, "keydown", this, this._element_onkeydown);
 
 	var el = l;
 	if(this._searchable) el = td2; // Button.
 
-	el.attachEvent("onmousedown", this._element_onmousedown);
-	el.attachEvent("ondblclick", this._element_onmousedown);
+	Event.add(el, "mousedown", this, this._element_onmousedown);
+	Event.add(el, "dblclick", this, this._element_onmousedown);
 
 	return l;
 }
 proto._setTextInputEvents = function(inputElement)
 {
-	inputElement.attachEvent("onbeforeactivate", this._inputElement_onbeforeactivate);
-	inputElement.attachEvent("ondeactivate", this._inputElement_ondeactivate);
-	inputElement.attachEvent("onkeypress", this._inputElement_onkeypress);
-	inputElement.attachEvent("onchange", this._inputElement_onchange);
-	inputElement.attachEvent("onkeydown", this._inputElement_onkeydown);
-	inputElement.attachEvent("onkeyup", this._inputElement_onkeyup);
+	Event.add(inputElement, "focusin", this, this._inputElement_onbeforeactivate);
+	Event.add(inputElement, "blur", this, this._inputElement_ondeactivate);
+	Event.add(inputElement, "keypress", this, this._inputElement_onkeypress);
+	Event.add(inputElement, "change", this, this._inputElement_onchange);
+	Event.add(inputElement, "keydown", this, this._inputElement_onkeydown);
+	Event.add(inputElement, "keyup", this, this._inputElement_onkeyup);
 }
 
 proto._lightPostData = function() 
@@ -343,12 +344,12 @@ proto._element_onresize = function()
 proto.element_onresize = function()
 {
 	if(!this.element) return;
-	if (this.element.cells.length == 0) return;	
+	if (this.element.rows.length == 0 || this.element.rows[0].cells.length == 0) return;	
 	
-	var cell0 = this.element.cells[1];	
+	var cell0 = this.element.rows[0].cells[1];	
 	var textBox = cell0.children[0];
 	var w = cell0.clientWidth - 4;
-	if(w > 0) textBox.style.width = w;
+	if(w > 0) textBox.style.width = w + "px";
 }
 
 proto.loadData = function(node)
@@ -442,43 +443,43 @@ proto.set_disabled = function(value)
 	this._disabled = value;
 	var l = this.element;
 
-	var cell1 = l.cells[1];
+	var cell1 = l.rows[0].cells[1];
 	if(this._disabled)
 	{
 		this.set_tabIndex(-1, true);
-		l.runtimeStyle.borderColor = "#dddddd";
-		cell1.runtimeStyle.borderColor = "#dddddd";
-		var bg = this.element.currentStyle["xl--disabled-background"]
+		l.style.borderColor = "#dddddd";
+		cell1.style.borderColor = "#dddddd";
+		var bg = Util.getStyle(this.element, "xl--disabled-background")
 		if(this._searchable) 
 		{
 			var box = cell1.children[0];
-			if(!box._color) box.runtimeStyle.color = "#888888";
+			if(!box._color) box.style.color = "#888888";
 			box.readOnly = this._disabled;
-			box.runtimeStyle.background = bg;
+			box.style.background = bg;
 			this._td15.style.display = "none";
 			this._hideValidationTooltip();
 		}
-		if(this._td15) this._td15.runtimeStyle.background = bg;
-		cell1.runtimeStyle.backgroundColor = bg;
-		this._td2.runtimeStyle.backgroundColor = bg;
+		if(this._td15) this._td15.style.background = bg;
+		cell1.style.backgroundColor = bg;
+		this._td2.style.backgroundColor = bg;
 	}
 	else
 	{
 		if(this._tabIndex) this.set_tabIndex(this._tabIndex);
-		l.runtimeStyle.borderColor = "";
-		l.cells[1].runtimeStyle.borderColor = "";
-		if(this._td15) this._td15.runtimeStyle.background = "";
+		l.style.borderColor = "";
+		l.rows[0].cells[1].style.borderColor = "";
+		if(this._td15) this._td15.style.background = "";
 		if(this._searchable) 
 		{
 			var box = cell1.children[0];
-			if(!box._color) box.runtimeStyle.color = "";
+			if(!box._color) box.style.color = "";
 			box.readOnly = this._disabled;
-			box.runtimeStyle.background = "";
+			box.style.background = "";
 			this._td15.style.display = "block";
 		}
-		cell1.runtimeStyle.backgroundColor = "";
-		this._td2.runtimeStyle.backgroundColor = "";
-		l.runtimeStyle.backgroundColor = "";
+		cell1.style.backgroundColor = "";
+		this._td2.style.backgroundColor = "";
+		l.style.backgroundColor = "";
 	}
 }
 
@@ -497,11 +498,11 @@ proto.get_selectedIndex = function()
 
 proto._getTextElement = function()
 {
-	return this.element.cells[1].children[0];
+	return this.element.rows[0].cells[1].children[0];
 }
 proto._getTextInput = function()
 {
-	return this.element.cells[1].children[0];
+	return this.element.rows[0].cells[1].children[0];
 }
 
 proto._set_selectedIndex = function(doNotFireEvent, force)
@@ -513,7 +514,7 @@ proto._set_selectedIndex = function(doNotFireEvent, force)
 	if(!this.optionTags || this.optionTags.length == 0) 
 	{
 		if(this._searchable) textElement.value = "";
-		else textElement.innerText = "";
+		else textElement.textContent = "";
 		return;
 	}
 
@@ -532,14 +533,14 @@ proto._set_selectedIndex = function(doNotFireEvent, force)
 	{
 		var text = this.getTextByIndex(this.element._selectedIndex);
 
-		textDiv.style.width = 1;
+		textDiv.style.width = "1px";
 		textDiv.style.overflow = "hidden";
-		textDiv.innerText = text;
+		textDiv.textContent = text;
 		
 		//if(this._searchable)  <- forced because of 918 and 927 conflict
 		//{
 			var w = textElement.parentElement.clientWidth;
-			if(w > 5) textDiv.style.width = w - 4;
+			if(w > 5) textDiv.style.width = (w - 4) + "px";
 			else textDiv.style.width = "100%"; // 993
 		//}
 		//else textDiv.style.width = "auto";
@@ -554,17 +555,17 @@ proto._set_selectedIndex = function(doNotFireEvent, force)
 	{
 		var attr = tag.getAttribute("textColor");
 
-		if(attr) valueElement._color = valueElement.runtimeStyle.color = String(attr);
+		if(attr) valueElement._color = valueElement.style.color = String(attr);
 		else 
 		{
-			valueElement.runtimeStyle.color = "";
+			valueElement.style.color = "";
 			valueElement._color = null;
 		}
 
 		attr = tag.getAttribute("img");
 		if(attr) 
 		{
-			var td0 = this.element.cells[0];
+			var td0 = this.element.rows[0].cells[0];
 			var img = td0.firstChild;
 			if(!img)
 			{
@@ -577,13 +578,13 @@ proto._set_selectedIndex = function(doNotFireEvent, force)
 		}
 		else 
 		{			
-			this.element.cells[0].style.display = "none";
+			this.element.rows[0].cells[0].style.display = "none";
 		}
 	}
 	else
 	{
-		valueElement.runtimeStyle.color = "";
-		this.element.cells[0].style.display = "none";
+		valueElement.style.color = "";
+		this.element.rows[0].cells[0].style.display = "none";
 	}
 	
 	if(!doNotFireEvent) this.fireChangedEvent();
@@ -613,7 +614,10 @@ proto.initData = function(data)
 	
 	var options = null;
 	var clearOptions = false;
-	if(data instanceof Array || data instanceof Object) options = CN_combobox.makeOptions(data);
+	// In standards browsers XML Elements are also instanceof Object.  Keep
+	// XML response nodes on the XML path so their <option> children are read.
+	var isXMLNode = data && data.nodeType != null && typeof data.getAttribute == "function";
+	if(data instanceof Array || (data instanceof Object && !isXMLNode)) options = CN_combobox.makeOptions(data);
 	else 
 	{
 		var attr = data.getAttribute("imgW");
@@ -622,10 +626,10 @@ proto.initData = function(data)
 		var attr = data.getAttribute("imgH");
 		if(attr) this._item_imgH = parseInt(attr, 10);
 
-		options = data.selectNodes("option");
+		options = Util.xmlSelectNodes(data, "option");
 		if(options.length == 0)
 		{
-			var nooptions = data.selectSingleNode("nooptions");
+			var nooptions = Util.xmlSelectSingleNode(data, "nooptions");
 			if(nooptions != null) 
 			{
 				clearOptions = true;
@@ -636,7 +640,7 @@ proto.initData = function(data)
 				this.element._value = null;
 				this.valueToIndexMap = [];
 				if(this._searchable) this._getTextInput().value = text;
-				if(!CNFormManager.vista) this.element.cells[0].style.display = "none"; // ?					
+			if(!CNFormManager.vista) this.element.rows[0].cells[0].style.display = "none"; // ?				
 				this.element._selectedIndex = -1;
 			}
 		}
@@ -736,24 +740,27 @@ proto.createPopup = function()
 	
 	//if(CNFormManager.vista) new Shadow(this.popup, false, true);
 	
-	this.popup.attachEvent("onclick", this._popup_onclick);
-	this.popup.attachEvent("onmouseover", this._popup_onmouseover);
-	this.popup.attachEvent("onmouseout", this._popup_onmouseout);
-	this.popup.attachEvent("onmousedown", this._popup_onmousedown);
-	this.popup.attachEvent("oncontextmenu", this._popup_oncontextmenu);
-	this.popup.attachEvent("onmousewheel", CNUtil.cancelBubble);
+	Event.add(this.popup, "click", this, this._popup_onclick);
+	Event.add(this.popup, "mouseover", this, this._popup_onmouseover);
+	Event.add(this.popup, "mouseout", this, this._popup_onmouseout);
+	Event.add(this.popup, "mousedown", this, this._popup_onmousedown);
+	Event.add(this.popup, "contextmenu", this, this._popup_oncontextmenu);
+	Event.add(this.popup, "wheel", this, CNUtil.cancelBubble);
 }
 
 proto.createOption = function(text, value, index, imgUrl, optionTag)
 {
-	var option = document.createElement("<div class=xlcombooption style=\"padding: 1px; position: relative; display: inline-block; white-space: nowrap; \">");
-	option.unselectable = true;
+	var option = Util.createElementFromHTML("<div class=xlcombooption style=\"padding: 1px; position: relative; display: inline-block; white-space: nowrap; \">");
+	option.style.userSelect = "none";
 
-	option.innerText = text;
+	option.textContent = text;
 
 	if(imgUrl)
 	{
-		var img = document.createElement("<img align=absmiddle style=\"margin-right: 4px; \">");
+		// Some standards-browser responses provide an image URL without the
+		// optional XML option node. Keep the image usable in that case.
+		if(!optionTag) optionTag = { getAttribute: function(){ return null; } };
+		var img = Util.createElementFromHTML("<img align=absmiddle style=\"margin-right: 4px; \">");
 		
 		var wAttr = optionTag.getAttribute("imgW");
 		if(wAttr) img.width = parseInt(wAttr, 10);
@@ -763,8 +770,8 @@ proto.createOption = function(text, value, index, imgUrl, optionTag)
 		if(hAttr) img.height = parseInt(wAttr, 10);
 		else if(this._item_imgH) img.height = this._item_imgH;
 		
-		option.insertAdjacentElement('afterbegin', img);
-		img.unselectable = true;
+		option.insertBefore(img, option.firstChild);
+		img.style.userSelect = "none";
 		img.src = imgUrl;
 	}
 
@@ -776,20 +783,20 @@ proto.createOption = function(text, value, index, imgUrl, optionTag)
 
 proto.getTextByIndex = function(ix)
 {
-	if(isNaN(ix) || ix < 0 || ix >= this.optionTags.length) return "";
+	if(!this.optionTags || isNaN(ix) || ix < 0 || ix >= this.optionTags.length || !this.optionTags[ix]) return "";
 	return String(this.optionTags[ix].getAttribute("text"));
 }
 
 proto.getHTMLByIndex = function(ix)
 {
-	if(isNaN(ix) || ix < 0 || ix >= this.optionTags.length) return "";
+	if(!this.optionTags || isNaN(ix) || ix < 0 || ix >= this.optionTags.length || !this.optionTags[ix]) return "";
 	var attr = this.optionTags[ix].getAttribute("html");
 	return attr ? String(attr) : null;
 }
 
 proto.getValueByIndex = function(ix)
 {
-	if(isNaN(ix) || ix < 0 || ix >= this.optionTags.length) return null;
+	if(!this.optionTags || isNaN(ix) || ix < 0 || ix >= this.optionTags.length || !this.optionTags[ix]) return null;
 	var value = this.optionTags[ix].getAttribute("value");
 	if(value === null) return String(ix);
 	return String(value);
@@ -804,26 +811,26 @@ proto.findTag = function(l, tag)
 // Event handlers.
 proto._element_onmouseenter = function()
 {
-	var jsObject = event.srcElement.jsObject;
+	var jsObject = CNUtil.eventTarget().jsObject;
 	if(jsObject && jsObject.element_onmouseenter) jsObject.element_onmouseenter();
 }
 
 proto.element_onmouseenter = function()
 {
-	if(this._disabled || this.oncheckreadonly() || this.popupOpened && this.element && this.element.contains(event.srcElement)) return;
-	this.hoverBox(event.srcElement);
+	if(this._disabled || this.oncheckreadonly() || this.popupOpened && this.element && this.element.contains(CNUtil.eventTarget())) return;
+	this.hoverBox(CNUtil.eventTarget());
 }
 
 proto._element_onmouseleave = function()
 {
-	var jsObject = event.srcElement.jsObject;
+	var jsObject = CNUtil.eventTarget().jsObject;
 	if(jsObject && jsObject.element_onmouseleave) jsObject.element_onmouseleave();
 }
 
 proto.element_onmouseleave = function()
 {
-	if(this._disabled || this.oncheckreadonly() || this.popupOpened && this.element && this.element.contains(event.srcElement)) return;
-	var l = event.srcElement;
+	if(this._disabled || this.oncheckreadonly() || this.popupOpened && this.element && this.element.contains(CNUtil.eventTarget())) return;
+	var l = CNUtil.eventTarget();
 	if(this._searchable && this.element && document.activeElement == this._getTextInput()
 	&& this.element.contains(l)) return;
 	this.unhoverBox(l);
@@ -831,29 +838,29 @@ proto.element_onmouseleave = function()
 
 proto._element_onmousedown = function()
 {
-	if(event.button != 1) return;
-	CNUtil.findJSObject(event.srcElement).element_onmousedown();
+	if(Event.current().button != 0 && Event.current().button != 1) return;
+	CNUtil.findJSObject(CNUtil.eventTarget()).element_onmousedown();
 }
 
 proto.element_onmousedown = function()
 {
 	if(this._disabled || this.oncheckreadonly() 
-	|| (event.type == "onmousedown" && event.button != 1)) return;
+	|| (Event.current().type == "mousedown" && Event.current().button != 0 && Event.current().button != 1)) return;
 	if(this._searchable && this._canBeEmpty && !this._optionCount) return;
-	if(this._searchable && event.srcElement.tagName == "INPUT") return;
+	if(this._searchable && CNUtil.eventTarget().tagName == "INPUT") return;
 
 	if(this.doNotFocus) 
 	{
-		event.srcElement.unselectable = true; // Hack, but works.
+		CNUtil.eventTarget().style.userSelect = "none"; // Hack, but works.
 		Util.cancelEvent();
 	}	
 
-	var l = event.srcElement;
+	var l = CNUtil.eventTarget();
 	while(l && !l._isComboBox) l = l.parentElement;
 	
 	if(this.popupOpened) 
 	{
-		event.cancelBubble = true;
+		CNUtil.cancelBubble();
 		if(this.element == l) 
 		{
 			this.hidePopup(true);
@@ -885,7 +892,7 @@ proto._pressBox = function()
 
 proto._popup_onmousedown = function()
 {
-	event.cancelBubble = true;
+	CNUtil.cancelBubble();
 }
 
 proto._popup_onclick = function()
@@ -895,8 +902,8 @@ proto._popup_onclick = function()
 
 proto.popup_onclick = function()
 {
-	var l = CNUtil.findByClassName(event.srcElement, "xlcombooption");
-	if(!l || !this.popup.contains(l) || l.className != "xlcombooption") return;
+	var l = CNUtil.findByClassName(CNUtil.eventTarget(), "xlcombooption");
+	if(!l || !this.popup.contains(l) || !Util.hasClass(l, "xlcombooption")) return;
 	this.hidePopup();
 	this.selectOption(l);
 }
@@ -908,8 +915,8 @@ proto._popup_onmouseover = function()
 
 proto.popup_onmouseover = function()
 {
-	var l = CNUtil.findByClassName(event.srcElement, "xlcombooption");
-	if(!l || !this.popup.contains(l) || l.className != "xlcombooption") return;
+	var l = CNUtil.findByClassName(CNUtil.eventTarget(), "xlcombooption");
+	if(!l || !this.popup.contains(l) || !Util.hasClass(l, "xlcombooption")) return;
 	this.hoverOption(l);
 }
 
@@ -920,8 +927,8 @@ proto._popup_onmouseout = function()
 
 proto.popup_onmouseout = function()
 {
-	var l = CNUtil.findByClassName(event.srcElement, "xlcombooption");
-	if(!l || !this.popup.contains(l) || l.className != "xlcombooption") return;
+	var l = CNUtil.findByClassName(CNUtil.eventTarget(), "xlcombooption");
+	if(!l || !this.popup.contains(l) || !Util.hasClass(l, "xlcombooption")) return;
 	this.unhoverOption();
 }
 
@@ -934,7 +941,7 @@ proto._element_onkeydown = function()
 proto.element_onkeydown = function()
 {
 	//CNFormManager._trace("combo element_onkeydown")
-	var code = event.keyCode;
+	var code = Event.keyValue(Event.current());
 	if(this.popupOpened)
 	{
 		this.popup_onkeydown();
@@ -952,7 +959,7 @@ proto.element_onkeydown = function()
 		{
 			this._processTypedWord(code, true);
 		}
-	} else if(this._inGrid && event.keyCode == 9) {
+	} else if(this._inGrid && Event.keyValue(Event.current()) == 9) {
 		CN_grid.proxyTabKeyDown();
 	}
 }
@@ -960,7 +967,7 @@ proto.element_onkeydown = function()
 proto.popup_onkeydown = function()
 {
 	if(!this.popup) return;
-	var code = event.keyCode;
+	var code = Event.keyValue(Event.current());
 	switch(code)
 	{
 		case 27: this.hidePopup(); break;
@@ -994,7 +1001,8 @@ proto.popup_onkeydown = function()
 		default:
 			this._processTypedWord(code, false);
 	}
-	event.returnValue = false;
+	if(Event.current().preventDefault) Event.current().preventDefault();
+	Event.cancel(Event.current());
 }
 
 
@@ -1030,7 +1038,7 @@ proto._processTypedWord = function(code, select)
 			
 			if(!currentOption) return;
 
-			var text = currentOption.innerText;
+			var text = currentOption.textContent;
 			if(text.length > 0)
 			{
 				text = text.toLowerCase().charAt(0);
@@ -1047,7 +1055,7 @@ proto._processTypedWord = function(code, select)
 	for(var i = selectNext; i < count; i++)
 	{
 		var child = children[i];
-		if(child.innerText.toLowerCase().indexOf(this._currentTypedWord) == 0)
+		if(child.textContent.toLowerCase().indexOf(this._currentTypedWord) == 0)
 		{
 			if(select) this.selectOption(child);
 			else this.hoverOption(child);
@@ -1066,13 +1074,13 @@ proto.document_onmousedown = function()
 {
 	this.closing = true;
 	this.hidePopup();
-	event.cancelBubble = true;
+	CNUtil.cancelBubble();
 	CN_combobox.currentCombobox = null;
 }
 
 proto._getTD3 = function(l)
 {
-	return l.cells[this._searchable ? 3 : 2];
+	return l.rows[0].cells[this._searchable ? 3 : 2];
 }
 
 proto.hoverBox = function(l)
@@ -1080,25 +1088,18 @@ proto.hoverBox = function(l)
 	// NOTE: do not set this.element here.
 	// this.element = l; 
 	var buttonElement = this._getTD3(l);
-	l.runtimeStyle.borderColor = buttonElement.runtimeStyle.borderColor 
-		= l.currentStyle["xl--hover-border-color"];
-	var filter = buttonElement.currentStyle["xl--hover-filter"];
-	if(filter)
-	{
-		 if(buttonElement.filters[0]) buttonElement.filters[0].enabled = true;
-		 else buttonElement.style.filter = filter;
-	}
-	else buttonElement.runtimeStyle.backgroundColor = buttonElement.currentStyle["xl--hover-background-color"];
+	l.style.borderColor = buttonElement.style.borderColor 
+		= Util.getStyle(l, "xl--hover-border-color");
+	buttonElement.style.backgroundColor = Util.getStyle(buttonElement, "xl--hover-background-color");
 }
 proto.unhoverBox = function(l)
 {
 	if(!l) l = this.element;
 	if(!l) return;
 	var buttonElement = this._getTD3(l);
-	l.runtimeStyle.borderColor = buttonElement.runtimeStyle.borderColor = "";
-	buttonElement.runtimeStyle.backgroundColor = "";
-	if(buttonElement.filters[0]) buttonElement.filters[0].enabled = false;
-}
+	l.style.borderColor = buttonElement.style.borderColor = "";
+	buttonElement.style.backgroundColor = "";
+	}
 
 proto._showPopup = function()
 {
@@ -1114,7 +1115,7 @@ proto.showPopup = function(element)
 	if(element) this.element = element;
 
 	if(CN_combobox.currentCombobox) {
-		CN_combobox.currentCombobox.hidePopup(); // Force hide, as combobox can be unselectable.
+		CN_combobox.currentCombobox.hidePopup(); // Force hide, as combobox can be non-selectable.
 	}
 
 	CN_combobox.currentCombobox = this;
@@ -1151,7 +1152,7 @@ proto.showPopup = function(element)
 			maxHeight = 20;
 		}
 	}
-	else maxHeight = parseInt(this.element.currentStyle["xl--popup-max-height"]);
+	else maxHeight = parseInt(Util.getStyle(this.element, "xl--popup-max-height"));
 
 	if(this.popup.offsetHeight >= maxHeight) this.popup.style.height = maxHeight + "px";
 	else this.popup.style.height = "auto";
@@ -1183,15 +1184,15 @@ proto.showPopup = function(element)
 		this.hoverOption(this.activeOption);
 	}
 	
-	document.attachEvent("onmousedown", this._document_onmousedown);
-	document.attachEvent("onmousewheel", this._document_onmousedown);
+	Event.add(document, "mousedown", document, this._document_onmousedown);
+	Event.add(document, "wheel", document, this._document_onmousedown);
 	
 	if(this._searchable) this._getTextInput().focus();
-	else if(!this.doNotFocus) this.element.setActive();
+	else if(!this.doNotFocus) this.element.focus();
 }
 proto.focus = function() { // #1036-3
 	if(this._searchable) this._getTextInput().focus();
-	else if(!this.doNotFocus) this.element.setActive();
+	else if(!this.doNotFocus) this.element.focus();
 }
 proto.hidePopup = function(doNotUnhover)
 {
@@ -1208,8 +1209,8 @@ proto.hidePopup = function(doNotUnhover)
 		}
 	}
 
-	document.detachEvent("onmousedown", this._document_onmousedown);
-	document.detachEvent("onmousewheel", this._document_onmousedown);
+	Event.del(document, "mousedown", document, this._document_onmousedown);
+	Event.del(document, "wheel", document, this._document_onmousedown);
 	
 	if(!doNotUnhover && !(!this._inGrid && this._searchable && this.element && document.activeElement == this._getTextInput())) 
 	{
@@ -1232,18 +1233,19 @@ proto.hoverOption = function(l)
 	else if(l.offsetTop + l.offsetHeight - this.popup.scrollTop >= this.popup.clientHeight)
 		this.popup.scrollTop = l.offsetTop + l.offsetHeight - this.popup.clientHeight + margin;
 	
-	l.runtimeStyle.background = this.element.currentStyle["xl--option-hover-background"];
-	l.runtimeStyle.color = this.element.currentStyle["xl--option-hover-color"];
-	var filter = this.element.currentStyle["xl--option-hover-filter"];
-	if(filter) l.runtimeStyle.filter = filter;
+	l.style.background = Util.getStyle(this.element, "xl--option-hover-background");
+	l.style.color = Util.getStyle(this.element, "xl--option-hover-color");
+	Util.addClass(l, "cn_combobox_option_active");
+	
 	this.activeOption = l;
 }
 proto.unhoverOption = function()
 {
 	if(!this.activeOption) return;
-	this.activeOption.runtimeStyle.background = "";
-	this.activeOption.runtimeStyle.color = "";
-	if(this.activeOption.runtimeStyle.filter) this.activeOption.runtimeStyle.filter = "none";
+	this.activeOption.style.background = "";
+	this.activeOption.style.color = "";
+	Util.removeClass(this.activeOption, "cn_combobox_option_active");
+	
 	this.activeOption = null;
 }
 proto.selectOption = function(l)
@@ -1282,7 +1284,7 @@ proto._inputElement_onkeypress = function()
 }
 proto.inputElement_onkeypress = function()
 {
-	if(event.keyCode == 13)
+	if(Event.keyValue(Event.current()) == 13)
 	{
 		if(this._searchable) 
 		{
@@ -1315,14 +1317,14 @@ proto.inputElement_onkeyup = function()
 	var ix = this.textToIndex(textBox.value);
 	if(ix == -1)
 	{
-		textBox.runtimeStyle.color = "";
+		textBox.style.color = "";
 		textBox._color = null;
 	}
 	else
 	{
 		var tag = this.optionTags[ix];
 		var attr = tag.getAttribute("textColor");
-		if(attr) textBox._color = textBox.runtimeStyle.color = String(attr);
+		if(attr) textBox._color = textBox.style.color = String(attr);
 	}
 }
 
@@ -1332,7 +1334,7 @@ proto._inputElement_onkeydown = function()
 }
 proto.inputElement_onkeydown = function()
 {
-	var code = event.keyCode;
+	var code = Event.keyValue(Event.current());
 	if(code == 40 && !this.popupOpened)
 	{
 		this.createPopup(); // Ensure popup created.
@@ -1373,7 +1375,7 @@ proto._inputElement_ondeactivate = function()
 }
 proto.inputElement_ondeactivate = function()
 {
-	var to = event.toElement;
+	var to = Event.current().relatedTarget;
 	if(to && this.element.contains(to)) return;
 	var box = this._getTextInput();
 	if(this._autoPostBack && this.element._isDirty && box.value.length > 0) 
@@ -1395,7 +1397,7 @@ proto.inputElement_onbeforeactivate = function()
 	
 	if(this._inGrid)
 	{
-		var l = event.srcElement;
+		var l = CNUtil.eventTarget();
 		while(l && !l._isComboBox) l = l.parentElement;
 		this.element = l;
 	}
@@ -1429,7 +1431,7 @@ proto._doSubmit = function(force, doNotPost)
 	if(this.oncheckreadonly()) return false;
 	
 	// Find element for grid combo.
-	var l = event.srcElement;
+	var l = CNUtil.eventTarget();
 	while(l && !l._isComboBox) l = l.parentElement;
 
 	this.element = l; 
@@ -1493,16 +1495,16 @@ vproto.createElementOnly = function(node, inGrid, assignElement)
 		img.className = "searchButtonIMG";
 		l.insertBefore(img, l.lastChild);
 		
-		var input = document.createElement("<input type='text'>");
+		var input = Util.createElementFromHTML("<input type='text'>");
 		input.className = "comboTextInput";
 		l.lastChild.appendChild(input);
-		input.attachEvent("onfocus", this._input_onfocus);
-		input.attachEvent("onbeforedeactivate", this._input_ondeactivate);
-		//input.attachEvent("onmousedown", Util.cancelBubble);
-		//input.attachEvent("ondblclick", Util.cancelBubble);
+		Event.add(input, "focus", this, this._input_onfocus);
+		Event.add(input, "focusout", this, this._input_ondeactivate);
+		//Event.add(input, "mousedown", this, Util.cancelBubble);
+		//Event.add(input, "dblclick", this, Util.cancelBubble);
 		this._setTextInputEvents(input);
 		
-		img.attachEvent("onclick", this._img_onclick);
+		Event.add(img, "click", this, this._img_onclick);
 
 		clickable = l.lastChild; // Note: right button is hidden by text div, and we can't move button on top.
 	}
@@ -1518,16 +1520,17 @@ vproto.createElementOnly = function(node, inGrid, assignElement)
 	if(assignElement) this.element = l;
 	l._isComboBox = true;
 	l.jsObject = this;
+	if(!this._searchable && !this.doNotFocus) l.tabIndex = -1;
 	
 	var isNotArray = !(node instanceof Array) && !(node instanceof Object);
 	if(isNotArray) this._setCommonOptions(node);
 
-	l.attachEvent("onmouseenter", this._element_onmouseenter);
-	l.attachEvent("onmouseleave", this._element_onmouseleave);
-	l.attachEvent("onkeydown", this._element_onkeydown);
+	Event.add(l, "mouseenter", this, this._element_onmouseenter);
+	Event.add(l, "mouseleave", this, this._element_onmouseleave);
+	Event.add(l, "keydown", this, this._element_onkeydown);
 	
-	clickable.attachEvent("onmousedown", this._element_onmousedown);
-	clickable.attachEvent("ondblclick", this._element_onmousedown);
+	Event.add(clickable, "mousedown", this, this._element_onmousedown);
+	Event.add(clickable, "dblclick", this, this._element_onmousedown);
 
 	return l;
 }
@@ -1535,29 +1538,17 @@ vproto.createElementOnly = function(node, inGrid, assignElement)
 vproto.hoverBox = function(l, imgSrc)
 {
 	var inner = l.children[0];
-	if(ThemeNonCSSStyles.animateButtons) {
-		if(inner.filters.length == 0) inner.style.filter = "progid:DXImageTransform.Microsoft.Fade()";
-		inner.filters[0].Apply();
-	}
 	l.className = "cn_combobox cn_combobox_hover";
-	if(imgSrc) inner.firstChild.runtimeStyle.backgroundImage = "url(" + CNFormManager.themeImagesPath + imgSrc + ")";
-	else inner.firstChild.runtimeStyle.backgroundImage = "";
-	if(ThemeNonCSSStyles.animateButtons) {
-		inner.filters[0].Play(imgSrc ? .2 : .4);
-	}
+	if(imgSrc) inner.firstChild.style.backgroundImage = "url(" + CNFormManager.themeImagesPath + imgSrc + ")";
+	else inner.firstChild.style.backgroundImage = "";
 }
 
 vproto.unhoverBox = function(l)
 {
 	if(l.className == "cn_combobox") return;
 	var inner = l.children[0];
-	if(inner.filters.length) 
-	{
-		inner.filters[0].Apply();
-	}
-	inner.firstChild.runtimeStyle.backgroundImage = "";	
+	inner.firstChild.style.backgroundImage = "";	
 	l.className = "cn_combobox";
-	if(inner.filters.length) inner.filters[0].Play(.4);
 }
 
 vproto._input_onfocus = function()
@@ -1571,7 +1562,7 @@ vproto._input_ondeactivate = function()
 {
 	var js = CNUtil.dispatchObject();
 	if(!js || js._disabled || js.popupOpened || js.oncheckreadonly()
-		|| js.element.contains(event.toElement)) return;
+		|| js.element.contains(Event.current().relatedTarget)) return;
 	js.unhoverBox(js.element, true);
 }
 
@@ -1598,7 +1589,7 @@ vproto._set_selectedIndex = function(doNotFireEvent, force)
 	if(!this.optionTags || this.optionTags.length == 0) 
 	{
 		if(this._searchable) textElement.firstChild.value = "";
-		else textElement.innerText = "";
+		else textElement.textContent = "";
 		return;
 	}
 	
@@ -1624,7 +1615,7 @@ vproto._set_selectedIndex = function(doNotFireEvent, force)
 			if(img && img._isComboImg) textElement.firstChild.nextSibling.value = text;
 			else textElement.firstChild.value = text;
 		}
-		else textElement.innerText = text;
+		else textElement.textContent = text;
 	}
 	
 	this.element._value = this.getValueByIndex(ix);
@@ -1637,10 +1628,10 @@ vproto._set_selectedIndex = function(doNotFireEvent, force)
 	{
 		var attr = tag.getAttribute("textColor");
 
-		if(attr) valueElement._color = valueElement.runtimeStyle.color = String(attr);
+		if(attr) valueElement._color = valueElement.style.color = String(attr);
 		else 
 		{
-			valueElement.runtimeStyle.color = "";
+			valueElement.style.color = "";
 			valueElement._color = null;
 		}
 
@@ -1659,13 +1650,13 @@ vproto._set_selectedIndex = function(doNotFireEvent, force)
 		}
 		else 
 		{			
-			if(img && img._isComboImg) img.removeNode(true);
+			if(img && img._isComboImg) Util.removeElement(img);
 		}
 	}
 	else
 	{
-		valueElement.runtimeStyle.color = "";
-		if(img && img._isComboImg) img.removeNode(true);
+		valueElement.style.color = "";
+		if(img && img._isComboImg) Util.removeElement(img);
 	}
 	
 	if(!doNotFireEvent) this.fireChangedEvent();
@@ -1678,14 +1669,13 @@ vproto.set_disabled = function(value)
 		this.set_tabIndex(-1, true);
 		this.element.className = "cn_combobox cn_combobox_disabled";
 		if(this._searchable) this._getTextInput().readOnly = true;
-		else this.element.firstChild.runtimeStyle.backgroundColor = "#F4F4F4";
+		else this.element.firstChild.style.backgroundColor = "#F4F4F4";
 	}
 	else
 	{
 		if(this._tabIndex) this.set_tabIndex(this._tabIndex);
 		this.element.className = "cn_combobox";
 		if(this._searchable) this._getTextInput().readOnly = false;
-		else this.element.firstChild.runtimeStyle.backgroundColor = "";
+		else this.element.firstChild.style.backgroundColor = "";
 	}
 }
-

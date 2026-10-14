@@ -13,7 +13,7 @@ var proto = CN_videoplayer.prototype;
 
 proto.createElement = function(node, parentElement)
 {
-	var l = document.createElement("<div class=cn_videoplayer>");
+	var l = Util.createElement("div", "cn_videoplayer");
 	parentElement.appendChild(l);
 
 	this.element = l;
@@ -50,8 +50,8 @@ proto._startPlayTO = function()
 	setTimeout(function()
 	{
 		if(!obj || !obj.player) return;
-		obj.player.AutoStart = false;
-		obj.player.Open(obj._src);
+		obj.player.autoplay = false;
+		obj.player.src = obj._src;
 	}, 300);
 }
 
@@ -62,7 +62,7 @@ proto.unload = function()
 
 proto.buildElements = function()
 {
-	var player = document.createElement("<object class=wmpObject classid=\"clsid:22D6F312-B0F6-11D0-94AB-0080C74C7E95\"' disabled=true>");
+	var player = Util.createElement("video", "wmpObject", {controls: true, disabled: true});
 	this.element.appendChild(player);
 	this.player = player;
 	this.set_disabled(true);
@@ -72,5 +72,5 @@ proto.set_disabled = function(val)
 {
 	if(!this._src) val = true;
 	this.element.disabled = val;
-	this.player.enabled = !val;
+	this.player.controls = !val;
 }

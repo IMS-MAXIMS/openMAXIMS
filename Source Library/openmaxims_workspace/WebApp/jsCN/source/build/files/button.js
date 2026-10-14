@@ -42,11 +42,11 @@ proto.createElement = function(node, parentElement)
 	var span = document.createElement("span");
 	l.appendChild(span);
 	
-	l.attachEvent("onmouseenter", _CN_button_onmouseenter);
-	l.attachEvent("onmouseleave", _CN_button_onmouseleave);
-	l.attachEvent("onmousedown", this._onmousedown);
-	l.attachEvent("onclick", _CN_button_onclick);
-	l.attachEvent("onkeypress", CNUtil.cancelBubble);
+	Event.add(l, "mouseenter", this, _CN_button_onmouseenter);
+	Event.add(l, "mouseleave", this, _CN_button_onmouseleave);
+	Event.add(l, "mousedown", this, this._onmousedown);
+	Event.add(l, "click", this, _CN_button_onclick);
+	Event.add(l, "keypress", this, CNUtil.cancelBubble);
 	
 	if(node.getAttribute("validator") == "false") this.validator = false;
 	
@@ -55,7 +55,7 @@ proto.createElement = function(node, parentElement)
 
 proto._onmousedown = function()
 {
-    if(event.button != 1) return;
+    if(Event.current().button != 0) return;
 	
 	var jso = CNUtil.dispatchObject();
 	if(jso && jso.formManager) jso.formManager.waitForButtonClick();	
@@ -63,23 +63,24 @@ proto._onmousedown = function()
 
 function _CN_button_onmouseenter()
 {
-	var l = event.srcElement;
-	if(!l || !l.currentStyle) return;
+	var l = Util.findByClassName(Util.eventTarget(), "cn_button");
+	if(!l) return;
 	
-	var color = l.currentStyle["xl--hover-border-color"];
-	if(color) l.runtimeStyle.borderColor = l.currentStyle["xl--hover-border-color"];
+	var color = Util.getStyle(l, "xl--hover-border-color");
+	if(color) l.style.borderColor = color;
 
 	//if(CNFormManager.currentThemeName == "blue") 
-	l.runtimeStyle.textDecoration = "underline";
+	l.style.textDecoration = "underline";
 } 
 
 function _CN_button_onmouseleave()
 {
-	var l = event.srcElement;
+	var l = Util.findByClassName(Util.eventTarget(), "cn_button");
+	if(!l) return;
 
-	l.runtimeStyle.borderColor = "";
+	l.style.borderColor = "";
 	//if(CNFormManager.currentThemeName == "blue") 
-	l.runtimeStyle.textDecoration = "";
+	l.style.textDecoration = "";
 } 
 
 function _CN_button_onclick()
@@ -93,8 +94,8 @@ proto.doClick = vproto.doClick = function()
 {
 	if(this.clicked
 	|| this._disabled || this.element.disabled
-	|| this.element.currentStyle.display == "none" 
-	|| this.element.currentStyle.visibility == "hidden") return false;
+	|| Util.getStyle(this.element, "display") == "none" 
+	|| Util.getStyle(this.element, "visibility") == "hidden") return false;
 
 	if(this.formManager) this.formManager.waitForButtonClick();
 
@@ -131,14 +132,12 @@ proto.loadData = vproto.loadData = function(node)
 	var backgroundColor = node.getAttribute("backgroundColor");
 	if(backgroundColor)
 	{	
-		this.element.filters[0].Enabled = false;
 		this.element.style.backgroundColor = backgroundColor;	
 		this.element.style.borderColor = "#316AC5";		
 	}
 	else
 	{
-		this.element.style.backgroundColor = "";
-		this.element.filters[0].Enabled = true;	
+		this.element.style.backgroundColor = "";	
 		this.element.style.borderColor = "";	
 	}
 	
@@ -193,16 +192,15 @@ proto._setImageCore = vproto._setImageCore = function(src, width, height, align)
 	{
 		if(imgEl && imgEl.tagName == "IMG") 
 		{
-			//if(!height) imgEl.attachEvent("onload", this._img_onload);
 			imgEl.src = src;
 		}
 		else
 		{
-			imgEl = document.createElement("<img align=absmiddle>");
-			textEl.insertAdjacentElement("afterbegin", imgEl);
+			imgEl = document.createElement("img");
+			imgEl.align = "absmiddle";
+			textEl.insertBefore(imgEl, textEl.firstChild);
 			textEl.style.lineHeight = "100%";
 			//imgEl.style.marginRight = 4;
-			//if(!height) imgEl.attachEvent("onload", this._img_onload);
 			imgEl.src = src;
 		}
 		
@@ -211,15 +209,7 @@ proto._setImageCore = vproto._setImageCore = function(src, width, height, align)
 	}
 }
 
-/*proto._img_onload = vproto._img_onload = function()
-{
-	var img = event.srcElement;
-	var jso = Util.dispatchObject();
-	img.detachEvent("onload",  jso._img_onload);
-	
-	alert(jso.element.offsetHeight)
-	img.style.top = (jso.element.offsetHeight - img.offsetHeight) / 2;
-}*/
+
 
 
 proto._getTextElement = function()
@@ -231,7 +221,7 @@ proto.validateLoading = vproto.validateLoading = function()
 {
 	if(this.formManager.defaultButton == this 
 		&& this.formManager.changeFocus
-		&& this.element.currentStyle.visibility != "hidden")
+		&& Util.getStyle(this.element, "visibility") != "hidden")
 	{
 		try
 		{
@@ -268,7 +258,8 @@ proto._handleDisabledState = function()
 			// Make transparent layer.
 			if(!this._tooltipLayer)
 			{
-				this._tooltipLayer = document.createElement("<div style='background: white; filter: alpha(opacity=0); position: absolute; top: 0px; left: 0px; width: 100%; height: 100px; '>");
+				this._tooltipLayer = document.createElement("div");
+				this._tooltipLayer.style.cssText = "background: white; opacity: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100px";
 				this.element.appendChild(this._tooltipLayer);
 				Tooltip.attach(this._tooltipLayer, this.element.tipText);
 			}
@@ -305,15 +296,12 @@ vproto.createElement = function(node, parentElement)
 
 	if(node.getAttribute("validator") == "false") this.validator = false;
 
-	Util.handleEvent(l, "onmouseenter", "button_");
-	Util.handleEvent(l, "onmouseleave", "button_");
-	Util.handleEvent(l, "onmousedown", "button_");
-	Util.handleEvent(l, "onmouseup", "button_");
-	Util.handleEvent(l, "onclick", "button_");
-	Util.handleEvent(l, "onkeypress", "button_");
-	
-	l.attachEvent("onselectstart", Util.cancelEvent);
-
+	Event.add(l, "mouseenter", this, this.button_onmouseenter);
+	Event.add(l, "mouseleave", this, this.button_onmouseleave);
+	Event.add(l, "mousedown", this, this.button_onmousedown);
+	Event.add(l, "mouseup", this, this.button_onmouseup);
+	Event.add(l, "click", this, this.button_onclick);
+	Event.add(l, "keypress", this, this.button_onkeypress);
 	return l;
 }
 
@@ -328,14 +316,12 @@ vproto.button_onmouseenter = function()
 	var frame = this.element.firstChild;
 
 	if(ThemeNonCSSStyles.animateButtons) {
-		if(frame.filters.length == 0) frame.style.filter = "progid:DXImageTransform.Microsoft.Fade()";
-		frame.filters[0].Apply();
+
 	}
 	this.element.className = "cn_button cn_button_hover";
 	frame.children[2].firstChild.src = 
 		frame.children[3].firstChild.src = CNFormManager.themeImagesPath + "hover-button-bg.gif";
 	if(ThemeNonCSSStyles.animateButtons) {
-		frame.filters[0].Play(.2);
 	}
 }
 
@@ -343,35 +329,32 @@ vproto.button_onmouseleave = function()
 {
 	if(this._disabled) return;
 	var frame = this.element.firstChild;
-	if(frame.filters.length > 0) frame.filters[0].Apply();
+
 	this.element.className = "cn_button";
 	frame.children[2].firstChild.src = 
 	frame.children[3].firstChild.src = CNFormManager.themeImagesPath + "button-bg.gif";
-	if(frame.filters.length > 0) frame.filters[0].Play(.4);
 
 }
 
 vproto.button_onmousedown = function()
 {
-	if(this._disabled || event.button != 1) return;
+	if(this._disabled || Event.current().button != 0) return;
 	if(this.formManager) this.formManager.waitForButtonClick();
 
 	var frame = this.element.firstChild;
 	if(ThemeNonCSSStyles.animateButtons) {
-		if(frame.filters.length == 0) frame.style.filter = "progid:DXImageTransform.Microsoft.Fade()";
-		frame.filters[0].Apply();
+
 	}
 	this.element.className = "cn_button cn_button_down";
 	frame.children[2].firstChild.src = 
 		frame.children[3].firstChild.src = CNFormManager.themeImagesPath + "down-button-bg.gif";
 	if(ThemeNonCSSStyles.animateButtons) {
-		frame.filters[0].Play(.1);
 	}
 }
 
 vproto.button_onmouseup = function()
 {
-	if(this._disabled || event.button != 1) return;
+	if(this._disabled || Event.current().button != 0) return;
 	this.button_onmouseenter();
 }
 
@@ -382,7 +365,7 @@ vproto.button_onclick = function()
 }
 vproto.button_onkeypress = function()
 {
-	if(this._disabled || event.keyCode != 13) return;
+	if(this._disabled || (Event.keyValue(Event.current())) != 13) return;
 	_CN_button_onclick();
 }
 
@@ -393,7 +376,7 @@ vproto.set_disabled = function(val)
 {
 	this._disabled = val;
 	var frame = this.element.firstChild;
-	if(frame.filters.length > 0) frame.filters[0].Stop();
+
 	if(val)
 	{
 		this.element.className = "cn_button cn_button_disabled";
@@ -423,8 +406,8 @@ vproto.set_tabIndex = function(ti)
 		if(!this._focusAttached)
 		{
 			this._focusAttached = true;
-			bgImg.attachEvent("onfocus", this._bgIMG_onfocus);
-			bgImg.attachEvent("onblur", this._bgIMG_onblur);
+			Event.add(bgImg, "focus", this, this._bgIMG_onfocus);
+			Event.add(bgImg, "blur", this, this._bgIMG_onblur);
 		}
 	}
 	else
@@ -432,19 +415,19 @@ vproto.set_tabIndex = function(ti)
 		if(this._focusAttached)
 		{
 			this._focusAttached = false;
-			bgImg.detachEvent("onfocus", this._bgIMG_onfocus);
-			bgImg.detachEvent("onblur", this._bgIMG_onblur);
+			Event.del(bgImg, "focus", this, this._bgIMG_onfocus);
+			Event.del(bgImg, "blur", this, this._bgIMG_onblur);
 		}
 	}
 }
 vproto._bgIMG_onfocus = function()
 {
-	var b = Util.findByClassName(event.srcElement, "cn_button");
+	var b = Util.findByClassName(Util.eventTarget(), "cn_button");
 	b.firstChild.children[1].firstChild.style.background = "#47D6FA";
 }
 vproto._bgIMG_onblur = function()
 {
-	var b = Util.findByClassName(event.srcElement, "cn_button");
+	var b = Util.findByClassName(Util.eventTarget(), "cn_button");
 	b.firstChild.children[1].firstChild.style.background = "";
 }
 

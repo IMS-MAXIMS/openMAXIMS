@@ -14,27 +14,31 @@ var proto = CN_availabilitycontrol.prototype;
 
 proto.createElement = function(node, parentElement)
 {
-	var l = this.element = document.createElement("<div class=cn_availabilitycontrol>");
+	var l = this.element = Util.createElementFromHTML("<div class=cn_availabilitycontrol>");
 	parentElement.appendChild(l);
 
 	l.jsObject = this;
 
 	this._buildElement();
 	
-	l.attachEvent("onresize", this._element_onresize);
+	Event.add(window, "resize", this, this._element_onresize);
+	if(typeof ResizeObserver != "undefined") {
+		this._resizeObserver = new ResizeObserver(this.element_onresize.bind(this));
+		this._resizeObserver.observe(l);
+	}
 
 	return l;
 } 
 
 proto._buildElement = function()
 {
-	var patternDiv = document.createElement("<div class=patternDiv>");
+	var patternDiv = Util.createElementFromHTML("<div class=patternDiv>");
 	this.element.appendChild(patternDiv);
 
-	var table = document.createElement("<table cellspacing=0 frame=void border=1>");
+	var table = Util.createElementFromHTML("<table cellspacing=0 frame=void border=1>");
 	this.element.appendChild(table);
 	
-	table.borderColor = this.element.currentStyle["xl--grid-color"];
+	table.borderColor = Util.getStyle(this.element, "xl--grid-color");
 }
 
 proto._buildGrid = function()
@@ -58,12 +62,12 @@ proto._buildGrid = function()
 		var td1 = tr.insertCell();
 		td1.className = "firstColumnTD"
 		
-		var button = document.createElement("<button class=availbutton>");
+		var button = Util.createElementFromHTML("<button class=availbutton>");
 		td1.appendChild(button);
 		
-		button.attachEvent("onclick", this._button_onclick);
+		Event.add(button, "click", this, this._button_onclick);
 		
-		button.innerText = text;
+		button.textContent = text;
 	}
 	
 //	}, "CN_availabilitycontrol._buildGrid", this);
@@ -81,13 +85,7 @@ proto.storeData = function(xmldoc)
 
 proto._element_onresize = function()
 {
-	var jso = CNUtil.dispatchObject();
-	if(jso)
-	{
-		//if(jso._element_onresizeTO) clearTimeout(jso._element_onresizeTO);
-		//jso._element_onresizeTO = setTimeout(function(){ jso.element_onresize(); }, 300);
-		jso.element_onresize();
-	}
+	this.element_onresize();
 }
 proto.element_onresize = function()
 {
@@ -108,7 +106,7 @@ proto.loadData = function(node)
 
 	var table = this.element.children[1];
 	
-	var dateNodes = node.selectNodes("date");
+	var dateNodes = Util.xmlSelectNodes(node, "date");
 	var dateCount = dateNodes.length;
 
 	if(dateCount == 0) 
@@ -132,12 +130,12 @@ proto.loadData = function(node)
 //	Util.benchmark(function() {	
 
 	var left = 0;
-	var htmlAr = [];
+	
 	var row0cells = table.rows[0].cells;
 	for(var i = 0; i < dateCount; i++)
 	{
 		var dateNode = dateNodes[i];
-		var pNodes = dateNode.selectNodes("p");
+		var pNodes = Util.xmlSelectNodes(dateNode, "p");
 		var pCount = pNodes.length;
 
 		var width = row0cells[1 + i].offsetWidth;
@@ -147,12 +145,12 @@ proto.loadData = function(node)
 		for(var j = 0; j < pCount; j++)
 		{
 			var pNode = pNodes[j];
-			htmlAr[htmlAr.length] = this._buildPeriod(pNode, table, patternDiv, left, width, i);
+			patternDiv.appendChild(this._buildPeriod(pNode, table, patternDiv, left, width, i));
 		}
 		left += width;		
 	}
 
-	patternDiv.innerHTML = htmlAr.join("");
+	
 	//CNFormManager._trace("pCount: " + dateCount);
 
 	this._setPatternSizes();
@@ -201,7 +199,7 @@ proto._resizeDataSet = function() {
 proto._processEmptyData = function()
 {
 	var patternDiv = this.element.children[0];
-	var grayDiv = document.createElement("<div class='periodDiv_unavail'>");
+	var grayDiv = Util.createElement("div", "periodDiv_unavail");
 	patternDiv.appendChild(grayDiv);
 	grayDiv.style.width = "100%";
 	grayDiv.style.height = "100%";
@@ -221,8 +219,8 @@ proto._setPatternSizes = function()
 {
 	var patternDiv = this.element.children[0];
 	var table = this.element.children[1];
-	patternDiv.style.left = table.rows[0].cells[0].offsetWidth;
-	patternDiv.style.top = 0;
+	patternDiv.style.left = table.rows[0].cells[0].offsetWidth + "px";
+	patternDiv.style.top = "0px";
 	patternDiv.style.width = "100%";
 	patternDiv.style.height = "100%";
 }
@@ -230,14 +228,15 @@ proto._setPatternSizes = function()
 proto._cleanData = function()
 {
 	this._periodsData = [];
-		var patternDiv = this.element.children[0];
+	
+	var patternDiv = this.element.children[0];
 	var table = this.element.children[1];
 	
 	var children = patternDiv.children;
 	var count = children.length;
 	for(var i = count - 1; i >= 0; i--)
 	{
-		children[i].removeNode(true);
+		Util.removeElement(children[i]);
 	}
 	
 	var rows = table.rows;
@@ -259,7 +258,7 @@ proto._renderGrid = function(colNum, dateTooltips)
 		{
 			var td = row.insertCell();
 			td.className = "innerGridTD"
-			td.innerText = " ";
+			td.textContent = " ";
 			var tooltip = dateTooltips[tdIx];
 			if(tooltip) Tooltip.attach(td, tooltip);
 		}
@@ -289,9 +288,13 @@ proto._buildPeriod = function(pNode, table, patternDiv, left, width, dateIx)
 	div.style.width = width + "px";
 	patternDiv.appendChild(div);*/
 	
-	var html = "<div class='periodDiv_" + type + "' style='position: absolute; top: " 
-		+ yBounds[0] + "px; left: " + left + "px; width: " + width + "px; height: " + yBounds[1] + "px; '></div>";
-	return html;
+	var div = Util.createElement("div", "periodDiv_" + type);
+	div.style.position = "absolute";
+	div.style.top = yBounds[0] + "px";
+	div.style.left = left + "px";
+	div.style.width = width + "px";
+	div.style.height = yBounds[1] + "px";
+	return div;
 }
 
 proto._calculatePeriodYBounds = function(table, fromPeriod, toPeriod) {
@@ -330,7 +333,7 @@ proto._button_onclick = function()
 proto.button_onclick = function()
 {
 	if(this.element.disabled) return;
-	var tr = CNUtil.findTag(event.srcElement, "TR");
+	var tr = CNUtil.findTag(Util.eventTarget(), "TR");
 	this._trIndex = tr.rowIndex;
 	this._clicked = true;
 	this.formManager.postData(this.element);

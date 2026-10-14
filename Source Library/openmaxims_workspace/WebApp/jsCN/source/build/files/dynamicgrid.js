@@ -15,20 +15,20 @@ var proto = CN_dynamicgrid.prototype;
 
 proto.createElement = function(node, parentElement)
 {
-	var l = document.createElement("<div class=cn_dynamicgrid>");
+	var l = Util.createElement("div", "cn_dynamicgrid");
 	parentElement.appendChild(l);
 	l.jsObject = this;
 	this.element = l;
 	
-	l.attachEvent("onresize", this._element_onresize);
+	Event.add(l, "resize", this, this._element_onresize);
 
-	var captionTable = document.createElement("<table width=100% border=0 cellpadding=0 cellspacing=0 class=captionTable>");
+	var captionTable = Util.createElement("table", "captionTable", {width: "100%", border: 0, cellPadding: 0, cellSpacing: 0});
 	l.appendChild(captionTable);
 	
-	var div = document.createElement("<div class=contentDiv>");
+	var div = Util.createElement("div", "contentDiv");
 	l.appendChild(div);
 	
-	var table = document.createElement("<table width=100% border=0 cellpadding=0 cellspacing=0 class=contentTable>");
+	var table = Util.createElement("table", "contentTable", {width: "100%", border: 0, cellPadding: 0, cellSpacing: 0});
 	div.appendChild(table);
 
 	if(CNFormManager.vista)
@@ -43,16 +43,25 @@ proto.createElement = function(node, parentElement)
 	}
 	else
 	{
-		this._leftBorder = document.createElement("<div class=leftBorder>");
+		this._leftBorder = Util.createElement("div", "leftBorder");
 		div.appendChild(this._leftBorder);
-		this._rightBorder = document.createElement("<div class=rightBorder>");
+		this._rightBorder = Util.createElement("div", "rightBorder");
 		div.appendChild(this._rightBorder);
-		this._topBorder = document.createElement("<div class=topBorder>");
+		this._topBorder = Util.createElement("div", "topBorder");
 		div.appendChild(this._topBorder);
-		this._bottomBorder = document.createElement("<div class=bottomBorder>");
+		this._bottomBorder = Util.createElement("div", "bottomBorder");
 		div.appendChild(this._bottomBorder);
 	}	
-	this._disabler = document.createElement('<div style="position: absolute; background: white; z-index: 1000; filter: alpha(opacity=50); width: 100%; height: 100%; visibility: hidden; top: 0px; left: 0px; ">');
+	this._disabler = Util.createElement("div");
+	this._disabler.style.position = "absolute";
+	this._disabler.style.background = "white";
+	this._disabler.style.zIndex = 1000;
+	this._disabler.style.opacity = "0.5";
+	this._disabler.style.width = "100%";
+	this._disabler.style.height = "100%";
+	this._disabler.style.visibility = "hidden";
+	this._disabler.style.top = "0px";
+	this._disabler.style.left = "0px";
 	this.element.appendChild(this._disabler);
 	var attr = node.getAttribute("headerHeight");
 	if(attr)
@@ -74,20 +83,20 @@ proto.loadData = function(node)
 	
 	this._cleanData(captionTable, table);
 	
-	captionTable.height = this._headerHeight;
+	captionTable.style.height = this._headerHeight + "px";
 	
 	var captionTR = captionTable.insertRow();
 	if(this._selectorVisible)
 	{
 		var selectorTD = captionTR.insertCell();
 		selectorTD.style.width = 20;
-		selectorTD.innerText = " ";
+		selectorTD.textContent = " ";
 	}
 	
 	var tBody = document.createElement("tbody");
 	table.appendChild(tBody);
 	
-	var colNodes = node.selectNodes("columns/col");
+	var colNodes = Util.xmlSelectNodes(node, "columns/col");
 	var colNodeCount = colNodes.length;
 	
 	var rowMatrix = [];
@@ -98,7 +107,7 @@ proto.loadData = function(node)
 	{
 		var colNode = colNodes[i];
 		
-		var cellNodes = colNode.selectNodes("cell");
+		var cellNodes = Util.xmlSelectNodes(colNode, "cell");
 		var cellNodeCount = cellNodes.length;
 		for(var j = 0; j < cellNodeCount; j++)
 		{
@@ -110,8 +119,8 @@ proto.loadData = function(node)
 		
 		var captionTD = captionTR.insertCell();
 		attr = colNode.getAttribute("caption");
-		if(attr) captionTD.innerText = String(attr);
-		else captionTD.innerText = " ";
+		if(attr) captionTD.textContent = String(attr);
+		else captionTD.textContent = " ";
 
 		attr = colNode.getAttribute("captionAlign");
 		if(attr) captionTD.align = String(attr);
@@ -204,9 +213,9 @@ proto._buildRow = function(table, row, cols)
 		var selectorTD = tr.insertCell();
 		selectorTD.style.width = 20;
 		selectorTD.style.cursor = "hand";
-		selectorTD.attachEvent("onclick", this._selectorTD_onclick);
+		Event.add(selectorTD, "click", this, this._selectorTD_onclick);
 		
-		var img = document.createElement("<img width=16 height=16>");
+		var img = Util.createElement("img", null, {width: 16, height: 16});
 		selectorTD.appendChild(img);
 		img.src = CNFormManager.themeImagesPath + "normalRow.gif";
 	}
@@ -218,11 +227,11 @@ proto._buildRow = function(table, row, cols)
 
 		if(!node) 
 		{
-			td.innerText = " ";
+			td.textContent = " ";
 			continue;
 		}
 		
-		td.innerText = String(node.getAttribute("value"));
+		td.textContent = String(node.getAttribute("value"));
 
 		var col = cols[i];
 
@@ -240,52 +249,44 @@ proto._setLoadStateTO = function()
 proto._loadState = function()
 {
 	if(!this.element || !this.element.id) return;
-
-	try
-	{
-		this.element.load("dynamicgrid_store");
-	}
-	catch(ex){}
-	var gridTag = this._getStoredGridTag();
-	var scrollTop = gridTag.getAttribute("scrollTop");
-	if(scrollTop)
+	var state = this._readState();
+	if(state)
 	{
 		var contentDiv = this.element.children[1];
-		contentDiv.scrollTop = scrollTop * 1;
-		contentDiv.scrollLeft = gridTag.getAttribute("scrollLeft") * 1;
+		contentDiv.scrollTop = Number(state.scrollTop) || 0;
+		contentDiv.scrollLeft = Number(state.scrollLeft) || 0;
 	}
-	gridTag.removeAttribute("scrollTop");
-	gridTag.removeAttribute("scrollLeft");
-	try{ this.element.save("dynamicgrid_store"); } catch(ex){}
 }
 
-proto._getStoredGridTag = function()
+proto._stateKey = function()
 {
-	var xmldoc = this.element.XMLDocument;
-	var gridTag = xmldoc.documentElement.selectSingleNode("dynamicgrid[@id='" + this.element.id + "']");
-	if(!gridTag)
+	return "cn_dynamicgrid:" + this.element.id;
+}
+
+proto._readState = function()
+{
+	try
 	{
-		gridTag = xmldoc.createElement("dynamicgrid");
-		gridTag.setAttribute("id", this.element.id);
-		xmldoc.documentElement.appendChild(gridTag);
+		var storage = window.sessionStorage || window.localStorage;
+		var value = storage && storage.getItem(this._stateKey());
+		return value ? JSON.parse(value) : null;
 	}
-	return gridTag;
+	catch(ex) { return null; }
 }
 
 proto._saveState = function()
 {
 	if(!this.element.id) return;
-	// NOTE: always load store before change, as another grid probably changed it.
+	var contentDiv = this.element.children[1];
 	try
 	{
-		this.element.load("dynamicgrid_store");
+		var storage = window.sessionStorage || window.localStorage;
+		if(storage) storage.setItem(this._stateKey(), JSON.stringify({
+			scrollTop: contentDiv.scrollTop || 0,
+			scrollLeft: contentDiv.scrollLeft || 0
+		}));
 	}
-	catch(ex){}
-	var gridTag = this._getStoredGridTag();
-	var contentDiv = this.element.children[1];
-	gridTag.setAttribute("scrollTop", contentDiv.scrollTop);
-	gridTag.setAttribute("scrollLeft", contentDiv.scrollLeft);	
-	try{ this.element.save("dynamicgrid_store"); } catch(ex){}
+	catch(ex) {}
 }
 
 proto._rowBorder_select = function(row)
@@ -381,7 +382,7 @@ proto.element_onresize = function()
 	
 	if(!captionTable.offsetHeight) return;
 
-	//var h = parseInt(this.element.currentStyle.height, 10);
+	//var h = parseInt(Util.getStyle(this.element, "height"), 10);
 	//if(!isNaN(h)) contentDiv.style.height = h - captionTable.offsetHeight;
 	if(this._selectedRow) this.rowBorder_updateSize(this._selectedRow);
 }
@@ -390,9 +391,11 @@ proto._selectorTD_onclick = function()
 {
 	CNUtil.dispatchObject().selectorTD_onclick();
 }
-proto.selectorTD_onclick = function()
+proto.selectorTD_onclick = function(nativeEvent)
 {
-	var tr = CNUtil.findTag(event.srcElement, "TR");
+	var ev = Event.normalize(nativeEvent) || Event.current();
+	var tr = CNUtil.findTag(ev && ev.target, "TR");
+	if(!tr) return;
 	this._rowBorder_unselect();
 	this._rowBorder_select(tr);
 	

@@ -38,11 +38,11 @@ proto.createElement = function(node, parentElement)
 }
 
 proto.loadData = function(node) {
-	var textEl = this.element.all["__panel_text"];
+	var textEl = Util.findById(this.element, "__panel_text");
 
 	var attr = node.getAttribute("text");
 	if(attr) {
-		textEl.innerText = String(attr);
+		textEl.textContent = String(attr);
 	}
 
 	attr = node.getAttribute("img");
@@ -58,11 +58,9 @@ proto.loadData = function(node) {
 		} else {
 			Util.addClass(textEl, "withImage");
 			var img = document.createElement("img");
-			img.replacePNG = "no";
 			img.className = "panelImg";
 			img.src = String(attr);
 			textEl.parentNode.insertBefore(img, textEl.parentNode.firstChild);
-			if(Util.IE6) Util.replacePNGImage(img);
 		}
 	}
 }
@@ -102,7 +100,7 @@ function CN_panel_buildMiniBoxPanel(l)
 	}
 	else
 	{
-		var table = document.createElement('<table width=100% height=100% border=0 cellpadding=0 cellspacing=0 class=smallMiniWindow2>');
+		var table = Util.createElementFromHTML("<table width=100% height=100% border=0 cellpadding=0 cellspacing=0 class=smallMiniWindow2>");
 		l.appendChild(table);
 		
 		var tbody = document.createElement('tbody');
@@ -111,26 +109,26 @@ function CN_panel_buildMiniBoxPanel(l)
 		// Header.
 		var tr = document.createElement('tr');
 		tbody.appendChild(tr);
-		var td = document.createElement('<td height=16 width=12 nowrap>');
+		var td = Util.createElementFromHTML("<td height=16 width=12 nowrap>");
 		tr.appendChild(td);
 		var td1 = td;
 			
-		var td2 = document.createElement('<td width=100%>');
+		var td2 = Util.createElementFromHTML("<td width=100%>");
 		tr.appendChild(td2);
 	
-		var h5 = document.createElement('<h5 id="__panel_text">');
+		var h5 = Util.createElement("h5", "", {id: "__panel_text"});
 		td2.appendChild(h5);
 		td2.style.paddingTop = "4px";
-		var td = document.createElement('<td width=12 nowrap>');
+		var td = Util.createElementFromHTML("<td width=12 nowrap>");
 		tr.appendChild(td);
 		
 		var td12 = td;
 	
 		// Content.
-		var tr = document.createElement('<tr valign=top>');
+		var tr = Util.createElementFromHTML("<tr valign=top>");
 		tbody.appendChild(tr);
 	
-		var td5 = document.createElement('<td colspan="3" id="contentTD" style="position: relative; " height="100%" width="100%">');
+		var td5 = Util.createElement("td", "", {colSpan: 3, id: "contentTD", style: "position: relative;", height: "100%", width: "100%"});
 		tr.appendChild(td5);
 		td5.innerHTML = '<div style="overflow: hidden; width: 1px; height: 1px; "></div>';
 	

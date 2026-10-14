@@ -25,7 +25,7 @@ function CN_partialdatebox()
 var proto = CN_partialdatebox.prototype; 
 
 // Events. =========================
-proto.onbeforedeactivate = function(){}
+proto.onfocusout = function(){}
 proto.onkeypress = function(){}
 
 
@@ -41,43 +41,53 @@ proto.createElement = function(node, parentElement)
 	
 	l.className = "cn_partialdatebox";
 	
-	var dayBox = document.createElement("<input type=text maxlength=2 style='width: 15px; padding-left: 1px; '>");
+	var dayBox = document.createElement("input");
+	dayBox.type = 'text';
+	dayBox.maxLength = 2;
+	dayBox.style.width = '15px';
+	dayBox.style.paddingLeft = '1px';
 	l.appendChild(dayBox);
 	l.appendChild(document.createTextNode("/"));
 	
-	var monthBox = document.createElement("<input type=text maxlength=2 style='width: 14px; '>");
+	var monthBox = document.createElement("input");
+	monthBox.type = 'text';
+	monthBox.maxLength = 2;
+	monthBox.style.width = '14px';
 	l.appendChild(monthBox);
 	l.appendChild(document.createTextNode("/"));
 
-	var yearBox = document.createElement("<input type=text maxlength=4 style='width: 28px; '>");
+	var yearBox = document.createElement("input");
+	yearBox.type = 'text';
+	yearBox.maxLength = 4;
+	yearBox.style.width = '28px';
 	l.appendChild(yearBox);
 		
 	dayBox._maxValue = 31;
 	monthBox._maxValue = 12;
 
-	dayBox.attachEvent("onkeypress", this._box_onkeypress);
-	monthBox.attachEvent("onkeypress", this._box_onkeypress);
-	yearBox.attachEvent("onkeypress", this._box_onkeypress);
+	Event.add(dayBox, "keypress", this, this._box_onkeypress);
+	Event.add(monthBox, "keypress", this, this._box_onkeypress);
+	Event.add(yearBox, "keypress", this, this._box_onkeypress);
 
-	dayBox.attachEvent("onkeyup", this._box_onkeyup);
-	monthBox.attachEvent("onkeyup", this._box_onkeyup);
-	yearBox.attachEvent("onkeyup", this._box_onkeyup);
+	Event.add(dayBox, "keyup", this, this._box_onkeyup);
+	Event.add(monthBox, "keyup", this, this._box_onkeyup);
+	Event.add(yearBox, "keyup", this, this._box_onkeyup);
 
-	dayBox.attachEvent("onkeydown", this._box_onkeyup);
-	monthBox.attachEvent("onkeydown", this._box_onkeyup);
-	yearBox.attachEvent("onkeydown", this._box_onkeyup);
+	Event.add(dayBox, "keydown", this, this._box_onkeyup);
+	Event.add(monthBox, "keydown", this, this._box_onkeyup);
+	Event.add(yearBox, "keydown", this, this._box_onkeyup);
 
-	dayBox.attachEvent("onfocus", this._box_onfocus);
-	monthBox.attachEvent("onfocus", this._box_onfocus);
-	yearBox.attachEvent("onfocus", this._box_onfocus);
+	Event.add(dayBox, "focus", this, this._box_onfocus);
+	Event.add(monthBox, "focus", this, this._box_onfocus);
+	Event.add(yearBox, "focus", this, this._box_onfocus);
 	
-	dayBox.attachEvent("onchange", this._box_onchange);
-	monthBox.attachEvent("onchange", this._box_onchange);
-	yearBox.attachEvent("onchange", this._box_onchange);
+	Event.add(dayBox, "change", this, this._box_onchange);
+	Event.add(monthBox, "change", this, this._box_onchange);
+	Event.add(yearBox, "change", this, this._box_onchange);
 
-	this.element.attachEvent("ondeactivate", this._element_ondeactivate);
-	this.element.attachEvent("onactivate", this._element_onactivate);
-	this.element.attachEvent("onbeforedeactivate", this._element_onbeforedeactivate);
+	Event.add(this.element, "focusout", this, this._element_onfocusout);
+	Event.add(this.element, "focusout", this, this._element_ondeactivate);
+	Event.add(this.element, "focusin", this, this._element_onactivate);
 	
 	if(node)
 	{
@@ -95,10 +105,10 @@ proto.createElement = function(node, parentElement)
 
 proto.loadData = function(node)
 {
-	_isDirty = false;
-	if(this.element.runtimeStyle.borderColor == "red") this.element.runtimeStyle.borderColor = "";
+	this._isDirty = false;
+	if(this.element.style.borderColor == "red") this.element.style.borderColor = "";
 
-	var boxes = this.element.all.tags("input");
+	var boxes = this.element.getElementsByTagName("input");
 	var dayAttr = node.getAttribute("day");
 	if(dayAttr != null) boxes[0].value = String(dayAttr);
 	var monthAttr = node.getAttribute("month");
@@ -106,7 +116,7 @@ proto.loadData = function(node)
 	var yearAttr = node.getAttribute("year");
 	if(yearAttr != null) boxes[2].value = String(yearAttr);
 	
-	attr = node.getAttribute("minvalue");
+	var attr = node.getAttribute("minvalue");
 	if(attr) this._minValue = this._parseDate(String(attr));
 	attr = node.getAttribute("maxvalue");
 	if(attr) this._maxValue = this._parseDate(String(attr));
@@ -117,7 +127,7 @@ proto._parseDate = function(str)
 	var ar = str.match(/^(\d{4})(\d{2})?(\d{2})?/);
 	if(!ar) return null;
 	ar.splice(0, 1);
-	for(var i = 0; i < ar.lenght; i++) ar[i] = parseInt(ar[i], 10);
+	for(var i = 0; i < ar.length; i++) ar[i] = parseInt(ar[i], 10);
 	return ar;
 }
 
@@ -128,7 +138,7 @@ proto.storeData = function(xmldoc)
 
 	var node = xmldoc.createElement("partialdatebox");
 
-	var boxes = this.element.all.tags("input");
+	var boxes = this.element.getElementsByTagName("input");
 	if(!isNaN(parseInt(boxes[0].value, 10))) node.setAttribute("day", boxes[0].value);
 	if(!isNaN(parseInt(boxes[1].value, 10))) node.setAttribute("month", boxes[1].value);
 	if(!isNaN(parseInt(boxes[2].value, 10))) node.setAttribute("year", boxes[2].value);
@@ -200,17 +210,17 @@ proto.isValid = function()
 
 	if(valid) 
 	{
-		if(this.element.runtimeStyle.borderColor == "red") this.element.runtimeStyle.borderColor = "";
+		if(this.element.style.borderColor == "red") this.element.style.borderColor = "";
 		return true;
 	}
-	this.element.runtimeStyle.borderColor = "red";
+	this.element.style.borderColor = "red";
 	return false;
 }
 
 // Private methods. =================================
 proto._tryNextField = function(box)
 {
-	if(box.value.length == box.maxLength && !box.createTextRange().isEqual(document.selection.createRange()))
+	if(box.value.length == box.maxLength && box.selectionStart == box.selectionEnd && box.selectionEnd == box.value.length)
 	{
 		this._moveToNextField(box);
 	} 
@@ -218,25 +228,23 @@ proto._tryNextField = function(box)
 
 proto._moveToNextField = function(box)
 {
-	var boxes = this.element.all.tags("input");
+	var boxes = this.element.getElementsByTagName("input");
 	if(box == boxes[0]) boxes[1].focus();
 	else if(box == boxes[1]) boxes[2].focus();
 }
 
 proto._moveToPreviousField = function(box)
 {
-	var boxes = this.element.all.tags("input");
+	var boxes = this.element.getElementsByTagName("input");
 	if(box == boxes[2]) boxes[1].focus();
 	else if(box == boxes[1]) boxes[0].focus();
 }
 
 proto._checkLeftRight = function(box, code)
 {
-	var selRange = document.selection.createRange();
-	var range = box.createTextRange();
 	if(code == 37) // Left
 	{
-		if(range.compareEndPoints("StartToStart", selRange) == 0) 
+		if(box.selectionStart == 0 && box.selectionEnd == 0) 
 		{
 			this._moveToPreviousField(box);		
 			return true;
@@ -244,7 +252,7 @@ proto._checkLeftRight = function(box, code)
 	}
 	else if(code == 39) // Right
 	{
-		if(range.compareEndPoints("EndToEnd", selRange) == 0) 
+		if(box.selectionStart == box.value.length && box.selectionEnd == box.value.length) 
 		{
 			this._moveToNextField(box);
 			return true;
@@ -256,7 +264,7 @@ proto._checkLeftRight = function(box, code)
 // Used by grid BoxManager.
 proto.focus = function()
 {
-	var boxes = this.element.all.tags("input");	
+	var boxes = this.element.getElementsByTagName("input");	
 	boxes[0].focus();
 }
 
@@ -266,8 +274,8 @@ proto.select = function(){}
 // Used by grid BoxManager.
 proto.blur = function()
 {
-	var boxes = this.element.all.tags("input");
-	for(var i = 0; i < boxes; i++)
+	var boxes = this.element.getElementsByTagName("input");
+	for(var i = 0; i < boxes.length; i++)
 	{
 		if(document.activeElement == boxes[i])
 		{
@@ -286,7 +294,7 @@ proto._box_onkeypress = function()
 proto.box_onkeypress = function()
 {
 	if(this._disabled) return;
-	var code = event.keyCode;
+	var code = (Event.keyValue(Event.current()));
 	var charx = String.fromCharCode(code);
 	if((charx < "0" || charx > "9") && code != 13)
 	{
@@ -302,11 +310,11 @@ proto._box_onkeyup = function()
 proto.box_onkeyup = function()
 {
 	if(this._disabled) return;
-	var box = event.srcElement;
+	var box = Util.eventTarget();
 	
-	var code = event.keyCode;
+	var code = (Event.keyValue(Event.current()));
 
-	if(event.type == "keydown")
+	if(Event.current().type == "keydown")
 	{
 		if(this._checkLeftRight(box, code)) return;
 		var value = parseInt(box.value, 10);
@@ -326,7 +334,7 @@ proto.box_onkeyup = function()
 		
 		if(code == 9 && this._inGrid) {
 			//	else if(box == boxes[1]) boxes[2].focus();		
-			var boxes = this.element.all.tags("input");
+			var boxes = this.element.getElementsByTagName("input");
 			if(box == boxes[2]) {
 				CN_grid.proxyTabKeyDown();
 				return;
@@ -347,12 +355,12 @@ proto.box_onkeyup = function()
 		return;
 	} 
 
-	if(event.type == "keydown") this._tryNextField(box);
+	if(Event.current().type == "keydown") this._tryNextField(box);
 }
 
 proto._box_onfocus = function()
 {
-	var box = event.srcElement;
+	var box = Util.eventTarget();
 	box.select();
 }
 
@@ -362,7 +370,7 @@ proto._element_ondeactivate = function()
 }
 proto.element_ondeactivate = function()
 {
-	if(this.element.contains(event.toElement)) return;
+	if(this.element.contains(Event.current().relatedTarget)) return;
 	if(this._isDirty && this.isValid() && this._autoPostBack) this.formManager.postData(this.element);
 }
 
@@ -372,8 +380,8 @@ proto._element_onactivate = function()
 }
 proto.element_onactivate = function()
 {
-	if(this.element.contains(event.fromElement)) return;
-	if(this.element.runtimeStyle.borderColor == "red") this.element.runtimeStyle.borderColor = "";
+	if(this.element.contains(Event.current().relatedTarget)) return;
+	if(this.element.style.borderColor == "red") this.element.style.borderColor = "";
 }
 
 proto._box_onchange = function()
@@ -387,16 +395,16 @@ proto.box_onchange = function()
 	this._isDirty = true;
 }
 
-proto._element_onbeforedeactivate = function()
+proto._element_onfocusout = function()
 {
 	var jso = CNUtil.dispatchObject()
-	if(jso && jso.element_onbeforedeactivate) jso.element_onbeforedeactivate();
+	if(jso && jso.element_onfocusout) jso.element_onfocusout();
 }
-proto.element_onbeforedeactivate = function()
+proto.element_onfocusout = function()
 {
 	if(this._disabled) return;
-	if(this.element.contains(event.toElement)) return;
-	if(this.onbeforedeactivate) this.onbeforedeactivate();
+	if(this.element.contains(Event.current().relatedTarget)) return;
+	if(this.onfocusout) this.onfocusout();
 }
 
 
@@ -404,7 +412,7 @@ proto.element_onbeforedeactivate = function()
 proto.get_values = function()
 {
 	var values = [];
-	var boxes = this.element.all.tags("input");
+	var boxes = this.element.getElementsByTagName("input");
 	for(var i = 0; i < boxes.length; i++) values.push(boxes[i].value);
 	return values;
 }
@@ -412,7 +420,7 @@ proto.get_values = function()
 // Used by grid BoxManager.
 proto.get_value = function()
 {
-	var boxes = this.element.all.tags("input");	
+	var boxes = this.element.getElementsByTagName("input");	
 	var value = "";
 	if(!isNaN(parseInt(boxes[0].value, 10))) value += boxes[0].value;
 	value += "/";
@@ -426,7 +434,7 @@ proto.get_value = function()
 // Used by grid BoxManager.
 proto.set_value = function(val)
 {
-	var boxes = this.element.all.tags("input");	
+	var boxes = this.element.getElementsByTagName("input");	
 	var values = val.split("/");
 	for(var i = 0; i < values.length && i < 3; i++) boxes[i].value = values[i]; 
 	for(var i = values.length; i < 3; i++) boxes[i].value = ""; 
@@ -454,8 +462,8 @@ proto.set_disabled = function(val)
 }
 proto._set_disabled = function()
 {
-	val = this._readOnly || this._disabled;
-	var boxes = this.element.all.tags("input");	
+	var val = this._readOnly || this._disabled;
+	var boxes = this.element.getElementsByTagName("input");	
 	if(CNFormManager.vista) 
 	{
 		this.element.className = val ? "cn_partialdatebox cn_partialdatebox_disabled" : "cn_partialdatebox";
@@ -466,11 +474,11 @@ proto._set_disabled = function()
 	}
 	else 
 	{
-		this.element.runtimeStyle.backgroundColor = val ? this.element.currentStyle["xl--disabled-background"] : "";
+		this.element.style.backgroundColor = val ? Util.getStyle(this.element, "xl--disabled-background") : "";
 		for(var i = 0; i < 3; i++) 
 		{
 			boxes[i].readOnly = val;
-			boxes[i].runtimeStyle.backgroundColor =  val ? this.element.currentStyle["xl--disabled-background"] : "";
+			boxes[i].style.backgroundColor =  val ? Util.getStyle(this.element, "xl--disabled-background") : "";
 		}
 	}
 }
@@ -483,7 +491,7 @@ proto.set_tabIndex = function(ti)
 
 proto._set_tabIndex = function(ti)
 {
-	var boxes = this.element.all.tags("input");	
+	var boxes = this.element.getElementsByTagName("input");	
 	for(var i = 0; i < 3; i++) 
 	{
 		boxes[i].tabIndex = ti;
@@ -504,7 +512,7 @@ PartialDateBoxCell._createBox = function()
 	var l = box.createElement();
 	l.style.position = "absolute";
 	
-//	l.attachEvent("onkeydown", CN_grid.proxyTabKeyDown);
+//	Event.add(l, "keydown", this, CN_grid.proxyTabKeyDown);
 
 	EditorBoxManager.attachBoxEvents(l);
 	return l;
@@ -535,10 +543,10 @@ wp.validateValue = function(value, cell)
 // Used by BoxManager.
 wp.commitChange = function(value, cell, row, colTag)
 {
-	if(cell.firstChild.innerText != value)
+	if(cell.firstChild.textContent != value)
 	{
-		if(value == "" || value.replace(/\s+/g, "") == "///") cell.firstChild.innerText = " ";
-		else cell.firstChild.innerText = value;
+		if(value == "" || value.replace(/\s+/g, "") == "///") cell.firstChild.textContent = " ";
+		else cell.firstChild.textContent = value;
 		
 		if(value != "")
 		{		

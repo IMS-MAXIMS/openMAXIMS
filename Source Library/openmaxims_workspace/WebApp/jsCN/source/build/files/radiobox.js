@@ -38,8 +38,7 @@ proto.createElement = function(node, parentElement)
 	this.element = l;
 	l.jsObject = this;
 
-	l.unselectable = "on";
-	l.attachEvent("onselectstart", CNUtil.cancelEvent);
+	l.style.userSelect = "none";
 	l.className = "cn_radiobox";
 	l.style.display = "inline-block"; // # 1148
 
@@ -58,12 +57,20 @@ proto.onControlCreated = function()
 	this.element.style.position = "static";
 }
 
+proto.layout = function()
+{
+	var formManager = this.formManager;
+	if(!this.items) return;
+	for(var i = 0; i < this.items.length; i++)
+		Util.setDarkHeaderControlClass(this.items[i], formManager);
+}
+
 proto.loadData = function(node)
 {
 	var attr = node.getAttribute("selection");
 	if(attr) this.set_selectedIndex(parseInt(attr));
 
-	var itemNodes = node.selectNodes("item");
+	var itemNodes = Util.xmlSelectNodes(node, "item");
 	var count = itemNodes.length;
 	for(var i = 0; i < count; i++)
 	{
@@ -99,7 +106,7 @@ proto.storeData = function(xmldoc)
 proto.buildElements = function(node)
 {
 	this.items = [];
-	var itemNodes = node.selectNodes("item");
+	var itemNodes = Util.xmlSelectNodes(node, "item");
 	var count = itemNodes.length;
 	for(var i = 0; i < count; i++)
 	{
@@ -118,13 +125,13 @@ proto.buildElement = function(item, ix)
 	this.items[this.items.length] = itemElement;
 	
 	itemElement.index = ix;
-	itemElement.unselectable = "on";
+	itemElement.style.userSelect = "none";
 	itemElement.jsObject = {};
 	
-	//var checkElement = document.createElement("<span class=checkSpan>")
-	var checkElement = document.createElement("<img width=16 height=16 align=middle>");
+	//var checkElement = Util.createElementFromHTML("<span class=checkSpan>")
+	var checkElement = Util.createElementFromHTML("<img width=16 height=16 align=middle>");
 	itemElement.appendChild(checkElement);
-	checkElement.unselectable = "on";
+	checkElement.style.userSelect = "none";
 	
 	var checked = ix == this._selectedIndex;
 	if(checked) this.setSelectedItem(itemElement)
@@ -133,9 +140,9 @@ proto.buildElement = function(item, ix)
 	var attr = item.getAttribute("text");
 	if(attr)
 	{
-		var textElement = document.createElement("<span class=textSpan>")
+		var textElement = Util.createElementFromHTML("<span class=textSpan>")
 		itemElement.appendChild(textElement);
-		textElement.unselectable = "on";
+		textElement.style.userSelect = "none";
 		textElement.innerHTML = String(attr);
 	}
 	
@@ -161,16 +168,19 @@ proto.buildElement = function(item, ix)
 		itemElement.tabIndex = itemElement._tabIndex = parseInt(attr, 10);
 	}
 	
-	itemElement.attachEvent("onmouseenter", this._item_onmouseenter);
-	itemElement.attachEvent("onmouseleave", this._item_onmouseleave);
-	itemElement.attachEvent("onmousedown", this._item_onmousedown);	
-	itemElement.attachEvent("ondblclick", this._item_onmousedown);		
-	itemElement.attachEvent("onkeydown", this._item_onkeydown);
+	Event.add(itemElement, "mouseenter", this, this._item_onmouseenter);
+	Event.add(itemElement, "mouseleave", this, this._item_onmouseleave);
+	Event.add(itemElement, "mousedown", this, this._item_onmousedown);
+	Event.add(itemElement, "dblclick", this, this._item_onmousedown);
+	Event.add(itemElement, "keydown", this, this._item_onkeydown);
 }
 
 CN_radiobox.findItem = function(l)
 {
-	while(l && l.className != "radioItem") l = l.parentElement;
+	// The standards theme adds state classes such as
+	// `control_on_darkHeader` to the item.  Match the radioItem token rather
+	// than requiring the old IE-era exact className string.
+	while(l && !Util.hasClass(l, "radioItem")) l = l.parentElement || l.parentNode;
 	return l;
 }
 
@@ -218,8 +228,7 @@ proto.fireChangedEvent = function(item)
 	ev.selectedIndex = item.index;
 	
 	//Focus
-	if(CNFormManager.vista)	item.jsObject.focus();
-	else item.focus();	
+	item.focus();	
 	
 	if(this.onchange) this.onchange(ev);
 }
@@ -234,7 +243,7 @@ proto.set_disabled = function(val)
 }
 proto._set_disabled = function()
 { 
-	var color = this._disabled ? this.element.currentStyle["xl--disabled-color"] : "";
+	var color = this._disabled ? Util.getStyle(this.element, "xl--disabled-color") : "";
 	var count = this.items.length;
 	for(var i = 0; i < count; i++)
 	{
@@ -245,7 +254,7 @@ proto._set_disabled = function()
 
 		if(!item._disabled) 
 		{
-			item.runtimeStyle.color = color;
+			item.style.color = color;
 			this.setItemChecked(item, item.checked);
 		}
 	}
@@ -253,8 +262,8 @@ proto._set_disabled = function()
 
 proto.set_disabledItem = function(item, disabled)
 {
-	var color = disabled ? this.element.currentStyle["xl--disabled-color"] : "";
-	item.runtimeStyle.color = color;
+	var color = disabled ? Util.getStyle(this.element, "xl--disabled-color") : "";
+	item.style.color = color;
 	item._disabled = disabled;
 	this.setItemChecked(item, item.checked);	
 }
@@ -276,25 +285,30 @@ proto._set_selectedIndex = function()
 // Event handlers. ===============================
 proto._item_onmouseenter = function()
 {
-	var item = CN_radiobox.findItem(event.srcElement);
-	var box = item.parentElement;
+	var item = CN_radiobox.findItem(Util.eventTarget());
+	if(!item) return;
+	var box = item.parentElement || item.parentNode;
+	if(!box || !box.jsObject) return;
 	var jsObject = box.jsObject;
-	if(!event.fromElement || jsObject._disabled || item._disabled) return;
+	if(jsObject._disabled || item._disabled) return;
 	jsObject.setItemChecked(item, item.checked, true, true);
 }
 proto._item_onmouseleave = function()
 {
-	var item = CN_radiobox.findItem(event.srcElement);
-	var box = item.parentElement;
+	var item = CN_radiobox.findItem(Util.eventTarget());
+	if(!item) return;
+	var box = item.parentElement || item.parentNode;
+	if(!box || !box.jsObject) return;
 	var jsObject = box.jsObject;
 	if(jsObject._disabled || item._disabled) return;
-	//item.firstChild.runtimeStyle.color = "";
 	jsObject.setItemChecked(item, item.checked, false, true);	
 }
 proto._item_onmousedown = function()
 {
-	var item = CN_radiobox.findItem(event.srcElement);
-	var box = item.parentElement;
+	var item = CN_radiobox.findItem(Util.eventTarget());
+	if(!item) return;
+	var box = item.parentElement || item.parentNode;
+	if(!box || !box.jsObject) return;
 	var jsObject = box.jsObject;
 	if(jsObject._disabled || item._disabled) return;
 
@@ -307,10 +321,12 @@ proto._item_onmousedown = function()
 }
 proto._item_onkeydown = function()
 {
-	if(event.keyCode == 32)
+	if((Event.keyValue(Event.current())) == 32)
 	{
-		var item = CN_radiobox.findItem(event.srcElement);
-		var box = item.parentElement;
+		var item = CN_radiobox.findItem(Util.eventTarget());
+		if(!item) return;
+		var box = item.parentElement || item.parentNode;
+		if(!box || !box.jsObject) return;
 		var jsObject = box.jsObject;
 		jsObject._item_onmousedown();
 	}

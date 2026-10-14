@@ -2,25 +2,21 @@ var proto = CNFormManager.prototype;
 
 proto._fetchUniqueID = function() {
 	var tagName = "unique_id";
-	try {
-		document.body.load(tagName);
-	} catch(ex){
+	var storage = null;
+	try { storage = window.sessionStorage || window.localStorage; } catch(ex3) {}
+	if(storage)
+	{
+		try
+		{
+			var stored = storage.getItem(tagName);
+			if(stored) return stored;
+			var generated = this._generateUniqueID();
+			storage.setItem(tagName, generated);
+			return generated;
+		}
+		catch(ex4) {}
 	}
-	var xmldoc = document.body.XMLDocument;
-	var tag = xmldoc.documentElement.selectSingleNode(tagName);
-	var id;
-	if(!tag || !tag.text || tag.text == "") {
-		tag = xmldoc.createElement(tagName);
-		tag.text = id = this._generateUniqueID();
-		xmldoc.documentElement.appendChild(tag);
-	} else {
-		id = tag.text;
-	}
-	try{
-		document.body.save(tagName);
-	} catch(ex){
-	}
-	return id;
+	throw new Error("Unique ID: standard Web Storage is required");
 }
 proto._generateUniqueID = function() {
 	var id = Util.SHA1.compute(navigator.userAgent + "-" + Math.random() + "-" + (new Date().getTime()), "hex");

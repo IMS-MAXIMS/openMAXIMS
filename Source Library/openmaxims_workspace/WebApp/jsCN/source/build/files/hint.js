@@ -6,7 +6,7 @@ function CN_hint() {
 var proto = CN_hint.prototype;
 
 proto.createElement = function(node, parentElement) {
-	var l = document.createElement('<div class="cn_hint">');
+	var l = Util.createElementFromHTML('<div class="cn_hint">');
 	parentElement.appendChild(l);
 
 	this.clicked = false;

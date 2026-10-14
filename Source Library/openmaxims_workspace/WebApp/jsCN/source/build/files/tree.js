@@ -191,21 +191,17 @@ proto.createElement = function(node, parentElement)
 	
 	attr = node.getAttribute("autoPostBackForCheckBoxes");
 	if(attr) this._autoPostBackForCheckBoxes = attr == "true";
-
-	l.attachEvent("onselectstart", CNUtil.cancelEvent);
-	
-	var content = document.createElement('<div id="content" style="width: 100%; height: 100%; overflow: auto; ">');
+	var content = Util.createElementFromHTML('<div id="content" style="width: 100%; height: 100%; overflow: auto; ">');
 	l.appendChild(content);
-	content.attachEvent("onselectstart", CNUtil.cancelEvent);
-	content.attachEvent("onmousedown", this._content_onmousedown);
+	Event.add(content, "mousedown", this, this._content_onmousedown);
 	this._content = content;
 	
-	//this.disabler = document.createElement('<div style="position: absolute; background: white; z-index: 1000; filter: alpha(opacity=50); width: 100%; height: 100%; visibility: hidden; top: 0px; left: 0px; ">');
+	//this.disabler = Util.createElementFromHTML('<div style="position: absolute; background: white; z-index: 1000; filter: alpha(opacity=50); width: 100%; height: 100%; visibility: hidden; top: 0px; left: 0px; ">');
 	//l.appendChild(this.disabler);
 
 	this.buildElement(node);
 	
-	l.attachEvent("onkeydown", this._element_onkeydown);
+	Event.add(l, "keydown", this, this._element_onkeydown);
 	
 	if(CNFormManager.vista)
 	{
@@ -222,7 +218,7 @@ proto.storeData = function(xmldoc)
 	var data = null;
 	var selectionData = null;
 	
-	var nodes = this.changedFragment.selectNodes("*");
+	var nodes = Util.xmlSelectNodes(this.changedFragment, "*");
 	if(nodes.length > 0)
 	{
 		data = this.changedFragment.cloneNode(true);
@@ -255,16 +251,16 @@ proto.loadData = function(node)
 	var attr = node.getAttribute("readOnly");
 	if(attr) this.set_readOnly(attr == "true");
 
-	var nodes = node.selectNodes("node");
+	var nodes = Util.xmlSelectNodes(node, "node");
 	var count = nodes.length;
 
-	if(nodes.length > 0 || node.selectSingleNode("nonodes"))	
+	if(nodes.length > 0 || Util.xmlSelectSingleNode(node, "nonodes"))	
 	{
 		if(CNFormManager.vista)
 		{
-			this._hover.removeNode(true);
-			this._select.removeNode(true);
-			if(this._hoverPM) this._hoverPM.removeNode(true);
+			Util.removeElement(this._hover);
+			Util.removeElement(this._select);
+			if(this._hoverPM) Util.removeElement(this._hoverPM);
 		}
 		
 		this.selectedNodeDiv = null;
@@ -314,7 +310,7 @@ proto.buildElement = function(node)
 
 	if(this._collectChanges) 
 	{
-		this.changedNodesDoc = new ActiveXObject("Microsoft.XMLDOM");
+		this.changedNodesDoc = Util.createXMLDocument();
 		this.changedFragment = this.changedNodesDoc.createDocumentFragment();
 	}
 
@@ -349,8 +345,8 @@ proto.buildElement = function(node)
 		this._rootType.checkBox = this.nodeTypes["__folder"].checkBox = "true";
 	}
 	
-	this.element.attachEvent("onmouseleave", this._element_onmouseleave);
-	this.element.attachEvent("onmouseup", this._element_onmouseup);
+	Event.add(this.element, "mouseleave", this, this._element_onmouseleave);
+	Event.add(this.element, "mouseup", this, this._element_onmouseup);
 
 	this.isReady = true;
 	
@@ -360,7 +356,7 @@ proto.buildElement = function(node)
 
 proto.initializeNodeTypes = function(node)
 {
-	var types = node.selectNodes("nodetype");
+	var types = Util.xmlSelectNodes(node, "nodetype");
 	var count = types.length;
 	for(var i = 0; i < count; i++)
 	{
@@ -406,41 +402,36 @@ proto.buildNodes = function(nodes, parent, level, nodeType)
 // optionally build with IDs specified.
 proto.prebuildNodeTemplate = function()
 {
-	var nodeDiv = document.createElement("<div class=nodeDiv>");
+	var nodeDiv = Util.createElementFromHTML("<div class=nodeDiv>");
 	nodeDiv.isNodeDiv = true;
 	
-	var lineSpan = document.createElement("<span class=lineSpan>"); // 0 
+	var lineSpan = Util.createElementFromHTML("<span class=lineSpan>"); // 0 
 	nodeDiv.appendChild(lineSpan);
 	
-	var pmSpan = document.createElement("<span class=plusMinusSpan>") // 1 
+	var pmSpan = Util.createElementFromHTML("<span class=plusMinusSpan>") // 1 
 	nodeDiv.appendChild(pmSpan);
 	
-	var checkBoxSpan = document.createElement("<span class=checkBoxSpan>"); // 2 
+	var checkBoxSpan = Util.createElementFromHTML("<span class=checkBoxSpan>"); // 2 
 
-	checkBoxSpan.attachEvent("onclick", this._checkBoxSpan_onclick);
-	//checkBoxSpan.attachEvent("onmousedown", CNUtil.cancelBubble);
-	checkBoxSpan.attachEvent("ondblclick", this._checkBoxSpan_onclick);	
-	checkBoxSpan.attachEvent("onmouseenter", this._checkBoxSpan_onmouseenter);
-	checkBoxSpan.attachEvent("onmouseleave", this._checkBoxSpan_onmouseleave);	
-	checkBoxSpan.attachEvent("onselectstart", CNUtil.cancelEvent);
+	Event.add(checkBoxSpan, "click", this, this._checkBoxSpan_onclick);
+	//Event.add(checkBoxSpan, "mousedown", this, CNUtil.cancelBubble);
+	Event.add(checkBoxSpan, "dblclick", this, this._checkBoxSpan_onclick);	
+	Event.add(checkBoxSpan, "mouseenter", this, this._checkBoxSpan_onmouseenter);
+	Event.add(checkBoxSpan, "mouseleave", this, this._checkBoxSpan_onmouseleave);	
 	nodeDiv.appendChild(checkBoxSpan);
 
-	var icon = document.createElement("<img align=absmiddle class=iconImg>"); // 3 
-	icon.attachEvent("onmousedown", this._icon_textSpan_onclick);
-	icon.attachEvent("ondblclick", this._icon_textSpan_ondblclick);
-	icon.attachEvent("onmouseenter", this._icon_textSpan_onmouseenter);
-	icon.attachEvent("onmouseleave", this._icon_textSpan_onmouseleave);
-	icon.attachEvent("onselectstart", CNUtil.cancelEvent);
-
+	var icon = Util.createElementFromHTML("<img align=absmiddle class=iconImg>"); // 3 
+	Event.add(icon, "mousedown", this, this._icon_textSpan_onclick);
+	Event.add(icon, "dblclick", this, this._icon_textSpan_ondblclick);
+	Event.add(icon, "mouseenter", this, this._icon_textSpan_onmouseenter);
+	Event.add(icon, "mouseleave", this, this._icon_textSpan_onmouseleave);
 	nodeDiv.appendChild(icon);
 	
-	var text = document.createElement("<span class=textSpan>"); // 4
-	text.attachEvent("onmousedown", this._icon_textSpan_onclick);
-	text.attachEvent("ondblclick", this._icon_textSpan_ondblclick);
-	text.attachEvent("onmouseenter", this._icon_textSpan_onmouseenter);
-	text.attachEvent("onmouseleave", this._icon_textSpan_onmouseleave);
-	text.attachEvent("onselectstart", CNUtil.cancelEvent);
-	
+	var text = Util.createElementFromHTML("<span class=textSpan>"); // 4
+	Event.add(text, "mousedown", this, this._icon_textSpan_onclick);
+	Event.add(text, "dblclick", this, this._icon_textSpan_ondblclick);
+	Event.add(text, "mouseenter", this, this._icon_textSpan_onmouseenter);
+	Event.add(text, "mouseleave", this, this._icon_textSpan_onmouseleave);
 	nodeDiv.appendChild(text);
 	
 	return nodeDiv;
@@ -524,7 +515,7 @@ proto.buildNode = function(node, parent, level, index, nodeType)
 	}
 	else checkBoxSpan.style.display = "none";
 
-	children[this.ix_textSpan].innerText = String(node.getAttribute("text"));
+	children[this.ix_textSpan].textContent = String(node.getAttribute("text"));
 	
 	parent.appendChild(nodeDiv);
 	
@@ -540,7 +531,7 @@ proto.buildNode = function(node, parent, level, index, nodeType)
 	var expanded = this.isExpanded(node);
 	this.updateImageToState(nodeDiv, expanded ? this.state_expanded : this.state_default);
 
-	var subNodes = node.selectNodes("node");
+	var subNodes = Util.xmlSelectNodes(node, "node");
 	if(subNodes.length > 0) 
 	{
 		var containerDiv = this._createNodeContainer(parent);
@@ -579,8 +570,8 @@ proto._set_checked = function(l, disabled, checked, hover, userAction, checkedCh
 
 proto._createNodeContainer = function(parent)
 {
-	var containerDiv = document.createElement("<div class=treeContainerDiv>");
-	containerDiv.unselectable = true;
+	var containerDiv = Util.createElementFromHTML("<div class=treeContainerDiv>");
+	containerDiv.style.userSelect = "none";
 	containerDiv.isNodeContainer = true;
 	return containerDiv;
 }
@@ -591,7 +582,7 @@ proto._rebuildLine = function(nodeDiv)
 	var count = lineSpan.children.length;
 	for(var i = count - 1; i >= 0; i--)
 	{
-		lineSpan.children[i].removeNode(true);
+		Util.removeElement(lineSpan.children[i]);
 	}
 
 	this.buildLine(nodeDiv, nodeDiv.node, lineSpan, parseInt(nodeDiv.node.getAttribute("nodeLevel"), 10));
@@ -603,12 +594,12 @@ proto._rebuildPM = function(nodeDiv)
 	var count = pmSpan.children.length;
 	for(var i = count - 1; i >= 0; i--)
 	{
-		pmSpan.children[i].removeNode(true);
+		Util.removeElement(pmSpan.children[i]);
 	}
 
-	pmSpan.detachEvent("onmousedown", this._pmImg_onmousedown);
-	pmSpan.detachEvent("ondblclick", this._pmImg_onmousedown);		
-	if(CNFormManager.vista)	pmSpan.detachEvent("onmouseenter", this._pmImg_onmouseenter);
+	Event.del(pmSpan, "mousedown", this, this._pmImg_onmousedown);
+	Event.del(pmSpan, "dblclick", this, this._pmImg_onmousedown);		
+	if(CNFormManager.vista)	Event.del(pmSpan, "mouseenter", this, this._pmImg_onmouseenter);
 	this.buildPM(nodeDiv.node, pmSpan, parseInt(nodeDiv.node.getAttribute("nodeLevel"), 10))
 }
 
@@ -619,10 +610,10 @@ proto.buildLine = function(nodeDiv, node, lineSpan, level)
 		var p = node.parentNode;
 		while(this.isNode(p) && (p.getAttribute("nodeLevel") * 1 != 0 || this._showRootLines))
 		{
-			var lineImg = document.createElement("<img align=absmiddle width=" + this.lineImg_Width + " height=" + this.lineImg_Height + ">");
+			var lineImg = Util.createElementFromHTML("<img align=absmiddle width=" + this.lineImg_Width + " height=" + this.lineImg_Height + ">");
 			lineImg._isLineImg = true;
 			
-			lineSpan.insertAdjacentElement("afterbegin", lineImg);
+			lineSpan.insertBefore(lineImg, lineSpan.firstChild);
 
 			if(this._showLines && this.isNode(p.nextSibling)) lineImg.src = CNFormManager.themeImagesPath + "i.gif";
 			else lineImg.src = CNFormManager.themeImagesPath + "white.gif";
@@ -634,7 +625,7 @@ proto.buildLine = function(nodeDiv, node, lineSpan, level)
 
 proto.buildPM = function(node, pmSpan, level)
 {
-	var pmImg = document.createElement("<img align=absmiddle width=" + this.lineImg_Width + " height=" + this.lineImg_Height + ">");
+	var pmImg = Util.createElementFromHTML("<img align=absmiddle width=" + this.lineImg_Width + " height=" + this.lineImg_Height + ">");
 	pmSpan.appendChild(pmImg);
 
 	var img = pmSpan.basePMImg = "";
@@ -660,9 +651,9 @@ proto.buildPM = function(node, pmSpan, level)
 			else img += "plus";
 			
 			// NOTE: it's important to remove all events in rebuildPM.
-			pmSpan.attachEvent("onmousedown", this._pmImg_onmousedown);
-			pmSpan.attachEvent("ondblclick", this._pmImg_onmousedown);		
-			if(CNFormManager.vista)	pmSpan.attachEvent("onmouseenter", this._pmImg_onmouseenter);
+			Event.add(pmSpan, "mousedown", this, this._pmImg_onmousedown);
+			Event.add(pmSpan, "dblclick", this, this._pmImg_onmousedown);		
+			if(CNFormManager.vista)	Event.add(pmSpan, "mouseenter", this, this._pmImg_onmouseenter);
 		}
 
 		if(img.length == 0) img = "white";
@@ -679,8 +670,8 @@ proto._syncHover = function(l, hover)
 {
 	l.style.position = "relative";
 	l.appendChild(hover);
-	hover.style.width = l.offsetWidth + 2;
-	hover.style.height = l.offsetHeight;
+	hover.style.width = (l.offsetWidth + 2) + "px";
+	hover.style.height = l.offsetHeight + "px";
 	hover.style.visibility = "inherit";
 }
 
@@ -734,7 +725,7 @@ proto.selectNodeDiv = function(l, userClick)
 			
 			if(this.onselectedindexchange) 
 			{
-				if(event && event.button == 2 && this._autoPostBack)
+				if(Event.current() && Event.current().button == 2 && this._autoPostBack)
 				{
 					// Set context menu to pending mode.
 					var fm = CNFormManager.getActiveFormManager();
@@ -748,7 +739,7 @@ proto.selectNodeDiv = function(l, userClick)
 				ev.nodeDiv = l;
 
 				this._pending_onselectedindexchangeEV = ev;
-				l.attachEvent("onmouseup", this._pending_node_onmouseup);
+				Event.add(l, "mouseup", this, this._pending_node_onmouseup);
 			}
 		}
 	}
@@ -767,7 +758,7 @@ proto._pending_node_onmouseup = function()
 proto._handle_onselectedindexchangeTO = function()
 {
 	if(!this._pending_onselectedindexchangeEV) return;
-	this._pending_onselectedindexchangeEV.nodeDiv.detachEvent("onmouseup", this._pending_node_onmouseup);
+	Event.del(this._pending_onselectedindexchangeEV.nodeDiv, "mouseup", this, this._pending_node_onmouseup);
 	this.onselectedindexchange(this._pending_onselectedindexchangeEV);
 	this._pending_onselectedindexchangeEV = null;
 }
@@ -887,13 +878,13 @@ proto.expandCollapse = function(nodeDiv, expand, userClick)
 			if(expand) cont.style.display = "block";
 			else
 			{
-				cont.runtimeStyle.overflow = "hidden";
+				cont.style.overflow = "hidden";
 				var anim = new AnimResize(cont, cont.offsetWidth, 1);
 				Animator.start(anim);
 				anim.onend = function()
 				{
 					cont.style.height = "auto";
-					cont.runtimeStyle.overflow = "";
+					cont.style.overflow = "";
 					cont.style.display = "none";					
 				};
 			}
@@ -905,14 +896,14 @@ proto.expandCollapse = function(nodeDiv, expand, userClick)
 	{
 		var h = cont.offsetHeight;
 		cont.style.height = "1px";
-		cont.runtimeStyle.overflow = "hidden";
+		cont.style.overflow = "hidden";
 		cont.style.visibility = "visible";
 		var anim = new AnimResize(cont, cont.offsetWidth, h);
 		Animator.start(anim);
 		anim.onend = function()
 		{
 			cont.style.height = "auto";
-			cont.runtimeStyle.overflow = "";
+			cont.style.overflow = "";
 		};
 	}
 
@@ -986,7 +977,7 @@ proto.storeChangedNode = function(nodeIndex, tagName, key, value, noStoreValue)
 {
 	tagName = "tree" + tagName;
 	
-	var node = this.changedFragment.selectSingleNode(tagName + "[@node=\"" + nodeIndex + "\"]");
+	var node = Util.xmlSelectSingleNode(this.changedFragment, tagName + "[@node=\"" + nodeIndex + "\"]");
 	var store = true;
 	if(!node)
 	{
@@ -1041,12 +1032,12 @@ proto._moveNode = function(dragNodeDiv, dragTarget, dragTargetPos)
 	var cont = dragNodeDiv.nextSibling;
 	if(cont && cont.isNodeContainer && cont.contains(dragTarget)) return;
 
-	this.element.runtimeStyle.overflow = "hidden";
+	this.element.style.overflow = "hidden";
 	
 	var nodeLevel;
 	if(dragTargetPos == 0) 
 	{
-		dragTarget.insertAdjacentElement("beforebegin", dragNodeDiv);
+		dragTarget.parentNode.insertBefore(dragNodeDiv, dragTarget);
 		dragTarget.node.parentNode.insertBefore(dragNodeDiv.node, dragTarget.node);
 		nodeLevel = parseInt(dragTarget.node.getAttribute("nodeLevel"), 10);
 	}
@@ -1054,7 +1045,7 @@ proto._moveNode = function(dragNodeDiv, dragTarget, dragTargetPos)
 	{
 		var realDragTarget = dragTarget;
 		if(dragTarget.nextSibling && dragTarget.nextSibling.isNodeContainer) realDragTarget = dragTarget.nextSibling;
-		realDragTarget.insertAdjacentElement("afterend", dragNodeDiv);
+		realDragTarget.parentNode.insertBefore(dragNodeDiv, realDragTarget.nextSibling);
 		dragTarget.node.parentNode.insertBefore(dragNodeDiv.node, dragTarget.node.nextSibling);
 		nodeLevel = parseInt(dragTarget.node.getAttribute("nodeLevel"), 10);
 	}
@@ -1067,7 +1058,7 @@ proto._moveNode = function(dragNodeDiv, dragTarget, dragTargetPos)
 		{
 			targetCont = this._createNodeContainer(parent);
 			targetCont.nodesBuilt = true;
-			dragTarget.insertAdjacentElement("afterend", targetCont);
+			dragTarget.parentNode.insertBefore(targetCont, dragTarget.nextSibling);
 			dragTarget.node.setAttribute("expanded", "true");
 		}
 		else if(!targetCont.nodesBuild)
@@ -1078,13 +1069,13 @@ proto._moveNode = function(dragNodeDiv, dragTarget, dragTargetPos)
 		nodeLevel = parseInt(dragTarget.node.getAttribute("nodeLevel"), 10) + 1;
 	}
 
-	if(cont && cont.isNodeContainer) dragNodeDiv.insertAdjacentElement("afterend", cont);
+	if(cont && cont.isNodeContainer) dragNodeDiv.parentNode.insertBefore(cont, dragNodeDiv.nextSibling);
 	dragNodeDiv.node.setAttribute("nodeLevel", nodeLevel);
 
 	this._refreshTree();
 	
 	if(this.onnodereordered) this.onnodereordered({jsObject: this, reorderedNodeDiv: dragNodeDiv});
-	this.element.runtimeStyle.overflow = "";
+	this.element.style.overflow = "";
 }
 
 proto._refreshTree = function()
@@ -1096,26 +1087,26 @@ proto.beginEditLabel = function(nodeDiv)
 {
 	if(CNFormManager.vista) 
 	{
-		this._select.removeNode(true);
-		this._hover.removeNode(true)
+		Util.removeElement(this._select);
+		Util.removeElement(this._hover)
 	}
 
 	var span = nodeDiv.children[this.ix_textSpan];
 	span.className = "textEditSpan textSpan";
 
 	span.contentEditable = true;
-	span.detachEvent("onselectstart", CNUtil.cancelEvent);
-	span.attachEvent("onselect", this._span_onselect);
-	span.attachEvent("onselectstart", this._span_onselect);
-	span.attachEvent("onblur", this._span_onblur);
-	span.attachEvent("onkeydown", this._span_onkeydown);
-	span.attachEvent("onkeyup", this._span_onkeyup);
-	span.attachEvent("onkeypress", this._span_onkeypress);
+	Event.add(span, "select", this, this._span_onselect);
+	Event.add(span, "blur", this, this._span_onblur);
+	Event.add(span, "keydown", this, this._span_onkeydown);
+	Event.add(span, "keyup", this, this._span_onkeyup);
+	Event.add(span, "keypress", this, this._span_onkeypress);
 
 	span.focus();
-	var range = document.body.createTextRange();
-	range.moveToElementText(span);
-	range.select();
+	var selection = window.getSelection();
+	var range = document.createRange();
+	range.selectNodeContents(span);
+	selection.removeAllRanges();
+	selection.addRange(range);
 	
 	this._currentEditLabel = nodeDiv;
 }
@@ -1127,25 +1118,19 @@ proto.endEditLabel = function()
 	this._currentEditLabel = null;
 	var span = nodeDiv.children[this.ix_textSpan];
 	
-	span.detachEvent("onselect", this._span_onselect);
-	span.detachEvent("onselectstart", this._span_onselect);
-	span.detachEvent("onblur", this._span_onblur);
-	span.detachEvent("onkeydown", this._span_onkeydown);
-	span.detachEvent("onkeyup", this._span_onkeyup);
-	span.detachEvent("onkeypress", this._span_onkeypress);
-
-	span.attachEvent("onselectstart", CNUtil.cancelEvent);
-
+	Event.del(span, "select", this, this._span_onselect);
+	Event.del(span, "blur", this, this._span_onblur);
+	Event.del(span, "keydown", this, this._span_onkeydown);
+	Event.del(span, "keyup", this, this._span_onkeyup);
+	Event.del(span, "keypress", this, this._span_onkeypress);
 	span.contentEditable = false;
 	span.className = "textSpan";
 	
-	nodeDiv.node.setAttribute("text", span.innerText);
+	nodeDiv.node.setAttribute("text", span.textContent);
 
 	if(document.activeElement == span) 
 	{
-		var range = document.selection.createRange();
-		range.collapse();
-		range.select();
+		window.getSelection().removeAllRanges();
 	}
 	
 	if(CNFormManager.vista)
@@ -1165,8 +1150,8 @@ proto.endEditLabel = function()
 
 proto._span_onselect = function()
 {
-	//event.returnValue = true;
-	event.cancelBubble = true;
+	// Event cancellation is handled through preventDefault/stopPropagation.
+	CNUtil.cancelBubble();
 }
 
 proto._span_onblur = function()
@@ -1180,7 +1165,7 @@ proto._span_onkeyup = function()
 	if(jsObject._pasted)
 	{
 		var span = jsObject._currentEditLabel.children[0];
-		span.innerText = span.innerText;
+		span.textContent = span.textContent;
 	}
 	jsObject._pasted = false;	
 }
@@ -1190,8 +1175,8 @@ proto._span_onkeydown = function()
 	var jsObject = CNUtil.dispatchObject();
 	jsObject._pasted = false;
 	// Disallow any WYSIWYG commands.
-	if(!event.ctrlKey) return;
-	switch(event.keyCode)
+	if(!Event.current().ctrlKey) return;
+	switch(Event.keyValue(Event.current()))
 	{
 		case 86: // V paste
 			jsObject._pasted = true;
@@ -1212,7 +1197,7 @@ proto._span_onkeydown = function()
 
 proto._span_onkeypress = function()
 {
-	if(event.keyCode ==  13)
+	if(Event.keyValue(Event.current()) ==  13)
 	{
 		var jsObject = CNUtil.dispatchObject();
 		jsObject.endEditLabel();
@@ -1258,7 +1243,7 @@ proto.addNode = function(parentNodeDiv, label, img)
 	{
 		cont = this._createNodeContainer(parent);
 		cont.nodesBuilt = true;
-		parentNodeDiv.insertAdjacentElement("afterend", cont);
+		parentNodeDiv.parentNode.insertBefore(cont, parentNodeDiv.nextSibling);
 		node.setAttribute("expanded", "true");
 	}
 
@@ -1274,8 +1259,8 @@ proto.deleteNode = function(nodeDiv)
 {
 	nodeDiv.node.parentNode.removeChild(nodeDiv.node);
 	var cont = nodeDiv.nextSibling;
-	if(cont && cont.isNodeContainer) cont.removeNode(true);
-	nodeDiv.removeNode(true);
+	if(cont && cont.isNodeContainer) Util.removeElement(cont);
+	Util.removeElement(nodeDiv);
 
 	this._refreshTree();
 }
@@ -1288,7 +1273,7 @@ proto._element_onkeydown = function()
 }
 proto.element_onkeydown = function()
 {
-	this._processTypedWord(event.keyCode, false);
+	this._processTypedWord(Event.keyValue(Event.current()), false);
 }
 
 proto._processTypedWord = function(code, select)
@@ -1332,7 +1317,7 @@ proto._processTypedWord = function(code, select)
 		{
 			if(startNode.isNodeDiv)
 			{
-				var text = startNode.children[4].innerText;
+				var text = startNode.children[4].textContent;
 				if(text.toLowerCase().indexOf(this._currentTypedWord) == 0)
 				{
 					this.set_selectedNodeIndex(this.getDottedIndex(startNode), true);
@@ -1433,14 +1418,15 @@ proto.content_onmousedown = function()
 {
 	if(this._disabled || !this._allowClearSelection || this.selectedNodeDiv == null
 	|| this._currentEditLabel != null) return;
-	var l = event.srcElement;
+	var l = CNUtil.eventTarget();
 	if(l.className != 'nodeDiv' && l.className != 'nodeDivSelected' && l.id != 'content') 
 	{
 		return;
 	}
 	var content = this.element.children['content'];
-	var c = content.componentFromPoint(event.clientX, event.clientY)
-	if(c.indexOf("scroll") != -1) return;
+	var bounds = content.getBoundingClientRect();
+	if(Event.current().clientX >= bounds.left + content.clientWidth ||
+		Event.current().clientY >= bounds.top + content.clientHeight) return;
 	
 	this.unselectNodeDiv();
 	this._selectionDirty = true;
@@ -1451,7 +1437,7 @@ proto.content_onmousedown = function()
 
 proto._checkBoxSpan_onclick = function()
 {
-	CNUtil.findJSObject(event.srcElement).checkBoxSpan_onclick();
+	CNUtil.findJSObject(CNUtil.eventTarget()).checkBoxSpan_onclick();
 }
 proto.checkBoxSpan_onclick = function()
 {
@@ -1459,7 +1445,7 @@ proto.checkBoxSpan_onclick = function()
 	
 	//CNUtil.cancelBubble();
 	
-	var l = Util.findByClassName(event.srcElement, "checkBoxSpan");
+	var l = Util.findByClassName(CNUtil.eventTarget(), "checkBoxSpan");
 	var nodeDiv = CNUtil.findTag(l, "DIV");
 	if(nodeDiv.node.getAttribute("enabled") == "false") return;
 	var checked = !this.isChecked(nodeDiv.node);
@@ -1480,7 +1466,7 @@ proto.checkBoxSpan_onclick = function()
 
 proto._checkBoxSpan_onmouseenter = function()
 {
-	var l = event.srcElement;
+	var l = CNUtil.eventTarget();
 	var jsObject = CNUtil.findJSObject(l);
 
 	if(jsObject._readOnly || jsObject._disabled) return;
@@ -1491,12 +1477,12 @@ proto._checkBoxSpan_onmouseenter = function()
 		var checked = jsObject.isChecked(nodeDiv.node);
 		jsObject._set_checked(l.firstChild, false, checked, true, true, true);	
 	}
-	else l.runtimeStyle.color = l.currentStyle["xl--hover-color"];
+	else l.style.color = Util.getStyle(l, "xl--hover-color");
 }
 
 proto._checkBoxSpan_onmouseleave = function()
 {
-	var l = event.srcElement;
+	var l = CNUtil.eventTarget();
 	var jsObject = CNUtil.findJSObject(l);
 
 	if(jsObject._readOnly || jsObject._disabled) return;
@@ -1507,17 +1493,17 @@ proto._checkBoxSpan_onmouseleave = function()
 		var checked = jsObject.isChecked(nodeDiv.node);
 		jsObject._set_checked(l.firstChild, false, checked, false, true, true);	
 	}
-	else l.runtimeStyle.color = "";
+	else l.style.color = "";
 }
 
 proto._icon_textSpan_onclick = function()
 {
-	CNUtil.findJSObject(event.srcElement).icon_textSpan_onclick();
+	CNUtil.findJSObject(CNUtil.eventTarget()).icon_textSpan_onclick();
 }
 proto.icon_textSpan_onclick = function()
 {
 	//CNUtil.cancelBubble();
-	var l = event.srcElement;
+	var l = CNUtil.eventTarget();
 	if(this._disabled) return;
 
 	var nodeDiv = CNUtil.findTag(l, "DIV");
@@ -1531,11 +1517,11 @@ proto.icon_textSpan_onclick = function()
 
 proto._icon_textSpan_ondblclick = function()
 {
-	CNUtil.findJSObject(event.srcElement).icon_textSpan_ondblclick();
+	CNUtil.findJSObject(CNUtil.eventTarget()).icon_textSpan_ondblclick();
 }
 proto.icon_textSpan_ondblclick = function()
 {
-	var l = event.srcElement;
+	var l = CNUtil.eventTarget();
 	if(this._disabled) return;
 	var nodeDiv = CNUtil.findTag(l, "DIV");
 	if(nodeDiv.node.getAttribute("enabled") == "false") return;
@@ -1546,11 +1532,11 @@ proto.icon_textSpan_ondblclick = function()
 
 proto._icon_textSpan_onmouseenter = function()
 {
-	CNUtil.findJSObject(event.srcElement).icon_textSpan_onmouseenter();
+	CNUtil.findJSObject(CNUtil.eventTarget()).icon_textSpan_onmouseenter();
 }
 proto.icon_textSpan_onmouseenter = function()
 {
-	var l = event.srcElement;	
+	var l = CNUtil.eventTarget();	
 	if(this._disabled) return;
 	var nodeDiv = CNUtil.findTag(l, "DIV");
 	if(nodeDiv.node.getAttribute("enabled") == "false") return;
@@ -1560,12 +1546,12 @@ proto.icon_textSpan_onmouseenter = function()
 
 proto._icon_textSpan_onmouseleave = function()
 {
-	CNUtil.findJSObject(event.srcElement).icon_textSpan_onmouseleave();
+	CNUtil.findJSObject(CNUtil.eventTarget()).icon_textSpan_onmouseleave();
 }
 proto.icon_textSpan_onmouseleave = function()
 {
 	if(this._disabled) return;
-	var l = event.srcElement;
+	var l = CNUtil.eventTarget();
 	var nodeDiv = CNUtil.findTag(l, "DIV");
 	if(nodeDiv.node.getAttribute("enabled") == "false") return;
 
@@ -1577,18 +1563,18 @@ proto.icon_textSpan_onmouseleave = function()
 	{
 		this._dragging = true;
 		
-		this._insertCursor = document.createElement("<div class=insertCursor>");
-		this._insertCursor.unselectable = true;
+		this._insertCursor = Util.createElementFromHTML("<div class=insertCursor>");
+		this._insertCursor.style.userSelect = "none";
 		this._insertCursor.style.position = "absolute";
-		this._insertCursor.style.top = -10;
-		this._insertCursor.style.left = -10;
+		this._insertCursor.style.top = "-10px";
+		this._insertCursor.style.left = "-10px";
 		this.element.appendChild(this._insertCursor);
 
 		var dragged = document.createElement("span");
 		dragged.style.position = "absolute";
-		dragged.unselectable = true;
+		dragged.style.userSelect = "none";
 		
-		dragged.innerText = nodeDiv.children[4].innerText;
+		dragged.textContent = nodeDiv.children[4].textContent;
 		dragged.className = "draggedNode"
 		this.element.appendChild(dragged);
 		
@@ -1597,16 +1583,14 @@ proto.icon_textSpan_onmouseleave = function()
 		
 		var xy = CNUtil.findAbsolutePos(nodeDiv.children[4], this.element);
 
-		this._startX = xy.x - event.screenX;
-		this._startY = xy.y - event.screenY;
+		this._startX = xy.x - Event.current().screenX;
+		this._startY = xy.y - Event.current().screenY;
 
-		dragged.style.top = xy.x - this._content.scrollLeft;
-		dragged.style.left = xy.y - this._content.scrollTop;
+		dragged.style.top = (xy.y - this._content.scrollTop) + "px";
+		dragged.style.left = (xy.x - this._content.scrollLeft) + "px";
 
-		this.element.attachEvent("onmousemove", this._element_onmousemove);
-		this.element.attachEvent("onlosecapture", this._element_onlosecapture);
-		
-		this.element.setCapture();
+		Event.add(document, "mousemove", this, this.element_onmousemove);
+		Event.add(document, "mouseup", this, this.element_onmouseup);
 	}
 }
 
@@ -1618,12 +1602,12 @@ proto._element_onmousemove = function()
 proto.element_onmousemove = function()
 {
 	if(this._disabled) return;
-	this._dragged.style.pixelLeft = this._startX + event.screenX - this._content.scrollLeft;
-	this._dragged.style.pixelTop = this._startY + event.screenY - this._content.scrollTop;
+	this._dragged.style.left = (this._startX + Event.current().screenX - this._content.scrollLeft) + "px";
+	this._dragged.style.top = (this._startY + Event.current().screenY - this._content.scrollTop) + "px";
 
 	this._insertCursor.style.display = "none";
 	this._dragged.style.display = "none";
-	var l = document.elementFromPoint(event.clientX, event.clientY);
+	var l = document.elementFromPoint(Event.current().clientX, Event.current().clientY);
 	this._dragged.style.display = "block";
 	this._insertCursor.style.display = "block";
 	
@@ -1643,29 +1627,29 @@ proto.element_onmousemove = function()
 			var xy = CNUtil.findAbsolutePos(textElement, this.element);
 			var clientXY = CNUtil.findAbsolutePos(textElement);
 					
-			if(event.clientY < clientXY.y + 5 - this._content.scrollTop)
+			if(Event.current().clientY < clientXY.y + 5 - this._content.scrollTop)
 			{
 				this._insertCursor.style.visibility = "inherit";
-				this._insertCursor.style.top = xy.y - 2 - this._content.scrollTop; 
+				this._insertCursor.style.top = (xy.y - 2 - this._content.scrollTop) + "px"; 
 				this._dragTargetPos = 0;
 			}
-			else if(event.clientY >= clientXY.y + 5 - this._content.scrollTop && event.clientY < clientXY.y + 15 - this._content.scrollTop)
+			else if(Event.current().clientY >= clientXY.y + 5 - this._content.scrollTop && Event.current().clientY < clientXY.y + 15 - this._content.scrollTop)
 			{
 				this._insertCursor.style.visibility = "hidden";
 				// Put as a child.
 				this._dragTargetPos = 2;
-				textElement.runtimeStyle.background = this.element.currentStyle["xl--drag-over-background"];
+				textElement.style.background = Util.getStyle(this.element, "xl--drag-over-background");
 				this._highlightedTextElement = textElement;
 			}
 			else
 			{
 				this._insertCursor.style.visibility = "inherit";
-				this._insertCursor.style.top = xy.y + textElement.offsetHeight - this._content.scrollTop;
+				this._insertCursor.style.top = (xy.y + textElement.offsetHeight - this._content.scrollTop) + "px";
 				this._dragTargetPos = 1;
 			}
 	
-			this._insertCursor.style.width = textElement.offsetWidth + 10;		
-			this._insertCursor.style.left = xy.x - 5 - this._content.scrollLeft;
+			this._insertCursor.style.width = (textElement.offsetWidth + 10) + "px";		
+			this._insertCursor.style.left = (xy.x - 5 - this._content.scrollLeft) + "px";
 	
 			var cont = this._dragNodeDiv.nextSibling;
 			
@@ -1673,11 +1657,11 @@ proto.element_onmousemove = function()
 			|| !this.onnodereorderallowed({draggedNodeDiv: this._dragNodeDiv, dragTarget: this._dragTarget, dragTargetPos: this._dragTargetPos}))
 			{
 				this._dragTargetPos = -1;
-				this.element.runtimeStyle.cursor = "not-allowed";
+				this.element.style.cursor = "not-allowed";
 			}
 			else
 			{
-				this.element.runtimeStyle.cursor = "default";
+				this.element.style.cursor = "default";
 			}
 		}
 	}
@@ -1687,7 +1671,7 @@ proto._dehighlightTextElement = function()
 {
 	if(this._highlightedTextElement)
 	{
-		this._highlightedTextElement.runtimeStyle.background = "";
+		this._highlightedTextElement.style.background = "";
 		this._highlightedTextElement = null;
 	}
 }
@@ -1705,7 +1689,7 @@ proto.element_onmouseup = function()
 	{
 		if(this._dragTarget) this._moveNode(this._dragNodeDiv, this._dragTarget, this._dragTargetPos);
 
-		this.element.releaseCapture();
+		this.element_onlosecapture();
 	}
 }
 
@@ -1715,16 +1699,16 @@ proto._element_onlosecapture = function()
 }
 proto.element_onlosecapture = function()
 {
-	this.element.detachEvent("onmousemove", this._element_onmousemove);
-	this.element.detachEvent("onlosecapture", this._element_onlosecapture);
+	Event.del(document, "mousemove", this, this.element_onmousemove);
+	Event.del(document, "mouseup", this, this.element_onmouseup);
 	
 	this._dehighlightTextElement();
-	this.element.runtimeStyle.cursor = "default";
+	this.element.style.cursor = "default";
 	
-	this._insertCursor.removeNode(true);
+	Util.removeElement(this._insertCursor);
 	this._insertCursor = null;
 	
-	this._dragged.removeNode(true);
+	Util.removeElement(this._dragged);
 	
 	this._dragTarget = null;
 	this._dragNodeDiv = null;
@@ -1739,13 +1723,13 @@ proto.element_onlosecapture = function()
 
 proto._pmImg_onmousedown = function()
 {
-	var jso = CNUtil.findJSObject(event.srcElement);
+	var jso = CNUtil.findJSObject(CNUtil.eventTarget());
 	if(jso) jso.pmImg_onmousedown();
 }
 proto.pmImg_onmousedown = function()
 {
-	if(event.button != 1) return;
-	var l = event.srcElement;
+	if(Event.current().button != 0 && Event.current().button != 1) return;
+	var l = CNUtil.eventTarget();
 	var div = CNUtil.findTag(l, "DIV");
 	this.toggleExpand(div, true);
 	if(CNFormManager.vista)
@@ -1759,7 +1743,7 @@ proto.pmImg_onmousedown = function()
 
 proto._pmImg_onmouseenter = function()
 {
-	var div = Util.findTag(event.srcElement, "DIV");
+	var div = Util.findTag(CNUtil.eventTarget(), "DIV");
 	var jso = Util.findJSObject(div);
 	var span = div.children[jso.ix_plusMinusSpan];
 	if(span.lastChild._hover) return;
@@ -1775,16 +1759,16 @@ proto._pmImg_onmouseenter = function()
 	hoverIMG.style.left = "5px";
 	hoverIMG.style.top = "5px";
 	span.appendChild(hoverIMG);
-	span.attachEvent("onmouseleave", jso._pmImg_onmouseleave);
+	Event.add(span, "mouseleave", this, jso._pmImg_onmouseleave);
 	jso._hoverPM = hoverIMG;
 }
 proto._pmImg_onmouseleave = function()
 {
-	var span = event.srcElement;
+	var span = CNUtil.eventTarget();
 	var jso = Util.findJSObject(span);
-	span.detachEvent("onmouseleave", jso._pmImg_onmouseleave);
+	Event.del(span, "mouseleave", this, jso._pmImg_onmouseleave);
 //	span.style.position = "static"; // Commented as this makes hover to be misaligned to the right.
-	if(span.lastChild && span.lastChild._hover) span.lastChild.removeNode(true);
+	if(span.lastChild && span.lastChild._hover) Util.removeElement(span.lastChild);
 	jso._hoverPM = null;
 }
 
@@ -1799,16 +1783,16 @@ proto.element_onmouseleave = function()
 	// Reset.
 	this._mouseButtonPressed = false;
 	
-	if(this._dragging) this.element.releaseCapture();
+	// Document listeners keep the drag active after the pointer leaves the tree.
 }
 
 
 // Properties. ===================================
 proto.set_readOnly = function(value)
 {
-	this._readOnly = eval(value);
-	this.element.runtimeStyle.backgroundColor = 
-		this._disabled || this._readOnly ? this.element.currentStyle["xl--disabled-background"] : "";
+	this._readOnly = Util.parseBoolean(value);
+	this.element.style.backgroundColor = 
+		this._disabled || this._readOnly ? Util.getStyle(this.element, "xl--disabled-background") : "";
 }
 
 proto.set_selectedNodeIndex = function(value, userClick, doNotSelectDisabled)
@@ -1876,7 +1860,7 @@ proto._findAndExpandByNodeIndex = function(index)
 
 proto.set_disabled = function(value)
 {
-	value = eval(value);
+	value = Util.parseBoolean(value);
 	if(this._disabled == value) return;
 	this._disabled = value;
 
@@ -1887,10 +1871,10 @@ proto.set_disabled = function(value)
 proto._set_disabled = function()
 {
 //	this.disabler.style.visibility = this._disabled ? "inherit" : "hidden";
-	this.element.runtimeStyle.backgroundColor = 
-		this._disabled || this._readOnly ? this.element.currentStyle["xl--disabled-background"] : "";
+	this.element.style.backgroundColor = 
+		this._disabled || this._readOnly ? Util.getStyle(this.element, "xl--disabled-background") : "";
 	var content = this.element.children[0];
-	content.runtimeStyle.filter = this._disabled ? "alpha(opacity=50)" : "";
+	content.style.opacity = this._disabled ? "0.5" : "";
 }
 
 proto.set_expandLevel = function(value)
@@ -1909,4 +1893,3 @@ proto.get_changedNodesDOM = function()
 {
 	return this.changedFragment;
 }
-

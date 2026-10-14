@@ -29,7 +29,7 @@ proto.onchange = function()
 // Main stuff. ==================
 proto.createElement = function(node, parentElement)
 {
-	var l = document.createElement("<span>");
+	var l = document.createElement("span");
 	parentElement.appendChild(l);
 
 	this.element = l;
@@ -37,11 +37,11 @@ proto.createElement = function(node, parentElement)
 
 	l.className = "cn_checkbox";
 
-	l.attachEvent("onmouseenter", this._element_onmouseenter);
-	l.attachEvent("onmouseleave", this._element_onmouseleave);
-	l.attachEvent("onmousedown", this._element_onmousedown);
-	l.attachEvent("ondblclick", this._element_onmousedown);
-	l.attachEvent("onkeydown", this._element_onkeydown);
+	Event.add(l, "mouseenter", this, this._element_onmouseenter);
+	Event.add(l, "mouseleave", this, this._element_onmouseleave);
+	Event.add(l, "mousedown", this, this._element_onmousedown);
+	Event.add(l, "dblclick", this, this._element_onmousedown);
+	Event.add(l, "keydown", this, this._element_onkeydown);
 
 	this.buildElement(node);  
 	this.isReady = true;
@@ -49,6 +49,11 @@ proto.createElement = function(node, parentElement)
 	this._set_checked();
 	
 	return l;
+}
+
+proto.layout = function()
+{
+	Util.setDarkHeaderControlClass(this.element, this.formManager);
 }
 
 proto.loadData = function(node)
@@ -78,15 +83,19 @@ proto.storeData = function(xmldoc)
 
 proto.buildElement = function(node)
 {
-	var checkElement = document.createElement("<img width=13 height=13 align=absmiddle>");
+	var checkElement = document.createElement("img");
+	checkElement.width = 13;
+	checkElement.height = 13;
+	checkElement.align = 'absmiddle';
 	this.element.appendChild(checkElement);
-	checkElement.unselectable = "on";
+	checkElement.style.userSelect = "none";
 
 	var textAttr = node.getAttribute("text");
 	if(textAttr)
 	{
-		var textElement = document.createElement("<span class=textSpan>")
-		textElement.unselectable = "on";
+		var textElement = document.createElement("span");
+		textElement.className = 'textSpan';
+		textElement.style.userSelect = "none";
 		textElement.innerHTML = String(textAttr);
 		this.element.appendChild(textElement);
 	}
@@ -105,11 +114,12 @@ proto._element_onkeydown = function()
 proto.element_onkeydown = function()
 {
 	if(this._disabled) return;
-	if(event.keyCode == 32)
+	if((Event.keyValue(Event.current())) == 32)
 	{
 		this.set_checked(!this.get_checked(), false);
 		this.fireChangedEvent();
 		this._isDirty = true;
+		Util.cancelEvent(Event.current());
 	}
 }
 
@@ -118,7 +128,7 @@ proto._element_onmouseenter = function()
 	var jsObject = CNUtil.dispatchObject();
 	if(jsObject._disabled) return;
 	var l = jsObject.element;
-	if(!event.fromElement) return; // Filter deleted vista trans images.
+	if(Event.current().relatedTarget && Event.current().relatedTarget.isConnected === false) return; // Filter deleted vista trans images.
 	jsObject._set_checked(true, true);
 }
 proto._element_onmouseleave = function()
@@ -130,7 +140,7 @@ proto._element_onmouseleave = function()
 }
 proto._element_onmousedown = function()
 {
-	var jsObject = CNUtil.findJSObject(event.srcElement);
+	var jsObject = CNUtil.findJSObject(Util.eventTarget());
 	if(jsObject._disabled) return;
 	
 	jsObject.element.focus();
@@ -150,7 +160,7 @@ proto.fireChangedEvent = function()
 // Properties. =========================
 proto.set_disabled = function(val)
 {
-	this._disabled = eval(val);
+	this._disabled = Util.parseBoolean(val);
 	if(this.isReady) this._set_disabled();
 }
 proto._set_disabled = function()
@@ -173,7 +183,7 @@ proto._set_tabIndex = function(ti)
 
 proto.set_checked = function(val, hover, userAction)
 {
-	val = eval(val);
+	val = Util.parseBoolean(val);
 	if(this._checked == val) return;
 	this._checked = val;
 	if(this.isReady) this._set_checked(hover, userAction, true);

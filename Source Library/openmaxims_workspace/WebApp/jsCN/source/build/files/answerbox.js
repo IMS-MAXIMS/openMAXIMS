@@ -67,22 +67,22 @@ proto.createElementOnly = function(node, parentElement)
 	this._canBeEmpty = attr == "true";
 
 	l.className = "cn_answerbox";
-	//l.unselectable = "on";
+	//l.style.userSelect = "none";
 	l._isComboBox = true;
 	l._selectedIndex = this._canBeEmpty ? -1 : 0;
 	
 	l.jsObject = this;
 	
-	l.attachEvent("onclick", this._element_onmousedown);
-	l.attachEvent("oncontextmenu", this._element_oncontextmenu);
-	l.attachEvent("ondblclick", this._element_onmousedown);
+	Event.add(l, "click", this, this._element_onmousedown);
+	Event.add(l, "contextmenu", this, this._element_oncontextmenu);
+	Event.add(l, "dblclick", this, this._element_onmousedown);
 
 	this.buildElement(l);
 
 	var attr = node.getAttribute("text");
-	if(attr) l.children[1].innerText = String(attr);
+	if(attr) l.children[1].textContent = String(attr);
 	
-	l.attachEvent("onkeydown", this._element_onkeydown);
+	Event.add(l, "keydown", this, this._element_onkeydown);
 
 	this.isReady = true;	
 	
@@ -114,16 +114,16 @@ proto.storeData = function(xmldoc)
 
 proto.buildElement = function(l)
 {
-	var checkElement = document.createElement("<span class=checkSpan>")
-	//checkElement.unselectable = "on";
+	var checkElement = Util.createElementFromHTML("<span class=checkSpan>")
+	//checkElement.style.userSelect = "none";
 	l.appendChild(checkElement);
 	
 	var img = document.createElement("img");
 	img.width = img.height = this._imgHeight;
 	checkElement.appendChild(img);
 
-	var textElement = document.createElement("<span class=textSpan>")
-	//textElement.unselectable = "on";
+	var textElement = Util.createElementFromHTML("<span class=textSpan>")
+	//textElement.style.userSelect = "none";
 	l.appendChild(textElement);
 }
 
@@ -133,7 +133,7 @@ proto.initData = function(data)
 	
 	var options = null;
 	if(data instanceof Array) options = CN_combobox.makeOptions(data);
-	else options = data.selectNodes("option");
+	else options = Util.xmlSelectNodes(data, "option");
 	if(!options || options.length == 0) return;
 
 	// Reset popup.
@@ -209,25 +209,25 @@ proto.createPopup = function()
 	
 	if(CNFormManager.vista) new Shadow(this.popup, false, true);
 	
-	this.popup.attachEvent("onmousedown", CNUtil.cancelEvent);
-	this.popup.attachEvent("onclick", this._popup_onclick);
-	this.popup.attachEvent("onmouseover", this._popup_onmouseover);
-	this.popup.attachEvent("onmouseout", this._popup_onmouseout);
-	this.popup.attachEvent("onkeydown", this._popup_onkeydown);
+	Event.add(this.popup, "mousedown", CNUtil, CNUtil.cancelEvent);
+	Event.add(this.popup, "click", this, this._popup_onclick);
+	Event.add(this.popup, "mouseover", this, this._popup_onmouseover);
+	Event.add(this.popup, "mouseout", this, this._popup_onmouseout);
+	Event.add(this.popup, "keydown", this, this._popup_onkeydown);
 }
 
 proto.createOption = function(text, imgUrl, index)
 {
-	var option = document.createElement("<div class=xlcombooption style=\"padding: 1px; position: relative; display: inline-block; white-space: nowrap; \">");
+	var option = Util.createElementFromHTML("<div class=xlcombooption style=\"padding: 1px; position: relative; display: inline-block; white-space: nowrap; \"></div>");
 
-	option.innerText = text;
+	option.textContent = text;
 	option.index = index;
 
 	if(imgUrl)
 	{
-		var img = document.createElement("<img align=absmiddle style=\"margin-right: 4px; \">");
+		var img = Util.createElementFromHTML("<img align=absmiddle style=\"margin-right: 4px; \">");
 		img.src = imgUrl;
-		option.insertAdjacentElement("afterbegin", img);
+		option.insertBefore(img, option.firstChild);
 	}
 
 	return option;
@@ -265,8 +265,8 @@ proto.showPopup = function()
 	this.popup.style.visibility = "hidden";
 	this.popup.style.display = "block";
 	
-	var maxHeight = parseInt(this.element.currentStyle["xl--popup-max-height"]);
-	if(this.popup.offsetHeight >= maxHeight) this.popup.style.height = maxHeight + "px";
+	var maxHeight = parseInt(Util.getStyle(this.element, "xl--popup-max-height"), 10);
+	if(!isNaN(maxHeight) && this.popup.offsetHeight >= maxHeight) this.popup.style.height = maxHeight + "px";
 	else this.popup.style.height = "auto";
 	
 	CNUtil.posPopup(this.popup, xy.x, xy.y);
@@ -292,10 +292,11 @@ proto.showPopup = function()
 		this.hoverOption(this.activeOption);
 	}
 	
-	document.attachEvent("onmousedown", this._document_onmousedown);
-	document.attachEvent("onmousewheel", this._document_onmousedown);
+	Event.add(document, "mousedown", this, this._document_onmousedown);
+	Event.add(document, "wheel", this, this._document_onmousedown);
 	
-	this.popup.setActive();
+	this.popup.tabIndex = -1;
+	this.popup.focus();
 }
 
 proto.hidePopup = function()
@@ -313,8 +314,8 @@ proto.hidePopup = function()
 		}
 	}
 
-	document.detachEvent("onmousedown", this._document_onmousedown);
-	document.detachEvent("onmousewheel", this._document_onmousedown);
+	Event.del(document, "mousedown", this, this._document_onmousedown);
+	Event.del(document, "wheel", this, this._document_onmousedown);
 }
 
 proto.hoverOption = CN_combobox.plainThemeProto.hoverOption;
@@ -337,7 +338,7 @@ proto._document_onmousedown = function()
 proto.document_onmousedown = function()
 {
 	this.closing = true;
-	event.cancelBubble = true;
+	CNUtil.cancelBubble();
 	this.hidePopup();
 	CN_answerbox.currentCombobox = null;
 }
@@ -348,7 +349,7 @@ proto._popup_onclick = function()
 }
 proto.popup_onclick = function()
 {
-	var l = event.srcElement;
+	var l = Util.eventTarget();
 	if(!l || !this.popup.contains(l) || l.className != "xlcombooption") return;
 	this.hidePopup();
 	this.selectOption(l);
@@ -360,7 +361,7 @@ proto._popup_onmouseover = function()
 }
 proto.popup_onmouseover = function()
 {
-	var l = event.srcElement;
+	var l = Util.eventTarget();
 	if(!l || !this.popup.contains(l) || l.className != "xlcombooption") return;
 	this.hoverOption(l);
 }
@@ -371,10 +372,10 @@ proto._popup_onmouseout = function()
 }
 proto.popup_onmouseout = function()
 {
-	var l = event.srcElement;
+	var l = Util.eventTarget();
 	var option = CNUtil.findByClassName(l, "xlcombooption");
 	if(!l || !this.popup.contains(l) || l.className != "xlcombooption"
-	|| option.contains(l)) return;
+	|| (option && Event.current().relatedTarget && option.contains(Event.current().relatedTarget))) return;
 	this.unhoverOption();
 }
 
@@ -384,7 +385,7 @@ proto._popup_onkeydown = function()
 }
 proto.popup_onkeydown = function()
 {
-	var code = event.keyCode;
+	var code = Event.keyValue(Event.current());
 	switch(code)
 	{
 		case 27:
@@ -411,12 +412,12 @@ proto.popup_onkeydown = function()
 			this._processTypedWord(code, false);
 			CNUtil.cancelEvent();
 	}
-	event.returnValue = false;
+	CNUtil.cancelEvent();
 }
 
 proto._element_oncontextmenu = function()
 {
-	CNUtil.findJSObject(event.srcElement).element_oncontextmenu();
+	CNUtil.findJSObject(Util.eventTarget()).element_oncontextmenu();
 }
 
 proto.element_oncontextmenu = function()
@@ -425,14 +426,14 @@ proto.element_oncontextmenu = function()
 	
 	if(this._disabled || this.oncheckreadonly()) return;
 
-	var l = event.srcElement;
+	var l = Util.eventTarget();
 	while(l && !l._isComboBox) l = l.parentElement;
 	this.element = l;
 
 	if(this.popupOpened) 
 	{
 		this.hidePopup();
-		event.cancelBubble = true;		
+		CNUtil.cancelBubble();		
 		return;
 	}
 
@@ -449,29 +450,29 @@ proto.element_onkeydown = function()
 {
 	if(this._disabled || this.oncheckreadonly()) return;
 	this.createPopup(); // Ensure popup created.
-	var code = event.keyCode;
+	var code = Event.keyValue(Event.current());
 	this._processTypedWord(code, true);
 }
 
 proto._element_onkeypress = function()
 {
-	if(event.keyCode == 27) 
+	if(Event.keyValue(Event.current()) == 27) 
 	{
-		var jsObject = CNUtil.findJSObject(event.srcElement);
+		var jsObject = CNUtil.findJSObject(Util.eventTarget());
 		jsObject.hidePopup();
 	}
 }
 
 proto._element_onmousedown = function()
 {
-	CNUtil.findJSObject(event.srcElement).element_onmousedown();
+	CNUtil.findJSObject(Util.eventTarget()).element_onmousedown();
 }
 
 proto.element_onmousedown = function()
 {
 	if(this._disabled || this.oncheckreadonly()) return;
 	
-	var l = event.srcElement;
+	var l = Util.eventTarget();
 	while(l && !l._isComboBox) l = l.parentElement;
 	this.element = l;
 
@@ -484,7 +485,7 @@ proto.element_onmousedown = function()
 proto.set_disabled = function(val)
 {
 	this._disabled = val;
-	this.element.runtimeStyle.filter = this._disabled ? this.element.currentStyle["xl--disabled-filter"] : "";
+	this.element.style.opacity = this._disabled ? "0.5" : "";
 	if(this._tabIndex) 
 	{
 		if(this._disabled) this.element.tabIndex = -1;
@@ -543,8 +544,9 @@ wp.isFocusable = true;
 wp.isValid = function(cell){ return true; }
 wp._cell_beforedeactivate = function()
 {
-	if(event.toElement == document.body) CNUtil.cancelEvent();
-	else event.srcElement.tabIndex = -1;
+	var ev = Event.current();
+	if(ev && ev.relatedTarget == document.body) CNUtil.cancelEvent(ev);
+	else if(Util.eventTarget()) Util.eventTarget().tabIndex = -1;
 }
 wp.prerender = function(cell, colTag)
 {
@@ -560,17 +562,17 @@ wp.prerender = function(cell, colTag)
 	combobox.onchange = this._answerbox_onchange;
 	combobox.oncheckreadonly = this._answerbox_oncheckreadonly;
 	
-	cell.attachEvent("onkeydown", this._cell_onkeydown)
-	cell.attachEvent("onbeforedeactivate", this._cell_beforedeactivate);	
+	Event.add(cell, "keydown", this, this._cell_onkeydown)
+	Event.add(cell, "focusout", this, this._cell_beforedeactivate);	
 }
 wp._cell_onkeydown = function()
 {
-	if(event.srcElement.className != 'cellSpan') return;
-	var cell = CN_grid.findCell(event.srcElement);
+	if(Util.eventTarget().className != 'cellSpan') return;
+	var cell = CN_grid.findCell(Util.eventTarget());
 	var typeObject = cell.colTag.typeObject;
 	CN_answerbox.currentCombobox = typeObject._combobox;
 	typeObject._combobox.element = cell.firstChild;
-	cell.children[0].fireEvent("onkeydown", event);
+	this._combobox.element_onkeydown(Event.current());
 }
 wp._answerbox_onchange = function(ev)
 {
@@ -590,7 +592,7 @@ wp._answerbox_onchange = function(ev)
 wp._answerbox_oncheckreadonly = function()
 {
 	// Executed in combobox context.
-	var cell = CN_grid.findCell(event.srcElement);
+	var cell = CN_grid.findCell(Util.eventTarget());
 	var jsObject = CNUtil.findJSObject(cell);
 	return jsObject.getCascadedReadOnly(cell);
 }
@@ -602,11 +604,11 @@ wp.render = function(cell, node)
 
 	var top = (18 - this._imgHeight) / 2;
 	if(top < 0) top = 0;
-	cell.style.paddingTop = top;
+	cell.style.paddingTop = top + "px";
 	
 	var comboElement = cell.children[0];
 	
-	var ix = parseInt(node.text, 10);
+	var ix = parseInt(Util.xmlText(node), 10);
 	
 	// Temporary set element.
 	this._combobox.element = comboElement;
@@ -632,15 +634,16 @@ wp.isFocusable = true;
 wp._cell_beforedeactivate = AnswerBoxCell.prototype._cell_beforedeactivate;
 wp._cell_onkeydown = function()
 {
-	if(event.srcElement.className != 'cellSpan') return;
-	var cell = CN_grid.findCell(event.srcElement);
-	cell.children[0].fireEvent("onkeydown", event);
+	if(Util.eventTarget().className != 'cellSpan') return;
+	var cell = CN_grid.findCell(Util.eventTarget());
+	var combo = Util.findJSObject(cell.children[0]);
+	if(combo) combo.element_onkeydown(Event.current());
 }
 
 wp.prerender = function(cell, colTag)
 {
-	cell.attachEvent("onkeydown", this._cell_onkeydown);
-	cell.attachEvent("onbeforedeactivate", this._cell_beforedeactivate);	
+	Event.add(cell, "keydown", this, this._cell_onkeydown);
+	Event.add(cell, "focusout", this, this._cell_beforedeactivate);	
 }
 
 wp._answerbox_onchange = AnswerBoxCell.prototype._answerbox_onchange;
@@ -654,7 +657,7 @@ wp.render = function(cell, node)
 
 	var top = (18 - this._imgHeight) / 2;
 	if(top < 0) top = 0;
-	cell.style.paddingTop = top;
+	cell.style.paddingTop = top + "px";
 	
 	node = node.cloneNode(true);
 	

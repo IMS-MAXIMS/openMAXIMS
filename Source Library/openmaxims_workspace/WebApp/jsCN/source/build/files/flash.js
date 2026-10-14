@@ -41,12 +41,14 @@ proto.createElement = function(node, parentElement) {
 }
 
 proto._build = function(node) {
-	var obj = document.createElement('<object width="100%" height="100%" classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0">');
+	var obj = document.createElement("object");
 	obj.id = node.getAttribute("id") + "_object";
-	obj.appendChild(document.createElement('<param name="allowFullScreen" value="false" />'));
-	obj.appendChild(document.createElement('<param name="quality" value="high" />'));
-	obj.appendChild(document.createElement('<param name="wmode" value="transparent"/>'));
-	obj.appendChild(document.createElement('<param name="allowScriptAccess" value="always"/>'));
+	obj.style.width = "100%";
+	obj.style.height = "100%";
+	obj.appendChild(Util.createElement("param", null, {name: "allowFullScreen", value: "false"}));
+	obj.appendChild(Util.createElement("param", null, {name: "quality", value: "high"}));
+	obj.appendChild(Util.createElement("param", null, {name: "wmode", value: "transparent"}));
+	obj.appendChild(Util.createElement("param", null, {name: "allowScriptAccess", value: "always"}));
 
 	var p = document.createElement("param");
 	p.setAttribute("name", "movie");
@@ -55,8 +57,8 @@ proto._build = function(node) {
 	this.element.appendChild(obj);
 }
 proto.loadData = function(node) {
-	if(node.text.length == 0) return;
-	var data = String(node.text);
+	if(Util.xmlText(node).length == 0) return;
+	var data = String(Util.xmlText(node));
 	if(this._loaded) {
 		this._loadDataToFlash(data);
 	} else {

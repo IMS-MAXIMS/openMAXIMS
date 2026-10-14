@@ -9,9 +9,38 @@ function CN_selectrole()
 }
 var proto = CN_selectrole.prototype;
 
+proto._createActionImage = function(black)
+{
+	var img;
+	if(black)
+	{
+		img = document.createElement("span");
+		img.style.display = "inline-block";
+		img.style.width = "22px";
+		img.style.height = "22px";
+		img.style.backgroundImage = "url(" + CNFormManager.themeImagesPath + "square-button-set.gif)";
+		img.style.backgroundRepeat = "no-repeat";
+		img.style.backgroundPosition = "0px 0px";
+		Event.nativeAdd(img, "mouseenter", function() { if(!img.disabled) img.style.backgroundPosition = "-22px 0px"; });
+		Event.nativeAdd(img, "mouseleave", function() { img.style.backgroundPosition = "0px 0px"; });
+		Event.nativeAdd(img, "mousedown", function() { if(!img.disabled) img.style.backgroundPosition = "-44px 0px"; });
+		Event.nativeAdd(img, "mouseup", function() { if(!img.disabled) img.style.backgroundPosition = "-22px 0px"; });
+	}
+	else
+	{
+		img = document.createElement("img");
+		img.src = CNFormManager.themeImagesPath + "round-button.gif";
+		Event.nativeAdd(img, "mouseenter", function() { if(!img.disabled) img.src = CNFormManager.themeImagesPath + "hover-round-button.gif"; });
+		Event.nativeAdd(img, "mouseleave", function() { img.src = CNFormManager.themeImagesPath + "round-button.gif"; });
+		Event.nativeAdd(img, "mousedown", function() { if(!img.disabled) img.src = CNFormManager.themeImagesPath + "down-round-button.gif"; });
+		Event.nativeAdd(img, "mouseup", function() { if(!img.disabled) img.src = CNFormManager.themeImagesPath + "hover-round-button.gif"; });
+	}
+	return img;
+}
+
 proto.createElement = function(node, parentElement)
 {
-	var l = document.createElement('<div class="cn_selectrole">');
+	var l = (function(){ var el = document.createElement("div"); el.className = 'cn_selectrole'; return el; })();
 	parentElement.appendChild(l);
 	
 	this.element = l;
@@ -27,65 +56,66 @@ proto._buildContent = function(node)
 {
 	$("__loginChrome").style.display = "block";
 	
-	var outerDiv = document.createElement("<div class=outerDiv>"); // Anchor div.
+	var outerDiv = (function(){ var el = document.createElement("div"); el.className = 'outerDiv'; return el; })(); // Anchor div.
 	this.element.appendChild(outerDiv);
 	
-	var frameCont = document.createElement("<div class=frameCont>");
+	var frameCont = (function(){ var el = document.createElement("div"); el.className = 'frameCont'; return el; })();
 	outerDiv.appendChild(frameCont);
 	
 	frameCont.innerHTML = $("__plainBG").innerHTML;
-	var frame = frameCont.firstChild;
+	var frame = frameCont.firstElementChild;
 	frame.style.visibility = "hidden";
 	
-	this._contentDiv = document.createElement("<div class=contentDiv>");
+	this._contentDiv = (function(){ var el = document.createElement("div"); el.className = 'contentDiv'; return el; })();
 	frameCont.appendChild(this._contentDiv);
 
 	this._showCombo(node);
 	
 	var img;
 	if(CNFormManager.subTheme == "black") {
-		img = VistaSupport.createImageSetButton("square-button-set.gif", 22, 22);
+		img = this._createActionImage(true);
 
 		var siteLogo = $("__siteLogo");
 		siteLogo.style.width = "34px";
 		siteLogo.style.height = "37px";	
-		siteLogo.filters[0].sizingMethod = "scale";
+		siteLogo.style.backgroundSize = "100% 100%";
+		siteLogo.style.objectFit = "fill";
 	} else {
-		img = VistaSupport.createImageButton("round-button.gif");
+		img = this._createActionImage(false);
 	}
 
 	img.tabIndex = 4; // After locations combo.
 	img.className = "imgButton";
 	this._contentDiv.appendChild(img);
-	img.onclick = this._img_onclick;
+	Event.add(img, "click", this, this._img_onclick);
 	
-	var logoDiv = document.createElement("<div class='selectRoleLogo'>");
+	var logoDiv = (function(){ var el = document.createElement("div"); el.className = 'selectRoleLogo'; return el; })();
 	this._contentDiv.appendChild(logoDiv);
 	
 	
 	
-	this.element.attachEvent("onkeypress", this._element_onkeypress);	
+	Event.add(this.element, "keypress", this, this._element_onkeypress);	
 	
-	var messageNode = node.selectSingleNode("message");
-	if(messageNode) alert(messageNode.text);
+	var messageNode = Util.xmlSelectSingleNode(node, "message");
+	if(messageNode) alert(Util.xmlText(messageNode));
 }
 
 proto._show = function()
 {
-	var frameCont = this.element.firstChild.firstChild;
+	var frameCont = this.element.firstElementChild.firstElementChild;
 
-	var frame = frameCont.firstChild;
-	frame.style.filter = "progid:DXImageTransform.Microsoft.Fade()";
-	frame.filters[0].Apply();
+	var frame = frameCont.firstElementChild;
+	frame.style.opacity = "0";
 	frame.style.visibility = "inherit";
-	frame.filters[0].Play(.5);	
+	frame.style.transition = "opacity .5s";
+	frame.style.opacity = "1";	
 	AnimVistaFadeResize(frameCont, 50, 15);	
 	this._combo.element.focus();
 }
 
 proto._img_onclick = function()
 {
-	Util.dispatchObject()._send();;
+	this._send();
 }
 
 proto._send = function()
@@ -124,12 +154,11 @@ proto.unload = function()
 }
 
 
-proto._element_onkeypress = function()
+proto._element_onkeypress = function(ev)
 {
-	if(event.keyCode != 13) return;
-	Util.cancelEvent();
-	var jso = Util.dispatchByClass(CN_selectrole);
-	if(jso) jso._send();
+	if(Event.keyValue(ev) != 13) return;
+	Util.cancelEvent(ev);
+	this._send();
 }
 
 proto._showCombo = function(node)
@@ -140,14 +169,14 @@ proto._showCombo = function(node)
 	var comboEl = this._combo.createElement(Util.wrapIntoNode({}), this._contentDiv);
 	this._combo.set_tabIndex(3);
 
-	var nodes = node.selectNodes("role");
+	var nodes = Util.xmlSelectNodes(node, "role");
 	var options = [];
 	options.push({html: "<i class='comboValue'>Please select role</i>"});
 
 	for(var i = 0; i < nodes.length; i++)
 	{
 		var node = nodes[i];
-		var option = {text: String(node.text), value: String(node.getAttribute("id"))};
+		var option = {text: String(Util.xmlText(node)), value: String(node.getAttribute("id"))};
 		options.push(option);
 	}
 	

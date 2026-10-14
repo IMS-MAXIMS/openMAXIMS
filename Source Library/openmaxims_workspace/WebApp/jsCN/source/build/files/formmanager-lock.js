@@ -2,7 +2,7 @@ var proto = CNFormManager.prototype;
 
 proto._loadAutoLockTimer = function(autoLockNode) 
 {
-	var lockTimer = autoLockNode.selectSingleNode("autoLockTimer");
+	var lockTimer = Util.xmlSelectSingleNode(autoLockNode, "autoLockTimer");
 	if(lockTimer)
 	{
 		if(lockTimer.getAttribute("reset") == "true")
@@ -41,8 +41,8 @@ proto._startAutoLockTimer = function(timeoutSeconds)
 
 	if(!fm._autoLockTO)
 	{
-		document.attachEvent("onkeydown", fm._resetAutoLock);
-		document.attachEvent("onmousedown", fm._resetAutoLock);
+		Event.add(document, "keydown", fm, fm._resetAutoLock);
+		Event.add(document, "mousedown", fm, fm._resetAutoLock);
 	}
 
 	fm._autoLockTime = timeoutSeconds;
@@ -79,8 +79,8 @@ proto._resetAutoLock = function() { // Executed on each click/other user activit
     fm._autoLockTO = setTimeout(function(){ fm._autoLock(); }, fm._autoLockTime * 1000);
 	if(!fm._autoLockTO)
 	{
-		document.attachEvent("onkeydown", fm._resetAutoLock);
-		document.attachEvent("onmousedown", fm._resetAutoLock);
+		Event.add(document, "keydown", fm, fm._resetAutoLock);
+		Event.add(document, "mousedown", fm, fm._resetAutoLock);
 	}
 
 }
@@ -91,8 +91,8 @@ proto._autoLock = function()
 	this.pauseAutoLockTimer();
 
     // this = base fm.
-	document.detachEvent("onkeydown", this._resetAutoLock);
-	document.detachEvent("onmousedown", this._resetAutoLock);
+	Event.del(document, "keydown", this, this._resetAutoLock);
+	Event.del(document, "mousedown", this, this._resetAutoLock);
 
 	// Close some popups.
     // TODO: custom events and global event, which all the popup-enabled controls should listen to.
@@ -140,8 +140,9 @@ proto._tempHideAllPopups = function() {
 		var l = bodyChildren[i];
 		if(l == baseFM._formPlaceholder || l == this._formPlaceholder) continue;
 
-		if(l.currentStyle.position == "absolute" && l.currentStyle.display != "none" && l.currentStyle.visibility != "hidden") {
-			l._tempHidden = l.currentStyle.visibility;
+		var style = Util.getComputedStyle(l);
+		if(style.position == "absolute" && style.display != "none" && style.visibility != "hidden") {
+			l._tempHidden = style.visibility;
 			l.style.visibility = 'hidden';
 		}
 	}

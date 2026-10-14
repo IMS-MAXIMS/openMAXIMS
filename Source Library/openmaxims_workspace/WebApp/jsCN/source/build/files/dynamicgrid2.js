@@ -61,8 +61,8 @@ proto.loadData = function(node)
 	this._resetScrollPosition = node.getAttribute("resetScrollPosition") == "true";
 	if(this._resetScrollPosition) this.rowsDiv.scrollTop = 0;
 
-	var cols = node.selectNodes("col");
-	var noColsNode = node.selectSingleNode("cols");
+	var cols = Util.xmlSelectNodes(node, "col");
+	var noColsNode = Util.xmlSelectSingleNode(node, "cols");
 	if(cols.length > 0 || changeHeaderSelector || noColsNode)
 	{
 		// Store cols.
@@ -86,7 +86,7 @@ proto.loadData = function(node)
 
 	this._resizeColumns(); // Fast pass on just template/header.
 
-	var rows = node.selectSingleNode("rows");
+	var rows = Util.xmlSelectSingleNode(node, "rows");
 	if(rows || changeRowsSelector) 
 	{
 		// Store rows.
@@ -112,7 +112,7 @@ proto.set_selectedRow = function(value)
 {
 	if(value != "-1")
 	{
-		var row = this.rowsDiv.all["row" + value];
+		var row = this.rowsDiv.querySelector("#row" + value);
 		if(!row) return;
 		this._selectedRow = row.rowIndex;
 		this._selectedRowDiv = row;
@@ -489,7 +489,7 @@ proto.tree_buildNode = function(nodeDiv, cell, node, level, index, nodeType)
 	this.tree_buildLine(nodeDiv, node, children[this.ix_lineSpan], level);
 	this.tree_buildPM(node, children[this.ix_plusMinusSpan], level);
 
-	//children[this.ix_textSpan].innerText = String(node.text);
+	//children[this.ix_textSpan].textContent = String(Util.xmlText(node));
 	
 	var expanded = this.tree_isExpanded(node);
 	this.tree_updateImageToState(nodeDiv, expanded ? this.state_expanded : this.state_default);
@@ -545,7 +545,7 @@ proto._resizeRows = function(rowsDiv, colWidth, ix, rowsDivWidth, firstRowIndex)
 
 proto._createCellEditBorder = function(cell)
 {
-	var l = document.createElement("<div class=cellHoverBorderDiv>");
+	var l = Util.createElementFromHTML("<div class=cellHoverBorderDiv>");
 	cell.appendChild(l);
 	EditorBoxManager._setHoverBorderStyle(l, cell);
 	l.style.width = "100%";
@@ -571,7 +571,7 @@ wp.render = function(cell, node)
 {
 	cell.style.width = "auto";
 	var span = document.createElement("span");
-	span.appendChild(document.createTextNode(node.text));
+	span.appendChild(document.createTextNode(Util.xmlText(node)));
 	cell.appendChild(span);
 	cell.colTag.widthRatio = cell.colTag.width / this._grid._elementWidth;
 	cell.style.width = cell.colTag.width;
@@ -588,12 +588,12 @@ var wp = TableCell.prototype;
 
 wp.box_onclick = function()
 {
-	var cell = CN_grid.findCell(event.srcElement);			
+	var cell = CN_grid.findCell(CNUtil.eventTarget());			
 		
-	var cellTD = event.srcElement.parentElement;
-	if (event.srcElement.parentElement.getAttribute("id"))
+	var cellTD = CNUtil.eventTarget().parentElement;
+	if (CNUtil.eventTarget().parentElement.getAttribute("id"))
 	{
-		cell.setAttribute("tableCellId", event.srcElement.parentElement.getAttribute("id"));
+		cell.setAttribute("tableCellId", CNUtil.eventTarget().parentElement.getAttribute("id"));
 	}
 	var cellTR = cellTD.parentElement;	
 	if (cellTD.parentElement.getAttribute("id"))
@@ -682,7 +682,7 @@ wp.prerender = function(cell, colTag)
 			{
 			
 				var hcell = document.createElement("span");
-				Tooltip.attach(td, String(tooltip.text));
+				Tooltip.attach(td, String(Util.xmlText(tooltip)));
 			}			
 			
 			//Type		
@@ -704,9 +704,9 @@ wp.prerender = function(cell, colTag)
 						td.setAttribute("align", align);
 					}
 					
-					if (value && value.text)
+					if (value && Util.xmlText(value))
 					{
-						td.innerHTML ="<img style=\"display: block; width: " + width + "px; margin:2px; padding:2px; border:none\" src=\"" + value.text + "\">";
+						td.innerHTML ="<img style=\"display: block; width: " + width + "px; margin:2px; padding:2px; border:none\" src=\"" + Util.xmlText(value) + "\">";
 					}
 					else
 					{
@@ -842,10 +842,10 @@ wp.prerender = function(cell, colTag)
 						td.setAttribute("align", align);				
 					
 					if (autopostback)
-						d.attachEvent("onclick", this.box_onclick);	
+						Event.add(d, "click", this, this.box_onclick);	
 					
 					if(value)
-						d.innerHTML = value.text;	
+						d.innerHTML = Util.xmlText(value);	
 						
 					if (blink)
 					{
@@ -896,7 +896,7 @@ wp.prerender = function(cell, colTag)
 					//Postback
 					autopostback = cell.colTag.node.childNodes[0].childNodes[i].childNodes[j].getAttribute("autopostback");	
 					if (autopostback)
-						d.attachEvent("onclick", this.box_onclick);	
+						Event.add(d, "click", this, this.box_onclick);	
 					
 					//Image
 					imgSrc = cell.colTag.node.childNodes[0].childNodes[i].childNodes[j].getAttribute("imgSrc");	
@@ -937,8 +937,8 @@ wp.prerender = function(cell, colTag)
 wp.render = function(cell, node)
 {
 	//var table = cell.children[0];
-	//table.rows[0].cells[0].children[0].innerHTML = String(node.text);
-	//var color = cell.parentElement.currentStyle.backgroundColor;
+	//table.rows[0].cells[0].children[0].innerHTML = String(Util.xmlText(node));
+	//var color = Util.getStyle(cell.parentElement, "backgroundColor");
 	//if(color != "transparent") table.style.borderColor = color;
 }
 

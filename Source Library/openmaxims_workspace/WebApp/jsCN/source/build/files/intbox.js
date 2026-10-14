@@ -42,13 +42,14 @@ proto.isValid = function()
 	var value = this.element.value;
 	var valid = value.match(/^([-+])?\d+$/) != null || (value.replace(/\s+/, "") == "" && this._canBeEmpty);
 	if(valid) valid = value.length <= this.maxLength || value.length == this.maxLength + 1 && value.match(/^[+-]/);
-	if(!valid) this.element.runtimeStyle.borderColor = "red";
+	if(!valid) this.element.style.borderColor = "red";
 	return valid;
 }
 
 proto.createElement = function(node, parentElement)
 {
-	var l = document.createElement("<input type=text>");
+	var l = document.createElement("input");
+	l.type = 'text';
 	parentElement.appendChild(l);
 
 	this.element = l;
@@ -89,11 +90,11 @@ proto.buildElement = function()
 {
 	var box = this.element;
 //	if(this.maxLength > 0) box.maxLength = this.maxLength;
-	box.attachEvent("onkeypress", this._box_onkeypress);
-	box.attachEvent("onpaste", this._box_onpaste);
-	box.attachEvent("onchange", this._box_onchange);	
-	box.attachEvent("onbeforedeactivate", this._box_onbeforedeactivate);
-	box.attachEvent("onactivate", this._box_onactivate);	
+	Event.add(box, "keypress", this, this._box_onkeypress);
+	Event.add(box, "paste", this, this._box_onpaste);
+	Event.add(box, "change", this, this._box_onchange);	
+	Event.add(box, "focusout", this, this._box_onfocusout);
+	Event.add(box, "focusin", this, this._box_onactivate);	
 	
 	if(CNFormManager.vista) VistaSupport.attachToTextBox(box);
 }
@@ -118,7 +119,7 @@ proto.loadData = function(node)
 	}
 
 	attr = node.getAttribute("textColor");
-	if(attr !== null) this.element.runtimeStyle.color = String(attr);
+	if(attr !== null) this.element.style.color = String(attr);
 
 	this._isDirty = false;
 }
@@ -136,7 +137,7 @@ proto.storeData = function(xmldoc)
 
 proto.fireChangedEvent = function()
 {
-	var ev = {srcElement: this.element};
+	var ev = {target: this.element};
 	if(this.onchange) this.onchange(ev);
 }
 
@@ -162,14 +163,14 @@ proto._set_disabled = function()
 {
 	var disable = this.element.readOnly = this._disabled || this._readOnly;
 	if(CNFormManager.vista) this.element.className = disable ? "cn_textbox cn_textbox_disabled" : "cn_textbox";
-	else this.element.runtimeStyle.backgroundColor =  disable ? this.element.currentStyle["xl--disabled-background"] : "";
+	else this.element.style.backgroundColor =  disable ? Util.getStyle(this.element, "xl--disabled-background") : "";
 }
 
 // Event handlers. ========================
 proto._box_onkeypress = function() {
-	var code = event.keyCode;
+	var code = (Event.keyValue(Event.current()));
 	if(code == 0) return;
-	var jsObject = event.srcElement.jsObject;
+	var jsObject = Util.eventTarget().jsObject;
 	if(code == 13)
 	{
 		if(this._autoPostBack) {
@@ -178,9 +179,10 @@ proto._box_onkeypress = function() {
 		}
 		return;
 	}
-	var charx = String.fromCharCode(code);
-	var validChar = event.returnValue = charx.match(jsObject.validCharsRegex) != null;	
-	if(validChar) event.returnValue = jsObject._validateLength(charx);
+	if(Event.current().ctrlKey || Event.current().metaKey || Event.current().altKey) return;
+	var charx = Event.current().key && Event.current().key.length == 1 ? Event.current().key : String.fromCharCode(code);
+	var validChar = charx.match(jsObject.validCharsRegex) != null;
+	if(!validChar || !jsObject._validateLength(charx)) Util.cancelEvent(Event.current());
 }
 proto._validateLength = function(typedChar) { // #1042 - refactor length validation.
 	var maxLength = this.maxLength;
@@ -195,37 +197,37 @@ proto._validateLength = function(typedChar) { // #1042 - refactor length validat
 
 proto._box_onchange = function()
 {
-	var jsObject = event.srcElement.jsObject;
+	var jsObject = Util.eventTarget().jsObject;
 	jsObject.fireChangedEvent();	
 	jsObject._isDirty = true;
 }
 
-proto._box_onbeforedeactivate = function()
+proto._box_onfocusout = function()
 {
-	var jsObject = event.srcElement.jsObject;
+	var jsObject = Util.eventTarget().jsObject;
 	jsObject.isValid();
 }
 
 proto._box_onactivate = function()
 {
-	event.srcElement.runtimeStyle.borderColor = "";
+	Util.eventTarget().style.borderColor = "";
 }
 
 proto._box_onpaste = function() {
-	var box = event.srcElement;
-	var range = document.selection.createRange();
-	range.text = "";
-	var curLength = box.value.length;
+	var ev = Event.current();
+	var box = Util.eventTarget(ev);
 	var jso = box.jsObject;
-	var text = window.clipboardData.getData("Text");
-	Util.cancelEvent();
+	var text = ev.clipboardData && ev.clipboardData.getData("text");
+	if(text == null) return;
+	Util.cancelEvent(ev);
+	var start = box.selectionStart;
+	var end = box.selectionEnd;
+	var available = jso.maxLength - (box.value.length - (end - start));
 	var buf = [];
-	var maxLengthToInsert = jso.maxLength - curLength;
-	for(var i = 0; i < text.length && i < maxLengthToInsert; i++) {
+	for(var i = 0; i < text.length && buf.length < available; i++) {
 		var ch = text.charAt(i);
 		if(ch.match(jso.validCharsRegex) != null) buf.push(ch);
 	}
-
-	range.text = buf.join("");
+	box.setRangeText(buf.join(""), start, end, "end");
+	if(buf.length) jso._isDirty = true;
 }
-

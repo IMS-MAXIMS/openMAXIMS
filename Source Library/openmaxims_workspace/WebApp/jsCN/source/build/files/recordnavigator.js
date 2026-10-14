@@ -18,7 +18,7 @@ var proto = CN_recordnavigator.prototype;
 
 proto.createElement = function(node, parentElement)
 {
-	var l = document.createElement("<table cellpadding=0 cellspacing=0 border=0>");
+	var l = Util.createElementFromHTML("<table cellpadding=0 cellspacing=0 border=0>");
 	parentElement.appendChild(l);
 
 	this.element = l;
@@ -41,7 +41,7 @@ proto.loadData = function(node)
 		else this._centerTD.tipText = String(attr);
 	}
 
-	var options = node.selectNodes("option");
+	var options = Util.xmlSelectNodes(node, "option");
 	var count = options.length;
 
 	var selectedID = null;
@@ -52,7 +52,7 @@ proto.loadData = function(node)
 		this._selectedIndex = 0;
 	}
 	
-	if(count == 0 && node.selectSingleNode("nooptions") != null) 
+	if(count == 0 && Util.xmlSelectSingleNode(node, "nooptions") != null) 
 	{
 		this._clean();
 		this._updateAfterSelect(false);
@@ -87,9 +87,9 @@ proto._updateAfterSelect = function(userClick)
 	if(this._options.length == 0) 
 	{
 		this._arrowDiv.style.visibility = "hidden";
-		//this._div1.innerText = " ";
-		this._div2.innerText = " ";
-		this._div2.runtimeStyle.color = "";
+		//this._div1.textContent = " ";
+		this._div2.textContent = " ";
+		this._div2.style.color = "";
 		this._button1.disabled = this._button2.disabled = this._button3.disabled = this._button4.disabled = true;
 		if(CNFormManager.vista)
 		{
@@ -106,11 +106,11 @@ proto._updateAfterSelect = function(userClick)
 	if(this._selectedIndex == this._options.length - 1) this._button3.disabled = this._button4.disabled = true;
 
 	var option = this._options[this._selectedIndex];
-	this._div2.innerText = option.text == "" ? " " : option.text;
-	if(option.textColor) this._div2.runtimeStyle.color = option.textColor;
-	else this._div2.runtimeStyle.color = "";
+	this._div2.textContent = option.text == "" ? " " : option.text;
+	if(option.textColor) this._div2.style.color = option.textColor;
+	else this._div2.style.color = "";
 	
-	//this._div1.innerText = "Record " + (this._selectedIndex + 1) + " of " + this._options.length;
+	//this._div1.textContent = "Record " + (this._selectedIndex + 1) + " of " + this._options.length;
 	
 	if(CNFormManager.vista)
 	{
@@ -129,7 +129,7 @@ proto._clean = function()
 	
 	// Remove popup.
 	
-	if(this.popup) this._popup.removeNode(true);
+	if(this._popup) Util.removeElement(this._popup);
 	this._popup = null;
 }
 
@@ -161,51 +161,51 @@ proto._buildElement = function()
 	var button1, button2, button3, button4;
 	if(CNFormManager.vista)
 	{
-		td.style.width = 41;
-		button1 = document.createElement("<span class='button19'>");
+		td.style.width = "41px";
+		button1 = Util.createElementFromHTML("<span class='button19'>");
 		button1.style.marginRight = "1px";
 		this._attachSpanButtonEvents(button1);
-		button2 = document.createElement("<span class='button19'>");
+		button2 = Util.createElementFromHTML("<span class='button19'>");
 		this._attachSpanButtonEvents(button2);
-		button3 = document.createElement("<span class='button19'>");
+		button3 = Util.createElementFromHTML("<span class='button19'>");
 		button3.style.marginLeft = "1px";
 		button3.style.marginRight = "1px";
 		this._attachSpanButtonEvents(button3);
-		button4 = document.createElement("<span class='button19'>");
+		button4 = Util.createElementFromHTML("<span class='button19'>");
 		this._attachSpanButtonEvents(button4);
 	}
 	else
 	{
-		td.style.width = 38;
+		td.style.width = "38px";
 		button1 = document.createElement("button");
-		button1.attachEvent("onmouseenter", this._button_onmouseenter);
-		button1.attachEvent("onmouseleave", this._button_onmouseleave);
+		Event.add(button1, "mouseenter", this, this._button_onmouseenter);
+		Event.add(button1, "mouseleave", this, this._button_onmouseleave);
 		
 		button2 = document.createElement("button");
-		button2.style.paddingLeft = 1;
-		button2.attachEvent("onmouseenter", this._button_onmouseenter);
-		button2.attachEvent("onmouseleave", this._button_onmouseleave);
+		button2.style.paddingLeft = "1px";
+		Event.add(button2, "mouseenter", this, this._button_onmouseenter);
+		Event.add(button2, "mouseleave", this, this._button_onmouseleave);
 
 		button3 = document.createElement("button");
-		button3.attachEvent("onmouseenter", this._button_onmouseenter);
-		button3.attachEvent("onmouseleave", this._button_onmouseleave);
+		Event.add(button3, "mouseenter", this, this._button_onmouseenter);
+		Event.add(button3, "mouseleave", this, this._button_onmouseleave);
 
 		button4 = document.createElement("button");
-		button4.attachEvent("onmouseenter", this._button_onmouseenter);
-		button4.attachEvent("onmouseleave", this._button_onmouseleave);
+		Event.add(button4, "mouseenter", this, this._button_onmouseenter);
+		Event.add(button4, "mouseleave", this, this._button_onmouseleave);
 	}
 
-	button1.attachEvent("onclick", this._button1_onclick);
-	button1.attachEvent("ondblclick", this._button1_onclick);
-	button1.innerText = "9";
+	Event.add(button1, "click", this, this._button1_onclick);
+	Event.add(button1, "dblclick", this, this._button1_onclick);
+	button1.textContent = "9";
 	td.appendChild(button1);
 	this._button1 = button1;
 	Tooltip.attach(button1, "First");
 	
-	button2.attachEvent("onclick", this._button2_onclick);
-	button2.attachEvent("ondblclick", this._button2_onclick);
+	Event.add(button2, "click", this, this._button2_onclick);
+	Event.add(button2, "dblclick", this, this._button2_onclick);
 	td.appendChild(button2);
-	button2.innerText = "3";
+	button2.textContent = "3";
 	this._button2 = button2;
 	Tooltip.attach(button2, "Previous");
 	
@@ -213,57 +213,55 @@ proto._buildElement = function()
 	tr.appendChild(td);
 	td.style.width = "100%";
 	td.className = "centerTD";
-	td.attachEvent("onmouseenter", this._td_onmouseenter);
-	td.attachEvent("onmouseleave", this._td_onmouseleave);
-	td.attachEvent("onclick", this._td_onclick);
-	td.onselectstart = CNUtil.cancelEvent;	
-	td.attachEvent("onkeydown", this._centerTD_onkeydown);	
+	td.tabIndex = -1;
+	Event.add(td, "mouseenter", this, this._td_onmouseenter);
+	Event.add(td, "mouseleave", this, this._td_onmouseleave);
+	Event.add(td, "click", this, this._td_onclick);
+	Event.add(td, "keydown", this, this._centerTD_onkeydown);	
 
 	this._centerTD = td;
 
 	var div2 = document.createElement("div");
 	td.appendChild(div2);
 	div2.className = "div2";
-	div2.onselectstart = CNUtil.cancelEvent;
-	
 	this._div2 = div2;
 		
-	this._arrowDiv = document.createElement("<div class=arrowDiv>");
+	this._arrowDiv = Util.createElementFromHTML("<div class=arrowDiv>");
 	td.appendChild(this._arrowDiv);
-	this._arrowDiv.innerText = "6";
+	this._arrowDiv.textContent = "6";
 
 	td = document.createElement("TD");
 	tr.appendChild(td);
-	td.style.width = CNFormManager.vista ? 41 : 38;
+	td.style.width = CNFormManager.vista ? "41px" : "38px";
 	
 	td.appendChild(button3);
-	button3.innerText = "4";
-	button3.attachEvent("onclick", this._button3_onclick);
-	button3.attachEvent("ondblclick", this._button3_onclick);
+	button3.textContent = "4";
+	Event.add(button3, "click", this, this._button3_onclick);
+	Event.add(button3, "dblclick", this, this._button3_onclick);
 	this._button3 = button3;
 	Tooltip.attach(button3, "Next");
 	
 	var button4;
 	td.appendChild(button4);
-	button4.innerText = ":";
-	button4.attachEvent("onclick", this._button4_onclick);
-	button4.attachEvent("ondblclick", this._button4_onclick);
+	button4.textContent = ":";
+	Event.add(button4, "click", this, this._button4_onclick);
+	Event.add(button4, "dblclick", this, this._button4_onclick);
 	this._button4 = button4;
 	Tooltip.attach(button4, "Last");
 }			  
 
 proto._attachSpanButtonEvents = function(b)
 {
-	b.attachEvent("onmouseenter", this._spanButton_onmouseenter);
-	b.attachEvent("onmouseleave", CN_recordnavigator.hideButtonHover);
-	b.attachEvent("onmousedown", this._spanButton_onmousedown);
-	b.attachEvent("ondblclick", this._spanButton_onmousedown);	
-	b.attachEvent("onmouseup", this._spanButton_onmouseenter);
+	Event.add(b, "mouseenter", this, this._spanButton_onmouseenter);
+	Event.add(b, "mouseleave", this, CN_recordnavigator.hideButtonHover);
+	Event.add(b, "mousedown", this, this._spanButton_onmousedown);
+	Event.add(b, "dblclick", this, this._spanButton_onmousedown);	
+	Event.add(b, "mouseup", this, this._spanButton_onmouseenter);
 }
 CN_recordnavigator._activeButton = null;
 proto._spanButton_onmouseenter = function()
 {
-	var span = event.srcElement;
+	var span = CNUtil.eventTarget();
 	if(span.disabled || span._disabled) return;
 	CN_recordnavigator._activeButton = span;
 	CN_recordnavigator._spanTrans(span, CNFormManager.themeImagesPath + "hover-button19x19.gif", true);
@@ -277,17 +275,13 @@ CN_recordnavigator.hideButtonHover = function()
 }
 proto._spanButton_onmousedown = function()
 {
-	var span = event.srcElement;
+	var span = CNUtil.eventTarget();
 	if(span.disabled || span._disabled) return;
 	CN_recordnavigator._spanTrans(span, CNFormManager.themeImagesPath + "down-button19x19.gif", true);
 }
 CN_recordnavigator._spanTrans = function(l, toSrc, fast)
 {
-	var f = l.filters[0];
-	f.Stop();
-	f.Apply();
 	l.style.backgroundImage = "url(" + toSrc + ")";
-	f.Play(fast ? .15 : .4);
 }
 proto._setSpanButtonDisabled = function(b, disabled)
 {
@@ -301,9 +295,9 @@ proto._button_onmouseenter = function()
 	var jso = CNUtil.dispatchObject();
 	if(jso.element.disabled) return;
 
-	var l = event.srcElement;
-	var color = l.currentStyle["xl--hover-border-color"];
-	if(color) l.runtimeStyle.borderColor = l.currentStyle["xl--hover-border-color"];
+	var l = CNUtil.eventTarget();
+	var color = Util.getStyle(l, "xl--hover-border-color");
+	if(color) l.style.borderColor = Util.getStyle(l, "xl--hover-border-color");
 } 
 
 proto._button_onmouseleave = function()
@@ -311,8 +305,8 @@ proto._button_onmouseleave = function()
 	var jso = CNUtil.dispatchObject();
 	if(jso.element.disabled) return;
 
-	var l = event.srcElement;
-	l.runtimeStyle.borderColor = "";
+	var l = CNUtil.eventTarget();
+	l.style.borderColor = "";
 } 
 
 
@@ -321,9 +315,8 @@ proto._td_onmouseenter = function()
 	var jso = CNUtil.dispatchObject();
 	if(jso.element.disabled) return;
 
-	var l = event.srcElement;
-	l._filter = l.currentStyle.filter;
-	l.runtimeStyle.filter = l.currentStyle["xl--hover-filter"];
+	var l = CNUtil.eventTarget();
+	l.style.background = Util.getStyle(l, "xl--option-hover-background");
 }
 
 proto._td_onmouseleave = function()
@@ -331,8 +324,8 @@ proto._td_onmouseleave = function()
 	var jso = CNUtil.dispatchObject();
 	if(jso.element.disabled) return;
 
-	var l = event.srcElement;
-	if(l._filter) l.runtimeStyle.filter = l._filter;
+	var l = CNUtil.eventTarget();
+	l.style.background = "";
 }
 
 proto._td_onclick = function()
@@ -352,10 +345,11 @@ proto._showPopup = function()
 
 	var xy = CNUtil.findAbsolutePos(this._centerTD);
 
-	this._popup.style.left = xy.x;
-	var y = this._popup.style.top = xy.y + this._centerTD.offsetHeight;
+	this._popup.style.left = xy.x + "px";
+	var y = xy.y + this._centerTD.offsetHeight;
+	this._popup.style.top = y + "px";
 	
-	this._popup.style.width = this._centerTD.offsetWidth;
+	this._popup.style.width = this._centerTD.offsetWidth + "px";
 	
 	this._popup.style.zIndex = top.__ontopZ++;
 	//this._popup.style.visibility = "visible";
@@ -363,18 +357,18 @@ proto._showPopup = function()
 	if(this._popup.scrollHeight > 15 * 16) 
 	{
 		this._popup.style.overflowY = "auto";
-		this._popup.style.height = 15 * 16 + 4;
+		this._popup.style.height = (15 * 16 + 4) + "px";
 	}
 	else 
 	{
-		this._popup.style.height = 15 + 4;
+		this._popup.style.height = (15 + 4) + "px";
 		this._popup.style.overflowY = "visible";
 	}
 
 	var b = y + this._popup.offsetHeight;	
 
 	if(b > document.body.clientHeight)
-		this._popup.style.top = y - b + document.body.clientHeight - 4;
+		this._popup.style.top = (y - b + document.body.clientHeight - 4) + "px";
 
 	if(CNFormManager.vista)
 	{
@@ -395,18 +389,19 @@ proto._showPopup = function()
 	CN_recordnavigator.current = this;
 	this._popup.focus();
 
-	document.attachEvent("onmousedown", CN_recordnavigator._hidePopup);
-	document.attachEvent("onkeydown", CN_recordnavigator._on_esc_keydown);
+	Event.add(document, "mousedown", document, CN_recordnavigator._hidePopup);
+	Event.add(document, "keydown", document, CN_recordnavigator._on_esc_keydown);
 }
 
 proto._ensurePopupCreated = function()
 {
 	if(this._popup) return;
 	
-	this._popup = document.createElement("<div class='cn_recordnavigator_popup'>");
-	document.body.insertAdjacentElement("afterbegin", this._popup);
-	this._popup.attachEvent("onmousedown", CNUtil.cancelEvent);
-	this._popup.attachEvent("onkeydown", this._popup_onkeydown);
+	this._popup = Util.createElementFromHTML("<div class='cn_recordnavigator_popup'>");
+	this._popup.tabIndex = -1;
+	document.body.insertBefore(this._popup, document.body.firstChild);
+	Event.add(this._popup, "mousedown", this, CNUtil.cancelEvent);
+	Event.add(this._popup, "keydown", this, this._popup_onkeydown);
 	
 	if(CNFormManager.vista) new Shadow(this._popup, false, false);	
 	
@@ -417,16 +412,16 @@ proto._createOptions = function()
 {
 	for(var i = 0; i < this._options.length; i++)
 	{
-		var option = document.createElement("<div class='optionDiv'>")
+		var option = Util.createElementFromHTML("<div class='optionDiv'>")
 		this._popup.appendChild(option);
 		option._ix = i;
-		option.innerText = this._options[i].text;
+		option.textContent = this._options[i].text;
 		var color = this._options[i].textColor;
 		if(color) option.style.color = color;
-		option.attachEvent("onmouseenter", this._option_onmouseenter);
-		option.attachEvent("onmouseleave", this._option_onmouseleave);
-		option.attachEvent("onclick", this._option_onclick);
-		option.unselectable = true;
+		Event.add(option, "mouseenter", this, this._option_onmouseenter);
+		Event.add(option, "mouseleave", this, this._option_onmouseleave);
+		Event.add(option, "click", this, this._option_onclick);
+		option.style.userSelect = "none";
 	}
 }
 
@@ -440,13 +435,13 @@ CN_recordnavigator._hidePopup = function()
 
 	CN_recordnavigator.current = null;
 
-	document.detachEvent("onmousedown", CN_recordnavigator._hidePopup);
-	document.detachEvent("onkeydown", CN_recordnavigator._on_esc_keydown);
+	Event.del(document, "mousedown", document, CN_recordnavigator._hidePopup);
+	Event.del(document, "keydown", document, CN_recordnavigator._on_esc_keydown);
 }
 
 CN_recordnavigator._on_esc_keydown = function()
 {
-	if(event.keyCode == 27) CN_recordnavigator._hidePopup();
+	if(Event.keyValue(Event.current()) == 27) CN_recordnavigator._hidePopup();
 }
 
 
@@ -459,7 +454,7 @@ proto._document_onmousedown = function()
 proto._option_onmouseenter = function()
 {
 	if(!CN_recordnavigator.current._hoverOption) alert("ASSERT: !CN_recordnavigator.current._hoverOption");
-	CN_recordnavigator.current._hoverOption(event.srcElement);
+	CN_recordnavigator.current._hoverOption(CNUtil.eventTarget());
 }
 
 proto._option_onmouseleave = function()
@@ -508,19 +503,18 @@ proto._hoverOption = function(l)
 	else if(l.offsetTop + l.offsetHeight - this._popup.scrollTop >= this._popup.clientHeight)
 		this._popup.scrollTop = l.offsetTop + l.offsetHeight - this._popup.clientHeight + margin;
 
-	l.runtimeStyle.background = l.currentStyle["xl--option-hover-background"];
-	l.runtimeStyle.color = l.currentStyle["xl--option-hover-color"];
-	var filter = l.currentStyle["xl--option-hover-filter"];
-	if(filter) l.runtimeStyle.filter = filter;
+	l.style.background = Util.getStyle(l, "xl--option-hover-background");
+	l.style.color = Util.getStyle(l, "xl--option-hover-color");
+	
 }
 
 proto._unhoverOption = function()
 {
 	if(!this._activeOption) return;
 
-	this._activeOption.runtimeStyle.background = "";
-	this._activeOption.runtimeStyle.color = "";
-	if(this._activeOption.filters.length > 0) this._activeOption.runtimeStyle.filter = "none";
+	this._activeOption.style.background = "";
+	this._activeOption.style.color = "";
+	
 	this._activeOption = null;
 
 }
@@ -575,7 +569,7 @@ proto._popup_onkeydown = function()
 }
 proto.popup_onkeydown = function()
 {
-	switch(event.keyCode)
+	switch(Event.keyValue(Event.current()))
 	{
 		case 27: 
 			CN_recordnavigator._hidePopup(); 
@@ -608,12 +602,13 @@ proto.popup_onkeydown = function()
 			}
 			break;
 	}
-	event.returnValue = false;
+	if(Event.current().preventDefault) Event.current().preventDefault();
+	Event.cancel(Event.current());
 }
 
 proto._centerTD_onkeydown = function()
 {
-	if(event.keyCode == 32 || event.keyCode == 13)
+	if(Event.keyValue(Event.current()) == 32 || Event.keyValue(Event.current()) == 13)
 	{
 		var jso = CNUtil.dispatchObject();
 		if(jso.element.disabled) return;

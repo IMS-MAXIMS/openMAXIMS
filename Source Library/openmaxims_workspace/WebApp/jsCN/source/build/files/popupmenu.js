@@ -17,17 +17,17 @@ if(!top.__ontopZ) top.__ontopZ = 10000;
 
 PopupMenu._menus = [];
 PopupMenu.activeMenus = [];
-PopupMenu.hideMenus = function()
+PopupMenu.hideMenus = function(ev)
 {
 	//CNFormManager._trace("PopupMenu.hideMenus");
 	for(var i = PopupMenu.activeMenus.length - 1; i >= 0; i--)
 	{
-		PopupMenu.activeMenus[i].hide(true);
+		PopupMenu.activeMenus[i].hide(true, ev);
 	}
 }
-PopupMenu.resetKeydown = function()
+PopupMenu.resetKeydown = function(ev)
 {
-	if(event.keyCode == 27) PopupMenu.hideMenus();
+	if(Event.keyValue(ev) == 27) PopupMenu.hideMenus(ev);
 }
 PopupMenu.unload = function()
 {
@@ -37,9 +37,9 @@ PopupMenu.unload = function()
 	}
 	PopupMenu._menus = null;
 }
-PopupMenu._document_onmousedown = function() {
+PopupMenu._document_onmousedown = function(ev) {
 	//CNFormManager._trace("PopupMenu._document_onmousedown");
-	PopupMenu.hideMenus();
+	PopupMenu.hideMenus(ev);
 }
 
 PopupMenu._handlerSet = false;
@@ -48,16 +48,16 @@ PopupMenu.setDocumentHandler = function()
 	if(PopupMenu._handlerSet) return; // Avoid double event handler, FWUI-1288
 	//CNFormManager._trace("PopupMenu.setDocumentHandler");
 	PopupMenu._handlerSet = true;
-	document.body.attachEvent("onmousedown", this._document_onmousedown);
-	document.body.attachEvent("onkeydown", PopupMenu.resetKeydown);
+	Event.nativeAdd(document.body, "mousedown", this._document_onmousedown);
+	Event.nativeAdd(document.body, "keydown", PopupMenu.resetKeydown);
 }
 PopupMenu._detachBodyHandlers = function()
 {
 	if(!PopupMenu._handlerSet) return;
 	//CNFormManager._trace("PopupMenu._detachBodyHandlers");
 	PopupMenu._handlerSet = false;
-	document.body.detachEvent("onmousedown", this._document_onmousedown);
-	document.body.detachEvent("onkeydown", PopupMenu.resetKeydown);
+	Event.nativeDel(document.body, "mousedown", this._document_onmousedown);
+	Event.nativeDel(document.body, "keydown", PopupMenu.resetKeydown);
 }
 PopupMenu._removeMenu = function(menu)
 {
@@ -83,28 +83,40 @@ proto.onmenuclick = function(){}
 proto.createElement = function(parentElement, position)
 {
 	var l = document.createElement("div");
-	parentElement.insertAdjacentElement(position, l);
+	if(position == "afterbegin") parentElement.insertBefore(l, parentElement.firstChild);
+	else if(position == "beforeend") parentElement.appendChild(l);
+	else if(position == "beforebegin") parentElement.parentNode.insertBefore(l, parentElement);
+	else if(position == "afterend") parentElement.parentNode.insertBefore(l, parentElement.nextSibling);
+	else throw new Error("Unsupported popup menu position: " + position);
 	
 	this.element = l;
 	l.jsObject = this;
 	
-	l.unselectable = "on";
+	l.style.userSelect = "none";
 	l.className = "popupMenu_container";
 
-	if(l.currentStyle["xl--left-line"] != "false")
+	if(Util.getStyle(l, "xl--left-line") != "false")
 	{
-		this.leftline = document.createElement("<div class=\"leftline\"></div>");
-		this.leftline.unselectable = "on";
+		this.leftline = (function(){ var el = document.createElement("div"); el.className = 'leftline'; return el; })();
+		this.leftline.style.userSelect = "none";
 		l.appendChild(this.leftline);
 	}
 	
-	new Shadow(l, false, true);
+	l.style.boxShadow = "2px 3px 3px rgba(0, 0, 0, .3)";
 
-	l.attachEvent("onmouseleave", this._element_onmouseleave);
+	Event.add(l, "mouseleave", this, this._element_onmouseleave);
 
 	if(CNFormManager.vista)
 	{
-		this.element.appendChild(this._hover = VistaSupport.createHover('item-gradient-5.gif', 30));
+		var hover = this._hover = document.createElement("div");
+		hover.className = "hoverRect";
+		hover.style.position = "absolute";
+		hover.style.pointerEvents = "none";
+		hover.style.backgroundImage = "url(" + CNFormManager.themeImagesPath + "item-gradient-5.gif)";
+		hover.style.opacity = "0.3";
+		hover.style.borderRadius = "5px";
+		hover.style.visibility = "hidden";
+		this.element.appendChild(hover);
 	}
 }
 
@@ -120,7 +132,7 @@ proto.destroy = function()
 			this.element.shadow = null;
 		}
 		this.element.jsObject = null;
-		this.element.removeNode(true);
+		this.element.remove();
 		this.element = null;
 	}
 }
@@ -133,15 +145,15 @@ proto.createSubmenu = function(text, img)
 proto.createSubmenuEx = function(text, img)
 {
 	var l = this.createItem(text, img, false, false);
-	var arImg = document.createElement("<img width='7' height='7' class='submenuIMG'>");
-	l.unselectable = "on";
+	var arImg = (function(){ var el = document.createElement("img"); el.width = '7'; el.height = '7'; el.className = 'submenuIMG'; return el; })();
+	l.style.userSelect = "none";
 	l.appendChild(arImg);
 	arImg.src = CNFormManager.neutralImagesPath + 'ar-right-1.gif'
 	arImg.style.position = "absolute";
-	arImg.style.right = 7;
-	arImg.style.top = (l.offsetHeight - 7) / 2;
+	arImg.style.right = "7px";
+	arImg.style.top = (l.offsetHeight - 7) / 2 + "px";
 	var submenu = new PopupMenu(this.element.parentElement);
-	l._submenu = submenu.element.uniqueID;
+	l._submenu = submenu.element;
 
 	return {submenu: submenu, item: l};
 }
@@ -149,7 +161,7 @@ proto.createSubmenuEx = function(text, img)
 proto.createItem = function(text, img)
 {
 	var l = document.createElement("div");
-	l.unselectable = "on";
+	l.style.userSelect = "none";
 	this.element.appendChild(l);
 	
 	l._data = {
@@ -162,13 +174,12 @@ proto.createItem = function(text, img)
 	l.appendChild(imgelcont);
 	
 	imgelcont.className = "leftItem"
-	imgelcont.unselectable = "on";
+	imgelcont.style.userSelect = "none";
 
 	if(img)
 	{
 		var imgel = document.createElement("img");
-		imgel.unselectable = "on";
-		imgel.replacePNG = "no";
+		imgel.style.userSelect = "none";
 		imgelcont.appendChild(imgel);
 	
 		imgel.className = 'menuItemImg';
@@ -180,17 +191,17 @@ proto.createItem = function(text, img)
 		imgelcont.className = isPushed ? "leftItemChecked" : "leftItemUnchecked";
 	}*/
 
-	var textel = document.createElement("<span class=text></span>");
-	textel.unselectable = "on";
+	var textel = (function(){ var el = document.createElement("span"); el.className = 'text'; return el; })();
+	textel.style.userSelect = "none";
 	l.appendChild(textel);
 	
 	textel.innerHTML = text;
 		
 	//this.setCheckSign(l);
 
-	l.attachEvent("onmouseenter", this._item_mouseover);
-	l.attachEvent("onmouseleave", this._item_mouseout);
-	l.attachEvent("onmousedown", this._item_mousedown);
+	Event.add(l, "mouseenter", this, this._item_mouseover);
+	Event.add(l, "mouseleave", this, this._item_mouseout);
+	Event.add(l, "mousedown", this, this._item_mousedown);
 
 	return l;
 }
@@ -198,12 +209,12 @@ proto.createItem = function(text, img)
 	// NOTE: functionality is just enough for bedplanner's bigIcon menus.
 	proto.createBigIconItem = function(data) {
 		if(!this._lastBigIconCont) {
-			this._lastBigIconCont = document.createElement("<div class='bigIconCont'></div>");
+			this._lastBigIconCont = (function(){ var el = document.createElement("div"); el.className = 'bigIconCont'; return el; })();
 			this.element.appendChild(this._lastBigIconCont);
 		}
 
 		var l = document.createElement("div");
-		l.unselectable = "on";
+		l.style.userSelect = "none";
 		this._lastBigIconCont.appendChild(l);
 		Tooltip.attach(l, data.text);
 
@@ -211,12 +222,11 @@ proto.createItem = function(text, img)
 		data.index = this.index++;
 
 		l.className = "bigIconItem";
-		l.unselectable = "on";
+		l.style.userSelect = "none";
 
 		var imgel = document.createElement("img");
-		imgel.unselectable = "on";
+		imgel.style.userSelect = "none";
 		imgel.src = data.img;
-		imgel.replacePNG = "no";
 		l.appendChild(imgel);
 
 		Event.add(l, "mouseenter", this, this._bigItem_mouseenter);
@@ -230,13 +240,13 @@ proto.createItem = function(text, img)
 		return l;
 	}
 	proto._bigItem_mouseenter = function(ev) {
-		Util.addClass(ev.srcElement, "hover");
+		Util.addClass(ev.currentTarget || Util.findByClassName(Util.eventTarget(ev), "bigIconItem"), "hover");
 	}
 	proto._bigItem_mouseleave = function(ev) {
-		Util.removeClass(ev.srcElement, "hover");
+		Util.removeClass(ev.currentTarget || Util.findByClassName(Util.eventTarget(ev), "bigIconItem"), "hover");
 	}
 	proto._bigItem_mousedown = function(ev) {
-		var l = Util.findByClassName(ev.srcElement, "bigIconItem");
+		var l = ev.currentTarget || Util.findByClassName(Util.eventTarget(ev), "bigIconItem");
 		if(!l || l.disabled) return;
 
 		Util.removeClass(l, "hover");
@@ -244,15 +254,13 @@ proto.createItem = function(text, img)
 		if(l._data.radio) this.pushItem(l);
 		else if(l._data.twoState) this.togglePushItem(l);
 
-		PopupMenu.hideMenus();
+		PopupMenu.hideMenus(ev);
 
 		if(l._data.callback) {
-			var ev = {}
-			ev.data= l._data;
-			ev.srcElement = l;
-			l._data.callback[1].call(l._data.callback[0], ev);
+			var menuEvent = {data: l._data, target: l};
+			l._data.callback[1].call(l._data.callback[0], menuEvent);
 		}
-		CNUtil.cancelEvent();
+		CNUtil.cancelEvent(ev);
 	}
 	proto.pushItem = function(item) {
 		Util.addClass(item, "pushed");
@@ -279,8 +287,8 @@ proto.createItem = function(text, img)
 		}
 	}
 	proto.createBigHR = function() {
-		var l = document.createElement("<div class=bigHR>");
-		l.unselectable = "on";
+		var l = (function(){ var el = document.createElement("div"); el.className = 'bigHR'; return el; })();
+		l.style.userSelect = "none";
 		this.element.appendChild(l);
 		this._lastBigIconCont = null;
 		return l;
@@ -299,12 +307,12 @@ proto.createItem = function(text, img)
 
 proto.createHR = function()
 {
-	var l = document.createElement("<div class=hr>");
+	var l = (function(){ var el = document.createElement("div"); el.className = 'hr'; return el; })();
 	if(CNFormManager.vista)
 	{
 		l.appendChild(document.createElement("div"));
 	}
-	l.unselectable = "on";
+	l.style.userSelect = "none";
 	l.style.width = this.element.clientWidth - 30 + "px";
 	this.element.appendChild(l);
 	return l;
@@ -324,9 +332,9 @@ proto.setCheckSign = function(l)
 {
 /*	if(l.twostate && !l.img)
 	{
-		var checksign = l.parentElement.currentStyle.getAttribute("xl--check-sign");
+		var checksign = Util.getStyle(l.parentElement, "xl--check-sign");
 		// l.children[0] -> imgelcont.
-		l.children[0].innerText = l.isPushed ? (checksign ? checksign : '') : '';
+		l.children[0].textContent = l.isPushed ? (checksign ? checksign : '') : '';
 	}*/
 }
 
@@ -346,27 +354,21 @@ proto.show = function(x, y, subMenu)
 	}	
 	if(CNFormManager.vista)
 	{
-		if(!this.element.filters.length) this.element.style.filter = "progid:DXImageTransform.Microsoft.Fade()";
-		this.element.filters[0].Apply();
+		this.element.style.opacity = "0";
 	}
 	// NOTE: moved style change here as it needed for new shadow.htc version.
 	this.element.style.visibility = "inherit";
 	if(this.element.shadow) this.element.shadow.show();
 
 	this._correctItemsWidth();
-	this.leftline.style.height = this.element.clientHeight - 2;
+	if(this.leftline) this.leftline.style.height = this.element.clientHeight - 2 + "px";
 	
 	if(CNFormManager.vista)
 	{
-		this.element.filters[0].Play(.3);
+		this.element.style.transition = "opacity .3s";
+		this.element.style.opacity = "1";
 	}
 
-	//CNFormManager._trace("menu should be shown vis: " + this.element.currentStyle.visibility);
-
-	/*var obj = this;
-	setTimeout(function() {
-		if(obj.element) CNFormManager._trace("menu should be shown, zIndex: " + obj.element.currentStyle.zIndex + ", vis: " + obj.element.currentStyle.visibility);
-	}, 500);*/
 
 	PopupMenu.activeMenus.push(this);
 	// If first menu, set handlers.
@@ -395,7 +397,7 @@ proto._correctItemsWidth = function()
 		{
 			var l = this.element.children[i];
 			if(l.className == "item" || l.className == "hr")
-				if(l.offsetWidth != width) l.style.width = width;
+				if(l.offsetWidth != width) l.style.width = width + "px";
 		}
 	}
 	else
@@ -404,31 +406,30 @@ proto._correctItemsWidth = function()
 		{
 			var l = this.element.children[i];
 			if(l.className != "item") continue;		
-			if(l.offsetWidth != width) l.style.width = width;
+			if(l.offsetWidth != width) l.style.width = width + "px";
 		}
 	}
 }
 
-proto.hide = function(force)
+proto.hide = function(force, ev)
 {
 	// Autohide self issue workaround. Now if menu is going to show self on mousedown, it 
-	// must add its uniqueID to return value.
-	if(!this.element || event && event.returnValue == this.element.uniqueID) return;
+	// callers can mark the event to keep it open.
+	if(!this.element) return;
+	ev = ev || Event.current();
+	if(ev && ev.clientFrameworkKeepOpenFor == this.element) return;
 
 	//CNFormManager._trace("hide id=" + this.element.id + ", force: " + force);
 
 	if(this.element.style.display != "none" && force === true 
-	|| (event && !(event.srcElement && this.element.contains(event.srcElement))))
+	|| (ev && !(Util.eventTarget(ev) && this.element.contains(Util.eventTarget(ev)))))
 	{
-		if(this.element.filters.length) 
-		{
-			this.element.filters[0].Apply();
-		}
+		if(CNFormManager.vista) this.element.style.opacity = "1";
 
 		if(this.element.shadow) this.element.shadow.hide();
 		this.element.style.visibility = "hidden";
 		
-		if(this.element.filters.length) this.element.filters[0].Play(.1);
+		if(CNFormManager.vista) this.element.style.opacity = "0";
 		
 
 		var ev = {};
@@ -453,13 +454,13 @@ proto.hide = function(force)
 
 
 // Event handlers. ========================================
-proto._item_mousedown = function()
+proto._item_mousedown = function(ev)
 {
-	CNUtil.findJSObject(event.srcElement).item_mousedown();
+	this.item_mousedown(ev);
 }
-proto.item_mousedown = function()
+proto.item_mousedown = function(ev)
 {
-	var l = CNUtil.findByClassName(event.srcElement, CNFormManager.vista ? "item" : "item_hover");
+	var l = ev.currentTarget || CNUtil.findByClassName(Util.eventTarget(ev), CNFormManager.vista ? "item" : "item_hover");
 
 	if(!l || l.disabled) return;
 
@@ -475,20 +476,17 @@ proto.item_mousedown = function()
 	{
 		l.className = "item";
 
-		PopupMenu.hideMenus();
+		PopupMenu.hideMenus(ev);
 	
-		var ev = {}
-		//ev.xlcmdid = l.cmdid;
-		ev.xlindex = l._data.index;
-		ev.srcElement = l;
-		if(l.onmenuclick) l.onmenuclick(ev);
+		var menuEvent = {xlindex: l._data.index, target: l};
+		if(l.onmenuclick) l.onmenuclick(menuEvent);
 		if(l._data.callback) {
-			l._data.callback[1].apply(l._data.callback[0], ev);
+			l._data.callback[1].call(l._data.callback[0], menuEvent);
 		}
 	
-		//if(cmdid && xlcc) xlcc.fire({srcElement: element, cmdid: cmdid, param: param, index: index})
+		//if(cmdid && xlcc) xlcc.fire({target: element, cmdid: cmdid, param: param, index: index})
 	}	
-	CNUtil.cancelEvent();
+	CNUtil.cancelEvent(ev);
 }
 
 proto._setShowSubmenuTO = function(submenu, x, y)
@@ -500,31 +498,32 @@ proto._setShowSubmenuTO = function(submenu, x, y)
 
 proto._showSubmenu = function(submenuID, x, y)
 {
-	var submenu = this.element.parentElement.children[submenuID];
+	var submenu = submenuID;
+	if(!submenu) return;
 	if(PopupMenu.activeMenus.length > 0 
 	&& PopupMenu.activeMenus[PopupMenu.activeMenus.length - 1] == submenu.jsObject) return;
 	
 	this._hideSubmenus();
-	if(submenu) submenu.jsObject.show(x, y, true);
+	if(submenu.jsObject) submenu.jsObject.show(x, y, true);
 	this._currentTO = null;
 }
 
-proto._item_mouseover = function()
+proto._item_mouseover = function(ev)
 {
-	CNUtil.findJSObject(event.srcElement).item_mouseover();
+	this.item_mouseover(ev);
 }
-proto.item_mouseover = function()
+proto.item_mouseover = function(ev)
 {
-	var l = event.srcElement;	
-	if(l.disabled || this._activeItem == l) return;
+	var l = ev.currentTarget || CNUtil.findByClassName(Util.eventTarget(ev), "item");	
+	if(!l || l.disabled || this._activeItem == l) return;
 	if(this._activeItem) this._unhoverItem(this._activeItem);
 	this._activeItem = l;	
 
 	if(CNFormManager.vista)
 	{
-		this._hover.style.top = l.offsetTop;
-		this._hover.style.width = l.offsetWidth - 1;
-		this._hover.style.height = l.offsetHeight - 1;
+		this._hover.style.top = l.offsetTop + "px";
+		this._hover.style.width = l.offsetWidth - 1 + "px";
+		this._hover.style.height = l.offsetHeight - 1 + "px";
 		this._hover.style.visibility = "inherit";
 	}
 	else l.className = "item_hover";
@@ -534,26 +533,25 @@ proto.item_mouseover = function()
 		var y = this.element.offsetTop + l.offsetTop - 1;
 		this._setShowSubmenuTO(l._submenu, x, y);
 	}
-	CNUtil.cancelEvent();
+	CNUtil.cancelEvent(ev);
 }
 
-proto._item_mouseout = function()
+proto._item_mouseout = function(ev)
 {
-	var jso = CNUtil.findJSObject(event.srcElement);
-	if(jso) jso.item_mouseout();
+	this.item_mouseout(ev);
 }
-proto.item_mouseout = function(l)
+proto.item_mouseout = function(ev)
 {
-	var l = event.srcElement;
-	if(l.disabled) return;
+	var l = ev.currentTarget || CNUtil.findByClassName(Util.eventTarget(ev), "item");
+	if(!l || l.disabled) return;
 
-	if(l._submenu && (!this.element.contains(event.toElement)
-	|| event.toElement == this.element)) return;
+	if(l._submenu && (!this.element.contains(ev.relatedTarget)
+	|| ev.relatedTarget == this.element)) return;
 	
 	this._unhoverItem(l);
 	this._activeItem = null;
 	
-	CNUtil.cancelEvent();
+	CNUtil.cancelEvent(ev);
 }
 proto._unhoverItem = function(l)
 {
@@ -582,16 +580,16 @@ proto._hideSubmenus = function()
 }
 
 
-proto._element_onmouseleave = function()
+proto._element_onmouseleave = function(ev)
 {
-	CNUtil.findJSObject(event.srcElement).element_onmouseleave();
+	this.element_onmouseleave(ev);
 }
-proto.element_onmouseleave = function()
+proto.element_onmouseleave = function(ev)
 {
 	var activeMenu = null;
 	if(PopupMenu.activeMenus.length > 0) activeMenu = PopupMenu.activeMenus[PopupMenu.activeMenus.length - 1];
 	
-	if(activeMenu && activeMenu.element && activeMenu.element.contains(event.toElement)) 
+	if(activeMenu && activeMenu.element && activeMenu.element.contains(ev.relatedTarget)) 
 	{
 		if(this._currentTO) 
 		{
@@ -619,10 +617,9 @@ proto._walkAndRemoveMenuTree = function(l)
 		var child = children[i];
 		if(child._submenu)
 		{
-			this._walkAndRemoveMenuTree(this.element.parentElement.children[child._submenu]);
+			this._walkAndRemoveMenuTree(child._submenu);
 		}
 	}
 	PopupMenu._removeMenu(l.jsObject);
-	l.jsObject.destroy();	
-	l.removeNode(true);
+	l.jsObject.destroy();
 }
