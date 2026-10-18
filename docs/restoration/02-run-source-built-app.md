@@ -135,7 +135,7 @@ this setup.
 
 ## Start and wait for readiness
 
-For an ordinary terminal-managed development run:
+For a temporary foreground run on a non-macOS system:
 
 ```bash
 export JAVA_HOME="/path/to/java-8"
@@ -143,6 +143,10 @@ export CATALINA_HOME="/tmp/tomcat6/apache-tomcat-6.0.53"
 export CATALINA_BASE="$HOME/openmaxims-tomcat-sqlserver"
 "$CATALINA_HOME/bin/catalina.sh" start
 ```
+
+On macOS, do not use this terminal command for the persistent application:
+when the terminal or automation session closes, Tomcat may be terminated. Use
+the user `launchd` agent described below instead.
 
 The verified setup uses a user `launchd` agent named
 `com.openmaxims.sqlserver-tomcat`, with `KeepAlive` enabled and logs at:

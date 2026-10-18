@@ -49,8 +49,18 @@ Role:     Admin
 
 This is a deliberately documented development credential for local restoration
 only. Change or remove it before any non-disposable deployment. The account is
-defined in the packaged `configuration.xml`; the database reference-data
-seed also gives the primary `core_appuser` row the `user` username.
+defined in the packaged `configuration.xml` and is independent of database
+reference-data seeds. These are browser/application credentials, not the Oracle
+schema credentials in the JNDI datasource below. The Oracle reference-data
+script contains non-portable placeholder user inserts; do not rely on them to
+create this disposable login.
+
+The packaged XML contains the restoration account as a historical
+configuration fact, but the HIB runtime path also needs the corresponding
+active `core_appuser` row and `Admin` role. Follow
+[`16-standards-port-build-and-run.md`](16-standards-port-build-and-run.md) to
+create or repair that database user before testing login. The packaged XML
+entry alone is not sufficient for the verified Oracle restoration path.
 
 ## Required local configuration
 

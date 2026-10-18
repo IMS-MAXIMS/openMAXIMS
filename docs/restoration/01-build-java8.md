@@ -73,6 +73,49 @@ export TOMCAT_HOME=/path/to/tomcat-support
 ./build-java8.sh
 ```
 
+## Set up the build tools on a new machine
+
+Tomcat does **not** install or provide Java. Install a Java 8 JDK and Apache
+Ant separately, then download Tomcat for the servlet/JSP libraries required by
+this historical Ant build. A running Tomcat server and database are not needed
+to compile/package the WAR.
+
+On macOS with Homebrew:
+
+```bash
+brew install ant
+brew install --cask temurin@8
+curl -fL -o "$HOME/apache-tomcat-6.0.53.tar.gz" \
+  https://archive.apache.org/dist/tomcat/tomcat-6/v6.0.53/bin/apache-tomcat-6.0.53.tar.gz
+tar -xzf "$HOME/apache-tomcat-6.0.53.tar.gz" -C "$HOME"
+export JAVA_HOME="$(/usr/libexec/java_home -v 1.8)"
+export TOMCAT_HOME="$HOME/apache-tomcat-6.0.53"
+java -version
+ant -version
+```
+
+The Temurin installer may request administrator approval. On Apple Silicon,
+the tested Temurin 8 distribution is x86-64 and runs through Rosetta 2; install
+Rosetta if needed. On Linux, install a vendor-provided Java 8 JDK (not a JRE)
+and Ant using that distribution's package manager, download/extract the same
+Tomcat support-library version, then set `JAVA_HOME` and `TOMCAT_HOME` to those
+installations. Do not assume the system's default Java is 8: verify
+`"$JAVA_HOME/bin/java" -version` before building.
+
+For an isolated build workspace outside the checkout:
+
+```bash
+export OPENMAXIMS_WORKSPACE="$HOME/openmaxims-workspace"
+mkdir -p "$OPENMAXIMS_WORKSPACE"
+cp -a "Source Library/openmaxims_workspace/." "$OPENMAXIMS_WORKSPACE/"
+./build-java8.sh openMAXIMSwarfile
+```
+
+Database setup is a separate task. For a disposable Oracle development
+database, continue with
+[`04-oracle-docker-prerequisites.md`](04-oracle-docker-prerequisites.md) and
+[`05-oracle-application-setup.md`](05-oracle-application-setup.md).
+
 The script invokes the existing Ant build with the workspace path supplied as
 an absolute property. It does not require manually editing
 `WebAppBuild.xml`.

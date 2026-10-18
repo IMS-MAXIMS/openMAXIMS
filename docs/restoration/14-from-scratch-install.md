@@ -284,8 +284,12 @@ cp "$OPENMAXIMS_WORKSPACE/WebApp/openMAXIMS.war" \
 
 ## 7. Start and verify
 
-Stop any previous Tomcat launch agent before starting this one. Then start
-Tomcat with Java 8:
+On macOS, run Tomcat as a per-user `launchd` LaunchAgent rather than from
+the terminal. Otherwise it may stop when the terminal or automation session
+closes. Use the complete LaunchAgent procedure in
+[`16-standards-port-build-and-run.md`](16-standards-port-build-and-run.md).
+
+For a temporary foreground run, when terminal lifetime is acceptable, use:
 
 ```bash
 export JAVA_HOME="$(/usr/libexec/java_home -v 1.8)"

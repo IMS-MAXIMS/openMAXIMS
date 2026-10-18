@@ -150,10 +150,26 @@ username, password, and administrative role required by that client.
 Submit the following SQL after replacing the placeholders with local values:
 
 ```sql
+SELECT role FROM dba_roles WHERE role = 'IMS_DML';
+```
+
+If the query returns no rows, create the legacy role once as an administrator:
+
+```sql
+CREATE ROLE IMS_DML;
+```
+
+Then create the application account and grant it this role:
+
+```sql
 CREATE USER <application_user> IDENTIFIED BY "<application_password>";
 GRANT CONNECT, RESOURCE TO <application_user>;
 GRANT UNLIMITED TABLESPACE TO <application_user>;
+GRANT IMS_DML TO <application_user>;
 ```
+
+If `IMS_DML` already exists, do not run `CREATE ROLE` again. The generated schema grants table
+privileges to `IMS_DML`, so the role must exist before loading the schema.
 
 The password is shown only as a placeholder. Choose a local password that
 meets the Oracle installation's password policy and keep it outside the

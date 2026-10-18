@@ -40,6 +40,22 @@ DATABASE_PASSWORD   <application schema password>
 Keep the password in an untracked local configuration. Do not commit it or
 place it in a repository script.
 
+The browser login is a separate, disposable restoration account. The packaged
+`WebApp/src/configuration.xml` records `user` / `pass` with the `Admin` role,
+but the HIB runtime also requires an active database `core_appuser` row and
+role mapping. Complete the account creation/repair step in
+[`16-standards-port-build-and-run.md`](16-standards-port-build-and-run.md)
+after loading reference data. These are not the Oracle schema credentials;
+do not use the account outside a disposable local restoration environment.
+
+`WebApp/WebAppBuild.xml` has five legacy `xxxxx` defaults: `dbHost`, `dbPort`,
+`dbName`, `userid`, and `password`. The first three are the database endpoint;
+`userid` and `password` are the Oracle schema credentials for Ant targets that
+connect to the database. They are not the browser login. Leave the checked-in
+defaults alone; supply local Ant property overrides instead. A WAR-only build
+does not connect to the application database, while schema-generation or
+database-management targets may need the schema credentials.
+
 ## Build prerequisites
 
 The historical build currently requires:
@@ -127,6 +143,23 @@ put a real password on the command line merely to build it.
   -DdbName="$DATABASE_SERVICE"
 ```
 
+For an Ant target that connects to Oracle, supply `userid` and `password` as
+well. Prefer a permission-restricted Ant property file outside the checkout
+rather than putting the schema password directly on the command line:
+
+```properties
+dbHost=127.0.0.1
+dbPort=1521
+dbName=ORCLPDB1
+userid=<DATABASE_USER>
+password=<DATABASE_PASSWORD>
+```
+
+Save it with owner-only permissions (for example, mode `600`) and pass it with
+Ant's `-propertyfile /path/to/private-oracle-build.properties` option. The
+file is for Oracle database access only; it does not set the `user` / `pass`
+browser login.
+
 The resulting WAR is:
 
 ```text
@@ -159,13 +192,20 @@ export ANT_OPTS="-Dcatalina.home=$TOMCAT_HOME"
 ```
 
 The generated output is not automatically a clean, portable Oracle script.
-In the known Oracle 19 restoration, a small number of numeric-leading
-identifiers required quoting and a small number of long statements required
-line reformatting for the selected SQL client. Keep those corrections as a
-reviewable local patch or script; do not silently edit the historical source.
+The checked-in helper `restoration-tests/oracle/prepare_oracle_sql.py` makes
+the observed Oracle 19 corrections to a **copy** of the generated output:
+quote numeric-leading identifiers, replace the three SQL Server `OBJECT_ID`
+sequence guards with Oracle `USER_SEQUENCES` checks, and wrap long physical
+lines for SQL*Plus. It is intentionally not a general SQL dialect converter.
 
-Before applying the file, inspect the generated SQL and preserve a copy of
-the unmodified output for comparison.
+Before applying the file, preserve the unmodified output for comparison and
+prepare a separate file:
+
+```bash
+python3 restoration-tests/oracle/prepare_oracle_sql.py schema \
+  "$WORKSPACE/DomainObjects/create_schema.sql" \
+  "$WORKSPACE/DomainObjects/create_schema_oracle.sql"
+```
 
 ## Apply the schema and reference data
 
@@ -184,10 +224,20 @@ Password:      <DATABASE_PASSWORD>
 Role:          normal
 ```
 
+Prepare the Oracle reference-data script as a separate copy as well. The helper
+removes its UTF-8 BOM; it does not otherwise rewrite the historical seed:
+
+```bash
+python3 restoration-tests/oracle/prepare_oracle_sql.py seed \
+  "$WORKSPACE/WebApp/MAXIMS_RefDataORA.sql" \
+  "$WORKSPACE/WebApp/MAXIMS_RefDataORA_oracle.sql"
+```
+
 Execute, in order:
 
-1. the corrected Oracle schema generated as `$WORKSPACE/DomainObjects/create_schema.sql`;
-2. `$WORKSPACE/WebApp/MAXIMS_RefDataORA.sql`;
+1. `$WORKSPACE/DomainObjects/create_schema_oracle.sql` as the application
+   schema owner;
+2. `$WORKSPACE/WebApp/MAXIMS_RefDataORA_oracle.sql` as the same owner;
 3. any separately required lookup or application seed scripts identified by
    the restoration notes.
 
@@ -196,11 +246,25 @@ assuming that a particular command-line client is installed. Confirm how it
 handles PL/SQL blocks, statement delimiters, errors, and file encoding before
 loading the large reference-data file.
 
-The known Oracle 19 load produced some expected fresh-install noise, including
-SQL Server-style conditional constraint drops, a backup-table reference, a
-UTF-8 BOM, duplicate menu rows, and placeholder default-user rows. Record the
-client, version, row counts, errors, and any local corrections used. Do not
-ignore new errors without investigating them.
+For the tested SQL*Plus flow, do not use `WHENEVER SQLERROR EXIT`: this schema
+has duplicate indexes/constraints that report errors while later DDL still
+creates the remaining objects. Inspect the full spool/log and verify the
+object counts after execution. Do not ignore new errors without investigating
+them.
+
+The 2026-10-18 Oracle 19 run created all 1,675 tables and the three expected
+sequences (`AUDIT_SEQUENCE`, `ORDER_SEQUENCE`, and `HIBERNATE_SEQUENCE`). It
+reported duplicate-object/index/constraint errors (`ORA-00955`, `ORA-01408`,
+`ORA-02264`, `ORA-02275`) from repeated generated DDL; the complete object
+counts were checked. The reference-data script has SQL Server-specific
+`OBJECT_ID` guards, a backup-table assumption, duplicate menu rows, two
+placeholder `xxxxx` user inserts, and a final `CONVERT(date, getdate())` that
+Oracle does not support. These are seed portability gaps; they do not define
+the browser login. The local restoration account is completed by the packaged configuration
+and the database `core_appuser`/role setup described in
+[`16-standards-port-build-and-run.md`](16-standards-port-build-and-run.md).
+The Oracle reference-data placeholders are not a reliable substitute for that
+step.
 
 After loading the data, ensure that the application user has the objects and
 privileges needed by the generated schema. Do not run the application as `SYS`.
@@ -246,9 +310,10 @@ Use a local, untracked file containing a JNDI resource equivalent to:
 
 The local runtime experiment required relaxed Oracle 19 authentication
 settings because the historical Oracle JDBC driver was rejected by the
-database's default authentication policy. This is acceptable only for an
-isolated development database; do not weaken authentication policy in a
-production environment without understanding the security consequences.
+database's default authentication policy. This was done only in a disposable
+local Docker database. Do not weaken authentication policy in a production
+environment; preferably use a compatible JDBC driver if that can be verified
+against this historical app.
 
 ## Deploy and start Tomcat
 
@@ -264,35 +329,78 @@ Start Tomcat using the Java 8 runtime selected for the build. Monitor the
 Tomcat log and confirm that the application context deploys without a JNDI
 datasource error.
 
-The first useful checks are:
+### Keep Tomcat available to a macOS browser
+
+If Tomcat is started as a child of a short-lived terminal/tool session, that
+process may be stopped when the session exits. For a persistent per-user
+development server, run Tomcat as a `launchd` LaunchAgent. The plist should
+invoke `catalina.sh run` and set `JAVA_HOME`, `JRE_HOME`, `CATALINA_HOME`, and
+`CATALINA_BASE` to that user's Java 8 and Tomcat paths. Keep the password only
+in the permission-restricted Tomcat context file, not in the plist.
+
+For example, after creating a plist at
+`$HOME/Library/LaunchAgents/org.openmaxims.oracle.tomcat.plist` with those
+values and the standard `RunAtLoad`/`KeepAlive` keys, load and inspect it with:
+
+```bash
+launchctl bootstrap "gui/$(id -u)" \
+  "$HOME/Library/LaunchAgents/org.openmaxims.oracle.tomcat.plist"
+launchctl kickstart -k "gui/$(id -u)/org.openmaxims.oracle.tomcat"
+launchctl print "gui/$(id -u)/org.openmaxims.oracle.tomcat"
+curl -I http://127.0.0.1:18080/openMAXIMS/
+```
+
+To stop and unload the agent, use `launchctl bootout` with the same GUI domain
+and plist path. `KeepAlive` restarts Tomcat if it exits; it does not make the
+server available before the user logs into macOS.
+
+The first useful server-level check is:
 
 ```text
 http://<application-host>:<application-port>/openMAXIMS/
-http://<application-host>:<application-port>/openMAXIMS/ideagz.html
 ```
+
+For the Standards Port browser smoke test, follow
+[`16-standards-port-build-and-run.md`](16-standards-port-build-and-run.md) and
+open the repository-owned `standards-port-launcher.html`. Do not use
+`ideagz.html` for that test; it launches the historical client path.
 
 The historical `CNHost` endpoint may reject a direct `GET`; that is not by
 itself a deployment failure. The meaningful test is a real client request
 through the application protocol.
 
-In the first clean repository-WAR deployment, these server-level checks
-completed successfully:
+In the 2026-10-18 repository-WAR deployment, these server-level checks
+completed successfully against the local Oracle database:
 
 - `GET /openMAXIMS/` returned HTTP 200;
 - `GET /openMAXIMS/CNHost` returned the expected “GET method is not supported”
   response from the servlet;
 - Tomcat deployed the repository WAR without the lab-only modern client files.
 
-This confirms that the Java application is starting and serving requests. It
-does not yet replace the authenticated smoke test below.
+Tomcat also initialized the application Hibernate mappings and registered
+forms/images. This confirms the app can start with the Oracle JNDI datasource
+and serve requests. The first browser attempt used `ideagz.html`, which loads
+the historical Legacy Bundle bootstrap and therefore remained on the loading
+message in Safari. The working Standards Port route is the repository-owned
+`standards-port-launcher.html` described in
+[`16-standards-port-build-and-run.md`](16-standards-port-build-and-run.md);
+it is packaged in the WAR separately from the historical launcher. That run
+exposed and fixed the missing `logincontrol_newblue` module,
+the login-surface clipping caused by zero-height `#__si_form` overflow, and
+the New Blue theme z-index/layout rules. The same run also required the
+`core_appuser`/`Admin` setup documented in the Standards Port guide. The
+resulting browser smoke test reached authenticated Patient Search. The
+historical launcher and Legacy Bundle remain unchanged.
 
 ## Initial smoke test
 
-Using the historical client or another compatible test client, verify in this
-order:
+Using the repository-owned Standards Port launcher described in
+[`16-standards-port-build-and-run.md`](16-standards-port-build-and-run.md),
+verify in this order:
 
 1. the login screen is returned;
-2. login succeeds with a test account;
+2. login succeeds with the packaged local restoration credentials `user` /
+   `pass` (role `Admin`), distinct from the Oracle schema credentials;
 3. the authenticated navigation tree is returned;
 4. Patient Search loads;
 5. a known synthetic patient can be searched;
@@ -305,6 +413,27 @@ version, SQL client and version, database scripts used, and any warnings.
 Successful login and Patient Search establish a meaningful Oracle-backed
 runtime, but do not establish that every module, report, scheduled job,
 backup, restore, or clinical workflow works.
+
+## Fresh-install reproducibility status
+
+This is a manual feasibility guide, not yet a one-command Oracle installer or
+a clean-room new-user proof. A prior local Oracle 19 run reached login and
+Patient Search. In the 2026-10-18 rerun, the repository WAR built, the helper
+prepared both scripts, the schema created 1,675 tables and all three sequences,
+the seed ran with documented Oracle/T-SQL errors, and Tomcat returned HTTP 200
+from the launcher plus the expected CNHost GET response. Login and Patient
+Search were **not** re-tested in this run. The missing `Default` config group
+had to be inserted manually; Quartz startup also reports missing Quartz tables
+because their creation guards in the legacy seed use SQL Server syntax.
+
+The tools repository's static Hibernate mapping inventory records 1,291
+`native` identifier generators and two explicit `ORDER_SEQUENCE` mappings.
+The Oracle seed reads `hibernate_sequence.NEXTVAL` before attempting to create
+`ORDER_SEQUENCE`; these facts informed the schema helper's sequence checks.
+Static mapping counts are not runtime proof. The helper and this runbook make
+the observed prep repeatable, but every Oracle seed error must still be
+reviewed, and fresh-user login remains unverified. No database credentials,
+database files, or generated SQL output are included in Git.
 
 ## Known warnings and stop conditions
 
