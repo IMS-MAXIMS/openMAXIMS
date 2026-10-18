@@ -1187,11 +1187,12 @@ proto._processColTag = function(node, colNode, i, colsCount)
 			var ratio = col.widthRatio = colWidth / this._elementWidth;
 			scaledColWidth = ratio * this._realWidth; // Scale to final width.
 		}
-		cell.style.width = hcell.style.width = scaledColWidth;
+		cell.style.width = hcell.style.width = scaledColWidth + "px";
 	}
 	else if(i == colsCount - 1)
 	{
-		scaledColWidth = colWidth = hcell.style.width = cell.style.width = Math.max(this._lastWidth, 16);
+		scaledColWidth = colWidth = Math.max(this._lastWidth, 16);
+		hcell.style.width = cell.style.width = scaledColWidth + "px";
 		col.widthRatio = -1;
 	}
 	else
@@ -1203,11 +1204,11 @@ proto._processColTag = function(node, colNode, i, colsCount)
 			var ratio = col.widthRatio = colWidth / this._elementWidth;
 			scaledColWidth = ratio * this._realWidth; // Scale to final width.
 		}
-		cell.style.width = hcell.style.width = scaledColWidth;
+		cell.style.width = hcell.style.width = scaledColWidth + "px";
 	}
 	this._lastWidth -= scaledColWidth;
 
-	hcell.style.left = this._x;
+	hcell.style.left = this._x + "px";
 	//this._x += colWidth;
 	this._x += scaledColWidth;
 

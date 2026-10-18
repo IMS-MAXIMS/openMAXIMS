@@ -2532,7 +2532,8 @@ proto._executeXMLForm = function(formNode)
 			// which has its own full-page artwork, is not covered by the form
 			// background layer.
 
-			this._darkHeader.style.height = this._darkHeight = Math.max(1, darkHeight + (CNFormManager.vista ? 5 : 21));
+			this._darkHeight = Math.max(1, darkHeight + (CNFormManager.vista ? 5 : 21));
+			this._darkHeader.style.height = this._darkHeight + "px";
 			this._darkHeader.style.visibility = "inherit";
 			if(!CNFormManager.vista && this.isDialog) {
 				Util.addClass(this._dialogDiv, "withDarkHeader");
@@ -2541,6 +2542,7 @@ proto._executeXMLForm = function(formNode)
 		else
 		{
 			this._darkHeader.style.visibility = "hidden";
+			Util.removeClass(this._darkHeader, "theme_darkFormSurface");
 			if(!CNFormManager.vista && this.isDialog) {
 				Util.removeClass(this._dialogDiv, "withDarkHeader");
 			}
@@ -2558,10 +2560,12 @@ proto._executeXMLForm = function(formNode)
 	{
 		var isLoginForm = this._formPlaceholder.querySelector &&
 			this._formPlaceholder.querySelector(".cn_logincontrol_newblue, .cn_logincontrol");
+		Util.toggleClass(this._darkHeader, "theme_darkFormSurface", !isLoginForm);
 		var formNodeDarkHeight = parseInt(formNode.getAttribute("darkHeight"), 10);
 		if(!isLoginForm && !isNaN(formNodeDarkHeight) && formNodeDarkHeight > 0)
 		{
-			this._darkHeader.style.height = this._darkHeight = formNodeDarkHeight;
+			this._darkHeight = formNodeDarkHeight;
+			this._darkHeader.style.height = this._darkHeight + "px";
 			if(this._formPlaceholder.querySelectorAll)
 			{
 				var darkControls = this._formPlaceholder.querySelectorAll(
@@ -5800,6 +5804,7 @@ proto._processTheme = function()
 	var href;
 	if(CNFormManager.usePacked) href = "packed/themes/css/" + CNFormManager.currentThemeName + ".css.gz";
 	else href = "themes/" + CNFormManager.currentThemeName + "/css/" + "allthemestyles.css";
+	if(CNFormManager.assetVersion) href += "?v=" + encodeURIComponent(CNFormManager.assetVersion);
 	
 	if(!cn_globalStyleLink || href.toLowerCase() != cn_globalStyleLink.href.toLowerCase())
 	{
@@ -5917,7 +5922,9 @@ proto._initHTMLLayout = function()
 	CN_button.setTheme(CNFormManager.currentThemeName);
 	CN_imagebutton.setTheme(CNFormManager.currentThemeName);
 	CN_combobox.setTheme(CNFormManager.currentThemeName);
-	CN_logincontrol = CNFormManager.vista ? CN_logincontrol_vista : CN_logincontrol_pre;
+	CN_logincontrol = CNFormManager.currentThemeName == "new-blue"
+		? CN_logincontrol_newblue
+		: (CNFormManager.vista ? CN_logincontrol_vista : CN_logincontrol_pre);
 	CNPopupCalendar.createDefaultCalendar();
 
 	var children = this._globalPlaceholder.children;

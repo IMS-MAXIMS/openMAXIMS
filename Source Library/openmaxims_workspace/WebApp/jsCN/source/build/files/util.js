@@ -233,6 +233,14 @@ var Util =
 		return xy;
 	},
 	
+	// CNHost coordinates are pixel lengths, including numeric XML strings.
+	cssLength: function(value) {
+		if(typeof value == "number") return isFinite(value) ? value + "px" : "";
+		if(typeof value == "string" && /^[+-]?(?:\d+\.?\d*|\.\d+)$/.test(value.trim()))
+			return value.trim() + "px";
+		return value;
+	},
+
 	setBounds: function(l, node)
 	{
 		this.setLocation(l, node);
@@ -243,16 +251,16 @@ var Util =
 	{
 		var x = node.getAttribute("x");
 		var y = node.getAttribute("y");
-		if(x) l.style.left = x;
-		if(y) l.style.top = y;
+		if(x) l.style.left = Util.cssLength(x);
+		if(y) l.style.top = Util.cssLength(y);
 	},
 	
 	setSize: function(l, node)
 	{
 		var width = node.getAttribute("width");
 		var height = node.getAttribute("height");
-		if(width) l.style.width = width; 
-		if(height) l.style.height = height;
+		if(width) l.style.width = Util.cssLength(width);
+		if(height) l.style.height = Util.cssLength(height);
 	},
 
 	getStyle: function(element, property)

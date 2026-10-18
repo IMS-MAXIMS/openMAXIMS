@@ -138,7 +138,7 @@ proto._relayoutAgainstCollaspable = function(l)
 			if(jso._anchorTop > cont.jsObject._anchorTop) 
 			{
 				if(jso._anchorTop !== undefined) jso._anchorTop -= cont._delta;
-				else l.style.top = l.offsetTop - cont._delta;
+				else l.style.top = Util.cssLength(l.offsetTop - cont._delta);
 			}
 		}
 	}
@@ -213,10 +213,10 @@ proto._processLayout = function(l, anchor, node, isTabbedContainer, parentElemen
 	// Optimization for usual anchor.
 	if(anchor == 0 || anchor == LayoutManager.TOPLEFT)
 	{
-		if(!isNaN(x)) l.style.left = x;
-		if(!isNaN(y)) l.style.top = y;
-		if(!isNaN(w)) l.style.width = w;
-		if(!isNaN(h)) l.style.height = h;
+		if(!isNaN(x)) l.style.left = Util.cssLength(x);
+		if(!isNaN(y)) l.style.top = Util.cssLength(y);
+		if(!isNaN(w)) l.style.width = Util.cssLength(w);
+		if(!isNaN(h)) l.style.height = Util.cssLength(h);
 		if(jso.layout) jso.layout();
 		return;
 	}
@@ -228,20 +228,20 @@ proto._processLayout = function(l, anchor, node, isTabbedContainer, parentElemen
 	{
 		if(leftRight)
 		{
-			if(!isNaN(x)) l.style.left = x;
+			if(!isNaN(x)) l.style.left = Util.cssLength(x);
 		}
 		else
 		{
-			if(!isNaN(w)) l.style.width = w;
+			if(!isNaN(w)) l.style.width = Util.cssLength(w);
 		}
 		
 		if(topBottom)
 		{
-			if(!isNaN(y)) l.style.top = y;
+			if(!isNaN(y)) l.style.top = Util.cssLength(y);
 		}
 		else
 		{
-			if(!isNaN(h)) l.style.height = h;
+			if(!isNaN(h)) l.style.height = Util.cssLength(h);
 		}
 
 		jso._anchorSide = anchor & (LayoutManager.LEFTRIGHT | LayoutManager.TOPBOTTOM);
@@ -259,7 +259,7 @@ proto._processLayout = function(l, anchor, node, isTabbedContainer, parentElemen
 		{
 			jso._anchorSide = jso._anchorSide | LayoutManager.RIGHT;
 			jso._anchorLeft = x;
-			l.style.left = x; // Set initial x (for non-resized layout).
+			l.style.left = Util.cssLength(x); // Set initial x (for non-resized layout).
 			if(!pushed)
 			{
 				pushed = true;
@@ -268,9 +268,9 @@ proto._processLayout = function(l, anchor, node, isTabbedContainer, parentElemen
 		}
 		else if(!isNaN(x))
 		{
-			l.style.left = x;
+			l.style.left = Util.cssLength(x);
 		}
-		if(!isNaN(w)) l.style.width = w;
+		if(!isNaN(w)) l.style.width = Util.cssLength(w);
 	}
 	if(!topBottom)
 	{
@@ -278,7 +278,7 @@ proto._processLayout = function(l, anchor, node, isTabbedContainer, parentElemen
 		{
 			jso._anchorSide = jso._anchorSide | LayoutManager.BOTTOM;
 			jso._anchorTop = y;
-			l.style.top = y;  // Set initial y (for non-resized layout).
+			l.style.top = Util.cssLength(y);  // Set initial y (for non-resized layout).
 			if(!pushed)
 			{
 				pushed = true;
@@ -287,9 +287,9 @@ proto._processLayout = function(l, anchor, node, isTabbedContainer, parentElemen
 		}
 		else if(!isNaN(y))
 		{
-			l.style.top = y;
+			l.style.top = Util.cssLength(y);
 		}
-		if(!isNaN(h)) l.style.height = h;
+		if(!isNaN(h)) l.style.height = Util.cssLength(h);
 	}
 	if(l.parentElement.isContainer && !l.parentElement.jsObject._anchorSide)
 	{
@@ -334,24 +334,24 @@ proto._setRecalculatedSize = function(l, contentDeltaWidth, contentDeltaHeight)
 	if((jso._anchorSide & LayoutManager.LEFTRIGHT) == LayoutManager.LEFTRIGHT) 
 	{
 		var w = contentDeltaWidth + jso._anchorW;
-		if(w > 0) l.style.width = w + "px";
+		if(w > 0) l.style.width = Util.cssLength(w + "px");
 	}
 	else if((jso._anchorSide & LayoutManager.RIGHT) == LayoutManager.RIGHT) 
 	{
-		l.style.left = jso._anchorLeft + contentDeltaWidth;
+		l.style.left = Util.cssLength(jso._anchorLeft + contentDeltaWidth);
 	}
 
 	if((jso._anchorSide & LayoutManager.TOPBOTTOM) == LayoutManager.TOPBOTTOM) 
 	{
 		var h = contentDeltaHeight + jso._anchorH;
-		if(h > 0) l.style.height = h + "px";
+		if(h > 0) l.style.height = Util.cssLength(h + "px");
 	}
 	else if((jso._anchorSide & LayoutManager.BOTTOM) == LayoutManager.BOTTOM) 
 	{
 		// `pixelTop` is an IE-only CSSOM property.  It is silently ignored by
 		// Safari/Chrome, leaving bottom-anchored controls at their design-time
 		// position when the form grows.
-		l.style.top = (jso._anchorTop + contentDeltaHeight) + "px";
+		l.style.top = Util.cssLength((jso._anchorTop + contentDeltaHeight) + "px");
 	}
 
 	if(jso.layout) jso.layout();
@@ -488,7 +488,7 @@ proto._collapseDown = function(l)
 
 	this._changeTAVisibility(l, false);
 	l.containerElement.style.visibility = "hidden";	
-	l.style.height = this._collapsedHeight;
+	l.style.height = Util.cssLength(this._collapsedHeight);
 
 	var delta = l.jsObject._expandedAnchorH - l.jsObject._anchorH;
 	l._delta = delta;
@@ -547,7 +547,7 @@ proto._expandContainer = function(l, skipParentCheck)
 
 	l.jsObject._anchorH = l.jsObject._expandedAnchorH;
 	this._initialHeight += l.jsObject._anchorH - l.offsetHeight;
-	l.style.height = l._expandedHeight;
+	l.style.height = Util.cssLength(l._expandedHeight);
 	
 	var resizedControls = this._resizedControls;
 
@@ -573,7 +573,7 @@ proto._expandContainer = function(l, skipParentCheck)
 			{
 				var delta = l.jsObject._expandedAnchorH - this._collapsedHeight;
 				if(control.jsObject._anchorTop !== undefined) control.jsObject._anchorTop += delta;
-				else control.style.top = control.offsetTop + delta;
+				else control.style.top = Util.cssLength(control.offsetTop + delta);
 			}
 		}
 	}
@@ -617,7 +617,7 @@ proto._collapseUp = function(l)
 
 	l.containerElement.style.visibility = "hidden";
 	
-	l.style.height = this._collapsedHeight;
+	l.style.height = Util.cssLength(this._collapsedHeight);
 	var delta = l._delta = l.jsObject._expandedAnchorH - this._collapsedHeight;
 				
 	var resizedControls = l.parentElement.isContainer ? l.parentElement.jsObject._resizedControls : this._resizedControls; // FWUI-1351 - added support for collapsable cont. inside sub-form
@@ -628,7 +628,7 @@ proto._collapseUp = function(l)
 		if(control.offsetTop > l.offsetTop)
 		{
 			if(control.jsObject._anchorTop !== undefined) control.jsObject._anchorTop -= delta;
-			else control.style.top = control.offsetTop - delta;
+			else control.style.top = Util.cssLength(control.offsetTop - delta);
 		}
 	}
 

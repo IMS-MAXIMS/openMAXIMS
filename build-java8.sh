@@ -36,7 +36,49 @@ fi
 # Build the active Standards Port bundle before Ant packages WebApp/packed/**.
 # The Legacy Bundle under WebApp/packed-legacy/ is deliberately not touched.
 export PATH="$JAVA_HOME/bin:$PATH"
-OPENMAXIMS_WORKSPACE="$WORKSPACE_DIR" "$ROOT_DIR/build-javascript.sh"
+case "${OPENMAXIMS_CLIENT:-standards}" in
+    standards)
+        if [[ -f "$WORKSPACE_DIR/.openmaxims-legacy-client" ]]; then
+            echo "This workspace was staged for the Legacy Bundle. Copy a fresh workspace for the Standards Port." >&2
+            exit 2
+        fi
+        OPENMAXIMS_WORKSPACE="$WORKSPACE_DIR" "$ROOT_DIR/build-javascript.sh"
+        ;;
+    legacy)
+        # Legacy JS is a preserved artifact: never regenerate it from active source.
+        python3 - "$ROOT_DIR" "$WORKSPACE_DIR" <<'PYCLIENT'
+from pathlib import Path
+import shutil
+import sys
+root, workspace = (Path(p).resolve() for p in sys.argv[1:])
+if workspace == root / "Source Library/openmaxims_workspace":
+    raise SystemExit("Legacy profile requires a separate OPENMAXIMS_WORKSPACE; the source checkout is not modified.")
+webapp = workspace / "WebApp"
+required = ["packed-legacy/jscn.js.gz", "packed-legacy/themes/css/new-blue.css.gz",
+            "src/themes-legacy/new-blue/layout.html", "ideagz.html", "jsCN/forminit.js"]
+for name in required:
+    if not (webapp / name).is_file():
+        raise SystemExit("Incomplete Legacy Bundle workspace; missing " + str(webapp / name))
+# Mark before any mutation so an interrupted stage cannot become a standards build.
+(workspace / ".openmaxims-legacy-client").touch()
+for source, destination in [("packed-legacy/jscn.js.gz", "packed/jscn.js.gz"),
+                            ("packed-legacy/themes/css/new-blue.css.gz", "packed/themes/css/new-blue.css.gz"),
+                            ("src/themes-legacy/new-blue/layout.html", "src/themes/new-blue/layout.html")]:
+    target = webapp / destination
+    target.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(webapp / source, target)
+shutil.copytree(webapp / "themes-legacy/new-blue", webapp / "themes/new-blue", dirs_exist_ok=True)
+# ideagz.html is the preserved launcher; stage it at the welcome path only in
+# this legacy-only WAR profile.
+shutil.copy2(webapp / "ideagz.html", webapp / "index.html")
+print("Staged preserved Legacy Bundle, theme, layout and IE bootstrap for WAR packaging")
+PYCLIENT
+        ;;
+    *)
+        echo "OPENMAXIMS_CLIENT must be standards (default) or legacy" >&2
+        exit 2
+        ;;
+esac
 
 # Keep the workspace override outside the XML so the checkout remains portable.
 exec ant -f "$WORKSPACE_DIR/WebApp/WebAppBuild.xml" \

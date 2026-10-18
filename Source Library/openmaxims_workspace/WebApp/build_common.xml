@@ -561,11 +561,15 @@
 		<include name="applet/**" />
 		<include name="flash/**" />
 		<include name="jsCN/forminit.js" />
+		<include name="jsCN/source/build/files/forminit.js" />
 		<include name="themes/**" />
 		<include name="packed/**" />
+		<include name="packed-legacy/**" />
+		<include name="themes-legacy/**" />
 		<include name="Certificates/**" />
 		<include name="blank.html" />
 		<include name="ideagz.html" />
+		<include name="index.html" />
 		<include name="1024.html" />
 		<include name="1280.html" />
 		<include name="full-screen.html" />

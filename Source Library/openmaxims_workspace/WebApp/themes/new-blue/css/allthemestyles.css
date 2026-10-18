@@ -5160,8 +5160,8 @@ body {
 
 /* Folder items use the historical arrow asset; popup items remain a grid. */
 .cn_iconnavigation_folder .icon_div {
-  /* This override is served from /openMAXIMS/, not /themes/new-blue/css/. */
-  background-image: url("themes/new-blue/g/nav-big-arrow-right.gif");
+  /* The packed stylesheet is served from /packed/themes/css/. */
+  background-image: url("../../../themes/new-blue/g/nav-big-arrow-right.gif");
   background-repeat: no-repeat;
   background-position: right 17px;
 }
@@ -5417,4 +5417,30 @@ body .cn_iconnavigation_popup .cn_iconnavigation_item {
   margin: 0;
   color: #2c4d7c;
   font: bold 16px/30px Tahoma, Arial, sans-serif;
+}
+
+/* The New Blue login control is positioned outside the zero-height form shell.
+ * Scope the overflow change to login only; ordinary forms retain clipping. */
+#__si_form:has(.cn_logincontrol_newblue) {
+  overflow: visible !important;
+}
+
+.loginChrome {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: #e4f0ff;
+}
+
+.cn_logincontrol_newblue .loginInputBox { width: 184px; margin-right: 0; }
+.cn_logincontrol_newblue .passwordDiv { margin-left: 12px; }
+
+/* Safari autofill must not paint over the transparent New Blue input frame. */
+.cn_logincontrol_newblue .loginBox:-webkit-autofill,
+.cn_logincontrol_newblue .loginBox:-webkit-autofill:hover,
+.cn_logincontrol_newblue .loginBox:-webkit-autofill:focus,
+.cn_logincontrol_newblue .loginBox:autofill {
+  -webkit-box-shadow: 0 0 0 1000px transparent inset;
+  -webkit-text-fill-color: #000;
+  background-color: transparent !important;
 }

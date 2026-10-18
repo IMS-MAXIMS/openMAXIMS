@@ -411,8 +411,6 @@ proto.more_onmouseover = function()
 	this._moreDiv.style.width = "10px";
 	this._moreDiv.style.height = "10px";
 
-	this._moreDiv.style.backgroundColor = Util.getStyle(document.body, "backgroundColor");
-	
 	var offset = CNFormManager.vista ? 4 : 0;
 	this._moreDiv.style.left = xy.x - this._moreDiv.offsetWidth + l.offsetWidth + offset + "px";
 	this._moreDiv.style.top = xy.y + l.offsetHeight - 6 + "px";

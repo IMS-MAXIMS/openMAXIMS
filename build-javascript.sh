@@ -10,14 +10,24 @@ BUILD="$WEBAPP/jsCN/source/build"
 ORDER="$BUILD/bin/standards-build-order.json"
 OUT="$WEBAPP/packed/jscn.js.gz"
 
-python3 - "$BUILD/files" "$ORDER" "$OUT" <<'PY'
+python3 - "$BUILD/files" "$ORDER" "$OUT" "$WEBAPP" <<'PY'
 import gzip
 import json
 import sys
 from pathlib import Path
 
 files = Path(sys.argv[1])
-order = json.loads(Path(sys.argv[2]).read_text(encoding="utf-8"))["modules"]
+order_path = Path(sys.argv[2])
+if not order_path.is_file():
+    raise SystemExit(
+        "Incomplete or older Standards Port workspace: " + str(files.parents[4])
+        + "\nMissing build-order file: " + str(order_path)
+        + "\nCreate a new OPENMAXIMS_WORKSPACE and copy the entire "
+        "'Source Library/openmaxims_workspace/.' directory from this checkout."
+        + "\nDo not copy just the manifest into an older source tree. "
+        "See docs/restoration/16-standards-port-build-and-run.md, section 3."
+    )
+order = json.loads(order_path.read_text(encoding="utf-8"))["modules"]
 output = Path(sys.argv[3])
 parts = []
 for name in order:
@@ -32,3 +42,18 @@ with output.open("wb") as raw:
         stream.write(joined)
 print(f"wrote {output} ({len(joined)} uncompressed bytes)")
 PY
+
+# The Standards Port loads packed CSS; regenerate it from the editable theme.
+python3 - "$WEBAPP" <<'PYTHEME'
+import gzip
+import sys
+from pathlib import Path
+webapp = Path(sys.argv[1])
+source = webapp / "themes/new-blue/css/allthemestyles.css"
+output = webapp / "packed/themes/css/new-blue.css.gz"
+output.parent.mkdir(parents=True, exist_ok=True)
+with output.open("wb") as raw:
+    with gzip.GzipFile(filename="", fileobj=raw, mode="wb", compresslevel=9, mtime=0) as stream:
+        stream.write(source.read_bytes())
+print(f"wrote {output} from {source}")
+PYTHEME

@@ -118,7 +118,7 @@ proto.enforceDialog = function() {
 	this._tempHideAllPopups(); // NOTE: this can cause some unwanted delegates to be called on messagebox.hide (e.g. fm._finishProcessServerErrors).
 }
 proto.deforceDialog = function() {
-	CNThemeableDialog.reshowAll();
+	// Dialogs and popups in this port are DOM surfaces, restored below.
 
 	var bodyChildren = document.body.children;
 
@@ -132,7 +132,7 @@ proto.deforceDialog = function() {
 }
 
 proto._tempHideAllPopups = function() {
-	CNThemeableDialog.temporaryHideAll();
+	// Preserve each visible body-level popup until the lock dialog closes.
 
 	var bodyChildren = document.body.children;
 	var baseFM = CNFormManager.getBaseFormManager(); 
@@ -141,7 +141,7 @@ proto._tempHideAllPopups = function() {
 		if(l == baseFM._formPlaceholder || l == this._formPlaceholder) continue;
 
 		var style = Util.getComputedStyle(l);
-		if(style.position == "absolute" && style.display != "none" && style.visibility != "hidden") {
+		if((style.position == "absolute" || style.position == "fixed") && style.display != "none" && style.visibility != "hidden") {
 			l._tempHidden = style.visibility;
 			l.style.visibility = 'hidden';
 		}

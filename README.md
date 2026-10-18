@@ -19,7 +19,9 @@ It records the complete procedure, including the repository-owned launcher,
 New Blue theme/bootstrap requirements, no-popup launch, macOS `launchd`
 Tomcat persistence, Oracle JNDI setup, and
 the disposable `user` / `pass` application administrator. **Do not use
-`ideagz.html` for this route; it launches the historical client path.**
+`ideagz.html` for the Standards Port; it remains available for direct IE7
+comparison against the same server. The application root and `index.html` both
+open the Standards Port.**
 
 For the preserved 2015 IE7 client, use the separate
 [Legacy Bundle build/run profile](docs/restoration/15-javascript-artifacts.md#build-and-run-the-preserved-ie7-client).
