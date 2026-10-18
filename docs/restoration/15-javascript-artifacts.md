@@ -41,14 +41,14 @@ and regenerates the packed Standards Port CSS. It never writes
 
 The checked-in `ideagz.html` still loads the historical `jsCN/forminit.js`
 bootstrap and is not the working Standards Port browser entry point. The
-standards-browser run uses the repository-owned `standards-port-launcher.html`,
+standards-browser run uses the repository-owned `index.html`,
 documented in [`16-standards-port-build-and-run.md`](16-standards-port-build-and-run.md).
 It loads the Standards Port bootstrap and active packed bundle from this
 checkout. The top-level `jsCN/forminit.js` remains the IE-specific Legacy Bundle
 bootstrap and uses `window.attachEvent`; do not load it from the Standards Port
-launcher. `ideagz-legacy.html` remains paired with the Legacy Bundle and its
-historical bootstrap. The Ant static-content allowlist packages both launcher
-paths separately.
+launcher. `ideagz.html` remains paired with the Legacy Bundle and its
+historical bootstrap. The Ant static-content allowlist packages the two
+launchers separately.
 
 ## Preservation path
 
@@ -61,7 +61,7 @@ WebApp/themes-legacy/new-blue/
     preserved pre-port theme assets
 WebApp/src/themes-legacy/new-blue/layout.html
     preserved pre-port theme layout
-WebApp/ideagz-legacy.html
+WebApp/ideagz.html
     launcher that explicitly loads packed-legacy/jscn.js.gz
 ```
 
@@ -92,9 +92,10 @@ python3 restoration-tests/check-legacy-client.py \
 
 The legacy profile stages the preserved JavaScript, packed New Blue CSS,
 images and server-supplied theme layout into their historical serving paths
-**only inside the external workspace**. It also stages the preserved launcher
-as `ideagz.html` so the original `1280.html`, `1024.html` and `full-screen.html`
-wrappers select the Legacy Bundle. It skips the Standards Port JavaScript
+**only inside the external workspace**. It also copies the preserved launcher
+to `index.html` for the root welcome URL, while retaining `ideagz.html`, so the
+original `1280.html`, `1024.html` and `full-screen.html` wrappers select the
+Legacy Bundle. It skips the Standards Port JavaScript
 build. This packages the preserved executable; it does not claim a reproducible
 build of the reconstructed Legacy Source.
 
@@ -119,7 +120,7 @@ http://<Mac-host-address>:18081/openMAXIMS/1280.html
 ```
 
 Allow that wrapper's popup. The historical launcher requires a window name
-starting with `ims`; opening `ideagz-legacy.html` directly may close the page.
+starting with `ims`; opening `ideagz.html` directly may close the page.
 The Standards Port direct launcher is intentionally absent from the legacy
 profile WAR. The default WAR includes preserved assets for reference, but the
 legacy profile is required to select the preserved **server theme layout** as

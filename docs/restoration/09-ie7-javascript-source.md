@@ -36,9 +36,9 @@ On the Standards Port branch, the two source trees are deliberately separate:
 The active bundle is generated at `WebApp/packed/jscn.js.gz`; the preserved
 Legacy Bundle is at `WebApp/packed-legacy/jscn.js.gz`.
 
-The Standards Port uses the standards-compatible `WebApp/ideagz.html`
-bootstrap. The former IE-only launcher is retained as
-`WebApp/ideagz-legacy.html` for Legacy Bundle comparison.
+The Standards Port is served from `WebApp/index.html`. The historical
+`WebApp/ideagz.html` remains available in the same WAR as the Legacy Bundle
+entrypoint, so developers can compare both clients without redirects.
 
 ## Four client artifacts
 
@@ -84,5 +84,6 @@ pre-port New Blue assets are retained under `themes-legacy/`,
 `src/themes-legacy/`, and `packed-legacy/themes/` for preservation and
 comparison.
 
-`ideagz.html` is the active Standards Port launcher.
-`ideagz-legacy.html` explicitly loads `packed-legacy/jscn.js.gz`.
+`index.html` is the active Standards Port launcher.
+`ideagz.html` remains the directly accessible historical launcher and
+loads `packed-legacy/jscn.js.gz`.

@@ -5,10 +5,23 @@ client added by the restoration. The separate **Legacy Bundle** is the 2015
 IE7 client; **Legacy Source** is its reconstructed readable source. The private
 **Ramsay Reference** is not required by this procedure.
 
-Open `standards-port-launcher.html` after deployment. **Do not use `ideagz.html`**:
-it still loads the historical bootstrap. A new install needs the build tools,
+Open the application root or `index.html` after deployment. They open the
+Standards Port. `ideagz.html` remains available for Legacy Bundle comparison.
+A new install needs the build tools,
 a prepared database, and a Tomcat instance. All application sources, build
 scripts, SQL preparation and login seed scripts are in this repository.
+
+The combined WAR intentionally exposes both clients without redirects:
+
+| URL | Client artifact | Purpose |
+|---|---|---|
+| `/openMAXIMS/index.html` | Standards Port | Normal modern-browser run |
+| `/openMAXIMS/ideagz.html` | Legacy Bundle | Direct IE7 comparison run |
+
+This is deliberate: developers can build one WAR and compare the two clients
+against the same server and fixtures. `index.html` is the servlet welcome file;
+`ideagz.html` remains a direct historical entrypoint and is not redirected to
+the Standards Port.
 
 ## 1. Install prerequisites
 
@@ -238,7 +251,7 @@ On Linux, use the platform service manager with the same environment and
 
 Open the repository-owned launcher directly:
 
-**<http://127.0.0.1:18080/openMAXIMS/standards-port-launcher.html>**
+**<http://127.0.0.1:18080/openMAXIMS/index.html>**
 
 Verify visible/editable login inputs, enter **`user` / `pass`**, and confirm
 Patient Search and navigation appear. The existing New Blue dark-blue form
@@ -253,7 +266,7 @@ The optional repository browser check uses Chrome and Python's standard library:
 python3 restoration-tests/check-client-entrypoints.py \
   "$OPENMAXIMS_WORKSPACE/WebApp/openMAXIMS.war"
 python3 restoration-tests/check-standards-browser.py --login \
-  --url http://127.0.0.1:18080/openMAXIMS/standards-port-launcher.html \
+  --url http://127.0.0.1:18080/openMAXIMS/index.html \
   --screenshots /tmp/openmaxims-smoke
 ```
 
@@ -261,6 +274,29 @@ Use `--chrome /path/to/chrome` if needed. It tests login input hit-testing,
 `user`/`pass` authentication, Patient Search geometry, the existing dark-blue
 surface, logout and uncaught JavaScript exceptions. Inspect the screenshots
 and check Safari separately. HTTP 200 alone does not verify a usable UI.
+
+### Browser cache and the Safari symptom
+
+The launcher deliberately does not use fixed, cacheable client URLs. On each
+launch it assigns a cache-generation value and loads both the Standards Port
+bundle and `forminit.js` with that value. The form manager applies the same
+value to the packed New Blue stylesheet. This prevents Safari from combining a
+new WAR with an older `jscn.js.gz` or theme CSS after a rebuild; that mixed state
+can show the old login background and report the CNHost request as an access
+control failure even though the page and servlet are on the same origin.
+
+The launcher also derives the CNHost request as a path on the current origin.
+Do not solve this symptom by adding wildcard CORS headers to CNHost. If the
+console still reports an access-control error after a fresh direct launch,
+confirm that the address is exactly the launcher URL above and that Safari has
+not retained an older tab/frame or a different host/port. A direct POST to
+`/openMAXIMS/CNHost` should return HTTP 200; the repository browser check is the
+repeatable validation.
+
+The Standards Port login does not request the optional `siteLogo.png` asset.
+The repository contains the historical `_siteLogo.png` variants, not a file
+with that active name; a 404 for `themes/new-blue/g/siteLogo.png` therefore
+indicates an old or locally modified client, not a missing database setting.
 
 ## Focus of this repair
 

@@ -362,7 +362,7 @@ http://<application-host>:<application-port>/openMAXIMS/
 
 For the Standards Port browser smoke test, follow
 [`16-standards-port-build-and-run.md`](16-standards-port-build-and-run.md) and
-open the repository-owned `standards-port-launcher.html`. Do not use
+open the repository-owned `index.html`. Do not use
 `ideagz.html` for that test; it launches the historical client path.
 
 The historical `CNHost` endpoint may reject a direct `GET`; that is not by
@@ -382,7 +382,7 @@ forms/images. This confirms the app can start with the Oracle JNDI datasource
 and serve requests. The first browser attempt used `ideagz.html`, which loads
 the historical Legacy Bundle bootstrap and therefore remained on the loading
 message in Safari. The working Standards Port route is the repository-owned
-`standards-port-launcher.html` described in
+`index.html` described in
 [`16-standards-port-build-and-run.md`](16-standards-port-build-and-run.md);
 it is packaged in the WAR separately from the historical launcher. That run
 exposed and fixed the missing `logincontrol_newblue` module,
