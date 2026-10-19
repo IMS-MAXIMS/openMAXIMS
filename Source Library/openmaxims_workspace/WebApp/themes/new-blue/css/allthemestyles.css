@@ -983,6 +983,11 @@ h5{
 .copyrightDiv{
 	position: absolute; top: 2px; right: 8px;
 	font-size: 9px;  
+	/* Standards Port: keep the text inside the 12px bottom-anchored
+	   __si_formBottom item. With the default line-height (~11.5px at 9px)
+	   it overhung the viewport by 1-2px, toggling page scrollbars and
+	   driving a ResizeObserver relayout loop (visible flicker). */
+	line-height: 10px;
 	color: #777;  
 }
 
@@ -3873,6 +3878,11 @@ h1 {
 }
 
 .si_formBottom img {
+  /* Standards Port: block, not inline. As an inline image it sat on a
+     text line box whose descender gap overhung the 12px bottom-anchored
+     __si_formBottom by ~2px, toggling page scrollbars and driving a
+     ResizeObserver relayout loop (visible flicker). */
+  display: block;
   width: 100%;
   height: 12px;
 }
