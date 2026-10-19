@@ -561,11 +561,15 @@
 		<include name="applet/**" />
 		<include name="flash/**" />
 		<include name="jsCN/forminit.js" />
+		<include name="jsCN/source/build/files/forminit.js" />
 		<include name="themes/**" />
 		<include name="packed/**" />
+		<include name="packed-legacy/**" />
+		<include name="themes-legacy/**" />
 		<include name="Certificates/**" />
 		<include name="blank.html" />
 		<include name="ideagz.html" />
+		<include name="index.html" />
 		<include name="1024.html" />
 		<include name="1280.html" />
 		<include name="full-screen.html" />
@@ -635,7 +639,7 @@
 		<include name="knowledge-internal-api-5.5.0.Final.jar" />
 		<include name="mvel2-2.1.3.Final.jar" />		
 		<include name="antlr-runtime-3.1.1.jar" />
-		<include name="org.eclipse.jdt.core_3.4.4.v_894_R34x.jar" />
+		<include name="ecj-4.4.2.jar" />
 		<include name="flatpack-3.1.1.jar" />
 		<include name="slf4j-api-1.5.8.jar" />
 		<include name="slf4j-jcl-1.5.8.jar" />

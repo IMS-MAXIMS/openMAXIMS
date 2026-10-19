@@ -1,0 +1,5456 @@
+.cn_alert_icons {
+	padding: 0;
+	width: 100%;
+	height: 100%;
+	text-align: right;
+}
+
+.cn_alert_icons .leftAlertsButton{
+	position: absolute; top: 2px; left: 0; display: none;
+
+	background: url(../../../themes/new-blue/g/alert-ar-set.png);
+	
+}
+
+.cn_alert_icons .rightAlertsButton{
+	position: absolute; top: 2px; right: 0; display: none;
+	background: url(../../../themes/new-blue/g/alert-ar-set.png);
+	
+}
+
+.cn_alert_icons_w_left {
+	padding-left: 20px;
+}
+.cn_alert_icons_w_left .leftAlertsButton {
+	display: block;
+}
+
+.cn_alert_icons_w_right {
+	padding-right: 20px;
+}
+.cn_alert_icons_w_right .rightAlertsButton {
+	display: block;
+}
+
+.cn_alert_icons .alertsContainer{
+	width: 100%;
+	overflow: hidden; height: 18px; white-space: nowrap; position: relative;
+	text-align: right !important;
+}
+
+.cn_alert_icons .alertsSpan{
+	position: absolute; left: 0px; top: 3px;
+	width: 100%;
+}
+
+.cn_alert_icons .alertsSpan img{
+	cursor: pointer;
+	width: 16px;
+	height: 16px;
+	xl--tooltip-position: move;
+	xl--blend-duration: 200;
+}
+
+.cn_alert_icons .alertsSpan_disabled img{
+	cursor: no-drop;
+}
+.cn_alert_icons .cn_alert_icons_cloned {
+	height: 100%;
+	background: red;
+	width: 100%;
+}
+.cn_answerbox{
+	padding: 1px;
+	cursor: default;
+	display: inline-block;
+		
+	xl--hover-color: #1148AB;
+
+	xl--popup-max-height: 250px;
+	xl--hover-border-color: #316AC5;
+	xl--option-hover-background: highlight;
+	xl--option-hover-color: white;
+	xl--option-hover-
+}
+
+.cn_answerbox .checkSpan{
+	padding: 1px; 
+	border: 1px solid #9DBBE1;
+	background: white;
+}
+
+.cn_answerbox .textSpan{
+	margin-left: 4px;
+}
+
+.cn_answerbox img{
+	margin: 1px;
+}
+.cn_answerbox_disabled {
+  color: #888;
+}
+
+.cn_answerbox_disabled .checkSpan {
+  border-color: #dddddd;
+  background: #e4f0ff;
+  
+}
+.cn_availabilitycontrol{
+	border: 1px solid #9DBBE1;
+	background: white;
+	
+	xl--grid-color: #777777;
+	overflow: hidden;
+}
+
+.cn_availabilitycontrol table{
+	width: 100%;
+	height: 100%;
+	border-collapse: collapse;
+	position: relative;
+}
+
+.cn_availabilitycontrol td{
+	padding: 0px;
+  border: 1px solid #888;
+}
+
+.cn_availabilitycontrol .availbutton{
+	background: none;
+	
+	border: 0px;
+	height: 100%;
+	width: 100%;
+}
+
+.cn_availabilitycontrol .firstColumnTD{
+	background: #E7F2FF;
+	width: 70px;
+	font-weight: bold;
+	text-align: center;
+	border-color: #9EBAE1;
+}
+
+.cn_availabilitycontrol .patternDiv{
+	position: absolute;
+}
+
+.cn_availabilitycontrol td{
+}
+
+.cn_availabilitycontrol .headerTD{
+	background: #2C5FA9;
+	border-color: #4E88DC;
+	border-width: 0px;
+	
+}
+
+.cn_availabilitycontrol .innerGridTD{
+	xl--tooltip-position: move;
+}
+
+.cn_availabilitycontrol .periodDiv_unavail{
+	background: #dddddd;
+	
+}
+
+.cn_availabilitycontrol .periodDiv_avail{
+	background: white;
+}
+
+.cn_availabilitycontrol .periodDiv_booked{
+	
+	background: #7DCF6D;
+}
+
+.cn_availabilitycontrol .periodDiv_pattern{
+	
+	background: #FEDA00;
+}
+
+.cn_availabilitycontrol_disabled,
+.cn_availabilitycontrol_disabled td {
+  border-color: #ddd !important;
+}
+
+.cn_availabilitycontrol_disabled .availbutton {
+  color: #888;
+}
+.cn_barcontrol{
+	border: 1px solid #7F9DB9;
+	padding: 0px;
+	overflow-x: scroll;
+	overflow-y: hidden;
+	
+	cursor: default;
+}
+
+.cn_barcontrol .resourceTable{
+	height: 100%;
+	table-layout: fixed;
+}
+
+.cn_barcontrol .resourceBarTD{
+	height: 100%;
+	width: 32px;
+	position: relative;
+}
+
+.cn_barcontrol .resourceBarDiv{
+	width: 100%;
+	border: 1px solid #66667E;
+	position: absolute;
+	background: white;
+	overflow: hidden;
+		
+}
+
+.cn_barcontrol .resourceNumberTD{
+	border: 1px solid #666692;
+	text-align: center;
+	font-weight: bold;
+	background: #29599E;
+	color: white;
+	xl--tooltip-delay: 0;
+	xl--tooltip-position: move;
+	xl--blend-duration: 250;
+}
+
+.cn_barcontrol .resourceGaugeDiv{
+	width: 100%;
+	position: absolute;
+	overflow: hidden;
+	background: gray;
+		
+}
+
+.cn_barcontrol_disabled {
+  border-color: #dddddd;
+  background: #e4f0ff;
+  
+}
+
+.cn_bookingcalendar{
+	border: 1px solid gray;
+	overflow: hidden;
+	xl-width: 400px;
+	xl-height: 400px;
+}
+
+.cn_bookingcalendar, 
+.cn_bookingcalendar select, 
+.cn_bookingcalendar input, 
+.cn_bookingcalendar td, 
+.cn_bookingcalendar button{
+	font-size: 12px;
+}
+
+.cn_bookingcalendar td{ position: relative; }
+
+.cn_bookingcalendar select{ width: 80px; font-weight: bold; }
+
+.cn_bookingcalendar #topControls td{
+	
+}
+
+.cn_bookingcalendar #topControls .cn_combobox td{
+	
+}
+
+.cn_bookingcalendar #daysTable{
+	width: 100%;
+}
+
+.cn_bookingcalendar #daysTable #header{
+	height: 24px;
+	color: white;
+	font-weight: bold;
+	cursor: default;
+}
+
+.cn_bookingcalendar #daysTable #header td{
+	text-align: center;
+	
+	border-style: none;
+	border-bottom: 1px solid #555555;
+	font-size: 110%;
+}
+
+.cn_bookingcalendar #daysTable td{
+	width: 14%;
+	border: none;
+	border-left: 1px solid #555555;
+	border-bottom: 1px solid #555555;
+}
+
+.cn_bookingcalendar #daysTable #header span{
+	height: 1px;
+	padding: 1px;
+	padding-right: 2px;
+	color: black;
+}
+
+.cn_bookingcalendar #monthSelect{ width: 100px; margin-top: 2px; }
+.cn_bookingcalendar #yearSelect{ width: 44px; font-weight: bold; margin-top: 1px; }
+
+.cn_bookingcalendar #nextMonthButton, 
+.cn_bookingcalendar #prevMonthButton{ 
+	height: 22px; 
+	line-height: 1em;
+	width: 40px;
+}
+
+.cn_bookingcalendar #yearDownButton, 
+.cn_bookingcalendar #yearUpButton{ 
+	height: 10px; width: 22px; 
+}
+
+.cn_bookingcalendar #yearUpButton{ margin-top: 2px; height: 9px; }
+
+.cn_bookingcalendar .arrows7, .cn_bookingcalendar .arrows10{  }
+.cn_bookingcalendar .arrows7{ font-size: 6px; }
+.cn_bookingcalendar .arrows10{ font-size: 14px; }
+
+.cn_bookingcalendar .dayButton, 
+.cn_bookingcalendar .dayDisabled, 
+.cn_bookingcalendar .conflictDay, 
+.cn_bookingcalendar .noSlotsDay{ 
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	
+	width: 70%;
+	height: 50%;
+	line-height: 1em;	
+		
+	background: none; 
+}
+
+.cn_bookingcalendar .dayButton{
+	border: 1px outset #eee;
+	background: #ACD7FF;
+	
+}
+
+.cn_bookingcalendar .dayDisabled{
+	text-align: center;
+	padding: 2px;
+}
+
+.cn_bookingcalendar .rebookedCheckbox, 
+.cn_bookingcalendar .bookedCheckbox{
+	position: absolute;
+	font-family: wingdings;
+	font-size: 14px;
+	font-weight: normal;
+	line-height: 0.75em;
+	cursor: default;
+	xl--hover-color: #1148AB;
+}
+
+.cn_bookingcalendar .bookedCheckbox{
+	top: 64%;
+	left: 15%;
+	color: black;
+}
+
+.cn_bookingcalendar .checksDisabled .bookedCheckbox {
+	color: gray;
+}
+
+.cn_bookingcalendar .rebookedCheckbox{
+	top: 64%;
+	left: 42%;
+	color: gray;
+}
+
+.cn_bookingcalendar .gauge{
+	position: absolute;
+	top: 1px;
+	right: 1px;	 
+	
+	height: 90%;
+	width: 20%;
+	overflow: hidden;
+	
+	border: 1px solid black;
+	background: white;
+}
+
+.cn_bookingcalendar .gaugeBar{
+	position: absolute;
+	bottom: -1px;
+	left: 0px;
+	width: 100%;
+	overflow: hidden;
+	background: #5090ff;
+}
+
+.cn_bookingcalendar .empty{
+	background: white;
+	
+}
+
+.cn_bookingcalendar td.beforeTodayDay{
+	background: #ddd;
+}
+
+.cn_bookingcalendar td.beforeTodayDay button{
+	 
+	background: #E1DBDF;	
+	border: 1px outset #eee;
+}
+
+
+.cn_bookingcalendar td.todayDay,
+.cn_bookingcalendar .normalDay{
+	background: #ACD7FF;
+}
+
+.cn_bookingcalendar .conflictDay{
+	background: red;
+	
+	color: yellow;
+	border-width: 1px;
+	border-color: #FFC0CB;
+}
+
+.cn_bookingcalendar .noSlotsDay{
+	background: #F5DEB3;
+	border-width: 1px;
+	border-color: #000000;
+	color: black !important;
+}
+
+.cn_bookingcalendar .selectedDay{
+	background: #6090FF;
+}
+.cn_bookingcalendar .selectedDay button{
+	color: black;
+	font-weight: bold;
+}
+
+.cn_bookingcalendar .cn_combobox{
+	width: 100px;
+	font-weight: bold;
+}
+
+
+.cn_bookingcalendar_disabled {
+  border-color: #ddd;
+}
+.cn_button{
+	
+	xl--hover-endcolorstr: #b0bFe7;
+	xl--hover-border-color: #316AC5;
+	font-weight: bold;
+	white-space: normal;
+}
+
+.cn_button span{
+	cursor: default;
+	width: 100%;
+}
+
+.cn_button span.dropdown {
+	background: url(../../../themes/new-blue/g/but-drop-down-1.gif) no-repeat right;
+	padding-right: 11px;
+}
+
+.cn_button span.cn_button_hover {
+	background: url(../../../themes/new-blue/g/but-drop-down-hover-1.gif) no-repeat right !important;
+}
+
+
+.cn_round_button {
+	
+	text-align: center;
+	padding-right: 1px;
+	padding-bottom: 1px;
+	overflow: hidden;
+}
+.cn_round_button v\:roundrect {
+	width: 100%; height: 100%;
+	margin: 0;
+	padding: 0;
+	margin-bottom: -2px;
+	margin-right: -2px;
+}
+
+.cn_round_button_hover {
+	text-decoration: underline;
+}
+.cn_round_button_disabled {
+	color: #aaa !important;
+}
+
+.cn_round_button .text_cont {
+	position: absolute; top: 50%; left: 0;
+	width: 100%;
+}
+.cn_round_button .text {
+	position: relative; top: -50%; width: 100%;
+	cursor: default;
+	font-weight: bold;
+}
+
+.cn_round_button .dropdown {
+	background: url(../../../themes/new-blue/g/but-drop-down-1.gif) no-repeat right;
+	padding-right: 11px;
+}
+
+.cn_round_button_hover .dropdown {
+	background: url(../../../themes/new-blue/g/but-drop-down-hover-1.gif) no-repeat right !important;
+}
+.cn_checkbox{
+	cursor: default;
+	display: inline-block;
+	white-space: nowrap;
+}
+
+.cn_checkbox .textSpan{
+	margin-left: 4px;
+}
+.cn_checkbox_disabled {
+  color: #888;
+}
+.cn_checkedlistbox{
+	border: 1px solid #7F9DB9;
+	overflow: auto;
+	background: white;
+	cursor: default;
+}
+
+.cn_checkedlistbox .checkBoxSpan{
+	font-family: wingdings;
+	font-size: 17px;
+	height: 1em;
+	overflow: hidden;
+	padding-left: 2px;
+	padding-right: 2px;
+	xl--hover-color: #1148AB;
+	vertical-align: top;
+	float: left;
+}
+
+.cn_checkedlistbox .iconImg{
+	vertical-align: top;
+	float: left;
+}
+
+.cn_checkedlistbox .textSpan{
+	position: relative;
+	margin-left: 2px;
+	padding: 2px;
+	float: left;
+}
+
+.cn_checkedlistbox .itemDiv,
+.cn_checkedlistbox .itemDivSelected,
+.cn_checkedlistbox .itemDivOver{
+	position: relative;
+	display: inline-block;
+}
+
+.cn_checkedlistbox .itemDivSelected .textSpan{
+	background: #316AC5;
+	color: white;
+	
+}
+
+
+.cn_checkedlistbox .itemDivOver .textSpan{
+	text-decoration: underline;
+}
+
+
+.cn_grid .cn_checkedlistbox{
+	border: none;
+}
+
+.cn_grid .cn_checkedlistbox img{
+	margin-top: 2px;
+}
+
+.cn_grid .readOnly .cn_checkedlistbox{
+	background: transparent;
+}
+
+.cn_grid .checkedlistbox_table td{
+	padding: 0;
+	margin: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.cn_checkedlistbox_disabled {
+  border-color: #dddddd;
+  background: #e4f0ff;
+}
+.cn_combobox{
+	
+	
+	display: inline;
+	background: white;
+	text-align: left;
+	white-space: nowrap;
+
+	cursor: default; 
+	overflow: hidden;
+	
+	border: 1px solid #9DBBE1;
+
+	xl--disabled-border-color: #dddddd;
+	xl--popup-max-height: 250px;
+	xl--hover-border-color: #316AC5;
+	xl--option-hover-background: #316AC5;
+	xl--option-hover-color: white;
+	xl--option-hover-
+
+	z-index: 1;
+}
+
+.cn_combobox .xlcomboTD1{
+	padding-left: 2px;
+	padding-right: 1px;
+	vertical-align: middle;
+	
+}
+
+.cn_combobox .xlcomboTD1 div{ 
+	overflow: hidden; 
+	height: 1.2em; 
+	padding-top: 1px;
+	white-space: nowrap;
+	height: 16px; 
+}
+
+.cn_combobox .xlcomboTD2{
+	width: 14px;
+
+	font-size: 10px;
+	font-weight: normal;
+	font-style: normal;
+	text-align: center;
+	
+	color: black;
+
+	xl--hover-
+	xl--hover-background-color: #9DBBE1;
+}
+
+.cn_combobox .xlcomboinput{
+	border-width: 0px;
+	width: 100%;
+	height: 100%;
+}
+
+.cn_comboboxPopup{
+	position: absolute; padding: 1px; cursor: default; 
+	border: 1px solid #9DBBE1;
+	display: none; 
+	background: white; 
+	xl--shadow-offset: 1;
+	xl--shadow-opacity: .1;
+
+}
+html {
+	overflow: auto !important;
+}
+body{
+	 
+	margin: 0;
+	overflow: auto !important; 
+
+	background: #e4f0ff;
+
+	scrollbar-3dlight-color: #6AA8EF;
+	scrollbar-darkshadow-color: #6AA8EF;
+	scrollbar-shadow-color: white;
+	scrollbar-highlight-color: white;
+	scrollbar-face-color: #6AA8EF;
+	scrollbar-arrow-color: white;
+
+	xl--tooltip-background: #F0F0F5; 
+	xl--tooltip-border: 1px solid #6E6D8F;
+	xl--tooltip-color: black;
+}
+
+body *{
+	scrollbar-3dlight-color: #B9CDFB;
+	scrollbar-darkshadow-color: #B9CDFB;
+	scrollbar-shadow-color: white;
+	scrollbar-highlight-color: white;
+	scrollbar-face-color: #B9CDFB;
+	scrollbar-arrow-color: white;
+	
+	xl--disabled-background: #e4f0ff;
+}
+
+body, td, input, select, button, textarea{ font-family: tahoma; font-size: 11px; }
+
+@media print{
+	body{
+		background: white;
+		background-image: none;
+	}
+}
+
+v\:*{  }
+
+#cn_globalPlaceholder{ width: 100%; height: 100%; }
+
+form{ margin: 0px; }
+
+a{ color: black; }
+
+input, textarea{ border: 1px solid #7F9DB9; }
+input{ line-height: 15px; }
+
+xl\:combobox{ vertical-align: middle; }
+
+button, .button{
+	background: #4D87DB;
+	border: 1px solid #dddddd;
+
+	
+	color: black;
+	
+	xl--hover-endcolorstr: #b0bFe7;
+	xl--hover-border-color: #316AC5;
+	
+	font-weight: bold;
+}
+
+h1, h2, h3{
+	margin: 0px; 
+}
+
+h1{ 
+	font-size: 22px;
+	font-weight: bold;
+}
+
+h2{ font-size: 16px; }
+
+h3{ 
+	font-size: 13px; 
+}
+
+h5{
+	margin: 0px; 
+	font-size: 13px;
+	font-weight: bold;
+	color: #3F3D3D;
+	display: inline-block;
+}
+
+.blue{ color: #3F3D3D; }
+
+.small td{ font-size: 10px; }
+
+.hoverable{ text-decoration: none; color: #d3e3ff; cursor: pointer; }
+.hoverable:hover{ text-decoration: underline; color: white; }
+.hoverable img{ margin-right: 4px; }
+
+
+/* Top buttons */
+
+.topRightControls{
+	color: white;
+	white-space: nowrap;
+}
+.topRightControls_disabled a { cursor: no-drop; }
+.topRightControls a{
+	position: relative;
+	margin-left: 8px;
+}
+
+.topButtonsMoreDiv{
+	cursor: default;
+	visibility: hidden;
+	position: absolute; 
+	top: 0px; left: 0px; height: 10px; width: 10px; 
+	overflow: hidden; 
+	z-index: 1000; 
+
+	border: 1px solid #416ca2; 
+	background: #416ca2;
+}
+
+.moreButton, .topButton{
+	font-weight: bold; 	
+	display: inline-block;
+	 
+	color: white;
+	position: relative;
+	height: 25px;
+	vertical-align: middle;
+	text-decoration: none;
+}
+.moreButton{ padding-top: 5px; }
+
+.moreButton img, .topButton img{ margin-right: 4px; }
+.topButton img{ display: none; vertical-align: middle; }
+.moreButton img{ border: 0; width: 7px; height: 7px; vertical-align: middle; margin-top: 2px; }
+
+.topButton .imgSpan{
+	
+	display: none;
+	width: 24px; height: 24px;
+	vertical-align: middle;
+	margin-right: 4px;
+}
+
+.topButton span{
+	color: white;
+}
+
+.topButtonsMoreDiv .topButton{
+	display: inline-block;
+	margin: 0;
+}
+
+
+.topButtonsMoreDiv .sectionCaptionDiv{
+	display: block;
+	padding: 4px;
+	color: #d3e3ff;
+	position: relative;
+}
+
+.topButtonsMoreDiv .sectionCaptionLine{
+	position: absolute;
+	top: 11px;
+	left: 0px;
+	height: 1px;
+	overflow: hidden;
+	background: #92AED1;
+	z-index: -1;
+}
+
+.topButtonsMoreDiv .sectionCaptionText{
+	z-index: 1;
+	background: #416ca2;
+	padding-right: 8px;
+}
+
+.dialogFormHeaderTextCont {
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+
+.ims_horizontal_line{
+	border-style: none;
+	overflow: hidden;
+	background-color:#AEADC5;
+}
+
+.ims_horizontal_line2{
+	border-style: none;
+	overflow: hidden;
+	
+}
+
+/* Blue dialog-form buttons. */
+.dialogTopButton{
+	width: 15px; 
+	height: 15px; 
+	overflow: hidden;
+	padding: 1px;
+	color: white; 
+	text-decoration: none; 
+	font-size: 13px; 
+	position: absolute;
+	top: 6px;
+	 
+	font-weight: bold; 
+	cursor: default; 
+	display: inline-block;
+}
+
+.dialogTopButton span{
+	position: relative;
+	top: -3px;
+	left: -1px;
+}
+
+.dialogCloseButton{
+	right: 6px;
+}
+
+.dialogMaxButton{
+	right: 24px;
+}
+
+.dialogTopButtonHover{
+	border: 1px solid white;
+	padding: 0px;
+}
+
+
+/* Toolbar stuff. */
+
+.cnToolbar .button_normal,
+.cnToolbar .button_normalHover,
+.cnToolbar .button_normalDown,
+.cnToolbar .button_pushed,
+.cnToolbar .button_pushedHover,
+.cnToolbar .button_pushedDown,
+.cnToolbar .button_disabled{
+	cursor: default;
+	height: 22px;
+	width: 22px;
+	overflow: hidden;
+}
+
+.cnToolbar .button_normal{ 
+	border: 0px;
+	background: none; 
+	
+	padding: 3px;
+}
+
+.cnToolbar .button_normalHover{ 
+	padding: 2px;
+	border: 1px solid #7F9DB9;
+	background: #eeeeee; 
+	
+}
+
+.cnToolbar .button_normalDown{ 
+	padding: 2px;
+	border: 1px solid #316AC5; 
+	background: #eeeeee; 
+	
+}
+
+.cnToolbar .button_pushed{ 
+	padding: 2px;
+	border: 1px solid #214Aa5; 
+	background: white;
+}
+
+.cnToolbar .button_pushedHover{ 
+	padding: 2px;
+	border: 1px solid #214Aa5; 
+	background: #7A92C2;
+	
+}
+
+.cnToolbar .button_pushedDown{ 
+	padding: 2px;
+	border: 1px solid #214Aa5; 
+	background: #7A92C2; 
+	 
+}
+
+.cnToolbar .button_disabled{ 
+	padding: 3px;
+	border: 0px; 
+	background: none; 
+	
+}
+	
+.cnToolbar .cnToolbarSeparator{
+	vertical-align: top;
+	overflow: hidden;
+	margin-top: 2px;
+	height: 20px;
+	width: 2px;
+	border-left: 1px solid #B3B6CE;
+	border-right: 1px solid #F4F4F8;
+	margin-left: 2px;
+	margin-right: 2px;
+}								   
+
+
+#formCaption1{
+	font-family: verdana;
+	color: white;
+	white-space: nowrap;
+}
+
+#xlToolTipFrame{
+	
+}
+
+.cnFormDialogDiv{
+	background: #4D87DB repeat-y;
+}
+
+.copyrightDiv{
+	position: absolute; top: 2px; right: 8px;
+	font-size: 9px;  
+	/* Standards Port: keep the text inside the 12px bottom-anchored
+	   __si_formBottom item. With the default line-height (~11.5px at 9px)
+	   it overhung the viewport by 1-2px, toggling page scrollbars and
+	   driving a ResizeObserver relayout loop (visible flicker). */
+	line-height: 10px;
+	color: #777;  
+}
+
+.dialog_about{
+	background: #ECE9D8;
+	
+}
+
+
+.cnRequiredIconSpan{
+	position: absolute; color: red; font-size: 16px; line-height: 16px; cursor: default;
+} 
+
+
+.tooltipPopup{
+	
+	border: 1px solid infotext; background: infobackground; 
+	color: infotext; 
+	padding: 2px; font-size: 11px; 
+	position: absolute; top: 0; left: 0; display: none;
+} 
+
+
+.hoverRect{
+	top: 0; 
+	left: 0; 
+	position: absolute; 
+	width: 100px; 
+	height: 21px; 
+	visibility: hidden;
+}
+
+
+.dialogFormHeaderDiv {
+	position: absolute; 
+	left: -10px; top: -14px; 
+	right: -10px; 
+	height: 28px;
+	overflow: hidden;
+}
+.withDarkHeader .dialogFormHeaderDiv {
+	height: auto;
+}
+
+.dialogFormHeaderTextCont {
+	position: absolute;
+	right: 10px;
+	top: 7px;
+	color: white;
+	font-weight: bold;
+	text-align: right;
+	font-size: 12px;
+	padding-left: 140px;
+	width: 100%;
+}
+
+div.hr {
+	height: 1px;
+	overflow: hidden;
+	background: #ddd;
+}
+
+h1 {
+	line-height: 48px;
+}
+
+
+
+
+
+.cnPopupDialogDiv{
+	border: 1px solid #787893;
+	background: white;
+	position: absolute;
+	width: 400px;
+	height: 300px;
+	
+}
+
+.cnPopupDialogDiv .cnPopupDialogCaption{
+	color: white;
+	cursor: move;
+	font-weight: bold;
+	font-size: 13px;
+	padding: 2px;
+	width: 100%;
+	background: #275497;
+	
+	border-bottom: 1px solid #787893;
+	position: relative;
+	z-index: 1;
+}
+
+.cnPopupDialogDiv .cnDialogCloseButton{
+	width: 15px;
+	height: 15px;
+	overflow: hidden;
+	padding: 1px;
+	color: white;
+	text-decoration: none;
+	font-size: 13px;
+	position: absolute;
+	
+	font-weight: bold;
+	cursor: default;
+	top: 2px;
+	right: 2px;
+	z-index: 1;
+}
+
+.cnPopupDialogDiv .cnDialogCloseButton span{
+	position: relative;
+	top: -3px;
+}
+
+.cnPopupDialogDiv .cnDialogButton{
+	position: absolute;
+}
+.cnPopupDialogDiv  .dialogContOuter{
+	position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+	padding: 20px 0px 0px 0px;
+}
+
+.cnPopupDialogDiv  .dialogBottom{
+	position: absolute; width: 100%; left: 0; bottom: 0px; text-align: right; padding: 4px 0 4px 4px;
+}
+
+.cnPopupDialogDiv  .dialogIcon{
+	position: absolute; top: 26px; left: 5px;
+}
+
+.control_on_darkHeader {
+  color: white;
+}
+.containerElementOuter {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 22px 6px 6px 6px;
+}
+
+.containerElement {
+  position: relative;
+  height: 100%;
+  /* NOTE: no width: 100% - that makes container not to be resized properly initially. */
+}
+
+.cnCollapseButton{
+  position: absolute; top: 5px; right: 6px; z-index: 2;
+}
+
+.cn_panel_collapsed {
+  cursor: pointer;
+}
+
+.cn_panel_collapsed .text {
+  top: 10px;
+}
+.cn_panel_collapsed .cnCollapseButton {
+  top: 7px;
+}
+.controlShadow {
+  position: absolute;
+  background: black;
+}
+.cn_datebox{ 
+	xl--disabled-border-color: #dddddd; 
+	xl--disabled-
+}
+.cn_datebox input{ width: 100%; }
+.cn_datebox .buttonTD{ width: 22px; }
+.cn_datebox button{ margin-left: 2px; width: 21px; height: 21px; }
+.cn_datebox img{ margin-top: 1px; margin-left: 1px; }
+
+.cn_grid .cn_datebox{
+	margin: 0;
+	border: 1px solid #9DBBE1; 
+	position: absolute;
+	margin-top: -1px;
+	background: white;
+}
+
+.cn_grid .cn_datebox td{
+	padding: 0 !important;
+}
+
+.cn_grid .cn_datebox input{
+	border: 0;
+	margin: 0 !important;
+	padding: 0;
+	padding-left: 3px;
+	height: 14px;
+	margin-top: -1px;
+}	
+
+.cn_grid .cn_datebox .cn_timebox{
+	border: 0;
+	border-left: 1px solid #9DBBE1 !important;
+}
+
+.cn_grid .cn_datebox .buttonTD{ width: 20px; }
+
+.cn_grid .cn_datebox button{ margin-left: 2px; width: 15px; height: 15px; border: 0px; }
+
+.cn_grid .cn_datebox .cn_timebox input{
+	padding-right: 2px !important;
+	width: 16px;
+}
+
+.cn_datebox_disabled input {
+  border-color: #dddddd;
+  background: #e4f0ff;
+}
+
+.cn_datebox_disabled button {
+  border-color: #dddddd;
+  background: #e4f0ff;
+  
+}
+.cn_designcanvas {
+	border: 1px solid #9DBBE1;
+	overflow: auto;
+	background: #f5f5f5;
+}
+
+.cn_designcanvas .canvas {
+	position: relative;
+	margin: 2px;
+	width: 1000px;
+	height: 1000px;
+	background: #e4f0ff;
+	overflow: hidden;
+}
+
+.cn_designcanvas .canvas_grid_16x16 {
+	background-image: url(../../../g/grid-16x16.gif);
+}
+
+.cn_designcanvas .cnToolbar{
+	overflow: hidden;
+	background: #eeeeee;
+	height: 24px;
+	
+	border: 1px solid white;
+	border-bottom: 1px solid #C6C6D9;
+}
+.cn_designcanvas .cnToolbar .controlSelect {
+	width: 250px;
+	top: 1px;
+	right: 4px;
+	position: absolute;
+}
+
+.cn_designcanvas_control_contextmenu {
+	width: 180px;
+}
+.cn_designMode_wrapper {
+	position: absolute;
+    cursor: move;
+	z-index: 10000;
+}
+.cn_designMode_wrapper_hover {
+	border: 2px dotted #888;
+}
+
+.cn_designMode_wrapper_selected {
+	border: 2px dashed #888;
+}
+
+.cn_designMode_wrapper .inner {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	background: white;
+	
+}
+
+.cn_designMode_wrapper_toCanvas {
+	border: 0;
+}
+
+/* Property dg2 row classes */
+.designMode_row_common {
+	background: #f5f5f5;
+}
+.designMode_row_form {
+	background: #eff;
+}
+.designMode_row_data {
+}
+.cn_diary{
+	position: absolute;
+	border: 1px solid #9DBBE1; 
+	overflow: hidden;
+	cursor: default;
+}
+
+.cn_diary .header{
+	height: 51px;
+	
+	border-bottom: 1px solid #9DBBE1;
+}
+
+.cn_diary .butBG{
+	margin-top: 1px;
+	margin-left: 1px;
+	display: inline-block;
+	padding-top: 1px;
+}
+
+.cn_diary .b1, .cn_diary .b2{
+	width: 25px;
+	height: 25px;
+}
+
+.cn_diary .header .textSpan{
+	vertical-align: top;
+	position: relative;
+	top: 7px;
+	left: 7px;
+	color: #444;
+	font-weight: bold;
+}
+
+.cn_diary .dataHeader3mView{
+	border-top: 1px solid #9DBBE1;
+	background: #E3EFFF;
+	height: 21px;
+	width: 100%;
+	table-layout: fixed;
+	border-collapse: collapse;
+}
+
+.cn_diary .dataHeader3mView td{
+	padding-left: 4px;
+	font-weight: bold;
+	color: #444;
+}
+
+.cn_diary .scrollArea3mView{
+	overflow: auto;
+	height: 10px;
+	background: white;
+}
+
+.cn_diary .table3mView{
+	width: 100%;
+	table-layout: fixed;
+	border-collapse: collapse;
+}
+
+.cn_diary .table3mView tr{
+	height: 33px;
+}
+
+.cn_diary .table3mView tr td{
+	border-bottom: 1px solid #6593CF;
+}
+
+.cn_diary .table3mView .td1{
+	background: #F1F8FF;
+	font-size: 13px;
+	color: #65A4E8;
+	border-right: 1px solid #6593CF;
+}
+
+.cn_diary .noDayTD{
+	background: #E4F0FF;
+}
+
+.cn_diary .dayOffTD{
+	background: #F1FCFD;
+	
+}
+
+.cn_diary .table3mView .cellDiv{
+	height: 100%;
+	overflow: auto;
+	margin-left: 16px;
+}
+
+.cn_diary .daySpan{
+	float: left;
+	height: 10px;
+	width: 18px;
+	font-size: 13px;
+	color: #65A4E8;
+	padding: 0px 1px 1px 1px;
+}
+
+.cn_diary .table3mView .eventDiv{
+	padding: 1px 2px 1px 2px;
+}
+
+.cn_diary .table3mView .eventDivWithBorder{
+	border-bottom: 1px solid #E6EDF7;
+}
+
+.cn_diary .eventDiv img{
+	vertical-align: middle;
+	margin-right: 3px;
+}
+
+.cn_diary .hoverRect{
+	z-index: -1;
+}
+
+
+.cn_diary_disabled {
+  border-color: #dddddd;
+}
+
+.cn_diary_disabled td {
+  background: #e4f0ff;
+}
+
+.cn_diary_disabled .td1,
+.cn_diary_disabled .textSpan,
+.cn_diary_disabled .dataHeader3mView td,
+.cn_diary_disabled td *{
+  color: #888 !important;
+}
+.cn_drawingcontrol{
+	border: 1px solid #9DBBE1;
+	background: white;
+}
+
+.cn_drawingcontrol .canvasToolbar{
+	border-left: 1px solid #9DBBE1;
+	
+}
+
+
+.cn_drawingcontrol .button_normal{ 
+	margin: 0px;
+	padding: 3px; 
+	border: 0px; 
+	background: none; 
+	
+}
+
+.cn_drawingcontrol .button_disabled{ 
+	margin: 0px;
+	padding: 3px; 
+	border: 0px; 
+	
+}
+
+.cn_drawingcontrol .button_normalHover{ 
+	margin: 0px;
+	padding: 2px; 
+	border: 1px solid #316AC5;
+	background: #eeeeee; 
+	display: inline-block;
+	
+}
+
+.cn_drawingcontrol .button_normalDown{ 
+	margin: 0px;
+	padding: 2px; 
+	display: inline-block;
+	border: 1px solid #316AC5; 
+	background: #eeeeee;  
+	
+}
+
+.cn_drawingcontrol .button_pushed{ 
+	margin: 0px;
+	padding: 2px; 
+	border: 1px solid #214Aa5; 
+	background: white;
+	display: inline-block;
+}
+
+.cn_drawingcontrol .button_pushedHover{ 
+	margin: 0px;
+	padding: 2px; 
+	border: 1px solid #214Aa5; 
+	 
+	display: inline-block;
+}
+
+.cn_drawingcontrol .button_pushedDown{ 
+	margin: 0px;
+	padding: 2px; 
+	border: 1px solid #214Aa5; 
+	background: #214Aa5;
+	 
+	display: inline-block;
+}
+
+
+.cn_drawingcontrol .spanButton_normal, 
+.cn_drawingcontrol .spanButton_disabled,
+.cn_drawingcontrol .spanButton_normalHover,
+.cn_drawingcontrol .spanButton_normalDown,
+.cn_drawingcontrol .spanButton_pushed,
+.cn_drawingcontrol .spanButton_pushedHover,
+.cn_drawingcontrol .spanButton_pushedDown{
+	width: 16px;
+	height: 16px;
+	background: none; 
+	padding: 1px; 
+	border: 0px; 
+	
+	margin: 0px;
+}
+
+.cn_drawingcontrol .spanButton_normal{ 
+}
+
+.cn_drawingcontrol .spanButton_disabled *{ 
+	
+}
+
+.cn_drawingcontrol .spanButton_normalHover{ 
+	padding: 0px; 
+	border: 1px solid #316AC5;
+	background: #eeeeee; 
+	
+}
+
+.cn_drawingcontrol .spanButton_normalDown{ 
+	padding: 0px; 
+	border: 1px solid #316AC5; 
+	background: #eeeeee; 
+	
+}
+
+.cn_drawingcontrol .spanButton_pushed{ 
+	padding: 0px; 
+	border: 1px solid #214Aa5; 
+	background: white;
+}
+
+.cn_drawingcontrol .spanButton_pushedHover{ 
+	padding: 0px;
+	border: 1px solid #214Aa5; 
+	 
+}
+
+.cn_drawingcontrol .spanButton_pushedDown{ 
+	padding: 0px; 
+	border: 1px solid #214Aa5; 
+	background: #ff4444; 
+	 
+}
+
+.cn_drawingcontrol .contextButtonsDiv{
+	position: absolute;
+	visibility: hidden;
+	bottom: 18px;
+	right: 125px;
+	height: 20px;
+		
+}
+
+.cn_drawingcontrol button{
+	background: #F4F4F8;
+}
+
+.cn_drawingcontrol .contextButtonsDiv button{
+	height: 20px;
+	width: 75px;
+	fontSize: 10px;
+	border-color: white;
+}
+
+.cn_drawingcontrol .contextButtonsDiv button img{
+	margin-right: 3px;
+}
+
+.cn_drawingcontrol .statusBar{
+	background: #CFE5FF;
+	
+	position: absolute;
+	padding: 2px;
+	padding-left: 4px;
+	cursor: default;
+	left: 0px;
+	width: 100%;
+	border-top: 1px solid #9DBBE1;
+}
+
+
+.cn_drawingconfigcontrol{
+	border: 1px solid #9DBBE1;
+	background: white;
+}
+.cn_drawingconfigcontrol table {
+  table-layout: fixed;
+}
+
+.cn_drawingconfigcontrol .content{
+	width: 100%;
+	height: 100%;
+	position: relative;
+	overflow: auto;
+}
+
+.cn_drawingconfigcontrol .cn_tree{
+	width: 200px;
+	height: 100%;
+	border-top: 0px;
+	border-left: 0px;
+	border-bottom: 0px;
+}
+
+
+.cn_drawingcontrol_printPageDiv{
+	 
+	border: 1px solid #ddd; 
+	width: 912px; 
+	height: 672px;
+	overflow: hidden;
+	font-family: arial;
+}
+
+.cn_drawingcontrol_printPageDiv v\:shape.markerArea{
+	display: none;
+}
+
+.cn_drawingcontrol_titleDiv, .cn_drawingcontrol_subTitleDiv{
+	width: 710px;
+	background: #eee;
+	position: absolute;
+	text-align: center;
+}
+
+.cn_drawingcontrol_titleDiv{
+	font-size: 14px;
+	top: -8px;
+	left: -8px; // ?
+	padding-top: 2px;
+	padding-bottom: 8px;
+}
+
+.cn_drawingcontrol_subTitleDiv{
+	top: 24px;
+	left: 0px;
+	font-size: 14px;
+	text-align: center;
+}
+
+.cn_drawingcontrol_disabled,
+.cn_drawingconfigcontrol_disabled {
+  border-color: #dddddd;
+  color: #888;
+}
+
+.cn_dynamicgrid{ 
+	border: 1px solid #9DBBE1; 
+	background: white;
+	
+}
+
+.cn_dynamicgrid .contentDiv{
+	width: 100%;
+	overflow: auto;
+}
+
+.cn_dynamicgrid table{
+	table-layout: fixed;
+	border-collapse: collapse;
+	border: 0px;
+}
+
+.cn_dynamicgrid td{
+	padding: 2px;
+}
+
+
+.cn_dynamicgrid .contentTable td{
+	border-bottom: 1px solid #eeeeee;
+}
+
+.cn_dynamicgrid .captionTable{
+	border-bottom: 1px solid #9DBBE1;
+}
+
+.cn_dynamicgrid .captionTable td{
+	font-weight: bold; 
+	background: #D6D7E0; 
+	
+}
+
+.cn_dynamicgrid .leftBorder, 
+.cn_dynamicgrid .topBorder, 
+.cn_dynamicgrid .bottomBorder, 
+.cn_dynamicgrid .rightBorder{
+	position: absolute;
+	visibility: hidden;
+	overflow: hidden;
+	top: 0px;
+	left: 0px;
+}
+
+.cn_dynamicgrid .leftBorder{ background: #316AC5; }
+.cn_dynamicgrid .rightBorder{ background: #EBF0F9; }
+.cn_dynamicgrid .leftBorder, .cn_dynamicgrid .rightBorder{ width: 2px; }
+.cn_dynamicgrid .topBorder, .cn_dynamicgrid .bottomBorder{ 
+	height: 2px;
+	
+}
+
+.cn_dynamicgrid_disabled {
+  border-color: #ddd;
+  background: #e4f0ff;
+}
+.cn_floorplanner, .cn_bedplanner{
+	border: 1px solid #9DBBE1;
+	overflow: hidden;
+}
+
+.cn_floorplanner .drawingArea, .cn_bedplanner .drawingArea{
+	background: url(../../../g/grid-back-1.gif);
+}
+
+.cn_floorplanner .canvasToolbar, .cn_bedplanner .canvasToolbar{
+	border-left: 1px solid #bbbbcc;
+	border-top: 1px solid #9DBBE1;
+	background: #c1d9f2;
+	
+}
+
+
+.cn_floorplanner .button_normal,
+.cn_bedplanner .button_normal{ 
+	margin: 1px; 
+	border: 0px; 
+	background: none; 
+	
+}
+
+.cn_floorplanner .button_normalHover,
+.cn_bedplanner .button_normalHover{ 
+	margin: 0px;
+	border: 1px solid #316AC5;
+	background: #eeeeee;
+	
+}
+
+.cn_floorplanner .button_normalDown,
+.cn_bedplanner .button_normalDown{ 
+	margin: 0px; 
+	border: 1px solid #316AC5; 
+	background: #eeeeee; 
+	
+}
+
+.cn_floorplanner .button_pushed,
+.cn_bedplanner .button_pushed{ 
+	margin: 0px; 
+	border: 1px solid #214Aa5; 
+	background: white;
+}
+
+.cn_floorplanner .button_pushedHover,
+.cn_bedplanner .button_pushedHover{ 
+	margin: 0px;
+	border: 1px solid #214Aa5; 
+	 
+}
+
+.cn_floorplanner .button_pushedDown,
+.cn_bedplanner .button_pushedDown{ 
+	margin: 0px; 
+	border: 1px solid #214Aa5; 
+	background: #ff4444; 
+	 
+}
+
+
+.cn_floorplanner .markerButtonHover,
+.cn_bedplanner .markerButtonHover{
+	background: #eeeeee;
+	
+}
+
+.cn_floorplanner .markerButtonDown,
+.cn_bedplanner .markerButtonDown{
+	background: white;
+	
+}
+
+.cn_floorplanner .toolBarVerticalSeparator,
+.cn_bedplanner .toolBarVerticalSeparator{
+	vertical-align: bottom;
+	width: 2;
+	height: 100%;
+	margin-left: 16;
+	margin-right: 16;
+	
+}
+
+
+.cn_bedplanner .toolTip{ 
+	z-index: 1000;
+
+	background: #F0F0F5; 
+	border: 1px solid #6E6D8F;
+	color: black;
+	
+	font-family: tahoma;
+	padding: 2px;
+	font-size: 11px; 
+	position: absolute;
+	visibility: hidden;
+	
+}
+
+.cn_list{
+	background: white;
+	width: 100%;
+	height: 100%;
+	border-right: 1px solid #9DBBE1;
+}
+
+.cn_list .contentDiv{
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+}
+
+.cn_list .headerTD{
+	height: 20px;
+	
+	border-bottom: 1px solid #9DBBE1; 
+	font-weight: bold;
+	padding: 3px;
+}
+
+.cn_list .listItemDiv{
+	padding: 2px;
+	width: 100%;
+	cursor: default;
+
+	xl--selected-background: #316AC5; 
+	xl--selected-color: white;
+	xl--selected-
+}
+
+.cn_list .textSpan, .cn_list .textEditSpan{
+	padding: 2px;
+	display: inline-block;
+	white-space: nowrap;
+}
+
+.cn_list .textEditSpan{
+	padding: 1px;
+	border: 1px solid black;
+	background: white;
+	color: black;
+}
+
+.cn_bedplanner .imgRect {
+	width: 16px;
+}
+.cn_bedplanner .imgRect .noImg {
+	background: white;
+	height: 18px;
+	white-space: nowrap;
+	writing-mode: tb-rl;
+	
+	color: #777;
+	border: 2px dotted #ddd;
+	padding: 2px 1px;
+}
+
+.cn_bedplanner .imgRect.horizontal {
+	white-space: nowrap;
+	width: auto;
+}
+.cn_bedplanner .imgRect.horizontal .noImg {
+	writing-mode: lr-tb;
+	
+}
+.cn_bedplanner.readOnly .imgRect .noImg {
+	display: none;
+}
+.cn_bedplanner .bedTextRect .noText {
+	width: 80px;
+	height: 28px;
+	color: #777;
+	text-align: center;
+	border: 2px dotted #ddd;
+}
+.cn_bedplanner.readOnly .bedTextRect .noText {
+	display: none;
+}
+
+
+.cn_floorplanner_disabled {
+  border-color: #ddd;
+}
+.cn_graphingcontrol{
+	border: 1px solid #9DBBE1;
+	background: white;
+	overflow: hidden;
+}
+
+@media print{
+	.cn_graphingcontrol_printDiv{
+		display: inline-block;
+		
+		page-break-after: always;
+	}
+}
+
+.cn_graphingcontrol .headerTD{
+}
+
+.cn_graphingcontrol .leftAxisLabelTD,
+.cn_graphingcontrol .rightAxisLabelTD{
+	background: #E7F2FF;
+}
+
+.cn_graphingcontrol .topDiv{
+	display: inline-block;
+	
+	border-bottom: 1px solid #D8E2ED;
+}
+
+@media print{
+	.cn_graphingcontrol .topDiv{
+		display: none;
+	}
+}
+
+.cn_graphingcontrol .headerDiv1{
+	font-size: 18px;
+	font-weight: bold;
+	padding: 3px; 
+}
+
+.cn_graphingcontrol .headerDiv2{
+	font-size: 14px;
+	font-weight: bold;
+	padding: 3px; 
+}
+
+.cn_graphingcontrol .legendItem{
+	padding: 4px;
+	text-align: center;
+	width: 55px;
+}
+
+.cn_graphingcontrol .leftAxisDiv{
+	
+	white-space: nowrap;
+}
+
+.cn_graphingcontrol .leftAxisDiv, 
+.cn_graphingcontrol .rightAxisDiv{
+	font-weight: bold;
+	display: inline-block; 
+	writing-mode: tb-rl; 
+}
+
+.cn_graphingcontrol .leftHeaderTD,
+.cn_graphingcontrol .rightHeaderTD{
+	
+}
+
+.cn_graphingcontrol .xLabelsTable td{
+	text-align: right;
+	border-bottom: 1px solid #DFE5EC;
+	padding-right: 2px;
+}
+
+.cn_graphingcontrol .xAxisTable{
+	border-collapse: collapse;
+	table-layout: fixed;
+}
+
+.cn_graphingcontrol .xAxisTable td{
+	border-bottom: 1px solid #DFE5EC;
+	font-size: 10px;
+}
+
+.cn_graphingcontrol .xAxisFirstTR td{
+}
+
+.cn_graphingcontrol .bottomAxisTD{
+	
+	border-left: 1px solid #D8E2ED;
+	border-right: 1px solid #D8E2ED;
+}
+
+.cn_graphingcontrol .leftBottomLabelsTD{
+	
+}
+
+.cn_graphingcontrol .rightBottomTD{
+	
+}
+
+.cn_graphingcontrol_printInfoTable{
+	background: white;
+	margin-bottom: 4px;
+}
+
+.cn_graphingcontrol_printInfoTable td{
+	padding: 3px;
+}
+
+.cn_graphingcontrol_printInfoTable .headerTD{
+	background: #ddd;
+	font-weight: bold;
+}
+
+@media print{
+	.cn_graphingcontrol .labelDiv{
+		font-size: 15px;
+	}
+}
+
+@media print{
+	.cn_graphingcontrol .leftAxisDiv{
+		font-size: 15px;
+	}
+}
+
+.cn_graphingcontrol_disabled {
+  border-color: #ddd;
+  background: #e4f0ff;
+  color: #888;
+}
+.cn_graphingcontrol_disabled .topDiv {
+  
+  background: none;
+}
+
+.cn_graphingcontrol_disabled td,
+.cn_graphingcontrol_disabled td * {
+  
+  background: none;
+  color: #888;
+}
+
+.cn_grid{ 
+  border: 1px solid #9DBBE1; 
+  overflow: hidden; 
+  background: white url(../../../themes/new-blue/g/bg-shade.png) bottom repeat-x;
+}
+.cn_grid .rowDiv{
+	height: 23px;
+	border-bottom-color: #eeeeee;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+.cn_grid .rowDiv_alternate {
+  background: #f5f5f5;
+}
+
+.cn_grid .rowDiv,
+.cn_grid input {
+  cursor: pointer;
+}
+
+.cn_grid .selectedRow input {
+  cursor: text;
+}
+
+/* 1 */
+.cn_grid .hasShadow{
+}
+
+/* 2 */
+.cn_grid .rowDiv .cellSpan{
+	border-left-color: #eeeeee;
+	border-left-width: 1px;
+	border-left-style: solid;
+}
+
+/* 3 */
+.cn_grid *{ 
+}
+
+
+.cn_grid table{ table-layout: fixed; }
+
+.cn_grid img, .cn_grid input, .cn_grid button{ vertical-align: top; }
+
+.cn_grid #headerTD{ 
+	color: black; 
+	font-weight: bold; 
+	border-bottom: 1px solid #9DBBE1; 
+	vertical-align: top;
+	height: 24px;
+	
+}
+
+.cn_grid #headerRow{
+	position: relative;
+	height: 100%;
+}
+
+.cn_grid #headerRow span{
+	overflow: hidden;
+	text-overflow: ellipsis;
+	position: absolute;
+	padding: 1px;
+	vertical-align: middle;
+}
+
+.cn_grid #rowsDiv{
+	width: 100%; 
+	height: 100%; 
+	overflow: auto; 	
+}
+
+.cn_grid .rowDiv{ 
+	xl--hover-background: #EBF0F9; 
+	xl--tooltip-delay: 300;
+	xl--tooltip-position: move;
+	xl--blend-duration: 250;
+	white-space: nowrap;
+	position: relative;
+}
+.cn_grid .rowDivHover {
+	background: #f6fbfe url(../../../themes/new-blue/g/item-gradient-5a.gif) bottom repeat-x !important;
+}
+
+.cn_grid .rowDiv .cellSpan{
+	padding-top: 5px;
+	padding-left: 2px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+
+	height: 100%; 
+	vertical-align: top;
+}
+
+.cn_grid .selectionSpan{ 
+	padding-top: .3em;
+	padding-left: 2px;
+	cursor: pointer; 
+	height: 100%;
+}
+
+.cn_grid #leftBorder, .cn_grid #topBorder, .cn_grid #bottomBorder, .cn_grid #rightBorder{
+	position: absolute;
+	visibility: hidden;
+	overflow: hidden;
+}
+.cn_grid #leftBorder{ background: #316AC5; }
+.cn_grid #rightBorder{ background: #B0B1C7; }
+.cn_grid #leftBorder, .cn_grid #rightBorder{ width: 2px; }
+.cn_grid #topBorder, .cn_grid #bottomBorder{ 
+	height: 2px;
+	
+}
+
+.cn_grid button img{ vertical-align: baseline; }
+
+.cellHoverBorderDiv{
+	border: 1px solid #7F9DB9; 
+	overflow: hidden;
+	visibility: hidden;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	height: 1.5em;
+}
+
+.cn_grid .textbox{ 
+	border: 1px solid #7F9DB9; 
+	background: white;
+	position: absolute;
+	height: 1.5em;
+	line-height: 1.2em;
+}
+
+.cn_grid .xllookupbutton{
+	padding: 0px; 
+	margin-top: -1px;
+	margin-left: 3px;
+	margin-right: 2px;	
+	width: 1.4em; /* !! */
+	height: 1.4em; /* !! */
+	z-index: 10;
+	position: relative;
+}
+
+.cn_grid .wrapTextTable{
+	margin: 1px;
+	margin-left: 2px;
+	height: 21px;
+	xl--edit-border-color: #7F9DB9;
+	border: 1px solid white;
+}
+
+.cn_grid .wrapTextTable div{
+	height: 1em;
+	padding: 0px;
+}
+
+.cn_grid p{
+	margin: 0px;
+}
+
+.cn_grid .wrapTextTable a{
+	text-decoration: none;
+}
+
+
+.cn_grid .tree_nodeDiv{
+	height: 100%;
+}
+
+.cn_grid .tree_checkBoxSpan{
+	font-family: wingdings;
+	font-size: 17px;
+	height: 1em;
+	overflow: hidden;
+	margin-left: 2px;
+	margin-right: 1px;
+	xl--hover-color: #1148AB;
+	cursor: default;
+	vertical-align: top;
+	margin-top: 2px;
+}
+
+.cn_grid .tree_iconImg{
+	/*vertical-align: middle;*/
+	margin-top: 2px;
+}
+
+.cn_grid .tree_textSpan{
+	cursor: default;
+	position: relative;
+	padding: 2px;
+	padding-left: 4px;
+	padding-top: 4px;
+	display: inline-block;
+	/*vertical-align: baseline;*/
+
+	/* Workaround. */
+	font-size: 8pt;
+}
+
+.cn_grid .tree_nodeDivSelected .tree_textSpan{
+	background: #316AC5;
+	color: white;
+	
+}
+
+.cn_grid .tree_nodeDivOver .tree_textSpan{
+	text-decoration: underline;
+}
+
+.cn_grid .xlgridcomboReadOnly .cn_combobox,
+.cn_grid .xlgridcomboReadOnly .xlcomboTD1,
+.cn_grid .xlgridcomboReadOnly .xlcomboinput{
+	border-width: 0px;
+	background: none;
+}
+
+.cn_grid .xlgridcomboReadOnly .xlcomboTD2{
+	visibility: hidden;
+	width: 1px;
+}
+
+.cn_grid .xlgridcomboReadOnly .xlcomboTD15{
+	display: none;
+}
+
+.cn_grid .readOnly{
+	background-color: #F5FAFF;
+}
+
+.cn_grid .readOnly .wrapTextTable{
+	border: 0px;
+}
+
+.commentBoxTextArea{
+	width: 100%;
+	height: 327px;
+}
+
+.commentBoxDiv .commentBoxCaption{ 
+	color: white; 
+	cursor: move; 
+	background: #B1B3C8;
+	font-weight: bold; 
+	font-size: 14px; 
+	padding: 3px; 
+	width: 100%;
+	
+}
+
+.commentBoxDiv .commentOkButton,
+.commentBoxDiv .commentCancelButton{
+	position: absolute;
+	bottom: 2px;
+	width: 80px;
+}
+
+.commentBoxDiv .commentOkButton{
+	right: 84px;
+}
+
+.commentBoxDiv .commentCancelButton{
+	right: 2px;
+}
+
+.cn_grid .gridSortArrow{
+	margin-left: 2px;
+}
+
+.cn_grid .gridHeaderDiv,
+.cn_grid .gridfooterDiv{
+	padding: 3px;
+	background: #F5FAFF;
+	
+	height: 100%;
+	overflow-y: auto;
+	cursor: default;
+}
+
+.cn_grid .gridHeaderDiv {
+	border-bottom: 1px solid #9DBBE1;}
+
+.cn_grid .gridFooterDiv {
+	border-top: 1px solid #9DBBE1;
+}
+
+.cn_grid .selectedRow {
+	
+}
+
+.cn_grid .hoverRect{
+	z-index: -1;
+}
+
+.cn_grid_disabled {
+  border-color: #ddd;
+  background: #e4f0ff;
+}
+.cn_hint {
+}
+
+.cn_hint_disabled {
+	
+}
+
+
+.cn_hint_disabled span {
+	cursor: default !important;
+}
+
+.cn_hint span {
+	cursor: pointer;
+	background: url(../../../themes/new-blue/g/hint.png) no-repeat;
+	
+}
+
+.cn_hint_no_autopostback span {
+	cursor: default;
+}
+.cn_htmlviewer{ border: 1px solid #9DBBE1; overflow: auto; }
+
+.cn_htmlviewer p { margin: 0px; }
+
+.cn_htmlviewer_disabled {
+  border-color: #ddd;
+  background: #e4f0ff;
+  color: #888;
+}
+.cn_iconnavigation {
+	width: 100%;
+	height: 100%;
+	position: relative;
+}
+.cn_iconnavigation .cn_navigation_pinButton {
+	position: absolute;
+	left: 90px;
+	top: 3px;
+	z-index: 1000;
+	background-image: url(../../../themes/new-blue/g/pin-set.png);
+	
+}
+.cn_iconnavigation .cn_navigation_pinButton_collapsed {
+	background-image: url(../../../themes/new-blue/g/pin-2-set.png);
+	
+}
+
+.cn_iconnavigation .container {
+	overflow: auto;
+	position: absolute;
+	top: 0;
+	width: 100%;
+	padding-top: 5px;
+
+	scrollbar-3dlight-color: #5386c4;
+	scrollbar-darkshadow-color: #5386c4;
+	scrollbar-face-color: #5386c4;
+
+	scrollbar-shadow-color: #5386c4;
+	scrollbar-highlight-color: #619add;
+	scrollbar-arrow-color: #e4f0ff;
+}
+.cn_iconnavigation_plusMinus {
+	position: absolute;
+	top: 6px;
+	left: 4px;
+	display: none;
+}
+.cn_iconnavigation_item {
+	text-align: center;
+	color: #fff;
+	margin: 1px;
+	padding: 5px 2px;
+	position: relative;
+	
+	cursor: pointer;
+	background: url(../../../themes/new-blue/g/nav-separator.gif) no-repeat 2px bottom;
+}
+.cn_navigation_disabled .cn_iconnavigation_item {
+  cursor: no-drop !important;
+}
+.cn_iconnavigation_item_hover {
+	background: #7ab3ff;
+	color: white !important;
+}
+.cn_iconnavigation_item_selected {
+	background: #4189fe url(../../../themes/new-blue/g/icon-nav-hover-bg.gif) repeat-y;
+	color: white !important;
+}
+.cn_iconnavigation_item_disabled {
+	cursor: default;
+}
+.cn_iconnavigation_folder .icon_div {
+	margin-bottom: 4px;
+	background: url(../../../themes/new-blue/g/nav-big-arrow-right.gif) no-repeat right 17px;
+}
+.cn_navigation_disabled .cn_iconnavigation_folder .icon_div {
+  background-image: none;
+}
+
+.cn_iconnavigation_item_non_clickable {
+  cursor: default !important;
+}
+
+/*.iconnavigation_noscroll .cn_iconnavigation_item.cn_iconnavigation_folder .icon_div {
+	background-position: 105px 17px !important;
+}*/
+
+.cn_iconnavigation_item .icon_div img {
+	width: 48px;
+	height: 48px;
+}
+.cn_iconnavigation_item .text_div {
+  margin-bottom: 3px;
+}
+
+
+.cn_iconnavigation_popup {
+	position: absolute;
+	display: none;
+	width: 1px;
+	height: 1px;
+	left: 0;
+	top: 0;
+}
+.cn_iconnavigation_popup .popupContentArea {
+	background: #b3caee;
+}
+.cn_iconnavigation_popup_items {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	padding: 6px 7px 5px 7px;
+	overflow: hidden;
+/*b3caee*/
+}
+.cn_iconnavigation_popup_inner {
+	scrollbar-3dlight-color: #c0d8ff;
+	scrollbar-darkshadow-color: #c0d8ff;
+	scrollbar-face-color: #b3caee;
+
+	scrollbar-shadow-color: #b3caee;
+	scrollbar-highlight-color: #a4b9da;
+	scrollbar-arrow-color: #eee;
+}
+
+.cn_iconnavigation_popup .cn_iconnavigation_item {
+	width: 120px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: inline !important;
+	
+	margin: 0 5px 5px 0;
+	padding: 5px 2px;
+	vertical-align: top;
+	color: black;
+	background-image: none;
+}
+.cn_iconnavigation_popup .icon_div {
+	background: none;
+}
+.cn_iconnavigation_popup .cn_iconnavigation_plusMinus {
+	display: block;
+}
+.cn_navigation_pinButton.iconnavigation_noscroll {
+	left: 113px !important;
+}
+
+.cn_navigation_collapsedTab {
+	left: -16px;
+}
+.cn_imsjourney{
+	border: 1px solid #9DBBE1; 
+	position: absolute;
+	overflow: hidden;
+	cursor: default;
+}
+
+.cn_imsjourney .headerDiv{
+	height: 24px;
+	border-bottom: 1px solid #9DBBE1; 
+	background: #A3C2EA; 
+	
+	white-space: nowrap;
+	width: 100%;
+}
+
+.cn_imsjourney .header1, .cn_imsjourney .header2{ 
+	display: inline;
+	margin-top: 4px;
+	padding-left: 4px;
+	font-weight: bold; 
+	vertical-align: top;
+	width: 50%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.cn_imsjourney .scrollDiv{
+	overflow-y: auto;
+	overflow-x: hidden;
+	width: 100%;
+	background: white url(../../../themes/new-blue/g/big-down-ar-bg.gif) repeat-y 3px 0px;
+}
+
+.cn_imsjourney .contentTable{
+	width: 100%;
+	table-layout: fixed;
+}
+
+.cn_imsjourney td{
+	padding: 3px;
+	vertical-align: top;
+}
+
+.cn_imsjourney td .img{
+	vertical-align: middle;
+}
+
+.cn_imsjourney .dragDiv{
+	position: absolute;
+	top: 0;
+	overflow: hidden;
+	width: 4px;
+	border-left: 1px solid white;
+	border-right: 1px solid white;
+	border-bottom: 1px solid white;
+	background: #9DBBE1;
+	z-index: 5;
+	height: 100%;
+	cursor: w-resize;
+}
+
+.cn_imsjourney .idSpan{
+	width: 30px;
+	text-align: center;
+	font-weight: bold;
+	display: inline-block;
+	margin-right: 3px;
+}
+
+.cn_imsjourney .imgSpacerSpan{
+	width: 16px;
+}
+
+.cn_imsjourney .separatorTD{
+	border-top: 1px solid #eee;
+	padding: 0;
+}
+.cn_imsjourney .separatorDiv{
+	background: url(../../../themes/vista/g/minibox_05.png) repeat-x;
+	padding: 2px 2px 2px 8px;
+	font-weight: bold;
+	margin-left: 20px;
+}
+.cn_imsjourney .separatorTD_highlight .separatorDiv {
+	font-size: 110%;
+	background: url(../../../themes/new-blue/g/item-gradient-5a.gif) repeat-x;
+	padding: 4px 4px 4px 8px;
+}
+
+.cn_imsjourney .textSpan{
+	padding: 1px;
+}
+
+.cn_imsjourney .clockLineDiv{
+	background: #FEE4C3;
+	
+
+	position: absolute;
+	top: 0;
+	left: 43px;
+	width: 10px;
+}
+
+.cn_imsjourney .clockLineAltDiv{
+	
+}
+
+.cn_imsjourney .clockStopperDiv{
+	background: #E38957;
+	
+
+	overflow: hidden;
+	width: 17px;
+	height: 3px;
+	position: absolute;
+	left: 41px;
+}
+
+.cn_imsjourney .clockStopperAltDiv{
+	
+}
+
+.cn_imsjourney .clocksWeekSpan{
+	text-align: center;
+	font-weight: bold;
+	margin-left: 3px;
+	width: 32px;
+}
+
+.cn_imsjourney .headerIconIMG{
+	position: absolute;
+	top: 3px;
+	left: 0;
+}
+
+.cn_imsjourney_disabled {
+  border-color: #ddd;
+}
+
+.contentTable {
+  background: #e4f0ff;
+}
+
+.cn_imsjourney_disabled .headerDiv,
+.cn_imsjourney_disabled .rowDiv,
+.cn_imsjourney_disabled  .idSpan,
+.cn_imsjourney_disabled  .textSpan,
+.cn_imsjourney_disabled .clocksWeekSpan,
+.cn_imsjourney_disabled .separatorDiv{
+  color: #888;
+  background: none;
+}
+.cn_label, .cn_label_standard, .cn_label_bold{ white-space: nowrap; cursor: default; }
+.cn_label_bold{ font-weight: bold; }
+.cn_link{ text-decoration: none; cursor: pointer; font-weight: bold; white-space: nowrap; }
+.cn_link:hover{ text-decoration: underline; }
+.cn_link img{ margin-right: 4px; border: 0px; }
+.cn_link_disabled{ color: gray; cursor: default; }
+.cn_link_disabled:hover{ text-decoration: none; }
+.cn_logincontrol_newblue{
+	z-index: 10;
+}
+.cn_logincontrol_newblue .container {
+	position: absolute;
+	right: 0;
+	top: 0;
+	width: 50%;
+	/*border: 1px solid red;*/
+	text-align: center;
+}
+.cn_logincontrol_newblue .loginArea {
+	position: relative; right: 0; top: 186px; height: 100px; width: 430px;
+	text-align: left;
+}
+.cn_logincontrol_newblue .label {
+	font-weight: bold; font-size: 24px; color: #b4c7df; 
+}
+.cn_logincontrol_newblue .disabled .label,
+.cn_logincontrol_newblue .disabled .locationLabel {
+  color: #2b4b7a;
+}
+
+.cn_logincontrol_newblue .passwordDiv {
+	 margin-left: 6px;
+}
+
+.cn_logincontrol_newblue .error {
+	border: 1px solid red !important;
+}
+
+.cn_logincontrol_newblue .location .loginInputBox {
+  height: 28px !important;
+}
+.cn_logincontrol_newblue .location .loginBoxBG {
+  height: 50px !important;
+  margin-top: 3px;
+
+}
+
+/* Location */
+.loginLockedLabel,
+.cn_logincontrol_newblue .locationLabel {
+  font-weight: bold;
+  font-size: 18px;
+  font-style: italic;
+  color: #b2c4db;
+  display: inline;
+  vertical-align: middle;
+  width: 188px;
+  text-align: right;
+  padding-right: 6px;
+}
+.cn_logincontrol_newblue .cn_combobox {
+  height: 24px;
+  position: absolute;
+  top: 3px;
+  left: 1px;
+  width: 180px;
+  background: transparent !important;
+  border: 0;
+}
+.cn_logincontrol_newblue .disabled .cn_combobox {
+  cursor: default !important;
+  
+  xl--disabled-background: #555;
+}
+.cn_logincontrol_newblue .cn_combobox .xlcomboTD1 div {
+  font-size: 17px !important;
+  height: auto;
+  font-weight: bold;
+  background: transparent;
+  padding-left: 2px;
+  color: #444;
+}
+.cn_logincontrol_newblue .cn_combobox .xlcomboTD2 {
+  width: 20px;
+  border: 0;
+}
+
+/* Login Input Box */
+.cn_logincontrol_newblue .loginInputBox {
+ 	position: relative; width: 160px; height: 40px; display: inline;
+ 	margin-right: 22px;
+  vertical-align: middle;
+}
+.cn_logincontrol_newblue .loginBoxBG {
+	position: absolute; left: -15px; top: -12px; cursor: text; width: 211px; height: 66px;
+}
+.cn_logincontrol_newblue .loginBox {
+	font-size: 18px; font-weight: bold; color: #000; position: absolute; border: 0; width: 178px; left: 2px; top: 2px;
+	height: 32px; line-height: 32px; background: transparent;
+}
+.cn_logincontrol_newblue .loginBoxHint {
+	font-size: 18px; font-weight: bold; color: #868686; font-style: italic; position: absolute; left: 3px; top: 8px;
+}
+.cn_logincontrol_newblue .disabled .loginBox {
+  background: #555;
+  cursor: default !important;
+  
+}
+.cn_logincontrol_newblue .disabled .loginBoxBG {
+/*  display: none;*/
+}
+.cn_logincontrol_newblue .loginButton {
+	position: absolute;
+	top: 7px;
+	left: 154px;
+	cursor: pointer;
+}
+.cn_logincontrol_newblue .disabled .loginButton {
+  display: none !important;
+}
+.cn_logincontrol_newblue .withButton{
+	width: 151px;
+}
+.cn_logincontrol_newblue .disabled .withButton{
+	width: 178px;
+}
+
+.cn_logincontrol_newblue .changePasswordContainer {
+  display: none;
+  position: relative;
+  top: 120px; width: 430px;
+  /*right: 0px;*/
+  text-align: left;
+  font-weight: bold;
+  font-size: 18px;
+  font-style: italic;
+  color: white;
+}
+.cn_logincontrol_newblue .changeLabel {
+  width: 188px;
+  display: inline;
+  vertical-align: middle;
+  line-height: 41px;
+  text-align: right;
+  padding-right: 10px;
+}
+.cn_logincontrol_newblue .changeNote {
+  font-weight: normal;
+  font-size: 15px;
+  font-weight: normal;
+  font-style: normal;
+  padding: 0px 0 10px 5px;
+  display: none;
+}
+.cn_logincontrol_newblue .disabled .changeNote {
+  display: block !important;
+}
+
+
+/* The Login Chrome and elements inside it */
+.loginChrome .errorContainer {
+  position: absolute;
+  right: -3px;
+  top: 8px;
+  width: 50%;
+  height: 97px;
+  background: url(../../../themes/new-blue/g/login-error-bg.png) repeat-x;
+  overflow: hidden;
+
+  color: #cfc3cd;
+  font-size: 17px;
+  padding: 10px 20px;
+}
+
+.loginChrome .loginBG {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+.loginChrome .loginCenter {
+	width: 100%;
+	height: 472px;
+	position: absolute;
+	z-index: 1;
+}
+.loginChrome .loginCenterBG {
+	width: 100%; height: 472px;
+	position: absolute;
+	left: 0;
+	top: 0;
+}
+.loginChrome .loginSeparator {
+	left: 50%;
+	margin-left: -1px;
+	top: 18px;
+	position: absolute;
+}
+.loginChrome .loginImsLogo {
+	position: absolute;
+	bottom: 3%;
+	left: 30px;
+}
+.loginChrome .loginBottomLeftBG {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+}
+.loginChrome .loginTopRightBG {
+	position: absolute;
+	top: 0;
+	right: -250px;
+}
+
+.loginChrome .loginLockedLabel {
+  position: absolute;
+  top: 47%;
+  right: 50%;
+  margin-right: 16px;
+  white-space: nowrap;
+  font-size: 19px;
+}
+.loginChrome .loginLockedLabel img {
+  width: 17px; height: 18px;
+  margin-right: 1px;
+  vertical-align: middle;
+  margin-top: 2px;
+}
+.cn_markercontrol{
+	border: 1px solid #9DBBE1;
+	background: white;
+}
+
+.cn_markercontrol .markerToolbar{
+	border-left: 1px solid #9DBBE1;
+	background: #c1d9f2;
+	
+}
+
+.cn_markercontrol .markerButton, 
+.cn_markercontrol .markerButtonHover, 
+.cn_markercontrol .markerButtonDown{
+	margin: 2px;
+}
+
+.cn_markercontrol .markerButtonHover{
+	margin: 1px;
+	border: 1px solid #316AC5;
+	background: #eeeeee;
+	
+}
+
+.cn_markercontrol .markerButtonDown{
+	margin: 1px;
+	background: white;
+	border: 1px solid red;
+	
+}
+
+.cn_markercontrol .toolTip{ 
+	z-index: 1000;
+
+	background: #F0F0F5; 
+	border: 1px solid #6E6D8F;
+	color: black;
+	
+	font-family: tahoma;
+	padding: 2px;
+	font-size: 11px; 
+	position: absolute;
+	visibility: hidden;
+	
+}
+
+.cn_markercontrol_disabled {
+  border-color: #ddd;
+  background: #e4f0ff;
+  color: #888;
+}
+.cn_navigation{
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	position: absolute;
+	background: white;
+	padding-top: 1px;
+}
+
+.cn_navigation_disabled .contentDiv *{
+	color: #aaaaaa;
+	cursor: no-drop !important;
+}
+
+.cn_navigation .cn_navigation_panel{
+	position: absolute;
+	width: 100%;
+	xl--top-border-offset: 1px;
+	overflow: hidden;
+	background: white;
+
+}
+
+.cn_navigation .cn_navigation_panel .panelImg{
+	margin-right: 2px;
+}
+
+.cn_navigation .cn_navigation_panel .contentDiv{
+	width: 100%;
+	overflow: auto;
+	background: white;
+	padding-left: 7px;
+}
+
+
+.cn_navigation .cn_navigation_panel .panelButton table{
+	color: #e4ecf5;
+	font-weight: bold;
+}
+
+.cn_navigation .cn_navigation_panel .panelButton{
+	cursor: pointer;
+
+	xl--selected-color: white;
+
+	height: 2em;
+	line-height: 1.7em;
+	width: 100%;
+	text-align: left;
+	display: inline-block;
+}
+
+.cn_navigation .panelButtonHover table {
+	text-decoration: underline;
+	color: white !important;
+}
+
+.cn_navigation .cn_navigation_panel .panelButton span{
+	display: inline-block;
+}
+
+
+.cn_navigation .itemDiv{
+	cursor: default;
+	color: black;
+	xl--selected-color: white;
+	xl--selected-
+	xl--hover-color: white;
+	xl--hover-background: #93C6FF;
+	white-space: nowrap;
+}
+
+.cn_navigation .clickable .textSpan{
+	cursor: pointer;
+}
+
+.cn_navigation .itemImage{
+	margin-right: 2px;
+	vertical-align: top;
+	margin-top: 0.3em;
+}
+
+.cn_navigation .textSpan{
+	display: inline-block;
+	padding: 2px;
+}
+
+.cn_navigation .clickable {
+}
+.cn_navigation_collapseBorder {
+	position: absolute;
+	z-index: 1000;
+	top: 1%;
+	right: -5px;
+	width: 8px;
+	height: 98%;
+}
+
+.cn_navigation_collapseBorder .collapseButton {
+	position: absolute;
+	z-index: 1000;
+	top: 45%;
+	left: 3px;
+	cursor: pointer;
+}
+
+.cn_navigation_pinButton {
+	position: absolute;
+	top: 5px;
+	right: 3px;
+	cursor: pointer;
+	background-image: url(../../../themes/new-blue/g/pin-set.png);
+	
+}
+.cn_navigation_pinButton_collapsed {
+	background-image: url(../../../themes/new-blue/g/pin-2-set.png);
+	
+}
+
+.cn_navigation_collapsedTab {
+	position: absolute;
+	top: 6px;
+	left: -16px;
+	height: 104px;
+	width: 24px;
+	writing-mode: tb-rl;
+	cursor: pointer;
+	z-index: 5;
+	color: white;
+}
+
+.cn_navigation_plain_collapsedTab {
+	left: -18px !important;
+}
+.cn_navigation_disabled_collapsedTab {
+	cursor: default;
+}
+
+.cn_navigation_collapsedTab .div1 {
+	background: url(../../../themes/new-blue/g/vertical-tab-left_01.png) no-repeat;
+	
+	float: left;
+	width: 24px;
+	height: 17px;
+	margin-bottom: -3px;
+}
+.cn_navigation_collapsedTab.hover .div1 {
+	background: url(../../../themes/new-blue/g/vertical-tab-left-2_01.png) no-repeat;
+	
+}
+.cn_navigation_collapsedTab .div2 {
+	float: right;
+	width: 24px;
+	height: 17px;
+	background: url(../../../themes/new-blue/g/vertical-tab-left_03.png) no-repeat;
+	
+	margin-top: -3px;
+}
+.cn_navigation_collapsedTab.hover .div2 {
+	background: url(../../../themes/new-blue/g/vertical-tab-left-2_03.png) no-repeat;
+	
+}
+.cn_navigation_collapsedTab .div3 {
+	width: 24px;
+	height: 70px;
+	text-align: center;
+	background: url(../../../themes/new-blue/g/vertical-tab-left_02.png) repeat-y;
+	
+	font-weight: bold;
+
+	padding-right: 10px;
+}
+.cn_navigation_collapsedTab.hover .div3 {
+	background: url(../../../themes/new-blue/g/vertical-tab-left-2_02.png) repeat-y;
+	
+}
+
+
+/* dark version
+
+.cn_navigation{
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	display: block;
+	position: relative;
+}
+
+.cn_navigation_disabled .contentDiv *{
+  	cursor: no-drop !important;
+}
+
+.cn_navigation .cn_navigation_panel{
+	position: absolute;
+	width: 100%;
+	xl--top-border-offset: 1px;
+	overflow: hidden;
+}
+
+.cn_navigation .cn_navigation_panel .panelImg{
+	margin-right: 2px;
+}
+
+.cn_navigation .cn_navigation_panel .contentDiv{
+	width: 100%;
+	overflow: auto;
+  background: #34588a;
+	padding-left: 7px;
+
+	scrollbar-3dlight-color: #34588a;
+	scrollbar-darkshadow-color: #34588a;
+	scrollbar-face-color: #34588a;
+
+	scrollbar-shadow-color: #34588a;
+	scrollbar-highlight-color: #619add;
+	scrollbar-arrow-color: #e4f0ff;
+}
+
+
+.cn_navigation .cn_navigation_panel .panelButton table{
+	color: #eee;
+  font-weight: bold;
+}
+
+.cn_navigation .cn_navigation_panel .panelButton{
+	cursor: pointer;
+	xl--selected-color: white;
+}
+
+.cn_navigation .cn_navigation_panel .panelButton span{
+	display: inline-block;
+}
+
+
+.cn_navigation .itemDiv{
+	cursor: default;
+	color: white;
+	xl--selected-color: white;
+	xl--selected-filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#316AC5, endcolorstr=#3F89FF, gradienttype=1);
+	xl--hover-color: white;
+	xl--hover-background: #7097c2;
+	white-space: nowrap;
+}
+
+.cn_navigation .clickable .textSpan{
+	cursor: hand;
+}
+
+.cn_navigation .itemImage{
+	margin-right: 2px;
+	vertical-align: top;
+	margin-top: 0.3em;
+}
+
+.cn_navigation .textSpan{
+	display: inline-block;
+	padding: 2px;
+}
+
+.cn_navigation .clickable {
+	color: white;
+}
+.cn_navigation_collapseBorder {
+	position: absolute;
+	z-index: 1000;
+	top: 1%;
+	right: -5px;
+	width: 8px;
+	height: 98%;
+}
+
+.cn_navigation_collapseBorder .collapseButton {
+	position: absolute;
+	z-index: 1000;
+	top: 45%;
+	left: 3px;
+	cursor: pointer;
+}
+
+.cn_navigation_pinButton {
+	position: absolute;
+	top: 7px;
+	right: 3px;
+	cursor: pointer;
+  background-image: url(../../../themes/new-blue/g/plain-pin-set.png);
+}
+.cn_navigation_pinButton_collapsed {
+  background-image: url(../../../themes/new-blue/g/plain-pin-2-set.png);
+}
+
+.cn_navigation_collapsedTab {
+	position: absolute;
+	top: 6px;
+	left: -16px;
+	height: 104px;
+	width: 24px;
+	writing-mode: tb-rl;
+	cursor: pointer;
+	z-index: 5;
+}
+.cn_navigation_disabled_collapsedTab {
+  cursor: default;
+}
+
+.cn_navigation_collapsedTab .div1 {
+	background: url(../../../themes/new-blue/g/vertical-tab-left_01.png) no-repeat;
+	float: left;
+	width: 24px;
+	height: 17px;
+	margin-bottom: -3px;
+}
+.cn_navigation_collapsedTab.hover .div1 {
+	background: url(../../../themes/new-blue/g/vertical-tab-left-2_01.png) no-repeat;
+}
+.cn_navigation_collapsedTab .div2 {
+	float: right;
+	width: 24px;
+	height: 17px;
+	background: url(../../../themes/new-blue/g/vertical-tab-left_03.png) no-repeat;
+	margin-top: -3px;
+}
+.cn_navigation_collapsedTab.hover .div2 {
+	background: url(../../../themes/new-blue/g/vertical-tab-left-2_03.png) no-repeat;
+}
+.cn_navigation_collapsedTab .div3 {
+	width: 24px;
+	height: 70px;
+	text-align: center;
+	background: url(../../../themes/new-blue/g/vertical-tab-left_02.png) repeat-y;
+	font-weight: bold;
+
+	padding-right: 10px;
+	color: #eee;
+}
+.cn_navigation_collapsedTab.hover .div3 {
+	background: url(../../../themes/new-blue/g/vertical-tab-left-2_02.png) repeat-y;
+}
+*/
+.cn_panel .panelImg {
+	position: absolute;
+	width: 48px;
+	height: 48px;
+	top: 12px;
+	left: 16px;
+}
+
+.cn_panel .text_shade,
+.cn_panel .text {
+  font-size: 16px;
+  position: absolute;
+  font-weight: bold;
+}
+
+.cn_panel .text {
+  top: 13px;
+  left: 15px;
+  color: #1f3657;
+}
+
+.cn_panel .text_shade {
+  color: #334;
+  top: 14px;
+  left: 16px;
+  /*display: none;*/
+}
+
+.cn_panel_with_image .text {
+  top: 24px;
+  left: 73px;
+}
+.cn_panel_with_image .text_shade {
+  top: 25px;
+  left: 74px;
+}
+
+.cn_panel_in_dark .text {
+  color: #fff;
+}
+.cn_panel_in_dark .text_shade {
+  display: block;
+}
+
+.cn_panel_minibox .text,
+.cn_panel_minibox .text_shade {
+  font-size: 13px;
+}
+.cn_panel_minibox .text {
+  top: 7px;
+  left: 12px;
+  color: #2c4d7c;
+  cursor: pointer;
+  z-index: 2;
+}
+/*.cn_panel_minibox .text_shade {
+  top: 8px;
+  left: 11px;
+  color: #eee;
+}*/
+
+.cn_panel_minibox .minibox_sep {
+  position: absolute;
+  top: 23px;
+  left: 7px;
+  width: 50%;
+  height: 1px;
+  display: none;
+}
+
+.cn_partialdatebox{
+	 
+	border: 1px solid #9DBBE1; 
+	white-space: nowrap;
+	background: white;
+	overflow: hidden;
+}
+
+.cn_partialdatebox input{
+	border: 0px;
+	padding: 0px;
+	height: 16px;
+	margin-top: -1px;
+	text-align: center;
+}
+
+.cn_partialdatebox_disabled {
+  border-color: #ddd;
+  background: #e4f0ff;
+  color: #888;
+}
+.cn_partialdatebox_disabled input {
+  background: #e4f0ff;
+  color: #888;
+}
+.cn_popupcalendar{
+	overflow: hidden;
+	width: 340px;
+	height: 261px;
+	background: #ECE9D8;
+}
+
+.cn_popupcalendar input{
+	font-family: tahoma;
+	font-size: 14px;
+}
+
+.cn_popupcalendar td{ font-size: 16px; }
+
+.cn_popupcalendar #topControls{
+	height: 20px;
+	
+}
+
+.cn_popupcalendar #daysTable{
+	width: 100%;
+	border-collapse: collapse;
+	
+}
+
+.cn_popupcalendar #daysTable #header td{
+	font-size: 14px; 
+		
+	border-style: none;
+	border-bottom: 1px solid #7A96DF;
+}
+
+.cn_popupcalendar #daysTable #header span{
+	display: inline-block;
+	
+}
+
+.cn_popupcalendar #daysTable tr{
+	text-align: center;
+	/*background: white;*/
+	cursor: pointer;
+}
+
+.cn_popupcalendar #daysTable td{
+	border-color: #7A96DF;
+	padding-top: 6px;
+	padding-bottom: 6px;
+	width: 14%;
+}
+
+.cn_popupcalendar #daysTable td.hover{
+	background: #4390FF;
+	color: white;
+	text-decoration: underline;
+}
+
+.cn_popupcalendar #daysTable td.pushed{
+	color: white;
+	background: #316AC5;
+	font-weight: bold;
+}
+
+.cn_popupcalendar #daysTable td.empty{
+	cursor: default;
+}
+
+.cn_popupcalendar #daysTable #header{
+	background: #7A96DF;
+	color: white;
+	font-weight: bold;
+	cursor: default;
+}
+
+.cn_popupcalendar #monthSelect{ width: 100px; height: 23px; }
+.cn_popupcalendar #yearSelect{ 
+	width: 44px; font-weight: bold; height: 20px; font-size: 13px;
+	margin-top: 1px;
+	line-height: 18px;
+}
+
+.cn_popupcalendar .arrows7, .cn_popupcalendar .arrows10{  }
+.cn_popupcalendar .arrows7{ font-size: 6px; }
+.cn_popupcalendar .arrows10{ font-size: 14px; }
+
+.cn_popupcalendar #nextMonthButton, 
+.cn_popupcalendar #prevMonthButton{ 
+	height: 23px; 
+	line-height: 1em;
+	width: 40px;
+
+	border: 1px outset #81A9E2;
+}
+
+.cn_popupcalendar #yearDownButton, 
+.cn_popupcalendar #yearUpButton{ 
+	height: 11px; width: 23px; 
+}
+
+.cn_popupcalendar #yearUpButton{ margin-top: 1px; }
+
+.cn_popupcalendar #nextMonthButton, 
+.cn_popupcalendar #prevMonthButton, 
+.cn_popupcalendar #yearDownButton, 
+.cn_popupcalendar #yearUpButton{ 
+	font-weight: bold;
+}
+
+.cn_popupcalendar .cn_combobox td{
+	font-size: 13px !important;
+}
+
+.cn_popupcalendar .cn_combobox{
+	font-weight: bold;
+	position: absolute;
+	top: 2px;
+	left: 0px;
+}
+.popupMenu_container{
+	/* Avoid scrolling. */
+	top: 0px;
+	left: 0px;
+
+	position: absolute;
+	width: 250px;
+	font-family: tahoma; 
+	font-size: 11px; 
+	cursor: default; 
+	padding: 1px; 
+	display: block;
+	visibility: hidden;	
+	overflow: visible;
+		
+	/*filter: blendTrans(duration=.15);*/
+	
+	xl--check-sign: a;
+	xl--shadow-opacity: .20;
+	xl--shadow-pixel-radius: 2;
+
+	background: #F6F6F6; 
+	border: 1px solid #9DBBE1;
+}
+
+.popupMenu_container .leftline{
+	position: absolute; 
+	z-Index: -1;
+	left: 0px; 
+	top: 1px; 
+	width: 24px;
+
+	background: #bbbbbb; 
+	
+}
+
+
+.popupMenu_container .item{
+	display: block;
+	padding: 2px; 
+}
+
+.popupMenu_container .item, 
+.popupMenu_container .item_hover{
+	position: relative;
+	display: inline-block;
+	height: 22px;
+}
+
+.popupMenu_container .item_hover{
+	border: 1px solid #9DBBE1; 
+	background: white url(../../../themes/new-blue/g/menu-hover.png) repeat-x bottom; 
+	padding: 1px; 
+}
+
+.popupMenu_container .text{
+	margin-left: 28px;
+	display: inline-block;
+	vertical-align: top;
+	line-height: 16px;
+}
+
+/* Compensate padding/border shift. */
+.popupMenu_container .item_hover .submenuIMG{
+	right: 6px !important;
+	margin-top: -1px;
+}
+
+.popupMenu_container .leftItem,
+.popupMenu_container .leftItemChecked,
+.popupMenu_container .leftItemUnchecked {
+	position: absolute;
+	top: 1px;
+	left: 2px;
+}
+
+.popupMenu_container .leftItem,
+.popupMenu_container .leftItemUnchecked {
+	width: 20px; 
+	height: 18px; 
+	vertical-align: top;
+}
+
+.popupMenu_container .leftItem img{margin-top: 1px; }
+
+.popupMenu_container .leftItem img,
+.popupMenu_container .leftItemChecked img{
+	vertical-align: middle; 
+}
+
+/*
+.popupMenu_container .leftItemChecked {
+	width: 20px; 
+	height: 20px; 
+	overflow: hidden;
+
+	margin-right: 11px;
+	margin-left: -1px; 
+	margin-top: -1px;
+	margin-bottom: -1px;
+
+	background: #dddddd;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startcolorstr=#ffffff,endcolorstr=#aaaabb,gradienttype=0);
+
+	border-top: 1px solid #ccccdd;
+	border-left: 1px solid #ccccdd;	
+	border-bottom: 1px solid #eeeeff;
+	border-right: 1px solid #eeeeff;	
+
+	font-family: webdings;
+	font-size: 11px; 
+
+	text-align: center;
+}
+*/
+
+.popupMenu_container .item_hover .leftItemUnchecked, 
+.popupMenu_container .item_hover .leftItem{
+	/*filter: dropShadow(offX=2,offY=2,color=#A7A7A7);*/
+	top: 0px;
+	left: 1px; 
+}
+
+.popupMenu_container .popup_menu_hr {
+	height: 1px; 
+	margin-top: 1px;
+	margin-bottom: 1px;
+	overflow: hidden;
+	padding-left: 30px;
+}
+.popupMenu_container .popup_menu_hr div {
+	color: #6E6D8F;
+	background: #9DBBE1;
+	height: 1px;
+	overflow: hidden;
+}
+
+
+
+.popupMenu_container .bigIconCont {
+	background: red;
+	overflow: hidden;
+	
+	margin-left: -1px;
+	padding-left: 1px;
+	background: #F6F6F6;
+}
+
+.popupMenu_container .bigIconItem {
+	float: left;
+	padding: 4px;
+}
+.popupMenu_container .bigIconItem.hover {
+	padding: 3px;
+	border: 1px solid #9DBBE1;
+	background: white url(../../../themes/new-blue/g/menu-hover.png) repeat-x bottom;
+}
+.popupMenu_container .bigIconItem.pushed {
+	background: white;
+	padding: 3px;
+	border: 1px solid #214Aa5;
+}
+
+.popupMenu_container .bigIconItem .text {
+	display: none !important;
+}
+
+.popupMenu_container .bigHR {
+	border-top: 1px solid #F6F6F6;
+	border-bottom: 1px solid #F6F6F6;
+	height: 3px;
+	background: #9DBBE1;
+	overflow: hidden;
+	clear: both;
+}
+.cn_globalProgressbar {
+	position: absolute;
+	bottom: 20px; right: 12px; width: 257px; overflow: hidden;
+  height: 40px;
+	visibility: hidden;
+	padding: 5px;
+	color: #444;
+	font-weight: bold;
+	
+	z-index: 10000;
+	xl--shadow-opacity: .5; xl--shadow-radius: 1; xl--shadow-type: fixed; xl--shadow-offset: 0;
+}
+
+.cn_globalProgressbar div {
+	padding: 1px;
+}
+.cn_radiobox{
+	xl--disabled-color: #888;
+	white-space: nowrap;
+}
+
+.cn_radiobox .radioItem{
+	cursor: default;
+	display: inline-block;
+		
+	xl--hover-color: #1148AB;
+}
+
+.cn_radiobox .radioItem .checkSpan{
+	font-family: wingdings;
+	font-weight: normal;
+	font-style: normal;
+	font-size: 16px;
+	vertical-align: middle;
+}
+
+.cn_radiobox .radioItem .textSpan{
+	margin-left: 4px;
+	vertical-align: middle;
+}
+.cn_rangebox{
+	height: 18px; 
+	border: 1px solid #9DBBE1; 
+	white-space: nowrap;
+	background: white;
+	overflow: hidden;
+  vertical-align: top;
+}
+
+.cn_rangebox input{
+	border: 1px solid white;
+	padding: 0px;
+	height: 100%;
+	margin-top: -1px;
+	text-align: center;
+}
+
+.cn_rangebox_disabled {
+  border-color: #ddd;
+  background: #e4f0ff;
+  color: #888;
+}
+.cn_rangebox_disabled input {
+  background: #e4f0ff;
+  color: #888;
+  border-color: #e4f0ff; 
+}
+.cn_recordnavigator{
+	table-layout: fixed;
+}
+
+.cn_recordnavigator button{
+	width: 19px;
+	height: 100%;
+	
+	font-weight: normal;
+	font-size: 14px;
+	line-height: 12px;
+}
+
+.cn_recordnavigator div{
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.cn_recordnavigator .centerTD{
+	text-align: center;
+	background: #E7F2FF;
+	
+	cursor: default;
+	xl--hover-
+}
+
+.cn_recordnavigator div{
+	padding-left: 2px;
+	padding-right: 2px;
+}
+
+/*.cn_recordnavigator .div1{
+	border-top: 1px solid #DDDDDD;
+	font-weight: bold;
+}*/
+
+
+.cn_recordnavigator .div2{
+	height: 100%;
+	padding-top: 2px;
+	border-top: 1px solid #DDDDDD;
+	border-bottom: 1px solid #DDDDDD;
+}
+
+
+.cn_recordnavigator_popup{
+	position: absolute;
+	visibility: hidden;
+	background: white; padding: 1px; cursor: default; border: 1px solid black;
+	
+	overflow-y: visible;
+	overflow-x: auto;
+}
+
+.cn_recordnavigator_popup .optionDiv{
+	padding: 1px; 
+	display: inline-block; 
+	white-space: nowrap;
+
+	xl--option-hover-background: #316AC5;
+	xl--option-hover-color: white;
+	xl--option-hover-
+}
+
+.cn_recordnavigator .arrowDiv{
+	
+	position: absolute;
+	top: 0px;
+	right: 38px;
+	visibility: hidden;
+}
+
+.cn_recordnavigator_disabled button {
+  
+  background: none;
+}
+.screenItem {
+  position: absolute;
+  display: none;
+  top: 0;
+  left: 0;
+}
+
+.si_formHeaderBG {
+  z-index: 5;
+}
+
+.si_formHeaderBG img {
+  width: 100%;
+  height: 62px;
+}
+
+.si_formRedHeaderBG {
+  visibility: hidden;
+  z-index: 5;
+}
+
+.si_formCaption {
+  z-index: 7;
+}
+.si_formCaption .formCaptionText {
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  display: block;
+  margin-left: 16px;
+}
+
+.si_formHeaderCont_withImage .formCaptionText {
+  margin-left: 54px;
+}
+
+.si_formCaption .captionImg {
+	width: 48px;
+	height: 48px;
+	vertical-align: top;
+	margin-right: 6px;
+	float: left;
+}
+
+.si_alertIcons {
+  z-index: 7;
+}
+
+.si_shortPatientInfo {
+	z-index: 7;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+  font-size: 13px;
+  margin-left: 16px;
+}
+.si_formHeaderCont_withImage .si_shortPatientInfo {
+  margin-left: 54px;
+}
+
+.si_topRightControls{
+  z-index: 7;
+}
+
+.si_search {
+  z-index: 7;
+}
+
+.si_formBottom img {
+  /* Standards Port: block, not inline. As an inline image it sat on a
+     text line box whose descender gap overhung the 12px bottom-anchored
+     __si_formBottom by ~2px, toggling page scrollbars and driving a
+     ResizeObserver relayout loop (visible flicker). */
+  display: block;
+  width: 100%;
+  height: 12px;
+}
+
+.si_navigationBG {
+  z-index: 4;
+}
+.navigationBG_img1 {
+  position: absolute; top: 0; right: 0;
+}
+.navigationBG_div1 {
+  position: absolute; top: 0; height: 100%; left: 0; width: 100%; padding: 14px 0 17px 0;
+}
+.navigationBG_img2 {
+  position: absolute; width: 185px; height: 100%; right: 0;
+}
+.navigationBG_img3 {
+  position: absolute; bottom: 0; right: 0;
+}
+.si_navigation {
+  z-index: 4;
+}
+
+.si_leftFormBGLine {
+  z-index: 4;
+  top: 0;
+  left: -16px;
+  display: block !important;
+  height: 100%;
+  width: 26px;
+  overflow: hidden;
+}
+.si_leftFormBGLine .navigationBG_div1 {
+  padding-bottom: 12px;
+}
+.si_leftFormBGLine .navigationBG_img3 {
+  bottom: -5px;
+}
+
+.si_form {
+  z-index: 1;
+}
+.si_darkHeader {
+  z-index: 1;
+}
+
+
+.si_plainNavigationBG {
+  display: none;
+  /*background: url(../../../themes/new-blue/g/shadow-right-5px.png) repeat-y right;*/
+  z-index: 4;
+}
+.cn_search {
+	xl--hover-border-color: #316AC5;
+	xl--option-hover-background: #316AC5;
+	xl--option-hover-color: white;
+	xl--option-hover-
+}
+
+.cn_search input {
+	width: 100%;
+	border: 1px solid #375d90;
+	height: 19px;
+	background: #588ecd url(../../../themes/new-blue/g/search-bg.png) repeat-x bottom;
+	color: #eee;
+	font-style: italic;
+}
+.cn_search.disabled input {
+	cursor: no-drop !important;
+	border: 1px solid #4374BD;
+	color: #B1BCCE;
+}
+
+.cn_search input.focused {
+	color: black;
+	background: white;
+	font-style: normal;
+}
+
+.cn_search_popup {
+	background: #F5FAFF;
+}
+
+.cn_search_popup .xlcombooption {
+	padding: 2px;
+	clear: both;
+	height: 48px; /* Sets minimum height, so absolute pos'ed image doesn't overflow to next item. */
+	position: relative;
+	width: 430px;
+	cursor: pointer;
+}
+
+.cn_search_popup .imgDiv {
+	width: 48px;
+	height: 48px;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+.cn_search_popup .img {
+ 	vertical-align: middle;
+}
+
+.cn_search_popup .titleDiv {
+	font-weight: bold;
+}
+
+.cn_search_popup .titleDiv,
+.cn_search_popup .descriptionDiv {
+	margin-left: 52px;
+}
+
+.cn_search_popup .xlcombooption.hover {
+	
+	background: #316AC5;
+	color: white;
+}
+.cn_selectrole_newblue {
+}
+.cn_selectrole_newblue .container {
+	position: absolute;
+	right: 0;
+	top: 0;
+	width: 50%;
+	height: 100%;
+	text-align: center;
+}
+
+.cn_selectrole_newblue .scrollableArea {
+	position: relative; right: 0; top: 0px; width: 345px;  
+	text-align: left;
+	height: 444px;
+	padding: 10px 0 0 0; 
+}
+
+.cn_selectrole_newblue .roleButton,
+.cn_selectrole_newblue .roleButton img {
+  width: 325px;
+  height: 68px;
+}
+.cn_selectrole_newblue .roleButton {
+  position: relative;
+  margin-top: -10px;
+  margin-bottom: -20px;
+  cursor: pointer;
+}
+
+.cn_selectrole_newblue .roleButton img {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.cn_selectrole_newblue .roleButtonText {
+  padding: 19px 0 0 40px;
+  font-size: 17px;
+  font-weight: bold;
+  font-style: italic;
+  color: #323639;
+  padding-right: 6px;
+  position: relative;
+}
+.tabContainer {
+  position: absolute;
+  /*padding: 20px 0 0 0;*/
+}
+
+.tabContainer .themeSupport_scalableFrame {
+  position: absolute;
+  height: 50px;
+  width: 100%;
+  top: 23px;
+  z-index: 2;
+}
+
+.tabContainerElement {
+  position: absolute;
+}
+
+.tabbedContainerButton {
+  display: inline;
+  margin-right: -12px;
+  -margin-right: -8px;
+  z-index: 1;
+  cursor: pointer;
+}
+.tabbedContainerButton .td2 {
+  padding: 6px 5px 0 5px;
+  color: #2c4d7c;
+}
+.tabbedContainerButton_selected {
+  position: relative;
+  margin-top: 2px;
+  cursor: default;
+}
+.tabbedContainerButton_selected .td2 {
+  padding-top: 3px;
+  font-weight: bold;
+  text-decoration: none;
+}
+.tabbedContainerButton_disabled .td2 {
+  color: #888;
+}
+
+.tabContainer .tabShadowFix {
+  position: absolute;
+  top: 26px;
+  left: 0;
+  z-index: 101;
+  width: 5px;
+  height: 4px;
+  -visibility: hidden;
+}
+.tabbedContainerButton_hover {
+   text-decoration: underline;
+}
+.tabbedContainerButton_disabled {
+  color: #888;
+  cursor: default;
+}
+
+.themeSupport_scalableFrame .tr2 .td2 {
+    background: #e4f0ff;
+    -background: #e4f0ff;
+}
+.cn_tabnavigation{
+	top: 3px; left: 3px; position: relative; 
+}
+
+.topTab, .topTabSelected{
+	display: inline; 
+	margin-right: 1px;
+}
+
+.topTab{
+	cursor: pointer;
+}
+
+#navigationPlaceholder2 .topTab, #navigationPlaceholder2 .topTabSelected{
+	vertical-align: top;
+}
+
+#navigationPlaceholder2 .topTab{
+	position: relative;
+	top: -1px;
+}
+
+.topTabSelected{
+	cursor: default;
+	position: relative;
+	top: 2px;
+}
+
+.topTab .topTabTextTD, .topTabSelected .topTabTextTD{
+	padding-left: 1px; padding-right: 1px; 
+	font-size: 12px;
+	font-weight: bold;
+	color: #3F3D3D;
+}
+
+.topTab .topTabTextTD{
+	padding-top: 9px; 
+}
+
+.topTabSelected .topTabTextTD{
+	padding-top: 8px; 
+}
+
+.subTabsDiv{
+	position: absolute;
+	top: 0px; 
+	left: -1px;
+	visibility: hidden;
+}
+.cn_textbox{ border: 1px solid #9DBBE1; line-height: 15px; }
+.cn_textbox_disabled {
+  border-color: #dddddd;
+  background: #e4f0ff;
+}
+.cn_themeable_dialog {
+  position: absolute;
+}
+
+.cn_themeable_dialog .dialogButtons {
+	position: absolute; top: 16px; right: 16px; width: 100px; height: 20px; z-index: 3;
+	text-align: right;
+}
+.cn_themeable_dialog_maximized {
+}
+.cn_themeable_dialog .dialogCaption{
+	position: absolute; top: 0px; left: 0px; height: 78px; width: 100%; padding: 14px 14px 0 14px;
+  cursor: default;	
+	z-index: 2;
+}
+.cn_themeable_dialog  .dialogCaptionInner {
+	width: 100%;
+	height: 48px;
+	line-height: 44px;
+	padding-left: 8px;
+	padding-top: 0px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+.cn_themeable_dialog .withSubCaption .dialogCaptionInner {
+  line-height: 20px;
+}
+
+.cn_themeable_dialog .dialogCaption .image {
+  display: inline-block;
+	margin-right: 8px;
+  vertical-align: middle;
+  height: 48px;
+  width: 1px;
+}
+.cn_themeable_dialog .dialogCaption .image img {
+  width: 48px;
+  height: 48px;
+  vertical-align: middle;
+}
+
+.cn_themeable_dialog .dialogCaption .text {
+  margin-top: -1px;
+  display: inline-block;
+	font-size: 20px;
+	white-space: nowrap;
+	color: white;
+  vertical-align: middle;
+  font-weight: bold;
+}
+.cn_themeable_dialog .dialogCaption .subCaption {
+  display: none;
+  font-size: 13px;
+  display: none;
+  width: 75%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: normal;
+}
+.cn_themeable_dialog .withSubCaption .subCaption {
+  display: block;
+}
+
+.cn_themeable_dialog .dialogContOuter {
+	position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  /* NOTE: dialogContInner should left-right border should match dialog chrome border - this is for dark header to spread properly. */
+  padding: 67px 14px 20px 14px;
+}
+.cn_themeable_dialog .dialogContInner { /* Dark header is child of that. */
+	width: 100%; height: 100%;
+  padding: 0 0 0 0;
+	background: #e4f0ff;
+	position: relative;
+}
+.cn_themeable_dialog .dialogContents{
+	width: 100%; height: 100%; position: relative;
+	z-index: 1;
+	/* Extra margin around form contents. Parent (dialogContInner) can't have it as dark header needs to match chrome borders.
+	   Overall, extra margin is needed for proper shaddings from tab containers/etc inside dialogs. */
+    margin: 0 6px;
+    overflow: hidden;
+}
+.cn_formdialog_with_header .formHeader {
+  position: absolute;
+  top: 37px;
+  right: 18px;
+  width: 161px;
+  height: 24px;
+}
+
+.cn_formdialog_with_darkheader .darkHeader {
+  position: absolute;
+  top: -6px;
+  left: 0px;
+  width: 100%;
+}
+.cn_formdialog_with_darkheader .darkHeader .darkHeaderBG {
+  width: 100%;
+  height: 100%;
+}
+.cn_formdialog_with_darkheader .darkHeader .darkHeaderShadow {
+  width: 100%;
+  height: 7px;
+}
+
+.cn_messagebox .dialogContents {
+  padding-top: 5px; 
+}
+
+.cn_messagebox .fm_messageBoxContent {
+  height: 100%; width: 100%; 
+	position: relative; padding: 0px 0px 0 20px;
+	overflow: auto;
+  font-size: 13px;
+}
+
+.cn_messagebox .icon{
+	position: absolute; top: 5px; left: 5px;
+}
+
+
+.cn_messagebox  .dialogContInner {
+  padding-bottom: 20px; /* = bottom height */
+  font-size: 13px;
+}
+
+.cn_messagebox .dialogBottom{
+	position: absolute;
+  width: 100%;
+  right: 0;
+  bottom: -1px;
+  text-align: right;
+  padding: 0 4px 0 0;
+  /*padding: 0 10px 6px 0;*/
+  z-index: 2;
+}
+
+
+.cn_messagebox .bottomButton {
+  margin-left: 4px;
+  display: inline;
+  height: 20px;
+  width: 80px;
+}
+
+.cn_messagebox  .fm_messageBox_button {
+  width: 80px !important;
+}
+
+.cn_messagebox .fm_passwordContents {
+  text-align: center;
+  padding: 0 0 0 0;
+  line-height: 20px;
+  height: 70px;
+  overflow: auto;
+  font-size: 13px;
+}
+
+.cn_messagebox .aboutDialogSiteLogo1{ float: left; }
+/*
+.cn_messagebox .aboutDialogDiv1{ position: absolute; top: 68px; left: 0px; width: 100%; overflow: auto; height: 120px; padding-left: 5px;  }
+.cn_messagebox .aboutDialogSeparator{ background: #888; position: absolute; top: 193px; left: 0; width: 100%; overflow: hidden; height: 1px; }
+.cn_messagebox .aboutDialogDiv2{ position: absolute; top: 200px; left: 0px; width: 100%; overflow: auto; height: 75px; padding-left: 5px; }
+*/
+.cn_messagebox .aboutDialogDiv1{ overflow: auto; /*height: 120px;*/ height: 160px; padding-left: 5px;  }
+.cn_messagebox .aboutDialogSeparator{ background: #888; width: 100%; overflow: hidden; height: 1px; margin-top: 5px; }
+.cn_messagebox .aboutDialogDiv2{ width: 100%; overflow: auto; height: 36%; padding-left: 5px; margin-top: 5px; }
+
+.cn_messagebox .yesNoMessage {
+  text-align: center;
+  padding: 0 10px;
+  font-size: 13px;
+}
+
+.cn_messagebox .errorsDialogContents {
+  height: 160px; width: 100%; position: relative; padding: 4px; overflow: auto;
+
+}
+
+.cn_messagebox .fatalErrorDialogMessageDiv1{ height: 94px; width: 100%; position: relative; padding: 4px; overflow: auto; }
+.cn_messagebox .fatalErrorDialogSpan1{ display: none; position: absolute; left: 5px; top: 118px; font-weight: bold; font-size: 10px; }
+.cn_messagebox .fatalErrorDialogMessageDiv2{ display: none; height: 90px; overflow: auto; border: 1px solid #ddd; background: white; padding: 3px;
+	position: absolute; width: 100%; top: 132px;
+}
+.cn_messagebox .fatalErrorDialogSpan2{ display: none; position: absolute; left: 5px; top: 232px; font-weight: bold; font-size: 10px; }
+.cn_messagebox .fatalErrorDialogMessageDiv3{ display: none; height: 90px; overflow: auto; border: 1px solid #ddd; background: white; padding: 3px; 
+	position: absolute; width: 100%; top: 246px;
+}
+.themeSupport_scalableFrame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.themeSupport_scalableFrame .tr2 {
+  height: 100%;
+}
+.themeSupport_scalableFrame .td2 {
+  width: 100%;
+}
+.themeSupport_scalableFrame img {
+  height: 100%;
+  width: 100%;
+}
+
+.themeSupport_scalableLine {
+}
+.cn_timebox {
+	border: 1px solid #9DBBE1; 
+	background: white;
+	
+	padding: 0px;
+	padding-left: 1px;
+	overflow: hidden;
+	white-space: nowrap;
+	
+	xl--disabled-border-color: #dddddd;
+}
+
+.cn_timebox input{
+	overflow: hidden;
+	border: 0px;
+	width: 1.3em;
+	font-size: 1em;
+	padding: 0px;
+	margin-top: 0;
+  vertical-align: top;
+  height: 100%;
+}
+.cn_timebox .divider {
+  margin-top: 5px;
+}
+
+.cn_timebox_disabled {
+  border-color: #ddd;
+  background: #e4f0ff;
+  color: #888;
+}
+.cn_timebox_disabled input {
+  background: #e4f0ff;
+  color: #888;
+}
+.cn_timeline{
+	cursor: default;
+	border: 1px solid #7F9DB9;
+	background: white;
+}
+
+.cn_timeline .timelineLegendDiv{
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width: 140px;
+	font-weight: bold;
+	
+	border-right: 1px solid #B3B6CE;
+}
+
+.cn_timeline .timelineCaptionDiv{
+	position: absolute;
+	width: 150px;
+	padding-left: 1px;
+	border-bottom: 1px solid #B3B6CE;
+}
+
+.cn_timeline .timelineTableDiv{
+	overflow: auto;
+	top: 0px;
+	left: 140px;
+	position: absolute;
+	border-right: 1px solid #B3B6CE;
+}
+
+.cn_timeline .timelineTable{
+	border-collapse: collapse;
+}
+
+.cn_timeline .timelineTable td{
+	position: relative;
+	border-bottom: 1px solid #B3B6CE;
+}
+
+.cn_timeline .lowerMonthes1 td{
+	font-size: 1px;
+}
+
+.cn_timeline .lowerMonthesMark{
+	overflow: hidden;
+	width: 2px;
+	background: #8899aa;
+	vertical-align: top;
+	margin-top: -3px;
+}
+
+.cn_timeline .lowerMonthes2 td{
+	font-size: 10px;
+	font-weight: bold;
+}
+
+.cn_timeline .nowMarkDiv{
+	position: absolute;
+	top: 0px;
+	width: 1px;
+	height: 100px;
+	background: red;
+	overflow: hidden;
+}
+
+.cn_timeline .timelineIcon{
+	position: absolute;
+	left: 0px;
+	top: 2px;
+	xl--blend-duration: 200;
+	cursor: pointer;
+}
+
+.cn_timeline .cnToolbar{
+	top: 0px;
+	position: absolute;
+	width: 22px;
+	background: #C6C6D9;
+	
+}
+
+.cn_timeline .nowLabelDiv{
+	position: absolute;
+	color: red;
+	font-size: 10px;
+}
+
+.cn_timeline_disabled {
+  border-color: #ddd;
+  background: #e4f0ff;
+  color: #888;
+}
+.cn_tree{
+	cursor: default;
+	white-space: nowrap;
+
+	border: 1px solid #7F9DB9;
+	overflow: hidden;
+
+  background: white url(../../../themes/new-blue/g/bg-shade.png) bottom repeat-x;
+	xl--drag-over-background: #CFE5FF;
+}
+
+.cn_tree .checkBoxSpan{
+	font-family: wingdings;
+	font-size: 17px;
+	height: 1em;
+	overflow: hidden;
+	margin-left: 2px;
+	margin-right: 1px;
+	xl--hover-color: #1148AB;
+	vertical-align: bottom;	
+}
+
+.cn_tree .iconImg{
+	vertical-align: bottom;
+}
+
+.cn_tree .textSpan{
+	position: relative;
+	margin-left: 2px;
+	padding: 2px;
+	display: inline-block;
+	vertical-align: bottom;
+
+	/* Workaround. */
+	font-family: tahoma;
+	font-size: 8pt;
+}
+
+.cn_tree .textEditSpan{
+	white-space: nowrap;
+	padding: 1px;
+	border: 1px solid black;
+	background: white !important;
+	color: black !important;
+	
+}
+
+.cn_tree .nodeDivSelected .textSpan, 
+.cn_tree .draggedNode{
+	background: #316AC5;
+	color: white;
+	
+}
+
+.cn_tree .draggedNode{
+	padding: 2px;
+	
+}
+
+.cn_tree .insertCursor{
+	overflow: hidden;
+	height: 2px;
+	width: 2px;
+	background: #316AC5;
+}
+
+.cn_tree .nodeDivOver .textSpan{
+	text-decoration: underline;
+}
+
+.cn_tree .inplaceEditBox{
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	margin-top: 0px;
+	padding-top: 0px;
+}
+
+.cn_tree_disabled {
+  border-color: #ddd;
+  background: #e4f0ff;
+  color: #888;
+}
+.cn_uploadbox{
+	overflow-x: hidden;
+	white-space: nowrap;
+}
+
+.cn_uploadbox input{
+	width: 100%;
+	height: 19px !important;
+	vertical-align: top
+}
+
+.cn_uploadbox input{
+	height: 100%;
+	vertical-align: top;
+	margin-right: 2px;
+}
+
+.cn_uploadbox .cn_round_button{
+	width: 80px;
+	height: 21px;
+	display: inline;
+}
+
+.cn_uploadbox_hiddenIframe{
+	width: 1px;
+	height: 1px;
+	display: none;
+	top: 0;
+	left: 0;
+	position: absolute;
+}
+
+.cn_uploadbox .progressIMG{
+	position: absolute;
+	left: 0;
+	top: 2px;
+}
+
+
+.cn_uploadbox_disabled input {
+  border-color: #ddd;
+  background: #e4f0ff;
+  color: #888;
+}
+.cn_videoplayer .wmpObject{
+	width: 100%;
+	height: 100%;
+	border: 1px solid #7F9DB9;
+} 
+
+.cn_wysiwygeditor{
+	border: 1px solid #7F9DB9;
+}
+
+.cn_wysiwygeditor .cnToolbar{
+	overflow: visible;
+	background: #eeeeee;
+	height: 24px;
+	
+	border: 1px solid white;
+	border-bottom: 1px solid #C6C6D9;
+}
+
+.cn_wysiwygeditor .cnScrollDiv{
+	overflow: auto;
+	width: 100%;
+	height: 100%;
+}
+
+.cn_wysiwygeditor .cnContentDiv{
+	height: 100%;
+	width: 100%;
+	padding: 4px;
+	position: relative;
+	background: white;
+}
+
+.cn_wysiwygeditor .cnContentDiv p{
+	margin: 0px;
+}
+
+.cn_wysiwygeditor .cn_combobox{
+	vertical-align: top;
+	margin-top: 2px;
+}
+
+.cn_wysiwygeditor .cn_combobox .xlcombotext, .cn_wysiwygeditor .cn_combobox .xlcombotext *{
+	font-size: 100%;
+}
+
+
+.cn_wysiwygeditor .cnVmlDiv{
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	overflow: visible;
+	height: 1px;
+	width: 1px;
+}
+
+.cn_wysiwygeditor_autocompleteDiv{
+	visibility: hidden;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 200px;
+	height: 137px; 
+	background: white; 
+	overflow: auto;
+	border: 1px solid #9DBBE1;
+	cursor: default;
+}
+
+.cn_autocompleteDiv_containerDiv{
+}
+
+.cn_autocompleteDiv_itemDiv{
+	padding: 2px;
+	margin: 2px;
+	display: inline-block;
+	border-style: solid;
+	border-color: #9DBBE1; /* Only for hilite state. */
+	border-width: 0px;
+	xl--hilite-
+}
+
+.cn_wysiwygeditor .spellError{
+	padding-bottom: 2px;
+	background: url(../../../g/spell-error-border.gif) repeat-x 0 100%;
+}
+
+.cn_wysiwygeditor_disabled {
+  border-color: #ddd;
+  background: #e4f0ff;
+  color: #888;
+}
+
+
+/* Server geometry contract.
+ *
+ * Form XML supplies the outer position and dimensions of framework controls.
+ * New Blue supplies borders, colours and typography, but must not impose
+ * legacy default widths/heights on those rectangles.
+ */
+.cn_button,
+.cn_combobox,
+.cn_datebox,
+.cn_partialdatebox,
+.cn_timebox,
+.cn_grid,
+.cn_dynamicgrid,
+.cn_checkedlistbox,
+.cn_htmlviewer,
+.cn_navigation,
+.cn_iconnavigation {
+  box-sizing: border-box;
+}
+
+/* Standards theme package additions. */
+.cn_logincontrol_newblue .loginInputBox {
+  display: inline-block;
+  position: relative;
+  vertical-align: middle;
+  box-sizing: content-box;
+}
+.cn_logincontrol_newblue .loginBox { box-sizing: border-box; z-index: 2; }
+.cn_logincontrol_newblue .loginBoxHint { z-index: 1; white-space: nowrap; pointer-events: none; }
+.cn_logincontrol_newblue .loginButton { z-index: 3; }
+.cn_logincontrol_newblue .locationLabel,
+.cn_logincontrol_newblue .changeLabel {
+  display: inline-block;
+  box-sizing: border-box;
+  vertical-align: middle;
+}
+.topRightControls .topButton .imgSpan {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  vertical-align: middle;
+}
+.cn_combobox {
+  display: table;
+  table-layout: fixed;
+  box-sizing: border-box;
+  vertical-align: middle;
+}
+.cn_combobox .xlcomboTD2 {
+  position: relative;
+  width: 14px;
+  padding: 0;
+  font-size: 0;
+  font-family: sans-serif;
+}
+.cn_combobox .xlcomboTD2::after {
+  content: "";
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid #222;
+  vertical-align: middle;
+}
+.cn_partialdatebox {
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  vertical-align: middle;
+}
+.cn_partialdatebox input { box-sizing: content-box; margin-top: 0; line-height: 16px; }
+
+.theme_supportsDarkFormSurface .cn_datebox .dateBox {
+  background: #ffffff;
+}
+.theme_supportsDarkFormSurface .cn_datebox .dateBox input {
+  border: 0;
+  background: transparent;
+}
+
+/* Standards New Blue control surfaces.  Keep the historical geometry; only
+   replace the IE-era transparent/native control appearance. */
+.topRightControls .topButton .imgSpan {
+  margin-right: 4px;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  border: 0;
+}
+
+/* Align the same explicit text/icon spans used by the other toolbar links. */
+.topRightControls .topButton,
+.topRightControls .moreButton {
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  height: 25px;
+  padding-top: 0;
+  line-height: normal;
+  vertical-align: middle;
+}
+.topRightControls .moreText {
+  display: inline-block;
+}
+.topRightControls .moreIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 7px;
+  height: 7px;
+  margin-left: 4px;
+}
+.topRightControls .moreIcon img {
+  display: block;
+  width: 7px;
+  height: 7px;
+  margin: 0;
+  border: 0;
+}
+
+.theme_supportsDarkFormSurface .cn_button,
+.theme_supportsDarkFormSurface .cn_datebox .buttonTD button {
+  border: 1px solid #9bb6d6;
+  border-radius: 4px;
+  background: linear-gradient(to bottom, #f8fbff 0%, #d7e6f6 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.95);
+  -webkit-appearance: none;
+  appearance: none;
+}
+.theme_supportsDarkFormSurface .cn_button_hover,
+.theme_supportsDarkFormSurface .cn_datebox .buttonTD button:hover {
+  border-color: #6e96c4;
+  background: linear-gradient(to bottom, #ffffff 0%, #c5dbf0 100%);
+}
+.theme_supportsDarkFormSurface .cn_button_down {
+  background: linear-gradient(to bottom, #c5dbf0 0%, #edf5fc 100%);
+}
+
+/* Image buttons have a different content contract from text buttons.  Center
+   their existing 24px asset without changing the server-supplied geometry. */
+.theme_supportsDarkFormSurface .cn_button:has(> img.cn_imagebutton) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 0;
+}
+.theme_supportsDarkFormSurface .cn_button > img.cn_imagebutton {
+  display: block;
+  margin: 0;
+}
+.theme_supportsDarkFormSurface .cn_datebox .buttonTD button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px;
+}
+.theme_supportsDarkFormSurface .cn_datebox .buttonTD button img {
+  display: block;
+  margin: 0;
+}
+/* Preserve server-supplied line breaks in standards browsers. */
+.cn_label, .cn_label_standard, .cn_label_bold{ white-space: pre-line; cursor: default; }
+
+.cn_iconnavigation_folder .icon_div {
+  background-image: url("../../../themes/new-blue/g/nav-big-arrow-right.gif");
+  background-repeat: no-repeat;
+  background-position: right 17px;
+}
+.cn_iconnavigation_popup .cn_iconnavigation_item {
+  display: inline-block;
+  box-sizing: border-box;
+  vertical-align: top;
+}
+#__si_darkHeader.theme_darkFormSurface {
+  /* Replace the fixed-size artwork with the sampled New Blue ramp.  The
+     bitmap contains a dark lower edge which becomes an accidental band when
+     it is stretched to variable form heights. */
+  background: linear-gradient(to bottom,
+    #71acee 0%,
+    #68a5e9 10%,
+    #629cdf 20%,
+    #5b92d2 30%,
+    #5387c4 40%,
+    #4b7bb5 50%,
+    #4470a7 60%,
+    #3c6499 70%,
+    #355a8c 80%,
+    #2f5181 90%,
+    #32507c 100%);
+  box-shadow: 0 6px 8px rgba(38, 58, 82, 0.42);
+  overflow: visible;
+}
+
+
+/* Standalone Standards Port layout layer. */
+/*
+ * Private standards-browser layout overrides.
+ *
+ * The historical theme CSS relies on IE's treatment of display:inline
+ * elements with explicit dimensions. Keep the theme assets, but restore the
+ * intended box geometry with standards layout primitives.
+ */
+/* Match the diagnostic wireframe's viewport and box arithmetic.  The server
+ * owns the outer rectangles; the theme must not remove the scrollbar or make
+ * borders/padding expand those rectangles. */
+html,
+body {
+  overflow: auto !important;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.cn_logincontrol_newblue .loginInputBox {
+  display: inline-block !important;
+  position: relative;
+  width: 160px;
+  height: 40px;
+  vertical-align: middle;
+  box-sizing: content-box;
+}
+
+.cn_logincontrol_newblue .loginBox {
+  box-sizing: border-box;
+  z-index: 2;
+}
+
+.cn_logincontrol_newblue .loginBoxHint {
+  z-index: 1;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.cn_logincontrol_newblue .loginButton {
+  z-index: 3;
+}
+
+.cn_logincontrol_newblue .locationLabel,
+.cn_logincontrol_newblue .changeLabel {
+  display: inline-block !important;
+  box-sizing: border-box;
+  vertical-align: middle;
+}
+
+/* Keep toolbar icon boxes dimensioned when the old CSS says display:inline. */
+.topRightControls .topButton .imgSpan {
+  display: inline-block !important;
+  width: 24px;
+  height: 24px;
+  vertical-align: middle;
+}
+
+/*
+ * The legacy theme uses `display:inline` and Webdings for table-based
+ * comboboxes.  That is not a standards layout primitive, and Safari either
+ * collapses the table or renders the Webdings codepoint as an ordinary digit.
+ */
+/* The historical grid relies on IE giving explicit widths to inline
+ * spans. Standards browsers require an inline formatting box for those
+ * widths to participate in layout. Include padding and borders in the
+ * assigned column width so each row boundary stays on the header boundary. */
+.cn_grid #headerRow > span {
+  box-sizing: border-box;
+}
+
+/* The server dimensions describe the grid's outer rectangle.  New Blue adds
+ * a 1px border, so content-box would expand every grid by 2px in each axis
+ * and move its right/bottom edges away from the server layout. */
+.cn_grid,
+.cn_dynamicgrid {
+  box-sizing: border-box;
+}
+
+.cn_grid .rowDiv > .selectionSpan,
+.cn_grid .rowDiv > .cellSpan {
+  display: inline-block !important;
+  box-sizing: border-box;
+  vertical-align: top;
+}
+
+/* The grid deliberately hides this column for non-selectable grids. */
+.cn_grid .rowDiv > .selectionSpan[style*="display: none"] {
+  display: none !important;
+}
+
+.cn_combobox {
+  display: table !important;
+  table-layout: fixed;
+  box-sizing: border-box;
+  vertical-align: middle;
+}
+
+.cn_combobox .xlcomboTD1 {
+  overflow: hidden;
+}
+
+.cn_combobox .xlcomboTD2 {
+  position: relative;
+  width: 14px;
+  padding: 0;
+  font-size: 0 !important;
+  font-family: sans-serif !important;
+}
+
+.cn_combobox .xlcomboTD2::after {
+  content: "";
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid #222;
+  vertical-align: middle;
+}
+
+/* Keep the three date inputs on one line inside the server-sized datebox. */
+.cn_datebox .dateBox {
+  white-space: nowrap;
+}
+
+.cn_datebox .buttonTD button {
+  box-sizing: border-box;
+  height: 100%;
+  max-height: 100%;
+}
+
+/* Render custom combobox options as selectable menu rows, not inline text. */
+.cn_comboboxPopup .xlcombooption {
+  display: block !important;
+  box-sizing: border-box;
+  width: 100%;
+  cursor: pointer;
+  user-select: none;
+}
+.cn_comboboxPopup .xlcombooption:hover,
+.cn_comboboxPopup .xlcombooption.cn_combobox_option_active {
+  background: #316ac5 !important;
+  color: #ffffff !important;
+}
+
+/* Preserve the historical three-part date control without IE pixel hacks. */
+.cn_partialdatebox {
+  display: inline-flex !important;
+  align-items: center;
+  box-sizing: border-box;
+  vertical-align: middle;
+}
+
+.cn_partialdatebox input {
+  box-sizing: content-box;
+  margin-top: 0;
+  line-height: 16px;
+}
+
+.theme_supportsDarkFormSurface .cn_datebox .dateBox {
+  background: #ffffff;
+}
+.theme_supportsDarkFormSurface .cn_datebox .dateBox input {
+  border: 0;
+  background: transparent;
+}
+
+/* Standards New Blue control surfaces.  Keep the historical geometry; only
+   replace the IE-era transparent/native control appearance. */
+.topRightControls .topButton .imgSpan {
+  margin-right: 4px;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  border: 0;
+}
+
+/* Align the same explicit text/icon spans used by the other toolbar links. */
+.topRightControls .topButton,
+.topRightControls .moreButton {
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  height: 25px;
+  padding-top: 0;
+  line-height: normal;
+  vertical-align: middle;
+}
+.topRightControls .moreText {
+  display: inline-block;
+}
+.topRightControls .moreIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 7px;
+  height: 7px;
+  margin-left: 4px;
+}
+.topRightControls .moreIcon img {
+  display: block;
+  width: 7px;
+  height: 7px;
+  margin: 0;
+  border: 0;
+}
+
+.theme_supportsDarkFormSurface .cn_button,
+.theme_supportsDarkFormSurface .cn_datebox .buttonTD button {
+  border: 1px solid #9bb6d6;
+  border-radius: 4px;
+  background: linear-gradient(to bottom, #f8fbff 0%, #d7e6f6 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.95);
+  -webkit-appearance: none;
+  appearance: none;
+}
+.theme_supportsDarkFormSurface .cn_button_hover,
+.theme_supportsDarkFormSurface .cn_datebox .buttonTD button:hover {
+  border-color: #6e96c4;
+  background: linear-gradient(to bottom, #ffffff 0%, #c5dbf0 100%);
+}
+.theme_supportsDarkFormSurface .cn_button_down {
+  background: linear-gradient(to bottom, #c5dbf0 0%, #edf5fc 100%);
+}
+
+/* Image buttons have a different content contract from text buttons.  Center
+   their existing 24px asset without changing the server-supplied geometry. */
+.theme_supportsDarkFormSurface .cn_button:has(> img.cn_imagebutton) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 0;
+}
+.theme_supportsDarkFormSurface .cn_button > img.cn_imagebutton {
+  display: block;
+  margin: 0;
+}
+.theme_supportsDarkFormSurface .cn_datebox .buttonTD button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px;
+}
+.theme_supportsDarkFormSurface .cn_datebox .buttonTD button img {
+  display: block;
+  margin: 0;
+}
+
+/* Folder items use the historical arrow asset; popup items remain a grid. */
+.cn_iconnavigation_folder .icon_div {
+  /* The packed stylesheet is served from /packed/themes/css/. */
+  background-image: url("../../../themes/new-blue/g/nav-big-arrow-right.gif");
+  background-repeat: no-repeat;
+  background-position: right 17px;
+}
+
+/* The historical theme declares display:inline !important. The extra body
+ * qualifier makes this standards rule win regardless of stylesheet insertion
+ * order, so popup dimensions are calculated after the correct display mode is
+ * already active. */
+body .cn_iconnavigation_popup .cn_iconnavigation_item {
+  display: inline-block !important;
+  box-sizing: border-box;
+  vertical-align: top;
+}
+
+/*
+ * Form controls are absolutely positioned from the server's design width and
+ * may extend beyond the current screen-item width.  The dark filter/header
+ * layer is decorative and must cover that same visible form area; otherwise
+ * standards browsers show a rectangular blue patch ending halfway across the
+ * form.
+ */
+#__si_darkHeader.theme_darkFormSurface {
+  background: linear-gradient(to bottom,
+    #71acee 0%,
+    #68a5e9 10%,
+    #629cdf 20%,
+    #5b92d2 30%,
+    #5387c4 40%,
+    #4b7bb5 50%,
+    #4470a7 60%,
+    #3c6499 70%,
+    #355a8c 80%,
+    #2f5181 90%,
+    #32507c 100%) !important;
+  box-shadow: 0 6px 8px rgba(38, 58, 82, 0.42) !important;
+  overflow: visible !important;
+}
+
+/* Standards accordion navigation: replace the historical orange three-slice
+ * panel header with the New Blue rounded blue surface visible in the XP theme.
+ * The framework still owns the table and panel lifecycle; CSS owns only the
+ * presentation. */
+#__si_navigation .cn_navigation .cn_navigation_panel .panelButton {
+  display: block !important;
+  box-sizing: border-box;
+  width: 100% !important;
+  height: 28px !important;
+  line-height: 28px !important;
+  overflow: hidden;
+  border: 1px solid #24568f;
+  border-radius: 10px 10px 0 0;
+  background: linear-gradient(to bottom, #73b0ef 0%, #4d8fd4 52%, #2b5f9d 100%) !important;
+  color: #ffffff !important;
+  cursor: pointer;
+}
+
+#__si_navigation .cn_navigation .cn_navigation_panel .panelButton table {
+  width: 100% !important;
+  height: 28px !important;
+  border-collapse: collapse;
+  color: #ffffff !important;
+  font: bold 16px/28px Tahoma, Arial, sans-serif !important;
+}
+
+/* The old left/right image slices are decorative only. */
+#__si_navigation .cn_navigation .cn_navigation_panel .panelButton table > tbody > tr > td:first-child,
+#__si_navigation .cn_navigation .cn_navigation_panel .panelButton table > tbody > tr > td:last-child {
+  display: none !important;
+}
+
+#__si_navigation .cn_navigation .cn_navigation_panel .panelButton .panelContentTD {
+  display: table-cell !important;
+  width: 100% !important;
+  height: 28px !important;
+  box-sizing: border-box;
+  padding: 0 12px !important;
+  vertical-align: middle;
+  background: transparent !important;
+  color: #ffffff !important;
+  font: bold 16px/28px Tahoma, Arial, sans-serif !important;
+  text-shadow: 0 1px 1px rgba(24, 58, 99, 0.45);
+}
+
+#__si_navigation .cn_navigation .cn_navigation_panel .panelButtonHover {
+  background: linear-gradient(to bottom, #86bdf2 0%, #5b9ce0 52%, #356fae 100%) !important;
+}
+
+#__si_navigation .cn_navigation .cn_navigation_panel .panelButtonHover .panelContentTD {
+  color: #ffffff !important;
+  text-decoration: none !important;
+}
+
+/* Standards tab treatment: replace the historical three-slice tab images. */
+.tabbedContainerButton {
+  display: inline-table !important;
+  width: auto !important;
+  height: 18px !important;
+  min-height: 18px;
+  margin: 0 !important;
+  position: relative;
+  top: 0;
+  vertical-align: bottom;
+  line-height: 16px;
+  table-layout: auto;
+  border: 1px solid #a9bfdc;
+  border-bottom: 0;
+  border-radius: 10px 10px 0 0;
+  background: #f7fbff;
+  box-shadow: inset 0 -6px 5px -5px #adb0b3;
+  color: #586777;
+  cursor: pointer;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.tabbedContainerButton > tbody > tr > td {
+  height: 16px !important;
+  padding: 0;
+  border: 0;
+  background: transparent !important;
+  vertical-align: middle;
+  line-height: 16px;
+  white-space: nowrap;
+}
+
+.tabbedContainerButton > tbody > tr > td:first-child,
+.tabbedContainerButton > tbody > tr > td:last-child {
+  width: 4px !important;
+  min-width: 4px;
+}
+
+.tabbedContainerButton > tbody > tr > td:nth-child(2) {
+  padding: 0;
+  color: inherit;
+  font: 12px/16px Arial, sans-serif;
+  font-weight: normal;
+  user-select: none;
+}
+
+.tabbedContainerButton img {
+  display: none !important;
+}
+
+.tabbedContainerButton:hover,
+.tabbedContainerButton_hover {
+  background: #ffffff;
+  color: #2c4d7c;
+  border-color: #a9bfdc;
+}
+
+.tabbedContainerButton_selected {
+  height: 22px !important;
+  min-height: 22px;
+  top: 0 !important;
+  transform: translateY(1px);
+  z-index: 3 !important;
+  border: 1px solid #a9bfdc;
+  border-bottom: 0;
+  border-radius: 10px 10px 0 0;
+  background: #e5f0ff;
+  box-shadow: none;
+  color: #245184;
+  cursor: default;
+}
+
+.tabbedContainerButton_selected > tbody > tr > td {
+  height: 20px !important;
+  line-height: 20px;
+}
+
+.tabbedContainerButton_selected > tbody > tr > td:nth-child(2) {
+  font: bold 12px/20px Arial, sans-serif;
+}
+
+.tabbedContainerButton_disabled,
+.tabbedContainerButton[disabled="true"] {
+  color: #8a929c;
+  cursor: default;
+  opacity: 0.72;
+}
+
+/* The framework toggles hidden tabs with an inline display declaration. */
+.tabbedContainerButton[style*="display: none"] {
+  display: none !important;
+}
+
+/* Keep the tab row aligned while allowing the selected tab to join the pane. */
+.tabbedContainerButton {
+  top: 0 !important;
+  margin-top: 0 !important;
+}
+.tabbedContainerButton_selected {
+  top: 0 !important;
+  margin-top: 0 !important;
+}
+
+
+/* Join each grouped tab strip to its rectangular content surface. */
+.standardsTabContainer {
+  z-index: 0 !important;
+  overflow: visible;
+}
+
+/* The server reserves a 22px tab row. The theme paints the tabs into that
+   row and lets the selected tab overlap the pane edge by one pixel. */
+.standardsTabContainer > tbody > tr:first-child {
+  height: 22px !important;
+  vertical-align: top;
+}
+
+.tabbedContainerContent {
+  box-sizing: border-box;
+  border: 1px solid #a9bfdc;
+  border-top: 0;
+  border-radius: 0 10px 10px 10px;
+  background: #e5f0ff;
+  box-shadow: none;
+  z-index: 0;
+}
+
+.standardsTabContainer .tabbedContainerButton_selected {
+  z-index: 3 !important;
+}
+
+/* New Blue mini-panels are complete CSS boxes, not header-only image slices. */
+.smallMiniWindow2 {
+  box-sizing: border-box;
+  border: 1px solid #a9bfdc !important;
+  border-radius: 12px;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: linear-gradient(to bottom, #e5f0ff 0%, #eef5ff 34px, #f5f8fd 100%);
+  box-shadow: 0 2px 8px rgba(64, 101, 145, 0.28);
+  overflow: hidden;
+}
+
+.smallMiniWindow2 > tbody > tr:first-child > td {
+  height: 34px;
+  padding: 0 !important;
+  vertical-align: middle;
+  background: transparent !important;
+}
+
+.smallMiniWindow2 > tbody > tr:first-child > td:nth-child(2) {
+  padding: 0 12px !important;
+}
+
+.smallMiniWindow2 > tbody > tr:nth-child(2) > td {
+  background: transparent !important;
+}
+
+.smallMiniWindow2 h5 {
+  margin: 0;
+  color: #2c4d7c;
+  font: bold 16px/30px Tahoma, Arial, sans-serif;
+}
+
+/* The New Blue login control is positioned outside the zero-height form shell.
+ * Scope the overflow change to login only; ordinary forms retain clipping. */
+#__si_form:has(.cn_logincontrol_newblue) {
+  overflow: visible !important;
+}
+
+.loginChrome {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: #e4f0ff;
+}
+
+.cn_logincontrol_newblue .loginInputBox { width: 184px; margin-right: 0; }
+.cn_logincontrol_newblue .passwordDiv { margin-left: 12px; }
+
+/* Safari autofill must not paint over the transparent New Blue input frame. */
+.cn_logincontrol_newblue .loginBox:-webkit-autofill,
+.cn_logincontrol_newblue .loginBox:-webkit-autofill:hover,
+.cn_logincontrol_newblue .loginBox:-webkit-autofill:focus,
+.cn_logincontrol_newblue .loginBox:autofill {
+  -webkit-box-shadow: 0 0 0 1000px transparent inset;
+  -webkit-text-fill-color: #000;
+  background-color: transparent !important;
+}

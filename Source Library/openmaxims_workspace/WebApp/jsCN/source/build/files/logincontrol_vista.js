@@ -1,1210 +1,409 @@
-//#############################################################################
-//#                                                                           #
-//#  Copyright (C) <2015>  <IMS MAXIMS>                                       #
-//#                                                                           #
-//#  This program is free software: you can redistribute it and/or modify     #
-//#  it under the terms of the GNU Affero General Public License as           #
-//#  published by the Free Software Foundation, either version 3 of the       #
-//#  License, or (at your option) any later version.                          # 
-//#                                                                           #
-//#  This program is distributed in the hope that it will be useful,          #
-//#  but WITHOUT ANY WARRANTY; without even the implied warranty of           #
-//#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
-//#  GNU Affero General Public License for more details.                      #
-//#                                                                           #
-//#  You should have received a copy of the GNU Affero General Public License #
-//#  along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
-//#                                                                           #
-//#############################################################################
-//#EOH
 /*
- * This code was generated
- * Copyright (C) 1995-2004 IMS MAXIMS plc. All rights reserved.
- * IMS Development Environment (version 1.80 build 5589.25814)
- * WARNING: DO NOT MODIFY the content of this file
- * Generated: 12/10/2015, 13:36
- *
- */
-package ims.webservice;
-
-public class MAXIMSWebService extends ims.domain.impl.DomainWebService
+	v. 2.0.1
+*/
+function CN_logincontrol_vista()
 {
-	public MAXIMSWebService() 
-	{
-		super();
-	}
+	this._lockMode = false;
+	this._jsObjects = [];
+	this._disabled = false;
+	this._salt = "";
+}
+var proto = CN_logincontrol_vista.prototype;
 
-	public String login(String username, String password) throws Exception
+CN_logincontrol_vista.loginImage = false;
+
+proto._createActionImage = function(black)
+{
+	var img;
+	if(black)
 	{
-		return super.login(username, password);
+		img = document.createElement("span");
+		img.style.display = "inline-block";
+		img.style.width = "22px";
+		img.style.height = "22px";
+		img.style.backgroundImage = "url(" + CNFormManager.themeImagesPath + "square-button-set.gif)";
+		img.style.backgroundRepeat = "no-repeat";
+		img.style.backgroundPosition = "0px 0px";
+		Event.nativeAdd(img, "mouseenter", function() { if(!img.disabled) img.style.backgroundPosition = "-22px 0px"; });
+		Event.nativeAdd(img, "mouseleave", function() { img.style.backgroundPosition = "0px 0px"; });
+		Event.nativeAdd(img, "mousedown", function() { if(!img.disabled) img.style.backgroundPosition = "-44px 0px"; });
+		Event.nativeAdd(img, "mouseup", function() { if(!img.disabled) img.style.backgroundPosition = "-22px 0px"; });
+	}
+	else
+	{
+		img = document.createElement("img");
+		img.src = CNFormManager.themeImagesPath + "round-button.gif";
+		Event.nativeAdd(img, "mouseenter", function() { if(!img.disabled) img.src = CNFormManager.themeImagesPath + "hover-round-button.gif"; });
+		Event.nativeAdd(img, "mouseleave", function() { img.src = CNFormManager.themeImagesPath + "round-button.gif"; });
+		Event.nativeAdd(img, "mousedown", function() { if(!img.disabled) img.src = CNFormManager.themeImagesPath + "down-round-button.gif"; });
+		Event.nativeAdd(img, "mouseup", function() { if(!img.disabled) img.src = CNFormManager.themeImagesPath + "hover-round-button.gif"; });
+	}
+	return img;
+}
+
+proto.createElement = function(node, parentElement)
+{
+	var l = (function(){ var el = document.createElement("div"); el.className = 'cn_logincontrol'; return el; })();
+	parentElement.appendChild(l);
+	
+	this.element = l;
+	l.jsObject = this;
+	
+	this._buildContent();
+	
+	this._lockMode = node.getAttribute("lock") == "true";
+	
+	this._showLoginScreen();	
+	
+	return l;
+} 
+
+proto._buildContent = function()
+{
+	$("__loginChrome").style.display = "block";
+
+	var img = $("__loginImage");
+	if(img) img.style.display = CN_logincontrol_vista.loginImage ? "block" : "none";
+	
+	var outerDiv = (function(){ var el = document.createElement("div"); el.className = 'outerDiv'; return el; })(); // Anchor div.
+	this.element.appendChild(outerDiv);
+	
+	var frameCont = (function(){ var el = document.createElement("div"); el.className = 'frameCont'; return el; })();
+	outerDiv.appendChild(frameCont);
+	
+	frameCont.innerHTML = $("__plainBG").innerHTML;
+	var frame = frameCont.firstElementChild;
+	frame.style.visibility = "hidden";	
+	frame.style.opacity = "0";
+
+	this._contentDiv = (function(){ var el = document.createElement("div"); el.className = 'contentDiv'; return el; })();
+	frameCont.appendChild(this._contentDiv);
+	this._contentDiv.style.visibility = "hidden";
+
+	var loginContentDiv = (function(){ var el = document.createElement("div"); el.className = 'loginContentDiv'; return el; })();
+	this._contentDiv.appendChild(loginContentDiv);
+
+	var focusDiv = (function(){ var el = document.createElement("span"); el.tabIndex = '1'; el.style.width = '1px'; el.style.overflow = 'hidden'; return el; })();
+	loginContentDiv.appendChild(focusDiv);	
+	
+	this._focusDiv = focusDiv;
+	
+	this._lockDiv = (function(){ var el = document.createElement("div"); el.className = 'lockDiv'; return el; })();
+	loginContentDiv.appendChild(this._lockDiv);
+	
+	this._userBox = (function(){ var el = document.createElement("input"); el.type = 'text'; el.className = 'loginBox untouched'; el.tabIndex = '2'; return el; })();
+	this._userBox._isEmpty = true;
+	this._userBox.value = "User";
+	loginContentDiv.appendChild(this._userBox);
+	VistaSupport.attachToTextBox(this._userBox);
+	Event.add(this._userBox, "focus", this, this._userBox_onfocus);
+	Event.add(this._userBox, "blur", this, this._userBox_onblur);
+	Event.add(this._userBox, "keypress", this, this._userBox_onkeypress);
+	
+	this._fakePasswordBox = (function(){ var el = document.createElement("input"); el.type = 'text'; el.className = 'passwordBox untouched'; el.tabIndex = '3'; return el; })();
+	this._fakePasswordBox.value = "Password";
+	loginContentDiv.appendChild(this._fakePasswordBox);
+	VistaSupport.attachToTextBox(this._fakePasswordBox);
+	Event.add(this._fakePasswordBox, "focus", this, this._fakePasswordBox_onfocus);
+	
+	this._passwordBox = (function(){ var el = document.createElement("input"); el.type = 'password'; el.className = 'passwordBox'; el.tabIndex = '3'; return el; })();
+	this._passwordBox.style.display = "none";
+	loginContentDiv.appendChild(this._passwordBox);
+	VistaSupport.attachToTextBox(this._passwordBox);
+	Event.add(this._passwordBox, "blur", this, this._passwordBox_onblur);
+
+	var img;
+	if(CNFormManager.subTheme == "black") {
+		img = this._createActionImage(true);
+
+		var siteLogo = document.getElementById("__siteLogo");
+		siteLogo.style.width = "1px";
+		siteLogo.style.backgroundSize = "contain";
+		siteLogo.style.objectFit = "contain"; // Reset logo back to image size.
+	} else {
+		img = this._createActionImage(false);
 	}
 	
-	public void logout()
-	{
-		super.logout();
+	img.tabIndex = 4; // After locations combo.
+	img.className = "imgButton";
+	loginContentDiv.appendChild(img);
+	Event.add(img, "click", this, this._img_onclick);
+	this._imgButton = img;
+	
+	if(CNFormManager.strings['loginCaption']) {
+		$('__loginLabel').innerHTML = $('__loginLabelShade').innerHTML = CNFormManager.strings['loginCaption'];
+	}
+	if(CNFormManager.strings['loginLogo']) {
+		var loginLogo = $('__loginLogoIMG');
+		if(loginLogo.tagName == "IMG") loginLogo.src = CNFormManager.strings['loginLogo'];
+		else loginLogo.style.backgroundImage = "url(" + CNFormManager.strings['loginLogo'] + ")";
 	}
 	
-	public void logout(String sessionToken)
-	{
-		super.logout(sessionToken);
-	}
+	Event.add(this.element, "keypress", this, this._element_onkeypress);	
+}
 
-	public void refreshLookupCache(
-
-												  Integer typeId
-                                                 ) throws Exception
-	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-	Integer v_typeId=null;
-	    if (typeId != null)
-		{
-			v_typeId = typeId;
-	}
-		
-		ims.admin.domain.RemoteAdmin intf = (ims.admin.domain.RemoteAdmin)super.getDomainImpl("ims.admin.domain.impl.RemoteAdminImpl");		
-
-	    intf.refreshLookupCache(
-												  v_typeId 
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-						
-	}
-	public void reloadFlags(
-                                                 ) throws Exception
-	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-		
-		ims.admin.domain.RemoteAdmin intf = (ims.admin.domain.RemoteAdmin)super.getDomainImpl("ims.admin.domain.impl.RemoteAdminImpl");		
-
-	    intf.reloadFlags(
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-						
-	}
-	public void saveFlag(
-
-												  String flagName
-
-												 , String flagValue
-                                                 ) throws Exception
-	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-	String v_flagName=null;
-	    if (flagName != null)
-		{
-			v_flagName = flagName;
-	}
-	String v_flagValue=null;
-	    if (flagValue != null)
-		{
-			v_flagValue = flagValue;
-	}
-		
-		ims.admin.domain.RemoteAdmin intf = (ims.admin.domain.RemoteAdmin)super.getDomainImpl("ims.admin.domain.impl.RemoteAdminImpl");		
-
-	    intf.saveFlag(
-												  v_flagName 
-												 , v_flagValue 
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-						
-	}
-	public void reloadAuditConfig(
-                                                 ) throws Exception
-	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-		
-		ims.admin.domain.RemoteAdmin intf = (ims.admin.domain.RemoteAdmin)super.getDomainImpl("ims.admin.domain.impl.RemoteAdminImpl");		
-
-	    intf.reloadAuditConfig(
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-						
-	}
-	public ims.core.vo.beans.NotificationVoBean[] getNotifications(
-                                                 ) throws Exception
-	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-		
-		ims.core.domain.Notifications intf = (ims.core.domain.Notifications)super.getDomainImpl("ims.core.domain.impl.NotificationsImpl");		
-
-	   ims.core.vo.NotificationVoCollection ret = intf.getNotifications(
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-				if(ret == null)
-			return null;
-				return ret.getBeanCollectionArray();
-	}
-	public void markNotificationAsSeen(
-
-												  Integer notificationId
-                                                 ) throws Exception
-	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-	Integer v_notificationId=null;
-	    if (notificationId != null)
-		{
-			v_notificationId = notificationId;
-	}
-		
-		ims.core.domain.Notifications intf = (ims.core.domain.Notifications)super.getDomainImpl("ims.core.domain.impl.NotificationsImpl");		
-
-	    intf.markNotificationAsSeen(
-												  v_notificationId 
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-						
-	}
-	public void registerMobileDeviceToPushNotifications(
-
-												  String uniqueDeviceId
-
-												 , String deviceTokenId
-
-												 , String deviceName
-
-												 , String deviceModel
-
-												 , String systemName
-
-												 , String systemVersion
-
-												 , Boolean enablePushNotifications
-                                                 ) throws Exception
-	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-	String v_uniqueDeviceId=null;
-	    if (uniqueDeviceId != null)
-		{
-			v_uniqueDeviceId = uniqueDeviceId;
-	}
-	String v_deviceTokenId=null;
-	    if (deviceTokenId != null)
-		{
-			v_deviceTokenId = deviceTokenId;
-	}
-	String v_deviceName=null;
-	    if (deviceName != null)
-		{
-			v_deviceName = deviceName;
-	}
-	String v_deviceModel=null;
-	    if (deviceModel != null)
-		{
-			v_deviceModel = deviceModel;
-	}
-	String v_systemName=null;
-	    if (systemName != null)
-		{
-			v_systemName = systemName;
-	}
-	String v_systemVersion=null;
-	    if (systemVersion != null)
-		{
-			v_systemVersion = systemVersion;
-	}
-	Boolean v_enablePushNotifications=null;
-	    if (enablePushNotifications != null)
-		{
-			v_enablePushNotifications = enablePushNotifications;
-	}
-		
-		ims.core.domain.Notifications intf = (ims.core.domain.Notifications)super.getDomainImpl("ims.core.domain.impl.NotificationsImpl");		
-
-	    intf.registerMobileDeviceToPushNotifications(
-												  v_uniqueDeviceId 
-												 , v_deviceTokenId 
-												 , v_deviceName 
-												 , v_deviceModel 
-												 , v_systemName 
-												 , v_systemVersion 
-												 , v_enablePushNotifications 
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-						
-	}
-	public ims.core.vo.beans.PatientShortBean getPatientById(
-
-												  Integer patientId
-                                                 ) throws Exception
-	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-	Integer v_patientId=null;
-	    if (patientId != null)
-		{
-			v_patientId = patientId;
-	}
-		
-		ims.core.domain.Notifications intf = (ims.core.domain.Notifications)super.getDomainImpl("ims.core.domain.impl.NotificationsImpl");		
-
-	   ims.core.vo.PatientShort ret = intf.getPatientById(
-												  v_patientId 
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-				if(ret == null)
-			return null;
-				return (ims.core.vo.beans.PatientShortBean)ret.getBean();
-	}
-	public ims.core.vo.beans.PatientShortBean[] searchPatients(
-
-												  String searchString
-                                                 ) throws Exception
-	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-	String v_searchString=null;
-	    if (searchString != null)
-		{
-			v_searchString = searchString;
-	}
-		
-		ims.core.domain.Notifications intf = (ims.core.domain.Notifications)super.getDomainImpl("ims.core.domain.impl.NotificationsImpl");		
-
-	   ims.core.vo.PatientShortCollection ret = intf.searchPatients(
-												  v_searchString 
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-				if(ret == null)
-			return null;
-				return ret.getBeanCollectionArray();
-	}
-	public ims.ocrr.vo.beans.OcsOrderWebServiceVoBean getOrderById(
-
-												  Integer orderId
-                                                 ) throws Exception
-	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-	Integer v_orderId=null;
-	    if (orderId != null)
-		{
-			v_orderId = orderId;
-	}
-		
-		ims.core.domain.Notifications intf = (ims.core.domain.Notifications)super.getDomainImpl("ims.core.domain.impl.NotificationsImpl");		
-
-	   ims.ocrr.vo.OcsOrderWebServiceVo ret = intf.getOrderById(
-												  v_orderId 
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-				if(ret == null)
-			return null;
-				return (ims.ocrr.vo.beans.OcsOrderWebServiceVoBean)ret.getBean();
-	}
-	public void markOrderAsSeen(
-
-												  Integer orderId
-                                                 ) throws Exception
-	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-	Integer v_orderId=null;
-	    if (orderId != null)
-		{
-			v_orderId = orderId;
-	}
-		
-		ims.core.domain.Notifications intf = (ims.core.domain.Notifications)super.getDomainImpl("ims.core.domain.impl.NotificationsImpl");		
-
-	    intf.markOrderAsSeen(
-												  v_orderId 
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-						
-	}
-	public byte[] getPatientImage(
-
-												  Integer patientId
-
-												 , Boolean smallImage
-                                                 ) throws Exception
-	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-	Integer v_patientId=null;
-	    if (patientId != null)
-		{
-			v_patientId = patientId;
-	}
-	Boolean v_smallImage=null;
-	    if (smallImage != null)
-		{
-			v_smallImage = smallImage;
-	}
-		
-		ims.core.domain.Notifications intf = (ims.core.domain.Notifications)super.getDomainImpl("ims.core.domain.impl.NotificationsImpl");		
-
-	   byte[] ret = intf.getPatientImage(
-												  v_patientId 
-												 , v_smallImage 
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-				if(ret == null)
-			return null;
-				return ret;
-	}
-	public ims.ocrr.vo.beans.OcsOrderWebServiceListVoBean[] getPatientOrders(
-
-												  Integer patientId
-
-												 , Integer lastNumberOfDays
-                                                 ) throws Exception
-	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-	Integer v_patientId=null;
-	    if (patientId != null)
-		{
-			v_patientId = patientId;
-	}
-	Integer v_lastNumberOfDays=null;
-	    if (lastNumberOfDays != null)
-		{
-			v_lastNumberOfDays = lastNumberOfDays;
-	}
-		
-		ims.core.domain.Notifications intf = (ims.core.domain.Notifications)super.getDomainImpl("ims.core.domain.impl.NotificationsImpl");		
-
-	   ims.ocrr.vo.OcsOrderWebServiceListVoCollection ret = intf.getPatientOrders(
-												  v_patientId 
-												 , v_lastNumberOfDays 
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-				if(ret == null)
-			return null;
-				return ret.getBeanCollectionArray();
-	}
-	public ims.core.vo.beans.PatientAllergyBean[] getPatientAllergies(
-
-												  Integer patientId
-                                                 ) throws Exception
-	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-	Integer v_patientId=null;
-	    if (patientId != null)
-		{
-			v_patientId = patientId;
-	}
-		
-		ims.core.domain.Notifications intf = (ims.core.domain.Notifications)super.getDomainImpl("ims.core.domain.impl.NotificationsImpl");		
-
-	   ims.core.vo.PatientAllergyCollection ret = intf.getPatientAllergies(
-												  v_patientId 
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-				if(ret == null)
-			return null;
-				return ret.getBeanCollectionArray();
-	}
-	public ims.core.vo.beans.PatientAlertBean[] getPatientAlerts(
-
-												  Integer patientId
-                                                 ) throws Exception
-	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-	Integer v_patientId=null;
-	    if (patientId != null)
-		{
-			v_patientId = patientId;
-	}
-		
-		ims.core.domain.Notifications intf = (ims.core.domain.Notifications)super.getDomainImpl("ims.core.domain.impl.NotificationsImpl");		
-
-	   ims.core.vo.PatientAlertCollection ret = intf.getPatientAlerts(
-												  v_patientId 
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-				if(ret == null)
-			return null;
-				return ret.getBeanCollectionArray();
-	}
-	public ims.admin.vo.beans.LoggedInUserInfoWebServiceVoBean getLoggedInUserInfo(
-                                                 ) throws Exception
-	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-		
-		ims.core.domain.Notifications intf = (ims.core.domain.Notifications)super.getDomainImpl("ims.core.domain.impl.NotificationsImpl");		
-
-	   ims.admin.vo.LoggedInUserInfoWebServiceVo ret = intf.getLoggedInUserInfo(
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-				if(ret == null)
-			return null;
-				return (ims.admin.vo.beans.LoggedInUserInfoWebServiceVoBean)ret.getBean();
-	}
-	public ims.core.vo.beans.VitalSignsWebServiceVoBean[] getPatientVitalSigns(
-
-												  Integer patientId
-
-												 , Integer lastNumberOfDays
-                                                 ) throws Exception
-	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-	Integer v_patientId=null;
-	    if (patientId != null)
-		{
-			v_patientId = patientId;
-	}
-	Integer v_lastNumberOfDays=null;
-	    if (lastNumberOfDays != null)
-		{
-			v_lastNumberOfDays = lastNumberOfDays;
-	}
-		
-		ims.core.domain.Notifications intf = (ims.core.domain.Notifications)super.getDomainImpl("ims.core.domain.impl.NotificationsImpl");		
-
-	   ims.core.vo.VitalSignsWebServiceVoCollection ret = intf.getPatientVitalSigns(
-												  v_patientId 
-												 , v_lastNumberOfDays 
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-				if(ret == null)
-			return null;
-				return ret.getBeanCollectionArray();
-	}
-	public Integer getCurrentInpatientCareContext(
-
-												  Integer patientId
-                                                 ) throws Exception
-	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-	Integer v_patientId=null;
-	    if (patientId != null)
-		{
-			v_patientId = patientId;
-	}
-		
-		ims.core.domain.Notifications intf = (ims.core.domain.Notifications)super.getDomainImpl("ims.core.domain.impl.NotificationsImpl");		
-
-	   Integer ret = intf.getCurrentInpatientCareContext(
-												  v_patientId 
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-				if(ret == null)
-			return null;
-				return ret;
-	}
-	public void recordVitalSigns(
-
-												  Integer patientId
-
-												 , ims.core.vo.beans.VitalSignsWebServiceVoBean vitalSigns
-                                                 ) throws Exception
-	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-	Integer v_patientId=null;
-	    if (patientId != null)
-		{
-			v_patientId = patientId;
-	}
-	ims.core.vo.VitalSignsWebServiceVo v_vitalSigns=null;
-	    if (vitalSigns != null)
-		{
-			v_vitalSigns = vitalSigns.buildVo();
-			//String[] errors0 = v_vitalSigns.validate();
-			//if (errors0 != null)
-			//	throw new Exception("Errors found during value object (vitalSigns) validation - " + errors0);
+proto.set_disabled = function(value)
+{
+	if(value == this._disabled) return;
+	this._disabled = value;
 	
-	}
-		
-		ims.core.domain.Notifications intf = (ims.core.domain.Notifications)super.getDomainImpl("ims.core.domain.impl.NotificationsImpl");		
+	this._userBox.readOnly = this._fakePasswordBox.readOnly = this._passwordBox.readOnly = value;
+	if(this._selectLocationCombo) this._selectLocationCombo.set_disabled(value);
+	this._imgButton.disabled = value;
+}
 
-	    intf.recordVitalSigns(
-												  v_patientId 
-												 , v_vitalSigns 
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-						
-	}
-	public ims.core.vo.beans.PatientDiagnosisWebServiceListVoBean[] getPatientDiagnosisForCurrentEpisodeOfCare(
-
-												  Integer patientId
-                                                 ) throws Exception
+proto._showLoginScreen = function()
+{
+	if(this._lockMode)
 	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-	Integer v_patientId=null;
-	    if (patientId != null)
+		this._lockDiv.style.display = "inline";
+	}
+	else
+	{	
+		var stored = false;
+		try 
 		{
-			v_patientId = patientId;
-	}
-		
-		ims.core.domain.Notifications intf = (ims.core.domain.Notifications)super.getDomainImpl("ims.core.domain.impl.NotificationsImpl");		
+			var storedRoot = this.formManager._getStoredLocationsXML();
+			var storedNodes = Util.xmlSelectNodes(storedRoot, "location");
+			if(storedNodes.length > 0) 
+			{							  
+				this._showLocationCombo(storedNodes);
+				this.element.className = "cn_logincontrol cn_logincontrol_big";
+				stored = true;
+			}
+		}
+		catch(e){}
+		if(!stored) this.element.className += " cn_logincontrol_no_stored";
+	}	
+}
 
-	   ims.core.vo.PatientDiagnosisWebServiceListVoCollection ret = intf.getPatientDiagnosisForCurrentEpisodeOfCare(
-												  v_patientId 
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-				if(ret == null)
-			return null;
-				return ret.getBeanCollectionArray();
-	}
-	public ims.core.vo.beans.PatientProcedureWebServiceListVoBean[] getPatientProceduresForCurrentEpisodeOfCare(
-
-												  Integer patientId
-                                                 ) throws Exception
+// Actually shows and animates control.
+proto.validateLoading = function()
+{
+	var frameCont = this.element.firstElementChild.firstElementChild;
+	var self = this;
+	//this._contentDiv
+	setTimeout(function()
 	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-	Integer v_patientId=null;
-	    if (patientId != null)
-		{
-			v_patientId = patientId;
-	}
+		self._contentDiv.style.visibility = "inherit";
 		
-		ims.core.domain.Notifications intf = (ims.core.domain.Notifications)super.getDomainImpl("ims.core.domain.impl.NotificationsImpl");		
-
-	   ims.core.vo.PatientProcedureWebServiceListVoCollection ret = intf.getPatientProceduresForCurrentEpisodeOfCare(
-												  v_patientId 
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-				if(ret == null)
-			return null;
-				return ret.getBeanCollectionArray();
-	}
-	public ims.core.vo.beans.PatientDiagnosisWebServiceVoBean getPatientDiagnosis(
-
-												  Integer diagnosisId
-                                                 ) throws Exception
-	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-	Integer v_diagnosisId=null;
-	    if (diagnosisId != null)
-		{
-			v_diagnosisId = diagnosisId;
-	}
+		var frame = frameCont.firstElementChild;
+		frame.style.opacity = "0";
+		frame.style.visibility = "inherit";
+		frame.style.transition = "opacity .5s";
+		frame.style.opacity = "1";	
+		self._focusDiv.focus();
+		AnimVistaFadeResize(frameCont, 60, 10);	
 		
-		ims.core.domain.Notifications intf = (ims.core.domain.Notifications)super.getDomainImpl("ims.core.domain.impl.NotificationsImpl");		
+		if(CNFormManager.subTheme == "black") {		
+			setTimeout(function() {
+				var siteLogo = document.getElementById("__siteLogo");
+				if(siteLogo) {
+					var w = siteLogo.offsetWidth,
+						h = siteLogo.offsetHeight;
+					siteLogo.style.width = w + "px";
+					siteLogo.style.height = h + "px";
+					siteLogo.style.backgroundSize = "100% 100%";
+					siteLogo.style.objectFit = "fill";
+					
+					Animator.start(new AnimResize(siteLogo, w / 2.5, h / 2.5));
+				}
+			}, 3000);
+		}
+	}, 0);
+}
 
-	   ims.core.vo.PatientDiagnosisWebServiceVo ret = intf.getPatientDiagnosis(
-												  v_diagnosisId 
-                                           ); 
+proto._createSelectLocationCombo = function()
+{
+	this._selectLocationCombo = new CN_combobox();
+	this._jsObjects.push(this._selectLocationCombo);
 
-		//super.freeDomainImpl(intf);
-				if(ret == null)
-			return null;
-				return (ims.core.vo.beans.PatientDiagnosisWebServiceVoBean)ret.getBean();
-	}
-	public ims.core.vo.beans.PatientProcedureWebServiceVoBean getPatientProcedure(
+	var comboEl = this._selectLocationCombo.createElement(Util.wrapIntoNode({}), this._contentDiv);
+	this._selectLocationCombo.set_tabIndex(3);
+}
 
-												  Integer procedureId
-                                                 ) throws Exception
+proto._showLocationCombo = function(storedNodes)
+{
+	if(!this._selectLocationCombo) this._createSelectLocationCombo();	
+	this._fillSelectLocationCombo(storedNodes);
+}
+
+proto._fillSelectLocationCombo = function(storedNodes)
+{
+	var options = [];
+	for(var i = 0; i < storedNodes.length; i++)
 	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-	Integer v_procedureId=null;
-	    if (procedureId != null)
-		{
-			v_procedureId = procedureId;
+		var option = {text: Util.xmlText(storedNodes[i])};
+		options.push(option);
 	}
-		
-		ims.core.domain.Notifications intf = (ims.core.domain.Notifications)super.getDomainImpl("ims.core.domain.impl.NotificationsImpl");		
-
-	   ims.core.vo.PatientProcedureWebServiceVo ret = intf.getPatientProcedure(
-												  v_procedureId 
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-				if(ret == null)
-			return null;
-				return (ims.core.vo.beans.PatientProcedureWebServiceVoBean)ret.getBean();
-	}
-	public ims.core.vo.beans.PatientGroupWebServiceVoBean[] getMyPatients(
-                                                 ) throws Exception
-	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-		
-		ims.core.domain.Notifications intf = (ims.core.domain.Notifications)super.getDomainImpl("ims.core.domain.impl.NotificationsImpl");		
-
-	   ims.core.vo.PatientGroupWebServiceVoCollection ret = intf.getMyPatients(
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-				if(ret == null)
-			return null;
-				return ret.getBeanCollectionArray();
-	}
-	public ims.core.vo.beans.PatientKioskSettingsVoBean getPatientKioskSettings(
-
-												  String kioskId
-                                                 ) throws Exception
-	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-	String v_kioskId=null;
-	    if (kioskId != null)
-		{
-			v_kioskId = kioskId;
-	}
-		
-		ims.admin.domain.PatientKioskConfig intf = (ims.admin.domain.PatientKioskConfig)super.getDomainImpl("ims.admin.domain.impl.PatientKioskConfigImpl");		
-
-	   ims.core.vo.PatientKioskSettingsVo ret = intf.getPatientKioskSettings(
-												  v_kioskId 
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-				if(ret == null)
-			return null;
-				return (ims.core.vo.beans.PatientKioskSettingsVoBean)ret.getBean();
-	}
-	public void processAppointmentForPukkaJ(
-
-												  ims.vo.RefVoBean catsReferral
-
-												 , ims.vo.RefVoBean appt
-                                                 ) throws Exception
-	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-	ims.RefMan.vo.CatsReferralRefVo v_catsReferral=null;
-	    if (catsReferral != null)
-		{
-			v_catsReferral = catsReferral == null ? null : new ims.RefMan.vo.CatsReferralRefVo(catsReferral.getId(), catsReferral.getVersion());
-	}
-	ims.scheduling.vo.Booking_AppointmentRefVo v_appt=null;
-	    if (appt != null)
-		{
-			v_appt = appt == null ? null : new ims.scheduling.vo.Booking_AppointmentRefVo(appt.getId(), appt.getVersion());
-	}
-		
-		ims.RefMan.domain.BookAppointment intf = (ims.RefMan.domain.BookAppointment)super.getDomainImpl("ims.RefMan.domain.impl.BookAppointmentImpl");		
-
-	    intf.processAppointmentForPukkaJ(
-												  v_catsReferral 
-												 , v_appt 
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-						
-	}
-	public void cancelAppointmentForPukkaJ(
-
-												  ims.vo.RefVoBean catsReferral
-
-												 , ims.vo.RefVoBean appt
-                                                 ) throws Exception
-	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-	ims.RefMan.vo.CatsReferralRefVo v_catsReferral=null;
-	    if (catsReferral != null)
-		{
-			v_catsReferral = catsReferral == null ? null : new ims.RefMan.vo.CatsReferralRefVo(catsReferral.getId(), catsReferral.getVersion());
-	}
-	ims.scheduling.vo.Booking_AppointmentRefVo v_appt=null;
-	    if (appt != null)
-		{
-			v_appt = appt == null ? null : new ims.scheduling.vo.Booking_AppointmentRefVo(appt.getId(), appt.getVersion());
-	}
-		
-		ims.RefMan.domain.BookAppointment intf = (ims.RefMan.domain.BookAppointment)super.getDomainImpl("ims.RefMan.domain.impl.BookAppointmentImpl");		
-
-	    intf.cancelAppointmentForPukkaJ(
-												  v_catsReferral 
-												 , v_appt 
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-						
-	}
-	public Integer generateSessionSlots(
-
-												  String directoryOfService
-
-												 , ims.framework.utils.beans.DateBean fromDate
-
-												 , ims.framework.utils.beans.DateBean toDate
-                                                 ) throws Exception
-	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-	String v_directoryOfService=null;
-	    if (directoryOfService != null)
-		{
-			v_directoryOfService = directoryOfService;
-	}
-	ims.framework.utils.Date v_fromDate=null;
-	    if (fromDate != null)
-		{
-			v_fromDate = fromDate.buildDate();
-	}
-	ims.framework.utils.Date v_toDate=null;
-	    if (toDate != null)
-		{
-			v_toDate = toDate.buildDate();
-	}
-		
-		ims.scheduling.domain.GenerateSessions intf = (ims.scheduling.domain.GenerateSessions)super.getDomainImpl("ims.scheduling.domain.impl.GenerateSessionsImpl");		
-
-	   Integer ret = intf.generateSessionSlots(
-												  v_directoryOfService 
-												 , v_fromDate 
-												 , v_toDate 
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-				if(ret == null)
-			return null;
-				return ret;
-	}
-	public ims.admin.vo.beans.PatientKioskBookingVoBean[] listPatientKioskBookingsForToday(
-
-												  String surname
-
-												 , ims.framework.utils.beans.DateBean dateOfBirth
-
-												 , Integer genderId
-
-												 , String kioskId
-                                                 ) throws Exception
-	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-	String v_surname=null;
-	    if (surname != null)
-		{
-			v_surname = surname;
-	}
-	ims.framework.utils.Date v_dateOfBirth=null;
-	    if (dateOfBirth != null)
-		{
-			v_dateOfBirth = dateOfBirth.buildDate();
-	}
-	Integer v_genderId=null;
-	    if (genderId != null)
-		{
-			v_genderId = genderId;
-	}
-	String v_kioskId=null;
-	    if (kioskId != null)
-		{
-			v_kioskId = kioskId;
-	}
-		
-		ims.scheduling.domain.PatientKioskOperations intf = (ims.scheduling.domain.PatientKioskOperations)super.getDomainImpl("ims.scheduling.domain.impl.PatientKioskOperationsImpl");		
-
-	   ims.admin.vo.PatientKioskBookingVoCollection ret = intf.listPatientKioskBookingsForToday(
-												  v_surname 
-												 , v_dateOfBirth 
-												 , v_genderId 
-												 , v_kioskId 
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-				if(ret == null)
-			return null;
-				return ret.getBeanCollectionArray();
-	}
-	public void confirmPatientKioskAppointmentsForToday(
-
-												  Integer[] appointmentIds
-
-												 , String kioskId
-                                                 ) throws Exception
-	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-	Integer[] v_appointmentIds=null;
-	    if (appointmentIds != null)
-		{
-			v_appointmentIds = appointmentIds;
-	}
-	String v_kioskId=null;
-	    if (kioskId != null)
-		{
-			v_kioskId = kioskId;
-	}
-		
-		ims.scheduling.domain.PatientKioskOperations intf = (ims.scheduling.domain.PatientKioskOperations)super.getDomainImpl("ims.scheduling.domain.impl.PatientKioskOperationsImpl");		
-
-	    intf.confirmPatientKioskAppointmentsForToday(
-												  v_appointmentIds 
-												 , v_kioskId 
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-						
-	}
-	public Boolean isPatientLate(
-
-												  Integer patientId
-                                                 ) throws Exception
-	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-	Integer v_patientId=null;
-	    if (patientId != null)
-		{
-			v_patientId = patientId;
-	}
-		
-		ims.scheduling.domain.PatientKioskOperations intf = (ims.scheduling.domain.PatientKioskOperations)super.getDomainImpl("ims.scheduling.domain.impl.PatientKioskOperationsImpl");		
-
-	   Boolean ret = intf.isPatientLate(
-												  v_patientId 
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-				if(ret == null)
-			return null;
-				return ret;
-	}
-	public String getSecurityToken(
-
-												  String sessionToken
-                                                 ) throws Exception
-	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-	String v_sessionToken=null;
-	    if (sessionToken != null)
-		{
-			v_sessionToken = sessionToken;
-	}
-		
-		ims.admin.domain.WebServicesIntegration intf = (ims.admin.domain.WebServicesIntegration)super.getDomainImpl("ims.admin.domain.impl.WebServicesIntegrationImpl");		
-
-	   String ret = intf.getSecurityToken(
-												  v_sessionToken 
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-				if(ret == null)
-			return null;
-				return ret;
-	}
-	public byte[] buildReport(
-
-												  String templateId
-
-												 , String imsId
-
-												 , String templateName
-
-												 , String reportId
-
-												 , String format
-                                                 ) throws Exception
-	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-	String v_templateId=null;
-	    if (templateId != null)
-		{
-			v_templateId = templateId;
-	}
-	String v_imsId=null;
-	    if (imsId != null)
-		{
-			v_imsId = imsId;
-	}
-	String v_templateName=null;
-	    if (templateName != null)
-		{
-			v_templateName = templateName;
-	}
-	String v_reportId=null;
-	    if (reportId != null)
-		{
-			v_reportId = reportId;
-	}
-	String v_format=null;
-	    if (format != null)
-		{
-			v_format = format;
-	}
-		
-		ims.admin.domain.WebServicesIntegration intf = (ims.admin.domain.WebServicesIntegration)super.getDomainImpl("ims.admin.domain.impl.WebServicesIntegrationImpl");		
-
-	   byte[] ret = intf.buildReport(
-												  v_templateId 
-												 , v_imsId 
-												 , v_templateName 
-												 , v_reportId 
-												 , v_format 
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-				if(ret == null)
-			return null;
-				return ret;
-	}
-	public String buildReportAsUrl(
-
-												  String templateId
-
-												 , String imsId
-
-												 , String templateName
-
-												 , String reportId
-
-												 , String format
-                                                 ) throws Exception
-	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-	String v_templateId=null;
-	    if (templateId != null)
-		{
-			v_templateId = templateId;
-	}
-	String v_imsId=null;
-	    if (imsId != null)
-		{
-			v_imsId = imsId;
-	}
-	String v_templateName=null;
-	    if (templateName != null)
-		{
-			v_templateName = templateName;
-	}
-	String v_reportId=null;
-	    if (reportId != null)
-		{
-			v_reportId = reportId;
-	}
-	String v_format=null;
-	    if (format != null)
-		{
-			v_format = format;
-	}
-		
-		ims.admin.domain.WebServicesIntegration intf = (ims.admin.domain.WebServicesIntegration)super.getDomainImpl("ims.admin.domain.impl.WebServicesIntegrationImpl");		
-
-	   String ret = intf.buildReportAsUrl(
-												  v_templateId 
-												 , v_imsId 
-												 , v_templateName 
-												 , v_reportId 
-												 , v_format 
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-				if(ret == null)
-			return null;
-				return ret;
-	}
-	public String buildReportAsUrlInlineFrame(
-
-												  String templateId
-
-												 , String imsId
-
-												 , String templateName
-
-												 , String reportId
-
-												 , String format
-                                                 ) throws Exception
-	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-	String v_templateId=null;
-	    if (templateId != null)
-		{
-			v_templateId = templateId;
-	}
-	String v_imsId=null;
-	    if (imsId != null)
-		{
-			v_imsId = imsId;
-	}
-	String v_templateName=null;
-	    if (templateName != null)
-		{
-			v_templateName = templateName;
-	}
-	String v_reportId=null;
-	    if (reportId != null)
-		{
-			v_reportId = reportId;
-	}
-	String v_format=null;
-	    if (format != null)
-		{
-			v_format = format;
-	}
-		
-		ims.admin.domain.WebServicesIntegration intf = (ims.admin.domain.WebServicesIntegration)super.getDomainImpl("ims.admin.domain.impl.WebServicesIntegrationImpl");		
-
-	   String ret = intf.buildReportAsUrlInlineFrame(
-												  v_templateId 
-												 , v_imsId 
-												 , v_templateName 
-												 , v_reportId 
-												 , v_format 
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-				if(ret == null)
-			return null;
-				return ret;
-	}
-	public void addSeed(
-
-												  String name
-
-												 , String value
-                                                 ) throws Exception
-	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-	String v_name=null;
-	    if (name != null)
-		{
-			v_name = name;
-	}
-	String v_value=null;
-	    if (value != null)
-		{
-			v_value = value;
-	}
-		
-		ims.admin.domain.WebServicesIntegration intf = (ims.admin.domain.WebServicesIntegration)super.getDomainImpl("ims.admin.domain.impl.WebServicesIntegrationImpl");		
-
-	    intf.addSeed(
-												  v_name 
-												 , v_value 
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-						
-	}
-	public ims.core.vo.beans.GeoCoOrdVoBean getGeoCoOrds(
-
-												  String poscode
-                                                 ) throws Exception
-	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-	String v_poscode=null;
-	    if (poscode != null)
-		{
-			v_poscode = poscode;
-	}
-		
-		ims.core.domain.AddressSearch intf = (ims.core.domain.AddressSearch)super.getDomainImpl("ims.core.domain.impl.AddressSearchImpl");		
-
-	   ims.core.vo.GeoCoOrdVo ret = intf.getGeoCoOrds(
-												  v_poscode 
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-				if(ret == null)
-			return null;
-				return (ims.core.vo.beans.GeoCoOrdVoBean)ret.getBean();
-	}
-	public ims.scheduling.vo.beans.Sch_BookingVoBean saveBooking(
-
-												  ims.scheduling.vo.beans.Sch_BookingVoBean booking
-
-												 , ims.vo.RefVoBean catsReferral
-
-												 , Boolean isRebook
-                                                 ) throws Exception
-	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-	ims.scheduling.vo.Sch_BookingVo v_booking=null;
-	    if (booking != null)
-		{
-			v_booking = booking.buildVo();
-			//String[] errors0 = v_booking.validate();
-			//if (errors0 != null)
-			//	throw new Exception("Errors found during value object (booking) validation - " + errors0);
 	
-	}
-	ims.RefMan.vo.CatsReferralRefVo v_catsReferral=null;
-	    if (catsReferral != null)
-		{
-			v_catsReferral = catsReferral == null ? null : new ims.RefMan.vo.CatsReferralRefVo(catsReferral.getId(), catsReferral.getVersion());
-	}
-	Boolean v_isRebook=null;
-	    if (isRebook != null)
-		{
-			v_isRebook = isRebook;
-	}
-		
-		ims.RefMan.domain.BookAppointment intf = (ims.RefMan.domain.BookAppointment)super.getDomainImpl("ims.RefMan.domain.impl.BookAppointmentImpl");		
+	options.push({text: "<Not listed>"});
 
-	   ims.scheduling.vo.Sch_BookingVo ret = intf.saveBooking(
-												  v_booking 
-												 , v_catsReferral 
-												 , v_isRebook 
-                                           ); 
+	this._selectLocationCombo.initData(options);
+	this._selectLocationCombo.set_selectedIndex(0, true);
+}
 
-		//super.freeDomainImpl(intf);
-				if(ret == null)
-			return null;
-				return (ims.scheduling.vo.beans.Sch_BookingVoBean)ret.getBean();
+proto._img_onclick = function()
+{
+	this.loginButtonClick();
+}
+proto._userBox_onfocus = function(ev)
+{
+	var box = Util.eventTarget(ev);
+	var jso = Util.dispatchObject();
+	if(jso._disabled || !box._isEmpty) return;
+	box._emptyValue = box.value;
+	box.value = "";
+	box.select();
+	Util.removeClass(box, "untouched");
+}
+proto._userBox_onkeypress = function(ev)
+{
+	var jso = Util.dispatchObject();
+	if(jso._disabled) return;
+	
+	var box = Util.eventTarget(ev);	
+	box._isEmpty = false;
+}
+proto._userBox_onblur = function(ev)
+{
+	var jso = Util.dispatchObject();
+	if(jso._disabled) return;
+
+	var box = Util.eventTarget(ev);
+	if(box.value == "") 
+	{	
+		box.value = box._emptyValue;
+		box.className += " untouched";
+		box._isEmpty = true;
 	}
-	public void updateCatsReferralAdditionalInvStatus(
-
-												  ims.vo.RefVoBean catsReferral
-
-												 , ims.vo.RefVoBean appointment
-                                                 ) throws Exception
+	else box._isEmpty = false;
+}
+proto._fakePasswordBox_onfocus = function(ev)
+{
+	var jso = Util.dispatchObject();
+	if(jso._disabled) return;
+	
+	var box = Util.eventTarget(ev);
+	jso._passwordBox.style.display = "inline";
+	jso._passwordBox.focus();
+	jso._passwordBox.select();
+	box.style.display = "none";
+}
+proto._passwordBox_onblur = function(ev)
+{
+	var jso = Util.dispatchObject();
+	if(jso._disabled) return;
+	
+	var box = Util.eventTarget(ev);
+	if(box.value == "")
 	{
-		if (!loggedIn()) throw new Exception("Not logged in!!");
-			
-	ims.RefMan.vo.CatsReferralRefVo v_catsReferral=null;
-	    if (catsReferral != null)
-		{
-			v_catsReferral = catsReferral == null ? null : new ims.RefMan.vo.CatsReferralRefVo(catsReferral.getId(), catsReferral.getVersion());
+		jso._fakePasswordBox.style.display = "inline";
+		box.style.display = "none";		
 	}
-	ims.scheduling.vo.Booking_AppointmentRefVo v_appointment=null;
-	    if (appointment != null)
-		{
-			v_appointment = appointment == null ? null : new ims.scheduling.vo.Booking_AppointmentRefVo(appointment.getId(), appointment.getVersion());
+}
+
+proto.loadData = function(node)
+{
+	this._salt = node.getAttribute("salt");
+
+	var message = Util.xmlSelectSingleNode(node, "message");
+	if(message) {
+		this._showMessage(message);
 	}
+}
+
+proto._showMessage = function(node) {
+	//redHeader
+	var redHeader = this._redHeader = $(CNFormManager.subTheme == "black" ? '__vistaFormRedHeaderBG' : '__si_formRedHeaderBG').cloneNode(true);
+	this.element.firstElementChild.appendChild(redHeader);
+	redHeader.className = "messageRedHeader";
+
+	var div = document.createElement("div");
+	this.element.firstElementChild.appendChild(div);
+	div.className = "messageDiv";
+	div.innerHTML = Util.xmlInnerString(node);
+
+	var obj = this;
+	setTimeout(function() {
+		obj._redHeader.style.display = "block";
+		div.style.visibility = "inherit";
+		Animator.start(new AnimMove(obj._redHeader, obj._redHeader.offsetLeft, -div.offsetHeight - 10), 
+			new AnimMove(div, 0, -div.offsetHeight));
+	}, 1000);
+
+}
+
+proto.storeData = function(xmldoc)
+{
+	if(this._lockMode)
+	{
+		var node = xmldoc.createElement("unlock");
+		node.setAttribute("name", this._userBox.value);
+		node.setAttribute("pass", this._encrypt(this._passwordBox.value));
 		
-		ims.scheduling.domain.SessionAdmin intf = (ims.scheduling.domain.SessionAdmin)super.getDomainImpl("ims.scheduling.domain.impl.SessionAdminImpl");		
-
-	    intf.updateCatsReferralAdditionalInvStatus(
-												  v_catsReferral 
-												 , v_appointment 
-                                           ); 
-
-		//super.freeDomainImpl(intf);
-						
+		return node;
 	}
-}		
+
+	var fragment = xmldoc.createDocumentFragment();
+	var node = xmldoc.createElement("loginEvent");
+	node.setAttribute("name", this._userBox.value);
+//	node.setAttribute("pass", this._passwordBox.value);
+	node.setAttribute("pass", this._encrypt(this._passwordBox.value));
+
+	fragment.appendChild(node);
+
+	var rootEl = this.formManager._getStoredLocationsXML(true);
+	if(rootEl) 
+	{
+		if(this._selectLocationCombo) 
+		{
+			var storedNodes = Util.xmlSelectNodes(rootEl, "location");
+			
+			var ix = this._selectLocationCombo.get_selectedIndex();
+			
+			if(ix >= storedNodes.length) ix = -1; 
+			rootEl.setAttribute("selection", ix);
+		}
+		fragment.appendChild(rootEl);
+	}
+	return fragment;
+}
+
+proto._encrypt = function(data) {
+	if(!this._salt) return data;
+	return Util.SHA1.compute(data + this._salt);
+}
+
+proto.unload = function()
+{
+	$("__loginChrome").style.display = "none";
+	CNFormManager.destroyJSObjects(this._jsObjects);
+	
+	this.formManager.restartAutoLock();
+}
+
+
+proto._element_onkeypress = function(ev)
+{
+	this.element_onkeypress(ev);
+}
+proto.element_onkeypress = function(ev)
+{
+	if(Event.keyValue(ev) != 13) return;
+	CNUtil.cancelEvent(ev);
+	this.loginButtonClick();
+}
+
+proto.loginButtonClick = function()
+{
+	if(this._disabled) return;
+	if(!this._userBox.value || this._userBox._isEmpty)
+	{
+		this._userBox.style.borderColor = "red";
+		return;
+	}
+	this._userBox.style.borderColor = "";
+	this.formManager.postData(this.element);
+}
+proto = null;
